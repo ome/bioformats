@@ -117,32 +117,26 @@ public class LeicaReader extends BaseTiffReader {
 
   /** Determines the number of images in the given Leica file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
+    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
     return numPlanes[series];
   }
 
   /** Return the number of series in the given Leica file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
+    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
     return numSeries;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
+    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
     tiff[series][0].setColorTableIgnored(isColorTableIgnored());
     return tiff[series][0].isRGB((String) files[series].get(0));
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
     return littleEndian;
   }
 
@@ -155,9 +149,7 @@ public class LeicaReader extends BaseTiffReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
+    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
@@ -172,9 +164,7 @@ public class LeicaReader extends BaseTiffReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
+    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
@@ -192,7 +182,7 @@ public class LeicaReader extends BaseTiffReader {
 
   /* @see IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
     Vector v = new Vector();
     v.add(id);
     for (int i=0; i<files.length; i++) {
@@ -294,8 +284,19 @@ public class LeicaReader extends BaseTiffReader {
       }
 
       // now open the LEI file
-      initFile(lei);
-      //super.initMetadata();
+
+      Location l = new Location(lei);
+      if (l.getAbsoluteFile().exists()) initFile(lei);
+      else {
+        l = l.getAbsoluteFile().getParentFile();
+        String[] list = l.list();
+        for (int i=0; i<list.length; i++) {
+          if (list[i].toLowerCase().endsWith("lei")) {
+            initFile(list[i]);
+            return;
+          }
+        }
+      }
     }
     else {
       // parse the LEI file
@@ -378,52 +379,160 @@ public class LeicaReader extends BaseTiffReader {
         String dirPrefix =
           new Location(id).getAbsoluteFile().getParent();
         dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
-        for (int j=0; j<tempImages; j++) {
-          // read in each filename
-          f.add(dirPrefix + DataTools.stripString(
-            new String(tempData, 20 + 2*(j*nameLength), 2*nameLength)));
-          // test to make sure the path is valid
-          Location test = new Location((String) f.get(f.size() - 1));
-          if (!test.exists()) {
-            // TIFF files were renamed
+        
+        String[] listing = (new Location(dirPrefix)).list();
+        Vector list = new Vector();
 
-            Location[] dirListing = (new Location(dirPrefix)).listFiles();
-
-            int pos = 0;
-            int maxChars = 0;
-            for (int k=0; k<dirListing.length; k++) {
-              int pt = 0;
-              int chars = 0;
-              String path = dirListing[k].getAbsolutePath();
-              if (path.toLowerCase().endsWith("tif") ||
-                path.toLowerCase().endsWith("tiff"))
-              {
-                while (path.charAt(pt) == test.getAbsolutePath().charAt(pt)) {
-                  pt++;
-                  chars++;
-                }
-                int newPt = path.length() - 1;
-                int oldPt = test.getAbsolutePath().length() - 1;
-                while (path.charAt(newPt) ==
-                  test.getAbsolutePath().charAt(oldPt))
-                {
-                  newPt--;
-                  oldPt--;
-                  chars++;
-                }
-                if (chars > maxChars) {
-                  maxChars = chars;
-                  pos = k;
-                }
-              }
-            }
-
-            f.set(f.size() - 1, dirListing[pos].getAbsolutePath());
+        for (int k=0; k<listing.length; k++) {
+          if (listing[k].toLowerCase().endsWith(".tif") ||
+            listing[k].toLowerCase().endsWith(".tiff"))
+          {
+            list.add(listing[k]);
           }
         }
 
-        files[i] = f;
-        numPlanes[i] = f.size();
+        listing = (String[]) list.toArray(new String[0]);
+
+        boolean tiffsExist = true;
+
+        String prefix = "";
+        for (int j=0; j<tempImages; j++) {
+          // read in each filename
+          prefix = DataTools.stripString(new String(tempData, 
+            20 + 2*(j*nameLength), 2*nameLength));
+          f.add(dirPrefix + prefix); 
+          // test to make sure the path is valid
+          Location test = new Location((String) f.get(f.size() - 1));
+          if (tiffsExist) tiffsExist = test.exists();
+        }
+
+        // at least one of the TIFF files was renamed
+        
+        if (!tiffsExist) {
+          // first thing is to get original LEI name associate with each TIFF
+          // this lets us figure out which TIFFs we need for this dataset
+          Hashtable leiMapping = new Hashtable();
+          int numLeis = 0;
+          for (int j=0; j<listing.length; j++) {
+            RandomAccessStream ras = 
+              new RandomAccessStream((String) listing[j]);
+            Hashtable ifd = TiffTools.getFirstIFD(ras);
+            ras.close();
+            String descr = 
+              (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+            int ndx = descr.indexOf("=", descr.indexOf("Series Name"));
+            String leiFile = descr.substring(ndx + 1, descr.indexOf("\n", ndx));
+            leiFile = leiFile.trim();
+            if (!leiMapping.contains(leiFile)) numLeis++;
+            leiMapping.put(listing[j], leiFile);
+          }
+       
+          // compare original TIFF prefix with original LEI prefix
+        
+          f.clear();
+          String[] keys = (String[]) leiMapping.keySet().toArray(new String[0]);
+          for (int j=0; j<keys.length; j++) {
+            String lei = (String) leiMapping.get(keys[j]);
+            if (DataTools.samePrefix(lei, prefix)) {
+              f.add(keys[j]);
+            }
+          }
+        
+          // now that we have our list of files, all that remains is to figure
+          // out how they should be ordered
+
+          // we'll try looking for a naming convention, using FilePattern
+          String[] usedFiles = null;
+          for (int j=0; j<f.size(); j++) {
+            if (usedFiles != null) {
+              for (int k=0; k<usedFiles.length; k++) {
+                if (usedFiles[k].equals((String) f.get(j)) || 
+                  usedFile((String) f.get(j))) 
+                {
+                  k = 0;
+                  j++;
+                }
+              }
+            }
+            if (j >= f.size()) break;
+            
+            FilePattern fp = new FilePattern(new Location((String) f.get(j)));
+            if (fp != null) usedFiles = fp.getFiles();
+            if (usedFiles != null && usedFiles.length == tempImages) {
+              files[i] = new Vector();
+              for (int k=0; k<usedFiles.length; k++) {
+                files[i].add(usedFiles[k]);
+              }
+              break;
+            }
+          }
+
+          // failing that, we can check the datestamp in each TIFF file
+          // note that this is not guaranteed to work - some versions of
+          // the Leica software will write a blank datestamp
+          if (files[i] == null || files[i].size() == 0) {
+            files[i] = new Vector();
+            Hashtable h = new Hashtable();
+            for (int j=0; j<listing.length; j++) {
+              RandomAccessStream ras = new RandomAccessStream(listing[j]);
+              Hashtable fd = TiffTools.getFirstIFD(ras);
+              String stamp = 
+                (String) TiffTools.getIFDValue(fd, TiffTools.DATE_TIME);
+              if (h.size() == tempImages) {
+                String[] ks = (String[]) h.keySet().toArray(new String[0]);
+                Arrays.sort(ks);
+                for (int k=0; k<ks.length; k++) {
+                  files[i].add(h.get(ks[k]));
+                }
+                h.clear();
+                break;
+              }
+              else {
+                if (!h.contains(stamp)) h.put(stamp, listing[j]);
+                else {
+                  h.clear();
+                  h.put(stamp, listing[j]);
+                }
+              }
+            }
+            if (h.size() == tempImages) {
+              String[] ks = (String[]) h.keySet().toArray(new String[0]);
+              Arrays.sort(ks);
+              for (int k=0; k<ks.length; k++) {
+                files[i].add(h.get(ks[k]));
+                /* debug */ System.out.println("adding " + h.get(ks[k]) + 
+                  " to series " + i);
+              }
+            }
+          }
+
+          // Our final effort is to just sort the filenames lexicographically.
+          // This gives us a pretty good chance of getting the order right,
+          // but it's not perfect.  Basically covers the (hopefully) unlikely
+          // case where filenames are nonsensical, and datestamps are invalid.
+          if (files[i] == null || files[i].size() == 0) {
+            if (debug) debug("File ordering is not obvious.");
+            files[i] = new Vector();
+            Arrays.sort(listing);
+            int ndx = 0;
+            for (int j=0; j<i; j++) ndx += files[j].size();
+            for (int j=ndx; j<ndx+tempImages; j++) files[i].add(listing[j]);
+          }
+
+          // Ways to break the renaming heuristics:
+          //
+          // 1) Don't use a detectable naming convention, and remove datestamps
+          //    from TIFF files.
+          // 2) Use a naming convention such as plane 0 -> "5.tif", 
+          //    plane 1 -> "4.tif", plane 2 -> "3.tif", etc.
+          // 3) Place two datasets in the same folder:
+          //      a) swap the two LEI file names
+          //      b) use the same naming convention for both sets of TIFF files
+          //      c) use the same naming convention AND make sure the datestamps
+          //         are the same between TIFF files
+        }
+        else files[i] = f;
+        numPlanes[i] = files[i].size();
         if (numPlanes[i] > maxPlanes) maxPlanes = numPlanes[i];
       }
 
@@ -470,15 +579,12 @@ public class LeicaReader extends BaseTiffReader {
 
       if (ndx == -1) return false;
 
-      String lei = descr.substring(descr.indexOf("=", ndx) + 1);
-      lei = lei.substring(0, lei.indexOf("\n"));
-      lei = lei.trim();
-
-      String dir = name.substring(0, name.lastIndexOf("/") + 1);
-      lei = dir + lei;
-
-      Location check = new Location(lei);
-      return check.exists();
+      String dir = new Location(name).getAbsoluteFile().getParent(); 
+      String[] listing = new Location(dir).list();
+      for (int i=0; i<listing.length; i++) {
+        if (listing[i].toLowerCase().endsWith(".lei")) return true;
+      }
+      return false;
     }
     catch (IOException exc) { }
     catch (NullPointerException exc) { }
@@ -944,7 +1050,14 @@ public class LeicaReader extends BaseTiffReader {
       }
       catch (NullPointerException n) { }
     }
+  }
 
+  private boolean usedFile(String s) {
+    for (int i=0; i<files.length; i++) {
+      if (files[i] == null) continue;
+      if (files[i].contains(s)) return true;
+    }
+    return false;
   }
 
   // -- Main method --
