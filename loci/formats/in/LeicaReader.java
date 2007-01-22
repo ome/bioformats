@@ -77,6 +77,9 @@ public class LeicaReader extends BaseTiffReader {
   /** Number of significant bits per pixel. */
   private int[][] validBits;
 
+  /** Name of current LEI file */
+  private String leiFilename;
+
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -117,26 +120,34 @@ public class LeicaReader extends BaseTiffReader {
 
   /** Determines the number of images in the given Leica file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
+      initFile(id);
+    }
     return numPlanes[series];
   }
 
   /** Return the number of series in the given Leica file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
+      initFile(id);
+    }
     return numSeries;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
+      initFile(id);
+    }
     tiff[series][0].setColorTableIgnored(isColorTableIgnored());
     return tiff[series][0].isRGB((String) files[series].get(0));
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
+      initFile(id);
+    } 
     return littleEndian;
   }
 
@@ -149,7 +160,9 @@ public class LeicaReader extends BaseTiffReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
+      initFile(id);
+    }
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
@@ -164,7 +177,9 @@ public class LeicaReader extends BaseTiffReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
+      initFile(id);
+    }
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
@@ -182,9 +197,11 @@ public class LeicaReader extends BaseTiffReader {
 
   /* @see IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id)) initFile(id);
+    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
+      initFile(id);
+    }
     Vector v = new Vector();
-    v.add(id);
+    v.add(leiFilename);
     for (int i=0; i<files.length; i++) {
       for (int j=0; j<files[i].size(); j++) {
         v.add(files[i].get(j));
@@ -211,6 +228,7 @@ public class LeicaReader extends BaseTiffReader {
 
   /** Initializes the given Leica file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (id.equals(currentId) || id.equals(leiFilename) || usedFile(id)) return;
     if (debug) debug("LeicaReader.initFile(" + id + ")");
     String idLow = id.toLowerCase();
     close();
@@ -228,17 +246,9 @@ public class LeicaReader extends BaseTiffReader {
       // open the TIFF file and look for the "Image Description" field
 
       ifds = TiffTools.getIFDs(in);
-      try {
-        super.initMetadata();
-      }
-      catch (NullPointerException n) {
-        if (debug) n.printStackTrace();
-      }
-
       if (ifds == null) throw new FormatException("No IFDs found");
-
-      String descr = (String) getMeta("Comment");
-      metadata.remove("Comment");
+      String descr = (String) TiffTools.getIFDValue(ifds[0], 
+        TiffTools.IMAGE_DESCRIPTION);
 
       int ndx = descr.indexOf("Series Name");
 
@@ -311,6 +321,7 @@ public class LeicaReader extends BaseTiffReader {
         if (currentId != id) currentId = id;
       }
 
+      leiFilename = id;
       in = new RandomAccessStream(id);
 
       byte[] fourBytes = new byte[4];
@@ -502,8 +513,6 @@ public class LeicaReader extends BaseTiffReader {
               Arrays.sort(ks);
               for (int k=0; k<ks.length; k++) {
                 files[i].add(h.get(ks[k]));
-                /* debug */ System.out.println("adding " + h.get(ks[k]) + 
-                  " to series " + i);
               }
             }
           }
@@ -809,14 +818,15 @@ public class LeicaReader extends BaseTiffReader {
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(40));
+      
       if (temp != null) {
         // time data
         // ID_TIMEINFO
         try {
-          addMeta("Number of time-stamped dimensions",
-            new Integer(DataTools.bytesToInt(temp, 0, 4, littleEndian)));
-          int nDims = DataTools.bytesToInt(temp, 4, 4, littleEndian);
-          addMeta("Time-stamped dimension", new Integer(nDims));
+          int nDims = DataTools.bytesToInt(temp, 0, 4, littleEndian);
+          addMeta("Number of time-stamped dimensions", new Integer(nDims));
+          addMeta("Time-stamped dimension", 
+            new Integer(DataTools.bytesToInt(temp, 4, 4, littleEndian)));
 
           int pt = 8;
 
@@ -1065,9 +1075,12 @@ public class LeicaReader extends BaseTiffReader {
 
   private boolean usedFile(String s) {
     if (files == null) return false;
+
     for (int i=0; i<files.length; i++) {
       if (files[i] == null) continue;
-      if (files[i].contains(s)) return true;
+      for (int j=0; j<files[i].size(); j++) {
+        if (((String) files[i].get(j)).endsWith(s)) return true;
+      }
     }
     return false;
   }
