@@ -480,6 +480,7 @@ public class DeltavisionReader extends FormatReader {
       null, null, null);
 
     String description = (String) getMeta("Title 1");
+    if (description == null) description = ""; 
     description = description.length() == 0 ? null : description;
     store.setImage(id, null, description, null);
 
