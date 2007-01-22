@@ -24,17 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import java.awt.Component;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
+import loci.formats.*;
+import loci.formats.in.OMEReader;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
-import org.openmicroscopy.ds.DataFactory;
-import org.openmicroscopy.ds.DataServices;
-import org.openmicroscopy.ds.dto.Image;
-import org.openmicroscopy.ds.st.Pixels;
-import org.openmicroscopy.is.PixelsFactory;
 import visad.*;
 
 /**
@@ -75,22 +73,10 @@ public class OMEImage extends ImageTransform {
   // -- Computed fields --
 
   /** Associated download helper object. */
-  protected ImageDownloader downloader;
+  protected OMEReader downloader;
 
-  /** Associated data services. */
-  protected DataServices rs;
-
-  /** Associated data factory. */
-  protected DataFactory df;
-
-  /** Associated pixels factory. */
-  protected PixelsFactory pf;
-
-  /** Image object allowing access to the image on the OME server. */
-  protected Image image;
-
-  /** Pixels object allowing access to the default pixels on the OME server. */
-  protected Pixels pixels;
+  /** ID passed to the OMEReader object. */
+  protected String id;
 
   /** Length of X dimension in this image. */
   protected int sizeX;
@@ -277,7 +263,15 @@ public class OMEImage extends ImageTransform {
 
     int z = indexZ < 0 ? 0 : pos[indexZ];
     int t = indexT < 0 ? 0 : pos[indexT];
-    float[][] samples = downloader.downloadPixels(pf, pixels, z, t);
+    float[][] samples = new float[sizeC][];
+    try {
+      for (int c=0; c<sizeC; c++) {
+        int ndx = downloader.getIndex(id, z, c, t);
+        samples[c] = ImageTools.getFloats(downloader.openImage(id, ndx))[0];
+      }
+    }
+    catch (FormatException exc) { exc.printStackTrace(); }
+    catch (IOException exc) { exc.printStackTrace(); }
 
     FunctionType fieldType = getType();
     RealTupleType fieldDomain = fieldType.getDomain();
@@ -352,36 +346,36 @@ public class OMEImage extends ImageTransform {
       imageId = data.imageId;
     }
 
-    if (rs != null) downloader.logout(rs);
-
-    // initialize download helper
-    downloader = new ImageDownloader();
-    if (task != null) {
-      task.setStatus("Downloading image");
-      downloader.addTaskListener(new TaskListener() {
-        public void taskUpdated(TaskEvent e) {
-          int val = e.getProgressValue();
-          int max = e.getProgressMaximum();
-          String msg = e.getStatusMessage();
-          task.setStatus(val, max, msg);
-        }
-      });
+    if (downloader != null) {
+      try {
+        downloader.close();
+      }
+      catch (Exception e) { e.printStackTrace(); }
     }
 
-    // download image details
-    rs = sessionKey == null ? downloader.login(server, user, password) :
-      downloader.getSession(server, sessionKey);
-    df = (DataFactory) rs.getService(DataFactory.class);
-    pf = (PixelsFactory) rs.getService(PixelsFactory.class);
-    image = downloader.downloadImage(df, imageId);
-    if (image == null && task != null) task.setCompleted();
-    name = image.getName();
-    pixels = image.getDefaultPixels();
-    sizeX = pixels.getSizeX().intValue();
-    sizeY = pixels.getSizeY().intValue();
-    sizeZ = pixels.getSizeZ().intValue();
-    sizeT = pixels.getSizeT().intValue();
-    sizeC = pixels.getSizeC().intValue();
+    downloader = new OMEReader();
+    if (task != null) {
+      task.setStatus("Downloading image");
+    }
+
+    id = server;
+    if (sessionKey != null && sessionKey.trim().length() != 0) {
+      id += "?key=" + sessionKey + "&id=" + imageId;
+    }
+    else {
+      id += "?user=" + user + "&password=" + password + "&id=" + imageId;
+    }
+    
+    try {
+      sizeX = downloader.getSizeX(id);
+      sizeY = downloader.getSizeY(id);
+      sizeZ = downloader.getSizeZ(id);
+      sizeC = downloader.getSizeC(id);
+      sizeT = downloader.getSizeT(id);
+      name = downloader.getCurrentFile();
+    }
+    catch (FormatException exc) { exc.printStackTrace(); }
+    catch (IOException exc) { exc.printStackTrace(); }
 
     // populate lengths and dims arrays
     if (sizeZ == 1 && sizeT == 1) {
@@ -416,6 +410,11 @@ public class OMEImage extends ImageTransform {
    * Called when this object is being discarded in favor of
    * another object with a matching state.
    */
-  public void discard() { if (rs != null) downloader.logout(rs); }
+  public void discard() { 
+    try {
+      downloader.close(); 
+    }
+    catch (Exception exc) { exc.printStackTrace(); }
+  }
 
 }
