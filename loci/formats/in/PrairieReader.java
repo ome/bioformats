@@ -334,7 +334,7 @@ public class PrairieReader extends FormatReader {
           if ((!readXML && path.endsWith(".xml")) || 
             (readXML && path.endsWith(".cfg")))
           {
-            next = new Location(path);
+            next = new Location(parent, path);
           }
         }
         if (next != null) initFile(next.getAbsolutePath());
