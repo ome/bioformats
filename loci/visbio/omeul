@@ -1,2 +1,2 @@
 #!/bin/sh
-java -mx512m loci.visbio.ome.ImageUploader $*
+java -mx512m loci.visbio.ome.ImageUploader "$@" 
