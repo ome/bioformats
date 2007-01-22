@@ -139,3 +139,10 @@ zeiss-lsm/billm/16stack.lsm
 #zeiss-lsm/billm/FC152_L1_B1_R7.lsm
 #zeiss-lsm/billm/FC152_L1_B1_R8.lsm
 #zeiss-lsm/billm/FC152_L1_B1_R9.lsm
+
+# these OME-XML files do not contain pixel data
+metamorph/samples/10xcalib.ome
+ome-xml/sdub-broken.ome
+ome-xml/sdub-nopix.ome
+ome-xml/tubhiswt-ca.ome
+ome-xml/sample-ca.ome
