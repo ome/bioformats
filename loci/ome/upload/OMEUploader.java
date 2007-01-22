@@ -738,6 +738,7 @@ public class OMEUploader implements Uploader {
     image.setInserted("now");
     image.setCreated("now");
     image.setDescription(xml.getDescription(null, null));
+    ((MappedDTO) image).setNew(false);
 
     df.update(image);
 
@@ -763,9 +764,15 @@ public class OMEUploader implements Uploader {
 
     df.update(ii);
 
+    Criteria c = new Criteria();
+    c.addWantedField("id");
+    c.addWantedField("default_pixels");
+    c.addFilter("id", "=", "" + image.getID());
+    image = (Image) df.retrieve(Image.class, c);
+
     // define pixels information and link to pixels in OMEIS
 
-    Pixels pixels = (Pixels) df.createNew("Pixels");
+    Pixels pixels = image.getDefaultPixels();
     pixels.setRepository(r);
     pixels.setImage(image);
     pixels.setModuleExecution(ii);
