@@ -137,6 +137,13 @@ public abstract class FormatReader extends FormatHandler
    * initialization operations such as parsing metadata.
    */
   protected void initFile(String id) throws FormatException, IOException {
+    if (currentId != null) {
+      String[] s = getUsedFiles(currentId);
+      for (int i=0; i<s.length; i++) {
+        if (id.equals(s[i])) return;
+      }
+    }
+
     close();
     currentId = id;
     metadata = new Hashtable();
