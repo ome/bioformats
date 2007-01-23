@@ -566,9 +566,9 @@ public class ZeissZVIReader extends FormatReader {
                   break;
                 case 69:
                 case 8:
-                  int len = DataTools.bytesToInt(data, pt, 2, true);
-                  pt += 2;
-                  value = new String(data, pt - 2, len + 2);
+                  int len = DataTools.bytesToInt(data, pt, 4, true);
+                  pt += 4;
+                  value = new String(data, pt, len);
                   pt += len;
                   break;
                 case 20:
@@ -653,10 +653,10 @@ public class ZeissZVIReader extends FormatReader {
                 break;
               case 69:
               case 8:
-                int len = DataTools.bytesToInt(data, pt, 2, true);
-                pt += 2;
+                int len = DataTools.bytesToInt(data, pt, 4, true);
+                pt += 4;
                 try {
-                  value = new String(data, pt - 2, len + 2);
+                  value = new String(data, pt, len);
                   pt += len;
                 }
                 catch (Exception e) {
@@ -919,7 +919,7 @@ public class ZeissZVIReader extends FormatReader {
         addMeta("RelFocusPosition2", data);
         break;
       case 513:
-        addMeta("tagID_513", data);
+        addMeta("ObjectType", data);
         break;
       case 515:
         addMeta("ImageWidth", data);
@@ -928,7 +928,7 @@ public class ZeissZVIReader extends FormatReader {
         addMeta("ImageHeight", data);
         break;
       case 517:
-        addMeta("tagID_517", data);
+        addMeta("Number Raw Count", data);
         break;
       case 518:
         addMeta("PixelType", data);
