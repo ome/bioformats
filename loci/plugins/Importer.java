@@ -340,6 +340,9 @@ public class Importer implements ItemListener {
       boolean[] series = new boolean[seriesCount];
       series[0] = true;
 
+      r.close();
+      store = (OMEXMLMetadataStore) r.getMetadataStore(id);
+
       // build descriptive string and range for each series
       String[] seriesStrings = new String[seriesCount];
       int[] num = new int[seriesCount];
