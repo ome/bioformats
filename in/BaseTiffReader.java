@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
@@ -83,22 +83,6 @@ public abstract class BaseTiffReader extends FormatReader {
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, -1),
       numImages
     };
-  }
-
-  /**
-   * Obtains an object which represents a given plane within the file.
-   * @param id The path to the file.
-   * @param no The plane or section within the file to obtain.
-   * @return an object which represents the plane.
-   * @throws FormatException if there is an error parsing the file.
-   * @throws IOException if there is an error reading from the file or
-   *   acquiring permissions to read the file.
-   */
-  public Plane2D openPlane2D(String id, int no)
-    throws FormatException, IOException
-  {
-    return new Plane2D(ByteBuffer.wrap(openBytes(id, no)),
-      getPixelType(id), isLittleEndian(id), getSizeX(id), getSizeY(id));
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -883,10 +867,10 @@ public abstract class BaseTiffReader extends FormatReader {
       for (int t = 0; t < getSizeT(currentId); t++) {
         for (int z = 0; z < getSizeZ(currentId); z++) {
           int index = getIndex(currentId, z, c, t);
-          Plane2D plane = openPlane2D(currentId, index);
+          WritableRaster pixels = openImage(currentId, index).getRaster();
           for (int x = 0; x < getSizeX(currentId); x++) {
             for (int y = 0; y < getSizeY(currentId); y++) {
-              double pixelValue = plane.getPixelValue(x, y);
+              double pixelValue = pixels.getSampleDouble(x, y, c);
               if (pixelValue < min) min = pixelValue;
               if (pixelValue > max) max = pixelValue;
             }
