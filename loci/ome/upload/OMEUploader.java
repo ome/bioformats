@@ -225,7 +225,7 @@ public class OMEUploader implements Uploader {
       }
 
       String id = closePixels(image.toString());
-      uploadMetadata(f.getMetadataStore(file), id.trim());
+      uploadMetadata(f.getMetadataStore(file), id.trim(), dataset);
 
       return bytesUploaded;
     }
@@ -360,7 +360,7 @@ public class OMEUploader implements Uploader {
 
         if (close) {
           id = closePixels(id).trim();
-          uploadMetadata(store, id);
+          uploadMetadata(store, id, dataset);
         }
 
         return bytesUploaded;
@@ -373,7 +373,7 @@ public class OMEUploader implements Uploader {
 
       if (close) {
         id = closePixels(id).trim();
-        uploadMetadata(store, id);
+        uploadMetadata(store, id, dataset);
       }
       return bytes;
     }
@@ -689,6 +689,16 @@ public class OMEUploader implements Uploader {
   private void uploadMetadata(MetadataStore store, String id)
     throws UploadException
   {
+    uploadMetadata(store, id, null); 
+  }
+
+  /**
+   * Parse and upload the given MetadataStore and link it to the
+   * given OMEIS ID.  The image is then placed in the given dataset.
+   */
+  private void uploadMetadata(MetadataStore store, String id, Integer dataset)
+    throws UploadException
+  {
     OMEXMLMetadataStore xml = (OMEXMLMetadataStore) store;
 
     // upload the OME-XML
@@ -792,6 +802,19 @@ public class OMEUploader implements Uploader {
 
     image.setDefaultPixels(pixels);
     df.update(image);
+  
+    // link image to the appropriate dataset
+    if (dataset != null) {
+      DatasetManager dm = (DatasetManager) rs.getService(DatasetManager.class);
+      Dataset d = (Dataset) df.createNew(Dataset.class);
+      ((MappedDTO) d).setNew(false);
+      d.setID(dataset.intValue());
+      Vector imgs = new Vector();
+      imgs.add(image);
+      dm.addImagesToDataset(d, imgs);
+      df.update(d);
+      df.update(image);
+    }
   }
 
 }
