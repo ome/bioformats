@@ -68,9 +68,11 @@ public class ConfigurationFiles {
     while (st.hasMoreTokens()) {
       String line = st.nextToken();
       if (!line.startsWith("#") && line.trim().length() > 0) {
+        // file name should be enclosed in double quotes
+        String file = line.substring(1, line.indexOf("\"", 2));
+        line = line.substring(line.indexOf("\"", 2) + 2);
+        file = new Location(l.getParent(), file).getAbsolutePath();
         StringTokenizer spaces = new StringTokenizer(line, " ");
-        String file = 
-          new Location(l.getParent(), spaces.nextToken()).getAbsolutePath(); 
         int nSeries = Integer.parseInt(spaces.nextToken());
         numSeries.put(file, new Integer(nSeries));
         int[][] dims = new int[nSeries][5];
