@@ -64,6 +64,8 @@ public class ReaderTest extends TestCase {
 
   // -- Static fields --
 
+  public static boolean writeConfigFiles = false;
+  private static StringBuffer configLine;
   private static Vector configFiles = new Vector();
   private static ConfigurationFiles config = ConfigurationFiles.newInstance();
   private static FileWriter logFile;
@@ -119,6 +121,7 @@ public class ReaderTest extends TestCase {
     maxMemory = initialMemory;
     try {
       int planesRead = 0;
+      
       long l1 = System.currentTimeMillis();
       for (int i=0; i<reader.getSeriesCount(id); i++) {
         int usedMemory = (int) (rt.totalMemory() - rt.freeMemory()) >> 20;
@@ -127,6 +130,7 @@ public class ReaderTest extends TestCase {
         int imageCount = reader.getImageCount(id);
         int sizeX = reader.getSizeX(id);
         int sizeY = reader.getSizeY(id);
+        
         for (int j=0; j<imageCount; j++) {
           BufferedImage b = reader.openImage(id, j);
           boolean failW = b.getWidth() != sizeX;
@@ -285,86 +289,163 @@ public class ReaderTest extends TestCase {
 
   /** 
    * Checks that the core metadata values match those given in 
-   * the configuration file.  Note that this test will fail if there was
-   * no configuration file.
+   * the configuration file.  If there is no configuration file, this test
+   * is not run.
    */
   public void testConsistent() {
     boolean success = true;
-    int nSeries = 0;
-    try {
-      nSeries = reader.getSeries(id);
-      if (nSeries != config.getNumSeries(id)) {
-        success = false;
-        writeLog(id + " failed consistent series count check");
+    if (writeConfigFiles) {
+      try {
+        // assemble the config line
+        configLine.append("\"");
+        configLine.append(new Location(id).getName());
+        configLine.append("\" total_series=");
+        configLine.append(reader.getSeriesCount(id));
+        for (int i=0; i<reader.getSeriesCount(id); i++) {
+          reader.setSeries(id, i);
+          configLine.append(" [series=");
+          configLine.append(i);
+          configLine.append(" x=");
+          configLine.append(reader.getSizeX(id));
+          configLine.append(" y=");
+          configLine.append(reader.getSizeY(id));
+          configLine.append(" z=");
+          configLine.append(reader.getSizeZ(id));
+          configLine.append(" c=");
+          configLine.append(reader.getSizeC(id));
+          configLine.append(" t=");
+          configLine.append(reader.getSizeT(id));
+          configLine.append(" order=");
+          configLine.append(reader.getDimensionOrder(id));
+          configLine.append(" interleave=");
+          configLine.append(reader.isInterleaved(id));
+          configLine.append(" rgb=");
+          configLine.append(reader.isRGB(id));
+          configLine.append(" thumbx=");
+          configLine.append(reader.getThumbSizeX(id));
+          configLine.append(" thumby=");
+          configLine.append(reader.getThumbSizeY(id));
+          configLine.append(" type=");
+          configLine.append(FormatReader.getPixelTypeString(
+            reader.getPixelType(id)));
+          configLine.append(" little=");
+          configLine.append(reader.isLittleEndian(id));
+          configLine.append("]");
+        }
+        configLine.append(" access=");
+        configLine.append(averagePlaneAccess);
+        configLine.append(" mem=");
+        long len = 0;
+        RandomAccessStream ras = new RandomAccessStream(id);
+        configLine.append(ras.length());
+        ras.close();
+        configLine.append(" test=true\n");
+    
+        File f = new File(new Location(id).getParent(), ".bioformats");
+        BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
+        w.write(configLine.toString());
+        w.close();
+      }
+      catch (Exception e) {
+          /* debug */ e.printStackTrace();
+        if (DEBUG) e.printStackTrace();
+     
+        configLine = new StringBuffer();
+        configLine.append("\"");
+        configLine.append(new Location(id).getName());
+        configLine.append("\" test=false\n");
+
+        try {
+          File f = new File(new Location(id).getParent(), ".bioformats");
+          BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
+          w.write(configLine.toString());
+          w.close();
+        }
+        catch (IOException exc) {
+          /* debug */ exc.printStackTrace();
+          if (DEBUG) exc.printStackTrace();
+          success = false;
+        }
       }
     }
-    catch (Exception e) {
-      if (DEBUG) e.printStackTrace();
-      success = false;
-    }
-    if (success) {
+    else {
+      int nSeries = 0;
       try {
-        for (int i=0; i<nSeries; i++) {
-          config.setSeries(id, i);
-          reader.setSeries(id, i);
-          if (config.getWidth(id) != reader.getSizeX(id)) {
-            success = false;
-            writeLog(id + " failed consistent width check in series " + i);
-          }
-          if (config.getHeight(id) != reader.getSizeY(id)) {
-            success = false;
-            writeLog(id + " failed consistent height check in series " + i);
-          }
-          if (config.getZ(id) != reader.getSizeZ(id)) {
-            success = false;
-            writeLog(id + " failed consistent sizeZ check in series " + i);
-          }
-          if (config.getC(id) != reader.getSizeC(id)) {
-            success = false;
-            writeLog(id + " failed consistent sizeC check in series " + i);
-          }
-          if (config.getT(id) != reader.getSizeT(id)) {
-            success = false;
-            writeLog(id + " failed consistent sizeT check in series " + i);
-          }
-          if (!config.getDimOrder(id).equals(reader.getDimensionOrder(id))) {
-            success = false;
-            writeLog(id + 
-              " failed consistent dimension order check in series " + i);
-          }
-          if (config.isInterleaved(id) != reader.isInterleaved(id)) {
-            success = false;
-            writeLog(id + 
-              " failed consistent interleaving flag check in series " + i);
-          }
-          if (config.isRGB(id) != reader.isRGB(id)) {
-            success = false;
-            writeLog(id + " failed consistent RGB flag check in series " + i);
-          }
-          if (config.getThumbX(id) != reader.getThumbSizeX(id)) {
-            success = false;
-            writeLog(id + 
-              " failed consistent thumbnail width check in series " + i);
-          }
-          if (config.getThumbY(id) != reader.getThumbSizeY(id)) {
-            success = false;
-            writeLog(id + 
-              " failed consistent thumbnail height check in series " + i);
-          }
-          if (config.getPixelType(id) != reader.getPixelType(id)) {
-            success = false;
-            writeLog(id + " failed consistent pixel type check in series " + i);
-          }
-          if (config.isLittleEndian(id) != reader.isLittleEndian(id)) {
-            success = false;
-            writeLog(id + 
-              " failed consistent endianness flag check in series " + i);
-          }
+        nSeries = reader.getSeries(id);
+        if (nSeries != config.getNumSeries(id)) {
+          success = false;
+          writeLog(id + " failed consistent series count check");
         }
       }
       catch (Exception e) {
         if (DEBUG) e.printStackTrace();
         success = false;
+      }
+      if (success) {
+        try {
+          for (int i=0; i<nSeries; i++) {
+            config.setSeries(id, i);
+            reader.setSeries(id, i);
+            if (config.getWidth(id) != reader.getSizeX(id)) {
+              success = false;
+              writeLog(id + " failed consistent width check in series " + i);
+            }
+            if (config.getHeight(id) != reader.getSizeY(id)) {
+              success = false;
+              writeLog(id + " failed consistent height check in series " + i);
+            }
+            if (config.getZ(id) != reader.getSizeZ(id)) {
+              success = false;
+              writeLog(id + " failed consistent sizeZ check in series " + i);
+            }
+            if (config.getC(id) != reader.getSizeC(id)) {
+              success = false;
+              writeLog(id + " failed consistent sizeC check in series " + i);
+            }
+            if (config.getT(id) != reader.getSizeT(id)) {
+              success = false;
+              writeLog(id + " failed consistent sizeT check in series " + i);
+            }
+            if (!config.getDimOrder(id).equals(reader.getDimensionOrder(id))) {
+              success = false;
+              writeLog(id + 
+                " failed consistent dimension order check in series " + i);
+            }
+            if (config.isInterleaved(id) != reader.isInterleaved(id)) {
+              success = false;
+              writeLog(id + 
+                " failed consistent interleaving flag check in series " + i);
+            }
+            if (config.isRGB(id) != reader.isRGB(id)) {
+              success = false;
+              writeLog(id + " failed consistent RGB flag check in series " + i);
+            }
+            if (config.getThumbX(id) != reader.getThumbSizeX(id)) {
+              success = false;
+              writeLog(id + 
+                " failed consistent thumbnail width check in series " + i);
+            }
+            if (config.getThumbY(id) != reader.getThumbSizeY(id)) {
+              success = false;
+              writeLog(id + 
+                " failed consistent thumbnail height check in series " + i);
+            }
+            if (config.getPixelType(id) != reader.getPixelType(id)) {
+              success = false;
+              writeLog(id + 
+                " failed consistent pixel type check in series " + i);
+            }
+            if (config.isLittleEndian(id) != reader.isLittleEndian(id)) {
+              success = false;
+              writeLog(id + 
+                " failed consistent endianness flag check in series " + i);
+            }
+          }
+        }
+        catch (Exception e) {
+          if (DEBUG) e.printStackTrace();
+          success = false;
+        }
       }
     }
     assertTrue(success);
@@ -409,6 +490,7 @@ public class ReaderTest extends TestCase {
   /** Sets up the fixture. */
   protected void setUp() {
     reader = new FileStitcher();
+    configLine = new StringBuffer();
   }
 
   /** Releases resources after tests have completed. */
@@ -436,11 +518,13 @@ public class ReaderTest extends TestCase {
   public static TestSuite suite(String id) {
     TestSuite suite = new TestSuite();
     suite.addTest(new ReaderTest("testBufferedImageDimensions", id));
-    suite.addTest(new ReaderTest("testByteArrayDimensions", id));
-    suite.addTest(new ReaderTest("testImageCount", id));
-    suite.addTest(new ReaderTest("testOMEXML", id));
-    if (config.initialized(id)) {
-      suite.addTest(new ReaderTest("testConsistent", id));
+    if (!writeConfigFiles) {
+      suite.addTest(new ReaderTest("testByteArrayDimensions", id));
+      suite.addTest(new ReaderTest("testImageCount", id));
+      suite.addTest(new ReaderTest("testOMEXML", id));
+    }
+    suite.addTest(new ReaderTest("testConsistent", id));
+    if (config.initialized(id) && !writeConfigFiles) {
       suite.addTest(new ReaderTest("testMemoryUsage", id));
       suite.addTest(new ReaderTest("testAccessTime", id));
     }
@@ -525,6 +609,12 @@ public class ReaderTest extends TestCase {
 
   public static void main(String[] args) {
     if (DEBUG) FormatReader.setDebug(true);
+    if (args.length > 0) {
+      for (int i=1; i<args.length; i++) {
+        if (args[i].equals("-config")) ReaderTest.writeConfigFiles = true;
+        else if (args[i].equals("-debug")) FormatReader.setDebug(true);
+      }
+    }
     Vector files = new Vector();
     if (args == null || args.length == 0) {
       System.out.println(
