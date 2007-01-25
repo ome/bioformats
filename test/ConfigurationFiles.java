@@ -30,17 +30,19 @@ import loci.formats.*;
 
 /** Stores data from a set of config files */
 public class ConfigurationFiles {
-  Hashtable numSeries = new Hashtable();
-  Hashtable dimensions = new Hashtable();
-  Hashtable dimOrders = new Hashtable();
-  Hashtable interleaved = new Hashtable();
-  Hashtable rgb = new Hashtable();
-  Hashtable thumbDims = new Hashtable();
-  Hashtable pixelType = new Hashtable();
-  Hashtable littleEndian = new Hashtable();
-  Hashtable readTime = new Hashtable();
-  Hashtable memUsage = new Hashtable();
-  Hashtable doTest = new Hashtable();
+  private Hashtable numSeries = new Hashtable();
+  private Hashtable dimensions = new Hashtable();
+  private Hashtable dimOrders = new Hashtable();
+  private Hashtable interleaved = new Hashtable();
+  private Hashtable rgb = new Hashtable();
+  private Hashtable thumbDims = new Hashtable();
+  private Hashtable pixelType = new Hashtable();
+  private Hashtable littleEndian = new Hashtable();
+  private Hashtable readTime = new Hashtable();
+  private Hashtable memUsage = new Hashtable();
+  private Hashtable doTest = new Hashtable();
+
+  public Vector parsedFiles = new Vector();
 
   int currentSeries = 0;
 
@@ -62,6 +64,8 @@ public class ConfigurationFiles {
   public void addFile(String id) throws IOException {
     RandomAccessStream ras = new RandomAccessStream(id);
     Location l = new Location(id);
+    if (parsedFiles.contains(l.getAbsolutePath())) return;
+    else parsedFiles.add(l.getAbsolutePath());
     byte[] b = new byte[(int) ras.length()];
     ras.read(b);
     ras.close();
@@ -70,7 +74,9 @@ public class ConfigurationFiles {
       String line = st.nextToken();
       if (!line.startsWith("#") && line.trim().length() > 0) {
         String file = line.substring(1, line.lastIndexOf("\""));
-        file = new Location(l.getParent(), file).getAbsolutePath();
+        Location newLocation = new Location(l.getParent(), file);
+        file = newLocation.getAbsolutePath();
+        newLocation = null;
         line = line.substring(line.lastIndexOf("\"") + 2);
 
         // first check if 'test' is set to false; if so, don't parse anything
@@ -153,6 +159,8 @@ public class ConfigurationFiles {
         }
       }
     }
+    l = null;
+    System.gc();
   }
 
   public void setSeries(String id, int no) {
