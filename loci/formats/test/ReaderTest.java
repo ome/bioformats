@@ -580,7 +580,6 @@ public class ReaderTest extends TestCase {
         else if (DEBUG) debug(subs[i] + " has invalid type");
       }
       file = null;
-      System.gc();
     }
   }
 
