@@ -427,8 +427,8 @@ public class LeicaReader extends BaseTiffReader {
           Hashtable leiMapping = new Hashtable();
           int numLeis = 0;
           for (int j=0; j<listing.length; j++) {
-            RandomAccessStream ras = 
-              new RandomAccessStream((String) listing[j]);
+            RandomAccessStream ras = new RandomAccessStream(
+              new Location(dirPrefix, listing[j]).getAbsolutePath());
             Hashtable ifd = TiffTools.getFirstIFD(ras);
             ras.close();
             String descr = 
@@ -474,7 +474,8 @@ public class LeicaReader extends BaseTiffReader {
             if (usedFiles != null && usedFiles.length == tempImages) {
               files[i] = new Vector();
               for (int k=0; k<usedFiles.length; k++) {
-                files[i].add(usedFiles[k]);
+                files[i].add(new Location(dirPrefix, 
+                  usedFiles[k]).getAbsolutePath());
               }
               break;
             }
@@ -487,7 +488,8 @@ public class LeicaReader extends BaseTiffReader {
             files[i] = new Vector();
             Hashtable h = new Hashtable();
             for (int j=0; j<listing.length; j++) {
-              RandomAccessStream ras = new RandomAccessStream(listing[j]);
+              RandomAccessStream ras = new RandomAccessStream(
+                new Location(dirPrefix, listing[j]).getAbsolutePath());
               Hashtable fd = TiffTools.getFirstIFD(ras);
               String stamp = 
                 (String) TiffTools.getIFDValue(fd, TiffTools.DATE_TIME);
@@ -495,7 +497,8 @@ public class LeicaReader extends BaseTiffReader {
                 String[] ks = (String[]) h.keySet().toArray(new String[0]);
                 Arrays.sort(ks);
                 for (int k=0; k<ks.length; k++) {
-                  files[i].add(h.get(ks[k]));
+                  files[i].add(new Location(dirPrefix, 
+                    (String) h.get(ks[k])).getAbsolutePath());
                 }
                 h.clear();
                 break;
@@ -512,7 +515,8 @@ public class LeicaReader extends BaseTiffReader {
               String[] ks = (String[]) h.keySet().toArray(new String[0]);
               Arrays.sort(ks);
               for (int k=0; k<ks.length; k++) {
-                files[i].add(h.get(ks[k]));
+                files[i].add(new Location(dirPrefix, 
+                  (String) h.get(ks[k])).getAbsolutePath());
               }
             }
           }
@@ -527,7 +531,10 @@ public class LeicaReader extends BaseTiffReader {
             Arrays.sort(listing);
             int ndx = 0;
             for (int j=0; j<i; j++) ndx += files[j].size();
-            for (int j=ndx; j<ndx+tempImages; j++) files[i].add(listing[j]);
+            for (int j=ndx; j<ndx+tempImages; j++) {
+              files[i].add(new Location(dirPrefix, 
+                listing[j]).getAbsolutePath());
+            }
           }
 
           // Ways to break the renaming heuristics:
