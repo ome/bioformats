@@ -35,15 +35,17 @@ import java.util.Vector;
  */
 public class Location {
 
+  // -- Static fields --
+
+  /** Map from given filenames to actual filenames. */
+  private static Hashtable idMap = new Hashtable();
+
   // -- Fields --
 
   private boolean isURL = true;
   private String path;
   private URL url;
   private File file;
-
-  /** Map from given filenames to actual filenames. */
-  private static Hashtable idMap = new Hashtable();
 
   // -- Constructors --
 
@@ -71,9 +73,9 @@ public class Location {
     this(parent.getAbsolutePath(), child);
   }
 
-  // -- File API methods --
+  // -- Location API methods --
 
-  /** 
+  /**
    * Maps the given id to the actual filename on disk. Typically actual
    * filenames are used for ids, making this step unnecessary, but in some
    * cases it is useful; e.g., if the file has been renamed to conform to a
@@ -107,10 +109,12 @@ public class Location {
 
   public static Hashtable getIdMap() { return idMap; }
 
-  public static void setIdMap(Hashtable map) { 
-    if (map != null) idMap = map; 
+  public static void setIdMap(Hashtable map) {
+    if (map != null) idMap = map;
     else idMap = new Hashtable();
   }
+
+  // -- File API methods --
 
   /* @see java.io.File#canRead() */
   public boolean canRead() {
