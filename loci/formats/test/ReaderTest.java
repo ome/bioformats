@@ -347,7 +347,6 @@ public class ReaderTest extends TestCase {
         w.close();
       }
       catch (Exception e) {
-          /* debug */ e.printStackTrace();
         if (DEBUG) e.printStackTrace();
      
         configLine = new StringBuffer();
@@ -362,7 +361,6 @@ public class ReaderTest extends TestCase {
           w.close();
         }
         catch (IOException exc) {
-          /* debug */ exc.printStackTrace();
           if (DEBUG) exc.printStackTrace();
           success = false;
         }
@@ -536,14 +534,13 @@ public class ReaderTest extends TestCase {
    * Bad files are skipped rather than tested.
    */
   public static boolean isBadFile(String file) {
-    if (config.numFiles() == 0) {
-      for (int i=0; i<configFiles.size(); i++) {
-        try {
-          config.addFile((String) configFiles.get(i));  
-        }
-        catch (IOException e) {
-          if (DEBUG) e.printStackTrace();
-        }
+    for (int i=0; i<configFiles.size(); i++) {
+      try {
+        String s = (String) configFiles.get(i);
+        if (!config.parsedFiles.contains(s)) config.addFile(s);
+      }
+      catch (IOException e) {
+        if (DEBUG) e.printStackTrace();
       }
     }
     return !config.testFile(file) && !file.endsWith(".bioformats");
@@ -553,6 +550,7 @@ public class ReaderTest extends TestCase {
   public static void getFiles(String root, Vector files) {
     Location f = new Location(root);
     String[] subs = f.list();
+    f = null;
     Arrays.sort(subs);
     if (subs == null) {
       System.out.println("Invalid directory: " + root);
@@ -561,12 +559,14 @@ public class ReaderTest extends TestCase {
     ImageReader ir = new ImageReader();
     for (int i=0; i<subs.length; i++) {
       if (DEBUG) debug("Checking file " + subs[i]);
-      subs[i] = new Location(root, subs[i]).getAbsolutePath();
+      subs[i] = root + (root.endsWith(File.separator) ? "" : File.separator) +
+        subs[i];
       if (isBadFile(subs[i])) {
         if (DEBUG) debug(subs[i] + " is a bad file");
         continue;
       }
       Location file = new Location(subs[i]);
+
       if (file.isDirectory()) getFiles(subs[i], files);
       else if (file.getName().equals(".bioformats")) {
         // special config file for the test suite
@@ -579,6 +579,8 @@ public class ReaderTest extends TestCase {
         }
         else if (DEBUG) debug(subs[i] + " has invalid type");
       }
+      file = null;
+      System.gc();
     }
   }
 
