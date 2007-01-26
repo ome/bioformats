@@ -57,6 +57,8 @@ public class OIFReader extends FormatReader {
   /** Number of valid bits per pixel. */
   private int[] validBits;
 
+  private Vector usedFiles = new Vector();
+
   // -- Constructor --
 
   /** Constructs a new OIF reader. */
@@ -200,11 +202,25 @@ public class OIFReader extends FormatReader {
   /* @see IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    String[] s = new String[tiffs.size() + 1];
-    s[0] = currentId;
-    for (int i=1; i<s.length; i++) s[i] = (String) tiffs.get(i-1);
+    String[] s = (String[]) usedFiles.toArray(new String[0]);
     return s;
   }
+
+  /* @see IFormatReader#close(boolean) */
+  /*
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly) {
+      if (reader != null) reader.close();
+      if (thumbReader != null) thumbReader.close(fileOnly);
+      if (tiffReader != null) {
+        for (int i=0; i<tiffReader.length; i++) {
+          if (tiffReader[i] != null) tiffReader[i].close(fileOnly);
+        }
+      }
+    }
+    else close();
+  }
+  */
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -255,6 +271,9 @@ public class OIFReader extends FormatReader {
     super.initFile(oifFile);
     reader = new RandomAccessStream(oifFile);
 
+    usedFiles.clear();
+    usedFiles.add(new Location(oifFile).getAbsolutePath());
+
     int slash = oifFile.lastIndexOf(File.separator);
     String path = slash < 0 ? "." : oifFile.substring(0, slash);
 
@@ -295,8 +314,9 @@ public class OIFReader extends FormatReader {
 
     // open each INI file (.pty extension)
 
-    String tiffPath;
+    String tiffPath = null;
     RandomAccessStream ptyReader;
+    
     for (int i=0; i<numImages; i++) {
       String file = (String) filenames.get(new Integer(i));
       file = file.substring(1, file.length() - 1);
@@ -326,6 +346,12 @@ public class OIFReader extends FormatReader {
         }
       }
       ptyReader.close();
+    }
+
+    if (tiffPath != null) {
+      Location dir = new Location(tiffPath);
+      String[] list = dir.list();
+      for (int i=0; i<list.length; i++) usedFiles.add(list[i]);
     }
 
     for (int i=0; i<9; i++) {
