@@ -624,20 +624,6 @@ public class FileStitcher implements IFormatReader {
         " (" + currentId + "): " + fp.getErrorMessage() + msg);
     }
     files = fp.getFiles();
-    String[][] s = new String[files.length][];
-    int total = files.length;
-    for (int i=0; i<files.length; i++) {
-      s[i] = reader.getUsedFiles(files[i]);
-      total += s[i].length;
-    }
-    String[] tmp = files;
-    files = new String[total];
-    System.arraycopy(tmp, 0, files, 0, tmp.length);
-    int off = tmp.length;
-    for (int i=0; i<s.length; i++) {
-      System.arraycopy(s[i], 0, files, off, s[i].length); 
-      off += s[i].length;
-    }
 
     if (files == null) {
       throw new FormatException("No files matching pattern (" +
@@ -734,6 +720,21 @@ public class FileStitcher implements IFormatReader {
       swapDimensions(currentId, order[i]);
     }
     setSeries(currentId, oldSeries);
+  
+    String[][] s = new String[files.length][];
+    int total = files.length;
+    for (int i=0; i<files.length; i++) {
+      s[i] = reader.getUsedFiles(files[i]);
+      total += s[i].length;
+    }
+    String[] tmp = files;
+    files = new String[total];
+    System.arraycopy(tmp, 0, files, 0, tmp.length);
+    int off = tmp.length;
+    for (int i=0; i<s.length; i++) {
+      System.arraycopy(s[i], 0, files, off, s[i].length); 
+      off += s[i].length;
+    }
   }
 
   /** Computes axis length arrays, and total axis lengths. */
