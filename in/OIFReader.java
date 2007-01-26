@@ -57,7 +57,7 @@ public class OIFReader extends FormatReader {
   /** Number of valid bits per pixel. */
   private int[] validBits;
 
-  private Vector usedFiles = new Vector();
+  private Vector usedFiles;
 
   // -- Constructor --
 
@@ -271,7 +271,7 @@ public class OIFReader extends FormatReader {
     super.initFile(oifFile);
     reader = new RandomAccessStream(oifFile);
 
-    usedFiles.clear();
+    usedFiles = new Vector();
     usedFiles.add(new Location(oifFile).getAbsolutePath());
 
     int slash = oifFile.lastIndexOf(File.separator);
@@ -351,7 +351,9 @@ public class OIFReader extends FormatReader {
     if (tiffPath != null) {
       Location dir = new Location(tiffPath);
       String[] list = dir.list();
-      for (int i=0; i<list.length; i++) usedFiles.add(list[i]);
+      for (int i=0; i<list.length; i++) {
+        usedFiles.add(new Location(tiffPath, list[i]).getAbsolutePath());
+      }
     }
 
     for (int i=0; i<9; i++) {

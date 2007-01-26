@@ -105,6 +105,15 @@ public class FileStitcher implements IFormatReader {
   /** Constructs a FileStitcher around a new image reader. */
   public FileStitcher() { this(new ImageReader()); }
 
+  /** 
+   * Constructs a FileStitcher around a new image reader. 
+   * @param patternIds Whether string ids given should be treated as file
+   *    patterns rather than single file paths.
+   */
+  public FileStitcher(boolean patternIds) {
+    this(new ImageReader(), patternIds);
+  }
+
   /**
    * Constructs a FileStitcher with the given reader.
    * @param r The reader to use for reading stitched files.
@@ -411,6 +420,21 @@ public class FileStitcher implements IFormatReader {
     return readers[fno].openThumbBytes(files[fno], ino);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  /*
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (readers != null) {
+      for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
+    }
+    if (!fileOnly) {
+      readers = null;
+      blankImage = null;
+      blankBytes = null;
+      currentId = null;
+    }
+  }
+  */
+
   /* @see IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (readers != null) {
@@ -600,6 +624,21 @@ public class FileStitcher implements IFormatReader {
         " (" + currentId + "): " + fp.getErrorMessage() + msg);
     }
     files = fp.getFiles();
+    String[][] s = new String[files.length][];
+    int total = files.length;
+    for (int i=0; i<files.length; i++) {
+      s[i] = reader.getUsedFiles(files[i]);
+      total += s[i].length;
+    }
+    String[] tmp = files;
+    files = new String[total];
+    System.arraycopy(tmp, 0, files, 0, tmp.length);
+    int off = tmp.length;
+    for (int i=0; i<s.length; i++) {
+      System.arraycopy(s[i], 0, files, off, s[i].length); 
+      off += s[i].length;
+    }
+
     if (files == null) {
       throw new FormatException("No files matching pattern (" +
         fp.getPattern() + "). " + msg);
