@@ -32,17 +32,11 @@ public class PointerTool extends OverlayTool {
 
   // -- Fields --
 
-  /** Index of object currently being grabbed. */
-  protected int grabIndex = -1;
-
   /** Location where an object was first "grabbed" with a mouse press. */
   protected float grabX, grabY;
 
   /** Vector of "grabbed" objects */
-  protected Vector grabees;  // (the user being the grabber)
-
-  /** Location where mouseDown occurs */
-  protected float downX, downY;
+  protected Vector grabbed;  // the grabees 
 
   /** The selection box which may be created by this tool */
   protected TransientSelectBox select;
@@ -80,6 +74,7 @@ public class PointerTool extends OverlayTool {
     objs = overlay.getObjects(pos);
     bounds = new float[objs.length][4];
     selected = new boolean[objs.length];
+    grabbed = new Vector(objs.length);
 
     double dist = Double.POSITIVE_INFINITY;
     int ndx = -1;
@@ -90,54 +85,60 @@ public class PointerTool extends OverlayTool {
         ndx = i;
       }
     }
-    
-    // assemble array of objects' bounding boxes 
-    for (int i=0; i<objs.length; i++) {
-      float[] bound = new float[4];
-      bound[0] = objs[i].getX();
-      bound[1] = objs[i].getY();
-      if (objs[i].hasEndpoint2()) {
-        bound[2] = objs[i].getX2();
-        bound[3] = objs[i].getY2();
-      } else {
-        bound[2] = bound[0];
-        bound[3] = bound[1];
-      }
-      bounds[i] = bound;
-    }
 
     double threshold = 0.02 * overlay.getScalingValue();
-    boolean sel = dist < threshold && objs[ndx].isSelected();
-
-    if (!shift && !ctrl) {
-      // deselect all previously selected objects
-      for (int i=0; i<objs.length; i++) objs[i].setSelected(false);
-    }
-
-    // compile array tracking initial selection state of all objs at this position
-    for (int i=0; i<objs.length; i++) { selected[i] = objs[i].isSelected(); }
 
     if (dist < threshold) {
-      if (sel && !ctrl && !shift) {
-        // grab object if it is already selected
-        grabIndex = ndx;
-        grabX = dx;
-        grabY = dy;
+      if (shift) objs[ndx].setSelected(true);
+      else if (ctrl) objs[ndx].setSelected(ctrl ? !objs[ndx].isSelected() : true);
+      else {
+        if (objs[ndx].isSelected()) {
+          // grab all selected objects
+          for (int i=0; i<objs.length; i++) {
+            if (objs[i].isSelected()) grabbed.add(objs[i]);
+          }
+          // record location of mouseDown
+          grabX = dx;
+          grabY = dy;
+        }
+        else {
+          // select this object and deselect all others
+          for (int i=0; i<objs.length; i++) objs[i].setSelected(false);
+          objs[ndx].setSelected(true);
+        }
       }
-      // select (or deselect) picked object
-      objs[ndx].setSelected(ctrl ? !sel : true);
-    } else {
-      // record location of click
-      downX = dx;
-      downY = dy;
+    }
+    else {
+      if (!ctrl && !shift) {
+        // deselect all previously selected objects
+        for (int i=0; i<objs.length; i++) objs[i].setSelected(false);
+      }
+    
+      // assemble array of objects' bounding boxes 
+      for (int i=0; i<objs.length; i++) {
+        float[] bound = new float[4];
+        bound[0] = objs[i].getX();
+        bound[1] = objs[i].getY();
+        if (objs[i].hasEndpoint2()) {
+          bound[2] = objs[i].getX2();
+          bound[3] = objs[i].getY2();
+        } else {
+          bound[2] = bound[0];
+          bound[3] = bound[1];
+        }
+        bounds[i] = bound;
+      }
+    
+      // compile array tracking initial selection state of all objs here 
+      for (int i=0; i<objs.length; i++) { selected[i] = objs[i].isSelected(); }
 
       // instantiate selection box
-      select = new TransientSelectBox(overlay, downX, downY);
+      select = new TransientSelectBox(overlay, dx, dy);
       overlay.addTSB (select);
     }
 
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
-    if (grabIndex >= 0 || select != null) overlay.setTextDrawn(false);
+    if (!grabbed.isEmpty() || select != null) overlay.setTextDrawn(false);
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 
@@ -149,8 +150,8 @@ public class PointerTool extends OverlayTool {
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
     // release any grabbed objects
-    if (grabIndex >= 0) {
-      grabIndex = -1;
+    if (!grabbed.isEmpty()) {
+      grabbed.clear();
       overlay.setTextDrawn(true);
       overlay.notifyListeners(new TransformEvent(overlay));
     }
@@ -170,17 +171,18 @@ public class PointerTool extends OverlayTool {
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
     // move grabbed object, if any
-    if (grabIndex >= 0) {
-      OverlayObject obj = overlay.getObjects(pos)[grabIndex];
+    if (!grabbed.isEmpty()) {
       float moveX = dx - grabX;
       float moveY = dy - grabY;
-      obj.setCoords(obj.getX() + moveX, obj.getY() + moveY);
-      obj.setCoords2(obj.getX2() + moveX, obj.getY2() + moveY);
+      for (int i=0; i<grabbed.size(); i++) {
+        OverlayObject obj = (OverlayObject) grabbed.elementAt(i);
+        obj.setCoords(obj.getX() + moveX, obj.getY() + moveY);
+        obj.setCoords2(obj.getX2() + moveX, obj.getY2() + moveY);
+      }
       grabX = dx;
       grabY = dy;
       overlay.notifyListeners(new TransformEvent(overlay));
-    }
-    else if (select != null) {
+    } else if (select != null) {
       // extend selection box
       select.setCorner(dx, dy);
 
