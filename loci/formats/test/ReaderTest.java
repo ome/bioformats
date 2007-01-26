@@ -60,7 +60,7 @@ public class ReaderTest extends TestCase {
   // -- Constants --
 
   /** Debugging flag. */
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
 
   // -- Static fields --
 
@@ -539,7 +539,6 @@ public class ReaderTest extends TestCase {
         String s = (String) configFiles.get(i);
         if (!config.parsedFiles.contains(s)) {
           config.addFile(s);
-          /* debug */ System.out.println("added config file " + s);
         }
       }
       catch (IOException e) {
