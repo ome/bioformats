@@ -26,6 +26,7 @@ package loci.visbio.util;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -449,4 +450,37 @@ public final class DisplayUtil {
     catch (ReflectException exc) { exc.printStackTrace(); }
   }
 
+  /** Converts the given domain coordinates to pixel coordinates */
+  public static double[] domainToPixel(DisplayImpl d, double x, double y) {
+    double[] v = {x, y};
+
+    Dimension dim = d.getComponent().getSize();
+    
+    double[] a, b, c, aa, bb, cc;
+    aa = pixelToDomain(d, 0, 0);
+    bb = pixelToDomain(d, dim.width, 0);
+    cc = pixelToDomain(d, 0, dim.height);
+
+    a = new double[] {aa[0], aa[1]}; // pixel to domain returns a double[] of
+    b = new double[] {bb[0], bb[1]}; // length 3
+    c = new double[] {cc[0], cc[1]};
+
+    double[] xx, yy;
+    xx = MathUtil.getProjection(a, b, v, false);
+    yy = MathUtil.getProjection(a, c, v, false);
+    
+    double xb, yb;
+    xb = MathUtil.getDistance (a, xx);
+    yb = MathUtil.getDistance (a, yy);
+
+    double wb, hb;
+    wb = MathUtil.getDistance (a, b);
+    hb = MathUtil.getDistance (a, c);
+
+    double dpx, dpy;
+    dpx =  (dim.width * xb / wb);
+    dpy =  (dim.height * yb / hb);
+
+    return new double[] {dpx, dpy};
+  }
 }
