@@ -60,7 +60,7 @@ public class ReaderTest extends TestCase {
   // -- Constants --
 
   /** Debugging flag. */
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
 
   // -- Static fields --
 
@@ -537,7 +537,10 @@ public class ReaderTest extends TestCase {
     for (int i=0; i<configFiles.size(); i++) {
       try {
         String s = (String) configFiles.get(i);
-        if (!config.parsedFiles.contains(s)) config.addFile(s);
+        if (!config.parsedFiles.contains(s)) {
+          config.addFile(s);
+          /* debug */ System.out.println("added config file " + s);
+        }
       }
       catch (IOException e) {
         if (DEBUG) e.printStackTrace();
@@ -624,7 +627,7 @@ public class ReaderTest extends TestCase {
     }
     System.out.print("Building file list...");
     if (DEBUG) System.out.println();
-    getFiles(args[0], files);
+    getFiles(new Location(args[0]).getAbsolutePath(), files);
     System.out.println(files.size() + " found.");
     while (files.size() > 0) {
       String id = (String) files.elementAt(0);
