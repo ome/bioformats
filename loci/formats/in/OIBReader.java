@@ -56,7 +56,7 @@ public class OIBReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
       r.exec("import java.util.Iterator");
     }
-    catch (Throwable exc) {
+    catch (ReflectException exc) {
       noPOI = true;
     }
     return r;
@@ -220,8 +220,7 @@ public class OIBReader extends FormatReader {
       return rtn;
     }
     catch (ReflectException e) {
-      noPOI = true;
-      return new byte[0];
+      throw new FormatException(e);
     }
   }
 
@@ -240,6 +239,13 @@ public class OIBReader extends FormatReader {
     return ImageTools.makeImage(b, sizeX[s], sizeY[s], bytes == 3 ? 3 : 1,
       false, bytes == 3 ? 1 : bytes, !littleEndian[s], validBits[s]);
   }
+
+  /* @see IFormatReader#close(boolean) */
+  /*
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (!fileOnly) close();
+  }
+  */
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -433,10 +439,8 @@ public class OIBReader extends FormatReader {
         else validBits[i] = null;
       }
     }
-    catch (Throwable t) {
-      noPOI = true;
-      if (debug) t.printStackTrace();
-      initFile(id);
+    catch (ReflectException e) {
+      throw new FormatException(e);
     }
 
     try {
