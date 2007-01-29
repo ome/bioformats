@@ -209,6 +209,25 @@ public class LeicaReader extends BaseTiffReader {
     }
     return (String[]) v.toArray(new String[0]);
   }
+ 
+  /* @see IFormatReader#close(boolean) */
+  /*
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly) {
+      if (in != null) in.close();
+      if (tiff != null) {
+        for (int i=0; i<tiff.length; i++) {
+          if (tiff[i] != null) {
+            for (int j=0; j<tiff[i].length; j++) {
+              if (tiff[i][j] != null) tiff[i][j].close(fileOnly);
+            }
+          }
+        }
+      }
+    }
+    else close();
+  }
+  */
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -590,6 +609,7 @@ public class LeicaReader extends BaseTiffReader {
     try {
       RandomAccessStream ras = new RandomAccessStream(name);
       Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
       if (ifd == null) return false;
 
       String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
