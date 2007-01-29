@@ -151,6 +151,18 @@ public class PerkinElmerReader extends FormatReader {
     return (String[]) allFiles.toArray(new String[0]);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  /*
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && tiff != null) {
+      for (int i=0; i<tiff.length; i++) {
+        if (tiff[i] != null) tiff[i].close(fileOnly);
+      }
+    }
+    else if (!fileOnly) close();
+  }
+  */
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
@@ -384,6 +396,7 @@ public class PerkinElmerReader extends FormatReader {
         addMeta(hashKeys[tNum], token);
         tNum++;
       }
+      read.close();
     }
 
     if (csvPos != -1) {
@@ -413,6 +426,7 @@ public class PerkinElmerReader extends FormatReader {
         }
         tNum++;
       }
+      read.close();
     }
     else if (zpoPos != -1) {
       tempFile = new Location(workingDir, ls[zpoPos]);
@@ -426,6 +440,7 @@ public class PerkinElmerReader extends FormatReader {
         addMeta("Z slice #" + tNum + " position", t.nextToken());
         tNum++;
       }
+      read.close();
     }
 
     // be aggressive about parsing the HTML file, since it's the only one that
@@ -467,6 +482,7 @@ public class PerkinElmerReader extends FormatReader {
           addMeta(tokens[j], tokens[j+1]);
         }
       }
+      read.close();
     }
     else {
       throw new FormatException("Valid header files not found.");
