@@ -168,13 +168,12 @@ public class ND2Reader extends FormatReader {
 
     in.seek(offsets[no]);
 
-    byte[] b = new byte[0];
-
+    byte[] b;
     if (no < getImageCount(id) - 1) {
       b = new byte[(int) (offsets[no + 1] - offsets[no])];
     }
     else b = new byte[(int) (in.length() - offsets[no])];
-    in.read(b);
+    in.readFully(b);
 
     ByteArrayInputStream bis = new ByteArrayInputStream(b);
     BufferedImage img = ImageIO.read(bis);
@@ -283,7 +282,7 @@ public class ND2Reader extends FormatReader {
     if (off > 0 && off < in.length() - 5) {
       in.seek(off + 5);
       byte[] b = new byte[(int) (in.length() - off - 5)];
-      in.read(b);
+      in.readFully(b);
       String xml = new String(b);
 
       // assume that this XML string will be malformed, since that's how both
@@ -340,9 +339,8 @@ public class ND2Reader extends FormatReader {
                         addMeta(effectiveKey, value);
                       }
                     }
-                    catch (Exception e) {
-                      // CTR TODO - eliminate catch-all exception handling
-                      if (debug) e.printStackTrace();
+                    catch (NumberFormatException exc) {
+                      if (debug) exc.printStackTrace();
                     }
                   }
                 }
