@@ -3,7 +3,7 @@
 //
 
 /*
-Coded in 2006 by Curtis Rueden.
+Coded in 2006-@year@ by Curtis Rueden.
 Permission is granted to use this code for anything.
 */
 

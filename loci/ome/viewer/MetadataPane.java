@@ -4,7 +4,7 @@
 
 /*
 OME Metadata Viewer tool for simple exploration of OME-XML metadata.
-Copyright (C) 2006 Curtis Rueden.
+Copyright (C) 2006-@year@ Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by

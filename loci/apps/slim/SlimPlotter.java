@@ -3,7 +3,7 @@
 //
 
 /*
-Coded in 2006 by Curtis Rueden, for Long Yan and others.
+Coded in 2006-@year@ by Curtis Rueden, for Long Yan and others.
 Permission is granted to use this code for anything.
 */
 

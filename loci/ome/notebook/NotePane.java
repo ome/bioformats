@@ -4,7 +4,7 @@
 
 /*
 OME Metadata Notebook application for exploration and editing of OME-XML and
-OME-TIFF metadata. Copyright (C) 2006 Christopher Peterson.
+OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by

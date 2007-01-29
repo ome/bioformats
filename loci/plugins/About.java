@@ -3,10 +3,10 @@
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including the 4D
-Data Browser, OME Plugin and Bio-Formats Exporter. Copyright (C) 2006
-Melissa Linkert, Christopher Peterson, Curtis Rueden, Philip Huettl
-and Francis Wong.
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including
+the 4D Data Browser, OME Plugin and Bio-Formats Exporter.
+Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
+Curtis Rueden, Philip Huettl and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -36,7 +36,7 @@ public final class About {
     JOptionPane.showMessageDialog(null,
       "LOCI Plugins for ImageJ\n" +
       "Built @date@\n\n" +
-      "Copyright 2006 Laboratory for Optical and Computational\n" +
+      "Copyright 2006-@year@ Laboratory for Optical and Computational\n" +
       "Instrumentation; http://www.loci.wisc.edu/software\n\n" +
       "The 4D Data Browser is written by Christopher Peterson,\n" +
       "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
