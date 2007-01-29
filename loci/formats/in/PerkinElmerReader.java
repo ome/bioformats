@@ -151,18 +151,6 @@ public class PerkinElmerReader extends FormatReader {
     return (String[]) allFiles.toArray(new String[0]);
   }
 
-  /* @see IFormatReader#close(boolean) */
-  /*
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && tiff != null) {
-      for (int i=0; i<tiff.length; i++) {
-        if (tiff[i] != null) tiff[i].close(fileOnly);
-      }
-    }
-    else if (!fileOnly) close();
-  }
-  */
-
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
@@ -556,7 +544,7 @@ public class PerkinElmerReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore(currentId);
 
     // populate Dimensions element
     String pixelSizeX = (String) getMeta("Pixel Size X");
@@ -578,7 +566,7 @@ public class PerkinElmerReader extends FormatReader {
       new Integer(y), // SizeY
       new Integer(z), // SizeZ
       new Integer(wavelengths), // SizeC
-      new Integer(getSizeT(id)), // SizeT
+      new Integer(sizeT[0]), // SizeT
       new Integer(pixelType[0]), // PixelType
       null, // BigEndian
       "XYCTZ", // DimensionOrder
