@@ -34,8 +34,8 @@ public final class MDBParser {
   // -- Constants --
 
   private static final String NO_MDB_MSG =
-    "You need to install the Java port of MDB tools from " +
-    "http://www.loci.wisc.edu/ome/formats.html.";
+    "Please install the Java port of MDB tools from " +
+    "http://www.loci.wisc.edu/ome/formats.html";
 
   // -- Static fields --
 
