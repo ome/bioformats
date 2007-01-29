@@ -51,13 +51,26 @@ public class ND2Reader extends FormatReader {
   private static ReflectedUniverse r = createReflectedUniverse();
 
   private static ReflectedUniverse createReflectedUniverse() {
-    System.setProperty("com.sun.media.imageio.disableCodecLib", "true");
     r = null;
     try {
       r = new ReflectedUniverse();
       r.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
       r.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
       r.exec("import jj2000.j2k.util.ISRandomAccessIO");
+
+      // make sure that a JPEG-2000 reader is available
+      String[] fnames = ImageIO.getReaderFormatNames();
+      boolean foundReader = false;
+      for (int i=0; i<fnames.length; i++) {
+        if (fnames[i].equals("JPEG 2000")) {
+          foundReader = true;
+          break;
+        }
+      }
+      if (!foundReader) {
+        if (debug) System.err.println("No JPEG-2000 reader found.");
+        noJAI = true;
+      }
     }
     catch (Throwable exc) {
       if (debug) exc.printStackTrace();
@@ -207,17 +220,6 @@ public class ND2Reader extends FormatReader {
     if (debug) debug("ND2Reader.initFile(" + id + ")");
     if (noJAI) throw new FormatException(NO_JAI_MSG);
     super.initFile(id);
-
-    // make sure that a JPEG 2000 reader is available
-    String[] fnames = ImageIO.getReaderFormatNames();
-    boolean foundReader = false;
-    for (int i=0; i<fnames.length; i++) {
-      if (fnames[i].equals("JPEG 2000")) {
-        foundReader = true;
-        break;
-      }
-    }
-    //if (!foundReader) throw new FormatException(NO_JAI_MSG);
 
     in = new RandomAccessStream(id);
 
