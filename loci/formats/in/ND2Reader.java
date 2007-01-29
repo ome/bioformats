@@ -51,6 +51,7 @@ public class ND2Reader extends FormatReader {
   private static ReflectedUniverse r = createReflectedUniverse();
 
   private static ReflectedUniverse createReflectedUniverse() {
+    System.setProperty("com.sun.media.jai.disableMediaLib", "true");
     r = null;
     try {
       r = new ReflectedUniverse();
@@ -59,7 +60,7 @@ public class ND2Reader extends FormatReader {
       r.exec("import jj2000.j2k.util.ISRandomAccessIO");
     }
     catch (Throwable exc) {
-      /* debug */ exc.printStackTrace();
+      if (debug) exc.printStackTrace();
       noJAI = true;
     }
     return r;
