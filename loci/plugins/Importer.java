@@ -1304,4 +1304,17 @@ public class Importer implements ItemListener {
     return digits;
   }
 
+  // -- Main method --
+
+  /** Main method, for testing. */
+  public static void main(String[] args) {
+    new ImageJ(null);
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<args.length; i++) {
+      if (i > 0) sb.append(" ");
+      sb.append(args[i]);
+    }
+    new LociImporter().run(sb.toString());
+  }
+
 }
