@@ -32,18 +32,18 @@ import loci.formats.*;
 
 /**
  * ND2Reader is the file format reader for Nikon ND2 files.
- * The JAI library is required to use this reader; it is available from
- * http://jai-imageio.dev.java.net.  Note that JAI is bundled with a version
- * of the JJ2000 library, so it is important that either (1) the JJ2000 jar
- * file is *not* in the classpath; or (2) the JAI jar file precedes JJ2000 in
- * the classpath.
+ * The JAI ImageIO library is required to use this reader; it is available from
+ * http://jai-imageio.dev.java.net. Note that JAI ImageIO is bundled with a
+ * version of the JJ2000 library, so it is important that either:
+ * (1) the JJ2000 jar file is *not* in the classpath; or
+ * (2) the JAI jar file precedes JJ2000 in the classpath.
  */
 public class ND2Reader extends FormatReader {
 
   // -- Constants --
 
   private static final String NO_JAI_MSG =
-    "You need to install JAI from http://jai-imageio.dev.java.net";
+    "Please install JAI from http://jai-imageio.dev.java.net";
 
   // -- Static fields --
 
