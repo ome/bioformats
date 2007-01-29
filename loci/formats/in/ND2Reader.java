@@ -51,7 +51,7 @@ public class ND2Reader extends FormatReader {
   private static ReflectedUniverse r = createReflectedUniverse();
 
   private static ReflectedUniverse createReflectedUniverse() {
-    System.setProperty("com.sun.media.jai.disableMediaLib", "true");
+    System.setProperty("com.sun.media.imageio.disableCodecLib", "true");
     r = null;
     try {
       r = new ReflectedUniverse();
@@ -212,10 +212,12 @@ public class ND2Reader extends FormatReader {
     String[] fnames = ImageIO.getReaderFormatNames();
     boolean foundReader = false;
     for (int i=0; i<fnames.length; i++) {
-      foundReader = fnames[i].equals("JPEG 2000");
-      if (foundReader) i = fnames.length;
+      if (fnames[i].equals("JPEG 2000")) {
+        foundReader = true;
+        break;
+      }
     }
-    if (!foundReader) throw new FormatException(NO_JAI_MSG);
+    //if (!foundReader) throw new FormatException(NO_JAI_MSG);
 
     in = new RandomAccessStream(id);
 
