@@ -27,7 +27,9 @@ package loci.formats.in;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-import javax.imageio.*;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import loci.formats.*;
 
 /**
@@ -42,39 +44,66 @@ public class ND2Reader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_JAI_MSG =
-    "Please install JAI from http://jai-imageio.dev.java.net";
+  private static final String NO_J2K_MSG =
+    "Please install JAI Image I/O Tools from http://jai-imageio.dev.java.net";
+
+  private static final String J2K_READER =
+    "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
 
   // -- Static fields --
 
-  private static boolean noJAI = false;
+  private static boolean noJ2k = false;
   private static ReflectedUniverse r = createReflectedUniverse();
 
   private static ReflectedUniverse createReflectedUniverse() {
+    // NB: ImageJ does not access the jai_imageio classes with the normal
+    // class loading scheme, and thus the necessary service provider stuff is
+    // not automatically registered. Instead, we register the J2KImageReader
+    // with the IIORegistry manually, merely so that we can obtain a
+    // J2KImageReaderSpi object from the IIORegistry's service provider
+    // lookup function, then use it to construct a J2KImageReader object
+    // directly, which we can use to process ND2 files one plane at a time.
+
+    // register J2KImageReader with IIORegistry
+    String j2kReaderSpi = J2K_READER + "Spi";
+    Class j2kSpiClass = null;
+    try {
+      j2kSpiClass = Class.forName(j2kReaderSpi);
+    }
+    catch (ClassNotFoundException exc) {
+      if (debug) exc.printStackTrace();
+      noJ2k = true;
+    }
+    catch (NoClassDefFoundError err) {
+      if (debug) err.printStackTrace();
+      noJ2k = true;
+    }
+    IIORegistry registry = IIORegistry.getDefaultInstance();
+    if (j2kSpiClass != null) {
+      Iterator providers = ServiceRegistry.lookupProviders(j2kSpiClass);
+      registry.registerServiceProviders(providers);
+    }
+
+    // obtain J2KImageReaderSpi instance from IIORegistry
+    Object j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
+
     r = null;
     try {
       r = new ReflectedUniverse();
+
+      // for computing offsets in initFile
       r.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
       r.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
       r.exec("import jj2000.j2k.util.ISRandomAccessIO");
 
-      // make sure that a JPEG-2000 reader is available
-      String[] fnames = ImageIO.getReaderFormatNames();
-      boolean foundReader = false;
-      for (int i=0; i<fnames.length; i++) {
-        if (fnames[i].equals("JPEG 2000")) {
-          foundReader = true;
-          break;
-        }
-      }
-      if (!foundReader) {
-        if (debug) System.err.println("No JPEG-2000 reader found.");
-        noJAI = true;
-      }
+      // for reading pixel data in openImage
+      r.exec("import " + J2K_READER);
+      r.setVar("j2kSpi", j2kSpi);
+      r.exec("j2kReader = new J2KImageReader(j2kSpi)");
     }
     catch (Throwable exc) {
       if (debug) exc.printStackTrace();
-      noJAI = true;
+      noJ2k = true;
     }
     return r;
   }
@@ -176,7 +205,21 @@ public class ND2Reader extends FormatReader {
     in.readFully(b);
 
     ByteArrayInputStream bis = new ByteArrayInputStream(b);
-    BufferedImage img = ImageIO.read(bis);
+    // NB: Even after registering J2KImageReader with
+    // IIORegistry manually, the following still does not work:
+    //BufferedImage img = ImageIO.read(bis);
+    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
+    BufferedImage img = null;
+    try {
+      r.setVar("mciis", mciis);
+      r.exec("j2kReader.setInput(mciis)");
+      r.setVar("zero", 0);
+      r.setVar("param", null);
+      img = (BufferedImage) r.exec("j2kReader.read(zero, param)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
     bis.close();
     b = null;
 
@@ -222,7 +265,7 @@ public class ND2Reader extends FormatReader {
   /** Initializes the given ND2 file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ND2Reader.initFile(" + id + ")");
-    if (noJAI) throw new FormatException(NO_JAI_MSG);
+    if (noJ2k) throw new FormatException(NO_J2K_MSG);
     super.initFile(id);
 
     in = new RandomAccessStream(id);
