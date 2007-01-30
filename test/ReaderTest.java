@@ -591,8 +591,8 @@ public class ReaderTest extends TestCase {
   public static void writeLog(String s) {
     if (logFile == null) {
       try {
-        logFile = new FileWriter(
-          "bio-formats-test-" + new Date().toString() + ".log");
+        String date = new Date().toString().replaceAll(":", "-");
+        logFile = new FileWriter("bio-formats-test-" + date + ".log");
         logFile.flush();
       }
       catch (IOException io) {
