@@ -268,7 +268,7 @@ plug-in08=>"LOCI"
 plug-in09="4D Data Browser",loci.plugins.browser.BrowserPlugin
 plug-in10="Bio-Formats Importer",loci.plugins.LociImporter
 plug-in11="Bio-Formats Exporter",loci.browser.LociDataBrowser
-plug-in12="OME Plugin",loci.plugins.ome.OMEPlugin
+plug-in12="OME Plugin",loci.plugins.OMEPlugin
 
 # Install user plugins located in ij.jar
 #user_plugins01="Red And Blue",RedAndBlue_

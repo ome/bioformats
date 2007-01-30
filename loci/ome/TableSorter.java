@@ -3,9 +3,6 @@
 //
 
 /*
-OME Plugin for ImageJ plugin for transferring images to and from an OME
-database. Copyright (C) 2004-@year@ Philip Huettl and Melissa Linkert.
-
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -21,7 +18,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.ome;
+package loci.ome;
 
 import java.awt.*;
 import java.awt.event.*;

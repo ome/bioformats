@@ -1,5 +1,5 @@
 //
-// OMETools.java
+// OMEPlugin.java
 //
 
 /*
@@ -21,27 +21,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.ome;
+package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.plugin.PlugIn;
 import ij.process.*;
 import java.awt.TextField;
 import java.util.*;
 import loci.formats.*;
+import loci.ome.*;
+import loci.plugins.Util;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 
 /**
- * Handles downloading images.
+ * OMEPlugin is the ImageJ Plugin that allows image import and exports from
+ * the OME database.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
- * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class OMETools {
+public class OMEPlugin implements PlugIn {
+
 
   // -- Fields --
 
@@ -76,7 +80,16 @@ public class OMETools {
   private RemoteCaller rc;
   private DataServices rs;
 
-  // -- Runnable API methods --
+  // -- PlugIn API methods --
+
+  /** Executes the plugin. */
+  public void run(String arg) {
+    if (!Util.checkVersion()) return;
+    if (!Util.checkLibraries(true, true, true, true)) return;
+    runPlugin();
+  }
+
+  // -- OMEPlugin API methods --
 
   /**
    * The getInput method prompts and receives user input to determine
@@ -185,107 +198,37 @@ public class OMETools {
 
   // -- Download methods --
 
-  /**
-   * HACK: this replaces calls to DataFactory.retrieveList(String, Criteria),
-   * since that method is broken for unknown reasons.
-   */
-  public static List retrieveList(String st, Criteria crit, DataFactory df) {
-    List l = new Vector();
-    int need = df.count(st, crit);
-    int have = 0;
-    while (have < need) {
-      crit.setOffset(have);
-      l.add(df.retrieve(st, crit));
-      have++;
-    }
-    return l;
-  }
-
   /** returns a list of images that the user chooses */
-  private Image[] getDownPicks(Image[] ima, DataFactory df, PixelsFactory pf) {
+  private Image[] getDownPicks(Image[] ima) {
     if (cancelPlugin) return null;
-    
-    //table array
-    Object[][] props = new Object[ima.length][4];
-
-    //details array
-    Object[][] details = new Object[ima.length][10];
-
-    //build a hashtable of experimenters to display names
-
-    Criteria criteria = new Criteria();
-    criteria.addWantedField("FirstName");
-    criteria.addWantedField("LastName");
-    criteria.addOrderBy("LastName");
-    List l = df.retrieveList("Experimenter", criteria);
-    String[][] expers = new String[3][l.size()];
-    for (int i=0; i<l.size(); i++) {
-      expers[0][i] = ((Experimenter) l.get(i)).getFirstName();
-      expers[1][i] = ((Experimenter) l.get(i)).getLastName();
-      expers[2][i] = "" + ((Experimenter) l.get(i)).getID();
-    }
-
-    Hashtable hm = new Hashtable(expers.length);
-    for (int i=0; i<expers[0].length; i++) {
-      hm.put(new Integer(expers[2][i]), expers[1][i] + ", " + expers[0][i]);
-    }
-
-    //assemble the table array
-    Pixels p;
-    for (int i=0 ; i<props.length; i++) {
-      props[i][1] = ima[i].getName();
-      props[i][2] = String.valueOf(ima[i].getID());
-      details[i][1] = (String)hm.get(new Integer(ima[i].getOwner().getID()));
-      props[i][3] = ima[i].getCreated();
-      props[i][0] = new Boolean(false);
-      details[i][8] = ima[i].getDescription();
-      p = ima[i].getDefaultPixels();
-
-      try {
-        details[i][0] = pf.getThumbnail(p);
+   
+    try {
+      OMEUtils.login(server, username, password);
+      int[] results = OMEUtils.showTable(ima);
+      if (results == null) {
+        cancelPlugin = true;
+        return null;
       }
-      catch (NoClassDefFoundError e) {
-        details[i][0] = null;
+      Image[] returns = new Image[results.length];
+      for (int i=0; i<returns.length; i++) {
+        Criteria c = new Criteria();
+        OMEUtils.setImageCriteria(c);
+        c.addFilter("id", "=", "" + results[i]);
+        returns[i] = (Image) df.retrieve(Image.class, c);
       }
-      catch (Throwable t) {
-        IJ.error("Error", "An exception occured.\n" + t.toString());
-        IJ.showStatus("Error Downloading thumbnails.");
-        t.printStackTrace();
-        details[i][0] = null;
-      }
-
-      details[i][2] = p.getPixelType();
-      details[i][3] = p.getSizeX().toString();
-      details[i][4] = p.getSizeY().toString();
-      details[i][5] = p.getSizeZ().toString();
-      details[i][6] = p.getSizeC().toString();
-      details[i][7] = p.getSizeT().toString();
-      details[i][9] = String.valueOf(ima[i].getID());
+      return returns;
     }
-    String[] columns = {"","Name","ID","Date Created"};
-
-    //create the table
-    OMETablePanel tp = new OMETablePanel(IJ.getInstance(), props, columns,
-      details);
-    int[] results = tp.getInput();
-    if (results == null) {
-      cancelPlugin = true;
-      return null;
+    catch (Exception e) {
+      IJ.setColumnHeadings("Errors");
+      IJ.write("An exception has occurred:  \n" + e.toString());
+      IJ.showStatus("Error downloading (see error console for details)");
+      e.printStackTrace();
     }
-    Image[] returns = new Image[results.length];
-    for (int i=0; i<results.length; i++) {
-      for (int j=0; j<props.length; j++) {
-        if (results[i] == Integer.parseInt((String)props[j][2])) {
-          returns[i] = ima[j];
-        }
-      }
-    }
-
-    return returns;
+    return null;
   }
 
   /** Does the work for downloading data from OME. */
-  public void run() {
+  public void runPlugin() {
     try {
       login();
       if (cancelPlugin) {
@@ -364,26 +307,7 @@ public class OMETools {
         String imageName = gd.getNextString();
 
         Criteria c = new Criteria();
-        c.addWantedField("id");
-        c.addWantedField("name");
-        c.addWantedField("description");
-        c.addWantedField("inserted");
-        c.addWantedField("created");
-        c.addWantedField("owner");
-        c.addWantedField("default_pixels");
-        c.addWantedField("default_pixels", "id");
-        c.addWantedField("default_pixels", "SizeX");
-        c.addWantedField("default_pixels", "SizeY");
-        c.addWantedField("default_pixels", "SizeZ");
-        c.addWantedField("default_pixels", "SizeC");
-        c.addWantedField("default_pixels", "SizeT");
-        c.addWantedField("default_pixels", "PixelType");
-        c.addWantedField("default_pixels", "Repository");
-        c.addWantedField("default_pixels", "ImageServerID");
-        c.addWantedField("default_pixels.Repository", "ImageServerURL");
-        c.addWantedField("owner", "FirstName");
-        c.addWantedField("owner", "LastName");
-        c.addWantedField("owner", "id");
+        OMEUtils.setImageCriteria(c);
 
         if (!owner.equals("All")) {
           // TODO : add filters
@@ -403,7 +327,7 @@ public class OMETools {
         }
         else {
           //pick from results
-          images = getDownPicks(images,df, pf);
+          images = getDownPicks(images);
           if (cancelPlugin) {
             return;
           }
@@ -439,4 +363,6 @@ public class OMETools {
     upThread = null;
     IJ.showProgress(1);
   }
+
+
 }

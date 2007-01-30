@@ -154,7 +154,7 @@ public class Importer implements ItemListener {
         }
       }
       else if (LOCATION_OME.equals(location)) {
-        IJ.runPlugIn("loci.plugins.ome.OMEPlugin", "");
+        IJ.runPlugIn("loci.plugins.OMEPlugin", "");
         return;
       }
       else if (LOCATION_HTTP.equals(location)) {

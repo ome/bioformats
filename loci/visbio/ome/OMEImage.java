@@ -29,6 +29,7 @@ import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
 import loci.formats.*;
 import loci.formats.in.OMEReader;
+import loci.ome.OMEUtils;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
@@ -207,12 +208,23 @@ public class OMEImage extends ImageTransform {
 
       // get image ID to download
       if (imageId < 0) {
-        String id = (String) JOptionPane.showInputDialog(parent, "Image ID:",
-          "Download OME image", JOptionPane.INFORMATION_MESSAGE,
-          null, null, "");
-        if (id == null) return null;
-        try { imageId = Integer.parseInt(id); }
-        catch (NumberFormatException exc) { }
+        try {
+        OMEUtils.login(server, user, password);
+       
+        // TODO : find a better way of handling multiple IDs
+        int[] results = OMEUtils.showTable(OMEUtils.getAllImages());
+        if (results.length > 0) {
+          imageId = results[0];
+        }
+        else imageId = -1;
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+          JOptionPane.showMessageDialog(parent, "Sorry, there has been a " +
+            "problem downloading from the server. Please try again.",
+            "VisBio", JOptionPane.ERROR_MESSAGE);
+          imageId = -1;
+        }
       }
       if (imageId < 0) return null;
 

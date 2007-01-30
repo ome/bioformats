@@ -197,6 +197,8 @@ public class OMEReader extends FormatReader {
     df = null;
     pf = null;
     pixels = null;
+    currentId = null;
+    loginString = null;
   }
 
   /* @see IFormatReader#initFile(String) */
