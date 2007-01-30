@@ -77,6 +77,13 @@ public class OMEXMLMetadataStore implements MetadataStore {
     catch (IOException exc) { exc.printStackTrace(); }
   }
 
+  /** 
+   * Copies all of the data from this OMEXMLMetadataStore to a different
+   * MetadataStore.
+   */
+  public void copyData(MetadataStore store) {
+  }
+
   /**
    * Dumps the given OME-XML DOM tree to a string.
    * @return OME-XML as a string.
@@ -435,7 +442,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     String dimensionOrder, Integer i)
   {
     int ndx = i == null ? 0 : i.intValue();
-    // TODO find a better way to specify which Pixels we want
+   
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
