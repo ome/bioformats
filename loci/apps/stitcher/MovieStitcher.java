@@ -389,6 +389,10 @@ public class MovieStitcher extends JFrame implements
     tChoice.setEnabled(false);
     cChoice.setEnabled(false);
     input.setEditable(false);
+    fps.setEnabled(false);
+    if (series != null) series.setEnabled(false);
+    forceType.setEnabled(false);
+    codec.setEnabled(false);
 
     progress.setString("Getting ready");
     try {
@@ -651,6 +655,10 @@ public class MovieStitcher extends JFrame implements
     cChoice.setEnabled(true);
     input.setEditable(true);
     output.setEditable(true);
+    fps.setEnabled(true);
+    if (series != null) series.setEnabled(true);
+    forceType.setEnabled(true);
+    codec.setEnabled(true);
   }
 
   // -- Helper methods --
