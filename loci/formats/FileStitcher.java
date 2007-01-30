@@ -421,7 +421,6 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#close(boolean) */
-  /*
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (readers != null) {
       for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
@@ -433,7 +432,6 @@ public class FileStitcher implements IFormatReader {
       currentId = null;
     }
   }
-  */
 
   /* @see IFormatReader#close() */
   public void close() throws FormatException, IOException {

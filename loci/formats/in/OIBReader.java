@@ -241,11 +241,9 @@ public class OIBReader extends FormatReader {
   }
 
   /* @see IFormatReader#close(boolean) */
-  /*
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (!fileOnly) close();
   }
-  */
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

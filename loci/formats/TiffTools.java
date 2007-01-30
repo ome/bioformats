@@ -2159,6 +2159,9 @@ public final class TiffTools {
     if (getIFDValue(ifd, SOFTWARE) == null) {
       putIFDValue(ifd, SOFTWARE, "LOCI Bio-Formats");
     }
+    if (getIFDValue(ifd, IMAGE_DESCRIPTION) == null) {
+      putIFDValue(ifd, IMAGE_DESCRIPTION, "");
+    }
 
     // create pixel output buffers
     int stripSize = 8192;

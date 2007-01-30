@@ -65,6 +65,8 @@ public class ReaderTest extends TestCase {
   // -- Static fields --
 
   public static boolean writeConfigFiles = false;
+  public static float timeMultiplier = 1f;
+  
   private static StringBuffer configLine;
   private static Vector configFiles = new Vector();
   private static ConfigurationFiles config = ConfigurationFiles.newInstance();
@@ -474,7 +476,7 @@ public class ReaderTest extends TestCase {
   /** Check that the average access time per plane is reasonable. */
   public void testAccessTime() {
     boolean success = true;
-    if (averagePlaneAccess - config.getTimePerPlane(id) > 10.0) {
+    if (averagePlaneAccess - timeMultiplier*config.getTimePerPlane(id) > 20.0) {
       success = false;
       writeLog(id + " failed consistent access time test (got " +
         averagePlaneAccess + " ms, expected " + config.getTimePerPlane(id) +
@@ -616,6 +618,9 @@ public class ReaderTest extends TestCase {
       for (int i=1; i<args.length; i++) {
         if (args[i].equals("-config")) ReaderTest.writeConfigFiles = true;
         else if (args[i].equals("-debug")) FormatReader.setDebug(true);
+        else if (args[i].equals("-time")) {
+          ReaderTest.timeMultiplier = Float.parseFloat(args[i+1]);
+        }
       }
     }
     Vector files = new Vector();

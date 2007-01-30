@@ -182,6 +182,12 @@ public class OMEReader extends FormatReader {
     return thumb;
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && rc != null) rc.logout();
+    else close();
+  }
+
   /* @see IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (rc != null) rc.logout();

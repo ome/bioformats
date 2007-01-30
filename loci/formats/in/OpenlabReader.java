@@ -373,6 +373,15 @@ public class OpenlabReader extends FormatReader {
       bytesPerPixel == 3 ? 1 : bytesPerPixel, false);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly) {
+      if (in != null) in.close();
+      if (pict != null) pict.close(fileOnly);
+    }
+    else close();
+  }
+
   /** Closes the currently open file. */
   public void close() throws FormatException, IOException {
     currentId = null;

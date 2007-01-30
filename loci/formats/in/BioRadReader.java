@@ -157,6 +157,12 @@ public class BioRadReader extends FormatReader {
       byteFormat ? 1 : 2, LITTLE_ENDIAN);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;

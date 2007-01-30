@@ -327,6 +327,11 @@ public class ImageReader implements IFormatReader {
     return getReader(id).openThumbBytes(id, no);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
+  }
+
   /* @see IFormatReader#close() */
   public void close() throws FormatException, IOException {
     for (int i=0; i<readers.length; i++) readers[i].close();

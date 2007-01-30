@@ -798,7 +798,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return byteArray;
   }
 
-/** Obtains the specified image from the given TIFF file. */
+  /** Obtains the specified image from the given TIFF file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -811,6 +811,12 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     return TiffTools.getImage(ifds[no], in, ignoreColorTable);
+  }
+
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
   }
 
   /** Closes any open files. */

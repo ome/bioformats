@@ -176,7 +176,16 @@ public interface IFormatReader extends IFormatHandler {
    */
   byte[] openThumbBytes(String id, int no) throws FormatException, IOException;
 
-  /** Closes the currently open file. */
+  /** 
+   * Closes the currently open file. If the flag is set, this is all that
+   * happens; if unset, it is equivalent to calling close().
+   */
+  void close(boolean fileOnly) throws FormatException, IOException;
+
+  /** 
+   * Closes the currently open file and frees memory 
+   * allocated by this reader. 
+   */
   void close() throws FormatException, IOException;
 
   /** Gets the number of series in this file. */

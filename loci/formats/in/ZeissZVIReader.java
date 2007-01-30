@@ -304,6 +304,15 @@ public class ZeissZVIReader extends FormatReader {
       isRGB(id) ? 3 : 1, true, bpp == 3 ? 1 : bpp, true, validBits);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly) {
+      if (ras != null) ras.close();
+      if (legacy != null) legacy.close(fileOnly);
+    }
+    else close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;

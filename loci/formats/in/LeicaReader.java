@@ -211,7 +211,6 @@ public class LeicaReader extends BaseTiffReader {
   }
  
   /* @see IFormatReader#close(boolean) */
-  /*
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       if (in != null) in.close();
@@ -227,7 +226,6 @@ public class LeicaReader extends BaseTiffReader {
     }
     else close();
   }
-  */
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

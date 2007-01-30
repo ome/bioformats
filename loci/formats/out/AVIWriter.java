@@ -522,6 +522,11 @@ public class AVIWriter extends FormatWriter {
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
 
+  /* @see IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String id) throws FormatException, IOException {
+    return new int[] {FormatReader.UINT8};
+  }
+
   // -- Main method --
 
   public static void main(String[] args) throws IOException, FormatException {
