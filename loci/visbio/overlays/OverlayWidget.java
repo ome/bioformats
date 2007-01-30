@@ -490,6 +490,8 @@ public class OverlayWidget extends JPanel implements ActionListener,
     String xval1 = "", yval1 = "", xval2 = "", yval2 = "";
     String words = "";
     boolean fill = true;
+    boolean enableFill = true;
+    boolean enableText = true;
     Color col = null;
     String grp = null;
     String note = null;
@@ -499,6 +501,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
 
       // if any selected overlay is not filled, clear filled checkbox
       if (!obj.isFilled()) fill = false;
+      
+      // if any selected overlay cannot be filled, disable filled checkbox
+      if (!obj.canBeFilled()) enableFill = false;
+
+      // if any selected overlay is not a text object, disable text box
+      if (!obj.hasText()) enableText = false;
 
       if (i == 0) {
         // fill in values based on parameters of first selected overlay
@@ -510,7 +518,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
         if (enableXY1) yval1 = "" + obj.getY();
         if (enableXY2) xval2 = "" + obj.getX2();
         if (enableXY2) yval2 = "" + obj.getY2();
-        words = obj.getText();
+        if (obj.hasText()) words = obj.getText();
         col = obj.getColor();
         grp = obj.getGroup();
         note = obj.getNotes();
@@ -519,6 +527,8 @@ public class OverlayWidget extends JPanel implements ActionListener,
       else {
         // multiple overlays selected; disable coordinate boxes
         enableXY1 = enableXY2 = false;
+        editXY1 = editXY2 = false;
+
         xval1 = yval1 = xval2 = yval2 = "";
 
         // if parameters do not match, reset to defaults
@@ -545,7 +555,10 @@ public class OverlayWidget extends JPanel implements ActionListener,
     y1.setText(yval1);
     x2.setText(xval2);
     y2.setText(yval2);
-    text.setText(words);
+    filled.setEnabled(enableFill);
+    text.setEnabled(enableText);
+    text.setEditable(enableText);
+    
     if (sel.length > 0) {
       // leave GUI components alone if nothing is selected
       filled.setSelected(fill);
@@ -803,5 +816,4 @@ public class OverlayWidget extends JPanel implements ActionListener,
     overlay.notifyListeners(new TransformEvent(overlay));
     if (!updateGUI) ignoreEvents = false;
   }
-
 }
