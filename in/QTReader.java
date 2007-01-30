@@ -544,6 +544,12 @@ public class QTReader extends FormatReader {
     }
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
@@ -582,9 +588,9 @@ public class QTReader extends FormatReader {
 
     sizeX[0] = flip ? height : width;
     sizeY[0] = flip ? width : height;
-    sizeZ[0] = numImages;
+    sizeZ[0] = 1;
     sizeC[0] = bitsPerPixel < 40 ? 3 : 1;
-    sizeT[0] = 1;
+    sizeT[0] = numImages;
     currentOrder[0] = "XYCZT";
 
     // The metadata store we're working with.

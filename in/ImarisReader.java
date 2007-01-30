@@ -221,6 +221,12 @@ public class ImarisReader extends FormatReader {
   {
     return ImageTools.makeImage(openBytes(id, no), dims[0], dims[1], 1, false);
   }
+ 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

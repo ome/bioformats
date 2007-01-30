@@ -186,6 +186,12 @@ public class PrairieReader extends FormatReader {
     return tiff.openImage(files[no], 0);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && tiff != null) tiff.close(fileOnly);
+    else if (!fileOnly) close();
+  }
+
   /* @see IFormatReader#close() */
   public void close() throws FormatException, IOException {
     files = null;
@@ -218,6 +224,7 @@ public class PrairieReader extends FormatReader {
       RandomAccessStream is = new RandomAccessStream(id);
       byte[] b = new byte[(int) is.length()];
       is.read(b);
+      is.close();
       String s = new String(b);
 
       Vector elements = new Vector();

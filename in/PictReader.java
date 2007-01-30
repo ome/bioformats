@@ -170,6 +170,12 @@ public class PictReader extends FormatReader {
     return open(bytes);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();

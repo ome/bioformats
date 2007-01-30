@@ -207,7 +207,6 @@ public class OIFReader extends FormatReader {
   }
 
   /* @see IFormatReader#close(boolean) */
-  /*
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       if (reader != null) reader.close();
@@ -220,7 +219,6 @@ public class OIFReader extends FormatReader {
     }
     else close();
   }
-  */
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

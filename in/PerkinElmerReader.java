@@ -151,6 +151,18 @@ public class PerkinElmerReader extends FormatReader {
     return (String[]) allFiles.toArray(new String[0]);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly) {
+      if (tiff != null) {
+        for (int i=0; i<tiff.length; i++) {
+          if (tiff[i] != null) tiff[i].close(fileOnly);
+        }
+      }
+    }
+    else close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;

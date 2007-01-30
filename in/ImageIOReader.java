@@ -108,6 +108,9 @@ public abstract class ImageIOReader extends FormatReader {
       new RandomAccessStream(id), 4096)));
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException { }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException { }
 

@@ -213,6 +213,12 @@ public class DeltavisionReader extends FormatReader {
     return ImageTools.makeImage(openBytes(id, no), width, height, 1,
       false, bytesPerPixel, little);
   }
+ 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

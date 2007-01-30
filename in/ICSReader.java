@@ -185,6 +185,12 @@ public class ICSReader extends FormatReader {
     return new String[] {currentIdsId, currentIcsId};
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && idsIn != null) idsIn.close();
+    else if (!fileOnly) close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (idsIn != null) idsIn.close();

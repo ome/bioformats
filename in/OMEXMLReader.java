@@ -193,6 +193,12 @@ public class OMEXMLReader extends FormatReader {
       height[series], 1, false, bpp[series], littleEndian[series]);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();

@@ -146,7 +146,9 @@ public class LegacyQTTools {
         if (exc.getMessage().indexOf("expired") >= 0) expiredQT = true;
       }
     }
-    catch (Throwable t) { noQT = true; }
+    catch (Throwable t) { 
+      noQT = true; 
+    }
     finally {
       if (needClose) {
         try { r.exec("QTSession.close()"); }

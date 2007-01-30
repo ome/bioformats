@@ -129,6 +129,12 @@ public class OpenlabRawReader extends FormatReader {
       !isRGB(id) ? 1 : channels, false, bytesPerPixel, false);
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();

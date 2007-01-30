@@ -221,13 +221,27 @@ public class ImageWriter implements IFormatWriter {
       HashSet set = new HashSet();
       for (int i=0; i<writers.length; i++) {
         String[] s = writers[i].getCompressionTypes();
-        for (int j=0; j<s.length; j++) set.add(s[j]);
+        if (s != null) {
+          for (int j=0; j<s.length; j++) set.add(s[j]);
+        }
       }
       compressionTypes = new String[set.size()];
       set.toArray(compressionTypes);
       Arrays.sort(compressionTypes);
     }
     return compressionTypes;
+  }
+
+  /* @see IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String id) throws FormatException, IOException {
+    return getWriter(id).getPixelTypes(id);
+  }
+
+  /* @see IFormatWriter#isSupportedType(String, int) */
+  public boolean isSupportedType(String id, int type) 
+    throws FormatException, IOException 
+  {
+    return getWriter(id).isSupportedType(id, type);
   }
 
   /* @see IFormatWriter#setCompression(String) */

@@ -177,6 +177,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.openThumbBytes(id, no);
   }
 
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    reader.close(fileOnly);
+  }
+
   public void close() throws FormatException, IOException {
     reader.close();
   }

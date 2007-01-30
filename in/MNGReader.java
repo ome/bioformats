@@ -132,6 +132,12 @@ public class MNGReader extends FormatReader {
     return ImageIO.read(new ByteArrayInputStream(b));
   }
 
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();

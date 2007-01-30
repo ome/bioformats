@@ -96,7 +96,24 @@ public abstract class FormatWriter extends FormatHandler
     throw new FormatException("Invalid compression type: " + compress);
   }
 
-  /* @see FormatWriter#testConvert(String[]) */
+  /* @see IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String id) throws FormatException, IOException {
+    return new int[] {FormatReader.UINT8, FormatReader.UINT16, 
+      FormatReader.UINT32, FormatReader.FLOAT};
+  }
+
+  /* @see IFormatWriter#isSupportedType(String, int) */
+  public boolean isSupportedType(String id, int type) 
+    throws FormatException, IOException
+  {
+    int[] types = getPixelTypes(id);
+    for (int i=0; i<types.length; i++) {
+      if (type == types[i]) return true;
+    }
+    return false;
+  }
+
+  /* @see IFormatWriter#testConvert(String[]) */
   public boolean testConvert(String[] args)
     throws FormatException, IOException
   {

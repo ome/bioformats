@@ -54,6 +54,11 @@ public class JPEGWriter extends ImageIOWriter {
     super.save(id, image, last);
   }
 
+  /* @see IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String id) throws FormatException, IOException {
+    return new int[] {FormatReader.UINT8};
+  }
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

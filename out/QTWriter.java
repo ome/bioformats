@@ -592,6 +592,12 @@ public class QTWriter extends FormatWriter {
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
 
+  /* @see IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String id) throws FormatException, IOException {
+    return new int[] {FormatReader.UINT8, FormatReader.UINT16};
+  }
+
+
   // -- Helper method --
 
   private void setCodec() {
