@@ -71,6 +71,11 @@ void close() throws FormatException, IOException :
   in the reader.  After calling close on a reader, any additional calls to
   that reader should result in a call to initFile(String).
 
+void close(boolean) throws FormatException, IOException :
+  If the flag is set, just close the stream used to read the file (the reader
+  should remain initialized).  Otherwise, should be equivalent to calling
+  close().
+
 protected void initFile(String) throws FormatException, IOException :
   The majority of the file parsing logic should be placed in this method.  The
   idea is to call this method once (and only once!) when the file is first
@@ -198,6 +203,11 @@ and Location.getMappedId(String).
     -range              Specify a range of images to open.
     -series             Set the series number (for container file formats).
     -map                Specify file on disk to which name should be mapped.
+
+- If you wish to test using JUnit, loci.formats.test.ReaderTest provides seven
+  basic tests that work with all Bio-Formats readers.  To run the test suite,
+  use "java loci.formats.test.ReaderTest <path to data folder>".  See the
+  ReaderTest source code for additional information.
 
 - For more details, please look at the source code and javadocs.  Studying
   existing readers is probably the best way to get a feel for the API; I would
