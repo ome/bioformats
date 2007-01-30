@@ -55,9 +55,10 @@ public class OIFReader extends FormatReader {
   protected BMPReader thumbReader;
 
   /** Number of valid bits per pixel. */
-  private int[] validBits;
+  protected int[] validBits;
 
-  private Vector usedFiles;
+  /** List of files in the current OIF dataset. */
+  protected Vector usedFiles;
 
   // -- Constructor --
 
@@ -189,12 +190,12 @@ public class OIFReader extends FormatReader {
     return thumbReader.openImage(thumbId, 0);
   }
 
-  /** Get the size of the X dimension for the thumbnail. */
+  /* @see IFormatReader#getThumbSizeX(String) */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return openThumbImage(id, 0).getWidth();
   }
 
-  /** Get the size of the Y dimension for the thumbnail. */
+  /* @see IFormatReader#getThumbSizeY(String) */
   public int getThumbSizeY(String id) throws FormatException, IOException {
     return openThumbImage(id, 0).getHeight();
   }
