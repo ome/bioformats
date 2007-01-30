@@ -296,15 +296,17 @@ public class OMEPlugin implements PlugIn {
 
       //do the image search
       IJ.showStatus("Searching for images...");
+      
+      String project = gd.getNextChoice();
+      String owner = gd.getNextChoice();
+      String img = gd.getNextString();
+      String imageName = gd.getNextString();
+      
       while (images.length == 0) {
         //get search results
 
-        String project = gd.getNextChoice();
-        String owner = gd.getNextChoice();
-        String img = gd.getNextString();
         if (img == null || img.length() == 0) img = "0";
         int imageId = new Integer(img).intValue();
-        String imageName = gd.getNextString();
 
         Criteria c = new Criteria();
         OMEUtils.setImageCriteria(c);
@@ -332,7 +334,10 @@ public class OMEPlugin implements PlugIn {
             return;
           }
         }
-        if (images == null) return;
+        if (images == null) {
+          logout();
+          return;
+        }
       }
       //download into ImageJ
       for (int i=0; i<images.length; i++) {

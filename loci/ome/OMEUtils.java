@@ -168,7 +168,6 @@ public class OMEUtils {
     String[] columns = {"", "Name", "ID", "Date Created"};
     OMETablePanel table = new OMETablePanel(null, props, columns, details);
     int[] results = table.getInput();
-    if (results == null) results = new int[0];
     return results;
   }
 

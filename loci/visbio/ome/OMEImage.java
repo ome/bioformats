@@ -209,14 +209,15 @@ public class OMEImage extends ImageTransform {
       // get image ID to download
       if (imageId < 0) {
         try {
-        OMEUtils.login(server, user, password);
+          OMEUtils.login(server, user, password);
        
-        // TODO : find a better way of handling multiple IDs
-        int[] results = OMEUtils.showTable(OMEUtils.getAllImages());
-        if (results.length > 0) {
-          imageId = results[0];
-        }
-        else imageId = -1;
+          // TODO : find a better way of handling multiple IDs
+          int[] results = OMEUtils.showTable(OMEUtils.getAllImages());
+          if (results == null) results = new int[0];
+          if (results.length > 0) {
+            imageId = results[0];
+          }
+          else imageId = -1;
         }
         catch (Exception e) {
           e.printStackTrace();
