@@ -61,6 +61,9 @@ public class FileStitcher implements IFormatReader {
   /** The matching files. */
   private String[] files;
 
+  /** Used files list. */
+  private String[] usedFiles;
+
   /** Reader used for each file. */
   private IFormatReader[] readers;
 
@@ -487,7 +490,20 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return files;
+    if (usedFiles == null) {
+      String[][] used = new String[files.length][];
+      int total = files.length;
+      for (int i=0; i<files.length; i++) {
+        used[i] = reader.getUsedFiles(files[i]);
+        total += used[i].length;
+      }
+      usedFiles = new String[total];
+      for (int i=0, off=0; i<used.length; i++) {
+        System.arraycopy(used[i], 0, usedFiles, off, used[i].length); 
+        off += used[i].length;
+      }
+    }
+    return usedFiles;
   }
 
   /* @see IFormatReader#getCurrentFile() */
@@ -719,20 +735,8 @@ public class FileStitcher implements IFormatReader {
     }
     setSeries(currentId, oldSeries);
   
-    String[][] s = new String[files.length][];
-    int total = files.length;
-    for (int i=0; i<files.length; i++) {
-      s[i] = reader.getUsedFiles(files[i]);
-      total += s[i].length;
-    }
-    String[] tmp = files;
-    files = new String[total];
-    System.arraycopy(tmp, 0, files, 0, tmp.length);
-    int off = tmp.length;
-    for (int i=0; i<s.length; i++) {
-      System.arraycopy(s[i], 0, files, off, s[i].length); 
-      off += s[i].length;
-    }
+    // initialize used files list only when requested
+    usedFiles = null;
   }
 
   /** Computes axis length arrays, and total axis lengths. */
