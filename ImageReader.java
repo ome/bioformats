@@ -69,7 +69,15 @@ public class ImageReader implements IFormatReader {
       // load reader class
       Class c = null;
       try { c = Class.forName(line); }
-      catch (ClassNotFoundException exc) { }
+      catch (ClassNotFoundException exc) {
+        if (FormatReader.debug) exc.printStackTrace();
+      }
+      catch (NoClassDefFoundError err) {
+        if (FormatReader.debug) err.printStackTrace();
+      }
+      catch (ExceptionInInitializerError err) {
+        if (FormatReader.debug) err.printStackTrace();
+      }
       if (c == null || !FormatReader.class.isAssignableFrom(c)) {
         System.err.println("Error: \"" + line +
           "\" is not a valid format reader.");
