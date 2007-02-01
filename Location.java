@@ -305,4 +305,11 @@ public class Location {
     return isURL ? url : file.toURL();
   }
 
+  // -- Object API methods --
+
+  /* @see java.lang.Object#toString() */
+  public String toString() {
+    return isURL ? url.toString() : file.toString();
+  }
+
 }
