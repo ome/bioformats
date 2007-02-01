@@ -1,3 +1,17 @@
+* Added plugin for downloading images from OME server
+* Improved HTTP import functionality
+* Added metadata filtering -- unreadable metadata is no longer shown
+* Better metadata table for multi-series datasets
+* Added support for calibration information in Gatan DM3
+* Eliminated need to install JAI Image I/O Tools to read ND2 files
+* Fixed ZVI bugs: metadata truncation, and other problems
+* Fixed bugs in Leica LIF: incorrect calibration, first series labeling
+* Fixed memory bug in Zeiss LSM
+* Many bugfixes: PerkinElmer, Deltavision, Leica LEI, LSM, ND2, and others
+* IFormatReader.close(boolean) method to close files temporarily
+* Replaced Compression utility class with extensible compressor interface
+* Improved testing framework to use .bioformats configuration files
+
 2007 Jan 5:
 * Added support for Prairie TIFF
 * Fixed bugs in Zeiss LSM, OIB, OIF, and ND2
