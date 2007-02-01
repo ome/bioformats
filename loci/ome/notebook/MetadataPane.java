@@ -302,14 +302,6 @@ public class MetadataPane extends JPanel
           MetadataNotebook mdn = (MetadataNotebook) getTopLevelAncestor();
           mdn.setTitle("OME Metadata Notebook - " + file);
         }
-/**
-        //Workaround for transform problems with writeOME(file,false);
-        String xml = thisOmeNode.writeOME(false);
-        FileWriter fw = new FileWriter(file);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(xml);
-        bw.close();
-*/
       }
     }
     catch (Exception e) {
@@ -320,6 +312,17 @@ public class MetadataPane extends JPanel
         "Unable to Write to Specified File", JOptionPane.ERROR_MESSAGE);
       System.out.println("ERROR! Attempt failed to open file: " +
         file.getName() );
+    }
+  }
+  
+  public void saveCompanionFile(File file) throws RuntimeException {
+    File compFile = new File(file.getPath() + ".meta");
+    try {
+      thisOmeNode.writeOME(compFile, false);
+    }
+    catch (Exception exc) {
+      if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+      else exc.printStackTrace();
     }
   }
 
