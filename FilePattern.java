@@ -50,6 +50,9 @@ public class FilePattern {
   /** The file pattern string. */
   private String pattern;
 
+  /** The original file, if specified. */
+  private static String original;
+
   /** The validity of the file pattern. */
   private boolean valid;
 
@@ -86,7 +89,9 @@ public class FilePattern {
   // -- Constructors --
 
   /** Creates a pattern object using the given file as a template. */
-  public FilePattern(Location file) { this(FilePattern.findPattern(file)); }
+  public FilePattern(Location file) { 
+    this(FilePattern.findPattern(file)); 
+  }
 
   /**
    * Creates a pattern object using the given
@@ -202,8 +207,56 @@ public class FilePattern {
     // build file listing
     Vector v = new Vector();
     buildFiles("", num, v);
+   
+    // check that the bounds are sane
+    int idx = -1;
+    for (int i=0; i<count.length-1; i++) {
+      int ndx = 1;
+      for (int j=i; j<count.length; j++) ndx *= count[j];
+      ndx -= count[i];
+      for (int j=0; j<count[0]; j++) {
+        String file = (String) v.get(ndx + j);
+        if (!new Location(file).exists()) {
+          for (int k=0; k<v.size(); k++) {
+            String prefix = getPrefix(i) + begin[i];
+            int n = 0;
+            while (original.indexOf(prefix) == -1) {
+              n++;
+              prefix = getPrefix(i) + (begin[i].add(new BigInteger("" + n)));
+            }
+            idx = i + 1;
+            if (((String) v.get(k)).indexOf(prefix) == -1) {
+              v.remove(k);
+              ndx--;
+              k--;
+              valid = false;
+            }
+          }
+        }
+      }
+    }
+   
     files = new String[v.size()];
     v.copyInto(files);
+
+    if (idx != -1) {
+      String[] tmpFiles = new String[files.length];
+      for (int i=0; i<tmpFiles.length; i++) {
+        tmpFiles[i] = new Location(files[i]).getName();
+      }
+
+      Location l = new Location(files[0]);
+      this.pattern = findPattern(l.getName(), l.getParent(), tmpFiles);
+
+      startIndex = new int[] {startIndex[idx]}; 
+      endIndex = new int[] {endIndex[idx]};
+      begin = new BigInteger[] {begin[idx]};
+      end = new BigInteger[] {end[idx]};
+      step = new BigInteger[] {step[idx]};
+      count = new int[] {count[idx]};
+      fixed = new boolean[] {fixed[idx]};
+      zeroes = new int[] {zeroes[idx]};
+    }
 
     valid = true;
   }
@@ -305,6 +358,7 @@ public class FilePattern {
    * @param dir The directory in which to search for matching files.
    */
   public static String findPattern(String name, String dir) {
+    original = name;
     if (dir == null) dir = ""; // current directory
     else if (!dir.equals("") && !dir.endsWith(File.separator)) {
       dir += File.separator;
