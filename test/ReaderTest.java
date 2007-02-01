@@ -556,6 +556,17 @@ public class ReaderTest extends TestCase {
     String[] subs = f.list();
     f = null;
     Arrays.sort(subs);
+    
+    // make sure that if a config file exists, it is first on the list
+    for (int i=0; i<subs.length; i++) {
+      if (subs[i].endsWith(".bioformats") && i != 0) {
+        String tmp = subs[0];
+        subs[0] = subs[i];
+        subs[i] = tmp;
+        break;
+      }
+    }
+    
     if (subs == null) {
       System.out.println("Invalid directory: " + root);
       return;
