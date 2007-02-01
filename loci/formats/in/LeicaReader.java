@@ -527,6 +527,7 @@ public class LeicaReader extends BaseTiffReader {
                   h.put(stamp, listing[j]);
                 }
               }
+              ras.close();
             }
             if (h.size() == tempImages) {
               String[] ks = (String[]) h.keySet().toArray(new String[0]);

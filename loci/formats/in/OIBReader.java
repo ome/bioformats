@@ -64,6 +64,9 @@ public class OIBReader extends FormatReader {
 
   // -- Fields --
 
+  /** Current file */
+  private RandomAccessStream in;
+
   /** Number of images. */
   private Vector nImages;
 
@@ -242,11 +245,14 @@ public class OIBReader extends FormatReader {
 
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
-    if (!fileOnly) close();
+    if (fileOnly && in != null) in.close();
+    else if (!fileOnly) close();
   }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
+    if (in != null) in.close();
+    in = null;
     currentId = null;
 
     String[] vars = {"dirName", "root", "dir", "document", "dis",
@@ -279,11 +285,11 @@ public class OIBReader extends FormatReader {
     rgb = new Vector();
 
     try {
-      RandomAccessStream ras = new RandomAccessStream(id);
-      if (ras.length() % 4096 != 0) {
-        ras.setExtend(4096 - (int) (ras.length() % 4096));
+      in = new RandomAccessStream(id);
+      if (in.length() % 4096 != 0) {
+        in.setExtend(4096 - (int) (in.length() % 4096));
       }
-      r.setVar("fis", ras);
+      r.setVar("fis", in);
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
