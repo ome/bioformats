@@ -242,7 +242,7 @@ public class ImarisReader extends FormatReader {
     if (!super.isThisType(name, open)) return false; // check extension
     if (!open) return true; // not allowed to check the file contents
     try {
-      DataInputStream dis = new DataInputStream(new FileInputStream(name));
+      RandomAccessStream dis = new DataInputStream(new FileInputStream(name));
       byte[] b = new byte[4];
       dis.readFully(b);
       dis.close();

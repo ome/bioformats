@@ -40,7 +40,7 @@ public class EPSReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected BufferedReader in;
+  protected RandomAccessStream in;
 
   /** Image width. */
   private int width;
@@ -177,7 +177,7 @@ public class EPSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("EPSReader.initFile(" + id + ")");
     super.initFile(id);
-    in = new BufferedReader(new FileReader(id));
+    in = new RandomAccessStream(id);
     String line = in.readLine();
     if (!line.trim().startsWith("%!PS")) {
       throw new FormatException("Invalid EPS file.");
