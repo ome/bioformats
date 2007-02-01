@@ -290,8 +290,8 @@ public class Location {
 
   /* @see java.io.File#listFiles() */
   public Location[] listFiles() {
-    if (!isDirectory()) return null;
     String[] s = list();
+    if (s == null) return null;
     Location[] f = new Location[s.length];
     for (int i=0; i<f.length; i++) {
       f[i] = new Location(getAbsolutePath(), s[i]);
