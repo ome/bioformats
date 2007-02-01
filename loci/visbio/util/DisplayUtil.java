@@ -26,7 +26,6 @@ package loci.visbio.util;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -330,17 +329,17 @@ public final class DisplayUtil {
     else if (doEnable) d.enableAction();
   }
 
-  /** Converts the given cursor coordinates to domain coordinates. */
-  public static double[] cursorToDomain(DisplayImpl d, double[] cursor) {
-    return cursorToDomain(d, null, cursor);
-  }
-
-  /** Converts the given cursor coordinates to domain coordinates. */
-  public static double[] cursorToDomain(DisplayImpl d,
-    RealType[] types, double[] cursor)
-  {
-    if (d == null) return null;
-
+  /**
+   * Gets scale values (multiplier and offset) for the X, Y and Z maps
+   * corresponding to the given RealTypes (or the first ScalarMaps to
+   * X, Y and Z if types is null). If no mapping to a spatial axis is
+   * found, that component of the array will be null.
+   *
+   * @return Scale array of size [3][2], with the first dimension
+   * corresponding to X, Y or Z, and the second giving multiplier and offset.
+   * For example, cursor_x = scale[0][0] * domain_x + scale[0][1].
+   */
+  public static double[][] getScaleValues(DisplayImpl d, RealType[] types) {
     // locate x, y and z mappings
     Vector maps = d.getMapVector();
     int numMaps = maps.size();
@@ -362,27 +361,63 @@ public final class DisplayUtil {
       }
     }
 
-    // adjust for scale
-    double[] scaleOffset = new double[2];
+    // get scale values
+    double[][] scale = new double[3][];
     double[] dummy = new double[2];
-    double[] values = new double[3];
-    if (mapX == null) values[0] = Double.NaN;
+    if (mapX == null) scale[0] = null;
     else {
-      mapX.getScale(scaleOffset, dummy, dummy);
-      values[0] = (cursor[0] - scaleOffset[1]) / scaleOffset[0];
+      scale[0] = new double[2];
+      mapX.getScale(scale[0], dummy, dummy);
     }
-    if (mapY == null) values[1] = Double.NaN;
+    if (mapY == null) scale[1] = null;
     else {
-      mapY.getScale(scaleOffset, dummy, dummy);
-      values[1] = (cursor[1] - scaleOffset[1]) / scaleOffset[0];
+      scale[1] = new double[2];
+      mapY.getScale(scale[1], dummy, dummy);
     }
-    if (mapZ == null) values[2] = Double.NaN;
+    if (mapZ == null) scale[2] = null;
     else {
-      mapZ.getScale(scaleOffset, dummy, dummy);
-      values[2] = (cursor[2] - scaleOffset[1]) / scaleOffset[0];
+      scale[2] = new double[2];
+      mapZ.getScale(scale[2], dummy, dummy);
     }
+    return scale;
+  }
 
-    return values;
+  /** Converts the given cursor coordinates to domain coordinates. */
+  public static double[] cursorToDomain(DisplayImpl d,
+    RealType[] types, double[] cursor)
+  {
+    if (d == null) return null;
+    double[][] scale = getScaleValues(d, types);
+    double[] domain = new double[3];
+    for (int i=0; i<3; i++) {
+      domain[i] = scale[i] == null ? Double.NaN :
+        (cursor[i] - scale[i][1]) / scale[i][0];
+    }
+    return domain;
+  }
+
+  /** Converts the given domain coordinates to cursor coordinates. */
+  public static double[] domainToCursor(DisplayImpl d,
+    RealType[] types, double[] domain)
+  {
+    if (d == null) return null;
+    double[][] scale = getScaleValues(d, types);
+    double[] cursor = new double[3];
+    for (int i=0; i<3; i++) {
+      cursor[i] = scale[i] == null ? Double.NaN :
+        scale[i][0] * domain[i] + scale[i][1];
+    }
+    return cursor;
+  }
+
+  /** Converts the given cursor coordinates to domain coordinates. */
+  public static double[] cursorToDomain(DisplayImpl d, double[] cursor) {
+    return cursorToDomain(d, null, cursor);
+  }
+
+  /** Converts the given domain coordinates to cursor coordinates. */
+  public static double[] domainToCursor(DisplayImpl d, double[] domain) {
+    return domainToCursor(d, null, domain);
   }
 
   /** Converts the given pixel coordinates to cursor coordinates. */
@@ -393,9 +428,21 @@ public final class DisplayUtil {
     return ray.position;
   }
 
+  /** Converts the given cursor coordinates to pixel coordinates. */
+  public static int[] cursorToPixel(DisplayImpl d, double[] cursor) {
+    if (d == null) return null;
+    MouseBehavior mb = d.getDisplayRenderer().getMouseBehavior();
+    return mb.getScreenCoords(cursor);
+  }
+
   /** Converts the given pixel coordinates to domain coordinates. */
   public static double[] pixelToDomain(DisplayImpl d, int x, int y) {
     return cursorToDomain(d, pixelToCursor(d, x, y));
+  }
+
+  /** Converts the given domain coordinates to pixel coordinates. */
+  public static int[] domainToPixel(DisplayImpl d, double[] domain) {
+    return cursorToPixel(d, domainToCursor(d, domain));
   }
 
   /** Redraws exception messages in a display's bottom left-hand corner. */
@@ -450,37 +497,4 @@ public final class DisplayUtil {
     catch (ReflectException exc) { exc.printStackTrace(); }
   }
 
-  /** Converts the given domain coordinates to pixel coordinates */
-  public static double[] domainToPixel(DisplayImpl d, double x, double y) {
-    double[] v = {x, y};
-
-    Dimension dim = d.getComponent().getSize();
-    
-    double[] a, b, c, aa, bb, cc;
-    aa = pixelToDomain(d, 0, 0);
-    bb = pixelToDomain(d, dim.width, 0);
-    cc = pixelToDomain(d, 0, dim.height);
-
-    a = new double[] {aa[0], aa[1]}; // pixel to domain returns a double[] of
-    b = new double[] {bb[0], bb[1]}; // length 3
-    c = new double[] {cc[0], cc[1]};
-
-    double[] xx, yy;
-    xx = MathUtil.getProjection(a, b, v, false);
-    yy = MathUtil.getProjection(a, c, v, false);
-    
-    double xb, yb;
-    xb = MathUtil.getDistance (a, xx);
-    yb = MathUtil.getDistance (a, yy);
-
-    double wb, hb;
-    wb = MathUtil.getDistance (a, b);
-    hb = MathUtil.getDistance (a, c);
-
-    double dpx, dpy;
-    dpx =  (dim.width * xb / wb);
-    dpy =  (dim.height * yb / hb);
-
-    return new double[] {dpx, dpy};
-  }
 }
