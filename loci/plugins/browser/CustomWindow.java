@@ -35,6 +35,11 @@ import javax.swing.event.ChangeListener;
 import loci.formats.ReflectedUniverse;
 import loci.formats.ReflectException;
 import loci.formats.FilePattern;
+import loci.formats.FormatException;
+import loci.formats.OMEXMLMetadataStore;
+import org.openmicroscopy.xml.OMENode;
+import java.io.IOException;
+
 //import loci.ome.notebook.MetadataNotebook;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -500,20 +505,35 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     String cmd = e.getActionCommand();
     if (cmd == null) cmd = ""; // prevent NullPointer
     if (cmd.equals("xml")) {
-      String[] args = {db.id};
-      //MetadataNotebook metaNote = new MetadataNotebook(args, false, false);
+      String[] args = (String[]) null;
+
+      String title = db.id;
       try {
+        OMENode ome = (OMENode)(db.reader.getMetadataStoreRoot(db.id));
+        
         ReflectedUniverse r = new ReflectedUniverse();
         r.exec("import loci.ome.notebook.MetadataNotebook");
         r.setVar("args", args);
+        r.setVar("ome", ome);
+        r.setVar("title", title);
         r.setVar("false", false);
-        r.exec("new MetadataNotebook(args, false, false)");
+        r.exec("new MetadataNotebook(args, ome, title, false, false)");
       }
       catch (ReflectException exc) {
         JOptionPane.showMessageDialog(this,
           "Sorry, there has been an error creating the metadata editor.",
           "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
         LociDataBrowser.exceptionMessage(exc);
+      }
+      catch (IOException exc) {
+        JOptionPane.showMessageDialog(this,
+          "We could not find metadata for this file.",
+          "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
+      }
+      catch (FormatException exc) {
+        JOptionPane.showMessageDialog(this,
+          "A FormatException occured trying to get the metadata for this file.",
+          "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
       }
     }
     else if (cmd.equals("options")) {

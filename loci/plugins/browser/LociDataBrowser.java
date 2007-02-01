@@ -46,7 +46,7 @@ public class LociDataBrowser {
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = false;
+  protected static final boolean DEBUG = true;
 
   // -- Fields --
 
@@ -310,10 +310,7 @@ public class LociDataBrowser {
         lengths = new int[3];
 
         if (virtual) {
-          OMEXMLMetadataStore store = new OMEXMLMetadataStore();
           synchronized (reader) {
-            reader.setMetadataStore(store);
-            store.createRoot();
             reader.setSeries(id, series);
 
             int num = reader.getImageCount(id);
@@ -349,6 +346,8 @@ public class LociDataBrowser {
 
           FileInfo fi = new FileInfo();
           try {
+            OMEXMLMetadataStore store =
+              (OMEXMLMetadataStore) reader.getMetadataStore(id);
             fi.description = store.dumpXML();
           }
           catch (Exception exc) {

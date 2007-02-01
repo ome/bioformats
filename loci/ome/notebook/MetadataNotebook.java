@@ -30,6 +30,7 @@ import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.border.*;
+import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 
 /**
@@ -86,21 +87,35 @@ public class MetadataNotebook extends JFrame
   // -- Constructors --
 
   public MetadataNotebook() {
-    this((String[]) null,true,true);
+    this((String[]) null);
   }
 
   /** Create a default notebook window with save function and editing enabled.*/
   public MetadataNotebook(String[] args) {
-    this(args,true,true);
+    this(args,(OMENode)null,(String)null,true,true);
   }
 
   /**
   * Create a notebook window with specified save and editing policies.
+  * @param args an array of strings the first entry of which should be a
+  * filename, otherwise, send a (String[]) null as this parameter.
+  * @param ome An OMENode xml root to be launched if a filename is not
+  * appropriate, for instance when in the LociDataBrowser we have a
+  * FilePattern if using a FileStitcher. Thus, send ome instead. Note
+  * that this is a temporary fix. If your file is OME-Tiff there's going
+  * to be a problem if saving is enabled and you try to save to it, since
+  * we're circumventing the code that flags TIFF files.
+  * @param title Sets the title of the notebook window, which is done by
+  * default if a file URL is given in args, but otherwise should be set
+  * using this String parameter.
   * @param addSave whether or not saving should be enabled
   * @param editable whether or not users should be able to edit the xml
   */
-  public MetadataNotebook(String[] args, boolean addSave, boolean editable) {
+  public MetadataNotebook(String[] args, OMENode ome, String title,
+    boolean addSave, boolean editable)
+  {
     super("OME Metadata Notebook");
+    if (title != null) setTitle(title);
 
     try {
       String os = System.getProperty("os.name");
@@ -126,7 +141,7 @@ public class MetadataNotebook extends JFrame
     scanP = new WiscScanPane();
     scanP.setEditable(editable);
 
-    //create a MetadataPane, where most everything happen
+    //create a MetadataPane, where most everything happens
     if (args != null && args.length > 0) {
       File file = null;
       try {
@@ -140,6 +155,7 @@ public class MetadataNotebook extends JFrame
       setTitle("OME Metadata Notebook - " + file);
     }
     else metadata = new MetadataPane((File) null, addSave, editable);
+    if(ome != null) metadata.setOMEXML(ome);
 
     metadata.setVisible(true);
     mdp.setVisible(false);

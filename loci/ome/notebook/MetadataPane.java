@@ -220,7 +220,8 @@ public class MetadataPane extends JPanel
     rawPanel.add(new JScrollPane(rawText), BorderLayout.CENTER);
     rawPanel.setVisible(false);
     add(rawPanel,"raw");
-
+    
+    //open initial file
     if (file != null) {
       setOMEXML(file);
       if (getTopLevelAncestor() instanceof MetadataNotebook) {
@@ -433,12 +434,15 @@ public class MetadataPane extends JPanel
   }
 
   /** Sets the displayed OME-XML metadata. */
-  private void setOMEXML(OMENode ome) {
+  protected void setOMEXML(OMENode ome) {
     // test for document, then call the setup(OMENode ome) method
     Document doc = null;
     try { doc = ome == null ? null : ome.getOMEDocument(false); }
     catch (Exception exc) { }
     if (doc == null) {
+      JOptionPane.showMessageDialog(this,
+          "Document is NULL.",
+          "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
       System.out.println("Document is NULL.");
       return;
     }
