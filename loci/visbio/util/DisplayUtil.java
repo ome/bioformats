@@ -390,9 +390,10 @@ public final class DisplayUtil {
     double[][] scale = getScaleValues(d, types);
     double[] domain = new double[3];
     for (int i=0; i<3; i++) {
-      domain[i] = scale[i] == null ? Double.NaN :
+      domain[i] = scale[i] == null ? 0 :
         (cursor[i] - scale[i][1]) / scale[i][0];
     }
+    System.out.println("cursorToDomain cursor=" + cursor[0] + "," + cursor[1] + "; domain=" + domain[0] + "," + domain[1]);//TEMP
     return domain;
   }
 
@@ -404,9 +405,10 @@ public final class DisplayUtil {
     double[][] scale = getScaleValues(d, types);
     double[] cursor = new double[3];
     for (int i=0; i<3; i++) {
-      cursor[i] = scale[i] == null ? Double.NaN :
+      cursor[i] = scale[i] == null ? 0 :
         scale[i][0] * domain[i] + scale[i][1];
     }
+    System.out.println("domainToCursor cursor=" + cursor[0] + "," + cursor[1] + "; domain=" + domain[0] + "," + domain[1]);//TEMP
     return cursor;
   }
 
@@ -425,6 +427,7 @@ public final class DisplayUtil {
     if (d == null) return null;
     MouseBehavior mb = d.getDisplayRenderer().getMouseBehavior();
     VisADRay ray = mb.findRay(x, y);
+    System.out.println("pixelToCursor: cursor=" + ray.position[0] + "," + ray.position[1] + "; pixel=" + x + "," + y);//TEMP
     return ray.position;
   }
 
@@ -432,12 +435,16 @@ public final class DisplayUtil {
   public static int[] cursorToPixel(DisplayImpl d, double[] cursor) {
     if (d == null) return null;
     MouseBehavior mb = d.getDisplayRenderer().getMouseBehavior();
-    return mb.getScreenCoords(cursor);
+    int[] pixel = mb.getScreenCoords(cursor);
+    System.out.println("cursorToPixel: cursor=" + cursor[0] + "," + cursor[1] + "; pixel=" + pixel[0] + "," + pixel[1]);//TEMP
+    return pixel;
   }
 
   /** Converts the given pixel coordinates to domain coordinates. */
   public static double[] pixelToDomain(DisplayImpl d, int x, int y) {
-    return cursorToDomain(d, pixelToCursor(d, x, y));
+    double[] domain = cursorToDomain(d, pixelToCursor(d, x, y));
+    int[] pixel = domainToPixel(d, domain);//TEMP
+    return domain;
   }
 
   /** Converts the given domain coordinates to pixel coordinates. */
