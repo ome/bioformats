@@ -350,68 +350,31 @@ public class MetadataPane extends JPanel
       if (TiffTools.isValidHeader(header)) {
         // TIFF file
         originalTIFF = file;
+      }
+      else originalTIFF = null;
 
-        OMENode ome = null;
+      OMENode ome = null;
 
-        try {
-          ImageReader reader = new ImageReader();
-          OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
-          // tell reader to write metadata as it's being
-          // parsed to an OMENode (DOM in memory)
-          reader.setMetadataStore(ms);
-          String id = file.getPath();
+      try {
+        ImageReader reader = new ImageReader();
+        OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
+        // tell reader to write metadata as it's being
+        // parsed to an OMENode (DOM in memory)
+        reader.setMetadataStore(ms);
+        String id = file.getPath();
 
-          int num = reader.getImageCount(id);
-          if (num > 0) {
-            // get middle image from the file
-            img = reader.openImage(id, num / 2);
-          }
-          else img = null;
-          int width = 50, height = 50;
-          thumb = ImageTools.scale(img, width, height, false);
-          ome = (OMENode) ms.getRoot();
+        int num = reader.getImageCount(id);
+        if (num > 0) {
+          // get middle image from the file
+          img = reader.openImage(id, num / 2);
         }
-        catch (Exception exc) { exc.printStackTrace(); }
-
+        else img = null;
+        int width = 50, height = 50;
+        thumb = ImageTools.scale(img, width, height, false);
+        ome = (OMENode) ms.getRoot();
         setOMEXML(ome);
       }
-      else if (file.getPath().endsWith(".ome")) {
-                // TIFF file
-        originalTIFF = null;
-
-        OMENode ome = null;
-
-        try {
-          ImageReader reader = new ImageReader();
-          OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
-          // tell reader to write metadata as it's being
-          // parsed to an OMENode (DOM in memory)
-          reader.setMetadataStore(ms);
-          String id = file.getPath();
-
-          img = reader.openImage(id, 0); // gets first image from the file
-          int width = 50, height = 50;
-          thumb = ImageTools.scale(img, width, height, false);
-          ome = (OMENode) ((OMEXMLMetadataStore)
-            reader.getMetadataStore(id)).getRoot();
-          setOMEXML(ome);
-        }
-        catch (Exception exc) { exc.printStackTrace(); }
-/*
-        String s = new String(header).trim();
-        if (s.startsWith("<?xml") || s.startsWith("<OME")) {
-          // raw OME-XML
-          byte[] data = new byte[(int) file.length()];
-          System.arraycopy(header, 0, data, 0, 8);
-          in.readFully(data, 8, data.length - 8);
-          in.close();
-          setOMEXML(new String(data));
-        }
-        else return false;
-*/
-      }
-      else {
-        originalTIFF = null;
+      catch (FormatException exc) {
         img = null;
         thumb = null;
         String s = new String(header).trim();
@@ -425,6 +388,7 @@ public class MetadataPane extends JPanel
         }
         else return false;
       }
+      catch (IOException exc) { exc.printStackTrace(); };
 
       currentFile = file;
       in.close();
