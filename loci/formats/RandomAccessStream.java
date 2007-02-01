@@ -25,11 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.*;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * RandomAccessStream provides methods for "intelligent" reading of files and
- * byte arrays.
+ * byte arrays.  It also automagically deals with closing and reopening files
+ * to prevent an IOException caused by too many open files.
  *
  * @author Melissa Linkert, linkert at wisc.edu
  */
@@ -44,10 +45,21 @@ public class RandomAccessStream extends InputStream implements DataInput {
   /** Maximum number of buffer sizes to keep. */
   protected static final int MAX_HISTORY = 50;
 
+  /** Maximum number of open files. */
+  protected static final int MAX_FILES = 128;
+
   /** Indicators for most efficient method of reading. */
   protected static final int DIS = 0;
   protected static final int RAF = 1;
   protected static final int ARRAY = 2;
+
+  // -- Static fields --
+
+  /** Hashtable of all files that have been opened at some point. */
+  private static Hashtable fileCache = new Hashtable();
+
+  /** Number of currently open files. */
+  private static int openFiles = 0;
 
   // -- Fields --
 
@@ -108,10 +120,15 @@ public class RandomAccessStream extends InputStream implements DataInput {
     this.file = file;
     fp = 0;
     afp = 0;
+    fileCache.put(this, Boolean.TRUE);
+    openFiles++;
+    if (openFiles > MAX_FILES) cleanCache();
   }
 
   /** Constructs a random access stream around the given byte array. */
   public RandomAccessStream(byte[] array) throws IOException {
+    // this doesn't use a file descriptor, so we don't need to add it to the
+    // file cache
     raf = new RABytes(array);
     fp = 0;
     afp = 0;
@@ -120,7 +137,15 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- RandomAccessStream API methods --
 
   /** Return the underlying InputStream */
-  public DataInputStream getInputStream() { return dis; }
+  public DataInputStream getInputStream() { 
+    try {
+      if (fileCache.get(this) == Boolean.FALSE) reopen();
+    }
+    catch (IOException e) {
+      return null;
+    }
+    return dis; 
+  }
 
   /**
    * Sets the number of bytes by which to extend the stream.  This only applies
@@ -139,7 +164,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
   }
 
   /** Gets the number of bytes in the file. */
-  public long length() throws IOException { return raf.length(); }
+  public long length() throws IOException { 
+    if (fileCache.get(this) == Boolean.FALSE) reopen();
+    return raf.length(); 
+  }
 
   /** Gets the current (absolute) file pointer. */
   public int getFilePointer() { return afp; }
@@ -150,8 +178,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
     raf = null;
     if (dis != null) dis.close();
     dis = null;
-    fp = 0;
-    mark = 0;
+    fileCache.put(this, Boolean.FALSE);
+    openFiles--;
   }
 
   /** Sets the endianness of the stream. */
@@ -344,22 +372,28 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- InputStream API methods --
 
   public int available() throws IOException {
+    if (fileCache.get(this) == Boolean.FALSE) reopen();
     return dis != null ? dis.available() + ext :
       (int) (length() - getFilePointer());
   }
 
   public void mark(int readLimit) {
+    try {
+      if (fileCache.get(this) == Boolean.FALSE) reopen();
+    }
+    catch (IOException e) { }
     dis.mark(readLimit);
   }
 
   public boolean markSupported() { return true; }
 
   public void reset() throws IOException {
+    if (fileCache.get(this) == Boolean.FALSE) reopen();
     dis.reset();
     fp = (int) (length() - dis.available());
   }
 
-  // -- Helper methods --
+  // -- Helper methods - I/O --
 
   /** Naive heuristic for determining a "good" buffer size for the DIS. */
   protected int determineBuffer() {
@@ -394,6 +428,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * RandomAccessFile, and 2 for a direct array access.
    */
   protected int checkEfficiency(int toRead) throws IOException {
+    if (fileCache.get(this) == Boolean.FALSE) reopen();
     int oldBufferSize = 0;
     if (recent != null) {
       oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
@@ -476,6 +511,48 @@ public class RandomAccessStream extends InputStream implements DataInput {
         raf.seek(afp);
         return RAF;
       }
+    }
+  }
+
+  // -- Helper methods - cache management --
+
+  /** Re-open a file that has been closed */
+  private void reopen() throws IOException {
+    File f = new File(Location.getMappedId(file));
+    f = f.getAbsoluteFile();
+    if (f.exists()) {
+      raf = new RAFile(f, "r");
+      dis = new DataInputStream(new BufferedInputStream(
+        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD));
+    }
+    else {
+      raf = new RAUrl(Location.getMappedId(file), "r");
+    }
+    fileCache.put(this, Boolean.TRUE);
+    openFiles++;
+    if (openFiles > MAX_FILES) cleanCache();
+  }
+
+  /** If we have too many open files, close 1/4 of them. */
+  private void cleanCache() {
+    int toClose = MAX_FILES - 10;
+    RandomAccessStream[] files = (RandomAccessStream[]) 
+      fileCache.keySet().toArray(new RandomAccessStream[0]);
+    int closed = 0;
+    int ndx = 0;
+    int blahCounter = 0;
+    int oldOpen = openFiles;
+    
+    while (closed < toClose) {
+      if (!this.equals(files[ndx]) && 
+        !fileCache.get(files[ndx]).equals(Boolean.FALSE)) 
+      {
+        try { files[ndx].close(); }
+        catch (IOException e) { e.printStackTrace(); }
+        blahCounter++;
+        closed++;
+      }
+      ndx++;
     }
   }
 
