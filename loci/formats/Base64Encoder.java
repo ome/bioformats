@@ -235,7 +235,7 @@ public class Base64Encoder extends BaseCompressor implements Compressor {
    */
 
   public static void main(String[] args) throws FormatException {
-    LZWCompressor c = new LZWCompressor();
+    Base64Encoder c = new Base64Encoder();
     c.test();
   }
 
