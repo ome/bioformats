@@ -403,6 +403,9 @@ public class ZeissZVIReader extends FormatReader {
 
       Object check = getMeta("Image Channel Index");
       if (check != null && !check.toString().trim().equals("")) {
+        String zIndex = (String) getMeta("Image Index Z");
+        String tIndex = (String) getMeta("Image Index T");
+
         int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
         int max = 0, min = Integer.MAX_VALUE, maxNdx = 0, minNdx = 0;
         String[] axes = {"Z", "C", "T"};
@@ -424,6 +427,19 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         currentOrder[0] = "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
+       
+        if (zIndex != null && tIndex != null) {
+          int z = Integer.parseInt(DataTools.stripString(zIndex));
+          int t = Integer.parseInt(DataTools.stripString(tIndex));
+
+          if (z != sizeZ[0]) {
+            if (sizeZ[0] != 1) {
+              currentOrder[0] = currentOrder[0].replaceAll("Z", "") + "Z";
+            }
+            else currentOrder[0] = currentOrder[0].replaceAll("T", "") + "T";
+          }
+        }
+
         if (sizeZ[0] == sizeC[0] && sizeC[0] == sizeT[0]) {
           currentOrder[0] = legacy.getDimensionOrder(id);
         }
