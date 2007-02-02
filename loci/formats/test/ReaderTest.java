@@ -57,11 +57,6 @@ import loci.formats.*;
  */
 public class ReaderTest extends TestCase {
 
-  // -- Constants --
-
-  /** Debugging flag. */
-  private static final boolean DEBUG = false;
-
   // -- Static fields --
 
   public static boolean writeConfigFiles = false;
@@ -152,7 +147,7 @@ public class ReaderTest extends TestCase {
       averagePlaneAccess = ((float) (l2 - l1)) / planesRead;
     }
     catch (Exception e) {
-      if (DEBUG) e.printStackTrace();
+      if (FormatReader.debug) e.printStackTrace();
       success = false;
     }
     if (!success) writeLog(id + " failed BufferedImage test");
@@ -193,7 +188,7 @@ public class ReaderTest extends TestCase {
       }
     }
     catch (Exception e) {
-      if (DEBUG) e.printStackTrace();
+      if (FormatReader.debug) e.printStackTrace();
       success = false;
     }
     if (!success) writeLog(id + " failed byte array test");
@@ -220,7 +215,7 @@ public class ReaderTest extends TestCase {
       }
     }
     catch (Exception e) {
-      if (DEBUG) e.printStackTrace();
+      if (FormatReader.debug) e.printStackTrace();
       success = false;
     }
     if (!success) writeLog(id + " failed image count test");
@@ -280,7 +275,7 @@ public class ReaderTest extends TestCase {
       }
     }
     catch (Exception e) {
-      if (DEBUG) e.printStackTrace();
+      if (FormatReader.debug) e.printStackTrace();
       success = false;
     }
     if (!success) writeLog(id + " failed OME-XML sanity test");
@@ -349,7 +344,7 @@ public class ReaderTest extends TestCase {
         w.close();
       }
       catch (Exception e) {
-        if (DEBUG) e.printStackTrace();
+        if (FormatReader.debug) e.printStackTrace();
      
         configLine = new StringBuffer();
         configLine.append("\"");
@@ -363,7 +358,7 @@ public class ReaderTest extends TestCase {
           w.close();
         }
         catch (IOException exc) {
-          if (DEBUG) exc.printStackTrace();
+          if (FormatReader.debug) exc.printStackTrace();
           success = false;
         }
       }
@@ -378,7 +373,7 @@ public class ReaderTest extends TestCase {
         }
       }
       catch (Exception e) {
-        if (DEBUG) e.printStackTrace();
+        if (FormatReader.debug) e.printStackTrace();
         success = false;
       }
       if (success) {
@@ -443,7 +438,7 @@ public class ReaderTest extends TestCase {
           }
         }
         catch (Exception e) {
-          if (DEBUG) e.printStackTrace();
+          if (FormatReader.debug) e.printStackTrace();
           success = false;
         }
       }
@@ -500,10 +495,10 @@ public class ReaderTest extends TestCase {
       reader.close();
     }
     catch (FormatException fe) {
-      if (DEBUG) fe.printStackTrace();
+      if (FormatReader.debug) fe.printStackTrace();
     }
     catch (IOException io) {
-      if (DEBUG) io.printStackTrace();
+      if (FormatReader.debug) io.printStackTrace();
     }
   }
 
@@ -544,7 +539,7 @@ public class ReaderTest extends TestCase {
         }
       }
       catch (IOException e) {
-        if (DEBUG) e.printStackTrace();
+        if (FormatReader.debug) e.printStackTrace();
       }
     }
     return !config.testFile(file) && !file.endsWith(".bioformats");
@@ -573,11 +568,11 @@ public class ReaderTest extends TestCase {
     }
     ImageReader ir = new ImageReader();
     for (int i=0; i<subs.length; i++) {
-      if (DEBUG) debug("Checking file " + subs[i]);
+      if (FormatReader.debug) debug("Checking file " + subs[i]);
       subs[i] = root + (root.endsWith(File.separator) ? "" : File.separator) +
         subs[i];
       if (isBadFile(subs[i])) {
-        if (DEBUG) debug(subs[i] + " is a bad file");
+        if (FormatReader.debug) debug(subs[i] + " is a bad file");
         continue;
       }
       Location file = new Location(subs[i]);
@@ -589,10 +584,10 @@ public class ReaderTest extends TestCase {
       }
       else {
         if (ir.isThisType(subs[i])) {
-          if (DEBUG) debug("Adding " + subs[i]);
+          if (FormatReader.debug) debug("Adding " + subs[i]);
           files.add(file.getAbsolutePath());
         }
-        else if (DEBUG) debug(subs[i] + " has invalid type");
+        else if (FormatReader.debug) debug(subs[i] + " has invalid type");
       }
       file = null;
     }
@@ -607,7 +602,7 @@ public class ReaderTest extends TestCase {
         logFile.flush();
       }
       catch (IOException io) {
-        if (DEBUG) io.printStackTrace();
+        if (FormatReader.debug) io.printStackTrace();
       }
     }
     try {
@@ -615,7 +610,7 @@ public class ReaderTest extends TestCase {
       logFile.flush();
     }
     catch (IOException exc) {
-      if (DEBUG) exc.printStackTrace();
+      if (FormatReader.debug) exc.printStackTrace();
     }
   }
 
@@ -624,7 +619,7 @@ public class ReaderTest extends TestCase {
   // -- Main method --
 
   public static void main(String[] args) {
-    if (DEBUG) FormatReader.setDebug(true);
+    if (FormatReader.debug) FormatReader.setDebug(true);
     if (args.length > 0) {
       for (int i=1; i<args.length; i++) {
         if (args[i].equals("-config")) ReaderTest.writeConfigFiles = true;
@@ -641,7 +636,7 @@ public class ReaderTest extends TestCase {
       System.exit(1);
     }
     System.out.print("Building file list...");
-    if (DEBUG) System.out.println();
+    if (FormatReader.debug) System.out.println();
     getFiles(new Location(args[0]).getAbsolutePath(), files);
     System.out.println(files.size() + " found.");
     while (files.size() > 0) {
@@ -667,7 +662,7 @@ public class ReaderTest extends TestCase {
       }
       else {
         for (int i=0; i<used.length; i++) {
-          if (DEBUG) System.out.println("Removing " + used[i]);
+          if (FormatReader.debug) System.out.println("Removing " + used[i]);
           files.removeElement(used[i]);
         }
       }
