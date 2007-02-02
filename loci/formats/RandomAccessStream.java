@@ -178,6 +178,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     raf = null;
     if (dis != null) dis.close();
     dis = null;
+    buf = null;
     fileCache.put(this, Boolean.FALSE);
     openFiles--;
   }
@@ -524,6 +525,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
       raf = new RAFile(f, "r");
       dis = new DataInputStream(new BufferedInputStream(
         new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD));
+      int len = (int) raf.length();
+      buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
+      raf.readFully(buf);
+      raf.seek(0);
     }
     else {
       raf = new RAUrl(Location.getMappedId(file), "r");
@@ -533,7 +538,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     if (openFiles > MAX_FILES) cleanCache();
   }
 
-  /** If we have too many open files, close 1/4 of them. */
+  /** If we have too many open files, close most of them. */
   private void cleanCache() {
     int toClose = MAX_FILES - 10;
     RandomAccessStream[] files = (RandomAccessStream[]) 
