@@ -316,7 +316,7 @@ public class MetadataPane extends JPanel
   }
   
   public void saveCompanionFile(File file) throws RuntimeException {
-    File compFile = new File(file.getPath() + ".meta");
+    File compFile = new File(file.getPath() + ".ome");
     try {
       thisOmeNode.writeOME(compFile, false);
     }
@@ -357,6 +357,8 @@ public class MetadataPane extends JPanel
       else originalTIFF = null;
 
       OMENode ome = null;
+      
+      boolean doMerge = false;
 
       try {
         ImageReader reader = new ImageReader();
@@ -365,6 +367,22 @@ public class MetadataPane extends JPanel
         // parsed to an OMENode (DOM in memory)
         reader.setMetadataStore(ms);
         String id = file.getPath();
+        File companionFile = new File(id + ".ome");
+        if(companionFile.exists()) {
+          Object[] options = {"Sounds good", "No thanks"};
+        
+          int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
+            "We detected that an OME-xml companion file exists for"
+              + " the file you just opened,\n would you like to merge these"
+              + " files in some manner?",
+            "Companion File Detected",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            (javax.swing.Icon)null,
+            options,
+            options[0]);
+          if (n == JOptionPane.YES_OPTION) doMerge = true;
+        }
 
         int num = reader.getImageCount(id);
         if (num > 0) {
@@ -375,6 +393,11 @@ public class MetadataPane extends JPanel
         int width = 50, height = 50;
         thumb = ImageTools.scale(img, width, height, false);
         ome = (OMENode) ms.getRoot();
+        if(doMerge) {
+          Merger merge = new Merger(ome,companionFile,this);
+          ome = merge.getRoot();
+        }
+        
         setOMEXML(ome);
       }
       catch (FormatException exc) {

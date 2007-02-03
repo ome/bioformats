@@ -111,12 +111,16 @@ public class NotePane extends JScrollPane implements ActionListener {
     titlePanel = build.getPanel();
     titlePanel.setBackground(TEXT_COLOR);
 
-    chooser = new JFileChooser(System.getProperty("user.dir"));
-    chooser.setDialogTitle("Export Notes to Text File");
-    chooser.setApproveButtonText("Save");
-    chooser.setApproveButtonToolTipText("Export notes to " +
-      "selected file.");
-    chooser.setFileFilter(new TextFileFilter());
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        chooser = new JFileChooser(System.getProperty("user.dir"));
+        chooser.setDialogTitle("Export Notes to Text File");
+        chooser.setApproveButtonText("Save");
+        chooser.setApproveButtonToolTipText("Export notes to " +
+          "selected file.");
+        chooser.setFileFilter(new TextFileFilter());
+      }
+    });
   }
 
   /**

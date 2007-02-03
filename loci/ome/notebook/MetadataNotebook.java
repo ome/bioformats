@@ -165,8 +165,6 @@ public class MetadataNotebook extends JFrame
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new CardLayout());
     contentPanel.setBorder((EmptyBorder) null);
-//    metadata.setBorder(new EmptyBorder(0,0,0,0));
-//    mdp.setBorder(new EmptyBorder(0,0,0,0));
     contentPanel.add("notebook", metadata);
     contentPanel.add("viewer", mdp);
     contentPanel.add("notes", noteP);
