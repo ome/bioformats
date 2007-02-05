@@ -612,7 +612,7 @@ public class LeicaReader extends BaseTiffReader {
       if (ifd == null) return false;
 
       String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      int ndx = descr.indexOf("Series Name");
+      int ndx = descr == null ? -1 : descr.indexOf("Series Name");
 
       if (ndx == -1) return false;
 
