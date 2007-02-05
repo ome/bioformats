@@ -386,7 +386,7 @@ public class ND2Reader extends FormatReader {
                   else {
                     String v = (String) getMeta(effectiveKey);
                     try {
-                      if (Integer.parseInt(v) < Integer.parseInt(value)) {
+                      if (Double.parseDouble(v) < Double.parseDouble(value)) {
                         addMeta(effectiveKey, value);
                       }
                     }
