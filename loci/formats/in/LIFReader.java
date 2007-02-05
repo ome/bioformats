@@ -409,13 +409,18 @@ public class LIFReader extends FormatReader {
               numChannels++;
               if (numChannels == 1) {
                 bps.add(new Integer((String) tmp.get("Resolution")));
-                try {
-                  channelMins.add(new Integer((String) tmp.get("Min")));
-                  channelMaxs.add(new Integer((String) tmp.get("Maxs")));
-                }
-                catch (Exception e) {
-                  // CTR TODO - eliminate catch-all exception handling
-                  if (debug) e.printStackTrace();
+                String sMin = (String) tmp.get("Min");
+                String sMax = (String) tmp.get("Max");
+                if (sMin != null && sMax != null) {
+                  try {
+                    Integer min = new Integer(sMin);
+                    Integer max = new Integer(sMax);
+                    channelMins.add(min);
+                    channelMaxs.add(max);
+                  }
+                  catch (NumberFormatException exc) {
+                    if (debug) exc.printStackTrace();
+                  }
                 }
               }
             }
