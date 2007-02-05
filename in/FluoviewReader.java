@@ -75,6 +75,7 @@ public class FluoviewReader extends BaseTiffReader {
   {
     if (!id.equals(currentId)) initFile(id);
     String s = (String) getMeta("Map Ch" + theC + ": Range");
+    if (s == null) return null;
     s = s.substring(0, s.indexOf("to") - 1).trim();
     return new Double(Integer.parseInt(s));
   }
@@ -85,6 +86,7 @@ public class FluoviewReader extends BaseTiffReader {
   {
     if (!id.equals(currentId)) initFile(id);
     String s = (String) getMeta("Map Ch" + theC + ": Range");
+    if (s == null) return null;
     s = s.substring(s.indexOf("to") + 2).trim();
     return new Double(Integer.parseInt(s));
   }
@@ -258,10 +260,14 @@ public class FluoviewReader extends BaseTiffReader {
       String first;
       String last;
 
-      while(descr.indexOf("[") != -1) {
-        first = descr.substring(0, descr.indexOf("["));
-        last = descr.substring(descr.indexOf("\n", descr.indexOf("[")));
+      int lbrack = descr.indexOf("[");
+      while (lbrack != -1) {
+        int nl = descr.indexOf("\n", lbrack);
+        if (nl < 0) nl = descr.length();
+        first = descr.substring(0, lbrack);
+        last = descr.substring(nl);
         descr = first + last;
+        lbrack = descr.indexOf("[");
       }
 
       // each remaining line in descr is a (key, value) pair,
@@ -271,7 +277,7 @@ public class FluoviewReader extends BaseTiffReader {
       String value;
       int eqIndex = descr.indexOf("=");
 
-      while(eqIndex != -1) {
+      while (eqIndex != -1) {
         key = descr.substring(0, eqIndex);
         value = descr.substring(eqIndex+1, descr.indexOf("\n", eqIndex));
         addMeta(key.trim(), value.trim());
