@@ -46,7 +46,7 @@ public class LociDataBrowser {
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = true;
+  protected static final boolean DEBUG = false;
 
   // -- Fields --
 
