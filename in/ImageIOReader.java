@@ -104,8 +104,12 @@ public abstract class ImageIOReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return ImageIO.read(new DataInputStream(new BufferedInputStream(
-      new RandomAccessStream(id), 4096)));
+    RandomAccessStream ras = new RandomAccessStream(id);
+    DataInputStream dis = new DataInputStream(new BufferedInputStream(ras, 4096));
+    BufferedImage b = ImageIO.read(dis);
+    ras.close();
+    dis.close();
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

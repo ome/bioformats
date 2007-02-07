@@ -111,9 +111,9 @@ public class OpenlabReader extends FormatReader {
         in = new RandomAccessStream(name);
         in.read(b);
       }
-      catch (Exception e) {
-        // CTR TODO - eliminate catch-all exception handling
+      catch (IOException e) {
         if (debug) e.printStackTrace();
+        return false;
       }
       return isThisType(b);
     }
@@ -430,8 +430,7 @@ public class OpenlabReader extends FormatReader {
         startPos = in.getFilePointer();
         nextTag = readTagHeader();
       }
-      catch (Exception e) {
-        // CTR TODO - eliminate catch-all exception handling
+      catch (IOException e) {
         if (debug) e.printStackTrace();
 
         if (in.getFilePointer() >= in.length()) break;

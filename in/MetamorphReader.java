@@ -240,9 +240,9 @@ public class MetamorphReader extends BaseTiffReader {
     try {
       super.initStandardMetadata();
     }
-    catch (Throwable t) {
+    catch (Exception t) {
       // CTR TODO - eliminate catch-all exception handling
-      t.printStackTrace();
+      if (debug) t.printStackTrace();
     }
 
     // parse (mangle) TIFF comment

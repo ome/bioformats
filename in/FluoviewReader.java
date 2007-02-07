@@ -113,6 +113,10 @@ public class FluoviewReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException {
     super.initStandardMetadata();
 
+    sizeZ[0] = 1;
+    sizeC[0] = 1;
+    sizeT[0] = 1;
+
     try {
       Hashtable ifd = ifds[0];
 
@@ -247,11 +251,14 @@ public class FluoviewReader extends BaseTiffReader {
 
       String descr = (String) getMeta("Comment");
       metadata.remove("Comment");
+      if (descr == null) descr = "";
 
       // strip LUT data from image description
       int firstIndex = descr.indexOf("[LUT Ch");
       int lastIndex = descr.lastIndexOf("[LUT Ch") + 13;
-      descr = descr.substring(0, firstIndex) + descr.substring(lastIndex);
+      if (firstIndex != -1 && lastIndex > firstIndex) {
+        descr = descr.substring(0, firstIndex) + descr.substring(lastIndex);
+      }
 
       // now parse key-value pairs in the description field
 
@@ -370,7 +377,9 @@ public class FluoviewReader extends BaseTiffReader {
         String pos = (String) numPlanes.get(i);
         int q = Integer.parseInt(pos);
 
-        if (name.equals("Ch")) sizeC[series] = q;
+        if (name.equals("Ch")) {
+          sizeC[series] = q;
+        }
         else if (name.equals("Animation") || name.equals("T")) {
           sizeT[series] = q;
           setT = true;
@@ -398,8 +407,10 @@ public class FluoviewReader extends BaseTiffReader {
         for (int i=0; i<validBits.length; i++) validBits[i] = vb;
       }
 
-      for (int i=0; i<ifds.length; i++) {
-        ifds[i].put(new Integer(TiffTools.VALID_BITS), validBits);
+      if (validBits != null) {
+        for (int i=0; i<ifds.length; i++) {
+          ifds[i].put(new Integer(TiffTools.VALID_BITS), validBits);
+        }
       }
 
       if (setZ && !setT) sizeT[series] = 1;
@@ -436,9 +447,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
       currentOrder[series] = order;
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+    catch (IOException e) {
+      throw new FormatException(e);
     }
   }
 

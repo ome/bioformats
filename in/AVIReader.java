@@ -278,12 +278,8 @@ public class AVIReader extends FormatReader {
                 addMeta("Start time", new Integer(dwStart));
                 addMeta("Length", new Integer(dwLength));
 
-                try {
+                if (spos + size <= in.length()) {  
                   in.seek((int) (spos + size));
-                }
-                catch (Exception e) {
-                  // CTR TODO - eliminate catch-all exception handling
-                  if (debug) e.printStackTrace();
                 }
               }
             }
@@ -327,12 +323,8 @@ public class AVIReader extends FormatReader {
                 addMeta("Stream quality", new Integer(dwStreamQuality));
                 addMeta("Stream sample size", new Integer(dwStreamSampleSize));
 
-                try {
+                if (spos + size <= in.length()) {  
                   in.seek((int) (spos + size));
-                }
-                catch (Exception e) {
-                  // CTR TODO - eliminate catch-all exception handling
-                  if (debug) e.printStackTrace();
                 }
               }
 
@@ -446,12 +438,8 @@ public class AVIReader extends FormatReader {
             }
           }
 
-          try {
+          if (startPos + streamSize + 8 <= in.length()) {  
             in.seek(startPos + 8 + streamSize);
-          }
-          catch (Exception e) {
-            // CTR TODO - eliminate catch-all exception handling
-            if (debug) e.printStackTrace();
           }
         }
         else if (fcc.equals("movi")) {
@@ -510,13 +498,9 @@ public class AVIReader extends FormatReader {
       else {
         // skipping unknown block
         type = readStringBytes();
-        try {
+        if (in.getFilePointer() + size + 4 <= in.length()) {  
           size = in.readInt();
           in.skipBytes(size);
-        }
-        catch (Exception iae) {
-          // CTR TODO - eliminate catch-all exception handling
-          if (debug) iae.printStackTrace();
         }
       }
       pos = in.getFilePointer();

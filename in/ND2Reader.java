@@ -221,6 +221,7 @@ public class ND2Reader extends FormatReader {
       throw new FormatException(exc);
     }
     bis.close();
+    mciis.close();
     b = null;
 
     int dataType = 0;
@@ -385,13 +386,17 @@ public class ND2Reader extends FormatReader {
                   }
                   else {
                     String v = (String) getMeta(effectiveKey);
-                    try {
-                      if (Double.parseDouble(v) < Double.parseDouble(value)) {
-                        addMeta(effectiveKey, value);
-                      }
+                    boolean parse = true;
+                    for (int i=0; i<v.length(); i++) {
+                      if (Character.isLetter(v.charAt(i)) || 
+                        Character.isWhitespace(v.charAt(i)))
+                      {
+                        parse = false;
+                        break;
+                      } 
                     }
-                    catch (NumberFormatException exc) {
-                      if (debug) exc.printStackTrace();
+                    if (parse) {
+                      addMeta(effectiveKey, value);
                     }
                   }
                 }

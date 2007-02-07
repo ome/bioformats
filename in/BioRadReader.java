@@ -373,15 +373,11 @@ public class BioRadReader extends FormatReader {
     byte[][] lut = new byte[3][768];
     boolean eof = false;
     while (!eof && numLuts < 3) {
-      try {
+      if (in.getFilePointer() + lut[numLuts].length <= in.length()) {  
         in.read(lut[numLuts]);
         numLuts++;
       }
-      catch (Exception exc) {
-        // CTR TODO - eliminate catch-all exception handling
-        eof = true;
-        if (debug) exc.printStackTrace();
-      }
+      else eof = true;
     }
 
     if (debug && debugLevel >= 2) {

@@ -412,15 +412,16 @@ public class LIFReader extends FormatReader {
                 String sMin = (String) tmp.get("Min");
                 String sMax = (String) tmp.get("Max");
                 if (sMin != null && sMax != null) {
-                  try {
+                    /*
                     Integer min = new Integer(sMin);
                     Integer max = new Integer(sMax);
                     channelMins.add(min);
                     channelMaxs.add(max);
-                  }
-                  catch (NumberFormatException exc) {
-                    if (debug) exc.printStackTrace();
-                  }
+                    */
+                  double min = Double.parseDouble(sMin);
+                  double max = Double.parseDouble(sMax);
+                  channelMins.add(new Integer((int) min));
+                  channelMaxs.add(new Integer((int) max));
                 }
               }
             }
@@ -451,14 +452,10 @@ public class LIFReader extends FormatReader {
           }
 
           ndx++;
-          try {
+          if (elements != null && ndx < elements.size()) {  
             token = (String) elements.get(ndx);
           }
-          catch (Exception e) {
-            // CTR TODO - eliminate catch-all exception handling
-            if (debug) e.printStackTrace();
-            break;
-          }
+          else break;
         }
         extraDims.add(new Integer(extras));
         //if (numChannels == 2) numChannels--;
