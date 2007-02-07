@@ -133,7 +133,9 @@ and Location.getMappedId(String).
 
 - loci.formats.RandomAccessStream is a hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
-  InputStream, and implements the DataInput interface.
+  InputStream, and implements the DataInput interface.  It also keeps track
+  of open files, and will automatically close and re-open files as needed
+  to ensure that there aren't too many files open at one time.
   It is recommended that you use this for reading binary files.
 
 - loci.formats.Location provides an API similar to java.io.File, and supports 
