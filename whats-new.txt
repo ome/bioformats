@@ -1,3 +1,4 @@
+2007 Feb 7:
 * Added plugin for downloading images from OME server
 * Improved HTTP import functionality
 * Added metadata filtering -- unreadable metadata is no longer shown
@@ -9,7 +10,7 @@
 * Fixed memory bug in Zeiss LSM
 * Many bugfixes: PerkinElmer, Deltavision, Leica LEI, LSM, ND2, and others
 * IFormatReader.close(boolean) method to close files temporarily
-* Replaced Compression utility class with extensible compressor interface
+* Replaced Compression utility class with extensible Compressor interface
 * Improved testing framework to use .bioformats configuration files
 
 2007 Jan 5:
