@@ -1,9 +1,0 @@
-Testing:
-* quicktime/haining/video2.mov (both legacy and native)
-
-Codecs:
-* QuickTime - svq3 codec (low)
-* AVI - msrle codec (very low)
-
-Implement readers for other file formats:
-* Anything listed online: http://www.loci.wisc.edu/ome/formats.html
