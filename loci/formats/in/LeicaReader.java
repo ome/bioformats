@@ -626,9 +626,6 @@ public class LeicaReader extends BaseTiffReader {
     catch (IOException exc) {
       if (debug) exc.printStackTrace();
     }
-    catch (NullPointerException exc) {
-      if (debug) exc.printStackTrace();
-    }
     return false;
   }
 
@@ -848,56 +845,50 @@ public class LeicaReader extends BaseTiffReader {
       if (temp != null) {
         // time data
         // ID_TIMEINFO
-        try {
-          int nDims = DataTools.bytesToInt(temp, 0, 4, littleEndian);
-          addMeta("Number of time-stamped dimensions", new Integer(nDims));
-          addMeta("Time-stamped dimension", 
-            new Integer(DataTools.bytesToInt(temp, 4, 4, littleEndian)));
+        int nDims = DataTools.bytesToInt(temp, 0, 4, littleEndian);
+        addMeta("Number of time-stamped dimensions", new Integer(nDims));
+        addMeta("Time-stamped dimension", 
+          new Integer(DataTools.bytesToInt(temp, 4, 4, littleEndian)));
 
-          int pt = 8;
+        int pt = 8;
 
-          for (int j=0; j < nDims; j++) {
-            addMeta("Dimension " + j + " ID",
-              new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
-            pt += 4;
-            addMeta("Dimension " + j + " size",
-              new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
-            pt += 4;
-            addMeta("Dimension " + j + " distance between dimensions",
-              new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
-            pt += 4;
-          }
-
-          int numStamps = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        for (int j=0; j < nDims; j++) {
+          addMeta("Dimension " + j + " ID",
+            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
           pt += 4;
-          addMeta("Number of time-stamps", new Integer(numStamps));
-          for (int j=0; j<numStamps; j++) {
-            addMeta("Timestamp " + j,
-              DataTools.stripString(new String(temp, pt, 64)));
-            pt += 64;
-          }
-
-          int numTMs = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          addMeta("Dimension " + j + " size",
+            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
           pt += 4;
-          addMeta("Number of time-markers", new Integer(numTMs));
-          for (int j=0; j<numTMs; j++) {
-            int numDims = DataTools.bytesToInt(temp, pt, 4, littleEndian);
-            pt += 4;
-
-            for (int k=0; k<numDims; k++) {
-              addMeta("Time-marker " + j +
-                " Dimension " + k + " coordinate",
-                new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
-              pt += 4;
-            }
-            addMeta("Time-marker " + j,
-              DataTools.stripString(new String(temp, pt, 64)));
-            pt += 64;
-          }
+          addMeta("Dimension " + j + " distance between dimensions",
+            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+          pt += 4;
         }
-        catch (Throwable t) {
-          // CTR TODO - eliminate catch-all exception handling
-          if (debug) t.printStackTrace();
+
+        int numStamps = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        pt += 4;
+        addMeta("Number of time-stamps", new Integer(numStamps));
+        for (int j=0; j<numStamps; j++) {
+          addMeta("Timestamp " + j,
+            DataTools.stripString(new String(temp, pt, 64)));
+          pt += 64;
+        }
+
+        int numTMs = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        pt += 4;
+        addMeta("Number of time-markers", new Integer(numTMs));
+        for (int j=0; j<numTMs; j++) {
+          int numDims = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          pt += 4;
+
+          for (int k=0; k<numDims; k++) {
+            addMeta("Time-marker " + j +
+              " Dimension " + k + " coordinate",
+              new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+            pt += 4;
+          }
+          addMeta("Time-marker " + j,
+            DataTools.stripString(new String(temp, pt, 64)));
+          pt += 64;
         }
       }
 
@@ -1041,8 +1032,10 @@ public class LeicaReader extends BaseTiffReader {
     try {
       store = getMetadataStore(currentId);
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (FormatException e) {
+      if (debug) e.printStackTrace();
+    }
+    catch (IOException e) {
       if (debug) e.printStackTrace();
     }
 
@@ -1089,13 +1082,8 @@ public class LeicaReader extends BaseTiffReader {
       String timestamp = (String) getMeta("Timestamp " + (i+1));
       String description = (String) getMeta("Image Description");
 
-      try {
-        store.setImage(null, timestamp.substring(3),
-          description, new Integer(i));
-      }
-      catch (NullPointerException n) {
-        if (debug) n.printStackTrace();
-      }
+      store.setImage(null, timestamp == null ? null : timestamp.substring(3),
+        description, new Integer(i));
     }
   }
 

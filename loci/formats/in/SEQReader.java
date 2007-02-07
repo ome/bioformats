@@ -114,9 +114,8 @@ public class SEQReader extends BaseTiffReader {
     try {
       if (isRGB(currentId) && sizeC[0] != 3) sizeC[0] *= 3;
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+    catch (IOException e) {
+      throw new FormatException(e);
     }
 
     currentOrder[0] = "XY";

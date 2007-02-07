@@ -151,7 +151,12 @@ public class ReaderTest extends TestCase {
       success = false;
     }
     if (!success) writeLog(id + " failed BufferedImage test");
-    try { reader.close(); }
+    try { 
+      reader.close(); 
+      System.gc();
+      Thread.sleep(100);
+      System.gc();
+    }
     catch (Exception e) { }
     finalMemory = (int) (rt.totalMemory() - rt.freeMemory()) >> 20;
     assertTrue(success);
@@ -192,7 +197,7 @@ public class ReaderTest extends TestCase {
       success = false;
     }
     if (!success) writeLog(id + " failed byte array test");
-    try { reader.close(); }
+    try { reader.close(true); }
     catch (Exception e) { }
     assertTrue(success);
   }
@@ -219,7 +224,7 @@ public class ReaderTest extends TestCase {
       success = false;
     }
     if (!success) writeLog(id + " failed image count test");
-    try { reader.close(); }
+    try { reader.close(true); }
     catch (Exception e) { }
     assertTrue(success);
   }
@@ -279,7 +284,7 @@ public class ReaderTest extends TestCase {
       success = false;
     }
     if (!success) writeLog(id + " failed OME-XML sanity test");
-    try { reader.close(); }
+    try { reader.close(true); }
     catch (Exception e) { }
     assertTrue(success);
   }
@@ -451,11 +456,11 @@ public class ReaderTest extends TestCase {
     boolean success = true;
     
     // we want the maximum usage to be no more than twice the file size
-    if (maxMemory - initialMemory > 2*config.getFileSize(id)) {
+    if (maxMemory - initialMemory > 2*(config.getFileSize(id)+1)) {
       success = false;
       writeLog(id + " failed maximum memory usage test (used " + 
         (maxMemory - initialMemory) + "MB; expected <= " + 
-        2*config.getFileSize(id) + "MB)");
+        (2*config.getFileSize(id) + 1) + "MB)");
     }
   
     // check that the reader doesn't have any (significant) memory leaks
@@ -518,7 +523,9 @@ public class ReaderTest extends TestCase {
       suite.addTest(new ReaderTest("testImageCount", id));
       suite.addTest(new ReaderTest("testOMEXML", id));
     }
-    suite.addTest(new ReaderTest("testConsistent", id));
+    if (config.initialized(id) || writeConfigFiles) {
+      suite.addTest(new ReaderTest("testConsistent", id));
+    }
     if (config.initialized(id) && !writeConfigFiles) {
       suite.addTest(new ReaderTest("testMemoryUsage", id));
       suite.addTest(new ReaderTest("testAccessTime", id));
@@ -567,12 +574,19 @@ public class ReaderTest extends TestCase {
       return;
     }
     ImageReader ir = new ImageReader();
+    Vector similarFiles = new Vector();
     for (int i=0; i<subs.length; i++) {
       if (FormatReader.debug) debug("Checking file " + subs[i]);
       subs[i] = root + (root.endsWith(File.separator) ? "" : File.separator) +
         subs[i];
-      if (isBadFile(subs[i])) {
+      if (isBadFile(subs[i]) || similarFiles.contains(subs[i]) ||
+        similarFiles.contains(new Location(root, subs[i]).getAbsolutePath())) 
+      {
         if (FormatReader.debug) debug(subs[i] + " is a bad file");
+        String[] matching = new FilePattern(subs[i]).getFiles();
+        for (int j=0; j<matching.length; j++) {
+          similarFiles.add(new Location(root, matching[j]).getAbsolutePath());
+        }
         continue;
       }
       Location file = new Location(subs[i]);
@@ -658,7 +672,15 @@ public class ReaderTest extends TestCase {
       String[] used = test.getUsedFiles();
       if (used == null) {
         System.out.println("Warning: used files list is null for " + id);
-        files.removeElementAt(0);
+      
+        used = new FilePattern(pattern).getFiles();
+        if (used != null) {
+          for (int i=0; i<used.length; i++) {
+            if (FormatReader.debug) System.out.println("Removing " + used[i]);
+            files.removeElement(used[i]);
+          }
+        }
+        else files.removeElementAt(0);
       }
       else {
         for (int i=0; i<used.length; i++) {
@@ -666,6 +688,7 @@ public class ReaderTest extends TestCase {
           files.removeElement(used[i]);
         }
       }
+      while (files.contains(id)) files.remove(id);
 
       test.close();
     }

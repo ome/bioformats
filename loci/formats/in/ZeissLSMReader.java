@@ -162,7 +162,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     // contains a thumbnail image
 
     int numThumbs = 0;
-    try {
+    //try {
       long prevOffset = 0;
       byte[] b = new byte[48];
       byte[] c = new byte[48];
@@ -199,11 +199,13 @@ public class ZeissLSMReader extends BaseTiffReader {
         }
         prevOffset = offsets[0];
       }
+    /*
     }
     catch (Exception e) {
       // CTR TODO - eliminate catch-all exception handling
       if (debug) e.printStackTrace();
     }
+    */
 
     // now copy ifds to a temp array so that we can get rid of
     // any null entries
@@ -515,25 +517,27 @@ public class ZeissLSMReader extends BaseTiffReader {
 
         // read in the intensity value for each color
 
-        in.seek(offsetNames);
+        if (offsetNames >= 0) {
+          in.seek(offsetNames);
 
-        for (int i=0; i<numColors; i++) {
-          data = in.readInt();
-          put("Intensity" + i, data);
-        }
-
-        // read in the channel names
-
-        for (int i=0; i<numNames; i++) {
-          // we want to read until we find a null char
-          StringBuffer sb = new StringBuffer();
-          char current = (char) in.read();
-          while (current != 0) {
-            sb.append(current);
-            current = (char) in.read();
+          for (int i=0; i<numColors; i++) {
+            data = in.readInt();
+            put("Intensity" + i, data);
           }
-          String name = sb.toString();
-          put("ChannelName" + i, name);
+
+          // read in the channel names
+  
+          for (int i=0; i<numNames; i++) {
+            // we want to read until we find a null char
+            StringBuffer sb = new StringBuffer();
+            char current = (char) in.read();
+            while (current != 0) {
+              sb.append(current);
+              current = (char) in.read();
+            }
+            String name = sb.toString();
+            put("ChannelName" + i, name);
+          }
         }
         in.seek(pos);
         in.order(isLittleEndian(currentId));
@@ -598,6 +602,7 @@ public class ZeissLSMReader extends BaseTiffReader {
             if (numBytes > in.length() - in.getFilePointer()) {
               numBytes = in.length() - in.getFilePointer();
             }
+            if (numBytes < 16) numBytes = 16;
             byte[] descr = new byte[(int) (numBytes - 16)];
             in.read(descr);
             put("Description" + i, new String(descr));
@@ -667,27 +672,35 @@ public class ZeissLSMReader extends BaseTiffReader {
     catch (IOException e) {
       if (debug) e.printStackTrace();
     }
+    /*
     catch (Exception e) {
       // CTR TODO - eliminate catch-all exception handling
       if (debug) e.printStackTrace();
     }
+    */
 
     sizeZ[0] = zSize > 0 ? zSize : 1;
     sizeC[0] = channels > 0 ? channels : 1;
     sizeT[0] = tSize > 0 ? tSize : 1;
     currentOrder[0] = "XYZCT";
 
-    try {
-      Float pixX = new Float(getMeta("VoxelSizeX").toString());
-      Float pixY = new Float(getMeta("VoxelSizeY").toString());
-      Float pixZ = new Float(getMeta("VoxelSizeZ").toString());
+    Object pixelSizeX = getMeta("VoxelSizeX");
+    Object pixelSizeY = getMeta("VoxelSizeY");
+    Object pixelSizeZ = getMeta("VoxelSizeZ");
 
+    Float pixX = new Float(pixelSizeX == null ? "0" : pixelSizeX.toString());
+    Float pixY = new Float(pixelSizeY == null ? "0" : pixelSizeY.toString());
+    Float pixZ = new Float(pixelSizeZ == null ? "0" : pixelSizeZ.toString());
+
+    try {
       MetadataStore store = getMetadataStore(currentId);
       store.setDimensions(pixX, pixY, pixZ, null, null, null);
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+    catch (FormatException e) {
+      if (FormatReader.debug) e.printStackTrace();
+    }
+    catch (IOException e) {
+      if (FormatReader.debug) e.printStackTrace();
     }
 
     // see if we have an associated MDB file

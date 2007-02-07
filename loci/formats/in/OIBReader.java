@@ -450,8 +450,10 @@ public class OIBReader extends FormatReader {
     try {
       initMetadata();
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (FormatException e) {
+      if (debug) e.printStackTrace();
+    }
+    catch (IOException e) {
       if (debug) e.printStackTrace();
     }
   }

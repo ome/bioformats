@@ -252,6 +252,7 @@ public class ICSReader extends FormatReader {
     String token;
     b = new byte[(int) reader.length()];
     reader.read(b);
+    reader.close();
     String s = new String(b);
     StringTokenizer st = new StringTokenizer(s, "\n");
     String line = st.nextToken();
@@ -371,8 +372,7 @@ public class ICSReader extends FormatReader {
         }
         data = v.toByteArray();
       }
-      catch (Exception dfe) {
-        // CTR TODO - eliminate catch-all exception handling
+      catch (IOException dfe) {
         throw new FormatException("Error uncompressing gzip'ed data", dfe);
       }
     }

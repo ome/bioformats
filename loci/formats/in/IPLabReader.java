@@ -451,13 +451,15 @@ public class IPLabReader extends FormatReader {
 
         store.setImage(id, null, notes, null);
       }
-      try {
+      
+      if (in.getFilePointer() + 4 <= in.length()) {  
         in.read(fourBytes);
         tag = new String(fourBytes);
       }
-      catch (Exception e) {
-        // CTR TODO - eliminate catch-all exception handling
-        if (debug) e.printStackTrace();
+      else {
+        tag = "fini";
+      }
+      if (in.getFilePointer() >= in.length() && !tag.equals("fini")) {
         tag = "fini";
       }
     }

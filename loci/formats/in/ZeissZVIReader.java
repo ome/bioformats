@@ -449,18 +449,19 @@ public class ZeissZVIReader extends FormatReader {
       }
       else currentOrder[0] = (zSize > tSize) ? "XYZTC" : "XYTZC";
     }
-    catch (Throwable t) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (ReflectException e) {
       needLegacy = true;
-      if (debug) t.printStackTrace();
+      if (debug) e.printStackTrace();
       initFile(id);
     }
 
     try {
       initMetadata();
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (FormatException e) {
+      if (debug) e.printStackTrace();
+    }
+    catch (IOException e) {
       if (debug) e.printStackTrace();
     }
   }
@@ -486,10 +487,14 @@ public class ZeissZVIReader extends FormatReader {
       getDimensionOrder(currentId),
       null);
 
+    String pixX = (String) getMeta("Scale Factor for X");
+    String pixY = (String) getMeta("Scale Factor for Y");
+    String pixZ = (String) getMeta("Scale Factor for Z");
+    
     store.setDimensions(
-      new Float((String) getMeta("Scale Factor for X")),
-      new Float((String) getMeta("Scale Factor for Y")),
-      new Float((String) getMeta("Scale Factor for Z")),
+      pixX == null ? null : new Float(pixX),
+      pixY == null ? null : new Float(pixY),
+      pixZ == null ? null : new Float(pixZ),
       null, null, null);
   }
 
@@ -680,15 +685,11 @@ public class ZeissZVIReader extends FormatReader {
               case 8:
                 int len = DataTools.bytesToInt(data, pt, 4, true);
                 pt += 4;
-                try {
+                if (pt + len < data.length) {
                   value = new String(data, pt, len);
                   pt += len;
                 }
-                catch (Exception e) {
-                  // CTR TODO - eliminate catch-all exception handling
-                  if (debug) e.printStackTrace();
-                  return;
-                }
+                else return;
                 break;
               case 20:
               case 21:
@@ -713,14 +714,10 @@ public class ZeissZVIReader extends FormatReader {
                 {
                   pt += 2;
                 }
-                try {
+                if (oldPt - 2 > 0 && pt < data.length) {
                   value = new String(data, oldPt - 2, pt - oldPt + 2);
                 }
-                catch (Exception e) {
-                  // CTR TODO - eliminate catch-all exception handling
-                  if (debug) e.printStackTrace();
-                  return;
-                }
+                else return;
             }
 
             pt += 2;
@@ -753,15 +750,13 @@ public class ZeissZVIReader extends FormatReader {
           int len = DataTools.bytesToInt(data, pt, 2, true);
           pt += 2;
           if (data[pt] == 0 && data[pt + 1] == 0) pt += 2;
-          try {
-            String typeDescription = new String(data, pt, len);
+          
+          String typeDescription = "";
+          if (pt + len <= data.length) {
+            typeDescription = new String(data, pt, len);
             pt += len;
           }
-          catch (Exception e) {
-            // CTR TODO - eliminate catch-all exception handling
-            if (debug) e.printStackTrace();
-            break;
-          }
+          else break;
 
           vt = DataTools.bytesToInt(data, pt, 2, true);
           pt += 2;
@@ -825,17 +820,11 @@ public class ZeissZVIReader extends FormatReader {
           boolean foundHeight =
             DataTools.bytesToInt(data, pt + 4, 4, true) == height;
           boolean findFailed = false;
-          try {
-            while ((!foundWidth || !foundHeight) && pt < data.length) {
-              pt++;
-              foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
-              foundHeight =
-                DataTools.bytesToInt(data, pt + 4, 4, true) == height;
-            }
-          }
-          catch (Exception e) {
-            // CTR TODO - eliminate catch-all exception handling
-            if (debug) e.printStackTrace();
+          while ((!foundWidth || !foundHeight) && pt + 9 < data.length) {
+            pt++;
+            foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
+            foundHeight =
+              DataTools.bytesToInt(data, pt + 4, 4, true) == height;
           }
           pt -= 8;
           findFailed = !foundWidth && !foundHeight;

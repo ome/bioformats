@@ -231,9 +231,12 @@ public class PrairieReader extends FormatReader {
 
       while (s.length() > 0) {
         int ndx = s.indexOf("<");
-        String sub = s.substring(ndx + 1, s.indexOf(">", ndx));
-        s = s.substring(s.indexOf(">", ndx) + 1);
-        elements.add(sub);
+        int val1 = s.indexOf(">", ndx);
+        if (val1 != -1 && val1 > ndx) {
+          String sub = s.substring(ndx + 1, val1);
+          s = s.substring(val1 + 1);
+          elements.add(sub);
+        }
       }
 
       int zt = 0;

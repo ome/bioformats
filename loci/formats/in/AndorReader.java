@@ -109,9 +109,8 @@ public class AndorReader extends BaseTiffReader {
     try {
       little = isLittleEndian(currentId);
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+    catch (IOException e) {
+      throw new FormatException(e);
     }
 
     int vb = 0; // number of valid bits per pixel
@@ -342,28 +341,30 @@ public class AndorReader extends BaseTiffReader {
   }
 
   protected void initMetadataStore() {
-    try {
-      super.initMetadataStore();
+    super.initMetadataStore();
 
-      float pixelSizeX = 0.0f, pixelSizeY = 0.0f, pixelSizeZ = 0.0f;
+    float pixelSizeX = 0.0f, pixelSizeY = 0.0f, pixelSizeZ = 0.0f;
 
-      for (int i=1; i<10; i++) {
-        String name = (String) getMeta("Dimension " + i + " Name");
-        String size = (String) getMeta("Dimension " + i + " Resolution");
+    for (int i=1; i<10; i++) {
+      String name = (String) getMeta("Dimension " + i + " Name");
+      String size = (String) getMeta("Dimension " + i + " Resolution");
 
-        if (name != null && size != null) {
-          if (name.equals("x")) pixelSizeX = Float.parseFloat(size);
-          else if (name.equals("y")) pixelSizeY = Float.parseFloat(size);
-          else if (name.equals("z")) pixelSizeZ = Float.parseFloat(size);
-        }
+      if (name != null && size != null) {
+        if (name.equals("x")) pixelSizeX = Float.parseFloat(size);
+        else if (name.equals("y")) pixelSizeY = Float.parseFloat(size);
+        else if (name.equals("z")) pixelSizeZ = Float.parseFloat(size);
       }
+    }
 
+    try {
       MetadataStore store = getMetadataStore(currentId);
       store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
         new Float(pixelSizeZ), null, null, null);
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (FormatException e) {
+      if (debug) e.printStackTrace();
+    }
+    catch (IOException e) {
       if (debug) e.printStackTrace();
     }
   }

@@ -458,59 +458,60 @@ public abstract class BaseTiffReader extends FormatReader {
       put("Comment", comment);
     }
 
+    sizeX[0] =
+      TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
+    sizeY[0] =
+      TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
+    sizeZ[0] = 1;
+    
     try {
-      sizeX[0] =
-        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
-      sizeY[0] =
-        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
-      sizeZ[0] = 1;
       sizeC[0] = isRGB(currentId) ? 3 : 1;
-      sizeT[0] = ifds.length;
-
-      int bitFormat = TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.SAMPLE_FORMAT);
-
-      while (bps % 8 != 0) bps++;
-      if (bps == 24 || bps == 48) bps /= 3;
-
-      if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
-      else if (bitFormat == 2) {
-        switch (bps) {
-          case 8:
-            pixelType[0] = FormatReader.UINT8;
-            break;
-          case 16:
-            pixelType[0] = FormatReader.INT16;
-            break;
-          case 32:
-            pixelType[0] = FormatReader.INT32;
-            break;
-          default:
-            pixelType[0] = FormatReader.UINT8;
-        }
-      }
-      else {
-        switch (bps) {
-          case 8:
-            pixelType[0] = FormatReader.UINT8;
-            break;
-          case 16:
-            pixelType[0] = FormatReader.UINT16;
-            break;
-          case 32:
-            pixelType[0] = FormatReader.UINT32;
-            break;
-          default:
-            pixelType[0] = FormatReader.UINT8;
-        }
-      }
-
-      currentOrder[0] = "XYCZT";
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+    catch (IOException e) {
+      throw new FormatException(e);
     }
+    
+    sizeT[0] = ifds.length;
+
+    int bitFormat = TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.SAMPLE_FORMAT);
+
+    while (bps % 8 != 0) bps++;
+    if (bps == 24 || bps == 48) bps /= 3;
+
+    if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
+    else if (bitFormat == 2) {
+      switch (bps) {
+        case 8:
+          pixelType[0] = FormatReader.UINT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.INT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.INT32;
+          break;
+        default:
+          pixelType[0] = FormatReader.UINT8;
+      }
+    }
+    else {
+      switch (bps) {
+        case 8:
+          pixelType[0] = FormatReader.UINT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.UINT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.UINT32;
+          break;
+        default:
+          pixelType[0] = FormatReader.UINT8;
+      }
+    }
+
+    currentOrder[0] = "XYCZT";
   }
 
   /**
@@ -567,8 +568,10 @@ public abstract class BaseTiffReader extends FormatReader {
             setChannelGlobalMinMax(i);
           }
         }
-        catch (Exception e) {
-          // CTR TODO - eliminate catch-all exception handling
+        catch (FormatException e) {
+          if (debug) e.printStackTrace();
+        }
+        catch (IOException e) {
           if (debug) e.printStackTrace();
         }
       }
@@ -661,19 +664,11 @@ public abstract class BaseTiffReader extends FormatReader {
     {
       return true;
     }
-    try {
-      int p = TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-      return (!isColorTableIgnored() &&
-        (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY)) ||
-        p == TiffTools.RGB;
-    }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
-      return TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.SAMPLES_PER_PIXEL, true, 0) > 1;
-    }
+    int p = TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
+    return (!isColorTableIgnored() &&
+      (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY)) ||
+      p == TiffTools.RGB;
   }
 
   /**

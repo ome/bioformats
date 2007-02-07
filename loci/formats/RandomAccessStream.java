@@ -46,7 +46,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   protected static final int MAX_HISTORY = 50;
 
   /** Maximum number of open files. */
-  protected static final int MAX_FILES = 128;
+  protected static final int MAX_FILES = 100;
 
   /** Indicators for most efficient method of reading. */
   protected static final int DIS = 0;
@@ -114,9 +114,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
       recent.add(new Integer(MAX_OVERHEAD / 2));
       nextMark = MAX_OVERHEAD;
     }
-    else {
+    else if (file.startsWith("http")) {
       raf = new RAUrl(Location.getMappedId(file), "r");
     }
+    else throw new IOException("File not found : " + file);
     this.file = file;
     fp = 0;
     afp = 0;
@@ -179,8 +180,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
     if (dis != null) dis.close();
     dis = null;
     buf = null;
-    fileCache.put(this, Boolean.FALSE);
-    openFiles--;
+    if (fileCache.get(this) != Boolean.FALSE) {
+      fileCache.put(this, Boolean.FALSE);
+      openFiles--;
+    }
   }
 
   /** Sets the endianness of the stream. */
@@ -545,8 +548,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
       fileCache.keySet().toArray(new RandomAccessStream[0]);
     int closed = 0;
     int ndx = 0;
-    int blahCounter = 0;
-    int oldOpen = openFiles;
     
     while (closed < toClose) {
       if (!this.equals(files[ndx]) && 
@@ -554,7 +555,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
       {
         try { files[ndx].close(); }
         catch (IOException e) { e.printStackTrace(); }
-        blahCounter++;
         closed++;
       }
       ndx++;

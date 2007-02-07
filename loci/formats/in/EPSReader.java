@@ -148,6 +148,7 @@ public class EPSReader extends FormatReader {
         }
       }
     }
+    ras.close();
 
     return p;
   }

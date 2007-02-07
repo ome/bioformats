@@ -284,10 +284,7 @@ public class PerkinElmerReader extends FormatReader {
           files[filesPt] = workingDirPath + ls[i];
           filesPt++;
         }
-        catch (Exception e) {
-          // CTR TODO - eliminate catch-all exception handling
-          if (debug) e.printStackTrace();
-
+        catch (NumberFormatException e) {
           try {
             String ext = filename.substring(filename.lastIndexOf(".") + 1);
             int num = Integer.parseInt(ext, 16);
@@ -295,8 +292,7 @@ public class PerkinElmerReader extends FormatReader {
             files[filesPt] = workingDirPath + ls[i];
             filesPt++;
           }
-          catch (Exception f) {
-            // CTR TODO - eliminate catch-all exception handling
+          catch (NumberFormatException f) {
             if (debug) f.printStackTrace();
           }
         }
@@ -491,20 +487,22 @@ public class PerkinElmerReader extends FormatReader {
     String details = (String) getMeta("Experiment details:");
     // parse details to get number of wavelengths and timepoints
 
-    t = new StringTokenizer(details);
-    int tokenNum = 0;
     String wavelengths = "1";
-    int numTokens = t.countTokens();
-    boolean foundId = false;
-    String prevToken = "";
-    while (t.hasMoreTokens()) {
-      String token = t.nextToken();
-      foundId = token.equals("Wavelengths");
-      if (foundId) {
-        wavelengths = prevToken;
+    if (details != null) {
+      t = new StringTokenizer(details);
+      int tokenNum = 0;
+      int numTokens = t.countTokens();
+      boolean foundId = false;
+      String prevToken = "";
+      while (t.hasMoreTokens()) {
+        String token = t.nextToken();
+        foundId = token.equals("Wavelengths");
+        if (foundId) {
+          wavelengths = prevToken;
+        }
+        tokenNum++;
+        prevToken = token;
       }
-      tokenNum++;
-      prevToken = token;
     }
 
     channels = Integer.parseInt(wavelengths);
@@ -566,8 +564,10 @@ public class PerkinElmerReader extends FormatReader {
 
     // populate Image element
     String time = (String) getMeta("Finish Time:");
-    time = time.substring(1).trim();
-    store.setImage(null, time, null, null);
+    if (time != null) {
+      time = time.substring(1).trim();
+      store.setImage(null, time, null, null);
+    }
 
     // populate Pixels element
     String x = (String) getMeta("Image Width");
@@ -588,12 +588,13 @@ public class PerkinElmerReader extends FormatReader {
     String originX = (String) getMeta("Origin X");
     String originY = (String) getMeta("Origin Y");
     String originZ = (String) getMeta("Origin Z");
+    
     try {
-      store.setStageLabel(null, new Float(originX), new Float(originY),
-                        new Float(originZ), null);
+      store.setStageLabel(null, originX == null ? null : new Float(originX), 
+        originY == null ? null : new Float(originY),
+        originZ == null ? null : new Float(originZ), null);
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (NumberFormatException e) {
       if (debug) e.printStackTrace();
     }
   }

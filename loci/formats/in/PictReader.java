@@ -203,6 +203,7 @@ public class PictReader extends FormatReader {
     Dimension d = getDimensions(b);
 
     sizeX[0] = d.width;
+    while (sizeX[0] % 8 != 0) sizeX[0]++;
     sizeY[0] = d.height;
     sizeZ[0] = 1;
     sizeC[0] = ignoreColorTable ? 1 : 3;
