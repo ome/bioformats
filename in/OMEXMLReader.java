@@ -77,7 +77,7 @@ public class OMEXMLReader extends FormatReader {
   private String[] order;
 
   /** Internal OME-XML store, for convenient access to metadata fields. */
-  private OMEXMLMetadataStore omexml = new OMEXMLMetadataStore();
+  private OMEXMLMetadataStore omexml;
 
   // -- Constructor --
 
@@ -145,6 +145,7 @@ public class OMEXMLReader extends FormatReader {
     }
     in.read(buf);
     String data = new String(buf);
+    buf = null;
 
     // retrieve the compressed pixel data
 
@@ -153,10 +154,12 @@ public class OMEXMLReader extends FormatReader {
     if (pix.indexOf("<") > 0) {
       pix = pix.substring(0, pix.indexOf("<"));
     }
+    data = null;
 
     //byte[] pixels = Compression.base64Decode(pix);
     Base64Encoder e = new Base64Encoder();
     byte[] pixels = e.base64Decode(pix);
+    pix = null;
 
     if (compression[series].equals("bzip2")) {
       byte[] tempPixels = pixels;
@@ -169,6 +172,10 @@ public class OMEXMLReader extends FormatReader {
       for (int i=0; i<pixels.length; i++) {
         pixels[i] = (byte) bzip.read();
       }
+      tempPixels = null;
+      bais.close();
+      bais = null;
+      bzip = null;
     }
     else if (compression[series].equals("zlib")) {
       try {
@@ -182,6 +189,7 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Error uncompressing zlib data.");
       }
     }
+
     return pixels;
   }
 
@@ -203,6 +211,8 @@ public class OMEXMLReader extends FormatReader {
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
+    if (omexml != null) omexml.createRoot();
+    omexml = null;
     currentId = null;
   }
 
@@ -213,6 +223,7 @@ public class OMEXMLReader extends FormatReader {
     currentId = id;
     metadata = new Hashtable();
     in = new RandomAccessStream(id);
+    omexml = new OMEXMLMetadataStore();
 
     in.skipBytes(200);
 
@@ -285,6 +296,7 @@ public class OMEXMLReader extends FormatReader {
             offsets[i].add(new Integer(
               (int) in.getFilePointer() - (numRead - ndx)));
           }
+          test = null;
         }
         else {
           throw new FormatException("Pixel data not found");
@@ -314,11 +326,13 @@ public class OMEXMLReader extends FormatReader {
             if (ndx == -1) {
               byte[] b = buf;
               System.arraycopy(b, 8192 - 15, buf, 0, 14);
+              b = null;
             }
             else {
               found = true;
               in.seek(in.getFilePointer() - (8192 - ndx));
             }
+            test = null;
           }
           else {
             throw new FormatException("Pixel data not found");
@@ -331,6 +345,7 @@ public class OMEXMLReader extends FormatReader {
       }
       in.read(buf);
     }
+    buf = null;
 
     OMENode ome = null;
     try {
@@ -425,6 +440,7 @@ public class OMEXMLReader extends FormatReader {
         searchForData(0, numZ[i] * numT[i] * numChannels[i]);
         numImages[i] = offsets[i].size();
       }
+      buf = null;
     }
     setSeries(currentId, oldSeries);
     sizeX = width;
@@ -435,6 +451,14 @@ public class OMEXMLReader extends FormatReader {
     currentOrder = order;
     orderCertain = new boolean[currentOrder.length];
     Arrays.fill(orderCertain, true);
+
+    try {
+      ome = new OMENode((String) null);
+    }
+    catch (Exception e) { }
+    ome = null;
+    omexml = null;
+    System.gc();
   }
 
   // -- Helper methods --
@@ -473,11 +497,13 @@ public class OMEXMLReader extends FormatReader {
               (int) in.getFilePointer() - (numRead - ndx)));
             ndx = test.indexOf("<Bin", ndx+1);
           }
+          test = null;
         }
         else {
           found = true;
         }
       }
+      buf = null;
 
       iteration++;
     }
