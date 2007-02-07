@@ -30,7 +30,7 @@ import ij.process.*;
 import java.awt.TextField;
 import java.util.*;
 import loci.formats.*;
-import loci.ome.*;
+import loci.ome.util.OMEUtils;
 import loci.plugins.Util;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;

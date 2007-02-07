@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
 import loci.formats.*;
 import loci.formats.in.OMEReader;
-import loci.ome.OMEUtils;
+import loci.ome.util.OMEUtils;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
