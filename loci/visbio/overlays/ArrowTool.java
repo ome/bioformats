@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import loci.visbio.data.TransformEvent;
+import visad.DisplayEvent;
 
 /** ArrowTool is the tool for creating arrow overlays. */
 public class ArrowTool extends OverlayTool {
@@ -43,7 +44,7 @@ public class ArrowTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(int px, int py,
+  public void mouseDown(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     deselectAll();
@@ -55,7 +56,7 @@ public class ArrowTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(int px, int py,
+  public void mouseUp(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     if (arrow == null) return;
@@ -65,7 +66,7 @@ public class ArrowTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(int px, int py,
+  public void mouseDrag(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     if (arrow == null) return;

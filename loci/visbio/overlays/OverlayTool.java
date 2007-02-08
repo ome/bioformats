@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import visad.DisplayEvent;
+
 /** OverlayTool is the superclass of all overlay tools. */
 public class OverlayTool {
 
@@ -56,6 +58,7 @@ public class OverlayTool {
 
   /**
    * Instructs this tool to respond to a mouse press.
+   * @param e DisplayEvent corresponding to this mouse press.
    * @param px X coordinate of mouse press in pixel coordinate system.
    * @param py Y coordinate of mouse press in pixel coordinate system.
    * @param dx X coordinate of mouse press in data coordinate system.
@@ -63,13 +66,14 @@ public class OverlayTool {
    * @param pos Dimensional position of mouse press.
    * @param mods Modifiers of mouse press.
    */
-  public void mouseDown(int px, int py,
+  public void mouseDown(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
   }
 
   /**
    * Instructs this tool to respond to a mouse release.
+   * @param e DisplayEvent corresponding to this mouse release.
    * @param px X coordinate of mouse release in pixel coordinate system.
    * @param py Y coordinate of mouse release in pixel coordinate system.
    * @param dx X coordinate of mouse release in data coordinate system.
@@ -77,13 +81,14 @@ public class OverlayTool {
    * @param pos Dimensional position of mouse release.
    * @param mods Modifiers of mouse release.
    */
-  public void mouseUp(int px, int py,
+  public void mouseUp(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
   }
 
   /**
    * Instructs this tool to respond to a mouse drag.
+   * @param e DisplayEvent corresponding to this mouse drag.
    * @param px X coordinate of mouse drag in pixel coordinate system.
    * @param py Y coordinate of mouse drag in pixel coordinate system.
    * @param dx X coordinate of mouse drag in data coordinate system.
@@ -91,7 +96,7 @@ public class OverlayTool {
    * @param pos Dimensional position of mouse drag.
    * @param mods Modifiers of mouse drag.
    */
-  public void mouseDrag(int px, int py,
+  public void mouseDrag(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
   }

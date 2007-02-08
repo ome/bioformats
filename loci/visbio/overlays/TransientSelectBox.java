@@ -50,14 +50,9 @@ public class TransientSelectBox {
   /** Parent Transform */
   private OverlayTransform overlay;
 
-  /** Whether the box is visible; toggled off if box
-   *  boundaries would form an invalid GriddedSet */
-  private boolean visible;
-
   // -- Constructor --
 
-  /** Constructs a selection box
-   *  Initially, the box has zero area and is not visible
+  /** Constructs a selection box.
    */
   public TransientSelectBox(OverlayTransform overlay,
     float downX, float downY)
@@ -67,8 +62,8 @@ public class TransientSelectBox {
     x2 = downX;
     y1 = downY;
     y2 = downY;
+    // initially box has zero area.
     color = Color.green;
-    visible = false;
   }
 
   // -- TransientSelectBox API Methods --
@@ -77,17 +72,17 @@ public class TransientSelectBox {
   public void setCorner (float x, float y) {
     x2 = x;
     y2 = y;
-    // toggle visible.  If x1 == x2 || y1 == y2, GriddedSet invalid.
-    if (x1 != x2 && y1 != y2) visible = true;
-    else visible = false;
   }
 
-  /** Returns a VisAD data object representing this box
-   *  The data object is compound, consisting of 2 parts:
+  /** Returns a VisAD data object representing this box.
+   *  The data object is compound, comprising 2 parts:
    *  1) a solid GriddedSet of manifold dimension 1, the outline
    *  2) a semi-transparent GriddedSet of manifold dimension 2, the interior
    */
   public DataImpl getData() {
+    if (x1 == x2 || y1 == y2) return null;  // don't construct a data object
+    // for a zero-area box
+    
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
@@ -152,9 +147,6 @@ public class TransientSelectBox {
     catch (RemoteException exc) { exc.printStackTrace(); }
     return ret;
   }
-
-  /** Whether this select box is visible */
-  public boolean isVisible() { return visible; }
 
   /** Gets X coordinate of the overlay's first endpoint. */
   public float getX1() { return x1; }

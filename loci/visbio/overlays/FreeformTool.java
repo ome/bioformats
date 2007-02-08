@@ -27,6 +27,7 @@ import loci.visbio.data.TransformEvent;
 import loci.visbio.util.MathUtil;
 import java.awt.event.InputEvent;
 import java.util.Vector;
+import visad.DisplayEvent;
 
 /** FreeformTool is the tool for creating freeform objects. */
 public class FreeformTool extends OverlayTool {
@@ -70,9 +71,12 @@ public class FreeformTool extends OverlayTool {
 
   /** Tendril wraps info about an edit to a curve */
   protected Tendril tendril;
+
+  /** Stores the current mode (ERASE, CHILL, DRAW, EDIT) */
   protected int mode;
 
-  protected float[][] pre, post; // chunks of curve tracked in redrawing
+  /** Chunks of curve tracked during EDIT */
+  protected float[][] pre, post; 
 
   // -- Constructor --
 
@@ -87,10 +91,11 @@ public class FreeformTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(int px, int py,
+  public void mouseDown(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     boolean ctl = (mods & InputEvent.CTRL_MASK) != 0;
+    
     OverlayFreeform target = getClosestFreeform(dx, dy);
     if (target != null) {
       freeform = target;
@@ -157,139 +162,8 @@ public class FreeformTool extends OverlayTool {
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
   } // end mouseDown
 
-  /** Slices a freeform in two. */
-  private void slice(OverlayFreeform freef,
-    float dx, float dy, double dist, int seg, double weight)
-  {
-    int f1Start, f2Start, f1Stop, f2Stop;
-    OverlayFreeform f1, f2;
-
-    f1Start = 0;
-    f1Stop = seg;
-    f2Start = seg + 1;
-    f2Stop = freef.getNumNodes() - 1;
-
-    if (weight == 0.0) f1Stop = seg - 1;
-    else if (weight == 1.0) f2Start = seg + 2;
-
-    float[][] oldNodes = freef.getNodes();
-    float[][] f1Nodes = new float[2][f1Stop+1];
-    float[][] f2Nodes = new float[2][f2Stop-f2Start+1];
-
-    for (int i = 0; i<2; i++) {
-      System.arraycopy(oldNodes[i], 0, f1Nodes[i], 0, f1Stop+1);
-      System.arraycopy(oldNodes[i], f2Start, f2Nodes[i], 0, f2Stop-f2Start+1);
-    }
-    f1 = new OverlayFreeform(overlay, f1Nodes);
-    f2 = new OverlayFreeform(overlay, f2Nodes);
-
-    configureOverlay(f1);
-    configureOverlay(f2);
-    overlay.addObject(f1);
-    overlay.addObject(f2);
-    f1.setSelected(false);
-    f2.setSelected(false);
-    f1.setDrawing(false);
-    f2.setDrawing(false);
-
-    //TODO element at exception caused by this
-    overlay.removeObject(freef);
-  }
-
-  /** Wraps info for redrawing a curve
-   *  Appears like a 'tendril' on screen */
-  private class Tendril {
-    public int start, stop, tip;
-    public boolean nodal;
-
-    public Tendril (int start, int stop, boolean nodal) {
-      this.start = start;
-      this.stop = stop;
-      this.nodal = nodal;
-      // initial value of tip is nonsensical.  Use as a check.
-      this.tip = -1;
-    }
-
-    public void increment() {
-      tendril.tip++;
-      tendril.start++;
-      tendril.stop++;
-    }
-  }
-
-  /**
-   * Splits the node array into two parts.  The first part goes from a[0] to
-   * a[index-1], the second from a[index2] to a[a.length -1].
-   */
-  private void splitNodes(int index, int index2) {
-    // splits the array a into two (before the index specified)
-    float[][] a = freeform.getNodes();
-    // print these guys
-    int depth = a.length;
-    int len = a[0].length; // assumes non-ragged array
-    pre =  new float[depth][index];
-    post = new float[depth][len-index2];
-    for (int i=0; i < depth; i++) {
-      System.arraycopy(a[i], 0, pre[i], 0, index);
-      System.arraycopy(a[i], index2, post[i], 0, len-index2);
-    }
-  }
-
-  /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(int px, int py, float dx, float dy, int[] pos, int mods) {
-    //print ("mouseUp", "mouseUp begun. mode = " + mode);
-    if (mode == DRAW) {
-      freeform.truncateNodeArray();
-    }
-    else if (mode == EDIT) {
-      // save coords of tendril root
-      float[] c = freeform.getNodeCoords(tendril.start);
-      freeform.deleteBetween(tendril.start-1, tendril.stop+1);
-      if (tendril.nodal) {
-        freeform.insertNode(tendril.start, c[0], c[1]);
-      }
-    }
-
-    if (mode != CHILL) setMode(CHILL);
-    overlay.notifyListeners(new TransformEvent(overlay));
-    ((OverlayWidget) overlay.getControls()).refreshListSelection();
-  }
-
-  /**
-   * Changes the edit mode. Depending on the new mode, some properties may
-   * change: e.g., whether a freeform is selected in the list of overlays.
-   */
-  private void setMode(int newMode) {
-    mode = newMode;
-    if (mode == DRAW || mode == EDIT || mode == ERASE) {
-      freeform.setDrawing(true);
-      freeform.setSelected(true);
-    }
-
-    if (mode == DRAW) {
-      // create list of freeforms
-      OverlayObject[] objs = overlay.getObjects();
-      for (int i=0; i<objs.length; i++) {
-        if (objs[i] instanceof OverlayFreeform && objs[i] != freeform) {
-          otherFreefs.add(objs[i]);
-        }
-      }
-    }
-    else {
-      otherFreefs.removeAllElements();
-    }
-
-    if (mode == CHILL && freeform != null) {
-      freeform.computeLength();
-      freeform.updateBoundingBox();
-      freeform.computeGridParameters();
-      freeform.setDrawing(false);
-      freeform = null;
-    }
-  }
-
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(int px, int py,
+  public void mouseDrag(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
@@ -510,7 +384,139 @@ public class FreeformTool extends OverlayTool {
     overlay.notifyListeners(new TransformEvent(overlay));
   } // end mouseDrag
 
-  //-- Additional methods
+  /** Instructs this tool to respond to a mouse release. */
+  public void mouseUp(DisplayEvent e, int px, int py, 
+      float dx, float dy, int[] pos, int mods) {
+    //print ("mouseUp", "mouseUp begun. mode = " + mode);
+    if (mode == DRAW) {
+      freeform.truncateNodeArray();
+    }
+    else if (mode == EDIT) {
+      // save coords of tendril root
+      float[] c = freeform.getNodeCoords(tendril.start);
+      freeform.deleteBetween(tendril.start-1, tendril.stop+1);
+      if (tendril.nodal) {
+        freeform.insertNode(tendril.start, c[0], c[1]);
+      }
+    }
+
+    if (mode != CHILL) setMode(CHILL);
+    overlay.notifyListeners(new TransformEvent(overlay));
+    ((OverlayWidget) overlay.getControls()).refreshListSelection();
+  }
+
+  // -- Helper methods for mouse methods
+  
+  /** Slices a freeform in two. */
+  private void slice(OverlayFreeform freef,
+    float dx, float dy, double dist, int seg, double weight)
+  {
+    int f1Start, f2Start, f1Stop, f2Stop;
+    OverlayFreeform f1, f2;
+
+    f1Start = 0;
+    f1Stop = seg;
+    f2Start = seg + 1;
+    f2Stop = freef.getNumNodes() - 1;
+
+    if (weight == 0.0) f1Stop = seg - 1;
+    else if (weight == 1.0) f2Start = seg + 2;
+
+    float[][] oldNodes = freef.getNodes();
+    float[][] f1Nodes = new float[2][f1Stop+1];
+    float[][] f2Nodes = new float[2][f2Stop-f2Start+1];
+
+    for (int i = 0; i<2; i++) {
+      System.arraycopy(oldNodes[i], 0, f1Nodes[i], 0, f1Stop+1);
+      System.arraycopy(oldNodes[i], f2Start, f2Nodes[i], 0, f2Stop-f2Start+1);
+    }
+    f1 = new OverlayFreeform(overlay, f1Nodes);
+    f2 = new OverlayFreeform(overlay, f2Nodes);
+
+    configureOverlay(f1);
+    configureOverlay(f2);
+    overlay.addObject(f1);
+    overlay.addObject(f2);
+    f1.setSelected(false);
+    f2.setSelected(false);
+    f1.setDrawing(false);
+    f2.setDrawing(false);
+
+    //TODO element at exception caused by this
+    overlay.removeObject(freef);
+  }
+
+  /** Wraps info for redrawing a curve
+   *  Appears like a 'tendril' on screen */
+  private class Tendril {
+    public int start, stop, tip;
+    public boolean nodal;
+
+    public Tendril (int start, int stop, boolean nodal) {
+      this.start = start;
+      this.stop = stop;
+      this.nodal = nodal;
+      // initial value of tip is nonsensical.  Use as a check.
+      this.tip = -1;
+    }
+
+    public void increment() {
+      tendril.tip++;
+      tendril.start++;
+      tendril.stop++;
+    }
+  }
+
+  /**
+   * Splits the node array into two parts.  The first part goes from a[0] to
+   * a[index-1], the second from a[index2] to a[a.length -1].
+   */
+  private void splitNodes(int index, int index2) {
+    // splits the array a into two (before the index specified)
+    float[][] a = freeform.getNodes();
+    // print these guys
+    int depth = a.length;
+    int len = a[0].length; // assumes non-ragged array
+    pre =  new float[depth][index];
+    post = new float[depth][len-index2];
+    for (int i=0; i < depth; i++) {
+      System.arraycopy(a[i], 0, pre[i], 0, index);
+      System.arraycopy(a[i], index2, post[i], 0, len-index2);
+    }
+  }
+
+  /**
+   * Changes the edit mode. Depending on the new mode, some properties may
+   * change: e.g., whether a freeform is selected in the list of overlays.
+   */
+  private void setMode(int newMode) {
+    mode = newMode;
+    if (mode == DRAW || mode == EDIT || mode == ERASE) {
+      freeform.setDrawing(true);
+      freeform.setSelected(true);
+    }
+
+    if (mode == DRAW) {
+      // create list of freeforms
+      OverlayObject[] objs = overlay.getObjects();
+      for (int i=0; i<objs.length; i++) {
+        if (objs[i] instanceof OverlayFreeform && objs[i] != freeform) {
+          otherFreefs.add(objs[i]);
+        }
+      }
+    }
+    else {
+      otherFreefs.removeAllElements();
+    }
+
+    if (mode == CHILL && freeform != null) {
+      freeform.computeLength();
+      freeform.updateBoundingBox();
+      freeform.computeGridParameters();
+      freeform.setDrawing(false);
+      freeform = null;
+    }
+  }
 
   /**
    * Connects a pair of freeforms.

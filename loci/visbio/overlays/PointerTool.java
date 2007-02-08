@@ -25,6 +25,7 @@ package loci.visbio.overlays;
 
 import java.awt.event.InputEvent;
 import loci.visbio.data.TransformEvent;
+import visad.DisplayEvent;
 import java.util.Vector;
 
 /** PointerTool is the tool for manipulating existing overlays. */
@@ -64,7 +65,7 @@ public class PointerTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(int px, int py,
+  public void mouseDown(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
@@ -143,7 +144,7 @@ public class PointerTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(int px, int py,
+  public void mouseUp(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
@@ -164,7 +165,7 @@ public class PointerTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(int px, int py,
+  public void mouseDrag(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
