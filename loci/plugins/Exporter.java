@@ -27,34 +27,24 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
-import ij.process.ImageConverter;
+import ij.io.SaveDialog;
 import ij.process.ImageProcessor;
 import java.awt.Image;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
-import javax.swing.*;
-import loci.formats.FormatWriter;
-import loci.formats.ImageWriter;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import loci.formats.*;
 
 /**
  * Core logic for the LOCI Exporter ImageJ plugin.
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class Exporter implements ItemListener {
+public class Exporter {
 
   // -- Fields --
 
   /** Current stack. */
   private ImagePlus imp;
-
-  private JCheckBox merge = null;
-  private JCheckBox interleave = null;
-  private JCheckBox sample = null;
-  private boolean mergeChannels = true;
-  private boolean interleaveChannels = true;
-  private boolean downSample = false;
 
   private LociExporter plugin;
 
@@ -69,180 +59,89 @@ public class Exporter implements ItemListener {
 
   /** Executes the plugin. */
   public synchronized void run(ImageProcessor ip) {
-    ImageWriter writer = new ImageWriter();
-
-    // prompt for the filename to save to
-
-    //SaveDialog sd = new SaveDialog("Save...", imp.getTitle(), "");
-
-    String filename = null;
-    JFileChooser chooser = writer.getFileChooser();
-    JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-    merge = new JCheckBox("Merge channels", true);
-    merge.addItemListener(this);
-    interleave = new JCheckBox("Interleave channels", true);
-    interleave.addItemListener(this);
-    sample = new JCheckBox("Convert 16-bit grayscale to RGB");
-    sample.addItemListener(this);
-    panel.add(merge);
-    panel.add(interleave);
-    panel.add(sample);
-    chooser.setAccessory(panel);
-
-    int rval = chooser.showSaveDialog(null);
-    if (rval == JFileChooser.APPROVE_OPTION) {
-      final File file = chooser.getSelectedFile();
-      if (file != null) filename = file.getAbsolutePath();
+    String outfile = null;
+    
+    if (plugin.arg != null && plugin.arg.startsWith("outfile=")) {
+      outfile = Macro.getValue(plugin.arg, "outfile", null);
+      plugin.arg = null;
     }
-    if (filename == null) return;
-
-    try {
-      long t1 = System.currentTimeMillis();
-      FormatWriter w2 = writer.getWriter(filename);
-
-      // make sure we prompt for a compression type, if applicable
-
-      String[] types = w2.getCompressionTypes();
-      if (types != null) {
-        GenericDialog gd = new GenericDialog("Choose a compression type");
-        gd.addChoice("Available compression types", types, types[0]);
-        gd.showDialog();
-        w2.setCompression(gd.getNextChoice());
+  
+    if (outfile == null) {
+      String options = Macro.getOptions();
+      if (options != null) {
+        String save = Macro.getValue(options, "save", null);
+        if (save != null) outfile = save;
       }
+    }
 
-      if (imp == null) return;
+    if (outfile == null || outfile.length() == 0) {
+      // open a dialog prompting for the filename to save
+      SaveDialog sd = new SaveDialog("LOCI Bio-Formats Exporter", "", "");
+      outfile = new File(sd.getDirectory(), sd.getFileName()).getAbsolutePath();
+      if (outfile == null) {
+        return;
+      }
+    }
+   
+    try {
+      FormatWriter w = new ImageWriter().getWriter(outfile);
 
-      ImageStack stack = imp.getStack();
-      if (mergeChannels) stack = mergeStack(stack, interleaveChannels);
-      else stack = splitStack(stack, interleaveChannels);
-      int size = stack.getSize();
+      // prompt for options
 
-      long t3 = System.currentTimeMillis();
-      if (w2.canDoStacks(filename)) {
-        for (int i=0; i<size; i++) {
-          ImageProcessor proc = stack.getProcessor(i+1);
-          Image img = proc.createImage();
-          w2.setColorModel(proc.getColorModel());
-          IJ.showStatus("Writing plane " + (i+1) + " / " + size);
-          IJ.showProgress((double) i / size);
-          w2.save(filename, img, i == (size - 1));
+      String[] codecs = w.getCompressionTypes();
+      ImageProcessor proc = imp.getStack().getProcessor(1);
+      Image firstImage = proc.createImage();
+      firstImage = ImageTools.makeBuffered(firstImage, proc.getColorModel());
+      int thisType = ImageTools.getPixelType((BufferedImage) firstImage);
+      boolean forceType = false;
+
+      if ((codecs != null && codecs.length > 1) || 
+        !w.isSupportedType(null, thisType))
+      {
+        GenericDialog gd = 
+          new GenericDialog("LOCI Bio-Formats Exporter Options");
+        if (codecs != null) {
+          gd.addChoice("Compression type: ", codecs, codecs[0]);
+        }
+        if (!w.isSupportedType(null, thisType)) {
+          gd.addCheckbox("Force compatible pixel type", true);
+        }
+        gd.showDialog();
+        if (gd.wasCanceled()) return;
+
+        if (codecs != null) w.setCompression(gd.getNextChoice());
+        if (!w.isSupportedType(null, thisType)) {
+          forceType = gd.getNextBoolean();
         }
       }
-      else {
-        ImageProcessor proc = imp.getProcessor();
-        Image img = imp.getImage();
-        w2.setColorModel(proc.getColorModel());
-        IJ.showStatus("Writing plane 1 / 1");
-        w2.save(filename, img, true);
-      }
 
-      long t4 = System.currentTimeMillis();
-      if (size == 1) {
-        IJ.showStatus((t4 - t1) + " ms");
-      }
-      else {
-        long average = (t4 - t3) / size;
-        IJ.showStatus("LOCI Bio-Formats Exporter: " + (t4 - t1) + " ms (" +
-          average + " ms per plane)");
-      }
-      IJ.showProgress(1);
-      plugin.success = true;
-    }
-    catch (Exception exc) {
-      exc.printStackTrace();
-      IJ.showStatus("");
-      String msg = exc.getMessage();
-      IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
-        "writing the data" + (msg == null ? "." : (": " + msg)));
-    }
-  }
+      // convert and save each slice 
 
-  // -- Helper methods --
-
-  /**
-   * Merge a greyscale image stack into an RGB stack with 1/3 the size.
-   * The interleaved flag refers to the ordering of channels within the original
-   * stack.
-   */
-  private ImageStack mergeStack(ImageStack is, boolean interleaved)
-    throws Exception
-  {
-    ImageStack newStack = new ImageStack(is.getWidth(), is.getHeight());
-    int type = imp.getType();
-
-    if (type == ImagePlus.GRAY8 || downSample) {
-      ImageStack tempStack = new ImageStack(is.getWidth(), is.getHeight());
-      ImagePlus ip = null;
-      ImageConverter converter = null;
-      int size = is.getSize() / 3;
-      if (interleaved) size *= 3;
-      int increment = size;
-      if (interleaved) increment = 1;
-      int loopIncrement = 1;
-      if (interleaved) loopIncrement = 3;
-      for (int i=1; i<=size; i+=loopIncrement) {
-        while (tempStack.getSize() > 0) tempStack.deleteLastSlice();
-        tempStack.addSlice(is.getSliceLabel(i), is.getProcessor(i));
-        tempStack.addSlice(is.getSliceLabel(i + increment),
-          is.getProcessor(i + increment));
-        tempStack.addSlice(is.getSliceLabel(i + 2 * increment),
-          is.getProcessor(i + 2 * increment));
-        ip = new ImagePlus("temp", tempStack);
-        converter = new ImageConverter(ip);
-        if (type != ImagePlus.GRAY8) converter.convertToGray8();
-        converter.convertRGBStackToRGB();
-        newStack.addSlice("", ip.getImageStack().getProcessor(1));
+      ImageStack is = imp.getStack();
+      for (int i=0; i<is.getSize(); i++) {
+        IJ.showStatus("Saving plane " + (i + 1) + "/" + is.getSize());
+        IJ.showProgress((double) (i + 1) / is.getSize());
+        proc = is.getProcessor(i + 1);
+        Image slice = proc.createImage();
+        BufferedImage img = 
+          ImageTools.makeBuffered(slice, proc.getColorModel());
+        if (forceType) {
+          if (!w.isSupportedType(null, thisType)) {
+            int[] types = w.getPixelTypes(null);
+            img = ImageTools.makeType(img, types[types.length - 1]);
+          }
+          w.save(outfile, img, i == is.getSize() - 1);
+        }
+        else w.save(outfile, img, i == is.getSize() - 1);
       }
     }
-    else {
-      // exit loudly
-      IJ.showStatus("LOCI Bio-Formats: Cannot convert this stack to RGB; " +
-        "please check the 'Enable converting 16-bit grayscale to RGB' box");
-      throw new Exception("Converting 16-bit data failed, please try again.");
+    catch (FormatException e) {
+      IJ.error(e.getMessage());
+      e.printStackTrace();
     }
-    return newStack;
-  }
-
-  private ImageStack splitStack(ImageStack is, boolean interleaved) {
-    ImageStack newStack = new ImageStack(is.getWidth(), is.getHeight());
-
-    // if it's not RGB, don't split the stack - just return it
-    int type = imp.getType();
-    if (type != ImagePlus.COLOR_RGB && type != ImagePlus.COLOR_256) {
-      return is;
-    }
-
-    ImagePlus ip = new ImagePlus("temp", is);
-    ImageConverter converter = new ImageConverter(ip);
-    converter.convertToRGBStack();
-    converter.convertToGray8();
-    ImageStack tempStack = ip.getImageStack();
-
-    if (interleaved) return tempStack;
-
-    for (int j=1; j<=3; j++) {
-      for (int i=j; i<=tempStack.getSize(); i+=3) {
-        newStack.addSlice(tempStack.getSliceLabel(i),
-          tempStack.getProcessor(i));
-      }
-    }
-
-    return newStack;
-  }
-
-  // -- ItemListener API methods --
-
-  public void itemStateChanged(ItemEvent e) {
-    Object source = e.getItemSelectable();
-    if (source == merge) {
-      mergeChannels = e.getStateChange() == ItemEvent.SELECTED;
-    }
-    else if (source == interleave) {
-      interleaveChannels = e.getStateChange() == ItemEvent.SELECTED;
-    }
-    else if (source == sample) {
-      downSample = e.getStateChange() == ItemEvent.SELECTED;
+    catch (IOException e) {
+      IJ.error(e.getMessage());
+      e.printStackTrace();
     }
   }
 

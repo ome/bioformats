@@ -43,12 +43,16 @@ public class LociExporter implements PlugInFilter {
   /** Flag indicating whether last operation was successful. */
   public boolean success = false;
 
+  /** Argument passed to setup(). */
+  public String arg;
+
   private Exporter exporter;
 
   // -- PlugInFilter API methods --
 
   /** Sets up the writer. */
   public int setup(String arg, ImagePlus imp) {
+    this.arg = arg;
     exporter = new Exporter(this, imp);
     return DOES_ALL + NO_CHANGES;
   }
