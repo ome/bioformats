@@ -30,6 +30,7 @@ import java.io.File;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import java.io.FileInputStream;
+import java.util.Vector;
 
 public class Merger {
   // --Constants--
@@ -78,8 +79,97 @@ public class Merger {
     }
   }
   
+  /**
+  * Merge two OME-XML Trees, when a conflict arrises, use the
+  * "over" tree's node instead of the "under" tree's. NB: the
+  * trees should be in OMECA (flattened) format before passing
+  * them to this method.
+  * @param over The OMENode that by default has higher priority.
+  * @param under The OMENode that by default has lower priority.
+  */
   public static OMENode merge(OMENode over, OMENode under) {
-    return over;
+    OMENode result;
+    OMEXMLNode tempNode = merge((OMEXMLNode)over,(OMEXMLNode)under);
+    if (tempNode instanceof OMENode) result = (OMENode) tempNode;
+    else result = null;
+    return result;
+  }
+    
+  private static OMEXMLNode merge(OMEXMLNode over, OMEXMLNode under) {
+    OMEXMLNode result = over;
+    Vector overList = result.getChildren();
+    Vector underList = under.getChildren();
+    Vector idList = new Vector();
+    boolean isOverCustom = false;
+    boolean isUnderCustom = false;
+    boolean addedCustom = false;
+    
+    for(int i = 0;i<overList.size();i++) {
+      OMEXMLNode overNode = (OMEXMLNode)(overList.get(i));
+      String overID = overNode.getAttribute("ID");
+      if (overID == null) isOverCustom = true;
+
+      for(int j = 0;j<underList.size();j++) {
+        OMEXMLNode underNode = (OMEXMLNode)(underList.get(j));
+        String underID = underNode.getAttribute("ID");
+        if (underID == null) isUnderCustom = true;
+        
+        if(isOverCustom && !isUnderCustom) {
+          //do nothing to alter custom tree
+          isOverCustom = false;
+        }
+        else if(!isOverCustom && isUnderCustom && !addedCustom) {
+          result.getDOMElement().appendChild(createClone(
+            underNode.getDOMElement(),overNode.getDOMElement().
+            getOwnerDocument()));
+          addedCustom = true;
+          isUnderCustom = false;
+        }
+        else if (!isOverCustom && !isUnderCustom) {
+          if (underID.equals(overID))
+            merge(overNode,underNode);
+          else {
+            if(idList.indexOf(underID) > -1) {
+              result.getDOMElement().appendChild(createClone(
+                underNode.getDOMElement(),overNode.getDOMElement().
+                getOwnerDocument()));
+              idList.add(underID);
+            }
+          }
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  public static Element createClone(Element el, Document doc) {
+    String tagName = el.getTagName();
+    Element clone = doc.createElement(tagName);
+
+    if(el.hasAttributes()) {
+      NamedNodeMap map = el.getAttributes();
+      for(int i = 0;i<map.getLength();i++) {
+        Node thisAttr = map.item(i);
+        String attrName = thisAttr.getNodeName();
+        String attrValue = thisAttr.getNodeValue();
+        clone.setAttribute(attrName,attrValue);
+      }
+    }
+    
+    if(el.hasChildNodes()) {
+      NodeList nodes = el.getChildNodes();
+      for(int i = 0;i<nodes.getLength();i++) {
+        Node thisNode = nodes.item(i);
+        if(thisNode instanceof Element) {
+          Element origChild = (Element) thisNode;
+          Element cloneChild = createClone(origChild,doc);
+          clone.appendChild(cloneChild);
+        }
+      }
+    }
+    
+    return clone;
   }
   
   private void prompt() {
