@@ -138,6 +138,8 @@ public class AVIReader extends FormatReader {
     int rawOffset = rawData.length - len;
     int offset = 0;
 
+    in.skipBytes(pad * bmpHeight);
+
     for (int i=bmpHeight - 1; i>=0; i--) {
       if (bmpBitsPerPixel == 8) {
         in.read(rawData, rawOffset, len);
@@ -150,6 +152,7 @@ public class AVIReader extends FormatReader {
           rawData[rawOffset + j*3 + 1] = b[j*3 + 1];
           rawData[rawOffset + j*3] = b[j*3 + 2];
         }
+        in.skipBytes(pad);
       }
 
       rawOffset -= (len - pad);
