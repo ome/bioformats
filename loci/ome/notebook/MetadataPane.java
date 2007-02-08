@@ -36,6 +36,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import loci.formats.*;
+import loci.formats.out.TiffWriter;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
@@ -132,6 +133,9 @@ public class MetadataPane extends JPanel
 
   /** Holds the first image of a tiff file.*/
   public BufferedImage img, thumb;
+  
+  /** Holds the ImageReader used to open image or null if none used.*/
+  protected ImageReader reader;
 
   // -- Fields - raw panel --
 
@@ -188,6 +192,7 @@ public class MetadataPane extends JPanel
     img = null;
     thumb = null;
     showIDs = false;
+    reader = null;
 
     // -- Tabbed Pane Initialization --
 
@@ -319,10 +324,67 @@ public class MetadataPane extends JPanel
     File compFile = new File(file.getPath() + ".ome");
     try {
       thisOmeNode.writeOME(compFile, false);
+      stateChanged(false);
     }
     catch (Exception exc) {
       if(exc instanceof RuntimeException) throw (RuntimeException)exc;
       else exc.printStackTrace();
+    }
+  }
+  
+  public void saveTiffFile(File file) throws RuntimeException{
+    if(originalTIFF != null) saveFile(file);
+    else {
+      String id = currentFile.getPath();
+      String outId = id + ".tif";
+      if(reader == null) reader = new ImageReader();
+      TiffWriter writer = new TiffWriter();
+
+      int imageCount = 0;
+      String xml = null;
+
+      try {      
+        xml = thisOmeNode.writeOME(false);
+        imageCount = reader.getImageCount(id);
+      }
+      catch(Exception exc) {
+        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+        else exc.printStackTrace();
+      }
+
+      for(int i = 0;i < imageCount;i++) {
+        BufferedImage plane = null;
+        
+        try {      
+          plane = reader.openImage(id, i);
+        }
+        catch(Exception exc) {
+          if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+          else exc.printStackTrace();
+        }
+
+        Hashtable ifd = null;  
+        if (i == 0) {
+          // save OME-XML metadata to TIFF file's first IFD  
+          ifd = new Hashtable();
+          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
+        }  
+        // write plane to output file
+        
+        try {      
+          writer.saveImage(outId, plane, ifd, i == imageCount - 1);
+        }
+        catch(Exception exc) {
+          if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+          else exc.printStackTrace();
+        }
+      }
+      currentFile = new File(outId);
+      if (getTopLevelAncestor() instanceof MetadataNotebook) {
+        MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+        mn.setCurrentFile(file);
+      }
+      stateChanged(false);
     }
   }
 
@@ -361,8 +423,9 @@ public class MetadataPane extends JPanel
       boolean doMerge = false;
 
       try {
-        ImageReader reader = new ImageReader();
+        reader = new ImageReader();
         OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
+        
         // tell reader to write metadata as it's being
         // parsed to an OMENode (DOM in memory)
         reader.setMetadataStore(ms);

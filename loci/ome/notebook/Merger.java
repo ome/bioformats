@@ -40,10 +40,10 @@ public class Merger {
     DocumentBuilderFactory.newInstance();
     
   /** Different mode constants.*/
-  public static final int ALL_ORIGINAL = 0x01; // 0001
-  public static final int ALL_COMPANION = 0x02; // 0010
-  public static final int ORIGINAL_OVER = 0x04; // 0100
-  public static final int COMPANION_OVER = 0x08; // 1000
+  public static final int ALL_ORIGINAL = 0x01;
+  public static final int ALL_COMPANION = 0x02;
+  public static final int ORIGINAL_OVER = 0x04;
+  public static final int COMPANION_OVER = 0x08;
 
   // --Members--
 

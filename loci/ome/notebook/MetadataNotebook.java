@@ -189,20 +189,31 @@ public class MetadataNotebook extends JFrame
     fileOpen.addActionListener(this);
     fileOpen.setMnemonic('o');
     fileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, MENU_MASK));
-    JMenuItem fileSave = new JMenuItem("Save to orignal");
-    file.add(fileSave);
+    JSeparator jSep = new JSeparator();
+    file.add(jSep);
+    JMenu subFile = new JMenu("Save...");
+    JMenuItem fileSave = new JMenuItem("Save to original");
+    subFile.add(fileSave);
     fileSave.setActionCommand("save");
     fileSave.addActionListener(this);
     fileSave.setMnemonic('s');
     fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, MENU_MASK));
     fileSave.setEnabled(addSave);
     JMenuItem fileSaveComp = new JMenuItem("Save as companion");
-    file.add(fileSaveComp);
+    subFile.add(fileSaveComp);
     fileSaveComp.setActionCommand("saveComp");
     fileSaveComp.addActionListener(this);
     fileSaveComp.setMnemonic('c');
     fileSaveComp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, MENU_MASK));
     fileSaveComp.setEnabled(addSave);
+    JMenuItem fileSaveTiff = new JMenuItem("Save as TIFF Format");
+    subFile.add(fileSaveTiff);
+    fileSaveTiff.setActionCommand("saveTiff");
+    fileSaveTiff.addActionListener(this);
+    fileSaveTiff.setMnemonic('t');
+    fileSaveTiff.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, MENU_MASK));
+    fileSaveTiff.setEnabled(addSave);
+    file.add(subFile);
     JMenuItem fileSaveAs = new JMenuItem("Save As...");
     file.add(fileSaveAs);
     fileSaveAs.setActionCommand("saveAs");
@@ -211,7 +222,7 @@ public class MetadataNotebook extends JFrame
     fileSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
       KeyEvent.CTRL_MASK|KeyEvent.SHIFT_MASK));
     fileSaveAs.setEnabled(addSave);
-    JSeparator jSep = new JSeparator();
+    jSep = new JSeparator();
     file.add(jSep);
     JMenuItem fileExit = new JMenuItem("Exit");
     file.add(fileExit);
@@ -270,6 +281,14 @@ public class MetadataNotebook extends JFrame
     exportItem.setActionCommand("export");
     exportItem.setMnemonic('x');
     exportItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENU_MASK));
+    JMenuItem mergeItem = new JMenuItem("Merge Companion File");
+    mergeItem.setSelected(false);
+    toolsMenu.add(mergeItem);
+    mergeItem.addActionListener(this);
+    mergeItem.setActionCommand("merge");
+    mergeItem.setMnemonic('m');
+    mergeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, MENU_MASK));
+    
 
     JMenu options = new JMenu("Options");
     options.setMnemonic('o');
@@ -327,6 +346,10 @@ public class MetadataNotebook extends JFrame
   /** saves to a companion file, same path with .meta extenstion, pure ome*/
   public void saveCompanionFile(File file) {
     metadata.saveCompanionFile(file);
+  }
+  
+  public void saveTiffFile(File file) {
+    metadata.saveTiffFile(file);
   }
 
   /**Given an array of Strings of appropriate tab names, this method
@@ -433,6 +456,10 @@ public class MetadataNotebook extends JFrame
     }
     else if ("saveComp".equals(cmd) && currentFile != null) {
       saveCompanionFile(currentFile);
+      metadata.stateChanged(false);
+    }
+    else if ("saveTiff".equals(cmd) && currentFile != null) {
+      saveTiffFile(currentFile);
       metadata.stateChanged(false);
     }
     else if ("exit".equals(cmd)) {
