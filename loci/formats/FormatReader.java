@@ -416,7 +416,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() {
-    return currentId;
+    return currentId == null ? "" : currentId;
   }
 
   /* @see IFormatReader#swapDimensions(String, String) */

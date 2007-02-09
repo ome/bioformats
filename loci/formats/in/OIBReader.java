@@ -334,26 +334,34 @@ public class OIBReader extends FormatReader {
 
       String[] labels = new String[9];
       String[] dims = new String[9];
+      String[] starts = new String[9];
+      String[] stops = new String[9];
 
       for (int i=0; i<labels.length; i++) {
-        labels[i] = (String)
-          getMeta("[Axis " + i + " Parameters Common] - AxisCode");
-        dims[i] =
-          (String) getMeta("[Axis " + i + " Parameters Common] - MaxSize");
+        String pre = "[Axis " + i + " Parameters Common] - ";
+        labels[i] = (String) getMeta(pre + "AxisCode");
+        dims[i] = (String) getMeta(pre + "MaxSize");
+        starts[i] = (String) getMeta(pre + "StartPosition");
+        stops[i] = (String) getMeta(pre + "EndPosition");
         if (labels[i] == null) labels[i] = "";
         if (dims[i] == null) dims[i] = "0";
+        if (starts[i] == null) starts[i] = "0";
+        if (stops[i] == null) stops[i] = "0";
       }
 
       for (int i=0; i<labels.length; i++) {
         if (labels[i].equals("\"X\"") || labels[i].equals("\"Y\"")) { }
         else if (labels[i].equals("\"C\"")) {
-          nChannels.add(new Integer(dims[i]));
+          if (!starts[i].equals(stops[i])) nChannels.add(new Integer(dims[i]));
+          else nChannels.add(new Integer(1));
         }
         else if (labels[i].equals("\"Z\"")) {
-          zSize.add(new Integer(dims[i]));
+          if (!starts[i].equals(stops[i])) zSize.add(new Integer(dims[i]));
+          else zSize.add(new Integer(1));
         }
         else if (labels[i].equals("\"T\"")) {
-          tSize.add(new Integer(dims[i]));
+          if (!starts[i].equals(stops[i])) tSize.add(new Integer(dims[i]));
+          else tSize.add(new Integer(1));
         }
         else if (!dims[i].equals("0")) {
           if (nChannels.size() > 0) {
@@ -401,6 +409,7 @@ public class OIBReader extends FormatReader {
         currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
 
         int numImages = ((Integer) nImages.get(i)).intValue();
+       
         if (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) {
           int diff = numImages - (sizeZ[i] * sizeT[i] * sizeC[i]);
 
