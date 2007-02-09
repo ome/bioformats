@@ -324,7 +324,6 @@ public class MetadataPane extends JPanel
     File compFile = new File(file.getPath() + ".ome");
     try {
       thisOmeNode.writeOME(compFile, false);
-      stateChanged(false);
     }
     catch (Exception exc) {
       if(exc instanceof RuntimeException) throw (RuntimeException)exc;
@@ -384,7 +383,42 @@ public class MetadataPane extends JPanel
         MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
         mn.setCurrentFile(file);
       }
-      stateChanged(false);
+    }
+  }
+  
+  public void merge() throws RuntimeException {
+    if (currentFile != null) {
+      String id = currentFile.getPath();
+      ImageReader read = new ImageReader();
+      OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
+      read.setMetadataStore(ms);
+      
+      try { 
+        //just to repopulate the metadatastore to original state     
+        int imageCount = read.getImageCount(id);
+//        BufferedImage whatever = reader.openImage(id, imageCount/2);
+      }
+      catch(Exception exc) {
+        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+        else exc.printStackTrace();
+      }
+      OMENode ome = (OMENode)ms.getRoot();
+    
+      File companion = new File(currentFile.getPath() + ".ome");
+      if (companion.exists()) {
+        Merger merge = new Merger(ome,companion,this);
+        setOMEXML(merge.getRoot());
+      }
+      else {
+        JOptionPane.showMessageDialog(this,
+            "No companion file found to merge!!",
+            "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+    else {
+      JOptionPane.showMessageDialog(this,
+            "You have not saved or opened a file to merge yet!",
+            "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -456,11 +490,11 @@ public class MetadataPane extends JPanel
         int width = 50, height = 50;
         thumb = ImageTools.scale(img, width, height, false);
         ome = (OMENode) ms.getRoot();
+        
         if(doMerge) {
           Merger merge = new Merger(ome,companionFile,this);
           ome = merge.getRoot();
         }
-        
         setOMEXML(ome);
       }
       catch (FormatException exc) {

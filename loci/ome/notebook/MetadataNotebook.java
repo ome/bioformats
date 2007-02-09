@@ -462,6 +462,9 @@ public class MetadataNotebook extends JFrame
       saveTiffFile(currentFile);
       metadata.stateChanged(false);
     }
+    else if ("merge".equals(cmd)) {
+      metadata.merge();
+    }
     else if ("exit".equals(cmd)) {
           if (metadata.getState()) {
         Object[] options = {"Yes, exit!", "No thanks."};
