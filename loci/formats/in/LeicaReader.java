@@ -232,6 +232,8 @@ public class LeicaReader extends BaseTiffReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
+    leiFilename = null;
+    files = null;
     if (tiff != null) {
       for (int i=0; i<tiff.length; i++) {
         if (tiff[i] != null) {
@@ -249,6 +251,7 @@ public class LeicaReader extends BaseTiffReader {
     if (debug) debug("LeicaReader.initFile(" + id + ")");
     String idLow = id.toLowerCase();
     close();
+    
     if (idLow.endsWith("tif") || idLow.endsWith("tiff")) {
       if (ifds == null) super.initFile(id);
 
@@ -970,10 +973,12 @@ public class LeicaReader extends BaseTiffReader {
           pt += 4;
 
           String name = DataTools.stripString(new String(temp, pt, length));
+          /*
           if (name.equals("Green") || name.equals("Red") || name.equals("Blue"))
           {
             numChannels[i] = 3;
           }
+          */
           addMeta("LUT Channel " + j + " name", name);
           pt += length;
 
@@ -1000,8 +1005,13 @@ public class LeicaReader extends BaseTiffReader {
         int oldSeries = getSeries(currentId);
         for (int i=0; i<sizeC.length; i++) {
           setSeries(currentId, i);
-          if (isRGB(currentId)) sizeC[i] = 3;
-          else sizeC[i] = 1;
+          if (!ignoreColorTable) {
+            if (isRGB(currentId)) sizeC[i] = 3;
+            else sizeC[i] = 1;
+          }
+          else {
+            sizeZ[i] /= sizeC[i];
+          }
         }
         setSeries(currentId, oldSeries);
       }
@@ -1044,7 +1054,7 @@ public class LeicaReader extends BaseTiffReader {
 
       if (sizeC[i] == 0) sizeC[i] = 1;
       sizeT[i] += 1;
-      currentOrder[i] = "XYZTC";
+      currentOrder[i] = sizeC[i] == 1 ? "XYZTC" : "XYCZT";
 
       int tPixelType = ((Integer) getMeta("Bytes per pixel")).intValue();
       switch (tPixelType) {
