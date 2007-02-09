@@ -179,7 +179,9 @@ public class Importer implements ItemListener {
 
     // -- Step 2: identify file --
 
-    IJ.showStatus("Identifying " + fileName);
+    if (!LOCATION_OME.equals(location)) {
+      IJ.showStatus("Identifying " + fileName);
+    }
 
     // determine whether we can handle this file
     ImageReader reader = new ImageReader();

@@ -97,7 +97,16 @@ public class OMEPlugin implements PlugIn {
    */
   private void getInput() {
     GenericDialog gd = new GenericDialog("OME Login");
-    gd.addStringField("Server:   ", Prefs.get("downloader.server", ""), 30);
+    
+    String s = Prefs.get("downloader.server", "");
+    if (s.startsWith("http:")) s = s.substring(5);
+    while (s.startsWith("/")) s = s.substring(1);
+    int slash = s.indexOf("/");
+    if (slash >= 0) s = s.substring(0, slash);
+    int colon = s.indexOf(":");
+    if (colon >= 0) s = s.substring(0, colon);
+    
+    gd.addStringField("Server:   ", s, 30);
     gd.addStringField("Username: ", Prefs.get("downloader.user", ""), 30);
     gd.addStringField("Password: ", "", 30);
 
@@ -119,17 +128,18 @@ public class OMEPlugin implements PlugIn {
       server = server.substring(5);
     }
     while (server.startsWith("/")) server = server.substring(1);
-    int slash = server.indexOf("/");
+    slash = server.indexOf("/");
     if (slash >= 0) server = server.substring(0, slash);
-    int colon = server.indexOf(":");
+    colon = server.indexOf(":");
     if (colon >= 0) server = server.substring(0, colon);
+
+    Prefs.set("downloader.server", server);
 
     server = "http://" + server + "/shoola/";
     
     username = gd.getNextString();
     password = gd.getNextString();
 
-    Prefs.set("downloader.server", server);
     Prefs.set("downloader.user", username);
   }
 
@@ -296,12 +306,12 @@ public class OMEPlugin implements PlugIn {
 
       //do the image search
       IJ.showStatus("Searching for images...");
-      
+     
       String project = gd.getNextChoice();
       String owner = gd.getNextChoice();
       String img = gd.getNextString();
       String imageName = gd.getNextString();
-      
+     
       while (images.length == 0) {
         //get search results
 
