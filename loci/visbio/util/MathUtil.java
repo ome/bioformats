@@ -57,7 +57,7 @@ public final class MathUtil {
    *
    * @param a Coordinates of the line's first endpoint
    * @param b Coordinates of the line's second endpoint
-   * @param v Coordinates of the standalone endpoint
+   * @param v Coordinates of the standalone point
    * @param segment Whether distance computation should be constrained to the given line segment
    *
    */
@@ -132,13 +132,68 @@ public final class MathUtil {
     else return b;
   }
 
-   /**  Gets distance to curve: finds out if the nearest point is a node or a segment;
+  /** Gets distance to a curve of points connected by straight line segments.  
+   *  Also returns a segment index and wieght describing the location of the 
+   *  nearest point on the curve (see below).
    *
    *  @param x x coordinate of point in question
    *  @param y y coordinate of point in question
-   *  @return an array double[3], with element 0 being node index i of one end of
-   *  closest line segment (the other end being i+1), and the third being the weight
-   *  between zero and one for interpolation along the segment (i, i+1)
+   *  @return an array double[3] with element 0 the distance to the nearest 
+   *  point on the curve, element 1 the node index i of one end of
+   *  closest line segment (the other end being i+1), and element 2 the weight
+   *  (between zero and one) for determining the location of the closest point
+   *  by interpolation along the segment (i, i+1).
+   */
+  public static double[] getDistSegWt(double[][] nodes, double x, double y) {
+    // assumes a non-ragged array of float[2][numNodes]
+    double minDist = Double.MAX_VALUE;
+    int seg = 0;
+    double weight = 0;
+
+    int numNodes = nodes[0].length;
+
+    // toss out the trivial case
+    if (numNodes == 1) {
+      double xdist = x - nodes[0][0];
+      double ydist = y - nodes[1][0];
+      minDist = Math.sqrt(xdist * xdist + ydist * ydist);
+    } else {
+
+      for (int i=0; i<numNodes-1; i++) {
+         double[] a = {nodes[0][i], nodes[1][i]};
+         double[] b = {nodes[0][i+1], nodes[1][i+1]};
+         double[] p = {x, y};
+
+         double[] proj = getProjection(a, b, p, true);
+         double dist = getDistance(p, proj);
+
+         if (dist < minDist) {
+           minDist = dist;
+           seg = i;
+           double segDist = getDistance (a, b);
+           double fracDist = getDistance (a, proj);
+           weight = fracDist / segDist;
+         }
+       }
+    }
+
+    double[] retvals = {minDist, (double) seg, weight}; // 'seg' is always an integer;
+    // cast down to int in functions using this method.
+    return retvals;
+  }
+
+  /** Gets distance to a curve of points connected by straight line segments.  
+   *  Also returns a segment index and wieght describing the location of the 
+   *  nearest point on the curve (see below).
+   *  All math takes place in double precision (floats upcast).
+   *
+   *  @param x x coordinate of point in question
+   *  @param y y coordinate of point in question
+   *  @return an array double[3] with element 0 the distance to the nearest 
+   *  point on the curve, element 1 the node index i of one end of
+   *  closest line segment (the other end being i+1), and element 2 the weight
+   *  (between zero and one) for determining the location of the closest point
+   *  by interpolation along the segment (i, i+1).
    */
   public static double[] getDistSegWt(float[][] nodes, float x, float y) {
     // assumes a non-ragged array of float[2][numNodes]
@@ -172,7 +227,8 @@ public final class MathUtil {
          }
        }
     }
-    double[] retvals = {minDist, (double) seg, weight};
+    double[] retvals = {minDist, (double) seg, weight}; // 'seg' is always an integer;
+    // cast down to int in functions using this method.
     return retvals;
   }
 
