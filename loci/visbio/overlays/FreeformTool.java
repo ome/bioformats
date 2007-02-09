@@ -42,6 +42,12 @@ public class FreeformTool extends OverlayTool {
    */
   protected static final double DRAW_THRESH = 2.0;
 
+  /** 
+   * How close a mouseDrag event must be to a node
+   * in order to erase it
+   */
+  protected static final double ERASE_THRESH = 10.0;
+
   /** Threshhold within which click must occur to invoke edit mode. */
   protected static final double EDIT_THRESH = 6.0;
 
@@ -51,17 +57,20 @@ public class FreeformTool extends OverlayTool {
    */
   protected static final double RECONNECT_THRESH = 1.0;
 
-  /** Constant for "erase" edit mode. */
+  /** Constant for "erase" mode. */
   protected static final int ERASE = -1;
 
-  /** Constant for "chill" edit mode. */
+  /** Constant for "wait" mode. */
   protected static final int CHILL = 0; // could call this WAIT...
 
-  /** Consant for "draw" edit mode. */
+  /** Consant for "draw" mode. */
   protected static final int DRAW = 1;
 
-  /** Constant for "edit" edit mode. */
+  /** Constant for "edit" mode. */
   protected static final int EDIT = 2;
+
+  /** Constant for "init" mode */
+  protected static final int INIT = 3;
 
   // -- Fields --
 
@@ -79,6 +88,9 @@ public class FreeformTool extends OverlayTool {
 
   /** Chunks of curve tracked during EDIT */
   protected float[][] pre, post; 
+
+  /** Point at which mouseDown occurs */
+  protected float downX, downY;
 
   // -- Constructor --
 
@@ -164,10 +176,10 @@ public class FreeformTool extends OverlayTool {
     else {
       if (!ctl) {
         deselectAll();
-        freeform = new OverlayFreeform(overlay, dx, dy, dx, dy);
-        configureOverlay(freeform);
-        overlay.addObject(freeform, pos);
-        setMode(DRAW);
+        // record initial coordinates of freeform
+        downX = dx;
+        downY = dy;
+        setMode(INIT);
       }
     }
 
@@ -179,6 +191,13 @@ public class FreeformTool extends OverlayTool {
   public void mouseDrag(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
+    if (mode == INIT) {
+      freeform = new OverlayFreeform(overlay, downX, downY, downX, downY);
+      configureOverlay(freeform);
+      overlay.addObject(freeform, pos);
+      setMode(DRAW);
+    }
+
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctl = (mods & InputEvent.CTRL_MASK) != 0;
 
@@ -289,7 +308,7 @@ public class FreeformTool extends OverlayTool {
       boolean closerToEnd = edist < bdist ? true : false;
       double mdist = closerToEnd ? edist : bdist;
 
-      if (mdist < DRAW_THRESH) {
+      if (mdist < ERASE_THRESH) {
         if (!closerToEnd) freeform.reverseNodes();
         if (ctl) {
           double[] nearest = new double[2], lastDbl = new double[2];
@@ -541,6 +560,7 @@ public class FreeformTool extends OverlayTool {
    * change: e.g., whether a freeform is selected in the list of overlays.
    */
   private void setMode(int newMode) {
+    // ACS TODO clean this logic up
     mode = newMode;
     if (mode == DRAW || mode == EDIT || mode == ERASE) {
       freeform.setDrawing(true);
@@ -561,11 +581,14 @@ public class FreeformTool extends OverlayTool {
     }
 
     if (mode == CHILL && freeform != null) {
-      freeform.computeLength();
-      freeform.updateBoundingBox();
-      freeform.computeGridParameters();
-      freeform.setDrawing(false);
-      freeform = null;
+      if (freeform.getNumNodes() <= 1) overlay.removeObject(freeform);
+      else {
+        freeform.computeLength();
+        freeform.updateBoundingBox();
+        freeform.computeGridParameters();
+        freeform.setDrawing(false);
+        freeform = null;
+      }
     }
   }
 

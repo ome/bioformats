@@ -499,6 +499,7 @@ public abstract class OverlayObject {
       maxNodes -= victims;
       nodes = newNodes;
       if (numNodes == 0) overlay.removeObject(this);
+      if (numNodes <= 1) overlay.removeObject(this);
     } else {
       //System.out.println("deleteBetween(int, int) out of bounds error");
     }
@@ -523,6 +524,7 @@ public abstract class OverlayObject {
         //System.out.println("destroying " + this);
         overlay.removeObject(this);
       }
+      if (numNodes <= 1) overlay.removeObject(this);
     }
   }
 
