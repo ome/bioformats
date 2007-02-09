@@ -158,13 +158,21 @@ public class ImageJReader extends FormatReader {
     if (debug) debug("ImageJReader.initFile(" + id + ")");
     super.initFile(id);
 
-    sizeX[0] = openImage(id, 0).getWidth();
-    sizeY[0] = openImage(id, 0).getHeight();
+    BufferedImage img = openImage(id, 0);
+
+    sizeX[0] = img.getWidth();
+    sizeY[0] = img.getHeight();
     sizeZ[0] = 1;
-    sizeC[0] = 3;
+    sizeC[0] = img.getRaster().getNumBands();
     sizeT[0] = 1;
-    pixelType[0] = FormatReader.INT8;
+    pixelType[0] = ImageTools.getPixelType(img);
     currentOrder[0] = "XYCZT";
+  
+    MetadataStore store = getMetadataStore(id);
+
+    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
+      new Integer(1), new Integer(sizeC[0]), new Integer(1),
+      new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null);
   }
 
   /* @see IFormatReader#close(boolean) */

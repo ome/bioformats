@@ -365,6 +365,19 @@ public class BMPReader extends FormatReader {
       new Boolean(!littleEndian), // BigEndian
       "XYCTZ", // Dimension order
       null); // Use index 0
+
+    // resolution is stored as pixels per meter; we want to convert to
+    // microns per pixel
+
+    int pixSizeX = Integer.parseInt((String) getMeta("X resolution"));
+    int pixSizeY = Integer.parseInt((String) getMeta("Y resolution"));
+
+    float correctedX = (1 / (float) pixSizeX) * 1000000;
+    float correctedY = (1 / (float) pixSizeY) * 1000000;
+
+    store.setDimensions(new Float(correctedX), new Float(correctedY), null,
+      null, null, null);
+  
   }
 
   // -- Main method --

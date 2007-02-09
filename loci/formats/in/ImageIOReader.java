@@ -66,6 +66,7 @@ public abstract class ImageIOReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
     return rgb;
   }
 
@@ -105,7 +106,8 @@ public abstract class ImageIOReader extends FormatReader {
     }
 
     RandomAccessStream ras = new RandomAccessStream(id);
-    DataInputStream dis = new DataInputStream(new BufferedInputStream(ras, 4096));
+    DataInputStream dis = 
+      new DataInputStream(new BufferedInputStream(ras, 4096));
     BufferedImage b = ImageIO.read(dis);
     ras.close();
     dis.close();
@@ -123,26 +125,28 @@ public abstract class ImageIOReader extends FormatReader {
     if (debug) debug("ImageIOReader.initFile(" + id + ")");
     super.initFile(id);
 
-    sizeX[0] = openImage(id, 0).getWidth();
-    sizeY[0] = openImage(id, 0).getHeight();
+    BufferedImage img = openImage(id, 0);
 
-    rgb = openBytes(id, 0).length > getSizeX(id) * getSizeY(id);
+    sizeX[0] = img.getWidth();
+    sizeY[0] = img.getHeight();
+
+    rgb = img.getRaster().getNumBands() > 1; 
 
     sizeZ[0] = 1;
     sizeC[0] = rgb ? 3 : 1;
     sizeT[0] = 1;
     currentOrder[0] = "XYCZT";
+    pixelType[0] = ImageTools.getPixelType(img);
 
     // populate the metadata store
 
     MetadataStore store = getMetadataStore(id);
 
-    pixelType[0] = FormatReader.UINT8;
     store.setPixels(
       new Integer(getSizeX(id)),
       new Integer(getSizeY(id)),
       new Integer(1),
-      new Integer(3),
+      new Integer(sizeC[0]),
       new Integer(1),
       new Integer(pixelType[0]),
       new Boolean(false),
