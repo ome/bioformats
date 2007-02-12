@@ -154,7 +154,7 @@ public class DeltavisionReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    Float v = (Float) getMeta("Wavelength " + theC + " min. intensity");
+    Float v = (Float) getMeta("Wavelength " + (theC + 1) + " min. intensity");
     return new Double(v.floatValue());
   }
 
@@ -163,7 +163,7 @@ public class DeltavisionReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    Float v = (Float) getMeta("Wavelength " + theC + " max. intensity");
+    Float v = (Float) getMeta("Wavelength " + (theC + 1) + " max. intensity");
     return new Double(v.floatValue());
   }
 
