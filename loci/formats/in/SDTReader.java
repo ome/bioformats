@@ -220,7 +220,7 @@ public class SDTReader extends FormatReader {
     sizeX[0] = info.width;
     sizeY[0] = info.height;
     sizeZ[0] = 1;
-    sizeC[0] = getImageCount(id);
+    sizeC[0] = channels;
     sizeT[0] = 1;
     currentOrder[0] = "XYZTC";
     pixelType[0] = FormatReader.UINT16;
