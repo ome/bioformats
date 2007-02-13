@@ -220,6 +220,7 @@ public class GIFReader extends FormatReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
+    numFrames = 0;
   }
 
   /** Initializes the given GIF file. */
@@ -227,6 +228,7 @@ public class GIFReader extends FormatReader {
     if (debug) debug("GIFReader.initFile(" + id + ")");
     super.initFile(id);
 
+    numFrames = 0;
     status = STATUS_OK;
     in = new RandomAccessStream(id);
     images = new Vector();
