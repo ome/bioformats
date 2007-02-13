@@ -45,7 +45,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** The maximum index in the channelMinMax array */
   private static final int MAX = 1;
-	
+
   // -- Fields --
 
   /** Current TIFF file. */
@@ -559,8 +559,21 @@ public abstract class BaseTiffReader extends FormatReader {
 
       // populate Logical Channel elements
       for (int i=0; i<getSizeC(currentId); i++) {
-        setLogicalChannel(i);
-        setChannelGlobalMinMax(i);
+        try {
+          setLogicalChannel(i);
+          if ((getChannelGlobalMinimum(currentId, 0) == null ||
+            getChannelGlobalMaximum(currentId, 0) == null) &&
+            enableChannelStatCalculation)
+          {
+            setChannelGlobalMinMax(i);
+          }
+        }
+        catch (FormatException e) {
+          if (debug) e.printStackTrace();
+        }
+        catch (IOException e) {
+          if (debug) e.printStackTrace();
+        }
       }
 
       // populate the default display options
@@ -833,10 +846,42 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void setChannelGlobalMinMax(int channelIdx)
     throws FormatException, IOException
   {
-    Double min = getChannelGlobalMinimum(currentId, channelIdx);
-    Double max = getChannelGlobalMaximum(currentId, channelIdx);
-    getMetadataStore(currentId).setChannelGlobalMinMax(channelIdx, min,
-                                                       max, null);
+    getChannelGlobalMinMax();
+    getMetadataStore(currentId).setChannelGlobalMinMax(channelIdx,
+        channelMinMax[channelIdx][MIN], channelMinMax[channelIdx][MAX], null);
+  }
+
+  /**
+   * Retrieves the global min and max for each channel.
+   * @throws FormatException if there is an error parsing metadata.
+   * @throws IOException if there is an error reading the file.
+   */
+  public void getChannelGlobalMinMax() throws FormatException, IOException {
+    if (channelMinMax == null) {
+      channelMinMax = new Double[getSizeC(currentId)][2];
+    }
+    else return;
+
+    for (int c = 0; c < getSizeC(currentId); c++) {
+      double min = Double.MAX_VALUE;
+      double max = Double.MIN_VALUE;
+      for (int t = 0; t < getSizeT(currentId); t++) {
+        for (int z = 0; z < getSizeZ(currentId); z++) {
+          int index = getIndex(currentId, z, isRGB(currentId) ? 0 : c, t);
+          WritableRaster pixels = openImage(currentId, index).getRaster();
+          for (int x = 0; x < getSizeX(currentId); x++) {
+            for (int y = 0; y < getSizeY(currentId); y++) {
+              double pixelValue = pixels.getSampleDouble(x, y, 
+                isRGB(currentId) ? c : 0);
+              if (pixelValue < min) min = pixelValue;
+              if (pixelValue > max) max = pixelValue;
+            }
+          }
+        }
+      }
+      channelMinMax[c][MIN] = new Double(min);
+      channelMinMax[c][MAX] = new Double(max);
+    }
   }
 
   /**
