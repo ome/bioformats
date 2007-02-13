@@ -3,7 +3,8 @@
 //
 
 /*
-Coded in 2006-@year@ by Curtis Rueden, for Long Yan and others.
+Coded in 2006-@year@ by Curtis Rueden, with suggestions from
+Long Yan, Steve Trier, Kraig Kumfer and Paolo Provenzano.
 Permission is granted to use this code for anything.
 */
 
@@ -31,6 +32,7 @@ import loci.visbio.util.OutputConsole;
 import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.*;
+import visad.util.ColorMapWidget;
 
 /** A tool for visualization of spectral lifetime data. */
 public class SlimPlotter implements ActionListener, ChangeListener,
@@ -70,9 +72,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private int channels, timeBins;
   private float timeRange;
   private int minWave, waveStep, maxWave;
-  private boolean adjustPeaks;
+  private boolean adjustPeaks, cutEnd;
   private boolean[] cVisible;
   private int maxPeak;
+  private int[] maxIntensity;
 
   // ROI parameters
   private float[][] roiGrid;
@@ -91,7 +94,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   // GUI components for parameter dialog box
   private JDialog paramDialog;
   private JTextField wField, hField, tField, cField, trField, wlField, sField;
-  private JCheckBox peaksBox;
+  private JCheckBox peaksBox, cutBox;
 
   // GUI components for intensity pane
   private JSlider cSlider;
@@ -226,7 +229,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     JPanel paramPane = new JPanel();
     paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
     paramDialog.setContentPane(paramPane);
-    paramPane.setLayout(new GridLayout(10, 3));
+    paramPane.setLayout(new GridLayout(11, 3));
     wField = addRow(paramPane, "Image width", width, "pixels");
     hField = addRow(paramPane, "Image height", height, "pixels");
     tField = addRow(paramPane, "Time bins", timeBins, "");
@@ -239,14 +242,29 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     ok.addActionListener(this);
     // row 8
     peaksBox = new JCheckBox("Align peaks", true);
+    peaksBox.setToolTipText("<html>Computes the peak of each spectral " +
+      "channel, and aligns those peaks <br>to match by adjusting the " +
+      "lifetime histograms. This option corrects<br>for skew across channels " +
+      "caused by the multispectral detector's<br>variable system response " +
+      "time between channels. This option must<br>be enabled to perform " +
+      "exponential curve fitting.</html>");
     paramPane.add(peaksBox);
     paramPane.add(new JLabel());
     paramPane.add(new JLabel());
-    // row 9
-    paramPane.add(new JLabel());
+    // row 8
+    cutBox = new JCheckBox("Cut 1.5ns from fit", true);
+    cutBox.setToolTipText("<html>When performing exponential curve fitting, " +
+      "excludes the last 1.5 ns<br>from the computation. This option is " +
+      "useful because the end of the <br>the lifetime histogram sometimes " +
+      "drops off unexpectedly, skewing<br>the fit results.</html>");
+    paramPane.add(cutBox);
     paramPane.add(new JLabel());
     paramPane.add(new JLabel());
     // row 10
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    // row 11
     paramPane.add(new JLabel());
     paramPane.add(ok);
     paramDialog.pack();
@@ -255,6 +273,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     paramDialog.setLocation((screenSize.width - ps.width) / 2,
       (screenSize.height - ps.height) / 2);
     paramDialog.setVisible(true);
+    if (cVisible == null) System.exit(0); // dialog canceled (closed with X)
     maxWave = minWave + (channels - 1) * waveStep;
     roiCount = width * height;
     roiPercent = 100;
@@ -296,7 +315,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     Linear1DSet cSet = new Linear1DSet(cType,
       minWave, maxWave, channels, null, new Unit[] {nm}, null);
     bc = new RealTupleType(bType, cType);
-    RealType vType2 = RealType.getRealType("color");
+    RealType vType2 = RealType.getRealType("tau");
     RealTupleType vv = new RealTupleType(vType, vType2);
     bcvFunc = new FunctionType(bc, vv);
     RealType vTypeFit = RealType.getRealType("value_fit");
@@ -450,8 +469,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     values = new int[channels][height][width][timeBins];
     float[][][] pix = new float[channels][1][width * height];
     FieldImpl field = new FieldImpl(cxyvFunc, cSet);
-    int max = 0;
-    int maxChan = 0;
+    maxIntensity = new int[channels];
     for (int c=0; c<channels; c++) {
       int oc = timeBins * width * height * c;
       for (int h=0; h<height; h++) {
@@ -462,10 +480,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           for (int t=0; t<timeBins; t++) {
             int ndx = 2 * (oc + oh + ow + t);
             int val = DataTools.bytesToInt(data, ndx, 2, true);
-            if (val > max) {
-              max = val;
-              maxChan = c;
-            }
+            if (val > maxIntensity[c]) maxIntensity[c] = val;
             values[c][h][w][t] = val;
             sum += val;
           }
@@ -478,6 +493,16 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       FlatField ff = new FlatField(xyvFunc, xySet);
       ff.setSamples(pix[c], false);
       field.setSample(c, ff);
+    }
+
+    // compute channel with brightest intensity
+    int maxChan = 0;
+    int max = 0;
+    for (int c=0; c<channels; c++) {
+      if (maxIntensity[c] > max) {
+        max = maxIntensity[c];
+        maxChan = c;
+      }
     }
 
     // adjust peaks
@@ -537,7 +562,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayPlot.addReferences(lineRend, peakRef, new ConstantMap[] {
         new ConstantMap(-1, Display.ZAxis),
         new ConstantMap(0, Display.Blue),
-//        new ConstantMap(2, Display.LineWidth)
+        //new ConstantMap(2, Display.LineWidth)
       });
     }
 
@@ -650,9 +675,33 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       "Displays information about the selected region of interest");
     decayPane.add(decayLabel, BorderLayout.NORTH);
 
-    JPanel options = new JPanel();
-    options.setBorder(new EmptyBorder(8, 5, 8, 5));
-    options.setLayout(new BoxLayout(options, BoxLayout.Y_AXIS));
+    ColorMapWidget colorWidget = new ColorMapWidget(vMap);
+    Dimension prefSize = colorWidget.getPreferredSize();
+    colorWidget.setPreferredSize(new Dimension(prefSize.width, 0));
+
+    showData = new JCheckBox("Data", true);
+    showData.setToolTipText("Toggles visibility of raw data");
+    showData.addActionListener(this);
+    showScale = new JCheckBox("Scale", true);
+    showScale.setToolTipText("Toggles visibility of scale bars");
+    showScale.addActionListener(this);
+    showBox = new JCheckBox("Box", true);
+    showBox.setToolTipText("Toggles visibility of bounding box");
+    showBox.addActionListener(this);
+    showLine = new JCheckBox("Line", adjustPeaks);
+    showLine.setToolTipText(
+      "Toggles visibility of aligned peaks indicator line");
+    showLine.setEnabled(adjustPeaks);
+    showLine.addActionListener(this);
+    showFit = new JCheckBox("Fit", false);
+    showFit.setToolTipText("Toggles visibility of fitted curves");
+    showFit.setEnabled(adjustPeaks);
+    showFit.addActionListener(this);
+    showResiduals = new JCheckBox("Residuals", false);
+    showResiduals.setToolTipText(
+      "Toggles visibility of fitted curve residuals");
+    showResiduals.setEnabled(adjustPeaks);
+    showResiduals.addActionListener(this);
 
     linear = new JRadioButton("Linear", true);
     linear.setToolTipText("Plots 3D data with a linear scale");
@@ -695,103 +744,98 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       "Colorizes data according to aggregate lifetime value");
     colorTau.setEnabled(adjustPeaks && channels > 1);
 
-    numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
-    numCurves.setToolTipText("Number of components in exponential fit");
-    numCurves.setMaximumSize(numCurves.getPreferredSize());
-    numCurves.addChangeListener(this);
-
-    JPanel showPanel = new JPanel();
-    showPanel.setBorder(new TitledBorder("Show"));
-    showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.X_AXIS));
-
-    showData = new JCheckBox("Data", true);
-    showData.setToolTipText("Toggles visibility of raw data");
-    showData.addActionListener(this);
-    showPanel.add(showData);
-    showScale = new JCheckBox("Scale", true);
-    showScale.setToolTipText("Toggles visibility of scale bars");
-    showScale.addActionListener(this);
-    showPanel.add(showScale);
-    showBox = new JCheckBox("Box", true);
-    showBox.setToolTipText("Toggles visibility of bounding box");
-    showBox.addActionListener(this);
-    showPanel.add(showBox);
-    showLine = new JCheckBox("Line", adjustPeaks);
-    showLine.setToolTipText(
-      "Toggles visibility of aligned peaks indicator line");
-    showLine.setEnabled(adjustPeaks);
-    showLine.addActionListener(this);
-    showPanel.add(showLine);
-    showFit = new JCheckBox("Fit", false);
-    showFit.setToolTipText("Toggles visibility of fitted curves");
-    showFit.setEnabled(adjustPeaks);
-    showFit.addActionListener(this);
-    showPanel.add(showFit);
-    showResiduals = new JCheckBox("Residuals", false);
-    showResiduals.setToolTipText(
-      "Toggles visibility of fitted curve residuals");
-    showResiduals.setEnabled(adjustPeaks);
-    showResiduals.addActionListener(this);
-    showPanel.add(showResiduals);
-
-    JPanel scalePanel = new JPanel();
-    scalePanel.setBorder(new TitledBorder("Z Scale Override"));
-    scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
-
     zOverride = new JCheckBox("", false);
     zOverride.setToolTipText("Toggles manual override of Z axis scale (Count)");
     zOverride.addActionListener(this);
-    scalePanel.add(zOverride);
     zScaleValue = new JTextField(9);
     zScaleValue.setToolTipText("Overridden Z axis scale value");
     zScaleValue.setEnabled(false);
     zScaleValue.getDocument().addDocumentListener(this);
-    scalePanel.add(zScaleValue);
 
     exportData = new JButton("Export");
     exportData.setToolTipText(
       "Exports the selected ROI's raw data to a text file");
     exportData.addActionListener(this);
 
+    numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
+    numCurves.setToolTipText("Number of components in exponential fit");
+    numCurves.setMaximumSize(numCurves.getPreferredSize());
+    numCurves.addChangeListener(this);
+
     setProgress(progress, 990); // estimate: 99%
     if (progress.isCanceled()) System.exit(0);
 
-    JPanel leftPanel = new JPanel() {
+    JPanel showPanel = new JPanel();
+    showPanel.setBorder(new TitledBorder("Show"));
+    showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.Y_AXIS));
+    showPanel.add(showData);
+    showPanel.add(showScale);
+    showPanel.add(showBox);
+    showPanel.add(showLine);
+    showPanel.add(showFit);
+    showPanel.add(showResiduals);
+
+    JPanel scalePanel = new JPanel();
+    scalePanel.setBorder(new TitledBorder("Z Scale Override"));
+    scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
+    scalePanel.add(zOverride);
+    scalePanel.add(zScaleValue);
+
+    JPanel colorPanel = new JPanel();
+    colorPanel.setBorder(new TitledBorder("Color Mapping"));
+    colorPanel.setLayout(new BorderLayout());
+    colorPanel.add(colorWidget);
+
+    JPanel miscRow1 = new JPanel();
+    miscRow1.setLayout(new BoxLayout(miscRow1, BoxLayout.X_AXIS));
+    miscRow1.add(makeRadioPanel("Scale", linear, log));
+    miscRow1.add(makeRadioPanel("Projection", perspective, parallel));
+    miscRow1.add(makeRadioPanel("Data", dataSurface, dataLines));
+
+    JPanel miscRow2 = new JPanel();
+    miscRow2.setLayout(new BoxLayout(miscRow2, BoxLayout.X_AXIS));
+    miscRow2.add(makeRadioPanel("Fit", fitSurface, fitLines));
+    miscRow2.add(makeRadioPanel("Residuals", resSurface, resLines));
+    miscRow2.add(makeRadioPanel("Colors", colorHeight, colorTau));
+
+    JPanel miscRow3 = new JPanel();
+    miscRow3.setLayout(new BoxLayout(miscRow3, BoxLayout.X_AXIS));
+    miscRow3.add(scalePanel);
+    miscRow3.add(Box.createHorizontalStrut(5));
+    miscRow3.add(exportData);
+    //miscRow3.add(numCurves);
+
+    JPanel miscPanel = new JPanel();
+    miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
+    miscPanel.add(miscRow1);
+    miscPanel.add(miscRow2);
+    miscPanel.add(miscRow3);
+
+    JPanel options = new JPanel();
+    options.setBorder(new EmptyBorder(8, 5, 8, 5));
+    options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
+    options.add(colorPanel);
+    options.add(showPanel);
+    options.add(miscPanel);
+    decayPane.add(options, BorderLayout.SOUTH);
+    masterPane.add(decayPane, BorderLayout.CENTER);
+
+    JPanel rightPanel = new JPanel() {
       public Dimension getMaximumSize() {
         Dimension pref = getPreferredSize();
         Dimension max = super.getMaximumSize();
         return new Dimension(pref.width, max.height);
       }
     };
-    leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-    leftPanel.add(intensityPane);
-    leftPanel.add(console.getWindow().getContentPane());
+    rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+    rightPanel.add(intensityPane);
+    rightPanel.add(console.getWindow().getContentPane());
     BreakawayPanel breakawayPanel = new BreakawayPanel(masterPane,
       "Intensity Data - " + file.getName(), false);
-    breakawayPanel.setEdge(BorderLayout.WEST);
+    breakawayPanel.setEdge(BorderLayout.EAST);
     breakawayPanel.setUpEnabled(false);
     breakawayPanel.setDownEnabled(false);
-    breakawayPanel.setContentPane(leftPanel);
-
-    JPanel options1 = new JPanel();
-    options1.setLayout(new BoxLayout(options1, BoxLayout.X_AXIS));
-    options1.add(makeRadioPanel("Scale", linear, log));
-    options1.add(makeRadioPanel("Projection", perspective, parallel));
-    options1.add(makeRadioPanel("Data", dataSurface, dataLines));
-    options1.add(makeRadioPanel("Fit", fitSurface, fitLines));
-    options1.add(makeRadioPanel("Residuals", resSurface, resLines));
-    options1.add(makeRadioPanel("Colors", colorHeight, colorTau));
-//    options1.add(numCurves);
-    JPanel options2 = new JPanel();
-    options2.setLayout(new BoxLayout(options2, BoxLayout.X_AXIS));
-    options2.add(showPanel);
-    options2.add(scalePanel);
-    options2.add(Box.createHorizontalStrut(5));
-    options2.add(exportData);
-    options.add(options1);
-    options.add(options2);
-    decayPane.add(options, BorderLayout.SOUTH);
-    masterPane.add(decayPane, BorderLayout.CENTER);
+    breakawayPanel.setContentPane(rightPanel);
 
     setProgress(progress, 999); // estimate: 99.9%
     if (progress.isCanceled()) System.exit(0);
@@ -960,6 +1004,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       minWave = parse(wlField.getText(), minWave);
       waveStep = parse(sField.getText(), waveStep);
       adjustPeaks = peaksBox.isSelected();
+      cutEnd = cutBox.isSelected();
       cVisible = new boolean[channels];
       Arrays.fill(cVisible, true);
       paramDialog.setVisible(false);
@@ -1141,14 +1186,22 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           params[1] = 2;
           params[2] = 0;
         }
-  //      for (int i=0; i<numExp; i++) {
-  //        // initial guess for (a, b, c)
-  //        int e = 3 * i;
-  //        params[e] = (numExp - i) * maxVal / (numExp + 1);
-  //        params[e + 1] = 1;
-  //        params[e + 2] = 0;
-  //      }
+        //for (int i=0; i<numExp; i++) {
+        //  // initial guess for (a, b, c)
+        //  int e = 3 * i;
+        //  params[e] = (numExp - i) * maxVal / (numExp + 1);
+        //  params[e + 1] = 1;
+        //  params[e + 2] = 0;
+        //}
         int num = timeBins - maxPeak;
+
+        // HACK - cut off last 1.5 ns from lifetime histogram,
+        // to improve accuracy of fit.
+        if (cutEnd) {
+          int cutBins = (int) (1.5f * timeBins / timeRange);
+          if (num > cutBins + 5) num -= cutBins;
+        }
+
         float[] xVals = new float[num];
         for (int i=0; i<num; i++) xVals[i] = i;
         float[] yVals = new float[num];
