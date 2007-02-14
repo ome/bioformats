@@ -326,6 +326,8 @@ public class MetadataPane extends JPanel
     else {
       String id = currentFile.getPath();
       String outId = id + ".tif";
+      File outFile = new File(outId);
+      if(outFile.exists()) outFile.delete();
       if(reader == null) reader = new ImageReader();
       TiffWriter writer = new TiffWriter();
 
