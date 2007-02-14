@@ -199,20 +199,11 @@ public final class BrowserLauncher {
   private static final String GURL_EVENT = "GURL";
 
   /**
-   * The first parameter that needs to be passed into Runtime.exec()
+   * The parameter that needs to be passed into Runtime.exec()
    * to open the default web browser on Windows.
    */
-  private static final String FIRST_WINDOWS_PARAMETER = "/c";
-
-  /** The second parameter for Runtime.exec() on Windows. */
-  private static final String SECOND_WINDOWS_PARAMETER = "start";
-
-  /**
-   * The third parameter for Runtime.exec() on Windows.  This is a "title"
-   * parameter that the command line expects.  Setting this parameter allows
-   * URLs containing spaces to work.
-   */
-  private static final String THIRD_WINDOWS_PARAMETER = "\"\"";
+  private static final String WINDOWS_PARAMETER =
+    "url.dll,FileProtocolHandler";
 
   /**
    * The shell parameters for Firefox that opens a given URL in an
@@ -546,10 +537,8 @@ public final class BrowserLauncher {
         theBrowser = "";  // Return something non-null
         break;
       case WINDOWS_NT:
-        theBrowser = "cmd.exe";
-        break;
       case WINDOWS_9X:
-        theBrowser = "command.com";
+        theBrowser = "rundll32";
         break;
       case OTHER:
       default:
@@ -645,8 +634,7 @@ public final class BrowserLauncher {
           // Add quotes around the URL to allow ampersands and other special
           // characters to work.
         Process process = Runtime.getRuntime().exec(new String[] {
-          (String) browser, FIRST_WINDOWS_PARAMETER, SECOND_WINDOWS_PARAMETER,
-          THIRD_WINDOWS_PARAMETER, '"' + url + '"'
+          (String) browser, WINDOWS_PARAMETER, '"' + url + '"'
         });
         // This avoids a memory leak on some versions of Java on Windows.
         // That's hinted at in
