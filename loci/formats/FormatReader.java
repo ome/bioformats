@@ -451,7 +451,7 @@ public abstract class FormatReader extends FormatHandler
     MetadataStore store = getMetadataStore(id);
     store.setPixels(new Integer(sizeX[series]), new Integer(sizeY[series]),
       new Integer(sizeZ[series]), new Integer(sizeC[series]),
-      new Integer(sizeT[series]), null, null, order, new Integer(series));
+      new Integer(sizeT[series]), null, null, order, new Integer(series), null);
   }
 
   /* @see IFormatReader#getIndex(String, int, int, int) */
@@ -632,7 +632,6 @@ public abstract class FormatReader extends FormatHandler
       try {
         Class c = Class.forName("loci.formats.OMEXMLMetadataStore");
         MetadataStore ms = (MetadataStore) c.newInstance();
-        ms.createRoot();
         reader.setMetadataStore(ms);
       }
       catch (Exception exc) { }

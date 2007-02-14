@@ -299,8 +299,8 @@ public class OMEReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(!isLittleEndian(id)),
       currentOrder[0],
-      null
-    );
+      null,
+      null);
   }
   
   // -- Main method --

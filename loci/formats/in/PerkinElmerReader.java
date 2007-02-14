@@ -582,7 +582,8 @@ public class PerkinElmerReader extends FormatReader {
       new Integer(pixelType[0]), // PixelType
       null, // BigEndian
       "XYCTZ", // DimensionOrder
-      null); // Use index 0
+      null, // Use image index 0
+      null); // Use pixels index 0
 
     // populate StageLabel element
     String originX = (String) getMeta("Origin X");

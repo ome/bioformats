@@ -535,7 +535,7 @@ public abstract class BaseTiffReader extends FormatReader {
         new Integer(getSizeC(currentId)), new Integer(getSizeT(currentId)),
         new Integer(getPixelType(currentId)),
         new Boolean(!isLittleEndian(currentId)),
-        getDimensionOrder(currentId), null);
+        getDimensionOrder(currentId), null, null);
 
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);

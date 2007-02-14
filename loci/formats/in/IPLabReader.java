@@ -261,7 +261,8 @@ public class IPLabReader extends FormatReader {
       new Integer(pixelType[0]), // PixelType
       new Boolean(!littleEndian), // BigEndian
       order, // DimensionOrder
-      null); // Use index 0
+      null, // Use image index 0
+      null); // Use pixels index 0
 
     in.read(fourBytes);
     String tag = new String(fourBytes);

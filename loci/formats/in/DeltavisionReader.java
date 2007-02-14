@@ -477,7 +477,7 @@ public class DeltavisionReader extends FormatReader {
 
     store.setPixels(new Integer(width), new Integer(height), new Integer(numZ),
       new Integer(numW), new Integer(numT), new Integer(pixelType[0]),
-      new Boolean(!little), dimOrder, null);
+      new Boolean(!little), dimOrder, null, null);
 
     store.setDimensions(
       (Float) getMeta("X element length (in um)"),

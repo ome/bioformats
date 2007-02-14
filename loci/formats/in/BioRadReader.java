@@ -470,7 +470,8 @@ public class BioRadReader extends FormatReader {
       new Integer(pixelType[0]), // PixelType
       Boolean.FALSE, // BigEndian
       dimOrder, // DimensionOrder
-      null); // Use index 0
+      null, // Use image index 0
+      null); // Use pixels index 0
 
     // populate Dimensions element
     int size = pixelSize.size();

@@ -485,6 +485,7 @@ public class ZeissZVIReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(false),
       getDimensionOrder(currentId),
+      null,
       null);
 
     String pixX = (String) getMeta("Scale Factor for X");

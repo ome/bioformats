@@ -224,7 +224,7 @@ public class MNGReader extends FormatReader {
 
     store.setPixels(new Integer(width), new Integer(height), new Integer(1),
       new Integer(sizeC[0]), new Integer(numImages), new Integer(pixelType[0]),
-      Boolean.TRUE, currentOrder[0], null);
+      Boolean.TRUE, currentOrder[0], null, null);
   }
 
   // -- Main method --

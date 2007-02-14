@@ -419,7 +419,8 @@ public class DicomReader extends FormatReader {
       new Integer(pixelType[0]),  // PixelType
       new Boolean(!little),  // BigEndian
       "XYZTC", // Dimension order
-      null); // Use index 0
+      null, // Use image index 0
+      null); // Use pixels index 0
 
     store.setImage(
       null, // name

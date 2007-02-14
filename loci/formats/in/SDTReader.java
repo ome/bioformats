@@ -229,7 +229,7 @@ public class SDTReader extends FormatReader {
     store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
       new Integer(getSizeT(id)), new Integer(pixelType[0]),
-      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
+      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null, null);
   }
 
   // -- Main method --

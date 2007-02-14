@@ -148,7 +148,8 @@ public interface MetadataStore {
                      Integer i);
 
   /**
-   * Creates a pixels set in the metadata store with a particular index.
+   * Creates a pixels set in the metadata store with a particular
+   * image and pixels index.
    * @param sizeX size of an individual plane or section's X axis (width)
    * @param sizeY size of an individual plane of section's Y axis (height)
    * @param sizeZ number of optical sections per channel, per timepoint
@@ -159,12 +160,15 @@ public interface MetadataStore {
    * present in {@link FormatReader}.
    * @param bigEndian if the pixels set is big endian or not.
    * @param dimensionOrder the dimension order of the pixels set.
-   * @param i the index to use in the store. If <code>null</code> the default
-   * index of 0 will be used.
+   * @param imageNo the image index to use in the store.
+   * If <code>null</code> the default index of 0 will be used.
+   * @param pixelsNo the pixels index to use in the store.
+   * If <code>null</code> the default index of 0 will be used.
    */
   void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
                  Integer sizeC, Integer sizeT, Integer pixelType,
-                 Boolean bigEndian, String dimensionOrder, Integer i);
+                 Boolean bigEndian, String dimensionOrder,
+                 Integer imageNo, Integer pixelsNo);
 
   /**
    * Creates a stage label in the metadata store with a particular index.

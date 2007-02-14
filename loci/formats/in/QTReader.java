@@ -605,6 +605,7 @@ public class QTReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(!little),
       "XYCZT",
+      null,
       null);
 
     // this handles the case where the data and resource forks have been

@@ -216,6 +216,7 @@ public class OpenlabRawReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(true),
       "XYZTC",
+      null,
       null);
   }
 

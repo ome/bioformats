@@ -256,7 +256,8 @@ public class GatanReader extends FormatReader {
       new Integer(pixelType[0]), // PixelType
       new Boolean(!littleEndian), // BigEndian
       "XYZTC", // DimensionOrder
-      null); // Use index 0
+      null, // Use image index 0
+      null); // Use pixels index 0
   
     Float pixX = null;
     Float pixY = null;

@@ -701,7 +701,8 @@ public class OpenlabReader extends FormatReader {
         new Integer(pixelType[i]),
         new Boolean(!isLittleEndian(id)),
         getDimensionOrder(id),
-        new Integer(i));
+        new Integer(i),
+        null);
       store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
         null, null, new Integer(i));
     }

@@ -549,7 +549,8 @@ public class AVIReader extends FormatReader {
       new Integer(pixelType[0]), // PixelType
       new Boolean(!little), // BigEndian
       order, // DimensionOrder
-      null); // Use index 0
+      null, // Use image index 0
+      null); // Use pixels index 0
   }
 
   /** Reads a 4-byte String. */

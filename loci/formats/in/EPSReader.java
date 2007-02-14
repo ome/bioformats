@@ -279,6 +279,7 @@ public class EPSReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(false),
       "XYCZT",
+      null,
       null);
   }
 

@@ -435,6 +435,7 @@ public class OIFReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(false),
       "XYZTC",
+      null,
       null);
 
     Float pixX = new Float((String)

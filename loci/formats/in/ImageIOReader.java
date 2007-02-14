@@ -151,6 +151,7 @@ public abstract class ImageIOReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(false),
       getDimensionOrder(id),
+      null,
       null);
     setMetadataStore(store);
   }

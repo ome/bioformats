@@ -569,6 +569,7 @@ public class ND2Reader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(isLittleEndian(id)),
       currentOrder[0],
+      null,
       null);
 
     store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),

@@ -475,7 +475,8 @@ public class ZeissLSMReader extends BaseTiffReader {
         new Integer(pixelType[0]), // PixelType
         null, // BigEndian
         dimOrder, // DimensionOrder
-        null);
+        null, // Image index
+        null); // Pixels index
 
       int pos = in.getFilePointer();
 

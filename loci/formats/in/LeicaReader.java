@@ -1087,7 +1087,8 @@ public class LeicaReader extends BaseTiffReader {
         new Integer(pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
         "XYZTC", // DimensionOrder
-        new Integer(i));
+        new Integer(i),
+        null);
 
       String timestamp = (String) getMeta("Timestamp " + (i+1));
       String description = (String) getMeta("Image Description");

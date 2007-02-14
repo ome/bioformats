@@ -145,6 +145,7 @@ public class ImarisReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(!IS_LITTLE),
       "XYZCT",
+      null,
       null);
 
     store.setImage(

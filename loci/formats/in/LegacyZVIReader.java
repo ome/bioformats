@@ -428,7 +428,8 @@ public class LegacyZVIReader extends FormatReader {
         new Integer(pixelType[0]), // PixelType
         Boolean.FALSE, // BigEndian
         new String(dimensionOrder), // DimensionOrder
-        null); // Use index 0
+        null, // Use image index 0
+        null); // Use pixels index 0
     }
 
     if (blockList.isEmpty()) {

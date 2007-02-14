@@ -80,7 +80,7 @@ public class DummyMetadataStore implements MetadataStore {
 
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
     Integer sizeC, Integer sizeT, Integer pixelType, Boolean bigEndian,
-    String dimensionOrder, Integer i)
+    String dimensionOrder, Integer imageNo, Integer pixelsNo)
   {
   }
 

@@ -328,6 +328,7 @@ public class PrairieReader extends FormatReader {
           new Integer(pixelType[0]),
           new Boolean(isLittleEndian(id)),
           currentOrder[0],
+          null,
           null);
         store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null,
           null, null, null);

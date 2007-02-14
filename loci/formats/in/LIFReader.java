@@ -553,7 +553,8 @@ public class LIFReader extends FormatReader {
         new Integer(pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
         getDimensionOrder(currentId), // DimensionOrder
-        ii); // Index
+        ii, // Image index
+        null); // Pixels index
 
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
       Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;

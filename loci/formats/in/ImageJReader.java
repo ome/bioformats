@@ -172,7 +172,7 @@ public class ImageJReader extends FormatReader {
 
     store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
       new Integer(1), new Integer(sizeC[0]), new Integer(1),
-      new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null);
+      new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null, null);
   }
 
   /* @see IFormatReader#close(boolean) */

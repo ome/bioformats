@@ -787,7 +787,7 @@ public class FileStitcher implements IFormatReader {
     s.setPixels(new Integer(width[sno]), new Integer(height[sno]),
       new Integer(totalSizeZ[sno]), new Integer(totalSizeC[sno]),
       new Integer(totalSizeT[sno]), new Integer(pixelType),
-      new Boolean(!little), order[sno], new Integer(sno));
+      new Boolean(!little), order[sno], new Integer(sno), null);
   }
 
   /**

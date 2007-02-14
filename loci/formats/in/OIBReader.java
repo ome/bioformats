@@ -500,7 +500,8 @@ public class OIBReader extends FormatReader {
         new Integer(pixelType[i]),
         new Boolean(false),
         currentOrder[i],
-        new Integer(i));
+        new Integer(i),
+        null);
 
       Float pixX = new Float(getMeta(
         "[Reference Image Parameter] - WidthConvertValue").toString());

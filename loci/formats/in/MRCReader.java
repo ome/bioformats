@@ -335,6 +335,7 @@ public class MRCReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(!little),
       currentOrder[0],
+      null,
       null);
 
     store.setDimensions(new Float(xlen / mx), new Float(ylen / my),

@@ -205,16 +205,16 @@ public class AggregateMetadataStore implements MetadataStore {
 
   /*
    * @see MetadataStore#setPixels(Integer, Integer, Integer,
-   *   Integer, Integer, String, Boolean, String, Integer)
+   *   Integer, Integer, String, Boolean, String, Integer, Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
     Integer sizeC, Integer sizeT, Integer pixelType, Boolean bigEndian,
-    String dimensionOrder, Integer i)
+    String dimensionOrder, Integer imageNo, Integer pixelsNo)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, bigEndian,
-                  dimensionOrder, i);
+                  dimensionOrder, imageNo, pixelsNo);
     }
   }
 

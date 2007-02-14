@@ -226,6 +226,7 @@ public class AliconaReader extends FormatReader {
       new Integer(pixelType[0]),
       new Boolean(true),
       "XYCTZ",
+      null,
       null
     );
 

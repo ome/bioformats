@@ -64,7 +64,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   // -- Constructor --
 
   /** Creates a new instance. */
-  public OMEXMLMetadataStore() { }
+  public OMEXMLMetadataStore() { createRoot(); }
 
   // -- OMEXMLMetadataStore methods --
 
@@ -435,18 +435,19 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
   /*
    * @see MetadataStore#setPixels(Integer, Integer, Integer,
-   *   Integer, Integer, String, Boolean, String, Integer)
+   *   Integer, Integer, String, Boolean, String, Integer, Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
     Integer sizeC, Integer sizeT, Integer pixelType, Boolean bigEndian,
-    String dimensionOrder, Integer i)
+    String dimensionOrder, Integer imageNo, Integer pixelsNo)
   {
-    int ndx = i == null ? 0 : i.intValue();
+    int img = imageNo == null ? 0 : imageNo.intValue();
+    int pix = pixelsNo == null ? 0 : pixelsNo.intValue();
    
-    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    ImageNode image = (ImageNode) getChild(root, "Image", img);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
-    PixelsNode pixels = (PixelsNode) getChild(ca, "Pixels", 0);
+    PixelsNode pixels = (PixelsNode) getChild(ca, "Pixels", pix);
     pixels.setSizeX(sizeX);
     pixels.setSizeY(sizeY);
     pixels.setSizeZ(sizeZ);
@@ -455,10 +456,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     pixels.setPixelType(pixelTypeAsString(pixelType));
     pixels.setBigEndian(bigEndian);
     pixels.setDimensionOrder(dimensionOrder);
-    if (ndx == 0) {
-      // assign Pixels as default for the Image
-      image.setDefaultPixels(pixels);
-    }
+
+    // assign Pixels as default for the Image
+    image.setDefaultPixels(pixels);
   }
 
   /* @see MetadataStore#setStageLabel(String, Float, Float, Float, Integer) */

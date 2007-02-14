@@ -390,7 +390,7 @@ public class IPWReader extends BaseTiffReader {
     MetadataStore store = getMetadataStore(id);
 
     store.setPixels(null, null, zSize, cSize, tSize, new Integer(pixelType[0]),
-      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
+      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null, null);
     store.setImage(null, null, (String) getMeta("Version"), null);
   }
 

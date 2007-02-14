@@ -364,7 +364,8 @@ public class BMPReader extends FormatReader {
       new Integer(pixType),
       new Boolean(!littleEndian), // BigEndian
       "XYCTZ", // Dimension order
-      null); // Use index 0
+      null, // Use image index 0
+      null); // Use pixels index 0
 
     // resolution is stored as pixels per meter; we want to convert to
     // microns per pixel
