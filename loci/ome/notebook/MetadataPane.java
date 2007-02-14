@@ -692,11 +692,11 @@ public class MetadataPane extends JPanel
       if ( aName.equals("Image") || aName.equals("Feature") ||
         aName.equals("Dataset") || aName.equals("Project") )
       {
-        inOmeList = ome.getChildren(aName);
+        inOmeList = ome.getChildNodes(aName);
       }
       else {
         if ( ome.getChild("CustomAttributes") != null)
-          inOmeList = ome.getChild("CustomAttributes").getChildren(aName);
+          inOmeList = ome.getChild("CustomAttributes").getChildNodes(aName);
       }
       int vSize = 0;
       if (inOmeList != null) vSize = inOmeList.size();

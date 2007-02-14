@@ -97,8 +97,8 @@ public class Merger {
     
   private static OMEXMLNode merge(OMEXMLNode over, OMEXMLNode under) {
     OMEXMLNode result = over;
-    Vector overList = result.getChildren();
-    Vector underList = under.getChildren();
+    Vector overList = result.getChildNodes();
+    Vector underList = under.getChildNodes();
     Vector idList = new Vector();
     boolean isOverCustom = false;
     boolean isUnderCustom = false;

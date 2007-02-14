@@ -698,7 +698,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
    * @return child node object
    */
   private OMEXMLNode getChild(OMEXMLNode base, String name, int i) {
-    Vector children = base.getChildren(name);
+    Vector children = base.getChildNodes(name);
     if (i < children.size()) {
       if (children.get(i) != null) return (OMEXMLNode) children.get(i);
     }

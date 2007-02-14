@@ -612,7 +612,7 @@ public class MovieStitcher extends JFrame implements
                 ((OMEXMLMetadataStore) reader.getMetadataStore(in)).getRoot();
                 
               // add TiffData element here 
-              Vector images = root.getChildren("Image");
+              Vector images = root.getChildNodes("Image");
               for (int p=0; p<images.size(); p++) {
                 PixelsNode pix = 
                   (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
