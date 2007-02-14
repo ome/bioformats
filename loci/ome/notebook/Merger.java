@@ -186,7 +186,7 @@ public class Merger {
       JOptionPane.QUESTION_MESSAGE,
       (javax.swing.Icon)null,
       possibilities,
-      possibilities[3]);
+      possibilities[1]);
     if ((s != null) && (s.length() > 0)) { 
       if(s.equals(possibilities[0])) mode = ALL_ORIGINAL;
       else if (s.equals(possibilities[1])) mode = ALL_COMPANION;

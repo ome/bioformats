@@ -281,24 +281,14 @@ public class MetadataPane extends JPanel
         String xml = thisOmeNode.writeOME(false);
 
         if (originalTIFF == file) {
+          //just rewrite image description of original file.
           RandomAccessFile raf = new RandomAccessFile(file, "rw");
           TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
           raf.close();
         }
         else {
-          FileInputStream fis = new FileInputStream(originalTIFF);
-          FileOutputStream fos = new FileOutputStream(file);
-          int myByte = fis.read();
-          while (myByte != -1) {
-            fos.write(myByte);
-            myByte = fis.read();
-          }
-          fis.close();
-          fos.close();
-
-          RandomAccessFile raf = new RandomAccessFile(file, "rw");
-          TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
-          raf.close();
+          //create the new tiff file.
+          saveTiffFile(file);
         }
       }
       else {
@@ -451,6 +441,7 @@ public class MetadataPane extends JPanel
         originalTIFF = file;
       }
       else originalTIFF = null;
+      in.close();
 
       OMENode ome = null;
       
@@ -459,6 +450,7 @@ public class MetadataPane extends JPanel
       try {
         reader = new ImageReader();
         OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
+        ms.createRoot();
         
         // tell reader to write metadata as it's being
         // parsed to an OMENode (DOM in memory)
@@ -466,7 +458,7 @@ public class MetadataPane extends JPanel
         String id = file.getPath();
         File companionFile = new File(id + ".ome");
         if(companionFile.exists()) {
-          Object[] options = {"Sounds good", "No thanks"};
+          Object[] options = {"Sounds good", "No, open original file"};
         
           int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
             "We detected that an OME-xml companion file exists for"
@@ -503,6 +495,7 @@ public class MetadataPane extends JPanel
         String s = new String(header).trim();
         if (s.startsWith("<?xml") || s.startsWith("<OME")) {
           // raw OME-XML
+          in = new DataInputStream(new FileInputStream(file));
           byte[] data = new byte[(int) file.length()];
           System.arraycopy(header, 0, data, 0, 8);
           in.readFully(data, 8, data.length - 8);
