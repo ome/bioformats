@@ -119,6 +119,7 @@ public class LociUploader implements PlugIn {
           new Integer(pixelType),
           new Boolean(!fi.intelByteOrder),
           "XYCZT",  // TODO : figure out a way to calculate the dimension order
+          null,
           null);
 
         store.setImage(fi.fileName, null, fi.info, null);
