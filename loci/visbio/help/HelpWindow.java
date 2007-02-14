@@ -210,6 +210,7 @@ public class HelpWindow extends JFrame
 
   /** Locates the first node with the given source. */
   private HelpTopic findTopic(String source) {
+    if (source.startsWith("http:")) return null;
     Enumeration e = root.breadthFirstEnumeration();
     while (e.hasMoreElements()) {
       HelpTopic node = (HelpTopic) e.nextElement();
