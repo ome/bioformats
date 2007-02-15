@@ -35,11 +35,13 @@ public class LegacyQTTools {
 
   // -- Constants --
 
-  public static final String NO_QT_MSG = "You need to install " +
-    "QuickTime for Java from http://www.apple.com/quicktime/";
+  public static final String NO_QT_MSG =
+    "QuickTime for Java is required to read some QuickTime files. " +
+    "Please install QuickTime for Java from http://www.apple.com/quicktime/";
 
-  public static final String EXPIRED_QT_MSG = "Your version of " +
-    "QuickTime for Java has expired";
+  public static final String EXPIRED_QT_MSG =
+    "Your version of QuickTime for Java has expired. " +
+    "Please reinstall QuickTime for Java from http://www.apple.com/quicktime/";
 
   protected static final String[] SUFFIXES = {"mov", "qt"};
 
