@@ -45,7 +45,8 @@ public class ND2Reader extends FormatReader {
   // -- Constants --
 
   private static final String NO_J2K_MSG =
-    "Please install JAI Image I/O Tools from http://jai-imageio.dev.java.net";
+    "The JAI Image I/O Tools are required to read ND2 files. Please " +
+    "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats.html";
 
   private static final String J2K_READER =
     "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
