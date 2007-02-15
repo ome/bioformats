@@ -268,6 +268,12 @@ public class SlidebookReader extends FormatReader {
     if (sizeZ[0] == 0) sizeZ[0] = 1;
     if (sizeC[0] == 0) sizeC[0] = 1;
     if (sizeT[0] == 0) sizeT[0] = 1;
+  
+    MetadataStore store = getMetadataStore(currentId);
+    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
+      new Integer(sizeZ[0]), new Integer(sizeC[0]), new Integer(sizeT[0]),
+      new Integer(pixelType[0]), new Boolean(!little), currentOrder[0], 
+      null, null); 
   }
 
   // -- Main method --
