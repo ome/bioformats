@@ -259,11 +259,7 @@ public final class OverlayIO {
           OverlayObject obj = createOverlay(className, trans, lineNum);
           if (obj == null) continue;
 
-          boolean hasNodes = false;
-          if (obj instanceof OverlayFreeform) {
-            loadedFreeforms.add(obj);
-            hasNodes = true;
-          }
+          if (obj instanceof OverlayFreeform) loadedFreeforms.add(obj);
 
           int r = MathUtil.positionToRaster(lengths, pos);
           // this error should never fire--will be caught above ("is coordinate w/in range?")
@@ -284,7 +280,6 @@ public final class OverlayIO {
           obj.filled = filled;
           obj.group = group;
           obj.notes = notes;
-          obj.hasNodes = hasNodes; // necessary to distinguish freeforms
           obj.drawing = false;
           obj.selected = false;
           obj.computeGridParameters();

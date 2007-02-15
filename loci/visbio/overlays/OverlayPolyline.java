@@ -1,5 +1,5 @@
 //
-// OverlayFreeform.java
+// OverlayPolyline.java
 //
 
 /*
@@ -23,29 +23,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-//import java.util.Arrays;
 import visad.*;
 
 /**
  * OverlayFreeform is a freeform overlay.
  */
 
-public class OverlayFreeform extends OverlayNodedObject {
+public class OverlayPolyline extends OverlayNodedObject {
 
   // -- Constructors --
 
   /** Constructs an uninitialized freeform. */
-  public OverlayFreeform(OverlayTransform overlay) { super(overlay); }
+  public OverlayPolyline(OverlayTransform overlay) { super(overlay); }
 
   /** Constructs a freeform. */
-  public OverlayFreeform(OverlayTransform overlay,
+  public OverlayPolyline(OverlayTransform overlay,
     float x1, float y1, float x2, float y2)
   {
     super(overlay, x1, y1, x2, y2);
   }
 
   /** Constructs a freeform from an array of nodes */
-  public OverlayFreeform(OverlayTransform overlay, float[][] nodes) {
+  public OverlayPolyline(OverlayTransform overlay, float[][] nodes) {
     super(overlay, nodes);
   }
 
@@ -56,7 +55,7 @@ public class OverlayFreeform extends OverlayNodedObject {
   // -- Object API methods --
 
   /** Gets a short string representation of this freeform. */
-  public String toString() { return "Freeform"; }
+  public String toString() { return "Polyline"; }
   
   /**
    * Computes a grid to be superimposed on this overlay
