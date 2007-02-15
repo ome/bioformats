@@ -47,8 +47,9 @@ public class ImageJReader extends FormatReader {
   };
 
   /** Message produced when attempting to use ImageJ without it installed. */
-  private static final String NO_IJ = "This feature requires ImageJ, " +
-    "available online at http://rsb.info.nih.gov/ij/download.html";
+  private static final String NO_IJ =
+    "ImageJ is required to read this file. Please " +
+    "obtain ij.jar from http://rsb.info.nih.gov/ij/upgrade/";
 
   // -- Fields --
 
