@@ -3,9 +3,9 @@
 //
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Hashtable;
 import loci.formats.FilePattern;
+import loci.formats.Location;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 import loci.formats.in.TiffReader;
@@ -26,7 +26,8 @@ public class SewTiffs {
     int c = Integer.parseInt(args[1]);
     int num;
     if (args.length < 3) {
-      FilePattern fp = new FilePattern(new File(base + "_C" + c + "_TP1.tiff"));
+      FilePattern fp = new FilePattern(
+        new Location(base + "_C" + c + "_TP1.tiff"));
       int[] count = fp.getCount();
       num = count[count.length - 1];
     }
