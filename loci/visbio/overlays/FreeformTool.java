@@ -179,9 +179,8 @@ public class FreeformTool extends OverlayTool {
         }
       }
     }
-    else {
+    else { // no freeform was sufficiently close
       if (!ctl) {
-        deselectAll();
         // record initial coordinates of freeform
         downX = dx;
         downY = dy;
@@ -597,9 +596,11 @@ public class FreeformTool extends OverlayTool {
   private void setMode(int newMode) {
     mode = newMode;
 
+    
     if (mode == INIT) {
     }
     else if (mode == DRAW) {
+      deselectAll();
       freeform.setDrawing(true);
       freeform.setSelected(true);
 
@@ -612,11 +613,13 @@ public class FreeformTool extends OverlayTool {
       }
     }
     else if (mode == EDIT) {
+      deselectAll();
       freeform.setDrawing(true);
       freeform.setSelected(true);
       otherFreefs.removeAllElements();
     }
     else if (mode == ERASE) {
+      deselectAll();
       freeform.setDrawing(true);
       freeform.setSelected(true);
       otherFreefs.removeAllElements();
@@ -630,6 +633,7 @@ public class FreeformTool extends OverlayTool {
           freeform.updateBoundingBox();
           freeform.computeGridParameters();
           freeform.setDrawing(false);
+          freeform.setSelected(true);
           freeform = null;
         }
       }
