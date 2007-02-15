@@ -29,7 +29,6 @@ import ij.plugin.PlugIn;
 import ij.process.*;
 import java.awt.TextField;
 import java.util.*;
-import loci.formats.*;
 import loci.ome.util.OMEUtils;
 import loci.plugins.Util;
 import org.openmicroscopy.ds.*;
@@ -336,6 +335,7 @@ public class OMEPlugin implements PlugIn {
         if (images.length == 0) {
           IJ.showMessage("OME Download",
             "No images matched the specified criteria.");
+          return;
         }
         else {
           //pick from results
@@ -351,7 +351,6 @@ public class OMEPlugin implements PlugIn {
       }
       //download into ImageJ
       for (int i=0; i<images.length; i++) {
-        ImageReader reader = new ImageReader();
         String file = server + "?user=" + username + "&password=" + password +
           "&id=" + images[i].getID();
         IJ.runPlugIn("loci.plugins.LociImporter", file);

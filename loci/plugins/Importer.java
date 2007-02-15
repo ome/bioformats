@@ -40,6 +40,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import loci.formats.*;
+import loci.formats.in.OMEReader;
 import loci.plugins.browser.LociDataBrowser;
 
 /**
@@ -184,19 +185,22 @@ public class Importer implements ItemListener {
     }
 
     // determine whether we can handle this file
-    ImageReader reader = new ImageReader();
     IFormatReader r = null;
-    try { r = reader.getReader(id); }
-    catch (Exception exc) {
-      exc.printStackTrace();
-      IJ.showStatus("");
-      if (!quiet) {
-        String msg = exc.getMessage();
-        IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
-          "reading the file" + (msg == null ? "." : (":\n" + msg)));
+    if (!LOCATION_OME.equals(location)) {
+      ImageReader reader = new ImageReader(); 
+      try { r = reader.getReader(id); }
+      catch (Exception exc) {
+        exc.printStackTrace();
+        IJ.showStatus("");
+        if (!quiet) {
+          String msg = exc.getMessage();
+          IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
+            "reading the file" + (msg == null ? "." : (":\n" + msg)));
+        }
+        return;
       }
-      return;
     }
+    else r = new OMEReader();
 
     // -- Step 3: get parameter values --
 
