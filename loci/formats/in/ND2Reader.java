@@ -64,42 +64,42 @@ public class ND2Reader extends FormatReader {
     // lookup function, then use it to construct a J2KImageReader object
     // directly, which we can use to process ND2 files one plane at a time.
 
-    // register J2KImageReader with IIORegistry
-    String j2kReaderSpi = J2K_READER + "Spi";
-    Class j2kSpiClass = null;
+    ReflectedUniverse ru = null;
     try {
-      j2kSpiClass = Class.forName(j2kReaderSpi);
-    }
-    catch (ClassNotFoundException exc) {
-      if (debug) exc.printStackTrace();
-      noJ2k = true;
-    }
-    catch (NoClassDefFoundError err) {
-      if (debug) err.printStackTrace();
-      noJ2k = true;
-    }
-    IIORegistry registry = IIORegistry.getDefaultInstance();
-    if (j2kSpiClass != null) {
-      Iterator providers = ServiceRegistry.lookupProviders(j2kSpiClass);
-      registry.registerServiceProviders(providers);
-    }
+      // register J2KImageReader with IIORegistry
+      String j2kReaderSpi = J2K_READER + "Spi";
+      Class j2kSpiClass = null;
+      try {
+        j2kSpiClass = Class.forName(j2kReaderSpi);
+      }
+      catch (ClassNotFoundException exc) {
+        if (debug) exc.printStackTrace();
+        noJ2k = true;
+      }
+      catch (NoClassDefFoundError err) {
+        if (debug) err.printStackTrace();
+        noJ2k = true;
+      }
+      IIORegistry registry = IIORegistry.getDefaultInstance();
+      if (j2kSpiClass != null) {
+        Iterator providers = ServiceRegistry.lookupProviders(j2kSpiClass);
+        registry.registerServiceProviders(providers);
+      }
 
-    // obtain J2KImageReaderSpi instance from IIORegistry
-    Object j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
+      // obtain J2KImageReaderSpi instance from IIORegistry
+      Object j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
 
-    r = null;
-    try {
-      r = new ReflectedUniverse();
+      ru = new ReflectedUniverse();
 
       // for computing offsets in initFile
-      r.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
-      r.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
-      r.exec("import jj2000.j2k.util.ISRandomAccessIO");
+      ru.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
+      ru.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
+      ru.exec("import jj2000.j2k.util.ISRandomAccessIO");
 
       // for reading pixel data in openImage
-      r.exec("import " + J2K_READER);
-      r.setVar("j2kSpi", j2kSpi);
-      r.exec("j2kReader = new J2KImageReader(j2kSpi)");
+      ru.exec("import " + J2K_READER);
+      ru.setVar("j2kSpi", j2kSpi);
+      ru.exec("j2kReader = new J2KImageReader(j2kSpi)");
     }
     catch (Throwable exc) {
       if (debug) exc.printStackTrace();
