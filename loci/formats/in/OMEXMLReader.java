@@ -38,6 +38,25 @@ import org.openmicroscopy.xml.OMENode;
  */
 public class OMEXMLReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final String NO_OME_JAVA_MSG =
+    "The Java OME-XML library is required to read OME-XML files. Please " +
+    "obtain ome-java.jar from http://loci.wisc.edu/ome/loci-ome-xml.html";
+
+  // -- Static fields --
+
+  private static boolean noOME = false;
+
+  static {
+    try {
+      Class.forName("org.openmicroscopy.xml.OMENode");
+    }
+    catch (Throwable t) {
+      noOME = true;
+    }
+  }
+
   // -- Fields --
 
   /** Current file. */
@@ -209,6 +228,7 @@ public class OMEXMLReader extends FormatReader {
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
+    if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     if (in != null) in.close();
     in = null;
     if (omexml != null) omexml.createRoot();
@@ -219,6 +239,7 @@ public class OMEXMLReader extends FormatReader {
   /** Initializes the given OME-XML file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OMEXMLReader.initFile(" + id + ")");
+    if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     close();
     currentId = id;
     metadata = new Hashtable();
