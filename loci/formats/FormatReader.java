@@ -634,7 +634,9 @@ public abstract class FormatReader extends FormatHandler
         MetadataStore ms = (MetadataStore) c.newInstance();
         reader.setMetadataStore(ms);
       }
-      catch (Exception exc) { }
+      catch (Throwable t) {
+        // NB: error messages for missing OME-Java are printed later
+      }
     }
 
     // check file format
@@ -840,14 +842,20 @@ public abstract class FormatReader extends FormatHandler
       System.out.println();
       System.out.println("Generating OME-XML");
       MetadataStore ms = reader.getMetadataStore(id);
-      try {
-        Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
-        System.out.println(m.invoke(ms, (Object[]) null));
-        System.out.println();
+
+      if (ms.getClass().getName().equals("loci.formats.OMEXMLMetadataStore")) {
+        try {
+          Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
+          System.out.println(m.invoke(ms, (Object[]) null));
+          System.out.println();
+        }
+        catch (Throwable t) {
+          System.out.println("Error generating OME-XML:");
+          t.printStackTrace();
+        }
       }
-      catch (Exception exc) {
-        System.err.println("OME-XML functionality not available:");
-        exc.printStackTrace();
+      else {
+        System.out.println("OME-Java library not found; no OME-XML available");
       }
     }
 
