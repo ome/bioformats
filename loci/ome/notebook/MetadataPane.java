@@ -278,12 +278,17 @@ public class MetadataPane extends JPanel
 
   /** Get the OMENode currently being edited.*/
   public OMENode getRoot() { return thisOmeNode; }
+  
+  public boolean testThirdParty(IFormatReader read, File file) {
+    return false;
+  }
 
   /** Save to the given file.*/
   public void saveFile(File file) {
     try {
       //use the node tree in the MetadataPane to write flattened OMECA
       //to a given file
+      if( testThirdParty(reader, file) ) return;
       if (originalTIFF != null) {
         String xml = thisOmeNode.writeOME(false);
 
@@ -485,7 +490,8 @@ public class MetadataPane extends JPanel
         int numSeries = reader.getSeriesCount(id);
         images = new BufferedImage[numSeries+1];
         thumbs = new BufferedImage[numSeries+1];
-        for(int i = 0; i<=numSeries;i++) {
+        for(int i = 0; i<numSeries;i++) {
+          if (numSeries > 1) reader.setSeries(id,i);
           int num = reader.getImageCount(id);
           if (num > 0) {
             // get middle image from the file
