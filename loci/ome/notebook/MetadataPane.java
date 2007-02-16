@@ -1412,6 +1412,10 @@ public class MetadataPane extends JPanel
 
     /**The JLabels for the title and the optional image.*/
     protected JLabel tableName, imageLabel;
+    
+    protected BufferedImage tableThumb;
+    
+    protected BufferedImage tableImage;
 
     /**
     * Construct a TablePanel to display the metadata of a
@@ -1586,10 +1590,27 @@ public class MetadataPane extends JPanel
       noteButton.setForeground(TEXT_COLOR);
 
       imageLabel = null;
-      if (name.endsWith("Pixels") || name.endsWith("Pixels (1)")) {
-        if (thumb != null) {
-          imageLabel = new JLabel(new ImageIcon(thumb));
-          imageLabel.setToolTipText("The first image of these pixels." +
+      if (name.endsWith("Pixels")) {
+        if(pixelsIDProblem || on == null) {        
+          if (thumb != null) {
+            tableThumb = thumb;
+            tableImage = img;
+            imageLabel = new JLabel(new ImageIcon(tableThumb));
+            imageLabel.setToolTipText("The middle image of these pixels." +
+              " Click for full sized image.");
+            imageLabel.addMouseListener(this);
+          }
+        }
+        else {
+          String thisID = on.getAttribute("ID");
+          int colonIndex = thisID.indexOf(":");
+          String pixNumString = thisID.substring(colonIndex + 1);
+          int pixNum = Integer.parseInt(pixNumString);
+          int indexNum = pixNum - minPixNum;
+          tableThumb = thumbs[indexNum];
+          tableImage = images[indexNum];
+          imageLabel = new JLabel(new ImageIcon(tableThumb));
+          imageLabel.setToolTipText("The middle image of these pixels." +
             " Click for full sized image.");
           imageLabel.addMouseListener(this);
         }
@@ -1858,7 +1879,7 @@ public class MetadataPane extends JPanel
       if (e.getSource() instanceof JLabel) {
         JOptionPane.showMessageDialog(getTopLevelAncestor(), null,
           "(Full Sized) " + name, JOptionPane.PLAIN_MESSAGE,
-          new ImageIcon(img));
+          new ImageIcon(tableImage));
       }
     }
 
