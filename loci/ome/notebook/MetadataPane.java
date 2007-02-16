@@ -139,6 +139,9 @@ public class MetadataPane extends JPanel
   /** Holds the ImageReader used to open image or null if none used.*/
   protected ImageReader reader;
   
+  private int minPixNum;
+  
+  private boolean pixelsIDProblem;
   
 
   // -- Fields - raw panel --
@@ -500,6 +503,46 @@ public class MetadataPane extends JPanel
           Merger merge = new Merger(ome,companionFile,this);
           ome = merge.getRoot();
         }
+
+        //find minimum pixel ID, doesn't have to be zero, if not in
+        //standard format, flag this, all thumbs will be the same        
+        minPixNum = 0;
+        pixelsIDProblem = false;
+
+        try {        
+          Vector pixList = DOMUtil.findElementList("Pixels",ome.getOMEDocument(true));
+          
+          int lowestInt = -1;
+          
+          for(int i = 0;i<pixList.size();i++) {
+            Element thisPix = (Element) pixList.get(i);
+            String thisID = thisPix.getAttribute("ID");
+            int colonIndex = thisID.indexOf(":");
+            if (colonIndex == -1) {
+              pixelsIDProblem = true;
+              break;
+            }
+            String pixNumString = thisID.substring(colonIndex + 1);
+            int pixNum = -1;
+            try {
+              pixNum = Integer.parseInt(pixNumString);
+            }
+            catch (java.lang.NumberFormatException exc) {
+              pixelsIDProblem = true;
+              break;
+            }
+            if(lowestInt == -1) {
+              lowestInt = pixNum;
+              continue;
+            }
+            if(lowestInt > pixNum) lowestInt = pixNum;
+          }
+          
+          minPixNum = lowestInt;
+          if(minPixNum == -1) pixelsIDProblem = true;
+        }
+        catch(Exception exc) { exc.printStackTrace(); }
+        
         setOMEXML(ome);
       }
       catch (FormatException exc) {
