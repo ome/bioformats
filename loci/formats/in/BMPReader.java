@@ -97,10 +97,10 @@ public class BMPReader extends FormatReader {
     return 1;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (bpp > 8);
+    return bpp > 8;
   }
 
   /** Return true if the data is in little-endian format. */

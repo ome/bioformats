@@ -72,6 +72,9 @@ public interface IFormatReader extends IFormatHandler {
    */
   int getEffectiveSizeC(String id) throws FormatException, IOException;
 
+  /** Get the number of channels per RGB image (if not RGB, this returns 1). */
+  int getRGBChannelCount(String id) throws FormatException, IOException;
+
   /**
    * Retrieves a specified channel's global minimum.
    * @param id the filename of the base image.

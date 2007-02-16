@@ -106,7 +106,7 @@ public class ImarisReader extends FormatReader {
     float dx = in.readFloat();
     float dy = in.readFloat();
     float dz = in.readFloat();
-    in.readShort();
+    int mag = in.readShort(); // TODO : set Objective:Magnification
 
     byte[] com = new byte[128];
     in.read(com);

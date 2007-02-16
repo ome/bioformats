@@ -28,7 +28,7 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
-import java.util.Hashtable;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -40,12 +40,6 @@ import loci.formats.*;
  */
 public abstract class BaseTiffReader extends FormatReader {
 
-  /** The minimum index in the channelMinMax array */
-  private static final int MIN = 0;
-
-  /** The maximum index in the channelMinMax array */
-  private static final int MAX = 1;
-
   // -- Fields --
 
   /** Current TIFF file. */
@@ -56,9 +50,6 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Number of images in the current TIFF stack. */
   protected int numImages;
-
-  /** The global min and max for each channel. */
-  protected Double[][] channelMinMax;
 
   // -- Constructors --
 
@@ -561,12 +552,6 @@ public abstract class BaseTiffReader extends FormatReader {
       for (int i=0; i<getSizeC(currentId); i++) {
         try {
           setLogicalChannel(i);
-          if ((getChannelGlobalMinimum(currentId, 0) == null ||
-            getChannelGlobalMaximum(currentId, 0) == null) &&
-            enableChannelStatCalculation)
-          {
-            setChannelGlobalMinMax(i);
-          }
         }
         catch (FormatException e) {
           if (debug) e.printStackTrace();
@@ -656,19 +641,18 @@ public abstract class BaseTiffReader extends FormatReader {
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (TiffTools.getIFDIntValue(ifds[0],
+    if (TiffTools.getIFDIntValue(ifds[0], 
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1)
     {
       return true;
     }
-    int p = TiffTools.getIFDIntValue(ifds[0],
+    int p = TiffTools.getIFDIntValue(ifds[0], 
       TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-    return (!isColorTableIgnored() &&
-      (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY)) ||
-      p == TiffTools.RGB;
+    return (!isColorTableIgnored() && (p == TiffTools.RGB_PALETTE ||
+      p == TiffTools.CFA_ARRAY)) || p == TiffTools.RGB;
   }
 
   /**
@@ -684,26 +668,6 @@ public abstract class BaseTiffReader extends FormatReader {
       initFile(id);
     }
     return getMeta(field);
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (channelMinMax == null || channelMinMax[theC] == null)
-      return null;
-    return channelMinMax[theC][MIN];
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (channelMinMax == null || channelMinMax[theC] == null)
-      return null;
-    return channelMinMax[theC][MAX];
   }
 
   /** Return true if the data is in little-endian format. */
@@ -836,53 +800,6 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   // -- Helper methods --
-
-  /**
-   * Sets the channels global min and max in the metadata store.
-   * @param channelIdx the channel to set.
-   * @throws FormatException if there is an error parsing metadata.
-   * @throws IOException if there is an error reading the file.
-   */
-  protected void setChannelGlobalMinMax(int channelIdx)
-    throws FormatException, IOException
-  {
-    getChannelGlobalMinMax();
-    getMetadataStore(currentId).setChannelGlobalMinMax(channelIdx,
-        channelMinMax[channelIdx][MIN], channelMinMax[channelIdx][MAX], null);
-  }
-
-  /**
-   * Retrieves the global min and max for each channel.
-   * @throws FormatException if there is an error parsing metadata.
-   * @throws IOException if there is an error reading the file.
-   */
-  public void getChannelGlobalMinMax() throws FormatException, IOException {
-    if (channelMinMax == null) {
-      channelMinMax = new Double[getSizeC(currentId)][2];
-    }
-    else return;
-
-    for (int c = 0; c < getSizeC(currentId); c++) {
-      double min = Double.MAX_VALUE;
-      double max = Double.MIN_VALUE;
-      for (int t = 0; t < getSizeT(currentId); t++) {
-        for (int z = 0; z < getSizeZ(currentId); z++) {
-          int index = getIndex(currentId, z, isRGB(currentId) ? 0 : c, t);
-          WritableRaster pixels = openImage(currentId, index).getRaster();
-          for (int x = 0; x < getSizeX(currentId); x++) {
-            for (int y = 0; y < getSizeY(currentId); y++) {
-              double pixelValue = pixels.getSampleDouble(x, y, 
-                isRGB(currentId) ? c : 0);
-              if (pixelValue < min) min = pixelValue;
-              if (pixelValue > max) max = pixelValue;
-            }
-          }
-        }
-      }
-      channelMinMax[c][MIN] = new Double(min);
-      channelMinMax[c][MAX] = new Double(max);
-    }
-  }
 
   /**
    * Sets the logical channel in the metadata store.

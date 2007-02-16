@@ -101,10 +101,10 @@ public class AVIReader extends FormatReader {
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (bmpBitsPerPixel > 8);
+    return bmpBitsPerPixel > 8;
   }
 
   /** Return true if the data is in little-endian format. */

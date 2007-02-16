@@ -73,7 +73,7 @@ public class AliconaReader extends FormatReader {
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
   }
@@ -234,6 +234,7 @@ public class AliconaReader extends FormatReader {
       new Float(((String) getMeta("PlanePntX")).trim()),
       new Float(((String) getMeta("PlanePntY")).trim()),
       new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
+  
   }
 
   // -- Main method --

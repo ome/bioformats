@@ -373,6 +373,11 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationGamma" + i, new Double(gamma));
           addMeta("NormalizationBlack" + i, new Double(black));
           addMeta("NormalizationWhite" + i, new Double(white));
+        
+          store = getMetadataStore(currentId);
+          store.setChannelGlobalMinMax(i, new Double(min), 
+            new Double(max), null);
+          // TODO : set DisplayChannel here
         }
       }
       else if (tag.equals("head")) {

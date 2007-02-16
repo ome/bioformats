@@ -238,7 +238,12 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#getEffectiveSizeC(String) */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    return FormatReader.getEffectiveSizeC(isRGB(id), getSizeC(id));
+    return getReader(id).getEffectiveSizeC(id);
+  }
+
+  /* @see IFormatReader#getRGBChannelCount(String) */
+  public int getRGBChannelCount(String id) throws FormatException, IOException {
+    return getReader(id).getRGBChannelCount(id);
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(int) */

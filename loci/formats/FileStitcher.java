@@ -273,7 +273,12 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getEffectiveSizeC(String) */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    return FormatReader.getEffectiveSizeC(isRGB(id), getSizeC(id));
+    return reader.getEffectiveSizeC(id);
+  }
+
+  /* @see IFormatReader#getRGBChannelCount(String) */
+  public int getRGBChannelCount(String id) throws FormatException, IOException {
+    return reader.getRGBChannelCount(id);
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */

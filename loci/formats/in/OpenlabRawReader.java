@@ -167,9 +167,19 @@ public class OpenlabRawReader extends FormatReader {
     in.readLong();
     width = in.readInt();
     height = in.readInt();
-    in.readShort();
-    bytesPerPixel = in.read();
+    in.read();
+    //bytesPerPixel = in.read();
+    //channels = in.read();
     channels = in.read();
+    bytesPerPixel = in.read();
+    in.read();
+    addMeta("Timestamp", "" + in.readLong());
+    in.skipBytes(4);
+    byte[] s = new byte[256];
+    in.read(s);
+    ///* debug */ System.out.println("name : " + new String(s).trim());
+    int len = s[0] > 0 ? s[0] : (s[0] + 256);
+    addMeta("Image name", new String(s, 1, len).trim());
 
     if (channels <= 1) channels = 1;
     else channels = 3;

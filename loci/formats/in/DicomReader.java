@@ -390,6 +390,7 @@ public class DicomReader extends FormatReader {
     sizeC[0] = 1;
     sizeT[0] = 1;
     currentOrder[0] = "XYZTC";
+    rgbChannelCount[0] = sizeC[0];
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);

@@ -114,11 +114,6 @@ public class DeltavisionReader extends FormatReader {
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
-  public boolean isRGB(String id) throws FormatException, IOException {
-    return false;
-  }
-
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -165,6 +160,11 @@ public class DeltavisionReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     Float v = (Float) getMeta("Wavelength " + (theC + 1) + " max. intensity");
     return new Double(v.floatValue());
+  }
+
+  /* @see IFormatReader#isRGB(String) */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return false;
   }
 
   /** Return true if the data is in little-endian format. */

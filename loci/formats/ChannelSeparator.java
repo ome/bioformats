@@ -29,6 +29,14 @@ import java.io.IOException;
 
 /** Logic to automatically separate the channels in a file. */
 public class ChannelSeparator extends ReaderWrapper {
+ 
+  // -- Fields --
+
+  /** Last image opened. */
+  private byte[] lastImage;
+
+  /** Index of last image opened. */
+  private int lastImageIndex = -1;
 
   // -- Constructors --
 
@@ -126,8 +134,12 @@ public class ChannelSeparator extends ReaderWrapper {
       int source = no / c;
       int channel = no % c;
 
-      byte[] sourceBytes = reader.openBytes(id, source);
-      return ImageTools.splitChannels(sourceBytes, c,
+      if (source != lastImageIndex) {
+        lastImage = reader.openBytes(id, source);
+        lastImageIndex = source;
+      }
+
+      return ImageTools.splitChannels(lastImage, c,
         false, isInterleaved(id))[channel];
     }
     else return reader.openBytes(id, no);
@@ -139,6 +151,11 @@ public class ChannelSeparator extends ReaderWrapper {
   {
     return ImageTools.scale(openImage(id, no), getThumbSizeX(id),
       getThumbSizeY(id), true);
+  }
+
+  public void close() {
+    lastImage = null;
+    lastImageIndex = -1;
   }
 
   public int getIndex(String id, int z, int c, int t)

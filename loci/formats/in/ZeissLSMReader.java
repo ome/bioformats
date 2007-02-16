@@ -162,50 +162,42 @@ public class ZeissLSMReader extends BaseTiffReader {
     // contains a thumbnail image
 
     int numThumbs = 0;
-    //try {
-      long prevOffset = 0;
-      byte[] b = new byte[48];
-      byte[] c = new byte[48];
-      for (int i=0; i<ifds.length; i++) {
-        long subFileType = TiffTools.getIFDLongValue(ifds[i],
-          TiffTools.NEW_SUBFILE_TYPE, true, 0);
-        long[] offsets = TiffTools.getStripOffsets(ifds[i]);
+    long prevOffset = 0;
+    byte[] b = new byte[48];
+    byte[] c = new byte[48];
+    for (int i=0; i<ifds.length; i++) {
+      long subFileType = TiffTools.getIFDLongValue(ifds[i],
+        TiffTools.NEW_SUBFILE_TYPE, true, 0);
+      long[] offsets = TiffTools.getStripOffsets(ifds[i]);
 
-        if (subFileType == 1) {
-          ifds[i] = null;
-          numThumbs++;
-        }
-        else if (i > 0) {
-          // make sure that we don't grab the thumbnail by accident
-          // there's probably a better way to do this
-
-          in.seek(prevOffset);
-          in.read(b);
-          in.seek(offsets[0]);
-          in.read(c);
-
-          boolean equal = true;
-          for (int j=0; j<48; j++) {
-            if (b[j] != c[j]) {
-              equal = false;
-              j = 48;
-            }
-          }
-
-          if (equal) {
-            offsets[0] += (offsets[0] - prevOffset);
-            TiffTools.putIFDValue(ifds[i], TiffTools.STRIP_OFFSETS, offsets);
-          }
-        }
-        prevOffset = offsets[0];
+      if (subFileType == 1) {
+        ifds[i] = null;
+        numThumbs++;
       }
-    /*
+      else if (i > 0) {
+        // make sure that we don't grab the thumbnail by accident
+        // there's probably a better way to do this
+
+        in.seek(prevOffset);
+        in.read(b);
+        in.seek(offsets[0]);
+        in.read(c);
+
+        boolean equal = true;
+        for (int j=0; j<48; j++) {
+          if (b[j] != c[j]) {
+            equal = false;
+            j = 48;
+          }
+        }
+
+        if (equal) {
+          offsets[0] += (offsets[0] - prevOffset);
+          TiffTools.putIFDValue(ifds[i], TiffTools.STRIP_OFFSETS, offsets);
+        }
+      }
+      prevOffset = offsets[0];
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
-    }
-    */
 
     // now copy ifds to a temp array so that we can get rid of
     // any null entries
@@ -459,6 +451,8 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       sizeC[0] = channels;
+      sizeZ[0] = zSize;
+      sizeT[0] = tSize;
       while (numImages > zSize * tSize * getEffectiveSizeC(currentId)) {
         numImages--;
       }
@@ -673,12 +667,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     catch (IOException e) {
       if (debug) e.printStackTrace();
     }
-    /*
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
-    }
-    */
 
     sizeZ[0] = zSize > 0 ? zSize : 1;
     sizeC[0] = channels > 0 ? channels : 1;

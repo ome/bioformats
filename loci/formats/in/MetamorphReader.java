@@ -104,6 +104,22 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
+  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return (Double) getMeta("grayMin");
+  }
+
+  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return (Double) getMeta("grayMax");
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable. */
@@ -312,18 +328,6 @@ public class MetamorphReader extends BaseTiffReader {
   protected String getImageCreationDate() {
     if (imageCreationDate == null) return super.getImageCreationDate();
     return imageCreationDate;
-  }
-
-  protected void setChannelGlobalMinMax(int i)
-    throws FormatException, IOException
-  {
-    Double globalMin = (Double) getMeta("grayMin");
-    Double globalMax = (Double) getMeta("grayMax");
-    if (globalMin != null || globalMax != null) {
-      getMetadataStore(currentId).setChannelGlobalMinMax(i,
-        globalMin, globalMax, null);
-    }
-    super.setChannelGlobalMinMax(i);
   }
 
   Integer getEmWave(int i) {

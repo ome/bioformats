@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-//import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -38,6 +38,10 @@ public abstract class FormatReader extends FormatHandler
 {
 
   // -- Constants --
+
+  /** Indices into the channel min/max array. */
+  protected static final int MIN = 0;
+  protected static final int MAX = 1;
 
   /** Default thumbnail width and height. */
   protected static final int THUMBNAIL_DIMENSION = 128;
@@ -97,9 +101,10 @@ public abstract class FormatReader extends FormatHandler
   protected int series = 0;
 
   /** Dimension fields. */
-  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType;
+  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, rgbChannelCount;
   protected String[] currentOrder;
   protected boolean[] orderCertain;
+  protected double[][][] channelMinMax;
 
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
@@ -153,6 +158,7 @@ public abstract class FormatReader extends FormatHandler
     sizeZ = new int[1];
     sizeC = new int[1];
     sizeT = new int[1];
+    rgbChannelCount = new int[1]; 
     pixelType = new int[1];
     currentOrder = new String[1];
     orderCertain = new boolean[] {true};
@@ -227,8 +233,9 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException;
 
   /* @see IFormatReader#isRGB(String) */
-  public abstract boolean isRGB(String id)
-    throws FormatException, IOException;
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return getRGBChannelCount(id) > 1;
+  }
 
   /* @see IFormatReader#getSizeX(String) */
   public int getSizeX(String id) throws FormatException, IOException {
@@ -268,13 +275,29 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getEffectiveSizeC(String) */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    return getEffectiveSizeC(isRGB(id), getSizeC(id));
+    return getSizeC(id) / getRGBChannelCount(id);
+  }
+
+  /* @see IFormatReader#getRGBChannelCount(String) */
+  public int getRGBChannelCount(String id) throws FormatException, IOException {
+    return getSizeC(id) / (getImageCount(id) / (getSizeZ(id) * getSizeT(id)));
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
+    if (theC < 0 || theC >= getSizeC(id)) {
+      throw new FormatException("Invalid channel index: " + theC);
+    }
+    if (enableChannelStatCalculation) {
+      if (channelMinMax != null) {
+        return new Double(channelMinMax[getSeries(id)][theC][MIN]);
+      }
+      computeMinMax(id);
+      return new Double(channelMinMax[getSeries(id)][theC][MIN]);
+    }
     return null;
   }
 
@@ -282,6 +305,17 @@ public abstract class FormatReader extends FormatHandler
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
+    if (theC < 0 || theC >= getSizeC(id)) {
+      throw new FormatException("Invalid channel index: " + theC);
+    }
+    if (enableChannelStatCalculation) {
+      if (channelMinMax != null) {
+        return new Double(channelMinMax[getSeries(id)][theC][MAX]);
+      }
+      computeMinMax(id);
+      return new Double(channelMinMax[getSeries(id)][theC][MAX]);
+    }
     return null;
   }
 
@@ -1009,16 +1043,50 @@ public abstract class FormatReader extends FormatHandler
     return new int[] {z, c, t};
   }
 
-  /**
-   * Gets the effective size of the C dimension.
-   * @see IFormatReader#getEffectiveSizeC(String)
-   */
-  public static int getEffectiveSizeC(boolean rgb, int sizeC) {
-    if (sizeC <= 4) {
-      return rgb ? (sizeC + 3) / 4 : sizeC;
+  /** Compute the minimum and maximum values for each channel. */
+  private void computeMinMax(String id) throws FormatException, IOException {
+    int oldSeries = getSeries(id);
+    if (channelMinMax == null) {
+      channelMinMax = new double[getSeriesCount(id)][][];
+      for (int i=0; i<getSeriesCount(id); i++) {
+        setSeries(id, i);
+        channelMinMax[i] = new double[getSizeC(id)][2];
+      }
+      setSeries(id, oldSeries);
     }
-    else if (sizeC % 3 == 0) return rgb ? sizeC / 3 : sizeC;
-    return rgb ? sizeC / 4 : sizeC;
+    else return;
+ 
+    for (int i=0; i<getSeriesCount(id); i++) {
+      setSeries(id, i);
+      int numRGB = getRGBChannelCount(currentId);
+      for (int c=0; c<getSizeC(id); c+=numRGB) {
+        for (int t=0; t<getSizeT(id); t++) {
+          for (int z=0; z<getSizeZ(id); z++) {
+            int ndx = getIndex(id, z, c / numRGB, t);
+            WritableRaster pixels = openImage(id, ndx).getRaster();
+            for (int x=0; x<getSizeX(currentId); x++) {
+              for (int y=0; y<getSizeY(currentId); y++) {
+                for (int cc=0; cc<numRGB; cc++) {
+                  double pixelValue = pixels.getSampleDouble(x, y, cc);
+                  if (pixelValue < channelMinMax[i][c + cc][MIN]) {
+                    channelMinMax[i][c + cc][MIN] = pixelValue;
+                  }
+                  if (pixelValue > channelMinMax[i][c + cc][MAX]) {
+                    channelMinMax[i][c + cc][MAX] = pixelValue;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      MetadataStore store = getMetadataStore(id);
+      for (int c=0; c<getSizeC(id); c++) {
+        store.setChannelGlobalMinMax(c, new Double(channelMinMax[i][c][MIN]),
+          new Double(channelMinMax[i][c][MAX]), null);
+      }
+    }
+    setSeries(id, oldSeries);
   }
 
   /**
