@@ -208,7 +208,7 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Error uncompressing zlib data.");
       }
     }
-
+    updateMinMax(pixels, no);
     return pixels;
   }
 
@@ -216,8 +216,10 @@ public class OMEXMLReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width[series],
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width[series],
       height[series], 1, false, bpp[series], littleEndian[series]);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

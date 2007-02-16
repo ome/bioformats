@@ -153,6 +153,7 @@ public class IPWReader extends BaseTiffReader {
           samples[i].length);
       }
       stream.close();
+      updateMinMax(rtn, no);
       return rtn;
     }
     catch (ReflectException e) {
@@ -172,8 +173,10 @@ public class IPWReader extends BaseTiffReader {
 
     byte[] b = openBytes(id, no);
     int bytes = b.length / (sizeX[0] * sizeY[0]);
-    return ImageTools.makeImage(b, sizeX[0], sizeY[0], bytes == 3 ? 3 : 1,
-      false, bytes == 3 ? 1 : bytes, little);
+    BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0], 
+      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, little);
+    updateMinMax(bi, no);
+    return bi;
   }
 
   /* @see IFormatReader#close(boolean) */

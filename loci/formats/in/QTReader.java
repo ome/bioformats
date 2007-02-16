@@ -351,7 +351,9 @@ public class QTReader extends FormatReader {
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
     if (code.equals("jpeg") || code.equals("mjpb")) {
-      return ImageTools.getBytes(openImage(id, no), false, no);
+      byte[] s = ImageTools.getBytes(openImage(id, no), false, no);
+      updateMinMax(s, no);
+      return s;
     }
 
     byte[] bytes = uncompress(pixs, code);
@@ -458,7 +460,7 @@ public class QTReader extends FormatReader {
       for (int i=0; i<bytes.length; i++) {
         bytes[i] = (byte) (255 - bytes[i]);
       }
-
+      updateMinMax(bytes, no);
       return bytes;
     }
     else if (bitsPerPixel == 32) {
@@ -474,10 +476,13 @@ public class QTReader extends FormatReader {
       for (int i=0; i<data.length; i++) {
         System.arraycopy(data[i], 0, rtn, i * data[0].length, data[i].length);
       }
-
+      updateMinMax(rtn, no);
       return rtn;
     }
-    else return bytes;
+    else {
+      updateMinMax(bytes, no);
+      return bytes;
+    }
   }
 
   /** Obtains the specified image from the given QuickTime file. */
@@ -530,18 +535,22 @@ public class QTReader extends FormatReader {
 
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
+    BufferedImage b = null;
+
     if (code.equals("jpeg")) {
-      return bufferedJPEG(pixs);
+      b = bufferedJPEG(pixs);
     }
     else if (code.equals("mjpb")) {
-      return mjpbUncompress(pixs);
+      b = mjpbUncompress(pixs);
     }
     else {
       int bpp = bitsPerPixel / 8;
       if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
-      return ImageTools.makeImage(openBytes(id, no), flip ? height : width,
+      b = ImageTools.makeImage(openBytes(id, no), flip ? height : width,
         flip ? width : height, isRGB(id) ? 3 : 1, false, bpp, little);
     }
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

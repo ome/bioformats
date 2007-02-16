@@ -170,6 +170,7 @@ public class LeicaReader extends BaseTiffReader {
     tiff[series][no].setColorTableIgnored(ignoreColorTable);
     byte[] b = tiff[series][no].openBytes((String) files[series].get(no), 0);
     tiff[series][no].close();
+    updateMinMax(b, no);
     return b;
   }
 
@@ -192,6 +193,7 @@ public class LeicaReader extends BaseTiffReader {
       b.getRaster().getTransferType(), validBits[series]);
     b = ImageTools.makeBuffered(b, cm);
     tiff[series][no].close();
+    updateMinMax(b, no);
     return b;
   }
 

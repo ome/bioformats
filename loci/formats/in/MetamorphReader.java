@@ -120,6 +120,13 @@ public class MetamorphReader extends BaseTiffReader {
     return (Double) getMeta("grayMax");
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable. */

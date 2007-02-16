@@ -91,6 +91,13 @@ public class FluoviewReader extends BaseTiffReader {
     return new Double(Integer.parseInt(s));
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   // -- FormatHandler API methods --
 
   /**

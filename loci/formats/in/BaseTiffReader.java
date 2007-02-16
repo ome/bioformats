@@ -700,6 +700,7 @@ public abstract class BaseTiffReader extends FormatReader {
       swapIfRequired(p[i]);
       System.arraycopy(p[i], 0, buf, i * p[0].length, p[0].length);
     }
+    updateMinMax(buf, no);
     return buf;
   }
 
@@ -769,7 +770,9 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return TiffTools.getImage(ifds[no], in, ignoreColorTable);
+    BufferedImage b = TiffTools.getImage(ifds[no], in, ignoreColorTable);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

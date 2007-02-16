@@ -184,6 +184,7 @@ public class ND2Reader extends FormatReader {
     for (int i=0; i<sizeC[0]; i++) {
       System.arraycopy(pixels[i], 0, b, i*pixels[0].length, pixels[i].length);
     }
+    updateMinMax(b, no);
     return b;
   }
 
@@ -251,7 +252,9 @@ public class ND2Reader extends FormatReader {
     }
 
     ColorModel cm = ImageTools.makeColorModel(sizeC[0], dataType, validBits);
-    return ImageTools.makeBuffered(img);
+    BufferedImage bi = ImageTools.makeBuffered(img);
+    updateMinMax(bi, no);
+    return bi;
   }
 
   /* @see IFormatReader#close(boolean) */

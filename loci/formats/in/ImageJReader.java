@@ -109,7 +109,9 @@ public class ImageJReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, no);
+    byte[] b = ImageTools.getBytes(openImage(id, no), false, no);
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Obtains the specified image from the given file. */
@@ -146,8 +148,10 @@ public class ImageJReader extends FormatReader {
       }
       r.exec("size = image.getStackSize()");
       Image img = (Image) r.exec("image.getImage()");
-
-      return ImageTools.makeBuffered(img);
+      
+      BufferedImage b = ImageTools.makeBuffered(img);
+      updateMinMax(b, no);
+      return b;
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);

@@ -117,7 +117,9 @@ public class LegacyZVIReader extends FormatReader {
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, no);
+    byte[] b = ImageTools.getBytes(openImage(id, no), false, no);
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Determines the number of images in the given ZVI file. */
@@ -140,7 +142,9 @@ public class LegacyZVIReader extends FormatReader {
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
 
-    return zviBlock.readImage(in);
+    BufferedImage b = zviBlock.readImage(in);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

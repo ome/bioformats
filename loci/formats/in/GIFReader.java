@@ -191,6 +191,7 @@ public class GIFReader extends FormatReader {
       b = new byte[width * height];
       for (int i=0; i<b.length; i++) b[i] = (byte) ints[i];
     }
+    updateMinMax(b, no);
     return b;
   }
 
@@ -198,15 +199,11 @@ public class GIFReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    byte[] b = openBytes(id, no);
-    return ImageTools.makeImage(b, width, height, b.length / (width * height),
-      false, 1, true);
+    byte[] bytes = openBytes(id, no);
+    BufferedImage b = ImageTools.makeImage(bytes, width, height, 
+      bytes.length / (width * height), false, 1, true);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

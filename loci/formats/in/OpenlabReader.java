@@ -353,6 +353,7 @@ public class OpenlabReader extends FormatReader {
       b = new byte[expected];
       System.arraycopy(tmp, 0, b, 0, b.length);
     }
+    updateMinMax(b, no);
     return b;
   }
 
@@ -368,9 +369,11 @@ public class OpenlabReader extends FormatReader {
     byte[] b = openBytes(id, no);
     bytesPerPixel = b.length / (width[series] * height[series]);
     if (bytesPerPixel > 3) bytesPerPixel = 3;
-    return ImageTools.makeImage(b, width[series], height[series],
+    BufferedImage bi = ImageTools.makeImage(b, width[series], height[series],
       bytesPerPixel == 3 ? 3 : 1, false,
       bytesPerPixel == 3 ? 1 : bytesPerPixel, false);
+    updateMinMax(bi, no);
+    return bi;
   }
 
   /* @see IFormatReader#close(boolean) */

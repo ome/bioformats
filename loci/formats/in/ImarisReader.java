@@ -212,7 +212,7 @@ public class ImarisReader extends FormatReader {
       in.read(data, row*dims[0], dims[0]);
       row--;
     }
-
+    updateMinMax(data, no);
     return data;
   }
 
@@ -220,7 +220,10 @@ public class ImarisReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), dims[0], dims[1], 1, false);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0], 
+      dims[1], 1, false);
+    updateMinMax(b, no);
+    return b;
   }
  
   /* @see IFormatReader#close(boolean) */

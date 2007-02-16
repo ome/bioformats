@@ -97,12 +97,9 @@ public class MNGReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    return ImageTools.getBytes(openImage(id, no), true, getSizeC(id));
+    byte[] b = ImageTools.getBytes(openImage(id, no), true, getSizeC(id));
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Obtains the specified image from the given MNG file. */
@@ -129,7 +126,9 @@ public class MNGReader extends FormatReader {
     b[6] = 0x1a;
     b[7] = 0x0a;
 
-    return ImageIO.read(new ByteArrayInputStream(b));
+    BufferedImage bi = ImageIO.read(new ByteArrayInputStream(b));
+    updateMinMax(bi, no);
+    return bi;
   }
 
   /* @see IFormatReader#close(boolean) */

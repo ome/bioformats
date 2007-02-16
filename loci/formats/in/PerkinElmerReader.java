@@ -121,6 +121,7 @@ public class PerkinElmerReader extends FormatReader {
     ras.skipBytes(6);
     ras.read(b);
     ras.close();
+    updateMinMax(b, no);
     return b;
   }
 
@@ -142,7 +143,10 @@ public class PerkinElmerReader extends FormatReader {
 
     byte[] b = openBytes(id, no);
     int bpp = b.length / (sizeX[0] * sizeY[0]);
-    return ImageTools.makeImage(b, sizeX[0], sizeY[0], 1, false, bpp, true);
+    BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0], 1, 
+      false, bpp, true);
+    updateMinMax(bi, no);
+    return bi;
   }
 
   /* @see IFormatReader#getUsedFiles(String) */

@@ -137,6 +137,13 @@ public class LIFReader extends FormatReader {
     return new Double(((Integer) channelMaxs.get(series)).intValue());
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   /** Obtains the specified image from the given LIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -168,6 +175,7 @@ public class LIFReader extends FormatReader {
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
     in.read(data);
+    updateMinMax(data, no);
     return data;
   }
 
@@ -175,8 +183,10 @@ public class LIFReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : c, false, bpp / 8, littleEndian, validBits[series]);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

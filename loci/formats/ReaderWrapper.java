@@ -117,6 +117,36 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getChannelGlobalMaximum(id, theC);
   }
 
+  public Double getChannelKnownMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    return reader.getChannelKnownMinimum(id, theC);
+  }
+
+  public Double getChannelKnownMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    return reader.getChannelKnownMaximum(id, theC);
+  }
+
+  public Double getPlaneMinimum(String id, int no)
+    throws FormatException, IOException
+  {
+    return reader.getPlaneMinimum(id, no);
+  }
+
+  public Double getPlaneMaximum(String id, int no)
+    throws FormatException, IOException
+  {
+    return reader.getPlaneMaximum(id, no);
+  }
+
+  public boolean isMinMaxPopulated(String id) 
+    throws FormatException, IOException
+  {
+    return reader.isMinMaxPopulated(id);
+  }
+
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return reader.getThumbSizeX(id);
   }

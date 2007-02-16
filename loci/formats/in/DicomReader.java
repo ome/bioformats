@@ -222,6 +222,7 @@ public class DicomReader extends FormatReader {
         data[2*i + 1] = b[1];
       }
     }
+    updateMinMax(data, no);
     return data;
   }
 
@@ -229,8 +230,10 @@ public class DicomReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 1, false,
-      bitsPerPixel / 8, little);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 
+      1, false, bitsPerPixel / 8, little);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

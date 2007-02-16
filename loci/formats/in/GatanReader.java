@@ -117,6 +117,13 @@ public class GatanReader extends FormatReader {
     return new Double(((Integer) getMeta("EstimatedMin")).intValue());
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   /** Obtains the specified image from the given Gatan file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -126,7 +133,7 @@ public class GatanReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
+    updateMinMax(pixelData, no);
     return pixelData;
   }
 
@@ -144,8 +151,10 @@ public class GatanReader extends FormatReader {
     int height = dims[1];
     int channels = 1;
 
-    return ImageTools.makeImage(pixelData, width, height, channels,
+    BufferedImage b = ImageTools.makeImage(pixelData, width, height, channels,
       false, dims[2], littleEndian);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

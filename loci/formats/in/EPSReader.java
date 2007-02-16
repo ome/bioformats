@@ -149,7 +149,7 @@ public class EPSReader extends FormatReader {
       }
     }
     ras.close();
-
+    updateMinMax(p, no);
     return p;
   }
 
@@ -157,8 +157,10 @@ public class EPSReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : 3, true);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

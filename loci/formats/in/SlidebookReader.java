@@ -110,6 +110,7 @@ public class SlidebookReader extends FormatReader {
     in.seek(offset + (no * width * height * 2));
     byte[] b = new byte[width * height * 2];
     in.read(b);
+    updateMinMax(b, no);
     return b;
   }
 
@@ -117,8 +118,10 @@ public class SlidebookReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 1, true,
-      bpp, true);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 
+      1, true, bpp, true);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

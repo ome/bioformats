@@ -160,11 +160,13 @@ public class AVIReader extends FormatReader {
     }
 
     if (rawData.length == dwWidth * bmpHeight * (bmpBitsPerPixel / 8)) {
+      updateMinMax(rawData, no);
       return rawData;
     }
     else {
       byte[] t = new byte[dwWidth * bmpHeight * (bmpBitsPerPixel / 8)];
       System.arraycopy(rawData, 0, t, 0, t.length);
+      updateMinMax(t, no);
       return t;
     }
   }
@@ -173,8 +175,10 @@ public class AVIReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), dwWidth, bmpHeight,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dwWidth, bmpHeight,
       !isRGB(id) ? 1 : 3, true);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

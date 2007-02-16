@@ -176,6 +176,7 @@ public class SDTReader extends FormatReader {
         }
       }
     }
+    updateMinMax(data, no);
     return data;
   }
 
@@ -183,8 +184,10 @@ public class SDTReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no),
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no),
       sizeX[series], sizeY[series], 1, false, 2, true);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

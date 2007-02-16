@@ -155,7 +155,9 @@ public class PictReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, no % 3);
+    byte[] b = ImageTools.getBytes(openImage(id, no), false, no % 3);
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -167,7 +169,9 @@ public class PictReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return open(bytes);
+    BufferedImage b = open(bytes);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

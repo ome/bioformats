@@ -181,6 +181,13 @@ public class OIBReader extends FormatReader {
     catch (NumberFormatException exc) { return null; }
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -220,7 +227,7 @@ public class OIBReader extends FormatReader {
       }
 
       stream.close();
-
+      updateMinMax(rtn, no);
       return rtn;
     }
     catch (ReflectException e) {
@@ -240,8 +247,11 @@ public class OIBReader extends FormatReader {
     byte[] b = openBytes(id, no);
     int s = getSeries(id);
     int bytes = b.length / (sizeX[s] * sizeY[s]);
-    return ImageTools.makeImage(b, sizeX[s], sizeY[s], bytes == 3 ? 3 : 1,
-      false, bytes == 3 ? 1 : bytes, !littleEndian[s], validBits[s]);
+    BufferedImage bi = ImageTools.makeImage(b, sizeX[s], sizeY[s], 
+      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, !littleEndian[s], 
+      validBits[s]);
+    updateMinMax(bi, no);
+    return bi;
   }
 
   /* @see IFormatReader#close(boolean) */

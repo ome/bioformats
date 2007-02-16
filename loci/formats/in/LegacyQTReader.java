@@ -98,13 +98,9 @@ public class LegacyQTReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    return ImageTools.getBytes(openImage(id, no), false, 3);
+    byte[] b = ImageTools.getBytes(openImage(id, no), false, 3);
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Obtains the specified image from the given QuickTime file. */
@@ -133,7 +129,9 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException("Open movie failed", re);
     }
 
-    return ImageTools.makeBuffered(image);
+    BufferedImage b = ImageTools.makeBuffered(image);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

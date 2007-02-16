@@ -162,6 +162,13 @@ public class DeltavisionReader extends FormatReader {
     return new Double(v.floatValue());
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true; 
+  }
+
   /* @see IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
@@ -202,7 +209,7 @@ public class DeltavisionReader extends FormatReader {
 
     in.seek(offset);
     in.read(buf);
-
+    updateMinMax(buf, no);
     return buf;
   }
 
@@ -210,8 +217,10 @@ public class DeltavisionReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 1,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1,
       false, bytesPerPixel, little);
+    updateMinMax(b, no);
+    return b;
   }
  
   /* @see IFormatReader#close(boolean) */

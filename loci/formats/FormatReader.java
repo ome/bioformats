@@ -28,8 +28,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.*;
 import javax.swing.filechooser.FileFilter;
 
 /** Abstract superclass of all biological file format readers. */
@@ -106,8 +105,29 @@ public abstract class FormatReader extends FormatHandler
   protected boolean[] orderCertain;
   protected double[][][] channelMinMax;
 
+  /** Min and max values for each plane. */
+  protected double[][][] planeMinMax;
+
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
+  
+  /** List of image indices that have been read. */
+  protected Vector[] imagesRead;
+
+  /** List of minimum values for each image. */
+  protected Vector[] minimumValues;
+
+  /** List of maximum values for each image. */
+  protected Vector[] maximumValues;
+
+  /** Whether or not min/max computation has finished. */
+  protected boolean[] minMaxFinished;
+
+  /** 
+   * Flag indicating min/max values are stored in 
+   * metadata (disables calculation). 
+   */
+  protected boolean metadataMinMax = false;
 
   /** Whether or not to ignore color tables, if present. */
   protected boolean ignoreColorTable = false;
@@ -152,6 +172,13 @@ public abstract class FormatReader extends FormatHandler
     close();
     currentId = id;
     metadata = new Hashtable();
+    imagesRead = new Vector[1];
+    minimumValues = new Vector[1];
+    maximumValues = new Vector[1];
+    Arrays.fill(imagesRead, new Vector());
+    Arrays.fill(minimumValues, new Vector());
+    Arrays.fill(maximumValues, new Vector());
+    minMaxFinished = new boolean[1];
 
     sizeX = new int[1];
     sizeY = new int[1];
@@ -291,12 +318,8 @@ public abstract class FormatReader extends FormatHandler
     if (theC < 0 || theC >= getSizeC(id)) {
       throw new FormatException("Invalid channel index: " + theC);
     }
-    if (enableChannelStatCalculation) {
-      if (channelMinMax != null) {
-        return new Double(channelMinMax[getSeries(id)][theC][MIN]);
-      }
-      computeMinMax(id);
-      return new Double(channelMinMax[getSeries(id)][theC][MIN]);
+    if (enableChannelStatCalculation && minMaxFinished[series]) {
+      return new Double(channelMinMax[series][theC][MIN]);
     }
     return null;
   }
@@ -309,14 +332,80 @@ public abstract class FormatReader extends FormatHandler
     if (theC < 0 || theC >= getSizeC(id)) {
       throw new FormatException("Invalid channel index: " + theC);
     }
-    if (enableChannelStatCalculation) {
-      if (channelMinMax != null) {
-        return new Double(channelMinMax[getSeries(id)][theC][MAX]);
-      }
-      computeMinMax(id);
-      return new Double(channelMinMax[getSeries(id)][theC][MAX]);
+    if (enableChannelStatCalculation && minMaxFinished[series]) {
+      return new Double(channelMinMax[series][theC][MAX]);
     }
     return null;
+  }
+  
+  /* @see IFormatReader#getChannelKnownMinimum(String, int) */
+  public Double getChannelKnownMinimum(String id, int theC) 
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (enableChannelStatCalculation) {
+      return new Double(channelMinMax[series][theC][MIN]);
+    }
+    return null;
+  }
+
+  /* @see IFormatReader#getChannelKnownMaximum(String, int) */
+  public Double getChannelKnownMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (enableChannelStatCalculation) {
+      return new Double(channelMinMax[series][theC][MAX]);
+    }
+    return null;
+  }
+
+  /* @see IFormatReader#getPlaneMinimum(String, int) */
+  public Double getPlaneMinimum(String id, int no) 
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (enableChannelStatCalculation && 
+      imagesRead[series].contains(new Integer(no))) 
+    {
+      int ndx = no * getRGBChannelCount(id);
+      double min = Double.MAX_VALUE;
+      for (int i=ndx; i<ndx+getRGBChannelCount(id); i++) {
+        if (planeMinMax[series][i][MIN] < min) {
+          min = planeMinMax[series][i][MIN];
+        }
+      }
+      return new Double(min);
+    }
+    return null;
+  }
+
+  /* @see IFormatReader#getPlaneMaximum(String, int) */
+  public Double getPlaneMaximum(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (enableChannelStatCalculation && 
+      imagesRead[series].contains(new Integer(no))) 
+    {
+      int ndx = no * getRGBChannelCount(id);
+      double max = Double.MIN_VALUE;
+      for (int i=ndx; i<ndx+getRGBChannelCount(id); i++) {
+        if (planeMinMax[series][i][MAX] > max) {
+          max = planeMinMax[series][i][MAX];
+        }
+      }
+      return new Double(max);
+    }
+    return null;
+  }
+
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return minMaxFinished[series];
   }
 
   /* @see IFormatReader#getThumbSizeX(String) */
@@ -525,7 +614,6 @@ public abstract class FormatReader extends FormatHandler
   public boolean isMetadataFiltered() {
     return filterMetadata;
   }
-
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
@@ -1043,50 +1131,104 @@ public abstract class FormatReader extends FormatHandler
     return new int[] {z, c, t};
   }
 
-  /** Compute the minimum and maximum values for each channel. */
-  private void computeMinMax(String id) throws FormatException, IOException {
-    int oldSeries = getSeries(id);
-    if (channelMinMax == null) {
-      channelMinMax = new double[getSeriesCount(id)][][];
-      for (int i=0; i<getSeriesCount(id); i++) {
-        setSeries(id, i);
-        channelMinMax[i] = new double[getSizeC(id)][2];
+  /** 
+   * Updates min/max values based on the given BufferedImage.
+   * Should be called by each format reader's openImage method.
+   */
+  public void updateMinMax(BufferedImage b, int ndx) 
+    throws FormatException, IOException
+  {
+    Integer ii = new Integer(ndx);
+    if (!imagesRead[series].contains(ii) && enableChannelStatCalculation) {
+      if (channelMinMax == null) {
+        channelMinMax = 
+          new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
       }
-      setSeries(id, oldSeries);
-    }
-    else return;
- 
-    for (int i=0; i<getSeriesCount(id); i++) {
-      setSeries(id, i);
+      if (planeMinMax == null) {
+        planeMinMax = new double[getSeriesCount(currentId)][
+          getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
+      }
+
+      imagesRead[series].add(ii);
+      int[] coords = getZCTCoords(currentId, ndx);
       int numRGB = getRGBChannelCount(currentId);
-      for (int c=0; c<getSizeC(id); c+=numRGB) {
-        for (int t=0; t<getSizeT(id); t++) {
-          for (int z=0; z<getSizeZ(id); z++) {
-            int ndx = getIndex(id, z, c / numRGB, t);
-            WritableRaster pixels = openImage(id, ndx).getRaster();
-            for (int x=0; x<getSizeX(currentId); x++) {
-              for (int y=0; y<getSizeY(currentId); y++) {
-                for (int cc=0; cc<numRGB; cc++) {
-                  double pixelValue = pixels.getSampleDouble(x, y, cc);
-                  if (pixelValue < channelMinMax[i][c + cc][MIN]) {
-                    channelMinMax[i][c + cc][MIN] = pixelValue;
-                  }
-                  if (pixelValue > channelMinMax[i][c + cc][MAX]) {
-                    channelMinMax[i][c + cc][MAX] = pixelValue;
-                  }
-                }
-              }
+      WritableRaster pixels = b.getRaster();
+      for (int x=0; x<b.getWidth(); x++) {
+        for (int y=0; y<b.getHeight(); y++) {
+          for (int c=0; c<numRGB; c++) {
+            double value = pixels.getSampleDouble(x, y, c);
+            if (value > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
+              channelMinMax[series][coords[1]*numRGB + c][MAX] = value;
+            }
+            if (value < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
+              channelMinMax[series][coords[1]*numRGB + c][MIN] = value;
+            }
+            if (value > planeMinMax[series][ndx*numRGB + c][MAX]) {
+              planeMinMax[series][ndx*numRGB + c][MAX] = value;
+            }
+            if (value < planeMinMax[series][ndx*numRGB + c][MIN]) {
+              planeMinMax[series][ndx*numRGB + c][MIN] = value;
             }
           }
         }
       }
-      MetadataStore store = getMetadataStore(id);
-      for (int c=0; c<getSizeC(id); c++) {
-        store.setChannelGlobalMinMax(c, new Double(channelMinMax[i][c][MIN]),
-          new Double(channelMinMax[i][c][MAX]), null);
+
+      if (imagesRead[series].size() == getImageCount(currentId)) {
+        minMaxFinished[series] = true;
       }
     }
-    setSeries(id, oldSeries);
+  }
+
+  /**
+   * Updates min/max values based on given byte array.
+   * Should be called by each format reader's openBytes method.
+   */
+  public void updateMinMax(byte[] b, int ndx) 
+    throws FormatException, IOException 
+  {
+    if (b == null) return;
+    Integer ii = new Integer(ndx);
+    if (!imagesRead[series].contains(ii) && enableChannelStatCalculation) {
+      if (channelMinMax == null) {
+        channelMinMax = 
+          new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
+      }
+      if (planeMinMax == null) {
+        planeMinMax = new double[getSeriesCount(currentId)][
+          getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
+      }
+      
+      boolean little = isLittleEndian(currentId);
+      int bytes = getBytesPerPixel(getPixelType(currentId));
+      int numRGB = getRGBChannelCount(currentId);
+      int pixels = getSizeX(currentId) * getSizeY(currentId);
+      boolean interleaved = isInterleaved(currentId);
+
+      byte[] value = new byte[bytes];
+      int[] coords = getZCTCoords(currentId, ndx);
+
+      for (int i=0; i<pixels; i++) {
+        for (int c=0; c<numRGB; c++) {
+          int idx = interleaved ? i*numRGB + c : c*pixels + i;
+          idx *= bytes;
+          System.arraycopy(b, idx, value, 0, bytes);
+          double v = 
+            Double.longBitsToDouble(DataTools.bytesToLong(value, little));
+          if (v > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
+            channelMinMax[series][coords[1]*numRGB + c][MAX] = v;
+          }
+          if (v < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
+            channelMinMax[series][coords[1]*numRGB + c][MIN] = v;
+          }
+          if (v > planeMinMax[series][ndx*numRGB + c][MAX]) {
+            planeMinMax[series][ndx*numRGB + c][MAX] = v;
+          }
+          if (v < planeMinMax[series][ndx*numRGB + c][MIN]) {
+            planeMinMax[series][ndx*numRGB + c][MIN] = v;
+          }
+        }
+      }
+    }
   }
 
   /**

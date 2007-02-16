@@ -142,9 +142,10 @@ public class ICSReader extends FormatReader {
         off -= len;
         newOff += len;
       }
+      updateMinMax(t, no);
       return t;
     }
-
+    updateMinMax(plane, no);
     return plane;
   }
 
@@ -171,11 +172,14 @@ public class ICSReader extends FormatReader {
 
       if (normalizeData) f = DataTools.normalizeFloats(f);
 
-      return ImageTools.makeImage(f, width, height, channels, true);
+      BufferedImage b = ImageTools.makeImage(f, width, height, channels, true);
+      updateMinMax(b, no);
     }
 
-    return ImageTools.makeImage(plane, width, height, channels, true,
+    BufferedImage b = ImageTools.makeImage(plane, width, height, channels, true,
       bytes, littleEndian);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#getUsedFiles(String) */

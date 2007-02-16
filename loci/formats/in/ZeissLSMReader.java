@@ -127,7 +127,9 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
 
     ifds = TiffTools.getIFDs(in);
-    return TiffTools.getImage(ifds[2*no], in);
+    BufferedImage b = TiffTools.getImage(ifds[2*no], in);
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -146,7 +148,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     for (int i=0; i<p.length; i++) {
       System.arraycopy(p[i], 0, b, i*p[0].length, p[i].length);
     }
-
+    updateMinMax(b, no);
     return b;
   }
 

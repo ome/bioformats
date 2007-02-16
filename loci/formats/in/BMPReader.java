@@ -212,6 +212,7 @@ public class BMPReader extends FormatReader {
       System.arraycopy(tempPx[i], 0, p, i * tempPx[i].length,
         tempPx[i].length);
     }
+    updateMinMax(p, no);
     return p;
   }
 
@@ -219,14 +220,10 @@ public class BMPReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    return ImageTools.makeImage(openBytes(id, no), width, height,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : 3, false);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

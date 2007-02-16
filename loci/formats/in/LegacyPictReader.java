@@ -75,7 +75,9 @@ public class LegacyPictReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, 3);
+    byte[] b = ImageTools.getBytes(openImage(id, no), false, 3);
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -100,7 +102,9 @@ public class LegacyPictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-    return ImageTools.makeBuffered(qtTools.pictToImage(bytes));
+    BufferedImage b = ImageTools.makeBuffered(qtTools.pictToImage(bytes));
+    updateMinMax(b, no);
+    return b;
   }
 
   /** Initializes the given PICT file. */

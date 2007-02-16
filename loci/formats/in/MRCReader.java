@@ -103,6 +103,7 @@ public class MRCReader extends FormatReader {
     in.seek(1024 + extHeaderSize + (no * sizeX[0] * sizeY[0] * bpp));
     byte[] b = new byte[sizeX[0] * sizeY[0] * bpp];
     in.read(b);
+    updateMinMax(b, no);
     return b;
   }
 
@@ -110,8 +111,10 @@ public class MRCReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), sizeX[0], sizeY[0], 1,
-      true, bpp, little);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0], 
+      sizeY[0], 1, true, bpp, little);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

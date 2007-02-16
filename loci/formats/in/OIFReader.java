@@ -133,6 +133,13 @@ public class OIFReader extends FormatReader {
     return new Double((String) getMeta("[Image Parameters] - DataMax"));
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   /** Obtains the specified image from the given OIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -143,6 +150,7 @@ public class OIFReader extends FormatReader {
     tiffReader[no].setColorTableIgnored(ignoreColorTable);
     byte[] b = tiffReader[no].openBytes((String) tiffs.get(no), 0);
     tiffReader[no].close();
+    updateMinMax(b, no);
     return b;
   }
 
@@ -164,6 +172,7 @@ public class OIFReader extends FormatReader {
       b.getRaster().getTransferType(), validBits);
     b = ImageTools.makeBuffered(b, cm);
     tiffReader[no].close();
+    updateMinMax(b, no);
     return b;
   }
 

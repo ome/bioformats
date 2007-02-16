@@ -246,18 +246,53 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getRGBChannelCount(id);
   }
 
-  /* @see IFormatReader#getChannelGlobalMinimum(int) */
+  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
     return getReader(id).getChannelGlobalMinimum(id, theC);
   }
 
-  /* @see IFormatReader#getChannelGlobalMaximum(int) */
+  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
     return getReader(id).getChannelGlobalMaximum(id, theC);
+  }
+
+  /* @see IFormatReader#getChannelKnownMinimum(String, int) */
+  public Double getChannelKnownMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    return getReader(id).getChannelKnownMinimum(id, theC);
+  }
+
+  /* @see IFormatReader#getChannelKnownMaximum(String, int) */
+  public Double getChannelKnownMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    return getReader(id).getChannelKnownMaximum(id, theC);
+  }
+
+  /* @see IFormatReader#getPlaneMinimum(String, int) */
+  public Double getPlaneMinimum(String id, int no) 
+    throws FormatException, IOException
+  {
+    return getReader(id).getPlaneMinimum(id, no);
+  }
+
+  /* @see IFormatReader#getPlaneMaximum(String, int) */
+  public Double getPlaneMaximum(String id, int no)
+    throws FormatException, IOException
+  {
+    return getReader(id).getPlaneMaximum(id, no);
+  }
+
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id) 
+    throws FormatException, IOException
+  {
+    return getReader(id).isMinMaxPopulated(id);
   }
 
   /* @see IFormatReader#getThumbSizeX(String) */

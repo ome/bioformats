@@ -125,6 +125,13 @@ public class IPLabReader extends FormatReader {
     return (Double) getMeta("NormalizationMax" + theC);
   }
 
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   /** Obtains the specified image from the given IPLab file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -140,6 +147,7 @@ public class IPLabReader extends FormatReader {
 
     byte[] rawData = new byte[numPixels * bps];
     in.read(rawData);
+    updateMinMax(rawData, no);
     return rawData;
   }
 
@@ -147,8 +155,10 @@ public class IPLabReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : c, false, bps, littleEndian);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

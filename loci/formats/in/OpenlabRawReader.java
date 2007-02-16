@@ -117,7 +117,7 @@ public class OpenlabRawReader extends FormatReader {
         data[i] = (byte) (255 - data[i]);
       }
     }
-
+    updateMinMax(data, no);
     return data;
   }
 
@@ -125,8 +125,10 @@ public class OpenlabRawReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : channels, false, bytesPerPixel, false);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

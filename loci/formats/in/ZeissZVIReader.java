@@ -283,6 +283,7 @@ public class ZeissZVIReader extends FormatReader {
         a = new byte[bpp * sizeX[0] * sizeY[0]];
         System.arraycopy(tmp, 0, a, 0, a.length);
       }
+      updateMinMax(a, no);
       return a;
     }
     catch (ReflectException e) {
@@ -295,14 +296,10 @@ public class ZeissZVIReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.openImage(id, no);
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    return ImageTools.makeImage(openBytes(id, no), width, height,
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       isRGB(id) ? 3 : 1, true, bpp == 3 ? 1 : bpp, true, validBits);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

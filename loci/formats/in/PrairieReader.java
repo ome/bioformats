@@ -172,7 +172,9 @@ public class PrairieReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openBytes(files[no], 0);
+    byte[] b = tiff.openBytes(files[no], 0);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#openImage(String, int) */
@@ -183,7 +185,9 @@ public class PrairieReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openImage(files[no], 0);
+    BufferedImage b = tiff.openImage(files[no], 0);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

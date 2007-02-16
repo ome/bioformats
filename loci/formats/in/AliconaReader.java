@@ -129,8 +129,10 @@ public class AliconaReader extends FormatReader {
         data[i*2] = lsbData[i];
         data[i*2 + 1] = msbData[i];
       }
+      updateMinMax(data, no);
       return data;
     }
+    updateMinMax(lsbData, no);
     return lsbData;
   }
 
@@ -138,8 +140,10 @@ public class AliconaReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 1, false,
-      numBytes, true);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1, 
+      false, numBytes, true);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#close(boolean) */

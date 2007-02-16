@@ -136,6 +136,7 @@ public class OMEReader extends FormatReader {
     int[] indices = getZCTCoords(id, no);
     try {
       byte[] b = pf.getPlane(pixels, indices[0], indices[1], indices[2], false);
+      updateMinMax(b, no);
       return b;
     }
     catch (ImageServerException e) {
@@ -147,12 +148,10 @@ public class OMEReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= numImages) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    return ImageTools.makeImage(openBytes(id, no), sizeX[0], sizeY[0], 
-      1, false, FormatReader.getBytesPerPixel(pixelType[0]), true);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0], 
+      sizeY[0], 1, false, FormatReader.getBytesPerPixel(pixelType[0]), true);
+    updateMinMax(b, no);
+    return b;
   }
 
   /* @see IFormatReader#openThumbBytes(String, int) */
