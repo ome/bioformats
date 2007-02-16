@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
 import java.util.Hashtable;
 import loci.formats.*;
 
@@ -157,7 +157,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     channels = 0;
 
     // go through the IFD hashtable array and
-    // remove anything with NEw_SUBFILE_TYPE = 1
+    // remove anything with NEW_SUBFILE_TYPE = 1
     // NEW_SUBFILE_TYPE = 1 indicates that the IFD
     // contains a thumbnail image
 
@@ -232,171 +232,71 @@ public class ZeissLSMReader extends BaseTiffReader {
     long data = 0;
     int idata = 0;
     double ddata = 0;
-    //short sdata = 0;
+    short sdata = 0;
 
     try {
-      // -- Parse standard metadata --
-
-      // determine byte order
       boolean little = TiffTools.isLittleEndian(ifd);
       in.order(little);
 
       super.initMetadata();
 
-      // get Zeiss LSM-specific data
-
-      // grab the TIF_CZ_LSMINFO structure, 512 bytes long
-      short[] cz = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
-      int p = 0; // pointer to next byte in the structure
-
-      put("MagicNumber", DataTools.bytesToLong(cz, p, 4, little));
-      p += 4;
-      put("StructureSize", DataTools.bytesToInt(cz, p, little));
-      p += 4;
-      put("DimensionX", DataTools.bytesToInt(cz, p, little));
-      p += 4;
-      put("DimensionY", DataTools.bytesToInt(cz, p, little));
-      p += 4;
-      put("DimensionZ", DataTools.bytesToInt(cz, p, little));
-      p += 4;
-      int dimensionChannels = DataTools.bytesToInt(cz, p, little);
-      put("DimensionChannels", dimensionChannels);
-      p += 4;
-      put("DimensionTime", DataTools.bytesToInt(cz, p, little));
-      p += 4;
-
-      idata = DataTools.bytesToInt(cz, p, little);
-      String type;
-      switch (idata) {
-        case 1:
-          type = "8 bit unsigned integer";
-          break;
-        case 2:
-          type = "12 bit unsigned integer";
-          break;
-        case 5:
-          type = "32 bit float";
-          break;
-        case 0:
-          type = "varying data types";
-          break;
-        default:
-          type = "8 bit unsigned integer";
+      // get TIF_CZ_LSMINFO structure
+      short[] s = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
+      byte[] cz = new byte[s.length];
+      for (int i=0; i<s.length; i++) {
+        cz[i] = (byte) s[i];
+        if (cz[i] < 0) cz[i]++; // account for byte->short conversion
       }
-      put("DataType", type);
-      p += 4;
 
-      put("ThumbnailX", DataTools.bytesToInt(cz, p, little));
-      p += 4;
-      put("ThumbnailY", DataTools.bytesToInt(cz, p, little));
-      p += 4;
-      put("VoxelSizeX", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
-      put("VoxelSizeY", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
-      put("VoxelSizeZ", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8 + 24; // skip over the next 24 bytes
+      RandomAccessStream ras = new RandomAccessStream(cz);
+   
+      put("MagicNumber", DataTools.read4UnsignedBytes(ras, little));
+      put("StructureSize", DataTools.read4SignedBytes(ras, little));
+      put("DimensionX", DataTools.read4SignedBytes(ras, little));
+      put("DimensionY", DataTools.read4SignedBytes(ras, little));
 
-      idata = DataTools.bytesToInt(cz, p, 2, little);
-      switch (idata) {
-        case 0:
-          type = "x-y-z scan";
-          break;
-        case 1:
-          type = "z scan (x-z plane)";
-          break;
-        case 2:
-          type = "line scan";
-          break;
-        case 3:
-          type = "time series x-y";
-          break;
-        case 4:
-          type = "time series x-z";
-          break;
-        case 5:
-          type = "time series 'Mean of ROIs'";
-          break;
-        case 6:
-          type = "time series x-y-z";
-          break;
-        case 7:
-          type = "spline scan";
-          break;
-        case 8:
-          type = "spline scan x-z";
-          break;
-        case 9:
-          type = "time series spline plane x-z";
-          break;
-        case 10:
-          type = "point mode";
-          break;
-        default:
-          type = "x-y-z scan";
+      sizeZ[0] = DataTools.read4SignedBytes(ras, little);
+      sizeC[0] = DataTools.read4SignedBytes(ras, little);
+      sizeT[0] = DataTools.read4SignedBytes(ras, little);
+
+      if (sizeC[0] == 0) sizeC[0]++;
+
+      while (numImages > sizeZ[0] * sizeC[0] * sizeT[0]) {
+        if (sizeZ[0] > sizeT[0]) sizeZ[0]++;
+        else sizeT[0]++;
       }
-      put("ScanType", type);
-      p += 2;
 
-      idata = DataTools.bytesToInt(cz, p, 2, little);
-      switch (idata) {
-        case 0:
-          type = "no spectral scan";
-          break;
-        case 1:
-          type = "acquired with spectral scan";
-          break;
-        default:
-          type = "no spectral scan";
+      while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(currentId)) {
+        numImages--;
       }
-      put("SpectralScan", type);
-      p += 2;
 
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      switch ((int) data) {
-        case 0:
-          type = "original scan data";
-          break;
+      put("DimensionZ", sizeZ[0]);
+      put("DimensionChannels", sizeC[0]);
+      put("DimensionTime", sizeT[0]);
+
+      int dataType = DataTools.read4SignedBytes(ras, little);
+      switch (dataType) {
         case 1:
-          type = "calculated data";
-          break;
-        case 2:
-          type = "animation";
-          break;
-        default:
-          type = "original scan data";
-      }
-      put("DataType2", type);
-      p += 4;
-
-      // -- Parse OME-XML metadata --
-
-      short[] omeData = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
-
-      int imageWidth = DataTools.bytesToInt(omeData, 8, little);
-      int imageLength = DataTools.bytesToInt(omeData, 12, little);
-      zSize = DataTools.bytesToInt(omeData, 16, little);
-      int cSize = DataTools.bytesToInt(omeData, 20, little);
-      tSize = DataTools.bytesToInt(omeData, 24, little);
-
-      int pixel = DataTools.bytesToInt(omeData, 28, little);
-      switch (pixel) {
-        case 1:
+          put("DataType", "8 bit unsigned integer");
           pixelType[0] = FormatReader.UINT8;
           break;
         case 2:
+          put("DataType", "12 bit unsigned integer");
           pixelType[0] = FormatReader.UINT16;
           break;
         case 5:
+          put("DataType", "32 bit float");
           pixelType[0] = FormatReader.FLOAT;
           break;
+        case 0:
+          put("DataType", "varying data types");
+          pixelType[0] = -1;
+          break;
         default:
+          put("DataType", "8 bit unsigned integer");
           pixelType[0] = -1;
       }
-
+     
       if (pixelType[0] == -1) {
         int[] bps = TiffTools.getBitsPerSample(ifd);
         switch (bps[0]) {
@@ -407,259 +307,230 @@ public class ZeissLSMReader extends BaseTiffReader {
         }
       }
 
-      short scanType = DataTools.bytesToShort(omeData, 88, little);
-      switch ((int) scanType) {
-        case 0:
-          dimOrder = "XYZCT";
+      put("ThumbnailX", DataTools.read4SignedBytes(ras, little));
+      put("ThumbnailY", DataTools.read4SignedBytes(ras, little));
+
+      put("VoxelSizeX", DataTools.readDouble(ras, little));
+      put("VoxelSizeY", DataTools.readDouble(ras, little));
+      put("VoxelSizeZ", DataTools.readDouble(ras, little));
+      
+      put("OriginX", DataTools.readDouble(ras, little));
+      put("OriginY", DataTools.readDouble(ras, little));
+      put("OriginZ", DataTools.readDouble(ras, little));
+
+      int scanType = DataTools.read2UnsignedBytes(ras, little);
+      switch (scanType) {
+        case 0: 
+          put("ScanType", "x-y-z scan"); 
+          currentOrder[0] = "XYZCT";
           break;
-        case 1:
-          dimOrder = "XYZCT";
+        case 1: 
+          put("ScanType", "z scan (x-z plane)"); 
+          currentOrder[0] = "XYZCT";
           break;
-        case 3:
-          dimOrder = "XYTCZ";
+        case 2: 
+          put("ScanType", "line scan"); 
+          currentOrder[0] = "XYZCT";
           break;
-        case 4:
-          dimOrder = "XYZTC";
+        case 3: 
+          put("ScanType", "time series x-y"); 
+          currentOrder[0] = "XYTCZ";
+          break;
+        case 4: 
+          put("ScanType", "time series x-z"); 
+          currentOrder[0] = "XYZTC";
           break;
         case 5:
-          dimOrder = "XYTCZ";
+          put("ScanType", "time series 'Mean of ROIs'"); 
+          currentOrder[0] = "XYTCZ";
           break;
-        case 6:
-          dimOrder = "XYZTC";
+        case 6: 
+          put("ScanType", "time series x-y-z"); 
+          currentOrder[0] = "XYZTC";
           break;
-        case 7:
-          dimOrder = "XYCTZ";
+        case 7: 
+          put("ScanType", "spline scan"); 
+          currentOrder[0] = "XYCTZ";
           break;
-        case 8:
-          dimOrder = "XYCZT";
+        case 8: 
+          put("ScanType", "spline scan x-z"); 
+          currentOrder[0] = "XYCZT";
           break;
-        case 9:
-          dimOrder = "XYTCZ";
+        case 9: 
+          put("ScanType", "time series spline plane x-z"); 
+          currentOrder[0] = "XYTCZ";
           break;
-        default:
-          dimOrder = "XYZCT";
-      }
-
-      channels = cSize;
-
-      if (channels == 0) channels++;
-      //if (channels == 2) channels--;
-
-      while (numImages > zSize * channels * tSize) {
-        if (zSize > tSize) zSize++;
-        else tSize++;
-      }
-
-      sizeC[0] = channels;
-      sizeZ[0] = zSize;
-      sizeT[0] = tSize;
-      while (numImages > zSize * tSize * getEffectiveSizeC(currentId)) {
-        numImages--;
-      }
-
-      // The metadata store we're working with.
+        case 10: 
+          put("ScanType", "point mode"); 
+          currentOrder[0] = "XYZCT";
+          break;
+        default: 
+          put("ScanType", "x-y-z scan");
+          currentOrder[0] = "XYZCT";
+      } 
+     
       MetadataStore store = getMetadataStore(currentId);
 
       store.setPixels(
-        new Integer(imageWidth), // SizeX
-        new Integer(imageLength), // SizeY
-        new Integer(zSize), // SizeZ
-        new Integer(channels), // SizeC
-        new Integer(tSize), // SizeT
+        new Integer(sizeX[0]), // SizeX
+        new Integer(sizeY[0]), // SizeY
+        new Integer(sizeZ[0]), // SizeZ
+        new Integer(sizeC[0]), // SizeC
+        new Integer(sizeT[0]), // SizeT
         new Integer(pixelType[0]), // PixelType
-        null, // BigEndian
-        dimOrder, // DimensionOrder
+        new Boolean(!little), // BigEndian
+        currentOrder[0], // DimensionOrder
         null, // Image index
         null); // Pixels index
 
-      int pos = in.getFilePointer();
+      int spectralScan = DataTools.read2UnsignedBytes(ras, little);
+      switch (spectralScan) {
+        case 0: put("SpectralScan", "no spectral scan"); break;
+        case 1: put("SpectralScan", "acquired with spectral scan"); break;
+        default: put("SpectralScan", "no spectral scan");
+      }
+      
+      long type = DataTools.read4UnsignedBytes(ras, little);
+      switch ((int) type) {
+        case 0: put("DataType2", "original scan data"); break;
+        case 1: put("DataType2", "calculated data"); break;
+        case 2: put("DataType2", "animation"); break;
+        default: put("DataType2", "original scan data");
+      }
+      
+      long overlayOffset = DataTools.read4UnsignedBytes(ras, little);
+      long inputLUTOffset = DataTools.read4UnsignedBytes(ras, little);
+      long outputLUTOffset = DataTools.read4UnsignedBytes(ras, little);
+      long channelColorsOffset = DataTools.read4UnsignedBytes(ras, little);
 
-      // the following 4 are file offsets
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseOverlays(data, "OffsetVectorOverlay", little);
-      p += 4;
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseSubBlocks(data, "OffsetInputLut", little);
-      p += 4;
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseSubBlocks(data, "OffsetOutputLut", little);
-      p += 4;
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      // seek to this offset and read in the structure there
-      // first we have to make sure that the structure actually exists
+      put("TimeInterval", DataTools.readDouble(ras, little));
 
-      if (data != 0) {
-        pos = in.getFilePointer();
+      long channelDataTypesOffset = DataTools.read4UnsignedBytes(ras, little);
+      long scanInformationOffset = DataTools.read4UnsignedBytes(ras, little);
+      long ksDataOffset = DataTools.read4UnsignedBytes(ras, little);
+      long timeStampOffset = DataTools.read4UnsignedBytes(ras, little);
+      long eventListOffset = DataTools.read4UnsignedBytes(ras, little);
+      long roiOffset = DataTools.read4UnsignedBytes(ras, little);
+      long bleachRoiOffset = DataTools.read4UnsignedBytes(ras, little);
+      long nextRecordingOffset = DataTools.read4UnsignedBytes(ras, little);
 
-        in.seek(data + 4);
-        pos = in.getFilePointer() - 4;
+      put("DisplayAspectX", DataTools.readDouble(ras, little));
+      put("DisplayAspectY", DataTools.readDouble(ras, little));
+      put("DisplayAspectZ", DataTools.readDouble(ras, little));
+      put("DisplayAspectTime", DataTools.readDouble(ras, little));
 
+      long meanOfRoisOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
+      long topoIsolineOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
+      long topoProfileOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
+      long linescanOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
+      
+      put("ToolbarFlags", DataTools.read4UnsignedBytes(ras, little));
+      long channelWavelengthOffset = DataTools.read4UnsignedBytes(ras, little);
+      long channelFactorsOffset = DataTools.read4UnsignedBytes(ras, little);
+
+      double objectiveSphereCorrection = DataTools.readDouble(ras, little);
+      long unmixParamsOffset = DataTools.read4UnsignedBytes(ras, little);
+
+      // read referenced structures
+   
+      if (overlayOffset != 0) {
+        parseOverlays(overlayOffset, "OffsetVectorOverlay", little);
+      }
+
+      if (inputLUTOffset != 0) {
+        parseSubBlocks(inputLUTOffset, "OffsetInputLut", little); 
+      }
+
+      if (outputLUTOffset != 0) {
+        parseSubBlocks(outputLUTOffset, "OffsetOutputLut", little);
+      }
+
+      if (channelColorsOffset != 0) {
+        in.seek(channelColorsOffset + 4);
         int numColors = in.readInt();
         int numNames = in.readInt();
 
-        if (numColors > getSizeC(currentId)) {
-          in.seek(data - 2);
-          pos = in.getFilePointer() + 7;
-          in.order(!in.isLittleEndian());
+        if (numColors > sizeC[0]) {
+          in.seek(channelColorsOffset - 2);
+          in.order(!little);
           in.readInt();
           numColors = in.readInt();
           numNames = in.readInt();
         }
 
-        idata = in.readInt();
+        long namesOffset = in.readInt() + channelColorsOffset; 
         int nameData = in.readInt();
-        long offsetNames = pos + idata; // will seek to this
 
         // read in the intensity value for each color
 
-        if (offsetNames >= 0) {
-          in.seek(offsetNames);
+        if (namesOffset >= 0) {
+          in.seek(namesOffset);
+          for (int i=0; i<numColors; i++) put("Intensity" + i, in.readInt());
+        }
 
-          for (int i=0; i<numColors; i++) {
-            data = in.readInt();
-            put("Intensity" + i, data);
-          }
-
-          // read in the channel names
+        // read in the channel names
   
-          for (int i=0; i<numNames; i++) {
-            // we want to read until we find a null char
-            StringBuffer sb = new StringBuffer();
-            char current = (char) in.read();
-            while (current != 0) {
-              sb.append(current);
-              current = (char) in.read();
-            }
-            String name = sb.toString();
-            put("ChannelName" + i, name);
+        for (int i=0; i<numNames; i++) {
+          // we want to read until we find a null char
+          StringBuffer sb = new StringBuffer();
+          char current = (char) in.read();
+          while (current != 0) {
+            sb.append(current);
+            current = (char) in.read();
           }
+          put("ChannelName" + i, sb.toString());
         }
-        in.seek(pos);
-        in.order(isLittleEndian(currentId));
       }
-      p += 4;
 
-      put("TimeInterval", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
-
-      // the following 8 are file offsets
-
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      if (data != 0) {
-        in.skipBytes((int) data);
-
-        for (int i=0; i<dimensionChannels; i++) {
-          put("OffsetChannelDataTypes" + i, in.readInt());
+      if (timeStampOffset != 0) {
+        in.seek(timeStampOffset);
+        int blockSize = DataTools.read4SignedBytes(in, little);
+        int numberOfStamps = DataTools.read4SignedBytes(in, little);
+        for (int i=0; i<numberOfStamps; i++) {
+          put("TimeStamp" + i, DataTools.readDouble(in, little));
         }
-        in.seek(pos);
       }
-      p += 4;
 
-      put("OffsetScanInformation", DataTools.bytesToLong(cz, p, 4, little));
-      p += 4;
-
-      put("OffsetKsData", DataTools.bytesToLong(cz, p, 4, little));
-      p += 4;
-
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      if (data != 0) {
-        pos = in.getFilePointer();
-        in.skipBytes((int) data + 4);
-
-        int numStamps = in.readInt();
-        if (numStamps > 1000) numStamps = 1000;
-        for (int i=0; i<numStamps; i++) {
-          ddata = in.readDouble();
-          put("TimeStamp" + i, ddata);
-        }
-        in.seek(pos);
-      }
-      p += 4;
-
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      if (data != 0) {
-        pos = in.getFilePointer();
-
-        long numBytes = in.readInt();
+      if (eventListOffset != 0) {
+        in.seek(eventListOffset);
+        in.skipBytes(4); // skipping the block size
         int numEvents = in.readInt();
-        in.seek((int) (pos + data + 8));
-
-        if (numEvents <= numImages) {
-          for (int i=0; i<numEvents; i++) {
-            in.readInt();
-            ddata = in.readDouble();
-            put("Time" + i, ddata);
-
-            data = in.readInt();
-            put("EventType" + i, data);
-
-            if (numBytes > in.length() - in.getFilePointer()) {
-              numBytes = in.length() - in.getFilePointer();
-            }
-            if (numBytes < 16) numBytes = 16;
-            byte[] descr = new byte[(int) (numBytes - 16)];
-            in.read(descr);
-            put("Description" + i, new String(descr));
-          }
+        for (int i=0; i<numEvents; i++) {
+          int size = in.readInt();
+          double eventTime = in.readDouble();
+          int eventType = in.readInt();
+          byte[] b = new byte[size - 16];
+          in.read(b);
+          put("Event" + i + " Time", eventTime);
+          put("Event" + i + " Type", eventType);
+          put("Event" + i + " Description", new String(b));
         }
-        in.seek(pos);
       }
-      p += 4;
 
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseOverlays(data, "OffsetRoi", little);
-      p += 4;
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseOverlays(data, "OffsetBleachRoi", little);
-      p += 4;
-      put("OffsetNextRecording", DataTools.bytesToLong(cz, p, 4, little));
-      p += 4;
+      if (roiOffset != 0) parseOverlays(roiOffset, "ROIOffset", little);
 
-      put("DisplayAspectX", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
-      put("DisplayAspectY", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
-      put("DisplayAspectZ", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
-      put("DisplayAspectTime", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
+      if (bleachRoiOffset != 0) {
+        parseOverlays(bleachRoiOffset, "BleachROIOffset", little);
+      }
 
-      // the following 4 are file offsets
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseOverlays(data, "OffsetMeanOfRoisOverlay", little);
-      p += 4;
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseOverlays(data, "OffsetTopoIsolineOverlay", little);
-      p += 4;
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseOverlays(data, "OffsetTopoProfileOverlay", little);
-      p += 4;
-      data = DataTools.bytesToLong(cz, p, 4, little);
-      parseOverlays(data, "OffsetLinescanOverlay", little);
-      p += 4;
+      if (meanOfRoisOverlayOffset != 0) {
+        parseOverlays(meanOfRoisOverlayOffset, 
+          "OffsetMeanOfRoisOverlay", little);
+      }
 
-      put("ToolbarFlags", DataTools.bytesToLong(cz, p, 4, little));
+      if (topoIsolineOverlayOffset != 0) {
+        parseOverlays(topoIsolineOverlayOffset, 
+          "OffsetTopoIsolineOverlay", little);
+      }
 
-      // the following 2 are file offsets
-      put("OffsetChannelWavelength", DataTools.bytesToLong(cz, p, 4, little));
-      p += 4;
-      put("OffsetChannelFactors", DataTools.bytesToLong(cz, p, 4, little));
-      p += 4;
+      if (topoProfileOverlayOffset != 0) {
+        parseOverlays(topoProfileOverlayOffset, 
+          "OffsetTopoProfileOverlay", little);
+      }
 
-      put("ObjectiveSphereCorrection", Double.longBitsToDouble(
-        DataTools.bytesToLong(cz, p, little)));
-      p += 8;
-
-      // the following is a file offset
-      put("OffsetUnmixParameters", DataTools.bytesToLong(cz, p, 4, little));
-      p += 4;
-
-      in.seek(pos);
+      if (linescanOverlayOffset != 0) {
+        parseOverlays(linescanOverlayOffset, "OffsetLinescanOverlay", little);
+      }
     }
     catch (FormatException e) {
       if (debug) e.printStackTrace();
@@ -667,11 +538,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     catch (IOException e) {
       if (debug) e.printStackTrace();
     }
-
-    sizeZ[0] = zSize > 0 ? zSize : 1;
-    sizeC[0] = channels > 0 ? channels : 1;
-    sizeT[0] = tSize > 0 ? tSize : 1;
-    currentOrder[0] = "XYZCT";
 
     Object pixelSizeX = getMeta("VoxelSizeX");
     Object pixelSizeY = getMeta("VoxelSizeY");
