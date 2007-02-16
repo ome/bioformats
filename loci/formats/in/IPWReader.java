@@ -26,9 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -316,6 +314,14 @@ public class IPWReader extends BaseTiffReader {
     pixelType = new int[1];
     currentOrder = new String[1];
     orderCertain = new boolean[] {true};
+    imagesRead = new Vector[1];
+    imagesRead[0] = new Vector();
+    minimumValues = new Vector[1];
+    minimumValues[0] = new Vector();
+    maximumValues = new Vector[1];
+    maximumValues[0] = new Vector();
+    minMaxFinished = new boolean[1];
+    minMaxFinished[0] = false;
 
     Hashtable h = ifds[0];
     sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);

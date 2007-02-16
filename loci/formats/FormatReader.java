@@ -123,12 +123,6 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not min/max computation has finished. */
   protected boolean[] minMaxFinished;
 
-  /** 
-   * Flag indicating min/max values are stored in 
-   * metadata (disables calculation). 
-   */
-  protected boolean metadataMinMax = false;
-
   /** Whether or not to ignore color tables, if present. */
   protected boolean ignoreColorTable = false;
 
@@ -179,6 +173,7 @@ public abstract class FormatReader extends FormatHandler
     Arrays.fill(minimumValues, new Vector());
     Arrays.fill(maximumValues, new Vector());
     minMaxFinished = new boolean[1];
+    Arrays.fill(minMaxFinished, false);
 
     sizeX = new int[1];
     sizeY = new int[1];

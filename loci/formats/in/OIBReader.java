@@ -398,6 +398,14 @@ public class OIBReader extends FormatReader {
       sizeC = new int[numSeries];
       sizeT = new int[numSeries];
       validBits = new int[numSeries][];
+      imagesRead = new Vector[numSeries];
+      minimumValues = new Vector[numSeries];
+      maximumValues = new Vector[numSeries];
+      Arrays.fill(imagesRead, new Vector());
+      Arrays.fill(minimumValues, new Vector());
+      Arrays.fill(maximumValues, new Vector());
+      minMaxFinished = new boolean[numSeries];
+      Arrays.fill(minMaxFinished, false);
 
       for (int i=0; i<numSeries; i++) {
         sizeX[i] = ((Integer) width.get(i)).intValue();

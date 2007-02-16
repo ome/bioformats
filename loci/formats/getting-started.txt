@@ -46,6 +46,20 @@ String[] getUsedFiles(String) throws FormatException, IOException :
   the given file name (i.e. every file needed to display the current dataset).
   For an example of how this works, see loci.formats.in.PerkinElmerReader.
 
+Double getChannelGlobalMinimum(String, int) throws FormatException, IOException:
+  You only need to override this if your format specifies the minimum value
+  for each channel in the metadata.  The int parameter specifies the channel
+  for which to return the minimum value.
+
+Double getChannelGlobalMaximum(String, int) throws FormatException, IOException:
+  You only need to override this if your format specifies the maximum value
+  for each channel in the metadata.  The int parameter specifies the channel
+  for which to return the maximum value.
+
+boolean isMinMaxPopulated(String) throws FormatException, IOException:
+  Only override this if you are also overriding getChannelGlobalMinimum and
+  getChannelGlobalMaximum.  In general, return true.
+
 byte[] openBytes(String, int) throws FormatException, IOException :
   Returns a byte array containing the pixel data for the specified image from
   the given file.  Should throw a FormatException if the image number is invalid

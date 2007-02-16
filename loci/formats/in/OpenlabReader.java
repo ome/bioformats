@@ -660,6 +660,14 @@ public class OpenlabReader extends FormatReader {
     currentOrder = new String[numSeries];
     orderCertain = new boolean[numSeries];
     Arrays.fill(orderCertain, true);
+    imagesRead = new Vector[numSeries];
+    minimumValues = new Vector[numSeries];
+    maximumValues = new Vector[numSeries];
+    Arrays.fill(imagesRead, new Vector());
+    Arrays.fill(minimumValues, new Vector());
+    Arrays.fill(maximumValues, new Vector());
+    minMaxFinished = new boolean[numSeries];
+    Arrays.fill(minMaxFinished, false);
 
     // populate MetadataStore
 

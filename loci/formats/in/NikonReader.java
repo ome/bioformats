@@ -25,8 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -193,6 +192,10 @@ public class NikonReader extends BaseTiffReader {
     currentOrder = new String[1];
     getMetadataStore(id).createRoot();
     orderCertain = new boolean[] {true};
+    imagesRead = new Vector[] {new Vector()};
+    minimumValues = new Vector[] {new Vector()};
+    maximumValues = new Vector[] {new Vector()};
+    minMaxFinished = new boolean[] {false};
 
     channelMinMax = null;
     in = new RandomAccessStream(id);

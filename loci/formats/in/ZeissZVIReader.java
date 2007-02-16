@@ -358,6 +358,10 @@ public class ZeissZVIReader extends FormatReader {
     pixelType = new int[1];
     currentOrder = new String[1];
     orderCertain = new boolean[] {true};
+    imagesRead = new Vector[] {new Vector()};
+    minimumValues = new Vector[] {new Vector()};
+    maximumValues = new Vector[] {new Vector()};
+    minMaxFinished = new boolean[] {false};
 
     nImages = 0;
 

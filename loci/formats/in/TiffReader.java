@@ -26,8 +26,7 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
 import org.w3c.dom.*;
@@ -127,6 +126,15 @@ public class TiffReader extends BaseTiffReader {
         pixelType = new int[tiffData.length];
         currentOrder = new String[tiffData.length];
         orderCertain = new boolean[tiffData.length];
+        Arrays.fill(orderCertain, true);
+        imagesRead = new Vector[tiffData.length];
+        minimumValues = new Vector[tiffData.length];
+        maximumValues = new Vector[tiffData.length];
+        Arrays.fill(imagesRead, new Vector());
+        Arrays.fill(minimumValues, new Vector());
+        Arrays.fill(maximumValues, new Vector());
+        minMaxFinished = new boolean[tiffData.length];
+        Arrays.fill(minMaxFinished, false);
 
         for (int i=0; i<tiffData.length; i++) {
           sizeX[i] = Integer.parseInt(pixels[i].getAttribute("SizeX"));

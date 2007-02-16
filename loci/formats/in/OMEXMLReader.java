@@ -474,6 +474,14 @@ public class OMEXMLReader extends FormatReader {
     currentOrder = order;
     orderCertain = new boolean[currentOrder.length];
     Arrays.fill(orderCertain, true);
+    imagesRead = new Vector[width.length];
+    minimumValues = new Vector[width.length];
+    maximumValues = new Vector[width.length];
+    Arrays.fill(imagesRead, new Vector());
+    Arrays.fill(minimumValues, new Vector());
+    Arrays.fill(maximumValues, new Vector());
+    minMaxFinished = new boolean[width.length];
+    Arrays.fill(minMaxFinished, false);
 
     try {
       ome = new OMENode((String) null);
