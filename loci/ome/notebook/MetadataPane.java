@@ -134,8 +134,12 @@ public class MetadataPane extends JPanel
   /** Holds the first image of a tiff file.*/
   public BufferedImage img, thumb;
   
+  public BufferedImage[] images,thumbs;
+  
   /** Holds the ImageReader used to open image or null if none used.*/
   protected ImageReader reader;
+  
+  
 
   // -- Fields - raw panel --
 
@@ -475,14 +479,21 @@ public class MetadataPane extends JPanel
           if (n == JOptionPane.YES_OPTION) doMerge = true;
         }
 
-        int num = reader.getImageCount(id);
-        if (num > 0) {
-          // get middle image from the file
-          img = reader.openImage(id, num / 2);
+        int numSeries = reader.getSeriesCount(id);
+        images = new BufferedImage[numSeries+1];
+        thumbs = new BufferedImage[numSeries+1];
+        for(int i = 0; i<=numSeries;i++) {
+          int num = reader.getImageCount(id);
+          if (num > 0) {
+            // get middle image from the file
+            img = reader.openImage(id, num / 2);
+          }
+          else img = null;
+          images[i] = img;
+          int width = 50, height = 50;
+          thumb = ImageTools.scale(img, width, height, false);
+          thumbs[i] = thumb;
         }
-        else img = null;
-        int width = 50, height = 50;
-        thumb = ImageTools.scale(img, width, height, false);
         ome = (OMENode) ms.getRoot();
         
         if(doMerge) {
