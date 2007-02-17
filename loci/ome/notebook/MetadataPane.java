@@ -36,9 +36,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import loci.formats.*;
-import loci.formats.out.TiffWriter;
+import loci.formats.in.*;
+import loci.formats.out.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
+import javax.xml.parsers.*;
+
 
 /**
  * A panel that displays OME-XML metadata.
@@ -141,8 +144,11 @@ public class MetadataPane extends JPanel
   
   private int minPixNum;
   
-  private boolean pixelsIDProblem;
+  private boolean pixelsIDProblem, isOMETiff;
   
+  protected String fileID;
+  
+  protected Hashtable tiffDataStore;
 
   // -- Fields - raw panel --
 
@@ -279,8 +285,38 @@ public class MetadataPane extends JPanel
   /** Get the OMENode currently being edited.*/
   public OMENode getRoot() { return thisOmeNode; }
   
-  public boolean testThirdParty(IFormatReader read, File file) {
-    return false;
+  public boolean testThirdParty(File file) {
+    String id = file.getPath();
+    if (!file.exists()) return false;
+    if (!isOMETiff) return false;
+    ImageReader read = new ImageReader();
+    try {
+      if (read.getReader(id) instanceof TiffReader ||
+        read.getReader(id) instanceof OMEXMLReader) return false;
+      else return false;
+    }
+    catch (FormatException exc) {
+      return true;
+    }
+    catch (IOException exc) {
+      return true;
+    }
+  }
+  
+  public void askCompanionInstead(File file) {
+    Object[] options = {"Sounds good", "Cancel"};
+        
+    int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
+            "The file you are trying to save to is a third-party format."
+            + " Currently Notebook can only save to TIFF or OMEXML files."
+            + " Would you like to save to a companion file instead?",
+            "Can't Save to Third-Party Format",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            (javax.swing.Icon)null,
+            options,
+            options[0]);
+    if(n == JOptionPane.YES_OPTION) saveCompanionFile(file);
   }
 
   /** Save to the given file.*/
@@ -288,13 +324,17 @@ public class MetadataPane extends JPanel
     try {
       //use the node tree in the MetadataPane to write flattened OMECA
       //to a given file
-      if( testThirdParty(reader, file) ) return;
+      if( testThirdParty(file) ) {
+        askCompanionInstead(file);
+        return;
+      }
       if (originalTIFF != null) {
         String xml = thisOmeNode.writeOME(false);
 
-        if (originalTIFF == file) {
+        if (originalTIFF.equals(file)) {
           //just rewrite image description of original file.
           RandomAccessFile raf = new RandomAccessFile(file, "rw");
+          addTiffData(xml,file);
           TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
           raf.close();
         }
@@ -324,6 +364,7 @@ public class MetadataPane extends JPanel
   
   public void saveCompanionFile(File file) throws RuntimeException {
     File compFile = new File(file.getPath() + ".ome");
+    if (compFile.exists()) compFile.delete();
     try {
       thisOmeNode.writeOME(compFile, false);
     }
@@ -334,7 +375,7 @@ public class MetadataPane extends JPanel
   }
   
   public void saveTiffFile(File file) throws RuntimeException{
-    if(originalTIFF != null) saveFile(file);
+    if(originalTIFF.equals(file)) saveFile(file);
     else {
       String id = currentFile.getPath();
       String outId = id + ".tif";
@@ -348,6 +389,7 @@ public class MetadataPane extends JPanel
 
       try {      
         xml = thisOmeNode.writeOME(false);
+        addTiffData(xml, file);
         imageCount = reader.getImageCount(id);
       }
       catch(Exception exc) {
@@ -425,6 +467,156 @@ public class MetadataPane extends JPanel
             "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
     }
   }
+  
+  public void storeTiffData(File file) {
+    tiffDataStore = new Hashtable();
+    Document doc;
+    Vector pixList = new Vector();
+    DocumentBuilderFactory docFact = 
+      DocumentBuilderFactory.newInstance();
+   
+    Hashtable ifd = new Hashtable();
+    try { 
+      RandomAccessStream in = new RandomAccessStream(file.getPath());
+      ifd = TiffTools.getFirstIFD(in);  
+      in.close();
+    }
+    catch (IOException exc) {
+      exc.printStackTrace();
+    }
+    
+    // extract comment  
+    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);  
+    String comment = null;  
+    if (o instanceof String) comment = (String) o;  
+    else if (o instanceof String[]) {  
+      String[] s = (String[]) o;
+      if (s.length > 0) comment = s[0];  
+    }  
+    else if (o != null) comment = o.toString();
+    
+    File tempFile = new File("tiffXML.temp");
+    if (tempFile.exists()) tempFile.delete();
+
+    try {
+      FileWriter fw = new FileWriter(tempFile);
+      fw.write(comment);
+      fw.close();
+    }
+    catch (IOException exc) {
+      exc.printStackTrace();
+    }
+    
+    try {
+      DocumentBuilder db = docFact.newDocumentBuilder();
+      doc = db.parse(getClass().getResourceAsStream(tempFile.getPath()));
+      pixList = DOMUtil.findElementList("Pixels",doc);
+    }
+    catch (IOException exc) {
+      exc.printStackTrace();
+    }
+    catch (org.xml.sax.SAXException exc) {
+      exc.printStackTrace();
+    }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      exc.printStackTrace();
+    }
+    
+    for(int i = 0;i<pixList.size();i++) {
+      Element thisEle = (Element) pixList.get(i);
+      String thisID = DOMUtil.getAttribute("ID", thisEle);
+      Vector dataList = DOMUtil.getChildElements("TiffData",thisEle);
+      tiffDataStore.put(thisID,dataList);
+    }
+    
+    tempFile.delete();
+  }
+  
+  public void addTiffData(String xml, File file) {
+    Document doc;
+    Vector pixList = new Vector();
+    DocumentBuilderFactory docFact = 
+      DocumentBuilderFactory.newInstance();
+    
+    try {
+      DocumentBuilder db = docFact.newDocumentBuilder();
+      doc = db.parse(getClass().getResourceAsStream(file.getPath()));
+      pixList = DOMUtil.findElementList("Pixels",doc);
+    }
+    catch (IOException exc) {
+      exc.printStackTrace();
+    }
+    catch (org.xml.sax.SAXException exc) {
+      exc.printStackTrace();
+    }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      exc.printStackTrace();
+    }
+    
+    //creating tiff from third party
+    if(!file.exists() && !isOMETiff) {
+      for(int i = 0;i<pixList.size();i++) {
+        Element thisEle = (Element) pixList.get(i);
+        DOMUtil.createChild(thisEle, "TiffData");
+      }
+    }
+    //creating tiff from OMETiff file
+    else {
+      for(int i = 0;i<pixList.size();i++) {
+        Element thisEle = (Element) pixList.get(i);
+        String thisID = DOMUtil.getAttribute("ID", thisEle);
+        Vector dataEles = (Vector) tiffDataStore.get(thisID);
+        for(int j = 0;i<dataEles.size();i++) {
+          Element thisData = DOMUtil.createChild(thisEle, "TiffData");
+          String[] attrNames = DOMUtil.getAttributeNames(thisData);
+          String[] attrValues = DOMUtil.getAttributeValues(thisData);
+          for(int k = 0;i<attrNames.length;i++) {
+            DOMUtil.setAttribute(attrNames[i],attrValues[i],thisData);
+          }
+        }
+      }
+    }
+  }
+  
+  public boolean checkOMETiff(File file) {
+    Hashtable ifd;
+    try{
+      RandomAccessStream in = new RandomAccessStream(file.getPath());
+      ifd = TiffTools.getFirstIFD(in);
+      in.close();
+    }
+    catch (IOException exc) {
+      return false;
+    }
+    
+    // extract comment  
+    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);  
+    String comment = null;  
+    if (o instanceof String) comment = (String) o;  
+    else if (o instanceof String[]) {  
+      String[] s = (String[]) o;  if (s.length > 0) comment = s[0];  
+    }  
+    else if (o != null) comment = o.toString();
+    try {
+      OMENode testNode = new OMENode(comment);
+    }
+    catch (IOException exc) {
+      return false;
+    }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      return false;
+    }
+    catch (org.xml.sax.SAXException exc) {
+      return false;
+    }
+    catch (javax.xml.transform.TransformerConfigurationException exc) {
+      return false;
+    }
+    catch (javax.xml.transform.TransformerException exc) {
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Sets the displayed OME-XML metadata to correspond
@@ -453,6 +645,8 @@ public class MetadataPane extends JPanel
       if (TiffTools.isValidHeader(header)) {
         // TIFF file
         originalTIFF = file;
+        isOMETiff = checkOMETiff(file);
+        storeTiffData(file);
       }
       else originalTIFF = null;
       in.close();
@@ -470,6 +664,7 @@ public class MetadataPane extends JPanel
         // parsed to an OMENode (DOM in memory)
         reader.setMetadataStore(ms);
         String id = file.getPath();
+        fileID = id;
         File companionFile = new File(id + ".ome");
         if(companionFile.exists()) {
           Object[] options = {"Sounds good", "No, open original file"};
@@ -487,6 +682,7 @@ public class MetadataPane extends JPanel
           if (n == JOptionPane.YES_OPTION) doMerge = true;
         }
 
+        //Set up thumbnails
         int numSeries = reader.getSeriesCount(id);
         images = new BufferedImage[numSeries+1];
         thumbs = new BufferedImage[numSeries+1];
@@ -514,9 +710,10 @@ public class MetadataPane extends JPanel
         //standard format, flag this, all thumbs will be the same        
         minPixNum = 0;
         pixelsIDProblem = false;
+        Vector pixList = new Vector();
 
         try {        
-          Vector pixList = DOMUtil.findElementList("Pixels",ome.getOMEDocument(true));
+          pixList = DOMUtil.findElementList("Pixels",ome.getOMEDocument(true));
           
           int lowestInt = -1;
           
@@ -548,6 +745,8 @@ public class MetadataPane extends JPanel
           if(minPixNum == -1) pixelsIDProblem = true;
         }
         catch(Exception exc) { exc.printStackTrace(); }
+        
+        if (pixList.size() == 1) pixelsIDProblem = false;
         
         setOMEXML(ome);
       }
@@ -1598,7 +1797,7 @@ public class MetadataPane extends JPanel
       imageLabel = null;
       if (name.endsWith("Pixels")) {
         if(pixelsIDProblem || on == null) {        
-          if (thumb != null) {
+          if (thumb != null && !pixelsIDProblem) {
             tableThumb = thumb;
             tableImage = img;
             imageLabel = new JLabel(new ImageIcon(tableThumb));
@@ -1606,15 +1805,28 @@ public class MetadataPane extends JPanel
               " Click for full sized image.");
             imageLabel.addMouseListener(this);
           }
+          if (pixelsIDProblem) JOptionPane.showMessageDialog(this,
+            "Thumbnails disabled due to multiple pixels with unsupported"
+              + " ID naming scheme.",
+            "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
         }
         else {
           String thisID = on.getAttribute("ID");
           int colonIndex = thisID.indexOf(":");
           String pixNumString = thisID.substring(colonIndex + 1);
-          int pixNum = Integer.parseInt(pixNumString);
-          int indexNum = pixNum - minPixNum;
-          tableThumb = thumbs[indexNum];
-          tableImage = images[indexNum];
+          int pixNum = -1;
+          try {
+            pixNum = Integer.parseInt(pixNumString);
+            int indexNum = pixNum - minPixNum;
+            tableThumb = thumbs[indexNum];
+            tableImage = images[indexNum];
+          }
+          catch (java.lang.NumberFormatException exc) {
+            //this happens when multiple pixels aren't present
+            //so we want to show just the one thumb
+            tableThumb = thumb;
+            tableImage = img;
+          }
           imageLabel = new JLabel(new ImageIcon(tableThumb));
           imageLabel.setToolTipText("The middle image of these pixels." +
             " Click for full sized image.");
