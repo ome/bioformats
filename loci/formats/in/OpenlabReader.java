@@ -583,7 +583,9 @@ public class OpenlabReader extends FormatReader {
         in.skipBytes(8);
         int w = DataTools.read2SignedBytes(in, false);
         int newSize = (int) (nextTag - in.getFilePointer());
-        if ((w == oldWidth) && ((i % 4) == 3) && (newSize != oldSize)) {
+        if ((w == oldWidth) && ((i % 4) == 3) && 
+          (newSize - oldSize >= (width[0] * height[0]) / 2)) 
+        {
           layerInfoList[1].add(tmp.get(i));
           layerInfoList[0].remove(tmp.get(i));
         }
@@ -627,6 +629,24 @@ public class OpenlabReader extends FormatReader {
 
     int[] bpp = new int[numSeries];
 
+    sizeX = width;
+    sizeY = height;
+    sizeZ = numImages;
+    sizeC = channelCount;
+    sizeT = new int[numSeries];
+    pixelType = new int[numSeries];
+    currentOrder = new String[numSeries];
+    orderCertain = new boolean[numSeries];
+    Arrays.fill(orderCertain, true);
+    imagesRead = new Vector[numSeries];
+    minimumValues = new Vector[numSeries];
+    maximumValues = new Vector[numSeries];
+    Arrays.fill(imagesRead, new Vector());
+    Arrays.fill(minimumValues, new Vector());
+    Arrays.fill(maximumValues, new Vector());
+    minMaxFinished = new boolean[numSeries];
+    Arrays.fill(minMaxFinished, false);
+    
     int oldSeries = getSeries(currentId);
     for (int i=0; i<bpp.length; i++) {
       setSeries(currentId, i);
@@ -650,24 +670,6 @@ public class OpenlabReader extends FormatReader {
       addMeta("Number of images (Series " + i + ")",
         new Integer(numImages[i]));
     }
-
-    sizeX = width;
-    sizeY = height;
-    sizeZ = numImages;
-    sizeC = channelCount;
-    sizeT = new int[numSeries];
-    pixelType = new int[numSeries];
-    currentOrder = new String[numSeries];
-    orderCertain = new boolean[numSeries];
-    Arrays.fill(orderCertain, true);
-    imagesRead = new Vector[numSeries];
-    minimumValues = new Vector[numSeries];
-    maximumValues = new Vector[numSeries];
-    Arrays.fill(imagesRead, new Vector());
-    Arrays.fill(minimumValues, new Vector());
-    Arrays.fill(maximumValues, new Vector());
-    minMaxFinished = new boolean[numSeries];
-    Arrays.fill(minMaxFinished, false);
 
     // populate MetadataStore
 
