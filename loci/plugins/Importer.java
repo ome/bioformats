@@ -317,22 +317,10 @@ public class Importer implements ItemListener {
         id = gd.getNextString();
       }
       if (fs != null) {
-        if (mergeChannels) {
-          if (pixelType == FormatReader.FLOAT) {
-            r = new ChannelMerger(fs);
-          }
-          else r = new ChannelSeparator(fs);
-        }
-        else r = new ChannelSeparator(fs);
+        r = new ChannelSeparator(fs);
       }
       else {
-        if (mergeChannels) {
-          if (r.getPixelType(id) == FormatReader.FLOAT) {
-            r = new ChannelMerger(r);
-          }
-          else r = new ChannelSeparator(r);
-        }
-        else r = new ChannelSeparator(r);
+        r = new ChannelSeparator(r);
       }
       r.setColorTableIgnored(ignoreTables);
       r.close();
@@ -666,13 +654,13 @@ public class Importer implements ItemListener {
 
             int w = r.getSizeX(id);
             int h = r.getSizeY(id);
-            int c = r.getEffectiveSizeC(id);
+            int c = r.getRGBChannelCount(id);
             int type = r.getPixelType(id);
 
             // construct image processor and add to stack
             ImageProcessor ip = null;
 
-            int bpp = FormatReader.getBytesPerPixel(type);;
+            int bpp = FormatReader.getBytesPerPixel(type);
             
             if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
               // HACK - byte array dimensions are incorrect - image is probably
@@ -1094,28 +1082,14 @@ public class Importer implements ItemListener {
     try {
       // convert to RGB if needed
 
-      if (mergeChannels && r.getSizeC(id) > 1 &&
-        r.getPixelType(id) != FormatReader.FLOAT)
+      if (mergeChannels && r.getSizeC(id) > 1)
       {
         int c = r.getSizeC(id);
         ImageStack s = imp.getStack();
         ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
         for (int i=0; i<s.getSize(); i++) {
-          if (r.getPixelType(id) != FormatReader.FLOAT) {
-            ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
-            newStack.addSlice(s.getSliceLabel(i + 1), p);
-          }
-          else {
-            float[] f = (float[]) s.getProcessor(i + 1).getPixels();
-            byte[] bytes = new byte[f.length];
-            for (int j=0; j<f.length; j++) {
-              bytes[j] = (byte) Float.floatToIntBits(f[j]);
-            }
-
-            ByteProcessor p = new ByteProcessor(s.getWidth(),
-              s.getHeight(), bytes, null);
-            newStack.addSlice(s.getSliceLabel(i + 1), p);
-          }
+          ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
+          newStack.addSlice(s.getSliceLabel(i + 1), p);
         }
         imp.setStack(imp.getTitle(), newStack);
         adjustDisplay(imp);
