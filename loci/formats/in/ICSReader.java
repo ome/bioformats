@@ -97,7 +97,7 @@ public class ICSReader extends FormatReader {
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
     if (numImages == 1) return 1;
-    return numImages / (isRGB(id) ? 3 : 1);
+    return numImages / (rgb ? dimensions[4] : 1);
   }
 
   /** Checks if the images in the file are RGB. */
@@ -127,14 +127,16 @@ public class ICSReader extends FormatReader {
     int width = dimensions[1];
     int height = dimensions[2];
 
-    int offset = width * height * (dimensions[0] / 8) * no * (rgb ? 3 : 1);
-    byte[] plane = new byte[width*height * (dimensions[0] / 8) * (rgb ? 3 : 1)];
+    int offset = width * height * (dimensions[0] / 8) * no * 
+      (rgb ? dimensions[4] : 1);
+    byte[] plane = 
+      new byte[width*height * (dimensions[0] / 8) * (rgb ? dimensions[4] : 1)];
     System.arraycopy(data, offset, plane, 0, plane.length);
 
     // if it's version two, we need to flip the plane upside down
     if (versionTwo) {
       byte[] t = new byte[plane.length];
-      int len = width * (dimensions[0] / 8) * (rgb ? 3 : 1);
+      int len = width * (dimensions[0] / 8) * (rgb ? dimensions[4] : 1);
       int off = (height - 1) * len;
       int newOff = 0;
       for (int i=0; i<height; i++) {
@@ -158,7 +160,7 @@ public class ICSReader extends FormatReader {
     byte[] plane = openBytes(id, no);
     int width = dimensions[1];
     int height = dimensions[2];
-    int channels = isRGB(id) ? 3 : 1;
+    int channels = rgb ? dimensions[4] : 1;
 
     int bytes = dimensions[0] / 8;
 
@@ -174,6 +176,7 @@ public class ICSReader extends FormatReader {
 
       BufferedImage b = ImageTools.makeImage(f, width, height, channels, true);
       updateMinMax(b, no);
+      return b;
     }
 
     BufferedImage b = ImageTools.makeImage(plane, width, height, channels, true,
