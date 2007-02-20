@@ -351,8 +351,8 @@ public class OMEPlugin implements PlugIn {
       }
       //download into ImageJ
       for (int i=0; i<images.length; i++) {
-        String file = server + "?user=" + username + "&password=" + password +
-          "&id=" + images[i].getID();
+        String file = "location=[OME server] open=[" + server + "?user=" + 
+          username + "&password=" + password + "&id=" + images[i].getID() + "]";
         IJ.runPlugIn("loci.plugins.LociImporter", file);
 
         if (cancelPlugin) {

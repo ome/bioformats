@@ -95,10 +95,10 @@ public class Importer implements ItemListener {
     if (arg != null && arg.startsWith("location=")) {
       // parse location from argument
       location = Macro.getValue(arg, "location", null);
-      arg = null;
+      if (arg.indexOf("open") == -1) arg = null;
     }
 
-    boolean quiet = arg != null && !arg.equals("");
+    boolean quiet = arg != null && !arg.equals("") && arg.indexOf("open=") == -1;
 
     // -- Step 1: get filename to open --
 
@@ -113,6 +113,10 @@ public class Importer implements ItemListener {
       if (options != null) {
         String open = Macro.getValue(options, "open", null);
         if (open != null) id = open;
+      }
+      if (arg != null) {
+        id = Macro.getValue(arg, "open", null);
+        arg = null;
       }
     }
 
@@ -154,7 +158,7 @@ public class Importer implements ItemListener {
           return;
         }
       }
-      else if (LOCATION_OME.equals(location)) {
+      else if (LOCATION_OME.equals(location) && id == null) {
         IJ.runPlugIn("loci.plugins.OMEPlugin", "");
         return;
       }
@@ -180,13 +184,10 @@ public class Importer implements ItemListener {
 
     // -- Step 2: identify file --
 
-    if (!LOCATION_OME.equals(location)) {
-      IJ.showStatus("Identifying " + fileName);
-    }
-
     // determine whether we can handle this file
     IFormatReader r = null;
     if (!LOCATION_OME.equals(location)) {
+      IJ.showStatus("Identifying " + fileName);
       ImageReader reader = new ImageReader(); 
       try { r = reader.getReader(id); }
       catch (Exception exc) {
@@ -290,7 +291,7 @@ public class Importer implements ItemListener {
 
     // -- Step 4: open file --
 
-    IJ.showStatus("Analyzing " + fileName);
+    IJ.showStatus("Analyzing " + r.getCurrentFile());
 
     try {
       // -- Step 4a: do some preparatory work --
