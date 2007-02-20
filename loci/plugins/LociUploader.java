@@ -119,12 +119,13 @@ public class LociUploader implements PlugIn {
           new Integer(imp.getNChannels()),
           new Integer(imp.getNFrames()),
           new Integer(pixelType),
-          new Boolean(!fi.intelByteOrder),
+          fi == null ? Boolean.TRUE : new Boolean(!fi.intelByteOrder),
           "XYCZT",  // TODO : figure out a way to calculate the dimension order
           null,
           null);
 
-        store.setImage(fi.fileName, null, fi.info, null);
+        String name = fi == null ? imp.getTitle() : fi.fileName;
+        store.setImage(name, null, fi == null ? null : fi.info, null);
 
       }
       boolean little = !store.getBigEndian(null).booleanValue();
