@@ -203,7 +203,7 @@ public final class BrowserLauncher {
    * to open the default web browser on Windows.
    */
   private static final String WINDOWS_PARAMETER =
-    "url.dll,FileProtocolHandler";
+    "shell32.dll,ShellExec_RunDLL";
 
   /**
    * The shell parameters for Firefox that opens a given URL in an
