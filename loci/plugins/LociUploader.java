@@ -99,7 +99,9 @@ public class LociUploader implements PlugIn {
 
       // if we opened this stack with the Bio-Formats importer, then the
       // appropriate OME-XML is in fi.description
-      if (fi.description != null && fi.description.endsWith("</OME>")) {
+      if (fi != null && fi.description != null &&
+        fi.description.endsWith("</OME>"))
+      {
         store.createRoot(fi.description);
       }
       else {
