@@ -577,19 +577,54 @@ public class OpenlabReader extends FormatReader {
 
       long nextTag = readTagHeader();
       if (fmt.equals("PICT")) {
-        in.skipBytes(298);
+        in.skipBytes(24);
+        int volumeType = DataTools.read2SignedBytes(in, false);
+        in.skipBytes(272);
 
-        // check if this is really a PICT image
-        in.skipBytes(8);
-        int w = DataTools.read2SignedBytes(in, false);
-        int newSize = (int) (nextTag - in.getFilePointer());
-        if ((w == oldWidth) && ((i % 4) == 3) && 
-          (newSize - oldSize >= (width[0] * height[0]) / 2)) 
-        {
-          layerInfoList[1].add(tmp.get(i));
-          layerInfoList[0].remove(tmp.get(i));
+        int top, left, bottom, right;
+
+        if (version == 2) {
+          in.skipBytes(2);
+          top = DataTools.read2SignedBytes(in, false);
+          left = DataTools.read2SignedBytes(in, false);
+          bottom = DataTools.read2SignedBytes(in, false);
+          right = DataTools.read2SignedBytes(in, false);
+
+          if (width[series] == 0) width[series] = right - left;
+          if (height[series] == 0) height[series] = bottom - top;
         }
-        else oldSize = newSize;
+        else {
+          width[series] = DataTools.read4SignedBytes(in, false);
+          height[series] = DataTools.read4SignedBytes(in, false);
+        }
+
+        in.seek(layer.layerStart);
+
+        b = new byte[0];
+
+        if (version == 2) {
+          nextTag = readTagHeader();
+
+          if ((tag != 67 && tag != 68) || !fmt.equals("PICT")) {
+            throw new FormatException("Corrupt LIFF file.");
+          }
+          in.skipBytes(298);
+
+          // open image using pict reader
+          try {
+            b = new byte[(int) (nextTag - in.getFilePointer())];
+            in.read(b);
+            BufferedImage img = pict.open(b);
+            if (img.getRaster().getNumBands() != oldChannels ||
+              img.getWidth() != oldWidth)
+            {
+              layerInfoList[1].add(tmp.get(i));
+              layerInfoList[0].remove(tmp.get(i));
+            }
+          }
+          catch (FormatException e) {
+          }
+        }
       }
       else {
         in.skipBytes(24);
