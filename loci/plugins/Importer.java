@@ -812,11 +812,17 @@ public class Importer implements ItemListener {
             // retrieve the spatial calibration information, if available
 
             applyCalibration(store, imp, i);
-            ImageReader ir = new ImageReader();
+            IFormatReader ir = new ImageReader();
             OMEXMLMetadataStore tmp = new OMEXMLMetadataStore();
             tmp.createRoot();
             ir.setMetadataStore(tmp);
-            tmp = (OMEXMLMetadataStore) ir.getReader(id).getMetadataStore(id);
+            if (fs == null) {
+              tmp = (OMEXMLMetadataStore) ir.getMetadataStore(id);
+            }
+            else {
+              ir = new FileStitcher(ir);
+              tmp = (OMEXMLMetadataStore) ir.getMetadataStore(id);
+            }
             fi.description = tmp.dumpXML();
             imp.setFileInfo(fi);
             imp.setDimensions((cEnd[i] - cBegin[i] + 1) / cStep[i], 
