@@ -66,9 +66,9 @@ public class LociUploader implements PlugIn {
   /** Open a dialog box that prompts for a username, password, and server. */
   private void promptForLogin() {
     GenericDialog prompt = new GenericDialog("Login to OME");
-    prompt.addStringField("Server:   ", Prefs.get("uploader.server", ""), 120);
-    prompt.addStringField("Username: ", Prefs.get("uploader.user", ""), 120);
-    prompt.addStringField("Password: ", "", 120);
+    prompt.addStringField("Server:   ", Prefs.get("uploader.server", ""), 60);
+    prompt.addStringField("Username: ", Prefs.get("uploader.user", ""), 60);
+    prompt.addStringField("Password: ", "", 60);
 
     ((TextField) prompt.getStringFields().get(2)).setEchoChar('*');
     prompt.showDialog();
@@ -142,22 +142,32 @@ public class LociUploader implements PlugIn {
           byte[] b = new byte[s.length * 2];
           for (int j=0; j<s.length; j++) {
             byte[] a = DataTools.shortToBytes(s[j], little);
-            b[i*2] = a[0];
-            b[i*2 + 1] = a[1];
+            b[j*2] = a[0];
+            b[j*2 + 1] = a[1];
           }
           pixels.add(b);
         }
         else if (pix instanceof int[]) {
-          int[] j = (int[]) pix;
-          int channels = is.getProcessor(i+1) instanceof ColorProcessor ? 3 : 1;
-          byte[] b = new byte[j.length * channels];
-          for (int k=0; k<j.length; k++) {
-            byte[] a = DataTools.intToBytes(j[k], little);
-            b[k*3] = a[0];
-            b[k*3 + 1] = a[1];
-            b[k*3 + 2] = a[2];
+          if (is.getProcessor(i+1) instanceof ColorProcessor) {
+            byte[][] rgb = new byte[3][((int[]) pix).length];
+            ((ColorProcessor) is.getProcessor(i+1)).getRGB(rgb[0], 
+              rgb[1], rgb[2]);
+            int channels = store.getSizeC(null).intValue();
+            if (channels > 3) channels = 3;
+            for (int j=0; j<channels; j++) {
+              pixels.add(rgb[j]);
+            }
           }
-          pixels.add(b);
+          else {
+            int[] p = (int[]) pix;
+            byte[] b = new byte[4 * p.length];
+            for (int j=0; j<p.length; j++) {
+              byte[] a = DataTools.intToBytes(p[j], little);
+              for (int k=0; k<a.length; k++) {
+                b[j*a.length + k] = a[k];
+              }
+            }
+          }
         }
         else if (pix instanceof float[]) {
           float[] f = (float[]) pix;
@@ -165,10 +175,10 @@ public class LociUploader implements PlugIn {
           for (int j=0; j<f.length; j++) {
             int k = Float.floatToIntBits(f[j]);
             byte[] a = DataTools.intToBytes(k, little);
-            b[i*4] = a[0];
-            b[i*4 + 1] = a[1];
-            b[i*4 + 2] = a[2];
-            b[i*4 + 3] = a[3];
+            b[j*4] = a[0];
+            b[j*4 + 1] = a[1];
+            b[j*4 + 2] = a[2];
+            b[j*4 + 3] = a[3];
           }
           pixels.add(b);
         }
@@ -186,6 +196,7 @@ public class LociUploader implements PlugIn {
     }
     catch (UploadException e) {
       IJ.error("Upload failed:\n" + e);
+      e.printStackTrace();
     }
   }
 
