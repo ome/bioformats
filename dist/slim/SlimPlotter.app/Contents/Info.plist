@@ -27,7 +27,7 @@
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>
-		<string>-Xmx128m</string>
+		<string>-Xmx256m</string>
 		<key>MainClass</key>
 		<string>loci.apps.slim.SlimPlotter</string>
 		<key>JVMVersion</key>

@@ -1,2 +1,2 @@
 #!/bin/bash
-java -mx128m -jar SlimPlotter.jar $*
+java -mx256m -jar SlimPlotter.jar $*
