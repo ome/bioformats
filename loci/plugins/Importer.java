@@ -599,9 +599,6 @@ public class Importer implements ItemListener {
       if (!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + r.getCurrentFile());
 
-        r.close();
-        store = (OMEXMLMetadataStore) r.getMetadataStore(id);
-        
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(id, i);
@@ -630,6 +627,7 @@ public class Importer implements ItemListener {
           for (int j=0; j<num[i]; j++) if (load[j]) total++;
 
           // dump OME-XML to ImageJ's description field, if available
+          store = (OMEXMLMetadataStore) r.getMetadataStore(id);
           FileInfo fi = new FileInfo();
           fi.description = store.dumpXML();
 
@@ -814,9 +812,16 @@ public class Importer implements ItemListener {
             // retrieve the spatial calibration information, if available
 
             applyCalibration(store, imp, i);
+            ImageReader ir = new ImageReader();
+            OMEXMLMetadataStore tmp = new OMEXMLMetadataStore();
+            tmp.createRoot();
+            ir.setMetadataStore(tmp);
+            tmp = (OMEXMLMetadataStore) ir.getReader(id).getMetadataStore(id);
+            fi.description = tmp.dumpXML();
             imp.setFileInfo(fi);
-
-//            int c = r.getSizeC(id);
+            imp.setDimensions((cEnd[i] - cBegin[i] + 1) / cStep[i], 
+              (zEnd[i] - zBegin[i] + 1) / zStep[i], 
+              (tEnd[i] - tBegin[i] + 1) / tStep[i]);
             displayStack(imp, r, fs, id);
             r.close();
           }
@@ -1046,6 +1051,7 @@ public class Importer implements ItemListener {
       }
 
       imp.setFileInfo(fi);
+      imp.setDimensions(1, r.getSizeZ(id), r.getSizeT(id));
       displayStack(imp, r, fs, id);
     }
   }
@@ -1127,6 +1133,8 @@ public class Importer implements ItemListener {
         imp.setStack(imp.getTitle(), newStack);
       }
 
+      imp.setDimensions(r.getSizeC(id) / (mergeChannels ? 3 : 1), 
+        imp.getNSlices(), imp.getNFrames());
       if (stackFormat.equals(VIEW_STANDARD)) {
         if (!stitchStack) imp.show();
         else imps.add(imp); 
@@ -1170,6 +1178,7 @@ public class Importer implements ItemListener {
         int sizeC = r.getSizeC(id);
         int sizeT = r.getSizeT(id);
         if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
+        ChannelMerger ndxReader = new ChannelMerger(r);
 
         // reorder stack to View5D's preferred order: XYZCT
         if (!r.getDimensionOrder(id).equals("XYZCT")) {
@@ -1178,7 +1187,8 @@ public class Importer implements ItemListener {
           for (int t=0; t<sizeT; t++) {
             for (int c=0; c<sizeC; c++) {
               for (int z=0; z<sizeZ; z++) {
-                int ndx = r.getIndex(id, z, c, t) + 1;
+                int ndx = mergeChannels ? ndxReader.getIndex(id, z, c, t) + 1 :
+                  r.getIndex(id, z, c, t) + 1;
                 is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
               }
             }
@@ -1186,7 +1196,7 @@ public class Importer implements ItemListener {
           imp.setStack(imp.getTitle(), is);
         }
         WindowManager.setTempCurrentImage(imp);
-        IJ.run("View5D ", "slicecount=" + sizeZ + " timecount=" + sizeT);
+        IJ.run("View5D ", "");
       }
     }
     catch (Exception e) {
