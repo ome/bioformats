@@ -615,6 +615,318 @@ public class OMEXMLMetadataStore implements MetadataStore {
     displayOptions.setGreyChannel(greyscaleChannel);
   }
 
+
+  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float,
+   * Float, Integer)
+   */
+  public void setImagingEnvironment(Float temperature, Float airPressure,
+    Float humidity, Float co2Percent, Integer i)
+  {
+    int ndx = i == null ? 0 : i.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(image, "CustomAttributes", 0);
+    ImagingEnvironmentNode env = 
+      (ImagingEnvironmentNode) getChild(ca, "ImagingEnvironment", 0);
+    env.setTemperature(temperature);
+    env.setAirPressure(airPressure);
+    env.setHumidity(humidity);
+    env.setCO2Percent(co2Percent);
+  }
+
+  /* @see MetadataStore#setDisplayChannel(Integer, Double, Double, Float,
+   * Integer)
+   */
+  public void setDisplayChannel(Integer channelNumber, Double blackLevel,
+    Double whiteLevel, Float gamma, Integer i)
+  {
+    int ndx = i == null ? 0 : i.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(image, "CustomAttributes", 0);
+    DisplayChannelNode display = (DisplayChannelNode) 
+      getChild(ca, "DisplayChannel", channelNumber.intValue());    
+    display.setChannelNumber(channelNumber);
+    display.setBlackLevel(blackLevel);
+    display.setWhiteLevel(whiteLevel);
+    display.setGamma(gamma);
+  }
+
+  /* @see MetadataStore#setDisplayOptions(Float, Boolean, Boolean, Boolean,
+   * Boolean, String, Integer, Integer, Integer, Integer, Integer, Integer,
+   * Integer, Integer, Integer, Integer)
+   */
+  public void setDisplayOptions(Float zoom, Boolean redChannelOn,
+    Boolean greenChannelOn, Boolean blueChannelOn, Boolean displayRGB,
+    String colorMap, Integer zstart, Integer zstop, Integer tstart,
+    Integer tstop, Integer imageNdx, Integer pixelsNdx, Integer redChannel, 
+    Integer greenChannel, Integer blueChannel, Integer grayChannel)
+  {
+    int ndx = imageNdx == null ? 0 : imageNdx.intValue();
+    int pixNdx = pixelsNdx == null ? 0 : pixelsNdx.intValue();
+    
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(image, "CustomAttributes", 0);
+    PixelsNode pix = (PixelsNode) getChild(ca, "Pixels", pixNdx);
+    DisplayChannelNode red = redChannel == null ? null : (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", redChannel.intValue());
+    DisplayChannelNode green = greenChannel == null ? null : 
+      (DisplayChannelNode) getChild(ca, "DisplayChannel", 
+      greenChannel.intValue());
+    DisplayChannelNode blue = blueChannel == null ? null : (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", blueChannel.intValue());
+    DisplayChannelNode gray = grayChannel == null ? null : (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", grayChannel.intValue());
+
+    DisplayOptionsNode display = (DisplayOptionsNode)
+      getChild(ca, "DisplayOptions", 0);
+    display.setPixels(pix);
+    display.setZoom(zoom);
+    if (red != null) display.setRedChannel(red);
+    display.setRedChannelOn(new Boolean(red != null));
+    if (green != null) display.setGreenChannel(green);
+    display.setGreenChannelOn(new Boolean(green != null));
+    if (blue != null) display.setBlueChannel(blue);
+    display.setBlueChannelOn(new Boolean(blue != null));
+    display.setDisplayRGB(displayRGB);
+    if (gray != null) display.setGreyChannel(gray);
+    display.setColorMap(colorMap);
+    display.setZStart(zstart);
+    display.setZStop(zstop);
+    display.setTStart(tstart);
+    display.setTStop(tstop);
+  }
+
+  /* @see MetadataStore#setLightSource(String, String, String, 
+   * Integer, Integer) 
+   */
+  public void setLightSource(String manufacturer, String model,
+    String serialNumber, Integer instrumentIndex, Integer lightIndex)
+  {
+    int ndx = instrumentIndex == null ? 0 : instrumentIndex.intValue();
+    int lightNdx = lightIndex == null ? 0 : lightIndex.intValue();
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    InstrumentNode inst = (InstrumentNode) getChild(ca, "Instrument", ndx);
+    LightSourceNode light = 
+      (LightSourceNode) getChild(ca, "LightSource", lightNdx);
+    light.setManufacturer(manufacturer);
+    light.setModel(model);
+    light.setSerialNumber(serialNumber);
+    light.setInstrument(inst);
+  }
+
+  /* @see MetadataStore#setLaser(String, String, Integer, Boolean, Boolean,
+   * String, Float, Integer, Integer, Integer, Integer)
+   */
+  public void setLaser(String type, String medium, Integer wavelength,
+    Boolean frequencyDoubled, Boolean tunable, String pulse, Float power,
+    Integer instrumentNdx, Integer lightNdx, Integer pumpNdx, Integer num)
+  {
+    int ndx = instrumentNdx == null ? 0 : instrumentNdx.intValue();
+    int light = lightNdx == null ? 0 : lightNdx.intValue();
+    int pump = pumpNdx == null ? 0 : pumpNdx.intValue();
+    int laserNdx = num == null ? 0 : num.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    LightSourceNode lightNode = 
+      (LightSourceNode) getChild(ca, "LightSource", light);
+    LightSourceNode pumpNode =
+      (LightSourceNode) getChild(ca, "LightSource", pump);
+    LaserNode laser = (LaserNode) getChild(ca, "Laser", laserNdx);
+    
+    laser.setType(type);
+    laser.setMedium(medium);
+    laser.setWavelength(wavelength);
+    laser.setFrequencyDoubled(frequencyDoubled);
+    laser.setTunable(tunable);
+    laser.setPulse(pulse);
+    laser.setPower(power);
+    laser.setLightSource(lightNode);
+    laser.setPump(pumpNode);
+  }
+
+  /* @see MetadataStore#setFilament(String, Float, Integer, Integer) */
+  public void setFilament(String type, Float power, Integer lightSource, 
+    Integer num) 
+  { 
+    int lightNdx = lightSource == null ? 0 : lightSource.intValue();
+    int n = num == null ? 0 : num.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    LightSourceNode light = 
+      (LightSourceNode) getChild(ca, "LightSource", lightNdx);
+
+    FilamentNode filament = (FilamentNode) getChild(ca, "Filament", n);
+    filament.setType(type);
+    filament.setPower(power);
+    filament.setLightSource(light);
+  }
+
+  /* @see MetadataStore#setArc(String, Float, Integer, Integer) */
+  public void setArc(String type, Float power, Integer lightSource, 
+    Integer num) 
+  { 
+    int lightNdx = lightSource == null ? 0 : lightSource.intValue();
+    int n = num == null ? 0 : num.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    LightSourceNode light = 
+      (LightSourceNode) getChild(ca, "LightSource", lightNdx);
+    ArcNode arc = (ArcNode) getChild(ca, "Arc", n);
+    arc.setType(type);
+    arc.setPower(power);
+    arc.setLightSource(light);
+  }
+
+  /* @see MetadataStore#setDetector(String, String, String, String, Float,
+   * Float, Float, Integer, Integer)
+   */
+  public void setDetector(String manufacturer, String model,
+    String serialNumber, String type, Float gain, Float voltage, Float offset,
+    Integer instrumentNdx, Integer detectorNdx)
+  {
+    int ndx = instrumentNdx == null ? 0 : instrumentNdx.intValue();
+    int dNdx = detectorNdx == null ? 0 : detectorNdx.intValue();
+ 
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    InstrumentNode inst = (InstrumentNode) getChild(ca, "Instrument", ndx);
+    DetectorNode detector = (DetectorNode) getChild(ca, "Detector", dNdx);
+    detector.setManufacturer(manufacturer);
+    detector.setModel(model);
+    detector.setSerialNumber(serialNumber);
+    detector.setType(type);
+    detector.setGain(gain);
+    detector.setVoltage(voltage);
+    detector.setOffset(offset);
+    detector.setInstrument(inst);
+  }
+
+  /* @see MetadataStore#setObjective(String, String, String, Float, Float, 
+   * Integer, Integer) 
+   */
+  public void setObjective(String manufacturer, String model, 
+    String serialNumber, Float lensNA,
+    Float magnification, Integer instrument, Integer objective)
+  {
+    int iNdx = instrument == null ? 0 : instrument.intValue();
+    int oNdx = objective == null ? 0 : objective.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    InstrumentNode inst = (InstrumentNode) getChild(ca, "Instrument", iNdx);
+    ObjectiveNode obj = (ObjectiveNode) getChild(ca, "Objective", oNdx);
+    obj.setManufacturer(manufacturer);
+    obj.setModel(model);
+    obj.setSerialNumber(serialNumber);
+    obj.setLensNA(lensNA);
+    obj.setMagnification(magnification);
+    obj.setInstrument(inst);
+  }
+
+  /* @see MetadataStore#setExcitationFilter(String, String, String, 
+   * String, Integer)
+   */
+  public void setExcitationFilter(String manufacturer, String model,
+    String lotNumber, String type, Integer filter)
+  {
+    int fNdx = filter == null ? 0 : filter.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    ExcitationFilterNode f = 
+      (ExcitationFilterNode) getChild(ca, "ExcitationFilter", fNdx);
+    f.setManufacturer(manufacturer);
+    f.setModel(model);
+    f.setLotNumber(lotNumber);
+    f.setType(type);
+  }
+
+  /* @see MetadataStore#setDichroic(String, String, String, Integer) */
+  public void setDichroic(String manufacturer, String model, String lotNumber,
+    Integer dichroic)
+  {
+    int dNdx = dichroic == null ? 0 : dichroic.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    DichroicNode d = (DichroicNode) getChild(ca, "Dichroic", dNdx);
+    d.setManufacturer(manufacturer);
+    d.setModel(model);
+    d.setLotNumber(lotNumber);
+  }
+
+  /* @see MetadataStore#setEmissionFilter(String, String, String, 
+   * String, Integer)
+   */
+  public void setEmissionFilter(String manufacturer, String model,
+    String lotNumber, String type, Integer filter)
+  {
+    int fNdx = filter == null ? 0 : filter.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    EmissionFilterNode f = (EmissionFilterNode) 
+      getChild(ca, "EmissionFilter", fNdx);
+    f.setManufacturer(manufacturer);
+    f.setModel(model);
+    f.setLotNumber(lotNumber);
+    f.setType(type);
+  }
+
+  /* @see MetadataStore#setFilterSet(String, String, String, Integer, 
+   * Integer) 
+   */
+  public void setFilterSet(String manufacturer, String model, String lotNumber,
+    Integer filterSet, Integer filter)
+  {
+    int fsNdx = filterSet == null ? 0 : filterSet.intValue();
+    int fNdx = filter == null ? 0 : filter.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    FilterNode filterNode = (FilterNode) getChild(ca, "Filter", fNdx);
+    FilterSetNode fsNode = (FilterSetNode) getChild(ca, "FilterSet", fsNdx);
+    fsNode.setManufacturer(manufacturer);
+    fsNode.setModel(model);
+    fsNode.setLotNumber(lotNumber);
+    fsNode.setFilter(filterNode);
+  }
+
+  /* @see MetadataStore#setOTF(Integer, Integer, String, String, 
+   * Boolean, Integer, Integer, Integer, Integer)
+   */
+  public void setOTF(Integer sizeX, Integer sizeY, String pixelType,
+    String path, Boolean opticalAxisAverage, Integer instrument, Integer otf,
+    Integer filter, Integer objective)
+  {
+    int iNdx = instrument == null ? 0 : instrument.intValue();
+    int fNdx = filter == null ? 0 : filter.intValue();
+    int otfNdx = otf == null ? 0 : otf.intValue();
+    int oNdx = objective == null ? 0 : objective.intValue();
+
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(root, "CustomAttributes", 0);
+    InstrumentNode inst = (InstrumentNode) getChild(ca, "Instrument", iNdx);
+    ObjectiveNode obj = (ObjectiveNode) getChild(ca, "Objective", oNdx);
+    FilterNode f = (FilterNode) getChild(ca, "Filter", fNdx);
+
+    OTFNode otfNode = (OTFNode) getChild(ca, "OTF", otfNdx);
+    otfNode.setObjective(obj);
+    otfNode.setFilter(f);
+    otfNode.setSizeX(sizeX);
+    otfNode.setSizeY(sizeY);
+    otfNode.setPixelType(pixelType);
+    otfNode.setPath(path);
+    otfNode.setOpticalAxisAverage(opticalAxisAverage);
+    otfNode.setInstrument(inst);
+  }
+
   // -- Helper methods --
 
   /**

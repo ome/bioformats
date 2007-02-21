@@ -674,22 +674,6 @@ public class BioRadReader extends FormatReader {
     sizeT[0] = tSize;
     currentOrder[0] = dimOrder;
 
-    store.setImage(name, null /* creation date */, null /* description */, null);
-
-    store.setInstrument(null /* manufacturer */, null /* model */,
-      null /* serial number */, null /* type */, null);
-
-    store.setLogicalChannel(0 /* channel index */, null /* name */,
-     null /* ND filter */, null /* EM wave */, null /* excitation wavelength */,
-     null /* photometric interpretation */, null /* mode */, null);
-
-    store.setChannelGlobalMinMax(0 /* channel */, null /* double min */,
-      null /* double max */, null);
-
-    // TODO do this for each plane
-    //store.setPlaneInfo(theZ, theC, theT, Float timestamp, Float exposureTime,
-    //  null);
-
     store.setPixels(
       new Integer(nx), // SizeX
       new Integer(ny), // SizeY
@@ -711,6 +695,46 @@ public class BioRadReader extends FormatReader {
     store.setDimensions(pixelSizeX, pixelSizeY, pixelSizeZ, null, null, null);
   
     store.setDefaultDisplaySettings(null);
+  
+    for (int i=0; i<sizeC[0]; i++) {
+      //setLogicalChannel
+      String black = (String) getMeta("PMT " + i + " Black level");
+      store.setDisplayChannel(new Integer(i), black == null ? null : 
+        new Double(black), new Double(Math.pow(2, type == 1 ? 8 : 16)),
+        null, null);
+    }
+    String zoom = (String) getMeta("Zoom factor (user selected)");
+    String zstart = (String) getMeta("Z start");
+    String zstop = (String) getMeta("Z stop");
+    store.setDisplayOptions(zoom == null ? null : new Float(zoom),
+      new Boolean(sizeC[0] > 1), new Boolean(sizeC[0] >= 2),
+      new Boolean(sizeC[0] >= 3), Boolean.FALSE, null, zstart == null ? null :
+      new Integer((int) (new Double(zstart).doubleValue())), zstop == null ? 
+      null : new Integer((int) (new Double(zstop).doubleValue())), null, null, 
+      null, null, sizeC[0] > 1 ? new Integer(0) : null, 
+      sizeC[0] > 1 ? new Integer(1) : null,
+      sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
+    for (int i=0; i<3; i++) {
+      String prefix = "Transmission detector " + (i+1) + " - ";
+      String gain = (String) getMeta(prefix + "gain");
+      String offset = (String) getMeta(prefix + "offset");
+      store.setDetector(null, null, null, null, gain == null ? null : 
+        new Float(gain), null, offset == null ? null : new Float(offset), 
+        null, new Integer(i));
+
+      String exc = (String) getMeta("Part number of excitation filter for " +
+        "laser " + (i+1));
+      String ems = (String) getMeta("Part number of emission filter for " +
+        "laser " + (i+1));
+      String excName = (String) getMeta("Excitation filter name - laser " + i);
+      String emsName = (String) getMeta("Emission filter name - laser " + i);
+      store.setExcitationFilter(null, null, exc, null, null);
+      store.setEmissionFilter(null, null, ems, null, null);
+    }
+    String mag = (String) getMeta("Objective lens magnification");
+    store.setObjective(null, null, null, null, 
+      mag == null ? null : new Float(mag), null, null);
+  
   }
 
   public String noteString(int n, int l, int s, int t, int x, int y, String p) {

@@ -94,4 +94,80 @@ public class DummyMetadataStore implements MetadataStore {
   public void setStageLabel(String name, Float x, Float y, Float z, Integer i) {
   }
 
+  public void setImagingEnvironment(Float temperature, Float airPressure,
+    Float humidity, Float co2Percent, Integer i)
+  {
+  }
+
+  public void setDisplayChannel(Integer channelNumber, Double blackLevel,
+    Double whiteLevel, Float gamma, Integer i)
+  {
+  }
+
+  public void setDisplayOptions(Float zoom, Boolean redChannelOn,
+    Boolean greenChannelOn, Boolean blueChannelOn, Boolean displayRGB,
+    String colorMap, Integer zstart, Integer zstop, Integer tstart,
+    Integer tstop, Integer imageNdx, Integer pixelNdx, Integer redChannel,
+    Integer greenChannel, Integer blueChannel, Integer grayChannel)
+  {
+  }
+
+  public void setLightSource(String manufacturer, String model,
+    String serialNumber, Integer instrumentNdx, Integer lightNdx)
+  {
+  }
+
+  public void setLaser(String type, String medium, Integer wavelength,
+    Boolean frequencyDoubled, Boolean tunable, String pulse, Float power,
+    Integer instrumentNdx, Integer lightNdx, Integer pumpNdx, Integer laserNdx)
+  {
+  }
+
+  public void setFilament(String type, Float power, Integer lightNdx, 
+    Integer filamentNdx) 
+  { 
+  }
+
+  public void setArc(String type, Float power, Integer lightNdx, Integer arcNdx)
+  { 
+  }
+
+  public void setDetector(String manufacturer, String model,
+    String serialNumber, String type, Float gain, Float voltage, Float offset,
+    Integer instrumentNdx, Integer detectorNdx)
+  {
+  }
+
+  public void setObjective(String manufacturer, String model, 
+    String serialNumber, Float lensNA, Float magnification, 
+    Integer instrumentNdx, Integer objectiveNdx)
+  {
+  }
+
+  public void setExcitationFilter(String manufacturer, String model,
+    String lotNumber, String type, Integer filterNdx)
+  {
+  }
+
+  public void setDichroic(String manufacturer, String model, String lotNumber,
+    Integer dichroicNdx)
+  {
+  }
+
+  public void setEmissionFilter(String manufacturer, String model,
+    String lotNumber, String type, Integer filterNdx)
+  {
+  }
+
+  public void setFilterSet(String manufacturer, String model, String lotNumber,
+    Integer filterSetNdx, Integer filterNdx)
+  {
+  }
+
+  public void setOTF(Integer sizeX, Integer sizeY, String pixelType,
+    String path, Boolean opticalAxisAverage, Integer instrumentNdx,
+    Integer otfNdx, Integer filterNdx, Integer objectiveNdx)
+  {
+  }
+
 }

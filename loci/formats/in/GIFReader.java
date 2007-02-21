@@ -406,6 +406,9 @@ public class GIFReader extends FormatReader {
       getDimensionOrder(id),
       null,
       null);
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Helper methods --

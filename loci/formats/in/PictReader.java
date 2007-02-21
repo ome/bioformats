@@ -222,6 +222,9 @@ public class PictReader extends FormatReader {
       new Integer(d.width), new Integer(d.height),
       new Integer(1), new Integer(sizeC[0]), new Integer(1),
       new Integer(pixelType[0]), new Boolean(!little), "XYCZT", null, null);
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- PictReader API methods --

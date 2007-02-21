@@ -262,7 +262,7 @@ public class OMEXMLReader extends FormatReader {
       boolean found = false;
       while (!found) {
         if (in.getFilePointer() < in.length()) {
-          in.read(buf, 9, 8183);
+          int read = in.read(buf, 9, 8183);
           String test = new String(buf);
 
           int ndx = test.indexOf("BigEndian");
@@ -270,7 +270,7 @@ public class OMEXMLReader extends FormatReader {
             found = true;
             String endian = test.substring(ndx + 11);
             endianness.add(new Boolean(!endian.toLowerCase().startsWith("t")));
-            bigEndianPos.add(new Integer(in.getFilePointer() - (8192 - ndx)));
+            bigEndianPos.add(new Integer(in.getFilePointer() - read - 9 + ndx));
             numDatasets++;
           }
         }

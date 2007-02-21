@@ -240,4 +240,66 @@ public interface MetadataStore {
    */
   void setDefaultDisplaySettings(Integer i);
 
+  /** Sets the imaging environment for a particular image. */
+  void setImagingEnvironment(Float temperature, Float airPressure,
+    Float humidity, Float co2Percent, Integer i);
+
+  /** Sets information about the specified channel for a particular image. */
+  void setDisplayChannel(Integer channelNumber, Double blackLevel,
+    Double whiteLevel, Float gamma, Integer i);
+
+  /** Sets various display options for a particular pixels set. */
+  void setDisplayOptions(Float zoom, Boolean redChannelOn, 
+    Boolean greenChannelOn, Boolean blueChannelOn, Boolean displayRGB,
+    String colorMap, Integer zstart, Integer zstop, Integer tstart, 
+    Integer tstop, Integer imageNdx, Integer pixelsNdx, Integer redChannel,
+    Integer greenChannel, Integer blueChannel, Integer grayChannel);
+
+  /** Sets a light source for a particular instrument. */
+  void setLightSource(String manufacturer, String model, String serialNumber, 
+    Integer instrumentIndex, Integer lightIndex);
+
+  /** Sets a laser for a particular instrument. */
+  void setLaser(String type, String medium, Integer wavelength,
+    Boolean frequencyDoubled, Boolean tunable, String pulse, Float power,
+    Integer instrumentNdx, Integer lightNdx, Integer pumpNdx, Integer laserNdx);
+
+  /** Sets a filament for a particular instrument. */
+  void setFilament(String type, Float power, Integer lightNdx, 
+    Integer filamentNdx);
+
+  /** Sets an arc for a particular instrument. */
+  void setArc(String type, Float power, Integer lightNdx, Integer arcNdx);
+ 
+  /** Sets a detector for a particular instrument. */
+  void setDetector(String manufacturer, String model, String serialNumber,
+    String type, Float gain, Float voltage, Float offset, Integer instrumentNdx,
+    Integer detectorNdx);
+
+  /** Sets an objective for a particular instrument. */
+  void setObjective(String manufacturer, String model, String serialNumber,
+    Float lensNA, Float magnification, Integer instrumentNdx, 
+    Integer objectiveNdx);
+
+  /** Sets an excitation filter for a particular instrument. */
+  void setExcitationFilter(String manufacturer, String model, String lotNumber,
+    String type, Integer filterNdx);
+
+  /** Sets a dichroic for a particular instrument. */
+  void setDichroic(String manufacturer, String model, String lotNumber, 
+    Integer dichroicNdx);
+
+  /** Sets an emission filter for a particular instrument. */
+  void setEmissionFilter(String manufacturer, String model, String lotNumber,
+    String type, Integer filterNdx);
+
+  /** Sets a filter set for a particular instrument. */
+  void setFilterSet(String manufacturer, String model, String lotNumber, 
+    Integer filterSetNdx, Integer filterNdx);
+
+  /** Sets an OTF for a particular instrument. */
+  void setOTF(Integer sizeX, Integer sizeY, String pixelType, String path,
+    Boolean opticalAxisAverage, Integer instrumentNdx, Integer otfNdx,
+    Integer filterNdx, Integer objectiveNdx);
+
 }

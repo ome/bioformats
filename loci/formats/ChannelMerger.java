@@ -55,6 +55,23 @@ public class ChannelMerger extends ReaderWrapper {
     return no;
   }
 
+  /* @see IFormatReader#getDimensionOrder(String) */
+  public String getDimensionOrder(String id) 
+    throws FormatException, IOException
+  {
+    String order = reader.getDimensionOrder(id);
+    if (canMerge(id)) {
+      StringBuffer sb = new StringBuffer(order);
+      while (order.indexOf("C") != 2) {
+        char pre = order.charAt(order.indexOf("C") - 1);
+        sb.setCharAt(order.indexOf("C"), pre);
+        sb.setCharAt(order.indexOf(pre), 'C');
+        order = sb.toString();
+      }
+    }
+    return order;
+  }
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return canMerge(id) || reader.isRGB(id);
@@ -69,7 +86,7 @@ public class ChannelMerger extends ReaderWrapper {
     int[] nos = getZCTCoords(id, no);
 
     int z = nos[0], t = nos[2];
-    String order = getDimensionOrder(id);
+    String order = reader.getDimensionOrder(id);
     int ic = order.indexOf("C") - 2;
     if (ic < 0 || ic > 2) {
       throw new FormatException("Invalid dimension order: " + order);
@@ -92,7 +109,7 @@ public class ChannelMerger extends ReaderWrapper {
     int sizeC = getSizeC(id);
     int[] nos = getZCTCoords(id, no);
     int z = nos[0], t = nos[2];
-    String dimOrder = getDimensionOrder(id);
+    String dimOrder = reader.getDimensionOrder(id);
     int ic = dimOrder.indexOf("C") - 2;
     byte[] bytes = null;
     for (int c=0; c<sizeC; c++) {

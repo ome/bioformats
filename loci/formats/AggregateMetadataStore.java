@@ -236,4 +236,181 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
+  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, 
+   * Float, Integer) 
+   */
+  public void setImagingEnvironment(Float temperature, Float airPressure,
+    Float humidity, Float co2Percent, Integer i)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setImagingEnvironment(temperature, airPressure, humidity, 
+        co2Percent, i);
+    }
+  }
+
+  /* @see MetadataStore#setDisplayChannel(Integer, Double, Double, Float
+   * Integer)
+   */
+  public void setDisplayChannel(Integer channelNumber, Double blackLevel,
+    Double whiteLevel, Float gamma, Integer i)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setDisplayChannel(channelNumber, blackLevel, whiteLevel, gamma, i);
+    }
+  }
+
+  /* @see MetadataStore#setDisplayOptions(Float, Boolean, Boolean, Boolean,
+   * Boolean, String, Integer, Integer, Integer, Integer, Integer, Integer,
+   * Integer, Integer, Integer, Integer)
+   */
+  public void setDisplayOptions(Float zoom, Boolean redChannelOn,
+    Boolean greenChannelOn, Boolean blueChannelOn, Boolean displayRGB,
+    String colorMap, Integer zstart, Integer zstop, Integer tstart,
+    Integer tstop, Integer imageNdx, Integer pixelNdx, Integer redChannel,
+    Integer greenChannel, Integer blueChannel, Integer grayChannel)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setDisplayOptions(zoom, redChannelOn, greenChannelOn, blueChannelOn,
+        displayRGB, colorMap, zstart, zstop, tstart, tstop, imageNdx, pixelNdx,
+        redChannel, greenChannel, blueChannel, grayChannel);
+    }
+  }
+
+  /* @see MetadataStore#setLightSource(String, String, String, 
+   * Integer, Integer) 
+   */
+  public void setLightSource(String manufacturer, String model,
+    String serialNumber, Integer instrumentNdx, Integer lightNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setLightSource(manufacturer, model, serialNumber, instrumentNdx, 
+        lightNdx);
+    }
+  }
+
+  /* @see MetadataStore#setLaser(String, String, Integer, Boolean, Boolean,
+   * String, Float, Integer, Integer, Integer, Integer)
+   */
+  public void setLaser(String type, String medium, Integer wavelength,
+    Boolean frequencyDoubled, Boolean tunable, String pulse, Float power,
+    Integer instrumentNdx, Integer lightNdx, Integer pumpNdx, Integer laserNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setLaser(type, medium, wavelength, frequencyDoubled, tunable, pulse,
+        power, instrumentNdx, lightNdx, pumpNdx, laserNdx);
+    }
+  }
+
+  /* @see MetadataStore#setFilament(String, Float, Integer, Integer) */
+  public void setFilament(String type, Float power, Integer lightNdx, 
+    Integer filamentNdx) 
+  { 
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setFilament(type, power, lightNdx, filamentNdx);
+    }
+  }
+
+  /* @see MetadataStore#setArc(String, Float, Integer, Integer) */
+  public void setArc(String type, Float power, Integer lightNdx, Integer arcNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setArc(type, power, lightNdx, arcNdx);
+    }
+  }
+
+  /* @see MetadataStore#setDetector(String, String, String, String, Float,
+   * Float, Float, Integer, Integer)
+   */
+  public void setDetector(String manufacturer, String model,
+    String serialNumber, String type, Float gain, Float voltage, Float offset,
+    Integer instrumentNdx, Integer detectorNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setDetector(manufacturer, model, serialNumber, type, gain, voltage,
+        offset, instrumentNdx, detectorNdx);
+    }
+  }
+
+  /* @see MetadataStore#setObjective(String, String, String, Float, Float, 
+   * Integer, Integer) 
+   */
+  public void setObjective(String manufacturer, String model, 
+    String serialNumber, Float lensNA, Float magnification, 
+    Integer instrumentNdx, Integer objectiveNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setObjective(manufacturer, model, serialNumber, lensNA, magnification, 
+        instrumentNdx, objectiveNdx);
+    }
+  }
+
+  /* @see MetadataStore#setExcitationFilter(String, String, String, String,
+   * Integer)
+   */
+  public void setExcitationFilter(String manufacturer, String model,
+    String lotNumber, String type, Integer filterNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setExcitationFilter(manufacturer, model, lotNumber, type, filterNdx);
+    }
+  }
+
+  /* @see MetadataStore#setDichroic(String, String, String, Integer) */
+  public void setDichroic(String manufacturer, String model, String lotNumber,
+    Integer dichroicNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setDichroic(manufacturer, model, lotNumber, dichroicNdx);
+    }
+  }
+
+  /* @see MetadataStore#setEmissionFilter(String, String, String, 
+   * String, Integer)
+   */
+  public void setEmissionFilter(String manufacturer, String model,
+    String lotNumber, String type, Integer filterNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setEmissionFilter(manufacturer, model, lotNumber, type, filterNdx);
+    }
+  }
+
+  /* @see MetadataStore#setFilterSet(String, String, String, Integer, 
+   * Integer) 
+   */
+  public void setFilterSet(String manufacturer, String model, String lotNumber,
+    Integer filterSetNdx, Integer filterNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setFilterSet(manufacturer, model, lotNumber, filterSetNdx, filterNdx);
+    }
+  }
+
+  /* @see MetadataStore#setOTF(Integer, Integer, String, String, 
+   * Boolean, Integer, Integer, Integer, Integer)
+   */
+  public void setOTF(Integer sizeX, Integer sizeY, String pixelType,
+    String path, Boolean opticalAxisAverage, Integer instrumentNdx,
+    Integer otfNdx, Integer filterNdx, Integer objectiveNdx)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      MetadataStore s = (MetadataStore) iter.next();
+      s.setOTF(sizeX, sizeY, pixelType, path, opticalAxisAverage, instrumentNdx,
+      otfNdx, filterNdx, objectiveNdx);
+    }
+  }
+
 }
