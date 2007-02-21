@@ -733,16 +733,20 @@ public class OMEUploader implements Uploader {
     List imageIDs = rim.importFiles(v);
 
     // set the Image information
+  
+    if (imageIDs == null) return;
 
     Image image = (Image) df.createNew(Image.class);
     image.setID(((Integer) imageIDs.get(0)).intValue());
 
     String name = xml.getImageName(null);
-    if (name == null || name.trim().equals("")) name = (String) files.get(0);
-    try {
-      name = name.substring(name.lastIndexOf(File.separator) + 1);
+    if ((name == null || name.trim().equals("")) && files.size() > 0) {
+      name = (String) files.get(0);
+      try {
+        name = name.substring(name.lastIndexOf(File.separator) + 1);
+      }
+      catch (Exception e) { }
     }
-    catch (Exception e) { }
 
     image.setName(name);
     image.setOwner(exp);
