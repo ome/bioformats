@@ -30,8 +30,10 @@ import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.filechooser.FileFilter;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
+import loci.formats.*;
 
 /**
  * An user-friendly application for displaying and editing OME-XML metadata.
@@ -51,7 +53,10 @@ public class MetadataNotebook extends JFrame
   // -- Fields --
 
   /**The file chooser used to save and open files.*/
-  protected JFileChooser chooser;
+  protected JFileChooser opener,saver;
+  
+  /**Format filters for saver JFileChooser.*/
+  protected ExtensionFileFilter tiffFilter,omeFilter;
 
   /**The MetadataPane used to display/edit OMEXML content.*/
   protected MetadataPane metadata;
@@ -191,29 +196,20 @@ public class MetadataNotebook extends JFrame
     fileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, MENU_MASK));
     JSeparator jSep = new JSeparator();
     file.add(jSep);
-    JMenu subFile = new JMenu("Save...");
-    JMenuItem fileSave = new JMenuItem("Save to original");
-    subFile.add(fileSave);
+    JMenuItem fileSave = new JMenuItem("Save");
+    file.add(fileSave);
     fileSave.setActionCommand("save");
     fileSave.addActionListener(this);
     fileSave.setMnemonic('s');
     fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, MENU_MASK));
     fileSave.setEnabled(addSave);
-    JMenuItem fileSaveComp = new JMenuItem("Save as companion");
-    subFile.add(fileSaveComp);
+    JMenuItem fileSaveComp = new JMenuItem("Save to Companion");
+    file.add(fileSaveComp);
     fileSaveComp.setActionCommand("saveComp");
     fileSaveComp.addActionListener(this);
     fileSaveComp.setMnemonic('c');
     fileSaveComp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, MENU_MASK));
     fileSaveComp.setEnabled(addSave);
-    JMenuItem fileSaveTiff = new JMenuItem("Save as TIFF Format");
-    subFile.add(fileSaveTiff);
-    fileSaveTiff.setActionCommand("saveTiff");
-    fileSaveTiff.addActionListener(this);
-    fileSaveTiff.setMnemonic('t');
-    fileSaveTiff.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, MENU_MASK));
-    fileSaveTiff.setEnabled(addSave);
-    file.add(subFile);
     JMenuItem fileSaveAs = new JMenuItem("Save As...");
     file.add(fileSaveAs);
     fileSaveAs.setActionCommand("saveAs");
@@ -311,7 +307,17 @@ public class MetadataNotebook extends JFrame
     helpAbout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, MENU_MASK));
 
     //make a filechooser to open and save our precious files
-    chooser = new JFileChooser(System.getProperty("user.dir"));
+    tiffFilter = new ExtensionFileFilter(
+      new String[] {"tif", "tiff"}, "Tagged Image File     Format");
+    omeFilter = new ExtensionFileFilter("ome", "OME-XML");
+    ExtensionFileFilter allFilter = new ExtensionFileFilter(new String[] {"tif","tiff","ome"},
+      "All supported file formats");
+    ExtensionFileFilter[] filters = new ExtensionFileFilter[] {tiffFilter, omeFilter};
+    saver = FormatHandler.buildFileChooser(filters);
+    saver.setCurrentDirectory(new File(System.getProperty("user.dir"))); 
+    if(metadata.reader == null) metadata.reader = new ImageReader();
+    opener = metadata.reader.getFileChooser();
+    opener.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
     //make WiscScan view the default
     scanView.setSelected(true);
@@ -416,22 +422,16 @@ public class MetadataNotebook extends JFrame
           options,  //the titles of buttons
           options[0]); //default button title
         if (n == JOptionPane.YES_OPTION) {
-          chooser.setDialogTitle("Open");
-          chooser.setApproveButtonText("Open");
-          chooser.setApproveButtonToolTipText("Open selected file.");
           opening = true;
-          int rval = chooser.showOpenDialog(this);
+          int rval = opener.showOpenDialog(this);
           if (rval == JFileChooser.APPROVE_OPTION) {
             new Thread(this, "MetadataNotebook-Opener").start();
           }
         }
       }
       else {
-        chooser.setDialogTitle("Open");
-        chooser.setApproveButtonText("Open");
-        chooser.setApproveButtonToolTipText("Open selected file.");
         opening = true;
-        int rval = chooser.showOpenDialog(this);
+        int rval = opener.showOpenDialog(this);
         if (rval == JFileChooser.APPROVE_OPTION) {
           new Thread(this, "MetadataNotebook-Opener").start();
         }
@@ -441,10 +441,7 @@ public class MetadataNotebook extends JFrame
       ("save".equals(cmd) && currentFile == null))
     {
       opening = false;
-      chooser.setDialogTitle("Save");
-      chooser.setApproveButtonText("Save");
-      chooser.setApproveButtonToolTipText("Save to selected file.");
-      int rval = chooser.showOpenDialog(this);
+      int rval = saver.showSaveDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
         new Thread(this, "MetadataNotebook-Saver").start();
         metadata.stateChanged(false);
@@ -456,10 +453,6 @@ public class MetadataNotebook extends JFrame
     }
     else if ("saveComp".equals(cmd) && currentFile != null) {
       saveCompanionFile(currentFile);
-      metadata.stateChanged(false);
-    }
-    else if ("saveTiff".equals(cmd) && currentFile != null) {
-      saveTiffFile(currentFile);
       metadata.stateChanged(false);
     }
     else if ("merge".equals(cmd)) {
@@ -593,9 +586,21 @@ public class MetadataNotebook extends JFrame
   /** Opens a file in a separate thread. */
   public void run() {
     wait(true);
-    currentFile = chooser.getSelectedFile();
-    if (opening) openFile(currentFile);
-    else saveFile(currentFile);
+    if (opening) {
+      currentFile = opener.getSelectedFile();
+      openFile(currentFile);
+    }
+    else {
+      currentFile = saver.getSelectedFile();
+      FileFilter filter = saver.getFileFilter();
+      if(filter.equals((FileFilter)omeFilter)) saveFile(currentFile);
+      else if(filter.equals((FileFilter)tiffFilter)) saveTiffFile(currentFile);
+      else {
+        String path = currentFile.getPath();
+        if(path.endsWith("ome")) saveFile(currentFile);
+        if(path.endsWith("tif") || path.endsWith("tiff")) saveTiffFile(currentFile);
+      }
+    }
     wait(false);
   }
 

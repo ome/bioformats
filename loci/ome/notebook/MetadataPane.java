@@ -496,7 +496,6 @@ public class MetadataPane extends JPanel
       ByteArrayInputStream bis = new ByteArrayInputStream(comment.getBytes());
       doc = db.parse((java.io.InputStream)bis);
       pixList = DOMUtil.findElementList("Pixels",doc);
-      System.out.println(pixList);//TEMP
       
     }
     catch (IOException exc) {
@@ -528,7 +527,6 @@ public class MetadataPane extends JPanel
       tiffDataStore.put(thisID,tiffDataAttrs);
     }
     
-    System.out.println(tiffDataStore);//TEMP
   }
   
   public void addTiffData(String xml, File file) {
@@ -556,21 +554,16 @@ public class MetadataPane extends JPanel
     //creating tiffData from non-OME-Tiff
     if(!isOMETiff) {
       for(int i = 0;i<pixList.size();i++) {
-        System.out.println("Adding third-party tiffdata element");//TEMP
         Element thisEle = (Element) pixList.get(i);
         DOMUtil.createChild(thisEle, "TiffData");
-        System.out.println("Not OME-Tiff format detected"); //TEMP
       }
     }
     //creating tiff from OMETiff file
-    else if (isOMETiff) {
-      System.out.println("OME-TIFF format detected"); //TEMP
-      
+    else if (isOMETiff) {      
       for(int i = 0;i<pixList.size();i++) {
         Element thisEle = (Element) pixList.get(i);
         String thisID = DOMUtil.getAttribute("ID", thisEle);
         Vector dataEles = (Vector) tiffDataStore.get(thisID);
-        System.out.println(dataEles);//TEMP
         for(int j = 0;j<dataEles.size();j++) {
           Element thisData = DOMUtil.createChild(thisEle, "TiffData");
           Hashtable attrs = (Hashtable) dataEles.get(j);
@@ -578,19 +571,10 @@ public class MetadataPane extends JPanel
           for(int k = 0;k<attrNames.length;k++) {
             String value = (String)(attrs.get(attrNames[k]));
             DOMUtil.setAttribute(attrNames[k],value,thisData);
-            System.out.println(attrNames[k] + ":" + value); //TEMP
           }
         }
       }
     }
-    else System.out.println("FORMAT NOT DETECTED");//TEMP
-    
-    try { //TEMP
-      DOMUtil.writeXML(System.out,doc); //TEMP
-    } //TEMP
-    catch (Exception exc) { //TEMP
-      exc.printStackTrace(); //TEMP
-    } //TEMP
   }
   
   public boolean checkOMETiff(File file) {
