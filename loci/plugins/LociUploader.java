@@ -128,6 +128,11 @@ public class LociUploader implements PlugIn {
         store.setImage(name, null, fi == null ? null : fi.info, null);
 
       }
+      if (is.getProcessor(1) instanceof ColorProcessor) {
+        store.setPixels(null, null, null, null, null, 
+          new Integer(FormatReader.UINT8), null, null, null, null);
+      }
+
       boolean little = !store.getBigEndian(null).booleanValue();
 
       for (int i=0; i<is.getSize(); i++) {
