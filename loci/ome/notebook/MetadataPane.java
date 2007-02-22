@@ -330,13 +330,13 @@ public class MetadataPane extends JPanel
         askCompanionInstead(file);
         return;
       }
-      if (originalTIFF != null) {
+      if (originalTIFF != null && !file.getPath().endsWith(".ome")) {
         String xml = thisOmeNode.writeOME(false);
 
         if (originalTIFF.equals(file)) {
           //just rewrite image description of original file.
           RandomAccessFile raf = new RandomAccessFile(file, "rw");
-          addTiffData(xml,file);
+          xml = addTiffData(xml,file);
           TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
           raf.close();
         }
@@ -391,7 +391,7 @@ public class MetadataPane extends JPanel
 
       try {      
         xml = thisOmeNode.writeOME(false);
-        addTiffData(xml, file);
+        xml = addTiffData(xml, file);
         imageCount = reader.getImageCount(id);
       }
       catch(Exception exc) {
@@ -431,6 +431,60 @@ public class MetadataPane extends JPanel
         MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
         mn.setCurrentFile(file);
       }
+    }
+  }
+  
+  public void saveTiffFile(File file, String outId) throws RuntimeException{
+    String id = currentFile.getPath();
+    File outFile = new File(outId);
+    if(outFile.exists()) outFile.delete();
+    if(reader == null) reader = new ImageReader();
+    TiffWriter writer = new TiffWriter();
+
+    int imageCount = 0;
+    String xml = null;
+
+    try {      
+      xml = thisOmeNode.writeOME(false);
+      xml = addTiffData(xml, file);
+      imageCount = reader.getImageCount(id);
+    }
+    catch(Exception exc) {
+      if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+      else exc.printStackTrace();
+    }
+
+    for(int i = 0;i < imageCount;i++) {
+      BufferedImage plane = null;
+      
+      try {      
+        plane = reader.openImage(id, i);
+      }
+      catch(Exception exc) {
+        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+        else exc.printStackTrace();
+      }
+
+      Hashtable ifd = null;  
+      if (i == 0) {
+        // save OME-XML metadata to TIFF file's first IFD  
+        ifd = new Hashtable();
+        TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
+      }  
+      // write plane to output file
+      
+      try {      
+        writer.saveImage(outId, plane, ifd, i == imageCount - 1);
+      }
+      catch(Exception exc) {
+        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+        else exc.printStackTrace();
+      }
+    }
+    currentFile = new File(outId);
+    if (getTopLevelAncestor() instanceof MetadataNotebook) {
+      MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+      mn.setCurrentFile(file);
     }
   }
   
@@ -529,7 +583,7 @@ public class MetadataPane extends JPanel
     
   }
   
-  public void addTiffData(String xml, File file) {
+  public String addTiffData(String xml, File file) {
     Document doc = null;
     Vector pixList = new Vector();
     DocumentBuilderFactory docFact = 
@@ -553,28 +607,51 @@ public class MetadataPane extends JPanel
     
     //creating tiffData from non-OME-Tiff
     if(!isOMETiff) {
+      System.out.println("Isn't OME-Tiff");//TEMP
       for(int i = 0;i<pixList.size();i++) {
         Element thisEle = (Element) pixList.get(i);
         DOMUtil.createChild(thisEle, "TiffData");
       }
     }
     //creating tiff from OMETiff file
-    else if (isOMETiff) {      
+    else if (isOMETiff) {
+      System.out.println("Is OME-Tiff");//TEMP      
       for(int i = 0;i<pixList.size();i++) {
         Element thisEle = (Element) pixList.get(i);
         String thisID = DOMUtil.getAttribute("ID", thisEle);
         Vector dataEles = (Vector) tiffDataStore.get(thisID);
+
+        //fixes if TiffData Elements not in File but should be
+        if(dataEles.size() == 0) {
+          DOMUtil.createChild(thisEle, "TiffData");
+          continue;
+        }
+        
         for(int j = 0;j<dataEles.size();j++) {
           Element thisData = DOMUtil.createChild(thisEle, "TiffData");
           Hashtable attrs = (Hashtable) dataEles.get(j);
-          String[] attrNames = (String[])(attrs.keySet().toArray());
-          for(int k = 0;k<attrNames.length;k++) {
-            String value = (String)(attrs.get(attrNames[k]));
-            DOMUtil.setAttribute(attrNames[k],value,thisData);
+          Object[] attrKeys = attrs.keySet().toArray();
+          for(int k = 0;k<attrKeys.length;k++) {
+            String name = (String)attrKeys[k];
+            String value = (String)(attrs.get(name));
+            if (value == null) value = "";
+            DOMUtil.setAttribute(name,value,thisData);
           }
         }
       }
     }
+    String result = null;
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      DOMUtil.writeXML(baos,doc);
+      result = baos.toString();
+      System.out.println(tiffDataStore);//TEMP
+      System.out.println(result);//TEMP
+    }
+    catch (Exception exc) {
+      exc.printStackTrace();
+    }
+    return result;
   }
   
   public boolean checkOMETiff(File file) {

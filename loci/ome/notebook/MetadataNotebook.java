@@ -357,6 +357,10 @@ public class MetadataNotebook extends JFrame
   public void saveTiffFile(File file) {
     metadata.saveTiffFile(file);
   }
+  
+  public void saveTiffFile(File file, String outPath) {
+    metadata.saveTiffFile(file,outPath);
+  }
 
   /**Given an array of Strings of appropriate tab names, this method
    * sets up the tab menu accordingly.
@@ -591,14 +595,36 @@ public class MetadataNotebook extends JFrame
       openFile(currentFile);
     }
     else {
-      currentFile = saver.getSelectedFile();
+      File outFile = saver.getSelectedFile();
       FileFilter filter = saver.getFileFilter();
-      if(filter.equals((FileFilter)omeFilter)) saveFile(currentFile);
-      else if(filter.equals((FileFilter)tiffFilter)) saveTiffFile(currentFile);
+      if(filter.equals((FileFilter)omeFilter)) {
+        if (outFile.getPath().endsWith(".ome")) {
+          currentFile = outFile; 
+          saveFile(outFile);
+        }
+        else {
+          outFile = new File(outFile.getPath() + ".ome");
+          currentFile = outFile;
+          saveFile(outFile);
+        }
+      }
+      else if(filter.equals((FileFilter)tiffFilter)) {
+        if(outFile.getPath().endsWith(".tif") || outFile.getPath().endsWith(".tiff")) {
+          saveTiffFile(currentFile,outFile.getPath());
+          currentFile = outFile;
+        }
+        else {
+          outFile = new File(outFile.getPath() + ".tif");
+          saveTiffFile(currentFile,outFile.getPath());
+          currentFile = outFile;
+        }
+      }
       else {
-        String path = currentFile.getPath();
+        String path = outFile.getPath();
         if(path.endsWith("ome")) saveFile(currentFile);
-        if(path.endsWith("tif") || path.endsWith("tiff")) saveTiffFile(currentFile);
+        else if(path.endsWith("tif") || path.endsWith("tiff")) saveTiffFile(currentFile,path);
+        else System.out.println("We could not identify which format you wanted, so the file"
+          + " was not saved.");
       }
     }
     wait(false);
