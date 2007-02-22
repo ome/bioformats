@@ -277,6 +277,9 @@ public class SlidebookReader extends FormatReader {
       new Integer(sizeZ[0]), new Integer(sizeC[0]), new Integer(sizeT[0]),
       new Integer(pixelType[0]), new Boolean(!little), currentOrder[0], 
       null, null); 
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Main method --

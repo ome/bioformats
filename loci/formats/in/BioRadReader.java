@@ -697,7 +697,7 @@ public class BioRadReader extends FormatReader {
     store.setDefaultDisplaySettings(null);
   
     for (int i=0; i<sizeC[0]; i++) {
-      //setLogicalChannel
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
       String black = (String) getMeta("PMT " + i + " Black level");
       store.setDisplayChannel(new Integer(i), black == null ? null : 
         new Double(black), new Double(Math.pow(2, type == 1 ? 8 : 16)),

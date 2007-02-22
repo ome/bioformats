@@ -499,6 +499,10 @@ public class ZeissZVIReader extends FormatReader {
       pixY == null ? null : new Float(pixY),
       pixZ == null ? null : new Float(pixZ),
       null, null, null);
+    
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   protected void parseDir(int depth, Object dir)

@@ -527,6 +527,10 @@ public class OIBReader extends FormatReader {
       Float pixY = new Float(getMeta(
         "[Reference Image Parameter] - HeightConvertValue").toString());
       store.setDimensions(pixX, pixY, null, null, null, new Integer(i));
+      for (int j=0; j<sizeC[0]; j++) {
+        store.setLogicalChannel(j, null, null, null, null, null, 
+          null, new Integer(i));
+      }
     }
   }
 

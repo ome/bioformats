@@ -336,6 +336,9 @@ public class PrairieReader extends FormatReader {
           null);
         store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null,
           null, null, null);
+        for (int i=0; i<sizeC[0]; i++) {
+          store.setLogicalChannel(i, null, null, null, null, null, null, null);
+        }
       }
 
       if (!readXML || !readCFG) {

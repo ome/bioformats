@@ -161,6 +161,10 @@ public class ImarisReader extends FormatReader {
       new Float(1),
       new Float(1),
       null);
+  
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- IFormatReader API methods --

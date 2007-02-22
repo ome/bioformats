@@ -519,16 +519,8 @@ public class AVIReader extends FormatReader {
     sizeZ[0] = 1;
     sizeC[0] = isRGB(id) ? 3 : 1;
     sizeT[0] = numImages;
-    pixelType[0] = FormatReader.UINT8;
     currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
 
-    initOMEMetadata();
-  }
-
-  // -- AVIReader API methods --
-
-  /** Initialize the OME-XML tree. */
-  public void initOMEMetadata() throws FormatException, IOException {
     int bitsPerPixel = ((Integer) getMeta("Bits per pixel")).intValue();
     int bytesPerPixel = bitsPerPixel / 8;
 
@@ -540,22 +532,24 @@ public class AVIReader extends FormatReader {
       throw new FormatException(
           "Unknown matching for pixel bit width of: " + bitsPerPixel);
 
-    String order = "XY";
-    if (bytesPerPixel == 3) order += "CTZ";
-    else order += "TCZ";
-
-    getMetadataStore(currentId).setPixels(
-      (Integer) getMeta("Frame width"), // SizeX
-      (Integer) getMeta("Frame height"), // SizeY
+    MetadataStore store = getMetadataStore(currentId);
+    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
       new Integer(1), // SizeZ
-      new Integer(bytesPerPixel), // SizeC
+      new Integer(sizeC[0]), // SizeC
       new Integer(numImages), // SizeT
       new Integer(pixelType[0]), // PixelType
       new Boolean(!little), // BigEndian
-      order, // DimensionOrder
+      currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
+  
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, 
+        sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
+    }
   }
+
+  // -- AVIReader API methods --
 
   /** Reads a 4-byte String. */
   public String readStringBytes() throws IOException {

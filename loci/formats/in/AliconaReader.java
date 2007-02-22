@@ -238,7 +238,10 @@ public class AliconaReader extends FormatReader {
       new Float(((String) getMeta("PlanePntX")).trim()),
       new Float(((String) getMeta("PlanePntY")).trim()),
       new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
-  
+ 
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Main method --

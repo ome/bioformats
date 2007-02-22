@@ -453,6 +453,9 @@ public class OIFReader extends FormatReader {
       getMeta("[Reference Image Parameter] - HeightConvertValue"));
 
     store.setDimensions(pixX, pixY, null, null, null, null);
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Main method --

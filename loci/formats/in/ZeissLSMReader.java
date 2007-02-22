@@ -384,6 +384,9 @@ public class ZeissLSMReader extends BaseTiffReader {
         currentOrder[0], // DimensionOrder
         null, // Image index
         null); // Pixels index
+      for (int i=0; i<sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      }
 
       int spectralScan = DataTools.read2UnsignedBytes(ras, little);
       switch (spectralScan) {

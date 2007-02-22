@@ -232,13 +232,24 @@ public class LegacyQTReader extends FormatReader {
         times[i] = q.intValue();
       }
 
-      sizeX[0] = ImageTools.makeBuffered(image).getWidth();
-      sizeY[0] = ImageTools.makeBuffered(image).getHeight();
+      BufferedImage img = ImageTools.makeBuffered(image);
+
+      sizeX[0] = img.getWidth();
+      sizeY[0] = img.getHeight();
       sizeZ[0] = 1;
-      sizeC[0] = 3;
+      sizeC[0] = img.getRaster().getNumBands();
       sizeT[0] = numImages;
-      pixelType[0] = FormatReader.INT8;
+      pixelType[0] = ImageTools.getPixelType(img);
       currentOrder[0] = "XYCTZ";
+    
+      MetadataStore store = getMetadataStore(id);
+      store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
+        new Integer(1), new Integer(sizeC[0]), new Integer(sizeT[0]),
+        new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null, null);
+    
+      for (int i=0; i<sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      }
     }
     catch (Exception e) {
       // CTR TODO - eliminate catch-all exception handling

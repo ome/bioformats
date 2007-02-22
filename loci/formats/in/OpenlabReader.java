@@ -753,6 +753,10 @@ public class OpenlabReader extends FormatReader {
         null);
       store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
         null, null, new Integer(i));
+      for (int j=0; j<sizeC[0]; j++) {
+        store.setLogicalChannel(j, null, null, null, null, null, 
+          null, new Integer(i));
+      }
     }
   }
 

@@ -106,7 +106,7 @@ public class ND2Reader extends FormatReader {
       if (debug) exc.printStackTrace();
       noJ2k = true;
     }
-    return r;
+    return ru;
   }
 
   // -- Fields --
@@ -578,6 +578,9 @@ public class ND2Reader extends FormatReader {
 
     store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
       new Float(pixSizeZ), null, null, null);
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Main method --

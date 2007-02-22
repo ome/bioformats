@@ -483,6 +483,13 @@ public class OMEXMLReader extends FormatReader {
     minMaxFinished = new boolean[width.length];
     Arrays.fill(minMaxFinished, false);
 
+    for (int i=0; i<sizeC.length; i++) {
+      for (int j=0; j<sizeC[i]; j++) {
+        store.setLogicalChannel(j, null, null, null, null, null, 
+          null, new Integer(i));
+      }
+    }
+
     try {
       ome = new OMENode((String) null);
     }

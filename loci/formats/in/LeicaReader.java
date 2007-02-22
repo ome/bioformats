@@ -1105,6 +1105,12 @@ public class LeicaReader extends BaseTiffReader {
 
       store.setImage(null, timestamp == null ? null : timestamp.substring(3),
         description, new Integer(i));
+    
+    
+      for (int j=0; j<sizeC[0]; j++) {
+        store.setLogicalChannel(j, null, null, null, null, null, 
+          null, new Integer(i));
+      }
     }
   }
 

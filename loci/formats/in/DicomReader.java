@@ -403,13 +403,13 @@ public class DicomReader extends FormatReader {
 
     switch (bitsPerPixel) {
       case 8:
-        pixelType[0] = FormatReader.INT8;
+        pixelType[0] = FormatReader.UINT8;
         break;
       case 16:
-        pixelType[0] = FormatReader.INT16;
+        pixelType[0] = FormatReader.UINT16;
         break;
       case 32:
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatReader.UINT32;
         break;
     }
 
@@ -437,6 +437,10 @@ public class DicomReader extends FormatReader {
       (String) getMeta("Manufacturer"),
       (String) getMeta("Manufacturer's Model Name"),
       null, null, null);
+
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Helper methods --

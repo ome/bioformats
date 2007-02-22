@@ -256,6 +256,10 @@ public class FluoviewReader extends BaseTiffReader {
       store.setStageLabel(null, new Float(stageX), new Float(stageY),
         new Float(stageZ), null);
 
+      for (int i=0; i<sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      }
+
       String descr = (String) getMeta("Comment");
       metadata.remove("Comment");
       if (descr == null) descr = "";

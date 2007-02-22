@@ -233,6 +233,9 @@ public class SDTReader extends FormatReader {
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
       new Integer(getSizeT(id)), new Integer(pixelType[0]),
       new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null, null);
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Main method --

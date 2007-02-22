@@ -360,6 +360,9 @@ public class AndorReader extends BaseTiffReader {
       MetadataStore store = getMetadataStore(currentId);
       store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
         new Float(pixelSizeZ), null, null, null);
+      for (int i=0; i<sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      }
     }
     catch (FormatException e) {
       if (debug) e.printStackTrace();

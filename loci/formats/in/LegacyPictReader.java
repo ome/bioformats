@@ -58,7 +58,8 @@ public class LegacyPictReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return true;
+    if (!id.equals(currentId)) initFile(id);
+    return sizeC[0] > 1;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -111,13 +112,23 @@ public class LegacyPictReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LegacyPictReader.initFile(" + id + ")");
     super.initFile(id);
-    sizeX[0] = openImage(id, 0).getWidth();
-    sizeY[0] = openImage(id, 0).getHeight();
+    BufferedImage img = openImage(id, 0);
+    sizeX[0] = img.getWidth();
+    sizeY[0] = img.getHeight();
     sizeZ[0] = 1;
-    sizeC[0] = 3;
+    sizeC[0] = img.getRaster().getNumBands();
     sizeT[0] = 1;
     pixelType[0] = FormatReader.INT8;
     currentOrder[0] = "XYCZT";
+  
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
+      new Integer(1), new Integer(sizeC[0]), new Integer(1),
+      new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null, null); 
+    
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   /* @see IFormatReader#close(boolean) */

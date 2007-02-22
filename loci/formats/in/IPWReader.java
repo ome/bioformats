@@ -402,6 +402,9 @@ public class IPWReader extends BaseTiffReader {
     store.setPixels(null, null, zSize, cSize, tSize, new Integer(pixelType[0]),
       new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null, null);
     store.setImage(null, null, (String) getMeta("Version"), null);
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
   }
 
   // -- Helper methods --

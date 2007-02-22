@@ -578,6 +578,9 @@ public class LIFReader extends FormatReader {
       Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
 
       store.setDimensions(xf, yf, zf, null, null, ii);
+      for (int j=0; j<sizeC[0]; j++) {
+        store.setLogicalChannel(j, null, null, null, null, null, null, ii);
+      }
     }
   }
 

@@ -434,6 +434,10 @@ public class LegacyZVIReader extends FormatReader {
         new String(dimensionOrder), // DimensionOrder
         null, // Use image index 0
         null); // Use pixels index 0
+    
+      for (int i=0; i<sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      }
     }
 
     if (blockList.isEmpty()) {
