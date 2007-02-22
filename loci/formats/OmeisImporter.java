@@ -79,7 +79,9 @@ public class OmeisImporter {
    * file IDs. Outputs the IDs it can potentially import, one group per line,
    * with elements of the each group separated by spaces.
    */
-  public void testIds(int[] fileIds) throws OmeisException {
+  public void testIds(int[] fileIds)
+    throws OmeisException, FormatException, IOException
+  {
     // set up file path mappings
     String[] ids = new String[fileIds.length];
     for (int i=0; i<fileIds.length; i++) {
@@ -97,14 +99,16 @@ public class OmeisImporter {
       if (done[i]) continue; // already part of another group
       if (ids[i] == null) continue; // invalid id
       if (!reader.isThisType(ids[i])) continue; // unknown format
-      FilePattern fp = reader.findPattern(ids[i]);
-      if (!fp.isValid()) continue; // invalid file pattern
-      String[] files = fp.getFiles();
+      String[] files = reader.getUsedFiles(ids[i]);
       if (files == null) continue; // invalid files list
       sb.setLength(0);
       for (int j=0; j<files.length; j++) {
         for (int ii=i; ii<fileIds.length; ii++) {
-          if (files[j].equals(ids[ii])) {
+          if (files[j] == null) {
+            log("Warning: FileID " + fileIds[ii] + " ('" +
+              ids[ii] + "') has null used file #" + j);
+          }
+          else if (files[j].equals(ids[ii])) {
             if (done[ii]) {
               log("Warning: FileID " + fileIds[ii] + " ('" +
                 ids[ii] + "') already belongs to a group");
@@ -142,27 +146,24 @@ public class OmeisImporter {
 
     // read file group
     String id = ids[0];
-    String path = Location.getMappedId(ids[0]);
+    String path = Location.getMappedId(id);
     if (DEBUG) log("Reading file '" + id + "' --> " + path);
 
-    // verify that all given file IDs were grouped by the file stitcher
-    FilePattern fp = reader.getFilePattern(id);
-    if (!fp.isValid()) {
-      throw new FormatException("Invalid file pattern for " + path);
-    }
-    String[] files = fp.getFiles();
-    if (files == null) {
+    // verify that all given file IDs were grouped by the reader
+    String[] used = reader.getUsedFiles(id);
+    if (used == null) {
       throw new FormatException("Invalid file list for " + path);
     }
-    if (files.length != ids.length) {
-      throw new FormatException("File list length mismatch for " + path);
+    if (used.length != ids.length) {
+      throw new FormatException("File list length mismatch for " + path +
+        ": used=" + a2s(used) + "; ids=" + a2s(ids));
     }
     boolean[] done = new boolean[ids.length];
     int numLeft = ids.length;
-    for (int i=0; i<files.length; i++) {
+    for (int i=0; i<used.length; i++) {
       for (int j=0; j<ids.length; j++) {
         if (done[j]) continue;
-        if (files[i].equals(ids[j])) {
+        if (used[i].equals(ids[j])) {
           done[j] = true;
           numLeft--;
           break;
@@ -522,8 +523,23 @@ public class OmeisImporter {
     return results;
   }
 
+  /** Prints a debugging message. */
   private void log(String msg) {
     System.err.println("Bio-Formats: " + msg);
+  }
+
+  /** Gets a printable version of the given array of strings. */
+  private String a2s(String[] s) {
+    StringBuffer sb = new StringBuffer();
+    if (s == null) return "null";
+    sb.append("[");
+    if (s.length > 0) sb.append(s[0]);
+    for (int i=1; i<s.length; i++) {
+      sb.append(" ");
+      sb.append(s[i]);
+    }
+    sb.append("]");
+    return sb.toString();
   }
 
   /** Prints an HTTP error response header. */
