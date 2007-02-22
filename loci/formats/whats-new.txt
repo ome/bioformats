@@ -33,7 +33,7 @@
 * Added support for MRC
 * Added support for MNG
 * Improved support for floating-point images
-* Fixed problem with 2-channel Leica LIF data 
+* Fixed problem with 2-channel Leica LIF data
 * Minor tweaks and bugfixes in many readers
 * Improved file stitching logic
 * Allow ImageJ plugin to be called from a macro

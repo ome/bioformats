@@ -1,4 +1,4 @@
-              Bio-Formats Getting Started Guide by Melissa Linkert
+            Bio-Formats File Format Reader Guide by Melissa Linkert
 
 This document is a brief guide to writing new Bio-Formats file format readers.
 
@@ -7,7 +7,7 @@ in loci.formats.in.
 
 ---=== Methods to override ===---
 
-boolean isThisType(byte[]) : 
+boolean isThisType(byte[]) :
   Check the first few bytes of a file to determine if the file can be read by
   this reader.  You can assume that the first byte of the array corresponds to
   the first byte of the file.  Return true if the file can be read; false if
@@ -28,7 +28,7 @@ boolean isLittleEndian(String) throws FormatException, IOException :
   Return the byte ordering of the pixel data.  Note that in some cases, this
   is different from the file's native ordering.  If the pixel data is
   guaranteed to have 8 bits per pixel, then isLittleEndian can return
-  anything. This method should begin by checking if the given argument is equal 
+  anything. This method should begin by checking if the given argument is equal
   to the current file; if not, initFile(String) should be called (see below).
 
 boolean isInterleaved(String) throws FormatException, IOException :
@@ -36,8 +36,8 @@ boolean isInterleaved(String) throws FormatException, IOException :
   indexed color; however, it should always be implemented.  If the image
   planes are RGB, and the pixel data is stored as "RRR...GGG...BBB", then
   return false.  Otherwise, if the pixel data is stored as "RGBRGBRGB..."
-  return true.  This method should begin by checking if the given argument 
-  is equal to the current file; if not, initFile(String) should be called 
+  return true.  This method should begin by checking if the given argument
+  is equal to the current file; if not, initFile(String) should be called
   (see below).
 
 String[] getUsedFiles(String) throws FormatException, IOException :
@@ -104,7 +104,7 @@ protected void initFile(String) throws FormatException, IOException :
     int sizeC[0] : the number of channels (set to 3 if RGB/indexed color)
     int sizeT[0] : number of planes along T axis (set to 1 if there are none)
     String currentOrder[0] : the dimension ordering of the planes
-    int pixelType[0] : corresponds to the number of bytes per pixel; see 
+    int pixelType[0] : corresponds to the number of bytes per pixel; see
                        constant values in FormatReader for a list of valid
                        values
     boolean orderCertain[0] : set to true if you are certain that the dimension
@@ -132,7 +132,7 @@ Thus, a stub for initFile(String) might look like this:
 
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    
+
     RandomAccessStream in = new RandomAccessStream(id);
     // alternatively,
     //FileInputStream in = new FileInputStream(Location.getMappedId(id));
@@ -152,8 +152,8 @@ and Location.getMappedId(String).
   to ensure that there aren't too many files open at one time.
   It is recommended that you use this for reading binary files.
 
-- loci.formats.Location provides an API similar to java.io.File, and supports 
-  File-like operations on URLs.  It is highly recommended that you use this 
+- loci.formats.Location provides an API similar to java.io.File, and supports
+  File-like operations on URLs.  It is highly recommended that you use this
   instead of File.  See the javadoc for additional information.
 
 - loci.formats.DataTools provides a number of methods for converting bytes to
@@ -166,20 +166,20 @@ and Location.getMappedId(String).
   into 3 grayscale images, and so on.  Consult the source or javadoc for more
   information.
 
-- If your reader relies on third-party code which may not be available to all 
+- If your reader relies on third-party code which may not be available to all
   users, it is strongly suggested that you access this code only through a
   loci.formats.ReflectedUniverse object.  For an example of how this works,
   see loci.formats.in.ZeissZVIReader.
 
 - Several common image compression types are supported through subclasses of
-  loci.formats.BaseCompressor.  These include LZW, LZO, Base64, ZIP and 
+  loci.formats.BaseCompressor.  These include LZW, LZO, Base64, ZIP and
   RLE (PackBits).
 
 - Debugging statements can be added using FormatReader.debug(String).
 
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
   loci.formats.OMEXMLMetadataStore provides methods for creating OME-XML from
-  metadata values.  Note that OMEXMLMetadataStore is a subclass of 
+  metadata values.  Note that OMEXMLMetadataStore is a subclass of
   loci.formats.MetadataStore (every subclass of FormatReader keeps an instance
   of MetadataStore by default); so to add OME-XML support is as simple as
   calling getMetadataStore(String) on a format reader instance, and then
