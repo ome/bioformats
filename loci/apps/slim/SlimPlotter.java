@@ -149,706 +149,722 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     // * Adjusting peaks - 4%
     // * Creating plots - 4%
     ProgressMonitor progress = new ProgressMonitor(null,
-      "Launching SlimPlotter", "Initializing", 0, 1000);
+      "Launching Slim Plotter", "Initializing", 0, 1000);
     progress.setMillisToPopup(0);
     progress.setMillisToDecideToPopup(0);
 
-    // check for required libraries
+    int maxChan = -1;
     try {
-      Class.forName("javax.vecmath.Point3d");
-    }
-    catch (Throwable t) {
-      String os = System.getProperty("os.name").toLowerCase();
-      String url = null;
-      if (os.indexOf("windows") >= 0 ||
-        os.indexOf("linux") >= 0 || os.indexOf("solaris") >= 0)
-      {
-        url = "https://java3d.dev.java.net/binary-builds.html";
+      // check for required libraries
+      try {
+        Class.forName("javax.vecmath.Point3d");
       }
-      else if (os.indexOf("mac os x") >= 0) {
-        url = "http://www.apple.com/downloads/macosx/apple/" +
-          "java3dandjavaadvancedimagingupdate.html";
+      catch (Throwable t) {
+        String os = System.getProperty("os.name").toLowerCase();
+        String url = null;
+        if (os.indexOf("windows") >= 0 ||
+          os.indexOf("linux") >= 0 || os.indexOf("solaris") >= 0)
+        {
+          url = "https://java3d.dev.java.net/binary-builds.html";
+        }
+        else if (os.indexOf("mac os x") >= 0) {
+          url = "http://www.apple.com/downloads/macosx/apple/" +
+            "java3dandjavaadvancedimagingupdate.html";
+        }
+        else if (os.indexOf("aix") >= 0) {
+          url = "http://www-128.ibm.com/developerworks/java/jdk/aix/index.html";
+        }
+        else if (os.indexOf("hp-ux") >= 0) {
+          url = "http://www.hp.com/products1/unix/java/java2/java3d/" +
+            "downloads/index.html";
+        }
+        else if (os.indexOf("irix") >= 0) {
+          url = "http://www.sgi.com/products/evaluation/6.5_java3d_1.3.1/";
+        }
+        JOptionPane.showMessageDialog(null,
+          "Slim Plotter requires Java3D, but it was not found." +
+          (url == null ? "" : ("\nPlease install it from:\n" + url)),
+          "Slim Plotter", JOptionPane.ERROR_MESSAGE);
+        System.exit(3);
       }
-      else if (os.indexOf("aix") >= 0) {
-        url = "http://www-128.ibm.com/developerworks/java/jdk/aix/index.html";
+
+      // parse command line arguments
+      String filename = null;
+      File file = null;
+      if (args == null || args.length < 1) {
+        JFileChooser jc = new JFileChooser(System.getProperty("user.dir"));
+        jc.addChoosableFileFilter(new ExtensionFileFilter("sdt",
+          "Becker & Hickl SPC-Image SDT"));
+        int rval = jc.showOpenDialog(null);
+        if (rval != JFileChooser.APPROVE_OPTION) {
+          System.out.println("Please specify an SDT file.");
+          System.exit(1);
+        }
+        file = jc.getSelectedFile();
+        filename = file.getPath();
       }
-      else if (os.indexOf("hp-ux") >= 0) {
-        url = "http://www.hp.com/products1/unix/java/java2/java3d/downloads/" +
-          "index.html";
+      else {
+        filename = args[0];
+        file = new File(filename);
       }
-      else if (os.indexOf("irix") >= 0) {
-        url = "http://www.sgi.com/products/evaluation/6.5_java3d_1.3.1/";
+
+      if (!file.exists()) {
+        System.out.println("File does not exist: " + filename);
+        System.exit(2);
       }
-      JOptionPane.showMessageDialog(null,
-        "SlimPlotter requires Java3D, but it was not found." +
-        (url == null ? "" : ("\nPlease install it from:\n" + url)),
-        "SlimPlotter", JOptionPane.ERROR_MESSAGE);
-      System.exit(3);
-    }
 
-    // parse command line arguments
-    String filename = null;
-    File file = null;
-    if (args == null || args.length < 1) {
-      JFileChooser jc = new JFileChooser(System.getProperty("user.dir"));
-      jc.addChoosableFileFilter(new ExtensionFileFilter("sdt",
-        "Becker & Hickl SPC-Image SDT"));
-      int rval = jc.showOpenDialog(null);
-      if (rval != JFileChooser.APPROVE_OPTION) {
-        System.out.println("Please specify an SDT file.");
-        System.exit(1);
-      }
-      file = jc.getSelectedFile();
-      filename = file.getPath();
-    }
-    else {
-      filename = args[0];
-      file = new File(filename);
-    }
+      // read SDT file header
+      SDTReader reader = new SDTReader();
+      SDTInfo info = reader.getInfo(file.getPath());
+      reader.close();
+      int offset = info.dataBlockOffs + 22;
+      width = info.width;
+      height = info.height;
+      timeBins = info.timeBins;
+      channels = info.channels;
+      timeRange = 12.5f;
+      minWave = 400;
+      waveStep = 10;
 
-    if (!file.exists()) {
-      System.out.println("File does not exist: " + filename);
-      System.exit(2);
-    }
+      // show dialog confirming data parameters
+      paramDialog = new JDialog((Frame) null, "Slim Plotter", true);
+      JPanel paramPane = new JPanel();
+      paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+      paramDialog.setContentPane(paramPane);
+      paramPane.setLayout(new GridLayout(11, 3));
+      wField = addRow(paramPane, "Image width", width, "pixels");
+      hField = addRow(paramPane, "Image height", height, "pixels");
+      tField = addRow(paramPane, "Time bins", timeBins, "");
+      cField = addRow(paramPane, "Channel count", channels, "");
+      trField = addRow(paramPane, "Time range", timeRange, "nanoseconds");
+      wlField = addRow(paramPane, "Starting wavelength", minWave, "nanometers");
+      sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
+      JButton ok = new JButton("OK");
+      paramDialog.getRootPane().setDefaultButton(ok);
+      ok.addActionListener(this);
+      // row 8
+      peaksBox = new JCheckBox("Align peaks", true);
+      peaksBox.setToolTipText("<html>Computes the peak of each spectral " +
+        "channel, and aligns those peaks <br>to match by adjusting the " +
+        "lifetime histograms. This option corrects<br>for skew across " +
+        "channels caused by the multispectral detector's<br>variable system " +
+        "response time between channels. This option must<br>be enabled to " +
+        "perform exponential curve fitting.</html>");
+      paramPane.add(peaksBox);
+      paramPane.add(new JLabel());
+      paramPane.add(new JLabel());
+      // row 8
+      cutBox = new JCheckBox("Cut 1.5ns from fit", true);
+      cutBox.setToolTipText("<html>When performing exponential curve " +
+        "fitting, excludes the last 1.5 ns<br>from the computation. This " +
+        "option is useful because the end of the <br>the lifetime histogram " +
+        "sometimes drops off unexpectedly, skewing<br>the fit results.</html>");
+      paramPane.add(cutBox);
+      paramPane.add(new JLabel());
+      paramPane.add(new JLabel());
+      // row 10
+      paramPane.add(new JLabel());
+      paramPane.add(new JLabel());
+      paramPane.add(new JLabel());
+      // row 11
+      paramPane.add(new JLabel());
+      paramPane.add(ok);
+      paramDialog.pack();
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      Dimension ps = paramDialog.getSize();
+      paramDialog.setLocation((screenSize.width - ps.width) / 2,
+        (screenSize.height - ps.height) / 2);
+      paramDialog.setVisible(true);
+      if (cVisible == null) System.exit(0); // dialog canceled (closed with X)
+      maxWave = minWave + (channels - 1) * waveStep;
+      roiCount = width * height;
+      roiPercent = 100;
 
-    // read SDT file header
-    SDTReader reader = new SDTReader();
-    SDTInfo info = reader.getInfo(file.getPath());
-    reader.close();
-    int offset = info.dataBlockOffs + 22;
-    width = info.width;
-    height = info.height;
-    timeBins = info.timeBins;
-    channels = info.channels;
-    timeRange = 12.5f;
-    minWave = 400;
-    waveStep = 10;
-
-    // show dialog confirming data parameters
-    paramDialog = new JDialog((Frame) null, "SlimPlotter", true);
-    JPanel paramPane = new JPanel();
-    paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-    paramDialog.setContentPane(paramPane);
-    paramPane.setLayout(new GridLayout(11, 3));
-    wField = addRow(paramPane, "Image width", width, "pixels");
-    hField = addRow(paramPane, "Image height", height, "pixels");
-    tField = addRow(paramPane, "Time bins", timeBins, "");
-    cField = addRow(paramPane, "Channel count", channels, "");
-    trField = addRow(paramPane, "Time range", timeRange, "nanoseconds");
-    wlField = addRow(paramPane, "Starting wavelength", minWave, "nanometers");
-    sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
-    JButton ok = new JButton("OK");
-    paramDialog.getRootPane().setDefaultButton(ok);
-    ok.addActionListener(this);
-    // row 8
-    peaksBox = new JCheckBox("Align peaks", true);
-    peaksBox.setToolTipText("<html>Computes the peak of each spectral " +
-      "channel, and aligns those peaks <br>to match by adjusting the " +
-      "lifetime histograms. This option corrects<br>for skew across channels " +
-      "caused by the multispectral detector's<br>variable system response " +
-      "time between channels. This option must<br>be enabled to perform " +
-      "exponential curve fitting.</html>");
-    paramPane.add(peaksBox);
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    // row 8
-    cutBox = new JCheckBox("Cut 1.5ns from fit", true);
-    cutBox.setToolTipText("<html>When performing exponential curve fitting, " +
-      "excludes the last 1.5 ns<br>from the computation. This option is " +
-      "useful because the end of the <br>the lifetime histogram sometimes " +
-      "drops off unexpectedly, skewing<br>the fit results.</html>");
-    paramPane.add(cutBox);
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    // row 10
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    paramPane.add(new JLabel());
-    // row 11
-    paramPane.add(new JLabel());
-    paramPane.add(ok);
-    paramDialog.pack();
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension ps = paramDialog.getSize();
-    paramDialog.setLocation((screenSize.width - ps.width) / 2,
-      (screenSize.height - ps.height) / 2);
-    paramDialog.setVisible(true);
-    if (cVisible == null) System.exit(0); // dialog canceled (closed with X)
-    maxWave = minWave + (channels - 1) * waveStep;
-    roiCount = width * height;
-    roiPercent = 100;
-
-    // pop up progress monitor
-    setProgress(progress, 1); // estimate: 0.1%
-    if (progress.isCanceled()) System.exit(0);
-
-    // read pixel data
-    progress.setNote("Reading data");
-    DataInputStream fin = new DataInputStream(new FileInputStream(file));
-    fin.skipBytes(offset); // skip to data
-    byte[] data = new byte[2 * channels * height * width * timeBins];
-    int blockSize = 65536;
-    for (int off=0; off<data.length; off+=blockSize) {
-      int len = data.length - off;
-      if (len > blockSize) len = blockSize;
-      fin.readFully(data, off, len);
-      setProgress(progress, (int) (700L *
-        (off + blockSize) / data.length)); // estimate: 0% -> 70%
+      // pop up progress monitor
+      setProgress(progress, 1); // estimate: 0.1%
       if (progress.isCanceled()) System.exit(0);
-    }
-    fin.close();
 
-    // create types
-    progress.setNote("Creating types");
-    RealType xType = RealType.getRealType("element");
-    RealType yType = RealType.getRealType("line");
-    ScaledUnit ns = new ScaledUnit(1e-9, SI.second, "ns");
-    ScaledUnit nm = new ScaledUnit(1e-9, SI.meter, "nm");
-    bcUnits = new Unit[] {ns, nm};
-    bType = RealType.getRealType("bin", ns);
-    cType = RealType.getRealType("channel", nm);
-    RealType vType = RealType.getRealType("count");
-    RealTupleType xy = new RealTupleType(xType, yType);
-    FunctionType xyvFunc = new FunctionType(xy, vType);
-    Integer2DSet xySet = new Integer2DSet(xy, width, height);
-    FunctionType cxyvFunc = new FunctionType(cType, xyvFunc);
-    Linear1DSet cSet = new Linear1DSet(cType,
-      minWave, maxWave, channels, null, new Unit[] {nm}, null);
-    bc = new RealTupleType(bType, cType);
-    RealType vType2 = RealType.getRealType("tau");
-    RealTupleType vv = new RealTupleType(vType, vType2);
-    bcvFunc = new FunctionType(bc, vv);
-    RealType vTypeFit = RealType.getRealType("value_fit");
-    bcvFuncFit = new FunctionType(bc, vTypeFit);
-    RealType vTypeRes = RealType.getRealType("value_res");
-    bcvFuncRes = new FunctionType(bc, vTypeRes);
-    setProgress(progress, 710); // estimate: 71%
-    if (progress.isCanceled()) System.exit(0);
-
-    // plot intensity data in 2D display
-    progress.setNote("Building displays");
-    iPlot = new DisplayImplJ3D("intensity", new TwoDDisplayRendererJ3D());
-    iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
-      {{MouseHelper.DIRECT, MouseHelper.NONE}, // L, shift-L
-       {MouseHelper.NONE, MouseHelper.NONE}}, // ctrl-L, ctrl-shift-L
-      {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, // M, shift-M
-       {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}}, // ctrl-M, ctrl-shift-M
-      {{MouseHelper.ROTATE, MouseHelper.ZOOM}, // R, shift-R
-       {MouseHelper.TRANSLATE, MouseHelper.NONE}}, // ctrl-R, ctrl-shift-R
-    });
-    iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
-    iPlot.addDisplayListener(this);
-    setProgress(progress, 720); // estimate: 72%
-    if (progress.isCanceled()) System.exit(0);
-
-    iPlot.addMap(new ScalarMap(xType, Display.XAxis));
-    iPlot.addMap(new ScalarMap(yType, Display.YAxis));
-    intensityMap = new ScalarMap(vType, Display.RGB);
-    iPlot.addMap(intensityMap);
-    iPlot.addMap(new ScalarMap(cType, Display.Animation));
-    DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
-    iPlot.addReference(intensityRef);
-    setProgress(progress, 730); // estimate: 73%
-    if (progress.isCanceled()) System.exit(0);
-
-    // set up curve manipulation renderer in 2D display
-    roiGrid = new float[2][width * height];
-    roiMask = new boolean[height][width];
-    for (int h=0; h<height; h++) {
-      for (int w=0; w<width; w++) {
-        int ndx = h * width + w;
-        roiGrid[0][ndx] = w;
-        roiGrid[1][ndx] = h;
-        roiMask[h][w] = true;
+      // read pixel data
+      progress.setNote("Reading data");
+      DataInputStream fin = new DataInputStream(new FileInputStream(file));
+      fin.skipBytes(offset); // skip to data
+      byte[] data = new byte[2 * channels * height * width * timeBins];
+      int blockSize = 65536;
+      for (int off=0; off<data.length; off+=blockSize) {
+        int len = data.length - off;
+        if (len > blockSize) len = blockSize;
+        fin.readFully(data, off, len);
+        setProgress(progress, (int) (700L *
+          (off + blockSize) / data.length)); // estimate: 0% -> 70%
+        if (progress.isCanceled()) System.exit(0);
       }
-    }
-    final DataReferenceImpl curveRef = new DataReferenceImpl("curve");
-    UnionSet dummyCurve = new UnionSet(xy, new Gridded2DSet[] {
-      new Gridded2DSet(xy, new float[][] {{0}, {0}}, 1)
-    });
-    curveRef.setData(dummyCurve);
-    CurveManipulationRendererJ3D curve =
-      new CurveManipulationRendererJ3D(0, 0, true);
-    iPlot.addReferences(curve, curveRef);
-    CellImpl cell = new CellImpl() {
-      public void doAction() throws VisADException, RemoteException {
-        // save latest drawn curve
-        curveSet = (UnionSet) curveRef.getData();
-      }
-    };
-    cell.addReference(curveRef);
-    roiRef = new DataReferenceImpl("roi");
-    roiRef.setData(new Real(0)); // dummy
-    iPlot.addReference(roiRef, new ConstantMap[] {
-      new ConstantMap(0, Display.Blue),
-      new ConstantMap(0.1, Display.Alpha)
-    });
-    setProgress(progress, 740); // estimate: 74%
-    if (progress.isCanceled()) System.exit(0);
+      fin.close();
 
-    ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
-    iPlot.getProjectionControl().setMatrix(
-      iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
+      // create types
+      progress.setNote("Creating types");
+      RealType xType = RealType.getRealType("element");
+      RealType yType = RealType.getRealType("line");
+      ScaledUnit ns = new ScaledUnit(1e-9, SI.second, "ns");
+      ScaledUnit nm = new ScaledUnit(1e-9, SI.meter, "nm");
+      bcUnits = new Unit[] {ns, nm};
+      bType = RealType.getRealType("bin", ns);
+      cType = RealType.getRealType("channel", nm);
+      RealType vType = RealType.getRealType("count");
+      RealTupleType xy = new RealTupleType(xType, yType);
+      FunctionType xyvFunc = new FunctionType(xy, vType);
+      Integer2DSet xySet = new Integer2DSet(xy, width, height);
+      FunctionType cxyvFunc = new FunctionType(cType, xyvFunc);
+      Linear1DSet cSet = new Linear1DSet(cType,
+        minWave, maxWave, channels, null, new Unit[] {nm}, null);
+      bc = new RealTupleType(bType, cType);
+      RealType vType2 = RealType.getRealType("tau");
+      RealTupleType vv = new RealTupleType(vType, vType2);
+      bcvFunc = new FunctionType(bc, vv);
+      RealType vTypeFit = RealType.getRealType("value_fit");
+      bcvFuncFit = new FunctionType(bc, vTypeFit);
+      RealType vTypeRes = RealType.getRealType("value_res");
+      bcvFuncRes = new FunctionType(bc, vTypeRes);
+      setProgress(progress, 710); // estimate: 71%
+      if (progress.isCanceled()) System.exit(0);
 
-    setProgress(progress, 750); // estimate: 75%
-    if (progress.isCanceled()) System.exit(0);
-
-    // plot decay curves in 3D display
-    decayPlot = channels > 1 ? new DisplayImplJ3D("decay") :
-      new DisplayImplJ3D("decay", new TwoDDisplayRendererJ3D());
-    ScalarMap xMap = new ScalarMap(bType, Display.XAxis);
-    ScalarMap yMap = new ScalarMap(cType, Display.YAxis);
-    DisplayRealType heightAxis = channels > 1 ? Display.ZAxis : Display.YAxis;
-    zMap = new ScalarMap(vType, heightAxis);
-    zMapFit = new ScalarMap(vTypeFit, heightAxis);
-    zMapRes = new ScalarMap(vTypeRes, heightAxis);
-    vMap = new ScalarMap(vType2, Display.RGB);
-    //vMapFit = new ScalarMap(vTypeFit, Display.RGB);
-    vMapRes = new ScalarMap(vTypeRes, Display.RGB);
-    decayPlot.addMap(xMap);
-    if (channels > 1) decayPlot.addMap(yMap);
-    decayPlot.addMap(zMap);
-    decayPlot.addMap(zMapFit);
-    decayPlot.addMap(zMapRes);
-    decayPlot.addMap(vMap);
-    //decayPlot.addMap(vMapFit);
-    decayPlot.addMap(vMapRes);
-    setProgress(progress, 760); // estimate: 76%
-    if (progress.isCanceled()) System.exit(0);
-
-    decayRend = new DefaultRendererJ3D();
-    decayRef = new DataReferenceImpl("decay");
-    decayPlot.addReferences(decayRend, decayRef);
-    if (adjustPeaks) {
-      fitRend = new DefaultRendererJ3D();
-      fitRef = new DataReferenceImpl("fit");
-      decayPlot.addReferences(fitRend, fitRef, new ConstantMap[] {
-        new ConstantMap(1.0, Display.Red),
-        new ConstantMap(1.0, Display.Green),
-        new ConstantMap(1.0, Display.Blue)
+      // plot intensity data in 2D display
+      progress.setNote("Building displays");
+      iPlot = new DisplayImplJ3D("intensity", new TwoDDisplayRendererJ3D());
+      iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
+        {{MouseHelper.DIRECT, MouseHelper.NONE}, // L, shift-L
+         {MouseHelper.NONE, MouseHelper.NONE}}, // ctrl-L, ctrl-shift-L
+        {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, // M, shift-M
+         {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}}, // ctrl-M, ctrl-shift-M
+        {{MouseHelper.ROTATE, MouseHelper.ZOOM}, // R, shift-R
+         {MouseHelper.TRANSLATE, MouseHelper.NONE}}, // ctrl-R, ctrl-shift-R
       });
-      fitRend.toggle(false);
-      resRend = new DefaultRendererJ3D();
-      resRef = new DataReferenceImpl("residuals");
-      decayPlot.addReferences(resRend, resRef);
-      resRend.toggle(false);
-    }
-    setProgress(progress, 770); // estimate: 77%
-    if (progress.isCanceled()) System.exit(0);
+      iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
+      iPlot.addDisplayListener(this);
+      setProgress(progress, 720); // estimate: 72%
+      if (progress.isCanceled()) System.exit(0);
 
-    xMap.setRange(0, timeRange);
-    yMap.setRange(minWave, maxWave);
-    AxisScale xScale = xMap.getAxisScale();
-    Font font = Font.decode("serif 24");
-    xScale.setFont(font);
-    xScale.setTitle("Time (ns)");
-    xScale.setSnapToBox(true);
-    AxisScale yScale = yMap.getAxisScale();
-    yScale.setFont(font);
-    yScale.setTitle("Wavelength (nm)");
-    yScale.setSide(AxisScale.SECONDARY);
-    yScale.setSnapToBox(true);
-    AxisScale zScale = zMap.getAxisScale();
-    zScale.setFont(font);
-    zScale.setTitle("Count");
-    zScale.setSnapToBox(true); // workaround for weird axis spacing issue
-    zMapFit.getAxisScale().setVisible(false);
-    zMapRes.getAxisScale().setVisible(false);
-    GraphicsModeControl gmc = decayPlot.getGraphicsModeControl();
-    gmc.setScaleEnable(true);
-    gmc.setTextureEnable(false);
-    ProjectionControl pc = decayPlot.getProjectionControl();
-    pc.setMatrix(channels > 1 ? MATRIX_3D : MATRIX_2D);
-    pc.setAspectCartesian(
-      new double[] {2, 1, 1});
-    setProgress(progress, 780); // estimate: 78%
-    if (progress.isCanceled()) System.exit(0);
+      iPlot.addMap(new ScalarMap(xType, Display.XAxis));
+      iPlot.addMap(new ScalarMap(yType, Display.YAxis));
+      intensityMap = new ScalarMap(vType, Display.RGB);
+      iPlot.addMap(intensityMap);
+      iPlot.addMap(new ScalarMap(cType, Display.Animation));
+      DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
+      iPlot.addReference(intensityRef);
+      setProgress(progress, 730); // estimate: 73%
+      if (progress.isCanceled()) System.exit(0);
 
-    // convert byte data to unsigned shorts
-    progress.setNote("Constructing images");
-    values = new int[channels][height][width][timeBins];
-    float[][][] pix = new float[channels][1][width * height];
-    FieldImpl field = new FieldImpl(cxyvFunc, cSet);
-    maxIntensity = new int[channels];
-    for (int c=0; c<channels; c++) {
-      int oc = timeBins * width * height * c;
+      // set up curve manipulation renderer in 2D display
+      roiGrid = new float[2][width * height];
+      roiMask = new boolean[height][width];
       for (int h=0; h<height; h++) {
-        int oh = timeBins * width * h;
         for (int w=0; w<width; w++) {
-          int ow = timeBins * w;
-          int sum = 0;
-          for (int t=0; t<timeBins; t++) {
-            int ndx = 2 * (oc + oh + ow + t);
-            int val = DataTools.bytesToInt(data, ndx, 2, true);
-            if (val > maxIntensity[c]) maxIntensity[c] = val;
-            values[c][h][w][t] = val;
-            sum += val;
-          }
-          pix[c][0][width * h + w] = sum;
+          int ndx = h * width + w;
+          roiGrid[0][ndx] = w;
+          roiGrid[1][ndx] = h;
+          roiMask[h][w] = true;
         }
-        setProgress(progress, 780 + 140 *
-          (height * c + h + 1) / (channels * height)); // estimate: 78% -> 92%
-        if (progress.isCanceled()) System.exit(0);
       }
-      FlatField ff = new FlatField(xyvFunc, xySet);
-      ff.setSamples(pix[c], false);
-      field.setSample(c, ff);
-    }
+      final DataReferenceImpl curveRef = new DataReferenceImpl("curve");
+      UnionSet dummyCurve = new UnionSet(xy, new Gridded2DSet[] {
+        new Gridded2DSet(xy, new float[][] {{0}, {0}}, 1)
+      });
+      curveRef.setData(dummyCurve);
+      CurveManipulationRendererJ3D curve =
+        new CurveManipulationRendererJ3D(0, 0, true);
+      iPlot.addReferences(curve, curveRef);
+      CellImpl cell = new CellImpl() {
+        public void doAction() throws VisADException, RemoteException {
+          // save latest drawn curve
+          curveSet = (UnionSet) curveRef.getData();
+        }
+      };
+      cell.addReference(curveRef);
+      roiRef = new DataReferenceImpl("roi");
+      roiRef.setData(new Real(0)); // dummy
+      iPlot.addReference(roiRef, new ConstantMap[] {
+        new ConstantMap(0, Display.Blue),
+        new ConstantMap(0.1, Display.Alpha)
+      });
+      setProgress(progress, 740); // estimate: 74%
+      if (progress.isCanceled()) System.exit(0);
 
-    // compute channel with brightest intensity
-    int maxChan = 0;
-    int max = 0;
-    for (int c=0; c<channels; c++) {
-      if (maxIntensity[c] > max) {
-        max = maxIntensity[c];
-        maxChan = c;
+      ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
+      iPlot.getProjectionControl().setMatrix(
+        iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
+
+      setProgress(progress, 750); // estimate: 75%
+      if (progress.isCanceled()) System.exit(0);
+
+      // plot decay curves in 3D display
+      decayPlot = channels > 1 ? new DisplayImplJ3D("decay") :
+        new DisplayImplJ3D("decay", new TwoDDisplayRendererJ3D());
+      ScalarMap xMap = new ScalarMap(bType, Display.XAxis);
+      ScalarMap yMap = new ScalarMap(cType, Display.YAxis);
+      DisplayRealType heightAxis = channels > 1 ? Display.ZAxis : Display.YAxis;
+      zMap = new ScalarMap(vType, heightAxis);
+      zMapFit = new ScalarMap(vTypeFit, heightAxis);
+      zMapRes = new ScalarMap(vTypeRes, heightAxis);
+      vMap = new ScalarMap(vType2, Display.RGB);
+      //vMapFit = new ScalarMap(vTypeFit, Display.RGB);
+      vMapRes = new ScalarMap(vTypeRes, Display.RGB);
+      decayPlot.addMap(xMap);
+      if (channels > 1) decayPlot.addMap(yMap);
+      decayPlot.addMap(zMap);
+      decayPlot.addMap(zMapFit);
+      decayPlot.addMap(zMapRes);
+      decayPlot.addMap(vMap);
+      //decayPlot.addMap(vMapFit);
+      decayPlot.addMap(vMapRes);
+      setProgress(progress, 760); // estimate: 76%
+      if (progress.isCanceled()) System.exit(0);
+
+      decayRend = new DefaultRendererJ3D();
+      decayRef = new DataReferenceImpl("decay");
+      decayPlot.addReferences(decayRend, decayRef);
+      if (adjustPeaks) {
+        fitRend = new DefaultRendererJ3D();
+        fitRef = new DataReferenceImpl("fit");
+        decayPlot.addReferences(fitRend, fitRef, new ConstantMap[] {
+          new ConstantMap(1.0, Display.Red),
+          new ConstantMap(1.0, Display.Green),
+          new ConstantMap(1.0, Display.Blue)
+        });
+        fitRend.toggle(false);
+        resRend = new DefaultRendererJ3D();
+        resRef = new DataReferenceImpl("residuals");
+        decayPlot.addReferences(resRend, resRef);
+        resRend.toggle(false);
       }
-    }
+      setProgress(progress, 770); // estimate: 77%
+      if (progress.isCanceled()) System.exit(0);
 
-    // adjust peaks
-    if (adjustPeaks) {
-      progress.setNote("Adjusting peaks");
-      int[] peaks = new int[channels];
+      xMap.setRange(0, timeRange);
+      yMap.setRange(minWave, maxWave);
+      AxisScale xScale = xMap.getAxisScale();
+      Font font = Font.decode("serif 24");
+      xScale.setFont(font);
+      xScale.setTitle("Time (ns)");
+      xScale.setSnapToBox(true);
+      AxisScale yScale = yMap.getAxisScale();
+      yScale.setFont(font);
+      yScale.setTitle("Wavelength (nm)");
+      yScale.setSide(AxisScale.SECONDARY);
+      yScale.setSnapToBox(true);
+      AxisScale zScale = zMap.getAxisScale();
+      zScale.setFont(font);
+      zScale.setTitle("Count");
+      zScale.setSnapToBox(true); // workaround for weird axis spacing issue
+      zMapFit.getAxisScale().setVisible(false);
+      zMapRes.getAxisScale().setVisible(false);
+      GraphicsModeControl gmc = decayPlot.getGraphicsModeControl();
+      gmc.setScaleEnable(true);
+      gmc.setTextureEnable(false);
+      ProjectionControl pc = decayPlot.getProjectionControl();
+      pc.setMatrix(channels > 1 ? MATRIX_3D : MATRIX_2D);
+      pc.setAspectCartesian(
+        new double[] {2, 1, 1});
+      setProgress(progress, 780); // estimate: 78%
+      if (progress.isCanceled()) System.exit(0);
+
+      // convert byte data to unsigned shorts
+      progress.setNote("Constructing images");
+      values = new int[channels][height][width][timeBins];
+      float[][][] pix = new float[channels][1][width * height];
+      FieldImpl field = new FieldImpl(cxyvFunc, cSet);
+      maxIntensity = new int[channels];
       for (int c=0; c<channels; c++) {
-        int[] sum = new int[timeBins];
+        int oc = timeBins * width * height * c;
         for (int h=0; h<height; h++) {
+          int oh = timeBins * width * h;
           for (int w=0; w<width; w++) {
-            for (int t=0; t<timeBins; t++) sum[t] += values[c][h][w][t];
+            int ow = timeBins * w;
+            int sum = 0;
+            for (int t=0; t<timeBins; t++) {
+              int ndx = 2 * (oc + oh + ow + t);
+              int val = DataTools.bytesToInt(data, ndx, 2, true);
+              if (val > maxIntensity[c]) maxIntensity[c] = val;
+              values[c][h][w][t] = val;
+              sum += val;
+            }
+            pix[c][0][width * h + w] = sum;
           }
+          setProgress(progress, 780 + 140 *
+            (height * c + h + 1) / (channels * height)); // estimate: 78% -> 92%
+          if (progress.isCanceled()) System.exit(0);
         }
-        int peak = 0, ndx = 0;
-        for (int t=0; t<timeBins; t++) {
-          if (peak <= sum[t]) {
-            peak = sum[t];
-            ndx = t;
-          }
-          else if (t > timeBins / 3) break; // HACK - too early to give up
+        FlatField ff = new FlatField(xyvFunc, xySet);
+        ff.setSamples(pix[c], false);
+        field.setSample(c, ff);
+      }
+
+      // compute channel with brightest intensity
+      maxChan = 0;
+      int max = 0;
+      for (int c=0; c<channels; c++) {
+        if (maxIntensity[c] > max) {
+          max = maxIntensity[c];
+          maxChan = c;
         }
-        peaks[c] = ndx;
-        setProgress(progress, 920 + 20 *
-          (c + 1) / channels); // estimate: 92% -> 94%
-        if (progress.isCanceled()) System.exit(0);
       }
-      maxPeak = 0;
-      for (int c=0; c<channels; c++) {
-        if (maxPeak < peaks[c]) maxPeak = peaks[c];
-      }
-      log("Aligning peaks to tmax = " + maxPeak);
-      for (int c=0; c<channels; c++) {
-        int shift = maxPeak - peaks[c];
-        if (shift > 0) {
+
+      // adjust peaks
+      if (adjustPeaks) {
+        progress.setNote("Adjusting peaks");
+        int[] peaks = new int[channels];
+        for (int c=0; c<channels; c++) {
+          int[] sum = new int[timeBins];
           for (int h=0; h<height; h++) {
             for (int w=0; w<width; w++) {
-              for (int t=timeBins-1; t>=shift; t--) {
-                values[c][h][w][t] = values[c][h][w][t - shift];
-              }
-              for (int t=shift-1; t>=0; t--) values[c][h][w][t] = 0;
+              for (int t=0; t<timeBins; t++) sum[t] += values[c][h][w][t];
             }
           }
-          log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
-            " (shifting by " + shift + ")");
+          int peak = 0, ndx = 0;
+          for (int t=0; t<timeBins; t++) {
+            if (peak <= sum[t]) {
+              peak = sum[t];
+              ndx = t;
+            }
+            else if (t > timeBins / 3) break; // HACK - too early to give up
+          }
+          peaks[c] = ndx;
+          setProgress(progress, 920 + 20 *
+            (c + 1) / channels); // estimate: 92% -> 94%
+          if (progress.isCanceled()) System.exit(0);
         }
-        setProgress(progress, 940 + 20 *
-          (c + 1) / channels); // estimate: 94% -> 96%
-        if (progress.isCanceled()) System.exit(0);
+        maxPeak = 0;
+        for (int c=0; c<channels; c++) {
+          if (maxPeak < peaks[c]) maxPeak = peaks[c];
+        }
+        log("Aligning peaks to tmax = " + maxPeak);
+        for (int c=0; c<channels; c++) {
+          int shift = maxPeak - peaks[c];
+          if (shift > 0) {
+            for (int h=0; h<height; h++) {
+              for (int w=0; w<width; w++) {
+                for (int t=timeBins-1; t>=shift; t--) {
+                  values[c][h][w][t] = values[c][h][w][t - shift];
+                }
+                for (int t=shift-1; t>=0; t--) values[c][h][w][t] = 0;
+              }
+            }
+            log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
+              " (shifting by " + shift + ")");
+          }
+          setProgress(progress, 940 + 20 *
+            (c + 1) / channels); // estimate: 94% -> 96%
+          if (progress.isCanceled()) System.exit(0);
+        }
+
+        // add yellow line to indicate adjusted peak position
+        lineRend = new DefaultRendererJ3D();
+        DataReferenceImpl peakRef = new DataReferenceImpl("peaks");
+        float peakTime = (float) (maxPeak * timeRange / timeBins);
+        peakRef.setData(new Gridded2DSet(bc,
+          new float[][] {{peakTime, peakTime}, {minWave, maxWave}}, 2));
+        decayPlot.addReferences(lineRend, peakRef, new ConstantMap[] {
+          new ConstantMap(-1, Display.ZAxis),
+          new ConstantMap(0, Display.Blue),
+          //new ConstantMap(2, Display.LineWidth)
+        });
       }
 
-      // add yellow line to indicate adjusted peak position
-      lineRend = new DefaultRendererJ3D();
-      DataReferenceImpl peakRef = new DataReferenceImpl("peaks");
-      float peakTime = (float) (maxPeak * timeRange / timeBins);
-      peakRef.setData(new Gridded2DSet(bc,
-        new float[][] {{peakTime, peakTime}, {minWave, maxWave}}, 2));
-      decayPlot.addReferences(lineRend, peakRef, new ConstantMap[] {
-        new ConstantMap(-1, Display.ZAxis),
-        new ConstantMap(0, Display.Blue),
-        //new ConstantMap(2, Display.LineWidth)
-      });
+      // construct 2D pane
+      progress.setNote("Creating plots");
+      JFrame masterWindow = new JFrame("Slim Plotter - " + file.getName());
+      masterWindow.addWindowListener(this);
+      JPanel masterPane = new JPanel();
+      masterPane.setLayout(new BorderLayout());
+      masterWindow.setContentPane(masterPane);
+      JPanel intensityPane = new JPanel();
+      intensityPane.setLayout(new BoxLayout(intensityPane, BoxLayout.Y_AXIS));
+      JPanel iPlotPane = new JPanel() {
+        private int height = 380;
+        public Dimension getMinimumSize() {
+          Dimension min = super.getMinimumSize();
+          return new Dimension(min.width, height);
+        }
+        public Dimension getPreferredSize() {
+          Dimension pref = super.getPreferredSize();
+          return new Dimension(pref.width, height);
+        }
+        public Dimension getMaximumSize() {
+          Dimension max = super.getMaximumSize();
+          return new Dimension(max.width, height);
+        }
+      };
+      iPlotPane.setLayout(new BorderLayout());
+      iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
+      intensityPane.add(iPlotPane);
+
+      setProgress(progress, 970); // estimate: 97%
+      if (progress.isCanceled()) System.exit(0);
+
+      JPanel sliderPane = new JPanel();
+      sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
+      intensityPane.add(sliderPane);
+      cSlider = new JSlider(1, channels, 1);
+      cSlider.setToolTipText(
+        "Selects the channel to display in the 2D intensity plot above");
+      cSlider.setSnapToTicks(true);
+      cSlider.setMajorTickSpacing(channels / 4);
+      cSlider.setMinorTickSpacing(1);
+      cSlider.setPaintTicks(true);
+      cSlider.addChangeListener(this);
+      cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
+      cSlider.setEnabled(channels > 1);
+      sliderPane.add(cSlider);
+      cToggle = new JCheckBox("", true);
+      cToggle.setToolTipText(
+        "Toggles the selected channel's visibility in the 3D data plot");
+      cToggle.addActionListener(this);
+      cToggle.setEnabled(channels > 1);
+      sliderPane.add(cToggle);
+
+      JPanel minMaxPane = new JPanel();
+      minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.X_AXIS));
+      intensityPane.add(minMaxPane);
+
+      JPanel minPane = new JPanel();
+      minPane.setLayout(new BoxLayout(minPane, BoxLayout.Y_AXIS));
+      minMaxPane.add(minPane);
+      minLabel = new JLabel("min=0");
+      minLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+      minPane.add(minLabel);
+      minSlider = new JSlider(0, max, 0);
+      minSlider.setToolTipText("<html>" +
+        "Adjusts intensity plot's minimum color value.<br>" +
+        "Anything less than this value appears black.</html>");
+      minSlider.setMajorTickSpacing(max);
+      int minor = max / 16;
+      if (minor < 1) minor = 1;
+      minSlider.setMinorTickSpacing(minor);
+      minSlider.setPaintTicks(true);
+      minSlider.addChangeListener(this);
+      minSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
+      minPane.add(minSlider);
+
+      JPanel maxPane = new JPanel();
+      maxPane.setLayout(new BoxLayout(maxPane, BoxLayout.Y_AXIS));
+      minMaxPane.add(maxPane);
+      maxLabel = new JLabel("max=" + max);
+      maxLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+      maxPane.add(maxLabel);
+      maxSlider = new JSlider(0, max, max);
+      maxSlider.setToolTipText("<html>" +
+        "Adjusts intensity plot's maximum color value.<br>" +
+        "Anything greater than this value appears white.</html>");
+      maxSlider.setMajorTickSpacing(max);
+      maxSlider.setMinorTickSpacing(minor);
+      maxSlider.setPaintTicks(true);
+      maxSlider.addChangeListener(this);
+      maxSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
+      maxPane.add(maxSlider);
+
+      intensityRef.setData(field);
+      ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
+      cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
+
+      setProgress(progress, 980); // estimate: 98%
+      if (progress.isCanceled()) System.exit(0);
+
+      // construct 3D pane
+      JPanel decayPane = new JPanel();
+      decayPane.setLayout(new BorderLayout());
+      decayPane.add(decayPlot.getComponent(), BorderLayout.CENTER);
+
+      decayLabel = new JLabel("Decay curve for all pixels");
+      decayLabel.setToolTipText(
+        "Displays information about the selected region of interest");
+      decayPane.add(decayLabel, BorderLayout.NORTH);
+
+      ColorMapWidget colorWidget = new ColorMapWidget(vMap);
+      Dimension prefSize = colorWidget.getPreferredSize();
+      colorWidget.setPreferredSize(new Dimension(prefSize.width, 0));
+
+      showData = new JCheckBox("Data", true);
+      showData.setToolTipText("Toggles visibility of raw data");
+      showData.addActionListener(this);
+      showScale = new JCheckBox("Scale", true);
+      showScale.setToolTipText("Toggles visibility of scale bars");
+      showScale.addActionListener(this);
+      showBox = new JCheckBox("Box", true);
+      showBox.setToolTipText("Toggles visibility of bounding box");
+      showBox.addActionListener(this);
+      showLine = new JCheckBox("Line", adjustPeaks);
+      showLine.setToolTipText(
+        "Toggles visibility of aligned peaks indicator line");
+      showLine.setEnabled(adjustPeaks);
+      showLine.addActionListener(this);
+      showFit = new JCheckBox("Fit", false);
+      showFit.setToolTipText("Toggles visibility of fitted curves");
+      showFit.setEnabled(adjustPeaks);
+      showFit.addActionListener(this);
+      showResiduals = new JCheckBox("Residuals", false);
+      showResiduals.setToolTipText(
+        "Toggles visibility of fitted curve residuals");
+      showResiduals.setEnabled(adjustPeaks);
+      showResiduals.addActionListener(this);
+
+      linear = new JRadioButton("Linear", true);
+      linear.setToolTipText("Plots 3D data with a linear scale");
+      log = new JRadioButton("Log", false);
+      log.setToolTipText("Plots 3D data with a logarithmic scale");
+      perspective = new JRadioButton("Perspective", true);
+      perspective.setToolTipText(
+        "Displays 3D plot with a perspective projection");
+      perspective.setEnabled(channels > 1);
+      parallel = new JRadioButton("Parallel", false);
+      parallel.setToolTipText(
+        "Displays 3D plot with a parallel (orthographic) projection");
+      parallel.setEnabled(channels > 1);
+      dataSurface = new JRadioButton("Surface", channels > 1);
+      dataSurface.setToolTipText("Displays raw data as a 2D surface");
+      dataSurface.setEnabled(channels > 1);
+      dataLines = new JRadioButton("Lines", channels == 1);
+      dataLines.setToolTipText("Displays raw data as a series of lines");
+      dataLines.setEnabled(channels > 1);
+      fitSurface = new JRadioButton("Surface", false);
+      fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
+      fitSurface.setEnabled(adjustPeaks && channels > 1);
+      fitLines = new JRadioButton("Lines", true);
+      fitLines.setToolTipText("Displays fitted curves as a series of lines");
+      fitLines.setEnabled(adjustPeaks && channels > 1);
+      resSurface = new JRadioButton("Surface", false);
+      resSurface.setToolTipText(
+        "Displays fitted curve residuals as a 2D surface");
+      resSurface.setEnabled(adjustPeaks && channels > 1);
+      resLines = new JRadioButton("Lines", true);
+      resLines.setToolTipText(
+        "Displays fitted curve residuals as a series of lines");
+      resLines.setEnabled(adjustPeaks && channels > 1);
+      colorHeight = new JRadioButton("Counts", true);
+      colorHeight.setToolTipText(
+        "Colorizes data according to the height (histogram count)");
+      colorHeight.setEnabled(adjustPeaks && channels > 1);
+      colorTau = new JRadioButton("Lifetimes", false);
+      colorTau.setToolTipText(
+        "Colorizes data according to aggregate lifetime value");
+      colorTau.setEnabled(adjustPeaks && channels > 1);
+
+      zOverride = new JCheckBox("", false);
+      zOverride.setToolTipText(
+        "Toggles manual override of Z axis scale (Count)");
+      zOverride.addActionListener(this);
+      zScaleValue = new JTextField(9);
+      zScaleValue.setToolTipText("Overridden Z axis scale value");
+      zScaleValue.setEnabled(false);
+      zScaleValue.getDocument().addDocumentListener(this);
+
+      exportData = new JButton("Export");
+      exportData.setToolTipText(
+        "Exports the selected ROI's raw data to a text file");
+      exportData.addActionListener(this);
+
+      numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
+      numCurves.setToolTipText("Number of components in exponential fit");
+      numCurves.setMaximumSize(numCurves.getPreferredSize());
+      numCurves.addChangeListener(this);
+
+      setProgress(progress, 990); // estimate: 99%
+      if (progress.isCanceled()) System.exit(0);
+
+      JPanel showPanel = new JPanel();
+      showPanel.setBorder(new TitledBorder("Show"));
+      showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.Y_AXIS));
+      showPanel.add(showData);
+      showPanel.add(showScale);
+      showPanel.add(showBox);
+      showPanel.add(showLine);
+      showPanel.add(showFit);
+      showPanel.add(showResiduals);
+
+      JPanel scalePanel = new JPanel();
+      scalePanel.setBorder(new TitledBorder("Z Scale Override"));
+      scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
+      scalePanel.add(zOverride);
+      scalePanel.add(zScaleValue);
+
+      JPanel colorPanel = new JPanel();
+      colorPanel.setBorder(new TitledBorder("Color Mapping"));
+      colorPanel.setLayout(new BorderLayout());
+      colorPanel.add(colorWidget);
+
+      JPanel miscRow1 = new JPanel();
+      miscRow1.setLayout(new BoxLayout(miscRow1, BoxLayout.X_AXIS));
+      miscRow1.add(makeRadioPanel("Scale", linear, log));
+      miscRow1.add(makeRadioPanel("Projection", perspective, parallel));
+      miscRow1.add(makeRadioPanel("Data", dataSurface, dataLines));
+
+      JPanel miscRow2 = new JPanel();
+      miscRow2.setLayout(new BoxLayout(miscRow2, BoxLayout.X_AXIS));
+      miscRow2.add(makeRadioPanel("Fit", fitSurface, fitLines));
+      miscRow2.add(makeRadioPanel("Residuals", resSurface, resLines));
+      miscRow2.add(makeRadioPanel("Colors", colorHeight, colorTau));
+
+      JPanel miscRow3 = new JPanel();
+      miscRow3.setLayout(new BoxLayout(miscRow3, BoxLayout.X_AXIS));
+      miscRow3.add(scalePanel);
+      miscRow3.add(Box.createHorizontalStrut(5));
+      miscRow3.add(exportData);
+      //miscRow3.add(numCurves);
+
+      JPanel miscPanel = new JPanel();
+      miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
+      miscPanel.add(miscRow1);
+      miscPanel.add(miscRow2);
+      miscPanel.add(miscRow3);
+
+      JPanel options = new JPanel();
+      options.setBorder(new EmptyBorder(8, 5, 8, 5));
+      options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
+      options.add(colorPanel);
+      options.add(showPanel);
+      options.add(miscPanel);
+      decayPane.add(options, BorderLayout.SOUTH);
+      masterPane.add(decayPane, BorderLayout.CENTER);
+
+      JPanel rightPanel = new JPanel() {
+        public Dimension getMaximumSize() {
+          Dimension pref = getPreferredSize();
+          Dimension max = super.getMaximumSize();
+          return new Dimension(pref.width, max.height);
+        }
+      };
+      rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+      rightPanel.add(intensityPane);
+      rightPanel.add(console.getWindow().getContentPane());
+      BreakawayPanel breakawayPanel = new BreakawayPanel(masterPane,
+        "Intensity Data - " + file.getName(), false);
+      breakawayPanel.setEdge(BorderLayout.EAST);
+      breakawayPanel.setUpEnabled(false);
+      breakawayPanel.setDownEnabled(false);
+      breakawayPanel.setContentPane(rightPanel);
+
+      setProgress(progress, 999); // estimate: 99.9%
+      if (progress.isCanceled()) System.exit(0);
+
+      // show window on screen
+      masterWindow.pack();
+      Dimension size = masterWindow.getSize();
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      masterWindow.setLocation((screen.width - size.width) / 2,
+        (screen.height - size.height) / 2);
+      masterWindow.setVisible(true);
+    }
+    catch (Throwable t) {
+      // display stack trace to the user
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      t.printStackTrace(new PrintStream(out));
+      String stackTrace = new String(out.toByteArray());
+      JOptionPane.showMessageDialog(null,
+        "Sorry, Slim Plotter encountered a problem loading your data:\n" +
+        stackTrace, "Slim Plotter", JOptionPane.ERROR_MESSAGE);
+      System.exit(4);
     }
 
-    // construct 2D pane
-    progress.setNote("Creating plots");
-    JFrame masterWindow = new JFrame("Slim Plotter - " + file.getName());
-    masterWindow.addWindowListener(this);
-    JPanel masterPane = new JPanel();
-    masterPane.setLayout(new BorderLayout());
-    masterWindow.setContentPane(masterPane);
-    JPanel intensityPane = new JPanel();
-    intensityPane.setLayout(new BoxLayout(intensityPane, BoxLayout.Y_AXIS));
-    JPanel iPlotPane = new JPanel() {
-      private int height = 380;
-      public Dimension getMinimumSize() {
-        Dimension min = super.getMinimumSize();
-        return new Dimension(min.width, height);
-      }
-      public Dimension getPreferredSize() {
-        Dimension pref = super.getPreferredSize();
-        return new Dimension(pref.width, height);
-      }
-      public Dimension getMaximumSize() {
-        Dimension max = super.getMaximumSize();
-        return new Dimension(max.width, height);
-      }
-    };
-    iPlotPane.setLayout(new BorderLayout());
-    iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
-    intensityPane.add(iPlotPane);
-
-    setProgress(progress, 970); // estimate: 97%
-    if (progress.isCanceled()) System.exit(0);
-
-    JPanel sliderPane = new JPanel();
-    sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
-    intensityPane.add(sliderPane);
-    cSlider = new JSlider(1, channels, 1);
-    cSlider.setToolTipText(
-      "Selects the channel to display in the 2D intensity plot above");
-    cSlider.setSnapToTicks(true);
-    cSlider.setMajorTickSpacing(channels / 4);
-    cSlider.setMinorTickSpacing(1);
-    cSlider.setPaintTicks(true);
-    cSlider.addChangeListener(this);
-    cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
-    cSlider.setEnabled(channels > 1);
-    sliderPane.add(cSlider);
-    cToggle = new JCheckBox("", true);
-    cToggle.setToolTipText(
-      "Toggles the selected channel's visibility in the 3D data plot");
-    cToggle.addActionListener(this);
-    cToggle.setEnabled(channels > 1);
-    sliderPane.add(cToggle);
-
-    JPanel minMaxPane = new JPanel();
-    minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.X_AXIS));
-    intensityPane.add(minMaxPane);
-
-    JPanel minPane = new JPanel();
-    minPane.setLayout(new BoxLayout(minPane, BoxLayout.Y_AXIS));
-    minMaxPane.add(minPane);
-    minLabel = new JLabel("min=0");
-    minLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-    minPane.add(minLabel);
-    minSlider = new JSlider(0, max, 0);
-    minSlider.setToolTipText("<html>" +
-      "Adjusts intensity plot's minimum color value.<br>" +
-      "Anything less than this value appears black.</html>");
-    minSlider.setMajorTickSpacing(max);
-    int minor = max / 16;
-    if (minor < 1) minor = 1;
-    minSlider.setMinorTickSpacing(minor);
-    minSlider.setPaintTicks(true);
-    minSlider.addChangeListener(this);
-    minSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
-    minPane.add(minSlider);
-
-    JPanel maxPane = new JPanel();
-    maxPane.setLayout(new BoxLayout(maxPane, BoxLayout.Y_AXIS));
-    minMaxPane.add(maxPane);
-    maxLabel = new JLabel("max=" + max);
-    maxLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-    maxPane.add(maxLabel);
-    maxSlider = new JSlider(0, max, max);
-    maxSlider.setToolTipText("<html>" +
-      "Adjusts intensity plot's maximum color value.<br>" +
-      "Anything greater than this value appears white.</html>");
-    maxSlider.setMajorTickSpacing(max);
-    maxSlider.setMinorTickSpacing(minor);
-    maxSlider.setPaintTicks(true);
-    maxSlider.addChangeListener(this);
-    maxSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
-    maxPane.add(maxSlider);
-
-    intensityRef.setData(field);
-    ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
-    cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
-
-    setProgress(progress, 980); // estimate: 98%
-    if (progress.isCanceled()) System.exit(0);
-
-    // construct 3D pane
-    JPanel decayPane = new JPanel();
-    decayPane.setLayout(new BorderLayout());
-    decayPane.add(decayPlot.getComponent(), BorderLayout.CENTER);
-
-    decayLabel = new JLabel("Decay curve for all pixels");
-    decayLabel.setToolTipText(
-      "Displays information about the selected region of interest");
-    decayPane.add(decayLabel, BorderLayout.NORTH);
-
-    ColorMapWidget colorWidget = new ColorMapWidget(vMap);
-    Dimension prefSize = colorWidget.getPreferredSize();
-    colorWidget.setPreferredSize(new Dimension(prefSize.width, 0));
-
-    showData = new JCheckBox("Data", true);
-    showData.setToolTipText("Toggles visibility of raw data");
-    showData.addActionListener(this);
-    showScale = new JCheckBox("Scale", true);
-    showScale.setToolTipText("Toggles visibility of scale bars");
-    showScale.addActionListener(this);
-    showBox = new JCheckBox("Box", true);
-    showBox.setToolTipText("Toggles visibility of bounding box");
-    showBox.addActionListener(this);
-    showLine = new JCheckBox("Line", adjustPeaks);
-    showLine.setToolTipText(
-      "Toggles visibility of aligned peaks indicator line");
-    showLine.setEnabled(adjustPeaks);
-    showLine.addActionListener(this);
-    showFit = new JCheckBox("Fit", false);
-    showFit.setToolTipText("Toggles visibility of fitted curves");
-    showFit.setEnabled(adjustPeaks);
-    showFit.addActionListener(this);
-    showResiduals = new JCheckBox("Residuals", false);
-    showResiduals.setToolTipText(
-      "Toggles visibility of fitted curve residuals");
-    showResiduals.setEnabled(adjustPeaks);
-    showResiduals.addActionListener(this);
-
-    linear = new JRadioButton("Linear", true);
-    linear.setToolTipText("Plots 3D data with a linear scale");
-    log = new JRadioButton("Log", false);
-    log.setToolTipText("Plots 3D data with a logarithmic scale");
-    perspective = new JRadioButton("Perspective", true);
-    perspective.setToolTipText(
-      "Displays 3D plot with a perspective projection");
-    perspective.setEnabled(channels > 1);
-    parallel = new JRadioButton("Parallel", false);
-    parallel.setToolTipText(
-      "Displays 3D plot with a parallel (orthographic) projection");
-    parallel.setEnabled(channels > 1);
-    dataSurface = new JRadioButton("Surface", channels > 1);
-    dataSurface.setToolTipText("Displays raw data as a 2D surface");
-    dataSurface.setEnabled(channels > 1);
-    dataLines = new JRadioButton("Lines", channels == 1);
-    dataLines.setToolTipText("Displays raw data as a series of lines");
-    dataLines.setEnabled(channels > 1);
-    fitSurface = new JRadioButton("Surface", false);
-    fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
-    fitSurface.setEnabled(adjustPeaks && channels > 1);
-    fitLines = new JRadioButton("Lines", true);
-    fitLines.setToolTipText("Displays fitted curves as a series of lines");
-    fitLines.setEnabled(adjustPeaks && channels > 1);
-    resSurface = new JRadioButton("Surface", false);
-    resSurface.setToolTipText(
-      "Displays fitted curve residuals as a 2D surface");
-    resSurface.setEnabled(adjustPeaks && channels > 1);
-    resLines = new JRadioButton("Lines", true);
-    resLines.setToolTipText(
-      "Displays fitted curve residuals as a series of lines");
-    resLines.setEnabled(adjustPeaks && channels > 1);
-    colorHeight = new JRadioButton("Counts", true);
-    colorHeight.setToolTipText(
-      "Colorizes data according to the height (histogram count)");
-    colorHeight.setEnabled(adjustPeaks && channels > 1);
-    colorTau = new JRadioButton("Lifetimes", false);
-    colorTau.setToolTipText(
-      "Colorizes data according to aggregate lifetime value");
-    colorTau.setEnabled(adjustPeaks && channels > 1);
-
-    zOverride = new JCheckBox("", false);
-    zOverride.setToolTipText("Toggles manual override of Z axis scale (Count)");
-    zOverride.addActionListener(this);
-    zScaleValue = new JTextField(9);
-    zScaleValue.setToolTipText("Overridden Z axis scale value");
-    zScaleValue.setEnabled(false);
-    zScaleValue.getDocument().addDocumentListener(this);
-
-    exportData = new JButton("Export");
-    exportData.setToolTipText(
-      "Exports the selected ROI's raw data to a text file");
-    exportData.addActionListener(this);
-
-    numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
-    numCurves.setToolTipText("Number of components in exponential fit");
-    numCurves.setMaximumSize(numCurves.getPreferredSize());
-    numCurves.addChangeListener(this);
-
-    setProgress(progress, 990); // estimate: 99%
-    if (progress.isCanceled()) System.exit(0);
-
-    JPanel showPanel = new JPanel();
-    showPanel.setBorder(new TitledBorder("Show"));
-    showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.Y_AXIS));
-    showPanel.add(showData);
-    showPanel.add(showScale);
-    showPanel.add(showBox);
-    showPanel.add(showLine);
-    showPanel.add(showFit);
-    showPanel.add(showResiduals);
-
-    JPanel scalePanel = new JPanel();
-    scalePanel.setBorder(new TitledBorder("Z Scale Override"));
-    scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
-    scalePanel.add(zOverride);
-    scalePanel.add(zScaleValue);
-
-    JPanel colorPanel = new JPanel();
-    colorPanel.setBorder(new TitledBorder("Color Mapping"));
-    colorPanel.setLayout(new BorderLayout());
-    colorPanel.add(colorWidget);
-
-    JPanel miscRow1 = new JPanel();
-    miscRow1.setLayout(new BoxLayout(miscRow1, BoxLayout.X_AXIS));
-    miscRow1.add(makeRadioPanel("Scale", linear, log));
-    miscRow1.add(makeRadioPanel("Projection", perspective, parallel));
-    miscRow1.add(makeRadioPanel("Data", dataSurface, dataLines));
-
-    JPanel miscRow2 = new JPanel();
-    miscRow2.setLayout(new BoxLayout(miscRow2, BoxLayout.X_AXIS));
-    miscRow2.add(makeRadioPanel("Fit", fitSurface, fitLines));
-    miscRow2.add(makeRadioPanel("Residuals", resSurface, resLines));
-    miscRow2.add(makeRadioPanel("Colors", colorHeight, colorTau));
-
-    JPanel miscRow3 = new JPanel();
-    miscRow3.setLayout(new BoxLayout(miscRow3, BoxLayout.X_AXIS));
-    miscRow3.add(scalePanel);
-    miscRow3.add(Box.createHorizontalStrut(5));
-    miscRow3.add(exportData);
-    //miscRow3.add(numCurves);
-
-    JPanel miscPanel = new JPanel();
-    miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
-    miscPanel.add(miscRow1);
-    miscPanel.add(miscRow2);
-    miscPanel.add(miscRow3);
-
-    JPanel options = new JPanel();
-    options.setBorder(new EmptyBorder(8, 5, 8, 5));
-    options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
-    options.add(colorPanel);
-    options.add(showPanel);
-    options.add(miscPanel);
-    decayPane.add(options, BorderLayout.SOUTH);
-    masterPane.add(decayPane, BorderLayout.CENTER);
-
-    JPanel rightPanel = new JPanel() {
-      public Dimension getMaximumSize() {
-        Dimension pref = getPreferredSize();
-        Dimension max = super.getMaximumSize();
-        return new Dimension(pref.width, max.height);
-      }
-    };
-    rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-    rightPanel.add(intensityPane);
-    rightPanel.add(console.getWindow().getContentPane());
-    BreakawayPanel breakawayPanel = new BreakawayPanel(masterPane,
-      "Intensity Data - " + file.getName(), false);
-    breakawayPanel.setEdge(BorderLayout.EAST);
-    breakawayPanel.setUpEnabled(false);
-    breakawayPanel.setDownEnabled(false);
-    breakawayPanel.setContentPane(rightPanel);
-
-    setProgress(progress, 999); // estimate: 99.9%
-    if (progress.isCanceled()) System.exit(0);
-
-    // show window on screen
-    masterWindow.pack();
-    Dimension size = masterWindow.getSize();
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    masterWindow.setLocation((screen.width - size.width) / 2,
-      (screen.height - size.height) / 2);
-    masterWindow.setVisible(true);
     setProgress(progress, 1000);
     progress.close();
+
     plotData(true, true, true);
 
     try { Thread.sleep(200); }
@@ -992,7 +1008,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       catch (IOException exc) {
         JOptionPane.showMessageDialog(exportData,
           "There was a problem writing the file: " + exc.getMessage(),
-          "SlimPlotter", JOptionPane.ERROR_MESSAGE);
+          "Slim Plotter", JOptionPane.ERROR_MESSAGE);
       }
     }
     else { // OK button
@@ -1097,7 +1113,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         if ("path self intersects".equals(msg)) {
           JOptionPane.showMessageDialog(iPlot.getComponent(),
             "Please draw a curve that does not intersect itself.",
-            "SlimPlotter", JOptionPane.ERROR_MESSAGE);
+            "Slim Plotter", JOptionPane.ERROR_MESSAGE);
         }
         else exc.printStackTrace();
       }
@@ -1175,30 +1191,30 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         float[] params = new float[3 * numExp];
         if (numExp == 1) {
           params[0] = maxVal;
-          params[1] = 1;
+          params[1] = picoToBins(1000);
           params[2] = 0;
         }
         else if (numExp == 2) {
           params[0] = maxVal / 2;
-          params[1] = 0.8f;
+          params[1] = picoToBins(800);
           params[2] = 0;
           params[0] = maxVal / 2;
-          params[1] = 2;
+          params[1] = picoToBins(2000);
           params[2] = 0;
         }
         //for (int i=0; i<numExp; i++) {
         //  // initial guess for (a, b, c)
         //  int e = 3 * i;
         //  params[e] = (numExp - i) * maxVal / (numExp + 1);
-        //  params[e + 1] = 1;
+        //  params[e + 1] = picoToBins(1000 * (i + 1));
         //  params[e + 2] = 0;
         //}
         int num = timeBins - maxPeak;
 
-        // HACK - cut off last 1.5 ns from lifetime histogram,
+        // HACK - cut off last 1500 ps from lifetime histogram,
         // to improve accuracy of fit.
         if (cutEnd) {
-          int cutBins = (int) (1.5f * timeBins / timeRange);
+          int cutBins = (int) picoToBins(1500);
           if (num > cutBins + 5) num -= cutBins;
         }
 
@@ -1224,8 +1240,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           for (int i=0; i<numExp; i++) {
             int e = 3 * i;
             log("\t\ta" + i + "=" + lma.parameters[e]);
-            tau[c][i] = (float) (1 / lma.parameters[e + 1]);
-            log("\t\t" + TAU + i + "=" + tau[c][i]);
+            tau[c][i] = binsToPico((float) (1 / lma.parameters[e + 1]));
+            log("\t\t" + TAU + i + "=" + tau[c][i] + " ps");
             log("\t\tc" + i + "=" + lma.parameters[e + 2]);
           }
           fitResults[c] = lma.parameters;
@@ -1379,6 +1395,16 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   public void windowOpened(WindowEvent e) { }
 
   // -- Helper methods --
+
+  /** Converts value in picoseconds to histogram bins. */
+  private float picoToBins(float pico) {
+    return timeBins * pico / timeRange / 1000;
+  }
+
+  /** Converts value in histogram bins to picoseconds. */
+  private float binsToPico(float bins) {
+    return 1000 * timeRange * bins / timeBins;
+  }
 
   private JPanel makeRadioPanel(String title,
     JRadioButton b1, JRadioButton b2)
