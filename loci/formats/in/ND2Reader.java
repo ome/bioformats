@@ -392,12 +392,12 @@ public class ND2Reader extends FormatReader {
                     String v = (String) getMeta(effectiveKey);
                     boolean parse = true;
                     for (int i=0; i<v.length(); i++) {
-                      if (Character.isLetter(v.charAt(i)) || 
+                      if (Character.isLetter(v.charAt(i)) ||
                         Character.isWhitespace(v.charAt(i)))
                       {
                         parse = false;
                         break;
-                      } 
+                      }
                     }
                     if (parse) {
                       addMeta(effectiveKey, value);
@@ -459,7 +459,7 @@ public class ND2Reader extends FormatReader {
       pixSizeZ = Float.parseFloat(pixZ.trim());
     }
 
-    String c = (String) 
+    String c = (String)
       getMeta("MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value");
     if (c != null) sizeC[0] = Integer.parseInt(c);
     else sizeC[0] = openImage(id, 0).getRaster().getNumBands();
@@ -491,7 +491,7 @@ public class ND2Reader extends FormatReader {
 
     currentOrder[0] = "XY";
     long deltaT = timestamps.length > 1 ? timestamps[1] - timestamps[0] : 1;
-    long deltaZ = zstamps.length > 1 ? zstamps[1] - zstamps[0] : 1; 
+    long deltaZ = zstamps.length > 1 ? zstamps[1] - zstamps[0] : 1;
 
     if (deltaT < deltaZ || deltaZ == 0) currentOrder[0] += "CTZ";
     else currentOrder[0] += "CZT";
@@ -509,7 +509,7 @@ public class ND2Reader extends FormatReader {
           sizeZ[0]++;
         }
       }
-      
+
       if (numImages < sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
         if (sizeZ[0] < sizeT[0]) {
           sizeZ[0]--;

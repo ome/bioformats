@@ -373,7 +373,7 @@ public class LIFReader extends FormatReader {
         }
         else if (token.indexOf("dblVoxel") != -1) {
           int index = token.indexOf("Variant") + 7;
-          String size = token.substring(index + 2, 
+          String size = token.substring(index + 2,
             token.indexOf("\"", index + 3));
           float cal = Float.parseFloat(size) * 1000000;
           if (token.indexOf("X") != -1) xcal.add(new Float(cal));
@@ -400,7 +400,7 @@ public class LIFReader extends FormatReader {
                 token.length() - 1), seriesNames.size() - 1);
               prefix = (String) seriesNames.get(seriesNames.size() - 1);
             }
-            
+
             Hashtable tmp = new Hashtable();
             while (token.length() > 2) {
               key = token.substring(0, token.indexOf("\"") - 1);
@@ -462,7 +462,7 @@ public class LIFReader extends FormatReader {
           }
 
           ndx++;
-          if (elements != null && ndx < elements.size()) {  
+          if (elements != null && ndx < elements.size()) {
             token = (String) elements.get(ndx);
           }
           else break;

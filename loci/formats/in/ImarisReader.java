@@ -161,7 +161,7 @@ public class ImarisReader extends FormatReader {
       new Float(1),
       new Float(1),
       null);
-  
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
@@ -224,12 +224,12 @@ public class ImarisReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0], 
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0],
       dims[1], 1, false);
     updateMinMax(b, no);
     return b;
   }
- 
+
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();

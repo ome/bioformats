@@ -147,7 +147,7 @@ public class LeicaReader extends BaseTiffReader {
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
       initFile(id);
-    } 
+    }
     return littleEndian;
   }
 
@@ -211,7 +211,7 @@ public class LeicaReader extends BaseTiffReader {
     }
     return (String[]) v.toArray(new String[0]);
   }
- 
+
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
@@ -253,7 +253,7 @@ public class LeicaReader extends BaseTiffReader {
     if (debug) debug("LeicaReader.initFile(" + id + ")");
     String idLow = id.toLowerCase();
     close();
-    
+
     if (idLow.endsWith("tif") || idLow.endsWith("tiff")) {
       if (ifds == null) super.initFile(id);
 
@@ -269,7 +269,7 @@ public class LeicaReader extends BaseTiffReader {
 
       ifds = TiffTools.getIFDs(in);
       if (ifds == null) throw new FormatException("No IFDs found");
-      String descr = (String) TiffTools.getIFDValue(ifds[0], 
+      String descr = (String) TiffTools.getIFDValue(ifds[0],
         TiffTools.IMAGE_DESCRIPTION);
 
       int ndx = descr.indexOf("Series Name");
@@ -414,7 +414,7 @@ public class LeicaReader extends BaseTiffReader {
         String dirPrefix =
           new Location(id).getAbsoluteFile().getParent();
         dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
-        
+
         String[] listing = (new Location(dirPrefix)).list();
         Vector list = new Vector();
 
@@ -433,16 +433,16 @@ public class LeicaReader extends BaseTiffReader {
         String prefix = "";
         for (int j=0; j<tempImages; j++) {
           // read in each filename
-          prefix = DataTools.stripString(new String(tempData, 
+          prefix = DataTools.stripString(new String(tempData,
             20 + 2*(j*nameLength), 2*nameLength));
-          f.add(dirPrefix + prefix); 
+          f.add(dirPrefix + prefix);
           // test to make sure the path is valid
           Location test = new Location((String) f.get(f.size() - 1));
           if (tiffsExist) tiffsExist = test.exists();
         }
 
         // at least one of the TIFF files was renamed
-        
+
         if (!tiffsExist) {
           // first thing is to get original LEI name associate with each TIFF
           // this lets us figure out which TIFFs we need for this dataset
@@ -453,7 +453,7 @@ public class LeicaReader extends BaseTiffReader {
               new Location(dirPrefix, listing[j]).getAbsolutePath());
             Hashtable ifd = TiffTools.getFirstIFD(ras);
             ras.close();
-            String descr = 
+            String descr =
               (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
             int ndx = descr.indexOf("=", descr.indexOf("Series Name"));
             String leiFile = descr.substring(ndx + 1, descr.indexOf("\n", ndx));
@@ -461,9 +461,9 @@ public class LeicaReader extends BaseTiffReader {
             if (!leiMapping.contains(leiFile)) numLeis++;
             leiMapping.put(listing[j], leiFile);
           }
-       
+
           // compare original TIFF prefix with original LEI prefix
-        
+
           f.clear();
           String[] keys = (String[]) leiMapping.keySet().toArray(new String[0]);
           for (int j=0; j<keys.length; j++) {
@@ -472,7 +472,7 @@ public class LeicaReader extends BaseTiffReader {
               f.add(keys[j]);
             }
           }
-        
+
           // now that we have our list of files, all that remains is to figure
           // out how they should be ordered
 
@@ -481,8 +481,8 @@ public class LeicaReader extends BaseTiffReader {
           for (int j=0; j<f.size(); j++) {
             if (usedFiles != null) {
               for (int k=0; k<usedFiles.length; k++) {
-                if (usedFiles[k].equals((String) f.get(j)) || 
-                  usedFile((String) f.get(j))) 
+                if (usedFiles[k].equals((String) f.get(j)) ||
+                  usedFile((String) f.get(j)))
                 {
                   k = 0;
                   j++;
@@ -490,13 +490,13 @@ public class LeicaReader extends BaseTiffReader {
               }
             }
             if (j >= f.size()) break;
-            
+
             FilePattern fp = new FilePattern(new Location((String) f.get(j)));
             if (fp != null) usedFiles = fp.getFiles();
             if (usedFiles != null && usedFiles.length == tempImages) {
               files[i] = new Vector();
               for (int k=0; k<usedFiles.length; k++) {
-                files[i].add(new Location(dirPrefix, 
+                files[i].add(new Location(dirPrefix,
                   usedFiles[k]).getAbsolutePath());
               }
               break;
@@ -513,13 +513,13 @@ public class LeicaReader extends BaseTiffReader {
               RandomAccessStream ras = new RandomAccessStream(
                 new Location(dirPrefix, listing[j]).getAbsolutePath());
               Hashtable fd = TiffTools.getFirstIFD(ras);
-              String stamp = 
+              String stamp =
                 (String) TiffTools.getIFDValue(fd, TiffTools.DATE_TIME);
               if (h.size() == tempImages) {
                 String[] ks = (String[]) h.keySet().toArray(new String[0]);
                 Arrays.sort(ks);
                 for (int k=0; k<ks.length; k++) {
-                  files[i].add(new Location(dirPrefix, 
+                  files[i].add(new Location(dirPrefix,
                     (String) h.get(ks[k])).getAbsolutePath());
                 }
                 h.clear();
@@ -538,7 +538,7 @@ public class LeicaReader extends BaseTiffReader {
               String[] ks = (String[]) h.keySet().toArray(new String[0]);
               Arrays.sort(ks);
               for (int k=0; k<ks.length; k++) {
-                files[i].add(new Location(dirPrefix, 
+                files[i].add(new Location(dirPrefix,
                   (String) h.get(ks[k])).getAbsolutePath());
               }
             }
@@ -555,7 +555,7 @@ public class LeicaReader extends BaseTiffReader {
             int ndx = 0;
             for (int j=0; j<i; j++) ndx += files[j].size();
             for (int j=ndx; j<ndx+tempImages; j++) {
-              files[i].add(new Location(dirPrefix, 
+              files[i].add(new Location(dirPrefix,
                 listing[j]).getAbsolutePath());
             }
           }
@@ -564,7 +564,7 @@ public class LeicaReader extends BaseTiffReader {
           //
           // 1) Don't use a detectable naming convention, and remove datestamps
           //    from TIFF files.
-          // 2) Use a naming convention such as plane 0 -> "5.tif", 
+          // 2) Use a naming convention such as plane 0 -> "5.tif",
           //    plane 1 -> "4.tif", plane 2 -> "3.tif", etc.
           // 3) Place two datasets in the same folder:
           //      a) swap the two LEI file names
@@ -621,7 +621,7 @@ public class LeicaReader extends BaseTiffReader {
 
       if (ndx == -1) return false;
 
-      String dir = new Location(name).getAbsoluteFile().getParent(); 
+      String dir = new Location(name).getAbsoluteFile().getParent();
       String[] listing = new Location(dir).list();
       for (int i=0; i<listing.length; i++) {
         if (listing[i].toLowerCase().endsWith(".lei")) return true;
@@ -846,13 +846,13 @@ public class LeicaReader extends BaseTiffReader {
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(40));
-      
+
       if (temp != null) {
         // time data
         // ID_TIMEINFO
         int nDims = DataTools.bytesToInt(temp, 0, 4, littleEndian);
         addMeta("Number of time-stamped dimensions", new Integer(nDims));
-        addMeta("Time-stamped dimension", 
+        addMeta("Time-stamped dimension",
           new Integer(DataTools.bytesToInt(temp, 4, 4, littleEndian)));
 
         int pt = 8;
@@ -1105,10 +1105,9 @@ public class LeicaReader extends BaseTiffReader {
 
       store.setImage(null, timestamp == null ? null : timestamp.substring(3),
         description, new Integer(i));
-    
-    
+
       for (int j=0; j<sizeC[0]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, 
+        store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
       }
     }

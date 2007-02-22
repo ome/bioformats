@@ -171,7 +171,7 @@ public class IPWReader extends BaseTiffReader {
 
     byte[] b = openBytes(id, no);
     int bytes = b.length / (sizeX[0] * sizeY[0]);
-    BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0], 
+    BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0],
       bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, little);
     updateMinMax(bi, no);
     return bi;

@@ -84,7 +84,7 @@ public class PrairieReader extends FormatReader {
     String[] listing = parent.list();
     int xmlCount = 0;
     for (int i=0; i<listing.length; i++) {
-      if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++; 
+      if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++;
     }
 
     boolean xml = xmlCount > 0;
@@ -349,7 +349,7 @@ public class PrairieReader extends FormatReader {
         Location next = null;
         for (int i=0; i<listing.length; i++) {
           String path = listing[i].toLowerCase();
-          if ((!readXML && path.endsWith(".xml")) || 
+          if ((!readXML && path.endsWith(".xml")) ||
             (readXML && path.endsWith(".cfg")))
           {
             next = new Location(parent, path);

@@ -53,7 +53,7 @@ public class JPEGCompressor extends BaseCompressor implements Compressor {
   }
 
   /**
-   * Decodes an image strip using JPEG compression algorithm 
+   * Decodes an image strip using JPEG compression algorithm
    *
    * @param b input data to be decompressed
    * @return The decompressed data
@@ -70,7 +70,6 @@ public class JPEGCompressor extends BaseCompressor implements Compressor {
       e.printStackTrace();
       return null;
     }
-      
 
     byte[][] buf = ImageTools.getBytes(b);
     byte[] rtn = new byte[buf.length * buf[0].length];

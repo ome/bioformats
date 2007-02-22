@@ -275,7 +275,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#getPlaneMinimum(String, int) */
-  public Double getPlaneMinimum(String id, int no) 
+  public Double getPlaneMinimum(String id, int no)
     throws FormatException, IOException
   {
     return getReader(id).getPlaneMinimum(id, no);
@@ -289,7 +289,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id) 
+  public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
     return getReader(id).isMinMaxPopulated(id);

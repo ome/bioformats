@@ -96,10 +96,10 @@ public class GelReader extends BaseTiffReader {
     addMeta("File units", units == null ? "unknown" : units);
 
     sizeT[series] = numImages;
-  
+
     try {
       MetadataStore store = getMetadataStore(currentId);
-      store.setDimensions(new Float(scale.floatValue()), 
+      store.setDimensions(new Float(scale.floatValue()),
         new Float(scale.floatValue()), null, null, null, null);
     }
     catch (IOException e) {

@@ -111,7 +111,7 @@ public class MRCReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0], 
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
       sizeY[0], 1, true, bpp, little);
     updateMinMax(b, no);
     return b;

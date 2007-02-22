@@ -236,15 +236,15 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, 
-   * Float, Integer) 
+  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float,
+   * Float, Integer)
    */
   public void setImagingEnvironment(Float temperature, Float airPressure,
     Float humidity, Float co2Percent, Integer i)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
-      s.setImagingEnvironment(temperature, airPressure, humidity, 
+      s.setImagingEnvironment(temperature, airPressure, humidity,
         co2Percent, i);
     }
   }
@@ -279,15 +279,15 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /* @see MetadataStore#setLightSource(String, String, String, 
-   * Integer, Integer) 
+  /* @see MetadataStore#setLightSource(String, String, String,
+   * Integer, Integer)
    */
   public void setLightSource(String manufacturer, String model,
     String serialNumber, Integer instrumentNdx, Integer lightNdx)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
-      s.setLightSource(manufacturer, model, serialNumber, instrumentNdx, 
+      s.setLightSource(manufacturer, model, serialNumber, instrumentNdx,
         lightNdx);
     }
   }
@@ -307,9 +307,9 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /* @see MetadataStore#setFilament(String, Float, Integer, Integer) */
-  public void setFilament(String type, Float power, Integer lightNdx, 
-    Integer filamentNdx) 
-  { 
+  public void setFilament(String type, Float power, Integer lightNdx,
+    Integer filamentNdx)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setFilament(type, power, lightNdx, filamentNdx);
@@ -339,16 +339,16 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Float, 
-   * Integer, Integer) 
+  /* @see MetadataStore#setObjective(String, String, String, Float, Float,
+   * Integer, Integer)
    */
-  public void setObjective(String manufacturer, String model, 
-    String serialNumber, Float lensNA, Float magnification, 
+  public void setObjective(String manufacturer, String model,
+    String serialNumber, Float lensNA, Float magnification,
     Integer instrumentNdx, Integer objectiveNdx)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
-      s.setObjective(manufacturer, model, serialNumber, lensNA, magnification, 
+      s.setObjective(manufacturer, model, serialNumber, lensNA, magnification,
         instrumentNdx, objectiveNdx);
     }
   }
@@ -375,7 +375,7 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /* @see MetadataStore#setEmissionFilter(String, String, String, 
+  /* @see MetadataStore#setEmissionFilter(String, String, String,
    * String, Integer)
    */
   public void setEmissionFilter(String manufacturer, String model,
@@ -387,8 +387,8 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /* @see MetadataStore#setFilterSet(String, String, String, Integer, 
-   * Integer) 
+  /* @see MetadataStore#setFilterSet(String, String, String, Integer,
+   * Integer)
    */
   public void setFilterSet(String manufacturer, String model, String lotNumber,
     Integer filterSetNdx, Integer filterNdx)
@@ -399,7 +399,7 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String, 
+  /* @see MetadataStore#setOTF(Integer, Integer, String, String,
    * Boolean, Integer, Integer, Integer, Integer)
    */
   public void setOTF(Integer sizeX, Integer sizeY, String pixelType,

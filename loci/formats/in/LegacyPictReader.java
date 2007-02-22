@@ -120,12 +120,12 @@ public class LegacyPictReader extends FormatReader {
     sizeT[0] = 1;
     pixelType[0] = FormatReader.INT8;
     currentOrder[0] = "XYCZT";
-  
+
     MetadataStore store = getMetadataStore(id);
     store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
       new Integer(1), new Integer(sizeC[0]), new Integer(1),
-      new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null, null); 
-    
+      new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null, null);
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }

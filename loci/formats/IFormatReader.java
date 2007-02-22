@@ -77,8 +77,8 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Retrieves a specified channel's global minimum.
-   * Returns null if channel stat calculation is disabled or if some of the image
-   * planes have not been read.
+   * Returns null if channel stat calculation is disabled or if some of the
+   * image planes have not been read.
    * @param id the filename of the base image.
    * @param theC the channel whose minimum is required.
    * @return the global minimum of the channel; which is defined as the minimum
@@ -95,8 +95,8 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Retrieves a specified channel's global maximum.
-   * Returns null if channel stat calculation is disabled or if some of the image
-   * planes have not been read.
+   * Returns null if channel stat calculation is disabled or if some of the
+   * image planes have not been read.
    * @param id the filename of the base image.
    * @param theC the channel whose maximum is required.
    * @return the global maximum of the channel; which is defined as the maximum
@@ -119,7 +119,6 @@ public interface IFormatReader extends IFormatHandler {
   Double getChannelKnownMinimum(String id, int theC)
     throws FormatException, IOException;
 
-
   /**
    * Retrieves the specified channel's maximum based on the images that have
    * been read.
@@ -128,7 +127,7 @@ public interface IFormatReader extends IFormatHandler {
   Double getChannelKnownMaximum(String id, int theC)
     throws FormatException, IOException;
 
-  /** 
+  /**
    * Retrieves the minimum pixel value for the specified plane.
    * Returns null if the plane has not already been read.
    */
@@ -141,7 +140,7 @@ public interface IFormatReader extends IFormatHandler {
   Double getPlaneMaximum(String id, int no) throws FormatException, IOException;
 
   /**
-   * Returns true if the values returned by getChannelGlobalMinimum/Maximum 
+   * Returns true if the values returned by getChannelGlobalMinimum/Maximum
    * can be trusted.
    */
   boolean isMinMaxPopulated(String id) throws FormatException, IOException;
@@ -218,15 +217,15 @@ public interface IFormatReader extends IFormatHandler {
    */
   byte[] openThumbBytes(String id, int no) throws FormatException, IOException;
 
-  /** 
+  /**
    * Closes the currently open file. If the flag is set, this is all that
    * happens; if unset, it is equivalent to calling close().
    */
   void close(boolean fileOnly) throws FormatException, IOException;
 
-  /** 
-   * Closes the currently open file and frees memory 
-   * allocated by this reader. 
+  /**
+   * Closes the currently open file and frees memory
+   * allocated by this reader.
    */
   void close() throws FormatException, IOException;
 

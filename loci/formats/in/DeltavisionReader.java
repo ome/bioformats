@@ -166,7 +166,7 @@ public class DeltavisionReader extends FormatReader {
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
-    return true; 
+    return true;
   }
 
   /* @see IFormatReader#isRGB(String) */
@@ -222,7 +222,7 @@ public class DeltavisionReader extends FormatReader {
     updateMinMax(b, no);
     return b;
   }
- 
+
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
@@ -495,7 +495,7 @@ public class DeltavisionReader extends FormatReader {
       null, null, null);
 
     String description = (String) getMeta("Title 1");
-    if (description == null) description = ""; 
+    if (description == null) description = "";
     description = description.length() == 0 ? null : description;
     store.setImage(id, null, description, null);
 

@@ -375,7 +375,7 @@ public class BMPReader extends FormatReader {
 
     store.setDimensions(new Float(correctedX), new Float(correctedY), null,
       null, null, null);
- 
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }

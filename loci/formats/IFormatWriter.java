@@ -63,9 +63,9 @@ public interface IFormatWriter extends IFormatHandler {
   int[] getPixelTypes(String id) throws FormatException, IOException;
 
   /** Checks if the given pixel type is supported. */
-  boolean isSupportedType(String id, int type) 
+  boolean isSupportedType(String id, int type)
     throws FormatException, IOException;
-  
+
   /** Sets the current compression type. */
   void setCompression(String compress) throws FormatException;
 

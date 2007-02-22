@@ -100,7 +100,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
     return getSizeC(id) / getRGBChannelCount(id);
   }
- 
+
   public int getRGBChannelCount(String id) throws FormatException, IOException {
     return getSizeC(id) / (getImageCount(id) / (getSizeZ(id) * getSizeT(id)));
   }
@@ -141,7 +141,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getPlaneMaximum(id, no);
   }
 
-  public boolean isMinMaxPopulated(String id) 
+  public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
     return reader.isMinMaxPopulated(id);

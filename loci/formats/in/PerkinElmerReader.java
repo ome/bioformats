@@ -143,7 +143,7 @@ public class PerkinElmerReader extends FormatReader {
 
     byte[] b = openBytes(id, no);
     int bpp = b.length / (sizeX[0] * sizeY[0]);
-    BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0], 1, 
+    BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0], 1,
       false, bpp, true);
     updateMinMax(bi, no);
     return bi;
@@ -593,9 +593,9 @@ public class PerkinElmerReader extends FormatReader {
     String originX = (String) getMeta("Origin X");
     String originY = (String) getMeta("Origin Y");
     String originZ = (String) getMeta("Origin Z");
-    
+
     try {
-      store.setStageLabel(null, originX == null ? null : new Float(originX), 
+      store.setStageLabel(null, originX == null ? null : new Float(originX),
         originY == null ? null : new Float(originY),
         originZ == null ? null : new Float(originZ), null);
     }

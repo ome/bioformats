@@ -324,7 +324,7 @@ public class OIFReader extends FormatReader {
 
     String tiffPath = null;
     RandomAccessStream ptyReader;
-    
+
     for (int i=0; i<numImages; i++) {
       String file = (String) filenames.get(new Integer(i));
       file = file.substring(1, file.length() - 1);

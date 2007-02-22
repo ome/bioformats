@@ -247,8 +247,8 @@ public class OIBReader extends FormatReader {
     byte[] b = openBytes(id, no);
     int s = getSeries(id);
     int bytes = b.length / (sizeX[s] * sizeY[s]);
-    BufferedImage bi = ImageTools.makeImage(b, sizeX[s], sizeY[s], 
-      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, !littleEndian[s], 
+    BufferedImage bi = ImageTools.makeImage(b, sizeX[s], sizeY[s],
+      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, !littleEndian[s],
       validBits[s]);
     updateMinMax(bi, no);
     return bi;
@@ -428,7 +428,7 @@ public class OIBReader extends FormatReader {
         currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
 
         int numImages = ((Integer) nImages.get(i)).intValue();
-       
+
         if (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) {
           int diff = numImages - (sizeZ[i] * sizeT[i] * sizeC[i]);
 
@@ -528,7 +528,7 @@ public class OIBReader extends FormatReader {
         "[Reference Image Parameter] - HeightConvertValue").toString());
       store.setDimensions(pixX, pixY, null, null, null, new Integer(i));
       for (int j=0; j<sizeC[0]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, 
+        store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
       }
     }

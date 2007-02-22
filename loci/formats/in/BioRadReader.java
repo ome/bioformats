@@ -319,123 +319,123 @@ public class BioRadReader extends FormatReader {
 
           switch (y) {
             case 1:
-              keys = new String[] {"Scan Channel", "Both Mode", "Speed", 
-                "Filter", "Factor", "Number of scans", 
+              keys = new String[] {"Scan Channel", "Both Mode", "Speed",
+                "Filter", "Factor", "Number of scans",
                 "Photon counting mode (channel 1)",
                 "Photon counting detector (channel 1)",
-                "Photon counting mode (channel 2)", 
-                "Photon counting detector (channel 2)", "Photon mode", 
-                "Objective lens magnification", "Zoom factor (user selected)", 
-                "Motor on", "Z step size"};   
+                "Photon counting mode (channel 2)",
+                "Photon counting detector (channel 2)", "Photon mode",
+                "Objective lens magnification", "Zoom factor (user selected)",
+                "Motor on", "Z step size"};
               break;
             case 2:
-              keys = new String[] {"Z start", "Z stop", "Scan area - cx", 
+              keys = new String[] {"Z start", "Z stop", "Scan area - cx",
                 "Scan area - cy", "Scan area - lx", "Scan area - ly"};
               break;
             case 3:
-              keys = new String[] {"PMT 1 Iris", "PMT 1 Gain", 
-                "PMT 1 Black level", "PMT 1 Emission filter", "PMT 2 Iris", 
-                "PMT 2 Gain", "PMT 2 Black level", "PMT 2 Emission filter", 
-                "PMT 3 Iris", "PMT 3 Gain", "PMT 3 Black level", 
-                "PMT 3 Emission filter", "Multiplier of channel 1", 
-                "Multiplier of channel 2", "Multiplier of channel 3"}; 
+              keys = new String[] {"PMT 1 Iris", "PMT 1 Gain",
+                "PMT 1 Black level", "PMT 1 Emission filter", "PMT 2 Iris",
+                "PMT 2 Gain", "PMT 2 Black level", "PMT 2 Emission filter",
+                "PMT 3 Iris", "PMT 3 Gain", "PMT 3 Black level",
+                "PMT 3 Emission filter", "Multiplier of channel 1",
+                "Multiplier of channel 2", "Multiplier of channel 3"};
               break;
             case 4:
-              keys = new String[] {"Number of lasers", 
-                "Number of transmission detectors", "Number of PMTs", 
+              keys = new String[] {"Number of lasers",
+                "Number of transmission detectors", "Number of PMTs",
                 "Shutter present for laser 1",
                 "Shutter present for laser 2", "Shutter present for laser 3",
-                "Neutral density filter for laser 1", 
-                "Excitation filter for laser 1", "Use laser 1", 
-                "Neutral density filter for laser 2", 
-                "Excitation filter for laser 2", "Use laser 2", 
-                "Neutral density filter for laser 3", 
-                "Excitation filter for laser 3", "Use laser 3", 
-                "Neutral density filter name - laser 1", 
-                "Neutral density filter name - laser 2", 
+                "Neutral density filter for laser 1",
+                "Excitation filter for laser 1", "Use laser 1",
+                "Neutral density filter for laser 2",
+                "Excitation filter for laser 2", "Use laser 2",
+                "Neutral density filter for laser 3",
+                "Excitation filter for laser 3", "Use laser 3",
+                "Neutral density filter name - laser 1",
+                "Neutral density filter name - laser 2",
                 "Neutral density filter name - laser 3"};
-              break; 
+              break;
             case 5:
               keys = new String[] {"Excitation filter name - laser 1",
-                "Excitation filter name - laser 2", 
+                "Excitation filter name - laser 2",
                 "Excitation filter name - laser 3"};
               break;
             case 6:
-              keys = new String[] {"Emission filter name - laser 1", 
-                "Emission filter name - laser 2", 
-                "Emission filter name - laser 3"}; 
+              keys = new String[] {"Emission filter name - laser 1",
+                "Emission filter name - laser 2",
+                "Emission filter name - laser 3"};
               break;
             case 7:
-              keys = new String[] {"Mixer 0 - enhanced", 
+              keys = new String[] {"Mixer 0 - enhanced",
                 "Mixer 0 - PMT 1 percentage",
                 "Mixer 0 - PMT 2 percentage", "Mixer 0 - PMT 3 percentage",
-                "Mixer 0 - Transmission 1 percentage", 
-                "Mixer 0 - Transmission 2 percentage", 
+                "Mixer 0 - Transmission 1 percentage",
+                "Mixer 0 - Transmission 2 percentage",
                 "Mixer 0 - Transmission 3 percentage", "Mixer 1 - enhanced",
                 "Mixer 1 - PMT 1 percentage", "Mixer 1 - PMT 2 percentage",
                 "Mixer 1 - PMT 3 percentage",
                 "Mixer 1 - Transmission 1 percentage",
                 "Mixer 1 - Transmission 2 percentage",
-                "Mixer 1 - Transmission 3 percentage", 
+                "Mixer 1 - Transmission 3 percentage",
                 "Mixer 0 - low signal on", "Mixer 1 - low signal on"};
               break;
             case 8:
-              keys = new String[] {"Laser 1 name"}; 
+              keys = new String[] {"Laser 1 name"};
               break;
             case 9:
-              keys = new String[] {"Laser 2 name"}; 
+              keys = new String[] {"Laser 2 name"};
               break;
             case 10:
-              keys = new String[] {"Laser 3 name"}; 
+              keys = new String[] {"Laser 3 name"};
               break;
             case 11:
               keys = new String[] {"Transmission detector 1 - offset",
-                "Transmission detector 1 - gain", 
-                "Transmission detector 1 - black level", 
-                "Transmission detector 2 - offset", 
-                "Transmission detector 2 - gain", 
-                "Transmission detector 2 - black level", 
-                "Transmission detector 3 - offset", 
-                "Transmission detector 3 - gain", 
+                "Transmission detector 1 - gain",
+                "Transmission detector 1 - black level",
+                "Transmission detector 2 - offset",
+                "Transmission detector 2 - gain",
+                "Transmission detector 2 - black level",
+                "Transmission detector 3 - offset",
+                "Transmission detector 3 - gain",
                 "Transmission detector 3 - black level"};
               break;
             case 12:
-              keys = new String[] {"Part number of laser 1", 
-                "Part number of excitation filter for laser 1", 
-                "Part number of ND filter for laser 1", 
-                "Part number of emission filter for laser 1", 
-                "Part number of laser 2", 
-                "Part number of excitation filter for laser 2", 
-                "Part number of ND filter for laser 2", 
-                "Part number of emission filter for laser 2"}; 
+              keys = new String[] {"Part number of laser 1",
+                "Part number of excitation filter for laser 1",
+                "Part number of ND filter for laser 1",
+                "Part number of emission filter for laser 1",
+                "Part number of laser 2",
+                "Part number of excitation filter for laser 2",
+                "Part number of ND filter for laser 2",
+                "Part number of emission filter for laser 2"};
               break;
             case 13:
-              keys = new String[] {"Part number of laser 3", 
-                "Part number of excitation filter for laser 3", 
-                "Part number of ND filter for laser 3", 
-                "Part number of emission filter for laser 3", 
-                "Part number of filter block 1", 
+              keys = new String[] {"Part number of laser 3",
+                "Part number of excitation filter for laser 3",
+                "Part number of ND filter for laser 3",
+                "Part number of emission filter for laser 3",
+                "Part number of filter block 1",
                 "Part number of filter block 2",
                 "Filter block 1", "Filter block 2"};
               break;
             case 14:
-              keys = new String[] {"Filter block 1 name", 
+              keys = new String[] {"Filter block 1 name",
                 "Filter block 2 name"};
               break;
             case 15:
-              keys = new String[] {"Image band 1 status", "Image band 1 min", 
-                "Image band 1 max", "Image band 2 status", "Image band 2 min", 
-                "Image band 2 max", "Image band 3 status", "Image band 3 min", 
-                "Image band 3 max", "Image band 4 status", "Image band 4 min", 
-                "Image band 4 max", "Image band 5 status", "Image band 5 min", 
-                "Image band 5 max"}; 
+              keys = new String[] {"Image band 1 status", "Image band 1 min",
+                "Image band 1 max", "Image band 2 status", "Image band 2 min",
+                "Image band 2 max", "Image band 3 status", "Image band 3 min",
+                "Image band 3 max", "Image band 4 status", "Image band 4 min",
+                "Image band 4 max", "Image band 5 status", "Image band 5 min",
+                "Image band 5 max"};
               break;
             case 16:
-              keys = new String[] {"Image band 5 status", "Image band 5 min", 
-                "Image band 5 max"}; 
+              keys = new String[] {"Image band 5 status", "Image band 5 min",
+                "Image band 5 max"};
               break;
             case 17:
-              keys = new String[] {"Date stamp (seconds)", 
+              keys = new String[] {"Date stamp (seconds)",
                 "Date stamp (minutes)",
                 "Date stamp (hours)", "Date stamp (day of month)",
                 "Date stamp (month)", "Date stamp (year: actual year - 1900)",
@@ -443,30 +443,30 @@ public class BioRadReader extends FormatReader {
                 "Daylight savings?"};
               break;
             case 18:
-              keys = new String[] {"Mixer 3 - enhanced", 
+              keys = new String[] {"Mixer 3 - enhanced",
                 "Mixer 3 - PMT 1 percentage",
                 "Mixer 3 - PMT 2 percentage", "Mixer 3 - PMT 3 percentage",
-                "Mixer 3 - Transmission 1 percentage", 
-                "Mixer 3 - Transmission 2 percentage", 
-                "Mixer 3 - Transmission 3 percentage", 
+                "Mixer 3 - Transmission 1 percentage",
+                "Mixer 3 - Transmission 2 percentage",
+                "Mixer 3 - Transmission 3 percentage",
                 "Mixer 3 - low signal on",
                 "Mixer 3 - photon counting 1", "Mixer 3 - photon counting 2",
                 "Mixer 3 - photon counting 3", "Mixer 3 - mode"};
               break;
             case 19:
-              keys = new String[] {"Mixer 1 - photon counting 1", 
-                "Mixer 1 - photon counting 2", "Mixer 1 - photon counting 3", 
-                "Mixer 1 - mode", "Mixer2 - photon counting 1", 
-                "Mixer 2 - photon counting 2", "Mixer 2 - photon counting 3", 
-                "Mixer 2 - mode"}; 
+              keys = new String[] {"Mixer 1 - photon counting 1",
+                "Mixer 1 - photon counting 2", "Mixer 1 - photon counting 3",
+                "Mixer 1 - mode", "Mixer2 - photon counting 1",
+                "Mixer 2 - photon counting 2", "Mixer 2 - photon counting 3",
+                "Mixer 2 - mode"};
               break;
             case 20:
-              keys = new String[] {"Display mode", "Course", 
+              keys = new String[] {"Display mode", "Course",
                 "Time Course - experiment type",
                 "Time Course - kd factor"};
               break;
             case 21:
-              keys = new String[] {"Time Course - ion name"}; 
+              keys = new String[] {"Time Course - ion name"};
               break;
             case 22:
               keys = new String[] {"PIC file generated on Isoscan (lite)",
@@ -479,14 +479,14 @@ public class BioRadReader extends FormatReader {
           }
           while (st.hasMoreTokens() && idx < keys.length) {
             addMeta(keys[idx], st.nextToken());
-            idx++;   
+            idx++;
           }
           break;
         default:
-          addMeta("note" + noteCount, 
+          addMeta("note" + noteCount,
             noteString(num, level, status, type, x, y, text));
       }
-      
+
       // if the text of the note contains "AXIS", parse the text
       // more thoroughly (see pg. 21 of the BioRad specs)
 
@@ -587,7 +587,7 @@ public class BioRadReader extends FormatReader {
     byte[][] lut = new byte[3][768];
     boolean eof = false;
     while (!eof && numLuts < 3) {
-      if (in.getFilePointer() + lut[numLuts].length <= in.length()) {  
+      if (in.getFilePointer() + lut[numLuts].length <= in.length()) {
         in.read(lut[numLuts]);
         numLuts++;
       }
@@ -693,13 +693,13 @@ public class BioRadReader extends FormatReader {
     if (size >= 2) pixelSizeY = new Float((String) pixelSize.get(1));
     if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
     store.setDimensions(pixelSizeX, pixelSizeY, pixelSizeZ, null, null, null);
-  
+
     store.setDefaultDisplaySettings(null);
-  
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
       String black = (String) getMeta("PMT " + i + " Black level");
-      store.setDisplayChannel(new Integer(i), black == null ? null : 
+      store.setDisplayChannel(new Integer(i), black == null ? null :
         new Double(black), new Double(Math.pow(2, type == 1 ? 8 : 16)),
         null, null);
     }
@@ -709,17 +709,17 @@ public class BioRadReader extends FormatReader {
     store.setDisplayOptions(zoom == null ? null : new Float(zoom),
       new Boolean(sizeC[0] > 1), new Boolean(sizeC[0] >= 2),
       new Boolean(sizeC[0] >= 3), Boolean.FALSE, null, zstart == null ? null :
-      new Integer((int) (new Double(zstart).doubleValue())), zstop == null ? 
-      null : new Integer((int) (new Double(zstop).doubleValue())), null, null, 
-      null, null, sizeC[0] > 1 ? new Integer(0) : null, 
+      new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
+      null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
+      null, null, sizeC[0] > 1 ? new Integer(0) : null,
       sizeC[0] > 1 ? new Integer(1) : null,
       sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
     for (int i=0; i<3; i++) {
       String prefix = "Transmission detector " + (i+1) + " - ";
       String gain = (String) getMeta(prefix + "gain");
       String offset = (String) getMeta(prefix + "offset");
-      store.setDetector(null, null, null, null, gain == null ? null : 
-        new Float(gain), null, offset == null ? null : new Float(offset), 
+      store.setDetector(null, null, null, null, gain == null ? null :
+        new Float(gain), null, offset == null ? null : new Float(offset),
         null, new Integer(i));
 
       String exc = (String) getMeta("Part number of excitation filter for " +
@@ -732,9 +732,9 @@ public class BioRadReader extends FormatReader {
       store.setEmissionFilter(null, null, ems, null, null);
     }
     String mag = (String) getMeta("Objective lens magnification");
-    store.setObjective(null, null, null, null, 
+    store.setObjective(null, null, null, null,
       mag == null ? null : new Float(mag), null, null);
-  
+
   }
 
   public String noteString(int n, int l, int s, int t, int x, int y, String p) {

@@ -107,7 +107,7 @@ public abstract class ImageIOReader extends FormatReader {
     }
 
     RandomAccessStream ras = new RandomAccessStream(id);
-    DataInputStream dis = 
+    DataInputStream dis =
       new DataInputStream(new BufferedInputStream(ras, 4096));
     BufferedImage b = ImageIO.read(dis);
     ras.close();
@@ -132,7 +132,7 @@ public abstract class ImageIOReader extends FormatReader {
     sizeX[0] = img.getWidth();
     sizeY[0] = img.getHeight();
 
-    rgb = img.getRaster().getNumBands() > 1; 
+    rgb = img.getRaster().getNumBands() > 1;
 
     sizeZ[0] = 1;
     sizeC[0] = rgb ? 3 : 1;

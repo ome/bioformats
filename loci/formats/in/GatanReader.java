@@ -53,7 +53,7 @@ public class GatanReader extends FormatReader {
 
   /** List of pixel sizes. */
   private Vector pixelSizes;
-  
+
   /** Dimensions -- width, height, bytes per pixel. */
   protected int[] dims = new int[3];
 
@@ -267,7 +267,7 @@ public class GatanReader extends FormatReader {
       "XYZTC", // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
-  
+
     Float pixX = null;
     Float pixY = null;
     Float pixZ = null;
@@ -283,7 +283,7 @@ public class GatanReader extends FormatReader {
     }
 
     store.setDimensions(pixX, pixY, pixZ, null, null, null);
- 
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }

@@ -118,7 +118,7 @@ public class SlidebookReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       1, true, bpp, true);
     updateMinMax(b, no);
     return b;
@@ -271,12 +271,12 @@ public class SlidebookReader extends FormatReader {
     if (sizeZ[0] == 0) sizeZ[0] = 1;
     if (sizeC[0] == 0) sizeC[0] = 1;
     if (sizeT[0] == 0) sizeT[0] = 1;
-  
+
     MetadataStore store = getMetadataStore(currentId);
     store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
       new Integer(sizeZ[0]), new Integer(sizeC[0]), new Integer(sizeT[0]),
-      new Integer(pixelType[0]), new Boolean(!little), currentOrder[0], 
-      null, null); 
+      new Integer(pixelType[0]), new Boolean(!little), currentOrder[0],
+      null, null);
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }

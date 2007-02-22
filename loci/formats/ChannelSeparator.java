@@ -29,7 +29,7 @@ import java.io.IOException;
 
 /** Logic to automatically separate the channels in a file. */
 public class ChannelSeparator extends ReaderWrapper {
- 
+
   // -- Fields --
 
   /** Last image opened. */
@@ -50,7 +50,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    return reader.isRGB(id) ? 
+    return reader.isRGB(id) ?
       (getSizeC(id) / reader.getEffectiveSizeC(id)) * reader.getImageCount(id) :
       reader.getImageCount(id);
   }

@@ -454,14 +454,14 @@ public abstract class BaseTiffReader extends FormatReader {
     sizeY[0] =
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
     sizeZ[0] = 1;
-    
+
     try {
       sizeC[0] = isRGB(currentId) ? 3 : 1;
     }
     catch (IOException e) {
       throw new FormatException(e);
     }
-    
+
     sizeT[0] = ifds.length;
 
     int bitFormat = TiffTools.getIFDIntValue(ifds[0],
@@ -644,12 +644,12 @@ public abstract class BaseTiffReader extends FormatReader {
   /* @see IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (TiffTools.getIFDIntValue(ifds[0], 
+    if (TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1)
     {
       return true;
     }
-    int p = TiffTools.getIFDIntValue(ifds[0], 
+    int p = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
     return (!isColorTableIgnored() && (p == TiffTools.RGB_PALETTE ||
       p == TiffTools.CFA_ARRAY)) || p == TiffTools.RGB;

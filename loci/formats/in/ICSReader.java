@@ -127,9 +127,9 @@ public class ICSReader extends FormatReader {
     int width = dimensions[1];
     int height = dimensions[2];
 
-    int offset = width * height * (dimensions[0] / 8) * no * 
+    int offset = width * height * (dimensions[0] / 8) * no *
       (rgb ? dimensions[4] : 1);
-    byte[] plane = 
+    byte[] plane =
       new byte[width*height * (dimensions[0] / 8) * (rgb ? dimensions[4] : 1)];
     System.arraycopy(data, offset, plane, 0, plane.length);
 
@@ -456,7 +456,7 @@ public class ICSReader extends FormatReader {
       order.trim(), // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
-  
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }

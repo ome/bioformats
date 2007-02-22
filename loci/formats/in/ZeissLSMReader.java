@@ -251,7 +251,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       RandomAccessStream ras = new RandomAccessStream(cz);
-   
+
       put("MagicNumber", DataTools.read4UnsignedBytes(ras, little));
       put("StructureSize", DataTools.read4SignedBytes(ras, little));
       put("DimensionX", DataTools.read4SignedBytes(ras, little));
@@ -298,7 +298,7 @@ public class ZeissLSMReader extends BaseTiffReader {
           put("DataType", "8 bit unsigned integer");
           pixelType[0] = -1;
       }
-     
+
       if (pixelType[0] == -1) {
         int[] bps = TiffTools.getBitsPerSample(ifd);
         switch (bps[0]) {
@@ -315,62 +315,62 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("VoxelSizeX", DataTools.readDouble(ras, little));
       put("VoxelSizeY", DataTools.readDouble(ras, little));
       put("VoxelSizeZ", DataTools.readDouble(ras, little));
-      
+
       put("OriginX", DataTools.readDouble(ras, little));
       put("OriginY", DataTools.readDouble(ras, little));
       put("OriginZ", DataTools.readDouble(ras, little));
 
       int scanType = DataTools.read2UnsignedBytes(ras, little);
       switch (scanType) {
-        case 0: 
-          put("ScanType", "x-y-z scan"); 
+        case 0:
+          put("ScanType", "x-y-z scan");
           currentOrder[0] = "XYZCT";
           break;
-        case 1: 
-          put("ScanType", "z scan (x-z plane)"); 
+        case 1:
+          put("ScanType", "z scan (x-z plane)");
           currentOrder[0] = "XYZCT";
           break;
-        case 2: 
-          put("ScanType", "line scan"); 
+        case 2:
+          put("ScanType", "line scan");
           currentOrder[0] = "XYZCT";
           break;
-        case 3: 
-          put("ScanType", "time series x-y"); 
+        case 3:
+          put("ScanType", "time series x-y");
           currentOrder[0] = "XYTCZ";
           break;
-        case 4: 
-          put("ScanType", "time series x-z"); 
+        case 4:
+          put("ScanType", "time series x-z");
           currentOrder[0] = "XYZTC";
           break;
         case 5:
-          put("ScanType", "time series 'Mean of ROIs'"); 
+          put("ScanType", "time series 'Mean of ROIs'");
           currentOrder[0] = "XYTCZ";
           break;
-        case 6: 
-          put("ScanType", "time series x-y-z"); 
+        case 6:
+          put("ScanType", "time series x-y-z");
           currentOrder[0] = "XYZTC";
           break;
-        case 7: 
-          put("ScanType", "spline scan"); 
+        case 7:
+          put("ScanType", "spline scan");
           currentOrder[0] = "XYCTZ";
           break;
-        case 8: 
-          put("ScanType", "spline scan x-z"); 
+        case 8:
+          put("ScanType", "spline scan x-z");
           currentOrder[0] = "XYCZT";
           break;
-        case 9: 
-          put("ScanType", "time series spline plane x-z"); 
+        case 9:
+          put("ScanType", "time series spline plane x-z");
           currentOrder[0] = "XYTCZ";
           break;
-        case 10: 
-          put("ScanType", "point mode"); 
+        case 10:
+          put("ScanType", "point mode");
           currentOrder[0] = "XYZCT";
           break;
-        default: 
+        default:
           put("ScanType", "x-y-z scan");
           currentOrder[0] = "XYZCT";
-      } 
-     
+      }
+
       MetadataStore store = getMetadataStore(currentId);
 
       store.setPixels(
@@ -394,7 +394,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         case 1: put("SpectralScan", "acquired with spectral scan"); break;
         default: put("SpectralScan", "no spectral scan");
       }
-      
+
       long type = DataTools.read4UnsignedBytes(ras, little);
       switch ((int) type) {
         case 0: put("DataType2", "original scan data"); break;
@@ -402,7 +402,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         case 2: put("DataType2", "animation"); break;
         default: put("DataType2", "original scan data");
       }
-      
+
       long overlayOffset = DataTools.read4UnsignedBytes(ras, little);
       long inputLUTOffset = DataTools.read4UnsignedBytes(ras, little);
       long outputLUTOffset = DataTools.read4UnsignedBytes(ras, little);
@@ -428,7 +428,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       long topoIsolineOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
       long topoProfileOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
       long linescanOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
-      
+
       put("ToolbarFlags", DataTools.read4UnsignedBytes(ras, little));
       long channelWavelengthOffset = DataTools.read4UnsignedBytes(ras, little);
       long channelFactorsOffset = DataTools.read4UnsignedBytes(ras, little);
@@ -437,13 +437,13 @@ public class ZeissLSMReader extends BaseTiffReader {
       long unmixParamsOffset = DataTools.read4UnsignedBytes(ras, little);
 
       // read referenced structures
-   
+
       if (overlayOffset != 0) {
         parseOverlays(overlayOffset, "OffsetVectorOverlay", little);
       }
 
       if (inputLUTOffset != 0) {
-        parseSubBlocks(inputLUTOffset, "OffsetInputLut", little); 
+        parseSubBlocks(inputLUTOffset, "OffsetInputLut", little);
       }
 
       if (outputLUTOffset != 0) {
@@ -463,7 +463,7 @@ public class ZeissLSMReader extends BaseTiffReader {
           numNames = in.readInt();
         }
 
-        long namesOffset = in.readInt() + channelColorsOffset; 
+        long namesOffset = in.readInt() + channelColorsOffset;
         int nameData = in.readInt();
 
         // read in the intensity value for each color
@@ -474,7 +474,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         }
 
         // read in the channel names
-  
+
         for (int i=0; i<numNames; i++) {
           // we want to read until we find a null char
           StringBuffer sb = new StringBuffer();
@@ -519,17 +519,17 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       if (meanOfRoisOverlayOffset != 0) {
-        parseOverlays(meanOfRoisOverlayOffset, 
+        parseOverlays(meanOfRoisOverlayOffset,
           "OffsetMeanOfRoisOverlay", little);
       }
 
       if (topoIsolineOverlayOffset != 0) {
-        parseOverlays(topoIsolineOverlayOffset, 
+        parseOverlays(topoIsolineOverlayOffset,
           "OffsetTopoIsolineOverlay", little);
       }
 
       if (topoProfileOverlayOffset != 0) {
-        parseOverlays(topoProfileOverlayOffset, 
+        parseOverlays(topoProfileOverlayOffset,
           "OffsetTopoProfileOverlay", little);
       }
 

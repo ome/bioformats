@@ -140,7 +140,7 @@ public class AliconaReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1, 
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1,
       false, numBytes, true);
     updateMinMax(b, no);
     return b;
@@ -238,7 +238,7 @@ public class AliconaReader extends FormatReader {
       new Float(((String) getMeta("PlanePntX")).trim()),
       new Float(((String) getMeta("PlanePntY")).trim()),
       new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
- 
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }

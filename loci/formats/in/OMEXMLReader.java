@@ -485,7 +485,7 @@ public class OMEXMLReader extends FormatReader {
 
     for (int i=0; i<sizeC.length; i++) {
       for (int j=0; j<sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, 
+        store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
       }
     }

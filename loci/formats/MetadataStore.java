@@ -249,14 +249,14 @@ public interface MetadataStore {
     Double whiteLevel, Float gamma, Integer i);
 
   /** Sets various display options for a particular pixels set. */
-  void setDisplayOptions(Float zoom, Boolean redChannelOn, 
+  void setDisplayOptions(Float zoom, Boolean redChannelOn,
     Boolean greenChannelOn, Boolean blueChannelOn, Boolean displayRGB,
-    String colorMap, Integer zstart, Integer zstop, Integer tstart, 
+    String colorMap, Integer zstart, Integer zstop, Integer tstart,
     Integer tstop, Integer imageNdx, Integer pixelsNdx, Integer redChannel,
     Integer greenChannel, Integer blueChannel, Integer grayChannel);
 
   /** Sets a light source for a particular instrument. */
-  void setLightSource(String manufacturer, String model, String serialNumber, 
+  void setLightSource(String manufacturer, String model, String serialNumber,
     Integer instrumentIndex, Integer lightIndex);
 
   /** Sets a laser for a particular instrument. */
@@ -265,12 +265,12 @@ public interface MetadataStore {
     Integer instrumentNdx, Integer lightNdx, Integer pumpNdx, Integer laserNdx);
 
   /** Sets a filament for a particular instrument. */
-  void setFilament(String type, Float power, Integer lightNdx, 
+  void setFilament(String type, Float power, Integer lightNdx,
     Integer filamentNdx);
 
   /** Sets an arc for a particular instrument. */
   void setArc(String type, Float power, Integer lightNdx, Integer arcNdx);
- 
+
   /** Sets a detector for a particular instrument. */
   void setDetector(String manufacturer, String model, String serialNumber,
     String type, Float gain, Float voltage, Float offset, Integer instrumentNdx,
@@ -278,7 +278,7 @@ public interface MetadataStore {
 
   /** Sets an objective for a particular instrument. */
   void setObjective(String manufacturer, String model, String serialNumber,
-    Float lensNA, Float magnification, Integer instrumentNdx, 
+    Float lensNA, Float magnification, Integer instrumentNdx,
     Integer objectiveNdx);
 
   /** Sets an excitation filter for a particular instrument. */
@@ -286,7 +286,7 @@ public interface MetadataStore {
     String type, Integer filterNdx);
 
   /** Sets a dichroic for a particular instrument. */
-  void setDichroic(String manufacturer, String model, String lotNumber, 
+  void setDichroic(String manufacturer, String model, String lotNumber,
     Integer dichroicNdx);
 
   /** Sets an emission filter for a particular instrument. */
@@ -294,7 +294,7 @@ public interface MetadataStore {
     String type, Integer filterNdx);
 
   /** Sets a filter set for a particular instrument. */
-  void setFilterSet(String manufacturer, String model, String lotNumber, 
+  void setFilterSet(String manufacturer, String model, String lotNumber,
     Integer filterSetNdx, Integer filterNdx);
 
   /** Sets an OTF for a particular instrument. */

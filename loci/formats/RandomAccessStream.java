@@ -138,14 +138,14 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- RandomAccessStream API methods --
 
   /** Return the underlying InputStream */
-  public DataInputStream getInputStream() { 
+  public DataInputStream getInputStream() {
     try {
       if (fileCache.get(this) == Boolean.FALSE) reopen();
     }
     catch (IOException e) {
       return null;
     }
-    return dis; 
+    return dis;
   }
 
   /**
@@ -165,9 +165,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
   }
 
   /** Gets the number of bytes in the file. */
-  public long length() throws IOException { 
+  public long length() throws IOException {
     if (fileCache.get(this) == Boolean.FALSE) reopen();
-    return raf.length(); 
+    return raf.length();
   }
 
   /** Gets the current (absolute) file pointer. */
@@ -544,14 +544,14 @@ public class RandomAccessStream extends InputStream implements DataInput {
   /** If we have too many open files, close most of them. */
   private void cleanCache() {
     int toClose = MAX_FILES - 10;
-    RandomAccessStream[] files = (RandomAccessStream[]) 
+    RandomAccessStream[] files = (RandomAccessStream[])
       fileCache.keySet().toArray(new RandomAccessStream[0]);
     int closed = 0;
     int ndx = 0;
-    
+
     while (closed < toClose) {
-      if (!this.equals(files[ndx]) && 
-        !fileCache.get(files[ndx]).equals(Boolean.FALSE)) 
+      if (!this.equals(files[ndx]) &&
+        !fileCache.get(files[ndx]).equals(Boolean.FALSE))
       {
         try { files[ndx].close(); }
         catch (IOException e) { e.printStackTrace(); }

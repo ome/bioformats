@@ -383,7 +383,7 @@ public class ZeissZVIReader extends FormatReader {
 
       zSize = zIndices.size();
       tSize = tIndices.size();
-      if (nChannels != cIndices.size()) nChannels *= cIndices.size(); 
+      if (nChannels != cIndices.size()) nChannels *= cIndices.size();
 
       sizeX[0] = width;
       sizeY[0] = height;
@@ -429,7 +429,7 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         currentOrder[0] = "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
-       
+
         if (zIndex != null && tIndex != null) {
           int z = Integer.parseInt(DataTools.stripString(zIndex));
           int t = Integer.parseInt(DataTools.stripString(tIndex));
@@ -493,13 +493,13 @@ public class ZeissZVIReader extends FormatReader {
     String pixX = (String) getMeta("Scale Factor for X");
     String pixY = (String) getMeta("Scale Factor for Y");
     String pixZ = (String) getMeta("Scale Factor for Z");
-    
+
     store.setDimensions(
       pixX == null ? null : new Float(pixX),
       pixY == null ? null : new Float(pixY),
       pixZ == null ? null : new Float(pixZ),
       null, null, null);
-    
+
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
@@ -535,14 +535,14 @@ public class ZeissZVIReader extends FormatReader {
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
         byte[] data = new byte[numbytes + 4]; // append 0 for final offset
         r.setVar("data", data);
-        
+
         // Suppressing an exception here looks like poor style.
         // However, this at least gives us a chance at reading files with
         // corrupt blocks.
         try {
           r.exec("dis.read(data)");
         }
-        catch (ReflectException e) { 
+        catch (ReflectException e) {
           if (debug) e.printStackTrace();
         }
 
@@ -757,7 +757,7 @@ public class ZeissZVIReader extends FormatReader {
           int len = DataTools.bytesToInt(data, pt, 2, true);
           pt += 2;
           if (data[pt] == 0 && data[pt + 1] == 0) pt += 2;
-          
+
           String typeDescription = "";
           if (pt + len <= data.length) {
             typeDescription = new String(data, pt, len);

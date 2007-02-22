@@ -200,7 +200,7 @@ public class GIFReader extends FormatReader {
     throws FormatException, IOException
   {
     byte[] bytes = openBytes(id, no);
-    BufferedImage b = ImageTools.makeImage(bytes, width, height, 
+    BufferedImage b = ImageTools.makeImage(bytes, width, height,
       bytes.length / (width * height), false, 1, true);
     updateMinMax(b, no);
     return b;

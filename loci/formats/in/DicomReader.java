@@ -230,7 +230,7 @@ public class DicomReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       1, false, bitsPerPixel / 8, little);
     updateMinMax(b, no);
     return b;
@@ -524,7 +524,7 @@ public class DicomReader extends FormatReader {
     }
     if (skip) {
       long skipCount = (long) elementLength;
-      if (in.getFilePointer() + skipCount <= in.length()) {  
+      if (in.getFilePointer() + skipCount <= in.length()) {
         in.skipBytes((int) skipCount);
       }
       location += elementLength;

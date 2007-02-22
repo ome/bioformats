@@ -148,7 +148,7 @@ public class ImageJReader extends FormatReader {
       }
       r.exec("size = image.getStackSize()");
       Image img = (Image) r.exec("image.getImage()");
-      
+
       BufferedImage b = ImageTools.makeBuffered(img);
       updateMinMax(b, no);
       return b;
@@ -172,7 +172,7 @@ public class ImageJReader extends FormatReader {
     sizeT[0] = 1;
     pixelType[0] = ImageTools.getPixelType(img);
     currentOrder[0] = "XYCZT";
-  
+
     MetadataStore store = getMetadataStore(id);
 
     store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),

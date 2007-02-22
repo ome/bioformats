@@ -56,7 +56,7 @@ public class ChannelMerger extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getDimensionOrder(String) */
-  public String getDimensionOrder(String id) 
+  public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
     String order = reader.getDimensionOrder(id);

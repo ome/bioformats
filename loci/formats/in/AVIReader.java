@@ -175,8 +175,8 @@ public class AVIReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dwWidth, bmpHeight,
-      !isRGB(id) ? 1 : 3, true);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no),
+      dwWidth, bmpHeight, !isRGB(id) ? 1 : 3, true);
     updateMinMax(b, no);
     return b;
   }
@@ -186,7 +186,7 @@ public class AVIReader extends FormatReader {
     if (fileOnly) {
       if (in != null) in.close();
     }
-    else close(); 
+    else close();
   }
 
   /** Closes any open files. */
@@ -285,7 +285,7 @@ public class AVIReader extends FormatReader {
                 addMeta("Start time", new Integer(dwStart));
                 addMeta("Length", new Integer(dwLength));
 
-                if (spos + size <= in.length()) {  
+                if (spos + size <= in.length()) {
                   in.seek((int) (spos + size));
                 }
               }
@@ -330,7 +330,7 @@ public class AVIReader extends FormatReader {
                 addMeta("Stream quality", new Integer(dwStreamQuality));
                 addMeta("Stream sample size", new Integer(dwStreamSampleSize));
 
-                if (spos + size <= in.length()) {  
+                if (spos + size <= in.length()) {
                   in.seek((int) (spos + size));
                 }
               }
@@ -445,7 +445,7 @@ public class AVIReader extends FormatReader {
             }
           }
 
-          if (startPos + streamSize + 8 <= in.length()) {  
+          if (startPos + streamSize + 8 <= in.length()) {
             in.seek(startPos + 8 + streamSize);
           }
         }
@@ -505,7 +505,7 @@ public class AVIReader extends FormatReader {
       else {
         // skipping unknown block
         type = readStringBytes();
-        if (in.getFilePointer() + size + 4 <= in.length()) {  
+        if (in.getFilePointer() + size + 4 <= in.length()) {
           size = in.readInt();
           in.skipBytes(size);
         }
@@ -542,9 +542,9 @@ public class AVIReader extends FormatReader {
       currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
-  
+
     for (int i=0; i<sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, 
+      store.setLogicalChannel(i, null, null, null, null,
         sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
     }
   }

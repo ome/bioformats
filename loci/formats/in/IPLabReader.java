@@ -387,9 +387,9 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationGamma" + i, new Double(gamma));
           addMeta("NormalizationBlack" + i, new Double(black));
           addMeta("NormalizationWhite" + i, new Double(white));
-        
+
           store = getMetadataStore(currentId);
-          store.setChannelGlobalMinMax(i, new Double(min), 
+          store.setChannelGlobalMinMax(i, new Double(min),
             new Double(max), null);
           // TODO : set DisplayChannel here
         }
@@ -471,8 +471,8 @@ public class IPLabReader extends FormatReader {
 
         store.setImage(id, null, notes, null);
       }
-      
-      if (in.getFilePointer() + 4 <= in.length()) {  
+
+      if (in.getFilePointer() + 4 <= in.length()) {
         in.read(fourBytes);
         tag = new String(fourBytes);
       }

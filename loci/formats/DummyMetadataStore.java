@@ -123,13 +123,13 @@ public class DummyMetadataStore implements MetadataStore {
   {
   }
 
-  public void setFilament(String type, Float power, Integer lightNdx, 
-    Integer filamentNdx) 
-  { 
+  public void setFilament(String type, Float power, Integer lightNdx,
+    Integer filamentNdx)
+  {
   }
 
   public void setArc(String type, Float power, Integer lightNdx, Integer arcNdx)
-  { 
+  {
   }
 
   public void setDetector(String manufacturer, String model,
@@ -138,8 +138,8 @@ public class DummyMetadataStore implements MetadataStore {
   {
   }
 
-  public void setObjective(String manufacturer, String model, 
-    String serialNumber, Float lensNA, Float magnification, 
+  public void setObjective(String manufacturer, String model,
+    String serialNumber, Float lensNA, Float magnification,
     Integer instrumentNdx, Integer objectiveNdx)
   {
   }

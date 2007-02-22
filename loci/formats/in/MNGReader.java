@@ -218,7 +218,7 @@ public class MNGReader extends FormatReader {
     sizeT[0] = numImages;
     currentOrder[0] = "XYCZT";
     pixelType[0] = FormatReader.UINT8;
-  
+
     MetadataStore store = getMetadataStore(id);
 
     store.setPixels(new Integer(width), new Integer(height), new Integer(1),

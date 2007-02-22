@@ -238,8 +238,8 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#isSupportedType(String, int) */
-  public boolean isSupportedType(String id, int type) 
-    throws FormatException, IOException 
+  public boolean isSupportedType(String id, int type)
+    throws FormatException, IOException
   {
     return getWriter(id).isSupportedType(id, type);
   }

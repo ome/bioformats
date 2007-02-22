@@ -77,7 +77,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     catch (IOException exc) { exc.printStackTrace(); }
   }
 
-  /** 
+  /**
    * Copies all of the data from this OMEXMLMetadataStore to a different
    * MetadataStore.
    */
@@ -443,7 +443,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int img = imageNo == null ? 0 : imageNo.intValue();
     int pix = pixelsNo == null ? 0 : pixelsNo.intValue();
-   
+
     ImageNode image = (ImageNode) getChild(root, "Image", img);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
@@ -615,7 +615,6 @@ public class OMEXMLMetadataStore implements MetadataStore {
     displayOptions.setGreyChannel(greyscaleChannel);
   }
 
-
   /* @see MetadataStore#setImagingEnvironment(Float, Float, Float,
    * Float, Integer)
    */
@@ -626,7 +625,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
-    ImagingEnvironmentNode env = 
+    ImagingEnvironmentNode env =
       (ImagingEnvironmentNode) getChild(ca, "ImagingEnvironment", 0);
     env.setTemperature(temperature);
     env.setAirPressure(airPressure);
@@ -644,8 +643,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
-    DisplayChannelNode display = (DisplayChannelNode) 
-      getChild(ca, "DisplayChannel", channelNumber.intValue());    
+    DisplayChannelNode display = (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", channelNumber.intValue());
     display.setChannelNumber(channelNumber);
     display.setBlackLevel(blackLevel);
     display.setWhiteLevel(whiteLevel);
@@ -659,20 +658,20 @@ public class OMEXMLMetadataStore implements MetadataStore {
   public void setDisplayOptions(Float zoom, Boolean redChannelOn,
     Boolean greenChannelOn, Boolean blueChannelOn, Boolean displayRGB,
     String colorMap, Integer zstart, Integer zstop, Integer tstart,
-    Integer tstop, Integer imageNdx, Integer pixelsNdx, Integer redChannel, 
+    Integer tstop, Integer imageNdx, Integer pixelsNdx, Integer redChannel,
     Integer greenChannel, Integer blueChannel, Integer grayChannel)
   {
     int ndx = imageNdx == null ? 0 : imageNdx.intValue();
     int pixNdx = pixelsNdx == null ? 0 : pixelsNdx.intValue();
-    
+
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
     PixelsNode pix = (PixelsNode) getChild(ca, "Pixels", pixNdx);
     DisplayChannelNode red = redChannel == null ? null : (DisplayChannelNode)
       getChild(ca, "DisplayChannel", redChannel.intValue());
-    DisplayChannelNode green = greenChannel == null ? null : 
-      (DisplayChannelNode) getChild(ca, "DisplayChannel", 
+    DisplayChannelNode green = greenChannel == null ? null :
+      (DisplayChannelNode) getChild(ca, "DisplayChannel",
       greenChannel.intValue());
     DisplayChannelNode blue = blueChannel == null ? null : (DisplayChannelNode)
       getChild(ca, "DisplayChannel", blueChannel.intValue());
@@ -698,8 +697,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
     display.setTStop(tstop);
   }
 
-  /* @see MetadataStore#setLightSource(String, String, String, 
-   * Integer, Integer) 
+  /* @see MetadataStore#setLightSource(String, String, String,
+   * Integer, Integer)
    */
   public void setLightSource(String manufacturer, String model,
     String serialNumber, Integer instrumentIndex, Integer lightIndex)
@@ -709,7 +708,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(root, "CustomAttributes", 0);
     InstrumentNode inst = (InstrumentNode) getChild(ca, "Instrument", ndx);
-    LightSourceNode light = 
+    LightSourceNode light =
       (LightSourceNode) getChild(ca, "LightSource", lightNdx);
     light.setManufacturer(manufacturer);
     light.setModel(model);
@@ -731,12 +730,12 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(root, "CustomAttributes", 0);
-    LightSourceNode lightNode = 
+    LightSourceNode lightNode =
       (LightSourceNode) getChild(ca, "LightSource", light);
     LightSourceNode pumpNode =
       (LightSourceNode) getChild(ca, "LightSource", pump);
     LaserNode laser = (LaserNode) getChild(ca, "Laser", laserNdx);
-    
+
     laser.setType(type);
     laser.setMedium(medium);
     laser.setWavelength(wavelength);
@@ -749,15 +748,15 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /* @see MetadataStore#setFilament(String, Float, Integer, Integer) */
-  public void setFilament(String type, Float power, Integer lightSource, 
-    Integer num) 
-  { 
+  public void setFilament(String type, Float power, Integer lightSource,
+    Integer num)
+  {
     int lightNdx = lightSource == null ? 0 : lightSource.intValue();
     int n = num == null ? 0 : num.intValue();
 
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(root, "CustomAttributes", 0);
-    LightSourceNode light = 
+    LightSourceNode light =
       (LightSourceNode) getChild(ca, "LightSource", lightNdx);
 
     FilamentNode filament = (FilamentNode) getChild(ca, "Filament", n);
@@ -767,15 +766,15 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /* @see MetadataStore#setArc(String, Float, Integer, Integer) */
-  public void setArc(String type, Float power, Integer lightSource, 
-    Integer num) 
-  { 
+  public void setArc(String type, Float power, Integer lightSource,
+    Integer num)
+  {
     int lightNdx = lightSource == null ? 0 : lightSource.intValue();
     int n = num == null ? 0 : num.intValue();
 
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(root, "CustomAttributes", 0);
-    LightSourceNode light = 
+    LightSourceNode light =
       (LightSourceNode) getChild(ca, "LightSource", lightNdx);
     ArcNode arc = (ArcNode) getChild(ca, "Arc", n);
     arc.setType(type);
@@ -792,7 +791,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int ndx = instrumentNdx == null ? 0 : instrumentNdx.intValue();
     int dNdx = detectorNdx == null ? 0 : detectorNdx.intValue();
- 
+
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(root, "CustomAttributes", 0);
     InstrumentNode inst = (InstrumentNode) getChild(ca, "Instrument", ndx);
@@ -807,10 +806,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
     detector.setInstrument(inst);
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Float, 
-   * Integer, Integer) 
+  /* @see MetadataStore#setObjective(String, String, String, Float, Float,
+   * Integer, Integer)
    */
-  public void setObjective(String manufacturer, String model, 
+  public void setObjective(String manufacturer, String model,
     String serialNumber, Float lensNA,
     Float magnification, Integer instrument, Integer objective)
   {
@@ -829,7 +828,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     obj.setInstrument(inst);
   }
 
-  /* @see MetadataStore#setExcitationFilter(String, String, String, 
+  /* @see MetadataStore#setExcitationFilter(String, String, String,
    * String, Integer)
    */
   public void setExcitationFilter(String manufacturer, String model,
@@ -839,7 +838,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(root, "CustomAttributes", 0);
-    ExcitationFilterNode f = 
+    ExcitationFilterNode f =
       (ExcitationFilterNode) getChild(ca, "ExcitationFilter", fNdx);
     f.setManufacturer(manufacturer);
     f.setModel(model);
@@ -861,7 +860,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     d.setLotNumber(lotNumber);
   }
 
-  /* @see MetadataStore#setEmissionFilter(String, String, String, 
+  /* @see MetadataStore#setEmissionFilter(String, String, String,
    * String, Integer)
    */
   public void setEmissionFilter(String manufacturer, String model,
@@ -871,7 +870,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(root, "CustomAttributes", 0);
-    EmissionFilterNode f = (EmissionFilterNode) 
+    EmissionFilterNode f = (EmissionFilterNode)
       getChild(ca, "EmissionFilter", fNdx);
     f.setManufacturer(manufacturer);
     f.setModel(model);
@@ -879,8 +878,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
     f.setType(type);
   }
 
-  /* @see MetadataStore#setFilterSet(String, String, String, Integer, 
-   * Integer) 
+  /* @see MetadataStore#setFilterSet(String, String, String, Integer,
+   * Integer)
    */
   public void setFilterSet(String manufacturer, String model, String lotNumber,
     Integer filterSet, Integer filter)
@@ -898,7 +897,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     fsNode.setFilter(filterNode);
   }
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String, 
+  /* @see MetadataStore#setOTF(Integer, Integer, String, String,
    * Boolean, Integer, Integer, Integer, Integer)
    */
   public void setOTF(Integer sizeX, Integer sizeY, String pixelType,

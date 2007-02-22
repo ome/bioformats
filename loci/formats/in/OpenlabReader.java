@@ -681,7 +681,7 @@ public class OpenlabReader extends FormatReader {
     Arrays.fill(maximumValues, new Vector());
     minMaxFinished = new boolean[numSeries];
     Arrays.fill(minMaxFinished, false);
-    
+
     int oldSeries = getSeries(currentId);
     for (int i=0; i<bpp.length; i++) {
       setSeries(currentId, i);
@@ -754,7 +754,7 @@ public class OpenlabReader extends FormatReader {
       store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
         null, null, new Integer(i));
       for (int j=0; j<sizeC[0]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, 
+        store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
       }
     }

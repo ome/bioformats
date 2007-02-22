@@ -108,8 +108,8 @@ public class FileStitcher implements IFormatReader {
   /** Constructs a FileStitcher around a new image reader. */
   public FileStitcher() { this(new ImageReader()); }
 
-  /** 
-   * Constructs a FileStitcher around a new image reader. 
+  /**
+   * Constructs a FileStitcher around a new image reader.
    * @param patternIds Whether string ids given should be treated as file
    *    patterns rather than single file paths.
    */
@@ -347,7 +347,7 @@ public class FileStitcher implements IFormatReader {
   {
     int[] q = computeIndices(id, no);
     int fno = q[0], ino = q[1];
-    return readers[fno].getPlaneMinimum(files[fno], ino); 
+    return readers[fno].getPlaneMinimum(files[fno], ino);
   }
 
   /* @see IFormatReader#getPlaneMaximum(String, int) */
@@ -356,7 +356,7 @@ public class FileStitcher implements IFormatReader {
   {
     int[] q = computeIndices(id, no);
     int fno = q[0], ino = q[1];
-    return readers[fno].getPlaneMaximum(files[fno], ino); 
+    return readers[fno].getPlaneMaximum(files[fno], ino);
   }
 
   /* @see IFormatReader#isMinMaxPopulated(String) */
@@ -571,7 +571,7 @@ public class FileStitcher implements IFormatReader {
         }
         usedFiles = new String[total];
         for (int i=0, off=0; i<used.length; i++) {
-          System.arraycopy(used[i], 0, usedFiles, off, used[i].length); 
+          System.arraycopy(used[i], 0, usedFiles, off, used[i].length);
           off += used[i].length;
         }
       }
@@ -811,7 +811,7 @@ public class FileStitcher implements IFormatReader {
       swapDimensions(currentId, order[i]);
     }
     setSeries(currentId, oldSeries);
-  
+
     // initialize used files list only when requested
     usedFiles = null;
   }
@@ -901,8 +901,8 @@ public class FileStitcher implements IFormatReader {
       }
     }
     int fno = positionToRaster(count, pos);
-    int ino = FormatReader.getIndex(order[sno], sizeZ[sno], 
-      reader.getEffectiveSizeC(files[0]), sizeT[sno], imagesPerFile[sno], 
+    int ino = FormatReader.getIndex(order[sno], sizeZ[sno],
+      reader.getEffectiveSizeC(files[0]), sizeT[sno], imagesPerFile[sno],
       posZ[0], posC[0], posT[0]);
 
     // configure the reader, in case we haven't done this one yet

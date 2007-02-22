@@ -110,7 +110,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
-  
+
   /** List of image indices that have been read. */
   protected Vector[] imagesRead;
 
@@ -180,7 +180,7 @@ public abstract class FormatReader extends FormatHandler
     sizeZ = new int[1];
     sizeC = new int[1];
     sizeT = new int[1];
-    rgbChannelCount = new int[1]; 
+    rgbChannelCount = new int[1];
     pixelType = new int[1];
     currentOrder = new String[1];
     orderCertain = new boolean[] {true};
@@ -332,9 +332,9 @@ public abstract class FormatReader extends FormatHandler
     }
     return null;
   }
-  
+
   /* @see IFormatReader#getChannelKnownMinimum(String, int) */
-  public Double getChannelKnownMinimum(String id, int theC) 
+  public Double getChannelKnownMinimum(String id, int theC)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -356,12 +356,12 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getPlaneMinimum(String, int) */
-  public Double getPlaneMinimum(String id, int no) 
+  public Double getPlaneMinimum(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStatCalculation && 
-      imagesRead[series].contains(new Integer(no))) 
+    if (enableChannelStatCalculation &&
+      imagesRead[series].contains(new Integer(no)))
     {
       int ndx = no * getRGBChannelCount(id);
       double min = Double.MAX_VALUE;
@@ -380,8 +380,8 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStatCalculation && 
-      imagesRead[series].contains(new Integer(no))) 
+    if (enableChannelStatCalculation &&
+      imagesRead[series].contains(new Integer(no)))
     {
       int ndx = no * getRGBChannelCount(id);
       double max = Double.MIN_VALUE;
@@ -1153,17 +1153,17 @@ public abstract class FormatReader extends FormatHandler
     return new int[] {z, c, t};
   }
 
-  /** 
+  /**
    * Updates min/max values based on the given BufferedImage.
    * Should be called by each format reader's openImage method.
    */
-  public void updateMinMax(BufferedImage b, int ndx) 
+  public void updateMinMax(BufferedImage b, int ndx)
     throws FormatException, IOException
   {
     Integer ii = new Integer(ndx);
     if (!imagesRead[series].contains(ii) && enableChannelStatCalculation) {
       if (channelMinMax == null) {
-        channelMinMax = 
+        channelMinMax =
           new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
       }
       if (planeMinMax == null) {
@@ -1205,21 +1205,21 @@ public abstract class FormatReader extends FormatHandler
    * Updates min/max values based on given byte array.
    * Should be called by each format reader's openBytes method.
    */
-  public void updateMinMax(byte[] b, int ndx) 
-    throws FormatException, IOException 
+  public void updateMinMax(byte[] b, int ndx)
+    throws FormatException, IOException
   {
     if (b == null) return;
     Integer ii = new Integer(ndx);
     if (!imagesRead[series].contains(ii) && enableChannelStatCalculation) {
       if (channelMinMax == null) {
-        channelMinMax = 
+        channelMinMax =
           new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
       }
       if (planeMinMax == null) {
         planeMinMax = new double[getSeriesCount(currentId)][
           getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
       }
-      
+
       boolean little = isLittleEndian(currentId);
       int bytes = getBytesPerPixel(getPixelType(currentId));
       int numRGB = getRGBChannelCount(currentId);
@@ -1234,7 +1234,7 @@ public abstract class FormatReader extends FormatHandler
           int idx = interleaved ? i*numRGB + c : c*pixels + i;
           idx *= bytes;
           System.arraycopy(b, idx, value, 0, bytes);
-          double v = 
+          double v =
             Double.longBitsToDouble(DataTools.bytesToLong(value, little));
           if (v > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
             channelMinMax[series][coords[1]*numRGB + c][MAX] = v;

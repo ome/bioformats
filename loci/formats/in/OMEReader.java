@@ -32,10 +32,10 @@ import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 
-/** 
- * OMEReader retrieves images on demand from an OME database. 
+/**
+ * OMEReader retrieves images on demand from an OME database.
  * Authentication with the OME server is handled, provided the 'id' parameter
- * is properly formed.  
+ * is properly formed.
  * The 'id' parameter should take one of the following forms:
  *
  * <server>?user=<username>&password=<password>&id=<image id>
@@ -49,7 +49,7 @@ public class OMEReader extends FormatReader {
 
   /** String containing authentication information */
   private String loginString;
-  
+
   /** Number of images */
   private int numImages;
 
@@ -125,7 +125,7 @@ public class OMEReader extends FormatReader {
   public boolean isInterleaved(String id) throws FormatException, IOException {
     return false;
   }
- 
+
   /* @see IFormatReader#openBytes(String, int) */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
@@ -148,7 +148,7 @@ public class OMEReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0], 
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
       sizeY[0], 1, false, FormatReader.getBytesPerPixel(pixelType[0]), true);
     updateMinMax(b, no);
     return b;
@@ -261,7 +261,7 @@ public class OMEReader extends FormatReader {
     catch (Exception e) { throw new FormatException(e); }
 
     rc = rs.getRemoteCaller();
-    
+
     if (user != null && pass != null) rc.login(user, pass);
     else if (sessionKey != null) rc.setSessionKey(sessionKey);
 
@@ -304,7 +304,7 @@ public class OMEReader extends FormatReader {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
-  
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
