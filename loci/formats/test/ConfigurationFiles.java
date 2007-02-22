@@ -46,7 +46,7 @@ public class ConfigurationFiles {
     return entries.containsKey(id) && getNumSeries(id) <= currentSeries;
   }
 
-  /** 
+  /**
    * Parses data from a new config file and stores it for later use.
    * Does not perform any checks - it is assumed that the file is properly
    * written.
@@ -64,7 +64,7 @@ public class ConfigurationFiles {
       String line = st.nextToken();
       if (!line.startsWith("#") && line.trim().length() > 0) {
         ConfigEntry entry = new ConfigEntry();
-        
+
         String file = line.substring(1, line.lastIndexOf("\""));
         Location newLocation = new Location(l.getParent(), file);
         file = newLocation.getAbsolutePath();
@@ -73,7 +73,7 @@ public class ConfigurationFiles {
 
         // first check if 'test' is set to false; if so, don't parse anything
         // else
-     
+
         String testValue = line.substring(line.indexOf("test=") + 5).trim();
         if (testValue.equals("false")) {
           entry.test = false;
@@ -82,7 +82,7 @@ public class ConfigurationFiles {
           entry.test = true;
 
           int ndx = line.indexOf("total_series=") + 13;
-          int nSeries = 
+          int nSeries =
             Integer.parseInt(line.substring(ndx, line.indexOf(" ", ndx)));
           entry.numSeries = nSeries;
 
@@ -98,33 +98,33 @@ public class ConfigurationFiles {
             ndx = line.indexOf("[series=" + i);
             String s = line.substring(ndx, line.indexOf("]", ndx));
             ndx = s.indexOf("x") + 2;
-            entry.dimensions[i][0] = 
+            entry.dimensions[i][0] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("y") + 2;
-            entry.dimensions[i][1] = 
+            entry.dimensions[i][1] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("z") + 2;
-            entry.dimensions[i][2] = 
+            entry.dimensions[i][2] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("c") + 2;
-            entry.dimensions[i][3] = 
+            entry.dimensions[i][3] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("t") + 2;
-            entry.dimensions[i][4] = 
+            entry.dimensions[i][4] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
-          
+
             ndx = s.indexOf("order") + 6;
             entry.orders[i] = s.substring(ndx, s.indexOf(" ", ndx));
             ndx = s.indexOf("interleave") + 11;
-            entry.interleaved[i] = 
+            entry.interleaved[i] =
               s.substring(ndx, s.indexOf(" ", ndx)).equals("true");
             ndx = s.indexOf("rgb") + 4;
             entry.rgb[i] = s.substring(ndx, s.indexOf(" ", ndx)).equals("true");
             ndx = s.indexOf("thumbx") + 7;
-            entry.thumbs[i][0] = 
+            entry.thumbs[i][0] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("thumby") + 7;
-            entry.thumbs[i][1] = 
+            entry.thumbs[i][1] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("type") + 5;
             entry.type[i] = FormatReader.pixelTypeFromString(
@@ -134,10 +134,10 @@ public class ConfigurationFiles {
           }
 
           ndx = line.indexOf("access=") + 7;
-          entry.access = Float.parseFloat(line.substring(ndx, 
+          entry.access = Float.parseFloat(line.substring(ndx,
             line.indexOf(" ", ndx)));
           ndx = line.indexOf("mem=") + 4;
-          entry.mem = (int) (Long.parseLong(line.substring(ndx, 
+          entry.mem = (int) (Long.parseLong(line.substring(ndx,
             line.indexOf(" ", ndx))) >> 20);
         }
         entries.put(file, entry);
@@ -148,40 +148,40 @@ public class ConfigurationFiles {
   }
 
   public void setSeries(String id, int no) {
-    if (no < getNumSeries(id)) currentSeries = no; 
+    if (no < getNumSeries(id)) currentSeries = no;
   }
 
-  public int getNumSeries(String id) { 
+  public int getNumSeries(String id) {
     if (!entries.contains(id)) return 0;
     return ((ConfigEntry) entries.get(id)).numSeries;
   }
-    
+
   public int getWidth(String id) {
     if (!initialized(id)) return 0;
     return ((ConfigEntry) entries.get(id)).dimensions[currentSeries][0];
   }
-    
-  public int getHeight(String id) { 
+
+  public int getHeight(String id) {
     if (!initialized(id)) return 0;
     return ((ConfigEntry) entries.get(id)).dimensions[currentSeries][1];
   }
 
-  public int getZ(String id) { 
+  public int getZ(String id) {
     if (!initialized(id)) return 0;
     return ((ConfigEntry) entries.get(id)).dimensions[currentSeries][2];
   }
-    
-  public int getC(String id) { 
+
+  public int getC(String id) {
     if (!initialized(id)) return 0;
     return ((ConfigEntry) entries.get(id)).dimensions[currentSeries][3];
   }
-    
-  public int getT(String id) { 
+
+  public int getT(String id) {
     if (!initialized(id)) return 0;
     return ((ConfigEntry) entries.get(id)).dimensions[currentSeries][4];
   }
-    
-  public String getDimOrder(String id) { 
+
+  public String getDimOrder(String id) {
     if (!initialized(id)) return null;
     return ((ConfigEntry) entries.get(id)).orders[currentSeries];
   }

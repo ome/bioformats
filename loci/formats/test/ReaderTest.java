@@ -61,7 +61,7 @@ public class ReaderTest extends TestCase {
 
   public static boolean writeConfigFiles = false;
   public static float timeMultiplier = 1f;
-  
+
   private static StringBuffer configLine;
   private static Vector configFiles = new Vector();
   private static ConfigurationFiles config = ConfigurationFiles.newInstance();
@@ -118,7 +118,7 @@ public class ReaderTest extends TestCase {
     maxMemory = initialMemory;
     try {
       int planesRead = 0;
-      
+
       long l1 = System.currentTimeMillis();
       for (int i=0; i<reader.getSeriesCount(id); i++) {
         int usedMemory = (int) (rt.totalMemory() - rt.freeMemory()) >> 20;
@@ -127,7 +127,7 @@ public class ReaderTest extends TestCase {
         int imageCount = reader.getImageCount(id);
         int sizeX = reader.getSizeX(id);
         int sizeY = reader.getSizeY(id);
-        
+
         for (int j=0; j<imageCount; j++) {
           BufferedImage b = reader.openImage(id, j);
           boolean failW = b.getWidth() != sizeX;
@@ -151,8 +151,8 @@ public class ReaderTest extends TestCase {
       success = false;
     }
     if (!success) writeLog(id + " failed BufferedImage test");
-    try { 
-      reader.close(); 
+    try {
+      reader.close();
       System.gc();
       Thread.sleep(100);
       System.gc();
@@ -289,8 +289,8 @@ public class ReaderTest extends TestCase {
     assertTrue(success);
   }
 
-  /** 
-   * Checks that the core metadata values match those given in 
+  /**
+   * Checks that the core metadata values match those given in
    * the configuration file.  If there is no configuration file, this test
    * is not run.
    */
@@ -342,7 +342,7 @@ public class ReaderTest extends TestCase {
         configLine.append(ras.length());
         ras.close();
         configLine.append(" test=true\n");
-    
+
         File f = new File(new Location(id).getParent(), ".bioformats");
         BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
         w.write(configLine.toString());
@@ -350,7 +350,7 @@ public class ReaderTest extends TestCase {
       }
       catch (Exception e) {
         if (FormatReader.debug) e.printStackTrace();
-     
+
         configLine = new StringBuffer();
         configLine.append("\"");
         configLine.append(new Location(id).getName());
@@ -408,12 +408,12 @@ public class ReaderTest extends TestCase {
             }
             if (!config.getDimOrder(id).equals(reader.getDimensionOrder(id))) {
               success = false;
-              writeLog(id + 
+              writeLog(id +
                 " failed consistent dimension order check in series " + i);
             }
             if (config.isInterleaved(id) != reader.isInterleaved(id)) {
               success = false;
-              writeLog(id + 
+              writeLog(id +
                 " failed consistent interleaving flag check in series " + i);
             }
             if (config.isRGB(id) != reader.isRGB(id)) {
@@ -422,22 +422,22 @@ public class ReaderTest extends TestCase {
             }
             if (config.getThumbX(id) != reader.getThumbSizeX(id)) {
               success = false;
-              writeLog(id + 
+              writeLog(id +
                 " failed consistent thumbnail width check in series " + i);
             }
             if (config.getThumbY(id) != reader.getThumbSizeY(id)) {
               success = false;
-              writeLog(id + 
+              writeLog(id +
                 " failed consistent thumbnail height check in series " + i);
             }
             if (config.getPixelType(id) != reader.getPixelType(id)) {
               success = false;
-              writeLog(id + 
+              writeLog(id +
                 " failed consistent pixel type check in series " + i);
             }
             if (config.isLittleEndian(id) != reader.isLittleEndian(id)) {
               success = false;
-              writeLog(id + 
+              writeLog(id +
                 " failed consistent endianness flag check in series " + i);
             }
           }
@@ -454,19 +454,19 @@ public class ReaderTest extends TestCase {
   /** Check that the memory usage is acceptable. */
   public void testMemoryUsage() {
     boolean success = true;
-    
+
     // we want the maximum usage to be no more than twice the file size
     if (maxMemory - initialMemory > 2*(config.getFileSize(id)+1)) {
       success = false;
-      writeLog(id + " failed maximum memory usage test (used " + 
-        (maxMemory - initialMemory) + "MB; expected <= " + 
+      writeLog(id + " failed maximum memory usage test (used " +
+        (maxMemory - initialMemory) + "MB; expected <= " +
         (2*config.getFileSize(id) + 1) + "MB)");
     }
-  
+
     // check that the reader doesn't have any (significant) memory leaks
     if (finalMemory - initialMemory > 10) {
       success = false;
-      writeLog(id + " failed memory leak test (" + 
+      writeLog(id + " failed memory leak test (" +
         (finalMemory - initialMemory) + "MB leaked)");
     }
 
@@ -558,7 +558,7 @@ public class ReaderTest extends TestCase {
     String[] subs = f.list();
     f = null;
     Arrays.sort(subs);
-    
+
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
       if (subs[i].endsWith(".bioformats") && i != 0) {
@@ -568,7 +568,7 @@ public class ReaderTest extends TestCase {
         break;
       }
     }
-    
+
     if (subs == null) {
       System.out.println("Invalid directory: " + root);
       return;
@@ -580,7 +580,7 @@ public class ReaderTest extends TestCase {
       subs[i] = root + (root.endsWith(File.separator) ? "" : File.separator) +
         subs[i];
       if (isBadFile(subs[i]) || similarFiles.contains(subs[i]) ||
-        similarFiles.contains(new Location(root, subs[i]).getAbsolutePath())) 
+        similarFiles.contains(new Location(root, subs[i]).getAbsolutePath()))
       {
         if (FormatReader.debug) debug(subs[i] + " is a bad file");
         String[] matching = new FilePattern(subs[i]).getFiles();
@@ -672,7 +672,7 @@ public class ReaderTest extends TestCase {
       String[] used = test.getUsedFiles();
       if (used == null) {
         System.out.println("Warning: used files list is null for " + id);
-      
+
         used = new FilePattern(pattern).getFiles();
         if (used != null) {
           for (int i=0; i<used.length; i++) {
