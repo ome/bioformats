@@ -257,7 +257,7 @@ public class OmeisImporter {
             id + "' series #" + s + ": " + pixelType);
       }
       boolean little = reader.isLittleEndian(id);
-      boolean swap = doLittle != little;
+      boolean swap = doLittle != little && bytesPerPixel > 1 && !isFloat;
 
       // ask OMEIS to allocate new pixels file
       int pixelsId = newPixels(sizeX, sizeY, sizeZ, sizeC, sizeT,
@@ -274,22 +274,34 @@ public class OmeisImporter {
         log("Processing " + imageCount + " planes (sizeZ=" + sizeZ +
           ", sizeC=" + sizeC + ", sizeT=" + sizeT + "): ");
       }
-      for (int j=0; j<imageCount; j++) {
-        if (DEBUG) log("  Reading plane #" + j);
-        byte[] plane = reader.openBytes(id, j);
-        if (swap && bytesPerPixel > 1 && !isFloat) { // swap endianness
-          for (int b=0; b<plane.length; b+=bytesPerPixel) {
-            for (int k=0; k<bytesPerPixel/2; k++) {
-              int i1 = b + k;
-              int i2 = b + bytesPerPixel - k - 1;
-              byte b1 = plane[i1];
-              byte b2 = plane[i2];
-              plane[i1] = b2;
-              plane[i2] = b1;
+      // OMEIS expects XYZCT order --
+      // interleaved RGB files will be handled a bit more slowly due to this
+      // ordering (ChannelSeparator must read each plane three times), but
+      // caching performed by the OS helps some
+      for (int t=0; t<sizeT; t++) {
+        for (int c=0; c<sizeC; c++) {
+          for (int z=0; z<sizeZ; z++) {
+            int ndx = reader.getIndex(id, z, c, t);
+            if (DEBUG) {
+              log("Reading plane #" + ndx +
+                ": z=" + z + ", c=" + c + ", t=" + t);
             }
+            byte[] plane = reader.openBytes(id, ndx);
+            if (swap) { // swap endianness
+              for (int b=0; b<plane.length; b+=bytesPerPixel) {
+                for (int k=0; k<bytesPerPixel/2; k++) {
+                  int i1 = b + k;
+                  int i2 = b + bytesPerPixel - k - 1;
+                  byte b1 = plane[i1];
+                  byte b2 = plane[i2];
+                  plane[i1] = b2;
+                  plane[i2] = b1;
+                }
+              }
+            }
+            out.write(plane);
           }
         }
-        out.write(plane);
       }
       out.close();
       reader.close();
@@ -307,6 +319,7 @@ public class OmeisImporter {
       Element pixels = (Element) pix.elementAt(s);
       pixels.setAttribute("FileSHA1", sha1);
       pixels.setAttribute("ImageServerID", "" + pixelsId);
+      pixels.setAttribute("DimensionOrder", "XYZCT"); // ignored anyway
       if (DEBUG) log("Pixel attributes injected.");
     }
 
@@ -510,7 +523,7 @@ public class OmeisImporter {
   }
 
   private void log(String msg) {
-    System.err.println(msg);
+    System.err.println("Bio-Formats: " + msg);
   }
 
   /** Prints an HTTP error response header. */
