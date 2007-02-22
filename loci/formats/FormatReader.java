@@ -789,9 +789,36 @@ public abstract class FormatReader extends FormatHandler
     // read basic metadata
     System.out.println();
     System.out.println("Reading core metadata");
-    System.out.println((stitch ? "File pattern = " + id :
-      "Filename = " + reader.getCurrentFile()));
+    System.out.println(stitch ?
+      "File pattern = " + id : "Filename = " + reader.getCurrentFile());
     if (map != null) System.out.println("Mapped filename = " + map);
+    String[] used = reader.getUsedFiles(id);
+    boolean usedValid = used != null && used.length > 0;
+    if (usedValid) {
+      for (int u=0; u<used.length; u++) {
+        if (used[u] == null) {
+          usedValid = false;
+          break;
+        }
+      }
+    }
+    if (!usedValid) {
+      System.out.println(
+        "************ Warning: invalid used files list ************");
+    }
+    if (used == null) {
+      System.out.println("Used files = null");
+    }
+    else if (used.length == 0) {
+      System.out.println("Used files = []");
+    }
+    else if (used.length > 1) {
+      System.out.println("Used files:");
+      for (int u=0; u<used.length; u++) System.out.println("\t" + used[u]);
+    }
+    else if (!id.equals(used[0])) {
+      System.out.println("Used files = [" + used[0] + "]");
+    }
     int seriesCount = reader.getSeriesCount(id);
     System.out.println("Series count = " + seriesCount);
     for (int j=0; j<seriesCount; j++) {
