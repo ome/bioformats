@@ -553,20 +553,34 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (usedFiles == null) {
-      String[][] used = new String[files.length][];
-      int total = files.length;
-      for (int i=0; i<files.length; i++) {
-        used[i] = reader.getUsedFiles(files[i]);
-        total += used[i].length;
+
+    // returning the files list directly here is fast, since we do not
+    // have to call initFile on each constituent file; but we can only do so
+    // when each constituent file does not itself have multiple used files
+
+    if (reader.getUsedFiles(files[0]).length > 1) {
+      // each constituent file has multiple used files; we must build the list
+      // this could happen with, e.g., a stitched collection of ICS/IDS pairs
+      // we have no datasets structured this way, so this logic is untested
+      if (usedFiles == null) {
+        String[][] used = new String[files.length][];
+        int total = files.length;
+        for (int i=0; i<files.length; i++) {
+          used[i] = readers[i].getUsedFiles(files[i]);
+          total += used[i].length;
+        }
+        usedFiles = new String[total];
+        for (int i=0, off=0; i<used.length; i++) {
+          System.arraycopy(used[i], 0, usedFiles, off, used[i].length); 
+          off += used[i].length;
+        }
       }
-      usedFiles = new String[total];
-      for (int i=0, off=0; i<used.length; i++) {
-        System.arraycopy(used[i], 0, usedFiles, off, used[i].length); 
-        off += used[i].length;
-      }
+      return usedFiles;
     }
-    return usedFiles;
+    // assume every constituent file has no other used files
+    // this logic could fail if the first constituent has no extra used files,
+    // but later constituents do; in practice, this scenario seems unlikely
+    return files;
   }
 
   /* @see IFormatReader#getCurrentFile() */
