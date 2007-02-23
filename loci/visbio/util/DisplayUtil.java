@@ -125,6 +125,8 @@ public final class DisplayUtil {
       d.disableEvent(DisplayEvent.DESTROYED);
       d.disableEvent(DisplayEvent.MAP_REMOVED);
       d.enableEvent(DisplayEvent.MOUSE_DRAGGED);
+      d.enableEvent(DisplayEvent.MOUSE_MOVED); // for the polyline tool
+      //ACS TODO how does enabling MOUSE_MOVED affect performance?
 
       // configure keyboard behavior
       KeyboardBehavior kb = null;
@@ -476,6 +478,16 @@ public final class DisplayUtil {
 
       //canvas.getGraphicsContext3D().flush(true);
     }
+  }
+
+  public static double[][] domainToPixel (DisplayImpl d, float[][] nodes) {
+    double[][] ret = new double[2][nodes[0].length];
+    for (int i=0; i<nodes[0].length; i++) {
+       int[] coords = domainToPixel (d, new double[]{nodes[0][i], nodes[1][i]});
+       ret[0][i] = coords[0];
+       ret[1][i] = coords[1];
+    }
+    return ret;
   }
 
   /** Sets whether the given 3D display uses a parallel projection. */
