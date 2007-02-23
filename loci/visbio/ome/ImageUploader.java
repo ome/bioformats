@@ -26,7 +26,7 @@ package loci.visbio.ome;
 import java.io.*;
 import java.util.*;
 import loci.formats.FilePattern;
-import loci.ome.upload.OMEUploader;
+import loci.formats.ome.OMEUploader;
 import loci.visbio.*;
 
 /**

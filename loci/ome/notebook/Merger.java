@@ -29,7 +29,6 @@ import javax.xml.parsers.*;
 import java.io.File;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import java.io.FileInputStream;
 import java.util.Vector;
 
 public class Merger {

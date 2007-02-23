@@ -33,7 +33,7 @@ import ij.plugin.PlugIn;
 import ij.process.*;
 import ij.io.FileInfo;
 import loci.formats.*;
-import loci.ome.upload.*;
+import loci.formats.ome.*;
 
 /**
  * ImageJ plugin for uploading images to an OME server.

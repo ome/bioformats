@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 import org.openmicroscopy.xml.OMENode;
 
 /**

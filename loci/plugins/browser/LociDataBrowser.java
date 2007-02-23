@@ -26,11 +26,10 @@ package loci.plugins.browser;
 
 import ij.*;
 import ij.gui.GenericDialog;
-import ij.gui.MessageDialog;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
-import java.awt.Frame;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D

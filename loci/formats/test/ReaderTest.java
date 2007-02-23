@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.*;
 import junit.framework.*;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 
 /**
  * JUnit tester for Bio-Formats file format readers.

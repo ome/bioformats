@@ -40,7 +40,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import loci.formats.*;
-import loci.formats.in.OMEReader;
+import loci.formats.ome.OMEReader;
+import loci.formats.ome.OMEXMLMetadataStore;
 import loci.plugins.browser.LociDataBrowser;
 
 /**

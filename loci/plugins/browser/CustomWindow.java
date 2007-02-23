@@ -32,11 +32,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import loci.formats.ReflectedUniverse;
-import loci.formats.ReflectException;
-import loci.formats.FilePattern;
-import loci.formats.FormatException;
-import loci.formats.OMEXMLMetadataStore;
+import loci.formats.*;
 import org.openmicroscopy.xml.OMENode;
 import java.io.IOException;
 

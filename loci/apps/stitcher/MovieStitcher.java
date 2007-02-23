@@ -20,6 +20,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 import loci.formats.out.TiffWriter;
 import org.openmicroscopy.xml.*;
 import org.openmicroscopy.xml.st.*;

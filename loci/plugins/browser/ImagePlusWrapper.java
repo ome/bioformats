@@ -29,6 +29,7 @@ import ij.process.*;
 import java.awt.image.*;
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 
 public class ImagePlusWrapper {
 

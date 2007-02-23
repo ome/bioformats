@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 

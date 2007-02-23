@@ -37,6 +37,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import loci.formats.*;
 import loci.formats.in.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 import loci.formats.out.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;

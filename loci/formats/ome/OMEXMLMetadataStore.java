@@ -22,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.formats.ome;
 
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
@@ -31,6 +31,8 @@ import java.lang.reflect.Constructor;
 import java.util.Vector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import loci.formats.FormatReader;
+import loci.formats.MetadataStore;
 import org.openmicroscopy.xml.*;
 import org.openmicroscopy.xml.st.*;
 import org.w3c.dom.Element;
