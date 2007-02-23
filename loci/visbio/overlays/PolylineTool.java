@@ -96,7 +96,7 @@ public class PolylineTool extends OverlayTool {
       if (nearTail) {
         if (!anchored) line.deleteNode(line.getNumNodes()-1);
         releaseLine();
-        System.out.println("nearTail, ending line"); // TEMP
+        //System.out.println("nearTail, ending line"); // TEMP
       }
       else if (nearHead) {
         if (anchored) System.out.println("puzzling case is here");
@@ -104,7 +104,7 @@ public class PolylineTool extends OverlayTool {
           float[] c = line.getNodeCoords(0);
           line.setLastNode(c[0], c[1]);
           releaseLine(); 
-          System.out.println("nearHead, ending line"); // TEMP
+          //System.out.println("nearHead, ending line"); // TEMP
         }
       }
       else {
@@ -172,12 +172,12 @@ public class PolylineTool extends OverlayTool {
 
       if (headDist < 2.0) {
         line.setHighlightNode(0);
-        System.out.println("near head"); // TEMP
+        //System.out.println("near head"); // TEMP
         nearHead = true;
       }
       else if (departed && tailDist < 2.0) {
         line.setHighlightNode(line.getNumNodes() - 2);
-        System.out.println("near tail");// TEMP
+        //System.out.println("near tail");// TEMP
         nearTail = true;
       }
       else {
