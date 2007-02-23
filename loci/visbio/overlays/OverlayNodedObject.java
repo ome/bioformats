@@ -23,9 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import loci.visbio.util.MathUtil;
+import loci.visbio.util.DisplayUtil;
 import visad.*;
 
 /**
@@ -34,6 +36,44 @@ import visad.*;
  */
 
 public abstract class OverlayNodedObject extends OverlayObject {
+
+  // -- Constants --
+  
+  /** Computed (X, Y) pairs for top 1/2 of a unit circle. */
+  protected static final float[][] ARC = arc();
+
+  /** Computes the top 1/2 of a unit circle. */
+  private static float[][] arc() {
+    int res = 16; // resolution for 1/8 of circle
+    float[][] arc = new float[2][4 * res];
+    for (int i=0; i<res; i++) {
+      float t = 0.5f * (i + 0.5f) / res;
+      float x = (float) Math.sqrt(t);
+      float y = (float) Math.sqrt(1 - t);
+
+      arc[0][i] = -y;
+      arc[1][i] = x;
+
+      int i1 = 2 * res - i - 1;
+      arc[0][i1] = -x;
+      arc[1][i1] = y;
+
+      int i2 = 2 * res + i;
+      arc[0][i2] = x;
+      arc[1][i2] = y;
+
+      int i3 = 4 * res - i - 1;
+      arc[0][i3] = y;
+      arc[1][i3] = x;
+    }
+    return arc;
+  }
+
+  /** Highlighting color. */
+  protected static final Color HLT = Color.YELLOW;
+
+  /** Alpha value for highlighting */
+  protected static float HLT_ALPHA = 0.5f;
   
   // -- Fields --
 
@@ -49,10 +89,30 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Length of curve of a noded object */
   protected double curveLength;
 
+  /** Whether the head node should be highlighted */
+  protected boolean highlightHead;
+
+  /** Whether the tail node should be highlighted */
+  protected boolean highlightTail;
+
+  /** Whether there is a higlighted node */
+  protected boolean highlightNode;
+
+  /** Index of the highlighted node */
+  protected int highlightIndex;
+
+  /** The active display, used by the getData method */
+  protected DisplayImpl display;
+
   // -- Constructors --
 
   /** Constructs an uninitialized noded object. */
-  public OverlayNodedObject(OverlayTransform overlay) { super(overlay); }
+  public OverlayNodedObject(OverlayTransform overlay) { 
+    super(overlay); 
+    setHighlightHead(false);
+    setHighlightTail(false);
+    turnOffHighlighting();
+  }
 
   /** Constructs a noded object. */
   public OverlayNodedObject(OverlayTransform overlay,
@@ -70,6 +130,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
     numNodes = 1;
     computeGridParameters();
     computeLength();
+    setHighlightHead(false);
+    setHighlightTail(false);
+    turnOffHighlighting();
   }
 
   /** Constructs a noded object from an array of nodes. */
@@ -82,6 +145,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
     updateBoundingBox();
     computeGridParameters();
     computeLength();
+    setHighlightHead(false);
+    setHighlightTail(false);
+    turnOffHighlighting();
   }
 
   // -- OverlayObject API methods --
@@ -91,27 +157,101 @@ public abstract class OverlayNodedObject extends OverlayObject {
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
-    float[][] setSamples = nodes;
-    float r = color.getRed() / 255f;
-    float g = color.getGreen() / 255f;
-    float b = color.getBlue() / 255f;
+    boolean circleFilled = false; // can't set to true right now w/o
+    // Manifold dimension mismatch occuring, since nodes are of 
+    // manifold dimension 1.
 
-    FlatField field = null;
-    try {
-      SampledSet fieldSet = new Gridded2DSet(domain,
-        setSamples, setSamples[0].length, null, null, null, false);
-      if (filled) {
-        Irregular2DSet roiSet =
-          DelaunayCustom.fillCheck((Gridded2DSet) fieldSet, false);
-        if (roiSet != null) fieldSet = roiSet;
+    float scale;
+    if (display != null) scale = getScalingValue(display);
+    else scale = 1f;
+
+    int arcLen = ARC[0].length;
+    int len = 2 * arcLen;
+    float rad = 10.0f * scale; // 10.0 pixels wide per active display
+
+    float[][] highlightSetSamples = new float[2][0];
+
+    if (isHighlightNode()) {
+      highlightSetSamples = new float[2][circleFilled ? len : len + 1];
+      float[] c = getNodeCoords(getHighlightedNodeIndex());
+
+      // top half of circle
+      for (int i=0; i<arcLen; i++) {
+        highlightSetSamples[0][i] = c[0] + rad * ARC[0][i];
+        highlightSetSamples[1][i] = c[1] + rad * ARC[1][i];
       }
 
-      int len = fieldSet.getSamples(false)[0].length;
-      float[][] rangeSamples = new float[4][len];
-      Arrays.fill(rangeSamples[0], r);
-      Arrays.fill(rangeSamples[1], g);
-      Arrays.fill(rangeSamples[2], b);
-      Arrays.fill(rangeSamples[3], 1.0f);
+      // bottom half of circle
+      for (int i=0; i<arcLen; i++) {
+        int ndx = circleFilled? arcLen + i : len - i - 1;
+        highlightSetSamples[0][ndx] = c[0] + rad * ARC[0][i];
+        highlightSetSamples[1][ndx] = c[1] - rad * ARC[1][i];
+      }
+    } 
+    
+    FlatField field = null;
+    FlatField highlightField = null;
+    try {
+      //highlight 
+      SampledSet highlightSet = null;
+      if (isHighlightNode()) {
+        if (circleFilled) {
+          highlightSet = new Gridded2DSet(domain, highlightSetSamples,
+            arcLen, 2, null, null, null, false);
+        }
+        else {
+          highlightSetSamples[0][len] = highlightSetSamples[0][0];
+          highlightSetSamples[1][len] = highlightSetSamples[1][0];
+          highlightSet = new Gridded2DSet(domain, highlightSetSamples,
+              highlightSetSamples[0].length, null, null, null, false);
+        }
+      }
+
+     // nodes
+      SampledSet nodesSet = new Gridded2DSet(domain,
+        nodes, maxNodes, null, null, null, false);
+      
+      // I've written !isDrawing() to prevent a manifold dimension mismatch
+      // that occurs when drawing filled polylines
+      if (filled && !isDrawing()) {  
+        Irregular2DSet roiSet =
+          DelaunayCustom.fillCheck((Gridded2DSet) nodesSet, false);
+        if (roiSet != null)  nodesSet = roiSet;
+      }
+
+      int hlen = 0;
+      int totalSamples = nodesSet.getLength();
+      if (highlightSet != null) {
+        hlen = highlightSet.getLength(); 
+        totalSamples += hlen; 
+      }
+
+      float r = color.getRed() / 255f;
+      float g = color.getGreen() / 255f;
+      float b = color.getBlue() / 255f;
+
+      float hltR = HLT.getRed() / 255f;
+      float hltG = HLT.getGreen() / 255f;
+      float hltB = HLT.getBlue() / 255f;
+      float hltA = HLT_ALPHA;
+
+      float[][] rangeSamples = new float[4][totalSamples];
+      Arrays.fill(rangeSamples[0], 0, hlen, hltR);
+      Arrays.fill(rangeSamples[1], 0, hlen, hltG);
+      Arrays.fill(rangeSamples[2], 0, hlen, hltB);
+      Arrays.fill(rangeSamples[3], 0, hlen, hltA);
+
+      Arrays.fill(rangeSamples[0], hlen, totalSamples, r);
+      Arrays.fill(rangeSamples[1], hlen, totalSamples, g);
+      Arrays.fill(rangeSamples[2], hlen, totalSamples, b);
+      Arrays.fill(rangeSamples[3], hlen, totalSamples, 1.0f);
+      
+      // select which sets to include in union set
+      SampledSet[] sets;
+      if (isHighlightNode()) sets = new SampledSet[]{highlightSet, nodesSet};  
+      else sets = new SampledSet[]{nodesSet};
+      
+      UnionSet fieldSet = new UnionSet(domain, sets);
 
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
@@ -119,7 +259,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
-    return field;
+    return field; // return field;
   }
 
   /**
@@ -155,6 +295,20 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
 
+  /** True iff the head node is highlighted. */
+  public boolean isHighlightHead() { return highlightHead; }
+  // TODO get rid of this ACS
+
+  /** True iff the tail node is highlighted. */
+  public boolean isHighlightTail() { return highlightTail; }
+  // TODO get rid of this ACS
+
+  /** True iff there is a highlighted node. */
+  public boolean isHighlightNode() { return highlightNode; }
+
+  /** Returns index of highlighted node. */ 
+  public int getHighlightedNodeIndex() { return highlightIndex; }
+
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
 
@@ -183,6 +337,27 @@ public abstract class OverlayNodedObject extends OverlayObject {
   }
 
   // -- Object API methods --
+
+  /** Makes this object aware of active display. 
+   *  The display is required to convert back and forth from pixel
+   *  to domain coordinates
+   */
+  public void setActiveDisplay (DisplayImpl d) { display = d; }
+  
+  /** Toggle highlight head of polyline. */
+  public void setHighlightHead(boolean b) { highlightHead = b; }
+
+  /** Toggle highlight tail of polyline. */
+  public void setHighlightTail(boolean b) { highlightTail = b; }
+
+  /** Highlight a node. */ 
+  public void setHighlightNode(int i) {
+    highlightNode = true;
+    highlightIndex = i;
+  }
+
+  /** Turn off node highlighting */
+  public void turnOffHighlighting() { highlightNode = false; }
 
   /** Returns coordinates of node at given index in the node array */
   public float[] getNodeCoords (int index) {
@@ -218,9 +393,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   
   /** Changes coordinates of the overlay's first endpoint. */
   public void setCoords(float x1, float y1) {
-    this.x1 = x1; 
-    this.y1 = y1;
-
     // different from super:
     float dx = x1-this.x1;
     float dy = y1-this.y1;
@@ -228,6 +400,11 @@ public abstract class OverlayNodedObject extends OverlayObject {
       nodes[0][i] = nodes[0][i]+dx;
       nodes[1][i] = nodes[1][i]+dy;
     }
+
+    // same as super
+    this.x1 = x1;
+    this.y1 = y1;
+
     computeGridParameters();
   }
 
@@ -292,6 +469,15 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
   }
 
+  /** Sets coordinates of last node. */
+  public void setLastNode(float x, float y) {
+    setNodeCoords(numNodes-1, x, y);
+    if (numNodes < maxNodes) {
+      Arrays.fill(nodes[0], numNodes, maxNodes, x);
+      Arrays.fill(nodes[1], numNodes, maxNodes, y);
+    }
+  }
+    
   /** Prints node array of current freeform; for debugging */
   private void printNodes(float[][] nodes) {
     System.out.println("Printing nodes...");
@@ -302,9 +488,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Sets next node coordinates. */
   public void setNextNode(float x, float y) {
-    //System.out.println("OverlayObject.setNextNode(...) called. " +
-    //  "numNodes = " + numNodes + ", maxNodes = " + maxNodes);
-    //printNodes(getNodes());
     if (numNodes >= maxNodes) {
       maxNodes *= 2;
       nodes = resizeNodeArray(nodes, maxNodes);
@@ -430,5 +613,11 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return a2;
   }
 
-
+  /** Returns a domain/pixel scaling value */
+  protected float getScalingValue(DisplayImpl d) {
+    double[] oDom = DisplayUtil.pixelToDomain(d, 0, 0);
+    double[] pDom = DisplayUtil.pixelToDomain(d, 1, 0);
+    double scl = MathUtil.getDistance(oDom, pDom); 
+    return (float) scl;
+  }
 }

@@ -153,7 +153,8 @@ public class OverlayWidget extends JPanel implements ActionListener,
       new TextTool(overlay),
       new OvalTool(overlay),
       new BoxTool(overlay),
-      new ArrowTool(overlay)
+      new ArrowTool(overlay),
+      new PolylineTool(overlay),
     };
     tools = new Vector(toolList.length);
 

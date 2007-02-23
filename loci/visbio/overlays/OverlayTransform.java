@@ -689,6 +689,14 @@ public class OverlayTransform extends DataTransform
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
     if (id == DisplayEvent.TRANSFORM_DONE) updatePosition(display);
+    else if (id == DisplayEvent.MOUSE_MOVED) {
+      if (tool != null) {
+        int px = e.getX(), py = e.getY();
+        double[] coords = DisplayUtil.pixelToDomain(display, px, py);
+        tool.mouseMoved(e, px, py,
+          (float) coords[0], (float) coords[1], pos, e.getModifiers());
+      }
+    }
     else if (id == DisplayEvent.MOUSE_PRESSED_RIGHT) {
       mouseDownRight = true;
       if (mouseDownLeft) releaseLeft(e, display, tool);

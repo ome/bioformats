@@ -102,6 +102,21 @@ public class OverlayTool {
   }
 
   /**
+   * Instructs this tool to respond to mouse movement.
+   * @param e DisplayEvent corresponding to this mouse movement.
+   * @param px X coordinate of mouse movement in pixel coordinate system.
+   * @param py Y coordinate of mouse movement in pixel coordinate system.
+   * @param dx X coordinate of mouse movement in data coordinate system.
+   * @param dy Y coordinate of mouse movement in data coordinate system.
+   * @param pos Dimensional position of mouse movement.
+   * @param mods Modifiers of mouse movement.
+   */
+  public void mouseMoved(DisplayEvent e, int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
+  }
+
+  /**
    * Instructs this tool to respond to a key press.
    * @param code Key code of pressed key.
    * @param mods Modifiers of pressed key.

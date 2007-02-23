@@ -31,6 +31,8 @@ import visad.*;
 
 public class OverlayPolyline extends OverlayNodedObject {
 
+  // -- Fields --
+  
   // -- Constructors --
 
   /** Constructs an uninitialized freeform. */
@@ -48,12 +50,12 @@ public class OverlayPolyline extends OverlayNodedObject {
     super(overlay, nodes);
   }
 
-  // -- OverlayObject API methods --
-
   // -- Internal OverlayObject API methods --
 
   // -- Object API methods --
-
+  
+  
+  // -- OverlayObject API methods --
   /** Gets a short string representation of this freeform. */
   public String toString() { return "Polyline"; }
   
