@@ -1,3 +1,10 @@
+* Many bugfixes: Leica LEI, ICS, FV1000 OIB, OME-XML and others
+* Better metadata parsing for BioRad PIC files
+* Enhanced API for calculating channel minimum and maximum values
+* Expanded MetadataStore API to include more semantic types
+* Added thumbnails to series chooser in ImageJ plugin
+* Fixed plugins that upload and download from an OME server
+
 2007 Feb 7:
 * Added plugin for downloading images from OME server
 * Improved HTTP import functionality
