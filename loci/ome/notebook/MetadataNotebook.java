@@ -76,6 +76,9 @@ public class MetadataNotebook extends JFrame
   /**The File&gt;New menu item.*/
   protected JMenuItem fileNew;
 
+  /**The File&gt;Save menu item.*/
+  protected JMenuItem fileSave;
+
   /**The NotePane that displays a comprehensive list of all notes.*/
   protected NotePane noteP;
 
@@ -195,7 +198,7 @@ public class MetadataNotebook extends JFrame
     fileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, MENU_MASK));
     JSeparator jSep = new JSeparator();
     file.add(jSep);
-    JMenuItem fileSave = new JMenuItem("Save");
+    fileSave = new JMenuItem("Save");
     file.add(fileSave);
     fileSave.setActionCommand("save");
     fileSave.addActionListener(this);
@@ -333,7 +336,16 @@ public class MetadataNotebook extends JFrame
   // -- MetadataNotebook API methods --
 
   /** Sets the current file being displayed to this file. */
-  protected void setCurrentFile(File aFile) { currentFile = aFile; }
+  protected void setCurrentFile(File aFile) {
+    currentFile = aFile;
+    boolean allowSave = !metadata.testThirdParty(currentFile);
+    fileSave.setEnabled(allowSave);
+    for (int i=0; i<metadata.tabPanelList.size(); i++) {
+      MetadataPane.TabPanel tp = (MetadataPane.TabPanel)
+        metadata.tabPanelList.get(i);
+      tp.saveButton.setEnabled(allowSave);
+    }
+  }
 
   /** Opens a file, sets the title of the frame to reflect the current file. */
   public void openFile(File file) {
