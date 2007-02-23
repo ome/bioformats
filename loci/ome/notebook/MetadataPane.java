@@ -608,15 +608,16 @@ public class MetadataPane extends JPanel
     
     //creating tiffData from non-OME-Tiff
     if(!isOMETiff) {
-      System.out.println("Isn't OME-Tiff");//TEMP
       for(int i = 0;i<pixList.size();i++) {
         Element thisEle = (Element) pixList.get(i);
         DOMUtil.createChild(thisEle, "TiffData");
       }
     }
     //creating tiff from OMETiff file
-    else if (isOMETiff) {
-      System.out.println("Is OME-Tiff");//TEMP      
+   
+    else if (isOMETiff) { 
+      boolean prompted = false;
+      boolean addElements = false;     
       for(int i = 0;i<pixList.size();i++) {
         Element thisEle = (Element) pixList.get(i);
         String thisID = DOMUtil.getAttribute("ID", thisEle);
@@ -624,8 +625,28 @@ public class MetadataPane extends JPanel
 
         //fixes if TiffData Elements not in File but should be
         if(dataEles.size() == 0) {
-          DOMUtil.createChild(thisEle, "TiffData");
-          continue;
+          if(!prompted) {
+            Object[] options = {"Sounds good", "Cancel (Nothing bad will happen)"};
+          
+            int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
+              "We detected that an OME-xml companion file exists for"
+                + " the file you just opened,\n would you like to merge these"
+                + " files in some manner?",
+              "Companion File Detected",
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE,
+              (javax.swing.Icon)null,
+              options,
+              options[0]);
+              
+              if (n == JOptionPane.YES_OPTION)  addElements = true;
+              prompted = true;
+          }
+            
+          if(addElements) {
+            DOMUtil.createChild(thisEle, "TiffData");
+            continue;
+          }
         }
         
         for(int j = 0;j<dataEles.size();j++) {
@@ -646,8 +667,6 @@ public class MetadataPane extends JPanel
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       DOMUtil.writeXML(baos,doc);
       result = baos.toString();
-      System.out.println(tiffDataStore);//TEMP
-      System.out.println(result);//TEMP
     }
     catch (Exception exc) {
       exc.printStackTrace();
@@ -761,6 +780,7 @@ public class MetadataPane extends JPanel
 
         //Set up thumbnails
         int numSeries = reader.getSeriesCount(id);
+        
         images = new BufferedImage[numSeries+1];
         thumbs = new BufferedImage[numSeries+1];
         for(int i = 0; i<numSeries;i++) {
@@ -788,7 +808,7 @@ public class MetadataPane extends JPanel
           isOMETiff = checkOMETiff(file);
           storeTiffData(file);
         }
-
+       
         //find minimum pixel ID, doesn't have to be zero, if not in
         //standard format, flag this, all thumbs will be the same        
         minPixNum = 0;
@@ -834,6 +854,13 @@ public class MetadataPane extends JPanel
         setOMEXML(ome);
       }
       catch (FormatException exc) {
+        if ("Unsupported ZCT index mapping".equals(exc.getMessage())) {
+          JOptionPane.showMessageDialog(this,
+             "This tiff file is corrupted. The ZCT index mapping is"
+             + " unsupported by bioformats.\nYour metadata will not"
+             + " populate correctly, our apologies.",
+          "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
+        }
         img = null;
         thumb = null;
         String s = new String(header).trim();
