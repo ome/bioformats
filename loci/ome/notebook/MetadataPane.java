@@ -868,8 +868,7 @@ public class MetadataPane extends JPanel
           // raw OME-XML
           in = new DataInputStream(new FileInputStream(file));
           byte[] data = new byte[(int) file.length()];
-          System.arraycopy(header, 0, data, 0, 8);
-          in.readFully(data, 8, data.length - 8);
+          in.readFully(data);
           in.close();
           setOMEXML(new String(data));
         }
@@ -1927,8 +1926,8 @@ public class MetadataPane extends JPanel
           try {
             pixNum = Integer.parseInt(pixNumString);
             int indexNum = pixNum - minPixNum;
-            tableThumb = thumbs[indexNum];
-            tableImage = images[indexNum];
+            tableThumb = thumbs == null ? null : thumbs[indexNum];
+            tableImage = images == null ? null : images[indexNum];
           }
           catch (java.lang.NumberFormatException exc) {
             //this happens when multiple pixels aren't present
@@ -1936,7 +1935,8 @@ public class MetadataPane extends JPanel
             tableThumb = thumb;
             tableImage = img;
           }
-          imageLabel = new JLabel(new ImageIcon(tableThumb));
+          imageLabel = tableThumb == null ? new JLabel() :
+            new JLabel(new ImageIcon(tableThumb));
           imageLabel.setToolTipText("The middle image of these pixels." +
             " Click for full sized image.");
           imageLabel.addMouseListener(this);
