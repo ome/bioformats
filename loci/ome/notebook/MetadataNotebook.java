@@ -31,9 +31,9 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileFilter;
+import loci.formats.*;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
-import loci.formats.*;
 
 /**
  * An user-friendly application for displaying and editing OME-XML metadata.
@@ -53,10 +53,10 @@ public class MetadataNotebook extends JFrame
   // -- Fields --
 
   /**The file chooser used to save and open files.*/
-  protected JFileChooser opener,saver;
-  
+  protected JFileChooser opener, saver;
+
   /**Format filters for saver JFileChooser.*/
-  protected ExtensionFileFilter tiffFilter,omeFilter;
+  protected ExtensionFileFilter tiffFilter, omeFilter;
 
   /**The MetadataPane used to display/edit OMEXML content.*/
   protected MetadataPane metadata;
@@ -70,7 +70,7 @@ public class MetadataNotebook extends JFrame
   /**Signifies whether we're opening(true) or saving(false) a file.*/
   protected boolean opening;
 
-  /**Holds the xml viewer that displays xml data in a JTree*/
+  /**Holds the xml viewer that displays xml data in a JTree.*/
   protected loci.ome.viewer.MetadataPane mdp;
 
   /**The File&gt;New menu item.*/
@@ -86,8 +86,7 @@ public class MetadataNotebook extends JFrame
   protected WiscScanPane scanP;
 
   /**The checkboxes that switch between the four views.*/
-  protected JCheckBoxMenuItem advView, noteView, normView, scanView,
-    showID;
+  protected JCheckBoxMenuItem advView, noteView, normView, scanView, showID;
 
   // -- Constructors --
 
@@ -97,7 +96,7 @@ public class MetadataNotebook extends JFrame
 
   /** Create a default notebook window with save function and editing enabled.*/
   public MetadataNotebook(String[] args) {
-    this(args,(OMENode)null,(String)null,true,true);
+    this(args, (OMENode) null, (String) null, true, true);
   }
 
   /**
@@ -160,7 +159,7 @@ public class MetadataNotebook extends JFrame
       setTitle("OME Metadata Notebook - " + file);
     }
     else metadata = new MetadataPane((File) null, addSave, editable);
-    if(ome != null) metadata.setOMEXML(ome);
+    if (ome != null) metadata.setOMEXML(ome);
 
     metadata.setVisible(true);
     mdp.setVisible(false);
@@ -208,7 +207,8 @@ public class MetadataNotebook extends JFrame
     fileSaveComp.setActionCommand("saveComp");
     fileSaveComp.addActionListener(this);
     fileSaveComp.setMnemonic('c');
-    fileSaveComp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, MENU_MASK));
+    fileSaveComp.setAccelerator(
+      KeyStroke.getKeyStroke(KeyEvent.VK_C, MENU_MASK));
     fileSaveComp.setEnabled(addSave);
     JMenuItem fileSaveAs = new JMenuItem("Save As...");
     file.add(fileSaveAs);
@@ -234,7 +234,7 @@ public class MetadataNotebook extends JFrame
     menubar.add(tabsMenu);
     Element[] tabs = tp.getTabs();
     String[] tabNames = new String[tabs.length];
-    for (int i = 0;i<tabs.length;i++) {
+    for (int i = 0; i<tabs.length; i++) {
       Element e = tabs[i];
       tabNames[i] = MetadataPane.getTreePathName(e);
     }
@@ -284,7 +284,6 @@ public class MetadataNotebook extends JFrame
     mergeItem.setActionCommand("merge");
     mergeItem.setMnemonic('m');
     mergeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, MENU_MASK));
-    
 
     JMenu options = new JMenu("Options");
     options.setMnemonic('o');
@@ -308,14 +307,15 @@ public class MetadataNotebook extends JFrame
 
     //make a filechooser to open and save our precious files
     tiffFilter = new ExtensionFileFilter(
-      new String[] {"tif", "tiff"}, "Tagged Image File     Format");
+      new String[] {"tif", "tiff"}, "Tagged Image File Format");
     omeFilter = new ExtensionFileFilter("ome", "OME-XML");
-    ExtensionFileFilter allFilter = new ExtensionFileFilter(new String[] {"tif","tiff","ome"},
-      "All supported file formats");
-    ExtensionFileFilter[] filters = new ExtensionFileFilter[] {tiffFilter, omeFilter};
+    ExtensionFileFilter allFilter = new ExtensionFileFilter(
+      new String[] {"tif", "tiff", "ome"}, "All supported file formats");
+    ExtensionFileFilter[] filters =
+      new ExtensionFileFilter[] {tiffFilter, omeFilter};
     saver = FormatHandler.buildFileChooser(filters);
-    saver.setCurrentDirectory(new File(System.getProperty("user.dir"))); 
-    if(metadata.reader == null) metadata.reader = new ImageReader();
+    saver.setCurrentDirectory(new File(System.getProperty("user.dir")));
+    if (metadata.reader == null) metadata.reader = new ImageReader();
     opener = metadata.reader.getFileChooser();
     opener.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
@@ -332,38 +332,39 @@ public class MetadataNotebook extends JFrame
 
   // -- MetadataNotebook API methods --
 
-  /**Set the current file being displayed to this file.*/
+  /** Sets the current file being displayed to this file. */
   protected void setCurrentFile(File aFile) { currentFile = aFile; }
 
-  /** opens a file, sets the title of the frame to reflect the current file.*/
+  /** Opens a file, sets the title of the frame to reflect the current file. */
   public void openFile(File file) {
     metadata.setOMEXML(file);
     mdp.setOMEXML(file);
     scanP.setOMEXML(metadata.getRoot());
-    if(noteView.getState()) noteP.setPanels(metadata.panelList);
+    if (noteView.getState()) noteP.setPanels(metadata.panelList);
     setTitle("OME Metadata Notebook - " + file);
   }
 
-  /** saves to a file, sets title of frame to reflect the current file */
+  /** Saves to a file, sets title of frame to reflect the current file. */
   public void saveFile(File file) {
     metadata.saveFile(file);
   }
-  
-  /** saves to a companion file, same path with .meta extenstion, pure ome*/
+
+  /** Saves to a companion file, same path with .meta extenstion, pure ome. */
   public void saveCompanionFile(File file) {
     metadata.saveCompanionFile(file);
   }
-  
+
   public void saveTiffFile(File file) {
     metadata.saveTiffFile(file);
   }
-  
+
   public void saveTiffFile(File file, String outPath) {
-    metadata.saveTiffFile(file,outPath);
+    metadata.saveTiffFile(file, outPath);
   }
 
-  /**Given an array of Strings of appropriate tab names, this method
-   * sets up the tab menu accordingly.
+  /**
+   * Given an array of Strings of appropriate tab names,
+   * this method sets up the tab menu accordingly.
    */
   public void changeTabMenu(String[] tabs) {
     tabsMenu.removeAll();
@@ -463,7 +464,7 @@ public class MetadataNotebook extends JFrame
       metadata.merge();
     }
     else if ("exit".equals(cmd)) {
-          if (metadata.getState()) {
+      if (metadata.getState()) {
         Object[] options = {"Yes, exit!", "No thanks."};
         int n = JOptionPane.showOptionDialog(this,
           "Are you sure you want to exit without\n" +
@@ -492,7 +493,7 @@ public class MetadataNotebook extends JFrame
         "OME Metadata Notebook", JOptionPane.INFORMATION_MESSAGE);
     }
     else if (cmd.startsWith("tabChange")) {
-      metadata.tabChange( Integer.parseInt(cmd.substring(9)) );
+      metadata.tabChange(Integer.parseInt(cmd.substring(9)));
     }
     else if ("export".equals(cmd)) {
       noteP.tPanels = metadata.panelList;
@@ -597,9 +598,9 @@ public class MetadataNotebook extends JFrame
     else {
       File outFile = saver.getSelectedFile();
       FileFilter filter = saver.getFileFilter();
-      if(filter.equals((FileFilter)omeFilter)) {
+      if (filter.equals((FileFilter) omeFilter)) {
         if (outFile.getPath().endsWith(".ome")) {
-          currentFile = outFile; 
+          currentFile = outFile;
           saveFile(outFile);
         }
         else {
@@ -608,23 +609,29 @@ public class MetadataNotebook extends JFrame
           saveFile(outFile);
         }
       }
-      else if(filter.equals((FileFilter)tiffFilter)) {
-        if(outFile.getPath().endsWith(".tif") || outFile.getPath().endsWith(".tiff")) {
-          saveTiffFile(currentFile,outFile.getPath());
+      else if (filter.equals((FileFilter) tiffFilter)) {
+        if (outFile.getPath().endsWith(".tif") ||
+          outFile.getPath().endsWith(".tiff"))
+        {
+          saveTiffFile(currentFile, outFile.getPath());
           currentFile = outFile;
         }
         else {
           outFile = new File(outFile.getPath() + ".tif");
-          saveTiffFile(currentFile,outFile.getPath());
+          saveTiffFile(currentFile, outFile.getPath());
           currentFile = outFile;
         }
       }
       else {
         String path = outFile.getPath();
-        if(path.endsWith("ome")) saveFile(currentFile);
-        else if(path.endsWith("tif") || path.endsWith("tiff")) saveTiffFile(currentFile,path);
-        else System.out.println("We could not identify which format you wanted, so the file"
-          + " was not saved.");
+        if (path.endsWith("ome")) saveFile(currentFile);
+        else if (path.endsWith("tif") || path.endsWith("tiff")) {
+          saveTiffFile(currentFile, path);
+        }
+        else {
+          System.out.println("We could not identify which format you wanted, " +
+            "so the file was not saved.");
+        }
       }
     }
     wait(false);

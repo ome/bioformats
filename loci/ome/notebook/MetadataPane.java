@@ -43,7 +43,6 @@ import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
-
 /**
  * A panel that displays OME-XML metadata.
  * Most of the gui code is in here.
@@ -75,15 +74,15 @@ public class MetadataPane extends JPanel
 
   /**The color that signifies a button's operation is to add something.*/
   public static final Color ADD_COLOR =
-    new Color(0,100,0);
+    new Color(0, 100, 0);
 
   /**The color that signifies a button's operation is to delete something.*/
   public static final Color DELETE_COLOR =
-    new Color(100,0,0);
+    new Color(100, 0, 0);
 
   /**The main text color of most things.*/
   public static final Color TEXT_COLOR =
-    new Color(0,0,50);
+    new Color(0, 0, 50);
 
   // -- Fields --
 
@@ -137,20 +136,20 @@ public class MetadataPane extends JPanel
 
   /** Holds the first image of a tiff file.*/
   public BufferedImage img, thumb;
-  
-  public BufferedImage[] images,thumbs;
-  
+
+  public BufferedImage[] images, thumbs;
+
   /** Holds the ImageReader used to open image or null if none used.*/
   protected ImageReader reader;
-  
+
   private int minPixNum;
-  
+
   private boolean pixelsIDProblem, isOMETiff;
-  
+
   protected String fileID;
-  
+
   protected Hashtable tiffDataStore;
-  
+
   protected OMEXMLMetadataStore ms;
 
   // -- Fields - raw panel --
@@ -182,7 +181,7 @@ public class MetadataPane extends JPanel
   * @param file The file to be initially displayed.
   * @param save Whether saving should be allowed.
   */
-  public MetadataPane(File file, boolean save) { this(file,save,true); }
+  public MetadataPane(File file, boolean save) { this(file, save, true); }
 
   /**
    * Constructs a pane to display the OME-XML metadata of a
@@ -215,7 +214,7 @@ public class MetadataPane extends JPanel
     tabPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
     setupTabs();
     setLayout(new CardLayout());
-    add(tabPane,"tabs");
+    add(tabPane, "tabs");
     setPreferredSize(new Dimension(700, 500));
     tabPane.setVisible(true);
     setVisible(true);
@@ -240,8 +239,8 @@ public class MetadataPane extends JPanel
     rawText.setEditable(false);
     rawPanel.add(new JScrollPane(rawText), BorderLayout.CENTER);
     rawPanel.setVisible(false);
-    add(rawPanel,"raw");
-    
+    add(rawPanel, "raw");
+
     //open initial file
     if (file != null) {
       setOMEXML(file);
@@ -278,7 +277,7 @@ public class MetadataPane extends JPanel
   */
   public void stateChanged(boolean change) {
     hasChanged = change;
-    for (int i = 0; i < tabPanelList.size();i++) {
+    for (int i = 0; i < tabPanelList.size(); i++) {
       TabPanel thisTab = (TabPanel) tabPanelList.get(i);
       if (change) thisTab.saveButton.setForeground(ADD_COLOR);
       else thisTab.saveButton.setForeground(TEXT_COLOR);
@@ -287,7 +286,7 @@ public class MetadataPane extends JPanel
 
   /** Get the OMENode currently being edited.*/
   public OMENode getRoot() { return thisOmeNode; }
-  
+
   public boolean testThirdParty(File file) {
     String id = file.getPath();
     if (!file.exists()) return false;
@@ -305,10 +304,10 @@ public class MetadataPane extends JPanel
       return true;
     }
   }
-  
+
   public void askCompanionInstead(File file) {
     Object[] options = {"Sounds good", "Cancel"};
-        
+
     int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
             "The file you are trying to save to is a third-party format."
             + " Currently Notebook can only save to TIFF or OMEXML files."
@@ -327,7 +326,7 @@ public class MetadataPane extends JPanel
     try {
       //use the node tree in the MetadataPane to write flattened OMECA
       //to a given file
-      if( testThirdParty(file) ) {
+      if(testThirdParty(file)) {
         askCompanionInstead(file);
         return;
       }
@@ -337,7 +336,7 @@ public class MetadataPane extends JPanel
         if (originalTIFF.equals(file)) {
           //just rewrite image description of original file.
           RandomAccessFile raf = new RandomAccessFile(file, "rw");
-          xml = addTiffData(xml,file);
+          xml = addTiffData(xml, file);
           TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
           raf.close();
         }
@@ -361,10 +360,10 @@ public class MetadataPane extends JPanel
         "or in use by another program. Game over, man.",
         "Unable to Write to Specified File", JOptionPane.ERROR_MESSAGE);
       System.out.println("ERROR! Attempt failed to open file: " +
-        file.getName() );
+        file.getName());
     }
   }
-  
+
   public void saveCompanionFile(File file) throws RuntimeException {
     File compFile = new File(file.getPath() + ".ome");
     if (compFile.exists()) compFile.delete();
@@ -376,7 +375,7 @@ public class MetadataPane extends JPanel
       else exc.printStackTrace();
     }
   }
-  
+
   public void saveTiffFile(File file) throws RuntimeException{
     if(originalTIFF != null && originalTIFF.equals(file)) saveFile(file);
     else {
@@ -390,7 +389,7 @@ public class MetadataPane extends JPanel
       int imageCount = 0;
       String xml = null;
 
-      try {      
+      try {
         xml = thisOmeNode.writeOME(false);
         xml = addTiffData(xml, file);
         imageCount = reader.getImageCount(id);
@@ -400,10 +399,10 @@ public class MetadataPane extends JPanel
         else exc.printStackTrace();
       }
 
-      for(int i = 0;i < imageCount;i++) {
+      for(int i = 0; i < imageCount; i++) {
         BufferedImage plane = null;
-        
-        try {      
+
+        try {
           plane = reader.openImage(id, i);
         }
         catch(Exception exc) {
@@ -411,15 +410,15 @@ public class MetadataPane extends JPanel
           else exc.printStackTrace();
         }
 
-        Hashtable ifd = null;  
+        Hashtable ifd = null;
         if (i == 0) {
-          // save OME-XML metadata to TIFF file's first IFD  
+          // save OME-XML metadata to TIFF file's first IFD
           ifd = new Hashtable();
           TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
-        }  
+        }
         // write plane to output file
-        
-        try {      
+
+        try {
           writer.saveImage(outId, plane, ifd, i == imageCount - 1);
         }
         catch(Exception exc) {
@@ -434,7 +433,7 @@ public class MetadataPane extends JPanel
       }
     }
   }
-  
+
   public void saveTiffFile(File file, String outId) throws RuntimeException{
     String id = currentFile.getPath();
     File outFile = new File(outId);
@@ -445,7 +444,7 @@ public class MetadataPane extends JPanel
     int imageCount = 0;
     String xml = null;
 
-    try {      
+    try {
       xml = thisOmeNode.writeOME(false);
       xml = addTiffData(xml, file);
       imageCount = reader.getImageCount(id);
@@ -455,10 +454,10 @@ public class MetadataPane extends JPanel
       else exc.printStackTrace();
     }
 
-    for(int i = 0;i < imageCount;i++) {
+    for(int i = 0; i < imageCount; i++) {
       BufferedImage plane = null;
-      
-      try {      
+
+      try {
         plane = reader.openImage(id, i);
       }
       catch(Exception exc) {
@@ -466,15 +465,15 @@ public class MetadataPane extends JPanel
         else exc.printStackTrace();
       }
 
-      Hashtable ifd = null;  
+      Hashtable ifd = null;
       if (i == 0) {
-        // save OME-XML metadata to TIFF file's first IFD  
+        // save OME-XML metadata to TIFF file's first IFD
         ifd = new Hashtable();
         TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
-      }  
+      }
       // write plane to output file
-      
-      try {      
+
+      try {
         writer.saveImage(outId, plane, ifd, i == imageCount - 1);
       }
       catch(Exception exc) {
@@ -488,16 +487,16 @@ public class MetadataPane extends JPanel
       mn.setCurrentFile(file);
     }
   }
-  
+
   public void merge() throws RuntimeException {
     if (currentFile != null) {
       String id = currentFile.getPath();
       ImageReader read = new ImageReader();
       OMEXMLMetadataStore oms = new OMEXMLMetadataStore();
       read.setMetadataStore(oms);
-      
-      try { 
-        //just to repopulate the metadatastore to original state     
+
+      try {
+        //just to repopulate the metadatastore to original state
         int imageCount = read.getImageCount(id);
 //        BufferedImage whatever = reader.openImage(id, imageCount/2);
       }
@@ -506,10 +505,10 @@ public class MetadataPane extends JPanel
         else exc.printStackTrace();
       }
       OMENode ome = (OMENode)oms.getRoot();
-    
+
       File companion = new File(currentFile.getPath() + ".ome");
       if (companion.exists()) {
-        Merger merge = new Merger(ome,companion,this);
+        Merger merge = new Merger(ome, companion, this);
         setOMEXML(merge.getRoot());
       }
       else {
@@ -524,34 +523,34 @@ public class MetadataPane extends JPanel
             "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
     }
   }
-  
+
   public void storeTiffData(File file) {
     tiffDataStore = new Hashtable();
     Document doc;
     Vector pixList = new Vector();
-    DocumentBuilderFactory docFact = 
+    DocumentBuilderFactory docFact =
       DocumentBuilderFactory.newInstance();
-        
+
     try {
       DocumentBuilder db = docFact.newDocumentBuilder();
-      
+
       //get TIFF comment without parsing out TiffData Elements
       RandomAccessStream in = new RandomAccessStream(currentFile.getPath());
-      Hashtable ifd = TiffTools.getFirstIFD(in);  
-      in.close();  // extract comment  
-      Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);  
-      String comment = null;  
-      if (o instanceof String) comment = (String) o;  
-      else if (o instanceof String[]) {  
+      Hashtable ifd = TiffTools.getFirstIFD(in);
+      in.close();  // extract comment
+      Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+      String comment = null;
+      if (o instanceof String) comment = (String) o;
+      else if (o instanceof String[]) {
         String[] s = (String[]) o;
         if (s.length > 0) comment = s[0];
-      }  
+      }
       else if (o != null) comment = o.toString();
-      
+
       ByteArrayInputStream bis = new ByteArrayInputStream(comment.getBytes());
       doc = db.parse((java.io.InputStream)bis);
-      pixList = DOMUtil.findElementList("Pixels",doc);
-      
+      pixList = DOMUtil.findElementList("Pixels", doc);
+
     }
     catch (IOException exc) {
       exc.printStackTrace();
@@ -562,39 +561,39 @@ public class MetadataPane extends JPanel
     catch (javax.xml.parsers.ParserConfigurationException exc) {
       exc.printStackTrace();
     }
-    
-    for(int i = 0;i<pixList.size();i++) {
+
+    for(int i = 0; i<pixList.size(); i++) {
       Element thisEle = (Element) pixList.get(i);
       String thisID = DOMUtil.getAttribute("ID", thisEle);
-      Vector dataList = DOMUtil.getChildElements("TiffData",thisEle);
-      Vector tiffDataAttrs = new Vector();;
-      for(int j = 0;j<dataList.size();j++) {
+      Vector dataList = DOMUtil.getChildElements("TiffData", thisEle);
+      Vector tiffDataAttrs = new Vector();
+      for(int j = 0; j<dataList.size(); j++) {
         Element thisData = (Element) dataList.get(j);
         String[] attrNames = DOMUtil.getAttributeNames(thisData);
         String[] attrValues = DOMUtil.getAttributeValues(thisData);
         Hashtable attrs = new Hashtable();
-        for(int k= 0;k<attrNames.length;k++) {
-          attrs.put(attrNames[k],attrValues[k]);
+        for(int k= 0; k<attrNames.length; k++) {
+          attrs.put(attrNames[k], attrValues[k]);
         }
         tiffDataAttrs.add(attrs);
       }
 
-      tiffDataStore.put(thisID,tiffDataAttrs);
+      tiffDataStore.put(thisID, tiffDataAttrs);
     }
-    
+
   }
-  
+
   public String addTiffData(String xml, File file) {
     Document doc = null;
     Vector pixList = new Vector();
-    DocumentBuilderFactory docFact = 
+    DocumentBuilderFactory docFact =
       DocumentBuilderFactory.newInstance();
-          
+
     try {
       DocumentBuilder db = docFact.newDocumentBuilder();
       ByteArrayInputStream bis = new ByteArrayInputStream(xml.getBytes());
       doc = db.parse((java.io.InputStream)bis);
-      pixList = DOMUtil.findElementList("Pixels",doc);
+      pixList = DOMUtil.findElementList("Pixels", doc);
     }
     catch (IOException exc) {
       exc.printStackTrace();
@@ -605,20 +604,20 @@ public class MetadataPane extends JPanel
     catch (javax.xml.parsers.ParserConfigurationException exc) {
       exc.printStackTrace();
     }
-    
+
     //creating tiffData from non-OME-Tiff
     if(!isOMETiff) {
-      for(int i = 0;i<pixList.size();i++) {
+      for(int i = 0; i<pixList.size(); i++) {
         Element thisEle = (Element) pixList.get(i);
         DOMUtil.createChild(thisEle, "TiffData");
       }
     }
     //creating tiff from OMETiff file
-   
-    else if (isOMETiff) { 
+
+    else if (isOMETiff) {
       boolean prompted = false;
-      boolean addElements = false;     
-      for(int i = 0;i<pixList.size();i++) {
+      boolean addElements = false;
+      for(int i = 0; i<pixList.size(); i++) {
         Element thisEle = (Element) pixList.get(i);
         String thisID = DOMUtil.getAttribute("ID", thisEle);
         Vector dataEles = (Vector) tiffDataStore.get(thisID);
@@ -626,11 +625,12 @@ public class MetadataPane extends JPanel
         //fixes if TiffData Elements not in File but should be
         if(dataEles.size() == 0) {
           if(!prompted) {
-            Object[] options = {"Sounds good", "Cancel (Nothing bad will happen)"};
-          
+            Object[] options =
+              {"Sounds good", "Cancel (Nothing bad will happen)"};
+
             int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
               "We detected that an OME-xml companion file exists for"
-                + " the file you just opened,\n would you like to merge these"
+                + " the file you just opened, \n would you like to merge these"
                 + " files in some manner?",
               "Companion File Detected",
               JOptionPane.YES_NO_OPTION,
@@ -638,26 +638,26 @@ public class MetadataPane extends JPanel
               (javax.swing.Icon)null,
               options,
               options[0]);
-              
+
               if (n == JOptionPane.YES_OPTION)  addElements = true;
               prompted = true;
           }
-            
+
           if(addElements) {
             DOMUtil.createChild(thisEle, "TiffData");
             continue;
           }
         }
-        
-        for(int j = 0;j<dataEles.size();j++) {
+
+        for(int j=0; j<dataEles.size(); j++) {
           Element thisData = DOMUtil.createChild(thisEle, "TiffData");
           Hashtable attrs = (Hashtable) dataEles.get(j);
           Object[] attrKeys = attrs.keySet().toArray();
-          for(int k = 0;k<attrKeys.length;k++) {
+          for(int k = 0; k<attrKeys.length; k++) {
             String name = (String)attrKeys[k];
             String value = (String)(attrs.get(name));
             if (value == null) value = "";
-            DOMUtil.setAttribute(name,value,thisData);
+            DOMUtil.setAttribute(name, value, thisData);
           }
         }
       }
@@ -665,7 +665,7 @@ public class MetadataPane extends JPanel
     String result = null;
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      DOMUtil.writeXML(baos,doc);
+      DOMUtil.writeXML(baos, doc);
       result = baos.toString();
     }
     catch (Exception exc) {
@@ -673,7 +673,7 @@ public class MetadataPane extends JPanel
     }
     return result;
   }
-  
+
   public boolean checkOMETiff(File file) {
     Hashtable ifd;
     try{
@@ -684,14 +684,14 @@ public class MetadataPane extends JPanel
     catch (IOException exc) {
       return false;
     }
-    
-    // extract comment  
-    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);  
-    String comment = null;  
-    if (o instanceof String) comment = (String) o;  
-    else if (o instanceof String[]) {  
-      String[] s = (String[]) o;  if (s.length > 0) comment = s[0];  
-    }  
+
+    // extract comment
+    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+    String comment = null;
+    if (o instanceof String) comment = (String) o;
+    else if (o instanceof String[]) {
+      String[] s = (String[]) o;  if (s.length > 0) comment = s[0];
+    }
     else if (o != null) comment = o.toString();
     try {
       OMENode testNode = new OMENode(comment);
@@ -747,14 +747,14 @@ public class MetadataPane extends JPanel
       in.close();
 
       OMENode ome = null;
-      
+
       boolean doMerge = false;
 
       try {
         reader = new ImageReader();
         ms = new OMEXMLMetadataStore();
         ms.createRoot();
-        
+
         // tell reader to write metadata as it's being
         // parsed to an OMENode (DOM in memory)
         reader.setMetadataStore(ms);
@@ -764,10 +764,10 @@ public class MetadataPane extends JPanel
         File companionFile = new File(id + ".ome");
         if(companionFile.exists()) {
           Object[] options = {"Sounds good", "No, open original file"};
-        
+
           int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
             "We detected that an OME-xml companion file exists for"
-              + " the file you just opened,\n would you like to merge these"
+              + " the file you just opened, \n would you like to merge these"
               + " files in some manner?",
             "Companion File Detected",
             JOptionPane.YES_NO_OPTION,
@@ -780,11 +780,11 @@ public class MetadataPane extends JPanel
 
         //Set up thumbnails
         int numSeries = reader.getSeriesCount(id);
-        
+
         images = new BufferedImage[numSeries+1];
         thumbs = new BufferedImage[numSeries+1];
-        for(int i = 0; i<numSeries;i++) {
-          if (numSeries > 1) reader.setSeries(id,i);
+        for(int i = 0; i<numSeries; i++) {
+          if (numSeries > 1) reader.setSeries(id, i);
           int num = reader.getImageCount(id);
           if (num > 0) {
             // get middle image from the file
@@ -797,9 +797,9 @@ public class MetadataPane extends JPanel
           thumbs[i] = thumb;
         }
         ome = (OMENode) ms.getRoot();
-        
+
         if(doMerge) {
-          Merger merge = new Merger(ome,companionFile,this);
+          Merger merge = new Merger(ome, companionFile, this);
           ome = merge.getRoot();
         }
 
@@ -808,19 +808,19 @@ public class MetadataPane extends JPanel
           isOMETiff = checkOMETiff(file);
           storeTiffData(file);
         }
-       
+
         //find minimum pixel ID, doesn't have to be zero, if not in
-        //standard format, flag this, all thumbs will be the same        
+        //standard format, flag this, all thumbs will be the same
         minPixNum = 0;
         pixelsIDProblem = false;
         Vector pixList = new Vector();
 
-        try {        
-          pixList = DOMUtil.findElementList("Pixels",ome.getOMEDocument(true));
-          
+        try {
+          pixList = DOMUtil.findElementList("Pixels", ome.getOMEDocument(true));
+
           int lowestInt = -1;
-          
-          for(int i = 0;i<pixList.size();i++) {
+
+          for(int i = 0; i<pixList.size(); i++) {
             Element thisPix = (Element) pixList.get(i);
             String thisID = thisPix.getAttribute("ID");
             int colonIndex = thisID.indexOf(":");
@@ -843,14 +843,14 @@ public class MetadataPane extends JPanel
             }
             if(lowestInt > pixNum) lowestInt = pixNum;
           }
-          
+
           minPixNum = lowestInt;
           if(minPixNum == -1) pixelsIDProblem = true;
         }
         catch(Exception exc) { exc.printStackTrace(); }
-        
+
         if (pixList.size() == 1) pixelsIDProblem = false;
-        
+
         setOMEXML(ome);
       }
       catch (FormatException exc) {
@@ -901,7 +901,7 @@ public class MetadataPane extends JPanel
     //to handle appropriate reference types
     Element thisRoot = ome.getDOMElement();
     NodeList nl = thisRoot.getChildNodes();
-    for (int j = 0;j < nl.getLength();j++) {
+    for (int j = 0; j < nl.getLength(); j++) {
       Node node = nl.item(j);
       if (!(node instanceof Element)) continue;
       Element someE = (Element) node;
@@ -909,14 +909,14 @@ public class MetadataPane extends JPanel
         continue;
       }
       NodeList omeEleList = node.getChildNodes();
-      for (int k = 0;k < omeEleList.getLength();k++) {
+      for (int k = 0; k < omeEleList.getLength(); k++) {
         node = omeEleList.item(k);
         if (!(node instanceof Element)) continue;
         Element omeEle = (Element) node;
         if (!omeEle.getTagName().equals("SemanticType")) continue;
         NodeList omeAttrList = node.getChildNodes();
         Hashtable thisHash = new Hashtable(10);
-        for (int l = 0;l < omeAttrList.getLength();l++) {
+        for (int l = 0; l < omeAttrList.getLength(); l++) {
           node = omeAttrList.item(l);
           if (!(node instanceof Element)) continue;
           Element omeAttr = (Element) node;
@@ -926,7 +926,7 @@ public class MetadataPane extends JPanel
           if (!dType.equals("reference")) continue;
           String attrName = omeAttr.getAttribute("Name");
           String refType = omeAttr.getAttribute("RefersTo");
-          thisHash.put(attrName,refType);
+          thisHash.put(attrName, refType);
         }
         internalDefs.put(omeEle.getAttribute("Name"), thisHash);
       }
@@ -961,7 +961,7 @@ public class MetadataPane extends JPanel
 
     //use the list acquired from Template.xml to form the initial tabs
     Element[] tabList = tParse.getTabs();
-    for (int i = 0;i< tabList.length;i++) {
+    for (int i = 0; i< tabList.length; i++) {
       String thisName = tabList[i].getAttribute("Name");
       if (thisName.length() == 0) thisName = tabList[i].getAttribute("XMLName");
       //make a TabPanel Object that represents the panel
@@ -986,12 +986,12 @@ public class MetadataPane extends JPanel
         scrollPane, null);
       else tabPane.addTab(thisName, NO_DATA_BULLET, scrollPane, desc);
       int keyNumber = getKey(i+1);
-      if (keyNumber !=0 ) tabPane.setMnemonicAt(i, keyNumber);
+      if (keyNumber !=0) tabPane.setMnemonicAt(i, keyNumber);
     }
 
     //Makes sure that the external references do not mirror the internal ones
     //since there should be no intersection between the two sets
-    for (int j = 0;j<panelsWithID.size();j++) {
+    for (int j = 0; j<panelsWithID.size(); j++) {
       TablePanel tempTP = (TablePanel) panelsWithID.get(j);
       String tryID = "(External) " + tempTP.id;
       if (addItems.indexOf(tryID) >= 0) addItems.remove(tryID);
@@ -999,14 +999,14 @@ public class MetadataPane extends JPanel
 
     //this part sets up the refTable's comboBox editor to have choices
     //corresponding to every TablePanel that has a valid ID attribute
-    for (int i = 0;i<panelList.size();i++) {
+    for (int i = 0; i<panelList.size(); i++) {
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
 
     //set the displayed tab to be by default the first image
     TabPanel firstImageTab = null;
-    for (int i=0;i<tabPanelList.size();i++) {
+    for (int i=0; i<tabPanelList.size(); i++) {
       TabPanel tabP = (TabPanel) tabPanelList.get(i);
       if (tabP.name.startsWith("Image")) {
         firstImageTab = tabP;
@@ -1042,7 +1042,7 @@ public class MetadataPane extends JPanel
     Element[] tabList = tParse.getTabs();
     Vector actualTabs = new Vector(2 * tabList.length);
     Vector oNodeList = new Vector(2 * tabList.length);
-    for (int i = 0;i< tabList.length;i++) {
+    for (int i = 0; i< tabList.length; i++) {
       //since we have an OMEXML file to compare to now, we have to worry about
       //repeat elements
       //inOmeList will hold all instances of a particular tagname on one level
@@ -1051,13 +1051,13 @@ public class MetadataPane extends JPanel
       String aName = tabList[i].getAttribute("XMLName");
       //work-around checks if we need to look in CustomAttributes,
       //and subsequently ignore it
-      if ( aName.equals("Image") || aName.equals("Feature") ||
-        aName.equals("Dataset") || aName.equals("Project") )
+      if (aName.equals("Image") || aName.equals("Feature") ||
+        aName.equals("Dataset") || aName.equals("Project"))
       {
         inOmeList = ome.getChildNodes(aName);
       }
       else {
-        if ( ome.getChild("CustomAttributes") != null)
+        if (ome.getChild("CustomAttributes") != null)
           inOmeList = ome.getChild("CustomAttributes").getChildNodes(aName);
       }
       int vSize = 0;
@@ -1065,7 +1065,7 @@ public class MetadataPane extends JPanel
       //check to see if one or more elements with the given tagname
       //(a.k.a. "XMLName") exist in the file
       if (vSize >0) {
-        for (int j = 0;j<vSize;j++) {
+        for (int j = 0; j<vSize; j++) {
           String thisName = tabList[i].getAttribute("Name");
           if (thisName.length() == 0) {
             thisName = tabList[i].getAttribute("XMLName");
@@ -1086,7 +1086,7 @@ public class MetadataPane extends JPanel
             JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
           //test if a description is associated with this tab in the template
           String desc = tabList[i].getAttribute("Description");
-          thisName = getTreePathName(tPanel.el,tPanel.oNode);
+          thisName = getTreePathName(tPanel.el, tPanel.oNode);
           if (desc.length() == 0) {
             tabPane.addTab(thisName, DATA_BULLET, scrollPane, null);
           }
@@ -1122,9 +1122,9 @@ public class MetadataPane extends JPanel
     }
     //set up mnemonics, and form an array holding the names of the tabs
     String[] tabNames = new String[actualTabs.size()];
-    for (int i = 0;i<actualTabs.size();i++) {
+    for (int i = 0; i<actualTabs.size(); i++) {
       int keyNumber = getKey(i+1);
-      if (keyNumber !=0 ) tabPane.setMnemonicAt(i, keyNumber);
+      if (keyNumber !=0) tabPane.setMnemonicAt(i, keyNumber);
       Element e = (Element) actualTabs.get(i);
       tabNames[i] = getTreePathName(e, (OMEXMLNode) oNodeList.get(i));
       if (tabNames[i] == null) tabNames[i] = getTreePathName(e);
@@ -1138,7 +1138,7 @@ public class MetadataPane extends JPanel
 
     //Makes sure that the external references do not mirror the internal ones
     //since there should be no intersection between the two sets
-    for (int j = 0;j<panelsWithID.size();j++) {
+    for (int j = 0; j<panelsWithID.size(); j++) {
       TablePanel tempTP = (TablePanel) panelsWithID.get(j);
       String tryID = "(External) " + tempTP.id;
       if (addItems.indexOf(tryID) >= 0) addItems.remove(tryID);
@@ -1146,14 +1146,14 @@ public class MetadataPane extends JPanel
 
     //this part sets up the refTable's comboBox editor to have choices
     //corresponding to every TablePanel that has a valid ID attribute
-    for (int i = 0;i<panelList.size();i++) {
+    for (int i = 0; i<panelList.size(); i++) {
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
 
     //set the displayed tab to be by default the first image
     TabPanel firstImageTab = null;
-    for (int i=0;i<tabPanelList.size();i++) {
+    for (int i=0; i<tabPanelList.size(); i++) {
       TabPanel tabP = (TabPanel) tabPanelList.get(i);
       if (tabP.name.startsWith("Image")) {
         firstImageTab = tabP;
@@ -1182,19 +1182,19 @@ public class MetadataPane extends JPanel
 
     //add a title label to show which element
     JPanel titlePanel = new JPanel();
-    titlePanel.setLayout(new GridLayout(2,1));
+    titlePanel.setLayout(new GridLayout(2, 1));
     JLabel title = new JLabel();
     Font thisFont = title.getFont();
-    Font newFont = new Font(thisFont.getFontName(),Font.BOLD,18);
+    Font newFont = new Font(thisFont.getFontName(), Font.BOLD, 18);
     title.setFont(newFont);
     if (tp.oNode != null) {
-      title.setText(" " + getTreePathName(tp.el,tp.oNode) + ":");
+      title.setText(" " + getTreePathName(tp.el, tp.oNode) + ":");
     }
     else title.setText(" " + getTreePathName(tp.el) + ":");
-    title.setForeground(new Color(255,255,255));
+    title.setForeground(new Color(255, 255, 255));
 
     tp.saveButton = new JButton("QuickSave");
-    tp.saveButton.setPreferredSize(new Dimension(100,17));
+    tp.saveButton.setPreferredSize(new Dimension(100, 17));
     tp.saveButton.setActionCommand("save");
     tp.saveButton.addActionListener(this);
     tp.saveButton.setOpaque(false);
@@ -1214,9 +1214,9 @@ public class MetadataPane extends JPanel
         descrip.setWrapStyleWord(true);
         descrip.setBackground(aColor);
         newFont = new Font(thisFont.getFontName(),
-          Font.ITALIC,thisFont.getSize());
+          Font.ITALIC, thisFont.getSize());
         descrip.setFont(newFont);
-        descrip.setText( "     " + tp.el.getAttribute("Description"));
+        descrip.setText("     " + tp.el.getAttribute("Description"));
       }
     }
 
@@ -1226,9 +1226,9 @@ public class MetadataPane extends JPanel
     PanelBuilder build = new PanelBuilder(myLayout);
     CellConstraints cellC = new CellConstraints();
 
-    build.add( title, cellC.xy(1, 2, "left,center"));
-    build.add( tp.saveButton, cellC.xy(3, 2, "right,center"));
-    build.add( descrip, cellC.xyw(1, 4, 4, "fill,center"));
+    build.add(title, cellC.xy(1, 2, "left, center"));
+    build.add(tp.saveButton, cellC.xy(3, 2, "right, center"));
+    build.add(descrip, cellC.xyw(1, 4, 4, "fill, center"));
     titlePanel = build.getPanel();
     titlePanel.setBackground(TEXT_COLOR);
 
@@ -1245,26 +1245,26 @@ public class MetadataPane extends JPanel
 
     //look at the template to get the nested Elements we need to display
     //with their own TablePanels
-    Vector theseElements = DOMUtil.getChildElements("OMEElement",tp.el);
+    Vector theseElements = DOMUtil.getChildElements("OMEElement", tp.el);
     //will be a list of those nested elements that have their own nested
     //elements
     Vector branchElements = new Vector(theseElements.size());
 
     //check out each nested Element
-    for (int i = 0;i<theseElements.size();i++) {
+    for (int i = 0; i<theseElements.size(); i++) {
       Element e = null;
       if (theseElements.get(i) instanceof Element) {
         e = (Element) theseElements.get(i);
       }
-      if (DOMUtil.getChildElements("OMEElement",e).size() != 0) {
+      if (DOMUtil.getChildElements("OMEElement", e).size() != 0) {
         branchElements.add(e);
       }
       else {
         if (tp.oNode != null) {
           Vector v = new Vector();
           String aName = e.getAttribute("XMLName");
-          if ( aName.equals("Image") || aName.equals("Feature") ||
-            aName.equals("Dataset") || aName.equals("Project") )
+          if (aName.equals("Image") || aName.equals("Feature") ||
+            aName.equals("Dataset") || aName.equals("Project"))
           {
             v = DOMUtil.getChildElements(aName, tp.oNode.getDOMElement());
           }
@@ -1279,7 +1279,7 @@ public class MetadataPane extends JPanel
             iHoldTables.add(p);
           }
           else {
-            for (int j = 0;j<v.size();j++) {
+            for (int j = 0; j<v.size(); j++) {
               Element anEle = (Element) v.get(j);
 
               OMEXMLNode n = null;
@@ -1329,7 +1329,7 @@ public class MetadataPane extends JPanel
     }
 
     String rowString = "pref, 10dlu, ";
-    for (int i = 0;i<iHoldTables.size();i++) {
+    for (int i = 0; i<iHoldTables.size(); i++) {
       rowString = rowString + "pref, 5dlu, ";
     }
     rowString = rowString.substring(0, rowString.length() - 2);
@@ -1340,13 +1340,13 @@ public class MetadataPane extends JPanel
     tp.setLayout(layout);
     CellConstraints cc = new CellConstraints();
 
-    tp.add(titlePanel, cc.xyw(1,1,5));
+    tp.add(titlePanel, cc.xyw(1, 1, 5));
 
     int row = 1;
-    for (int i = 0;i<iHoldTables.size();i++) {
+    for (int i = 0; i<iHoldTables.size(); i++) {
       row = row + 2;
       Component c = (Component) iHoldTables.get(i);
-      tp.add(c, cc.xyw(i == 0 ? 2 : 3, row, 2, "fill,center"));
+      tp.add(c, cc.xyw(i == 0 ? 2 : 3, row, 2, "fill, center"));
     }
 
     //Layout stuff distinguishes between the title and the data panels
@@ -1385,7 +1385,7 @@ public class MetadataPane extends JPanel
         stateChanged(false);
       }
       else JOptionPane.showMessageDialog(getTopLevelAncestor(),
-        "There is no current file specified,\n" +
+        "There is no current file specified, \n" +
         "so you cannot QuickSave.",
         "No Current File Found", JOptionPane.ERROR_MESSAGE);
     }
@@ -1411,13 +1411,13 @@ public class MetadataPane extends JPanel
     if (e.hasAttribute("Name"))thisName = e.getAttribute("Name");
     else thisName = e.getAttribute("XMLName");
 
-    Element aParent = DOMUtil.getAncestorElement("OMEElement",e);
+    Element aParent = DOMUtil.getAncestorElement("OMEElement", e);
     while (aParent != null) {
       if (aParent.hasAttribute("Name")) {
         thisName = aParent.getAttribute("Name") + thisName;
       }
       else thisName = aParent.getAttribute("XMLName") + ": " + thisName;
-      aParent = DOMUtil.getAncestorElement("OMEElement",aParent);
+      aParent = DOMUtil.getAncestorElement("OMEElement", aParent);
     }
     return thisName;
   }
@@ -1440,15 +1440,15 @@ public class MetadataPane extends JPanel
       pathNames.add("OME");
       pathList.add(aParent);
 
-      for (int i = 1;i<pathNames.size();i++) {
+      for (int i = 1; i<pathNames.size(); i++) {
         String s = (String) pathNames.get(i);
         aParent = DOMUtil.getAncestorElement(s, aParent);
-        pathList.add(0,aParent);
+        pathList.add(0, aParent);
       }
 
       String result = "";
 
-      for (int i = 0;i<pathList.size() - 1;i++) {
+      for (int i = 0; i<pathList.size() - 1; i++) {
         aParent = (Element) pathList.get(i);
         Element aChild = (Element) pathList.get(i+1);
         String thisName = aChild.getTagName();
@@ -1461,7 +1461,7 @@ public class MetadataPane extends JPanel
           else result = result + ": " + e.getTagName();
         }
         else {
-          for (int j = 0;j<nl.getLength();j++) {
+          for (int j = 0; j<nl.getLength(); j++) {
             Element e = (Element) nl.item(j);
             if (e == aChild) {
               Integer aInt = new Integer(j+1);
@@ -1529,7 +1529,7 @@ public class MetadataPane extends JPanel
         }
         else {
           Element cloneEle = DOMUtil.createChild(
-            parent.getDOMElement(),"CustomAttributes");
+            parent.getDOMElement(), "CustomAttributes");
           caNode = new CustomAttributesNode(cloneEle);
           r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
           r.exec("import org.openmicroscopy.xml.st." +
@@ -1557,52 +1557,52 @@ public class MetadataPane extends JPanel
     Vector thisPath = new Vector(10);
     thisPath.add(e.getAttribute("XMLName"));
 
-    Element aParent = DOMUtil.getAncestorElement("OMEElement",e);
+    Element aParent = DOMUtil.getAncestorElement("OMEElement", e);
     while (aParent != null) {
       thisPath.add(aParent.getAttribute("XMLName"));
-      aParent = DOMUtil.getAncestorElement("OMEElement",aParent);
+      aParent = DOMUtil.getAncestorElement("OMEElement", aParent);
     }
     return thisPath;
   }
 
   /**Converts a number into the KeyEvent for that number.*/
   public static int getKey(int i) {
-      int keyNumber = 0;
-      switch (i) {
-        case 1 :
-          keyNumber = KeyEvent.VK_1;
-          break;
-        case 2 :
-          keyNumber = KeyEvent.VK_2;
-          break;
-        case 3 :
-          keyNumber = KeyEvent.VK_3;
-          break;
-        case 4 :
-          keyNumber = KeyEvent.VK_4;
-          break;
-        case 5 :
-          keyNumber = KeyEvent.VK_5;
-          break;
-        case 6 :
-          keyNumber = KeyEvent.VK_6;
-          break;
-        case 7 :
-          keyNumber = KeyEvent.VK_7;
-          break;
-        case 8 :
-          keyNumber = KeyEvent.VK_8;
-          break;
-        case 9 :
-          keyNumber = KeyEvent.VK_9;
-          break;
-        case 10 :
-          keyNumber = KeyEvent.VK_0;
-          break;
-        default:
-          keyNumber = 0;
-      }
-      return keyNumber;
+    int keyNumber = 0;
+    switch (i) {
+      case 1:
+        keyNumber = KeyEvent.VK_1;
+        break;
+      case 2:
+        keyNumber = KeyEvent.VK_2;
+        break;
+      case 3:
+        keyNumber = KeyEvent.VK_3;
+        break;
+      case 4:
+        keyNumber = KeyEvent.VK_4;
+        break;
+      case 5:
+        keyNumber = KeyEvent.VK_5;
+        break;
+      case 6:
+        keyNumber = KeyEvent.VK_6;
+        break;
+      case 7:
+        keyNumber = KeyEvent.VK_7;
+        break;
+      case 8:
+        keyNumber = KeyEvent.VK_8;
+        break;
+      case 9:
+        keyNumber = KeyEvent.VK_9;
+        break;
+      case 10:
+        keyNumber = KeyEvent.VK_0;
+        break;
+      default:
+        keyNumber = 0;
+    }
+    return keyNumber;
   }
 
   // -- Helper classes --
@@ -1661,11 +1661,21 @@ public class MetadataPane extends JPanel
     }
 
     public int getScrollableUnitIncrement(Rectangle visibleRect,
-      int orientation, int direction) {return 5;}
+      int orientation, int direction)
+    {
+      return 5;
+    }
     public int getScrollableBlockIncrement(Rectangle visibleRect,
-      int orientation, int direction) {return visibleRect.height;}
-    public boolean getScrollableTracksViewportWidth() {return true;}
-    public boolean getScrollableTracksViewportHeight() {return false;}
+      int orientation, int direction)
+    {
+      return visibleRect.height;
+    }
+    public boolean getScrollableTracksViewportWidth() {
+      return true;
+    }
+    public boolean getScrollableTracksViewportHeight() {
+      return false;
+    }
   }
 
   /**
@@ -1725,9 +1735,9 @@ public class MetadataPane extends JPanel
 
     /**The JLabels for the title and the optional image.*/
     protected JLabel tableName, imageLabel;
-    
+
     protected BufferedImage tableThumb;
-    
+
     protected BufferedImage tableImage;
 
     /**
@@ -1745,7 +1755,7 @@ public class MetadataPane extends JPanel
         Vector foundEles = DOMUtil.getChildElements("OMEElement",
           tParse.getRoot());
 
-        for (int i = 0;i < foundEles.size();i++) {
+        for (int i = 0; i < foundEles.size(); i++) {
           Element thisNode = (Element) foundEles.get(i);
           if (thisNode == e) isTopLevel = true;
         }
@@ -1757,7 +1767,7 @@ public class MetadataPane extends JPanel
       tPanel = tp;
       id = null;
       JComboBox comboBox = null;
-      if (on != null) name = getTreePathName(e,on);
+      if (on != null) name = getTreePathName(e, on);
       else name = getTreePathName(e);
       String thisName = name;
       panelList.add(this);
@@ -1767,17 +1777,17 @@ public class MetadataPane extends JPanel
 
       //Check which "types" the various template attributes are and
       //group them into Vectors.
-      Vector fullList = DOMUtil.getChildElements("OMEAttribute",e);
+      Vector fullList = DOMUtil.getChildElements("OMEAttribute", e);
       attrList = new Vector();
       refList = new Vector();
-      for (int i = 0;i<fullList.size();i++) {
+      for (int i = 0; i<fullList.size(); i++) {
         Element thisE = (Element) fullList.get(i);
-        if (thisE.hasAttribute("Type") ) {
+        if (thisE.hasAttribute("Type")) {
           if (thisE.getAttribute("Type").equals("Ref")) {
             if (oNode != null) {
               String value = oNode.getAttribute(thisE.getAttribute("XMLName"));
               if (value != null && !value.equals("")) {
-                if ( addItems.indexOf("(External) " + value) < 0) {
+                if (addItems.indexOf("(External) " + value) < 0) {
                   addItems.add("(External) " + value);
                 }
               }
@@ -1814,15 +1824,15 @@ public class MetadataPane extends JPanel
         if (debug) {
           System.out.println(openIndex + " " + refDetails.charAt(openIndex));
         }
-        int closeIndex = refDetails.indexOf('%',openIndex + 1);
+        int closeIndex = refDetails.indexOf('%', openIndex + 1);
         if (debug) {
           System.out.println(closeIndex + " " + refDetails.charAt(closeIndex));
         }
-        String thisCommand = refDetails.substring(openIndex + 1,closeIndex);
+        String thisCommand = refDetails.substring(openIndex + 1, closeIndex);
         if (debug) {
           System.out.println("Command: " + thisCommand);
         }
-        String processed = refDetails.substring(0,openIndex);
+        String processed = refDetails.substring(0, openIndex);
         if (debug) {
           System.out.println("Processed: " + processed);
         }
@@ -1840,13 +1850,13 @@ public class MetadataPane extends JPanel
           int endIndex = thisCommand.indexOf(' ', varIndex + 1);
           if (endIndex < 0) endIndex = thisCommand.length();
           if (debug) System.out.println("endIndex: " + endIndex);
-          String prefix = thisCommand.substring(0,varIndex);
+          String prefix = thisCommand.substring(0, varIndex);
           if (debug) System.out.println("Prefix: " + prefix);
-          String thisVar = thisCommand.substring(varIndex+1,endIndex);
+          String thisVar = thisCommand.substring(varIndex+1, endIndex);
           if (debug) System.out.println("thisVar: " + thisVar);
           String suffix;
           if (endIndex != thisCommand.length())
-            suffix = thisCommand.substring(endIndex + 1,thisCommand.length());
+            suffix = thisCommand.substring(endIndex + 1, thisCommand.length());
           else suffix = "";
           if (debug) System.out.println("Suffix: " + suffix);
           String value = null;
@@ -1877,8 +1887,8 @@ public class MetadataPane extends JPanel
       if (debug) System.out.println(name + " - " + refDetails);
       if (showIDs) refDetails = refDetails + " (ID: " + id + ")";
 
-      Element cDataEl = DOMUtil.getChildElement("CData",e);
-      if (cDataEl != null) attrList.add(0,cDataEl);
+      Element cDataEl = DOMUtil.getChildElement("CData", e);
+      if (cDataEl != null) attrList.add(0, cDataEl);
 
       tableName = null;
       if (oNode == null) tableName =
@@ -1886,7 +1896,7 @@ public class MetadataPane extends JPanel
       else tableName = new JLabel(thisName, DATA_BULLET, JLabel.LEFT);
       Font thisFont = tableName.getFont();
       thisFont = new Font(thisFont.getFontName(),
-        Font.BOLD,12);
+        Font.BOLD, 12);
       tableName.setFont(thisFont);
       if (el.hasAttribute("ShortDesc"))
         tableName.setToolTipText(el.getAttribute("ShortDesc"));
@@ -1895,7 +1905,7 @@ public class MetadataPane extends JPanel
       tableName.setForeground(TEXT_COLOR);
 
       noteButton = new JButton("Notes");
-//      noteButton.setPreferredSize(new Dimension(85,17));
+//      noteButton.setPreferredSize(new Dimension(85, 17));
       noteButton.addActionListener(this);
       noteButton.setActionCommand("getNotes");
       noteButton.setToolTipText(
@@ -1904,7 +1914,7 @@ public class MetadataPane extends JPanel
 
       imageLabel = null;
       if (name.endsWith("Pixels")) {
-        if(pixelsIDProblem || on == null) {        
+        if(pixelsIDProblem || on == null) {
           if (thumb != null && !pixelsIDProblem) {
             tableThumb = thumb;
             tableImage = img;
@@ -1947,14 +1957,7 @@ public class MetadataPane extends JPanel
         new DefaultTableModel(TREE_COLUMNS, 0)
       {
         public boolean isCellEditable(int row, int col) {
-          if (editable) {
-            if (col < 1) return false;
-            else return true;
-          }
-          else {
-            if (col < 2) return false;
-            else return true;
-          }
+          return col >= (editable ? 1 : 2);
         }
       };
 
@@ -1962,7 +1965,7 @@ public class MetadataPane extends JPanel
           addItems, this, internalDefs);
 
       table = new ClickableTable(myTableModel, this, vcEdit);
-//      table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
+//      table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       table.getColumnModel().getColumn(0).setPreferredWidth(125);
       table.getColumnModel().getColumn(1).setPreferredWidth(430);
       table.getColumnModel().getColumn(2).setPreferredWidth(70);
@@ -1976,24 +1979,26 @@ public class MetadataPane extends JPanel
       myTableModel.setRowCount(attrList.size() + refList.size());
 
       String clippedName = name;
-      if (name.endsWith(")")) clippedName = name.substring(0,name.length() - 4);
+      if (name.endsWith(")")) {
+        clippedName = name.substring(0, name.length() - 4);
+      }
 
       addButton = new JButton("New Table");
-//      addButton.setPreferredSize(new Dimension(130,17));
+//      addButton.setPreferredSize(new Dimension(130, 17));
       addButton.addActionListener(table);
       addButton.setActionCommand("bigAdd");
       addButton.setToolTipText("Create a new " + clippedName + " table.");
-      if ( !isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
-      if ( !editable) addButton.setEnabled(false);
+      if (!isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
+      if (!editable) addButton.setEnabled(false);
       addButton.setForeground(ADD_COLOR);
 
       delButton = new JButton("Delete Table");
-//      delButton.setPreferredSize(new Dimension(130,17));
+//      delButton.setPreferredSize(new Dimension(130, 17));
       delButton.addActionListener(table);
       delButton.setActionCommand("bigRem");
       delButton.setToolTipText("Delete this " + clippedName + " table.");
-      if ( oNode == null) delButton.setVisible(false);
-      if ( !editable) delButton.setEnabled(false);
+      if (oNode == null) delButton.setVisible(false);
+      if (!editable) delButton.setEnabled(false);
       delButton.setForeground(DELETE_COLOR);
 
       noteP = new NotePanel(this);
@@ -2001,20 +2006,20 @@ public class MetadataPane extends JPanel
 
       FormLayout layout = new FormLayout(
         "pref, 10dlu, pref, 10dlu, pref, pref:grow:right, 5dlu, pref",
-        "pref,2dlu,pref,pref,3dlu,pref,3dlu");
+        "pref, 2dlu, pref, pref, 3dlu, pref, 3dlu");
       setLayout(layout);
       CellConstraints cc = new CellConstraints();
 
-      add(tableName, cc.xy(1,1));
-      add(noteButton, cc.xy(3,1, "left,center"));
+      add(tableName, cc.xy(1, 1));
+      add(noteButton, cc.xy(3, 1, "left, center"));
       if (imageLabel != null) {
-        add(imageLabel, cc.xy(5,1, "center,top"));
+        add(imageLabel, cc.xy(5, 1, "center, top"));
       }
-      add(addButton, cc.xy(6,1, "right,center"));
-      add(delButton, cc.xy(8,1, "right,center"));
-      add(tHead, cc.xyw(1,3,8, "fill, center"));
-      add(table, cc.xyw(1,4,8, "fill, center"));
-      add(noteP, cc.xyw(1,6,8, "fill,center"));
+      add(addButton, cc.xy(6, 1, "right, center"));
+      add(delButton, cc.xy(8, 1, "right, center"));
+      add(tHead, cc.xyw(1, 3, 8, "fill, center"));
+      add(table, cc.xyw(1, 4, 8, "fill, center"));
+      add(noteP, cc.xyw(1, 6, 8, "fill, center"));
 
       if (oNode == null) {
         tHead.setVisible(false);
@@ -2062,7 +2067,7 @@ public class MetadataPane extends JPanel
               if (oNode != null) {
                 if (DOMUtil.getCharacterData(oNode.getDOMElement()) != null) {
                   myTableModel.setValueAt(
-                    DOMUtil.getCharacterData(oNode.getDOMElement() ), i, 1);
+                    DOMUtil.getCharacterData(oNode.getDOMElement()), i, 1);
                 }
               }
             }
@@ -2101,27 +2106,27 @@ public class MetadataPane extends JPanel
         table.setDefs(panelsWithID, addItems);
         TableModel model = table.getModel();
         TableColumn refColumn = table.getColumnModel().getColumn(1);
-        for (int i = 0;i < table.getRowCount();i++) {
-          if ( i < attrList.size()) {
+        for (int i = 0; i < table.getRowCount(); i++) {
+          if (i < attrList.size()) {
           }
           else {
             boolean isLocal = false;
-            String attrName = (String) model.getValueAt(i,0);
+            String attrName = (String) model.getValueAt(i, 0);
             String value = null;
             if (oNode != null) value = oNode.getAttribute(attrName);
-            for (int j = 0;j < panelsWithID.size();j++) {
+            for (int j = 0; j < panelsWithID.size(); j++) {
               TablePanel tp = (TablePanel) panelsWithID.get(j);
               if (tp.id != null && value != null) {
                 if (value.equals(tp.id)) {
                   isLocal = true;
                   if (tp.refDetails != null && !tp.refDetails.equals(""))
-                    model.setValueAt(tp.name + " - " + tp.refDetails,i,1);
-                  else model.setValueAt(tp.name,i,1);
+                    model.setValueAt(tp.name + " - " + tp.refDetails, i, 1);
+                  else model.setValueAt(tp.name, i, 1);
                 }
               }
             }
             if (!isLocal && value != null && !value.equals("")) {
-              model.setValueAt("(External) " + value,i,1);
+              model.setValueAt("(External) " + value, i, 1);
             }
             //makes the initial value non-null to display the buttons
             model.setValueAt("foobar", i, 2);
@@ -2152,7 +2157,7 @@ public class MetadataPane extends JPanel
 
           int whichNum = -23;
 
-          for (int i = 0;i<panelsWithID.size();i++) {
+          for (int i = 0; i<panelsWithID.size(); i++) {
             aPanel = (TablePanel) panelsWithID.get(i);
             if (aName.startsWith(aPanel.name)) whichNum = i;
           }
@@ -2226,13 +2231,13 @@ public class MetadataPane extends JPanel
     }
 
     /** @return MetadataPane.currentFile*/
-    public File getCurrentFile() {return currentFile;}
+    public File getCurrentFile() { return currentFile; }
 
     /**
     * Checks whether this TablePanel should be editable.
     * @return MetadataPane.editable
     */
-    public boolean isEditable() {return editable;}
+    public boolean isEditable() { return editable; }
   }
 
 }

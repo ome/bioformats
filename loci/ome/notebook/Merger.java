@@ -37,7 +37,7 @@ public class Merger {
   /** Factory for generating document builders. */
   public static final DocumentBuilderFactory DOC_FACT =
     DocumentBuilderFactory.newInstance();
-    
+
   /** Different mode constants.*/
   public static final int ALL_ORIGINAL = 0x01;
   public static final int ALL_COMPANION = 0x02;
@@ -53,20 +53,20 @@ public class Merger {
   public Merger(OMENode originalOme, File compFile, JComponent c) {
     ome = originalOme;
     comp = c;
-    
+
     try {
       compOme = new OMENode(compFile);
     }
     catch (Exception exc) { exc.printStackTrace();}
-    
+
     prompt();
     merge();
   }
-  
+
   public OMENode getRoot() {
     return finalOme;
   }
-  
+
   private void merge() {
     if(mode == ALL_ORIGINAL) finalOme = ome;
     else if(mode == ALL_COMPANION) finalOme = compOme;
@@ -77,7 +77,7 @@ public class Merger {
       finalOme = merge(compOme,ome);
     }
   }
-  
+
   /**
   * Merge two OME-XML Trees, when a conflict arrises, use the
   * "over" tree's node instead of the "under" tree's. NB: the
@@ -93,7 +93,7 @@ public class Merger {
     else result = null;
     return result;
   }
-    
+
   private static OMEXMLNode merge(OMEXMLNode over, OMEXMLNode under) {
     OMEXMLNode result = over;
     Vector overList = result.getChildNodes();
@@ -102,7 +102,7 @@ public class Merger {
     boolean isOverCustom = false;
     boolean isUnderCustom = false;
     boolean addedCustom = false;
-    
+
     for(int i = 0;i<overList.size();i++) {
       OMEXMLNode overNode = (OMEXMLNode)(overList.get(i));
       String overID = overNode.getAttribute("ID");
@@ -112,7 +112,7 @@ public class Merger {
         OMEXMLNode underNode = (OMEXMLNode)(underList.get(j));
         String underID = underNode.getAttribute("ID");
         if (underID == null) isUnderCustom = true;
-        
+
         if(isOverCustom && !isUnderCustom) {
           //do nothing to alter custom tree
           isOverCustom = false;
@@ -138,10 +138,10 @@ public class Merger {
         }
       }
     }
-    
+
     return result;
   }
-  
+
   public static Element createClone(Element el, Document doc) {
     String tagName = el.getTagName();
     Element clone = doc.createElement(tagName);
@@ -155,7 +155,7 @@ public class Merger {
         clone.setAttribute(attrName,attrValue);
       }
     }
-    
+
     if(el.hasChildNodes()) {
       NodeList nodes = el.getChildNodes();
       for(int i = 0;i<nodes.getLength();i++) {
@@ -167,10 +167,10 @@ public class Merger {
         }
       }
     }
-    
+
     return clone;
   }
-  
+
   private void prompt() {
     Object[] possibilities = {"Just use the original file",
       "Just use the companion file", "Merge, original file takes precedence",
@@ -186,7 +186,7 @@ public class Merger {
       (javax.swing.Icon)null,
       possibilities,
       possibilities[1]);
-    if ((s != null) && (s.length() > 0)) { 
+    if ((s != null) && (s.length() > 0)) {
       if(s.equals(possibilities[0])) mode = ALL_ORIGINAL;
       else if (s.equals(possibilities[1])) mode = ALL_COMPANION;
       else if (s.equals(possibilities[2])) mode = ORIGINAL_OVER;
