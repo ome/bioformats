@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.*;
-import ij.gui.GenericDialog;
+import ij.gui.*;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
@@ -419,9 +419,25 @@ public class Importer implements ItemListener {
         IJ.showStatus("");
 
         gd = new GenericDialog("LOCI Bio-Formats Series Options");
+        GridBagLayout gdl = (GridBagLayout) gd.getLayout();
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        ImageReader ir = new ImageReader();
         for (int i=0; i<seriesCount; i++) {
           gd.addCheckbox(seriesStrings[i], series[i]);
+          ir.setSeries(id, i);
+          BufferedImage thumb = ir.openThumbImage(id, 0);
+          Panel p = new Panel();
+          ImageCanvas ic = new ImageCanvas(new ImagePlus("", thumb));
+          p.add(ic);
+          gbc.gridy = i;
+          gbc.gridwidth = GridBagConstraints.REMAINDER;
+          gdl.setConstraints(p, gbc);
+          gd.setLayout(gdl);
+          gd.add(p);
         }
+        ir.close();
+        ir = null;
         addScrollBars(gd);
         gd.showDialog();
         if (gd.wasCanceled()) {
