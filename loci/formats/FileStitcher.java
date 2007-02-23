@@ -564,7 +564,7 @@ public class FileStitcher implements IFormatReader {
       // we have no datasets structured this way, so this logic is untested
       if (usedFiles == null) {
         String[][] used = new String[files.length][];
-        int total = files.length;
+        int total = 0;
         for (int i=0; i<files.length; i++) {
           used[i] = readers[i].getUsedFiles(files[i]);
           total += used[i].length;
