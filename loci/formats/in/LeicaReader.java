@@ -631,6 +631,9 @@ public class LeicaReader extends BaseTiffReader {
     catch (IOException exc) {
       if (debug) exc.printStackTrace();
     }
+    catch (ClassCastException exc) {
+      if (debug) exc.printStackTrace();
+    }
     return false;
   }
 

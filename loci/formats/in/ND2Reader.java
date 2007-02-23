@@ -496,40 +496,44 @@ public class ND2Reader extends FormatReader {
     if (deltaT < deltaZ || deltaZ == 0) currentOrder[0] += "CTZ";
     else currentOrder[0] += "CZT";
 
+    // we calculate this directly (instead of calling getEffectiveSizeC) because
+    // sizeZ and sizeT have not been accurately set yet
+    int effectiveC = (sizeC[0] / 3) + 1; 
+
     if (numImages < sizeZ[0] * sizeT[0]) {
       if (sizeT[0] == numImages) {
-        sizeT[0] /= sizeZ[0] * getEffectiveSizeC(id);
-        while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+        sizeT[0] /= sizeZ[0] * effectiveC;
+        while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
           sizeT[0]++;
         }
       }
       else if (sizeZ[0] == numImages) {
-        sizeZ[0] /= sizeT[0] * getEffectiveSizeC(id);
-        while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+        sizeZ[0] /= sizeT[0] * effectiveC;
+        while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
           sizeZ[0]++;
         }
       }
 
-      if (numImages < sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+      if (numImages < sizeZ[0] * sizeT[0] * effectiveC) {
         if (sizeZ[0] < sizeT[0]) {
           sizeZ[0]--;
-          while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+          while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
             sizeT[0]++;
           }
-          while (numImages < sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+          while (numImages < sizeZ[0] * sizeT[0] * effectiveC) {
             sizeT[0]--;
           }
         }
         else {
           sizeT[0]--;
-          while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+          while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
             sizeZ[0]++;
           }
-          if (numImages < sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+          if (numImages < sizeZ[0] * sizeT[0] * effectiveC) {
             sizeZ[0]--;
           }
         }
-        while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+        while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
           numImages--;
         }
       }

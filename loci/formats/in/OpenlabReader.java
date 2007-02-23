@@ -644,6 +644,7 @@ public class OpenlabReader extends FormatReader {
       int oldImages = numImages[0];
       numImages = new int[1];
       numImages[0] = oldImages;
+      if (layerInfoList[0].size() == 0) layerInfoList[0] = layerInfoList[1];
     }
     else {
       numImages[0] = layerInfoList[0].size();
