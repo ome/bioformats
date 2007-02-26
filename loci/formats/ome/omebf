@@ -20,4 +20,4 @@
 
 # omebf: a command line utility for use by OMEIS to interface with Bio-Formats
 
-java -mx256m loci.formats.OmeisImporter "$@"
+java -mx256m loci.formats.ome.OmeisImporter "$@"
