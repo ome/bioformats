@@ -1,5 +1,7 @@
+                   Using Bio-Formats Guide by Melissa Linkert
+
                                   Overview
-                                -----------
+                                 ----------
 
 This document describes various things that are useful to know when working
 with Bio-Formats.  It is recommended that you obtain the Bio-Formats source
@@ -12,7 +14,7 @@ For a complete list of supported formats, see the Bio-Formats home page:
 http://www.loci.wisc.edu/ome/formats.html
 
                               Basic File Reading
-                         ---------------------------
+                             --------------------
 
 Bio-Formats provides several methods for retrieving data from files in an
 arbitrary (supported) format.  These methods fall into three categories: raw
@@ -61,7 +63,7 @@ Note that the keys in this Hashtable are different for each format, hence the
 name "format-specific metadata".
 
                              File Reading Extras
-                           ----------------------
+                            ---------------------
 
 The previous section described how to read pixels as they are stored in the
 file.  However, the native format isn't necessarily convenient, so Bio-Formats
@@ -80,7 +82,7 @@ provides a few extras to make file reading more flexible.
   type (e.g. convert short data to byte data).
 
                                 Writing Files
-                        ----------------------------
+                               ---------------
 
 The following file formats can be written using Bio-Formats:
 
@@ -114,7 +116,7 @@ Please see the Movie Stitcher (loci.apps.stitcher) for an example of how
 to write files using Bio-Formats.
 
                     Arcane Notes and Implementation Details
-                 --------------------------------------------
+                   -----------------------------------------
 
 Following is a list of known oddities.
 

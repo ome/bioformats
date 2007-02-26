@@ -5,7 +5,8 @@ This document is a brief guide to writing new Bio-Formats file format readers.
 All format readers should extend either loci.formats.FormatReader or a reader
 in loci.formats.in.
 
----=== Methods to override ===---
+                              Methods to Override
+                             ---------------------
 
 boolean isThisType(byte[]) :
   Check the first few bytes of a file to determine if the file can be read by
@@ -143,7 +144,8 @@ Thus, a stub for initFile(String) might look like this:
 For more details, see the javadoc for Location.mapId(String, String)
 and Location.getMappedId(String).
 
----=== Other useful things ===---
+                              Other Useful Things
+                             ---------------------
 
 - loci.formats.RandomAccessStream is a hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
