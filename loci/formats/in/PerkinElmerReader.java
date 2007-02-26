@@ -479,7 +479,7 @@ public class PerkinElmerReader extends FormatReader {
           j--;
         }
         else if (!tokens[j].trim().equals("")) {
-          addMeta(tokens[j], tokens[j+1]);
+          addMeta(tokens[j].trim(), tokens[j+1].trim());
         }
       }
       read.close();
