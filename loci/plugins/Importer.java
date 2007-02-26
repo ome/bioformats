@@ -425,9 +425,15 @@ public class Importer implements ItemListener {
 
         ImageReader ir = new ImageReader();
         for (int i=0; i<seriesCount; i++) {
+          IJ.showStatus("Reading thumbnail for series #" + i);
           gd.addCheckbox(seriesStrings[i], series[i]);
           ir.setSeries(id, i);
-          BufferedImage thumb = ir.openThumbImage(id, 0);
+          // open middle image thumbnail
+          int z = ir.getSizeZ(id) / 2;
+          int c = 0;
+          int t = ir.getSizeT(id) / 2;
+          int ndx = ir.getIndex(id, z, c, t);
+          BufferedImage thumb = ir.openThumbImage(id, ndx);
           Panel p = new Panel();
           ImageCanvas ic = new ImageCanvas(new ImagePlus("", thumb));
           p.add(ic);
@@ -437,6 +443,7 @@ public class Importer implements ItemListener {
           gd.setLayout(gdl);
           gd.add(p);
         }
+        IJ.showStatus("");
         ir.close();
         ir = null;
         addScrollBars(gd);
