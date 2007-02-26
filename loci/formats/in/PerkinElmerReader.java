@@ -186,7 +186,7 @@ public class PerkinElmerReader extends FormatReader {
     allFiles = new Vector();
 
     // get the working directory
-    Location tempFile = new Location(id);
+    Location tempFile = new Location(id).getAbsoluteFile();
     Location workingDir = tempFile.getParentFile();
     if (workingDir == null) workingDir = new Location(".");
     String workingDirPath = workingDir.getPath() + File.separator;
