@@ -351,7 +351,8 @@ public class ImageViewer extends JFrame
         "LOCI Bio-Formats\n" +
         "Built @date@\n\n" +
         "The Bio-Formats library is LOCI software written by\n" +
-        "Melissa Linkert, Curtis Rueden, Chris Allan and Eric Kjellman.\n" +
+        "Melissa Linkert, Curtis Rueden, Chris Allan, Eric Kjellman\n" +
+        "and Brian Loranger.\n" +
         "http://www.loci.wisc.edu/ome/formats.html",
         "LOCI Bio-Formats", JOptionPane.INFORMATION_MESSAGE);
     }
