@@ -405,12 +405,16 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getThumbSizeX(String) */
   public int getThumbSizeX(String id) throws FormatException, IOException {
-    return THUMBNAIL_DIMENSION;
+    int sx = getSizeX(id);
+    int sy = getSizeY(id);
+    return sx > sy ? THUMBNAIL_DIMENSION : sx * THUMBNAIL_DIMENSION / sy;
   }
 
   /* @see IFormatReader#getThumbSizeY(String) */
   public int getThumbSizeY(String id) throws FormatException, IOException {
-    return THUMBNAIL_DIMENSION;
+    int sx = getSizeX(id);
+    int sy = getSizeY(id);
+    return sy > sx ? THUMBNAIL_DIMENSION : sy * THUMBNAIL_DIMENSION / sx;
   }
 
   /* @see IFormatReader.isLittleEndian(String) */
@@ -466,7 +470,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     return ImageTools.scale(openImage(id, no),
-      getThumbSizeX(id), getThumbSizeY(id), true);
+      getThumbSizeX(id), getThumbSizeY(id), false);
   }
 
   /* @see IFormatReader#openThumbBytes(String, int) */

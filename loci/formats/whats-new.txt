@@ -1,3 +1,5 @@
+* Better series preview thumbnails
+
 2007 Feb 26:
 * Many bugfixes: Leica LEI, ICS, FV1000 OIB, OME-XML and others
 * Better metadata parsing for BioRad PIC files
