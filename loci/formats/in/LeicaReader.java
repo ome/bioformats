@@ -174,6 +174,22 @@ public class LeicaReader extends BaseTiffReader {
     return b;
   }
 
+  /*
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    tiff[series][no].setColorTableIgnored(ignoreColorTable);
+    tiff[series][no].openBytes((String) files[series].get(no), 0, buf);
+    tiff[series][no].close();
+    updateMinMax(buf, no);
+    return buf;
+  }
+  */
+  
   /** Obtains the specified image from the given Leica file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -189,7 +205,7 @@ public class LeicaReader extends BaseTiffReader {
     tiff[series][no].setColorTableIgnored(ignoreColorTable);
     BufferedImage b =
       tiff[series][no].openImage((String) files[series].get(no), 0);
-    ColorModel cm = ImageTools.makeColorModel(b.getRaster().getNumBands(),
+    ColorModel cm = ImageTools.makeColorModel(getRGBChannelCount(id),
       b.getRaster().getTransferType(), validBits[series]);
     b = ImageTools.makeBuffered(b, cm);
     tiff[series][no].close();
@@ -1042,7 +1058,7 @@ public class LeicaReader extends BaseTiffReader {
       validBits = new int[sizeC.length][];
 
       for (int i=0; i<validBits.length; i++) {
-        validBits[i] = new int[sizeC[i]];
+        validBits[i] = new int[sizeC[i] == 2 ? 3 : sizeC[i]];
         for (int j=0; j<validBits[i].length; j++) {
           validBits[i][j] = v.intValue();
         }

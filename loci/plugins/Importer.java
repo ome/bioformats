@@ -302,6 +302,7 @@ public class Importer implements ItemListener {
       FileStitcher fs = null;
 
       int pixelType = r.getPixelType(id);
+      r.setColorTableIgnored(ignoreTables);
 
       if (stitchFiles) {
         fs = new FileStitcher(r, true);
@@ -319,14 +320,15 @@ public class Importer implements ItemListener {
         id = gd.getNextString();
       }
       if (fs != null) {
-        r = new ChannelSeparator(fs);
+        if (!ignoreTables && r.isRGB(id)) r = new ChannelSeparator(fs);
       }
       else {
-        r = new ChannelSeparator(r);
+        if (!ignoreTables && r.isRGB(id)) r = new ChannelSeparator(r);
       }
       r.setColorTableIgnored(ignoreTables);
       r.close();
       r.setMetadataFiltered(true);
+      r.setColorTableIgnored(ignoreTables);
 
       // store OME metadata into OME-XML structure, if available
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
@@ -339,6 +341,7 @@ public class Importer implements ItemListener {
 
       r.close();
       store = (OMEXMLMetadataStore) r.getMetadataStore(id);
+      r.setColorTableIgnored(ignoreTables);
 
       // build descriptive string and range for each series
       String[] seriesStrings = new String[seriesCount];
@@ -358,6 +361,7 @@ public class Importer implements ItemListener {
       int[] tStep = new int[seriesCount];
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
+        r.setColorTableIgnored(ignoreTables);
         num[i] = r.getImageCount(id);
         sizeC[i] = r.getEffectiveSizeC(id);
         sizeZ[i] = r.getSizeZ(id);
@@ -626,6 +630,7 @@ public class Importer implements ItemListener {
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(id, i);
+          r.setColorTableIgnored(ignoreTables);
 
           String name = store.getImageName(new Integer(i));
           String imageName = r.getCurrentFile();
@@ -854,6 +859,7 @@ public class Importer implements ItemListener {
               (tEnd[i] - tBegin[i] + 1) / tStep[i]);
             displayStack(imp, r, fs, id);
             r.close();
+            r.setColorTableIgnored(ignoreTables);
           }
 
           long endTime = System.currentTimeMillis();
@@ -1163,7 +1169,8 @@ public class Importer implements ItemListener {
         imp.setStack(imp.getTitle(), newStack);
       }
 
-      imp.setDimensions(r.getSizeC(id) / (mergeChannels ? 3 : 1), 
+      imp.setDimensions(
+        imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()), 
         imp.getNSlices(), imp.getNFrames());
       if (stackFormat.equals(VIEW_STANDARD)) {
         if (!stitchStack) imp.show();
