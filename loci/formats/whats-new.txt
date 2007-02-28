@@ -1,4 +1,7 @@
+2007 Feb 28:
 * Better series preview thumbnails
+* Fixed bugs with multi-channel Leica LEI
+* Fixed bugs with "ignore color tables" option in ImageJ plugin
 
 2007 Feb 26:
 * Many bugfixes: Leica LEI, ICS, FV1000 OIB, OME-XML and others
