@@ -221,7 +221,7 @@ public class Importer implements ItemListener {
 
     // load preferences from IJ_Prefs.txt
     mergeChannels = Prefs.get("bioformats.mergeChannels", false);
-    boolean ignoreTables = Prefs.get("bioformats.ignoreTable", false);
+    boolean ignoreTables = Prefs.get("bioformats.ignoreTables", false);
     boolean colorize = Prefs.get("bioformats.colorize", false);
     boolean splitWindows = Prefs.get("bioformats.splitWindows", true);
     boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
@@ -1125,8 +1125,7 @@ public class Importer implements ItemListener {
     try {
       // convert to RGB if needed
 
-      if (mergeChannels && r.getSizeC(id) > 1)
-      {
+      if (mergeChannels && r.getSizeC(id) > 1) {
         int c = r.getSizeC(id);
         ImageStack s = imp.getStack();
         ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
