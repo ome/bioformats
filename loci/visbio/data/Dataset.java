@@ -92,11 +92,11 @@ public class Dataset extends ImageTransform {
   /** File format description of source files. */
   protected String format;
 
-  /** Metadata associated with each source file. */
-  protected Hashtable[] metadata;
+  /** Metadata associated with the first source file. */
+  protected Hashtable metadata;
 
-  /** OME node associated with each source file. */
-  protected OMENode[] ome;
+  /** OME node associated with the first source file. */
+  protected OMENode ome;
 
   /** Range component count for each image. */
   protected int numRange;
@@ -199,11 +199,11 @@ public class Dataset extends ImageTransform {
   /** Gets a description of the source files' file format. */
   public String getFileFormat() { return format; }
 
-  /** Gets metadata associated with each source file. */
-  public Hashtable[] getMetadata() { return metadata; }
+  /** Gets metadata associated with the first source file. */
+  public Hashtable getMetadata() { return metadata; }
 
-  /** Gets the OME node associated with each source file. */
-  public OMENode[] getOMENodes() { return ome; }
+  /** Gets the OME node associated with the first source file. */
+  public OMENode getOMENode() { return ome; }
 
   // -- ImageTransform API methods --
 
@@ -462,9 +462,7 @@ public class Dataset extends ImageTransform {
       ids = data.ids;
     }
 
-    metadata = new Hashtable[ids.length];
-    ome = new OMENode[ids.length];
-    int numTasks = ids.length + 4;
+    int numTasks = 5;
 
     // make sure each file exists
     status(0, numTasks, "Checking files");
@@ -565,30 +563,28 @@ public class Dataset extends ImageTransform {
     RealTupleType domain = ftype.getDomain();
     spatial = domain.getRealComponents();
 
-    // load metadata for each source file
-    for (int i=0; i<ids.length; i++) {
-      String fname = new File(ids[i]).getName();
-      status(i + 3, numTasks, "Reading " + fname + " metadata");
-      try { metadata[i] = readers[i].getMetadata(ids[i]); }
-      catch (IOException exc) { metadata[i] = null; }
-      catch (FormatException exc) { metadata[i] = null; }
-      if (metadata[i] == null) {
-        System.err.println("Could not read metadata from " +
-          fname + ". The file may be corrupt or invalid.");
-        return;
-      }
-      try {
-        MetadataStore ms = readers[i].getMetadataStore(ids[i]);
-        if (ms instanceof OMEXMLMetadataStore) {
-          ome[i] = (OMENode) ((OMEXMLMetadataStore) ms).getRoot();
-        }
-      }
-      catch (IOException exc) { ome[i] = null; }
-      catch (FormatException exc) { ome[i] = null; }
+    // load metadata for the first source file
+    String fname = new File(ids[0]).getName();
+    status(3, numTasks, "Reading " + fname + " metadata");
+    try { metadata = readers[0].getMetadata(ids[0]); }
+    catch (IOException exc) { metadata = null; }
+    catch (FormatException exc) { metadata = null; }
+    if (metadata == null) {
+      System.err.println("Could not read metadata from " +
+        fname + ". The file may be corrupt or invalid.");
+      return;
     }
+    try {
+      MetadataStore ms = readers[0].getMetadataStore(ids[0]);
+      if (ms instanceof OMEXMLMetadataStore) {
+        ome = (OMENode) ((OMEXMLMetadataStore) ms).getRoot();
+      }
+    }
+    catch (IOException exc) { ome = null; }
+    catch (FormatException exc) { ome = null; }
 
     // construct metadata controls
-    status(ids.length + 3, numTasks, "Finishing");
+    status(4, numTasks, "Finishing");
     controls = new DatasetWidget(this);
 
     // construct thumbnail handler
@@ -596,7 +592,7 @@ public class Dataset extends ImageTransform {
     if (path == null) path = "";
     thumbs = new ThumbnailHandler(this,
       path + File.separator + name + ".visbio");
-    status(ids.length + 4, numTasks, "Done");
+    status(5, numTasks, "Done");
   }
 
   // -- Saveable API methods --

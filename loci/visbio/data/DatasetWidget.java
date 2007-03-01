@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.awt.BorderLayout;
-import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -36,9 +35,7 @@ import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 
 /** DatasetWidget is a set of GUI controls for a Dataset transform. */
-public class DatasetWidget extends JPanel
-  implements ListSelectionListener, TreeSelectionListener
-{
+public class DatasetWidget extends JPanel implements TreeSelectionListener {
 
   // -- Constants --
 
@@ -54,13 +51,13 @@ public class DatasetWidget extends JPanel
   protected Dataset dataset;
 
   /** Dataset's associated metadata in OME-XML format. */
-  protected OMENode[] ome;
+  protected OMENode ome;
 
   /** Dataset's associated metadata. */
-  protected Hashtable[] metadata;
+  protected Hashtable metadata;
 
-  /** Metadata hashtables' sorted key lists. */
-  protected String[][] keys;
+  /** Metadata hashtable's sorted key lists. */
+  protected String[] keys;
 
   /** List of dataset source files. */
   protected JList list;
@@ -91,33 +88,19 @@ public class DatasetWidget extends JPanel
     this.dataset = dataset;
 
     // get dataset's metadata
-    ome = dataset.getOMENodes();
+    ome = dataset.getOMENode();
     metadata = dataset.getMetadata();
-    keys = new String[metadata.length][];
 
     // sort metadata keys
-    for (int i=0; i<metadata.length; i++) {
-      if (metadata[i] == null) {
-        keys[i] = new String[0];
-        continue;
-      }
-      Enumeration e = metadata[i].keys();
+    if (metadata == null) keys = new String[0];
+    else {
+      Enumeration e = metadata.keys();
       Vector v = new Vector();
       while (e.hasMoreElements()) v.add(e.nextElement());
-      keys[i] = new String[v.size()];
-      v.copyInto(keys[i]);
-      Arrays.sort(keys[i]);
+      keys = new String[v.size()];
+      v.copyInto(keys);
+      Arrays.sort(keys);
     }
-
-    // list of filenames
-    String[] ids = dataset.getFilenames();
-    String[] names = new String[ids.length];
-    for (int i=0; i<names.length; i++) names[i] = new File(ids[i]).getName();
-    list = new JList(names);
-    JScrollPane scrollList = new JScrollPane(list);
-    SwingUtil.configureScrollPane(scrollList);
-    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.addListSelectionListener(this);
 
     // -- First tab --
 
@@ -158,39 +141,21 @@ public class DatasetWidget extends JPanel
     tabbed.addTab("Original metadata", scrollMetaTable);
     tabbed.addTab("OME-XML", treeSplit);
 
-    // split pane
-    JSplitPane mainSplit =
-      new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollList, tabbed);
-
     // lay out components
     setLayout(new BorderLayout());
-    add(mainSplit);
-    list.setSelectedIndex(0);
-  }
+    add(tabbed);
 
-  // -- ListSelectionListener API methods --
-
-  /** Called when the filename list selection changes. */
-  public void valueChanged(ListSelectionEvent e) {
-    treeRoot.removeAllChildren();
-
-    int ndx = list.getSelectedIndex();
-    if (ndx < 0 || ndx >= keys.length) {
-      metaTableModel.setRowCount(0);
-      return;
-    }
-
-    // update metadata table
-    int len = keys[ndx].length;
+    // populate metadata table
+    int len = keys.length;
     metaTableModel.setRowCount(len);
     for (int i=0; i<len; i++) {
-      metaTableModel.setValueAt(keys[ndx][i], i, 0);
-      metaTableModel.setValueAt(metadata[ndx].get(keys[ndx][i]), i, 1);
+      metaTableModel.setValueAt(keys[i], i, 0);
+      metaTableModel.setValueAt(metadata.get(keys[i]), i, 1);
     }
 
-    // update OME-XML tree
+    // populate OME-XML tree
     Document doc = null;
-    try { doc = ome[ndx] == null ? null : ome[ndx].getOMEDocument(false); }
+    try { doc = ome == null ? null : ome.getOMEDocument(false); }
     catch (Exception exc) { }
     if (doc != null) {
       buildTree(doc.getDocumentElement(), treeRoot);
