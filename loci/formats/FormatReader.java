@@ -832,6 +832,7 @@ public abstract class FormatReader extends FormatHandler
       // read basic metadata for series #i
       int imageCount = reader.getImageCount(id);
       boolean rgb = reader.isRGB(id);
+      int rgbChanCount = reader.getRGBChannelCount(id);
       boolean interleaved = reader.isInterleaved(id);
       int sizeX = reader.getSizeX(id);
       int sizeY = reader.getSizeY(id);
@@ -849,9 +850,12 @@ public abstract class FormatReader extends FormatHandler
       // output basic metadata for series #i
       System.out.println("Series #" + j + ":");
       System.out.println("\tImage count = " + imageCount);
-      System.out.print("\tRGB = " + rgb);
+      System.out.print("\tRGB = " + rgb + " (" + rgbChanCount + ")");
       if (merge) System.out.print(" (merged)");
       else if (separate) System.out.print(" (separated)");
+      if (rgb != (rgbChanCount != 1)) {
+        System.out.println("\t************ Warning: RGB mismatch ************");
+      }
       System.out.println();
       System.out.println("\tInterleaved = " + interleaved);
       System.out.println("\tWidth = " + sizeX);
