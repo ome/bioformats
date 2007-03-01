@@ -129,7 +129,7 @@ public class Importer implements ItemListener {
         // open a dialog asking the user where their dataset is
         gd = new GenericDialog("LOCI Bio-Formats Dataset Location");
         gd.addChoice("Location: ",
-          new String[] {LOCATION_LOCAL, LOCATION_OME, LOCATION_HTTP}, 
+          new String[] {LOCATION_LOCAL, LOCATION_OME, LOCATION_HTTP},
             LOCATION_LOCAL);
         gd.showDialog();
         if (gd.wasCanceled()) {
@@ -189,7 +189,7 @@ public class Importer implements ItemListener {
     IFormatReader r = null;
     if (!LOCATION_OME.equals(location)) {
       IJ.showStatus("Identifying " + fileName);
-      ImageReader reader = new ImageReader(); 
+      ImageReader reader = new ImageReader();
       try { r = reader.getReader(id); }
       catch (Exception exc) {
         exc.printStackTrace();
@@ -292,7 +292,7 @@ public class Importer implements ItemListener {
 
     // -- Step 4: open file --
 
-    IJ.showStatus("Analyzing " + r.getCurrentFile());
+    IJ.showStatus("Analyzing " + id);
 
     try {
       // -- Step 4a: do some preparatory work --
@@ -303,6 +303,7 @@ public class Importer implements ItemListener {
 
       int pixelType = r.getPixelType(id);
       r.setColorTableIgnored(ignoreTables);
+      String currentFile = r.getCurrentFile();
 
       if (stitchFiles) {
         fs = new FileStitcher(r, true);
@@ -318,13 +319,9 @@ public class Importer implements ItemListener {
           return;
         }
         id = gd.getNextString();
+        r = fs;
       }
-      if (fs != null) {
-        if (!ignoreTables && r.isRGB(id)) r = new ChannelSeparator(fs);
-      }
-      else {
-        if (!ignoreTables && r.isRGB(id)) r = new ChannelSeparator(r);
-      }
+      if (!ignoreTables) r = new ChannelSeparator(r);
       r.setColorTableIgnored(ignoreTables);
       r.close();
       r.setMetadataFiltered(true);
@@ -376,9 +373,11 @@ public class Importer implements ItemListener {
         else cEnd[i] = num[i] - 1;
         cStep[i] = zStep[i] = tStep[i] = 1;
         StringBuffer sb = new StringBuffer();
-        sb.append("Series_");
-        sb.append(i + 1);
-        sb.append(" - ");
+        if (seriesCount > 1) {
+          sb.append("Series_");
+          sb.append(i + 1);
+          sb.append(" - ");
+        }
         String name = store.getImageName(new Integer(i));
         if (name != null && name.length() > 0) {
           sb.append(name);
@@ -456,7 +455,7 @@ public class Importer implements ItemListener {
           plugin.canceled = true;
           return;
         }
-        
+
         int[] widths = new int[seriesCount];
         int[] heights = new int[seriesCount];
         int[] types = new int[seriesCount];
@@ -475,8 +474,8 @@ public class Importer implements ItemListener {
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) {
               for (int j=0; j<seriesCount; j++) {
-                if ((j != i) && series[j] && (widths[j] == widths[i]) && 
-                  (heights[j] == heights[i]) && (types[j] == types[i]) && 
+                if ((j != i) && series[j] && (widths[j] == widths[i]) &&
+                  (heights[j] == heights[i]) && (types[j] == types[i]) &&
                   (channels[j] == channels[i]))
                 {
                   series[i] = true;
@@ -501,7 +500,7 @@ public class Importer implements ItemListener {
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) continue;
             gd.addMessage(seriesStrings[i].replaceAll("_", " "));
-            String s = "_" + (i + 1);
+            String s = seriesCount > 1 ? "_" + (i + 1) : "";
             if (certain[i]) {
               if (sizeC[i] > 1) {
                 gd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
@@ -574,6 +573,14 @@ public class Importer implements ItemListener {
           }
         }
       }
+      int[] cCount = new int[seriesCount];
+      int[] zCount = new int[seriesCount];
+      int[] tCount = new int[seriesCount];
+      for (int i=0; i<seriesCount; i++) {
+        cCount[i] = (cEnd[i] - cBegin[i] + cStep[i]) / cStep[i];
+        zCount[i] = (zEnd[i] - zBegin[i] + zStep[i]) / zStep[i];
+        tCount[i] = (tEnd[i] - tBegin[i] + tStep[i]) / tStep[i];
+      }
 
       // -- Step 4c: display metadata, when appropriate --
 
@@ -582,7 +589,7 @@ public class Importer implements ItemListener {
 
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata(id);
-        meta.put("\t\t" + idType, r.getCurrentFile());
+        meta.put("\t\t" + idType, currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
@@ -613,7 +620,7 @@ public class Importer implements ItemListener {
             new Boolean(r.isInterleaved(id)));
         }
         MetadataPane mp = new MetadataPane(meta);
-        JFrame frame = new JFrame("Metadata - " + r.getCurrentFile());
+        JFrame frame = new JFrame("Metadata - " + currentFile);
         frame.setContentPane(mp);
         frame.pack();
         frame.setVisible(true);
@@ -625,16 +632,15 @@ public class Importer implements ItemListener {
 
       // only read data explicitly if not using 4D Data Browser
       if (!stackFormat.equals(VIEW_BROWSER)) {
-        IJ.showStatus("Reading " + r.getCurrentFile());
+        IJ.showStatus("Reading " + currentFile);
 
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(id, i);
           r.setColorTableIgnored(ignoreTables);
 
-          String name = store.getImageName(new Integer(i));
-          String imageName = r.getCurrentFile();
-          if (name != null && name.length() > 0) imageName += " - " + name;
+          String imageName = store.getImageName(new Integer(i));
+          if (imageName == null) imageName = currentFile;
 
           boolean[] load = new boolean[num[i]];
           if (!stackFormat.equals(VIEW_NONE)) {
@@ -664,6 +670,11 @@ public class Importer implements ItemListener {
           long time = startTime;
           ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
 
+          int w = r.getSizeX(id);
+          int h = r.getSizeY(id);
+          int c = r.getRGBChannelCount(id);
+          int type = r.getPixelType(id);
+
           int q = 0;
           for (int j=0; j<num[i]; j++) {
             if (!load[j]) continue;
@@ -678,18 +689,52 @@ public class Importer implements ItemListener {
             }
             IJ.showProgress((double) q++ / total);
 
-            byte[] b = r.openBytes(id, j);
+            // construct label for this slice
+            int[] zct = r.getZCTCoords(id, j);
+            StringBuffer sb = new StringBuffer();
+            sb.append(imageName);
+            sb.append(": ");
+            if (certain[i]) {
+              boolean first = true;
+              if (cCount[i] > 1) {
+                if (first) first = false;
+                else sb.append("; ");
+                sb.append("ch:");
+                sb.append(zct[1] + 1);
+                sb.append("/");
+                sb.append(sizeC[i]);
+              }
+              if (zCount[i] > 1) {
+                if (first) first = false;
+                else sb.append("; ");
+                sb.append("z:");
+                sb.append(zct[0] + 1);
+                sb.append("/");
+                sb.append(sizeZ[i]);
+              }
+              if (tCount[i] > 1) {
+                if (first) first = false;
+                else sb.append("; ");
+                sb.append("t:");
+                sb.append(zct[2] + 1);
+                sb.append("/");
+                sb.append(sizeT[i]);
+              }
+            }
+            else {
+              sb.append(j + 1);
+              sb.append("/");
+              sb.append(num[i]);
+            }
+            String label = sb.toString();
 
-            int w = r.getSizeX(id);
-            int h = r.getSizeY(id);
-            int c = r.getRGBChannelCount(id);
-            int type = r.getPixelType(id);
+            byte[] b = r.openBytes(id, j);
 
             // construct image processor and add to stack
             ImageProcessor ip = null;
 
             int bpp = FormatReader.getBytesPerPixel(type);
-            
+
             if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
               // HACK - byte array dimensions are incorrect - image is probably
               // a different size, but we have no way of knowing what size;
@@ -713,7 +758,7 @@ public class Importer implements ItemListener {
 
               ip = new ByteProcessor(w, h, bytes, null);
               if (stackB == null) stackB = new ImageStack(w, h);
-              stackB.addSlice(imageName + ":" + (j + 1), ip);
+              stackB.addSlice(label, ip);
             }
             else if (pixels instanceof short[]) {
               short[] s = (short[]) pixels;
@@ -725,7 +770,7 @@ public class Importer implements ItemListener {
 
               ip = new ShortProcessor(w, h, s, null);
               if (stackS == null) stackS = new ImageStack(w, h);
-              stackS.addSlice(imageName + ":" + (j + 1), ip);
+              stackS.addSlice(label, ip);
             }
             else if (pixels instanceof int[]) {
               int[] s = (int[]) pixels;
@@ -737,7 +782,7 @@ public class Importer implements ItemListener {
 
               ip = new FloatProcessor(w, h, s);
               if (stackF == null) stackF = new ImageStack(w, h);
-              stackF.addSlice(imageName + ":" + (j + 1), ip);
+              stackF.addSlice(label, ip);
             }
             else if (pixels instanceof float[]) {
               float[] f = (float[]) pixels;
@@ -753,15 +798,15 @@ public class Importer implements ItemListener {
 
                 if (stackB != null) {
                   ip = ip.convertToByte(true);
-                  stackB.addSlice(imageName + ":" + (j + 1), ip);
+                  stackB.addSlice(label, ip);
                   stackF = null;
                 }
                 else if (stackS != null) {
                   ip = ip.convertToShort(true);
-                  stackS.addSlice(imageName + ":" + (j + 1), ip);
+                  stackS.addSlice(label, ip);
                   stackF = null;
                 }
-                else stackF.addSlice(imageName + ":" + (j + 1), ip);
+                else stackF.addSlice(label, ip);
               }
               else {
                 if (stackO == null) stackO = new ImageStack(w, h);
@@ -788,7 +833,7 @@ public class Importer implements ItemListener {
                 ip = new ColorProcessor(w, h);
                 ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
                   pix.length >= 3 ? bytes[2] : new byte[w*h]);
-                stackO.addSlice(imageName + ":" + (j + 1), ip);
+                stackO.addSlice(label, ip);
               }
             }
             else if (pixels instanceof double[]) {
@@ -801,7 +846,7 @@ public class Importer implements ItemListener {
 
               ip = new FloatProcessor(w, h, d);
               if (stackF == null) stackF = new ImageStack(w, h);
-              stackF.addSlice(imageName + ":" + (j + 1), ip);
+              stackF.addSlice(label, ip);
             }
           }
 
@@ -813,28 +858,28 @@ public class Importer implements ItemListener {
               slice(stackB, id, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
-            else imp = new ImagePlus(imageName, stackB);
+            else imp = new ImagePlus(currentFile, stackB);
           }
           if (stackS != null) {
             if (!mergeChannels && splitWindows) {
               slice(stackS, id, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
-            else imp = new ImagePlus(imageName, stackS);
+            else imp = new ImagePlus(currentFile, stackS);
           }
           if (stackF != null) {
             if (!mergeChannels && splitWindows) {
               slice(stackF, id, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
-            else imp = new ImagePlus(imageName, stackF);
+            else imp = new ImagePlus(currentFile, stackF);
           }
           if (stackO != null) {
             if (!mergeChannels && splitWindows) {
               slice(stackO, id, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
-            else imp = new ImagePlus(imageName, stackO);
+            else imp = new ImagePlus(currentFile, stackO);
           }
 
           if (imp != null) {
@@ -854,9 +899,7 @@ public class Importer implements ItemListener {
             }
             fi.description = tmp.dumpXML();
             imp.setFileInfo(fi);
-            imp.setDimensions((cEnd[i] - cBegin[i] + 1) / cStep[i], 
-              (zEnd[i] - zBegin[i] + 1) / zStep[i], 
-              (tEnd[i] - tBegin[i] + 1) / tStep[i]);
+            imp.setDimensions(cCount[i], zCount[i], tCount[i]);
             displayStack(imp, r, fs, id);
             r.close();
             r.setColorTableIgnored(ignoreTables);
@@ -890,13 +933,13 @@ public class Importer implements ItemListener {
               int width = ((Integer) widths.get(j)).intValue();
               int height = ((Integer) heights.get(j)).intValue();
               int t = ((Integer) types.get(j)).intValue();
-              
-              if (width == w && height == h && type == t) { 
+
+              if (width == w && height == h && type == t) {
                 ImagePlus oldImp = (ImagePlus) newImps.get(j);
                 ImageStack is = oldImp.getStack();
                 ImageStack newStack = imp.getStack();
                 for (int k=0; k<newStack.getSize(); k++) {
-                  is.addSlice(newStack.getSliceLabel(k+1), 
+                  is.addSlice(newStack.getSliceLabel(k+1),
                     newStack.getProcessor(k+1));
                 }
                 oldImp.setStack(oldImp.getTitle(), is);
@@ -912,7 +955,7 @@ public class Importer implements ItemListener {
               newImps.add(imp);
             }
           }
-       
+
           for (int i=0; i<newImps.size(); i++) {
             ((ImagePlus) newImps.get(i)).show();
           }
@@ -1141,7 +1184,7 @@ public class Importer implements ItemListener {
 
         int sizeZ = r.getSizeZ(id);
         int sizeT = r.getSizeT(id);
-        
+
         int extraC = 1;
         if (c > 4) {
           extraC *= (c % 3 == 0 ? 4 : 3);
@@ -1156,7 +1199,7 @@ public class Importer implements ItemListener {
                 int ndx = r.getIndex(id, z, ch1*c + ch2, t) + 1;
                 bytes[ch2] = (byte[]) s.getProcessor(ndx).getPixels();
               }
-              ColorProcessor cp = 
+              ColorProcessor cp =
                 new ColorProcessor(s.getWidth(), s.getHeight());
               cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
                 new byte[s.getWidth() * s.getHeight()]);
@@ -1169,11 +1212,11 @@ public class Importer implements ItemListener {
       }
 
       imp.setDimensions(
-        imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()), 
+        imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()),
         imp.getNSlices(), imp.getNFrames());
       if (stackFormat.equals(VIEW_STANDARD)) {
         if (!stitchStack) imp.show();
-        else imps.add(imp); 
+        else imps.add(imp);
       }
       else if (stackFormat.equals(VIEW_BROWSER)) {}
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
