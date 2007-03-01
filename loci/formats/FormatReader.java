@@ -297,12 +297,13 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getEffectiveSizeC(String) */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    return getSizeC(id) / getRGBChannelCount(id);
+    // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
+    return getImageCount(id) / (getSizeZ(id) * getSizeT(id));
   }
 
   /* @see IFormatReader#getRGBChannelCount(String) */
   public int getRGBChannelCount(String id) throws FormatException, IOException {
-    return getSizeC(id) / (getImageCount(id) / (getSizeZ(id) * getSizeT(id)));
+    return getSizeC(id) / getEffectiveSizeC(id);
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
