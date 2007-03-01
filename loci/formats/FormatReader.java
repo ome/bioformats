@@ -752,7 +752,7 @@ public abstract class FormatReader extends FormatHandler
     if (map != null) Location.mapId(id, map);
     if (omexml) {
       try {
-        Class c = Class.forName("loci.formats.OMEXMLMetadataStore");
+        Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
         MetadataStore ms = (MetadataStore) c.newInstance();
         reader.setMetadataStore(ms);
       }
@@ -992,7 +992,9 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("Generating OME-XML");
       MetadataStore ms = reader.getMetadataStore(id);
 
-      if (ms.getClass().getName().equals("loci.formats.OMEXMLMetadataStore")) {
+      if (ms.getClass().getName().equals(
+        "loci.formats.ome.OMEXMLMetadataStore")) 
+      {
         try {
           Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
           System.out.println(m.invoke(ms, (Object[]) null));
