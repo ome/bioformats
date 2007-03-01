@@ -3,7 +3,7 @@
 //
 
 import loci.formats.ImageReader;
-import loci.formats.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadataStore;
 import org.openmicroscopy.xml.ImageNode;
 import org.openmicroscopy.xml.OMENode;
 

@@ -180,7 +180,7 @@ and Location.getMappedId(String).
 - Debugging statements can be added using FormatReader.debug(String).
 
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
-  loci.formats.OMEXMLMetadataStore provides methods for creating OME-XML from
+  loci.formats.ome.OMEXMLMetadataStore provides methods for creating OME-XML from
   metadata values.  Note that OMEXMLMetadataStore is a subclass of
   loci.formats.MetadataStore (every subclass of FormatReader keeps an instance
   of MetadataStore by default); so to add OME-XML support is as simple as

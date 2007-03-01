@@ -5,6 +5,7 @@
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 import loci.formats.out.TiffWriter;
 
 /** Converts the given files to OME-TIFF format. */

@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import org.openmicroscopy.xml.OMENode;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 import loci.formats.out.TiffWriter;
 
 /** Converts the given image file to an LZW-compressed TIFF. */
