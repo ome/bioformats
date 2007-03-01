@@ -73,7 +73,7 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Determines the number of images in the given PerkinElmer file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
       initFile(id);
     }
     return numImages;
@@ -81,7 +81,7 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
       initFile(id);
     }
     if (isTiff) {
@@ -93,7 +93,9 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
+      initFile(id);
+    }
     if (isTiff) return tiff[0].isLittleEndian(files[0]);
     return true;
   }
@@ -107,7 +109,7 @@ public class PerkinElmerReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
       initFile(id);
     }
     if (isTiff) {
@@ -129,7 +131,7 @@ public class PerkinElmerReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
       initFile(id);
     }
 
@@ -151,7 +153,9 @@ public class PerkinElmerReader extends FormatReader {
 
   /* @see IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
+      initFile(id);
+    }
     return (String[]) allFiles.toArray(new String[0]);
   }
 
@@ -180,7 +184,27 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Initializes the given PerkinElmer file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (currentId != null && 
+      (id.equals(currentId) || isUsedFile(currentId, id))) 
+    {  
+      return;
+    }
+
     if (debug) debug("PerkinElmerReader.initFile(" + id + ")");
+    // always init on the HTML file - this prevents complications with
+    // initializing the image files
+   
+    if (!id.toLowerCase().endsWith(".htm")) {
+      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      String[] ls = parent.list();
+      for (int i=0; i<ls.length; i++) {
+        if (ls[i].toLowerCase().endsWith(".htm")) {
+          id = new Location(ls[i]).getAbsolutePath();
+          break;
+        } 
+      }
+    }
+    
     super.initFile(id);
 
     allFiles = new Vector();
@@ -297,7 +321,7 @@ public class PerkinElmerReader extends FormatReader {
             filesPt++;
           }
           catch (NumberFormatException f) {
-            if (debug) f.printStackTrace();
+            //if (debug) f.printStackTrace();
           }
         }
       }
@@ -600,7 +624,7 @@ public class PerkinElmerReader extends FormatReader {
         originZ == null ? null : new Float(originZ), null);
     }
     catch (NumberFormatException e) {
-      if (debug) e.printStackTrace();
+      //if (debug) e.printStackTrace();
     }
 
     for (int i=0; i<sizeC[0]; i++) {

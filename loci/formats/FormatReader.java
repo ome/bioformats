@@ -1164,6 +1164,21 @@ public abstract class FormatReader extends FormatHandler
     return new int[] {z, c, t};
   }
 
+  /** Returns true if the given file name is in the used files list. */
+  public boolean isUsedFile(String id, String file) 
+    throws FormatException, IOException
+  {
+    String[] usedFiles = getUsedFiles(id);
+    for (int i=0; i<usedFiles.length; i++) {
+      if (usedFiles[i].equals(file) || 
+        usedFiles[i].equals(new Location(file).getAbsolutePath())) 
+      {  
+        return true;
+      }
+    }
+    return false; 
+  }
+
   /**
    * Updates min/max values based on the given BufferedImage.
    * Should be called by each format reader's openImage method.
