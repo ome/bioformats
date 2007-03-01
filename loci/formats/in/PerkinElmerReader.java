@@ -321,7 +321,7 @@ public class PerkinElmerReader extends FormatReader {
             filesPt++;
           }
           catch (NumberFormatException f) {
-            //if (debug) f.printStackTrace();
+            if (debug) f.printStackTrace();
           }
         }
       }
@@ -624,7 +624,7 @@ public class PerkinElmerReader extends FormatReader {
         originZ == null ? null : new Float(originZ), null);
     }
     catch (NumberFormatException e) {
-      //if (debug) e.printStackTrace();
+      if (debug) e.printStackTrace();
     }
 
     for (int i=0; i<sizeC[0]; i++) {
