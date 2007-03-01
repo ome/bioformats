@@ -72,10 +72,10 @@ public final class OverlayIO {
     boolean foundOverlays = false;
 
     // tracks addresses of stored freeforms
-    Vector loadedFreeforms = new Vector();
+    Vector loadedNodedObjects = new Vector();
     boolean nodesChanged = false; // used in event INIT, state NODES
-    int numberOfFreeformsRead = 0;
-    int numFreeformsRestored = 0;
+    int numberOfNodedObjectsRead = 0;
+    int numNodedObjectsRestored = 0;
 
     // tracks line number for error messages
     int lineNum = 0;
@@ -158,8 +158,9 @@ public final class OverlayIO {
           }
 
         } else if (state == NODES) {
-          if (numberOfFreeformsRead == loadedFreeforms.size()) {
-            String s = "more Freeform node lists than Freeforms (" + numberOfFreeformsRead
+          if (numberOfNodedObjectsRead == loadedNodedObjects.size()) {
+            String s = "more \"Noded Object\" (Freeforms, Polylines) node"
+              + " lists" + "than Noded Objects (" + numberOfNodedObjectsRead
               + ") specified in table";
             displayErrorMsg(owner, lineNum, s);
             return null;
@@ -167,14 +168,15 @@ public final class OverlayIO {
 
           // store nodes of previously read freeform
           if (nodesChanged) {
-            OverlayFreeform of = (OverlayFreeform) loadedFreeforms.elementAt(numFreeformsRestored++);
+            OverlayNodedObject ono = (OverlayNodedObject)
+              loadedNodedObjects.elementAt(numNodedObjectsRestored++);
             float[][] temp = new float[2][numNodes];
             for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
-            of.setNodes(temp);
+            ono.setNodes(temp);
             nodes = new float[2][50];
             numNodes = 0;
           }
-          numberOfFreeformsRead++;
+          numberOfNodedObjectsRead++;
           nodesChanged = true;
         }
 
@@ -196,8 +198,12 @@ public final class OverlayIO {
           for (int i=0; i<pos.length; i++) {
             try {
               int p = Integer.parseInt(st.nextToken());
-              if (p >= 0 && p < lengths[i]) { // is coordinate within range?
-                pos[i] = p;
+              if (p > 0 && p <= lengths[i]) { 
+                // Is coordinate within range?
+                // Remember, in the overlay.txt files dimensional position
+                // coordinates are indexed from 1; inside visbio, 
+                // they're indexed from 0.
+                pos[i] = p-1; // shift from external to internal indexing 
                 tok++;
               } else {
                 pos = null;
@@ -259,9 +265,13 @@ public final class OverlayIO {
           OverlayObject obj = createOverlay(className, trans, lineNum);
           if (obj == null) continue;
 
-          if (obj instanceof OverlayFreeform) loadedFreeforms.add(obj);
+          if (obj instanceof OverlayNodedObject) loadedNodedObjects.add(obj);
 
           int r = MathUtil.positionToRaster(lengths, pos);
+          //System.out.print("["); // TEMP
+          //for (int i=0; i< pos.length; i++) System.out.print(i + " "); // TEMP
+          //System.out.println("]"); // TEMP
+          //System.out.println("r = " + r); // TEMP
           // this error should never fire--will be caught above ("is coordinate w/in range?")
           /*
           if (r < 0 || r >= loadedOverlays.length) {
@@ -308,7 +318,8 @@ public final class OverlayIO {
 
           if (numNodes == nodes[0].length) {
             float[][] temp = new float[2][numNodes*2];
-            for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
+            for (int i=0; i<2; i++) 
+              System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
             nodes = temp;
           }
         }
@@ -319,16 +330,19 @@ public final class OverlayIO {
     if (!foundOverlays) {
       displayErrorMsg(owner, lineNum, "no overlays found");
       return null;
-    } else if (loadedFreeforms != null) {
-      if (numFreeformsRestored + 1 < loadedFreeforms.size()) {
+    } 
+    else if (loadedNodedObjects.size() > 0) {
+      if (numNodedObjectsRestored + 1 < loadedNodedObjects.size()) {
         displayErrorMsg(owner, lineNum, "missing node lists for one or more Freeforms");
         return null;
-      } else {
+      } 
+      else {
         // store last freeform read
-        OverlayFreeform of = (OverlayFreeform) loadedFreeforms.elementAt(numFreeformsRestored++);
+        OverlayNodedObject ono = (OverlayNodedObject)
+          loadedNodedObjects.elementAt(numNodedObjectsRestored++);
         float[][] temp = new float[2][numNodes];
         for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
-        of.setNodes(temp);
+        ono.setNodes(temp);
       }
     }
 
@@ -341,7 +355,9 @@ public final class OverlayIO {
     String[] dims = trans.getDimTypes();
     int[] lengths = trans.getLengths();
     Vector[] overlays = trans.overlays;
-    Vector savedFreeforms = new Vector();
+    Vector savedNodedObjects = new Vector();
+    int freeformCount = 0;
+    int polylineCount = 0;
 
     // file header
     out.println("# " + VisBio.TITLE + " " + VisBio.VERSION +
@@ -359,11 +375,12 @@ public final class OverlayIO {
     for (int i=0; i<overlays.length; i++) {
       int[] pos = MathUtil.rasterToPosition(lengths, i);
       StringBuffer sb = new StringBuffer();
-      for (int p=0; p<pos.length; p++) sb.append(pos[p] + "\t");
+      // add 1 to shift indices for humans
+      for (int p=0; p<pos.length; p++) sb.append((pos[p]+1) + "\t");
       String posString = sb.toString();
       for (int j=0; j<overlays[i].size(); j++) {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
-        if (obj instanceof OverlayFreeform) savedFreeforms.add(obj);
+        if (obj instanceof OverlayNodedObject) savedNodedObjects.add(obj);
         out.print(obj.toString());
         out.print("\t");
         out.print(posString);
@@ -387,21 +404,28 @@ public final class OverlayIO {
       }
     }
 
-    // nodes of freeforms, one node per line
-    for (int i=0; i<savedFreeforms.size(); i++) {
-      OverlayFreeform of = (OverlayFreeform) savedFreeforms.get(i);
+    // nodes of noded objects, one node per line
+    for (int i=0; i<savedNodedObjects.size(); i++) {
+      OverlayNodedObject ono = (OverlayNodedObject) savedNodedObjects.get(i);
       out.println();
       float xx1, xx2, yy1, yy2;
-      xx1 = of.getX();
-      yy1 = of.getY();
-      xx2 = of.getX2();
-      yy2 = of.getY2();
+      xx1 = ono.getX();
+      yy1 = ono.getY();
+      xx2 = ono.getX2();
+      yy2 = ono.getY2();
+      
       // nodes header
-      out.println("# Freeform line " + i + " (" + xx1 + "," + yy1 + ")(" + xx2 + "," + yy2 + ")");
+      int k = 0;
+      if (ono instanceof OverlayFreeform) k = ++freeformCount;
+      else if (ono instanceof OverlayPolyline) k = ++polylineCount;
+
+      out.println("# " + ono + " " + k + " (" + xx1 + "," + yy1 + ")(" + xx2 + "," + yy2 + ")");
+
       out.println("X\tY");
-      float[][] nodes = of.getNodes();
-      for (int j=0; j<nodes[0].length; j++) {
-        out.println(nodes[0][j]+"\t"+nodes[1][j]);
+      // print the nodes themselves
+      for (int j=0; j<ono.getNumNodes(); j++) {
+        float[] c = ono.getNodeCoords(j);
+        out.println(c[0]+"\t"+c[1]);
       }
     }
   }
@@ -472,7 +496,7 @@ public final class OverlayIO {
     // top-level if/elseif clause corresponds to a different state, and the interior
     // if/elseif/else clauses describe possible transitions from that state.
     //
-    // As a result of the state machine, I've managed to put most the error messages for
+    // As a result of using the state machine approach, I've managed to put most the error messages for
     // unexpected lines in one place (if (event == BARF) under loadOverlays); however
     // there are still many cases which generate errors elsewhere in loadOverlays.
     // Adding more states to the machine and/or more rigorous checking for acceptable line formats
@@ -480,31 +504,49 @@ public final class OverlayIO {
 
     int state = WAIT, event = BARF;
     if (current == WAIT) {
-      if (input.matches("^\\s*$") || input.startsWith("#")) {state = WAIT; event = IGNORE;}
-      else if (input.startsWith("Overlay")) {state = TABLE; event = INIT;}
-      else {state = WAIT; event = BARF;}
+      if (input.matches("^\\s*$") || input.startsWith("#")) {
+        state = WAIT; event = IGNORE;
+      }
+      else if (input.startsWith("Overlay")) {
+        state = TABLE; event = INIT;
+      }
+      else {
+        state = WAIT; event = BARF;
+      }
     } else if (current == TABLE) {
-      if (input.equals("")) {state = TABLE; event = IGNORE;}
-      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*")) {state = NODES; event = INIT;}
+      if (input.equals("")) {
+        state = TABLE; event = IGNORE;
+      }
+      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*") || 
+          input.matches("^\\s*#\\s*[Pp][Oo][Ll][Yy][Ll][Ii][Nn][Ee].*")) {
+        state = NODES; event = INIT;
+      }
       else if (input.startsWith("Line") || input.startsWith("Freeform")
-          || input.startsWith("Marker") || input.startsWith("Text") || input.startsWith("Oval")
-          || input.startsWith("Box") || input.startsWith("Arrow")) {
-        state = TABLE;
-        event = PARSE;
+          || input.startsWith("Marker") || input.startsWith("Text") ||
+          input.startsWith("Oval") || input.startsWith("Box") ||
+          input.startsWith("Arrow") || input.startsWith("Polyline")) {
+        state = TABLE; event = PARSE;
       }
       else if (input.startsWith("#")) {state = TABLE; event = IGNORE;} // must check for freeform header first
       else {
-        event = BARF;
-        state = TABLE;
+        event = BARF; state = TABLE;
       }
     } else if (current == NODES) {
-      if (input.equals("")) {state = NODES; event = IGNORE;}
-      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*")) {state = NODES; event = INIT;}
-      else if (input.startsWith("#") || input.matches("^[Xx]\t[Yy]")) {state = NODES; event = IGNORE;}
-      else if (input.matches("^[0-9]+\\.[0-9]+\\s[0-9]+\\.[0-9]+$")) {state = NODES; event = PARSE;}
+      if (input.equals("")) {
+        state = NODES; event = IGNORE;
+      }
+      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*") || 
+          input.matches("^\\s*#\\s*[Pp][Oo][Ll][Yy][Ll][Ii][Nn][Ee].*")) {
+        state = NODES; event = INIT;
+      }
+      else if (input.startsWith("#") || input.matches("^[Xx]\t[Yy]")) {
+        state = NODES; event = IGNORE;
+      }
+      else if (input.matches("^[0-9]+\\.[0-9]+\\s[0-9]+\\.[0-9]+$")) {
+        state = NODES; event = PARSE;
+      }
       else {
-        state = NODES;
-        event = BARF;
+        state = NODES; event = BARF;
       }
     }
 
