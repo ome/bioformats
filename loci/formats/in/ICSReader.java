@@ -122,33 +122,51 @@ public class ICSReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[sizeX[0] * sizeY[0] * (dimensions[0] / 8) * 
+      getRGBChannelCount(id)];
+    return openBytes(id, no, buf);
+  }
+
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+    if (no < 0 || no >= getImageCount(currentId)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    if (buf.length < sizeX[0] * sizeY[0] * (dimensions[0] / 8) * 
+      getRGBChannelCount(id)) 
+    {
+      throw new FormatException("Buffer too small.");
+    }
+  
+    int bpp = dimensions[0] / 8;
 
-    int width = dimensions[1];
-    int height = dimensions[2];
-
-    int offset = width * height * (dimensions[0] / 8) * no *
-      (rgb ? dimensions[4] : 1);
-    byte[] plane =
-      new byte[width*height * (dimensions[0] / 8) * (rgb ? dimensions[4] : 1)];
-    System.arraycopy(data, offset, plane, 0, plane.length);
+    int len = sizeX[0] * sizeY[0] * bpp * getRGBChannelCount(id);
+    int offset = len * no;
+    if (!rgb && sizeC[0] > 4) {
+      int pt = 0;
+      for (int i=no*bpp; i<data.length; i+=sizeC[0]*bpp) {
+        System.arraycopy(data, i, buf, pt, bpp);
+        pt += bpp;
+      }
+    }
+    else System.arraycopy(data, offset, buf, 0, len); 
 
     // if it's version two, we need to flip the plane upside down
     if (versionTwo) {
-      byte[] t = new byte[plane.length];
-      int len = width * (dimensions[0] / 8) * (rgb ? dimensions[4] : 1);
-      int off = (height - 1) * len;
-      int newOff = 0;
-      for (int i=0; i<height; i++) {
-        System.arraycopy(plane, off, t, newOff, len);
-        off -= len;
-        newOff += len;
+      int scanline = sizeX[0] * bpp * sizeC[0]; 
+      for (int y=0; y<sizeY[0]; y++) {
+        for (int x=0; x<scanline; x++) {
+          byte bottom = buf[y*scanline + x];
+          buf[y*scanline + x] = buf[(sizeY[0] - y - 1)*scanline + x];
+          buf[(sizeY[0] - y - 1)*scanline + x] = bottom; 
+        }
       }
-      updateMinMax(t, no);
-      return t;
     }
-    updateMinMax(plane, no);
-    return plane;
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given ICS file. */
@@ -325,6 +343,7 @@ public class ICSReader extends FormatReader {
       }
       else if(orderToken.equals("ch")) {
         dimensions[4] = Integer.parseInt(imageToken);
+        if (dimensions[4] > 4) rgb = false; 
       }
       else {
         dimensions[5] = Integer.parseInt(imageToken);
@@ -342,14 +361,10 @@ public class ICSReader extends FormatReader {
 
     if (endian != null) {
       StringTokenizer endianness = new StringTokenizer(endian);
-      int firstByte = 0;
-      int lastByte = 0;
-
-      for(int i=0; i<endianness.countTokens(); i++) {
-        if (i == 0) firstByte = Integer.parseInt(endianness.nextToken());
-        else lastByte = Integer.parseInt(endianness.nextToken());
-      }
-      if (lastByte < firstByte) littleEndian = false;
+      String firstByte = endianness.nextToken();
+      int first = Integer.parseInt(firstByte);
+      littleEndian = ((String) getMeta("format")).equals("real") ? 
+        first == 1 : first != 1;
     }
 
     String test = (String) getMeta("compression");
