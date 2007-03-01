@@ -73,7 +73,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
   protected static final Color HLT = Color.YELLOW;
 
   /** Alpha value for highlighting */
-  protected static float HLT_ALPHA = 0.5f;
+  protected static final float HLT_ALPHA = 0.5f;
   
   // -- Fields --
 
