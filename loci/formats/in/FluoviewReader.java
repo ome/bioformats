@@ -25,13 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 
 /**
  * FluoviewReader is the file format reader for
- * Olympus Fluoview TIFF files.
+ * Olympus Fluoview TIFF files AND Andor Bio-imaging Division (ABD) TIFF files.
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
@@ -47,14 +46,24 @@ public class FluoviewReader extends BaseTiffReader {
   /** String identifying a Fluoview file. */
   private static final String FLUOVIEW_MAGIC_STRING = "FLUOVIEW";
 
-  /** Fluoview TIFF private tags */
+  /** Private TIFF tags */
   private static final int MMHEADER = 34361;
+  private static final int MMSTAMP = 34362;
 
+  // -- Fields --
+
+  /** Flag indicating this is a Fluoview file. */
+  private boolean isFluoview;
+
+  /** Pixel dimensions for this file. */
+  private float voxelX = 0f, voxelY = 0f, voxelZ = 0f, voxelC = 0f, voxelT = 0f;
+  
   // -- Constructor --
 
   /** Constructs a new Fluoview TIFF reader. */
   public FluoviewReader() {
-    super("Olympus Fluoview TIFF", new String[] {"tif", "tiff"});
+    super("Olympus Fluoview/Andor Bio-imaging TIFF", 
+      new String[] {"tif", "tiff"});
   }
 
   // -- FormatReader API methods --
@@ -63,10 +72,29 @@ public class FluoviewReader extends BaseTiffReader {
   public boolean isThisType(byte[] block) {
     if (!TiffTools.isValidHeader(block)) return false;
 
-    // if this file is a Fluoview TIFF file, it should have 42
-    // for the 3rd byte, and contain the text "FLUOVIEW"
+    if (block.length < 3) return false;
+    if (block.length < 8) return true;
+
     String test = new String(block);
-    return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
+    if (test.indexOf(FLUOVIEW_MAGIC_STRING) != -1) {
+      isFluoview = true;
+      return true;
+    }
+
+    int ifdlocation = DataTools.bytesToInt(block, 4, true);
+    if (ifdlocation < 0 || ifdlocation + 1 > block.length) return false;
+    else {
+      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
+      for (int i=0; i<ifdnumber; i++) {
+        if (ifdlocation + 3 + (i*12) > block.length) return false;
+        else {
+          int ifdtag = DataTools.bytesToInt(block, ifdlocation + 2 + (i*12),
+            2, true);
+          if (ifdtag == MMHEADER || ifdtag == MMSTAMP) return true;
+        }
+      }
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
@@ -74,10 +102,9 @@ public class FluoviewReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String s = (String) getMeta("Map Ch" + theC + ": Range");
+    String s = (String) getMeta("Map min");
     if (s == null) return null;
-    s = s.substring(0, s.indexOf("to") - 1).trim();
-    return new Double(Integer.parseInt(s));
+    return new Double(s);
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -85,17 +112,17 @@ public class FluoviewReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String s = (String) getMeta("Map Ch" + theC + ": Range");
+    String s = (String) getMeta("Map max");
     if (s == null) return null;
-    s = s.substring(s.indexOf("to") + 2).trim();
-    return new Double(Integer.parseInt(s));
+    return new Double(s);
   }
 
   /* @see IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
-    return true;
+    if (!id.equals(currentId)) initFile(id);
+    return getMeta("Min value") != null && getMeta("Max value") != null;
   }
 
   // -- FormatHandler API methods --
@@ -117,349 +144,223 @@ public class FluoviewReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
-  protected void initStandardMetadata() throws FormatException {
+  protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    sizeZ[0] = 1;
-    sizeC[0] = 1;
-    sizeT[0] = 1;
+    // First, we want to determine whether this file is a Fluoview TIFF.
+    // Originally, Andor TIFF had its own reader; however, the two formats are
+    // very similar, so it made more sense to merge the two formats into one
+    // reader.
+  
+    byte[] buf = new byte[BLOCK_CHECK_LEN];
+    in.seek(0);
+    in.read(buf);
+    isFluoview = new String(buf).indexOf(FLUOVIEW_MAGIC_STRING) != -1;
 
-    try {
-      Hashtable ifd = ifds[0];
-
-      // determine byte order
-      boolean little = TiffTools.isLittleEndian(ifd);
-
-      in.order(little);
-
-      // set file pointer to start reading MM_HEAD metadata
-      short[] mmHead = TiffTools.getIFDShortArray(ifd, MMHEADER, false);
-      int p = 0; // pointer to next byte in mmHead
-
-      // -- Parse standard metadata --
-
-      put("HeaderSize", DataTools.bytesToInt(mmHead, p, 2, little));
-      p += 2;
-      put("Status", DataTools.bytesToString(mmHead, p, 1));
-      p++;
-
-      // change from the specs: using 257 bytes instead of 256
-      String imageName = DataTools.bytesToString(mmHead, p, 257);
-      put("ImageName", imageName);
-      p += 257 + 4; // there are 4 bytes that we don't need
-
-      put("NumberOfColors", DataTools.bytesToLong(mmHead, p, 4, little));
-      p += 4 + 8; // again, 8 bytes we don't need
-
-      // don't add commentSize and commentOffset to hashtable
-      // these will be used later to read in the Comments field
-      // and add it to the hashtable
-      long commentSize = DataTools.bytesToLong(mmHead, p, 4, little);
-      p += 4;
-      long commentOffset = DataTools.bytesToLong(mmHead, p, 4, little);
-      p += 4;
-
-      // dimensions info
-      // there are 10 blocks of dimension info to be read,
-      // each with the same structure
-      // in the hashtable, the same tags in different blocks
-      // are distinguished by appending the block number to the
-      // tag name
-      for (int j=0; j<10; j++) {
-        put("DimName" + j, DataTools.bytesToString(mmHead, p, 16));
-        p += 16;
-        put("Size" + j, DataTools.bytesToLong(mmHead, p, 4, little));
-        p += 4;
-        put("Origin" + j, Double.longBitsToDouble(
-          DataTools.bytesToLong(mmHead, p, little)));
-        p += 8;
-        put("Resolution" + j, Double.longBitsToDouble(
-          DataTools.bytesToLong(mmHead, p, little)));
-        p += 8;
-      }
-
-      put("MapType", DataTools.bytesToInt(mmHead, p, 2, little));
-      p += 2 + 2; // 2 bytes we don't need
-      put("MapMin", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-      p += 8;
-      put("MapMax", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-      p += 8;
-      put("MinValue", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-      p += 8;
-      put("MaxValue", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-      p += 8 + 4; // skipping over 4 bytes
-      put("Gamma", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-      p += 8;
-      put("Offset", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-      p += 8;
-
-      // get Gray dimension info
-
-      put("DimName11", DataTools.bytesToString(mmHead, p, 16));
-      p += 16;
-      put("Size11", DataTools.bytesToLong(mmHead, p, 4, little));
-      p += 4;
-      put("Origin11", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-      p += 8;
-      put("Resolution11", Double.longBitsToDouble(
-        DataTools.bytesToLong(mmHead, p, little)));
-
-      // read in comments field
-      if (commentSize > 0) {
-        in.seek((int) commentOffset);
-        byte[] comments = new byte[(int) commentSize];
-        in.read(comments);
-        put("Comments", new String(comments));
-      }
-
-      // -- Parse OME-XML metadata --
-
-      Object off = (Object) ifd.get(new Integer(MMHEADER));
-      float origin = 0;
-
-      float stageX = 0;
-      float stageY = 0;
-      float stageZ = 0;
-
-      if (off != null) {
-        // read the metadata
-        byte[] temp2 = new byte[279];
-        in.read(temp2);
-        char[] dimName;
-        for (int j=0; j<10; j++) {
-          dimName = new char[16];
-          for (int i=0; i<16; i++) {
-            dimName[i] = (char) in.read();
-            in.read();
-          }
-
-          in.skipBytes(4);
-          origin = (float) in.readDouble();
-          if (j == 1) stageX = origin;
-          else if (j == 2) stageY = origin;
-          else if (j == 3) stageZ = origin;
-
-          in.readDouble(); // skip next double
-        }
-      }
-
-      // The metadata store we're working with.
-      MetadataStore store = getMetadataStore(currentId);
-
-      store.setStageLabel(null, new Float(stageX), new Float(stageY),
-        new Float(stageZ), null);
-
-      for (int i=0; i<sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      }
-
-      String descr = (String) getMeta("Comment");
-      metadata.remove("Comment");
-      if (descr == null) descr = "";
-
-      // strip LUT data from image description
-      int firstIndex = descr.indexOf("[LUT Ch");
-      int lastIndex = descr.lastIndexOf("[LUT Ch") + 13;
-      if (firstIndex != -1 && lastIndex > firstIndex) {
-        descr = descr.substring(0, firstIndex) + descr.substring(lastIndex);
-      }
-
-      // now parse key-value pairs in the description field
-
-      // first thing is to remove anything of the form "[blah]"
-
-      String first;
-      String last;
-
-      int lbrack = descr.indexOf("[");
-      while (lbrack != -1) {
-        int nl = descr.indexOf("\n", lbrack);
-        if (nl < 0) nl = descr.length();
-        first = descr.substring(0, lbrack);
-        last = descr.substring(nl);
-        descr = first + last;
-        lbrack = descr.indexOf("[");
-      }
-
-      // each remaining line in descr is a (key, value) pair,
-      // where '=' separates the key from the value
-
-      String key;
-      String value;
-      int eqIndex = descr.indexOf("=");
-
-      while (eqIndex != -1) {
-        key = descr.substring(0, eqIndex);
-        value = descr.substring(eqIndex+1, descr.indexOf("\n", eqIndex));
-        addMeta(key.trim(), value.trim());
-        descr = descr.substring(descr.indexOf("\n", eqIndex));
-        eqIndex = descr.indexOf("=");
-      }
-
-      // finally, set descr to be the value of "FLUOVIEW Version"
-
-      descr = (String) getMeta("FLUOVIEW Version");
-      if (descr == null) {
-        descr = (String) getMeta("File Version");
-      }
-      store.setImage(imageName, null, descr, null);
-
-      String d = (String) TiffTools.getIFDValue(ifds[0], TiffTools.PAGE_NAME);
-      int strPos = d.indexOf("[Higher Dimensions]") + 19;
-      d = d.substring(strPos);
-
-      String names = d.substring(5, d.indexOf("Spatial Position"));
-      String positions = d.substring(d.indexOf("Number Of Positions") + 19);
-      names = names.trim();
-      positions = positions.trim();
-
-      // first parse the names
-      Vector n = new Vector();
-      Vector chars = new Vector();
-      for(int i=0; i<names.length(); i++) {
-        if (!Character.isWhitespace(names.charAt(i))) {
-          chars.add(new Character(names.charAt(i)));
-        }
-        else {
-          if (chars.size() > 0) {
-            char[] dim = new char[chars.size()];
-            for(int j=0; j<chars.size(); j++) {
-              dim[j] = ((Character) chars.get(j)).charValue();
-            }
-            n.add(new String(dim));
-          }
-          chars.clear();
-        }
-      }
-
-      if (chars.size() > 0) {
-        char[] dim = new char[chars.size()];
-        for (int j=0; j<chars.size(); j++) {
-          dim[j] = ((Character) chars.get(j)).charValue();
-        }
-        n.add(new String(dim));
-      }
-
-      // now parse the number of positions for each dimension
-
-      Vector numPlanes = new Vector();
-      chars = new Vector();
-
-      for(int i=0; i< positions.length(); i++) {
-        if (!Character.isWhitespace(positions.charAt(i))) {
-          chars.add(new Character(positions.charAt(i)));
-        }
-        else {
-          if (chars.size() > 0) {
-            char[] dim = new char[chars.size()];
-            for (int j=0; j<chars.size(); j++) {
-              dim[j] = ((Character) chars.get(j)).charValue();
-            }
-            numPlanes.add(new String(dim));
-          }
-          chars.clear();
-        }
-      }
-
-      if (chars.size() > 0) {
-        char[] dim = new char[chars.size()];
-        for (int j=0; j<chars.size(); j++) {
-          dim[j] = ((Character) chars.get(j)).charValue();
-        }
-        numPlanes.add(new String(dim));
-      }
-
-      // Populate the metadata store appropriately
-
-      // first we need to reset the dimensions
-
-      boolean setZ = false;
-      boolean setT = false;
-
-      for(int i=0; i<n.size(); i++) {
-        String name = (String) n.get(i);
-        String pos = (String) numPlanes.get(i);
-        int q = Integer.parseInt(pos);
-
-        if (name.equals("Ch")) {
-          sizeC[series] = q;
-        }
-        else if (name.equals("Animation") || name.equals("T")) {
-          sizeT[series] = q;
-          setT = true;
-        }
-        else if (name.equals("Z")) {
-          sizeZ[series] = q;
-          setZ = true;
-        }
-      }
-
-      // set the number of valid bits per pixel
-
-      String bits = (String) getMeta("Map Ch" + (sizeC[0] - 1) + ": Range");
-      int[] validBits = null;
-      int vb = -1;
-      if (bits != null && bits.length() > 0) {
-        int start = Integer.parseInt(bits.substring(0, bits.indexOf(" to")));
-        int end = Integer.parseInt(bits.substring(bits.indexOf("to") + 3));
-        while (Math.pow(2, vb) < end) vb++;
-      }
-
-      if (vb > -1) {
-        validBits = new int[sizeC[0]];
-        if (validBits.length == 2) validBits = new int[3];
-        for (int i=0; i<validBits.length; i++) validBits[i] = vb;
-      }
-
-      if (validBits != null) {
-        for (int i=0; i<ifds.length; i++) {
-          ifds[i].put(new Integer(TiffTools.VALID_BITS), validBits);
-        }
-      }
-
-      if (setZ && !setT) sizeT[series] = 1;
-      if (setT && !setZ) sizeZ[series] = 1;
-
-      // set the dimension order
-
-      String order = "XY";
-
-      int[] dims = new int[] {sizeZ[series], sizeC[series], sizeT[series]};
-      int max = 0;
-      int median = 1;
-      int min = Integer.MAX_VALUE;
-
-      for (int i=0; i<dims.length; i++) {
-        if (dims[i] < min) min = dims[i];
-        if (dims[i] > max) max = dims[i];
-      }
-
-      for (int i=0; i<dims.length; i++) {
-        if (dims[i] != max && dims[i] != min) median = dims[i];
-      }
-
-      int[] orderedDims = new int[] {max, median, min};
-
-      for (int i=0; i<orderedDims.length; i++) {
-        if (orderedDims[i] == sizeZ[series] && order.indexOf("Z") == -1) {
-          order += "Z";
-        }
-        else if (orderedDims[i] == sizeC[series] && order.indexOf("C") == -1) {
-          order += "C";
-        }
-        else order += "T";
-      }
-      currentOrder[series] = order;
+    short[] s = TiffTools.getIFDShortArray(ifds[0], MMHEADER, true);
+    byte[] mmheader = new byte[s.length];
+    for (int i=0; i<mmheader.length; i++) {
+      mmheader[i] = (byte) s[i];
+      if (mmheader[i] < 0) mmheader[i]++;
     }
-    catch (IOException e) {
-      throw new FormatException(e);
+  
+    RandomAccessStream ras = new RandomAccessStream(mmheader);
+    ras.order(isLittleEndian(currentId));
+
+    put("Header Flag", ras.readShort());
+    put("Image Type", (char) ras.read());
+    
+    byte[] nameBytes = new byte[257];
+    ras.read(nameBytes);
+    put("Image name", new String(nameBytes));
+
+    ras.skipBytes(4); // skip pointer to data field
+
+    put("Number of colors", ras.readInt());
+    ras.skipBytes(4); // skip pointer to palette field
+    ras.skipBytes(4); // skip pointer to other palette field
+    
+    put("Comment size", ras.readInt());
+    ras.skipBytes(4); // skip pointer to comment field
+
+    // read dimension information
+    byte[] dimNameBytes = new byte[16];
+    byte[] dimCalibrationUnits = new byte[64];
+    for (int i=0; i<10; i++) {
+      ras.read(dimNameBytes);
+      int size = ras.readInt();
+      double origin = ras.readDouble();
+      double resolution = ras.readDouble();
+      ras.read(dimCalibrationUnits);
+    
+      put("Dimension " + (i+1) + " Name", new String(dimNameBytes));
+      put("Dimension " + (i+1) + " Size", size);
+      put("Dimension " + (i+1) + " Origin", origin);
+      put("Dimension " + (i+1) + " Resolution", resolution);
+      put("Dimension " + (i+1) + " Units", new String(dimCalibrationUnits));
+    }
+
+    ras.skipBytes(4); // skip pointer to spatial position data
+
+    put("Map type", ras.readShort());
+    put("Map min", ras.readDouble());
+    put("Map max", ras.readDouble());
+    put("Min value", ras.readDouble());
+    put("Max value", ras.readDouble());
+
+    ras.skipBytes(4); // skip pointer to map data
+
+    put("Gamma", ras.readDouble());
+    put("Offset", ras.readDouble());
+
+    // read gray channel data
+    ras.read(dimNameBytes);
+    put("Gray Channel Name", new String(dimNameBytes));
+    put("Gray Channel Size", ras.readInt());
+    put("Gray Channel Origin", ras.readDouble());
+    put("Gray Channel Resolution", ras.readDouble());
+    ras.read(dimCalibrationUnits);
+    put("Gray Channel Units", new String(dimCalibrationUnits));
+
+    ras.skipBytes(4); // skip pointer to thumbnail data
+
+    put("Voice field", ras.readInt());
+    ras.skipBytes(4); // skip pointer to voice field
+  
+    // now we need to read the MMSTAMP data to determine dimension order
+    
+    double[][] stamps = new double[8][ifds.length];
+    for (int i=0; i<ifds.length; i++) {
+      s = TiffTools.getIFDShortArray(ifds[i], MMSTAMP, true);
+      byte[] stamp = new byte[s.length];
+      for (int j=0; j<s.length; j++) {
+        stamp[j] = (byte) s[j];
+        if (stamp[j] < 0) stamp[j]++;
+      }
+      ras = new RandomAccessStream(stamp);
+
+      // each stamp is 8 doubles, representing the position on dimensions 3-10
+      for (int j=0; j<8; j++) {
+        stamps[j][i] = ras.readDouble(); 
+      }
+    }
+
+    // calculate the dimension order and axis sizes
+    
+    sizeZ[0] = sizeC[0] = sizeT[0] = 1;
+    currentOrder[0] = "XY";
+
+    for (int i=0; i<10; i++) {
+      String name = (String) getMeta("Dimension " + (i+1) + " Name");
+      Integer size = (Integer) getMeta("Dimension " + (i+1) + " Size");
+      Double voxel = (Double) getMeta("Dimension " + (i+1) + " Resolution"); 
+      if (name == null || size == null || size.intValue() == 0) continue;
+      name = name.toLowerCase().trim();
+      
+      if (name.equals("x")) {
+        sizeX[0] = size.intValue();
+        if (voxel != null) voxelX = voxel.floatValue(); 
+      } 
+      else if (name.equals("y")) {
+        sizeY[0] = size.intValue();
+        if (voxel != null) voxelY = voxel.floatValue(); 
+      } 
+      else if (name.equals("z") || name.equals("event")) {
+        sizeZ[0] *= size.intValue();
+        if (currentOrder[0].indexOf("Z") == -1) currentOrder[0] += "Z";
+        if (voxel != null) voxelZ = voxel.floatValue(); 
+      }
+      else if (name.equals("ch") || name.equals("wavelength")) {
+        sizeC[0] *= size.intValue();
+        if (currentOrder[0].indexOf("C") == -1) currentOrder[0] += "C";
+        if (voxel != null) voxelC = voxel.floatValue(); 
+      }
+      else {
+        sizeT[0] *= size.intValue();
+        if (currentOrder[0].indexOf("T") == -1) currentOrder[0] += "T";
+        if (voxel != null) voxelT = voxel.floatValue(); 
+      }
+    }
+
+    if (currentOrder[0].indexOf("Z") == -1) currentOrder[0] += "Z";
+    if (currentOrder[0].indexOf("T") == -1) currentOrder[0] += "T";
+    if (currentOrder[0].indexOf("C") == -1) currentOrder[0] += "C";
+    
+    numImages = ifds.length;
+  
+    // cut up the comment, if necessary 
+    String comment = (String) getMeta("Comment"); 
+    
+    if (comment != null && comment.startsWith("[")) {
+      int start = comment.indexOf("[Acquisition Parameters]");
+      int end = comment.indexOf("[Acquisition Parameters End]");
+      if (start != -1 && end != -1 && end > start) {
+        String parms = comment.substring(start + 24, end).trim();
+        
+        // this is an INI-style comment, with one key/value pair per line
+
+        StringTokenizer st = new StringTokenizer(parms, "\n");
+        while (st.hasMoreTokens()) {
+          String token = st.nextToken();
+          int eq = token.indexOf("=");
+          if (eq != -1) {
+            String key = token.substring(0, eq);
+            String value = token.substring(eq + 1);
+            addMeta(key, value); 
+          }
+        }
+      }
+   
+      start = comment.indexOf("[Version Info]");
+      end = comment.indexOf("[Version Info End]");
+      if (start != -1 && end != -1 && end > start) {
+        comment = comment.substring(start + 14, end).trim();
+        comment = comment.substring(comment.indexOf("=") + 1,
+          comment.indexOf("\n")).trim(); 
+      }
+      else comment = "";
+    }
+    addMeta("Comment", comment);
+  }
+
+  protected void initMetadataStore() {
+    super.initMetadataStore(); 
+    try {
+      MetadataStore store = getMetadataStore(currentId);
+      store.setDimensions(new Float(voxelX), new Float(voxelY), 
+        new Float(voxelZ), new Float(voxelC), new Float(voxelT), null); 
+      
+      Double gamma = (Double) getMeta("Gamma");
+      for (int i=0; i<sizeC[0]; i++) {
+        store.setDisplayChannel(new Integer(i), null, null, 
+          gamma == null ? null : new Float(gamma.floatValue()), null); 
+     
+        String gain = (String) getMeta("Gain Ch" + (i+1));
+        String voltage = (String) getMeta("PMT Voltage Ch" + (i+1));
+        String offset = (String) getMeta("Offset Ch" + (i+1));
+       
+        if (gain != null || voltage != null || offset != null) {
+          store.setDetector((String) getMeta("System Configuration"), null,
+            null, null, gain == null ? null : new Float(gain),
+            voltage == null ? null : new Float(voltage),
+            offset == null ? null : new Float(offset), null, new Integer(i)); 
+        }
+      }
+   
+      String mag = (String) getMeta("Magnification");
+      if (mag != null && mag.toLowerCase().endsWith("x")) {
+        mag = mag.substring(0, mag.length() - 1);
+      }
+      else if (mag == null) mag = "1";
+      store.setObjective((String) getMeta("Objective Lens"), null, null, null, 
+        new Float(mag), null, null);
+    
+    }
+    catch (FormatException fe) {
+      if (debug) fe.printStackTrace();
+    }
+    catch (IOException ie) {
+      if (debug) ie.printStackTrace();
     }
   }
 

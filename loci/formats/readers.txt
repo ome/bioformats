@@ -72,7 +72,6 @@ loci.formats.in.ImarisTiffReader  # ims [TIFF]
 loci.formats.in.LeicaReader       # lei, tif [TIFF+companion; slow isThisType]
 loci.formats.in.NikonReader       # nef, tif [TIFF; slow isThisType]
 loci.formats.in.FluoviewReader    # tif [TIFF; slow isThisType]
-loci.formats.in.AndorReader       # tif [TIFF; slow isThisType]
 loci.formats.in.PrairieReader     # xml, cfg, tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
