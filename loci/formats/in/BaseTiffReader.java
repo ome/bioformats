@@ -590,8 +590,8 @@ public abstract class BaseTiffReader extends FormatReader {
       switch (resolutionUnit) {
         case 2:
           // resolution is expressed in pixels per inch
-          pixX *= 2.54;
-          pixY *= 2.54;
+          pixX *= 0.0254;
+          pixY *= 0.0254;
           break;
         case 3:
           // resolution is expressed in pixels per centimeter
