@@ -136,19 +136,28 @@ public class IPLabReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[width * height * bps * c];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
+    
     int numPixels = width * height * c;
+    if (buf.length < numPixels * bps) {
+      throw new FormatException("Buffer too small.");
+    } 
     in.seek(numPixels * bps * (no / c) + 44);
 
-    byte[] rawData = new byte[numPixels * bps];
-    in.read(rawData);
-    updateMinMax(rawData, no);
-    return rawData;
+    in.read(buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given IPLab file. */
@@ -391,20 +400,26 @@ public class IPLabReader extends FormatReader {
           store = getMetadataStore(currentId);
           store.setChannelGlobalMinMax(i, new Double(min),
             new Double(max), null);
-          // TODO : set DisplayChannel here
+        
+          store.setDisplayChannel(new Integer(c), new Double(black),
+            new Double(white), new Float(gamma), null);
         }
       }
       else if (tag.equals("head")) {
         // read in header labels
 
-        in.readInt(); // size is defined to 2200
+        int size = in.readInt();
 
-        for (int i=0; i<100; i++) {
+        byte[] headerString = new byte[20];
+        for (int i=0; i<size / (headerString.length + 2); i++) {
           int num = in.readShort();
-          in.read(fourBytes);
+          in.read(headerString);
           String name = new String(fourBytes);
           addMeta("Header" + num, name);
         }
+      }
+      else if (tag.equals("mmrc")) {
+        in.skipBytes(in.readInt());
       }
       else if (tag.equals("roi ")) {
         // read in ROI information
@@ -427,6 +442,8 @@ public class IPLabReader extends FormatReader {
       }
       else if (tag.equals("mask")) {
         // read in Segmentation Mask
+        int size = in.readInt();
+        in.skipBytes(size);
       }
       else if (tag.equals("unit")) {
         // read in units
@@ -441,7 +458,7 @@ public class IPLabReader extends FormatReader {
           addMeta("UnitsPerPixel" + i, new Long(unitsPerPixel));
 
           if (i == 0) {
-            Float pixelSize = new Float(unitsPerPixel);
+            Float pixelSize = new Float(1 / (float) unitsPerPixel);
             store.setDimensions(pixelSize, pixelSize, null, null, null, null);
           }
 

@@ -193,15 +193,23 @@ public class OIBReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    byte[] buf = new byte[sizeX[series] * sizeY[series] * sizeC[series] * 
+      FormatReader.getBytesPerPixel(pixelType[series])];
+    return openBytes(id, no, buf);
+  }
+  
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
+  
     try {
-      int s = getSeries(id);
-      String directory =
-        (String) ((Hashtable) pixels.get(s)).get(new Integer(no));
-      String name = (String) ((Hashtable) names.get(s)).get(new Integer(no));
+      Integer ii = new Integer(no); 
+      String directory = (String) ((Hashtable) pixels.get(series)).get(ii);
+      String name = (String) ((Hashtable) names.get(series)).get(ii);
 
       r.setVar("dirName", directory);
       r.exec("root = fs.getRoot()");
@@ -210,25 +218,18 @@ public class OIBReader extends FormatReader {
       r.exec("document = dir.getEntry(entryName)");
       r.exec("dis = new DocumentInputStream(document)");
       r.exec("numBytes = dis.available()");
-      int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numbytes + 4]; // append 0 for final offset
+      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
+      byte[] b = new byte[numBytes + 4]; // append 0 for final offset
       r.setVar("data", b);
       r.exec("dis.read(data)");
 
       RandomAccessStream stream = new RandomAccessStream(b);
       Hashtable[] ifds = TiffTools.getIFDs(stream);
-      littleEndian[s] = TiffTools.isLittleEndian(ifds[0]);
-      byte[][] samples = TiffTools.getSamples(ifds[0], stream);
-
-      byte[] rtn = new byte[samples.length * samples[0].length];
-      for (int i=0; i<samples.length; i++) {
-        System.arraycopy(samples[i], 0, rtn, i*samples[i].length,
-          samples[i].length);
-      }
-
+      littleEndian[series] = TiffTools.isLittleEndian(ifds[0]);
+      TiffTools.getSamples(ifds[0], stream, ignoreColorTable, buf);
       stream.close();
-      updateMinMax(rtn, no);
-      return rtn;
+      updateMinMax(buf, no);
+      return buf;
     }
     catch (ReflectException e) {
       throw new FormatException(e);

@@ -148,35 +148,31 @@ public class LIFReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[sizeX[series] * sizeY[series] * 
+      (bpp / 8) * sizeC[series]];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    // determine which dataset the plane is part of
-
-    int z = getSizeZ(id);
-    int t = getSizeT(id);
-
-    width = dims[series][0];
-    height = dims[series][1];
-    c = dims[series][4];
-    //if (c == 2) c--;
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
-    int bytesPerPixel = bpp / 8;
+    int bytes = bpp / 8;
+    if (buf.length < sizeX[series] * sizeY[series] * bytes * sizeC[series]) {
+      throw new FormatException("Buffer too small.");
+    }
 
     int offset = ((Long) offsets.get(series)).intValue();
-
-    // get the image number within this dataset
-
-    in.seek(offset + width * height * bytesPerPixel * no * c);
-
-    byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
-    in.read(data);
-    updateMinMax(data, no);
-    return data;
+    in.seek(offset + sizeX[series] * sizeY[series] * bytes * no * sizeC[series]);
+    in.read(buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given LIF file. */
@@ -184,7 +180,7 @@ public class LIFReader extends FormatReader {
     throws FormatException, IOException
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
-      !isRGB(id) ? 1 : c, false, bpp / 8, littleEndian, validBits[series]);
+      c, false, bpp / 8, littleEndian, validBits[series]);
     updateMinMax(b, no);
     return b;
   }

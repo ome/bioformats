@@ -810,6 +810,31 @@ public final class TiffTools {
   public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in,
     boolean ignore) throws FormatException, IOException
   {
+    int samplesPerPixel = getSamplesPerPixel(ifd);
+    int photoInterp = getPhotometricInterpretation(ifd);
+    if (samplesPerPixel == 1 && (photoInterp == RGB_PALETTE ||
+      photoInterp == CFA_ARRAY))
+    {
+      samplesPerPixel = 3;
+    }
+    int bpp = getBitsPerSample(ifd)[0] / 8; 
+    long width = getImageWidth(ifd);
+    long length = getImageLength(ifd);
+    byte[] b = new byte[(int) (width * length * samplesPerPixel * bpp)];
+    
+    getSamples(ifd, in, ignore, b);
+    byte[][] samples = new byte[samplesPerPixel][(int) (width * length * bpp)];
+    for (int i=0; i<samplesPerPixel; i++) {
+      System.arraycopy(b, (int) (i*width*length*bpp), samples[i], 0, 
+        samples[i].length);
+    } 
+    b = null;
+    return samples;
+  }
+  
+  public static byte[] getSamples(Hashtable ifd, RandomAccessStream in,
+    boolean ignore, byte[] buf) throws FormatException, IOException
+  {
     if (DEBUG) debug("parsing IFD entries");
 
     // get internal non-IFD entries
@@ -949,25 +974,24 @@ public final class TiffTools {
             stripOffsets[i] = stripOffsets[i - 1] + stripByteCounts[i];
           }
 
-          byte[] row = new byte[(int) imageWidth];
           in.seek((int) stripOffsets[i]);
-          in.read(row);
+          in.read(buf, (int) (i*imageWidth), (int) imageWidth);
           boolean isZero = true;
-          for (int j=0; j<row.length; j++) {
-            if (row[j] != 0) {
+          for (int j=0; j<imageWidth; j++) {
+            if (buf[(int) (i*imageWidth + j)] != 0) {
               isZero = false;
               break;
             }
           }
 
           while (isZero) {
-            stripOffsets[i] -= row.length;
+            stripOffsets[i] -= imageWidth;
             in.seek((int) stripOffsets[i]);
-            in.read(row);
-            for (int j=0; j<row.length; j++) {
-              if (row[j] != 0) {
+            in.read(buf, (int) (i*imageWidth), (int) imageWidth); 
+            for (int j=0; j<imageWidth; j++) {
+              if (buf[(int) (i*imageWidth + j)] != 0) {
                 isZero = false;
-                stripOffsets[i] -= (stripByteCounts[i] - row.length);
+                stripOffsets[i] -= (stripByteCounts[i] - imageWidth);
                 break;
               }
             }
@@ -1311,7 +1335,6 @@ public final class TiffTools {
 
     // Since the lowest common denominator for all pixel operations is "byte"
     // we're going to normalize everything to byte.
-    byte[][] byteData = null;
 
     if (bitsPerSample[0] == 12) bitsPerSample[0] = 16;
 
@@ -1321,35 +1344,34 @@ public final class TiffTools {
     }
 
     if (bitsPerSample[0] == 16) {
-      byteData = new byte[samplesPerPixel][numSamples * 2];
+      int pt = 0; 
       for (int i = 0; i < samplesPerPixel; i++) {
         for (int j = 0; j < numSamples; j++) {
-          byteData[i][j * 2]     = (byte) ((samples[i][j] & 0xFF00) >> 8);
-          byteData[i][j * 2 + 1] = (byte) (samples[i][j] & 0x00FF);
+          buf[pt++] = (byte) ((samples[i][j] & 0xff00) >> 8);
+          buf[pt++] = (byte) (samples[i][j] & 0xff);
         }
       }
     }
     else if (bitsPerSample[0] == 32) {
-      byteData = new byte[samplesPerPixel][numSamples * 4];
+      int pt = 0; 
       for (int i=0; i<samplesPerPixel; i++) {
         for (int j=0; j<numSamples; j++) {
-          byteData[i][j * 4] = (byte) ((samples[i][j] & 0xff000000) >> 24);
-          byteData[i][j * 4 + 1] = (byte) ((samples[i][j] & 0xff0000) >> 16);
-          byteData[i][j * 4 + 2] = (byte) ((samples[i][j] & 0xff00) >> 8);
-          byteData[i][j * 4 + 3] = (byte) (samples[i][j] & 0xff);
+          buf[pt++] = (byte) ((samples[i][j] & 0xff000000) >> 24); 
+          buf[pt++] = (byte) ((samples[i][j] & 0xff0000) >> 16); 
+          buf[pt++] = (byte) ((samples[i][j] & 0xff00) >> 8); 
+          buf[pt++] = (byte) (samples[i][j] & 0xff); 
         }
       }
     }
     else {
-      byteData = new byte[samplesPerPixel][numSamples];
       for (int i=0; i<samplesPerPixel; i++) {
         for (int j=0; j<numSamples; j++) {
-          byteData[i][j] = (byte) samples[i][j];
+          buf[j + i*numSamples] = (byte) samples[i][j];
         }
       }
     }
 
-    return byteData;
+    return buf; 
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
@@ -1378,6 +1400,7 @@ public final class TiffTools {
     int photoInterp = getPhotometricInterpretation(ifd);
     if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
       photoInterp = BLACK_IS_ZERO;
+      samplesPerPixel = 1;
     }
 
     int[] validBits = getIFDIntArray(ifd, VALID_BITS, false);

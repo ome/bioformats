@@ -26,9 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -234,10 +232,22 @@ public class ZeissZVIReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[sizeX[0] * sizeY[0] * bpp];
+    return openBytes(id, no, buf);
+  }
+
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.openBytes(id, no);
+    if (noPOI || needLegacy) return legacy.openBytes(id, no, buf);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
+    }
+
+    if (buf.length < sizeX[0] * sizeY[0] * bpp) {
+      throw new FormatException("Buffer too small.");
     }
 
     try {
@@ -249,46 +259,30 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("document = dir.getEntry(entryName)");
       r.exec("dis = new DocumentInputStream(document)");
       r.exec("numBytes = dis.available()");
-      int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numbytes + 4]; // append 0 for final offset
-      r.setVar("data", b);
+      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
+      r.setVar("skipBytes", 
+        ((Integer) offsets.get(new Integer(no))).longValue());
+      r.exec("blah = dis.skip(skipBytes)");
+      r.setVar("data", buf);
       r.exec("dis.read(data)");
-
-      // remove extra bytes
-
-      int offset = ((Integer) offsets.get(new Integer(no))).intValue();
-      byte[] a = new byte[b.length - offset];
-      System.arraycopy(b, b.length - a.length, a, 0, a.length);
 
       if (bpp > 6) bpp = 1;
 
       if (bpp == 3) {
         // reverse bytes in groups of 3 to account for BGR storage
-
-        byte[] tmp = a;
-        a = new byte[tmp.length];
-
-        for (int i=0; i<tmp.length; i+=3) {
-          if (i + 2 < tmp.length) {
-            a[i] = tmp[i + 2];
-            a[i + 1] = tmp[i + 1];
-            a[i + 2] = tmp[i];
-          }
+        for (int i=0; i<buf.length; i+=3) {
+          byte r = buf[i + 2];
+          buf[i + 2] = buf[i];
+          buf[i] = r;
         }
       }
-      b = null;
 
-      if (a.length != bpp * sizeX[0] * sizeY[0]) {
-        byte[] tmp = a;
-        a = new byte[bpp * sizeX[0] * sizeY[0]];
-        System.arraycopy(tmp, 0, a, 0, a.length);
-      }
-      updateMinMax(a, no);
-      return a;
+      updateMinMax(buf, no);
+      return buf;
     }
     catch (ReflectException e) {
       needLegacy = true;
-      return openBytes(id, no);
+      return openBytes(id, no, buf);
     }
   }
 
@@ -473,7 +467,8 @@ public class ZeissZVIReader extends FormatReader {
   /** Initialize metadata hashtable and OME-XML structure. */
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore(currentId);
-    store.setImage((String) getMeta("File Name"), null, null, null);
+
+    store.setImage((String) getMeta("Title"), null, null, null);
 
     if (bpp == 1 || bpp == 3) pixelType[0] = FormatReader.UINT8;
     else if (bpp == 2 || bpp == 6) pixelType[0] = FormatReader.UINT16;

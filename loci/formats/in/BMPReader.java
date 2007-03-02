@@ -114,106 +114,70 @@ public class BMPReader extends FormatReader {
     return true;
   }
 
-  /** Obtains the specified image from the given BMP file as a byte array. */
-  public byte[] openBytes(String id, int no)
+  public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    in.seek(global);
-
+   
     if (width % 2 == 1) width++;
-
-    byte[] pix = new byte[width * height * (bpp / 8)];
-    in.read(pix);
-
-    byte[][] pixels = new byte[0][0];
-
-    // check to make sure that the pixel data is uncompressed
-    // we aren't going to support compressed data, since only crazy people
-    // compress bitmaps :-)
+   
+    if (buf.length < width * height * (bpp / 8)) {
+      throw new FormatException("Buffer too small.");
+    }
 
     if (compression != 0) {
       throw new FormatException("Compression type " + compression +
         " not supported");
     }
 
-    if (palette == null) palette = new byte[1][0];
+    in.seek(global);
+    int pixels = width * height;
 
-    if (palette[0].length != 0 && !ignoreColorTable) {
-      pixels = new byte[3][pix.length];
-      int pt = pix.length;
-      for (int i=0; i<pix.length; i++) {
-        if (pix[i] < 0) pix[i] += 127;
-        pixels[0][pt] = palette[0][pix[i]];
-        pixels[1][pt] = palette[1][pix[i]];
-        pixels[2][pt] = palette[2][pix[i]];
-        pt--;
+    if (palette != null && palette[0].length > 0 && !ignoreColorTable) {
+      for (int y=height-1; y>=0; y--) {
+        for (int x=0; x<width; x++) {
+          int val = in.read();
+          if (val < 0) val += 127;
+          buf[y*width + x] = palette[0][val];
+          buf[y*width + x + pixels] = palette[1][val];
+          buf[y*width + x + 2*pixels] = palette[2][val];
+        }
       }
     }
     else {
       if (bpp <= 8) {
-        pixels = new byte[3][pix.length];
-
-        int pt = pix.length - 1;
-        for (int i=0; i<pix.length; i++) {
-          pixels[0][i] = pix[pt];
-          pixels[1][i] = pix[pt];
-          pixels[2][i] = pix[pt];
-          pt--;
+        for (int y=height-1; y>=0; y--) {
+          for (int x=0; x<width; x++) {
+            buf[y*width + x] = (byte) in.read();
+          }
         }
       }
-      else if (bpp == 24) {
-        pixels = new byte[3][pix.length / 3];
-        int pt = pix.length - 1;
-        for (int j=0; j<pixels[0].length; j++) {
-          pixels[0][j] = pix[pt];
-          pixels[1][j] = pix[pt - 1];
-          pixels[2][j] = pix[pt - 2];
-          pt -= 3;
+      else {
+        for (int y=height-1; y>=0; y--) {
+          for (int x=0; x<width; x++) {
+            buf[y*width + x + 2*pixels] = (byte) in.read();
+            buf[y*width + x + pixels] = (byte) in.read();
+            buf[y*width + x] = (byte) in.read();
+            for (int j=0; j<(bpp - 24) / 8; j++) in.read(); 
+          } 
         }
       }
-      else if (bpp == 32) {
-        pixels = new byte[3][pix.length / 4];
-        int pt = pix.length - 1;
-        for (int j=0; j<pixels[0].length; j++) {
-          pixels[0][j] = pix[pt];
-          pixels[1][j] = pix[pt - 1];
-          pixels[2][j] = pix[pt - 2];
-          pt -= 4;
-        }
-        bpp = 24;
-      }
     }
+    updateMinMax(buf, no);
+    return buf;
+  }
 
-    // need to reverse each row
-
-    byte[][] tempPx = new byte[pixels.length][pixels[0].length];
-
-    for (int j=0; j < height; j++) {
-      int oldOff = width * j;
-      int newOff = width * (j+1) - 1;
-      for (int k=0; k < width; k++) {
-        tempPx[0][oldOff] = pixels[0][newOff];
-        tempPx[1][oldOff] = pixels[1][newOff];
-        tempPx[2][oldOff] = pixels[2][newOff];
-
-        oldOff++;
-        newOff--;
-      }
-    }
-
-    byte[] p = new byte[sizeC[0] * tempPx[0].length];
-    for (int i=0; i<sizeC[0]; i++) {
-      System.arraycopy(tempPx[i], 0, p, i * tempPx[i].length,
-        tempPx[i].length);
-    }
-    updateMinMax(p, no);
-    return p;
+  /** Obtains the specified image from the given BMP file as a byte array. */
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (width % 2 == 1) width++; 
+    byte[] buf = new byte[width * height * (bpp / 8)];
+    return openBytes(id, no, buf);
   }
 
   /** Obtains the specified image from the given BMP file. */

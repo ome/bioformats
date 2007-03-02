@@ -101,17 +101,25 @@ public class SlidebookReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[width * height * 2];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
+    if (buf.length < width * height * 2) {
+      throw new FormatException("Buffer too small.");
+    }
     in.seek(offset + (no * width * height * 2));
-    byte[] b = new byte[width * height * 2];
-    in.read(b);
-    updateMinMax(b, no);
-    return b;
+    in.read(buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given Slidebook file. */

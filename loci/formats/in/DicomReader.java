@@ -143,87 +143,25 @@ public class DicomReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    byte[] buf = new byte[width * height * (bitsPerPixel / 8)];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    byte[] data = new byte[width * height * (bitsPerPixel / 8)];
-
-    in.seek(offsets + data.length * no);
-    in.read(data);
-
-    if (bitsPerPixel == 16) {
-      // may still be broken on some samples, but it's better than it was
-
-      for (int i=0; i<data.length; i++) {
-        data[i] = (byte) (255 - data[i]);
-      }
-
-      String windowCenter = (String) getMeta("Window Center");
-      String windowWidth = (String) getMeta("Window Width");
-      if (windowCenter != null && windowCenter.indexOf("\\") != -1) {
-        windowCenter = windowCenter.substring(windowCenter.indexOf("\\") + 1);
-      }
-      if (windowWidth != null && windowWidth.indexOf("\\") != -1) {
-        windowWidth = windowWidth.substring(windowWidth.indexOf("\\") + 1);
-      }
-
-      double wCenter = 0;
-      if (windowCenter != null) wCenter = Double.parseDouble(windowCenter);
-      double wWidth = 0;
-      if (windowWidth != null) wWidth = Double.parseDouble(windowWidth);
-
-      double min = (wCenter - wWidth / 2) + 3964;
-      double max = (wCenter + wWidth / 2) - 2540;
-
-      short[] shortData = new short[width * height];
-      int minValue = Integer.MAX_VALUE;
-      int maxValue = Integer.MIN_VALUE;
-      for (int i=0; i<data.length; i+=2) {
-        shortData[i/2] = DataTools.bytesToShort(data, i, 2, little);
-        if (shortData[i/2] < minValue) minValue = shortData[i/2];
-        if (shortData[i/2] > maxValue) maxValue = shortData[i/2];
-      }
-
-      String rescale = (String) getMeta("Rescale Intercept");
-      double scale = 0;
-      if (rescale != null) {
-        rescale = rescale.trim();
-        scale = Double.parseDouble(rescale);
-      }
-
-      if (min < minValue) {
-        for (int i=0; i<shortData.length; i++) {
-          shortData[i] = (short) (shortData[i] - (minValue - min) + scale);
-        }
-      }
-      else {
-        for (int i=0; i<shortData.length; i++) {
-          shortData[i] = (short) (shortData[i] + (min - minValue) + scale);
-        }
-      }
-
-      if (max < maxValue) {
-        for (int i=0; i<shortData.length; i++) {
-          shortData[i] = (short) (shortData[i] - (maxValue - max));
-        }
-      }
-      else {
-        for (int i=0; i<shortData.length; i++) {
-          shortData[i] = (short) (shortData[i] - (max - maxValue));
-        }
-      }
-
-      data = new byte[shortData.length * 2];
-      for (int i=0; i<shortData.length; i++) {
-        byte[] b = DataTools.shortToBytes(shortData[i], little);
-        data[2*i] = b[0];
-        data[2*i + 1] = b[1];
-      }
+    if (buf.length < width * height * (bitsPerPixel / 8)) {
+      throw new FormatException("Buffer too small.");
     }
-    updateMinMax(data, no);
-    return data;
+    
+    in.seek(offsets + (width * height * (bitsPerPixel / 8) * no));
+    in.read(buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given DICOM file. */

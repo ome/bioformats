@@ -117,9 +117,23 @@ public class LegacyZVIReader extends FormatReader {
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
-    byte[] b = ImageTools.getBytes(openImage(id, no), false, no);
-    updateMinMax(b, no);
-    return b;
+    if (!id.equals(currentId)) initFile(id);
+    byte[] buf = new byte[((ZVIBlock) blockList.elementAt(no)).imageSize];
+    return openBytes(id, no, buf); 
+  }
+
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    
+    ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
+    zviBlock.readBytes(in, buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Determines the number of images in the given ZVI file. */
@@ -549,8 +563,8 @@ public class LegacyZVIReader extends FormatReader {
       bytesPerChannel = bytesPerPixel / numChannels;
     }
 
-    /** Reads in this block's image data from the given file. */
-    public BufferedImage readImage(RandomAccessStream raf)
+    /** Reads in this block's image bytes from the given file. */
+    public byte[] readBytes(RandomAccessStream raf, byte[] buf)
       throws IOException, FormatException
     {
       long fileSize = raf.length();
@@ -560,11 +574,19 @@ public class LegacyZVIReader extends FormatReader {
           "; bytesPerPixel=" + bytesPerPixel + "; imagePos=" + imagePos +
           "; fileSize=" + fileSize + "). " + WHINING);
       }
+      if (buf.length < imageSize) throw new FormatException("Buffer too small.");
 
       // read image
-      byte[] imageBytes = new byte[imageSize];
       raf.seek(imagePos);
-      raf.readFully(imageBytes);
+      raf.readFully(buf);
+      return buf; 
+    }
+
+    /** Reads in this block's image data from the given file. */
+    public BufferedImage readImage(RandomAccessStream raf)
+      throws IOException, FormatException
+    {
+      byte[] imageBytes = readBytes(raf, new byte[imageSize]);
 
       // convert image bytes into BufferedImage
       if (bytesPerPixel > 4) {

@@ -64,6 +64,29 @@ public class MRCReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double((String) getMeta("Minimum pixel value")); 
+  }
+
+  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double((String) getMeta("Maximum pixel value"));
+  }
+
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id) 
+    throws FormatException, IOException 
+  {
+    return true;
+  }
+
   /** Checks if the given block is a valid header for an MRC file. */
   public boolean isThisType(byte[] block) {
     return false; // no way to tell if this is an MRC file or not
@@ -94,17 +117,25 @@ public class MRCReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[sizeX[0] * sizeY[0] * bpp];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
+    if (buf.length < sizeX[0] * sizeY[0] * bpp) {
+      throw new FormatException("Buffer too small.");
+    }
     in.seek(1024 + extHeaderSize + (no * sizeX[0] * sizeY[0] * bpp));
-    byte[] b = new byte[sizeX[0] * sizeY[0] * bpp];
-    in.read(b);
-    updateMinMax(b, no);
-    return b;
+    in.read(buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given MRC file. */
@@ -345,6 +376,8 @@ public class MRCReader extends FormatReader {
       new Float(zlen / mz), null, null, null);
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
+        getChannelGlobalMaximum(id, i), null);
     }
   }
 

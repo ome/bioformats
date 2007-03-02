@@ -61,7 +61,7 @@ public class GelReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
-  protected void initStandardMetadata() throws FormatException {
+  protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
     numImages--;
@@ -97,14 +97,9 @@ public class GelReader extends BaseTiffReader {
 
     sizeT[series] = numImages;
 
-    try {
-      MetadataStore store = getMetadataStore(currentId);
-      store.setDimensions(new Float(scale.floatValue()),
-        new Float(scale.floatValue()), null, null, null, null);
-    }
-    catch (IOException e) {
-      throw new FormatException(e);
-    }
+    MetadataStore store = getMetadataStore(currentId);
+    store.setDimensions(new Float(scale.floatValue()),
+      new Float(scale.floatValue()), null, null, null, null);
   }
 
   // -- Main method --

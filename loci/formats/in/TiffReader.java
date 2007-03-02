@@ -66,7 +66,7 @@ public class TiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /** Parses standard metadata. */
-  protected void initStandardMetadata() throws FormatException {
+  protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
     String comment = (String) getMeta("Comment");
 

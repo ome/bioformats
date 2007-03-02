@@ -102,16 +102,22 @@ public class EPSReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[width * height * channels * (bps / 8)];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    close();
-
-    byte[] p = new byte[width * height * channels * (bps / 8)];
-
+    if (buf.length < width * height * channels * (bps / 8)) {
+      throw new FormatException("Buffer too small.");
+    }
+ 
     RandomAccessStream ras = new RandomAccessStream(id);
     int line = 0;
 
@@ -121,37 +127,28 @@ public class EPSReader extends FormatReader {
     }
 
     if (binary) {
-      ras.read(p, 0, p.length);
+      ras.read(buf, 0, buf.length);
     }
     else {
       int pos = ras.getFilePointer();
       String len = ras.readLine();
       ras.seek(pos);
-      int numLines = p.length / len.trim().length();
+      int numLines = buf.length / len.trim().length();
 
-      byte[] tmp = new byte[p.length * 2 + 3*numLines];
-      ras.read(tmp, 0, tmp.length);
-      String pixels = new String(tmp);
-      pixels = pixels.replaceAll("\n", "");
-
-      // every 2 characters in the pixels string represents 1 byte
-
-      for (int i=0; i<p.length; i++) {
-        if (i < p.length - 1) {
-          String s = pixels.substring(i*2, (i+1)*2);
-          p[i] = (byte) Integer.parseInt(s, 16);
-        }
-        else {
-          String s = pixels.substring(i*2);
-          if (s.length() > 2) s = s.substring(0, 2);
-          p[i] = (byte) Integer.parseInt(s, 16);
-        }
+      for (int i=0; i<buf.length; i++) {
+        char msb = (char) ras.read();
+        while (msb == '\n') msb = (char) ras.read();
+        char lsb = (char) ras.read();
+        while (lsb == '\n') lsb = (char) ras.read();
+        String s = new String(new char[] {msb, lsb});
+        buf[i] = (byte) Integer.parseInt(s, 16);
       }
     }
     ras.close();
-    updateMinMax(p, no);
-    return p;
+    updateMinMax(buf, no);
+    return buf;
   }
+
 
   /** Obtains the specified image from the given EPS file. */
   public BufferedImage openImage(String id, int no)

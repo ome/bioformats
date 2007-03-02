@@ -202,22 +202,30 @@ public class ImarisReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[dims[0] * dims[1]];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+    if (buf.length < dims[0] * dims[1]) {
+      throw new FormatException("Buffer too small.");
+    }
 
     in.seek(offsets[no]);
-    byte[] data = new byte[dims[0] * dims[1]];
-
     int row = dims[1] - 1;
     for (int i=0; i<dims[1]; i++) {
-      in.read(data, row*dims[0], dims[0]);
+      in.read(buf, row*dims[0], dims[0]);
       row--;
     }
-    updateMinMax(data, no);
-    return data;
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given Imaris file. */

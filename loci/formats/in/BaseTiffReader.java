@@ -28,6 +28,7 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
+import java.text.*;
 import java.util.*;
 import loci.formats.*;
 
@@ -79,7 +80,7 @@ public abstract class BaseTiffReader extends FormatReader {
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable and metadata store. */
-  protected void initMetadata() throws FormatException {
+  protected void initMetadata() throws FormatException, IOException {
     initStandardMetadata();
     initMetadataStore();
   }
@@ -91,7 +92,7 @@ public abstract class BaseTiffReader extends FormatReader {
    * this method or methods that override this method. Data <b>will</b> be
    * overwritten if you do so.
    */
-  protected void initStandardMetadata() throws FormatException {
+  protected void initStandardMetadata() throws FormatException, IOException {
     Hashtable ifd = ifds[0];
     if (metadata == null) metadata = new Hashtable();
     put("ImageWidth", ifd, TiffTools.IMAGE_WIDTH);
@@ -544,9 +545,23 @@ public abstract class BaseTiffReader extends FormatReader {
           null, null, null, null);
       }
 
+      // format the creation date to ISO 8061 
+
+      String creationDate = getImageCreationDate();
+      try {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date date = DateFormat.getDateTimeInstance().parse(creationDate);
+        creationDate = sdf.format(date);
+      }
+      catch (Exception e) {
+        if (debug) e.printStackTrace();
+        creationDate = ""; 
+      }
+
       // populate Image element
+      
       store.setImage(getImageName(),
-        getImageCreationDate(), getImageDescription(), null);
+        creationDate, getImageDescription(), null);
 
       // populate Logical Channel elements
       for (int i=0; i<getSizeC(currentId); i++) {
@@ -561,25 +576,31 @@ public abstract class BaseTiffReader extends FormatReader {
         }
       }
 
-      // populate the default display options
-//      store.setDefaultDisplaySettings(null);
+      // set the X and Y pixel dimensions
 
-      // use a default "real" pixel dimension of 1 for each dimensionality.
-      Float f = new Float(1);
-      store.setDimensions(f, f, f, f, f, null);
+      int resolutionUnit = TiffTools.getIFDIntValue(ifd, 
+        TiffTools.RESOLUTION_UNIT);
+      TiffRational xResolution = TiffTools.getIFDRationalValue(ifd, 
+        TiffTools.X_RESOLUTION, false);
+      TiffRational yResolution = TiffTools.getIFDRationalValue(ifd,
+        TiffTools.Y_RESOLUTION, false);
+      float pixX = xResolution == null ? 0f : xResolution.floatValue(); 
+      float pixY = yResolution == null ? 0f : yResolution.floatValue(); 
 
-      // populate Dimensions element
-      int pixelSizeX = TiffTools.getIFDIntValue(ifd,
-        TiffTools.CELL_WIDTH, false, 0);
-      int pixelSizeY = TiffTools.getIFDIntValue(ifd,
-        TiffTools.CELL_LENGTH, false, 0);
-      int pixelSizeZ = TiffTools.getIFDIntValue(ifd,
-        TiffTools.ORIENTATION, false, 0);
-      store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
-                          new Float(pixelSizeZ), null, null, null);
+      switch (resolutionUnit) {
+        case 2:
+          // resolution is expressed in pixels per inch
+          pixX *= 2.54;
+          pixY *= 2.54;
+        case 3:
+          // resolution is expressed in pixels per centimeter
+          pixX /= 100; 
+          pixY /= 100; 
+          break;
+      }
 
-//      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel", "" +
-//        TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLES_PER_PIXEL));
+      store.setDimensions(new Float(pixX), new Float(pixY), null, 
+        null, null, null);
 
       // populate StageLabel element
       Object x = TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
@@ -694,12 +715,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[][] p = null;
-    p = TiffTools.getSamples(ifds[no], in, ignoreColorTable);
-    for (int i=0; i<p.length; i++) {
-      swapIfRequired(p[i]);
-      System.arraycopy(p[i], 0, buf, i * p[0].length, p[0].length);
-    }
+    TiffTools.getSamples(ifds[no], in, ignoreColorTable, buf);  
     updateMinMax(buf, no);
     return buf;
   }
@@ -715,13 +731,8 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     int bytesPerPixel = FormatReader.getBytesPerPixel(getPixelType(id));
-    byte[] buf = null;
-    if (isRGB(id)) {
-      buf =
-        new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) * bytesPerPixel];
-    }
-    else buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel];
-
+    byte[] buf = 
+      new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel * getSizeC(id)];
     return openBytes(id, no, buf);
   }
 

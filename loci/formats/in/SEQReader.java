@@ -60,7 +60,7 @@ public class SEQReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /** Overridden to include the three SEQ-specific tags. */
-  protected void initStandardMetadata() throws FormatException {
+  protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
     for (int j=0; j<ifds.length; j++) {

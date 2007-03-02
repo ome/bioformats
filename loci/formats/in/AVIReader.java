@@ -122,53 +122,50 @@ public class AVIReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[bmpHeight * bmpScanLineSize * (bmpBitsPerPixel / 8)];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
+    }
+
+    if (buf.length < bmpHeight*bmpScanLineSize*(bmpBitsPerPixel / 8)) {
+      throw new FormatException("Buffer too small.");
     }
 
     long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek((int) fileOff);
 
-    int len = bmpScanLineSize;
-
     int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
-    rawData = new byte[bmpActualSize];
-    int rawOffset = rawData.length - len;
+    int rawOffset = bmpActualSize - bmpScanLineSize;
     int offset = 0;
 
     in.skipBytes(pad * bmpHeight);
 
     for (int i=bmpHeight - 1; i>=0; i--) {
       if (bmpBitsPerPixel == 8) {
-        in.read(rawData, rawOffset, len);
+        in.read(buf, rawOffset, bmpScanLineSize);
       }
       else {
-        byte[] b = new byte[dwWidth * 3];
-        in.read(b);
+        in.read(buf, rawOffset, dwWidth * 3);
         for (int j=0; j<dwWidth; j++) {
-          rawData[rawOffset + j*3 + 2] = b[j*3];
-          rawData[rawOffset + j*3 + 1] = b[j*3 + 1];
-          rawData[rawOffset + j*3] = b[j*3 + 2];
+          byte r = buf[rawOffset + j*3 + 2];
+          buf[rawOffset + j*3 + 2] = buf[rawOffset + j*3];
+          buf[rawOffset + j*3] = r;
         }
         in.skipBytes(pad);
       }
-
-      rawOffset -= (len - pad);
+      rawOffset -= (bmpScanLineSize - pad);
       offset += dwWidth;
     }
-
-    if (rawData.length == dwWidth * bmpHeight * (bmpBitsPerPixel / 8)) {
-      updateMinMax(rawData, no);
-      return rawData;
-    }
-    else {
-      byte[] t = new byte[dwWidth * bmpHeight * (bmpBitsPerPixel / 8)];
-      System.arraycopy(rawData, 0, t, 0, t.length);
-      updateMinMax(t, no);
-      return t;
-    }
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given AVI file. */
@@ -176,7 +173,7 @@ public class AVIReader extends FormatReader {
     throws FormatException, IOException
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no),
-      dwWidth, bmpHeight, !isRGB(id) ? 1 : 3, true);
+      dwWidth, bmpHeight, sizeC[0], true);
     updateMinMax(b, no);
     return b;
   }

@@ -138,21 +138,27 @@ public class BioRadReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if(!id.equals(currentId)) initFile(id);
-
-    if(no < 0 || no >= npic) {
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[nx * ny * (byteFormat ? 1 : 2)];
+    return openBytes(id, no, buf);
+  }
+  
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= npic) {
       throw new FormatException("Invalid image number: " + no);
     }
+    if (buf.length < nx * ny * (byteFormat ? 1 : 2)) {
+      throw new FormatException("Buffer too small.");
+    }
 
-    // read image bytes
-    int imageLen = nx * ny;
-    byte[] data = new byte[imageLen * ((byteFormat) ? 1 : 2)];
-    int offset = no * imageLen;
-    if (!byteFormat) offset *= 2;
+    int offset = no * nx * ny * (byteFormat ? 1 : 2);
     in.seek(offset + 76);
-    in.read(data);
-    updateMinMax(data, no);
-    return data;
+    in.read(buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given Bio-Rad PIC file. */

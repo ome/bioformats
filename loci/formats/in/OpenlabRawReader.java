@@ -26,6 +26,8 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import loci.formats.*;
 
@@ -100,25 +102,33 @@ public class OpenlabRawReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[width * height * bytesPerPixel];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
+    if (buf.length < width * height * bytesPerPixel) {
+      throw new FormatException("Buffer too small.");
+    }
+    
     in.seek(offsets[no / channels] + 288);
-
-    byte[] data = new byte[width*height*bytesPerPixel];
-    in.read(data);
+    in.read(buf);
 
     if (bytesPerPixel == 1) {
       // need to invert the pixels
-      for (int i=0; i<data.length; i++) {
-        data[i] = (byte) (255 - data[i]);
+      for (int i=0; i<buf.length; i++) {
+        buf[i] = (byte) (255 - buf[i]);
       }
     }
-    updateMinMax(data, no);
-    return data;
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given RAW file. */
@@ -170,16 +180,15 @@ public class OpenlabRawReader extends FormatReader {
     width = in.readInt();
     height = in.readInt();
     in.read();
-    //bytesPerPixel = in.read();
-    //channels = in.read();
     channels = in.read();
     bytesPerPixel = in.read();
     in.read();
-    addMeta("Timestamp", "" + in.readLong());
+    Date timestamp = new Date(in.readLong());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    addMeta("Timestamp", sdf.format(timestamp));
     in.skipBytes(4);
     byte[] s = new byte[256];
     in.read(s);
-    ///* debug */ System.out.println("name : " + new String(s).trim());
     int len = s[0] > 0 ? s[0] : (s[0] + 256);
     addMeta("Image name", new String(s, 1, len).trim());
 
@@ -219,6 +228,8 @@ public class OpenlabRawReader extends FormatReader {
         pixelType[0] = FormatReader.FLOAT;
     }
 
+    store.setImage((String) getMeta("Image name"), sdf.format(timestamp),
+      null, null);
     store.setPixels(
       (Integer) getMeta("Width"),
       (Integer) getMeta("Height"),

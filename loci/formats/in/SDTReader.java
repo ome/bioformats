@@ -134,50 +134,54 @@ public class SDTReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[2 * sizeX[series] * sizeY[series]];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= timeBins * channels) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    int w = sizeX[series];
-    int h = sizeY[series];
-    byte[] pixel = new byte[2 * timeBins];
-    byte[] data = new byte[2 * w * h];
+    if (buf.length < 2 * sizeX[series] * sizeY[series]) {
+      throw new FormatException("Buffer too small.");
+    }
+    
     if (intensity) {
-      int c = no;
-      in.seek(off + 2 * w * h * timeBins * c);
-      for (int y=0; y<h; y++) {
-        for (int x=0; x<w; x++) {
+      in.seek(off + 2 * sizeX[series] * sizeY[series] * timeBins * no);
+      for (int y=0; y<sizeY[series]; y++) {
+        for (int x=0; x<sizeX[series]; x++) {
           // read all lifetime bins at this pixel for this channel
-          in.readFully(pixel, 0, 2 * timeBins);
-
+          
           // combine lifetime bins into intensity value
           short sum = 0;
           for (int t=0; t<timeBins; t++) {
-            sum += DataTools.bytesToShort(pixel, 2 * t, 2, true);
+            sum += DataTools.read2SignedBytes(in, true); 
           }
-          int ndx = 2 * (w * y + x);
-          data[ndx] = (byte) (sum & 0xff);
-          data[ndx + 1] = (byte) ((sum >> 8) & 0xff);
+          int ndx = 2 * (sizeX[0] * y + x);
+          buf[ndx] = (byte) (sum & 0xff);
+          buf[ndx + 1] = (byte) ((sum >> 8) & 0xff);
         }
       }
     }
     else {
       int t = no % timeBins;
       int c = no / timeBins;
-      in.seek(off + 2 * (w * h * timeBins * c + t));
-      for (int y=0; y<h; y++) {
-        for (int x=0; x<w; x++) {
+      in.seek(off + 2 * (sizeX[series] * sizeY[series] * timeBins * c + t));
+      for (int y=0; y<sizeY[series]; y++) {
+        for (int x=0; x<sizeX[series]; x++) {
           // read data only for the given lifetime bin
-          int ndx = 2 * (w * y + x);
-          in.readFully(data, ndx, 2);
+          int ndx = 2 * (sizeX[series] * y + x);
+          in.readFully(buf, ndx, 2);
           in.skipBytes(timeBins);
         }
       }
     }
-    updateMinMax(data, no);
-    return data;
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given SDT file. */

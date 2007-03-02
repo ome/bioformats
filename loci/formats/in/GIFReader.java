@@ -170,29 +170,36 @@ public class GIFReader extends FormatReader {
   /** Obtains the specified image from the given GIF file as a byte array. */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[width * height * sizeC[0]];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+    if (buf.length < width * height * sizeC[0]) {
+      throw new FormatException("Buffer too small.");
+    }
 
-    byte[] b = new byte[1];
     int[] ints = (int[]) images.get(no);
 
-    if (!ignoreColorTable) {
-      b = new byte[width * height * 3];
-      for (int i=0; i<ints.length; i++) {
-        b[i] = (byte) ((ints[i] & 0xff0000) >> 16);
-        b[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
-        b[i + 2*ints.length] = (byte) (ints[i] & 0xff);
-      }
+    if (ignoreColorTable) {
+      for (int i=0; i<buf.length; i++) buf[i] = (byte) ints[i]; 
     }
     else {
-      b = new byte[width * height];
-      for (int i=0; i<b.length; i++) b[i] = (byte) ints[i];
+      for (int i=0; i<ints.length; i++) {
+        buf[i] = (byte) ((ints[i] & 0xff0000) >> 16);
+        buf[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
+        buf[i + 2*ints.length] = (byte) (ints[i] & 0xff);
+      }
     }
-    updateMinMax(b, no);
-    return b;
+    updateMinMax(buf, no); 
+    return buf; 
   }
 
   /** Obtains the specified image from the given GIF file. */
@@ -541,7 +548,6 @@ public class GIFReader extends FormatReader {
   }
 
   private void setPixels() {
-
     // expose destination image's pixels as an int array
     int[] dest = new int[width * height];
     int lastImage = -1;

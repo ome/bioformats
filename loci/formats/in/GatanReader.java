@@ -48,8 +48,8 @@ public class GatanReader extends FormatReader {
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
 
-  /** Array of pixel bytes. */
-  protected byte[] pixelData;
+  /** Offset to pixel data. */
+  private long pixelOffset;
 
   /** List of pixel sizes. */
   private Vector pixelSizes;
@@ -128,13 +128,25 @@ public class GatanReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[dims[0] * dims[1] * dims[2]];
+    return openBytes(id, no, buf);
+  }
 
-    if (no < 0 || no >= getImageCount(id)) {
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no != 0) {
       throw new FormatException("Invalid image number: " + no);
     }
-    updateMinMax(pixelData, no);
-    return pixelData;
+    if (buf.length < dims[0] * dims[1] * dims[2]) {
+      throw new FormatException("Buffer too small.");
+    } 
+ 
+    in.seek(pixelOffset);
+    in.read(buf);
+    return buf;
   }
 
   /** Obtains the specified image from the given Gatan file. */
@@ -147,12 +159,8 @@ public class GatanReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int width = dims[0];
-    int height = dims[1];
-    int channels = 1;
-
-    BufferedImage b = ImageTools.makeImage(pixelData, width, height, channels,
-      false, dims[2], littleEndian);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0], dims[1],
+      1, false, dims[2], littleEndian);
     updateMinMax(b, no);
     return b;
   }
@@ -168,7 +176,7 @@ public class GatanReader extends FormatReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
-    pixelData = null;
+    pixelOffset = 0; 
   }
 
   /** Initializes the given Gatan file. */
@@ -284,9 +292,16 @@ public class GatanReader extends FormatReader {
 
     store.setDimensions(pixX, pixY, pixZ, null, null, null);
 
+    String gamma = (String) getMeta("Gamma");
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setDisplayChannel(new Integer(i), null, null, 
+        gamma == null ? null : new Float(gamma), null);
     }
+
+    String mag = (String) getMeta("Indicated Magnification");
+    store.setObjective(null, null, null, null, 
+      mag == null ? null : new Float(mag), null, null);
 
   }
 
@@ -401,8 +416,8 @@ public class GatanReader extends FormatReader {
               while (check != 20 && check != 21) {
                 bpp *= 2;
                 in.seek(pos);
-                pixelData = new byte[(int) bpp * length];
-                in.read(pixelData);
+                pixelOffset = pos;
+                in.skipBytes((int) (bpp * length));
                 check = in.readByte();
               }
               in.seek((int) (pos + bpp * length));

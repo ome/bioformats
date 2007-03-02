@@ -154,6 +154,23 @@ public class OIFReader extends FormatReader {
     return b;
   }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+     
+    tiffReader[no].setColorTableIgnored(ignoreColorTable);
+    tiffReader[no].openBytes((String) tiffs.get(no), 0, buf);
+    tiffReader[no].close();
+    updateMinMax(buf, no);
+    return buf;
+  }
+
   /** Obtains the specified image from the given OIF file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -454,8 +471,50 @@ public class OIFReader extends FormatReader {
 
     store.setDimensions(pixX, pixY, null, null, null, null);
     for (int i=0; i<sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      prefix = "[Channel " + (i+1) + " Parameters] - ";
+      String name = (String) getMeta(prefix + "CH Name");
+      String emWave = (String) getMeta(prefix + "EmissionWavelength");
+      String exWave = (String) getMeta(prefix + "ExcitationWavelength");
+      store.setLogicalChannel(i, name, null, emWave == null ? null : 
+        new Integer(emWave), exWave == null ? null : new Integer(exWave), 
+        null, null, null);
     }
+
+    for (int i=0; i<sizeC[0]; i++) {
+      prefix = "[Channel " + (i+1) + " Parameters] - ";
+      String gain = (String) getMeta(prefix + "CountingPMTGain");
+      String voltage = (String) getMeta(prefix + "CountingPMTVoltage");
+      String offset = (String) getMeta(prefix + "CountingPMTOffset");
+
+      if (gain != null) gain.replaceAll("\"", "");
+      if (voltage != null) voltage.replaceAll("\"", "");
+      if (offset != null) offset.replaceAll("\"", "");
+   
+      if (gain != null || voltage != null || offset != null) {
+        store.setDetector(null, null, null, null, new Float(gain), 
+          new Float(voltage), new Float(offset), null, new Integer(i));
+      }
+    }
+
+    String mag = (String) getMeta("Image 0 : Magnification");
+    if (mag != null) {
+      store.setObjective(null, null, null, null, new Float(mag), null, null);
+    }
+
+    String num = 
+      (String) getMeta("[Acquisition Parameters Common] - Number of use Laser");
+    if (num != null) {
+      int numLasers = Integer.parseInt(num);
+      for (int i=0; i<numLasers; i++) {
+        String wave = (String) getMeta("[Acquisition Parameters Common] - " +
+          "LaserWavelength0" + (i+1)); 
+        if (wave != null) {
+          store.setLaser(null, null, new Integer(wave), null, null, null, null, 
+            null, null, null, new Integer(i));
+        }
+      }
+    }
+
   }
 
   // -- Main method --

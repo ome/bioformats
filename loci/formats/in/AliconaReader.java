@@ -95,45 +95,35 @@ public class AliconaReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id); 
+    byte[] buf = new byte[width * height * numBytes];
+    return openBytes(id, no, buf);
+  }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int pad = 8 - (width % 8);
-    if (pad == 8) pad = 0;
+    int pad = (8 - (width % 8)) % 8;
 
-    in.seek(textureOffset +
-      (no * (width + pad) * height * numBytes));
+    if (buf.length < width * height * numBytes) {
+      throw new FormatException("Buffer to small.");
+    }
 
-    byte[] plane = new byte[(width + pad) * height * numBytes];
-    in.read(plane);
-
-    byte[] lsbData = new byte[width * height];
-    byte[] msbData = new byte[width * height];
-
-    for (int i=0; i<height * numBytes; i++) {
-      if (i < height) {
-        System.arraycopy(plane, i*(width+pad), lsbData, i*width, width);
-      }
-      else {
-        System.arraycopy(plane, (i % height)*(width + pad), msbData,
-          (i % height)*width, width);
+    for (int i=0; i<numBytes; i++) {
+      in.seek(textureOffset + (no * (width + pad) * height * (i+1)));
+      for (int j=0; j<width*height; j++) {
+        buf[j*numBytes + i] = (byte) in.read();
+        if (j % width == width - 1) in.skipBytes(pad);
       }
     }
 
-    if (numBytes == 2) {
-      byte[] data = new byte[width * height * 2];
-      for (int i=0; i<width*height; i++) {
-        data[i*2] = lsbData[i];
-        data[i*2 + 1] = msbData[i];
-      }
-      updateMinMax(data, no);
-      return data;
-    }
-    updateMinMax(lsbData, no);
-    return lsbData;
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given Alicona file. */
@@ -234,10 +224,23 @@ public class AliconaReader extends FormatReader {
       null
     );
 
-    store.setDimensions(
-      new Float(((String) getMeta("PlanePntX")).trim()),
-      new Float(((String) getMeta("PlanePntY")).trim()),
-      new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
+    if (getMeta("Voltage") != null) {
+      store.setDetector(null, null, null, null, null, 
+        new Float((String) getMeta("Voltage")), null, null, null);
+    }
+    if (getMeta("Magnification") != null) {
+      store.setObjective(null, null, null, null, 
+        new Float((String) getMeta("Magnification")), null, null);
+    }
+
+    if (getMeta("PlanePntX") != null && getMeta("PlanePntY") != null &&
+      getMeta("PlanePntZ") != null)
+    {
+      store.setDimensions(
+        new Float(((String) getMeta("PlanePntX")).trim()),
+        new Float(((String) getMeta("PlanePntY")).trim()),
+        new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
+    }
 
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);

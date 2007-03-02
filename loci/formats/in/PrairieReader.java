@@ -177,6 +177,18 @@ public class PrairieReader extends FormatReader {
     return b;
   }
 
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    tiff.openBytes(files[no], 0, buf);
+    updateMinMax(buf, no);
+    return buf; 
+  }
+
   /* @see IFormatReader#openImage(String, int) */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
