@@ -40,6 +40,28 @@ import loci.formats.*;
 
 public class ICSReader extends FormatReader {
 
+  // -- Constants --
+
+  /** Metadata field categories. */
+  private String[] CATEGORIES = new String[] {
+    "ics_version", "filename", "source", "layout", "representation", 
+    "parameter", "sensor", "history", "end"
+  };
+
+  /** Metadata field subcategories. */
+  private String[] SUB_CATEGORIES = new String[] {
+    "file", "offset", "parameters", "order", "sizes", "coordinates",
+    "significant_bits", "format", "sign", "compression", "byte_order",
+    "origin", "scale", "units", "labels", "SCIL_TYPE", "type", "model",
+    "s_params"
+  };
+
+  /** Metadata field sub-subcategories. */
+  private String[] SUB_SUB_CATEGORIES = new String[] {
+    "Channels", "PinholeRadius", "LambdaEx", "LambdaEm", "ExPhotonCnt",
+    "RefInxMedium", "NumAperture", "RefInxLensMedium", "PinholeSpacing"
+  };
+
   // -- Fields --
 
   /** Current filename. */
@@ -205,8 +227,10 @@ public class ICSReader extends FormatReader {
 
   /* @see IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (versionTwo) return new String[] {currentIdsId};
+    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+    if (versionTwo) {
+      return new String[] {currentIdsId == null ? id : currentIdsId};
+    }
     return new String[] {currentIdsId, currentIcsId};
   }
 
@@ -244,7 +268,7 @@ public class ICSReader extends FormatReader {
       // convert D to C regardless of case
       char[] c = icsId.toCharArray();
       c[c.length - 2]--;
-      /*id = */icsId = new String(c);
+      icsId = new String(c);
     }
 
     if (icsId == null) throw new FormatException("No ICS file found.");
@@ -284,35 +308,40 @@ public class ICSReader extends FormatReader {
     line = st.nextToken();
     while (line != null && !line.trim().equals("end")) {
       t = new StringTokenizer(line);
-      while(t.hasMoreTokens()) {
+      StringBuffer key = new StringBuffer();
+      while (t.hasMoreTokens()) {
         token = t.nextToken();
-        if (!token.equals("layout") && !token.equals("representation") &&
-          !token.equals("parameter") && !token.equals("history") &&
-          !token.equals("sensor"))
-        {
-          if (t.countTokens() < 3) {
-            try {
-              addMeta(token, t.nextToken());
-            }
-            catch (NoSuchElementException e) { }
+        boolean foundValue = true;
+        for (int i=0; i<CATEGORIES.length; i++) {
+          if (token.equals(CATEGORIES[i])) foundValue = false;
+        }
+        for (int i=0; i<SUB_CATEGORIES.length; i++) {
+          if (token.equals(SUB_CATEGORIES[i])) foundValue = false;
+        }
+        for (int i=0; i<SUB_SUB_CATEGORIES.length; i++) {
+          if (token.equals(SUB_SUB_CATEGORIES[i])) foundValue = false;
+        }
+      
+        if (foundValue) {
+          StringBuffer value = new StringBuffer();
+          value.append(token);
+          while (t.hasMoreTokens()) {
+            value.append(" ");
+            value.append(t.nextToken());
           }
-          else {
-            String meta = t.nextToken();
-            while (t.hasMoreTokens()) {
-              meta = meta + " " + t.nextToken();
-            }
-            addMeta(token, meta);
-          }
+          addMeta(key.toString().trim(), value.toString().trim());
+        }
+        else {
+          key.append(token);
+          key.append(" ");
         }
       }
-      try {
-        line = st.nextToken();
-      }
-      catch (NoSuchElementException e) { line = null; }
+      if (st.hasMoreTokens()) line = st.nextToken(); 
+      else line = null;
     }
 
-    String images = (String) getMeta("sizes");
-    String ord = (String) getMeta("order");
+    String images = (String) getMeta("layout sizes");
+    String ord = (String) getMeta("layout order");
     ord = ord.trim();
     // bpp, width, height, z, channels
     StringTokenizer t1 = new StringTokenizer(images);
@@ -356,18 +385,19 @@ public class ICSReader extends FormatReader {
     numImages = dimensions[3] * dimensions[4] * dimensions[5];
     if (numImages == 0) numImages++;
 
-    String endian = (String) getMeta("byte_order");
+    String endian = (String) getMeta("representation byte_order");
     littleEndian = true;
 
     if (endian != null) {
       StringTokenizer endianness = new StringTokenizer(endian);
       String firstByte = endianness.nextToken();
       int first = Integer.parseInt(firstByte);
-      littleEndian = ((String) getMeta("format")).equals("real") ? 
+      littleEndian = 
+        ((String) getMeta("representation format")).equals("real") ? 
         first == 1 : first != 1;
     }
 
-    String test = (String) getMeta("compression");
+    String test = (String) getMeta("representation compression");
     boolean gzip = (test == null) ? false : test.equals("gzip");
 
     if (versionTwo) {
@@ -409,7 +439,7 @@ public class ICSReader extends FormatReader {
 
     // populate Pixels element
 
-    String o = (String) getMeta("order");
+    String o = (String) getMeta("layout order");
     o = o.trim();
     o = o.substring(o.indexOf("x")).trim();
     char[] tempOrder = new char[(o.length() / 2) + 1];
@@ -424,9 +454,9 @@ public class ICSReader extends FormatReader {
     if (o.indexOf("C") == -1) o = o + "C";
 
     int bitsPerPixel =
-      Integer.parseInt((String) getMeta("significant_bits"));
-    String fmt = (String) getMeta("format");
-    String sign = (String) getMeta("sign");
+      Integer.parseInt((String) getMeta("layout significant_bits"));
+    String fmt = (String) getMeta("representation format");
+    String sign = (String) getMeta("representation sign");
 
     if (bitsPerPixel < 32) littleEndian = !littleEndian;
 
@@ -472,8 +502,46 @@ public class ICSReader extends FormatReader {
       null, // Use image index 0
       null); // Use pixels index 0
 
+    String pixelSizes = (String) getMeta("parameter scale");
+    o = (String) getMeta("layout order");
+    if (pixelSizes != null) {
+      StringTokenizer pixelSizeTokens = new StringTokenizer(pixelSizes);
+      StringTokenizer axisTokens = new StringTokenizer(o);
+    
+      Float pixX = null, pixY = null, pixZ = null, pixC = null, pixT = null; 
+    
+      while (pixelSizeTokens.hasMoreTokens()) {
+        String axis = axisTokens.nextToken().trim().toLowerCase();
+        String size = pixelSizeTokens.nextToken().trim();
+        if (axis.equals("x")) pixX = new Float(size); 
+        else if (axis.equals("y")) pixY = new Float(size); 
+        else if (axis.equals("ch")) pixC = new Float(size); 
+        else if (axis.equals("z")) pixZ = new Float(size); 
+        else if (axis.equals("t")) pixT = new Float(size); 
+      }
+      store.setDimensions(pixX, pixY, pixZ, pixC, pixT, null);
+    }
+
+    String em = (String) getMeta("sensor s_params LambdaEm");
+    String ex = (String) getMeta("sensor s_params LambdaEx");
+    int[] emWave = new int[sizeC[0]]; 
+    int[] exWave = new int[sizeC[0]]; 
+    if (em != null) {
+      StringTokenizer emTokens = new StringTokenizer(em);
+      for (int i=0; i<sizeC[0]; i++) {
+        emWave[i] = (int) Float.parseFloat(emTokens.nextToken().trim());
+      }
+    }
+    if (ex != null) {
+      StringTokenizer exTokens = new StringTokenizer(ex);
+      for (int i=0; i<sizeC[0]; i++) {
+        exWave[i] = (int) Float.parseFloat(exTokens.nextToken().trim());
+      }
+    }
+
     for (int i=0; i<sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setLogicalChannel(i, null, null, new Integer(emWave[i]), 
+        new Integer(exWave[i]), null, null, null);
     }
   }
 
