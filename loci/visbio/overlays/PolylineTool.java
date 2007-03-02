@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.awt.event.InputEvent;
+import java.util.Vector;
 import loci.visbio.data.TransformEvent;
 import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.MathUtil;
@@ -41,6 +42,12 @@ public class PolylineTool extends OverlayTool {
 
   /** Curve currently being drawn or modified. */
   protected OverlayPolyline line;
+
+  /** Curve close to the mouse when drawing is not occurring */
+  protected OverlayPolyline near;
+
+  /** Nearest node on Polyline near */
+  protected int nearNode;
 
   /** Whether the active node of the polyline is anchored. */
   protected boolean anchored;
@@ -67,6 +74,7 @@ public class PolylineTool extends OverlayTool {
     nearTail = false;
     nearHead = false;
     departed = false;
+    unsetMouseOverNode();
   }
 
   // -- OverlayTool API methods --
@@ -86,9 +94,11 @@ public class PolylineTool extends OverlayTool {
     deselectAll(); 
    
     if (line == null) {
-      line =  new OverlayPolyline(overlay, dx, dy, dx, dy);
-      configureOverlay(line);
-      overlay.addObject(line, pos);
+      if (!isMouseOverNode()) {
+        line =  new OverlayPolyline(overlay, dx, dy, dx, dy);
+        configureOverlay(line);
+        overlay.addObject(line, pos);
+      }
     }
     else {
       line.setActiveDisplay (display);
@@ -128,11 +138,25 @@ public class PolylineTool extends OverlayTool {
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods) {
+    // System.out.println("mouseDrag"); // TEMP
+    if (isMouseOverNode()) {
+      near.setNodeCoords(nearNode, dx, dy);
+      overlay.notifyListeners(new TransformEvent(overlay));
+    } 
+    else {
+      mouseMoved(e, px, py, dx, dy, pos, mods);
+    }
   } 
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(DisplayEvent e, int px, int py, 
       float dx, float dy, int[] pos, int mods) {
+    if (isMouseOverNode()) {
+      // System.out.println("mouseUp"); // TEMP
+      near.updateBoundingBox();
+      near.computeGridParameters();
+      unsetMouseOverNode();
+    }
   }
 
   /** Instructs this tool to respond to a mouse movement. */
@@ -183,12 +207,94 @@ public class PolylineTool extends OverlayTool {
       else {
         line.turnOffHighlighting();
       }
-
-      overlay.notifyListeners(new TransformEvent(overlay));
     }
+    else {
+      // find out if you're near a node
+      OverlayObject[] objects = overlay.getObjects();
+      double threshold = 2.0;
+      int[] objNode =  getNearestNode(display, objects, px, py, threshold);
+
+      unHighlightAllPolylines(objects);
+      if (objNode != null) {
+        int obj = objNode[0];
+        int node = objNode[1];
+        //System.out.println("near node " + node + " of object " + obj); // TEMP 
+        OverlayPolyline pln = (OverlayPolyline) objects[obj];
+        pln.setHighlightNode(node);
+        setMouseOverNode(pln, node);
+      }
+      else if (isMouseOverNode()) {
+        unsetMouseOverNode();
+      }
+    }
+    overlay.notifyListeners(new TransformEvent(overlay));
   }
 
   // -- Helper methods -- 
+  
+  private void unsetMouseOverNode() {
+    near = null;
+    nearNode = -1;
+  }
+  
+  private void setMouseOverNode(OverlayPolyline pln, int node) {
+    near = pln;
+    nearNode = node;
+  }
+
+  private boolean isMouseOverNode() { return (near != null); }
+  
+  /** Unhighlights all polylines in a list of OverlayObjects */
+  private void unHighlightAllPolylines(OverlayObject[] objects) {
+    for (int i=0; i<objects.length; i++) {
+      if (objects[i] instanceof OverlayPolyline) 
+        ((OverlayPolyline) objects[i]).turnOffHighlighting();
+    }
+  }
+
+  /** Finds nearest (subject to a threshold) node of all polylines
+   *  in a list of OverlayObjects.
+   *  @param objects An array of OverlayObjects on this display
+   *  Returns an array int[2], with item 0 the index of the nearest polyline
+   *  in the objects array, item 1 the index of the nearest node in the nearest
+   *  polyline */
+  private int[] getNearestNode(DisplayImpl display,
+      OverlayObject[] objects, int px, int py, double threshold) {
+    Vector polylines = new Vector();
+    Vector indices = new Vector();
+    double[] p = {(double) px, (double) py};
+
+    for (int i=0; i<objects.length; i++) {
+      if (objects[i] instanceof OverlayPolyline) {
+        polylines.add(objects[i]);
+        indices.add(new Integer(i));
+      }
+    }
+
+    int nearestPline = -1;
+    int nearestNode = -1;
+    double minDist = Double.POSITIVE_INFINITY;
+    for (int i=0; i<polylines.size(); i++) {
+      OverlayPolyline pln = (OverlayPolyline) polylines.get(i);
+      for (int j=0; j<pln.getNumNodes(); j++) {
+        float[] c = pln.getNodeCoords(j);
+        double[] cDbl = {c[0], c[1]}; // auto cast
+        int[] cPxl = DisplayUtil.domainToPixel(display, cDbl);
+        double[] cPxlDbl = {(double) cPxl[0], (double) cPxl[1]};
+        double dist = MathUtil.getDistance (cPxlDbl, p);
+        if (dist < minDist && dist < threshold) {
+          minDist = dist;
+          nearestPline = ((Integer) indices.get(i)).intValue();
+          nearestNode = j;
+        }
+      }
+    }
+
+    if (nearestPline == -1) return null;
+    else return new int[]{nearestPline, nearestNode};
+  }
+  
+
   
   /** Ends drawing of the current line */
   private void releaseLine() {
@@ -198,7 +304,7 @@ public class PolylineTool extends OverlayTool {
       line.computeGridParameters();
       line.computeLength();
       line.setDrawing(false);
-      line.setSelected(true);
+      line.setSelected(false);
       line = null;
     }
   }
