@@ -149,6 +149,8 @@ public class LIFReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id); 
+    bpp = dims[series][5];
+    while (bpp % 8 != 0) bpp++;
     byte[] buf = new byte[sizeX[series] * sizeY[series] * 
       (bpp / 8) * sizeC[series]];
     return openBytes(id, no, buf);
@@ -179,8 +181,9 @@ public class LIFReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
-      c, false, bpp / 8, littleEndian, validBits[series]);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[series], 
+      sizeY[series], sizeC[series], false, bpp / 8, littleEndian, 
+      validBits[series]);
     updateMinMax(b, no);
     return b;
   }
