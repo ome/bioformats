@@ -204,6 +204,85 @@ public class ReaderTest extends TestCase {
   }
 
   /**
+   * Checks the reported thumbnail dimensions against the actual dimensions of
+   * the thumbnail BufferedImages.
+   */
+  public void testThumbnailImageDimensions() {
+    boolean success = true;
+    try {
+      int planesRead = 0;
+
+      for (int i=0; i<reader.getSeriesCount(id); i++) {
+        reader.setSeries(id, i);
+        int imageCount = reader.getImageCount(id);
+        int sizeX = reader.getThumbSizeX(id);
+        int sizeY = reader.getThumbSizeY(id);
+
+        for (int j=0; j<imageCount; j++) {
+          BufferedImage b = reader.openThumbImage(id, j);
+          boolean failW = b.getWidth() != sizeX;
+          boolean failH = b.getHeight() != sizeY;
+          if (failW) writeLog(id + " failed thumbnail width test");
+          if (failH) writeLog(id + " failed thumbnail height test");
+          if (failW || failH) {
+            success = false;
+            j = imageCount;
+            i = reader.getSeriesCount(id);
+            break;
+          }
+        }
+        planesRead += imageCount;
+      }
+    }
+    catch (Exception e) {
+      if (FormatReader.debug) e.printStackTrace();
+      success = false;
+    }
+    if (!success) writeLog(id + " failed thumbnail BufferedImage test");
+    assertTrue(success);
+  }
+
+  /**
+   * Checks the reported thumbnail dimensions against the size of the array
+   * returned by openThumbBytes.
+   */
+  public void testThumbnailArrayDimensions() {
+    boolean success = true;
+    try {
+      for (int i=0; i<reader.getSeriesCount(id); i++) {
+        reader.setSeries(id, i);
+        int imageCount = reader.getImageCount(id);
+        int sizeX = reader.getThumbSizeX(id);
+        int sizeY = reader.getThumbSizeY(id);
+        int bytesPerPixel =
+          FormatReader.getBytesPerPixel(reader.getPixelType(id));
+        int sizeC = reader.getSizeC(id);
+        boolean rgb = reader.isRGB(id);
+
+        int expectedBytes = sizeX * sizeY * bytesPerPixel * (rgb ? sizeC : 1);
+
+        for (int j=0; j<imageCount; j++) {
+          byte[] b = reader.openThumbBytes(id, j);
+          if (b.length != expectedBytes) {
+            success = false;
+            j = imageCount;
+            i = reader.getSeriesCount(id);
+            break;
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      if (FormatReader.debug) e.printStackTrace();
+      success = false;
+    }
+    if (!success) writeLog(id + " failed thumbnail byte array test");
+    try { reader.close(true); }
+    catch (Exception e) { }
+    assertTrue(success);
+  }
+
+  /**
    * Checks the SizeZ, SizeC, and SizeT dimensions against the
    * total image count.
    */
@@ -521,6 +600,8 @@ public class ReaderTest extends TestCase {
     suite.addTest(new ReaderTest("testBufferedImageDimensions", id));
     if (!writeConfigFiles) {
       suite.addTest(new ReaderTest("testByteArrayDimensions", id));
+      suite.addTest(new ReaderTest("testThumbnailImageDimensions", id)); 
+      suite.addTest(new ReaderTest("testThumbnailArrayDimensions", id)); 
       suite.addTest(new ReaderTest("testImageCount", id));
       suite.addTest(new ReaderTest("testOMEXML", id));
     }
