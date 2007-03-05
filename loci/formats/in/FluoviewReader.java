@@ -256,7 +256,8 @@ public class FluoviewReader extends BaseTiffReader {
       Double voxel = (Double) getMeta("Dimension " + (i+1) + " Resolution"); 
       if (name == null || size == null || size.intValue() == 0) continue;
       name = name.toLowerCase().trim();
-      
+      if (name.length() == 0) continue; 
+
       if (name.equals("x")) {
         sizeX[0] = size.intValue();
         if (voxel != null) voxelX = voxel.floatValue(); 
@@ -315,8 +316,10 @@ public class FluoviewReader extends BaseTiffReader {
       end = comment.indexOf("[Version Info End]");
       if (start != -1 && end != -1 && end > start) {
         comment = comment.substring(start + 14, end).trim();
-        comment = comment.substring(comment.indexOf("=") + 1,
-          comment.indexOf("\n")).trim(); 
+        start = comment.indexOf("=") + 1;
+        end = comment.indexOf("\n");
+        if (end > start) comment = comment.substring(start, end).trim();
+        else comment = comment.substring(start).trim();
       }
       else comment = "";
     }

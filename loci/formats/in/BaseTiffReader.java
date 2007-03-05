@@ -718,7 +718,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
     TiffTools.getSamples(ifds[no], in, ignoreColorTable, buf);  
     updateMinMax(buf, no);
-    return buf;
+    return swapIfRequired(buf);
   }
 
   /* @see loci.formats.FormatReader#openBytes(String, int) */
@@ -732,8 +732,8 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     int bytesPerPixel = FormatReader.getBytesPerPixel(getPixelType(id));
-    byte[] buf = 
-      new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel * getSizeC(id)];
+    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel * 
+      getRGBChannelCount(id)];
     return openBytes(id, no, buf);
   }
 

@@ -481,8 +481,8 @@ public abstract class FormatReader extends FormatHandler
     BufferedImage img = openThumbImage(id, no);
     byte[][] bytes = ImageTools.getBytes(img);
     if (bytes.length == 1) return bytes[0];
-    byte[] rtn = new byte[bytes.length * bytes[0].length];
-    for (int i=0; i<bytes.length; i++) {
+    byte[] rtn = new byte[getRGBChannelCount(id) * bytes[0].length];
+    for (int i=0; i<getRGBChannelCount(id); i++) {
       System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
     }
     return rtn;

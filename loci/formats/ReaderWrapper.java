@@ -98,11 +98,11 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    return getSizeC(id) / getRGBChannelCount(id);
+    return getImageCount(id) / (getSizeZ(id) * getSizeT(id));
   }
 
   public int getRGBChannelCount(String id) throws FormatException, IOException {
-    return getSizeC(id) / (getImageCount(id) / (getSizeZ(id) * getSizeT(id)));
+    return getSizeC(id) / getEffectiveSizeC(id);
   }
 
   public Double getChannelGlobalMinimum(String id, int theC)
