@@ -193,7 +193,8 @@ public class OIBReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[sizeX[series] * sizeY[series] * sizeC[series] * 
+    byte[] buf = new byte[sizeX[series] * sizeY[series] * 
+      getRGBChannelCount(id) * 
       FormatReader.getBytesPerPixel(pixelType[series])];
     return openBytes(id, no, buf);
   }
@@ -246,11 +247,12 @@ public class OIBReader extends FormatReader {
     }
 
     byte[] b = openBytes(id, no);
-    int s = getSeries(id);
-    int bytes = b.length / (sizeX[s] * sizeY[s]);
-    BufferedImage bi = ImageTools.makeImage(b, sizeX[s], sizeY[s],
-      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, !littleEndian[s],
-      validBits[s]);
+    int bytes = b.length / (sizeX[series] * sizeY[series] * 
+      getRGBChannelCount(id));
+    
+    BufferedImage bi = ImageTools.makeImage(b, sizeX[series], sizeY[series],
+      getRGBChannelCount(id), false, bytes, !littleEndian[series],
+      validBits[series]);
     updateMinMax(bi, no);
     return bi;
   }
@@ -625,9 +627,7 @@ public class OIBReader extends FormatReader {
           }
         }
         else if (entryName.equals("OibInfo.txt")) { /* ignore this */ }
-        else {
-          // INI-style metadata
-
+        else if (data[0] == (byte) 0xff && data[1] == (byte) 0xfe) {
           String ini = DataTools.stripString(new String(data));
           StringTokenizer st = new StringTokenizer(ini, "\n");
           String prefix = "";
