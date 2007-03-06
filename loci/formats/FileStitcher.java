@@ -73,6 +73,12 @@ public class FileStitcher implements IFormatReader {
   /** Blank image bytes, for use when image counts vary between files. */
   private byte[][] blankBytes;
 
+  /** Blank buffered thumbnail, for use when image counts vary between files. */
+  private BufferedImage[] blankThumb;
+
+  /** Blank thumbnail bytes, for use when image counts vary between files. */
+  private byte[][] blankThumbBytes;
+
   /** Image dimensions. */
   private int[] width, height;
 
@@ -454,7 +460,7 @@ public class FileStitcher implements IFormatReader {
     if (blankBytes[sno] == null) {
       int bytes = FormatReader.getBytesPerPixel(getPixelType(currentId));
       blankBytes[sno] = new byte[width[sno] * height[sno] *
-        bytes * (isRGB(id) ? sizeC[sno] : 1)];
+        bytes * getRGBChannelCount(id)];
     }
     return blankBytes[sno];
   }
@@ -474,7 +480,17 @@ public class FileStitcher implements IFormatReader {
   {
     int[] q = computeIndices(id, no);
     int fno = q[0], ino = q[1];
-    return readers[fno].openThumbImage(files[fno], ino);
+    if (ino < readers[fno].getImageCount(files[fno])) {
+      return readers[fno].openThumbImage(files[fno], ino);
+    }
+    // return a blank image to cover for the fact that
+    // this file does not contain enough image planes
+    int sno = getSeries(id);
+    if (blankThumb[sno] == null) {
+      blankThumb[sno] = ImageTools.blankImage(getThumbSizeX(id), 
+        getThumbSizeY(id), sizeC[sno], FormatReader.UINT8);
+    }
+    return blankThumb[sno]; 
   }
 
   /* @see IFormatReader#openThumbImage(String, int) */
@@ -483,7 +499,17 @@ public class FileStitcher implements IFormatReader {
   {
     int[] q = computeIndices(id, no);
     int fno = q[0], ino = q[1];
-    return readers[fno].openThumbBytes(files[fno], ino);
+    if (ino < readers[fno].getImageCount(files[fno])) {
+      return readers[fno].openThumbBytes(files[fno], ino);
+    }
+    // return a blank image to cover for the fact that 
+    // this file does not contain enough image planes
+    int sno = getSeries(id);
+    if (blankThumbBytes[sno] == null) {
+      blankThumbBytes[sno] = new byte[getThumbSizeX(id) * getThumbSizeY(id) *
+        getRGBChannelCount(id)];
+    }
+    return blankThumbBytes[sno];
   }
 
   /* @see IFormatReader#close(boolean) */
@@ -765,6 +791,8 @@ public class FileStitcher implements IFormatReader {
     ag = new AxisGuesser[seriesCount];
     blankImage = new BufferedImage[seriesCount];
     blankBytes = new byte[seriesCount][];
+    blankThumb = new BufferedImage[seriesCount];
+    blankThumbBytes = new byte[seriesCount][];
     width = new int[seriesCount];
     height = new int[seriesCount];
     imagesPerFile = new int[seriesCount];
