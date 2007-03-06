@@ -1853,16 +1853,8 @@ public final class ImageTools {
       }
     }
 
-    BufferedImage result;
-    if ((width * height) / (w * h) > 0) {
-      // use Java2D to enlarge
-      result = scale2D(source, width, height, null, source.getColorModel());
-    }
-    else {
-      // use AWT to shrink
-      result = makeBuffered(scaleAWT(source, width, height,
-        Image.SCALE_AREA_AVERAGING), source.getColorModel());
-    }
+    BufferedImage result = makeBuffered(scaleAWT(source, width, height,
+      Image.SCALE_AREA_AVERAGING), source.getColorModel());
     return padImage(result, finalWidth, finalHeight);
   }
 
