@@ -703,11 +703,7 @@ public final class ImageTools {
     if (tt == DataBuffer.TYPE_USHORT) {
       DataBuffer buffer = r.getDataBuffer();
       if (buffer instanceof DataBufferUShort) {
-        SampleModel model = r.getSampleModel();
-        if (model instanceof BandedSampleModel) {
-          // return shorts directly, with no copy
-          return ((DataBufferUShort) buffer).getBankData();
-        }
+        return ((DataBufferUShort) buffer).getBankData();
       }
     }
     return getShorts(makeType(image, DataBuffer.TYPE_USHORT));

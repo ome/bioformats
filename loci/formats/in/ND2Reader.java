@@ -251,10 +251,8 @@ public class ND2Reader extends FormatReader {
         break;
     }
 
-    ColorModel cm = ImageTools.makeColorModel(sizeC[0], dataType, validBits);
-    BufferedImage bi = ImageTools.makeBuffered(img);
-    updateMinMax(bi, no);
-    return bi;
+    updateMinMax(img, no);
+    return img;
   }
 
   /* @see IFormatReader#close(boolean) */
