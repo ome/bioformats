@@ -1,3 +1,10 @@
+2007 Mar 6:
+* Fixed several bugs - Leica LIF, Leica LEI, ICS, ND2, and others
+* Enhanced metadata support for several formats
+* Better implementation of openBytes(String, int, byte[]) for most readers.
+* Added support for Micro-Manager file format.
+* Expanded unit testing framework
+
 2007 Feb 28:
 * Better series preview thumbnails
 * Fixed bugs with multi-channel Leica LEI
