@@ -254,12 +254,9 @@ public class ReaderTest extends TestCase {
         int imageCount = reader.getImageCount(id);
         int sizeX = reader.getThumbSizeX(id);
         int sizeY = reader.getThumbSizeY(id);
-        int bytesPerPixel =
-          FormatReader.getBytesPerPixel(reader.getPixelType(id));
-        int sizeC = reader.getSizeC(id);
-        boolean rgb = reader.isRGB(id);
+        int sizeC = reader.getRGBChannelCount(id);
 
-        int expectedBytes = sizeX * sizeY * bytesPerPixel * (rgb ? sizeC : 1);
+        int expectedBytes = sizeX * sizeY * sizeC;
 
         for (int j=0; j<imageCount; j++) {
           byte[] b = reader.openThumbBytes(id, j);
@@ -565,6 +562,37 @@ public class ReaderTest extends TestCase {
     assertTrue(success);
   }
 
+  /** 
+   * Check that the used file list produced by each file in a set is the same. 
+   */
+  public void testSaneUsedFiles() {
+    try {
+      String[] base = reader.getUsedFiles(id);
+      Arrays.sort(base);
+
+      FileStitcher fs = new FileStitcher();
+
+      for (int i=0; i<base.length; i++) {
+        String[] comp = fs.getUsedFiles(base[i]);
+        Arrays.sort(comp);
+        for (int j=0; j<comp.length; j++) {
+          if (!comp[j].equals(base[j])) {
+            writeLog(id + " failed sane used files test (" + base[i] + ")"); 
+            assertTrue(false);
+          } 
+        }
+      }
+
+      fs.close();
+      assertTrue(true);
+    }
+    catch (Exception e) {
+      if (FormatReader.debug) e.printStackTrace();
+      writeLog(id + " failed sane used files test"); 
+    }
+    assertTrue(false); 
+  }
+
   // -- TestCase API methods --
 
   /** Sets up the fixture. */
@@ -604,6 +632,7 @@ public class ReaderTest extends TestCase {
       suite.addTest(new ReaderTest("testThumbnailArrayDimensions", id)); 
       suite.addTest(new ReaderTest("testImageCount", id));
       suite.addTest(new ReaderTest("testOMEXML", id));
+      suite.addTest(new ReaderTest("testSaneUsedFiles", id)); 
     }
     if (config.initialized(id) || writeConfigFiles) {
       suite.addTest(new ReaderTest("testConsistent", id));
