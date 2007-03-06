@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.*;
-import ij.gui.*;
+import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
@@ -38,7 +38,8 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.JFrame;
 import loci.formats.*;
 import loci.formats.ome.OMEReader;
 import loci.formats.ome.OMEXMLMetadataStore;
@@ -99,7 +100,8 @@ public class Importer implements ItemListener {
       if (arg.indexOf("open") == -1) arg = null;
     }
 
-    boolean quiet = arg != null && !arg.equals("") && arg.indexOf("open=") == -1;
+    boolean quiet = arg != null &&
+      !arg.equals("") && arg.indexOf("open=") == -1;
 
     // -- Step 1: get filename to open --
 
@@ -420,37 +422,29 @@ public class Importer implements ItemListener {
       // -- Step 4a: prompt for the series to open, if necessary --
 
       if (seriesCount > 1) {
-        IJ.showStatus("");
-
         gd = new GenericDialog("LOCI Bio-Formats Series Options");
+
         GridBagLayout gdl = (GridBagLayout) gd.getLayout();
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
 
-        ImageReader ir = new ImageReader();
+        Panel[] p = new Panel[seriesCount];
         for (int i=0; i<seriesCount; i++) {
-          IJ.showStatus("Reading thumbnail for series #" + i);
           gd.addCheckbox(seriesStrings[i], series[i]);
-          ir.setSeries(id, i);
-          // open middle image thumbnail
-          int z = ir.getSizeZ(id) / 2;
-          int c = 0;
-          int t = ir.getSizeT(id) / 2;
-          int ndx = ir.getIndex(id, z, c, t);
-          BufferedImage thumb = ir.openThumbImage(id, ndx);
-          Panel p = new Panel();
-          ImageCanvas ic = new ImageCanvas(new ImagePlus("", thumb));
-          p.add(ic);
+          r.setSeries(id, i);
+          int sx = r.getThumbSizeX(id) + 10;
+          int sy = r.getThumbSizeY(id);
+          p[i] = new Panel();
+          p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
           gbc.gridy = i;
-          gbc.gridwidth = GridBagConstraints.REMAINDER;
-          gdl.setConstraints(p, gbc);
-          gd.setLayout(gdl);
-          gd.add(p);
+          gdl.setConstraints(p[i], gbc);
+          gd.add(p[i]);
         }
-        IJ.showStatus("");
-        ir.close();
-        ir = null;
         addScrollBars(gd);
+        ThumbLoader loader = new ThumbLoader(r, id, p, gd);
         gd.showDialog();
+        loader.stop();
         if (gd.wasCanceled()) {
           plugin.canceled = true;
           return;
@@ -474,9 +468,9 @@ public class Importer implements ItemListener {
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) {
               for (int j=0; j<seriesCount; j++) {
-                if ((j != i) && series[j] && (widths[j] == widths[i]) &&
-                  (heights[j] == heights[i]) && (types[j] == types[i]) &&
-                  (channels[j] == channels[i]))
+                if (j != i && series[j] && widths[j] == widths[i] &&
+                  heights[j] == heights[i] && types[j] == types[i] &&
+                  channels[j] == channels[i])
                 {
                   series[i] = true;
                   j = seriesCount;
