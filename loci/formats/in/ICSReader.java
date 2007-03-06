@@ -124,7 +124,7 @@ public class ICSReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
-    return rgb;
+    return rgb && sizeC[0] > 1;
   }
 
   /** Return true if the data is in little-endian format. */

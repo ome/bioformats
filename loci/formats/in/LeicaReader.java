@@ -966,6 +966,7 @@ public class LeicaReader extends BaseTiffReader {
           new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
         pt += 4;
 
+        if (nChannels > 4) nChannels = 3;
         numChannels[i] = nChannels;
 
         for (int j=0; j<nChannels; j++) {
@@ -1084,6 +1085,7 @@ public class LeicaReader extends BaseTiffReader {
       if (sizeC[i] == 0) sizeC[i] = 1;
       sizeT[i] += 1;
       currentOrder[i] = sizeC[i] == 1 ? "XYZTC" : "XYCZT";
+      if (sizeZ[i] == 0) sizeZ[i] = 1;
 
       int tPixelType = ((Integer) getMeta("Bytes per pixel")).intValue();
       switch (tPixelType) {
@@ -1112,7 +1114,7 @@ public class LeicaReader extends BaseTiffReader {
         new Integer(heights[i]),
         new Integer(zs[i]),
         new Integer(numChannels[i] == 0 ? 1 : numChannels[i]), // SizeC
-        new Integer(1), // SizeT
+        new Integer(sizeT[i]), // SizeT
         new Integer(pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
         "XYZTC", // DimensionOrder
