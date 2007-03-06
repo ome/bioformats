@@ -69,9 +69,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return arc;
   }
 
-  /** Highlighting color. */
-  protected static final Color HLT = Color.YELLOW;
-
   /** Alpha value for highlighting */
   protected static final float HLT_ALPHA = 0.5f;
   
@@ -100,6 +97,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Index of the highlighted node */
   protected int highlightIndex;
+
+  /** Color to highlight highlighted node */
+  protected Color highlightColor;
 
   /** The active display, used by the getData method */
   protected DisplayImpl display;
@@ -157,22 +157,64 @@ public abstract class OverlayNodedObject extends OverlayObject {
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
-    boolean circleFilled = false; // can't set to true right now w/o
-    // Manifold dimension mismatch occuring, since nodes are of 
-    // manifold dimension 1.
-
-    float scale;
-    if (display != null) scale = getScalingValue(display);
-    else scale = 1f;
-
+    FlatField field = null;
+    Set fieldSet = null;
+      
+    // determine number of samples
+    boolean circleFilled = false; // only works if nodes are also filled
+    // (all sets in a union set must have same manifold dimension)
     int arcLen = ARC[0].length;
     int len = 2 * arcLen;
-    float rad = 10.0f * scale; // 10.0 pixels wide per active display
+    int hlen = circleFilled ? len : len + 1;
+    int totalSamples = maxNodes;
+    if (isHighlightNode()) totalSamples += hlen;
 
-    float[][] highlightSetSamples = new float[2][0];
+    float[][] rangeSamples = new float[4][totalSamples];
 
+    // ******************************************************************
+    // build nodes set and assign nodes range samples
+    // ******************************************************************
+    SampledSet nodesSet = null;
+    try {
+      nodesSet = new Gridded2DSet(domain,
+        nodes, maxNodes, null, null, null, false);
+      
+      // I've written !isDrawing() to prevent a manifold dimension mismatch
+      // that occurs when drawing filled polylines
+      if (filled && !isDrawing()) {  
+        Irregular2DSet roiSet =
+          DelaunayCustom.fillCheck((Gridded2DSet) nodesSet, false);
+        if (roiSet != null)  nodesSet = roiSet;
+      }
+
+      fieldSet = nodesSet;
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    
+    // fill nodes range samples
+    float r = color.getRed() / 255f;
+    float g = color.getGreen() / 255f;
+    float b = color.getBlue() / 255f;
+
+    Arrays.fill(rangeSamples[0], 0, maxNodes, r);
+    Arrays.fill(rangeSamples[1], 0, maxNodes, g);
+    Arrays.fill(rangeSamples[2], 0, maxNodes, b);
+    Arrays.fill(rangeSamples[3], 0, maxNodes, 1.0f);
+    
+    // **************************************************************
+    // make highlight set and fill highlight range samples
+    // **************************************************************
     if (isHighlightNode()) {
-      highlightSetSamples = new float[2][circleFilled ? len : len + 1];
+      SampledSet highlightSet = null;
+
+      // scale cirlce radius
+      float scale;
+      if (display != null) scale = getScalingValue(display);
+      else scale = 1f;
+      float rad = 10.0f * scale; // 10.0 pixels wide per active display
+
+      // assemble highlight set samples
+      float[][] highlightSetSamples = new float[2][hlen];
       float[] c = getNodeCoords(getHighlightedNodeIndex());
 
       // top half of circle
@@ -187,14 +229,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
         highlightSetSamples[0][ndx] = c[0] + rad * ARC[0][i];
         highlightSetSamples[1][ndx] = c[1] - rad * ARC[1][i];
       }
-    } 
-    
-    FlatField field = null;
-    FlatField highlightField = null;
-    try {
-      //highlight 
-      SampledSet highlightSet = null;
-      if (isHighlightNode()) {
+
+      try {
+        // build highlight set 
         if (circleFilled) {
           highlightSet = new Gridded2DSet(domain, highlightSetSamples,
             arcLen, 2, null, null, null, false);
@@ -206,60 +243,39 @@ public abstract class OverlayNodedObject extends OverlayObject {
               highlightSetSamples[0].length, null, null, null, false);
         }
       }
-
-     // nodes
-      SampledSet nodesSet = new Gridded2DSet(domain,
-        nodes, maxNodes, null, null, null, false);
+      catch (VisADException exc) { exc.printStackTrace(); }
       
-      // I've written !isDrawing() to prevent a manifold dimension mismatch
-      // that occurs when drawing filled polylines
-      if (filled && !isDrawing()) {  
-        Irregular2DSet roiSet =
-          DelaunayCustom.fillCheck((Gridded2DSet) nodesSet, false);
-        if (roiSet != null)  nodesSet = roiSet;
-      }
-
-      int hlen = 0;
-      int totalSamples = nodesSet.getLength();
-      if (highlightSet != null) {
-        hlen = highlightSet.getLength(); 
-        totalSamples += hlen; 
-      }
-
-      float r = color.getRed() / 255f;
-      float g = color.getGreen() / 255f;
-      float b = color.getBlue() / 255f;
-
-      float hltR = HLT.getRed() / 255f;
-      float hltG = HLT.getGreen() / 255f;
-      float hltB = HLT.getBlue() / 255f;
+      // fill highlight range samples
+      float hltR = highlightColor.getRed() / 255f;
+      float hltG = highlightColor.getGreen() / 255f;
+      float hltB = highlightColor.getBlue() / 255f;
       float hltA = HLT_ALPHA;
 
-      float[][] rangeSamples = new float[4][totalSamples];
-      Arrays.fill(rangeSamples[0], 0, hlen, hltR);
-      Arrays.fill(rangeSamples[1], 0, hlen, hltG);
-      Arrays.fill(rangeSamples[2], 0, hlen, hltB);
-      Arrays.fill(rangeSamples[3], 0, hlen, hltA);
+      Arrays.fill(rangeSamples[0], maxNodes, totalSamples, hltR);
+      Arrays.fill(rangeSamples[1], maxNodes, totalSamples, hltG);
+      Arrays.fill(rangeSamples[2], maxNodes, totalSamples, hltB);
+      Arrays.fill(rangeSamples[3], maxNodes, totalSamples, hltA);
 
-      Arrays.fill(rangeSamples[0], hlen, totalSamples, r);
-      Arrays.fill(rangeSamples[1], hlen, totalSamples, g);
-      Arrays.fill(rangeSamples[2], hlen, totalSamples, b);
-      Arrays.fill(rangeSamples[3], hlen, totalSamples, 1.0f);
-      
-      // select which sets to include in union set
-      SampledSet[] sets;
-      if (isHighlightNode()) sets = new SampledSet[]{highlightSet, nodesSet};  
-      else sets = new SampledSet[]{nodesSet};
-      
-      UnionSet fieldSet = new UnionSet(domain, sets);
-
+      try {
+        // assemble a UnionSet of nodes and circle
+        SampledSet[] sets = new SampledSet[]{nodesSet, highlightSet};  
+        fieldSet = new UnionSet(domain, sets);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+    }
+    
+    // **********************************************************
+    // assemble ultimate field
+    // **********************************************************
+    try {
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(rangeSamples);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
-    return field; // return field;
+
+    return field; 
   }
 
   /**
@@ -351,13 +367,18 @@ public abstract class OverlayNodedObject extends OverlayObject {
   public void setHighlightTail(boolean b) { highlightTail = b; }
 
   /** Highlight a node. */ 
-  public void setHighlightNode(int i) {
+  public void setHighlightNode(int i, Color c) {
     highlightNode = true;
     highlightIndex = i;
+    highlightColor = c;
   }
 
   /** Turn off node highlighting */
-  public void turnOffHighlighting() { highlightNode = false; }
+  public void turnOffHighlighting() { 
+    highlightNode = false;
+    highlightIndex = -1; 
+    highlightColor = null;
+  }
 
   /** Returns coordinates of node at given index in the node array */
   public float[] getNodeCoords (int index) {

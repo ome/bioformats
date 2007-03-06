@@ -116,6 +116,12 @@ public class OverlayTransform extends DataTransform
   /** Transient Select Box, if active */
   protected TransientSelectBox selectBox;
 
+  /** Type of last tool used */
+  protected String lastToolType;
+
+  /** Whether last tool has changed */
+  protected boolean toolChanged;
+
   // -- Constructor --
 
   /** Creates an overlay object for the given transform. */
@@ -132,6 +138,9 @@ public class OverlayTransform extends DataTransform
     catch (VisADException exc) { exc.printStackTrace(); }
     initState(null);
     parent.addTransformListener(this);
+
+    lastToolType = "";
+    toolChanged = false;
   }
 
   // -- OverlayTransform API methods --
@@ -688,6 +697,13 @@ public class OverlayTransform extends DataTransform
     OverlayTool tool = controls.getActiveTool();
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
+    if (tool != null) {
+      String toolType = tool.getName();
+      if (toolType.equals(lastToolType)) toolChanged = false;
+      else toolChanged = true;
+      lastToolType = toolType;
+    }
+
     if (id == DisplayEvent.TRANSFORM_DONE) updatePosition(display);
     else if (id == DisplayEvent.MOUSE_MOVED) {
       if (tool != null) {
@@ -895,5 +911,10 @@ public class OverlayTransform extends DataTransform
     DisplayWindow window = DisplayWindow.getDisplayWindow(display);
     setPos(window.getTransformHandler().getPos(this));
   }
+
+  /** 
+   * Returns whether the current tool has changed
+   */
+  public boolean hasToolChanged() { return toolChanged; }
 
 }
