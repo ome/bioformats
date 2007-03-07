@@ -633,9 +633,6 @@ public class Importer implements ItemListener {
           r.setSeries(id, i);
           r.setColorTableIgnored(ignoreTables);
 
-          String imageName = store.getImageName(new Integer(i));
-          if (imageName == null) imageName = currentFile;
-
           boolean[] load = new boolean[num[i]];
           if (!stackFormat.equals(VIEW_NONE)) {
             if (certain[i]) {
@@ -686,8 +683,6 @@ public class Importer implements ItemListener {
             // construct label for this slice
             int[] zct = r.getZCTCoords(id, j);
             StringBuffer sb = new StringBuffer();
-            sb.append(imageName);
-            sb.append(": ");
             if (certain[i]) {
               boolean first = true;
               if (cCount[i] > 1) {
@@ -716,9 +711,16 @@ public class Importer implements ItemListener {
               }
             }
             else {
+              sb.append("no:");
               sb.append(j + 1);
               sb.append("/");
               sb.append(num[i]);
+            }
+            // put image name at the end, in case it is too long
+            String imageName = store.getImageName(new Integer(i));
+            if (imageName != null) {
+              sb.append(" - ");
+              sb.append(imageName);
             }
             String label = sb.toString();
 
@@ -1197,8 +1199,8 @@ public class Importer implements ItemListener {
                 new ColorProcessor(s.getWidth(), s.getHeight());
               cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
                 new byte[s.getWidth() * s.getHeight()]);
-              newStack.addSlice(s.getSliceLabel(
-                r.getIndex(id, z, ch1*c + c - 1, t) + 1), cp);
+              int ndx = r.getIndex(id, z, ch1*c + c - 1, t) + 1;
+              newStack.addSlice(s.getSliceLabel(ndx), cp);
             }
           }
         }
