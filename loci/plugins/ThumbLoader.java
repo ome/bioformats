@@ -105,7 +105,6 @@ public class ThumbLoader implements Runnable {
       Arrays.sort(info);
 
       // open each thumbnail, fastest/smallest first
-      int maxWidth = 0;
       for (int i=0; i<seriesCount && !stop; i++) {
         final int ii = info[i].index;
         IJ.showStatus("Reading thumbnail for series #" + (ii + 1));
