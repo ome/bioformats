@@ -38,6 +38,9 @@ public class ChannelSeparator extends ReaderWrapper {
   /** Index of last image opened. */
   private int lastImageIndex = -1;
 
+  /** Series of last image opened. */
+  private int lastImageSeries = -1;
+
   // -- Constructors --
 
   /** Constructs a ChannelSeparator around a new image reader. */
@@ -133,10 +136,12 @@ public class ChannelSeparator extends ReaderWrapper {
       int c = getSizeC(id) / reader.getEffectiveSizeC(id);
       int source = no / c;
       int channel = no % c;
+      int series = getSeries(id);
 
-      if (source != lastImageIndex) {
+      if (source != lastImageIndex || series != lastImageSeries) {
         lastImage = reader.openBytes(id, source);
         lastImageIndex = source;
+        lastImageSeries = series;
       }
 
       return ImageTools.splitChannels(lastImage, c,
@@ -156,6 +161,7 @@ public class ChannelSeparator extends ReaderWrapper {
   public void close() {
     lastImage = null;
     lastImageIndex = -1;
+    lastImageSeries = -1;
   }
 
   public int getIndex(String id, int z, int c, int t)
