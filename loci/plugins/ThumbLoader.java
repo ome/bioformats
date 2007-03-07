@@ -26,8 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.IJ;
-//import ij.ImagePlus;
-//import ij.gui.ImageCanvas;
 import java.awt.Dialog;
 import java.awt.Panel;
 import java.awt.image.BufferedImage;
@@ -117,11 +115,9 @@ public class ThumbLoader implements Runnable {
         int t = ir.getSizeT(id) / 2;
         int ndx = ir.getIndex(id, z, 0, t);
         BufferedImage thumb = ir.openThumbImage(id, ndx);
-        //ImagePlus imp = new ImagePlus("", thumb);
-        //ImageCanvas ic = new ImageCanvas(imp);
+        ImageIcon icon = new ImageIcon(thumb);
         p[ii].removeAll();
-        //p[ii].add(ic);
-        p[ii].add(new JLabel(new ImageIcon(thumb)));
+        p[ii].add(new JLabel(icon));
         if (dialog != null) dialog.validate();
       }
     }

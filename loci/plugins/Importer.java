@@ -421,7 +421,7 @@ public class Importer implements ItemListener {
 
       // -- Step 4a: prompt for the series to open, if necessary --
 
-      if (seriesCount > 1) {
+      /*if (seriesCount > 1) */{
         gd = new GenericDialog("LOCI Bio-Formats Series Options");
 
         GridBagLayout gdl = (GridBagLayout) gd.getLayout();
