@@ -488,6 +488,9 @@ public class ZeissZVIReader extends FormatReader {
     String pixX = (String) getMeta("Scale Factor for X");
     String pixY = (String) getMeta("Scale Factor for Y");
     String pixZ = (String) getMeta("Scale Factor for Z");
+ 
+    if (pixX == null && pixY != null) pixX = pixY;
+    if (pixY == null && pixX != null) pixY = pixX;
 
     store.setDimensions(
       pixX == null ? null : new Float(pixX),
