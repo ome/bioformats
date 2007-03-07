@@ -430,11 +430,12 @@ public class Importer implements ItemListener {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
 
         Panel[] p = new Panel[seriesCount];
+        ImageReader reader = new ImageReader(); 
         for (int i=0; i<seriesCount; i++) {
           gd.addCheckbox(seriesStrings[i], series[i]);
-          r.setSeries(id, i);
-          int sx = r.getThumbSizeX(id) + 10;
-          int sy = r.getThumbSizeY(id);
+          reader.setSeries(id, i);
+          int sx = reader.getThumbSizeX(id) + 10;
+          int sy = reader.getThumbSizeY(id);
           p[i] = new Panel();
           p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
           gbc.gridy = i;
@@ -442,9 +443,10 @@ public class Importer implements ItemListener {
           gd.add(p[i]);
         }
         addScrollBars(gd);
-        ThumbLoader loader = new ThumbLoader(r, id, p, gd);
+        ThumbLoader loader = new ThumbLoader(reader, id, p, gd);
         gd.showDialog();
         loader.stop();
+        reader.close();
         if (gd.wasCanceled()) {
           plugin.canceled = true;
           return;
