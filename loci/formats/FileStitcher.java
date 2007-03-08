@@ -410,7 +410,7 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getChannelStatCalculationStatus */
   public boolean getChannelStatCalculationStatus() {
-    return readers[0].getChannelStatCalculationStatus();
+    return reader.getChannelStatCalculationStatus();
   }
 
   /* @see IFormatReader#isInterleaved(String) */
@@ -559,7 +559,7 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#isColorTableIgnored() */
   public boolean isColorTableIgnored() { 
-    return readers[0].isColorTableIgnored(); 
+    return reader.isColorTableIgnored(); 
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
@@ -572,7 +572,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#isNormalized() */
-  public boolean isNormalized() { return readers[0].isNormalized(); }
+  public boolean isNormalized() { return reader.isNormalized(); }
 
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
