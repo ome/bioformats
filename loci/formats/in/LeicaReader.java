@@ -118,6 +118,31 @@ public class LeicaReader extends BaseTiffReader {
     }
   }
 
+  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    String min = (String) getMeta("Minimum voxel intensity");
+    return min == null ? null : new Double(min);
+  }
+
+  /* @see IFormatReader#getChannelGlobalMaximum(Straxg, axt) */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    String max = (String) getMeta("Maximum voxel intensity");
+    return max == null ? null : new Double(max);
+  }
+
+  /* @see IFormatReader#isMinMaxPopulated(String) */
+  public boolean isMinMaxPopulated(String id) 
+    throws FormatException, IOException
+  {
+    return true;
+  }
+
   /** Determines the number of images in the given Leica file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
@@ -1107,6 +1132,8 @@ public class LeicaReader extends BaseTiffReader {
           break;
       }
 
+      Integer ii = new Integer(i);
+
       store.setPixels(
         new Integer(widths[i]),
         new Integer(heights[i]),
@@ -1116,19 +1143,20 @@ public class LeicaReader extends BaseTiffReader {
         new Integer(pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
         "XYZTC", // DimensionOrder
-        new Integer(i),
-        null);
+        ii, null);
 
       String timestamp = (String) getMeta("Timestamp " + (i+1));
       String description = (String) getMeta("Image Description");
 
       store.setImage(null, timestamp == null ? null : timestamp.substring(3),
-        description, new Integer(i));
+        description, ii);
 
       for (int j=0; j<sizeC[0]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null,
-          null, new Integer(i));
+        store.setLogicalChannel(j, null, null, null, null, null, null, ii);
+        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(id, j),
+          getChannelGlobalMaximum(id, j), ii);
       }
+
     }
   }
 

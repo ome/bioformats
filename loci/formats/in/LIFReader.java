@@ -182,9 +182,9 @@ public class LIFReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    int c = isRGB(id) ? sizeC[series] : 1;
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[series],
-      sizeY[series], c, false, bpp / 8, littleEndian, validBits[series]);
+      sizeY[series], isRGB(id) ? sizeC[series] : 1, false, bpp / 8, 
+      littleEndian, validBits[series]);
     updateMinMax(b, no);
     return b;
   }
@@ -320,16 +320,11 @@ public class LIFReader extends FormatReader {
 
       String tmpToken = token;
       if (token.indexOf("=") != -1) {
-        token = token.substring(0, token.length() - 1).trim();
-        key = token.substring(0, token.indexOf(" ")).trim();
-        int count = 1;
-        while (metadata.containsKey(prefix + " - " + key)) {
-          if (key.indexOf(" ") != -1) key = key.substring(0, key.indexOf(" "));
-          key = key + " " + count;
-          count++;
-        }
-        value = token.substring(token.indexOf(" ") + 1).trim();
-        addMeta(prefix + " - " + key, value);
+        int idx = token.indexOf("Identifier") + 12;
+        key = token.substring(idx, token.indexOf("\"", idx + 1));
+        idx = token.indexOf("Variant") + 9;  
+        value = token.substring(idx, token.indexOf("\"", idx + 1)); 
+        if (key.indexOf("=") == -1) addMeta(prefix + " - " + key, value); 
       }
       token = tmpToken;
 
@@ -578,9 +573,17 @@ public class LIFReader extends FormatReader {
       Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
 
       store.setDimensions(xf, yf, zf, null, null, ii);
-      for (int j=0; j<sizeC[0]; j++) {
+      for (int j=0; j<sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
       }
+   
+      String zoom = 
+        (String) getMeta((String) seriesNames.get(i) + " - dblZoom");
+      store.setDisplayOptions(zoom == null ? null : new Float(zoom),
+        new Boolean(sizeC[i] > 1), new Boolean(sizeC[i] > 1), 
+        new Boolean(sizeC[i] > 2), new Boolean(isRGB(currentId)), null, null, 
+        null, null, null, ii, null, null, null, null, null);
+
     }
   }
 
