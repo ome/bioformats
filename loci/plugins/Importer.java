@@ -305,6 +305,7 @@ public class Importer implements ItemListener {
 
       FileStitcher fs = null;
       r.setColorTableIgnored(ignoreTables);
+      r.setMetadataFiltered(true);
 
       int pixelType = r.getPixelType(id);
       String currentFile = r.getCurrentFile();
@@ -642,7 +643,6 @@ public class Importer implements ItemListener {
           for (int j=0; j<num[i]; j++) if (load[j]) total++;
 
           // dump OME-XML to ImageJ's description field, if available
-          store = (OMEXMLMetadataStore) r.getMetadataStore(id);
           FileInfo fi = new FileInfo();
           fi.description = store.dumpXML();
 
@@ -869,9 +869,7 @@ public class Importer implements ItemListener {
 
           if (imp != null) {
             // retrieve the spatial calibration information, if available
-
             applyCalibration(store, imp, i);
-            fi.description = store.dumpXML();
             imp.setFileInfo(fi);
             imp.setDimensions(cCount[i], zCount[i], tCount[i]);
             displayStack(imp, r, fs, id);
