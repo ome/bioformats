@@ -136,7 +136,7 @@ public class IPLabReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[width * height * bps * c];
     return openBytes(id, no, buf);
   }
@@ -148,11 +148,11 @@ public class IPLabReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    
+
     int numPixels = width * height * c;
     if (buf.length < numPixels * bps) {
       throw new FormatException("Buffer too small.");
-    } 
+    }
     in.seek(numPixels * bps * (no / c) + 44);
 
     in.read(buf);
@@ -400,7 +400,7 @@ public class IPLabReader extends FormatReader {
           store = getMetadataStore(currentId);
           store.setChannelGlobalMinMax(i, new Double(min),
             new Double(max), null);
-        
+
           store.setDisplayChannel(new Integer(c), new Double(black),
             new Double(white), new Float(gamma), null);
         }

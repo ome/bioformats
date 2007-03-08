@@ -597,7 +597,6 @@ public class QTWriter extends FormatWriter {
     return new int[] {FormatReader.UINT8, FormatReader.UINT16};
   }
 
-
   // -- Helper method --
 
   private void setCodec() {

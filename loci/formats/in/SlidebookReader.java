@@ -101,7 +101,7 @@ public class SlidebookReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[width * height * 2];
     return openBytes(id, no, buf);
   }

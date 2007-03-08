@@ -95,7 +95,7 @@ public class AliconaReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[width * height * numBytes];
     return openBytes(id, no, buf);
   }
@@ -225,11 +225,11 @@ public class AliconaReader extends FormatReader {
     );
 
     if (getMeta("Voltage") != null) {
-      store.setDetector(null, null, null, null, null, 
+      store.setDetector(null, null, null, null, null,
         new Float((String) getMeta("Voltage")), null, null, null);
     }
     if (getMeta("Magnification") != null) {
-      store.setObjective(null, null, null, null, 
+      store.setObjective(null, null, null, null,
         new Float((String) getMeta("Magnification")), null, null);
     }
 

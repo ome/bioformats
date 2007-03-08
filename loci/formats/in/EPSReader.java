@@ -102,7 +102,7 @@ public class EPSReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[width * height * channels * (bps / 8)];
     return openBytes(id, no, buf);
   }
@@ -117,7 +117,7 @@ public class EPSReader extends FormatReader {
     if (buf.length < width * height * channels * (bps / 8)) {
       throw new FormatException("Buffer too small.");
     }
- 
+
     RandomAccessStream ras = new RandomAccessStream(id);
     int line = 0;
 
@@ -148,7 +148,6 @@ public class EPSReader extends FormatReader {
     updateMinMax(buf, no);
     return buf;
   }
-
 
   /** Obtains the specified image from the given EPS file. */
   public BufferedImage openImage(String id, int no)

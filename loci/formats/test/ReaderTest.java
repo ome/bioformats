@@ -562,8 +562,8 @@ public class ReaderTest extends TestCase {
     assertTrue(success);
   }
 
-  /** 
-   * Check that the used file list produced by each file in a set is the same. 
+  /**
+   * Check that the used file list produced by each file in a set is the same.
    */
   public void testSaneUsedFiles() {
     try {
@@ -577,9 +577,9 @@ public class ReaderTest extends TestCase {
         Arrays.sort(comp);
         for (int j=0; j<comp.length; j++) {
           if (!comp[j].equals(base[j])) {
-            writeLog(id + " failed sane used files test (" + base[i] + ")"); 
+            writeLog(id + " failed sane used files test (" + base[i] + ")");
             assertTrue(false);
-          } 
+          }
         }
       }
 
@@ -588,9 +588,9 @@ public class ReaderTest extends TestCase {
     }
     catch (Exception e) {
       if (FormatReader.debug) e.printStackTrace();
-      writeLog(id + " failed sane used files test"); 
+      writeLog(id + " failed sane used files test");
     }
-    assertTrue(false); 
+    assertTrue(false);
   }
 
   // -- TestCase API methods --
@@ -628,11 +628,11 @@ public class ReaderTest extends TestCase {
     suite.addTest(new ReaderTest("testBufferedImageDimensions", id));
     if (!writeConfigFiles) {
       suite.addTest(new ReaderTest("testByteArrayDimensions", id));
-      suite.addTest(new ReaderTest("testThumbnailImageDimensions", id)); 
-      suite.addTest(new ReaderTest("testThumbnailArrayDimensions", id)); 
+      suite.addTest(new ReaderTest("testThumbnailImageDimensions", id));
+      suite.addTest(new ReaderTest("testThumbnailArrayDimensions", id));
       suite.addTest(new ReaderTest("testImageCount", id));
       suite.addTest(new ReaderTest("testOMEXML", id));
-      suite.addTest(new ReaderTest("testSaneUsedFiles", id)); 
+      suite.addTest(new ReaderTest("testSaneUsedFiles", id));
     }
     if (config.initialized(id) || writeConfigFiles) {
       suite.addTest(new ReaderTest("testConsistent", id));

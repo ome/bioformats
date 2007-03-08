@@ -170,7 +170,7 @@ public class GIFReader extends FormatReader {
   /** Obtains the specified image from the given GIF file as a byte array. */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[width * height * sizeC[0]];
     return openBytes(id, no, buf);
   }
@@ -189,7 +189,7 @@ public class GIFReader extends FormatReader {
     int[] ints = (int[]) images.get(no);
 
     if (ignoreColorTable) {
-      for (int i=0; i<buf.length; i++) buf[i] = (byte) ints[i]; 
+      for (int i=0; i<buf.length; i++) buf[i] = (byte) ints[i];
     }
     else {
       for (int i=0; i<ints.length; i++) {
@@ -198,8 +198,8 @@ public class GIFReader extends FormatReader {
         buf[i + 2*ints.length] = (byte) (ints[i] & 0xff);
       }
     }
-    updateMinMax(buf, no); 
-    return buf; 
+    updateMinMax(buf, no);
+    return buf;
   }
 
   /** Obtains the specified image from the given GIF file. */

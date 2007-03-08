@@ -122,7 +122,7 @@ public class AVIReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[bmpHeight * bmpScanLineSize * (bmpBitsPerPixel / 8)];
     return openBytes(id, no, buf);
   }

@@ -187,7 +187,7 @@ public class LeicaReader extends BaseTiffReader {
     return buf;
   }
   */
-  
+
   /** Obtains the specified image from the given Leica file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -595,7 +595,7 @@ public class LeicaReader extends BaseTiffReader {
       for (int i=0; i<tiff.length; i++) {
         for (int j=0; j<tiff[i].length; j++) {
           tiff[i][j] = new TiffReader();
-          tiff[i][j].setColorTableIgnored(isColorTableIgnored()); 
+          tiff[i][j].setColorTableIgnored(isColorTableIgnored());
         }
       }
 

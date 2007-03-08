@@ -181,16 +181,16 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Initializes the given PerkinElmer file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (currentId != null && 
-      (id.equals(currentId) || isUsedFile(currentId, id))) 
-    {  
+    if (currentId != null &&
+      (id.equals(currentId) || isUsedFile(currentId, id)))
+    {
       return;
     }
 
     if (debug) debug("PerkinElmerReader.initFile(" + id + ")");
     // always init on the HTML file - this prevents complications with
     // initializing the image files
-   
+
     if (!id.toLowerCase().endsWith(".htm")) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       String[] ls = parent.list();
@@ -198,10 +198,10 @@ public class PerkinElmerReader extends FormatReader {
         if (ls[i].toLowerCase().endsWith(".htm")) {
           id = new Location(ls[i]).getAbsolutePath();
           break;
-        } 
+        }
       }
     }
-    
+
     super.initFile(id);
 
     allFiles = new Vector();

@@ -95,7 +95,7 @@ public class LIFReader extends FormatReader {
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     numImages = dims[series][2] * dims[series][3];
-    return numImages * (isRGB(id) ? 1 : dims[series][4]); 
+    return numImages * (isRGB(id) ? 1 : dims[series][4]);
   }
 
   /** Checks if the images in the file are RGB. */
@@ -148,10 +148,10 @@ public class LIFReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
-    byte[] buf = new byte[sizeX[series] * sizeY[series] * 
+    byte[] buf = new byte[sizeX[series] * sizeY[series] *
       (bpp / 8) * sizeC[series]];
     return openBytes(id, no, buf);
   }
@@ -171,7 +171,8 @@ public class LIFReader extends FormatReader {
     }
 
     int offset = ((Long) offsets.get(series)).intValue();
-    in.seek(offset + sizeX[series] * sizeY[series] * bytes * no * sizeC[series]);
+    in.seek(offset +
+      sizeX[series] * sizeY[series] * bytes * no * sizeC[series]);
     in.read(buf);
     updateMinMax(buf, no);
     return buf;
@@ -181,9 +182,9 @@ public class LIFReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[series], 
-      sizeY[series], isRGB(id) ? sizeC[series] : 1, false, bpp / 8, littleEndian, 
-      validBits[series]);
+    int c = isRGB(id) ? sizeC[series] : 1;
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[series],
+      sizeY[series], c, false, bpp / 8, littleEndian, validBits[series]);
     updateMinMax(b, no);
     return b;
   }

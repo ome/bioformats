@@ -161,7 +161,7 @@ public class OIFReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-     
+
     tiffReader[no].openBytes((String) tiffs.get(no), 0, buf);
     tiffReader[no].close();
     updateMinMax(buf, no);
@@ -474,8 +474,8 @@ public class OIFReader extends FormatReader {
       String name = (String) getMeta(prefix + "CH Name");
       String emWave = (String) getMeta(prefix + "EmissionWavelength");
       String exWave = (String) getMeta(prefix + "ExcitationWavelength");
-      store.setLogicalChannel(i, name, null, emWave == null ? null : 
-        new Integer(emWave), exWave == null ? null : new Integer(exWave), 
+      store.setLogicalChannel(i, name, null, emWave == null ? null :
+        new Integer(emWave), exWave == null ? null : new Integer(exWave),
         null, null, null);
     }
 
@@ -488,9 +488,9 @@ public class OIFReader extends FormatReader {
       if (gain != null) gain.replaceAll("\"", "");
       if (voltage != null) voltage.replaceAll("\"", "");
       if (offset != null) offset.replaceAll("\"", "");
-   
+
       if (gain != null || voltage != null || offset != null) {
-        store.setDetector(null, null, null, null, new Float(gain), 
+        store.setDetector(null, null, null, null, new Float(gain),
           new Float(voltage), new Float(offset), null, new Integer(i));
       }
     }
@@ -500,15 +500,15 @@ public class OIFReader extends FormatReader {
       store.setObjective(null, null, null, null, new Float(mag), null, null);
     }
 
-    String num = 
+    String num =
       (String) getMeta("[Acquisition Parameters Common] - Number of use Laser");
     if (num != null) {
       int numLasers = Integer.parseInt(num);
       for (int i=0; i<numLasers; i++) {
         String wave = (String) getMeta("[Acquisition Parameters Common] - " +
-          "LaserWavelength0" + (i+1)); 
+          "LaserWavelength0" + (i+1));
         if (wave != null) {
-          store.setLaser(null, null, new Integer(wave), null, null, null, null, 
+          store.setLaser(null, null, new Integer(wave), null, null, null, null,
             null, null, null, new Integer(i));
         }
       }

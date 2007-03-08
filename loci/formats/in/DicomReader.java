@@ -157,7 +157,7 @@ public class DicomReader extends FormatReader {
     if (buf.length < width * height * (bitsPerPixel / 8)) {
       throw new FormatException("Buffer too small.");
     }
-    
+
     in.seek(offsets + (width * height * (bitsPerPixel / 8) * no));
     in.read(buf);
     updateMinMax(buf, no);

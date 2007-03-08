@@ -119,7 +119,7 @@ public class LegacyZVIReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[((ZVIBlock) blockList.elementAt(no)).imageSize];
-    return openBytes(id, no, buf); 
+    return openBytes(id, no, buf);
   }
 
   public byte[] openBytes(String id, int no, byte[] buf)
@@ -129,7 +129,7 @@ public class LegacyZVIReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    
+
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
     zviBlock.readBytes(in, buf);
     updateMinMax(buf, no);
@@ -574,12 +574,12 @@ public class LegacyZVIReader extends FormatReader {
           "; bytesPerPixel=" + bytesPerPixel + "; imagePos=" + imagePos +
           "; fileSize=" + fileSize + "). " + WHINING);
       }
-      if (buf.length < imageSize) throw new FormatException("Buffer too small.");
+      if (buf.length < imageSize) throw new FormatException("Buffer too small");
 
       // read image
       raf.seek(imagePos);
       raf.readFully(buf);
-      return buf; 
+      return buf;
     }
 
     /** Reads in this block's image data from the given file. */

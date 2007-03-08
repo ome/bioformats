@@ -43,7 +43,7 @@ public class MicromanagerReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Micromanager reader. */
-  public MicromanagerReader() { 
+  public MicromanagerReader() {
     super("Micro-Manager", new String[] {"tif", "tiff", "txt"});
   }
 
@@ -72,7 +72,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -109,9 +109,9 @@ public class MicromanagerReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String min = (String) getMeta("ChContrastMin"); 
-    if (min == null) return null; 
-    if (sizeC[0] == 1) return new Double(min); 
+    String min = (String) getMeta("ChContrastMin");
+    if (min == null) return null;
+    if (sizeC[0] == 1) return new Double(min);
     StringTokenizer st = new StringTokenizer(min, ",");
     int pos = 0;
     while (pos < theC) {
@@ -120,7 +120,7 @@ public class MicromanagerReader extends FormatReader {
     }
     min = st.nextToken();
     min.replaceAll("[", "").replaceAll("]", "").trim();
-    return new Double(min); 
+    return new Double(min);
   }
 
   /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -128,9 +128,9 @@ public class MicromanagerReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String max = (String) getMeta("ChContrastMax"); 
-    if (max == null) return null; 
-    if (sizeC[0] == 1) return max == null ? null : new Double(max); 
+    String max = (String) getMeta("ChContrastMax");
+    if (max == null) return null;
+    if (sizeC[0] == 1) return max == null ? null : new Double(max);
     StringTokenizer st = new StringTokenizer(max, ",");
     int pos = 0;
     while (pos < theC) {
@@ -143,11 +143,11 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id) 
+  public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
     return getChannelGlobalMinimum(id, 0) != null &&
-      getChannelGlobalMaximum(id, 0) != null; 
+      getChannelGlobalMaximum(id, 0) != null;
   }
 
   /* @see IFormatReader#close() */
@@ -157,7 +157,7 @@ public class MicromanagerReader extends FormatReader {
     currentId = null;
     tiffs = null;
   }
-  
+
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) tiffReader.close(fileOnly);
@@ -174,7 +174,7 @@ public class MicromanagerReader extends FormatReader {
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
     RandomAccessStream ras = new RandomAccessStream(
       new Location(parent, "metadata.txt").getAbsolutePath());
-  
+
     // usually a small file, so we can afford to read it into memory
 
     byte[] meta = new byte[(int) ras.length()];
@@ -190,7 +190,7 @@ public class MicromanagerReader extends FormatReader {
       if (pos == -1 || pos >= ras.length()) break;
       String name = s.substring(s.indexOf(":", pos), s.indexOf(",", pos));
       tiffs.add(0, name.substring(3, name.length() - 1));
-      pos++; 
+      pos++;
     }
 
     // now parse the rest of the metadata
@@ -200,16 +200,16 @@ public class MicromanagerReader extends FormatReader {
     if (start != -1 && end > start) {
       s = s.substring(s.indexOf("\n", start), end).trim();
     }
- 
+
     StringTokenizer st = new StringTokenizer(s, "\n");
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
       boolean open = token.indexOf("[") != -1;
-      boolean closed = token.indexOf("]") != -1; 
+      boolean closed = token.indexOf("]") != -1;
       if (open || (!open && !closed)) {
         int quote = token.indexOf("\"") + 1;
-        String key = token.substring(quote, token.indexOf("\"", quote)); 
-     
+        String key = token.substring(quote, token.indexOf("\"", quote));
+
         if (!open && !closed) {
           String value = token.substring(token.indexOf(":") + 1).trim();
           addMeta(key, value.substring(0, value.length() - 1));
@@ -223,10 +223,10 @@ public class MicromanagerReader extends FormatReader {
           }
           String value = valueBuffer.toString();
           value.replaceAll("\n", "").trim();
-          addMeta(key, value.substring(0, value.length() - 1)); 
+          addMeta(key, value.substring(0, value.length() - 1));
         }
         else {
-          String value = 
+          String value =
             token.substring(token.indexOf("[") + 1, token.indexOf("]")).trim();
           addMeta(key, value.substring(0, value.length() - 1));
         }
@@ -239,7 +239,7 @@ public class MicromanagerReader extends FormatReader {
     sizeY[0] = tiffReader.getSizeY((String) tiffs.get(0));
     currentOrder[0] = "XYCTZ";
     pixelType[0] = tiffReader.getPixelType((String) tiffs.get(0));
-  
+
     MetadataStore store = getMetadataStore(id);
 
     store.setPixels(
@@ -267,7 +267,7 @@ public class MicromanagerReader extends FormatReader {
     String[] list = parent.list();
     for (int i=0; i<list.length; i++) {
       if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
-    } 
+    }
     return false;
   }
 

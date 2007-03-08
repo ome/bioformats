@@ -232,7 +232,7 @@ public class ZeissZVIReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[sizeX[0] * sizeY[0] * bpp];
     return openBytes(id, no, buf);
   }
@@ -260,7 +260,7 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("dis = new DocumentInputStream(document)");
       r.exec("numBytes = dis.available()");
       int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      r.setVar("skipBytes", 
+      r.setVar("skipBytes",
         ((Integer) offsets.get(new Integer(no))).longValue());
       r.exec("blah = dis.skip(skipBytes)");
       r.setVar("data", buf);
@@ -488,7 +488,7 @@ public class ZeissZVIReader extends FormatReader {
     String pixX = (String) getMeta("Scale Factor for X");
     String pixY = (String) getMeta("Scale Factor for Y");
     String pixZ = (String) getMeta("Scale Factor for Z");
- 
+
     if (pixX == null && pixY != null) pixX = pixY;
     if (pixY == null && pixX != null) pixY = pixX;
 

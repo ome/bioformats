@@ -138,11 +138,11 @@ public class BioRadReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[nx * ny * (byteFormat ? 1 : 2)];
     return openBytes(id, no, buf);
   }
-  
+
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {

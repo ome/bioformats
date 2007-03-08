@@ -102,7 +102,7 @@ public class OpenlabRawReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[width * height * bytesPerPixel];
     return openBytes(id, no, buf);
   }
@@ -117,7 +117,7 @@ public class OpenlabRawReader extends FormatReader {
     if (buf.length < width * height * bytesPerPixel) {
       throw new FormatException("Buffer too small.");
     }
-    
+
     in.seek(offsets[no / channels] + 288);
     in.read(buf);
 

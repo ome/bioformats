@@ -69,7 +69,7 @@ public class MRCReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double((String) getMeta("Minimum pixel value")); 
+    return new Double((String) getMeta("Minimum pixel value"));
   }
 
   /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -81,8 +81,8 @@ public class MRCReader extends FormatReader {
   }
 
   /* @see IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id) 
-    throws FormatException, IOException 
+  public boolean isMinMaxPopulated(String id)
+    throws FormatException, IOException
   {
     return true;
   }
@@ -117,7 +117,7 @@ public class MRCReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[sizeX[0] * sizeY[0] * bpp];
     return openBytes(id, no, buf);
   }

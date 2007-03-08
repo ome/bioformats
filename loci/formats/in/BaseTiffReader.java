@@ -545,7 +545,7 @@ public abstract class BaseTiffReader extends FormatReader {
           null, null, null, null);
       }
 
-      // format the creation date to ISO 8061 
+      // format the creation date to ISO 8061
 
       String creationDate = getImageCreationDate();
       try {
@@ -555,11 +555,11 @@ public abstract class BaseTiffReader extends FormatReader {
       }
       catch (Exception e) {
         if (debug) e.printStackTrace();
-        creationDate = ""; 
+        creationDate = "";
       }
 
       // populate Image element
-      
+
       store.setImage(getImageName(),
         creationDate, getImageDescription(), null);
 
@@ -578,14 +578,14 @@ public abstract class BaseTiffReader extends FormatReader {
 
       // set the X and Y pixel dimensions
 
-      int resolutionUnit = TiffTools.getIFDIntValue(ifd, 
+      int resolutionUnit = TiffTools.getIFDIntValue(ifd,
         TiffTools.RESOLUTION_UNIT);
-      TiffRational xResolution = TiffTools.getIFDRationalValue(ifd, 
+      TiffRational xResolution = TiffTools.getIFDRationalValue(ifd,
         TiffTools.X_RESOLUTION, false);
       TiffRational yResolution = TiffTools.getIFDRationalValue(ifd,
         TiffTools.Y_RESOLUTION, false);
-      float pixX = xResolution == null ? 0f : xResolution.floatValue(); 
-      float pixY = yResolution == null ? 0f : yResolution.floatValue(); 
+      float pixX = xResolution == null ? 0f : xResolution.floatValue();
+      float pixY = yResolution == null ? 0f : yResolution.floatValue();
 
       switch (resolutionUnit) {
         case 2:
@@ -595,12 +595,12 @@ public abstract class BaseTiffReader extends FormatReader {
           break;
         case 3:
           // resolution is expressed in pixels per centimeter
-          pixX /= 100; 
-          pixY /= 100; 
+          pixX /= 100;
+          pixY /= 100;
           break;
       }
 
-      store.setDimensions(new Float(pixX), new Float(pixY), null, 
+      store.setDimensions(new Float(pixX), new Float(pixY), null,
         null, null, null);
 
       // populate StageLabel element
@@ -716,7 +716,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    TiffTools.getSamples(ifds[no], in, ignoreColorTable, buf);  
+    TiffTools.getSamples(ifds[no], in, ignoreColorTable, buf);
     updateMinMax(buf, no);
     return swapIfRequired(buf);
   }
@@ -732,7 +732,7 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     int bytesPerPixel = FormatReader.getBytesPerPixel(getPixelType(id));
-    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel * 
+    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel *
       getRGBChannelCount(id)];
     return openBytes(id, no, buf);
   }

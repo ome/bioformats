@@ -193,12 +193,12 @@ public class OIBReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[sizeX[series] * sizeY[series] * 
-      getRGBChannelCount(id) * 
+    byte[] buf = new byte[sizeX[series] * sizeY[series] *
+      getRGBChannelCount(id) *
       FormatReader.getBytesPerPixel(pixelType[series])];
     return openBytes(id, no, buf);
   }
-  
+
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -206,9 +206,9 @@ public class OIBReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-  
+
     try {
-      Integer ii = new Integer(no); 
+      Integer ii = new Integer(no);
       String directory = (String) ((Hashtable) pixels.get(series)).get(ii);
       String name = (String) ((Hashtable) names.get(series)).get(ii);
 
@@ -247,9 +247,9 @@ public class OIBReader extends FormatReader {
     }
 
     byte[] b = openBytes(id, no);
-    int bytes = b.length / (sizeX[series] * sizeY[series] * 
+    int bytes = b.length / (sizeX[series] * sizeY[series] *
       getRGBChannelCount(id));
-    
+
     BufferedImage bi = ImageTools.makeImage(b, sizeX[series], sizeY[series],
       getRGBChannelCount(id), false, bytes, !littleEndian[series],
       validBits[series]);
@@ -511,7 +511,7 @@ public class OIBReader extends FormatReader {
       }
 
       String acquisition = "[Acquisition Parameters Common] - ";
-      store.setImage(null, (String) getMeta(acquisition + "ImageCaputreDate"), 
+      store.setImage(null, (String) getMeta(acquisition + "ImageCaputreDate"),
         null, null);
 
       store.setPixels(
@@ -534,25 +534,25 @@ public class OIBReader extends FormatReader {
       for (int j=0; j<sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
-      
+
         String prefix = "[Channel " + (j + 1) + " Parameters] - ";
         String gain = (String) getMeta(prefix + "AnalogPMTGain");
         String offset = (String) getMeta(prefix + "AnalogPMTOffset");
         String voltage = (String) getMeta(prefix + "AnalogPMTVoltage");
 
-        store.setDetector(null, null, null, null, 
-          gain == null ? null : new Float(gain), 
-          voltage == null ? null : new Float(voltage), 
-          offset == null ? null : new Float(offset), null, new Integer(j)); 
+        store.setDetector(null, null, null, null,
+          gain == null ? null : new Float(gain),
+          voltage == null ? null : new Float(voltage),
+          offset == null ? null : new Float(offset), null, new Integer(j));
       }
 
       String laserCount = (String) getMeta(acquisition + "Number of use Laser");
       int numLasers = laserCount == null ? 0 : Integer.parseInt(laserCount);
 
       for (int j=0; j<numLasers; j++) {
-        String wave = 
+        String wave =
           (String) getMeta(acquisition + "LaserWavelength0" + (j + 1));
-        if (wave == null) wave = "0"; 
+        if (wave == null) wave = "0";
         store.setLaser(null, null, new Integer(wave), null, null, null, null,
           null, null, null, new Integer(j));
       }

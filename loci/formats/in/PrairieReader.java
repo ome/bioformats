@@ -186,7 +186,7 @@ public class PrairieReader extends FormatReader {
     }
     tiff.openBytes(files[no], 0, buf);
     updateMinMax(buf, no);
-    return buf; 
+    return buf;
   }
 
   /* @see IFormatReader#openImage(String, int) */
@@ -351,25 +351,25 @@ public class PrairieReader extends FormatReader {
         for (int i=0; i<sizeC[0]; i++) {
           store.setLogicalChannel(i, null, null, null, null, null, null, null);
         }
-      
+
         String date = (String) getMeta(" PVScan date");
-       
+
         store.setImage(null, date, null, null);
-        
+
         String laserPower = (String) getMeta("laserPower_0");
-        
-        store.setLaser(null, null, null, null, null, null, 
-          laserPower == null ? null : new Float(laserPower), 
-          null, null, null, null); 
-        
+
+        store.setLaser(null, null, null, null, null, null,
+          laserPower == null ? null : new Float(laserPower),
+          null, null, null, null);
+
         for (int i=0; i<4; i++) {
           String gain = (String) getMeta("pmtGain_" + i);
           String offset = (String) getMeta("pmtOffset_" + i);
-          store.setDetector(null, null, null, null, 
-            gain == null ? null : new Float(gain), null, 
-            offset == null ? null : new Float(offset), null, new Integer(i)); 
+          store.setDetector(null, null, null, null,
+            gain == null ? null : new Float(gain), null,
+            offset == null ? null : new Float(offset), null, new Integer(i));
         }
-   
+
         String zoom = (String) getMeta("opticalZoom");
         if (zoom != null) {
           store.setDisplayOptions(new Float(zoom), new Boolean(sizeC[0] > 1),

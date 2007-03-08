@@ -817,21 +817,21 @@ public final class TiffTools {
     {
       samplesPerPixel = 3;
     }
-    int bpp = getBitsPerSample(ifd)[0] / 8; 
+    int bpp = getBitsPerSample(ifd)[0] / 8;
     long width = getImageWidth(ifd);
     long length = getImageLength(ifd);
     byte[] b = new byte[(int) (width * length * samplesPerPixel * bpp)];
-    
+
     getSamples(ifd, in, ignore, b);
     byte[][] samples = new byte[samplesPerPixel][(int) (width * length * bpp)];
     for (int i=0; i<samplesPerPixel; i++) {
-      System.arraycopy(b, (int) (i*width*length*bpp), samples[i], 0, 
+      System.arraycopy(b, (int) (i*width*length*bpp), samples[i], 0,
         samples[i].length);
-    } 
+    }
     b = null;
     return samples;
   }
-  
+
   public static byte[] getSamples(Hashtable ifd, RandomAccessStream in,
     boolean ignore, byte[] buf) throws FormatException, IOException
   {
@@ -987,7 +987,7 @@ public final class TiffTools {
           while (isZero) {
             stripOffsets[i] -= imageWidth;
             in.seek((int) stripOffsets[i]);
-            in.read(buf, (int) (i*imageWidth), (int) imageWidth); 
+            in.read(buf, (int) (i*imageWidth), (int) imageWidth);
             for (int j=0; j<imageWidth; j++) {
               if (buf[(int) (i*imageWidth + j)] != 0) {
                 isZero = false;
@@ -1344,7 +1344,7 @@ public final class TiffTools {
     }
 
     if (bitsPerSample[0] == 16) {
-      int pt = 0; 
+      int pt = 0;
       for (int i = 0; i < samplesPerPixel; i++) {
         for (int j = 0; j < numSamples; j++) {
           buf[pt++] = (byte) ((samples[i][j] & 0xff00) >> 8);
@@ -1353,13 +1353,13 @@ public final class TiffTools {
       }
     }
     else if (bitsPerSample[0] == 32) {
-      int pt = 0; 
+      int pt = 0;
       for (int i=0; i<samplesPerPixel; i++) {
         for (int j=0; j<numSamples; j++) {
-          buf[pt++] = (byte) ((samples[i][j] & 0xff000000) >> 24); 
-          buf[pt++] = (byte) ((samples[i][j] & 0xff0000) >> 16); 
-          buf[pt++] = (byte) ((samples[i][j] & 0xff00) >> 8); 
-          buf[pt++] = (byte) (samples[i][j] & 0xff); 
+          buf[pt++] = (byte) ((samples[i][j] & 0xff000000) >> 24);
+          buf[pt++] = (byte) ((samples[i][j] & 0xff0000) >> 16);
+          buf[pt++] = (byte) ((samples[i][j] & 0xff00) >> 8);
+          buf[pt++] = (byte) (samples[i][j] & 0xff);
         }
       }
     }
@@ -1371,7 +1371,7 @@ public final class TiffTools {
       }
     }
 
-    return buf; 
+    return buf;
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
@@ -1456,10 +1456,10 @@ public final class TiffTools {
       }
     }
     if (samplesPerPixel == 1) {
-      return ImageTools.makeImage(samples[0], (int) imageWidth, 
+      return ImageTools.makeImage(samples[0], (int) imageWidth,
         (int) imageLength, 1, false, validBits);
     }
-    
+
     if (samples.length == 2) {
       byte[][] s = new byte[3][samples[0].length];
       System.arraycopy(samples[0], 0, s[0], 0, s[0].length);

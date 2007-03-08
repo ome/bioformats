@@ -121,9 +121,9 @@ public class BMPReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-   
+
     if (width % 2 == 1) width++;
-   
+
     if (buf.length < width * height * (bpp / 8)) {
       throw new FormatException("Buffer too small.");
     }
@@ -161,8 +161,8 @@ public class BMPReader extends FormatReader {
             buf[y*width + x + 2*pixels] = (byte) in.read();
             buf[y*width + x + pixels] = (byte) in.read();
             buf[y*width + x] = (byte) in.read();
-            for (int j=0; j<(bpp - 24) / 8; j++) in.read(); 
-          } 
+            for (int j=0; j<(bpp - 24) / 8; j++) in.read();
+          }
         }
       }
     }
@@ -175,7 +175,7 @@ public class BMPReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (width % 2 == 1) width++; 
+    if (width % 2 == 1) width++;
     byte[] buf = new byte[width * height * (bpp / 8)];
     return openBytes(id, no, buf);
   }

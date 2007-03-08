@@ -128,7 +128,7 @@ public class GatanReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[dims[0] * dims[1] * dims[2]];
     return openBytes(id, no, buf);
   }
@@ -142,8 +142,8 @@ public class GatanReader extends FormatReader {
     }
     if (buf.length < dims[0] * dims[1] * dims[2]) {
       throw new FormatException("Buffer too small.");
-    } 
- 
+    }
+
     in.seek(pixelOffset);
     in.read(buf);
     return buf;
@@ -176,7 +176,7 @@ public class GatanReader extends FormatReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
-    pixelOffset = 0; 
+    pixelOffset = 0;
   }
 
   /** Initializes the given Gatan file. */
@@ -295,12 +295,12 @@ public class GatanReader extends FormatReader {
     String gamma = (String) getMeta("Gamma");
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      store.setDisplayChannel(new Integer(i), null, null, 
+      store.setDisplayChannel(new Integer(i), null, null,
         gamma == null ? null : new Float(gamma), null);
     }
 
     String mag = (String) getMeta("Indicated Magnification");
-    store.setObjective(null, null, null, null, 
+    store.setObjective(null, null, null, null,
       mag == null ? null : new Float(mag), null, null);
 
   }

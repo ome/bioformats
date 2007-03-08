@@ -270,12 +270,12 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getEffectiveSizeC(String) */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    return getImageCount(id) / (getSizeZ(id) * getSizeT(id)); 
+    return getImageCount(id) / (getSizeZ(id) * getSizeT(id));
   }
 
   /* @see IFormatReader#getRGBChannelCount(String) */
   public int getRGBChannelCount(String id) throws FormatException, IOException {
-    return getSizeC(id) / getEffectiveSizeC(id); 
+    return getSizeC(id) / getEffectiveSizeC(id);
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
@@ -480,10 +480,10 @@ public class FileStitcher implements IFormatReader {
     // this file does not contain enough image planes
     int sno = getSeries(id);
     if (blankThumb[sno] == null) {
-      blankThumb[sno] = ImageTools.blankImage(getThumbSizeX(id), 
+      blankThumb[sno] = ImageTools.blankImage(getThumbSizeX(id),
         getThumbSizeY(id), sizeC[sno], FormatReader.UINT8);
     }
-    return blankThumb[sno]; 
+    return blankThumb[sno];
   }
 
   /* @see IFormatReader#openThumbImage(String, int) */
@@ -495,7 +495,7 @@ public class FileStitcher implements IFormatReader {
     if (ino < readers[fno].getImageCount(files[fno])) {
       return readers[fno].openThumbBytes(files[fno], ino);
     }
-    // return a blank image to cover for the fact that 
+    // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     int sno = getSeries(id);
     if (blankThumbBytes[sno] == null) {
@@ -558,13 +558,13 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#isColorTableIgnored() */
-  public boolean isColorTableIgnored() { 
-    return reader.isColorTableIgnored(); 
+  public boolean isColorTableIgnored() {
+    return reader.isColorTableIgnored();
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
-    if (readers != null) { 
+    if (readers != null) {
       for (int i=0; i<readers.length; i++) {
         readers[i].setNormalized(normalize);
       }
@@ -778,7 +778,7 @@ public class FileStitcher implements IFormatReader {
         }
         readers[i] = (IFormatReader) r;
         readers[i].setChannelStatCalculationStatus(
-          reader.getChannelStatCalculationStatus()); 
+          reader.getChannelStatCalculationStatus());
         readers[i].setColorTableIgnored(reader.isColorTableIgnored());
         readers[i].setNormalized(reader.isNormalized());
         readers[i].setMetadataFiltered(reader.isMetadataFiltered());

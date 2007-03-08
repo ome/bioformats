@@ -438,9 +438,9 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
-    if (currentId != null) { 
+    if (currentId != null) {
       System.err.println(
-        "Warning: setChannelStatCalculation called with open file."); 
+        "Warning: setChannelStatCalculation called with open file.");
     }
     enableChannelStatCalculation = on;
   }
@@ -517,7 +517,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setColorTableIgnored(boolean) */
   public void setColorTableIgnored(boolean ignore) {
-    if (currentId != null) { 
+    if (currentId != null) {
       System.err.println(
         "Warning: setColorTableIgnored called with open file.");
       Exception e = new Exception();
@@ -533,8 +533,8 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
-    if (currentId != null) { 
-      System.err.println("Warning: setNormalized called with open file."); 
+    if (currentId != null) {
+      System.err.println("Warning: setNormalized called with open file.");
     }
     normalizeData = normalize;
   }
@@ -620,8 +620,8 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
   public void setMetadataFiltered(boolean filter) {
-    if (currentId != null) { 
-      System.err.println("Warning: setMetadataFiltered called with open file."); 
+    if (currentId != null) {
+      System.err.println("Warning: setMetadataFiltered called with open file.");
     }
     filterMetadata = filter;
   }
@@ -633,8 +633,8 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
-    if (currentId != null) { 
-      System.err.println("Warning: setMetadataStore called with open file."); 
+    if (currentId != null) {
+      System.err.println("Warning: setMetadataStore called with open file.");
     }
     metadataStore = store;
   }
@@ -1016,7 +1016,7 @@ public abstract class FormatReader extends FormatHandler
       MetadataStore ms = reader.getMetadataStore(id);
 
       if (ms.getClass().getName().equals(
-        "loci.formats.ome.OMEXMLMetadataStore")) 
+        "loci.formats.ome.OMEXMLMetadataStore"))
       {
         try {
           Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
@@ -1184,18 +1184,18 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /** Returns true if the given file name is in the used files list. */
-  public boolean isUsedFile(String id, String file) 
+  public boolean isUsedFile(String id, String file)
     throws FormatException, IOException
   {
     String[] usedFiles = getUsedFiles(id);
     for (int i=0; i<usedFiles.length; i++) {
-      if (usedFiles[i].equals(file) || 
-        usedFiles[i].equals(new Location(file).getAbsolutePath())) 
-      {  
+      if (usedFiles[i].equals(file) ||
+        usedFiles[i].equals(new Location(file).getAbsolutePath()))
+      {
         return true;
       }
     }
-    return false; 
+    return false;
   }
 
   /**

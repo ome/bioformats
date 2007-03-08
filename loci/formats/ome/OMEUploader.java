@@ -691,7 +691,7 @@ public class OMEUploader implements Uploader {
   private void uploadMetadata(MetadataStore store, String id)
     throws UploadException
   {
-    uploadMetadata(store, id, null); 
+    uploadMetadata(store, id, null);
   }
 
   /**
@@ -734,7 +734,7 @@ public class OMEUploader implements Uploader {
     List imageIDs = rim.importFiles(v);
 
     // set the Image information
-  
+
     if (imageIDs == null) return;
 
     Image image = (Image) df.createNew(Image.class);
@@ -808,7 +808,7 @@ public class OMEUploader implements Uploader {
 
     image.setDefaultPixels(pixels);
     df.update(image);
-  
+
     // link image to the appropriate dataset
     if (dataset != null) {
       DatasetManager dm = (DatasetManager) rs.getService(DatasetManager.class);

@@ -134,7 +134,7 @@ public class SDTReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[2 * sizeX[series] * sizeY[series]];
     return openBytes(id, no, buf);
   }
@@ -149,17 +149,17 @@ public class SDTReader extends FormatReader {
     if (buf.length < 2 * sizeX[series] * sizeY[series]) {
       throw new FormatException("Buffer too small.");
     }
-    
+
     if (intensity) {
       in.seek(off + 2 * sizeX[series] * sizeY[series] * timeBins * no);
       for (int y=0; y<sizeY[series]; y++) {
         for (int x=0; x<sizeX[series]; x++) {
           // read all lifetime bins at this pixel for this channel
-          
+
           // combine lifetime bins into intensity value
           short sum = 0;
           for (int t=0; t<timeBins; t++) {
-            sum += DataTools.read2SignedBytes(in, true); 
+            sum += DataTools.read2SignedBytes(in, true);
           }
           int ndx = 2 * (sizeX[0] * y + x);
           buf[ndx] = (byte) (sum & 0xff);

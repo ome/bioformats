@@ -496,7 +496,7 @@ public class ND2Reader extends FormatReader {
 
     // we calculate this directly (instead of calling getEffectiveSizeC) because
     // sizeZ and sizeT have not been accurately set yet
-    int effectiveC = (sizeC[0] / 3) + 1; 
+    int effectiveC = (sizeC[0] / 3) + 1;
 
     if (numImages < sizeZ[0] * sizeT[0]) {
       if (sizeT[0] == numImages) {
@@ -583,18 +583,18 @@ public class ND2Reader extends FormatReader {
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
-  
+
     String prefix = "MetadataSeq _SEQUENCE_INDEX=\"0\" ";
 
     String gain = (String) getMeta(prefix + "dGain value");
     String voltage = (String) getMeta(prefix + "dLampVoltage value");
     String mag = (String) getMeta(prefix + "dObjectiveMag value");
     String na = (String) getMeta(prefix + "dObjectiveNA value");
-  
-    store.setDetector(null, null, null, null, 
-      gain == null ? null : new Float(gain), 
+
+    store.setDetector(null, null, null, null,
+      gain == null ? null : new Float(gain),
       voltage == null ? null : new Float(voltage), null, null, null);
-    store.setObjective(null, null, null, na == null ? null : new Float(na),  
+    store.setObjective(null, null, null, na == null ? null : new Float(na),
       mag == null ? null : new Float(mag), null, null);
   }
 

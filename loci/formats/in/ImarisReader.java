@@ -202,7 +202,7 @@ public class ImarisReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
+    if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[dims[0] * dims[1]];
     return openBytes(id, no, buf);
   }

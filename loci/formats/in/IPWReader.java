@@ -112,7 +112,7 @@ public class IPWReader extends BaseTiffReader {
     if (!id.equals(currentId)) initFile(id);
     int c = getRGBChannelCount(id);
     if (c == 2) c++;
-    byte[] buf = new byte[sizeX[0] * sizeY[0] * c * 
+    byte[] buf = new byte[sizeX[0] * sizeY[0] * c *
       FormatReader.getBytesPerPixel(pixelType[0])];
     return openBytes(id, no, buf);
   }
@@ -124,7 +124,7 @@ public class IPWReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
- 
+
     try {
       String directory = (String) pixels.get(new Integer(no));
       String name = (String) names.get(new Integer(no));
@@ -140,12 +140,12 @@ public class IPWReader extends BaseTiffReader {
       else {
         r.setVar("entryName", name);
         r.exec("document = root.getEntry(entryName)");
-      } 
-    
+      }
+
       r.exec("dis = new DocumentInputStream(document)");
       r.exec("numBytes = dis.available()");
       int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes + 4]; 
+      byte[] b = new byte[numBytes + 4];
       r.setVar("data", b);
       r.exec("dis.read(data)");
 
@@ -157,7 +157,7 @@ public class IPWReader extends BaseTiffReader {
       updateMinMax(buf, no);
       return buf;
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       noPOI = true;
       return null;
     }

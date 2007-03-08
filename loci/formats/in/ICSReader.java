@@ -43,7 +43,7 @@ public class ICSReader extends FormatReader {
 
   /** Metadata field categories. */
   private String[] CATEGORIES = new String[] {
-    "ics_version", "filename", "source", "layout", "representation", 
+    "ics_version", "filename", "source", "layout", "representation",
     "parameter", "sensor", "history", "end"
   };
 
@@ -143,8 +143,8 @@ public class ICSReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
-    byte[] buf = new byte[sizeX[0] * sizeY[0] * (dimensions[0] / 8) * 
+    if (!id.equals(currentId)) initFile(id);
+    byte[] buf = new byte[sizeX[0] * sizeY[0] * (dimensions[0] / 8) *
       getRGBChannelCount(id)];
     return openBytes(id, no, buf);
   }
@@ -156,12 +156,12 @@ public class ICSReader extends FormatReader {
     if (no < 0 || no >= getImageCount(currentId)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < sizeX[0] * sizeY[0] * (dimensions[0] / 8) * 
-      getRGBChannelCount(id)) 
+    if (buf.length < sizeX[0] * sizeY[0] * (dimensions[0] / 8) *
+      getRGBChannelCount(id))
     {
       throw new FormatException("Buffer too small.");
     }
-  
+
     int bpp = dimensions[0] / 8;
 
     int len = sizeX[0] * sizeY[0] * bpp * getRGBChannelCount(id);
@@ -173,16 +173,16 @@ public class ICSReader extends FormatReader {
         pt += bpp;
       }
     }
-    else System.arraycopy(data, offset, buf, 0, len); 
+    else System.arraycopy(data, offset, buf, 0, len);
 
     // if it's version two, we need to flip the plane upside down
     if (versionTwo) {
-      int scanline = sizeX[0] * bpp * sizeC[0]; 
+      int scanline = sizeX[0] * bpp * sizeC[0];
       for (int y=0; y<sizeY[0]; y++) {
         for (int x=0; x<scanline; x++) {
           byte bottom = buf[y*scanline + x];
           buf[y*scanline + x] = buf[(sizeY[0] - y - 1)*scanline + x];
-          buf[(sizeY[0] - y - 1)*scanline + x] = bottom; 
+          buf[(sizeY[0] - y - 1)*scanline + x] = bottom;
         }
       }
     }
@@ -320,7 +320,7 @@ public class ICSReader extends FormatReader {
         for (int i=0; i<SUB_SUB_CATEGORIES.length; i++) {
           if (token.equals(SUB_SUB_CATEGORIES[i])) foundValue = false;
         }
-      
+
         if (foundValue) {
           StringBuffer value = new StringBuffer();
           value.append(token);
@@ -335,7 +335,7 @@ public class ICSReader extends FormatReader {
           key.append(" ");
         }
       }
-      if (st.hasMoreTokens()) line = st.nextToken(); 
+      if (st.hasMoreTokens()) line = st.nextToken();
       else line = null;
     }
 
@@ -371,7 +371,7 @@ public class ICSReader extends FormatReader {
       }
       else if(orderToken.equals("ch")) {
         dimensions[4] = Integer.parseInt(imageToken);
-        if (dimensions[4] > 4) rgb = false; 
+        if (dimensions[4] > 4) rgb = false;
       }
       else {
         dimensions[5] = Integer.parseInt(imageToken);
@@ -391,8 +391,8 @@ public class ICSReader extends FormatReader {
       StringTokenizer endianness = new StringTokenizer(endian);
       String firstByte = endianness.nextToken();
       int first = Integer.parseInt(firstByte);
-      littleEndian = 
-        ((String) getMeta("representation format")).equals("real") ? 
+      littleEndian =
+        ((String) getMeta("representation format")).equals("real") ?
         first == 1 : first != 1;
     }
 
@@ -506,25 +506,25 @@ public class ICSReader extends FormatReader {
     if (pixelSizes != null) {
       StringTokenizer pixelSizeTokens = new StringTokenizer(pixelSizes);
       StringTokenizer axisTokens = new StringTokenizer(o);
-    
-      Float pixX = null, pixY = null, pixZ = null, pixC = null, pixT = null; 
-    
+
+      Float pixX = null, pixY = null, pixZ = null, pixC = null, pixT = null;
+
       while (pixelSizeTokens.hasMoreTokens()) {
         String axis = axisTokens.nextToken().trim().toLowerCase();
         String size = pixelSizeTokens.nextToken().trim();
-        if (axis.equals("x")) pixX = new Float(size); 
-        else if (axis.equals("y")) pixY = new Float(size); 
-        else if (axis.equals("ch")) pixC = new Float(size); 
-        else if (axis.equals("z")) pixZ = new Float(size); 
-        else if (axis.equals("t")) pixT = new Float(size); 
+        if (axis.equals("x")) pixX = new Float(size);
+        else if (axis.equals("y")) pixY = new Float(size);
+        else if (axis.equals("ch")) pixC = new Float(size);
+        else if (axis.equals("z")) pixZ = new Float(size);
+        else if (axis.equals("t")) pixT = new Float(size);
       }
       store.setDimensions(pixX, pixY, pixZ, pixC, pixT, null);
     }
 
     String em = (String) getMeta("sensor s_params LambdaEm");
     String ex = (String) getMeta("sensor s_params LambdaEx");
-    int[] emWave = new int[sizeC[0]]; 
-    int[] exWave = new int[sizeC[0]]; 
+    int[] emWave = new int[sizeC[0]];
+    int[] exWave = new int[sizeC[0]];
     if (em != null) {
       StringTokenizer emTokens = new StringTokenizer(em);
       for (int i=0; i<sizeC[0]; i++) {
@@ -539,7 +539,7 @@ public class ICSReader extends FormatReader {
     }
 
     for (int i=0; i<sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, new Integer(emWave[i]), 
+      store.setLogicalChannel(i, null, null, new Integer(emWave[i]),
         new Integer(exWave[i]), null, null, null);
     }
   }
