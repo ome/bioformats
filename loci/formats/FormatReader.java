@@ -438,6 +438,10 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
+    if (currentId != null) { 
+      System.err.println(
+        "Warning: setChannelStatCalculation called with open file."); 
+    }
     enableChannelStatCalculation = on;
   }
 
@@ -513,6 +517,12 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setColorTableIgnored(boolean) */
   public void setColorTableIgnored(boolean ignore) {
+    if (currentId != null) { 
+      System.err.println(
+        "Warning: setColorTableIgnored called with open file.");
+      Exception e = new Exception();
+      e.printStackTrace();
+    }
     ignoreColorTable = ignore;
   }
 
@@ -523,6 +533,9 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
+    if (currentId != null) { 
+      System.err.println("Warning: setNormalized called with open file."); 
+    }
     normalizeData = normalize;
   }
 
@@ -607,6 +620,9 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
   public void setMetadataFiltered(boolean filter) {
+    if (currentId != null) { 
+      System.err.println("Warning: setMetadataFiltered called with open file."); 
+    }
     filterMetadata = filter;
   }
 
@@ -617,6 +633,9 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
+    if (currentId != null) { 
+      System.err.println("Warning: setMetadataStore called with open file."); 
+    }
     metadataStore = store;
   }
 

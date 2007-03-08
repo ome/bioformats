@@ -1405,7 +1405,7 @@ public final class TiffTools {
 
     int[] validBits = getIFDIntArray(ifd, VALID_BITS, false);
 
-    if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
+    if (!ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
       samplesPerPixel = 3;
     }
 
@@ -1455,6 +1455,11 @@ public final class TiffTools {
           (int) imageWidth, (int) imageLength, validBits);
       }
     }
+    if (samplesPerPixel == 1) {
+      return ImageTools.makeImage(samples[0], (int) imageWidth, 
+        (int) imageLength, 1, false, validBits);
+    }
+    
     if (samples.length == 2) {
       byte[][] s = new byte[3][samples[0].length];
       System.arraycopy(samples[0], 0, s[0], 0, s[0].length);

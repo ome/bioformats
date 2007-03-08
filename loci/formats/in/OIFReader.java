@@ -103,7 +103,6 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    tiffReader[0].setColorTableIgnored(ignoreColorTable);
     return tiffReader[0].isRGB((String) tiffs.get(0));
   }
 
@@ -147,7 +146,6 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    tiffReader[no].setColorTableIgnored(ignoreColorTable);
     byte[] b = tiffReader[no].openBytes((String) tiffs.get(no), 0);
     tiffReader[no].close();
     updateMinMax(b, no);
@@ -164,7 +162,6 @@ public class OIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
      
-    tiffReader[no].setColorTableIgnored(ignoreColorTable);
     tiffReader[no].openBytes((String) tiffs.get(no), 0, buf);
     tiffReader[no].close();
     updateMinMax(buf, no);
@@ -183,7 +180,6 @@ public class OIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    tiffReader[no].setColorTableIgnored(ignoreColorTable);
     BufferedImage b = tiffReader[no].openImage((String) tiffs.get(no), 0);
     ColorModel cm = ImageTools.makeColorModel(b.getRaster().getNumBands(),
       b.getRaster().getTransferType(), validBits);
@@ -212,7 +208,6 @@ public class OIFReader extends FormatReader {
 
     thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
       id.lastIndexOf(".")) + "_Thumb.bmp";
-    thumbReader.setColorTableIgnored(ignoreColorTable);
     return thumbReader.openImage(thumbId, 0);
   }
 
@@ -331,11 +326,15 @@ public class OIFReader extends FormatReader {
     }
 
     thumbReader = new BMPReader();
+    thumbReader.setColorTableIgnored(isColorTableIgnored());
     numImages = filenames.size();
     tiffs = new Vector(numImages);
 
     tiffReader = new TiffReader[numImages];
-    for (int i=0; i<numImages; i++) tiffReader[i] = new TiffReader();
+    for (int i=0; i<numImages; i++) {
+      tiffReader[i] = new TiffReader();
+      tiffReader[i].setColorTableIgnored(isColorTableIgnored());
+    }
 
     // open each INI file (.pty extension)
 

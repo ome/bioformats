@@ -85,7 +85,6 @@ public class PerkinElmerReader extends FormatReader {
       initFile(id);
     }
     if (isTiff) {
-      tiff[0].setColorTableIgnored(ignoreColorTable);
       return tiff[0].isRGB(files[0]);
     }
     return false;
@@ -113,7 +112,6 @@ public class PerkinElmerReader extends FormatReader {
       initFile(id);
     }
     if (isTiff) {
-      tiff[no / channels].setColorTableIgnored(ignoreColorTable);
       return tiff[no / channels].openBytes(files[no / channels], 0);
     }
 
@@ -139,7 +137,6 @@ public class PerkinElmerReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
     if (isTiff) {
-      tiff[no / channels].setColorTableIgnored(ignoreColorTable);
       return tiff[no / channels].openImage(files[no / channels], 0);
     }
 
@@ -382,7 +379,10 @@ public class PerkinElmerReader extends FormatReader {
     StringTokenizer t;
 
     tiff = new TiffReader[numImages];
-    for (int i=0; i<tiff.length; i++) tiff[i] = new TiffReader();
+    for (int i=0; i<tiff.length; i++) {
+      tiff[i] = new TiffReader();
+      tiff[i].setColorTableIgnored(isColorTableIgnored());
+    }
 
     // highly questionable metadata parsing
 

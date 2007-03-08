@@ -100,15 +100,6 @@ public class FileStitcher implements IFormatReader {
   /** Component lengths for each axis type. */
   private int[][] lenZ, lenC, lenT;
 
-  /** Whether or not we're doing channel stat calculation (no by default). */
-  protected boolean enableChannelStatCalculation = false;
-
-  /** Whether or not to ignore color tables, if present. */
-  protected boolean ignoreColorTable = false;
-
-  /** Whether or not to normalize float data. */
-  protected boolean normalizeData = false;
-
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
@@ -412,12 +403,14 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
-    enableChannelStatCalculation = on;
+    for (int i=0; i<readers.length; i++) {
+      readers[i].setChannelStatCalculationStatus(on);
+    }
   }
 
   /* @see IFormatReader#getChannelStatCalculationStatus */
   public boolean getChannelStatCalculationStatus() {
-    return enableChannelStatCalculation;
+    return readers[0].getChannelStatCalculationStatus();
   }
 
   /* @see IFormatReader#isInterleaved(String) */
@@ -556,7 +549,6 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#setColorTableIgnored(boolean) */
   public void setColorTableIgnored(boolean ignore) {
-    ignoreColorTable = ignore;
     reader.setColorTableIgnored(ignore);
     if (readers != null) {
       for (int i=0; i<readers.length; i++) {
@@ -566,15 +558,21 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#isColorTableIgnored() */
-  public boolean isColorTableIgnored() { return ignoreColorTable; }
+  public boolean isColorTableIgnored() { 
+    return readers[0].isColorTableIgnored(); 
+  }
 
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
-    normalizeData = normalize;
+    if (readers != null) { 
+      for (int i=0; i<readers.length; i++) {
+        readers[i].setNormalized(normalize);
+      }
+    }
   }
 
   /* @see IFormatReader#isNormalized() */
-  public boolean isNormalized() { return normalizeData; }
+  public boolean isNormalized() { return readers[0].isNormalized(); }
 
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
@@ -779,6 +777,11 @@ public class FileStitcher implements IFormatReader {
           }
         }
         readers[i] = (IFormatReader) r;
+        readers[i].setChannelStatCalculationStatus(
+          reader.getChannelStatCalculationStatus()); 
+        readers[i].setColorTableIgnored(reader.isColorTableIgnored());
+        readers[i].setNormalized(reader.isNormalized());
+        readers[i].setMetadataFiltered(reader.isMetadataFiltered());
       }
       catch (InstantiationException exc) { exc.printStackTrace(); }
       catch (IllegalAccessException exc) { exc.printStackTrace(); }
@@ -934,9 +937,7 @@ public class FileStitcher implements IFormatReader {
       posZ[0], posC[0], posT[0]);
 
     // configure the reader, in case we haven't done this one yet
-    readers[fno].setChannelStatCalculationStatus(enableChannelStatCalculation);
     readers[fno].setSeries(files[fno], reader.getSeries(files[0]));
-    readers[fno].setColorTableIgnored(ignoreColorTable);
     readers[fno].swapDimensions(files[fno], order[sno]);
 
     return new int[] {fno, ino};
