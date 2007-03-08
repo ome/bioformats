@@ -1153,8 +1153,16 @@ public class LeicaReader extends BaseTiffReader {
 
       for (int j=0; j<sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
-        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(id, j),
-          getChannelGlobalMaximum(id, j), ii);
+        try { 
+          store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
+            getChannelGlobalMaximum(currentId, j), ii);
+        }
+        catch (FormatException exc) {
+          if (debug) exc.printStackTrace();
+        }
+        catch (IOException exc) {
+          if (debug) exc.printStackTrace();
+        }
       }
 
     }
