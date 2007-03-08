@@ -205,6 +205,8 @@ public class Importer implements ItemListener {
       }
     }
     else r = new OMEReader();
+    OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+    r.setMetadataStore(store);
 
     // -- Step 3: get parameter values --
 
@@ -302,9 +304,9 @@ public class Importer implements ItemListener {
       if (stackFormat.equals(VIEW_IMAGE_5D)) mergeChannels = false;
 
       FileStitcher fs = null;
+      r.setColorTableIgnored(ignoreTables);
 
       int pixelType = r.getPixelType(id);
-      r.setColorTableIgnored(ignoreTables);
       String currentFile = r.getCurrentFile();
 
       if (stitchFiles) {
@@ -323,24 +325,13 @@ public class Importer implements ItemListener {
         id = gd.getNextString();
         r = fs;
       }
-      if (!ignoreTables) r = new ChannelSeparator(r);
-      r.setColorTableIgnored(ignoreTables);
-      r.close();
-      r.setMetadataFiltered(true);
-      r.setColorTableIgnored(ignoreTables);
+      r = new ChannelSeparator(r);
 
       // store OME metadata into OME-XML structure, if available
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-      store.createRoot();
-      r.setMetadataStore(store);
 
       int seriesCount = r.getSeriesCount(id);
       boolean[] series = new boolean[seriesCount];
       series[0] = true;
-
-      r.close();
-      store = (OMEXMLMetadataStore) r.getMetadataStore(id);
-      r.setColorTableIgnored(ignoreTables);
 
       // build descriptive string and range for each series
       String[] seriesStrings = new String[seriesCount];
@@ -360,7 +351,6 @@ public class Importer implements ItemListener {
       int[] tStep = new int[seriesCount];
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
-        r.setColorTableIgnored(ignoreTables);
         num[i] = r.getImageCount(id);
         sizeC[i] = r.getEffectiveSizeC(id);
         sizeZ[i] = r.getSizeZ(id);
@@ -631,7 +621,6 @@ public class Importer implements ItemListener {
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(id, i);
-          r.setColorTableIgnored(ignoreTables);
 
           boolean[] load = new boolean[num[i]];
           if (!stackFormat.equals(VIEW_NONE)) {
@@ -882,23 +871,10 @@ public class Importer implements ItemListener {
             // retrieve the spatial calibration information, if available
 
             applyCalibration(store, imp, i);
-            IFormatReader ir = new ImageReader();
-            OMEXMLMetadataStore tmp = new OMEXMLMetadataStore();
-            tmp.createRoot();
-            ir.setMetadataStore(tmp);
-            if (fs == null) {
-              tmp = (OMEXMLMetadataStore) ir.getMetadataStore(id);
-            }
-            else {
-              ir = new FileStitcher(ir);
-              tmp = (OMEXMLMetadataStore) ir.getMetadataStore(id);
-            }
-            fi.description = tmp.dumpXML();
+            fi.description = store.dumpXML();
             imp.setFileInfo(fi);
             imp.setDimensions(cCount[i], zCount[i], tCount[i]);
             displayStack(imp, r, fs, id);
-            r.close();
-            r.setColorTableIgnored(ignoreTables);
           }
 
           long endTime = System.currentTimeMillis();
