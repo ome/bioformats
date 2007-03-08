@@ -45,7 +45,6 @@ import org.openmicroscopy.is.*;
  */
 public class OMEPlugin implements PlugIn {
 
-
   // -- Fields --
 
   /** Current OME thread. */
@@ -96,7 +95,7 @@ public class OMEPlugin implements PlugIn {
    */
   private void getInput() {
     GenericDialog gd = new GenericDialog("OME Login");
-    
+
     String s = Prefs.get("downloader.server", "");
     if (s.startsWith("http:")) s = s.substring(5);
     while (s.startsWith("/")) s = s.substring(1);
@@ -104,7 +103,7 @@ public class OMEPlugin implements PlugIn {
     if (slash >= 0) s = s.substring(0, slash);
     int colon = s.indexOf(":");
     if (colon >= 0) s = s.substring(0, colon);
-    
+
     gd.addStringField("Server:   ", s, 30);
     gd.addStringField("Username: ", Prefs.get("downloader.user", ""), 30);
     gd.addStringField("Password: ", "", 30);
@@ -121,7 +120,7 @@ public class OMEPlugin implements PlugIn {
     }
 
     server = gd.getNextString();
-  
+
     // do sanity check on server name
     if (server.startsWith("http:")) {
       server = server.substring(5);
@@ -135,7 +134,7 @@ public class OMEPlugin implements PlugIn {
     Prefs.set("downloader.server", server);
 
     server = "http://" + server + "/shoola/";
-    
+
     username = gd.getNextString();
     password = gd.getNextString();
 
@@ -210,7 +209,7 @@ public class OMEPlugin implements PlugIn {
   /** returns a list of images that the user chooses */
   private Image[] getDownPicks(Image[] ima) {
     if (cancelPlugin) return null;
-   
+
     try {
       OMEUtils.login(server, username, password);
       int[] results = OMEUtils.showTable(ima);
@@ -305,12 +304,12 @@ public class OMEPlugin implements PlugIn {
 
       //do the image search
       IJ.showStatus("Searching for images...");
-     
+
       String project = gd.getNextChoice();
       String owner = gd.getNextChoice();
       String img = gd.getNextString();
       String imageName = gd.getNextString();
-     
+
       while (images.length == 0) {
         //get search results
 
@@ -351,7 +350,7 @@ public class OMEPlugin implements PlugIn {
       }
       //download into ImageJ
       for (int i=0; i<images.length; i++) {
-        String file = "location=[OME server] open=[" + server + "?user=" + 
+        String file = "location=[OME server] open=[" + server + "?user=" +
           username + "&password=" + password + "&id=" + images[i].getID() + "]";
         IJ.runPlugIn("loci.plugins.LociImporter", file);
 
@@ -377,6 +376,5 @@ public class OMEPlugin implements PlugIn {
     upThread = null;
     IJ.showProgress(1);
   }
-
 
 }

@@ -129,7 +129,7 @@ public class LociUploader implements PlugIn {
 
       }
       if (is.getProcessor(1) instanceof ColorProcessor) {
-        store.setPixels(null, null, null, null, null, 
+        store.setPixels(null, null, null, null, null,
           new Integer(FormatReader.UINT8), null, null, null, null);
       }
 
@@ -155,7 +155,7 @@ public class LociUploader implements PlugIn {
         else if (pix instanceof int[]) {
           if (is.getProcessor(i+1) instanceof ColorProcessor) {
             byte[][] rgb = new byte[3][((int[]) pix).length];
-            ((ColorProcessor) is.getProcessor(i+1)).getRGB(rgb[0], 
+            ((ColorProcessor) is.getProcessor(i+1)).getRGB(rgb[0],
               rgb[1], rgb[2]);
             int channels = store.getSizeC(null).intValue();
             if (channels > 3) channels = 3;

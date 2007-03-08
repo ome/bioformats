@@ -60,12 +60,12 @@ public class Exporter {
   /** Executes the plugin. */
   public synchronized void run(ImageProcessor ip) {
     String outfile = null;
-    
+
     if (plugin.arg != null && plugin.arg.startsWith("outfile=")) {
       outfile = Macro.getValue(plugin.arg, "outfile", null);
       plugin.arg = null;
     }
-  
+
     if (outfile == null) {
       String options = Macro.getOptions();
       if (options != null) {
@@ -82,7 +82,7 @@ public class Exporter {
         return;
       }
     }
-   
+
     try {
       FormatWriter w = new ImageWriter().getWriter(outfile);
 
@@ -95,10 +95,10 @@ public class Exporter {
       int thisType = ImageTools.getPixelType((BufferedImage) firstImage);
       boolean forceType = false;
 
-      if ((codecs != null && codecs.length > 1) || 
+      if ((codecs != null && codecs.length > 1) ||
         !w.isSupportedType(null, thisType))
       {
-        GenericDialog gd = 
+        GenericDialog gd =
           new GenericDialog("LOCI Bio-Formats Exporter Options");
         if (codecs != null) {
           gd.addChoice("Compression type: ", codecs, codecs[0]);
@@ -115,7 +115,7 @@ public class Exporter {
         }
       }
 
-      // convert and save each slice 
+      // convert and save each slice
 
       ImageStack is = imp.getStack();
       for (int i=0; i<is.getSize(); i++) {
@@ -123,7 +123,7 @@ public class Exporter {
         IJ.showProgress((double) (i + 1) / is.getSize());
         proc = is.getProcessor(i + 1);
         Image slice = proc.createImage();
-        BufferedImage img = 
+        BufferedImage img =
           ImageTools.makeBuffered(slice, proc.getColorModel());
         if (forceType) {
           if (!w.isSupportedType(null, thisType)) {
