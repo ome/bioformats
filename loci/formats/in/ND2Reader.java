@@ -583,6 +583,19 @@ public class ND2Reader extends FormatReader {
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
+  
+    String prefix = "MetadataSeq _SEQUENCE_INDEX=\"0\" ";
+
+    String gain = (String) getMeta(prefix + "dGain value");
+    String voltage = (String) getMeta(prefix + "dLampVoltage value");
+    String mag = (String) getMeta(prefix + "dObjectiveMag value");
+    String na = (String) getMeta(prefix + "dObjectiveNA value");
+  
+    store.setDetector(null, null, null, null, 
+      gain == null ? null : new Float(gain), 
+      voltage == null ? null : new Float(voltage), null, null, null);
+    store.setObjective(null, null, null, na == null ? null : new Float(na),  
+      mag == null ? null : new Float(mag), null, null);
   }
 
   // -- Main method --

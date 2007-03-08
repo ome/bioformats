@@ -387,9 +387,6 @@ public class OIBReader extends FormatReader {
         }
       }
 
-      //if (zSize[0] == 0) zSize[0]++;
-      //if (tSize[0] == 0) tSize[0]++;
-
       pixelType = new int[numSeries];
       currentOrder = new String[numSeries];
       orderCertain = new boolean[numSeries];
@@ -513,6 +510,10 @@ public class OIBReader extends FormatReader {
             "Unknown matching for pixel byte width of: " + bpp);
       }
 
+      String acquisition = "[Acquisition Parameters Common] - ";
+      store.setImage(null, (String) getMeta(acquisition + "ImageCaputreDate"), 
+        null, null);
+
       store.setPixels(
         new Integer(sizeX[i]),
         new Integer(sizeY[i]),
@@ -533,7 +534,29 @@ public class OIBReader extends FormatReader {
       for (int j=0; j<sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
+      
+        String prefix = "[Channel " + (j + 1) + " Parameters] - ";
+        String gain = (String) getMeta(prefix + "AnalogPMTGain");
+        String offset = (String) getMeta(prefix + "AnalogPMTOffset");
+        String voltage = (String) getMeta(prefix + "AnalogPMTVoltage");
+
+        store.setDetector(null, null, null, null, 
+          gain == null ? null : new Float(gain), 
+          voltage == null ? null : new Float(voltage), 
+          offset == null ? null : new Float(offset), null, new Integer(j)); 
       }
+
+      String laserCount = (String) getMeta(acquisition + "Number of use Laser");
+      int numLasers = laserCount == null ? 0 : Integer.parseInt(laserCount);
+
+      for (int j=0; j<numLasers; j++) {
+        String wave = 
+          (String) getMeta(acquisition + "LaserWavelength0" + (j + 1));
+        if (wave == null) wave = "0"; 
+        store.setLaser(null, null, new Integer(wave), null, null, null, null,
+          null, null, null, new Integer(j));
+      }
+
     }
   }
 
