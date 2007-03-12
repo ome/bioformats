@@ -113,7 +113,9 @@ public interface MetadataStore {
 
   /**
    * Creates a set of pixel dimensions in the metadata store with a particular
-   * index.  Unless both values are non-null, pixelSizeX will equal pixelSizeY.
+   * index.  Unless both values are non-null, the MetadataStore should assume
+   * pixelSizeX equals pixelSizeY (i.e., should populate the null field with
+   * the other field's value).
    * @param pixelSizeX size of an individual pixel's X axis in microns.
    * @param pixelSizeY size of an individual pixel's Y axis in microns.
    * @param pixelSizeZ size of an individual pixel's Z axis in microns.
