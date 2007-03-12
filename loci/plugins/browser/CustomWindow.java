@@ -26,9 +26,11 @@ package loci.plugins.browser;
 
 import ij.*;
 import ij.gui.*;
+import ij.macro.MacroRunner;
 import ij.measure.Calibration;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -340,8 +342,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     if (db.manager != null) {
       imp.setProcessor(patternTitle, db.manager.getSlice(index - 1));
+      // now execute macros as needed 
+ 
+      Vector macros = db.macro.getMacros();
+      for (int i=0; i<macros.size(); i++) {
+        MacroRunner runner = new MacroRunner((String) macros.get(i));
+      }
       index = 1;
-//      repaint();
       return;
     }
 
@@ -355,6 +362,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       IJ.log("invalid index: " + index + " (size = " + imp.getStackSize() +
         "; zSliceSel = " + zSliceSel.getValue() +
         "; tSliceSel = " + tSliceSel.getValue() + ")");
+    }
+  
+    // now execute macros as needed 
+ 
+    Vector macros = db.macro.getMacros();
+    for (int i=0; i<macros.size(); i++) {
+      MacroRunner runner = new MacroRunner((String) macros.get(i));
     }
     repaint();
   }
