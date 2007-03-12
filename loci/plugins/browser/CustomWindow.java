@@ -96,7 +96,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     FilePattern fp = null;
 
-    if(db.fStitch != null) {
+    if (db.fStitch != null) {
       try {
         fp = db.fStitch.getFilePattern(id);
         patternTitle = fp.getPattern();
@@ -121,9 +121,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         g.drawRect(loc.x - 1, loc.y - 1, csize.width + 1, csize.height + 1);
       }
     };
-
-//    imagePane.setLayout(getLayout()); // ImageLayout
-//    imagePane.setBackground(Color.white);
 
     // redo layout for master window
     remove(ic);
@@ -220,7 +217,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     zPanel.add(zSliceSel,BorderLayout.CENTER);
     tPanel.add(tSliceSel,BorderLayout.CENTER);
 
-    if(db.virtual) {
+    if (db.virtual) {
       zIndicator = new CacheIndicator(zSliceSel);
       tIndicator = new CacheIndicator(tSliceSel);
       zPanel.add(zIndicator,BorderLayout.SOUTH);
@@ -631,7 +628,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void windowClosed(WindowEvent e) {
     if (animationTimer != null) animationTimer.stop();
-    db.manager.finish();
+    if (db.manager != null) db.manager.finish();
     super.windowClosed(e);
   }
 

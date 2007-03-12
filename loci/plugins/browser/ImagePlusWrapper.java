@@ -62,6 +62,8 @@ public class ImagePlusWrapper {
       // get # images in all matching files
 
       try {
+        if (stitch && fs == null) fs = new FileStitcher(r); 
+        
         numTotal = fs.getImageCount(name);
 
         dim = fs.getDimensionOrder(name);
@@ -70,6 +72,7 @@ public class ImagePlusWrapper {
         sizeZ = fs.getSizeZ(name);
         sizeT = fs.getSizeT(name);
         sizeC = fs.getSizeC(name);
+        
         if (LociDataBrowser.DEBUG) {
           System.err.println("numTotal = "+numTotal);
         }
@@ -79,11 +82,12 @@ public class ImagePlusWrapper {
         LociDataBrowser.exceptionMessage(exc);
       }
 
-      int num = r.getImageCount(name);
+      int num = fs.getImageCount(name);
       ImageStack stackB = null, stackS = null,
         stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
+     
       for (int i=0; i<num; i++) {
         long clock = System.currentTimeMillis();
         if (clock - time >= 50) {
@@ -91,7 +95,7 @@ public class ImagePlusWrapper {
           time = clock;
         }
         IJ.showProgress((double) i/num);
-        BufferedImage img = r.openImage(name, i);
+        BufferedImage img = fs.openImage(name, i);
 
         // scale image if it is the wrong size
         int w = img.getWidth(), h = img.getHeight();
@@ -107,6 +111,7 @@ public class ImagePlusWrapper {
         WritableRaster raster = img.getRaster();
         int c = raster.getNumBands();
         int tt = raster.getTransferType();
+        
         if (c == 1) {
           if (tt == DataBuffer.TYPE_BYTE) {
             byte[] b = ImageTools.getBytes(img)[0];

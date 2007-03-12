@@ -908,7 +908,7 @@ public class OptionsWindow extends JFrame implements
       if (cCheck.isSelected()) cState = CacheManager.C_AXIS;
 
       int finalState = (zState | tState | cState);
-      manager.setAxis(finalState);
+      if (manager != null) manager.setAxis(finalState);
     }
   }
 

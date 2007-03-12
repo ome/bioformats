@@ -1918,8 +1918,8 @@ public class CacheManager implements Runnable {
     Arrays.sort(zL);
     Arrays.sort(tL);
 
-    zInd.setIndicator(zC, zL, sizeZ);
-    tInd.setIndicator(tC, tL, sizeT);
+    if (zInd != null) zInd.setIndicator(zC, zL, sizeZ);
+    if (tInd != null) tInd.setIndicator(tC, tL, sizeT);
   }
 
   private static int [] makeInt(Object[] array) {

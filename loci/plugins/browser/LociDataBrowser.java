@@ -123,9 +123,8 @@ public class LociDataBrowser {
   // -- LociDataBrowser API methods --
 
   /**
-  * Displays the given ImageJ image in a 4D browser window.
-  * NB: this method is needed only internally. Do not call.
-  */
+   * Displays the given ImageJ image in a 4D browser window.
+   */
   private void show(ImagePlus imp) {
     int stackSize = imp == null ? 0 : imp.getStackSize();
 
@@ -139,7 +138,7 @@ public class LociDataBrowser {
       imp.show();
       return;
     }
-    if(cw != null) {
+    if (cw != null) {
       cw.ow.dispose();
       cw.ow = null;
       cw.dispose();
@@ -243,37 +242,31 @@ public class LociDataBrowser {
   }
 
   public void toggleCache(boolean cached) {
-    if(cached) {
-      if(!virtual) {
-        virtual = true;
-        run("");
-      }
-    }
-    else {
-      if(virtual) {
-        virtual = false;
-        run("");
-      }
+    if (cached != virtual) {
+      virtual = !virtual;
+      run("");
     }
   }
   
   public void toggleMerge() {    
     if (reader instanceof ChannelMerger) {
-      IFormatReader parent = ((ReaderWrapper)reader).getReader();
+      IFormatReader parent = ((ReaderWrapper) reader).getReader();
       reader = new ChannelSeparator(parent);
       run("");
     }
-    else if(reader instanceof ChannelSeparator) {
-      IFormatReader parent = ((ReaderWrapper)reader).getReader();
+    else if (reader instanceof ChannelSeparator) {
+      IFormatReader parent = ((ReaderWrapper) reader).getReader();
       reader = new ChannelMerger(parent);
       run("");
     }
-    else throw new RuntimeException("Unsuported reader class: " + reader.getClass().getName());
+    else {
+      throw new RuntimeException("Unsupported reader class: " + 
+        reader.getClass().getName());
+    } 
   }
   
   public boolean isMerged() {
-    if (reader instanceof ChannelMerger) return true;
-    else return false;
+    return reader instanceof ChannelMerger;
   }
 
   public void run(String arg) {
@@ -358,6 +351,7 @@ public class LociDataBrowser {
           show(imp);
         }
         else {
+          manager = null; 
           ipw = new ImagePlusWrapper(id, reader, fStitch, true);
           setDimensions();
 
