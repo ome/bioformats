@@ -489,7 +489,7 @@ public final class OverlayIO {
     c = r.createCell((short) 0);
 
     c.setCellStyle(text);
-    c.setCellValue(header);
+    c.setCellValue(new HSSFRichTextString(header));
 
     // write table header
   
@@ -498,13 +498,13 @@ public final class OverlayIO {
     c = r.createCell(cellnum);
 
     c.setCellStyle(text);
-    c.setCellValue("Overlay");
+    c.setCellValue(new HSSFRichTextString("Overlay"));
 
     cellnum = 1;
     for (int i = 0; i<lengths.length; i++) {
       c = r.createCell(cellnum++);
       c.setCellStyle(text);
-      c.setCellValue(dims[i] + " (" + lengths[i] + ")");
+      c.setCellValue(new HSSFRichTextString(dims[i] + " (" + lengths[i] + ")"));
     }
 
     String[] colHeaders = {"x1", "y1", "x2", "y2", "text", "color", "filled",
@@ -512,7 +512,7 @@ public final class OverlayIO {
     for (int i=0; i<colHeaders.length; i++) {
       c = r.createCell(cellnum++);
       c.setCellStyle(text);
-      c.setCellValue(colHeaders[i]);
+      c.setCellValue(new HSSFRichTextString(colHeaders[i]));
     }
 
     // overlays table
@@ -532,7 +532,7 @@ public final class OverlayIO {
         // overlay object type
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
-        c.setCellValue(obj.toString());
+        c.setCellValue(new HSSFRichTextString(obj.toString()));
 
         // object dimensional position
         for (int p=0; p<pos.length; p++) {
@@ -549,7 +549,7 @@ public final class OverlayIO {
         }
         else {
           c.setCellStyle(text);
-          c.setCellValue(NOT_APPLICABLE);
+          c.setCellValue(new HSSFRichTextString(NOT_APPLICABLE));
         }
         
         // y1 
@@ -560,7 +560,7 @@ public final class OverlayIO {
         }
         else {
           c.setCellStyle(text);
-          c.setCellValue(NOT_APPLICABLE);
+          c.setCellValue(new HSSFRichTextString(NOT_APPLICABLE));
         }
 
         // x2
@@ -571,7 +571,7 @@ public final class OverlayIO {
         }
         else {
           c.setCellStyle(text);
-          c.setCellValue(NOT_APPLICABLE);
+          c.setCellValue(new HSSFRichTextString(NOT_APPLICABLE));
         }
 
         // y2 
@@ -582,34 +582,36 @@ public final class OverlayIO {
         }
         else {
           c.setCellStyle(text);
-          c.setCellValue(NOT_APPLICABLE);
+          c.setCellValue(new HSSFRichTextString(NOT_APPLICABLE));
         }
 
         // object text
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
-        c.setCellValue(obj.hasText() ? obj.text : NOT_APPLICABLE);
+        c.setCellValue(new HSSFRichTextString(
+              obj.hasText() ? obj.text : NOT_APPLICABLE));
 
         // object color
         c = r.createCell(cellnum++);
         c.setCellStyle(hex);
-        c.setCellValue(ColorUtil.colorToHex(obj.color));
+        c.setCellValue(new HSSFRichTextString(ColorUtil.colorToHex(obj.color)));
 
         // object filled
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
-        c.setCellValue(obj.canBeFilled() ? "" + (obj.filled ? "true" :
-              "false") : NOT_APPLICABLE);
+        c.setCellValue(new HSSFRichTextString(
+              obj.canBeFilled() ? "" + 
+              (obj.filled ? "true" : "false") : NOT_APPLICABLE));
         
         // object group
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
-        c.setCellValue(obj.group.replaceAll("\t", " "));
+        c.setCellValue(new HSSFRichTextString(obj.group.replaceAll("\t", " ")));
 
         // object notes
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
-        c.setCellValue(obj.notes.replaceAll("\t", " "));
+        c.setCellValue(new HSSFRichTextString(obj.notes.replaceAll("\t", " ")));
       }
     }
 
@@ -640,7 +642,7 @@ public final class OverlayIO {
 
       String hdr = ono + " " + k + " (" + xx1 + "," + yy1 + ")(" + xx2 + "," +
         yy2 + ")";
-      c.setCellValue(hdr);
+      c.setCellValue(new HSSFRichTextString(hdr));
 
       // write nodes themselves
       for (int j = 0; j<numNodes; j++) {
