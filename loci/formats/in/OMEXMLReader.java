@@ -419,19 +419,19 @@ public class OMEXMLReader extends FormatReader {
       String type = omexml.getPixelType(ndx).toLowerCase();
       if (type.endsWith("16")) {
         bpp[i] = 2;
-        pixelType[i] = FormatReader.UINT16;
+        pixelType[i] = FormatTools.UINT16;
       }
       else if (type.endsWith("32")) {
         bpp[i] = 4;
-        pixelType[i] = FormatReader.UINT32;
+        pixelType[i] = FormatTools.UINT32;
       }
       else if (type.equals("float")) {
         bpp[i] = 4;
-        pixelType[i] = FormatReader.FLOAT;
+        pixelType[i] = FormatTools.FLOAT;
       }
       else {
         bpp[i] = 1;
-        pixelType[i] = FormatReader.UINT8;
+        pixelType[i] = FormatTools.UINT8;
       }
 
       order[i] = omexml.getDimensionOrder(ndx);

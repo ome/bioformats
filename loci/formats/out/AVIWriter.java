@@ -524,7 +524,7 @@ public class AVIWriter extends FormatWriter {
 
   /* @see IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
-    return new int[] {FormatReader.UINT8};
+    return new int[] {FormatTools.UINT8};
   }
 
   // -- Main method --

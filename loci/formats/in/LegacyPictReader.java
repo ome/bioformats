@@ -118,7 +118,7 @@ public class LegacyPictReader extends FormatReader {
     sizeZ[0] = 1;
     sizeC[0] = img.getRaster().getNumBands();
     sizeT[0] = 1;
-    pixelType[0] = FormatReader.INT8;
+    pixelType[0] = FormatTools.INT8;
     currentOrder[0] = "XYCZT";
 
     MetadataStore store = getMetadataStore(id);

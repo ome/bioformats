@@ -176,7 +176,7 @@ public class ReaderTest extends TestCase {
         int sizeX = reader.getSizeX(id);
         int sizeY = reader.getSizeY(id);
         int bytesPerPixel =
-          FormatReader.getBytesPerPixel(reader.getPixelType(id));
+          FormatTools.getBytesPerPixel(reader.getPixelType(id));
         int sizeC = reader.getSizeC(id);
         boolean rgb = reader.isRGB(id);
 
@@ -325,8 +325,7 @@ public class ReaderTest extends TestCase {
         int sizeC = reader.getSizeC(id);
         int sizeT = reader.getSizeT(id);
         boolean bigEndian = !reader.isLittleEndian(id);
-        String type =
-          FormatReader.getPixelTypeString(reader.getPixelType(id));
+        String type = FormatTools.getPixelTypeString(reader.getPixelType(id));
         String dimensionOrder = reader.getDimensionOrder(id);
 
         Integer ii = new Integer(i);
@@ -405,7 +404,7 @@ public class ReaderTest extends TestCase {
           configLine.append(" thumby=");
           configLine.append(reader.getThumbSizeY(id));
           configLine.append(" type=");
-          configLine.append(FormatReader.getPixelTypeString(
+          configLine.append(FormatTools.getPixelTypeString(
             reader.getPixelType(id)));
           configLine.append(" little=");
           configLine.append(reader.isLittleEndian(id));
@@ -744,7 +743,6 @@ public class ReaderTest extends TestCase {
   // -- Main method --
 
   public static void main(String[] args) {
-    if (FormatReader.debug) FormatReader.setDebug(true);
     if (args.length > 0) {
       for (int i=1; i<args.length; i++) {
         if (args[i].equals("-config")) ReaderTest.writeConfigFiles = true;

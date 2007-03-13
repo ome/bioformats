@@ -343,39 +343,39 @@ public class LegacyZVIReader extends FormatReader {
       switch (pixType) {
         case 1:
           type = "8 bit rgb tuple, 24 bpp";
-          pixelType[0] = FormatReader.INT8;
+          pixelType[0] = FormatTools.INT8;
           break;
         case 2:
           type = "8 bit rgb quad, 32 bpp";
-          pixelType[0] = FormatReader.INT8;
+          pixelType[0] = FormatTools.INT8;
           break;
         case 3:
           type = "8 bit grayscale";
-          pixelType[0] = FormatReader.INT8;
+          pixelType[0] = FormatTools.INT8;
           break;
         case 4:
           type = "16 bit signed int, 16 bpp";
-          pixelType[0] = FormatReader.INT16;
+          pixelType[0] = FormatTools.INT16;
           break;
         case 5:
           type = "32 bit int, 32 bpp";
-          pixelType[0] = FormatReader.INT32;
+          pixelType[0] = FormatTools.INT32;
           break;
         case 6:
           type = "32 bit float, 32 bpp";
-          pixelType[0] = FormatReader.FLOAT;
+          pixelType[0] = FormatTools.FLOAT;
           break;
         case 7:
           type = "64 bit float, 64 bpp";
-          pixelType[0] = FormatReader.DOUBLE;
+          pixelType[0] = FormatTools.DOUBLE;
           break;
         case 8:
           type = "16 bit unsigned short triple, 48 bpp";
-          pixelType[0] = FormatReader.INT16;
+          pixelType[0] = FormatTools.INT16;
           break;
         case 9:
           type = "32 bit int triple, 96 bpp";
-          pixelType[0] = FormatReader.INT32;
+          pixelType[0] = FormatTools.INT32;
           break;
         default:
           type = "undefined pixel type (" + pixType + ")";

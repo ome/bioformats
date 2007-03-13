@@ -474,7 +474,7 @@ public class ImageViewer extends JFrame
         if (pix.length > 1) sb.append(")");
         sb.append("; type=");
         int pixelType = ImageTools.getPixelType(image);
-        sb.append(FormatReader.getPixelTypeString(pixelType));
+        sb.append(FormatTools.getPixelTypeString(pixelType));
       }
     }
     sb.append(" ");

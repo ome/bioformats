@@ -191,34 +191,34 @@ public class MRCReader extends FormatReader {
     switch (mode) {
       case 0:
         bpp = 1;
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         break;
       case 1:
         bpp = 2;
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         break;
       case 2:
         bpp = 4;
         isFloat = true;
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         break;
       case 3:
         bpp = 4;
-        pixelType[0] = FormatReader.UINT32;
+        pixelType[0] = FormatTools.UINT32;
         break;
       case 4:
         bpp = 8;
         isFloat = true;
-        pixelType[0] = FormatReader.DOUBLE;
+        pixelType[0] = FormatTools.DOUBLE;
         break;
       case 6:
         bpp = 2;
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         break;
       case 16:
         bpp = 2;
         sizeC[0] = 3;
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         break;
     }
 

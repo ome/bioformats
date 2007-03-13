@@ -521,10 +521,10 @@ public class AVIReader extends FormatReader {
     int bitsPerPixel = ((Integer) getMeta("Bits per pixel")).intValue();
     int bytesPerPixel = bitsPerPixel / 8;
 
-    if (bitsPerPixel == 8) pixelType[0] = FormatReader.UINT8;
-    else if (bitsPerPixel == 16) pixelType[0] = FormatReader.UINT16;
-    else if (bitsPerPixel == 32) pixelType[0] = FormatReader.UINT32;
-    else if (bitsPerPixel == 24) pixelType[0] = FormatReader.UINT8;
+    if (bitsPerPixel == 8) pixelType[0] = FormatTools.UINT8;
+    else if (bitsPerPixel == 16) pixelType[0] = FormatTools.UINT16;
+    else if (bitsPerPixel == 32) pixelType[0] = FormatTools.UINT32;
+    else if (bitsPerPixel == 24) pixelType[0] = FormatTools.UINT8;
     else
       throw new FormatException(
           "Unknown matching for pixel bit width of: " + bitsPerPixel);

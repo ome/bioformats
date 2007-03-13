@@ -585,13 +585,13 @@ public class QTReader extends FormatReader {
     switch (bytesPerPixel) {
       case 0:
       case 1:
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         break;
       case 2:
-        pixelType[0] = FormatReader.INT16;
+        pixelType[0] = FormatTools.INT16;
         break;
       case 3:
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         break;
     }
 

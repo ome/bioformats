@@ -214,42 +214,42 @@ public class OmeisImporter {
       int bytesPerPixel;
       boolean isSigned, isFloat;
       switch (pixelType) {
-        case FormatReader.INT8:
+        case FormatTools.INT8:
           bytesPerPixel = 1;
           isSigned = true;
           isFloat = false;
           break;
-        case FormatReader.UINT8:
+        case FormatTools.UINT8:
           bytesPerPixel = 1;
           isSigned = false;
           isFloat = false;
           break;
-        case FormatReader.INT16:
+        case FormatTools.INT16:
           bytesPerPixel = 2;
           isSigned = true;
           isFloat = false;
           break;
-        case FormatReader.UINT16:
+        case FormatTools.UINT16:
           bytesPerPixel = 2;
           isSigned = false;
           isFloat = false;
           break;
-        case FormatReader.INT32:
+        case FormatTools.INT32:
           bytesPerPixel = 4;
           isSigned = true;
           isFloat = false;
           break;
-        case FormatReader.UINT32:
+        case FormatTools.UINT32:
           bytesPerPixel = 4;
           isSigned = false;
           isFloat = false;
           break;
-        case FormatReader.FLOAT:
+        case FormatTools.FLOAT:
           bytesPerPixel = 4;
           isSigned = true;
           isFloat = true;
           break;
-        case FormatReader.DOUBLE:
+        case FormatTools.DOUBLE:
           bytesPerPixel = 8;
           isSigned = true;
           isFloat = true;

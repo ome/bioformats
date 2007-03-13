@@ -149,7 +149,7 @@ public class OMEReader extends FormatReader {
     throws FormatException, IOException
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
-      sizeY[0], 1, false, FormatReader.getBytesPerPixel(pixelType[0]), true);
+      sizeY[0], 1, false, FormatTools.getBytesPerPixel(pixelType[0]), true);
     updateMinMax(b, no);
     return b;
   }
@@ -283,7 +283,7 @@ public class OMEReader extends FormatReader {
     sizeZ[0] = pixels.getSizeZ().intValue();
     sizeC[0] = pixels.getSizeC().intValue();
     sizeT[0] = pixels.getSizeT().intValue();
-    pixelType[0] = FormatReader.pixelTypeFromString(pixels.getPixelType());
+    pixelType[0] = FormatTools.pixelTypeFromString(pixels.getPixelType());
     currentOrder[0] = "XYZCT";
 
     numImages = sizeZ[0] * sizeC[0] * sizeT[0];

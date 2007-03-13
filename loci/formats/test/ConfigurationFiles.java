@@ -127,7 +127,7 @@ public class ConfigurationFiles {
             entry.thumbs[i][1] =
               Integer.parseInt(s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("type") + 5;
-            entry.type[i] = FormatReader.pixelTypeFromString(
+            entry.type[i] = FormatTools.pixelTypeFromString(
               s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("little") + 7;
             entry.littleEndian[i] = s.substring(ndx).equals("true");

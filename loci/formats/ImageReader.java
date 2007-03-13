@@ -511,7 +511,7 @@ public class ImageReader implements IFormatReader {
         if (file != null) args = new String[] {file.getPath()};
       }
     }
-    return FormatReader.testRead(this, args);
+    return FormatTools.testRead(this, args);
   }
 
   // -- IFormatHandler API methods --

@@ -106,10 +106,10 @@ public class LociUploader implements PlugIn {
       }
       else {
         store.createRoot();
-        int pixelType = FormatReader.UINT8;
+        int pixelType = FormatTools.UINT8;
         switch (imp.getBitDepth()) {
-          case 16: pixelType = FormatReader.UINT16; break;
-          case 32: pixelType = FormatReader.FLOAT; break;
+          case 16: pixelType = FormatTools.UINT16; break;
+          case 32: pixelType = FormatTools.FLOAT; break;
         }
 
         store.setPixels(
@@ -130,7 +130,7 @@ public class LociUploader implements PlugIn {
       }
       if (is.getProcessor(1) instanceof ColorProcessor) {
         store.setPixels(null, null, null, null, null,
-          new Integer(FormatReader.UINT8), null, null, null, null);
+          new Integer(FormatTools.UINT8), null, null, null, null);
       }
 
       boolean little = !store.getBigEndian(null).booleanValue();

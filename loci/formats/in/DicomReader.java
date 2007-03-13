@@ -341,13 +341,13 @@ public class DicomReader extends FormatReader {
 
     switch (bitsPerPixel) {
       case 8:
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         break;
       case 16:
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         break;
       case 32:
-        pixelType[0] = FormatReader.UINT32;
+        pixelType[0] = FormatTools.UINT32;
         break;
     }
 

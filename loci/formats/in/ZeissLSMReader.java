@@ -280,15 +280,15 @@ public class ZeissLSMReader extends BaseTiffReader {
       switch (dataType) {
         case 1:
           put("DataType", "8 bit unsigned integer");
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
           break;
         case 2:
           put("DataType", "12 bit unsigned integer");
-          pixelType[0] = FormatReader.UINT16;
+          pixelType[0] = FormatTools.UINT16;
           break;
         case 5:
           put("DataType", "32 bit float");
-          pixelType[0] = FormatReader.FLOAT;
+          pixelType[0] = FormatTools.FLOAT;
           break;
         case 0:
           put("DataType", "varying data types");
@@ -302,10 +302,10 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (pixelType[0] == -1) {
         int[] bps = TiffTools.getBitsPerSample(ifd);
         switch (bps[0]) {
-          case 8: pixelType[0] = FormatReader.UINT8; break;
-          case 16: pixelType[0] = FormatReader.UINT16; break;
-          case 32: pixelType[0] = FormatReader.FLOAT; break;
-          default: pixelType[0] = FormatReader.UINT8;
+          case 8: pixelType[0] = FormatTools.UINT8; break;
+          case 16: pixelType[0] = FormatTools.UINT16; break;
+          case 32: pixelType[0] = FormatTools.FLOAT; break;
+          default: pixelType[0] = FormatTools.UINT8;
         }
       }
 
@@ -557,10 +557,10 @@ public class ZeissLSMReader extends BaseTiffReader {
       store.setDimensions(pixX, pixY, pixZ, null, null, null);
     }
     catch (FormatException e) {
-      if (FormatReader.debug) e.printStackTrace();
+      if (debug) e.printStackTrace();
     }
     catch (IOException e) {
-      if (FormatReader.debug) e.printStackTrace();
+      if (debug) e.printStackTrace();
     }
 
     // see if we have an associated MDB file

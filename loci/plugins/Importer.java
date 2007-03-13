@@ -597,7 +597,7 @@ public class Importer implements ItemListener {
           meta.put("\t" + s + "SizeC", new Integer(r.getSizeC(id)));
           meta.put("\t" + s + "IsRGB", new Boolean(r.isRGB(id)));
           meta.put("\t" + s + "PixelType",
-            FormatReader.getPixelTypeString(r.getPixelType(id)));
+            FormatTools.getPixelTypeString(r.getPixelType(id)));
           meta.put("\t" + s + "LittleEndian",
             new Boolean(r.isLittleEndian(id)));
           meta.put("\t" + s + "DimensionOrder", r.getDimensionOrder(id));
@@ -718,7 +718,7 @@ public class Importer implements ItemListener {
             // construct image processor and add to stack
             ImageProcessor ip = null;
 
-            int bpp = FormatReader.getBytesPerPixel(type);
+            int bpp = FormatTools.getBytesPerPixel(type);
 
             if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
               // HACK - byte array dimensions are incorrect - image is probably
@@ -730,7 +730,7 @@ public class Importer implements ItemListener {
             }
 
             Object pixels = DataTools.makeDataArray(b, bpp,
-              type == FormatReader.FLOAT || type == FormatReader.DOUBLE,
+              type == FormatTools.FLOAT || type == FormatTools.DOUBLE,
               r.isLittleEndian(id));
 
             if (pixels instanceof byte[]) {

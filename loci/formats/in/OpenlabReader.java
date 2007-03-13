@@ -724,19 +724,19 @@ public class OpenlabReader extends FormatReader {
 
       switch (bpp[i]) {
         case 1:
-          pixelType[i] = FormatReader.INT8;
+          pixelType[i] = FormatTools.INT8;
           break;
         case 2:
-          pixelType[i] = FormatReader.UINT16;
+          pixelType[i] = FormatTools.UINT16;
           break;
         case 3:
-          pixelType[i] = FormatReader.UINT8;
+          pixelType[i] = FormatTools.UINT8;
           break;
         case 4:
-          pixelType[i] = FormatReader.INT32;
+          pixelType[i] = FormatTools.INT32;
           break;
         case 6:
-          pixelType[i] = FormatReader.INT16;
+          pixelType[i] = FormatTools.INT16;
           break;
       }
 

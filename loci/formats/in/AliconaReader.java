@@ -207,7 +207,7 @@ public class AliconaReader extends FormatReader {
     sizeZ[0] = 1;
     sizeT[0] = numImages / sizeC[0];
 
-    pixelType[0] = numBytes == 2 ? FormatReader.UINT16 : FormatReader.UINT8;
+    pixelType[0] = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
     currentOrder[0] = "XYCTZ";
 
     MetadataStore store = getMetadataStore(id);

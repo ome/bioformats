@@ -110,7 +110,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
     byte[] b = openBytes(id, no);
 
-    if (getPixelType(id) == FormatReader.FLOAT) {
+    if (getPixelType(id) == FormatTools.FLOAT) {
       float[] f = new float[b.length / 4];
       for (int i=0; i<b.length; i+=4) {
         f[i/4] = Float.intBitsToFloat(DataTools.bytesToInt(b, i, 4,
@@ -167,17 +167,17 @@ public class ChannelSeparator extends ReaderWrapper {
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
-    return FormatReader.getIndex(this, id, z, c, t);
+    return FormatTools.getIndex(this, id, z, c, t);
   }
 
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
-    return FormatReader.getZCTCoords(this, id, index);
+    return FormatTools.getZCTCoords(this, id, index);
   }
 
   public boolean testRead(String[] args) throws FormatException, IOException {
-    return FormatReader.testRead(this, args);
+    return FormatTools.testRead(this, args);
   }
 
 }

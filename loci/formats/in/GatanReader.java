@@ -207,50 +207,50 @@ public class GatanReader extends FormatReader {
 
     int datatype = Integer.parseInt((String) getMeta("DataType"));
 
-    pixelType[0] = FormatReader.INT8;
+    pixelType[0] = FormatTools.INT8;
     switch (datatype) {
       case 1:
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         break;
       case 2:
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         break;
       case 3:
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         break;
       // there is no case 4
       case 5:
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         break;
       case 6:
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         break;
       case 7:
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatTools.INT32;
         break;
       case 8:
-        pixelType[0] = FormatReader.UINT32;
+        pixelType[0] = FormatTools.UINT32;
         break;
       case 9:
-        pixelType[0] = FormatReader.INT8;
+        pixelType[0] = FormatTools.INT8;
         break;
       case 10:
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         break;
       case 11:
-        pixelType[0] = FormatReader.UINT32;
+        pixelType[0] = FormatTools.UINT32;
         break;
       case 12:
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         break;
       case 13:
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         break;
       case 14:
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         break;
       case 23:
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatTools.INT32;
         break;
     }
 

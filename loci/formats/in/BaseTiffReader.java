@@ -471,35 +471,35 @@ public abstract class BaseTiffReader extends FormatReader {
     while (bps % 8 != 0) bps++;
     if (bps == 24 || bps == 48) bps /= 3;
 
-    if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
+    if (bitFormat == 3) pixelType[0] = FormatTools.FLOAT;
     else if (bitFormat == 2) {
       switch (bps) {
         case 8:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatReader.INT16;
+          pixelType[0] = FormatTools.INT16;
           break;
         case 32:
-          pixelType[0] = FormatReader.INT32;
+          pixelType[0] = FormatTools.INT32;
           break;
         default:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
       }
     }
     else {
       switch (bps) {
         case 8:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatReader.UINT16;
+          pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatReader.UINT32;
+          pixelType[0] = FormatTools.UINT32;
           break;
         default:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
       }
     }
 
@@ -731,7 +731,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int bytesPerPixel = FormatReader.getBytesPerPixel(getPixelType(id));
+    int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType(id));
     byte[] buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel *
       getRGBChannelCount(id)];
     return openBytes(id, no, buf);

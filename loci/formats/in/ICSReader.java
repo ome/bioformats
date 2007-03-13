@@ -42,13 +42,13 @@ public class ICSReader extends FormatReader {
   // -- Constants --
 
   /** Metadata field categories. */
-  private String[] CATEGORIES = new String[] {
+  private static final String[] CATEGORIES = new String[] {
     "ics_version", "filename", "source", "layout", "representation",
     "parameter", "sensor", "history", "end"
   };
 
   /** Metadata field subcategories. */
-  private String[] SUB_CATEGORIES = new String[] {
+  private static final String[] SUB_CATEGORIES = new String[] {
     "file", "offset", "parameters", "order", "sizes", "coordinates",
     "significant_bits", "format", "sign", "compression", "byte_order",
     "origin", "scale", "units", "labels", "SCIL_TYPE", "type", "model",
@@ -56,7 +56,7 @@ public class ICSReader extends FormatReader {
   };
 
   /** Metadata field sub-subcategories. */
-  private String[] SUB_SUB_CATEGORIES = new String[] {
+  private static final String[] SUB_SUB_CATEGORIES = new String[] {
     "Channels", "PinholeRadius", "LambdaEx", "LambdaEm", "ExPhotonCnt",
     "RefInxMedium", "NumAperture", "RefInxLensMedium", "PinholeSpacing"
   };
@@ -459,20 +459,20 @@ public class ICSReader extends FormatReader {
 
     if (bitsPerPixel < 32) littleEndian = !littleEndian;
 
-    if (fmt.equals("real")) pixelType[0] = FormatReader.FLOAT;
+    if (fmt.equals("real")) pixelType[0] = FormatTools.FLOAT;
     else if (fmt.equals("integer")) {
       while (bitsPerPixel % 8 != 0) bitsPerPixel++;
       if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
 
       switch (bitsPerPixel) {
         case 8:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatReader.UINT16;
+          pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatReader.UINT32;
+          pixelType[0] = FormatTools.UINT32;
           break;
       }
     }

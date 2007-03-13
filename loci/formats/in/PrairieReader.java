@@ -326,7 +326,7 @@ public class PrairieReader extends FormatReader {
         sizeT[0] = isZ ? 1 : zt;
         sizeC[0] = numImages / (sizeZ[0] * sizeT[0]);
         currentOrder[0] = "XYC" + (isZ ? "ZT" : "TZ");
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
 
         float pixSizeX =
           Float.parseFloat((String) getMeta("micronsPerPixel_XAxis"));

@@ -1113,22 +1113,22 @@ public class LeicaReader extends BaseTiffReader {
       int tPixelType = ((Integer) getMeta("Bytes per pixel")).intValue();
       switch (tPixelType) {
         case 1:
-          pixelType[i] = FormatReader.UINT8;
+          pixelType[i] = FormatTools.UINT8;
           break;
         case 2:
-          pixelType[i] = FormatReader.UINT16;
+          pixelType[i] = FormatTools.UINT16;
           break;
         case 3:
-          pixelType[i] = FormatReader.UINT8;
+          pixelType[i] = FormatTools.UINT8;
           break;
         case 4:
-          pixelType[i] = FormatReader.INT32;
+          pixelType[i] = FormatTools.INT32;
           break;
         case 6:
-          pixelType[i] = FormatReader.INT16;
+          pixelType[i] = FormatTools.INT16;
           break;
         case 8:
-          pixelType[i] = FormatReader.DOUBLE;
+          pixelType[i] = FormatTools.DOUBLE;
           break;
       }
 

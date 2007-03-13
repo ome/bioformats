@@ -31,7 +31,7 @@ import java.lang.reflect.Constructor;
 import java.util.Vector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import loci.formats.FormatReader;
+import loci.formats.FormatTools;
 import loci.formats.MetadataStore;
 import org.openmicroscopy.xml.*;
 import org.openmicroscopy.xml.st.*;
@@ -943,21 +943,21 @@ public class OMEXMLMetadataStore implements MetadataStore {
     if (pixelType == null) return null;
 
     switch (pixelType.intValue()) {
-      case FormatReader.INT8:
+      case FormatTools.INT8:
         return "int8";
-      case FormatReader.UINT8:
+      case FormatTools.UINT8:
         return "Uint8";
-      case FormatReader.INT16:
+      case FormatTools.INT16:
         return "int16";
-      case FormatReader.UINT16:
+      case FormatTools.UINT16:
         return "Uint16";
-      case FormatReader.INT32:
+      case FormatTools.INT32:
         return "int32";
-      case FormatReader.UINT32:
+      case FormatTools.UINT32:
         return "Uint32";
-      case FormatReader.FLOAT:
+      case FormatTools.FLOAT:
         return "float";
-      case FormatReader.DOUBLE:
+      case FormatTools.DOUBLE:
         return "double";
     }
     throw new RuntimeException("Unknown pixel type: " + pixelType);

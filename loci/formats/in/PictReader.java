@@ -217,7 +217,7 @@ public class PictReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    pixelType[0] = FormatReader.UINT8;
+    pixelType[0] = FormatTools.UINT8;
     store.setPixels(
       new Integer(d.width), new Integer(d.height),
       new Integer(1), new Integer(sizeC[0]), new Integer(1),

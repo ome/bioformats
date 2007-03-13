@@ -98,8 +98,8 @@ public abstract class FormatWriter extends FormatHandler
 
   /* @see IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
-    return new int[] {FormatReader.UINT8, FormatReader.UINT16,
-      FormatReader.UINT32, FormatReader.FLOAT};
+    return new int[] {FormatTools.UINT8, FormatTools.UINT16,
+      FormatTools.UINT32, FormatTools.FLOAT};
   }
 
   /* @see IFormatWriter#isSupportedType(String, int) */

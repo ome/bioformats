@@ -643,9 +643,9 @@ public class BioRadReader extends FormatReader {
     //int type = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN);
     int type = in.readShort();
     if (type == 1)
-      pixelType[0] = FormatReader.UINT8;
+      pixelType[0] = FormatTools.UINT8;
     else
-      pixelType[0] = FormatReader.UINT16;
+      pixelType[0] = FormatTools.UINT16;
 
     String dimOrder = "XY";
     int[] dims = new int[] {zSize, cSize, tSize};

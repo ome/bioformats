@@ -230,7 +230,7 @@ public class SDTReader extends FormatReader {
     sizeC[0] = channels;
     sizeT[0] = 1;
     currentOrder[0] = "XYZTC";
-    pixelType[0] = FormatReader.UINT16;
+    pixelType[0] = FormatTools.UINT16;
 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),

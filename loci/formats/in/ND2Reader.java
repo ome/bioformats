@@ -228,25 +228,25 @@ public class ND2Reader extends FormatReader {
 
     int dataType = 0;
     switch (pixelType[0]) {
-      case FormatReader.INT8:
+      case FormatTools.INT8:
         throw new FormatException("Unsupported pixel type: int8");
-      case FormatReader.UINT8:
+      case FormatTools.UINT8:
         dataType = DataBuffer.TYPE_BYTE;
         break;
-      case FormatReader.INT16:
+      case FormatTools.INT16:
         dataType = DataBuffer.TYPE_SHORT;
         break;
-      case FormatReader.UINT16:
+      case FormatTools.UINT16:
         dataType = DataBuffer.TYPE_USHORT;
         break;
-      case FormatReader.INT32:
-      case FormatReader.UINT32:
+      case FormatTools.INT32:
+      case FormatTools.UINT32:
         dataType = DataBuffer.TYPE_INT;
         break;
-      case FormatReader.FLOAT:
+      case FormatTools.FLOAT:
         dataType = DataBuffer.TYPE_FLOAT;
         break;
-      case FormatReader.DOUBLE:
+      case FormatTools.DOUBLE:
         dataType = DataBuffer.TYPE_DOUBLE;
         break;
     }
@@ -303,7 +303,7 @@ public class ND2Reader extends FormatReader {
 
     numImages = offsets.length;
 
-    pixelType[0] = FormatReader.UINT8;
+    pixelType[0] = FormatTools.UINT8;
 
     // read XML metadata from the end of the file
 
@@ -543,19 +543,19 @@ public class ND2Reader extends FormatReader {
     }
     else validBits = null;
 
-    if (validBits == null) pixelType[0] = FormatReader.UINT8;
+    if (validBits == null) pixelType[0] = FormatTools.UINT8;
     else {
       int bpp = validBits[0];
       while (bpp % 8 != 0) bpp++;
       switch (bpp) {
         case 8:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatReader.UINT16;
+          pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatReader.UINT32;
+          pixelType[0] = FormatTools.UINT32;
           break;
         default:
           throw new FormatException("Unsupported bits per pixel: " + bpp);

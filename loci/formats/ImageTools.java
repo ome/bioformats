@@ -601,26 +601,26 @@ public final class ImageTools {
     int tt = 0;
     DataBuffer buffer = null;
     switch (type) {
-      case FormatReader.INT8:
-      case FormatReader.UINT8:
+      case FormatTools.INT8:
+      case FormatTools.UINT8:
         tt = DataBuffer.TYPE_BYTE;
         buffer = new DataBufferByte(new byte[c * w * h], c * w * h);
         break;
-      case FormatReader.INT16:
-      case FormatReader.UINT16:
+      case FormatTools.INT16:
+      case FormatTools.UINT16:
         tt = DataBuffer.TYPE_USHORT;
         buffer = new DataBufferUShort(new short[c * w * h], c * w * h);
         break;
-      case FormatReader.INT32:
-      case FormatReader.UINT32:
+      case FormatTools.INT32:
+      case FormatTools.UINT32:
         tt = DataBuffer.TYPE_INT;
         buffer = new DataBufferInt(new int[c * w * h], c * w * h);
         break;
-      case FormatReader.FLOAT:
+      case FormatTools.FLOAT:
         tt = DataBuffer.TYPE_FLOAT;
         buffer = new DataBufferFloat(new float[c * w * h], c * w * h);
         break;
-      case FormatReader.DOUBLE:
+      case FormatTools.DOUBLE:
         tt = DataBuffer.TYPE_DOUBLE;
         buffer = new DataBufferDouble(new double[c * w * h], c * w * h);
         break;
@@ -847,17 +847,17 @@ public final class ImageTools {
     int type = image.getRaster().getDataBuffer().getDataType();
     switch (type) {
       case DataBuffer.TYPE_BYTE:
-        return FormatReader.UINT8;
+        return FormatTools.UINT8;
       case DataBuffer.TYPE_DOUBLE:
-        return FormatReader.DOUBLE;
+        return FormatTools.DOUBLE;
       case DataBuffer.TYPE_FLOAT:
-        return FormatReader.FLOAT;
+        return FormatTools.FLOAT;
       case DataBuffer.TYPE_INT:
-        return FormatReader.INT32;
+        return FormatTools.INT32;
       case DataBuffer.TYPE_SHORT:
-        return FormatReader.INT16;
+        return FormatTools.INT16;
       case DataBuffer.TYPE_USHORT:
-        return FormatReader.UINT16;
+        return FormatTools.UINT16;
       default:
         return -1;
     }

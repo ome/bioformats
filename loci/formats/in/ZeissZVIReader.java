@@ -470,8 +470,8 @@ public class ZeissZVIReader extends FormatReader {
 
     store.setImage((String) getMeta("Title"), null, null, null);
 
-    if (bpp == 1 || bpp == 3) pixelType[0] = FormatReader.UINT8;
-    else if (bpp == 2 || bpp == 6) pixelType[0] = FormatReader.UINT16;
+    if (bpp == 1 || bpp == 3) pixelType[0] = FormatTools.UINT8;
+    else if (bpp == 2 || bpp == 6) pixelType[0] = FormatTools.UINT16;
 
     store.setPixels(
       new Integer(getSizeX(currentId)),

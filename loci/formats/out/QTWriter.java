@@ -594,7 +594,7 @@ public class QTWriter extends FormatWriter {
 
   /* @see IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
-    return new int[] {FormatReader.UINT8, FormatReader.UINT16};
+    return new int[] {FormatTools.UINT8, FormatTools.UINT16};
   }
 
   // -- Helper method --

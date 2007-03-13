@@ -216,16 +216,16 @@ public class OpenlabRawReader extends FormatReader {
 
     switch (bytesPerPixel) {
       case 1:
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         break;
       case 2:
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         break;
       case 3:
-        pixelType[0] = FormatReader.INT8;
+        pixelType[0] = FormatTools.INT8;
         break;
       default:
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
     }
 
     store.setImage((String) getMeta("Image name"), sdf.format(timestamp),

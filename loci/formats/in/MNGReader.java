@@ -217,7 +217,7 @@ public class MNGReader extends FormatReader {
     sizeC[0] = openImage(id, 0).getRaster().getNumBands();
     sizeT[0] = numImages;
     currentOrder[0] = "XYCZT";
-    pixelType[0] = FormatReader.UINT8;
+    pixelType[0] = FormatTools.UINT8;
 
     MetadataStore store = getMetadataStore(id);
 

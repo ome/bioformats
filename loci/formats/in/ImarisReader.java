@@ -135,7 +135,7 @@ public class ImarisReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    pixelType[0] = FormatReader.UINT8;
+    pixelType[0] = FormatTools.UINT8;
     store.setPixels(
       new Integer(dims[0]),
       new Integer(dims[1]),

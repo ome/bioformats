@@ -507,7 +507,7 @@ public class MovieStitcher extends JFrame implements
       }
       else if (!force && !writer.isSupportedType(out, type)) {
         throw new FormatException("Unsupported pixel type: " + 
-          FormatReader.getPixelTypeString(type) +
+          FormatTools.getPixelTypeString(type) +
           "\nTo write to this format, the \"force\" box must be checked.\n" +
           "This may result in a loss of precision; for best results, " +
           "convert to TIFF instead.");
@@ -574,24 +574,24 @@ public class MovieStitcher extends JFrame implements
                   {
                     int pixelType = 0;
                     switch (type) {
-                      case FormatReader.INT8:
-                      case FormatReader.UINT8: 
+                      case FormatTools.INT8:
+                      case FormatTools.UINT8: 
                         pixelType = DataBuffer.TYPE_BYTE;
                         break;
-                      case FormatReader.INT16: 
+                      case FormatTools.INT16: 
                         pixelType = DataBuffer.TYPE_USHORT;
                         break;
-                      case FormatReader.UINT16: 
+                      case FormatTools.UINT16: 
                         pixelType = DataBuffer.TYPE_SHORT;
                         break;
-                      case FormatReader.INT32:
-                      case FormatReader.UINT32: 
+                      case FormatTools.INT32:
+                      case FormatTools.UINT32: 
                         pixelType = DataBuffer.TYPE_INT;
                         break;
-                      case FormatReader.FLOAT: 
+                      case FormatTools.FLOAT: 
                         pixelType = DataBuffer.TYPE_FLOAT;
                         break;
-                      case FormatReader.DOUBLE:
+                      case FormatTools.DOUBLE:
                         pixelType = DataBuffer.TYPE_DOUBLE;
                         break; 
                     }

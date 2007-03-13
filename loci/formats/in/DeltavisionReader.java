@@ -271,37 +271,37 @@ public class DeltavisionReader extends FormatReader {
     switch (filePixelType) {
       case 0:
         pixel = "8 bit unsigned integer";
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         bytesPerPixel = 1;
         break;
       case 1:
         pixel = "16 bit signed integer";
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         bytesPerPixel = 2;
         break;
       case 2:
         pixel = "32 bit floating point";
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         bytesPerPixel = 4;
         break;
       case 3:
         pixel = "32 bit complex";
-        pixelType[0] = FormatReader.UINT32;
+        pixelType[0] = FormatTools.UINT32;
         bytesPerPixel = 4;
         break;
       case 4:
         pixel = "64 bit complex";
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         bytesPerPixel = 8;
         break;
       case 6:
         pixel = "16 bit unsigned integer";
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         bytesPerPixel = 2;
         break;
       default:
         pixel = "unknown";
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         bytesPerPixel = 1;
     }
 

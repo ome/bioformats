@@ -48,7 +48,7 @@ public class JPEGWriter extends ImageIOWriter {
     BufferedImage img = (cm == null) ?
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
     int type = ImageTools.getPixelType(img);
-    if (type == FormatReader.UINT16 || type == FormatReader.INT16) {
+    if (type == FormatTools.UINT16 || type == FormatTools.INT16) {
       throw new FormatException("16-bit data not supported.");
     }
     super.save(id, image, last);
@@ -56,7 +56,7 @@ public class JPEGWriter extends ImageIOWriter {
 
   /* @see IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
-    return new int[] {FormatReader.UINT8};
+    return new int[] {FormatTools.UINT8};
   }
 
   // -- Main method --

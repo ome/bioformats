@@ -451,7 +451,7 @@ public class FileStitcher implements IFormatReader {
     // this file does not contain enough image planes
     int sno = getSeries(id);
     if (blankBytes[sno] == null) {
-      int bytes = FormatReader.getBytesPerPixel(getPixelType(currentId));
+      int bytes = FormatTools.getBytesPerPixel(getPixelType(currentId));
       blankBytes[sno] = new byte[width[sno] * height[sno] *
         bytes * getRGBChannelCount(id)];
     }
@@ -481,7 +481,7 @@ public class FileStitcher implements IFormatReader {
     int sno = getSeries(id);
     if (blankThumb[sno] == null) {
       blankThumb[sno] = ImageTools.blankImage(getThumbSizeX(id),
-        getThumbSizeY(id), sizeC[sno], FormatReader.UINT8);
+        getThumbSizeY(id), sizeC[sno], FormatTools.UINT8);
     }
     return blankThumb[sno];
   }
@@ -628,14 +628,14 @@ public class FileStitcher implements IFormatReader {
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
-    return FormatReader.getIndex(this, id, z, c, t);
+    return FormatTools.getIndex(this, id, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(String, int) */
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
-    return FormatReader.getZCTCoords(this, id, index);
+    return FormatTools.getZCTCoords(this, id, index);
   }
 
   /* @see IFormatReader#getMetadataValue(String, String) */
@@ -685,7 +685,7 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#testRead(String[]) */
   public boolean testRead(String[] args) throws FormatException, IOException {
-    return FormatReader.testRead(this, args);
+    return FormatTools.testRead(this, args);
   }
 
   // -- IFormatHandler API methods --
@@ -932,7 +932,7 @@ public class FileStitcher implements IFormatReader {
       }
     }
     int fno = positionToRaster(count, pos);
-    int ino = FormatReader.getIndex(order[sno], sizeZ[sno],
+    int ino = FormatTools.getIndex(order[sno], sizeZ[sno],
       reader.getEffectiveSizeC(files[0]), sizeT[sno], imagesPerFile[sno],
       posZ[0], posC[0], posT[0]);
 

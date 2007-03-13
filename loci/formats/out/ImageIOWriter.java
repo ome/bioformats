@@ -76,7 +76,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   {
     BufferedImage img = (cm == null) ?
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
-    if (ImageTools.getPixelType(img) == FormatReader.FLOAT) {
+    if (ImageTools.getPixelType(img) == FormatTools.FLOAT) {
       throw new FormatException("Floating point data not supported.");
     }
     out = new DataOutputStream(new BufferedOutputStream(
@@ -96,7 +96,7 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   /* @see IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
-    return new int[] {FormatReader.UINT8, FormatReader.UINT16};
+    return new int[] {FormatTools.UINT8, FormatTools.UINT16};
   }
 
 }

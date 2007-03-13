@@ -219,42 +219,42 @@ public class IPLabReader extends FormatReader {
     switch ((int) filePixelType) {
       case 0:
         ptype = "8 bit unsigned";
-        pixelType[0] = FormatReader.UINT8;
+        pixelType[0] = FormatTools.UINT8;
         bps = 1;
         break;
       case 1:
         ptype = "16 bit signed short";
-        pixelType[0] = FormatReader.INT16;
+        pixelType[0] = FormatTools.INT16;
         bps = 2;
         break;
       case 2:
         ptype = "16 bit unsigned short";
-        pixelType[0] = FormatReader.UINT16;
+        pixelType[0] = FormatTools.UINT16;
         bps = 2;
         break;
       case 3:
         ptype = "32 bit signed long";
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatTools.INT32;
         bps = 4;
         break;
       case 4:
         ptype = "32 bit single-precision float";
-        pixelType[0] = FormatReader.FLOAT;
+        pixelType[0] = FormatTools.FLOAT;
         bps = 4;
         break;
       case 5:
         ptype = "Color24";
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatTools.INT32;
         bps = 1;
         break;
       case 6:
         ptype = "Color48";
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatTools.INT32;
         bps = 2;
         break;
       case 10:
         ptype = "64 bit double-precision float";
-        pixelType[0] = FormatReader.DOUBLE;
+        pixelType[0] = FormatTools.DOUBLE;
         bps = 8;
         break;
       default:

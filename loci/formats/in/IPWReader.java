@@ -113,7 +113,7 @@ public class IPWReader extends BaseTiffReader {
     int c = getRGBChannelCount(id);
     if (c == 2) c++;
     byte[] buf = new byte[sizeX[0] * sizeY[0] * c *
-      FormatReader.getBytesPerPixel(pixelType[0])];
+      FormatTools.getBytesPerPixel(pixelType[0])];
     return openBytes(id, no, buf);
   }
 
@@ -369,32 +369,32 @@ public class IPWReader extends BaseTiffReader {
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
-    pixelType[0] = FormatReader.UINT8;
+    pixelType[0] = FormatTools.UINT8;
 
-    if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
+    if (bitFormat == 3) pixelType[0] = FormatTools.FLOAT;
     else if (bitFormat == 2) {
       switch (bitsPerSample) {
         case 8:
-          pixelType[0] = FormatReader.INT8;
+          pixelType[0] = FormatTools.INT8;
           break;
         case 16:
-          pixelType[0] = FormatReader.INT16;
+          pixelType[0] = FormatTools.INT16;
           break;
         case 32:
-          pixelType[0] = FormatReader.INT32;
+          pixelType[0] = FormatTools.INT32;
           break;
       }
     }
     else {
       switch (bitsPerSample) {
         case 8:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatReader.UINT16;
+          pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatReader.UINT32;
+          pixelType[0] = FormatTools.UINT32;
           break;
       }
     }

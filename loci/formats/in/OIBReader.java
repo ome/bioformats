@@ -195,7 +195,7 @@ public class OIBReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     byte[] buf = new byte[sizeX[series] * sizeY[series] *
       getRGBChannelCount(id) *
-      FormatReader.getBytesPerPixel(pixelType[series])];
+      FormatTools.getBytesPerPixel(pixelType[series])];
     return openBytes(id, no, buf);
   }
 
@@ -497,13 +497,13 @@ public class OIBReader extends FormatReader {
       switch (((Integer) bpp.get(0)).intValue() % 3) {
         case 0:
         case 1:
-          pixelType[i] = FormatReader.UINT8;
+          pixelType[i] = FormatTools.UINT8;
           break;
         case 2:
-          pixelType[i] = FormatReader.UINT16;
+          pixelType[i] = FormatTools.UINT16;
           break;
         case 4:
-          pixelType[i] = FormatReader.UINT32;
+          pixelType[i] = FormatTools.UINT32;
           break;
         default:
           throw new RuntimeException(
