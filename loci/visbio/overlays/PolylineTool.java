@@ -45,7 +45,9 @@ public class PolylineTool extends OverlayTool {
   protected static final int ADJUST_TAIL = 5;
   protected static final int CLOSE_LOOP = 6;
   protected static final int SELECTED_TAIL = 7;
-
+  protected static final int EXTEND_ON_TAIL = 8;
+  protected static final int BEG_EXTEND = 9;
+  
 
   /** Maximum distance (in pixels) mouse can be from a node to be considered
    *  pointing to it. */
@@ -64,30 +66,16 @@ public class PolylineTool extends OverlayTool {
   /** Curve currently being drawn or modified. */
   protected OverlayPolyline line;
 
-  /** Curve close to the mouse when drawing is not occurring */
+  /** Curve close to the mouse when drawing is not occurring. */
   protected OverlayPolyline selectedPln;
 
-  /** Nearest node on selected PolyLine */
+  /** Nearest node on selected PolyLine. */
   protected int selectedNode;
 
-  /** Whether the active node of the polyline is anchored. */
-  protected boolean anchored;
-
-  /** Whether the mouse is currently near the last node of 
-   *  the active polyline. */
-  protected boolean nearTail;
-
-  /** Whether the mouse is currently near the first node of 
-   *  the active polyline. */
-  protected boolean nearHead;
-
-  /** Whether the mouse has moved sufficiently far from the 
-   *  last node placed. */
-  protected boolean departed;
-
-  /** Has the user entered resume mode */
-  protected boolean resume;
-
+  /**
+   * The current mode of the state machine represented in/by the
+   * mouse methods of this tool.
+   */
   protected int mode;
 
   // -- Constructor --
@@ -96,10 +84,6 @@ public class PolylineTool extends OverlayTool {
   public PolylineTool(OverlayTransform overlay) {
     super(overlay, "Polyline", "Polyline", "polyline.png");
     line = null;
-    anchored = false;
-    nearTail = false;
-    nearHead = false;
-    departed = false;
     mode = WAIT;
     unselect();
   }
@@ -120,6 +104,7 @@ public class PolylineTool extends OverlayTool {
       unselect();
       mode = WAIT;
     }
+
     if (mode == WAIT) {
       line =  new OverlayPolyline(overlay, dx, dy, dx, dy);
       configureOverlay(line);
@@ -204,10 +189,16 @@ public class PolylineTool extends OverlayTool {
         }
       }
     }
-    else if (mode == EXTEND) {
+    else if (mode == EXTEND || mode == BEG_EXTEND) {
       line.setLastNode(dx, dy);
       line.computeLength();
       mode = PLACE;
+    }
+    else if (mode == EXTEND_ON_TAIL) {
+      line.deleteNode(line.getNumNodes()-1);
+      releaseLine();
+      unselect();
+      mode = WAIT;
     }
 
     overlay.notifyListeners(new TransformEvent(overlay));
@@ -254,7 +245,8 @@ public class PolylineTool extends OverlayTool {
 
       overlay.notifyListeners(new TransformEvent(overlay));
     }
-    else if (mode == PLACE || mode == EXTEND) {
+    else if (mode == PLACE || mode == EXTEND || mode == BEG_EXTEND ||
+        mode == EXTEND_ON_TAIL) {
       mouseMoved(e, px, py, dx, dy, pos, mods);
     }
   } 
@@ -285,6 +277,10 @@ public class PolylineTool extends OverlayTool {
       selectNode(display, line, line.getNumNodes() - 1);
       mode = SELECT;
     }
+    else if (mode == EXTEND_ON_TAIL) {
+      mouseDown(e, px, py, dx, dy, pos, mods);
+      // basically delete last node and end line
+    }
   }
 
   /** Instructs this tool to respond to a mouse movement. */
@@ -314,10 +310,11 @@ public class PolylineTool extends OverlayTool {
     }
     else if (mode == PLACE) {
       line.setNextNode(dx, dy);
-      mode = EXTEND;
+      mode = BEG_EXTEND;
     }
-    else if (mode == EXTEND) {
+    else if (mode == EXTEND || mode == EXTEND_ON_TAIL) {
       line.setLastNode(dx, dy);
+      
       // determine if near head: 
       int ndx = 0; // index of head
       double[] dPxlDbl = {(double) px, (double) py};
@@ -325,15 +322,72 @@ public class PolylineTool extends OverlayTool {
       double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
       int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
       double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
-      double dist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+      double hdist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
       
+      // determine if near last node placed 
+      ndx = line.getNumNodes() - 2;
+      dPxlDbl = new double[] {(double) px, (double) py};
+      nDom = line.getNodeCoords(ndx);
+      nDomDbl = new double[] {(double) nDom[0], (double) nDom[1]};
+      nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
+      nPxlDbl = new double[] {(double) nPxl[0], (double) nPxl[1]};
+      double ldist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+
       // if near ndx, highlight selected node differently 
-      if (dist < THRESH) {
+      int flag = -1; 
+      if (ldist < THRESH) 
+        if (hdist < ldist) flag = 0;
+        else if (hdist > ldist) flag = 1;
+        else ;
+      else if (hdist < THRESH) flag = 0;
+
+      
+      if (flag == 0) {
+        line.setActiveDisplay(display);
+        line.setHighlightNode(0, CON);
+        mode = CLOSE_LOOP;
+      }
+      else if (flag == 1) {
+        line.setActiveDisplay(display);
+        line.setHighlightNode(line.getNumNodes()-1, SEL);
+        mode = EXTEND_ON_TAIL;
+      }
+      else if (flag == -1) {
+        line.turnOffHighlighting();
+        mode = EXTEND;
+      }
+    }
+    else if (mode == BEG_EXTEND) {
+      line.setLastNode(dx, dy);
+      
+      // determine if near head: 
+      int ndx = 0; // index of head
+      double[] dPxlDbl = {(double) px, (double) py};
+      float[] nDom = line.getNodeCoords(ndx);
+      double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
+      int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
+      double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
+      double hdist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+      
+      // determine if near last node placed 
+      ndx = line.getNumNodes() - 2;
+      dPxlDbl = new double[] {(double) px, (double) py};
+      nDom = line.getNodeCoords(ndx);
+      nDomDbl = new double[] {(double) nDom[0], (double) nDom[1]};
+      nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
+      nPxlDbl = new double[] {(double) nPxl[0], (double) nPxl[1]};
+      double ldist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+
+      if (hdist < THRESH) {
         line.setActiveDisplay(display);
         line.setHighlightNode(line.getNumNodes()-1, CON);
         mode = CLOSE_LOOP;
       }
-      // mode remains extend otherwise
+     
+      // if you've dragged far enough from last node placed
+      if (ldist > 10.0) {
+        mode = EXTEND;
+      }
     }
     else if (mode == CLOSE_LOOP) {
       line.setLastNode(dx, dy);
