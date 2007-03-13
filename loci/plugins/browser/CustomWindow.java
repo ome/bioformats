@@ -28,6 +28,7 @@ import ij.*;
 import ij.gui.*;
 import ij.macro.MacroRunner;
 import ij.measure.Calibration;
+import ij.process.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
@@ -63,11 +64,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   protected LociDataBrowser db;
   protected CacheIndicator zIndicator,tIndicator;
   protected OptionsWindow ow;
+ 
   private String zString = Z_STRING;
   private String tString = T_STRING;
   private int fps = 10;
   private int z = 1, t = 1, c = 1;
-
+ 
   // -- Fields - widgets --
 
   private JLabel zLabel, tLabel, cLabel;
@@ -341,13 +343,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     index++;
 
     if (db.manager != null) {
-      imp.setProcessor(patternTitle, db.manager.getSlice(index - 1));
-      // now execute macros as needed 
- 
+      index--;
+      ImageProcessor clone = db.manager.getSlice(index).duplicate();
+      imp.setProcessor(patternTitle, clone);
+      // now execute macros as needed
+
       Vector macros = db.macro.getMacros();
       for (int i=0; i<macros.size(); i++) {
         MacroRunner runner = new MacroRunner((String) macros.get(i));
       }
+      
       index = 1;
       return;
     }
@@ -365,11 +370,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
   
     // now execute macros as needed 
- 
+
     Vector macros = db.macro.getMacros();
     for (int i=0; i<macros.size(); i++) {
       MacroRunner runner = new MacroRunner((String) macros.get(i));
     }
+    
     repaint();
   }
 
@@ -407,14 +413,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       int textGap = 0;
 
       int nSlices = db.numZ * db.numT * db.numC;
-      int currentSlice = imp.getCurrentSlice();
+      int current = imp.getCurrentSlice();
       if (db.manager != null) {
-        currentSlice = db.manager.getSlice();
-        currentSlice++;
+        current = db.manager.getSlice();
+        current++;
       }
 
       StringBuffer sb = new StringBuffer();
-      sb.append(currentSlice);
+      sb.append(current);
       sb.append("/");
       sb.append(nSlices);
       sb.append("; ");
@@ -435,7 +441,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         sb.append("; ");
       }
       if (db.names != null) {
-        String name = db.names[currentSlice - 1];
+        String name = db.names[current - 1];
         if (name != null) {
           sb.append(name);
           sb.append("; ");

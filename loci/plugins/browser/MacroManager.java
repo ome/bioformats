@@ -41,20 +41,23 @@ public class MacroManager implements Runnable {
   /** Previous textBox contents. */
   private String previousText;
 
+  /** Macro recorder. */
+  private Recorder r;
+
   // -- Constructor --
 
   public MacroManager() {
     macros = new Vector();
-  
-    Recorder r = new Recorder();
-    r.hide();
+    r = new Recorder();
 
     Component[] components = r.getComponents();
     for (int i=0; i<components.length; i++) {
       if (components[i] instanceof TextArea) {
         textBox = (TextArea) components[i];
+        break; 
       }
     }
+    r.setVisible(false);
   }
 
   // -- Runnable API methods --
@@ -66,7 +69,11 @@ public class MacroManager implements Runnable {
         StringTokenizer st = new StringTokenizer(cmds, "\n");
         for (int i=0; i<macros.size(); i++) st.nextToken();
         while (st.hasMoreTokens()) {
-          macros.add(st.nextToken());
+          String macro = st.nextToken(); 
+          if (macro.equals("run(\"Undo\")")) {
+            macros.removeElementAt(macros.size() - 1);
+          }
+          else macros.add(macro);
         }
         previousText = cmds; 
       }
