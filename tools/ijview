@@ -12,13 +12,14 @@
 # the LOCI classes in your CLASSPATH, you can set the
 # LOCI_DEVEL environment variable to use them instead.
 
+PROG=loci.plugins.Importer
+
 if [ $LOCI_DEVEL ]
 then
-  java -mx512m loci.plugins.Importer "$@"
+  java -mx512m $PROG "$@"
 elif [ -e loci_tools.jar -a ij.jar ] || [ -e bio-formats.jar -a ij.jar ]
 then
-  java -mx512m -cp bio-formats.jar:ij.jar:loci_tools.jar \
-    loci.plugins.Importer "$@"
+  java -mx512m -cp bio-formats.jar:ij.jar:loci_tools.jar $PROG "$@"
 else
   echo "Required JAR libraries not found. Please download:"
   echo "  loci_tools.jar"

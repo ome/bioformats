@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# bfview: a script for displaying a given image file in the image viewer
+# bfview: a script for displaying an image file in the image viewer
 
 # Required JARs: loci_tools.jar
 
@@ -11,12 +11,14 @@
 # the LOCI classes in your CLASSPATH, you can set the
 # LOCI_DEVEL environment variable to use them instead.
 
+PROG=loci.formats.ImageViewer
+
 if [ $LOCI_DEVEL ]
 then
-  java -mx512m loci.formats.ImageViewer "$@"
+  java -mx512m $PROG "$@"
 elif [ -e loci_tools.jar ] || [ -e bio-formats.jar ]
 then
-  java -mx512m -cp bio-formats.jar:loci_tools.jar loci.formats.ImageViewer "$@"
+  java -mx512m -cp bio-formats.jar:loci_tools.jar $PROG "$@"
 else
   echo "Required JAR libraries not found. Please download:"
   echo "  loci_tools.jar"
