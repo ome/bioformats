@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# ijview: a script for displaying an image file in ImageJ
+#         using the Bio-Formats Importer plugin
+
+# Required JARs: loci_tools.jar; ij.jar
+
+# JAR libraries must be in the same directory as this
+# command line script for the command to function.  
+
+# If you are a developer working from source and have
+# the LOCI classes in your CLASSPATH, you can set the
+# LOCI_DEVEL environment variable to use them instead.
+
+if [ $LOCI_DEVEL ]
+then
+  java -mx512m loci.plugins.Importer "$@"
+elif [ -e loci_tools.jar -a ij.jar ] || [ -e bio-formats.jar -a ij.jar ]
+then
+  java -mx512m -cp bio-formats.jar:ij.jar:loci_tools.jar \
+    loci.plugins.Importer "$@"
+else
+  echo "Required JAR libraries not found. Please download:"
+  echo "  loci_tools.jar"
+  echo "from:"
+  echo "  http://www.loci.wisc.edu/ome/formats.html"
+  echo "and:"
+  echo "  ij.jar"
+  echo "from:"
+  echo "  http://rsb.info.nih.gov/ij/upgrade/"
+  echo "and place in the same directory as the command line tools."
+fi
