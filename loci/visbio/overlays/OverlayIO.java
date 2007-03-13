@@ -32,6 +32,8 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.VisBio;
 import loci.visbio.util.*;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.Region;
 
 /** Utility methods for saving and loading overlays to and from disk. */
 public final class OverlayIO {
@@ -171,7 +173,8 @@ public final class OverlayIO {
             OverlayNodedObject ono = (OverlayNodedObject)
               loadedNodedObjects.elementAt(numNodedObjectsRestored++);
             float[][] temp = new float[2][numNodes];
-            for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
+            for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0,
+                numNodes);
             ono.setNodes(temp);
             nodes = new float[2][50];
             numNodes = 0;
@@ -187,9 +190,10 @@ public final class OverlayIO {
           String type = st.nextToken().substring(1); // remove initial #
           int tok = 0;
 
-          if (count != lengths.length + 10) { // 10 == number of non-dim. fields in the overlay description
-            String s = "line in data table has an insufficient number of fields (" + count + " instead of "
-              + (lengths.length + 10) + ")";
+          if (count != lengths.length + 10) { 
+            // 10 == number of non-dim. fields in the overlay description
+            String s = "line in data table has an insufficient number of " +
+              "fields (" + count + " instead of " + (lengths.length + 10) + ")";
             displayErrorMsg(owner, lineNum, s);
             return null;
           }
@@ -217,7 +221,8 @@ public final class OverlayIO {
           }
 
           if (pos == null) {
-            displayErrorMsg(owner, lineNum, "line has an invalid dimensional position");
+            displayErrorMsg(owner, lineNum, 
+                "line has an invalid dimensional position");
             return null;
           }
 
@@ -238,7 +243,8 @@ public final class OverlayIO {
           }
 
           catch (NumberFormatException exc) {
-            displayErrorMsg(owner, lineNum, "line has invalid coordinate values");
+            displayErrorMsg(owner, lineNum, 
+                "line has invalid coordinate values");
             return null;
           }
 
@@ -272,10 +278,12 @@ public final class OverlayIO {
           //for (int i=0; i< pos.length; i++) System.out.print(i + " "); // TEMP
           //System.out.println("]"); // TEMP
           //System.out.println("r = " + r); // TEMP
-          // this error should never fire--will be caught above ("is coordinate w/in range?")
+          // this error should never fire--will be caught above ("is coordinate
+          // w/in range?")
           /*
           if (r < 0 || r >= loadedOverlays.length) {
-            displayErrorMsg(owner, lineNum, "could not reconstruct overlay: invalid dimensional position");
+            displayErrorMsg(owner, lineNum, "could not reconstruct overlay:
+            invalid dimensional position");
             return null;
           }
           */
@@ -307,7 +315,8 @@ public final class OverlayIO {
             y = Float.parseFloat(toks[1]);
           }
           catch (NumberFormatException exc) {
-            // this error message won't fire: covered by regular expressions in getEventAndState
+            // this error message won't fire: covered by regular expressions in
+            // getEventAndState
             displayErrorMsg(owner, lineNum, "error parsing node coordinates");
             return null;
           }
@@ -333,7 +342,8 @@ public final class OverlayIO {
     } 
     else if (loadedNodedObjects.size() > 0) {
       if (numNodedObjectsRestored + 1 < loadedNodedObjects.size()) {
-        displayErrorMsg(owner, lineNum, "missing node lists for one or more Freeforms");
+        displayErrorMsg(owner, lineNum, 
+            "missing node lists for one or more Freeforms");
         return null;
       } 
       else {
@@ -341,7 +351,8 @@ public final class OverlayIO {
         OverlayNodedObject ono = (OverlayNodedObject)
           loadedNodedObjects.elementAt(numNodedObjectsRestored++);
         float[][] temp = new float[2][numNodes];
-        for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
+        for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0,
+            numNodes);
         ono.setNodes(temp);
       }
     }
@@ -419,7 +430,8 @@ public final class OverlayIO {
       if (ono instanceof OverlayFreeform) k = ++freeformCount;
       else if (ono instanceof OverlayPolyline) k = ++polylineCount;
 
-      out.println("# " + ono + " " + k + " (" + xx1 + "," + yy1 + ")(" + xx2 + "," + yy2 + ")");
+      out.println("# " + ono + " " + k + " (" + xx1 + "," + yy1 + ")(" + xx2 +
+          "," + yy2 + ")");
 
       out.println("X\tY");
       // print the nodes themselves
@@ -428,6 +440,224 @@ public final class OverlayIO {
         out.println(c[0]+"\t"+c[1]);
       }
     }
+  }
+
+  /** Saves overlays to a .xls workbook */
+  public static HSSFWorkbook exportOverlays (OverlayTransform overlay) {
+    String[] dims = overlay.getDimTypes();
+    int[] lengths = overlay.getLengths();
+    Vector[] overlays = overlay.overlays;
+    Vector savedNodedObjects = new Vector();
+
+    // initialize worksheet
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet s = wb.createSheet();
+    HSSFRow r = null;
+    HSSFCell c = null;
+
+    // create cell styles 
+    HSSFCellStyle text = wb.createCellStyle();
+    text.setDataFormat(HSSFDataFormat.getBuiltinFormat("text")); 
+
+    HSSFCellStyle integer = wb.createCellStyle();
+    integer.setDataFormat((short) 1);
+
+    HSSFCellStyle flt = wb.createCellStyle();
+    flt.setDataFormat((short) 0); // "general" format
+    
+    HSSFCellStyle hex = wb.createCellStyle();
+    hex.setDataFormat((short) 0); // "general" format
+
+    // write file header
+    int rownum = 0;
+
+    String header = "# " + VisBio.TITLE + " " + VisBio.VERSION +
+      " overlay file written " + new Date();
+
+    // try to estimate number of cells to merge
+    // short width = s.getDefaultColumnWidth();
+    // int numChars = header.length();
+    // short numColsToMerge = (short) Math.ceil((float) numChars/(float)
+    // (width));
+    
+    short numColsToMerge = 12; // number of columns in overlay table header
+
+    Region mergedCells = new Region (0, (short) 0, 0, numColsToMerge);
+    s.addMergedRegion(mergedCells);
+
+    r = s.createRow(rownum);
+    c = r.createCell((short) 0);
+
+    c.setCellStyle(text);
+    c.setCellValue(header);
+
+    // write table header
+  
+    short cellnum = 0;
+    r = s.createRow(++rownum);
+    c = r.createCell(cellnum);
+
+    c.setCellStyle(text);
+    c.setCellValue("Overlay");
+
+    cellnum = 1;
+    for (int i = 0; i<lengths.length; i++) {
+      c = r.createCell(cellnum++);
+      c.setCellStyle(text);
+      c.setCellValue(dims[i] + " (" + lengths[i] + ")");
+    }
+
+    String[] colHeaders = {"x1", "y1", "x2", "y2", "text", "color", "filled",
+      "group", "notes"};
+    for (int i=0; i<colHeaders.length; i++) {
+      c = r.createCell(cellnum++);
+      c.setCellStyle(text);
+      c.setCellValue(colHeaders[i]);
+    }
+
+    // overlays table
+    for (int i=0; i<overlays.length; i++) {
+      int[] pos = MathUtil.rasterToPosition(lengths, i);
+      
+      for (int j=0; j<overlays[i].size(); j++) {
+        cellnum = 0;
+        // make new row
+        r = s.createRow(++rownum);
+        
+        OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
+
+        // a 'rider' to this loop: keep track of noded objects
+        if (obj instanceof OverlayNodedObject) savedNodedObjects.add(obj);
+
+        // overlay object type
+        c = r.createCell(cellnum++);
+        c.setCellStyle(text);
+        c.setCellValue(obj.toString());
+
+        // object dimensional position
+        for (int p=0; p<pos.length; p++) {
+          c = r.createCell(cellnum++);
+          c.setCellStyle(integer);
+          c.setCellValue(pos[p] + 1); // add 1 to shift indices for humans
+        }
+
+        // x1
+        c = r.createCell(cellnum++);
+        if (obj.hasEndpoint()) { 
+          c.setCellStyle(flt);
+          c.setCellValue(obj.x1);
+        }
+        else {
+          c.setCellStyle(text);
+          c.setCellValue(NOT_APPLICABLE);
+        }
+        
+        // y1 
+        c = r.createCell(cellnum++);
+        if (obj.hasEndpoint()) { 
+          c.setCellStyle(flt);
+          c.setCellValue(obj.y1);
+        }
+        else {
+          c.setCellStyle(text);
+          c.setCellValue(NOT_APPLICABLE);
+        }
+
+        // x2
+        c = r.createCell(cellnum++);
+        if (obj.hasEndpoint()) { 
+          c.setCellStyle(flt);
+          c.setCellValue(obj.x2);
+        }
+        else {
+          c.setCellStyle(text);
+          c.setCellValue(NOT_APPLICABLE);
+        }
+
+        // y2 
+        c = r.createCell(cellnum++);
+        if (obj.hasEndpoint()) { 
+          c.setCellStyle(flt);
+          c.setCellValue(obj.y2);
+        }
+        else {
+          c.setCellStyle(text);
+          c.setCellValue(NOT_APPLICABLE);
+        }
+
+        // object text
+        c = r.createCell(cellnum++);
+        c.setCellStyle(text);
+        c.setCellValue(obj.hasText() ? obj.text : NOT_APPLICABLE);
+
+        // object color
+        c = r.createCell(cellnum++);
+        c.setCellStyle(hex);
+        c.setCellValue(ColorUtil.colorToHex(obj.color));
+
+        // object filled
+        c = r.createCell(cellnum++);
+        c.setCellStyle(text);
+        c.setCellValue(obj.canBeFilled() ? "" + (obj.filled ? "true" :
+              "false") : NOT_APPLICABLE);
+        
+        // object group
+        c = r.createCell(cellnum++);
+        c.setCellStyle(text);
+        c.setCellValue(obj.group.replaceAll("\t", " "));
+
+        // object notes
+        c = r.createCell(cellnum++);
+        c.setCellStyle(text);
+        c.setCellValue(obj.notes.replaceAll("\t", " "));
+      }
+    }
+
+    // write nodes of noded objects
+    int freeformCount = 0;
+    int polylineCount = 0;
+    
+    rownum += 2; // skip a row
+    for (int i = 0; i<savedNodedObjects.size(); i++) {
+      OverlayNodedObject ono = (OverlayNodedObject) 
+        savedNodedObjects.elementAt(i);
+
+      // write nodes header
+      int numNodes = ono.getNumNodes();
+      r = s.createRow(rownum++);
+      c = r.createCell((short) 0);
+      c.setCellStyle(text);
+
+      float xx1, xx2, yy1, yy2;
+      xx1 = ono.getX();
+      yy1 = ono.getY();
+      xx2 = ono.getX2();
+      yy2 = ono.getY2();
+      
+      int k = 0;
+      if (ono instanceof OverlayFreeform) k = ++freeformCount;
+      else if (ono instanceof OverlayPolyline) k = ++polylineCount;
+
+      String hdr = ono + " " + k + " (" + xx1 + "," + yy1 + ")(" + xx2 + "," +
+        yy2 + ")";
+      c.setCellValue(hdr);
+
+      // write nodes themselves
+      for (int j = 0; j<numNodes; j++) {
+        float[] node = ono.getNodeCoords(j);
+        r = s.createRow(rownum++);
+        c = r.createCell((short) 0);
+        c.setCellStyle(flt);
+        c.setCellValue(node[0]);
+
+        c = r.createCell((short) 1);
+        c.setCellStyle(flt);
+        c.setCellValue(node[1]);
+      }
+      rownum++; // skip a row
+    }
+
+    return wb;
   }
 
   /** Instantiates an overlay object of the given class. */
@@ -490,18 +720,22 @@ public final class OverlayIO {
     // logic for parsing overlays file --ACS 12/06
     //
     // I visualized the process of parsing an overlay file as a 'state machine':
-    // at each input (a line of text), the machine changes state and spits out an event
-    // telling the method loadOverlays to parse the line, display an error message, etc.
-    // This method getEventTypeAndNewState describes the state machine's behavior: each
-    // top-level if/elseif clause corresponds to a different state, and the interior
-    // if/elseif/else clauses describe possible transitions from that state.
+    // at each input (a line of text), the machine changes state and spits out
+    // an event telling the method loadOverlays to parse the line, display an
+    // error message, etc.
+    // This method getEventTypeAndNewState describes the state machine's
+    // behavior: each top-level if/elseif clause corresponds to a different
+    // state, and the interior if/elseif/else clauses describe possible
+    // transitions from that state.
     //
-    // As a result of using the state machine approach, I've managed to put most the error messages for
-    // unexpected lines in one place (if (event == BARF) under loadOverlays); however
-    // there are still many cases which generate errors elsewhere in loadOverlays.
-    // Adding more states to the machine and/or more rigorous checking for acceptable line formats
-    // in this machine would help reduce the number of exceptional cases not handled here.
-
+    // As a result of using the state machine approach, I've managed to put
+    // most the error messages for unexpected lines in one place (if (event ==
+    // BARF) under loadOverlays); however there are still many cases which
+    // generate errors elsewhere in loadOverlays.
+    // Adding more states to the machine and/or more rigorous checking for
+    // acceptable line formats in this machine would help reduce the number of
+    // exceptional cases not handled here.  
+    
     int state = WAIT, event = BARF;
     if (current == WAIT) {
       if (input.matches("^\\s*$") || input.startsWith("#")) {
@@ -527,7 +761,8 @@ public final class OverlayIO {
           input.startsWith("Arrow") || input.startsWith("Polyline")) {
         state = TABLE; event = PARSE;
       }
-      else if (input.startsWith("#")) {state = TABLE; event = IGNORE;} // must check for freeform header first
+      else if (input.startsWith("#")) {state = TABLE; event = IGNORE;} 
+      // must check for freeform header first
       else {
         event = BARF; state = TABLE;
       }

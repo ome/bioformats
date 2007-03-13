@@ -39,6 +39,7 @@ import javax.swing.text.Document;
 import loci.formats.ExtensionFileFilter;
 import loci.visbio.data.*;
 import loci.visbio.util.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import visad.util.Util;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
@@ -109,6 +110,9 @@ public class OverlayWidget extends JPanel implements ActionListener,
 
   /** Button for saving overlays to disk. */
   protected JButton save;
+
+  /** Button for exporting overlays to .xls on disk. */
+  protected JButton export;
 
   // -- GUI components - overlay-specific --
 
@@ -295,6 +299,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
     if (!LAFUtil.isMacLookAndFeel()) save.setMnemonic('s');
     save.setToolTipText("Saves overlays to a text file on disk");
 
+    // overlay export button
+    export = new JButton("Export overlays...");
+    export.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) save.setMnemonic('e');
+    export.setToolTipText("Exports overlays to a .xls file on disk");
+
     // lay out components
     setLayout(new BorderLayout());
     FormLayout layout = new FormLayout(
@@ -340,7 +350,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
     builder.add(notes, cc.xyw(5, row, 5));
     row += 2;
     builder.add(ButtonBarFactory.buildCenteredBar(new JButton[] {
-      remove, copy, paste, dist, load, save}),
+      remove, copy, paste, dist, load, save, export}),
       cc.xyw(1, row, 9, "center, center"));
     row += 2;
     builder.addSeparator("Statistics", cc.xyw(1, row, 9));
@@ -663,6 +673,18 @@ public class OverlayWidget extends JPanel implements ActionListener,
         JOptionPane.showMessageDialog(this, "Error saving overlay file " +
           file + "): " + exc.getMessage(), "Cannot save overlays",
           JOptionPane.ERROR_MESSAGE);
+      }
+    }
+    else if (src == export) {
+      try {
+        FileOutputStream fout = new FileOutputStream("workbook.xls");
+        HSSFWorkbook wb = overlay.exportOverlays();
+        wb.write(fout);
+        fout.close();
+      }
+      catch (IOException exc) {
+        //update this TODO ACS
+        exc.printStackTrace();
       }
     }
   }

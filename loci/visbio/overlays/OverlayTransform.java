@@ -35,6 +35,7 @@ import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.*;
 import loci.visbio.view.DisplayWindow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import visad.*;
 
 /** A set of overlays on top another transform. */
@@ -416,6 +417,11 @@ public class OverlayTransform extends DataTransform
   /** Writes the overlays to the given writer. */
   public void saveOverlays(PrintWriter out) {
     OverlayIO.saveOverlays(out, this);
+  }
+
+  /** Exports the overlays as .xls to the given output file.*/
+  public HSSFWorkbook exportOverlays() {
+    return OverlayIO.exportOverlays (this);
   }
 
   /** Gets domain type (XY). */
