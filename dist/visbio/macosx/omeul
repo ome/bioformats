@@ -1,2 +1,0 @@
-#!/bin/sh
-java -mx512m -cp VisBio.app/Contents/Resources/Java/bio-formats.jar:VisBio.app/Contents/Resources/Java/commons-httpclient-2.0-rc2.jar:VisBio.app/Contents/Resources/Java/commons-logging.jar:VisBio.app/Contents/Resources/Java/ij.jar:VisBio.app/Contents/Resources/Java/looks-1.2.2.jar:VisBio.app/Contents/Resources/Java/forms-1.0.4.jar:VisBio.app/Contents/Resources/Java/ome-java.jar:VisBio.app/Contents/Resources/Java/visad-lite.jar:VisBio.app/Contents/Resources/Java/visbio.jar:VisBio.app/Contents/Resources/Java/xmlrpc-1.2-b1.jar loci.visbio.ome.ImageUploader $*
