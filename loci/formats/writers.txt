@@ -24,9 +24,9 @@
 # available to Bio-Formats, and the order in which they should be used.
 # Please do not edit unless you know what you are doing.
 
-loci.formats.out.TiffWriter
-loci.formats.out.JPEGWriter
-loci.formats.out.PNGWriter
-loci.formats.out.AVIWriter
-loci.formats.out.QTWriter
-loci.formats.out.EPSWriter
+loci.formats.out.TiffWriter # tif, tiff
+loci.formats.out.JPEGWriter # jpg, jpeg
+loci.formats.out.PNGWriter  # png
+loci.formats.out.AVIWriter  # avi
+loci.formats.out.QTWriter   # mov
+loci.formats.out.EPSWriter  # eps
