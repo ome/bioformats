@@ -631,8 +631,8 @@ public final class FormatTools {
   }
 
   /**
-   * Computes the maximum raster value of a positional array with
-   * the given maximum values.
+   * Computes the number of raster values for a positional array
+   * with the given lengths.
    */
   public static int getRasterLength(int[] lengths) {
     int len = 1;
