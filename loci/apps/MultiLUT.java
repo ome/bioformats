@@ -2,7 +2,7 @@
 // MultiLUT.java
 //
 
-package loci;
+package loci.apps;
 
 import visad.*;
 import visad.data.*;
