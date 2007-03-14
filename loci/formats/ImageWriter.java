@@ -69,8 +69,16 @@ public class ImageWriter implements IFormatWriter {
       // load writer class
       Class c = null;
       try { c = Class.forName(line); }
-      catch (ClassNotFoundException exc) { }
-      if (c == null || !FormatWriter.class.isAssignableFrom(c)) {
+      catch (ClassNotFoundException exc) {
+        if (FormatWriter.debug) exc.printStackTrace();
+      }
+      catch (NoClassDefFoundError err) {
+        if (FormatWriter.debug) err.printStackTrace();
+      }
+      catch (ExceptionInInitializerError err) {
+        if (FormatWriter.debug) err.printStackTrace();
+      }
+      if (c == null || !IFormatWriter.class.isAssignableFrom(c)) {
         System.err.println("Error: \"" + line +
           "\" is not a valid format writer.");
         continue;
@@ -269,7 +277,7 @@ public class ImageWriter implements IFormatWriter {
       System.out.print("Checking file format ");
       System.out.println("[" + getFormat(args[1]) + "]");
     }
-    return FormatWriter.testConvert(this, args);
+    return FormatTools.testConvert(this, args);
   }
 
   // -- IFormatHandler API methods --
@@ -296,13 +304,13 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
     if (suffixes == null) {
-      HashSet set = new HashSet();
+      HashSet suffixSet = new HashSet();
       for (int i=0; i<writers.length; i++) {
-        String[] s = writers[i].getSuffixes();
-        for (int j=0; j<s.length; j++) set.add(s[j]);
+        String[] suf = writers[i].getSuffixes();
+        for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
       }
-      suffixes = new String[set.size()];
-      set.toArray(suffixes);
+      suffixes = new String[suffixSet.size()];
+      suffixSet.toArray(suffixes);
       Arrays.sort(suffixes);
     }
     return suffixes;
@@ -324,9 +332,25 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatHandler#getFileChooser() */
   public JFileChooser getFileChooser() {
     if (chooser == null) {
-      chooser = FormatHandler.buildFileChooser(getFileFilters());
+      chooser = FormatTools.buildFileChooser(getFileFilters());
     }
     return chooser;
+  }
+
+  /* @see IFormatHandler#addStatusListener(StatusListener) */
+  public void addStatusListener(StatusListener l) {
+    for (int i=0; i<writers.length; i++) writers[i].addStatusListener(l);
+  }
+
+  /* @see IFormatHandler#removeStatusListener(StatusListener) */
+  public void removeStatusListener(StatusListener l) {
+    for (int i=0; i<writers.length; i++) writers[i].removeStatusListener(l);
+  }
+
+  /* @see IFormatHandler#getStatusListeners() */
+  public StatusListener[] getStatusListeners() {
+    // NB: all writers should have the same status listeners
+    return writers[0].getStatusListeners();
   }
 
   // -- Static ImageWriter API methods --

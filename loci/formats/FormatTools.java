@@ -24,11 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
 
 /** A utility class for format reader and writer implementations. */
 public final class FormatTools {
@@ -77,7 +82,7 @@ public final class FormatTools {
 
   private FormatTools() { }
 
-  // -- Utility methods --
+  // -- Utility methods - testing --
 
   /**
    * A utility method for test reading a file from the command line,
@@ -445,7 +450,51 @@ public final class FormatTools {
     return true;
   }
 
-  // -- Dimensional positions --
+  /** A utility method for converting a file from the command line. */
+  public static boolean testConvert(IFormatWriter writer, String[] args)
+    throws FormatException, IOException
+  {
+    String className = writer.getClass().getName();
+    if (args == null || args.length < 2) {
+      System.out.println("To convert a file to " + writer.getFormat() +
+        " format, run:");
+      System.out.println("  java " + className + " in_file out_file");
+      return false;
+    }
+    String in = args[0];
+    String out = args[1];
+    System.out.print(in + " -> " + out + " ");
+
+    ImageReader reader = new ImageReader();
+    long start = System.currentTimeMillis();
+    int num = reader.getImageCount(in);
+    long mid = System.currentTimeMillis();
+    long read = 0, write = 0;
+    for (int i=0; i<num; i++) {
+      long s = System.currentTimeMillis();
+      Image image = reader.openImage(in, i);
+      long m = System.currentTimeMillis();
+      writer.save(out, image, i == num - 1);
+      long e = System.currentTimeMillis();
+      System.out.print(".");
+      read += m - s;
+      write += e - m;
+    }
+    long end = System.currentTimeMillis();
+    System.out.println(" [done]");
+
+    // output timing results
+    float sec = (end - start) / 1000f;
+    long initial = mid - start;
+    float readAvg = (float) read / num;
+    float writeAvg = (float) write / num;
+    System.out.println(sec + "s elapsed (" +
+      readAvg + "+" + writeAvg + "ms per image, " + initial + "ms overhead)");
+
+    return true;
+  }
+
+  // -- Utility methods - dimensional positions --
 
   /**
    * Gets the rasterized index corresponding
@@ -640,7 +689,7 @@ public final class FormatTools {
     return len;
   }
 
-  // -- Pixel types --
+  // -- Utility methods - pixel types --
 
   /**
    * Takes a string value and maps it to one of the pixel type enumerations.
@@ -688,6 +737,55 @@ public final class FormatTools {
         return 8;
     }
     throw new RuntimeException("Unknown type with id: '" + type + "'");
+  }
+
+  // -- Utility methods - GUI --
+
+  /**
+   * Builds a file chooser with the given file filters,
+   * as well as an "All supported file types" combo filter.
+   */
+  public static JFileChooser buildFileChooser(final FileFilter[] filters) {
+    // NB: must construct JFileChooser in the
+    // AWT worker thread, to avoid deadlocks
+    final JFileChooser[] jfc = new JFileChooser[1];
+    Runnable r = new Runnable() {
+      public void run() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        FileFilter[] ff = ComboFileFilter.sortFilters(filters);
+        FileFilter combo = null;
+        if (ff.length > 1) {
+          // By default, some readers might need to open a file to determine
+          // if it is the proper type, when the extension alone isn't enough
+          // to distinguish.
+          //
+          // We want to disable that behavior for the "All supported file
+          // types" combination filter, because otherwise it is too slow.
+          //
+          // Also, most of the formats that do this are TIFF-based, and the
+          // TIFF reader will already green-light anything with .tif
+          // extension, making more thorough checks redundant.
+          combo = new ComboFileFilter(ff, "All supported file types", false);
+          fc.addChoosableFileFilter(combo);
+        }
+        for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
+        if (combo != null) fc.setFileFilter(combo);
+        jfc[0] = fc;
+      }
+    };
+    if (Thread.currentThread().getName().startsWith("AWT-EventQueue")) {
+      // current thread is the AWT event queue thread; just execute the code
+      r.run();
+    }
+    else {
+      // execute the code with the AWT event thread
+      try {
+        SwingUtilities.invokeAndWait(r);
+      }
+      catch (InterruptedException exc) { return null; }
+      catch (InvocationTargetException exc) { return null; }
+    }
+    return jfc[0];
   }
 
 }

@@ -33,6 +33,15 @@ public abstract class FormatWriter extends FormatHandler
   implements IFormatWriter
 {
 
+  // -- Constants --
+
+  /** Debugging flag. */
+  public static boolean debug = false;
+
+  /** Debugging level. 1=basic, 2=extended, 3=everything, 4=insane. */
+  public static int debugLevel = 1;
+
+
   // -- Fields --
 
   /** Frame rate to use when writing in frames per second, if applicable. */
@@ -117,53 +126,7 @@ public abstract class FormatWriter extends FormatHandler
   public boolean testConvert(String[] args)
     throws FormatException, IOException
   {
-    return testConvert(this, args);
-  }
-
-  // -- Utility methods --
-
-  /** A utility method for converting a file from the command line. */
-  public static boolean testConvert(IFormatWriter writer, String[] args)
-    throws FormatException, IOException
-  {
-    String className = writer.getClass().getName();
-    if (args == null || args.length < 2) {
-      System.out.println("To convert a file to " + writer.getFormat() +
-        " format, run:");
-      System.out.println("  java " + className + " in_file out_file");
-      return false;
-    }
-    String in = args[0];
-    String out = args[1];
-    System.out.print(in + " -> " + out + " ");
-
-    ImageReader reader = new ImageReader();
-    long start = System.currentTimeMillis();
-    int num = reader.getImageCount(in);
-    long mid = System.currentTimeMillis();
-    long read = 0, write = 0;
-    for (int i=0; i<num; i++) {
-      long s = System.currentTimeMillis();
-      Image image = reader.openImage(in, i);
-      long m = System.currentTimeMillis();
-      writer.save(out, image, i == num - 1);
-      long e = System.currentTimeMillis();
-      System.out.print(".");
-      read += m - s;
-      write += e - m;
-    }
-    long end = System.currentTimeMillis();
-    System.out.println(" [done]");
-
-    // output timing results
-    float sec = (end - start) / 1000f;
-    long initial = mid - start;
-    float readAvg = (float) read / num;
-    float writeAvg = (float) write / num;
-    System.out.println(sec + "s elapsed (" +
-      readAvg + "+" + writeAvg + "ms per image, " + initial + "ms overhead)");
-
-    return true;
+    return FormatTools.testConvert(this, args);
   }
 
 }

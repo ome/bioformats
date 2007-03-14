@@ -720,6 +720,21 @@ public class FileStitcher implements IFormatReader {
     return reader.getFileChooser();
   }
 
+  /* @see IFormatHandler#addStatusListener(StatusListener) */
+  public void addStatusListener(StatusListener l) {
+    for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);
+  }
+
+  /* @see IFormatHandler#removeStatusListener(StatusListener) */
+  public void removeStatusListener(StatusListener l) {
+    for (int i=0; i<readers.length; i++) readers[i].removeStatusListener(l);
+  }
+
+  /* @see IFormatHandler#getStatusListeners() */
+  public StatusListener[] getStatusListeners() {
+    return reader.getStatusListeners();
+  }
+
   // -- Helper methods --
 
   /** Initializes the given file. */

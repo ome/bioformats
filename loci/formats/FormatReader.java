@@ -70,7 +70,7 @@ public abstract class FormatReader extends FormatHandler
   protected double[][][] planeMinMax;
 
   /** Whether or not we're doing channel stat calculation (no by default). */
-  protected boolean enableChannelStatCalculation = false;
+  protected boolean enableChannelStats = false;
 
   /** List of image indices that have been read. */
   protected Vector[] imagesRead;
@@ -164,6 +164,120 @@ public abstract class FormatReader extends FormatHandler
       return isThisType(buf);
     }
     catch (IOException exc) { return false; }
+  }
+
+  /**
+   * Updates min/max values based on the given BufferedImage.
+   * Should be called by each format reader's openImage method.
+   */
+  protected void updateMinMax(BufferedImage b, int ndx)
+    throws FormatException, IOException
+  {
+    if (b == null || !enableChannelStats) return;
+    Integer ii = new Integer(ndx);
+    if (imagesRead[series].contains(ii)) return;
+    if (channelMinMax == null) {
+      channelMinMax =
+        new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
+    }
+    if (planeMinMax == null) {
+      planeMinMax = new double[getSeriesCount(currentId)][
+        getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
+    }
+
+    imagesRead[series].add(ii);
+    int[] coords = getZCTCoords(currentId, ndx);
+    int numRGB = getRGBChannelCount(currentId);
+    WritableRaster pixels = b.getRaster();
+    for (int x=0; x<b.getWidth(); x++) {
+      for (int y=0; y<b.getHeight(); y++) {
+        for (int c=0; c<numRGB; c++) {
+          double value = pixels.getSampleDouble(x, y, c);
+          if (value > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
+            channelMinMax[series][coords[1]*numRGB + c][MAX] = value;
+          }
+          if (value < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
+            channelMinMax[series][coords[1]*numRGB + c][MIN] = value;
+          }
+          if (value > planeMinMax[series][ndx*numRGB + c][MAX]) {
+            planeMinMax[series][ndx*numRGB + c][MAX] = value;
+          }
+          if (value < planeMinMax[series][ndx*numRGB + c][MIN]) {
+            planeMinMax[series][ndx*numRGB + c][MIN] = value;
+          }
+        }
+      }
+    }
+
+    if (imagesRead[series].size() == getImageCount(currentId)) {
+      minMaxFinished[series] = true;
+    }
+  }
+
+  /**
+   * Updates min/max values based on given byte array.
+   * Should be called by each format reader's openBytes method.
+   */
+  protected void updateMinMax(byte[] b, int ndx)
+    throws FormatException, IOException
+  {
+    if (b == null || !enableChannelStats) return;
+    Integer ii = new Integer(ndx);
+    if (imagesRead[series].contains(ii)) return;
+    if (channelMinMax == null) {
+      channelMinMax =
+        new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
+    }
+    if (planeMinMax == null) {
+      planeMinMax = new double[getSeriesCount(currentId)][
+        getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
+    }
+
+    boolean little = isLittleEndian(currentId);
+    int bytes = FormatTools.getBytesPerPixel(getPixelType(currentId));
+    int numRGB = getRGBChannelCount(currentId);
+    int pixels = getSizeX(currentId) * getSizeY(currentId);
+    boolean interleaved = isInterleaved(currentId);
+
+    byte[] value = new byte[bytes];
+    int[] coords = getZCTCoords(currentId, ndx);
+
+    for (int i=0; i<pixels; i++) {
+      for (int c=0; c<numRGB; c++) {
+        int idx = interleaved ? i*numRGB + c : c*pixels + i;
+        idx *= bytes;
+        System.arraycopy(b, idx, value, 0, bytes);
+        double v =
+          Double.longBitsToDouble(DataTools.bytesToLong(value, little));
+        if (v > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
+          channelMinMax[series][coords[1]*numRGB + c][MAX] = v;
+        }
+        if (v < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
+          channelMinMax[series][coords[1]*numRGB + c][MIN] = v;
+        }
+        if (v > planeMinMax[series][ndx*numRGB + c][MAX]) {
+          planeMinMax[series][ndx*numRGB + c][MAX] = v;
+        }
+        if (v < planeMinMax[series][ndx*numRGB + c][MIN]) {
+          planeMinMax[series][ndx*numRGB + c][MIN] = v;
+        }
+      }
+    }
+  }
+
+  /** Returns true if the given file name is in the used files list. */
+  protected boolean isUsedFile(String id, String file)
+    throws FormatException, IOException
+  {
+    String[] usedFiles = getUsedFiles(id);
+    for (int i=0; i<usedFiles.length; i++) {
+      if (usedFiles[i].equals(file) ||
+        usedFiles[i].equals(new Location(file).getAbsolutePath()))
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
   /** Adds an entry to the metadata table. */
@@ -275,7 +389,7 @@ public abstract class FormatReader extends FormatHandler
     if (theC < 0 || theC >= getSizeC(id)) {
       throw new FormatException("Invalid channel index: " + theC);
     }
-    if (enableChannelStatCalculation && minMaxFinished[series]) {
+    if (enableChannelStats && minMaxFinished[series]) {
       return new Double(channelMinMax[series][theC][MIN]);
     }
     return null;
@@ -289,7 +403,7 @@ public abstract class FormatReader extends FormatHandler
     if (theC < 0 || theC >= getSizeC(id)) {
       throw new FormatException("Invalid channel index: " + theC);
     }
-    if (enableChannelStatCalculation && minMaxFinished[series]) {
+    if (enableChannelStats && minMaxFinished[series]) {
       return new Double(channelMinMax[series][theC][MAX]);
     }
     return null;
@@ -300,7 +414,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStatCalculation) {
+    if (enableChannelStats) {
       return new Double(channelMinMax[series][theC][MIN]);
     }
     return null;
@@ -311,7 +425,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStatCalculation) {
+    if (enableChannelStats) {
       return new Double(channelMinMax[series][theC][MAX]);
     }
     return null;
@@ -322,7 +436,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStatCalculation &&
+    if (enableChannelStats &&
       imagesRead[series].contains(new Integer(no)))
     {
       int ndx = no * getRGBChannelCount(id);
@@ -342,7 +456,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStatCalculation &&
+    if (enableChannelStats &&
       imagesRead[series].contains(new Integer(no)))
     {
       int ndx = no * getRGBChannelCount(id);
@@ -403,12 +517,12 @@ public abstract class FormatReader extends FormatHandler
       System.err.println(
         "Warning: setChannelStatCalculation called with open file.");
     }
-    enableChannelStatCalculation = on;
+    enableChannelStats = on;
   }
 
   /* @see IFormatReader#getChannelStatCalculationStatus() */
   public boolean getChannelStatCalculationStatus() {
-    return enableChannelStatCalculation;
+    return enableChannelStats;
   }
 
   /* @see IFormatReader#isInterleaved(String) */
@@ -644,123 +758,6 @@ public abstract class FormatReader extends FormatHandler
    */
   public static void setDebugLevel(int debugLevel) {
     FormatReader.debugLevel = debugLevel;
-  }
-
-  // -- Helper methods --
-
-  /**
-   * Updates min/max values based on the given BufferedImage.
-   * Should be called by each format reader's openImage method.
-   */
-  protected void updateMinMax(BufferedImage b, int ndx)
-    throws FormatException, IOException
-  {
-    Integer ii = new Integer(ndx);
-    if (!imagesRead[series].contains(ii) && enableChannelStatCalculation) {
-      if (channelMinMax == null) {
-        channelMinMax =
-          new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
-      }
-      if (planeMinMax == null) {
-        planeMinMax = new double[getSeriesCount(currentId)][
-          getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
-      }
-
-      imagesRead[series].add(ii);
-      int[] coords = getZCTCoords(currentId, ndx);
-      int numRGB = getRGBChannelCount(currentId);
-      WritableRaster pixels = b.getRaster();
-      for (int x=0; x<b.getWidth(); x++) {
-        for (int y=0; y<b.getHeight(); y++) {
-          for (int c=0; c<numRGB; c++) {
-            double value = pixels.getSampleDouble(x, y, c);
-            if (value > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
-              channelMinMax[series][coords[1]*numRGB + c][MAX] = value;
-            }
-            if (value < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
-              channelMinMax[series][coords[1]*numRGB + c][MIN] = value;
-            }
-            if (value > planeMinMax[series][ndx*numRGB + c][MAX]) {
-              planeMinMax[series][ndx*numRGB + c][MAX] = value;
-            }
-            if (value < planeMinMax[series][ndx*numRGB + c][MIN]) {
-              planeMinMax[series][ndx*numRGB + c][MIN] = value;
-            }
-          }
-        }
-      }
-
-      if (imagesRead[series].size() == getImageCount(currentId)) {
-        minMaxFinished[series] = true;
-      }
-    }
-  }
-
-  /**
-   * Updates min/max values based on given byte array.
-   * Should be called by each format reader's openBytes method.
-   */
-  protected void updateMinMax(byte[] b, int ndx)
-    throws FormatException, IOException
-  {
-    if (b == null) return;
-    Integer ii = new Integer(ndx);
-    if (!imagesRead[series].contains(ii) && enableChannelStatCalculation) {
-      if (channelMinMax == null) {
-        channelMinMax =
-          new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
-      }
-      if (planeMinMax == null) {
-        planeMinMax = new double[getSeriesCount(currentId)][
-          getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
-      }
-
-      boolean little = isLittleEndian(currentId);
-      int bytes = FormatTools.getBytesPerPixel(getPixelType(currentId));
-      int numRGB = getRGBChannelCount(currentId);
-      int pixels = getSizeX(currentId) * getSizeY(currentId);
-      boolean interleaved = isInterleaved(currentId);
-
-      byte[] value = new byte[bytes];
-      int[] coords = getZCTCoords(currentId, ndx);
-
-      for (int i=0; i<pixels; i++) {
-        for (int c=0; c<numRGB; c++) {
-          int idx = interleaved ? i*numRGB + c : c*pixels + i;
-          idx *= bytes;
-          System.arraycopy(b, idx, value, 0, bytes);
-          double v =
-            Double.longBitsToDouble(DataTools.bytesToLong(value, little));
-          if (v > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
-            channelMinMax[series][coords[1]*numRGB + c][MAX] = v;
-          }
-          if (v < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
-            channelMinMax[series][coords[1]*numRGB + c][MIN] = v;
-          }
-          if (v > planeMinMax[series][ndx*numRGB + c][MAX]) {
-            planeMinMax[series][ndx*numRGB + c][MAX] = v;
-          }
-          if (v < planeMinMax[series][ndx*numRGB + c][MIN]) {
-            planeMinMax[series][ndx*numRGB + c][MIN] = v;
-          }
-        }
-      }
-    }
-  }
-
-  /** Returns true if the given file name is in the used files list. */
-  protected boolean isUsedFile(String id, String file)
-    throws FormatException, IOException
-  {
-    String[] usedFiles = getUsedFiles(id);
-    for (int i=0; i<usedFiles.length; i++) {
-      if (usedFiles[i].equals(file) ||
-        usedFiles[i].equals(new Location(file).getAbsolutePath()))
-      {
-        return true;
-      }
-    }
-    return false;
   }
 
 }

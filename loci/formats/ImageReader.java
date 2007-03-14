@@ -78,7 +78,7 @@ public class ImageReader implements IFormatReader {
       catch (ExceptionInInitializerError err) {
         if (FormatReader.debug) err.printStackTrace();
       }
-      if (c == null || !FormatReader.class.isAssignableFrom(c)) {
+      if (c == null || !IFormatReader.class.isAssignableFrom(c)) {
         System.err.println("Error: \"" + line +
           "\" is not a valid format reader.");
         continue;
@@ -331,7 +331,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#getChannelStatCalculationStatus() */
   public boolean getChannelStatCalculationStatus() {
-    // NB: all readers should have the same status
+    // NB: all readers should have the same channel calculation status
     return readers[0].getChannelStatCalculationStatus();
   }
 
@@ -409,6 +409,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isColorTableIgnored() */
   public boolean isColorTableIgnored() {
+    // NB: all readers should have the same color tables setting
     return readers[0].isColorTableIgnored();
   }
 
@@ -419,6 +420,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isNormalized() */
   public boolean isNormalized() {
+    // NB: all readers should have the same normalization setting
     return readers[0].isNormalized();
   }
 
@@ -477,6 +479,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isMetadataFiltered() */
   public boolean isMetadataFiltered() {
+    // NB: all readers should have the same metadata filtering setting
     return readers[0].isNormalized();
   }
 
@@ -555,7 +558,7 @@ public class ImageReader implements IFormatReader {
     if (filters == null) {
       Vector v = new Vector();
       for (int i=0; i<readers.length; i++) {
-        javax.swing.filechooser.FileFilter[] ff = readers[i].getFileFilters();
+        FileFilter[] ff = readers[i].getFileFilters();
         for (int j=0; j<ff.length; j++) v.add(ff[j]);
       }
       filters = ComboFileFilter.sortFilters(v);
@@ -566,9 +569,25 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#getFileChooser() */
   public JFileChooser getFileChooser() {
     if (chooser == null) {
-      chooser = FormatHandler.buildFileChooser(getFileFilters());
+      chooser = FormatTools.buildFileChooser(getFileFilters());
     }
     return chooser;
+  }
+
+  /* @see IFormatHandler#addStatusListener(StatusListener) */
+  public void addStatusListener(StatusListener l) {
+    for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);
+  }
+
+  /* @see IFormatHandler#removeStatusListener(StatusListener) */
+  public void removeStatusListener(StatusListener l) {
+    for (int i=0; i<readers.length; i++) readers[i].removeStatusListener(l);
+  }
+
+  /* @see IFormatHandler#getStatusListeners() */
+  public StatusListener[] getStatusListeners() {
+    // NB: all readers should have the same status listeners
+    return readers[0].getStatusListeners();
   }
 
   // -- Static ImageReader API methods --

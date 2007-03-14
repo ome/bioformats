@@ -51,4 +51,14 @@ public interface IFormatHandler {
 
   /** Gets a JFileChooser that recognizes accepted file types. */
   JFileChooser getFileChooser();
+
+  /** Adds a listener for status update events. */
+  void addStatusListener(StatusListener l);
+
+  /** Removes a listener for status update events. */
+  void removeStatusListener(StatusListener l);
+
+  /** Gets a list of all registered status update listeners. */
+  StatusListener[] getStatusListeners();
+
 }

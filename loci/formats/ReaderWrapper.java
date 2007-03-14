@@ -331,4 +331,16 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getFileChooser();
   }
 
+  public void addStatusListener(StatusListener l) {
+    reader.addStatusListener(l);
+  }
+
+  public void removeStatusListener(StatusListener l) {
+    reader.removeStatusListener(l);
+  }
+
+  public StatusListener[] getStatusListeners() {
+    return reader.getStatusListeners();
+  }
+
 }
