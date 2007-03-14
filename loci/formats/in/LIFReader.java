@@ -183,7 +183,7 @@ public class LIFReader extends FormatReader {
     throws FormatException, IOException
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[series],
-      sizeY[series], isRGB(id) ? sizeC[series] : 1, false, bpp / 8, 
+      sizeY[series], isRGB(id) ? sizeC[series] : 1, false, bpp / 8,
       littleEndian, validBits[series]);
     updateMinMax(b, no);
     return b;
@@ -322,9 +322,9 @@ public class LIFReader extends FormatReader {
       if (token.indexOf("=") != -1) {
         int idx = token.indexOf("Identifier") + 12;
         key = token.substring(idx, token.indexOf("\"", idx + 1));
-        idx = token.indexOf("Variant") + 9;  
-        value = token.substring(idx, token.indexOf("\"", idx + 1)); 
-        if (key.indexOf("=") == -1) addMeta(prefix + " - " + key, value); 
+        idx = token.indexOf("Variant") + 9;
+        value = token.substring(idx, token.indexOf("\"", idx + 1));
+        if (key.indexOf("=") == -1) addMeta(prefix + " - " + key, value);
       }
       token = tmpToken;
 
@@ -576,12 +576,12 @@ public class LIFReader extends FormatReader {
       for (int j=0; j<sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
       }
-   
-      String zoom = 
+
+      String zoom =
         (String) getMeta((String) seriesNames.get(i) + " - dblZoom");
       store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-        new Boolean(sizeC[i] > 1), new Boolean(sizeC[i] > 1), 
-        new Boolean(sizeC[i] > 2), new Boolean(isRGB(currentId)), null, null, 
+        new Boolean(sizeC[i] > 1), new Boolean(sizeC[i] > 1),
+        new Boolean(sizeC[i] > 2), new Boolean(isRGB(currentId)), null, null,
         null, null, null, ii, null, null, null, null, null);
 
     }

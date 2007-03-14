@@ -402,10 +402,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
       getChild(image, "CustomAttributes", 0);
     DimensionsNode dimensions =
       (DimensionsNode) getChild(ca, "Dimensions", 0);
-    
-    if (pixelSizeX == null && pixelSizeY != null) pixelSizeX = pixelSizeY; 
-    if (pixelSizeY == null && pixelSizeX != null) pixelSizeY = pixelSizeX; 
-    
+
+    if (pixelSizeX == null && pixelSizeY != null) pixelSizeX = pixelSizeY;
+    if (pixelSizeY == null && pixelSizeX != null) pixelSizeY = pixelSizeX;
+
     dimensions.setPixelSizeX(pixelSizeX);
     dimensions.setPixelSizeY(pixelSizeY);
     dimensions.setPixelSizeZ(pixelSizeZ);

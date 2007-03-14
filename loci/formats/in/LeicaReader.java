@@ -137,7 +137,7 @@ public class LeicaReader extends BaseTiffReader {
   }
 
   /* @see IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id) 
+  public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
     return true;
@@ -1150,7 +1150,7 @@ public class LeicaReader extends BaseTiffReader {
 
       for (int j=0; j<sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
-        try { 
+        try {
           store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
             getChannelGlobalMaximum(currentId, j), ii);
         }
