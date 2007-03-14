@@ -758,7 +758,7 @@ public abstract class BaseTiffReader extends FormatReader {
       if (bitsPerSample == 16) { // short
         ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
         for (int i = 0; i < (byteArray.length / 2); i++) {
-          buf.put(i, Bits.swap(buf.get(i)));
+          buf.put(i, DataTools.swap(buf.get(i)));
         }
       }
       else {
