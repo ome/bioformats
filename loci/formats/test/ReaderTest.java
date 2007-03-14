@@ -37,8 +37,7 @@ import loci.formats.ome.OMEXMLMetadataStore;
  *
  * To test the framework, run this class from the command line with a command
  * line argument indicating the root path of data files to be tested. The
- * path will be scanned, and a list of files to test will be built (files
- * matching those enumerated in bad-files.txt are excluded).
+ * path will be scanned, and a list of files to test will be built.
  *
  * Unfortunately, it is not practical to construct one large JUnit test suite
  * with a static suite() method, because many datasets are spread across
