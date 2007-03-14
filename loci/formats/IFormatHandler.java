@@ -28,7 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /** Interface for all biological file format readers and writers. */
-public interface IFormatHandler {
+public interface IFormatHandler extends StatusReporter {
 
   /** Checks if the given string is a valid filename for this file format. */
   boolean isThisType(String name);
@@ -51,14 +51,5 @@ public interface IFormatHandler {
 
   /** Gets a JFileChooser that recognizes accepted file types. */
   JFileChooser getFileChooser();
-
-  /** Adds a listener for status update events. */
-  void addStatusListener(StatusListener l);
-
-  /** Removes a listener for status update events. */
-  void removeStatusListener(StatusListener l);
-
-  /** Gets a list of all registered status update listeners. */
-  StatusListener[] getStatusListeners();
 
 }

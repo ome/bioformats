@@ -26,8 +26,10 @@ package loci.formats.ome;
 
 import java.awt.image.BufferedImage;
 import loci.formats.MetadataStore;
+import loci.formats.StatusReporter;
 
-public interface Uploader {
+/** Interface for uploading image information to a database. */
+public interface Uploader extends StatusReporter {
 
   /** Log in to the specified server, with the specified credentials. */
   void login(String server, String user, String pass) throws UploadException;

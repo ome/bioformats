@@ -574,6 +574,8 @@ public class ImageReader implements IFormatReader {
     return chooser;
   }
 
+  // -- StatusReporter API methods --
+
   /* @see IFormatHandler#addStatusListener(StatusListener) */
   public void addStatusListener(StatusListener l) {
     for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);

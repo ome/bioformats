@@ -337,6 +337,8 @@ public class ImageWriter implements IFormatWriter {
     return chooser;
   }
 
+  // -- StatusReporter API methods --
+
   /* @see IFormatHandler#addStatusListener(StatusListener) */
   public void addStatusListener(StatusListener l) {
     for (int i=0; i<writers.length; i++) writers[i].addStatusListener(l);

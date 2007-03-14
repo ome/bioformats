@@ -331,6 +331,8 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getFileChooser();
   }
 
+  // -- StatusReporter API methods --
+
   public void addStatusListener(StatusListener l) {
     reader.addStatusListener(l);
   }

@@ -129,21 +129,23 @@ public abstract class FormatHandler implements IFormatHandler {
     return chooser;
   }
 
-  /* @see IFormatHandler#addStatusListener(StatusListener) */
+  // -- StatusReporter API methods --
+
+  /* @see StatusReporter#addStatusListener(StatusListener) */
   public void addStatusListener(StatusListener l) {
     synchronized (statusListeners) {
       if (!statusListeners.contains(l)) statusListeners.add(l);
     }
   }
 
-  /* @see IFormatHandler#removeStatusListener(StatusListener) */
+  /* @see StatusReporter#removeStatusListener(StatusListener) */
   public void removeStatusListener(StatusListener l) {
     synchronized (statusListeners) {
       statusListeners.remove(l);
     }
   }
 
-  /* @see IFormatHandler#getStatusListeners() */
+  /* @see StatusReporter#getStatusListeners() */
   public StatusListener[] getStatusListeners() {
     synchronized (statusListeners) {
       StatusListener[] l = new StatusListener[statusListeners.size()];

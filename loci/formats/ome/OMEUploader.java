@@ -36,7 +36,7 @@ import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 import org.openmicroscopy.xml.*;
 
-/** Utility methods for uploading pixels and metadata to an OME server. */
+/** Module for uploading pixels and metadata to an OME server. */
 public class OMEUploader implements Uploader {
 
   // -- Fields --
@@ -75,6 +75,9 @@ public class OMEUploader implements Uploader {
   private Experimenter exp;
   private Repository r;
 
+  /** List of status listeners. */
+  protected Vector statusListeners = new Vector();
+
   // -- Constructors --
 
   /** Construct a new OMEUploader for the specified server. */
@@ -92,6 +95,24 @@ public class OMEUploader implements Uploader {
     this.pass = pass;
     login(server, user, pass);
     files = new Vector();
+  }
+
+  // -- Internal FormatHandler API methods --
+
+  /** Fires a status update event. */
+  protected void status(String message) {
+    status(new StatusEvent(message));
+  }
+
+  /** Fires a status update event. */
+  protected void status(int progress, int maximum, String message) {
+    status(new StatusEvent(progress, maximum, message));
+  }
+
+  /** Fires a status update event. */
+  protected void status(StatusEvent e) {
+    StatusListener[] l = getStatusListeners();
+    for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
   }
 
   // -- Uploader API methods --
@@ -488,7 +509,33 @@ public class OMEUploader implements Uploader {
     return uploaded;
   }
 
-  // -- Utility methods --
+  // -- StatusReporter API methods --
+
+  /* @see loci.formats.StatusReporter#addStatusListener(StatusListener) */
+  public void addStatusListener(StatusListener l) {
+    synchronized (statusListeners) {
+      if (!statusListeners.contains(l)) statusListeners.add(l);
+    }
+  }
+
+  /* @see loci.formats.StatusReporter#removeStatusListener(StatusListener) */
+  public void removeStatusListener(StatusListener l) {
+    synchronized (statusListeners) {
+      statusListeners.remove(l);
+    }
+  }
+
+  /* @see loci.formats.StatusReporter#getStatusListeners() */
+  public StatusListener[] getStatusListeners() {
+    synchronized (statusListeners) {
+      StatusListener[] l = new StatusListener[statusListeners.size()];
+      statusListeners.copyInto(l);
+      return l;
+    }
+  }
+
+
+  // -- Helper methods --
 
   /** Send a request string to the server and return the response. */
   private String sendRequest(String request) throws UploadException {
