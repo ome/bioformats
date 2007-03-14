@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.StringTokenizer;
 import java.util.zip.*;
 import loci.formats.*;
+import loci.formats.codec.ByteVector;
 
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)

@@ -31,6 +31,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.*;
 import java.util.*;
+import loci.formats.codec.*;
 
 /**
  * A utility class for manipulating TIFF files.
@@ -1801,7 +1802,7 @@ public final class TiffTools {
         "(Group 4 Fax) compression mode is not supported");
     }
     else if (compression == LZW) {
-      LZWCompressor c = new LZWCompressor();
+      LZWCodec c = new LZWCodec();
       return c.decompress(input);
       // return Compression.lzwUncompress(input);
     }
@@ -1817,14 +1818,14 @@ public final class TiffTools {
         "supported; it will be added in the near future");
     }
     else if (compression == PACK_BITS) {
-      PackbitsCompressor c = new PackbitsCompressor();
+      PackbitsCodec c = new PackbitsCodec();
       return c.decompress(input);
 
       //return Compression.packBitsUncompress(input);
     }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
       //return Compression.deflateUncompress(input);
-      AdobeDeflateCompressor c = new AdobeDeflateCompressor();
+      AdobeDeflateCodec c = new AdobeDeflateCodec();
       return c.decompress(input);
     }
     else if (compression == THUNDERSCAN) {
@@ -2451,7 +2452,7 @@ public final class TiffTools {
         "(Group 4 Fax) compression mode is not supported");
     }
     else if (compression == LZW) {
-      LZWCompressor c = new LZWCompressor();
+      LZWCodec c = new LZWCodec();
       return c.compress(input, 0, 0, null, null);
       // return Compression.lzwCompress(input);
     }

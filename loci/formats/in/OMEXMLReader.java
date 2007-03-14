@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import loci.formats.*;
+import loci.formats.codec.Base64Codec;
 import loci.formats.ome.OMEXMLMetadataStore;
 import org.openmicroscopy.xml.OMENode;
 
@@ -177,7 +178,7 @@ public class OMEXMLReader extends FormatReader {
     data = null;
 
     //byte[] pixels = Compression.base64Decode(pix);
-    Base64Encoder e = new Base64Encoder();
+    Base64Codec e = new Base64Codec();
     byte[] pixels = e.base64Decode(pix);
     pix = null;
 

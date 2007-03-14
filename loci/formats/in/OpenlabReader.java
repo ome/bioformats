@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.codec.LZOCodec;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
@@ -303,13 +304,12 @@ public class OpenlabReader extends FormatReader {
       byte[] c = new byte[compressedSize];
       in.read(c);
 
-//      Compression.lzoUncompress(c, size, b);
-      LZOCompressor lzoc = new LZOCompressor();
+      LZOCodec lzoc = new LZOCodec();
       b = lzoc.decompress(c);
-      if(b.length != size) {
-        System.err.println("LZOCompressor failed to predict image size");
+      if (b.length != size) {
+        System.err.println("LZOCodec failed to predict image size");
         System.err.println(size + " expected, got " + b.length +
-                           ". The image displayed may not be correct.");
+          ". The image displayed may not be correct.");
       }
 
       if (volumeType == MAC_24_BIT) {

@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import loci.formats.*;
+import loci.formats.codec.ByteVector;
 
 /**
  * QTReader is the file format reader for QuickTime movie files.

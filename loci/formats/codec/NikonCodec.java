@@ -1,5 +1,5 @@
 //
-// JPEGCompressor.java
+// NikonCodec.java
 //
 
 /*
@@ -22,20 +22,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.formats.codec;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-import javax.imageio.ImageIO;
+import loci.formats.FormatException;
 
 /**
- * This class implements JPEG decompression. Compression is not yet
+ * This class implements Nikon decompression. Compression is not yet
  * implemented.
+ *
+ * @author Melissa Linkert linkert at wisc.edu
  */
-public class JPEGCompressor extends BaseCompressor implements Compressor {
+public class NikonCodec extends BaseCodec implements Codec {
+
+  /** Huffman tree for the Nikon decoder. */
+  private static final int[] NIKON_TREE = {
+    0, 1, 5, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0,
+    0, 5, 4, 3, 6, 2, 7, 1, 0, 8, 9, 11, 10, 12
+  };
 
   /**
-   * Compresses a block of JPEG data. Currently not supported.
+   * Compresses a block of Nikon data. Currently not supported.
    *
    * @param data the data to be compressed
    * @param x length of the x dimension of the image data, if appropriate
@@ -49,36 +55,60 @@ public class JPEGCompressor extends BaseCompressor implements Compressor {
       int[] dims, Object options) throws FormatException
   {
     // TODO: Add compression support.
-    throw new FormatException("JPEG Compression not currently supported");
+    throw new FormatException("Nikon Compression not currently supported");
   }
 
   /**
-   * Decodes an image strip using JPEG compression algorithm
+   * Decodes an image strip using Nikon's compression algorithm (a variant on
+   * Huffman coding).
    *
-   * @param b input data to be decompressed
+   * TODO : this is broken
+   *
+   * @param input input data to be decompressed
    * @return The decompressed data
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
    */
   public byte[] decompress(byte[] input) throws FormatException {
-    BufferedImage b;
-    try {
-      b = ImageIO.read(new ByteArrayInputStream(input));
-    } catch (IOException e) {
-      System.err.println("An IO Error occurred decompressing image." +
-        " Stack dump follows:");
-      e.printStackTrace();
-      return null;
-    }
-
-    byte[][] buf = ImageTools.getBytes(b);
-    byte[] rtn = new byte[buf.length * buf[0].length];
-    if (buf.length == 1) rtn = buf[0];
-    else {
-      for (int i=0; i<buf.length; i++) {
-        System.arraycopy(buf[i], 0, rtn, i*buf[0].length, buf[i].length);
+    BitWriter out = new BitWriter(input.length);
+    BitBuffer bb = new BitBuffer(input);
+    boolean eof = false;
+    while (!eof) {
+      boolean codeFound = false;
+      int code = 0;
+      int bitsRead = 0;
+      while (!codeFound) {
+        int bit = bb.getBits(1);
+        if (bit == -1) {
+          eof = true;
+          break;
+        }
+        bitsRead++;
+        code >>= 1;
+        code += bit;
+        for (int i=16; i<NIKON_TREE.length; i++) {
+          if (code == NIKON_TREE[i]) {
+            int ndx = i;
+            int count = 0;
+            while (ndx > 16) {
+              ndx -= NIKON_TREE[count];
+              count++;
+            }
+            if (ndx < 16) count--;
+            if (bitsRead == count + 1) {
+              codeFound = true;
+              i = NIKON_TREE.length;
+              break;
+            }
+          }
+        }
+      }
+      while (code > 0) {
+        out.write(bb.getBits(1), 1);
+        code--;
       }
     }
-    return rtn;
+    byte[] b = out.toByteArray();
+    return b;
   }
 }

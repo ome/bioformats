@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.codec.PackbitsCodec;
 
 /**
  * PictReader is the file format reader for Apple PICT files.
@@ -552,7 +553,7 @@ public class PictReader extends FormatReader {
           throw new FormatException("Sorry, vector data not supported.");
         }
 
-        PackbitsCompressor c = new PackbitsCompressor();
+        PackbitsCodec c = new PackbitsCodec();
         uBuf = c.decompress(buf);
         //uBuf = Compression.packBitsUncompress(buf);
 
@@ -774,7 +775,7 @@ public class PictReader extends FormatReader {
           strips.add(uBufI);
         }
         else {
-          PackbitsCompressor c = new PackbitsCompressor();
+          PackbitsCodec c = new PackbitsCodec();
           uBuf = c.decompress(buf);
           //uBuf = Compression.packBitsUncompress(buf);
         }
