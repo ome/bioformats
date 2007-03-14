@@ -137,7 +137,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   // -- RandomAccessStream API methods --
 
-  /** Return the underlying InputStream */
+  /** Returns the underlying InputStream. */
   public DataInputStream getInputStream() {
     try {
       if (fileCache.get(this) == Boolean.FALSE) reopen();

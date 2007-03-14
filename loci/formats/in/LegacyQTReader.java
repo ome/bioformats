@@ -134,7 +134,7 @@ public class LegacyQTReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       try {

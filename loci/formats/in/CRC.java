@@ -132,7 +132,7 @@ public class CRC {
     initialiseCRC();
   }
 
-  // -- CRC methods --
+  // -- CRC API methods --
 
   public void initialiseCRC() {
     globalCrc = 0xffffffff;

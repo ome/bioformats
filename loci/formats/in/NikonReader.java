@@ -157,7 +157,7 @@ public class NikonReader extends BaseTiffReader {
     }
   }
 
-  // -- FormatHandler API methods --
+  // -- IFormatHandler API methods --
 
   /**
    * Checks if the given string is a valid filename for a Nikon NEF file.

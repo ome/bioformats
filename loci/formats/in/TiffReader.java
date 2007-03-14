@@ -477,7 +477,7 @@ public class TiffReader extends BaseTiffReader {
     super.initMetadataStore();
   }
 
-  // -- IFormatReader methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getSeriesCount(String) */
   public int getSeriesCount(String id) throws FormatException, IOException {

@@ -408,8 +408,8 @@ public class AggregateMetadataStore implements MetadataStore {
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
-      s.setOTF(sizeX, sizeY, pixelType, path, opticalAxisAverage, instrumentNdx,
-      otfNdx, filterNdx, objectiveNdx);
+      s.setOTF(sizeX, sizeY, pixelType, path, opticalAxisAverage,
+        instrumentNdx, otfNdx, filterNdx, objectiveNdx);
     }
   }
 

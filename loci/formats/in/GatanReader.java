@@ -117,7 +117,7 @@ public class GatanReader extends FormatReader {
     return new Double(((Integer) getMeta("EstimatedMin")).intValue());
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -165,7 +165,7 @@ public class GatanReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();

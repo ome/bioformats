@@ -68,7 +68,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   /** Creates a new instance. */
   public OMEXMLMetadataStore() { createRoot(); }
 
-  // -- OMEXMLMetadataStore methods --
+  // -- OMEXMLMetadataStore API methods --
 
   /** Constructs a new OME-XML root node with the given XML block. */
   public void createRoot(String xml) {
@@ -312,12 +312,12 @@ public class OMEXMLMetadataStore implements MetadataStore {
     return stageZ == null ? null : new Float(stageZ);
   }
 
-  // -- MetadataStore methods --
+  // -- MetadataStore API methods --
 
-  /* @see MetadataStore#createRoot() */
+  /* @see loci.formats.MetadataStore#createRoot() */
   public void createRoot() { createRoot(null); }
 
-  /* @see MetadataStore#setRoot(Object) */
+  /* @see loci.formats.MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
     if (!(root instanceof OMENode)) {
       throw new IllegalArgumentException(
@@ -326,10 +326,13 @@ public class OMEXMLMetadataStore implements MetadataStore {
     this.root = (OMENode) root;
   }
 
-  /* @see MetadataStore#getRoot() */
+  /* @see loci.formats.MetadataStore#getRoot() */
   public Object getRoot() { return root; }
 
-  /* @see MetadataStore#setImage(String, String, String, Integer) */
+  /*
+   * @see loci.formats.MetadataStore#setImage(String,
+   *   String, String, Integer)
+   */
   public void setImage(String name,
     String creationDate, String description, Integer i)
   {
@@ -341,7 +344,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /*
-   * @see MetadataStore#setExperimenter(String, String,
+   * @see loci.formats.MetadataStore#setExperimenter(String, String,
    *   String, String, String, Object, Integer)
    */
   public void setExperimenter(String firstName, String lastName, String email,
@@ -360,7 +363,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     experimenter.setGroup((GroupNode) group);
   }
 
-  /* @see MetadataStore#setGroup(String, Object, Object, Integer) */
+  /*
+   * @see loci.formats.MetadataStore#setGroup(String, Object, Object, Integer)
+   */
   public void setGroup(String name, Object leader, Object contact, Integer i) {
     int ndx = i == null ? 0 : i.intValue();
     CustomAttributesNode ca = (CustomAttributesNode)
@@ -372,7 +377,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /*
-   * @see MetadataStore#setInstrument(String, String, String, String, Integer)
+   * @see loci.formats.MetadataStore#setInstrument(String,
+   *   String, String, String, Integer)
    */
   public void setInstrument(String manufacturer,
     String model, String serialNumber, String type, Integer i)
@@ -389,7 +395,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /*
-   * @see MetadataStore#setDimensions(Float,
+   * @see loci.formats.MetadataStore#setDimensions(Float,
    *   Float, Float, Float, Float, Integer)
    */
   public void setDimensions(Float pixelSizeX, Float pixelSizeY,
@@ -414,7 +420,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /*
-   * @see MetadataStore#setDisplayROI(Integer, Integer, Integer,
+   * @see loci.formats.MetadataStore#setDisplayROI(Integer, Integer, Integer,
    *   Integer, Integer, Integer, Integer, Integer, Object, Integer)
    */
   public void setDisplayROI(Integer x0, Integer y0, Integer z0,
@@ -440,7 +446,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /*
-   * @see MetadataStore#setPixels(Integer, Integer, Integer,
+   * @see loci.formats.MetadataStore#setPixels(Integer, Integer, Integer,
    *   Integer, Integer, String, Boolean, String, Integer, Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
@@ -467,7 +473,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
     image.setDefaultPixels(pixels);
   }
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, Integer) */
+  /*
+   * @see loci.formats.MetadataStore#setStageLabel(String,
+   *   Float, Float, Float, Integer)
+   */
   public void setStageLabel(String name, Float x, Float y, Float z, Integer i) {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which StageLabel we want
@@ -483,7 +492,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /*
-   * @see MetadataStore#setLogicalChannel(int, String,
+   * @see loci.formats.MetadataStore#setLogicalChannel(int, String,
    *   Float, Integer, Integer, String, String, Integer)
    */
   public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
@@ -523,7 +532,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
       colorDomains[channelIdx] : null);
   }
 
-  /* @see MetadataStore#setChannelGlobalMinMax(int, Double, Double, Integer) */
+  /*
+   * @see loci.formats.MetadataStore#setChannelGlobalMinMax(int,
+   *   Double, Double, Integer)
+   */
   public void setChannelGlobalMinMax(int channel,
     Double globalMin, Double globalMax, Integer i)
   {
@@ -555,7 +567,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
     channelMaximum[channel] = globalMax.doubleValue();
   }
 
-  /* @see MetadataStore#setPlaneInfo(int, int, int, Float, Float, Integer) */
+  /*
+   * @see loci.formats.MetadataStore#setPlaneInfo(int,
+   *   int, int, Float, Float, Integer)
+   */
   public void setPlaneInfo(int theZ, int theC, int theT, Float timestamp,
     Float exposureTime, Integer i)
   {
@@ -564,7 +579,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     // put into the OME-XML schema.
   }
 
-  /* @see MetadataStore#setDefaultDisplaySettings(Integer) */
+  /* @see loci.formats.MetadataStore#setDefaultDisplaySettings(Integer) */
   public void setDefaultDisplaySettings(Integer i) {
     int ndx = i == null ? 0 : i.intValue();
 
@@ -621,8 +636,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     displayOptions.setGreyChannel(greyscaleChannel);
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float,
-   * Float, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setImagingEnvironment(Float,
+   *   Float, Float, Float, Integer)
    */
   public void setImagingEnvironment(Float temperature, Float airPressure,
     Float humidity, Float co2Percent, Integer i)
@@ -639,8 +655,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     env.setCO2Percent(co2Percent);
   }
 
-  /* @see MetadataStore#setDisplayChannel(Integer, Double, Double, Float,
-   * Integer)
+  /*
+   * @see loci.formats.MetadataStore#setDisplayChannel(Integer,
+   *   Double, Double, Float, Integer)
    */
   public void setDisplayChannel(Integer channelNumber, Double blackLevel,
     Double whiteLevel, Float gamma, Integer i)
@@ -657,9 +674,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
     display.setGamma(gamma);
   }
 
-  /* @see MetadataStore#setDisplayOptions(Float, Boolean, Boolean, Boolean,
-   * Boolean, String, Integer, Integer, Integer, Integer, Integer, Integer,
-   * Integer, Integer, Integer, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setDisplayOptions(Float, Boolean,
+   *   Boolean, Boolean, Boolean, String, Integer, Integer, Integer,
+   *   Integer, Integer, Integer, Integer, Integer, Integer, Integer)
    */
   public void setDisplayOptions(Float zoom, Boolean redChannelOn,
     Boolean greenChannelOn, Boolean blueChannelOn, Boolean displayRGB,
@@ -677,8 +695,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
     DisplayChannelNode red = redChannel == null ? null : (DisplayChannelNode)
       getChild(ca, "DisplayChannel", redChannel.intValue());
     DisplayChannelNode green = greenChannel == null ? null :
-      (DisplayChannelNode) getChild(ca, "DisplayChannel",
-      greenChannel.intValue());
+      (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", greenChannel.intValue());
     DisplayChannelNode blue = blueChannel == null ? null : (DisplayChannelNode)
       getChild(ca, "DisplayChannel", blueChannel.intValue());
     DisplayChannelNode gray = grayChannel == null ? null : (DisplayChannelNode)
@@ -703,8 +721,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     display.setTStop(tstop);
   }
 
-  /* @see MetadataStore#setLightSource(String, String, String,
-   * Integer, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setLightSource(String,
+   *   String, String, Integer, Integer)
    */
   public void setLightSource(String manufacturer, String model,
     String serialNumber, Integer instrumentIndex, Integer lightIndex)
@@ -722,8 +741,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     light.setInstrument(inst);
   }
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Boolean, Boolean,
-   * String, Float, Integer, Integer, Integer, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setLaser(String, String, Integer,
+   *   Boolean, Boolean, String, Float, Integer, Integer, Integer, Integer)
    */
   public void setLaser(String type, String medium, Integer wavelength,
     Boolean frequencyDoubled, Boolean tunable, String pulse, Float power,
@@ -753,7 +773,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
     laser.setPump(pumpNode);
   }
 
-  /* @see MetadataStore#setFilament(String, Float, Integer, Integer) */
+  /*
+   * @see loci.formats.MetadataStore#setFilament(String,
+   *   Float, Integer, Integer)
+   */
   public void setFilament(String type, Float power, Integer lightSource,
     Integer num)
   {
@@ -771,7 +794,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     filament.setLightSource(light);
   }
 
-  /* @see MetadataStore#setArc(String, Float, Integer, Integer) */
+  /* @see loci.formats.MetadataStore#setArc(String, Float, Integer, Integer) */
   public void setArc(String type, Float power, Integer lightSource,
     Integer num)
   {
@@ -788,8 +811,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     arc.setLightSource(light);
   }
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float,
-   * Float, Float, Integer, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setDetector(String, String,
+   *   String, String, Float, Float, Float, Integer, Integer)
    */
   public void setDetector(String manufacturer, String model,
     String serialNumber, String type, Float gain, Float voltage, Float offset,
@@ -812,8 +836,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     detector.setInstrument(inst);
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Float,
-   * Integer, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setObjective(String,
+   *   String, String, Float, Float, Integer, Integer)
    */
   public void setObjective(String manufacturer, String model,
     String serialNumber, Float lensNA,
@@ -834,8 +859,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     obj.setInstrument(inst);
   }
 
-  /* @see MetadataStore#setExcitationFilter(String, String, String,
-   * String, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setExcitationFilter(String,
+   *   String, String, String, Integer)
    */
   public void setExcitationFilter(String manufacturer, String model,
     String lotNumber, String type, Integer filter)
@@ -852,7 +878,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
     f.setType(type);
   }
 
-  /* @see MetadataStore#setDichroic(String, String, String, Integer) */
+  /*
+   * @see loci.formats.MetadataStore#setDichroic(String,
+   *   String, String, Integer)
+   */
   public void setDichroic(String manufacturer, String model, String lotNumber,
     Integer dichroic)
   {
@@ -866,8 +895,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     d.setLotNumber(lotNumber);
   }
 
-  /* @see MetadataStore#setEmissionFilter(String, String, String,
-   * String, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setEmissionFilter(String,
+   *   String, String, String, Integer)
    */
   public void setEmissionFilter(String manufacturer, String model,
     String lotNumber, String type, Integer filter)
@@ -884,8 +914,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     f.setType(type);
   }
 
-  /* @see MetadataStore#setFilterSet(String, String, String, Integer,
-   * Integer)
+  /*
+   * @see loci.formats.MetadataStore#setFilterSet(String,
+   *   String, String, Integer, Integer)
    */
   public void setFilterSet(String manufacturer, String model, String lotNumber,
     Integer filterSet, Integer filter)
@@ -903,8 +934,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     fsNode.setFilter(filterNode);
   }
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String,
-   * Boolean, Integer, Integer, Integer, Integer)
+  /*
+   * @see loci.formats.MetadataStore#setOTF(Integer, Integer,
+   *   String, String, Boolean, Integer, Integer, Integer, Integer)
    */
   public void setOTF(Integer sizeX, Integer sizeY, String pixelType,
     String path, Boolean opticalAxisAverage, Integer instrument, Integer otf,

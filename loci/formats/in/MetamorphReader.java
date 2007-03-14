@@ -104,7 +104,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -112,7 +112,7 @@ public class MetamorphReader extends BaseTiffReader {
     return (Double) getMeta("grayMin");
   }
 
-  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -120,7 +120,7 @@ public class MetamorphReader extends BaseTiffReader {
     return (Double) getMeta("grayMax");
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {

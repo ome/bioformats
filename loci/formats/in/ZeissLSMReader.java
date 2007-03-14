@@ -302,10 +302,17 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (pixelType[0] == -1) {
         int[] bps = TiffTools.getBitsPerSample(ifd);
         switch (bps[0]) {
-          case 8: pixelType[0] = FormatTools.UINT8; break;
-          case 16: pixelType[0] = FormatTools.UINT16; break;
-          case 32: pixelType[0] = FormatTools.FLOAT; break;
-          default: pixelType[0] = FormatTools.UINT8;
+          case 8:
+            pixelType[0] = FormatTools.UINT8;
+            break;
+          case 16:
+            pixelType[0] = FormatTools.UINT16;
+            break;
+          case 32:
+            pixelType[0] = FormatTools.FLOAT;
+            break;
+          default:
+            pixelType[0] = FormatTools.UINT8;
         }
       }
 
@@ -390,17 +397,29 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       int spectralScan = DataTools.read2UnsignedBytes(ras, little);
       switch (spectralScan) {
-        case 0: put("SpectralScan", "no spectral scan"); break;
-        case 1: put("SpectralScan", "acquired with spectral scan"); break;
-        default: put("SpectralScan", "no spectral scan");
+        case 0:
+          put("SpectralScan", "no spectral scan");
+          break;
+        case 1:
+          put("SpectralScan", "acquired with spectral scan");
+          break;
+        default:
+          put("SpectralScan", "no spectral scan");
       }
 
       long type = DataTools.read4UnsignedBytes(ras, little);
       switch ((int) type) {
-        case 0: put("DataType2", "original scan data"); break;
-        case 1: put("DataType2", "calculated data"); break;
-        case 2: put("DataType2", "animation"); break;
-        default: put("DataType2", "original scan data");
+        case 0:
+          put("DataType2", "original scan data");
+          break;
+        case 1:
+          put("DataType2", "calculated data");
+          break;
+        case 2:
+          put("DataType2", "animation");
+          break;
+        default:
+          put("DataType2", "original scan data");
       }
 
       long overlayOffset = DataTools.read4UnsignedBytes(ras, little);

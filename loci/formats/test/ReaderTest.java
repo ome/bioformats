@@ -59,8 +59,8 @@ public class ReaderTest extends TestCase {
 
   // -- Static fields --
 
-  public static boolean writeConfigFiles = false;
-  public static float timeMultiplier = 1f;
+  private static boolean writeConfigFiles = false;
+  private static float timeMultiplier = 1f;
 
   private static StringBuffer configLine;
   private static Vector configFiles = new Vector();
@@ -650,9 +650,7 @@ public class ReaderTest extends TestCase {
     for (int i=0; i<configFiles.size(); i++) {
       try {
         String s = (String) configFiles.get(i);
-        if (!config.parsedFiles.contains(s)) {
-          config.addFile(s);
-        }
+        if (!config.isParsed(s)) config.addFile(s);
       }
       catch (IOException e) {
         if (FormatReader.debug) e.printStackTrace();

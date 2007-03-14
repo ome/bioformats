@@ -55,7 +55,7 @@ public class JPEGCodec extends BaseCodec implements Codec {
   }
 
   /**
-   * Decodes an image strip using JPEG compression algorithm
+   * Decodes an image strip using JPEG compression algorithm.
    *
    * @param b input data to be decompressed
    * @return The decompressed data
@@ -66,7 +66,8 @@ public class JPEGCodec extends BaseCodec implements Codec {
     BufferedImage b;
     try {
       b = ImageIO.read(new ByteArrayInputStream(input));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       System.err.println("An I/O Error occurred decompressing image." +
         " Stack dump follows:");
       e.printStackTrace();

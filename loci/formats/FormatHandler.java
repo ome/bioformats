@@ -64,7 +64,7 @@ public abstract class FormatHandler implements IFormatHandler {
     this.suffixes = suffixes == null ? new String[0] : suffixes;
   }
 
-  // -- Internal FormatHandler methods --
+  // -- Internal FormatHandler API methods --
 
   /** Fires a status update event. */
   protected void status(String message) {

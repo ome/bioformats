@@ -376,7 +376,7 @@ public class OpenlabReader extends FormatReader {
     return bi;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       if (in != null) in.close();

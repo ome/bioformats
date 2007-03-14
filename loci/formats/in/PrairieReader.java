@@ -67,7 +67,7 @@ public class PrairieReader extends FormatReader {
     super("Prairie (TIFF)", new String[] {"tif", "tiff", "cfg", "xml"});
   }
 
-  // -- FormatHandler API methods --
+  // -- IFormatHandler API methods --
 
   /**
    * Checks if the given string is a valid filename for a Prairie TIFF file.
@@ -130,7 +130,7 @@ public class PrairieReader extends FormatReader {
     }
   }
 
-  /* @see IFormatReader#getUsedFiles(String) */
+  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     String[] s = new String[files.length + 2];
@@ -140,31 +140,31 @@ public class PrairieReader extends FormatReader {
     return s;
   }
 
-  /* @see IFormatReader#getImageCount(String) */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /* @see IFormatReader#isRGB(String) */
+  /* @see loci.formats.IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return false;
   }
 
-  /* @see IFormatReader#isLittleEndian(String) */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return tiff.isLittleEndian(files[0]);
   }
 
-  /* @see IFormatReader#isInterleaved(String) */
+  /* @see loci.formats.IFormatReader#isInterleaved(String) */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return false;
   }
 
-  /* @see IFormatReader#openBytes(String, int) */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -189,7 +189,7 @@ public class PrairieReader extends FormatReader {
     return buf;
   }
 
-  /* @see IFormatReader#openImage(String, int) */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -202,13 +202,13 @@ public class PrairieReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && tiff != null) tiff.close(fileOnly);
     else if (!fileOnly) close();
   }
 
-  /* @see IFormatReader#close() */
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     files = null;
     if (tiff != null) tiff.close();
@@ -218,7 +218,7 @@ public class PrairieReader extends FormatReader {
     readCFG = false;
   }
 
-  /* @see IFormatReader#initFile(String) */
+  /* @see loci.formats.IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("PrairieReader.initFile(" + id + ")");
 

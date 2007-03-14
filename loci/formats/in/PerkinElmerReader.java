@@ -148,7 +148,7 @@ public class PerkinElmerReader extends FormatReader {
     return bi;
   }
 
-  /* @see IFormatReader#getUsedFiles(String) */
+  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
       initFile(id);
@@ -156,7 +156,7 @@ public class PerkinElmerReader extends FormatReader {
     return (String[]) allFiles.toArray(new String[0]);
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       if (tiff != null) {

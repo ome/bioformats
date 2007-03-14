@@ -103,7 +103,7 @@ public class LegacyQTWriter extends FormatWriter {
    */
   public void setQuality(int quality) { this.quality = quality; }
 
-  // -- FormatWriter API methods --
+  // -- IFormatWriter API methods --
 
   /**
    * Saves the given image to the specified (possibly already open) file.
@@ -275,7 +275,7 @@ public class LegacyQTWriter extends FormatWriter {
     }
   }
 
-  /* @see IFormatWriter#close() */
+  /* @see loci.formats.IFormatWriter#close() */
   public void close() throws FormatException, IOException {
     r = null;
     numWritten = 0;

@@ -116,7 +116,7 @@ public abstract class ImageIOReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException { }
 
   /** Closes any open files. */

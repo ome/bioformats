@@ -39,9 +39,9 @@ public class JPEGWriter extends ImageIOWriter {
       new String[] {"jpg", "jpeg", "jpe"}, "jpeg");
   }
 
-  // -- FormatWriter API methods --
+  // -- IFormatWriter API methods --
 
-  /* @see ImageIOWriter#save(String, Image, boolean) */
+  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
@@ -54,7 +54,7 @@ public class JPEGWriter extends ImageIOWriter {
     super.save(id, image, last);
   }
 
-  /* @see IFormatWriter#getPixelTypes(String) */
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
     return new int[] {FormatTools.UINT8};
   }

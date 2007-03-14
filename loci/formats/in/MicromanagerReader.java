@@ -49,29 +49,29 @@ public class MicromanagerReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#isThisType(byte[]) */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] b) {
     return tiffReader.isThisType(b);
   }
 
-  /* @see IFormatReader#getImageCount(String) */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return tiffs.size();
   }
 
-  /* @see IFormatReader#isLittleEndian(String) */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return tiffReader.isLittleEndian((String) tiffs.get(0));
   }
 
-  /* @see IFormatReader#isInterleaved(String) */
+  /* @see loci.formats.IFormatReader#isInterleaved(String) */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     return false;
   }
 
-  /* @see IFormatReader#openBytes(String, int) */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -82,7 +82,7 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.openBytes((String) tiffs.get(no), 0);
   }
 
-  /* @see IFormatReader#openBytes(String, int, byte[]) */
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -93,7 +93,7 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.openBytes((String) tiffs.get(no), 0, buf);
   }
 
-  /* @see IFormatReader#openImage(String, int) */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -104,7 +104,7 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.openImage((String) tiffs.get(no), 0);
   }
 
-  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -123,7 +123,7 @@ public class MicromanagerReader extends FormatReader {
     return new Double(min);
   }
 
-  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -142,7 +142,7 @@ public class MicromanagerReader extends FormatReader {
     return new Double(max);
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -150,7 +150,7 @@ public class MicromanagerReader extends FormatReader {
       getChannelGlobalMaximum(id, 0) != null;
   }
 
-  /* @see IFormatReader#close() */
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (tiffReader != null) tiffReader.close();
     tiffReader = null;
@@ -158,13 +158,13 @@ public class MicromanagerReader extends FormatReader {
     tiffs = null;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) tiffReader.close(fileOnly);
     else close();
   }
 
-  /* @see IFormatReader#initFile(String) */
+  /* @see loci.formats.IFormatReader#initFile(String) */
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     tiffReader = new TiffReader();
@@ -259,9 +259,9 @@ public class MicromanagerReader extends FormatReader {
     }
   }
 
-  // -- FormatHandler API methods --
+  // -- IFormatHandler API methods --
 
-  /* @see FormatHandler#isThisType(String, boolean) */
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     String[] list = parent.list();

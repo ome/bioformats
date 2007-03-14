@@ -76,7 +76,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     }
   }
 
-  // -- FormatHandler API methods --
+  // -- IFormatHandler API methods --
 
   /**
    * Checks if the given string is a valid filename for an Imaris TIFF file.

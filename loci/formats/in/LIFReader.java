@@ -137,7 +137,7 @@ public class LIFReader extends FormatReader {
     return new Double(((Integer) channelMaxs.get(series)).intValue());
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -189,7 +189,7 @@ public class LIFReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();

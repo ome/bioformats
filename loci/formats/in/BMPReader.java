@@ -97,7 +97,7 @@ public class BMPReader extends FormatReader {
     return 1;
   }
 
-  /* @see IFormatReader#isRGB(String) */
+  /* @see loci.formats.IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return bpp > 8;
@@ -190,7 +190,7 @@ public class BMPReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();

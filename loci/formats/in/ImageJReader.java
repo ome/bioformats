@@ -183,7 +183,7 @@ public class ImageJReader extends FormatReader {
     }
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (!fileOnly) close();
   }

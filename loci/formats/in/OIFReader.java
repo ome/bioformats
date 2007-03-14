@@ -132,7 +132,7 @@ public class OIFReader extends FormatReader {
     return new Double((String) getMeta("[Image Parameters] - DataMax"));
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -211,24 +211,24 @@ public class OIFReader extends FormatReader {
     return thumbReader.openImage(thumbId, 0);
   }
 
-  /* @see IFormatReader#getThumbSizeX(String) */
+  /* @see loci.formats.IFormatReader#getThumbSizeX(String) */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return openThumbImage(id, 0).getWidth();
   }
 
-  /* @see IFormatReader#getThumbSizeY(String) */
+  /* @see loci.formats.IFormatReader#getThumbSizeY(String) */
   public int getThumbSizeY(String id) throws FormatException, IOException {
     return openThumbImage(id, 0).getHeight();
   }
 
-  /* @see IFormatReader#getUsedFiles(String) */
+  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     String[] s = (String[]) usedFiles.toArray(new String[0]);
     return s;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       if (reader != null) reader.close();

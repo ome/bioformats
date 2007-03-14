@@ -65,7 +65,7 @@ public abstract class ImageIOWriter extends FormatWriter {
     this.kind = kind;
   }
 
-  // -- FormatWriter API methods --
+  // -- IFormatWriter API methods --
 
   /**
    * Saves the given image to the specified (possibly already open) file.
@@ -84,7 +84,7 @@ public abstract class ImageIOWriter extends FormatWriter {
     ImageIO.write(img, kind, out);
   }
 
-  /* @see IFormatWriter#close() */
+  /* @see loci.formats.IFormatWriter#close() */
   public void close() throws FormatException, IOException {
     if (out != null) out.close();
     out = null;
@@ -94,7 +94,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return false; }
 
-  /* @see IFormatWriter#getPixelTypes(String) */
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
     return new int[] {FormatTools.UINT8, FormatTools.UINT16};
   }

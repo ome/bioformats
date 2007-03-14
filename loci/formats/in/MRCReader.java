@@ -64,7 +64,7 @@ public class MRCReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -72,7 +72,7 @@ public class MRCReader extends FormatReader {
     return new Double((String) getMeta("Minimum pixel value"));
   }
 
-  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -80,7 +80,7 @@ public class MRCReader extends FormatReader {
     return new Double((String) getMeta("Maximum pixel value"));
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -148,7 +148,7 @@ public class MRCReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();

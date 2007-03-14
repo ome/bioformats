@@ -81,7 +81,7 @@ public class ImageTester extends JPanel implements WindowListener {
     return new Dimension(width, height);
   }
 
-  // -- WindowListener methods --
+  // -- WindowListener API methods --
 
   public void windowActivated(WindowEvent e) { }
   public void windowClosed(WindowEvent e) { }

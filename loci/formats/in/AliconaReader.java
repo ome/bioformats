@@ -73,7 +73,7 @@ public class AliconaReader extends FormatReader {
     return numImages;
   }
 
-  /* @see IFormatReader#isRGB(String) */
+  /* @see loci.formats.IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
   }
@@ -136,7 +136,7 @@ public class AliconaReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();

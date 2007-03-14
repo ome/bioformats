@@ -117,7 +117,7 @@ public class FluoviewReader extends BaseTiffReader {
     return new Double(s);
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -125,7 +125,7 @@ public class FluoviewReader extends BaseTiffReader {
     return getMeta("Min value") != null && getMeta("Max value") != null;
   }
 
-  // -- FormatHandler API methods --
+  // -- IFormatHandler API methods --
 
   /**
    * Checks if the given string is a valid filename for an Fluoview TIFF file.

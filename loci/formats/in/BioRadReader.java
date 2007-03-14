@@ -95,7 +95,7 @@ public class BioRadReader extends FormatReader {
     return npic;
   }
 
-  /* @see IFormatReader#isRGB(String) */
+  /* @see loci.formats.IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
   }
@@ -126,7 +126,7 @@ public class BioRadReader extends FormatReader {
     return new Double(((Integer) getMeta("ramp1_max")).intValue());
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -171,7 +171,7 @@ public class BioRadReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();

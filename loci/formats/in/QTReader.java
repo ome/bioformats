@@ -287,13 +287,13 @@ public class QTReader extends FormatReader {
     return true;
   }
 
-  /* @see FormatReader#setMetadataStore(MetadataStore) */
+  /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     super.setMetadataStore(store);
     if (useLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see FormatReader#swapDimensions(String, String) */
+  /* @see loci.formats.IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
@@ -554,7 +554,7 @@ public class QTReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();

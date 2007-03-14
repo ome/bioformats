@@ -27,7 +27,7 @@ package loci.formats;
 import java.io.*;
 
 /**
- * Interface for random access into structures (files or arrays).
+ * Interface for random access into structures (e.g., files or arrays).
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

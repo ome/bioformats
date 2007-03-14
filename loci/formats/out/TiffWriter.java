@@ -100,7 +100,7 @@ public class TiffWriter extends FormatWriter {
     }
   }
 
-  // -- FormatWriter API methods --
+  // -- IFormatWriter API methods --
 
   /**
    * Saves the given image to the specified (possibly already open) file.
@@ -116,7 +116,7 @@ public class TiffWriter extends FormatWriter {
     saveImage(id, image, h, last);
   }
 
-  /* @see IFormatWriter#close() */
+  /* @see loci.formats.IFormatWriter#close() */
   public void close() throws FormatException, IOException {
     if (out != null) out.close();
     out = null;

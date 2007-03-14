@@ -225,7 +225,7 @@ public class ICSReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#getUsedFiles(String) */
+  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
     if (versionTwo) {
@@ -234,7 +234,7 @@ public class ICSReader extends FormatReader {
     return new String[] {currentIdsId, currentIcsId};
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && idsIn != null) idsIn.close();
     else if (!fileOnly) close();

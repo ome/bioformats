@@ -38,34 +38,34 @@ import org.openmicroscopy.is.*;
  * is properly formed.
  * The 'id' parameter should take one of the following forms:
  *
- * <server>?user=<username>&password=<password>&id=<image id>
- * <server>?key=<session key>&id=<image id>
+ * [server]?user=[username]&password=[password]&id=[image id]
+ * [server]?key=[session key]&id=[image id]
  *
- * where <server> is the URL of the OME data server (not the image server).
+ * where [server] is the URL of the OME data server (not the image server).
  */
 public class OMEReader extends FormatReader {
 
   // -- Fields --
 
-  /** String containing authentication information */
+  /** String containing authentication information. */
   private String loginString;
 
-  /** Number of images */
+  /** Number of images. */
   private int numImages;
 
-  /** Current server */
+  /** Current server. */
   private String server;
 
-  /** Session key for authentication */
+  /** Session key for authentication. */
   private String sessionKey;
 
-  /** OME image ID */
+  /** OME image ID. */
   private String imageId;
 
-  /** Thumbnail associated with the current dataset */
+  /** Thumbnail associated with the current dataset. */
   private BufferedImage thumb;
 
-  /** Download helpers */
+  /** Download helpers. */
   private DataServices rs;
   private RemoteCaller rc;
   private DataFactory df;
@@ -74,133 +74,12 @@ public class OMEReader extends FormatReader {
 
   // -- Constructor --
 
-  /** Constructs a new OME reader */
+  /** Constructs a new OME reader. */
   public OMEReader() { super("Open Microscopy Environment (OME)", "*"); }
 
-  // -- FormatHandler API methods --
+  // -- Internal FormatReader API methods --
 
-  /* @see IFormatHandler#isThisType(String) */
-  public boolean isThisType(String id) {
-    return id.indexOf("id") != -1 && (id.indexOf("password") != -1 ||
-      id.indexOf("sessionKey") != -1);
-  }
-
-  // -- FormatReader API methods --
-
-  /* @see IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return true;
-  }
-
-  /* @see IFormatReader#getImageCount(String) */
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numImages;
-  }
-
-  /* @see IFormatReader#isRGB(String) */
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return false;
-  }
-
-  /* @see IFormatReader#getThumbSizeX(String) */
-  public int getThumbSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return thumb.getWidth();
-  }
-
-  /* @see IFormatReader#getThumbSizeY(String) */
-  public int getThumbSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return thumb.getHeight();
-  }
-
-  /* @see IFormatReader#isLittleEndian(String) */
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see IFormatReader#isInterleaved(String) */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= numImages) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    int[] indices = getZCTCoords(id, no);
-    try {
-      byte[] b = pf.getPlane(pixels, indices[0], indices[1], indices[2], false);
-      updateMinMax(b, no);
-      return b;
-    }
-    catch (ImageServerException e) {
-      throw new FormatException(e);
-    }
-  }
-
-  /* @see IFormatReader#openImage(String, int) */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
-      sizeY[0], 1, false, FormatTools.getBytesPerPixel(pixelType[0]), true);
-    updateMinMax(b, no);
-    return b;
-  }
-
-  /* @see IFormatReader#openThumbBytes(String, int) */
-  public byte[] openThumbBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= numImages) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    byte[][] b = ImageTools.getPixelBytes(openThumbImage(id, no), true);
-    byte[] rtn = new byte[b.length * b[0].length];
-    for (int i=0; i<b.length; i++) {
-      System.arraycopy(b[i], 0, rtn, i*b[0].length, b[i].length);
-    }
-    return rtn;
-  }
-
-  /* @see IFormatReader#openThumbImage(String, int) */
-  public BufferedImage openThumbImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= numImages) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    return thumb;
-  }
-
-  /* @see IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && rc != null) rc.logout();
-    else close();
-  }
-
-  /* @see IFormatReader#close() */
-  public void close() throws FormatException, IOException {
-    if (rc != null) rc.logout();
-    thumb = null;
-    rs = null;
-    rc = null;
-    df = null;
-    pf = null;
-    pixels = null;
-    currentId = null;
-    loginString = null;
-  }
-
-  /* @see IFormatReader#initFile(String) */
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (id.equals(loginString)) return;
     super.initFile(id);
@@ -303,6 +182,129 @@ public class OMEReader extends FormatReader {
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    return true;
+  }
+
+  /* @see loci.formats.IFormatReader#getImageCount(String) */
+  public int getImageCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numImages;
+  }
+
+  /* @see loci.formats.IFormatReader#isRGB(String) */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return false;
+  }
+
+  /* @see loci.formats.IFormatReader#getThumbSizeX(String) */
+  public int getThumbSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return thumb.getWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getThumbSizeY(String) */
+  public int getThumbSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return thumb.getHeight();
+  }
+
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    return true;
+  }
+
+  /* @see loci.formats.IFormatReader#isInterleaved(String) */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */
+  public byte[] openBytes(String id, int no) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= numImages) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    int[] indices = getZCTCoords(id, no);
+    try {
+      byte[] b = pf.getPlane(pixels, indices[0], indices[1], indices[2], false);
+      updateMinMax(b, no);
+      return b;
+    }
+    catch (ImageServerException e) {
+      throw new FormatException(e);
+    }
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(String, int) */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
+      sizeY[0], 1, false, FormatTools.getBytesPerPixel(pixelType[0]), true);
+    updateMinMax(b, no);
+    return b;
+  }
+
+  /* @see loci.formats.IFormatReader#openThumbBytes(String, int) */
+  public byte[] openThumbBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= numImages) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    byte[][] b = ImageTools.getPixelBytes(openThumbImage(id, no), true);
+    byte[] rtn = new byte[b.length * b[0].length];
+    for (int i=0; i<b.length; i++) {
+      System.arraycopy(b[i], 0, rtn, i*b[0].length, b[i].length);
+    }
+    return rtn;
+  }
+
+  /* @see loci.formats.IFormatReader#openThumbImage(String, int) */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= numImages) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    return thumb;
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly && rc != null) rc.logout();
+    else close();
+  }
+
+  /* @see loci.formats.IFormatReader#close() */
+  public void close() throws FormatException, IOException {
+    if (rc != null) rc.logout();
+    thumb = null;
+    rs = null;
+    rc = null;
+    df = null;
+    pf = null;
+    pixels = null;
+    currentId = null;
+    loginString = null;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String) */
+  public boolean isThisType(String id) {
+    return id.indexOf("id") != -1 && (id.indexOf("password") != -1 ||
+      id.indexOf("sessionKey") != -1);
   }
 
   // -- Main method --

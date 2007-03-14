@@ -118,7 +118,7 @@ public class LeicaReader extends BaseTiffReader {
     }
   }
 
-  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -127,7 +127,7 @@ public class LeicaReader extends BaseTiffReader {
     return min == null ? null : new Double(min);
   }
 
-  /* @see IFormatReader#getChannelGlobalMaximum(Straxg, axt) */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(Straxg, axt) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -136,7 +136,7 @@ public class LeicaReader extends BaseTiffReader {
     return max == null ? null : new Double(max);
   }
 
-  /* @see IFormatReader#isMinMaxPopulated(String) */
+  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
   public boolean isMinMaxPopulated(String id)
     throws FormatException, IOException
   {
@@ -232,7 +232,7 @@ public class LeicaReader extends BaseTiffReader {
     return b;
   }
 
-  /* @see IFormatReader#getUsedFiles(String) */
+  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
       initFile(id);
@@ -247,7 +247,7 @@ public class LeicaReader extends BaseTiffReader {
     return (String[]) v.toArray(new String[0]);
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       if (in != null) in.close();
@@ -625,7 +625,7 @@ public class LeicaReader extends BaseTiffReader {
     }
   }
 
-  // -- FormatHandler API methods --
+  // -- IFormatHandler API methods --
 
   /**
    * Checks if the given string is a valid filename for a Leica file.

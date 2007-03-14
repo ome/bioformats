@@ -127,7 +127,7 @@ public class ZeissZVIReader extends FormatReader {
   /** Constructs a new ZeissZVI reader. */
   public ZeissZVIReader() { super("Zeiss Vision Image (ZVI)", "zvi"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /** Checks if the given block is a valid header for an Zeiss ZVI file. */
   public boolean isThisType(byte[] block) {
@@ -214,13 +214,13 @@ public class ZeissZVIReader extends FormatReader {
     return false;
   }
 
-  /* @see FormatReader#setMetadataStore(MetadataStore) */
+  /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     super.setMetadataStore(store);
     if (noPOI || needLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see FormatReader#swapDimensions(String, String) */
+  /* @see loci.formats.IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
@@ -271,9 +271,9 @@ public class ZeissZVIReader extends FormatReader {
       if (bpp == 3) {
         // reverse bytes in groups of 3 to account for BGR storage
         for (int i=0; i<buf.length; i+=3) {
-          byte r = buf[i + 2];
+          byte b = buf[i + 2];
           buf[i + 2] = buf[i];
-          buf[i] = r;
+          buf[i] = b;
         }
       }
 
@@ -296,7 +296,7 @@ public class ZeissZVIReader extends FormatReader {
     return b;
   }
 
-  /* @see IFormatReader#close(boolean) */
+  /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
       if (ras != null) ras.close();

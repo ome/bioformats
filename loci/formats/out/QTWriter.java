@@ -147,7 +147,7 @@ public class QTWriter extends FormatWriter {
    */
   public void setQuality(int quality) { this.quality = quality; }
 
-  // -- FormatWriter API methods --
+  // -- IFormatWriter API methods --
 
   /**
    * Saves the given image to the specified (possibly already open) file.
@@ -578,7 +578,7 @@ public class QTWriter extends FormatWriter {
     }
   }
 
-  /* @see IFormatWriter#close() */
+  /* @see loci.formats.IFormatWriter#close() */
   public void close() throws FormatException, IOException {
     if (out != null) out.close();
     out = null;
@@ -592,7 +592,7 @@ public class QTWriter extends FormatWriter {
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
 
-  /* @see IFormatWriter#getPixelTypes(String) */
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String id) throws FormatException, IOException {
     return new int[] {FormatTools.UINT8, FormatTools.UINT16};
   }

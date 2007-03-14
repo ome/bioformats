@@ -253,7 +253,7 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns an array of filenames needed to open this dataset. */
   String[] getUsedFiles(String id) throws FormatException, IOException;
 
-  /** Returns the current file */
+  /** Returns the current file. */
   String getCurrentFile();
 
   /**

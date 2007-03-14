@@ -28,19 +28,28 @@ import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
 
-/** Stores data from a set of config files */
+/** Stores data from a set of config files. */
 public class ConfigurationFiles {
+
+  // -- Fields --
+
   private Hashtable entries = new Hashtable();
 
-  public Vector parsedFiles = new Vector();
+  private Vector parsedFiles = new Vector();
 
   private int currentSeries = 0;
+
+  // -- Static ConfigurationFiles API methods --
 
   public static ConfigurationFiles newInstance() {
     return new ConfigurationFiles();
   }
 
+  // -- ConfigurationFiles API methods --
+
   public int numFiles() { return entries.size(); }
+
+  public boolean isParsed(String file) { return parsedFiles.contains(file); }
 
   public boolean initialized(String id) {
     return entries.containsKey(id) && getNumSeries(id) <= currentSeries;
@@ -231,19 +240,21 @@ public class ConfigurationFiles {
     return ((ConfigEntry) entries.get(id)).test;
   }
 
-  // -- Helper class --
+  // -- Helper classes --
 
+  /** Helper class representing a configuration entry for a dataset. */
   public class ConfigEntry {
-    public int numSeries;
-    public int[][] dimensions;
-    public String[] orders;
-    public boolean[] interleaved;
-    public boolean[] rgb;
-    public int[][] thumbs;
-    public int[] type;
-    public boolean[] littleEndian;
-    public float access;
-    public int mem;
-    public boolean test;
+    private int numSeries;
+    private int[][] dimensions;
+    private String[] orders;
+    private boolean[] interleaved;
+    private boolean[] rgb;
+    private int[][] thumbs;
+    private int[] type;
+    private boolean[] littleEndian;
+    private float access;
+    private int mem;
+    private boolean test;
   }
+
 }

@@ -534,7 +534,6 @@ public class OMEUploader implements Uploader {
     }
   }
 
-
   // -- Helper methods --
 
   /** Send a request string to the server and return the response. */
@@ -565,8 +564,7 @@ public class OMEUploader implements Uploader {
   }
 
   /** Build an XML-RPC request. */
-  private String buildXML(String method, Vector params) throws UploadException
-  {
+  private String buildXML(String method, Vector params) throws UploadException {
     try {
       String request = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" +
         "<methodCall><methodName>" + method + "</methodName><params>";
