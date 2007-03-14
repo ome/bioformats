@@ -197,7 +197,6 @@ public class LeicaReader extends BaseTiffReader {
     return b;
   }
 
-  /*
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -205,13 +204,11 @@ public class LeicaReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiff[series][no].setColorTableIgnored(ignoreColorTable);
     tiff[series][no].openBytes((String) files[series].get(no), 0, buf);
     tiff[series][no].close();
     updateMinMax(buf, no);
     return buf;
   }
-  */
 
   /** Obtains the specified image from the given Leica file. */
   public BufferedImage openImage(String id, int no)
