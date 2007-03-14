@@ -829,9 +829,9 @@ public class OMEUploader implements Uploader {
    * A command-line tool for uploading data to an
    * OME server using client-side Java tools.
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     String server = null, user = null, pass = null;
-    Vector files = new Vector();
+    String id = null;
 
     // parse command-line arguments
     boolean doUsage = false;
@@ -850,17 +850,17 @@ public class OMEUploader implements Uploader {
             doUsage = true;
           }
           else {
-            System.out.println("Error: unknown flag: " + param);
-            System.out.println();
+            System.err.println("Error: unknown flag: " + param);
+            System.err.println();
             doUsage = true;
             break;
           }
         }
         catch (ArrayIndexOutOfBoundsException exc) {
           if (i == args.length - 1) {
-            System.out.println("Error: flag " + param +
+            System.err.println("Error: flag " + param +
               " must be followed by a parameter value.");
-            System.out.println();
+            System.err.println();
             doUsage = true;
             break;
           }
@@ -868,13 +868,18 @@ public class OMEUploader implements Uploader {
         }
       }
       else {
-        files.add(args[i]);
+        if (id == null) id = args[i];
+        else {
+          System.err.println("Error: unknown argument: " + args[i]);
+          System.err.println();
+        }
       }
     }
+    if (id == null) doUsage = true;
     if (doUsage) {
-      System.out.println("Usage: omeul [-s server.address] " +
+      System.err.println("Usage: omeul [-s server.address] " +
         "[-u username] [-p password] filename");
-      System.out.println();
+      System.err.println();
       System.exit(1);
     }
 
@@ -897,34 +902,19 @@ public class OMEUploader implements Uploader {
     }
 
     if (server == null || user == null || pass == null) {
-      System.out.println("Error: could not obtain server login information");
+      System.err.println("Error: could not obtain server login information");
       System.exit(2);
     }
     System.out.println("Using server " + server + " as user " + user);
 
     // create image uploader
-/* CTR TODO
-    OMEUploader uploader = new OMEUploader();
-    uploader.addTaskListener(new TaskListener() {
-      public void taskUpdated(TaskEvent e) {
-        System.out.println(e.getStatusMessage());
-      }
-    });
-
-    for (int i=0; i<files.size(); i++) {
-      FilePattern fp = new FilePattern((String) files.get(i));
-      int[] lengths = fp.getCount();
-      if (lengths.length == 0) {
-        lengths = new int[1];
-        lengths[0] = 1;
-      }
-      
-      loci.visbio.data.Dataset data = new loci.visbio.data.Dataset(
-        (String) files.get(i), fp.getPattern(), fp.getFiles(), lengths, 
-        new String[lengths.length]);
-      uploader.upload(data, server, user, pass);
-    }
-*/
+    OMEUploader uploader = new OMEUploader(server, user, pass);
+//    uploader.addUploadListener(new UploadListener() {
+//      public void taskUpdated(UploadEvent e) {
+//        System.out.println(e.getStatusMessage());
+//      }
+//    });
+    uploader.uploadFile(id, true);
   }
 
 }
