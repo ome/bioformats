@@ -23,10 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.ome;
 
-import java.io.*;
 import java.util.*;
-import loci.formats.FilePattern;
 import loci.formats.ome.OMEUploader;
+import loci.formats.ome.UploadException;
 import loci.visbio.*;
 
 /**
@@ -57,11 +56,9 @@ public class ImageUploader {
     try {  
       OMEUploader ul = new OMEUploader(server, username, password);
       String[] ids = data.getFilenames();
-      for (int i=0; i<ids.length; i++) {
-        ul.uploadFile(ids[0], true);
-      }
+      ul.uploadFile(ids[0], true);
     }
-    catch (Exception exc) {
+    catch (UploadException exc) {
       notifyListeners(new TaskEvent(1, 1,
         "Error uploading (see error console for details)"));
       exc.printStackTrace();
@@ -90,108 +87,6 @@ public class ImageUploader {
         TaskListener l = (TaskListener) listeners.elementAt(i);
         l.taskUpdated(e);
       }
-    }
-  }
-
-  // -- Main method --
-
-  /**
-   * A command-line tool for uploading data to an
-   * OME server using client-side Java tools.
-   */
-  public static void main(String[] args) {
-    String server = null, user = null, pass = null;
-    Vector files = new Vector();
-
-    // parse command-line arguments
-    boolean doUsage = false;
-    if (args.length == 0) doUsage = true;
-    for (int i=0; i<args.length; i++) {
-      if (args[i].startsWith("-")) {
-        // argument is a command line flag
-        String param = args[i];
-        try {
-          if (param.equalsIgnoreCase("-s")) server = args[++i];
-          else if (param.equalsIgnoreCase("-u")) user = args[++i];
-          else if (param.equalsIgnoreCase("-p")) pass = args[++i];
-          else if (param.equalsIgnoreCase("-h") ||
-            param.equalsIgnoreCase("-?"))
-          {
-            doUsage = true;
-          }
-          else {
-            System.out.println("Error: unknown flag: " + param);
-            System.out.println();
-            doUsage = true;
-            break;
-          }
-        }
-        catch (ArrayIndexOutOfBoundsException exc) {
-          if (i == args.length - 1) {
-            System.out.println("Error: flag " + param +
-              " must be followed by a parameter value.");
-            System.out.println();
-            doUsage = true;
-            break;
-          }
-          else throw exc;
-        }
-      }
-      else {
-        files.add(args[i]);
-      }
-    }
-    if (doUsage) {
-      System.out.println("Usage: omeul [-s server.address] " +
-        "[-u username] [-p password] filename");
-      System.out.println();
-      System.exit(1);
-    }
-
-    // ask for information if necessary
-    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
-    if (server == null) {
-      System.out.print("Server address? ");
-      try { server = cin.readLine(); }
-      catch (IOException exc) { }
-    }
-    if (user == null) {
-      System.out.print("Username? ");
-      try { user = cin.readLine(); }
-      catch (IOException exc) { }
-    }
-    if (pass == null) {
-      System.out.print("Password? ");
-      try { pass = cin.readLine(); }
-      catch (IOException exc) { }
-    }
-
-    if (server == null || user == null || pass == null) {
-      System.out.println("Error: could not obtain server login information");
-      System.exit(2);
-    }
-    System.out.println("Using server " + server + " as user " + user);
-
-    // create image uploader
-    ImageUploader uploader = new ImageUploader();
-    uploader.addTaskListener(new TaskListener() {
-      public void taskUpdated(TaskEvent e) {
-        System.out.println(e.getStatusMessage());
-      }
-    });
-
-    for (int i=0; i<files.size(); i++) {
-      FilePattern fp = new FilePattern((String) files.get(i));
-      int[] lengths = fp.getCount();
-      if (lengths.length == 0) {
-        lengths = new int[1];
-        lengths[0] = 1;
-      }
-      
-      loci.visbio.data.Dataset data = new loci.visbio.data.Dataset(
-        (String) files.get(i), fp.getPattern(), fp.getFiles(), lengths, 
-        new String[lengths.length]);
-      uploader.upload(data, server, user, pass);
     }
   }
 
