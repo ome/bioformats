@@ -152,7 +152,7 @@ public class LIFReader extends FormatReader {
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
     byte[] buf = new byte[sizeX[series] * sizeY[series] *
-      (bpp / 8) * sizeC[series]];
+      (bpp / 8) * getRGBChannelCount(id)];
     return openBytes(id, no, buf);
   }
 
@@ -166,13 +166,16 @@ public class LIFReader extends FormatReader {
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
     int bytes = bpp / 8;
-    if (buf.length < sizeX[series] * sizeY[series] * bytes * sizeC[series]) {
+    if (buf.length < sizeX[series] * sizeY[series] * bytes * 
+      getRGBChannelCount(id)) 
+    {
       throw new FormatException("Buffer too small.");
     }
 
     int offset = ((Long) offsets.get(series)).intValue();
     in.seek(offset +
-      sizeX[series] * sizeY[series] * bytes * no * sizeC[series]);
+      sizeX[series] * sizeY[series] * bytes * no * getRGBChannelCount(id));
+   
     in.read(buf);
     updateMinMax(buf, no);
     return buf;
