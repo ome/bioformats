@@ -215,6 +215,12 @@ public final class FormatTools {
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
 
+    System.out.println("Initializing reader");
+    reader.addStatusListener(new StatusListener() {
+      public void statusUpdated(StatusEvent e) {
+        System.out.println("\t" + e.getStatusMessage());
+      }
+    });
     reader.setColorTableIgnored(ignoreColors);
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(true);
