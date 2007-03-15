@@ -211,13 +211,9 @@ public class AVIReader extends FormatReader {
 
     if (type.equals("RIFF")) {
       bigChunkSize = size;
-      if (!fcc.equals("AVI ")) {
-        whine("Sorry, AVI RIFF format not found.");
-      }
+      if (!fcc.equals("AVI ")) whine("Sorry, AVI RIFF format not found.");
     }
-    else {
-      whine("Not an AVI file");
-    }
+    else whine("Not an AVI file");
 
     pos = in.getFilePointer();
     long spos = pos;
@@ -556,7 +552,7 @@ public class AVIReader extends FormatReader {
   }
 
   /**
-   * Throw a FormatException to apologize for the fact that
+   * Throws a FormatException to apologize for the fact that
    * AVI support is suboptimal.
    */
   private void whine(String msg) throws FormatException {
