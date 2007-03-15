@@ -81,8 +81,7 @@ public class OMEUploader implements Uploader {
   // -- Constructors --
 
   /** Construct a new OMEUploader for the specified server. */
-  public OMEUploader(String server) {
-    this.server = server;
+  public OMEUploader() {
     files = new Vector();
   }
 
@@ -122,12 +121,14 @@ public class OMEUploader implements Uploader {
     throws UploadException
   {
     this.server = server + "/shoola";
-    omeis = server + "/cgi-bin/omeis";
-
-    if (!omeis.startsWith("http://")) omeis = "http://" + omeis;
     if (!this.server.startsWith("http://")) {
       this.server = "http://" + this.server;
     }
+    omeis = this.server + "/cgi-bin/omeis";
+    this.user = user;
+    this.pass = pass;
+
+    status("Logging in to " + server);
 
     Vector v = new Vector();
     v.add(user);
@@ -154,10 +155,14 @@ public class OMEUploader implements Uploader {
 
   /** Log all users out of the current server. */
   public void logout() {
+    status("Logging out");
+
     Vector v = new Vector();
     v.add(sessionKey);
     try { sendRequest(buildXML("closeSession", v)); }
-    catch (Exception e) { /* do nothing; we don't care if this fails */ }
+    catch (UploadException e) {
+      // do nothing; we don't care if this fails
+    }
     validLogin = false;
   }
 
@@ -634,6 +639,8 @@ public class OMEUploader implements Uploader {
   private String newPixels(int x, int y, int z, int c, int t, int bpp)
     throws UploadException
   {
+    status("Creating pixels file");
+
     Vector keys = new Vector();
     Vector values = new Vector();
 
@@ -650,6 +657,8 @@ public class OMEUploader implements Uploader {
 
   /** Close the given pixels file. */
   private String closePixels(String id) throws UploadException {
+    status("Closing pixels file");
+
     Vector keys = new Vector();
     Vector values = new Vector();
 
@@ -668,6 +677,8 @@ public class OMEUploader implements Uploader {
   private int uploadPlane(byte[] b, int z, int c, int t, String id,
     boolean bigEndian) throws UploadException
   {
+    status("Uploading plane: Z=" + z + ", C=" + c + ", T=" + t);
+
     Vector keys = new Vector();
     Vector values = new Vector();
 
@@ -699,6 +710,8 @@ public class OMEUploader implements Uploader {
    * @param int size - the number of pixel bytes we expect to upload
    */
   private void setupImport(long size) throws UploadException {
+    status("Preparing to upload");
+
     if (files != null) files.clear();
 
     try {
@@ -746,6 +759,8 @@ public class OMEUploader implements Uploader {
   private void uploadMetadata(MetadataStore store, String id, Integer dataset)
     throws UploadException
   {
+    status("Uploading metadata");
+
     OMEXMLMetadataStore xml = (OMEXMLMetadataStore) store;
 
     // upload the OME-XML
@@ -810,8 +825,10 @@ public class OMEUploader implements Uploader {
     of.setImage(image);
     try {
       for (int i=0; i<files.size(); i++) {
-        OriginalFile f = pf.uploadFile(r, of, new File((String) files.get(i)));
-        f.setPath((String) files.get(i));
+        String filename = (String) files.get(i);
+        status("Uploading file " + filename);
+        OriginalFile f = pf.uploadFile(r, of, new File(filename));
+        f.setPath(filename);
         df.markForUpdate(f);
       }
     }
@@ -819,6 +836,8 @@ public class OMEUploader implements Uploader {
 
     of.setStatus("FINISHED");
     df.update(of);
+
+    status("Linking pixels");
 
     ModuleExecution ii = im.getImageImportMEX(image);
     ii.setExperimenter(exp);
@@ -953,12 +972,13 @@ public class OMEUploader implements Uploader {
     System.out.println("Using server " + server + " as user " + user);
 
     // create image uploader
-    OMEUploader uploader = new OMEUploader(server, user, pass);
-//    uploader.addUploadListener(new UploadListener() {
-//      public void taskUpdated(UploadEvent e) {
-//        System.out.println(e.getStatusMessage());
-//      }
-//    });
+    OMEUploader uploader = new OMEUploader();
+    uploader.addStatusListener(new StatusListener() {
+      public void statusUpdated(StatusEvent e) {
+        System.out.println(e.getStatusMessage());
+      }
+    });
+    uploader.login(server, user, pass);
     uploader.uploadFile(id, true);
   }
 
