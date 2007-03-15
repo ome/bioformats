@@ -1138,7 +1138,7 @@ public class Importer implements ItemListener {
     try {
       // convert to RGB if needed
 
-      if (mergeChannels && r.getSizeC(id) > 1) {
+      if (mergeChannels && r.getSizeC(id) > 1 && r.getSizeC(id) < 4) {
         int c = r.getSizeC(id);
         ImageStack s = imp.getStack();
         ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
@@ -1155,30 +1155,25 @@ public class Importer implements ItemListener {
         int sizeZ = r.getSizeZ(id);
         int sizeT = r.getSizeT(id);
 
-        int extraC = 1;
-        if (c > 4) {
-          extraC *= (c % 3 == 0 ? 4 : 3);
-          c /= extraC;
-        }
-
         for (int z=0; z<sizeZ; z++) {
           for (int t=0; t<sizeT; t++) {
             byte[][] bytes = new byte[c][];
-            for (int ch1=0; ch1<extraC; ch1++) {
-              for (int ch2=0; ch2<c; ch2++) {
-                int ndx = r.getIndex(id, z, ch1*c + ch2, t) + 1;
-                bytes[ch2] = (byte[]) s.getProcessor(ndx).getPixels();
-              }
-              ColorProcessor cp =
-                new ColorProcessor(s.getWidth(), s.getHeight());
-              cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
-                new byte[s.getWidth() * s.getHeight()]);
-              int ndx = r.getIndex(id, z, ch1*c + c - 1, t) + 1;
-              newStack.addSlice(s.getSliceLabel(ndx), cp);
+            for (int ch1=0; ch1<c; ch1++) {
+              int ndx = r.getIndex(id, z, ch1, t) + 1;
+              bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
             }
+            ColorProcessor cp =
+              new ColorProcessor(s.getWidth(), s.getHeight());
+            cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
+              new byte[s.getWidth() * s.getHeight()]);
+            int ndx = r.getIndex(id, z, c - 1, t) + 1;
+            newStack.addSlice(s.getSliceLabel(ndx), cp);
           }
         }
         imp.setStack(imp.getTitle(), newStack);
+      }
+      else if (mergeChannels && r.getSizeC(id) >= 4) {
+        IJ.showMessage("Can only merge 2 or 3 channels.");
       }
 
       imp.setDimensions(
