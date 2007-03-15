@@ -156,7 +156,7 @@ public class AliconaReader extends FormatReader {
     in = new RandomAccessStream(id);
 
     // check that this is a valid AL3D file
-
+    status("Verifying Alicona format");
     byte[] check = new byte[17];
     in.read(check);
     String magicString = new String(check);
@@ -167,6 +167,8 @@ public class AliconaReader extends FormatReader {
 
     // now we read a series of tags
     // each one is 52 bytes - 20 byte key + 30 byte value + 2 byte CRLF
+
+    status("Reading tags");
 
     byte[] keyBytes = new byte[20];
     byte[] valueBytes = new byte[30];
@@ -195,6 +197,8 @@ public class AliconaReader extends FormatReader {
         textureOffset = Integer.parseInt(value);
       }
     }
+
+    status("Populating metadata");
 
     numBytes =
       (int) (in.length() - textureOffset) / (width * height * numImages);
