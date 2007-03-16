@@ -65,7 +65,7 @@ public class MacroManager implements Runnable {
   public void run() {
     while (true) {
       String cmds = textBox.getText();
-      if (previousText == null || !cmds.equals(previousText)) { 
+      if (previousText == null || !cmds.equals(previousText)) {
         StringTokenizer st = new StringTokenizer(cmds, "\n");
         for (int i=0; i<macros.size(); i++) st.nextToken();
         while (st.hasMoreTokens()) {
@@ -77,6 +77,10 @@ public class MacroManager implements Runnable {
         }
         previousText = cmds; 
       }
+      try {
+        Thread.sleep(50);
+      }
+      catch (InterruptedException exc) { exc.printStackTrace(); }
     }
   }
 

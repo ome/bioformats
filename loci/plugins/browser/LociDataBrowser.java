@@ -82,11 +82,11 @@ public class LociDataBrowser {
   /** Cache manager (if virtual stack is used). */
   protected CacheManager manager;
 
-  /** Macro manager - allows us to perform operations on a virtual stack. */
-  protected MacroManager macro;
+//  /** Macro manager - allows us to perform operations on a virtual stack. */
+//  protected MacroManager macro;
 
-  /** Macro manager thread. */
-  protected Thread macroThread;
+//  /** Macro manager thread. */
+//  protected Thread macroThread;
 
   /** Series to use in a multi-series file. */
   protected int series;
@@ -99,9 +99,10 @@ public class LociDataBrowser {
   public LociDataBrowser() {
     fStitch = new FileStitcher();
     reader = new ChannelSeparator(fStitch);
-    macro = new MacroManager();
-    macroThread = new Thread(macro, "MacroRecorder");
-    macroThread.start(); 
+// TODO: macros
+//    macro = new MacroManager();
+//    macroThread = new Thread(macro, "MacroRecorder");
+//    macroThread.start(); 
   }
 
   public LociDataBrowser(String name) {
@@ -279,9 +280,10 @@ public class LociDataBrowser {
   }
 
   public void run(String arg) {
-    macro = new MacroManager();
-    macroThread = new Thread(macro, "MacroRecorder");
-    macroThread.start(); 
+// TODO: macros
+//    macro = new MacroManager();
+//    macroThread = new Thread(macro, "MacroRecorder");
+//    macroThread.start(); 
     
     LociOpener lociOpener = new LociOpener();
     boolean done2 = false;

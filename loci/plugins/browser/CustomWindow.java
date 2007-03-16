@@ -26,12 +26,12 @@ package loci.plugins.browser;
 
 import ij.*;
 import ij.gui.*;
-import ij.macro.MacroRunner;
+//import ij.macro.MacroRunner;
 import ij.measure.Calibration;
 import ij.process.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+//import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -346,12 +346,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       index--;
       ImageProcessor clone = db.manager.getSlice(index).duplicate();
       imp.setProcessor(patternTitle, clone);
-      // now execute macros as needed
 
-      Vector macros = db.macro.getMacros();
-      for (int i=0; i<macros.size(); i++) {
-        MacroRunner runner = new MacroRunner((String) macros.get(i));
-      }
+      // now execute macros as needed
+// TODO: macros
+//      Vector macros = db.macro.getMacros();
+//      for (int i=0; i<macros.size(); i++) {
+//        MacroRunner runner = new MacroRunner((String) macros.get(i));
+//      }
       
       index = 1;
       return;
@@ -370,11 +371,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
   
     // now execute macros as needed 
-
-    Vector macros = db.macro.getMacros();
-    for (int i=0; i<macros.size(); i++) {
-      MacroRunner runner = new MacroRunner((String) macros.get(i));
-    }
+// TODO: macros
+//    Vector macros = db.macro.getMacros();
+//    for (int i=0; i<macros.size(); i++) {
+//      MacroRunner runner = new MacroRunner((String) macros.get(i));
+//    }
     
     repaint();
   }
