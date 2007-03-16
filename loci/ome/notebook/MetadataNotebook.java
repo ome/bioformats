@@ -316,7 +316,7 @@ public class MetadataNotebook extends JFrame
       new String[] {"tif", "tiff", "ome"}, "All supported file formats");
     ExtensionFileFilter[] filters =
       new ExtensionFileFilter[] {tiffFilter, omeFilter};
-    saver = FormatHandler.buildFileChooser(filters);
+    saver = FormatTools.buildFileChooser(filters);
     saver.setCurrentDirectory(new File(System.getProperty("user.dir")));
     if (metadata.reader == null) metadata.reader = new ImageReader();
     opener = metadata.reader.getFileChooser();
