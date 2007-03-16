@@ -1,5 +1,7 @@
-* Fixed calibration bug in importer plugin
+2007 Mar 16:
+* Fixed calibration bugs in importer plugin
 * Enhanced metadata support for additional formats
+* Fixed LSM bug
 
 2007 Mar 7:
 * Added support for Micro-Manager file format
