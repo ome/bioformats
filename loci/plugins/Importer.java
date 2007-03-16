@@ -1190,7 +1190,7 @@ public class Importer implements ItemListener {
         int sizeC = r.getSizeC(id);
         if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
 
-        // reorder stack to Image5D's preferred order: XYZTC
+        // reorder stack to Image5D's preferred order: XYCZT
         ImageStack is;
         ImageStack stack = imp.getStack();
         if (r.getDimensionOrder(id).equals("XYCZT")) is = stack;
@@ -1215,6 +1215,11 @@ public class Importer implements ItemListener {
         ru.setVar("sizeZ", sizeZ);
         ru.setVar("sizeT", sizeT);
         ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
+        ru.setVar("cal", imp.getCalibration());
+        ru.setVar("fi", imp.getFileInfo());
+        ru.exec("i5d.setCalibration(cal)");
+        ru.exec("i5d.setFileInfo(fi)");
+        //ru.exec("i5d.setDimensions(sizeC, sizeZ, sizeT)");
         ru.exec("i5d.show()");
       }
       else if (stackFormat.equals(VIEW_VIEW_5D)) {
