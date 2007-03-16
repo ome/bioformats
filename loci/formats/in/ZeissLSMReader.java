@@ -148,6 +148,8 @@ public class ZeissLSMReader extends BaseTiffReader {
     for (int i=0; i<p.length; i++) {
       System.arraycopy(p[i], 0, b, i*p[0].length, p[i].length);
     }
+    
+    b = swapIfRequired(b); 
     updateMinMax(b, no);
     return b;
   }

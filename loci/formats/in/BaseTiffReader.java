@@ -745,7 +745,7 @@ public abstract class BaseTiffReader extends FormatReader {
    * @throws IOException if there is an error read from the file.
    * @throws FormatException if there is an error during metadata parsing.
    */
-  private byte[] swapIfRequired(byte[] byteArray)
+  protected byte[] swapIfRequired(byte[] byteArray)
     throws FormatException, IOException
   {
     int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
