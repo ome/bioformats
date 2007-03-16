@@ -1,0 +1,228 @@
+//
+// ImageJReader.java
+//
+
+/*
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+Eric Kjellman and Brian Loranger.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.formats.in;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.swing.filechooser.FileFilter;
+import loci.formats.*;
+
+/**
+ * ImageJReader is the file format reader for the image formats supported
+ * by Wayne Rasband's excellent ImageJ program:
+ *
+ * DICOM, FITS, PGM, JPEG, GIF, LUT, BMP, TIFF, ZIP-compressed TIFF and ROI.
+ */
+public class ImageJReader extends FormatReader {
+
+  // -- Static fields --
+
+  /** Legal ImageJ suffixes. */
+  private static final String[] SUFFIXES = {
+    "tif", "tiff", "dcm", "dicom", "fits", "pgm", "jpg", "jpeg", "jpe",
+    "gif", "png", "lut", "bmp", "zip", "roi"
+  };
+
+  /** Message produced when attempting to use ImageJ without it installed. */
+  private static final String NO_IJ =
+    "ImageJ is required to read this file. Please " +
+    "obtain ij.jar from http://rsb.info.nih.gov/ij/upgrade/";
+
+  // -- Fields --
+
+  /** Reflection tool for ImageJ calls. */
+  private ReflectedUniverse r;
+
+  /** Flag indicating ImageJ is not installed. */
+  private boolean noImageJ = false;
+
+  // -- Constructor --
+
+  /** Constructs a new ImageJ reader. */
+  public ImageJReader() {
+    super("ImageJ", SUFFIXES);
+    r = new ReflectedUniverse();
+
+    try {
+      r.exec("import ij.ImagePlus");
+      r.exec("import ij.ImageStack");
+      r.exec("import ij.io.Opener");
+      r.exec("import ij.process.ImageProcessor");
+      r.exec("opener = new Opener()");
+      r.setVar("false", false);
+    }
+    catch (Throwable t) {
+      noImageJ = true;
+    }
+  }
+
+  // -- FormatReader API methods --
+
+  /** Checks if the given block is a valid header. */
+  public boolean isThisType(byte[] block) { return false; }
+
+  /** Determines the number of images in the given file. */
+  public int getImageCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return 1;
+  }
+
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return true;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    return false;
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    byte[] b = ImageTools.getBytes(openImage(id, no), false, no);
+    updateMinMax(b, no);
+    return b;
+  }
+
+  /** Obtains the specified image from the given file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    if (noImageJ) throw new FormatException(NO_IJ);
+
+    try {
+      Location file = new Location(id);
+      r.setVar("dir", file.getParent() + System.getProperty("file.separator"));
+      r.setVar("name", file.getName());
+      synchronized (ImageJReader.class) {
+        try {
+          r.exec("state = Opener.getOpenUsingPlugins()");
+          r.exec("Opener.setOpenUsingPlugins(false)");
+        }
+        catch (ReflectException exc) {
+          // probably ImageJ version < 1.38f
+        }
+        r.exec("image = opener.openImage(dir, name)");
+        try {
+          r.exec("Opener.setOpenUsingPlugins(state)");
+        }
+        catch (ReflectException exc) {
+          // probably ImageJ version < 1.38f
+        }
+      }
+      r.exec("size = image.getStackSize()");
+      Image img = (Image) r.exec("image.getImage()");
+
+      BufferedImage b = ImageTools.makeBuffered(img);
+      updateMinMax(b, no);
+      return b;
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
+  }
+
+  /** Initializes the given file. */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (debug) debug("ImageJReader.initFile(" + id + ")");
+    super.initFile(id);
+
+    BufferedImage img = openImage(id, 0);
+
+    sizeX[0] = img.getWidth();
+    sizeY[0] = img.getHeight();
+    sizeZ[0] = 1;
+    sizeC[0] = img.getRaster().getNumBands();
+    sizeT[0] = 1;
+    pixelType[0] = ImageTools.getPixelType(img);
+    currentOrder[0] = "XYCZT";
+
+    MetadataStore store = getMetadataStore(id);
+
+    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
+      new Integer(1), new Integer(sizeC[0]), new Integer(1),
+      new Integer(pixelType[0]), Boolean.TRUE, currentOrder[0], null, null);
+    for (int i=0; i<sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (!fileOnly) close();
+  }
+
+  /** Closes any open files. */
+  public void close() throws FormatException, IOException {
+    currentId = null;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#getFileFilters() */
+  public FileFilter[] getFileFilters() {
+    if (filters == null) {
+      filters = new FileFilter[] {
+        new ExtensionFileFilter(new String[] {"tif", "tiff"},
+          "Tagged Image File Format"),
+        new ExtensionFileFilter(new String[] {"dcm", "dicom"},
+          "Digital Imaging and Communications in Medicine"),
+        new ExtensionFileFilter("fits",
+          "Flexible Image Transport System"),
+        new ExtensionFileFilter("pgm", "PGM"),
+        new ExtensionFileFilter(new String[] {"jpg", "jpeg", "jpe"},
+          "Joint Photographic Experts Group"),
+        new ExtensionFileFilter("gif", "Graphics Interchange Format"),
+        new ExtensionFileFilter("png", "Portable Network Graphics"),
+        new ExtensionFileFilter("lut", "ImageJ Lookup Table"),
+        new ExtensionFileFilter("bmp", "Windows Bitmap"),
+        new ExtensionFileFilter("zip", "Zip-compressed TIFF"),
+        new ExtensionFileFilter("roi", "ImageJ Region of Interest")
+      };
+    }
+    return filters;
+  }
+
+  // -- Main method --
+
+  public static void main(String[] args) throws FormatException, IOException {
+    new ImageJReader().testRead(args);
+  }
+
+}
