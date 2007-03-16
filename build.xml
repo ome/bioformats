@@ -87,17 +87,6 @@ OME Metadata Notebook
                    jar-notebook
     License:       LGPL
 
-Leica Converter
-    JAR file:      LeicaConverter.jar
-    Folders:       loci/apps/leica
-    Main class:    loci.apps.leica.LeicaConverter
-    Dependencies:  bio-formats.jar
-                   ome-java.jar
-    Targets:       style-leica
-                   compile-leica
-                   jar-leica
-    License:       Public domain
-
 Movie Stitcher
     JAR file:      MovieStitcher.jar
     Folders:       loci/apps/stitcher
@@ -258,7 +247,7 @@ Apache XML-RPC
 
   <target name="style"
     depends="style-formats, style-visbio, style-plugins, style-notebook,
-      style-leica, style-stitcher, style-slim, style-checks"
+      style-stitcher, style-slim, style-checks"
     description="check source code style for LOCI software packages"/>
 
 <!--
@@ -271,11 +260,11 @@ Apache XML-RPC
 -->
   <target name="compile"
     depends="compile-formats, compile-visbio, compile-plugins,
-      compile-notebook, compile-leica, compile-stitcher, compile-slim"
+      compile-notebook, compile-stitcher, compile-slim"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica,
+    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook,
       jar-stitcher, jar-slim, jar-checks"
     description="generate JAR files for LOCI software packages"/>
 
@@ -665,34 +654,6 @@ Apache XML-RPC
       <manifest>
         <attribute name="Main-Class" value="${notebook.main}"/>
         <attribute name="Class-Path" value="${notebook.classpath}"/>
-      </manifest>
-    </jar>
-  </target>
-
-  <!-- Leica Converter -->
-
-  <target name="style-leica" depends="copy-source, jar-checks"
-    description="check source code style for Leica Converter">
-    <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${leica.source}"/>
-    </checkstyle>
-  </target>
-
-  <target name="compile-leica" depends="copy-source"
-    description="compile classes for Leica Converter">
-    <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${leica.source}" classpath="${ext.jars}"
-      debug="true" deprecation="true" source="1.4" target="1.4"/>
-  </target>
-
-  <target name="jar-leica" depends="compile-leica, copy-jars, jar-formats"
-    description="generate JAR file for Leica Converter">
-    <jar jarfile="${jar.dir}/${leica.jar}" basedir="${classes.dir}"
-      includes="${leica.files}">
-      <manifest>
-        <attribute name="Main-Class" value="${leica.main}"/>
-        <attribute name="Class-Path" value="${leica.classpath}"/>
       </manifest>
     </jar>
   </target>
