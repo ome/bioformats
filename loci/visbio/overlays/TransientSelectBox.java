@@ -23,10 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import loci.visbio.util.DisplayUtil;
 import visad.*;
-import java.awt.Color;
 
 /**
  * TransientSelectBox represents the square that appears in a VisBio display
@@ -45,19 +46,24 @@ public class TransientSelectBox {
   private Color color;
 
   /** Boundaries of box */
-  private float x1, x2, y1, y2;
+  private int x1, x2, y1, y2;
 
   /** Parent Transform */
+  // not sure if this is useful at all
   private OverlayTransform overlay;
+
+  /** Associated display */
+  private DisplayImpl display;
 
   // -- Constructor --
 
   /** Constructs a selection box.
    */
-  public TransientSelectBox(OverlayTransform overlay,
-    float downX, float downY)
+  public TransientSelectBox(OverlayTransform overlay, DisplayImpl display,
+    int downX, int downY)
   {
     this.overlay = overlay;
+    this.display = display;
     x1 = downX;
     x2 = downX;
     y1 = downY;
@@ -69,10 +75,13 @@ public class TransientSelectBox {
   // -- TransientSelectBox API Methods --
 
   /** Sets coordinates of draggable box corner */
-  public void setCorner (float x, float y) {
+  public void setCorner (int x, int y) {
     x2 = x;
     y2 = y;
   }
+
+  /** Returns the display on which this TSB exists */
+  public DisplayImpl getActiveDisplay() { return display; }
 
   /** Returns a VisAD data object representing this box.
    *  The data object is compound, comprising 2 parts:
@@ -86,6 +95,22 @@ public class TransientSelectBox {
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
+    /*
+     * 1------2
+     * |      |
+     * |      |
+     * 4------3
+     */
+    double[] d1 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y1);
+    double[] d2 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y1);
+    double[] d3 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y2);
+    double[] d4 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y2);
+
+    float[] f1 = {(float) d1[0], (float) d1[1]};
+    float[] f2 = {(float) d2[0], (float) d2[1]};
+    float[] f3 = {(float) d3[0], (float) d3[1]};
+    float[] f4 = {(float) d4[0], (float) d4[1]};
+
     float[][] shadeSamples = null;
     float[][] outlineSamples = null;
     GriddedSet shadeSet = null;
@@ -93,13 +118,13 @@ public class TransientSelectBox {
 
     try {
       shadeSamples = new float[][] {
-        {x1, x2, x1, x2},
-        {y1, y1, y2, y2}
+        {f1[0], f2[0], f4[0], f3[0]},
+        {f1[1], f2[1], f4[1], f3[1]}
       };
 
       outlineSamples = new float[][] {
-        {x1, x1, x2, x2, x1},
-        {y1, y2, y2, y1, y1}
+        {f1[0], f2[0], f3[0], f4[0], f1[0]},
+        {f1[1], f2[1], f3[1], f4[1], f1[1]}
       };
 
       shadeSet = new Gridded2DSet(domain,
@@ -140,6 +165,7 @@ public class TransientSelectBox {
       outField = new FlatField(fieldType, outlineSet);
       outField.setSamples(outlineRangeSamples);
 
+      // go Mallards
       wholeTeam = new DataImpl[] {inField, outField};
       ret = new Tuple (wholeTeam, false);
     }
@@ -148,15 +174,41 @@ public class TransientSelectBox {
     return ret;
   }
 
-  /** Gets X coordinate of the overlay's first endpoint. */
-  public float getX1() { return x1; }
 
-  /** Gets X coordinate of the overlay's second endpoint. */
-  public float getX2() { return x2; }
+  /** 
+   * Gets domain coordinates of box corners 
+   * Corners are returned as a double[4][2]
+   */
+  public double[][] getCornersDomain() {
+    /*
+     * 0----1
+     * |    |
+     * |    |
+     * 3----2
+     */
 
-  /** Gets Y coordinate of the overlay's second endpoint. */
-  public float getY1() { return y1; }
+    double[] p0 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y1);
+    double[] p1 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y1);
+    double[] p2 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y2);
+    double[] p3 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y2);
 
-  /** Gets Y coordinate of the overlay's first endpoint. */
-  public float getY2() { return y2; }
+    double[][] ret = {  {p0[0], p0[1]},
+                        {p1[0], p1[1]},
+                        {p2[0], p2[1]},
+                        {p3[0], p3[1]}};
+
+    return ret; 
+  }
+  
+  /** Gets X coordinate of the first endpoint. */
+  public int getX1() { return x1; }
+
+  /** Gets X coordinate of the second endpoint. */
+  public int getX2() { return x2; }
+
+  /** Gets Y coordinate of the first endpoint. */
+  public int getY1() { return y1; }
+
+  /** Gets Y coordinate of the second endpoint. */
+  public int getY2() { return y2; }
 }

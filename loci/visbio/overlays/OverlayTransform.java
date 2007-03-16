@@ -733,26 +733,6 @@ public class OverlayTransform extends DataTransform
         double[] coords = DisplayUtil.pixelToDomain(display, px, py);
         tool.mouseDown(e, px, py,
           (float) coords[0], (float) coords[1], pos, e.getModifiers());
-        /*
-        //  Temporary testing junk
-        // pixel coords 
-        System.out.println("Pixel coords (native) = (" + px + "," + py + ")"); // TEMP
-        // pixel to cursor
-        double[] ccoords = DisplayUtil.pixelToCursor(display, px, py); 
-        System.out.println("pixelToCursor coords = (" + ccoords[0] + "," + ccoords[1]);
-        // cursor to domain
-        double[] dcoords  = DisplayUtil.cursorToDomain(display, ccoords);
-        System.out.println("cursorToDomain coords = (" + dcoords[0] + "," + dcoords[1]);
-        System.out.println("pixelToDomain coords = (" + coords[0] + "," + coords[1]);
-
-        // domain to cursor
-        double[] dccoords = DisplayUtil.domainToCursor(display, dcoords);
-        System.out.println("domainToCursor coords = (" + dccoords[0] + "," + dccoords[1]);
-
-        // cursor to pixel 
-        int[] cpcoords = DisplayUtil.cursorToPixel(display, dccoords); // TEMP
-        System.out.println("cursorToPixel coords = (" + cpcoords[0] + "," + cpcoords[1]);
-        */
       }
     }
     else if (id == DisplayEvent.MOUSE_RELEASED_LEFT) {

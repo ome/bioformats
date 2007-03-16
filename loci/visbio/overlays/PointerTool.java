@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.awt.event.InputEvent;
-import loci.visbio.data.TransformEvent;
-import visad.DisplayEvent;
 import java.util.Vector;
+import loci.visbio.data.TransformEvent;
+import loci.visbio.util.MathUtil;
+import visad.DisplayEvent;
+import visad.DisplayImpl;
 
 /** PointerTool is the tool for manipulating existing overlays. */
 public class PointerTool extends OverlayTool {
@@ -70,6 +72,8 @@ public class PointerTool extends OverlayTool {
   {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
+
+    DisplayImpl display = (DisplayImpl) e.getDisplay();
     
     // pick nearest object
     objs = overlay.getObjects(pos);
@@ -134,7 +138,7 @@ public class PointerTool extends OverlayTool {
       for (int i=0; i<objs.length; i++) { selected[i] = objs[i].isSelected(); }
 
       // instantiate selection box
-      select = new TransientSelectBox(overlay, dx, dy);
+      select = new TransientSelectBox(overlay, display, px, py);
       overlay.addTSB (select);
     }
 
@@ -185,7 +189,7 @@ public class PointerTool extends OverlayTool {
       overlay.notifyListeners(new TransformEvent(overlay));
     } else if (select != null) {
       // extend selection box
-      select.setCorner(dx, dy);
+      select.setCorner(px, py);
 
       // select objects inside the box
       boolean stateChanged = false;
@@ -194,55 +198,58 @@ public class PointerTool extends OverlayTool {
         float tx1, tx2, ty1, ty2;
         float ox1, ox2, oy1, oy2;
 
+        // object corners
         ox1 = bounds[i][0];
         oy1 = bounds[i][1];
         ox2 = bounds[i][2];
         oy2 = bounds[i][3];
 
         // un-oriented (disoriented?) box coordinates
-        tx1 = select.getX1();
-        tx2 = select.getX2();
-        ty1 = select.getY1();
-        ty2 = select.getY2();
+        double[][] c = select.getCornersDomain();
 
-        // assign oriented coordinates of seletion box
-        if (tx1 < tx2) {
-          bx1 = tx1;
-          bx2 = tx2;
-        }
-        else {
-          bx1 = tx2;
-          bx2 = tx1;
-        }
-        if (ty1 < ty2) {
-          by1 = ty1;
-          by2 = ty2;
-        }
-        else {
-          by1 = ty2;
-          by2 = ty1;
-        }
-
-        // determine whether object i is inside or outside of selection box 
-        boolean inside = false;
-        if (bx1 < ox1 && ox1 < bx2 && bx1 < ox2 && ox2 < bx2 &&
-          by1 < oy1 && oy1 < by2 && by1 < oy2 && oy2 < by2)
-        {
-          inside = true;
-        }
-
-        // code for static list refresh
-        // (add a refreshListSelection line to mouseUp
+        // selection box corners 'c'
         /*
-        if (inside) {
-          if (ctrl && !shift) objs[i].setSelected(!selected[i]);
-          else objs[i].setSelected(true);
-        }
-        else {
-          if (shift || ctrl) objs[i].setSelected(selected[i]);
-          else objs[i].setSelected(false);
-        }
-        */
+         * 0----1
+         * |    |
+         * |    |
+         * 3----2
+         */
+        
+        // express object corners in terms of TSB edge vectors
+        double[] v1 = {c[1][0] - c[0][0], c[1][1] - c[0][1]};
+        double[] v2 = {c[3][0] - c[0][0], c[3][1] - c[0][1]};
+
+        // iterate through all points of bounding box
+        // and check whether they're inside 
+        boolean inside = true; 
+        for (int j = 0; j<bounds[0].length && inside; j++) {
+          int xndx = j < 2 ? 0 : 2;
+          int yndx = j % 2 == 0 ? 1 : 3;
+          double[] p = {bounds[i][xndx], bounds[i][yndx]};
+          double[] vp = {p[0] - c[0][0], p[1] - c[0][1]};
+
+          double cos1 = (vp[0] * v1[0] + vp[1] * v1[1]) / 
+            (Math.sqrt(vp[0]*vp[0] + vp[1]*vp[1] + v1[0]*v1[0] + v1[1]*v1[1]));
+          
+          double cos2 = (vp[0] * v2[0] + vp[1] * v2[1]) / 
+            (Math.sqrt(vp[0]*vp[0] + vp[1]*vp[1] + v2[0]*v2[0] + v2[1]*v2[1]));
+
+          if (cos1 < 0 || cos2 < 0)  inside = false;
+          else {
+            // determine projection of point on edge vectors
+            // if projection is longer than either edge vector, you're too far.
+            double[] proj1 = MathUtil.getProjection(c[0], c[3], p, false);
+            double[] proj2 = MathUtil.getProjection(c[0], c[1], p, false);
+             
+            double d1 = MathUtil.getDistance(proj1, c[0]);
+            double d2 = MathUtil.getDistance(proj2, c[0]);
+
+            double dv1 = MathUtil.getDistance(c[0], c[3]);
+            double dv2 = MathUtil.getDistance(c[0], c[1]);
+
+            if (d1 > dv1 || d2 > dv2) inside = false;
+          }
+        } // end for 
 
         // code for dynamic list refresh
         if (inside) {

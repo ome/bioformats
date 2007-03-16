@@ -302,7 +302,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
     // overlay export button
     export = new JButton("Export overlays...");
     export.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) save.setMnemonic('e');
+    if (!LAFUtil.isMacLookAndFeel()) export.setMnemonic('e');
     export.setToolTipText("Exports overlays to a .xls file on disk");
 
     // lay out components
