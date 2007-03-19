@@ -588,13 +588,14 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     // see if we have an associated MDB file
 
-    Location dir = new Location(currentId).getAbsoluteFile().getParentFile();
+    Location dir = new Location(currentId).getParentFile();
     String[] dirList = dir.list();
 
     for (int i=0; i<dirList.length; i++) {
       if (dirList[i].toLowerCase().endsWith(".mdb")) {
         try {
-          MDBParser.parseDatabase(dirList[i], metadata);
+          MDBParser.parseDatabase((new Location(dir.getPath(), 
+            dirList[i])).getAbsolutePath(), metadata);
         }
         catch (FormatException f) {
           if (debug) f.printStackTrace();
