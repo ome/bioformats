@@ -89,8 +89,8 @@ public final class MDBParser {
 
       // print out all data
 
-      // TODO: this doesn't work in general
-      r.setVar("dbfile", new File(filename));
+      r.setVar("filename", filename); 
+      r.exec("dbfile = new File(filename)");
       r.exec("mdb = file.mdb_open(dbfile)");
       r.exec("Catalog.mdb_read_catalog(mdb, Constants.MDB_TABLE)");
 
