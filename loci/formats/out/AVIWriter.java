@@ -435,24 +435,29 @@ public class AVIWriter extends FormatWriter {
 
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim, true);
 
-    byte[] buf =
-      new byte[byteData.length * byteData[0].length +
-      height*xPad*byteData.length];
-
-    int offset = 0;
-    int next = 0;
-    for (int i=(height-1); i>=0; i--) {
-      for (int j=0; j<width; j++) {
-        offset = i*width + j;
-        for (int k=(byteData.length - 1); k>=0; k--) {
-          buf[next] = byteData[k][offset];
-          next++;
-        }
+    if (bytesPerPixel == 1) {
+      for (int i=(height-1); i>=0; i--) {
+        raFile.write(byteData[0], i*width, width);
+        for (int j=0; j<xPad; j++) raFile.write(0);
       }
-      next += xPad * byteData.length;
     }
-    raFile.write(buf);
-    buf = null;
+    else {
+      byte[] buf = new byte[bytesPerPixel * xDim * yDim];
+      int offset = 0;
+      int next = 0;
+      for (int i=(height-1); i>=0; i--) {
+        for (int j=0; j<width; j++) {
+          offset = i*width + j;
+          for (int k=(byteData.length - 1); k>=0; k--) {
+            buf[next] = byteData[k][offset];
+            next++;
+          }
+        }
+        next += xPad * byteData.length;
+      }
+      raFile.write(buf);
+      buf = null;
+    }
 
     planesWritten++;
 

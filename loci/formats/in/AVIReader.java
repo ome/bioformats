@@ -143,26 +143,22 @@ public class AVIReader extends FormatReader {
     in.seek((int) fileOff);
 
     int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
-    int rawOffset = bmpActualSize - bmpScanLineSize;
     int offset = 0;
-
-    in.skipBytes(pad * bmpHeight);
 
     for (int i=bmpHeight - 1; i>=0; i--) {
       if (bmpBitsPerPixel == 8) {
-        in.read(buf, rawOffset, bmpScanLineSize);
+        in.read(buf, i*dwWidth, dwWidth);
+        in.skipBytes(pad); 
       }
       else {
-        in.read(buf, rawOffset, dwWidth * 3);
+        in.read(buf, i*dwWidth*3, dwWidth * 3);
         for (int j=0; j<dwWidth; j++) {
-          byte r = buf[rawOffset + j*3 + 2];
-          buf[rawOffset + j*3 + 2] = buf[rawOffset + j*3];
-          buf[rawOffset + j*3] = r;
+          byte r = buf[i*dwWidth*3 + j*3 + 2];
+          buf[i*dwWidth*3 + j*3 + 2] = buf[i*dwWidth*3 + j*3];
+          buf[i*dwWidth*3 + j*3] = r;
         }
-        in.skipBytes(pad);
+        in.skipBytes(pad*3);
       }
-      rawOffset -= (bmpScanLineSize - pad);
-      offset += dwWidth;
     }
     updateMinMax(buf, no);
     return buf;
