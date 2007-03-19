@@ -403,8 +403,11 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
-    for (int i=0; i<readers.length; i++) {
-      readers[i].setChannelStatCalculationStatus(on);
+    if (readers == null) reader.setChannelStatCalculationStatus(on);
+    else {
+      for (int i=0; i<readers.length; i++) {
+        readers[i].setChannelStatCalculationStatus(on);
+      }
     }
   }
 
@@ -507,7 +510,8 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
-    if (readers != null) {
+    if (readers == null) reader.close(fileOnly);
+    else {
       for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
     }
     if (!fileOnly) {
@@ -520,7 +524,8 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#close() */
   public void close() throws FormatException, IOException {
-    if (readers != null) {
+    if (readers == null) reader.close();
+    else {
       for (int i=0; i<readers.length; i++) readers[i].close();
     }
     readers = null;
@@ -550,7 +555,8 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#setColorTableIgnored(boolean) */
   public void setColorTableIgnored(boolean ignore) {
     reader.setColorTableIgnored(ignore);
-    if (readers != null) {
+    if (readers == null) reader.setColorTableIgnored(ignore);
+    else {
       for (int i=0; i<readers.length; i++) {
         readers[i].setColorTableIgnored(ignore);
       }
@@ -564,7 +570,8 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
-    if (readers != null) {
+    if (readers == null) reader.setNormalized(normalize);
+    else {
       for (int i=0; i<readers.length; i++) {
         readers[i].setNormalized(normalize);
       }
@@ -724,12 +731,18 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatHandler#addStatusListener(StatusListener) */
   public void addStatusListener(StatusListener l) {
-    for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);
+    if (readers == null) reader.addStatusListener(l);
+    else {
+      for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);
+    }
   }
 
   /* @see IFormatHandler#removeStatusListener(StatusListener) */
   public void removeStatusListener(StatusListener l) {
-    for (int i=0; i<readers.length; i++) readers[i].removeStatusListener(l);
+    if (readers == null) reader.removeStatusListener(l);
+    else {
+      for (int i=0; i<readers.length; i++) readers[i].removeStatusListener(l);
+    }
   }
 
   /* @see IFormatHandler#getStatusListeners() */
@@ -794,17 +807,30 @@ public class FileStitcher implements IFormatReader {
           }
         }
         readers[i] = (IFormatReader) r;
-        readers[i].setChannelStatCalculationStatus(
-          reader.getChannelStatCalculationStatus());
-        readers[i].setColorTableIgnored(reader.isColorTableIgnored());
-        readers[i].setNormalized(reader.isNormalized());
-        readers[i].setMetadataFiltered(reader.isMetadataFiltered());
       }
       catch (InstantiationException exc) { exc.printStackTrace(); }
       catch (IllegalAccessException exc) { exc.printStackTrace(); }
       catch (NoSuchMethodException exc) { exc.printStackTrace(); }
       catch (InvocationTargetException exc) { exc.printStackTrace(); }
     }
+
+    // sync reader configurations with original reader
+    boolean channelStatCalculationStatus =
+      reader.getChannelStatCalculationStatus();
+    boolean colorTableIgnored = reader.isColorTableIgnored();
+    boolean normalized = reader.isNormalized();
+    boolean metadataFiltered = reader.isMetadataFiltered();
+    StatusListener[] statusListeners = reader.getStatusListeners();
+    for (int i=1; i<readers.length; i++) {
+      readers[i].setChannelStatCalculationStatus(channelStatCalculationStatus);
+      readers[i].setColorTableIgnored(colorTableIgnored);
+      readers[i].setNormalized(normalized);
+      readers[i].setMetadataFiltered(metadataFiltered);
+      for (int j=0; j<statusListeners.length; j++) {
+        readers[i].addStatusListener(statusListeners[j]);
+      }
+    }
+
     String f0 = files[0];
 
     int seriesCount = reader.getSeriesCount(f0);
