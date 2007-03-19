@@ -1276,11 +1276,16 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       if (tauMin == tauMin && tauMax == tauMax) {
         sb.append("; ");
         sb.append(TAU);
-        sb.append("=[");
-        sb.append(tauMin);
-        sb.append(", ");
-        sb.append(tauMax);
-        sb.append("]");
+        sb.append("=");
+        if (tauMin != tauMax) {
+          sb.append("[");
+          sb.append(tauMin);
+          sb.append(", ");
+          sb.append(tauMax);
+          sb.append("]");
+        }
+        else sb.append(tauMin);
+        sb.append(" ps");
       }
       decayLabel.setText(sb.toString());
 
