@@ -400,6 +400,8 @@ public class OpenlabReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Verifying Openlab LIFF format");
+
     in.skipBytes(4);
     byte[] b = new byte[4];
     in.read(b);
@@ -418,6 +420,8 @@ public class OpenlabReader extends FormatReader {
     // read offset to first plane
     int offset = DataTools.read4SignedBytes(in, false);
     in.seek(offset);
+
+    status("Finding image offsets");
 
     layerInfoList = new Vector[2];
     for (int i=0; i<layerInfoList.length; i++) layerInfoList[i] = new Vector();
@@ -567,6 +571,8 @@ public class OpenlabReader extends FormatReader {
 
     // determine if we have a multi-series file
 
+    status("Determining series count");
+
     int oldChannels = openBytes(id, 0).length / (width[0] * height[0] * 3);
     int oldWidth = width[0];
 
@@ -660,6 +666,8 @@ public class OpenlabReader extends FormatReader {
       height[0] = oldH;
       height[1] = oldH;
     }
+
+    status("Populating metadata");
 
     numSeries = numImages.length;
 

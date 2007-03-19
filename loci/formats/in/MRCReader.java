@@ -167,6 +167,8 @@ public class MRCReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Reading header");
+
     // check endianness
 
     in.seek(213);
@@ -354,6 +356,8 @@ public class MRCReader extends FormatReader {
     }
 
     in.skipBytes(extHeaderSize);
+
+    status("Populating metadata");
 
     sizeT[0] = 1;
     currentOrder[0] = "XYZTC";

@@ -250,6 +250,8 @@ public class OMEXMLReader extends FormatReader {
     in = new RandomAccessStream(id);
     omexml = new OMEXMLMetadataStore();
 
+    status("Determining endianness");
+
     in.skipBytes(200);
 
     int numDatasets = 0;
@@ -290,6 +292,8 @@ public class OMEXMLReader extends FormatReader {
       littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
       offsets[i] = new Vector();
     }
+
+    status("Finding image offsets");
 
     // look for the first BinData element in each series
 
@@ -371,6 +375,8 @@ public class OMEXMLReader extends FormatReader {
       in.read(buf);
     }
     buf = null;
+
+    status("Populating metadata");
 
     OMENode ome = null;
     try {

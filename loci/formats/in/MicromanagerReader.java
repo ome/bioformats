@@ -169,6 +169,8 @@ public class MicromanagerReader extends FormatReader {
     super.initFile(id);
     tiffReader = new TiffReader();
 
+    status("Reading metadata file");
+
     // find metadata.txt
 
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
@@ -182,6 +184,8 @@ public class MicromanagerReader extends FormatReader {
     String s = new String(meta);
     meta = null;
 
+    status("Finding image file names");
+
     // first find the name of each TIFF file
     tiffs = new Vector();
     int pos = 0;
@@ -194,6 +198,8 @@ public class MicromanagerReader extends FormatReader {
     }
 
     // now parse the rest of the metadata
+
+    status("Populating metadata");
 
     int start = s.indexOf("Summary");
     int end = s.indexOf("}", start);

@@ -221,6 +221,7 @@ public class IPWReader extends BaseTiffReader {
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
+      status("Populating metadata"); 
       initMetadata(id);
     }
     catch (Throwable t) {
@@ -429,9 +430,11 @@ public class IPWReader extends BaseTiffReader {
       r.setVar("dir", dir);
       r.exec("dirName = dir.getName()");
       if (isInstance)  {
+        status("Parsing embedded folder (" + (depth + 1) + ")"); 
         parseDir(depth + 1, r.getVar("entry"));
       }
       else if (isDocument) {
+        status("Parsing embedded file (" + depth + ")");
         r.exec("entryName = entry.getName()");
         r.exec("dis = new DocumentInputStream(entry)");
         r.exec("numBytes = dis.available()");

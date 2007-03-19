@@ -192,6 +192,8 @@ public class BioRadReader extends FormatReader {
     in = new RandomAccessStream(id);
     in.order(true);
 
+    status("Reading image dimensions");
+
     // read header
 
     nx = in.readShort();
@@ -253,6 +255,8 @@ public class BioRadReader extends FormatReader {
     int tSize = 1;
 
     orderCertain[0] = false;
+
+    status("Reading notes");
 
     // read notes
     int noteCount = 0;
@@ -588,6 +592,8 @@ public class BioRadReader extends FormatReader {
       }
     }
 
+    status("Reading color table");
+
     // read color tables
     int numLuts = 0;
     byte[][] lut = new byte[3][768];
@@ -629,6 +635,8 @@ public class BioRadReader extends FormatReader {
     }
 
     addMeta("luts", colorString);
+
+    status("Populating metadata");
 
     // Populate the metadata store
 

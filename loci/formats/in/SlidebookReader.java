@@ -151,6 +151,8 @@ public class SlidebookReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Determining series count");
+
     in.skipBytes(4);
     little = in.read() == 0x49;
 
@@ -167,6 +169,8 @@ public class SlidebookReader extends FormatReader {
     in.seek(1792);
 
     // determine the number of images
+
+    status("Determining image count"); 
 
     byte[] buf = new byte[8192];
     boolean found = false;
@@ -222,6 +226,8 @@ public class SlidebookReader extends FormatReader {
     }
 
     // look for the first "i...II" block - this will have the width and height
+
+    status("Populating metadata");
 
     in.seek(lastH);
     in.skipBytes(335);

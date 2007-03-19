@@ -808,8 +808,13 @@ public abstract class BaseTiffReader extends FormatReader {
     in = new RandomAccessStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 
+    status("Reading IFDs");
+
     ifds = TiffTools.getIFDs(in);
     if (ifds == null) throw new FormatException("No IFDs found");
+    
+    status("Populating metadata"); 
+
     numImages = ifds.length;
     initMetadata();
   }

@@ -200,6 +200,8 @@ public class AVIReader extends FormatReader {
     in = new RandomAccessStream(id);
     in.order(true);
 
+    status("Verifying AVI format");
+
     offsets = new Vector();
 
     byte[] list = new byte[4];
@@ -217,6 +219,8 @@ public class AVIReader extends FormatReader {
 
     pos = in.getFilePointer();
     long spos = pos;
+
+    status("Searching for image data");
 
     while ((in.length() - in.getFilePointer()) > 4) {
       in.read(list);
@@ -505,6 +509,8 @@ public class AVIReader extends FormatReader {
       }
       pos = in.getFilePointer();
     }
+    status("Populating metadata");  
+    
     numImages = offsets.size();
 
     sizeX[0] = dwWidth;

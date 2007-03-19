@@ -276,6 +276,8 @@ public class ND2Reader extends FormatReader {
 
     in = new RandomAccessStream(id);
 
+    status("Calculating image offsets");
+
     try {
       File f = new File(Location.getMappedId(id));
       if (f.exists()) {
@@ -300,6 +302,8 @@ public class ND2Reader extends FormatReader {
       offsets = (long[]) r.getVar("offsets");
     }
     catch (ReflectException e) { throw new FormatException(e); }
+
+    status("Finding XML metadata");
 
     numImages = offsets.length;
 
@@ -332,6 +336,8 @@ public class ND2Reader extends FormatReader {
         }
       }
     }
+
+    status("Parsing XML");
 
     if (off > 0 && off < in.length() - 5) {
       in.seek(off + 5);
@@ -409,6 +415,8 @@ public class ND2Reader extends FormatReader {
         }
       }
     }
+
+    status("Populating metadata");
 
     BufferedImage img = openImage(id, 0);
     sizeX[0] = img.getWidth();

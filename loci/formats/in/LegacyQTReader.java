@@ -166,6 +166,9 @@ public class LegacyQTReader extends FormatReader {
     throws FormatException, IOException
   {
     if (debug) debug("LegacyQTReader.initFile(" + id + ")");
+    
+    status("Checking for QuickTime Java"); 
+    
     if (tools == null) {
       tools = new LegacyQTTools();
       r = tools.getUniverse();
@@ -177,6 +180,7 @@ public class LegacyQTReader extends FormatReader {
 
     super.initFile(id);
 
+    status("Reading movie dimensions");
     try {
       r.exec("QTSession.open()");
 
@@ -231,6 +235,8 @@ public class LegacyQTReader extends FormatReader {
         q = (Integer) v.elementAt(i);
         times[i] = q.intValue();
       }
+
+      status("Populating metadata");
 
       BufferedImage img = ImageTools.makeBuffered(image);
 

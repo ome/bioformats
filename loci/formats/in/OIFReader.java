@@ -263,6 +263,8 @@ public class OIFReader extends FormatReader {
     // check to make sure that we have the OIF file
     // if not, we need to look for it in the parent directory
 
+    status("Finding metadata file");
+
     String oifFile = id;
     if (!id.toLowerCase().endsWith("oif")) {
       Location current = new Location(id);
@@ -299,6 +301,8 @@ public class OIFReader extends FormatReader {
 
     // parse each key/value pair (one per line)
 
+    status("Parsing metadata values");
+
     byte[] b = new byte[(int) reader.length()];
     reader.read(b);
     String s = new String(b);
@@ -325,6 +329,8 @@ public class OIFReader extends FormatReader {
       }
     }
 
+    status("Initializing helper readers");
+
     thumbReader = new BMPReader();
     thumbReader.setColorTableIgnored(isColorTableIgnored());
     numImages = filenames.size();
@@ -337,6 +343,8 @@ public class OIFReader extends FormatReader {
     }
 
     // open each INI file (.pty extension)
+
+    status("Reading additional metadata");
 
     String tiffPath = null;
     RandomAccessStream ptyReader;
@@ -379,6 +387,8 @@ public class OIFReader extends FormatReader {
         usedFiles.add(new Location(tiffPath, list[i]).getAbsolutePath());
       }
     }
+
+    status("Populating metadata");
 
     for (int i=0; i<9; i++) {
       String pre = "[Axis " + i + " Parameters Common] - ";

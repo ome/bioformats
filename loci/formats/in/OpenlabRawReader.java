@@ -162,12 +162,16 @@ public class OpenlabRawReader extends FormatReader {
 
     // read the 12 byte file header
 
+    status("Verifying Openlab RAW format");
+
     byte[] header = new byte[4];
     in.read(header);
     String check = new String(header);
     if (!check.equals("OLRW")) {
       throw new FormatException("Openlab RAW magic string not found.");
     }
+
+    status("Populating metadata");
 
     int version = in.readInt();
     addMeta("Version", new Integer(version));

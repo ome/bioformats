@@ -244,6 +244,8 @@ public class DeltavisionReader extends FormatReader {
 
     in = new RandomAccessStream(id);
 
+    status("Reading header");
+
     // read in the image header data
     header = new byte[1024];
     in.read(header);
@@ -480,6 +482,8 @@ public class DeltavisionReader extends FormatReader {
 
     // ----- The Extended Header data handler begins here ------
 
+    status("Reading extended header");
+
     numIntsPerSection = DataTools.bytesToInt(header, 128, 2, little);
     numFloatsPerSection = DataTools.bytesToInt(header, 130, 2, little);
     setOffsetInfo(sequence, numZ, numW, numT);
@@ -514,6 +518,8 @@ public class DeltavisionReader extends FormatReader {
         }
       }
     }
+
+    status("Populating metadata");
 
     for (int w=0; w<numW; w++) {
       store.setLogicalChannel(w, null,

@@ -185,6 +185,8 @@ public class GatanReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Verifying Gatan format");
+
     littleEndian = false;
     pixelSizes = new Vector();
 
@@ -194,6 +196,8 @@ public class GatanReader extends FormatReader {
     if(!isThisType(temp)) {
       throw new FormatException("invalid header");
     }
+
+    status("Reading tags");
 
     in.skipBytes(4);
     in.read(temp);
@@ -206,6 +210,8 @@ public class GatanReader extends FormatReader {
     parseTags(DataTools.bytesToInt(temp, !littleEndian), "initFile");
 
     int datatype = Integer.parseInt((String) getMeta("DataType"));
+
+    status("Populating metadata");
 
     pixelType[0] = FormatTools.INT8;
     switch (datatype) {

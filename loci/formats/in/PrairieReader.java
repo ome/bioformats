@@ -225,6 +225,8 @@ public class PrairieReader extends FormatReader {
     if (id.endsWith("xml") || id.endsWith("cfg")) {
       // we have been given the XML file that lists TIFF files (best case)
 
+      status("Parsing XML");
+
       if (id.endsWith("xml")) {
         super.initFile(id);
         tiff = new TiffReader();
@@ -316,6 +318,8 @@ public class PrairieReader extends FormatReader {
         files = new String[f.size()];
         f.copyInto(files);
 
+        status("Populating metadata");
+
         boolean isZ =
           ((String) getMeta("PVScan Sequence type")).equals("ZSeries");
         if (zt == 0) zt = 1;
@@ -397,6 +401,8 @@ public class PrairieReader extends FormatReader {
     }
     else {
       // we have been given a TIFF file - reinitialize with the proper XML file
+
+      status("Finding XML file");
 
       Location f = new Location(id);
       f = f.getAbsoluteFile();

@@ -189,6 +189,8 @@ public class IPLabReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Populating metadata");
+
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
     littleEndian = new String(fourBytes).equals("iiii");
@@ -286,6 +288,8 @@ public class IPLabReader extends FormatReader {
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
+
+    status("Reading tags");
 
     in.read(fourBytes);
     String tag = new String(fourBytes);

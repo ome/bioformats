@@ -216,6 +216,8 @@ public class SDTReader extends FormatReader {
     in = new RandomAccessStream(id);
     in.order(true);
 
+    status("Reading header");
+
     // read file header information
     info = new SDTInfo(in, metadata);
     off = info.dataBlockOffs + 22;
@@ -223,6 +225,8 @@ public class SDTReader extends FormatReader {
     channels = info.channels;
     addMeta("time bins", new Integer(timeBins));
     addMeta("channels", new Integer(channels));
+
+    status("Populating metadata");
 
     sizeX[0] = info.width;
     sizeY[0] = info.height;

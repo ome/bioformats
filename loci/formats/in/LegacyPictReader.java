@@ -112,6 +112,7 @@ public class LegacyPictReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LegacyPictReader.initFile(" + id + ")");
     super.initFile(id);
+    status("Populating metadata"); 
     BufferedImage img = openImage(id, 0);
     sizeX[0] = img.getWidth();
     sizeY[0] = img.getHeight();

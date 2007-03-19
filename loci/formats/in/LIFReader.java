@@ -222,6 +222,8 @@ public class LIFReader extends FormatReader {
 
     // read the header
 
+    status("Reading header");
+
     byte checkOne = (byte) in.read();
     in.skipBytes(2);
     byte checkTwo = (byte) in.read();
@@ -243,6 +245,8 @@ public class LIFReader extends FormatReader {
     byte[] s = new byte[nc * 2];
     in.read(s);
     String xml = DataTools.stripString(new String(s));
+
+    status("Finding image offsets");
 
     while (in.getFilePointer() < in.length()) {
       if (DataTools.read4SignedBytes(in, littleEndian) != 0x70) {
@@ -279,6 +283,8 @@ public class LIFReader extends FormatReader {
   private void initMetadata(String xml) throws FormatException, IOException {
     Vector elements = new Vector();
     seriesNames = new Vector();
+
+    status("Populating native metadata");
 
     // first parse each element in the XML string
 
@@ -420,12 +426,6 @@ public class LIFReader extends FormatReader {
                 String sMin = (String) tmp.get("Min");
                 String sMax = (String) tmp.get("Max");
                 if (sMin != null && sMax != null) {
-                    /*
-                    Integer min = new Integer(sMin);
-                    Integer max = new Integer(sMax);
-                    channelMins.add(min);
-                    channelMaxs.add(max);
-                    */
                   double min = Double.parseDouble(sMin);
                   double max = Double.parseDouble(sMax);
                   channelMins.add(new Integer((int) min));
@@ -466,7 +466,6 @@ public class LIFReader extends FormatReader {
           else break;
         }
         extraDims.add(new Integer(extras));
-        //if (numChannels == 2) numChannels--;
         if (numChannels == 0) numChannels++;
         channels.add(new Integer(numChannels));
 
@@ -506,6 +505,8 @@ public class LIFReader extends FormatReader {
     }
 
     // Populate metadata store
+
+    status("Populating metadata");
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(currentId);

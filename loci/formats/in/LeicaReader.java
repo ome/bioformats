@@ -300,6 +300,8 @@ public class LeicaReader extends BaseTiffReader {
 
       in.seek(0);
 
+      status("Finding companion file name");
+
       // open the TIFF file and look for the "Image Description" field
 
       ifds = TiffTools.getIFDs(in);
@@ -327,7 +329,7 @@ public class LeicaReader extends BaseTiffReader {
       String first;
       String last;
 
-      while(descr.indexOf("[") != -1) {
+      while (descr.indexOf("[") != -1) {
         first = descr.substring(0, descr.indexOf("["));
         last = descr.substring(descr.indexOf("\n", descr.indexOf("[")));
         descr = first + last;
@@ -340,7 +342,7 @@ public class LeicaReader extends BaseTiffReader {
       String value;
       int eqIndex = descr.indexOf("=");
 
-      while(eqIndex != -1) {
+      while (eqIndex != -1) {
         key = descr.substring(0, eqIndex);
         newLineNdx = descr.indexOf("\n", eqIndex);
         if (newLineNdx == -1) newLineNdx = descr.length();
@@ -390,6 +392,8 @@ public class LeicaReader extends BaseTiffReader {
 
       in.order(littleEndian);
 
+      status("Reading metadata blocks");
+ 
       in.skipBytes(8);
       int addr = in.readInt();
       Vector v = new Vector();
@@ -437,6 +441,8 @@ public class LeicaReader extends BaseTiffReader {
 
       int maxPlanes = 0;
 
+      status("Parsing metadata blocks");
+
       for (int i=0; i<headerIFDs.length; i++) {
         if (headerIFDs[i].get(new Integer(10)) != null) {
           byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
@@ -479,6 +485,8 @@ public class LeicaReader extends BaseTiffReader {
         // at least one of the TIFF files was renamed
 
         if (!tiffsExist) {
+          status("Handling renamed TIFF files");
+
           // first thing is to get original LEI name associate with each TIFF
           // this lets us figure out which TIFFs we need for this dataset
           Hashtable leiMapping = new Hashtable();
@@ -621,6 +629,7 @@ public class LeicaReader extends BaseTiffReader {
         }
       }
 
+      status("Populating metadata");
       initMetadata();
     }
   }

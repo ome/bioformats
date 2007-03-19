@@ -150,6 +150,8 @@ public class MNGReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Verifying MNG format");
+
     offsets = new Vector();
     lengths = new Vector();
 
@@ -161,6 +163,8 @@ public class MNGReader extends FormatReader {
     if (!"MHDR".equals(new String(b))) {
       throw new FormatException("Invalid MNG file.");
     }
+
+    status("Reading dimensions");
 
     width = (int) DataTools.read4UnsignedBytes(in, false);
     height = (int) DataTools.read4UnsignedBytes(in, false);
@@ -176,6 +180,9 @@ public class MNGReader extends FormatReader {
     Vector stack = new Vector();
     int maxIterations = 0;
     int currentIteration = 0;
+
+    status("Finding image offsets");
+
     while (in.getFilePointer() < in.length()) {
       long len = DataTools.read4UnsignedBytes(in, false);
       in.read(b);
@@ -210,6 +217,8 @@ public class MNGReader extends FormatReader {
 
       in.seek(fp + (int) len + 4);
     }
+
+    status("Populating metadata");
 
     sizeX[0] = width;
     sizeY[0] = height;

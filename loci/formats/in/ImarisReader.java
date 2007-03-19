@@ -71,6 +71,9 @@ public class ImarisReader extends FormatReader {
     if (debug) debug("ImarisReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
+    
+    status("Verifying Imaris RAW format"); 
+    
     in.order(IS_LITTLE);
 
     dims = new int[4];
@@ -79,6 +82,8 @@ public class ImarisReader extends FormatReader {
     if (magic != IMARIS_MAGIC_NUMBER) {
       throw new FormatException("Imaris magic number not found.");
     }
+
+    status("Reading header");
 
     int version = in.readInt();
     addMeta("Version", new Integer(version));
@@ -115,6 +120,8 @@ public class ImarisReader extends FormatReader {
     int isSurvey = in.readInt();
     addMeta("Survey performed", isSurvey == 0 ? "true" : "false");
 
+    status("Calculating image offsets");
+
     numImages = dims[2] * dims[3];
     offsets = new int[numImages];
 
@@ -124,6 +131,8 @@ public class ImarisReader extends FormatReader {
         offsets[i*dims[2] + j] = offset + (j * dims[0] * dims[1]);
       }
     }
+
+    status("Populating metadata");
 
     sizeX[0] = dims[0];
     sizeY[0] = dims[1];

@@ -209,6 +209,8 @@ public class BMPReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Reading bitmap header");
+
     littleEndian = true;
     in.order(littleEndian);
 
@@ -285,6 +287,8 @@ public class BMPReader extends FormatReader {
 
     global = in.getFilePointer();
     addMeta("Indexed color", palette == null ? "false" : "true");
+
+    status("Populating metadata");
 
     int c = (palette == null & bpp == 8) ? 1 : 3;
     int tbpp = bpp;

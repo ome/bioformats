@@ -163,6 +163,8 @@ public class ImageJReader extends FormatReader {
     if (debug) debug("ImageJReader.initFile(" + id + ")");
     super.initFile(id);
 
+    status("Populating metadata");
+
     BufferedImage img = openImage(id, 0);
 
     sizeX[0] = img.getWidth();

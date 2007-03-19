@@ -127,6 +127,7 @@ public abstract class ImageIOReader extends FormatReader {
     if (debug) debug("ImageIOReader.initFile(" + id + ")");
     super.initFile(id);
 
+    status("Populating metadata");
     BufferedImage img = openImage(id, 0);
 
     sizeX[0] = img.getWidth();

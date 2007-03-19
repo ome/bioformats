@@ -113,7 +113,6 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     close();
     currentId = id;
-    //metadata = new Hashtable();
 
     sizeX = new int[1];
     sizeY = new int[1];
@@ -137,6 +136,8 @@ public class ImarisTiffReader extends BaseTiffReader {
     // Imaris TIFFs store a thumbnail in the first IFD; each of the remaining
     // IFDs defines a stack of tiled planes.
 
+    status("Verifying IFD sanity");
+
     Vector tmp = new Vector();
 
     for (int i=1; i<ifds.length; i++) {
@@ -152,6 +153,8 @@ public class ImarisTiffReader extends BaseTiffReader {
         tmp.add(t);
       }
     }
+
+    status("Populating metadata");
 
     sizeC[0] = ifds.length - 1;
     sizeZ[0] = tmp.size() / sizeC[0];
@@ -199,6 +202,8 @@ public class ImarisTiffReader extends BaseTiffReader {
           break;
       }
     }
+
+    status("Parsing comment");
 
     String comment = (String) getMeta("Comment");
 

@@ -229,6 +229,7 @@ public class LegacyZVIReader extends FormatReader {
 
     while (true) {
       // search for start of next image header
+      status("Searching for next image"); 
       long header = findBlock(in, ZVI_MAGIC_BLOCK_1, pos);
 
       if (header < 0) {
@@ -326,6 +327,8 @@ public class LegacyZVIReader extends FormatReader {
       }
       if (!ok) continue;
       pos += ZVI_MAGIC_BLOCK_3.length;
+
+      status("Reading image header");
 
       // read more header information
       int width = (int) DataTools.read4UnsignedBytes(in, true);
@@ -453,6 +456,8 @@ public class LegacyZVIReader extends FormatReader {
         store.setLogicalChannel(i, null, null, null, null, null, null, null);
       }
     }
+
+    status("Verifying image count");
 
     if (blockList.isEmpty()) {
       throw new FormatException("No image data found." + WHINING);

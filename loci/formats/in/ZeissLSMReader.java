@@ -165,6 +165,8 @@ public class ZeissLSMReader extends BaseTiffReader {
     // NEW_SUBFILE_TYPE = 1 indicates that the IFD
     // contains a thumbnail image
 
+    status("Removing thumbnails");
+
     int numThumbs = 0;
     long prevOffset = 0;
     byte[] b = new byte[48];

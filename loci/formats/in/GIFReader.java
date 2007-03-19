@@ -232,6 +232,8 @@ public class GIFReader extends FormatReader {
     if (debug) debug("GIFReader.initFile(" + id + ")");
     super.initFile(id);
 
+    status("Verifying GIF format");
+
     numFrames = 0;
     status = STATUS_OK;
     in = new RandomAccessStream(id);
@@ -244,6 +246,8 @@ public class GIFReader extends FormatReader {
     if (!ident.startsWith("GIF")) {
       throw new FormatException("Not a valid GIF file.");
     }
+
+    status("Reading dimensions");
 
     width = DataTools.read2UnsignedBytes(in, true);
     height = DataTools.read2UnsignedBytes(in, true);
@@ -271,6 +275,8 @@ public class GIFReader extends FormatReader {
     }
 
     bgColor = gct[bgIndex];
+
+    status("Reading data blocks");
 
     boolean done = false;
     while (!done) {
@@ -389,6 +395,8 @@ public class GIFReader extends FormatReader {
           break;
       }
     }
+
+    status("Populating metadata");
 
     sizeX[0] = width;
     sizeY[0] = height;

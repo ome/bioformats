@@ -199,6 +199,8 @@ public class DicomReader extends FormatReader {
 
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
+    status("Verifying DICOM format");
+
     byte[] four = new byte[4];
     long pos = 0;
     in.seek(128);
@@ -213,6 +215,8 @@ public class DicomReader extends FormatReader {
       location = 128;
     }
     else in.seek(pos);
+
+    status("Reading tags");
 
     boolean decodingTags = true;
 
@@ -324,6 +328,8 @@ public class DicomReader extends FormatReader {
       }
     }
     if (numImages == 0) numImages = 1;
+
+    status("Populating metadata");
 
     sizeX[0] = width;
     sizeY[0] = height;

@@ -187,6 +187,8 @@ public class PerkinElmerReader extends FormatReader {
       return;
     }
 
+    status("Finding HTML companion file");
+
     if (debug) debug("PerkinElmerReader.initFile(" + id + ")");
     // always init on the HTML file - this prevents complications with
     // initializing the image files
@@ -214,6 +216,8 @@ public class PerkinElmerReader extends FormatReader {
     String[] ls = workingDir.list();
 
     allFiles.add(id);
+
+    status("Searching for all metadata companion files");
 
     // check if we have any of the required header file types
 
@@ -328,9 +332,10 @@ public class PerkinElmerReader extends FormatReader {
 
     String[] tempFiles = files;
     files = new String[filesPt];
-    //System.arraycopy(tempFiles, 0, files, 0, filesPt);
 
     // determine the number of different extensions we have
+
+    status("Finding image files");
 
     int extCount = 0;
     Vector foundExts = new Vector();
@@ -388,6 +393,8 @@ public class PerkinElmerReader extends FormatReader {
 
     // we always parse the .tim and .htm files if they exist, along with
     // either the .csv file or the .zpo file
+
+    status("Parsing metadata values");
 
     if (timPos != -1) {
       tempFile = new Location(workingDir, ls[timPos]);
@@ -532,6 +539,8 @@ public class PerkinElmerReader extends FormatReader {
         prevToken = token;
       }
     }
+
+    status("Populating metadata");
 
     channels = Integer.parseInt(wavelengths);
 

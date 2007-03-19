@@ -255,16 +255,18 @@ public class ICSReader extends FormatReader {
     if (debug) debug("ICSReader.initFile(" + id + ")");
     super.initFile(id);
 
+    status("Finding companion file");
+
     String icsId = id, idsId = id;
     int dot = id.lastIndexOf(".");
     String ext = dot < 0 ? "" : id.substring(dot + 1).toLowerCase();
-    if(ext.equals("ics")) {
+    if (ext.equals("ics")) {
       // convert C to D regardless of case
       char[] c = idsId.toCharArray();
       c[c.length - 2]++;
       idsId = new String(c);
     }
-    else if(ext.equals("ids")) {
+    else if (ext.equals("ids")) {
       // convert D to C regardless of case
       char[] c = icsId.toCharArray();
       c[c.length - 2]--;
@@ -274,6 +276,8 @@ public class ICSReader extends FormatReader {
     if (icsId == null) throw new FormatException("No ICS file found.");
     Location icsFile = new Location(icsId);
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
+
+    status("Checking file version");
 
     // check if we have a v2 ICS file
     RandomAccessStream f = new RandomAccessStream(icsId);
@@ -295,6 +299,8 @@ public class ICSReader extends FormatReader {
     currentIcsId = icsId;
 
     icsIn = icsFile;
+
+    status("Reading metadata");
 
     RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
     StringTokenizer t;
@@ -339,6 +345,8 @@ public class ICSReader extends FormatReader {
       if (st.hasMoreTokens()) line = st.nextToken();
       else line = null;
     }
+
+    status("Populating metadata");
 
     String images = (String) getMeta("layout sizes");
     String ord = (String) getMeta("layout order");
@@ -411,6 +419,7 @@ public class ICSReader extends FormatReader {
     if (gzip &&
       ((data.length / (numImages) < (width * height * dimensions[0]/8))))
     {
+      status("Decompressing pixel data"); 
       idsIn.read(data);
       byte[] buf = new byte[8192];
       ByteVector v = new ByteVector();
@@ -429,6 +438,8 @@ public class ICSReader extends FormatReader {
       }
     }
     else idsIn.readFully(data);
+
+    status("Populating metadata");
 
     // Populate metadata store
 

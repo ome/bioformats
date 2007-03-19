@@ -310,6 +310,8 @@ public class OIBReader extends FormatReader {
 
       int numSeries = width.size();
 
+      status("Sorting images");
+
       // sort names
 
       for (int i=0; i<numSeries; i++) {
@@ -345,6 +347,8 @@ public class OIBReader extends FormatReader {
         }
         names.setElementAt(newNames, i);
       }
+
+      status("Populating metadata");
 
       String[] labels = new String[9];
       String[] dims = new String[9];
@@ -577,9 +581,11 @@ public class OIBReader extends FormatReader {
       r.setVar("dir", dir);
       r.exec("dirName = dir.getName()");
       if (isInstance)  {
+        status("Parsing embedded folder (" + (depth + 1) + ")"); 
         parseDir(depth + 1, r.getVar("entry"));
       }
       else if (isDocument) {
+        status("Parsing embedded file (" + depth + ")");
         r.exec("entryName = entry.getName()");
         if (debug) {
           print(depth + 1, "Found document: " + r.getVar("entryName"));

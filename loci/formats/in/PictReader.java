@@ -194,6 +194,8 @@ public class PictReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
+    status("Populating metadata");
+
     little = false;
 
     // skip the header and read in the remaining bytes

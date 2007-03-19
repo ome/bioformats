@@ -70,10 +70,14 @@ public class TiffReader extends BaseTiffReader {
     super.initStandardMetadata();
     String comment = (String) getMeta("Comment");
 
+    status("Checking comment style");
+
     // check for OME-XML in TIFF comment (OME-TIFF format)
     boolean omeTiff = comment != null && comment.indexOf("ome.xsd") >= 0;
     put("OME-TIFF", omeTiff ? "yes" : "no");
     if (omeTiff) {
+      status("Found OME-TIFF: parsing OME-XML");
+
       // convert string to DOM
       ByteArrayInputStream is = new ByteArrayInputStream(comment.getBytes());
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

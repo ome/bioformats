@@ -375,6 +375,8 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
 
+      status("Populating metadata");
+
       zSize = zIndices.size();
       tSize = tIndices.size();
       if (nChannels != cIndices.size()) nChannels *= cIndices.size();
@@ -518,9 +520,11 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("dirName = dir.getName()");
 
       if (isInstance)  {
+        status("Parsing embedded folder (" + (depth + 1) + ")"); 
         parseDir(depth + 1, r.getVar("entry"));
       }
       else if (isDocument) {
+        status("Parsing embedded file (" + depth + ")");
         r.exec("entryName = entry.getName()");
         if (debug) {
           print(depth + 1, "Found document: " + r.getVar("entryName"));

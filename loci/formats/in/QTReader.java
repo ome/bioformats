@@ -577,8 +577,11 @@ public class QTReader extends FormatReader {
     spork = true;
     offsets = new Vector();
     chunkSizes = new Vector();
+    status("Parsing tags"); 
     parse(0, 0, in.length());
     numImages = offsets.size();
+
+    status("Populating metadata");
 
     int bytesPerPixel = bitsPerPixel / 8;
     bytesPerPixel %= 4;

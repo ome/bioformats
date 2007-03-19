@@ -177,10 +177,15 @@ public class EPSReader extends FormatReader {
     if (debug) debug("EPSReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
+    
+    status("Verifying EPS format");  
+    
     String line = in.readLine();
     if (!line.trim().startsWith("%!PS")) {
       throw new FormatException("Invalid EPS file.");
     }
+
+    status("Finding image data");
 
     binary = false;
 
@@ -252,6 +257,8 @@ public class EPSReader extends FormatReader {
       lineNum++;
       line = in.readLine();
     }
+
+    status("Populating metadata");
 
     if (bps == 0) bps = 8;
 
