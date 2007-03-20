@@ -805,8 +805,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       miscRow3.setLayout(new BoxLayout(miscRow3, BoxLayout.X_AXIS));
       miscRow3.add(scalePanel);
       miscRow3.add(Box.createHorizontalStrut(5));
+      miscRow3.add(numCurves);
+      miscRow3.add(Box.createHorizontalStrut(5));
       miscRow3.add(exportData);
-      //miscRow3.add(numCurves);
 
       JPanel miscPanel = new JPanel();
       miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
@@ -1155,6 +1156,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       }
       samps = new float[numChanVis * timeBins];
       maxVal = 0;
+      float[] maxVals = new float[numChanVis];
       for (int c=0, cc=0; c<channels; c++) {
         if (!cVisible[c]) continue;
         for (int t=0; t<timeBins; t++) {
@@ -1171,6 +1173,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           samps[ndx] = sum;
           if (doLog) samps[ndx] = (float) Math.log(samps[ndx] + 1);
           if (samps[ndx] > maxVal) maxVal = samps[ndx];
+          if (samps[ndx] > maxVals[cc]) maxVals[cc] = samps[ndx];
           setProgress(progress, ++p);
           if (progress.isCanceled()) plotCanceled = true;
           if (plotCanceled) break;
@@ -1188,27 +1191,19 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         tau = new float[channels][numExp];
         for (int c=0; c<channels; c++) Arrays.fill(tau[c], Float.NaN);
         ExpFunction func = new ExpFunction(numExp);
-        float[] params = new float[3 * numExp];
+        float[] params = new float[2 * numExp + 1];
         if (numExp == 1) {
-          params[0] = maxVal;
+          //params[0] = maxVal;
           params[1] = picoToBins(1000);
           params[2] = 0;
         }
         else if (numExp == 2) {
-          params[0] = maxVal / 2;
+          //params[0] = maxVal / 2;
           params[1] = picoToBins(800);
-          params[2] = 0;
-          params[0] = maxVal / 2;
-          params[1] = picoToBins(2000);
-          params[2] = 0;
+          //params[2] = maxVal / 2;
+          params[3] = picoToBins(2000);
+          params[4] = 0;
         }
-        //for (int i=0; i<numExp; i++) {
-        //  // initial guess for (a, b, c)
-        //  int e = 3 * i;
-        //  params[e] = (numExp - i) * maxVal / (numExp + 1);
-        //  params[e + 1] = picoToBins(1000 * (i + 1));
-        //  params[e + 2] = 0;
-        //}
         int num = timeBins - maxPeak;
 
         // HACK - cut off last 1500 ps from lifetime histogram,
@@ -1223,7 +1218,18 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         float[] yVals = new float[num];
         float[] weights = new float[num];
         Arrays.fill(weights, 1); // no weighting
-        log("Computing fit parameters: y(t) = a * e^(-t/" + TAU + ") + c");
+        StringBuffer equation = new StringBuffer();
+        equation.append("y(t) = ");
+        for (int i=0; i<numExp; i++) {
+          equation.append("a");
+          equation.append(i + 1);
+          equation.append(" * e^(-t/");
+          equation.append(TAU);
+          equation.append(i + 1);
+          equation.append(") + ");
+        }
+        equation.append("c");
+        log("Computing fit parameters: " + equation.toString());
         for (int c=0, cc=0; c<channels; c++) {
           if (!cVisible[c]) {
             fitResults[c] = null;
@@ -1232,18 +1238,26 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           log("\tChannel #" + (c + 1) + ":");
           System.arraycopy(samps, timeBins * cc + maxPeak, yVals, 0, num);
           LMA lma = null;
+          for (int i=0; i<numExp; i++) {
+            int e = 2 * i;
+            params[e] = maxVals[cc] / numExp;
+          }
           lma = new LMA(func, params, new float[][] {xVals, yVals},
             weights, new JAMAMatrix(params.length, params.length));
           lma.fit();
           log("\t\titerations=" + lma.iterationCount);
+          // normalize chi2 by the channel's peak value
+          if (maxVals[cc] != 0) lma.chi2 /= maxVals[cc];
+          // scale chi2 by degrees of freedom
+          lma.chi2 /= num - params.length;
           log("\t\tchi2=" + lma.chi2);
           for (int i=0; i<numExp; i++) {
-            int e = 3 * i;
-            log("\t\ta" + i + "=" + lma.parameters[e]);
+            int e = 2 * i;
+            log("\t\ta" + (i + 1) + "=" + lma.parameters[e]);
             tau[c][i] = binsToPico((float) (1 / lma.parameters[e + 1]));
-            log("\t\t" + TAU + i + "=" + tau[c][i] + " ps");
-            log("\t\tc" + i + "=" + lma.parameters[e + 2]);
+            log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
           }
+          log("\t\tc=" + lma.parameters[2 * numExp]);
           fitResults[c] = lma.parameters;
           setProgress(progress, ++p);
           cc++;
@@ -1336,9 +1350,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
               else {
                 float sum = 0;
                 for (int i=0; i<numExp; i++) {
-                  int e = 3 * i;
-                  sum += (float) (q[e] * Math.exp(-q[e + 1] * et) + q[e + 2]);
+                  int e = 2 * i;
+                  sum += (float) (q[e] * Math.exp(-q[e + 1] * et));
                 }
+                sum += (float) q[2 * numExp];
                 fitSamps[ndx] = sum;
                 residuals[ndx] = samps[ndx] - fitSamps[ndx];
               }
@@ -1585,23 +1600,25 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     public double getY(double x, double[] a) {
       double sum = 0;
       for (int i=0; i<numExp; i++) {
-        int e = 3 * i;
-        sum += a[e] * Math.exp(-a[e + 1] * x) + a[e + 2];
+        int e = 2 * i;
+        sum += a[e] * Math.exp(-a[e + 1] * x);
       }
+      sum += a[2 * numExp];
       return sum;
     }
 
     public double getPartialDerivate(double x, double[] a, int parameterIndex) {
-      int e = parameterIndex / 3;
-      int off = parameterIndex % 3;
+      if (parameterIndex == 2 * numExp) return 1; // c
+      int e = parameterIndex / 2;
+      int off = parameterIndex % 2;
       switch (off) {
-        case 0: return Math.exp(-a[e + 1] * x);
-        case 1: return -a[e] * x * Math.exp(-a[e + 1] * x);
-        case 2: return 1;
-        default:
-          throw new RuntimeException("No such parameter index: " +
-            parameterIndex);
+        case 0:
+          return Math.exp(-a[e + 1] * x); // a
+        case 1:
+          return -a[e] * x * Math.exp(-a[e + 1] * x); // b
       }
+      throw new RuntimeException("No such parameter index: " +
+        parameterIndex);
     }
   }
 
