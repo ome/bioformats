@@ -175,6 +175,8 @@ public class PointerTool extends OverlayTool {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
+    boolean selectionStateChanged = false;
+
     // move grabbed object, if any
     if (!grabbed.isEmpty()) {
       float moveX = dx - grabX;
@@ -192,7 +194,6 @@ public class PointerTool extends OverlayTool {
       select.setCorner(px, py);
 
       // select objects inside the box
-      boolean stateChanged = false;
       for (int i=0; i<bounds.length; i++) {
         float bx1, bx2, by1, by2;
         float tx1, tx2, ty1, ty2;
@@ -216,28 +217,38 @@ public class PointerTool extends OverlayTool {
          */
         
         // express object corners in terms of TSB edge vectors
+        // vector between corners 0 and 1
         double[] v1 = {c[1][0] - c[0][0], c[1][1] - c[0][1]};
+        // vector between corners 0 and 3
         double[] v2 = {c[3][0] - c[0][0], c[3][1] - c[0][1]};
 
-        // iterate through all points of bounding box
-        // and check whether they're inside 
+        // iterate through all 4 points of object bounding box
+        // and check whether they're inside selection area
         boolean inside = true; 
         for (int j = 0; j<bounds[0].length && inside; j++) {
-          int xndx = j < 2 ? 0 : 2;
-          int yndx = j % 2 == 0 ? 1 : 3;
+          int xndx = j < 2 ? 0 : 2; 
+          int yndx = j % 2 == 0 ? 1 : 3; 
           double[] p = {bounds[i][xndx], bounds[i][yndx]};
-          double[] vp = {p[0] - c[0][0], p[1] - c[0][1]};
+          // the above three lines iterate through the pairs (0,1),
+          // (0,3), (2,1), (2, 3) of bounds[i] over the 
+          // duration of the loop
+          
+          double[] vp = {p[0] - c[0][0], p[1] - c[0][1]}; // vector from c(0)
+          // to p
 
+          // cos of angle btw. vectors v1 and vp
           double cos1 = (vp[0] * v1[0] + vp[1] * v1[1]) / 
             (Math.sqrt(vp[0]*vp[0] + vp[1]*vp[1] + v1[0]*v1[0] + v1[1]*v1[1]));
           
+          // cos of angle btw. v2 and vp
           double cos2 = (vp[0] * v2[0] + vp[1] * v2[1]) / 
             (Math.sqrt(vp[0]*vp[0] + vp[1]*vp[1] + v2[0]*v2[0] + v2[1]*v2[1]));
 
           if (cos1 < 0 || cos2 < 0)  inside = false;
           else {
             // determine projection of point on edge vectors
-            // if projection is longer than either edge vector, you're too far.
+            // if projection is longer than either edge vector,
+            // point is outside selection area
             double[] proj1 = MathUtil.getProjection(c[0], c[3], p, false);
             double[] proj2 = MathUtil.getProjection(c[0], c[1], p, false);
              
@@ -256,31 +267,33 @@ public class PointerTool extends OverlayTool {
           if (ctrl && !shift) {
             if (objs[i].isSelected() == selected[i]) {
               objs[i].setSelected(!selected[i]);
-              stateChanged = true;
+              selectionStateChanged = true;
             }
           }
           else if (!objs[i].isSelected()) {
             objs[i].setSelected(true);
-            stateChanged = true;
+            selectionStateChanged = true;
           }
         }
         else {
           if (shift || ctrl) {
             if (objs[i].isSelected() != selected[i]) {
               objs[i].setSelected(selected[i]);
-              stateChanged = true;
+              selectionStateChanged = true;
             }
           }
           else {
             if (objs[i].isSelected()) {
               objs[i].setSelected(false);
-              stateChanged = true;
+              selectionStateChanged = true;
             }
           }
         }
       } // end for
-      // do this only if state changed?
-      if (stateChanged) ((OverlayWidget) overlay.getControls()).refreshListSelection();
+
+      if (selectionStateChanged) ((OverlayWidget)
+          overlay.getControls()).refreshListSelection();
+
       overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
