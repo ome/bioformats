@@ -760,7 +760,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "Exports the selected ROI's raw data to a text file");
       exportData.addActionListener(this);
 
-      numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
+      numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 2, 1));
       numCurves.setToolTipText("Number of components in exponential fit");
       numCurves.setMaximumSize(numCurves.getPreferredSize());
       numCurves.addChangeListener(this);
