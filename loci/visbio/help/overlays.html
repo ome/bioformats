@@ -36,8 +36,8 @@ click the "Up" button to move them up in the rendering order.</i>
 
 To draw an overlay, choose the appropriate tool from the "Tools" section of the
 overlay controls. The tools shown above (from left to right) are: pointer,
-line, freeform, marker, text, oval, box and arrow. In many ways, they behave like
-similar tools available in many image editing programs.
+line, freeform, marker, text, oval, box, arrow, and polyline. In many ways,
+  they behave like similar tools available in many image editing programs.
 
 <ul>
   <li>The <b>pointer tool</b> is for selecting existing overlays. Click an
@@ -49,14 +49,28 @@ similar tools available in many image editing programs.
   <li>The <b>line tool</b> draws lines from one point to another. Click and
     drag across the display to draw a new line.</li>
   <li>The <b>freeform tool</b> draws freeform curves Click and
-    drag across the display to draw a new line.  The freeform tool has several built-in editing features:
-    <ul>
-      <li>To <b>erase</b> a portion of a freeform, Ctrl+drag backwards along the freeform from one end.</li>
-    <li>To <b>split</b> a freeform in two, Ctrl+click on a point along the curve.</li>
-      <li>To <b>resume</b> drawing an existing freeform, click near the end of an existing freeform and drag.</li>
-      <li>To <b>splice</b> two freeform curves together end-to-end, simply drag near the end of an existing freeform while drawing.  A freeform in the process of being drawn will automatically connect to a nearby end of an existing freeform. When drawing freeforms close together, hold the shift key to suppress automatic reconnection.</li>
-      <li>To <b>redraw</b> a portion of a freeform curve, click on the curve and drag the mouse.  Dragging produces a tendril-like extension of the curve.  When the tendril approaches the original curve, it automatically reconnects, replacing the subtended segment of the original curve.  To prevent the tendril from reconnecting to the original curve, hold Shift.  Release Shift to allow the tendril to reconnect to the curve.  If the mouse is released before the tendril reconnects, the original curve is restored.</li>
-    </ul>
+    drag across the display to draw a new line.  <p>The freeform tool has several built-in editing features:
+  <ul>
+    <li>To <b>erase</b> a portion of a freeform, Ctrl+drag backwards along the
+      freeform from one end.</li>
+    <li>To <b>split</b> a freeform in two, Ctrl+click on a point along the
+      curve.</li>
+    <li>To <b>resume</b> drawing an existing freeform, click near the end of an
+      existing freeform and drag.</li>
+    <li>To <b>splice</b> two freeform curves together end-to-end, simply drag
+      near the end of an existing freeform while drawing.  A freeform in the
+      process of being drawn will automatically connect to a nearby end of an
+      existing freeform. When drawing freeforms close together, hold the shift
+      key to suppress automatic reconnection.</li>
+    <li>To <b>redraw</b> a portion of a freeform curve, click on the
+      curve and drag the mouse.  Dragging produces a tendril-like extension of
+      the curve.  When the tendril approaches the original curve, it
+      automatically reconnects, replacing the subtended segment of the original
+      curve.  To prevent the tendril from reconnecting to the original curve,
+      hold Shift.  Release Shift to allow the tendril to reconnect to
+      the curve.  If the mouse is released before the tendril reconnects, the
+      original curve is restored.</li> 
+    </ul> 
   <li>The <b>marker tool</b> draws markers at a given point. Click a point in
     the display to place a crosshairs there.</li>
   <li>The <b>text tool</b> draws text at a given point. Click a point in the
@@ -70,6 +84,36 @@ similar tools available in many image editing programs.
     to draw a new arrow which stretches across the path you draw, with the
     arrow's tip corresponding to the point at which you press the mouse
     button.</li>
+  <li>The <b>polyline tool</b> draws a segmented curve, point-to-point.  Click
+    on the display to begin a new polyline.  Move the mouse and click to add
+    new nodes to the line.  To complete a polyline, either double-click on the
+    display or return to the last node on the curve and click when a yellow
+    circle appears around it.  Similarly, a green circle will appear
+    around the first node on a polyline being drawn if the mouse is moved
+    directly over it.  Click while the green circle is visible to "close"
+    the polyline, placing the final node directly over the first.
+    
+    <p>Like the freeform tool, the polyline tool has several built-in editing
+    features:
+   
+    <ul>
+      <li>To <b>reposition</b> a node of a completed polyline, move the mouse
+      over the node until a yellow circle appears.  With the yellow circle
+      visible, click and drag the node to the desired postion, then release the
+      mouse.</li>
+
+      <li>To <b>delete</b> a node of an existing polyline, position the mouse
+      over a node until a yellow circle appears around it.  Then Ctrl+click to
+      delete the node.  The polyline splits in two around the deleted node;
+      however, any one-node polylines created as a result are automatically
+      deleted.</li>
+
+      <li>To <b>resume</b> drawing an existing polyline, move the mouse over an
+      end node so that a yellow circle appears.  Then click to resume drawing
+      the line at that end.</li>
+     </ul>
+  </li>
+
 </ul>
 
 To use a tool, click the associated tool button.
@@ -82,8 +126,7 @@ or select them from the overlay list on the left side of the "Overlays" section
 of controls. Note that the overlay list only shows overlays for the current
 dimensional position.
 
-<p>To remove an overlay, press click the "Remove" button or press the Delete
-key.
+<p>To remove an overlay, press click the "Remove" button or press the Delete key.  
 
 <p>To copy overlays to the clipboard, first select them, then click the "Copy"
 button or press the Ctrl+C key combination.
@@ -162,6 +205,9 @@ button to do so.
 choosing a text file saved earlier. Please note that loading an overlay set
 will clear out any current overlays, overwriting them with those saved in the
 text file.
+
+<p>You can export your overlays to .xls spreadsheet format using the "Export Overlays..." button.  VisBio uses the Apache POI HSSF library to write .xls 
+spreadsheets.
 
 <br><h3>See also:</h3>
 
