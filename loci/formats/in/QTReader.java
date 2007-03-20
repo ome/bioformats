@@ -722,7 +722,9 @@ public class QTReader extends FormatReader {
   // -- Helper methods --
 
   /** Parse all of the atoms in the file. */
-  public void parse(int depth, long offset, long length) throws IOException {
+  public void parse(int depth, long offset, long length) 
+    throws FormatException, IOException 
+  {
     while (offset < length) {
       in.seek(offset);
 
@@ -790,6 +792,9 @@ public class QTReader extends FormatReader {
 
           width = in.readInt();
           height = in.readInt();
+        }
+        else if (atomType.equals("cmov")) {
+          throw new FormatException("Compressed header not supported.");
         }
         else if (atomType.equals("stco")) {
           // we've found the plane offsets
