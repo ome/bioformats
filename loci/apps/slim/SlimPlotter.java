@@ -1253,7 +1253,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           log("\t\tchi2=" + lma.chi2);
           for (int i=0; i<numExp; i++) {
             int e = 2 * i;
-            log("\t\ta" + (i + 1) + "=" + lma.parameters[e]);
+            log("\t\ta" + (i + 1) + "=" +
+              (100 * lma.parameters[e] / maxVals[cc]) + "%");
             tau[c][i] = binsToPico((float) (1 / lma.parameters[e + 1]));
             log("\t\t" + TAU + (i + 1) + "=" + tau[c][i] + " ps");
           }
