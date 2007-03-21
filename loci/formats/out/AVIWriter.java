@@ -120,7 +120,7 @@ public class AVIWriter extends FormatWriter {
       frameOffset2 = 35 * 4;
       savestrfSize = 42 * 4;
       savestrnPos = savestrfSize + 44 + (bytesPerPixel == 1 ? 4 * 256 : 0);
-      saveJUNKsignature = savestrnPos + 16;
+      saveJUNKsignature = savestrnPos + 24;
       saveLIST2Size = 4088;
       savemovi = 4092;
 
