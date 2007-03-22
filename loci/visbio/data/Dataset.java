@@ -33,8 +33,6 @@ import java.util.Hashtable;
 import javax.swing.JComponent;
 import loci.formats.*;
 import loci.formats.ome.OMEXMLMetadataStore;
-import loci.visbio.TaskEvent;
-import loci.visbio.TaskListener;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
@@ -76,7 +74,7 @@ public class Dataset extends ImageTransform {
   protected String[] ids;
 
   /** Optional listener for constructor progress. */
-  protected TaskListener listener;
+  protected StatusListener listener;
 
   // -- Computed fields --
 
@@ -169,7 +167,7 @@ public class Dataset extends ImageTransform {
    */
   public Dataset(String name, String pattern, String[] ids,
     int[] lengths, String[] dims, float width, float height, float step,
-    TaskListener listener)
+    StatusListener listener)
   {
     super(null, name, width, height, step);
     this.pattern = pattern;
@@ -642,7 +640,7 @@ public class Dataset extends ImageTransform {
   /** Notifies constructor task listener of a status update. */
   private void status(int current, int max, String message) {
     if (listener == null) return;
-    listener.taskUpdated(new TaskEvent(current, max, message));
+    listener.statusUpdated(new StatusEvent(current, max, message));
   }
 
 }

@@ -24,9 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import java.util.*;
+import loci.formats.StatusEvent;
+import loci.formats.StatusListener;
 import loci.formats.ome.OMEUploader;
 import loci.formats.ome.UploadException;
-import loci.visbio.*;
 
 /**
  * ImageUploader is a helper class for uploading VisBio datasets
@@ -59,33 +60,33 @@ public class ImageUploader {
       ul.uploadFile(ids[0], true);
     }
     catch (UploadException exc) {
-      notifyListeners(new TaskEvent(1, 1,
+      notifyListeners(new StatusEvent(1, 1,
         "Error uploading (see error console for details)"));
       exc.printStackTrace();
     }
   }
 
   /** Adds an upload task listener. */
-  public void addTaskListener(TaskListener l) {
+  public void addStatusListener(StatusListener l) {
     synchronized (listeners) { listeners.addElement(l); }
   }
 
   /** Removes an upload task listener. */
-  public void removeTaskListener(TaskListener l) {
+  public void removeStatusListener(StatusListener l) {
     synchronized (listeners) { listeners.removeElement(l); }
   }
 
   /** Removes all upload task listeners. */
-  public void removeAllTaskListeners() {
+  public void removeAllStatusListeners() {
     synchronized (listeners) { listeners.removeAllElements(); }
   }
 
   /** Notifies listeners of an upload task update. */
-  protected void notifyListeners(TaskEvent e) {
+  protected void notifyListeners(StatusEvent e) {
     synchronized (listeners) {
       for (int i=0; i<listeners.size(); i++) {
-        TaskListener l = (TaskListener) listeners.elementAt(i);
-        l.taskUpdated(e);
+        StatusListener l = (StatusListener) listeners.elementAt(i);
+        l.statusUpdated(e);
       }
     }
   }

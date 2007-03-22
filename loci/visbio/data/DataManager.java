@@ -31,7 +31,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
-import loci.formats.FilePattern;
+import loci.formats.*;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.*;
@@ -289,8 +289,8 @@ public class DataManager extends LogicManager {
     final BioTask task = bioTask;
     task.setStoppable(false);
     task.setStatus("Creating dataset");
-    TaskListener tl = new TaskListener() {
-      public void taskUpdated(TaskEvent e) {
+    StatusListener sl = new StatusListener() {
+      public void statusUpdated(StatusEvent e) {
         int val = e.getProgressValue();
         int max = e.getProgressMaximum();
         String msg = e.getStatusMessage();
@@ -298,7 +298,7 @@ public class DataManager extends LogicManager {
       }
     };
     Dataset dataset = new Dataset(name, pattern,
-      ids, lengths, dims, width, height, step, tl);
+      ids, lengths, dims, width, height, step, sl);
     task.setCompleted();
     addData(dataset);
   }

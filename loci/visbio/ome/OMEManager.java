@@ -25,6 +25,8 @@ package loci.visbio.ome;
 
 import java.awt.Component;
 import javax.swing.JOptionPane;
+import loci.formats.StatusEvent;
+import loci.formats.StatusListener;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.help.HelpManager;
@@ -91,8 +93,8 @@ public class OMEManager extends LogicManager {
     final ImageUploader uploader = new ImageUploader();
     TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
     final BioTask task = tm.createTask("Upload " + dt.getName() + " to OME");
-    uploader.addTaskListener(new TaskListener() {
-      public void taskUpdated(TaskEvent e) {
+    uploader.addStatusListener(new StatusListener() {
+      public void statusUpdated(StatusEvent e) {
         // update task with latest database communication status
         int value = e.getProgressValue();
         int max = e.getProgressMaximum();
