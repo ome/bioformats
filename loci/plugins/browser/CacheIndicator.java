@@ -209,7 +209,15 @@ public class CacheIndicator extends JComponent {
   }
 
   public Dimension getPreferredSize() {
-    return new Dimension(scroll.getWidth(),COMPONENT_HEIGHT);
+    return new Dimension(scroll.getPreferredSize().width, COMPONENT_HEIGHT);
+  }
+
+  public Dimension getMinimumSize() {
+    return new Dimension(scroll.getMinimumSize().width, COMPONENT_HEIGHT);
+  }
+
+  public Dimension getMaximumSize() {
+    return new Dimension(scroll.getMaximumSize().width, COMPONENT_HEIGHT);
   }
 
 }
