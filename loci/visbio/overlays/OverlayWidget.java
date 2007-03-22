@@ -78,6 +78,9 @@ public class OverlayWidget extends JPanel implements ActionListener,
   /** File chooser for loading and saving overlays. */
   protected JFileChooser overlayBox;
 
+  /** File chooser for exporting overlays to .xls */
+  protected JFileChooser overlayXLSBox;
+
   /** Text field indicating current font. */
   protected JTextField currentFont;
 
@@ -173,6 +176,10 @@ public class OverlayWidget extends JPanel implements ActionListener,
     overlayBox = new JFileChooser();
     overlayBox.addChoosableFileFilter(new ExtensionFileFilter(
       new String[] {"txt"}, "Overlay text files"));
+
+    overlayXLSBox = new JFileChooser();
+    overlayXLSBox.addChoosableFileFilter(new ExtensionFileFilter(
+      new String[] {"xls"}, "Overlay spreadsheet files"));
 
     // current font text field
     currentFont = new JTextField();
@@ -676,8 +683,11 @@ public class OverlayWidget extends JPanel implements ActionListener,
       }
     }
     else if (src == export) {
+      int rval = overlayXLSBox.showDialog(this, "Export");
+      if (rval != JFileChooser.APPROVE_OPTION) return;
+      File file = overlayXLSBox.getSelectedFile();
       try {
-        FileOutputStream fout = new FileOutputStream("workbook.xls");
+        FileOutputStream fout = new FileOutputStream(file);
         HSSFWorkbook wb = overlay.exportOverlays();
         wb.write(fout);
         fout.close();
