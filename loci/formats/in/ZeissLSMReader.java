@@ -141,23 +141,37 @@ public class ZeissLSMReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    ifds = TiffTools.getIFDs(in);
-    byte[][] p = TiffTools.getSamples(ifds[2*no], in);
-    byte[] b = new byte[p.length * p[0].length];
+    byte[] b = new byte[sizeX[0] * sizeY[0] * sizeC[0] * 
+      FormatTools.getBytesPerPixel(pixelType[0])]; 
+    return openBytes(id, no, b);   
+  }
 
-    for (int i=0; i<p.length; i++) {
-      System.arraycopy(p[i], 0, b, i*p[0].length, p[i].length);
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
     }
-    
-    b = swapIfRequired(b); 
-    updateMinMax(b, no);
-    return b;
+ 
+    int bpp = FormatTools.getBytesPerPixel(pixelType[0]);
+
+    if (buf.length < sizeX[0] * sizeY[0] * sizeC[0] * bpp) {
+      throw new FormatException("Buffer too small.");
+    }
+  
+    ifds = TiffTools.getIFDs(in);
+    TiffTools.getSamples(ifds[2*no], in, ignoreColorTable, buf);
+    updateMinMax(buf, no);
+    return swapIfRequired(buf);
   }
 
   /** Initializes the given Zeiss LSM file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissLSMReader.initFile(" + id + ")");
     super.initFile(id);
+    currentId = id; 
     channels = 0;
 
     // go through the IFD hashtable array and
@@ -262,9 +276,10 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DimensionY", DataTools.read4SignedBytes(ras, little));
 
       sizeZ[0] = DataTools.read4SignedBytes(ras, little);
-      sizeC[0] = DataTools.read4SignedBytes(ras, little);
+      int c = DataTools.read4SignedBytes(ras, little);
       sizeT[0] = DataTools.read4SignedBytes(ras, little);
 
+      if (c > sizeC[0] || c != 1) sizeC[0] = c;
       if (sizeC[0] == 0) sizeC[0]++;
 
       while (numImages > sizeZ[0] * sizeC[0] * sizeT[0]) {
@@ -588,7 +603,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     // see if we have an associated MDB file
 
-    Location dir = new Location(currentId).getParentFile();
+    Location dir = new Location(currentId).getAbsoluteFile().getParentFile();
     String[] dirList = dir.list();
 
     for (int i=0; i<dirList.length; i++) {
@@ -603,7 +618,6 @@ public class ZeissLSMReader extends BaseTiffReader {
         i = dirList.length;
       }
     }
-
   }
 
   // -- Helper methods --

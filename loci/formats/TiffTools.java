@@ -871,6 +871,8 @@ public final class TiffTools {
 
     if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
       photoInterp = BLACK_IS_ZERO;
+      samplesPerPixel = 1; 
+      bitsPerSample = new int[] {bitsPerSample[0]}; 
     }
 
     if (isTiled) {
@@ -1399,6 +1401,7 @@ public final class TiffTools {
     long imageLength = getImageLength(ifd);
     int samplesPerPixel = getSamplesPerPixel(ifd);
     int photoInterp = getPhotometricInterpretation(ifd);
+    
     if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
       photoInterp = BLACK_IS_ZERO;
       samplesPerPixel = 1;
@@ -1414,9 +1417,9 @@ public final class TiffTools {
       // First wrap the byte arrays and then use the features of the
       // ByteBuffer to transform to a ShortBuffer. Finally, use the ShortBuffer
       // bulk get method to copy the data into a usable form for makeImage().
-      int len = samples.length == 2 ? 3 : samples.length;
-      short[][] sampleData = new short[len][samples[0].length / 2];
-      for (int i = 0; i < samples.length; i++) {
+      //int len = samples.length == 2 ? 3 : samples.length;
+      short[][] sampleData = new short[samplesPerPixel][samples[0].length / 2];
+      for (int i = 0; i < sampleData.length; i++) {
         ShortBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asShortBuffer();
         sampleBuf.get(sampleData[i]);
       }
