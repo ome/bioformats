@@ -1,0 +1,21 @@
+ Category
+ CreationDate
+ Description
+ Experimenter
+ FormalInput
+ FormalOutput
+ Group
+ Index
+ Path
+ PixelType
+ Pixels
+ Repository
+ SizeC
+ SizeT
+ SizeX
+ SizeY
+ SizeZ
+
+Additions
+---------
+Well

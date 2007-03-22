@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <meta>
+        <filters directoryPatterns="" filePatterns=""
+            positiveFilePatterns="" showHiddenFiles="false"/>
+        <options/>
+    </meta>
+    <projectTree name="omeOxyProject.xpr">
+        <file name="AnalysisChain.xsd"/>
+        <file name="AnalysisModule.xsd"/>
+        <file name="atribute%20list.txt"/>
+        <file name="BinaryFile.xsd"/>
+        <file name="both%20list.txt"/>
+        <file name="CA.xsd"/>
+        <file name="CLI.xsd"/>
+        <file name="DataHistory.xsd"/>
+        <file name="element%20list.txt"/>
+        <file name="MLI.xsd"/>
+        <file name="ome.xsd"/>
+        <file name="../FromJM/Screens%20Data%20Model/scratch.txt"/>
+        <file name="SPW.xsd"/>
+        <file name="STD.xsd"/>
+    </projectTree>
+</project>
