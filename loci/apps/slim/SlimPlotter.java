@@ -17,8 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -58,6 +57,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   };
 
   private static final char TAU = 'T';
+
+  // log base 10, for now
+  private static final float BASE = 10;
+  private static final float BASE_LOG = (float) Math.log(BASE);
 
   // -- Fields --
 
@@ -1149,6 +1152,19 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       boolean doResLines = resLines.isSelected();
       boolean doTauColors = colorTau.isSelected();
 
+      // update scale labels for log scale
+      if (doLog) {
+        AxisScale zScale = zMap.getAxisScale();
+        Hashtable hash = new Hashtable();
+        for (int i=1; i<=maxVal; i*=BASE) {
+          hash.put(new Double(Math.log(i) / BASE_LOG), "" + i);
+        }
+        try {
+          zScale.setLabelTable(hash);
+        }
+        catch (VisADException exc) { exc.printStackTrace(); }
+      }
+
       // calculate samples
       int numChanVis = 0;
       for (int c=0; c<channels; c++) {
@@ -1171,7 +1187,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             }
           }
           samps[ndx] = sum;
-          if (doLog) samps[ndx] = (float) Math.log(samps[ndx] + 1);
+          if (doLog) {
+            samps[ndx] = (float) samps[ndx] >= 1 ?
+              (float) Math.log(samps[ndx]) / BASE_LOG : Float.NaN;
+          }
           if (samps[ndx] > maxVal) maxVal = samps[ndx];
           if (samps[ndx] > maxVals[cc]) maxVals[cc] = samps[ndx];
           setProgress(progress, ++p);
@@ -1376,6 +1395,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       catch (Exception exc) { exc.printStackTrace(); }
       setProgress(progress, ++p);
       progress.close();
+
+      // update scale labels for linear scale
+      if (!doLog) {
+        AxisScale zScale = zMap.getAxisScale();
+        zScale.createStandardLabels(maxVal, 0, 0, maxVal);
+      }
     }
 
     if (doRescale) {
