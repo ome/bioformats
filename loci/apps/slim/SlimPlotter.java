@@ -1138,6 +1138,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   // -- Runnable methods --
 
   public void run() {
+    decayPlot.disableAction();
+    boolean doLog = log.isSelected();
+
     if (doRecalc) {
       ProgressMonitor progress = new ProgressMonitor(null, "Plotting data",
         "Calculating sums", 0,
@@ -1146,7 +1149,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       progress.setMillisToDecideToPopup(50);
       int p = 0;
 
-      boolean doLog = log.isSelected();
       boolean doDataLines = dataLines.isSelected();
       boolean doFitLines = fitLines.isSelected();
       boolean doResLines = resLines.isSelected();
@@ -1187,10 +1189,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             }
           }
           samps[ndx] = sum;
-          if (doLog) {
-            samps[ndx] = (float) samps[ndx] >= 1 ?
-              (float) Math.log(samps[ndx]) / BASE_LOG : Float.NaN;
-          }
           if (samps[ndx] > maxVal) maxVal = samps[ndx];
           if (samps[ndx] > maxVals[cc]) maxVals[cc] = samps[ndx];
           setProgress(progress, ++p);
@@ -1351,15 +1349,11 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           cc++;
         }
 
-        // construct "Data" plot
-        FlatField ff = new FlatField(bcvFunc, bcSet);
-        ff.setSamples(new float[][] {samps, colors}, false);
-        decayRef.setData(doDataLines ? makeLines(ff) : ff);
-
+        float[] fitSamps = null, residuals = null;
         if (fitResults != null) {
           // compute finite sampling matching fitted exponentials
-          float[] fitSamps = new float[numChanVis * timeBins];
-          float[] residuals = new float[numChanVis * timeBins];
+          fitSamps = new float[numChanVis * timeBins];
+          residuals = new float[numChanVis * timeBins];
           for (int c=0, cc=0; c<channels; c++) {
             if (!cVisible[c]) continue;
             double[] q = fitResults[c];
@@ -1380,13 +1374,43 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             }
             cc++;
           }
+        }
 
+        // construct "Data" plot
+        if (doLog) {
+          // convert samples to log values for plotting
+          // this is done AFTER any computations involving samples (above)
+          for (int i=0; i<samps.length; i++) {
+            samps[i] = linearToLog(samps[i]);
+          }
+        }
+        FlatField ff = new FlatField(bcvFunc, bcSet);
+        ff.setSamples(new float[][] {samps, colors}, false);
+        decayRef.setData(doDataLines ? makeLines(ff) : ff);
+
+        if (fitSamps != null) {
           // construct "Fit" plot
+          if (doLog) {
+            // convert samples to log values for plotting
+            // this is done AFTER any computations involving samples (above)
+            for (int i=0; i<fitSamps.length; i++) {
+              fitSamps[i] = linearToLog(fitSamps[i]);
+            }
+          }
           FlatField fit = new FlatField(bcvFuncFit, bcSet);
           fit.setSamples(new float[][] {fitSamps}, false);
           fitRef.setData(doFitLines ? makeLines(fit) : fit);
+        }
 
+        if (residuals != null) {
           // construct "Residuals" plot
+          if (doLog) {
+            // convert samples to log values for plotting
+            // this is done AFTER any computations involving samples (above)
+            for (int i=0; i<residuals.length; i++) {
+              residuals[i] = linearToLog(residuals[i]);
+            }
+          }
           FlatField res = new FlatField(bcvFuncRes, bcSet);
           res.setSamples(new float[][] {residuals}, false);
           resRef.setData(doResLines ? makeLines(res) : res);
@@ -1415,7 +1439,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         zScaleValue.setText("" + maxVal);
         zScaleValue.getDocument().addDocumentListener(this);
       }
-      float maxZ = d == d ? d : (maxVal == 0 ? 1 : maxVal);
+      float maxZ = d == d ? d : maxVal;
+      if (doLog) maxZ = linearToLog(maxZ);
+      if (maxZ != maxZ || maxZ == 0) maxZ = 1;
       try {
         zMap.setRange(0, maxZ);
         zMapFit.setRange(0, maxZ);
@@ -1427,6 +1453,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       }
       catch (Exception exc) { exc.printStackTrace(); }
     }
+    decayPlot.enableAction();
     plotThread = null;
   }
 
@@ -1450,6 +1477,11 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   /** Converts value in histogram bins to picoseconds. */
   private float binsToPico(float bins) {
     return 1000 * timeRange * bins / timeBins;
+  }
+
+  /** Converts linear value to logarithm value. */
+  private float linearToLog(float v) {
+    return (float) v >= 1 ? (float) Math.log(v) / BASE_LOG : Float.NaN;
   }
 
   private JPanel makeRadioPanel(String title,
