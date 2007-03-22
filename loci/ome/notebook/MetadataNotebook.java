@@ -323,7 +323,7 @@ public class MetadataNotebook extends JFrame
     opener.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
     //make WiscScan view the default
-    scanView.setSelected(true);
+    //scanView.setSelected(true);
 
     //useful frame method that handles closing of window
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
