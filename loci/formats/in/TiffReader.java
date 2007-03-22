@@ -461,6 +461,29 @@ public class TiffReader extends BaseTiffReader {
       }
       metadata.remove("Comment");
     }
+  
+    // check for MetaMorph-style TIFF comment 
+    boolean metamorph = comment != null && 
+      ((String) getMeta("Software")).indexOf("MetaMorph") != -1; 
+    put("MetaMorph", metamorph ? "yes" : "no"); 
+    
+    if (metamorph) {
+      // parse key/value pairs   
+      StringTokenizer st = new StringTokenizer(comment, "\n");
+      while (st.hasMoreTokens()) {
+        String line = st.nextToken();
+        int colon = line.indexOf(":");
+        if (colon < 0) {
+          addMeta("Comment", line);
+          continue; 
+        } 
+        String key = line.substring(0, colon);
+        String value = line.substring(colon + 1);
+        addMeta(key, value);
+      }
+    }
+
+
   }
 
   /** Parses OME-XML metadata. */
