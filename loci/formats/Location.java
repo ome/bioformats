@@ -302,7 +302,7 @@ public class Location {
 
   /* @see java.io.File#toURL() */
   public URL toURL() throws MalformedURLException {
-    return isURL ? url : file.toURL();
+    return isURL ? url : file.toURI().toURL();
   }
 
   // -- Object API methods --
