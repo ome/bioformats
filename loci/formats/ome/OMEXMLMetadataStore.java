@@ -28,6 +28,7 @@ package loci.formats.ome;
 //import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Vector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -543,22 +544,24 @@ public class OMEXMLMetadataStore implements MetadataStore {
     // Since we will need this information for default display options creation
     // but don't have a place really to store this in OME-XML we're just going
     // to store it in instance variables.
-    if (channelMinimum == null) {
-      Integer sizeC = getSizeC(i);
-      if (sizeC == null) {
-        warn("Out of order access or missing metadata 'sizeC'.");
-        return;
+    if (channelMinimum == null || channelMinimum.length <= ndx) {
+      // expand channel minimum list
+      double[] min = new double[ndx + 1];
+      Arrays.fill(min, Double.NaN);
+      if (channelMinimum != null) {
+        System.arraycopy(channelMinimum, 0, min, 0, channelMinimum.length);
       }
-      channelMinimum = new double[sizeC.intValue()];
+      channelMinimum = min;
     }
 
-    if (channelMaximum == null) {
-      Integer sizeC = getSizeC(i);
-      if (sizeC == null) {
-        warn("Out of order access or missing metadata 'sizeC'.");
-        return;
+    if (channelMaximum == null || channelMaximum.length <= ndx) {
+      // expand channel maximum list
+      double[] max = new double[ndx + 1];
+      Arrays.fill(max, Double.NaN);
+      if (channelMaximum != null) {
+        System.arraycopy(channelMaximum, 0, max, 0, channelMaximum.length);
       }
-      channelMaximum = new double[sizeC.intValue()];
+      channelMaximum = max;
     }
 
     // Now that the array initialization hocus-pocus has been completed
@@ -610,8 +613,20 @@ public class OMEXMLMetadataStore implements MetadataStore {
       return;
     }
     if (channelMaximum == null) {
-      warn("Out of order access or missing metadata 'channelMinimum'.");
+      warn("Out of order access or missing metadata 'channelMaximum'.");
       return;
+    }
+    for (int c=0; c<sizeC; c++) {
+      if (c > channelMinimum.length || channelMinimum[c] != channelMinimum[c]) {
+        warn("Out of order access or missing metadata " +
+          "'channelMinimum[" + c + "]'.");
+        return;
+      }
+      if (c > channelMaximum.length || channelMaximum[c] != channelMaximum[c]) {
+        warn("Out of order access or missing metadata " +
+          "'channelMaximum[" + c + "]'.");
+        return;
+      }
     }
 
     DisplayChannelNode[] displayChannels = createRGBDisplayChannels(sizeC, ca);
