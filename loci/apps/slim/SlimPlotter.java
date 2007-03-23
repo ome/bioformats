@@ -22,16 +22,19 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
+import javax.swing.text.Document;
 import loci.formats.in.SDTInfo;
 import loci.formats.in.SDTReader;
 import loci.formats.DataTools;
 import loci.formats.ExtensionFileFilter;
 import loci.visbio.util.BreakawayPanel;
+import loci.visbio.util.ColorUtil;
 import loci.visbio.util.OutputConsole;
 import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.*;
 import visad.util.ColorMapWidget;
+import visad.util.Util;
 
 /** A tool for visualization of spectral lifetime data. */
 public class SlimPlotter implements ActionListener, ChangeListener,
@@ -39,6 +42,22 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 {
 
   // -- Constants --
+
+  /** Names for preset color look-up table. */
+  public static final String[] LUT_NAMES = {
+    "Grayscale", "HSV", "RGB", null,
+    "Red", "Green", "Blue", null,
+    "Cyan", "Magenta", "Yellow", null,
+    "Fire", "Ice"
+  };
+
+  /** Preset color look-up tables. */
+  public static final float[][][] LUTS = {
+    ColorUtil.LUT_GRAY, ColorUtil.LUT_HSV, ColorUtil.LUT_RGB, null,
+    ColorUtil.LUT_RED, ColorUtil.LUT_GREEN, ColorUtil.LUT_BLUE, null,
+    ColorUtil.LUT_CYAN, ColorUtil.LUT_MAGENTA, ColorUtil.LUT_YELLOW, null,
+    ColorUtil.LUT_FIRE, ColorUtil.LUT_ICE
+  };
 
   /** Default orientation for 3D decay curves display. */
   private static final double[] MATRIX_3D = {
@@ -90,6 +109,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private int roiCount;
   private double roiPercent;
   private float maxVal;
+  private float tauMin, tauMax;
 
   // fit parameters
   private float[][] tau;
@@ -107,6 +127,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // GUI components for decay pane
   private JLabel decayLabel;
+  private ColorMapWidget colorWidget;
+  private JCheckBox cOverride;
+  private JTextField cMinValue, cMaxValue;
+  private JButton lutLoad, lutSave, lutPresets;
+  private JPopupMenu lutsMenu;
+  private JFileChooser lutBox;
   private JRadioButton linear, log;
   private JRadioButton perspective, parallel;
   private JRadioButton dataSurface, dataLines;
@@ -122,6 +148,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private JButton exportData;
 
   // other GUI components
+  private JFrame masterWindow;
   private OutputConsole console;
 
   // VisAD objects
@@ -320,7 +347,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       Linear1DSet cSet = new Linear1DSet(cType,
         minWave, maxWave, channels, null, new Unit[] {nm}, null);
       bc = new RealTupleType(bType, cType);
-      RealType vType2 = RealType.getRealType("tau");
+      RealType vType2 = RealType.getRealType("value");
       RealTupleType vv = new RealTupleType(vType, vType2);
       bcvFunc = new FunctionType(bc, vv);
       RealType vTypeFit = RealType.getRealType("value_fit");
@@ -573,7 +600,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // construct 2D pane
       progress.setNote("Creating plots");
-      JFrame masterWindow = new JFrame("Slim Plotter - " + file.getName());
+      masterWindow = new JFrame("Slim Plotter - " + file.getName());
       masterWindow.addWindowListener(this);
       JPanel masterPane = new JPanel();
       masterPane.setLayout(new BorderLayout());
@@ -680,9 +707,51 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "Displays information about the selected region of interest");
       decayPane.add(decayLabel, BorderLayout.NORTH);
 
-      ColorMapWidget colorWidget = new ColorMapWidget(vMap);
+      colorWidget = new ColorMapWidget(vMap);
       Dimension prefSize = colorWidget.getPreferredSize();
       colorWidget.setPreferredSize(new Dimension(prefSize.width, 0));
+
+      cOverride = new JCheckBox("", false);
+      cOverride.setToolTipText(
+        "Toggles manual override of color range");
+      cOverride.addActionListener(this);
+      cMinValue = new JTextField();
+      Util.adjustTextField(cMinValue);
+      cMinValue.setToolTipText("Overridden color minimum");
+      cMinValue.setEnabled(false);
+      cMinValue.getDocument().addDocumentListener(this);
+      cMaxValue = new JTextField();
+      Util.adjustTextField(cMaxValue);
+      cMaxValue.setToolTipText("Overridden color maximum");
+      cMaxValue.setEnabled(false);
+      cMaxValue.getDocument().addDocumentListener(this);
+
+      lutLoad = new JButton("Load LUT...");
+      lutLoad.setToolTipText("Loads a color table from disk");
+      lutLoad.addActionListener(this);
+
+      lutSave = new JButton("Save LUT...");
+      lutSave.setToolTipText("Saves this color table to disk");
+      lutSave.addActionListener(this);
+
+      lutsMenu = new JPopupMenu();
+      for (int i=0; i<LUT_NAMES.length; i++) {
+        if (LUT_NAMES[i] == null) lutsMenu.addSeparator();
+        else {
+          JMenuItem item = new JMenuItem(LUT_NAMES[i]);
+          item.setActionCommand("lut" + i);
+          item.addActionListener(this);
+          lutsMenu.add(item);
+        }
+      }
+
+      lutPresets = new JButton("LUTs >");
+      lutPresets.setToolTipText("Selects a LUT from the list of presets");
+      lutPresets.addActionListener(this);
+
+      lutBox = new JFileChooser(System.getProperty("user.dir"));
+      lutBox.addChoosableFileFilter(
+        new ExtensionFileFilter("lut", "Binary color table files"));
 
       showData = new JCheckBox("Data", true);
       showData.setToolTipText("Toggles visibility of raw data");
@@ -771,6 +840,25 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       setProgress(progress, 990); // estimate: 99%
       if (progress.isCanceled()) System.exit(0);
 
+      JPanel colorPanel = new JPanel();
+      colorPanel.setBorder(new TitledBorder("Color Mapping"));
+      colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.Y_AXIS));
+      colorPanel.add(colorWidget);
+
+      JPanel colorRange = new JPanel();
+      colorRange.setLayout(new BoxLayout(colorRange, BoxLayout.X_AXIS));
+      colorRange.add(cOverride);
+      colorRange.add(cMinValue);
+      colorRange.add(cMaxValue);
+      colorPanel.add(colorRange);
+
+      JPanel colorButtons = new JPanel();
+      colorButtons.setLayout(new BoxLayout(colorButtons, BoxLayout.X_AXIS));
+      colorButtons.add(lutLoad);
+      colorButtons.add(lutSave);
+      colorButtons.add(lutPresets);
+      colorPanel.add(colorButtons);
+
       JPanel showPanel = new JPanel();
       showPanel.setBorder(new TitledBorder("Show"));
       showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.Y_AXIS));
@@ -786,11 +874,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
       scalePanel.add(zOverride);
       scalePanel.add(zScaleValue);
-
-      JPanel colorPanel = new JPanel();
-      colorPanel.setBorder(new TitledBorder("Color Mapping"));
-      colorPanel.setLayout(new BorderLayout());
-      colorPanel.add(colorWidget);
 
       JPanel miscRow1 = new JPanel();
       miscRow1.setLayout(new BoxLayout(miscRow1, BoxLayout.X_AXIS));
@@ -920,6 +1003,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     plotData(true, rescale, refit);
   }
 
+  /** Sets the currently selected range component's color widget table. */
+  public void setWidgetTable(float[][] table) {
+//    float[][] oldTable = colorWidget.getTableView();
+//    float[] alpha = oldTable.length > 3 ? oldTable[3] : null;
+//    table = ColorUtil.adjustColorTable(table, alpha, true);
+    colorWidget.setTableView(table);
+  }
+
   /** Logs the given output to the appropriate location. */
   public void log(String msg) {
     final String message = msg;
@@ -938,6 +1029,43 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       int c = cSlider.getValue() - 1;
       cVisible[c] = !cVisible[c];
       plotData(true, true, false);
+    }
+    else if (src == cOverride) {
+      boolean manual = cOverride.isSelected();
+      cMinValue.setEnabled(manual);
+      cMaxValue.setEnabled(manual);
+      updateColorScale();
+    }
+    else if (src == lutLoad) {
+      // ask user to specify the file
+      int returnVal = lutBox.showOpenDialog(masterWindow);
+      if (returnVal != JFileChooser.APPROVE_OPTION) return;
+      File file = lutBox.getSelectedFile();
+
+      float[][] table = ColorUtil.loadColorTable(file);
+      if (table == null) {
+        JOptionPane.showMessageDialog(masterWindow, "Error reading LUT file.",
+          "Cannot load color table", JOptionPane.ERROR_MESSAGE);
+      }
+      else setWidgetTable(table);
+    }
+    else if (src == lutSave) {
+      // ask user to specify the file
+      int returnVal = lutBox.showSaveDialog(masterWindow);
+      if (returnVal != JFileChooser.APPROVE_OPTION) return;
+      File file = lutBox.getSelectedFile();
+      String s = file.getAbsolutePath();
+      if (!s.toLowerCase().endsWith(".lut")) file = new File(s + ".lut");
+
+      boolean success =
+        ColorUtil.saveColorTable(colorWidget.getTableView(), file);
+      if (!success) {
+        JOptionPane.showMessageDialog(masterWindow, "Error writing LUT file.",
+          "Cannot save color table", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+    else if (src == lutPresets) {
+      lutsMenu.show(lutPresets, lutPresets.getWidth(), 0);
     }
     else if (src == linear || src == log) plotData(true, true, true);
     else if (src == dataSurface || src == dataLines ||
@@ -1015,19 +1143,26 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           "Slim Plotter", JOptionPane.ERROR_MESSAGE);
       }
     }
-    else { // OK button
-      width = parse(wField.getText(), width);
-      height = parse(hField.getText(), height);
-      timeBins = parse(tField.getText(), timeBins);
-      channels = parse(cField.getText(), channels);
-      timeRange = parse(trField.getText(), timeRange);
-      minWave = parse(wlField.getText(), minWave);
-      waveStep = parse(sField.getText(), waveStep);
-      adjustPeaks = peaksBox.isSelected();
-      cutEnd = cutBox.isSelected();
-      cVisible = new boolean[channels];
-      Arrays.fill(cVisible, true);
-      paramDialog.setVisible(false);
+    else {
+      String cmd = e.getActionCommand();
+      if (cmd != null && cmd.startsWith("lut")) {
+        // apply the chosen LUT preset
+        setWidgetTable(LUTS[Integer.parseInt(cmd.substring(3))]);
+      }
+      else { // OK button
+        width = parse(wField.getText(), width);
+        height = parse(hField.getText(), height);
+        timeBins = parse(tField.getText(), timeBins);
+        channels = parse(cField.getText(), channels);
+        timeRange = parse(trField.getText(), timeRange);
+        minWave = parse(wlField.getText(), minWave);
+        waveStep = parse(sField.getText(), waveStep);
+        adjustPeaks = peaksBox.isSelected();
+        cutEnd = cutBox.isSelected();
+        cVisible = new boolean[channels];
+        Arrays.fill(cVisible, true);
+        paramDialog.setVisible(false);
+      }
     }
   }
 
@@ -1131,9 +1266,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- DocumentListener methods --
 
-  public void changedUpdate(DocumentEvent e) { updateZAxis(); }
-  public void insertUpdate(DocumentEvent e) { updateZAxis(); }
-  public void removeUpdate(DocumentEvent e) { updateZAxis(); }
+  public void changedUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void insertUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void removeUpdate(DocumentEvent e) { documentUpdate(e); }
 
   // -- Runnable methods --
 
@@ -1282,7 +1417,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
       }
 
-      float tauMin = Float.NaN, tauMax = Float.NaN;
+      tauMin = tauMax = Float.NaN;
       if (tau != null) {
         tauMin = tauMax = tau[0][0];
         for (int i=1; i<tau.length; i++) {
@@ -1425,6 +1560,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         AxisScale zScale = zMap.getAxisScale();
         zScale.createStandardLabels(maxVal, 0, 0, maxVal);
       }
+
+      updateColorScale();
     }
 
     if (doRescale) {
@@ -1439,16 +1576,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         zScaleValue.setText("" + maxVal);
         zScaleValue.getDocument().addDocumentListener(this);
       }
+      float minZ = 0;
       float maxZ = d == d ? d : maxVal;
       if (doLog) maxZ = linearToLog(maxZ);
       if (maxZ != maxZ || maxZ == 0) maxZ = 1;
       try {
-        zMap.setRange(0, maxZ);
-        zMapFit.setRange(0, maxZ);
-        zMapRes.setRange(0, maxZ);
-        //vMap.setRange(0, max);
-        //vMapFit.setRange(0, max);
-        //vMapRes.setRange(0, max);
+        zMap.setRange(minZ, maxZ);
+        zMapFit.setRange(minZ, maxZ);
+        zMapRes.setRange(minZ, maxZ);
         decayPlot.reAutoScale();
       }
       catch (Exception exc) { exc.printStackTrace(); }
@@ -1481,7 +1616,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   /** Converts linear value to logarithm value. */
   private float linearToLog(float v) {
-    return (float) v >= 1 ? (float) Math.log(v) / BASE_LOG : Float.NaN;
+    return (float) v >= 1 ? (float) Math.log(v) / BASE_LOG : 0;
   }
 
   private JPanel makeRadioPanel(String title,
@@ -1532,11 +1667,49 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     return null;
   }
 
+  private void documentUpdate(DocumentEvent e) {
+    Document doc = e.getDocument();
+    if (doc == zScaleValue.getDocument()) updateZAxis();
+    else updateColorScale(); // cMinValue or cMaxValue
+  }
+
   private void updateZAxis() {
     float f = Float.NaN;
     try { f = Float.parseFloat(zScaleValue.getText()); }
     catch (NumberFormatException exc) { }
     if (f == f) plotData(false, true, false);
+  }
+
+  private void updateColorScale() {
+    boolean manual = cOverride.isSelected();
+    float min = Float.NaN, max = Float.NaN;
+    if (manual) {
+      try { min = Float.parseFloat(cMinValue.getText()); }
+      catch (NumberFormatException exc) { }
+      try { max = Float.parseFloat(cMaxValue.getText()); }
+      catch (NumberFormatException exc) { }
+    }
+    else {
+      if (colorHeight.isSelected()) {
+        min = 0;
+        max = maxVal;
+      }
+      else { // colorTau.isSelected()
+        min = tauMin;
+        max = tauMax;
+      }
+      cMinValue.getDocument().removeDocumentListener(this);
+      cMinValue.setText("" + min);
+      cMinValue.getDocument().addDocumentListener(this);
+      cMaxValue.getDocument().removeDocumentListener(this);
+      cMaxValue.setText("" + max);
+      cMaxValue.getDocument().addDocumentListener(this);
+    }
+    if (min == min && max == max && min < max) {
+      try { vMap.setRange(min, max); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
   }
 
   private void rescaleMinMax() {
