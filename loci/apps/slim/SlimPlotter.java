@@ -891,8 +891,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       miscRow3.setLayout(new BoxLayout(miscRow3, BoxLayout.X_AXIS));
       miscRow3.add(scalePanel);
       miscRow3.add(Box.createHorizontalStrut(5));
-      miscRow3.add(numCurves);
-      miscRow3.add(Box.createHorizontalStrut(5));
+//      miscRow3.add(numCurves);
+//      miscRow3.add(Box.createHorizontalStrut(5));
       miscRow3.add(exportData);
 
       JPanel miscPanel = new JPanel();
