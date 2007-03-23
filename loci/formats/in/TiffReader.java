@@ -114,6 +114,14 @@ public class TiffReader extends BaseTiffReader {
         }
       }
 
+      // MAJOR HACK : check for OME-XML in the comment of the second IFD
+      // There is a version of WiscScan which writes OME-XML to every IFD,
+      // but with SizeZ and SizeT equal to 1.
+
+      String s = 
+        (String) TiffTools.getIFDValue(ifds[1], TiffTools.IMAGE_DESCRIPTION);
+      boolean isWiscScan = s != null && s.indexOf("ome.xsd") != -1;
+
       // extract SizeZ, SizeC and SizeT from XML block
       if (tiffData != null) {
         boolean rgb = false;
@@ -158,11 +166,13 @@ public class TiffReader extends BaseTiffReader {
             pixelType[i]++;
           }
 
+          // MAJOR HACK : adjust SizeT to match the number of IFDs, if this
+          // file was written by a buggy version of WiscScan
+          if (isWiscScan) sizeT[i] = numImages;
+
           currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
           orderCertain[i] = true;
 
-          /* debug */ System.out.println("Z=" + sizeZ[i] + ", C=" + sc +
-            ", T=" + sizeT[i]);
           boolean[][][] zct = new boolean[sizeZ[i]][sc][sizeT[i]];
 
           for (int j=0; j<tiffData[i].length; j++) {
@@ -183,18 +193,12 @@ public class TiffReader extends BaseTiffReader {
             int numPlanes = nullNumPlanes ?
               (nullIfd ? numImages : 1) : Integer.parseInt(aNumPlanes);
 
-            /* debug */ System.out.println("first (" + firstZ + "," + firstC +
-              "," + firstT + ")");
-
             // populate ZCT matrix
             char d1st = currentOrder[i].charAt(2);
             char d2nd = currentOrder[i].charAt(3);
             int z = firstZ, t = firstT, c = firstC;
             
-            /* debug */ System.out.println("number of planes : " + numPlanes); 
-            
             for (int k=0; k<numPlanes; k++) {
-              /* debug */ System.out.println("z=" + z + ", c=" + c + ", t=" + t);
               zct[z][c][t] = true;
               switch (d1st) {
                 case 'Z':
