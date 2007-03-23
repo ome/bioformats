@@ -27,7 +27,7 @@
         <xsd:documentation>
             Open Microscopy Environment
             Screen, Plate, and Well XML Schema
-            Author:  Andrew Patterson
+            Author:  Andrew J Patterson
         </xsd:documentation>
     </xsd:annotation>
     <xsd:element name="PlateDataset">

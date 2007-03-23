@@ -10,7 +10,7 @@
 		<documentation>
 			Open Microscopy Environment
 			Command Line Interface XML Schema
-			Author:  Josiah Johnston
+			Author:  Josiah Johnston, Andrew J Patterson
 		</documentation>
 	</annotation>
 	<attributeGroup name = "InputLocation">
@@ -30,7 +30,7 @@
 	<!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2003 Open Microscopy Environment
+# Copyright (C) 2003-2007 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee
@@ -39,7 +39,7 @@
 -->
 	<!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Written by:  Josiah Johnston <siah@nih.gov>
+# Written by:  Josiah Johnston <siah@nih.gov>, Andrew J Patterson
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 	<element name = "ExecutionInstructions">
