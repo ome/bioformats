@@ -701,9 +701,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    int pi = TiffTools.getPhotometricInterpretation(ifds[0]);
-    return pi == TiffTools.RGB || pi == TiffTools.RGB_PALETTE ||
-      pi == TiffTools.CFA_ARRAY;
+    return TiffTools.getSamplesPerPixel(ifds[0]) > 1; 
   }
 
   /* @see loci.formats.FormatReader#openBytes(String, int, byte[]) */

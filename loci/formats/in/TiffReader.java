@@ -161,6 +161,8 @@ public class TiffReader extends BaseTiffReader {
           currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
           orderCertain[i] = true;
 
+          /* debug */ System.out.println("Z=" + sizeZ[i] + ", C=" + sc +
+            ", T=" + sizeT[i]);
           boolean[][][] zct = new boolean[sizeZ[i]][sc][sizeT[i]];
 
           for (int j=0; j<tiffData[i].length; j++) {
@@ -181,11 +183,18 @@ public class TiffReader extends BaseTiffReader {
             int numPlanes = nullNumPlanes ?
               (nullIfd ? numImages : 1) : Integer.parseInt(aNumPlanes);
 
+            /* debug */ System.out.println("first (" + firstZ + "," + firstC +
+              "," + firstT + ")");
+
             // populate ZCT matrix
             char d1st = currentOrder[i].charAt(2);
             char d2nd = currentOrder[i].charAt(3);
             int z = firstZ, t = firstT, c = firstC;
+            
+            /* debug */ System.out.println("number of planes : " + numPlanes); 
+            
             for (int k=0; k<numPlanes; k++) {
+              /* debug */ System.out.println("z=" + z + ", c=" + c + ", t=" + t);
               zct[z][c][t] = true;
               switch (d1st) {
                 case 'Z':
@@ -463,7 +472,7 @@ public class TiffReader extends BaseTiffReader {
     }
   
     // check for MetaMorph-style TIFF comment 
-    boolean metamorph = comment != null && 
+    boolean metamorph = comment != null && getMeta("Software") != null && 
       ((String) getMeta("Software")).indexOf("MetaMorph") != -1; 
     put("MetaMorph", metamorph ? "yes" : "no"); 
     
