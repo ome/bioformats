@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    # Copyright (C) 2007 Open Microscopy Environment
+    #       Massachusetts Institute of Technology,
+    #       National Institutes of Health,
+    #       University of Dundee
+    #
+    #
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<xsd:schema xmlns = "http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd"
+        targetNamespace = "http://www.openmicroscopy.org/XMLschemas/SPL/2.0-RC1/SPW.xsd"
+        xmlns:OME = "http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd"
+        xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
+        version = "2.0-RC1"
+        elementFormDefault = "qualified">
+        <xsd:import namespace = "http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd" schemaLocation = "ome.xsd"/>
+    <xsd:annotation>
+        <xsd:documentation>
+            Open Microscopy Environment
+            Screen, Plate, and Well XML Schema
+            Author:  Andrew Patterson
+        </xsd:documentation>
+    </xsd:annotation>
+    <xsd:element name="PlateDataset">
+        <xsd:annotation>
+            <xsd:documentation>
+                This is a link between a Dataset and a Plate.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="PlateImage">
+        <xsd:annotation>
+            <xsd:documentation>
+                A PlateImage is an image attribute that serves as a short-cut between
+                a set of Images and the Plate they belong to. 
+                
+                Not sure what this maps to in EA - ajp
+                Is it ScreenPlate? Nope - ajp
+                Probably not needed in xsd at all - ajp
+            </xsd:documentation>
+        </xsd:annotation>        
+    </xsd:element>
+    <xsd:element name="Reagent">
+        <xsd:annotation>
+            <xsd:documentation>
+                Reagent is used to describe a chemical or some other physical experimental parameter.
+            </xsd:documentation>
+        </xsd:annotation>      
+        <xsd:complexType>
+            <xsd:attribute name="Description">
+                
+            </xsd:attribute>
+            <xsd:attribute name="Name">
+                
+            </xsd:attribute>
+            <xsd:attribute name="ReagentIdentifier">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        This is a reference to an external (to OME) representation of the Reagent.
+                        It serves as a foreign key into an external database. - aka ExternalIdentifier
+                    </xsd:documentation>
+                </xsd:annotation>      
+                
+            </xsd:attribute>
+       </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ReagentWell">
+        <xsd:annotation>
+            <xsd:documentation>
+                A ReagentWell is used to link a Reagent to a Well (and from there to Plates and Screens)
+                A WellSample is an image attribute that also has a reference to Well.  Images
+                can be linked to Reagents in a Screen format by having WellSample and ReagentWell refer to
+                the same Well.
+            </xsd:documentation>
+        </xsd:annotation>     
+    </xsd:element>
+    <xsd:element name="ScreenAcquisition">
+        <xsd:annotation>
+            <xsd:documentation>
+                ScreenAcquisition is used to describe a single acquisition run for a screen.
+                Since Screens are abstract, this object is used to record the set of images
+                acquired in a single acquisition run.  The Images for this run are linked
+                to ScreenAcquisition through WellSample.
+            </xsd:documentation>
+        </xsd:annotation>     
+        <xsd:complexType>
+            <xsd:attribute name="EndTime" type="xsd:dateTime">
+                
+            </xsd:attribute>
+            <xsd:attribute name="StartTime" type="xsd:dateTime">
+                
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="ScreenImage">
+        <xsd:annotation>
+            <xsd:documentation>
+                A ScreenImage is an image attribute that serves as a short-cut between
+                a set of Images and the Screen they belong to.
+            </xsd:documentation>
+        </xsd:annotation>      
+    </xsd:element>
+    <xsd:element name="ScreenPlate">
+        <xsd:annotation>
+            <xsd:documentation>
+                A ScreenPlate serves as the link between a Screen and the Plates its composed of.
+            </xsd:documentation>
+        </xsd:annotation>     
+    </xsd:element>
+    <xsd:element name="Well">
+        <xsd:annotation>
+            <xsd:documentation>
+                A Well is a component of the Well/Plate/Screen construct to describe screening applications.
+                Well is an abstract referand for various objects that describe things about a Well.
+                A WellSample links an Image to a Well, a WellReagent links a Reagent to a Well.
+            </xsd:documentation>
+        </xsd:annotation> 
+        <xsd:complexType>
+            <xsd:attribute name="Column" type="xsd:integer">
+                
+            </xsd:attribute>
+            <xsd:attribute name="ExternalDescription" type="xsd:string">
+                
+            </xsd:attribute>
+            <xsd:attribute name="ExternalIdentifier" type="xsd:string">
+                
+            </xsd:attribute>
+            <xsd:attribute name="Row" type="xsd:integer">
+                
+            </xsd:attribute>
+            <xsd:attribute name="Type" type="xsd:string">
+                
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
+    
