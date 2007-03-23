@@ -209,8 +209,8 @@ Currently, only native image pixels are supported.
 			<attribute name = "Format">
 				<annotation>
 					<documentation>Specifies the expected format of the plane.
-RAW corrosponds to OME repository format of pixel dump.
-TIFF corrosponds to TIFF files.
+RAW corresponds to OME repository format of pixel dump.
+TIFF corresponds to TIFF files.
 Currently only TIFF is supported.
 					</documentation>
 				</annotation>
@@ -288,7 +288,7 @@ e.g. /OME/repository/1-tinyTest.ori
 			<attribute name = "RepeatCount" type = "positiveInteger">
 				<annotation>
 					<documentation>RepeatCount specifies how many times to read a record. If it is not specified, reading will continue until it reaches the end of the output stream.
-If used in conjuction with TerminateAt, reading will stop after RepeatCount or TerminateAt, whichever comes first.
+If used in conjunction with TerminateAt, reading will stop after RepeatCount or TerminateAt, whichever comes first.
 					</documentation>
 				</annotation>
 			</attribute>
