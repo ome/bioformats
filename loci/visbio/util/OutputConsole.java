@@ -30,7 +30,6 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import visad.util.Util;
 
 /**
  * OutputConsole provides an output stream that pipes to a JTextArea
@@ -149,7 +148,7 @@ public class OutputConsole extends OutputStream {
 //    if (lastInvalid && s.trim().equals("")) return;
 //    lastInvalid = false;
 
-    Util.invoke(false, new Runnable() {
+    SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         try {
           if (log != null) {

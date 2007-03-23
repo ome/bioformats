@@ -30,7 +30,6 @@ import java.awt.Color;
 import java.net.URL;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import visad.util.Util;
 
 /** An application splash screen. */
 public class SplashScreen extends JWindow {
@@ -87,7 +86,7 @@ public class SplashScreen extends JWindow {
     if (bgColor != null) pane.setBackground(bgColor);
     setContentPane(pane);
     pack();
-    Util.centerWindow(this);
+    SwingUtil.centerWindow(this);
   }
 
   // -- SplashScreen API methods --

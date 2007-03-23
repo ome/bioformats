@@ -84,7 +84,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
    * given initial font and preview text.
    */
   public FontChooserPane(Font font, String preview) {
-    super("VisBio Font Chooser", true);
+    super("Font Chooser", true);
 
     GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
     String[] fontNames = e.getAvailableFontFamilyNames();

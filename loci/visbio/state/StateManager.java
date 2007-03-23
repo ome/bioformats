@@ -29,7 +29,6 @@ import java.util.*;
 import javax.swing.*;
 import loci.formats.ExtensionFileFilter;
 import loci.visbio.*;
-import loci.visbio.util.SwingUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -290,13 +289,13 @@ public class StateManager extends LogicManager {
     bio.setSplashStatus(null);
     editUndo = bio.addMenuItem("Edit", "Undo",
       "loci.visbio.state.StateManager.editUndo", 'u');
-    SwingUtil.setMenuShortcut(bio, "Edit", "Undo", KeyEvent.VK_Z);
+    bio.setMenuShortcut("Edit", "Undo", KeyEvent.VK_Z);
     editRedo = bio.addMenuItem("Edit", "Redo",
       "loci.visbio.state.StateManager.editRedo", 'r');
-    SwingUtil.setMenuShortcut(bio, "Edit", "Redo", KeyEvent.VK_Y);
+    bio.setMenuShortcut("Edit", "Redo", KeyEvent.VK_Y);
     JMenuItem editReset = bio.addMenuItem("Edit", "Reset",
       "loci.visbio.state.StateManager.editReset", 't');
-    SwingUtil.setMenuShortcut(bio, "Edit", "Reset", KeyEvent.VK_R);
+    bio.setMenuShortcut("Edit", "Reset", KeyEvent.VK_R);
 
     // undo logic variables
     bio.setSplashStatus(null);

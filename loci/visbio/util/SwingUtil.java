@@ -36,7 +36,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import loci.formats.ImageReader;
-import visad.util.GUIFrame;
 
 /** SwingUtil contains useful Swing functions. */
 public final class SwingUtil {
@@ -160,6 +159,27 @@ public final class SwingUtil {
       size.height < pref.height ? pref.height : size.height);
   }
 
+  /** Centers the given window on the screen. */
+  public static void centerWindow(Window window) {
+    Dimension s = Toolkit.getDefaultToolkit().getScreenSize();
+    centerWindow(new Rectangle(0, 0, s.width, s.height), window);
+  }
+
+  /** Centers the given window within the specified parent window. */
+  public static void centerWindow(Window parent, Window window) {
+    centerWindow(parent.getBounds(), window);
+  }
+
+  /** Centers the given window within the specified bounds. */
+  public static void centerWindow(Rectangle bounds, Window window) {
+    Dimension w = window.getSize();
+    int x = bounds.x + (bounds.width - w.width) / 2;
+    int y = bounds.y + (bounds.height - w.height) / 2;
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    window.setLocation(x, y);
+  }
+
   /** Sets the title of the given window. */
   public static void setWindowTitle(Window w, String title) {
     if (w instanceof Frame) ((Frame) w).setTitle(title);
@@ -172,19 +192,6 @@ public final class SwingUtil {
     if (w instanceof Frame) return ((Frame) w).getTitle();
     else if (w instanceof Dialog) return ((Dialog) w).getTitle();
     else return w.getName();
-  }
-
-  /** Key mask for use with keyboard shortcuts on this operating system. */
-  public static final int MENU_MASK =
-    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-
-  /** Sets the keyboard shortcut for the given menu item. */
-  public static void setMenuShortcut(GUIFrame frame,
-    String menu, String item, int keycode)
-  {
-    JMenuItem jmi = frame.getMenuItem(menu, item);
-    if (jmi == null) return;
-    jmi.setAccelerator(KeyStroke.getKeyStroke(keycode, MENU_MASK));
   }
 
   /**

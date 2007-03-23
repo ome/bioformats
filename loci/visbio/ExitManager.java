@@ -25,7 +25,6 @@ package loci.visbio;
 
 import com.jgoodies.plaf.LookUtils;
 import java.awt.event.*;
-import loci.visbio.util.SwingUtil;
 
 /** ExitManager is the manager encapsulating VisBio's shutdown logic. */
 public class ExitManager extends LogicManager implements WindowListener {
@@ -73,7 +72,7 @@ public class ExitManager extends LogicManager implements WindowListener {
     if (!LookUtils.IS_OS_MAC) {
       bio.addMenuSeparator("File");
       bio.addMenuItem("File", "Exit", "loci.visbio.ExitManager.fileExit", 'x');
-      SwingUtil.setMenuShortcut(bio, "File", "Exit", KeyEvent.VK_Q);
+      bio.setMenuShortcut("File", "Exit", KeyEvent.VK_Q);
     }
   }
 

@@ -31,7 +31,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import visad.util.Util;
 
 /**
  * DialogPane provides an extensible interface for
@@ -166,8 +165,8 @@ public class DialogPane extends JPanel implements ActionListener {
     resetComponents();
     dialog.pack();
     Window owner = dialog.getOwner();
-    if (owner == null) Util.centerWindow(dialog);
-    else Util.centerWindow(owner, dialog);
+    if (owner == null) SwingUtil.centerWindow(dialog);
+    else SwingUtil.centerWindow(owner, dialog);
     rval = CANCEL_OPTION;
     dialog.setVisible(true);
     return rval;

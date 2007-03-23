@@ -35,7 +35,6 @@ import loci.formats.*;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.*;
-import loci.visbio.util.SwingUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
@@ -461,10 +460,10 @@ public class DataManager extends LogicManager {
     bio.setSplashStatus(null);
     bio.addMenuItem("File", "Import data...",
       "loci.visbio.data.DataManager.importData", 'i');
-    SwingUtil.setMenuShortcut(bio, "File", "Import data...", KeyEvent.VK_O);
+    bio.setMenuShortcut("File", "Import data...", KeyEvent.VK_O);
     bio.addMenuItem("File", "Export data...",
       "loci.visbio.data.DataManager.exportData", 'e').setEnabled(false);
-    SwingUtil.setMenuShortcut(bio, "File", "Export data...", KeyEvent.VK_X);
+    bio.setMenuShortcut("File", "Export data...", KeyEvent.VK_X);
     bio.addSubMenu("File", "Sample datasets", 'd');
     bio.addMenuItem("Sample datasets", "sdub",
       "loci.visbio.data.DataManager.openSampleData(sdub)", 's');

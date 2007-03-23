@@ -33,6 +33,7 @@ import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.*;
 import loci.visbio.util.*;
+import visad.util.GUIFrame;
 
 /** HelpManager is the manager encapsulating VisBio's help window logic. */
 public class HelpManager extends LogicManager {
@@ -158,7 +159,7 @@ public class HelpManager extends LogicManager {
     JMenuItem help = bio.addMenuItem("Help", "VisBio Help",
       "loci.visbio.help.HelpManager.helpHelp", 'h');
     KeyStroke helpStroke = LookUtils.IS_OS_MAC ? KeyStroke.getKeyStroke(
-      new Character('?'), SwingUtil.MENU_MASK) :
+      new Character('?'), GUIFrame.MENU_MASK) :
       KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
     help.setAccelerator(helpStroke);
 
@@ -166,7 +167,7 @@ public class HelpManager extends LogicManager {
       bio.addMenuSeparator("Help");
       bio.addMenuItem("Help", "About",
         "loci.visbio.help.HelpManager.helpAbout", 'a');
-      SwingUtil.setMenuShortcut(bio, "Help", "About", KeyEvent.VK_A);
+      bio.setMenuShortcut("Help", "About", KeyEvent.VK_A);
     }
 
     // options

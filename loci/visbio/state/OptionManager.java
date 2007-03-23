@@ -212,7 +212,7 @@ public class OptionManager extends LogicManager {
           bio.addMenuSeparator("File");
           bio.addMenuItem("File", "Options...",
             "loci.visbio.state.OptionManager.fileOptions", 'o');
-          SwingUtil.setMenuShortcut(bio, "File", "Options...", KeyEvent.VK_P);
+          bio.setMenuShortcut("File", "Options...", KeyEvent.VK_P);
         }
       }
     }
