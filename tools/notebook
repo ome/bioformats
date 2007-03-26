@@ -11,7 +11,7 @@
 # the LOCI classes in your CLASSPATH, you can set the
 # LOCI_DEVEL environment variable to use them instead.
 
-PROG=loci.ome.notebook.MetadataNotebook
+PROG=loci.ome.notebook.Notebook
 
 if [ $LOCI_DEVEL ]
 then
