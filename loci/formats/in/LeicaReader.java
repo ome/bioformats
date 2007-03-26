@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import loci.formats.*;
 
@@ -1154,8 +1155,12 @@ public class LeicaReader extends BaseTiffReader {
       String timestamp = (String) getMeta("Timestamp " + (i+1));
       String description = (String) getMeta("Image Description");
 
-      store.setImage(null, timestamp == null ? null : timestamp.substring(3),
-        description, ii);
+      SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
+      Date date = parse.parse(timestamp, new ParsePosition(0));
+      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      timestamp = fmt.format(date);
+
+      store.setImage(null, timestamp, description, ii);
 
       for (int j=0; j<sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);

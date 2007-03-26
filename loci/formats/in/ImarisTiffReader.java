@@ -122,7 +122,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     pixelType = new int[1];
     currentOrder = new String[1];
     orderCertain = new boolean[] {true};
-    getMetadataStore(id).createRoot();
+    //getMetadataStore(id).createRoot();
 
     channelMinMax = null;
     in = new RandomAccessStream(id);
@@ -222,6 +222,13 @@ public class ImarisTiffReader extends BaseTiffReader {
       }
       metadata.remove("Comment");
     }
+
+    MetadataStore store = getMetadataStore(currentId);
+
+    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
+      new Integer(sizeZ[0]), new Integer(sizeC[0]), new Integer(sizeT[0]),
+      new Integer(pixelType[0]), null, currentOrder[0],
+      null, null);
 
   }
 

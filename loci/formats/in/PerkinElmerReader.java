@@ -27,8 +27,8 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.text.*;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -601,10 +601,13 @@ public class PerkinElmerReader extends FormatReader {
 
     // populate Image element
     String time = (String) getMeta("Finish Time:");
-    if (time != null) {
-      time = time.substring(1).trim();
-      store.setImage(null, time, null, null);
-    }
+   
+    SimpleDateFormat parse = new SimpleDateFormat("HH:mm:ss (MM/dd/yyyy)");
+    Date date = parse.parse(time, new ParsePosition(0));
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    time = fmt.format(date);
+
+    store.setImage(null, time, null, null);
 
     // populate Pixels element
     String x = (String) getMeta("Image Width");

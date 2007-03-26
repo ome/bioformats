@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import loci.formats.*;
 
@@ -357,6 +358,11 @@ public class PrairieReader extends FormatReader {
         }
 
         String date = (String) getMeta(" PVScan date");
+
+        SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
+        Date d = parse.parse(date, new ParsePosition(0));
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        date = fmt.format(d);
 
         store.setImage(null, date, null, null);
 

@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import loci.formats.*;
 
@@ -515,8 +516,18 @@ public class OIBReader extends FormatReader {
       }
 
       String acquisition = "[Acquisition Parameters Common] - ";
-      store.setImage(null, (String) getMeta(acquisition + "ImageCaputreDate"),
-        null, null);
+      
+      String stamp = (String) getMeta(acquisition + "ImageCaputreDate"); 
+    
+      if (stamp != null) {
+        stamp = stamp.substring(1, stamp.length() - 1); 
+        SimpleDateFormat parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = parse.parse(stamp, new ParsePosition(0));
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        stamp = fmt.format(date);
+      } 
+
+      store.setImage(null, stamp, null, null);
 
       store.setPixels(
         new Integer(sizeX[i]),

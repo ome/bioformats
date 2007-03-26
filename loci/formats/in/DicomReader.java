@@ -26,7 +26,8 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
+import java.text.*;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -370,10 +371,23 @@ public class DicomReader extends FormatReader {
       null, // Use image index 0
       null); // Use pixels index 0
 
+    String date = (String) getMeta("Content Date");
+    String time = (String) getMeta("Content Time");
+
+    String stamp = null;
+
+    if (date != null && time != null) {
+      stamp = date + " " + time;
+      SimpleDateFormat parse = 
+        new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSSSSS");
+      Date d = parse.parse(stamp, new ParsePosition(0));
+      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      stamp = fmt.format(d);
+    }
+    
     store.setImage(
       null, // name
-      ((String) getMeta("Content Date")) + "T" +
-      ((String) getMeta("Content Time")),  // CreationDate
+      stamp, 
       (String) getMeta("Image Type"),
       null); // Use index 0
 
