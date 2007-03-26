@@ -244,9 +244,8 @@ public class OMEXMLReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OMEXMLReader.initFile(" + id + ")");
     if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
-    close();
-    currentId = id;
-    metadata = new Hashtable();
+    super.initFile(id);
+
     in = new RandomAccessStream(id);
     omexml = new OMEXMLMetadataStore();
 
@@ -482,14 +481,6 @@ public class OMEXMLReader extends FormatReader {
     currentOrder = order;
     orderCertain = new boolean[currentOrder.length];
     Arrays.fill(orderCertain, true);
-    imagesRead = new Vector[width.length];
-    minimumValues = new Vector[width.length];
-    maximumValues = new Vector[width.length];
-    Arrays.fill(imagesRead, new Vector());
-    Arrays.fill(minimumValues, new Vector());
-    Arrays.fill(maximumValues, new Vector());
-    minMaxFinished = new boolean[width.length];
-    Arrays.fill(minMaxFinished, false);
 
     for (int i=0; i<sizeC.length; i++) {
       for (int j=0; j<sizeC[i]; j++) {

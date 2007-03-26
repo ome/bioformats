@@ -520,14 +520,6 @@ public class LIFReader extends FormatReader {
     currentOrder = new String[numDatasets];
     orderCertain = new boolean[numDatasets];
     Arrays.fill(orderCertain, true);
-    imagesRead = new Vector[numDatasets];
-    Arrays.fill(imagesRead, new Vector());
-    minimumValues = new Vector[numDatasets];
-    Arrays.fill(minimumValues, new Vector());
-    maximumValues = new Vector[numDatasets];
-    Arrays.fill(maximumValues, new Vector());
-    minMaxFinished = new boolean[numDatasets];
-    Arrays.fill(minMaxFinished, false);
     validBits = new int[numDatasets][1];
 
     for (int i=0; i<numDatasets; i++) {

@@ -207,11 +207,10 @@ public class IPWReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("IPWReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
-    currentId = id;
+    super.initFile(id);
 
     in = new RandomAccessStream(id);
 
-    metadata = new Hashtable();
     pixels = new Hashtable();
     names = new Hashtable();
     numImages = 0;
@@ -309,23 +308,6 @@ public class IPWReader extends BaseTiffReader {
     Integer tSize = Integer.valueOf((String) getMeta("slices"));
     Integer cSize = Integer.valueOf((String) getMeta("channels"));
     Integer zSize = Integer.valueOf(getMeta("frames").toString());
-
-    sizeX = new int[1];
-    sizeY = new int[1];
-    sizeZ = new int[1];
-    sizeC = new int[1];
-    sizeT = new int[1];
-    pixelType = new int[1];
-    currentOrder = new String[1];
-    orderCertain = new boolean[] {true};
-    imagesRead = new Vector[1];
-    imagesRead[0] = new Vector();
-    minimumValues = new Vector[1];
-    minimumValues[0] = new Vector();
-    maximumValues = new Vector[1];
-    maximumValues[0] = new Vector();
-    minMaxFinished = new boolean[1];
-    minMaxFinished[0] = false;
 
     Hashtable h = ifds[0];
     sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);

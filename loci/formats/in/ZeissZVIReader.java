@@ -67,7 +67,7 @@ public class ZeissZVIReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  private RandomAccessStream ras;
+  private RandomAccessStream in;
 
   /** Flag set to true if we need to use the legacy reader. */
   private boolean needLegacy = false;
@@ -299,7 +299,7 @@ public class ZeissZVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
-      if (ras != null) ras.close();
+      if (in != null) in.close();
       if (legacy != null) legacy.close(fileOnly);
     }
     else close();
@@ -309,8 +309,8 @@ public class ZeissZVIReader extends FormatReader {
   public void close() throws FormatException, IOException {
     currentId = null;
     needLegacy = false;
-    if (ras != null) ras.close();
-    ras = null;
+    if (in != null) in.close();
+    in = null;
 
     if (legacy != null) legacy.close();
     pixels = null;
@@ -326,17 +326,12 @@ public class ZeissZVIReader extends FormatReader {
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
-
     if (noPOI || needLegacy) {
       legacy.initFile(id);
       return;
     }
+    super.initFile(id);
 
-    close();
-
-    currentId = id;
-
-    metadata = new Hashtable();
     pixels = new Hashtable();
     names = new Hashtable();
     offsets = new Hashtable();
@@ -344,33 +339,20 @@ public class ZeissZVIReader extends FormatReader {
     cIndices = new Vector();
     tIndices = new Vector();
 
-    sizeX = new int[1];
-    sizeY = new int[1];
-    sizeZ = new int[1];
-    sizeC = new int[1];
-    sizeT = new int[1];
-    pixelType = new int[1];
-    currentOrder = new String[1];
-    orderCertain = new boolean[] {true};
-    imagesRead = new Vector[] {new Vector()};
-    minimumValues = new Vector[] {new Vector()};
-    maximumValues = new Vector[] {new Vector()};
-    minMaxFinished = new boolean[] {false};
-
     nImages = 0;
 
     try {
-      ras = new RandomAccessStream(id);
+      in = new RandomAccessStream(id);
 
       // Don't uncomment this block.  Even though OIBReader has something
       // like this, it's really a bad idea here.  Every ZVI file we have *will*
       // break if you uncomment it.
       //
-      //if (ras.length() % 4096 != 0) {
-      //  ras.setExtend((4096 - (int) (ras.length() % 4096)));
+      //if (in.length() % 4096 != 0) {
+      //  in.setExtend((4096 - (int) (in.length() % 4096)));
       //}
 
-      r.setVar("fis", ras);
+      r.setVar("fis", in);
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));

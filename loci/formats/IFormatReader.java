@@ -76,9 +76,22 @@ public interface IFormatReader extends IFormatHandler {
   int getRGBChannelCount(String id) throws FormatException, IOException;
 
   /**
+   * Gets the lengths of each subdimension of C,
+   * in fastest-to-sloweset rasterization order.
+   */
+  int[] getChannelDimLengths(String id) throws FormatException, IOException;
+
+  /**
+   * Gets the name of each subdimension of C,
+   * in fastest-to-slowest rasterization order.
+   * Common subdimensional types are enumerated in {@link FormatTools}.
+   */
+  String[] getChannelDimTypes(String id) throws FormatException, IOException;
+
+  /**
    * Retrieves a specified channel's global minimum.
-   * Returns null if channel stat calculation is disabled or if some of the
-   * image planes have not been read.
+   * Returns null if some of the image planes have not been read with channel
+   * stat calculation enabled.
    * @param id the filename of the base image.
    * @param theC the channel whose minimum is required.
    * @return the global minimum of the channel; which is defined as the minimum
@@ -95,8 +108,8 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Retrieves a specified channel's global maximum.
-   * Returns null if channel stat calculation is disabled or if some of the
-   * image planes have not been read.
+   * Returns null if some of the image planes have not been read with channel
+   * stat calculation enabled.
    * @param id the filename of the base image.
    * @param theC the channel whose maximum is required.
    * @return the global maximum of the channel; which is defined as the maximum
@@ -113,35 +126,39 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Retrieves the specified channel's minimum based on the images that have
-   * been read.
-   * Returns null if channel stat calculation is disabled.
+   * been read. Returns null if no image planes have been read yet.
    */
   Double getChannelKnownMinimum(String id, int theC)
     throws FormatException, IOException;
 
   /**
    * Retrieves the specified channel's maximum based on the images that have
-   * been read.
-   * Returns null if channel stat calculation is disabled.
+   * been read. Returns null if no image planes have been read yet.
    */
   Double getChannelKnownMaximum(String id, int theC)
     throws FormatException, IOException;
 
   /**
-   * Retrieves the minimum pixel value for the specified plane.
-   * Returns null if the plane has not already been read.
+   * Retrieves the maximum pixel value for the specified plane. If each image
+   * plane contains more than one channel (i.e.,
+   * {@link #getRGBChannelCount(String)}), returns the maximum value for each
+   * embedded channel. Returns null if the plane has not already been read.
    */
-  Double getPlaneMinimum(String id, int no) throws FormatException, IOException;
+  Double[] getPlaneMinimum(String id, int no)
+    throws FormatException, IOException;
 
   /**
-   * Retrieves the maximum pixel value for the specified plane.
-   * Returns null if the plane has not already been read.
+   * Retrieves the maximum pixel value for the specified plane. If each image
+   * plane contains more than one channel (i.e.,
+   * {@link #getRGBChannelCount(String)}), returns the maximum value for each
+   * embedded channel. Returns null if the plane has not already been read.
    */
-  Double getPlaneMaximum(String id, int no) throws FormatException, IOException;
+  Double[] getPlaneMaximum(String id, int no)
+    throws FormatException, IOException;
 
   /**
    * Returns true if the values returned by getChannelGlobalMinimum/Maximum
-   * can be trusted.
+   * can be trusted. 
    */
   boolean isMinMaxPopulated(String id) throws FormatException, IOException;
 

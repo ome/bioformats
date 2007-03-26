@@ -278,6 +278,20 @@ public class FileStitcher implements IFormatReader {
     return getSizeC(id) / getEffectiveSizeC(id);
   }
 
+  /* @see IFormatReader#getChannelDimLengths(String) */
+  public int[] getChannelDimLengths(String id)
+    throws FormatException, IOException
+  {
+    throw new FormatException("Unimplemented");//TODO
+  }
+
+  /* @see IFormatReader#getChannelDimTypes(String) */
+  public String[] getChannelDimTypes(String id)
+    throws FormatException, IOException
+  {
+    throw new FormatException("Unimplemented");//TODO
+  }
+
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
@@ -339,7 +353,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getPlaneMinimum(String, int) */
-  public Double getPlaneMinimum(String id, int no)
+  public Double[] getPlaneMinimum(String id, int no)
     throws FormatException, IOException
   {
     int[] q = computeIndices(id, no);
@@ -348,7 +362,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getPlaneMaximum(String, int) */
-  public Double getPlaneMaximum(String id, int no)
+  public Double[] getPlaneMaximum(String id, int no)
     throws FormatException, IOException
   {
     int[] q = computeIndices(id, no);

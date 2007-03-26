@@ -280,9 +280,8 @@ public class OIBReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OIBReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
-    currentId = id;
+    super.initFile(id);
 
-    metadata = new Hashtable();
     zIndices = new Vector[] {new Vector()};
     cIndices = new Vector[] {new Vector()};
     tIndices = new Vector[] {new Vector()};
@@ -403,14 +402,6 @@ public class OIBReader extends FormatReader {
       sizeC = new int[numSeries];
       sizeT = new int[numSeries];
       validBits = new int[numSeries][];
-      imagesRead = new Vector[numSeries];
-      minimumValues = new Vector[numSeries];
-      maximumValues = new Vector[numSeries];
-      Arrays.fill(imagesRead, new Vector());
-      Arrays.fill(minimumValues, new Vector());
-      Arrays.fill(maximumValues, new Vector());
-      minMaxFinished = new boolean[numSeries];
-      Arrays.fill(minMaxFinished, false);
 
       for (int i=0; i<numSeries; i++) {
         sizeX[i] = ((Integer) width.get(i)).intValue();

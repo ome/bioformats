@@ -171,7 +171,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissLSMReader.initFile(" + id + ")");
     super.initFile(id);
-    currentId = id; 
+
     channels = 0;
 
     // go through the IFD hashtable array and

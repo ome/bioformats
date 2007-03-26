@@ -246,6 +246,20 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getRGBChannelCount(id);
   }
 
+  /* @see IFormatReader#getChannelDimLengths(String) */
+  public int[] getChannelDimLengths(String id)
+    throws FormatException, IOException
+  {
+    return getReader(id).getChannelDimLengths(id);
+  }
+
+  /* @see IFormatReader#getChannelDimTypes(String) */
+  public String[] getChannelDimTypes(String id)
+    throws FormatException, IOException
+  {
+    return getReader(id).getChannelDimTypes(id);
+  }
+
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
@@ -275,14 +289,14 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#getPlaneMinimum(String, int) */
-  public Double getPlaneMinimum(String id, int no)
+  public Double[] getPlaneMinimum(String id, int no)
     throws FormatException, IOException
   {
     return getReader(id).getPlaneMinimum(id, no);
   }
 
   /* @see IFormatReader#getPlaneMaximum(String, int) */
-  public Double getPlaneMaximum(String id, int no)
+  public Double[] getPlaneMaximum(String id, int no)
     throws FormatException, IOException
   {
     return getReader(id).getPlaneMaximum(id, no);

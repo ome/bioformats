@@ -105,6 +105,18 @@ public abstract class ReaderWrapper implements IFormatReader {
     return getSizeC(id) / getEffectiveSizeC(id);
   }
 
+  public int[] getChannelDimLengths(String id)
+    throws FormatException, IOException
+  {
+    return reader.getChannelDimLengths(id);
+  }
+
+  public String[] getChannelDimTypes(String id)
+    throws FormatException, IOException
+  {
+    return reader.getChannelDimTypes(id);
+  }
+
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -129,13 +141,13 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getChannelKnownMaximum(id, theC);
   }
 
-  public Double getPlaneMinimum(String id, int no)
+  public Double[] getPlaneMinimum(String id, int no)
     throws FormatException, IOException
   {
     return reader.getPlaneMinimum(id, no);
   }
 
-  public Double getPlaneMaximum(String id, int no)
+  public Double[] getPlaneMaximum(String id, int no)
     throws FormatException, IOException
   {
     return reader.getPlaneMaximum(id, no);

@@ -109,22 +109,7 @@ public class ImarisTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ImarisTiffReader.initFile(" + id + ")");
     super.initFile(id);
-    super.initMetadata();
 
-    close();
-    currentId = id;
-
-    sizeX = new int[1];
-    sizeY = new int[1];
-    sizeZ = new int[1];
-    sizeC = new int[1];
-    sizeT = new int[1];
-    pixelType = new int[1];
-    currentOrder = new String[1];
-    orderCertain = new boolean[] {true};
-    //getMetadataStore(id).createRoot();
-
-    channelMinMax = null;
     in = new RandomAccessStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 

@@ -37,10 +37,6 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Constants --
 
-  /** Indices into the channel min/max array. */
-  protected static final int MIN = 0;
-  protected static final int MAX = 1;
-
   /** Default thumbnail width and height. */
   protected static final int THUMBNAIL_DIMENSION = 128;
 
@@ -61,31 +57,33 @@ public abstract class FormatReader extends FormatHandler
   protected int series = 0;
 
   /** Dimension fields. */
-  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, rgbChannelCount;
+  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
+  protected int[][] dimLengths;
+  protected String[][] dimTypes;
+  protected int[] pixelType;
   protected String[] currentOrder;
   protected boolean[] orderCertain;
-  protected double[][][] channelMinMax;
 
-  /** Min and max values for each plane. */
-  protected double[][][] planeMinMax;
+  /** Min values for each channel. */
+  protected double[][] chanMin;
+
+  /** Max values for each channel. */
+  protected double[][] chanMax;
+
+  /** Min values for each plane. */
+  protected double[][] planeMin;
+
+  /** Max values for each plane. */
+  protected double[][] planeMax;
+
+  /** Number of planes for which min/max computations have been completed. */
+  protected int[] minMaxDone;
 
   /** Whether or not we're doing channel stat calculation (no by default). */
-  protected boolean enableChannelStats = false;
-
-  /** List of image indices that have been read. */
-  protected Vector[] imagesRead;
-
-  /** List of minimum values for each image. */
-  protected Vector[] minimumValues;
-
-  /** List of maximum values for each image. */
-  protected Vector[] maximumValues;
-
-  /** Whether or not min/max computation has finished. */
-  protected boolean[] minMaxFinished;
+  protected boolean enableChannelStats;
 
   /** Whether or not to ignore color tables, if present. */
-  protected boolean ignoreColorTable = false;
+  protected boolean ignoreColorTable;
 
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
@@ -127,24 +125,22 @@ public abstract class FormatReader extends FormatHandler
     close();
     currentId = id;
     metadata = new Hashtable();
-    imagesRead = new Vector[1];
-    minimumValues = new Vector[1];
-    maximumValues = new Vector[1];
-    Arrays.fill(imagesRead, new Vector());
-    Arrays.fill(minimumValues, new Vector());
-    Arrays.fill(maximumValues, new Vector());
-    minMaxFinished = new boolean[1];
-    Arrays.fill(minMaxFinished, false);
 
     sizeX = new int[1];
     sizeY = new int[1];
     sizeZ = new int[1];
     sizeC = new int[1];
     sizeT = new int[1];
-    rgbChannelCount = new int[1];
+    dimLengths = new int[1][];
+    dimTypes = new String[1][];
     pixelType = new int[1];
     currentOrder = new String[1];
-    orderCertain = new boolean[] {true};
+    orderCertain = new boolean[1];
+    Arrays.fill(orderCertain, true);
+
+    chanMin = chanMax = null;
+    planeMin = planeMax = null;
+    minMaxDone = null;
 
     // reinitialize the MetadataStore
     getMetadataStore(id).createRoot();
@@ -174,44 +170,34 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (b == null || !enableChannelStats) return;
-    Integer ii = new Integer(ndx);
-    if (imagesRead[series].contains(ii)) return;
-    if (channelMinMax == null) {
-      channelMinMax =
-        new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
-    }
-    if (planeMinMax == null) {
-      planeMinMax = new double[getSeriesCount(currentId)][
-        getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
-    }
+    initMinMax();
 
-    imagesRead[series].add(ii);
+    // check whether min/max values have already been computed for this plane
+    if (planeMin[series][ndx] == planeMin[series][ndx]) return;
+
     int[] coords = getZCTCoords(currentId, ndx);
     int numRGB = getRGBChannelCount(currentId);
+    int cBase = coords[1] * numRGB;
+    int pBase = ndx * numRGB;
+    for (int c=0; c<numRGB; c++) {
+      planeMin[series][pBase + c] = Double.POSITIVE_INFINITY;
+      planeMax[series][pBase + c] = Double.NEGATIVE_INFINITY;
+    }
+
     WritableRaster pixels = b.getRaster();
     for (int x=0; x<b.getWidth(); x++) {
       for (int y=0; y<b.getHeight(); y++) {
         for (int c=0; c<numRGB; c++) {
-          double value = pixels.getSampleDouble(x, y, c);
-          if (value > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
-            channelMinMax[series][coords[1]*numRGB + c][MAX] = value;
-          }
-          if (value < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
-            channelMinMax[series][coords[1]*numRGB + c][MIN] = value;
-          }
-          if (value > planeMinMax[series][ndx*numRGB + c][MAX]) {
-            planeMinMax[series][ndx*numRGB + c][MAX] = value;
-          }
-          if (value < planeMinMax[series][ndx*numRGB + c][MIN]) {
-            planeMinMax[series][ndx*numRGB + c][MIN] = value;
-          }
+          double v = pixels.getSampleDouble(x, y, c);
+          if (v > chanMax[series][cBase + c]) chanMax[series][cBase + c] = v;
+          if (v < chanMin[series][cBase + c]) chanMin[series][cBase + c] = v;
+          if (v > planeMax[series][pBase + c]) planeMax[series][pBase + c] = v;
+          if (v < planeMin[series][pBase + c]) planeMin[series][pBase + c] = v;
         }
       }
     }
 
-    if (imagesRead[series].size() == getImageCount(currentId)) {
-      minMaxFinished[series] = true;
-    }
+    minMaxDone[series]++;
   }
 
   /**
@@ -222,47 +208,40 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (b == null || !enableChannelStats) return;
-    Integer ii = new Integer(ndx);
-    if (imagesRead[series].contains(ii)) return;
-    if (channelMinMax == null) {
-      channelMinMax =
-        new double[getSeriesCount(currentId)][getSizeC(currentId)][2];
-    }
-    if (planeMinMax == null) {
-      planeMinMax = new double[getSeriesCount(currentId)][
-        getSizeZ(currentId) * getSizeC(currentId) * getSizeT(currentId)][2];
-    }
+    initMinMax();
+
+    // check whether min/max values have already been computed for this plane
+    if (planeMin[series][ndx] == planeMin[series][ndx]) return;
 
     boolean little = isLittleEndian(currentId);
     int bytes = FormatTools.getBytesPerPixel(getPixelType(currentId));
-    int numRGB = getRGBChannelCount(currentId);
     int pixels = getSizeX(currentId) * getSizeY(currentId);
     boolean interleaved = isInterleaved(currentId);
 
-    byte[] value = new byte[bytes];
     int[] coords = getZCTCoords(currentId, ndx);
+    int numRGB = getRGBChannelCount(currentId);
+    int cBase = coords[1] * numRGB;
+    int pBase = ndx * numRGB;
+    for (int c=0; c<numRGB; c++) {
+      planeMin[series][pBase + c] = Double.POSITIVE_INFINITY;
+      planeMax[series][pBase + c] = Double.NEGATIVE_INFINITY;
+    }
 
+    byte[] value = new byte[bytes];
     for (int i=0; i<pixels; i++) {
       for (int c=0; c<numRGB; c++) {
-        int idx = interleaved ? i*numRGB + c : c*pixels + i;
-        idx *= bytes;
+        int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
         System.arraycopy(b, idx, value, 0, bytes);
-        double v =
-          Double.longBitsToDouble(DataTools.bytesToLong(value, little));
-        if (v > channelMinMax[series][coords[1]*numRGB + c][MAX]) {
-          channelMinMax[series][coords[1]*numRGB + c][MAX] = v;
-        }
-        if (v < channelMinMax[series][coords[1]*numRGB + c][MIN]) {
-          channelMinMax[series][coords[1]*numRGB + c][MIN] = v;
-        }
-        if (v > planeMinMax[series][ndx*numRGB + c][MAX]) {
-          planeMinMax[series][ndx*numRGB + c][MAX] = v;
-        }
-        if (v < planeMinMax[series][ndx*numRGB + c][MIN]) {
-          planeMinMax[series][ndx*numRGB + c][MIN] = v;
-        }
+        long bits = DataTools.bytesToLong(value, little);
+        double v = Double.longBitsToDouble(bits);
+        if (v > chanMax[series][cBase + c]) chanMax[series][cBase + c] = v;
+        if (v < chanMin[series][cBase + c]) chanMin[series][cBase + c] = v;
+        if (v > planeMax[series][pBase + c]) planeMax[series][pBase + c] = v;
+        if (v < planeMin[series][pBase + c]) planeMin[series][pBase + c] = v;
       }
     }
+
+    minMaxDone[series]++;
   }
 
   /** Returns true if the given file name is in the used files list. */
@@ -316,8 +295,13 @@ public abstract class FormatReader extends FormatHandler
     String prefix = "loci.formats.in.";
     if (name.startsWith(prefix)) name = name.substring(prefix.length());
     String msg = System.currentTimeMillis() + ": " + name + ": " + s;
-    if (debugLevel > 3) new Exception(msg).printStackTrace();
+    if (debugLevel > 3) trace(msg);
     else System.out.println(msg);
+  }
+
+  /** Issues a stack trace. */
+  protected void trace(String s) {
+    new Exception(s).printStackTrace();
   }
 
   // -- IFormatReader API methods --
@@ -381,6 +365,28 @@ public abstract class FormatReader extends FormatHandler
     return getSizeC(id) / getEffectiveSizeC(id);
   }
 
+  /* @see IFormatReader#getChannelDimLengths(String) */
+  public int[] getChannelDimLengths(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (dimLengths[series] == null) {
+      dimLengths[series] = new int[] {sizeC[series]};
+    }
+    return dimLengths[series];
+  }
+
+  /* @see IFormatReader#getChannelDimTypes(String) */
+  public String[] getChannelDimTypes(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (dimTypes[series] == null) {
+      dimTypes[series] = new String[] {FormatTools.CHANNEL};
+    }
+    return dimTypes[series];
+  }
+
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
@@ -389,10 +395,9 @@ public abstract class FormatReader extends FormatHandler
     if (theC < 0 || theC >= getSizeC(id)) {
       throw new FormatException("Invalid channel index: " + theC);
     }
-    if (enableChannelStats && minMaxFinished[series]) {
-      return new Double(channelMinMax[series][theC][MIN]);
-    }
-    return null;
+    // check that all planes have been read
+    if (minMaxDone[series] < getImageCount(id)) return null;
+    return new Double(chanMin[series][theC]);
   }
 
   /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -403,10 +408,9 @@ public abstract class FormatReader extends FormatHandler
     if (theC < 0 || theC >= getSizeC(id)) {
       throw new FormatException("Invalid channel index: " + theC);
     }
-    if (enableChannelStats && minMaxFinished[series]) {
-      return new Double(channelMinMax[series][theC][MAX]);
-    }
-    return null;
+    // check that all planes have been read
+    if (minMaxDone[series] < getImageCount(id)) return null;
+    return new Double(chanMax[series][theC]);
   }
 
   /* @see IFormatReader#getChannelKnownMinimum(String, int) */
@@ -414,10 +418,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStats) {
-      return new Double(channelMinMax[series][theC][MIN]);
-    }
-    return null;
+    return chanMin == null ? null : new Double(chanMin[series][theC]);
   }
 
   /* @see IFormatReader#getChannelKnownMaximum(String, int) */
@@ -425,50 +426,43 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStats) {
-      return new Double(channelMinMax[series][theC][MAX]);
-    }
-    return null;
+    return chanMax == null ? null : new Double(chanMax[series][theC]);
   }
 
   /* @see IFormatReader#getPlaneMinimum(String, int) */
-  public Double getPlaneMinimum(String id, int no)
+  public Double[] getPlaneMinimum(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStats &&
-      imagesRead[series].contains(new Integer(no)))
-    {
-      int ndx = no * getRGBChannelCount(id);
-      double min = Double.MAX_VALUE;
-      for (int i=ndx; i<ndx+getRGBChannelCount(id); i++) {
-        if (planeMinMax[series][i][MIN] < min) {
-          min = planeMinMax[series][i][MIN];
-        }
-      }
-      return new Double(min);
+    if (planeMin == null) return null;
+
+    int numRGB = getRGBChannelCount(id);
+    int pBase = no * numRGB;
+    if (planeMin[series][pBase] != planeMin[series][pBase]) return null;
+
+    Double[] min = new Double[numRGB];
+    for (int c=0; c<numRGB; c++) {
+      min[c] = new Double(planeMin[series][pBase + c]);
     }
-    return null;
+    return min;
   }
 
   /* @see IFormatReader#getPlaneMaximum(String, int) */
-  public Double getPlaneMaximum(String id, int no)
+  public Double[] getPlaneMaximum(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (enableChannelStats &&
-      imagesRead[series].contains(new Integer(no)))
-    {
-      int ndx = no * getRGBChannelCount(id);
-      double max = Double.MIN_VALUE;
-      for (int i=ndx; i<ndx+getRGBChannelCount(id); i++) {
-        if (planeMinMax[series][i][MAX] > max) {
-          max = planeMinMax[series][i][MAX];
-        }
-      }
-      return new Double(max);
+    if (planeMax == null) return null;
+
+    int numRGB = getRGBChannelCount(id);
+    int pBase = no * numRGB;
+    if (planeMax[series][pBase] != planeMax[series][pBase]) return null;
+
+    Double[] max = new Double[numRGB];
+    for (int c=0; c<numRGB; c++) {
+      max[c] = new Double(planeMax[series][pBase + c]);
     }
-    return null;
+    return max;
   }
 
   /* @see IFormatReader#isMinMaxPopulated(String) */
@@ -476,7 +470,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return minMaxFinished[series];
+    return minMaxDone[series] == getImageCount(id);
   }
 
   /* @see IFormatReader#getThumbSizeX(String) */
@@ -514,8 +508,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
     if (currentId != null) {
-      System.err.println(
-        "Warning: setChannelStatCalculation called with open file.");
+      String s = "setChannelStatCalculation called with open file.";
+      if (debug && debugLevel >= 2) trace(s);
+      else System.err.println("Warning: " + s);
     }
     enableChannelStats = on;
   }
@@ -593,10 +588,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setColorTableIgnored(boolean) */
   public void setColorTableIgnored(boolean ignore) {
     if (currentId != null) {
-      System.err.println(
-        "Warning: setColorTableIgnored called with open file.");
-      Exception e = new Exception();
-      e.printStackTrace();
+      String s = "setColorTableIgnored called with open file.";
+      if (debug && debugLevel >= 2) trace(s);
+      else System.err.println("Warning: " + s);
     }
     ignoreColorTable = ignore;
   }
@@ -609,7 +603,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     if (currentId != null) {
-      System.err.println("Warning: setNormalized called with open file.");
+      String s = "setNormalized called with open file.";
+      if (debug && debugLevel >= 2) trace(s);
+      else System.err.println("Warning: " + s);
     }
     normalizeData = normalize;
   }
@@ -696,7 +692,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setMetadataFiltered(boolean) */
   public void setMetadataFiltered(boolean filter) {
     if (currentId != null) {
-      System.err.println("Warning: setMetadataFiltered called with open file.");
+      String s = "setMetadataFiltered called with open file.";
+      if (debug && debugLevel >= 2) trace(s);
+      else System.err.println("Warning: " + s);
     }
     filterMetadata = filter;
   }
@@ -709,7 +707,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     if (currentId != null) {
-      System.err.println("Warning: setMetadataStore called with open file.");
+      String s = "setMetadataStore called with open file.";
+      if (debug && debugLevel >= 2) trace(s);
+      else System.err.println("Warning: " + s);
     }
     metadataStore = store;
   }
@@ -758,6 +758,50 @@ public abstract class FormatReader extends FormatHandler
    */
   public static void setDebugLevel(int debugLevel) {
     FormatReader.debugLevel = debugLevel;
+  }
+
+  // -- Helper methods --
+
+  /** Ensures internal min/max variables are initialized properly. */
+  private void initMinMax() throws FormatException, IOException {
+    int seriesCount = getSeriesCount(currentId);
+    if (chanMin == null) {
+      chanMin = new double[seriesCount][];
+      for (int i=0; i<seriesCount; i++) {
+        chanMin[i] = new double[sizeC[i]];
+        Arrays.fill(chanMin[i], Double.POSITIVE_INFINITY);
+      }
+    }
+    if (chanMax == null) {
+      chanMax = new double[seriesCount][];
+      for (int i=0; i<seriesCount; i++) {
+        chanMax[i] = new double[sizeC[i]];
+        Arrays.fill(chanMax[i], Double.NEGATIVE_INFINITY);
+      }
+    }
+    if (planeMin == null) {
+      planeMin = new double[seriesCount][];
+      int oldSeries = series;
+      for (int i=0; i<seriesCount; i++) {
+        setSeries(currentId, i);
+        int numRGB = getRGBChannelCount(currentId);
+        planeMin[i] = new double[getImageCount(currentId) * numRGB];
+        Arrays.fill(planeMin[i], Double.NaN);
+      }
+      setSeries(currentId, oldSeries);
+    }
+    if (planeMax == null) {
+      planeMax = new double[seriesCount][];
+      int oldSeries = series;
+      for (int i=0; i<seriesCount; i++) {
+        setSeries(currentId, i);
+        int numRGB = getRGBChannelCount(currentId);
+        planeMax[i] = new double[getImageCount(currentId) * numRGB];
+        Arrays.fill(planeMax[i], Double.NaN);
+      }
+      setSeries(currentId, oldSeries);
+    }
+    if (minMaxDone == null) minMaxDone = new int[seriesCount];
   }
 
 }

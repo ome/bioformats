@@ -179,25 +179,8 @@ public class NikonReader extends BaseTiffReader {
   /* @see BaseTiffReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("NikonReader.initFile(" + id + ")");
-    close();
-    currentId = id;
-    metadata = new Hashtable();
+    super.initFile(id);
 
-    sizeX = new int[1];
-    sizeY = new int[1];
-    sizeZ = new int[1];
-    sizeC = new int[1];
-    sizeT = new int[1];
-    pixelType = new int[1];
-    currentOrder = new String[1];
-    getMetadataStore(id).createRoot();
-    orderCertain = new boolean[] {true};
-    imagesRead = new Vector[] {new Vector()};
-    minimumValues = new Vector[] {new Vector()};
-    maximumValues = new Vector[] {new Vector()};
-    minMaxFinished = new boolean[] {false};
-
-    channelMinMax = null;
     in = new RandomAccessStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 
@@ -223,8 +206,6 @@ public class NikonReader extends BaseTiffReader {
     original = ifds[0];
     ifds[0] = realImage;
     numImages = 1;
-
-    initMetadata();
 
     Object pattern = getMeta("CFA pattern");
     if (pattern != null) {

@@ -268,7 +268,6 @@ public class EPSReader extends FormatReader {
     sizeC[0] = isRGB(id) ? 3 : 1;
     sizeT[0] = 1;
     currentOrder[0] = "XYCZT";
-    rgbChannelCount[0] = sizeC[0];
 
     // Populate metadata store
 

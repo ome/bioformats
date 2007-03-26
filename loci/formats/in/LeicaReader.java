@@ -1048,14 +1048,6 @@ public class LeicaReader extends BaseTiffReader {
     currentOrder = new String[numSeries];
     orderCertain = new boolean[numSeries];
     Arrays.fill(orderCertain, true);
-    imagesRead = new Vector[numSeries];
-    Arrays.fill(imagesRead, new Vector());
-    minimumValues = new Vector[numSeries];
-    Arrays.fill(minimumValues, new Vector());
-    maximumValues = new Vector[numSeries];
-    Arrays.fill(maximumValues, new Vector());
-    minMaxFinished = new boolean[numSeries];
-    Arrays.fill(minMaxFinished, false);
 
     // sizeC is null here if the file we opened was a TIFF.
     // However, the sizeC field will be adjusted anyway by

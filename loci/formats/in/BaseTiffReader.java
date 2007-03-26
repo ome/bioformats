@@ -94,7 +94,6 @@ public abstract class BaseTiffReader extends FormatReader {
    */
   protected void initStandardMetadata() throws FormatException, IOException {
     Hashtable ifd = ifds[0];
-    if (metadata == null) metadata = new Hashtable();
     put("ImageWidth", ifd, TiffTools.IMAGE_WIDTH);
     put("ImageLength", ifd, TiffTools.IMAGE_LENGTH);
     put("BitsPerSample", ifd, TiffTools.BITS_PER_SAMPLE);
@@ -803,7 +802,6 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BaseTiffReader.initFile(" + id + ")");
     super.initFile(id);
-    channelMinMax = null;
     in = new RandomAccessStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 

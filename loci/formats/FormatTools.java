@@ -78,6 +78,30 @@ public final class FormatTools {
     pixelTypes[DOUBLE] = "double";
   }
 
+  /**
+   * Identifies the <i>Channel</i> dimensional type,
+   * representing a generic channel dimension.
+   */
+  public static final String CHANNEL = "Channel";
+
+  /**
+   * Identifies the <i>Spectra</i> dimensional type,
+   * representing a dimension consisting of spectral channels.
+   */
+  public static final String SPECTRA = "Spectra";
+
+  /**
+   * Identifies the <i>Lifetime</i> dimensional type,
+   * representing a dimension consisting of a lifetime histogram.
+   */
+  public static final String LIFETIME = "Lifetime";
+
+  /**
+   * Identifies the <i>Polarization</i> dimensional type,
+   * representing a dimension consisting of polarization states.
+   */
+  public static final String POLARIZATION = "Polarization";
+
   // -- Constructor --
 
   private FormatTools() { }
