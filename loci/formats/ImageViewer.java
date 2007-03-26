@@ -33,6 +33,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import loci.ome.notebook.Notebook;
 
 /**
  * ImageViewer is a simple viewer/converter
@@ -159,6 +160,11 @@ public class ImageViewer extends JFrame
     fileSave.setActionCommand("save");
     fileSave.addActionListener(this);
     file.add(fileSave);
+    JMenuItem view = new JMenuItem("View...");
+    view.setEnabled(true);
+    view.setActionCommand("view");
+    view.addActionListener(this);
+    file.add(view);
     JMenuItem fileExit = new JMenuItem("Exit");
     fileExit.setActionCommand("exit");
     fileExit.addActionListener(this);
@@ -342,6 +348,10 @@ public class ImageViewer extends JFrame
           }.start();
         }
       }
+    }
+    else if ("view".equals(cmd)) {
+      Notebook n = 
+        new Notebook(null, filename);
     }
     else if ("exit".equals(cmd)) dispose();
     else if ("about".equals(cmd)) {
