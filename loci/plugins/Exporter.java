@@ -28,7 +28,7 @@ package loci.plugins;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.io.SaveDialog;
-import ij.process.ImageProcessor;
+import ij.process.*;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -122,9 +122,29 @@ public class Exporter {
         IJ.showStatus("Saving plane " + (i + 1) + "/" + is.getSize());
         IJ.showProgress((double) (i + 1) / is.getSize());
         proc = is.getProcessor(i + 1);
-        Image slice = proc.createImage();
-        BufferedImage img =
-          ImageTools.makeBuffered(slice, proc.getColorModel());
+        
+        BufferedImage img = null;
+        int x = proc.getWidth();
+        int y = proc.getHeight();
+
+        if (proc instanceof ByteProcessor) {
+          byte[] b = (byte[]) proc.getPixels();
+          img = ImageTools.makeImage(b, x, y);
+        }
+        else if (proc instanceof ShortProcessor) {
+          short[] s = (short[]) proc.getPixels();
+          img = ImageTools.makeImage(s, x, y);
+        }
+        else if (proc instanceof FloatProcessor) {
+          float[] b = (float[]) proc.getPixels();
+          img = ImageTools.makeImage(b, x, y);
+        }
+        else if (proc instanceof ColorProcessor) {
+          byte[][] pix = new byte[3][x*y];
+          ((ColorProcessor) proc).getRGB(pix[0], pix[1], pix[2]);
+          img = ImageTools.makeImage(pix, x, y); 
+        }
+
         if (forceType) {
           if (!w.isSupportedType(null, thisType)) {
             int[] types = w.getPixelTypes(null);
