@@ -550,12 +550,13 @@ public abstract class BaseTiffReader extends FormatReader {
       String creationDate = getImageCreationDate();
       try {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Date date = DateFormat.getDateTimeInstance().parse(creationDate);
+        SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss"); 
+        Date date = parse.parse(creationDate, new ParsePosition(0));
         creationDate = sdf.format(date);
       }
       catch (Exception e) {
         if (debug) e.printStackTrace();
-        creationDate = "";
+        creationDate = null;
       }
 
       // populate Image element
