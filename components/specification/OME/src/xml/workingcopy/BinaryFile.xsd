@@ -21,6 +21,11 @@
 # Written by:  Josiah Johnston <siah@nih.gov>, Andrew J Patterson
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
+	<annotation>
+		<documentation>
+			The elements in this file are not yet represented by classes in the EA diagrams - ajp
+		</documentation>
+	</annotation>
 	<element name = "External">
 		<annotation>
 			<documentation>Describes a file location.  Can optionally specify a portion of a file using Offset and a ReadLength.
@@ -68,6 +73,17 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 								<enumeration value = "zlib"/>
 								<enumeration value = "bzip2"/>
 								<enumeration value = "none"/>
+							</restriction>
+						</simpleType>
+					</attribute>
+					<attribute name="Length">
+						<annotation>
+							<documentation>Character count attribute for the BinData field. - ajp
+							Added in response to Evolution document - ajp</documentation>
+						</annotation>
+						<simpleType>
+							<restriction base="nonNegativeInteger">
+								
 							</restriction>
 						</simpleType>
 					</attribute>
