@@ -1,0 +1,140 @@
+# Template designed specifically for viewing (not editing) metadata.
+
+font-style "Courier"
+font-size "13"
+font-color "0,100,255"
+background-color "50,50,50"
+
+default-width "600"
+default-height "500"
+
+editable "false"
+prefer-companion "true"
+edit-template-fields "false"
+edit-mapping "false"
+
+tab {
+  name "Image Information"
+
+  # demonstrates how to set up an arbitrarily repeated group
+  # this will show information for every Image in the open file
+
+  group {
+    name "Image"
+
+    field {
+      name "Name"
+      type "var"
+      map "Image:Name"
+    }
+
+    field {
+      name "Creation Date"
+      type "var"
+      map "Image:CreationDate"
+    }
+
+    field {
+      name "Description"
+      type "var"
+      map "Image:Description"
+    }
+
+    field {
+      name "Width"
+      type "int"
+      map "Image:Pixels:SizeX"
+    }
+  
+    field {
+      name "Height"
+      type "int"
+      map "Image:Pixels:SizeY"
+    }
+ 
+    field {
+      name "Number of slices"
+      type "int"
+      map "Image:Pixels:SizeZ"
+    }
+
+    field {
+      name "Number of channels"
+      type "int"
+      map "Image:Pixels:SizeC"
+    }
+
+    field {
+      name "Number of timepoints"
+      type "int"
+      map "Image:Pixels:SizeT"
+    }
+  
+    # show some other component types 
+ 
+    field {
+      name "Big Endian"
+      type "bool"
+      default "false"
+      map "Image:Pixels:BigEndian"
+    }
+
+    field {
+      name "Pixel Type"
+      type "enum"
+      values {"uint8", "uint16", "float"}
+      default "float"
+      map "Image:Pixels:PixelType"
+    }
+  }
+}
+
+tab {
+
+  name "Experimenter Information"
+
+  # we don't need to have a group containing fields
+
+  field {
+    name "First Name"
+    type "var"
+    map "CustomAttributes:Experimenter:FirstName"
+  }
+
+  field {
+    name "Last Name"
+    type "var"
+    map "CustomAttributes:Experimenter:LastName"
+  }
+
+  field {
+    name "Email"
+    type "var"
+    map "CustomAttributes:Experimenter:Email"
+  }
+}
+
+tab {
+  name "Extra Information"
+
+  # this is grouped, unmapped information 
+
+  group {
+    name "Extra (un-mapped) data"
+    count "1"
+
+    field {
+      name "Uses color tables"
+      type "enum"
+      values {"yes", "no"}
+      default "no"
+    }
+
+    field {
+      name "Notes"
+      type "var"
+    }
+
+  }
+
+}
