@@ -1,9 +1,9 @@
 //
-// VariableComboRenderer.java
+// GotoRenderer.java
 //
 
 /*
-OME Metadata Notebook application for exploration and editing of OME-XML and
+OME Metadata Editor application for exploration and editing of OME-XML and
 OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
@@ -21,59 +21,57 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.notebook;
+package loci.ome.editor;
 
+import java.awt.Color;
 import java.awt.Component;
-import javax.swing.JComboBox;
+import java.awt.Dimension;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
-/**
- * A class to handle how to display a combobox cell even
- * when the cell is not being edited.
- *
- * @author Christopher Peterson crpeterson2 at wisc.edu
- */
-public class VariableComboRenderer extends JComboBox
-  implements TableCellRenderer
-{
-  /** Construct a new VariableComboRenderer.*/
-  public VariableComboRenderer() { super(); }
+/*
+* A class to handle the appearance of "Goto" buttons
+* that are within a cell of a given ClickableTable.
+*
+* @author Christopher Peterson crpeterson2 at wisc.edu
+*/
+public class GotoRenderer extends JButton implements TableCellRenderer {
+
+  /**Construct a GotoRenderer.*/
+  public GotoRenderer() {
+    super("Goto");
+    setActionCommand("goto");
+    setPreferredSize(new Dimension(70, 15));
+    setForeground(new Color(0,0,50));
+    setOpaque(true); //MUST do this for background to show up.
+  }
 
   /**
-  * Returns the component that should be displayed by the table in
-  * a reference cell when it is not being edited.
+  * Overide the TableCellRenderer method to give back the appropriate
+  * component to make the buttons appear even when not clicked on.
   */
   public Component getTableCellRendererComponent(JTable table, Object value,
     boolean isSelected, boolean hasFocus, int row, int column)
   {
-    removeAllItems();
-    addItem(value);
-    setBorder((EmptyBorder) null);
-    return this;
+    if (value == null) {
+      setToolTipText("Not a reference.");
+      return new JLabel();
+    }
+    else {
+      setToolTipText("Go to the referenced table.");
+      return this;
+    }
   }
 
   //overidden for performance reasons... see jdk 1.4 doc
   //for details as to why I did this
-//  public void validate() {}
-//  public void revalidate() {}
-  /**
-  * Made no-op for performance reasons... see jdk 1.4 API
-  * Specifications on DefaultCellRenderer for details.
-  */
-  public void repaint(long tm, int x, int y,
-    int width, int height) {}
-  /**
-  * Made no-op for performance reasons... see jdk 1.4 API
-  * Specifications on DefaultCellRenderer for details.
-  */
+  public void validate() {}
+  public void revalidate() {}
+  public void repaint(long tm, int x, int y, int width, int height) {}
   public void firePropertyChange(String propertyName,
     boolean oldValue, boolean newValue) {}
-  /**
-  * Made no-op for performance reasons... see jdk 1.4 API
-  * Specifications on DefaultCellRenderer for details.
-  */
   protected void firePropertyChange(String propertyName,
     Object oldValue, Object newValue) {}
 }
