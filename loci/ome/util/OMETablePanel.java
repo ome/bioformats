@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.util;
 
-import ij.IJ;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -319,11 +318,6 @@ public class OMETablePanel implements ActionListener {
     int[] results = new int[al.size()];
     for (int i=0; i<al.size(); i++) {
       results[i] = Integer.parseInt((String) al.get(i));
-    }
-    if (results.length == 0) {
-      IJ.error("OME Download",
-        "No images were selected to download.  Try again.");
-      return getInput();
     }
     return results;
   }
