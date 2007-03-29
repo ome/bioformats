@@ -33,7 +33,6 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import loci.ome.notebook.Notebook;
 
 /**
  * ImageViewer is a simple viewer/converter
@@ -150,28 +149,43 @@ public class ImageViewer extends JFrame
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
     JMenu file = new JMenu("File");
+    file.setMnemonic('f');
     menubar.add(file);
     JMenuItem fileOpen = new JMenuItem("Open...");
+    fileOpen.setMnemonic('o');
     fileOpen.setActionCommand("open");
     fileOpen.addActionListener(this);
     file.add(fileOpen);
     fileSave = new JMenuItem("Save...");
+    fileSave.setMnemonic('s');
     fileSave.setEnabled(false);
     fileSave.setActionCommand("save");
     fileSave.addActionListener(this);
     file.add(fileSave);
-    JMenuItem view = new JMenuItem("View...");
-    view.setEnabled(true);
-    view.setActionCommand("view");
-    view.addActionListener(this);
-    file.add(view);
+    boolean canDoNotebook = false;
+    try {
+      Class c = Class.forName("loci.ome.notebook.Notebook");
+      if (c != null) canDoNotebook = true;
+    }
+    catch (Throwable t) { }
+    if (canDoNotebook) {
+      JMenuItem fileView = new JMenuItem("View Metadata...");
+      fileView.setMnemonic('m');
+      fileView.setEnabled(true);
+      fileView.setActionCommand("view");
+      fileView.addActionListener(this);
+      file.add(fileView);
+    }
     JMenuItem fileExit = new JMenuItem("Exit");
+    fileExit.setMnemonic('x');
     fileExit.setActionCommand("exit");
     fileExit.addActionListener(this);
     file.add(fileExit);
     JMenu help = new JMenu("Help");
+    help.setMnemonic('h');
     menubar.add(help);
     JMenuItem helpAbout = new JMenuItem("About...");
+    helpAbout.setMnemonic('a');
     helpAbout.setActionCommand("about");
     helpAbout.addActionListener(this);
     help.add(helpAbout);
@@ -350,8 +364,13 @@ public class ImageViewer extends JFrame
       }
     }
     else if ("view".equals(cmd)) {
-      Notebook n = 
-        new Notebook(null, filename);
+      ReflectedUniverse r = new ReflectedUniverse();
+      try {
+        r.exec("import loci.ome.notebook.Notebook");
+        r.setVar("filename", filename);
+        r.exec("new Notebook(null, filename)");
+      }
+      catch (ReflectException exc) { exc.printStackTrace(); }
     }
     else if ("exit".equals(cmd)) dispose();
     else if ("about".equals(cmd)) {
