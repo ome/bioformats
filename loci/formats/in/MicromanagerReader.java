@@ -67,7 +67,9 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(String) */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
     return false;
   }
 

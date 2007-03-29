@@ -93,11 +93,6 @@ public class SDTReader extends FormatReader {
     return info;
   }
 
-  public short[][][][] openData(String id) {
-    // CTR TODO
-    return null;
-  }
-
   // -- IFormatReader API methods --
 
   /** Checks if the given block is a valid header for an SDT file. */
@@ -106,18 +101,32 @@ public class SDTReader extends FormatReader {
   /** Determines the number of images in the given SDT file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return intensity ? channels : (timeBins * channels);
-  }
-
-  /** Checks if the images in the file are RGB. */
-  public boolean isRGB(String id) throws FormatException, IOException {
-    return false;
+    return channels;
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
-    int sc = super.getSizeC(id);
-    return intensity ? sc : (timeBins * sc);
+    return intensity ? channels : (timeBins * channels);
+  }
+
+  /* @see loci.formats.IFormatReader#getRGBChannelCount(String) */
+  public int getRGBChannelCount(String id) throws FormatException, IOException {
+    return intensity ? 1 : timeBins;
+  }
+
+  /* @see loci.formats.IFormatReader#getChannelDimLengths(String) */
+  public int[] getChannelDimLengths(String id)
+    throws FormatException, IOException
+  {
+    return intensity ? new int[] {channels} : new int[] {timeBins, channels};
+  }
+
+  /* @see loci.formats.IFormatReader#getChannelDimTypes(String) */
+  public String[] getChannelDimTypes(String id)
+    throws FormatException, IOException
+  {
+    return intensity ? new String[] {FormatTools.SPECTRA} :
+      new String[] {FormatTools.LIFETIME, FormatTools.SPECTRA};
   }
 
   /** Return true if the data is in little-endian format. */
@@ -126,8 +135,10 @@ public class SDTReader extends FormatReader {
   }
 
   /** Returns whether or not the channels are interleaved. */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
+    return !intensity && subC == 0;
   }
 
   /** Obtains the specified image from the given SDT file as a byte array. */
@@ -135,7 +146,8 @@ public class SDTReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[2 * sizeX[series] * sizeY[series]];
+    int c = getRGBChannelCount(id);
+    byte[] buf = new byte[2 * c * sizeX[series] * sizeY[series]];
     return openBytes(id, no, buf);
   }
 
@@ -146,8 +158,9 @@ public class SDTReader extends FormatReader {
     if (no < 0 || no >= timeBins * channels) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < 2 * sizeX[series] * sizeY[series]) {
-      throw new FormatException("Buffer too small.");
+    int c = getRGBChannelCount(id);
+    if (buf.length < 2 * c * sizeX[series] * sizeY[series]) {
+      throw new FormatException("Buffer too small");
     }
 
     if (intensity) {
@@ -168,15 +181,13 @@ public class SDTReader extends FormatReader {
       }
     }
     else {
-      int t = no % timeBins;
-      int c = no / timeBins;
-      in.seek(off + 2 * (sizeX[series] * sizeY[series] * timeBins * c + t));
+      in.seek(off + 2 * sizeX[series] * sizeY[series] * timeBins * no);
       for (int y=0; y<sizeY[series]; y++) {
         for (int x=0; x<sizeX[series]; x++) {
-          // read data only for the given lifetime bin
-          int ndx = 2 * (sizeX[series] * y + x);
-          in.readFully(buf, ndx, 2);
-          in.skipBytes(timeBins);
+          for (int t=0; t<timeBins; t++) {
+            int ndx = 2 * (timeBins * sizeX[0] * y + timeBins * x + t);
+            in.readFully(buf, ndx, 2);
+          }
         }
       }
     }
@@ -189,7 +200,7 @@ public class SDTReader extends FormatReader {
     throws FormatException, IOException
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no),
-      sizeX[series], sizeY[series], 1, false, 2, true);
+      sizeX[series], sizeY[series], getRGBChannelCount(id), false, 2, true);
     updateMinMax(b, no);
     return b;
   }

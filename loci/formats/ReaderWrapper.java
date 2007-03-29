@@ -193,6 +193,12 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isInterleaved(id);
   }
 
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
+    return reader.isInterleaved(id, subC);
+  }
+
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {

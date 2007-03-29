@@ -58,8 +58,8 @@ public abstract class FormatReader extends FormatHandler
 
   /** Dimension fields. */
   protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
-  protected int[][] dimLengths;
-  protected String[][] dimTypes;
+  protected int[][] cLengths;
+  protected String[][] cTypes;
   protected int[] pixelType;
   protected String[] currentOrder;
   protected boolean[] orderCertain;
@@ -131,8 +131,8 @@ public abstract class FormatReader extends FormatHandler
     sizeZ = new int[1];
     sizeC = new int[1];
     sizeT = new int[1];
-    dimLengths = new int[1][];
-    dimTypes = new String[1][];
+    cLengths = new int[1][];
+    cTypes = new String[1][];
     pixelType = new int[1];
     currentOrder = new String[1];
     orderCertain = new boolean[1];
@@ -370,10 +370,10 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (dimLengths[series] == null) {
-      dimLengths[series] = new int[] {sizeC[series]};
+    if (cLengths[series] == null) {
+      cLengths[series] = new int[] {sizeC[series]};
     }
-    return dimLengths[series];
+    return cLengths[series];
   }
 
   /* @see IFormatReader#getChannelDimTypes(String) */
@@ -381,10 +381,10 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (dimTypes[series] == null) {
-      dimTypes[series] = new String[] {FormatTools.CHANNEL};
+    if (cTypes[series] == null) {
+      cTypes[series] = new String[] {FormatTools.CHANNEL};
     }
-    return dimTypes[series];
+    return cTypes[series];
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
@@ -521,7 +521,14 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isInterleaved(String) */
-  public abstract boolean isInterleaved(String id)
+  public boolean isInterleaved(String id)
+    throws FormatException, IOException
+  {
+    return isInterleaved(id, 0);
+  }
+
+  /* @see IFormatReader#isInterleaved(String, int) */
+  public abstract boolean isInterleaved(String id, int subC)
     throws FormatException, IOException;
 
   /* @see IFormatReader#openImage(String, int) */

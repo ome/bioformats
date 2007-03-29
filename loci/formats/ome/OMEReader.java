@@ -220,8 +220,10 @@ public class OMEReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String) */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
     return false;
   }
 

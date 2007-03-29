@@ -295,20 +295,22 @@ public final class FormatTools {
       // read basic metadata for series #i
       int imageCount = reader.getImageCount(id);
       boolean rgb = reader.isRGB(id);
-      int rgbChanCount = reader.getRGBChannelCount(id);
-      boolean interleaved = reader.isInterleaved(id);
       int sizeX = reader.getSizeX(id);
       int sizeY = reader.getSizeY(id);
       int sizeZ = reader.getSizeZ(id);
       int sizeC = reader.getSizeC(id);
-      int effSizeC = reader.getEffectiveSizeC(id);
       int sizeT = reader.getSizeT(id);
+      int pixelType = reader.getPixelType(id);
+      int effSizeC = reader.getEffectiveSizeC(id);
+      int rgbChanCount = reader.getRGBChannelCount(id);
+      int[] cLengths = reader.getChannelDimLengths(id);
+      String[] cTypes = reader.getChannelDimTypes(id);
       int thumbSizeX = reader.getThumbSizeX(id);
       int thumbSizeY = reader.getThumbSizeY(id);
       boolean little = reader.isLittleEndian(id);
       String dimOrder = reader.getDimensionOrder(id);
       boolean orderCertain = reader.isOrderCertain(id);
-      int pixelType = reader.getPixelType(id);
+      boolean interleaved = reader.isInterleaved(id);
 
       // output basic metadata for series #i
       System.out.println("Series #" + j + ":");
@@ -329,6 +331,10 @@ public final class FormatTools {
         System.out.print(" (effectively " + effSizeC + ")");
       }
       System.out.println();
+      for (int i=0; i<cLengths.length; i++) {
+        System.out.println("\t\t#" + (i + 1) + " = " +
+          cTypes[i] + " (" + cLengths[i] + ")");
+      }
       System.out.println("\tSizeT = " + sizeT);
       if (imageCount != sizeZ * effSizeC * sizeT) {
         System.out.println("\t************ Warning: ZCT mismatch ************");

@@ -100,7 +100,9 @@ public class ImarisTiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#isInterleaved(String) */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
     if (!id.equals(currentId)) initFile(id);
     return false;
   }

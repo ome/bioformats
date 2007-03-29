@@ -173,7 +173,17 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Gets a five-character string representing the
-   * dimension order within the file.
+   * dimension order within the file. Valid orders are:<ul>
+   *   <li>XYCTZ</li>
+   *   <li>XYCZT</li>
+   *   <li>XYTCZ</li>
+   *   <li>XYTZC</li>
+   *   <li>XYZCT</li>
+   *   <li>XYZTC</li>
+   * </ul>
+   * In cases where the channels are interleaved (e.g., CXYTZ), C will be
+   * the first dimension after X and Y (e.g., XYCTZ) and the
+   * {@link #isInterleaved(String)} method will return true.
    */
   String getDimensionOrder(String id) throws FormatException, IOException;
 
@@ -198,8 +208,22 @@ public interface IFormatReader extends IFormatHandler {
    */
   boolean getChannelStatCalculationStatus();
 
-  /** Gets whether or not the channels are interleaved. */
+  /**
+   * Gets whether or not the channels are interleaved. This method exists
+   * because X and Y must appear first in the dimension order. For
+   * interleaved data, XYCTZ or XYCZT is used, and this method returns true.
+   */
   boolean isInterleaved(String id) throws FormatException, IOException;
+
+  /**
+   * Gets whether or not the given sub-channel is interleaved. This method
+   * exists because some data with multiple rasterized sub-dimensions within
+   * C have one sub-dimension interleaved, and the other not&mdash;e.g.,
+   * {@link loci.formats.in.SDTReader} handles spectral-lifetime data with
+   * the interleaved lifetime bins and non-interleaved spectral channels.
+   */
+  boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException;
 
   /** Obtains the specified image from the given file. */
   BufferedImage openImage(String id, int no)

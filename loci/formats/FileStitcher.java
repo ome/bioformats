@@ -282,14 +282,23 @@ public class FileStitcher implements IFormatReader {
   public int[] getChannelDimLengths(String id)
     throws FormatException, IOException
   {
-    throw new FormatException("Unimplemented");//TODO
+    if (!id.equals(currentId)) initFile(id);
+    int sno = getSeries(id);
+    int len = lenC[sno].length;
+    int[] cLengths = new int[len];
+    System.arraycopy(lenC[sno], 0, cLengths, 0, len);
+    return cLengths;
   }
 
   /* @see IFormatReader#getChannelDimTypes(String) */
   public String[] getChannelDimTypes(String id)
     throws FormatException, IOException
   {
-    throw new FormatException("Unimplemented");//TODO
+    int sno = getSeries(id);
+    int len = lenC[sno].length;
+    String[] cTypes = new String[len];
+    Arrays.fill(cTypes, FormatTools.CHANNEL);
+    return cTypes;
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
@@ -434,6 +443,14 @@ public class FileStitcher implements IFormatReader {
   public boolean isInterleaved(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return reader.isInterleaved(files[0]);
+  }
+
+  /* @see IFormatReader#isInterleaved(String, int) */
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.isInterleaved(files[0], subC);
   }
 
   /** Obtains the specified image from the given file series. */

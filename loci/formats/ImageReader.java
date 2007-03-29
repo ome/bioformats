@@ -354,6 +354,13 @@ public class ImageReader implements IFormatReader {
     return getReader(id).isInterleaved(id);
   }
 
+  /* @see IFormatReader#isInterleaved(String, int) */
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
+    return getReader(id).isInterleaved(id, subC);
+  }
+
   /* @see IFormatReader#openImage(String, int) */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException

@@ -135,7 +135,9 @@ public class ICSReader extends FormatReader {
   }
 
   /** Returns whether or not the channels are interleaved. */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
+  public boolean isInterleaved(String id, int subC)
+    throws FormatException, IOException
+  {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
     return !rgb;
   }
