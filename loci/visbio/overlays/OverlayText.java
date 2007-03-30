@@ -23,8 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import visad.*;
 
 /** OverlayText is a text string overlay. */
@@ -51,9 +53,10 @@ public class OverlayText extends OverlayObject {
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getTextRangeType();
 
-    float r = color.getRed() / 255f;
-    float g = color.getGreen() / 255f;
-    float b = color.getBlue() / 255f;
+    Color col = selected ? GLOW_COLOR : color;
+    float r = col.getRed() / 255f;
+    float g = col.getGreen() / 255f;
+    float b = col.getBlue() / 255f;
 
     FieldImpl field = null;
     try {
@@ -65,6 +68,45 @@ public class OverlayText extends OverlayObject {
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
+    return field;
+  }
+
+  /** Gets a layer indicating this object is selected */
+  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
+
+  /** Gets a layer indicating this object is selected */
+  public DataImpl getSelectionGrid(boolean outline) { 
+    if (outline) return super.getSelectionGrid(outline);
+
+    RealTupleType domain = overlay.getDomainType();
+    TupleType range = overlay.getRangeType();
+
+    float[][] setSamples = {
+      {xGrid1, xGrid2, xGrid3, xGrid4},
+      {yGrid1, yGrid2, yGrid3, yGrid4}
+    };
+
+    // construct range samples
+    float r = GLOW_COLOR.getRed() / 255f;
+    float g = GLOW_COLOR.getGreen() / 255f;
+    float b = GLOW_COLOR.getBlue() / 255f;
+
+    float[][] rangeSamples = new float[4][setSamples[0].length];
+    Arrays.fill(rangeSamples[0], r);
+    Arrays.fill(rangeSamples[1], g);
+    Arrays.fill(rangeSamples[2], b);
+    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
+
+    FlatField field = null;
+    try {
+      Gridded2DSet domainSet = new Gridded2DSet(domain, setSamples, 2, 2,
+          null, null, null, false);
+      FunctionType fieldType = new FunctionType(domain, range);
+      field = new FlatField(fieldType, domainSet);
+      field.setSamples(rangeSamples);
+    }
+    catch (VisADException ex) { ex.printStackTrace(); }
+    catch (RemoteException ex) { ex.printStackTrace(); }
     return field;
   }
 

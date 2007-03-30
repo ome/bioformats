@@ -193,6 +193,7 @@ public class PointerTool extends OverlayTool {
       // extend selection box
       select.setCorner(px, py);
 
+      // *******************************************************
       // select objects inside the box
       for (int i=0; i<bounds.length; i++) {
         float bx1, bx2, by1, by2;
@@ -290,6 +291,7 @@ public class PointerTool extends OverlayTool {
           }
         }
       } // end for
+      // ****************************************************
 
       if (selectionStateChanged) ((OverlayWidget)
           overlay.getControls()).refreshListSelection();

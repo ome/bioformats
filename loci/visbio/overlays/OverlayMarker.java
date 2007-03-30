@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
@@ -55,9 +56,10 @@ public class OverlayMarker extends OverlayObject {
       {x1, x1, x1, x1 + size, x1 - size},
       {y1 + size, y1 - size, y1, y1, y1}
     };
-    float r = color.getRed() / 255f;
-    float g = color.getGreen() / 255f;
-    float b = color.getBlue() / 255f;
+    Color col = selected ? GLOW_COLOR : color;
+    float r = col.getRed() / 255f;
+    float g = col.getGreen() / 255f;
+    float b = col.getBlue() / 255f;
     float[][] rangeSamples = new float[4][setSamples[0].length];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
@@ -76,6 +78,91 @@ public class OverlayMarker extends OverlayObject {
     catch (RemoteException exc) { exc.printStackTrace(); }
     return field;
   }
+
+  /** Gets a DataImpl overlay indicating that this object is selected */
+  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
+
+  /** Gets a DataImpl overlay indicating that this object is selected */
+  public DataImpl getSelectionGrid(boolean outline) {
+    if (outline) return super.getSelectionGrid(outline);
+
+    RealTupleType domain = overlay.getDomainType();
+    TupleType range = overlay.getRangeType();
+
+    float size = 0.02f * overlay.getScalingValue();
+    float scl = .1f; // for now
+    float delta = GLOW_WIDTH * scl;
+
+    //System.out.println("x1 - size = " + (x1 - size)); // TEMP
+    //System.out.println("x1 + size = " + (x1 + size)); // TEMP
+    //System.out.println("y1 - size = " + (y1 - size)); // TEMP
+    //System.out.println("y1 + size = " + (y1 + size)); // TEMP
+
+    float xx1 = x1 - size - delta;
+    float xx2 = x1 + size + delta;
+    float yy1 = y1 + size + delta;
+    float yy2 = y1 - size - delta;
+
+    float dx = 0.0001f; // TEMP
+
+    float[][] setSamples;
+    if (true || 2 * delta > size) {
+      // return box
+      setSamples = new float[][]{
+        {xx1, xx2, xx1, xx2},
+        {yy1, yy1, yy2, yy2}
+      };
+    }
+    else {
+      // return cross
+      /*
+      setSamples = new float[][]{
+        {xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2,
+          xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2},
+        {y1 + delta, y1 + delta, yy1, yy1, y1 + delta, y1 + delta,
+          y1 - delta, y1 - delta, yy2, yy2, y1 - delta, y1 - delta}
+      };*/
+      setSamples = new float[][] {
+        {xx1, x1 - delta, x1 - delta + dx,
+          xx1, x1 - delta, x1 -delta + dx},
+        {y1 + delta, y1 + delta, y1 + size + delta, 
+          y1 - delta, y1 - delta, y1 - size - delta}
+      };
+    }
+
+    //System.out.println("coords ==========================="); // TEMP
+    /*
+    for (int i=0; i<setSamples[0].length; i++) {
+      System.out.println("(" + setSamples[0][i] + "," + setSamples[1][i] + ")");
+    }
+    */
+
+    // construct range samples
+    float r = GLOW_COLOR.getRed() / 255f;
+    float g = GLOW_COLOR.getGreen() / 255f;
+    float b = GLOW_COLOR.getBlue() / 255f;
+
+    float[][] rangeSamples = new float[4][setSamples[0].length];
+    Arrays.fill(rangeSamples[0], r);
+    Arrays.fill(rangeSamples[1], g);
+    Arrays.fill(rangeSamples[2], b);
+    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
+
+    // construct field
+    Gridded2DSet domainSet = null;
+    FlatField field = null;
+    try {
+      domainSet = new Gridded2DSet(domain, setSamples, setSamples[0].length /
+          2, 2, null, null, null, false);
+      FunctionType fieldType = new FunctionType (domain, range);
+      field = new FlatField(fieldType, domainSet);
+      field.setSamples(rangeSamples);
+    }
+    catch (VisADException ex) { ex.printStackTrace(); }
+    catch (RemoteException ex) { ex.printStackTrace(); }
+    return field;
+  }
+    
 
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {

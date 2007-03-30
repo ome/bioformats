@@ -101,7 +101,7 @@ public class PolylineTool extends OverlayTool {
     deselectAll(); 
 
     if (overlay.hasToolChanged()) {
-      unselect();
+      releaseLine();
       mode = WAIT;
     }
 
@@ -191,7 +191,11 @@ public class PolylineTool extends OverlayTool {
     }
     else if (mode == EXTEND || mode == BEG_EXTEND) {
       line.setLastNode(dx, dy);
-      line.computeLength();
+      float[] c = line.getNodeCoords(line.getNumNodes()-2);
+      double[] cdub = {(double) c[0], (double) c[1]};
+      double oldLen = line.getCurveLength();
+      line.setCurveLength(oldLen + MathUtil.getDistance(cdub,
+            new double[]{dx, dy}));
       mode = PLACE;
     }
     else if (mode == EXTEND_ON_TAIL) {
@@ -211,7 +215,7 @@ public class PolylineTool extends OverlayTool {
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
     if (overlay.hasToolChanged()) {
-      unselect();
+      releaseLine();
       mode = WAIT;
     }
     if (mode == ADJUST) {
@@ -258,13 +262,19 @@ public class PolylineTool extends OverlayTool {
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
     if (overlay.hasToolChanged()) {
+      releaseLine();
       mode = WAIT;
-      unselect();
     }
     if (mode == ADJUST) {
+      line.updateBoundingBox();
+      line.computeGridParameters();
+      line.computeLength();
       mode = SELECT;
     }
     else if (mode == ADJUST_TAIL) {
+      line.updateBoundingBox();
+      line.computeGridParameters();
+      line.computeLength();
       mode = SELECT;
     }
     else if (mode == SELECTED_TAIL) { 
@@ -274,6 +284,9 @@ public class PolylineTool extends OverlayTool {
     else if (mode == CLOSE_LOOP) {
       float[] c = line.getNodeCoords(0);
       line.setLastNode(c[0], c[1]); 
+      line.updateBoundingBox();
+      line.computeGridParameters();
+      line.computeLength();
       selectNode(display, line, line.getNumNodes() - 1);
       mode = SELECT;
     }
@@ -291,7 +304,7 @@ public class PolylineTool extends OverlayTool {
     double[] movePxl = {(double) px, (double) py}; 
 
     if (overlay.hasToolChanged()) {
-      unselect();
+      releaseLine();
       mode = WAIT;
     }
     if (mode == WAIT) {
@@ -310,10 +323,37 @@ public class PolylineTool extends OverlayTool {
     }
     else if (mode == PLACE) {
       line.setNextNode(dx, dy);
+      
+      float[] c = line.getNodeCoords(line.getNumNodes()-2);
+      double[] cdub = {(double) c[0], (double) c[1]};
+      double oldLen = line.getCurveLength();
+      line.setCurveLength(oldLen + MathUtil.getDistance(cdub,
+            new double[]{dx, dy}));
+
       mode = BEG_EXTEND;
     }
     else if (mode == EXTEND || mode == EXTEND_ON_TAIL) {
+      float[][] lastSeg = {line.getNodeCoords(line.getNumNodes()-1),
+        line.getNodeCoords(line.getNumNodes() - 2)};
+      double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
+        {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
+      double lastSegLength = MathUtil.getDistance(lastSegD[0], lastSegD[1]);
+
       line.setLastNode(dx, dy);
+
+      float[][] newLastSeg = {line.getNodeCoords(line.getNumNodes() -1),
+        line.getNodeCoords(line.getNumNodes() - 2)};
+      double[][] newLastSegD = {{(double) lastSeg[0][0], (double)
+        lastSeg[0][1]}, {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
+      double newLastSegLength = MathUtil.getDistance(newLastSegD[0], 
+          newLastSegD[1]);
+
+      double delta = newLastSegLength - lastSegLength;
+      //System.out.println("lastSegLength = " + lastSegLength); // TEMP
+      //System.out.println("newLastSegLength = " + newLastSegLength);
+      //System.out.println("delta =  " + delta);
+
+      line.setCurveLength(line.getCurveLength() + delta);     
       
       // determine if near head: 
       int ndx = 0; // index of head
@@ -358,7 +398,23 @@ public class PolylineTool extends OverlayTool {
       }
     }
     else if (mode == BEG_EXTEND) {
+      float[][] lastSeg = {line.getNodeCoords(line.getNumNodes() -1), line.getNodeCoords(line.getNumNodes() - 2)};
+      double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
+        {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
+      double lastSegLength = MathUtil.getDistance(lastSegD[0], lastSegD[1]);
+
       line.setLastNode(dx, dy);
+
+      float[][] newLastSeg = {line.getNodeCoords(line.getNumNodes() -1),
+        line.getNodeCoords(line.getNumNodes() - 2)};
+      double[][] newLastSegD = {{(double) lastSeg[0][0], (double)
+        lastSeg[0][1]}, {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
+      double newLastSegLength = MathUtil.getDistance(newLastSegD[0], 
+          newLastSegD[1]);
+
+      double delta = newLastSegLength - lastSegLength;
+
+      line.setCurveLength(line.getCurveLength() + delta); 
       
       // determine if near head: 
       int ndx = 0; // index of head
@@ -437,6 +493,7 @@ public class PolylineTool extends OverlayTool {
       line.setDrawing(false);
       line.setSelected(true);
       line = null;
+      selectedNode = -1;
     }
   }
 

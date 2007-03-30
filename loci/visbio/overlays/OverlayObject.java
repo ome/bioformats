@@ -30,6 +30,13 @@ import visad.*;
 /** OverlayObject is the superclass of all overlay objects. */
 public abstract class OverlayObject {
 
+  // -- Constants --
+  protected static final float GLOW_WIDTH = 3.0f; // (pixels)
+
+  protected static final float GLOW_ALPHA = 0.15f; 
+
+  protected static final Color GLOW_COLOR = Color.YELLOW;
+
   // -- Fields --
 
   /** Associated overlay transform. */

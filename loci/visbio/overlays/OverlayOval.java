@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
@@ -124,9 +125,10 @@ public class OverlayOval extends OverlayObject {
     }
     catch (VisADException exc) { exc.printStackTrace(); }
 
-    float r = color.getRed() / 255f;
-    float g = color.getGreen() / 255f;
-    float b = color.getBlue() / 255f;
+    Color col = selected ? GLOW_COLOR : color;
+    float r = col.getRed() / 255f;
+    float g = col.getGreen() / 255f;
+    float b = col.getBlue() / 255f;
     float[][] rangeSamples = new float[4][setSamples[0].length];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
@@ -135,6 +137,69 @@ public class OverlayOval extends OverlayObject {
 
     FlatField field = null;
     try {
+      FunctionType fieldType = new FunctionType(domain, range);
+      field = new FlatField(fieldType, fieldSet);
+      field.setSamples(rangeSamples);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return field;
+  }
+
+  /** Gets a layer indicating this overlay is selected */
+  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
+
+  /** Gets a layer indicating this overlay is selected */
+  public DataImpl getSelectionGrid(boolean outline) {
+    if (x1 == x2 || y1 == y2) return null; 
+    // don't try to render a zero-area ellipse
+
+    RealTupleType domain = overlay.getDomainType();
+    TupleType range = overlay.getRangeType();
+
+    float cx = (x1 + x2) / 2;
+    float cy = (y1 + y2) / 2;
+    float rrx = cx > x1 ? cx - x1 : cx - x2;
+    float rry = cy > y1 ? cy - y1 : cy - y2;
+
+    float scl = 1; // for now
+    float rx = rrx + GLOW_WIDTH * scl;
+    float ry = rry + GLOW_WIDTH * scl;
+
+    int arcLen = ARC[0].length;
+    int len = 2 * arcLen;
+    float[][] setSamples = new float[2][len];
+
+    // top half of circle
+    for (int i=0; i<arcLen; i++) {
+      setSamples[0][i] = cx + rx * ARC[0][i];
+      setSamples[1][i] = cy + ry * ARC[1][i];
+    }
+
+    // bottom half of circle
+    for (int i=0; i<arcLen; i++) {
+      int ndx = arcLen + i;
+      setSamples[0][ndx] = cx + rx * ARC[0][i];
+      setSamples[1][ndx] = cy - ry * ARC[1][i];
+    }
+
+    // construct range samples
+    float r = GLOW_COLOR.getRed() / 255f;
+    float g = GLOW_COLOR.getGreen() / 255f;
+    float b = GLOW_COLOR.getBlue() / 255f;
+
+    float[][] rangeSamples = new float[4][setSamples[0].length];
+    Arrays.fill(rangeSamples[0], r);
+    Arrays.fill(rangeSamples[1], g);
+    Arrays.fill(rangeSamples[2], b);
+    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
+
+    GriddedSet fieldSet = null;
+    FlatField field = null;
+    try {
+      fieldSet = new Gridded2DSet(domain,
+        setSamples, arcLen, 2, null, null, null, false);
+
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(rangeSamples);

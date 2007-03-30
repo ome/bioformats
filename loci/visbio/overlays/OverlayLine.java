@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import loci.visbio.util.MathUtil;
@@ -56,9 +57,12 @@ public class OverlayLine extends OverlayObject {
     TupleType range = overlay.getRangeType();
 
     float[][] setSamples = {{x1, x2}, {y1, y2}};
-    float r = color.getRed() / 255f;
-    float g = color.getGreen() / 255f;
-    float b = color.getBlue() / 255f;
+
+    Color col = selected ? GLOW_COLOR : color; 
+    float r = col.getRed() / 255f;
+    float g = col.getGreen() / 255f;
+    float b = col.getBlue() / 255f;
+
     float[][] rangeSamples = new float[4][setSamples[0].length];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
@@ -145,6 +149,58 @@ public class OverlayLine extends OverlayObject {
       x2 + qx + multiplier * qy, y2 + qy - multiplier * qx,
       x2 + qx - multiplier * qy, y2 + qy + multiplier * qx
     };
+  }
+
+  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
+
+  public DataImpl getSelectionGrid(boolean outline) {
+    RealTupleType domain = overlay.getDomainType();
+    TupleType range = overlay.getRangeType();
+
+    float delta = GLOW_WIDTH;
+
+    float[] v = new float[]{x2 - x1, y2 - y1};
+
+    // angle of vector perpendicular to line
+    double theta =  Math.PI / 2 + Math.atan2(v[1], v[0]); 
+
+    float dx = (float) (delta * Math.cos(theta));
+    float dy = (float) (delta * Math.sin(theta));
+
+    float[] p1 = {x1 + dx, y1 + dy};
+    float[] p2 = {x2 + dx, y2 + dy};
+    float[] p3 = {x1 - dx, y1 - dy};
+    float[] p4 = {x2 - dx, y2 - dy};
+
+    float[][] setSamples = {{p1[0], p2[0], p3[0], p4[0]},
+                            {p1[1], p2[1], p3[1], p4[1]}};
+
+    // construct range samples;
+    Color col = GLOW_COLOR;
+
+    float r = col.getRed() / 255f;
+    float g = col.getGreen() / 255f;
+    float b = col.getBlue() / 255f;
+
+    float[][] rangeSamples = new float[4][4];
+    Arrays.fill(rangeSamples[0], r);
+    Arrays.fill(rangeSamples[1], g);
+    Arrays.fill(rangeSamples[2], b);
+    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
+
+    Gridded2DSet domainSet = null;
+    FlatField field = null;
+    try {
+      domainSet = new Gridded2DSet(domain, setSamples,
+            2, 2, null, null, null, false);
+      FunctionType fieldType = new FunctionType(domain, range);
+      field = new FlatField(fieldType, domainSet);
+      field.setSamples(rangeSamples);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+
+    return field;
   }
 
 }
