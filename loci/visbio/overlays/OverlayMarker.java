@@ -90,13 +90,8 @@ public class OverlayMarker extends OverlayObject {
     TupleType range = overlay.getRangeType();
 
     float size = 0.02f * overlay.getScalingValue();
-    float scl = .1f; // for now
+    float scl = .3f; // for now
     float delta = GLOW_WIDTH * scl;
-
-    //System.out.println("x1 - size = " + (x1 - size)); // TEMP
-    //System.out.println("x1 + size = " + (x1 + size)); // TEMP
-    //System.out.println("y1 - size = " + (y1 - size)); // TEMP
-    //System.out.println("y1 + size = " + (y1 + size)); // TEMP
 
     float xx1 = x1 - size - delta;
     float xx2 = x1 + size + delta;
@@ -105,16 +100,55 @@ public class OverlayMarker extends OverlayObject {
 
     float dx = 0.0001f; // TEMP
 
-    float[][] setSamples;
-    if (true || 2 * delta > size) {
+    SampledSet domainSet = null;
+    int samplesLength = 4;
+    if (2 * delta > size) {
       // return box
+      float[][] setSamples;
       setSamples = new float[][]{
         {xx1, xx2, xx1, xx2},
         {yy1, yy1, yy2, yy2}
       };
+
+      try {
+        domainSet = new Gridded2DSet(domain, setSamples, setSamples[0].length /
+            2, 2, null, null, null, false);
+      }
+      catch (VisADException ex) { ex.printStackTrace(); }
     }
     else {
-      // return cross
+      // return cross shape
+      // using a UnionSet for now--couldn't get a single
+      // Gridded2D set to appear as a cross
+      float[][] setSamples1 = {
+        {xx1, x1-delta, xx1, x1 - delta},
+        {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
+      };
+
+      float[][] setSamples2 = { 
+        {x1 - delta, x1 + delta, x1 - delta, x1 + delta},
+        {yy1, yy1, yy2, yy2}
+      };
+
+      float[][] setSamples3 = {
+        {x1 + delta, xx2, x1 + delta, xx2},
+        {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
+      };
+
+      float[][][] setSamples = {setSamples1, setSamples2, setSamples3};
+
+      samplesLength = 12;
+      
+      Gridded2DSet[] sets = new Gridded2DSet[3]; 
+      try {
+        for (int j=0; j<3; j++) {
+          sets[j] = new Gridded2DSet(domain, setSamples[j], 2, 2, 
+              null, null, null, false);
+        }
+        domainSet = new UnionSet(domain, sets);
+      }
+      catch (VisADException ex) { ex.printStackTrace(); }
+      
       /*
       setSamples = new float[][]{
         {xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2,
@@ -122,38 +156,45 @@ public class OverlayMarker extends OverlayObject {
         {y1 + delta, y1 + delta, yy1, yy1, y1 + delta, y1 + delta,
           y1 - delta, y1 - delta, yy2, yy2, y1 - delta, y1 - delta}
       };*/
+
+      // Run this example by curtis:
+      // Start with this:
+      /*
+      setSamples = new float[][] {
+        {xx1, x1 - delta, 
+          xx1, x1 - delta,},
+        {y1 + delta, y1 + delta, 
+          y1 - delta, y1 - delta,}
+      };
+      */
+
+      // then try this:
+      /*
       setSamples = new float[][] {
         {xx1, x1 - delta, x1 - delta + dx,
           xx1, x1 - delta, x1 -delta + dx},
         {y1 + delta, y1 + delta, y1 + size + delta, 
           y1 - delta, y1 - delta, y1 - size - delta}
       };
+      */
+      // I would expect the second one to look like a sideways 'T', but 
+      // it looks like a triangle instead
     }
-
-    //System.out.println("coords ==========================="); // TEMP
-    /*
-    for (int i=0; i<setSamples[0].length; i++) {
-      System.out.println("(" + setSamples[0][i] + "," + setSamples[1][i] + ")");
-    }
-    */
 
     // construct range samples
     float r = GLOW_COLOR.getRed() / 255f;
     float g = GLOW_COLOR.getGreen() / 255f;
     float b = GLOW_COLOR.getBlue() / 255f;
 
-    float[][] rangeSamples = new float[4][setSamples[0].length];
+    float[][] rangeSamples = new float[4][samplesLength];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
     Arrays.fill(rangeSamples[2], b);
     Arrays.fill(rangeSamples[3], GLOW_ALPHA);
 
     // construct field
-    Gridded2DSet domainSet = null;
     FlatField field = null;
     try {
-      domainSet = new Gridded2DSet(domain, setSamples, setSamples[0].length /
-          2, 2, null, null, null, false);
       FunctionType fieldType = new FunctionType (domain, range);
       field = new FlatField(fieldType, domainSet);
       field.setSamples(rangeSamples);
