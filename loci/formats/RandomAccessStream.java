@@ -61,6 +61,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
   /** Number of currently open files. */
   private static int openFiles = 0;
 
+  /** Recent buffer sizes. */
+  private static int[] bufferSizes = new int[MAX_HISTORY];
+
   // -- Fields --
 
   protected IRandomAccess raf;
@@ -84,14 +87,14 @@ public class RandomAccessStream extends InputStream implements DataInput {
   /** Starting buffer. */
   protected byte[] buf;
 
-  /** Recent buffer sizes. */
-  protected Vector recent;
-
   /** Endianness of the stream. */
   protected boolean littleEndian = false;
 
   /** Number of bytes by which to extend the stream. */
   protected int ext = 0;
+
+  /** Number of valid entries in the buffer size array. */
+  protected int lastValid = 0;
 
   // -- Constructors --
 
@@ -110,8 +113,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
       buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
       raf.readFully(buf);
       raf.seek(0);
-      recent = new Vector();
-      recent.add(new Integer(MAX_OVERHEAD / 2));
+      bufferSizes[0] = MAX_OVERHEAD / 2; 
+      lastValid = 1; 
       nextMark = MAX_OVERHEAD;
     }
     else if (file.startsWith("http")) {
@@ -407,8 +410,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
     int div = 0;
     int ndx = 0;
 
-    while ((ndx < recent.size()) && (ndx < MAX_HISTORY)) {
-      int size = ((Integer) recent.get(ndx)).intValue();
+    while ((ndx < lastValid) && (ndx < MAX_HISTORY)) {
+      int size = bufferSizes[ndx]; 
       sum += (size * ((ndx / (MAX_HISTORY / 5)) + 1));
       div += (ndx / (MAX_HISTORY / 5)) + 1;
       ndx++;
@@ -416,10 +419,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
     int newSize = sum / div;
     if (newSize > MAX_OVERHEAD) newSize = MAX_OVERHEAD;
-    if (recent.size() < MAX_HISTORY) recent.add(new Integer(newSize));
+    if (lastValid < MAX_HISTORY) {/*recent.add(new Integer(newSize)); */
+      bufferSizes[lastValid] = newSize;
+      lastValid++;
+    }
     else {
-      recent.remove(0);
-      recent.add(new Integer(newSize));
+      bufferSizes[0] = newSize; 
     }
 
     return newSize;
@@ -433,10 +438,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
    */
   protected int checkEfficiency(int toRead) throws IOException {
     if (fileCache.get(this) == Boolean.FALSE) reopen();
-    int oldBufferSize = 0;
-    if (recent != null) {
-      oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
-    }
+    int oldBufferSize = bufferSizes[bufferSizes.length - 1];
 
     if (dis != null) {
       while (fp > (length() - dis.available())) {
@@ -459,10 +461,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
         fp += skip;
       }
 
-      if (recent.size() < MAX_HISTORY) recent.add(new Integer(MAX_OVERHEAD));
+      if (lastValid < MAX_HISTORY) {
+        bufferSizes[lastValid] = MAX_OVERHEAD;
+        lastValid++;
+      }
       else {
-        recent.remove(0);
-        recent.add(new Integer(MAX_OVERHEAD));
+        bufferSizes[0] = MAX_OVERHEAD; 
       }
 
       if (fp >= nextMark) {
