@@ -146,9 +146,10 @@ public class LociUploader implements PlugIn {
           short[] s = (short[]) pix;
           byte[] b = new byte[s.length * 2];
           for (int j=0; j<s.length; j++) {
-            byte[] a = DataTools.shortToBytes(s[j], little);
-            b[j*2] = a[0];
-            b[j*2 + 1] = a[1];
+            b[j*2] = little ? (byte) (s[j] & 0xff) : 
+              (byte) ((s[j] >>> 8) & 0xff);
+            b[j*2 + 1] = little ? (byte) ((s[j] >>> 8) & 0xff): 
+              (byte) (s[j] & 0xff); 
           }
           pixels.add(b);
         }
@@ -167,10 +168,14 @@ public class LociUploader implements PlugIn {
             int[] p = (int[]) pix;
             byte[] b = new byte[4 * p.length];
             for (int j=0; j<p.length; j++) {
-              byte[] a = DataTools.intToBytes(p[j], little);
-              for (int k=0; k<a.length; k++) {
-                b[j*a.length + k] = a[k];
-              }
+              b[j*4] = little ? (byte) (p[j] & 0xff) : 
+                (byte) ((p[j] >> 24) & 0xff); 
+              b[j*4 + 1] = little ? (byte) ((p[j] >> 8) & 0xff) : 
+                (byte) ((p[j] >> 16) & 0xff); 
+              b[j*4 + 2] = little ? (byte) ((p[j] >> 16) & 0xff) :
+                (byte) ((p[j] >> 8) & 0xff); 
+              b[j*4 + 3] = little ? (byte) ((p[j] >> 24) & 0xff) :
+                (byte) (p[j] & 0xff); 
             }
           }
         }
@@ -179,11 +184,14 @@ public class LociUploader implements PlugIn {
           byte[] b = new byte[f.length * 4];
           for (int j=0; j<f.length; j++) {
             int k = Float.floatToIntBits(f[j]);
-            byte[] a = DataTools.intToBytes(k, little);
-            b[j*4] = a[0];
-            b[j*4 + 1] = a[1];
-            b[j*4 + 2] = a[2];
-            b[j*4 + 3] = a[3];
+            b[j*4] = little ? (byte) (k & 0xff) : 
+              (byte) ((k >> 24) & 0xff); 
+            b[j*4 + 1] = little ? (byte) ((k >> 8) & 0xff) : 
+              (byte) ((k >> 16) & 0xff); 
+            b[j*4 + 2] = little ? (byte) ((k >> 16) & 0xff) :
+              (byte) ((k >> 8) & 0xff); 
+            b[j*4 + 3] = little ? (byte) ((k >> 24) & 0xff) :
+              (byte) (k & 0xff); 
           }
           pixels.add(b);
         }
