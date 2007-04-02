@@ -111,7 +111,7 @@ public class ImarisReader extends FormatReader {
     float dx = in.readFloat();
     float dy = in.readFloat();
     float dz = in.readFloat();
-    int mag = in.readShort(); // TODO : set Objective:Magnification
+    int mag = in.readShort();
 
     byte[] com = new byte[128];
     in.read(com);
@@ -170,6 +170,8 @@ public class ImarisReader extends FormatReader {
       new Float(1),
       new Float(1),
       null);
+
+    store.setObjective(null, null, null, null, new Float(mag), null, null);
 
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
