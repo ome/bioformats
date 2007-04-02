@@ -523,6 +523,8 @@ public class LIFReader extends FormatReader {
     orderCertain = new boolean[numDatasets];
     Arrays.fill(orderCertain, true);
     validBits = new int[numDatasets][1];
+    cLengths = new int[numDatasets][];
+    cTypes = new String[numDatasets][];
 
     for (int i=0; i<numDatasets; i++) {
       sizeX[i] = dims[i][0];

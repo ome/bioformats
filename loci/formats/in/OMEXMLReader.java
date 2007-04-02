@@ -411,6 +411,8 @@ public class OMEXMLReader extends FormatReader {
     numZ = new int[numDatasets];
     order = new String[numDatasets];
     pixelType = new int[numDatasets];
+    cLengths = new int[numDatasets][];
+    cTypes = new String[numDatasets][];
 
     int oldSeries = getSeries(currentId);
 

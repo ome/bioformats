@@ -684,6 +684,8 @@ public class OpenlabReader extends FormatReader {
     currentOrder = new String[numSeries];
     orderCertain = new boolean[numSeries];
     Arrays.fill(orderCertain, true);
+    cLengths = new int[numSeries][];
+    cTypes = new String[numSeries][];
 
     int oldSeries = getSeries(currentId);
     for (int i=0; i<bpp.length; i++) {

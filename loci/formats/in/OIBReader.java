@@ -404,6 +404,8 @@ public class OIBReader extends FormatReader {
       sizeC = new int[numSeries];
       sizeT = new int[numSeries];
       validBits = new int[numSeries][];
+      cTypes = new String[numSeries][];
+      cLengths = new int[numSeries][]; 
 
       for (int i=0; i<numSeries; i++) {
         sizeX[i] = ((Integer) width.get(i)).intValue();

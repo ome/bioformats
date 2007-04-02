@@ -139,6 +139,8 @@ public class TiffReader extends BaseTiffReader {
         pixelType = new int[tiffData.length];
         currentOrder = new String[tiffData.length];
         orderCertain = new boolean[tiffData.length];
+        cLengths = new int[tiffData.length][];
+        cTypes = new String[tiffData.length][];
         Arrays.fill(orderCertain, true);
 
         for (int i=0; i<tiffData.length; i++) {

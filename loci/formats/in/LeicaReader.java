@@ -36,7 +36,7 @@ import loci.formats.*;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class LeicaReader extends BaseTiffReader {
+public class LeicaReader extends FormatReader {
 
   // -- Constants -
 
@@ -44,6 +44,11 @@ public class LeicaReader extends BaseTiffReader {
   private static final int LEICA_MAGIC_TAG = 33923;
 
   // -- Fields --
+
+  /** Current file. */
+  protected RandomAccessStream in;
+
+  protected Hashtable[] ifds;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -375,13 +380,7 @@ public class LeicaReader extends BaseTiffReader {
     else {
       // parse the LEI file
 
-      if (metadata == null) {
-        currentId = id;
-        metadata = new Hashtable();
-      }
-      else {
-        if (currentId != id) currentId = id;
-      }
+      super.initFile(id);
 
       leiFilename = id;
       in = new RandomAccessStream(id);
@@ -435,6 +434,8 @@ public class LeicaReader extends BaseTiffReader {
       headerIFDs = new Hashtable[numSeries];
       files = new Vector[numSeries];
       numPlanes = new int[numSeries];
+      cLengths = new int[numSeries][];
+      cTypes = new String[numSeries][];
 
       v.copyInto(headerIFDs);
 
@@ -1149,10 +1150,13 @@ public class LeicaReader extends BaseTiffReader {
       String timestamp = (String) getMeta("Timestamp " + (i+1));
       String description = (String) getMeta("Image Description");
 
-      SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
-      Date date = parse.parse(timestamp, new ParsePosition(0));
-      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      timestamp = fmt.format(date);
+      if (timestamp != null) {
+        SimpleDateFormat parse = 
+          new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
+        Date date = parse.parse(timestamp, new ParsePosition(0));
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        timestamp = fmt.format(date);
+      }
 
       store.setImage(null, timestamp, description, ii);
 
