@@ -399,17 +399,19 @@ public final class TiffTools {
 
       if (type == BYTE) {
         // 8-bit unsigned integer
-        short[] bytes = new short[count];
         if (count > 4) {
           long pointer = in.readInt();
           in.seek((int) pointer);
         }
-        for (int j=0; j<count; j++) {
-          bytes[j] = (byte) in.read();
-          if (bytes[j] < 0) bytes[j] += 255;
+        if (count == 1) value = new Short((byte) in.read());
+        else {
+          short[] bytes = new short[count];
+          for (int j=0; j<count; j++) {
+            bytes[j] = (byte) in.read();
+            if (bytes[j] < 0) bytes[j] += 255;
+          }
+          value = bytes;
         }
-        if (bytes.length == 1) value = new Short(bytes[0]);
-        else value = bytes;
       }
       else if (type == ASCII) {
         // 8-bit byte that contain a 7-bit ASCII code;
@@ -428,138 +430,134 @@ public final class TiffTools {
         }
 
         // convert character array to array of strings
-        String[] strings = new String[nullCount];
+        String[] strings = count == 1 ? null : new String[nullCount];
+        String s = null;
         int c = 0, ndx = -1;
         for (int j=0; j<count; j++) {
           if (ascii[j] == 0) {
-            strings[c++] = new String(ascii, ndx + 1, j - ndx - 1);
+            s = new String(ascii, ndx + 1, j - ndx - 1);
             ndx = j;
           }
           else if (j == count - 1) {
             // handle non-null-terminated strings
-            strings[c++] = new String(ascii, ndx + 1, j - ndx);
+            s = new String(ascii, ndx + 1, j - ndx);
           }
+          if (count > 1) strings[c++] = s;
         }
-        if (strings.length == 1) value = strings[0];
-        else value = strings;
+        if (count == 1) value = strings[0];
+        else value = s;
       }
       else if (type == SHORT) {
         // 16-bit (2-byte) unsigned integer
-        int[] shorts = new int[count];
         if (count > 2) {
           long pointer = in.readInt();
           in.seek((int) pointer);
         }
-        for (int j=0; j<count; j++) {
-          shorts[j] = in.readShort();
-          if (shorts[j] < 0) shorts[j] += 65536;
+        if (count == 1) value = new Integer(in.readShort());
+        else {
+          int[] shorts = new int[count];
+          for (int j=0; j<count; j++) {
+            shorts[j] = in.readShort();
+            if (shorts[j] < 0) shorts[j] += 65536;
+          }
+          value = shorts;
         }
-        if (shorts.length == 1) value = new Integer(shorts[0]);
-        else value = shorts;
       }
       else if (type == LONG) {
         // 32-bit (4-byte) unsigned integer
-        long[] longs = new long[count];
         if (count > 1) {
           long pointer = in.readInt();
           in.seek((int) pointer);
         }
-        for (int j=0; j<count; j++) {
-          longs[j] = in.readInt();
+        if (count == 1) value = new Long(in.readInt());
+        else {
+          long[] longs = new long[count];
+          for (int j=0; j<count; j++) longs[j] = in.readInt();
+          value = longs;
         }
-        if (longs.length == 1) value = new Long(longs[0]);
-        else value = longs;
       }
-      else if (type == RATIONAL) {
+      else if (type == RATIONAL || type == SRATIONAL) {
         // Two LONGs: the first represents the numerator of a fraction;
         // the second, the denominator
-        TiffRational[] rationals = new TiffRational[count];
+        // Two SLONG's: the first represents the numerator of a fraction,
+        // the second the denominator
         long pointer = in.readInt();
         in.seek((int) pointer);
-        for (int j=0; j<count; j++) {
-          long numer = in.readInt();
-          long denom = in.readInt();
-          rationals[j] = new TiffRational(numer, denom);
+        if (count == 1) value = new TiffRational(in.readInt(), in.readInt());
+        else {
+          TiffRational[] rationals = new TiffRational[count];
+          for (int j=0; j<count; j++) {
+            rationals[j] = new TiffRational(in.readInt(), in.readInt());
+          }
+          value = rationals;
         }
-        if (rationals.length == 1) value = rationals[0];
-        else value = rationals;
       }
       else if (type == SBYTE || type == UNDEFINED) {
         // SBYTE: An 8-bit signed (twos-complement) integer
         // UNDEFINED: An 8-bit byte that may contain anything,
         // depending on the definition of the field
-        byte[] sbytes = new byte[count];
         if (count > 4) {
           long pointer = in.readInt();
           in.seek((int) pointer);
         }
-        in.read(sbytes);
-        if (sbytes.length == 1) value = new Byte(sbytes[0]);
-        else value = sbytes;
+        if (count == 1) value = new Byte((byte) in.read());
+        else {
+          byte[] sbytes = new byte[count];
+          in.readFully(sbytes);
+          value = sbytes;
+        }
       }
       else if (type == SSHORT) {
         // A 16-bit (2-byte) signed (twos-complement) integer
-        short[] sshorts = new short[count];
         if (count > 2) {
           long pointer = in.readInt();
           in.seek((int) pointer);
         }
-        for (int j=0; j<count; j++) {
-          sshorts[j] = in.readShort();
+        if (count == 1) value = new Short(in.readShort());
+        else {
+          short[] sshorts = new short[count];
+          for (int j=0; j<count; j++) sshorts[j] = in.readShort();
+          value = sshorts;
         }
-        if (sshorts.length == 1) value = new Short(sshorts[0]);
-        else value = sshorts;
       }
       else if (type == SLONG) {
         // A 32-bit (4-byte) signed (twos-complement) integer
-        int[] slongs = new int[count];
         if (count > 1) {
           long pointer = in.readInt();
           in.seek((int) pointer);
         }
-        for (int j=0; j<count; j++) {
-          slongs[j] = in.readInt();
+        if (count == 1) value = new Integer(in.readInt());
+        else {
+          int[] slongs = new int[count];
+          for (int j=0; j<count; j++) slongs[j] = in.readInt();
+          value = slongs;
         }
-        if (slongs.length == 1) value = new Integer(slongs[0]);
-        else value = slongs;
-      }
-      else if (type == SRATIONAL) {
-        // Two SLONG's: the first represents the numerator of a fraction,
-        // the second the denominator
-        TiffRational[] srationals = new TiffRational[count];
-        long pointer = in.readInt();
-        in.seek((int) pointer);
-        for (int j=0; j<count; j++) {
-          int numer = in.readInt();
-          int denom = in.readInt();
-          srationals[j] = new TiffRational(numer, denom);
-        }
-        if (srationals.length == 1) value = srationals[0];
-        else value = srationals;
       }
       else if (type == FLOAT) {
         // Single precision (4-byte) IEEE format
-        float[] floats = new float[count];
         if (count > 1) {
           long pointer = in.readInt();
           in.seek((int) pointer);
         }
-        for (int j=0; j<count; j++) {
-          floats[j] = in.readFloat();
+        if (count == 1) value = new Float(in.readFloat());
+        else {
+          float[] floats = new float[count];
+          for (int j=0; j<count; j++) floats[j] = in.readFloat();
+          value = floats;
         }
-        if (floats.length == 1) value = new Float(floats[0]);
-        else value = floats;
       }
       else if (type == DOUBLE) {
         // Double precision (8-byte) IEEE format
-        double[] doubles = new double[count];
         long pointer = in.readInt();
         in.seek((int) pointer);
-        for (int j=0; j<count; j++) {
-          doubles[j] = in.readDouble();
+        if (count == 1) value = new Double(in.readDouble());
+        else {
+          double[] doubles = new double[count];
+          for (int j=0; j<count; j++) {
+            doubles[j] = in.readDouble();
+          }
+          value = doubles;
         }
-        if (doubles.length == 1) value = new Double(doubles[0]);
-        else value = doubles;
       }
       if (value != null) ifd.put(new Integer(tag), value);
     }
