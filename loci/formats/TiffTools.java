@@ -430,7 +430,7 @@ public final class TiffTools {
         }
 
         // convert character array to array of strings
-        String[] strings = count == 1 ? null : new String[nullCount];
+        String[] strings = nullCount == 1 ? null : new String[nullCount];
         String s = null;
         int c = 0, ndx = -1;
         for (int j=0; j<count; j++) {
@@ -442,10 +442,9 @@ public final class TiffTools {
             // handle non-null-terminated strings
             s = new String(ascii, ndx + 1, j - ndx);
           }
-          if (count > 1) strings[c++] = s;
+          if (strings != null) strings[c++] = s;
         }
-        if (count == 1) value = strings[0];
-        else value = s;
+        value = strings == null ? (Object) s : strings;
       }
       else if (type == SHORT) {
         // 16-bit (2-byte) unsigned integer
