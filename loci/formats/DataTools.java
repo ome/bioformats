@@ -35,6 +35,18 @@ import java.io.*;
  */
 public final class DataTools {
 
+  // -- Static fields --
+
+  /**
+   * Persistent byte array for calling
+   * {@link java.io.DataInput#readFully(byte[], int, int)} efficiently.
+   */
+  private static ThreadLocal eightBytes = new ThreadLocal() {
+    protected synchronized Object initialValue() {
+      return new byte[8];
+    }
+  };
+
   // -- Constructor --
 
   private DataTools() { }
@@ -43,8 +55,8 @@ public final class DataTools {
 
   /** Reads 1 signed byte [-128, 127]. */
   public static byte readSignedByte(DataInput in) throws IOException {
-    byte[] b = new byte[1];
-    in.readFully(b);
+    byte[] b = (byte[]) eightBytes.get();
+    in.readFully(b, 0, 1);
     return b[0];
   }
 
@@ -61,9 +73,9 @@ public final class DataTools {
   public static short read2SignedBytes(DataInput in, boolean little)
     throws IOException
   {
-    byte[] bytes = new byte[2];
-    in.readFully(bytes);
-    return bytesToShort(bytes, little);
+    byte[] b = (byte[]) eightBytes.get();
+    in.readFully(b, 0, 2);
+    return bytesToShort(b, little);
   }
 
   /** Reads 2 unsigned bytes [0, 65535]. */
@@ -79,9 +91,9 @@ public final class DataTools {
   public static int read4SignedBytes(DataInput in, boolean little)
     throws IOException
   {
-    byte[] bytes = new byte[4];
-    in.readFully(bytes);
-    return bytesToInt(bytes, little);
+    byte[] b = (byte[]) eightBytes.get();
+    in.readFully(b, 0, 4);
+    return bytesToInt(b, little);
   }
 
   /** Reads 4 unsigned bytes [0, 4294967296]. */
@@ -97,9 +109,9 @@ public final class DataTools {
   public static long read8SignedBytes(DataInput in, boolean little)
     throws IOException
   {
-    byte[] bytes = new byte[8];
-    in.readFully(bytes);
-    return bytesToLong(bytes, little);
+    byte[] b = (byte[]) eightBytes.get();
+    in.readFully(b, 0, 8);
+    return bytesToLong(b, little);
   }
 
   /** Reads 4 bytes in single precision IEEE format. */
@@ -122,8 +134,8 @@ public final class DataTools {
   public static void writeString(DataOutput out, String s)
     throws IOException
   {
-    byte[] bytes =  s.getBytes("UTF-8");
-    out.write(bytes);
+    byte[] b =  s.getBytes("UTF-8");
+    out.write(b);
   }
 
   /** Writes an integer to the given data output destination. */
@@ -156,72 +168,6 @@ public final class DataTools {
       out.write((v >>> 8) & 0xFF);
       out.write(v & 0xFF);
     }
-  }
-
-  /** Get a pair of bytes representing a short value. */
-  public static byte[] shortToBytes(short v, boolean little) {
-    byte[] rtn = new byte[2];
-    if (little) {
-      rtn[0] = (byte) (v & 0xff);
-      rtn[1] = (byte) ((v >>> 8) & 0xff);
-    }
-    else {
-      rtn[0] = (byte) ((v >>> 8) & 0xff);
-      rtn[1] = (byte) (v & 0xff);
-    }
-    return rtn;
-  }
-
-  /** Get four bytes representing an int value. */
-  public static byte[] intToBytes(int v, boolean little) {
-    byte[] rtn = new byte[4];
-    if (little) {
-      rtn[0] = (byte) (v & 0xff);
-      rtn[1] = (byte) ((v >> 8) & 0xff);
-      rtn[2] = (byte) ((v >> 16) & 0xff);
-      rtn[3] = (byte) ((v >> 24) & 0xff);
-    }
-    else {
-      rtn[0] = (byte) ((v >> 24) & 0xff);
-      rtn[1] = (byte) ((v >> 16) & 0xff);
-      rtn[2] = (byte) ((v >> 8) & 0xff);
-      rtn[3] = (byte) (v & 0xff);
-    }
-    return rtn;
-  }
-
-  /** Get four bytes representing a float value. */
-  public static byte[] floatToBytes(float v, boolean little) {
-    int i = Float.floatToIntBits(v);
-    return intToBytes(i, little);
-  }
-
-  /** Get eight bytes representing a double value. */
-  public static byte[] doubleToBytes(double v, boolean little) {
-    byte[] rtn = new byte[8];
-    long l = Double.doubleToLongBits(v);
-
-    if (little) {
-      rtn[0] = (byte) (l & 0xff);
-      rtn[1] = (byte) ((l >> 8) & 0xff);
-      rtn[2] = (byte) ((l >> 16) & 0xff);
-      rtn[3] = (byte) ((l >> 24) & 0xff);
-      rtn[4] = (byte) ((l >> 32) & 0xff);
-      rtn[5] = (byte) ((l >> 40) & 0xff);
-      rtn[6] = (byte) ((l >> 48) & 0xff);
-      rtn[7] = (byte) ((l >> 56) & 0xff);
-    }
-    else {
-      rtn[0] = (byte) ((l >> 56) & 0xff);
-      rtn[1] = (byte) ((l >> 48) & 0xff);
-      rtn[2] = (byte) ((l >> 40) & 0xff);
-      rtn[3] = (byte) ((l >> 32) & 0xff);
-      rtn[4] = (byte) ((l >> 24) & 0xff);
-      rtn[5] = (byte) ((l >> 16) & 0xff);
-      rtn[6] = (byte) ((l >> 8) & 0xff);
-      rtn[7] = (byte) (l & 0xff);
-    }
-    return rtn;
   }
 
   // -- Word decoding --
@@ -431,30 +377,6 @@ public final class DataTools {
    */
   public static long bytesToLong(short[] bytes, boolean little) {
     return bytesToLong(bytes, 0, 8, little);
-  }
-
-  /** Translates bytes from the given array into a string. */
-  public static String bytesToString(short[] bytes, int off, int len) {
-    if (bytes.length - off < len) len = bytes.length - off;
-    for (int i=0; i<len; i++) {
-      if (bytes[off + i] == 0) {
-        len = i;
-        break;
-      }
-    }
-    byte[] b = new byte[len];
-    for (int i=0; i<b.length; i++) b[i] = (byte) bytes[off + i];
-    return new String(b);
-  }
-
-  /** Translates bytes from the given array into a string. */
-  public static String bytesToString(short[] bytes, int off) {
-    return bytesToString(bytes, off, bytes.length - off);
-  }
-
-  /** Translates bytes from the given array into a string. */
-  public static String bytesToString(short[] bytes) {
-    return bytesToString(bytes, 0, bytes.length);
   }
 
   /** Remove null bytes from a string. */

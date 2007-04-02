@@ -788,9 +788,15 @@ public final class ImageTools {
       byte[][] b = new byte[s.length][s[0].length * 2];
       for (int i=0; i<b.length; i++) {
         for (int j=0; j<s[0].length; j++) {
-          byte[] v = DataTools.shortToBytes(s[i][j], little);
-          b[i][j*2] = v[0];
-          b[i][j*2 + 1] = v[1];
+          short v = s[i][j];
+          if (little) {
+            b[i][j*2] = (byte) (v & 0xff);
+            b[i][j*2+1] = (byte) ((v >>> 8) & 0xff);
+          }
+          else {
+            b[i][j*2] = (byte) ((v >>> 8) & 0xff);
+            b[i][j*2+1] = (byte) (v & 0xff);
+          }
         }
       }
       return b;
@@ -800,11 +806,19 @@ public final class ImageTools {
       byte[][] b = new byte[in.length][in[0].length * 4];
       for (int i=0; i<b.length; i++) {
         for (int j=0; j<in[0].length; j++) {
-          byte[] v = DataTools.intToBytes(in[i][j], little);
-          b[i][j*4] = v[0];
-          b[i][j*4 + 1] = v[1];
-          b[i][j*4 + 2] = v[2];
-          b[i][j*4 + 3] = v[3];
+          int v = in[i][j];
+          if (little) {
+            b[i][j*4] = (byte) (v & 0xff);
+            b[i][j*4+1] = (byte) ((v >> 8) & 0xff);
+            b[i][j*4+2] = (byte) ((v >> 16) & 0xff);
+            b[i][j*4+3] = (byte) ((v >> 24) & 0xff);
+          }
+          else {
+            b[i][j*4] = (byte) ((v >> 24) & 0xff);
+            b[i][j*4+1] = (byte) ((v >> 16) & 0xff);
+            b[i][j*4+2] = (byte) ((v >> 8) & 0xff);
+            b[i][j*4+3] = (byte) (v & 0xff);
+          }
         }
       }
       return b;
@@ -814,11 +828,19 @@ public final class ImageTools {
       byte[][] b = new byte[in.length][in[0].length * 4];
       for (int i=0; i<b.length; i++) {
         for (int j=0; j<in[0].length; j++) {
-          byte[] v = DataTools.floatToBytes(in[i][j], little);
-          b[i][j*4] = v[0];
-          b[i][j*4 + 1] = v[1];
-          b[i][j*4 + 2] = v[2];
-          b[i][j*4 + 3] = v[3];
+          int v = Float.floatToIntBits(in[i][j]);
+          if (little) {
+            b[i][j*4] = (byte) (v & 0xff);
+            b[i][j*4+1] = (byte) ((v >> 8) & 0xff);
+            b[i][j*4+2] = (byte) ((v >> 16) & 0xff);
+            b[i][j*4+3] = (byte) ((v >> 24) & 0xff);
+          }
+          else {
+            b[i][j*4] = (byte) ((v >> 24) & 0xff);
+            b[i][j*4+1] = (byte) ((v >> 16) & 0xff);
+            b[i][j*4+2] = (byte) ((v >> 8) & 0xff);
+            b[i][j*4+3] = (byte) (v & 0xff);
+          }
         }
       }
       return b;
