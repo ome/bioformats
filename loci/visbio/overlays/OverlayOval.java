@@ -256,6 +256,47 @@ public class OverlayOval extends OverlayObject {
       "Circumference = " + circum + " (approximate)";
   }
 
+ /** Gets this object's statistics in array */
+  public OverlayStat[] getStatisticsArray() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float centerX = x1 + xx / 2;
+    float centerY = y1 + yy / 2;
+    float radiusX = (xx < 0 ? -xx : xx) / 2;
+    float radiusY = (yy < 0 ? -yy : yy) / 2;
+    float major, minor;
+    if (radiusX > radiusY) {
+      major = radiusX;
+      minor = radiusY;
+    }
+    else {
+      major = radiusY;
+      minor = radiusX;
+    }
+    float eccen = (float) Math.sqrt(1 - (minor * minor) / (major * major));
+    float area = (float) (Math.PI * major * minor);
+
+    // ellipse circumference approximation algorithm due to Ramanujan found at
+    // http://mathforum.org/dr.math/faq/formulas/faq.ellipse.circumference.html
+    float mm = (major - minor) / (major + minor);
+    float q = 3 * mm * mm;
+    float circum = (float) (Math.PI *
+      (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
+
+    String coords = "(" + x1 + ", " + y1 + ")";
+    OverlayStat[] stats = { 
+      new OverlayStat("Coordinates", coords),
+      new OverlayStat("Center", "(" + centerX + ", " + centerY + ")"),
+      new OverlayStat("Radius", "(" + radiusX + ", " + radiusY + ")"),
+      new OverlayStat("Major Axis Length", "" + major),
+      new OverlayStat("Minor Axis Length", "" + minor),
+      new OverlayStat("Area", "" + area),
+      new OverlayStat("Eccentricity", "" + eccen),
+      new OverlayStat("Circumference (approximate)", "" + circum) 
+    };
+    return stats;
+  }
+
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 

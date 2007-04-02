@@ -97,6 +97,9 @@ public abstract class OverlayObject {
   /** Computes the shortest distance from this overlay to the given point. */
   public abstract double getDistance(double x, double y);
 
+  /** Gets an array of OverlayStats statistics about this overlay. */
+  public abstract OverlayStat[] getStatisticsArray();
+
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     String name = getClass().getName();
@@ -341,5 +344,4 @@ public abstract class OverlayObject {
     y1 = Math.min(y1, y);
     y2 = Math.max(y2, y);
   }
-
 }// end class

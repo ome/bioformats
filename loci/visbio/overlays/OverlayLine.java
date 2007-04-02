@@ -99,6 +99,21 @@ public class OverlayLine extends OverlayObject {
       "Length = " + length;
   }
 
+  /** Gets this object's statistics in array */
+  public OverlayStat[] getStatisticsArray() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float length = (float) Math.sqrt(xx * xx + yy * yy);
+    
+    String coords = "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
+    OverlayStat[] stats = {
+      new OverlayStat("Coordinates", coords),
+      new OverlayStat("Length", "" + length),
+    };
+
+    return stats;
+  }
+
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 

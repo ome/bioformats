@@ -304,6 +304,20 @@ public abstract class OverlayNodedObject extends OverlayObject {
     float scl = display == null ? 1.0f : getScalingValue(display);
     float delta = GLOW_WIDTH * scl;
 
+    /*
+    // compute angle bisectors at each node
+    for (int i=0; i<numNodes; i++) {
+      if (i == 0){
+      }
+      if (i == numNodes - 1){
+      }
+      else {
+        float[] v1 = {nodes[0][i] - nodes[0][i-1], nodes[1][i] - nodes[1][i-1]};
+        float[] v2 = {nodes[0][i+1] - nodes[0][i], nodes[1][i+1] - nodes[1][i]};
+
+
+    }*/
+
     Gridded2DSet[] segments = new Gridded2DSet[numNodes-1];
     for (int i=0; i<numNodes - 1; i++) {
       float[] v = new float[]{nodes[0][i+1] - nodes[0][i], nodes[1][i+1] -
@@ -336,7 +350,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     float g = col.getGreen() / 255f;
     float b = col.getBlue() / 255f;
 
-
     float[][] rangeSamples = new float[4][4*(numNodes-1)];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
@@ -356,7 +369,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     catch (RemoteException exc) { exc.printStackTrace(); }
 
     return field;
-
   }
 
   /**
@@ -384,6 +396,17 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return "Bounds = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n" +
       "Number of Nodes = " + numNodes + "\n" +
       "Curve Length = " + (float) curveLength + "\n";
+  }
+  
+  /** Gets this object's statistics in array */
+  public OverlayStat[] getStatisticsArray() {
+    String bounds = "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
+    OverlayStat[] stats = {
+      new OverlayStat("Bounds", bounds),
+      new OverlayStat("Length (standard)", "" + curveLength),
+    };
+
+    return stats;
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
@@ -475,7 +498,12 @@ public abstract class OverlayNodedObject extends OverlayObject {
   }
 
   /** Returns the node array */
-  public float[][] getNodes() { return nodes; }
+  public float[][] getNodes() { 
+    float[][] copy = new float[2][numNodes];
+    for (int i=0; i<2; i++)
+      System.arraycopy(nodes[i], 0, copy[i], 0, numNodes); 
+    return copy;
+  }
 
   /** Returns the number of real nodes in the array */
   public int getNumNodes() { return numNodes; }

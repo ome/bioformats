@@ -126,6 +126,13 @@ public class OverlayText extends OverlayObject {
     return "Text coordinates = (" + x1 + ", " + y1 + ")";
   }
 
+  /** Gets this object's statistics in array */
+  public OverlayStat[] getStatisticsArray() {
+    String coords = "(" + x1 + ", " + y1 + ")";
+    OverlayStat[] stats = { new OverlayStat("Coordinates", coords) };
+    return stats;
+  }
+
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 

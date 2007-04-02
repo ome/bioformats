@@ -204,8 +204,27 @@ public class OverlayArrow extends OverlayObject {
     if (angle < 0) angle += 360;
     float length = (float) Math.sqrt(xx * xx + yy * yy);
 
-    return "Arrow coordinates = (" + x1 + ", " + y1 + ")\n" +
+    return "Arrow tip coordinates = (" + x1 + ", " + y1 + ")\n" +
       "Angle = " + angle + "; Length = " + length;
+  }
+
+  /** Gets this object's statistics in array */
+  public OverlayStat[] getStatisticsArray() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float angle = (float) (180 * Math.atan(xx / yy) / Math.PI);
+    if (yy < 0) angle += 180;
+    if (angle < 0) angle += 360;
+    float length = (float) Math.sqrt(xx * xx + yy * yy);
+    
+    String coords = "(" + x1 + ", " + y1 + ")";
+    OverlayStat[] stats = {
+      new OverlayStat("Tip coordinates", coords),
+      new OverlayStat("Angle", "" + angle),
+      new OverlayStat("Length", "" + length),
+    };
+
+    return stats;
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

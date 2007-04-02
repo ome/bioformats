@@ -162,12 +162,11 @@ public final class OverlayIO {
         } else if (state == NODES) {
           if (numberOfNodedObjectsRead == loadedNodedObjects.size()) {
             String s = "more \"Noded Object\" (Freeforms, Polylines) node"
-              + " lists" + "than Noded Objects (" + numberOfNodedObjectsRead
+              + " lists " + "than Noded Objects (" + numberOfNodedObjectsRead
               + ") specified in table";
             displayErrorMsg(owner, lineNum, s);
             return null;
           }
-
           // store nodes of previously read freeform
           if (nodesChanged) {
             OverlayNodedObject ono = (OverlayNodedObject)
@@ -366,9 +365,17 @@ public final class OverlayIO {
     String[] dims = trans.getDimTypes();
     int[] lengths = trans.getLengths();
     Vector[] overlays = trans.overlays;
-    Vector savedNodedObjects = new Vector();
     int freeformCount = 0;
     int polylineCount = 0;
+
+    Vector lines = new Vector();
+    Vector markers = new Vector();
+    Vector freeforms = new Vector();
+    Vector texts = new Vector();
+    Vector ovals = new Vector();
+    Vector boxes = new Vector();
+    Vector arrows = new Vector();
+    Vector polylines = new Vector();
 
     // file header
     out.println("# " + VisBio.TITLE + " " + VisBio.VERSION +
@@ -391,7 +398,16 @@ public final class OverlayIO {
       String posString = sb.toString();
       for (int j=0; j<overlays[i].size(); j++) {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
-        if (obj instanceof OverlayNodedObject) savedNodedObjects.add(obj);
+        
+        if (obj instanceof OverlayLine) lines.add(obj);
+        if (obj instanceof OverlayFreeform) freeforms.add(obj);
+        if (obj instanceof OverlayMarker) markers.add(obj);
+        if (obj instanceof OverlayText) texts.add(obj);
+        if (obj instanceof OverlayOval) ovals.add(obj);
+        if (obj instanceof OverlayBox) boxes.add(obj);
+        if (obj instanceof OverlayArrow) arrows.add(obj);
+        if (obj instanceof OverlayPolyline) polylines.add(obj);
+
         out.print(obj.toString());
         out.print("\t");
         out.print(posString);
@@ -414,10 +430,38 @@ public final class OverlayIO {
         out.println(obj.notes.replaceAll("\t", " "));
       }
     }
+    out.println ();
 
+    // print stats by object type
+    Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
+      arrows, polylines};
+    String[] titles = {"Line", "Freeform", "Marker", "Text", "Oval", "Box",
+      "Arrow", "Polyline"};
+    for (int v=0; v<vectors.length; v++) {
+      out.println("# " + titles[v] + " Statistics");
+      for (int i=0; i<vectors[v].size(); i++) {
+        OverlayObject obj = (OverlayObject) vectors[v].get(i);
+        int index = i + 1;
+        out.println("# " + titles[v] + " " + index);
+        OverlayStat[] stats = obj.getStatisticsArray();
+        for (int j=0; j<stats.length; j++) {
+          out.println("#\t" + stats[j].getName() + "\t" + stats[j].getValue());
+        }
+      }
+      out.println();
+    }
+   
     // nodes of noded objects, one node per line
-    for (int i=0; i<savedNodedObjects.size(); i++) {
-      OverlayNodedObject ono = (OverlayNodedObject) savedNodedObjects.get(i);
+    for (int i=0; i<freeforms.size() + polylines.size(); i++) {
+      // get the noded object from the appropriate Vector
+      OverlayNodedObject ono;
+      if (i < freeforms.size()) {
+        ono = (OverlayNodedObject) freeforms.get(i);
+      }
+      else {
+        ono = (OverlayNodedObject) polylines.get(i - freeforms.size());
+      }
+
       out.println();
       float xx1, xx2, yy1, yy2;
       xx1 = ono.getX();
@@ -430,8 +474,7 @@ public final class OverlayIO {
       if (ono instanceof OverlayFreeform) k = ++freeformCount;
       else if (ono instanceof OverlayPolyline) k = ++polylineCount;
 
-      out.println("# " + ono + " " + k + " (" + xx1 + "," + yy1 + ")(" + xx2 +
-          "," + yy2 + ")");
+      out.println("# " + ono + " " + k + " nodes:");
 
       out.println("X\tY");
       // print the nodes themselves
@@ -753,8 +796,9 @@ public final class OverlayIO {
       if (input.equals("")) {
         state = TABLE; event = IGNORE;
       }
-      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*") || 
-          input.matches("^\\s*#\\s*[Pp][Oo][Ll][Yy][Ll][Ii][Nn][Ee].*")) {
+      else if (input.matches("# Freeform \\d+ nodes:")
+          || input.matches("# Polyline \\d+ nodes:"))
+      {
         state = NODES; event = INIT;
       }
       else if (input.startsWith("Line") || input.startsWith("Freeform")
@@ -772,8 +816,8 @@ public final class OverlayIO {
       if (input.equals("")) {
         state = NODES; event = IGNORE;
       }
-      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*") || 
-          input.matches("^\\s*#\\s*[Pp][Oo][Ll][Yy][Ll][Ii][Nn][Ee].*")) {
+      else if (input.matches("# Freeform \\d+ nodes:") || 
+          input.matches("# Polyline \\d+ nodes:")) {
         state = NODES; event = INIT;
       }
       else if (input.startsWith("#") || input.matches("^[Xx]\t[Yy]")) {

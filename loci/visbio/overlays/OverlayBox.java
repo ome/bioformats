@@ -130,6 +130,32 @@ public class OverlayBox extends OverlayObject {
       "Area = " + area + "; Perimeter = " + perim;
   }
 
+  /** Gets this object's statistics in array */
+  public OverlayStat[] getStatisticsArray() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float width = xx < 0 ? -xx : xx;
+    float height = yy < 0 ? -yy : yy;
+    float centerX = x1 + xx / 2;
+    float centerY = y1 + yy / 2;
+    float area = width * height;
+    float perim = width + width + height + height;
+
+    String coords = "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
+    String center = "(" + centerX + ", " + centerY + ")";
+    
+    OverlayStat[] stats = {
+      new OverlayStat("Coordinates", coords),
+      new OverlayStat("Center", "" + center),
+      new OverlayStat("Width", "" + width),
+      new OverlayStat("Height", "" + height),
+      new OverlayStat("Area", "" + area),
+      new OverlayStat("Perimeter", "" + perim)
+    };
+
+    return stats;
+  }
+
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 
