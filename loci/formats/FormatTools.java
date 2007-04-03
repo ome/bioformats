@@ -27,13 +27,9 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
-import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
 
 /** A utility class for format reader and writer implementations. */
 public final class FormatTools {
@@ -119,6 +115,7 @@ public final class FormatTools {
     boolean pixels = true;
     boolean doMeta = true;
     boolean thumbs = false;
+    boolean minmax = false;
     boolean merge = false;
     boolean stitch = false;
     boolean separate = false;
@@ -136,6 +133,7 @@ public final class FormatTools {
           if (args[i].equals("-nopix")) pixels = false;
           else if (args[i].equals("-nometa")) doMeta = false;
           else if (args[i].equals("-thumbs")) thumbs = true;
+          else if (args[i].equals("-minmax")) minmax = true;
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
@@ -180,14 +178,15 @@ public final class FormatTools {
       String format = reader.getFormat();
       String[] s = {
         "To test read a file in " + format + " format, run:",
-        "  java " + className + " [-nopix] [-nometa] [-thumbs] [-merge]",
-        "    [-stitch] [-separate] [-nocolors] [-omexml] [-normalize] [-fast]",
-        "    [-debug] [-range start end] [-series num] [-map id] file",
+        "  java " + className + " [-nopix] [-nometa] [-thumbs] [-minmax]",
+        "    [-merge] [-stitch] [-separate] [-nocolors] [-omexml] [-normalize]",
+        "    [-fast] [-debug] [-range start end] [-series num] [-map id] file",
         "",
         "      file: the image file to read",
         "    -nopix: read metadata only, not pixels",
         "   -nometa: output only core metadata",
         "   -thumbs: read thumbnails instead of normal pixels",
+        "   -minmax: compute min/max statistics",
         "    -merge: combine separate channels into RGB image",
         "   -stitch: stitch files with similar names",
         " -separate: split RGB image into separate channels",
@@ -238,6 +237,8 @@ public final class FormatTools {
     }
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
+    MinMaxCalculator minMaxCalc = null;
+    if (minmax) reader = minMaxCalc = new MinMaxCalculator(reader);
 
     System.out.println("Initializing reader");
     reader.addStatusListener(new StatusListener() {
@@ -377,6 +378,28 @@ public final class FormatTools {
     reader.setSeries(id, series);
     String s = seriesCount > 1 ? (" series #" + series) : "";
     int pixelType = reader.getPixelType(id);
+    int sizeC = reader.getSizeC(id);
+
+    // get a priori min/max values
+    Double[] preGlobalMin = null, preGlobalMax = null;
+    Double[] preKnownMin = null, preKnownMax = null;
+    Double[] prePlaneMin = null, prePlaneMax = null;
+    boolean preIsMinMaxPop = false;
+    if (minmax) {
+      preGlobalMin = new Double[sizeC];
+      preGlobalMax = new Double[sizeC];
+      preKnownMin = new Double[sizeC];
+      preKnownMax = new Double[sizeC];
+      for (int c=0; c<sizeC; c++) {
+        preGlobalMin[c] = minMaxCalc.getChannelGlobalMinimum(id, c);
+        preGlobalMax[c] = minMaxCalc.getChannelGlobalMaximum(id, c);
+        preKnownMin[c] = minMaxCalc.getChannelKnownMinimum(id, c);
+        preKnownMax[c] = minMaxCalc.getChannelKnownMaximum(id, c);
+      }
+      prePlaneMin = minMaxCalc.getPlaneMinimum(id, 0);
+      prePlaneMax = minMaxCalc.getPlaneMaximum(id, 0);
+      preIsMinMaxPop = minMaxCalc.isMinMaxPopulated(id);
+    }
 
     // read pixels
     if (pixels) {
@@ -440,10 +463,90 @@ public final class FormatTools {
       System.out.println(sec + "s elapsed (" +
         avg + "ms per image, " + initial + "ms overhead)");
 
+      if (minmax) {
+        // get computed min/max values
+        Double[] globalMin = new Double[sizeC];
+        Double[] globalMax = new Double[sizeC];
+        Double[] knownMin = new Double[sizeC];
+        Double[] knownMax = new Double[sizeC];
+        for (int c=0; c<sizeC; c++) {
+          globalMin[c] = minMaxCalc.getChannelGlobalMinimum(id, c);
+          globalMax[c] = minMaxCalc.getChannelGlobalMaximum(id, c);
+          knownMin[c] = minMaxCalc.getChannelKnownMinimum(id, c);
+          knownMax[c] = minMaxCalc.getChannelKnownMaximum(id, c);
+        }
+        Double[] planeMin = minMaxCalc.getPlaneMinimum(id, 0);
+        Double[] planeMax = minMaxCalc.getPlaneMaximum(id, 0);
+        boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated(id);
+
+        // output min/max results
+        System.out.println();
+        System.out.println("Min/max values (final / tentative):");
+        for (int c=0; c<sizeC; c++) {
+          System.out.println("\tChannel " + c + ":");
+          System.out.println("\t\tGlobal minimum = " +
+            globalMin[c] + " / " + preGlobalMin[c]);
+          System.out.println("\t\tGlobal maximum = " +
+            globalMax[c] + " / " + preGlobalMax[c]);
+          System.out.println("\t\tKnown minimum = " +
+            knownMin[c] + " / " + preKnownMin[c]);
+          System.out.println("\t\tKnown maximum = " +
+            knownMax[c] + " / " + preKnownMax[c]);
+        }
+        System.out.print("\tFirst plane minimum(s) =");
+        if (planeMin == null) System.out.print(" none");
+        else {
+          for (int subC=0; subC<planeMin.length; subC++) {
+            System.out.print(" " + planeMin[subC]);
+          }
+        }
+        System.out.print(" /");
+        if (prePlaneMin == null) System.out.print(" none");
+        else {
+          for (int subC=0; subC<prePlaneMin.length; subC++) {
+            System.out.print(" " + prePlaneMin[subC]);
+          }
+        }
+        System.out.println();
+        System.out.print("\tFirst plane maximum(s) =");
+        if (planeMax == null) System.out.print(" none");
+        else {
+          for (int subC=0; subC<planeMax.length; subC++) {
+            System.out.print(" " + planeMax[subC]);
+          }
+        }
+        System.out.print(" /");
+        if (prePlaneMax == null) System.out.print(" none");
+        else {
+          for (int subC=0; subC<prePlaneMax.length; subC++) {
+            System.out.print(" " + prePlaneMax[subC]);
+          }
+        }
+        System.out.println();
+        System.out.println("\tMin/max populated = " +
+          isMinMaxPop + " / " + preIsMinMaxPop);
+      }
+
       // display pixels in image viewer
-      ImageViewer viewer = new ImageViewer();
-      viewer.setImages(id, reader, images);
-      viewer.setVisible(true);
+      // avoid dependencies on optional loci.formats.gui package
+//      ImageViewer viewer = new ImageViewer();
+//      viewer.setImages(id, reader, images);
+//      viewer.setVisible(true);
+//      CTR TODO remove the above three commented out lines
+      ReflectedUniverse r = new ReflectedUniverse();
+      try {
+        r.exec("import loci.formats.gui.ImageViewer");
+        r.exec("viewer = new ImageViewer()");
+        r.setVar("id", id);
+        r.setVar("reader", reader);
+        r.setVar("images", images);
+        r.setVar("true", true);
+        r.exec("viewer.setImages(id, reader, images)");
+        r.exec("viewer.setVisible(true)");
+      }
+      catch (ReflectException exc) {
+        throw new FormatException(exc);
+      }
     }
 
     // read format-specific metadata table
@@ -773,55 +876,6 @@ public final class FormatTools {
         return 8;
     }
     throw new RuntimeException("Unknown type with id: '" + type + "'");
-  }
-
-  // -- Utility methods - GUI --
-
-  /**
-   * Builds a file chooser with the given file filters,
-   * as well as an "All supported file types" combo filter.
-   */
-  public static JFileChooser buildFileChooser(final FileFilter[] filters) {
-    // NB: must construct JFileChooser in the
-    // AWT worker thread, to avoid deadlocks
-    final JFileChooser[] jfc = new JFileChooser[1];
-    Runnable r = new Runnable() {
-      public void run() {
-        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-        FileFilter[] ff = ComboFileFilter.sortFilters(filters);
-        FileFilter combo = null;
-        if (ff.length > 1) {
-          // By default, some readers might need to open a file to determine
-          // if it is the proper type, when the extension alone isn't enough
-          // to distinguish.
-          //
-          // We want to disable that behavior for the "All supported file
-          // types" combination filter, because otherwise it is too slow.
-          //
-          // Also, most of the formats that do this are TIFF-based, and the
-          // TIFF reader will already green-light anything with .tif
-          // extension, making more thorough checks redundant.
-          combo = new ComboFileFilter(ff, "All supported file types", false);
-          fc.addChoosableFileFilter(combo);
-        }
-        for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
-        if (combo != null) fc.setFileFilter(combo);
-        jfc[0] = fc;
-      }
-    };
-    if (Thread.currentThread().getName().startsWith("AWT-EventQueue")) {
-      // current thread is the AWT event queue thread; just execute the code
-      r.run();
-    }
-    else {
-      // execute the code with the AWT event thread
-      try {
-        SwingUtilities.invokeAndWait(r);
-      }
-      catch (InterruptedException exc) { return null; }
-      catch (InvocationTargetException exc) { return null; }
-    }
-    return jfc[0];
   }
 
 }

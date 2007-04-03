@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
-
 /** Interface for all biological file format readers and writers. */
 public interface IFormatHandler extends StatusReporter {
 
@@ -45,11 +42,5 @@ public interface IFormatHandler extends StatusReporter {
 
   /** Gets the default file suffixes for this file format. */
   String[] getSuffixes();
-
-  /** Gets file filters for this file format, for use with a JFileChooser. */
-  FileFilter[] getFileFilters();
-
-  /** Gets a JFileChooser that recognizes accepted file types. */
-  JFileChooser getFileChooser();
 
 }

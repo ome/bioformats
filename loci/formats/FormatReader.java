@@ -27,7 +27,6 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
-import javax.swing.filechooser.FileFilter;
 
 /** Abstract superclass of all biological file format readers. */
 public abstract class FormatReader extends FormatHandler
@@ -534,16 +533,6 @@ public abstract class FormatReader extends FormatHandler
   /* @see FormatReader#testRead(String[]) */
   public boolean testRead(String[] args) throws FormatException, IOException {
     return FormatTools.testRead(this, args);
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see IFormatHandler#getFileFilters() */
-  public FileFilter[] getFileFilters() {
-    if (filters == null) {
-      filters = new FileFilter[] {new FormatFileFilter(this)};
-    }
-    return filters;
   }
 
   // -- Utility methods --

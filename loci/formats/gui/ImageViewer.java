@@ -22,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.formats.gui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +33,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import loci.formats.*;
 
 /**
  * ImageViewer is a simple viewer/converter
@@ -337,7 +338,7 @@ public class ImageViewer extends JFrame
     String cmd = e.getActionCommand();
     if ("open".equals(cmd)) {
       wait(true);
-      JFileChooser chooser = myReader.getFileChooser();
+      JFileChooser chooser = GUITools.buildFileChooser(myReader);
       wait(false);
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
@@ -351,7 +352,7 @@ public class ImageViewer extends JFrame
     }
     else if ("save".equals(cmd)) {
       wait(true);
-      JFileChooser chooser = myWriter.getFileChooser();
+      JFileChooser chooser = GUITools.buildFileChooser(myWriter);
       wait(false);
       int rval = chooser.showSaveDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {

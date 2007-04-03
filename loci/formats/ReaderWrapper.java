@@ -27,8 +27,6 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * Abstract superclass of reader logic that wraps other readers.
@@ -289,14 +287,6 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public String[] getSuffixes() {
     return reader.getSuffixes();
-  }
-
-  public FileFilter[] getFileFilters() {
-    return reader.getFileFilters();
-  }
-
-  public JFileChooser getFileChooser() {
-    return reader.getFileChooser();
   }
 
   // -- StatusReporter API methods --

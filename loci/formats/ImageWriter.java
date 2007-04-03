@@ -30,8 +30,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * ImageWriter is the master file format writer for all supported formats.
@@ -101,18 +99,6 @@ public class ImageWriter implements IFormatWriter {
   private String[] suffixes;
 
   /**
-   * File filters for all file format writers, for use with a JFileChooser.
-   * Populated the first time getFileFilters() is called.
-   */
-  protected FileFilter[] filters;
-
-  /**
-   * File chooser for all file format writers.
-   * Created the first time getFileChooser() is called.
-   */
-  protected JFileChooser chooser;
-
-  /**
    * Compression types for all file format writers.
    * Populated the first time getCompressionTypes() is called.
    */
@@ -180,6 +166,13 @@ public class ImageWriter implements IFormatWriter {
       if (writers[i].getClass().equals(c)) return writers[i];
     }
     return null;
+  }
+
+  /** Gets all constituent file format writers. */
+  public IFormatWriter[] getWriters() {
+    IFormatWriter[] w = new IFormatWriter[writers.length];
+    System.arraycopy(writers, 0, w, 0, writers.length);
+    return w;
   }
 
   // -- IFormatWriter API methods --
@@ -314,27 +307,6 @@ public class ImageWriter implements IFormatWriter {
       Arrays.sort(suffixes);
     }
     return suffixes;
-  }
-
-  /* @see IFormatHandler#getFileFilters() */
-  public FileFilter[] getFileFilters() {
-    if (filters == null) {
-      Vector v = new Vector();
-      for (int i=0; i<writers.length; i++) {
-        FileFilter[] ff = writers[i].getFileFilters();
-        for (int j=0; j<ff.length; j++) v.add(ff[j]);
-      }
-      filters = ComboFileFilter.sortFilters(v);
-    }
-    return filters;
-  }
-
-  /* @see IFormatHandler#getFileChooser() */
-  public JFileChooser getFileChooser() {
-    if (chooser == null) {
-      chooser = FormatTools.buildFileChooser(getFileFilters());
-    }
-    return chooser;
   }
 
   // -- StatusReporter API methods --

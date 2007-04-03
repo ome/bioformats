@@ -28,8 +28,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * Logic to stitch together files with similar names. Stitches based on the
@@ -132,6 +130,9 @@ public class FileStitcher implements IFormatReader {
   }
 
   // -- FileStitcher API methods --
+
+  /** Gets the wrapped reader prototype. */
+  public IFormatReader getReader() { return reader; }
 
   /**
    * Gets the axis type for each dimensional block.
@@ -643,16 +644,6 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
     return reader.getSuffixes();
-  }
-
-  /* @see IFormatHandler#getFileFilters() */
-  public FileFilter[] getFileFilters() {
-    return reader.getFileFilters();
-  }
-
-  /* @see IFormatHandler#getFileChooser() */
-  public JFileChooser getFileChooser() {
-    return reader.getFileChooser();
   }
 
   // -- StatusReporter API methods --

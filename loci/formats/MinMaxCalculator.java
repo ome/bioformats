@@ -50,6 +50,11 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- Constructors --
 
+  /** Constructs a MinMaxCalculator around a new image reader. */
+  public MinMaxCalculator() { super(); }
+
+  /** Constructs a MinMaxCalculator with the given reader. */
+  public MinMaxCalculator(IFormatReader r) { super(r); }
 
   // -- IFormatReader API methods -- 
 

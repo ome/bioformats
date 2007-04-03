@@ -26,12 +26,9 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * ImageReader is the master file format reader for all supported formats.
@@ -99,18 +96,6 @@ public class ImageReader implements IFormatReader {
    * Populated the first time getSuffixes() is called.
    */
   private String[] suffixes;
-
-  /**
-   * File filters for this file format, for use with a JFileChooser.
-   * Populated the first time getFileFilters() is called.
-   */
-  protected FileFilter[] filters;
-
-  /**
-   * File chooser for this file format.
-   * Created the first time getFileChooser() is called.
-   */
-  protected JFileChooser chooser;
 
   /** Name of current file. */
   private String currentId;
@@ -184,6 +169,13 @@ public class ImageReader implements IFormatReader {
       if (readers[i].getClass().equals(c)) return readers[i];
     }
     return null;
+  }
+
+  /** Gets all constituent file format readers. */
+  public IFormatReader[] getReaders() {
+    IFormatReader[] r = new IFormatReader[readers.length];
+    System.arraycopy(readers, 0, r, 0, readers.length);
+    return r;
   }
 
   // -- IFormatReader API methods --
@@ -465,14 +457,6 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#testRead(String[]) */
   public boolean testRead(String[] args) throws FormatException, IOException {
-    if (args.length == 0) {
-      JFileChooser box = getFileChooser();
-      int rval = box.showOpenDialog(null);
-      if (rval == JFileChooser.APPROVE_OPTION) {
-        File file = box.getSelectedFile();
-        if (file != null) args = new String[] {file.getPath()};
-      }
-    }
     return FormatTools.testRead(this, args);
   }
 
@@ -510,27 +494,6 @@ public class ImageReader implements IFormatReader {
       Arrays.sort(suffixes);
     }
     return suffixes;
-  }
-
-  /* @see IFormatHandler#getFileFilters() */
-  public FileFilter[] getFileFilters() {
-    if (filters == null) {
-      Vector v = new Vector();
-      for (int i=0; i<readers.length; i++) {
-        FileFilter[] ff = readers[i].getFileFilters();
-        for (int j=0; j<ff.length; j++) v.add(ff[j]);
-      }
-      filters = ComboFileFilter.sortFilters(v);
-    }
-    return filters;
-  }
-
-  /* @see IFormatHandler#getFileChooser() */
-  public JFileChooser getFileChooser() {
-    if (chooser == null) {
-      chooser = FormatTools.buildFileChooser(getFileFilters());
-    }
-    return chooser;
   }
 
   // -- StatusReporter API methods --

@@ -1,5 +1,5 @@
 //
-// ExtensionFileFilter.java
+// FormatFileFilter.java
 //
 
 /*
@@ -22,40 +22,35 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.formats.gui;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+import loci.formats.IFormatReader;
 
-/** A file filter based on file extensions, for use with a JFileChooser. */
-public class ExtensionFileFilter extends FileFilter
+/** A file filter for a biological file format, for use with a JFileChooser. */
+public class FormatFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
 {
 
   // -- Fields --
 
-  /** List of valid extensions. */
-  private String[] exts;
+  /** Associated file format reader. */
+  private IFormatReader reader;
 
   /** Description. */
   private String desc;
 
-  // -- Constructors --
+  // -- Constructor --
 
   /** Constructs a new filter that accepts the given extension. */
-  public ExtensionFileFilter(String extension, String description) {
-    this(new String[] {extension}, description);
-  }
-
-  /** Constructs a new filter that accepts the given extensions. */
-  public ExtensionFileFilter(String[] extensions, String description) {
-    exts = new String[extensions.length];
-    System.arraycopy(extensions, 0, exts, 0, extensions.length);
-    StringBuffer sb = new StringBuffer(description);
+  public FormatFileFilter(IFormatReader reader) {
+    this.reader = reader;
+    StringBuffer sb = new StringBuffer(reader.getFormat());
+    String[] exts = reader.getSuffixes();
     boolean first = true;
     for (int i=0; i<exts.length; i++) {
-      if (exts[i] == null) exts[i] = "";
-      if (exts[i].equals("")) continue;
+      if (exts[i] == null || exts[i].equals("")) continue;
       if (first) {
         sb.append(" (");
         first = false;
@@ -68,30 +63,21 @@ public class ExtensionFileFilter extends FileFilter
     desc = sb.toString();
   }
 
-  // -- ExtensionFileFilter API methods --
+  // -- FormatFileFilter API methods --
 
-  /** Gets the filter's first valid extension. */
-  public String getExtension() { return exts[0]; }
-
-  /** Gets the filter's valid extensions. */
-  public String[] getExtensions() { return exts; }
+  /**
+   * Accepts files in accordance with the file format reader.
+   * @param allowOpen whether it is ok to open a file to determine its type.
+   */
+  public boolean accept(File f, boolean allowOpen) {
+    if (f.isDirectory()) return true;
+    return reader.isThisType(f.getPath(), allowOpen);
+  }
 
   // -- FileFilter API methods --
 
-  /** Accepts files with the proper extensions. */
-  public boolean accept(File f) {
-    if (f.isDirectory()) return true;
-
-    String name = f.getName();
-    int index = name.lastIndexOf('.');
-    String ext = index < 0 ? "" : name.substring(index + 1);
-
-    for (int i=0; i<exts.length; i++) {
-      if (ext.equalsIgnoreCase(exts[i])) return true;
-    }
-
-    return false;
-  }
+  /** Accepts files in accordance with the file format reader. */
+  public boolean accept(File f) { return accept(f, true); }
 
   /** Gets the filter's description. */
   public String getDescription() { return desc; }
@@ -99,13 +85,13 @@ public class ExtensionFileFilter extends FileFilter
   // -- Object API methods --
 
   /** Gets a string representation of this file filter. */
-  public String toString() { return "ExtensionFileFilter: " + desc; }
+  public String toString() { return "FormatFileFilter: " + desc; }
 
   // -- Comparable API methods --
 
   /** Compares two FileFilter objects alphanumerically. */
   public int compareTo(Object o) {
-    return desc.compareToIgnoreCase(((FileFilter) o).getDescription());
+    return desc.compareTo(((FileFilter) o).getDescription());
   }
 
 }
