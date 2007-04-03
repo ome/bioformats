@@ -529,10 +529,6 @@ public final class FormatTools {
 
       // display pixels in image viewer
       // avoid dependencies on optional loci.formats.gui package
-//      ImageViewer viewer = new ImageViewer();
-//      viewer.setImages(id, reader, images);
-//      viewer.setVisible(true);
-//      CTR TODO remove the above three commented out lines
       ReflectedUniverse r = new ReflectedUniverse();
       try {
         r.exec("import loci.formats.gui.ImageViewer");
