@@ -34,6 +34,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import javax.swing.*;
 import loci.formats.*;
+import loci.formats.gui.GUITools;
 
 public class LociOpener implements ItemListener {
 
@@ -47,7 +48,7 @@ public class LociOpener implements ItemListener {
   public LociOpener() {
     // set up the file chooser
     ImageReader ir = new ImageReader();
-    fc = ir.getFileChooser();
+    fc = GUITools.buildFileChooser(ir);
     String ijDir = OpenDialog.getDefaultDirectory();
     if (ijDir != null) fc.setCurrentDirectory(new File(ijDir));
 
