@@ -32,6 +32,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
+import loci.formats.gui.ExtensionFileFilter;
+import loci.formats.gui.GUITools;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 
@@ -316,10 +318,10 @@ public class MetadataNotebook extends JFrame
       new String[] {"tif", "tiff", "ome"}, "All supported file formats");
     ExtensionFileFilter[] filters =
       new ExtensionFileFilter[] {tiffFilter, omeFilter};
-    saver = FormatTools.buildFileChooser(filters);
+    saver = GUITools.buildFileChooser(filters);
     saver.setCurrentDirectory(new File(System.getProperty("user.dir")));
     if (metadata.reader == null) metadata.reader = new ImageReader();
-    opener = metadata.reader.getFileChooser();
+    opener = GUITools.buildFileChooser(metadata.reader);
     opener.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
     //make WiscScan view the default

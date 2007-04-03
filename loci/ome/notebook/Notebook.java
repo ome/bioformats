@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
+import loci.formats.gui.GUITools;
 import loci.formats.ome.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
@@ -308,7 +309,7 @@ public class Notebook extends JFrame implements ActionListener {
 
       try {
         ImageReader reader = new ImageReader();
-        JFileChooser chooser = reader.getFileChooser();
+        JFileChooser chooser = GUITools.buildFileChooser(reader);
 
         int status = chooser.showOpenDialog(this);
         if (status == JFileChooser.APPROVE_OPTION) {
