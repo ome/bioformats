@@ -80,6 +80,3 @@ loci.formats.in.TiffReader         # tif, tiff
 
 # non-TIFF readers with slow isThisType
 loci.formats.in.OpenlabReader      # liff
-
-# if nothing else works, try ImageJ
-loci.formats.in.ImageJReader       # various [ImageJ]
