@@ -84,10 +84,6 @@ Overlays transform
 
 [M] Overlays should not affect ScalarMap scaling.
 
-[L] Add rubber band box renderer to all displays (at least 2D ones) and send
-    "rubber band" events down the transform chain so that transforms can react
-    (in particular, so OverlayTransform can do multiple selection).
-
 [L] Loading a large number of overlays causes a hiccup; at the least, put up an
     hourglass while this is happening. Better, register a task for it.
 
