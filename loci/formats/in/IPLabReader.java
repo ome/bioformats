@@ -111,29 +111,6 @@ public class IPLabReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return (Double) getMeta("NormalizationMin" + theC);
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return (Double) getMeta("NormalizationMax" + theC);
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /** Obtains the specified image from the given IPLab file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -158,7 +135,6 @@ public class IPLabReader extends FormatReader {
     in.seek(numPixels * bps * (no / c) + 44);
 
     in.read(buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -168,7 +144,6 @@ public class IPLabReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : c, false, bps, littleEndian);
-    updateMinMax(b, no);
     return b;
   }
 

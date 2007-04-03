@@ -88,80 +88,6 @@ public interface IFormatReader extends IFormatHandler {
    */
   String[] getChannelDimTypes(String id) throws FormatException, IOException;
 
-  /**
-   * Retrieves a specified channel's global minimum.
-   * Returns null if some of the image planes have not been read with channel
-   * stat calculation enabled.
-   * @param id the filename of the base image.
-   * @param theC the channel whose minimum is required.
-   * @return the global minimum of the channel; which is defined as the minimum
-   * for the channel across all image planes/sections in the image. Will be
-   * <code>null</code> if there is no channel minimum stored directly in the
-   * file and channel stat calculation is disabled.
-   * @throws FormatException if there was a problem parsing the metadata of the
-   * file.
-   * @throws IOException if there was a problem reading the file.
-   * @see #setChannelStatCalculationStatus(boolean)
-   */
-  Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException;
-
-  /**
-   * Retrieves a specified channel's global maximum.
-   * Returns null if some of the image planes have not been read with channel
-   * stat calculation enabled.
-   * @param id the filename of the base image.
-   * @param theC the channel whose maximum is required.
-   * @return the global maximum of the channel; which is defined as the maximum
-   * for the channel across all image planes/sections in the image. Will be
-   * <code>null</code> if there is no channel maximum stored directly in the
-   * file and channel stat calculation is disabled.
-   * @throws FormatException if there was a problem parsing the metadata of the
-   * file.
-   * @throws IOException if there was a problem reading the file.
-   * @see #setChannelStatCalculationStatus(boolean)
-   */
-  Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException;
-
-  /**
-   * Retrieves the specified channel's minimum based on the images that have
-   * been read. Returns null if no image planes have been read yet.
-   */
-  Double getChannelKnownMinimum(String id, int theC)
-    throws FormatException, IOException;
-
-  /**
-   * Retrieves the specified channel's maximum based on the images that have
-   * been read. Returns null if no image planes have been read yet.
-   */
-  Double getChannelKnownMaximum(String id, int theC)
-    throws FormatException, IOException;
-
-  /**
-   * Retrieves the maximum pixel value for the specified plane. If each image
-   * plane contains more than one channel (i.e.,
-   * {@link #getRGBChannelCount(String)}), returns the maximum value for each
-   * embedded channel. Returns null if the plane has not already been read.
-   */
-  Double[] getPlaneMinimum(String id, int no)
-    throws FormatException, IOException;
-
-  /**
-   * Retrieves the maximum pixel value for the specified plane. If each image
-   * plane contains more than one channel (i.e.,
-   * {@link #getRGBChannelCount(String)}), returns the maximum value for each
-   * embedded channel. Returns null if the plane has not already been read.
-   */
-  Double[] getPlaneMaximum(String id, int no)
-    throws FormatException, IOException;
-
-  /**
-   * Returns true if the values returned by getChannelGlobalMinimum/Maximum
-   * can be trusted. 
-   */
-  boolean isMinMaxPopulated(String id) throws FormatException, IOException;
-
   /** Get the size of the X dimension for the thumbnail. */
   int getThumbSizeX(String id) throws FormatException, IOException;
 
@@ -191,22 +117,6 @@ public interface IFormatReader extends IFormatHandler {
    * Gets whether the dimension order and sizes are known, or merely guesses.
    */
   boolean isOrderCertain(String id) throws FormatException, IOException;
-
-  /**
-   * Readers can implement potentially performance hindering statistics
-   * calculation as part of metadata parsing. This method allows the user of
-   * the reader to turn such calculations on or off.
-   * @param on <code>true</code> if statistics calculation should be turned on.
-   * @see #getChannelStatCalculationStatus()
-   */
-  void setChannelStatCalculationStatus(boolean on);
-
-  /**
-   * Retrieves the status of channel statistics calculation.
-   * @return the status.
-   * @see #setChannelStatCalculationStatus(boolean)
-   */
-  boolean getChannelStatCalculationStatus();
 
   /**
    * Gets whether or not the channels are interleaved. This method exists

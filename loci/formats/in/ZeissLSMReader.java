@@ -128,7 +128,6 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     ifds = TiffTools.getIFDs(in);
     BufferedImage b = TiffTools.getImage(ifds[2*no], in);
-    updateMinMax(b, no);
     return b;
   }
 
@@ -163,7 +162,6 @@ public class ZeissLSMReader extends BaseTiffReader {
   
     ifds = TiffTools.getIFDs(in);
     TiffTools.getSamples(ifds[2*no], in, ignoreColorTable, buf);
-    updateMinMax(buf, no);
     return swapIfRequired(buf);
   }
 

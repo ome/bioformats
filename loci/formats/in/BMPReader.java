@@ -168,7 +168,6 @@ public class BMPReader extends FormatReader {
         }
       }
     }
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -188,7 +187,6 @@ public class BMPReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : 3, false);
-    updateMinMax(b, no);
     return b;
   }
 

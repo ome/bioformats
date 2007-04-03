@@ -112,7 +112,6 @@ public class ImageJReader extends FormatReader {
     throws FormatException, IOException
   {
     byte[] b = ImageTools.getBytes(openImage(id, no), false, no);
-    updateMinMax(b, no);
     return b;
   }
 
@@ -152,7 +151,6 @@ public class ImageJReader extends FormatReader {
       Image img = (Image) r.exec("image.getImage()");
 
       BufferedImage b = ImageTools.makeBuffered(img);
-      updateMinMax(b, no);
       return b;
     }
     catch (ReflectException exc) {

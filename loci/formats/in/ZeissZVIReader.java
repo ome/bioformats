@@ -279,7 +279,6 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
 
-      updateMinMax(buf, no);
       return buf;
     }
     catch (ReflectException e) {
@@ -294,7 +293,6 @@ public class ZeissZVIReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       isRGB(id) ? 3 : 1, true, bpp == 3 ? 1 : bpp, true, validBits);
-    updateMinMax(b, no);
     return b;
   }
 

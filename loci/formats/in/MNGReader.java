@@ -100,7 +100,6 @@ public class MNGReader extends FormatReader {
     throws FormatException, IOException
   {
     byte[] b = ImageTools.getBytes(openImage(id, no), true, getSizeC(id));
-    updateMinMax(b, no);
     return b;
   }
 
@@ -129,7 +128,6 @@ public class MNGReader extends FormatReader {
     b[7] = 0x0a;
 
     BufferedImage bi = ImageIO.read(new ByteArrayInputStream(b));
-    updateMinMax(bi, no);
     return bi;
   }
 

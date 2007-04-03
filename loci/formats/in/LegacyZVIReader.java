@@ -134,7 +134,6 @@ public class LegacyZVIReader extends FormatReader {
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
     zviBlock.readBytes(in, buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -159,7 +158,6 @@ public class LegacyZVIReader extends FormatReader {
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
 
     BufferedImage b = zviBlock.readImage(in);
-    updateMinMax(b, no);
     return b;
   }
 

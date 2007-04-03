@@ -64,29 +64,6 @@ public class MRCReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double((String) getMeta("Minimum pixel value"));
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double((String) getMeta("Maximum pixel value"));
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /** Checks if the given block is a valid header for an MRC file. */
   public boolean isThisType(byte[] block) {
     return false; // no way to tell if this is an MRC file or not
@@ -136,7 +113,6 @@ public class MRCReader extends FormatReader {
     }
     in.seek(1024 + extHeaderSize + (no * sizeX[0] * sizeY[0] * bpp));
     in.read(buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -146,7 +122,6 @@ public class MRCReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
       sizeY[0], 1, true, bpp, little);
-    updateMinMax(b, no);
     return b;
   }
 
@@ -382,8 +357,9 @@ public class MRCReader extends FormatReader {
       new Float(zlen / mz), null, null, null);
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
-        getChannelGlobalMaximum(id, i), null);
+      // TODO : get channel min/max from metadata 
+      //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
+      //  getChannelGlobalMaximum(id, i), null);
     }
   }
 

@@ -154,7 +154,6 @@ public class IPWReader extends BaseTiffReader {
       little = TiffTools.isLittleEndian(ifds[0]);
       TiffTools.getSamples(ifds[0], stream, ignoreColorTable, buf);
       stream.close();
-      updateMinMax(buf, no);
       return buf;
     }
     catch (ReflectException e) {
@@ -176,7 +175,6 @@ public class IPWReader extends BaseTiffReader {
     int bytes = b.length / (sizeX[0] * sizeY[0]);
     BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0],
       bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, little);
-    updateMinMax(bi, no);
     return bi;
   }
 

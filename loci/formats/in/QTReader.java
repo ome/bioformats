@@ -355,7 +355,6 @@ public class QTReader extends FormatReader {
 
     if (code.equals("jpeg") || code.equals("mjpb")) {
       byte[] s = ImageTools.getBytes(openImage(id, no), false, no);
-      updateMinMax(s, no);
       return s;
     }
 
@@ -463,7 +462,6 @@ public class QTReader extends FormatReader {
       for (int i=0; i<bytes.length; i++) {
         bytes[i] = (byte) (255 - bytes[i]);
       }
-      updateMinMax(bytes, no);
       return bytes;
     }
     else if (bitsPerPixel == 32) {
@@ -479,11 +477,9 @@ public class QTReader extends FormatReader {
       for (int i=0; i<data.length; i++) {
         System.arraycopy(data[i], 0, rtn, i * data[0].length, data[i].length);
       }
-      updateMinMax(rtn, no);
       return rtn;
     }
     else {
-      updateMinMax(bytes, no);
       return bytes;
     }
   }
@@ -552,7 +548,6 @@ public class QTReader extends FormatReader {
       b = ImageTools.makeImage(openBytes(id, no), flip ? height : width,
         flip ? width : height, isRGB(id) ? 3 : 1, false, bpp, little);
     }
-    updateMinMax(b, no);
     return b;
   }
 

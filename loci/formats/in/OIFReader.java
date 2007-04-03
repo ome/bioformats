@@ -118,29 +118,6 @@ public class OIFReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double((String) getMeta("[Image Parameters] - DataMin"));
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double((String) getMeta("[Image Parameters] - DataMax"));
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /** Obtains the specified image from the given OIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -150,7 +127,6 @@ public class OIFReader extends FormatReader {
     }
     byte[] b = tiffReader[no].openBytes((String) tiffs.get(no), 0);
     tiffReader[no].close();
-    updateMinMax(b, no);
     return b;
   }
 
@@ -166,7 +142,6 @@ public class OIFReader extends FormatReader {
 
     tiffReader[no].openBytes((String) tiffs.get(no), 0, buf);
     tiffReader[no].close();
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -187,7 +162,6 @@ public class OIFReader extends FormatReader {
       b.getRaster().getTransferType(), validBits);
     b = ImageTools.makeBuffered(b, cm);
     tiffReader[no].close();
-    updateMinMax(b, no);
     return b;
   }
 

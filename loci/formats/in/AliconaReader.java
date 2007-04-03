@@ -124,7 +124,6 @@ public class AliconaReader extends FormatReader {
       }
     }
 
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -134,7 +133,6 @@ public class AliconaReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1,
       false, numBytes, true);
-    updateMinMax(b, no);
     return b;
   }
 

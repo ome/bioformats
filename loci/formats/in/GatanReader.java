@@ -101,31 +101,6 @@ public class GatanReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    // yes, we really do want to get the value for "EstimatedMax"
-    // for some reason, all of our files have max and min reversed
-    return new Double(((Integer) getMeta("EstimatedMax")).intValue());
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) getMeta("EstimatedMin")).intValue());
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /** Obtains the specified image from the given Gatan file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -163,7 +138,6 @@ public class GatanReader extends FormatReader {
 
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0], dims[1],
       1, false, dims[2], littleEndian);
-    updateMinMax(b, no);
     return b;
   }
 

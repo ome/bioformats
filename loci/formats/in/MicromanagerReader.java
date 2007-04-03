@@ -106,52 +106,6 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.openImage((String) tiffs.get(no), 0);
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String min = (String) getMeta("ChContrastMin");
-    if (min == null) return null;
-    if (sizeC[0] == 1) return new Double(min);
-    StringTokenizer st = new StringTokenizer(min, ",");
-    int pos = 0;
-    while (pos < theC) {
-      st.nextToken();
-      pos++;
-    }
-    min = st.nextToken();
-    min.replaceAll("[", "").replaceAll("]", "").trim();
-    return new Double(min);
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String max = (String) getMeta("ChContrastMax");
-    if (max == null) return null;
-    if (sizeC[0] == 1) return max == null ? null : new Double(max);
-    StringTokenizer st = new StringTokenizer(max, ",");
-    int pos = 0;
-    while (pos < theC) {
-      st.nextToken();
-      pos++;
-    }
-    max = st.nextToken();
-    max.replaceAll("[", "").replaceAll("]", "").trim();
-    return new Double(max);
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return getChannelGlobalMinimum(id, 0) != null &&
-      getChannelGlobalMaximum(id, 0) != null;
-  }
-
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (tiffReader != null) tiffReader.close();
@@ -262,8 +216,9 @@ public class MicromanagerReader extends FormatReader {
       null, null);
     for (int i=0; i<sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
-        getChannelGlobalMaximum(id, i), null);
+      // TODO : retrieve min/max from the metadata 
+      //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
+      //  getChannelGlobalMaximum(id, i), null);
     }
   }
 

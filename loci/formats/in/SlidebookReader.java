@@ -120,7 +120,6 @@ public class SlidebookReader extends FormatReader {
     }
     in.seek(offset + (no * width * height * 2));
     in.read(buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -130,7 +129,6 @@ public class SlidebookReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       1, true, bpp, true);
-    updateMinMax(b, no);
     return b;
   }
 

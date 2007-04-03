@@ -129,7 +129,6 @@ public class OpenlabRawReader extends FormatReader {
         buf[i] = (byte) (255 - buf[i]);
       }
     }
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -139,7 +138,6 @@ public class OpenlabRawReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : channels, false, bytesPerPixel, false);
-    updateMinMax(b, no);
     return b;
   }
 

@@ -123,29 +123,6 @@ public class LIFReader extends FormatReader {
     return dims.length;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) channelMins.get(series)).intValue());
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) channelMaxs.get(series)).intValue());
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /** Obtains the specified image from the given LIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -179,7 +156,6 @@ public class LIFReader extends FormatReader {
       sizeX[series] * sizeY[series] * bytes * no * getRGBChannelCount(id));
    
     in.read(buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -190,7 +166,6 @@ public class LIFReader extends FormatReader {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[series],
       sizeY[series], isRGB(id) ? sizeC[series] : 1, false, bpp / 8,
       littleEndian, validBits[series]);
-    updateMinMax(b, no);
     return b;
   }
 

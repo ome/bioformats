@@ -191,7 +191,6 @@ public class SDTReader extends FormatReader {
         }
       }
     }
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -201,7 +200,6 @@ public class SDTReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no),
       sizeX[series], sizeY[series], getRGBChannelCount(id), false, 2, true);
-    updateMinMax(b, no);
     return b;
   }
 

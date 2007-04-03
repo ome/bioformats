@@ -79,7 +79,6 @@ public class LegacyPictReader extends FormatReader {
     throws FormatException, IOException
   {
     byte[] b = ImageTools.getBytes(openImage(id, no), false, 3);
-    updateMinMax(b, no);
     return b;
   }
 
@@ -106,7 +105,6 @@ public class LegacyPictReader extends FormatReader {
     }
     fin.close();
     BufferedImage b = ImageTools.makeBuffered(qtTools.pictToImage(bytes));
-    updateMinMax(b, no);
     return b;
   }
 

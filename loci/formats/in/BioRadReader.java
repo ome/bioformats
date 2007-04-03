@@ -112,30 +112,6 @@ public class BioRadReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) getMeta("ramp1_min")).intValue());
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) getMeta("ramp1_max")).intValue());
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return getMeta("ramp1_min") != null && getMeta("ramp1_max") != null;
-  }
-
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -159,7 +135,6 @@ public class BioRadReader extends FormatReader {
     int offset = no * nx * ny * (byteFormat ? 1 : 2);
     in.seek(offset + 76);
     in.read(buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -169,7 +144,6 @@ public class BioRadReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), nx, ny, 1, false,
       byteFormat ? 1 : 2, LITTLE_ENDIAN);
-    updateMinMax(b, no);
     return b;
   }
 

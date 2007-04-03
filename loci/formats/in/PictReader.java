@@ -158,9 +158,7 @@ public class PictReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    byte[] b = ImageTools.getBytes(openImage(id, no), false, no % 3);
-    updateMinMax(b, no);
-    return b;
+    return ImageTools.getBytes(openImage(id, no), false, no % 3);
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -172,9 +170,7 @@ public class PictReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    BufferedImage b = open(bytes);
-    updateMinMax(b, no);
-    return b;
+    return open(bytes);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

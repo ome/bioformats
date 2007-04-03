@@ -301,94 +301,6 @@ public class FileStitcher implements IFormatReader {
     return cTypes;
   }
 
-  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    int[] include = getIncludeList(id, theC);
-    Double min = new Double(Double.POSITIVE_INFINITY);
-    for (int i=0; i<readers.length; i++) {
-      if (include[i] >= 0) {
-        Double d = readers[i].getChannelGlobalMinimum(files[i], include[i]);
-        if (d.compareTo(min) < 0) min = d;
-      }
-    }
-    return min;
-  }
-
-  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    int[] include = getIncludeList(id, theC);
-    Double max = new Double(Double.NEGATIVE_INFINITY);
-    for (int i=0; i<readers.length; i++) {
-      if (include[i] >= 0) {
-        Double d = readers[i].getChannelGlobalMaximum(files[i], include[i]);
-        if (d.compareTo(max) > 0) max = d;
-      }
-    }
-    return max;
-  }
-
-  /* @see IFormatReader#getChannelKnownMinimum(String, int) */
-  public Double getChannelKnownMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    int[] include = getIncludeList(id, theC);
-    Double min = new Double(Double.MAX_VALUE);
-    for (int i=0; i<readers.length; i++) {
-      if (include[i] >= 0) {
-        Double d = readers[i].getChannelKnownMinimum(files[i], include[i]);
-        if (d.compareTo(min) < 0) min = d;
-      }
-    }
-    return min;
-  }
-
-  /* @see IFormatReader#getChannelKnownMaximum(String, int) */
-  public Double getChannelKnownMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    int[] include = getIncludeList(id, theC);
-    Double max = new Double(Double.MIN_VALUE);
-    for (int i=0; i<readers.length; i++) {
-      if (include[i] >= 0) {
-        Double d = readers[i].getChannelKnownMaximum(files[i], include[i]);
-        if (d.compareTo(max) > 0) max = d;
-      }
-    }
-    return max;
-  }
-
-  /* @see IFormatReader#getPlaneMinimum(String, int) */
-  public Double[] getPlaneMinimum(String id, int no)
-    throws FormatException, IOException
-  {
-    int[] q = computeIndices(id, no);
-    int fno = q[0], ino = q[1];
-    return readers[fno].getPlaneMinimum(files[fno], ino);
-  }
-
-  /* @see IFormatReader#getPlaneMaximum(String, int) */
-  public Double[] getPlaneMaximum(String id, int no)
-    throws FormatException, IOException
-  {
-    int[] q = computeIndices(id, no);
-    int fno = q[0], ino = q[1];
-    return readers[fno].getPlaneMaximum(files[fno], ino);
-  }
-
-  /* @see IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    for (int i=0; i<readers.length; i++) {
-      if (!readers[i].isMinMaxPopulated(files[i])) return false;
-    }
-    return true;
-  }
-
   /* @see IFormatReader#getThumbSizeX(String) */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -422,21 +334,6 @@ public class FileStitcher implements IFormatReader {
   public boolean isOrderCertain(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return ag[getSeries(id)].isCertain();
-  }
-
-  /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
-  public void setChannelStatCalculationStatus(boolean on) {
-    if (readers == null) reader.setChannelStatCalculationStatus(on);
-    else {
-      for (int i=0; i<readers.length; i++) {
-        readers[i].setChannelStatCalculationStatus(on);
-      }
-    }
-  }
-
-  /* @see IFormatReader#getChannelStatCalculationStatus */
-  public boolean getChannelStatCalculationStatus() {
-    return reader.getChannelStatCalculationStatus();
   }
 
   /* @see IFormatReader#isInterleaved(String) */
@@ -846,14 +743,11 @@ public class FileStitcher implements IFormatReader {
     }
 
     // sync reader configurations with original reader
-    boolean channelStatCalculationStatus =
-      reader.getChannelStatCalculationStatus();
     boolean colorTableIgnored = reader.isColorTableIgnored();
     boolean normalized = reader.isNormalized();
     boolean metadataFiltered = reader.isMetadataFiltered();
     StatusListener[] statusListeners = reader.getStatusListeners();
     for (int i=1; i<readers.length; i++) {
-      readers[i].setChannelStatCalculationStatus(channelStatCalculationStatus);
       readers[i].setColorTableIgnored(colorTableIgnored);
       readers[i].setNormalized(normalized);
       readers[i].setMetadataFiltered(metadataFiltered);

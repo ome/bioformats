@@ -717,7 +717,6 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     TiffTools.getSamples(ifds[no], in, ignoreColorTable, buf);
-    updateMinMax(buf, no);
     return swapIfRequired(buf);
   }
 
@@ -783,7 +782,6 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     BufferedImage b = TiffTools.getImage(ifds[no], in, ignoreColorTable);
-    updateMinMax(b, no);
     return b;
   }
 

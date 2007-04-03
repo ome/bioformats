@@ -237,7 +237,6 @@ public class ImarisReader extends FormatReader {
       in.read(buf, row*dims[0], dims[0]);
       row--;
     }
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -247,7 +246,6 @@ public class ImarisReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0],
       dims[1], 1, false);
-    updateMinMax(b, no);
     return b;
   }
 

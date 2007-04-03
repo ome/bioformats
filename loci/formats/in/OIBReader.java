@@ -164,33 +164,6 @@ public class OIBReader extends FormatReader {
     return width.size();
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String s = (String) getMeta("[Image Parameters] - DataMin");
-    try { return new Double(s); }
-    catch (NumberFormatException exc) { return null; }
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String s = (String) getMeta("[Image Parameters] - DataMax");
-    try { return new Double(s); }
-    catch (NumberFormatException exc) { return null; }
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -232,7 +205,6 @@ public class OIBReader extends FormatReader {
       littleEndian[series] = TiffTools.isLittleEndian(ifds[0]);
       TiffTools.getSamples(ifds[0], stream, ignoreColorTable, buf);
       stream.close();
-      updateMinMax(buf, no);
       return buf;
     }
     catch (ReflectException e) {
@@ -256,7 +228,6 @@ public class OIBReader extends FormatReader {
     BufferedImage bi = ImageTools.makeImage(b, sizeX[series], sizeY[series],
       getRGBChannelCount(id), false, bytes, !littleEndian[series],
       validBits[series]);
-    updateMinMax(bi, no);
     return bi;
   }
 

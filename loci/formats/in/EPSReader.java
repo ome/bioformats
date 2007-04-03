@@ -147,7 +147,6 @@ public class EPSReader extends FormatReader {
       }
     }
     ras.close();
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -157,7 +156,6 @@ public class EPSReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       !isRGB(id) ? 1 : 3, true);
-    updateMinMax(b, no);
     return b;
   }
 

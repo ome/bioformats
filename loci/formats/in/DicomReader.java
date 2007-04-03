@@ -163,7 +163,6 @@ public class DicomReader extends FormatReader {
 
     in.seek(offsets + (width * height * (bitsPerPixel / 8) * no));
     in.read(buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -173,7 +172,6 @@ public class DicomReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
       1, false, bitsPerPixel / 8, little);
-    updateMinMax(b, no);
     return b;
   }
 

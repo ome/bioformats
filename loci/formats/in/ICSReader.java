@@ -189,7 +189,6 @@ public class ICSReader extends FormatReader {
         }
       }
     }
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -217,13 +216,11 @@ public class ICSReader extends FormatReader {
       if (normalizeData) f = DataTools.normalizeFloats(f);
 
       BufferedImage b = ImageTools.makeImage(f, width, height, channels, true);
-      updateMinMax(b, no);
       return b;
     }
 
     BufferedImage b = ImageTools.makeImage(plane, width, height, channels, true,
       bytes, littleEndian);
-    updateMinMax(b, no);
     return b;
   }
 

@@ -355,7 +355,6 @@ public class OpenlabReader extends FormatReader {
       b = new byte[expected];
       System.arraycopy(tmp, 0, b, 0, b.length);
     }
-    updateMinMax(b, no);
     return b;
   }
 
@@ -374,7 +373,6 @@ public class OpenlabReader extends FormatReader {
     BufferedImage bi = ImageTools.makeImage(b, width[series], height[series],
       bytesPerPixel == 3 ? 3 : 1, false,
       bytesPerPixel == 3 ? 1 : bytesPerPixel, false);
-    updateMinMax(bi, no);
     return bi;
   }
 

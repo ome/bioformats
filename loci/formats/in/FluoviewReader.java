@@ -97,34 +97,6 @@ public class FluoviewReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String s = (String) getMeta("Map min");
-    if (s == null) return null;
-    return new Double(s);
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String s = (String) getMeta("Map max");
-    if (s == null) return null;
-    return new Double(s);
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return getMeta("Min value") != null && getMeta("Max value") != null;
-  }
-
   // -- IFormatHandler API methods --
 
   /**

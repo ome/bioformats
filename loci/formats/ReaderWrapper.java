@@ -117,48 +117,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getChannelDimTypes(id);
   }
 
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    return reader.getChannelGlobalMinimum(id, theC);
-  }
-
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    return reader.getChannelGlobalMaximum(id, theC);
-  }
-
-  public Double getChannelKnownMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    return reader.getChannelKnownMinimum(id, theC);
-  }
-
-  public Double getChannelKnownMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    return reader.getChannelKnownMaximum(id, theC);
-  }
-
-  public Double[] getPlaneMinimum(String id, int no)
-    throws FormatException, IOException
-  {
-    return reader.getPlaneMinimum(id, no);
-  }
-
-  public Double[] getPlaneMaximum(String id, int no)
-    throws FormatException, IOException
-  {
-    return reader.getPlaneMaximum(id, no);
-  }
-
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return reader.isMinMaxPopulated(id);
-  }
-
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return reader.getThumbSizeX(id);
   }
@@ -179,14 +137,6 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public boolean isOrderCertain(String id) throws FormatException, IOException {
     return reader.isOrderCertain(id);
-  }
-
-  public void setChannelStatCalculationStatus(boolean on) {
-    reader.setChannelStatCalculationStatus(on);
-  }
-
-  public boolean getChannelStatCalculationStatus() {
-    return reader.getChannelStatCalculationStatus();
   }
 
   public boolean isInterleaved(String id) throws FormatException, IOException {

@@ -144,31 +144,6 @@ public class DeltavisionReader extends FormatReader {
     return numT;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    Float v = (Float) getMeta("Wavelength " + (theC + 1) + " min. intensity");
-    return new Double(v.floatValue());
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(int) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    Float v = (Float) getMeta("Wavelength " + (theC + 1) + " max. intensity");
-    return new Double(v.floatValue());
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
@@ -212,7 +187,6 @@ public class DeltavisionReader extends FormatReader {
 
     in.seek(offset);
     in.read(buf);
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -222,7 +196,6 @@ public class DeltavisionReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1,
       false, bytesPerPixel, little);
-    updateMinMax(b, no);
     return b;
   }
 

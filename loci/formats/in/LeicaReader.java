@@ -124,31 +124,6 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String min = (String) getMeta("Minimum voxel intensity");
-    return min == null ? null : new Double(min);
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(Straxg, axt) */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    String max = (String) getMeta("Maximum voxel intensity");
-    return max == null ? null : new Double(max);
-  }
-
-  /* @see loci.formats.IFormatReader#isMinMaxPopulated(String) */
-  public boolean isMinMaxPopulated(String id)
-    throws FormatException, IOException
-  {
-    return true;
-  }
-
   /** Determines the number of images in the given Leica file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
@@ -201,7 +176,6 @@ public class LeicaReader extends FormatReader {
     }
     byte[] b = tiff[series][no].openBytes((String) files[series].get(no), 0);
     tiff[series][no].close();
-    updateMinMax(b, no);
     return b;
   }
 
@@ -214,7 +188,6 @@ public class LeicaReader extends FormatReader {
     }
     tiff[series][no].openBytes((String) files[series].get(no), 0, buf);
     tiff[series][no].close();
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -236,7 +209,6 @@ public class LeicaReader extends FormatReader {
       b.getRaster().getTransferType(), validBits[series]);
     b = ImageTools.makeBuffered(b, cm);
     tiff[series][no].close();
-    updateMinMax(b, no);
     return b;
   }
 
@@ -1162,6 +1134,8 @@ public class LeicaReader extends FormatReader {
 
       for (int j=0; j<sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
+        // TODO : get channel min/max from metadata 
+        /* 
         try {
           store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
             getChannelGlobalMaximum(currentId, j), ii);
@@ -1172,6 +1146,7 @@ public class LeicaReader extends FormatReader {
         catch (IOException exc) {
           if (debug) exc.printStackTrace();
         }
+        */ 
       }
 
     }

@@ -186,7 +186,6 @@ public class ND2Reader extends FormatReader {
     for (int i=0; i<sizeC[0]; i++) {
       System.arraycopy(pixels[i], 0, b, i*pixels[0].length, pixels[i].length);
     }
-    updateMinMax(b, no);
     return b;
   }
 
@@ -253,7 +252,6 @@ public class ND2Reader extends FormatReader {
         break;
     }
 
-    updateMinMax(img, no);
     return img;
   }
 

@@ -162,7 +162,6 @@ public class AVIReader extends FormatReader {
         in.skipBytes(pad*3);
       }
     }
-    updateMinMax(buf, no);
     return buf;
   }
 
@@ -170,10 +169,8 @@ public class AVIReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no),
+    return ImageTools.makeImage(openBytes(id, no),
       dwWidth, bmpHeight, sizeC[0], true);
-    updateMinMax(b, no);
-    return b;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

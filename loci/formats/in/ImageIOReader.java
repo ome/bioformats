@@ -96,7 +96,6 @@ public abstract class ImageIOReader extends FormatReader {
           bytesPerChannel);
       }
     }
-    updateMinMax(b, no);
     return b;
   }
 
@@ -114,7 +113,6 @@ public abstract class ImageIOReader extends FormatReader {
     BufferedImage b = ImageIO.read(dis);
     ras.close();
     dis.close();
-    updateMinMax(b, no);
     return b;
   }
 
