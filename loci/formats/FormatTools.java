@@ -528,7 +528,7 @@ public final class FormatTools {
       }
 
       // display pixels in image viewer
-      // avoid dependencies on optional loci.formats.gui package
+      // NB: avoid dependencies on optional loci.formats.gui package
       ReflectedUniverse r = new ReflectedUniverse();
       try {
         r.exec("import loci.formats.gui.ImageViewer");

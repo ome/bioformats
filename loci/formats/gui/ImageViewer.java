@@ -365,6 +365,7 @@ public class ImageViewer extends JFrame
       }
     }
     else if ("view".equals(cmd)) {
+      // NB: avoid dependencies on optional loci.ome.notebook package
       ReflectedUniverse r = new ReflectedUniverse();
       try {
         r.exec("import loci.ome.notebook.Notebook");
