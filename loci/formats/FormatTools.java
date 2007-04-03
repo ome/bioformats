@@ -481,17 +481,17 @@ public final class FormatTools {
 
         // output min/max results
         System.out.println();
-        System.out.println("Min/max values (final / tentative):");
+        System.out.println("Min/max values:");
         for (int c=0; c<sizeC; c++) {
           System.out.println("\tChannel " + c + ":");
           System.out.println("\t\tGlobal minimum = " +
-            globalMin[c] + " / " + preGlobalMin[c]);
+            globalMin[c] + " (initially " + preGlobalMin[c] + ")");
           System.out.println("\t\tGlobal maximum = " +
-            globalMax[c] + " / " + preGlobalMax[c]);
+            globalMax[c] + " (initially " + preGlobalMax[c] + ")");
           System.out.println("\t\tKnown minimum = " +
-            knownMin[c] + " / " + preKnownMin[c]);
+            knownMin[c] + " (initially " + preKnownMin[c] + ")");
           System.out.println("\t\tKnown maximum = " +
-            knownMax[c] + " / " + preKnownMax[c]);
+            knownMax[c] + " (initially " + preKnownMax[c] + ")");
         }
         System.out.print("\tFirst plane minimum(s) =");
         if (planeMin == null) System.out.print(" none");
@@ -500,14 +500,14 @@ public final class FormatTools {
             System.out.print(" " + planeMin[subC]);
           }
         }
-        System.out.print(" /");
+        System.out.print(" (initially");
         if (prePlaneMin == null) System.out.print(" none");
         else {
           for (int subC=0; subC<prePlaneMin.length; subC++) {
             System.out.print(" " + prePlaneMin[subC]);
           }
         }
-        System.out.println();
+        System.out.println(")");
         System.out.print("\tFirst plane maximum(s) =");
         if (planeMax == null) System.out.print(" none");
         else {
@@ -515,16 +515,16 @@ public final class FormatTools {
             System.out.print(" " + planeMax[subC]);
           }
         }
-        System.out.print(" /");
+        System.out.print(" (initially");
         if (prePlaneMax == null) System.out.print(" none");
         else {
           for (int subC=0; subC<prePlaneMax.length; subC++) {
             System.out.print(" " + prePlaneMax[subC]);
           }
         }
-        System.out.println();
+        System.out.println(")");
         System.out.println("\tMin/max populated = " +
-          isMinMaxPop + " / " + preIsMinMaxPop);
+          isMinMaxPop + " (initially " + preIsMinMaxPop + ")");
       }
 
       // display pixels in image viewer
