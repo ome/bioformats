@@ -237,7 +237,6 @@ public class OMEReader extends FormatReader {
     int[] indices = getZCTCoords(id, no);
     try {
       byte[] b = pf.getPlane(pixels, indices[0], indices[1], indices[2], false);
-      updateMinMax(b, no);
       return b;
     }
     catch (ImageServerException e) {
@@ -251,7 +250,6 @@ public class OMEReader extends FormatReader {
   {
     BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
       sizeY[0], 1, false, FormatTools.getBytesPerPixel(pixelType[0]), true);
-    updateMinMax(b, no);
     return b;
   }
 
