@@ -30,8 +30,6 @@ import java.util.*;
 import java.util.zip.*;
 import loci.formats.*;
 import loci.formats.codec.Base64Codec;
-import loci.formats.ome.OMEXMLMetadataStore;
-import org.openmicroscopy.xml.OMENode;
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
@@ -98,7 +96,7 @@ public class OMEXMLReader extends FormatReader {
   private String[] order;
 
   /** Internal OME-XML store, for convenient access to metadata fields. */
-  private OMEXMLMetadataStore omexml;
+  private Object omexml;
 
   // -- Constructor --
 
@@ -235,7 +233,6 @@ public class OMEXMLReader extends FormatReader {
     if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     if (in != null) in.close();
     in = null;
-    if (omexml != null) omexml.createRoot();
     omexml = null;
     currentId = null;
   }
@@ -247,7 +244,15 @@ public class OMEXMLReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessStream(id);
-    omexml = new OMEXMLMetadataStore();
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import loci.formats.ome.OMEXMLMetadataStore");
+      r.exec("import org.openmicroscopy.xml.OMENode");
+      omexml = r.exec("omexml = new OMEXMLMetadataStore()");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
 
     status("Determining endianness");
 
@@ -377,27 +382,34 @@ public class OMEXMLReader extends FormatReader {
 
     status("Populating metadata");
 
-    OMENode ome = null;
+    r.setVar("ome", null);
     try {
       File f = new File(Location.getMappedId(id));
       f = f.getAbsoluteFile();
-      if (f.exists()) ome = new OMENode(f);
+      if (f.exists()) {
+        r.setVar("f", f);
+        r.exec("ome = new OMENode(f)");
+      }
       else {
         byte[] b = new byte[(int) in.length()];
         long oldFp = in.getFilePointer();
         in.seek(0);
         in.read(b);
         in.seek(oldFp);
-        ome = new OMENode(new String(b));
+        r.setVar("s", new String(b));
+        r.exec("ome = new OMENode(s)");
         b = null;
       }
     }
-    catch (Exception exc) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (ReflectException exc) {
       throw new FormatException(exc);
     }
-    MetadataStore store = getMetadataStore(id);
-    store.setRoot(ome);
+    try {
+      r.exec("omexml.setRoot(ome)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
 
     width = new int[numDatasets];
     height = new int[numDatasets];
@@ -414,17 +426,37 @@ public class OMEXMLReader extends FormatReader {
 
     int oldSeries = getSeries(currentId);
 
-    omexml.setRoot(ome);
+    try {
+      r.exec("omexml.setRoot(ome)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
     for (int i=0; i<numDatasets; i++) {
       setSeries(currentId, i);
       Integer ndx = new Integer(i);
-      width[i] = omexml.getSizeX(ndx).intValue();
-      height[i] = omexml.getSizeY(ndx).intValue();
-      numT[i] = omexml.getSizeT(ndx).intValue();
-      numZ[i] = omexml.getSizeZ(ndx).intValue();
-      numChannels[i] = omexml.getSizeC(ndx).intValue();
+      Integer w = null, h = null, t = null, z = null, c = null;
+      String pixType = null, dimOrder = null;
+      try {
+        r.setVar("ndx", i);
+        w = (Integer) r.exec("omexml.getSizeX(ndx)");
+        h = (Integer) r.exec("omexml.getSizeY(ndx)");
+        t = (Integer) r.exec("omexml.getSizeT(ndx)");
+        z = (Integer) r.exec("omexml.getSizeZ(ndx)");
+        c = (Integer) r.exec("omexml.getSizeC(ndx)");
+        pixType = (String) r.exec("omexml.getPixelType(ndx)");
+        dimOrder = (String) r.exec("omexml.getDimensionOrder(ndx)");
+      }
+      catch (ReflectException exc) {
+        throw new FormatException(exc);
+      }
+      width[i] = w.intValue();
+      height[i] = h.intValue();
+      numT[i] = t.intValue();
+      numZ[i] = z.intValue();
+      numChannels[i] = c.intValue();
 
-      String type = omexml.getPixelType(ndx).toLowerCase();
+      String type = pixType.toLowerCase();
       if (type.endsWith("16")) {
         bpp[i] = 2;
         pixelType[i] = FormatTools.UINT16;
@@ -442,7 +474,7 @@ public class OMEXMLReader extends FormatReader {
         pixelType[i] = FormatTools.UINT8;
       }
 
-      order[i] = omexml.getDimensionOrder(ndx);
+      order[i] = dimOrder;
 
       // calculate the number of raw bytes of pixel data that we are expecting
       int expected = width[i] * height[i] * bpp[i];
@@ -484,6 +516,7 @@ public class OMEXMLReader extends FormatReader {
     orderCertain = new boolean[currentOrder.length];
     Arrays.fill(orderCertain, true);
 
+    MetadataStore store = getMetadataStore(id);
     for (int i=0; i<sizeC.length; i++) {
       for (int j=0; j<sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null,
@@ -491,11 +524,6 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
-    try {
-      ome = new OMENode((String) null);
-    }
-    catch (Exception e) { }
-    ome = null;
     omexml = null;
     System.gc();
   }
