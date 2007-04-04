@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -502,10 +501,27 @@ public class TiffReader extends BaseTiffReader {
     String comment = (String) getMeta("Comment");
     if (comment != null && comment.indexOf("ome.xsd") >= 0) {
       metadata.remove("Comment");
-      if (metadataStore instanceof OMEXMLMetadataStore) {
-        OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) metadataStore;
-        xmlStore.createRoot(comment);
-        return;
+      boolean isOMEXML;
+      try {
+        Class omexmlMeta =
+          Class.forName("loci.formats.ome.OMEXMLMetadataStore");
+        isOMEXML = omexmlMeta.isAssignableFrom(metadataStore.getClass());
+      }
+      catch (Throwable t) {
+        isOMEXML = false;
+      }
+      if (isOMEXML) {
+        ReflectedUniverse r = new ReflectedUniverse();
+        try {
+          r.exec("import loci.formats.ome.OMEXMLMetadataStore");
+          r.setVar("xmlStore", metadataStore);
+          r.setVar("comment", comment);
+          r.exec("xmlStore.createRoot(comment)");
+          return;
+        }
+        catch (ReflectException exc) {
+          // OME Java probably not available; ignore this error
+        }
       }
     }
     super.initMetadataStore();
