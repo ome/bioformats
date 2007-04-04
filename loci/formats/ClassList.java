@@ -39,7 +39,7 @@ public class ClassList {
 
   // -- Fields --
 
-  /** Base class from which all classes are assignable. */
+  /** Base class to which all classes are assignable. */
   private Class base;
 
   /** List of classes. */
@@ -49,7 +49,7 @@ public class ClassList {
 
   /**
    * Constructs a list of classes, initially empty.
-   * @param base Base class from which all classes are assignable.
+   * @param base Base class to which all classes are assignable.
    */
   public ClassList(Class base) {
     this.base = base;
@@ -59,7 +59,7 @@ public class ClassList {
   /**
    * Constructs a list of classes from the given configuration file.
    * @param file Configuration file containing the list of classes.
-   * @param base Base class from which all classes are assignable.
+   * @param base Base class to which all classes are assignable.
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class base) throws IOException {
@@ -106,14 +106,14 @@ public class ClassList {
 
   /**
    * Adds the given class, which must be assignable
-   * from the base class, to the list.
+   * to the base class, to the list.
    *
-   * @throws FormatException if the class is not assignable from the base class.
+   * @throws FormatException if the class is not assignable to the base class.
    */
   public void addClass(Class c) throws FormatException {
     if (base != null && !base.isAssignableFrom(c)) {
       throw new FormatException(
-        "Class is not assignable from the base class");
+        "Class is not assignable to the base class");
     }
     classes.add(c);
   }
