@@ -20,6 +20,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import loci.formats.*;
+import loci.formats.gui.GUITools;
 import loci.formats.ome.OMEXMLMetadataStore;
 import loci.formats.out.TiffWriter;
 import org.openmicroscopy.xml.*;
@@ -60,8 +61,8 @@ public class MovieStitcher extends JFrame implements
     super(TITLE);
 
     // file choosers
-    rc = reader.getFileChooser();
-    wc = writer.getFileChooser();
+    rc = GUITools.buildFileChooser(reader);
+    wc = GUITools.buildFileChooser(writer);
 
     JPanel pane = new JPanel();
     pane.setBorder(new EmptyBorder(5, 5, 5, 5));

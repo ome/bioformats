@@ -26,7 +26,7 @@ import javax.swing.text.Document;
 import loci.formats.in.SDTInfo;
 import loci.formats.in.SDTReader;
 import loci.formats.DataTools;
-import loci.formats.ExtensionFileFilter;
+import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.util.BreakawayPanel;
 import loci.visbio.util.ColorUtil;
 import loci.visbio.util.OutputConsole;
