@@ -69,7 +69,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Metamorph file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     // If the file is a Metamorph STK file, it should have a specific IFD tag.
     // Most Metamorph files seem to have the IFD information at the end, so it
@@ -106,7 +106,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Populates the metadata hashtable. */
+  /* @see BaseTiffReader#initStandardMetadata() */ 
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -293,8 +293,8 @@ public class MetamorphReader extends BaseTiffReader {
       else put("Comment", descr);
     }
     try {
-      sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
-      sizeT[0] = getImageCount(currentId) / sizeZ[0];
+      core.sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
+      core.sizeT[0] = getImageCount(currentId) / core.sizeZ[0];
     }
     catch (Exception e) {
       // CTR TODO - eliminate catch-all exception handling
@@ -302,13 +302,13 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /*@see loci.formats.BaseTiffReader#getImageName() */
+  /*@see BaseTiffReader#getImageName() */
   protected String getImageName() {
     if (imageName == null) return super.getImageName();
     return imageName;
   }
 
-  /* @see loci.formats.BaseTiffReader#getImageCreationDate() */
+  /* @see BaseTiffReader#getImageCreationDate() */
   protected String getImageCreationDate() {
     if (imageCreationDate == null) return super.getImageCreationDate();
     return imageCreationDate;

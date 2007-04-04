@@ -67,9 +67,6 @@ public class BioRadReader extends FormatReader {
   /** Input stream for current Bio-Rad PIC. */
   private RandomAccessStream in;
 
-  /** Dimensions of each image in current Bio-Rad PIC. */
-  private int nx, ny, nz, nt;
-
   /** Number of images in current Bio-Rad PIC. */
   private int npic;
 
@@ -83,13 +80,13 @@ public class BioRadReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Bio-Rad PIC file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block.length < 56) return false;
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
   }
 
-  /** Determines the number of images in the given Bio-Rad PIC file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return npic;
@@ -100,27 +97,28 @@ public class BioRadReader extends FormatReader {
     return false;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return LITTLE_ENDIAN;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[nx * ny * (byteFormat ? 1 : 2)];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -128,22 +126,22 @@ public class BioRadReader extends FormatReader {
     if (no < 0 || no >= npic) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < nx * ny * (byteFormat ? 1 : 2)) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)) {
       throw new FormatException("Buffer too small.");
     }
 
-    int offset = no * nx * ny * (byteFormat ? 1 : 2);
+    int offset = no * core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2);
     in.seek(offset + 76);
     in.read(buf);
     return buf;
   }
 
-  /** Obtains the specified image from the given Bio-Rad PIC file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), nx, ny, 1, false,
-      byteFormat ? 1 : 2, LITTLE_ENDIAN);
+    BufferedImage b = ImageTools.makeImage(openBytes(id, no), core.sizeX[0], 
+      core.sizeY[0], 1, false, byteFormat ? 1 : 2, LITTLE_ENDIAN);
     return b;
   }
 
@@ -153,7 +151,7 @@ public class BioRadReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     currentId = null;
     if (in != null) in.close();
@@ -172,8 +170,8 @@ public class BioRadReader extends FormatReader {
 
     // read header
 
-    nx = in.readShort();
-    ny = in.readShort();
+    core.sizeX[0] = in.readShort();
+    core.sizeY[0] = in.readShort();
     npic = in.readShort();
 
     int ramp1min = in.readShort();
@@ -200,8 +198,8 @@ public class BioRadReader extends FormatReader {
     }
 
     // populate metadata fields
-    addMeta("nx", new Integer(nx));
-    addMeta("ny", new Integer(ny));
+    addMeta("nx", new Integer(core.sizeX[0]));
+    addMeta("ny", new Integer(core.sizeY[0]));
     addMeta("npic", new Integer(npic));
     addMeta("ramp1_min", new Integer(ramp1min));
     addMeta("ramp1_max", new Integer(ramp1max));
@@ -220,17 +218,17 @@ public class BioRadReader extends FormatReader {
     addMeta("mag_factor", new Float(magFactor));
 
     // skip image data
-    int imageLen = nx * ny;
+    int imageLen = core.sizeX[0] * core.sizeY[0];
     int bpp = byteFormat ? 1 : 2;
     in.skipBytes(bpp * npic * imageLen + 6);
 
     Vector pixelSize = new Vector();
 
-    int zSize = npic;
-    int cSize = 1;
-    int tSize = 1;
+    core.sizeZ[0] = npic;
+    core.sizeC[0] = 1;
+    core.sizeT[0] = 1;
 
-    orderCertain[0] = false;
+    core.orderCertain[0] = false;
 
     status("Reading notes");
 
@@ -503,9 +501,9 @@ public class BioRadReader extends FormatReader {
               if (text.indexOf("AXIS_4") != -1) {
                 addMeta(key + " time (X) in seconds", params.get(0));
                 addMeta(key + " time (Y) in seconds", params.get(1));
-                zSize = 1;
-                tSize = npic;
-                orderCertain[0] = true;
+                core.sizeZ[0] = 1;
+                core.sizeT[0] = npic;
+                core.orderCertain[0] = true;
               }
               break;
             case 3:
@@ -624,15 +622,11 @@ public class BioRadReader extends FormatReader {
 
     // populate Pixels element
     in.seek(14);
-    //int type = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN);
-    int type = in.readShort();
-    if (type == 1)
-      pixelType[0] = FormatTools.UINT8;
-    else
-      pixelType[0] = FormatTools.UINT16;
+    core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT16 : 
+      FormatTools.UINT8; 
 
-    String dimOrder = "XY";
-    int[] dims = new int[] {zSize, cSize, tSize};
+    core.currentOrder[0] = "XY";
+    int[] dims = new int[] {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
     int max = 0;
     int min = Integer.MAX_VALUE;
     int median = 1;
@@ -645,34 +639,28 @@ public class BioRadReader extends FormatReader {
 
     int[] orderedDims = new int[] {max, median, min};
     for (int i=0; i<orderedDims.length; i++) {
-      if (orderedDims[i] == zSize && dimOrder.indexOf("Z") == -1) {
-        dimOrder += "Z";
+      if (orderedDims[i] == core.sizeZ[0] && 
+        core.currentOrder[0].indexOf("Z") == -1) 
+      {
+        core.currentOrder[0] += "Z";
       }
-      else if (orderedDims[i] == cSize && dimOrder.indexOf("C") == -1) {
-        dimOrder += "C";
+      else if (orderedDims[i] == core.sizeC[0] && 
+        core.currentOrder[0].indexOf("C") == -1) 
+      {
+        core.currentOrder[0] += "C";
       }
-      else dimOrder += "T";
+      else core.currentOrder[0] += "T";
     }
 
-    nz = zSize;
-    nt = tSize;
-
-    sizeX[0] = nx;
-    sizeY[0] = ny;
-    sizeZ[0] = zSize;
-    sizeC[0] = cSize;
-    sizeT[0] = tSize;
-    currentOrder[0] = dimOrder;
-
     store.setPixels(
-      new Integer(nx), // SizeX
-      new Integer(ny), // SizeY
-      new Integer(zSize), // SizeZ
-      new Integer(cSize), // SizeC
-      new Integer(tSize), // SizeT
-      new Integer(pixelType[0]), // PixelType
+      new Integer(core.sizeX[0]), // SizeX
+      new Integer(core.sizeY[0]), // SizeY
+      new Integer(core.sizeZ[0]), // SizeZ
+      new Integer(core.sizeC[0]), // SizeC
+      new Integer(core.sizeT[0]), // SizeT
+      new Integer(core.pixelType[0]), // PixelType
       Boolean.FALSE, // BigEndian
-      dimOrder, // DimensionOrder
+      core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
 
@@ -686,24 +674,27 @@ public class BioRadReader extends FormatReader {
 
     store.setDefaultDisplaySettings(null);
 
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
       String black = (String) getMeta("PMT " + i + " Black level");
       store.setDisplayChannel(new Integer(i), black == null ? null :
-        new Double(black), new Double(Math.pow(2, type == 1 ? 8 : 16)),
+        new Double(black), new Double(Math.pow(2, 
+        core.pixelType[0] == FormatTools.UINT8 ? 8 : 16)),
         null, null);
     }
     String zoom = (String) getMeta("Zoom factor (user selected)");
     String zstart = (String) getMeta("Z start");
     String zstop = (String) getMeta("Z stop");
     store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-      new Boolean(sizeC[0] > 1), new Boolean(sizeC[0] >= 2),
-      new Boolean(sizeC[0] >= 3), Boolean.FALSE, null, zstart == null ? null :
+      new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] >= 2),
+      new Boolean(core.sizeC[0] >= 3), Boolean.FALSE, null,
+      zstart == null ? null :
       new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
       null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
-      null, null, sizeC[0] > 1 ? new Integer(0) : null,
-      sizeC[0] > 1 ? new Integer(1) : null,
-      sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
+      null, null, core.sizeC[0] > 1 ? new Integer(0) : null,
+      core.sizeC[0] > 1 ? new Integer(1) : null,
+      core.sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
+    
     for (int i=0; i<3; i++) {
       String prefix = "Transmission detector " + (i+1) + " - ";
       String gain = (String) getMeta(prefix + "gain");
@@ -746,9 +737,4 @@ public class BioRadReader extends FormatReader {
     return sb.toString();
   }
 
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new BioRadReader().testRead(args);
-  }
 }

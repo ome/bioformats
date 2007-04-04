@@ -122,7 +122,7 @@ public class NikonReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Nikon NEF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
 
@@ -159,11 +159,7 @@ public class NikonReader extends BaseTiffReader {
 
   // -- IFormatHandler API methods --
 
-  /**
-   * Checks if the given string is a valid filename for a Nikon NEF file.
-   * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
-   */
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
     if (lname.endsWith(".nef")) return true;
@@ -397,12 +393,6 @@ public class NikonReader extends BaseTiffReader {
         return "Capture Editor Data";
     }
     return "" + tag;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new NikonReader().testRead(args);
   }
 
 }

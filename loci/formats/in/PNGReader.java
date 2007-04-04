@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.IOException;
-import loci.formats.FormatException;
-
 /**
  * PNGReader is the file format reader for
  * Portable Network Graphics (PNG) images.
@@ -39,11 +36,5 @@ public class PNGReader extends ImageIOReader {
 
   /** Constructs a new PNGReader. */
   public PNGReader() { super("Portable Network Graphics", "png"); }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new PNGReader().testRead(args);
-  }
 
 }

@@ -157,29 +157,29 @@ public class OMEReader extends FormatReader {
       if (debug) e.printStackTrace();
     }
 
-    sizeX[0] = pixels.getSizeX().intValue();
-    sizeY[0] = pixels.getSizeY().intValue();
-    sizeZ[0] = pixels.getSizeZ().intValue();
-    sizeC[0] = pixels.getSizeC().intValue();
-    sizeT[0] = pixels.getSizeT().intValue();
-    pixelType[0] = FormatTools.pixelTypeFromString(pixels.getPixelType());
-    currentOrder[0] = "XYZCT";
+    core.sizeX[0] = pixels.getSizeX().intValue();
+    core.sizeY[0] = pixels.getSizeY().intValue();
+    core.sizeZ[0] = pixels.getSizeZ().intValue();
+    core.sizeC[0] = pixels.getSizeC().intValue();
+    core.sizeT[0] = pixels.getSizeT().intValue();
+    core.pixelType[0] = FormatTools.pixelTypeFromString(pixels.getPixelType());
+    core.currentOrder[0] = "XYZCT";
 
-    numImages = sizeZ[0] * sizeC[0] * sizeT[0];
+    numImages = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(
-      new Integer(sizeX[0]),
-      new Integer(sizeY[0]),
-      new Integer(sizeZ[0]),
-      new Integer(sizeC[0]),
-      new Integer(sizeT[0]),
-      new Integer(pixelType[0]),
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
       new Boolean(!isLittleEndian(id)),
-      currentOrder[0],
+      core.currentOrder[0],
       null,
       null);
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
@@ -248,9 +248,9 @@ public class OMEReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[0],
-      sizeY[0], 1, false, FormatTools.getBytesPerPixel(pixelType[0]), true);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0],
+      core.sizeY[0], 1, false, FormatTools.getBytesPerPixel(core.pixelType[0]),
+      true);
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(String, int) */
@@ -305,12 +305,6 @@ public class OMEReader extends FormatReader {
   public boolean isThisType(String id) {
     return id.indexOf("id") != -1 && (id.indexOf("password") != -1 ||
       id.indexOf("sessionKey") != -1);
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new OMEReader().testRead(args);
   }
 
 }

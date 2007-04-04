@@ -54,31 +54,19 @@ public class AVIReader extends FormatReader {
   private String type = "error";
   private String fcc = "error";
   private int size = -1;
-  private int bigChunkSize;
   private long pos;
-
-  // AVI Header chunk fields
-
-  private int dwMicroSecPerFrame, dwMaxBytesPerSec, dwReserved1, dwFlags;
-  private int dwTotalFrames, dwInitialFrames, dwStreams, dwSuggestedBufferSize;
-  private int dwWidth, dwHeight, dwScale, dwRate, dwStart, dwLength;
 
   // Stream Header chunk fields
 
-  private String fccStreamType, fccStreamHandler;
-  private int dwStreamFlags, dwStreamReserved1, dwStreamInitialFrames;
-  private int dwStreamScale, dwStreamRate, dwStreamStart, dwStreamLength;
-  private int dwStreamSuggestedBufferSize, dwStreamQuality, dwStreamSampleSize;
+  private String fccStreamType;
 
   // Stream Format chunk fields
 
-  private int bmpSize, bmpSizeOfBitmap, bmpHorzResolution, bmpVertResolution;
-  private int bmpColorsUsed, bmpColorsImportant, bmpNoOfPixels, bmpWidth;
-  private int bmpHeight, bmpCompression, bmpActualSize, bmpScanLineSize;
+  private int bmpSizeOfBitmap;
+  private int bmpColorsUsed, bmpWidth;
+  private int bmpCompression, bmpScanLineSize;
   private int bmpActualColorsUsed;
-  private short bmpPlanes, bmpBitsPerPixel;
-  private boolean bmpTopDown;
-  private byte[] rawData = null;
+  private short bmpBitsPerPixel;
   private byte[] pr = null;
   private byte[] pg = null;
   private byte[] pb = null;
@@ -90,12 +78,12 @@ public class AVIReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an AVI file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /** Determines the number of images in the given AVI file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
@@ -107,28 +95,30 @@ public class AVIReader extends FormatReader {
     return bmpBitsPerPixel > 8;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return little;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given AVI file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[bmpHeight * bmpScanLineSize * (bmpBitsPerPixel / 8)];
+    byte[] buf = 
+      new byte[core.sizeX[0] * bmpScanLineSize * (bmpBitsPerPixel / 8)];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -137,40 +127,36 @@ public class AVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (buf.length < bmpHeight*bmpScanLineSize*(bmpBitsPerPixel / 8)) {
+    if (buf.length < core.sizeY[0]*bmpScanLineSize*(bmpBitsPerPixel / 8)) {
       throw new FormatException("Buffer too small.");
     }
 
     long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek((int) fileOff);
 
-    int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
-    int offset = 0;
+    int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
+    int scanline = core.sizeX[0] * (bmpBitsPerPixel / 8);
 
-    for (int i=bmpHeight - 1; i>=0; i--) {
-      if (bmpBitsPerPixel == 8) {
-        in.read(buf, i*dwWidth, dwWidth);
-        in.skipBytes(pad); 
-      }
-      else {
-        in.read(buf, i*dwWidth*3, dwWidth * 3);
-        for (int j=0; j<dwWidth; j++) {
-          byte r = buf[i*dwWidth*3 + j*3 + 2];
-          buf[i*dwWidth*3 + j*3 + 2] = buf[i*dwWidth*3 + j*3];
-          buf[i*dwWidth*3 + j*3] = r;
+    for (int i=core.sizeY[0] - 1; i>=0; i--) {
+      in.read(buf, i*scanline, scanline);
+      if (bmpBitsPerPixel != 8) {
+        for (int j=0; j<core.sizeX[0]; j++) {
+          byte r = buf[i*scanline + j*3 + 2];
+          buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
+          buf[i*scanline + j*3] = r;
         }
-        in.skipBytes(pad*3);
       }
+      in.skipBytes(pad * (bmpBitsPerPixel / 8));
     }
     return buf;
   }
 
-  /** Obtains the specified image from the given AVI file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no),
-      dwWidth, bmpHeight, sizeC[0], true);
+      core.sizeX[0], core.sizeY[0], core.sizeC[0], true);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -181,7 +167,7 @@ public class AVIReader extends FormatReader {
     else close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -207,7 +193,6 @@ public class AVIReader extends FormatReader {
     fcc = readStringBytes();
 
     if (type.equals("RIFF")) {
-      bigChunkSize = size;
       if (!fcc.equals("AVI ")) whine("Sorry, AVI RIFF format not found.");
     }
     else whine("Not an AVI file");
@@ -249,33 +234,24 @@ public class AVIReader extends FormatReader {
               if (type.equals("avih")) {
                 spos = in.getFilePointer();
 
-                dwMicroSecPerFrame = in.readInt();
-                dwMaxBytesPerSec = in.readInt();
-                dwReserved1 = in.readInt();
-                dwFlags = in.readInt();
-                dwTotalFrames = in.readInt();
-                dwInitialFrames = in.readInt();
-                dwStreams = in.readInt();
-                dwSuggestedBufferSize = in.readInt();
-                dwWidth = in.readInt();
-                dwHeight = in.readInt();
-                dwScale= in.readInt();
-                dwRate = in.readInt();
-                dwStart = in.readInt();
-                dwLength = in.readInt();
+                addMeta("Microseconds per frame", new Integer(in.readInt()));
+                addMeta("Max. bytes per second", new Integer(in.readInt()));
 
-                addMeta("Microseconds per frame",
-                  new Integer(dwMicroSecPerFrame));
-                addMeta("Max. bytes per second",
-                  new Integer(dwMaxBytesPerSec));
-                addMeta("Total frames", new Integer(dwTotalFrames));
-                addMeta("Initial frames", new Integer(dwInitialFrames));
-                addMeta("Frame width", new Integer(dwWidth));
-                addMeta("Frame height", new Integer(dwHeight));
-                addMeta("Scale factor", new Integer(dwScale));
-                addMeta("Frame rate", new Integer(dwRate));
-                addMeta("Start time", new Integer(dwStart));
-                addMeta("Length", new Integer(dwLength));
+                in.skipBytes(8); 
+               
+                addMeta("Total frames", new Integer(in.readInt()));
+                addMeta("Initial frames", new Integer(in.readInt()));
+
+                in.skipBytes(8); 
+                core.sizeX[0] = in.readInt();
+                
+                addMeta("Frame height", new Integer(in.readInt()));
+                addMeta("Scale factor", new Integer(in.readInt()));
+                addMeta("Frame rate", new Integer(in.readInt()));
+                addMeta("Start time", new Integer(in.readInt()));
+                addMeta("Length", new Integer(in.readInt()));
+
+                addMeta("Frame width", new Integer(core.sizeX[0]));
 
                 if (spos + size <= in.length()) {
                   in.seek((int) (spos + size));
@@ -306,21 +282,10 @@ public class AVIReader extends FormatReader {
                   fccStreamType = fccStreamTypeOld;
                 }
 
-                fccStreamHandler = readStringBytes();
+                in.skipBytes(36);
 
-                dwStreamFlags = in.readInt();
-                dwStreamReserved1 = in.readInt();
-                dwStreamInitialFrames = in.readInt();
-                dwStreamScale = in.readInt();
-                dwStreamRate = in.readInt();
-                dwStreamStart = in.readInt();
-                dwStreamLength = in.readInt();
-                dwStreamSuggestedBufferSize = in.readInt();
-                dwStreamQuality = in.readInt();
-                dwStreamSampleSize = in.readInt();
-
-                addMeta("Stream quality", new Integer(dwStreamQuality));
-                addMeta("Stream sample size", new Integer(dwStreamSampleSize));
+                addMeta("Stream quality", new Integer(in.readInt()));
+                addMeta("Stream sample size", new Integer(in.readInt()));
 
                 if (spos + size <= in.length()) {
                   in.seek((int) (spos + size));
@@ -332,27 +297,22 @@ public class AVIReader extends FormatReader {
               if (type.equals("strf")) {
                 spos = in.getFilePointer();
 
-                bmpSize = in.readInt();
+                in.skipBytes(4); 
                 bmpWidth = in.readInt();
-                bmpHeight = in.readInt();
-                bmpPlanes = in.readShort();
+                core.sizeY[0] = in.readInt();
+                in.skipBytes(2); 
                 bmpBitsPerPixel = in.readShort();
                 bmpCompression = in.readInt();
                 bmpSizeOfBitmap = in.readInt();
-                bmpHorzResolution = in.readInt();
-                bmpVertResolution = in.readInt();
+                
+                addMeta("Horizontal resolution", new Integer(in.readInt())); 
+                addMeta("Vertical resolution", new Integer(in.readInt())); 
+                
                 bmpColorsUsed = in.readInt();
-                bmpColorsImportant = in.readInt();
-
-                bmpTopDown = (bmpHeight < 0);
-                bmpNoOfPixels = bmpWidth * bmpHeight;
+                in.skipBytes(4);
 
                 addMeta("Bitmap compression value",
                   new Integer(bmpCompression));
-                addMeta("Horizontal resolution",
-                  new Integer(bmpHorzResolution));
-                addMeta("Vertical resolution",
-                  new Integer(bmpVertResolution));
                 addMeta("Number of colors used",
                   new Integer(bmpColorsUsed));
                 addMeta("Bits per pixel", new Integer(bmpBitsPerPixel));
@@ -362,15 +322,6 @@ public class AVIReader extends FormatReader {
                 if (npad > 0) npad = 4 - npad;
 
                 bmpScanLineSize = (bmpWidth + npad) * (bmpBitsPerPixel / 8);
-
-                if (bmpSizeOfBitmap != 0) {
-                  bmpActualSize = bmpSizeOfBitmap;
-                }
-                else {
-                  // a value of 0 doesn't mean 0 -- it means we have
-                  // to calculate it
-                  bmpActualSize = bmpScanLineSize * bmpHeight;
-                }
 
                 if (bmpColorsUsed != 0) {
                   bmpActualColorsUsed = bmpColorsUsed;
@@ -468,7 +419,7 @@ public class AVIReader extends FormatReader {
                   type.substring(2).equals("dc"))
                 {
                   offsets.add(new Long(in.getFilePointer()));
-                  in.skipBytes(bmpHeight * bmpScanLineSize);
+                  in.skipBytes(core.sizeY[0] * bmpScanLineSize);
                 }
 
                 spos = in.getFilePointer();
@@ -508,38 +459,36 @@ public class AVIReader extends FormatReader {
     
     numImages = offsets.size();
 
-    sizeX[0] = dwWidth;
-    sizeY[0] = bmpHeight;
-    sizeZ[0] = 1;
-    sizeC[0] = isRGB(id) ? 3 : 1;
-    sizeT[0] = numImages;
-    currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
+    core.sizeZ[0] = 1;
+    core.sizeC[0] = isRGB(id) ? 3 : 1;
+    core.sizeT[0] = numImages;
+    core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
 
     int bitsPerPixel = ((Integer) getMeta("Bits per pixel")).intValue();
     int bytesPerPixel = bitsPerPixel / 8;
 
-    if (bitsPerPixel == 8) pixelType[0] = FormatTools.UINT8;
-    else if (bitsPerPixel == 16) pixelType[0] = FormatTools.UINT16;
-    else if (bitsPerPixel == 32) pixelType[0] = FormatTools.UINT32;
-    else if (bitsPerPixel == 24) pixelType[0] = FormatTools.UINT8;
+    if (bitsPerPixel == 8) core.pixelType[0] = FormatTools.UINT8;
+    else if (bitsPerPixel == 16) core.pixelType[0] = FormatTools.UINT16;
+    else if (bitsPerPixel == 32) core.pixelType[0] = FormatTools.UINT32;
+    else if (bitsPerPixel == 24) core.pixelType[0] = FormatTools.UINT8;
     else
       throw new FormatException(
           "Unknown matching for pixel bit width of: " + bitsPerPixel);
 
     MetadataStore store = getMetadataStore(currentId);
-    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
-      new Integer(1), // SizeZ
-      new Integer(sizeC[0]), // SizeC
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]), // SizeZ
+      new Integer(core.sizeC[0]), // SizeC
       new Integer(numImages), // SizeT
-      new Integer(pixelType[0]), // PixelType
+      new Integer(core.pixelType[0]), // PixelType
       new Boolean(!little), // BigEndian
-      currentOrder[0], // DimensionOrder
+      core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
 
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null,
-        sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
+        core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
     }
   }
 
@@ -558,12 +507,6 @@ public class AVIReader extends FormatReader {
    */
   private void whine(String msg) throws FormatException {
     throw new FormatException(msg);
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new AVIReader().testRead(args);
   }
 
 }

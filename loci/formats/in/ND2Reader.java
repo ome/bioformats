@@ -132,41 +132,38 @@ public class ND2Reader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an ND2 file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block.length < 8) return false;
     return block[4] == 0x6a && block[5] == 0x50 && block[6] == 0x20 &&
       block[7] == 0x20;
   }
 
-  /** Determines the number of images in the given ND2 file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return rgb;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return false;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return true;
   }
 
-  /**
-   * Obtains the specified image from the
-   * given ND2 file as a byte array.
-   */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -178,18 +175,18 @@ public class ND2Reader extends FormatReader {
 
     byte[][] pixels = ImageTools.getPixelBytes(openImage(id, no), false);
 
-    if (pixels.length == 1 || sizeC[0] == 1) {
+    if (pixels.length == 1 || core.sizeC[0] == 1) {
       return pixels[0];
     }
 
-    byte[] b = new byte[sizeC[0] * pixels[0].length];
-    for (int i=0; i<sizeC[0]; i++) {
+    byte[] b = new byte[core.sizeC[0] * pixels[0].length];
+    for (int i=0; i<core.sizeC[0]; i++) {
       System.arraycopy(pixels[i], 0, b, i*pixels[0].length, pixels[i].length);
     }
     return b;
   }
 
-  /** Obtains the specified image from the given ND2 file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -228,7 +225,7 @@ public class ND2Reader extends FormatReader {
     b = null;
 
     int dataType = 0;
-    switch (pixelType[0]) {
+    switch (core.pixelType[0]) {
       case FormatTools.INT8:
         throw new FormatException("Unsupported pixel type: int8");
       case FormatTools.UINT8:
@@ -261,7 +258,7 @@ public class ND2Reader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -307,7 +304,7 @@ public class ND2Reader extends FormatReader {
 
     numImages = offsets.length;
 
-    pixelType[0] = FormatTools.UINT8;
+    core.pixelType[0] = FormatTools.UINT8;
 
     // read XML metadata from the end of the file
 
@@ -419,13 +416,13 @@ public class ND2Reader extends FormatReader {
     status("Populating metadata");
 
     BufferedImage img = openImage(id, 0);
-    sizeX[0] = img.getWidth();
-    sizeY[0] = img.getHeight();
+    core.sizeX[0] = img.getWidth();
+    core.sizeY[0] = img.getHeight();
 
     int numInvalid = 0;
 
     for (int i=1; i<offsets.length; i++) {
-      if (offsets[i] - offsets[i - 1] < (sizeX[0] * sizeY[0] / 4)) {
+      if (offsets[i] - offsets[i - 1] < (core.sizeX[0] * core.sizeY[0] / 4)) {
         offsets[i - 1] = 0;
         numInvalid++;
       }
@@ -467,9 +464,9 @@ public class ND2Reader extends FormatReader {
 
     String c = (String)
       getMeta("MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value");
-    if (c != null) sizeC[0] = Integer.parseInt(c);
-    else sizeC[0] = openImage(id, 0).getRaster().getNumBands();
-    if (sizeC[0] == 2) sizeC[0] = 1;
+    if (c != null) core.sizeC[0] = Integer.parseInt(c);
+    else core.sizeC[0] = openImage(id, 0).getRaster().getNumBands();
+    if (core.sizeC[0] == 2) core.sizeC[0] = 1;
 
     long[] timestamps = new long[numImages];
     long[] zstamps = new long[numImages];
@@ -486,84 +483,84 @@ public class ND2Reader extends FormatReader {
     Vector ts = new Vector();
     for (int i=0; i<numImages; i++) {
       if (!zs.contains(new Long(zstamps[i]))) {
-        sizeZ[0]++;
+        core.sizeZ[0]++;
         zs.add(new Long(zstamps[i]));
       }
       if (!ts.contains(new Long(timestamps[i]))) {
-        sizeT[0]++;
+        core.sizeT[0]++;
         ts.add(new Long(timestamps[i]));
       }
     }
 
-    currentOrder[0] = "XY";
+    core.currentOrder[0] = "XY";
     long deltaT = timestamps.length > 1 ? timestamps[1] - timestamps[0] : 1;
     long deltaZ = zstamps.length > 1 ? zstamps[1] - zstamps[0] : 1;
 
-    if (deltaT < deltaZ || deltaZ == 0) currentOrder[0] += "CTZ";
-    else currentOrder[0] += "CZT";
+    if (deltaT < deltaZ || deltaZ == 0) core.currentOrder[0] += "CTZ";
+    else core.currentOrder[0] += "CZT";
 
     // we calculate this directly (instead of calling getEffectiveSizeC) because
     // sizeZ and sizeT have not been accurately set yet
-    int effectiveC = (sizeC[0] / 3) + 1;
+    int effectiveC = (core.sizeC[0] / 3) + 1;
 
-    if (numImages < sizeZ[0] * sizeT[0]) {
-      if (sizeT[0] == numImages) {
-        sizeT[0] /= sizeZ[0] * effectiveC;
-        while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
-          sizeT[0]++;
+    if (numImages < core.sizeZ[0] * core.sizeT[0]) {
+      if (core.sizeT[0] == numImages) {
+        core.sizeT[0] /= core.sizeZ[0] * effectiveC;
+        while (numImages > core.sizeZ[0] * core.sizeT[0] * effectiveC) {
+          core.sizeT[0]++;
         }
       }
-      else if (sizeZ[0] == numImages) {
-        sizeZ[0] /= sizeT[0] * effectiveC;
-        while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
-          sizeZ[0]++;
+      else if (core.sizeZ[0] == numImages) {
+        core.sizeZ[0] /= core.sizeT[0] * effectiveC;
+        while (numImages > core.sizeZ[0] * core.sizeT[0] * effectiveC) {
+          core.sizeZ[0]++;
         }
       }
 
-      if (numImages < sizeZ[0] * sizeT[0] * effectiveC) {
-        if (sizeZ[0] < sizeT[0]) {
-          sizeZ[0]--;
-          while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
-            sizeT[0]++;
+      if (numImages < core.sizeZ[0] * core.sizeT[0] * effectiveC) {
+        if (core.sizeZ[0] < core.sizeT[0]) {
+          core.sizeZ[0]--;
+          while (numImages > core.sizeZ[0] * core.sizeT[0] * effectiveC) {
+            core.sizeT[0]++;
           }
-          while (numImages < sizeZ[0] * sizeT[0] * effectiveC) {
-            sizeT[0]--;
+          while (numImages < core.sizeZ[0] * core.sizeT[0] * effectiveC) {
+            core.sizeT[0]--;
           }
         }
         else {
-          sizeT[0]--;
-          while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
-            sizeZ[0]++;
+          core.sizeT[0]--;
+          while (numImages > core.sizeZ[0] * core.sizeT[0] * effectiveC) {
+            core.sizeZ[0]++;
           }
-          if (numImages < sizeZ[0] * sizeT[0] * effectiveC) {
-            sizeZ[0]--;
+          if (numImages < core.sizeZ[0] * core.sizeT[0] * effectiveC) {
+            core.sizeZ[0]--;
           }
         }
-        while (numImages > sizeZ[0] * sizeT[0] * effectiveC) {
+        while (numImages > core.sizeZ[0] * core.sizeT[0] * effectiveC) {
           numImages--;
         }
       }
     }
 
     if (bits != 0) {
-      validBits = new int[sizeC[0] == 2 ? 3 : sizeC[0]];
+      validBits = new int[core.sizeC[0] == 2 ? 3 : core.sizeC[0]];
       for (int i=0; i<validBits.length; i++) validBits[i] = bits;
     }
     else validBits = null;
 
-    if (validBits == null) pixelType[0] = FormatTools.UINT8;
+    if (validBits == null) core.pixelType[0] = FormatTools.UINT8;
     else {
       int bpp = validBits[0];
       while (bpp % 8 != 0) bpp++;
       switch (bpp) {
         case 8:
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatTools.UINT16;
+          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatTools.UINT32;
+          core.pixelType[0] = FormatTools.UINT32;
           break;
         default:
           throw new FormatException("Unsupported bits per pixel: " + bpp);
@@ -571,24 +568,24 @@ public class ND2Reader extends FormatReader {
 
     }
 
-    rgb = sizeC[0] == 3;
+    rgb = core.sizeC[0] == 3;
 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(
-      new Integer(sizeX[0]),
-      new Integer(sizeY[0]),
-      new Integer(sizeZ[0]),
-      new Integer(sizeC[0]),
-      new Integer(sizeT[0]),
-      new Integer(pixelType[0]),
-      new Boolean(isLittleEndian(id)),
-      currentOrder[0],
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
+      new Boolean(!isLittleEndian(id)),
+      core.currentOrder[0],
       null,
       null);
 
     store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
       new Float(pixSizeZ), null, null, null);
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
 
@@ -604,12 +601,6 @@ public class ND2Reader extends FormatReader {
       voltage == null ? null : new Float(voltage), null, null, null);
     store.setObjective(null, null, null, na == null ? null : new Float(na),
       mag == null ? null : new Float(mag), null, null);
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new ND2Reader().testRead(args);
   }
 
 }

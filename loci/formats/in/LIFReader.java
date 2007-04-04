@@ -86,55 +86,56 @@ public class LIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a LIF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return block[0] == 0x70;
   }
 
-  /** Determines the number of images in the given LIF file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     numImages = dims[series][2] * dims[series][3];
     return numImages * (isRGB(id) ? 1 : dims[series][4]);
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return dims[series][4] > 1 && dims[series][4] < 4;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return true;
   }
 
-  /** Return the number of series in this file. */
+  /* @see loci.formats.IFormatReader#getSeriesCount(String) */ 
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return dims.length;
   }
 
-  /** Obtains the specified image from the given LIF file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
-    byte[] buf = new byte[sizeX[series] * sizeY[series] *
+    byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] *
       (bpp / 8) * getRGBChannelCount(id)];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -145,28 +146,27 @@ public class LIFReader extends FormatReader {
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
     int bytes = bpp / 8;
-    if (buf.length < sizeX[series] * sizeY[series] * bytes * 
+    if (buf.length < core.sizeX[series] * core.sizeY[series] * bytes * 
       getRGBChannelCount(id)) 
     {
       throw new FormatException("Buffer too small.");
     }
 
     int offset = ((Long) offsets.get(series)).intValue();
-    in.seek(offset +
-      sizeX[series] * sizeY[series] * bytes * no * getRGBChannelCount(id));
+    in.seek(offset + core.sizeX[series] * core.sizeY[series] * 
+      bytes * no * getRGBChannelCount(id));
    
     in.read(buf);
     return buf;
   }
 
-  /** Obtains the specified image from the given LIF file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), sizeX[series],
-      sizeY[series], isRGB(id) ? sizeC[series] : 1, false, bpp / 8,
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[series],
+      core.sizeY[series], isRGB(id) ? core.sizeC[series] : 1, false, bpp / 8,
       littleEndian, validBits[series]);
-    return b;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -175,7 +175,7 @@ public class LIFReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -488,28 +488,20 @@ public class LIFReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(currentId);
 
-    sizeX = new int[numDatasets];
-    sizeY = new int[numDatasets];
-    sizeZ = new int[numDatasets];
-    sizeC = new int[numDatasets];
-    sizeT = new int[numDatasets];
-    pixelType = new int[numDatasets];
-    currentOrder = new String[numDatasets];
-    orderCertain = new boolean[numDatasets];
-    Arrays.fill(orderCertain, true);
-    validBits = new int[numDatasets][1];
-    cLengths = new int[numDatasets][];
-    cTypes = new String[numDatasets][];
+    core = new CoreMetadata(numDatasets);
+    Arrays.fill(core.orderCertain, true);
+    validBits = new int[numDatasets][];
 
     for (int i=0; i<numDatasets; i++) {
-      sizeX[i] = dims[i][0];
-      sizeY[i] = dims[i][1];
-      sizeZ[i] = dims[i][2];
-      sizeC[i] = dims[i][4];
-      sizeT[i] = dims[i][3];
-      currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
+      core.sizeX[i] = dims[i][0];
+      core.sizeY[i] = dims[i][1];
+      core.sizeZ[i] = dims[i][2];
+      core.sizeC[i] = dims[i][4];
+      core.sizeT[i] = dims[i][3];
+      core.currentOrder[i] = 
+        (core.sizeZ[i] > core.sizeT[i]) ? "XYCZT" : "XYCTZ";
 
-      validBits[i] = new int[sizeC[i] != 2 ? sizeC[i] : 3];
+      validBits[i] = new int[core.sizeC[i] != 2 ? core.sizeC[i] : 3];
       for (int j=0; j<validBits[i].length; j++) {
         validBits[i][j] = dims[i][5];
       }
@@ -517,13 +509,13 @@ public class LIFReader extends FormatReader {
       while (dims[i][5] % 8 != 0) dims[i][5]++;
       switch (dims[i][5]) {
         case 8:
-          pixelType[i] = FormatTools.UINT8;
+          core.pixelType[i] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[i] = FormatTools.UINT16;
+          core.pixelType[i] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[i] = FormatTools.FLOAT;
+          core.pixelType[i] = FormatTools.FLOAT;
           break;
       }
 
@@ -532,14 +524,14 @@ public class LIFReader extends FormatReader {
       store.setImage((String) seriesNames.get(i), null, null, ii);
 
       store.setPixels(
-        new Integer(dims[i][0]), // SizeX
-        new Integer(dims[i][1]), // SizeY
-        new Integer(dims[i][2]), // SizeZ
-        new Integer(dims[i][4]), // SizeC
-        new Integer(dims[i][3]), // SizeT
-        new Integer(pixelType[i]), // PixelType
+        new Integer(core.sizeX[0]), // SizeX
+        new Integer(core.sizeY[0]), // SizeY
+        new Integer(core.sizeZ[0]), // SizeZ
+        new Integer(core.sizeC[0]), // SizeC
+        new Integer(core.sizeT[0]), // SizeT
+        new Integer(core.pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
-        getDimensionOrder(currentId), // DimensionOrder
+        core.currentOrder[i], // DimensionOrder
         ii, // Image index
         null); // Pixels index
 
@@ -548,24 +540,17 @@ public class LIFReader extends FormatReader {
       Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
 
       store.setDimensions(xf, yf, zf, null, null, ii);
-      for (int j=0; j<sizeC[i]; j++) {
+      for (int j=0; j<core.sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
       }
 
       String zoom =
         (String) getMeta((String) seriesNames.get(i) + " - dblZoom");
       store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-        new Boolean(sizeC[i] > 1), new Boolean(sizeC[i] > 1),
-        new Boolean(sizeC[i] > 2), new Boolean(isRGB(currentId)), null, null,
-        null, null, null, ii, null, null, null, null, null);
-
+        new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
+        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB(currentId)), null, 
+        null, null, null, null, ii, null, null, null, null, null);
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new LIFReader().testRead(args);
   }
 
 }

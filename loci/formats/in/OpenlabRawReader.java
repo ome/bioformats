@@ -51,15 +51,6 @@ public class OpenlabRawReader extends FormatReader {
   /** Offset to each image's pixel data. */
   protected int[] offsets;
 
-  /** Image width. */
-  private int width;
-
-  /** Image height. */
-  private int height;
-
-  /** Number of channels. */
-  private int channels;
-
   /** Number of bytes per pixel. */
   private int bytesPerPixel;
 
@@ -70,45 +61,46 @@ public class OpenlabRawReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a RAW file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return (block[0] == 'O') && (block[1] == 'L') && (block[2] == 'R') &&
       (block[3] == 'W');
   }
 
-  /** Determines the number of images in the given RAW file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return channels > 1;
+    return core.sizeC[0] > 1;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return false;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given RAW file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[width * height * bytesPerPixel];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bytesPerPixel];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -116,11 +108,11 @@ public class OpenlabRawReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < width * height * bytesPerPixel) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * bytesPerPixel) {
       throw new FormatException("Buffer too small.");
     }
 
-    in.seek(offsets[no / channels] + 288);
+    in.seek(offsets[no / core.sizeC[0]] + 288);
     in.read(buf);
 
     if (bytesPerPixel == 1) {
@@ -132,13 +124,12 @@ public class OpenlabRawReader extends FormatReader {
     return buf;
   }
 
-  /** Obtains the specified image from the given RAW file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
-      !isRGB(id) ? 1 : channels, false, bytesPerPixel, false);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], 
+      core.sizeY[0], core.sizeC[0], false, bytesPerPixel, false);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -147,7 +138,7 @@ public class OpenlabRawReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -181,10 +172,10 @@ public class OpenlabRawReader extends FormatReader {
     offsets[0] = 12;
 
     in.readLong();
-    width = in.readInt();
-    height = in.readInt();
+    core.sizeX[0] = in.readInt();
+    core.sizeY[0] = in.readInt();
     in.read();
-    channels = in.read();
+    core.sizeC[0] = in.read();
     bytesPerPixel = in.read();
     in.read();
     Date timestamp = new Date(in.readLong());
@@ -196,64 +187,56 @@ public class OpenlabRawReader extends FormatReader {
     int len = s[0] > 0 ? s[0] : (s[0] + 256);
     addMeta("Image name", new String(s, 1, len).trim());
 
-    if (channels <= 1) channels = 1;
-    else channels = 3;
-    addMeta("Width", new Integer(width));
-    addMeta("Height", new Integer(height));
+    if (core.sizeC[0] < 1) core.sizeC[0] = 1;
+    else core.sizeC[0] = 3;
+    addMeta("Width", new Integer(core.sizeX[0]));
+    addMeta("Height", new Integer(core.sizeY[0]));
     addMeta("Bytes per pixel", new Integer(bytesPerPixel));
 
     for (int i=1; i<numImages; i++) {
-      offsets[i] = offsets[i-1] + 288 + width*height*bytesPerPixel;
+      offsets[i] = 
+        offsets[i-1] + 288 + core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
     }
 
     bytesPerPixel = ((Integer) getMeta("Bytes per pixel")).intValue();
 
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeZ[0] = numImages;
-    sizeC[0] = channels;
-    sizeT[0] = 1;
-    currentOrder[0] = "XYZTC";
+    core.sizeZ[0] = numImages;
+    core.sizeT[0] = 1;
+    core.currentOrder[0] = "XYZTC";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
     switch (bytesPerPixel) {
       case 1:
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         break;
       case 2:
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         break;
       case 3:
-        pixelType[0] = FormatTools.INT8;
+        core.pixelType[0] = FormatTools.INT8;
         break;
       default:
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
     }
 
     store.setImage((String) getMeta("Image name"), sdf.format(timestamp),
       null, null);
     store.setPixels(
-      (Integer) getMeta("Width"),
-      (Integer) getMeta("Height"),
-      new Integer(numImages),
-      new Integer(channels),
-      new Integer(1),
-      new Integer(pixelType[0]),
-      new Boolean(true),
-      "XYZTC",
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
+      Boolean.TRUE, 
+      core.currentOrder[0], 
       null,
       null);
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new OpenlabRawReader().testRead(args);
   }
 
 }

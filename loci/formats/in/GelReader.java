@@ -55,7 +55,7 @@ public class GelReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a GEL TIFF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
 
   // -- Internal BaseTiffReader API methods --
@@ -95,17 +95,11 @@ public class GelReader extends BaseTiffReader {
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
     addMeta("File units", units == null ? "unknown" : units);
 
-    sizeT[series] = numImages;
+    core.sizeT[series] = numImages;
 
     MetadataStore store = getMetadataStore(currentId);
     store.setDimensions(new Float(scale.floatValue()),
       new Float(scale.floatValue()), null, null, null, null);
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new GelReader().testRead(args);
   }
 
 }

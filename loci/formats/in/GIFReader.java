@@ -57,12 +57,6 @@ public class GIFReader extends FormatReader {
 
   private int status;
 
-  /** Full image width. */
-  private int width;
-
-  /** Full image height. */
-  private int height;
-
   /** Global color table used. */
   private boolean gctFlag;
 
@@ -143,40 +137,42 @@ public class GIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a GIF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
 
-  /** Determines the number of images in the given GIF file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numFrames;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id); 
     return !ignoreColorTable;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return true;
   }
 
-  /** Obtains the specified image from the given GIF file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[width * height * sizeC[0]];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -184,7 +180,7 @@ public class GIFReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < width * height * sizeC[0]) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0]) {
       throw new FormatException("Buffer too small.");
     }
 
@@ -203,14 +199,13 @@ public class GIFReader extends FormatReader {
     return buf;
   }
 
-  /** Obtains the specified image from the given GIF file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     byte[] bytes = openBytes(id, no);
-    BufferedImage b = ImageTools.makeImage(bytes, width, height,
-      bytes.length / (width * height), false, 1, true);
-    return b;
+    return ImageTools.makeImage(bytes, core.sizeX[0], core.sizeY[0],
+      bytes.length / (core.sizeX[0] * core.sizeY[0]), false, 1, true);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -219,7 +214,7 @@ public class GIFReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -249,8 +244,8 @@ public class GIFReader extends FormatReader {
 
     status("Reading dimensions");
 
-    width = DataTools.read2UnsignedBytes(in, true);
-    height = DataTools.read2UnsignedBytes(in, true);
+    core.sizeX[0] = DataTools.read2UnsignedBytes(in, true);
+    core.sizeY[0] = DataTools.read2UnsignedBytes(in, true);
 
     int packed = DataTools.readUnsignedByte(in);
     gctFlag = (packed & 0x80) != 0;
@@ -266,10 +261,11 @@ public class GIFReader extends FormatReader {
       gct = new int[256];
       int i = 0;
       int j = 0;
+      int r, g, b; 
       while (i < gctSize) {
-        int r = ((int) c[j++]) & 0xff;
-        int g = ((int) c[j++]) & 0xff;
-        int b = ((int) c[j++]) & 0xff;
+        r = ((int) c[j++]) & 0xff;
+        g = ((int) c[j++]) & 0xff;
+        b = ((int) c[j++]) & 0xff;
         gct[i++] = 0xff000000 | (r << 16) | (g << 8) | b;
       }
     }
@@ -398,30 +394,28 @@ public class GIFReader extends FormatReader {
 
     status("Populating metadata");
 
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeZ[0] = 1;
-    sizeC[0] = ignoreColorTable ? 1 : 3;
-    sizeT[0] = numFrames;
-    currentOrder[0] = "XYCTZ";
+    core.sizeZ[0] = 1;
+    core.sizeC[0] = ignoreColorTable ? 1 : 3;
+    core.sizeT[0] = numFrames;
+    core.currentOrder[0] = "XYCTZ";
 
     // populate metadata store
 
     MetadataStore store = getMetadataStore(id);
 
-    pixelType[0] = FormatTools.UINT8;
+    core.pixelType[0] = FormatTools.UINT8;
     store.setPixels(
-      new Integer(width),
-      new Integer(height),
-      new Integer(getSizeZ(id)),
-      new Integer(3),
-      new Integer(getSizeT(id)),
-      new Integer(pixelType[0]),
-      new Boolean(false),
-      getDimensionOrder(id),
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
+      Boolean.FALSE,
+      core.currentOrder[0],
       null,
       null);
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
@@ -557,7 +551,7 @@ public class GIFReader extends FormatReader {
 
   private void setPixels() {
     // expose destination image's pixels as an int array
-    int[] dest = new int[width * height];
+    int[] dest = new int[core.sizeX[0] * core.sizeY[0]];
     int lastImage = -1;
 
     // fill in starting image contents based on last image's dispose code
@@ -569,7 +563,7 @@ public class GIFReader extends FormatReader {
 
       if (lastImage != -1) {
         int[] prev = (int[]) images.get(lastImage);
-        System.arraycopy(prev, 0, dest, 0, width * height);
+        System.arraycopy(prev, 0, dest, 0, core.sizeX[0] * core.sizeY[0]);
       }
     }
 
@@ -601,11 +595,11 @@ public class GIFReader extends FormatReader {
         iline += inc;
       }
       line += iy;
-      if (line < height) {
-        int k = line * width;
+      if (line < core.sizeY[0]) {
+        int k = line * core.sizeX[0];
         int dx = k + ix; // start of line in dest
         int dlim = dx + iw; // end of dest line
-        if ((k + width) < dlim) dlim = k + width; // past dest edge
+        if ((k + core.sizeX[0]) < dlim) dlim = k + core.sizeX[0];
         int sx = i * iw; // start of line in source
         while (dx < dlim) {
           // map color and insert in destination
@@ -616,12 +610,6 @@ public class GIFReader extends FormatReader {
       }
     }
     images.add(dest);
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new GIFReader().testRead(args);
   }
 
 }

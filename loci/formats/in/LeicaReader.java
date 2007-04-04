@@ -59,23 +59,11 @@ public class LeicaReader extends FormatReader {
   /** Helper readers. */
   protected TiffReader[][] tiff;
 
-  /** Number of channels in the current series. */
-  protected int[] numChannels;
-
   /** Array of image file names. */
   protected Vector[] files;
 
   /** Number of series in the file. */
   private int numSeries;
-
-  /** Image widths. */
-  private int[] widths;
-
-  /** Image heights. */
-  private int[] heights;
-
-  /** Number of Z slices. */
-  private int[] zs;
 
   /** Total number of planes in each series. */
   private int[] numPlanes;
@@ -95,7 +83,7 @@ public class LeicaReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Leica file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block.length < 4) return false;
 
@@ -124,7 +112,7 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  /** Determines the number of images in the given Leica file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
       initFile(id);
@@ -132,7 +120,7 @@ public class LeicaReader extends FormatReader {
     return numPlanes[series];
   }
 
-  /** Return the number of series in the given Leica file. */
+  /* @see loci.formats.IFormatReader#getSeriesCount(String) */ 
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
       initFile(id);
@@ -140,7 +128,7 @@ public class LeicaReader extends FormatReader {
     return numSeries;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
       initFile(id);
@@ -148,7 +136,7 @@ public class LeicaReader extends FormatReader {
     return tiff[series][0].isRGB((String) files[series].get(0));
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
       initFile(id);
@@ -156,14 +144,14 @@ public class LeicaReader extends FormatReader {
     return littleEndian;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return true;
   }
 
-  /** Obtains the specified image from the given Leica file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -179,6 +167,7 @@ public class LeicaReader extends FormatReader {
     return b;
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -191,7 +180,7 @@ public class LeicaReader extends FormatReader {
     return buf;
   }
 
-  /** Obtains the specified image from the given Leica file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -244,7 +233,7 @@ public class LeicaReader extends FormatReader {
     else close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -399,15 +388,11 @@ public class LeicaReader extends FormatReader {
 
       if (v.size() < numSeries) numSeries = v.size();
 
-      numChannels = new int[numSeries];
-      widths = new int[numSeries];
-      heights = new int[numSeries];
-      zs = new int[numSeries];
+      core = new CoreMetadata(numSeries);
+
       headerIFDs = new Hashtable[numSeries];
       files = new Vector[numSeries];
       numPlanes = new int[numSeries];
-      cLengths = new int[numSeries][];
-      cTypes = new String[numSeries][];
 
       v.copyInto(headerIFDs);
 
@@ -687,13 +672,13 @@ public class LeicaReader extends FormatReader {
         // the image data
         // ID_IMAGES
 
-        zs[i] = DataTools.bytesToInt(temp, 0, 4, littleEndian);
-        widths[i] = DataTools.bytesToInt(temp, 4, 4, littleEndian);
-        heights[i] = DataTools.bytesToInt(temp, 8, 4, littleEndian);
+        core.sizeZ[i] = DataTools.bytesToInt(temp, 0, 4, littleEndian);
+        core.sizeX[i] = DataTools.bytesToInt(temp, 4, 4, littleEndian);
+        core.sizeY[i] = DataTools.bytesToInt(temp, 8, 4, littleEndian);
 
-        addMeta("Number of images", new Integer(zs[i]));
-        addMeta("Image width", new Integer(widths[i]));
-        addMeta("Image height", new Integer(heights[i]));
+        addMeta("Number of images", new Integer(core.sizeZ[i]));
+        addMeta("Image width", new Integer(core.sizeX[i]));
+        addMeta("Image height", new Integer(core.sizeY[i]));
         addMeta("Bits per Sample",
           new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
         addMeta("Samples per pixel",
@@ -972,7 +957,7 @@ public class LeicaReader extends FormatReader {
         pt += 4;
 
         if (nChannels > 4) nChannels = 3;
-        numChannels[i] = nChannels;
+        core.sizeC[i] = nChannels;
 
         for (int j=0; j<nChannels; j++) {
           addMeta("LUT Channel " + j + " version",
@@ -1014,30 +999,23 @@ public class LeicaReader extends FormatReader {
       }
     }
 
-    sizeX = widths;
-    sizeY = heights;
-    sizeZ = zs;
-    sizeC = numChannels;
-    sizeT = new int[numSeries];
-    pixelType = new int[numSeries];
-    currentOrder = new String[numSeries];
-    orderCertain = new boolean[numSeries];
-    Arrays.fill(orderCertain, true);
+    core = new CoreMetadata(numSeries);
+    Arrays.fill(core.orderCertain, true);
 
     // sizeC is null here if the file we opened was a TIFF.
     // However, the sizeC field will be adjusted anyway by
     // a later call to BaseTiffReader.initMetadata.
-    if (sizeC != null) {
+    if (core.sizeC != null) {
       try {
         int oldSeries = getSeries(currentId);
-        for (int i=0; i<sizeC.length; i++) {
+        for (int i=0; i<core.sizeC.length; i++) {
           setSeries(currentId, i);
           if (!ignoreColorTable) {
-            if (isRGB(currentId)) sizeC[i] = 3;
-            else sizeC[i] = 1;
+            if (isRGB(currentId)) core.sizeC[i] = 3;
+            else core.sizeC[i] = 1;
           }
           else {
-            sizeZ[i] /= sizeC[i];
+            core.sizeZ[i] /= core.sizeC[i];
           }
         }
         setSeries(currentId, oldSeries);
@@ -1053,10 +1031,10 @@ public class LeicaReader extends FormatReader {
     Integer v = (Integer) getMeta("Real world resolution");
 
     if (v != null) {
-      validBits = new int[sizeC.length][];
+      validBits = new int[core.sizeC.length][];
 
       for (int i=0; i<validBits.length; i++) {
-        validBits[i] = new int[sizeC[i] == 2 ? 3 : sizeC[i]];
+        validBits[i] = new int[core.sizeC[i] == 2 ? 3 : core.sizeC[i]];
         for (int j=0; j<validBits[i].length; j++) {
           validBits[i][j] = v.intValue();
         }
@@ -1077,46 +1055,46 @@ public class LeicaReader extends FormatReader {
     }
 
     for (int i=0; i<numSeries; i++) {
-      orderCertain[i] = true;
+      core.orderCertain[i] = true;
 
-      if (sizeC[i] == 0) sizeC[i] = 1;
-      sizeT[i] += 1;
-      currentOrder[i] = sizeC[i] == 1 ? "XYZTC" : "XYCZT";
-      if (sizeZ[i] == 0) sizeZ[i] = 1;
+      if (core.sizeC[i] == 0) core.sizeC[i] = 1;
+      core.sizeT[i] += 1;
+      core.currentOrder[i] = core.sizeC[i] == 1 ? "XYZTC" : "XYCZT";
+      if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
 
       int tPixelType = ((Integer) getMeta("Bytes per pixel")).intValue();
       switch (tPixelType) {
         case 1:
-          pixelType[i] = FormatTools.UINT8;
+          core.pixelType[i] = FormatTools.UINT8;
           break;
         case 2:
-          pixelType[i] = FormatTools.UINT16;
+          core.pixelType[i] = FormatTools.UINT16;
           break;
         case 3:
-          pixelType[i] = FormatTools.UINT8;
+          core.pixelType[i] = FormatTools.UINT8;
           break;
         case 4:
-          pixelType[i] = FormatTools.INT32;
+          core.pixelType[i] = FormatTools.INT32;
           break;
         case 6:
-          pixelType[i] = FormatTools.INT16;
+          core.pixelType[i] = FormatTools.INT16;
           break;
         case 8:
-          pixelType[i] = FormatTools.DOUBLE;
+          core.pixelType[i] = FormatTools.DOUBLE;
           break;
       }
 
       Integer ii = new Integer(i);
 
       store.setPixels(
-        new Integer(widths[i]),
-        new Integer(heights[i]),
-        new Integer(zs[i]),
-        new Integer(numChannels[i] == 0 ? 1 : numChannels[i]), // SizeC
-        new Integer(sizeT[i]), // SizeT
-        new Integer(pixelType[i]), // PixelType
+        new Integer(core.sizeX[i]),
+        new Integer(core.sizeY[i]),
+        new Integer(core.sizeZ[i]),
+        new Integer(core.sizeC[i] == 0 ? 1 : core.sizeC[i]), // SizeC
+        new Integer(core.sizeT[i]), // SizeT
+        new Integer(core.pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
-        "XYZTC", // DimensionOrder
+        core.currentOrder[i], // DimensionOrder
         ii, null);
 
       String timestamp = (String) getMeta("Timestamp " + (i+1));
@@ -1132,7 +1110,7 @@ public class LeicaReader extends FormatReader {
 
       store.setImage(null, timestamp, description, ii);
 
-      for (int j=0; j<sizeC[0]; j++) {
+      for (int j=0; j<core.sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
         // TODO : get channel min/max from metadata 
         /* 
@@ -1162,12 +1140,6 @@ public class LeicaReader extends FormatReader {
       }
     }
     return false;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new LeicaReader().testRead(args);
   }
 
 }

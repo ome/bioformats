@@ -56,20 +56,11 @@ public class DeltavisionReader extends FormatReader {
   /** Byte array containing extended header data. */
   protected byte[] extHeader;
 
-  /** Image width. */
-  private int width;
-
-  /** Image height. */
-  private int height;
-
   /** Bytes per pixel. */
   private int bytesPerPixel;
 
   /** Offset where the ExtHdr starts. */
   protected int initExtHdrOffset = 1024;
-
-  /** Dimension order. */
-  private String order;
 
   /** Size of one wave in the extended header. */
   protected int wSize;
@@ -79,10 +70,6 @@ public class DeltavisionReader extends FormatReader {
 
   /** Size of one time element in the extended header. */
   protected int tSize;
-
-  protected int numT;
-  protected int numW;
-  protected int numZ;
 
   /**
    * the Number of ints in each extended header section. These fields appear
@@ -103,45 +90,15 @@ public class DeltavisionReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Deltavision file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return (DataTools.bytesToShort(block, 0, 2, little) == LITTLE_ENDIAN);
   }
 
-  /** Determines the number of images in the given Deltavision file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
-  }
-
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numZ;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numW;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numT;
   }
 
   /* @see loci.formats.IFormatReader#isRGB(String) */
@@ -149,25 +106,25 @@ public class DeltavisionReader extends FormatReader {
     return false;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return little;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[width * height * bytesPerPixel];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bytesPerPixel];
     return openBytes(id, no, buf);
   }
 
@@ -183,20 +140,19 @@ public class DeltavisionReader extends FormatReader {
 
     // read the image plane's pixel data
     int offset = header.length + extHeader.length;
-    offset += width * height * bytesPerPixel * no;
+    offset += core.sizeX[0] * core.sizeY[0] * bytesPerPixel * no;
 
     in.seek(offset);
     in.read(buf);
     return buf;
   }
 
-  /** Obtains the specified image from the given Deltavision file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1,
-      false, bytesPerPixel, little);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], 
+      core.sizeY[0], 1, false, bytesPerPixel, little);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -205,7 +161,7 @@ public class DeltavisionReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -233,11 +189,11 @@ public class DeltavisionReader extends FormatReader {
     extHeader = new byte[extSize];
     in.read(extHeader);
 
-    width = DataTools.bytesToInt(header, 0, 4, little);
-    height = DataTools.bytesToInt(header, 4, 4, little);
+    core.sizeX[0] = DataTools.bytesToInt(header, 0, 4, little);
+    core.sizeY[0] = DataTools.bytesToInt(header, 4, 4, little);
 
-    Integer xSize = new Integer(width);
-    Integer ySize = new Integer(height);
+    Integer xSize = new Integer(core.sizeX[0]);
+    Integer ySize = new Integer(core.sizeY[0]);
     addMeta("ImageWidth", xSize);
     addMeta("ImageHeight", ySize);
     addMeta("NumberOfImages", new Integer(DataTools.bytesToInt(header,
@@ -248,37 +204,37 @@ public class DeltavisionReader extends FormatReader {
     switch (filePixelType) {
       case 0:
         pixel = "8 bit unsigned integer";
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         bytesPerPixel = 1;
         break;
       case 1:
         pixel = "16 bit signed integer";
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         bytesPerPixel = 2;
         break;
       case 2:
         pixel = "32 bit floating point";
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         bytesPerPixel = 4;
         break;
       case 3:
         pixel = "32 bit complex";
-        pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.UINT32;
         bytesPerPixel = 4;
         break;
       case 4:
         pixel = "64 bit complex";
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         bytesPerPixel = 8;
         break;
       case 6:
         pixel = "16 bit unsigned integer";
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         bytesPerPixel = 2;
         break;
       default:
         pixel = "unknown";
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         bytesPerPixel = 1;
     }
 
@@ -383,27 +339,26 @@ public class DeltavisionReader extends FormatReader {
       Float.intBitsToFloat(DataTools.bytesToInt(header, 176, 4, little)));
     addMeta("Wavelength 5 max. intensity", wave5Max);
 
-    numT = DataTools.bytesToShort(header, 180, 2, little);
-    addMeta("Number of timepoints", new Integer(numT));
+    core.sizeT[0] = DataTools.bytesToShort(header, 180, 2, little);
+    addMeta("Number of timepoints", new Integer(core.sizeT[0]));
 
     int sequence = DataTools.bytesToInt(header, 182, 4, little);
     String imageSequence;
-    String dimOrder;
     switch (sequence) {
       case 0:
-        imageSequence = "ZTW"; dimOrder = "XYZTC";
+        imageSequence = "ZTW"; core.currentOrder[0] = "XYZTC";
         break;
       case 1:
-        imageSequence = "WZT"; dimOrder = "XYCZT";
+        imageSequence = "WZT"; core.currentOrder[0] = "XYCZT";
         break;
       case 2:
-        imageSequence = "ZWT"; dimOrder = "XYZCT";
+        imageSequence = "ZWT"; core.currentOrder[0] = "XYZCT";
         break;
       case 65536:
-        imageSequence = "WZT"; dimOrder = "XYCZT";
+        imageSequence = "WZT"; core.currentOrder[0] = "XYCZT";
         break;
       default:
-        imageSequence = "unknown"; dimOrder = "XYZTC";
+        imageSequence = "unknown"; core.currentOrder[0] = "XYZTC";
     }
     addMeta("Image sequence", imageSequence);
 
@@ -414,10 +369,10 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Z axis tilt angle", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 192, 4, little))));
 
-    numW = DataTools.bytesToShort(header, 196, 2, little);
-    addMeta("Number of wavelengths", new Integer(numW));
-    numZ = numImages / (numW * numT);
-    addMeta("Number of focal planes", new Integer(numZ));
+    core.sizeC[0] = DataTools.bytesToShort(header, 196, 2, little);
+    addMeta("Number of wavelengths", new Integer(core.sizeC[0]));
+    core.sizeZ[0] = numImages / (core.sizeC[0] * core.sizeT[0]);
+    addMeta("Number of focal planes", new Integer(core.sizeZ[0]));
 
     addMeta("Wavelength 1 (in nm)", new Integer(DataTools.bytesToShort(
       header, 198, 2, little)));
@@ -436,8 +391,6 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Z origin (in um)", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 216, 4, little))));
 
-    order = dimOrder;
-
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
@@ -448,25 +401,20 @@ public class DeltavisionReader extends FormatReader {
       addMeta("Title " + i, title);
     }
 
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeZ[0] = numZ;
-    sizeC[0] = numW;
-    sizeT[0] = numT;
-    currentOrder[0] = order;
-
     // ----- The Extended Header data handler begins here ------
 
     status("Reading extended header");
 
     numIntsPerSection = DataTools.bytesToInt(header, 128, 2, little);
     numFloatsPerSection = DataTools.bytesToInt(header, 130, 2, little);
-    setOffsetInfo(sequence, numZ, numW, numT);
-    extHdrFields = new DVExtHdrFields[numZ][numW][numT];
+    setOffsetInfo(sequence, core.sizeZ[0], core.sizeC[0], core.sizeT[0]);
+    extHdrFields = 
+      new DVExtHdrFields[core.sizeZ[0]][core.sizeC[0]][core.sizeT[0]];
 
-    store.setPixels(new Integer(width), new Integer(height), new Integer(numZ),
-      new Integer(numW), new Integer(numT), new Integer(pixelType[0]),
-      new Boolean(!little), dimOrder, null, null);
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]), 
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
+      new Boolean(!little), core.currentOrder[0], null, null);
 
     store.setDimensions(
       (Float) getMeta("X element length (in um)"),
@@ -481,9 +429,9 @@ public class DeltavisionReader extends FormatReader {
 
     // Run through every timeslice, for each wavelength, for each z section
     // and fill in the Extended Header information array for that image
-    for (int z = 0; z < numZ; z++) {
-      for (int t = 0; t < numT; t++) {
-        for (int w = 0; w < numW; w++) {
+    for (int z = 0; z < core.sizeZ[0]; z++) {
+      for (int t = 0; t < core.sizeT[0]; t++) {
+        for (int w = 0; w < core.sizeC[0]; w++) {
           extHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z, w, t),
             numIntsPerSection, extHeader, little);
 
@@ -496,7 +444,7 @@ public class DeltavisionReader extends FormatReader {
 
     status("Populating metadata");
 
-    for (int w=0; w<numW; w++) {
+    for (int w=0; w<core.sizeC[0]; w++) {
       store.setLogicalChannel(w, null,
         new Float(extHdrFields[0][w][0].getNdFilter()),
         (Integer) getMeta("Wavelength " + (w+1) + " (in nm)"),
@@ -509,23 +457,23 @@ public class DeltavisionReader extends FormatReader {
       new Float(extHdrFields[0][0][0].getStageYCoord()),
       new Float(extHdrFields[0][0][0].getStageZCoord()), null);
 
-    if (numW > 0) {
+    if (core.sizeC[0] > 0) {
       store.setChannelGlobalMinMax(0, new Double(wave1Min.floatValue()),
         new Double(wave1Max.floatValue()), null);
     }
-    if (numW > 1) {
+    if (core.sizeC[0] > 1) {
       store.setChannelGlobalMinMax(1, new Double(wave2Min.floatValue()),
         new Double(wave2Max.floatValue()), null);
     }
-    if (numW > 2) {
+    if (core.sizeC[0] > 2) {
       store.setChannelGlobalMinMax(2, new Double(wave3Min.floatValue()),
         new Double(wave3Max.floatValue()), null);
     }
-    if (numW > 3) {
+    if (core.sizeC[0] > 3) {
       store.setChannelGlobalMinMax(3, new Double(wave4Min.floatValue()),
         new Double(wave4Max.floatValue()), null);
     }
-    if (numW > 4) {
+    if (core.sizeC[0] > 4) {
       store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()),
         new Double(wave5Max.floatValue()), null);
     }
@@ -764,12 +712,6 @@ public class DeltavisionReader extends FormatReader {
     public float getEmWavelen() { return emWavelen; }
     public float getIntenScaling() { return intenScaling; }
 
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new DeltavisionReader().testRead(args);
   }
 
 }

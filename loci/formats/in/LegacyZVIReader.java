@@ -77,8 +77,6 @@ public class LegacyZVIReader extends FormatReader {
   /** Counters of image elements */
   private int numZ = 0, numC = 0, numT = 0;
 
-  /** dimension order within file */
-  private String dimensionOrder  = "XYCZT";
   private int cFlag = 0, zFlag = 0, tFlag = 0;
 
   // -- Constructor --
@@ -88,7 +86,7 @@ public class LegacyZVIReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a ZVI file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block == null) return false;
     int len = block.length < ZVI_SIG.length ? block.length : ZVI_SIG.length;
@@ -98,25 +96,25 @@ public class LegacyZVIReader extends FormatReader {
     return true;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return (bytesPerPixel == 3) || (bytesPerPixel > 4);
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given ZVI file, as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -124,6 +122,7 @@ public class LegacyZVIReader extends FormatReader {
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -137,13 +136,13 @@ public class LegacyZVIReader extends FormatReader {
     return buf;
   }
 
-  /** Determines the number of images in the given ZVI file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return blockList.size();
   }
 
-  /** Obtains the specified image from the given ZVI file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -156,9 +155,7 @@ public class LegacyZVIReader extends FormatReader {
     if (debug) debug("Reading image #" + no + "...");
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
-
-    BufferedImage b = zviBlock.readImage(in);
-    return b;
+    return zviBlock.readImage(in);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -167,7 +164,7 @@ public class LegacyZVIReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -288,7 +285,7 @@ public class LegacyZVIReader extends FormatReader {
       if (!ok) continue;
 
       // everything checks out; looks like an image header to me
-//+ (mb) decoding strategy modification
+      //+ (mb) decoding strategy modification
       //      Some zvi images have the following structure:
       //        ZVI_SIG                    Decoding:
       //        ZVI_MAGIC_BLOCK_1
@@ -331,8 +328,8 @@ public class LegacyZVIReader extends FormatReader {
       status("Reading image header");
 
       // read more header information
-      int width = (int) DataTools.read4UnsignedBytes(in, true);
-      int height = (int) DataTools.read4UnsignedBytes(in, true);
+      core.sizeX[0] = (int) DataTools.read4UnsignedBytes(in, true);
+      core.sizeY[0] = (int) DataTools.read4UnsignedBytes(in, true);
       // don't know what this is for
       int alwaysOne = (int) DataTools.read4UnsignedBytes(in, true);
       bytesPerPixel = (int) DataTools.read4UnsignedBytes(in, true);
@@ -346,51 +343,51 @@ public class LegacyZVIReader extends FormatReader {
       switch (pixType) {
         case 1:
           type = "8 bit rgb tuple, 24 bpp";
-          pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.INT8;
           break;
         case 2:
           type = "8 bit rgb quad, 32 bpp";
-          pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.INT8;
           break;
         case 3:
           type = "8 bit grayscale";
-          pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.INT8;
           break;
         case 4:
           type = "16 bit signed int, 16 bpp";
-          pixelType[0] = FormatTools.INT16;
+          core.pixelType[0] = FormatTools.INT16;
           break;
         case 5:
           type = "32 bit int, 32 bpp";
-          pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.INT32;
           break;
         case 6:
           type = "32 bit float, 32 bpp";
-          pixelType[0] = FormatTools.FLOAT;
+          core.pixelType[0] = FormatTools.FLOAT;
           break;
         case 7:
           type = "64 bit float, 64 bpp";
-          pixelType[0] = FormatTools.DOUBLE;
+          core.pixelType[0] = FormatTools.DOUBLE;
           break;
         case 8:
           type = "16 bit unsigned short triple, 48 bpp";
-          pixelType[0] = FormatTools.INT16;
+          core.pixelType[0] = FormatTools.INT16;
           break;
         case 9:
           type = "32 bit int triple, 96 bpp";
-          pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.INT32;
           break;
         default:
           type = "undefined pixel type (" + pixType + ")";
       }
 
-      addMeta("Width", new Integer(width));
-      addMeta("Height", new Integer(height));
+      addMeta("Width", new Integer(core.sizeX[0]));
+      addMeta("Height", new Integer(core.sizeY[0]));
       addMeta("PixelType", type);
       addMeta("BPP", new Integer(bytesPerPixel));
 
-      ZVIBlock zviBlock = new ZVIBlock(theZ, theC, theT, width, height,
-        alwaysOne, bytesPerPixel, pixType, bitDepth, pos);
+      ZVIBlock zviBlock = new ZVIBlock(theZ, theC, theT, core.sizeX[0], 
+        core.sizeY[0], alwaysOne, bytesPerPixel, pixType, bitDepth, pos);
       if (debug) debug(zviBlock.toString());
 
       // perform some checks on the header info
@@ -406,53 +403,51 @@ public class LegacyZVIReader extends FormatReader {
       if ((numI == 2) && (tSet.size() == 2))  tFlag = 1;
 
       if ((numI % 3 == 0) && (zSet.size() > 1) && (cFlag == 1)) {
-        dimensionOrder = "XYCZT";
+        core.currentOrder[0] = "XYCZT";
       }
       if ((numI % 3 == 0) && (tSet.size() > 1) && (cFlag == 1)) {
-        dimensionOrder = "XYCTZ";
+        core.currentOrder[0] = "XYCTZ";
       }
       if ((numI % 3 == 0) && (cSet.size() > 1) && (zFlag == 1)) {
-        dimensionOrder = "XYZCT";
+        core.currentOrder[0] = "XYZCT";
       }
       if ((numI % 3 == 0) && (tSet.size() > 1) && (zFlag == 1)) {
-        dimensionOrder = "XYZTC";
+        core.currentOrder[0] = "XYZTC";
       }
       if ((numI % 3 == 0) && (cSet.size() > 1) && (tFlag == 1)) {
-        dimensionOrder = "XYTCZ";
+        core.currentOrder[0] = "XYTCZ";
       }
       if ((numI % 3 == 0) && (zSet.size() > 1) && (tFlag == 1)) {
-        dimensionOrder = "XYTZC";
+        core.currentOrder[0] = "XYTZC";
       }
 
       // save this image block's position
       blockList.add(zviBlock);
-      pos += width * height * bytesPerPixel;
+      pos += core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
 
-      sizeX[0] = openImage(id, 0).getWidth();
-      sizeY[0] = openImage(id, 0).getHeight();
-      sizeZ[0] = zSet.size();
-      sizeC[0] = cSet.size();
-      sizeT[0] = tSet.size();
-      currentOrder[0] = dimensionOrder;
+      core.sizeX[0] = openImage(id, 0).getWidth();
+      core.sizeY[0] = openImage(id, 0).getHeight();
+      core.sizeZ[0] = zSet.size();
+      core.sizeC[0] = cSet.size();
+      core.sizeT[0] = tSet.size();
 
       // Populate metadata store
 
-      // The metadata store we're working with.
       MetadataStore store = getMetadataStore(id);
 
       store.setPixels(
-        new Integer(width), // SizeX
-        new Integer(height), // SizeY
-        new Integer(getSizeZ(id)), // SizeZ
-        new Integer(getSizeC(id)), // SizeC
-        new Integer(getSizeT(id)), // SizeT
-        new Integer(pixelType[0]), // PixelType
+        new Integer(core.sizeX[0]), // SizeX
+        new Integer(core.sizeY[0]), // SizeY
+        new Integer(core.sizeZ[0]), // SizeZ
+        new Integer(core.sizeC[0]), // SizeC
+        new Integer(core.sizeT[0]), // SizeT
+        new Integer(core.pixelType[0]), // PixelType
         Boolean.FALSE, // BigEndian
-        new String(dimensionOrder), // DimensionOrder
+        core.currentOrder[0], // DimensionOrder
         null, // Use image index 0
         null); // Use pixels index 0
 
-      for (int i=0; i<sizeC[0]; i++) {
+      for (int i=0; i<core.sizeC[0]; i++) {
         store.setLogicalChannel(i, null, null, null, null, null, null, null);
       }
     }

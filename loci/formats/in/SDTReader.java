@@ -95,22 +95,24 @@ public class SDTReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /** Checks if the given block is a valid header for an SDT file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
 
-  /** Determines the number of images in the given SDT file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return channels;
   }
 
-  /** Get the size of the C dimension. */
+  /* @see loci.formats.IFormatReader#getSizeC(String) */ 
   public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
     return intensity ? channels : (timeBins * channels);
   }
 
   /* @see loci.formats.IFormatReader#getRGBChannelCount(String) */
   public int getRGBChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
     return intensity ? 1 : timeBins;
   }
 
@@ -118,6 +120,7 @@ public class SDTReader extends FormatReader {
   public int[] getChannelDimLengths(String id)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
     return intensity ? new int[] {channels} : new int[] {timeBins, channels};
   }
 
@@ -125,32 +128,35 @@ public class SDTReader extends FormatReader {
   public String[] getChannelDimTypes(String id)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
     return intensity ? new String[] {FormatTools.SPECTRA} :
       new String[] {FormatTools.LIFETIME, FormatTools.SPECTRA};
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
     return !intensity && subC == 0;
   }
 
-  /** Obtains the specified image from the given SDT file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     int c = getRGBChannelCount(id);
-    byte[] buf = new byte[2 * c * sizeX[series] * sizeY[series]];
+    byte[] buf = new byte[2 * c * core.sizeX[series] * core.sizeY[series]];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -159,14 +165,15 @@ public class SDTReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
     int c = getRGBChannelCount(id);
-    if (buf.length < 2 * c * sizeX[series] * sizeY[series]) {
+    if (buf.length < 2 * c * core.sizeX[series] * core.sizeY[series]) {
       throw new FormatException("Buffer too small");
     }
 
     if (intensity) {
-      in.seek(off + 2 * sizeX[series] * sizeY[series] * timeBins * no);
-      for (int y=0; y<sizeY[series]; y++) {
-        for (int x=0; x<sizeX[series]; x++) {
+      in.seek(off + 2 * core.sizeX[series] * core.sizeY[series] * 
+        timeBins * no);
+      for (int y=0; y<core.sizeY[series]; y++) {
+        for (int x=0; x<core.sizeX[series]; x++) {
           // read all lifetime bins at this pixel for this channel
 
           // combine lifetime bins into intensity value
@@ -174,18 +181,18 @@ public class SDTReader extends FormatReader {
           for (int t=0; t<timeBins; t++) {
             sum += DataTools.read2SignedBytes(in, true);
           }
-          int ndx = 2 * (sizeX[0] * y + x);
+          int ndx = 2 * (core.sizeX[0] * y + x);
           buf[ndx] = (byte) (sum & 0xff);
           buf[ndx + 1] = (byte) ((sum >> 8) & 0xff);
         }
       }
     }
     else {
-      in.seek(off + 2 * sizeX[series] * sizeY[series] * timeBins * no);
-      for (int y=0; y<sizeY[series]; y++) {
-        for (int x=0; x<sizeX[series]; x++) {
+      in.seek(off + 2 * core.sizeX[series]*core.sizeY[series] * timeBins * no);
+      for (int y=0; y<core.sizeY[series]; y++) {
+        for (int x=0; x<core.sizeX[series]; x++) {
           for (int t=0; t<timeBins; t++) {
-            int ndx = 2 * (timeBins * sizeX[0] * y + timeBins * x + t);
+            int ndx = 2 * (timeBins * core.sizeX[0] * y + timeBins * x + t);
             in.readFully(buf, ndx, 2);
           }
         }
@@ -194,13 +201,12 @@ public class SDTReader extends FormatReader {
     return buf;
   }
 
-  /** Obtains the specified image from the given SDT file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no),
-      sizeX[series], sizeY[series], getRGBChannelCount(id), false, 2, true);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[series], 
+      core.sizeY[series], getRGBChannelCount(id), false, 2, true);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -209,7 +215,7 @@ public class SDTReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -237,28 +243,22 @@ public class SDTReader extends FormatReader {
 
     status("Populating metadata");
 
-    sizeX[0] = info.width;
-    sizeY[0] = info.height;
-    sizeZ[0] = 1;
-    sizeC[0] = channels;
-    sizeT[0] = 1;
-    currentOrder[0] = "XYZTC";
-    pixelType[0] = FormatTools.UINT16;
+    core.sizeX[0] = info.width;
+    core.sizeY[0] = info.height;
+    core.sizeZ[0] = 1;
+    core.sizeC[0] = channels;
+    core.sizeT[0] = 1;
+    core.currentOrder[0] = "XYZTC";
+    core.pixelType[0] = FormatTools.UINT16;
 
     MetadataStore store = getMetadataStore(id);
-    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
-      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), new Integer(pixelType[0]),
-      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null, null);
-    for (int i=0; i<sizeC[0]; i++) {
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
+      new Boolean(!isLittleEndian(id)), core.currentOrder[0], null, null);
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new SDTReader().testRead(args);
   }
 
 }

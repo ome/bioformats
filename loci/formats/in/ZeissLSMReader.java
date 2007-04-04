@@ -43,20 +43,6 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Tag identifying a Zeiss LSM file. */
   private static final int ZEISS_ID = 34412;
 
-  // -- Fields --
-
-  /** Number of timepoints. */
-  private int tSize;
-
-  /** Number of Z slices. */
-  private int zSize;
-
-  /** Number of channels. */
-  private int channels;
-
-  /** Dimension order. */
-  private String dimOrder;
-
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -64,7 +50,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Zeiss LSM file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block.length < 3) return false;
     if (block[0] != TiffTools.LITTLE) return false; // denotes little-endian
@@ -90,7 +76,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
-  /** Obtains a thumbnail for the specified image from the given file. */
+  /* @see loci.formats.IFormatReader#openThumbImage(String, int) */ 
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
@@ -103,21 +89,21 @@ public class ZeissLSMReader extends BaseTiffReader {
     return super.openThumbImage(id, no);
   }
 
-  /** Get the size of the X dimension for the thumbnail. */
+  /* @see loci.formats.IFormatReader#getThumbSizeX(String) */ 
   public int getThumbSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     if (ifds.length == 1) return super.getThumbSizeX(id);
     return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 1);
   }
 
-  /** Get the size of the Y dimension for the thumbnail. */
+  /* @see loci.formats.IFormatReader#getThumbSizeY(String) */ 
   public int getThumbSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     if (ifds.length == 1) return super.getThumbSizeY(id);
     return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 1);
   }
 
-  /** Obtains the specified image from the given file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -127,11 +113,10 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
 
     ifds = TiffTools.getIFDs(in);
-    BufferedImage b = TiffTools.getImage(ifds[2*no], in);
-    return b;
+    return TiffTools.getImage(ifds[2*no], in);
   }
 
-  /** Obtains the specified image from the given file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -140,8 +125,8 @@ public class ZeissLSMReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[] b = new byte[sizeX[0] * sizeY[0] * sizeC[0] * 
-      FormatTools.getBytesPerPixel(pixelType[0])]; 
+    byte[] b = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * 
+      FormatTools.getBytesPerPixel(core.pixelType[0])]; 
     return openBytes(id, no, b);   
   }
 
@@ -154,9 +139,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
  
-    int bpp = FormatTools.getBytesPerPixel(pixelType[0]);
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
 
-    if (buf.length < sizeX[0] * sizeY[0] * sizeC[0] * bpp) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * bpp) {
       throw new FormatException("Buffer too small.");
     }
   
@@ -169,8 +154,6 @@ public class ZeissLSMReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissLSMReader.initFile(" + id + ")");
     super.initFile(id);
-
-    channels = 0;
 
     // go through the IFD hashtable array and
     // remove anything with NEW_SUBFILE_TYPE = 1
@@ -273,63 +256,65 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DimensionX", DataTools.read4SignedBytes(ras, little));
       put("DimensionY", DataTools.read4SignedBytes(ras, little));
 
-      sizeZ[0] = DataTools.read4SignedBytes(ras, little);
+      core.sizeZ[0] = DataTools.read4SignedBytes(ras, little);
       int c = DataTools.read4SignedBytes(ras, little);
-      sizeT[0] = DataTools.read4SignedBytes(ras, little);
+      core.sizeT[0] = DataTools.read4SignedBytes(ras, little);
 
-      if (c > sizeC[0] || c != 1) sizeC[0] = c;
-      if (sizeC[0] == 0) sizeC[0]++;
+      if (c > core.sizeC[0] || c != 1) core.sizeC[0] = c;
+      if (core.sizeC[0] == 0) core.sizeC[0]++;
 
-      while (numImages > sizeZ[0] * sizeC[0] * sizeT[0]) {
-        if (sizeZ[0] > sizeT[0]) sizeZ[0]++;
-        else sizeT[0]++;
+      while (numImages > core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]) {
+        if (core.sizeZ[0] > core.sizeT[0]) core.sizeZ[0]++;
+        else core.sizeT[0]++;
       }
 
-      while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(currentId)) {
+      while (numImages > core.sizeZ[0] * core.sizeT[0] * 
+        getEffectiveSizeC(currentId)) 
+      {
         numImages--;
       }
 
-      put("DimensionZ", sizeZ[0]);
-      put("DimensionChannels", sizeC[0]);
-      put("DimensionTime", sizeT[0]);
+      put("DimensionZ", core.sizeZ[0]);
+      put("DimensionChannels", core.sizeC[0]);
+      put("DimensionTime", core.sizeT[0]);
 
       int dataType = DataTools.read4SignedBytes(ras, little);
       switch (dataType) {
         case 1:
           put("DataType", "8 bit unsigned integer");
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 2:
           put("DataType", "12 bit unsigned integer");
-          pixelType[0] = FormatTools.UINT16;
+          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 5:
           put("DataType", "32 bit float");
-          pixelType[0] = FormatTools.FLOAT;
+          core.pixelType[0] = FormatTools.FLOAT;
           break;
         case 0:
           put("DataType", "varying data types");
-          pixelType[0] = -1;
+          core.pixelType[0] = -1;
           break;
         default:
           put("DataType", "8 bit unsigned integer");
-          pixelType[0] = -1;
+          core.pixelType[0] = -1;
       }
 
-      if (pixelType[0] == -1) {
+      if (core.pixelType[0] == -1) {
         int[] bps = TiffTools.getBitsPerSample(ifd);
         switch (bps[0]) {
           case 8:
-            pixelType[0] = FormatTools.UINT8;
+            core.pixelType[0] = FormatTools.UINT8;
             break;
           case 16:
-            pixelType[0] = FormatTools.UINT16;
+            core.pixelType[0] = FormatTools.UINT16;
             break;
           case 32:
-            pixelType[0] = FormatTools.FLOAT;
+            core.pixelType[0] = FormatTools.FLOAT;
             break;
           default:
-            pixelType[0] = FormatTools.UINT8;
+            core.pixelType[0] = FormatTools.UINT8;
         }
       }
 
@@ -348,67 +333,67 @@ public class ZeissLSMReader extends BaseTiffReader {
       switch (scanType) {
         case 0:
           put("ScanType", "x-y-z scan");
-          currentOrder[0] = "XYZCT";
+          core.currentOrder[0] = "XYZCT";
           break;
         case 1:
           put("ScanType", "z scan (x-z plane)");
-          currentOrder[0] = "XYZCT";
+          core.currentOrder[0] = "XYZCT";
           break;
         case 2:
           put("ScanType", "line scan");
-          currentOrder[0] = "XYZCT";
+          core.currentOrder[0] = "XYZCT";
           break;
         case 3:
           put("ScanType", "time series x-y");
-          currentOrder[0] = "XYTCZ";
+          core.currentOrder[0] = "XYTCZ";
           break;
         case 4:
           put("ScanType", "time series x-z");
-          currentOrder[0] = "XYZTC";
+          core.currentOrder[0] = "XYZTC";
           break;
         case 5:
           put("ScanType", "time series 'Mean of ROIs'");
-          currentOrder[0] = "XYTCZ";
+          core.currentOrder[0] = "XYTCZ";
           break;
         case 6:
           put("ScanType", "time series x-y-z");
-          currentOrder[0] = "XYZTC";
+          core.currentOrder[0] = "XYZTC";
           break;
         case 7:
           put("ScanType", "spline scan");
-          currentOrder[0] = "XYCTZ";
+          core.currentOrder[0] = "XYCTZ";
           break;
         case 8:
           put("ScanType", "spline scan x-z");
-          currentOrder[0] = "XYCZT";
+          core.currentOrder[0] = "XYCZT";
           break;
         case 9:
           put("ScanType", "time series spline plane x-z");
-          currentOrder[0] = "XYTCZ";
+          core.currentOrder[0] = "XYTCZ";
           break;
         case 10:
           put("ScanType", "point mode");
-          currentOrder[0] = "XYZCT";
+          core.currentOrder[0] = "XYZCT";
           break;
         default:
           put("ScanType", "x-y-z scan");
-          currentOrder[0] = "XYZCT";
+          core.currentOrder[0] = "XYZCT";
       }
 
       MetadataStore store = getMetadataStore(currentId);
 
       store.setPixels(
-        new Integer(sizeX[0]), // SizeX
-        new Integer(sizeY[0]), // SizeY
-        new Integer(sizeZ[0]), // SizeZ
-        new Integer(sizeC[0]), // SizeC
-        new Integer(sizeT[0]), // SizeT
-        new Integer(pixelType[0]), // PixelType
+        new Integer(core.sizeX[0]), // SizeX
+        new Integer(core.sizeY[0]), // SizeY
+        new Integer(core.sizeZ[0]), // SizeZ
+        new Integer(core.sizeC[0]), // SizeC
+        new Integer(core.sizeT[0]), // SizeT
+        new Integer(core.pixelType[0]), // PixelType
         new Boolean(!little), // BigEndian
-        currentOrder[0], // DimensionOrder
+        core.currentOrder[0], // DimensionOrder
         null, // Image index
         null); // Pixels index
-      for (int i=0; i<sizeC[0]; i++) {
+      for (int i=0; i<core.sizeC[0]; i++) {
         store.setLogicalChannel(i, null, null, null, null, null, null, null);
       }
 
@@ -491,7 +476,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         int numColors = in.readInt();
         int numNames = in.readInt();
 
-        if (numColors > sizeC[0]) {
+        if (numColors > core.sizeC[0]) {
           in.seek(channelColorsOffset - 2);
           in.order(!little);
           in.readInt();

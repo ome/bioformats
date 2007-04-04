@@ -58,8 +58,8 @@ public class TiffReader extends BaseTiffReader {
    *   Integer, Integer, Integer, Boolean, String, Integer, Integer)}.
    */
   protected void setSizeZ(int zSize) {
-    if (sizeZ == null) sizeZ = new int[1];
-    this.sizeZ[0] = zSize;
+    if (core.sizeZ == null) core.sizeZ = new int[1];
+    core.sizeZ[0] = zSize;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -130,43 +130,35 @@ public class TiffReader extends BaseTiffReader {
         catch (IOException exc) {
           throw new FormatException(exc);
         }
-        sizeX = new int[tiffData.length];
-        sizeY = new int[tiffData.length];
-        sizeZ = new int[tiffData.length];
-        sizeC = new int[tiffData.length];
-        sizeT = new int[tiffData.length];
-        pixelType = new int[tiffData.length];
-        currentOrder = new String[tiffData.length];
-        orderCertain = new boolean[tiffData.length];
-        cLengths = new int[tiffData.length][];
-        cTypes = new String[tiffData.length][];
-        Arrays.fill(orderCertain, true);
+        
+        core = new CoreMetadata(tiffData.length);
+        Arrays.fill(core.orderCertain, true);
 
         for (int i=0; i<tiffData.length; i++) {
-          sizeX[i] = Integer.parseInt(pixels[i].getAttribute("SizeX"));
-          sizeY[i] = Integer.parseInt(pixels[i].getAttribute("SizeY"));
-          sizeZ[i] = Integer.parseInt(pixels[i].getAttribute("SizeZ"));
-          sizeC[i] = Integer.parseInt(pixels[i].getAttribute("SizeC"));
-          int sc = sizeC[i];
+          core.sizeX[i] = Integer.parseInt(pixels[i].getAttribute("SizeX"));
+          core.sizeY[i] = Integer.parseInt(pixels[i].getAttribute("SizeY"));
+          core.sizeZ[i] = Integer.parseInt(pixels[i].getAttribute("SizeZ"));
+          core.sizeC[i] = Integer.parseInt(pixels[i].getAttribute("SizeC"));
+          int sc = core.sizeC[i];
           if (rgb) sc /= 3;
-          sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
-          pixelType[i] = FormatTools.pixelTypeFromString(
+          core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
+          core.pixelType[i] = FormatTools.pixelTypeFromString(
             pixels[i].getAttribute("PixelType"));
-          if (pixelType[i] == FormatTools.INT8 ||
-            pixelType[i] == FormatTools.INT16 ||
-            pixelType[i] == FormatTools.INT32)
+          if (core.pixelType[i] == FormatTools.INT8 ||
+            core.pixelType[i] == FormatTools.INT16 ||
+            core.pixelType[i] == FormatTools.INT32)
           {
-            pixelType[i]++;
+            core.pixelType[i]++;
           }
 
           // MAJOR HACK : adjust SizeT to match the number of IFDs, if this
           // file was written by a buggy version of WiscScan
-          if (isWiscScan) sizeT[i] = numImages;
+          if (isWiscScan) core.sizeT[i] = numImages;
 
-          currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
-          orderCertain[i] = true;
+          core.currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
+          core.orderCertain[i] = true;
 
-          boolean[][][] zct = new boolean[sizeZ[i]][sc][sizeT[i]];
+          boolean[][][] zct = new boolean[core.sizeZ[i]][sc][core.sizeT[i]];
 
           for (int j=0; j<tiffData[i].length; j++) {
             String aIfd = tiffData[i][j].getAttribute("IFD");
@@ -187,8 +179,8 @@ public class TiffReader extends BaseTiffReader {
               (nullIfd ? numImages : 1) : Integer.parseInt(aNumPlanes);
 
             // populate ZCT matrix
-            char d1st = currentOrder[i].charAt(2);
-            char d2nd = currentOrder[i].charAt(3);
+            char d1st = core.currentOrder[i].charAt(2);
+            char d2nd = core.currentOrder[i].charAt(3);
             int z = firstZ, t = firstT, c = firstC;
             
             for (int k=0; k<numPlanes; k++) {
@@ -196,12 +188,12 @@ public class TiffReader extends BaseTiffReader {
               switch (d1st) {
                 case 'Z':
                   z++;
-                  if (z >= sizeZ[i]) {
+                  if (z >= core.sizeZ[i]) {
                     z = 0;
                     switch (d2nd) {
                       case 'T':
                         t++;
-                        if (t >= sizeT[i]) {
+                        if (t >= core.sizeT[i]) {
                           t = 0;
                           c++;
                         }
@@ -218,12 +210,12 @@ public class TiffReader extends BaseTiffReader {
                   break;
                 case 'T':
                   t++;
-                  if (t >= sizeT[i]) {
+                  if (t >= core.sizeT[i]) {
                     t = 0;
                     switch (d2nd) {
                       case 'Z':
                         z++;
-                        if (z >= sizeZ[i]) {
+                        if (z >= core.sizeZ[i]) {
                           z = 0;
                           c++;
                         }
@@ -245,14 +237,14 @@ public class TiffReader extends BaseTiffReader {
                     switch (d2nd) {
                       case 'Z':
                         z++;
-                        if (z >= sizeZ[i]) {
+                        if (z >= core.sizeZ[i]) {
                           z = 0;
                           t++;
                         }
                         break;
                       case 'T':
                         t++;
-                        if (t >= sizeT[i]) {
+                        if (t >= core.sizeT[i]) {
                           t = 0;
                           z++;
                         }
@@ -271,8 +263,8 @@ public class TiffReader extends BaseTiffReader {
 
           // 1) all Z, all T, all C
           success = true;
-          for (int z=0; z<sizeZ[i] && success; z++) {
-            for (int t=0; t<sizeT[i] && success; t++) {
+          for (int z=0; z<core.sizeZ[i] && success; z++) {
+            for (int t=0; t<core.sizeT[i] && success; t++) {
               for (int c=0; c<sc && success; c++) {
                 if (!zct[z][c][t]) success = false;
               }
@@ -286,40 +278,40 @@ public class TiffReader extends BaseTiffReader {
           // 2) single Z, all T, all C
           success = true;
           theZ = -1;
-          for (int z=0; z<sizeZ[i] && success; z++) {
+          for (int z=0; z<core.sizeZ[i] && success; z++) {
             if (zct[z][0][0]) {
               if (theZ < 0) theZ = z;
               else success = false;
             }
             boolean state = theZ == z;
-            for (int t=0; t<sizeT[i] && success; t++) {
+            for (int t=0; t<core.sizeT[i] && success; t++) {
               for (int c=0; c<sc && success; c++) {
                 if (zct[z][c][t] != state) success = false;
               }
             }
           }
           if (success) {
-            sizeZ[i] = 1;
+            core.sizeZ[i] = 1;
             continue;
           }
 
           // 3) all Z, single T, all C
           success = true;
           theT = -1;
-          for (int t=0; t<sizeT[i] && success; t++) {
+          for (int t=0; t<core.sizeT[i] && success; t++) {
             if (zct[0][0][t]) {
               if (theT < 0) theT = t;
               else success = false;
             }
             boolean state = theT == t;
-            for (int z=0; z<sizeZ[i] && success; z++) {
+            for (int z=0; z<core.sizeZ[i] && success; z++) {
               for (int c=0; c<sc && success; c++) {
                 if (zct[z][c][t] != state) success = false;
               }
             }
           }
           if (success) {
-            sizeT[i] = 1;
+            core.sizeT[i] = 1;
             continue;
           }
 
@@ -332,14 +324,14 @@ public class TiffReader extends BaseTiffReader {
               else success = false;
             }
             boolean state = theC == c;
-            for (int z=0; z<sizeZ[i] && success; z++) {
-              for (int t=0; t<sizeT[i] && success; t++) {
+            for (int z=0; z<core.sizeZ[i] && success; z++) {
+              for (int t=0; t<core.sizeT[i] && success; t++) {
                 if (zct[z][c][t] != state) success = false;
               }
             }
           }
           if (success) {
-            sizeC[i] = 1;
+            core.sizeC[i] = 1;
             continue;
           }
 
@@ -347,8 +339,8 @@ public class TiffReader extends BaseTiffReader {
           success = true;
           theZ = -1;
           theT = -1;
-          for (int z=0; z<sizeZ[i] && success; z++) {
-            for (int t=0; t<sizeT[i] && success; t++) {
+          for (int z=0; z<core.sizeZ[i] && success; z++) {
+            for (int t=0; t<core.sizeT[i] && success; t++) {
               if (zct[z][0][t]) {
                 if (theZ < 0 && theT < 0) {
                   theZ = z;
@@ -363,7 +355,7 @@ public class TiffReader extends BaseTiffReader {
             }
           }
           if (success) {
-            sizeZ[i] = sizeT[i] = 1;
+            core.sizeZ[i] = core.sizeT[i] = 1;
             continue;
           }
 
@@ -371,7 +363,7 @@ public class TiffReader extends BaseTiffReader {
           success = true;
           theZ = -1;
           theC = -1;
-          for (int z=0; z<sizeZ[i] && success; z++) {
+          for (int z=0; z<core.sizeZ[i] && success; z++) {
             for (int c=0; c<sc && success; c++) {
               if (zct[z][c][0]) {
                 if (theZ < 0 && theC < 0) {
@@ -381,13 +373,13 @@ public class TiffReader extends BaseTiffReader {
                 else success = false;
               }
               boolean state = theZ == z && theC == c;
-              for (int t=0; t<sizeT[i] && success; t++) {
+              for (int t=0; t<core.sizeT[i] && success; t++) {
                 if (zct[z][c][t] != state) success = false;
               }
             }
           }
           if (success) {
-            sizeZ[i] = sizeC[i] = 1;
+            core.sizeZ[i] = core.sizeC[i] = 1;
             continue;
           }
 
@@ -395,7 +387,7 @@ public class TiffReader extends BaseTiffReader {
           success = true;
           theT = -1;
           theC = -1;
-          for (int t=0; t<sizeT[i] && success; t++) {
+          for (int t=0; t<core.sizeT[i] && success; t++) {
             for (int c=0; c<sc && success; c++) {
               if (zct[0][c][t]) {
                 if (theC < 0 && theT < 0) {
@@ -405,13 +397,13 @@ public class TiffReader extends BaseTiffReader {
                 else success = false;
               }
               boolean state = theC == c && theT == t;
-              for (int z=0; z<sizeZ[i] && success; z++) {
+              for (int z=0; z<core.sizeZ[i] && success; z++) {
                 if (zct[z][c][t] != state) success = false;
               }
             }
           }
           if (success) {
-            sizeT[i] = sizeC[i] = 1;
+            core.sizeT[i] = core.sizeC[i] = 1;
             continue;
           }
 
@@ -421,8 +413,8 @@ public class TiffReader extends BaseTiffReader {
           theT = -1;
           theC = -1;
           int count = 0;
-          for (int z=0; z<sizeZ[i] && success; z++) {
-            for (int t=0; t<sizeT[i] && success; t++) {
+          for (int z=0; z<core.sizeZ[i] && success; z++) {
+            for (int t=0; t<core.sizeT[i] && success; t++) {
               for (int c=0; c<sc && success; c++) {
                 if (zct[z][c][t]) {
                   count++;
@@ -432,7 +424,7 @@ public class TiffReader extends BaseTiffReader {
             }
           }
           if (success) {
-            sizeZ[i] = sizeT[i] = sizeC[i] = 1;
+            core.sizeZ[i] = core.sizeT[i] = core.sizeC[i] = 1;
             continue;
           }
 
@@ -441,7 +433,7 @@ public class TiffReader extends BaseTiffReader {
         }
       }
     }
-    else if (ifds.length > 1) orderCertain[0] = false;
+    else if (ifds.length > 1) core.orderCertain[0] = false;
 
     // check for ImageJ-style TIFF comment
     boolean ij = comment != null && comment.startsWith("ImageJ=");
@@ -532,7 +524,7 @@ public class TiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#getSeriesCount(String) */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return currentOrder.length;
+    return core.currentOrder.length;
   }
 
   // -- Main method --

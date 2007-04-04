@@ -80,12 +80,6 @@ public class DicomReader extends FormatReader {
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
-  /** Image width. */
-  protected int width;
-
-  /** Image height. */
-  protected int height;
-
   /** Bits per pixel. */
   protected int bitsPerPixel;
 
@@ -112,44 +106,45 @@ public class DicomReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a DICOM file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /** Determines the number of images in the given DICOM file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return little;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[width * height * (bitsPerPixel / 8)];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8)];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -157,22 +152,24 @@ public class DicomReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < width * height * (bitsPerPixel / 8)) {
+    
+    int bytes = core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8); 
+    
+    if (buf.length < bytes) {
       throw new FormatException("Buffer too small.");
     }
 
-    in.seek(offsets + (width * height * (bitsPerPixel / 8) * no));
+    in.seek(offsets + bytes * no);
     in.read(buf);
     return buf;
   }
 
-  /** Obtains the specified image from the given DICOM file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], core.sizeY[0],
       1, false, bitsPerPixel / 8, little);
-    return b;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -181,7 +178,7 @@ public class DicomReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -271,12 +268,12 @@ public class DicomReader extends FormatReader {
           addInfo(tag, planarConfiguration);
           break;
         case ROWS:
-          height = in.readShort();
-          addInfo(tag, height);
+          core.sizeY[0] = in.readShort();
+          addInfo(tag, core.sizeY[0]);
           break;
         case COLUMNS:
-          width = in.readShort();
-          addInfo(tag, width);
+          core.sizeX[0] = in.readShort();
+          addInfo(tag, core.sizeX[0]);
           break;
         case PIXEL_SPACING:
           st = new byte[elementLength];
@@ -332,12 +329,10 @@ public class DicomReader extends FormatReader {
 
     status("Populating metadata");
 
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeZ[0] = numImages;
-    sizeC[0] = 1;
-    sizeT[0] = 1;
-    currentOrder[0] = "XYZTC";
+    core.sizeZ[0] = numImages;
+    core.sizeC[0] = 1;
+    core.sizeT[0] = 1;
+    core.currentOrder[0] = "XYZTC";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
@@ -347,26 +342,26 @@ public class DicomReader extends FormatReader {
 
     switch (bitsPerPixel) {
       case 8:
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         break;
       case 16:
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         break;
       case 32:
-        pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.UINT32;
         break;
     }
 
     // populate OME-XML node
     store.setPixels(
-      new Integer((String) getMeta("Columns")), // SizeX
-      new Integer((String) getMeta("Rows")), // SizeY
-      new Integer(numImages), // SizeZ
-      new Integer(1), // SizeC
-      new Integer(1), // SizeT
-      new Integer(pixelType[0]),  // PixelType
+      new Integer(core.sizeX[0]), // SizeX
+      new Integer(core.sizeY[0]), // SizeY
+      new Integer(core.sizeZ[0]), // SizeZ
+      new Integer(core.sizeC[0]), // SizeC
+      new Integer(core.sizeT[0]), // SizeT
+      new Integer(core.pixelType[0]),  // PixelType
       new Boolean(!little),  // BigEndian
-      "XYZTC", // Dimension order
+      core.currentOrder[0], // Dimension order
       null, // Use image index 0
       null); // Use pixels index 0
 
@@ -395,7 +390,7 @@ public class DicomReader extends FormatReader {
       (String) getMeta("Manufacturer's Model Name"),
       null, null, null);
 
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
@@ -1200,12 +1195,6 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x20100100), "Border Density");
 
     return dict;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new DicomReader().testRead(args);
   }
 
 }

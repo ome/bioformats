@@ -1,5 +1,5 @@
 //
-// JPEGReader.java
+// CoreMetadata.java
 //
 
 /*
@@ -22,21 +22,27 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.in;
+package loci.formats;
 
-/**
- * JPEGReader is the file format reader for JPEG images.
- *
- * @author Curtis Rueden ctrueden at wisc.edu
- */
-public class JPEGReader extends ImageIOReader {
+/** Encompasses core metadata values. */
+public class CoreMetadata {
+  public int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType;
+  public int[][] cLengths;
+  public String[][] cTypes;
+  public String[] currentOrder;
+  public boolean[] orderCertain;
 
-  // -- Constructor --
-
-  /** Constructs a new JPEGReader. */
-  public JPEGReader() {
-    super("Joint Photographic Experts Group",
-      new String[] {"jpg", "jpeg", "jpe"});
+  public CoreMetadata(int series) {
+    sizeX = new int[series];
+    sizeY = new int[series];
+    sizeZ = new int[series];
+    sizeC = new int[series];
+    sizeT = new int[series];
+    pixelType = new int[series];
+    cLengths = new int[series][];
+    cTypes = new String[series][];
+    currentOrder = new String[series];
+    orderCertain = new boolean[series];
   }
 
 }

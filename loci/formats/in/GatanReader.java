@@ -54,8 +54,7 @@ public class GatanReader extends FormatReader {
   /** List of pixel sizes. */
   private Vector pixelSizes;
 
-  /** Dimensions -- width, height, bytes per pixel. */
-  protected int[] dims = new int[3];
+  private int bytesPerPixel;
 
   protected int pixelDataNum = 0;
 
@@ -66,7 +65,7 @@ public class GatanReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Gatan file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block == null) return false;
     if (block.length != GATAN_MAGIC_BLOCK_1.length) return false;
@@ -76,40 +75,40 @@ public class GatanReader extends FormatReader {
     return true;
   }
 
-  /** Determines the number of images in the given Gatan file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
     // every Gatan file has only one image
     return 1;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */  
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given Gatan file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[dims[0] * dims[1] * dims[2]];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bytesPerPixel];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -117,7 +116,7 @@ public class GatanReader extends FormatReader {
     if (no != 0) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < dims[0] * dims[1] * dims[2]) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * bytesPerPixel) {
       throw new FormatException("Buffer too small.");
     }
 
@@ -126,7 +125,7 @@ public class GatanReader extends FormatReader {
     return buf;
   }
 
-  /** Obtains the specified image from the given Gatan file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -136,9 +135,8 @@ public class GatanReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0], dims[1],
-      1, false, dims[2], littleEndian);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], core.sizeY[0],
+      1, false, bytesPerPixel, littleEndian);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -147,7 +145,7 @@ public class GatanReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -169,7 +167,7 @@ public class GatanReader extends FormatReader {
     byte[] temp = new byte[4];
     in.read(temp);
     // only support version 3
-    if(!isThisType(temp)) {
+    if (!isThisType(temp)) {
       throw new FormatException("invalid header");
     }
 
@@ -177,7 +175,7 @@ public class GatanReader extends FormatReader {
 
     in.skipBytes(4);
     in.read(temp);
-    if (DataTools.bytesToInt(temp, littleEndian) == 1) littleEndian = true;
+    littleEndian = DataTools.bytesToInt(temp, littleEndian) == 1;
 
     // TagGroup instance
 
@@ -189,72 +187,70 @@ public class GatanReader extends FormatReader {
 
     status("Populating metadata");
 
-    pixelType[0] = FormatTools.INT8;
     switch (datatype) {
       case 1:
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         break;
       case 2:
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         break;
       case 3:
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         break;
       // there is no case 4
       case 5:
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         break;
       case 6:
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         break;
       case 7:
-        pixelType[0] = FormatTools.INT32;
+        core.pixelType[0] = FormatTools.INT32;
         break;
       case 8:
-        pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.UINT32;
         break;
       case 9:
-        pixelType[0] = FormatTools.INT8;
+        core.pixelType[0] = FormatTools.INT8;
         break;
       case 10:
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         break;
       case 11:
-        pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.UINT32;
         break;
       case 12:
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         break;
       case 13:
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         break;
       case 14:
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         break;
       case 23:
-        pixelType[0] = FormatTools.INT32;
+        core.pixelType[0] = FormatTools.INT32;
         break;
+      default: core.pixelType[0] = FormatTools.INT8; 
     }
 
-    sizeX[0] = dims[0];
-    sizeY[0] = dims[1];
-    sizeZ[0] = 1;
-    sizeC[0] = 1;
-    sizeT[0] = 1;
-    currentOrder[0] = "XYZTC";
+    core.sizeZ[0] = 1;
+    core.sizeC[0] = 1;
+    core.sizeT[0] = 1;
+    core.currentOrder[0] = "XYZTC";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
     store.setPixels(
-      new Integer(dims[0]), // SizeX
-      new Integer(dims[1]), // SizeY
-      new Integer(1), // SizeZ
-      new Integer(1), // SizeC
-      new Integer(1), // SizeT
-      new Integer(pixelType[0]), // PixelType
+      new Integer(core.sizeX[0]), // SizeX
+      new Integer(core.sizeY[0]), // SizeY
+      new Integer(core.sizeZ[0]), // SizeZ
+      new Integer(core.sizeC[0]), // SizeC
+      new Integer(core.sizeT[0]), // SizeT
+      new Integer(core.pixelType[0]), // PixelType
       new Boolean(!littleEndian), // BigEndian
-      "XYZTC", // DimensionOrder
+      core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
 
@@ -275,7 +271,7 @@ public class GatanReader extends FormatReader {
     store.setDimensions(pixX, pixY, pixZ, null, null, null);
 
     String gamma = (String) getMeta("Gamma");
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
       store.setDisplayChannel(new Integer(i), null, null,
         gamma == null ? null : new Float(gamma), null);
@@ -352,11 +348,11 @@ public class GatanReader extends FormatReader {
               data = "0";
           }
           if (parent.equals("Dimensions")) {
-            if (i == 0) dims[0] = Integer.parseInt(data);
-            else if (i == 1) dims[1] = Integer.parseInt(data);
+            if (i == 0) core.sizeX[0] = Integer.parseInt(data);
+            else if (i == 1) core.sizeY[0] = Integer.parseInt(data);
           }
           if (labelString.equals("PixelDepth")) {
-            dims[2] = Integer.parseInt(data);
+            bytesPerPixel = Integer.parseInt(data);
           }
           else if (labelString.equals("Scale")) {
             pixelSizes.add(data);
@@ -523,12 +519,6 @@ public class GatanReader extends FormatReader {
         parseTags(DataTools.bytesToInt(temp, !littleEndian), labelString);
       }
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new GatanReader().testRead(args);
   }
 
 }

@@ -54,13 +54,8 @@ public abstract class FormatReader extends FormatHandler
   /** The number of the current series. */
   protected int series = 0;
 
-  /** Dimension fields. */
-  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
-  protected int[][] cLengths;
-  protected String[][] cTypes;
-  protected int[] pixelType;
-  protected String[] currentOrder;
-  protected boolean[] orderCertain;
+  /** Core metadata values. */
+  protected CoreMetadata core;
 
   /** Whether or not to ignore color tables, if present. */
   protected boolean ignoreColorTable;
@@ -106,17 +101,8 @@ public abstract class FormatReader extends FormatHandler
     currentId = id;
     metadata = new Hashtable();
 
-    sizeX = new int[1];
-    sizeY = new int[1];
-    sizeZ = new int[1];
-    sizeC = new int[1];
-    sizeT = new int[1];
-    cLengths = new int[1][];
-    cTypes = new String[1][];
-    pixelType = new int[1];
-    currentOrder = new String[1];
-    orderCertain = new boolean[1];
-    Arrays.fill(orderCertain, true);
+    core = new CoreMetadata(1);
+    Arrays.fill(core.orderCertain, true);
 
     // reinitialize the MetadataStore
     getMetadataStore(id).createRoot();
@@ -215,37 +201,37 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getSizeX(String) */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeX[series];
+    return core.sizeX[series];
   }
 
   /* @see IFormatReader#getSizeY(String) */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeY[series];
+    return core.sizeY[series];
   }
 
   /* @see IFormatReader#getSizeZ(String) */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeZ[series];
+    return core.sizeZ[series];
   }
 
   /* @see IFormatReader#getSizeC(String) */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeC[series];
+    return core.sizeC[series];
   }
 
   /* @see IFormatReader#getSizeT(String) */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeT[series];
+    return core.sizeT[series];
   }
 
   /* @see IFormatReader#getPixelType(String) */
   public int getPixelType(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return pixelType[series];
+    return core.pixelType[series];
   }
 
   /* @see IFormatReader#getEffectiveSizeC(String) */
@@ -264,10 +250,10 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (cLengths[series] == null) {
-      cLengths[series] = new int[] {sizeC[series]};
+    if (core.cLengths[series] == null) {
+      core.cLengths[series] = new int[] {core.sizeC[series]};
     }
-    return cLengths[series];
+    return core.cLengths[series];
   }
 
   /* @see IFormatReader#getChannelDimTypes(String) */
@@ -275,10 +261,10 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (cTypes[series] == null) {
-      cTypes[series] = new String[] {FormatTools.CHANNEL};
+    if (core.cTypes[series] == null) {
+      core.cTypes[series] = new String[] {FormatTools.CHANNEL};
     }
-    return cTypes[series];
+    return core.cTypes[series];
   }
 
   /* @see IFormatReader#getThumbSizeX(String) */
@@ -304,13 +290,13 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return currentOrder[series];
+    return core.currentOrder[series];
   }
 
   /* @see IFormatReader.isOrderCertain(String) */
   public boolean isOrderCertain(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return orderCertain[series];
+    return core.orderCertain[series];
   }
 
   /* @see IFormatReader#isInterleaved(String) */
@@ -336,8 +322,7 @@ public abstract class FormatReader extends FormatHandler
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
-    buf = openBytes(id, no);
-    return buf;
+    return openBytes(id, no);
   }
 
   /* @see IFormatReader#openThumbImage(String, int) */
@@ -432,33 +417,34 @@ public abstract class FormatReader extends FormatHandler
   {
     if (!id.equals(currentId)) initFile(id);
     if (order == null) return;
-    if (order.equals(currentOrder[series])) return;
+    if (order.equals(core.currentOrder[series])) return;
 
     int[] dims = new int[5];
 
-    int xndx = currentOrder[series].indexOf("X");
-    int yndx = currentOrder[series].indexOf("Y");
-    int zndx = currentOrder[series].indexOf("Z");
-    int cndx = currentOrder[series].indexOf("C");
-    int tndx = currentOrder[series].indexOf("T");
+    int xndx = core.currentOrder[series].indexOf("X");
+    int yndx = core.currentOrder[series].indexOf("Y");
+    int zndx = core.currentOrder[series].indexOf("Z");
+    int cndx = core.currentOrder[series].indexOf("C");
+    int tndx = core.currentOrder[series].indexOf("T");
 
-    dims[xndx] = sizeX[series];
-    dims[yndx] = sizeY[series];
-    dims[zndx] = sizeZ[series];
-    dims[cndx] = sizeC[series];
-    dims[tndx] = sizeT[series];
+    dims[xndx] = core.sizeX[series];
+    dims[yndx] = core.sizeY[series];
+    dims[zndx] = core.sizeZ[series];
+    dims[cndx] = core.sizeC[series];
+    dims[tndx] = core.sizeT[series];
 
-    sizeX[series] = dims[order.indexOf("X")];
-    sizeY[series] = dims[order.indexOf("Y")];
-    sizeZ[series] = dims[order.indexOf("Z")];
-    sizeC[series] = dims[order.indexOf("C")];
-    sizeT[series] = dims[order.indexOf("T")];
-    currentOrder[series] = order;
+    core.sizeX[series] = dims[order.indexOf("X")];
+    core.sizeY[series] = dims[order.indexOf("Y")];
+    core.sizeZ[series] = dims[order.indexOf("Z")];
+    core.sizeC[series] = dims[order.indexOf("C")];
+    core.sizeT[series] = dims[order.indexOf("T")];
+    core.currentOrder[series] = order;
 
     MetadataStore store = getMetadataStore(id);
-    store.setPixels(new Integer(sizeX[series]), new Integer(sizeY[series]),
-      new Integer(sizeZ[series]), new Integer(sizeC[series]),
-      new Integer(sizeT[series]), null, null, order, new Integer(series), null);
+    store.setPixels(new Integer(core.sizeX[series]), 
+      new Integer(core.sizeY[series]), new Integer(core.sizeZ[series]), 
+      new Integer(core.sizeC[series]), new Integer(core.sizeT[series]), 
+      null, null, order, new Integer(series), null);
   }
 
   /* @see IFormatReader#getIndex(String, int, int, int) */

@@ -70,12 +70,12 @@ public class OIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an OIF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /** Determines the number of images in the given OIF file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
@@ -83,12 +83,7 @@ public class OIFReader extends FormatReader {
     return isRGB(id) ? 3*numImages : numImages;
   }
 
-  /**
-   * Obtains the specified metadata field's value for the given file.
-   *
-   * @param field the name associated with the metadata field
-   * @return the value, or null if the field doesn't exist
-   */
+  /* @see loci.formats.IFormatReader#getMetadataValue(String, String) */ 
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
@@ -98,7 +93,7 @@ public class OIFReader extends FormatReader {
     return getMeta(field);
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
@@ -106,19 +101,19 @@ public class OIFReader extends FormatReader {
     return tiffReader[0].isRGB((String) tiffs.get(0));
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given OIF file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -130,6 +125,7 @@ public class OIFReader extends FormatReader {
     return b;
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -145,7 +141,7 @@ public class OIFReader extends FormatReader {
     return buf;
   }
 
-  /** Obtains the specified image from the given OIF file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -165,7 +161,7 @@ public class OIFReader extends FormatReader {
     return b;
   }
 
-  /** Obtains a thumbnail for the specified image from the given file. */
+  /* @see loci.formats.IFormatReader#openThumbImage(String, int) */ 
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
@@ -218,7 +214,7 @@ public class OIFReader extends FormatReader {
     else close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (reader != null) reader.close();
     reader = null;
@@ -370,20 +366,20 @@ public class OIFReader extends FormatReader {
       String pre = "[Axis " + i + " Parameters Common] - ";
       String code = (String) getMeta(pre + "AxisCode");
       String size = (String) getMeta(pre + "MaxSize");
-      if (code.equals("\"X\"")) sizeX[0] = Integer.parseInt(size);
-      else if (code.equals("\"Y\"")) sizeY[0] = Integer.parseInt(size);
-      else if (code.equals("\"C\"")) sizeC[0] = Integer.parseInt(size);
-      else if (code.equals("\"T\"")) sizeT[0] = Integer.parseInt(size);
-      else if (code.equals("\"Z\"")) sizeZ[0] = Integer.parseInt(size);
+      if (code.equals("\"X\"")) core.sizeX[0] = Integer.parseInt(size);
+      else if (code.equals("\"Y\"")) core.sizeY[0] = Integer.parseInt(size);
+      else if (code.equals("\"C\"")) core.sizeC[0] = Integer.parseInt(size);
+      else if (code.equals("\"T\"")) core.sizeT[0] = Integer.parseInt(size);
+      else if (code.equals("\"Z\"")) core.sizeZ[0] = Integer.parseInt(size);
     }
 
-    if (sizeZ[0] == 0) sizeZ[0] = 1;
-    if (sizeC[0] == 0) sizeC[0] = 1;
-    if (sizeT[0] == 0) sizeT[0] = 1;
+    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
-    while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
-      if (sizeZ[0] == 1) sizeT[0]++;
-      else if (sizeT[0] == 1) sizeZ[0]++;
+    while (numImages > core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC(id)) {
+      if (core.sizeZ[0] == 1) core.sizeT[0]++;
+      else if (core.sizeT[0] == 1) core.sizeZ[0]++;
     }
 
     String metadataOrder = (String)
@@ -398,7 +394,7 @@ public class OIFReader extends FormatReader {
         }
       }
     }
-    currentOrder[0] = metadataOrder;
+    core.currentOrder[0] = metadataOrder;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(oifFile);
@@ -407,20 +403,20 @@ public class OIFReader extends FormatReader {
       getMeta("[Reference Image Parameter] - ImageDepth"));
     switch (imageDepth) {
       case 1:
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         break;
       case 2:
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         break;
       case 4:
-        pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.UINT32;
         break;
       default:
         throw new RuntimeException(
           "Unknown matching for pixel depth of: " + imageDepth);
     }
 
-    validBits = new int[sizeC[0]];
+    validBits = new int[core.sizeC[0]];
     if (validBits.length == 2) validBits = new int[3];
     for (int i=0; i<validBits.length; i++) {
       s = (String) getMeta("[Reference Image Parameter] - ValidBitCounts");
@@ -438,13 +434,13 @@ public class OIFReader extends FormatReader {
     }
 
     store.setPixels(
-      new Integer(sizeX[0]),
-      new Integer(sizeY[0]),
-      new Integer(sizeZ[0]),
-      new Integer(sizeC[0]),
-      new Integer(sizeT[0]),
-      new Integer(pixelType[0]),
-      new Boolean(false),
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
+      Boolean.FALSE, 
       "XYZTC",
       null,
       null);
@@ -455,7 +451,7 @@ public class OIFReader extends FormatReader {
       getMeta("[Reference Image Parameter] - HeightConvertValue"));
 
     store.setDimensions(pixX, pixY, null, null, null, null);
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       prefix = "[Channel " + (i+1) + " Parameters] - ";
       String name = (String) getMeta(prefix + "CH Name");
       String emWave = (String) getMeta(prefix + "EmissionWavelength");
@@ -465,7 +461,7 @@ public class OIFReader extends FormatReader {
         null, null, null);
     }
 
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       prefix = "[Channel " + (i+1) + " Parameters] - ";
       String gain = (String) getMeta(prefix + "CountingPMTGain");
       String voltage = (String) getMeta(prefix + "CountingPMTVoltage");
@@ -500,12 +496,6 @@ public class OIFReader extends FormatReader {
       }
     }
 
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new OIFReader().testRead(args);
   }
 
 }

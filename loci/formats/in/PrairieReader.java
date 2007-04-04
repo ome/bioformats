@@ -70,11 +70,7 @@ public class PrairieReader extends FormatReader {
 
   // -- IFormatHandler API methods --
 
-  /**
-   * Checks if the given string is a valid filename for a Prairie TIFF file.
-   * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
-   */
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
 
@@ -97,7 +93,7 @@ public class PrairieReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Prairie TIFF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
     if (block.length < 3) return false;
@@ -175,10 +171,10 @@ public class PrairieReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    byte[] b = tiff.openBytes(files[no], 0);
-    return b;
+    return tiff.openBytes(files[no], 0);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -198,8 +194,7 @@ public class PrairieReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    BufferedImage b = tiff.openImage(files[no], 0);
-    return b;
+    return tiff.openImage(files[no], 0);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -324,13 +319,13 @@ public class PrairieReader extends FormatReader {
           ((String) getMeta("PVScan Sequence type")).equals("ZSeries");
         if (zt == 0) zt = 1;
 
-        sizeX[0] = Integer.parseInt((String) getMeta("pixelsPerLine"));
-        sizeY[0] = Integer.parseInt((String) getMeta("linesPerFrame"));
-        sizeZ[0] = isZ ? zt : 1;
-        sizeT[0] = isZ ? 1 : zt;
-        sizeC[0] = numImages / (sizeZ[0] * sizeT[0]);
-        currentOrder[0] = "XYC" + (isZ ? "ZT" : "TZ");
-        pixelType[0] = FormatTools.UINT16;
+        core.sizeX[0] = Integer.parseInt((String) getMeta("pixelsPerLine"));
+        core.sizeY[0] = Integer.parseInt((String) getMeta("linesPerFrame"));
+        core.sizeZ[0] = isZ ? zt : 1;
+        core.sizeT[0] = isZ ? 1 : zt;
+        core.sizeC[0] = numImages / (core.sizeZ[0] * core.sizeT[0]);
+        core.currentOrder[0] = "XYC" + (isZ ? "ZT" : "TZ");
+        core.pixelType[0] = FormatTools.UINT16;
 
         float pixSizeX =
           Float.parseFloat((String) getMeta("micronsPerPixel_XAxis"));
@@ -340,19 +335,19 @@ public class PrairieReader extends FormatReader {
         MetadataStore store = getMetadataStore(id);
 
         store.setPixels(
-          new Integer(sizeX[0]),
-          new Integer(sizeY[0]),
-          new Integer(sizeZ[0]),
-          new Integer(sizeC[0]),
-          new Integer(sizeT[0]),
-          new Integer(pixelType[0]),
-          new Boolean(isLittleEndian(id)),
-          currentOrder[0],
+          new Integer(core.sizeX[0]),
+          new Integer(core.sizeY[0]),
+          new Integer(core.sizeZ[0]),
+          new Integer(core.sizeC[0]),
+          new Integer(core.sizeT[0]),
+          new Integer(core.pixelType[0]),
+          new Boolean(!isLittleEndian(id)),
+          core.currentOrder[0],
           null,
           null);
         store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null,
           null, null, null);
-        for (int i=0; i<sizeC[0]; i++) {
+        for (int i=0; i<core.sizeC[0]; i++) {
           store.setLogicalChannel(i, null, null, null, null, null, null, null);
         }
 
@@ -381,8 +376,9 @@ public class PrairieReader extends FormatReader {
 
         String zoom = (String) getMeta("opticalZoom");
         if (zoom != null) {
-          store.setDisplayOptions(new Float(zoom), new Boolean(sizeC[0] > 1),
-            new Boolean(sizeC[0] > 1), new Boolean(sizeC[0] > 2), Boolean.FALSE,
+          store.setDisplayOptions(new Float(zoom), 
+            new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] > 1), 
+            new Boolean(core.sizeC[0] > 2), Boolean.FALSE,
             null, null, null, null, null, null, null, null, null, null, null);
         }
       }
@@ -420,12 +416,6 @@ public class PrairieReader extends FormatReader {
         }
       }
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new PrairieReader().testRead(args);
   }
 
 }

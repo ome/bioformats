@@ -127,31 +127,31 @@ public class OIBReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an OIB file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return (block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /** Determines the number of images in the given OIB file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return ((Integer) nImages.get(getSeries(id))).intValue();
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return ((Boolean) rgb.get(getSeries(id))).booleanValue();
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return false;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
@@ -164,17 +164,18 @@ public class OIBReader extends FormatReader {
     return width.size();
   }
 
-  /** Obtains the specified image from the given ZVI file, as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[sizeX[series] * sizeY[series] *
+    byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] *
       getRGBChannelCount(id) *
-      FormatTools.getBytesPerPixel(pixelType[series])];
+      FormatTools.getBytesPerPixel(core.pixelType[series])];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -212,7 +213,7 @@ public class OIBReader extends FormatReader {
     }
   }
 
-  /** Obtains the specified image from the given ZVI file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -222,13 +223,12 @@ public class OIBReader extends FormatReader {
     }
 
     byte[] b = openBytes(id, no);
-    int bytes = b.length / (sizeX[series] * sizeY[series] *
+    int bytes = b.length / (core.sizeX[series] * core.sizeY[series] *
       getRGBChannelCount(id));
 
-    BufferedImage bi = ImageTools.makeImage(b, sizeX[series], sizeY[series],
-      getRGBChannelCount(id), false, bytes, !littleEndian[series],
+    return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series], 
+      getRGBChannelCount(id), false, bytes, !littleEndian[series], 
       validBits[series]);
-    return bi;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -237,7 +237,7 @@ public class OIBReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -364,70 +364,80 @@ public class OIBReader extends FormatReader {
         }
       }
 
-      pixelType = new int[numSeries];
-      currentOrder = new String[numSeries];
-      orderCertain = new boolean[numSeries];
       littleEndian = new boolean[numSeries];
 
-      sizeX = new int[numSeries];
-      sizeY = new int[numSeries];
-      sizeZ = new int[numSeries];
-      sizeC = new int[numSeries];
-      sizeT = new int[numSeries];
+      core = new CoreMetadata(numSeries);
+
       validBits = new int[numSeries][];
-      cTypes = new String[numSeries][];
-      cLengths = new int[numSeries][]; 
 
       for (int i=0; i<numSeries; i++) {
-        sizeX[i] = ((Integer) width.get(i)).intValue();
-        sizeY[i] = ((Integer) height.get(i)).intValue();
+        core.sizeX[i] = ((Integer) width.get(i)).intValue();
+        core.sizeY[i] = ((Integer) height.get(i)).intValue();
 
-        if (i < zSize.size()) sizeZ[i] = ((Integer) zSize.get(i)).intValue();
-        else sizeZ[i] = 1;
+        if (i < zSize.size()) {
+          core.sizeZ[i] = ((Integer) zSize.get(i)).intValue();
+        } 
+        else core.sizeZ[i] = 1;
 
         if (i < nChannels.size()) {
-          sizeC[i] = ((Integer) nChannels.get(i)).intValue();
+          core.sizeC[i] = ((Integer) nChannels.get(i)).intValue();
         }
-        else sizeC[i] = 1;
+        else core.sizeC[i] = 1;
 
-        if (i < tSize.size()) sizeT[i] = ((Integer) tSize.get(i)).intValue();
-        else sizeT[i] = 1;
+        if (i < tSize.size()) {
+          core.sizeT[i] = ((Integer) tSize.get(i)).intValue();
+        } 
+        else core.sizeT[i] = 1;
 
-        if (sizeZ[i] == 0) sizeZ[i]++;
-        if (sizeT[i] == 0) sizeT[i]++;
+        if (core.sizeZ[i] == 0) core.sizeZ[i]++;
+        if (core.sizeT[i] == 0) core.sizeT[i]++;
 
-        currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
+        core.currentOrder[i] = 
+          (core.sizeZ[i] > core.sizeT[i]) ? "XYCZT" : "XYCTZ";
 
         int numImages = ((Integer) nImages.get(i)).intValue();
 
-        if (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) {
-          int diff = numImages - (sizeZ[i] * sizeT[i] * sizeC[i]);
+        if (numImages > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) {
+          int diff = numImages - 
+            (core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]);
 
-          if (diff % sizeZ[i] == 0 && sizeZ[i] > 1) {
-            while (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) sizeT[i]++;
+          if (diff % core.sizeZ[i] == 0 && core.sizeZ[i] > 1) {
+            while (numImages > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) {
+              core.sizeT[i]++;
+            } 
           }
-          else if (diff % sizeT[i] == 0 && sizeT[i] > 1) {
-            while (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) sizeZ[i]++;
+          else if (diff % core.sizeT[i] == 0 && core.sizeT[i] > 1) {
+            while (numImages > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) {
+              core.sizeZ[i]++;
+            } 
           }
-          else if (diff % sizeC[i] == 0) {
-            if (sizeZ[i] > sizeT[i]) {
-              while (numImages > sizeZ[i] * sizeC[i] * sizeT[i]) sizeZ[i]++;
+          else if (diff % core.sizeC[i] == 0) {
+            if (core.sizeZ[i] > core.sizeT[i]) {
+              while (numImages > core.sizeZ[i] * core.sizeC[i] * core.sizeT[i])
+              {
+                core.sizeZ[i]++;
+              } 
             }
             else {
-              while (numImages > sizeZ[i] * sizeC[i] * sizeT[i]) sizeT[i]++;
+              while (numImages > core.sizeZ[i] * core.sizeC[i] * core.sizeT[i]) 
+              { 
+                core.sizeT[i]++;
+              } 
             }
           }
         }
 
         int oldSeries = getSeries(id);
         setSeries(id, i);
-        while (numImages < sizeZ[i] * sizeT[i] * getEffectiveSizeC(id)) {
+        while (numImages < core.sizeZ[i] * core.sizeT[i] * 
+          getEffectiveSizeC(id)) 
+        {
           numImages++;
         }
         nImages.setElementAt(new Integer(numImages), i);
         setSeries(id, oldSeries);
 
-        validBits[i] = new int[sizeC[i] == 2 ? 3 : sizeC[i]];
+        validBits[i] = new int[core.sizeC[i] == 2 ? 3 : core.sizeC[i]];
         int vb = 0;
         Enumeration k = metadata.keys();
         while (k.hasMoreElements()) {
@@ -468,13 +478,13 @@ public class OIBReader extends FormatReader {
       switch (((Integer) bpp.get(0)).intValue() % 3) {
         case 0:
         case 1:
-          pixelType[i] = FormatTools.UINT8;
+          core.pixelType[i] = FormatTools.UINT8;
           break;
         case 2:
-          pixelType[i] = FormatTools.UINT16;
+          core.pixelType[i] = FormatTools.UINT16;
           break;
         case 4:
-          pixelType[i] = FormatTools.UINT32;
+          core.pixelType[i] = FormatTools.UINT32;
           break;
         default:
           throw new RuntimeException(
@@ -496,14 +506,14 @@ public class OIBReader extends FormatReader {
       store.setImage(null, stamp, null, null);
 
       store.setPixels(
-        new Integer(sizeX[i]),
-        new Integer(sizeY[i]),
-        new Integer(sizeZ[i]),
-        new Integer(sizeC[i]),
-        new Integer(sizeT[i]),
-        new Integer(pixelType[i]),
+        new Integer(core.sizeX[i]),
+        new Integer(core.sizeY[i]),
+        new Integer(core.sizeZ[i]),
+        new Integer(core.sizeC[i]),
+        new Integer(core.sizeT[i]),
+        new Integer(core.pixelType[i]),
         new Boolean(false),
-        currentOrder[i],
+        core.currentOrder[i],
         new Integer(i),
         null);
 
@@ -512,7 +522,7 @@ public class OIBReader extends FormatReader {
       Float pixY = new Float(getMeta(
         "[Reference Image Parameter] - HeightConvertValue").toString());
       store.setDimensions(pixX, pixY, null, null, null, new Integer(i));
-      for (int j=0; j<sizeC[0]; j++) {
+      for (int j=0; j<core.sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
 
@@ -684,8 +694,4 @@ public class OIBReader extends FormatReader {
     debug(sb.toString());
   }
 
-  // -- Main method --
-  public static void main(String[] args) throws FormatException, IOException {
-    new OIBReader().testRead(args);
-  }
 }

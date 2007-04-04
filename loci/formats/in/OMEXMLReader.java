@@ -77,24 +77,6 @@ public class OMEXMLReader extends FormatReader {
   /** String indicating the compression type. */
   protected String[] compression;
 
-  /** Image width. */
-  private int[] width;
-
-  /** Image height. */
-  private int[] height;
-
-  /** Number of channels. */
-  private int[] numChannels;
-
-  /** Number of timepoints. */
-  private int[] numT;
-
-  /** Number of Z slices. */
-  private int[] numZ;
-
-  /** Dimension order. */
-  private String[] order;
-
   // -- Constructor --
 
   /** Constructs a new OME-XML reader. */
@@ -102,42 +84,42 @@ public class OMEXMLReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an OME-XML file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return new String(block, 0, 5).equals("<?xml");
   }
 
-  /** Return the number of series in this file. */
+  /* @see loci.formats.IFormatReader#getSeriesCount(String) */ 
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return width.length;
+    return core.sizeX.length; 
   }
 
-  /** Determines the number of images in the given OME-XML file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages[series];
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian[series];
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /** Obtains the specified image from the given file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -146,9 +128,6 @@ public class OMEXMLReader extends FormatReader {
     if (no < 0 || no >= numImages[series]) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    int w = width[series];
-    int h = height[series];
 
     in.seek(((Integer) offsets[series].get(no)).intValue());
 
@@ -186,7 +165,7 @@ public class OMEXMLReader extends FormatReader {
 
       ByteArrayInputStream bais = new ByteArrayInputStream(pixels);
       CBZip2InputStream bzip = new CBZip2InputStream(bais);
-      pixels = new byte[w * h * bpp[series]];
+      pixels = new byte[core.sizeX[series] * core.sizeY[series] * bpp[series]];
       for (int i=0; i<pixels.length; i++) {
         pixels[i] = (byte) bzip.read();
       }
@@ -199,7 +178,7 @@ public class OMEXMLReader extends FormatReader {
       try {
         Inflater decompressor = new Inflater();
         decompressor.setInput(pixels, 0, pixels.length);
-        pixels = new byte[w * h * bpp[series]];
+        pixels = new byte[core.sizeX[series]*core.sizeY[series]*bpp[series]];
         decompressor.inflate(pixels);
         decompressor.end();
       }
@@ -210,13 +189,12 @@ public class OMEXMLReader extends FormatReader {
     return pixels;
   }
 
-  /** Obtains the specified image from the given OME-XML file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width[series],
-      height[series], 1, false, bpp[series], littleEndian[series]);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[series],
+      core.sizeY[series], 1, false, bpp[series], littleEndian[series]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -225,7 +203,7 @@ public class OMEXMLReader extends FormatReader {
     else close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     if (in != null) in.close();
@@ -241,11 +219,10 @@ public class OMEXMLReader extends FormatReader {
 
     in = new RandomAccessStream(id);
     ReflectedUniverse r = new ReflectedUniverse();
-    Object omexml = null;
     try {
       r.exec("import loci.formats.ome.OMEXMLMetadataStore");
       r.exec("import org.openmicroscopy.xml.OMENode");
-      omexml = r.exec("omexml = new OMEXMLMetadataStore()");
+      r.exec("omexml = new OMEXMLMetadataStore()");
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);
@@ -408,18 +385,11 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException(exc);
     }
 
-    width = new int[numDatasets];
-    height = new int[numDatasets];
+    core = new CoreMetadata(numDatasets);
+
     numImages = new int[numDatasets];
     bpp = new int[numDatasets];
     compression = new String[numDatasets];
-    numChannels = new int[numDatasets];
-    numT = new int[numDatasets];
-    numZ = new int[numDatasets];
-    order = new String[numDatasets];
-    pixelType = new int[numDatasets];
-    cLengths = new int[numDatasets][];
-    cTypes = new String[numDatasets][];
 
     int oldSeries = getSeries(currentId);
 
@@ -442,39 +412,38 @@ public class OMEXMLReader extends FormatReader {
         z = (Integer) r.exec("omexml.getSizeZ(ndx)");
         c = (Integer) r.exec("omexml.getSizeC(ndx)");
         pixType = (String) r.exec("omexml.getPixelType(ndx)");
-        dimOrder = (String) r.exec("omexml.getDimensionOrder(ndx)");
+        core.currentOrder[i] = 
+          (String) r.exec("omexml.getDimensionOrder(ndx)");
       }
       catch (ReflectException exc) {
         throw new FormatException(exc);
       }
-      width[i] = w.intValue();
-      height[i] = h.intValue();
-      numT[i] = t.intValue();
-      numZ[i] = z.intValue();
-      numChannels[i] = c.intValue();
+      core.sizeX[i] = w.intValue();
+      core.sizeY[i] = h.intValue();
+      core.sizeT[i] = t.intValue();
+      core.sizeZ[i] = z.intValue();
+      core.sizeC[i] = c.intValue();
 
       String type = pixType.toLowerCase();
       if (type.endsWith("16")) {
         bpp[i] = 2;
-        pixelType[i] = FormatTools.UINT16;
+        core.pixelType[i] = FormatTools.UINT16;
       }
       else if (type.endsWith("32")) {
         bpp[i] = 4;
-        pixelType[i] = FormatTools.UINT32;
+        core.pixelType[i] = FormatTools.UINT32;
       }
       else if (type.equals("float")) {
         bpp[i] = 4;
-        pixelType[i] = FormatTools.FLOAT;
+        core.pixelType[i] = FormatTools.FLOAT;
       }
       else {
         bpp[i] = 1;
-        pixelType[i] = FormatTools.UINT8;
+        core.pixelType[i] = FormatTools.UINT8;
       }
 
-      order[i] = dimOrder;
-
       // calculate the number of raw bytes of pixel data that we are expecting
-      int expected = width[i] * height[i] * bpp[i];
+      int expected = core.sizeX[i] * core.sizeY[i] * bpp[i];
 
       // find the compression type and adjust 'expected' accordingly
       in.seek(((Integer) offsets[i].get(0)).intValue());
@@ -493,33 +462,30 @@ public class OMEXMLReader extends FormatReader {
 
       in.seek(((Integer) offsets[i].get(0)).intValue());
 
-      searchForData(expected, numZ[i] * numT[i] * numChannels[i]);
+      int planes = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
+
+      searchForData(expected, planes);
       numImages[i] = offsets[i].size();
-      if (numImages[i] < (numZ[i] * numT[i] * numChannels[i])) {
+      if (numImages[i] < planes) {
         // hope this doesn't happen too often
         in.seek(((Integer) offsets[i].get(0)).intValue());
-        searchForData(0, numZ[i] * numT[i] * numChannels[i]);
+        searchForData(0, planes);
         numImages[i] = offsets[i].size();
       }
       buf = null;
     }
     setSeries(currentId, oldSeries);
-    sizeX = width;
-    sizeY = height;
-    sizeZ = numZ;
-    sizeC = numChannels;
-    sizeT = numT;
-    currentOrder = order;
-    orderCertain = new boolean[currentOrder.length];
-    Arrays.fill(orderCertain, true);
+    Arrays.fill(core.orderCertain, true);
 
     MetadataStore store = getMetadataStore(id);
-    for (int i=0; i<sizeC.length; i++) {
-      for (int j=0; j<sizeC[i]; j++) {
+    for (int i=0; i<core.sizeC.length; i++) {
+      for (int j=0; j<core.sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
       }
     }
+
+    System.gc();
   }
 
   // -- Helper methods --

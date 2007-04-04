@@ -44,9 +44,6 @@ public class MNGReader extends FormatReader {
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
-  /** Frame dimensions. */
-  private int width, height;
-
   /** Offsets to each plane. */
   private Vector offsets;
 
@@ -60,7 +57,7 @@ public class MNGReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an MNG file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block.length < 8) return false;
     return block[0] == 0x8a && block[1] == 0x4d && block[2] == 0x4e &&
@@ -68,42 +65,38 @@ public class MNGReader extends FormatReader {
       block[6] == 0x1a && block[7] == 0x0a;
   }
 
-  /** Determines the number of images in the given MNG file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return getSizeC(id) > 1;
+    return core.sizeC[0] > 1;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return false;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /**
-   * Obtains the specified image from the
-   * given MNG file as a byte array.
-   */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    byte[] b = ImageTools.getBytes(openImage(id, no), true, getSizeC(id));
-    return b;
+    return ImageTools.getBytes(openImage(id, no), true, core.sizeC[0]);
   }
 
-  /** Obtains the specified image from the given MNG file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -127,8 +120,7 @@ public class MNGReader extends FormatReader {
     b[6] = 0x1a;
     b[7] = 0x0a;
 
-    BufferedImage bi = ImageIO.read(new ByteArrayInputStream(b));
-    return bi;
+    return ImageIO.read(new ByteArrayInputStream(b));
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -137,7 +129,7 @@ public class MNGReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -166,8 +158,8 @@ public class MNGReader extends FormatReader {
 
     status("Reading dimensions");
 
-    width = (int) DataTools.read4UnsignedBytes(in, false);
-    height = (int) DataTools.read4UnsignedBytes(in, false);
+    core.sizeX[0] = (int) DataTools.read4UnsignedBytes(in, false);
+    core.sizeY[0] = (int) DataTools.read4UnsignedBytes(in, false);
     long fps = DataTools.read4UnsignedBytes(in, false);
     long layerCounter = DataTools.read4UnsignedBytes(in, false);
     in.skipBytes(4);
@@ -220,28 +212,21 @@ public class MNGReader extends FormatReader {
 
     status("Populating metadata");
 
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeZ[0] = 1;
-    sizeC[0] = openImage(id, 0).getRaster().getNumBands();
-    sizeT[0] = numImages;
-    currentOrder[0] = "XYCZT";
-    pixelType[0] = FormatTools.UINT8;
+    core.sizeZ[0] = 1;
+    core.sizeC[0] = openImage(id, 0).getRaster().getNumBands();
+    core.sizeT[0] = numImages;
+    core.currentOrder[0] = "XYCZT";
+    core.pixelType[0] = FormatTools.UINT8;
 
     MetadataStore store = getMetadataStore(id);
 
-    store.setPixels(new Integer(width), new Integer(height), new Integer(1),
-      new Integer(sizeC[0]), new Integer(numImages), new Integer(pixelType[0]),
-      Boolean.TRUE, currentOrder[0], null, null);
-    for (int i=0; i<sizeC[0]; i++) {
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]), 
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
+      Boolean.TRUE, core.currentOrder[0], null, null);
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new MNGReader().testRead(args);
   }
 
 }

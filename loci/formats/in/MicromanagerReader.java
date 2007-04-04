@@ -194,27 +194,27 @@ public class MicromanagerReader extends FormatReader {
         }
       }
     }
-    sizeC[0] = Integer.parseInt((String) getMeta("Channels"));
-    sizeZ[0] = 1;
-    sizeT[0] = tiffs.size() / sizeC[0];
-    sizeX[0] = tiffReader.getSizeX((String) tiffs.get(0));
-    sizeY[0] = tiffReader.getSizeY((String) tiffs.get(0));
-    currentOrder[0] = "XYCTZ";
-    pixelType[0] = tiffReader.getPixelType((String) tiffs.get(0));
+    core.sizeC[0] = Integer.parseInt((String) getMeta("Channels"));
+    core.sizeZ[0] = 1;
+    core.sizeT[0] = tiffs.size() / core.sizeC[0];
+    core.sizeX[0] = tiffReader.getSizeX((String) tiffs.get(0));
+    core.sizeY[0] = tiffReader.getSizeY((String) tiffs.get(0));
+    core.currentOrder[0] = "XYCTZ";
+    core.pixelType[0] = tiffReader.getPixelType((String) tiffs.get(0));
 
     MetadataStore store = getMetadataStore(id);
 
     store.setPixels(
-      new Integer(sizeX[0]),
-      new Integer(sizeY[0]),
-      new Integer(sizeZ[0]),
-      new Integer(sizeC[0]),
-      new Integer(sizeT[0]),
-      new Integer(pixelType[0]),
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
       new Boolean(isLittleEndian(id)),
-      currentOrder[0],
+      core.currentOrder[0],
       null, null);
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
       // TODO : retrieve min/max from the metadata 
       //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
@@ -232,12 +232,6 @@ public class MicromanagerReader extends FormatReader {
       if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
     }
     return false;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new MicromanagerReader().testRead(args);
   }
 
 }

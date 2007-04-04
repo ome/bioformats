@@ -71,7 +71,6 @@ public class IPWReader extends BaseTiffReader {
   private byte[] tags; // tags data
   private boolean rgb;
   private boolean little;
-  private int totalBytes= 0;
 
   // -- Constructor --
 
@@ -80,43 +79,44 @@ public class IPWReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an IPW file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     // all of our samples begin with 0xd0cf11e0
     return (block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /** Determines the number of images in the given IPW file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return rgb && !ignoreColorTable;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return little;
   }
 
-  /** Obtains the specified image from the given IPW file, as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     int c = getRGBChannelCount(id);
     if (c == 2) c++;
-    byte[] buf = new byte[sizeX[0] * sizeY[0] * c *
-      FormatTools.getBytesPerPixel(pixelType[0])];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * c *
+      FormatTools.getBytesPerPixel(core.pixelType[0])];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -162,7 +162,7 @@ public class IPWReader extends BaseTiffReader {
     }
   }
 
-  /** Obtains the specified image from the given IPW file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -172,10 +172,9 @@ public class IPWReader extends BaseTiffReader {
     }
 
     byte[] b = openBytes(id, no);
-    int bytes = b.length / (sizeX[0] * sizeY[0]);
-    BufferedImage bi = ImageTools.makeImage(b, sizeX[0], sizeY[0],
+    int bytes = b.length / (core.sizeX[0] * core.sizeY[0]);
+    return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0],
       bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, little);
-    return bi;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -184,7 +183,7 @@ public class IPWReader extends BaseTiffReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -229,7 +228,7 @@ public class IPWReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Initialize metadata hashtable and OME-XML structure. */
+  /* @see loci.formats.in.BaseTiffReader#initMetadata(String) */ 
   public void initMetadata(String id)
     throws FormatException, IOException
   {
@@ -283,7 +282,7 @@ public class IPWReader extends BaseTiffReader {
     addMeta("frames", new Integer(getImageCount(id)));
 
     // parse the description to get channels/slices/times where applicable
-    // basically the same as in ImageProSeqForm
+    // basically the same as in SEQReader 
     if (description != null) {
       StringTokenizer tokenizer = new StringTokenizer(description, "\n");
       while (tokenizer.hasMoreTokens()) {
@@ -303,23 +302,19 @@ public class IPWReader extends BaseTiffReader {
 
     addMeta("Version", new String(header).trim());
 
-    Integer tSize = Integer.valueOf((String) getMeta("slices"));
-    Integer cSize = Integer.valueOf((String) getMeta("channels"));
-    Integer zSize = Integer.valueOf(getMeta("frames").toString());
-
     Hashtable h = ifds[0];
-    sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
-    sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-    sizeZ[0] = Integer.valueOf(getMeta("frames").toString()).intValue();
-    sizeC[0] = Integer.parseInt((String) getMeta("channels"));
-    sizeT[0] = Integer.parseInt((String) getMeta("slices"));
-    currentOrder[0] = "XY";
+    core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
+    core.sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
+    core.sizeZ[0] = Integer.parseInt((String) getMeta("frames"));
+    core.sizeC[0] = Integer.parseInt((String) getMeta("channels"));
+    core.sizeT[0] = Integer.parseInt((String) getMeta("slices"));
+    core.currentOrder[0] = "XY";
 
-    if (rgb) sizeC[0] *= 3;
-    if (ignoreColorTable) sizeC[0] = 1;
+    if (rgb) core.sizeC[0] *= 3;
+    if (ignoreColorTable) core.sizeC[0] = 1;
 
     int maxNdx = 0, max = 0;
-    int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
+    int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
     String[] axes = {"Z", "C", "T"};
 
     for (int i=0; i<dims.length; i++) {
@@ -329,19 +324,22 @@ public class IPWReader extends BaseTiffReader {
       }
     }
 
-    currentOrder[0] += axes[maxNdx];
+    core.currentOrder[0] += axes[maxNdx];
 
     if (maxNdx != 1) {
-      if (sizeC[0] > 1) {
-        currentOrder[0] += "C";
-        currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]);
+      if (core.sizeC[0] > 1) {
+        core.currentOrder[0] += "C";
+        core.currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]);
       }
-      else currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
+      else core.currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
     }
     else {
-      if (sizeZ[0] > sizeT[0]) currentOrder[0] += "ZT";
-      else currentOrder[0] += "TZ";
+      if (core.sizeZ[0] > core.sizeT[0]) core.currentOrder[0] += "ZT";
+      else core.currentOrder[0] += "TZ";
     }
+
+    // TODO : look into removing this logic, as it appears to be copied directly
+    // from BaseTiffReader
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);
@@ -350,32 +348,32 @@ public class IPWReader extends BaseTiffReader {
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
-    pixelType[0] = FormatTools.UINT8;
+    core.pixelType[0] = FormatTools.UINT8;
 
-    if (bitFormat == 3) pixelType[0] = FormatTools.FLOAT;
+    if (bitFormat == 3) core.pixelType[0] = FormatTools.FLOAT;
     else if (bitFormat == 2) {
       switch (bitsPerSample) {
         case 8:
-          pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.INT8;
           break;
         case 16:
-          pixelType[0] = FormatTools.INT16;
+          core.pixelType[0] = FormatTools.INT16;
           break;
         case 32:
-          pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.INT32;
           break;
       }
     }
     else {
       switch (bitsPerSample) {
         case 8:
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatTools.UINT16;
+          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatTools.UINT32;
+          core.pixelType[0] = FormatTools.UINT32;
           break;
       }
     }
@@ -383,10 +381,12 @@ public class IPWReader extends BaseTiffReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    store.setPixels(null, null, zSize, cSize, tSize, new Integer(pixelType[0]),
-      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null, null);
+    store.setPixels(null, null, new Integer(core.sizeZ[0]), 
+      new Integer(core.sizeC[0]), new Integer(core.sizeT[0]), 
+      new Integer(core.pixelType[0]), new Boolean(!isLittleEndian(id)), 
+      core.currentOrder[0], null, null);
     store.setImage(null, null, (String) getMeta("Version"), null);
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
@@ -427,7 +427,6 @@ public class IPWReader extends BaseTiffReader {
         String dirName = (String) r.getVar("dirName");
 
         boolean isContents = entryName.equals("CONTENTS");
-        totalBytes += data.length + entryName.length();
 
         if (isContents) {
           // software version
@@ -480,12 +479,6 @@ public class IPWReader extends BaseTiffReader {
     for (int i=0; i<depth; i++) sb.append("  ");
     sb.append(s);
     debug(sb.toString());
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new IPWReader().testRead(args);
   }
 
 }

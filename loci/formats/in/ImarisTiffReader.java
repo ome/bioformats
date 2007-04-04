@@ -45,7 +45,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an Imaris TIFF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
     if (block.length < 3) return false;
@@ -78,11 +78,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- IFormatHandler API methods --
 
-  /**
-   * Checks if the given string is a valid filename for an Imaris TIFF file.
-   * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
-   */
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
 
@@ -143,49 +139,52 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     status("Populating metadata");
 
-    sizeC[0] = ifds.length - 1;
-    sizeZ[0] = tmp.size() / sizeC[0];
-    sizeT[0] = 1;
-    sizeX[0] =
+    core.sizeC[0] = ifds.length - 1;
+    core.sizeZ[0] = tmp.size() / core.sizeC[0];
+    core.sizeT[0] = 1;
+    core.sizeX[0] =
       TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 0);
-    sizeY[0] =
+    core.sizeY[0] =
       TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 0);
 
     ifds = (Hashtable[]) tmp.toArray(new Hashtable[0]);
-    numImages = sizeC[0] * sizeZ[0];
-    currentOrder[0] = "XYZCT";
+    numImages = core.sizeC[0] * core.sizeZ[0];
+    core.currentOrder[0] = "XYZCT";
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);
     int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
 
+    // TODO : look into removing this logic, since it's copied directly from
+    // BaseTiffReader
+
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
-    if (bitFormat == 3) pixelType[0] = FormatTools.FLOAT;
+    if (bitFormat == 3) core.pixelType[0] = FormatTools.FLOAT;
     else if (bitFormat == 2) {
       switch (bitsPerSample) {
         case 8:
-          pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.INT8;
           break;
         case 16:
-          pixelType[0] = FormatTools.INT16;
+          core.pixelType[0] = FormatTools.INT16;
           break;
         case 32:
-          pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.INT32;
           break;
       }
     }
     else {
       switch (bitsPerSample) {
         case 8:
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatTools.UINT16;
+          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatTools.UINT32;
+          core.pixelType[0] = FormatTools.UINT32;
           break;
       }
     }
@@ -212,17 +211,11 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     MetadataStore store = getMetadataStore(currentId);
 
-    store.setPixels(new Integer(sizeX[0]), new Integer(sizeY[0]),
-      new Integer(sizeZ[0]), new Integer(sizeC[0]), new Integer(sizeT[0]),
-      new Integer(pixelType[0]), null, currentOrder[0],
-      null, null);
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), null, 
+      core.currentOrder[0], null, null);
 
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new ImarisTiffReader().testRead(args);
   }
 
 }

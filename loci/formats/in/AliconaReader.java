@@ -40,15 +40,6 @@ public class AliconaReader extends FormatReader {
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
-  /** Image width. */
-  private int width;
-
-  /** Image height. */
-  private int height;
-
-  /** Number of channels. */
-  private int channels;
-
   /** Image offset. */
   private int textureOffset;
 
@@ -62,12 +53,12 @@ public class AliconaReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an Alicona file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return (new String(block)).indexOf("Alicona") != -1;
   }
-
-  /** Determines the number of images in the given Alicona file. */
+ 
+  /* @see loci.formats.IFormatReader#getImageCount(String) */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
@@ -78,30 +69,28 @@ public class AliconaReader extends FormatReader {
     return false;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /**
-   * Obtains the specified image from the
-   * given Alicona file as a byte array.
-   */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[width * height * numBytes];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * numBytes];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -110,30 +99,29 @@ public class AliconaReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int pad = (8 - (width % 8)) % 8;
+    int pad = (8 - (core.sizeX[0] % 8)) % 8;
 
-    if (buf.length < width * height * numBytes) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * numBytes) {
       throw new FormatException("Buffer to small.");
     }
 
     for (int i=0; i<numBytes; i++) {
-      in.seek(textureOffset + (no * (width + pad) * height * (i+1)));
-      for (int j=0; j<width*height; j++) {
+      in.seek(textureOffset + (no * (core.sizeX[0] + pad)*core.sizeY[0]*(i+1)));
+      for (int j=0; j<core.sizeX[0] * core.sizeY[0]; j++) {
         buf[j*numBytes + i] = (byte) in.read();
-        if (j % width == width - 1) in.skipBytes(pad);
+        if (j % core.sizeX[0] == core.sizeX[0] - 1) in.skipBytes(pad);
       }
     }
 
     return buf;
   }
 
-  /** Obtains the specified image from the given Alicona file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height, 1,
-      false, numBytes, true);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], core.sizeY[0],
+      1, false, numBytes, true);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -142,7 +130,7 @@ public class AliconaReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -188,8 +176,8 @@ public class AliconaReader extends FormatReader {
       addMeta(key, value);
 
       if (key.equals("TagCount")) count += Integer.parseInt(value);
-      else if (key.equals("Rows")) height = Integer.parseInt(value);
-      else if (key.equals("Cols")) width = Integer.parseInt(value);
+      else if (key.equals("Rows")) core.sizeY[0] = Integer.parseInt(value);
+      else if (key.equals("Cols")) core.sizeX[0] = Integer.parseInt(value);
       else if (key.equals("NumberOfPlanes")) {
         numImages = Integer.parseInt(value);
       }
@@ -200,30 +188,28 @@ public class AliconaReader extends FormatReader {
 
     status("Populating metadata");
 
-    numBytes =
-      (int) (in.length() - textureOffset) / (width * height * numImages);
+    numBytes = (int) (in.length() - textureOffset) / 
+      (core.sizeX[0] * core.sizeY[0] * numImages);
 
     boolean hasC = !((String) getMeta("TexturePtr")).trim().equals("7");
 
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeC[0] = hasC ? 3 : 1;
-    sizeZ[0] = 1;
-    sizeT[0] = numImages / sizeC[0];
+    core.sizeC[0] = hasC ? 3 : 1;
+    core.sizeZ[0] = 1;
+    core.sizeT[0] = numImages / core.sizeC[0];
 
-    pixelType[0] = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
-    currentOrder[0] = "XYCTZ";
+    core.pixelType[0] = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
+    core.currentOrder[0] = "XYCTZ";
 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(
-      new Integer(width),
-      new Integer(height),
-      new Integer(sizeZ[0]),
-      new Integer(sizeC[0]),
-      new Integer(sizeT[0]),
-      new Integer(pixelType[0]),
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
       new Boolean(true),
-      "XYCTZ",
+      core.currentOrder[0],
       null,
       null
     );
@@ -246,15 +232,9 @@ public class AliconaReader extends FormatReader {
         new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
     }
 
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new AliconaReader().testRead(args);
   }
 
 }

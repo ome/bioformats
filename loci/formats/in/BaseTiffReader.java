@@ -449,20 +449,20 @@ public abstract class BaseTiffReader extends FormatReader {
       put("Comment", comment);
     }
 
-    sizeX[0] =
+    core.sizeX[0] =
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
-    sizeY[0] =
+    core.sizeY[0] =
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
-    sizeZ[0] = 1;
+    core.sizeZ[0] = 1;
 
     try {
-      sizeC[0] = isRGB(currentId) ? 3 : 1;
+      core.sizeC[0] = isRGB(currentId) ? 3 : 1;
     }
     catch (IOException e) {
       throw new FormatException(e);
     }
 
-    sizeT[0] = ifds.length;
+    core.sizeT[0] = ifds.length;
 
     int bitFormat = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLE_FORMAT);
@@ -470,39 +470,39 @@ public abstract class BaseTiffReader extends FormatReader {
     while (bps % 8 != 0) bps++;
     if (bps == 24 || bps == 48) bps /= 3;
 
-    if (bitFormat == 3) pixelType[0] = FormatTools.FLOAT;
+    if (bitFormat == 3) core.pixelType[0] = FormatTools.FLOAT;
     else if (bitFormat == 2) {
       switch (bps) {
         case 8:
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatTools.INT16;
+          core.pixelType[0] = FormatTools.INT16;
           break;
         case 32:
-          pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.INT32;
           break;
         default:
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
       }
     }
     else {
       switch (bps) {
         case 8:
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 16:
-          pixelType[0] = FormatTools.UINT16;
+          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          pixelType[0] = FormatTools.UINT32;
+          core.pixelType[0] = FormatTools.UINT32;
           break;
         default:
-          pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.UINT8;
       }
     }
 
-    currentOrder[0] = "XYCZT";
+    core.currentOrder[0] = "XYCZT";
   }
 
   /**
@@ -650,14 +650,47 @@ public abstract class BaseTiffReader extends FormatReader {
     return (String) getMeta("Comment");
   }
 
+  /**
+   * Examines a byte array to see if it needs to be byte swapped and modifies
+   * the byte array directly.
+   * @param byteArray The byte array to check and modify if required.
+   * @return the <i>byteArray</i> either swapped or not for convenience.
+   * @throws IOException if there is an error read from the file.
+   * @throws FormatException if there is an error during metadata parsing.
+   */
+  protected byte[] swapIfRequired(byte[] byteArray)
+    throws FormatException, IOException
+  {
+    int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
+
+    // We've got nothing to do if the samples are only 8-bits wide or if they
+    // are floating point.
+    if (bitsPerSample == 8 || bitsPerSample == 32) return byteArray;
+
+    if (isLittleEndian(currentId)) {
+      if (bitsPerSample == 16) { // short
+        ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
+        for (int i = 0; i < (byteArray.length / 2); i++) {
+          buf.put(i, DataTools.swap(buf.get(i)));
+        }
+      }
+      else {
+        throw new FormatException(
+          "Unsupported sample bit width: '" + bitsPerSample + "'");
+      }
+    }
+    // We've got a big-endian file with a big-endian byte array.
+    return byteArray;
+  }
+
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a TIFF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return TiffTools.isValidHeader(block);
   }
 
-  /** Determines the number of images in the given TIFF file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
@@ -677,12 +710,7 @@ public abstract class BaseTiffReader extends FormatReader {
       p == TiffTools.CFA_ARRAY)) || p == TiffTools.RGB;
   }
 
-  /**
-   * Obtains the specified metadata field's value for the given file.
-   *
-   * @param field the name associated with the metadata field
-   * @return the value, or null if the field doesn't exist
-   */
+  /* @see loci.formats.IFormatReader#getMetadataValue(String, String) */ 
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
@@ -692,13 +720,13 @@ public abstract class BaseTiffReader extends FormatReader {
     return getMeta(field);
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return TiffTools.isLittleEndian(ifds[0]);
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
@@ -736,40 +764,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return openBytes(id, no, buf);
   }
 
-  /**
-   * Examines a byte array to see if it needs to be byte swapped and modifies
-   * the byte array directly.
-   * @param byteArray The byte array to check and modify if required.
-   * @return the <i>byteArray</i> either swapped or not for convenience.
-   * @throws IOException if there is an error read from the file.
-   * @throws FormatException if there is an error during metadata parsing.
-   */
-  protected byte[] swapIfRequired(byte[] byteArray)
-    throws FormatException, IOException
-  {
-    int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
-
-    // We've got nothing to do if the samples are only 8-bits wide or if they
-    // are floating point.
-    if (bitsPerSample == 8 || bitsPerSample == 32) return byteArray;
-
-    if (isLittleEndian(currentId)) {
-      if (bitsPerSample == 16) { // short
-        ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
-        for (int i = 0; i < (byteArray.length / 2); i++) {
-          buf.put(i, DataTools.swap(buf.get(i)));
-        }
-      }
-      else {
-        throw new FormatException(
-          "Unsupported sample bit width: '" + bitsPerSample + "'");
-      }
-    }
-    // We've got a big-endian file with a big-endian byte array.
-    return byteArray;
-  }
-
-  /** Obtains the specified image from the given TIFF file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -781,8 +776,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    BufferedImage b = TiffTools.getImage(ifds[no], in, ignoreColorTable);
-    return b;
+    return TiffTools.getImage(ifds[no], in, ignoreColorTable);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -791,7 +785,7 @@ public abstract class BaseTiffReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -803,7 +797,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (debug) debug("BaseTiffReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
-    if (in.readShort() == 0x4949) in.order(true);
+    in.order(in.readShort() == 0x4949);
 
     status("Reading IFDs");
 

@@ -68,7 +68,7 @@ public class FluoviewReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Fluoview TIFF file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (!TiffTools.isValidHeader(block)) return false;
 
@@ -99,12 +99,7 @@ public class FluoviewReader extends BaseTiffReader {
 
   // -- IFormatHandler API methods --
 
-  /**
-   * Checks if the given string is a valid filename for an Fluoview TIFF file.
-   * @param open If true, the (existing) file is opened for further analysis,
-   *   since the file extension is insufficient to confirm that the file is in
-   *   Fluoview TIFF format.
-   */
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
 
@@ -219,8 +214,8 @@ public class FluoviewReader extends BaseTiffReader {
 
     // calculate the dimension order and axis sizes
 
-    sizeZ[0] = sizeC[0] = sizeT[0] = 1;
-    currentOrder[0] = "XY";
+    core.sizeZ[0] = core.sizeC[0] = core.sizeT[0] = 1;
+    core.currentOrder[0] = "XY";
 
     for (int i=0; i<10; i++) {
       String name = (String) getMeta("Dimension " + (i+1) + " Name");
@@ -231,33 +226,33 @@ public class FluoviewReader extends BaseTiffReader {
       if (name.length() == 0) continue;
 
       if (name.equals("x")) {
-        sizeX[0] = size.intValue();
+        core.sizeX[0] = size.intValue();
         if (voxel != null) voxelX = voxel.floatValue();
       }
       else if (name.equals("y")) {
-        sizeY[0] = size.intValue();
+        core.sizeY[0] = size.intValue();
         if (voxel != null) voxelY = voxel.floatValue();
       }
       else if (name.equals("z") || name.equals("event")) {
-        sizeZ[0] *= size.intValue();
-        if (currentOrder[0].indexOf("Z") == -1) currentOrder[0] += "Z";
+        core.sizeZ[0] *= size.intValue();
+        if (core.currentOrder[0].indexOf("Z") == -1) core.currentOrder[0] += "Z";
         if (voxel != null) voxelZ = voxel.floatValue();
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
-        sizeC[0] *= size.intValue();
-        if (currentOrder[0].indexOf("C") == -1) currentOrder[0] += "C";
+        core.sizeC[0] *= size.intValue();
+        if (core.currentOrder[0].indexOf("C") == -1) core.currentOrder[0] += "C";
         if (voxel != null) voxelC = voxel.floatValue();
       }
       else {
-        sizeT[0] *= size.intValue();
-        if (currentOrder[0].indexOf("T") == -1) currentOrder[0] += "T";
+        core.sizeT[0] *= size.intValue();
+        if (core.currentOrder[0].indexOf("T") == -1) core.currentOrder[0] += "T";
         if (voxel != null) voxelT = voxel.floatValue();
       }
     }
 
-    if (currentOrder[0].indexOf("Z") == -1) currentOrder[0] += "Z";
-    if (currentOrder[0].indexOf("T") == -1) currentOrder[0] += "T";
-    if (currentOrder[0].indexOf("C") == -1) currentOrder[0] += "C";
+    if (core.currentOrder[0].indexOf("Z") == -1) core.currentOrder[0] += "Z";
+    if (core.currentOrder[0].indexOf("T") == -1) core.currentOrder[0] += "T";
+    if (core.currentOrder[0].indexOf("C") == -1) core.currentOrder[0] += "C";
 
     numImages = ifds.length;
 
@@ -298,6 +293,7 @@ public class FluoviewReader extends BaseTiffReader {
     addMeta("Comment", comment);
   }
 
+  /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
     super.initMetadataStore();
     try {
@@ -306,7 +302,7 @@ public class FluoviewReader extends BaseTiffReader {
         new Float(voxelZ), new Float(voxelC), new Float(voxelT), null);
 
       Double gamma = (Double) getMeta("Gamma");
-      for (int i=0; i<sizeC[0]; i++) {
+      for (int i=0; i<core.sizeC[0]; i++) {
         store.setDisplayChannel(new Integer(i), null, null,
           gamma == null ? null : new Float(gamma.floatValue()), null);
 
@@ -337,12 +333,6 @@ public class FluoviewReader extends BaseTiffReader {
     catch (IOException ie) {
       if (debug) ie.printStackTrace();
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new FluoviewReader().testRead(args);
   }
 
 }

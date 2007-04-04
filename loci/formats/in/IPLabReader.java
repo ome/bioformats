@@ -47,23 +47,11 @@ public class IPLabReader extends FormatReader {
   /** Number of images in the file. */
   private int numImages;
 
-  /** Image width. */
-  private int width;
-
-  /** Image height. */
-  private int height;
-
   /** Bytes per pixel. */
   private int bps;
 
-  /** Number of channels. */
-  private int c;
-
   /** Total number of pixel bytes. */
   private int dataSize;
-
-  /** Dimension order. */
-  private String order;
 
   // -- Constructor --
 
@@ -72,7 +60,7 @@ public class IPLabReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an IPLab file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block.length < 12) return false; // block length too short
     String s = new String(block, 0, 4);
@@ -86,40 +74,41 @@ public class IPLabReader extends FormatReader {
     return true;
   }
 
-  /** Determines the number of images in the given IPLab file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return c > 1;
+    return core.sizeC[0] > 1;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return true;
   }
 
-  /** Obtains the specified image from the given IPLab file as a byte array. */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[width * height * bps * c];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bps * core.sizeC[0]];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -128,23 +117,22 @@ public class IPLabReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int numPixels = width * height * c;
+    int numPixels = core.sizeX[0] * core.sizeY[0] * core.sizeC[0];
     if (buf.length < numPixels * bps) {
       throw new FormatException("Buffer too small.");
     }
-    in.seek(numPixels * bps * (no / c) + 44);
+    in.seek(numPixels * bps * (no / core.sizeC[0]) + 44);
 
     in.read(buf);
     return buf;
   }
 
-  /** Obtains the specified image from the given IPLab file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), width, height,
-      !isRGB(id) ? 1 : c, false, bps, littleEndian);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], core.sizeY[0],
+      isRGB(id) ? core.sizeC[0] : 1, false, bps, littleEndian);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -153,7 +141,7 @@ public class IPLabReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -178,62 +166,62 @@ public class IPLabReader extends FormatReader {
     in.skipBytes(12);
 
     dataSize = in.readInt() - 28;
-    width = in.readInt();
-    height = in.readInt();
-    c = in.readInt();
-    int zDepth = in.readInt();
-    int tDepth = in.readInt();
+    core.sizeX[0] = in.readInt();
+    core.sizeY[0] = in.readInt();
+    core.sizeC[0] = in.readInt();
+    core.sizeZ[0] = in.readInt();
+    core.sizeT[0] = in.readInt();
     int filePixelType = in.readInt();
 
-    numImages = zDepth * tDepth;
+    numImages = core.sizeZ[0] * core.sizeT[0];
 
-    addMeta("Width", new Long(width));
-    addMeta("Height", new Long(height));
-    addMeta("Channels", new Long(c));
-    addMeta("ZDepth", new Long(zDepth));
-    addMeta("TDepth", new Long(tDepth));
+    addMeta("Width", new Long(core.sizeX[0]));
+    addMeta("Height", new Long(core.sizeY[0]));
+    addMeta("Channels", new Long(core.sizeC[0]));
+    addMeta("ZDepth", new Long(core.sizeZ[0]));
+    addMeta("TDepth", new Long(core.sizeT[0]));
 
     String ptype;
     bps = 1;
     switch ((int) filePixelType) {
       case 0:
         ptype = "8 bit unsigned";
-        pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT8;
         bps = 1;
         break;
       case 1:
         ptype = "16 bit signed short";
-        pixelType[0] = FormatTools.INT16;
+        core.pixelType[0] = FormatTools.INT16;
         bps = 2;
         break;
       case 2:
         ptype = "16 bit unsigned short";
-        pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.UINT16;
         bps = 2;
         break;
       case 3:
         ptype = "32 bit signed long";
-        pixelType[0] = FormatTools.INT32;
+        core.pixelType[0] = FormatTools.INT32;
         bps = 4;
         break;
       case 4:
         ptype = "32 bit single-precision float";
-        pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = FormatTools.FLOAT;
         bps = 4;
         break;
       case 5:
         ptype = "Color24";
-        pixelType[0] = FormatTools.INT32;
+        core.pixelType[0] = FormatTools.INT32;
         bps = 1;
         break;
       case 6:
         ptype = "Color48";
-        pixelType[0] = FormatTools.INT32;
+        core.pixelType[0] = FormatTools.INT32;
         bps = 2;
         break;
       case 10:
         ptype = "64 bit double-precision float";
-        pixelType[0] = FormatTools.DOUBLE;
+        core.pixelType[0] = FormatTools.DOUBLE;
         bps = 8;
         break;
       default:
@@ -243,26 +231,26 @@ public class IPLabReader extends FormatReader {
     addMeta("PixelType", ptype);
     in.skipBytes(dataSize);
 
-    order = "XY";
-    if (c > 1) order += "CZT";
-    else order += "ZTC";
+    core.currentOrder[0] = "XY";
+    if (core.sizeC[0] > 1) core.currentOrder[0] += "CZT";
+    else core.currentOrder[0] += "ZTC";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
     store.setPixels(
-      new Integer((int) width), // SizeX
-      new Integer((int) height), // SizeY
-      new Integer((int) zDepth), // SizeZ
-      new Integer((int) c), // SizeC
-      new Integer((int) tDepth), // SizeT
-      new Integer(pixelType[0]), // PixelType
+      new Integer(core.sizeX[0]), // SizeX
+      new Integer(core.sizeY[0]), // SizeY
+      new Integer(core.sizeZ[0]), // SizeZ
+      new Integer(core.sizeC[0]), // SizeC
+      new Integer(core.sizeT[0]), // SizeT
+      new Integer(core.pixelType[0]), // PixelType
       new Boolean(!littleEndian), // BigEndian
-      order, // DimensionOrder
+      core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
 
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
 
@@ -334,11 +322,11 @@ public class IPLabReader extends FormatReader {
         int size = in.readInt();
         // error checking
 
-        if (size != (44 * c)) {
+        if (size != (44 * core.sizeC[0])) {
           throw new FormatException("Bad normalization settings");
         }
 
-        for (int i=0; i<c; i++) {
+        for (int i=0; i<core.sizeC[0]; i++) {
           long source = in.readInt();
 
           String sourceType;
@@ -382,7 +370,7 @@ public class IPLabReader extends FormatReader {
           store.setChannelGlobalMinMax(i, new Double(min),
             new Double(max), null);
 
-          store.setDisplayChannel(new Integer(c), new Double(black),
+          store.setDisplayChannel(new Integer(core.sizeC[0]), new Double(black),
             new Double(white), new Float(gamma), null);
         }
       }
@@ -481,20 +469,6 @@ public class IPLabReader extends FormatReader {
         tag = "fini";
       }
     }
-
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeZ[0] = (int) ((Long) getMeta("ZDepth")).longValue();
-    sizeC[0] = c;
-    sizeT[0] = (int) ((Long) getMeta("TDepth")).longValue();
-    currentOrder[0] = order;
-
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new IPLabReader().testRead(args);
   }
 
 }

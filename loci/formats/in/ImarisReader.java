@@ -53,9 +53,6 @@ public class ImarisReader extends FormatReader {
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
-  /** Image dimensions: width, height, z, channels. */
-  private int[] dims;
-
   /** Offsets to each image. */
   private int[] offsets;
 
@@ -76,8 +73,6 @@ public class ImarisReader extends FormatReader {
     
     in.order(IS_LITTLE);
 
-    dims = new int[4];
-
     long magic = in.readInt();
     if (magic != IMARIS_MAGIC_NUMBER) {
       throw new FormatException("Imaris magic number not found.");
@@ -94,13 +89,13 @@ public class ImarisReader extends FormatReader {
     String iName = new String(name);
     addMeta("Image name", iName);
 
-    dims[0] = in.readShort();
-    dims[1] = in.readShort();
-    dims[2] = in.readShort();
+    core.sizeX[0] = in.readShort();
+    core.sizeY[0] = in.readShort();
+    core.sizeZ[0] = in.readShort();
 
     in.skipBytes(2);
 
-    dims[3] = in.readInt();
+    core.sizeC[0] = in.readInt();
     in.skipBytes(2);
 
     byte[] date = new byte[32];
@@ -122,38 +117,36 @@ public class ImarisReader extends FormatReader {
 
     status("Calculating image offsets");
 
-    numImages = dims[2] * dims[3];
+    numImages = core.sizeZ[0] * core.sizeC[0]; 
     offsets = new int[numImages];
 
-    for (int i=0; i<dims[3]; i++) {
-      int offset = 332 + ((i + 1) * 168) + (i * dims[0] * dims[1] * dims[2]);
-      for (int j=0; j<dims[2]; j++) {
-        offsets[i*dims[2] + j] = offset + (j * dims[0] * dims[1]);
+    for (int i=0; i<core.sizeC[0]; i++) {
+      int offset = 332 + ((i + 1) * 168) + (i * core.sizeX[0] * 
+        core.sizeY[0] * core.sizeZ[0]);
+      for (int j=0; j<core.sizeZ[0]; j++) {
+        offsets[i*core.sizeZ[0] + j] = 
+          offset + (j * core.sizeX[0] * core.sizeY[0]);
       }
     }
 
     status("Populating metadata");
 
-    sizeX[0] = dims[0];
-    sizeY[0] = dims[1];
-    sizeZ[0] = dims[2];
-    sizeC[0] = dims[3];
-    sizeT[0] = numImages / (dims[2] * dims[3]);
-    currentOrder[0] = "XYZCT";
+    core.sizeT[0] = numImages / (core.sizeC[0] * core.sizeZ[0]);
+    core.currentOrder[0] = "XYZCT";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    pixelType[0] = FormatTools.UINT8;
+    core.pixelType[0] = FormatTools.UINT8;
     store.setPixels(
-      new Integer(dims[0]),
-      new Integer(dims[1]),
-      new Integer(dims[2]),
-      new Integer(dims[3]),
-      new Integer(1),
-      new Integer(pixelType[0]),
+      new Integer(core.sizeX[0]),
+      new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]),
       new Boolean(!IS_LITTLE),
-      "XYZCT",
+      core.currentOrder[0],
       null,
       null);
 
@@ -173,53 +166,51 @@ public class ImarisReader extends FormatReader {
 
     store.setObjective(null, null, null, null, new Float(mag), null, null);
 
-    for (int i=0; i<sizeC[0]; i++) {
+    for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
 
   // -- IFormatReader API methods --
 
-  /** Checks if the given block is a valid header for an Imaris file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
   }
 
-  /** Determines the number of images in the given Imaris file. */
+  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return IS_LITTLE;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
     return false;
   }
 
-  /**
-   * Obtains the specified image from the
-   * given Imaris file as a byte array.
-   */
+  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    byte[] buf = new byte[dims[0] * dims[1]];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0]];
     return openBytes(id, no, buf);
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -227,26 +218,25 @@ public class ImarisReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < dims[0] * dims[1]) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0]) {
       throw new FormatException("Buffer too small.");
     }
 
     in.seek(offsets[no]);
-    int row = dims[1] - 1;
-    for (int i=0; i<dims[1]; i++) {
-      in.read(buf, row*dims[0], dims[0]);
+    int row = core.sizeY[0] - 1;
+    for (int i=0; i<core.sizeY[0]; i++) {
+      in.read(buf, row*core.sizeX[0], core.sizeX[0]);
       row--;
     }
     return buf;
   }
 
-  /** Obtains the specified image from the given Imaris file. */
+  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), dims[0],
-      dims[1], 1, false);
-    return b;
+    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0],
+      core.sizeY[0], 1, false);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -255,7 +245,7 @@ public class ImarisReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -276,12 +266,6 @@ public class ImarisReader extends FormatReader {
       return isThisType(b);
     }
     catch (IOException e) { return false; }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new ImarisReader().testRead(args);
   }
 
 }
