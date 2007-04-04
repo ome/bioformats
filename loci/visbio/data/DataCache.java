@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.util.Hashtable;
-import loci.visbio.util.MathUtil;
+import loci.formats.FormatTools;
 import visad.Data;
 
 /** Provides a simple caching mechanism for full-resolution data in memory. */
@@ -101,9 +101,9 @@ public class DataCache {
    */
   public synchronized void dump(DataTransform trans, String append) {
     int[] lengths = trans.getLengths();
-    int len = MathUtil.getRasterLength(lengths);
+    int len = FormatTools.getRasterLength(lengths);
     for (int i=0; i<len; i++) {
-      int[] pos = MathUtil.rasterToPosition(lengths, i);
+      int[] pos = FormatTools.rasterToPosition(lengths, i);
       dump(getKey(trans, pos, append));
     }
   }

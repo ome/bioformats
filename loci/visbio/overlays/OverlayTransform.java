@@ -31,9 +31,11 @@ import java.rmi.RemoteException;
 import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import loci.formats.FormatTools;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
-import loci.visbio.util.*;
+import loci.visbio.util.DisplayUtil;
+import loci.visbio.util.ObjectUtil;
 import loci.visbio.view.DisplayWindow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import visad.*;
@@ -151,7 +153,7 @@ public class OverlayTransform extends DataTransform
 
   /** Adds an overlay object at the given dimensional position. */
   public void addObject(OverlayObject obj, int[] pos) {
-    int ndx = MathUtil.positionToRaster(lengths, pos);
+    int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     synchronized (overlays) {
       overlays[ndx].add(obj);
@@ -165,7 +167,7 @@ public class OverlayTransform extends DataTransform
 
   /** Removes an overlay object at the given dimensional position. */
   public void removeObject(OverlayObject obj, int[] pos) {
-    int ndx = MathUtil.positionToRaster(lengths, pos);
+    int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     synchronized (overlays) {
       overlays[ndx].remove(obj);
@@ -185,7 +187,7 @@ public class OverlayTransform extends DataTransform
 
   /** Removes selected overlay objects at the given dimensional position. */
   public void removeSelectedObjects(int[] pos) {
-    int ndx = MathUtil.positionToRaster(lengths, pos);
+    int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     boolean anyRemoved = false;
     int i = 0;
@@ -216,7 +218,7 @@ public class OverlayTransform extends DataTransform
    * to the clipboard.
    */
   public void copySelectedObjects(int[] pos) {
-    int ndx = MathUtil.positionToRaster(lengths, pos);
+    int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     synchronized (overlays) {
       clipboard.removeAllElements();
@@ -234,7 +236,7 @@ public class OverlayTransform extends DataTransform
 
   /** Pastes copied objects at the given dimensional position. */
   public void pasteObjects(int[] pos) {
-    int ndx = MathUtil.positionToRaster(lengths, pos);
+    int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     synchronized (overlays) {
       if (clipboard.isEmpty()) return;
@@ -282,7 +284,7 @@ public class OverlayTransform extends DataTransform
    * the operation was successful.
    */
   public String distributeObjects(int[] pos) {
-    int ndx = MathUtil.positionToRaster(lengths, pos);
+    int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) {
       return "Invalid dimensional position.";
     }
@@ -355,7 +357,7 @@ public class OverlayTransform extends DataTransform
       System.arraycopy(pos, 0, p, 0, pos.length);
       for (int i=1; i<distance; i++) {
         p[diffIndex] = pos[diffIndex] + i * inc;
-        ndx = MathUtil.positionToRaster(lengths, p);
+        ndx = FormatTools.positionToRaster(lengths, p);
 
         OverlayObject obj = OverlayIO.createOverlay(className, this);
 
@@ -388,7 +390,7 @@ public class OverlayTransform extends DataTransform
 
   /** Gets the overlay objects at the given dimensional position. */
   public OverlayObject[] getObjects(int[] pos) {
-    int ndx = MathUtil.positionToRaster(lengths, pos);
+    int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return null;
     OverlayObject[] oo = new OverlayObject[overlays[ndx].size()];
     overlays[ndx].copyInto(oo);
@@ -499,6 +501,9 @@ public class OverlayTransform extends DataTransform
   /** Gets whether text is drawn. */
   public boolean isTextDrawn() { return drawText; }
 
+  /** Gets whether the current tool has changed since last mouse gesture. */
+  public boolean hasToolChanged() { return toolChanged; }
+
   // -- Static DataTransform API methods --
 
   /** Creates a new set of overlays, with user interaction. */
@@ -537,7 +542,7 @@ public class OverlayTransform extends DataTransform
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;
     }
-    int q = MathUtil.positionToRaster(lengths, pos);
+    int q = FormatTools.positionToRaster(lengths, pos);
     if (q < 0 || q >= overlays.length) return null;
     synchronized (overlays) {
       int size = overlays[q].size();
@@ -757,7 +762,7 @@ public class OverlayTransform extends DataTransform
       else if (ctrl && code == KeyEvent.VK_V) pasteObjects();
       else {
         // update selected text objects
-        int ndx = MathUtil.positionToRaster(lengths, pos);
+        int ndx = FormatTools.positionToRaster(lengths, pos);
         if (ndx < 0 || ndx >= overlays.length) return;
         Vector objs = overlays[ndx];
         boolean changed = false;
@@ -790,20 +795,6 @@ public class OverlayTransform extends DataTransform
       updatePosition(display);
       // No tools use keyReleased functionality, so it is disabled for now
       //if (tool != null) tool.keyReleased(e.getKeyCode(), e.getModifiers());
-    }
-  }
-
-  /** Helper method for Display Changed -- releases left mouse button */
-  protected void releaseLeft(DisplayEvent e,
-    DisplayImpl display, OverlayTool tool)
-  {
-    mouseDownLeft = false;
-    updatePosition(display);
-    if (tool != null) {
-      int px = e.getX(), py = e.getY();
-      double[] coords = DisplayUtil.pixelToDomain(display, px, py);
-      tool.mouseUp(e, px, py,
-        (float) coords[0], (float) coords[1], pos, e.getModifiers());
     }
   }
 
@@ -844,7 +835,7 @@ public class OverlayTransform extends DataTransform
     dims = parent.getDimTypes();
     makeLabels();
 
-    int len = MathUtil.getRasterLength(lengths);
+    int len = FormatTools.getRasterLength(lengths);
     Vector[] v = new Vector[len];
     int minLen = 0;
     if (overlays != null) {
@@ -893,14 +884,23 @@ public class OverlayTransform extends DataTransform
    * Updates the dimensional position based on
    * the current state of the given display.
    */
-  public void updatePosition(DisplayImpl display) {
+  protected void updatePosition(DisplayImpl display) {
     DisplayWindow window = DisplayWindow.getDisplayWindow(display);
     setPos(window.getTransformHandler().getPos(this));
   }
 
-  /** 
-   * Returns whether the current tool has changed
-   */
-  public boolean hasToolChanged() { return toolChanged; }
+  /** Helper method that handles left mouse button releases. */
+  protected void releaseLeft(DisplayEvent e,
+    DisplayImpl display, OverlayTool tool)
+  {
+    mouseDownLeft = false;
+    updatePosition(display);
+    if (tool != null) {
+      int px = e.getX(), py = e.getY();
+      double[] coords = DisplayUtil.pixelToDomain(display, px, py);
+      tool.mouseUp(e, px, py,
+        (float) coords[0], (float) coords[1], pos, e.getModifiers());
+    }
+  }
 
 }

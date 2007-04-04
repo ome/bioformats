@@ -27,7 +27,7 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import loci.formats.ExtensionFileFilter;
+import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.*;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Document;

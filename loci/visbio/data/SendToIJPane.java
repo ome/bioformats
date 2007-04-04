@@ -26,9 +26,6 @@ package loci.visbio.data;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.process.ImageProcessor;
 import loci.visbio.*;
 import loci.visbio.view.BioSlideWidget;
 import loci.visbio.util.*;
@@ -106,31 +103,11 @@ public class SendToIJPane extends DialogPane {
             task.setStatus(len, len);
           }
 
-          // convert FlatFields into ImagePlus object
+          // send FlatFields to ImageJ
           task.setStatus("Sending data to ImageJ");
-          ImagePlus image;
-          String name = trans.getName() + " (from VisBio)";
-          if (data.length > 1) {
-            // create image stack
-            ImageStack is = null;
-            for (int i=0; i<data.length; i++) {
-              ImageProcessor ips = ImageJUtil.extractImage(data[i]);
-              if (is == null) {
-                is = new ImageStack(ips.getWidth(), ips.getHeight(),
-                  ips.getColorModel());
-              }
-              is.addSlice("" + i, ips);
-            }
-            image = new ImagePlus(name, is);
-          }
-          else {
-            // create single image
-            image = new ImagePlus(name, ImageJUtil.extractImage(data[0]));
-          }
-
-          // send ImagePlus object to ImageJ
+          String title = trans.getName() + " (from VisBio)";
+          ImageJUtil.sendToImageJ(title, data, bio);
           task.setCompleted();
-          ImageJUtil.sendToImageJ(image, bio);
         }
         catch (VisADException exc) {
           exc.printStackTrace();

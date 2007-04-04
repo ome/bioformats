@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import loci.formats.FormatTools;
 import loci.visbio.VisBio;
 import loci.visbio.util.*;
 import org.apache.poi.hssf.usermodel.*;
@@ -154,7 +155,7 @@ public final class OverlayIO {
           }
 
           // initialize replacement overlay lists
-          loadedOverlays = new Vector[MathUtil.getRasterLength(lengths)];
+          loadedOverlays = new Vector[FormatTools.getRasterLength(lengths)];
           for (int i=0; i<loadedOverlays.length; i++) {
             loadedOverlays[i] = new Vector();
           }
@@ -272,7 +273,7 @@ public final class OverlayIO {
 
           if (obj instanceof OverlayNodedObject) loadedNodedObjects.add(obj);
 
-          int r = MathUtil.positionToRaster(lengths, pos);
+          int r = FormatTools.positionToRaster(lengths, pos);
           //System.out.print("["); // TEMP
           //for (int i=0; i< pos.length; i++) System.out.print(i + " "); // TEMP
           //System.out.println("]"); // TEMP
@@ -391,7 +392,7 @@ public final class OverlayIO {
 
     // overlays table
     for (int i=0; i<overlays.length; i++) {
-      int[] pos = MathUtil.rasterToPosition(lengths, i);
+      int[] pos = FormatTools.rasterToPosition(lengths, i);
       StringBuffer sb = new StringBuffer();
       // add 1 to shift indices for humans
       for (int p=0; p<pos.length; p++) sb.append((pos[p]+1) + "\t");
@@ -560,7 +561,7 @@ public final class OverlayIO {
 
     // overlays table
     for (int i=0; i<overlays.length; i++) {
-      int[] pos = MathUtil.rasterToPosition(lengths, i);
+      int[] pos = FormatTools.rasterToPosition(lengths, i);
       
       for (int j=0; j<overlays[i].size(); j++) {
         cellnum = 0;

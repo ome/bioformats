@@ -217,7 +217,7 @@ public class ExportPane extends WizardPane {
 
           int[] lengths = trans.getLengths();
           for (int i=0; i<numFiles; i++) {
-            int[] pos = MathUtil.rasterToPosition(plen, i);
+            int[] pos = FormatTools.rasterToPosition(plen, i);
             int[] npos = new int[lengths.length];
             for (int j=0; j<stars; j++) npos[maps[j]] = pos[j];
 

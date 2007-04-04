@@ -36,7 +36,7 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.*;
 import javax.swing.text.Document;
-import loci.formats.ExtensionFileFilter;
+import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.data.*;
 import loci.visbio.util.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

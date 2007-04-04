@@ -26,6 +26,7 @@ package loci.visbio.util;
 import ij.*;
 import ij.process.*;
 import java.awt.Component;
+import java.awt.Image;
 import java.io.File;
 import javax.swing.JOptionPane;
 import loci.visbio.VisBioFrame;
@@ -136,19 +137,74 @@ public final class ImageJUtil {
   }
 
   /**
-   * Displays the given ImageJ image object within ImageJ,
+   * Displays the given image object within ImageJ,
    * launching ImageJ if necessary.
    */
-  public static void sendToImageJ(ImagePlus image) {
-    sendToImageJ(image, null);
+  public static void sendToImageJ(String title, Image image) {
+    sendToImageJ(title, image, null);
   }
 
   /**
-   * Displays the given ImageJ image object within ImageJ,
+   * Displays the given image object within ImageJ,
    * launching ImageJ if necessary.
    */
-  public static void sendToImageJ(ImagePlus image, VisBioFrame bio) {
+  public static void sendToImageJ(String title, Image image, VisBioFrame bio) {
+    sendToImageJ(new ImagePlus(title, image), bio);
+  }
+
+  /**
+   * Displays the given FlatFields as an image stack within ImageJ,
+   * launching ImageJ if necessary.
+   */
+  public static void sendToImageJ(String title, FlatField[] data,
+    VisBioFrame bio) throws VisADException
+  {
+    ImagePlus imp;
+    if (data.length > 1) {
+      // create image stack
+      ImageStack is = null;
+      for (int i=0; i<data.length; i++) {
+        ImageProcessor ips = extractImage(data[i]);
+        if (is == null) {
+          is = new ImageStack(ips.getWidth(), ips.getHeight(),
+            ips.getColorModel());
+        }
+        is.addSlice("" + i, ips);
+      }
+      imp = new ImagePlus(title, is);
+    }
+    else {
+      // create single image
+      imp = new ImagePlus(title, ImageJUtil.extractImage(data[0]));
+    }
+    sendToImageJ(imp, bio);
+  }
+
+  /**
+   * Displays the given image object within ImageJ, launching ImageJ if
+   * necessary. If ImageJ is launched, and a suitable VisBio frame is given,
+   * the user is warned to save their work in ImageJ before quitting VisBio.
+   */
+  public static void sendToImageJ(ImagePlus imp, VisBioFrame bio) {
+    boolean ijPopped = sendToImageJ(imp);
+    if (bio != null && ijPopped) {
+      // display ImageJ warning
+      OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+      om.checkWarning(bio, DisplayManager.WARN_IMAGEJ, false,
+        "Quitting VisBio will also shut down ImageJ, with no\n" +
+        "warning or opportunity to save your work. Please remember\n" +
+        "to save your work in ImageJ before closing VisBio.");
+    }
+  }
+
+  /**
+   * Displays the given image object within ImageJ,
+   * launching ImageJ if necessary.
+   * @return true if ImageJ needed to be launched
+   */
+  public static boolean sendToImageJ(ImagePlus imp) {
     ImageJ ij = IJ.getInstance();
+    boolean ijPopped = false;
     if (ij == null || (ij != null && !ij.isShowing())) {
       // create new ImageJ instance
       File dir = new File(System.getProperty("user.dir"));
@@ -156,17 +212,10 @@ public final class ImageJUtil {
       System.setProperty("user.dir", newDir.getPath());
       new ImageJ(null);
       System.setProperty("user.dir", dir.getPath());
-
-      if (bio != null) {
-        // display ImageJ warning
-        OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
-        om.checkWarning(ij, DisplayManager.WARN_IMAGEJ, false,
-          "Quitting VisBio will also shut down ImageJ, with no\n" +
-          "warning or opportunity to save your work. Please remember\n" +
-          "to save your work in ImageJ before closing VisBio.");
-      }
+      ijPopped = true;
     }
-    image.show();
+    imp.show();
+    return ijPopped;
   }
 
 }

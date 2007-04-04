@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import ij.*;
-import ij.io.FileSaver;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -33,6 +31,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
+import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 import loci.visbio.state.*;
@@ -143,13 +142,17 @@ public class CaptureHandler implements Saveable {
     }
 
     // save file in a separate thread
-    final String filename = file;
+    final String id = file;
     final boolean isTiff = tiff, isJpeg = jpeg;
     new Thread("VisBio-SnapshotThread-" + window.getName()) {
       public void run() {
-        FileSaver saver = new FileSaver(new ImagePlus("null", getSnapshot()));
-        if (isTiff) saver.saveAsTiff(filename);
-        else if (isJpeg) saver.saveAsJpeg(filename);
+        ImageWriter writer = new ImageWriter();
+        try {
+          writer.save(id, getSnapshot(), true);
+          writer.close();
+        }
+        catch (FormatException exc) { exc.printStackTrace(); }
+        catch (IOException exc) { exc.printStackTrace(); }
       }
     }.start();
   }
@@ -158,8 +161,8 @@ public class CaptureHandler implements Saveable {
   public void sendToImageJ() {
     new Thread("VisBio-SendToImageJThread-" + window.getName()) {
       public void run() {
-        ImageJUtil.sendToImageJ(new ImagePlus(
-          window.getName() + " snapshot", getSnapshot()), window.getVisBio());
+        ImageJUtil.sendToImageJ(window.getName() + " snapshot",
+          getSnapshot(), window.getVisBio());
       }
     }.start();
   }

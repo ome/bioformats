@@ -245,52 +245,6 @@ public final class MathUtil {
     return v;
   }
 
-  /**
-   * Computes a unique 1-D index corresponding to the multidimensional
-   * position given in the pos array, using the specified lengths array
-   * as the maximum value at each positional dimension.
-   */
-  public static int positionToRaster(int[] lengths, int[] pos) {
-    int[] offsets = new int[lengths.length];
-    if (offsets.length > 0) offsets[0] = 1;
-    for (int i=1; i<offsets.length; i++) {
-      offsets[i] = offsets[i - 1] * lengths[i - 1];
-    }
-    int raster = 0;
-    for (int i=0; i<pos.length; i++) raster += offsets[i] * pos[i];
-    return raster;
-  }
-
-  /**
-   * Computes a unique 3-D position corresponding to the given raster
-   * value, using the specified lengths array as the maximum value at
-   * each positional dimension.
-   */
-  public static int[] rasterToPosition(int[] lengths, int raster) {
-    int[] offsets = new int[lengths.length];
-    if (offsets.length > 0) offsets[0] = 1;
-    for (int i=1; i<offsets.length; i++) {
-      offsets[i] = offsets[i - 1] * lengths[i - 1];
-    }
-    int[] pos = new int[lengths.length];
-    for (int i=0; i<pos.length; i++) {
-      int q = i < pos.length - 1 ? raster % offsets[i + 1] : raster;
-      pos[i] = q / offsets[i];
-      raster -= q;
-    }
-    return pos;
-  }
-
-  /**
-   * Computes the maximum raster value of a positional array with
-   * the given maximum values.
-   */
-  public static int getRasterLength(int[] lengths) {
-    int len = 1;
-    for (int i=0; i<lengths.length; i++) len *= lengths[i];
-    return len;
-  }
-
   /** Units for use with getProductWithUnit method. */
   private static final String[] UNITS = {
     "", "kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta",

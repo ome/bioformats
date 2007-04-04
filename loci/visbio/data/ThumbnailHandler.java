@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
+import loci.formats.FormatTools;
 import loci.visbio.BioTask;
 import loci.visbio.TaskManager;
 import loci.visbio.util.*;
@@ -83,13 +84,13 @@ public class ThumbnailHandler implements Runnable, TransformListener {
 
   /** Gets the thumbnail at the given dimensional position. */
   public FlatField getThumb(int[] pos) {
-    int ndx = MathUtil.positionToRaster(data.getLengths(), pos);
+    int ndx = FormatTools.positionToRaster(data.getLengths(), pos);
     return ndx >= 0 && ndx < thumbs.length ? thumbs[ndx] : null;
   }
 
   /** Sets the thumbnail at the given dimensional position. */
   public void setThumb(int[] pos, FlatField thumb) {
-    int ndx = MathUtil.positionToRaster(data.getLengths(), pos);
+    int ndx = FormatTools.positionToRaster(data.getLengths(), pos);
     if (ndx >= 0 && ndx < thumbs.length) thumbs[ndx] = thumb;
   }
 
@@ -130,7 +131,7 @@ public class ThumbnailHandler implements Runnable, TransformListener {
       catch (InterruptedException exc) { exc.printStackTrace(); }
       on = oldOn;
     }
-    thumbs = new FlatField[MathUtil.getRasterLength(data.getLengths())];
+    thumbs = new FlatField[FormatTools.getRasterLength(data.getLengths())];
     count = 0;
     if (on) startGeneration();
   }
@@ -153,7 +154,7 @@ public class ThumbnailHandler implements Runnable, TransformListener {
 
     int[] lengths = data.getLengths();
     String id = data.getCacheId(
-      MathUtil.rasterToPosition(lengths, i), global);
+      FormatTools.rasterToPosition(lengths, i), global);
 
     // attempt to grab thumbnail from the disk cache
     boolean cached = false;
@@ -167,7 +168,7 @@ public class ThumbnailHandler implements Runnable, TransformListener {
 
     if (!cached) {
       // compute thumbnail from data object
-      thumbs[i] = computeThumb(MathUtil.rasterToPosition(lengths, i));
+      thumbs[i] = computeThumb(FormatTools.rasterToPosition(lengths, i));
       if (cache != null && thumbs[i] != null) cache.store(id, thumbs[i]);
     }
 

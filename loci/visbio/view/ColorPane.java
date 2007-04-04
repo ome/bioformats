@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
-import loci.formats.ExtensionFileFilter;
+import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.util.*;
 import visad.*;
 import visad.browser.Convert;

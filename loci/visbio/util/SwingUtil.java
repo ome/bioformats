@@ -36,6 +36,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import loci.formats.ImageReader;
+import loci.formats.gui.GUITools;
 
 /** SwingUtil contains useful Swing functions. */
 public final class SwingUtil {
@@ -245,13 +246,12 @@ public final class SwingUtil {
       JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
   }
 
-  /** ImageReader for JFileChooser filtering. */
-  protected static ImageReader reader;
+  protected static JFileChooser chooser;
 
   /** Constructs a JFileChooser that recognizes accepted VisBio file types. */
   public static JFileChooser getVisBioFileChooser() {
-    if (reader == null) reader = new ImageReader();
-    return reader.getFileChooser();
+    if (chooser == null) chooser = GUITools.buildFileChooser(new ImageReader());
+    return chooser;
   }
 
   /** Pops up a message box, blocking the current thread. */
