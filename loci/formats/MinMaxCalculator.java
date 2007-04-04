@@ -33,16 +33,16 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- Fields --
 
-  /** Minimum values for each channel. */
+  /** Min values for each channel. */
   protected double[][] chanMin;
 
-  /** Maximum values for each channel. */
+  /** Max values for each channel. */
   protected double[][] chanMax;
 
-  /** Minimum values for each plane. */
+  /** Min values for each plane. */
   protected double[][] planeMin;
 
-  /** Maximum values for each plane. */
+  /** Max values for each plane. */
   protected double[][] planeMax;
 
   /** Number of planes for which min/max computations have been completed. */
@@ -50,11 +50,6 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- Constructors --
 
-  /** Constructs a MinMaxCalculator around a new image reader. */
-  public MinMaxCalculator() { super(); }
-
-  /** Constructs a MinMaxCalculator with the given reader. */
-  public MinMaxCalculator(IFormatReader r) { super(r); }
 
   // -- IFormatReader API methods -- 
 
@@ -244,6 +239,14 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
   
     minMaxDone[getSeries(id)]++; 
+  
+    if (minMaxDone[getSeries(id)] == getImageCount(id)) {
+      MetadataStore store = getMetadataStore(id);
+      for (int c=0; c<getSizeC(id); c++) { 
+        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries(id)][c]), 
+          new Double(chanMax[getSeries(id)][c]), new Integer(getSeries(id)));
+      } 
+    }
   }
   
   /** Updates min/max values based on the given byte array. */
@@ -294,6 +297,14 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
   
     minMaxDone[getSeries(id)]++; 
+  
+    if (minMaxDone[getSeries(id)] == getImageCount(id)) {
+      MetadataStore store = getMetadataStore(id);
+      for (int c=0; c<getSizeC(id); c++) { 
+        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries(id)][c]), 
+          new Double(chanMax[getSeries(id)][c]), new Integer(getSeries(id)));
+      } 
+    }
   }
 
   /** Ensures internal min/max variables are initialized properly. */
