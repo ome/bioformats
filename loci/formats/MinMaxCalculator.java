@@ -56,34 +56,6 @@ public class MinMaxCalculator extends ReaderWrapper {
   /** Constructs a MinMaxCalculator with the given reader. */
   public MinMaxCalculator(IFormatReader r) { super(r); }
 
-  // -- IFormatReader API methods -- 
-
-  /* @see loci.formats.IFormatReader#openImage(String, int) */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    BufferedImage b = super.openImage(id, no);
-    updateMinMax(b, no);
-    return b;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no) throws FormatException, IOException
-  {
-    byte[] b = super.openBytes(id, no);
-    updateMinMax(b, no);
-    return b;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    byte[] b = super.openBytes(id, no, buf);
-    updateMinMax(b, no);
-    return b;
-  }
-
   // -- MinMaxCalculator API methods --
 
   /**
@@ -198,6 +170,34 @@ public class MinMaxCalculator extends ReaderWrapper {
     throws FormatException, IOException
   {
     return minMaxDone != null && minMaxDone[getSeries(id)] == getImageCount(id);
+  }
+
+  // -- IFormatReader API methods -- 
+
+  /* @see IFormatReader#openImage(String, int) */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    BufferedImage b = super.openImage(id, no);
+    updateMinMax(b, no);
+    return b;
+  }
+
+  /* @see IFormatReader#openBytes(String, int) */
+  public byte[] openBytes(String id, int no) throws FormatException, IOException
+  {
+    byte[] b = super.openBytes(id, no);
+    updateMinMax(b, no);
+    return b;
+  }
+
+  /* @see IFormatReader#openBytes(String, int, byte[]) */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    byte[] b = super.openBytes(id, no, buf);
+    updateMinMax(b, no);
+    return b;
   }
 
   // -- Helper methods --
@@ -354,7 +354,6 @@ public class MinMaxCalculator extends ReaderWrapper {
       setSeries(getCurrentFile(), oldSeries); 
     }
     if (minMaxDone == null) minMaxDone = new int[seriesCount];
-
   }
 
 }
