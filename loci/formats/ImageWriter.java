@@ -26,15 +26,13 @@ package loci.formats;
 
 import java.awt.Image;
 import java.awt.image.ColorModel;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 /**
  * ImageWriter is the master file format writer for all supported formats.
- * It uses one instance of each writer subclass (specified in writers.txt)
- * to identify file formats based on extension and write data.
+ * It uses one instance of each writer subclass (specified in writers.txt,
+ * or other class list source) to identify file formats and write data.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -43,54 +41,25 @@ public class ImageWriter implements IFormatWriter {
   // -- Static fields --
 
   /** List of writer classes. */
-  protected static Vector writerClasses;
+  private static ClassList writerClasses;
 
   // -- Static initializer --
 
   static {
-    // read built-in writer classes from writers.txt file
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-      ImageWriter.class.getResourceAsStream("writers.txt")));
-    writerClasses = new Vector();
-    while (true) {
-      String line = null;
-      try { line = in.readLine(); }
-      catch (IOException exc) { exc.printStackTrace(); }
-      if (line == null) break;
-
-      // ignore characters following # sign (comments)
-      int ndx = line.indexOf("#");
-      if (ndx >= 0) line = line.substring(0, ndx);
-      line = line.trim();
-      if (line.equals("")) continue;
-
-      // load writer class
-      Class c = null;
-      try { c = Class.forName(line); }
-      catch (ClassNotFoundException exc) {
-        if (FormatWriter.debug) exc.printStackTrace();
-      }
-      catch (NoClassDefFoundError err) {
-        if (FormatWriter.debug) err.printStackTrace();
-      }
-      catch (ExceptionInInitializerError err) {
-        if (FormatWriter.debug) err.printStackTrace();
-      }
-      if (c == null || !IFormatWriter.class.isAssignableFrom(c)) {
-        System.err.println("Error: \"" + line +
-          "\" is not a valid format writer.");
-        continue;
-      }
-      writerClasses.add(c);
+    // load built-in writer classes from writers.txt file
+    try {
+      writerClasses = new ClassList("writers.txt", IFormatWriter.class);
     }
-    try { in.close(); }
-    catch (IOException exc) { exc.printStackTrace(); }
+    catch (IOException exc) {
+      exc.printStackTrace();
+      writerClasses = new ClassList(IFormatWriter.class);
+    }
   }
 
   // -- Fields --
 
   /** List of supported file format writers. */
-  protected FormatWriter[] writers;
+  protected IFormatWriter[] writers;
 
   /**
    * Valid suffixes for all file format writers.
@@ -112,26 +81,34 @@ public class ImageWriter implements IFormatWriter {
 
   // -- Constructor --
 
-  /** Constructs a new ImageWriter. */
+  /**
+   * Constructs a new ImageWriter with the default
+   * list of writer classes from writers.txt.
+   */
   public ImageWriter() {
-    // add built-in writers to the list
+    this(writerClasses);
+  }
+
+  /** Constructs a new ImageWriter from the given list of writer classes. */
+  public ImageWriter(ClassList classList) {
+    // add writers to the list
     Vector v = new Vector();
-    for (int i=0; i<writerClasses.size(); i++) {
-      Class writerClass = (Class) writerClasses.elementAt(i);
-      FormatWriter writer = null;
+    Class[] c = classList.getClasses();
+    for (int i=0; i<c.length; i++) {
+      IFormatWriter writer = null;
       try {
-        writer = (FormatWriter) writerClass.newInstance();
+        writer = (IFormatWriter) c[i].newInstance();
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (writer == null) {
-        System.err.println("Error: " + writerClass.getName() +
+        System.err.println("Error: " + c[i].getName() +
           " cannot be instantiated.");
         continue;
       }
       v.add(writer);
     }
-    writers = new FormatWriter[v.size()];
+    writers = new IFormatWriter[v.size()];
     v.copyInto(writers);
   }
 
@@ -143,7 +120,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Gets the writer used to save the given file. */
-  public FormatWriter getWriter(String id) throws FormatException {
+  public IFormatWriter getWriter(String id) throws FormatException {
     if (!id.equals(currentId)) {
       // initialize file
       boolean success = false;
@@ -161,7 +138,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Gets the file format writer instance matching the given class. */
-  public FormatWriter getWriter(Class c) {
+  public IFormatWriter getWriter(Class c) {
     for (int i=0; i<writers.length; i++) {
       if (writers[i].getClass().equals(c)) return writers[i];
     }
@@ -325,28 +302,6 @@ public class ImageWriter implements IFormatWriter {
   public StatusListener[] getStatusListeners() {
     // NB: all writers should have the same status listeners
     return writers[0].getStatusListeners();
-  }
-
-  // -- Static ImageWriter API methods --
-
-  /**
-   * Adds the given class, which must implement IFormatWriter,
-   * to the writer list.
-   *
-   * @throws FormatException if the class does not implement
-   *   the IFormatWriter interface.
-   */
-  public static void addWriterType(Class c) throws FormatException {
-    if (!IFormatWriter.class.isAssignableFrom(c)) {
-      throw new FormatException(
-        "Writer class must implement IFormatWriter interface");
-    }
-    writerClasses.add(c);
-  }
-
-  /** Removes the given class from the writer list. */
-  public static void removeWriterType(Class c) {
-    writerClasses.remove(c);
   }
 
   // -- Main method --

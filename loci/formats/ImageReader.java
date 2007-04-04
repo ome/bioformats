@@ -25,15 +25,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 /**
  * ImageReader is the master file format reader for all supported formats.
- * It uses one instance of each reader subclass (specified in readers.txt)
- * to identify file formats and read data.
+ * It uses one instance of each reader subclass (specified in readers.txt,
+ * or other class list source) to identify file formats and read data.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -42,48 +40,19 @@ public class ImageReader implements IFormatReader {
   // -- Static fields --
 
   /** List of reader classes. */
-  private static Vector readerClasses;
+  private static ClassList readerClasses;
 
   // -- Static initializer --
 
   static {
-    // read built-in reader classes from readers.txt file
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-      ImageReader.class.getResourceAsStream("readers.txt")));
-    readerClasses = new Vector();
-    while (true) {
-      String line = null;
-      try { line = in.readLine(); }
-      catch (IOException exc) { exc.printStackTrace(); }
-      if (line == null) break;
-
-      // ignore characters following # sign (comments)
-      int ndx = line.indexOf("#");
-      if (ndx >= 0) line = line.substring(0, ndx);
-      line = line.trim();
-      if (line.equals("")) continue;
-
-      // load reader class
-      Class c = null;
-      try { c = Class.forName(line); }
-      catch (ClassNotFoundException exc) {
-        if (FormatReader.debug) exc.printStackTrace();
-      }
-      catch (NoClassDefFoundError err) {
-        if (FormatReader.debug) err.printStackTrace();
-      }
-      catch (ExceptionInInitializerError err) {
-        if (FormatReader.debug) err.printStackTrace();
-      }
-      if (c == null || !IFormatReader.class.isAssignableFrom(c)) {
-        System.err.println("Error: \"" + line +
-          "\" is not a valid format reader.");
-        continue;
-      }
-      readerClasses.add(c);
+    // load built-in reader classes from readers.txt file
+    try {
+      readerClasses = new ClassList("readers.txt", IFormatReader.class);
     }
-    try { in.close(); }
-    catch (IOException exc) { exc.printStackTrace(); }
+    catch (IOException exc) {
+      exc.printStackTrace();
+      readerClasses = new ClassList(IFormatReader.class);
+    }
   }
 
   // -- Fields --
@@ -105,26 +74,28 @@ public class ImageReader implements IFormatReader {
 
   // -- Constructors --
 
-  /** Constructs a new ImageReader. */
-  public ImageReader() { this(null); }
-
   /**
-   * Constructs a new ImageReader with a MetadataStore.
-   * @param store the default metadata store.
+   * Constructs a new ImageReader with the default
+   * list of reader classes from readers.txt.
    */
-  public ImageReader(MetadataStore store) {
-    // add built-in readers to the list
+  public ImageReader() {
+    this(readerClasses);
+  }
+
+  /** Constructs a new ImageReader from the given list of reader classes. */
+  public ImageReader(ClassList classList) {
+    // add readers to the list
     Vector v = new Vector();
-    for (int i=0; i<readerClasses.size(); i++) {
-      Class readerClass = (Class) readerClasses.elementAt(i);
+    Class[] c = classList.getClasses();
+    for (int i=0; i<c.length; i++) {
       IFormatReader reader = null;
       try {
-        reader = (IFormatReader) readerClass.newInstance();
+        reader = (IFormatReader) c[i].newInstance();
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (reader == null) {
-        System.err.println("Error: " + readerClass.getName() +
+        System.err.println("Error: " + c[i].getName() +
           " cannot be instantiated.");
         continue;
       }
@@ -132,8 +103,6 @@ public class ImageReader implements IFormatReader {
     }
     readers = new IFormatReader[v.size()];
     v.copyInto(readers);
-
-    if (store != null) setMetadataStore(store);
   }
 
   // -- ImageReader API methods --
@@ -512,28 +481,6 @@ public class ImageReader implements IFormatReader {
   public StatusListener[] getStatusListeners() {
     // NB: all readers should have the same status listeners
     return readers[0].getStatusListeners();
-  }
-
-  // -- Static ImageReader API methods --
-
-  /**
-   * Adds the given class, which must implement IFormatReader,
-   * to the reader list.
-   *
-   * @throws FormatException if the class does not implement
-   *   the IFormatReader interface.
-   */
-  public static void addReaderType(Class c) throws FormatException {
-    if (!IFormatReader.class.isAssignableFrom(c)) {
-      throw new FormatException(
-        "Reader class must implement IFormatReader interface");
-    }
-    readerClasses.add(c);
-  }
-
-  /** Removes the given class from the reader list. */
-  public static void removeReaderType(Class c) {
-    readerClasses.remove(c);
   }
 
   // -- Main method --
