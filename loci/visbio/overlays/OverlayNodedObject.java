@@ -403,7 +403,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     String bounds = "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
     OverlayStat[] stats = {
       new OverlayStat("Bounds", bounds),
-      new OverlayStat("Length (standard)", "" + curveLength),
+      new OverlayStat("Length (pixels, standard)", "" + curveLength),
     };
 
     return stats;

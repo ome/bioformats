@@ -439,17 +439,22 @@ public final class OverlayIO {
     String[] titles = {"Line", "Freeform", "Marker", "Text", "Oval", "Box",
       "Arrow", "Polyline"};
     for (int v=0; v<vectors.length; v++) {
-      out.println("# " + titles[v] + " Statistics");
-      for (int i=0; i<vectors[v].size(); i++) {
-        OverlayObject obj = (OverlayObject) vectors[v].get(i);
-        int index = i + 1;
-        out.println("# " + titles[v] + " " + index);
-        OverlayStat[] stats = obj.getStatisticsArray();
-        for (int j=0; j<stats.length; j++) {
-          out.println("#\t" + stats[j].getName() + "\t" + stats[j].getValue());
-        }
-      }
-      out.println();
+			if (vectors[v].size() > 0) 
+			{
+				out.println("# " + titles[v] + " Statistics");
+				for (int i=0; i<vectors[v].size(); i++) 
+				{
+					OverlayObject obj = (OverlayObject) vectors[v].get(i);
+					int index = i + 1;
+					out.println("# " + titles[v] + " " + index);
+					OverlayStat[] stats = obj.getStatisticsArray();
+					for (int j=0; j<stats.length; j++) 
+					{
+						out.println("#\t" + stats[j].getName() + "\t" + stats[j].getValue());
+					}
+				}
+				out.println();
+			}
     }
    
     // nodes of noded objects, one node per line
@@ -490,8 +495,17 @@ public final class OverlayIO {
   public static HSSFWorkbook exportOverlays (OverlayTransform overlay) {
     String[] dims = overlay.getDimTypes();
     int[] lengths = overlay.getLengths();
+
     Vector[] overlays = overlay.overlays;
-    Vector savedNodedObjects = new Vector();
+
+		Vector lines = new Vector();
+		Vector markers = new Vector();
+		Vector freeforms = new Vector();
+		Vector texts = new Vector();
+		Vector ovals = new Vector();
+		Vector boxes = new Vector();
+		Vector arrows = new Vector();
+		Vector polylines = new Vector();
 
     // initialize worksheet
     HSSFWorkbook wb = new HSSFWorkbook();
@@ -515,7 +529,7 @@ public final class OverlayIO {
     // write file header
     int rownum = 0;
 
-    String header = "# " + VisBio.TITLE + " " + VisBio.VERSION +
+    String header = VisBio.TITLE + " " + VisBio.VERSION +
       " overlay file written " + new Date();
 
     // try to estimate number of cells to merge
@@ -571,7 +585,14 @@ public final class OverlayIO {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
 
         // a 'rider' to this loop: keep track of noded objects
-        if (obj instanceof OverlayNodedObject) savedNodedObjects.add(obj);
+				if (obj instanceof OverlayLine) lines.add(obj);
+				if (obj instanceof OverlayFreeform) freeforms.add(obj);
+				if (obj instanceof OverlayMarker) markers.add(obj);
+				if (obj instanceof OverlayText) texts.add(obj);
+				if (obj instanceof OverlayOval) ovals.add(obj);
+				if (obj instanceof OverlayBox) boxes.add(obj);
+				if (obj instanceof OverlayArrow) arrows.add(obj);
+				if (obj instanceof OverlayPolyline) polylines.add(obj);
 
         // overlay object type
         c = r.createCell(cellnum++);
@@ -658,15 +679,69 @@ public final class OverlayIO {
         c.setCellValue(new HSSFRichTextString(obj.notes.replaceAll("\t", " ")));
       }
     }
+    
+    // write overlay statistics
+    Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
+				arrows, polylines};
+		String[] titles = 
+			{	"Line", "Freeform", "Marker", "Text", "Oval", "Box",
+				"Arrow", "Polyline"};
+				
+		for (int v=0; v<vectors.length; v++) 
+		{
+			if (vectors[v].size() > 0) 
+			{
+				rownum += 2;
+				r = s.createRow(rownum);
+				cellnum = 0;
+			  c = r.createCell(cellnum++);
+			  c.setCellStyle(text);
+			  c.setCellValue(new HSSFRichTextString(titles[v] + " Statistics"));
+			  			
+				for (int i=0; i<vectors[v].size(); i++) 
+				{
+					OverlayObject obj = (OverlayObject) vectors[v].get(i);
+					int index = i + 1;
+					
+					cellnum = 0;
+					r = s.createRow(++rownum);
+					c = r.createCell(cellnum++);
+					c.setCellStyle(text);
+					c.setCellValue(new HSSFRichTextString(titles[v] + " " + index));
+					
+					OverlayStat[] stats = obj.getStatisticsArray();
+					for (int j=0; j<stats.length; j++) 
+					{
+					  r = s.createRow(++rownum);
+					  cellnum = 1; // indent one column
+						c = r.createCell(cellnum++);
+						c.setCellStyle(text);
+						c.setCellValue(new HSSFRichTextString(stats[j].getName()));
+						
+						c = r.createCell(cellnum++);
+						c.setCellStyle(text);
+						c.setCellValue(new HSSFRichTextString(stats[j].getValue()));
+					} 
+				}
+			} 
+		} 
 
     // write nodes of noded objects
     int freeformCount = 0;
     int polylineCount = 0;
     
     rownum += 2; // skip a row
-    for (int i = 0; i<savedNodedObjects.size(); i++) {
-      OverlayNodedObject ono = (OverlayNodedObject) 
-        savedNodedObjects.elementAt(i);
+    for (int i = 0; i<freeforms.size() + polylines.size(); i++) {
+      OverlayNodedObject ono;
+      int k = 0;
+      if (i < freeforms.size()){
+        ono = (OverlayNodedObject) freeforms.get(i);
+        k = ++freeformCount;
+      }
+      else {
+        ono = (OverlayNodedObject) polylines.get(i - freeforms.size());
+        k = ++polylineCount;
+      }
 
       // write nodes header
       int numNodes = ono.getNumNodes();
@@ -679,16 +754,11 @@ public final class OverlayIO {
       yy1 = ono.getY();
       xx2 = ono.getX2();
       yy2 = ono.getY2();
-      
-      int k = 0;
-      if (ono instanceof OverlayFreeform) k = ++freeformCount;
-      else if (ono instanceof OverlayPolyline) k = ++polylineCount;
-
-      String hdr = ono + " " + k + " (" + xx1 + "," + yy1 + ")(" + xx2 + "," +
-        yy2 + ")";
+            
+      String hdr = ono + " " + k;
       c.setCellValue(new HSSFRichTextString(hdr));
 
-      // write nodes themselves
+      // write the nodes themselves
       for (int j = 0; j<numNodes; j++) {
         float[] node = ono.getNodeCoords(j);
         r = s.createRow(rownum++);
