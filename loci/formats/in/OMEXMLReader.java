@@ -95,9 +95,6 @@ public class OMEXMLReader extends FormatReader {
   /** Dimension order. */
   private String[] order;
 
-  /** Internal OME-XML store, for convenient access to metadata fields. */
-  private Object omexml;
-
   // -- Constructor --
 
   /** Constructs a new OME-XML reader. */
@@ -233,7 +230,6 @@ public class OMEXMLReader extends FormatReader {
     if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     if (in != null) in.close();
     in = null;
-    omexml = null;
     currentId = null;
   }
 
@@ -245,6 +241,7 @@ public class OMEXMLReader extends FormatReader {
 
     in = new RandomAccessStream(id);
     ReflectedUniverse r = new ReflectedUniverse();
+    Object omexml = null;
     try {
       r.exec("import loci.formats.ome.OMEXMLMetadataStore");
       r.exec("import org.openmicroscopy.xml.OMENode");
@@ -523,9 +520,6 @@ public class OMEXMLReader extends FormatReader {
           null, new Integer(i));
       }
     }
-
-    omexml = null;
-    System.gc();
   }
 
   // -- Helper methods --
