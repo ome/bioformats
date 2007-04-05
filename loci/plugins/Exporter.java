@@ -84,7 +84,7 @@ public class Exporter {
     }
 
     try {
-      FormatWriter w = new ImageWriter().getWriter(outfile);
+      IFormatWriter w = new ImageWriter().getWriter(outfile);
 
       // prompt for options
 
