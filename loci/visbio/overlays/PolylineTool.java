@@ -47,7 +47,6 @@ public class PolylineTool extends OverlayTool {
   protected static final int SELECTED_TAIL = 7;
   protected static final int EXTEND_ON_TAIL = 8;
   protected static final int BEG_EXTEND = 9;
-  
 
   /** Maximum distance (in pixels) mouse can be from a node to be considered
    *  pointing to it. */
@@ -98,15 +97,16 @@ public class PolylineTool extends OverlayTool {
     boolean ctl = (mods & InputEvent.CTRL_MASK) != 0;
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
-    deselectAll(); 
-
     if (overlay.hasToolChanged()) {
       releaseLine();
       mode = WAIT;
     }
 
     if (mode == WAIT) {
+      deselectAll();
       line =  new OverlayPolyline(overlay, dx, dy, dx, dy);
+      line.setDrawing(true);
+      line.setSelected(true);
       configureOverlay(line);
       overlay.addObject(line, pos);
       mode = PLACE;
@@ -229,15 +229,10 @@ public class PolylineTool extends OverlayTool {
     else if (mode == ADJUST_TAIL || mode == CLOSE_LOOP) {
       line.setNodeCoords(selectedNode, dx, dy);
 
-      int ndx = 0; // index of head
-      double[] dPxlDbl = {(double) px, (double) py};
-      float[] nDom = line.getNodeCoords(ndx);
-      double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
-      int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
-      double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
-      double dist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+      // determine if near head
+      double dist = getDistanceToNode(0, px, py, display);
       
-      // if near ndx, highlight selected node differently 
+      // if near, highlight head node 
       if (dist < THRESH) {
         line.setHighlightNode(selectedNode, CON);
         mode = CLOSE_LOOP;
@@ -333,46 +328,18 @@ public class PolylineTool extends OverlayTool {
       mode = BEG_EXTEND;
     }
     else if (mode == EXTEND || mode == EXTEND_ON_TAIL) {
-      float[][] lastSeg = {line.getNodeCoords(line.getNumNodes()-1),
-        line.getNodeCoords(line.getNumNodes() - 2)};
-      double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
-        {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
-      double lastSegLength = MathUtil.getDistance(lastSegD[0], lastSegD[1]);
-
+      // update curve length
+      double lastSegLength = getLastSegmentLength();
       line.setLastNode(dx, dy);
-
-      float[][] newLastSeg = {line.getNodeCoords(line.getNumNodes() -1),
-        line.getNodeCoords(line.getNumNodes() - 2)};
-      double[][] newLastSegD = {{(double) lastSeg[0][0], (double)
-        lastSeg[0][1]}, {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
-      double newLastSegLength = MathUtil.getDistance(newLastSegD[0], 
-          newLastSegD[1]);
-
+      double newLastSegLength = getLastSegmentLength();
       double delta = newLastSegLength - lastSegLength;
-      //System.out.println("lastSegLength = " + lastSegLength); // TEMP
-      //System.out.println("newLastSegLength = " + newLastSegLength);
-      //System.out.println("delta =  " + delta);
-
       line.setCurveLength(line.getCurveLength() + delta);     
       
-      // determine if near head: 
-      int ndx = 0; // index of head
-      double[] dPxlDbl = {(double) px, (double) py};
-      float[] nDom = line.getNodeCoords(ndx);
-      double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
-      int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
-      double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
-      double hdist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
-      
+      // determine if near head 
+      double hdist = getDistanceToNode(0, px, py, display);
       // determine if near last node placed 
-      ndx = line.getNumNodes() - 2;
-      dPxlDbl = new double[] {(double) px, (double) py};
-      nDom = line.getNodeCoords(ndx);
-      nDomDbl = new double[] {(double) nDom[0], (double) nDom[1]};
-      nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
-      nPxlDbl = new double[] {(double) nPxl[0], (double) nPxl[1]};
-      double ldist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
-
+      double ldist = getDistanceToNode(line.getNumNodes() - 2, px, py, display);
+      
       // if near ndx, highlight selected node differently 
       int flag = -1; 
       if (ldist < THRESH) 
@@ -381,7 +348,6 @@ public class PolylineTool extends OverlayTool {
         else ;
       else if (hdist < THRESH) flag = 0;
 
-      
       if (flag == 0) {
         line.setActiveDisplay(display);
         line.setHighlightNode(0, CON);
@@ -398,49 +364,26 @@ public class PolylineTool extends OverlayTool {
       }
     }
     else if (mode == BEG_EXTEND) {
-      float[][] lastSeg = {line.getNodeCoords(line.getNumNodes() -1), line.getNodeCoords(line.getNumNodes() - 2)};
-      double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
-        {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
-      double lastSegLength = MathUtil.getDistance(lastSegD[0], lastSegD[1]);
-
+      // update curve length
+      double lastSegLength = getLastSegmentLength();
       line.setLastNode(dx, dy);
-
-      float[][] newLastSeg = {line.getNodeCoords(line.getNumNodes() -1),
-        line.getNodeCoords(line.getNumNodes() - 2)};
-      double[][] newLastSegD = {{(double) lastSeg[0][0], (double)
-        lastSeg[0][1]}, {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
-      double newLastSegLength = MathUtil.getDistance(newLastSegD[0], 
-          newLastSegD[1]);
-
+      double newLastSegLength = getLastSegmentLength();
       double delta = newLastSegLength - lastSegLength;
+      line.setCurveLength(line.getCurveLength() + delta);     
 
-      line.setCurveLength(line.getCurveLength() + delta); 
-      
-      // determine if near head: 
-      int ndx = 0; // index of head
-      double[] dPxlDbl = {(double) px, (double) py};
-      float[] nDom = line.getNodeCoords(ndx);
-      double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
-      int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
-      double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
-      double hdist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
-      
+      // determine if near head 
+      double hdist = getDistanceToNode(0, px, py, display);
       // determine if near last node placed 
-      ndx = line.getNumNodes() - 2;
-      dPxlDbl = new double[] {(double) px, (double) py};
-      nDom = line.getNodeCoords(ndx);
-      nDomDbl = new double[] {(double) nDom[0], (double) nDom[1]};
-      nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
-      nPxlDbl = new double[] {(double) nPxl[0], (double) nPxl[1]};
-      double ldist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+      double ldist = getDistanceToNode(line.getNumNodes() - 2, px, py, display);
 
+      // highlight first or last visible node if near
       if (hdist < THRESH) {
         line.setActiveDisplay(display);
         line.setHighlightNode(line.getNumNodes()-1, CON);
         mode = CLOSE_LOOP;
       }
      
-      // if you've dragged far enough from last node placed
+      // switch modes if you've dragged far enough from last node placed
       if (ldist > 10.0) {
         mode = EXTEND;
       }
@@ -448,14 +391,8 @@ public class PolylineTool extends OverlayTool {
     else if (mode == CLOSE_LOOP) {
       line.setLastNode(dx, dy);
       // determine if near head: 
-      int ndx = 0; // index of head
-      double[] dPxlDbl = {(double) px, (double) py};
-      float[] nDom = line.getNodeCoords(ndx);
-      double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
-      int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
-      double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
-      double dist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
-      
+      double dist = getDistanceToNode(0, px, py, display);
+     
       // if near ndx, highlight selected node differently 
       if (dist > THRESH) {
         line.turnOffHighlighting();
@@ -463,6 +400,7 @@ public class PolylineTool extends OverlayTool {
       }
     }
     else if (mode == SELECT) {
+      // get distance btw. pointer and selectedNode
       float[] nodeFlt = line.getNodeCoords (selectedNode); 
       double[] nodeDbl = {(double) nodeFlt[0], (double) nodeFlt[1]};
       int[] nodePxl = DisplayUtil.domainToPixel(display, nodeDbl); 
@@ -483,6 +421,27 @@ public class PolylineTool extends OverlayTool {
 
   // -- Helper methods -- 
   
+  /** Gets distance to the node specified, handling awkward casts */
+  private double getDistanceToNode(int ndx, int px, int py, 
+    DisplayImpl display) {
+    double[] dPxlDbl = {(double) px, (double) py};
+    float[] nDom = line.getNodeCoords(ndx);
+    double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
+    int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
+    double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
+    double dist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+    return dist;
+  }
+
+  /** Determines length of last line segment */ 
+  private double getLastSegmentLength() {
+    float[][] lastSeg = {line.getNodeCoords(line.getNumNodes() -1), 
+      line.getNodeCoords(line.getNumNodes() - 2)};
+    double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
+      {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
+    return MathUtil.getDistance(lastSegD[0], lastSegD[1]);
+  }
+
   /** Ends drawing of the current line */
   private void releaseLine() {
     if (line != null) {

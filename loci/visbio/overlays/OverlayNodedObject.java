@@ -86,12 +86,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Length of curve of a noded object */
   protected double curveLength;
 
-  /** Whether the head node should be highlighted */
-  protected boolean highlightHead;
-
-  /** Whether the tail node should be highlighted */
-  protected boolean highlightTail;
-
   /** Whether there is a higlighted node */
   protected boolean highlightNode;
 
@@ -109,8 +103,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Constructs an uninitialized noded object. */
   public OverlayNodedObject(OverlayTransform overlay) { 
     super(overlay); 
-    setHighlightHead(false);
-    setHighlightTail(false);
     turnOffHighlighting();
   }
 
@@ -130,8 +122,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     numNodes = 1;
     computeGridParameters();
     computeLength();
-    setHighlightHead(false);
-    setHighlightTail(false);
     turnOffHighlighting();
   }
 
@@ -145,8 +135,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     updateBoundingBox();
     computeGridParameters();
     computeLength();
-    setHighlightHead(false);
-    setHighlightTail(false);
     turnOffHighlighting();
   }
 
@@ -192,15 +180,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
     catch (VisADException exc) { exc.printStackTrace(); }
     
     // fill nodes range samples
-    float r = color.getRed() / 255f;
-    float g = color.getGreen() / 255f;
-    float b = color.getBlue() / 255f;
-
-    if (selected) {
-      r = 1.0f;
-      g = 1.0f;
-      b = 0.0f;
-    }
+    Color col = selected ? GLOW_COLOR : color; 
+    float r = col.getRed() / 255f;
+    float g = col.getGreen() / 255f;
+    float b = col.getBlue() / 255f;
 
     Arrays.fill(rangeSamples[0], 0, maxNodes, r);
     Arrays.fill(rangeSamples[1], 0, maxNodes, g);
@@ -344,8 +327,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
 
     // construct range samples;
-    Color col = Color.YELLOW;
-
+    Color col = GLOW_COLOR;
     float r = col.getRed() / 255f;
     float g = col.getGreen() / 255f;
     float b = col.getBlue() / 255f;
@@ -415,14 +397,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
 
-  /** True iff the head node is highlighted. */
-  public boolean isHighlightHead() { return highlightHead; }
-  // TODO get rid of this ACS
-
-  /** True iff the tail node is highlighted. */
-  public boolean isHighlightTail() { return highlightTail; }
-  // TODO get rid of this ACS
-
   /** True iff there is a highlighted node. */
   public boolean isHighlightNode() { return highlightNode; }
 
@@ -463,12 +437,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
    *  to domain coordinates
    */
   public void setActiveDisplay (DisplayImpl d) { display = d; }
-  
-  /** Toggle highlight head of polyline. */
-  public void setHighlightHead(boolean b) { highlightHead = b; }
-
-  /** Toggle highlight tail of polyline. */
-  public void setHighlightTail(boolean b) { highlightTail = b; }
 
   /** Highlight a node. */ 
   public void setHighlightNode(int i, Color c) {
