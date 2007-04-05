@@ -174,18 +174,22 @@ public class OverlayLine extends OverlayObject {
 
     float delta = GLOW_WIDTH;
 
-    float[] v = new float[]{x2 - x1, y2 - y1};
+    // compute locations of grid points
+    // (uses similar triangles instead of raw trig fcns)
+    float x = x2 - x1;
+    float y = y2 - y1;
+    float hyp = (float) Math.sqrt(x * x + y * y);
+    float ratio = delta / hyp;
+    // offsets from endpoints of line segments 
+    float dx1 = ratio * y; 
+    float dy1 = ratio * x;
+    float dx2 = ratio * x;
+    float dy2 = ratio * y;
 
-    // angle of vector perpendicular to line
-    double theta =  Math.PI / 2 + Math.atan2(v[1], v[0]); 
-
-    float dx = (float) (delta * Math.cos(theta));
-    float dy = (float) (delta * Math.sin(theta));
-
-    float[] p1 = {x1 + dx, y1 + dy};
-    float[] p2 = {x2 + dx, y2 + dy};
-    float[] p3 = {x1 - dx, y1 - dy};
-    float[] p4 = {x2 - dx, y2 - dy};
+    float[] p1 = {x1 - dx1 - dx2, y1 + dy1 - dy2};
+    float[] p2 = {x2 - dx1 + dx2, y2 + dy1 + dy2};
+    float[] p3 = {x1 + dx1 - dx2, y1 - dy1 - dy2};
+    float[] p4 = {x2 + dx1 + dx2, y2 - dy1 + dy2};
 
     float[][] setSamples = {{p1[0], p2[0], p3[0], p4[0]},
                             {p1[1], p2[1], p3[1], p4[1]}};

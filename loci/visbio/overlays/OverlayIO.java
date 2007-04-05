@@ -431,7 +431,6 @@ public final class OverlayIO {
         out.println(obj.notes.replaceAll("\t", " "));
       }
     }
-    out.println ();
 
     // print stats by object type
     Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
@@ -439,22 +438,22 @@ public final class OverlayIO {
     String[] titles = {"Line", "Freeform", "Marker", "Text", "Oval", "Box",
       "Arrow", "Polyline"};
     for (int v=0; v<vectors.length; v++) {
-			if (vectors[v].size() > 0) 
-			{
-				out.println("# " + titles[v] + " Statistics");
-				for (int i=0; i<vectors[v].size(); i++) 
-				{
-					OverlayObject obj = (OverlayObject) vectors[v].get(i);
-					int index = i + 1;
-					out.println("# " + titles[v] + " " + index);
-					OverlayStat[] stats = obj.getStatisticsArray();
-					for (int j=0; j<stats.length; j++) 
-					{
-						out.println("#\t" + stats[j].getName() + "\t" + stats[j].getValue());
-					}
-				}
-				out.println();
-			}
+      if (vectors[v].size() > 0) 
+      {
+	out.println(); // Throw in a blank
+	out.println("# " + titles[v] + " Statistics");
+	for (int i=0; i<vectors[v].size(); i++) 
+	{
+	  OverlayObject obj = (OverlayObject) vectors[v].get(i);
+	  int index = i + 1;
+	  out.println("# " + titles[v] + " " + index);
+	  OverlayStat[] stats = obj.getStatisticsArray();
+	  for (int j=0; j<stats.length; j++) 
+	  {
+		  out.println("#\t" + stats[j].getName() + "\t" + stats[j].getValue());
+	  }
+	}
+      }
     }
    
     // nodes of noded objects, one node per line
@@ -585,14 +584,14 @@ public final class OverlayIO {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
 
         // a 'rider' to this loop: keep track of noded objects
-				if (obj instanceof OverlayLine) lines.add(obj);
-				if (obj instanceof OverlayFreeform) freeforms.add(obj);
-				if (obj instanceof OverlayMarker) markers.add(obj);
-				if (obj instanceof OverlayText) texts.add(obj);
-				if (obj instanceof OverlayOval) ovals.add(obj);
-				if (obj instanceof OverlayBox) boxes.add(obj);
-				if (obj instanceof OverlayArrow) arrows.add(obj);
-				if (obj instanceof OverlayPolyline) polylines.add(obj);
+	if (obj instanceof OverlayLine) lines.add(obj);
+	if (obj instanceof OverlayFreeform) freeforms.add(obj);
+	if (obj instanceof OverlayMarker) markers.add(obj);
+	if (obj instanceof OverlayText) texts.add(obj);
+	if (obj instanceof OverlayOval) ovals.add(obj);
+	if (obj instanceof OverlayBox) boxes.add(obj);
+	if (obj instanceof OverlayArrow) arrows.add(obj);
+	if (obj instanceof OverlayPolyline) polylines.add(obj);
 
         // overlay object type
         c = r.createCell(cellnum++);
@@ -682,49 +681,48 @@ public final class OverlayIO {
     
     // write overlay statistics
     Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
-				arrows, polylines};
-		String[] titles = 
-			{	"Line", "Freeform", "Marker", "Text", "Oval", "Box",
-				"Arrow", "Polyline"};
-				
-		for (int v=0; v<vectors.length; v++) 
-		{
-			if (vectors[v].size() > 0) 
-			{
-				rownum += 2;
-				r = s.createRow(rownum);
-				cellnum = 0;
-			  c = r.createCell(cellnum++);
-			  c.setCellStyle(text);
-			  c.setCellValue(new HSSFRichTextString(titles[v] + " Statistics"));
-			  			
-				for (int i=0; i<vectors[v].size(); i++) 
-				{
-					OverlayObject obj = (OverlayObject) vectors[v].get(i);
-					int index = i + 1;
-					
-					cellnum = 0;
-					r = s.createRow(++rownum);
-					c = r.createCell(cellnum++);
-					c.setCellStyle(text);
-					c.setCellValue(new HSSFRichTextString(titles[v] + " " + index));
-					
-					OverlayStat[] stats = obj.getStatisticsArray();
-					for (int j=0; j<stats.length; j++) 
-					{
-					  r = s.createRow(++rownum);
-					  cellnum = 1; // indent one column
-						c = r.createCell(cellnum++);
-						c.setCellStyle(text);
-						c.setCellValue(new HSSFRichTextString(stats[j].getName()));
-						
-						c = r.createCell(cellnum++);
-						c.setCellStyle(text);
-						c.setCellValue(new HSSFRichTextString(stats[j].getValue()));
-					} 
-				}
-			} 
-		} 
+      arrows, polylines};
+    String[] titles = 
+      { "Line", "Freeform", "Marker", "Text", "Oval", "Box",
+        "Arrow", "Polyline"};
+    for (int v=0; v<vectors.length; v++) 
+    {
+      if (vectors[v].size() > 0) 
+      {
+	rownum += 2;
+	r = s.createRow(rownum);
+	cellnum = 0;
+	c = r.createCell(cellnum++);
+	c.setCellStyle(text);
+	c.setCellValue(new HSSFRichTextString(titles[v] + " Statistics"));
+			      
+	for (int i=0; i<vectors[v].size(); i++) 
+	{
+	  OverlayObject obj = (OverlayObject) vectors[v].get(i);
+	  int index = i + 1;
+	  
+	  cellnum = 0;
+	  r = s.createRow(++rownum);
+	  c = r.createCell(cellnum++);
+	  c.setCellStyle(text);
+	  c.setCellValue(new HSSFRichTextString(titles[v] + " " + index));
+	  
+	  OverlayStat[] stats = obj.getStatisticsArray();
+	  for (int j=0; j<stats.length; j++) 
+	  {
+	    r = s.createRow(++rownum);
+	    cellnum = 1; // indent one column
+	    c = r.createCell(cellnum++);
+	    c.setCellStyle(text);
+	    c.setCellValue(new HSSFRichTextString(stats[j].getName()));
+	    
+	    c = r.createCell(cellnum++);
+	    c.setCellStyle(text);
+	    c.setCellValue(new HSSFRichTextString(stats[j].getValue()));
+	  } 
+	}
+      } 
+    } 
 
     // write nodes of noded objects
     int freeformCount = 0;
