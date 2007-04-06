@@ -44,7 +44,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Computes the top 1/2 of a unit circle. */
   private static float[][] arc() {
-    int res = 16; // resolution for 1/8 of circle
+    int res = 8; // resolution for 1/8 of circle
     float[][] arc = new float[2][4 * res];
     for (int i=0; i<res; i++) {
       float t = 0.5f * (i + 0.5f) / res;
@@ -71,6 +71,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Alpha value for highlighting */
   protected static final float HLT_ALPHA = 0.5f;
+
+  /** Radius in pixels of circle indicating a node is selected */
+  protected static final float RADIUS = 7.5f;
   
   // -- Fields --
 
@@ -200,7 +203,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
       float scale;
       if (display != null) scale = getScalingValue(display);
       else scale = 1f;
-      float rad = 10.0f * scale; // 10.0 pixels wide per active display
+      float rad = RADIUS * scale; // 5.0 pixels wide per active display
 
       // assemble highlight set samples
       float[][] highlightSetSamples = new float[2][hlen];
