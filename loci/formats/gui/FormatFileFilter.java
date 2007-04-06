@@ -38,14 +38,28 @@ public class FormatFileFilter extends FileFilter
   /** Associated file format reader. */
   private IFormatReader reader;
 
+  /** Whether it is ok to open a file to determine its type. */
+  private boolean allowOpen;
+
   /** Description. */
   private String desc;
 
-  // -- Constructor --
+  // -- Constructors --
 
-  /** Constructs a new filter that accepts the given extension. */
+  /** Constructs a new filter that accepts files of the given reader's type. */
   public FormatFileFilter(IFormatReader reader) {
+    this(reader, true);
+  }
+
+  /**
+   * Constructs a new filter that accepts files of the given reader's type,
+   * allowing the reader to open files only if the allowOpen flag is set.
+   * @param reader The reader to use for verifying a file's type.
+   * @param allowOpen Whether it is ok to open a file to determine its type.
+   */
+  public FormatFileFilter(IFormatReader reader, boolean allowOpen) {
     this.reader = reader;
+    this.allowOpen = allowOpen;
     StringBuffer sb = new StringBuffer(reader.getFormat());
     String[] exts = reader.getSuffixes();
     boolean first = true;
@@ -63,21 +77,13 @@ public class FormatFileFilter extends FileFilter
     desc = sb.toString();
   }
 
-  // -- FormatFileFilter API methods --
-
-  /**
-   * Accepts files in accordance with the file format reader.
-   * @param allowOpen whether it is ok to open a file to determine its type.
-   */
-  public boolean accept(File f, boolean allowOpen) {
-    if (f.isDirectory()) return true;
-    return reader.isThisType(f.getPath(), allowOpen);
-  }
-
   // -- FileFilter API methods --
 
   /** Accepts files in accordance with the file format reader. */
-  public boolean accept(File f) { return accept(f, true); }
+  public boolean accept(File f) {
+    if (f.isDirectory()) return true;
+    return reader.isThisType(f.getPath(), allowOpen);
+  }
 
   /** Gets the filter's description. */
   public String getDescription() { return desc; }
