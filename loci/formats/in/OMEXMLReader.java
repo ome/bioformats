@@ -205,7 +205,6 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
-    if (noOME) throw new FormatException(NO_OME_JAVA_MSG);
     if (in != null) in.close();
     in = null;
     currentId = null;
