@@ -47,20 +47,6 @@ String[] getUsedFiles(String) throws FormatException, IOException :
   the given file name (i.e. every file needed to display the current dataset).
   For an example of how this works, see loci.formats.in.PerkinElmerReader.
 
-Double getChannelGlobalMinimum(String, int) throws FormatException, IOException:
-  You only need to override this if your format specifies the minimum value
-  for each channel in the metadata.  The int parameter specifies the channel
-  for which to return the minimum value.
-
-Double getChannelGlobalMaximum(String, int) throws FormatException, IOException:
-  You only need to override this if your format specifies the maximum value
-  for each channel in the metadata.  The int parameter specifies the channel
-  for which to return the maximum value.
-
-boolean isMinMaxPopulated(String) throws FormatException, IOException:
-  Only override this if you are also overriding getChannelGlobalMinimum and
-  getChannelGlobalMaximum.  In general, return true.
-
 byte[] openBytes(String, int) throws FormatException, IOException :
   Returns a byte array containing the pixel data for the specified image from
   the given file.  Should throw a FormatException if the image number is invalid
@@ -115,10 +101,6 @@ protected void initFile(String) throws FormatException, IOException :
   super.initFile(String) is called.
   Also, super.initFile(String) constructs a Hashtable called "metadata" where
   you should store any relevant metadata.
-
-static void main(String[]) throws FormatException, IOException :
-  Consists of the following line:
-    "new <class name>().testRead(args);"
 
 Note that if the new format is a variant of a format currently supported by
 Bio-Formats, it is more efficient to make the new reader a subclass of the
@@ -213,7 +195,6 @@ and Location.getMappedId(String).
     -merge              Combine separate channels into a set of RGB images.
     -stitch             Open all files with a similar name.
     -separate           Force RGB images to be split into separate channels.
-    -nocolors           Intepret indexed color images as grayscale.
     -omexml             Output the OME-XML for the file.
     -normalize          Normalize floating point images.
     -fast               Display RGB images as quickly as possible.

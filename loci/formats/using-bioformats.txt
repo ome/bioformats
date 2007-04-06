@@ -74,8 +74,12 @@ provides a few extras to make file reading more flexible.
 - loci.formats.ChannelSeparator extends IFormatReader, and makes sure that
   all planes are grayscale - RGB images are split into 3 separate grayscale
   images.
-- loci.formats.ChannelSeparator extends IFormatReader, and merges grayscale
+- loci.formats.ChannelMerger extends IFormatReader, and merges grayscale
   images to RGB if the number of channels is greater than 1.
+- loci.formats.MinMaxCalculator extends IFormatReader, and provides an API
+  for retrieving the minimum and maximum pixel values for each channel.
+- loci.formats.DimensionSwapper extends IFormatReader, and provides an API
+  for changing the dimension order of a file.
 - ImageTools provides a number of methods for manipulating BufferedImages and
   primitive type arrays.  In particular, there are methods to split and merge
   channels in a BufferedImage/array, as well as converting to a specific data
@@ -129,8 +133,7 @@ o While the IFormatReader API provides methods to read a byte array or
 
 o IFormatWriter accepts Image objects, and not BufferedImages; yet all writers
   convert the Image to a BufferedImage.  You can still pass in a
-  BufferedImage, but you are free to pass in any Image object (this is mainly
-  for compatibility with ImageJ).
+  BufferedImage, but you are free to pass in any Image object.
 
 o All readers have another openBytes method that takes a pre-allocated byte
   array, but there is no corresponding method for openImage.  The
@@ -140,20 +143,6 @@ o All readers have another openBytes method that takes a pre-allocated byte
   that takes a pre-allocated BufferedImage) is that it's kind of a pain to
   implement, and no one has cared so far.  If you want this method, we can work
   towards adding it.
-
-o Leica LEI files sometimes (actually, frequently) don't look right.
-  However, there is a sneaky way of getting Bio-Formats to read them correctly:
-  call setColorTableIgnored(true) on the reader object.  Why?  Well, the LEI
-  file format consists of a "header" file (.lei extension), and a set of TIFF
-  files (which contain the actual pixel data).  The LEI acquisition software
-  allows the user to specify an "acquisition channel" - in fact, multiple
-  acquisition channels can be specified for each dataset.  Then for each
-  acquisition channel, a color lookup table is applied to the grayscale data.
-  This doesn't sound so bad, but it gets really ugly if half of the TIFF files
-  in a dataset had an acquisition channel specified, and half didn't - you get
-  alternating RGB and grayscale planes.  Forcing Bio-Formats to ignore the
-  color tables means you get all grayscale planes, but the number of channels
-  is preserved (so channel merging still works).
 
 o Importing multi-file formats (Leica LEI, PerkinElmer, FV1000 OIF, ICS, and
   Prairie TIFF) can fail if any of the files are renamed.  There are
