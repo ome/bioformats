@@ -241,14 +241,14 @@ public class ImageViewer extends JFrame
         for (int i=0; i<images.length; i++) {
           progress.setProgress(i);
           boolean canceled = progress.isCanceled();
-          myWriter.save(id, images[i], i == images.length - 1 || canceled);
+          myWriter.saveImage(id, images[i], i == images.length - 1 || canceled);
           if (canceled) break;
         }
         progress.setProgress(images.length);
       }
       else {
         // save current image only
-        myWriter.save(id, getImage(), true);
+        myWriter.saveImage(id, getImage(), true);
         progress.setProgress(1);
       }
     }
