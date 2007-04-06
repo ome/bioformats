@@ -98,7 +98,6 @@ public abstract class FormatReader extends FormatHandler
     currentId = id;
     metadata = new Hashtable();
 
-    /* debug */ System.out.println("reinitializing core metadata");
     core = new CoreMetadata(1);
     Arrays.fill(core.orderCertain, true);
 
