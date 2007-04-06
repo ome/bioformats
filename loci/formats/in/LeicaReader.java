@@ -135,7 +135,7 @@ public class LeicaReader extends FormatReader {
     if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
       initFile(id);
     }
-    return tiff[series][0].isRGB((String) files[series].get(0));
+    return false; 
   }
 
   /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
@@ -164,7 +164,10 @@ public class LeicaReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+    int ndx = no % channelIndices.length; 
     byte[] b = tiff[series][no].openBytes((String) files[series].get(no), 0);
+    b = ImageTools.splitChannels(b, core.sizeC[series], false, 
+      isInterleaved(id))[channelIndices[ndx]]; 
     tiff[series][no].close();
     return b;
   }
@@ -179,6 +182,10 @@ public class LeicaReader extends FormatReader {
     }
     tiff[series][no].openBytes((String) files[series].get(no), 0, buf);
     tiff[series][no].close();
+    
+    int ndx = no % channelIndices.length;
+    buf = ImageTools.splitChannels(buf, core.sizeC[series], false, 
+      isInterleaved(id))[channelIndices[ndx]];
     return buf;
   }
 
@@ -196,9 +203,10 @@ public class LeicaReader extends FormatReader {
 
     BufferedImage b =
       tiff[series][no].openImage((String) files[series].get(no), 0);
-    ColorModel cm = ImageTools.makeColorModel(getRGBChannelCount(id),
-      b.getRaster().getTransferType(), validBits[series]);
-    b = ImageTools.makeBuffered(b, cm);
+
+    int ndx = no % channelIndices.length;
+
+    b = ImageTools.splitChannels(b)[channelIndices[ndx]];
     tiff[series][no].close();
     return b;
   }
@@ -959,6 +967,7 @@ public class LeicaReader extends FormatReader {
 
         if (nChannels > 4) nChannels = 3;
         core.sizeC[i] = nChannels;
+        channelIndices = new int[nChannels];
 
         for (int j=0; j<nChannels; j++) {
           addMeta("LUT Channel " + j + " version",
@@ -986,12 +995,14 @@ public class LeicaReader extends FormatReader {
           pt += 4;
 
           String name = DataTools.stripString(new String(temp, pt, length));
-          /*
-          if (name.equals("Green") || name.equals("Red") || name.equals("Blue"))
-          {
-            numChannels[i] = 3;
-          }
-          */
+          
+          if (name.equals("Red")) channelIndices[j] = 0; 
+          else if (name.equals("Green")) channelIndices[j] = 1; 
+          else if (name.equals("Blue")) channelIndices[j] = 2; 
+          else if (name.equals("Gray")) channelIndices[j] = 0; 
+          else if (name.equals("Yellow")) channelIndices[j] = 0; 
+          else if (name.equals("Geo (L&S)")) channelIndices[j] = 0; 
+          
           addMeta("LUT Channel " + j + " name", name);
           pt += length;
 
@@ -1011,8 +1022,7 @@ public class LeicaReader extends FormatReader {
         int oldSeries = getSeries(currentId);
         for (int i=0; i<core.sizeC.length; i++) {
           setSeries(currentId, i);
-          if (isRGB(currentId)) core.sizeC[i] = 3;
-          else core.sizeC[i] = 1;
+          core.sizeZ[i] /= core.sizeC[i]; 
         }
         setSeries(currentId, oldSeries);
       }
