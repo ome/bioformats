@@ -544,9 +544,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     // Since we will need this information for default display options creation
     // but don't have a place really to store this in OME-XML we're just going
     // to store it in instance variables.
-    if (channelMinimum == null || channelMinimum.length <= ndx) {
+    if (channelMinimum == null || channelMinimum.length <= channel) {
       // expand channel minimum list
-      double[] min = new double[ndx + 1];
+      double[] min = new double[channel + 1];
       Arrays.fill(min, Double.NaN);
       if (channelMinimum != null) {
         System.arraycopy(channelMinimum, 0, min, 0, channelMinimum.length);
@@ -554,9 +554,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
       channelMinimum = min;
     }
 
-    if (channelMaximum == null || channelMaximum.length <= ndx) {
+    if (channelMaximum == null || channelMaximum.length <= channel) {
       // expand channel maximum list
-      double[] max = new double[ndx + 1];
+      double[] max = new double[channel + 1];
       Arrays.fill(max, Double.NaN);
       if (channelMaximum != null) {
         System.arraycopy(channelMaximum, 0, max, 0, channelMaximum.length);
