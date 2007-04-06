@@ -161,7 +161,7 @@ public class ImageWriter implements IFormatWriter {
     getWriter(id).saveImage(id, image, last);
   }
 
-  /* @see IFormatWriter#save(String, Image, boolean) */
+  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {

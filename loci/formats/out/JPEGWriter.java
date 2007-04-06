@@ -51,7 +51,7 @@ public class JPEGWriter extends ImageIOWriter {
     if (type == FormatTools.UINT16 || type == FormatTools.INT16) {
       throw new FormatException("16-bit data not supported.");
     }
-    super.save(id, image, last);
+    super.saveImage(id, image, last);
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */

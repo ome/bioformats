@@ -71,7 +71,7 @@ public abstract class FormatWriter extends FormatHandler
   public abstract void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException;
 
-  /* @see IFormatWriter#save(String, Image, boolean) */ 
+  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {

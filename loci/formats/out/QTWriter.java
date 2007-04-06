@@ -149,7 +149,7 @@ public class QTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */ 
+  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */ 
   public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
@@ -162,7 +162,7 @@ public class QTWriter extends FormatWriter {
     }
 
     if (needLegacy) {
-      legacy.save(id, image, last);
+      legacy.saveImage(id, image, last);
       return;
     }
 
@@ -221,7 +221,7 @@ public class QTWriter extends FormatWriter {
       if (codec != 0) {
         needLegacy = true;
         legacy.setCodec(codec);
-        legacy.save(id, image, last);
+        legacy.saveImage(id, image, last);
         return;
       }
 
