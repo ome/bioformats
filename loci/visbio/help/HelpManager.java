@@ -91,6 +91,13 @@ public class HelpManager extends LogicManager {
       if (!LAFUtil.isMacLookAndFeel()) vis2D.setMnemonic('2');
       buttons.add(vis2D);
 
+      // create option for 2D visualization w/ overlays
+      JRadioButton visOver = new JRadioButton("In 2D w/ Overlays", 
+        !canDisplay3D);
+      visOver.setEnabled(canDisplay2D);
+      if (!LAFUtil.isMacLookAndFeel()) visOver.setMnemonic('o');
+      buttons.add(visOver);
+
       // create option for no visualization
       JRadioButton visNot = new JRadioButton("Not now");
       if (!LAFUtil.isMacLookAndFeel()) visNot.setMnemonic('n');
@@ -98,14 +105,17 @@ public class HelpManager extends LogicManager {
 
       // create panel for asking user about immediate visualization
       PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "15dlu, pref, 3dlu, pref, 3dlu, pref:grow", "pref, 3dlu, pref"
+        "15dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref:grow", 
+        "pref, 3dlu, pref"
       ));
       CellConstraints cc = new CellConstraints();
-      builder.addLabel("Would you like the visualize the \"" +
-        data + "\" object now?", cc.xyw(1, 1, 6));
+      builder.addLabel("Would you like to visualize the \"" +
+        data + "\" object now?", cc.xyw(1, 1, 8));
       builder.add(vis3D, cc.xy(2, 3));
       builder.add(vis2D, cc.xy(4, 3));
-      builder.add(visNot, cc.xy(6, 3));
+      builder.add(visOver, cc.xy(6, 3));
+      builder.add(visNot, cc.xy(8, 3));
+
       JPanel visPanel = builder.getPanel();
 
       // display message pane
@@ -114,7 +124,10 @@ public class HelpManager extends LogicManager {
         bio.getManager(OptionManager.class);
       boolean success = om.checkMessage(dc,
         DISPLAY_DATA, false, visPanel, "VisBio");
-      if (success && !visNot.isSelected()) dc.doNewDisplay(vis3D.isSelected());
+      if (success && !visNot.isSelected()) { 
+        if (!visOver.isSelected()) dc.doNewDisplay(vis3D.isSelected());
+        else dc.doNewDisplayWithOverlays();
+      }
     }
   }
 

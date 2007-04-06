@@ -40,6 +40,7 @@ import loci.formats.ReflectException;
 import loci.formats.ReflectedUniverse;
 import loci.visbio.*;
 import loci.visbio.ome.OMEManager;
+import loci.visbio.overlays.OverlayTransform;
 import loci.visbio.util.*;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.DisplayManager;
@@ -375,6 +376,33 @@ public class DataControls extends ControlPanel
     WindowManager wm = (WindowManager)
       lm.getVisBio().getManager(WindowManager.class);
     wm.showWindow(window);
+  }
+
+  /** Do new display with overlays */
+  public void doNewDisplayWithOverlays() {
+    DataTransform data = getSelectedData();
+    if (data == null) return;
+    DisplayManager disp = (DisplayManager)
+      lm.getVisBio().getManager(DisplayManager.class);
+    if (disp == null) return;
+    DisplayWindow window = disp.createDisplay(this, data.getName(), false);
+    if (window == null) return;
+
+    // construct overlays and add to data list and display window
+    String overlaysName = data.getName() + "  overlays";
+    OverlayTransform overlays = new OverlayTransform(data, overlaysName);
+    DataManager dm = (DataManager) 
+      lm.getVisBio().getManager(DataManager.class);
+    if (dm == null) return;
+    dm.addData(overlays);
+    window.addTransform(data);
+    window.addTransform(overlays);
+
+    // show windows
+    WindowManager wm = (WindowManager)
+      lm.getVisBio().getManager(WindowManager.class);
+    wm.showWindow(window);
+    dm.showControls(overlays);
   }
 
   // -- ActionListener API methods --
