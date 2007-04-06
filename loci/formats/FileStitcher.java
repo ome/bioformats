@@ -530,20 +530,6 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() { return currentId; }
 
-  /* @see IFormatReader#swapDimensions(String, String) */
-  public void swapDimensions(String id, String dimOrder)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    order[getSeries(id)] = dimOrder;
-    String f0 = files[0];
-    reader.swapDimensions(f0, dimOrder);
-    sizeZ[getSeries(id)] = reader.getSizeZ(f0);
-    sizeC[getSeries(id)] = reader.getSizeC(f0);
-    sizeT[getSeries(id)] = reader.getSizeT(f0);
-    computeAxisLengths();
-  }
-
   /* @see IFormatReader#getIndex(String, int, int, int) */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
@@ -570,6 +556,14 @@ public class FileStitcher implements IFormatReader {
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return reader.getMetadata(files[0]);
+  }
+
+  /* @see IFormatReader#getCoreMetadata(String) */
+  public CoreMetadata getCoreMetadata(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getCoreMetadata(files[0]);
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
@@ -780,7 +774,6 @@ public class FileStitcher implements IFormatReader {
     for (int i=0; i<seriesCount; i++) {
       setSeries(currentId, i);
       order[i] = ag[i].getAdjustedOrder();
-      swapDimensions(currentId, order[i]);
     }
     setSeries(currentId, oldSeries);
 
@@ -879,7 +872,6 @@ public class FileStitcher implements IFormatReader {
 
     // configure the reader, in case we haven't done this one yet
     readers[fno].setSeries(files[fno], reader.getSeries(files[0]));
-    readers[fno].swapDimensions(files[fno], order[sno]);
 
     return new int[] {fno, ino};
   }

@@ -98,6 +98,7 @@ public abstract class FormatReader extends FormatHandler
     currentId = id;
     metadata = new Hashtable();
 
+    /* debug */ System.out.println("reinitializing core metadata");
     core = new CoreMetadata(1);
     Arrays.fill(core.orderCertain, true);
 
@@ -393,42 +394,6 @@ public abstract class FormatReader extends FormatHandler
     return currentId == null ? "" : currentId;
   }
 
-  /* @see IFormatReader#swapDimensions(String, String) */
-  public void swapDimensions(String id, String order)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (order == null) return;
-    if (order.equals(core.currentOrder[series])) return;
-
-    int[] dims = new int[5];
-
-    int xndx = core.currentOrder[series].indexOf("X");
-    int yndx = core.currentOrder[series].indexOf("Y");
-    int zndx = core.currentOrder[series].indexOf("Z");
-    int cndx = core.currentOrder[series].indexOf("C");
-    int tndx = core.currentOrder[series].indexOf("T");
-
-    dims[xndx] = core.sizeX[series];
-    dims[yndx] = core.sizeY[series];
-    dims[zndx] = core.sizeZ[series];
-    dims[cndx] = core.sizeC[series];
-    dims[tndx] = core.sizeT[series];
-
-    core.sizeX[series] = dims[order.indexOf("X")];
-    core.sizeY[series] = dims[order.indexOf("Y")];
-    core.sizeZ[series] = dims[order.indexOf("Z")];
-    core.sizeC[series] = dims[order.indexOf("C")];
-    core.sizeT[series] = dims[order.indexOf("T")];
-    core.currentOrder[series] = order;
-
-    MetadataStore store = getMetadataStore(id);
-    store.setPixels(new Integer(core.sizeX[series]), 
-      new Integer(core.sizeY[series]), new Integer(core.sizeZ[series]), 
-      new Integer(core.sizeC[series]), new Integer(core.sizeT[series]), 
-      null, null, order, new Integer(series), null);
-  }
-
   /* @see IFormatReader#getIndex(String, int, int, int) */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
@@ -455,6 +420,14 @@ public abstract class FormatReader extends FormatHandler
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return metadata;
+  }
+
+  /* @see IFormatReader#getCoreMetadata(String) */
+  public CoreMetadata getCoreMetadata(String id) 
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return core;
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */

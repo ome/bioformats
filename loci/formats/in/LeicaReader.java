@@ -71,6 +71,8 @@ public class LeicaReader extends FormatReader {
   /** Number of significant bits per pixel. */
   private int[][] validBits;
 
+  private int[] channelIndices;
+
   /** Name of current LEI file */
   private String leiFilename;
 
@@ -998,7 +1000,7 @@ public class LeicaReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata(numSeries);
+    //core = new CoreMetadata(numSeries);
     Arrays.fill(core.orderCertain, true);
 
     // sizeC is null here if the file we opened was a TIFF.

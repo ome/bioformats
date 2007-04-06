@@ -289,14 +289,6 @@ public class QTReader extends FormatReader {
     if (useLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#swapDimensions(String, String) */
-  public void swapDimensions(String id, String order)
-    throws FormatException, IOException
-  {
-    super.swapDimensions(id, order);
-    if (useLegacy) legacy.swapDimensions(id, order);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

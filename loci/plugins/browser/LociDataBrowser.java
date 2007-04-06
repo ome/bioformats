@@ -53,7 +53,7 @@ public class LociDataBrowser {
   protected String[] names;
 
   /** The file format reader used by the plugin. */
-  protected IFormatReader reader;
+  protected DimensionSwapper reader;
 
   /** The file stitcher used by the reader.*/
   protected FileStitcher fStitch;
@@ -98,7 +98,7 @@ public class LociDataBrowser {
   /** Constructs a new data browser. */
   public LociDataBrowser() {
     fStitch = new FileStitcher();
-    reader = new ChannelSeparator(fStitch);
+    reader = new DimensionSwapper(new ChannelSeparator(fStitch));
 // TODO: macros
 //    macro = new MacroManager();
 //    macroThread = new Thread(macro, "MacroRecorder");
@@ -113,8 +113,8 @@ public class LociDataBrowser {
 
   public LociDataBrowser(boolean merged) {
     fStitch = new FileStitcher();
-    if (merged) reader = new ChannelMerger(fStitch);
-    else reader = new ChannelSeparator(fStitch);
+    if (merged) reader = new DimensionSwapper(new ChannelMerger(fStitch));
+    else reader = new DimensionSwapper(new ChannelSeparator(fStitch));
   }
 
   public LociDataBrowser(String name, boolean merged) {
@@ -125,7 +125,7 @@ public class LociDataBrowser {
 
   public LociDataBrowser(IFormatReader r, FileStitcher fs, String name) {
     virtual = true;
-    reader = r;
+    reader = new DimensionSwapper(r);
     fStitch = fs;
     id = name;
   }
@@ -259,14 +259,14 @@ public class LociDataBrowser {
   }
   
   public void toggleMerge() {    
-    if (reader instanceof ChannelMerger) {
+    if (reader.getReader() instanceof ChannelMerger) {
       IFormatReader parent = ((ReaderWrapper) reader).getReader();
-      reader = new ChannelSeparator(parent);
+      reader = new DimensionSwapper(new ChannelSeparator(parent));
       run("");
     }
-    else if (reader instanceof ChannelSeparator) {
+    else if (reader.getReader() instanceof ChannelSeparator) {
       IFormatReader parent = ((ReaderWrapper) reader).getReader();
-      reader = new ChannelMerger(parent);
+      reader = new DimensionSwapper(new ChannelMerger(parent));
       run("");
     }
     else {
@@ -276,7 +276,7 @@ public class LociDataBrowser {
   }
   
   public boolean isMerged() {
-    return reader instanceof ChannelMerger;
+    return reader.getReader() instanceof ChannelMerger;
   }
 
   public void run(String arg) {

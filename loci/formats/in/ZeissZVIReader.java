@@ -205,14 +205,6 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#swapDimensions(String, String) */
-  public void swapDimensions(String id, String order)
-    throws FormatException, IOException
-  {
-    if (noPOI || needLegacy) legacy.swapDimensions(id, order);
-    else super.swapDimensions(id, order);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

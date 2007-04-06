@@ -120,7 +120,6 @@ public final class FormatTools {
     boolean stitch = false;
     boolean separate = false;
     boolean omexml = false;
-    boolean ignoreColors = false;
     boolean normalize = false;
     boolean fastBlit = false;
     int start = 0;
@@ -137,7 +136,6 @@ public final class FormatTools {
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
-          else if (args[i].equals("-nocolors")) ignoreColors = true;
           else if (args[i].equals("-omexml")) omexml = true;
           else if (args[i].equals("-normalize")) normalize = true;
           else if (args[i].equals("-fast")) fastBlit = true;
@@ -179,7 +177,7 @@ public final class FormatTools {
       String[] s = {
         "To test read a file in " + format + " format, run:",
         "  java " + className + " [-nopix] [-nometa] [-thumbs] [-minmax]",
-        "    [-merge] [-stitch] [-separate] [-nocolors] [-omexml] [-normalize]",
+        "    [-merge] [-stitch] [-separate] [-omexml] [-normalize]",
         "    [-fast] [-debug] [-range start end] [-series num] [-map id] file",
         "",
         "      file: the image file to read",
@@ -190,7 +188,6 @@ public final class FormatTools {
         "    -merge: combine separate channels into RGB image",
         "   -stitch: stitch files with similar names",
         " -separate: split RGB image into separate channels",
-        " -nocolors: ignore color lookup tables, if present",
         "   -omexml: populate OME-XML metadata",
         "-normalize: normalize floating point images*",
         "     -fast: paint RGB images as quickly as possible*",

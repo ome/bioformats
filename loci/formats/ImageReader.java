@@ -346,13 +346,6 @@ public class ImageReader implements IFormatReader {
     return null;
   }
 
-  /* @see IFormatReader#swapDimensions(String, String) */
-  public void swapDimensions(String id, String order)
-    throws FormatException, IOException
-  {
-    getReader(id).swapDimensions(id, order);
-  }
-
   /* @see IFormatReader#getIndex(String, int, int, int) */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
@@ -377,6 +370,13 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#getMetadata(String) */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     return getReader(id).getMetadata(id);
+  }
+
+  /* @see IFormatReader#getCoreMetadata(String) */
+  public CoreMetadata getCoreMetadata(String id)
+    throws FormatException, IOException
+  {
+    return getReader(id).getCoreMetadata(id);
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */

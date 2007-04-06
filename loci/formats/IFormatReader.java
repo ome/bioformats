@@ -202,15 +202,6 @@ public interface IFormatReader extends IFormatHandler {
   String getCurrentFile();
 
   /**
-   * Swaps the dimensions according to the given dimension order.  If the given
-   * order is identical to the file's native order, then nothing happens.
-   * Note that this method will throw an exception if X and Y do not appear in
-   * positions 0 and 1 (although X and Y can be reversed).
-   */
-  void swapDimensions(String id, String order)
-    throws FormatException, IOException;
-
-  /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
@@ -241,6 +232,9 @@ public interface IFormatReader extends IFormatHandler {
    * @return the hashtable containing all metadata from the file
    */
   Hashtable getMetadata(String id) throws FormatException, IOException;
+
+  /** Obtains the core metadata values for the given file. */
+  CoreMetadata getCoreMetadata(String id) throws FormatException, IOException;
 
   /**
    * Specifies whether ugly metadata (entries with unprintable characters,

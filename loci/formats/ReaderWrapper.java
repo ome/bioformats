@@ -209,12 +209,6 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public String getCurrentFile() { return reader.getCurrentFile(); }
 
-  public void swapDimensions(String id, String order)
-    throws FormatException, IOException
-  {
-    reader.swapDimensions(id, order);
-  }
-
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
@@ -235,6 +229,12 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     return reader.getMetadata(id);
+  }
+
+  public CoreMetadata getCoreMetadata(String id)
+    throws FormatException, IOException
+  {
+    return reader.getCoreMetadata(id);
   }
 
   public void setMetadataFiltered(boolean filter) {
