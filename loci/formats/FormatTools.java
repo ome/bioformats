@@ -605,7 +605,7 @@ public final class FormatTools {
       long s = System.currentTimeMillis();
       Image image = reader.openImage(in, i);
       long m = System.currentTimeMillis();
-      writer.save(out, image, i == num - 1);
+      writer.saveImage(out, image, i == num - 1);
       long e = System.currentTimeMillis();
       System.out.print(".");
       read += m - s;

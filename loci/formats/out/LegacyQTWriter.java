@@ -105,11 +105,8 @@ public class LegacyQTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * If this image is the last one in the file, the last flag must be set.
-   */
-  public void save(String id, Image image, boolean last)
+  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */
+  public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
     if (tools == null) {
@@ -284,7 +281,7 @@ public class LegacyQTWriter extends FormatWriter {
     pixels2 = null;
   }
 
-  /** Reports whether the writer can save multiple images to a single file. */
+  /* @see loci.formats.IFormatWriter#canDoStacks(String) */
   public boolean canDoStacks(String id) { return true; }
 
   // -- Main method --

@@ -67,12 +67,16 @@ public abstract class FormatWriter extends FormatHandler
 
   // -- IFormatWriter API methods --
 
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * If this image is the last one in the file, the last flag must be set.
-   */
-  public abstract void save(String id, Image image, boolean last)
+  /* @see IFormatWriter#saveImage(String, Image, boolean) */
+  public abstract void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException;
+
+  /* @see IFormatWriter#save(String, Image, boolean) */ 
+  public void save(String id, Image image, boolean last)
+    throws FormatException, IOException
+  {
+    saveImage(id, image, last);
+  }
 
   /** Reports whether the writer can save multiple images to a single file. */
   public abstract boolean canDoStacks(String id);

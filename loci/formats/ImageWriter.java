@@ -154,6 +154,13 @@ public class ImageWriter implements IFormatWriter {
 
   // -- IFormatWriter API methods --
 
+  /* @see IFormatWriter#saveImage(String, Image, boolean) */
+  public void saveImage(String id, Image image, boolean last)
+    throws FormatException, IOException
+  {
+    getWriter(id).saveImage(id, image, last);
+  }
+
   /* @see IFormatWriter#save(String, Image, boolean) */
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException

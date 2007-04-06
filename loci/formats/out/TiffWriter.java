@@ -27,8 +27,12 @@ package loci.formats.out;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
+import java.util.*;
 import loci.formats.*;
+
+//import org.openmicroscopy.xml.*;
+//import org.openmicroscopy.xml.st.*;
+//import loci.formats.ome.OMEXMLMetadataStore;
 
 /** TiffWriter is the file format writer for TIFF files. */
 public class TiffWriter extends FormatWriter {
@@ -102,11 +106,8 @@ public class TiffWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * If this image is the last one in the file, the last flag must be set.
-   */
-  public void save(String id, Image image, boolean last)
+  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */ 
+  public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
     Hashtable h = new Hashtable();
@@ -118,13 +119,46 @@ public class TiffWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#close() */
   public void close() throws FormatException, IOException {
+    // write the metadata, if enabled 
+  
+    /*
+    if (metadataEnabled && store != null && currentId != null) {
+      // TODO : use reflection to access the OMEXMLMetadataStore
+      if (store instanceof OMEXMLMetadataStore) {
+        try { 
+          // writes valid OME-TIFF 
+          RandomAccessFile raf = new RandomAccessFile(currentId, "rw"); 
+          RandomAccessStream in = new RandomAccessStream(currentId);
+          OMENode xml = (OMENode) ((OMEXMLMetadataStore) store).getRoot();
+          Vector images = xml.getChildNodes("Image");
+          for (int p=0; p<images.size(); p++) {
+            PixelsNode pix = 
+              (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
+            DOMUtil.createChild(pix.getDOMElement(), "TiffData");
+          }
+        
+          Hashtable[] ifds = TiffTools.getIFDs(in);  
+          TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION,
+            xml.writeOME(true));
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      else {
+        throw new FormatException("Expecting an OMEXMLMetadataStore; got a " + 
+          store.getClass());
+      } 
+    }
+    */ 
+
     if (out != null) out.close();
     out = null;
     currentId = null;
     lastOffset = 0;
   }
 
-  /** Reports whether the writer can save multiple images to a single file. */
+  /* @see loci.formats.IFormatWriter#canDoStacks(String) */
   public boolean canDoStacks(String id) { return true; }
 
   // -- Main method --

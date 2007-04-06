@@ -42,7 +42,7 @@ public class JPEGWriter extends ImageIOWriter {
   // -- IFormatWriter API methods --
 
   /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */
-  public void save(String id, Image image, boolean last)
+  public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
     BufferedImage img = (cm == null) ?

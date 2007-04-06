@@ -150,9 +150,9 @@ public class Exporter {
             int[] types = w.getPixelTypes(null);
             img = ImageTools.makeType(img, types[types.length - 1]);
           }
-          w.save(outfile, img, i == is.getSize() - 1);
+          w.saveImage(outfile, img, i == is.getSize() - 1);
         }
-        else w.save(outfile, img, i == is.getSize() - 1);
+        else w.saveImage(outfile, img, i == is.getSize() - 1);
       }
     }
     catch (FormatException e) {

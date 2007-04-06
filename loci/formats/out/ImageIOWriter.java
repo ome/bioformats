@@ -71,7 +71,7 @@ public abstract class ImageIOWriter extends FormatWriter {
    * Saves the given image to the specified (possibly already open) file.
    * The last flag is ignored, since this writer produces single-image files.
    */
-  public void save(String id, Image image, boolean last)
+  public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
     BufferedImage img = (cm == null) ?

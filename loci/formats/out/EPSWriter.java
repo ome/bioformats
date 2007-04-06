@@ -51,7 +51,7 @@ public class EPSWriter extends FormatWriter {
    * Saves the given image to the specified (possibly already open) file.
    * If this image is the last one in the file, the last flag must be set.
    */
-  public void save(String id, Image image, boolean last)
+  public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
     if (image == null) {
