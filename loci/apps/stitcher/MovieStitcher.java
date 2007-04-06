@@ -600,7 +600,7 @@ public class MovieStitcher extends JFrame implements
                     img = ImageTools.makeType(img, pixelType);
                   }
 
-                  writer.save(outFile, img, shutdown || 
+                  writer.saveImage(outFile, img, shutdown || 
                     (filePlane == planesPerFile));
                   if (shutdown) break;
                 }
