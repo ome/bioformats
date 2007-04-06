@@ -34,7 +34,7 @@ public class OptionPane extends DialogPane {
   // -- Constants --
 
   /** Flag indicating options should be divided into separate tabs. */
-  protected static final boolean USE_TABS = false;
+  protected static final boolean USE_TABS = true;
 
   // -- Fields --
 

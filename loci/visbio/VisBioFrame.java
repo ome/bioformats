@@ -56,6 +56,11 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
   public static final boolean DEBUG =
     "true".equalsIgnoreCase(System.getProperty("visbio.debug"));
 
+  // -- Static fields --
+
+  /** Running instance of VisBio. */
+  protected static VisBioFrame visbio;
+
   // -- Fields --
 
   /** Logic managers. */
@@ -84,6 +89,10 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
    */
   public VisBioFrame(SplashScreen splash, String[] args) {
     super(true);
+    if (visbio != null) {
+      throw new RuntimeException("Only once instance of VisBio is allowed");
+    }
+    visbio = this;
     try {
       // initialize server for responding to newly spawned instances
       try {
@@ -216,6 +225,13 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
       if (xm != null) xm.fileExit();
       else System.exit(0);
     }
+  }
+
+  // -- Static VisBioFrame API methods --
+
+  /** Gets the running instance of VisBio. */
+  public static VisBioFrame getVisBio() {
+    return visbio;
   }
 
   // -- VisBioFrame API methods --
