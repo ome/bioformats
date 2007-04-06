@@ -57,9 +57,6 @@ public abstract class FormatReader extends FormatHandler
   /** Core metadata values. */
   protected CoreMetadata core;
 
-  /** Whether or not to ignore color tables, if present. */
-  protected boolean ignoreColorTable;
-
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
 
@@ -368,21 +365,6 @@ public abstract class FormatReader extends FormatHandler
   public int getSeries(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return series;
-  }
-
-  /* @see IFormatReader#setColorTableIgnored(boolean) */
-  public void setColorTableIgnored(boolean ignore) {
-    if (currentId != null) {
-      String s = "setColorTableIgnored called with open file.";
-      if (debug && debugLevel >= 2) trace(s);
-      else System.err.println("Warning: " + s);
-    }
-    ignoreColorTable = ignore;
-  }
-
-  /* @see IFormatReader#isColorTableIgnored() */
-  public boolean isColorTableIgnored() {
-    return ignoreColorTable;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

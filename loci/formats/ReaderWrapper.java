@@ -197,14 +197,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeries(id);
   }
 
-  public void setColorTableIgnored(boolean ignore) {
-    reader.setColorTableIgnored(ignore);
-  }
-
-  public boolean isColorTableIgnored() {
-    return reader.isColorTableIgnored();
-  }
-
   public void setNormalized(boolean normalize) {
     reader.setNormalized(normalize);
   }

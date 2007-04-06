@@ -304,14 +304,12 @@ public class OIFReader extends FormatReader {
     status("Initializing helper readers");
 
     thumbReader = new BMPReader();
-    thumbReader.setColorTableIgnored(isColorTableIgnored());
     numImages = filenames.size();
     tiffs = new Vector(numImages);
 
     tiffReader = new TiffReader[numImages];
     for (int i=0; i<numImages; i++) {
       tiffReader[i] = new TiffReader();
-      tiffReader[i].setColorTableIgnored(isColorTableIgnored());
     }
 
     // open each INI file (.pty extension)

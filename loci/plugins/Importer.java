@@ -70,7 +70,6 @@ public class Importer implements ItemListener {
   private LociImporter plugin;
   private String stackFormat = "";
   private Checkbox mergeBox;
-  private Checkbox ignoreBox;
   private Checkbox colorizeBox;
   private Checkbox splitBox;
   private Checkbox metadataBox;
@@ -225,7 +224,6 @@ public class Importer implements ItemListener {
 
     // load preferences from IJ_Prefs.txt
     mergeChannels = Prefs.get("bioformats.mergeChannels", false);
-    boolean ignoreTables = Prefs.get("bioformats.ignoreTables", false);
     boolean colorize = Prefs.get("bioformats.colorize", false);
     boolean splitWindows = Prefs.get("bioformats.splitWindows", true);
     boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
@@ -235,7 +233,6 @@ public class Importer implements ItemListener {
     stackFormat = Prefs.get("bioformats.stackFormat", VIEW_STANDARD);
 
     final String mergeString = "Merge channels to RGB";
-    final String ignoreString = "Ignore color lookup table";
     final String colorizeString = "Colorize channels";
     final String splitString = "Open each channel in its own window";
     final String metadataString = "Display associated metadata";
@@ -247,7 +244,6 @@ public class Importer implements ItemListener {
     // prompt for parameters, if necessary
     gd = new GenericDialog("LOCI Bio-Formats Import Options");
     gd.addCheckbox(mergeString, mergeChannels);
-    gd.addCheckbox(ignoreString, ignoreTables);
     gd.addCheckbox(colorizeString, colorize);
     gd.addCheckbox(splitString, splitWindows);
     gd.addCheckbox(metadataString, showMetadata);
@@ -260,13 +256,12 @@ public class Importer implements ItemListener {
     Vector boxes = gd.getCheckboxes();
     if (boxes != null) {
       mergeBox = (Checkbox) boxes.get(0);
-      ignoreBox = (Checkbox) boxes.get(1);
-      colorizeBox = (Checkbox) boxes.get(2);
-      splitBox = (Checkbox) boxes.get(3);
-      metadataBox = (Checkbox) boxes.get(4);
-      stitchBox = (Checkbox) boxes.get(5);
-      stitchStackBox = (Checkbox) boxes.get(6);
-      rangeBox = (Checkbox) boxes.get(7);
+      colorizeBox = (Checkbox) boxes.get(1);
+      splitBox = (Checkbox) boxes.get(2);
+      metadataBox = (Checkbox) boxes.get(3);
+      stitchBox = (Checkbox) boxes.get(4);
+      stitchStackBox = (Checkbox) boxes.get(5);
+      rangeBox = (Checkbox) boxes.get(6);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -285,7 +280,6 @@ public class Importer implements ItemListener {
       return;
     }
     mergeChannels = gd.getNextBoolean();
-    ignoreTables = gd.getNextBoolean();
     colorize = gd.getNextBoolean();
     splitWindows = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
@@ -304,7 +298,6 @@ public class Importer implements ItemListener {
       if (stackFormat.equals(VIEW_IMAGE_5D)) mergeChannels = false;
 
       FileStitcher fs = null;
-      r.setColorTableIgnored(ignoreTables);
       r.setMetadataFiltered(true);
 
       int pixelType = r.getPixelType(id);
@@ -938,7 +931,6 @@ public class Importer implements ItemListener {
 
       // save parameter values to IJ_Prefs.txt
       Prefs.set("bioformats.mergeChannels", mergeChannels);
-      Prefs.set("bioformats.ignoreTables", ignoreTables);
       Prefs.set("bioformats.colorize", colorize);
       Prefs.set("bioformats.splitWindows", splitWindows);
       Prefs.set("bioformats.showMetadata", showMetadata);
@@ -977,8 +969,6 @@ public class Importer implements ItemListener {
         colorizeBox.setState(false);
         splitBox.setState(false);
       }
-    }
-    else if (src == ignoreBox) {
     }
     else if (src == colorizeBox) {
       if (colorizeBox.getState()) {

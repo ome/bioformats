@@ -189,12 +189,6 @@ public interface IFormatReader extends IFormatHandler {
   /** Gets the currently active series. */
   int getSeries(String id) throws FormatException, IOException;
 
-  /** Specifies whether or not to ignore color tables, if present. */
-  void setColorTableIgnored(boolean ignore);
-
-  /** Returns true if we should ignore color tables, if present. */
-  boolean isColorTableIgnored();
-
   /** Specifies whether or not to normalize float data. */
   void setNormalized(boolean normalize);
 

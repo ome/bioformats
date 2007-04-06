@@ -586,7 +586,6 @@ public class LeicaReader extends FormatReader {
       for (int i=0; i<tiff.length; i++) {
         for (int j=0; j<tiff[i].length; j++) {
           tiff[i][j] = new TiffReader();
-          tiff[i][j].setColorTableIgnored(isColorTableIgnored());
         }
       }
 
@@ -1010,13 +1009,8 @@ public class LeicaReader extends FormatReader {
         int oldSeries = getSeries(currentId);
         for (int i=0; i<core.sizeC.length; i++) {
           setSeries(currentId, i);
-          if (!ignoreColorTable) {
-            if (isRGB(currentId)) core.sizeC[i] = 3;
-            else core.sizeC[i] = 1;
-          }
-          else {
-            core.sizeZ[i] /= core.sizeC[i];
-          }
+          if (isRGB(currentId)) core.sizeC[i] = 3;
+          else core.sizeC[i] = 1;
         }
         setSeries(currentId, oldSeries);
       }

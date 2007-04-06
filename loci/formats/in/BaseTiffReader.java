@@ -423,9 +423,7 @@ public abstract class BaseTiffReader extends FormatReader {
     // to reset it here
 
     int p = TiffTools.getIFDIntValue(ifd, TiffTools.PHOTOMETRIC_INTERPRETATION);
-    if (!ignoreColorTable &&
-      (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY))
-    {
+    if (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY) {
       numC = 3;
       bps *= 3;
     }
@@ -706,8 +704,8 @@ public abstract class BaseTiffReader extends FormatReader {
     }
     int p = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-    return (!isColorTableIgnored() && (p == TiffTools.RGB_PALETTE ||
-      p == TiffTools.CFA_ARRAY)) || p == TiffTools.RGB;
+    return p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY || 
+      p == TiffTools.RGB;
   }
 
   /* @see loci.formats.IFormatReader#getMetadataValue(String, String) */ 
@@ -744,7 +742,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    TiffTools.getSamples(ifds[no], in, ignoreColorTable, buf);
+    TiffTools.getSamples(ifds[no], in, buf);
     return swapIfRequired(buf);
   }
 
@@ -776,7 +774,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return TiffTools.getImage(ifds[no], in, ignoreColorTable);
+    return TiffTools.getImage(ifds[no], in);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

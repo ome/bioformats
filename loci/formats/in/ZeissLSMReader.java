@@ -146,7 +146,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   
     ifds = TiffTools.getIFDs(in);
-    TiffTools.getSamples(ifds[2*no], in, ignoreColorTable, buf);
+    TiffTools.getSamples(ifds[2*no], in, buf);
     return swapIfRequired(buf);
   }
 

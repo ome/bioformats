@@ -797,17 +797,6 @@ public final class TiffTools {
   public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in)
     throws FormatException, IOException
   {
-    return getSamples(ifd, in, false);
-  }
-
-  /**
-   * Reads the image defined in the given IFD from the specified file.
-   * If the 'ignore' flag is set, then RGB LUT images are interpreted as
-   * grayscale images.
-   */
-  public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in,
-    boolean ignore) throws FormatException, IOException
-  {
     int samplesPerPixel = getSamplesPerPixel(ifd);
     int photoInterp = getPhotometricInterpretation(ifd);
     if (samplesPerPixel == 1 && (photoInterp == RGB_PALETTE ||
@@ -820,7 +809,7 @@ public final class TiffTools {
     long length = getImageLength(ifd);
     byte[] b = new byte[(int) (width * length * samplesPerPixel * bpp)];
 
-    getSamples(ifd, in, ignore, b);
+    getSamples(ifd, in, b);
     byte[][] samples = new byte[samplesPerPixel][(int) (width * length * bpp)];
     for (int i=0; i<samplesPerPixel; i++) {
       System.arraycopy(b, (int) (i*width*length*bpp), samples[i], 0,
@@ -831,7 +820,7 @@ public final class TiffTools {
   }
 
   public static byte[] getSamples(Hashtable ifd, RandomAccessStream in,
-    boolean ignore, byte[] buf) throws FormatException, IOException
+    byte[] buf) throws FormatException, IOException
   {
     if (DEBUG) debug("parsing IFD entries");
 
@@ -864,12 +853,6 @@ public final class TiffTools {
         for (int i=0; i<validBits.length; i++) validBits[i] = vb;
       }
       putIFDValue(ifd, VALID_BITS, validBits);
-    }
-
-    if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
-      photoInterp = BLACK_IS_ZERO;
-      samplesPerPixel = 1; 
-      bitsPerSample = new int[] {bitsPerSample[0]}; 
     }
 
     if (isTiled) {
@@ -1378,35 +1361,19 @@ public final class TiffTools {
   public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in)
     throws FormatException, IOException
   {
-    return getImage(ifd, in, false);
-  }
-
-  /**
-   * Reads the image defined in the given IFD from the specified file.
-   * If the 'ignore' flag is set, then RGB LUT images are interpreted as
-   * grayscale images.
-   */
-  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
-    boolean ignore) throws FormatException, IOException
-  {
     // construct field
     if (DEBUG) debug("constructing image");
 
-    byte[][] samples = getSamples(ifd, in, ignore);
+    byte[][] samples = getSamples(ifd, in);
     int[] bitsPerSample = getBitsPerSample(ifd);
     long imageWidth = getImageWidth(ifd);
     long imageLength = getImageLength(ifd);
     int samplesPerPixel = getSamplesPerPixel(ifd);
     int photoInterp = getPhotometricInterpretation(ifd);
     
-    if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
-      photoInterp = BLACK_IS_ZERO;
-      samplesPerPixel = 1;
-    }
-
     int[] validBits = getIFDIntArray(ifd, VALID_BITS, false);
 
-    if (!ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
+    if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
       samplesPerPixel = 3;
     }
 

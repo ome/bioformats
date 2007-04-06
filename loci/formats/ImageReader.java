@@ -320,19 +320,6 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getSeries(id);
   }
 
-  /* @see IFormatReader#setColorTableIgnored(boolean) */
-  public void setColorTableIgnored(boolean ignore) {
-    for (int i=0; i<readers.length; i++) {
-      readers[i].setColorTableIgnored(ignore);
-    }
-  }
-
-  /* @see IFormatReader#isColorTableIgnored() */
-  public boolean isColorTableIgnored() {
-    // NB: all readers should have the same color tables setting
-    return readers[0].isColorTableIgnored();
-  }
-
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     for (int i=0; i<readers.length; i++) readers[i].setNormalized(normalize);

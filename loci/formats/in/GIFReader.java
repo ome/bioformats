@@ -149,7 +149,7 @@ public class GIFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id); 
-    return !ignoreColorTable;
+    return true;
   }
 
   /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
@@ -186,15 +186,10 @@ public class GIFReader extends FormatReader {
 
     int[] ints = (int[]) images.get(no);
 
-    if (ignoreColorTable) {
-      for (int i=0; i<buf.length; i++) buf[i] = (byte) ints[i];
-    }
-    else {
-      for (int i=0; i<ints.length; i++) {
-        buf[i] = (byte) ((ints[i] & 0xff0000) >> 16);
-        buf[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
-        buf[i + 2*ints.length] = (byte) (ints[i] & 0xff);
-      }
+    for (int i=0; i<ints.length; i++) {
+      buf[i] = (byte) ((ints[i] & 0xff0000) >> 16);
+      buf[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
+      buf[i + 2*ints.length] = (byte) (ints[i] & 0xff);
     }
     return buf;
   }
@@ -395,7 +390,7 @@ public class GIFReader extends FormatReader {
     status("Populating metadata");
 
     core.sizeZ[0] = 1;
-    core.sizeC[0] = ignoreColorTable ? 1 : 3;
+    core.sizeC[0] = 3;
     core.sizeT[0] = numFrames;
     core.currentOrder[0] = "XYCTZ";
 
@@ -604,8 +599,7 @@ public class GIFReader extends FormatReader {
         while (dx < dlim) {
           // map color and insert in destination
           int index = ((int) pixels[sx++]) & 0xff;
-          if (!ignoreColorTable) dest[dx++] = act[index];
-          else dest[dx++] = index;
+          dest[dx++] = act[index];
         }
       }
     }

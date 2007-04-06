@@ -95,7 +95,7 @@ public class IPWReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isRGB(String) */ 
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return rgb && !ignoreColorTable;
+    return rgb;
   }
 
   /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
@@ -152,7 +152,7 @@ public class IPWReader extends BaseTiffReader {
       RandomAccessStream stream = new RandomAccessStream(b);
       ifds = TiffTools.getIFDs(stream);
       little = TiffTools.isLittleEndian(ifds[0]);
-      TiffTools.getSamples(ifds[0], stream, ignoreColorTable, buf);
+      TiffTools.getSamples(ifds[0], stream, buf);
       stream.close();
       return buf;
     }
@@ -311,7 +311,6 @@ public class IPWReader extends BaseTiffReader {
     core.currentOrder[0] = "XY";
 
     if (rgb) core.sizeC[0] *= 3;
-    if (ignoreColorTable) core.sizeC[0] = 1;
 
     int maxNdx = 0, max = 0;
     int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};

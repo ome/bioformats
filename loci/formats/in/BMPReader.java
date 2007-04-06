@@ -124,7 +124,7 @@ public class BMPReader extends FormatReader {
 
     in.seek(global);
 
-    if (palette != null && palette[0].length > 0 && !ignoreColorTable) {
+    if (palette != null && palette[0].length > 0) {
       for (int y=core.sizeY[0]-1; y>=0; y--) {
         for (int x=0; x<core.sizeX[0]; x++) {
           int val = in.read();

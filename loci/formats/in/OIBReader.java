@@ -204,7 +204,7 @@ public class OIBReader extends FormatReader {
       RandomAccessStream stream = new RandomAccessStream(b);
       Hashtable[] ifds = TiffTools.getIFDs(stream);
       littleEndian[series] = TiffTools.isLittleEndian(ifds[0]);
-      TiffTools.getSamples(ifds[0], stream, ignoreColorTable, buf);
+      TiffTools.getSamples(ifds[0], stream, buf);
       stream.close();
       return buf;
     }
@@ -611,8 +611,8 @@ public class OIBReader extends FormatReader {
           boolean isRGB = TiffTools.getSamplesPerPixel(ifd) > 1;
           if (!isRGB) {
             int p = TiffTools.getPhotometricInterpretation(ifd);
-            isRGB = !isColorTableIgnored() && (p == TiffTools.RGB_PALETTE ||
-              p == TiffTools.CFA_ARRAY) || p == TiffTools.RGB;
+            isRGB = p == TiffTools.RGB_PALETTE ||
+              p == TiffTools.CFA_ARRAY || p == TiffTools.RGB;
           }
 
           boolean added = false;

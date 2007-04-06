@@ -481,22 +481,6 @@ public class FileStitcher implements IFormatReader {
     return reader.getSeries(files[0]);
   }
 
-  /* @see IFormatReader#setColorTableIgnored(boolean) */
-  public void setColorTableIgnored(boolean ignore) {
-    reader.setColorTableIgnored(ignore);
-    if (readers == null) reader.setColorTableIgnored(ignore);
-    else {
-      for (int i=0; i<readers.length; i++) {
-        readers[i].setColorTableIgnored(ignore);
-      }
-    }
-  }
-
-  /* @see IFormatReader#isColorTableIgnored() */
-  public boolean isColorTableIgnored() {
-    return reader.isColorTableIgnored();
-  }
-
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     if (readers == null) reader.setNormalized(normalize);
@@ -734,12 +718,10 @@ public class FileStitcher implements IFormatReader {
     }
 
     // sync reader configurations with original reader
-    boolean colorTableIgnored = reader.isColorTableIgnored();
     boolean normalized = reader.isNormalized();
     boolean metadataFiltered = reader.isMetadataFiltered();
     StatusListener[] statusListeners = reader.getStatusListeners();
     for (int i=1; i<readers.length; i++) {
-      readers[i].setColorTableIgnored(colorTableIgnored);
       readers[i].setNormalized(normalized);
       readers[i].setMetadataFiltered(metadataFiltered);
       for (int j=0; j<statusListeners.length; j++) {

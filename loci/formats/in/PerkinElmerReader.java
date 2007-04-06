@@ -380,7 +380,6 @@ public class PerkinElmerReader extends FormatReader {
     tiff = new TiffReader[numImages];
     for (int i=0; i<tiff.length; i++) {
       tiff[i] = new TiffReader();
-      tiff[i].setColorTableIgnored(isColorTableIgnored());
     }
 
     // highly questionable metadata parsing
