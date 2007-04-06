@@ -205,6 +205,7 @@ public final class FormatTools {
     if (map != null) Location.mapId(id, map);
     if (omexml) {
       try {
+        // NB: avoid dependencies on optional loci.formats.ome package
         Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
         MetadataStore ms = (MetadataStore) c.newInstance();
         reader.setMetadataStore(ms);
@@ -560,6 +561,7 @@ public final class FormatTools {
       System.out.println("Generating OME-XML");
       MetadataStore ms = reader.getMetadataStore(id);
 
+      // NB: avoid dependencies on optional loci.formats.ome package
       if (ms.getClass().getName().equals(
         "loci.formats.ome.OMEXMLMetadataStore"))
       {
