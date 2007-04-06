@@ -245,7 +245,7 @@ public class ExportPane extends WizardPane {
                 DataUtility.extractImage(ff, false);
               task.setStatus(count++, max,
                 "Writing #" + (i + 1) + "/" + numTotal);
-              if (tiffSaver == null) saver.save(filename, image, true);
+              if (tiffSaver == null) saver.saveImage(filename, image, true);
               else {
                 // save image to TIFF file
                 Hashtable ifd = new Hashtable();
@@ -273,7 +273,7 @@ public class ExportPane extends WizardPane {
                 task.setStatus(count++, max,
                   "Writing #" + img + "/" + numTotal);
                 boolean last = j == lengths[excl] - 1;
-                if (tiffSaver == null) saver.save(filename, image, last);
+                if (tiffSaver == null) saver.saveImage(filename, image, last);
                 else {
                   // save image to TIFF file
                   Hashtable ifd = new Hashtable();
