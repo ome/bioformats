@@ -608,8 +608,18 @@ public class Notebook extends JFrame implements ActionListener {
   // -- Main method --
 
   public static void main(String[] args) {
-    Notebook n = new Notebook(args.length > 0 ? args[0] : null,
-      args.length > 1 ? args[1] : null);
+    String template = null, data = null;
+    for (int i=0; i<args.length; i++) {
+      if (args[i].equals("-template")) {
+        if (args.length > i + 1) { 
+          template = args[i++];
+        }
+        else System.err.println("Please specify a template file");
+      }
+      else data = args[i]; 
+    }
+   
+    new Notebook(template, data);
   }
 
 }
