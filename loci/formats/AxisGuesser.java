@@ -299,11 +299,12 @@ public class AxisGuesser {
           // read dimensional information from first file
           System.out.print("Reading first file ");
           ImageReader reader = new ImageReader();
-          String dimOrder = reader.getDimensionOrder(id);
-          int sizeZ = reader.getSizeZ(id);
-          int sizeT = reader.getSizeT(id);
-          int sizeC = reader.getSizeC(id);
-          boolean certain = reader.isOrderCertain(id);
+          reader.setId(id); 
+          String dimOrder = reader.getDimensionOrder();
+          int sizeZ = reader.getSizeZ();
+          int sizeT = reader.getSizeT();
+          int sizeC = reader.getSizeC();
+          boolean certain = reader.isOrderCertain();
           reader.close();
           System.out.println("[done]");
           System.out.println("\tdimOrder = " + dimOrder +

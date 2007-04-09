@@ -91,81 +91,69 @@ public class LIFReader extends FormatReader {
     return block[0] == 0x70;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     numImages = dims[series][2] * dims[series][3];
-    return numImages * (isRGB(id) ? 1 : dims[series][4]);
+    return numImages * (isRGB() ? 1 : dims[series][4]);
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return dims[series][4] > 1 && dims[series][4] < 4;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return littleEndian;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesCount(String) */ 
-  public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
+  public int getSeriesCount() throws FormatException, IOException {
     return dims.length;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
     byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] *
-      (bpp / 8) * getRGBChannelCount(id)];
-    return openBytes(id, no, buf);
+      (bpp / 8) * getRGBChannelCount()];
+    return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
     int bytes = bpp / 8;
     if (buf.length < core.sizeX[series] * core.sizeY[series] * bytes * 
-      getRGBChannelCount(id)) 
+      getRGBChannelCount()) 
     {
       throw new FormatException("Buffer too small.");
     }
 
     int offset = ((Long) offsets.get(series)).intValue();
     in.seek(offset + core.sizeX[series] * core.sizeY[series] * 
-      bytes * no * getRGBChannelCount(id));
+      bytes * no * getRGBChannelCount());
    
     in.read(buf);
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.makeImage(openBytes(id, no), core.sizeX[series],
-      core.sizeY[series], isRGB(id) ? core.sizeC[series] : 1, false, bpp / 8,
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return ImageTools.makeImage(openBytes(no), core.sizeX[series],
+      core.sizeY[series], isRGB() ? core.sizeC[series] : 1, false, bpp / 8,
       littleEndian, validBits[series]);
   }
 
@@ -486,7 +474,7 @@ public class LIFReader extends FormatReader {
     status("Populating metadata");
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(currentId);
+    MetadataStore store = getMetadataStore();
 
     core = new CoreMetadata(numDatasets);
     Arrays.fill(core.orderCertain, true);
@@ -548,7 +536,7 @@ public class LIFReader extends FormatReader {
         (String) getMeta((String) seriesNames.get(i) + " - dblZoom");
       store.setDisplayOptions(zoom == null ? null : new Float(zoom),
         new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
-        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB(currentId)), null, 
+        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null, 
         null, null, null, null, ii, null, null, null, null, null);
     }
   }

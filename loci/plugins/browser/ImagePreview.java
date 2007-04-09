@@ -66,10 +66,11 @@ public class ImagePreview extends JComponent
 
       synchronized(ir) {
         String path = file.getAbsolutePath();
-        int sizeZ = ir.getSizeZ(path);
-        int sizeT = ir.getSizeT(path);
-        int index = ir.getIndex(path, sizeZ / 2, 0, sizeT / 2);
-        BufferedImage image = ir.openThumbImage(path, index);
+        ir.setId(path); 
+        int sizeZ = ir.getSizeZ();
+        int sizeT = ir.getSizeT();
+        int index = ir.getIndex(sizeZ / 2, 0, sizeT / 2);
+        BufferedImage image = ir.openThumbImage(index);
         ir.close();
         thumbnail = new ImageIcon(image);
       }

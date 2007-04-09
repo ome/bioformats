@@ -89,42 +89,33 @@ public class OMEXMLReader extends FormatReader {
     return new String(block, 0, 5).equals("<?xml");
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesCount(String) */ 
-  public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
+  public int getSeriesCount() throws FormatException, IOException {
     return core.sizeX.length; 
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return numImages[series];
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return littleEndian[series];
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= numImages[series]) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -132,7 +123,7 @@ public class OMEXMLReader extends FormatReader {
     in.seek(((Integer) offsets[series].get(no)).intValue());
 
     byte[] buf;
-    if (no < getImageCount(id) - 1) {
+    if (no < getImageCount() - 1) {
       buf = new byte[((Integer) offsets[series].get(no + 1)).intValue() -
         ((Integer) offsets[series].get(no)).intValue()];
     }
@@ -189,11 +180,9 @@ public class OMEXMLReader extends FormatReader {
     return pixels;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.makeImage(openBytes(id, no), core.sizeX[series],
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], 1, false, bpp[series], littleEndian[series]);
   }
 
@@ -390,7 +379,7 @@ public class OMEXMLReader extends FormatReader {
     bpp = new int[numDatasets];
     compression = new String[numDatasets];
 
-    int oldSeries = getSeries(currentId);
+    int oldSeries = getSeries();
 
     try {
       r.exec("omexml.setRoot(ome)");
@@ -399,7 +388,7 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException(exc);
     }
     for (int i=0; i<numDatasets; i++) {
-      setSeries(currentId, i);
+      setSeries(i);
       Integer ndx = new Integer(i);
       Integer w = null, h = null, t = null, z = null, c = null;
       String pixType = null, dimOrder = null;
@@ -473,10 +462,10 @@ public class OMEXMLReader extends FormatReader {
       }
       buf = null;
     }
-    setSeries(currentId, oldSeries);
+    setSeries(oldSeries);
     Arrays.fill(core.orderCertain, true);
 
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
     for (int i=0; i<core.sizeC.length; i++) {
       for (int j=0; j<core.sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null,
@@ -533,12 +522,6 @@ public class OMEXMLReader extends FormatReader {
 
       iteration++;
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new OMEXMLReader().testRead(args);
   }
 
 }

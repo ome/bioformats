@@ -86,43 +86,36 @@ public class BioRadReader extends FormatReader {
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return npic;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */
-  public boolean isRGB(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isRGB() */
+  public boolean isRGB() throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return LITTLE_ENDIAN;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)];
-    return openBytes(id, no, buf);
+    return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf) 
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= npic) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -136,11 +129,9 @@ public class BioRadReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    BufferedImage b = ImageTools.makeImage(openBytes(id, no), core.sizeX[0], 
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
       core.sizeY[0], 1, false, byteFormat ? 1 : 2, LITTLE_ENDIAN);
     return b;
   }
@@ -615,7 +606,7 @@ public class BioRadReader extends FormatReader {
     // Populate the metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     // populate Image element
     store.setImage(name, null, null, null);

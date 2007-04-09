@@ -100,7 +100,8 @@ public class OmeisImporter {
       if (done[i]) continue; // already part of another group
       if (ids[i] == null) continue; // invalid id
       if (!reader.isThisType(ids[i])) continue; // unknown format
-      String[] files = reader.getUsedFiles(ids[i]);
+      reader.setId(ids[i]); 
+      String[] files = reader.getUsedFiles();
       if (files == null) continue; // invalid files list
       sb.setLength(0);
       for (int j=0; j<files.length; j++) {
@@ -151,7 +152,8 @@ public class OmeisImporter {
     if (DEBUG) log("Reading file '" + id + "' --> " + path);
 
     // verify that all given file IDs were grouped by the reader
-    String[] used = reader.getUsedFiles(id);
+    reader.setId(id); 
+    String[] used = reader.getUsedFiles();
     if (used == null) {
       throw new FormatException("Invalid file list for " + path);
     }
@@ -176,7 +178,7 @@ public class OmeisImporter {
         "File list does not correspond to ID list for " + path);
     }
 
-    int seriesCount = reader.getSeriesCount(id);
+    int seriesCount = reader.getSeriesCount();
 
     // get DOM and Pixels elements for the file's OME-XML metadata
     OMENode ome = (OMENode) store.getRoot();
@@ -202,15 +204,15 @@ public class OmeisImporter {
     if (DEBUG) log(seriesCount + " series detected.");
 
     for (int s=0; s<seriesCount; s++) {
-      reader.setSeries(id, s);
+      reader.setSeries(s);
 
       // gather pixels information for this series
-      int sizeX = reader.getSizeX(id);
-      int sizeY = reader.getSizeY(id);
-      int sizeZ = reader.getSizeZ(id);
-      int sizeC = reader.getSizeC(id);
-      int sizeT = reader.getSizeT(id);
-      int pixelType = reader.getPixelType(id);
+      int sizeX = reader.getSizeX();
+      int sizeY = reader.getSizeY();
+      int sizeZ = reader.getSizeZ();
+      int sizeC = reader.getSizeC();
+      int sizeT = reader.getSizeT();
+      int pixelType = reader.getPixelType();
       int bytesPerPixel;
       boolean isSigned, isFloat;
       switch (pixelType) {
@@ -258,7 +260,7 @@ public class OmeisImporter {
           throw new FormatException("Unknown pixel type for '" +
             id + "' series #" + s + ": " + pixelType);
       }
-      boolean little = reader.isLittleEndian(id);
+      boolean little = reader.isLittleEndian();
       boolean swap = doLittle != little && bytesPerPixel > 1 && !isFloat;
 
       // ask OMEIS to allocate new pixels file
@@ -271,7 +273,7 @@ public class OmeisImporter {
 
       // write pixels to file
       FileOutputStream out = new FileOutputStream(pixelsPath);
-      int imageCount = reader.getImageCount(id);
+      int imageCount = reader.getImageCount();
       if (DEBUG) {
         log("Processing " + imageCount + " planes (sizeZ=" + sizeZ +
           ", sizeC=" + sizeC + ", sizeT=" + sizeT + "): ");
@@ -283,12 +285,12 @@ public class OmeisImporter {
       for (int t=0; t<sizeT; t++) {
         for (int c=0; c<sizeC; c++) {
           for (int z=0; z<sizeZ; z++) {
-            int ndx = reader.getIndex(id, z, c, t);
+            int ndx = reader.getIndex(z, c, t);
             if (DEBUG) {
               log("Reading plane #" + ndx +
                 ": z=" + z + ", c=" + c + ", t=" + t);
             }
-            byte[] plane = reader.openBytes(id, ndx);
+            byte[] plane = reader.openBytes(ndx);
             if (swap) { // swap endianness
               for (int b=0; b<plane.length; b+=bytesPerPixel) {
                 for (int k=0; k<bytesPerPixel/2; k++) {

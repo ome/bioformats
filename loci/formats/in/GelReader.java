@@ -97,7 +97,7 @@ public class GelReader extends BaseTiffReader {
 
     core.sizeT[series] = numImages;
 
-    MetadataStore store = getMetadataStore(currentId);
+    MetadataStore store = getMetadataStore();
     store.setDimensions(new Float(scale.floatValue()),
       new Float(scale.floatValue()), null, null, null, null);
   }

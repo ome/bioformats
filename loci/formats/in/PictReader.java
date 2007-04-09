@@ -131,42 +131,35 @@ public class PictReader extends FormatReader {
   }
 
   /** Determines the number of images in the given PICT file. */
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public int getImageCount() throws FormatException, IOException {
     return 1;
   }
 
   /** Checks if the images in the file are RGB. */
-  public boolean isRGB(String id) throws FormatException, IOException {
+  public boolean isRGB() throws FormatException, IOException {
     return true;
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public boolean isLittleEndian() throws FormatException, IOException {
     return little;
   }
 
   /** Returns whether or not the channels are interleaved. */
-  public boolean isInterleaved(String id, int subC)
+  public boolean isInterleaved(int subC)
     throws FormatException, IOException
   {
     return true;
   }
 
-  /** Obtains the specified image from the given PICT file as a byte array. */
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.getBytes(openImage(id, no), false, no % 3);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return ImageTools.getBytes(openImage(no), false, no % 3);
   }
 
-  /** Obtains the specified image from the given PICT file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -179,7 +172,7 @@ public class PictReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /** Closes any open files. */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -216,7 +209,7 @@ public class PictReader extends FormatReader {
     core.currentOrder[0] = "XYCZT";
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     core.pixelType[0] = FormatTools.UINT8;
     store.setPixels(

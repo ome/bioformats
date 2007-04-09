@@ -64,7 +64,7 @@ public class TiffReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Parses standard metadata. */
+  /* @see BaseTiffReader#initStandardMetadata() */ 
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
     String comment = (String) getMeta("Comment");
@@ -125,7 +125,7 @@ public class TiffReader extends BaseTiffReader {
       if (tiffData != null) {
         boolean rgb = false;
         try {
-          rgb = isRGB(currentId);
+          rgb = isRGB();
         }
         catch (IOException exc) {
           throw new FormatException(exc);
@@ -484,7 +484,7 @@ public class TiffReader extends BaseTiffReader {
 
   }
 
-  /** Parses OME-XML metadata. */
+  /* @see BaseTiffReader#initMetadataStore() */ 
   protected void initMetadataStore() {
     // check for OME-XML in TIFF comment (OME-TIFF format)
     // we need an extra check to make sure that any XML we find is indeed
@@ -521,16 +521,9 @@ public class TiffReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getSeriesCount(String) */
-  public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getSeriesCount() */
+  public int getSeriesCount() throws FormatException, IOException {
     return core.currentOrder.length;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new TiffReader().testRead(args);
   }
 
 }

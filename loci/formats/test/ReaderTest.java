@@ -118,18 +118,18 @@ public class ReaderTest extends TestCase {
     maxMemory = initialMemory;
     try {
       int planesRead = 0;
-
+      reader.setId(id);
       long l1 = System.currentTimeMillis();
-      for (int i=0; i<reader.getSeriesCount(id); i++) {
+      for (int i=0; i<reader.getSeriesCount(); i++) {
         int usedMemory = (int) (rt.totalMemory() - rt.freeMemory()) >> 20;
         if (usedMemory > maxMemory) maxMemory = usedMemory;
-        reader.setSeries(id, i);
-        int imageCount = reader.getImageCount(id);
-        int sizeX = reader.getSizeX(id);
-        int sizeY = reader.getSizeY(id);
+        reader.setSeries(i);
+        int imageCount = reader.getImageCount();
+        int sizeX = reader.getSizeX();
+        int sizeY = reader.getSizeY();
 
         for (int j=0; j<imageCount; j++) {
-          BufferedImage b = reader.openImage(id, j);
+          BufferedImage b = reader.openImage(j);
           boolean failW = b.getWidth() != sizeX;
           boolean failH = b.getHeight() != sizeY;
           if (failW) writeLog(id + " failed width test");
@@ -137,7 +137,7 @@ public class ReaderTest extends TestCase {
           if (failW || failH) {
             success = false;
             j = imageCount;
-            i = reader.getSeriesCount(id);
+            i = reader.getSeriesCount();
             break;
           }
         }
@@ -169,24 +169,25 @@ public class ReaderTest extends TestCase {
   public void testByteArrayDimensions() {
     boolean success = true;
     try {
-      for (int i=0; i<reader.getSeriesCount(id); i++) {
-        reader.setSeries(id, i);
-        int imageCount = reader.getImageCount(id);
-        int sizeX = reader.getSizeX(id);
-        int sizeY = reader.getSizeY(id);
+      reader.setId(id);
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        reader.setSeries(i);
+        int imageCount = reader.getImageCount();
+        int sizeX = reader.getSizeX();
+        int sizeY = reader.getSizeY();
         int bytesPerPixel =
-          FormatTools.getBytesPerPixel(reader.getPixelType(id));
-        int sizeC = reader.getSizeC(id);
-        boolean rgb = reader.isRGB(id);
+          FormatTools.getBytesPerPixel(reader.getPixelType());
+        int sizeC = reader.getSizeC();
+        boolean rgb = reader.isRGB();
 
         int expectedBytes = sizeX * sizeY * bytesPerPixel * (rgb ? sizeC : 1);
 
         for (int j=0; j<imageCount; j++) {
-          byte[] b = reader.openBytes(id, j);
+          byte[] b = reader.openBytes(j);
           if (b.length != expectedBytes) {
             success = false;
             j = imageCount;
-            i = reader.getSeriesCount(id);
+            i = reader.getSeriesCount();
             break;
           }
         }
@@ -210,15 +211,16 @@ public class ReaderTest extends TestCase {
     boolean success = true;
     try {
       int planesRead = 0;
-
-      for (int i=0; i<reader.getSeriesCount(id); i++) {
-        reader.setSeries(id, i);
-        int imageCount = reader.getImageCount(id);
-        int sizeX = reader.getThumbSizeX(id);
-        int sizeY = reader.getThumbSizeY(id);
+      reader.setId(id);
+      
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        reader.setSeries(i);
+        int imageCount = reader.getImageCount();
+        int sizeX = reader.getThumbSizeX();
+        int sizeY = reader.getThumbSizeY();
 
         for (int j=0; j<imageCount; j++) {
-          BufferedImage b = reader.openThumbImage(id, j);
+          BufferedImage b = reader.openThumbImage(j);
           boolean failW = b.getWidth() != sizeX;
           boolean failH = b.getHeight() != sizeY;
           if (failW) writeLog(id + " failed thumbnail width test");
@@ -226,7 +228,7 @@ public class ReaderTest extends TestCase {
           if (failW || failH) {
             success = false;
             j = imageCount;
-            i = reader.getSeriesCount(id);
+            i = reader.getSeriesCount();
             break;
           }
         }
@@ -248,21 +250,22 @@ public class ReaderTest extends TestCase {
   public void testThumbnailArrayDimensions() {
     boolean success = true;
     try {
-      for (int i=0; i<reader.getSeriesCount(id); i++) {
-        reader.setSeries(id, i);
-        int imageCount = reader.getImageCount(id);
-        int sizeX = reader.getThumbSizeX(id);
-        int sizeY = reader.getThumbSizeY(id);
-        int sizeC = reader.getRGBChannelCount(id);
+      reader.setId(id);
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        reader.setSeries(i);
+        int imageCount = reader.getImageCount();
+        int sizeX = reader.getThumbSizeX();
+        int sizeY = reader.getThumbSizeY();
+        int sizeC = reader.getRGBChannelCount();
 
         int expectedBytes = sizeX * sizeY * sizeC;
 
         for (int j=0; j<imageCount; j++) {
-          byte[] b = reader.openThumbBytes(id, j);
+          byte[] b = reader.openThumbBytes(j);
           if (b.length != expectedBytes) {
             success = false;
             j = imageCount;
-            i = reader.getSeriesCount(id);
+            i = reader.getSeriesCount();
             break;
           }
         }
@@ -285,12 +288,13 @@ public class ReaderTest extends TestCase {
   public void testImageCount() {
     boolean success = true;
     try {
-      for (int i=0; i<reader.getSeriesCount(id); i++) {
-        reader.setSeries(id, i);
-        int imageCount = reader.getImageCount(id);
-        int sizeZ = reader.getSizeZ(id);
-        int sizeC = reader.getEffectiveSizeC(id);
-        int sizeT = reader.getSizeT(id);
+      reader.setId(id);
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        reader.setSeries(i);
+        int imageCount = reader.getImageCount();
+        int sizeZ = reader.getSizeZ();
+        int sizeC = reader.getEffectiveSizeC();
+        int sizeT = reader.getSizeT();
         if (success) success = imageCount == sizeZ * sizeC * sizeT;
         else break;
       }
@@ -315,17 +319,18 @@ public class ReaderTest extends TestCase {
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.createRoot();
       reader.setMetadataStore(store);
+      reader.setId(id);
 
-      for (int i=0; i<reader.getSeries(id); i++) {
-        reader.setSeries(id, i);
-        int sizeX = reader.getSizeX(id);
-        int sizeY = reader.getSizeY(id);
-        int sizeZ = reader.getSizeZ(id);
-        int sizeC = reader.getSizeC(id);
-        int sizeT = reader.getSizeT(id);
-        boolean bigEndian = !reader.isLittleEndian(id);
-        String type = FormatTools.getPixelTypeString(reader.getPixelType(id));
-        String dimensionOrder = reader.getDimensionOrder(id);
+      for (int i=0; i<reader.getSeries(); i++) {
+        reader.setSeries(i);
+        int sizeX = reader.getSizeX();
+        int sizeY = reader.getSizeY();
+        int sizeZ = reader.getSizeZ();
+        int sizeC = reader.getSizeC();
+        int sizeT = reader.getSizeT();
+        boolean bigEndian = !reader.isLittleEndian();
+        String type = FormatTools.getPixelTypeString(reader.getPixelType());
+        String dimensionOrder = reader.getDimensionOrder();
 
         Integer ii = new Integer(i);
         boolean failX = sizeX != store.getSizeX(ii).intValue();
@@ -371,42 +376,51 @@ public class ReaderTest extends TestCase {
    */
   public void testConsistent() {
     boolean success = true;
+    try { 
+      reader.setId(id);
+    }
+    catch (Exception e) {
+      writeLog(id + " failed consistent metadata test");
+      if (FormatReader.debug) e.printStackTrace(); 
+      assertTrue(false);
+    }
+     
     if (writeConfigFiles) {
       try {
         // assemble the config line
         configLine.append("\"");
         configLine.append(new Location(id).getName());
         configLine.append("\" total_series=");
-        configLine.append(reader.getSeriesCount(id));
-        for (int i=0; i<reader.getSeriesCount(id); i++) {
-          reader.setSeries(id, i);
+        configLine.append(reader.getSeriesCount());
+        for (int i=0; i<reader.getSeriesCount(); i++) {
+          reader.setSeries(i);
           configLine.append(" [series=");
           configLine.append(i);
           configLine.append(" x=");
-          configLine.append(reader.getSizeX(id));
+          configLine.append(reader.getSizeX());
           configLine.append(" y=");
-          configLine.append(reader.getSizeY(id));
+          configLine.append(reader.getSizeY());
           configLine.append(" z=");
-          configLine.append(reader.getSizeZ(id));
+          configLine.append(reader.getSizeZ());
           configLine.append(" c=");
-          configLine.append(reader.getSizeC(id));
+          configLine.append(reader.getSizeC());
           configLine.append(" t=");
-          configLine.append(reader.getSizeT(id));
+          configLine.append(reader.getSizeT());
           configLine.append(" order=");
-          configLine.append(reader.getDimensionOrder(id));
+          configLine.append(reader.getDimensionOrder());
           configLine.append(" interleave=");
-          configLine.append(reader.isInterleaved(id));
+          configLine.append(reader.isInterleaved());
           configLine.append(" rgb=");
-          configLine.append(reader.isRGB(id));
+          configLine.append(reader.isRGB());
           configLine.append(" thumbx=");
-          configLine.append(reader.getThumbSizeX(id));
+          configLine.append(reader.getThumbSizeX());
           configLine.append(" thumby=");
-          configLine.append(reader.getThumbSizeY(id));
+          configLine.append(reader.getThumbSizeY());
           configLine.append(" type=");
           configLine.append(FormatTools.getPixelTypeString(
-            reader.getPixelType(id)));
+            reader.getPixelType()));
           configLine.append(" little=");
-          configLine.append(reader.isLittleEndian(id));
+          configLine.append(reader.isLittleEndian());
           configLine.append("]");
         }
         configLine.append(" access=");
@@ -446,7 +460,7 @@ public class ReaderTest extends TestCase {
     else {
       int nSeries = 0;
       try {
-        nSeries = reader.getSeries(id);
+        nSeries = reader.getSeries();
         if (nSeries != config.getNumSeries(id)) {
           success = false;
           writeLog(id + " failed consistent series count check");
@@ -460,57 +474,57 @@ public class ReaderTest extends TestCase {
         try {
           for (int i=0; i<nSeries; i++) {
             config.setSeries(id, i);
-            reader.setSeries(id, i);
-            if (config.getWidth(id) != reader.getSizeX(id)) {
+            reader.setSeries(i);
+            if (config.getWidth(id) != reader.getSizeX()) {
               success = false;
               writeLog(id + " failed consistent width check in series " + i);
             }
-            if (config.getHeight(id) != reader.getSizeY(id)) {
+            if (config.getHeight(id) != reader.getSizeY()) {
               success = false;
               writeLog(id + " failed consistent height check in series " + i);
             }
-            if (config.getZ(id) != reader.getSizeZ(id)) {
+            if (config.getZ(id) != reader.getSizeZ()) {
               success = false;
               writeLog(id + " failed consistent sizeZ check in series " + i);
             }
-            if (config.getC(id) != reader.getSizeC(id)) {
+            if (config.getC(id) != reader.getSizeC()) {
               success = false;
               writeLog(id + " failed consistent sizeC check in series " + i);
             }
-            if (config.getT(id) != reader.getSizeT(id)) {
+            if (config.getT(id) != reader.getSizeT()) {
               success = false;
               writeLog(id + " failed consistent sizeT check in series " + i);
             }
-            if (!config.getDimOrder(id).equals(reader.getDimensionOrder(id))) {
+            if (!config.getDimOrder(id).equals(reader.getDimensionOrder())) {
               success = false;
               writeLog(id +
                 " failed consistent dimension order check in series " + i);
             }
-            if (config.isInterleaved(id) != reader.isInterleaved(id)) {
+            if (config.isInterleaved(id) != reader.isInterleaved()) {
               success = false;
               writeLog(id +
                 " failed consistent interleaving flag check in series " + i);
             }
-            if (config.isRGB(id) != reader.isRGB(id)) {
+            if (config.isRGB(id) != reader.isRGB()) {
               success = false;
               writeLog(id + " failed consistent RGB flag check in series " + i);
             }
-            if (config.getThumbX(id) != reader.getThumbSizeX(id)) {
+            if (config.getThumbX(id) != reader.getThumbSizeX()) {
               success = false;
               writeLog(id +
                 " failed consistent thumbnail width check in series " + i);
             }
-            if (config.getThumbY(id) != reader.getThumbSizeY(id)) {
+            if (config.getThumbY(id) != reader.getThumbSizeY()) {
               success = false;
               writeLog(id +
                 " failed consistent thumbnail height check in series " + i);
             }
-            if (config.getPixelType(id) != reader.getPixelType(id)) {
+            if (config.getPixelType(id) != reader.getPixelType()) {
               success = false;
               writeLog(id +
                 " failed consistent pixel type check in series " + i);
             }
-            if (config.isLittleEndian(id) != reader.isLittleEndian(id)) {
+            if (config.isLittleEndian(id) != reader.isLittleEndian()) {
               success = false;
               writeLog(id +
                 " failed consistent endianness flag check in series " + i);
@@ -565,13 +579,15 @@ public class ReaderTest extends TestCase {
    */
   public void testSaneUsedFiles() {
     try {
-      String[] base = reader.getUsedFiles(id);
+      reader.setId(id);
+      String[] base = reader.getUsedFiles();
       Arrays.sort(base);
 
       FileStitcher fs = new FileStitcher();
-
+      
       for (int i=0; i<base.length; i++) {
-        String[] comp = fs.getUsedFiles(base[i]);
+        fs.setId(base[i]); 
+        String[] comp = fs.getUsedFiles();
         Arrays.sort(comp);
         for (int j=0; j<comp.length; j++) {
           if (!comp[j].equals(base[j])) {
@@ -602,7 +618,8 @@ public class ReaderTest extends TestCase {
   /** Releases resources after tests have completed. */
   protected void tearDown() {
     try {
-      used = reader.getUsedFiles(id);
+      reader.setId(id);
+      used = reader.getUsedFiles();
       reader.close();
     }
     catch (FormatException fe) {

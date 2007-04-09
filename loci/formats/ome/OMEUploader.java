@@ -189,28 +189,29 @@ public class OMEUploader implements Uploader {
       }
       else files.add(file);
       f = new ChannelSeparator(f);
+      f.setId(file);
 
       int bytesPerPixel = 4;
-      String pixelType = FormatTools.getPixelTypeString(f.getPixelType(file));
+      String pixelType = FormatTools.getPixelTypeString(f.getPixelType());
       if (pixelType.indexOf("int") != -1) {
         pixelType = pixelType.substring(pixelType.indexOf("int") + 3);
         bytesPerPixel = Integer.parseInt(pixelType) / 8;
       }
 
-      String id = newPixels(f.getSizeX(file), f.getSizeY(file),
-        f.getSizeZ(file), f.getSizeC(file), f.getSizeT(file), bytesPerPixel);
+      String id = newPixels(f.getSizeX(), f.getSizeY(),
+        f.getSizeZ(), f.getSizeC(), f.getSizeT(), bytesPerPixel);
 
-      int num = f.getImageCount(file);
+      int num = f.getImageCount();
       int bytesUploaded = 0;
 
       for (int i=0; i<num; i++) {
-        int[] coords = f.getZCTCoords(file, i);
-        bytesUploaded += uploadPlane(f.openBytes(file, i), coords[0],
-          coords[1], coords[2], id, !f.isLittleEndian(file));
+        int[] coords = f.getZCTCoords(i);
+        bytesUploaded += uploadPlane(f.openBytes(i), coords[0],
+          coords[1], coords[2], id, !f.isLittleEndian());
       }
 
       id = closePixels(id).trim();
-      uploadMetadata(f.getMetadataStore(file), id);
+      uploadMetadata(f.getMetadataStore(), id);
       return bytesUploaded;
     }
     catch (Exception e) { throw new UploadException(e); }
@@ -242,18 +243,19 @@ public class OMEUploader implements Uploader {
         for (int i=0; i<names.length; i++) files.add(names[i]);
       }
       else files.add(file);
+      f.setId(file);
 
-      int num = f.getImageCount(file);
+      int num = f.getImageCount();
       int bytesUploaded = 0;
 
       for (int i=0; i<num; i++) {
-        int[] coords = f.getZCTCoords(file, i);
-        bytesUploaded += uploadPlane(f.openBytes(file, i), coords[0], coords[1],
-          coords[2], image.toString(), !f.isLittleEndian(file));
+        int[] coords = f.getZCTCoords(i);
+        bytesUploaded += uploadPlane(f.openBytes(i), coords[0], coords[1],
+          coords[2], image.toString(), !f.isLittleEndian());
       }
 
       String id = closePixels(image.toString());
-      uploadMetadata(f.getMetadataStore(file), id.trim(), dataset);
+      uploadMetadata(f.getMetadataStore(), id.trim(), dataset);
 
       return bytesUploaded;
     }

@@ -74,46 +74,37 @@ public class IPLabReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return numImages;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return core.sizeC[0] > 1;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return littleEndian;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bps * core.sizeC[0]];
-    return openBytes(id, no, buf);
+    return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf) 
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -127,12 +118,10 @@ public class IPLabReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], core.sizeY[0],
-      isRGB(id) ? core.sizeC[0] : 1, false, bps, littleEndian);
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
+      isRGB() ? core.sizeC[0] : 1, false, bps, littleEndian);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -236,7 +225,7 @@ public class IPLabReader extends FormatReader {
     else core.currentOrder[0] += "ZTC";
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     store.setPixels(
       new Integer(core.sizeX[0]), // SizeX
@@ -366,7 +355,7 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationBlack" + i, new Double(black));
           addMeta("NormalizationWhite" + i, new Double(white));
 
-          store = getMetadataStore(currentId);
+          store = getMetadataStore();
           store.setChannelGlobalMinMax(i, new Double(min),
             new Double(max), null);
 
@@ -455,7 +444,7 @@ public class IPLabReader extends FormatReader {
         addMeta("Descriptor", descriptor);
         addMeta("Notes", notes);
 
-        store.setImage(id, null, notes, null);
+        store.setImage(currentId, null, notes, null);
       }
 
       if (in.getFilePointer() + 4 <= in.length()) {

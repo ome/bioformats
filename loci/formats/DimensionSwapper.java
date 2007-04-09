@@ -39,36 +39,34 @@ public class DimensionSwapper extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getSizeX(String) */
-  public int getSizeX(String id) throws FormatException, IOException {
-    return getCoreMetadata(id).sizeX[getSeries(id)]; 
+  /* @see loci.formats.IFormatReader#getSizeX() */
+  public int getSizeX() throws FormatException, IOException {
+    return getCoreMetadata().sizeX[getSeries()]; 
   }
 
-  /* @see loci.formats.IFormatReader#getSizeY(String) */
-  public int getSizeY(String id) throws FormatException, IOException {
-    return getCoreMetadata(id).sizeY[getSeries(id)]; 
+  /* @see loci.formats.IFormatReader#getSizeY() */
+  public int getSizeY() throws FormatException, IOException {
+    return getCoreMetadata().sizeY[getSeries()]; 
   }
   
-  /* @see loci.formats.IFormatReader#getSizeZ(String) */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    return getCoreMetadata(id).sizeZ[getSeries(id)]; 
+  /* @see loci.formats.IFormatReader#getSizeZ() */
+  public int getSizeZ() throws FormatException, IOException {
+    return getCoreMetadata().sizeZ[getSeries()]; 
   }
 
-  /* @see loci.formats.IFormatReader#getSizeC(String) */
-  public int getSizeC(String id) throws FormatException, IOException {
-    return getCoreMetadata(id).sizeC[getSeries(id)]; 
+  /* @see loci.formats.IFormatReader#getSizeC() */
+  public int getSizeC() throws FormatException, IOException {
+    return getCoreMetadata().sizeC[getSeries()]; 
   }
 
-  /* @see loci.formats.IFormatReader#getSizeT(String) */
-  public int getSizeT(String id) throws FormatException, IOException {
-    return getCoreMetadata(id).sizeT[getSeries(id)]; 
+  /* @see loci.formats.IFormatReader#getSizeT() */
+  public int getSizeT() throws FormatException, IOException {
+    return getCoreMetadata().sizeT[getSeries()]; 
   }
 
-  /* @see loci.formats.IFormatReader#getDimensionOrder(String) */
-  public String getDimensionOrder(String id) 
-    throws FormatException, IOException 
-  {
-    return getCoreMetadata(id).currentOrder[getSeries(id)]; 
+  /* @see loci.formats.IFormatReader#getDimensionOrder() */
+  public String getDimensionOrder() throws FormatException, IOException {
+    return getCoreMetadata().currentOrder[getSeries()]; 
   }
 
   // -- DimensionSwapper API methods --
@@ -79,12 +77,11 @@ public class DimensionSwapper extends ReaderWrapper {
    * Note that this method will throw an exception if X and Y do not appear in
    * positions 0 and 1 (although X and Y can be reversed).
    */
-  public void swapDimensions(String id, String order) 
-    throws FormatException, IOException 
+  public void swapDimensions(String order)  throws FormatException, IOException 
   {
     if (order == null) return;
     
-    String oldOrder = getDimensionOrder(id); 
+    String oldOrder = getDimensionOrder(); 
     
     if (order.equals(oldOrder)) return;
 
@@ -96,14 +93,14 @@ public class DimensionSwapper extends ReaderWrapper {
     int cndx = oldOrder.indexOf("C");
     int tndx = oldOrder.indexOf("T");
 
-    dims[xndx] = getSizeX(id);
-    dims[yndx] = getSizeY(id);
-    dims[zndx] = getSizeZ(id);
-    dims[cndx] = getSizeC(id);
-    dims[tndx] = getSizeT(id);
+    dims[xndx] = getSizeX();
+    dims[yndx] = getSizeY();
+    dims[zndx] = getSizeZ();
+    dims[cndx] = getSizeC();
+    dims[tndx] = getSizeT();
 
-    int series = getSeries(id);
-    CoreMetadata core = getCoreMetadata(id);
+    int series = getSeries();
+    CoreMetadata core = getCoreMetadata();
 
     core.sizeX[series] = dims[order.indexOf("X")];
     core.sizeY[series] = dims[order.indexOf("Y")];
@@ -112,7 +109,7 @@ public class DimensionSwapper extends ReaderWrapper {
     core.sizeT[series] = dims[order.indexOf("T")];
     core.currentOrder[series] = order;
 
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(dims[xndx]), new Integer(dims[yndx]), 
       new Integer(dims[zndx]), new Integer(dims[cndx]), 
       new Integer(dims[tndx]), null, null, order, new Integer(series), null);

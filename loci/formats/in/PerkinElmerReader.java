@@ -68,47 +68,30 @@ public class PerkinElmerReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return numImages;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
-      initFile(id);
-    }
-    return isTiff ? tiff[0].isRGB(files[0]) : false; 
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
+    return isTiff ? tiff[0].isRGB() : false; 
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
-      initFile(id);
-    }
-    return isTiff ? tiff[0].isLittleEndian(files[0]) : true;
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
+    return isTiff ? tiff[0].isLittleEndian() : true;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
     if (isTiff) {
-      int idx = no / core.sizeC[0];
-      return tiff[idx].openBytes(files[idx], 0);
+      return tiff[no / core.sizeC[0]].openBytes(0);
     }
 
     String file = files[no];
@@ -120,33 +103,25 @@ public class PerkinElmerReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
-      initFile(id);
-    }
-
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
     if (isTiff) {
       int idx = no / core.sizeC[0];
-      return tiff[idx].openImage(files[idx], 0);
+      tiff[idx].setId(files[idx]);
+      return tiff[idx].openImage(0);
     }
 
-    byte[] b = openBytes(id, no);
+    byte[] b = openBytes(no);
     int bpp = b.length / (core.sizeX[0] * core.sizeY[0]);
     return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0], 1,
       false, bpp, true);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
-  public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !isUsedFile(currentId, id)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() throws FormatException, IOException {
     return (String[]) allFiles.toArray(new String[0]);
   }
 
@@ -540,10 +515,10 @@ public class PerkinElmerReader extends FormatReader {
     core.sizeX[0] = Integer.parseInt((String) getMeta("Image Width"));
     core.sizeY[0] = Integer.parseInt((String) getMeta("Image Length"));
     core.sizeZ[0] = Integer.parseInt((String) getMeta("Number of slices"));
-    core.sizeT[0] = getImageCount(currentId) / (core.sizeZ[0] * core.sizeC[0]);
-    if (isTiff) core.pixelType[0] = tiff[0].getPixelType(files[0]);
+    core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
+    if (isTiff) core.pixelType[0] = tiff[0].getPixelType();
     else {
-      int bpp = openBytes(id, 0).length / (core.sizeX[0] * core.sizeY[0]);
+      int bpp = openBytes(0).length / (core.sizeX[0] * core.sizeY[0]);
       switch (bpp) {
         case 1:
           core.pixelType[0] = FormatTools.INT8;
@@ -564,13 +539,11 @@ public class PerkinElmerReader extends FormatReader {
 
     if (core.sizeZ[0] <= 0) {
       core.sizeZ[0] = 1;
-      core.sizeT[0] = getImageCount(currentId) / 
-        (core.sizeZ[0] * core.sizeC[0]);
+      core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
     }
     if (core.sizeC[0] <= 0) {
       core.sizeC[0] = 1;
-      core.sizeT[0] = 
-        getImageCount(currentId) / (core.sizeZ[0] * core.sizeC[0]);
+      core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
     }
     if (core.sizeT[0] <= 0) core.sizeT[0] = 1;
 
@@ -585,7 +558,7 @@ public class PerkinElmerReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(currentId);
+    MetadataStore store = getMetadataStore();
 
     // populate Dimensions element
     String pixelSizeX = (String) getMeta("Pixel Size X");
@@ -611,7 +584,7 @@ public class PerkinElmerReader extends FormatReader {
       new Integer(core.sizeC[0]), // SizeC
       new Integer(core.sizeT[0]), // SizeT
       new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!isLittleEndian(currentId)), // BigEndian
+      new Boolean(!isLittleEndian()), // BigEndian
       core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0

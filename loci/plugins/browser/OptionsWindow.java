@@ -110,10 +110,11 @@ public class OptionsWindow extends JFrame implements
     if(fs != null) {
       try {
         id = cw.db.id;
-        order = fs.getDimensionOrder(id).substring(2);
-        sizeZ = fs.getSizeZ(id);
-        sizeT = fs.getSizeT(id);
-        sizeC = fs.getSizeC(id);
+        fs.setId(id); 
+        order = fs.getDimensionOrder().substring(2);
+        sizeZ = fs.getSizeZ();
+        sizeT = fs.getSizeT();
+        sizeC = fs.getSizeC();
         axes = fs.getAxisTypes(id);
         fp = fs.getFilePattern(id);
         prefixes = fp.getPrefixes();
@@ -128,10 +129,11 @@ public class OptionsWindow extends JFrame implements
     else {
       try {
         id = cw.db.id;
-        order = cw.db.reader.getDimensionOrder(id).substring(2);
-        sizeZ = cw.db.reader.getSizeZ(id);
-        sizeT = cw.db.reader.getSizeT(id);
-        sizeC = cw.db.reader.getSizeC(id);
+        cw.db.reader.setId(id);
+        order = cw.db.reader.getDimensionOrder().substring(2);
+        sizeZ = cw.db.reader.getSizeZ();
+        sizeT = cw.db.reader.getSizeT();
+        sizeC = cw.db.reader.getSizeC();
       }
       catch(Exception exc) {
         exc.printStackTrace();
@@ -755,10 +757,11 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          cw.db.reader.swapDimensions(id,"XY" + order);
-          sizeZ = cw.db.reader.getSizeZ(id);
-          sizeT = cw.db.reader.getSizeT(id);
-          sizeC = cw.db.reader.getSizeC(id);
+          cw.db.reader.setId(id);
+          cw.db.reader.swapDimensions("XY" + order);
+          sizeZ = cw.db.reader.getSizeZ();
+          sizeT = cw.db.reader.getSizeT();
+          sizeC = cw.db.reader.getSizeC();
         }
         catch(Exception exc) {
           exc.printStackTrace();
@@ -789,10 +792,11 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          cw.db.reader.swapDimensions(id,"XY" + order);
-          sizeZ = cw.db.reader.getSizeZ(id);
-          sizeT = cw.db.reader.getSizeT(id);
-          sizeC = cw.db.reader.getSizeC(id);
+          cw.db.reader.setId(id); 
+          cw.db.reader.swapDimensions("XY" + order);
+          sizeZ = cw.db.reader.getSizeZ();
+          sizeT = cw.db.reader.getSizeT();
+          sizeC = cw.db.reader.getSizeC();
         }
         catch(Exception exc) {
           exc.printStackTrace();
@@ -823,10 +827,11 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          cw.db.reader.swapDimensions(id,"XY" + order);
-          sizeZ = cw.db.reader.getSizeZ(id);
-          sizeT = cw.db.reader.getSizeT(id);
-          sizeC = cw.db.reader.getSizeC(id);
+          cw.db.reader.setId(id); 
+          cw.db.reader.swapDimensions("XY" + order);
+          sizeZ = cw.db.reader.getSizeZ();
+          sizeT = cw.db.reader.getSizeT();
+          sizeC = cw.db.reader.getSizeC();
         }
         catch(Exception exc) {
           exc.printStackTrace();

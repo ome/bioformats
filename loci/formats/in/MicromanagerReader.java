@@ -54,56 +54,45 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.isThisType(b);
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */
+  public int getImageCount() throws FormatException, IOException {
     return tiffs.size();
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return tiffReader.isLittleEndian((String) tiffs.get(0));
+  /* @see loci.formats.IFormatReader#isLittleEndian() */
+  public boolean isLittleEndian() throws FormatException, IOException {
+    return tiffReader.isLittleEndian();
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String) */
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved() */
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiffReader.openBytes((String) tiffs.get(no), 0);
+    return tiffReader.openBytes(0);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiffReader.openBytes((String) tiffs.get(no), 0, buf);
+    return tiffReader.openBytes(0, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiffReader.openImage((String) tiffs.get(no), 0);
+    return tiffReader.openImage(0);
   }
 
   /* @see loci.formats.IFormatReader#close() */
@@ -194,15 +183,16 @@ public class MicromanagerReader extends FormatReader {
         }
       }
     }
+    tiffReader.setId((String) tiffs.get(0));
     core.sizeC[0] = Integer.parseInt((String) getMeta("Channels"));
     core.sizeZ[0] = 1;
     core.sizeT[0] = tiffs.size() / core.sizeC[0];
-    core.sizeX[0] = tiffReader.getSizeX((String) tiffs.get(0));
-    core.sizeY[0] = tiffReader.getSizeY((String) tiffs.get(0));
+    core.sizeX[0] = tiffReader.getSizeX();
+    core.sizeY[0] = tiffReader.getSizeY();
     core.currentOrder[0] = "XYCTZ";
-    core.pixelType[0] = tiffReader.getPixelType((String) tiffs.get(0));
+    core.pixelType[0] = tiffReader.getPixelType();
 
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     store.setPixels(
       new Integer(core.sizeX[0]),
@@ -211,7 +201,7 @@ public class MicromanagerReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      new Boolean(isLittleEndian(id)),
+      new Boolean(isLittleEndian()),
       core.currentOrder[0],
       null, null);
     for (int i=0; i<core.sizeC[0]; i++) {

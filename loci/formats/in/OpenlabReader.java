@@ -89,63 +89,34 @@ public class OpenlabReader extends FormatReader {
       block[5] == 109 && block[6] == 112 && block[7] == 114;
   }
 
-  /* @see loci.foramts.IFormatReader#isThisType(String, boolean) */ 
-  public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true; // check extension
-
-    if (open) {
-      byte[] b = new byte[8];
-      try {
-        in = new RandomAccessStream(name);
-        in.read(b);
-      }
-      catch (IOException e) {
-        if (debug) e.printStackTrace();
-        return false;
-      }
-      return isThisType(b);
-    }
-    else {
-      return name.indexOf(".") < 0; // file appears to have no extension
-    }
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return numImages[series];
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return core.sizeC[series] > 1;
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesCount(String) */ 
-  public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
+  public int getSeriesCount() throws FormatException, IOException {
     return numSeries;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -346,16 +317,13 @@ public class OpenlabReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[] b = openBytes(id, no);
+    byte[] b = openBytes(no);
     bytesPerPixel = b.length / (core.sizeX[series] * core.sizeY[series]);
     if (bytesPerPixel > 3) bytesPerPixel = 3;
     return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series],
@@ -559,8 +527,7 @@ public class OpenlabReader extends FormatReader {
 
     status("Determining series count");
 
-    int oldChannels = 
-      openBytes(id, 0).length / (core.sizeX[0] * core.sizeY[0] * 3);
+    int oldChannels = openBytes(0).length / (core.sizeX[0] * core.sizeY[0] * 3);
     int oldWidth = core.sizeX[0];
 
     int oldSize = 0;
@@ -662,12 +629,12 @@ public class OpenlabReader extends FormatReader {
 
     Arrays.fill(core.orderCertain, true);
 
-    int oldSeries = getSeries(currentId);
+    int oldSeries = getSeries();
     for (int i=0; i<bpp.length; i++) {
-      setSeries(currentId, i);
-      bpp[i] = openBytes(id, 0).length / (core.sizeX[i] * core.sizeY[i]);
+      setSeries(i);
+      bpp[i] = openBytes(0).length / (core.sizeX[i] * core.sizeY[i]);
     }
-    setSeries(currentId, oldSeries);
+    setSeries(oldSeries);
 
     if (bytesPerPixel == 3) bytesPerPixel = 1;
     if (bytesPerPixel == 0) bytesPerPixel++;
@@ -688,11 +655,11 @@ public class OpenlabReader extends FormatReader {
 
     // populate MetadataStore
 
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     for (int i=0; i<numSeries; i++) {
       core.sizeT[i] += 1;
-      core.currentOrder[i] = isRGB(id) ? "XYCZT" : "XYZCT";
+      core.currentOrder[i] = isRGB() ? "XYCZT" : "XYZCT";
 
       try {
         if (i != 0) {
@@ -727,7 +694,7 @@ public class OpenlabReader extends FormatReader {
         new Integer(core.sizeC[i]),
         new Integer(core.sizeT[i]),
         new Integer(core.pixelType[i]),
-        new Boolean(!isLittleEndian(id)),
+        new Boolean(!isLittleEndian()),
         core.currentOrder[i], 
         new Integer(i),
         null);
@@ -737,6 +704,29 @@ public class OpenlabReader extends FormatReader {
         store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
       }
+    }
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
+  public boolean isThisType(String name, boolean open) {
+    if (super.isThisType(name, open)) return true; // check extension
+
+    if (open) {
+      byte[] b = new byte[8];
+      try {
+        in = new RandomAccessStream(name);
+        in.read(b);
+      }
+      catch (IOException e) {
+        if (debug) e.printStackTrace();
+        return false;
+      }
+      return isThisType(b);
+    }
+    else {
+      return name.indexOf(".") < 0; // file appears to have no extension
     }
   }
 

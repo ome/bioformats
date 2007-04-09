@@ -441,8 +441,9 @@ public class Notebook extends JFrame implements ActionListener {
       }
 
       stitcher.setMetadataStore(new OMEXMLMetadataStore());
+      stitcher.setId(currentFile); 
       OMEXMLMetadataStore store = 
-        (OMEXMLMetadataStore) stitcher.getMetadataStore(currentFile);
+        (OMEXMLMetadataStore) stitcher.getMetadataStore();
 
       if (companion.exists()) {
         // merge the two OMENode objects

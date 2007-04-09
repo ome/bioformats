@@ -65,44 +65,34 @@ public class MNGReader extends FormatReader {
       block[6] == 0x1a && block[7] == 0x0a;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return numImages;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return core.sizeC[0] > 1;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved() */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.getBytes(openImage(id, no), true, core.sizeC[0]);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return ImageTools.getBytes(openImage(no), true, core.sizeC[0]);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -213,12 +203,12 @@ public class MNGReader extends FormatReader {
     status("Populating metadata");
 
     core.sizeZ[0] = 1;
-    core.sizeC[0] = openImage(id, 0).getRaster().getNumBands();
+    core.sizeC[0] = openImage(0).getRaster().getNumBands();
     core.sizeT[0] = numImages;
     core.currentOrder[0] = "XYCZT";
     core.pixelType[0] = FormatTools.UINT8;
 
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]), 
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 

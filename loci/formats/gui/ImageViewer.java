@@ -202,19 +202,20 @@ public class ImageViewer extends JFrame
     try {
       Location f = new Location(id);
       id = f.getAbsolutePath();
-      int num = myReader.getImageCount(id);
+      myReader.setId(id); 
+      int num = myReader.getImageCount();
       ProgressMonitor progress = new ProgressMonitor(this,
         "Reading " + id, null, 0, num + 1);
-      sizeZ = myReader.getSizeZ(id);
-      sizeT = myReader.getSizeT(id);
-      sizeC = myReader.getEffectiveSizeC(id);
+      sizeZ = myReader.getSizeZ();
+      sizeT = myReader.getSizeT();
+      sizeC = myReader.getEffectiveSizeC();
       //if (myReader.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
       progress.setProgress(1);
       BufferedImage[] img = new BufferedImage[num];
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
-        img[i] = myReader.openImage(id, i);
-        if (i == 0) setImages(id, myReader, img);
+        img[i] = myReader.openImage(i);
+        if (i == 0) setImages(myReader, img);
         progress.setProgress(i + 2);
       }
       myReader.close();
@@ -257,15 +258,15 @@ public class ImageViewer extends JFrame
   }
 
   /** Sets the viewer to display the given images. */
-  public void setImages(String id, IFormatReader reader, BufferedImage[] img) {
-    filename = id;
+  public void setImages(IFormatReader reader, BufferedImage[] img) {
+    filename = reader.getCurrentFile();
     in = reader;
     images = img;
 
     try {
-      sizeZ = reader.getSizeZ(id);
-      sizeT = reader.getSizeT(id);
-      sizeC = reader.getEffectiveSizeC(id);
+      sizeZ = reader.getSizeZ();
+      sizeT = reader.getSizeT();
+      sizeC = reader.getEffectiveSizeC();
       //if (reader.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
     }
     catch (Exception exc) { exc.printStackTrace(); }
@@ -295,7 +296,7 @@ public class ImageViewer extends JFrame
 
     updateLabel(-1, -1);
     sb.setLength(0);
-    if (id != null) {
+    if (filename != null) {
       sb.append(reader.getCurrentFile());
       sb.append(" ");
     }
@@ -306,7 +307,7 @@ public class ImageViewer extends JFrame
       sb.append(")");
       sb.append(" ");
     }
-    if (id != null || format != null) sb.append("- ");
+    if (filename != null || format != null) sb.append("- ");
     sb.append(TITLE);
     setTitle(sb.toString());
     icon.setImage(images == null ? null : images[0]);
@@ -398,7 +399,7 @@ public class ImageViewer extends JFrame
       // update Z, T and C sliders
       int ndx = getImageIndex();
       int[] zct = {-1, -1, -1};
-      try { zct = in.getZCTCoords(filename, ndx); }
+      try { zct = in.getZCTCoords(ndx); }
       catch (Exception exc) { exc.printStackTrace(); }
       if (zct[0] >= 0) {
         zSlider.removeChangeListener(this);
@@ -419,7 +420,7 @@ public class ImageViewer extends JFrame
     else {
       // update N slider
       int ndx = -1;
-      try { ndx = in.getIndex(filename, getZ(), getC(), getT()); }
+      try { ndx = in.getIndex(getZ(), getC(), getT()); }
       catch (Exception exc) { exc.printStackTrace(); }
       if (ndx >= 0) {
         nSlider.removeChangeListener(this);

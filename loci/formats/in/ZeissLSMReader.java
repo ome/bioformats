@@ -76,39 +76,33 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#openThumbImage(String, int) */ 
-  public BufferedImage openThumbImage(String id, int no)
+  /* @see loci.formats.IFormatReader#openThumbImage(int) */ 
+  public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
     if (2*no + 1 < ifds.length) return TiffTools.getImage(ifds[2*no + 1], in);
-    return super.openThumbImage(id, no);
+    return super.openThumbImage(no);
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeX(String) */ 
-  public int getThumbSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (ifds.length == 1) return super.getThumbSizeX(id);
+  /* @see loci.formats.IFormatReader#getThumbSizeX() */ 
+  public int getThumbSizeX() throws FormatException, IOException {
+    if (ifds.length == 1) return super.getThumbSizeX();
     return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 1);
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeY(String) */ 
-  public int getThumbSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (ifds.length == 1) return super.getThumbSizeY(id);
+  /* @see loci.formats.IFormatReader#getThumbSizeY() */ 
+  public int getThumbSizeY() throws FormatException, IOException {
+    if (ifds.length == 1) return super.getThumbSizeY();
     return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 1);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -116,26 +110,22 @@ public class ZeissLSMReader extends BaseTiffReader {
     return TiffTools.getImage(ifds[2*no], in);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
     byte[] b = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * 
       FormatTools.getBytesPerPixel(core.pixelType[0])]; 
-    return openBytes(id, no, b);   
+    return openBytes(no, b);   
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
  
@@ -226,7 +216,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     ifds = TiffTools.getIFDs(in);
   }
 
-  /** Populates the metadata hashtable. */
+  /* @see BaseTiffReader#initMetadata() */ 
   protected void initMetadata() {
     Hashtable ifd = ifds[0];
 
@@ -268,9 +258,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         else core.sizeT[0]++;
       }
 
-      while (numImages > core.sizeZ[0] * core.sizeT[0] * 
-        getEffectiveSizeC(currentId)) 
-      {
+      while (numImages > core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC()) {
         numImages--;
       }
 
@@ -380,7 +368,7 @@ public class ZeissLSMReader extends BaseTiffReader {
           core.currentOrder[0] = "XYZCT";
       }
 
-      MetadataStore store = getMetadataStore(currentId);
+      MetadataStore store = getMetadataStore();
 
       store.setPixels(
         new Integer(core.sizeX[0]), // SizeX
@@ -574,7 +562,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     Float pixZ = new Float(pixelSizeZ == null ? "0" : pixelSizeZ.toString());
 
     try {
-      MetadataStore store = getMetadataStore(currentId);
+      MetadataStore store = getMetadataStore();
       store.setDimensions(pixX, pixY, pixZ, null, null, null);
     }
     catch (FormatException e) {

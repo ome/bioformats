@@ -51,47 +51,39 @@ public class LegacyPictReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return 1;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return core.sizeC[0] > 1;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.getBytes(openImage(id, no), false, 3);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return ImageTools.getBytes(openImage(no), false, 3);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
     // read in PICT data
-    RandomAccessStream fin = new RandomAccessStream(id);
+    RandomAccessStream fin = new RandomAccessStream(currentId);
     int len = (int) (fin.length() - 512);
     byte[] bytes = new byte[len];
     fin.skip(512);  // skip 512 byte PICT header
@@ -111,7 +103,7 @@ public class LegacyPictReader extends FormatReader {
     if (debug) debug("LegacyPictReader.initFile(" + id + ")");
     super.initFile(id);
     status("Populating metadata"); 
-    BufferedImage img = openImage(id, 0);
+    BufferedImage img = openImage(0);
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();
     core.sizeZ[0] = 1;
@@ -120,7 +112,7 @@ public class LegacyPictReader extends FormatReader {
     core.pixelType[0] = FormatTools.INT8;
     core.currentOrder[0] = "XYCZT";
 
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), Boolean.TRUE,

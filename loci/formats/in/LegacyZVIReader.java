@@ -96,38 +96,32 @@ public class LegacyZVIReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return (bytesPerPixel == 3) || (bytesPerPixel > 4);
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[((ZVIBlock) blockList.elementAt(no)).imageSize];
-    return openBytes(id, no, buf);
+    return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf) 
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -136,19 +130,14 @@ public class LegacyZVIReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return blockList.size();
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -425,15 +414,15 @@ public class LegacyZVIReader extends FormatReader {
       blockList.add(zviBlock);
       pos += core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
 
-      core.sizeX[0] = openImage(id, 0).getWidth();
-      core.sizeY[0] = openImage(id, 0).getHeight();
+      core.sizeX[0] = openImage(0).getWidth();
+      core.sizeY[0] = openImage(0).getHeight();
       core.sizeZ[0] = zSet.size();
       core.sizeC[0] = cSet.size();
       core.sizeT[0] = tSet.size();
 
       // Populate metadata store
 
-      MetadataStore store = getMetadataStore(id);
+      MetadataStore store = getMetadataStore();
 
       store.setPixels(
         new Integer(core.sizeX[0]), // SizeX
@@ -617,12 +606,6 @@ public class LegacyZVIReader extends FormatReader {
         "  bytesPerPixel = " + bytesPerPixel + "\n" +
         "  pixelType = " + pixelType + "\n" + "  bitDepth = " + bitDepth;
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new LegacyZVIReader().testRead(args);
   }
 
 }

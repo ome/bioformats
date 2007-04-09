@@ -75,85 +75,53 @@ public class OIFReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return isRGB(id) ? 3*numImages : numImages;
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
+    return isRGB() ? 3*numImages : numImages;
   }
 
-  /* @see loci.formats.IFormatReader#getMetadataValue(String, String) */ 
-  public Object getMetadataValue(String id, String field)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return getMeta(field);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
+    return tiffReader[0].isRGB();
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return tiffReader[0].isRGB((String) tiffs.get(0));
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved() */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    byte[] b = tiffReader[no].openBytes((String) tiffs.get(no), 0);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] b = tiffReader[no].openBytes(0);
     tiffReader[no].close();
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    tiffReader[no].openBytes((String) tiffs.get(no), 0, buf);
+    tiffReader[no].openBytes(0, buf);
     tiffReader[no].close();
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    BufferedImage b = tiffReader[no].openImage((String) tiffs.get(no), 0);
+    BufferedImage b = tiffReader[no].openImage(0);
     ColorModel cm = ImageTools.makeColorModel(b.getRaster().getNumBands(),
       b.getRaster().getTransferType(), validBits);
     b = ImageTools.makeBuffered(b, cm);
@@ -161,43 +129,38 @@ public class OIFReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openThumbImage(String, int) */ 
-  public BufferedImage openThumbImage(String id, int no)
+  /* @see loci.formats.IFormatReader#openThumbImage(int) */ 
+  public BufferedImage openThumbImage(int no) 
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    String thumbId = "";
-    String dir = id.substring(0, id.lastIndexOf(File.separator) + 1);
-    dir += id.substring(id.lastIndexOf(File.separator) + 1) + ".files" +
-      File.separator;
+    String dir = 
+      currentId.substring(0, currentId.lastIndexOf(File.separator) + 1);
+    dir += currentId.substring(currentId.lastIndexOf(File.separator) + 1) + 
+      ".files" + File.separator;
 
-    thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
-      id.lastIndexOf(".")) + "_Thumb.bmp";
-    return thumbReader.openImage(thumbId, 0);
+    String thumbId = dir + currentId.substring(currentId.lastIndexOf(
+      File.separator) + 1, currentId.lastIndexOf(".")) + "_Thumb.bmp";
+    thumbReader.setId(thumbId); 
+    return thumbReader.openImage(0);
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeX(String) */
-  public int getThumbSizeX(String id) throws FormatException, IOException {
-    return openThumbImage(id, 0).getWidth();
+  /* @see loci.formats.IFormatReader#getThumbSizeX() */
+  public int getThumbSizeX() throws FormatException, IOException {
+    return openThumbImage(0).getWidth();
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeY(String) */
-  public int getThumbSizeY(String id) throws FormatException, IOException {
-    return openThumbImage(id, 0).getHeight();
+  /* @see loci.formats.IFormatReader#getThumbSizeY() */
+  public int getThumbSizeY() throws FormatException, IOException {
+    return openThumbImage(0).getHeight();
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
-  public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    String[] s = (String[]) usedFiles.toArray(new String[0]);
-    return s;
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() throws FormatException, IOException {
+    return (String[]) usedFiles.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -375,7 +338,7 @@ public class OIFReader extends FormatReader {
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
-    while (numImages > core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC(id)) {
+    while (numImages > core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC()) {
       if (core.sizeZ[0] == 1) core.sizeT[0]++;
       else if (core.sizeT[0] == 1) core.sizeZ[0]++;
     }
@@ -395,7 +358,7 @@ public class OIFReader extends FormatReader {
     core.currentOrder[0] = metadataOrder;
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(oifFile);
+    MetadataStore store = getMetadataStore();
 
     int imageDepth = Integer.parseInt((String)
       getMeta("[Reference Image Parameter] - ImageDepth"));

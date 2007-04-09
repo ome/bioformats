@@ -104,60 +104,50 @@ public class ICSReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     if (numImages == 1) return 1;
     return numImages / (rgb ? core.sizeC[0] : 1);
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return rgb && core.sizeC[0] > 1;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return littleEndian;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return !rgb;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8) *
-      getRGBChannelCount(id)];
-    return openBytes(id, no, buf);
+      getRGBChannelCount()];
+    return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
-    if (no < 0 || no >= getImageCount(currentId)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
     if (buf.length < core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8) *
-      getRGBChannelCount(id))
+      getRGBChannelCount())
     {
       throw new FormatException("Buffer too small.");
     }
 
     int bpp = bitsPerPixel / 8;
 
-    int len = core.sizeX[0] * core.sizeY[0] * bpp * getRGBChannelCount(id);
+    int len = core.sizeX[0] * core.sizeY[0] * bpp * getRGBChannelCount();
     int offset = len * no;
     if (!rgb && core.sizeC[0] > 4) {
       int pt = 0;
@@ -182,13 +172,9 @@ public class ICSReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
-
-    byte[] plane = openBytes(id, no);
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    byte[] plane = openBytes(no);
     int channels = rgb ? core.sizeC[0] : 1;
 
     int bytes = bitsPerPixel / 8;
@@ -211,11 +197,10 @@ public class ICSReader extends FormatReader {
       true, bytes, littleEndian);
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
-  public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() throws FormatException, IOException {
     if (versionTwo) {
-      return new String[] {currentIdsId == null ? id : currentIdsId};
+      return new String[] {currentIdsId == null ? "" : currentIdsId};
     }
     return new String[] {currentIdsId, currentIcsId};
   }
@@ -423,7 +408,7 @@ public class ICSReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     store.setImage((String) getMeta("filename"), null, null, null);
 

@@ -280,12 +280,14 @@ public class MovieStitcher extends JFrame implements
       if (file != null) wc.setCurrentDirectory(file);
       String pattern = FilePattern.findPattern(file);
       input.setText(pattern);
-     
+    
       try {
-        if (swap.getSeriesCount(pattern) > 1 && series == null) {
+        swap.setId(pattern);
+        
+        if (swap.getSeriesCount() > 1 && series == null) {
           JLabel seriesLabel = new JLabel("Series: ");
           series = new JSpinner(new SpinnerNumberModel(1, 1, 
-            swap.getSeriesCount(pattern), 1)); 
+            swap.getSeriesCount(), 1)); 
           series.addChangeListener(this);
           seriesRow.add(seriesLabel);
           seriesRow.add(series);
@@ -293,10 +295,10 @@ public class MovieStitcher extends JFrame implements
         }
         else if (series != null) {
           ((SpinnerNumberModel) series.getModel()).setMaximum(
-            new Integer(swap.getSeriesCount(pattern)));
+            new Integer(swap.getSeriesCount()));
           pack();
         }
-        else if (swap.getSeriesCount(pattern) == 1 && series != null) {
+        else if (swap.getSeriesCount() == 1 && series != null) {
           seriesRow.remove(series);
           series = null;
           pack();
@@ -370,8 +372,7 @@ public class MovieStitcher extends JFrame implements
   public void stateChanged(ChangeEvent e) {
     if (e.getSource() == series) {
       try {
-        swap.setSeries(swap.getCurrentFile(), 
-          ((Integer) series.getValue()).intValue() - 1);
+        swap.setSeries(((Integer) series.getValue()).intValue() - 1);
         updateLabels(input.getText());
       }
       catch (Exception exc) {
@@ -418,9 +419,10 @@ public class MovieStitcher extends JFrame implements
         output.setText(out);
       }
       output.setEditable(false);
- 
+
+      swap.setId(in);
       if (series != null) {
-        swap.setSeries(in, ((Integer) series.getValue()).intValue() - 1);
+        swap.setSeries(((Integer) series.getValue()).intValue() - 1);
       }
 
       writer.setFramesPerSecond(((Integer) fps.getValue()).intValue());
@@ -435,7 +437,7 @@ public class MovieStitcher extends JFrame implements
 
       // swap dimensions based on user input
 
-      String order = swap.getDimensionOrder(in);
+      String order = swap.getDimensionOrder();
       
       if (zLabel.getText().indexOf("Time") != -1) {
         order = order.replace('Z', 'T') ;
@@ -458,7 +460,7 @@ public class MovieStitcher extends JFrame implements
         order = order.replace('C', 'Z');
       }
 
-      swap.swapDimensions(in, order);
+      swap.swapDimensions(order);
 
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.createRoot();
@@ -467,13 +469,13 @@ public class MovieStitcher extends JFrame implements
 
       // determine internal and external dimensions for each axis
 
-      int internalZ = includeZ.isSelected() ? swap.getSizeZ(in) : 1;
-      int internalT = includeT.isSelected() ? swap.getSizeT(in) : 1;
-      int internalC = includeC.isSelected() ? swap.getEffectiveSizeC(in) : 1;
+      int internalZ = includeZ.isSelected() ? swap.getSizeZ() : 1;
+      int internalT = includeT.isSelected() ? swap.getSizeT() : 1;
+      int internalC = includeC.isSelected() ? swap.getEffectiveSizeC() : 1;
 
-      int externalZ = includeZ.isSelected() ? 1 : swap.getSizeZ(in);
-      int externalT = includeT.isSelected() ? 1 : swap.getSizeT(in);
-      int externalC = includeC.isSelected() ? 1 : swap.getEffectiveSizeC(in);
+      int externalZ = includeZ.isSelected() ? 1 : swap.getSizeZ();
+      int externalT = includeT.isSelected() ? 1 : swap.getSizeT();
+      int externalC = includeC.isSelected() ? 1 : swap.getEffectiveSizeC();
 
       int numFiles = externalZ * externalT * externalC;
 
@@ -481,7 +483,7 @@ public class MovieStitcher extends JFrame implements
       int tDigits = ("" + externalT).length();
       int cDigits = ("" + externalC).length();
 
-      progress.setMaximum(2 * swap.getImageCount(in));
+      progress.setMaximum(2 * swap.getImageCount());
 
       int star = out.lastIndexOf(".");
       if (star < 0) star = out.length();
@@ -490,7 +492,7 @@ public class MovieStitcher extends JFrame implements
 
       // determine appropriate pixel type
 
-      int type = swap.getPixelType(in);
+      int type = swap.getPixelType();
       if (force && !writer.isSupportedType(out, type)) {
         int[] types = writer.getPixelTypes(out);
         for (int i=0; i<types.length; i++) {
@@ -568,11 +570,11 @@ public class MovieStitcher extends JFrame implements
                   filePlane++;
                   progress.setValue(2 * (plane + 1));
                   plane++;
-                  int ndx = swap.getIndex(in, zPos, cPos, tPos);
+                  int ndx = swap.getIndex(zPos, cPos, tPos);
 
-                  BufferedImage img = swap.openImage(in, ndx);
+                  BufferedImage img = swap.openImage(ndx);
                   if (force && 
-                    !writer.isSupportedType(out, swap.getPixelType(in))) 
+                    !writer.isSupportedType(out, swap.getPixelType())) 
                   {
                     int pixelType = 0;
                     switch (type) {
@@ -612,7 +614,7 @@ public class MovieStitcher extends JFrame implements
               RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
               
               OMENode root = (OMENode) 
-                ((OMEXMLMetadataStore) swap.getMetadataStore(in)).getRoot();
+                ((OMEXMLMetadataStore) swap.getMetadataStore()).getRoot();
                 
               // add TiffData element here 
               Vector images = root.getChildNodes("Image");
@@ -630,13 +632,13 @@ public class MovieStitcher extends JFrame implements
         }
       }
 
-      progress.setValue(2 * swap.getImageCount(in));
+      progress.setValue(2 * swap.getImageCount());
       progress.setString("Finishing");
       if (writer != null) writer.close();
 
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;
-      long avg = (end - start) / (swap.getImageCount(in));
+      long avg = (end - start) / (swap.getImageCount());
       progress.setString(time + " s elapsed (" + avg + " ms/plane)");
       progress.setValue(0);
       if (swap != null) swap.close();
@@ -678,19 +680,21 @@ public class MovieStitcher extends JFrame implements
 
   private void updateLabels(String pattern) {
     try {
+      swap.setId(pattern); 
+
       String z = zLabel.getText();
       z = z.substring(0, z.indexOf("<"));
-      z += "<1-" + swap.getSizeZ(pattern) + ">";
+      z += "<1-" + swap.getSizeZ() + ">";
       zLabel.setText(z);
 
       String t = tLabel.getText();
       t = t.substring(0, t.indexOf("<"));
-      t += "<1-" + swap.getSizeT(pattern) + ">";
+      t += "<1-" + swap.getSizeT() + ">";
       tLabel.setText(t);
 
       String c = cLabel.getText();
       c = c.substring(0, c.indexOf("<"));
-      c += "<1-" + swap.getEffectiveSizeC(pattern) + ">";
+      c += "<1-" + swap.getEffectiveSizeC() + ">";
       cLabel.setText(c);
       
       includeZ.setEnabled(true);

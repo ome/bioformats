@@ -89,17 +89,13 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* @see BaseTiffReader#getImageCount(String) */
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see BaseTiffReader#getImageCount() */
+  public int getImageCount() throws FormatException, IOException {
     return numImages;
   }
 
-  /* @see BaseTiffReader#isInterleaved(String) */
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see BaseTiffReader#isInterleaved() */
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
@@ -209,7 +205,7 @@ public class ImarisTiffReader extends BaseTiffReader {
       metadata.remove("Comment");
     }
 
-    MetadataStore store = getMetadataStore(currentId);
+    MetadataStore store = getMetadataStore();
 
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 

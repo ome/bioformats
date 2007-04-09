@@ -62,56 +62,56 @@ public class MinMaxCalculator extends ReaderWrapper {
    * Retrieves a specified channel's global minimum.
    * Returns null if some of the image planes have not been read.
    */
-  public Double getChannelGlobalMinimum(String id, int theC)
+  public Double getChannelGlobalMinimum(int theC)
     throws FormatException, IOException
   {
-    if (theC < 0 || theC >= getSizeC(id)) {
+    if (theC < 0 || theC >= getSizeC()) {
       throw new FormatException("Invalid channel index: " + theC);
     }
   
     // check that all planes have been reade 
-    if (minMaxDone == null || minMaxDone[getSeries(id)] < getImageCount(id)) {
+    if (minMaxDone == null || minMaxDone[getSeries()] < getImageCount()) {
       return null;
     }
-    return new Double(chanMin[getSeries(id)][theC]);
+    return new Double(chanMin[getSeries()][theC]);
   }
 
   /**
    * Retrieves a specified channel's global maximum.
    * Returns null if some of the image planes have not been read.
    */
-  public Double getChannelGlobalMaximum(String id, int theC)
+  public Double getChannelGlobalMaximum(int theC)
     throws FormatException, IOException
   {
-    if (theC < 0 || theC >= getSizeC(id)) {
+    if (theC < 0 || theC >= getSizeC()) {
       throw new FormatException("Invalid channel index: " + theC);
     }
   
     // check that all planes have been reade
-    if (minMaxDone == null || minMaxDone[getSeries(id)] < getImageCount(id)) {
+    if (minMaxDone == null || minMaxDone[getSeries()] < getImageCount()) {
       return null;
     }
-    return new Double(chanMax[getSeries(id)][theC]); 
+    return new Double(chanMax[getSeries()][theC]); 
   }
 
   /**
    * Retrieves the specified channel's minimum based on the images that have
    * been read.  Returns null if no image planes have been read yet.
    */
-  public Double getChannelKnownMinimum(String id, int theC)
+  public Double getChannelKnownMinimum(int theC)
     throws FormatException, IOException
   {
-    return chanMin == null ? null : new Double(chanMin[getSeries(id)][theC]);
+    return chanMin == null ? null : new Double(chanMin[getSeries()][theC]);
   }
 
   /**
    * Retrieves the specified channel's maximum based on the images that
    * have been read.  Returns null if no image planes have been read yet.
    */
-  public Double getChannelKnownMaximum(String id, int theC)
+  public Double getChannelKnownMaximum(int theC)
     throws FormatException, IOException
   {
-    return chanMax == null ? null : new Double(chanMax[getSeries(id)][theC]);
+    return chanMax == null ? null : new Double(chanMax[getSeries()][theC]);
   }
 
   /**
@@ -120,20 +120,18 @@ public class MinMaxCalculator extends ReaderWrapper {
    * {@link #getRGBChannelCount(String)}), returns the maximum value for each
    * embedded channel.  Returns null if the plane has not already been read.
    */
-  public Double[] getPlaneMinimum(String id, int no)
-    throws FormatException, IOException
-  {
+  public Double[] getPlaneMinimum(int no) throws FormatException, IOException {
     if (planeMin == null) return null;
 
-    int numRGB = getRGBChannelCount(id);
+    int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
-    if (planeMin[getSeries(id)][pBase] != planeMin[getSeries(id)][pBase]) {
+    if (planeMin[getSeries()][pBase] != planeMin[getSeries()][pBase]) {
       return null;
     } 
 
     Double[] min = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
-      min[c] = new Double(planeMin[getSeries(id)][pBase + c]);
+      min[c] = new Double(planeMin[getSeries()][pBase + c]);
     }
     return min; 
   }
@@ -144,20 +142,18 @@ public class MinMaxCalculator extends ReaderWrapper {
    * {@link #getRGBChannelCount(String)}), returns the maximum value for each
    * embedded channel.  Returns null if the plane has not already been read.
    */
-  public Double[] getPlaneMaximum(String id, int no)
-    throws FormatException, IOException
-  {
+  public Double[] getPlaneMaximum(int no) throws FormatException, IOException {
     if (planeMax == null) return null;
 
-    int numRGB = getRGBChannelCount(id);
+    int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
-    if (planeMax[getSeries(id)][pBase] != planeMax[getSeries(id)][pBase]) {
+    if (planeMax[getSeries()][pBase] != planeMax[getSeries()][pBase]) {
       return null;
     } 
 
     Double[] max = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
-      max[c] = new Double(planeMax[getSeries(id)][pBase + c]);
+      max[c] = new Double(planeMax[getSeries()][pBase + c]);
     }
     return max; 
   }
@@ -166,38 +162,64 @@ public class MinMaxCalculator extends ReaderWrapper {
    * Returns true if the values returned by 
    * getChannelGlobalMinimum/Maximum can be trusted.
    */
-  public boolean isMinMaxPopulated(String id) 
-    throws FormatException, IOException
-  {
-    return minMaxDone != null && minMaxDone[getSeries(id)] == getImageCount(id);
+  public boolean isMinMaxPopulated() throws FormatException, IOException {
+    return minMaxDone != null && minMaxDone[getSeries()] == getImageCount();
   }
 
   // -- IFormatReader API methods -- 
 
-  /* @see IFormatReader#openImage(String, int) */
+  /* @see IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    BufferedImage b = super.openImage(no);
+    updateMinMax(b, no);
+    return b;
+  }
+
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] b = super.openBytes(no);
+    updateMinMax(b, no);
+    return b;
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    super.openBytes(no, buf);
+    updateMinMax(buf, no);
+    return buf;
+  }
+
+  // -- Deprecated IFormatReader API methods --
+
+  /** @deprecated Replaced by {@link openImage(int)} */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage b = super.openImage(id, no);
+    setId(id);
+    BufferedImage b = super.openImage(no);
     updateMinMax(b, no);
     return b;
   }
 
-  /* @see IFormatReader#openBytes(String, int) */
+  /** @deprecated Replaced by {@link openBytes(int)} */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
-    byte[] b = super.openBytes(id, no);
+    setId(id);
+    byte[] b = super.openBytes(no);
     updateMinMax(b, no);
     return b;
   }
 
-  /* @see IFormatReader#openBytes(String, int, byte[]) */
+  /** @deprecated Replaced by {@link openBytes(int, byte[])} */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
-    byte[] b = super.openBytes(id, no, buf);
-    updateMinMax(b, no);
-    return b;
+    setId(id);
+    super.openBytes(no, buf);
+    updateMinMax(buf, no);
+    return buf;
   }
 
   // -- Helper methods --

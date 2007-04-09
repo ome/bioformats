@@ -86,42 +86,35 @@ public class IPWReader extends BaseTiffReader {
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return numImages;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return rgb;
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return little;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    int c = getRGBChannelCount(id);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    int c = getRGBChannelCount();
     if (c == 2) c++;
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * c *
       FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(id, no, buf);
+    return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -162,16 +155,13 @@ public class IPWReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[] b = openBytes(id, no);
+    byte[] b = openBytes(no);
     int bytes = b.length / (core.sizeX[0] * core.sizeY[0]);
     return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0],
       bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, little);
@@ -218,7 +208,7 @@ public class IPWReader extends BaseTiffReader {
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
       status("Populating metadata"); 
-      initMetadata(id);
+      initMetadata();
     }
     catch (Throwable t) {
       noPOI = true;
@@ -228,10 +218,8 @@ public class IPWReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* @see loci.formats.in.BaseTiffReader#initMetadata(String) */ 
-  public void initMetadata(String id)
-    throws FormatException, IOException
-  {
+  /* @see BaseTiffReader#initMetadata() */ 
+  public void initMetadata() throws FormatException, IOException {
     String directory = (String) pixels.get(new Integer(0));
     String name = (String) names.get(new Integer(0));
 
@@ -279,7 +267,7 @@ public class IPWReader extends BaseTiffReader {
     // default values
     addMeta("slices", "1");
     addMeta("channels", "1");
-    addMeta("frames", new Integer(getImageCount(id)));
+    addMeta("frames", new Integer(getImageCount()));
 
     // parse the description to get channels/slices/times where applicable
     // basically the same as in SEQReader 
@@ -378,11 +366,11 @@ public class IPWReader extends BaseTiffReader {
     }
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     store.setPixels(null, null, new Integer(core.sizeZ[0]), 
       new Integer(core.sizeC[0]), new Integer(core.sizeT[0]), 
-      new Integer(core.pixelType[0]), new Boolean(!isLittleEndian(id)), 
+      new Integer(core.pixelType[0]), new Boolean(!isLittleEndian()), 
       core.currentOrder[0], null, null);
     store.setImage(null, null, (String) getMeta("Version"), null);
     for (int i=0; i<core.sizeC[0]; i++) {

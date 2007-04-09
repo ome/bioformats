@@ -127,9 +127,8 @@ public class PrairieReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
-  public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() throws FormatException, IOException {
     String[] s = new String[files.length + 2];
     System.arraycopy(files, 0, s, 0, files.length);
     s[files.length] = xmlFile;
@@ -138,63 +137,53 @@ public class PrairieReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getImageCount(String) */
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public int getImageCount() throws FormatException, IOException {
     return numImages;
   }
 
   /* @see loci.formats.IFormatReader#isRGB(String) */
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public boolean isRGB() throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isLittleEndian(String) */
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return tiff.isLittleEndian(files[0]);
+  public boolean isLittleEndian() throws FormatException, IOException {
+    return tiff.isLittleEndian();
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(String) */
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openBytes(files[no], 0);
+    tiff.setId(files[no]); 
+    return tiff.openBytes(0);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiff.openBytes(files[no], 0, buf);
+    tiff.setId(files[no]); 
+    tiff.openBytes(0, buf);
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openImage(files[no], 0);
+    tiff.setId(files[no]);
+    return tiff.openImage(0);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -332,7 +321,7 @@ public class PrairieReader extends FormatReader {
         float pixSizeY =
           Float.parseFloat((String) getMeta("micronsPerPixel_YAxis"));
 
-        MetadataStore store = getMetadataStore(id);
+        MetadataStore store = getMetadataStore();
 
         store.setPixels(
           new Integer(core.sizeX[0]),
@@ -341,7 +330,7 @@ public class PrairieReader extends FormatReader {
           new Integer(core.sizeC[0]),
           new Integer(core.sizeT[0]),
           new Integer(core.pixelType[0]),
-          new Boolean(!isLittleEndian(id)),
+          new Boolean(!isLittleEndian()),
           core.currentOrder[0],
           null,
           null);

@@ -122,80 +122,69 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getImageCount(id);
+  public int getImageCount() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.getImageCount();
     return nImages;
   }
 
   /* @see loci.formats.IFormatReader#getSizeX(String) */ 
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getSizeX(id);
-    return super.getSizeX(id);
+  public int getSizeX() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.getSizeX();
+    return super.getSizeX();
   }
 
-  /* @see loci.formats.IFormatReader#getSizeY(String) */ 
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getSizeY(id);
-    return super.getSizeY(id);
+  /* @see loci.formats.IFormatReader#getSizeY() */ 
+  public int getSizeY() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.getSizeY();
+    return super.getSizeY();
   }
 
-  /* @see loci.formats.IFormatReader#getSizeZ(String) */ 
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getSizeZ(id);
-    return super.getSizeZ(id);
+  /* @see loci.formats.IFormatReader#getSizeZ() */ 
+  public int getSizeZ() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.getSizeZ();
+    return super.getSizeZ();
   }
 
   /* @see loci.formats.IFormatReader#getSizeC(String) */ 
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getSizeC(id);
-    return super.getSizeC(id);
+  public int getSizeC() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.getSizeC();
+    return super.getSizeC();
   }
 
   /* @see loci.formats.IFormatReader#getSizeT(String) */ 
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getSizeT(id);
-    return super.getSizeT(id);
+  public int getSizeT() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.getSizeT();
+    return super.getSizeT();
   }
 
   /* @see loci.formats.IFormatReader#getPixelType(String) */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getPixelType(id);
-    return super.getPixelType(id);
+  public int getPixelType() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.getPixelType();
+    return super.getPixelType();
   }
 
   /* @see loci.formats.IFormatReader#getDimensionOrder(String) */ 
-  public String getDimensionOrder(String id)
+  public String getDimensionOrder()
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.getDimensionOrder(id);
-    return super.getDimensionOrder(id);
+    if (noPOI || needLegacy) return legacy.getDimensionOrder();
+    return super.getDimensionOrder();
   }
 
   /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.isRGB(id);
+  public boolean isRGB() throws FormatException, IOException {
+    if (noPOI || needLegacy) return legacy.isRGB();
     return core.sizeC[0] > 1 && 
       (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] != nImages);
   }
 
   /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
+  public boolean isLittleEndian() throws FormatException, IOException {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
@@ -205,22 +194,18 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bpp];
-    return openBytes(id, no, buf);
+    return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (noPOI || needLegacy) return legacy.openBytes(id, no, buf);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (noPOI || needLegacy) return legacy.openBytes(no, buf);
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -259,15 +244,14 @@ public class ZeissZVIReader extends FormatReader {
     }
     catch (ReflectException e) {
       needLegacy = true;
-      return openBytes(id, no, buf);
+      return openBytes(no, buf);
     }
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), core.sizeX[0], core.sizeY[0],
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       core.sizeC[0], true, bpp == 3 ? 1 : bpp, true, validBits);
   }
 
@@ -338,7 +322,7 @@ public class ZeissZVIReader extends FormatReader {
       core.sizeT[0] = tIndices.size();
       if (core.sizeC[0] != cIndices.size()) core.sizeC[0] *= cIndices.size();
 
-      nImages = core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC(id);
+      nImages = core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC();
 
       String s = (String) getMeta("Acquisition Bit Depth");
       if (s != null && s.trim().length() > 0) {
@@ -395,7 +379,7 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         if (core.sizeZ[0] == core.sizeC[0] && core.sizeC[0] == core.sizeT[0]) {
-          core.currentOrder[0] = legacy.getDimensionOrder(id);
+          core.currentOrder[0] = legacy.getDimensionOrder();
         }
       }
       else if (getMeta("MultiChannel Color") != null) {
@@ -428,7 +412,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Initialize metadata hashtable and OME-XML structure. */
   private void initMetadata() throws FormatException, IOException {
-    MetadataStore store = getMetadataStore(currentId);
+    MetadataStore store = getMetadataStore();
 
     store.setImage((String) getMeta("Title"), null, null, null);
 

@@ -61,17 +61,18 @@ public class ImagePlusWrapper {
 
       // get # images in all matching files
 
+      fs.setId(name);
+
       try {
         if (stitch && fs == null) fs = new FileStitcher(r); 
-        
-        numTotal = fs.getImageCount(name);
 
-        dim = fs.getDimensionOrder(name);
-        sizeX = fs.getSizeX(name);
-        sizeY = fs.getSizeY(name);
-        sizeZ = fs.getSizeZ(name);
-        sizeT = fs.getSizeT(name);
-        sizeC = fs.getSizeC(name);
+        numTotal = fs.getImageCount();
+        dim = fs.getDimensionOrder();
+        sizeX = fs.getSizeX();
+        sizeY = fs.getSizeY();
+        sizeZ = fs.getSizeZ();
+        sizeT = fs.getSizeT();
+        sizeC = fs.getSizeC();
         
         if (LociDataBrowser.DEBUG) {
           System.err.println("numTotal = "+numTotal);
@@ -82,7 +83,7 @@ public class ImagePlusWrapper {
         LociDataBrowser.exceptionMessage(exc);
       }
 
-      int num = fs.getImageCount(name);
+      int num = fs.getImageCount();
       ImageStack stackB = null, stackS = null,
         stackF = null, stackO = null;
       long start = System.currentTimeMillis();
@@ -95,7 +96,7 @@ public class ImagePlusWrapper {
           time = clock;
         }
         IJ.showProgress((double) i/num);
-        BufferedImage img = fs.openImage(name, i);
+        BufferedImage img = fs.openImage(i);
 
         // scale image if it is the wrong size
         int w = img.getWidth(), h = img.getHeight();
@@ -199,12 +200,13 @@ public class ImagePlusWrapper {
     synchronized (read) {
       Exception problem = null;
       try {
-        dim = read.getDimensionOrder(name);
-        sizeX = read.getSizeX(name);
-        sizeY = read.getSizeY(name);
-        sizeZ = read.getSizeZ(name);
-        sizeT = read.getSizeT(name);
-        sizeC = read.getSizeC(name);
+        read.setId(name);
+        dim = read.getDimensionOrder();
+        sizeX = read.getSizeX();
+        sizeY = read.getSizeY();
+        sizeZ = read.getSizeZ();
+        sizeT = read.getSizeT();
+        sizeC = read.getSizeC();
       }
       catch (FormatException exc) {
         problem = exc;
@@ -221,7 +223,7 @@ public class ImagePlusWrapper {
 
       // read image from disk
       try {
-        img = read.openImage(name, index);
+        img = read.openImage(index);
       }
       catch (FormatException exc) {
         exc.printStackTrace();

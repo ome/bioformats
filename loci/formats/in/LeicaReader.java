@@ -113,95 +113,67 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#getImageCount() */ 
+  public int getImageCount() throws FormatException, IOException {
     return numPlanes[series];
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesCount(String) */ 
-  public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
+  public int getSeriesCount() throws FormatException, IOException {
     return numSeries;
   }
 
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#isRGB() */ 
+  public boolean isRGB() throws FormatException, IOException {
     return false; 
   }
 
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
+  public boolean isLittleEndian() throws FormatException, IOException {
     return littleEndian;
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
-      initFile(id);
-    }
-
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
     int ndx = no % channelIndices.length; 
-    byte[] b = tiff[series][no].openBytes((String) files[series].get(no), 0);
+    byte[] b = tiff[series][no].openBytes(0);
     b = ImageTools.splitChannels(b, core.sizeC[series], false, 
-      isInterleaved(id))[channelIndices[ndx]]; 
+      isInterleaved())[channelIndices[ndx]]; 
     tiff[series][no].close();
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
-  public byte[] openBytes(String id, int no, byte[] buf)
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf) 
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiff[series][no].openBytes((String) files[series].get(no), 0, buf);
+    tiff[series][no].openBytes(0, buf);
     tiff[series][no].close();
     
     int ndx = no % channelIndices.length;
     buf = ImageTools.splitChannels(buf, core.sizeC[series], false, 
-      isInterleaved(id))[channelIndices[ndx]];
+      isInterleaved())[channelIndices[ndx]];
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
-      initFile(id);
-    }
-
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    BufferedImage b =
-      tiff[series][no].openImage((String) files[series].get(no), 0);
+    BufferedImage b = tiff[series][no].openImage(0);
 
     int ndx = no % channelIndices.length;
 
@@ -210,11 +182,8 @@ public class LeicaReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#getUsedFiles(String) */
-  public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !usedFile(id) && !id.equals(leiFilename)) {
-      initFile(id);
-    }
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() throws FormatException, IOException {
     Vector v = new Vector();
     v.add(leiFilename);
     for (int i=0; i<files.length; i++) {
@@ -262,7 +231,6 @@ public class LeicaReader extends FormatReader {
 
   /** Initializes the given Leica file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (id.equals(currentId) || id.equals(leiFilename) || usedFile(id)) return;
     if (debug) debug("LeicaReader.initFile(" + id + ")");
     String idLow = id.toLowerCase();
     close();
@@ -605,12 +573,7 @@ public class LeicaReader extends FormatReader {
 
   // -- IFormatHandler API methods --
 
-  /**
-   * Checks if the given string is a valid filename for a Leica file.
-   * @param open If true, the (existing) file is opened for further analysis,
-   *   since the file extension is insufficient to confirm that the file is in
-   *   Leica format.
-   */
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
     if (lname.endsWith(".lei")) return true;
@@ -653,7 +616,7 @@ public class LeicaReader extends FormatReader {
 
   // -- Helper methods --
 
-  /* @see loci.formats.BaseTiffReader#initMetadata() */
+  /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() {
     if (headerIFDs == null) headerIFDs = ifds;
 
@@ -1018,12 +981,12 @@ public class LeicaReader extends FormatReader {
     // a later call to BaseTiffReader.initMetadata.
     if (core.sizeC != null) {
       try {
-        int oldSeries = getSeries(currentId);
+        int oldSeries = getSeries();
         for (int i=0; i<core.sizeC.length; i++) {
-          setSeries(currentId, i);
+          setSeries(i);
           core.sizeZ[i] /= core.sizeC[i]; 
         }
-        setSeries(currentId, oldSeries);
+        setSeries(oldSeries);
       }
       catch (FormatException exc) {
         exc.printStackTrace();
@@ -1050,7 +1013,7 @@ public class LeicaReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = new DummyMetadataStore();
     try {
-      store = getMetadataStore(currentId);
+      store = getMetadataStore();
     }
     catch (FormatException e) {
       if (debug) e.printStackTrace();

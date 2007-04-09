@@ -56,15 +56,11 @@ public class ThumbLoader implements Runnable {
   /**
    * Constructs a new thumbnail loader.
    * @param ir the reader to use for obtaining the thumbnails
-   * @param id the ID string from which to draw the thumbnails
    * @param p the panels upon which to populate the results
    * @param dialog the dialog containing the panels
    */
-  public ThumbLoader(IFormatReader ir,
-    String id, Panel[] p, Dialog dialog)
-  {
+  public ThumbLoader(IFormatReader ir, Panel[] p, Dialog dialog) {
     this.ir = ir;
-    this.id = id;
     this.p = p;
     this.dialog = dialog;
     loader = new Thread(this, "BioFormats-ThumbLoader");
@@ -94,13 +90,14 @@ public class ThumbLoader implements Runnable {
   public void run() {
     try {
       IJ.showStatus("Gathering series information");
-      int seriesCount = ir.getSeriesCount(id);
+      ir.setId(id); 
+      int seriesCount = ir.getSeriesCount();
 
       // find image plane for each series and sort by size
       SeriesInfo[] info = new SeriesInfo[seriesCount];
       for (int i=0; i<seriesCount && !stop; i++) {
-        ir.setSeries(id, i);
-        info[i] = new SeriesInfo(i, ir.getSizeX(id) * ir.getSizeY(id));
+        ir.setSeries(i);
+        info[i] = new SeriesInfo(i, ir.getSizeX() * ir.getSizeY());
       }
       Arrays.sort(info);
 
@@ -108,12 +105,12 @@ public class ThumbLoader implements Runnable {
       for (int i=0; i<seriesCount && !stop; i++) {
         final int ii = info[i].index;
         IJ.showStatus("Reading thumbnail for series #" + (ii + 1));
-        ir.setSeries(id, ii);
+        ir.setSeries(ii);
         // open middle image thumbnail
-        int z = ir.getSizeZ(id) / 2;
-        int t = ir.getSizeT(id) / 2;
-        int ndx = ir.getIndex(id, z, 0, t);
-        BufferedImage thumb = ir.openThumbImage(id, ndx);
+        int z = ir.getSizeZ() / 2;
+        int t = ir.getSizeT() / 2;
+        int ndx = ir.getIndex(z, 0, t);
+        BufferedImage thumb = ir.openThumbImage(ndx);
         ImageIcon icon = new ImageIcon(thumb);
         p[ii].removeAll();
         p[ii].add(new JLabel(icon));

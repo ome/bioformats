@@ -107,7 +107,7 @@ public class SEQReader extends BaseTiffReader {
     core.sizeC[0] = Integer.parseInt((String) getMeta("channels"));
 
     try {
-      if (isRGB(currentId) && core.sizeC[0] != 3) core.sizeC[0] *= 3;
+      if (isRGB() && core.sizeC[0] != 3) core.sizeC[0] *= 3;
     }
     catch (IOException e) {
       throw new FormatException(e);

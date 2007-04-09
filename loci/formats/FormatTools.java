@@ -246,8 +246,10 @@ public final class FormatTools {
     });
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(true);
+    reader.setId(id);
+    if (minMaxCalc != null) minMaxCalc.setId(id);
 
-    if (!normalize && reader.getPixelType(id) == FLOAT) {
+    if (!normalize && reader.getPixelType() == FLOAT) {
       throw new FormatException("Sorry, unnormalized floating point " +
         "data is not supported. Please use the '-normalize' option.");
     }
@@ -258,7 +260,7 @@ public final class FormatTools {
     System.out.println(stitch ?
       "File pattern = " + id : "Filename = " + reader.getCurrentFile());
     if (map != null) System.out.println("Mapped filename = " + map);
-    String[] used = reader.getUsedFiles(id);
+    String[] used = reader.getUsedFiles();
     boolean usedValid = used != null && used.length > 0;
     if (usedValid) {
       for (int u=0; u<used.length; u++) {
@@ -285,30 +287,30 @@ public final class FormatTools {
     else if (!id.equals(used[0])) {
       System.out.println("Used files = [" + used[0] + "]");
     }
-    int seriesCount = reader.getSeriesCount(id);
+    int seriesCount = reader.getSeriesCount();
     System.out.println("Series count = " + seriesCount);
     for (int j=0; j<seriesCount; j++) {
-      reader.setSeries(id, j);
+      reader.setSeries(j);
 
       // read basic metadata for series #i
-      int imageCount = reader.getImageCount(id);
-      boolean rgb = reader.isRGB(id);
-      int sizeX = reader.getSizeX(id);
-      int sizeY = reader.getSizeY(id);
-      int sizeZ = reader.getSizeZ(id);
-      int sizeC = reader.getSizeC(id);
-      int sizeT = reader.getSizeT(id);
-      int pixelType = reader.getPixelType(id);
-      int effSizeC = reader.getEffectiveSizeC(id);
-      int rgbChanCount = reader.getRGBChannelCount(id);
-      int[] cLengths = reader.getChannelDimLengths(id);
-      String[] cTypes = reader.getChannelDimTypes(id);
-      int thumbSizeX = reader.getThumbSizeX(id);
-      int thumbSizeY = reader.getThumbSizeY(id);
-      boolean little = reader.isLittleEndian(id);
-      String dimOrder = reader.getDimensionOrder(id);
-      boolean orderCertain = reader.isOrderCertain(id);
-      boolean interleaved = reader.isInterleaved(id);
+      int imageCount = reader.getImageCount();
+      boolean rgb = reader.isRGB();
+      int sizeX = reader.getSizeX();
+      int sizeY = reader.getSizeY();
+      int sizeZ = reader.getSizeZ();
+      int sizeC = reader.getSizeC();
+      int sizeT = reader.getSizeT();
+      int pixelType = reader.getPixelType();
+      int effSizeC = reader.getEffectiveSizeC();
+      int rgbChanCount = reader.getRGBChannelCount();
+      int[] cLengths = reader.getChannelDimLengths();
+      String[] cTypes = reader.getChannelDimTypes();
+      int thumbSizeX = reader.getThumbSizeX();
+      int thumbSizeY = reader.getThumbSizeY();
+      boolean little = reader.isLittleEndian();
+      String dimOrder = reader.getDimensionOrder();
+      boolean orderCertain = reader.isOrderCertain();
+      boolean interleaved = reader.isInterleaved();
 
       // output basic metadata for series #i
       System.out.println("Series #" + j + ":");
@@ -361,8 +363,8 @@ public final class FormatTools {
         int[][] zct = new int[indices.length][];
         int[] indices2 = new int[indices.length];
         for (int i=0; i<indices.length; i++) {
-          zct[i] = reader.getZCTCoords(id, indices[i]);
-          indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
+          zct[i] = reader.getZCTCoords(indices[i]);
+          indices2[i] = reader.getIndex(zct[i][0], zct[i][1], zct[i][2]);
           System.out.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
             ", C " + zct[i][1] + ", T " + zct[i][2]);
           if (indices[i] != indices2[i]) {
@@ -372,10 +374,10 @@ public final class FormatTools {
         }
       }
     }
-    reader.setSeries(id, series);
+    reader.setSeries(series);
     String s = seriesCount > 1 ? (" series #" + series) : "";
-    int pixelType = reader.getPixelType(id);
-    int sizeC = reader.getSizeC(id);
+    int pixelType = reader.getPixelType();
+    int sizeC = reader.getSizeC();
 
     // get a priori min/max values
     Double[] preGlobalMin = null, preGlobalMax = null;
@@ -388,14 +390,14 @@ public final class FormatTools {
       preKnownMin = new Double[sizeC];
       preKnownMax = new Double[sizeC];
       for (int c=0; c<sizeC; c++) {
-        preGlobalMin[c] = minMaxCalc.getChannelGlobalMinimum(id, c);
-        preGlobalMax[c] = minMaxCalc.getChannelGlobalMaximum(id, c);
-        preKnownMin[c] = minMaxCalc.getChannelKnownMinimum(id, c);
-        preKnownMax[c] = minMaxCalc.getChannelKnownMaximum(id, c);
+        preGlobalMin[c] = minMaxCalc.getChannelGlobalMinimum(c);
+        preGlobalMax[c] = minMaxCalc.getChannelGlobalMaximum(c);
+        preKnownMin[c] = minMaxCalc.getChannelKnownMinimum(c);
+        preKnownMax[c] = minMaxCalc.getChannelKnownMaximum(c);
       }
-      prePlaneMin = minMaxCalc.getPlaneMinimum(id, 0);
-      prePlaneMax = minMaxCalc.getPlaneMaximum(id, 0);
-      preIsMinMaxPop = minMaxCalc.isMinMaxPopulated(id);
+      prePlaneMin = minMaxCalc.getPlaneMinimum(0);
+      prePlaneMax = minMaxCalc.getPlaneMaximum(0);
+      preIsMinMaxPop = minMaxCalc.isMinMaxPopulated();
     }
 
     // read pixels
@@ -403,7 +405,7 @@ public final class FormatTools {
       System.out.println();
       System.out.print("Reading" + s + " pixel data ");
       long s1 = System.currentTimeMillis();
-      int num = reader.getImageCount(id);
+      int num = reader.getImageCount();
       if (start < 0) start = 0;
       if (start >= num) start = num - 1;
       if (end < 0) end = 0;
@@ -418,17 +420,17 @@ public final class FormatTools {
       for (int i=start; i<=end; i++) {
         if (!fastBlit) {
           images[i - start] = thumbs ?
-            reader.openThumbImage(id, i) : reader.openImage(id, i);
+            reader.openThumbImage(i) : reader.openImage(i);
         }
         else {
-          int x = reader.getSizeX(id);
-          int y = reader.getSizeY(id);
-          byte[] b = thumbs ? reader.openThumbBytes(id, i) :
-            reader.openBytes(id, i);
+          int x = reader.getSizeX();
+          int y = reader.getSizeY();
+          byte[] b = thumbs ? reader.openThumbBytes(i) :
+            reader.openBytes(i);
           Object pix = DataTools.makeDataArray(b,
-            getBytesPerPixel(reader.getPixelType(id)),
-            reader.getPixelType(id) == FLOAT,
-            reader.isLittleEndian(id));
+            getBytesPerPixel(reader.getPixelType()),
+            reader.getPixelType() == FLOAT,
+            reader.isLittleEndian());
           images[i - start] =
             ImageTools.makeImage(ImageTools.make24Bits(pix, x, y,
               false, false), x, y);
@@ -467,14 +469,14 @@ public final class FormatTools {
         Double[] knownMin = new Double[sizeC];
         Double[] knownMax = new Double[sizeC];
         for (int c=0; c<sizeC; c++) {
-          globalMin[c] = minMaxCalc.getChannelGlobalMinimum(id, c);
-          globalMax[c] = minMaxCalc.getChannelGlobalMaximum(id, c);
-          knownMin[c] = minMaxCalc.getChannelKnownMinimum(id, c);
-          knownMax[c] = minMaxCalc.getChannelKnownMaximum(id, c);
+          globalMin[c] = minMaxCalc.getChannelGlobalMinimum(c);
+          globalMax[c] = minMaxCalc.getChannelGlobalMaximum(c);
+          knownMin[c] = minMaxCalc.getChannelKnownMinimum(c);
+          knownMax[c] = minMaxCalc.getChannelKnownMaximum(c);
         }
-        Double[] planeMin = minMaxCalc.getPlaneMinimum(id, 0);
-        Double[] planeMax = minMaxCalc.getPlaneMaximum(id, 0);
-        boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated(id);
+        Double[] planeMin = minMaxCalc.getPlaneMinimum(0);
+        Double[] planeMax = minMaxCalc.getPlaneMaximum(0);
+        boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated();
 
         // output min/max results
         System.out.println();
@@ -530,11 +532,10 @@ public final class FormatTools {
       try {
         r.exec("import loci.formats.gui.ImageViewer");
         r.exec("viewer = new ImageViewer()");
-        r.setVar("id", id);
         r.setVar("reader", reader);
         r.setVar("images", images);
         r.setVar("true", true);
-        r.exec("viewer.setImages(id, reader, images)");
+        r.exec("viewer.setImages(reader, images)");
         r.exec("viewer.setVisible(true)");
       }
       catch (ReflectException exc) {
@@ -546,12 +547,12 @@ public final class FormatTools {
     if (doMeta) {
       System.out.println();
       System.out.println("Reading" + s + " metadata");
-      Hashtable meta = reader.getMetadata(id);
+      Hashtable meta = reader.getMetadata();
       String[] keys = (String[]) meta.keySet().toArray(new String[0]);
       Arrays.sort(keys);
       for (int i=0; i<keys.length; i++) {
         System.out.print(keys[i] + ": ");
-        System.out.println(reader.getMetadataValue(id, keys[i]));
+        System.out.println(reader.getMetadataValue(keys[i]));
       }
     }
 
@@ -559,7 +560,7 @@ public final class FormatTools {
     if (omexml) {
       System.out.println();
       System.out.println("Generating OME-XML");
-      MetadataStore ms = reader.getMetadataStore(id);
+      MetadataStore ms = reader.getMetadataStore();
 
       // NB: avoid dependencies on optional loci.formats.ome package
       if (ms.getClass().getName().equals(
@@ -599,13 +600,15 @@ public final class FormatTools {
     System.out.print(in + " -> " + out + " ");
 
     ImageReader reader = new ImageReader();
+    reader.setId(in); 
+
     long start = System.currentTimeMillis();
-    int num = reader.getImageCount(in);
+    int num = reader.getImageCount();
     long mid = System.currentTimeMillis();
     long read = 0, write = 0;
     for (int i=0; i<num; i++) {
       long s = System.currentTimeMillis();
-      Image image = reader.openImage(in, i);
+      Image image = reader.openImage(i);
       long m = System.currentTimeMillis();
       writer.saveImage(out, image, i == num - 1);
       long e = System.currentTimeMillis();
@@ -633,14 +636,14 @@ public final class FormatTools {
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  public static int getIndex(IFormatReader reader, String id,
-    int z, int c, int t) throws FormatException, IOException
+  public static int getIndex(IFormatReader reader, int z, int c, int t) 
+    throws FormatException, IOException
   {
-    String order = reader.getDimensionOrder(id);
-    int zSize = reader.getSizeZ(id);
-    int cSize = reader.getEffectiveSizeC(id);
-    int tSize = reader.getSizeT(id);
-    int num = reader.getImageCount(id);
+    String order = reader.getDimensionOrder();
+    int zSize = reader.getSizeZ();
+    int cSize = reader.getEffectiveSizeC();
+    int tSize = reader.getSizeT();
+    int num = reader.getImageCount();
     return getIndex(order, zSize, cSize, tSize, num, z, c, t);
   }
 
@@ -708,14 +711,14 @@ public final class FormatTools {
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  public static int[] getZCTCoords(IFormatReader reader,
-    String id, int index) throws FormatException, IOException
+  public static int[] getZCTCoords(IFormatReader reader, int index) 
+    throws FormatException, IOException
   {
-    String order = reader.getDimensionOrder(id);
-    int zSize = reader.getSizeZ(id);
-    int cSize = reader.getEffectiveSizeC(id);
-    int tSize = reader.getSizeT(id);
-    int num = reader.getImageCount(id);
+    String order = reader.getDimensionOrder();
+    int zSize = reader.getSizeZ();
+    int cSize = reader.getEffectiveSizeC();
+    int tSize = reader.getSizeT();
+    int num = reader.getImageCount();
     return getZCTCoords(order, zSize, cSize, tSize, num, index);
   }
 

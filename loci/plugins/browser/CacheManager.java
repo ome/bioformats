@@ -223,10 +223,11 @@ public class CacheManager implements Runnable {
     tSel = null;
     synchronized (read) {
       try {
-        sizeZ = read.getSizeZ(fileName);
-        sizeT = read.getSizeT(fileName);
-        sizeC = read.getEffectiveSizeC(fileName);
-        cache = new ImageProcessor[read.getImageCount(fileName)];
+        read.setId(fileName); 
+        sizeZ = read.getSizeZ();
+        sizeT = read.getSizeT();
+        sizeC = read.getEffectiveSizeC();
+        cache = new ImageProcessor[read.getImageCount()];
       }
       catch (Exception exc) {
         if (DEBUG) System.out.println("Error reading size of file.");
@@ -423,7 +424,7 @@ public class CacheManager implements Runnable {
     int index;
     synchronized (read) {
       try {
-        index = read.getIndex(fileName, curZ, curC, curT);
+        index = read.getIndex(curZ, curC, curT);
       }
       catch (Exception exc) {
         LociDataBrowser.exceptionMessage(exc);
@@ -444,7 +445,7 @@ public class CacheManager implements Runnable {
     int[] coords;
     synchronized (read) {
       try {
-        coords = read.getZCTCoords(fileName, index);
+        coords = read.getZCTCoords(index);
         curZ = coords[0];
         curC = coords[1];
         curT = coords[2];
@@ -492,7 +493,7 @@ public class CacheManager implements Runnable {
     int index;
     synchronized (read) {
       try {
-        index = read.getIndex(fileName, z, c, t);
+        index = read.getIndex(z, c, t);
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
@@ -524,7 +525,7 @@ public class CacheManager implements Runnable {
     int index;
     synchronized (read) {
       try {
-        index = read.getIndex(fileName, z, c, t);
+        index = read.getIndex(z, c, t);
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
@@ -1084,13 +1085,13 @@ public class CacheManager implements Runnable {
         synchronized (read) {
           try {
             if (someAxis == Z_AXIS) {
-              index = read.getIndex(fileName, realCoord, c, t);
+              index = read.getIndex(realCoord, c, t);
             }
             else if (someAxis == T_AXIS) {
-              index = read.getIndex(fileName, z, c, realCoord);
+              index = read.getIndex(z, c, realCoord);
             }
             else {
-              index = read.getIndex(fileName, z, realCoord, t);
+              index = read.getIndex(z, realCoord, t);
             }
           }
           catch (Exception exc) {
@@ -1176,13 +1177,13 @@ public class CacheManager implements Runnable {
         synchronized (read) {
           try {
             if (someAxis == Z_AXIS) {
-              index = read.getIndex(fileName, realCoord, c, t);
+              index = read.getIndex(realCoord, c, t);
             }
             else if (someAxis == T_AXIS) {
-              index = read.getIndex(fileName, z, c, realCoord);
+              index = read.getIndex(z, c, realCoord);
             }
             else {
-              index = read.getIndex(fileName, z, realCoord, t);
+              index = read.getIndex(z, realCoord, t);
             }
           }
           catch (Exception exc) {
@@ -1220,7 +1221,7 @@ public class CacheManager implements Runnable {
       int index = -1;
 
       try {
-        index = read.getIndex(fileName, z, c, t);
+        index = read.getIndex(z, c, t);
       }
       catch(Exception exc) {
         if(DEBUG) exc.printStackTrace();
@@ -1278,26 +1279,26 @@ public class CacheManager implements Runnable {
               try {
                 if (fAxis == Z_AXIS) {
                   if (sAxis == T_AXIS) {
-                    index = read.getIndex(fileName, fUp, c, s);
+                    index = read.getIndex(fUp, c, s);
                   }
                   else { //sAxis == C_AXIS
-                    index = read.getIndex(fileName, fUp, s, t);
+                    index = read.getIndex(fUp, s, t);
                   }
                 }
                 else if (fAxis == T_AXIS) {
                   if (sAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, s, c, fUp);
+                    index = read.getIndex(s, c, fUp);
                   }
                   else { //sAxis == C_AXIS
-                    index = read.getIndex(fileName, z, s, fUp);
+                    index = read.getIndex(z, s, fUp);
                   }
                 }
                 else { //fAxis == C_AXIS
                   if (sAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, s, fUp, t);
+                    index = read.getIndex(s, fUp, t);
                   }
                   else { //sAxis == T_AXIS
-                    index = read.getIndex(fileName, z, fUp, s);
+                    index = read.getIndex(z, fUp, s);
                   }
                 }
               }
@@ -1326,26 +1327,26 @@ public class CacheManager implements Runnable {
               try {
                 if (fAxis == Z_AXIS) {
                   if (sAxis == T_AXIS) {
-                    index = read.getIndex(fileName, fLow, c, s);
+                    index = read.getIndex(fLow, c, s);
                   }
                   else { //sAxis == C_AXIS
-                    index = read.getIndex(fileName, fLow, s, t);
+                    index = read.getIndex(fLow, s, t);
                   }
                 }
                 else if (fAxis == T_AXIS) {
                   if (sAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, s, c, fLow);
+                    index = read.getIndex(s, c, fLow);
                   }
                   else { //sAxis == C_AXIS
-                    index = read.getIndex(fileName, z, s, fLow);
+                    index = read.getIndex(z, s, fLow);
                   }
                 }
                 else { //fAxis == C_AXIS
                   if (sAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, s, fLow, t);
+                    index = read.getIndex(s, fLow, t);
                   }
                   else { //sAxis == T_AXIS
-                    index = read.getIndex(fileName, z, fLow, s);
+                    index = read.getIndex(z, fLow, s);
                   }
                 }
               }
@@ -1374,26 +1375,26 @@ public class CacheManager implements Runnable {
               try {
                 if (sAxis == Z_AXIS) {
                   if (fAxis == T_AXIS) {
-                    index = read.getIndex(fileName, sUp, c, f);
+                    index = read.getIndex(sUp, c, f);
                   }
                   else { //fAxis == C_AXIS
-                    index = read.getIndex(fileName, sUp, f, t);
+                    index = read.getIndex(sUp, f, t);
                   }
                 }
                 else if (sAxis == T_AXIS) {
                   if (fAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, f, c, sUp);
+                    index = read.getIndex(f, c, sUp);
                   }
                   else { //fAxis == C_AXIS
-                    index = read.getIndex(fileName, z, f, sUp);
+                    index = read.getIndex(z, f, sUp);
                   }
                 }
                 else { //sAxis == C_AXIS
                   if (fAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, f, sUp, t);
+                    index = read.getIndex(f, sUp, t);
                   }
                   else { //fAxis == T_AXIS
-                    index = read.getIndex(fileName, z, sUp, f);
+                    index = read.getIndex(z, sUp, f);
                   }
                 }
               }
@@ -1422,26 +1423,26 @@ public class CacheManager implements Runnable {
               try {
                 if (sAxis == Z_AXIS) {
                   if (fAxis == T_AXIS) {
-                    index = read.getIndex(fileName, sLow, c, f);
+                    index = read.getIndex(sLow, c, f);
                   }
                   else { //fAxis == C_AXIS
-                    index = read.getIndex(fileName, sLow, f, t);
+                    index = read.getIndex(sLow, f, t);
                   }
                 }
                 else if (sAxis == T_AXIS) {
                   if (fAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, f, c, sLow);
+                    index = read.getIndex(f, c, sLow);
                   }
                   else { //fAxis == C_AXIS
-                    index = read.getIndex(fileName, z, f, sLow);
+                    index = read.getIndex(z, f, sLow);
                   }
                 }
                 else { //sAxis == C_AXIS
                   if (fAxis == Z_AXIS) {
-                    index = read.getIndex(fileName, f, sLow, t);
+                    index = read.getIndex(f, sLow, t);
                   }
                   else { //fAxis == T_AXIS
-                    index = read.getIndex(fileName, z, sLow, f);
+                    index = read.getIndex(z, sLow, f);
                   }
                 }
               }
@@ -1836,10 +1837,10 @@ public class CacheManager implements Runnable {
     zapCache = true;
     synchronized (read) {
       try {
-        sizeZ = read.getSizeZ(fileName);
-        sizeT = read.getSizeT(fileName);
-        sizeC = read.getEffectiveSizeC(fileName);
-        cache = new ImageProcessor[read.getImageCount(fileName)];
+        sizeZ = read.getSizeZ();
+        sizeT = read.getSizeT();
+        sizeC = read.getEffectiveSizeC();
+        cache = new ImageProcessor[read.getImageCount()];
       }
       catch (Exception exc) {
         if (DEBUG) System.out.println("Error reading size of file.");
@@ -1858,7 +1859,7 @@ public class CacheManager implements Runnable {
     for(int i = 0;i < sizeZ;i++) {
       int index = -1;
       try {
-        index = read.getIndex(fileName, i, aC - 1, aT - 1);
+        index = read.getIndex(i, aC - 1, aT - 1);
       }
       catch(Exception exc) {
         LociDataBrowser.exceptionMessage(exc);
@@ -1870,7 +1871,7 @@ public class CacheManager implements Runnable {
     for(int i = 0;i < sizeT;i++) {
       int index = -1;
       try {
-        index = read.getIndex(fileName, aZ - 1, aC - 1, i);
+        index = read.getIndex(aZ - 1, aC - 1, i);
       }
       catch(Exception exc) {
         LociDataBrowser.exceptionMessage(exc);
@@ -1889,7 +1890,7 @@ public class CacheManager implements Runnable {
     for(int i = 0;i < loadCopy.length;i++) {
       int[] coords = null;
       try {
-        coords = read.getZCTCoords(fileName, loadCopy[i]);
+        coords = read.getZCTCoords(loadCopy[i]);
       }
       catch(Exception exc) {
         LociDataBrowser.exceptionMessage(exc);
@@ -1947,7 +1948,7 @@ public class CacheManager implements Runnable {
     else {
       try {
         synchronized(read) {
-          cache = new ImageProcessor[read.getImageCount(fileName)];
+          cache = new ImageProcessor[read.getImageCount()];
         }
       }
       catch(Exception exc){

@@ -132,7 +132,7 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     RandomAccessStream ras = new RandomAccessStream(mmheader);
-    ras.order(isLittleEndian(currentId));
+    ras.order(isLittleEndian());
 
     put("Header Flag", ras.readShort());
     put("Image Type", (char) ras.read());
@@ -235,17 +235,23 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("z") || name.equals("event")) {
         core.sizeZ[0] *= size.intValue();
-        if (core.currentOrder[0].indexOf("Z") == -1) core.currentOrder[0] += "Z";
+        if (core.currentOrder[0].indexOf("Z") == -1) {
+          core.currentOrder[0] += "Z";
+        } 
         if (voxel != null) voxelZ = voxel.floatValue();
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         core.sizeC[0] *= size.intValue();
-        if (core.currentOrder[0].indexOf("C") == -1) core.currentOrder[0] += "C";
+        if (core.currentOrder[0].indexOf("C") == -1) {
+          core.currentOrder[0] += "C";
+        } 
         if (voxel != null) voxelC = voxel.floatValue();
       }
       else {
         core.sizeT[0] *= size.intValue();
-        if (core.currentOrder[0].indexOf("T") == -1) core.currentOrder[0] += "T";
+        if (core.currentOrder[0].indexOf("T") == -1) {
+          core.currentOrder[0] += "T";
+        } 
         if (voxel != null) voxelT = voxel.floatValue();
       }
     }
@@ -297,7 +303,7 @@ public class FluoviewReader extends BaseTiffReader {
   protected void initMetadataStore() {
     super.initMetadataStore();
     try {
-      MetadataStore store = getMetadataStore(currentId);
+      MetadataStore store = getMetadataStore();
       store.setDimensions(new Float(voxelX), new Float(voxelY),
         new Float(voxelZ), new Float(voxelC), new Float(voxelT), null);
 

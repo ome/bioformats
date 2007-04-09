@@ -259,27 +259,22 @@ public class QTReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public int getImageCount() throws FormatException, IOException {
     return numImages;
   }
 
   /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public boolean isRGB() throws FormatException, IOException {
     return bitsPerPixel < 40;
   }
 
   /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public boolean isLittleEndian() throws FormatException, IOException {
     return little;
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(String, int) */ 
-  public boolean isInterleaved(String id, int subC)
-    throws FormatException, IOException
-  {
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return true;
   }
 
@@ -289,17 +284,14 @@ public class QTReader extends FormatReader {
     if (useLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(String, int) */ 
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
     String code = codec;
-    if (no >= getImageCount(id) - altPlanes) code = altCodec;
+    if (no >= getImageCount() - altPlanes) code = altCodec;
 
     boolean doLegacy = useLegacy;
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
@@ -312,7 +304,7 @@ public class QTReader extends FormatReader {
     }
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
-      return legacy.openBytes(id, no);
+      return legacy.openBytes(no);
     }
 
     int offset = ((Integer) offsets.get(no)).intValue();
@@ -340,7 +332,7 @@ public class QTReader extends FormatReader {
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
     if (code.equals("jpeg") || code.equals("mjpb")) {
-      byte[] s = ImageTools.getBytes(openImage(id, no), false, no);
+      byte[] s = ImageTools.getBytes(openImage(no), false, no);
       return s;
     }
 
@@ -478,17 +470,14 @@ public class QTReader extends FormatReader {
     }
   }
 
-  /* @See loci.formats.IFormatReader#openImage(String, int) */ 
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (no < 0 || no >= getImageCount(id)) {
+  /* @See loci.formats.IFormatReader#openImage(int) */ 
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
     String code = codec;
-    if (no >= getImageCount(id) - altPlanes) code = altCodec;
+    if (no >= getImageCount() - altPlanes) code = altCodec;
 
     boolean doLegacy = useLegacy;
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
@@ -501,7 +490,7 @@ public class QTReader extends FormatReader {
     }
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
-      return legacy.openImage(id, no);
+      return legacy.openImage(no);
     }
 
     int offset = ((Integer) offsets.get(no)).intValue();
@@ -539,7 +528,7 @@ public class QTReader extends FormatReader {
     else {
       int bpp = bitsPerPixel / 8;
       if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
-      b = ImageTools.makeImage(openBytes(id, no), core.sizeX[0],
+      b = ImageTools.makeImage(openBytes(no), core.sizeX[0],
         core.sizeY[0], core.sizeC[0], false, bpp, little);
     }
     return b;
@@ -602,7 +591,7 @@ public class QTReader extends FormatReader {
     core.currentOrder[0] = "XYCZT";
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(id);
+    MetadataStore store = getMetadataStore();
 
     store.setPixels(
       new Integer(core.sizeX[0]),

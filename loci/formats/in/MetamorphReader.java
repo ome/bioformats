@@ -294,7 +294,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
     try {
       core.sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
-      core.sizeT[0] = getImageCount(currentId) / core.sizeZ[0];
+      core.sizeT[0] = getImageCount() / core.sizeZ[0];
     }
     catch (Exception e) {
       // CTR TODO - eliminate catch-all exception handling
@@ -609,12 +609,6 @@ public class MetamorphReader extends BaseTiffReader {
     hours = millis;
 
     return hours + ":" + minutes + ":" + seconds + "." + ms;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new MetamorphReader().testRead(args);
   }
 
 }

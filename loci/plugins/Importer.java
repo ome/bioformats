@@ -299,8 +299,9 @@ public class Importer implements ItemListener {
 
       FileStitcher fs = null;
       r.setMetadataFiltered(true);
+      r.setId(id);
 
-      int pixelType = r.getPixelType(id);
+      int pixelType = r.getPixelType();
       String currentFile = r.getCurrentFile();
 
       if (stitchFiles) {
@@ -320,10 +321,11 @@ public class Importer implements ItemListener {
         r = fs;
       }
       r = new ChannelSeparator(r);
+      r.setId(id);
 
       // store OME metadata into OME-XML structure, if available
 
-      int seriesCount = r.getSeriesCount(id);
+      int seriesCount = r.getSeriesCount();
       boolean[] series = new boolean[seriesCount];
       series[0] = true;
 
@@ -344,12 +346,12 @@ public class Importer implements ItemListener {
       int[] tEnd = new int[seriesCount];
       int[] tStep = new int[seriesCount];
       for (int i=0; i<seriesCount; i++) {
-        r.setSeries(id, i);
-        num[i] = r.getImageCount(id);
-        sizeC[i] = r.getEffectiveSizeC(id);
-        sizeZ[i] = r.getSizeZ(id);
-        sizeT[i] = r.getSizeT(id);
-        certain[i] = r.isOrderCertain(id);
+        r.setSeries(i);
+        num[i] = r.getImageCount();
+        sizeC[i] = r.getEffectiveSizeC();
+        sizeZ[i] = r.getSizeZ();
+        sizeT[i] = r.getSizeT();
+        certain[i] = r.isOrderCertain();
         cBegin[i] = zBegin[i] = tBegin[i] = 0;
         if (certain[i]) {
           cEnd[i] = sizeC[i] - 1;
@@ -369,9 +371,9 @@ public class Importer implements ItemListener {
           sb.append(name);
           sb.append(": ");
         }
-        sb.append(r.getSizeX(id));
+        sb.append(r.getSizeX());
         sb.append(" x ");
-        sb.append(r.getSizeY(id));
+        sb.append(r.getSizeY());
         sb.append("; ");
         sb.append(num[i]);
         sb.append(" plane");
@@ -416,9 +418,9 @@ public class Importer implements ItemListener {
         Panel[] p = new Panel[seriesCount];
         for (int i=0; i<seriesCount; i++) {
           gd.addCheckbox(seriesStrings[i], series[i]);
-          r.setSeries(id, i);
-          int sx = r.getThumbSizeX(id) + 10;
-          int sy = r.getThumbSizeY(id);
+          r.setSeries(i);
+          int sx = r.getThumbSizeX() + 10;
+          int sy = r.getThumbSizeY();
           p[i] = new Panel();
           p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
           gbc.gridy = i;
@@ -426,7 +428,7 @@ public class Importer implements ItemListener {
           gd.add(p[i]);
         }
         addScrollBars(gd);
-        ThumbLoader loader = new ThumbLoader(r, id, p, gd);
+        ThumbLoader loader = new ThumbLoader(r, p, gd);
         gd.showDialog();
         loader.stop();
         if (gd.wasCanceled()) {
@@ -441,11 +443,11 @@ public class Importer implements ItemListener {
 
         for (int i=0; i<seriesCount; i++) {
           series[i] = gd.getNextBoolean();
-          r.setSeries(id, i);
-          widths[i] = r.getSizeX(id);
-          heights[i] = r.getSizeY(id);
-          types[i] = r.getPixelType(id);
-          channels[i] = r.getSizeC(id);
+          r.setSeries(i);
+          widths[i] = r.getSizeX();
+          heights[i] = r.getSizeY();
+          types[i] = r.getPixelType();
+          channels[i] = r.getSizeC();
         }
 
         if (stitchStack) {
@@ -566,12 +568,12 @@ public class Importer implements ItemListener {
         IJ.showStatus("Populating metadata");
 
         // display standard metadata in a table in its own window
-        Hashtable meta = r.getMetadata(id);
+        Hashtable meta = r.getMetadata();
         meta.put("\t\t" + idType, currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
-          r.setSeries(id, i);
+          r.setSeries(i);
           String s;
           if (seriesCount > 1) {
             StringBuffer sb = new StringBuffer();
@@ -583,19 +585,19 @@ public class Importer implements ItemListener {
             s = sb.toString();
           }
           else s = "";
-          meta.put("\t" + s + "SizeX", new Integer(r.getSizeX(id)));
-          meta.put("\t" + s + "SizeY", new Integer(r.getSizeY(id)));
-          meta.put("\t" + s + "SizeZ", new Integer(r.getSizeZ(id)));
-          meta.put("\t" + s + "SizeT", new Integer(r.getSizeT(id)));
-          meta.put("\t" + s + "SizeC", new Integer(r.getSizeC(id)));
-          meta.put("\t" + s + "IsRGB", new Boolean(r.isRGB(id)));
+          meta.put("\t" + s + "SizeX", new Integer(r.getSizeX()));
+          meta.put("\t" + s + "SizeY", new Integer(r.getSizeY()));
+          meta.put("\t" + s + "SizeZ", new Integer(r.getSizeZ()));
+          meta.put("\t" + s + "SizeT", new Integer(r.getSizeT()));
+          meta.put("\t" + s + "SizeC", new Integer(r.getSizeC()));
+          meta.put("\t" + s + "IsRGB", new Boolean(r.isRGB()));
           meta.put("\t" + s + "PixelType",
-            FormatTools.getPixelTypeString(r.getPixelType(id)));
+            FormatTools.getPixelTypeString(r.getPixelType()));
           meta.put("\t" + s + "LittleEndian",
-            new Boolean(r.isLittleEndian(id)));
-          meta.put("\t" + s + "DimensionOrder", r.getDimensionOrder(id));
+            new Boolean(r.isLittleEndian()));
+          meta.put("\t" + s + "DimensionOrder", r.getDimensionOrder());
           meta.put("\t" + s + "IsInterleaved",
-            new Boolean(r.isInterleaved(id)));
+            new Boolean(r.isInterleaved()));
         }
         MetadataPane mp = new MetadataPane(meta);
         JFrame frame = new JFrame("Metadata - " + currentFile);
@@ -614,7 +616,7 @@ public class Importer implements ItemListener {
 
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
-          r.setSeries(id, i);
+          r.setSeries(i);
 
           boolean[] load = new boolean[num[i]];
           if (!stackFormat.equals(VIEW_NONE)) {
@@ -622,7 +624,7 @@ public class Importer implements ItemListener {
               for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
                 for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
                   for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
-                    int index = r.getIndex(id, z, c, t);
+                    int index = r.getIndex(z, c, t);
                     load[index] = true;
                   }
                 }
@@ -643,10 +645,10 @@ public class Importer implements ItemListener {
           long time = startTime;
           ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
 
-          int w = r.getSizeX(id);
-          int h = r.getSizeY(id);
-          int c = r.getRGBChannelCount(id);
-          int type = r.getPixelType(id);
+          int w = r.getSizeX();
+          int h = r.getSizeY();
+          int c = r.getRGBChannelCount();
+          int type = r.getPixelType();
 
           int q = 0;
           for (int j=0; j<num[i]; j++) {
@@ -663,7 +665,7 @@ public class Importer implements ItemListener {
             IJ.showProgress((double) q++ / total);
 
             // construct label for this slice
-            int[] zct = r.getZCTCoords(id, j);
+            int[] zct = r.getZCTCoords(j);
             StringBuffer sb = new StringBuffer();
             if (certain[i]) {
               boolean first = true;
@@ -706,7 +708,7 @@ public class Importer implements ItemListener {
             }
             String label = sb.toString();
 
-            byte[] b = r.openBytes(id, j);
+            byte[] b = r.openBytes(j);
 
             // construct image processor and add to stack
             ImageProcessor ip = null;
@@ -717,14 +719,14 @@ public class Importer implements ItemListener {
               // HACK - byte array dimensions are incorrect - image is probably
               // a different size, but we have no way of knowing what size;
               // so open this plane as a BufferedImage instead
-              BufferedImage bi = r.openImage(id, j);
-              b = ImageTools.padImage(b, r.isInterleaved(id), c,
+              BufferedImage bi = r.openImage(j);
+              b = ImageTools.padImage(b, r.isInterleaved(), c,
                 bi.getWidth() * bpp, w, h);
             }
 
             Object pixels = DataTools.makeDataArray(b, bpp,
               type == FormatTools.FLOAT || type == FormatTools.DOUBLE,
-              r.isLittleEndian(id));
+              r.isLittleEndian());
 
             if (pixels instanceof byte[]) {
               byte[] bytes = (byte[]) pixels;
@@ -789,7 +791,7 @@ public class Importer implements ItemListener {
               else {
                 if (stackO == null) stackO = new ImageStack(w, h);
                 float[][] pix = new float[c][w*h];
-                if (!r.isInterleaved(id)) {
+                if (!r.isInterleaved()) {
                   for (int k=0; k<f.length; k+=c) {
                     for (int l=0; l<c; l++) {
                       pix[l][k / c] = f[k + l];
@@ -833,28 +835,28 @@ public class Importer implements ItemListener {
           ImagePlus imp = null;
           if (stackB != null) {
             if (!mergeChannels && splitWindows) {
-              slice(stackB, id, sizeZ[i], sizeC[i], sizeT[i],
+              slice(stackB, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
             else imp = new ImagePlus(currentFile, stackB);
           }
           if (stackS != null) {
             if (!mergeChannels && splitWindows) {
-              slice(stackS, id, sizeZ[i], sizeC[i], sizeT[i],
+              slice(stackS, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
             else imp = new ImagePlus(currentFile, stackS);
           }
           if (stackF != null) {
             if (!mergeChannels && splitWindows) {
-              slice(stackF, id, sizeZ[i], sizeC[i], sizeT[i],
+              slice(stackF, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
             else imp = new ImagePlus(currentFile, stackF);
           }
           if (stackO != null) {
             if (!mergeChannels && splitWindows) {
-              slice(stackO, id, sizeZ[i], sizeC[i], sizeT[i],
+              slice(stackO, sizeZ[i], sizeC[i], sizeT[i],
                 fi, r, fs, specifyRanges, colorize);
             }
             else imp = new ImagePlus(currentFile, stackO);
@@ -865,7 +867,7 @@ public class Importer implements ItemListener {
             applyCalibration(store, imp, i);
             imp.setFileInfo(fi);
             imp.setDimensions(cCount[i], zCount[i], tCount[i]);
-            displayStack(imp, r, fs, id);
+            displayStack(imp, r, fs);
           }
 
           long endTime = System.currentTimeMillis();
@@ -1025,14 +1027,14 @@ public class Importer implements ItemListener {
   // -- Helper methods --
 
   /** Opens each channel of the source stack in a separate window. */
-  private void slice(ImageStack is, String id, int z, int c, int t,
+  private void slice(ImageStack is, int z, int c, int t,
     FileInfo fi, IFormatReader r, FileStitcher fs, boolean range,
     boolean colorize) throws FormatException, IOException
   {
     int step = 1;
     if (range) {
       step = c;
-      c = r.getSizeC(id);
+      c = r.getSizeC();
     }
 
     ImageStack[] newStacks = new ImageStack[c];
@@ -1052,7 +1054,7 @@ public class Importer implements ItemListener {
       else {
         for (int j=0; j<z; j++) {
           for (int k=0; k<t; k++) {
-            int s = r.getIndex(id, j, i, k) + 1;
+            int s = r.getIndex(j, i, k) + 1;
             newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
           }
         }
@@ -1062,9 +1064,10 @@ public class Importer implements ItemListener {
     // retrieve the spatial calibration information, if available
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus imp = new ImagePlus(id + " - Ch" + (i+1), newStacks[i]);
-      applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(id), imp,
-        r.getSeries(id));
+      ImagePlus imp = new ImagePlus(r.getCurrentFile() + " - Ch" + (i+1), 
+        newStacks[i]);
+      applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(), imp,
+        r.getSeries());
 
       // colorize channels; mostly copied from the ImageJ source
 
@@ -1090,8 +1093,8 @@ public class Importer implements ItemListener {
       }
 
       imp.setFileInfo(fi);
-      imp.setDimensions(1, r.getSizeZ(id), r.getSizeT(id));
-      displayStack(imp, r, fs, id);
+      imp.setDimensions(1, r.getSizeZ(), r.getSizeT());
+      displayStack(imp, r, fs);
     }
   }
 
@@ -1120,16 +1123,14 @@ public class Importer implements ItemListener {
   }
 
   /** Displays the image stack using the appropriate plugin. */
-  private void displayStack(ImagePlus imp, IFormatReader r,
-    FileStitcher fs, String id)
-  {
+  private void displayStack(ImagePlus imp, IFormatReader r, FileStitcher fs) {
     adjustDisplay(imp);
 
     try {
       // convert to RGB if needed
 
-      if (mergeChannels && r.getSizeC(id) > 1 && r.getSizeC(id) < 4) {
-        int c = r.getSizeC(id);
+      if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4) {
+        int c = r.getSizeC();
         ImageStack s = imp.getStack();
         ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
         for (int i=0; i<s.getSize(); i++) {
@@ -1142,27 +1143,27 @@ public class Importer implements ItemListener {
         s = imp.getStack();
         newStack = new ImageStack(s.getWidth(), s.getHeight());
 
-        int sizeZ = r.getSizeZ(id);
-        int sizeT = r.getSizeT(id);
+        int sizeZ = r.getSizeZ();
+        int sizeT = r.getSizeT();
 
         for (int z=0; z<sizeZ; z++) {
           for (int t=0; t<sizeT; t++) {
             byte[][] bytes = new byte[c][];
             for (int ch1=0; ch1<c; ch1++) {
-              int ndx = r.getIndex(id, z, ch1, t) + 1;
+              int ndx = r.getIndex(z, ch1, t) + 1;
               bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
             }
             ColorProcessor cp =
               new ColorProcessor(s.getWidth(), s.getHeight());
             cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
               new byte[s.getWidth() * s.getHeight()]);
-            int ndx = r.getIndex(id, z, c - 1, t) + 1;
+            int ndx = r.getIndex(z, c - 1, t) + 1;
             newStack.addSlice(s.getSliceLabel(ndx), cp);
           }
         }
         imp.setStack(imp.getTitle(), newStack);
       }
-      else if (mergeChannels && r.getSizeC(id) >= 4) {
+      else if (mergeChannels && r.getSizeC() >= 4) {
         IJ.showMessage("Can only merge 2 or 3 channels.");
       }
 
@@ -1175,21 +1176,21 @@ public class Importer implements ItemListener {
       }
       else if (stackFormat.equals(VIEW_BROWSER)) {}
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
-        int sizeZ = r.getSizeZ(id);
-        int sizeT = r.getSizeT(id);
-        int sizeC = r.getSizeC(id);
+        int sizeZ = r.getSizeZ();
+        int sizeT = r.getSizeT();
+        int sizeC = r.getSizeC();
         if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
 
         // reorder stack to Image5D's preferred order: XYCZT
         ImageStack is;
         ImageStack stack = imp.getStack();
-        if (r.getDimensionOrder(id).equals("XYCZT")) is = stack;
+        if (r.getDimensionOrder().equals("XYCZT")) is = stack;
         else {
-          is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
+          is = new ImageStack(r.getSizeX(), r.getSizeY());
           for (int t=0; t<sizeT; t++) {
             for (int z=0; z<sizeZ; z++) {
               for (int c=0; c<sizeC; c++) {
-                int ndx = r.getIndex(id, z, c, t) + 1;
+                int ndx = r.getIndex(z, c, t) + 1;
                 is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
               }
             }
@@ -1213,21 +1214,21 @@ public class Importer implements ItemListener {
         ru.exec("i5d.show()");
       }
       else if (stackFormat.equals(VIEW_VIEW_5D)) {
-        int sizeZ = r.getSizeZ(id);
-        int sizeC = r.getSizeC(id);
-        int sizeT = r.getSizeT(id);
+        int sizeZ = r.getSizeZ();
+        int sizeC = r.getSizeC();
+        int sizeT = r.getSizeT();
         if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
         ChannelMerger ndxReader = new ChannelMerger(r);
 
         // reorder stack to View5D's preferred order: XYZCT
-        if (!r.getDimensionOrder(id).equals("XYZCT")) {
-          ImageStack is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
+        if (!r.getDimensionOrder().equals("XYZCT")) {
+          ImageStack is = new ImageStack(r.getSizeX(), r.getSizeY());
           ImageStack stack = imp.getStack();
           for (int t=0; t<sizeT; t++) {
             for (int c=0; c<sizeC; c++) {
               for (int z=0; z<sizeZ; z++) {
-                int ndx = mergeChannels ? ndxReader.getIndex(id, z, c, t) + 1 :
-                  r.getIndex(id, z, c, t) + 1;
+                int ndx = mergeChannels ? ndxReader.getIndex(z, c, t) + 1 :
+                  r.getIndex(z, c, t) + 1;
                 is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
               }
             }
