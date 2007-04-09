@@ -38,9 +38,6 @@ public class SDTReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
   /** Object containing SDT header information. */
   protected SDTInfo info;
 
@@ -98,16 +95,6 @@ public class SDTReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount() throws FormatException, IOException {
-    return channels;
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeC(String) */ 
-  public int getSizeC() throws FormatException, IOException {
-    return intensity ? channels : (timeBins * channels);
-  }
-
   /* @see loci.formats.IFormatReader#getRGBChannelCount(String) */
   public int getRGBChannelCount() throws FormatException, IOException {
     return intensity ? 1 : timeBins;
@@ -122,11 +109,6 @@ public class SDTReader extends FormatReader {
   public String[] getChannelDimTypes() throws FormatException, IOException {
     return intensity ? new String[] {FormatTools.SPECTRA} :
       new String[] {FormatTools.LIFETIME, FormatTools.SPECTRA};
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return true;
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
@@ -198,13 +180,6 @@ public class SDTReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-  }
-
   // -- FormatReader API methods --
 
   /** Initializes the given SDT file. */
@@ -233,6 +208,9 @@ public class SDTReader extends FormatReader {
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
     core.pixelType[0] = FormatTools.UINT16;
+    core.rgb[0] = getRGBChannelCount() > 1;
+    core.littleEndian[0] = true;
+    core.imageCount[0] = channels;
 
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),

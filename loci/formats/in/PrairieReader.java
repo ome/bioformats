@@ -48,9 +48,6 @@ public class PrairieReader extends FormatReader {
 
   // -- Fields --
 
-  /** Number of images */
-  private int numImages;
-
   /** List of files in the current dataset */
   private String[] files;
 
@@ -134,26 +131,6 @@ public class PrairieReader extends FormatReader {
     s[files.length] = xmlFile;
     s[files.length + 1] = cfgFile;
     return s;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount(String) */
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB(String) */
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return tiff.isLittleEndian();
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(String) */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -244,7 +221,7 @@ public class PrairieReader extends FormatReader {
       int zt = 0;
       Vector f = new Vector();
       int fileIndex = 1;
-      if (id.endsWith(".xml")) numImages = 0;
+      if (id.endsWith(".xml")) core.imageCount[0] = 0;
 
       String pastPrefix = "";
       for (int i=1; i<elements.size(); i++) {
@@ -253,7 +230,7 @@ public class PrairieReader extends FormatReader {
           boolean closed = el.endsWith("/");
 
           String prefix = el.substring(0, el.indexOf(" "));
-          if (prefix.equals("File")) numImages++;
+          if (prefix.equals("File")) core.imageCount[0]++;
           if (prefix.equals("Frame")) {
             zt++;
             fileIndex = 1;
@@ -312,9 +289,12 @@ public class PrairieReader extends FormatReader {
         core.sizeY[0] = Integer.parseInt((String) getMeta("linesPerFrame"));
         core.sizeZ[0] = isZ ? zt : 1;
         core.sizeT[0] = isZ ? 1 : zt;
-        core.sizeC[0] = numImages / (core.sizeZ[0] * core.sizeT[0]);
+        core.sizeC[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeT[0]);
         core.currentOrder[0] = "XYC" + (isZ ? "ZT" : "TZ");
         core.pixelType[0] = FormatTools.UINT16;
+        core.rgb[0] = false;
+        core.interleaved[0] = false;
+        core.littleEndian[0] = tiff.isLittleEndian();
 
         float pixSizeX =
           Float.parseFloat((String) getMeta("micronsPerPixel_XAxis"));

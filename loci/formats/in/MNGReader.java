@@ -38,12 +38,6 @@ public class MNGReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Offsets to each plane. */
   private Vector offsets;
 
@@ -63,26 +57,6 @@ public class MNGReader extends FormatReader {
     return block[0] == 0x8a && block[1] == 0x4d && block[2] == 0x4e &&
       block[3] == 0x47 && block[4] == 0x0d && block[5] == 0x0a &&
       block[6] == 0x1a && block[7] == 0x0a;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return core.sizeC[0] > 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved() */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -117,13 +91,6 @@ public class MNGReader extends FormatReader {
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given MNG file. */
@@ -174,7 +141,7 @@ public class MNGReader extends FormatReader {
 
       if (code.equals("IHDR")) {
         offsets.add(new Integer((int) in.getFilePointer() - 8));
-        numImages++;
+        core.imageCount[0]++;
       }
       else if (code.equals("IEND")) {
         lengths.add(new Integer(fp + (int) len + 4));
@@ -204,9 +171,12 @@ public class MNGReader extends FormatReader {
 
     core.sizeZ[0] = 1;
     core.sizeC[0] = openImage(0).getRaster().getNumBands();
-    core.sizeT[0] = numImages;
+    core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCZT";
     core.pixelType[0] = FormatTools.UINT8;
+    core.rgb[0] = core.sizeC[0] > 1;
+    core.interleaved[0] = false;
+    core.littleEndian[0] = false;
 
     MetadataStore store = getMetadataStore();
 

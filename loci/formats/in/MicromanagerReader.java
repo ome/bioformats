@@ -32,6 +32,11 @@ import loci.formats.*;
 /** MicromanagerReader is the file format reader for Micro-Manager files. */
 public class MicromanagerReader extends FormatReader {
 
+  // -- Constants --
+
+  /** File containing extra metadata. */
+  private static final String METADATA = "metadata.txt";
+
   // -- Fields --
 
   /** Helper reader for TIFF files. */
@@ -52,21 +57,6 @@ public class MicromanagerReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] b) {
     return tiffReader.isThisType(b);
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
-    return tiffs.size();
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return tiffReader.isLittleEndian();
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved() */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -97,9 +87,9 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
+    super.close(); 
     if (tiffReader != null) tiffReader.close();
     tiffReader = null;
-    currentId = null;
     tiffs = null;
   }
 
@@ -119,13 +109,13 @@ public class MicromanagerReader extends FormatReader {
     // find metadata.txt
 
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
-    RandomAccessStream ras = new RandomAccessStream(
-      new Location(parent, "metadata.txt").getAbsolutePath());
+    in = new RandomAccessStream(new Location(parent, 
+      METADATA).getAbsolutePath());
 
     // usually a small file, so we can afford to read it into memory
 
-    byte[] meta = new byte[(int) ras.length()];
-    ras.read(meta);
+    byte[] meta = new byte[(int) in.length()];
+    in.read(meta);
     String s = new String(meta);
     meta = null;
 
@@ -136,7 +126,7 @@ public class MicromanagerReader extends FormatReader {
     int pos = 0;
     while (true) {
       pos = s.indexOf("FileName", pos);
-      if (pos == -1 || pos >= ras.length()) break;
+      if (pos == -1 || pos >= in.length()) break;
       String name = s.substring(s.indexOf(":", pos), s.indexOf(",", pos));
       tiffs.add(0, name.substring(3, name.length() - 1));
       pos++;
@@ -191,6 +181,10 @@ public class MicromanagerReader extends FormatReader {
     core.sizeY[0] = tiffReader.getSizeY();
     core.currentOrder[0] = "XYCTZ";
     core.pixelType[0] = tiffReader.getPixelType();
+    core.rgb[0] = tiffReader.isRGB();
+    core.interleaved[0] = false;
+    core.littleEndian[0] = tiffReader.isLittleEndian();
+    core.imageCount[0] = tiffs.size();
 
     MetadataStore store = getMetadataStore();
 
@@ -201,7 +195,7 @@ public class MicromanagerReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      new Boolean(isLittleEndian()),
+      new Boolean(!core.littleEndian[0]),
       core.currentOrder[0],
       null, null);
     for (int i=0; i<core.sizeC[0]; i++) {

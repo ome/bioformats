@@ -68,15 +68,8 @@ public class ICSReader extends FormatReader {
   protected String currentIcsId;
   protected String currentIdsId;
 
-  /** Current file. */
-  protected RandomAccessStream idsIn; // IDS file
-  protected Location icsIn; // ICS file
-
-  /** Flag indicating whether current file is little endian. */
-  protected boolean littleEndian;
-
-  /** Number of images. */
-  protected int numImages;
+  /** Current ICS file. */
+  protected Location icsIn;
 
   /** Number of bits per pixel. */
   protected int bitsPerPixel;
@@ -86,9 +79,6 @@ public class ICSReader extends FormatReader {
 
   /** Image data. */
   protected byte[] data;
-
-  /** Flag indicating that the images are RGB. */
-  private boolean rgb;
 
   // -- Constructor --
 
@@ -102,27 +92,6 @@ public class ICSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return false;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    if (numImages == 1) return 1;
-    return numImages / (rgb ? core.sizeC[0] : 1);
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return rgb && core.sizeC[0] > 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return littleEndian;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return !rgb;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -149,7 +118,7 @@ public class ICSReader extends FormatReader {
 
     int len = core.sizeX[0] * core.sizeY[0] * bpp * getRGBChannelCount();
     int offset = len * no;
-    if (!rgb && core.sizeC[0] > 4) {
+    if (!core.rgb[0] && core.sizeC[0] > 4) {
       int pt = 0;
       for (int i=no*bpp; i<data.length; i+=core.sizeC[0]*bpp) {
         System.arraycopy(data, i, buf, pt, bpp);
@@ -175,7 +144,7 @@ public class ICSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */ 
   public BufferedImage openImage(int no) throws FormatException, IOException {
     byte[] plane = openBytes(no);
-    int channels = rgb ? core.sizeC[0] : 1;
+    int channels = core.rgb[0] ? core.sizeC[0] : 1;
 
     int bytes = bitsPerPixel / 8;
 
@@ -183,7 +152,7 @@ public class ICSReader extends FormatReader {
       float[] f = new float[core.sizeX[0] * core.sizeY[0] * channels];
       int pt = 0;
       for (int i=0; i<f.length; i++) {
-        int p = DataTools.bytesToInt(plane, i*4, 4, littleEndian);
+        int p = DataTools.bytesToInt(plane, i*4, 4, core.littleEndian[0]);
         f[i] = Float.intBitsToFloat(p);
       }
 
@@ -194,7 +163,7 @@ public class ICSReader extends FormatReader {
     }
 
     return ImageTools.makeImage(plane, core.sizeX[0], core.sizeY[0], channels, 
-      true, bytes, littleEndian);
+      true, bytes, core.littleEndian[0]);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -207,14 +176,13 @@ public class ICSReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && idsIn != null) idsIn.close();
+    if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
   }
 
   /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
-    if (idsIn != null) idsIn.close();
-    idsIn = null;
+    super.close(); 
     icsIn = null;
     currentIcsId = null;
     currentIdsId = null;
@@ -256,7 +224,7 @@ public class ICSReader extends FormatReader {
     f.read(b);
     f.close();
     if (new String(b).trim().equals("ics_version\t2.0")) {
-      idsIn = new RandomAccessStream(icsId);
+      in = new RandomAccessStream(icsId);
       versionTwo = true;
     }
     else {
@@ -264,7 +232,7 @@ public class ICSReader extends FormatReader {
       Location idsFile = new Location(idsId);
       if (!idsFile.exists()) throw new FormatException("IDS file not found.");
       currentIdsId = idsId;
-      idsIn = new RandomAccessStream(idsId);
+      in = new RandomAccessStream(idsId);
     }
 
     currentIcsId = icsId;
@@ -326,7 +294,8 @@ public class ICSReader extends FormatReader {
     StringTokenizer t1 = new StringTokenizer(images);
     StringTokenizer t2 = new StringTokenizer(ord);
 
-    rgb = ord.indexOf("ch") >= 0 && ord.indexOf("ch") < ord.indexOf("x");
+    core.rgb[0] = 
+      ord.indexOf("ch") >= 0 && ord.indexOf("ch") < ord.indexOf("x");
 
     String imageToken;
     String orderToken;
@@ -347,24 +316,26 @@ public class ICSReader extends FormatReader {
       }
       else if(orderToken.equals("ch")) {
         core.sizeC[0] = Integer.parseInt(imageToken);
-        if (core.sizeC[0] > 4) rgb = false;
+        if (core.sizeC[0] > 4) core.rgb[0] = false;
       }
       else {
         core.sizeT[0] = Integer.parseInt(imageToken);
       }
     }
 
-    numImages = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-    if (numImages == 0) numImages++;
+    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    if (core.imageCount[0] == 0) core.imageCount[0] = 1;
+    core.rgb[0] = core.rgb[0] && core.sizeC[0] > 1;
+    core.interleaved[0] = !core.rgb[0];
 
     String endian = (String) getMeta("representation byte_order");
-    littleEndian = true;
+    core.littleEndian[0] = true;
 
     if (endian != null) {
       StringTokenizer endianness = new StringTokenizer(endian);
       String firstByte = endianness.nextToken();
       int first = Integer.parseInt(firstByte);
-      littleEndian =
+      core.littleEndian[0] =
         ((String) getMeta("representation format")).equals("real") ?
         first == 1 : first != 1;
     }
@@ -373,18 +344,18 @@ public class ICSReader extends FormatReader {
     boolean gzip = (test == null) ? false : test.equals("gzip");
 
     if (versionTwo) {
-      s = idsIn.readLine();
-      while(!s.trim().equals("end")) s = idsIn.readLine();
+      s = in.readLine();
+      while(!s.trim().equals("end")) s = in.readLine();
     }
-    data = new byte[(int) (idsIn.length() - idsIn.getFilePointer())];
+    data = new byte[(int) (in.length() - in.getFilePointer())];
 
     // extra check is because some of our datasets are labeled as 'gzip', and
     // have a valid GZIP header, but are actually uncompressed
-    if (gzip && ((data.length / (numImages) < 
+    if (gzip && ((data.length / (core.imageCount[0]) < 
       (core.sizeX[0] * core.sizeY[0] * bitsPerPixel / 8))))
     {
       status("Decompressing pixel data"); 
-      idsIn.read(data);
+      in.read(data);
       byte[] buf = new byte[8192];
       ByteVector v = new ByteVector();
       try {
@@ -401,7 +372,7 @@ public class ICSReader extends FormatReader {
         throw new FormatException("Error uncompressing gzip'ed data", dfe);
       }
     }
-    else idsIn.readFully(data);
+    else in.readFully(data);
 
     status("Populating metadata");
 
@@ -431,7 +402,7 @@ public class ICSReader extends FormatReader {
     String fmt = (String) getMeta("representation format");
     String sign = (String) getMeta("representation sign");
 
-    if (bitsPerPixel < 32) littleEndian = !littleEndian;
+    if (bitsPerPixel < 32) core.littleEndian[0] = !core.littleEndian[0];
 
     if (fmt.equals("real")) core.pixelType[0] = FormatTools.FLOAT;
     else if (fmt.equals("integer")) {
@@ -463,7 +434,7 @@ public class ICSReader extends FormatReader {
       new Integer(core.sizeC[0]), // SizeC
       new Integer(core.sizeT[0]), // SizeT
       new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!littleEndian), // BigEndian
+      new Boolean(!core.littleEndian[0]), // BigEndian
       core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0

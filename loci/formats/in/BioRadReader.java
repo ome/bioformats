@@ -64,12 +64,6 @@ public class BioRadReader extends FormatReader {
 
   // -- Fields --
 
-  /** Input stream for current Bio-Rad PIC. */
-  private RandomAccessStream in;
-
-  /** Number of images in current Bio-Rad PIC. */
-  private int npic;
-
   /** Flag indicating current Bio-Rad PIC is packed with bytes. */
   private boolean byteFormat;
 
@@ -86,26 +80,6 @@ public class BioRadReader extends FormatReader {
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return npic;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return LITTLE_ENDIAN;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)];
@@ -116,7 +90,7 @@ public class BioRadReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf) 
     throws FormatException, IOException
   {
-    if (no < 0 || no >= npic) {
+    if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }
     if (buf.length < core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)) {
@@ -142,14 +116,6 @@ public class BioRadReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    currentId = null;
-    if (in != null) in.close();
-    in = null;
-    metadata = null;
-  }
-
   /** Initializes the given Bio-Rad file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
@@ -163,7 +129,7 @@ public class BioRadReader extends FormatReader {
 
     core.sizeX[0] = in.readShort();
     core.sizeY[0] = in.readShort();
-    npic = in.readShort();
+    core.imageCount[0] = in.readShort();
 
     int ramp1min = in.readShort();
     int ramp1max = in.readShort();
@@ -191,7 +157,7 @@ public class BioRadReader extends FormatReader {
     // populate metadata fields
     addMeta("nx", new Integer(core.sizeX[0]));
     addMeta("ny", new Integer(core.sizeY[0]));
-    addMeta("npic", new Integer(npic));
+    addMeta("npic", new Integer(core.imageCount[0]));
     addMeta("ramp1_min", new Integer(ramp1min));
     addMeta("ramp1_max", new Integer(ramp1max));
     addMeta("notes", new Boolean(notes));
@@ -211,15 +177,18 @@ public class BioRadReader extends FormatReader {
     // skip image data
     int imageLen = core.sizeX[0] * core.sizeY[0];
     int bpp = byteFormat ? 1 : 2;
-    in.skipBytes(bpp * npic * imageLen + 6);
+    in.skipBytes(bpp * core.imageCount[0] * imageLen + 6);
 
     Vector pixelSize = new Vector();
 
-    core.sizeZ[0] = npic;
+    core.sizeZ[0] = core.imageCount[0];
     core.sizeC[0] = 1;
     core.sizeT[0] = 1;
 
     core.orderCertain[0] = false;
+    core.rgb[0] = false;
+    core.interleaved[0] = false;
+    core.littleEndian[0] = LITTLE_ENDIAN;
 
     status("Reading notes");
 
@@ -493,7 +462,7 @@ public class BioRadReader extends FormatReader {
                 addMeta(key + " time (X) in seconds", params.get(0));
                 addMeta(key + " time (Y) in seconds", params.get(1));
                 core.sizeZ[0] = 1;
-                core.sizeT[0] = npic;
+                core.sizeT[0] = core.imageCount[0];
                 core.orderCertain[0] = true;
               }
               break;

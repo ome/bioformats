@@ -56,14 +56,8 @@ public class OpenlabReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  private RandomAccessStream in;
-
   /** LIFF version (should be 2 or 5). */
   private int version;
-
-  /** Number of images in the file. */
-  private int[] numImages;
 
   /** Number of series. */
   private int numSeries;
@@ -87,31 +81,6 @@ public class OpenlabReader extends FormatReader {
     return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
       block[2] == -1 && block[3] == -1 && block[4] == 105 &&
       block[5] == 109 && block[6] == 112 && block[7] == 114;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages[series];
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return core.sizeC[series] > 1;
-  }
-
-  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
-  public int getSeriesCount() throws FormatException, IOException {
-    return numSeries;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return true;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -520,8 +489,7 @@ public class OpenlabReader extends FormatReader {
 
     core = new CoreMetadata(2);
 
-    numImages = new int[2];
-    numImages[0] = tmp.size();
+    core.imageCount[0] = tmp.size();
 
     // determine if we have a multi-series file
 
@@ -601,14 +569,14 @@ public class OpenlabReader extends FormatReader {
       core.sizeC[0] = layerInfoList[1].size() == 0 ? 1 : 3;
       if (core.sizeC[0] == 1 && oldChannels == 1) core.sizeC[0] = 3;
 
-      int oldImages = numImages[0];
-      numImages = new int[1];
-      numImages[0] = oldImages;
+      int oldImages = core.imageCount[0];
+      core.imageCount = new int[1];
+      core.imageCount[0] = oldImages;
       if (layerInfoList[0].size() == 0) layerInfoList[0] = layerInfoList[1];
     }
     else {
-      numImages[0] = layerInfoList[0].size();
-      numImages[1] = layerInfoList[1].size();
+      core.imageCount[0] = layerInfoList[0].size();
+      core.imageCount[1] = layerInfoList[1].size();
       core.sizeC[0] = 1;
       core.sizeC[1] = 3;
       int oldW = core.sizeX[0];
@@ -623,7 +591,7 @@ public class OpenlabReader extends FormatReader {
 
     status("Populating metadata");
 
-    numSeries = numImages.length;
+    numSeries = core.imageCount.length;
 
     int[] bpp = new int[numSeries];
 
@@ -650,7 +618,7 @@ public class OpenlabReader extends FormatReader {
       addMeta("Number of channels (Series " + i + ")",
         new Integer(core.sizeC[i]));
       addMeta("Number of images (Series " + i + ")",
-        new Integer(numImages[i]));
+        new Integer(core.imageCount[i]));
     }
 
     // populate MetadataStore
@@ -660,6 +628,9 @@ public class OpenlabReader extends FormatReader {
     for (int i=0; i<numSeries; i++) {
       core.sizeT[i] += 1;
       core.currentOrder[i] = isRGB() ? "XYCZT" : "XYZCT";
+      core.rgb[i] = core.sizeC[i] > 1;
+      core.interleaved[i] = true;
+      core.littleEndian[i] = false;
 
       try {
         if (i != 0) {

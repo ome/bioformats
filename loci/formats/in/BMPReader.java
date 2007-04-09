@@ -39,9 +39,6 @@ public class BMPReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
   /** Offset to the image data. */
   protected int offset;
 
@@ -76,28 +73,6 @@ public class BMPReader extends FormatReader {
       return false;
     }
     if (block[0] != 'B' || block[1] != 'M') return false;
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
-    return bpp > 8;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC)
-    throws FormatException, IOException
-  {
     return true;
   }
 
@@ -171,13 +146,6 @@ public class BMPReader extends FormatReader {
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given BMP file. */
@@ -283,8 +251,12 @@ public class BMPReader extends FormatReader {
     }
 
     if (core.sizeX[0] % 2 == 1) core.sizeX[0]++; 
+    core.rgb[0] = bpp > 8; 
+    core.littleEndian[0] = true;
+    core.interleaved[0] = true;
+    core.imageCount[0] = 1; 
     core.sizeZ[0] = 1;
-    core.sizeC[0] = isRGB() ? 3 : 1;
+    core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCTZ";
 

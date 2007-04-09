@@ -210,7 +210,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
 
     // reset numImages and ifds
-    numImages = tempIFDs.length;
+    core.imageCount[0] = tempIFDs.length;
     ifds = tempIFDs;
     initMetadata();
     ifds = TiffTools.getIFDs(in);
@@ -253,13 +253,16 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (c > core.sizeC[0] || c != 1) core.sizeC[0] = c;
       if (core.sizeC[0] == 0) core.sizeC[0]++;
 
-      while (numImages > core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]) {
+      while (core.imageCount[0] > core.sizeZ[0] * core.sizeC[0] * core.sizeT[0])
+      {
         if (core.sizeZ[0] > core.sizeT[0]) core.sizeZ[0]++;
         else core.sizeT[0]++;
       }
 
-      while (numImages > core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC()) {
-        numImages--;
+      while (core.imageCount[0] > core.sizeZ[0] * core.sizeT[0] * 
+        getEffectiveSizeC()) 
+      {
+        core.imageCount[0]--;
       }
 
       put("DimensionZ", core.sizeZ[0]);

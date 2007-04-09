@@ -40,9 +40,6 @@ public class PerkinElmerReader extends FormatReader {
 
   // -- Fields --
 
-  /** Number of images. */
-  protected int numImages;
-
   /** Helper reader. */
   protected TiffReader[] tiff;
 
@@ -67,26 +64,6 @@ public class PerkinElmerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return isTiff ? tiff[0].isRGB() : false; 
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return isTiff ? tiff[0].isLittleEndian() : true;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
@@ -347,12 +324,12 @@ public class PerkinElmerReader extends FormatReader {
 
     for (int i=0; i<files.length; i++) allFiles.add(files[i]);
 
-    numImages = files.length;
+    core.imageCount[0] = files.length;
     RandomAccessStream read;
     byte[] data;
     StringTokenizer t;
 
-    tiff = new TiffReader[numImages];
+    tiff = new TiffReader[core.imageCount[0]];
     for (int i=0; i<tiff.length; i++) {
       tiff[i] = new TiffReader();
     }
@@ -554,6 +531,10 @@ public class PerkinElmerReader extends FormatReader {
       else core.currentOrder[0] += "ZT";
     }
     else core.currentOrder[0] += "ZT"; // doesn't matter, since Z = T = 1
+
+    core.rgb[0] = isTiff ? tiff[0].isRGB() : false;
+    core.interleaved[0] = false;
+    core.littleEndian[0] = isTiff ? tiff[0].isLittleEndian() : true;
 
     // Populate metadata store
 

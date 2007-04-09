@@ -42,12 +42,6 @@ public class OpenlabRawReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Offset to each image's pixel data. */
   protected int[] offsets;
 
@@ -65,26 +59,6 @@ public class OpenlabRawReader extends FormatReader {
   public boolean isThisType(byte[] block) {
     return (block[0] == 'O') && (block[1] == 'L') && (block[2] == 'R') &&
       (block[3] == 'W');
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return core.sizeC[0] > 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -157,8 +131,8 @@ public class OpenlabRawReader extends FormatReader {
     int version = in.readInt();
     addMeta("Version", new Integer(version));
 
-    numImages = in.readInt();
-    offsets = new int[numImages];
+    core.imageCount[0] = in.readInt();
+    offsets = new int[core.imageCount[0]];
     offsets[0] = 12;
 
     in.readLong();
@@ -183,16 +157,19 @@ public class OpenlabRawReader extends FormatReader {
     addMeta("Height", new Integer(core.sizeY[0]));
     addMeta("Bytes per pixel", new Integer(bytesPerPixel));
 
-    for (int i=1; i<numImages; i++) {
+    for (int i=1; i<core.imageCount[0]; i++) {
       offsets[i] = 
         offsets[i-1] + 288 + core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
     }
 
     bytesPerPixel = ((Integer) getMeta("Bytes per pixel")).intValue();
 
-    core.sizeZ[0] = numImages;
+    core.sizeZ[0] = core.imageCount[0];
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
+    core.rgb[0] = core.sizeC[0] > 1;
+    core.interleaved[0] = false;
+    core.littleEndian[0] = false;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();

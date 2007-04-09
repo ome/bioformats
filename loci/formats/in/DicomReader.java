@@ -74,20 +74,11 @@ public class DicomReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Bits per pixel. */
   protected int bitsPerPixel;
 
   /** Offset to first plane. */
   protected int offsets;
-
-  /** True if the data is little-endian. */
-  protected boolean little;
 
   private int location;
   private int elementLength;
@@ -108,26 +99,6 @@ public class DicomReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return little;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
@@ -159,20 +130,13 @@ public class DicomReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */ 
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      1, false, bitsPerPixel / 8, little);
+      1, false, bitsPerPixel / 8, core.littleEndian[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given DICOM file. */
@@ -182,7 +146,7 @@ public class DicomReader extends FormatReader {
     in = new RandomAccessStream(id);
     in.order(true);
 
-    little = true;
+    core.littleEndian[0] = true;
     location = 0;
 
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
@@ -241,7 +205,7 @@ public class DicomReader extends FormatReader {
           s = new String(st);
           addInfo(tag, s);
           double frames = Double.parseDouble(s);
-          if (frames > 1.0) numImages = (int) frames;
+          if (frames > 1.0) core.imageCount[0] = (int) frames;
           break;
         case SAMPLES_PER_PIXEL:
           int samplesPerPixel = in.readShort();
@@ -315,14 +279,16 @@ public class DicomReader extends FormatReader {
         decodingTags = false;
       }
     }
-    if (numImages == 0) numImages = 1;
+    if (core.imageCount[0] == 0) core.imageCount[0] = 1;
 
     status("Populating metadata");
 
-    core.sizeZ[0] = numImages;
+    core.sizeZ[0] = core.imageCount[0];
     core.sizeC[0] = 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
+    core.rgb[0] = false;
+    core.interleaved[0] = false;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
@@ -350,7 +316,7 @@ public class DicomReader extends FormatReader {
       new Integer(core.sizeC[0]), // SizeC
       new Integer(core.sizeT[0]), // SizeT
       new Integer(core.pixelType[0]),  // PixelType
-      new Boolean(!little),  // BigEndian
+      new Boolean(!core.littleEndian[0]),  // BigEndian
       core.currentOrder[0], // Dimension order
       null, // Use image index 0
       null); // Use pixels index 0
@@ -501,7 +467,9 @@ public class DicomReader extends FormatReader {
           return in.readInt();
         }
         vr = IMPLICIT_VR;
-        if (little) return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
+        if (core.littleEndian[0]) {
+          return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
+        } 
         return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
       case AE:
       case AS:
@@ -527,11 +495,13 @@ public class DicomReader extends FormatReader {
       case UT:
       case QQ:
         // Explicit VR with 16-bit length
-        if (little) return (b[3] << 8) + b[2];
+        if (core.littleEndian[0]) return (b[3] << 8) + b[2];
         else return (b[2] << 8) + b[3];
       default:
         vr = IMPLICIT_VR;
-        if (little) return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
+        if (core.littleEndian[0]) {
+          return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
+        } 
         return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
     }
   }
@@ -539,7 +509,7 @@ public class DicomReader extends FormatReader {
   private int getNextTag() throws IOException {
     int groupWord = in.readShort();
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
-      little = false;
+      core.littleEndian[0] = false;
       groupWord = 0x0008;
       in.order(false);
     }

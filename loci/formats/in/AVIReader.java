@@ -39,17 +39,8 @@ public class AVIReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of images in current AVI movie. */
-  private int numImages;
-
   /** Offset to each plane. */
   private Vector offsets;
-
-  /** Endianness flag. */
-  private boolean little = true;
 
   private String type = "error";
   private String fcc = "error";
@@ -80,26 +71,6 @@ public class AVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
-    return bmpBitsPerPixel > 8;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return little;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
@@ -154,13 +125,6 @@ public class AVIReader extends FormatReader {
       if (in != null) in.close();
     }
     else close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given AVI file. */
@@ -446,12 +410,14 @@ public class AVIReader extends FormatReader {
     }
     status("Populating metadata");  
     
-    numImages = offsets.size();
+    core.imageCount[0] = offsets.size();
 
+    core.rgb[0] = bmpBitsPerPixel > 8;
     core.sizeZ[0] = 1;
-    core.sizeC[0] = isRGB() ? 3 : 1;
-    core.sizeT[0] = numImages;
+    core.sizeC[0] = core.rgb[0] ? 3 : 1;
+    core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
+    core.littleEndian[0] = true;
 
     int bitsPerPixel = ((Integer) getMeta("Bits per pixel")).intValue();
     int bytesPerPixel = bitsPerPixel / 8;
@@ -468,9 +434,9 @@ public class AVIReader extends FormatReader {
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), // SizeZ
       new Integer(core.sizeC[0]), // SizeC
-      new Integer(numImages), // SizeT
+      new Integer(core.sizeT[0]), // SizeT
       new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!little), // BigEndian
+      new Boolean(!core.littleEndian[0]), // BigEndian
       core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0

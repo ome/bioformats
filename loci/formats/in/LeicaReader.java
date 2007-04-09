@@ -44,13 +44,7 @@ public class LeicaReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
   protected Hashtable[] ifds;
-
-  /** Flag indicating whether current file is little endian. */
-  protected boolean littleEndian;
 
   /** Array of IFD-like structures containing metadata. */
   protected Hashtable[] headerIFDs;
@@ -63,9 +57,6 @@ public class LeicaReader extends FormatReader {
 
   /** Number of series in the file. */
   private int numSeries;
-
-  /** Total number of planes in each series. */
-  private int[] numPlanes;
 
   /** Number of significant bits per pixel. */
   private int[][] validBits;
@@ -113,37 +104,13 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numPlanes[series];
-  }
-
-  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
-  public int getSeriesCount() throws FormatException, IOException {
-    return numSeries;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return false; 
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return littleEndian;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
     int ndx = no % channelIndices.length; 
+    tiff[series][no].setId((String) files[series].get(no));
     byte[] b = tiff[series][no].openBytes(0);
     b = ImageTools.splitChannels(b, core.sizeC[series], false, 
       isInterleaved())[channelIndices[ndx]]; 
@@ -158,6 +125,7 @@ public class LeicaReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
+    tiff[series][no].setId((String) files[series].get(no));
     tiff[series][no].openBytes(0, buf);
     tiff[series][no].close();
     
@@ -173,6 +141,7 @@ public class LeicaReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
+    tiff[series][no].setId((String) files[series].get(no));
     BufferedImage b = tiff[series][no].openImage(0);
 
     int ndx = no % channelIndices.length;
@@ -213,9 +182,7 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
+    super.close(); 
     leiFilename = null;
     files = null;
     if (tiff != null) {
@@ -325,12 +292,12 @@ public class LeicaReader extends FormatReader {
 
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
-      littleEndian = (fourBytes[0] == TiffTools.LITTLE &&
+      core.littleEndian[0] = (fourBytes[0] == TiffTools.LITTLE &&
         fourBytes[1] == TiffTools.LITTLE &&
         fourBytes[2] == TiffTools.LITTLE &&
         fourBytes[3] == TiffTools.LITTLE);
 
-      in.order(littleEndian);
+      in.order(core.littleEndian[0]);
 
       status("Reading metadata blocks");
  
@@ -369,7 +336,6 @@ public class LeicaReader extends FormatReader {
 
       headerIFDs = new Hashtable[numSeries];
       files = new Vector[numSeries];
-      numPlanes = new int[numSeries];
 
       v.copyInto(headerIFDs);
 
@@ -381,15 +347,18 @@ public class LeicaReader extends FormatReader {
 
       status("Parsing metadata blocks");
 
+      core.littleEndian[0] = !core.littleEndian[0];
+
       for (int i=0; i<headerIFDs.length; i++) {
         if (headerIFDs[i].get(new Integer(10)) != null) {
           byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
-          nameLength = DataTools.bytesToInt(temp, 8, 4, littleEndian);
+          nameLength = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
         }
 
         Vector f = new Vector();
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
-        int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
+        int tempImages = DataTools.bytesToInt(tempData, 0, 4, 
+          core.littleEndian[0]);
         String dirPrefix =
           new Location(id).getAbsoluteFile().getParent();
         dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
@@ -554,8 +523,8 @@ public class LeicaReader extends FormatReader {
           //         are the same between TIFF files
         }
         else files[i] = f;
-        numPlanes[i] = files[i].size();
-        if (numPlanes[i] > maxPlanes) maxPlanes = numPlanes[i];
+        core.imageCount[i] = files[i].size();
+        if (core.imageCount[i] > maxPlanes) maxPlanes = core.imageCount[i];
       }
 
       tiff = new TiffReader[numSeries][maxPlanes];
@@ -626,13 +595,13 @@ public class LeicaReader extends FormatReader {
         // the series data
         // ID_SERIES
         addMeta("Version",
-          new Integer(DataTools.bytesToInt(temp, 0, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0])));
         addMeta("Number of Series",
-          new Integer(DataTools.bytesToInt(temp, 4, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0])));
         addMeta("Length of filename",
-          new Integer(DataTools.bytesToInt(temp, 8, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0])));
         addMeta("Length of file extension",
-          new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])));
         Integer fileExtLen = (Integer) getMeta("Length of file extension");
         addMeta("Image file extension",
           DataTools.stripString(new String(temp, 16, fileExtLen.intValue())));
@@ -643,17 +612,17 @@ public class LeicaReader extends FormatReader {
         // the image data
         // ID_IMAGES
 
-        core.sizeZ[i] = DataTools.bytesToInt(temp, 0, 4, littleEndian);
-        core.sizeX[i] = DataTools.bytesToInt(temp, 4, 4, littleEndian);
-        core.sizeY[i] = DataTools.bytesToInt(temp, 8, 4, littleEndian);
+        core.sizeZ[i] = DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0]);
+        core.sizeX[i] = DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0]);
+        core.sizeY[i] = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
 
         addMeta("Number of images", new Integer(core.sizeZ[i]));
         addMeta("Image width", new Integer(core.sizeX[i]));
         addMeta("Image height", new Integer(core.sizeY[i]));
         addMeta("Bits per Sample",
-          new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])));
         addMeta("Samples per pixel",
-          new Integer(DataTools.bytesToInt(temp, 16, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 16, 4, core.littleEndian[0])));
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(20));
@@ -662,8 +631,8 @@ public class LeicaReader extends FormatReader {
         // ID_DIMDESCR
         int pt = 0;
         addMeta("Voxel Version", new Integer(
-          DataTools.bytesToInt(temp, 0, 4, littleEndian)));
-        int voxelType = DataTools.bytesToInt(temp, 4, 4, littleEndian);
+          DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0])));
+        int voxelType = DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0]);
         String type = "";
         switch (voxelType) {
           case 0:
@@ -680,10 +649,10 @@ public class LeicaReader extends FormatReader {
         addMeta("VoxelType", type);
 
         addMeta("Bytes per pixel",
-          new Integer(DataTools.bytesToInt(temp, 8, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0])));
         addMeta("Real world resolution",
-          new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
-        int length = DataTools.bytesToInt(temp, 16, 4, littleEndian);
+          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])));
+        int length = DataTools.bytesToInt(temp, 16, 4, core.littleEndian[0]);
         addMeta("Maximum voxel intensity",
           DataTools.stripString(new String(temp, 20, length)));
         pt = 20 + length;
@@ -691,12 +660,12 @@ public class LeicaReader extends FormatReader {
         addMeta("Minimum voxel intensity",
           DataTools.stripString(new String(temp, pt, length)));
         pt += length;
-        length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4 + length + 4;
 
-        length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         for (int j=0; j<length; j++) {
-          int dimId = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          int dimId = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           String dimType = "";
           switch (dimId) {
             case 0:
@@ -786,31 +755,32 @@ public class LeicaReader extends FormatReader {
           addMeta("Dim" + j + " type", dimType);
           pt += 4;
           addMeta("Dim" + j + " size", new Integer(
-            DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+            DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0])));
           pt += 4;
           addMeta("Dim" + j + " distance between sub-dimensions",
-            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+            new Integer(DataTools.bytesToInt(temp, pt, 4, 
+            core.littleEndian[0])));
           pt += 4;
 
-          int len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          int len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
           addMeta("Dim" + j + " physical length",
             DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
-          len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
           addMeta("Dim" + j + " physical origin",
             DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
-          len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
           addMeta("Dim" + j + " name",
             DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
-          len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
           addMeta("Dim" + j + " description",
             DataTools.stripString(new String(temp, pt, len)));
@@ -830,26 +800,29 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // time data
         // ID_TIMEINFO
-        int nDims = DataTools.bytesToInt(temp, 0, 4, littleEndian);
+        int nDims = DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0]);
         addMeta("Number of time-stamped dimensions", new Integer(nDims));
         addMeta("Time-stamped dimension",
-          new Integer(DataTools.bytesToInt(temp, 4, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0])));
 
         int pt = 8;
 
         for (int j=0; j < nDims; j++) {
           addMeta("Dimension " + j + " ID",
-            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+            new Integer(DataTools.bytesToInt(temp, pt, 4, 
+            core.littleEndian[0])));
           pt += 4;
           addMeta("Dimension " + j + " size",
-            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+            new Integer(DataTools.bytesToInt(temp, pt, 4,
+            core.littleEndian[0])));
           pt += 4;
           addMeta("Dimension " + j + " distance between dimensions",
-            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+            new Integer(DataTools.bytesToInt(temp, pt, 4,
+            core.littleEndian[0])));
           pt += 4;
         }
 
-        int numStamps = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        int numStamps = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4;
         addMeta("Number of time-stamps", new Integer(numStamps));
         for (int j=0; j<numStamps; j++) {
@@ -858,17 +831,17 @@ public class LeicaReader extends FormatReader {
           pt += 64;
         }
 
-        int numTMs = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        int numTMs = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4;
         addMeta("Number of time-markers", new Integer(numTMs));
         for (int j=0; j<numTMs; j++) {
-          int numDims = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          int numDims = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
 
           for (int k=0; k<numDims; k++) {
             addMeta("Time-marker " + j +
               " Dimension " + k + " coordinate",
-              new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+              new Integer(DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0])));
             pt += 4;
           }
           addMeta("Time-marker " + j,
@@ -890,26 +863,26 @@ public class LeicaReader extends FormatReader {
         // experiment data
         // ID_EXPERIMENT
         int pt = 8;
-        int len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        int len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4;
 
         addMeta("Image Description",
           DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
-        len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4;
 
         addMeta("Main file extension",
           DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
 
-        len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4;
         addMeta("Single image format identifier",
           DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
 
-        len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4;
         addMeta("Single image extension",
           DataTools.stripString(new String(temp, pt, 2*len)));
@@ -920,11 +893,11 @@ public class LeicaReader extends FormatReader {
         // LUT data
         // ID_LUTDESC
         int pt = 0;
-        int nChannels = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        int nChannels = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
         pt += 4;
         addMeta("Number of LUT channels", new Integer(nChannels));
         addMeta("ID of colored dimension",
-          new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+          new Integer(DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0])));
         pt += 4;
 
         if (nChannels > 4) nChannels = 3;
@@ -933,27 +906,28 @@ public class LeicaReader extends FormatReader {
 
         for (int j=0; j<nChannels; j++) {
           addMeta("LUT Channel " + j + " version",
-            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+            new Integer(DataTools.bytesToInt(temp, pt, 4, 
+            core.littleEndian[0])));
           pt += 4;
 
-          int invert = DataTools.bytesToInt(temp, pt, 1, littleEndian);
+          int invert = DataTools.bytesToInt(temp, pt, 1, core.littleEndian[0]);
           pt += 1;
           boolean inverted = invert == 1;
           addMeta("LUT Channel " + j + " inverted?",
             new Boolean(inverted).toString());
 
-          int length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          int length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
           addMeta("LUT Channel " + j + " description",
             DataTools.stripString(new String(temp, pt, length)));
 
           pt += length;
-          length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
           addMeta("LUT Channel " + j + " filename",
             DataTools.stripString(new String(temp, pt, length)));
           pt += length;
-          length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+          length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
           pt += 4;
 
           String name = DataTools.stripString(new String(temp, pt, length));
@@ -1022,8 +996,21 @@ public class LeicaReader extends FormatReader {
       if (debug) e.printStackTrace();
     }
 
+    byte[] f = new byte[4];
     for (int i=0; i<numSeries; i++) {
       core.orderCertain[i] = true;
+      core.rgb[i] = false;
+      core.interleaved[i] = true;
+      try { 
+        in.seek(0);
+        in.read(f);
+        core.littleEndian[i] = (f[0] == TiffTools.LITTLE &&
+          f[1] == TiffTools.LITTLE && f[2] == TiffTools.LITTLE &&
+          f[3] == TiffTools.LITTLE);
+      }
+      catch (Exception e) {
+        if (debug) e.printStackTrace(); 
+      } 
 
       if (core.sizeC[i] == 0) core.sizeC[i] = 1;
       core.sizeT[i] += 1;
@@ -1061,7 +1048,7 @@ public class LeicaReader extends FormatReader {
         new Integer(core.sizeC[i] == 0 ? 1 : core.sizeC[i]), // SizeC
         new Integer(core.sizeT[i]), // SizeT
         new Integer(core.pixelType[i]), // PixelType
-        new Boolean(!littleEndian), // BigEndian
+        new Boolean(!core.littleEndian[i]), // BigEndian
         core.currentOrder[i], // DimensionOrder
         ii, null);
 

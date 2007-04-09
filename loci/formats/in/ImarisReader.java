@@ -47,12 +47,6 @@ public class ImarisReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Offsets to each image. */
   private int[] offsets;
 
@@ -117,8 +111,8 @@ public class ImarisReader extends FormatReader {
 
     status("Calculating image offsets");
 
-    numImages = core.sizeZ[0] * core.sizeC[0]; 
-    offsets = new int[numImages];
+    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0]; 
+    offsets = new int[core.imageCount[0]];
 
     for (int i=0; i<core.sizeC[0]; i++) {
       int offset = 332 + ((i + 1) * 168) + (i * core.sizeX[0] * 
@@ -131,8 +125,11 @@ public class ImarisReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeT[0] = numImages / (core.sizeC[0] * core.sizeZ[0]);
+    core.sizeT[0] = core.imageCount[0] / (core.sizeC[0] * core.sizeZ[0]);
     core.currentOrder[0] = "XYZCT";
+    core.rgb[0] = false;
+    core.interleaved[0] = false;
+    core.littleEndian[0] = IS_LITTLE;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
@@ -178,26 +175,6 @@ public class ImarisReader extends FormatReader {
     return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return IS_LITTLE;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0]];
@@ -234,13 +211,6 @@ public class ImarisReader extends FormatReader {
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   // -- IFormatHandler API methods --

@@ -26,11 +26,11 @@ package loci.formats;
 
 /** Encompasses core metadata values. */
 public class CoreMetadata {
-  public int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType;
+  public int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, imageCount;
   public int[][] cLengths;
   public String[][] cTypes;
   public String[] currentOrder;
-  public boolean[] orderCertain;
+  public boolean[] orderCertain, rgb, littleEndian, interleaved;
 
   public CoreMetadata(int series) {
     sizeX = new int[series];
@@ -39,10 +39,14 @@ public class CoreMetadata {
     sizeC = new int[series];
     sizeT = new int[series];
     pixelType = new int[series];
+    imageCount = new int[series];
     cLengths = new int[series][];
     cTypes = new String[series][];
     currentOrder = new String[series];
     orderCertain = new boolean[series];
+    rgb = new boolean[series];
+    littleEndian = new boolean[series];
+    interleaved = new boolean[series];
   }
 
 }

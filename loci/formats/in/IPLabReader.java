@@ -38,15 +38,6 @@ public class IPLabReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Flag indicating whether current file is little endian. */
-  protected boolean littleEndian;
-
-  /** Number of images in the file. */
-  private int numImages;
-
   /** Bytes per pixel. */
   private int bps;
 
@@ -71,26 +62,6 @@ public class IPLabReader extends FormatReader {
     if (size != 4) return false; // first block size should be 4
     int version = DataTools.bytesToInt(block, 8, 4, little);
     if (version < 0x100e) return false; // invalid version
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return core.sizeC[0] > 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return littleEndian;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return true;
   }
 
@@ -121,20 +92,13 @@ public class IPLabReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */ 
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      isRGB() ? core.sizeC[0] : 1, false, bps, littleEndian);
+      core.rgb[0] ? core.sizeC[0] : 1, false, bps, core.littleEndian[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given IPLab file. */
@@ -147,9 +111,9 @@ public class IPLabReader extends FormatReader {
 
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
-    littleEndian = new String(fourBytes).equals("iiii");
+    core.littleEndian[0] = new String(fourBytes).equals("iiii");
 
-    in.order(littleEndian);
+    in.order(core.littleEndian[0]);
 
     // populate standard metadata hashtable and OME root node
     in.skipBytes(12);
@@ -162,7 +126,7 @@ public class IPLabReader extends FormatReader {
     core.sizeT[0] = in.readInt();
     int filePixelType = in.readInt();
 
-    numImages = core.sizeZ[0] * core.sizeT[0];
+    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
 
     addMeta("Width", new Long(core.sizeX[0]));
     addMeta("Height", new Long(core.sizeY[0]));
@@ -224,6 +188,9 @@ public class IPLabReader extends FormatReader {
     if (core.sizeC[0] > 1) core.currentOrder[0] += "CZT";
     else core.currentOrder[0] += "ZTC";
 
+    core.rgb[0] = core.sizeC[0] > 1;
+    core.interleaved[0] = true;
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
@@ -234,7 +201,7 @@ public class IPLabReader extends FormatReader {
       new Integer(core.sizeC[0]), // SizeC
       new Integer(core.sizeT[0]), // SizeT
       new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!littleEndian), // BigEndian
+      new Boolean(!core.littleEndian[0]), // BigEndian
       core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0

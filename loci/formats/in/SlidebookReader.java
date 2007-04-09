@@ -40,20 +40,11 @@ public class SlidebookReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Offset to pixel data. */
   private int offset = 1792;
 
   /** Number of bytes per pixel. */
   private int bpp;
-
-  /** Flag is true if the data is in little-endian order. */
-  private boolean little;
 
   // -- Constructor --
 
@@ -67,26 +58,6 @@ public class SlidebookReader extends FormatReader {
     if (block.length < 8) return false;
     return block[0] == 0x6c && block[1] == 0 && block[2] == 0 &&
       block[3] == 1 && block[4] == 0x49 && block[5] == 0x49 && block[6] == 0;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount(String) */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB(String) */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian(String) */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return little;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -122,13 +93,6 @@ public class SlidebookReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-  }
-
   /** Initializes the given Slidebook file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("SlidebookReader.initFile(" + id + ")");
@@ -138,7 +102,7 @@ public class SlidebookReader extends FormatReader {
     status("Determining series count");
 
     in.skipBytes(4);
-    little = in.read() == 0x49;
+    core.littleEndian[0] = in.read() == 0x49;
 
     bpp = 2; // this is a major assumption
 
@@ -222,19 +186,21 @@ public class SlidebookReader extends FormatReader {
       core.sizeY[0] /= core.sizeC[0];
     }
 
-    numImages = count / (core.sizeX[0] * core.sizeY[0] * bpp);
+    core.imageCount[0] = count / (core.sizeX[0] * core.sizeY[0] * bpp);
 
     float planes = (float) count / (float) (core.sizeX[0]*core.sizeY[0] * bpp);
-    numImages = (int) planes;
+    core.imageCount[0] = (int) planes;
 
-    core.sizeZ[0] = numImages / (core.sizeC[0] * core.sizeT[0]);
+    core.sizeZ[0] = core.imageCount[0] / (core.sizeC[0] * core.sizeT[0]);
 
     core.pixelType[0] = FormatTools.UINT16;
     core.currentOrder[0] = "XY";
+    core.rgb[0] = false;
+    core.interleaved[0] = false;
 
-    if (numImages != (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0])) {
+    if (core.imageCount[0] != (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0])) {
       core.sizeZ[0] = 1;
-      core.sizeT[0] = numImages / core.sizeC[0];
+      core.sizeT[0] = core.imageCount[0] / core.sizeC[0];
     }
 
     int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
@@ -268,7 +234,7 @@ public class SlidebookReader extends FormatReader {
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), 
-      new Boolean(!little), core.currentOrder[0], null, null);
+      new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }

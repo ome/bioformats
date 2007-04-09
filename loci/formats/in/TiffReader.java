@@ -153,7 +153,7 @@ public class TiffReader extends BaseTiffReader {
 
           // MAJOR HACK : adjust SizeT to match the number of IFDs, if this
           // file was written by a buggy version of WiscScan
-          if (isWiscScan) core.sizeT[i] = numImages;
+          if (isWiscScan) core.sizeT[i] = core.imageCount[0];
 
           core.currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
           core.orderCertain[i] = true;
@@ -176,7 +176,7 @@ public class TiffReader extends BaseTiffReader {
             int firstT = nullFirstT ? 0 : Integer.parseInt(aFirstT);
             int firstC = nullFirstC ? 0 : Integer.parseInt(aFirstC);
             int numPlanes = nullNumPlanes ?
-              (nullIfd ? numImages : 1) : Integer.parseInt(aNumPlanes);
+              (nullIfd ? core.imageCount[0] : 1) : Integer.parseInt(aNumPlanes);
 
             // populate ZCT matrix
             char d1st = core.currentOrder[i].charAt(2);

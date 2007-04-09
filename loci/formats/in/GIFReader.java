@@ -49,12 +49,6 @@ public class GIFReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of frames. */
-  private int numFrames;
-
   private int status;
 
   /** Global color table used. */
@@ -140,26 +134,6 @@ public class GIFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numFrames;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
@@ -202,14 +176,6 @@ public class GIFReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-    numFrames = 0;
-  }
-
   /** Initializes the given GIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("GIFReader.initFile(" + id + ")");
@@ -217,7 +183,6 @@ public class GIFReader extends FormatReader {
 
     status("Verifying GIF format");
 
-    numFrames = 0;
     status = STATUS_OK;
     in = new RandomAccessStream(id);
     images = new Vector();
@@ -320,7 +285,7 @@ public class GIFReader extends FormatReader {
           do { check = readBlock(); }
           while (blockSize > 0 && check != -1);
 
-          numFrames++;
+          core.imageCount[0]++;
 
           if (transparency) act[transIndex] = save;
 
@@ -384,8 +349,11 @@ public class GIFReader extends FormatReader {
 
     core.sizeZ[0] = 1;
     core.sizeC[0] = 3;
-    core.sizeT[0] = numFrames;
+    core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCTZ";
+    core.rgb[0] = true;
+    core.littleEndian[0] = true;
+    core.interleaved[0] = true;
 
     // populate metadata store
 
@@ -545,7 +513,7 @@ public class GIFReader extends FormatReader {
     // fill in starting image contents based on last image's dispose code
     if (lastDispose > 0) {
       if (lastDispose == 3) { // use image before last
-        int n = numFrames - 2;
+        int n = core.imageCount[0] - 2;
         if (n > 0) lastImage = n - 1;
       }
 

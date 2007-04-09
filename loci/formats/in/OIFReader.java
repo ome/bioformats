@@ -39,12 +39,6 @@ public class OIFReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream reader;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Names of every TIFF file to open. */
   protected Vector tiffs;
 
@@ -72,26 +66,6 @@ public class OIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return isRGB() ? 3*numImages : numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return tiffReader[0].isRGB();
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved() */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return false;
   }
 
@@ -166,7 +140,7 @@ public class OIFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly) {
-      if (reader != null) reader.close();
+      if (in != null) in.close();
       if (thumbReader != null) thumbReader.close(fileOnly);
       if (tiffReader != null) {
         for (int i=0; i<tiffReader.length; i++) {
@@ -179,9 +153,7 @@ public class OIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
-    if (reader != null) reader.close();
-    reader = null;
-    currentId = null;
+    super.close(); 
     if (thumbReader != null) thumbReader.close();
     if (tiffReader != null) {
       for (int i=0; i<tiffReader.length; i++) {
@@ -226,7 +198,7 @@ public class OIFReader extends FormatReader {
     }
 
     super.initFile(oifFile);
-    reader = new RandomAccessStream(oifFile);
+    in = new RandomAccessStream(oifFile);
 
     usedFiles = new Vector();
     usedFiles.add(new Location(oifFile).getAbsolutePath());
@@ -238,8 +210,8 @@ public class OIFReader extends FormatReader {
 
     status("Parsing metadata values");
 
-    byte[] b = new byte[(int) reader.length()];
-    reader.read(b);
+    byte[] b = new byte[(int) in.length()];
+    in.read(b);
     String s = new String(b);
     StringTokenizer st = new StringTokenizer(s, "\r\n");
 
@@ -267,11 +239,11 @@ public class OIFReader extends FormatReader {
     status("Initializing helper readers");
 
     thumbReader = new BMPReader();
-    numImages = filenames.size();
-    tiffs = new Vector(numImages);
+    core.imageCount[0] = filenames.size();
+    tiffs = new Vector(core.imageCount[0]);
 
-    tiffReader = new TiffReader[numImages];
-    for (int i=0; i<numImages; i++) {
+    tiffReader = new TiffReader[core.imageCount[0]];
+    for (int i=0; i<core.imageCount[0]; i++) {
       tiffReader[i] = new TiffReader();
     }
 
@@ -282,7 +254,7 @@ public class OIFReader extends FormatReader {
     String tiffPath = null;
     RandomAccessStream ptyReader;
 
-    for (int i=0; i<numImages; i++) {
+    for (int i=0; i<core.imageCount[0]; i++) {
       String file = (String) filenames.get(new Integer(i));
       file = file.substring(1, file.length() - 1);
       file = file.replace('\\', File.separatorChar);
@@ -338,7 +310,9 @@ public class OIFReader extends FormatReader {
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
-    while (numImages > core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC()) {
+    while (core.imageCount[0] > 
+      core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC()) 
+    {
       if (core.sizeZ[0] == 1) core.sizeT[0]++;
       else if (core.sizeT[0] == 1) core.sizeZ[0]++;
     }
@@ -393,6 +367,10 @@ public class OIFReader extends FormatReader {
     for (int i=0; i<len; i++) {
       if (validBits[i] == 0) validBits = null;
     }
+
+    core.rgb[0] = tiffReader[0].isRGB();
+    core.littleEndian[0] = true;
+    core.interleaved[0] = false;
 
     store.setPixels(
       new Integer(core.sizeX[0]),

@@ -42,12 +42,6 @@ public class GatanReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Flag indicating whether current file is little endian. */
-  protected boolean littleEndian;
-
   /** Offset to pixel data. */
   private long pixelOffset;
 
@@ -73,26 +67,6 @@ public class GatanReader extends FormatReader {
       if (block[i] != GATAN_MAGIC_BLOCK_1[i]) return false;
     }
     return true;
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */  
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return littleEndian;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -123,8 +97,8 @@ public class GatanReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return ImageTools.makeImage(openBytes( no), core.sizeX[0], core.sizeY[0],
-      1, false, bytesPerPixel, littleEndian);
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
+      1, false, bytesPerPixel, core.littleEndian[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -133,43 +107,36 @@ public class GatanReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-    pixelOffset = 0;
-  }
-
   /** Initializes the given Gatan file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("GatanReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
+    pixelOffset = 0;
 
     status("Verifying Gatan format");
 
-    littleEndian = false;
+    core.littleEndian[0] = false;
     pixelSizes = new Vector();
 
-    byte[] temp = new byte[4];
-    in.read(temp);
+    byte[] tmp = new byte[4];
+    in.read(tmp);
     // only support version 3
-    if (!isThisType(temp)) {
+    if (!isThisType(tmp)) {
       throw new FormatException("invalid header");
     }
 
     status("Reading tags");
 
     in.skipBytes(4);
-    in.read(temp);
-    littleEndian = DataTools.bytesToInt(temp, littleEndian) == 1;
+    in.read(tmp);
+    core.littleEndian[0] = DataTools.bytesToInt(tmp, core.littleEndian[0]) == 1;
 
     // TagGroup instance
 
     in.skipBytes(2);
-    in.read(temp);
-    parseTags(DataTools.bytesToInt(temp, !littleEndian), "initFile");
+    in.read(tmp);
+    parseTags(DataTools.bytesToInt(tmp, !core.littleEndian[0]), "initFile");
 
     int datatype = Integer.parseInt((String) getMeta("DataType"));
 
@@ -226,6 +193,9 @@ public class GatanReader extends FormatReader {
     core.sizeC[0] = 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
+    core.imageCount[0] = 1;
+    core.rgb[0] = false;
+    core.interleaved[0] = false;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
@@ -237,7 +207,7 @@ public class GatanReader extends FormatReader {
       new Integer(core.sizeC[0]), // SizeC
       new Integer(core.sizeT[0]), // SizeT
       new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!littleEndian), // BigEndian
+      new Boolean(!core.littleEndian[0]), // BigEndian
       core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0
@@ -285,7 +255,7 @@ public class GatanReader extends FormatReader {
       byte type = in.readByte();  // can be 21 (data) or 20 (tag group)
       byte[] twobytes = new byte[2];
       in.read(twobytes);
-      int length = DataTools.bytesToInt(twobytes, !littleEndian);
+      int length = DataTools.bytesToInt(twobytes, !core.littleEndian[0]);
       byte[] label = new byte[length];
       in.read(label);
       String labelString = new String(label);
@@ -297,30 +267,32 @@ public class GatanReader extends FormatReader {
       if (type == 21) {
         in.skipBytes(4);  // equal to '%%%%'
         in.read(temp);
-        int n = DataTools.bytesToInt(temp, !littleEndian);
+        int n = DataTools.bytesToInt(temp, !core.littleEndian[0]);
         int dataType = 0;
         if (n == 1) {
           in.read(temp);
-          dataType = DataTools.bytesToInt(temp, !littleEndian);
+          dataType = DataTools.bytesToInt(temp, !core.littleEndian[0]);
           String data;
           switch (dataType) {
             case 2:
-              data = "" + DataTools.read2SignedBytes(in, littleEndian);
+              data = "" + DataTools.read2SignedBytes(in, core.littleEndian[0]);
               break;
             case 3:
-              data = "" + DataTools.read4SignedBytes(in, littleEndian);
+              data = "" + DataTools.read4SignedBytes(in, core.littleEndian[0]);
               break;
             case 4:
-              data = "" + DataTools.read2UnsignedBytes(in, littleEndian);
+              data = 
+                "" + DataTools.read2UnsignedBytes(in, core.littleEndian[0]);
               break;
             case 5:
-              data = "" + DataTools.read4UnsignedBytes(in, littleEndian);
+              data = 
+                "" + DataTools.read4UnsignedBytes(in, core.littleEndian[0]);
               break;
             case 6:
-              data = "" + DataTools.readFloat(in, littleEndian);
+              data = "" + DataTools.readFloat(in, core.littleEndian[0]);
               break;
             case 7:
-              data = "" + DataTools.readFloat(in, littleEndian);
+              data = "" + DataTools.readFloat(in, core.littleEndian[0]);
               in.skipBytes(4);
               break;
             case 8:
@@ -349,10 +321,10 @@ public class GatanReader extends FormatReader {
         }
         else if (n == 2) {
           in.read(temp);
-          dataType = DataTools.bytesToInt(temp, littleEndian);
+          dataType = DataTools.bytesToInt(temp, core.littleEndian[0]);
           if (dataType == 18) { // this should always be true
             in.read(temp);
-            length = DataTools.bytesToInt(temp, littleEndian);
+            length = DataTools.bytesToInt(temp, core.littleEndian[0]);
           }
           byte[] data = new byte[length];
           in.read(data);
@@ -360,12 +332,12 @@ public class GatanReader extends FormatReader {
         }
         else if (n == 3) {
           in.read(temp);
-          dataType = DataTools.bytesToInt(temp, !littleEndian);
+          dataType = DataTools.bytesToInt(temp, !core.littleEndian[0]);
           if (dataType == 20) { // this should always be true
             in.read(temp);
-            dataType = DataTools.bytesToInt(temp, !littleEndian);
+            dataType = DataTools.bytesToInt(temp, !core.littleEndian[0]);
             in.read(temp);
-            length = DataTools.bytesToInt(temp, !littleEndian);
+            length = DataTools.bytesToInt(temp, !core.littleEndian[0]);
 
             if ("Data".equals(labelString)) pixelDataNum++;
 
@@ -394,13 +366,14 @@ public class GatanReader extends FormatReader {
                 if (dataType == 2 || dataType == 4) {
                   byte[] two = new byte[2];
                   in.read(two);
-                  data[j] = (int) DataTools.bytesToShort(two, !littleEndian);
+                  data[j] = (int) DataTools.bytesToShort(two, 
+                    !core.littleEndian[0]);
                 }
                 else if (dataType == 7) in.skipBytes(8);
                 else if (dataType == 8 || dataType == 9) in.skipBytes(1);
                 else {
                   in.read(temp);
-                  data[j] = DataTools.bytesToInt(temp, !littleEndian);
+                  data[j] = DataTools.bytesToInt(temp, !core.littleEndian[0]);
                 }
               }
             }
@@ -408,19 +381,19 @@ public class GatanReader extends FormatReader {
         }
         else {
           in.read(temp);
-          dataType = DataTools.bytesToInt(temp, !littleEndian);
+          dataType = DataTools.bytesToInt(temp, !core.littleEndian[0]);
           // this is a normal struct of simple types
           if (dataType == 15) {
             int skip = 0;
             in.read(temp);
-            skip += DataTools.bytesToInt(temp, !littleEndian);
+            skip += DataTools.bytesToInt(temp, !core.littleEndian[0]);
             in.read(temp);
-            int numFields = DataTools.bytesToInt(temp, !littleEndian);
+            int numFields = DataTools.bytesToInt(temp, !core.littleEndian[0]);
             for (int j=0; j<numFields; j++) {
               in.read(temp);
-              skip += DataTools.bytesToInt(temp, !littleEndian);
+              skip += DataTools.bytesToInt(temp, !core.littleEndian[0]);
               in.read(temp);
-              dataType = DataTools.bytesToInt(temp, !littleEndian);
+              dataType = DataTools.bytesToInt(temp, !core.littleEndian[0]);
 
               switch (dataType) {
                 case 2:
@@ -455,17 +428,17 @@ public class GatanReader extends FormatReader {
             // this is an array of structs
             int skip = 0;
             in.read(temp);
-            dataType = DataTools.bytesToInt(temp, !littleEndian);
+            dataType = DataTools.bytesToInt(temp, !core.littleEndian[0]);
             if (dataType == 15) { // should always be true
               in.read(temp);
-              skip += DataTools.bytesToInt(temp, !littleEndian);
+              skip += DataTools.bytesToInt(temp, !core.littleEndian[0]);
               in.read(temp);
-              int numFields = DataTools.bytesToInt(temp, !littleEndian);
+              int numFields = DataTools.bytesToInt(temp, !core.littleEndian[0]);
               for (int j=0; j<numFields; j++) {
                 in.read(temp);
-                skip += DataTools.bytesToInt(temp, !littleEndian);
+                skip += DataTools.bytesToInt(temp, !core.littleEndian[0]);
                 in.read(temp);
-                dataType = DataTools.bytesToInt(temp, !littleEndian);
+                dataType = DataTools.bytesToInt(temp, !core.littleEndian[0]);
 
                 switch (dataType) {
                   case 2:
@@ -496,7 +469,7 @@ public class GatanReader extends FormatReader {
               }
             }
             in.read(temp);
-            skip *= DataTools.bytesToInt(temp, !littleEndian);
+            skip *= DataTools.bytesToInt(temp, !core.littleEndian[0]);
             in.skipBytes(skip);
           }
         }
@@ -504,7 +477,8 @@ public class GatanReader extends FormatReader {
       else if (type == 20) {
         in.skipBytes(2);
         in.read(temp);
-        parseTags(DataTools.bytesToInt(temp, !littleEndian), labelString);
+        parseTags(DataTools.bytesToInt(temp, !core.littleEndian[0]), 
+          labelString);
       }
     }
   }

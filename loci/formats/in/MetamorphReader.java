@@ -153,7 +153,7 @@ public class MetamorphReader extends BaseTiffReader {
       // copy ifds into a new array of Hashtables that will accomodate the
       // additional image planes
       long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
-      numImages = uic2.length;
+      core.imageCount[0] = uic2.length;
 
       long[] uic3 = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
       for (int i=0; i<uic3.length; i++) {
@@ -161,7 +161,7 @@ public class MetamorphReader extends BaseTiffReader {
         put("Wavelength [" + i + "]", in.readLong() / in.readLong());
       }
 
-      Hashtable[] tempIFDs = new Hashtable[numImages];
+      Hashtable[] tempIFDs = new Hashtable[core.imageCount[0]];
 
       long[] oldOffsets = TiffTools.getIFDLongArray(ifds[0],
           TiffTools.STRIP_OFFSETS, true);
@@ -185,7 +185,7 @@ public class MetamorphReader extends BaseTiffReader {
       int pointer = 0;
 
       Hashtable temp;
-      for(int i=0; i<numImages; i++) {
+      for(int i=0; i<core.imageCount[0]; i++) {
         temp = new Hashtable();
 
         // copy most of the data from 1st IFD

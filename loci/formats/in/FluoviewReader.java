@@ -260,7 +260,7 @@ public class FluoviewReader extends BaseTiffReader {
     if (core.currentOrder[0].indexOf("T") == -1) core.currentOrder[0] += "T";
     if (core.currentOrder[0].indexOf("C") == -1) core.currentOrder[0] += "C";
 
-    numImages = ifds.length;
+    core.imageCount[0] = ifds.length;
 
     // cut up the comment, if necessary
     String comment = (String) getMeta("Comment");

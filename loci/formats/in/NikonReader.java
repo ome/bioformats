@@ -104,9 +104,6 @@ public class NikonReader extends BaseTiffReader {
 
   // -- Fields --
 
-  /** True if the data is little endian. */
-  protected boolean littleEndian;
-
   /** Offset to the Nikon Maker Note. */
   protected int makerNoteOffset;
 
@@ -201,7 +198,7 @@ public class NikonReader extends BaseTiffReader {
 
     original = ifds[0];
     ifds[0] = realImage;
-    numImages = 1;
+    core.imageCount[0] = 1;
 
     Object pattern = getMeta("CFA pattern");
     if (pattern != null) {
@@ -222,9 +219,9 @@ public class NikonReader extends BaseTiffReader {
     for (int i=0; i<version.length; i++) v += version[i];
     addMeta("Version", v);
 
-    littleEndian = true;
+    core.littleEndian[0] = true;
     try {
-      littleEndian = TiffTools.isLittleEndian(ifds[0]);
+      core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
     }
     catch (FormatException f) { }
 

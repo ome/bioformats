@@ -38,38 +38,18 @@ public class LIFReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Flag indicating whether current file is little endian. */
-  protected boolean littleEndian;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Offsets to memory blocks, paired with their corresponding description. */
   protected Vector offsets;
 
-  /**
-   * Dimension information for each image.
-   * The first index specifies the image number, and the second specifies
-   * the dimension from the following list:
-   * 0) width
-   * 1) height
-   * 2) Z
-   * 3) T
-   * 4) channels (1 or 3)
-   * 5) bits per pixel
-   * 6) extra dimensions
-   */
-  protected int[][] dims;
+  /** Bits per pixel. */
+  private int[] bitsPerPixel;
 
+  /** Extra dimensions. */
+  private int[] extraDimensions;
+  
   /** Number of valid bits per pixel */
   private int[][] validBits;
 
-  private int width;
-  private int height;
-  private int c;
   private int bpp;
   private Vector xcal;
   private Vector ycal;
@@ -91,35 +71,14 @@ public class LIFReader extends FormatReader {
     return block[0] == 0x70;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    numImages = dims[series][2] * dims[series][3];
-    return numImages * (isRGB() ? 1 : dims[series][4]);
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return dims[series][4] > 1 && dims[series][4] < 4;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return littleEndian;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#getSeriesCount() */ 
   public int getSeriesCount() throws FormatException, IOException {
-    return dims.length;
+    return core.sizeX.length;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
-    bpp = dims[series][5];
+    bpp = bitsPerPixel[series];
     while (bpp % 8 != 0) bpp++;
     byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] *
       (bpp / 8) * getRGBChannelCount()];
@@ -133,7 +92,7 @@ public class LIFReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    bpp = dims[series][5];
+    bpp = bitsPerPixel[series]; 
     while (bpp % 8 != 0) bpp++;
     int bytes = bpp / 8;
     if (buf.length < core.sizeX[series] * core.sizeY[series] * bytes * 
@@ -154,20 +113,13 @@ public class LIFReader extends FormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], isRGB() ? core.sizeC[series] : 1, false, bpp / 8,
-      littleEndian, validBits[series]);
+      core.littleEndian[series], validBits[series]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given LIF file. */
@@ -177,7 +129,7 @@ public class LIFReader extends FormatReader {
     in = new RandomAccessStream(id);
     offsets = new Vector();
 
-    littleEndian = true;
+    core.littleEndian[0] = true;
 
     xcal = new Vector();
     ycal = new Vector();
@@ -206,7 +158,7 @@ public class LIFReader extends FormatReader {
 
     // number of Unicode characters in the XML block
 
-    int nc = DataTools.read4SignedBytes(in, littleEndian);
+    int nc = DataTools.read4SignedBytes(in, core.littleEndian[0]);
     byte[] s = new byte[nc * 2];
     in.read(s);
     String xml = DataTools.stripString(new String(s));
@@ -214,7 +166,7 @@ public class LIFReader extends FormatReader {
     status("Finding image offsets");
 
     while (in.getFilePointer() < in.length()) {
-      if (DataTools.read4SignedBytes(in, littleEndian) != 0x70) {
+      if (DataTools.read4SignedBytes(in, core.littleEndian[0]) != 0x70) {
         throw new FormatException("Invalid Memory Block");
       }
 
@@ -223,12 +175,12 @@ public class LIFReader extends FormatReader {
         throw new FormatException("Invalid Memory Description");
       }
 
-      int blockLength = DataTools.read4SignedBytes(in, littleEndian);
+      int blockLength = DataTools.read4SignedBytes(in, core.littleEndian[0]);
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
       }
 
-      int descrLength = DataTools.read4SignedBytes(in, littleEndian);
+      int descrLength = DataTools.read4SignedBytes(in, core.littleEndian[0]);
       byte[] memDescr = new byte[2*descrLength];
       in.read(memDescr);
 
@@ -238,7 +190,6 @@ public class LIFReader extends FormatReader {
 
       in.skipBytes(blockLength);
     }
-    numImages = offsets.size();
     initMetadata(xml);
   }
 
@@ -270,7 +221,6 @@ public class LIFReader extends FormatReader {
     // be parsed into the appropriate image dimensions
 
     int ndx = 1;
-    numImages = 0;
 
     // the image data we need starts with the token "ElementName='blah'" and
     // ends with the token "/ImageDescription"
@@ -449,25 +399,9 @@ public class LIFReader extends FormatReader {
     }
 
     numDatasets = widths.size();
-    dims = new int[numDatasets][7];
 
-    for (int i=0; i<numDatasets; i++) {
-      dims[i][0] = ((Integer) widths.get(i)).intValue();
-      dims[i][1] = ((Integer) heights.get(i)).intValue();
-      dims[i][2] = ((Integer) zs.get(i)).intValue();
-      dims[i][3] = ((Integer) ts.get(i)).intValue();
-      dims[i][4] = ((Integer) channels.get(i)).intValue();
-      dims[i][5] = ((Integer) bps.get(i)).intValue();
-      dims[i][6] = ((Integer) extraDims.get(i)).intValue();
-
-      if (dims[i][6] > 1) {
-        if (dims[i][2] == 1) dims[i][2] = dims[i][6];
-        else dims[i][3] *= dims[i][6];
-        dims[i][6] = 1;
-      }
-
-      numImages += (dims[i][2] * dims[i][3] * dims[i][6]);
-    }
+    bitsPerPixel = new int[numDatasets];
+    extraDimensions = new int[numDatasets];
 
     // Populate metadata store
 
@@ -481,21 +415,36 @@ public class LIFReader extends FormatReader {
     validBits = new int[numDatasets][];
 
     for (int i=0; i<numDatasets; i++) {
-      core.sizeX[i] = dims[i][0];
-      core.sizeY[i] = dims[i][1];
-      core.sizeZ[i] = dims[i][2];
-      core.sizeC[i] = dims[i][4];
-      core.sizeT[i] = dims[i][3];
+      core.sizeX[i] = ((Integer) widths.get(i)).intValue();
+      core.sizeY[i] = ((Integer) heights.get(i)).intValue();
+      core.sizeZ[i] = ((Integer) zs.get(i)).intValue();
+      core.sizeC[i] = ((Integer) channels.get(i)).intValue();
+      core.sizeT[i] = ((Integer) ts.get(i)).intValue();
       core.currentOrder[i] = 
         (core.sizeZ[i] > core.sizeT[i]) ? "XYCZT" : "XYCTZ";
 
-      validBits[i] = new int[core.sizeC[i] != 2 ? core.sizeC[i] : 3];
-      for (int j=0; j<validBits[i].length; j++) {
-        validBits[i][j] = dims[i][5];
+      bitsPerPixel[i] = ((Integer) bps.get(i)).intValue();
+      extraDimensions[i] = ((Integer) extraDims.get(i)).intValue();
+
+      if (extraDimensions[i] > 1) {
+        if (core.sizeZ[i] == 1) core.sizeZ[i] = extraDimensions[i];
+        else core.sizeT[i] *= extraDimensions[i];
+        extraDimensions[i] = 1; 
       }
 
-      while (dims[i][5] % 8 != 0) dims[i][5]++;
-      switch (dims[i][5]) {
+      core.littleEndian[i] = true;
+      core.rgb[i] = core.sizeC[i] > 1 && core.sizeC[i] < 4;
+      core.interleaved[i] = true;
+      core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
+      if (core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
+
+      validBits[i] = new int[core.sizeC[i] != 2 ? core.sizeC[i] : 3];
+      for (int j=0; j<validBits[i].length; j++) {
+        validBits[i][j] = bitsPerPixel[i];
+      }
+
+      while (bitsPerPixel[i] % 8 != 0) bitsPerPixel[i]++;
+      switch (bitsPerPixel[i]) {
         case 8:
           core.pixelType[i] = FormatTools.UINT8;
           break;
@@ -512,13 +461,13 @@ public class LIFReader extends FormatReader {
       store.setImage((String) seriesNames.get(i), null, null, ii);
 
       store.setPixels(
-        new Integer(core.sizeX[0]), // SizeX
-        new Integer(core.sizeY[0]), // SizeY
-        new Integer(core.sizeZ[0]), // SizeZ
-        new Integer(core.sizeC[0]), // SizeC
-        new Integer(core.sizeT[0]), // SizeT
+        new Integer(core.sizeX[i]), // SizeX
+        new Integer(core.sizeY[i]), // SizeY
+        new Integer(core.sizeZ[i]), // SizeZ
+        new Integer(core.sizeC[i]), // SizeC
+        new Integer(core.sizeT[i]), // SizeT
         new Integer(core.pixelType[i]), // PixelType
-        new Boolean(!littleEndian), // BigEndian
+        new Boolean(!core.littleEndian[i]), // BigEndian
         core.currentOrder[i], // DimensionOrder
         ii, // Image index
         null); // Pixels index

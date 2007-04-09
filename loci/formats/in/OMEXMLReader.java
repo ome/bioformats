@@ -59,15 +59,6 @@ public class OMEXMLReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Flag indicating whether current file is little endian. */
-  protected boolean[] littleEndian;
-
-  /** Number of image planes in the file. */
-  protected int[] numImages;
-
   /** Number of bits per pixel. */
   protected int[] bpp;
 
@@ -89,34 +80,9 @@ public class OMEXMLReader extends FormatReader {
     return new String(block, 0, 5).equals("<?xml");
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
-  public int getSeriesCount() throws FormatException, IOException {
-    return core.sizeX.length; 
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages[series];
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return littleEndian[series];
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
-    if (no < 0 || no >= numImages[series]) {
+    if (no < 0 || no >= core.imageCount[series]) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -183,20 +149,13 @@ public class OMEXMLReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */ 
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
-      core.sizeY[series], 1, false, bpp[series], littleEndian[series]);
+      core.sizeY[series], 1, false, bpp[series], core.littleEndian[series]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given OME-XML file. */
@@ -251,11 +210,9 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
-    littleEndian = new boolean[numDatasets];
     offsets = new Vector[numDatasets];
 
-    for (int i=0; i<littleEndian.length; i++) {
-      littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
+    for (int i=0; i<numDatasets; i++) {
       offsets[i] = new Vector();
     }
 
@@ -375,7 +332,6 @@ public class OMEXMLReader extends FormatReader {
 
     core = new CoreMetadata(numDatasets);
 
-    numImages = new int[numDatasets];
     bpp = new int[numDatasets];
     compression = new String[numDatasets];
 
@@ -389,6 +345,9 @@ public class OMEXMLReader extends FormatReader {
     }
     for (int i=0; i<numDatasets; i++) {
       setSeries(i);
+      
+      core.littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
+      
       Integer ndx = new Integer(i);
       Integer w = null, h = null, t = null, z = null, c = null;
       String pixType = null, dimOrder = null;
@@ -411,6 +370,8 @@ public class OMEXMLReader extends FormatReader {
       core.sizeT[i] = t.intValue();
       core.sizeZ[i] = z.intValue();
       core.sizeC[i] = c.intValue();
+      core.rgb[i] = false;
+      core.interleaved[i] = false;
 
       String type = pixType.toLowerCase();
       if (type.endsWith("16")) {
@@ -453,12 +414,12 @@ public class OMEXMLReader extends FormatReader {
       int planes = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
 
       searchForData(expected, planes);
-      numImages[i] = offsets[i].size();
-      if (numImages[i] < planes) {
+      core.imageCount[i] = offsets[i].size();
+      if (core.imageCount[i] < planes) {
         // hope this doesn't happen too often
         in.seek(((Integer) offsets[i].get(0)).intValue());
         searchForData(0, planes);
-        numImages[i] = offsets[i].size();
+        core.imageCount[i] = offsets[i].size();
       }
       buf = null;
     }

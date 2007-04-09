@@ -48,6 +48,9 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Fields --
 
+  /** Current file. */
+  protected RandomAccessStream in;
+
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable metadata;
 
@@ -187,7 +190,9 @@ public abstract class FormatReader extends FormatHandler
   public abstract boolean isThisType(byte[] block);
 
   /* @see IFormatReader#getImageCount() */
-  public abstract int getImageCount() throws FormatException, IOException;
+  public int getImageCount() throws FormatException, IOException {
+    return core.imageCount[series];
+  }
 
   /* @see IFormatReader#setId(String) */
   public void setId(String id) throws FormatException, IOException {
@@ -196,7 +201,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() throws FormatException, IOException {
-    return getRGBChannelCount() > 1;
+    return core.rgb[series];
   }
 
   /* @see IFormatReader#getSizeX() */
@@ -273,7 +278,9 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader.isLittleEndian() */
-  public abstract boolean isLittleEndian() throws FormatException, IOException;
+  public boolean isLittleEndian() throws FormatException, IOException {
+    return core.littleEndian[series];
+  }
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() throws FormatException, IOException {
@@ -291,8 +298,9 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isInterleaved(int) */
-  public abstract boolean isInterleaved(int subC) 
-    throws FormatException, IOException;
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
+    return core.interleaved[series];
+  }
 
   /* @see IFormatReader#openImage(int) */
   public abstract BufferedImage openImage(int no)
@@ -330,11 +338,15 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#close() */
-  public abstract void close() throws FormatException, IOException;
+  public void close() throws FormatException, IOException {
+    if (in != null) in.close();
+    in = null;
+    currentId = null;
+  }
 
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() throws FormatException, IOException {
-    return 1;
+    return core.sizeX.length;
   }
 
   /* @see IFormatReader#setSeries(int) */

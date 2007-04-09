@@ -39,11 +39,6 @@ import loci.formats.*;
  */
 public abstract class ImageIOReader extends FormatReader {
 
-  // -- Fields --
-
-  /** Flag indicating image is RGB. */
-  private boolean rgb;
-
   // -- Constructors --
 
   /** Constructs a new ImageIOReader. */
@@ -58,26 +53,6 @@ public abstract class ImageIOReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return rgb;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return true;
-  }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no)
@@ -128,13 +103,16 @@ public abstract class ImageIOReader extends FormatReader {
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();
 
-    rgb = img.getRaster().getNumBands() > 1;
+    core.rgb[0] = img.getRaster().getNumBands() > 1;
 
     core.sizeZ[0] = 1;
-    core.sizeC[0] = rgb ? 3 : 1;
+    core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
     core.pixelType[0] = ImageTools.getPixelType(img);
+    core.imageCount[0] = 1;
+    core.interleaved[0] = true;
+    core.littleEndian[0] = false;
 
     // populate the metadata store
 
@@ -147,7 +125,7 @@ public abstract class ImageIOReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      new Boolean(false),
+      new Boolean(!core.littleEndian[0]), 
       core.currentOrder[0], 
       null,
       null);

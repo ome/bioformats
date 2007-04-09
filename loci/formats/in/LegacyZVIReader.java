@@ -65,9 +65,6 @@ public class LegacyZVIReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
   /** List of image blocks. */
   private Vector blockList;
 
@@ -94,21 +91,6 @@ public class LegacyZVIReader extends FormatReader {
       if (block[i] != ZVI_SIG[i]) return false;
     }
     return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return (bytesPerPixel == 3) || (bytesPerPixel > 4);
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -151,13 +133,6 @@ public class LegacyZVIReader extends FormatReader {
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given ZVI file. */
@@ -419,6 +394,10 @@ public class LegacyZVIReader extends FormatReader {
       core.sizeZ[0] = zSet.size();
       core.sizeC[0] = cSet.size();
       core.sizeT[0] = tSet.size();
+      core.rgb[0] = bytesPerPixel == 3 || bytesPerPixel > 4;
+      core.interleaved[0] = false;
+      core.imageCount[0] = blockList.size();
+      core.littleEndian[0] = true;
 
       // Populate metadata store
 

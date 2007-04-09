@@ -51,26 +51,6 @@ public class LegacyPictReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return core.sizeC[0] > 1;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
     return ImageTools.getBytes(openImage(no), false, 3);
@@ -111,6 +91,10 @@ public class LegacyPictReader extends FormatReader {
     core.sizeT[0] = 1;
     core.pixelType[0] = FormatTools.INT8;
     core.currentOrder[0] = "XYCZT";
+    core.rgb[0] = core.sizeC[0] > 1;
+    core.interleaved[0] = false;
+    core.imageCount[0] = 1;
+    core.littleEndian[0] = false;
 
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
@@ -125,8 +109,5 @@ public class LegacyPictReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException { }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException { }
 
 }

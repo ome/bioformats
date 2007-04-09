@@ -66,9 +66,6 @@ public class OIBReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file */
-  private RandomAccessStream in;
-
   /** Number of images. */
   private Vector nImages;
 
@@ -117,7 +114,6 @@ public class OIBReader extends FormatReader {
   /** Number of valid bits per pixel. */
   private int[][] validBits;
 
-  private boolean[] littleEndian;
   private Vector rgb;
 
   // -- Constructor --
@@ -131,31 +127,6 @@ public class OIBReader extends FormatReader {
   public boolean isThisType(byte[] block) {
     return (block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0);
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return ((Integer) nImages.get(series)).intValue();
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return ((Boolean) rgb.get(series)).booleanValue();
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#getSeriesCount() */
-  public int getSeriesCount() throws FormatException, IOException {
-    return width.size();
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -193,7 +164,7 @@ public class OIBReader extends FormatReader {
 
       RandomAccessStream stream = new RandomAccessStream(b);
       Hashtable[] ifds = TiffTools.getIFDs(stream);
-      littleEndian[series] = TiffTools.isLittleEndian(ifds[0]);
+      core.littleEndian[series] = TiffTools.isLittleEndian(ifds[0]);
       TiffTools.getSamples(ifds[0], stream, buf);
       stream.close();
       return buf;
@@ -214,7 +185,7 @@ public class OIBReader extends FormatReader {
       getRGBChannelCount());
 
     return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series], 
-      getRGBChannelCount(), false, bytes, !littleEndian[series], 
+      getRGBChannelCount(), false, bytes, !core.littleEndian[series], 
       validBits[series]);
   }
 
@@ -226,10 +197,7 @@ public class OIBReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-
+    super.close();
     String[] vars = {"dirName", "root", "dir", "document", "dis",
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
       "entry", "documentName", "entryName"};
@@ -351,8 +319,6 @@ public class OIBReader extends FormatReader {
         }
       }
 
-      littleEndian = new boolean[numSeries];
-
       core = new CoreMetadata(numSeries);
 
       validBits = new int[numSeries][];
@@ -382,31 +348,38 @@ public class OIBReader extends FormatReader {
         core.currentOrder[i] = 
           (core.sizeZ[i] > core.sizeT[i]) ? "XYCZT" : "XYCTZ";
 
-        int numImages = ((Integer) nImages.get(i)).intValue();
+        core.imageCount[i] = ((Integer) nImages.get(i)).intValue();
 
-        if (numImages > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) {
-          int diff = numImages - 
+        if (core.imageCount[i] > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i])
+        {
+          int diff = core.imageCount[i] - 
             (core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]);
 
           if (diff % core.sizeZ[i] == 0 && core.sizeZ[i] > 1) {
-            while (numImages > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) {
+            while (core.imageCount[i] > 
+              core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) 
+            {
               core.sizeT[i]++;
             } 
           }
           else if (diff % core.sizeT[i] == 0 && core.sizeT[i] > 1) {
-            while (numImages > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) {
+            while (core.imageCount[i] > 
+              core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]) 
+            {
               core.sizeZ[i]++;
             } 
           }
           else if (diff % core.sizeC[i] == 0) {
             if (core.sizeZ[i] > core.sizeT[i]) {
-              while (numImages > core.sizeZ[i] * core.sizeC[i] * core.sizeT[i])
+              while (core.imageCount[i] > 
+                core.sizeZ[i] * core.sizeC[i] * core.sizeT[i])
               {
                 core.sizeZ[i]++;
               } 
             }
             else {
-              while (numImages > core.sizeZ[i] * core.sizeC[i] * core.sizeT[i]) 
+              while (core.imageCount[i] > 
+                core.sizeZ[i] * core.sizeC[i] * core.sizeT[i]) 
               { 
                 core.sizeT[i]++;
               } 
@@ -416,11 +389,12 @@ public class OIBReader extends FormatReader {
 
         int oldSeries = getSeries();
         setSeries(i);
-        while (numImages < core.sizeZ[i] * core.sizeT[i] * getEffectiveSizeC()) 
+        while (core.imageCount[i] < 
+          core.sizeZ[i] * core.sizeT[i] * getEffectiveSizeC()) 
         {
-          numImages++;
+          core.imageCount[i]++;
         }
-        nImages.setElementAt(new Integer(numImages), i);
+        nImages.setElementAt(new Integer(core.imageCount[i]), i);
         setSeries(oldSeries);
 
         validBits[i] = new int[core.sizeC[i] == 2 ? 3 : core.sizeC[i]];
@@ -436,6 +410,9 @@ public class OIBReader extends FormatReader {
           for (int j=0; j<validBits[i].length; j++) validBits[i][j] = vb;
         }
         else validBits[i] = null;
+      
+        core.rgb[i] = ((Boolean) rgb.get(i)).booleanValue();
+        core.interleaved[i] = false;
       }
     }
     catch (ReflectException e) {

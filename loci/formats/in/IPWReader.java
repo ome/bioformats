@@ -69,8 +69,6 @@ public class IPWReader extends BaseTiffReader {
   private Hashtable names;
   private byte[] header;  // general image header data
   private byte[] tags; // tags data
-  private boolean rgb;
-  private boolean little;
 
   // -- Constructor --
 
@@ -84,21 +82,6 @@ public class IPWReader extends BaseTiffReader {
     // all of our samples begin with 0xd0cf11e0
     return (block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0);
-  }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return rgb;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return little;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
@@ -144,7 +127,7 @@ public class IPWReader extends BaseTiffReader {
 
       RandomAccessStream stream = new RandomAccessStream(b);
       ifds = TiffTools.getIFDs(stream);
-      little = TiffTools.isLittleEndian(ifds[0]);
+      core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
       TiffTools.getSamples(ifds[0], stream, buf);
       stream.close();
       return buf;
@@ -164,7 +147,7 @@ public class IPWReader extends BaseTiffReader {
     byte[] b = openBytes(no);
     int bytes = b.length / (core.sizeX[0] * core.sizeY[0]);
     return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0],
-      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, little);
+      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, core.littleEndian[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -175,9 +158,7 @@ public class IPWReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
+    super.close();
 
     pixels = null;
     names = null;
@@ -200,7 +181,6 @@ public class IPWReader extends BaseTiffReader {
 
     pixels = new Hashtable();
     names = new Hashtable();
-    numImages = 0;
 
     try {
       r.setVar("fis", in);
@@ -249,16 +229,16 @@ public class IPWReader extends BaseTiffReader {
     }
     catch (ReflectException e) { }
 
-    rgb = (TiffTools.getIFDIntValue(ifds[0],
+    core.rgb[0] = (TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
 
-    if (!rgb) {
-      rgb = TiffTools.getIFDIntValue(ifds[0],
+    if (!core.rgb[0]) {
+      core.rgb[0] = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.PHOTOMETRIC_INTERPRETATION, false, 1) ==
         TiffTools.RGB_PALETTE;
     }
 
-    little = TiffTools.isLittleEndian(ifds[0]);
+    core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
     // parse the image description
     String description = new String(tags, 22, tags.length-22);
@@ -298,7 +278,7 @@ public class IPWReader extends BaseTiffReader {
     core.sizeT[0] = Integer.parseInt((String) getMeta("slices"));
     core.currentOrder[0] = "XY";
 
-    if (rgb) core.sizeC[0] *= 3;
+    if (core.rgb[0]) core.sizeC[0] *= 3;
 
     int maxNdx = 0, max = 0;
     int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
@@ -449,7 +429,7 @@ public class IPWReader extends BaseTiffReader {
           Integer imageNum = Integer.valueOf(name);
           pixels.put(imageNum, dirName);
           names.put(imageNum, entryName);
-          numImages++;
+          core.imageCount[0]++;
         }
         r.exec("dis.close()");
         if (debug) {

@@ -34,12 +34,6 @@ public class AliconaReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Number of image planes in the file. */
-  protected int numImages = 0;
-
   /** Image offset. */
   private int textureOffset;
 
@@ -58,26 +52,6 @@ public class AliconaReader extends FormatReader {
     return (new String(block)).indexOf("Alicona") != -1;
   }
  
-  /* @see loci.formats.IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(, int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * numBytes];
@@ -119,13 +93,6 @@ public class AliconaReader extends FormatReader {
   public void close(boolean fileOnly) throws FormatException, IOException {
     if (fileOnly && in != null) in.close();
     else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given Alicona file. */
@@ -170,7 +137,7 @@ public class AliconaReader extends FormatReader {
       else if (key.equals("Rows")) core.sizeY[0] = Integer.parseInt(value);
       else if (key.equals("Cols")) core.sizeX[0] = Integer.parseInt(value);
       else if (key.equals("NumberOfPlanes")) {
-        numImages = Integer.parseInt(value);
+        core.imageCount[0] = Integer.parseInt(value);
       }
       else if (key.equals("TextureImageOffset")) {
         textureOffset = Integer.parseInt(value);
@@ -180,13 +147,16 @@ public class AliconaReader extends FormatReader {
     status("Populating metadata");
 
     numBytes = (int) (in.length() - textureOffset) / 
-      (core.sizeX[0] * core.sizeY[0] * numImages);
+      (core.sizeX[0] * core.sizeY[0] * core.imageCount[0]);
 
     boolean hasC = !((String) getMeta("TexturePtr")).trim().equals("7");
 
     core.sizeC[0] = hasC ? 3 : 1;
     core.sizeZ[0] = 1;
-    core.sizeT[0] = numImages / core.sizeC[0];
+    core.sizeT[0] = core.imageCount[0] / core.sizeC[0];
+    core.rgb[0] = false;
+    core.interleaved[0] = false;
+    core.littleEndian[0] = true;
 
     core.pixelType[0] = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
     core.currentOrder[0] = "XYCTZ";
@@ -199,7 +169,7 @@ public class AliconaReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      new Boolean(true),
+      new Boolean(!core.littleEndian[0]), 
       core.currentOrder[0],
       null,
       null

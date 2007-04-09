@@ -89,16 +89,6 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* @see BaseTiffReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see BaseTiffReader#isInterleaved() */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
-
   /* @see BaseTiffReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ImarisTiffReader.initFile(" + id + ")");
@@ -144,8 +134,9 @@ public class ImarisTiffReader extends BaseTiffReader {
       TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 0);
 
     ifds = (Hashtable[]) tmp.toArray(new Hashtable[0]);
-    numImages = core.sizeC[0] * core.sizeZ[0];
+    core.imageCount[0] = core.sizeC[0] * core.sizeZ[0];
     core.currentOrder[0] = "XYZCT";
+    core.interleaved[0] = false;
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);

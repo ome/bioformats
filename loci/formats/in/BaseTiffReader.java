@@ -43,14 +43,8 @@ public abstract class BaseTiffReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current TIFF file. */
-  protected RandomAccessStream in;
-
   /** List of IFDs for the current TIFF. */
   protected Hashtable[] ifds;
-
-  /** Number of images in the current TIFF stack. */
-  protected int numImages;
 
   // -- Constructors --
 
@@ -70,7 +64,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return new int[] {
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, -1),
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, -1),
-      numImages
+      core.imageCount[0] 
     };
   }
 
@@ -444,19 +438,19 @@ public abstract class BaseTiffReader extends FormatReader {
       put("Comment", comment);
     }
 
+    int samples = TiffTools.getIFDIntValue(ifds[0], 
+      TiffTools.SAMPLES_PER_PIXEL, false, 1);
+    core.rgb[0] = samples > 1 || p == TiffTools.RGB_PALETTE ||
+      p == TiffTools.CFA_ARRAY || p == TiffTools.RGB;
+    core.interleaved[0] = TiffTools.getSamplesPerPixel(ifds[0]) > 1;
+    core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
+
     core.sizeX[0] =
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
     core.sizeY[0] =
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
     core.sizeZ[0] = 1;
-
-    try {
-      core.sizeC[0] = isRGB() ? 3 : 1;
-    }
-    catch (IOException e) {
-      throw new FormatException(e);
-    }
-
+    core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = ifds.length;
 
     int bitFormat = TiffTools.getIFDIntValue(ifds[0],
@@ -685,39 +679,11 @@ public abstract class BaseTiffReader extends FormatReader {
     return TiffTools.isValidHeader(block);
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
-    if (TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1)
-    {
-      return true;
-    }
-    int p = TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-    return p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY || 
-      p == TiffTools.RGB;
-  }
-
   /* @see loci.formats.IFormatReader#getMetadataValue(String) */ 
   public Object getMetadataValue(String field)
     throws FormatException, IOException
   {
     return getMeta(field);
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return TiffTools.isLittleEndian(ifds[0]);
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return TiffTools.getSamplesPerPixel(ifds[0]) > 1; 
   }
 
   /* @see loci.formats.FormatReader#openBytes(int, byte[]) */
@@ -759,13 +725,6 @@ public abstract class BaseTiffReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-  }
-
   /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BaseTiffReader.initFile(" + id + ")");
@@ -780,7 +739,7 @@ public abstract class BaseTiffReader extends FormatReader {
     
     status("Populating metadata"); 
 
-    numImages = ifds.length;
+    core.imageCount[0] = ifds.length;
     initMetadata();
   }
 

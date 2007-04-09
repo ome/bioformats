@@ -78,20 +78,8 @@ public class PictReader extends FormatReader {
 
   // -- Fields --
 
-  /** Current file. */
-  protected RandomAccessStream in;
-
-  /** Flag indicating whether current file is little endian. */
-  protected boolean little;
-
   /** Pixel bytes. */
   protected byte[] bytes;
-
-  /** Width of the image. */
-  protected int width;
-
-  /** Height of the image. */
-  protected int height;
 
   /** Number of bytes in a row of pixel data (variable). */
   protected int rowBytes;
@@ -124,31 +112,9 @@ public class PictReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a PICT file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     if (block.length < 528) return false;
-    return true;
-  }
-
-  /** Determines the number of images in the given PICT file. */
-  public int getImageCount() throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Checks if the images in the file are RGB. */
-  public boolean isRGB() throws FormatException, IOException {
-    return true;
-  }
-
-  /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return little;
-  }
-
-  /** Returns whether or not the channels are interleaved. */
-  public boolean isInterleaved(int subC)
-    throws FormatException, IOException
-  {
     return true;
   }
 
@@ -187,7 +153,7 @@ public class PictReader extends FormatReader {
 
     status("Populating metadata");
 
-    little = false;
+    core.littleEndian[0] = false;
 
     // skip the header and read in the remaining bytes
     int len = (int) (in.length() - 512);
@@ -207,6 +173,9 @@ public class PictReader extends FormatReader {
     core.sizeC[0] = 3;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
+    core.rgb[0] = true;
+    core.interleaved[0] = true;
+    core.imageCount[0] = 1;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
@@ -216,7 +185,7 @@ public class PictReader extends FormatReader {
       new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), 
-      new Boolean(!little), core.currentOrder[0], null, null);
+      new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
@@ -229,8 +198,8 @@ public class PictReader extends FormatReader {
     if (stuff.length < 10) {
       throw new FormatException("Need 10 bytes to calculate dimension");
     }
-    int w = DataTools.bytesToInt(stuff, 6, 2, little);
-    int h = DataTools.bytesToInt(stuff, 8, 2, little);
+    int w = DataTools.bytesToInt(stuff, 6, 2, core.littleEndian[0]);
+    int h = DataTools.bytesToInt(stuff, 8, 2, core.littleEndian[0]);
     if (debug) debug("getDimensions: " + w + " x " + h);
     return new Dimension(h, w);
   }
@@ -258,8 +227,10 @@ public class PictReader extends FormatReader {
 
     // combine everything in the strips Vector
 
-    if ((height*4 < strips.size()) && (((strips.size() / 3) % height) != 0)) {
-      height = strips.size();
+    if ((core.sizeY[0]*4 < strips.size()) && (((strips.size() / 3) % 
+      core.sizeY[0]) != 0)) 
+    {
+      core.sizeY[0] = strips.size();
     }
 
     if (strips.size() == 0) {
@@ -268,20 +239,20 @@ public class PictReader extends FormatReader {
 
     if (lookup != null) {
       // 8 bit data
-      short[][] data = new short[3][height * width];
+      short[][] data = new short[3][core.sizeY[0] * core.sizeX[0]];
 
       byte[] row;
 
-      for (int i=0; i<height; i++) {
+      for (int i=0; i<core.sizeY[0]; i++) {
         row = (byte[]) strips.get(i);
 
         for (int j=0; j<row.length; j++) {
-          if (j < width) {
+          if (j < core.sizeX[0]) {
             int ndx = row[j];
             if (ndx < 0) ndx += lookup[0].length;
             ndx = ndx % lookup[0].length;
 
-            int outIndex = i*width + j;
+            int outIndex = i*core.sizeX[0] + j;
             if (outIndex >= data[0].length) outIndex = data[0].length - 1;
 
             data[0][outIndex] = lookup[0][ndx];
@@ -293,38 +264,38 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        debug("openBytes: 8-bit data, " + width + " x " + height +
-          ", length=" + data.length + "x" + data[0].length);
+        debug("openBytes: 8-bit data, " + core.sizeX[0] + " x " + 
+          core.sizeY[0] + ", length=" + data.length + "x" + data[0].length);
       }
-      return ImageTools.makeImage(data, width, height);
+      return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0]);
     }
-    else if (height*3 == strips.size()) {
+    else if (core.sizeY[0]*3 == strips.size()) {
       // 24 bit data
-      byte[][] data = new byte[3][width * height];
+      byte[][] data = new byte[3][core.sizeX[0] * core.sizeY[0]];
 
       int outIndex = 0;
-      for (int i=0; i<3*height; i+=3) {
+      for (int i=0; i<3*core.sizeY[0]; i+=3) {
         byte[] c0 = (byte[]) strips.get(i);
         byte[] c1 = (byte[]) strips.get(i+1);
         byte[] c2 = (byte[]) strips.get(i+2);
         System.arraycopy(c0, 0, data[0], outIndex, c0.length);
         System.arraycopy(c1, 0, data[1], outIndex, c1.length);
         System.arraycopy(c2, 0, data[2], outIndex, c2.length);
-        outIndex += width;
+        outIndex += core.sizeX[0];
       }
 
       if (debug) {
-        debug("openBytes: 24-bit data, " + width + " x " + height +
-          ", length=" + data.length + "x" + data[0].length);
+        debug("openBytes: 24-bit data, " + core.sizeX[0] + " x " + 
+          core.sizeY[0] + ", length=" + data.length + "x" + data[0].length);
       }
-      return ImageTools.makeImage(data, width, height);
+      return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0]);
     }
-    else if (height*4 == strips.size()) {
+    else if (core.sizeY[0]*4 == strips.size()) {
       // 32 bit data
-      byte[][] data = new byte[3][width * height];
+      byte[][] data = new byte[3][core.sizeX[0] * core.sizeY[0]];
 
       int outIndex = 0;
-      for (int i=0; i<4*height; i+=4) {
+      for (int i=0; i<4*core.sizeY[0]; i+=4) {
         //byte[] a = (byte[]) strips.get(i);
         byte[] r = (byte[]) strips.get(i+1);
         byte[] g = (byte[]) strips.get(i+2);
@@ -333,25 +304,25 @@ public class PictReader extends FormatReader {
         System.arraycopy(g, 0, data[1], outIndex, g.length);
         System.arraycopy(b, 0, data[2], outIndex, b.length);
         //System.arraycopy(a, 0, data[3], outIndex, a.length);
-        outIndex += width;
+        outIndex += core.sizeX[0];
       }
 
       if (debug) {
-        debug("openBytes: 32-bit data, " + width + " x " + height +
-          ", length=" + data.length + "x" + data[0].length);
+        debug("openBytes: 32-bit data, " + core.sizeX[0] + " x " + 
+          core.sizeY[0] + ", length=" + data.length + "x" + data[0].length);
       }
-      return ImageTools.makeImage(data, width, height);
+      return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0]);
     }
     else {
       // 16 bit data
-      short[] data = new short[3 * height * width];
+      short[] data = new short[3 * core.sizeY[0] * core.sizeX[0]];
 
       int outIndex = 0;
-      for (int i=0; i<height; i++) {
+      for (int i=0; i<core.sizeY[0]; i++) {
         int[] row = (int[]) strips.get(i);
 
         for (int j=0; j<row.length; j++, outIndex+=3) {
-          if (j < width) {
+          if (j < core.sizeX[0]) {
             if (outIndex >= data.length - 2) break;
             int s0 = (row[j] & 0x1f);
             int s1 = (row[j] & 0x3e0) >> 5; // 0x1f << 5;
@@ -365,10 +336,10 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        debug("openBytes: 16-bit data, " + width + " x " + height +
-          ", length=" + data.length);
+        debug("openBytes: 16-bit data, " + core.sizeX[0] + " x " + 
+          core.sizeY[0] + ", length=" + data.length);
       }
-      return ImageTools.makeImage(data, width, height, 3, true);
+      return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0], 3, true);
     }
   }
 
@@ -384,15 +355,18 @@ public class PictReader extends FormatReader {
         pt += 2;
         // skip over frame
         pt += 8;
-        int verOpcode = DataTools.bytesToInt(bytes, pt, 1, little);
+        int verOpcode = 
+          DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
         pt++;
-        int verNumber = DataTools.bytesToInt(bytes, pt, 1, little);
+        int verNumber = 
+          DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
         pt++;
 
         if (verOpcode == 0x11 && verNumber == 0x01) versionOne = true;
         else if (verOpcode == 0x00 && verNumber == 0x11) {
           versionOne = false;
-          int verNumber2 = DataTools.bytesToInt(bytes, pt, 2, little);
+          int verNumber2 = 
+            DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
           pt += 2;
 
           if (verNumber2 != 0x02ff) {
@@ -410,7 +384,7 @@ public class PictReader extends FormatReader {
 
       case STATE2:
         if (versionOne) {
-          opcode = DataTools.bytesToInt(bytes, pt, 1, little);
+          opcode = DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
           pt++;
         }
         else {
@@ -419,7 +393,7 @@ public class PictReader extends FormatReader {
           if ((pt & 0x1L) != 0) {
             pt++;
           }
-          opcode = DataTools.bytesToInt(bytes, pt, 2, little);
+          opcode = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
           pt += 2;
         }
         return drivePictDecoder(opcode);
@@ -440,12 +414,12 @@ public class PictReader extends FormatReader {
         handlePackBits(opcode);
         break;
       case PICT_CLIP_RGN:
-        int x = DataTools.bytesToInt(bytes, pt, 2, little);
+        int x = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
         pt += x;
         break;
       case PICT_LONGCOMMENT:
         pt += 2;
-        x = DataTools.bytesToInt(bytes, pt, 2, little);
+        x = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
         pt += x + 2;
         break;
       case PICT_END: // end of PICT
@@ -464,7 +438,7 @@ public class PictReader extends FormatReader {
       handlePixmap(opcode);
     }
     else {
-      rowBytes = DataTools.bytesToInt(bytes, pt, 2, little);
+      rowBytes = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
       if (versionOne || (rowBytes & 0x8000) == 0) handleBitmap(opcode);
       else handlePixmap(opcode);
@@ -483,33 +457,33 @@ public class PictReader extends FormatReader {
 
     // read the bitmap data -- 3 rectangles + mode
 
-    int tlY = DataTools.bytesToInt(bytes, pt, 2, little);
+    int tlY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
     pt += 2;
-    int tlX = DataTools.bytesToInt(bytes, pt, 2, little);
+    int tlX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
     pt += 2;
-    int brY = DataTools.bytesToInt(bytes, pt, 2, little);
+    int brY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
     pt += 2;
-    int brX = DataTools.bytesToInt(bytes, pt, 2, little);
+    int brX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
     pt += 2;
 
     // skip next two rectangles
     pt += 18;
 
-    width = brX - tlX;
-    height = brY - tlY;
+    core.sizeX[0] = brX - tlX;
+    core.sizeY[0] = brY - tlY;
 
     // allocate enough space to handle compressed data length for rowBytes
 
     try {
       buf = new byte[rowBytes + 1 + rowBytes/128];
       uBuf = new byte[rowBytes];
-      outBuf = new byte[width];
+      outBuf = new byte[core.sizeX[0]];
     }
     catch (NegativeArraySizeException n) {
       throw new FormatException("Sorry, vector data not supported.");
     }
 
-    for (row=0; row < height; ++row) {
+    for (row=0; row < core.sizeY[0]; ++row) {
       if (rowBytes < 8) {  // data is not compressed
         System.arraycopy(bytes, pt, buf, 0, rowBytes);
 
@@ -521,11 +495,11 @@ public class PictReader extends FormatReader {
       else {
         int rawLen;
         if (rowBytes > 250) {
-          rawLen = DataTools.bytesToInt(bytes, pt, 2, little);
+          rawLen = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
           pt += 2;
         }
         else {
-          rawLen = DataTools.bytesToInt(bytes, pt, 1, little);
+          rawLen = DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
           pt++;
         }
 
@@ -567,34 +541,34 @@ public class PictReader extends FormatReader {
       pt += 2;
 
       // read the bounding box
-      int tlY = DataTools.bytesToInt(bytes, pt, 2, little);
+      int tlY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      int tlX = DataTools.bytesToInt(bytes, pt, 2, little);
+      int tlX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      int brY = DataTools.bytesToInt(bytes, pt, 2, little);
+      int brY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      int brX = DataTools.bytesToInt(bytes, pt, 2, little);
+      int brX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
 
       pt += 2; // undocumented extra short in the data structure
 
       pt += 16;
 
-      pixelSize = DataTools.bytesToInt(bytes, pt, 2, little);
+      pixelSize = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      compCount = DataTools.bytesToInt(bytes, pt, 2, little);
+      compCount = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 16; // reserved
 
-      width = brX - tlX;
-      height = brY - tlY;
+      core.sizeX[0] = brX - tlX;
+      core.sizeY[0] = brY - tlY;
 
       // rowBytes doesn't exist, so set it to its logical value
       switch (pixelSize) {
         case 32:
-          rowBytes = width * compCount;
+          rowBytes = core.sizeX[0] * compCount;
           break;
         case 16:
-          rowBytes = width * 2;
+          rowBytes = core.sizeX[0] * 2;
           break;
         default:
           throw new FormatException("Sorry, vector data not supported.");
@@ -603,21 +577,21 @@ public class PictReader extends FormatReader {
     else {
       rowBytes &= 0x3fff;  // mask off flags
 
-      int tlY = DataTools.bytesToInt(bytes, pt, 2, little);
+      int tlY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      int tlX = DataTools.bytesToInt(bytes, pt, 2, little);
+      int tlX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      int brY = DataTools.bytesToInt(bytes, pt, 2, little);
+      int brY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      int brX = DataTools.bytesToInt(bytes, pt, 2, little);
+      int brX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
 
       // unnecessary data
       pt += 18;
 
-      pixelSize = DataTools.bytesToInt(bytes, pt, 2, little);
+      pixelSize = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      compCount = DataTools.bytesToInt(bytes, pt, 2, little);
+      compCount = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
 
       // unnecessary data
@@ -626,28 +600,31 @@ public class PictReader extends FormatReader {
       // read the lookup table
 
       pt += 4;
-      int flags = DataTools.bytesToInt(bytes, pt, 2, little);
+      int flags = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
-      int count = DataTools.bytesToInt(bytes, pt, 2, little);
+      int count = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
       pt += 2;
 
       count++;
       lookup = new short[3][count];
 
       for (int i=0; i<count; i++) {
-        int index = DataTools.bytesToInt(bytes, pt, 2, little);
+        int index = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
         if ((flags & 0x8000) != 0) index = i;
-        lookup[0][index] = DataTools.bytesToShort(bytes, pt, 2, little);
+        lookup[0][index] = 
+          DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
-        lookup[1][index] = DataTools.bytesToShort(bytes, pt, 2, little);
+        lookup[1][index] = 
+          DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
-        lookup[2][index] = DataTools.bytesToShort(bytes, pt, 2, little);
+        lookup[2][index] = 
+          DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
       }
 
-      width = brX - tlX;
-      height = brY - tlY;
+      core.sizeX[0] = brX - tlX;
+      core.sizeY[0] = brY - tlY;
     }
 
     // skip over two rectangles
@@ -678,17 +655,17 @@ public class PictReader extends FormatReader {
 
     bufSize = rBytes;
 
-    outBufSize = width;
+    outBufSize = core.sizeX[0];
 
     // allocate buffers
 
     switch (pixelSize) {
       case 32:
-        if (!compressed) uBufI = new int[width];
+        if (!compressed) uBufI = new int[core.sizeX[0]];
         else uBuf = new byte[bufSize];
         break;
       case 16:
-        uBufI = new int[width];
+        uBufI = new int[core.sizeX[0]];
         break;
       case 8:
         uBuf = new byte[bufSize];
@@ -704,12 +681,12 @@ public class PictReader extends FormatReader {
         debug("Pixel data is uncompressed (pixelSize=" + pixelSize + ").");
       }
       buf = new byte[bufSize];
-      for (int row=0; row<height; row++) {
+      for (int row=0; row<core.sizeY[0]; row++) {
         System.arraycopy(bytes, pt, buf, 0, rBytes);
 
         switch (pixelSize) {
           case 16:
-            for (int i=0; i<width; i++) {
+            for (int i=0; i<core.sizeX[0]; i++) {
               uBufI[i] = ((buf[i*2] & 0xff) << 8) + (buf[i*2+1] & 0xff);
             }
             strips.add(uBufI);
@@ -729,13 +706,13 @@ public class PictReader extends FormatReader {
           pixelSize + "; compCount=" + compCount + ").");
       }
       buf = new byte[bufSize + 1 + bufSize / 128];
-      for (int row=0; row<height; row++) {
+      for (int row=0; row<core.sizeY[0]; row++) {
         if (rBytes > 250) {
-          rawLen = DataTools.bytesToInt(bytes, pt, 2, little);
+          rawLen = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
           pt += 2;
         }
         else {
-          rawLen = DataTools.bytesToInt(bytes, pt, 1, little);
+          rawLen = DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
           pt++;
         }
 
@@ -754,7 +731,7 @@ public class PictReader extends FormatReader {
         pt += rawLen;
 
         if (pixelSize == 16) {
-          uBufI = new int[width];
+          uBufI = new int[core.sizeX[0]];
           unpackBits(buf, uBufI);
           strips.add(uBufI);
         }
@@ -778,24 +755,24 @@ public class PictReader extends FormatReader {
             //newBuf = new byte[width];
             //System.arraycopy(uBuf, offset, newBuf, 0, width);
             strips.add(newBuf);
-            offset += width;
+            offset += core.sizeX[0];
           }
 
           // red channel
-          newBuf = new byte[width];
-          System.arraycopy(uBuf, offset, newBuf, 0, width);
+          newBuf = new byte[core.sizeX[0]];
+          System.arraycopy(uBuf, offset, newBuf, 0, core.sizeX[0]);
           strips.add(newBuf);
-          offset += width;
+          offset += core.sizeX[0];
 
           // green channel
-          newBuf = new byte[width];
-          System.arraycopy(uBuf, offset, newBuf, 0, width);
+          newBuf = new byte[core.sizeX[0]];
+          System.arraycopy(uBuf, offset, newBuf, 0, core.sizeX[0]);
           strips.add(newBuf);
-          offset += width;
+          offset += core.sizeX[0];
 
           // blue channel
-          newBuf = new byte[width];
-          System.arraycopy(uBuf, offset, newBuf, 0, width);
+          newBuf = new byte[core.sizeX[0]];
+          System.arraycopy(uBuf, offset, newBuf, 0, core.sizeX[0]);
           strips.add(newBuf);
         }
       }

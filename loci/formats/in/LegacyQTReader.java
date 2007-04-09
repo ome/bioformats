@@ -49,9 +49,6 @@ public class LegacyQTReader extends FormatReader {
   /** Reflection tool for QuickTime for Java calls. */
   protected ReflectedUniverse r;
 
-  /** Number of images in current QuickTime movie. */
-  protected int numImages;
-
   /** Time offset for each frame. */
   protected int[] times;
 
@@ -72,26 +69,6 @@ public class LegacyQTReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) { return false; }
-
-  /* @see loci.formats.IFormatReader#getImageCount() */ 
-  public int getImageCount() throws FormatException, IOException {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */ 
-  public boolean isRGB() throws FormatException, IOException {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */ 
-  public boolean isLittleEndian() throws FormatException, IOException {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
-    return false;
-  }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
@@ -218,8 +195,8 @@ public class LegacyQTReader extends FormatReader {
         time = q.intValue();
       }
       while (time >= 0);
-      numImages = v.size();
-      times = new int[numImages];
+      core.imageCount[0] = v.size();
+      times = new int[core.imageCount[0]];
       for (int i=0; i<times.length; i++) {
         q = (Integer) v.elementAt(i);
         times[i] = q.intValue();
@@ -233,9 +210,12 @@ public class LegacyQTReader extends FormatReader {
       core.sizeY[0] = img.getHeight();
       core.sizeZ[0] = 1;
       core.sizeC[0] = img.getRaster().getNumBands();
-      core.sizeT[0] = numImages;
+      core.sizeT[0] = core.imageCount[0];
       core.pixelType[0] = ImageTools.getPixelType(img);
       core.currentOrder[0] = "XYCTZ";
+      core.rgb[0] = true;
+      core.interleaved[0] = false;
+      core.littleEndian[0] = false;
 
       MetadataStore store = getMetadataStore();
       store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),

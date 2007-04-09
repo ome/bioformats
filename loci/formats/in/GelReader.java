@@ -64,7 +64,7 @@ public class GelReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    numImages--;
+    core.imageCount[0]--;
 
     try {
       long fmt = TiffTools.getIFDLongValue(ifds[1], MD_FILETAG, true, 128);
@@ -95,7 +95,7 @@ public class GelReader extends BaseTiffReader {
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
     addMeta("File units", units == null ? "unknown" : units);
 
-    core.sizeT[series] = numImages;
+    core.sizeT[series] = core.imageCount[series];
 
     MetadataStore store = getMetadataStore();
     store.setDimensions(new Float(scale.floatValue()),
