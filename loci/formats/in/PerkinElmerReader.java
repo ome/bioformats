@@ -332,6 +332,7 @@ public class PerkinElmerReader extends FormatReader {
     tiff = new TiffReader[core.imageCount[0]];
     for (int i=0; i<tiff.length; i++) {
       tiff[i] = new TiffReader();
+      if (i > 0) tiff[i].setMetadataCollected(false); 
       tiff[i].setId(files[i]); 
     }
 

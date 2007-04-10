@@ -245,6 +245,7 @@ public class OIFReader extends FormatReader {
     tiffReader = new TiffReader[core.imageCount[0]];
     for (int i=0; i<core.imageCount[0]; i++) {
       tiffReader[i] = new TiffReader();
+      if (i > 0) tiffReader[i].setMetadataCollected(false); 
     }
 
     // open each INI file (.pty extension)

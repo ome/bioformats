@@ -532,6 +532,7 @@ public class LeicaReader extends FormatReader {
       for (int i=0; i<tiff.length; i++) {
         for (int j=0; j<tiff[i].length; j++) {
           tiff[i][j] = new TiffReader();
+          if (j > 0) tiff[i][j].setMetadataCollected(false); 
         }
       }
 
