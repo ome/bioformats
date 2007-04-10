@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.rmi.RemoteException;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
+import loci.visbio.view.TransformLink;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -194,7 +195,7 @@ public abstract class ImageTransform extends DataTransform {
    * Retrieves the data corresponding to the given dimensional position,
    * for the given display dimensionality.
    */
-  public Data getData(int[] pos, int dim, DataCache cache) {
+  public Data getData(TransformLink link, int[] pos, int dim, DataCache cache) {
     if (dim != 2) return null;
     if (cache != null) return cache.getData(this, pos, null, dim);
 

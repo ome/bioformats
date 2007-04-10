@@ -89,7 +89,7 @@ public class SendToIJPane extends DialogPane {
           if (axis < 0) {
             task.setStatus("Reading image");
             data = new FlatField[1];
-            data[0] = (FlatField) trans.getData(pos, 2, null);
+            data[0] = (FlatField) trans.getData(null, pos, 2, null);
             task.setStatus(1, 1);
           }
           else {
@@ -98,7 +98,7 @@ public class SendToIJPane extends DialogPane {
             for (int i=0; i<len; i++) {
               task.setStatus(i, len, "Reading image #" + (i + 1) + "/" + len);
               pos[axis] = i;
-              data[i] = (FlatField) trans.getData(pos, 2, null);
+              data[i] = (FlatField) trans.getData(null, pos, 2, null);
             }
             task.setStatus(len, len);
           }

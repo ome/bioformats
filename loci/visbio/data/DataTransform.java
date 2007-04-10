@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 import loci.visbio.state.*;
 import loci.visbio.util.FontChooserPane;
 import loci.visbio.util.ObjectUtil;
+import loci.visbio.view.TransformLink;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -108,7 +109,8 @@ public abstract class DataTransform implements Dynamic, Saveable {
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public abstract Data getData(int[] pos, int dim, DataCache cache);
+  public abstract Data getData(TransformLink link,
+    int[] pos, int dim, DataCache cache);
 
   /** Gets whether this transform provides data of the given dimensionality. */
   public abstract boolean isValidDimension(int dim);

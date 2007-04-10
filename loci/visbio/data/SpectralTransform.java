@@ -31,6 +31,7 @@ import loci.visbio.state.SaveException;
 import org.w3c.dom.Element;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.XMLUtil;
+import loci.visbio.view.TransformLink;
 import visad.*;
 
 /**
@@ -151,10 +152,10 @@ public class SpectralTransform extends ImageTransform
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public Data getData(int[] pos, int dim, DataCache cache) {
+  public Data getData(TransformLink link, int[] pos, int dim, DataCache cache) {
     if (dim != 2) return null;
 
-    Data data = parent.getData(pos, dim, cache);
+    Data data = parent.getData(link, pos, dim, cache);
     if (data == null || !(data instanceof FlatField)) return null;
 
     return doWeightedMapping((FlatField) data, range, weights);

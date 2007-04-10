@@ -56,7 +56,7 @@ public class DataCache {
     if (d == null) { // do not compute for non-null append
       if (append == null || append.equals("")) {
         // compute automatically for null append string
-        d = trans.getData(pos, dim, null);
+        d = trans.getData(null, pos, dim, null);
         putCachedData(key, d);
       }
       if (DEBUG) System.out.println("DataCache: cache miss for " + key);

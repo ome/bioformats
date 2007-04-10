@@ -450,7 +450,7 @@ public class TransformLink
       }
       cachedPos = pos;
       Data d = dim == 3 ?
-        trans.getData(pos, 3, handler.getCache()) : getImageData(pos);
+        trans.getData(this, pos, 3, handler.getCache()) : getImageData(pos);
       if (th != null && thumb == null) {
         // fill in missing thumbnail
         th.setThumb(pos, th.makeThumb(d));
@@ -464,7 +464,7 @@ public class TransformLink
 
   /** Gets the transform's data at the given dimensional position. */
   protected Data getImageData(int[] pos) {
-    return trans.getData(pos, 2, handler.getCache());
+    return trans.getData(this, pos, 2, handler.getCache());
   }
 
   /** Assigns the given data object to the data reference. */

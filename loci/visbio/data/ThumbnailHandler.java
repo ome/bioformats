@@ -181,7 +181,7 @@ public class ThumbnailHandler implements Runnable, TransformListener {
    * more efficient thumbnail creation behavior.
    */
   protected FlatField computeThumb(int[] pos) {
-    Data d = data.getData(pos, 2, null);
+    Data d = data.getData(null, pos, 2, null);
     return makeThumb(d);
   }
 

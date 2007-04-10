@@ -37,6 +37,7 @@ import loci.visbio.state.Dynamic;
 import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.view.DisplayWindow;
+import loci.visbio.view.TransformLink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import visad.*;
 
@@ -537,7 +538,7 @@ public class OverlayTransform extends DataTransform
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public Data getData(int[] pos, int dim, DataCache cache) {
+  public Data getData(TransformLink link, int[] pos, int dim, DataCache cache) {
     if (dim != 2) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;

@@ -239,7 +239,7 @@ public class ExportPane extends WizardPane {
             if (excl < 0) {
               task.setStatus(count++, max,
                 "Reading #" + (i + 1) + "/" + numTotal);
-              FlatField ff = (FlatField) trans.getData(npos, 2, null);
+              FlatField ff = (FlatField) trans.getData(null, npos, 2, null);
               Image image = ff instanceof ImageFlatField ?
                 ((ImageFlatField) ff).getImage() :
                 DataUtility.extractImage(ff, false);
@@ -266,7 +266,7 @@ public class ExportPane extends WizardPane {
                 task.setStatus(count++, max,
                   "Reading #" + img + "/" + numTotal);
                 npos[excl] = j;
-                FlatField ff = (FlatField) trans.getData(npos, 2, null);
+                FlatField ff = (FlatField) trans.getData(null, npos, 2, null);
                 Image image = ff instanceof ImageFlatField ?
                   ((ImageFlatField) ff).getImage() :
                   DataUtility.extractImage(ff, false);
