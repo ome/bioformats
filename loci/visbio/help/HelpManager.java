@@ -105,16 +105,16 @@ public class HelpManager extends LogicManager {
 
       // create panel for asking user about immediate visualization
       PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "15dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref:grow", 
-        "pref, 3dlu, pref"
+        "15dlu, pref:grow, 15dlu", 
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"
       ));
       CellConstraints cc = new CellConstraints();
       builder.addLabel("Would you like to visualize the \"" +
-        data + "\" object now?", cc.xyw(1, 1, 8));
+        data + "\" object now?", cc.xyw(1, 1, 3));
       builder.add(vis3D, cc.xy(2, 3));
-      builder.add(vis2D, cc.xy(4, 3));
-      builder.add(visOver, cc.xy(6, 3));
-      builder.add(visNot, cc.xy(8, 3));
+      builder.add(vis2D, cc.xy(2, 5));
+      builder.add(visOver, cc.xy(2, 7));
+      builder.add(visNot, cc.xy(2, 9));
 
       JPanel visPanel = builder.getPanel();
 
