@@ -94,7 +94,7 @@ public abstract class FormatReader extends FormatHandler
    */
   protected void initFile(String id) throws FormatException, IOException {
     if (currentId != null) {
-      String[] s = getUsedFiles(currentId);
+      String[] s = getUsedFiles();
       for (int i=0; i<s.length; i++) {
         if (id.equals(s[i])) return;
       }
@@ -131,7 +131,7 @@ public abstract class FormatReader extends FormatHandler
   protected boolean isUsedFile(String id, String file)
     throws FormatException, IOException
   {
-    String[] usedFiles = getUsedFiles(id);
+    String[] usedFiles = getUsedFiles();
     for (int i=0; i<usedFiles.length; i++) {
       if (usedFiles[i].equals(file) ||
         usedFiles[i].equals(new Location(file).getAbsolutePath()))
@@ -474,6 +474,21 @@ public abstract class FormatReader extends FormatHandler
     return FormatTools.testRead(this, args);
   }
 
+  // -- Utility methods --
+
+  /** Toggles debug mode (more verbose output and error messages). */
+  public static void setDebug(boolean debug) {
+    FormatReader.debug = debug;
+  }
+
+  /**
+   * Toggles debug mode verbosity (which kinds of output are produced).
+   * @param debugLevel 1=basic, 2=extended, 3=everything.
+   */
+  public static void setDebugLevel(int debugLevel) {
+    FormatReader.debugLevel = debugLevel;
+  }
+
   // -- Deprecated IFormatReader API methods --
 
   /** @deprecated Replaced by {@link getImageCount()} */ 
@@ -727,21 +742,6 @@ public abstract class FormatReader extends FormatHandler
   {
     if (!id.equals(currentId)) setId(id); 
     return getMetadataStore().getRoot();
-  }
-
-  // -- Utility methods --
-
-  /** Toggles debug mode (more verbose output and error messages). */
-  public static void setDebug(boolean debug) {
-    FormatReader.debug = debug;
-  }
-
-  /**
-   * Toggles debug mode verbosity (which kinds of output are produced).
-   * @param debugLevel 1=basic, 2=extended, 3=everything.
-   */
-  public static void setDebugLevel(int debugLevel) {
-    FormatReader.debugLevel = debugLevel;
   }
 
 }

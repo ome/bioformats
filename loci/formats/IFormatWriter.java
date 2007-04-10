@@ -38,10 +38,6 @@ public interface IFormatWriter extends IFormatHandler {
   void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException;
   
-  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
-  void save(String id, Image image, boolean last)
-    throws FormatException, IOException;
-
   /** Closes open files. */
   void close() throws FormatException, IOException;
 
@@ -75,5 +71,11 @@ public interface IFormatWriter extends IFormatHandler {
 
   /** A utility method for converting a file from the command line. */
   boolean testConvert(String[] args) throws FormatException, IOException;
+
+  // -- Deprecated API methods --
+
+  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
+  void save(String id, Image image, boolean last)
+    throws FormatException, IOException;
 
 }

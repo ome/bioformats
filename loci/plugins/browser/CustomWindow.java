@@ -523,7 +523,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
       String title = db.id;
       try {
-        OMENode ome = (OMENode)(db.reader.getMetadataStoreRoot(db.id));
+        OMENode ome = (OMENode)(db.reader.getMetadataStoreRoot());
         
         ReflectedUniverse r = new ReflectedUniverse();
         r.exec("import loci.ome.notebook.MetadataNotebook");

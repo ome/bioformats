@@ -184,10 +184,11 @@ public class LociDataBrowser {
     String order = null;
 
     try {
-      numZ = reader.getSizeZ(id);
-      numC = reader.getEffectiveSizeC(id);
-      numT = reader.getSizeT(id);
-      order = reader.getDimensionOrder(id);
+      reader.setId(id); 
+      numZ = reader.getSizeZ();
+      numC = reader.getEffectiveSizeC();
+      numT = reader.getSizeT();
+      order = reader.getDimensionOrder();
     }
     catch (Exception exc) {
       if (DEBUG) exc.printStackTrace();
@@ -213,7 +214,7 @@ public class LociDataBrowser {
     int result = -23;
     synchronized(reader) {
       try {
-        result = reader.getIndex(id,z,c,t);
+        result = reader.getIndex(z, c, t);
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
@@ -318,9 +319,10 @@ public class LociDataBrowser {
 
         if (virtual) {
           synchronized (reader) {
-            reader.setSeries(id, series);
+            reader.setId(id); 
+            reader.setSeries(series);
 
-            int num = reader.getImageCount(id);
+            int num = reader.getImageCount();
             if(manager != null) {
               manager.finish();
               manager = null;
@@ -333,8 +335,8 @@ public class LociDataBrowser {
               setDimensions();
 
               // CTR: stack must not be null
-              int sizeX = reader.getSizeX(id);
-              int sizeY = reader.getSizeY(id);
+              int sizeX = reader.getSizeX();
+              int sizeY = reader.getSizeY();
               stack = new ImageStack(sizeX, sizeY);
               // CTR: must add at least one image to the stack
               stack.addSlice(id + " : 1", manager.getSlice(0, 0, 0));
@@ -354,7 +356,7 @@ public class LociDataBrowser {
           FileInfo fi = new FileInfo();
           try {
             OMEXMLMetadataStore store =
-              (OMEXMLMetadataStore) reader.getMetadataStore(id);
+              (OMEXMLMetadataStore) reader.getMetadataStore();
             fi.description = store.dumpXML();
           }
           catch (Exception exc) {

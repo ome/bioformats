@@ -20,8 +20,9 @@ public class EditImageName {
     reader.setMetadataStore(new OMEXMLMetadataStore());
     String id = args[0];
     System.out.print("Reading metadata ");
+    reader.setId(id); 
     OMEXMLMetadataStore store =
-      (OMEXMLMetadataStore) reader.getMetadataStore(id);
+      (OMEXMLMetadataStore) reader.getMetadataStore();
     System.out.println(" [done]");
     // get OME root node
     OMENode ome = (OMENode) store.getRoot();

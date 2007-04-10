@@ -392,7 +392,8 @@ public class MetadataPane extends JPanel
       try {
         xml = thisOmeNode.writeOME(false);
         xml = addTiffData(xml, file);
-        imageCount = reader.getImageCount(id);
+        reader.setId(id); 
+        imageCount = reader.getImageCount();
       }
       catch(Exception exc) {
         if(exc instanceof RuntimeException) throw (RuntimeException)exc;
@@ -403,7 +404,7 @@ public class MetadataPane extends JPanel
         BufferedImage plane = null;
 
         try {
-          plane = reader.openImage(id, i);
+          plane = reader.openImage(i);
         }
         catch(Exception exc) {
           if(exc instanceof RuntimeException) throw (RuntimeException)exc;
@@ -447,7 +448,8 @@ public class MetadataPane extends JPanel
     try {
       xml = thisOmeNode.writeOME(false);
       xml = addTiffData(xml, file);
-      imageCount = reader.getImageCount(id);
+      reader.setId(id);
+      imageCount = reader.getImageCount();
     }
     catch(Exception exc) {
       if(exc instanceof RuntimeException) throw (RuntimeException)exc;
@@ -458,7 +460,7 @@ public class MetadataPane extends JPanel
       BufferedImage plane = null;
 
       try {
-        plane = reader.openImage(id, i);
+        plane = reader.openImage(i);
       }
       catch(Exception exc) {
         if(exc instanceof RuntimeException) throw (RuntimeException)exc;
@@ -497,7 +499,8 @@ public class MetadataPane extends JPanel
 
       try {
         //just to repopulate the metadatastore to original state
-        int imageCount = read.getImageCount(id);
+        read.setId(id);
+        int imageCount = read.getImageCount();
 //        BufferedImage whatever = reader.openImage(id, imageCount/2);
       }
       catch(Exception exc) {
@@ -779,16 +782,17 @@ public class MetadataPane extends JPanel
         }
 
         //Set up thumbnails
-        int numSeries = reader.getSeriesCount(id);
+        reader.setId(id); 
+        int numSeries = reader.getSeriesCount();
 
         images = new BufferedImage[numSeries+1];
         thumbs = new BufferedImage[numSeries+1];
         for(int i = 0; i<numSeries; i++) {
-          if (numSeries > 1) reader.setSeries(id, i);
-          int num = reader.getImageCount(id);
+          if (numSeries > 1) reader.setSeries(i);
+          int num = reader.getImageCount();
           if (num > 0) {
             // get middle image from the file
-            img = reader.openImage(id, num / 2);
+            img = reader.openImage(num / 2);
           }
           else img = null;
           images[i] = img;

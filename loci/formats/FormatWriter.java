@@ -71,13 +71,6 @@ public abstract class FormatWriter extends FormatHandler
   public abstract void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
-  public void save(String id, Image image, boolean last)
-    throws FormatException, IOException
-  {
-    saveImage(id, image, last);
-  }
-
   /** Reports whether the writer can save multiple images to a single file. */
   public abstract boolean canDoStacks(String id);
 
@@ -130,6 +123,15 @@ public abstract class FormatWriter extends FormatHandler
     throws FormatException, IOException
   {
     return FormatTools.testConvert(this, args);
+  }
+
+  // -- Deprecated IFormatWriter API methods --
+
+  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
+  public void save(String id, Image image, boolean last)
+    throws FormatException, IOException
+  {
+    saveImage(id, image, last);
   }
 
 }

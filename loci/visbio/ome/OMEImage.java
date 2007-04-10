@@ -279,8 +279,8 @@ public class OMEImage extends ImageTransform {
     float[][] samples = new float[sizeC][];
     try {
       for (int c=0; c<sizeC; c++) {
-        int ndx = downloader.getIndex(id, z, c, t);
-        samples[c] = ImageTools.getFloats(downloader.openImage(id, ndx))[0];
+        int ndx = downloader.getIndex(z, c, t);
+        samples[c] = ImageTools.getFloats(downloader.openImage(ndx))[0];
       }
     }
     catch (FormatException exc) { exc.printStackTrace(); }
@@ -378,13 +378,14 @@ public class OMEImage extends ImageTransform {
     else {
       id += "?user=" + user + "&password=" + password + "&id=" + imageId;
     }
-    
+   
     try {
-      sizeX = downloader.getSizeX(id);
-      sizeY = downloader.getSizeY(id);
-      sizeZ = downloader.getSizeZ(id);
-      sizeC = downloader.getSizeC(id);
-      sizeT = downloader.getSizeT(id);
+      downloader.setId(id); 
+      sizeX = downloader.getSizeX();
+      sizeY = downloader.getSizeY();
+      sizeZ = downloader.getSizeZ();
+      sizeC = downloader.getSizeC();
+      sizeT = downloader.getSizeT();
       name = downloader.getCurrentFile();
     }
     catch (FormatException exc) { exc.printStackTrace(); }

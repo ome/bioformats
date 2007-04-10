@@ -191,6 +191,159 @@ public class MinMaxCalculator extends ReaderWrapper {
     return buf;
   }
 
+  // -- Helper methods --
+
+  /** Updates min/max values based on the given BufferedImage. */
+  private void updateMinMax(BufferedImage b, int ndx)
+    throws FormatException, IOException
+  {
+    if (b == null) return;
+    initMinMax();
+
+    // check whether min/max values have already been computed for this plane
+    if (planeMin[getSeries()][ndx] == planeMin[getSeries()][ndx]) return;
+
+    int[] coords = getZCTCoords(ndx);
+    int numRGB = getRGBChannelCount();
+    int cBase = coords[1] * numRGB;
+    int pBase = ndx * numRGB;
+    for (int c=0; c<numRGB; c++) {
+      planeMin[getSeries()][pBase + c] = Double.POSITIVE_INFINITY;
+      planeMax[getSeries()][pBase + c] = Double.NEGATIVE_INFINITY;
+    }
+ 
+    WritableRaster pixels = b.getRaster();
+    for (int x=0; x<b.getWidth(); x++) {
+      for (int y=0; y<b.getHeight(); y++) {
+        for (int c=0; c<numRGB; c++) {
+          double v = pixels.getSampleDouble(x, y, c);
+          if (v > chanMax[getSeries()][cBase + c]) {
+            chanMax[getSeries()][cBase + c] = v;
+          } 
+          if (v < chanMin[getSeries()][cBase + c]) {
+            chanMin[getSeries()][cBase + c] = v;
+          } 
+          if (v > planeMax[getSeries()][pBase + c]) {
+            planeMax[getSeries()][pBase + c] = v;
+          } 
+          if (v < planeMin[getSeries()][pBase + c]) {
+            planeMin[getSeries()][pBase + c] = v;
+          } 
+        }
+      }
+    }
+  
+    minMaxDone[getSeries()]++; 
+  
+    if (minMaxDone[getSeries()] == getImageCount()) {
+      MetadataStore store = getMetadataStore();
+      for (int c=0; c<getSizeC(); c++) { 
+        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries()][c]), 
+          new Double(chanMax[getSeries()][c]), new Integer(getSeries()));
+      } 
+    }
+  }
+  
+  /** Updates min/max values based on the given byte array. */
+  private void updateMinMax(byte[] b, int ndx)
+    throws FormatException, IOException
+  {
+    if (b == null) return;
+    initMinMax();
+
+    // check whether min/max values have already been computed for this plane
+    if (planeMin[getSeries()][ndx] == planeMin[getSeries()][ndx]) return;
+
+    boolean little = isLittleEndian();
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
+    int pixels = getSizeX() * getSizeY();
+    boolean interleaved = isInterleaved();
+
+    int[] coords = getZCTCoords(ndx);
+    int numRGB = getRGBChannelCount();
+    int cBase = coords[1] * numRGB;
+    int pBase = ndx * numRGB;
+    for (int c=0; c<numRGB; c++) {
+      planeMin[getSeries()][pBase + c] = Double.POSITIVE_INFINITY;
+      planeMax[getSeries()][pBase + c] = Double.NEGATIVE_INFINITY;
+    }
+   
+    byte[] value = new byte[bytes];
+    for (int i=0; i<pixels; i++) {
+      for (int c=0; c<numRGB; c++) {
+        int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
+        System.arraycopy(b, idx, value, 0, bytes);
+        long bits = DataTools.bytesToLong(value, little);
+        double v = Double.longBitsToDouble(bits);
+        if (v > chanMax[getSeries()][cBase + c]) {
+          chanMax[getSeries()][cBase + c] = v;
+        } 
+        if (v < chanMin[getSeries()][cBase + c]) {
+          chanMin[getSeries()][cBase + c] = v;
+        } 
+        if (v > planeMax[getSeries()][pBase + c]) {
+          planeMax[getSeries()][pBase + c] = v;
+        } 
+        if (v < planeMin[getSeries()][pBase + c]) {
+          planeMin[getSeries()][pBase + c] = v;
+        } 
+     }
+    }
+  
+    minMaxDone[getSeries()]++; 
+  
+    if (minMaxDone[getSeries()] == getImageCount()) {
+      MetadataStore store = getMetadataStore();
+      for (int c=0; c<getSizeC(); c++) { 
+        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries()][c]), 
+          new Double(chanMax[getSeries()][c]), new Integer(getSeries()));
+      } 
+    }
+  }
+
+  /** Ensures internal min/max variables are initialized properly. */
+  private void initMinMax() throws FormatException, IOException {
+    int seriesCount = getSeriesCount();
+
+    if (chanMin == null) {
+      chanMin = new double[seriesCount][];
+      for (int i=0; i<seriesCount; i++) {
+        chanMin[i] = new double[getSizeC()];
+        Arrays.fill(chanMin[i], Double.POSITIVE_INFINITY);
+      }
+    }
+    if (chanMax == null) {
+      chanMax = new double[seriesCount][];
+      for (int i=0; i<seriesCount; i++) {
+        chanMax[i] = new double[getSizeC()];
+        Arrays.fill(chanMax[i], Double.NEGATIVE_INFINITY);
+      }
+    }
+    if (planeMin == null) { 
+      planeMin = new double[seriesCount][];
+      int oldSeries = getSeries();
+      for (int i=0; i<seriesCount; i++) {
+        setSeries(i);
+        int numRGB = getRGBChannelCount();
+        planeMin[i] = new double[getImageCount() * numRGB];
+        Arrays.fill(planeMin[i], Double.NaN);
+      }
+      setSeries(oldSeries); 
+    }
+    if (planeMax == null) { 
+      planeMax = new double[seriesCount][];
+      int oldSeries = getSeries();
+      for (int i=0; i<seriesCount; i++) {
+        setSeries(i);
+        int numRGB = getRGBChannelCount();
+        planeMax[i] = new double[getImageCount() * numRGB];
+        Arrays.fill(planeMax[i], Double.NaN);
+      }
+      setSeries(oldSeries); 
+    }
+    if (minMaxDone == null) minMaxDone = new int[seriesCount];
+  }
+
   // -- Deprecated IFormatReader API methods --
 
   /** @deprecated Replaced by {@link openImage(int)} */
@@ -220,162 +373,6 @@ public class MinMaxCalculator extends ReaderWrapper {
     super.openBytes(no, buf);
     updateMinMax(buf, no);
     return buf;
-  }
-
-  // -- Helper methods --
-
-  /** Updates min/max values based on the given BufferedImage. */
-  private void updateMinMax(BufferedImage b, int ndx)
-    throws FormatException, IOException
-  {
-    if (b == null) return;
-    String id = getCurrentFile(); 
-    initMinMax();
-
-    // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries(id)][ndx] == planeMin[getSeries(id)][ndx]) return;
-
-    int[] coords = getZCTCoords(getCurrentFile(), ndx);
-    int numRGB = getRGBChannelCount(getCurrentFile());
-    int cBase = coords[1] * numRGB;
-    int pBase = ndx * numRGB;
-    for (int c=0; c<numRGB; c++) {
-      planeMin[getSeries(id)][pBase + c] = Double.POSITIVE_INFINITY;
-      planeMax[getSeries(id)][pBase + c] = Double.NEGATIVE_INFINITY;
-    }
- 
-    WritableRaster pixels = b.getRaster();
-    for (int x=0; x<b.getWidth(); x++) {
-      for (int y=0; y<b.getHeight(); y++) {
-        for (int c=0; c<numRGB; c++) {
-          double v = pixels.getSampleDouble(x, y, c);
-          if (v > chanMax[getSeries(id)][cBase + c]) {
-            chanMax[getSeries(id)][cBase + c] = v;
-          } 
-          if (v < chanMin[getSeries(id)][cBase + c]) {
-            chanMin[getSeries(id)][cBase + c] = v;
-          } 
-          if (v > planeMax[getSeries(id)][pBase + c]) {
-            planeMax[getSeries(id)][pBase + c] = v;
-          } 
-          if (v < planeMin[getSeries(id)][pBase + c]) {
-            planeMin[getSeries(id)][pBase + c] = v;
-          } 
-        }
-      }
-    }
-  
-    minMaxDone[getSeries(id)]++; 
-  
-    if (minMaxDone[getSeries(id)] == getImageCount(id)) {
-      MetadataStore store = getMetadataStore(id);
-      for (int c=0; c<getSizeC(id); c++) { 
-        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries(id)][c]), 
-          new Double(chanMax[getSeries(id)][c]), new Integer(getSeries(id)));
-      } 
-    }
-  }
-  
-  /** Updates min/max values based on the given byte array. */
-  private void updateMinMax(byte[] b, int ndx)
-    throws FormatException, IOException
-  {
-    if (b == null) return;
-    String id = getCurrentFile(); 
-    initMinMax();
-
-    // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries(id)][ndx] == planeMin[getSeries(id)][ndx]) return;
-
-    boolean little = isLittleEndian(getCurrentFile());
-    int bytes = FormatTools.getBytesPerPixel(getPixelType(getCurrentFile()));
-    int pixels = getSizeX(getCurrentFile()) * getSizeY(getCurrentFile());
-    boolean interleaved = isInterleaved(getCurrentFile());
-
-    int[] coords = getZCTCoords(getCurrentFile(), ndx);
-    int numRGB = getRGBChannelCount(getCurrentFile());
-    int cBase = coords[1] * numRGB;
-    int pBase = ndx * numRGB;
-    for (int c=0; c<numRGB; c++) {
-      planeMin[getSeries(id)][pBase + c] = Double.POSITIVE_INFINITY;
-      planeMax[getSeries(id)][pBase + c] = Double.NEGATIVE_INFINITY;
-    }
-   
-    byte[] value = new byte[bytes];
-    for (int i=0; i<pixels; i++) {
-      for (int c=0; c<numRGB; c++) {
-        int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
-        System.arraycopy(b, idx, value, 0, bytes);
-        long bits = DataTools.bytesToLong(value, little);
-        double v = Double.longBitsToDouble(bits);
-        if (v > chanMax[getSeries(id)][cBase + c]) {
-          chanMax[getSeries(id)][cBase + c] = v;
-        } 
-        if (v < chanMin[getSeries(id)][cBase + c]) {
-          chanMin[getSeries(id)][cBase + c] = v;
-        } 
-        if (v > planeMax[getSeries(id)][pBase + c]) {
-          planeMax[getSeries(id)][pBase + c] = v;
-        } 
-        if (v < planeMin[getSeries(id)][pBase + c]) {
-          planeMin[getSeries(id)][pBase + c] = v;
-        } 
-     }
-    }
-  
-    minMaxDone[getSeries(id)]++; 
-  
-    if (minMaxDone[getSeries(id)] == getImageCount(id)) {
-      MetadataStore store = getMetadataStore(id);
-      for (int c=0; c<getSizeC(id); c++) { 
-        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries(id)][c]), 
-          new Double(chanMax[getSeries(id)][c]), new Integer(getSeries(id)));
-      } 
-    }
-  }
-
-  /** Ensures internal min/max variables are initialized properly. */
-  private void initMinMax() throws FormatException, IOException {
-    int seriesCount = getSeriesCount(getCurrentFile());
-    String id = getCurrentFile(); 
-
-    if (chanMin == null) {
-      chanMin = new double[seriesCount][];
-      for (int i=0; i<seriesCount; i++) {
-        chanMin[i] = new double[getSizeC(id)];
-        Arrays.fill(chanMin[i], Double.POSITIVE_INFINITY);
-      }
-    }
-    if (chanMax == null) {
-      chanMax = new double[seriesCount][];
-      for (int i=0; i<seriesCount; i++) {
-        chanMax[i] = new double[getSizeC(id)];
-        Arrays.fill(chanMax[i], Double.NEGATIVE_INFINITY);
-      }
-    }
-    if (planeMin == null) { 
-      planeMin = new double[seriesCount][];
-      int oldSeries = getSeries(id);
-      for (int i=0; i<seriesCount; i++) {
-        setSeries(getCurrentFile(), i);
-        int numRGB = getRGBChannelCount(getCurrentFile());
-        planeMin[i] = new double[getImageCount(getCurrentFile()) * numRGB];
-        Arrays.fill(planeMin[i], Double.NaN);
-      }
-      setSeries(getCurrentFile(), oldSeries); 
-    }
-    if (planeMax == null) { 
-      planeMax = new double[seriesCount][];
-      int oldSeries = getSeries(id);
-      for (int i=0; i<seriesCount; i++) {
-        setSeries(getCurrentFile(), i);
-        int numRGB = getRGBChannelCount(getCurrentFile());
-        planeMax[i] = new double[getImageCount(getCurrentFile()) * numRGB];
-        Arrays.fill(planeMax[i], Double.NaN);
-      }
-      setSeries(getCurrentFile(), oldSeries); 
-    }
-    if (minMaxDone == null) minMaxDone = new int[seriesCount];
   }
 
 }

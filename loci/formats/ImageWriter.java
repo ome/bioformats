@@ -161,13 +161,6 @@ public class ImageWriter implements IFormatWriter {
     getWriter(id).saveImage(id, image, last);
   }
 
-  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
-  public void save(String id, Image image, boolean last)
-    throws FormatException, IOException
-  {
-    getWriter(id).save(id, image, last);
-  }
-
   /* @see IFormatWriter#close() */
   public void close() throws FormatException, IOException {
     getWriter(currentId).close();
@@ -315,6 +308,15 @@ public class ImageWriter implements IFormatWriter {
 
   public static void main(String[] args) throws FormatException, IOException {
     if (!new ImageWriter().testConvert(args)) System.exit(1);
+  }
+
+  // -- Deprecated IFormatWriter API methods --
+
+  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
+  public void save(String id, Image image, boolean last)
+    throws FormatException, IOException
+  {
+    getWriter(id).save(id, image, last);
   }
 
 }

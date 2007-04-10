@@ -21,11 +21,12 @@ public class MakeLZW {
       String f = args[i];
       String nf = "lzw-" + f;
       System.out.print("Converting " + f + " to " + nf);
-      int blocks = reader.getImageCount(f);
+      reader.setId(f); 
+      int blocks = reader.getImageCount();
       OMENode ome = (OMENode) ms.getRoot();
       for (int b=0; b<blocks; b++) {
         System.out.print(".");
-        BufferedImage img = reader.openImage(f, b);
+        BufferedImage img = reader.openImage(b);
 
         Hashtable ifd = new Hashtable();
         if (b == 0) {

@@ -219,7 +219,10 @@ public class Dataset extends ImageTransform {
     BufferedImage img = null;
 
     int numImg = -1;
-    try { numImg = readers[fileIndex].getImageCount(ids[fileIndex]); }
+    try { 
+      readers[fileIndex].setId(ids[fileIndex]); 
+      numImg = readers[fileIndex].getImageCount(); 
+    }
     catch (IOException exc) { numImg = -1; }
     catch (FormatException exc) { numImg = -1; }
     if (numImg < 0) {
@@ -240,7 +243,7 @@ public class Dataset extends ImageTransform {
     while (tries > 0) {
       boolean again = false;
       try {
-        img = readers[fileIndex].openImage(ids[fileIndex], imgIndex);
+        img = readers[fileIndex].openImage(imgIndex);
       }
       catch (IOException exc) {
         String msg = exc.getMessage();
@@ -483,7 +486,8 @@ public class Dataset extends ImageTransform {
     status(1, numTasks, "Determining image count");
     String filename = "\"" + new File(ids[0]).getName() + "\"";
     try {
-      numImages = readers[0].getImageCount(ids[0]);
+      readers[0].setId(ids[0]); 
+      numImages = readers[0].getImageCount();
       format = readers[0].getFormat(ids[0]);
       if (format.startsWith("TIFF")) {
         format = (numImages > 1 ? "multi-page " : "single-image ") + format;
@@ -514,7 +518,7 @@ public class Dataset extends ImageTransform {
     // load first image for analysis
     status(2, numTasks, "Reading first image");
     BufferedImage img = null;
-    try { img = readers[0].openImage(ids[0], 0); }
+    try { img = readers[0].openImage(0); }
     catch (IOException exc) { img = null; }
     catch (FormatException exc) { img = null; }
     catch (NullPointerException exc) { img = null; }
@@ -564,7 +568,7 @@ public class Dataset extends ImageTransform {
     // load metadata for the first source file
     String fname = new File(ids[0]).getName();
     status(3, numTasks, "Reading " + fname + " metadata");
-    try { metadata = readers[0].getMetadata(ids[0]); }
+    try { metadata = readers[0].getMetadata(); }
     catch (IOException exc) { metadata = null; }
     catch (FormatException exc) { metadata = null; }
     if (metadata == null) {
@@ -573,7 +577,7 @@ public class Dataset extends ImageTransform {
       return;
     }
     try {
-      MetadataStore ms = readers[0].getMetadataStore(ids[0]);
+      MetadataStore ms = readers[0].getMetadataStore();
       if (ms instanceof OMEXMLMetadataStore) {
         ome = (OMENode) ((OMEXMLMetadataStore) ms).getRoot();
       }

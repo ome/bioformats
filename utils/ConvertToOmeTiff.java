@@ -25,7 +25,8 @@ public class ConvertToOmeTiff {
       String id = args[i];
       String outId = id + ".tif";
       System.out.print("Converting " + id + " to " + outId + " ");
-      int imageCount = reader.getImageCount(id);
+      reader.setId(id); 
+      int imageCount = reader.getImageCount();
       // insert TiffData element into OME-XML
       // currently handles only single series (single Image, single Pixels)
       String xml = store.dumpXML();
@@ -35,7 +36,7 @@ public class ConvertToOmeTiff {
         "><TiffData/></Pixels>" + xml.substring(end + 2);
       // write out image planes
       for (int j=0; j<imageCount; j++) {
-        BufferedImage plane = reader.openImage(id, j);
+        BufferedImage plane = reader.openImage(j);
         Hashtable ifd = null;
         if (j == 0) {
           // save OME-XML metadata to TIFF file's first IFD

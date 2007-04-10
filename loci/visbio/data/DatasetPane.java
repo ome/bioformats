@@ -387,7 +387,8 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     int numImages = 0;
     ImageReader reader = new ImageReader();
     try {
-      numImages = reader.getImageCount(ids[0]);
+      reader.setId(ids[0]); 
+      numImages = reader.getImageCount();
     }
     catch (IOException exc) {
       if (VisBioFrame.DEBUG) exc.printStackTrace();
@@ -408,10 +409,10 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     String dimOrder = null;
     int sizeZ = 1, sizeT = 1, sizeC = 1;
     try {
-      dimOrder = reader.getDimensionOrder(ids[0]);
-      sizeZ = reader.getSizeZ(ids[0]);
-      sizeT = reader.getSizeT(ids[0]);
-      sizeC = reader.getSizeC(ids[0]);
+      dimOrder = reader.getDimensionOrder();
+      sizeZ = reader.getSizeZ();
+      sizeT = reader.getSizeT();
+      sizeC = reader.getSizeC();
     }
     catch (FormatException exc) { exc.printStackTrace(); }
     catch (IOException exc) { exc.printStackTrace(); }

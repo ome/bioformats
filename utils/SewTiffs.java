@@ -39,11 +39,13 @@ public class SewTiffs {
     System.out.println("Writing " + outId);
     System.out.print("   ");
     boolean comment = false;
+    
     for (int t=0; t<num; t++) {
       String inId = base + "_C" + c + "_TP" + (t + 1) + ".tiff";
+      in.setId(inId);
 
       // read first image plane
-      BufferedImage image = in.openImage(inId, 0);
+      BufferedImage image = in.openImage(0);
       in.close();
 
       if (t == 0) {
@@ -70,7 +72,7 @@ public class SewTiffs {
       }
 
       // write image plane
-      out.save(outId, image, t == num - 1);
+      out.saveImage(outId, image, t == num - 1);
 
       // update status
       System.out.print(".");

@@ -413,6 +413,66 @@ public class ImageReader implements IFormatReader {
     return FormatTools.testRead(this, args);
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#isThisType(String) */
+  public boolean isThisType(String name) {
+    // NB: Unlike individual format readers, ImageReader defaults to *not*
+    // allowing files to be opened to analyze type, because doing so is
+    // quite slow with the large number of supported formats.
+    return isThisType(name, false);
+  }
+
+  /* @see IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    for (int i=0; i<readers.length; i++) {
+      if (readers[i].isThisType(name, open)) return true;
+    }
+    return false;
+  }
+
+  /* @see IFormatHandler#getFormat() */
+  public String getFormat() { return "image"; }
+
+  /* @see IFormatHandler#getSuffixes() */
+  public String[] getSuffixes() {
+    if (suffixes == null) {
+      HashSet suffixSet = new HashSet();
+      for (int i=0; i<readers.length; i++) {
+        String[] suf = readers[i].getSuffixes();
+        for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
+      }
+      suffixes = new String[suffixSet.size()];
+      suffixSet.toArray(suffixes);
+      Arrays.sort(suffixes);
+    }
+    return suffixes;
+  }
+
+  // -- StatusReporter API methods --
+
+  /* @see IFormatHandler#addStatusListener(StatusListener) */
+  public void addStatusListener(StatusListener l) {
+    for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);
+  }
+
+  /* @see IFormatHandler#removeStatusListener(StatusListener) */
+  public void removeStatusListener(StatusListener l) {
+    for (int i=0; i<readers.length; i++) readers[i].removeStatusListener(l);
+  }
+
+  /* @see IFormatHandler#getStatusListeners() */
+  public StatusListener[] getStatusListeners() {
+    // NB: all readers should have the same status listeners
+    return readers[0].getStatusListeners();
+  }
+
+  // -- Main method --
+
+  public static void main(String[] args) throws FormatException, IOException {
+    if (!new ImageReader().testRead(args)) System.exit(1);
+  }
+
   // -- Deprecated IFormatReader API methods --
 
   /** @deprecated Replaced by {@link getImageCount()} */
@@ -653,66 +713,6 @@ public class ImageReader implements IFormatReader {
   {
     setId(id);
     return getReader().getMetadataStoreRoot();
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see IFormatHandler#isThisType(String) */
-  public boolean isThisType(String name) {
-    // NB: Unlike individual format readers, ImageReader defaults to *not*
-    // allowing files to be opened to analyze type, because doing so is
-    // quite slow with the large number of supported formats.
-    return isThisType(name, false);
-  }
-
-  /* @see IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(name, open)) return true;
-    }
-    return false;
-  }
-
-  /* @see IFormatHandler#getFormat() */
-  public String getFormat() { return "image"; }
-
-  /* @see IFormatHandler#getSuffixes() */
-  public String[] getSuffixes() {
-    if (suffixes == null) {
-      HashSet suffixSet = new HashSet();
-      for (int i=0; i<readers.length; i++) {
-        String[] suf = readers[i].getSuffixes();
-        for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
-      }
-      suffixes = new String[suffixSet.size()];
-      suffixSet.toArray(suffixes);
-      Arrays.sort(suffixes);
-    }
-    return suffixes;
-  }
-
-  // -- StatusReporter API methods --
-
-  /* @see IFormatHandler#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);
-  }
-
-  /* @see IFormatHandler#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    for (int i=0; i<readers.length; i++) readers[i].removeStatusListener(l);
-  }
-
-  /* @see IFormatHandler#getStatusListeners() */
-  public StatusListener[] getStatusListeners() {
-    // NB: all readers should have the same status listeners
-    return readers[0].getStatusListeners();
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    if (!new ImageReader().testRead(args)) System.exit(1);
   }
 
 }
