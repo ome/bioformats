@@ -48,11 +48,19 @@ public class OverlayBox extends OverlayObject {
     computeGridParameters();
   }
 
+  // -- Static OverlayObject API methods -- 
+  /** Returns the types of statistics reported by this overlay */
+  public static String[] getStatTypes() {  
+    return new String[] {"Coordinates", "Center", "Width", "Height", "Area",
+        "Perimeter"};
+  }
+
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
-    if (x1 == x2 || y1 == y2) return null; // don't try to render a zero-area box
+    if (x1 == x2 || y1 == y2) return null; 
+    // don't try to render a zero-area box
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
@@ -200,7 +208,7 @@ public class OverlayBox extends OverlayObject {
     // Determine orientation of (x1, y1) relative to (x2, y2)
     // and flip if need be.
     // I've set up the code in this section based on the 
-    // suppositioin that the box is oriented like this:
+    // supposition that the box is oriented like this:
     //
     // (x1, y1) +--------+
     //          |        |
@@ -209,6 +217,7 @@ public class OverlayBox extends OverlayObject {
     //
     // which means x1 is supposed to be _less_ than x2, but inconsistently,
     // y1 is supposed to be _greater_ than y2.
+
     float[][] c;
     boolean flipX = x2 > x1;
     float xx1 = flipX ? x1 : x2;
@@ -217,65 +226,13 @@ public class OverlayBox extends OverlayObject {
     float yy1 = flipY ? y1 : y2;
     float yy2 = flipY ? y2 : y1;
 
-    int rangeSamplesLength = 16;
-    SampledSet domainSet = null;
-    if (2 * delta > xx2 - xx1 || 2 * delta > yy1 - yy2) {
-      // if box is narrower than twice the width the highlighting
-      // band would be,
-      // just throw down a translucent rectangle over the box
-
-      rangeSamplesLength = 4;
-      
-      float[][] setSamples = {
-        {xx1 - delta, xx2 + delta, xx1 - delta, xx2 + delta},
-        {yy1 + delta, yy1 + delta, yy2 - delta, yy2 - delta}};
-
-      try {
-        domainSet = new Gridded2DSet(domain, setSamples, 2, 2,
-          null, null, null, false);
-      }
-      catch (VisADException ex) { ex.printStackTrace(); }
-    }
-    else {
-      // construct a trapezoidal highlighting band for each of the 
-      // four line segments which constitute the box
-      c = new float[][]{{xx1, yy1}, {xx2, yy2}};
-
-      float[][] s1 = 
-        {{c[0][0] - delta, c[1][0] + delta, c[0][0] + delta, c[1][0] - delta},
-        {c[0][1] + delta, c[0][1] + delta, c[0][1] - delta, c[0][1] - delta}};
-      float[][] s2 = 
-        {{c[1][0] + delta, c[1][0] + delta, c[1][0] - delta, c[1][0] - delta},
-        {c[0][1] + delta, c[1][1] - delta, c[0][1] - delta, c[1][1] + delta}};
-      float[][] s3 = 
-        {{c[1][0] + delta, c[0][0] - delta, c[1][0] - delta, c[0][0] + delta},
-        {c[1][1] - delta, c[1][1] - delta, c[1][1] + delta, c[1][1] + delta}};
-      float[][] s4 = 
-        {{c[0][0] - delta, c[0][0] - delta, c[0][0] + delta, c[0][0] + delta},
-        {c[1][1] - delta, c[0][1] + delta, c[1][1] + delta, c[0][1] - delta}};
-
-      float[][][] setSamples = {s1, s2, s3, s4};
-
-      Gridded2DSet[] segments = new Gridded2DSet[4];
-      for (int i=0; i<4; i++) {
-        Gridded2DSet segment = null;
-        try {
-          segment = new Gridded2DSet (domain, setSamples[i], 2, 2, null, null,
-              null,
-              false);
-        }
-        catch (VisADException exc) { exc.printStackTrace(); }
-        segments[i] = segment;
-      }
-
-      try { domainSet = new UnionSet(domain, segments); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-    } // end else 
-
-    //************************************************************** 
+    // just throw down a translucent rectangle over the box
+    float[][] setSamples = {
+      {xx1 - delta, xx2 + delta, xx1 - delta, xx2 + delta},
+      {yy1 + delta, yy1 + delta, yy2 - delta, yy2 - delta}};
     
     // construct range samples
-    float[][] rangeSamples = new float[4][rangeSamplesLength];
+    float[][] rangeSamples = new float[4][4];
     float r = GLOW_COLOR.getRed() / 255f;
     float g = GLOW_COLOR.getGreen() / 255f;
     float b = GLOW_COLOR.getBlue() / 255f;
@@ -285,8 +242,11 @@ public class OverlayBox extends OverlayObject {
     Arrays.fill(rangeSamples[3], GLOW_ALPHA);
 
     // construct field
+    Gridded2DSet domainSet = null;
     FlatField field = null;
     try {
+      domainSet = new Gridded2DSet(domain, setSamples, 2, 2,
+        null, null, null, false);
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, domainSet);
       field.setSamples(rangeSamples);
