@@ -755,6 +755,13 @@ public final class OverlayIO {
             
       String hdr = ono + " " + k;
       c.setCellValue(new HSSFRichTextString(hdr));
+      r = s.createRow(rownum++);
+      c = r.createCell((short) 0);
+      c.setCellStyle(text);
+      c.setCellValue(new HSSFRichTextString("X"));
+      c = r.createCell((short) 1);
+      c.setCellStyle(text);
+      c.setCellValue(new HSSFRichTextString("Y"));
 
       // write the nodes themselves
       for (int j = 0; j<numNodes; j++) {
