@@ -1,3 +1,10 @@
+* Added API to toggle metadata collection
+* Deprecated methods in IFormatReader that accept the 'id' parameter
+* Deprecated IFormatWriter.save in favor of IFormatWriter.saveImage
+* Removed "ignore color table" logic - replaced with Leica-specific solution
+* Moved dimension swapping and min/max calculation logic to delegates.
+* Miscellaneous bugfixes/tweaks in most readers
+
 2007 Mar 16:
 * Fixed calibration bugs in importer plugin
 * Enhanced metadata support for additional formats

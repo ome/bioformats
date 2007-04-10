@@ -14,51 +14,42 @@ boolean isThisType(byte[]) :
   the first byte of the file.  Return true if the file can be read; false if
   not (or if there is no way of checking).
 
-int getImageCount(String) throws FormatException, IOException :
-  Return the number of image planes in the file.  This method should begin
-  by checking if the given argument is equal to the current file; if not,
-  initFile(String) should be called (see below).
+int getImageCount() throws FormatException, IOException :
+  Return the number of image planes in the file.  
 
-boolean isRGB(String) throws FormatException, IOException :
+boolean isRGB() throws FormatException, IOException :
   This should only return true if the file's image planes are stored as RGB
-  or indexed color.  All other cases return false.  This method should begin
-  by checking if the given argument is equal to the current file; if not,
-  initFile(String) should be called (see below).
+  or indexed color.  All other cases return false. 
 
-boolean isLittleEndian(String) throws FormatException, IOException :
+boolean isLittleEndian() throws FormatException, IOException :
   Return the byte ordering of the pixel data.  Note that in some cases, this
   is different from the file's native ordering.  If the pixel data is
   guaranteed to have 8 bits per pixel, then isLittleEndian can return
-  anything. This method should begin by checking if the given argument is equal
-  to the current file; if not, initFile(String) should be called (see below).
+  anything.
 
-boolean isInterleaved(String) throws FormatException, IOException :
+boolean isInterleaved() throws FormatException, IOException :
   This is only relevant if the file's image planes are stored as RGB or
   indexed color; however, it should always be implemented.  If the image
   planes are RGB, and the pixel data is stored as "RRR...GGG...BBB", then
   return false.  Otherwise, if the pixel data is stored as "RGBRGBRGB..."
-  return true.  This method should begin by checking if the given argument
-  is equal to the current file; if not, initFile(String) should be called
-  (see below).
+  return true.
 
-String[] getUsedFiles(String) throws FormatException, IOException :
+String[] getUsedFiles() throws FormatException, IOException :
   You only need to override this if your format uses multiple files in a single
   dataset.  This method should return a list of all the files associated with
   the given file name (i.e. every file needed to display the current dataset).
   For an example of how this works, see loci.formats.in.PerkinElmerReader.
 
-byte[] openBytes(String, int) throws FormatException, IOException :
+byte[] openBytes(int) throws FormatException, IOException :
   Returns a byte array containing the pixel data for the specified image from
   the given file.  Should throw a FormatException if the image number is invalid
   (less than 0 or >= the number of images).  The ordering of the array
   returned by openBytes should correspond to the values returned by
-  isLittleEndian(String) and isInterleaved(String).  Also, the length of the
+  isLittleEndian() and isInterleaved().  Also, the length of the
   byte array should be [image width * image height * bytes per pixel].  Extra
-  bytes will generally be truncated.  This method should begin
-  by checking if the given argument is equal to the current file; if not,
-  initFile(String) should be called (see below).
+  bytes will generally be truncated.
 
-BufferedImage openImage(String, int) throws FormatException, IOException :
+BufferedImage openImage(int) throws FormatException, IOException :
   Basically the same as openBytes, but returns a java.awt.image.BufferedImage
   instead of a byte array.  In general, the easiest way to implement this is
   by getting the corresponding byte array from openBytes, then returning
@@ -83,19 +74,8 @@ protected void initFile(String) throws FormatException, IOException :
   opened.  Generally, you will want to start by calling
   super.initFile(String).  You will also need to set up the stream for reading
   the file, as well as initializing any dimension information and metadata.
-  Most of this logic is up to you; however, it is wise to set the following
-  variables:
-    int sizeX[0] : the image width
-    int sizeY[0] : the image height
-    int sizeZ[0] : number of planes along Z axis (set to 1 if there are none)
-    int sizeC[0] : the number of channels (set to 3 if RGB/indexed color)
-    int sizeT[0] : number of planes along T axis (set to 1 if there are none)
-    String currentOrder[0] : the dimension ordering of the planes
-    int pixelType[0] : corresponds to the number of bytes per pixel; see
-                       constant values in FormatReader for a list of valid
-                       values
-    boolean orderCertain[0] : set to true if you are certain that the dimension
-                              order is correct
+  Most of this logic is up to you; however, you should populate the 'core'
+  variable (see loci.formats.CoreMetadata).
 
   Note that each variable is initialized to 0 or null when
   super.initFile(String) is called.
@@ -166,7 +146,7 @@ and Location.getMappedId(String).
   from metadata values.  Note that OMEXMLMetadataStore is a subclass of
   loci.formats.MetadataStore (every subclass of FormatReader keeps an instance
   of MetadataStore by default); so to add OME-XML support is as simple as
-  calling getMetadataStore(String) on a format reader instance, and then
+  calling getMetadataStore() on a format reader instance, and then
   calling the appropriate "set" methods as documented in OMEXMLMetadataStore.
 
 - Utility methods for reading and writing individual bits from a byte array

@@ -26,9 +26,12 @@ work with readers for a specific format, ImageReader contains additional logic
 to automatically detect the format of a file and delegate subsequent calls to
 the appropriate reader.
 
+Prior to retrieving pixels or metadata, it is necessary to call setId(String)
+on the reader instance, passing in the name of the file to read.
+
 Raw pixels are always retrieved one plane at a time.  Planes can be returned
 either in a byte array, or in a java.awt.image.BufferedImage (using
-openBytes(String, int) and openImage(String, int) respectively).  It is entirely
+openBytes(int) and openImage(int) respectively).  It is entirely
 up to you which method to use, as the pixel values are always identical.
 In general, BufferedImages are more convenient for viewer applications and
 applications that don't need to perform computations on pixel data, while byte
@@ -38,18 +41,18 @@ Core metadata is the general term for anything that might be needed to work with
 the planes in a file.  A list of core metadata fields is given below, with the
 appropriate accessor method in parentheses:
 
-- image width (getSizeX(String))
-- image height (getSizeY(String))
-- total number of images per file (getImageCount(String))
-- number of slices per file (getSizeZ(String))
-- number of timepoints per file (getSizeT(String))
-- number of actual channels per file (getSizeC(String))
-- number of channels per image (getRGBChannelCount(String))
-- the ordering of the images within the file (getDimensionOrder(String))
-- whether each image is RGB (isRGB(String))
-- whether the pixel bytes in little-endian order (isLittleEndian(String))
-- whether the channels in an image are interleaved (isInterleaved(String))
-- the type of pixel data in this file (getPixelType(String))
+- image width (getSizeX())
+- image height (getSizeY())
+- total number of images per file (getImageCount())
+- number of slices per file (getSizeZ())
+- number of timepoints per file (getSizeT())
+- number of actual channels per file (getSizeC())
+- number of channels per image (getRGBChannelCount())
+- the ordering of the images within the file (getDimensionOrder())
+- whether each image is RGB (isRGB())
+- whether the pixel bytes in little-endian order (isLittleEndian())
+- whether the channels in an image are interleaved (isInterleaved())
+- the type of pixel data in this file (getPixelType())
 
 All file formats are guaranteed to accurately report core metadata.
 
@@ -57,8 +60,8 @@ Format-specific metadata refers to any other data specified in the file - this
 includes acquisition and hardware parameters, among other things.  This data
 is stored internally in a java.util.Hashtable, and can be accessed in one of
 two ways: individual values can be retrieved by calling
-getMetadataValue(String, String), which gets the value of the specified key.
-Alternatively, getMetadata(String) will return the entire Hashtable.
+getMetadataValue(String), which gets the value of the specified key.
+Alternatively, getMetadata() will return the entire Hashtable.
 Note that the keys in this Hashtable are different for each format, hence the
 name "format-specific metadata".
 
@@ -108,11 +111,11 @@ the same writer and output settings (compression, frames per second, etc.),
 and is especially useful for formats that do not support multiple images per
 file.
 
-A word of warning: IFormatWriter.save(String, Image, boolean) accepts generic
-java.awt.Images, and converts them to a BufferedImage under the hood.
+A word of warning: IFormatWriter.saveImage(String, Image, boolean) accepts 
+generic java.awt.Images, and converts them to a BufferedImage under the hood.
 The problem is that not all formats support all types of data (e.g. JPEG
 does not support 16-bit data).  To prevent the possibility of corrupt or
-invalid files, it is important to check that the Image you supply to save()
+invalid files, it is important to check that the Image you supply to saveImage()
 is supported.  This can be done using the isSupportedType and getPixelTypes
 methods of IFormatWriter.
 
@@ -164,3 +167,6 @@ o Through specialized I/O classes, Bio-Formats is able to control the number of
   be able to read from disk, over HTTP, and potentially other sources.  The
   result is a hybrid class that extends InputStream and implements DataInput to
   meet all of our goals.
+
+o RLE-compressed QuickTime movies will look funny if the planes are not read
+  in sequential order.
