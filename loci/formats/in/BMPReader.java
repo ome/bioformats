@@ -109,7 +109,7 @@ public class BMPReader extends FormatReader {
       }
     }
     else {
-      if (bpp <= 8) {
+      if (core.sizeC[0] == 1) {
         for (int y=core.sizeY[0]-1; y>=0; y--) {
           for (int x=0; x<core.sizeX[0]; x++) {
             buf[y*core.sizeX[0] + x] = (byte) in.read();
@@ -132,7 +132,7 @@ public class BMPReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (bpp / 8)];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
     return openBytes(no, buf);
   }
 
@@ -234,7 +234,7 @@ public class BMPReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeC[0] = (palette == null & bpp == 8) ? 1 : 3;
+    core.sizeC[0] = (palette == null && bpp == 8) ? 1 : 3;
     if (bpp > 8) bpp /= 3;
     while (bpp % 8 != 0) bpp++;
 
@@ -251,12 +251,12 @@ public class BMPReader extends FormatReader {
     }
 
     if (core.sizeX[0] % 2 == 1) core.sizeX[0]++; 
-    core.rgb[0] = bpp > 8; 
+    core.rgb[0] = core.sizeC[0] > 1; 
     core.littleEndian[0] = true;
     core.interleaved[0] = true;
     core.imageCount[0] = 1; 
     core.sizeZ[0] = 1;
-    core.sizeC[0] = core.rgb[0] ? 3 : 1;
+    //core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCTZ";
 

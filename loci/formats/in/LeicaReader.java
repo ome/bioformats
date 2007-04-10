@@ -999,7 +999,6 @@ public class LeicaReader extends FormatReader {
     byte[] f = new byte[4];
     for (int i=0; i<numSeries; i++) {
       core.orderCertain[i] = true;
-      core.rgb[i] = false;
       core.interleaved[i] = true;
       try { 
         in.seek(0);
@@ -1038,6 +1037,9 @@ public class LeicaReader extends FormatReader {
           core.pixelType[i] = FormatTools.DOUBLE;
           break;
       }
+
+      core.rgb[i] = 
+        core.imageCount[i] != core.sizeC[i] * core.sizeZ[i] * core.sizeT[i];
 
       Integer ii = new Integer(i);
 

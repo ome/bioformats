@@ -582,8 +582,8 @@ public class BioRadReader extends FormatReader {
 
     // populate Pixels element
     in.seek(14);
-    core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT16 : 
-      FormatTools.UINT8; 
+    core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT8 : 
+      FormatTools.UINT16; 
 
     core.currentOrder[0] = "XY";
     int[] dims = new int[] {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};

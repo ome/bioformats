@@ -370,6 +370,18 @@ public class ImageReader implements IFormatReader {
     return readers[0].isNormalized();
   } 
 
+  /* @see IFormatReader#setMetadataCollected(boolean) */
+  public void setMetadataCollected(boolean collect) {
+    for (int i=0; i<readers.length; i++) {
+      readers[i].setMetadataCollected(collect);
+    }
+  }
+
+  /* @see IFormatReader#isMetadataCollected() */
+  public boolean isMetadataCollected() {
+    return readers[0].isMetadataCollected();
+  }
+
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() {
     try {

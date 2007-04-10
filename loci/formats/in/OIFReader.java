@@ -278,6 +278,7 @@ public class OIFReader extends FormatReader {
           if (key.equals("DataName")) {
             value = value.substring(1, value.length() - 1);
             tiffs.add(i, tiffPath + File.separator + value);
+            tiffReader[i].setId((String) tiffs.get(i)); 
           }
           addMeta("Image " + i + " : " + key, value);
         }

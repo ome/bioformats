@@ -193,6 +193,12 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public boolean isNormalized() { return reader.isNormalized(); }
 
+  public void setMetadataCollected(boolean collect) {
+    reader.setMetadataCollected(collect);
+  }
+
+  public boolean isMetadataCollected() { return reader.isMetadataCollected(); }
+
   public String[] getUsedFiles() throws FormatException, IOException {
     return reader.getUsedFiles();
   }

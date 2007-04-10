@@ -98,6 +98,7 @@ public abstract class ImageIOReader extends FormatReader {
     super.initFile(id);
 
     status("Populating metadata");
+    core.imageCount[0] = 1;
     BufferedImage img = openImage(0);
 
     core.sizeX[0] = img.getWidth();
@@ -110,7 +111,6 @@ public abstract class ImageIOReader extends FormatReader {
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
     core.pixelType[0] = ImageTools.getPixelType(img);
-    core.imageCount[0] = 1;
     core.interleaved[0] = true;
     core.littleEndian[0] = false;
 

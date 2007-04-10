@@ -123,7 +123,8 @@ public class ZeissZVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bpp];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * 
+      FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount()];
     return openBytes(no, buf);
   }
 
@@ -136,7 +137,9 @@ public class ZeissZVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * bpp) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * 
+      FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount())
+    { 
       throw new FormatException("Buffer too small.");
     }
 
@@ -179,7 +182,8 @@ public class ZeissZVIReader extends FormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], true, bpp == 3 ? 1 : bpp, true, validBits);
+      core.rgb[0] ? core.sizeC[0] : 1, true, bpp == 3 ? 1 : bpp, true, 
+      validBits);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -773,6 +777,7 @@ public class ZeissZVIReader extends FormatReader {
     names.put(new Integer(num), entry);
     core.imageCount[0]++;
     if (bpp % 3 == 0) core.sizeC[0] = 3;
+    else core.sizeC[0] = 1; 
   }
 
   /** Parse a tag and place it in the metadata hashtable. */

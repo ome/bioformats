@@ -137,6 +137,8 @@ public class ImarisTiffReader extends BaseTiffReader {
     core.imageCount[0] = core.sizeC[0] * core.sizeZ[0];
     core.currentOrder[0] = "XYZCT";
     core.interleaved[0] = false;
+    core.rgb[0] = 
+      core.imageCount[0] != core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);

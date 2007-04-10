@@ -278,6 +278,7 @@ public class PrairieReader extends FormatReader {
       if (id.endsWith("xml")) {
         files = new String[f.size()];
         f.copyInto(files);
+        tiff.setId(files[0]);
 
         status("Populating metadata");
 

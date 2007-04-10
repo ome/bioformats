@@ -305,16 +305,16 @@ public class ICSReader extends FormatReader {
       if (orderToken.equals("bits")) {
         bitsPerPixel = Integer.parseInt(imageToken);
       }
-      else if(orderToken.equals("x")) {
+      else if (orderToken.equals("x")) {
         core.sizeX[0] = Integer.parseInt(imageToken);
       }
-      else if(orderToken.equals("y")) {
+      else if (orderToken.equals("y")) {
         core.sizeY[0] = Integer.parseInt(imageToken);
       }
-      else if(orderToken.equals("z")) {
+      else if (orderToken.equals("z")) {
         core.sizeZ[0] = Integer.parseInt(imageToken);
       }
-      else if(orderToken.equals("ch")) {
+      else if (orderToken.equals("ch")) {
         core.sizeC[0] = Integer.parseInt(imageToken);
         if (core.sizeC[0] > 4) core.rgb[0] = false;
       }
@@ -323,10 +323,15 @@ public class ICSReader extends FormatReader {
       }
     }
 
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+
     if (core.imageCount[0] == 0) core.imageCount[0] = 1;
     core.rgb[0] = core.rgb[0] && core.sizeC[0] > 1;
     core.interleaved[0] = !core.rgb[0];
+    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
+    if (!core.rgb[0]) core.imageCount[0] *= core.sizeC[0];
 
     String endian = (String) getMeta("representation byte_order");
     core.littleEndian[0] = true;

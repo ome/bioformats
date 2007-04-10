@@ -468,6 +468,21 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isNormalized() */
   public boolean isNormalized() { return reader.isNormalized(); }
 
+  /* @see IFormatReader#setMetadataCollected(boolean) */
+  public void setMetadataCollected(boolean collect) {
+    if (readers == null) reader.setMetadataCollected(collect);
+    else {
+      for (int i=0; i<readers.length; i++) {
+        readers[i].setMetadataCollected(collect);
+      } 
+    }
+  }
+
+  /* @see IFormatReader#isMetadataCollected() */
+  public boolean isMetadataCollected() {
+    return reader.isMetadataCollected();
+  }
+
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() throws FormatException, IOException {
     // returning the files list directly here is fast, since we do not
@@ -924,10 +939,12 @@ public class FileStitcher implements IFormatReader {
     // sync reader configurations with original reader
     boolean normalized = reader.isNormalized();
     boolean metadataFiltered = reader.isMetadataFiltered();
+    boolean metadataCollected = reader.isMetadataCollected(); 
     StatusListener[] statusListeners = reader.getStatusListeners();
     for (int i=1; i<readers.length; i++) {
       readers[i].setNormalized(normalized);
       readers[i].setMetadataFiltered(metadataFiltered);
+      readers[i].setMetadataCollected(metadataCollected); 
       for (int j=0; j<statusListeners.length; j++) {
         readers[i].addStatusListener(statusListeners[j]);
       }
@@ -989,11 +1006,13 @@ public class FileStitcher implements IFormatReader {
 
     // initialize used files list only when requested
     usedFiles = null;
+  
+    computeAxisLengths(); 
   }
 
   /** Computes axis length arrays, and total axis lengths. */
   protected void computeAxisLengths() throws FormatException, IOException {
-    int sno = getSeries(currentId);
+    int sno = getSeries();
 
     int[] count = fp.getCount();
     int[] axes = ag[sno].getAxisTypes();

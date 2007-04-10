@@ -436,7 +436,7 @@ public class LIFReader extends FormatReader {
       core.rgb[i] = core.sizeC[i] > 1 && core.sizeC[i] < 4;
       core.interleaved[i] = true;
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
-      if (core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
+      if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
 
       validBits[i] = new int[core.sizeC[i] != 2 ? core.sizeC[i] : 3];
       for (int j=0; j<validBits[i].length; j++) {

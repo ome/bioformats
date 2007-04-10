@@ -151,7 +151,7 @@ public class OpenlabRawReader extends FormatReader {
     int len = s[0] > 0 ? s[0] : (s[0] + 256);
     addMeta("Image name", new String(s, 1, len).trim());
 
-    if (core.sizeC[0] < 1) core.sizeC[0] = 1;
+    if (core.sizeC[0] <= 1) core.sizeC[0] = 1;
     else core.sizeC[0] = 3;
     addMeta("Width", new Integer(core.sizeX[0]));
     addMeta("Height", new Integer(core.sizeY[0]));

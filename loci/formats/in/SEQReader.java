@@ -81,6 +81,7 @@ public class SEQReader extends BaseTiffReader {
     }
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1; 
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
     if (core.sizeZ[0] == 1 && core.sizeT[0] == 1) {
       core.sizeZ[0] = ifds.length;
@@ -105,6 +106,8 @@ public class SEQReader extends BaseTiffReader {
     }
 
     core.sizeC[0] = Integer.parseInt((String) getMeta("channels"));
+    core.sizeZ[0] = Integer.parseInt((String) getMeta("frames"));
+    core.sizeT[0] = Integer.parseInt((String) getMeta("slices"));
 
     try {
       if (isRGB() && core.sizeC[0] != 3) core.sizeC[0] *= 3;

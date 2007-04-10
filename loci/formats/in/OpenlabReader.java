@@ -627,6 +627,7 @@ public class OpenlabReader extends FormatReader {
 
     for (int i=0; i<numSeries; i++) {
       core.sizeT[i] += 1;
+      core.sizeZ[i] = core.imageCount[i] / core.sizeT[i];
       core.currentOrder[i] = isRGB() ? "XYCZT" : "XYZCT";
       core.rgb[i] = core.sizeC[i] > 1;
       core.interleaved[i] = true;

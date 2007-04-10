@@ -175,8 +175,13 @@ public class IPWReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("IPWReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
-    super.initFile(id);
 
+    currentId = id;
+    metadata = new Hashtable();
+    core = new CoreMetadata(1);
+    Arrays.fill(core.orderCertain, true);
+    getMetadataStore().createRoot();
+    
     in = new RandomAccessStream(id);
 
     pixels = new Hashtable();
@@ -273,10 +278,14 @@ public class IPWReader extends BaseTiffReader {
     Hashtable h = ifds[0];
     core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
     core.sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-    core.sizeZ[0] = Integer.parseInt((String) getMeta("frames"));
-    core.sizeC[0] = Integer.parseInt((String) getMeta("channels"));
-    core.sizeT[0] = Integer.parseInt((String) getMeta("slices"));
+    core.sizeZ[0] = Integer.parseInt(getMeta("frames").toString());
+    core.sizeC[0] = Integer.parseInt(getMeta("channels").toString());
+    core.sizeT[0] = Integer.parseInt(getMeta("slices").toString());
     core.currentOrder[0] = "XY";
+
+    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
     if (core.rgb[0]) core.sizeC[0] *= 3;
 

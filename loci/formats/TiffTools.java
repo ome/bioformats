@@ -183,7 +183,7 @@ public final class TiffTools {
   public static final int CMYK = 5;
   public static final int Y_CB_CR = 6;
   public static final int CIE_LAB = 8;
-  public static final int CFA_ARRAY = 32803;
+  public static final int CFA_ARRAY = -32733;
 
   // TIFF header constants
   public static final int MAGIC_NUMBER = 42;
@@ -442,7 +442,8 @@ public final class TiffTools {
             // handle non-null-terminated strings
             s = new String(ascii, ndx + 1, j - ndx);
           }
-          if (strings != null) strings[c++] = s;
+          else s = null;
+          if (strings != null && s != null) strings[c++] = s;
         }
         value = strings == null ? (Object) s : strings;
       }

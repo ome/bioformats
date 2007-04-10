@@ -246,6 +246,7 @@ public final class FormatTools {
     });
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(true);
+    reader.setMetadataCollected(doMeta); 
     reader.setId(id);
     if (minMaxCalc != null) minMaxCalc.setId(id);
 

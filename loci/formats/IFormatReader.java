@@ -198,6 +198,12 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns true if we should normalize float data. */
   boolean isNormalized();
 
+  /** Specifies whether or not to collect metadata. */
+  void setMetadataCollected(boolean collect);
+
+  /** Returns true if we should collect metadata. */
+  boolean isMetadataCollected();
+
   /** Returns an array of filenames needed to open this dataset. */
   String[] getUsedFiles() throws FormatException, IOException;
 

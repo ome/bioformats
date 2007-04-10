@@ -210,6 +210,8 @@ public class PictReader extends FormatReader {
     // through initFile(String)
     if (debug) debug("open");
 
+    if (core == null) core = new CoreMetadata(1);
+
     strips = new Vector();
 
     state = 0;

@@ -139,6 +139,7 @@ public class TiffReader extends BaseTiffReader {
           core.sizeY[i] = Integer.parseInt(pixels[i].getAttribute("SizeY"));
           core.sizeZ[i] = Integer.parseInt(pixels[i].getAttribute("SizeZ"));
           core.sizeC[i] = Integer.parseInt(pixels[i].getAttribute("SizeC"));
+          core.imageCount[i] = ifds.length; 
           int sc = core.sizeC[i];
           if (rgb) sc /= 3;
           core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
@@ -480,8 +481,6 @@ public class TiffReader extends BaseTiffReader {
         addMeta(key, value);
       }
     }
-
-
   }
 
   /* @see BaseTiffReader#initMetadataStore() */ 

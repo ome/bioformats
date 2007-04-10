@@ -66,6 +66,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to filter out invalid metadata. */
   protected boolean filterMetadata;
 
+  /** Whether or not to collect metadata. */
+  protected boolean collectMetadata = true;
+
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore(String)} prevent "null" access.
@@ -141,7 +144,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table. */
   protected void addMeta(String key, Object value) {
-    if (key == null || value == null) return;
+    if (key == null || value == null || !collectMetadata) return;
     if (filterMetadata) {
       // verify key & value are not empty
       if (key.length() == 0) return;
@@ -196,7 +199,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    initFile(id);
+    if (!id.equals(currentId)) initFile(id);
   }
 
   /* @see IFormatReader#isRGB() */
@@ -375,6 +378,21 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isNormalized() */
   public boolean isNormalized() {
     return normalizeData;
+  }
+
+  /* @see IFormatReader#setMetadataCollected(boolean) */
+  public void setMetadataCollected(boolean collect) {
+    if (currentId != null) {
+      String s = "setMetadataCollected called with open file.";
+      if (debug && debugLevel >= 2) trace(s);
+      else System.err.println("Warning: " + s);
+    }
+    collectMetadata = collect; 
+  }
+
+  /* @see IFormatReader#isMetadataCollected() */
+  public boolean isMetadataCollected() {
+    return collectMetadata;
   }
 
   /* @see IFormatReader#getUsedFiles() */
