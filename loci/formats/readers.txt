@@ -28,6 +28,10 @@
 loci.formats.in.PNGReader          # png [javax.imageio]
 loci.formats.in.JPEGReader         # jpg, jpeg [javax.imageio]
 
+# ImageJ readers
+loci.formats.in.PGMReader          # pgm [ImageJ]
+loci.formats.in.FitsReader         # fits [ImageJ]
+
 # standalone readers with unique file extensions
 loci.formats.in.GIFReader          # gif
 loci.formats.in.BMPReader          # bmp

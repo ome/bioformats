@@ -1,5 +1,5 @@
 //
-// ImageIOReader.java
+// ImageJReader.java
 //
 
 /*
@@ -24,29 +24,52 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import loci.formats.*;
 
 /**
- * ImageIOReader is the superclass for file format readers
- * that use the javax.imageio package.
+ * ImageJReader is the superclass for file format readers that use
+ * Wayne Rasband's excellent ImageJ program:
  *
- * @author Curtis Rueden ctrueden at wisc.edu
+ * DICOM, FITS, PGM, JPEG, GIF, LUT, BMP, TIFF, ZIP-compressed TIFF and ROI.
  */
-public abstract class ImageIOReader extends FormatReader {
+public abstract class ImageJReader extends FormatReader {
 
-  // -- Constructors --
+  // -- Static fields --
 
-  /** Constructs a new ImageIOReader. */
-  public ImageIOReader(String name, String suffix) { super(name, suffix); }
+  /** Message produced when attempting to use ImageJ without it installed. */
+  private static final String NO_IJ =
+    "ImageJ is required to read this file. Please " +
+    "obtain ij.jar from http://rsb.info.nih.gov/ij/upgrade/";
 
-  /** Constructs a new ImageIOReader. */
-  public ImageIOReader(String name, String[] suffixes) {
-    super(name, suffixes);
+  // -- Fields --
+
+  /** Reflection tool for ImageJ calls. */
+  private ReflectedUniverse r;
+
+  /** Flag indicating ImageJ is not installed. */
+  private boolean noImageJ = false;
+
+  // -- Constructor --
+
+  /** Constructs a new ImageJ reader. */
+  public ImageJReader(String name, String suffix) {
+    super(name, suffix);
+    r = new ReflectedUniverse();
+
+    try {
+      r.exec("import ij.ImagePlus");
+      r.exec("import ij.ImageStack");
+      r.exec("import ij.io.Opener");
+      r.exec("import ij.process.ImageProcessor");
+      r.exec("opener = new Opener()");
+      r.setVar("false", false);
+    }
+    catch (Throwable t) {
+      noImageJ = true;
+    }
   }
 
   // -- FormatReader API methods --
@@ -55,35 +78,50 @@ public abstract class ImageIOReader extends FormatReader {
   public boolean isThisType(byte[] block) { return false; }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
-  public byte[] openBytes(int no)
-    throws FormatException, IOException
-  {
-    byte[] b = ImageTools.getBytes(openImage(no), false, no);
-    int bytesPerChannel = core.sizeX[0] * core.sizeY[0];
-    if (b.length > bytesPerChannel) {
-      byte[] tmp = b;
-      b = new byte[bytesPerChannel * 3];
-      for (int i=0; i<3; i++) {
-        System.arraycopy(tmp, i * bytesPerChannel, b, i*bytesPerChannel,
-          bytesPerChannel);
-      }
-    }
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] b = ImageTools.getBytes(openImage(currentId, no), false, no);
     return b;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */ 
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (no < 0 || no >= getImageCount()) {
+  public BufferedImage openImage(int no)
+    throws FormatException, IOException
+  {
+    if (no < 0 || no >= getImageCount(currentId)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    RandomAccessStream ras = new RandomAccessStream(currentId);
-    DataInputStream dis =
-      new DataInputStream(new BufferedInputStream(ras, 4096));
-    BufferedImage b = ImageIO.read(dis);
-    ras.close();
-    dis.close();
-    return b;
+    if (noImageJ) throw new FormatException(NO_IJ);
+
+    try {
+      Location file = new Location(currentId);
+      r.setVar("dir", file.getParent() + System.getProperty("file.separator"));
+      r.setVar("name", file.getName());
+      synchronized (ImageJReader.class) {
+        try {
+          r.exec("state = Opener.getOpenUsingPlugins()");
+          r.exec("Opener.setOpenUsingPlugins(false)");
+        }
+        catch (ReflectException exc) {
+          // probably ImageJ version < 1.38f
+        }
+        r.exec("image = opener.openImage(dir, name)");
+        try {
+          r.exec("Opener.setOpenUsingPlugins(state)");
+        }
+        catch (ReflectException exc) {
+          // probably ImageJ version < 1.38f
+        }
+      }
+      r.exec("size = image.getStackSize()");
+      Image img = (Image) r.exec("image.getImage()");
+
+      BufferedImage b = ImageTools.makeBuffered(img);
+      return b;
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -96,7 +134,7 @@ public abstract class ImageIOReader extends FormatReader {
 
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("ImageIOReader.initFile(" + id + ")");
+    if (debug) debug("ImageJReader.initFile(" + id + ")");
     super.initFile(id);
 
     status("Populating metadata");
