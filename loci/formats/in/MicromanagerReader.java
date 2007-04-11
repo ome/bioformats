@@ -87,7 +87,7 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
-    super.close(); 
+    super.close();
     if (tiffReader != null) tiffReader.close();
     tiffReader = null;
     tiffs = null;
@@ -109,7 +109,7 @@ public class MicromanagerReader extends FormatReader {
     // find metadata.txt
 
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
-    in = new RandomAccessStream(new Location(parent, 
+    in = new RandomAccessStream(new Location(parent,
       METADATA).getAbsolutePath());
 
     // usually a small file, so we can afford to read it into memory
@@ -200,7 +200,7 @@ public class MicromanagerReader extends FormatReader {
       null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      // TODO : retrieve min/max from the metadata 
+      // TODO : retrieve min/max from the metadata
       //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
       //  getChannelGlobalMaximum(id, i), null);
     }

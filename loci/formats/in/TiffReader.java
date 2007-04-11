@@ -64,7 +64,7 @@ public class TiffReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* @see BaseTiffReader#initStandardMetadata() */ 
+  /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
     String comment = (String) getMeta("Comment");
@@ -117,7 +117,7 @@ public class TiffReader extends BaseTiffReader {
       // There is a version of WiscScan which writes OME-XML to every IFD,
       // but with SizeZ and SizeT equal to 1.
 
-      String s = 
+      String s =
         (String) TiffTools.getIFDValue(ifds[1], TiffTools.IMAGE_DESCRIPTION);
       boolean isWiscScan = s != null && s.indexOf("ome.xsd") != -1;
 
@@ -130,7 +130,7 @@ public class TiffReader extends BaseTiffReader {
         catch (IOException exc) {
           throw new FormatException(exc);
         }
-        
+
         core = new CoreMetadata(tiffData.length);
         Arrays.fill(core.orderCertain, true);
 
@@ -139,7 +139,7 @@ public class TiffReader extends BaseTiffReader {
           core.sizeY[i] = Integer.parseInt(pixels[i].getAttribute("SizeY"));
           core.sizeZ[i] = Integer.parseInt(pixels[i].getAttribute("SizeZ"));
           core.sizeC[i] = Integer.parseInt(pixels[i].getAttribute("SizeC"));
-          core.imageCount[i] = ifds.length; 
+          core.imageCount[i] = ifds.length;
           int sc = core.sizeC[i];
           if (rgb) sc /= 3;
           core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
@@ -183,7 +183,7 @@ public class TiffReader extends BaseTiffReader {
             char d1st = core.currentOrder[i].charAt(2);
             char d2nd = core.currentOrder[i].charAt(3);
             int z = firstZ, t = firstT, c = firstC;
-            
+
             for (int k=0; k<numPlanes; k++) {
               zct[z][c][t] = true;
               switch (d1st) {
@@ -460,22 +460,22 @@ public class TiffReader extends BaseTiffReader {
       }
       metadata.remove("Comment");
     }
-  
-    // check for MetaMorph-style TIFF comment 
-    boolean metamorph = comment != null && getMeta("Software") != null && 
-      ((String) getMeta("Software")).indexOf("MetaMorph") != -1; 
-    put("MetaMorph", metamorph ? "yes" : "no"); 
-    
+
+    // check for MetaMorph-style TIFF comment
+    boolean metamorph = comment != null && getMeta("Software") != null &&
+      ((String) getMeta("Software")).indexOf("MetaMorph") != -1;
+    put("MetaMorph", metamorph ? "yes" : "no");
+
     if (metamorph) {
-      // parse key/value pairs   
+      // parse key/value pairs
       StringTokenizer st = new StringTokenizer(comment, "\n");
       while (st.hasMoreTokens()) {
         String line = st.nextToken();
         int colon = line.indexOf(":");
         if (colon < 0) {
           addMeta("Comment", line);
-          continue; 
-        } 
+          continue;
+        }
         String key = line.substring(0, colon);
         String value = line.substring(colon + 1);
         addMeta(key, value);
@@ -483,7 +483,7 @@ public class TiffReader extends BaseTiffReader {
     }
   }
 
-  /* @see BaseTiffReader#initMetadataStore() */ 
+  /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
     // check for OME-XML in TIFF comment (OME-TIFF format)
     // we need an extra check to make sure that any XML we find is indeed

@@ -108,7 +108,7 @@ public class ZeissZVIReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // all of our samples begin with 0xd0cf11e0
     return (block[0] == 0xd0 && block[1] == 0xcf &&
@@ -121,9 +121,9 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * 
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount()];
     return openBytes(no, buf);
   }
@@ -137,14 +137,14 @@ public class ZeissZVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * 
+    if (buf.length < core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount())
-    { 
+    {
       throw new FormatException("Buffer too small.");
     }
 
     try {
-      Integer ii = new Integer(no); 
+      Integer ii = new Integer(no);
       Object directory = pixels.get(ii);
       String name = (String) names.get(ii);
 
@@ -178,11 +178,10 @@ public class ZeissZVIReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
-  public BufferedImage openImage(int no) throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.rgb[0] ? core.sizeC[0] : 1, true, bpp == 3 ? 1 : bpp, true, 
+      core.rgb[0] ? core.sizeC[0] : 1, true, bpp == 3 ? 1 : bpp, true,
       validBits);
   }
 
@@ -195,9 +194,9 @@ public class ZeissZVIReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
-    super.close(); 
+    super.close();
     needLegacy = false;
 
     if (legacy != null) legacy.close();
@@ -216,7 +215,7 @@ public class ZeissZVIReader extends FormatReader {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
     if (noPOI || needLegacy) {
       legacy.initFile(id);
-      core = legacy.getCoreMetadata(); 
+      core = legacy.getCoreMetadata();
       return;
     }
     super.initFile(id);
@@ -246,7 +245,7 @@ public class ZeissZVIReader extends FormatReader {
 
       status("Populating metadata");
 
-      core.rgb[0] = core.sizeC[0] > 1 && 
+      core.rgb[0] = core.sizeC[0] > 1 &&
         (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] != core.imageCount[0]);
       core.littleEndian[0] = true;
       core.interleaved[0] = false;
@@ -292,7 +291,7 @@ public class ZeissZVIReader extends FormatReader {
           if (i != maxNdx && i != minNdx) medNdx = i;
         }
 
-        core.currentOrder[0] = 
+        core.currentOrder[0] =
           "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
 
         if (zIndex != null && tIndex != null) {
@@ -301,13 +300,13 @@ public class ZeissZVIReader extends FormatReader {
 
           if (z != core.sizeZ[0]) {
             if (core.sizeZ[0] != 1) {
-              core.currentOrder[0] = 
+              core.currentOrder[0] =
                 core.currentOrder[0].replaceAll("Z", "") + "Z";
             }
             else {
-              core.currentOrder[0] = 
+              core.currentOrder[0] =
                 core.currentOrder[0].replaceAll("T", "") + "T";
-            } 
+            }
           }
         }
 
@@ -316,13 +315,13 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       else if (getMeta("MultiChannel Color") != null) {
-        core.currentOrder[0] = 
+        core.currentOrder[0] =
           (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
       }
       else {
-        core.currentOrder[0] = 
+        core.currentOrder[0] =
           (core.sizeZ[0] > core.sizeT[0]) ? "XYZTC" : "XYTZC";
-      } 
+      }
     }
     catch (ReflectException e) {
       needLegacy = true;
@@ -359,8 +358,8 @@ public class ZeissZVIReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      Boolean.FALSE, 
-      core.currentOrder[0], 
+      Boolean.FALSE,
+      core.currentOrder[0],
       null,
       null);
 
@@ -397,7 +396,7 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("dirName = dir.getName()");
 
       if (isInstance)  {
-        status("Parsing embedded folder (" + (depth + 1) + ")"); 
+        status("Parsing embedded folder (" + (depth + 1) + ")");
         parseDir(depth + 1, r.getVar("entry"));
       }
       else if (isDocument) {
@@ -651,12 +650,12 @@ public class ZeissZVIReader extends FormatReader {
           int tw = DataTools.bytesToInt(data, pt, 4, true);
           if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
             core.sizeX[0] = tw;
-          } 
+          }
           pt += 6;
           int th = DataTools.bytesToInt(data, pt, 4, true);
           if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
             core.sizeY[0] = th;
-          } 
+          }
           pt += 6;
 
           int zDepth = DataTools.bytesToInt(data, pt, 4, true);
@@ -703,14 +702,14 @@ public class ZeissZVIReader extends FormatReader {
 
           pt = oldPt + 4 + len;
 
-          boolean foundWidth = 
+          boolean foundWidth =
             DataTools.bytesToInt(data, pt, 4, true) == core.sizeX[0];
           boolean foundHeight =
             DataTools.bytesToInt(data, pt + 4, 4, true) == core.sizeY[0];
           boolean findFailed = false;
           while ((!foundWidth || !foundHeight) && pt + 9 < data.length) {
             pt++;
-            foundWidth = 
+            foundWidth =
               DataTools.bytesToInt(data, pt, 4, true) == core.sizeX[0];
             foundHeight =
               DataTools.bytesToInt(data, pt + 4, 4, true) == core.sizeY[0];
@@ -777,7 +776,7 @@ public class ZeissZVIReader extends FormatReader {
     names.put(new Integer(num), entry);
     core.imageCount[0]++;
     if (bpp % 3 == 0) core.sizeC[0] = 3;
-    else core.sizeC[0] = 1; 
+    else core.sizeC[0] = 1;
   }
 
   /** Parse a tag and place it in the metadata hashtable. */

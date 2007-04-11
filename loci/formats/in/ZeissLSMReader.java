@@ -50,7 +50,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 3) return false;
     if (block[0] != TiffTools.LITTLE) return false; // denotes little-endian
@@ -76,7 +76,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */ 
+  /* @see loci.formats.IFormatReader#openThumbImage(int) */
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
@@ -88,19 +88,19 @@ public class ZeissLSMReader extends BaseTiffReader {
     return super.openThumbImage(no);
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeX() */ 
+  /* @see loci.formats.IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() throws FormatException, IOException {
     if (ifds.length == 1) return super.getThumbSizeX();
     return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 1);
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeY() */ 
+  /* @see loci.formats.IFormatReader#getThumbSizeY() */
   public int getThumbSizeY() throws FormatException, IOException {
     if (ifds.length == 1) return super.getThumbSizeY();
     return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 1);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -110,15 +110,15 @@ public class ZeissLSMReader extends BaseTiffReader {
     return TiffTools.getImage(ifds[2*no], in);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[] b = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * 
-      FormatTools.getBytesPerPixel(core.pixelType[0])]; 
-    return openBytes(no, b);   
+    byte[] b = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0])];
+    return openBytes(no, b);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -128,13 +128,13 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
- 
+
     int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
 
     if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * bpp) {
       throw new FormatException("Buffer too small.");
     }
-  
+
     ifds = TiffTools.getIFDs(in);
     TiffTools.getSamples(ifds[2*no], in, buf);
     return swapIfRequired(buf);
@@ -216,7 +216,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     ifds = TiffTools.getIFDs(in);
   }
 
-  /* @see BaseTiffReader#initMetadata() */ 
+  /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() {
     Hashtable ifd = ifds[0];
 
@@ -259,8 +259,8 @@ public class ZeissLSMReader extends BaseTiffReader {
         else core.sizeT[0]++;
       }
 
-      while (core.imageCount[0] > core.sizeZ[0] * core.sizeT[0] * 
-        getEffectiveSizeC()) 
+      while (core.imageCount[0] > core.sizeZ[0] * core.sizeT[0] *
+        getEffectiveSizeC())
       {
         core.imageCount[0]--;
       }
@@ -583,7 +583,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     for (int i=0; i<dirList.length; i++) {
       if (dirList[i].toLowerCase().endsWith(".mdb")) {
         try {
-          MDBParser.parseDatabase((new Location(dir.getPath(), 
+          MDBParser.parseDatabase((new Location(dir.getPath(),
             dirList[i])).getAbsolutePath(), metadata);
         }
         catch (FormatException f) {

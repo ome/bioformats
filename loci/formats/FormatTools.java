@@ -246,7 +246,7 @@ public final class FormatTools {
     });
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(true);
-    reader.setMetadataCollected(doMeta); 
+    reader.setMetadataCollected(doMeta);
     reader.setId(id);
     if (minMaxCalc != null) minMaxCalc.setId(id);
 
@@ -601,7 +601,7 @@ public final class FormatTools {
     System.out.print(in + " -> " + out + " ");
 
     ImageReader reader = new ImageReader();
-    reader.setId(in); 
+    reader.setId(in);
 
     long start = System.currentTimeMillis();
     int num = reader.getImageCount();
@@ -637,7 +637,7 @@ public final class FormatTools {
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  public static int getIndex(IFormatReader reader, int z, int c, int t) 
+  public static int getIndex(IFormatReader reader, int z, int c, int t)
     throws FormatException, IOException
   {
     String order = reader.getDimensionOrder();
@@ -712,7 +712,7 @@ public final class FormatTools {
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  public static int[] getZCTCoords(IFormatReader reader, int index) 
+  public static int[] getZCTCoords(IFormatReader reader, int index)
     throws FormatException, IOException
   {
     String order = reader.getDimensionOrder();

@@ -112,18 +112,18 @@ public class PictReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 528) return false;
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     return ImageTools.getBytes(openImage(no), false, no % 3);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -138,7 +138,7 @@ public class PictReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -184,7 +184,7 @@ public class PictReader extends FormatReader {
     store.setPixels(
       new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), 
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
@@ -229,8 +229,8 @@ public class PictReader extends FormatReader {
 
     // combine everything in the strips Vector
 
-    if ((core.sizeY[0]*4 < strips.size()) && (((strips.size() / 3) % 
-      core.sizeY[0]) != 0)) 
+    if ((core.sizeY[0]*4 < strips.size()) && (((strips.size() / 3) %
+      core.sizeY[0]) != 0))
     {
       core.sizeY[0] = strips.size();
     }
@@ -266,7 +266,7 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        debug("openBytes: 8-bit data, " + core.sizeX[0] + " x " + 
+        debug("openBytes: 8-bit data, " + core.sizeX[0] + " x " +
           core.sizeY[0] + ", length=" + data.length + "x" + data[0].length);
       }
       return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0]);
@@ -287,7 +287,7 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        debug("openBytes: 24-bit data, " + core.sizeX[0] + " x " + 
+        debug("openBytes: 24-bit data, " + core.sizeX[0] + " x " +
           core.sizeY[0] + ", length=" + data.length + "x" + data[0].length);
       }
       return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0]);
@@ -310,7 +310,7 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        debug("openBytes: 32-bit data, " + core.sizeX[0] + " x " + 
+        debug("openBytes: 32-bit data, " + core.sizeX[0] + " x " +
           core.sizeY[0] + ", length=" + data.length + "x" + data[0].length);
       }
       return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0]);
@@ -338,7 +338,7 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        debug("openBytes: 16-bit data, " + core.sizeX[0] + " x " + 
+        debug("openBytes: 16-bit data, " + core.sizeX[0] + " x " +
           core.sizeY[0] + ", length=" + data.length);
       }
       return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0], 3, true);
@@ -357,17 +357,17 @@ public class PictReader extends FormatReader {
         pt += 2;
         // skip over frame
         pt += 8;
-        int verOpcode = 
+        int verOpcode =
           DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
         pt++;
-        int verNumber = 
+        int verNumber =
           DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
         pt++;
 
         if (verOpcode == 0x11 && verNumber == 0x01) versionOne = true;
         else if (verOpcode == 0x00 && verNumber == 0x11) {
           versionOne = false;
-          int verNumber2 = 
+          int verNumber2 =
             DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
           pt += 2;
 
@@ -614,13 +614,13 @@ public class PictReader extends FormatReader {
         int index = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
         if ((flags & 0x8000) != 0) index = i;
-        lookup[0][index] = 
+        lookup[0][index] =
           DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
-        lookup[1][index] = 
+        lookup[1][index] =
           DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
-        lookup[2][index] = 
+        lookup[2][index] =
           DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
         pt += 2;
       }

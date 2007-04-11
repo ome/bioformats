@@ -48,7 +48,7 @@ public class ChannelMerger extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#getImageCount() */ 
+  /* @see IFormatReader#getImageCount() */
   public int getImageCount() throws FormatException, IOException {
     int no = reader.getImageCount();
     if (canMerge()) no /= getSizeC();
@@ -70,12 +70,12 @@ public class ChannelMerger extends ReaderWrapper {
     return order;
   }
 
-  /* @see IFormatReader#isRGB() */ 
+  /* @see IFormatReader#isRGB() */
   public boolean isRGB() throws FormatException, IOException {
     return canMerge() || reader.isRGB();
   }
 
-  /* @see IFormatReader#openImage(int) */ 
+  /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (!canMerge()) return super.openImage(no);
     int sizeC = getSizeC();
@@ -101,7 +101,7 @@ public class ChannelMerger extends ReaderWrapper {
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (!canMerge()) return super.openBytes(no);
     int sizeC = getSizeC();
-    int[] nos = getZCTCoords( no);
+    int[] nos = getZCTCoords(no);
     int z = nos[0], t = nos[2];
     String dimOrder = reader.getDimensionOrder();
     int ic = dimOrder.indexOf("C") - 2;
@@ -118,7 +118,7 @@ public class ChannelMerger extends ReaderWrapper {
     return bytes;
   }
 
-  /* @see IFormatReader#openThumbImage(int) */ 
+  /* @see IFormatReader#openThumbImage(int) */
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
@@ -127,8 +127,7 @@ public class ChannelMerger extends ReaderWrapper {
       getThumbSizeY(), true);
   }
 
-  public int getIndex(int z, int c, int t) throws FormatException, IOException
-  {
+  public int getIndex(int z, int c, int t) throws FormatException, IOException {
     return FormatTools.getIndex(this, z, c, t);
   }
 

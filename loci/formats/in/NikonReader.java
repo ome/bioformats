@@ -119,7 +119,7 @@ public class NikonReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
 
@@ -156,7 +156,7 @@ public class NikonReader extends BaseTiffReader {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
     if (lname.endsWith(".nef")) return true;

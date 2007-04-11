@@ -113,8 +113,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
       buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
       raf.readFully(buf);
       raf.seek(0);
-      bufferSizes[0] = MAX_OVERHEAD / 2; 
-      lastValid = 1; 
+      bufferSizes[0] = MAX_OVERHEAD / 2;
+      lastValid = 1;
       nextMark = MAX_OVERHEAD;
     }
     else if (file.startsWith("http")) {
@@ -411,7 +411,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     int ndx = 0;
 
     while ((ndx < lastValid) && (ndx < MAX_HISTORY)) {
-      int size = bufferSizes[ndx]; 
+      int size = bufferSizes[ndx];
       sum += (size * ((ndx / (MAX_HISTORY / 5)) + 1));
       div += (ndx / (MAX_HISTORY / 5)) + 1;
       ndx++;
@@ -424,7 +424,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       lastValid++;
     }
     else {
-      bufferSizes[0] = newSize; 
+      bufferSizes[0] = newSize;
     }
 
     return newSize;
@@ -466,7 +466,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
         lastValid++;
       }
       else {
-        bufferSizes[0] = MAX_OVERHEAD; 
+        bufferSizes[0] = MAX_OVERHEAD;
       }
 
       if (fp >= nextMark) {

@@ -55,12 +55,12 @@ public class MRCReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false; // no way to tell if this is an MRC file or not
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bpp];
     return openBytes(no, buf);
@@ -81,7 +81,7 @@ public class MRCReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], 1, true, bpp, core.littleEndian[0]);
@@ -109,7 +109,7 @@ public class MRCReader extends FormatReader {
     // read 1024 byte header
 
     in.seek(0);
-    in.order(core.littleEndian[0]); 
+    in.order(core.littleEndian[0]);
 
     core.sizeX[0] = in.readInt();
     core.sizeY[0] = in.readInt();
@@ -281,7 +281,7 @@ public class MRCReader extends FormatReader {
       new Float(zlen / mz), null, null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      // TODO : get channel min/max from metadata 
+      // TODO : get channel min/max from metadata
       //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
       //  getChannelGlobalMaximum(id, i), null);
     }

@@ -97,12 +97,12 @@ public class DicomReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8)];
     return openBytes(no, buf);
@@ -115,9 +115,9 @@ public class DicomReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    
-    int bytes = core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8); 
-    
+
+    int bytes = core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8);
+
     if (buf.length < bytes) {
       throw new FormatException("Buffer too small.");
     }
@@ -127,7 +127,7 @@ public class DicomReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       1, false, bitsPerPixel / 8, core.littleEndian[0]);
@@ -328,16 +328,16 @@ public class DicomReader extends FormatReader {
 
     if (date != null && time != null) {
       stamp = date + " " + time;
-      SimpleDateFormat parse = 
+      SimpleDateFormat parse =
         new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSSSSS");
       Date d = parse.parse(stamp, new ParsePosition(0));
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       stamp = fmt.format(d);
     }
-    
+
     store.setImage(
       null, // name
-      stamp, 
+      stamp,
       (String) getMeta("Image Type"),
       null); // Use index 0
 
@@ -469,7 +469,7 @@ public class DicomReader extends FormatReader {
         vr = IMPLICIT_VR;
         if (core.littleEndian[0]) {
           return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
-        } 
+        }
         return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
       case AE:
       case AS:
@@ -501,7 +501,7 @@ public class DicomReader extends FormatReader {
         vr = IMPLICIT_VR;
         if (core.littleEndian[0]) {
           return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
-        } 
+        }
         return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
     }
   }

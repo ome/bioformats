@@ -51,7 +51,7 @@ public class IPLabReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 12) return false; // block length too short
     String s = new String(block, 0, 4);
@@ -65,14 +65,14 @@ public class IPLabReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bps * core.sizeC[0]];
     return openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf) 
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     if (no < 0 || no >= getImageCount()) {
@@ -89,7 +89,7 @@ public class IPLabReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       core.rgb[0] ? core.sizeC[0] : 1, false, bps, core.littleEndian[0]);

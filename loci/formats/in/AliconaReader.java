@@ -47,19 +47,19 @@ public class AliconaReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return (new String(block)).indexOf("Alicona") != -1;
   }
- 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * numBytes];
     return openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf) 
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     if (no < 0 || no >= getImageCount()) {
@@ -83,9 +83,9 @@ public class AliconaReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes( no), core.sizeX[0], core.sizeY[0],
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       1, false, numBytes, true);
   }
 
@@ -146,7 +146,7 @@ public class AliconaReader extends FormatReader {
 
     status("Populating metadata");
 
-    numBytes = (int) (in.length() - textureOffset) / 
+    numBytes = (int) (in.length() - textureOffset) /
       (core.sizeX[0] * core.sizeY[0] * core.imageCount[0]);
 
     boolean hasC = !((String) getMeta("TexturePtr")).trim().equals("7");
@@ -169,7 +169,7 @@ public class AliconaReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      new Boolean(!core.littleEndian[0]), 
+      new Boolean(!core.littleEndian[0]),
       core.currentOrder[0],
       null,
       null

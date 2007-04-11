@@ -29,7 +29,7 @@ import loci.formats.FormatException;
 /**
  * Implements encoding (compress) and decoding (decompress) methods
  * for Base64.  This code was adapted from the Jakarta Commons Codec source,
- * http://jakarta.apache.org/commons 
+ * http://jakarta.apache.org/commons
  *
  * @author Melissa Linkert linkert at wisc.edu
  */

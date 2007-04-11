@@ -131,10 +131,10 @@ public class GIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
     return openBytes(no, buf);
@@ -161,7 +161,7 @@ public class GIFReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no)
     throws FormatException, IOException
   {
@@ -214,7 +214,7 @@ public class GIFReader extends FormatReader {
       gct = new int[256];
       int i = 0;
       int j = 0;
-      int r, g, b; 
+      int r, g, b;
       while (i < gctSize) {
         r = ((int) c[j++]) & 0xff;
         g = ((int) c[j++]) & 0xff;

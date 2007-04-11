@@ -89,7 +89,7 @@ public class ICSReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
   }
@@ -141,7 +141,7 @@ public class ICSReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     byte[] plane = openBytes(no);
     int channels = core.rgb[0] ? core.sizeC[0] : 1;
@@ -158,11 +158,11 @@ public class ICSReader extends FormatReader {
 
       if (normalizeData) f = DataTools.normalizeFloats(f);
 
-      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0], 
+      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0],
         channels, true);
     }
 
-    return ImageTools.makeImage(plane, core.sizeX[0], core.sizeY[0], channels, 
+    return ImageTools.makeImage(plane, core.sizeX[0], core.sizeY[0], channels,
       true, bytes, core.littleEndian[0]);
   }
 
@@ -180,9 +180,9 @@ public class ICSReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
-    super.close(); 
+    super.close();
     icsIn = null;
     currentIcsId = null;
     currentIdsId = null;
@@ -294,7 +294,7 @@ public class ICSReader extends FormatReader {
     StringTokenizer t1 = new StringTokenizer(images);
     StringTokenizer t2 = new StringTokenizer(ord);
 
-    core.rgb[0] = 
+    core.rgb[0] =
       ord.indexOf("ch") >= 0 && ord.indexOf("ch") < ord.indexOf("x");
 
     String imageToken;
@@ -356,10 +356,10 @@ public class ICSReader extends FormatReader {
 
     // extra check is because some of our datasets are labeled as 'gzip', and
     // have a valid GZIP header, but are actually uncompressed
-    if (gzip && ((data.length / (core.imageCount[0]) < 
+    if (gzip && ((data.length / (core.imageCount[0]) <
       (core.sizeX[0] * core.sizeY[0] * bitsPerPixel / 8))))
     {
-      status("Decompressing pixel data"); 
+      status("Decompressing pixel data");
       in.read(data);
       byte[] buf = new byte[8192];
       ByteVector v = new ByteVector();

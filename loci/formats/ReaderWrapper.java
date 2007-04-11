@@ -285,61 +285,61 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   /** @deprecated Replaced by IFormatReader#getImageCount() */
   public int getImageCount(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getImageCount();
   }
 
   /** @deprecated Replaced by IFormatReader#isRGB() */
   public boolean isRGB(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.isRGB();
   }
 
   /** @deprecated Replaced by IFormatReader#getSizeX() */
   public int getSizeX(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getSizeX();
   }
 
   /** @deprecated Replaced by IFormatReader#getSizeY() */
   public int getSizeY(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getSizeY();
   }
 
   /** @deprecated Replaced by IFormatReader#getSizeZ() */
   public int getSizeZ(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getSizeZ();
   }
 
   /** @deprecated Replaced by IFormatReader#getSizeC() */
   public int getSizeC(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getSizeC();
   }
 
   /** @deprecated Replaced by IFormatReader#getSizeT() */
   public int getSizeT(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getSizeT();
   }
 
   /** @deprecated Replaced by IFormatReader#getPixelType() */
   public int getPixelType(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getPixelType();
   }
 
   /** @deprecated Replaced by IFormatReader#getEffectiveSizeC() */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return getImageCount() / (getSizeZ() * getSizeT());
   }
 
   /** @deprecated Replaced by IFormatReader#getRGBChannelCount() */
   public int getRGBChannelCount(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return getSizeC() / getEffectiveSizeC();
   }
 
@@ -347,7 +347,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public int[] getChannelDimLengths(String id)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getChannelDimLengths();
   }
 
@@ -355,25 +355,25 @@ public abstract class ReaderWrapper implements IFormatReader {
   public String[] getChannelDimTypes(String id)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getChannelDimTypes();
   }
 
   /** @deprecated Replaced by IFormatReader#getThumbSizeX() */
   public int getThumbSizeX(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getThumbSizeX();
   }
 
   /** @deprecated Replaced by IFormatReader#getThumbSizeY() */
   public int getThumbSizeY(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getThumbSizeY();
   }
 
   /** @deprecated Replaced by IFormatReader#isLittleEndian() */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.isLittleEndian();
   }
 
@@ -381,19 +381,19 @@ public abstract class ReaderWrapper implements IFormatReader {
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getDimensionOrder();
   }
 
   /** @deprecated Replaced by IFormatReader#isOrderCertain() */
   public boolean isOrderCertain(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.isOrderCertain();
   }
 
   /** @deprecated Replaced by IFormatReader#isInterleaved() */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.isInterleaved();
   }
 
@@ -401,7 +401,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.isInterleaved(subC);
   }
 
@@ -409,7 +409,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.openImage(no);
   }
 
@@ -417,7 +417,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.openBytes(no);
   }
 
@@ -425,7 +425,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.openBytes(no, buf);
   }
 
@@ -433,7 +433,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.openThumbImage(no);
   }
 
@@ -441,31 +441,31 @@ public abstract class ReaderWrapper implements IFormatReader {
   public byte[] openThumbBytes(String id, int no)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.openThumbBytes(no);
   }
 
   /** @deprecated Replaced by IFormatReader#getSeriesCount() */
   public int getSeriesCount(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getSeriesCount();
   }
 
   /** @deprecated Replaced by IFormatReader#setSeries(int) */
   public void setSeries(String id, int no) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     reader.setSeries(no);
   }
 
   /** @deprecated Replaced by IFormatReader#getSeries() */
   public int getSeries(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getSeries();
   }
 
   /** @deprecated Replaced by IFormatReader#getUsedFiles() */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getUsedFiles();
   }
 
@@ -473,7 +473,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getIndex(z, c, t);
   }
 
@@ -481,7 +481,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getZCTCoords(index);
   }
 
@@ -489,13 +489,13 @@ public abstract class ReaderWrapper implements IFormatReader {
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getMetadataValue(field);
   }
 
   /** @deprecated Replaced by IFormatReader#getMetadata() */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getMetadata();
   }
 
@@ -503,7 +503,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public CoreMetadata getCoreMetadata(String id)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getCoreMetadata();
   }
 
@@ -511,7 +511,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public MetadataStore getMetadataStore(String id)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getMetadataStore();
   }
 
@@ -519,7 +519,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   public Object getMetadataStoreRoot(String id)
     throws FormatException, IOException
   {
-    reader.setId(id); 
+    reader.setId(id);
     return reader.getMetadataStoreRoot();
   }
 

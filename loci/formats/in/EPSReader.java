@@ -57,14 +57,14 @@ public class EPSReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /* @see loci.formats.IFormatRaeder#openBytes(int) */ 
+  /* @see loci.formats.IFormatRaeder#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = 
+    byte[] buf =
       new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * (bps / 8)];
     return openBytes(no, buf);
   }
@@ -112,7 +112,7 @@ public class EPSReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       isRGB() ? 3 : 1, true);
@@ -129,9 +129,9 @@ public class EPSReader extends FormatReader {
     if (debug) debug("EPSReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
-    
-    status("Verifying EPS format");  
-    
+
+    status("Verifying EPS format");
+
     String line = in.readLine();
     if (!line.trim().startsWith("%!PS")) {
       throw new FormatException("Invalid EPS file.");
@@ -235,8 +235,8 @@ public class EPSReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      Boolean.FALSE, 
-      core.currentOrder[0], 
+      Boolean.FALSE,
+      core.currentOrder[0],
       null,
       null);
     for (int i=0; i<core.sizeC[0]; i++) {

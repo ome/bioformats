@@ -100,7 +100,7 @@ public class OmeisImporter {
       if (done[i]) continue; // already part of another group
       if (ids[i] == null) continue; // invalid id
       if (!reader.isThisType(ids[i])) continue; // unknown format
-      reader.setId(ids[i]); 
+      reader.setId(ids[i]);
       String[] files = reader.getUsedFiles();
       if (files == null) continue; // invalid files list
       sb.setLength(0);
@@ -152,7 +152,7 @@ public class OmeisImporter {
     if (DEBUG) log("Reading file '" + id + "' --> " + path);
 
     // verify that all given file IDs were grouped by the reader
-    reader.setId(id); 
+    reader.setId(id);
     String[] used = reader.getUsedFiles();
     if (used == null) {
       throw new FormatException("Invalid file list for " + path);

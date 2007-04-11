@@ -212,7 +212,7 @@ public class ReaderTest extends TestCase {
     try {
       int planesRead = 0;
       reader.setId(id);
-      
+
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
         int imageCount = reader.getImageCount();
@@ -376,15 +376,15 @@ public class ReaderTest extends TestCase {
    */
   public void testConsistent() {
     boolean success = true;
-    try { 
+    try {
       reader.setId(id);
     }
     catch (Exception e) {
       writeLog(id + " failed consistent metadata test");
-      if (FormatReader.debug) e.printStackTrace(); 
+      if (FormatReader.debug) e.printStackTrace();
       assertTrue(false);
     }
-     
+
     if (writeConfigFiles) {
       try {
         // assemble the config line
@@ -584,9 +584,9 @@ public class ReaderTest extends TestCase {
       Arrays.sort(base);
 
       FileStitcher fs = new FileStitcher();
-      
+
       for (int i=0; i<base.length; i++) {
-        fs.setId(base[i]); 
+        fs.setId(base[i]);
         String[] comp = fs.getUsedFiles();
         Arrays.sort(comp);
         for (int j=0; j<comp.length; j++) {

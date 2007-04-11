@@ -1371,7 +1371,7 @@ public final class TiffTools {
     long imageLength = getImageLength(ifd);
     int samplesPerPixel = getSamplesPerPixel(ifd);
     int photoInterp = getPhotometricInterpretation(ifd);
-    
+
     int[] validBits = getIFDIntArray(ifd, VALID_BITS, false);
 
     if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {

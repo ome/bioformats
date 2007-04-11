@@ -74,16 +74,16 @@ public abstract class ImageJReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] b = ImageTools.getBytes(openImage(no), false, no);
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no)
     throws FormatException, IOException
   {
@@ -127,7 +127,7 @@ public abstract class ImageJReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws FormatException, IOException { }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException { }
 
   // -- Internal FormatReader API methods --
@@ -163,8 +163,8 @@ public abstract class ImageJReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      new Boolean(!core.littleEndian[0]), 
-      core.currentOrder[0], 
+      new Boolean(!core.littleEndian[0]),
+      core.currentOrder[0],
       null,
       null);
     for (int i=0; i<core.sizeC[0]; i++) {

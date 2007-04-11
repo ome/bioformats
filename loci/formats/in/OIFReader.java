@@ -64,12 +64,12 @@ public class OIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] b = tiffReader[no].openBytes(0);
     tiffReader[no].close();
@@ -89,7 +89,7 @@ public class OIFReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -103,22 +103,22 @@ public class OIFReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */ 
-  public BufferedImage openThumbImage(int no) 
+  /* @see loci.formats.IFormatReader#openThumbImage(int) */
+  public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    String dir = 
+    String dir =
       currentId.substring(0, currentId.lastIndexOf(File.separator) + 1);
-    dir += currentId.substring(currentId.lastIndexOf(File.separator) + 1) + 
+    dir += currentId.substring(currentId.lastIndexOf(File.separator) + 1) +
       ".files" + File.separator;
 
     String thumbId = dir + currentId.substring(currentId.lastIndexOf(
       File.separator) + 1, currentId.lastIndexOf(".")) + "_Thumb.bmp";
-    thumbReader.setId(thumbId); 
+    thumbReader.setId(thumbId);
     return thumbReader.openImage(0);
   }
 
@@ -151,9 +151,9 @@ public class OIFReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
-    super.close(); 
+    super.close();
     if (thumbReader != null) thumbReader.close();
     if (tiffReader != null) {
       for (int i=0; i<tiffReader.length; i++) {
@@ -245,7 +245,7 @@ public class OIFReader extends FormatReader {
     tiffReader = new TiffReader[core.imageCount[0]];
     for (int i=0; i<core.imageCount[0]; i++) {
       tiffReader[i] = new TiffReader();
-      if (i > 0) tiffReader[i].setMetadataCollected(false); 
+      if (i > 0) tiffReader[i].setMetadataCollected(false);
     }
 
     // open each INI file (.pty extension)
@@ -279,7 +279,7 @@ public class OIFReader extends FormatReader {
           if (key.equals("DataName")) {
             value = value.substring(1, value.length() - 1);
             tiffs.add(i, tiffPath + File.separator + value);
-            tiffReader[i].setId((String) tiffs.get(i)); 
+            tiffReader[i].setId((String) tiffs.get(i));
           }
           addMeta("Image " + i + " : " + key, value);
         }
@@ -312,8 +312,8 @@ public class OIFReader extends FormatReader {
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
-    while (core.imageCount[0] > 
-      core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC()) 
+    while (core.imageCount[0] >
+      core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC())
     {
       if (core.sizeZ[0] == 1) core.sizeT[0]++;
       else if (core.sizeT[0] == 1) core.sizeZ[0]++;
@@ -381,7 +381,7 @@ public class OIFReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      Boolean.FALSE, 
+      Boolean.FALSE,
       "XYZTC",
       null,
       null);

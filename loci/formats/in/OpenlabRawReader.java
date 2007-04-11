@@ -55,13 +55,13 @@ public class OpenlabRawReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return (block[0] == 'O') && (block[1] == 'L') && (block[2] == 'R') &&
       (block[3] == 'W');
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bytesPerPixel];
     return openBytes(no, buf);
@@ -90,9 +90,9 @@ public class OpenlabRawReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], core.sizeC[0], false, bytesPerPixel, false);
   }
 
@@ -102,7 +102,7 @@ public class OpenlabRawReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -158,7 +158,7 @@ public class OpenlabRawReader extends FormatReader {
     addMeta("Bytes per pixel", new Integer(bytesPerPixel));
 
     for (int i=1; i<core.imageCount[0]; i++) {
-      offsets[i] = 
+      offsets[i] =
         offsets[i-1] + 288 + core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
     }
 
@@ -197,8 +197,8 @@ public class OpenlabRawReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      Boolean.TRUE, 
-      core.currentOrder[0], 
+      Boolean.TRUE,
+      core.currentOrder[0],
       null,
       null);
     for (int i=0; i<core.sizeC[0]; i++) {

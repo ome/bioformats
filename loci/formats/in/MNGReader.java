@@ -51,7 +51,7 @@ public class MNGReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 8) return false;
     return block[0] == 0x8a && block[1] == 0x4d && block[2] == 0x4e &&
@@ -59,12 +59,12 @@ public class MNGReader extends FormatReader {
       block[6] == 0x1a && block[7] == 0x0a;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     return ImageTools.getBytes(openImage(no), true, core.sizeC[0]);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -180,8 +180,8 @@ public class MNGReader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
 
-    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]), 
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       Boolean.TRUE, core.currentOrder[0], null, null);
     for (int i=0; i<core.sizeC[0]; i++) {

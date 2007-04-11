@@ -62,10 +62,10 @@ public class PerkinElmerReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (isTiff) {
       return tiff[no / core.sizeC[0]].openBytes(0);
@@ -80,7 +80,7 @@ public class PerkinElmerReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -114,7 +114,7 @@ public class PerkinElmerReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     currentId = null;
     files = null;
@@ -332,8 +332,8 @@ public class PerkinElmerReader extends FormatReader {
     tiff = new TiffReader[core.imageCount[0]];
     for (int i=0; i<tiff.length; i++) {
       tiff[i] = new TiffReader();
-      if (i > 0) tiff[i].setMetadataCollected(false); 
-      tiff[i].setId(files[i]); 
+      if (i > 0) tiff[i].setMetadataCollected(false);
+      tiff[i].setId(files[i]);
     }
 
     // highly questionable metadata parsing
@@ -551,7 +551,7 @@ public class PerkinElmerReader extends FormatReader {
 
     // populate Image element
     String time = (String) getMeta("Finish Time:");
-   
+
     SimpleDateFormat parse = new SimpleDateFormat("HH:mm:ss (MM/dd/yyyy)");
     Date date = parse.parse(time, new ParsePosition(0));
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");

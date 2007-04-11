@@ -202,7 +202,7 @@ public class ImageViewer extends JFrame
     try {
       Location f = new Location(id);
       id = f.getAbsolutePath();
-      myReader.setId(id); 
+      myReader.setId(id);
       int num = myReader.getImageCount();
       ProgressMonitor progress = new ProgressMonitor(this,
         "Reading " + id, null, 0, num + 1);

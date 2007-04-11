@@ -55,7 +55,7 @@ public class GelReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
   // -- Internal BaseTiffReader API methods --

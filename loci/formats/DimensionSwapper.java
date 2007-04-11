@@ -29,7 +29,7 @@ import java.io.IOException;
 /** Handles swapping the dimension order of a file. */
 public class DimensionSwapper extends ReaderWrapper {
 
-  // -- Constructors -- 
+  // -- Constructors --
 
   /** Constructs a DimensionSwapper around a new image reader. */
   public DimensionSwapper() { super(); }
@@ -41,48 +41,48 @@ public class DimensionSwapper extends ReaderWrapper {
 
   /* @see loci.formats.IFormatReader#getSizeX() */
   public int getSizeX() throws FormatException, IOException {
-    return getCoreMetadata().sizeX[getSeries()]; 
+    return getCoreMetadata().sizeX[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeY() */
   public int getSizeY() throws FormatException, IOException {
-    return getCoreMetadata().sizeY[getSeries()]; 
+    return getCoreMetadata().sizeY[getSeries()];
   }
-  
+
   /* @see loci.formats.IFormatReader#getSizeZ() */
   public int getSizeZ() throws FormatException, IOException {
-    return getCoreMetadata().sizeZ[getSeries()]; 
+    return getCoreMetadata().sizeZ[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeC() */
   public int getSizeC() throws FormatException, IOException {
-    return getCoreMetadata().sizeC[getSeries()]; 
+    return getCoreMetadata().sizeC[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeT() */
   public int getSizeT() throws FormatException, IOException {
-    return getCoreMetadata().sizeT[getSeries()]; 
+    return getCoreMetadata().sizeT[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() throws FormatException, IOException {
-    return getCoreMetadata().currentOrder[getSeries()]; 
+    return getCoreMetadata().currentOrder[getSeries()];
   }
 
   // -- DimensionSwapper API methods --
 
-  /** 
+  /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.
    * Note that this method will throw an exception if X and Y do not appear in
    * positions 0 and 1 (although X and Y can be reversed).
    */
-  public void swapDimensions(String order)  throws FormatException, IOException 
+  public void swapDimensions(String order)  throws FormatException, IOException
   {
     if (order == null) return;
-    
-    String oldOrder = getDimensionOrder(); 
-    
+
+    String oldOrder = getDimensionOrder();
+
     if (order.equals(oldOrder)) return;
 
     int[] dims = new int[5];
@@ -110,8 +110,8 @@ public class DimensionSwapper extends ReaderWrapper {
     core.currentOrder[series] = order;
 
     MetadataStore store = getMetadataStore();
-    store.setPixels(new Integer(dims[xndx]), new Integer(dims[yndx]), 
-      new Integer(dims[zndx]), new Integer(dims[cndx]), 
+    store.setPixels(new Integer(dims[xndx]), new Integer(dims[yndx]),
+      new Integer(dims[zndx]), new Integer(dims[cndx]),
       new Integer(dims[tndx]), null, null, order, new Integer(series), null);
   }
 

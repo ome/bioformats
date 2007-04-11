@@ -92,7 +92,7 @@ public class SDTReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
   /* @see loci.formats.IFormatReader#getRGBChannelCount(String) */
@@ -111,13 +111,12 @@ public class SDTReader extends FormatReader {
       new String[] {FormatTools.LIFETIME, FormatTools.SPECTRA};
   }
 
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */ 
-  public boolean isInterleaved(int subC) throws FormatException, IOException
-  {
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */
+  public boolean isInterleaved(int subC) throws FormatException, IOException {
     return !intensity && subC == 0;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     int c = getRGBChannelCount();
     byte[] buf = new byte[2 * c * core.sizeX[series] * core.sizeY[series]];
@@ -137,7 +136,7 @@ public class SDTReader extends FormatReader {
     }
 
     if (intensity) {
-      in.seek(off + 2 * core.sizeX[series] * core.sizeY[series] * 
+      in.seek(off + 2 * core.sizeX[series] * core.sizeY[series] *
         timeBins * no);
       for (int y=0; y<core.sizeY[series]; y++) {
         for (int x=0; x<core.sizeX[series]; x++) {
@@ -168,9 +167,9 @@ public class SDTReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[series], 
+    return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], getRGBChannelCount(), false, 2, true);
   }
 

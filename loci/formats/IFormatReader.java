@@ -60,7 +60,6 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Gets the pixel type.
-   * @param id the image's filename.
    * @return the pixel type as an enumeration from <code>FormatTools</code>
    * <i>static</i> pixel types such as <code>INT8</code>.
    * @throws FormatException if there was a problem parsing file metadata.
@@ -150,7 +149,6 @@ public interface IFormatReader extends IFormatHandler {
   /**
    * Obtains the specified image from the current file into a pre-allocated byte
    * array of (sizeX * sizeY * bytesPerPixel).
-   * @param id the filename of the base image.
    * @param no the image index within the file.
    * @param buf a pre-allocated buffer.
    * @return the pre-allocated buffer <code>buf</code> for convenience.
@@ -224,7 +222,6 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Obtains the specified metadata field's value for the current file.
-   *
    * @param field the name associated with the metadata field
    * @return the value, or null if the field doesn't exist
    */
@@ -233,8 +230,6 @@ public interface IFormatReader extends IFormatHandler {
   /**
    * Obtains the hashtable containing the metadata field/value pairs from
    * the current file.
-   *
-   * @param id the filename
    * @return the hashtable containing all metadata from the file
    */
   Hashtable getMetadata() throws FormatException, IOException;
@@ -256,7 +251,6 @@ public interface IFormatReader extends IFormatHandler {
 
   /**
    * Sets the default metadata store for this reader.
-   *
    * @param store a metadata store implementation.
    */
   void setMetadataStore(MetadataStore store);
@@ -273,7 +267,6 @@ public interface IFormatReader extends IFormatHandler {
    * Retrieves the current metadata store's root object. It is guaranteed that
    * all file parsing has been performed by the reader prior to retrieval.
    * Requests for a full populated root object should be made using this method.
-   * @param id a fully qualified path to the file.
    * @return current metadata store's root object fully populated.
    * @throws IOException if there is an IO error when reading the file specified
    *   by <code>path</code>.
@@ -290,10 +283,10 @@ public interface IFormatReader extends IFormatHandler {
 
   // -- Deprecated API methods --
 
-  /** @deprecated Replaced by {@link getImageCount()} */ 
+  /** @deprecated Replaced by {@link getImageCount()} */
   int getImageCount(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link isRGB()} */ 
+  /** @deprecated Replaced by {@link isRGB()} */
   boolean isRGB(String id) throws FormatException, IOException;
 
   /** @deprecated Replaced by {@link getSizeX()} */
@@ -311,95 +304,95 @@ public interface IFormatReader extends IFormatHandler {
   /** @deprecated Replaced by {@link getSizeT()} */
   int getSizeT(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getPixelType()} */ 
+  /** @deprecated Replaced by {@link getPixelType()} */
   int getPixelType(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getEffectiveSizeC()} */ 
+  /** @deprecated Replaced by {@link getEffectiveSizeC()} */
   int getEffectiveSizeC(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getRGBChannelCount()} */ 
+  /** @deprecated Replaced by {@link getRGBChannelCount()} */
   int getRGBChannelCount(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getChannelDimLengths()} */ 
+  /** @deprecated Replaced by {@link getChannelDimLengths()} */
   int[] getChannelDimLengths(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getChannelDimTypes()} */ 
+  /** @deprecated Replaced by {@link getChannelDimTypes()} */
   String[] getChannelDimTypes(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getThumbSizeX()} */ 
+  /** @deprecated Replaced by {@link getThumbSizeX()} */
   int getThumbSizeX(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getThumbSizeY()} */ 
+  /** @deprecated Replaced by {@link getThumbSizeY()} */
   int getThumbSizeY(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link isLittleEndian()} */ 
+  /** @deprecated Replaced by {@link isLittleEndian()} */
   boolean isLittleEndian(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getDimensionOrder()} */ 
+  /** @deprecated Replaced by {@link getDimensionOrder()} */
   String getDimensionOrder(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link isOrderCertain()} */ 
+  /** @deprecated Replaced by {@link isOrderCertain()} */
   boolean isOrderCertain(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link isInterleaved()} */ 
+  /** @deprecated Replaced by {@link isInterleaved()} */
   boolean isInterleaved(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link isInterleaved(int)} */ 
+  /** @deprecated Replaced by {@link isInterleaved(int)} */
   boolean isInterleaved(String id, int subC)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link openImage(int)} */ 
+  /** @deprecated Replaced by {@link openImage(int)} */
   BufferedImage openImage(String id, int no)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link openBytes(int)} */ 
+  /** @deprecated Replaced by {@link openBytes(int)} */
   byte[] openBytes(String id, int no) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link openBytes(int, byte[])} */ 
+  /** @deprecated Replaced by {@link openBytes(int, byte[])} */
   byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link openThumbImage(int)} */ 
+  /** @deprecated Replaced by {@link openThumbImage(int)} */
   BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link openThumbBytes(int)} */ 
+  /** @deprecated Replaced by {@link openThumbBytes(int)} */
   byte[] openThumbBytes(String id, int no) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getSeriesCount()} */ 
+  /** @deprecated Replaced by {@link getSeriesCount()} */
   int getSeriesCount(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link setSeries(int)} */ 
+  /** @deprecated Replaced by {@link setSeries(int)} */
   void setSeries(String id, int no) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getSeries()} */ 
+  /** @deprecated Replaced by {@link getSeries()} */
   int getSeries(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getUsedFiles()} */ 
+  /** @deprecated Replaced by {@link getUsedFiles()} */
   String[] getUsedFiles(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getIndex(int, int, int)} */ 
+  /** @deprecated Replaced by {@link getIndex(int, int, int)} */
   int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getZCTCoords(int)} */ 
+  /** @deprecated Replaced by {@link getZCTCoords(int)} */
   int[] getZCTCoords(String id, int index)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getMetadataValue(String)} */ 
+  /** @deprecated Replaced by {@link getMetadataValue(String)} */
   Object getMetadataValue(String id, String field)
     throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getMetadata()} */ 
+  /** @deprecated Replaced by {@link getMetadata()} */
   Hashtable getMetadata(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getCoreMetadata()} */ 
+  /** @deprecated Replaced by {@link getCoreMetadata()} */
   CoreMetadata getCoreMetadata(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getMetadataStore()} */ 
+  /** @deprecated Replaced by {@link getMetadataStore()} */
   MetadataStore getMetadataStore(String id) throws FormatException, IOException;
 
-  /** @deprecated Replaced by {@link getMetadataStoreRoot()} */ 
+  /** @deprecated Replaced by {@link getMetadataStoreRoot()} */
   Object getMetadataStoreRoot(String id) throws FormatException, IOException;
 
 }

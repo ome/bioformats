@@ -106,7 +106,7 @@ public class TiffWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */ 
+  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */
   public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
@@ -119,25 +119,25 @@ public class TiffWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#close() */
   public void close() throws FormatException, IOException {
-    // write the metadata, if enabled 
-  
+    // write the metadata, if enabled
+
     /*
     if (metadataEnabled && store != null && currentId != null) {
       // TODO : use reflection to access the OMEXMLMetadataStore
       if (store instanceof OMEXMLMetadataStore) {
-        try { 
-          // writes valid OME-TIFF 
-          RandomAccessFile raf = new RandomAccessFile(currentId, "rw"); 
+        try {
+          // writes valid OME-TIFF
+          RandomAccessFile raf = new RandomAccessFile(currentId, "rw");
           RandomAccessStream in = new RandomAccessStream(currentId);
           OMENode xml = (OMENode) ((OMEXMLMetadataStore) store).getRoot();
           Vector images = xml.getChildNodes("Image");
           for (int p=0; p<images.size(); p++) {
-            PixelsNode pix = 
+            PixelsNode pix =
               (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
             DOMUtil.createChild(pix.getDOMElement(), "TiffData");
           }
-        
-          Hashtable[] ifds = TiffTools.getIFDs(in);  
+
+          Hashtable[] ifds = TiffTools.getIFDs(in);
           TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION,
             xml.writeOME(true));
         }
@@ -146,11 +146,11 @@ public class TiffWriter extends FormatWriter {
         }
       }
       else {
-        throw new FormatException("Expecting an OMEXMLMetadataStore; got a " + 
+        throw new FormatException("Expecting an OMEXMLMetadataStore; got a " +
           store.getClass());
-      } 
+      }
     }
-    */ 
+    */
 
     if (out != null) out.close();
     out = null;

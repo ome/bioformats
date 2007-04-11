@@ -164,7 +164,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    getReader(id).setId(id); 
+    getReader(id).setId(id);
   }
 
   /* @see IFormatReader#getImageCount() */
@@ -180,27 +180,27 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#getSizeX() */
   public int getSizeX() throws FormatException, IOException {
     return getReader().getSizeX();
-  } 
+  }
 
   /* @see IFormatReader#getSizeY() */
   public int getSizeY() throws FormatException, IOException {
     return getReader().getSizeY();
-  } 
+  }
 
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() throws FormatException, IOException {
     return getReader().getSizeC();
-  } 
+  }
 
   /* @see IFormatReader#getSizeZ() */
   public int getSizeZ() throws FormatException, IOException {
     return getReader().getSizeZ();
-  } 
+  }
 
   /* @see IFormatReader#getSizeT() */
   public int getSizeT() throws FormatException, IOException {
     return getReader().getSizeT();
-  } 
+  }
 
   /* @see IFormatReader#getPixelType() */
   public int getPixelType() throws FormatException, IOException {
@@ -312,8 +312,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t) throws FormatException, IOException
-  {
+  public int getIndex(int z, int c, int t) throws FormatException, IOException {
     return getReader().getIndex(z, c, t);
   }
 
@@ -363,12 +362,12 @@ public class ImageReader implements IFormatReader {
   public void setNormalized(boolean normalize) {
     for (int i=0; i<readers.length; i++) readers[i].setNormalized(normalize);
   }
-  
+
   /* @see IFormatReader#isNormalized() */
   public boolean isNormalized() {
     // NB: all readers should have the same normalization setting
     return readers[0].isNormalized();
-  } 
+  }
 
   /* @see IFormatReader#setMetadataCollected(boolean) */
   public void setMetadataCollected(boolean collect) {

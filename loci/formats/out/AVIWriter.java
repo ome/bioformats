@@ -173,8 +173,8 @@ public class AVIWriter extends FormatWriter {
 
         DataTools.writeInt(raFile, 0, true); // dwReserved1 - set to 0
         // dwFlags - just set the bit for AVIF_HASINDEX
-        savePlaneNum = (int) raFile.getFilePointer(); 
-        DataTools.writeInt(raFile, 0x10, true); 
+        savePlaneNum = (int) raFile.getFilePointer();
+        DataTools.writeInt(raFile, 0x10, true);
 
         // 10H AVIF_HASINDEX: The AVI file has an idx1 chunk containing
         //   an index at the end of the file. For good performance, all
@@ -382,8 +382,8 @@ public class AVIWriter extends FormatWriter {
         text[2] = 108; // l
         text[3] = 101; // e
         text[4] = 65; // A
-        text[5] = 86; // V 
-        text[6] = 73; // I 
+        text[5] = 86; // V
+        text[6] = 73; // I
         text[7] = 32; // space
         text[8] = 119; // w
         text[9] = 114; // r

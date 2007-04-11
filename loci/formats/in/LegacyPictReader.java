@@ -46,17 +46,17 @@ public class LegacyPictReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     return ImageTools.getBytes(openImage(no), false, 3);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -82,7 +82,7 @@ public class LegacyPictReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LegacyPictReader.initFile(" + id + ")");
     super.initFile(id);
-    status("Populating metadata"); 
+    status("Populating metadata");
     BufferedImage img = openImage(0);
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();
@@ -98,7 +98,7 @@ public class LegacyPictReader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), Boolean.TRUE,
       core.currentOrder[0], null, null);
 

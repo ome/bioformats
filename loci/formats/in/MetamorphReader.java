@@ -69,7 +69,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // If the file is a Metamorph STK file, it should have a specific IFD tag.
     // Most Metamorph files seem to have the IFD information at the end, so it
@@ -106,7 +106,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* @see BaseTiffReader#initStandardMetadata() */ 
+  /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 

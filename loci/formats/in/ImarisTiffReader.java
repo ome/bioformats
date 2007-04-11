@@ -45,7 +45,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
     if (block.length < 3) return false;
@@ -78,7 +78,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
 
@@ -137,7 +137,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     core.imageCount[0] = core.sizeC[0] * core.sizeZ[0];
     core.currentOrder[0] = "XYZCT";
     core.interleaved[0] = false;
-    core.rgb[0] = 
+    core.rgb[0] =
       core.imageCount[0] != core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
@@ -201,8 +201,8 @@ public class ImarisTiffReader extends BaseTiffReader {
     MetadataStore store = getMetadataStore();
 
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
-      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), null, 
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), null,
       core.currentOrder[0], null, null);
 
   }

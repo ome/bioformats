@@ -57,7 +57,7 @@ public class JPEGCodec extends BaseCodec implements Codec {
   /**
    * Decodes an image strip using JPEG compression algorithm.
    *
-   * @param b input data to be decompressed
+   * @param input input data to be decompressed
    * @return The decompressed data
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor

@@ -46,7 +46,7 @@ public class LIFReader extends FormatReader {
 
   /** Extra dimensions. */
   private int[] extraDimensions;
-  
+
   /** Number of valid bits per pixel */
   private int[][] validBits;
 
@@ -66,17 +66,17 @@ public class LIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return block[0] == 0x70;
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesCount() */ 
+  /* @see loci.formats.IFormatReader#getSeriesCount() */
   public int getSeriesCount() throws FormatException, IOException {
     return core.sizeX.length;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     bpp = bitsPerPixel[series];
     while (bpp % 8 != 0) bpp++;
@@ -92,24 +92,24 @@ public class LIFReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    bpp = bitsPerPixel[series]; 
+    bpp = bitsPerPixel[series];
     while (bpp % 8 != 0) bpp++;
     int bytes = bpp / 8;
-    if (buf.length < core.sizeX[series] * core.sizeY[series] * bytes * 
-      getRGBChannelCount()) 
+    if (buf.length < core.sizeX[series] * core.sizeY[series] * bytes *
+      getRGBChannelCount())
     {
       throw new FormatException("Buffer too small.");
     }
 
     int offset = ((Long) offsets.get(series)).intValue();
-    in.seek(offset + core.sizeX[series] * core.sizeY[series] * 
+    in.seek(offset + core.sizeX[series] * core.sizeY[series] *
       bytes * no * getRGBChannelCount());
-   
+
     in.read(buf);
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], isRGB() ? core.sizeC[series] : 1, false, bpp / 8,
@@ -420,7 +420,7 @@ public class LIFReader extends FormatReader {
       core.sizeZ[i] = ((Integer) zs.get(i)).intValue();
       core.sizeC[i] = ((Integer) channels.get(i)).intValue();
       core.sizeT[i] = ((Integer) ts.get(i)).intValue();
-      core.currentOrder[i] = 
+      core.currentOrder[i] =
         (core.sizeZ[i] > core.sizeT[i]) ? "XYCZT" : "XYCTZ";
 
       bitsPerPixel[i] = ((Integer) bps.get(i)).intValue();
@@ -429,7 +429,7 @@ public class LIFReader extends FormatReader {
       if (extraDimensions[i] > 1) {
         if (core.sizeZ[i] == 1) core.sizeZ[i] = extraDimensions[i];
         else core.sizeT[i] *= extraDimensions[i];
-        extraDimensions[i] = 1; 
+        extraDimensions[i] = 1;
       }
 
       core.littleEndian[i] = true;
@@ -485,7 +485,7 @@ public class LIFReader extends FormatReader {
         (String) getMeta((String) seriesNames.get(i) + " - dblZoom");
       store.setDisplayOptions(zoom == null ? null : new Float(zoom),
         new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
-        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null, 
+        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null,
         null, null, null, null, ii, null, null, null, null, null);
     }
   }

@@ -76,14 +76,14 @@ public class OpenlabReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
       block[2] == -1 && block[3] == -1 && block[4] == 105 &&
       block[5] == 109 && block[6] == 112 && block[7] == 114;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -286,7 +286,7 @@ public class OpenlabReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -309,7 +309,7 @@ public class OpenlabReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     currentId = null;
     if (in != null) in.close();
@@ -667,7 +667,7 @@ public class OpenlabReader extends FormatReader {
         new Integer(core.sizeT[i]),
         new Integer(core.pixelType[i]),
         new Boolean(!isLittleEndian()),
-        core.currentOrder[i], 
+        core.currentOrder[i],
         new Integer(i),
         null);
       store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
@@ -681,7 +681,7 @@ public class OpenlabReader extends FormatReader {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (super.isThisType(name, open)) return true; // check extension
 

@@ -51,14 +51,14 @@ public class ChannelSeparator extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#getImageCount() */ 
+  /* @see IFormatReader#getImageCount() */
   public int getImageCount() throws FormatException, IOException {
     return reader.isRGB() ?
       (getSizeC() / reader.getEffectiveSizeC()) * reader.getImageCount() :
       reader.getImageCount();
   }
 
-  /* @see IFormatReader#getDimensionOrder() */ 
+  /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() throws FormatException, IOException {
     String order = super.getDimensionOrder();
     if (reader.isRGB()) {
@@ -70,10 +70,10 @@ public class ChannelSeparator extends ReaderWrapper {
     return order;
   }
 
-  /* @see IFormatReader#isRGB() */ 
+  /* @see IFormatReader#isRGB() */
   public boolean isRGB() { return false; }
 
-  /* @see IFormatReader#openImage(int) */ 
+  /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -104,7 +104,7 @@ public class ChannelSeparator extends ReaderWrapper {
     if (getPixelType() == FormatTools.FLOAT) {
       float[] f = new float[b.length / 4];
       for (int i=0; i<b.length; i+=4) {
-        f[i/4] = Float.intBitsToFloat(DataTools.bytesToInt(b, i, 4, 
+        f[i/4] = Float.intBitsToFloat(DataTools.bytesToInt(b, i, 4,
           isLittleEndian()));
       }
       if (isNormalized()) f = DataTools.normalizeFloats(f);
@@ -115,7 +115,7 @@ public class ChannelSeparator extends ReaderWrapper {
       bytes, isLittleEndian());
   }
 
-  /* @see IFormatReader#openBytes(int) */ 
+  /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -139,8 +139,8 @@ public class ChannelSeparator extends ReaderWrapper {
     else return reader.openBytes(no);
   }
 
-  /* @see IFormatReader#openThumbImage(int) */ 
-  public BufferedImage openThumbImage(int no) 
+  /* @see IFormatReader#openThumbImage(int) */
+  public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
     return ImageTools.scale(openImage(no), getThumbSizeX(),
@@ -153,8 +153,7 @@ public class ChannelSeparator extends ReaderWrapper {
     lastImageSeries = -1;
   }
 
-  public int getIndex(int z, int c, int t) throws FormatException, IOException
-  {
+  public int getIndex(int z, int c, int t) throws FormatException, IOException {
     return FormatTools.getIndex(this, z, c, t);
   }
 

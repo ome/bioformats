@@ -62,9 +62,9 @@ public class ImarisReader extends FormatReader {
     if (debug) debug("ImarisReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
-    
-    status("Verifying Imaris RAW format"); 
-    
+
+    status("Verifying Imaris RAW format");
+
     in.order(IS_LITTLE);
 
     long magic = in.readInt();
@@ -111,14 +111,14 @@ public class ImarisReader extends FormatReader {
 
     status("Calculating image offsets");
 
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0]; 
+    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0];
     offsets = new int[core.imageCount[0]];
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      int offset = 332 + ((i + 1) * 168) + (i * core.sizeX[0] * 
+      int offset = 332 + ((i + 1) * 168) + (i * core.sizeX[0] *
         core.sizeY[0] * core.sizeZ[0]);
       for (int j=0; j<core.sizeZ[0]; j++) {
-        offsets[i*core.sizeZ[0] + j] = 
+        offsets[i*core.sizeZ[0] + j] =
           offset + (j * core.sizeX[0] * core.sizeY[0]);
       }
     }
@@ -170,12 +170,12 @@ public class ImarisReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0]];
     return openBytes(no, buf);
@@ -201,7 +201,7 @@ public class ImarisReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], 1, false);

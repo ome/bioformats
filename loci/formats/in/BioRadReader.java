@@ -74,20 +74,20 @@ public class BioRadReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 56) return false;
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)];
     return openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf) 
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     if (no < 0 || no >= core.imageCount[0]) {
@@ -103,9 +103,9 @@ public class BioRadReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], 1, false, byteFormat ? 1 : 2, LITTLE_ENDIAN);
     return b;
   }
@@ -582,8 +582,8 @@ public class BioRadReader extends FormatReader {
 
     // populate Pixels element
     in.seek(14);
-    core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT8 : 
-      FormatTools.UINT16; 
+    core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT8 :
+      FormatTools.UINT16;
 
     core.currentOrder[0] = "XY";
     int[] dims = new int[] {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
@@ -599,13 +599,13 @@ public class BioRadReader extends FormatReader {
 
     int[] orderedDims = new int[] {max, median, min};
     for (int i=0; i<orderedDims.length; i++) {
-      if (orderedDims[i] == core.sizeZ[0] && 
-        core.currentOrder[0].indexOf("Z") == -1) 
+      if (orderedDims[i] == core.sizeZ[0] &&
+        core.currentOrder[0].indexOf("Z") == -1)
       {
         core.currentOrder[0] += "Z";
       }
-      else if (orderedDims[i] == core.sizeC[0] && 
-        core.currentOrder[0].indexOf("C") == -1) 
+      else if (orderedDims[i] == core.sizeC[0] &&
+        core.currentOrder[0].indexOf("C") == -1)
       {
         core.currentOrder[0] += "C";
       }
@@ -637,10 +637,9 @@ public class BioRadReader extends FormatReader {
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
       String black = (String) getMeta("PMT " + i + " Black level");
+      int bits = core.pixelType[0] == FormatTools.UINT8 ? 8 : 16;
       store.setDisplayChannel(new Integer(i), black == null ? null :
-        new Double(black), new Double(Math.pow(2, 
-        core.pixelType[0] == FormatTools.UINT8 ? 8 : 16)),
-        null, null);
+        new Double(black), new Double(Math.pow(2, bits)), null, null);
     }
     String zoom = (String) getMeta("Zoom factor (user selected)");
     String zstart = (String) getMeta("Z start");
@@ -654,7 +653,7 @@ public class BioRadReader extends FormatReader {
       null, null, core.sizeC[0] > 1 ? new Integer(0) : null,
       core.sizeC[0] > 1 ? new Integer(1) : null,
       core.sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
-    
+
     for (int i=0; i<3; i++) {
       String prefix = "Transmission detector " + (i+1) + " - ";
       String gain = (String) getMeta(prefix + "gain");

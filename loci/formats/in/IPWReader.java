@@ -77,14 +77,14 @@ public class IPWReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // all of our samples begin with 0xd0cf11e0
     return (block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     int c = getRGBChannelCount();
     if (c == 2) c++;
@@ -138,7 +138,7 @@ public class IPWReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -156,7 +156,7 @@ public class IPWReader extends BaseTiffReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     super.close();
 
@@ -181,7 +181,7 @@ public class IPWReader extends BaseTiffReader {
     core = new CoreMetadata(1);
     Arrays.fill(core.orderCertain, true);
     getMetadataStore().createRoot();
-    
+
     in = new RandomAccessStream(id);
 
     pixels = new Hashtable();
@@ -192,7 +192,7 @@ public class IPWReader extends BaseTiffReader {
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
-      status("Populating metadata"); 
+      status("Populating metadata");
       initMetadata();
     }
     catch (Throwable t) {
@@ -203,7 +203,7 @@ public class IPWReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* @see BaseTiffReader#initMetadata() */ 
+  /* @see BaseTiffReader#initMetadata() */
   public void initMetadata() throws FormatException, IOException {
     String directory = (String) pixels.get(new Integer(0));
     String name = (String) names.get(new Integer(0));
@@ -255,7 +255,7 @@ public class IPWReader extends BaseTiffReader {
     addMeta("frames", new Integer(getImageCount()));
 
     // parse the description to get channels/slices/times where applicable
-    // basically the same as in SEQReader 
+    // basically the same as in SEQReader
     if (description != null) {
       StringTokenizer tokenizer = new StringTokenizer(description, "\n");
       while (tokenizer.hasMoreTokens()) {
@@ -357,9 +357,9 @@ public class IPWReader extends BaseTiffReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
-    store.setPixels(null, null, new Integer(core.sizeZ[0]), 
-      new Integer(core.sizeC[0]), new Integer(core.sizeT[0]), 
-      new Integer(core.pixelType[0]), new Boolean(!isLittleEndian()), 
+    store.setPixels(null, null, new Integer(core.sizeZ[0]),
+      new Integer(core.sizeC[0]), new Integer(core.sizeT[0]),
+      new Integer(core.pixelType[0]), new Boolean(!isLittleEndian()),
       core.currentOrder[0], null, null);
     store.setImage(null, null, (String) getMeta("Version"), null);
     for (int i=0; i<core.sizeC[0]; i++) {
@@ -386,7 +386,7 @@ public class IPWReader extends BaseTiffReader {
       r.setVar("dir", dir);
       r.exec("dirName = dir.getName()");
       if (isInstance)  {
-        status("Parsing embedded folder (" + (depth + 1) + ")"); 
+        status("Parsing embedded folder (" + (depth + 1) + ")");
         parseDir(depth + 1, r.getVar("entry"));
       }
       else if (isDocument) {

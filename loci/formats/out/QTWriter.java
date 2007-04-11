@@ -149,7 +149,7 @@ public class QTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */ 
+  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
   public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {

@@ -124,14 +124,14 @@ public class ND2Reader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 8) return false;
     return block[4] == 0x6a && block[5] == 0x50 && block[6] == 0x20 &&
       block[7] == 0x20;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -150,7 +150,7 @@ public class ND2Reader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -219,7 +219,7 @@ public class ND2Reader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -483,21 +483,21 @@ public class ND2Reader extends FormatReader {
       if (core.imageCount[0] < core.sizeZ[0] * core.sizeT[0] * effectiveC) {
         if (core.sizeZ[0] < core.sizeT[0]) {
           core.sizeZ[0]--;
-          while (core.imageCount[0] > 
-            core.sizeZ[0] * core.sizeT[0] * effectiveC) 
+          while (core.imageCount[0] >
+            core.sizeZ[0] * core.sizeT[0] * effectiveC)
           {
             core.sizeT[0]++;
           }
-          while (core.imageCount[0] < 
-            core.sizeZ[0] * core.sizeT[0] * effectiveC) 
+          while (core.imageCount[0] <
+            core.sizeZ[0] * core.sizeT[0] * effectiveC)
           {
             core.sizeT[0]--;
           }
         }
         else {
           core.sizeT[0]--;
-          while (core.imageCount[0] > 
-            core.sizeZ[0] * core.sizeT[0] * effectiveC) 
+          while (core.imageCount[0] >
+            core.sizeZ[0] * core.sizeT[0] * effectiveC)
           {
             core.sizeZ[0]++;
           }

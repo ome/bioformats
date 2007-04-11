@@ -52,14 +52,14 @@ public class SEQReader extends BaseTiffReader {
   public SEQReader() { super("Image-Pro Sequence", "seq"); }
 
   // -- Internal BaseTiffReader API methods --
- 
+
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    core.sizeZ[0] = 0; 
-    core.sizeT[0] = 0; 
-    
+    core.sizeZ[0] = 0;
+    core.sizeT[0] = 0;
+
     for (int j=0; j<ifds.length; j++) {
       short[] tag1 = (short[]) TiffTools.getIFDValue(ifds[j], IMAGE_PRO_TAG_1);
 
@@ -73,14 +73,14 @@ public class SEQReader extends BaseTiffReader {
 
       if (tag2 != -1) {
         // should be one of these for every image plane
-        core.sizeZ[0]++; 
+        core.sizeZ[0]++;
         addMeta("Frame Rate", new Integer(tag2));
       }
 
       addMeta("Number of images", new Integer(core.sizeZ[0]));
     }
 
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1; 
+    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
     if (core.sizeZ[0] == 1 && core.sizeT[0] == 1) {

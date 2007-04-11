@@ -67,7 +67,7 @@ public class PrairieReader extends FormatReader {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */ 
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
 
@@ -90,7 +90,7 @@ public class PrairieReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
     if (block.length < 3) return false;
@@ -138,7 +138,7 @@ public class PrairieReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiff.setId(files[no]); 
+    tiff.setId(files[no]);
     return tiff.openBytes(0);
   }
 
@@ -149,7 +149,7 @@ public class PrairieReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiff.setId(files[no]); 
+    tiff.setId(files[no]);
     tiff.openBytes(0, buf);
     return buf;
   }
@@ -346,8 +346,8 @@ public class PrairieReader extends FormatReader {
 
         String zoom = (String) getMeta("opticalZoom");
         if (zoom != null) {
-          store.setDisplayOptions(new Float(zoom), 
-            new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] > 1), 
+          store.setDisplayOptions(new Float(zoom),
+            new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] > 1),
             new Boolean(core.sizeC[0] > 2), Boolean.FALSE,
             null, null, null, null, null, null, null, null, null, null, null);
         }

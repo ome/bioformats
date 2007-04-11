@@ -37,7 +37,7 @@ public interface IFormatWriter extends IFormatHandler {
    */
   void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException;
-  
+
   /** Closes open files. */
   void close() throws FormatException, IOException;
 

@@ -75,12 +75,12 @@ public class OMEXMLReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return new String(block, 0, 5).equals("<?xml");
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= core.imageCount[series]) {
       throw new FormatException("Invalid image number: " + no);
@@ -146,7 +146,7 @@ public class OMEXMLReader extends FormatReader {
     return pixels;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], 1, false, bpp[series], core.littleEndian[series]);
@@ -345,9 +345,9 @@ public class OMEXMLReader extends FormatReader {
     }
     for (int i=0; i<numDatasets; i++) {
       setSeries(i);
-      
+
       core.littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
-      
+
       Integer ndx = new Integer(i);
       Integer w = null, h = null, t = null, z = null, c = null;
       String pixType = null, dimOrder = null;
@@ -359,7 +359,7 @@ public class OMEXMLReader extends FormatReader {
         z = (Integer) r.exec("omexml.getSizeZ(ndx)");
         c = (Integer) r.exec("omexml.getSizeC(ndx)");
         pixType = (String) r.exec("omexml.getPixelType(ndx)");
-        core.currentOrder[i] = 
+        core.currentOrder[i] =
           (String) r.exec("omexml.getDimensionOrder(ndx)");
       }
       catch (ReflectException exc) {

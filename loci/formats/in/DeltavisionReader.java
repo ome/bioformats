@@ -81,13 +81,13 @@ public class DeltavisionReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return (DataTools.bytesToShort(block, 0, 2, core.littleEndian[0]) == 
+    return (DataTools.bytesToShort(block, 0, 2, core.littleEndian[0]) ==
       LITTLE_ENDIAN);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bytesPerPixel];
     return openBytes(no, buf);
@@ -110,11 +110,11 @@ public class DeltavisionReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], 1, false, bytesPerPixel, core.littleEndian[0]);
   }
 
@@ -221,8 +221,8 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Wavelength 1 max. intensity", wave1Max);
     addMeta("Wavelength 1 mean intensity", new Float(hstream.readFloat()));
     addMeta("Space group number", new Integer(hstream.readInt()));
-    
-    hstream.seek(132); 
+
+    hstream.seek(132);
     addMeta("Number of Sub-resolution sets", new Integer(hstream.readShort()));
     addMeta("Z axis reduction quotient", new Integer(hstream.readShort()));
     Float wave2Min = new Float(hstream.readFloat());
@@ -266,8 +266,8 @@ public class DeltavisionReader extends FormatReader {
 
     addMeta("Image Type", imageType);
     addMeta("Lens ID Number", new Integer(hstream.readShort()));
-    
-    hstream.seek(172); 
+
+    hstream.seek(172);
     Float wave5Min = new Float(hstream.readFloat());
     addMeta("Wavelength 5 min. intensity", wave5Min);
 
@@ -308,7 +308,7 @@ public class DeltavisionReader extends FormatReader {
 
     core.rgb[0] = false;
     core.interleaved[0] = false;
-    
+
     addMeta("Wavelength 1 (in nm)", new Integer(hstream.readShort()));
     addMeta("Wavelength 2 (in nm)", new Integer(hstream.readShort()));
     addMeta("Wavelength 3 (in nm)", new Integer(hstream.readShort()));
@@ -336,11 +336,11 @@ public class DeltavisionReader extends FormatReader {
     numIntsPerSection = hstream.readShort();
     numFloatsPerSection = hstream.readShort();
     setOffsetInfo(sequence, core.sizeZ[0], core.sizeC[0], core.sizeT[0]);
-    extHdrFields = 
+    extHdrFields =
       new DVExtHdrFields[core.sizeZ[0]][core.sizeC[0]][core.sizeT[0]];
 
-    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]), 
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
 

@@ -64,7 +64,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return new int[] {
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, -1),
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, -1),
-      core.imageCount[0] 
+      core.imageCount[0]
     };
   }
 
@@ -438,7 +438,7 @@ public abstract class BaseTiffReader extends FormatReader {
       put("Comment", comment);
     }
 
-    int samples = TiffTools.getIFDIntValue(ifds[0], 
+    int samples = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1);
     core.rgb[0] = samples > 1 || p == TiffTools.RGB_PALETTE ||
       p == TiffTools.CFA_ARRAY || p == TiffTools.RGB;
@@ -538,7 +538,7 @@ public abstract class BaseTiffReader extends FormatReader {
       String creationDate = getImageCreationDate();
       try {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss"); 
+        SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
         Date date = parse.parse(creationDate, new ParsePosition(0));
         creationDate = sdf.format(date);
       }
@@ -674,12 +674,12 @@ public abstract class BaseTiffReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return TiffTools.isValidHeader(block);
   }
 
-  /* @see loci.formats.IFormatReader#getMetadataValue(String) */ 
+  /* @see loci.formats.IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field)
     throws FormatException, IOException
   {
@@ -687,7 +687,7 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.FormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf) 
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     if (no < 0 || no >= getImageCount()) {
@@ -710,7 +710,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -736,8 +736,8 @@ public abstract class BaseTiffReader extends FormatReader {
 
     ifds = TiffTools.getIFDs(in);
     if (ifds == null) throw new FormatException("No IFDs found");
-    
-    status("Populating metadata"); 
+
+    status("Populating metadata");
 
     core.imageCount[0] = ifds.length;
     initMetadata();

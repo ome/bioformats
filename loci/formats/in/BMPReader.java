@@ -67,7 +67,7 @@ public class BMPReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length != 14) {
       return false;
@@ -130,15 +130,15 @@ public class BMPReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
     return openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0], 
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       core.sizeC[0], false);
   }
 
@@ -250,11 +250,11 @@ public class BMPReader extends FormatReader {
         break;
     }
 
-    if (core.sizeX[0] % 2 == 1) core.sizeX[0]++; 
-    core.rgb[0] = core.sizeC[0] > 1; 
+    if (core.sizeX[0] % 2 == 1) core.sizeX[0]++;
+    core.rgb[0] = core.sizeC[0] > 1;
     core.littleEndian[0] = true;
     core.interleaved[0] = true;
-    core.imageCount[0] = 1; 
+    core.imageCount[0] = 1;
     core.sizeZ[0] = 1;
     //core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = 1;

@@ -53,14 +53,14 @@ public class SlidebookReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 8) return false;
     return block[0] == 0x6c && block[1] == 0 && block[2] == 0 &&
       block[3] == 1 && block[4] == 0x49 && block[5] == 0x49 && block[6] == 0;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * 2];
     return openBytes(no, buf);
@@ -81,9 +81,9 @@ public class SlidebookReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */ 
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], 1, true, bpp, true);
   }
 
@@ -118,7 +118,7 @@ public class SlidebookReader extends FormatReader {
 
     // determine the number of images
 
-    status("Determining image count"); 
+    status("Determining image count");
 
     byte[] buf = new byte[8192];
     boolean found = false;
@@ -232,8 +232,8 @@ public class SlidebookReader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
-      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), 
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
