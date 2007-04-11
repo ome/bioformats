@@ -79,7 +79,7 @@ public abstract class ImageJReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] b = ImageTools.getBytes(openImage(currentId, no), false, no);
+    byte[] b = ImageTools.getBytes(openImage(no), false, no);
     return b;
   }
 
@@ -87,7 +87,7 @@ public abstract class ImageJReader extends FormatReader {
   public BufferedImage openImage(int no)
     throws FormatException, IOException
   {
-    if (no < 0 || no >= getImageCount(currentId)) {
+    if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
