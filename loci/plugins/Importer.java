@@ -1129,7 +1129,10 @@ public class Importer implements ItemListener {
     try {
       // convert to RGB if needed
 
-      if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4) {
+      int pixelType = r.getPixelType();
+      if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 && 
+        (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8)) 
+      {
         int c = r.getSizeC();
         ImageStack s = imp.getStack();
         ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
@@ -1162,6 +1165,19 @@ public class Importer implements ItemListener {
           }
         }
         imp.setStack(imp.getTitle(), newStack);
+      }
+      else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 && 
+        imp.getStackSize() == r.getSizeC()) 
+      {
+        // create a composite image - this feature is available starting in
+        // ImageJ 1.38n
+      
+        if (IJ.versionLessThan("1.38n")) {
+          IJ.showMessage("Please upgrade to ImageJ 1.38n to use this feature.");
+        }
+        else { 
+          imp = new CompositeImage(imp, r.getSizeC());
+        } 
       }
       else if (mergeChannels && r.getSizeC() >= 4) {
         IJ.showMessage("Can only merge 2 or 3 channels.");
@@ -1240,6 +1256,7 @@ public class Importer implements ItemListener {
       }
     }
     catch (Exception e) {
+      /* debug */ e.printStackTrace(); 
       if (!stitchStack) imp.show();
       else imps.add(imp);
     }
