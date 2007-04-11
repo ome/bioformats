@@ -142,9 +142,9 @@ Run "ant style" to check for source code style deviations.
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
-    <module name="VisibilityModifier">
-      <property name="protectedAllowed" value="true"/>
-    </module>
+<!--    <module name="VisibilityModifier"> -->
+<!--      <property name="protectedAllowed" value="true"/> -->
+<!--    </module> -->
 
     <!-- Miscellaneous other checks.                   -->
     <!-- See http://checkstyle.sf.net/config_misc.html -->
