@@ -164,7 +164,6 @@ public class OIBReader extends FormatReader {
 
       RandomAccessStream stream = new RandomAccessStream(b);
       Hashtable[] ifds = TiffTools.getIFDs(stream);
-      core.littleEndian[series] = TiffTools.isLittleEndian(ifds[0]);
       TiffTools.getSamples(ifds[0], stream, buf);
       stream.close();
       return buf;
@@ -185,7 +184,7 @@ public class OIBReader extends FormatReader {
       getRGBChannelCount());
 
     return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series], 
-      getRGBChannelCount(), false, bytes, !core.littleEndian[series], 
+      getRGBChannelCount(), false, bytes, core.littleEndian[series], 
       validBits[series]);
   }
 
@@ -414,6 +413,27 @@ public class OIBReader extends FormatReader {
         core.rgb[i] = ((Boolean) rgb.get(i)).booleanValue();
         core.interleaved[i] = false;
       }
+    
+      Integer ii = new Integer(0);
+      String directory = (String) ((Hashtable) pixels.get(series)).get(ii);
+      String name = (String) ((Hashtable) names.get(series)).get(ii);
+
+      r.setVar("dirName", directory);
+      r.exec("root = fs.getRoot()");
+      r.exec("dir = root.getEntry(dirName)");
+      r.setVar("entryName", name);
+      r.exec("document = dir.getEntry(entryName)");
+      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("numBytes = dis.available()");
+      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
+      byte[] b = new byte[numBytes + 4]; // append 0 for final offset
+      r.setVar("data", b);
+      r.exec("dis.read(data)");
+
+      RandomAccessStream stream = new RandomAccessStream(b);
+      Hashtable[] ifds = TiffTools.getIFDs(stream);
+    
+      Arrays.fill(core.littleEndian, !TiffTools.isLittleEndian(ifds[0])); 
     }
     catch (ReflectException e) {
       throw new FormatException(e);
@@ -480,11 +500,12 @@ public class OIBReader extends FormatReader {
         new Integer(i),
         null);
 
-      Float pixX = new Float(getMeta(
-        "[Reference Image Parameter] - WidthConvertValue").toString());
-      Float pixY = new Float(getMeta(
-        "[Reference Image Parameter] - HeightConvertValue").toString());
-      store.setDimensions(pixX, pixY, null, null, null, new Integer(i));
+      String pre = "[Reference Image Parameter] - ";
+      String x = (String) getMeta(pre + "WidthConvertValue");
+      String y = (String) getMeta(pre + "HeightConvertValue");
+      
+      store.setDimensions(x == null ? null : new Float(x), 
+        y == null ? null : new Float(y), null, null, null, new Integer(i));
       for (int j=0; j<core.sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null,
           null, new Integer(i));
