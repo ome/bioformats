@@ -632,8 +632,6 @@ public class BioRadReader extends FormatReader {
     if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
     store.setDimensions(pixelSizeX, pixelSizeY, pixelSizeZ, null, null, null);
 
-    store.setDefaultDisplaySettings(null);
-
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
       String black = (String) getMeta("PMT " + i + " Black level");
