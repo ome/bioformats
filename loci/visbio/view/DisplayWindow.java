@@ -209,8 +209,12 @@ public class DisplayWindow extends JFrame
       r.exec("import visad.java3d.DisplayImplJ3D");
       int nicest = ((Integer) r.getVar("DisplayImplJ3D.NICEST")).intValue();
       int fastest = ((Integer) r.getVar("DisplayImplJ3D.FASTEST")).intValue();
-      display.getGraphicsModeControl().setTransparencyMode(
-        nice ? nicest : fastest);
+      GraphicsModeControl gmc = display.getGraphicsModeControl();
+      if (gmc.getClass().getName().equals(
+        "visad.java3d.GraphicsModeControlJ3D"))
+      {
+        gmc.setTransparencyMode(nice ? nicest : fastest);
+      }
     }
     catch (ReflectException exc) {
       System.err.println("Warning: transparency mode setting (nice=" +
