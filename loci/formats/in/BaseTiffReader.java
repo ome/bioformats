@@ -543,8 +543,17 @@ public abstract class BaseTiffReader extends FormatReader {
         creationDate = sdf.format(date);
       }
       catch (Exception e) {
-        if (debug) e.printStackTrace();
-        creationDate = null;
+        try {
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+          SimpleDateFormat parse = 
+            new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS");
+          Date date = parse.parse(creationDate, new ParsePosition(0));
+          creationDate = sdf.format(date);
+        }
+        catch (Exception ex) {
+          if (debug) ex.printStackTrace();
+          creationDate = null;
+        } 
       }
 
       // populate Image element
