@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-import java.awt.event.KeyEvent;
+//import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -248,12 +248,14 @@ public class StateManager extends LogicManager {
       else if (src instanceof ExitManager) {
         // HACK - make state logic menu items appears in the proper location
 
+        /* CTR TODO fix state logic
         // file menu
         bio.addMenuSeparator("File");
         bio.addMenuItem("File", "Restore state...",
           "loci.visbio.state.StateManager.fileRestore", 'r');
         bio.addMenuItem("File", "Save state...",
           "loci.visbio.state.StateManager.fileSave", 's');
+        */
       }
     }
     else if (eventType == VisBioEvent.STATE_CHANGED) {
@@ -287,6 +289,7 @@ public class StateManager extends LogicManager {
 
     // edit menu
     bio.setSplashStatus(null);
+    /* CTR TODO fix state logic
     editUndo = bio.addMenuItem("Edit", "Undo",
       "loci.visbio.state.StateManager.editUndo", 'u');
     bio.setMenuShortcut("Edit", "Undo", KeyEvent.VK_Z);
@@ -296,6 +299,7 @@ public class StateManager extends LogicManager {
     JMenuItem editReset = bio.addMenuItem("Edit", "Reset",
       "loci.visbio.state.StateManager.editReset", 't');
     bio.setMenuShortcut("Edit", "Reset", KeyEvent.VK_R);
+    */
 
     // undo logic variables
     bio.setSplashStatus(null);

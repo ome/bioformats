@@ -123,7 +123,7 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
 
       // make menus appear in the right order
       getMenu("File");
-      getMenu("Edit");
+      getMenu("Edit").setEnabled(false); // CTR TODO fix state logic
       getMenu("Window");
       getMenu("Help");
 
@@ -194,7 +194,9 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
 
       // determine if VisBio crashed last time
       sm.setRestoring(false);
+      /* CTR TODO fix state logic
       sm.checkCrash();
+      */
 
       // process arguments
       processArguments(args);
