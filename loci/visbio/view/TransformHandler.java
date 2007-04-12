@@ -448,14 +448,16 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
             // fix X range according to first transform (if it is an image)
             if (trans instanceof ImageTransform) {
               ImageTransform it = (ImageTransform) trans;
-              map.setRange(0, it.getImageWidth() - 1);
+              double mw = it.getMicronWidth();
+              map.setRange(0, mw == mw ? mw : it.getImageWidth() - 1);
             }
           }
           else if (map.getDisplayScalar().equals(Display.YAxis)) {
             // fix Y range according to first transform (if it is an image)
             if (trans instanceof ImageTransform) {
               ImageTransform it = (ImageTransform) trans;
-              map.setRange(0, it.getImageHeight() - 1);
+              double mh = it.getMicronHeight();
+              map.setRange(0, mh == mh ? mh : it.getImageHeight() - 1);
             }
           }
         }
