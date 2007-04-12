@@ -53,6 +53,7 @@ public class OverlayArrow extends OverlayObject {
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
+    if (x1 == x2 && y1 == y2) return null; // dont render zero length arrows
     float padding = 0.02f * overlay.getScalingValue();
     double xx = x2 - x1;
     double yy = y2 - y1;
@@ -68,16 +69,9 @@ public class OverlayArrow extends OverlayObject {
       {x1, x2 - qy, x2 + qy, x1}, {y1, y2 + qx, y2 - qx, y1}
     };
 
-    boolean missing = false;
-    for (int i=0; i<setSamples.length; i++) {
-      for (int j=0; j<setSamples[i].length; j++) {
-        if (Float.isNaN(setSamples[i][j])) missing = true;
-      }
-    }
-
     GriddedSet fieldSet = null;
     try {
-      if (filled && !missing) {
+      if (filled) {
         fieldSet = new Gridded2DSet(domain,
           setSamples, 2, 2, null, null, null, false, false);
       }
@@ -121,7 +115,8 @@ public class OverlayArrow extends OverlayObject {
 
   /** Gets a selection grid for this object */
   public DataImpl getSelectionGrid(boolean outline) {
-    if (outline) return super.getSelectionGrid(true);
+    if (x1 == x2 && y1 == y2) return null; // dont render zero length arrows
+    else if (outline) return super.getSelectionGrid(true);
 
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
