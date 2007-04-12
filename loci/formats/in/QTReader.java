@@ -31,8 +31,6 @@ import javax.imageio.ImageIO;
 import loci.formats.*;
 import loci.formats.codec.ByteVector;
 
-// TODO : move decompression logic to loci.formats.codec
-
 /**
  * QTReader is the file format reader for QuickTime movie files.
  * It does not require any external libraries to be installed.
@@ -246,7 +244,7 @@ public class QTReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
   public boolean isThisType(byte[] block) {
     return false;
   }
@@ -257,7 +255,7 @@ public class QTReader extends FormatReader {
     if (useLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
+  /* @see loci.formats.IFormatReader#openBytes(int) */ 
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -333,9 +331,8 @@ public class QTReader extends FormatReader {
         for (int i=0; i<core.sizeX[0]; i++) {
           for (int j=0; j<core.sizeY[0]; j++) {
             for (int k=0; k<b; k++) {
-              int bndx = j * core.sizeX[0] * b + (core.sizeX[0] - i) + b;
-              int tndx = i * core.sizeY[0] * b + j + b;
-              bytes[bndx] = tmp[tndx];
+              bytes[j*core.sizeX[0]*b + (core.sizeX[0] - i) + b] = 
+                tmp[i*core.sizeY[0]*b + j + b];
             }
           }
         }
@@ -344,10 +341,9 @@ public class QTReader extends FormatReader {
         for (int i=0; i<3; i++) {
           for (int j=0; j<core.sizeX[0]; j++) {
             for (int k=0; k<core.sizeY[0]; k++) {
-              int q = i * core.sizeX[0] * core.sizeY[0];
-              int bndx = k * core.sizeX[0] + q + (core.sizeX[0] - j - 1);
-              int tndx = j * core.sizeY[0] + k + q;
-              bytes[bndx] = tmp[tndx];
+              bytes[k*core.sizeX[0] +i*core.sizeX[0]*core.sizeY[0] + 
+               (core.sizeX[0] - j - 1)] = tmp[j*core.sizeY[0] + k + 
+               i*core.sizeX[0]*core.sizeY[0]];
             }
           }
         }
@@ -362,15 +358,16 @@ public class QTReader extends FormatReader {
     int pad = core.sizeX[0] % 4;
     pad = (4 - pad) % 4;
 
-    int size = core.sizeX[0] * core.sizeY[0];
-    if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
+    if (core.sizeX[0]*core.sizeY[0] * (bitsPerPixel / 8) == prevPixels.length) {
+      pad = 0;
+    }
 
     if (pad > 0 && !code.equals("rpza")) {
-      bytes = new byte[prevPixels.length - core.sizeY[0] * pad];
+      bytes = new byte[prevPixels.length - core.sizeY[0]*pad];
 
       for (int row=0; row<core.sizeY[0]; row++) {
-        System.arraycopy(prevPixels, row * (core.sizeY[0] + pad), bytes,
-          row * core.sizeX[0], core.sizeX[0]);
+        System.arraycopy(prevPixels, row*(core.sizeY[0]+pad), bytes,
+          row*core.sizeX[0], core.sizeX[0]);
       }
     }
     else if (code.equals("rpza")) {
@@ -384,33 +381,36 @@ public class QTReader extends FormatReader {
         byte[] blueColumn = new byte[core.sizeY[0]];
 
         for (int j=0; j<cut; j++) {
-          int ndx = (j + core.sizeY[0] - cut) * core.sizeX[0] + i;
-          redColumn[j] = prevPixels[ndx];
-          greenColumn[j] = prevPixels[ndx + size];
-          blueColumn[j] = prevPixels[ndx + 2 * size];
+          redColumn[j] = prevPixels[(j+core.sizeY[0]-cut)*core.sizeX[0] + i];
+          greenColumn[j] = prevPixels[(j+core.sizeY[0]-cut)*core.sizeX[0] + i + 
+            core.sizeX[0]*core.sizeY[0]];
+          blueColumn[j] = prevPixels[(j+core.sizeY[0]-cut)*core.sizeX[0] + i + 
+            2*core.sizeX[0]*core.sizeY[0]];
         }
 
         for (int j=cut; j<core.sizeY[0]; j++) {
-          int ndx = j * core.sizeX[0] + i;
-          redColumn[j] = prevPixels[ndx];
-          greenColumn[j] = prevPixels[ndx + size];
-          blueColumn[j] = prevPixels[ndx + 2 * size];
+          redColumn[j] = prevPixels[j*core.sizeX[0] + i];
+          greenColumn[j] = 
+            prevPixels[j*core.sizeX[0] + i + core.sizeX[0]*core.sizeY[0]];
+          blueColumn[j] = 
+            prevPixels[j*core.sizeX[0] + i + 2*core.sizeX[0]*core.sizeY[0]];
         }
 
         if (i > core.sizeX[0] - 1 - core.sizeY[0]) cut++;
 
         for (int j=0; j<core.sizeY[0]; j++) {
-          int ndx = j * core.sizeX[0] + i;
-          bytes[ndx] = redColumn[j];
-          bytes[ndx + size] = greenColumn[j];
-          bytes[ndx + 2 * size] = blueColumn[j];
+          bytes[j*core.sizeX[0] + i] = redColumn[j];
+          bytes[j*core.sizeX[0] + i + core.sizeX[0]*core.sizeY[0]] = 
+            greenColumn[j];
+          bytes[j*core.sizeX[0] + i + 2*core.sizeX[0]*core.sizeY[0]] = 
+            blueColumn[j];
         }
       }
     }
 
     if (flip) {
       int t = core.sizeX[0];
-      core.sizeX[0] = core.sizeY[0];
+      core.sizeX[0] = core.sizeY[0]; 
       core.sizeY[0] = t;
     }
 
@@ -425,9 +425,9 @@ public class QTReader extends FormatReader {
       // strip out alpha channel
       byte[][] data = new byte[3][bytes.length / 4];
       for (int i=0; i<data[0].length; i++) {
-        data[0][i] = bytes[4 * i + 1];
-        data[1][i] = bytes[4 * i + 2];
-        data[2][i] = bytes[4 * i + 3];
+        data[0][i] = bytes[4*i + 1];
+        data[1][i] = bytes[4*i + 2];
+        data[2][i] = bytes[4*i + 3];
       }
 
       byte[] rtn = new byte[data.length * data[0].length];
@@ -441,7 +441,7 @@ public class QTReader extends FormatReader {
     }
   }
 
-  /* @See loci.formats.IFormatReader#openImage(int) */
+  /* @See loci.formats.IFormatReader#openImage(int) */ 
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -511,9 +511,11 @@ public class QTReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  /* @see loci.formats.IFormatReader#close() */ 
   public void close() throws FormatException, IOException {
-    super.close();
+    if (in != null) in.close();
+    in = null;
+    currentId = null;
     prevPixels = null;
   }
 
@@ -526,7 +528,7 @@ public class QTReader extends FormatReader {
     spork = true;
     offsets = new Vector();
     chunkSizes = new Vector();
-    status("Parsing tags");
+    status("Parsing tags"); 
     parse(0, 0, in.length());
     core.imageCount[0] = offsets.size();
 
@@ -553,14 +555,14 @@ public class QTReader extends FormatReader {
       core.sizeX[0] = core.sizeY[0];
       core.sizeY[0] = tmp;
     }
-
+    
+    core.rgb[0] = bitsPerPixel < 40;
     core.sizeZ[0] = 1;
-    core.sizeC[0] = bitsPerPixel < 40 ? 3 : 1;
+    core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCZT";
-    core.rgb[0] = bitsPerPixel < 40;
-    core.interleaved[0] = true;
     core.littleEndian[0] = false;
+    core.interleaved[0] = true;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
@@ -573,7 +575,7 @@ public class QTReader extends FormatReader {
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]),
-      core.currentOrder[0],
+      core.currentOrder[0], 
       null,
       null);
     for (int i=0; i<core.sizeC[0]; i++) {
@@ -641,7 +643,7 @@ public class QTReader extends FormatReader {
       }
 
       // read through the file looking for occurences of the codec string
-      numImages = 0;
+      core.imageCount[0] = 0;
       String codecString = new String(pixels, 4, 4);
       if (codecString.equals("mjpg")) codec = "mjpb";
       else codec = codecString;
@@ -662,7 +664,7 @@ public class QTReader extends FormatReader {
         if (codecString.equals(new String(pixels, i, 4))) {
           if (canAdd) {
             offsets.add(new Integer(i - 4));
-            numImages++;
+            core.imageCount[0]++;
             canAdd = false;
           }
           else {
@@ -678,8 +680,8 @@ public class QTReader extends FormatReader {
   // -- Helper methods --
 
   /** Parse all of the atoms in the file. */
-  public void parse(int depth, long offset, long length)
-    throws FormatException, IOException
+  public void parse(int depth, long offset, long length) 
+    throws FormatException, IOException 
   {
     while (offset < length) {
       in.seek(offset);
@@ -948,8 +950,9 @@ public class QTReader extends FormatReader {
 
             for (int y=0; y<4; y++) {
               for (int x=0; x<4; x++) {
-                int ondx = (rowPtr + y) * core.sizeX[0] + pixelPtr + x;
-                if (ondx < out.length) out[ondx] = colorA;
+                if ((rowPtr + y)*core.sizeX[0] + pixelPtr + x < out.length) {
+                  out[(rowPtr + y)*core.sizeX[0] + pixelPtr + x] = colorA;
+                }
               }
             }
 
@@ -1001,8 +1004,9 @@ public class QTReader extends FormatReader {
               pt++;
               for (int x=0; x<4; x++) {
                 int idx = (ndx >> (2 * (3 - x))) & 0x03;
-                int ondx = (rowPtr + y) * core.sizeX[0] + pixelPtr + x;
-                if (ondx < out.length) out[ondx] = colors[idx];
+                if ((rowPtr + y)*core.sizeX[0] + pixelPtr + x < out.length) {
+                  out[(rowPtr + y)*core.sizeX[0] + pixelPtr + x] = colors[idx];
+                }
               }
             }
 
@@ -1025,8 +1029,9 @@ public class QTReader extends FormatReader {
                 colorA = DataTools.bytesToInt(input, pt, 2, false);
                 pt += 2;
               }
-              int ondx = (rowPtr + y) * core.sizeX[0] + pixelPtr + x;
-              if (ondx < out.length) out[ondx] = colorA;
+              if ((rowPtr + y)*core.sizeX[0] + pixelPtr + x < out.length) {
+                out[(rowPtr + y)*core.sizeX[0] + pixelPtr + x] = colorA;
+              }
             }
           }
 
@@ -1049,20 +1054,16 @@ public class QTReader extends FormatReader {
       int color = 65535 - out[i];
       rtn[i] = (byte) ((color >> 10) & 0x1f);
       rtn[i + out.length] = (byte) ((color >> 5) & 0x1f);
-      rtn[i + 2 * out.length] = (byte) (color & 0x1f);
+      rtn[i + 2*out.length] = (byte) (color & 0x1f);
     }
     return rtn;
   }
 
   /** Uncompresses a MJPEG-B compressed image plane. */
-  public BufferedImage mjpbUncompress(byte[] input)
-    throws FormatException, IOException
-  {
+  public BufferedImage mjpbUncompress(byte[] input) throws FormatException {
     byte[] raw = null;
     byte[] raw2 = null;
-
-    RandomAccessStream stream = new RandomAccessStream(input);
-    stream.skipBytes(16);
+    int pt = 16; // pointer into the compressed data
 
     // official documentation at
     // http://developer.apple.com/documentation/QuickTime/QTFF/QTFFChap3/
@@ -1090,90 +1091,106 @@ public class QTReader extends FormatReader {
     // http://lists.apple.com/archives/quicktime-talk/2000/Nov/msg00269.html
     // contains some interesting notes on why Apple chose to define this codec
 
-    stream.skipBytes(4);
-    if (stream.getFilePointer() >= stream.length()) stream.seek(0);
-
-    boolean hasID = stream.readChar() == 'm' && stream.readChar() == 'j' &&
-      stream.readChar() == 'p' && stream.readChar() == 'g';
-    stream.seek(stream.getFilePointer() - 20);
-    if (!hasID) {
-      hasID = stream.readChar() == 'm' && stream.readChar() == 'j' &&
-        stream.readChar() == 'p' && stream.readChar() == 'g';
-    }
-    stream.skipBytes(12);
-    stream.order(core.littleEndian[0]);
+    pt += 4;
+    if (pt >= input.length) pt = 0;
 
     // most MJPEG-B planes don't have this identifier
-    if (hasID) {
+    if (!(input[pt] != 'm' || input[pt+1] != 'j' || input[pt+2] != 'p' ||
+      input[pt+3] != 'g') || !(input[pt-16] != 'm' || input[pt-15] != 'j' ||
+      input[pt-14] != 'p' || input[pt-13] != 'g'))
+    {
       int extra = 16;
-      stream.seek(stream.getFilePointer() - 16);
-      if (stream.readChar() == 'm') {
-        stream.seek(4);
+      if (input[pt-16] == 'm') {
+        pt = 4;
         extra = 0;
       }
-      else stream.skipBytes(16);
-      stream.skipBytes(12);
+      pt += 4;
+
+      // number of compressed bytes (minus padding)
+      pt += 4;
+
+      // number of compressed bytes (including padding)
+      pt += 4;
 
       // offset to second field
-      int offset = stream.readInt() + extra;
+      int offset = 
+        DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      pt += 4;
 
       // offset to quantization table
-      int quantOffset = stream.readInt() + extra;
+      int quantOffset = 
+        DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      pt += 4;
 
       // offset to Huffman table
-      int huffmanOffset = stream.readInt() + extra;
+      int huffmanOffset = 
+        DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      pt += 4;
 
       // offset to start of frame
-      int sof = stream.readInt() + extra;
+      int sof = DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      pt += 4;
 
       // offset to start of scan
-      int sos = stream.readInt() + extra;
+      int sos = DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      pt += 4;
 
       // offset to start of data
-      int sod = stream.readInt() + extra;
+      int sod = DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      pt += 4;
 
       // skip over the quantization table, if it exists
       if (quantOffset != 0) {
-        stream.seek(quantOffset);
-        int length = stream.readShort();
-        stream.skipBytes(length - 2);
+        pt = quantOffset;
+        int length = DataTools.bytesToInt(input, pt, 2, core.littleEndian[0]);
+        pt += length;
       }
 
       // skip over the Huffman table, if it exists
       if (huffmanOffset != 0) {
-        stream.seek(huffmanOffset);
-        int length = stream.readShort();
-        stream.skipBytes(length - 2);
+        pt = huffmanOffset;
+        int length = DataTools.bytesToInt(input, pt, 2, core.littleEndian[0]);
+        pt += length;
       }
 
       // skip to the frame header
-      stream.seek(sof + 7);
+      pt = sof;
+
+      // read sof header
+      // we can skip over the first 7 bytes (length, bps, height, width)
+      pt += 7;
 
       // number of channels
-      int channels = stream.read();
+      int channels = DataTools.bytesToInt(input, pt, 1, core.littleEndian[0]);
+      pt++;
 
       int[] sampling = new int[channels];
       for (int i=0; i<channels; i++) {
-        stream.read();
-        sampling[i] = stream.read();
+        pt++;
+        sampling[i] = DataTools.bytesToInt(input, pt, 1, core.littleEndian[0]);
+        pt += 2;
       }
 
       // skip to scan header
-      stream.seek(sos + 3);
+      pt = sos;
 
+      // we can skip over the first 3 bytes (length, number of channels)
+      pt += 3;
       int[] tables = new int[channels];
       for (int i=0; i<channels; i++) {
-        stream.read();
-        tables[i] = stream.read();
+        pt++;
+        tables[i] = DataTools.bytesToInt(input, pt, 1, core.littleEndian[0]);
+        pt++;
       }
+      pt += 3;
 
       // now we can finally read this field's data
-      stream.seek(sod + 3);
+      pt = sod;
 
-      int numBytes = offset - stream.getFilePointer();
-      if (offset == 0) numBytes = input.length - stream.getFilePointer();
+      int numBytes = offset - pt;
+      if (offset == 0) numBytes = input.length - pt;
       raw = new byte[numBytes];
-      System.arraycopy(input, stream.getFilePointer(), raw, 0, raw.length);
+      System.arraycopy(input, pt, raw, 0, raw.length);
 
       // get the second field
       // from the specs:
@@ -1185,14 +1202,24 @@ public class QTReader extends FormatReader {
       // field T has ((H+1) div 2) lines, and field B has (H div 2) lines."
 
       if (offset != 0) {
-        stream.seek(offset);
-        stream.skipBytes(36);
+        pt = offset;
 
-        stream.skipBytes(stream.readInt() - 36);
+        pt += 4; // reserved = 0
+        pt += 4; // 'mjpg' tag
+        pt += 4; // field size
+        pt += 4; // padded field size
+        pt += 4; // offset to next field = 0
+        pt += 4; // quantization table offset
+        pt += 4; // Huffman table offset
+        pt += 4; // sof offset
+        pt += 4; // sos offset
 
-        numBytes = input.length - stream.getFilePointer();
+        pt += DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]);
+        pt -= 36; // HACK
+
+        numBytes = input.length - pt;
         raw2 = new byte[numBytes];
-        System.arraycopy(input, stream.getFilePointer(), raw2, 0, raw2.length);
+        System.arraycopy(input, pt, raw2, 0, raw2.length);
       }
     }
 
@@ -1276,7 +1303,7 @@ public class QTReader extends FormatReader {
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
 
-    int fieldHeight = core.sizeY[0];
+    int fieldHeight = core.sizeY[0]; 
     if (interlaced) fieldHeight /= 2;
     if (core.sizeY[0] % 2 == 1) fieldHeight++;
 
@@ -1465,7 +1492,7 @@ public class QTReader extends FormatReader {
       off += (core.sizeX[0] * ebpp);
 
       if (canUsePrevious) {
-        for (int i=start+numLines; i<core.sizeY[0]; i++) {
+        for (int i=(start+numLines); i<core.sizeY[0]; i++) {
           int offset = i * core.sizeX[0] * ebpp;
           System.arraycopy(prevPixels, offset, output, offset,
             core.sizeX[0] * ebpp);
@@ -1487,13 +1514,13 @@ public class QTReader extends FormatReader {
 
       if (canUsePrevious) {
         try {
-          System.arraycopy(prevPixels, rowPointer,
-            output, rowPointer, (skip - 1) * ebpp);
+          System.arraycopy(prevPixels, rowPointer, output, rowPointer,
+            (skip-1) * ebpp);
         }
         catch (ArrayIndexOutOfBoundsException e) { }
       }
 
-      off = rowPointer + ((skip - 1) * ebpp);
+      off = rowPointer + ((skip-1) * ebpp);
       pt++;
       while (true) {
         rle = input[pt];
@@ -1504,8 +1531,8 @@ public class QTReader extends FormatReader {
 
           if (canUsePrevious) {
             try {
-              System.arraycopy(prevPixels, off,
-                output, off, (skip-1) * ebpp);
+              System.arraycopy(prevPixels, off, output, off,
+                (skip-1) * ebpp);
             }
             catch (ArrayIndexOutOfBoundsException e) { }
           }
@@ -1525,20 +1552,20 @@ public class QTReader extends FormatReader {
         }
         else if (rle < -1) {
           // unpack next pixel and copy it to output -(rle) times
-          for (int j=0; j<-rle; j++) {
+          for (int j=0; j<(-1*rle); j++) {
             if (off < output.length) {
               System.arraycopy(input, pt, output, off, ebpp);
               off += ebpp;
             }
-            else j = -rle;
+            else j = (-1*rle);
           }
           pt += ebpp;
         }
         else {
           // copy (rle) pixels to output
-          System.arraycopy(input, pt, output, off, rle * ebpp);
-          pt += rle * ebpp;
-          off += rle * ebpp;
+          System.arraycopy(input, pt, output, off, rle*ebpp);
+          pt += rle*ebpp;
+          off += rle*ebpp;
         }
       }
       rowPointer += (core.sizeX[0] * ebpp);
