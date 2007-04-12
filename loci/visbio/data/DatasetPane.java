@@ -36,9 +36,9 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import loci.formats.*;
+import loci.formats.ome.OMEXMLMetadataStore;
 import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
-import org.openmicroscopy.xml.OMENode;
 import visad.util.Util;
 
 /**
@@ -383,9 +383,10 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     }
 
     // get number of images and OME-XML metadata from the first file
-    OMENode ome = null;
     int numImages = 0;
     ImageReader reader = new ImageReader();
+    OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+    reader.setMetadataStore(store);
     try {
       reader.setId(ids[0]); 
       numImages = reader.getImageCount();
@@ -405,14 +406,22 @@ public class DatasetPane extends WizardPane implements DocumentListener {
       return;
     }
 
-    // extract dimensional axis counts from OME-XML metadata
+    // get physical pixel sizes (if any)
+    Float pixX = store.getPixelSizeX(null);
+    Float pixY = store.getPixelSizeY(null);
+    Float pixZ = store.getPixelSizeZ(null);
+
+    // get dimensional axis lengths
     String dimOrder = null;
+    int sizeX = -1, sizeY = -1;
     int sizeZ = 1, sizeT = 1, sizeC = 1;
     try {
-      dimOrder = reader.getDimensionOrder();
+      sizeX = reader.getSizeX();
+      sizeY = reader.getSizeY();
       sizeZ = reader.getSizeZ();
       sizeT = reader.getSizeT();
       sizeC = reader.getSizeC();
+      dimOrder = reader.getDimensionOrder();
     }
     catch (FormatException exc) { exc.printStackTrace(); }
     catch (IOException exc) { exc.printStackTrace(); }
@@ -613,12 +622,16 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     second.removeAll();
     second.add(builder.getPanel());
 
-    // clear out micron information
-    micronWidth.setText("");
-    micronHeight.setText("");
-    micronStep.setText("");
-    useMicrons.setSelected(false);
-    toggleMicronPanel(false);
+    // populate micron information
+    float mx = pixX == null ? Float.NaN : sizeX * pixX.floatValue();
+    float my = pixY == null ? Float.NaN : sizeY * pixY.floatValue();
+    float mz = pixZ == null ? Float.NaN : pixZ.floatValue();
+    micronWidth.setText(mx == mx ? "" + mx : "");
+    micronHeight.setText(my == my ? "" + my : "");
+    micronStep.setText(mz == mz ? "" + mz : "");
+    boolean enabled = mx == mx || my == my || mz == mz;
+    useMicrons.setSelected(enabled);
+    toggleMicronPanel(enabled);
 
     Util.invoke(false, new Runnable() {
       public void run() {
