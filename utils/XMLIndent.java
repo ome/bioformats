@@ -2,8 +2,9 @@
 // XMLIndent.java
 //
 
-import java.io.*;
-import java.util.StringTokenizer;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import loci.formats.FormatTools;
 
 /** Indents XML to be more readable. Does not handle CDATA. */
 public class XMLIndent {
@@ -19,17 +20,7 @@ public class XMLIndent {
         sb.append(line);
       }
       in.close();
-      StringTokenizer st = new StringTokenizer(sb.toString(), "<>");
-      int indent = 0;
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken().trim();
-        if (token.equals("")) continue;
-        if (token.startsWith("/")) indent -= 2;
-        for (int j=0; j<indent; j++) System.out.print(" ");
-        System.out.println("<" + token + ">");
-        if (!token.startsWith("/") && !token.endsWith("/")) indent += 2;
-      }
-      System.out.println();
+      System.out.println(FormatTools.indentXML(sb.toString()));
     }
   }
 

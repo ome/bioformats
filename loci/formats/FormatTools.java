@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 /** A utility class for format reader and writer implementations. */
 public final class FormatTools {
@@ -569,8 +570,8 @@ public final class FormatTools {
       {
         try {
           Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
-          System.out.println(m.invoke(ms, (Object[]) null));
-          System.out.println();
+          String xml = (String) m.invoke(ms, (Object[]) null);
+          System.out.println(indentXML(xml));
         }
         catch (Throwable t) {
           System.out.println("Error generating OME-XML:");
@@ -874,6 +875,43 @@ public final class FormatTools {
         return 8;
     }
     throw new RuntimeException("Unknown type with id: '" + type + "'");
+  }
+
+  // -- Utility methods - XML --
+
+  /** Indents XML to be more readable. */
+  public static String indentXML(String xml) { return indentXML(xml, 3); }
+
+  /** Indents XML by the given spacing to be more readable. */
+  public static String indentXML(String xml, int spacing) {
+    int indent = 0;
+    StringBuffer sb = new StringBuffer();
+    StringTokenizer st = new StringTokenizer(xml, "<>", true);
+    boolean element = false;
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken().trim();
+      if (token.equals("")) continue;
+      if (token.equals("<")) {
+        element = true;
+        continue;
+      }
+      if (element && token.equals(">")) {
+        element = false;
+        continue;
+      }
+      if (element && token.startsWith("/")) indent -= spacing;
+      for (int j=0; j<indent; j++) sb.append(" ");
+      if (element) sb.append("<");
+      sb.append(token);
+      if (element) sb.append(">");
+      sb.append("\n");
+      if (element && !token.startsWith("?") &&
+        !token.startsWith("/") && !token.endsWith("/"))
+      {
+        indent += spacing;
+      }
+    }
+    return sb.toString();
   }
 
 }
