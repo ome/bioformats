@@ -220,12 +220,17 @@ public class GatanReader extends FormatReader {
     if (pixelSizes.size() > 0) {
       pixX = new Float((String) pixelSizes.get(0));
     }
+    else pixX = new Float(1); 
+
     if (pixelSizes.size() > 1) {
       pixY = new Float((String) pixelSizes.get(1));
     }
+    else pixY = new Float(1); 
+    
     if (pixelSizes.size() > 2) {
       pixZ = new Float((String) pixelSizes.get(2));
     }
+    else pixZ = new Float(1); 
 
     store.setDimensions(pixX, pixY, pixZ, null, null, null);
 
@@ -315,7 +320,9 @@ public class GatanReader extends FormatReader {
           if (labelString.equals("PixelDepth")) {
             bytesPerPixel = Integer.parseInt(data);
           }
-          else if (labelString.equals("Scale")) {
+          else if (labelString.equals("Scale") && !data.equals("1.0") && 
+            !data.equals("0.0")) 
+          {
             pixelSizes.add(data);
           }
           addMeta(labelString, data);
