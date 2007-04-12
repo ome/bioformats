@@ -634,10 +634,12 @@ public class BioRadReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      String black = (String) getMeta("PMT " + i + " Black level");
-      int bits = core.pixelType[0] == FormatTools.UINT8 ? 8 : 16;
-      store.setDisplayChannel(new Integer(i), black == null ? null :
-        new Double(black), new Double(Math.pow(2, bits)), null, null);
+      
+      double white = Double.parseDouble(getMeta("ramp1_max").toString()); 
+      double black = Double.parseDouble(getMeta("ramp1_min").toString()); 
+      
+      store.setDisplayChannel(new Integer(i),  new Double(black),
+        new Double(white), null, null);
     }
     String zoom = (String) getMeta("Zoom factor (user selected)");
     String zstart = (String) getMeta("Z start");
@@ -656,9 +658,11 @@ public class BioRadReader extends FormatReader {
       String prefix = "Transmission detector " + (i+1) + " - ";
       String gain = (String) getMeta(prefix + "gain");
       String offset = (String) getMeta(prefix + "offset");
-      store.setDetector(null, null, null, null, gain == null ? null :
-        new Float(gain), null, offset == null ? null : new Float(offset),
-        null, new Integer(i));
+      if (gain != null || offset != null) { 
+        store.setDetector(null, null, null, null, gain == null ? null :
+          new Float(gain), null, offset == null ? null : new Float(offset),
+          null, new Integer(i));
+      }
 
       String exc = (String) getMeta("Part number of excitation filter for " +
         "laser " + (i+1));
@@ -666,13 +670,13 @@ public class BioRadReader extends FormatReader {
         "laser " + (i+1));
       String excName = (String) getMeta("Excitation filter name - laser " + i);
       String emsName = (String) getMeta("Emission filter name - laser " + i);
-      store.setExcitationFilter(null, null, exc, null, null);
-      store.setEmissionFilter(null, null, ems, null, null);
+      if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
+      if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
     }
     String mag = (String) getMeta("Objective lens magnification");
-    store.setObjective(null, null, null, null,
-      mag == null ? null : new Float(mag), null, null);
-
+    if (mag != null) {
+      store.setObjective(null, null, null, null, new Float(mag), null, null);
+    }
   }
 
   public String noteString(int n, int l, int s, int t, int x, int y, String p) {
