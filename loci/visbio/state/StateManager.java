@@ -346,6 +346,7 @@ public class StateManager extends LogicManager {
 
   /** Updates the Edit menu's Undo and Redo menu items. */
   private void updateMenuItems() {
+    /* CTR TODO fix state logic
     if (undoStates.isEmpty()) {
       editUndo.setText("Undo");
       editUndo.setEnabled(false);
@@ -362,6 +363,7 @@ public class StateManager extends LogicManager {
       editRedo.setText("Redo " + ((ProgramState) redoStates.peek()).msg);
       editRedo.setEnabled(true);
     }
+    */
   }
 
   // -- Utility methods --
