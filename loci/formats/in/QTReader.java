@@ -244,7 +244,7 @@ public class QTReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
   }
@@ -255,7 +255,7 @@ public class QTReader extends FormatReader {
     if (useLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */ 
+  /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -331,8 +331,9 @@ public class QTReader extends FormatReader {
         for (int i=0; i<core.sizeX[0]; i++) {
           for (int j=0; j<core.sizeY[0]; j++) {
             for (int k=0; k<b; k++) {
-              bytes[j*core.sizeX[0]*b + (core.sizeX[0] - i) + b] = 
-                tmp[i*core.sizeY[0]*b + j + b];
+              int bndx = j * core.sizeX[0] * b + (core.sizeX[0] - i) + b;
+              int tndx = i * core.sizeY[0] * b + j + b;
+              bytes[bndx] = tmp[tndx];
             }
           }
         }
@@ -341,9 +342,10 @@ public class QTReader extends FormatReader {
         for (int i=0; i<3; i++) {
           for (int j=0; j<core.sizeX[0]; j++) {
             for (int k=0; k<core.sizeY[0]; k++) {
-              bytes[k*core.sizeX[0] +i*core.sizeX[0]*core.sizeY[0] + 
-               (core.sizeX[0] - j - 1)] = tmp[j*core.sizeY[0] + k + 
-               i*core.sizeX[0]*core.sizeY[0]];
+              int q = i * core.sizeX[0] * core.sizeY[0];
+              int bndx = k * core.sizeX[0] + q + (core.sizeX[0] - j - 1);
+              int tndx = j * core.sizeY[0] + k + q;
+              bytes[bndx] = tmp[tndx];
             }
           }
         }
@@ -358,9 +360,8 @@ public class QTReader extends FormatReader {
     int pad = core.sizeX[0] % 4;
     pad = (4 - pad) % 4;
 
-    if (core.sizeX[0]*core.sizeY[0] * (bitsPerPixel / 8) == prevPixels.length) {
-      pad = 0;
-    }
+    int size = core.sizeX[0] * core.sizeY[0];
+    if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
 
     if (pad > 0 && !code.equals("rpza")) {
       bytes = new byte[prevPixels.length - core.sizeY[0]*pad];
@@ -381,36 +382,33 @@ public class QTReader extends FormatReader {
         byte[] blueColumn = new byte[core.sizeY[0]];
 
         for (int j=0; j<cut; j++) {
-          redColumn[j] = prevPixels[(j+core.sizeY[0]-cut)*core.sizeX[0] + i];
-          greenColumn[j] = prevPixels[(j+core.sizeY[0]-cut)*core.sizeX[0] + i + 
-            core.sizeX[0]*core.sizeY[0]];
-          blueColumn[j] = prevPixels[(j+core.sizeY[0]-cut)*core.sizeX[0] + i + 
-            2*core.sizeX[0]*core.sizeY[0]];
+          int ndx = (j + core.sizeY[0] - cut) * core.sizeX[0] + i;
+          redColumn[j] = prevPixels[ndx];
+          greenColumn[j] = prevPixels[ndx + size];
+          blueColumn[j] = prevPixels[ndx + 2 * size];
         }
 
         for (int j=cut; j<core.sizeY[0]; j++) {
-          redColumn[j] = prevPixels[j*core.sizeX[0] + i];
-          greenColumn[j] = 
-            prevPixels[j*core.sizeX[0] + i + core.sizeX[0]*core.sizeY[0]];
-          blueColumn[j] = 
-            prevPixels[j*core.sizeX[0] + i + 2*core.sizeX[0]*core.sizeY[0]];
+          int ndx = j * core.sizeX[0] + i;
+          redColumn[j] = prevPixels[ndx];
+          greenColumn[j] = prevPixels[ndx + size];
+          blueColumn[j] = prevPixels[ndx + 2 * size];
         }
 
         if (i > core.sizeX[0] - 1 - core.sizeY[0]) cut++;
 
         for (int j=0; j<core.sizeY[0]; j++) {
-          bytes[j*core.sizeX[0] + i] = redColumn[j];
-          bytes[j*core.sizeX[0] + i + core.sizeX[0]*core.sizeY[0]] = 
-            greenColumn[j];
-          bytes[j*core.sizeX[0] + i + 2*core.sizeX[0]*core.sizeY[0]] = 
-            blueColumn[j];
+          int ndx = j * core.sizeX[0] + i;
+          bytes[ndx] = redColumn[j];
+          bytes[ndx + size] = greenColumn[j];
+          bytes[ndx + 2 * size] = blueColumn[j];
         }
       }
     }
 
     if (flip) {
       int t = core.sizeX[0];
-      core.sizeX[0] = core.sizeY[0]; 
+      core.sizeX[0] = core.sizeY[0];
       core.sizeY[0] = t;
     }
 
@@ -441,7 +439,7 @@ public class QTReader extends FormatReader {
     }
   }
 
-  /* @See loci.formats.IFormatReader#openImage(int) */ 
+  /* @See loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -511,7 +509,7 @@ public class QTReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */ 
+  /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();
     in = null;
@@ -528,7 +526,7 @@ public class QTReader extends FormatReader {
     spork = true;
     offsets = new Vector();
     chunkSizes = new Vector();
-    status("Parsing tags"); 
+    status("Parsing tags");
     parse(0, 0, in.length());
     core.imageCount[0] = offsets.size();
 
@@ -555,7 +553,7 @@ public class QTReader extends FormatReader {
       core.sizeX[0] = core.sizeY[0];
       core.sizeY[0] = tmp;
     }
-    
+
     core.rgb[0] = bitsPerPixel < 40;
     core.sizeZ[0] = 1;
     core.sizeC[0] = core.rgb[0] ? 3 : 1;
@@ -575,7 +573,7 @@ public class QTReader extends FormatReader {
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]),
-      core.currentOrder[0], 
+      core.currentOrder[0],
       null,
       null);
     for (int i=0; i<core.sizeC[0]; i++) {
@@ -680,8 +678,8 @@ public class QTReader extends FormatReader {
   // -- Helper methods --
 
   /** Parse all of the atoms in the file. */
-  public void parse(int depth, long offset, long length) 
-    throws FormatException, IOException 
+  public void parse(int depth, long offset, long length)
+    throws FormatException, IOException
   {
     while (offset < length) {
       in.seek(offset);
@@ -1113,30 +1111,33 @@ public class QTReader extends FormatReader {
       pt += 4;
 
       // offset to second field
-      int offset = 
+      int offset =
         DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
       pt += 4;
 
       // offset to quantization table
-      int quantOffset = 
+      int quantOffset =
         DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
       pt += 4;
 
       // offset to Huffman table
-      int huffmanOffset = 
+      int huffmanOffset =
         DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
       pt += 4;
 
       // offset to start of frame
-      int sof = DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      int sof =
+        DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
       pt += 4;
 
       // offset to start of scan
-      int sos = DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      int sos =
+        DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
       pt += 4;
 
       // offset to start of data
-      int sod = DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
+      int sod =
+        DataTools.bytesToInt(input, pt, 4, core.littleEndian[0]) + extra;
       pt += 4;
 
       // skip over the quantization table, if it exists
@@ -1303,7 +1304,7 @@ public class QTReader extends FormatReader {
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
 
-    int fieldHeight = core.sizeY[0]; 
+    int fieldHeight = core.sizeY[0];
     if (interlaced) fieldHeight /= 2;
     if (core.sizeY[0] % 2 == 1) fieldHeight++;
 

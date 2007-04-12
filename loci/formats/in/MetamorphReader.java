@@ -25,9 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import java.text.DecimalFormat;
 import loci.formats.DataTools;
 import loci.formats.FormatException;
 import loci.formats.TiffIFDEntry;
@@ -40,7 +40,7 @@ import loci.formats.TiffTools;
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Sebastien Huart Sebastien dot Huart at curie.fr 
+ * @author Sebastien Huart Sebastien dot Huart at curie.fr
  */
 public class MetamorphReader extends BaseTiffReader {
 
@@ -72,7 +72,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */ 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // If the file is a Metamorph STK file, it should have a specific IFD tag.
     // Most Metamorph files seem to have the IFD information at the end, so it
@@ -109,26 +109,26 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* @see BaseTiffReader#initStandardMetadata() */ 
+  /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
     try {
       // Now that the base TIFF standard metadata has been parsed, we need to
       // parse out the STK metadata from the UIC4TAG.
-    	TiffIFDEntry uic1tagEntry= TiffTools.getFirstIFDEntry(in, UIC1TAG);
-    	TiffIFDEntry uic2tagEntry=TiffTools.getFirstIFDEntry(in, UIC2TAG);
-    	TiffIFDEntry uic3tagEntry=TiffTools.getFirstIFDEntry(in, UIC3TAG);
-    	TiffIFDEntry uic4tagEntry = TiffTools.getFirstIFDEntry(in, UIC4TAG);
-    	int planes = uic4tagEntry.getValueCount();
+      TiffIFDEntry uic1tagEntry= TiffTools.getFirstIFDEntry(in, UIC1TAG);
+      TiffIFDEntry uic2tagEntry=TiffTools.getFirstIFDEntry(in, UIC2TAG);
+      TiffIFDEntry uic3tagEntry=TiffTools.getFirstIFDEntry(in, UIC3TAG);
+      TiffIFDEntry uic4tagEntry = TiffTools.getFirstIFDEntry(in, UIC4TAG);
+      int planes = uic4tagEntry.getValueCount();
       mmPlanes = planes;
-    	parseUIC2Tags(uic2tagEntry.getValueOffset());
-    	parseUIC4Tags(uic4tagEntry.getValueOffset());
-    	parseUIC1Tags(uic1tagEntry.getValueOffset(),
+      parseUIC2Tags(uic2tagEntry.getValueOffset());
+      parseUIC4Tags(uic4tagEntry.getValueOffset());
+      parseUIC1Tags(uic1tagEntry.getValueOffset(),
         uic1tagEntry.getValueCount());
       in.seek(uic4tagEntry.getValueOffset());
-      
-      // copy ifds into a new array of Hashtables that will accomodate the
+
+      // copy ifds into a new array of Hashtables that will accommodate the
       // additional image planes
       long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
       core.imageCount[0] = uic2.length;
@@ -136,7 +136,7 @@ public class MetamorphReader extends BaseTiffReader {
       long[] uic3 = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
       for (int i=0; i<uic3.length; i++) {
         in.seek(uic3[i]);
-        put("Wavelength [" + intFormatMax(i,mmPlanes) + "]", 
+        put("Wavelength [" + intFormatMax(i, mmPlanes) + "]",
           in.readLong() / in.readLong());
       }
 
@@ -219,9 +219,11 @@ public class MetamorphReader extends BaseTiffReader {
     try {
       super.initStandardMetadata();
     }
-    catch (Exception t) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) t.printStackTrace();
+    catch (FormatException exc) {
+      if (debug) exc.printStackTrace();
+    }
+    catch (IOException exc) {
+      if (debug) exc.printStackTrace();
     }
 
     // parse (mangle) TIFF comment
@@ -275,9 +277,8 @@ public class MetamorphReader extends BaseTiffReader {
       core.sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
       core.sizeT[0] = getImageCount() / core.sizeZ[0];
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+    catch (FormatException exc) {
+      if (debug) exc.printStackTrace();
     }
   }
 
@@ -299,437 +300,432 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   // -- Utility methods --
-		
-  /** Populates metadata fields with some contained in MetaMorph UIC2 Tag 
-   * (for each plane:6 integers:
-   * zdistance numerator, zdistance denominator, 
+
+  /**
+   * Populates metadata fields with some contained in MetaMorph UIC2 Tag.
+   * (for each plane: 6 integers:
+   * zdistance numerator, zdistance denominator,
    * creation date, creation time, modif date, modif time)
-   * @param long uic2offset: offset to UIC2 (33629) tag entries 
-   * 
+   * @param uic2offset offset to UIC2 (33629) tag entries
+   *
    * not a regular tiff tag (6*N entries, N being the tagCount)
-   * @throws IOException 
+   * @throws IOException
    */
-	void parseUIC2Tags(long uic2offset) throws IOException {
+  void parseUIC2Tags(long uic2offset) throws IOException {
 
-		int saveLoc = in.getFilePointer();
-		in.seek(uic2offset);
+    int saveLoc = in.getFilePointer();
+    in.seek(uic2offset);
 
-		/*number of days since the 1st of January 4713 B.C*/
-		int cDate;
-		/*milliseconds since 0:00*/
-		int cTime;
+    /*number of days since the 1st of January 4713 B.C*/
+    int cDate;
+    /*milliseconds since 0:00*/
+    int cTime;
 
-		/*z step, distance separating previous slice from  current one*/
-		double zDistance;
-		String iAsString;
+    /*z step, distance separating previous slice from  current one*/
+    double zDistance;
+    String iAsString;
 
-		for (int i=0; i<mmPlanes; i++) {
-			iAsString = intFormatMax(i, mmPlanes);
-			int num = in.readInt();
-			int den = in.readInt();
-			zDistance = (double) num / den;
-			put("zDistance[" + iAsString + "]", zDistance);
-			cDate = in.readInt();
-			put("creationDate[" + iAsString + "]", decodeDate(cDate));
+    for (int i=0; i<mmPlanes; i++) {
+      iAsString = intFormatMax(i, mmPlanes);
+      int num = in.readInt();
+      int den = in.readInt();
+      zDistance = (double) num / den;
+      put("zDistance[" + iAsString + "]", zDistance);
+      cDate = in.readInt();
+      put("creationDate[" + iAsString + "]", decodeDate(cDate));
 
-			cTime = in.readInt();
-			put("creationTime[" + iAsString + "]", decodeTime(cTime));
-			/* modification date and time are skipped 
-		  		as they all seem equal to 0...???
-			 */
-			in.skip(8); 
-		}
-		in.seek(saveLoc);
-	}
-
-	/** UIC4 metadata parser
-	 * 
-	 * UIC4 Table contains per-plane blocks of metadata
-	 * stage X/Y positions,
-	 * camera chip offsets,
-	 * stage labels...
-	 * @param long uic4offset: offset of UIC4 table (not tiff-compliant)
-	 * @throws IOException
-	 * 
-	 */
-	private void parseUIC4Tags(long uic4offset) throws IOException {
-		long saveLoc = in.getFilePointer();
-		in.seek(uic4offset);
-		boolean end=false;
-		short id;
-		while (!end) {
-			id = in.readShort();
-
-			switch (id) {
-			case 0:
-				end=true;
-				break;
-			case 28:
-				readStagePositions();
-				break;
-			case 29:
-				readCameraChipOffsets();
-				break;
-			case 37:
-				readStageLabels();
-				break;
-			case 40:
-				readAbsoluteZ();
-				break;
-			case 41:
-				readAbsoluteZValid();
-				break;
-			default:
-				//unknown tags: do nothing
-				break;
-
-			//28->stagePositions
-			//29->cameraChipOffsets
-			//30->stageLabel
-			//40->AbsoluteZ
-			//41AbsoluteZValid
-			//0->end
-			}
-
-		}
-		in.seek(saveLoc);
-	}
-	
-  void readStagePositions() throws IOException {
-		int nx, dx, ny, dy;
-		/* for each plane: 
-	   2 ints (rational:numerator,denominator) for stage X, 
-	   2 ints (idem) for stage Y position
-		 */
-		double xPosition, yPosition;
-		String iAsString;
-		for(int i=0; i<mmPlanes; i++) {
-			nx = in.readInt();
-			dx = in.readInt();
-			ny = in.readInt();
-			dy = in.readInt();
-			xPosition = (dx == 0) ? Double.NaN : (double) nx / dx;
-			yPosition = (dy == 0) ? Double.NaN : (double) ny / dy;
-			iAsString = intFormatMax(i, mmPlanes);
-			put("stageX[" + iAsString + "]", xPosition);
-			put("stageY[" + iAsString + "]", yPosition);
-		}
-
-	}
-
-	void readCameraChipOffsets() throws IOException {
-		int nx, dx, ny, dy;
-		double cameraXChipOffset, cameraYChipOffset;
-		String iAsString;
-		for(int i=0; i<mmPlanes; i++) {
-			iAsString = intFormatMax(i, mmPlanes);
-			nx = in.readInt();
-			dx = in.readInt();
-			ny = in.readInt();
-			dy = in.readInt();
-			cameraXChipOffset = (dx == 0) ? Double.NaN: (double) nx / dx;
-			cameraYChipOffset = (dy == 0) ? Double.NaN: (double) ny/ dy;
-			put("cameraXChipOffset[" + iAsString + "]", cameraXChipOffset);
-			put("cameraYChipOffset[" + iAsString + "]", cameraYChipOffset);
-		}
-	}
-
-	void readStageLabels() throws IOException {
-		int strlen;
-		byte[] curlabel;
-		String iAsString;
-		for (int i=0; i<mmPlanes; i++) {
-			iAsString = intFormatMax(i, mmPlanes);
-			strlen = in.readInt();
-			curlabel = new byte[strlen];
-			in.read(curlabel);
-			put("stageLabel[" + iAsString + "]", new String(curlabel));
-		}
-	}
-
-	void readAbsoluteZ() throws IOException {
-		int nz, dz;
-		double absoluteZ;
-		for(int i=0; i<mmPlanes; i++) {
-			nz = in.readInt();
-			dz = in.readInt();
-			absoluteZ = (dz == 0) ? Double.NaN : (double) nz / dz;
-			put("absoluteZ[" + intFormatMax(i, mmPlanes) + "]", absoluteZ);
-		}
-	}
-
-	void readAbsoluteZValid() throws IOException {
-		for (int i=0; i<mmPlanes; i++) {
-			put("absoluteZValid[" + intFormatMax(i, mmPlanes) + "]", in.readInt());
-    }	
+      cTime = in.readInt();
+      put("creationTime[" + iAsString + "]", decodeTime(cTime));
+      // modification date and time are skipped as they all seem equal to 0...?
+      in.skip(8);
+    }
+    in.seek(saveLoc);
   }
 
-	/** UIC1 entry parser 
-	 * @throws IOException
-	 * @param long uic1offset : offset as found in the tiff tag 33628 (UIC1Tag)
-	 * @param int uic1count : number of entries in UIC1 table (not tiff-compliant)
-	 * */
-	private void parseUIC1Tags(long uic1offset, int uic1count) throws IOException
+  /**
+   * UIC4 metadata parser
+   *
+   * UIC4 Table contains per-plane blocks of metadata
+   * stage X/Y positions,
+   * camera chip offsets,
+   * stage labels...
+   * @param long uic4offset: offset of UIC4 table (not tiff-compliant)
+   * @throws IOException
+   */
+  private void parseUIC4Tags(long uic4offset) throws IOException {
+    long saveLoc = in.getFilePointer();
+    in.seek(uic4offset);
+    boolean end=false;
+    short id;
+    while (!end) {
+      id = in.readShort();
+
+      switch (id) {
+        case 0:
+          end=true;
+          break;
+        case 28:
+          readStagePositions();
+          break;
+        case 29:
+          readCameraChipOffsets();
+          break;
+        case 37:
+          readStageLabels();
+          break;
+        case 40:
+          readAbsoluteZ();
+          break;
+        case 41:
+          readAbsoluteZValid();
+          break;
+        default:
+          //unknown tags: do nothing
+          break;
+        //28->stagePositions
+        //29->cameraChipOffsets
+        //30->stageLabel
+        //40->AbsoluteZ
+        //41AbsoluteZValid
+        //0->end
+      }
+    }
+    in.seek(saveLoc);
+  }
+
+  void readStagePositions() throws IOException {
+    int nx, dx, ny, dy;
+    // for each plane:
+    // 2 ints (rational:numerator,denominator) for stage X,
+    // 2 ints (idem) for stage Y position
+    double xPosition, yPosition;
+    String iAsString;
+    for(int i=0; i<mmPlanes; i++) {
+      nx = in.readInt();
+      dx = in.readInt();
+      ny = in.readInt();
+      dy = in.readInt();
+      xPosition = (dx == 0) ? Double.NaN : (double) nx / dx;
+      yPosition = (dy == 0) ? Double.NaN : (double) ny / dy;
+      iAsString = intFormatMax(i, mmPlanes);
+      put("stageX[" + iAsString + "]", xPosition);
+      put("stageY[" + iAsString + "]", yPosition);
+    }
+
+  }
+
+  void readCameraChipOffsets() throws IOException {
+    int nx, dx, ny, dy;
+    double cameraXChipOffset, cameraYChipOffset;
+    String iAsString;
+    for(int i=0; i<mmPlanes; i++) {
+      iAsString = intFormatMax(i, mmPlanes);
+      nx = in.readInt();
+      dx = in.readInt();
+      ny = in.readInt();
+      dy = in.readInt();
+      cameraXChipOffset = (dx == 0) ? Double.NaN: (double) nx / dx;
+      cameraYChipOffset = (dy == 0) ? Double.NaN: (double) ny/ dy;
+      put("cameraXChipOffset[" + iAsString + "]", cameraXChipOffset);
+      put("cameraYChipOffset[" + iAsString + "]", cameraYChipOffset);
+    }
+  }
+
+  void readStageLabels() throws IOException {
+    int strlen;
+    byte[] curlabel;
+    String iAsString;
+    for (int i=0; i<mmPlanes; i++) {
+      iAsString = intFormatMax(i, mmPlanes);
+      strlen = in.readInt();
+      curlabel = new byte[strlen];
+      in.read(curlabel);
+      put("stageLabel[" + iAsString + "]", new String(curlabel));
+    }
+  }
+
+  void readAbsoluteZ() throws IOException {
+    int nz, dz;
+    double absoluteZ;
+    for(int i=0; i<mmPlanes; i++) {
+      nz = in.readInt();
+      dz = in.readInt();
+      absoluteZ = (dz == 0) ? Double.NaN : (double) nz / dz;
+      put("absoluteZ[" + intFormatMax(i, mmPlanes) + "]", absoluteZ);
+    }
+  }
+
+  void readAbsoluteZValid() throws IOException {
+    for (int i=0; i<mmPlanes; i++) {
+      put("absoluteZValid[" + intFormatMax(i, mmPlanes) + "]", in.readInt());
+    }
+  }
+
+  /**
+   * UIC1 entry parser
+   * @throws IOException
+   * @param long uic1offset : offset as found in the tiff tag 33628 (UIC1Tag)
+   * @param int uic1count : number of entries in UIC1 table (not tiff-compliant)
+   */
+  private void parseUIC1Tags(long uic1offset, int uic1count) throws IOException
   {
-		// Loop through and parse out each field. A field whose
-		// code is "0" represents the end of the fields so we'll stop
-		// when we reach that; much like a NULL terminated C string.
-		long saveLoc = in.getFilePointer();
-		in.seek(uic1offset);
-		int currentID, valOrOffset;
-		// variable declarations, because switch is dumb
-		int num, denom;
-		String thedate, thetime;
-		long lastOffset;
-		byte[] toread;
-		for(int i=0; i<uic1count; i++) {
-			currentID = in.readInt();
-			valOrOffset = in.readInt();
-					
-			switch (currentID) {
-			case 1:
-				put("MinScale", valOrOffset);
-				break;
-			case 2:
-				put("MaxScale", valOrOffset);
-				break;
-			case 3:
-				int calib = valOrOffset;
-				String calibration = calib != 0 ? "on" : "off";
-				put("Spatial Calibration", calibration);
-				break;
-			case 4:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("XCalibration", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-			case 5:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("YCalibration", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-			case 6:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				toread = new byte[num];
-				in.read(toread);
-				put("CalibrationUnits", new String(toread));
-				in.seek(lastOffset);
-				break;
-			case 7:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				toread = new byte[num];
-				in.read(toread);
-				String name = new String(toread);
-				put("Name", name);
-				imageName = name;
-				in.seek(lastOffset);
-				break;
-				
-			case 8:
-				int thresh = valOrOffset;
-				String threshState = "off";
-				if (thresh == 1) threshState = "inside";
-				else if (thresh == 2) threshState = "outside";
-				put("ThreshState", threshState);
-				break;
-			case 9:
-				put("ThreshStateRed", valOrOffset);
-				break;
-				// there is no 10
-			case 11:
-				put("ThreshStateGreen", valOrOffset);
-				break;
-			case 12:
-				put("ThreshStateBlue", valOrOffset);
-				break;
-			case 13:
-				put("ThreshStateLo", valOrOffset);
-				break;
-			case 14:
-				put("ThreshStateHi", valOrOffset);
-				break;
-			case 15:
-				int zoom = valOrOffset;
-				put("Zoom", zoom);
-//				OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + zoom);
-				break;
-			case 16: // oh how we hate you Julian format...
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				thedate = decodeDate(in.readInt());
-				thetime = decodeTime(in.readInt());
-				put("DateTime", thedate + " " + thetime);
-				imageCreationDate = thedate + " " + thetime;
-				in.seek(lastOffset);
-				break;
-			case 17:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				thedate = decodeDate(in.readInt());
-				thetime = decodeTime(in.readInt());
-				put("LastSavedTime", thedate + " " + thetime);
-				in.seek(lastOffset);
-				break;
-			case 18:
-				put("currentBuffer", valOrOffset);
-				break;
-			case 19:
-				put("grayFit", valOrOffset);
-				break;
-			case 20:
-				put("grayPointCount", valOrOffset);
-				break;
-			case 21:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("grayX", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-			case 22:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("gray", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-			case 23:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("grayMin", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-			case 24:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("grayMax", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-				
-			case 25:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				toread = new byte[num];
-				in.read(toread);
-				put("grayUnitName", new String(toread));
-				in.seek(lastOffset);
-				break;
-				
-			case 26:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				int standardLUT = in.readInt();
-				in.seek(lastOffset);
-				String standLUT;
-				switch (standardLUT) {
-				case 0:
-					standLUT = "monochrome";
-					break;
-				case 1:
-					standLUT = "pseudocolor";
-					break;
-				case 2:
-					standLUT = "Red";
-					break;
-				case 3:
-					standLUT = "Green";
-					break;
-				case 4:
-					standLUT = "Blue";
-					break;
-				case 5:
-					standLUT = "user-defined";
-					break;
-				default:
-					standLUT = "monochrome"; break;
-				}
-				put("StandardLUT", standLUT);
-				break;
-			case 27:
-				put("Wavelength", valOrOffset);
-				break;
-			case 30:
-				put("OverlayMask", valOrOffset);
-				break;
-			case 31:
-				put("OverlayCompress", valOrOffset);
-				break;
-			case 32:
-				put("Overlay", valOrOffset);
-				break;
-			case 33:
-				put("SpecialOverlayMask", valOrOffset);
-				break;
-			case 34:
-				put("SpecialOverlayCompress", in.readInt());
-				break;
-			case 35:
-				put("SpecialOverlay", valOrOffset);
-				break;
-			case 36:
-				put("ImageProperty", valOrOffset);
-				break;
-			case 38:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("AutoScaleLoInfo", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-			case 39:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				num = in.readInt();
-				denom = in.readInt();
-				put("AutoScaleHiInfo", new TiffRational(num, denom));
-				in.seek(lastOffset);
-				break;
-			case 42:
-				put("Gamma", valOrOffset);
-				break;
-			case 43:
-				put("GammaRed", valOrOffset);
-				break;
-			case 44:
-				put("GammaGreen", valOrOffset);
-				break;
-			case 45:
-				put("GammaBlue", valOrOffset);
-				break;
-			case 46:
-				lastOffset = in.getFilePointer();
-				in.seek(valOrOffset);
-				int xBin, yBin;
-				xBin = in.readInt();
-				yBin = in.readInt();
-				put("CameraBin", new String("(" + xBin + "," + yBin + ")"));
-				in.seek(lastOffset);
-		    break;	
-      default:
-				break;
-			}
-		}
-		in.seek(saveLoc);
-	}
-	
+    // Loop through and parse out each field. A field whose
+    // code is "0" represents the end of the fields so we'll stop
+    // when we reach that; much like a NULL terminated C string.
+    long saveLoc = in.getFilePointer();
+    in.seek(uic1offset);
+    int currentID, valOrOffset;
+    // variable declarations, because switch is dumb
+    int num, denom;
+    String thedate, thetime;
+    long lastOffset;
+    byte[] toread;
+    for (int i=0; i<uic1count; i++) {
+      currentID = in.readInt();
+      valOrOffset = in.readInt();
+
+      switch (currentID) {
+        case 1:
+          put("MinScale", valOrOffset);
+          break;
+        case 2:
+          put("MaxScale", valOrOffset);
+          break;
+        case 3:
+          int calib = valOrOffset;
+          String calibration = calib != 0 ? "on" : "off";
+          put("Spatial Calibration", calibration);
+          break;
+        case 4:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("XCalibration", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 5:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("YCalibration", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 6:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          toread = new byte[num];
+          in.read(toread);
+          put("CalibrationUnits", new String(toread));
+          in.seek(lastOffset);
+          break;
+        case 7:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          toread = new byte[num];
+          in.read(toread);
+          String name = new String(toread);
+          put("Name", name);
+          imageName = name;
+          in.seek(lastOffset);
+          break;
+
+        case 8:
+          int thresh = valOrOffset;
+          String threshState = "off";
+          if (thresh == 1) threshState = "inside";
+          else if (thresh == 2) threshState = "outside";
+          put("ThreshState", threshState);
+          break;
+        case 9:
+          put("ThreshStateRed", valOrOffset);
+          break;
+          // there is no 10
+        case 11:
+          put("ThreshStateGreen", valOrOffset);
+          break;
+        case 12:
+          put("ThreshStateBlue", valOrOffset);
+          break;
+        case 13:
+          put("ThreshStateLo", valOrOffset);
+          break;
+        case 14:
+          put("ThreshStateHi", valOrOffset);
+          break;
+        case 15:
+          int zoom = valOrOffset;
+          put("Zoom", zoom);
+          //OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + zoom);
+          break;
+        case 16: // oh how we hate you Julian format...
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          thedate = decodeDate(in.readInt());
+          thetime = decodeTime(in.readInt());
+          put("DateTime", thedate + " " + thetime);
+          imageCreationDate = thedate + " " + thetime;
+          in.seek(lastOffset);
+          break;
+        case 17:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          thedate = decodeDate(in.readInt());
+          thetime = decodeTime(in.readInt());
+          put("LastSavedTime", thedate + " " + thetime);
+          in.seek(lastOffset);
+          break;
+        case 18:
+          put("currentBuffer", valOrOffset);
+          break;
+        case 19:
+          put("grayFit", valOrOffset);
+          break;
+        case 20:
+          put("grayPointCount", valOrOffset);
+          break;
+        case 21:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("grayX", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 22:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("gray", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 23:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("grayMin", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 24:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("grayMax", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 25:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          toread = new byte[num];
+          in.read(toread);
+          put("grayUnitName", new String(toread));
+          in.seek(lastOffset);
+          break;
+        case 26:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          int standardLUT = in.readInt();
+          in.seek(lastOffset);
+          String standLUT;
+          switch (standardLUT) {
+            case 0:
+              standLUT = "monochrome";
+              break;
+            case 1:
+              standLUT = "pseudocolor";
+              break;
+            case 2:
+              standLUT = "Red";
+              break;
+            case 3:
+              standLUT = "Green";
+              break;
+            case 4:
+              standLUT = "Blue";
+              break;
+            case 5:
+              standLUT = "user-defined";
+              break;
+            default:
+              standLUT = "monochrome"; break;
+          }
+          put("StandardLUT", standLUT);
+          break;
+        case 27:
+          put("Wavelength", valOrOffset);
+          break;
+        case 30:
+          put("OverlayMask", valOrOffset);
+          break;
+        case 31:
+          put("OverlayCompress", valOrOffset);
+          break;
+        case 32:
+          put("Overlay", valOrOffset);
+          break;
+        case 33:
+          put("SpecialOverlayMask", valOrOffset);
+          break;
+        case 34:
+          put("SpecialOverlayCompress", in.readInt());
+          break;
+        case 35:
+          put("SpecialOverlay", valOrOffset);
+          break;
+        case 36:
+          put("ImageProperty", valOrOffset);
+          break;
+        case 38:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("AutoScaleLoInfo", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 39:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          num = in.readInt();
+          denom = in.readInt();
+          put("AutoScaleHiInfo", new TiffRational(num, denom));
+          in.seek(lastOffset);
+          break;
+        case 42:
+          put("Gamma", valOrOffset);
+          break;
+        case 43:
+          put("GammaRed", valOrOffset);
+          break;
+        case 44:
+          put("GammaGreen", valOrOffset);
+          break;
+        case 45:
+          put("GammaBlue", valOrOffset);
+          break;
+        case 46:
+          lastOffset = in.getFilePointer();
+          in.seek(valOrOffset);
+          int xBin, yBin;
+          xBin = in.readInt();
+          yBin = in.readInt();
+          put("CameraBin", new String("(" + xBin + "," + yBin + ")"));
+          in.seek(lastOffset);
+          break;
+        default:
+          break;
+      }
+    }
+    in.seek(saveLoc);
+  }
+
   /** Converts a Julian date value into a human-readable string. */
   public static String decodeDate(int julian) {
     long a, b, c, d, e, alpha, z;
@@ -770,29 +766,29 @@ public class MetamorphReader extends BaseTiffReader {
     millis -= minutes;
     millis /= 60;
     hours = millis;
-    return intFormat(hours, 2) + ":" + intFormat(minutes, 2) + ":" + 
+    return intFormat(hours, 2) + ":" + intFormat(minutes, 2) + ":" +
       intFormat(seconds, 2) + "." + intFormat(ms, 3);
   }
-  
+
   /** Formats an integer value with leading 0s if needed. */
-	public static String intFormat(int myint, int digits) {
-		String formatstring = "0";
-		while (formatstring.length() < digits) {
-			formatstring += "0";
+  public static String intFormat(int myint, int digits) {
+    String formatstring = "0";
+    while (formatstring.length() < digits) {
+      formatstring += "0";
     }
-		DecimalFormat df = new DecimalFormat(formatstring);
-		return df.format(myint);
-	}
-  
+    DecimalFormat df = new DecimalFormat(formatstring);
+    return df.format(myint);
+  }
+
   /**
-   * Formats an integer with leading 0 using maximum sequence number
-	 * 
-	 * @param myint : integer to format
-	 * @param maxint : max of "myint"
-	 * @return String
-	 */
-	public static String intFormatMax(int myint, int maxint) {
-		return intFormat(myint, new Integer(maxint).toString().length());
-	}
+   * Formats an integer with leading 0 using maximum sequence number.
+   *
+   * @param myint integer to format
+   * @param maxint max of "myint"
+   * @return String
+   */
+  public static String intFormatMax(int myint, int maxint) {
+    return intFormat(myint, new Integer(maxint).toString().length());
+  }
 
 }
