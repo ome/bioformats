@@ -220,6 +220,7 @@ public class Dataset extends ImageTransform {
 
     int numImg = -1;
     try { 
+      // CTR TODO - This results in superfluous initFile calls!
       readers[fileIndex].setId(ids[fileIndex]); 
       numImg = readers[fileIndex].getImageCount(); 
     }
