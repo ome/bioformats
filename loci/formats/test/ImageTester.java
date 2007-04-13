@@ -29,6 +29,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
+import loci.formats.ImageTools;
 
 /**
  * A class for testing the ImageTools.makeImage methods.
