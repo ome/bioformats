@@ -503,17 +503,9 @@ public class QTReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
+    super.close(); 
     prevPixels = null;
   }
 

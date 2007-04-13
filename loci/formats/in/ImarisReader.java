@@ -207,12 +207,6 @@ public class ImarisReader extends FormatReader {
       core.sizeY[0], 1, false);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */

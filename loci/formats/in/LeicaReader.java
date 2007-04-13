@@ -66,6 +66,8 @@ public class LeicaReader extends FormatReader {
   /** Name of current LEI file */
   private String leiFilename;
 
+  private int bpp;
+
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -601,9 +603,9 @@ public class LeicaReader extends FormatReader {
           new Integer(DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0])));
         addMeta("Length of filename",
           new Integer(DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0])));
-        addMeta("Length of file extension",
-          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])));
-        Integer fileExtLen = (Integer) getMeta("Length of file extension");
+        Integer fileExtLen = 
+          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])); 
+        addMeta("Length of file extension", fileExtLen);
         addMeta("Image file extension",
           DataTools.stripString(new String(temp, 16, fileExtLen.intValue())));
       }
@@ -649,8 +651,8 @@ public class LeicaReader extends FormatReader {
 
         addMeta("VoxelType", type);
 
-        addMeta("Bytes per pixel",
-          new Integer(DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0])));
+        bpp = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
+        addMeta("Bytes per pixel", new Integer(bpp));
         addMeta("Real world resolution",
           new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])));
         int length = DataTools.bytesToInt(temp, 16, 4, core.littleEndian[0]);
@@ -1014,8 +1016,7 @@ public class LeicaReader extends FormatReader {
       core.currentOrder[i] = core.sizeC[i] == 1 ? "XYZTC" : "XYCZT";
       if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
 
-      int tPixelType = ((Integer) getMeta("Bytes per pixel")).intValue();
-      switch (tPixelType) {
+      switch (bpp) {
         case 1:
           core.pixelType[i] = FormatTools.UINT8;
           break;

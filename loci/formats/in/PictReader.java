@@ -132,19 +132,6 @@ public class PictReader extends FormatReader {
     return open(bytes);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-  }
-
   /** Initializes the given PICT file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("PictReader.initFile(" + id + ")");

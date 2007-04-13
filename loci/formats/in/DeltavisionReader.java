@@ -118,12 +118,6 @@ public class DeltavisionReader extends FormatReader {
       core.sizeY[0], 1, false, bytesPerPixel, core.littleEndian[0]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given Deltavision file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("DeltavisionReader.initFile(" + id + ")");
@@ -206,9 +200,14 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Pixel sampling size (X)", new Integer(hstream.readInt()));
     addMeta("Pixel sampling size (Y)", new Integer(hstream.readInt()));
     addMeta("Pixel sampling size (Z)", new Integer(hstream.readInt()));
-    addMeta("X element length (in um)", new Float(hstream.readFloat()));
-    addMeta("Y element length (in um)", new Float(hstream.readFloat()));
-    addMeta("Z element length (in um)", new Float(hstream.readFloat()));
+    
+    float pixX = hstream.readFloat();
+    float pixY = hstream.readFloat();
+    float pixZ = hstream.readFloat();
+    
+    addMeta("X element length (in um)", new Float(pixX));
+    addMeta("Y element length (in um)", new Float(pixY));
+    addMeta("Z element length (in um)", new Float(pixZ));
     addMeta("X axis angle", new Float(hstream.readFloat()));
     addMeta("Y axis angle", new Float(hstream.readFloat()));
     addMeta("Z axis angle", new Float(hstream.readFloat()));
@@ -309,11 +308,14 @@ public class DeltavisionReader extends FormatReader {
     core.rgb[0] = false;
     core.interleaved[0] = false;
 
-    addMeta("Wavelength 1 (in nm)", new Integer(hstream.readShort()));
-    addMeta("Wavelength 2 (in nm)", new Integer(hstream.readShort()));
-    addMeta("Wavelength 3 (in nm)", new Integer(hstream.readShort()));
-    addMeta("Wavelength 4 (in nm)", new Integer(hstream.readShort()));
-    addMeta("Wavelength 5 (in nm)", new Integer(hstream.readShort()));
+    short[] waves = new short[5];
+    for (int i=0; i<waves.length; i++) waves[i] = hstream.readShort();
+
+    addMeta("Wavelength 1 (in nm)", new Integer(waves[0]));
+    addMeta("Wavelength 2 (in nm)", new Integer(waves[1]));
+    addMeta("Wavelength 3 (in nm)", new Integer(waves[2]));
+    addMeta("Wavelength 4 (in nm)", new Integer(waves[3]));
+    addMeta("Wavelength 5 (in nm)", new Integer(waves[4]));
     addMeta("X origin (in um)", new Float(hstream.readFloat()));
     addMeta("Y origin (in um)", new Float(hstream.readFloat()));
     addMeta("Z origin (in um)", new Float(hstream.readFloat()));
@@ -321,8 +323,8 @@ public class DeltavisionReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
-    String title;
-    for (int i=1; i<=10; i++) {
+    String title = null;
+    for (int i=10; i>=1; i--) {
       // Make sure that "null" characters are stripped out
       title = new String(header, 224 + 80*(i-1), 80).replaceAll("\0", "");
       addMeta("Title " + i, title);
@@ -344,16 +346,12 @@ public class DeltavisionReader extends FormatReader {
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
 
-    store.setDimensions(
-      (Float) getMeta("X element length (in um)"),
-      (Float) getMeta("Y element length (in um)"),
-      (Float) getMeta("Z element length (in um)"),
+    store.setDimensions(new Float(pixX), new Float(pixY), new Float(pixZ),
       null, null, null);
 
-    String description = (String) getMeta("Title 1");
-    if (description == null) description = "";
-    description = description.length() == 0 ? null : description;
-    store.setImage(id, null, description, null);
+    if (title == null) title = "";
+    title = title.length() == 0 ? null : title;
+    store.setImage(id, null, title, null);
 
     // Run through every timeslice, for each wavelength, for each z section
     // and fill in the Extended Header information array for that image
@@ -374,8 +372,7 @@ public class DeltavisionReader extends FormatReader {
 
     for (int w=0; w<core.sizeC[0]; w++) {
       store.setLogicalChannel(w, null,
-        new Float(extHdrFields[0][w][0].getNdFilter()),
-        (Integer) getMeta("Wavelength " + (w+1) + " (in nm)"),
+        new Float(extHdrFields[0][w][0].getNdFilter()), new Integer(waves[w]), 
         new Integer((int) extHdrFields[0][w][0].getExFilter()),
         "Monochrome", "Wide-field", null);
     }

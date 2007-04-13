@@ -311,9 +311,7 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
-    currentId = null;
-    if (in != null) in.close();
-    in = null;
+    super.close(); 
     if (pict != null) pict.close();
     layerInfoList = null;
   }

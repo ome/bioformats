@@ -89,12 +89,6 @@ public class AliconaReader extends FormatReader {
       1, false, numBytes, true);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given Alicona file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("AliconaReader.initFile(" + id + ")");
@@ -121,6 +115,10 @@ public class AliconaReader extends FormatReader {
 
     int count = 2;
 
+    boolean hasC = false;
+    String voltage = null, magnification = null;
+    String pntX = null, pntY = null, pntZ = null;
+
     for (int i=0; i<count; i++) {
       in.read(keyBytes);
       in.read(valueBytes);
@@ -142,14 +140,18 @@ public class AliconaReader extends FormatReader {
       else if (key.equals("TextureImageOffset")) {
         textureOffset = Integer.parseInt(value);
       }
+      else if (key.equals("TexturePtr") && !value.equals("7")) hasC = true; 
+      else if (key.equals("Voltage")) voltage = value;
+      else if (key.equals("Magnification")) magnification = value;
+      else if (key.equals("PlanePntX")) pntX = value; 
+      else if (key.equals("PlanePntY")) pntY = value; 
+      else if (key.equals("PlanePntZ")) pntZ = value; 
     }
 
     status("Populating metadata");
 
     numBytes = (int) (in.length() - textureOffset) /
       (core.sizeX[0] * core.sizeY[0] * core.imageCount[0]);
-
-    boolean hasC = !((String) getMeta("TexturePtr")).trim().equals("7");
 
     core.sizeC[0] = hasC ? 3 : 1;
     core.sizeZ[0] = 1;
@@ -175,22 +177,18 @@ public class AliconaReader extends FormatReader {
       null
     );
 
-    if (getMeta("Voltage") != null) {
-      store.setDetector(null, null, null, null, null,
-        new Float((String) getMeta("Voltage")), null, null, null);
+    if (voltage != null) {
+      store.setDetector(null, null, null, null, null, new Float(voltage), 
+        null, null, null);
     }
-    if (getMeta("Magnification") != null) {
-      store.setObjective(null, null, null, null,
-        new Float((String) getMeta("Magnification")), null, null);
+    if (magnification != null) {
+      store.setObjective(null, null, null, null, new Float(magnification), 
+        null, null);
     }
 
-    if (getMeta("PlanePntX") != null && getMeta("PlanePntY") != null &&
-      getMeta("PlanePntZ") != null)
-    {
-      store.setDimensions(
-        new Float(((String) getMeta("PlanePntX")).trim()),
-        new Float(((String) getMeta("PlanePntY")).trim()),
-        new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
+    if (pntX != null && pntY != null && pntZ != null) {
+      store.setDimensions(new Float(pntX.trim()), new Float(pntY.trim()),
+        new Float(pntZ.trim()), null, null, null);
     }
 
     for (int i=0; i<core.sizeC[0]; i++) {

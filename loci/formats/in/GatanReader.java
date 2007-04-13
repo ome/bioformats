@@ -51,6 +51,7 @@ public class GatanReader extends FormatReader {
   private int bytesPerPixel;
 
   protected int pixelDataNum = 0;
+  protected int datatype;
 
   // -- Constructor --
 
@@ -101,12 +102,6 @@ public class GatanReader extends FormatReader {
       1, false, bytesPerPixel, core.littleEndian[0]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given Gatan file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("GatanReader.initFile(" + id + ")");
@@ -137,8 +132,6 @@ public class GatanReader extends FormatReader {
     in.skipBytes(2);
     in.read(tmp);
     parseTags(DataTools.bytesToInt(tmp, !core.littleEndian[0]), "initFile");
-
-    int datatype = Integer.parseInt((String) getMeta("DataType"));
 
     status("Populating metadata");
 
@@ -326,6 +319,7 @@ public class GatanReader extends FormatReader {
             pixelSizes.add(data);
           }
           addMeta(labelString, data);
+          if (labelString.equals("DataType")) datatype = Integer.parseInt(data);
         }
         else if (n == 2) {
           in.read(temp);

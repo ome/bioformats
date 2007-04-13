@@ -101,6 +101,8 @@ public class ZeissZVIReader extends FormatReader {
 
   private Hashtable offsets;
 
+  private int zIndex = -1, cIndex = -1, tIndex = -1;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -266,11 +268,7 @@ public class ZeissZVIReader extends FormatReader {
       }
       else validBits = null;
 
-      Object check = getMeta("Image Channel Index");
-      if (check != null && !check.toString().trim().equals("")) {
-        String zIndex = (String) getMeta("Image Index Z");
-        String tIndex = (String) getMeta("Image Index T");
-
+      if (cIndex != -1) {
         int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
         int max = 0, min = Integer.MAX_VALUE, maxNdx = 0, minNdx = 0;
         String[] axes = {"Z", "C", "T"};
@@ -294,11 +292,8 @@ public class ZeissZVIReader extends FormatReader {
         core.currentOrder[0] =
           "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
 
-        if (zIndex != null && tIndex != null) {
-          int z = Integer.parseInt(DataTools.stripString(zIndex));
-          int t = Integer.parseInt(DataTools.stripString(tIndex));
-
-          if (z != core.sizeZ[0]) {
+        if (zIndex != -1 && tIndex != -1) {
+          if (zIndex != core.sizeZ[0]) {
             if (core.sizeZ[0] != 1) {
               core.currentOrder[0] =
                 core.currentOrder[0].replaceAll("Z", "") + "Z";
@@ -314,7 +309,7 @@ public class ZeissZVIReader extends FormatReader {
           core.currentOrder[0] = legacy.getDimensionOrder();
         }
       }
-      else if (getMeta("MultiChannel Color") != null) {
+      else if (core.rgb[0]) {
         core.currentOrder[0] =
           (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
       }
@@ -685,16 +680,16 @@ public class ZeissZVIReader extends FormatReader {
 
           pt += 8;
 
-          int tIndex = DataTools.bytesToInt(data, pt, 4, true);
+          int tidx = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
-          int cIndex = DataTools.bytesToInt(data, pt, 4, true);
+          int cidx = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
-          int zIndex = DataTools.bytesToInt(data, pt, 4, true);
+          int zidx = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
 
-          Integer zndx = new Integer(zIndex);
-          Integer cndx = new Integer(cIndex);
-          Integer tndx = new Integer(tIndex);
+          Integer zndx = new Integer(zidx);
+          Integer cndx = new Integer(cidx);
+          Integer tndx = new Integer(tidx);
 
           if (!zIndices.contains(zndx)) zIndices.add(zndx);
           if (!cIndices.contains(cndx)) cIndices.add(cndx);
@@ -1648,12 +1643,15 @@ public class ZeissZVIReader extends FormatReader {
         break;
       case 2819:
         addMeta("Image Index Z", data);
+        zIndex = Integer.parseInt(DataTools.stripString(data)); 
         break;
       case 2820:
         addMeta("Image Channel Index", data);
+        cIndex = Integer.parseInt(DataTools.stripString(data)); 
         break;
       case 2821:
         addMeta("Image Index T", data);
+        tIndex = Integer.parseInt(DataTools.stripString(data));
         break;
       case 2822:
         addMeta("ImageTile Index", data);

@@ -96,19 +96,6 @@ public class OpenlabRawReader extends FormatReader {
       core.sizeY[0], core.sizeC[0], false, bytesPerPixel, false);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-  }
-
   /** Initializes the given RAW file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OpenlabRawReader.initFile(" + id + ")");
@@ -161,8 +148,6 @@ public class OpenlabRawReader extends FormatReader {
       offsets[i] =
         offsets[i-1] + 288 + core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
     }
-
-    bytesPerPixel = ((Integer) getMeta("Bytes per pixel")).intValue();
 
     core.sizeZ[0] = core.imageCount[0];
     core.sizeT[0] = 1;

@@ -153,7 +153,9 @@ public class MicromanagerReader extends FormatReader {
 
         if (!open && !closed) {
           String value = token.substring(token.indexOf(":") + 1).trim();
-          addMeta(key, value.substring(0, value.length() - 1));
+          value = value.substring(0, value.length() - 1); 
+          addMeta(key, value);
+          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);  
         }
         else if (!closed){
           StringBuffer valueBuffer = new StringBuffer();
@@ -164,17 +166,20 @@ public class MicromanagerReader extends FormatReader {
           }
           String value = valueBuffer.toString();
           value.replaceAll("\n", "").trim();
-          addMeta(key, value.substring(0, value.length() - 1));
+          value = value.substring(0, value.length() - 1); 
+          addMeta(key, value);
+          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);  
         }
         else {
           String value =
             token.substring(token.indexOf("[") + 1, token.indexOf("]")).trim();
-          addMeta(key, value.substring(0, value.length() - 1));
+          value = value.substring(0, value.length() - 1); 
+          addMeta(key, value);
+          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);  
         }
       }
     }
     tiffReader.setId((String) tiffs.get(0));
-    core.sizeC[0] = Integer.parseInt((String) getMeta("Channels"));
     core.sizeZ[0] = 1;
     core.sizeT[0] = tiffs.size() / core.sizeC[0];
     core.sizeX[0] = tiffReader.getSizeX();

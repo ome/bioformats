@@ -118,12 +118,6 @@ public class EPSReader extends FormatReader {
       isRGB() ? 3 : 1, true);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given EPS file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("EPSReader.initFile(" + id + ")");

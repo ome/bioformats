@@ -153,17 +153,21 @@ public class FluoviewReader extends BaseTiffReader {
     // read dimension information
     byte[] dimNameBytes = new byte[16];
     byte[] dimCalibrationUnits = new byte[64];
+    String[] names = new String[10];
+    int[] sizes = new int[10];
+    double[] resolutions = new double[10];
     for (int i=0; i<10; i++) {
       ras.read(dimNameBytes);
-      int size = ras.readInt();
+      names[i] = new String(dimNameBytes);
+      sizes[i] = ras.readInt();
       double origin = ras.readDouble();
-      double resolution = ras.readDouble();
+      resolutions[i] = ras.readDouble();
       ras.read(dimCalibrationUnits);
 
-      put("Dimension " + (i+1) + " Name", new String(dimNameBytes));
-      put("Dimension " + (i+1) + " Size", size);
+      put("Dimension " + (i+1) + " Name", names[i]);
+      put("Dimension " + (i+1) + " Size", sizes[i]);
       put("Dimension " + (i+1) + " Origin", origin);
-      put("Dimension " + (i+1) + " Resolution", resolution);
+      put("Dimension " + (i+1) + " Resolution", resolutions[i]);
       put("Dimension " + (i+1) + " Units", new String(dimCalibrationUnits));
     }
 
@@ -218,41 +222,41 @@ public class FluoviewReader extends BaseTiffReader {
     core.currentOrder[0] = "XY";
 
     for (int i=0; i<10; i++) {
-      String name = (String) getMeta("Dimension " + (i+1) + " Name");
-      Integer size = (Integer) getMeta("Dimension " + (i+1) + " Size");
-      Double voxel = (Double) getMeta("Dimension " + (i+1) + " Resolution");
-      if (name == null || size == null || size.intValue() == 0) continue;
+      String name = names[i];
+      int size = sizes[i];
+      float voxel = (float) resolutions[i];
+      if (name == null || size == 0) continue;
       name = name.toLowerCase().trim();
       if (name.length() == 0) continue;
 
       if (name.equals("x")) {
-        core.sizeX[0] = size.intValue();
-        if (voxel != null) voxelX = voxel.floatValue();
+        core.sizeX[0] = size;
+        voxelX = voxel;
       }
       else if (name.equals("y")) {
-        core.sizeY[0] = size.intValue();
-        if (voxel != null) voxelY = voxel.floatValue();
+        core.sizeY[0] = size;
+        voxelY = voxel;
       }
       else if (name.equals("z") || name.equals("event")) {
-        core.sizeZ[0] *= size.intValue();
+        core.sizeZ[0] *= size;
         if (core.currentOrder[0].indexOf("Z") == -1) {
           core.currentOrder[0] += "Z";
         }
-        if (voxel != null) voxelZ = voxel.floatValue();
+        voxelZ = voxel;
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
-        core.sizeC[0] *= size.intValue();
+        core.sizeC[0] *= size;
         if (core.currentOrder[0].indexOf("C") == -1) {
           core.currentOrder[0] += "C";
         }
-        if (voxel != null) voxelC = voxel.floatValue();
+        voxelC = voxel;
       }
       else {
-        core.sizeT[0] *= size.intValue();
+        core.sizeT[0] *= size;
         if (core.currentOrder[0].indexOf("T") == -1) {
           core.currentOrder[0] += "T";
         }
-        if (voxel != null) voxelT = voxel.floatValue();
+        voxelT = voxel;
       }
     }
 

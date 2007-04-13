@@ -728,12 +728,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return TiffTools.getImage(ifds[no], in);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BaseTiffReader.initFile(" + id + ")");

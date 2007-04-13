@@ -173,12 +173,6 @@ public class SDTReader extends FormatReader {
       core.sizeY[series], getRGBChannelCount(), false, 2, true);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   // -- FormatReader API methods --
 
   /** Initializes the given SDT file. */

@@ -174,12 +174,6 @@ public class ICSReader extends FormatReader {
     return new String[] {currentIdsId, currentIcsId};
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     super.close();
@@ -241,6 +235,9 @@ public class ICSReader extends FormatReader {
 
     status("Reading metadata");
 
+    String layoutSizes = null, layoutOrder = null, byteOrder = null;
+    String rFormat = null, compression = null, scale = null;
+
     RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
     StringTokenizer t;
     String token;
@@ -274,7 +271,16 @@ public class ICSReader extends FormatReader {
             value.append(" ");
             value.append(t.nextToken());
           }
-          addMeta(key.toString().trim(), value.toString().trim());
+          String k = key.toString().trim();
+          String v = value.toString().trim();
+          addMeta(k, v);
+        
+          if (k.equals("layout sizes")) layoutSizes = v;
+          else if (k.equals("layout order")) layoutOrder = v;
+          else if (k.equals("representation byte_order")) byteOrder = v;
+          else if (k.equals("representation format")) rFormat = v;
+          else if (k.equals("representation compression")) compression = v;
+          else if (k.equals("parameter scale")) scale = v;
         }
         else {
           key.append(token);
@@ -287,15 +293,13 @@ public class ICSReader extends FormatReader {
 
     status("Populating metadata");
 
-    String images = (String) getMeta("layout sizes");
-    String ord = (String) getMeta("layout order");
-    ord = ord.trim();
+    layoutOrder = layoutOrder.trim();
     // bpp, width, height, z, channels
-    StringTokenizer t1 = new StringTokenizer(images);
-    StringTokenizer t2 = new StringTokenizer(ord);
+    StringTokenizer t1 = new StringTokenizer(layoutSizes);
+    StringTokenizer t2 = new StringTokenizer(layoutOrder);
 
-    core.rgb[0] =
-      ord.indexOf("ch") >= 0 && ord.indexOf("ch") < ord.indexOf("x");
+    core.rgb[0] = layoutOrder.indexOf("ch") >= 0 && 
+      layoutOrder.indexOf("ch") < layoutOrder.indexOf("x");
 
     String imageToken;
     String orderToken;
@@ -333,19 +337,17 @@ public class ICSReader extends FormatReader {
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
     if (!core.rgb[0]) core.imageCount[0] *= core.sizeC[0];
 
-    String endian = (String) getMeta("representation byte_order");
+    String endian = byteOrder;
     core.littleEndian[0] = true;
 
     if (endian != null) {
       StringTokenizer endianness = new StringTokenizer(endian);
       String firstByte = endianness.nextToken();
       int first = Integer.parseInt(firstByte);
-      core.littleEndian[0] =
-        ((String) getMeta("representation format")).equals("real") ?
-        first == 1 : first != 1;
+      core.littleEndian[0] = rFormat.equals("real") ? first == 1 : first != 1;
     }
 
-    String test = (String) getMeta("representation compression");
+    String test = compression;
     boolean gzip = (test == null) ? false : test.equals("gzip");
 
     if (versionTwo) {
@@ -390,7 +392,7 @@ public class ICSReader extends FormatReader {
 
     // populate Pixels element
 
-    String o = (String) getMeta("layout order");
+    String o = layoutOrder;
     o = o.trim();
     o = o.substring(o.indexOf("x")).trim();
     char[] tempOrder = new char[(o.length() / 2) + 1];
@@ -404,8 +406,7 @@ public class ICSReader extends FormatReader {
     if (o.indexOf("T") == -1) o = o + "T";
     if (o.indexOf("C") == -1) o = o + "C";
 
-    String fmt = (String) getMeta("representation format");
-    String sign = (String) getMeta("representation sign");
+    String fmt = rFormat;
 
     if (bitsPerPixel < 32) core.littleEndian[0] = !core.littleEndian[0];
 
@@ -444,8 +445,8 @@ public class ICSReader extends FormatReader {
       null, // Use image index 0
       null); // Use pixels index 0
 
-    String pixelSizes = (String) getMeta("parameter scale");
-    o = (String) getMeta("layout order");
+    String pixelSizes = scale;
+    o = layoutOrder;
     if (pixelSizes != null) {
       StringTokenizer pixelSizeTokens = new StringTokenizer(pixelSizes);
       StringTokenizer axisTokens = new StringTokenizer(o);

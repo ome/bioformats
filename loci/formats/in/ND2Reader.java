@@ -117,6 +117,9 @@ public class ND2Reader extends FormatReader {
   /** Number of valid bits per pixel */
   private int[] validBits;
 
+  private Vector zs = new Vector();
+  private Vector ts = new Vector();
+
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -211,19 +214,6 @@ public class ND2Reader extends FormatReader {
     }
 
     return img;
-  }
-
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
-  /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
   }
 
   /** Initializes the given ND2 file. */
@@ -349,16 +339,40 @@ public class ND2Reader extends FormatReader {
                   String effectiveKey = prefix + " " + pre + " " + key;
                   if (!metadata.containsKey(effectiveKey)) {
                     addMeta(effectiveKey, value);
+                  
+                    if (effectiveKey.equals(
+                      "MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value"))
+                    {
+                      if (value != null) {
+                        core.sizeC[0] = Integer.parseInt(value);
+                      } 
+                    }
+                    else if (effectiveKey.endsWith("dTimeMSec value")) {
+                      long v = (long) Double.parseDouble(value); 
+                      if (!zs.contains(new Long(v))) {
+                        core.sizeZ[0]++;
+                        zs.add(new Long(v));
+                      }
+                    }
+                    else if (effectiveKey.endsWith("dZPos value")) {
+                      long v = (long) Double.parseDouble(value); 
+                      if (!ts.contains(new Long(v))) {
+                        core.sizeT[0]++;
+                        ts.add(new Long(v));
+                      }
+                    }
                   }
                   else {
                     String v = (String) getMeta(effectiveKey);
-                    boolean parse = true;
-                    for (int i=0; i<v.length(); i++) {
-                      if (Character.isLetter(v.charAt(i)) ||
-                        Character.isWhitespace(v.charAt(i)))
-                      {
-                        parse = false;
-                        break;
+                    boolean parse = v != null;
+                    if (parse) {
+                      for (int i=0; i<v.length(); i++) {
+                        if (Character.isLetter(v.charAt(i)) ||
+                          Character.isWhitespace(v.charAt(i)))
+                        {
+                          parse = false;
+                          break;
+                        }
                       }
                     }
                     if (parse) {
@@ -423,39 +437,16 @@ public class ND2Reader extends FormatReader {
       pixSizeZ = Float.parseFloat(pixZ.trim());
     }
 
-    String c = (String)
-      getMeta("MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value");
-    if (c != null) core.sizeC[0] = Integer.parseInt(c);
-    else core.sizeC[0] = openImage(0).getRaster().getNumBands();
+    if (core.sizeC[0] == 0) {
+      core.sizeC[0] = openImage(0).getRaster().getNumBands();
+    } 
     if (core.sizeC[0] == 2) core.sizeC[0] = 1;
 
-    long[] timestamps = new long[core.imageCount[0]];
-    long[] zstamps = new long[core.imageCount[0]];
-
-    for (int i=0; i<core.imageCount[0]; i++) {
-      String pre = "MetadataSeq _SEQUENCE_INDEX=\"" + i + "\" ";
-      String tstamp = (String) getMeta(pre + "dTimeMSec value");
-      String zstamp = (String) getMeta(pre + "dZPos value");
-      if (tstamp != null) timestamps[i] = (long) Float.parseFloat(tstamp);
-      if (zstamp != null) zstamps[i] = (long) Float.parseFloat(zstamp);
-    }
-
-    Vector zs = new Vector();
-    Vector ts = new Vector();
-    for (int i=0; i<core.imageCount[0]; i++) {
-      if (!zs.contains(new Long(zstamps[i]))) {
-        core.sizeZ[0]++;
-        zs.add(new Long(zstamps[i]));
-      }
-      if (!ts.contains(new Long(timestamps[i]))) {
-        core.sizeT[0]++;
-        ts.add(new Long(timestamps[i]));
-      }
-    }
-
     core.currentOrder[0] = "XY";
-    long deltaT = timestamps.length > 1 ? timestamps[1] - timestamps[0] : 1;
-    long deltaZ = zstamps.length > 1 ? zstamps[1] - zstamps[0] : 1;
+    long deltaT = ts.size() > 1 ? 
+      ((Long) ts.get(1)).longValue() - ((Long) ts.get(0)).longValue() : 1;
+    long deltaZ = zs.size() > 1 ? 
+      ((Long) zs.get(1)).longValue() - ((Long) zs.get(0)).longValue() : 1;
 
     if (deltaT < deltaZ || deltaZ == 0) core.currentOrder[0] += "CTZ";
     else core.currentOrder[0] += "CZT";

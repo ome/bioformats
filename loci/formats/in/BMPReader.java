@@ -142,12 +142,6 @@ public class BMPReader extends FormatReader {
       core.sizeC[0], false);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given BMP file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BMPReader.initFile(" + id + ")");
@@ -211,8 +205,10 @@ public class BMPReader extends FormatReader {
     addMeta("Compression type", comp);
 
     in.skipBytes(4);
-    addMeta("X resolution", "" + in.readInt());
-    addMeta("Y resolution", "" + in.readInt());
+    int pixelSizeX = in.readInt();
+    int pixelSizeY = in.readInt();
+    addMeta("X resolution", "" + pixelSizeX);
+    addMeta("Y resolution", "" + pixelSizeY);
     int nColors = in.readInt();
     in.skipBytes(4);
 
@@ -280,11 +276,8 @@ public class BMPReader extends FormatReader {
     // resolution is stored as pixels per meter; we want to convert to
     // microns per pixel
 
-    int pixSizeX = Integer.parseInt((String) getMeta("X resolution"));
-    int pixSizeY = Integer.parseInt((String) getMeta("Y resolution"));
-
-    float correctedX = (1 / (float) pixSizeX) * 1000000;
-    float correctedY = (1 / (float) pixSizeY) * 1000000;
+    float correctedX = (1 / (float) pixelSizeX) * 1000000;
+    float correctedY = (1 / (float) pixelSizeY) * 1000000;
 
     store.setDimensions(new Float(correctedX), new Float(correctedY), null,
       null, null, null);

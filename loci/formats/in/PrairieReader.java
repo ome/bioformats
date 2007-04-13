@@ -219,6 +219,7 @@ public class PrairieReader extends FormatReader {
       }
 
       int zt = 0;
+      boolean isZ = false;
       Vector f = new Vector();
       int fileIndex = 1;
       if (id.endsWith(".xml")) core.imageCount[0] = 0;
@@ -247,7 +248,14 @@ public class PrairieReader extends FormatReader {
                   " " + key, value);
                 if (key.equals("filename")) fileIndex++;
               }
-              else addMeta(pastPrefix + " " + prefix + " " + key, value);
+              else {
+                addMeta(pastPrefix + " " + prefix + " " + key, value);
+                if (pastPrefix.equals("PVScan") && 
+                  prefix.equals("Sequence") && key.equals("type")) 
+                {
+                  isZ = value.equals("ZSeries"); 
+                }
+              } 
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
                 Location current = new Location(id);
@@ -263,6 +271,13 @@ public class PrairieReader extends FormatReader {
             String value =
               el.substring(valueIndex, el.indexOf("\"", valueIndex));
             addMeta(key, value);
+          
+            if (key.equals("pixelsPerLine")) {
+              core.sizeX[0] = Integer.parseInt(value);
+            } 
+            else if (key.equals("linesPerFrame")) {
+              core.sizeY[0] = Integer.parseInt(value);
+            } 
           }
           if (!closed) {
             pastPrefix = prefix;
@@ -282,12 +297,8 @@ public class PrairieReader extends FormatReader {
 
         status("Populating metadata");
 
-        boolean isZ =
-          ((String) getMeta("PVScan Sequence type")).equals("ZSeries");
         if (zt == 0) zt = 1;
 
-        core.sizeX[0] = Integer.parseInt((String) getMeta("pixelsPerLine"));
-        core.sizeY[0] = Integer.parseInt((String) getMeta("linesPerFrame"));
         core.sizeZ[0] = isZ ? zt : 1;
         core.sizeT[0] = isZ ? 1 : zt;
         core.sizeC[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeT[0]);
@@ -297,10 +308,10 @@ public class PrairieReader extends FormatReader {
         core.interleaved[0] = false;
         core.littleEndian[0] = tiff.isLittleEndian();
 
-        float pixSizeX =
-          Float.parseFloat((String) getMeta("micronsPerPixel_XAxis"));
-        float pixSizeY =
-          Float.parseFloat((String) getMeta("micronsPerPixel_YAxis"));
+        String px = (String) getMeta("micronsPerPixel_XAxis");
+        String py = (String) getMeta("micronsPerPixel_YAxis");
+        float pixSizeX = px == null ? 0f : Float.parseFloat(px);
+        float pixSizeY = py == null ? 0f : Float.parseFloat(py);
 
         MetadataStore store = getMetadataStore();
 
@@ -323,12 +334,14 @@ public class PrairieReader extends FormatReader {
 
         String date = (String) getMeta(" PVScan date");
 
-        SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
-        Date d = parse.parse(date, new ParsePosition(0));
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        date = fmt.format(d);
+        if (date != null) {
+          SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
+          Date d = parse.parse(date, new ParsePosition(0));
+          SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+          date = fmt.format(d);
 
-        store.setImage(null, date, null, null);
+          store.setImage(null, date, null, null);
+        }
 
         String laserPower = (String) getMeta("laserPower_0");
 

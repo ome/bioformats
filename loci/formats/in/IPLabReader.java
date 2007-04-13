@@ -95,12 +95,6 @@ public class IPLabReader extends FormatReader {
       core.rgb[0] ? core.sizeC[0] : 1, false, bps, core.littleEndian[0]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("IPLabReader.initFile(" + id + ")");

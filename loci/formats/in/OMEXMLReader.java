@@ -152,12 +152,6 @@ public class OMEXMLReader extends FormatReader {
       core.sizeY[series], 1, false, bpp[series], core.littleEndian[series]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else close();
-  }
-
   /** Initializes the given OME-XML file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OMEXMLReader.initFile(" + id + ")");

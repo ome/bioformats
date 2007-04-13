@@ -129,12 +129,6 @@ public class LegacyZVIReader extends FormatReader {
     return zviBlock.readImage(in);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LegacyZVIReader.initFile(" + id + ")");

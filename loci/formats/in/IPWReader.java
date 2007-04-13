@@ -150,12 +150,6 @@ public class IPWReader extends BaseTiffReader {
       bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, core.littleEndian[0]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws FormatException, IOException {
     super.close();
@@ -250,6 +244,10 @@ public class IPWReader extends BaseTiffReader {
     addMeta("Image Description", description);
 
     // default values
+    
+    core.sizeZ[0] = 1;
+    core.sizeC[0] = 1;
+    core.sizeT[0] = getImageCount();
     addMeta("slices", "1");
     addMeta("channels", "1");
     addMeta("frames", new Integer(getImageCount()));
@@ -270,6 +268,11 @@ public class IPWReader extends BaseTiffReader {
           data = token.trim();
         }
         addMeta(label, data);
+        if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data); 
+        else if (label.equals("slices")) core.sizeT[0] = Integer.parseInt(data);
+        else if (label.equals("channels")) {
+          core.sizeC[0] = Integer.parseInt(data); 
+        } 
       }
     }
 
@@ -278,9 +281,6 @@ public class IPWReader extends BaseTiffReader {
     Hashtable h = ifds[0];
     core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
     core.sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-    core.sizeZ[0] = Integer.parseInt(getMeta("frames").toString());
-    core.sizeC[0] = Integer.parseInt(getMeta("channels").toString());
-    core.sizeT[0] = Integer.parseInt(getMeta("slices").toString());
     core.currentOrder[0] = "XY";
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;

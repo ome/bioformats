@@ -110,12 +110,6 @@ public class BioRadReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given Bio-Rad file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
@@ -191,6 +185,12 @@ public class BioRadReader extends FormatReader {
     core.littleEndian[0] = LITTLE_ENDIAN;
 
     status("Reading notes");
+
+    String zoom = null, zstart = null, zstop = null, mag = null;
+    String gain1 = null, gain2 = null, gain3 = null;
+    String offset1 = null, offset2 = null, offset3 = null;
+    String ex1 = null, ex2 = null, ex3 = null;
+    String em1 = null, em2 = null, em3 = null;
 
     // read notes
     int noteCount = 0;
@@ -421,8 +421,66 @@ public class BioRadReader extends FormatReader {
                 "Tx selector used (TX 3)"};
               break;
           }
+          
+          String value; 
           while (st.hasMoreTokens() && idx < keys.length) {
-            addMeta(keys[idx], st.nextToken());
+            value = st.nextToken(); 
+            addMeta(keys[idx], value);
+            if (keys[idx].equals("Zoom factor (user selected)")) zoom = value;
+            else if (keys[idx].equals("Z start")) zstart = value;
+            else if (keys[idx].equals("Z stop")) zstop = value;
+            else if (keys[idx].equals("Transmission detector 1 - gain")) {
+              gain1 = value;
+            } 
+            else if (keys[idx].equals("Transmission detector 2 - gain")) {
+              gain2 = value;
+            } 
+            else if (keys[idx].equals("Transmission detector 3 - gain")) {
+              gain3 = value;
+            } 
+            else if (keys[idx].equals("Transmission detector 1 - offset")) {
+              offset1 = value;
+            } 
+            else if (keys[idx].equals("Transmission detector 2 - offset")) {
+              offset2 = value;
+            } 
+            else if (keys[idx].equals("Transmission detector 3 - offset")) {
+              offset3 = value;
+            } 
+            else if (keys[idx].equals(
+              "Part number of excitation filter for laser 1")) 
+            {
+              ex1 = value;
+            }
+            else if (keys[idx].equals(
+              "Part number of excitation filter for laser 2")) 
+            {
+              ex2 = value;
+            }
+            else if (keys[idx].equals(
+              "Part number of excitation filter for laser 3")) 
+            {
+              ex3 = value;
+            }
+            else if (keys[idx].equals(
+              "Part number of emission filter for laser 1"))
+            {
+              em1 = value;
+            }
+            else if (keys[idx].equals(
+              "Part number of emission filter for laser 2"))
+            {
+              em2 = value;
+            }
+            else if (keys[idx].equals(
+              "Part number of emission filter for laser 3"))
+            {
+              em3 = value;
+            }
+            else if (keys[idx].equals("Objective lens magnification")) {
+              mag = value;
+            }
+
             idx++;
           }
           break;
@@ -635,15 +693,12 @@ public class BioRadReader extends FormatReader {
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
       
-      double white = Double.parseDouble(getMeta("ramp1_max").toString()); 
-      double black = Double.parseDouble(getMeta("ramp1_min").toString()); 
+      double white = ramp1max; 
+      double black = ramp1min; 
       
       store.setDisplayChannel(new Integer(i),  new Double(black),
         new Double(white), null, null);
     }
-    String zoom = (String) getMeta("Zoom factor (user selected)");
-    String zstart = (String) getMeta("Z start");
-    String zstop = (String) getMeta("Z stop");
     store.setDisplayOptions(zoom == null ? null : new Float(zoom),
       new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] >= 2),
       new Boolean(core.sizeC[0] >= 3), Boolean.FALSE, null,
@@ -655,25 +710,19 @@ public class BioRadReader extends FormatReader {
       core.sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
 
     for (int i=0; i<3; i++) {
-      String prefix = "Transmission detector " + (i+1) + " - ";
-      String gain = (String) getMeta(prefix + "gain");
-      String offset = (String) getMeta(prefix + "offset");
+      String gain = i == 0 ? gain1 : i == 1 ? gain2 : gain3;
+      String offset = i == 0 ? offset1 : i == 1 ? gain2 : gain3;
       if (gain != null || offset != null) { 
         store.setDetector(null, null, null, null, gain == null ? null :
           new Float(gain), null, offset == null ? null : new Float(offset),
           null, new Integer(i));
       }
 
-      String exc = (String) getMeta("Part number of excitation filter for " +
-        "laser " + (i+1));
-      String ems = (String) getMeta("Part number of emission filter for " +
-        "laser " + (i+1));
-      String excName = (String) getMeta("Excitation filter name - laser " + i);
-      String emsName = (String) getMeta("Emission filter name - laser " + i);
+      String exc = i == 0 ? ex1 : i == 1 ? ex2 : ex3; 
+      String ems = i == 0 ? em1 : i == 1 ? em2 : em3; 
       if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
       if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
     }
-    String mag = (String) getMeta("Objective lens magnification");
     if (mag != null) {
       store.setObjective(null, null, null, null, new Float(mag), null, null);
     }

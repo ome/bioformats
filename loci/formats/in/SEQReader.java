@@ -89,11 +89,12 @@ public class SEQReader extends BaseTiffReader {
 
     // default values
     addMeta("frames", "" + core.sizeZ[0]);
-    addMeta("channels", getMeta("NumberOfChannels").toString());
+    addMeta("channels", "" + super.getSizeC());
     addMeta("slices", "" + core.sizeT[0]);
 
     // parse the description to get channels, slices and times where applicable
-    String descr = (String) getMeta("Comment");
+    String descr = (String) TiffTools.getIFDValue(ifds[0], 
+      TiffTools.IMAGE_DESCRIPTION);
     metadata.remove("Comment");
     if (descr != null) {
       StringTokenizer tokenizer = new StringTokenizer(descr, "\n");
@@ -102,12 +103,11 @@ public class SEQReader extends BaseTiffReader {
         String label = token.substring(0, token.indexOf("="));
         String data = token.substring(token.indexOf("=") + 1);
         addMeta(label, data);
+        if (label.equals("channels")) core.sizeC[0] = Integer.parseInt(data); 
+        else if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data);
+        else if (label.equals("slices")) core.sizeT[0] = Integer.parseInt(data);
       }
     }
-
-    core.sizeC[0] = Integer.parseInt((String) getMeta("channels"));
-    core.sizeZ[0] = Integer.parseInt((String) getMeta("frames"));
-    core.sizeT[0] = Integer.parseInt((String) getMeta("slices"));
 
     try {
       if (isRGB() && core.sizeC[0] != 3) core.sizeC[0] *= 3;

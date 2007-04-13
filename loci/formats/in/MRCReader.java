@@ -87,12 +87,6 @@ public class MRCReader extends FormatReader {
       core.sizeY[0], 1, true, bpp, core.littleEndian[0]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given MRC file. */
   public void initFile(String id) throws FormatException, IOException {
     if (debug) debug("MRCReader.initFile(" + id + ")");

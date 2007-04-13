@@ -116,12 +116,6 @@ public class LIFReader extends FormatReader {
       core.littleEndian[series], validBits[series]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given LIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LIFReader.initFile(" + id + ")");

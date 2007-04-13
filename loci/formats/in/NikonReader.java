@@ -256,7 +256,7 @@ public class NikonReader extends BaseTiffReader {
     // read the maker note
 
     byte[] offsets = (byte[]) getMeta("Offset to maker note");
-    makerNoteOffset = offsets[0];
+    if (offsets != null) makerNoteOffset = offsets[0];
     try {
       if (makerNoteOffset >= in.length() || makerNoteOffset == 0) return;
       Hashtable makerNote = TiffTools.getIFD(in, 0, makerNoteOffset);

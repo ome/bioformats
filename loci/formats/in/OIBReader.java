@@ -116,6 +116,12 @@ public class OIBReader extends FormatReader {
 
   private Vector rgb;
 
+  /** Axis data. */
+  private String[] labels = new String[9];
+  private String[] dims = new String[9];
+  private String[] starts = new String[9];
+  private String[] stops = new String[9];
+
   // -- Constructor --
 
   /** Constructs a new OIB reader. */
@@ -186,12 +192,6 @@ public class OIBReader extends FormatReader {
     return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series],
       getRGBChannelCount(), false, bytes, core.littleEndian[series],
       validBits[series]);
-  }
-
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
   }
 
   /* @see loci.formats.IFormatReader#close() */
@@ -277,17 +277,7 @@ public class OIBReader extends FormatReader {
 
       status("Populating metadata");
 
-      String[] labels = new String[9];
-      String[] dims = new String[9];
-      String[] starts = new String[9];
-      String[] stops = new String[9];
-
       for (int i=0; i<labels.length; i++) {
-        String pre = "[Axis " + i + " Parameters Common] - ";
-        labels[i] = (String) getMeta(pre + "AxisCode");
-        dims[i] = (String) getMeta(pre + "MaxSize");
-        starts[i] = (String) getMeta(pre + "StartPosition");
-        stops[i] = (String) getMeta(pre + "EndPosition");
         if (labels[i] == null) labels[i] = "";
         if (dims[i] == null) dims[i] = "0";
         if (starts[i] == null) starts[i] = "0";
@@ -295,6 +285,12 @@ public class OIBReader extends FormatReader {
       }
 
       for (int i=0; i<labels.length; i++) {
+        System.out.println("label: " + labels[i]);
+        System.out.println("dim: " + dims[i]);
+        System.out.println("start: " + starts[i]);
+        System.out.println("stop: " + stops[i]);
+        System.out.println();
+
         if (labels[i].equals("\"X\"") || labels[i].equals("\"Y\"")) { }
         else if (labels[i].equals("\"C\"")) {
           if (!starts[i].equals(stops[i])) nChannels.add(new Integer(dims[i]));
@@ -653,6 +649,17 @@ public class OIBReader extends FormatReader {
                 prefix.indexOf("Green") == -1 && prefix.indexOf("Blue") == -1)
               {
                 addMeta(prefix + key, value);
+              
+                if (prefix.startsWith("[Axis ") &&
+                  prefix.endsWith("Parameters Common] - "))
+                {
+                  int ndx = Integer.parseInt(
+                    prefix.substring(6, prefix.indexOf("P")).trim());
+                  if (key.equals("AxisCode")) labels[ndx] = value;
+                  else if (key.equals("MaxSize")) dims[ndx] = value;
+                  else if (key.equals("StartPosition")) starts[ndx] = value;
+                  else if (key.equals("EndPosition")) stops[ndx] = value;
+                }
               }
             }
             else {

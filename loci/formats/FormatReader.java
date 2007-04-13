@@ -144,7 +144,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table. */
   protected void addMeta(String key, Object value) {
-    if (key == null || value == null/* || !collectMetadata*/) return;
+    if (key == null || value == null || !collectMetadata) return;
     if (filterMetadata) {
       // verify key & value are not empty
       if (key.length() == 0) return;
@@ -338,6 +338,14 @@ public abstract class FormatReader extends FormatHandler
       System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
     }
     return rtn;
+  }
+
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws FormatException, IOException {
+    if (fileOnly) {
+      if (in != null) in.close();
+    }
+    else close();
   }
 
   /* @see IFormatReader#close() */

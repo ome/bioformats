@@ -119,14 +119,6 @@ public class AVIReader extends FormatReader {
       core.sizeX[0], core.sizeY[0], core.sizeC[0], true);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly) {
-      if (in != null) in.close();
-    }
-    else close();
-  }
-
   /** Initializes the given AVI file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("AVIReader.initFile(" + id + ")");
@@ -419,16 +411,15 @@ public class AVIReader extends FormatReader {
     core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
     core.littleEndian[0] = true;
 
-    int bitsPerPixel = ((Integer) getMeta("Bits per pixel")).intValue();
-    int bytesPerPixel = bitsPerPixel / 8;
+    int bytesPerPixel = bmpBitsPerPixel / 8;
 
-    if (bitsPerPixel == 8) core.pixelType[0] = FormatTools.UINT8;
-    else if (bitsPerPixel == 16) core.pixelType[0] = FormatTools.UINT16;
-    else if (bitsPerPixel == 32) core.pixelType[0] = FormatTools.UINT32;
-    else if (bitsPerPixel == 24) core.pixelType[0] = FormatTools.UINT8;
+    if (bmpBitsPerPixel == 8) core.pixelType[0] = FormatTools.UINT8;
+    else if (bmpBitsPerPixel == 16) core.pixelType[0] = FormatTools.UINT16;
+    else if (bmpBitsPerPixel == 32) core.pixelType[0] = FormatTools.UINT32;
+    else if (bmpBitsPerPixel == 24) core.pixelType[0] = FormatTools.UINT8;
     else
       throw new FormatException(
-          "Unknown matching for pixel bit width of: " + bitsPerPixel);
+          "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
 
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),

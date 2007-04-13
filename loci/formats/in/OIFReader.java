@@ -54,6 +54,9 @@ public class OIFReader extends FormatReader {
   /** List of files in the current OIF dataset. */
   protected Vector usedFiles;
 
+  protected String[] size = new String[9], code = new String[9];
+  protected int imageDepth;
+
   // -- Constructor --
 
   /** Constructs a new OIF reader. */
@@ -227,6 +230,23 @@ public class OIFReader extends FormatReader {
           filenames.put(new Integer(pos), value);
         }
         addMeta(prefix + key, value);
+      
+        if (prefix.startsWith("[Axis ") && 
+          prefix.endsWith("Parameters Common] - ")) 
+        {
+          int ndx = 
+            Integer.parseInt(prefix.substring(6, prefix.indexOf("P")).trim());
+          if (key.equals("AxisCode")) code[ndx] = value;
+          else if (key.equals("MaxSize")) size[ndx] = value;
+        }
+        else if ((prefix + key).equals("[Axis Parameter Common] - AxisOrder")) {
+          core.currentOrder[0] = value;
+        }
+        else if ((prefix + key).equals(
+          "[Reference Image Parameter] - ImageDepth"))
+        {
+          imageDepth = Integer.parseInt(value);
+        }
       }
       else if (line.length() > 0) {
         if (line.indexOf("[") == 2) {
@@ -298,14 +318,19 @@ public class OIFReader extends FormatReader {
     status("Populating metadata");
 
     for (int i=0; i<9; i++) {
-      String pre = "[Axis " + i + " Parameters Common] - ";
-      String code = (String) getMeta(pre + "AxisCode");
-      String size = (String) getMeta(pre + "MaxSize");
-      if (code.equals("\"X\"")) core.sizeX[0] = Integer.parseInt(size);
-      else if (code.equals("\"Y\"")) core.sizeY[0] = Integer.parseInt(size);
-      else if (code.equals("\"C\"")) core.sizeC[0] = Integer.parseInt(size);
-      else if (code.equals("\"T\"")) core.sizeT[0] = Integer.parseInt(size);
-      else if (code.equals("\"Z\"")) core.sizeZ[0] = Integer.parseInt(size);
+      if (code[i].equals("\"X\"")) core.sizeX[0] = Integer.parseInt(size[i]);
+      else if (code[i].equals("\"Y\"")) {
+        core.sizeY[0] = Integer.parseInt(size[i]);
+      } 
+      else if (code[i].equals("\"C\"")) {
+        core.sizeC[0] = Integer.parseInt(size[i]);
+      } 
+      else if (code[i].equals("\"T\"")) {
+        core.sizeT[0] = Integer.parseInt(size[i]);
+      } 
+      else if (code[i].equals("\"Z\"")) {
+        core.sizeZ[0] = Integer.parseInt(size[i]);
+      } 
     }
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
@@ -319,25 +344,23 @@ public class OIFReader extends FormatReader {
       else if (core.sizeT[0] == 1) core.sizeZ[0]++;
     }
 
-    String metadataOrder = (String)
-      getMeta("[Axis Parameter Common] - AxisOrder");
-    metadataOrder = metadataOrder.substring(1, metadataOrder.length() - 1);
-    if (metadataOrder == null) metadataOrder = "XYZTC";
+    core.currentOrder[0] = 
+      core.currentOrder[0].substring(1, core.currentOrder[0].length() - 1);
+    if (core.currentOrder[0] == null) core.currentOrder[0] = "XYZTC";
     else {
       String[] names = new String[] {"X", "Y", "Z", "C", "T"};
-      if (metadataOrder.length() < 5) {
+      if (core.currentOrder[0].length() < 5) {
         for (int i=0; i<names.length; i++) {
-          if (metadataOrder.indexOf(names[i]) == -1) metadataOrder += names[i];
+          if (core.currentOrder[0].indexOf(names[i]) == -1) {
+            core.currentOrder[0] += names[i];
+          } 
         }
       }
     }
-    core.currentOrder[0] = metadataOrder;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
-    int imageDepth = Integer.parseInt((String)
-      getMeta("[Reference Image Parameter] - ImageDepth"));
     switch (imageDepth) {
       case 1:
         core.pixelType[0] = FormatTools.UINT8;
@@ -367,7 +390,10 @@ public class OIFReader extends FormatReader {
 
     int len = validBits.length;
     for (int i=0; i<len; i++) {
-      if (validBits[i] == 0) validBits = null;
+      if (validBits[i] == 0) {
+        validBits = null;
+        break; 
+      } 
     }
 
     core.rgb[0] = tiffReader[0].isRGB();
@@ -386,12 +412,14 @@ public class OIFReader extends FormatReader {
       null,
       null);
 
-    Float pixX = new Float((String)
-      getMeta("[Reference Image Parameter] - WidthConvertValue"));
-    Float pixY = new Float((String)
-      getMeta("[Reference Image Parameter] - HeightConvertValue"));
-
+    prefix = "[Reference Image Parameter] - ";
+    String px = (String) getMeta(prefix + "WidthConvertValue");
+    String py = (String) getMeta(prefix + "HeightConvertValue");
+    Float pixX = null, pixY = null;
+    if (px != null) pixX = new Float(px);
+    if (py != null) pixY = new Float(py);
     store.setDimensions(pixX, pixY, null, null, null, null);
+    
     for (int i=0; i<core.sizeC[0]; i++) {
       prefix = "[Channel " + (i+1) + " Parameters] - ";
       String name = (String) getMeta(prefix + "CH Name");

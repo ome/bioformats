@@ -170,12 +170,6 @@ public class GIFReader extends FormatReader {
       bytes.length / (core.sizeX[0] * core.sizeY[0]), false, 1, true);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && in != null) in.close();
-    else if (!fileOnly) close();
-  }
-
   /** Initializes the given GIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("GIFReader.initFile(" + id + ")");
