@@ -31,6 +31,7 @@ import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
+import visad.util.CursorUtil;
 
 /**
  * Represents a link between a data transform and a display
@@ -651,7 +652,7 @@ public class StackLink extends TransformLink {
     RealType xType = it.getXType();
     RealType yType = it.getYType();
     RealType zType = it.getZType();
-    double[] domain = DisplayUtil.cursorToDomain(display,
+    double[] domain = CursorUtil.cursorToDomain(display,
       new RealType[] {xType, yType, zType}, cur);
 
     // determine which slice to probe

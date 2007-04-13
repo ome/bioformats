@@ -27,10 +27,10 @@ import java.awt.event.InputEvent;
 import java.awt.Color;
 import java.util.Vector;
 import loci.visbio.data.TransformEvent;
-import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.MathUtil;
 import visad.DisplayEvent;
 import visad.DisplayImpl;
+import visad.util.CursorUtil;
 
 /** FreeformTool is the tool for creating freeform objects. */
 public class PolylineTool extends OverlayTool {
@@ -411,7 +411,7 @@ public class PolylineTool extends OverlayTool {
       // get distance btw. pointer and selectedNode
       float[] nodeFlt = line.getNodeCoords (selectedNode); 
       double[] nodeDbl = {(double) nodeFlt[0], (double) nodeFlt[1]};
-      int[] nodePxl = DisplayUtil.domainToPixel(display, nodeDbl); 
+      int[] nodePxl = CursorUtil.domainToPixel(display, nodeDbl); 
       double[] nodePxlDbl = {(double) nodePxl[0], (double) nodePxl[1]};
       double dist = MathUtil.getDistance(movePxl, nodePxlDbl); 
 
@@ -456,7 +456,7 @@ public class PolylineTool extends OverlayTool {
     double[] dPxlDbl = {(double) px, (double) py};
     float[] nDom = line.getNodeCoords(ndx);
     double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
-    int[] nPxl = DisplayUtil.domainToPixel(display, nDomDbl);
+    int[] nPxl = CursorUtil.domainToPixel(display, nDomDbl);
     double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
     double dist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
     return dist;
@@ -533,7 +533,7 @@ public class PolylineTool extends OverlayTool {
       for (int j=0; j<pln.getNumNodes(); j++) {
         float[] c = pln.getNodeCoords(j);
         double[] cDbl = {c[0], c[1]}; // auto cast
-        int[] cPxl = DisplayUtil.domainToPixel(display, cDbl);
+        int[] cPxl = CursorUtil.domainToPixel(display, cDbl);
         double[] cPxlDbl = {(double) cPxl[0], (double) cPxl[1]};
         double dist = MathUtil.getDistance (cPxlDbl, p);
         if (dist < minDist && dist < threshold) {
@@ -552,7 +552,7 @@ public class PolylineTool extends OverlayTool {
   private double[][] floatsToPixelDoubles(DisplayImpl d, float[][] nodes) {
     double[][] nodesDbl = new double[nodes.length][nodes[0].length];
     for (int j=0; j<nodes[0].length; j++) {
-      int[] c = DisplayUtil.domainToPixel(d, new double[]{
+      int[] c = CursorUtil.domainToPixel(d, new double[]{
         (double) nodes[0][j], (double) nodes[1][j]});
       nodesDbl[0][j] = (double) c[0];
       nodesDbl[1][j] = (double) c[1];

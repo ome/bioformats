@@ -27,8 +27,8 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import loci.visbio.util.MathUtil;
-import loci.visbio.util.DisplayUtil;
 import visad.*;
+import visad.util.CursorUtil;
 
 /**
  * OverlayNodedObject is an overlay object built of nodes likely
@@ -716,8 +716,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Returns a scaling value [domain length units/pixel] */
   protected float getScalingValue(DisplayImpl d) {
-    double[] oDom = DisplayUtil.pixelToDomain(d, 0, 0);
-    double[] pDom = DisplayUtil.pixelToDomain(d, 1, 0);
+    double[] oDom = CursorUtil.pixelToDomain(d, 0, 0);
+    double[] pDom = CursorUtil.pixelToDomain(d, 1, 0);
     double scl = MathUtil.getDistance(oDom, pDom); 
     return (float) scl;
   }

@@ -331,122 +331,6 @@ public final class DisplayUtil {
     else if (doEnable) d.enableAction();
   }
 
-  /**
-   * Gets scale values (multiplier and offset) for the X, Y and Z maps
-   * corresponding to the given RealTypes (or the first ScalarMaps to
-   * X, Y and Z if types is null). If no mapping to a spatial axis is
-   * found, that component of the array will be null.
-   *
-   * @return Scale array of size [3][2], with the first dimension
-   * corresponding to X, Y or Z, and the second giving multiplier and offset.
-   * For example, cursor_x = scale[0][0] * domain_x + scale[0][1].
-   */
-  public static double[][] getScaleValues(DisplayImpl d, RealType[] types) {
-    // locate x, y and z mappings
-    Vector maps = d.getMapVector();
-    int numMaps = maps.size();
-    ScalarMap mapX = null, mapY = null, mapZ = null;
-    for (int i=0; i<numMaps; i++) {
-      if (mapX != null && mapY != null && mapZ != null) break;
-      ScalarMap map = (ScalarMap) maps.elementAt(i);
-      if (types == null) {
-        DisplayRealType drt = map.getDisplayScalar();
-        if (drt.equals(Display.XAxis)) mapX = map;
-        else if (drt.equals(Display.YAxis)) mapY = map;
-        else if (drt.equals(Display.ZAxis)) mapZ = map;
-      }
-      else {
-        ScalarType st = map.getScalar();
-        if (st.equals(types[0])) mapX = map;
-        if (st.equals(types[1])) mapY = map;
-        if (st.equals(types[2])) mapZ = map;
-      }
-    }
-
-    // get scale values
-    double[][] scale = new double[3][];
-    double[] dummy = new double[2];
-    if (mapX == null) scale[0] = null;
-    else {
-      scale[0] = new double[2];
-      mapX.getScale(scale[0], dummy, dummy);
-    }
-    if (mapY == null) scale[1] = null;
-    else {
-      scale[1] = new double[2];
-      mapY.getScale(scale[1], dummy, dummy);
-    }
-    if (mapZ == null) scale[2] = null;
-    else {
-      scale[2] = new double[2];
-      mapZ.getScale(scale[2], dummy, dummy);
-    }
-    return scale;
-  }
-
-  /** Converts the given cursor coordinates to domain coordinates. */
-  public static double[] cursorToDomain(DisplayImpl d,
-    RealType[] types, double[] cursor)
-  {
-    if (d == null) return null;
-    double[][] scale = getScaleValues(d, types);
-    double[] domain = new double[3];
-    for (int i=0; i<3; i++) {
-      domain[i] = scale[i] == null ? 0 :
-        (cursor[i] - scale[i][1]) / scale[i][0];
-    }
-    return domain;
-  }
-
-  /** Converts the given domain coordinates to cursor coordinates. */
-  public static double[] domainToCursor(DisplayImpl d,
-    RealType[] types, double[] domain)
-  {
-    if (d == null) return null;
-    double[][] scale = getScaleValues(d, types);
-    double[] cursor = new double[3];
-    for (int i=0; i<3; i++) {
-      cursor[i] = scale[i] == null ? 0 :
-        scale[i][0] * domain[i] + scale[i][1];
-    }
-    return cursor;
-  }
-
-  /** Converts the given cursor coordinates to domain coordinates. */
-  public static double[] cursorToDomain(DisplayImpl d, double[] cursor) {
-    return cursorToDomain(d, null, cursor);
-  }
-
-  /** Converts the given domain coordinates to cursor coordinates. */
-  public static double[] domainToCursor(DisplayImpl d, double[] domain) {
-    return domainToCursor(d, null, domain);
-  }
-
-  /** Converts the given pixel coordinates to cursor coordinates. */
-  public static double[] pixelToCursor(DisplayImpl d, int x, int y) {
-    if (d == null) return null;
-    MouseBehavior mb = d.getDisplayRenderer().getMouseBehavior();
-    VisADRay ray = mb.findRay(x, y);
-    return ray.position;
-  }
-
-  /** Converts the given cursor coordinates to pixel coordinates. */
-  public static int[] cursorToPixel(DisplayImpl d, double[] cursor) {
-    if (d == null) return null;
-    MouseBehavior mb = d.getDisplayRenderer().getMouseBehavior();
-    return mb.getScreenCoords(cursor);
-  }
-
-  /** Converts the given pixel coordinates to domain coordinates. */
-  public static double[] pixelToDomain(DisplayImpl d, int x, int y) {
-    return cursorToDomain(d, pixelToCursor(d, x, y));
-  }
-
-  /** Converts the given domain coordinates to pixel coordinates. */
-  public static int[] domainToPixel(DisplayImpl d, double[] domain) {
-    return cursorToPixel(d, domainToCursor(d, domain));
-  }
-
   /** Redraws exception messages in a display's bottom left-hand corner. */
   public static void redrawMessages(DisplayImpl d) {
     if (d == null) return;
@@ -478,16 +362,6 @@ public final class DisplayUtil {
 
       //canvas.getGraphicsContext3D().flush(true);
     }
-  }
-
-  public static double[][] domainToPixel (DisplayImpl d, float[][] nodes) {
-    double[][] ret = new double[2][nodes[0].length];
-    for (int i=0; i<nodes[0].length; i++) {
-       int[] coords = domainToPixel (d, new double[]{nodes[0][i], nodes[1][i]});
-       ret[0][i] = coords[0];
-       ret[1][i] = coords[1];
-    }
-    return ret;
   }
 
   /** Sets whether the given 3D display uses a parallel projection. */

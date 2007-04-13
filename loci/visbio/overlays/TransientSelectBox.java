@@ -26,8 +26,8 @@ package loci.visbio.overlays;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import loci.visbio.util.DisplayUtil;
 import visad.*;
+import visad.util.CursorUtil;
 
 /**
  * TransientSelectBox represents the square that appears in a VisBio display
@@ -101,10 +101,10 @@ public class TransientSelectBox {
      * |      |
      * 4------3
      */
-    double[] d1 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y1);
-    double[] d2 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y1);
-    double[] d3 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y2);
-    double[] d4 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y2);
+    double[] d1 = CursorUtil.pixelToDomain(getActiveDisplay(), x1, y1);
+    double[] d2 = CursorUtil.pixelToDomain(getActiveDisplay(), x2, y1);
+    double[] d3 = CursorUtil.pixelToDomain(getActiveDisplay(), x2, y2);
+    double[] d4 = CursorUtil.pixelToDomain(getActiveDisplay(), x1, y2);
 
     float[] f1 = {(float) d1[0], (float) d1[1]};
     float[] f2 = {(float) d2[0], (float) d2[1]};
@@ -187,10 +187,10 @@ public class TransientSelectBox {
      * 3----2
      */
 
-    double[] p0 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y1);
-    double[] p1 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y1);
-    double[] p2 = DisplayUtil.pixelToDomain(getActiveDisplay(), x2, y2);
-    double[] p3 = DisplayUtil.pixelToDomain(getActiveDisplay(), x1, y2);
+    double[] p0 = CursorUtil.pixelToDomain(getActiveDisplay(), x1, y1);
+    double[] p1 = CursorUtil.pixelToDomain(getActiveDisplay(), x2, y1);
+    double[] p2 = CursorUtil.pixelToDomain(getActiveDisplay(), x2, y2);
+    double[] p3 = CursorUtil.pixelToDomain(getActiveDisplay(), x1, y2);
 
     double[][] ret = {  {p0[0], p0[1]},
                         {p1[0], p1[1]},

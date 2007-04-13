@@ -34,12 +34,12 @@ import javax.swing.JOptionPane;
 import loci.formats.FormatTools;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
-import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.TransformLink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import visad.*;
+import visad.util.CursorUtil;
 
 /** A set of overlays on top another transform. */
 public class OverlayTransform extends DataTransform
@@ -720,7 +720,7 @@ public class OverlayTransform extends DataTransform
     else if (id == DisplayEvent.MOUSE_MOVED) {
       if (tool != null) {
         int px = e.getX(), py = e.getY();
-        double[] coords = DisplayUtil.pixelToDomain(display, px, py);
+        double[] coords = CursorUtil.pixelToDomain(display, px, py);
         tool.mouseMoved(e, px, py,
           (float) coords[0], (float) coords[1], pos, e.getModifiers());
       }
@@ -736,7 +736,7 @@ public class OverlayTransform extends DataTransform
       updatePosition(display);
       if (tool != null) {
         int px = e.getX(), py = e.getY();
-        double[] coords = DisplayUtil.pixelToDomain(display, px, py);
+        double[] coords = CursorUtil.pixelToDomain(display, px, py);
         tool.mouseDown(e, px, py,
           (float) coords[0], (float) coords[1], pos, e.getModifiers());
       }
@@ -749,7 +749,7 @@ public class OverlayTransform extends DataTransform
       updatePosition(display);
       if (tool != null) {
         int px = e.getX(), py = e.getY();
-        double[] coords = DisplayUtil.pixelToDomain(display, px, py);
+        double[] coords = CursorUtil.pixelToDomain(display, px, py);
         tool.mouseDrag(e, px, py,
           (float) coords[0], (float) coords[1], pos, e.getModifiers());
       }
@@ -898,7 +898,7 @@ public class OverlayTransform extends DataTransform
     updatePosition(display);
     if (tool != null) {
       int px = e.getX(), py = e.getY();
-      double[] coords = DisplayUtil.pixelToDomain(display, px, py);
+      double[] coords = CursorUtil.pixelToDomain(display, px, py);
       tool.mouseUp(e, px, py,
         (float) coords[0], (float) coords[1], pos, e.getModifiers());
     }

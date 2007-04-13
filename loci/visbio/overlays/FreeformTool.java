@@ -25,11 +25,11 @@ package loci.visbio.overlays;
 
 import loci.visbio.data.TransformEvent;
 import loci.visbio.util.MathUtil;
-import loci.visbio.util.DisplayUtil;
 import java.awt.event.InputEvent;
 import java.util.Vector;
 import visad.DisplayEvent;
 import visad.DisplayImpl;
+import visad.util.CursorUtil;
 
 /** FreeformTool is the tool for creating freeform objects. */
 public class FreeformTool extends OverlayTool {
@@ -230,8 +230,8 @@ public class FreeformTool extends OverlayTool {
         double[] headDbl = {(double) head[0], (double) head[1]};
         double[] tailDbl = {(double) tail[0], (double) tail[1]};
         //double[] drag = {(double) dx, (double) dy};
-        int[] headPxl = DisplayUtil.domainToPixel(display, headDbl);
-        int[] tailPxl = DisplayUtil.domainToPixel(display, tailDbl);
+        int[] headPxl = CursorUtil.domainToPixel(display, headDbl);
+        int[] tailPxl = CursorUtil.domainToPixel(display, tailDbl);
         double[]  headPxlDbl = new double[] {(double) headPxl[0], 
           (double) headPxl[1]};
         double[] tailPxlDbl = new double[] {(double) tailPxl[0],
@@ -268,7 +268,7 @@ public class FreeformTool extends OverlayTool {
         double dist = Math.sqrt (distX*distX + distY*distY);
 
         double[] last = new double[]{(double) lastX, (double) lastY};
-        int[] lastPxl = DisplayUtil.domainToPixel(display, last);
+        int[] lastPxl = CursorUtil.domainToPixel(display, last);
 
         double dxPxl = dpx - (double) lastPxl[0];
         double dyPxl = dpy - (double) lastPxl[1];
@@ -304,8 +304,8 @@ public class FreeformTool extends OverlayTool {
         double[] drag = {dpx, dpy};
         double[] begDbl = {(double) beg[0], (double) beg[1]};
         double[] endDbl = {(double) end[0], (double) end[1]};
-        int[] begPxl = DisplayUtil.domainToPixel(display, begDbl);
-        int[] endPxl = DisplayUtil.domainToPixel(display, endDbl);
+        int[] begPxl = CursorUtil.domainToPixel(display, begDbl);
+        int[] endPxl = CursorUtil.domainToPixel(display, endDbl);
         double[] begPxlDbl = {(double) begPxl[0], (double) begPxl[1]};
         double[] endPxlDbl = {(double) endPxl[0], (double) endPxl[1]};
 
@@ -363,7 +363,7 @@ public class FreeformTool extends OverlayTool {
       }
 
       double[] prvCrdsDbl= {(double) prvCrdsFlt[0], (double) prvCrdsFlt[1]};
-      int[] prvCrdsPxl = DisplayUtil.domainToPixel(display, prvCrdsDbl);
+      int[] prvCrdsPxl = CursorUtil.domainToPixel(display, prvCrdsDbl);
       double[] prvCrdsPxlDbl = {(double) prvCrdsPxl[0], (double) prvCrdsPxl[1]};
       
       // coords of this mouseDrag event
@@ -791,7 +791,7 @@ public class FreeformTool extends OverlayTool {
   private double[][] floatsToPixelDoubles(DisplayImpl d, float[][] nodes) {
     double[][] nodesDbl = new double[nodes.length][nodes[0].length];
     for (int j=0; j<nodes[0].length; j++) {
-      int[] c = DisplayUtil.domainToPixel(d, new double[]{
+      int[] c = CursorUtil.domainToPixel(d, new double[]{
         (double) nodes[0][j], (double) nodes[1][j]});
       nodesDbl[0][j] = (double) c[0];
       nodesDbl[1][j] = (double) c[1];

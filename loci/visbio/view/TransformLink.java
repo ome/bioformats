@@ -32,6 +32,7 @@ import loci.visbio.state.*;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
+import visad.util.CursorUtil;
 import visad.util.Util;
 
 /**
@@ -530,7 +531,7 @@ public class TransformLink
     // get cursor's domain coordinates
     RealType xType = it.getXType();
     RealType yType = it.getYType();
-    double[] domain = DisplayUtil.cursorToDomain(display,
+    double[] domain = CursorUtil.cursorToDomain(display,
       new RealType[] {xType, yType, null}, cur);
 
     // evaluate function at the cursor location
