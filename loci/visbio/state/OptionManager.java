@@ -116,7 +116,8 @@ public class OptionManager extends LogicManager {
 
   /** Adds an option to VisBio's options dialog. */
   public void addOption(String tab, BioOption option) {
-    options.addOption(tab, option);
+    // HACK - do not show Overlays-related options in option dialog
+    if (!tab.equals("Overlays")) options.addOption(tab, option);
     list.add(option);
     bio.generateEvent(this, "add option", false);
   }
