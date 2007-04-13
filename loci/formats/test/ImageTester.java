@@ -108,6 +108,9 @@ public class ImageTester extends JPanel implements WindowListener {
     BufferedImage[] simg1 = new BufferedImage[chan.length];
     BufferedImage[] simg2 = new BufferedImage[chan.length];
     BufferedImage[] simg3 = new BufferedImage[chan.length];
+    // NB: comment out integer-based images for now;
+    // these images can be created, but take a long time
+    // to paint, and do not appear as expected
 //    BufferedImage[] iimg1 = new BufferedImage[chan.length];
 //    BufferedImage[] iimg2 = new BufferedImage[chan.length];
 //    BufferedImage[] iimg3 = new BufferedImage[chan.length];
