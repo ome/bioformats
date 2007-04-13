@@ -1976,6 +1976,15 @@ public final class TiffTools {
     }
   }
 
+  /** Convenience method for overwriting a file's first ImageDescription. */
+  public static void overwriteComment(String id, Object value)
+    throws FormatException, IOException
+  {
+    RandomAccessFile raf = new RandomAccessFile(id, "rw");
+    overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, value);
+    raf.close();
+  }
+
   /**
    * Surgically overwrites an existing IFD value with the given one. This
    * method requires that the IFD directory entry already exist. It
