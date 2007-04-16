@@ -200,11 +200,16 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (b == null) return;
     initMinMax();
 
+    int numRGB = getRGBChannelCount();
+
     // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries()][ndx] == planeMin[getSeries()][ndx]) return;
+    if (planeMin[getSeries()][ndx * numRGB] == 
+      planeMin[getSeries()][ndx * numRGB]) 
+    {
+      return;
+    }
 
     int[] coords = getZCTCoords(ndx);
-    int numRGB = getRGBChannelCount();
     int cBase = coords[1] * numRGB;
     int pBase = ndx * numRGB;
     for (int c=0; c<numRGB; c++) {
@@ -251,8 +256,14 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (b == null) return;
     initMinMax();
 
+    int numRGB = getRGBChannelCount();
+
     // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries()][ndx] == planeMin[getSeries()][ndx]) return;
+    if (planeMin[getSeries()][ndx * numRGB] == 
+      planeMin[getSeries()][ndx * numRGB]) 
+    {
+      return;
+    }
 
     boolean little = isLittleEndian();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
@@ -260,7 +271,6 @@ public class MinMaxCalculator extends ReaderWrapper {
     boolean interleaved = isInterleaved();
 
     int[] coords = getZCTCoords(ndx);
-    int numRGB = getRGBChannelCount();
     int cBase = coords[1] * numRGB;
     int pBase = ndx * numRGB;
     for (int c=0; c<numRGB; c++) {
@@ -268,21 +278,22 @@ public class MinMaxCalculator extends ReaderWrapper {
       planeMax[getSeries()][pBase + c] = Double.NEGATIVE_INFINITY;
     }
 
-    byte[] value = new byte[bytes];
+    boolean fp = getPixelType() == FormatTools.FLOAT || 
+      getPixelType() == FormatTools.DOUBLE;
+
     for (int i=0; i<pixels; i++) {
       for (int c=0; c<numRGB; c++) {
         int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
-        System.arraycopy(b, idx, value, 0, bytes);
-        long bits = DataTools.bytesToLong(value, little);
-        double v = Double.longBitsToDouble(bits);
+        long bits = DataTools.bytesToLong(b, idx, bytes, little);
+        double v = fp ? Double.longBitsToDouble(bits) : (double) bits; 
         if (v > chanMax[getSeries()][cBase + c]) {
           chanMax[getSeries()][cBase + c] = v;
         }
         if (v < chanMin[getSeries()][cBase + c]) {
           chanMin[getSeries()][cBase + c] = v;
         }
-        if (v > planeMax[getSeries()][pBase + c]) {
-          planeMax[getSeries()][pBase + c] = v;
+        if (v > planeMax[getSeries()][ndx]) {
+          planeMax[getSeries()][ndx] = v;
         }
         if (v < planeMin[getSeries()][pBase + c]) {
           planeMin[getSeries()][pBase + c] = v;
