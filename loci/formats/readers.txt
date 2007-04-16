@@ -53,6 +53,7 @@ loci.formats.in.EPSReader          # eps, epsi
 loci.formats.in.SlidebookReader    # sld
 loci.formats.in.AliconaReader      # al3d
 loci.formats.in.MNGReader          # mng
+loci.formats.in.NRRDReader         # nrrd, nhrd
 
 # multi-extension messes
 loci.formats.in.ICSReader          # ics, ids
