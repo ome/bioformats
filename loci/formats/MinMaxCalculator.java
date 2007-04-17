@@ -204,7 +204,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   // -- Helper methods --
 
   /** Updates min/max values based on the given BufferedImage. */
-  private void updateMinMax(BufferedImage b, int ndx)
+  protected void updateMinMax(BufferedImage b, int ndx)
     throws FormatException, IOException
   {
     if (b == null) return;
@@ -260,7 +260,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   }
 
   /** Updates min/max values based on the given byte array. */
-  private void updateMinMax(byte[] b, int ndx)
+  protected void updateMinMax(byte[] b, int ndx)
     throws FormatException, IOException
   {
     if (b == null) return;
@@ -323,7 +323,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   }
 
   /** Ensures internal min/max variables are initialized properly. */
-  private void initMinMax() throws FormatException, IOException {
+  protected void initMinMax() throws FormatException, IOException {
     int seriesCount = getSeriesCount();
 
     if (chanMin == null) {
