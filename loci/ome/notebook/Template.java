@@ -28,6 +28,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import javax.swing.*;
 import org.openmicroscopy.xml.*;
+import org.w3c.dom.Element;
 
 /** 
  * Loads a template from a file, and stores the options associated with this 
@@ -446,7 +447,24 @@ public class Template {
   /** Populate the given TemplateField. */
   private void populateField(OMENode root, TemplateField t) throws Exception {
     OMEXMLNode node = findNode(root, t.getMap(), false); 
-    if (node == null) return;
+    
+    if (node == null) {
+      // unmapped field
+
+      CustomAttributesNode ca = root.getCustomAttributes();
+
+      Vector elements = DOMUtil.getChildElements("NotebookField", 
+        ca.getDOMElement());
+      for (int i=0; i<elements.size(); i++) {
+        Element el = (Element) elements.get(i);
+        if (DOMUtil.getAttribute("name", el).equals(t.getName())) {
+          String v = DOMUtil.getAttribute("value", el); 
+          setComponentValue(t, t.getComponent(), v);  
+        }
+      }
+
+      return;
+    }
 
     String map = t.getMap();
     map = map.substring(map.lastIndexOf(":") + 1);
@@ -474,28 +492,7 @@ public class Template {
 
         // populate the corresponding Swing component
 
-        JComponent component = t.getComponent();
-
-        if (component instanceof JCheckBox) {
-          ((JCheckBox) component).setSelected(v.startsWith("t"));
-        }
-        else if (component instanceof JComboBox) {
-          String[] enums = t.getEnums();
-          for (int k=0; k<enums.length; k++) {
-            if (enums[k].toLowerCase().equals(v)) {
-              ((JComboBox) component).setSelectedIndex(k);
-              break;
-            }
-          }
-        }
-        else if (component instanceof JScrollPane) {
-          JScrollPane scroll = (JScrollPane) component;
-          JViewport view = scroll.getViewport();
-          ((JTextArea) view.getView()).setText(s); 
-        }
-        else if (component instanceof JSpinner) {
-          ((JSpinner) component).setValue(new Integer(v));
-        }
+        setComponentValue(t, t.getComponent(), v);
         break; 
       }
     }
@@ -524,8 +521,19 @@ public class Template {
     }
 
     String map = t.getMap();
-    // TODO : we should still add these fields to the XML
-    if (map == null || map.length() == 0) return; 
+    
+    if (map == null || map.length() == 0) {
+      // this is a custom unmapped field, which gets stored in a
+      // NotebookField ST
+
+      CustomAttributesNode ca = root.getCustomAttributes();
+      Element el = DOMUtil.createChild(ca.getDOMElement(), "NotebookField");
+      OMEXMLNode newNode = OMEXMLNode.createNode(el); 
+      newNode.setAttribute("name", t.getName());
+      newNode.setAttribute("value", value.toString());
+      return; 
+    }
+    
     map = map.substring(map.lastIndexOf(":") + 1);
     if (map.indexOf("-") != -1) {
       map = map.substring(0, map.indexOf("-"));
@@ -663,6 +671,32 @@ public class Template {
       }
     }
     return node; 
+  }
+
+  /** Sets the value of the given component, based on the given string. */
+  private void setComponentValue(TemplateField t, JComponent component, 
+    String v) 
+  {
+    if (component instanceof JCheckBox) {
+      ((JCheckBox) component).setSelected(v.startsWith("t"));
+    }
+    else if (component instanceof JComboBox) {
+      String[] enums = t.getEnums();
+      for (int k=0; k<enums.length; k++) {
+        if (enums[k].toLowerCase().equals(v)) {
+          ((JComboBox) component).setSelectedIndex(k);
+          break;
+        }
+      }
+    }
+    else if (component instanceof JScrollPane) {
+      JScrollPane scroll = (JScrollPane) component;
+      JViewport view = scroll.getViewport();
+      ((JTextArea) view.getView()).setText(v); 
+    }
+    else if (component instanceof JSpinner) {
+      ((JSpinner) component).setValue(new Integer(v));
+    }
   }
 
 }
