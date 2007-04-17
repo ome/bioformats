@@ -191,6 +191,16 @@ public class MinMaxCalculator extends ReaderWrapper {
     return buf;
   }
 
+  /* @see IFormatReader#close() */
+  public void close() throws FormatException, IOException {
+    reader.close();
+    chanMin = null;
+    chanMax = null;
+    planeMin = null;
+    planeMax = null;
+    minMaxDone = null;
+  }
+
   // -- Helper methods --
 
   /** Updates min/max values based on the given BufferedImage. */
