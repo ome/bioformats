@@ -41,6 +41,7 @@ import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
+import visad.java2d.DisplayImplJ2D;
 
 /** Provides logic for linking data transforms to a display. */
 public class TransformHandler implements ChangeListener, Runnable, Saveable {
@@ -426,7 +427,18 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       try {
         for (int i=0; i<mapList.size(); i++) {
           ScalarMap map = (ScalarMap) mapList.elementAt(i);
-          display.addMap((ScalarMap) mapList.elementAt(i));
+          DisplayRealType drt = map.getDisplayScalar();
+          boolean mappingOk = true;
+          if (!window.is3D()) {
+            // 2D displays do not support every type of mapping
+            if (drt.equals(Display.ZAxis)) mappingOk = false;
+          }
+          if (display instanceof DisplayImplJ2D) {
+            // Java2D does not support every type of mapping
+            if (drt.equals(Display.Alpha)) mappingOk = false;
+            // NB: Display.RGBA not currently handled
+          }
+          if (mappingOk) display.addMap(map);
 
           // configure map's controls according to transform settings;
           // if multiple transforms have the same map, but different
