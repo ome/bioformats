@@ -81,13 +81,6 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /**
-   * Copies all of the data from this OMEXMLMetadataStore to a different
-   * MetadataStore.
-   */
-  public void copyData(MetadataStore store) {
-  }
-
-  /**
    * Dumps the given OME-XML DOM tree to a string.
    * @return OME-XML as a string.
    */
@@ -98,6 +91,39 @@ public class OMEXMLMetadataStore implements MetadataStore {
     catch (ParserConfigurationException exc) { exc.printStackTrace(); }
     catch (IOException exc) { exc.printStackTrace(); }
     return null;
+  }
+
+  /** Creates a new key/value pair. */ 
+  public void setOriginalMetadata(String key, String value) {
+    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(image, "CustomAttributes", 0);
+   
+    Vector original = 
+      DOMUtil.getChildElements("OriginalMetadata", ca.getDOMElement());
+    if (original.size() == 0) {
+      Element el = DOMUtil.createChild(root.getDOMElement(), "SemanticType");
+      OMEXMLNode node = OMEXMLNode.createNode(el);
+      node.setAttribute("Name", "OriginalMetadata");
+      node.setAttribute("AppliesTo", "I");
+      
+      Element nameElement = DOMUtil.createChild(el, "Element");
+      OMEXMLNode nameNode = OMEXMLNode.createNode(nameElement); 
+      nameNode.setAttribute("Name", "name");
+      nameNode.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME");
+      nameNode.setAttribute("DataType", "string");
+      
+      Element valueElement = DOMUtil.createChild(el, "Element");
+      OMEXMLNode valueNode = OMEXMLNode.createNode(valueElement); 
+      valueElement.setAttribute("Name", "value");
+      valueElement.setAttribute("DBLocation", "ORIGINAL_METADATA.VALUE");
+      valueElement.setAttribute("DataType", "string");
+    }
+
+    Element el = DOMUtil.createChild(ca.getDOMElement(), "OriginalMetadata");
+    OMEXMLNode node = OMEXMLNode.createNode(el);
+    node.setAttribute("name", key);
+    node.setAttribute("value", value);
   }
 
   // -- OMEXMLMetadataStore methods - individual attribute retrieval --

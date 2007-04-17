@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /** Abstract superclass of all biological file format readers. */
@@ -164,6 +165,21 @@ public abstract class FormatReader extends FormatHandler
       if (!key.matches(".*[a-zA-Z].*")) return;
     }
     metadata.put(key, value);
+ 
+    try {
+      MetadataStore store = getMetadataStore();
+      if (store.getClass().getName().equals(
+        "loci.formats.ome.OMEXMLMetadataStore"))
+      {
+        Method m = store.getClass().getMethod("setOriginalMetadata", 
+          new Class[] {String.class, String.class});
+        m.invoke(store, new Object[] {key, value.toString()});       
+      } 
+    }
+    catch (Throwable t) {
+      System.out.println("Error populating OME-XML");
+      t.printStackTrace();
+    }
   }
 
   /** Gets a value from the metadata table. */
