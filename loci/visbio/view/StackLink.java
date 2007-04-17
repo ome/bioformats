@@ -669,36 +669,16 @@ public class StackLink extends TransformLink {
 
     // get data at appropriate slice
     Data data = sliceRef.getData();
-
-    // evaluate function at the cursor location
     if (!(data instanceof FunctionImpl)) return;
     FunctionImpl func = (FunctionImpl) data;
+
+    // evaluate function at the cursor location
     double[] rangeValues = null;
     try {
-      RealTuple tuple = new RealTuple(new Real[] {
-        new Real(xType, domain[0]),
-        new Real(yType, domain[1])
-      });
-
-      Data result = func.evaluate(tuple,
-        Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-      if (result instanceof Real) {
-        Real r = (Real) result;
-        rangeValues = new double[] {r.getValue()};
-      }
-      else if (result instanceof RealTuple) {
-        RealTuple rt = (RealTuple) result;
-        int dim = rt.getDimension();
-        rangeValues = new double[dim];
-        for (int j=0; j<dim; j++) {
-          Real r = (Real) rt.getComponent(j);
-          rangeValues[j] = r.getValue();
-        }
-      }
-      else return;
+      rangeValues = CursorUtil.evaluate(func, domain);
     }
-    catch (VisADException exc) { return; }
-    catch (RemoteException exc) { return; }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
 
     // compile range value messages
     if (rangeValues == null) return;
