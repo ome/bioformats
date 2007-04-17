@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notebook;
 
+import com.jgoodies.forms.layout.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -207,40 +208,103 @@ public class Notebook extends JFrame implements ActionListener {
   
       JScrollPane scroll = new JScrollPane();
       JPanel panel = new JPanel();
-      panel.setLayout(new GridLayout(1, 2));
+      
+      String rowString = "";
+      String colString = "pref:grow,";
+
+      int paddingColumns = 1;
+
+      if (currentTemplate.editTemplateFields()) {
+        colString = "30dlu,30dlu,3dlu,pref:grow,";
+        paddingColumns = 4; 
+      }
+
+      int numRows = tabs[i].getRows();
+      if (numRows < 1) numRows = 1;
+      int numColumns = tabs[i].getColumns();
+      if (numColumns < 2) numColumns = 2;
+      for (int j=0; j<numRows; j++) {
+        rowString += "pref:grow,";
+      }
+      for (int j=0; j<numColumns; j++) {
+        colString += "pref:grow,";
+      } 
+      panel.setLayout(new FormLayout(colString, rowString));
+
       scroll.getViewport().add(panel);
-    
+   
+      int rowNumber = 1;
+
+      CellConstraints cc = new CellConstraints();
+
       for (int j=0; j<groups.size(); j++) {
         TemplateGroup group = (TemplateGroup) groups.get(j); 
         for (int r=0; r<group.getRepetitions(); r++) { 
-          GridLayout grid = (GridLayout) panel.getLayout();
-          grid.setRows(grid.getRows() + group.getNumFields() + 1);
-          panel.setLayout(grid);
-     
-          panel.add(new JLabel(group.getName() + " #" + (r + 1)));
-          if (currentTemplate.editTemplateFields() && r == 0) {
-            JButton add = new JButton("Add new instance of this group");
+          FormLayout layout = (FormLayout) panel.getLayout();
+          if (tabs[i].getRows() == 0) { 
+            for (int n=0; n<group.getNumFields() + 1; n++) {
+              layout.appendRow(new RowSpec("pref:grow"));
+            }
+            panel.setLayout(layout);
+          } 
+    
+          panel.add(new JLabel(group.getName() + " #" + (r + 1)), 
+            cc.xyw(paddingColumns, rowNumber, 2));
+          if (currentTemplate.editTemplateFields()) {
+            JButton add = new JButton("+");
             add.setActionCommand("cloneGroup" + i + "-" + j);
             add.addActionListener(this);
-            panel.add(add);
-          }
-          else panel.add(new JLabel(""));
+            panel.add(add, cc.xy(1, rowNumber));
+          
+            JButton remove = new JButton("-");
+            remove.setActionCommand("removeGroup" + i + "-" + j);
+            remove.addActionListener(this);
+            panel.add(remove, cc.xy(2, rowNumber));
+          } 
+
+          rowNumber++;
 
           for (int k=0; k<group.getNumFields(); k++) {
             TemplateField field = group.getField(r, k); 
-            panel.add(new JLabel(field.getName()));
-            panel.add(field.getComponent());
+            if (field.getRow() != -1) { 
+              panel.add(new JLabel(field.getName()), 
+                cc.xy(field.getColumn() + paddingColumns + 1, 
+                field.getRow() + 1));
+              panel.add(field.getComponent(), 
+                cc.xy(field.getColumn() + paddingColumns + 2, 
+                field.getRow() + 1));
+            } 
+            else {
+              panel.add(new JLabel(field.getName()), 
+                cc.xy(paddingColumns + 1, rowNumber));
+              panel.add(field.getComponent(), 
+                cc.xy(paddingColumns + 2, rowNumber));
+              rowNumber++; 
+            }
           } 
         } 
       }
 
-      GridLayout grid = (GridLayout) panel.getLayout();
-      grid.setRows(grid.getRows() + fields.size() - 1);
-      panel.setLayout(grid);
+      FormLayout layout = (FormLayout) panel.getLayout();
+      for (int j=0; j<fields.size() - 1; j++) {
+        layout.appendRow(new RowSpec("pref:grow"));
+      }
+      panel.setLayout(layout);
 
       for (int j=0; j<fields.size(); j++) {
-        panel.add(new JLabel(tabs[i].getField(j).getName()));
-        panel.add(tabs[i].getField(j).getComponent());
+        TemplateField f = tabs[i].getField(j); 
+        if (f.getRow() != -1) { 
+          panel.add(new JLabel(f.getName()), 
+            cc.xyw(f.getColumn() + 1, f.getRow() + 1, paddingColumns + 1));
+          panel.add(f.getComponent(), 
+            cc.xyw(f.getColumn() + 2, f.getRow() + 1, 2));
+        } 
+        else {
+          panel.add(new JLabel(f.getName()), 
+            cc.xyw(1, rowNumber, paddingColumns + 1));
+          panel.add(f.getComponent(), cc.xyw(paddingColumns + 1, rowNumber, 2));
+          rowNumber++; 
+        }
       }
     
       tabPane.add(scroll, tabs[i].getName()); 
@@ -300,8 +364,10 @@ public class Notebook extends JFrame implements ActionListener {
     if (cmd.equals("new")) {
       // check if the user wants to save the current metadata first 
 
-      CustomDialog dialog = 
-        new CustomDialog(this, "", "Save current metadata?"); 
+      JOptionPane.showConfirmDialog(this, "Save current metadata?", "", 
+        JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE); 
+      actionPerformed(new ActionEvent(this, -1, "save"));
+      loadTemplate(templateName); 
     }
     else if (cmd.equals("open")) {
       progress.setString("Opening file..."); 
@@ -362,7 +428,8 @@ public class Notebook extends JFrame implements ActionListener {
             if (name == null) return; 
           }
         }
-        
+       
+        if (name == null) return;
         if (!name.endsWith(".ome")) name += ".ome";
 
         File f = new File(name);
@@ -418,7 +485,23 @@ public class Notebook extends JFrame implements ActionListener {
         exc.printStackTrace();
       }
     } 
-  
+    else if (cmd.startsWith("removeGroup")) {
+      cmd = cmd.substring(11);
+      int tabIndex = Integer.parseInt(cmd.substring(0, cmd.indexOf("-")));
+      int groupIndex = Integer.parseInt(cmd.substring(cmd.indexOf("-") + 1));
+
+      TemplateTab tab = currentTemplate.getTabs()[tabIndex];
+      TemplateGroup group = tab.getGroup(groupIndex);
+      group.setRepetitions(group.getRepetitions() - 1);  
+      loadTemplate(currentTemplate); 
+      try { 
+        if (currentFile != null) openFile(currentFile); 
+      }
+      catch (Exception exc) {
+        exc.printStackTrace();
+      }
+    }
+
   }
 
   // -- Helper methods --
@@ -559,52 +642,6 @@ public class Notebook extends JFrame implements ActionListener {
     return clone; 
   }
 
-  // -- Helper class --
-
-  /** Custom yes/no dialog. */
-  public class CustomDialog extends JFrame implements ActionListener {
-    Notebook parent; 
-
-    // TODO : this window isn't packed very nicely
-    public CustomDialog(Notebook parent, String title, String question) {
-      super(title);
-
-      this.parent = parent;
-
-      JLabel label = new JLabel(question);
-
-      JButton yes = new JButton("Yes");
-      yes.setActionCommand("yes");
-      yes.addActionListener(this);
-      JButton no = new JButton("No");
-      no.setActionCommand("no");
-      no.addActionListener(this);
- 
-      JPanel content = new JPanel();
-      content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS)); 
-      content.add(label);
-      content.add(yes);
-      content.add(no);
-
-      add(content);
-      setPreferredSize(new Dimension(200, 150));
-
-      pack();
-      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-      setVisible(true);
-    }
-  
-    public void actionPerformed(ActionEvent e) {
-      String cmd = e.getActionCommand();
- 
-      if (cmd.equals("yes")) {
-        parent.actionPerformed(new ActionEvent(this, -1, "save"));
-        parent.loadTemplate(parent.templateName); 
-      }
-      dispose(); 
-    }
-  }
-
   // -- Main method --
 
   public static void main(String[] args) {
@@ -612,7 +649,7 @@ public class Notebook extends JFrame implements ActionListener {
     for (int i=0; i<args.length; i++) {
       if (args[i].equals("-template")) {
         if (args.length > i + 1) { 
-          template = args[i++];
+          template = args[++i];
         }
         else System.err.println("Please specify a template file");
       }

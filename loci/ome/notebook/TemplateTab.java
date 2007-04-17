@@ -39,6 +39,9 @@ public class TemplateTab {
   /** List of ungrouped fields in this tab. */
   private Vector fields;
 
+  /** Number of rows and columns in this tab. */
+  private int rows, columns;
+
   // -- Constructor --
 
   public TemplateTab() {
@@ -47,6 +50,14 @@ public class TemplateTab {
   }
 
   // -- TemplateTab API methods --
+
+  public int getRows() { return rows; }
+
+  public void setRows(int rows) { this.rows = rows; }
+
+  public int getColumns() { return columns; }
+
+  public void setColumns(int columns) { this.columns = columns; }
 
   public int getNumGroups() { return groups.size(); }
 
@@ -62,6 +73,14 @@ public class TemplateTab {
 
   public TemplateField getField(int ndx) {
     return (TemplateField) fields.get(ndx);
+  }
+
+  public TemplateField getField(int row, int col) {
+    for (int i=0; i<fields.size(); i++) {
+      TemplateField t = (TemplateField) fields.get(i);
+      if (t.getRow() == row && t.getColumn() == col) return t;
+    } 
+    return null; 
   }
 
   public void addGroup(TemplateGroup g) { groups.add(g); }

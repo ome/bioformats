@@ -57,6 +57,9 @@ public class TemplateField {
   /** Component used to represent this field. */
   private JComponent component;
 
+  /** Row and column in the layout grid. */
+  private int row = -1, column = -1;
+
   // -- Constructors --
 
   /** Constructs a new empty TemplateField. */
@@ -79,6 +82,11 @@ public class TemplateField {
         if (key.startsWith("name")) name = value; 
         else if (key.startsWith("type")) type = value; 
         else if (key.startsWith("map")) omecaMap = value; 
+        else if (key.startsWith("grid")) {
+          row = Integer.parseInt(value.substring(1, value.indexOf(",")));
+          column = Integer.parseInt(value.substring(value.indexOf(",") + 1, 
+            value.length() - 1));
+        }
         else if (key.startsWith("values")) {
           StringTokenizer e = new StringTokenizer(value, "\", ");
           Vector tokens = new Vector(); 
@@ -183,5 +191,13 @@ public class TemplateField {
   public JComponent getComponent() { return component; }
 
   public void setComponent(JComponent component) { this.component = component; }
+
+  public int getRow() { return row; }
+
+  public void setRow(int row) { this.row = row; }
+
+  public int getColumn() { return column; }
+
+  public void setColumn(int column) { this.column = column; }
 
 }

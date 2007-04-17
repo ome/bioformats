@@ -86,6 +86,12 @@ public class Template {
     }
   }
 
+  /** Constructs a new Template from TemplateTabs and a list of options. */
+  public Template(TemplateTab[] tabs, Hashtable options) {
+    this.tabs = tabs;
+    this.options = options;
+  }
+
   // -- Template API methods --
 
   /** Parses the template options from the given InputStream. */
@@ -162,6 +168,14 @@ public class Template {
         line = line.substring(line.indexOf(" ")).trim();
         line = line.substring(1, line.length() - 1);
         currentTab.setName(line); 
+      }
+      else if (openTab && line.startsWith("grid")) {
+        line = line.substring(line.indexOf(" ")).trim();
+        line = line.substring(1, line.length() - 1);
+        int r = Integer.parseInt(line.substring(0, line.indexOf(",")));
+        int c = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+        currentTab.setRows(r);
+        currentTab.setColumns(c);
       }
       else if (openTab && line.startsWith("}")) {
         openTab = false;
@@ -254,8 +268,87 @@ public class Template {
   }
 
   /** Save the template to a file. */
-  public void save(String filename) {
-    // TODO
+  public void save(String filename) throws IOException {
+    BufferedWriter writer = new BufferedWriter(new FileWriter(filename)); 
+   
+    if (options != null) {
+      Enumeration keys = options.keys();
+      while (keys.hasMoreElements()) {
+        String key = keys.nextElement().toString();
+        writer.write(key + " \"" + options.get(key) + "\"\n");
+      }
+    } 
+    if (tabs == null) return;
+
+    for (int i=0; i<tabs.length; i++) {
+      writer.write("tab {\n");
+      writer.write("  name \"" + tabs[i].getName() + "\"\n");
+      
+      for (int j=0; j<tabs[i].getNumFields(); j++) {
+        TemplateField t = tabs[i].getField(j); 
+        writer.write("  field {\n");
+        writer.write("    name \"" + t.getName() + "\"\n");
+        writer.write("    type \"" + t.getType() + "\"\n");
+        if (t.getMap() != null) {
+          writer.write("    map \"" + t.getMap() + "\"\n");
+        } 
+        if (t.getDefaultValue() != null) {
+          writer.write("    default \"" + t.getDefaultValue() + "\"\n");
+        }
+        writer.write("    grid \"" + t.getRow() + "," + t.getColumn() + "\"\n");
+
+        String[] enums = t.getEnums();
+        if (enums != null && enums.length > 0) {
+          writer.write("    values {");
+          for (int k=0; k<enums.length; k++) {
+            writer.write("\"" + enums[k] + "\""); 
+            if (k < enums.length - 1) writer.write(", "); 
+          }
+          writer.write("}\n"); 
+        }
+        writer.write("  }\n"); 
+      }
+     
+      for (int j=0; j<tabs[i].getNumGroups(); j++) {
+        TemplateGroup g = tabs[i].getGroup(j); 
+
+        writer.write("  group {\n");
+        writer.write("    count\"" + g.getRepetitions() + "\"\n");
+        writer.write("    name\"" + g.getName() + "\"\n");
+
+        for (int k=0; k<g.getNumFields(); k++) {
+          TemplateField t = g.getField(0, k); 
+          writer.write("    field {\n");
+          writer.write("      name \"" + t.getName() + "\"\n");
+          writer.write("      type \"" + t.getType() + "\"\n");
+          if (t.getMap() != null) {
+            writer.write("      map \"" + t.getMap() + "\"\n");
+          } 
+          if (t.getDefaultValue() != null) {
+            writer.write("      default \"" + t.getDefaultValue() + "\"\n");
+          } 
+          writer.write("      grid \"" + t.getRow() + "," + 
+            t.getColumn() + "\"\n");
+          
+          String[] enums = t.getEnums();
+          if (enums != null && enums.length > 0) {
+            writer.write("      values {");
+            for (int m=0; m<enums.length; m++) {
+              writer.write("\"" + enums[m] + "\""); 
+              if (m < enums.length - 1) writer.write(", "); 
+            }
+            writer.write("}\n"); 
+          }
+          writer.write("    }\n"); 
+        }
+      
+        writer.write("  }\n"); 
+      }
+
+      writer.write("}\n");
+    }
+  
+    writer.close(); 
   }
 
   /** Change the value of an option. */
@@ -324,26 +417,28 @@ public class Template {
 
   /** Returns whether or not fields in this template can be edited. */
   public boolean isEditable() {
-    return ((String) options.get("editable")).toLowerCase().equals("true");
+    String editable = (String) options.get("editable");
+    return editable == null ? true : editable.toLowerCase().equals("true");
   }
 
   /** 
    * Returns whether or not the companion-file metadata should take precedence. 
    */
   public boolean preferCompanion() {
-    return 
-      ((String) options.get("prefer-companion")).toLowerCase().equals("true");
+    String prefer = (String) options.get("prefer-companion");
+    return prefer == null ? true : prefer.toLowerCase().equals("true"); 
   }
 
   /** Returns true if we can edit this template on-the-fly. */
   public boolean editTemplateFields() {
-    return ((String) options.get(
-      "edit-template-fields")).toLowerCase().equals("true");
+    String fields = (String) options.get("edit-template-fields");
+    return fields == null ? false : fields.toLowerCase().equals("true");
   }
 
   /** Returns true if we can edit the OME-CA mapping on-the-fly. */
   public boolean editMapping() {
-    return ((String) options.get("edit-mapping")).toLowerCase().equals("true");
+    String mapping = (String) options.get("edit-mapping");
+    return mapping == null ? false : mapping.toLowerCase().equals("true");
   }
 
   // -- Helper methods --
