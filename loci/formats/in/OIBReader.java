@@ -285,12 +285,6 @@ public class OIBReader extends FormatReader {
       }
 
       for (int i=0; i<labels.length; i++) {
-        System.out.println("label: " + labels[i]);
-        System.out.println("dim: " + dims[i]);
-        System.out.println("start: " + starts[i]);
-        System.out.println("stop: " + stops[i]);
-        System.out.println();
-
         if (labels[i].equals("\"X\"") || labels[i].equals("\"Y\"")) { }
         else if (labels[i].equals("\"C\"")) {
           if (!starts[i].equals(stops[i])) nChannels.add(new Integer(dims[i]));
@@ -622,8 +616,9 @@ public class OIBReader extends FormatReader {
             rgb.add(new Boolean(isRGB));
           }
         }
-        else if (entryName.equals("OibInfo.txt")) { /* ignore this */ }
-        else if (data[0] == (byte) 0xff && data[1] == (byte) 0xfe) {
+        else if (entryName.equals("OibInfo.txt")) { }
+        else { 
+        //else if (data[0] == (byte) 0xff && data[1] == (byte) 0xfe) {
           String ini = DataTools.stripString(new String(data));
           StringTokenizer st = new StringTokenizer(ini, "\n");
           String prefix = "";

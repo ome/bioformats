@@ -193,7 +193,7 @@ public class OMEXMLReader extends FormatReader {
             found = true;
             String endian = test.substring(ndx + 11);
             endianness.add(new Boolean(!endian.toLowerCase().startsWith("t")));
-            bigEndianPos.add(new Integer(in.getFilePointer() - read - 9 + ndx));
+            bigEndianPos.add(new Long(in.getFilePointer() - read - 9 + ndx));
             numDatasets++;
           }
         }
@@ -215,7 +215,7 @@ public class OMEXMLReader extends FormatReader {
     // look for the first BinData element in each series
 
     for (int i=0; i<numDatasets; i++) {
-      in.seek(((Integer) bigEndianPos.get(i)).intValue());
+      in.seek(((Long) bigEndianPos.get(i)).longValue());
       boolean found = false;
       buf = new byte[8192];
       in.read(buf, 0, 14);
@@ -285,8 +285,8 @@ public class OMEXMLReader extends FormatReader {
           }
         }
 
-        int bufSize = ((Integer) offsets[i].get(0)).intValue() -
-          in.getFilePointer();
+        int bufSize = (int) (((Long) offsets[i].get(0)).longValue() -
+          in.getFilePointer());
         buf = new byte[bufSize];
       }
       in.read(buf);

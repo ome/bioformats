@@ -139,7 +139,7 @@ public class SlidebookReader extends FormatReader {
     in.seek(1792 + count - 20);
 
     int check = in.read();
-    int lastH = 0;
+    long lastH = 0;
     while (check == 'h') {
       lastH = in.getFilePointer();
       in.skipBytes(255);

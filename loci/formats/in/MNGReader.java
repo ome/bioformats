@@ -70,10 +70,10 @@ public class MNGReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int offset = ((Integer) offsets.get(no)).intValue();
+    long offset = ((Long) offsets.get(no)).longValue();
     in.seek(offset);
-    int end = ((Integer) lengths.get(no)).intValue();
-    byte[] b = new byte[end - offset + 8];
+    long end = ((Long) lengths.get(no)).longValue();
+    byte[] b = new byte[(int) (end - offset + 8)];
     in.read(b, 8, b.length - 8);
     b[0] = (byte) 0x89;
     b[1] = 0x50;
@@ -131,17 +131,17 @@ public class MNGReader extends FormatReader {
       in.read(b);
       String code = new String(b);
 
-      int fp = in.getFilePointer();
+      long fp = in.getFilePointer();
 
       if (code.equals("IHDR")) {
-        offsets.add(new Integer((int) in.getFilePointer() - 8));
+        offsets.add(new Long(in.getFilePointer() - 8));
         core.imageCount[0]++;
       }
       else if (code.equals("IEND")) {
-        lengths.add(new Integer(fp + (int) len + 4));
+        lengths.add(new Long(fp + len + 4));
       }
       else if (code.equals("LOOP")) {
-        stack.add(new Integer((int) (in.getFilePointer() + len + 4)));
+        stack.add(new Long(in.getFilePointer() + len + 4));
         in.skipBytes(1);
         maxIterations = DataTools.read4SignedBytes(in, false);
       }

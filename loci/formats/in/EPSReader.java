@@ -92,7 +92,7 @@ public class EPSReader extends FormatReader {
       ras.read(buf, 0, buf.length);
     }
     else {
-      int pos = ras.getFilePointer();
+      long pos = ras.getFilePointer();
       String len = ras.readLine();
       ras.seek(pos);
       int numLines = buf.length / len.trim().length();

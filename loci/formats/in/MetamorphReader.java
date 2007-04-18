@@ -313,7 +313,7 @@ public class MetamorphReader extends BaseTiffReader {
    */
   void parseUIC2Tags(long uic2offset) throws IOException {
 
-    int saveLoc = in.getFilePointer();
+    long saveLoc = in.getFilePointer();
     in.seek(uic2offset);
 
     /*number of days since the 1st of January 4713 B.C*/

@@ -70,16 +70,16 @@ public class RandomAccessStream extends InputStream implements DataInput {
   protected DataInputStream dis;
 
   /** The file pointer within the DIS. */
-  protected int fp;
+  protected long fp;
 
   /** The "absolute" file pointer. */
-  protected int afp;
+  protected long afp;
 
   /** Most recent mark. */
-  protected int mark;
+  protected long mark;
 
   /** Next place to mark. */
-  protected int nextMark;
+  protected long nextMark;
 
   /** The file name. */
   protected String file;
@@ -109,8 +109,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
       raf = new RAFile(f, "r");
       dis = new DataInputStream(new BufferedInputStream(
         new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD));
-      int len = (int) raf.length();
-      buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
+      long len = raf.length();
+      buf = new byte[(int) (len < MAX_OVERHEAD ? len : MAX_OVERHEAD)];
       raf.readFully(buf);
       raf.seek(0);
       bufferSizes[0] = MAX_OVERHEAD / 2;
@@ -158,7 +158,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   public void setExtend(int extend) { ext = extend; }
 
   /** Seeks to the given offset within the stream. */
-  public void seek(long pos) throws IOException { afp = (int) pos; }
+  public void seek(long pos) throws IOException { afp = pos; }
 
   /** Alias for readByte(). */
   public int read() throws IOException {
@@ -174,7 +174,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   }
 
   /** Gets the current (absolute) file pointer. */
-  public int getFilePointer() { return afp; }
+  public long getFilePointer() { return afp; }
 
   /** Closes the streams. */
   public void close() throws IOException {
@@ -206,7 +206,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   public byte readByte() throws IOException {
     int status = checkEfficiency(1);
 
-    int oldAFP = afp;
+    long oldAFP = afp;
     if (afp < raf.length() - 1) afp++;
 
     if (status == DIS) {
@@ -215,7 +215,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       return b;
     }
     else if (status == ARRAY) {
-      return buf[oldAFP];
+      return buf[(int) oldAFP];
     }
     else {
       byte b = raf.readByte();
@@ -294,9 +294,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
     else if (status == ARRAY) {
       n = array.length;
       if ((buf.length - afp) < array.length) {
-        n = buf.length - afp;
+        n = buf.length - (int) afp;
       }
-      System.arraycopy(buf, afp, array, 0, n);
+      System.arraycopy(buf, (int) afp, array, 0, n);
     }
     else n = raf.read(array);
 
@@ -322,8 +322,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
       n = dis.read(array, offset, n);
     }
     else if (status == ARRAY) {
-      if ((buf.length - afp) < n) n = buf.length - afp;
-      System.arraycopy(buf, afp, array, offset, n);
+      if ((buf.length - afp) < n) n = buf.length - (int) afp;
+      System.arraycopy(buf, (int) afp, array, offset, n);
     }
     else {
       n = raf.read(array, offset, n);
@@ -348,7 +348,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       dis.readFully(array, 0, array.length);
     }
     else if (status == ARRAY) {
-      System.arraycopy(buf, afp, array, 0, array.length);
+      System.arraycopy(buf, (int) afp, array, 0, array.length);
     }
     else {
       raf.readFully(array, 0, array.length);
@@ -367,7 +367,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       dis.readFully(array, offset, n);
     }
     else if (status == ARRAY) {
-      System.arraycopy(buf, afp, array, offset, n);
+      System.arraycopy(buf, (int) afp, array, offset, n);
     }
     else {
       raf.readFully(array, offset, n);
@@ -380,8 +380,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   public int available() throws IOException {
     if (fileCache.get(this) == Boolean.FALSE) reopen();
-    return dis != null ? dis.available() + ext :
+    int available = dis != null ? dis.available() + ext :
       (int) (length() - getFilePointer());
+    if (available < 0) available = Integer.MAX_VALUE; 
+    return available; 
   }
 
   public void mark(int readLimit) {
@@ -397,7 +399,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   public void reset() throws IOException {
     if (fileCache.get(this) == Boolean.FALSE) reopen();
     dis.reset();
-    fp = (int) (length() - dis.available());
+    fp = length() - dis.available();
   }
 
   // -- Helper methods - I/O --
@@ -419,7 +421,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
     int newSize = sum / div;
     if (newSize > MAX_OVERHEAD) newSize = MAX_OVERHEAD;
-    if (lastValid < MAX_HISTORY) {/*recent.add(new Integer(newSize)); */
+    if (lastValid < MAX_HISTORY) {
       bufferSizes[lastValid] = newSize;
       lastValid++;
     }
@@ -442,6 +444,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
     if (dis != null) {
       while (fp > (length() - dis.available())) {
+        while (fp - length() + dis.available() > Integer.MAX_VALUE) {
+          dis.skipBytes(Integer.MAX_VALUE);
+        } 
         dis.skipBytes((int) (fp - (length() - dis.available())));
       }
     }
@@ -456,7 +461,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
     else if (afp >= fp && dis != null) {
       while (fp < afp) {
-        int skip = dis.skipBytes(afp - fp);
+        while (afp - fp > Integer.MAX_VALUE) {
+          fp += dis.skipBytes(Integer.MAX_VALUE);
+        }
+        int skip = dis.skipBytes((int) (afp - fp)); 
         if (skip == 0) break;
         fp += skip;
       }
@@ -494,9 +502,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
           dis.mark(newBufferSize);
           //fp = mark;
 
-          fp = (int) (length() - dis.available());
+          fp = length() - dis.available();
           while (fp < afp) {
-            int skip = dis.skipBytes(afp - fp);
+            while (afp - fp > Integer.MAX_VALUE) {
+              fp += dis.skipBytes(Integer.MAX_VALUE);
+            }
+            int skip = dis.skipBytes((int) (afp - fp));
             if (skip == 0) break;
             fp += skip;
           }
@@ -532,8 +543,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
       raf = new RAFile(f, "r");
       dis = new DataInputStream(new BufferedInputStream(
         new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD));
-      int len = (int) raf.length();
-      buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
+      long len = raf.length();
+      buf = new byte[(int) (len < MAX_OVERHEAD ? len : MAX_OVERHEAD)];
       raf.readFully(buf);
       raf.seek(0);
     }

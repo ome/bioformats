@@ -44,7 +44,7 @@ public class NRRDReader extends FormatReader {
   private String min, max;
 
   /** Offset to pixel data. */
-  private int offset;
+  private long offset;
 
   // -- Constructor -- 
 

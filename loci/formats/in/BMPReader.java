@@ -58,7 +58,7 @@ public class BMPReader extends FormatReader {
   protected int compression;
 
   /** Offset to image data. */
-  private int global;
+  private long global;
 
   // -- Constructor --
 
