@@ -102,7 +102,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     Vector original = 
       DOMUtil.getChildElements("OriginalMetadata", ca.getDOMElement());
     if (original.size() == 0) {
-      Element el = DOMUtil.createChild(root.getDOMElement(), "SemanticType");
+      Element el = DOMUtil.createChild(root.getDOMElement(), 
+        "SemanticTypeDefinitions");
+      el = DOMUtil.createChild(el, "SemanticType");
       OMEXMLNode node = OMEXMLNode.createNode(el);
       node.setAttribute("Name", "OriginalMetadata");
       node.setAttribute("AppliesTo", "I");
