@@ -367,7 +367,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- Deprecated IFormatReader API methods --
 
-  /** @deprecated Replaced by {@link openImage(int)} */
+  /** @deprecated Replaced by {@link #openImage(int)} */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -377,7 +377,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     return b;
   }
 
-  /** @deprecated Replaced by {@link openBytes(int)} */
+  /** @deprecated Replaced by {@link #openBytes(int)} */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
     setId(id);
@@ -386,7 +386,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     return b;
   }
 
-  /** @deprecated Replaced by {@link openBytes(int, byte[])} */
+  /** @deprecated Replaced by {@link #openBytes(int, byte[])} */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
