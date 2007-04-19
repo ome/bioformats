@@ -62,118 +62,6 @@ public class QTReader extends FormatReader {
     0x00, 0x00 // no thumbnail specified
   };
 
-  /** Luminance quantization table. */
-  private static final byte[] LUM_QUANT = new byte[] {
-    3, 2, 2, 2, 2, 2, 3, 2,
-    2, 2, 3, 3, 3, 3, 4, 6,
-    4, 4, 4, 4, 4, 7, 5, 6,
-    5, 6, 9, 8, 9, 9, 8, 8,
-    8, 8, 9, 10, 13, 11, 9, 10,
-    13, 10, 8, 8, 12, 16, 12, 13,
-    14, 14, 15, 15, 15, 9, 11, 16,
-    17, 16, 14, 17, 13, 14, 15, 14
-  };
-
-  /** Chrominance quantization table. */
-  private static final byte[] CHROM_QUANT = new byte[] {
-    3, 3, 3, 4, 3, 4, 7, 4,
-    4, 7, 14, 10, 8, 10, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14,
-  };
-
-  /** Defines the number of entries in the luminance DC Huffman table. */
-  private static final byte[] LUM_DC_BITS = new byte[] {
-    0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0
-  };
-
-  /** The luminance DC Huffman table. */
-  private static final byte[] LUM_DC = new byte[] {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-  };
-
-  /** Defines the number of entries in the chrominance DC Huffman table. */
-  private static final byte[] CHROM_DC_BITS = new byte[] {
-    0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
-  };
-
-  /** The chrominance DC Huffman table. */
-  private static final byte[] CHROM_DC = new byte[] {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-  };
-
-  /** Defines the number of entries in the luminance AC Huffman table. */
-  private static final byte[] LUM_AC_BITS = new byte[] {
-    0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, 0x7d
-  };
-
-  /** The luminance AC Huffman table. */
-  private static final byte[] LUM_AC = new byte[] {
-    1, 2, 3, 0, 4, 17, 5, 18, 33, 0x31, 0x41, 6, 19, 0x51, 0x61, 7,
-    34, 0x71, 20, 0x32, (byte) 0x81, (byte) 0x91, (byte) 161, 8, 35, 0x42,
-    (byte) 0xb1, (byte) 0xc1, 0x15, 0x52, (byte) 0xd1, (byte) 0xf0,
-    0x24, 0x33, 0x62, 0x72, (byte) 0x82, 9, 10, 22, 23, 24, 25, 26, 0x25,
-    0x26, 0x27, 0x28, 0x29, 0x2a, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
-    0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
-    0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59,
-    0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
-    0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
-    0x7a, (byte) 0x83, (byte) 0x84, (byte) 0x85, (byte) 0x86, (byte) 0x87,
-    (byte) 0x88, (byte) 0x89, (byte) 0x8a, (byte) 0x92, (byte) 0x93,
-    (byte) 0x94, (byte) 0x95, (byte) 0x96, (byte) 0x97, (byte) 0x98,
-    (byte) 0x99, (byte) 0x9a, (byte) 0xa2, (byte) 0xa3, (byte) 0xa4,
-    (byte) 0xa5, (byte) 0xa6, (byte) 0xa7, (byte) 0xa8, (byte) 0xa9,
-    (byte) 0xaa, (byte) 0xb2, (byte) 0xb3, (byte) 0xb4, (byte) 0xb5,
-    (byte) 0xb6, (byte) 0xb7, (byte) 0xb8, (byte) 0xb9, (byte) 0xba,
-    (byte) 0xc2, (byte) 0xc3, (byte) 0xc4, (byte) 0xc5, (byte) 0xc6,
-    (byte) 0xc7, (byte) 0xc8, (byte) 0xc9, (byte) 0xca, (byte) 0xd2,
-    (byte) 0xd3, (byte) 0xd4, (byte) 0xd5, (byte) 0xd6, (byte) 0xd7,
-    (byte) 0xd8, (byte) 0xd9, (byte) 0xda, (byte) 0xe1, (byte) 0xe2,
-    (byte) 0xe3, (byte) 0xe4, (byte) 0xe5, (byte) 0xe6, (byte) 0xe7,
-    (byte) 0xe8, (byte) 0xe9, (byte) 0xea, (byte) 0xf1, (byte) 0xf2,
-    (byte) 0xf3, (byte) 0xf4, (byte) 0xf5, (byte) 0xf6, (byte) 0xf7,
-    (byte) 0xf8, (byte) 0xf9, (byte) 0xfa
-  };
-
-  /** Defines the number of entries in the chrominance AC Huffman table. */
-  private static final byte[] CHROM_AC_BITS = new byte[] {
-    0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, 0x77
-  };
-
-  /** The chrominance AC Huffman table. */
-  private static final byte[] CHROM_AC = new byte[] {
-    0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
-    0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
-    0x13, 0x22, 0x32, (byte) 0x81, 0x08, 0x14, 0x42, (byte) 0x91, (byte) 0xa1,
-    (byte) 0xb1, (byte) 0xc1, 0x09, 0x23, 0x33, 0x52, (byte) 0xf0,
-    0x15, 0x62, 0x72, (byte) 0xd1, 0x0a, 0x16, 0x24, 0x34,
-    (byte) 0xe1, 0x25, (byte) 0xf1, 0x17, 0x18, 0x19, 0x1a, 0x26,
-    0x27, 0x28, 0x29, 0x2a, 0x35, 0x36, 0x37, 0x38,
-    0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
-    0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
-    0x59, 0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-    0x69, 0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
-    0x79, 0x7a, (byte) 0x82, (byte) 0x83, (byte) 0x84, (byte) 0x85,
-    (byte) 0x86, (byte) 0x87, (byte) 0x88, (byte) 0x89, (byte) 0x8a,
-    (byte) 0x92, (byte) 0x93, (byte) 0x94, (byte) 0x95, (byte) 0x96,
-    (byte) 0x97, (byte) 0x98, (byte) 0x99, (byte) 0x9a, (byte) 0xa2,
-    (byte) 0xa3, (byte) 0xa4, (byte) 0xa5, (byte) 0xa6, (byte) 0xa7,
-    (byte) 0xa8, (byte) 0xa9, (byte) 0xaa, (byte) 0xb2, (byte) 0xb3,
-    (byte) 0xb4, (byte) 0xb5, (byte) 0xb6, (byte) 0xb7, (byte) 0xb8,
-    (byte) 0xb9, (byte) 0xba, (byte) 0xc2, (byte) 0xc3, (byte) 0xc4,
-    (byte) 0xc5, (byte) 0xc6, (byte) 0xc7, (byte) 0xc8, (byte) 0xc9,
-    (byte) 0xca, (byte) 0xd2, (byte) 0xd3, (byte) 0xd4, (byte) 0xd5,
-    (byte) 0xd6, (byte) 0xd7, (byte) 0xd8, (byte) 0xd9, (byte) 0xda,
-    (byte) 0xe2, (byte) 0xe3, (byte) 0xe4, (byte) 0xe5, (byte) 0xe6,
-    (byte) 0xe7, (byte) 0xe8, (byte) 0xe9, (byte) 0xea, (byte) 0xf2,
-    (byte) 0xf3, (byte) 0xf4, (byte) 0xf5, (byte) 0xf6, (byte) 0xf7,
-    (byte) 0xf8, (byte) 0xf9, (byte) 0xfa
-  };
-
   // -- Fields --
 
   /** Offset to start of pixel data. */
@@ -1084,6 +972,9 @@ public class QTReader extends FormatReader {
     pt += 4;
     if (pt >= input.length) pt = 0;
 
+    byte[] lumDcBits = null, lumAcBits = null, lumDc = null, lumAc = null;
+    byte[] quant = null;
+
     // most MJPEG-B planes don't have this identifier
     if (!(input[pt] != 'm' || input[pt+1] != 'j' || input[pt+2] != 'p' ||
       input[pt+3] != 'g') || !(input[pt-16] != 'm' || input[pt-15] != 'j' ||
@@ -1136,14 +1027,29 @@ public class QTReader extends FormatReader {
       if (quantOffset != 0) {
         pt = quantOffset;
         int length = DataTools.bytesToInt(input, pt, 2, core.littleEndian[0]);
-        pt += length;
+        pt += 3;
+        quant = new byte[length - 3];
+        System.arraycopy(input, pt, quant, 0, quant.length);
+        pt += quant.length;
       }
 
       // skip over the Huffman table, if it exists
       if (huffmanOffset != 0) {
         pt = huffmanOffset;
         int length = DataTools.bytesToInt(input, pt, 2, core.littleEndian[0]);
-        pt += length;
+        pt += 3;
+        lumDcBits = new byte[16];
+        System.arraycopy(input, pt, lumDcBits, 0, lumDcBits.length);
+        pt += lumDcBits.length;
+        lumDc = new byte[12];
+        System.arraycopy(input, pt, lumDc, 0, lumDc.length);
+        pt += lumDc.length + 1;
+        lumAcBits = new byte[16];
+        System.arraycopy(input, pt, lumAcBits, 0, lumAcBits.length);
+        pt += lumAcBits.length;
+        lumAc = new byte[162];
+        System.arraycopy(input, pt, lumAc, 0, lumAc.length);
+        pt += lumAc.length;
       }
 
       // skip to the frame header
@@ -1218,11 +1124,7 @@ public class QTReader extends FormatReader {
 
     if (raw == null) raw = input;
 
-    // "Because Motion-JPEG format B does not support markers, the JPEG
-    // bitstream does not have null bytes (0x00) inserted after data bytes
-    // that are set to 0xFF."
-    // Thus quoth the specifications.
-
+    // insert zero after each byte equal to 0xff
     ByteVector b = new ByteVector();
     for (int i=0; i<raw.length; i++) {
       b.add((byte) raw[i]);
@@ -1249,42 +1151,39 @@ public class QTReader extends FormatReader {
 
     v.add(new byte[] {(byte) 0xff, (byte) 0xdb});
 
-    int length = LUM_QUANT.length + CHROM_QUANT.length + 4;
+    int length = 67;
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
 
     v.add((byte) 0x00);
-    v.add(LUM_QUANT);
-    v.add((byte) 0x01);
-    v.add(CHROM_QUANT);
+    v.add(quant); 
 
     // add Huffman tables
 
     v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
 
-    length = LUM_DC_BITS.length + LUM_DC.length + CHROM_DC_BITS.length +
-      CHROM_DC.length + LUM_AC_BITS.length + LUM_AC.length +
-      CHROM_AC_BITS.length + CHROM_AC.length + 6;
+    length = (lumDcBits.length + lumDc.length + 
+      lumAcBits.length + lumAc.length)*2 + 6; 
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
 
     // the ordering of these tables matters
 
     v.add((byte) 0x00);
-    v.add(LUM_DC_BITS);
-    v.add(LUM_DC);
+    v.add(lumDcBits);
+    v.add(lumDc);
 
     v.add((byte) 0x01);
-    v.add(CHROM_DC_BITS);
-    v.add(CHROM_DC);
+    v.add(lumDcBits);
+    v.add(lumDc);
 
     v.add((byte) 0x10);
-    v.add(LUM_AC_BITS);
-    v.add(LUM_AC);
+    v.add(lumAcBits);
+    v.add(lumAc);
 
     v.add((byte) 0x11);
-    v.add(CHROM_AC_BITS);
-    v.add(CHROM_AC);
+    v.add(lumAcBits);
+    v.add(lumAc);
 
     // add start-of-frame header
 
@@ -1364,7 +1263,7 @@ public class QTReader extends FormatReader {
       v2.add(b2.toByteArray());
       v2.add((byte) 0xff);
       v2.add((byte) 0xd9);
-
+      
       BufferedImage top = bufferedJPEG(v.toByteArray());
       BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 
