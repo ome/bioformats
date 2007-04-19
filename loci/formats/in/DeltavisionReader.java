@@ -103,8 +103,8 @@ public class DeltavisionReader extends FormatReader {
 
     // read the image plane's pixel data
     long offset = header.length + extHeader.length;
-    offset += core.sizeX[0] * core.sizeY[0] * bytesPerPixel * no;
-
+    long bytes = core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
+    offset += bytes * no;
     in.seek(offset);
     in.read(buf);
     return buf;
