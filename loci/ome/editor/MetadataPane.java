@@ -349,7 +349,7 @@ public class MetadataPane extends JPanel
         thisOmeNode.writeOME(file, false);
         if (getTopLevelAncestor() instanceof MetadataNotebook) {
           MetadataNotebook mdn = (MetadataNotebook) getTopLevelAncestor();
-          mdn.setTitle("OME Metadata Notebook - " + file);
+          mdn.setTitle("OME Metadata Editor - " + file);
         }
       }
     }

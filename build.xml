@@ -69,11 +69,10 @@ LOCI Plugins for ImageJ
                    jar-plugins
     License:       LGPL
 
-OME Metadata Notebook
+OME Notebook
     JAR file:      ome-notebook.jar
-    Folders:       loci/ome/notebook
-                   loci/ome/viewer (temporary)
-    Main class:    loci.ome.notebook.MetadataNotebook
+    Folder:        loci/ome/notebook
+    Main class:    loci.ome.editor.MetadataNotebook
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
@@ -85,6 +84,24 @@ OME Metadata Notebook
     Targets:       style-notebook
                    compile-notebook
                    jar-notebook
+    License:       LGPL
+
+OME Metadata Editor
+    JAR file:      ome-editor.jar
+    Folders:       loci/ome/editor
+                   loci/ome/viewer
+    Main class:    loci.ome.editor.MetadataNotebook
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   forms-1.0.4.jar
+                   jai_imageio.jar (bio-formats.jar)
+                   ome-java.jar
+                   poi-loci.jar (bio-formats.jar)
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       style-editor
+                   compile-editor
+                   jar-editor
     License:       LGPL
 
 Movie Stitcher
@@ -247,7 +264,7 @@ Apache XML-RPC
 
   <target name="style"
     depends="style-formats, style-visbio, style-plugins, style-notebook,
-      style-stitcher, style-slim, style-checks"
+      style-editor, style-stitcher, style-slim, style-checks"
     description="check source code style for LOCI software packages"/>
 
 <!--
@@ -260,12 +277,12 @@ Apache XML-RPC
 -->
   <target name="compile"
     depends="compile-formats, compile-visbio, compile-plugins,
-      compile-notebook, compile-stitcher, compile-slim"
+      compile-notebook, compile-editor, compile-stitcher, compile-slim"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
     depends="jar-formats, jar-visbio, jar-plugins, jar-notebook,
-      jar-stitcher, jar-slim, jar-checks"
+      jar-editor, jar-stitcher, jar-slim, jar-checks"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="tools" depends="jars"
@@ -626,17 +643,17 @@ Apache XML-RPC
     </jar>
   </target>
 
-  <!-- OME Metadata Notebook -->
+  <!-- OME Notebook -->
 
   <target name="style-notebook" depends="copy-source, jar-checks"
-    description="check source code style for OME Metadata Notebook">
+    description="check source code style for OME Notebook">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${notebook.source}"/>
     </checkstyle>
   </target>
 
   <target name="compile-notebook" depends="copy-source"
-    description="compile classes for OME Metadata Notebook">
+    description="compile classes for OME Notebook">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${notebook.source}" classpath="${ext.jars}"
@@ -645,7 +662,7 @@ Apache XML-RPC
 
   <target name="jar-notebook"
     depends="compile-notebook, copy-jars, jar-formats"
-    description="generate JAR file for OME Metadata Notebook">
+    description="generate JAR file for OME Notebook">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${notebook.resources}"/>
     </copy>
@@ -654,6 +671,38 @@ Apache XML-RPC
       <manifest>
         <attribute name="Main-Class" value="${notebook.main}"/>
         <attribute name="Class-Path" value="${notebook.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- OME Metadata Editor -->
+
+  <target name="style-editor" depends="copy-source, jar-checks"
+    description="check source code style for OME Metadata Editor">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${editor.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-editor" depends="copy-source"
+    description="compile classes for OME Metadata Editor">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${editor.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-editor"
+    depends="compile-editor, copy-jars, jar-formats"
+    description="generate JAR file for OME Metadata Editor">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${editor.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/${editor.jar}" basedir="${classes.dir}"
+      includes="${editor.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${editor.main}"/>
+        <attribute name="Class-Path" value="${editor.classpath}"/>
       </manifest>
     </jar>
   </target>

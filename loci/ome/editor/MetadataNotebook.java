@@ -123,7 +123,7 @@ public class MetadataNotebook extends JFrame
   public MetadataNotebook(String[] args, OMENode ome, String title,
     boolean addSave, boolean editable)
   {
-    super("OME Metadata Notebook");
+    super("OME Metadata Editor");
     if (title != null) setTitle(title);
 
     try {
@@ -161,7 +161,7 @@ public class MetadataNotebook extends JFrame
       }
       currentFile = file;
       metadata = new MetadataPane(file, addSave, editable);
-      setTitle("OME Metadata Notebook - " + file);
+      setTitle("OME Metadata Editor - " + file);
     }
     else metadata = new MetadataPane((File) null, addSave, editable);
     if (ome != null) metadata.setOMEXML(ome);
@@ -355,7 +355,7 @@ public class MetadataNotebook extends JFrame
     mdp.setOMEXML(file);
     scanP.setOMEXML(metadata.getRoot());
     if (noteView.getState()) noteP.setPanels(metadata.panelList);
-    setTitle("OME Metadata Notebook - " + file);
+    setTitle("OME Metadata Editor - " + file);
   }
 
   /** Saves to a file, sets title of frame to reflect the current file. */
@@ -416,13 +416,13 @@ public class MetadataNotebook extends JFrame
           options,  //the titles of buttons
           options[0]); //default button title
         if (n == JOptionPane.YES_OPTION) {
-          setTitle("OME Metadata Notebook");
+          setTitle("OME Metadata Editor");
           currentFile = null;
           metadata.setupTabs();
         }
       }
       else {
-        setTitle("OME Metadata Notebook");
+        setTitle("OME Metadata Editor");
         currentFile = null;
         metadata.setupTabs();
       }
@@ -499,12 +499,12 @@ public class MetadataNotebook extends JFrame
     }
     else if ("about".equals(cmd)) {
       JOptionPane.showMessageDialog(this,
-        "OME Metadata Notebook\n" +
+        "OME Metadata Editor\n" +
         "Built @date@\n\n" +
-        "The OME Metadata Notebook is LOCI software written by\n" +
+        "The OME Metadata Editor is LOCI software written by\n" +
         "Christopher Peterson.\n" +
         "http://www.loci.wisc.edu/software/#notebook",
-        "OME Metadata Notebook", JOptionPane.INFORMATION_MESSAGE);
+        "OME Metadata Editor", JOptionPane.INFORMATION_MESSAGE);
     }
     else if (cmd.startsWith("tabChange")) {
       metadata.tabChange(Integer.parseInt(cmd.substring(9)));
