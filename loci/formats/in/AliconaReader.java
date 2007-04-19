@@ -72,8 +72,10 @@ public class AliconaReader extends FormatReader {
       throw new FormatException("Buffer to small.");
     }
 
+    long offset = textureOffset;
+
     for (int i=0; i<numBytes; i++) {
-      in.seek(textureOffset + (no * (core.sizeX[0] + pad)*core.sizeY[0]*(i+1)));
+      in.seek(offset + (no * (core.sizeX[0] + pad)*core.sizeY[0]*(i+1)));
       for (int j=0; j<core.sizeX[0] * core.sizeY[0]; j++) {
         buf[j*numBytes + i] = (byte) in.read();
         if (j % core.sizeX[0] == core.sizeX[0] - 1) in.skipBytes(pad);

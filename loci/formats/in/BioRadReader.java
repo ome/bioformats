@@ -97,7 +97,7 @@ public class BioRadReader extends FormatReader {
       throw new FormatException("Buffer too small.");
     }
 
-    int offset = no * core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2);
+    long offset = no * core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2);
     in.seek(offset + 76);
     in.read(buf);
     return buf;

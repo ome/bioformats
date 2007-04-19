@@ -94,7 +94,7 @@ public class AVIReader extends FormatReader {
     }
 
     long fileOff = ((Long) offsets.get(no)).longValue();
-    in.seek((int) fileOff);
+    in.seek(fileOff);
 
     int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
     int scanline = core.sizeX[0] * (bmpBitsPerPixel / 8);
@@ -149,7 +149,7 @@ public class AVIReader extends FormatReader {
 
     while ((in.length() - in.getFilePointer()) > 4) {
       in.read(list);
-      in.seek((int) pos);
+      in.seek(pos);
       listString = new String(list);
 
       if (listString.equals("JUNK")) {
@@ -166,7 +166,7 @@ public class AVIReader extends FormatReader {
         size = in.readInt();
         fcc = readStringBytes();
 
-        in.seek((int) spos);
+        in.seek(spos);
         if (fcc.equals("hdrl")) {
           type = readStringBytes();
           size = in.readInt();
@@ -199,7 +199,7 @@ public class AVIReader extends FormatReader {
                 addMeta("Frame width", new Integer(core.sizeX[0]));
 
                 if (spos + size <= in.length()) {
-                  in.seek((int) (spos + size));
+                  in.seek(spos + size);
                 }
               }
             }
@@ -233,7 +233,7 @@ public class AVIReader extends FormatReader {
                 addMeta("Stream sample size", new Integer(in.readInt()));
 
                 if (spos + size <= in.length()) {
-                  in.seek((int) (spos + size));
+                  in.seek(spos + size);
                 }
               }
 
@@ -308,7 +308,7 @@ public class AVIReader extends FormatReader {
                   }
                 }
 
-                in.seek((int) (spos + size));
+                in.seek(spos + size);
               }
             }
 
@@ -349,7 +349,7 @@ public class AVIReader extends FormatReader {
               size = in.readInt();
               fcc = readStringBytes();
               if (!(type.equals("LIST") && fcc.equals("rec "))) {
-                in.seek((int) spos);
+                in.seek(spos);
               }
 
               spos = in.getFilePointer();

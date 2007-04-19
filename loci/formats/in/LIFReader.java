@@ -101,7 +101,7 @@ public class LIFReader extends FormatReader {
       throw new FormatException("Buffer too small.");
     }
 
-    int offset = ((Long) offsets.get(series)).intValue();
+    long offset = ((Long) offsets.get(series)).longValue();
     in.seek(offset + core.sizeX[series] * core.sizeY[series] *
       bytes * no * getRGBChannelCount());
 

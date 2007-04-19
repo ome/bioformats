@@ -41,7 +41,7 @@ public class SlidebookReader extends FormatReader {
   // -- Fields --
 
   /** Offset to pixel data. */
-  private int offset = 1792;
+  private long offset = 1792;
 
   /** Number of bytes per pixel. */
   private int bpp;
