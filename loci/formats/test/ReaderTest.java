@@ -60,6 +60,7 @@ public class ReaderTest extends TestCase {
   // -- Static fields --
 
   private static boolean writeConfigFiles = false;
+  private static boolean testXML = false; 
   private static float timeMultiplier = 1f;
 
   private static StringBuffer configLine;
@@ -607,6 +608,25 @@ public class ReaderTest extends TestCase {
     assertTrue(false);
   }
 
+  /** Tests that OME-XML is valid. */
+  public void testValidXML() {
+    try { 
+      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      store.createRoot();
+      reader.setMetadataStore(store);
+      reader.setId(id);
+    
+      String xml = ((OMEXMLMetadataStore) reader.getMetadataStore()).dumpXML(); 
+      if (xml == null) writeLog(id + " failed OME-XML validation"); 
+      assertTrue(xml != null); 
+    }
+    catch (Exception e) {
+      writeLog(id + " failed OME-XML validation"); 
+      e.printStackTrace(); 
+      assertTrue(false);
+    }
+  }
+
   // -- TestCase API methods --
 
   /** Sets up the fixture. */
@@ -640,21 +660,25 @@ public class ReaderTest extends TestCase {
    */
   public static TestSuite suite(String id) {
     TestSuite suite = new TestSuite();
-    suite.addTest(new ReaderTest("testBufferedImageDimensions", id));
-    if (!writeConfigFiles) {
-      suite.addTest(new ReaderTest("testByteArrayDimensions", id));
-      suite.addTest(new ReaderTest("testThumbnailImageDimensions", id));
-      suite.addTest(new ReaderTest("testThumbnailArrayDimensions", id));
-      suite.addTest(new ReaderTest("testImageCount", id));
-      suite.addTest(new ReaderTest("testOMEXML", id));
-      suite.addTest(new ReaderTest("testSaneUsedFiles", id));
-    }
-    if (config.initialized(id) || writeConfigFiles) {
-      suite.addTest(new ReaderTest("testConsistent", id));
-    }
-    if (config.initialized(id) && !writeConfigFiles) {
-      suite.addTest(new ReaderTest("testMemoryUsage", id));
-      suite.addTest(new ReaderTest("testAccessTime", id));
+    if (testXML) suite.addTest(new ReaderTest("testValidXML", id));
+    else { 
+      suite.addTest(new ReaderTest("testBufferedImageDimensions", id));
+      if (!writeConfigFiles) {
+        suite.addTest(new ReaderTest("testByteArrayDimensions", id));
+        suite.addTest(new ReaderTest("testThumbnailImageDimensions", id));
+        suite.addTest(new ReaderTest("testThumbnailArrayDimensions", id));
+        suite.addTest(new ReaderTest("testImageCount", id));
+        suite.addTest(new ReaderTest("testOMEXML", id));
+        suite.addTest(new ReaderTest("testSaneUsedFiles", id));
+        suite.addTest(new ReaderTest("testValidXML", id)); 
+      }
+      if (config.initialized(id) || writeConfigFiles) {
+        suite.addTest(new ReaderTest("testConsistent", id));
+      }
+      if (config.initialized(id) && !writeConfigFiles) {
+        suite.addTest(new ReaderTest("testMemoryUsage", id));
+        suite.addTest(new ReaderTest("testAccessTime", id));
+      }
     }
     return suite;
   }
@@ -761,6 +785,7 @@ public class ReaderTest extends TestCase {
       for (int i=1; i<args.length; i++) {
         if (args[i].equals("-config")) ReaderTest.writeConfigFiles = true;
         else if (args[i].equals("-debug")) FormatReader.setDebug(true);
+        else if (args[i].equals("-xmlonly")) ReaderTest.testXML = true; 
         else if (args[i].equals("-time")) {
           ReaderTest.timeMultiplier = Float.parseFloat(args[i+1]);
         }
