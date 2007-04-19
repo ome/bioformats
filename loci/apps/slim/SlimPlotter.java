@@ -580,8 +580,41 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
               " (shifting by " + shift + ")");
           }
-          setProgress(progress, 940 + 20 *
-            (c + 1) / channels); // estimate: 94% -> 96%
+          setProgress(progress, 940 + 10 *
+            (c + 1) / channels); // estimate: 94% -> 95%
+          if (progress.isCanceled()) System.exit(0);
+        }
+        log("Calculating full width half maxes");
+        for (int c=0; c<channels; c++) {
+          // sum across all pixels
+          int[] sum = new int[timeBins];
+          for (int h=0; h<height; h++) {
+            for (int w=0; w<width; w++) {
+              for (int t=0; t<timeBins; t++) sum[t] += values[c][h][w][t];
+            }
+          }
+          // find full width half max
+          float half = sum[maxPeak] / 2f;
+          float h1 = Float.NaN, h2 = Float.NaN;
+          boolean up = true;
+          for (int t=0; t<timeBins-1; t++) {
+            if (sum[t] <= half && sum[t + 1] >= half) { // upslope
+              float q = (half - sum[t]) / (sum[t + 1] - sum[t]);
+              h1 = binsToPico(t + q);
+            }
+            else if (sum[t] >= half && sum[t + 1] <= half) { // downslope
+              float q = (half - sum[t + 1]) / (sum[t] - sum[t + 1]);
+              h2 = binsToPico(t + 1 - q);
+            }
+            if (h1 == h1 && h2 == h2) break;
+          }
+          String s = "#" + (c + 1);
+          while (s.length() < 3) s = " " + s;
+          log("\tChannel " + s + ": fwhm = " + (h2 - h1) +
+            " ps, peak = " + sum[maxPeak]);
+          log("\t             range = [" + h1 + ", " + h2 + "] ps");
+          setProgress(progress, 950 + 10 *
+            (c + 1) / channels); // estimate: 95% -> 96%
           if (progress.isCanceled()) System.exit(0);
         }
 
