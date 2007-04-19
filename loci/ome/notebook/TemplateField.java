@@ -29,14 +29,6 @@ import javax.swing.*;
 /** Stores information about a template field. */
 public class TemplateField {
 
-  // -- Constants --
-
-  /** Number of columns in a text area. */
-  private static final int NUM_COLUMNS = 10;
-
-  /** Number of rows in a text area. */
-  private static final int NUM_ROWS = 1;
-
   // -- Fields --
 
   /** Named type of this field. */
@@ -83,9 +75,8 @@ public class TemplateField {
         else if (key.startsWith("type")) type = value; 
         else if (key.startsWith("map")) omecaMap = value; 
         else if (key.startsWith("grid")) {
-          row = Integer.parseInt(value.substring(1, value.indexOf(",")));
-          column = Integer.parseInt(value.substring(value.indexOf(",") + 1, 
-            value.length() - 1));
+          row = Integer.parseInt(value.substring(0, value.indexOf(",")));
+          column = Integer.parseInt(value.substring(value.indexOf(",") + 1));
         }
         else if (key.startsWith("values")) {
           StringTokenizer e = new StringTokenizer(value, "\", ");
@@ -114,8 +105,7 @@ public class TemplateField {
     // create the associate JComponent 
     
     if (type.equals("var")) {
-      JTextArea text = 
-        new JTextArea((String) defaultValue, NUM_COLUMNS, NUM_ROWS);
+      JTextArea text = new JTextArea((String) defaultValue); 
       component = new JScrollPane();
       ((JScrollPane) component).getViewport().add(text);
     }
@@ -147,8 +137,7 @@ public class TemplateField {
     // copy the component
     JComponent comp = null;
     if (type.equals("var")) {
-      JTextArea text = 
-        new JTextArea((String) defaultValue, NUM_COLUMNS, NUM_ROWS);
+      JTextArea text = new JTextArea((String) defaultValue); 
       comp = new JScrollPane();
       ((JScrollPane) comp).getViewport().add(text);
     }

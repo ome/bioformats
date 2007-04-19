@@ -69,21 +69,24 @@ public class Template {
   // -- Constructor --
 
   /** Constructs a new Template from the given filename. */
-  public Template(String file) {
+  public Template(String file) throws IOException {
     this(new File(file).getAbsoluteFile());
   }
 
   /** Constructs a new Template from the given file. */
-  public Template(File file) {
+  public Template(File file) throws IOException {
+    this(new FileInputStream(file));
+  }
+
+  /** Constructs a new Template from the given InputStream. */
+  public Template(InputStream stream) throws IOException {
     options = new Hashtable(); 
     
-    if (file.exists()) {
-      try { 
-        parse(new FileInputStream(file));
-      }
-      catch (IOException io) {
-        io.printStackTrace();
-      }
+    try { 
+      parse(stream);
+    }
+    catch (IOException io) {
+      io.printStackTrace();
     }
   }
 
@@ -453,13 +456,15 @@ public class Template {
 
       CustomAttributesNode ca = root.getCustomAttributes();
 
-      Vector elements = DOMUtil.getChildElements("NotebookField", 
-        ca.getDOMElement());
-      for (int i=0; i<elements.size(); i++) {
-        Element el = (Element) elements.get(i);
-        if (DOMUtil.getAttribute("name", el).equals(t.getName())) {
-          String v = DOMUtil.getAttribute("value", el); 
-          setComponentValue(t, t.getComponent(), v);  
+      if (ca != null) {
+        Vector elements = DOMUtil.getChildElements("NotebookField", 
+          ca.getDOMElement());
+        for (int i=0; i<elements.size(); i++) {
+          Element el = (Element) elements.get(i);
+          if (DOMUtil.getAttribute("name", el).equals(t.getName())) {
+            String v = DOMUtil.getAttribute("value", el); 
+            setComponentValue(t, t.getComponent(), v);  
+          }
         }
       }
 

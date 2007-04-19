@@ -143,13 +143,8 @@ public class Notebook extends JFrame implements ActionListener {
       loadTemplate(template);
     }
     else {
-      try {
-        loadTemplate(new File(new URI(Notebook.class.getResource(
-          DEFAULT_TEMPLATE).toString())).getAbsolutePath());
-      }
-      catch (URISyntaxException e) {
-        e.printStackTrace();
-      }
+      templateName = DEFAULT_TEMPLATE; 
+      loadTemplate(Notebook.class.getResourceAsStream(DEFAULT_TEMPLATE));
     }
   
     try {
@@ -174,7 +169,23 @@ public class Notebook extends JFrame implements ActionListener {
     templateName = filename;
 
     // parse the template file 
-    loadTemplate(new Template(filename));
+    try { 
+      loadTemplate(new Template(filename));
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /** Load and apply a template from the specified InputStream. */
+  public void loadTemplate(InputStream stream) {
+    progress.setString("Loading template...");
+    try {
+      loadTemplate(new Template(stream));
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /** Load and apply the given template. */
@@ -295,9 +306,9 @@ public class Notebook extends JFrame implements ActionListener {
         TemplateField f = tabs[i].getField(j); 
         if (f.getRow() != -1) { 
           panel.add(new JLabel(f.getName()), 
-            cc.xyw(f.getColumn() + 1, f.getRow() + 1, paddingColumns + 1));
+            cc.xyw(f.getColumn(), f.getRow(), paddingColumns + 1));
           panel.add(f.getComponent(), 
-            cc.xyw(f.getColumn() + 2, f.getRow() + 1, 2));
+            cc.xyw(f.getColumn() + 1, f.getRow(), 2));
         } 
         else {
           panel.add(new JLabel(f.getName()), 
@@ -477,6 +488,9 @@ public class Notebook extends JFrame implements ActionListener {
       TemplateTab tab = currentTemplate.getTabs()[tabIndex];
       TemplateGroup group = tab.getGroup(groupIndex);
       group.setRepetitions(group.getRepetitions() + 1);
+      
+      int tabIdx = tabPane.getSelectedIndex(); 
+      
       loadTemplate(currentTemplate); 
       try { 
         if (currentFile != null) openFile(currentFile); 
@@ -484,6 +498,8 @@ public class Notebook extends JFrame implements ActionListener {
       catch (Exception exc) {
         exc.printStackTrace();
       }
+
+      tabPane.setSelectedIndex(tabIdx); 
     } 
     else if (cmd.startsWith("removeGroup")) {
       cmd = cmd.substring(11);
@@ -493,6 +509,9 @@ public class Notebook extends JFrame implements ActionListener {
       TemplateTab tab = currentTemplate.getTabs()[tabIndex];
       TemplateGroup group = tab.getGroup(groupIndex);
       group.setRepetitions(group.getRepetitions() - 1);  
+      
+      int tabIdx = tabPane.getSelectedIndex(); 
+      
       loadTemplate(currentTemplate); 
       try { 
         if (currentFile != null) openFile(currentFile); 
@@ -500,6 +519,8 @@ public class Notebook extends JFrame implements ActionListener {
       catch (Exception exc) {
         exc.printStackTrace();
       }
+      
+      tabPane.setSelectedIndex(tabIdx);
     }
 
   }
