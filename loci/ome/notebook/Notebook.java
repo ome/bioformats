@@ -27,7 +27,6 @@ import com.jgoodies.forms.layout.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
