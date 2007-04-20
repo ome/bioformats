@@ -1122,6 +1122,44 @@ public class Importer implements ItemListener {
     }
   }
 
+  private void makeRGB(ImagePlus imp, IFormatReader r, int c) 
+    throws FormatException, IOException 
+  {
+    ImageStack s = imp.getStack();
+    ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
+    for (int i=0; i<s.getSize(); i++) {
+      ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
+      newStack.addSlice(s.getSliceLabel(i + 1), p);
+    }
+    imp.setStack(imp.getTitle(), newStack);
+    adjustDisplay(imp);
+
+    s = imp.getStack();
+    newStack = new ImageStack(s.getWidth(), s.getHeight());
+
+    int sizeZ = r.getSizeZ();
+    int sizeT = r.getSizeT();
+
+    for (int z=0; z<sizeZ; z++) {
+      for (int t=0; t<sizeT; t++) {
+        byte[][] bytes = new byte[c][];
+        for (int ch=0; ch<r.getSizeC()/c; ch++) { 
+          for (int ch1=0; ch1<c; ch1++) {
+            int ndx = r.getIndex(z, ch*c + ch1, t) + 1;
+            bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
+          }
+          ColorProcessor cp =
+            new ColorProcessor(s.getWidth(), s.getHeight());
+          cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
+            new byte[s.getWidth() * s.getHeight()]);
+          int ndx = r.getIndex(z, ch*c, t) + 1;
+          newStack.addSlice(s.getSliceLabel(ndx), cp);
+        } 
+      }
+    }
+    imp.setStack(imp.getTitle(), newStack);
+  }
+
   /** Displays the image stack using the appropriate plugin. */
   private void displayStack(ImagePlus imp, IFormatReader r, FileStitcher fs) {
     adjustDisplay(imp);
@@ -1133,38 +1171,7 @@ public class Importer implements ItemListener {
       if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 && 
         (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8)) 
       {
-        int c = r.getSizeC();
-        ImageStack s = imp.getStack();
-        ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
-        for (int i=0; i<s.getSize(); i++) {
-          ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
-          newStack.addSlice(s.getSliceLabel(i + 1), p);
-        }
-        imp.setStack(imp.getTitle(), newStack);
-        adjustDisplay(imp);
-
-        s = imp.getStack();
-        newStack = new ImageStack(s.getWidth(), s.getHeight());
-
-        int sizeZ = r.getSizeZ();
-        int sizeT = r.getSizeT();
-
-        for (int z=0; z<sizeZ; z++) {
-          for (int t=0; t<sizeT; t++) {
-            byte[][] bytes = new byte[c][];
-            for (int ch1=0; ch1<c; ch1++) {
-              int ndx = r.getIndex(z, ch1, t) + 1;
-              bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
-            }
-            ColorProcessor cp =
-              new ColorProcessor(s.getWidth(), s.getHeight());
-            cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
-              new byte[s.getWidth() * s.getHeight()]);
-            int ndx = r.getIndex(z, c - 1, t) + 1;
-            newStack.addSlice(s.getSliceLabel(ndx), cp);
-          }
-        }
-        imp.setStack(imp.getTitle(), newStack);
+        makeRGB(imp, r, r.getSizeC()); 
       }
       else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 && 
         imp.getStackSize() == r.getSizeC()) 
@@ -1180,7 +1187,32 @@ public class Importer implements ItemListener {
         } 
       }
       else if (mergeChannels && r.getSizeC() >= 4) {
-        IJ.showMessage("Can only merge 2 or 3 channels.");
+        // ask the user what they would like to do... 
+    
+        int planes1 = r.getImageCount() / 2;
+        if (planes1 * 2 < r.getImageCount()) planes1++;
+        int planes2 = r.getImageCount() / 3;
+        if (planes2 * 3 < r.getImageCount()) planes2++;
+
+        GenericDialog gd = new GenericDialog("Merging Options...");
+        gd.addMessage("How would you like to merge this data?");
+        gd.addChoice("", new String[] {
+          planes1 + " windows, 2 channels per plane", 
+          planes2 + " windows, 3 channels per plane", "Do not merge"}, "");
+        gd.showDialog();
+
+        if (gd.wasCanceled()) return;
+        
+        int idx = gd.getNextChoiceIndex();
+     
+        switch (idx) {
+          case 0:
+            makeRGB(imp, r, 2);
+            break;
+          case 1:
+            makeRGB(imp, r, 3);
+            break;
+        }
       }
 
       imp.setDimensions(
