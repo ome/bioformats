@@ -1197,8 +1197,8 @@ public class Importer implements ItemListener {
         GenericDialog gd = new GenericDialog("Merging Options...");
         gd.addMessage("How would you like to merge this data?");
         gd.addChoice("", new String[] {
-          planes1 + " windows, 2 channels per plane", 
-          planes2 + " windows, 3 channels per plane", "Do not merge"}, "");
+          planes1 + " planes, 2 channels per plane", 
+          planes2 + " planes, 3 channels per plane", "Do not merge"}, "");
         gd.showDialog();
 
         if (gd.wasCanceled()) return;
