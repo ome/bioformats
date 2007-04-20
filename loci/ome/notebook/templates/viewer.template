@@ -1,9 +1,9 @@
 # Template designed specifically for viewing (not editing) metadata.
 
-font-style "Courier"
-font-size "13"
-font-color "0,100,255"
-background-color "50,50,50"
+#font-style "Courier"
+#font-size "13"
+#font-color "0,100,255"
+#background-color "50,50,50"
 
 default-width "600"
 default-height "500"

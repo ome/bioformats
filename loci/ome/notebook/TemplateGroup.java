@@ -101,9 +101,17 @@ public class TemplateGroup {
     numFields++; 
   }
 
+  public void removeField(int ndx) { 
+    for (int i=0; i<repetitions; i++) {
+      fields.remove(new Point(i, ndx));
+    }
+  }
+
   // -- Helper methods --
 
-  /** Adjust the mapping so that the node index matches the repetition number. */
+  /** 
+   * Adjust the mapping so that the node index matches the repetition number. 
+   */
   private void adjustMap(TemplateField t, int repetition) {
     String map = t.getMap();
     if (map == null) return;

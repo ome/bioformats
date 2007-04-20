@@ -1,0 +1,7 @@
+"Image name" "Image:Name"
+"Image description" "Image:Description"
+"Image width" "Image:Pixels:SizeX"
+"Image height" "Image:Pixels:SizeY"
+"Number of channels" "Image:Pixels:SizeC"
+"Number of timepoints" "Image:Pixels:SizeT"
+"Number of slices" "Image:Pixels:SizeZ"

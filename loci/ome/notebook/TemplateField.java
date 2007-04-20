@@ -133,7 +133,9 @@ public class TemplateField {
     rtn.setEnums(getEnums());
     rtn.setName(getName());
     rtn.setMap(getMap());
-   
+    rtn.setRow(getRow());
+    rtn.setColumn(getColumn());
+
     // copy the component
     JComponent comp = null;
     if (type.equals("var")) {

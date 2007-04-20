@@ -278,10 +278,10 @@ public class Notebook extends JFrame implements ActionListener {
             TemplateField field = group.getField(r, k); 
             if (field.getRow() != -1) { 
               panel.add(new JLabel(field.getName()), 
-                cc.xy(field.getColumn() + paddingColumns + 1, 
+                cc.xy(field.getColumn() + paddingColumns, 
                 field.getRow() + 1));
               panel.add(field.getComponent(), 
-                cc.xy(field.getColumn() + paddingColumns + 2, 
+                cc.xy(field.getColumn() + paddingColumns + 1, 
                 field.getRow() + 1));
             } 
             else {

@@ -317,8 +317,8 @@ public class Template {
         TemplateGroup g = tabs[i].getGroup(j); 
 
         writer.write("  group {\n");
-        writer.write("    count\"" + g.getRepetitions() + "\"\n");
-        writer.write("    name\"" + g.getName() + "\"\n");
+        writer.write("    count \"" + g.getRepetitions() + "\"\n");
+        writer.write("    name \"" + g.getName() + "\"\n");
 
         for (int k=0; k<g.getNumFields(); k++) {
           TemplateField t = g.getField(0, k); 

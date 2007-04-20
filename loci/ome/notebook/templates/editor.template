@@ -62,7 +62,7 @@ tab {
 
 tab {
   name "Image Information"
- 
+
   group {
     count "2"
     name "Image"

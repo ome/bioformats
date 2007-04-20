@@ -87,6 +87,10 @@ public class TemplateTab {
 
   public void addField(TemplateField t) { fields.add(t); }
 
+  public void removeGroup(int ndx) { groups.removeElementAt(ndx); }
+
+  public void removeField(int ndx) { fields.removeElementAt(ndx); }
+
   public String getName() { return name; }
 
   public void setName(String name) { this.name = name; }
