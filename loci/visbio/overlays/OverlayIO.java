@@ -31,8 +31,11 @@ import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.formats.FormatTools;
-import loci.visbio.VisBio;
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.OptionManager;
 import loci.visbio.util.*;
+import loci.visbio.VisBio;
+import loci.visbio.VisBioFrame;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.Region;
 
@@ -435,24 +438,28 @@ public final class OverlayIO {
     // print stats by object type
     Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
       arrows, polylines};
-    String[] titles = {"Line", "Freeform", "Marker", "Text", "Oval", "Box",
-      "Arrow", "Polyline"};
+    String[] titles = OverlayStat.getOverlayTypes();
     for (int v=0; v<vectors.length; v++) {
-      if (vectors[v].size() > 0) 
-      {
-	out.println(); // Throw in a blank
-	out.println("# " + titles[v] + " Statistics");
-	for (int i=0; i<vectors[v].size(); i++) 
-	{
-	  OverlayObject obj = (OverlayObject) vectors[v].get(i);
-	  int index = i + 1;
-	  out.println("# " + titles[v] + " " + index);
-	  OverlayStat[] stats = obj.getStatisticsArray();
-	  for (int j=0; j<stats.length; j++) 
-	  {
-		  out.println("#\t" + stats[j].getName() + "\t" + stats[j].getValue());
-	  }
-	}
+      if (vectors[v].size() > 0) {
+        out.println(); // Throw in a blank
+        out.println("# " + titles[v] + " Statistics");
+        for (int i=0; i<vectors[v].size(); i++) {
+          OverlayObject obj = (OverlayObject) vectors[v].get(i);
+          int index = i + 1;
+          out.println("# " + titles[v] + " " + index);
+          String[] stats = OverlayStat.getStatTypes(titles[v]);
+          OptionManager om = (OptionManager)
+            VisBioFrame.getVisBio().getManager(OptionManager.class);
+          for (int j=0; j<stats.length; j++) {
+            String name = titles[v] + "." + stats[j];
+            BooleanOption option = (BooleanOption) om.getOption(name);
+            // print if option is selected
+            if (option.getValue()) {
+              out.println("#\t" + stats[j] + "\t" +
+                obj.getStat(stats[j]));
+            }
+          }
+        }
       }
     }
    
@@ -584,14 +591,14 @@ public final class OverlayIO {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
 
         // a 'rider' to this loop: keep track of noded objects
-	if (obj instanceof OverlayLine) lines.add(obj);
-	if (obj instanceof OverlayFreeform) freeforms.add(obj);
-	if (obj instanceof OverlayMarker) markers.add(obj);
-	if (obj instanceof OverlayText) texts.add(obj);
-	if (obj instanceof OverlayOval) ovals.add(obj);
-	if (obj instanceof OverlayBox) boxes.add(obj);
-	if (obj instanceof OverlayArrow) arrows.add(obj);
-	if (obj instanceof OverlayPolyline) polylines.add(obj);
+        if (obj instanceof OverlayLine) lines.add(obj);
+        if (obj instanceof OverlayFreeform) freeforms.add(obj);
+        if (obj instanceof OverlayMarker) markers.add(obj);
+        if (obj instanceof OverlayText) texts.add(obj);
+        if (obj instanceof OverlayOval) ovals.add(obj);
+        if (obj instanceof OverlayBox) boxes.add(obj);
+        if (obj instanceof OverlayArrow) arrows.add(obj);
+        if (obj instanceof OverlayPolyline) polylines.add(obj);
 
         // overlay object type
         c = r.createCell(cellnum++);
@@ -629,7 +636,7 @@ public final class OverlayIO {
 
         // x2
         c = r.createCell(cellnum++);
-        if (obj.hasEndpoint()) { 
+        if (obj.hasEndpoint2()) { 
           c.setCellStyle(flt);
           c.setCellValue(obj.x2);
         }
@@ -640,7 +647,7 @@ public final class OverlayIO {
 
         // y2 
         c = r.createCell(cellnum++);
-        if (obj.hasEndpoint()) { 
+        if (obj.hasEndpoint2()) { 
           c.setCellStyle(flt);
           c.setCellValue(obj.y2);
         }
@@ -682,46 +689,48 @@ public final class OverlayIO {
     // write overlay statistics
     Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
       arrows, polylines};
-    String[] titles = 
-      { "Line", "Freeform", "Marker", "Text", "Oval", "Box",
-        "Arrow", "Polyline"};
-    for (int v=0; v<vectors.length; v++) 
-    {
-      if (vectors[v].size() > 0) 
-      {
-	rownum += 2;
-	r = s.createRow(rownum);
-	cellnum = 0;
-	c = r.createCell(cellnum++);
-	c.setCellStyle(text);
-	c.setCellValue(new HSSFRichTextString(titles[v] + " Statistics"));
-			      
-	for (int i=0; i<vectors[v].size(); i++) 
-	{
-	  OverlayObject obj = (OverlayObject) vectors[v].get(i);
-	  int index = i + 1;
-	  
-	  cellnum = 0;
-	  r = s.createRow(++rownum);
-	  c = r.createCell(cellnum++);
-	  c.setCellStyle(text);
-	  c.setCellValue(new HSSFRichTextString(titles[v] + " " + index));
-	  
-	  OverlayStat[] stats = obj.getStatisticsArray();
-	  for (int j=0; j<stats.length; j++) 
-	  {
-	    r = s.createRow(++rownum);
-	    cellnum = 1; // indent one column
-	    c = r.createCell(cellnum++);
-	    c.setCellStyle(text);
-	    c.setCellValue(new HSSFRichTextString(stats[j].getName()));
-	    
-	    c = r.createCell(cellnum++);
-	    c.setCellStyle(text);
-	    c.setCellValue(new HSSFRichTextString(stats[j].getValue()));
-	  } 
-	}
-      } 
+    String[] titles = OverlayStat.getOverlayTypes(); 
+    for (int v=0; v<vectors.length ; v++) {
+      if (vectors[v].size() > 0) {
+        rownum += 2;
+        r = s.createRow(rownum);
+        cellnum = 0;
+        c = r.createCell(cellnum++);
+        c.setCellStyle(text);
+        c.setCellValue(new HSSFRichTextString(titles[v] + " Statistics"));
+                  
+        for (int i=0; i<vectors[v].size(); i++) {
+          OverlayObject obj = (OverlayObject) vectors[v].get(i);
+          int index = i + 1; // index from 1 for readability
+          
+          cellnum = 0;
+          r = s.createRow(++rownum);
+          c = r.createCell(cellnum++);
+          c.setCellStyle(text);
+          c.setCellValue(new HSSFRichTextString(titles[v] + " " + index));
+          
+          String[] statTypes = OverlayStat.getStatTypes(titles[v]);
+          OptionManager om = (OptionManager)
+            VisBioFrame.getVisBio().getManager(OptionManager.class);
+
+          for (int j=0; j<statTypes.length; j++) {
+            String name = titles[v] + "." + statTypes[j];
+            BooleanOption option = (BooleanOption) om.getOption(name);
+            // print if option is selected
+            if (option.getValue()) {
+              r = s.createRow(++rownum);
+              cellnum = 1; // indent one column
+              c = r.createCell(cellnum++);
+              c.setCellStyle(text);
+              c.setCellValue(new HSSFRichTextString(statTypes[j]));
+              
+              c = r.createCell(cellnum++);
+              c.setCellStyle(text);
+              c.setCellValue(new HSSFRichTextString(obj.getStat(statTypes[j])));
+            }
+          } 
+        }
+      }
     } 
 
     // write nodes of noded objects

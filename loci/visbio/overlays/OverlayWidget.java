@@ -176,10 +176,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
     overlayBox = new JFileChooser();
     overlayBox.addChoosableFileFilter(new ExtensionFileFilter(
       new String[] {"txt"}, "Overlay text files"));
+    overlayBox.setAccessory(new StatsOptionsPane());
 
     overlayXLSBox = new JFileChooser();
     overlayXLSBox.addChoosableFileFilter(new ExtensionFileFilter(
       new String[] {"xls"}, "Overlay spreadsheet files"));
+    overlayXLSBox.setAccessory(new StatsOptionsPane());
 
     // current font text field
     currentFont = new JTextField();
@@ -668,9 +670,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
       }
     }
     else if (src == save) {
+      StatsOptionsPane statsPane = (StatsOptionsPane) overlayBox.getAccessory();
+      statsPane.loadSettings();
       int rval = overlayBox.showSaveDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = overlayBox.getSelectedFile();
+      statsPane.saveSettings();
       try {
         PrintWriter fout = new PrintWriter(new FileWriter(file));
         overlay.saveOverlays(fout);
@@ -683,9 +688,14 @@ public class OverlayWidget extends JPanel implements ActionListener,
       }
     }
     else if (src == export) {
+      StatsOptionsPane statsPane = (StatsOptionsPane)
+        overlayXLSBox.getAccessory();
+      statsPane.loadSettings();
       int rval = overlayXLSBox.showDialog(this, "Export");
       if (rval != JFileChooser.APPROVE_OPTION) return;
+      // TODO save current options to OverlayManager
       File file = overlayXLSBox.getSelectedFile();
+      statsPane.saveSettings();
       try {
         FileOutputStream fout = new FileOutputStream(file);
         HSSFWorkbook wb = overlay.exportOverlays();
@@ -831,6 +841,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
   }
 
   // -- Helper methods --
+
 
   /** Sets the font text field to reflect the currently chosen font. */
   protected void refreshCurrentFont() {

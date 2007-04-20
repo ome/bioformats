@@ -37,6 +37,12 @@ import visad.util.CursorUtil;
 
 public abstract class OverlayNodedObject extends OverlayObject {
 
+  // -- Static Fields -- 
+  
+  /** The names of the statistics this object reports */
+  protected static String[] statTypes =  {"Bounds", "Nodes",
+    "Length"};
+
   // -- Constants --
   
   /** Computed (X, Y) pairs for top 1/2 of a unit circle. */
@@ -73,7 +79,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
   protected static final float HLT_ALPHA = 0.5f;
 
   /** Radius in pixels of circle indicating a node is selected */
-  protected static final float RADIUS = 7.5f;
+  protected static final float RADIUS = 3.0f;
   
   // -- Fields --
 
@@ -97,9 +103,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Color to highlight highlighted node */
   protected Color highlightColor;
-
-  /** The active display, used by the getData method */
-  protected DisplayImpl display;
 
   // -- Constructors --
 
@@ -141,10 +144,28 @@ public abstract class OverlayNodedObject extends OverlayObject {
     turnOffHighlighting();
   }
 
+  // -- Static methods --
+
+  /** Returns the names of the statistics this object reports */
+  public static String[] getStatTypes() { return statTypes; }
+
   // -- OverlayObject API methods --
-  
+
+  /** Returns whether this object is drawable, i.e., is of nonzero 
+  *  size, area, length, etc. 
+  */
+  public boolean hasData() { 
+    if (isDrawing()) return (numNodes > 0);
+    else return (numNodes > 1);
+    // NOTE: Not exactly consistent with the other overlay objects.
+    // You want to see 1-node objects while drawing, but 
+    // want to delete them if after drawing is done.
+  }
+   
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
+    if (!hasData()) return null;
+
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
@@ -158,7 +179,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     int len = 2 * arcLen;
     int hlen = circleFilled ? len : len + 1;
     int totalSamples = maxNodes;
-    if (isHighlightNode()) totalSamples += hlen;
+    if (isHighlightNode() && !filled) totalSamples += hlen;
 
     float[][] rangeSamples = new float[4][totalSamples];
 
@@ -196,15 +217,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // **************************************************************
     // make highlight set and fill highlight range samples
     // **************************************************************
-    if (isHighlightNode()) {
+    if (isHighlightNode() && !filled) {
       SampledSet highlightSet = null;
-
-      // scale cirlce radius
-      float scale;
-      if (display != null) scale = getScalingValue(display);
-      else scale = 1f;
-      float rad = RADIUS * scale; // 5.0 pixels wide per active display
-
+      float rad = RADIUS; 
       // assemble highlight set samples
       float[][] highlightSetSamples = new float[2][hlen];
       float[] c = getNodeCoords(getHighlightedNodeIndex());
@@ -264,7 +279,21 @@ public abstract class OverlayNodedObject extends OverlayObject {
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(rangeSamples);
     }
-    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (VisADException exc) { 
+      exc.printStackTrace(); 
+      System.out.println("isHighlightNode() = " + isHighlightNode());
+      System.out.println("filled  = " + filled);
+      System.out.println("Thread.currentThread()" + Thread.currentThread());
+      System.out.println("totalSamples = " + totalSamples);
+      try {
+        System.out.println("nodesSet.getLength = " + nodesSet.getLength()); 
+      }
+      catch (VisADException exc2) {exc2.printStackTrace();}
+      System.out.println("maxNodes = " + maxNodes); 
+      System.out.println("numNodes = " + numNodes);
+      System.out.println("rangeSamples[0].length " + rangeSamples[0].length);
+
+    }
     catch (RemoteException exc) { exc.printStackTrace(); }
 
     return field; 
@@ -282,13 +311,12 @@ public abstract class OverlayNodedObject extends OverlayObject {
    * Computes only an outline regardless of the flag 'outline' 
    */
   public DataImpl getSelectionGrid(boolean outline) {
-    //return super.getSelectionGrid(true);
+    if (!hasData()) return null;
+    else if (outline) return super.getSelectionGrid(outline);
 
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
-
-    float scl = display == null ? 1.0f : getScalingValue(display);
-    float delta = GLOW_WIDTH * scl;
+    float delta = GLOW_WIDTH;
 
     /*
     // compute angle bisectors at each node
@@ -376,24 +404,27 @@ public abstract class OverlayNodedObject extends OverlayObject {
      return distSegWt[0];
   }
 
+  /** Returns a specific statistic of this object */
+  public String getStat(String name) {
+    if (name.equals("Bounds")) {
+      return "(" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")";
+    } 
+    else if (name.equals("Nodes")) {
+      return "" + numNodes;
+    }
+    else if (name.equals("Length")) {
+      return "" + (float) curveLength;
+    }
+    else return "No such statistic for this overlay type";
+  }
+
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     return "Bounds = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n" +
       "Number of Nodes = " + numNodes + "\n" +
       "Curve Length = " + (float) curveLength + "\n";
   }
-  
-  /** Gets this object's statistics in array */
-  public OverlayStat[] getStatisticsArray() {
-    String bounds = "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
-    OverlayStat[] stats = {
-      new OverlayStat("Bounds", bounds),
-      new OverlayStat("Length (pixels, standard)", "" + curveLength),
-    };
-
-    return stats;
-  }
-
+ 
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 
@@ -434,12 +465,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   }
 
   // -- Object API methods --
-
-  /** Makes this object aware of active display. 
-   *  The display is required to convert back and forth from pixel
-   *  to domain coordinates
-   */
-  public void setActiveDisplay (DisplayImpl d) { display = d; }
 
   /** Highlight a node. */ 
   public void setHighlightNode(int i, Color c) {
@@ -640,8 +665,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
       numNodes -= victims;
       maxNodes -= victims;
       nodes = newNodes;
-      if (numNodes == 0) overlay.removeObject(this);
-      if (numNodes <= 1) overlay.removeObject(this);
     } else {
       //System.out.println("deleteBetween(int, int) out of bounds error");
     }
@@ -661,12 +684,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
       numNodes--;
       maxNodes = numNodes;
       nodes = newNodes;
-
-      if (numNodes == 0) {
-        //System.out.println("destroying " + this);
-        overlay.removeObject(this);
-      }
-      if (numNodes <= 1) overlay.removeObject(this);
     }
   }
 

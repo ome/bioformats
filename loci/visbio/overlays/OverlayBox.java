@@ -31,6 +31,12 @@ import visad.*;
 /** OverlayBox is a rectangle overlay. */
 public class OverlayBox extends OverlayObject {
 
+  // -- Static Fields --
+  
+  /** The names of the statistics this object reports */
+  protected static String[] statTypes =  {"Coordinates", "Center", "Width", 
+    "Height", "Area", "Perimeter"};
+
   // -- Constructors --
 
   /** Constructs an uninitialized bounding rectangle. */
@@ -48,18 +54,16 @@ public class OverlayBox extends OverlayObject {
     computeGridParameters();
   }
 
-  // -- Static OverlayObject API methods -- 
-  /** Returns the types of statistics reported by this overlay */
-  public static String[] getStatTypes() {  
-    return new String[] {"Coordinates", "Center", "Width", "Height", "Area",
-        "Perimeter"};
-  }
+  // -- Static methods --
+
+  /** Returns the names of the statistics this object reports */
+  public static String[] getStatTypes() {return statTypes;}
 
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
-    if (x1 == x2 || y1 == y2) return null; 
+    if (!hasData()) return null; 
     // don't try to render a zero-area box
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
@@ -109,6 +113,11 @@ public class OverlayBox extends OverlayObject {
     return field;
   }
 
+  /** Returns whether this object is drawable, i.e., is of nonzero 
+   *  size, area, length, etc. 
+   */
+  public boolean hasData() { return (x1 != x2 && y1 != y2); }
+
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     double xdist = 0;
@@ -120,6 +129,38 @@ public class OverlayBox extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
+  /** Returns a specific statistic of this object*/
+  public String getStat(String name) {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float width = xx < 0 ? -xx : xx;
+    float height = yy < 0 ? -yy : yy;
+    float centerX = x1 + xx / 2;
+    float centerY = y1 + yy / 2;
+    float area = width * height;
+    float perim = width + width + height + height;
+
+    if (name.equals("Coordinates")) {
+      return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
+    } 
+    else if (name.equals("Center")) {
+      return "(" + centerX + ", " + centerY + ")"; 
+    } 
+    else if (name.equals("Width")) {
+      return "" + width;
+    }
+    else if (name.equals("Height")) {
+      return "" + height;
+    }
+    else if (name.equals("Area")) {
+      return "" + area;
+    }
+    else if (name.equals("Perimeter")) {
+      return "" + perim;
+    }
+    else return "No such statistic for this overlay type";
+  }
+  
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     float xx = x2 - x1;
@@ -136,32 +177,6 @@ public class OverlayBox extends OverlayObject {
       "Center = (" + centerX + ", " + centerY + ")\n" +
       "Width = " + width + "; Height = " + height + "\n" +
       "Area = " + area + "; Perimeter = " + perim;
-  }
-
-  /** Gets this object's statistics in array */
-  public OverlayStat[] getStatisticsArray() {
-    float xx = x2 - x1;
-    float yy = y2 - y1;
-    float width = xx < 0 ? -xx : xx;
-    float height = yy < 0 ? -yy : yy;
-    float centerX = x1 + xx / 2;
-    float centerY = y1 + yy / 2;
-    float area = width * height;
-    float perim = width + width + height + height;
-
-    String coords = "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
-    String center = "(" + centerX + ", " + centerY + ")";
-    
-    OverlayStat[] stats = {
-      new OverlayStat("Coordinates", coords),
-      new OverlayStat("Center", "" + center),
-      new OverlayStat("Width", "" + width),
-      new OverlayStat("Height", "" + height),
-      new OverlayStat("Area", "" + area),
-      new OverlayStat("Perimeter", "" + perim)
-    };
-
-    return stats;
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
@@ -200,6 +215,9 @@ public class OverlayBox extends OverlayObject {
   public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
 
   public DataImpl getSelectionGrid(boolean outline) {
+    if (!hasData()) return null;
+    else if (outline) return super.getSelectionGrid(outline);
+
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 

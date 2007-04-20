@@ -61,11 +61,7 @@ public class BoxTool extends OverlayTool {
   {
     if (box == null) return;
     box.setDrawing(false);
-
-    if (box.getX() == box.getX2() || box.getY() == box.getY2()) {
-      overlay.removeObject(box);
-    }
-
+    if (!box.hasData()) overlay.removeObject(box); 
     box = null;
     overlay.notifyListeners(new TransformEvent(overlay));
   }

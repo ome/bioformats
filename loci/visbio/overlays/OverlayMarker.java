@@ -30,6 +30,11 @@ import visad.*;
 
 /** OverlayMarker is a marker crosshairs overlay. */
 public class OverlayMarker extends OverlayObject {
+  
+  // -- Static Fields -- 
+  
+  /** The names of the statistics this object reports */
+  protected static String[] statTypes =  {"Coordinates"};
 
   // -- Constructors --
 
@@ -44,10 +49,16 @@ public class OverlayMarker extends OverlayObject {
     computeGridParameters();
   }
 
+  // -- Static methods --
+
+  /** Returns the names of the statistics this object reports */
+  public static String[] getStatTypes() {return statTypes;}
+
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
+    if (!hasData()) return null;
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
     float size = 0.02f * overlay.getScalingValue();
@@ -79,12 +90,18 @@ public class OverlayMarker extends OverlayObject {
     return field;
   }
 
+  /** Returns whether this object is drawable, i.e., is of nonzero 
+   *  size, area, length, etc. 
+   */
+  public boolean hasData() { return true; }
+
   /** Gets a DataImpl overlay indicating that this object is selected */
   public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
 
   /** Gets a DataImpl overlay indicating that this object is selected */
   public DataImpl getSelectionGrid(boolean outline) {
-    if (outline) return super.getSelectionGrid(outline);
+    if (!hasData()) return null;
+    else if (outline) return super.getSelectionGrid(outline);
 
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
@@ -204,7 +221,6 @@ public class OverlayMarker extends OverlayObject {
     return field;
   }
     
-
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     double xx = x1 - x;
@@ -212,18 +228,19 @@ public class OverlayMarker extends OverlayObject {
     return Math.sqrt(xx * xx + yy * yy);
   }
 
+  /** Returns a specific statistic of this object*/
+  public String getStat(String name) {
+    if (name.equals("Coordinates")) {
+      return "(" + x1 + ", " + y1 + ")";
+    } 
+    else return "No such statistic for this overlay type";
+  }
+ 
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     return "Marker coordinates = (" + x1 + ", " + y1 + ")";
   }
-  
-  /** Gets this object's statistics in array */
-  public OverlayStat[] getStatisticsArray() {
-    String coords = "(" + x1 + ", " + y1 + ")";
-    OverlayStat[] stats = { new OverlayStat("Coordinates", coords) };
-    return stats;
-  }
-
+ 
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 

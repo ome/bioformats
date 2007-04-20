@@ -31,6 +31,13 @@ import visad.*;
 /** OverlayOval is a bounding oval overlay. */
 public class OverlayOval extends OverlayObject {
 
+  // -- Static Fields --
+  
+  /** The names of the statistics this object reports */
+  protected static String[] statTypes =  {"Coordinates", "Center", "Radius", 
+    "Major Axis Length", "Minor Axis Length", "Area", "Eccentricity",
+    "Circumference (approximate)"};
+ 
   // -- Constants --
 
   /** Computed (X, Y) pairs for top 1/2 of a unit circle. */
@@ -80,11 +87,22 @@ public class OverlayOval extends OverlayObject {
     computeGridParameters();
   }
 
+  // -- Static methods --
+
+  /** Returns the names of the statistics this object reports */
+  public static String[] getStatTypes() { return statTypes; }
+
   // -- OverlayObject API methods --
+
+  /** Returns whether this object is drawable, i.e., is of nonzero 
+   *  size, area, length, etc. 
+   */
+  public boolean hasData() { return (x1 != x2 && y1 != y2); }
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
-    if (x1 == x2 || y1 == y2) return null; // don't try to render a zero-area ellipse
+    if (!hasData()) return null;
+
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
@@ -146,13 +164,14 @@ public class OverlayOval extends OverlayObject {
     return field;
   }
 
+  
   /** Gets a layer indicating this overlay is selected */
   public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
 
   /** Gets a layer indicating this overlay is selected */
   public DataImpl getSelectionGrid(boolean outline) {
-    if (x1 == x2 || y1 == y2) return null; 
-    // don't try to render a zero-area ellipse
+    if (!hasData()) return null;
+    else if (outline) return super.getSelectionGrid(outline);
 
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
@@ -218,6 +237,60 @@ public class OverlayOval extends OverlayObject {
     if (y < y1 && y < y2) ydist = Math.min(y1, y2) - y;
     else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
     return Math.sqrt(xdist * xdist + ydist * ydist);
+  } 
+
+  /** Returns a specific statistic of this object */
+  public String getStat(String name) {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float centerX = x1 + xx / 2;
+    float centerY = y1 + yy / 2;
+    float radiusX = (xx < 0 ? -xx : xx) / 2;
+    float radiusY = (yy < 0 ? -yy : yy) / 2;
+    float major, minor;
+    if (radiusX > radiusY) {
+      major = radiusX;
+      minor = radiusY;
+    }
+    else {
+      major = radiusY;
+      minor = radiusX;
+    }
+    float eccen = (float) Math.sqrt(1 - (minor * minor) / (major * major));
+    float area = (float) (Math.PI * major * minor);
+
+    // ellipse circumference approximation algorithm due to Ramanujan found at
+    // http://mathforum.org/dr.math/faq/formulas/faq.ellipse.circumference.html
+    float mm = (major - minor) / (major + minor);
+    float q = 3 * mm * mm;
+    float circum = (float) (Math.PI *
+      (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
+
+    if (name.equals("Coordinates")) {
+      return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
+    } 
+    else if (name.equals("Center")) {
+      return "(" + centerX + ", " + centerY + ")";
+    } 
+    else if (name.equals("Radius")) {
+      return "(" + radiusX + ", " + radiusY + ")";
+    }
+    else if (name.equals("Major Axis Length")) {
+      return "" + major;
+    }
+    else if (name.equals("Minor Axis Length")) {
+      return "" + minor;
+    }
+    else if (name.equals("Area")) {
+      return "" + area;
+    }
+    else if (name.equals("Eccentricity")) {
+      return "" + eccen;
+    }
+    else if (name.equals("Circumference (approximate)")) {
+      return "" + circum;
+    }
+    else return "No such statistic for this overlay type";
   }
 
   /** Retrieves useful statistics about this overlay. */
@@ -256,7 +329,7 @@ public class OverlayOval extends OverlayObject {
       "Circumference = " + circum + " (approximate)";
   }
 
- /** Gets this object's statistics in array */
+  /** Gets this object's statistics in array */
   public OverlayStat[] getStatisticsArray() {
     float xx = x2 - x1;
     float yy = y2 - y1;

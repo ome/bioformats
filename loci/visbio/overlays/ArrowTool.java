@@ -61,6 +61,7 @@ public class ArrowTool extends OverlayTool {
   {
     if (arrow == null) return;
     arrow.setDrawing(false);
+    if (!arrow.hasData()) overlay.removeObject(arrow);
     arrow = null;
     overlay.notifyListeners(new TransformEvent(overlay));
   }

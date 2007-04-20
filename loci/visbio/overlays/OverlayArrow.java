@@ -32,6 +32,12 @@ import visad.*;
 /** OverlayArrow is an arrow wedge overlay. */
 public class OverlayArrow extends OverlayObject {
 
+  // -- Static Fields --
+
+  /** The names of the statistics this object reports */
+  protected static String[] statTypes = {"Tip coordinates", "Angle",
+    "Length"};
+
   // -- Constructors --
 
   /** Constructs an uninitialized arrow wedge overlay. */
@@ -49,11 +55,16 @@ public class OverlayArrow extends OverlayObject {
     computeGridParameters();
   }
 
+  // -- Static methods --
+
+  /** Returns the names of the statistics this object reports */
+  public static String[] getStatTypes() {return statTypes;}
+
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
-    if (x1 == x2 && y1 == y2) return null; // dont render zero length arrows
+    if (!hasData()) return null; // dont render zero length arrows
     float padding = 0.02f * overlay.getScalingValue();
     double xx = x2 - x1;
     double yy = y2 - y1;
@@ -104,6 +115,11 @@ public class OverlayArrow extends OverlayObject {
     return field;
   }
 
+  /** Returns whether this object is drawable, i.e., is of nonzero 
+   *  size, area, length, etc. 
+   */
+  public boolean hasData() { return (x1 != x2 || y1 != y2); }
+
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     return MathUtil.getDistance(new double[] {x1, y1},
@@ -115,7 +131,7 @@ public class OverlayArrow extends OverlayObject {
 
   /** Gets a selection grid for this object */
   public DataImpl getSelectionGrid(boolean outline) {
-    if (x1 == x2 && y1 == y2) return null; // dont render zero length arrows
+    if (!hasData()) return null; // dont render zero length arrows
     else if (outline) return super.getSelectionGrid(true);
 
     RealTupleType domain = overlay.getDomainType();
@@ -190,17 +206,24 @@ public class OverlayArrow extends OverlayObject {
     return field;
   }
 
+  /** Returns a specific statistic of this object */
+  public String getStat(String name) {
+    if (name.equals("Tip coordinates")) {
+      return "(" + x1 + ", " + y1 + ")";
+    } 
+    else if (name.equals("Angle")) {
+      return "" + getAngle();
+    } 
+    else if (name.equals("Length")) {
+      return "" + getLength();
+    }
+    else return "No such statistic for this overlay type";
+  }
+
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
-    float xx = x2 - x1;
-    float yy = y2 - y1;
-    float angle = (float) (180 * Math.atan(xx / yy) / Math.PI);
-    if (yy < 0) angle += 180;
-    if (angle < 0) angle += 360;
-    float length = (float) Math.sqrt(xx * xx + yy * yy);
-
     return "Arrow tip coordinates = (" + x1 + ", " + y1 + ")\n" +
-      "Angle = " + angle + "; Length = " + length;
+      "Angle = " + getAngle() + "; Length = " + getLength();
   }
 
   /** Gets this object's statistics in array */
@@ -244,6 +267,26 @@ public class OverlayArrow extends OverlayObject {
     xGrid3 = corners2[2]; yGrid3 = corners2[3];
     xGrid4 = corners2[0]; yGrid4 = corners2[1];
     horizGridCount = 3; vertGridCount = 2;
+  }
+
+  // -- Helper methods --
+  
+  /** Computes the angle of this arrow */
+  protected float getAngle() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float angle = (float) (180 * Math.atan(xx / yy) / Math.PI);
+    if (yy < 0) angle += 180;
+    if (angle < 0) angle += 360;
+    return angle;
+  }
+
+  /** Computes the length of this arrow */
+  protected float getLength() { 
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float length = (float) Math.sqrt(xx * xx + yy * yy);
+    return length;
   }
 
   // -- Object API methods --

@@ -26,6 +26,7 @@ package loci.visbio.overlays;
 import loci.visbio.*;
 import loci.visbio.data.DataManager;
 import loci.visbio.help.HelpManager;
+import loci.visbio.state.OptionManager;
 
 /** OverlayManager is the manager encapsulating VisBio's overlay logic. */
 public class OverlayManager extends LogicManager {
@@ -57,6 +58,19 @@ public class OverlayManager extends LogicManager {
     bio.setSplashStatus("Initializing overlay logic");
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     dm.registerDataType(OverlayTransform.class, "Overlays");
+
+    // register Overlay options
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    String[] overlayTypes = OverlayStat.getOverlayTypes();
+    for (int i=0; i<overlayTypes.length; i++) {
+      String[] statTypes = OverlayStat.getStatTypes(overlayTypes[i]);
+      for (int j=0; j<statTypes.length; j++) {
+        String name = overlayTypes[i] + "." + statTypes[j];
+        om.addBooleanOption("Overlays", name, '|',
+            "Toggles whether the " + name + " statistic is exported or saved",
+            true);
+      }
+    }
 
     // help window
     bio.setSplashStatus(null);

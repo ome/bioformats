@@ -31,6 +31,12 @@ import visad.DisplayEvent;
 import visad.DisplayImpl;
 import visad.util.CursorUtil;
 
+
+//goals: 
+// eliminate errors in code
+// make code readable 
+// consolidate code where possible
+
 /** FreeformTool is the tool for creating freeform objects. */
 public class FreeformTool extends OverlayTool {
 
@@ -108,7 +114,6 @@ public class FreeformTool extends OverlayTool {
   public void mouseDown(DisplayEvent e, int px, int py,
     float dx, float dy, int[] pos, int mods)
   {
-    // -- housekeeping
     boolean ctl = (mods & InputEvent.CTRL_MASK) != 0;
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
@@ -148,7 +153,7 @@ public class FreeformTool extends OverlayTool {
         // near an interior node
         if (ctl && dist < ERASE_THRESH) {
           // split and enter erase mode
-          slice(freeform, dx, dy, dist, seg, weight);
+          slice(freeform, dist, seg, weight);
           freeform = null;
         }
         else if (dist < EDIT_THRESH) {
@@ -163,7 +168,7 @@ public class FreeformTool extends OverlayTool {
             float[] a = freeform.getNodeCoords(seg+1);
             freeform.insertNode(seg+2, a[0], a[1]);
             tendril = new Tendril (seg+1, seg+2, true);
-            splitNodes (seg, seg+3);
+            splitNodes (freeform, seg, seg+3);
           }
           else {
             // determine projection on seg.
@@ -173,7 +178,7 @@ public class FreeformTool extends OverlayTool {
             freeform.insertNode(seg + 1, newXY[0], newXY[1]);
             freeform.insertNode(seg + 1, newXY[0], newXY[1]);
             tendril = new Tendril(seg+1, seg+2, false);
-            splitNodes (seg+1, seg+3);
+            splitNodes (freeform, seg+1, seg+3);
           }
           setMode(EDIT);
         }
@@ -331,20 +336,16 @@ public class FreeformTool extends OverlayTool {
             last = freeform.getNodeCoords(index);
             lastDbl[0] = (double) last[0];
             lastDbl[1] = (double) last[1];
-
-            // DISTANCE COMPUTATION 
-            // floats and doubles
             delta = MathUtil.getDistance (nearest, lastDbl);
             freeform.setCurveLength(freeform.getCurveLength() - delta);
 
-            // delete last node node
+            // delete last node
             freeform.deleteNode(index);
-            // WARNING: this is O(n) expensive.
-            // Maybe remove it and just update at mouseUp?
-            freeform.updateBoundingBox();
+            if (!freeform.hasData()) {
+             setMode(CHILL);
+            }
           }
           else setMode(DRAW);
-          if (freeform.getNumNodes() == 0) setMode(CHILL);
         }
       }
       // do nothing if too far from curve
@@ -485,8 +486,7 @@ public class FreeformTool extends OverlayTool {
   // -- Helper methods for mouse methods
   
   /** Slices a freeform in two. */
-  private void slice(OverlayFreeform freef,
-    float dx, float dy, double dist, int seg, double weight)
+  private void slice(OverlayFreeform freef, double dist, int seg, double weight)
   {
     int f1Start, f2Start, f1Stop, f2Stop;
     OverlayFreeform f1, f2;
@@ -575,7 +575,7 @@ public class FreeformTool extends OverlayTool {
    * Splits the node array into two parts.  The first part goes from a[0] to
    * a[index-1], the second from a[index2] to a[a.length -1].
    */
-  private void splitNodes(int index, int index2) {
+  private void splitNodes(OverlayFreeform freeform, int index, int index2) {
     // splits the array a into two (before the index specified)
     float[][] a = freeform.getNodes();
     // print these guys
@@ -596,7 +596,6 @@ public class FreeformTool extends OverlayTool {
   private void setMode(int newMode) {
     mode = newMode;
 
-    
     if (mode == INIT) {
     }
     else if (mode == DRAW) {
@@ -627,12 +626,14 @@ public class FreeformTool extends OverlayTool {
     else if (mode == CHILL) {
       otherFreefs.removeAllElements();
       if (freeform != null) {
-        if (freeform.getNumNodes() <= 1) overlay.removeObject(freeform);
+        freeform.setDrawing(false);
+        if (!freeform.hasData()) {
+          overlay.removeObject(freeform);
+        }
         else {
           freeform.computeLength();
           freeform.updateBoundingBox();
           freeform.computeGridParameters();
-          freeform.setDrawing(false);
           freeform.setSelected(true);
           freeform = null;
         }

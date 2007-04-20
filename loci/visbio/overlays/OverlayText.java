@@ -31,6 +31,10 @@ import visad.*;
 
 /** OverlayText is a text string overlay. */
 public class OverlayText extends OverlayObject {
+  // -- Static Fields -- 
+  
+  /** The names of the statistics this object reports */
+  protected static String[] statTypes =  {"Coordinates"};
 
   // -- Constructors --
 
@@ -46,10 +50,17 @@ public class OverlayText extends OverlayObject {
     computeGridParameters();
   }
 
+  // -- Static methods --
+
+  /** Returns the names of the statistics this object reports */
+  public static String[] getStatTypes() {return statTypes;}
+
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
+    if (!hasData()) return null;
+
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getTextRangeType();
 
@@ -71,12 +82,18 @@ public class OverlayText extends OverlayObject {
     return field;
   }
 
+  /** Returns whether this object is drawable, i.e., is of nonzero 
+   *  size, area, length, etc. 
+   */
+  public boolean hasData() { return true; }
+
   /** Gets a layer indicating this object is selected */
   public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
 
   /** Gets a layer indicating this object is selected */
   public DataImpl getSelectionGrid(boolean outline) { 
-    if (outline) return super.getSelectionGrid(outline);
+    if (!hasData()) return null;
+    else if (outline) return super.getSelectionGrid(outline);
 
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
@@ -121,16 +138,17 @@ public class OverlayText extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
+  /** Returns a specific statistic of this object*/
+  public String getStat(String name) {
+    if (name.equals("Coordinates")) {
+      return "(" + x1 + ", " + y1 + ")";
+    } 
+    else return "No such statistic for this overlay type";
+  }
+
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     return "Text coordinates = (" + x1 + ", " + y1 + ")";
-  }
-
-  /** Gets this object's statistics in array */
-  public OverlayStat[] getStatisticsArray() {
-    String coords = "(" + x1 + ", " + y1 + ")";
-    OverlayStat[] stats = { new OverlayStat("Coordinates", coords) };
-    return stats;
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

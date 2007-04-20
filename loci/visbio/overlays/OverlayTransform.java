@@ -531,6 +531,10 @@ public class OverlayTransform extends DataTransform
   public static boolean isParentRequired() { return true; }
 
   // -- DataTransform API methods --
+  
+  public Data getData(int[] pos, int dim, DataCache cache) {
+    return getData(null, pos, dim, cache);
+  }
 
   /**
    * Retrieves the data corresponding to the given dimensional position,
@@ -539,6 +543,11 @@ public class OverlayTransform extends DataTransform
    * @return null if the transform does not provide data of that dimensionality
    */
   public Data getData(TransformLink link, int[] pos, int dim, DataCache cache) {
+    // note to ACS: do not assume TransformLink is null.  It may be null!
+    // If so, assume some reasonable defaults when computing your selection 
+    // grids.
+
+
     if (dim != 2) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;
