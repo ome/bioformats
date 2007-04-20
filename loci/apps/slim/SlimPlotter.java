@@ -141,7 +141,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private JRadioButton colorHeight, colorTau;
   private JSpinner numCurves;
   private JCheckBox showData, showScale;
-  private JCheckBox showBox, showLine;
+  private JCheckBox showBox, showLine, showFWHMs;
   private JCheckBox showFit, showResiduals;
   private JCheckBox zOverride;
   private JTextField zScaleValue;
@@ -154,10 +154,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   // VisAD objects
   private Unit[] bcUnits;
   private RealType bType, cType;
-  private RealTupleType bc;
+  private RealTupleType bc, bcv;
   private FunctionType bcvFunc, bcvFuncFit, bcvFuncRes;
   private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapFit, vMapRes;
-  private DataRenderer decayRend, fitRend, resRend, lineRend;
+  private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
   private DataReferenceImpl decayRef, fitRef, resRef;
   private DisplayImpl iPlot, decayPlot;
   private ScalarMap intensityMap;
@@ -347,6 +347,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       Linear1DSet cSet = new Linear1DSet(cType,
         minWave, maxWave, channels, null, new Unit[] {nm}, null);
       bc = new RealTupleType(bType, cType);
+      bcv = new RealTupleType(bType, cType, vType);
       RealType vType2 = RealType.getRealType("value");
       RealTupleType vv = new RealTupleType(vType, vType2);
       bcvFunc = new FunctionType(bc, vv);
@@ -585,6 +586,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           if (progress.isCanceled()) System.exit(0);
         }
         log("Calculating full width half maxes");
+        float[] half = new float[channels];
+        float[] fwhm1 = new float[channels], fwhm2 = new float[channels];
         for (int c=0; c<channels; c++) {
           // sum across all pixels
           int[] sum = new int[timeBins];
@@ -594,24 +597,29 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             }
           }
           // find full width half max
-          float half = sum[maxPeak] / 2f;
-          float h1 = Float.NaN, h2 = Float.NaN;
+          half[c] = sum[maxPeak] / 2f;
+          fwhm1[c] = fwhm2[c] = Float.NaN;
           boolean up = true;
           for (int t=0; t<timeBins-1; t++) {
-            if (sum[t] <= half && sum[t + 1] >= half) { // upslope
-              float q = (half - sum[t]) / (sum[t + 1] - sum[t]);
-              h1 = binsToPico(t + q);
+            if (sum[t] <= half[c] && sum[t + 1] >= half[c]) { // upslope
+//              System.out.println("Found upslope: t=" + t + ", low=" + sum[t] + ", hi=" + sum[t+1]);//TEMP
+              float q = (half[c] - sum[t]) / (sum[t + 1] - sum[t]);
+              fwhm1[c] = timeRange * (t + q) / timeBins; // binsToNano
             }
-            else if (sum[t] >= half && sum[t + 1] <= half) { // downslope
-              float q = (half - sum[t + 1]) / (sum[t] - sum[t + 1]);
-              h2 = binsToPico(t + 1 - q);
+            else if (sum[t] >= half[c] && sum[t + 1] <= half[c]) { // downslope
+//              System.out.println("Found downslope: t=" + t + ", low=" + sum[t] + ", hi=" + sum[t+1]);//TEMP
+              float q = (half[c] - sum[t + 1]) / (sum[t] - sum[t + 1]);
+              fwhm2[c] = timeRange * (t + 1 - q) / timeBins; // binsToNano
             }
-            if (h1 == h1 && h2 == h2) break;
+//            else System.out.println("Unsuitable: t=" + t + ", low=" + sum[t] + ", hi=" + sum[t+1]);//TEMP
+            if (fwhm1[c] == fwhm1[c] && fwhm2[c] == fwhm2[c]) break;
           }
           String s = "#" + (c + 1);
           while (s.length() < 3) s = " " + s;
-          log("\tChannel " + s + ": fwhm = " + (h2 - h1) +
-            " ps, peak = " + sum[maxPeak]);
+          float h1 = 1000 * fwhm1[c], h2 = 1000 * fwhm2[c];
+          log("\tChannel " + s + ": fwhm = " + (h2 - h1) + " ps");
+          log("\t             peak = " + sum[maxPeak]);
+          log("\t             center = " + ((h1 + h2) / 2) + " ps");
           log("\t             range = [" + h1 + ", " + h2 + "] ps");
           setProgress(progress, 950 + 10 *
             (c + 1) / channels); // estimate: 95% -> 96%
@@ -629,6 +637,27 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           new ConstantMap(0, Display.Blue),
           //new ConstantMap(2, Display.LineWidth)
         });
+
+        // add green lines to indicate full width half maxes
+        fwhmRend = new DefaultRendererJ3D();
+        DataReferenceImpl fwhmRef = new DataReferenceImpl("fwhm");
+        Gridded3DSet[] fwhmSets = new Gridded3DSet[channels];
+        for (int c=0; c<channels; c++) {
+          float wave = minWave + c * waveStep;
+          float[][] fwhmLines = {
+            {fwhm1[c], fwhm2[c]},
+            {wave, wave},
+            {half[c], half[c]}
+          };
+          fwhmSets[c] = new Gridded3DSet(bcv, fwhmLines, 2);
+        }
+        fwhmRef.setData(new UnionSet(bcv, fwhmSets));
+        decayPlot.addReferences(fwhmRend, fwhmRef, new ConstantMap[] {
+          new ConstantMap(0, Display.Red),
+          new ConstantMap(0, Display.Blue),
+          //new ConstantMap(2, Display.LineWidth)
+        });
+        fwhmRend.toggle(false);
       }
 
       // construct 2D pane
@@ -800,6 +829,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         "Toggles visibility of aligned peaks indicator line");
       showLine.setEnabled(adjustPeaks);
       showLine.addActionListener(this);
+      showFWHMs = new JCheckBox("FWHMs", false);
+      showFWHMs.setToolTipText("Toggles visibility of full width half maxes");
+      showFWHMs.setEnabled(adjustPeaks);
+      showFWHMs.addActionListener(this);
       showFit = new JCheckBox("Fit", false);
       showFit.setToolTipText("Toggles visibility of fitted curves");
       showFit.setEnabled(adjustPeaks);
@@ -899,6 +932,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       showPanel.add(showScale);
       showPanel.add(showBox);
       showPanel.add(showLine);
+      showPanel.add(showFWHMs);
       showPanel.add(showFit);
       showPanel.add(showResiduals);
 
@@ -1121,6 +1155,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     }
     else if (src == showData) decayRend.toggle(showData.isSelected());
     else if (src == showLine) lineRend.toggle(showLine.isSelected());
+    else if (src == showFWHMs) fwhmRend.toggle(showFWHMs.isSelected());
     else if (src == showBox) {
       try { decayPlot.getDisplayRenderer().setBoxOn(showBox.isSelected()); }
       catch (Exception exc) { exc.printStackTrace(); }
