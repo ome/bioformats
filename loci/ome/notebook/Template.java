@@ -300,6 +300,9 @@ public class Template {
           writer.write("    default \"" + t.getDefaultValue() + "\"\n");
         }
         writer.write("    grid \"" + t.getRow() + "," + t.getColumn() + "\"\n");
+        writer.write("    span \"" + t.getWidth() + "," + 
+          t.getHeight() + "\"\n"); 
+        writer.write("    repeated \"" + t.isRepeated() + "\"\n");
 
         String[] enums = t.getEnums();
         if (enums != null && enums.length > 0) {
@@ -333,6 +336,9 @@ public class Template {
           } 
           writer.write("      grid \"" + t.getRow() + "," + 
             t.getColumn() + "\"\n");
+          writer.write("      span \"" + t.getWidth() + "," + 
+            t.getHeight() + "\"\n"); 
+          writer.write("      repeated \"" + t.isRepeated() + "\"\n");
           
           String[] enums = t.getEnums();
           if (enums != null && enums.length > 0) {
