@@ -110,10 +110,10 @@ public class ViewHandler implements Saveable {
   /** Zooms out on the display. */
   public void zoomOut() { zoom(1 / ZOOM_AMOUNT); }
 
-  /** Rotates the display to the left (3D only). */
+  /** Rotates the display clockwise (2D and 3D). */
   public void rotateClockwise() { rotate(0, 0, ROTATION_AMOUNT); }
 
-  /** Rotates the display to the left (3D only). */
+  /** Rotates the display counterclockwise (2D and 3D). */
   public void rotateCounterclockwise() { rotate(0, 0, -ROTATION_AMOUNT); }
 
   /** Rotates the display to the left (3D only). */
