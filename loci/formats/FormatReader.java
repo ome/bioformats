@@ -39,14 +39,6 @@ public abstract class FormatReader extends FormatHandler
   /** Default thumbnail width and height. */
   protected static final int THUMBNAIL_DIMENSION = 128;
 
-  // -- Static fields --
-
-  /** Debugging flag. */
-  public static boolean debug = false;
-
-  /** Debugging level. 1=basic, 2=extended, 3=everything, 4=insane. */
-  public static int debugLevel = 1;
-
   // -- Fields --
 
   /** Current file. */
@@ -185,22 +177,6 @@ public abstract class FormatReader extends FormatHandler
   /** Gets a value from the metadata table. */
   protected Object getMeta(String key) {
     return metadata.get(key);
-  }
-
-  /** Issues a debugging statement. */
-  protected void debug(String s) {
-    // NB: could use a logger class or other means of output here, if desired
-    String name = getClass().getName();
-    String prefix = "loci.formats.in.";
-    if (name.startsWith(prefix)) name = name.substring(prefix.length());
-    String msg = System.currentTimeMillis() + ": " + name + ": " + s;
-    if (debugLevel > 3) trace(msg);
-    else System.out.println(msg);
-  }
-
-  /** Issues a stack trace. */
-  protected void trace(String s) {
-    new Exception(s).printStackTrace();
   }
 
   // -- IFormatReader API methods --
@@ -496,21 +472,6 @@ public abstract class FormatReader extends FormatHandler
   /* @see FormatReader#testRead(String[]) */
   public boolean testRead(String[] args) throws FormatException, IOException {
     return FormatTools.testRead(this, args);
-  }
-
-  // -- Utility methods --
-
-  /** Toggles debug mode (more verbose output and error messages). */
-  public static void setDebug(boolean debug) {
-    FormatReader.debug = debug;
-  }
-
-  /**
-   * Toggles debug mode verbosity (which kinds of output are produced).
-   * @param debugLevel 1=basic, 2=extended, 3=everything.
-   */
-  public static void setDebugLevel(int debugLevel) {
-    FormatReader.debugLevel = debugLevel;
   }
 
   // -- Deprecated IFormatReader API methods --

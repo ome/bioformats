@@ -140,10 +140,10 @@ public final class FormatTools {
           else if (args[i].equals("-omexml")) omexml = true;
           else if (args[i].equals("-normalize")) normalize = true;
           else if (args[i].equals("-fast")) fastBlit = true;
-          else if (args[i].equals("-debug")) FormatReader.setDebug(true);
+          else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
           else if (args[i].equals("-level")) {
             try {
-              FormatReader.setDebugLevel(Integer.parseInt(args[++i]));
+              FormatHandler.setDebugLevel(Integer.parseInt(args[++i]));
             }
             catch (NumberFormatException exc) { }
           }
@@ -169,8 +169,8 @@ public final class FormatTools {
         }
       }
     }
-    if (FormatReader.debug) {
-      System.out.println("Debugging at level " + FormatReader.debugLevel);
+    if (FormatHandler.debug) {
+      System.out.println("Debugging at level " + FormatHandler.debugLevel);
     }
     if (id == null) {
       String className = reader.getClass().getName();

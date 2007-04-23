@@ -85,13 +85,13 @@ public class ClassList {
       Class c = null;
       try { c = Class.forName(line); }
       catch (ClassNotFoundException exc) {
-        if (FormatReader.debug) exc.printStackTrace();
+        if (FormatHandler.debug) exc.printStackTrace();
       }
       catch (NoClassDefFoundError err) {
-        if (FormatReader.debug) err.printStackTrace();
+        if (FormatHandler.debug) err.printStackTrace();
       }
       catch (ExceptionInInitializerError err) {
-        if (FormatReader.debug) err.printStackTrace();
+        if (FormatHandler.debug) err.printStackTrace();
       }
       if (c == null || (base != null && !base.isAssignableFrom(c))) {
         System.err.println("Error: \"" + line + "\" is not valid.");

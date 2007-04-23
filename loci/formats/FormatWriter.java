@@ -33,14 +33,6 @@ public abstract class FormatWriter extends FormatHandler
   implements IFormatWriter
 {
 
-  // -- Constants --
-
-  /** Debugging flag. */
-  public static boolean debug = false;
-
-  /** Debugging level. 1=basic, 2=extended, 3=everything, 4=insane. */
-  public static int debugLevel = 1;
-
   // -- Fields --
 
   /** Frame rate to use when writing in frames per second, if applicable. */

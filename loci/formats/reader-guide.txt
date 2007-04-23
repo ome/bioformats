@@ -111,7 +111,7 @@ and Location.getMappedId(String).
   loci.formats.BaseCompressor.  These include LZW, LZO, Base64, ZIP and
   RLE (PackBits).
 
-- Debugging statements can be added using FormatReader.debug(String).
+- Debugging statements can be added using FormatHandler.debug(String).
 
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
   loci.formats.ome.OMEXMLMetadataStore provides methods for creating OME-XML
