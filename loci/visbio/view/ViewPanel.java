@@ -94,6 +94,8 @@ public class ViewPanel extends JPanel
     else if (cmd.equals("panRight")) handler.panRight();
     else if (cmd.equals("panUp")) handler.panUp();
     else if (cmd.equals("panDown")) handler.panDown();
+    else if (cmd.equals("rotateClock")) handler.rotateClockwise();
+    else if (cmd.equals("rotateCounter")) handler.rotateCounterclockwise();
     else if (cmd.equals("rotateLeft")) handler.rotateLeft();
     else if (cmd.equals("rotateRight")) handler.rotateRight();
     else if (cmd.equals("rotateUp")) handler.rotateUp();
@@ -148,6 +150,11 @@ public class ViewPanel extends JPanel
       "Pans the display downward");
 
     // rotate buttons
+    JButton rotateCW = makeButton("rotate-clock.png", "Rotate clockwise",
+      "rotateClock", "Rotates the display clockwise");
+    JButton rotateCC = makeButton("rotate-counter.png",
+      "Rotate counterclockwise", "rotateCounter",
+      "Rotates the display counterclockwise");
     JButton rotateL = null, rotateR = null, rotateU = null, rotateD = null;
     if (threeD) {
       rotateL = makeButton("rotate-left.png", "Rotate left", "rotateLeft",
@@ -161,10 +168,9 @@ public class ViewPanel extends JPanel
     }
 
     // lay out components
-    String rows = "pref, 3dlu, pref";
-    if (threeD) rows += ", 3dlu, pref";
-    PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", rows));
+    PanelBuilder builder = new PanelBuilder(new FormLayout("pref, 3dlu, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref",
+      "pref, 3dlu, pref, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
 
     builder.addLabel("Zoom", cc.xy(1, 1));
@@ -178,12 +184,14 @@ public class ViewPanel extends JPanel
     builder.add(panU, cc.xy(7, 3));
     builder.add(panD, cc.xy(9, 3));
 
+    builder.addLabel("Rotate", cc.xy(1, 5));
+    builder.add(rotateCW, cc.xy(3, 5));
+    builder.add(rotateCC, cc.xy(5, 5));
     if (threeD) {
-      builder.addLabel("Rotate", cc.xy(1, 5));
-      builder.add(rotateL, cc.xy(3, 5));
-      builder.add(rotateR, cc.xy(5, 5));
-      builder.add(rotateU, cc.xy(7, 5));
-      builder.add(rotateD, cc.xy(9, 5));
+      builder.add(rotateL, cc.xy(7, 5));
+      builder.add(rotateR, cc.xy(9, 5));
+      builder.add(rotateU, cc.xy(11, 5));
+      builder.add(rotateD, cc.xy(13, 5));
     }
 
     return builder.getPanel();

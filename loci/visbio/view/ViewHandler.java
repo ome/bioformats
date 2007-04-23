@@ -51,7 +51,7 @@ public class ViewHandler implements Saveable {
   public static final double ZOOM_AMOUNT = 1.5;
 
   /** How far display rotates each time. */
-  public static final double ROTATION_AMOUNT = 30;
+  public static final double ROTATION_AMOUNT = 15;
 
   /** How far display pans each time. */
   public static final double PAN_AMOUNT = 0.25;
@@ -109,6 +109,12 @@ public class ViewHandler implements Saveable {
 
   /** Zooms out on the display. */
   public void zoomOut() { zoom(1 / ZOOM_AMOUNT); }
+
+  /** Rotates the display to the left (3D only). */
+  public void rotateClockwise() { rotate(0, 0, ROTATION_AMOUNT); }
+
+  /** Rotates the display to the left (3D only). */
+  public void rotateCounterclockwise() { rotate(0, 0, -ROTATION_AMOUNT); }
 
   /** Rotates the display to the left (3D only). */
   public void rotateLeft() { rotate(0, ROTATION_AMOUNT, 0); }
