@@ -51,7 +51,25 @@ public class TemplateTab {
 
   // -- TemplateTab API methods --
 
-  public int getRows() { return rows; }
+  public int getRows() { 
+    if (rows == 0) {
+      for (int i=0; i<fields.size(); i++) {
+        rows += ((TemplateField) fields.get(i)).getHeight();
+      } 
+    
+      for (int i=0; i<groups.size(); i++) {
+        TemplateGroup g = (TemplateGroup) groups.get(i);
+        for (int k=0; k<g.getRepetitions(); k++) { 
+          for (int j=0; j<g.getNumFields(); j++) {
+            rows += g.getField(0, j).getHeight();
+          }
+          rows++; 
+        } 
+      }
+    }
+    
+    return rows; 
+  }
 
   public void setRows(int rows) { this.rows = rows; }
 

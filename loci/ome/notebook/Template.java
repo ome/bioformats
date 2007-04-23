@@ -355,6 +355,56 @@ public class Template {
     writer.close(); 
   }
 
+  /** Determine number of repetitions for each repeatable field. */
+  public void initializeFields(OMENode root) {
+    for (int i=0; i<tabs.length; i++) {
+      int fields = tabs[i].getNumFields(); 
+      for (int j=0; j<fields; j++) {
+        if (tabs[i].getField(j).isRepeated()) {
+          String map = tabs[i].getField(j).getMap();
+          if (map.indexOf("-") != -1) map = map.substring(0, map.indexOf("-"));
+          
+          try {
+            int nodeCount = getNodeCount(root, map);
+            for (int k=1; k<nodeCount; k++) {
+              TemplateField f = tabs[i].getField(j).copy();
+              f.setMap(map + "-" + k);
+              tabs[i].addField(f); 
+            }
+          }
+          catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    
+      for (int j=0; j<tabs[i].getNumGroups(); j++) {
+        TemplateGroup g = tabs[i].getGroup(j);
+        fields = g.getNumFields(); 
+        for (int k=0; k<fields; k++) {
+          TemplateField f = g.getField(0, k).copy();
+          if (f.isRepeated()) { 
+            String map = f.getMap();
+            if (map.indexOf("-") != -1) {
+              map = map.substring(0, map.indexOf("-"));
+            }
+
+            try {
+              for (int m=1; m<getNodeCount(root, map); m++) {
+                f.setMap(map + "-" + k);
+                g.addField(f);
+              }
+            }
+            catch (Exception e) {
+              e.printStackTrace();  
+            }
+          } 
+        }
+      } 
+    
+    }
+  }
+
   /** Change the value of an option. */
   public void changeValue(String key, String value) {
     options.put(key, value); 
@@ -450,7 +500,7 @@ public class Template {
   /** Populate the given TemplateField. */
   private void populateField(OMENode root, TemplateField t) throws Exception {
     OMEXMLNode node = findNode(root, t.getMap(), false); 
-    
+   
     if (node == null) {
       // unmapped field
 
@@ -476,6 +526,11 @@ public class Template {
     if (map.indexOf("-") != -1) {
       map = map.substring(0, map.indexOf("-"));
     } 
+
+    if (node instanceof AttributeNode) {
+      setComponentValue(t, t.getComponent(), node.getAttribute(map));  
+      return; 
+    }
 
     String methodName1 = "get" + map;
     String methodName2 = "is" + map;
@@ -563,6 +618,15 @@ public class Template {
     }
   }
 
+  /** Retrieve the number of nodes corresponding to this map. */
+  private int getNodeCount(OMENode root, String map) throws Exception {
+    if (map == null || map.length() == 0 || root == null) return 0;
+    map = map.substring(0, map.lastIndexOf(":"));
+    map = map.substring(map.lastIndexOf(":") + 1);
+    if (map.indexOf("-") != -1) map = map.substring(0, map.indexOf("-"));
+    return DOMUtil.findElementList(map, root.getOMEDocument(true)).size(); 
+  }
+
   /** 
    * Find the OME-XML node corresponding to the given map string. 
    * If the 'create' flag is set, a new node will be created if one does not
@@ -583,7 +647,7 @@ public class Template {
     map = map.substring(map.indexOf(":") + 1);
 
     int ndx = 0;
-    if (map.indexOf("-") != -1) {
+    if (map.indexOf("-") != -1 && map.indexOf("OriginalMetadata") == -1) {
       ndx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
       map = map.substring(0, map.indexOf("-"));
     }
@@ -609,7 +673,12 @@ public class Template {
     else if (nodes.size() == 0) return null;
 
     OMEXMLNode node = (OMEXMLNode) nodes.get(ndx < nodes.size() ? ndx : 0);
-    
+   
+    if (map.indexOf("OriginalMetadata") != -1 && map.indexOf("-") != -1) {
+      ndx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
+      map = map.substring(0, map.indexOf("-"));
+    }
+
     while (map.indexOf(":") != -1) {
       String type = map.substring(0, map.indexOf(":"));
       map = map.substring(map.indexOf(":") + 1);
@@ -631,31 +700,44 @@ public class Template {
           if (node instanceof CustomAttributesNode) {
             Vector list = (Vector) methods[j].invoke(node, new Object[0]);
 
+            int count = -1;
             for (int k=0; k<list.size(); k++) {
               String className = list.get(k).getClass().getName();
               int idx = className.lastIndexOf(".");
               className = className.substring(idx + 1);
 
-              if (className.equals(type + "Node")) {
-                node = (OMEXMLNode) list.get(k);
-                break; 
+              if (className.equals(type + "Node") || 
+                (className.equals("AttributeNode") && 
+                type.equals("OriginalMetadata"))) 
+              {
+                count++; 
+                if (count == ndx) { 
+                  node = (OMEXMLNode) list.get(k);
+                  if (type.equals("OriginalMetadata")) return node; 
+                  break; 
+                } 
               }
             }
           }
           else node = (OMEXMLNode) methods[j].invoke(node, new Object[0]); 
-        
+       
           // check if we found a matching node; if not, create one
           if (node == null || 
             !node.getClass().getName().endsWith(type + "Node")) 
           {
-            Class target;
+            Class target = null;
 
             try {
               target = Class.forName("org.openmicroscopy.xml." + type + "Node");
             }
             catch (ClassNotFoundException e) {
-              target = 
-                Class.forName("org.openmicroscopy.xml.st." + type + "Node");
+              try { 
+                target = 
+                  Class.forName("org.openmicroscopy.xml.st." + type + "Node");
+              }
+              catch (ClassNotFoundException cfe) {
+                cfe.printStackTrace();     
+              }
             }
             
             Class param = 

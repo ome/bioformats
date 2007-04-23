@@ -52,6 +52,12 @@ public class TemplateField {
   /** Row and column in the layout grid. */
   private int row = -1, column = -1;
 
+  /** Width and height of the component (in terms of grid cells). */
+  private int width = 1, height = 1;
+
+  /** Flag indicating that this field is repeated indefinitely. */
+  private boolean repeated = false;
+
   // -- Constructors --
 
   /** Constructs a new empty TemplateField. */
@@ -74,10 +80,17 @@ public class TemplateField {
         if (key.startsWith("name")) name = value; 
         else if (key.startsWith("type")) type = value; 
         else if (key.startsWith("map")) omecaMap = value; 
+        else if (key.startsWith("repeated")) {
+          repeated = new Boolean(value).booleanValue(); 
+        } 
         else if (key.startsWith("grid")) {
           row = Integer.parseInt(value.substring(0, value.indexOf(",")));
           column = Integer.parseInt(value.substring(value.indexOf(",") + 1));
         }
+        else if (key.startsWith("span")) {
+          width = Integer.parseInt(value.substring(0, value.indexOf(",")));
+          height = Integer.parseInt(value.substring(value.indexOf(",") + 1));
+        }        
         else if (key.startsWith("values")) {
           StringTokenizer e = new StringTokenizer(value, "\", ");
           Vector tokens = new Vector(); 
@@ -105,7 +118,11 @@ public class TemplateField {
     // create the associate JComponent 
     
     if (type.equals("var")) {
-      JTextArea text = new JTextArea((String) defaultValue); 
+      JTextArea text = null;
+      if (width != 1 || height != 1) {
+        text = new JTextArea((String) defaultValue, width, height); 
+      }
+      else text = new JTextArea((String) defaultValue);
       component = new JScrollPane();
       ((JScrollPane) component).getViewport().add(text);
     }
@@ -133,13 +150,19 @@ public class TemplateField {
     rtn.setEnums(getEnums());
     rtn.setName(getName());
     rtn.setMap(getMap());
-    rtn.setRow(getRow());
     rtn.setColumn(getColumn());
+    rtn.setWidth(getWidth());
+    rtn.setHeight(getHeight());
+    rtn.setRepeated(isRepeated());
 
     // copy the component
     JComponent comp = null;
     if (type.equals("var")) {
-      JTextArea text = new JTextArea((String) defaultValue); 
+      JTextArea text = null;
+      if (width != 1 || height != 1) {
+        text = new JTextArea((String) defaultValue, width, height); 
+      }
+      else text = new JTextArea((String) defaultValue);
       comp = new JScrollPane();
       ((JScrollPane) comp).getViewport().add(text);
     }
@@ -191,4 +214,15 @@ public class TemplateField {
 
   public void setColumn(int column) { this.column = column; }
 
+  public int getWidth() { return width; }
+
+  public void setWidth(int width) { this.width = width; }
+
+  public int getHeight() { return height; }
+
+  public void setHeight(int height) { this.height = height; }
+
+  public boolean isRepeated() { return repeated; }
+
+  public void setRepeated(boolean repeated) { this.repeated = repeated; }
 }

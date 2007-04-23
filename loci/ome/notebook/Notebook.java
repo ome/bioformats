@@ -27,7 +27,7 @@ import com.jgoodies.forms.layout.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
@@ -233,17 +233,20 @@ public class Notebook extends JFrame implements ActionListener {
       if (numRows < 1) numRows = 1;
       int numColumns = tabs[i].getColumns();
       if (numColumns < 2) numColumns = 2;
+      else numColumns += 2; 
       for (int j=0; j<numRows; j++) {
         rowString += "pref:grow,";
       }
       for (int j=0; j<numColumns; j++) {
         colString += "pref:grow,";
-      } 
-      panel.setLayout(new FormLayout(colString, rowString));
+      }
+      FormLayout l = new FormLayout(colString, rowString);
+      panel.setLayout(l);
 
       scroll.getViewport().add(panel);
    
-      int rowNumber = 1;
+      int[] rowNumber = new int[l.getColumnCount()];
+      Arrays.fill(rowNumber, 1);
 
       CellConstraints cc = new CellConstraints();
 
@@ -259,20 +262,20 @@ public class Notebook extends JFrame implements ActionListener {
           } 
     
           panel.add(new JLabel(group.getName() + " #" + (r + 1)), 
-            cc.xyw(paddingColumns, rowNumber, 2));
+            cc.xyw(paddingColumns, rowNumber[paddingColumns - 1], 2));
           if (currentTemplate.editTemplateFields()) {
             JButton add = new JButton("+");
             add.setActionCommand("cloneGroup" + i + "-" + j);
             add.addActionListener(this);
-            panel.add(add, cc.xy(1, rowNumber));
+            panel.add(add, cc.xy(1, rowNumber[0]));
+            rowNumber[0]++; 
           
             JButton remove = new JButton("-");
             remove.setActionCommand("removeGroup" + i + "-" + j);
             remove.addActionListener(this);
-            panel.add(remove, cc.xy(2, rowNumber));
+            panel.add(remove, cc.xy(2, rowNumber[1]));
+            rowNumber[1]++; 
           } 
-
-          rowNumber++;
 
           for (int k=0; k<group.getNumFields(); k++) {
             TemplateField field = group.getField(r, k); 
@@ -281,16 +284,21 @@ public class Notebook extends JFrame implements ActionListener {
                 cc.xy(field.getColumn() + paddingColumns, 
                 field.getRow() + 1));
               panel.add(field.getComponent(), 
-                cc.xy(field.getColumn() + paddingColumns + 1, 
-                field.getRow() + 1));
+                cc.xywh(field.getColumn() + paddingColumns + 1, 
+                field.getRow() + 1, field.getWidth(), field.getHeight()));
+              rowNumber[field.getColumn() + paddingColumns - 1]++; 
+              rowNumber[field.getColumn() + paddingColumns]++; 
             } 
             else {
               panel.add(new JLabel(field.getName()), 
-                cc.xy(paddingColumns + 1, rowNumber));
-              panel.add(field.getComponent(), 
-                cc.xy(paddingColumns + 2, rowNumber));
-              rowNumber++; 
+                cc.xy(paddingColumns + 1, rowNumber[paddingColumns]));
+              rowNumber[paddingColumns]++;
+              panel.add(field.getComponent(), cc.xywh(paddingColumns + 2, 
+                rowNumber[paddingColumns + 1], field.getWidth(), 
+                field.getHeight()));
+              rowNumber[paddingColumns + 1]++; 
             }
+            rowNumber[paddingColumns - 1]++; 
           } 
         } 
       }
@@ -303,17 +311,23 @@ public class Notebook extends JFrame implements ActionListener {
 
       for (int j=0; j<fields.size(); j++) {
         TemplateField f = tabs[i].getField(j); 
-        if (f.getRow() != -1) { 
-          panel.add(new JLabel(f.getName()), 
-            cc.xyw(f.getColumn(), f.getRow(), paddingColumns + 1));
-          panel.add(f.getComponent(), 
-            cc.xyw(f.getColumn() + 1, f.getRow(), 2));
+        if (f.getRow() != -1 || f.getColumn() != -1) { 
+          int column = f.getColumn() == -1 ? 1 : f.getColumn();
+          int row = f.getRow() == -1 ? rowNumber[column - 1] : f.getRow();
+          int width = f.getWidth();
+          int height = f.getHeight();
+         
+          panel.add(new JLabel(f.getName()), cc.xyw(column, row, 1));
+          panel.add(f.getComponent(), cc.xywh(column + 1, row, width, height));
+          rowNumber[column - 1]++; 
         } 
         else {
           panel.add(new JLabel(f.getName()), 
-            cc.xyw(1, rowNumber, paddingColumns + 1));
-          panel.add(f.getComponent(), cc.xyw(paddingColumns + 1, rowNumber, 2));
-          rowNumber++; 
+            cc.xyw(1, rowNumber[0], paddingColumns + 1));
+          rowNumber[0]++; 
+          panel.add(f.getComponent(), cc.xywh(paddingColumns + 1, 
+            rowNumber[paddingColumns], f.getWidth(), f.getHeight()));
+          rowNumber[paddingColumns]++; 
         }
       }
     
@@ -374,14 +388,16 @@ public class Notebook extends JFrame implements ActionListener {
     if (cmd.equals("new")) {
       // check if the user wants to save the current metadata first 
 
-      JOptionPane.showConfirmDialog(this, "Save current metadata?", "", 
+      int s = JOptionPane.showConfirmDialog(this, "Save current metadata?", "", 
         JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE); 
-      actionPerformed(new ActionEvent(this, -1, "save"));
-      loadTemplate(templateName); 
+       
+      if (s == JOptionPane.YES_OPTION) {
+        actionPerformed(new ActionEvent(this, -1, "save"));
+      } 
+      loadTemplate(currentTemplate); 
     }
     else if (cmd.equals("open")) {
       progress.setString("Opening file..."); 
-      loadTemplate(templateName); 
 
       try {
         ImageReader reader = new ImageReader();
@@ -565,6 +581,7 @@ public class Notebook extends JFrame implements ActionListener {
       stitcher.close();
     } 
     progress.setString("Populating fields..."); 
+    currentTemplate.initializeFields(currentRoot); 
     currentTemplate.populateFields(currentRoot); 
     loadTemplate(currentTemplate); 
     progress.setString(""); 

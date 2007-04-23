@@ -263,7 +263,8 @@ public class TemplateEditor extends JFrame
     for (int i=0; i<tab.getNumFields(); i++) {
       TemplateField f = tab.getField(i); 
       panel.add(new JLabel(f.getName()), cc.xy(1, i + 1));
-      panel.add(f.getComponent(), cc.xy(2, i + 1));    
+      panel.add(f.getComponent(), cc.xywh(2, i + 1, f.getWidth(), 
+        f.getHeight()));    
     }
     tabPanels.add(panel); 
   
@@ -544,7 +545,8 @@ public class TemplateEditor extends JFrame
         CellConstraints cc = new CellConstraints();
         JPanel pane = (JPanel) tabPanels.get(currentTab);
         pane.add(new JLabel(name), cc.xy(col*2 - 1, row));
-        pane.add((JComponent) COMPONENTS[ndx].newInstance(), cc.xy(col*2, row));
+        pane.add((JComponent) COMPONENTS[ndx].newInstance(), 
+          cc.xywh(col*2, row, fp.getWidth(), fp.getHeight()));
         tabPanels.setElementAt(pane, currentTab);
         pack(); 
       }
@@ -557,6 +559,8 @@ public class TemplateEditor extends JFrame
       field.setName(name);
       field.setRow(row);
       field.setColumn(col);
+      field.setWidth(fp.getWidth());
+      field.setHeight(fp.getHeight());
       field.setType(COMPONENT_TYPES[ndx]);
       field.setMap(fp.getMap()); 
 
@@ -649,6 +653,7 @@ public class TemplateEditor extends JFrame
 
     private JTextField name;
     private JSpinner row, col;
+    private JSpinner width, height; 
     private JComboBox omexml;
     private JComboBox group; 
     private JSpinner groupSpinner; 
@@ -664,7 +669,8 @@ public class TemplateEditor extends JFrame
 
       FormLayout layout =
         new FormLayout("2dlu, pref:grow, 2dlu, pref:grow, 2dlu",
-        "pref:grow, pref:grow, pref:grow, pref:grow, pref:grow, pref:grow");
+        "pref:grow, pref:grow, pref:grow, pref:grow, pref:grow, pref:grow," +
+        "pref:grow, pref:grow");
       JPanel pane = new JPanel(layout);
       CellConstraints cc = new CellConstraints();
 
@@ -688,13 +694,20 @@ public class TemplateEditor extends JFrame
       } 
       
       if (type == TemplateEditor.FIELD) {
-        pane.add(new JLabel("OME-XML mapping:"), cc.xy(2, 5)); 
-        pane.add(new JLabel("Group:"), cc.xy(2, 4));
+        width = new JSpinner(new SpinnerNumberModel(1, 1, rowMax, 1));
+        height = new JSpinner(new SpinnerNumberModel(1, 1, colMax, 1));
+        pane.add(new JLabel("Width:"), cc.xy(2, 4));
+        pane.add(new JLabel("Height:"), cc.xy(2, 5));
+        pane.add(width, cc.xy(4, 4));
+        pane.add(height, cc.xy(4, 5));
+
+        pane.add(new JLabel("OME-XML mapping:"), cc.xy(2, 6)); 
+        pane.add(new JLabel("Group:"), cc.xy(2, 5));
         group = new JComboBox(groups);
-        pane.add(group, cc.xy(4, 4));
+        pane.add(group, cc.xy(4, 5));
 
         omexml = new JComboBox(omexmlMaps.keySet().toArray());
-        pane.add(omexml, cc.xy(4, 5)); 
+        pane.add(omexml, cc.xy(4, 6)); 
       } 
      
       if (type == TemplateEditor.GROUP) {
@@ -707,12 +720,12 @@ public class TemplateEditor extends JFrame
       JButton ok = new JButton("OK");
       ok.setActionCommand("ok");
       ok.addActionListener(this);
-      pane.add(ok, cc.xy(2, 6)); 
+      pane.add(ok, cc.xy(2, 7)); 
 
       JButton cancel = new JButton("Cancel");
       cancel.setActionCommand("cancel");
       cancel.addActionListener(this);
-      pane.add(cancel, cc.xy(4, 6));
+      pane.add(cancel, cc.xy(4, 7));
 
       setContentPane(pane);  
       setPreferredSize(new Dimension(325, 130));
@@ -726,6 +739,10 @@ public class TemplateEditor extends JFrame
     public int getRow() { return ((Integer) row.getValue()).intValue(); }
 
     public int getColumn() { return ((Integer) col.getValue()).intValue(); }
+
+    public int getWidth() { return ((Integer) width.getValue()).intValue(); }
+
+    public int getHeight() { return ((Integer) height.getValue()).intValue(); }
 
     public String getName() { return name.getText(); }
 

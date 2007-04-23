@@ -110,31 +110,30 @@ tab {
   field {
     name "Email"
     type "var"
+    span "1,3" 
     map "CustomAttributes:Experimenter:Email"
   }
 }
 
 tab {
-  name "Extra Information"
+  name "Metadata hashtable"
 
-  # this is grouped, unmapped information 
+  grid "1,2"
 
-  group {
-    name "Extra (un-mapped) data"
-    count "1"
+  field {
+    name "Field name"
+    map "Image:CustomAttributes:OriginalMetadata:name"
+    repeated "true" 
+    type "var" 
+    grid "1,1" 
+  }
 
-    field {
-      name "Uses color tables"
-      type "enum"
-      values {"yes", "no"}
-      default "no"
-    }
-
-    field {
-      name "Notes"
-      type "var"
-    }
-
+  field {
+    name "Field value"
+    map "Image:CustomAttributes:OriginalMetadata:value"
+    repeated "true"
+    type "var"
+    grid "1,3" 
   }
 
 }
