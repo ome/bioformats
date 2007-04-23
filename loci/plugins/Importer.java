@@ -73,12 +73,12 @@ public class Importer implements ItemListener {
   private Checkbox colorizeBox;
   private Checkbox splitBox;
   private Checkbox metadataBox;
-  private Checkbox stitchBox;
-  private Checkbox stitchStackBox;
+  private Checkbox groupBox;
+  private Checkbox concatenateBox;
   private Checkbox rangeBox;
   private Choice stackChoice;
   private boolean mergeChannels;
-  private boolean stitchStack;
+  private boolean concatenate;
 
   private Vector imps = new Vector();
 
@@ -227,8 +227,8 @@ public class Importer implements ItemListener {
     boolean colorize = Prefs.get("bioformats.colorize", false);
     boolean splitWindows = Prefs.get("bioformats.splitWindows", true);
     boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
-    boolean stitchFiles = Prefs.get("bioformats.stitchFiles", false);
-    stitchStack = Prefs.get("bioformats.stitchStack", false);
+    boolean groupFiles = Prefs.get("bioformats.groupFiles", false);
+    concatenate = Prefs.get("bioformats.concatenate", false);
     boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
     stackFormat = Prefs.get("bioformats.stackFormat", VIEW_STANDARD);
 
@@ -236,8 +236,8 @@ public class Importer implements ItemListener {
     final String colorizeString = "Colorize channels";
     final String splitString = "Open each channel in its own window";
     final String metadataString = "Display associated metadata";
-    final String stitchString = "Stitch files with similar names";
-    final String stitchStackString = "Stitch compatible series";
+    final String groupString = "Group files with similar names";
+    final String concatenateString = "Concatenate compatible series";
     final String rangeString = "Specify range for each series";
     final String stackString = "View stack with: ";
 
@@ -247,8 +247,8 @@ public class Importer implements ItemListener {
     gd.addCheckbox(colorizeString, colorize);
     gd.addCheckbox(splitString, splitWindows);
     gd.addCheckbox(metadataString, showMetadata);
-    gd.addCheckbox(stitchString, stitchFiles);
-    gd.addCheckbox(stitchStackString, stitchStack);
+    gd.addCheckbox(groupString, groupFiles);
+    gd.addCheckbox(concatenateString, concatenate);
     gd.addCheckbox(rangeString, specifyRanges);
     gd.addChoice(stackString, stackFormats, stackFormat);
 
@@ -259,8 +259,8 @@ public class Importer implements ItemListener {
       colorizeBox = (Checkbox) boxes.get(1);
       splitBox = (Checkbox) boxes.get(2);
       metadataBox = (Checkbox) boxes.get(3);
-      stitchBox = (Checkbox) boxes.get(4);
-      stitchStackBox = (Checkbox) boxes.get(5);
+      groupBox = (Checkbox) boxes.get(4);
+      concatenateBox = (Checkbox) boxes.get(5);
       rangeBox = (Checkbox) boxes.get(6);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
@@ -283,8 +283,8 @@ public class Importer implements ItemListener {
     colorize = gd.getNextBoolean();
     splitWindows = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
-    stitchFiles = gd.getNextBoolean();
-    stitchStack = gd.getNextBoolean();
+    groupFiles = gd.getNextBoolean();
+    concatenate = gd.getNextBoolean();
     specifyRanges = gd.getNextBoolean();
     stackFormat = stackFormats[gd.getNextChoiceIndex()];
 
@@ -304,7 +304,7 @@ public class Importer implements ItemListener {
       int pixelType = r.getPixelType();
       String currentFile = r.getCurrentFile();
 
-      if (stitchFiles) {
+      if (groupFiles) {
         fs = new FileStitcher(r, true);
         // prompt user to confirm detected file pattern
         id = FilePattern.findPattern(new Location(id));
@@ -450,7 +450,7 @@ public class Importer implements ItemListener {
           channels[i] = r.getSizeC();
         }
 
-        if (stitchStack) {
+        if (concatenate) {
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) {
               for (int j=0; j<seriesCount; j++) {
@@ -882,7 +882,7 @@ public class Importer implements ItemListener {
           }
         }
 
-        if (stitchStack) {
+        if (concatenate) {
           Vector widths = new Vector();
           Vector heights = new Vector();
           Vector types = new Vector();
@@ -936,8 +936,8 @@ public class Importer implements ItemListener {
       Prefs.set("bioformats.colorize", colorize);
       Prefs.set("bioformats.splitWindows", splitWindows);
       Prefs.set("bioformats.showMetadata", showMetadata);
-      Prefs.set("bioformats.stitchFiles", stitchFiles);
-      Prefs.set("bioformats.stitchStack", stitchStack);
+      Prefs.set("bioformats.groupFiles", groupFiles);
+      Prefs.set("bioformats.concatenate", concatenate);
       Prefs.set("bioformats.specifyRanges", specifyRanges);
       Prefs.set("bioformats.stackFormat", stackFormat);
 
@@ -994,7 +994,9 @@ public class Importer implements ItemListener {
         if (s.equals(VIEW_NONE)) stackChoice.select(VIEW_STANDARD);
       }
     }
-    else if (src == stitchBox) {
+    else if (src == groupBox) {
+    }
+    else if (src == concatenateBox) {
     }
     else if (src == rangeBox) {
       if (rangeBox.getState()) {
@@ -1219,7 +1221,7 @@ public class Importer implements ItemListener {
         imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()),
         imp.getNSlices(), imp.getNFrames());
       if (stackFormat.equals(VIEW_STANDARD)) {
-        if (!stitchStack) imp.show();
+        if (!concatenate) imp.show();
         else imps.add(imp);
       }
       else if (stackFormat.equals(VIEW_BROWSER)) {}
@@ -1289,7 +1291,7 @@ public class Importer implements ItemListener {
     }
     catch (Exception e) {
       /* debug */ e.printStackTrace(); 
-      if (!stitchStack) imp.show();
+      if (!concatenate) imp.show();
       else imps.add(imp);
     }
   }
