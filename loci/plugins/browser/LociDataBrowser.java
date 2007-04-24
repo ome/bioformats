@@ -286,7 +286,6 @@ public class LociDataBrowser {
 //    macroThread = new Thread(macro, "MacroRecorder");
 //    macroThread.start(); 
     
-    LociOpener lociOpener = new LociOpener();
     boolean done2 = false;
     String directory = "";
     String name = "";
@@ -296,22 +295,6 @@ public class LociDataBrowser {
     stack = null;
     while (!done2) {
       try {
-        if(id == null) {
-          lociOpener.show();
-          directory = lociOpener.getDirectory();
-          name = lociOpener.getAbsolutePath();
-          virtual = lociOpener.getVirtual();
-          if (name == null || lociOpener.isCanceled()) return;
-          if (DEBUG) {
-            IJ.log("directory = " + directory);
-            IJ.log("name = " + name);
-            IJ.log("virtual = " + virtual);
-          }
-
-          id = name;
-          if (DEBUG) System.err.println("id = " + id);
-        }
-
         ImagePlusWrapper ipw = null;
 
         // process input
