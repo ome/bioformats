@@ -92,7 +92,7 @@ public class HelpManager extends LogicManager {
       buttons.add(vis2D);
 
       // create option for 2D visualization w/ overlays
-      JRadioButton visOver = new JRadioButton("In 2D w/ Overlays", 
+      JRadioButton visOver = new JRadioButton("In 2D with overlays", 
         !canDisplay3D);
       visOver.setEnabled(canDisplay2D);
       if (!LAFUtil.isMacLookAndFeel()) visOver.setMnemonic('o');
