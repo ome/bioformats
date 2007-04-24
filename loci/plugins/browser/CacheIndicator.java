@@ -63,35 +63,35 @@ public class CacheIndicator extends JComponent {
     if(doUpdate) {
       g.setColor(Color.black);
       g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
-  
+
       if(ratio < 1 && ratio != 0) {
         int [] loadCount = new int[getWidth()];
         int [] cacheCount = new int[getWidth()];
-  
+
         for(int i = 0;i < loadCount.length;i++) {
           loadCount[i] = 0;
           cacheCount[i] = 0;
         }
-  
+
         //find how many entries of the cache are handled per pixel of indicator
         int perPixel;
         double integers = 2;
         double dPerPixel = ratio * integers;
-  
+
         if(DEBUG) System.out.println("Ratio: " + ratio);
         while(dPerPixel < 1) {
           integers++;
           dPerPixel = ratio * integers;
         }
-  
+
         Double temp = new Double(integers);
         perPixel = temp.intValue();
-  
+
         if(DEBUG) System.out.println("PerPixel: " + perPixel);
-  
+
         int colorAmount = 255 / perPixel;
         if(DEBUG) System.out.println("ColorAmount: " + colorAmount);
-  
+
         for(int i = 0;i<loadList.length;i++) {
           boolean isLoaded = false;
           if( Arrays.binarySearch(cache, loadList[i]) >= 0) isLoaded = true;
@@ -102,7 +102,7 @@ public class CacheIndicator extends JComponent {
           int index = translate(cache[i]);
           cacheCount[index]++;
         }
-  
+
         for(int i = 0;i < getWidth();i++) {
           int loadColor,cacheColor;
           loadColor = colorAmount * loadCount[i];
@@ -120,13 +120,13 @@ public class CacheIndicator extends JComponent {
         for(int i = 0;i<loadList.length;i++) {
           if(!doUpdate) break;
           int toLoad = loadList[i];
-  
+
           //correct for bug with length 1
           if(loadList.length == 1) {
             startLoad = toLoad;
             prevLoad = toLoad;
           }
-  
+
           if(startLoad == -1) {
             startLoad = toLoad;
             prevLoad = toLoad;
@@ -141,8 +141,7 @@ public class CacheIndicator extends JComponent {
             g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
             startLoad = -1;
           }
-          
-          
+
           if (i == loadList.length - 1) {
             prevLoad = prevLoad + 1;
             int x = translate(startLoad);
@@ -151,20 +150,20 @@ public class CacheIndicator extends JComponent {
             startLoad = -1;
           }
         }
-  
+
         prevLoad = -1;
         startLoad = -1;
         g.setColor(Color.blue);
         for(int i = 0;i<cache.length;i++) {
           if(!doUpdate) break;
           int toLoad = cache[i];
-  
+
           //correct for bug with length 1
           if(loadList.length == 1) {
             startLoad = toLoad;
             prevLoad = toLoad;
           }
-  
+
           if(startLoad == -1) {
             startLoad = toLoad;
             prevLoad = toLoad;
@@ -179,7 +178,7 @@ public class CacheIndicator extends JComponent {
             g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
             startLoad = -1;
           }
-          
+
           if (i == cache.length - 1) {
             prevLoad = prevLoad + 1;
             int x = translate(startLoad);

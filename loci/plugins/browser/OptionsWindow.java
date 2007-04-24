@@ -80,8 +80,6 @@ public class OptionsWindow extends JFrame implements
   /** Storage of what priority settings used to be.*/
   private int oldTop,oldMid,oldLow;
 
-
-
   JComboBox[] blockBoxes;
   String id = null,order = null,suffix = null;
   String[] prefixes = null,blocks = null;
@@ -110,7 +108,7 @@ public class OptionsWindow extends JFrame implements
     if(fs != null) {
       try {
         id = cw.db.id;
-        fs.setId(id); 
+        fs.setId(id);
         order = fs.getDimensionOrder().substring(2);
         sizeZ = fs.getSizeZ();
         sizeT = fs.getSizeT();
@@ -177,7 +175,7 @@ public class OptionsWindow extends JFrame implements
     zGroup.addActionListener(this);
     tGroup.addActionListener(this);
     cGroup.addActionListener(this);
-    
+
     if(fs != null) {
       Vector blockBoxesV = new Vector();
       for(int i = 0;i<blocks.length;i++) {
@@ -233,7 +231,6 @@ public class OptionsWindow extends JFrame implements
     tLab = new JLabel("Second (" + internalSizes[1] + "):");
     cLab = new JLabel("Third (" + internalSizes[2] + "):");
     fileLab = new JLabel("Filename:");
-    
 
     String rowString = "pref," + TAB + ",pref,pref,pref," + TAB +
       ",pref,pref";
@@ -431,13 +428,13 @@ public class OptionsWindow extends JFrame implements
     mergeCheck = new JCheckBox("Merge Channels");
     mergeCheck.setSelected(cw.db.isMerged());
     mergeCheck.addItemListener(this);
-    
+
     FormLayout inputLayout = new FormLayout(
       TAB + ",pref:grow," + TAB,
       "pref");
     inputPane.setLayout(inputLayout);
     CellConstraints cci = new CellConstraints();
-    
+
     inputPane.add(mergeCheck,cci.xy(2,1,"left,center"));
 
     //configure/layout content pane
@@ -458,7 +455,7 @@ public class OptionsWindow extends JFrame implements
     oldTop = topBox.getSelectedIndex();
     oldMid = midBox.getSelectedIndex();
     oldLow = lowBox.getSelectedIndex();
-    
+
     JScrollPane jsp = new JScrollPane((Component)viewPanel);
     Dimension viewSize = viewPanel.getPreferredSize();
     jsp.setPreferredSize(new Dimension(viewSize.width + 20,600));
@@ -792,7 +789,7 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          cw.db.reader.setId(id); 
+          cw.db.reader.setId(id);
           cw.db.reader.swapDimensions("XY" + order);
           sizeZ = cw.db.reader.getSizeZ();
           sizeT = cw.db.reader.getSizeT();
@@ -827,7 +824,7 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          cw.db.reader.setId(id); 
+          cw.db.reader.setId(id);
           cw.db.reader.swapDimensions("XY" + order);
           sizeZ = cw.db.reader.getSizeZ();
           sizeT = cw.db.reader.getSizeT();

@@ -64,12 +64,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   protected LociDataBrowser db;
   protected CacheIndicator zIndicator,tIndicator;
   protected OptionsWindow ow;
- 
+
   private String zString = Z_STRING;
   private String tString = T_STRING;
   private int fps = 10;
   private int z = 1, t = 1, c = 1;
- 
+
   // -- Fields - widgets --
 
   private JLabel zLabel, tLabel, cLabel;
@@ -263,11 +263,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     showSlice(z, t, c);
 
     updateControls();
-    
+
     // listen for arrow key presses
     addKeyListener(this);
     ic.addKeyListener(this);
-    
+
   }
 
   // -- CustomWindow methods --
@@ -353,7 +353,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 //      for (int i=0; i<macros.size(); i++) {
 //        MacroRunner runner = new MacroRunner((String) macros.get(i));
 //      }
-      
+
       index = 1;
       return;
     }
@@ -369,14 +369,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         "; zSliceSel = " + zSliceSel.getValue() +
         "; tSliceSel = " + tSliceSel.getValue() + ")");
     }
-  
-    // now execute macros as needed 
+
+    // now execute macros as needed
 // TODO: macros
 //    Vector macros = db.macro.getMacros();
 //    for (int i=0; i<macros.size(); i++) {
 //      MacroRunner runner = new MacroRunner((String) macros.get(i));
 //    }
-    
+
     repaint();
   }
 
@@ -524,7 +524,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       String title = db.id;
       try {
         OMENode ome = (OMENode)(db.reader.getMetadataStoreRoot());
-        
+
         ReflectedUniverse r = new ReflectedUniverse();
         r.exec("import loci.ome.notebook.MetadataNotebook");
         r.setVar("args", args);

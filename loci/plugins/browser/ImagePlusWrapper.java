@@ -64,7 +64,7 @@ public class ImagePlusWrapper {
       fs.setId(name);
 
       try {
-        if (stitch && fs == null) fs = new FileStitcher(r); 
+        if (stitch && fs == null) fs = new FileStitcher(r);
 
         numTotal = fs.getImageCount();
         dim = fs.getDimensionOrder();
@@ -73,7 +73,7 @@ public class ImagePlusWrapper {
         sizeZ = fs.getSizeZ();
         sizeT = fs.getSizeT();
         sizeC = fs.getSizeC();
-        
+
         if (LociDataBrowser.DEBUG) {
           System.err.println("numTotal = "+numTotal);
         }
@@ -88,7 +88,7 @@ public class ImagePlusWrapper {
         stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
-     
+
       for (int i=0; i<num; i++) {
         long clock = System.currentTimeMillis();
         if (clock - time >= 50) {
@@ -112,7 +112,7 @@ public class ImagePlusWrapper {
         WritableRaster raster = img.getRaster();
         int c = raster.getNumBands();
         int tt = raster.getTransferType();
-        
+
         if (c == 1) {
           if (tt == DataBuffer.TYPE_BYTE) {
             byte[] b = ImageTools.getBytes(img)[0];

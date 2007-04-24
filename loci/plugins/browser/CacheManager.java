@@ -139,7 +139,7 @@ public class CacheManager implements Runnable {
 
   /** Stop-flag used to stop the caching thread.*/
   private volatile boolean quit;
-  
+
   /** The loading images thread.*/
   private Thread loader;
 
@@ -154,7 +154,7 @@ public class CacheManager implements Runnable {
 
   /** A list of indeces to be loaded by the caching thread.*/
   protected int[] loadList;
-  
+
   /** The actual queue used by the loader thread to load images.*/
   protected Stack queue;
 
@@ -223,7 +223,7 @@ public class CacheManager implements Runnable {
     tSel = null;
     synchronized (read) {
       try {
-        read.setId(fileName); 
+        read.setId(fileName);
         sizeZ = read.getSizeZ();
         sizeT = read.getSizeT();
         sizeC = read.getEffectiveSizeC();
@@ -1930,7 +1930,7 @@ public class CacheManager implements Runnable {
     }
     return result;
   }
-  
+
   /**
   * Clears the cache and sets the new loadList that the loader
   * thread will use to start loading slices into the cache.
@@ -2008,7 +2008,7 @@ public class CacheManager implements Runnable {
       Integer temp = new Integer(loadList[i]);
       queue.push(temp);
     }
-    
+
     Arrays.sort(newIndex);
 
     if(erase) {
@@ -2038,7 +2038,7 @@ public class CacheManager implements Runnable {
         ImageProcessor imp = ImagePlusWrapper.getImageProcessor(
           fileName, read, index);
         cache[index] = imp;
-        
+
         if(db.cw != null) {
           int aC = 1;
           zSel = db.cw.zSliceSel;
@@ -2053,5 +2053,5 @@ public class CacheManager implements Runnable {
   /** Terminates the slice loading thread. */
   public void finish() {
     quit = true;
-  }  
+  }
 }

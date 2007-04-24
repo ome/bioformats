@@ -54,7 +54,7 @@ public class MacroManager implements Runnable {
     for (int i=0; i<components.length; i++) {
       if (components[i] instanceof TextArea) {
         textBox = (TextArea) components[i];
-        break; 
+        break;
       }
     }
     r.setVisible(false);
@@ -69,13 +69,13 @@ public class MacroManager implements Runnable {
         StringTokenizer st = new StringTokenizer(cmds, "\n");
         for (int i=0; i<macros.size(); i++) st.nextToken();
         while (st.hasMoreTokens()) {
-          String macro = st.nextToken(); 
+          String macro = st.nextToken();
           if (macro.equals("run(\"Undo\")")) {
             macros.removeElementAt(macros.size() - 1);
           }
           else macros.add(macro);
         }
-        previousText = cmds; 
+        previousText = cmds;
       }
       try {
         Thread.sleep(50);
