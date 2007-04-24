@@ -303,7 +303,6 @@ public final class OverlayIO {
           obj.notes = notes;
           obj.drawing = false;
           obj.selected = false;
-          obj.computeGridParameters();
 
           // add overlay to list
           loadedOverlays[r].add(obj);

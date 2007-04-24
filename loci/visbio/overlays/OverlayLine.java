@@ -51,7 +51,6 @@ public class OverlayLine extends OverlayObject {
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
-    computeGridParameters();
   }
 
   // -- Static methods --
@@ -136,27 +135,15 @@ public class OverlayLine extends OverlayObject {
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
 
-  // -- Internal OverlayObject API methods --
-
-  /** Computes parameters needed for selection grid computation. */
-  protected void computeGridParameters() {
-    float padding = 0.02f * overlay.getScalingValue();
-    float[] corners1 = computeCorners(x1, y1, x2, y2, padding, 1);
-    float[] corners2 = computeCorners(x2, y2, x1, y1, padding, 1);
-
-    xGrid1 = corners1[0]; yGrid1 = corners1[1];
-    xGrid2 = corners1[2]; yGrid2 = corners1[3];
-    xGrid3 = corners2[2]; yGrid3 = corners2[3];
-    xGrid4 = corners2[0]; yGrid4 = corners2[1];
-    horizGridCount = 3; vertGridCount = 2;
-  }
-
   // -- Object API methods --
 
   /** Gets a short string representation of this measurement line. */
   public String toString() { return "Line"; }
 
   // -- Helper methods --
+
+  // ACS -- keep this method around in case since figuring out the geometry
+  // is a bother.
 
   /**
    * Helper method for computing coordinates of two corner points of the
@@ -181,64 +168,4 @@ public class OverlayLine extends OverlayObject {
       x2 + qx - multiplier * qy, y2 + qy + multiplier * qx
     };
   }
-
-  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
-
-  public DataImpl getSelectionGrid(boolean outline) {
-    if (!hasData()) return null;
-    else if (outline) return super.getSelectionGrid(outline);
-
-    RealTupleType domain = overlay.getDomainType();
-    TupleType range = overlay.getRangeType();
-
-    float delta = GLOW_WIDTH;
-
-    // compute locations of grid points
-    // (uses similar triangles instead of raw trig fcns)
-    float x = x2 - x1;
-    float y = y2 - y1;
-    float hyp = (float) Math.sqrt(x * x + y * y);
-    float ratio = delta / hyp;
-    // offsets from endpoints of line segments 
-    float dx1 = ratio * y; 
-    float dy1 = ratio * x;
-    float dx2 = ratio * x;
-    float dy2 = ratio * y;
-
-    float[] p1 = {x1 - dx1 - dx2, y1 + dy1 - dy2};
-    float[] p2 = {x2 - dx1 + dx2, y2 + dy1 + dy2};
-    float[] p3 = {x1 + dx1 - dx2, y1 - dy1 - dy2};
-    float[] p4 = {x2 + dx1 + dx2, y2 - dy1 + dy2};
-
-    float[][] setSamples = {{p1[0], p2[0], p3[0], p4[0]},
-                            {p1[1], p2[1], p3[1], p4[1]}};
-
-    // construct range samples;
-    Color col = GLOW_COLOR;
-
-    float r = col.getRed() / 255f;
-    float g = col.getGreen() / 255f;
-    float b = col.getBlue() / 255f;
-
-    float[][] rangeSamples = new float[4][4];
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
-    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
-
-    Gridded2DSet domainSet = null;
-    FlatField field = null;
-    try {
-      domainSet = new Gridded2DSet(domain, setSamples,
-            2, 2, null, null, null, false);
-      FunctionType fieldType = new FunctionType(domain, range);
-      field = new FlatField(fieldType, domainSet);
-      field.setSamples(rangeSamples);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-
-    return field;
-  }
-
 }

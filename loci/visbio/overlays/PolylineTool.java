@@ -228,14 +228,12 @@ public class PolylineTool extends OverlayTool {
     }
     if (mode == ADJUST) {
       line.updateBoundingBox();
-      line.computeGridParameters();
       line.computeLength();
       line.setDrawing(false);
       mode = SELECT;
     }
     else if (mode == ADJUST_TAIL) {
       line.updateBoundingBox();
-      line.computeGridParameters();
       line.computeLength();
       line.setDrawing(false);
       mode = SELECT;
@@ -248,7 +246,6 @@ public class PolylineTool extends OverlayTool {
       float[] c = line.getNodeCoords(0);
       line.setLastNode(c[0], c[1]); 
       line.updateBoundingBox();
-      line.computeGridParameters();
       line.computeLength();
       line.setDrawing(false);
       selectNode(display, line, line.getNumNodes() - 1);
@@ -479,7 +476,6 @@ public class PolylineTool extends OverlayTool {
     if (line != null) {
       line.turnOffHighlighting();
       line.updateBoundingBox();
-      line.computeGridParameters();
       line.computeLength();
       line.setDrawing(false);
       line.setSelected(true);

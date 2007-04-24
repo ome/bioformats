@@ -35,6 +35,7 @@ import loci.formats.FormatTools;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.OverlayUtil;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.TransformLink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -256,7 +257,6 @@ public class OverlayTransform extends DataTransform
         obj.notes = orig.notes;
         obj.drawing = false;
         obj.selected = true;
-        obj.computeGridParameters();
         overlays[ndx].add(obj);
       }
     }
@@ -376,7 +376,6 @@ public class OverlayTransform extends DataTransform
         obj.notes = notes;
         obj.drawing = false;
         obj.selected = false;
-        obj.computeGridParameters();
 
         overlays[ndx].add(obj);
       }
@@ -531,11 +530,7 @@ public class OverlayTransform extends DataTransform
   public static boolean isParentRequired() { return true; }
 
   // -- DataTransform API methods --
-  
-  public Data getData(int[] pos, int dim, DataCache cache) {
-    return getData(null, pos, dim, cache);
-  }
-
+ 
   /**
    * Retrieves the data corresponding to the given dimensional position,
    * for the given display dimensionality.
@@ -546,7 +541,6 @@ public class OverlayTransform extends DataTransform
     // note to ACS: do not assume TransformLink is null.  It may be null!
     // If so, assume some reasonable defaults when computing your selection 
     // grids.
-
 
     if (dim != 2) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
@@ -590,14 +584,15 @@ public class OverlayTransform extends DataTransform
             for (int i=0, c=0; i<size && c<sel; i++) {
               OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
               if (!obj.isSelected() || obj.isDrawing()) continue;
-              rgbField.setSample(rgbSize + c++, obj.getSelectionGrid(), false);
+              DataImpl layer = OverlayUtil.getSelectionLayer(obj, link, false);
+              rgbField.setSample(rgbSize + c++, layer, false);
             }
             // compute outline grid for each invisible text object
             for (int i=0, c=0; i<size && c<outline; i++) {
               OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
               if (!obj.hasText() || obj.isSelected()) continue;
-              rgbField.setSample(rgbSize + sel + c++,
-                obj.getSelectionGrid(true), false);
+              DataImpl layer = OverlayUtil.getSelectionLayer(obj, link, true);
+              rgbField.setSample(rgbSize + sel + c++, layer, false);
             }
           }
 
@@ -702,12 +697,7 @@ public class OverlayTransform extends DataTransform
       new Font(font.getName(), font.getStyle(), 11));
 
     // recompute grid boxes for text overlays
-    for (int j=0; j<overlays.length; j++) {
-      for (int i=0; i<overlays[j].size(); i++) {
-        OverlayObject obj = (OverlayObject) overlays[j].elementAt(i);
-        if (obj instanceof OverlayText) obj.computeGridParameters();
-      }
-    }
+    // 4/24 removed computeGridParameters method
 
     notifyListeners(new TransformEvent(this, TransformEvent.DATA_CHANGED));
   }

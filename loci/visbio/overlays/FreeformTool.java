@@ -633,7 +633,6 @@ public class FreeformTool extends OverlayTool {
         else {
           freeform.computeLength();
           freeform.updateBoundingBox();
-          freeform.computeGridParameters();
           freeform.setSelected(true);
           freeform = null;
         }

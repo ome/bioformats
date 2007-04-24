@@ -51,7 +51,6 @@ public class OverlayBox extends OverlayObject {
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
-    computeGridParameters();
   }
 
   // -- Static methods --
@@ -188,90 +187,8 @@ public class OverlayBox extends OverlayObject {
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
 
-  // -- Internal OverlayObject API methods --
-
-  /** Computes parameters needed for selection grid computation. */
-  protected void computeGridParameters() {
-    float padding = 0.02f * overlay.getScalingValue();
-    boolean flipX = x2 < x1;
-    float xx1 = flipX ? (x1 + padding) : (x1 - padding);
-    float xx2 = flipX ? (x2 - padding) : (x2 + padding);
-    boolean flipY = y2 < y1;
-    float yy1 = flipY ? (y1 + padding) : (y1 - padding);
-    float yy2 = flipY ? (y2 - padding) : (y2 + padding);
-
-    xGrid1 = xx1; yGrid1 = yy1;
-    xGrid2 = xx2; yGrid2 = yy1;
-    xGrid3 = xx1; yGrid3 = yy2;
-    xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 3; vertGridCount = 3;
-  }
-
   // -- Object API methods --
 
   /** Gets a short string representation of this overlay box. */
   public String toString() { return "Box"; }
-
-  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
-
-  public DataImpl getSelectionGrid(boolean outline) {
-    if (!hasData()) return null;
-    else if (outline) return super.getSelectionGrid(outline);
-
-    RealTupleType domain = overlay.getDomainType();
-    TupleType range = overlay.getRangeType();
-
-    float delta = GLOW_WIDTH;
-
-    // Determine orientation of (x1, y1) relative to (x2, y2)
-    // and flip if need be.
-    // I've set up the code in this section based on the 
-    // supposition that the box is oriented like this:
-    //
-    // (x1, y1) +--------+
-    //          |        |
-    //          |        |
-    //          +--------+ (x2, y2)
-    //
-    // which means x1 is supposed to be _less_ than x2, but inconsistently,
-    // y1 is supposed to be _greater_ than y2.
-
-    float[][] c;
-    boolean flipX = x2 > x1;
-    float xx1 = flipX ? x1 : x2;
-    float xx2 = flipX ? x2 : x1;
-    boolean flipY = y2 < y1;
-    float yy1 = flipY ? y1 : y2;
-    float yy2 = flipY ? y2 : y1;
-
-    // just throw down a translucent rectangle over the box
-    float[][] setSamples = {
-      {xx1 - delta, xx2 + delta, xx1 - delta, xx2 + delta},
-      {yy1 + delta, yy1 + delta, yy2 - delta, yy2 - delta}};
-    
-    // construct range samples
-    float[][] rangeSamples = new float[4][4];
-    float r = GLOW_COLOR.getRed() / 255f;
-    float g = GLOW_COLOR.getGreen() / 255f;
-    float b = GLOW_COLOR.getBlue() / 255f;
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
-    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
-
-    // construct field
-    Gridded2DSet domainSet = null;
-    FlatField field = null;
-    try {
-      domainSet = new Gridded2DSet(domain, setSamples, 2, 2,
-        null, null, null, false);
-      FunctionType fieldType = new FunctionType(domain, range);
-      field = new FlatField(fieldType, domainSet);
-      field.setSamples(rangeSamples);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-
-    return field;
-  }
 }

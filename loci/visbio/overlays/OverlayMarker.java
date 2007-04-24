@@ -46,7 +46,6 @@ public class OverlayMarker extends OverlayObject {
     super(overlay);
     x1 = x;
     y1 = y;
-    computeGridParameters();
   }
 
   // -- Static methods --
@@ -95,132 +94,6 @@ public class OverlayMarker extends OverlayObject {
    */
   public boolean hasData() { return true; }
 
-  /** Gets a DataImpl overlay indicating that this object is selected */
-  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
-
-  /** Gets a DataImpl overlay indicating that this object is selected */
-  public DataImpl getSelectionGrid(boolean outline) {
-    if (!hasData()) return null;
-    else if (outline) return super.getSelectionGrid(outline);
-
-    RealTupleType domain = overlay.getDomainType();
-    TupleType range = overlay.getRangeType();
-
-    float size = 0.02f * overlay.getScalingValue();
-    float scl = .3f; // for now
-    float delta = GLOW_WIDTH * scl;
-
-    float xx1 = x1 - size - delta;
-    float xx2 = x1 + size + delta;
-    float yy1 = y1 + size + delta;
-    float yy2 = y1 - size - delta;
-
-    float dx = 0.0001f; // TEMP
-
-    SampledSet domainSet = null;
-    int samplesLength = 4;
-    if (2 * delta > size) {
-      // return box
-      float[][] setSamples;
-      setSamples = new float[][]{
-        {xx1, xx2, xx1, xx2},
-        {yy1, yy1, yy2, yy2}
-      };
-
-      try {
-        domainSet = new Gridded2DSet(domain, setSamples, setSamples[0].length /
-            2, 2, null, null, null, false);
-      }
-      catch (VisADException ex) { ex.printStackTrace(); }
-    }
-    else {
-      // return cross shape
-      // using a UnionSet for now--couldn't get a single
-      // Gridded2D set to appear as a cross
-      float[][] setSamples1 = {
-        {xx1, x1-delta, xx1, x1 - delta},
-        {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
-      };
-
-      float[][] setSamples2 = { 
-        {x1 - delta, x1 + delta, x1 - delta, x1 + delta},
-        {yy1, yy1, yy2, yy2}
-      };
-
-      float[][] setSamples3 = {
-        {x1 + delta, xx2, x1 + delta, xx2},
-        {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
-      };
-
-      float[][][] setSamples = {setSamples1, setSamples2, setSamples3};
-
-      samplesLength = 12;
-      
-      Gridded2DSet[] sets = new Gridded2DSet[3]; 
-      try {
-        for (int j=0; j<3; j++) {
-          sets[j] = new Gridded2DSet(domain, setSamples[j], 2, 2, 
-              null, null, null, false);
-        }
-        domainSet = new UnionSet(domain, sets);
-      }
-      catch (VisADException ex) { ex.printStackTrace(); }
-      
-      /*
-      setSamples = new float[][]{
-        {xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2,
-          xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2},
-        {y1 + delta, y1 + delta, yy1, yy1, y1 + delta, y1 + delta,
-          y1 - delta, y1 - delta, yy2, yy2, y1 - delta, y1 - delta}
-      };*/
-
-      // Run this example by curtis:
-      // Start with this:
-      /*
-      setSamples = new float[][] {
-        {xx1, x1 - delta, 
-          xx1, x1 - delta,},
-        {y1 + delta, y1 + delta, 
-          y1 - delta, y1 - delta,}
-      };
-      */
-
-      // then try this:
-      /*
-      setSamples = new float[][] {
-        {xx1, x1 - delta, x1 - delta + dx,
-          xx1, x1 - delta, x1 -delta + dx},
-        {y1 + delta, y1 + delta, y1 + size + delta, 
-          y1 - delta, y1 - delta, y1 - size - delta}
-      };
-      */
-      // I would expect the second one to look like a sideways 'T', but 
-      // it looks like a triangle instead
-    }
-
-    // construct range samples
-    float r = GLOW_COLOR.getRed() / 255f;
-    float g = GLOW_COLOR.getGreen() / 255f;
-    float b = GLOW_COLOR.getBlue() / 255f;
-
-    float[][] rangeSamples = new float[4][samplesLength];
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
-    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
-
-    // construct field
-    FlatField field = null;
-    try {
-      FunctionType fieldType = new FunctionType (domain, range);
-      field = new FlatField(fieldType, domainSet);
-      field.setSamples(rangeSamples);
-    }
-    catch (VisADException ex) { ex.printStackTrace(); }
-    catch (RemoteException ex) { ex.printStackTrace(); }
-    return field;
-  }
-    
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     double xx = x1 - x;
@@ -243,23 +116,6 @@ public class OverlayMarker extends OverlayObject {
  
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
-
-  // -- Internal OverlayObject API methods --
-
-  /** Computes parameters needed for selection grid computation. */
-  protected void computeGridParameters() {
-    float padding = 0.02f * overlay.getScalingValue();
-    float xx1 = x1 - padding;
-    float xx2 = x1 + padding;
-    float yy1 = y1 - padding;
-    float yy2 = y1 + padding;
-
-    xGrid1 = xx1; yGrid1 = yy1;
-    xGrid2 = xx2; yGrid2 = yy1;
-    xGrid3 = xx1; yGrid3 = yy2;
-    xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 2; vertGridCount = 2;
-  }
 
   // -- Object API methods --
 

@@ -52,7 +52,6 @@ public class OverlayPolyline extends OverlayNodedObject {
 
   // -- Object API methods --
   
-  
   // -- OverlayObject API methods --
   /** Gets a short string representation of this freeform. */
   public String toString() { return "Polyline"; }

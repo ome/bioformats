@@ -126,7 +126,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     Arrays.fill(nodes[0], x1);
     Arrays.fill(nodes[1], y1);
     numNodes = 1;
-    computeGridParameters();
     computeLength();
     turnOffHighlighting();
   }
@@ -139,7 +138,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     numNodes = nodes[0].length;
     maxNodes = nodes[0].length;
     updateBoundingBox();
-    computeGridParameters();
     computeLength();
     turnOffHighlighting();
   }
@@ -298,92 +296,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
     return field; 
   }
-
-  /**
-   * Computes a grid to be superimposed on this overlay
-   * to indicate it is currently selected.
-   */
-  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
-
-  /**
-   * Computes a grid to be superimposed on this overlay to
-   * indicate it is currently selected.
-   * Computes only an outline regardless of the flag 'outline' 
-   */
-  public DataImpl getSelectionGrid(boolean outline) {
-    if (!hasData()) return null;
-    else if (outline) return super.getSelectionGrid(outline);
-
-    RealTupleType domain = overlay.getDomainType();
-    TupleType range = overlay.getRangeType();
-    float delta = GLOW_WIDTH;
-
-    /*
-    // compute angle bisectors at each node
-    for (int i=0; i<numNodes; i++) {
-      if (i == 0){
-      }
-      if (i == numNodes - 1){
-      }
-      else {
-        float[] v1 = {nodes[0][i] - nodes[0][i-1], nodes[1][i] - nodes[1][i-1]};
-        float[] v2 = {nodes[0][i+1] - nodes[0][i], nodes[1][i+1] - nodes[1][i]};
-
-
-    }*/
-
-    Gridded2DSet[] segments = new Gridded2DSet[numNodes-1];
-    for (int i=0; i<numNodes - 1; i++) {
-      float[] v = new float[]{nodes[0][i+1] - nodes[0][i], nodes[1][i+1] -
-          nodes[1][i]};
-      // angle of vector perpendicular to line
-      double theta =  Math.PI / 2 + Math.atan2(v[1], v[0]); 
-
-      float dx = (float) (delta * Math.cos(theta));
-      float dy = (float) (delta * Math.sin(theta));
-
-      float[] p1 = {nodes[0][i] + dx, nodes[1][i] + dy};
-      float[] p2 = {nodes[0][i+1] + dx, nodes[1][i+1] + dy};
-      float[] p3 = {nodes[0][i] - dx, nodes[1][i] - dy};
-      float[] p4 = {nodes[0][i+1] - dx, nodes[1][i+1] - dy};
-
-      float[][] setSamples = {{p1[0], p2[0], p3[0], p4[0]},
-                              {p1[1], p2[1], p3[1], p4[1]}};
-
-      try {
-        segments[i] = new Gridded2DSet(domain, setSamples,
-            2, 2, null, null, null, false);
-      }
-      catch (VisADException exc) { exc.printStackTrace(); }
-    }
-
-    // construct range samples;
-    Color col = GLOW_COLOR;
-    float r = col.getRed() / 255f;
-    float g = col.getGreen() / 255f;
-    float b = col.getBlue() / 255f;
-
-    float[][] rangeSamples = new float[4][4*(numNodes-1)];
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
-    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
-
-    FlatField field = null;
-    UnionSet fieldSet = null;
-    try {
-      fieldSet = new UnionSet (domain, segments);
-
-      FunctionType fieldType = new FunctionType(domain, range);
-      field = new FlatField(fieldType, fieldSet);
-      field.setSamples(rangeSamples);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-
-    return field;
-  }
-
   /**
    * Computes the shortest distance from this
    * object's bounding box to the given point.
@@ -444,25 +356,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   public boolean areBoundsEditable() { return false; }
   // currently, only non-noded objects can be resized this way.
   // (Actually could perform some rad scaling on all nodes)
-
-  // -- Internal OverlayObject API methods --
-
-  /** Computes parameters needed for selection grid computation. */
-  protected void computeGridParameters() {
-    float padding = 0.02f * overlay.getScalingValue();
-    boolean flipX = x2 < x1;
-    float xx1 = flipX ? (x1 + padding) : (x1 - padding);
-    float xx2 = flipX ? (x2 - padding) : (x2 + padding);
-    boolean flipY = y2 < y1;
-    float yy1 = flipY ? (y1 + padding) : (y1 - padding);
-    float yy2 = flipY ? (y2 - padding) : (y2 + padding);
-
-    xGrid1 = xx1; yGrid1 = yy1;
-    xGrid2 = xx2; yGrid2 = yy1;
-    xGrid3 = xx1; yGrid3 = yy2;
-    xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 3; vertGridCount = 3;
-  }
 
   // -- Object API methods --
 
@@ -530,8 +423,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // same as super
     this.x1 = x1;
     this.y1 = y1;
-
-    computeGridParameters();
   }
 
   /** Sets the node array to that provided--for loading from saved */
@@ -541,7 +432,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     maxNodes = numNodes;
     computeLength();
     updateBoundingBox();
-    computeGridParameters();
   }
 
   /** Updates the coordinates of the bounding box of a noded object */

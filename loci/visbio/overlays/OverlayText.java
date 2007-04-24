@@ -24,9 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import visad.*;
 
 /** OverlayText is a text string overlay. */
@@ -47,7 +45,6 @@ public class OverlayText extends OverlayObject {
     x1 = x;
     y1 = y;
     this.text = text;
-    computeGridParameters();
   }
 
   // -- Static methods --
@@ -87,46 +84,6 @@ public class OverlayText extends OverlayObject {
    */
   public boolean hasData() { return true; }
 
-  /** Gets a layer indicating this object is selected */
-  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
-
-  /** Gets a layer indicating this object is selected */
-  public DataImpl getSelectionGrid(boolean outline) { 
-    if (!hasData()) return null;
-    else if (outline) return super.getSelectionGrid(outline);
-
-    RealTupleType domain = overlay.getDomainType();
-    TupleType range = overlay.getRangeType();
-
-    float[][] setSamples = {
-      {xGrid1, xGrid2, xGrid3, xGrid4},
-      {yGrid1, yGrid2, yGrid3, yGrid4}
-    };
-
-    // construct range samples
-    float r = GLOW_COLOR.getRed() / 255f;
-    float g = GLOW_COLOR.getGreen() / 255f;
-    float b = GLOW_COLOR.getBlue() / 255f;
-
-    float[][] rangeSamples = new float[4][setSamples[0].length];
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
-    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
-
-    FlatField field = null;
-    try {
-      Gridded2DSet domainSet = new Gridded2DSet(domain, setSamples, 2, 2,
-          null, null, null, false);
-      FunctionType fieldType = new FunctionType(domain, range);
-      field = new FlatField(fieldType, domainSet);
-      field.setSamples(rangeSamples);
-    }
-    catch (VisADException ex) { ex.printStackTrace(); }
-    catch (RemoteException ex) { ex.printStackTrace(); }
-    return field;
-  }
-
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     double xdist = 0;
@@ -138,7 +95,7 @@ public class OverlayText extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
-  /** Returns a specific statistic of this object*/
+  /** Returns a specific statistic of this object */
   public String getStat(String name) {
     if (name.equals("Coordinates")) {
       return "(" + x1 + ", " + y1 + ")";
@@ -156,38 +113,6 @@ public class OverlayText extends OverlayObject {
 
   /** True iff this overlay object returns text to render. */
   public boolean hasText() { return true; }
-
-  // -- Internal OverlayObject API methods --
-
-  /** Computes parameters needed for selection grid computation. */
-  protected void computeGridParameters() {
-    // Computing the grid for text overlays is difficult because the size of
-    // the overlay depends on the font metrics, which are obtained from an AWT
-    // component (in this case, window.getDisplay().getComponent() for a
-    // display window), but data transforms have no knowledge of which display
-    // windows are currently displaying them.
-
-    // HACK - for now, use this harebrained scheme to estimate the bounds
-    int sx = overlay.getScalingValueX();
-    int sy = overlay.getScalingValueY();
-    float mw = sx / 318f, mh = sy / 640f; // obtained through experimentation
-    FontMetrics fm = overlay.getFontMetrics();
-    x2 = x1 + mw * fm.stringWidth(text);
-    y2 = y1 + mh * fm.getHeight();
-
-    float padx = 0.02f * sx;
-    float pady = 0.02f * sy;
-    float xx1 = x1 - padx;
-    float xx2 = x2 + padx;
-    float yy1 = y1 - pady;
-    float yy2 = y2 + pady;
-
-    xGrid1 = xx1; yGrid1 = yy1;
-    xGrid2 = xx2; yGrid2 = yy1;
-    xGrid3 = xx1; yGrid3 = yy2;
-    xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 2; vertGridCount = 3;
-  }
 
   // -- Object API methods --
 

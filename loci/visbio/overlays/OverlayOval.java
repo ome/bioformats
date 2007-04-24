@@ -84,7 +84,6 @@ public class OverlayOval extends OverlayObject {
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
-    computeGridParameters();
   }
 
   // -- Static methods --
@@ -165,69 +164,6 @@ public class OverlayOval extends OverlayObject {
   }
 
   
-  /** Gets a layer indicating this overlay is selected */
-  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
-
-  /** Gets a layer indicating this overlay is selected */
-  public DataImpl getSelectionGrid(boolean outline) {
-    if (!hasData()) return null;
-    else if (outline) return super.getSelectionGrid(outline);
-
-    RealTupleType domain = overlay.getDomainType();
-    TupleType range = overlay.getRangeType();
-
-    float cx = (x1 + x2) / 2;
-    float cy = (y1 + y2) / 2;
-    float rrx = cx > x1 ? cx - x1 : cx - x2;
-    float rry = cy > y1 ? cy - y1 : cy - y2;
-
-    float scl = 1; // for now
-    float rx = rrx + GLOW_WIDTH * scl;
-    float ry = rry + GLOW_WIDTH * scl;
-
-    int arcLen = ARC[0].length;
-    int len = 2 * arcLen;
-    float[][] setSamples = new float[2][len];
-
-    // top half of circle
-    for (int i=0; i<arcLen; i++) {
-      setSamples[0][i] = cx + rx * ARC[0][i];
-      setSamples[1][i] = cy + ry * ARC[1][i];
-    }
-
-    // bottom half of circle
-    for (int i=0; i<arcLen; i++) {
-      int ndx = arcLen + i;
-      setSamples[0][ndx] = cx + rx * ARC[0][i];
-      setSamples[1][ndx] = cy - ry * ARC[1][i];
-    }
-
-    // construct range samples
-    float r = GLOW_COLOR.getRed() / 255f;
-    float g = GLOW_COLOR.getGreen() / 255f;
-    float b = GLOW_COLOR.getBlue() / 255f;
-
-    float[][] rangeSamples = new float[4][setSamples[0].length];
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
-    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
-
-    GriddedSet fieldSet = null;
-    FlatField field = null;
-    try {
-      fieldSet = new Gridded2DSet(domain,
-        setSamples, arcLen, 2, null, null, null, false);
-
-      FunctionType fieldType = new FunctionType(domain, range);
-      field = new FlatField(fieldType, fieldSet);
-      field.setSamples(rangeSamples);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-    return field;
-  }
-
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     double xdist = 0;
@@ -378,25 +314,6 @@ public class OverlayOval extends OverlayObject {
 
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
-
-  // -- Internal OverlayObject API methods --
-
-  /** Computes parameters needed for selection grid computation. */
-  protected void computeGridParameters() {
-    float padding = 0.02f * overlay.getScalingValue();
-    boolean flipX = x2 < x1;
-    float xx1 = flipX ? (x1 + padding) : (x1 - padding);
-    float xx2 = flipX ? (x2 - padding) : (x2 + padding);
-    boolean flipY = y2 < y1;
-    float yy1 = flipY ? (y1 + padding) : (y1 - padding);
-    float yy2 = flipY ? (y2 - padding) : (y2 + padding);
-
-    xGrid1 = xx1; yGrid1 = yy1;
-    xGrid2 = xx2; yGrid2 = yy1;
-    xGrid3 = xx1; yGrid3 = yy2;
-    xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 3; vertGridCount = 3;
-  }
 
   // -- Object API methods --
 
