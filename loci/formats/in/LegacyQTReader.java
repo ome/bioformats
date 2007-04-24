@@ -119,6 +119,8 @@ public class LegacyQTReader extends FormatReader {
 
     try {
       r.exec("openMovieFile.close()");
+      r.exec("m.disposeQTObject()");
+      r.exec("imageTrack.disposeQTObject()");
       r.exec("QTSession.close()");
     }
     catch (ReflectException e) {
