@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
+import java.util.zip.*;
 import javax.imageio.ImageIO;
 import loci.formats.*;
 import loci.formats.codec.ByteVector;
@@ -648,7 +649,36 @@ public class QTReader extends FormatReader {
           core.sizeY[0] = in.readInt();
         }
         else if (atomType.equals("cmov")) {
-          throw new FormatException("Compressed header not supported.");
+          in.skipBytes(8);
+          byte[] b = new byte[4];
+          in.read(b);
+          if ("zlib".equals(new String(b))) {
+            atomSize = in.readInt();
+            in.skipBytes(4);
+            int uncompressedSize = in.readInt();
+
+            b = new byte[(int) (atomSize - 12)];
+            in.read(b); 
+          
+            Inflater inf = new Inflater();
+            inf.setInput(b, 0, b.length);
+            byte[] output = new byte[uncompressedSize];
+            try { 
+              inf.inflate(output);
+            }
+            catch (DataFormatException dfe) {
+              if (debug) dfe.printStackTrace();
+              throw new FormatException("Compressed header not supported.");
+            }
+            inf.end();
+         
+            RandomAccessStream oldIn = in;
+            in = new RandomAccessStream(output);
+            parse(0, 0, output.length);
+            in.close(); 
+            in = oldIn;
+          }
+          else throw new FormatException("Compressed header not supported.");
         }
         else if (atomType.equals("stco")) {
           // we've found the plane offsets
