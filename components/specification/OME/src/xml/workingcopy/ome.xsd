@@ -36,7 +36,7 @@
 # Written by: Ilya G. Goldberg, Andrew J Patterson
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-	<xs:element name = "OME">
+	<xs:element name="OME">
 		<xs:annotation>
 			<xs:documentation>
 				The OME element is a container for all information objects acessible by OME.  These information objects include descriptions of the imaging experiments
@@ -47,22 +47,22 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Project" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Dataset" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Experiment" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Plate" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Screen" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Experimenter" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Group" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Instrument" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "Image" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "STD:SemanticTypeDefinitions" minOccurs = "0"/>
-				<xs:element ref = "AML:AnalysisModuleLibrary" minOccurs = "0"/>
-				<xs:element ref = "CA:CustomAttributes" minOccurs = "0"/>
+				<xs:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Plate" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Screen" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="STD:SemanticTypeDefinitions" minOccurs="0"/>
+				<xs:element ref="AML:AnalysisModuleLibrary" minOccurs="0"/>
+				<xs:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Image">
+	<xs:element name="Image">
 		<xs:annotation>
 			<xs:documentation>
 				This element describes the actual image and its meta-data.
@@ -82,45 +82,45 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "CreationDate"/>
-				<xs:element ref = "ExperimenterRef" minOccurs = "0"/>
-				<xs:element ref = "Description" minOccurs = "0"/>
-				<xs:element ref = "ExperimentRef" minOccurs = "0"/>
-				<xs:element ref = "GroupRef" minOccurs = "0"/>
-				<xs:element ref = "DatasetRef" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "InstrumentRef" minOccurs = "0"/>
+				<xs:element ref="CreationDate"/>
+				<xs:element ref="ExperimenterRef" minOccurs="0"/>
+				<xs:element ref="Description" minOccurs="0"/>
+				<xs:element ref="ExperimentRef" minOccurs="0"/>
+				<xs:element ref="GroupRef" minOccurs="0"/>
+				<xs:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="InstrumentRef" minOccurs="0"/>
 				<xs:element ref = "ObjectiveRef" minOccurs = "0"/>
-				<xs:element ref = "ImagingEnvironment" minOccurs = "0"/>
-				<xs:element ref = "Thumbnail" minOccurs = "0"/>
-				<xs:element ref = "ChannelInfo" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "DisplayOptions" minOccurs = "0"/>
-				<xs:element ref = "StageLabel" minOccurs = "0"/>
-				<xs:element ref = "PlateRef" minOccurs = "0"/>
-				<xs:element ref = "Pixels" maxOccurs = "unbounded"/>
-				<xs:element ref = "Feature" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "CA:CustomAttributes" minOccurs = "0"/>
+				<xs:element ref="ImagingEnvironment" minOccurs="0"/>
+				<xs:element ref="Thumbnail" minOccurs="0"/>
+				<xs:element ref="ChannelInfo" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="DisplayOptions" minOccurs="0"/>
+				<xs:element ref="StageLabel" minOccurs="0"/>
+				<xs:element ref="PlateRef" minOccurs="0"/>
+				<xs:element ref="Pixels" maxOccurs="unbounded"/>
+				<xs:element ref="Feature" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "ImageID"/>
-			<xs:attribute name = "Name" use = "required" type = "xs:string"/>
-			<xs:attribute name = "PixelSizeX" type = "xs:float">
+			<xs:attribute name="ID" use="required" type="ImageID"/>
+			<xs:attribute name="Name" use="required" type="xs:string"/>
+			<xs:attribute name="PixelSizeX" type="xs:float">
 				<xs:annotation>
 					<xs:documentation>Physical size of a pixel</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "PixelSizeY" type = "xs:float">
+			<xs:attribute name="PixelSizeY" type="xs:float">
 				<xs:annotation>
 					<xs:documentation>Physical size of a pixel</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "PixelSizeZ" type = "xs:float">
+			<xs:attribute name="PixelSizeZ" type="xs:float">
 				<xs:annotation>
 					<xs:documentation>Physical size of a pixel</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "TimeIncrement" type = "xs:float"/>
-			<xs:attribute name = "WaveStart" type = "xs:positiveInteger"/>
-			<xs:attribute name = "WaveIncrement" type = "xs:positiveInteger"/>
-			<xs:attribute name = "DefaultPixels" type = "PixelsID">
+			<xs:attribute name="TimeIncrement" type="xs:float"/>
+			<xs:attribute name="WaveStart" type="xs:positiveInteger"/>
+			<xs:attribute name="WaveIncrement" type="xs:positiveInteger"/>
+			<xs:attribute name="DefaultPixels" type="PixelsID">
 				<xs:annotation>
 					<xs:documentation>More than one Pixels attribute may be associated with an Image. An Image will however have one "primary" set of Pixels. If a PixelsID is specified with this attribute, then that will be the "primary" pixels for this image. If this attribute
 is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be assumed to be the "primary" set.
@@ -129,7 +129,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "CreationDate" type = "xs:dateTime">
+	<xs:element name="CreationDate" type="xs:dateTime">
 		<xs:annotation>
 			<xs:documentation>
 				The creation date of the Image - when the Image was acquired.
@@ -137,7 +137,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "Pixels">
+	<xs:element name="Pixels">
 		<xs:annotation>
 			<xs:documentation>
 				The Image will be unreadable if any of the required Pixel attributes are missing.
@@ -149,24 +149,24 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Bin:BinData" maxOccurs = "unbounded"/>
+				<xs:element ref="Bin:BinData" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "PixelsID"/>
-			<xs:attribute name = "DimensionOrder" use = "required">
+			<xs:attribute name="ID" use="required" type="PixelsID"/>
+			<xs:attribute name="DimensionOrder" use="required">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "XYZCT"/>
-						<xs:enumeration value = "XYZTC"/>
-						<xs:enumeration value = "XYCTZ"/>
-						<xs:enumeration value = "XYCZT"/>
-						<xs:enumeration value = "XYTCZ"/>
-						<xs:enumeration value = "XYTZC"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="XYZCT"/>
+						<xs:enumeration value="XYZTC"/>
+						<xs:enumeration value="XYCTZ"/>
+						<xs:enumeration value="XYCZT"/>
+						<xs:enumeration value="XYTCZ"/>
+						<xs:enumeration value="XYTZC"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "PixelType" use = "required">
+			<xs:attribute name="PixelType" use="required">
 				<xs:simpleType>
-					<xs:restriction base = "PixelTypes">
+					<xs:restriction base="PixelTypes">
 						<xs:enumeration value = "int8"/>
 						<xs:enumeration value = "int16"/>
 						<xs:enumeration value = "int32"/>
@@ -177,39 +177,39 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "BigEndian" use = "required" type = "xs:boolean">
+			<xs:attribute name="BigEndian" use="required" type="xs:boolean">
 				<xs:annotation>
 					<xs:documentation>This is true if the pixel data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All pixel data must be written in the same endian order.</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "SizeX" use = "required" type = "xs:positiveInteger">
+			<xs:attribute name="SizeX" use="required" type="xs:positiveInteger">
 				<xs:annotation>
 					<xs:documentation>Dimensional size of pixel data array</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "SizeY" use = "required" type = "xs:positiveInteger">
+			<xs:attribute name="SizeY" use="required" type="xs:positiveInteger">
 				<xs:annotation>
 					<xs:documentation>Dimensional size of pixel data array</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "SizeZ" use = "required" type = "xs:positiveInteger">
+			<xs:attribute name="SizeZ" use="required" type="xs:positiveInteger">
 				<xs:annotation>
 					<xs:documentation>Dimensional size of pixel data array</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "SizeC" use = "required" type = "xs:positiveInteger">
+			<xs:attribute name="SizeC" use="required" type="xs:positiveInteger">
 				<xs:annotation>
 					<xs:documentation>Dimensional size of pixel data array</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "SizeT" use = "required" type = "xs:positiveInteger">
+			<xs:attribute name="SizeT" use="required" type="xs:positiveInteger">
 				<xs:annotation>
 					<xs:documentation>Dimensional size of pixel data array</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Experiment">
+	<xs:element name="Experiment">
 		<xs:annotation>
 			<xs:documentation>
 				This element describes the type of experiment.  The required Type attribute must contain one or more entries from the following list:
@@ -221,52 +221,52 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Description" minOccurs = "0"/>
-				<xs:element ref = "ExperimenterRef"/>
+				<xs:element ref="Description" minOccurs="0"/>
+				<xs:element ref="ExperimenterRef"/>
 			</xs:sequence>
-			<xs:attribute name = "Type" use = "required">
+			<xs:attribute name="Type" use="required">
 				<xs:simpleType>
 					<xs:list>
 						<xs:simpleType>
-							<xs:restriction base = "xs:string">
-								<xs:enumeration value = "FP"/>
-								<xs:enumeration value = "FRET"/>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="FP"/>
+								<xs:enumeration value="FRET"/>
 								<xs:enumeration value = "Time-lapse"/>
 								<xs:enumeration value = "4-D+"/>
-								<xs:enumeration value = "Screen"/>
-								<xs:enumeration value = "Immunocytochemistry"/>
-								<xs:enumeration value = "Immunofluorescence"/>
-								<xs:enumeration value = "FISH"/>
-								<xs:enumeration value = "Electrophysiology"/>
+								<xs:enumeration value="Screen"/>
+								<xs:enumeration value="Immunocytochemistry"/>
+								<xs:enumeration value="Immunofluorescence"/>
+								<xs:enumeration value="FISH"/>
+								<xs:enumeration value="Electrophysiology"/>
 								<xs:enumeration value = "Ion-Imaging"/>
-								<xs:enumeration value = "Colocalization"/>
+								<xs:enumeration value="Colocalization"/>
 								<xs:enumeration value = "PGI/Documentation"/>
-								<xs:enumeration value = "FRAP"/>
-								<xs:enumeration value = "Photoablation"/>
-								<xs:enumeration value = "Photoactivation"/>
-								<xs:enumeration value = "Uncaging"/>
+								<xs:enumeration value="FRAP"/>
+								<xs:enumeration value="Photoablation"/>
+								<xs:enumeration value="Photoactivation"/>
+								<xs:enumeration value="Uncaging"/>
 								<xs:enumeration value = "Optical-Trapping"/>
 								<xs:enumeration value = "Fluorescence-Lifetime"/>
 								<xs:enumeration value = "Spectral-Imaging"/>
-								<xs:enumeration value = "Other"/>
+								<xs:enumeration value="Other"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:list>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "ID" use = "required" type = "ExperimentID"/>
+			<xs:attribute name="ID" use="required" type="ExperimentID"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "ExperimentRef">
+	<xs:element name="ExperimentRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "ExperimentID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="ExperimentID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "ChannelInfo">
+	<xs:element name="ChannelInfo">
 		<xs:annotation>
 			<xs:documentation>
 				There must be one per channel in the Image, even for a single-plane image.  In OME, Channels (e.g. 'FITC', 'Texas Red', etc) are specified as Logical Channels,
@@ -296,40 +296,40 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "LightSourceRef" minOccurs = "0"/>
-				<xs:element ref = "AuxLightSourceRef" minOccurs = "0"/>
-				<xs:element ref = "OTFRef" minOccurs = "0"/>
-				<xs:element ref = "DetectorRef" minOccurs = "0"/>
-				<xs:element ref = "FilterRef" minOccurs = "0"/>
-				<xs:element ref = "ChannelComponent" maxOccurs = "unbounded"/>
+				<xs:element ref="LightSourceRef" minOccurs="0"/>
+				<xs:element ref="AuxLightSourceRef" minOccurs="0"/>
+				<xs:element ref="OTFRef" minOccurs="0"/>
+				<xs:element ref="DetectorRef" minOccurs="0"/>
+				<xs:element ref="FilterRef" minOccurs="0"/>
+				<xs:element ref="ChannelComponent" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "LogicalChannelID"/>
-			<xs:attribute name = "Name" type = "xs:string"/>
-			<xs:attribute name = "SamplesPerPixel" type = "xs:integer"/>
-			<xs:attribute name = "IlluminationType">
+			<xs:attribute name="ID" use="required" type="LogicalChannelID"/>
+			<xs:attribute name="Name" type="xs:string"/>
+			<xs:attribute name="SamplesPerPixel" type="xs:integer"/>
+			<xs:attribute name="IlluminationType">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "Transmitted"/>
-						<xs:enumeration value = "Epifluorescence"/>
-						<xs:enumeration value = "Oblique"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Transmitted"/>
+						<xs:enumeration value="Epifluorescence"/>
+						<xs:enumeration value="Oblique"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "PinholeSize" type = "xs:positiveInteger"/>
+			<xs:attribute name="PinholeSize" type="xs:positiveInteger"/>
 			<xs:attribute name = "PhotometricInterpretation" default = "monochrome">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
+					<xs:restriction base="xs:string">
 						<xs:enumeration value = "monochrome"/>
-						<xs:enumeration value = "RGB"/>
-						<xs:enumeration value = "ARGB"/>
-						<xs:enumeration value = "CMYK"/>
-						<xs:enumeration value = "HSV"/>
+						<xs:enumeration value="RGB"/>
+						<xs:enumeration value="ARGB"/>
+						<xs:enumeration value="CMYK"/>
+						<xs:enumeration value="HSV"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "Mode">
+			<xs:attribute name="Mode">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
+					<xs:restriction base="xs:string">
 						<xs:enumeration value = "Wide-field"/>
 						<xs:enumeration value = "Laser Scanning Microscopy"/>
 						<xs:enumeration value = "Laser Scanning Confocal"/>
@@ -347,27 +347,27 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "ContrastMethod">
+			<xs:attribute name="ContrastMethod">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "Brightfield"/>
-						<xs:enumeration value = "Phase"/>
-						<xs:enumeration value = "DIC"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Brightfield"/>
+						<xs:enumeration value="Phase"/>
+						<xs:enumeration value="DIC"/>
 						<xs:enumeration value = "Hoffman Modulation"/>
 						<xs:enumeration value = "Oblique Illumination"/>
 						<xs:enumeration value = "Polarized Light"/>
-						<xs:enumeration value = "Darkfield"/>
-						<xs:enumeration value = "Fluorescence"/>
+						<xs:enumeration value="Darkfield"/>
+						<xs:enumeration value="Fluorescence"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "ExWave" type = "xs:positiveInteger"/>
-			<xs:attribute name = "EmWave" type = "xs:positiveInteger"/>
-			<xs:attribute name = "Fluor" type = "xs:string"/>
+			<xs:attribute name="ExWave" type="xs:positiveInteger"/>
+			<xs:attribute name="EmWave" type="xs:positiveInteger"/>
+			<xs:attribute name="Fluor" type="xs:string"/>
 			<xs:attribute name = "NDfilter" type = "xs:float"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "DisplayOptions">
+	<xs:element name="DisplayOptions">
 		<xs:annotation>
 			<xs:documentation>
 				There is optionally one of these per Image.
@@ -385,30 +385,30 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "RedChannel"/>
-				<xs:element ref = "GreenChannel"/>
-				<xs:element ref = "BlueChannel"/>
-				<xs:element ref = "GreyChannel"/>
-				<xs:element ref = "Projection" minOccurs = "0"/>
-				<xs:element ref = "Time" minOccurs = "0"/>
-				<xs:element ref = "ROI" minOccurs = "0" maxOccurs = "unbounded"/>
+				<xs:element ref="RedChannel"/>
+				<xs:element ref="GreenChannel"/>
+				<xs:element ref="BlueChannel"/>
+				<xs:element ref="GreyChannel"/>
+				<xs:element ref="Projection" minOccurs="0"/>
+				<xs:element ref="Time" minOccurs="0"/>
+				<xs:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name = "Zoom" type = "xs:float"/>
-			<xs:attribute name = "ID" use = "required" type = "DisplayOptionsID"/>
-			<xs:attribute name = "Display" use = "required">
+			<xs:attribute name="Zoom" type="xs:float"/>
+			<xs:attribute name="ID" use="required" type="DisplayOptionsID"/>
+			<xs:attribute name="Display" use="required">
 				<xs:annotation>
 					<xs:documentation>Specifies to display the image as greyscale or RGB</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "RGB"/>
-						<xs:enumeration value = "Grey"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="RGB"/>
+						<xs:enumeration value="Grey"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "RedChannel" type = "ChannelSpecType">
+	<xs:element name="RedChannel" type="ChannelSpecType">
 		<xs:annotation>
 			<xs:documentation>
 				The wave number, black level, white level and optional gamma for the red channel of an RGB image.
@@ -417,7 +417,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "GreenChannel" type = "ChannelSpecType">
+	<xs:element name="GreenChannel" type="ChannelSpecType">
 		<xs:annotation>
 			<xs:documentation>
 				The wave number, black level, white level and optional gamma for the green channel of an RGB image.
@@ -426,7 +426,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "BlueChannel" type = "ChannelSpecType">
+	<xs:element name="BlueChannel" type="ChannelSpecType">
 		<xs:annotation>
 			<xs:documentation>
 				The wave number, black level, white level and optional gamma for the blue channel of an RGB image.
@@ -435,7 +435,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "GreyChannel">
+	<xs:element name="GreyChannel">
 		<xs:annotation>
 			<xs:documentation>
 				The wave number, black level, white level and optional gamma for a greyscale image.
@@ -446,13 +446,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "ChannelSpecType">
-					<xs:attribute name = "ColorMap" default = "Greyscale">
+				<xs:extension base="ChannelSpecType">
+					<xs:attribute name="ColorMap" default="Greyscale">
 						<xs:simpleType>
-							<xs:restriction base = "xs:string">
-								<xs:enumeration value = "Greyscale"/>
-								<xs:enumeration value = "Spectrum"/>
-								<xs:enumeration value = "Blackbody"/>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="Greyscale"/>
+								<xs:enumeration value="Spectrum"/>
+								<xs:enumeration value="Blackbody"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
@@ -460,7 +460,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Projection">
+	<xs:element name="Projection">
 		<xs:annotation>
 			<xs:documentation>
 				The presence of this element indicates the user wants to view the Image as a maximum intensity projection.
@@ -469,11 +469,11 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "Zstart" type = "xs:integer"/>
-			<xs:attribute name = "Zstop" type = "xs:integer"/>
+			<xs:attribute name="Zstart" type="xs:integer"/>
+			<xs:attribute name="Zstop" type="xs:integer"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Time">
+	<xs:element name="Time">
 		<xs:annotation>
 			<xs:documentation>
 				The time range the user is interested in the initial viewer display.  A range of timepoints indicates a movie
@@ -484,11 +484,11 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "Tstart" type = "xs:integer"/>
-			<xs:attribute name = "Tstop" type = "xs:integer"/>
+			<xs:attribute name="Tstart" type="xs:integer"/>
+			<xs:attribute name="Tstop" type="xs:integer"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Instrument">
+	<xs:element name="Instrument">
 		<xs:annotation>
 			<xs:documentation>
 				This element describes the instrument used to capture the Image.
@@ -508,30 +508,30 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Microscope"/>
-				<xs:element ref = "LightSource" maxOccurs = "unbounded"/>
-				<xs:element ref = "Detector" maxOccurs = "unbounded"/>
-				<xs:element ref = "Objective" maxOccurs = "unbounded"/>
-				<xs:element ref = "Filter" maxOccurs = "unbounded"/>
-				<xs:element ref = "OTF" maxOccurs = "unbounded"/>
+				<xs:element ref="Microscope"/>
+				<xs:element ref="LightSource" maxOccurs="unbounded"/>
+				<xs:element ref="Detector" maxOccurs="unbounded"/>
+				<xs:element ref="Objective" maxOccurs="unbounded"/>
+				<xs:element ref="Filter" maxOccurs="unbounded"/>
+				<xs:element ref="OTF" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "InstrumentID"/>
+			<xs:attribute name="ID" use="required" type="InstrumentID"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "StageLabel">
+	<xs:element name="StageLabel">
 		<xs:annotation>
 			<xs:documentation>
 				The StageLabel is used to specify a name and position for a stage position in the microscope's reference frame.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "Name" use = "required" type = "xs:string"/>
-			<xs:attribute name = "X" type = "xs:float"/>
-			<xs:attribute name = "Y" type = "xs:float"/>
-			<xs:attribute name = "Z" type = "xs:float"/>
+			<xs:attribute name="Name" use="required" type="xs:string"/>
+			<xs:attribute name="X" type="xs:float"/>
+			<xs:attribute name="Y" type="xs:float"/>
+			<xs:attribute name="Z" type="xs:float"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Experimenter" type = "ExperimenterType">
+	<xs:element name="Experimenter" type="ExperimenterType">
 		<xs:annotation>
 			<xs:documentation>
 				This element describes a person who performed an imaging experiment.  Required elements are FirstName, LastName and Email.
@@ -540,27 +540,27 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "OMEName" type = "xs:string">
+	<xs:element name="OMEName" type="xs:string">
 		<xs:annotation>
 			<xs:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense).</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "FirstName" type = "xs:string">
+	<xs:element name="FirstName" type="xs:string">
 		<xs:annotation>
 			<xs:documentation>First name, optionally containing a middle initial.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "LastName" type = "xs:string">
+	<xs:element name="LastName" type="xs:string">
 		<xs:annotation>
 			<xs:documentation>A person's last or surname.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "Email" type = "xs:string">
+	<xs:element name="Email" type="xs:string">
 		<xs:annotation>
 			<xs:documentation>A person's  email address.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "Screen">
+	<xs:element name="Screen">
 		<xs:annotation>
 			<xs:documentation>
 				The Screen element is a grouping for Plates.
@@ -573,14 +573,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Description" minOccurs = "0"/>
+				<xs:element ref="Description" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "ScreenID"/>
-			<xs:attribute name = "Name" use = "required" type = "xs:string"/>
+			<xs:attribute name="ID" use="required" type="ScreenID"/>
+			<xs:attribute name="Name" use="required" type="xs:string"/>
 			<xs:attribute name = "ExternRef" type = "ExternDBref"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "ScreenRef">
+	<xs:element name="ScreenRef">
 		<xs:annotation>
 			<xs:documentation>
 				The ScreenRef element is a reference to a Screen element.
@@ -590,13 +590,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "ScreenID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="ScreenID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Plate">
+	<xs:element name="Plate">
 		<xs:annotation>
 			<xs:documentation>
 				This element identifies microtiter plates within a screen.
@@ -609,14 +609,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "ScreenRef" maxOccurs = "unbounded"/>
+				<xs:element ref="ScreenRef" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "PlateID"/>
-			<xs:attribute name = "Name" use = "required" type = "xs:string"/>
-			<xs:attribute name = "ExternRef" type = "ExternDBref"/>
+			<xs:attribute name="ID" use="required" type="PlateID"/>
+			<xs:attribute name="Name" use="required" type="xs:string"/>
+			<xs:attribute name="ExternRef" type="ExternDBref"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Objective">
+	<xs:element name="Objective">
 		<xs:annotation>
 			<xs:documentation>
 				A description of the microscope's objective lens.
@@ -625,17 +625,18 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "ManufactSpec">
+				<xs:extension base="ManufactSpec">
 					<xs:sequence>
-						<xs:element ref = "LensNA"/>
-						<xs:element ref = "Magnification"/>
+							<xs:element ref="LensNA"/>
+							<xs:element ref="Magnification"/>
 					</xs:sequence>
-					<xs:attribute name = "ID" use = "required" type = "ObjectiveID"/>
+					<xs:attribute name="ID" use="required" type="ObjectiveID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Filter">
+	
+	<xs:element name="Filter">
 		<xs:annotation>
 			<xs:documentation>
 				Filters may be separate excitation dichroic mirror and emission filters specified by the
@@ -652,14 +653,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xs:sequence>
 				<xs:choice>
 					<xs:sequence>
-						<xs:element ref = "ExFilter"/>
-						<xs:element ref = "Dichroic"/>
-						<xs:element ref = "EmFilter"/>
+						<xs:element ref="ExFilter"/>
+						<xs:element ref="Dichroic"/>
+						<xs:element ref="EmFilter"/>
 					</xs:sequence>
-					<xs:element ref = "FilterSet"/>
+					<xs:element ref="FilterSet"/>
 				</xs:choice>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "FilterID"/>
+			<xs:attribute name="ID" use="required" type="FilterID"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name = "Magnification" type = "xs:float">
@@ -667,12 +668,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xs:documentation>The magnification of the lens - i.e. '60.0' is a 60X lens.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "LensNA" type = "xs:float">
+	<xs:element name="LensNA" type="xs:float">
 		<xs:annotation>
 			<xs:documentation>The numerical aperture of the lens expressed as a floating point (real) number.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "ExFilter">
+	<xs:element name="ExFilter">
 		<xs:annotation>
 			<xs:documentation>
 				Excitation filter manufacturer specification.
@@ -681,14 +682,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "FilterSpec">
-					<xs:attribute name = "Type">
+				<xs:extension base="FilterSpec">
+					<xs:attribute name="Type">
 						<xs:simpleType>
-							<xs:restriction base = "xs:string">
-								<xs:enumeration value = "LongPass"/>
-								<xs:enumeration value = "ShortPass"/>
-								<xs:enumeration value = "BandPass"/>
-								<xs:enumeration value = "MultiPass"/>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="LongPass"/>
+								<xs:enumeration value="ShortPass"/>
+								<xs:enumeration value="BandPass"/>
+								<xs:enumeration value="MultiPass"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
@@ -696,7 +697,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "EmFilter">
+	<xs:element name="EmFilter">
 		<xs:annotation>
 			<xs:documentation>
 				Emission filter manufacturer specification.
@@ -705,14 +706,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "FilterSpec">
-					<xs:attribute name = "Type">
+				<xs:extension base="FilterSpec">
+					<xs:attribute name="Type">
 						<xs:simpleType>
-							<xs:restriction base = "xs:string">
-								<xs:enumeration value = "LongPass"/>
-								<xs:enumeration value = "ShortPass"/>
-								<xs:enumeration value = "BandPass"/>
-								<xs:enumeration value = "MultiPass"/>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="LongPass"/>
+								<xs:enumeration value="ShortPass"/>
+								<xs:enumeration value="BandPass"/>
+								<xs:enumeration value="MultiPass"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
@@ -720,12 +721,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "FilterSet" type = "FilterSpec">
+	<xs:element name="FilterSet" type="FilterSpec">
 		<xs:annotation>
 			<xs:documentation>Filter set manufacturer specification</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "Detector">
+	<xs:element name="Detector">
 		<xs:annotation>
 			<xs:documentation>
 				The type of detector used to capture the image.
@@ -735,23 +736,23 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "ManufactSpec">
-					<xs:attribute name = "Gain" type = "xs:float"/>
-					<xs:attribute name = "Voltage" type = "xs:float"/>
-					<xs:attribute name = "Offset" type = "xs:float"/>
-					<xs:attribute name = "ID" use = "required" type = "DetectorID"/>
-					<xs:attribute name = "Type" use = "required">
+				<xs:extension base="ManufactSpec">
+					<xs:attribute name="Gain" type="xs:float"/>
+					<xs:attribute name="Voltage" type="xs:float"/>
+					<xs:attribute name="Offset" type="xs:float"/>
+					<xs:attribute name="ID" use="required" type="DetectorID"/>
+					<xs:attribute name="Type" use="required">
 						<xs:simpleType>
-							<xs:restriction base = "xs:string">
-								<xs:enumeration value = "CCD"/>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="CCD"/>
 								<xs:enumeration value = "Intensified-CCD"/>
 								<xs:enumeration value = "Analog-Video"/>
-								<xs:enumeration value = "PMT"/>
-								<xs:enumeration value = "Photodiode"/>
-								<xs:enumeration value = "Spectroscopy"/>
+								<xs:enumeration value="PMT"/>
+								<xs:enumeration value="Photodiode"/>
+								<xs:enumeration value="Spectroscopy"/>
 								<xs:enumeration value = "Life-time-Imaging"/>
 								<xs:enumeration value = "Correlation-Spectroscopy"/>
-								<xs:enumeration value = "FTIR"/>
+								<xs:enumeration value="FTIR"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
@@ -759,7 +760,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Description">
+	<xs:element name="Description">
 		<xs:annotation>
 			<xs:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
@@ -767,20 +768,20 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "Microscope">
+	<xs:element name="Microscope">
 		<xs:annotation>
 			<xs:documentation>The microscope's manufacturer specification.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "ManufactSpec">
-					<xs:attribute name = "Type" use = "required">
+				<xs:extension base="ManufactSpec">
+					<xs:attribute name="Type" use="required">
 						<xs:simpleType>
-							<xs:restriction base = "xs:string">
-								<xs:enumeration value = "Upright"/>
-								<xs:enumeration value = "Inverted"/>
-								<xs:enumeration value = "Dissection"/>
-								<xs:enumeration value = "Electrophysiology"/>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="Upright"/>
+								<xs:enumeration value="Inverted"/>
+								<xs:enumeration value="Dissection"/>
+								<xs:enumeration value="Electrophysiology"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
@@ -788,12 +789,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name = "ManufactSpec">
-		<xs:attribute name = "Manufacturer" use = "required" type = "xs:string"/>
-		<xs:attribute name = "Model" use = "required" type = "xs:string"/>
-		<xs:attribute name = "SerialNumber" use = "required" type = "xs:string"/>
+	<xs:complexType name="ManufactSpec">
+		<xs:attribute name="Manufacturer" use="required" type="xs:string"/>
+		<xs:attribute name="Model" use="required" type="xs:string"/>
+		<xs:attribute name="SerialNumber" use="required" type="xs:string"/>
 	</xs:complexType>
-	<xs:element name = "Thumbnail">
+	<xs:element name="Thumbnail">
 		<xs:annotation>
 			<xs:documentation>
 				The thumbnail may be an external URI reference specified by the href attribute, or it may contain an SVG sub-document
@@ -803,13 +804,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:any namespace = "http://www.w3.org/2000/svg" processContents = "strict" minOccurs = "0"/>
+				<xs:any namespace="http://www.w3.org/2000/svg" processContents="strict" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "href" type = "xs:anyURI"/>
-			<xs:attribute name = "MIMEtype" use = "required" type = "MIMEtype"/>
+			<xs:attribute name="href" type="xs:anyURI"/>
+			<xs:attribute name="MIMEtype" use="required" type="MIMEtype"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Project">
+	<xs:element name="Project">
 		<xs:annotation>
 			<xs:documentation>
 				The Project ID and Name attributes are required.
@@ -820,211 +821,211 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Description" minOccurs = "0"/>
-				<xs:element ref = "ExperimenterRef"/>
-				<xs:element ref = "GroupRef" minOccurs = "0"/>
+				<xs:element ref="Description" minOccurs="0"/>
+				<xs:element ref="ExperimenterRef"/>
+				<xs:element ref="GroupRef" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "Name" use = "required" type = "xs:string"/>
-			<xs:attribute name = "ID" use = "required" type = "ProjectID"/>
+			<xs:attribute name="Name" use="required" type="xs:string"/>
+			<xs:attribute name="ID" use="required" type="ProjectID"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:simpleType name = "MIMEtype">
-		<xs:restriction base = "xs:string"/>
+	<xs:simpleType name="MIMEtype">
+		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
-	<xs:simpleType name = "ExternDBref">
-		<xs:restriction base = "xs:string"/>
+	<xs:simpleType name="ExternDBref">
+		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
-	<xs:simpleType name = "Hex40">
-		<xs:restriction base = "xs:hexBinary">
-			<xs:length value = "20"/>
+	<xs:simpleType name="Hex40">
+		<xs:restriction base="xs:hexBinary">
+			<xs:length value="20"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "MetalVaporLaserMedia">
-		<xs:restriction base = "xs:string">
-			<xs:enumeration value = "Cu"/>
-			<xs:enumeration value = "Ag"/>
+	<xs:simpleType name="MetalVaporLaserMedia">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Cu"/>
+			<xs:enumeration value="Ag"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ExcimerLaserMedia">
-		<xs:restriction base = "xs:string">
-			<xs:enumeration value = "ArFl"/>
-			<xs:enumeration value = "ArCl"/>
-			<xs:enumeration value = "KrFl"/>
-			<xs:enumeration value = "KrCl"/>
-			<xs:enumeration value = "XeFl"/>
-			<xs:enumeration value = "XeCl"/>
-			<xs:enumeration value = "XeBr"/>
+	<xs:simpleType name="ExcimerLaserMedia">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ArFl"/>
+			<xs:enumeration value="ArCl"/>
+			<xs:enumeration value="KrFl"/>
+			<xs:enumeration value="KrCl"/>
+			<xs:enumeration value="XeFl"/>
+			<xs:enumeration value="XeCl"/>
+			<xs:enumeration value="XeBr"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "GasLaserMedia">
-		<xs:restriction base = "xs:string">
+	<xs:simpleType name="GasLaserMedia">
+		<xs:restriction base="xs:string">
 			<xs:enumeration value = "Nitrogen"/>
 			<xs:enumeration value = "Argon"/>
 			<xs:enumeration value = "Krypton"/>
 			<xs:enumeration value = "Xenon"/>
-			<xs:enumeration value = "HeNe"/>
-			<xs:enumeration value = "HeCd"/>
-			<xs:enumeration value = "CO"/>
-			<xs:enumeration value = "CO2"/>
-			<xs:enumeration value = "H2O"/>
-			<xs:enumeration value = "HFl"/>
+			<xs:enumeration value="HeNe"/>
+			<xs:enumeration value="HeCd"/>
+			<xs:enumeration value="CO"/>
+			<xs:enumeration value="CO2"/>
+			<xs:enumeration value="H2O"/>
+			<xs:enumeration value="HFl"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "SolidStateLaserMedia">
-		<xs:restriction base = "xs:string">
+	<xs:simpleType name="SolidStateLaserMedia">
+		<xs:restriction base="xs:string">
 			<xs:enumeration value = "Nd-Glass"/>
 			<xs:enumeration value = "Nd-YAG"/>
 			<xs:enumeration value = "Er-Glass"/>
 			<xs:enumeration value = "Er-YAG"/>
 			<xs:enumeration value = "Ho-YLF"/>
 			<xs:enumeration value = "Ho-YAG"/>
-			<xs:enumeration value = "Ruby"/>
+			<xs:enumeration value="Ruby"/>
 			<xs:enumeration value = "Ti-Sapphire"/>
-			<xs:enumeration value = "Alexandrite"/>
+			<xs:enumeration value="Alexandrite"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "DyeLaserMedia">
-		<xs:restriction base = "xs:string">
+	<xs:simpleType name="DyeLaserMedia">
+		<xs:restriction base="xs:string">
 			<xs:enumeration value = "Rhodamine-6G"/>
 			<xs:enumeration value = "Coumarin-C30"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "SemiconductorLaserMedia">
-		<xs:restriction base = "xs:string">
-			<xs:enumeration value = "GaAs"/>
-			<xs:enumeration value = "GaAlAs"/>
+	<xs:simpleType name="SemiconductorLaserMedia">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GaAs"/>
+			<xs:enumeration value="GaAlAs"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "FreeElectronLaserMedia">
-		<xs:restriction base = "xs:string">
+	<xs:simpleType name="FreeElectronLaserMedia">
+		<xs:restriction base="xs:string">
 			<xs:enumeration value = "e-"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "LaserMedia">
-		<xs:union memberTypes = "MetalVaporLaserMedia ExcimerLaserMedia GasLaserMedia SolidStateLaserMedia DyeLaserMedia SemiconductorLaserMedia FreeElectronLaserMedia"/>
+	<xs:simpleType name="LaserMedia">
+		<xs:union memberTypes="MetalVaporLaserMedia ExcimerLaserMedia GasLaserMedia SolidStateLaserMedia DyeLaserMedia SemiconductorLaserMedia FreeElectronLaserMedia"/>
 	</xs:simpleType>
-	<xs:simpleType name = "PercentFraction">
-		<xs:restriction base = "xs:float">
-			<xs:maxInclusive value = "1.0"/>
-			<xs:minInclusive value = "0.0"/>
+	<xs:simpleType name="PercentFraction">
+		<xs:restriction base="xs:float">
+			<xs:maxInclusive value="1.0"/>
+			<xs:minInclusive value="0.0"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "LSID">
-		<xs:restriction base = "xs:string">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:\S+)(:\S+)"/>
+	<xs:simpleType name="LSID">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:\S+)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ProjectID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Project)(:\S+)"/>
+	<xs:simpleType name="ProjectID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Project)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "DatasetID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Dataset)(:\S+)"/>
+	<xs:simpleType name="DatasetID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Dataset)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ImageID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Image)(:\S+)"/>
+	<xs:simpleType name="ImageID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Image)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "FeatureID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Feature)(:\S+)"/>
+	<xs:simpleType name="FeatureID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Feature)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ExperimenterID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Experimenter)(:\S+)"/>
+	<xs:simpleType name="ExperimenterID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Experimenter)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "GroupID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Group)(:\S+)"/>
+	<xs:simpleType name="GroupID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Group)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ExperimentID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Experiment)(:\S+)"/>
+	<xs:simpleType name="ExperimentID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Experiment)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "InstrumentID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Instrument)(:\S+)"/>
+	<xs:simpleType name="InstrumentID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Instrument)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ObjectiveID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Objective)(:\S+)"/>
+	<xs:simpleType name="ObjectiveID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Objective)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "LightSourceID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:LightSource)(:\S+)"/>
+	<xs:simpleType name="LightSourceID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:LightSource)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "FilterID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Filter)(:\S+)"/>
+	<xs:simpleType name="FilterID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Filter)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "OTFID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:OTF)(:\S+)"/>
+	<xs:simpleType name="OTFID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:OTF)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "DetectorID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Detector)(:\S+)"/>
+	<xs:simpleType name="DetectorID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Detector)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "PixelsID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Pixels)(:\S+)"/>
+	<xs:simpleType name="PixelsID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Pixels)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "PlateID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Plate)(:\S+)"/>
+	<xs:simpleType name="PlateID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Plate)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "DisplayOptionsID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:DisplayOptions)(:\S+)"/>
+	<xs:simpleType name="DisplayOptionsID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:DisplayOptions)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ScreenID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Screen)(:\S+)"/>
+	<xs:simpleType name="ScreenID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Screen)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "LogicalChannelID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:LogicalChannel)(:\S+)"/>
+	<xs:simpleType name="LogicalChannelID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:LogicalChannel)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "PixelTypes">
-		<xs:restriction base = "xs:string">
+	<xs:simpleType name="PixelTypes">
+		<xs:restriction base="xs:string">
 			<xs:enumeration value = "bit"/>
 			<xs:enumeration value = "int8"/>
 			<xs:enumeration value = "int16"/>
 			<xs:enumeration value = "int32"/>
-			<xs:enumeration value = "Uint8"/>
-			<xs:enumeration value = "Uint16"/>
-			<xs:enumeration value = "Uint32"/>
+			<xs:enumeration value="Uint8"/>
+			<xs:enumeration value="Uint16"/>
+			<xs:enumeration value="Uint32"/>
 			<xs:enumeration value = "float"/>
 			<xs:enumeration value = "double"/>
 			<xs:enumeration value = "complex"/>
 			<xs:enumeration value = "double-complex"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name = "ModuleID">
-		<xs:restriction base = "LSID">
-			<xs:pattern value = "(urn:lsid:)?(\S+\.\S+)+(:Module)(:\S+)"/>
+	<xs:simpleType name="ModuleID">
+		<xs:restriction base="LSID">
+			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Module)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:element name = "ProjectRef">
+	<xs:element name="ProjectRef">
 		<xs:annotation>
 			<xs:documentation>
 				There may be one or more of these in a Dataset.
@@ -1033,13 +1034,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "ProjectID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="ProjectID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "ExperimenterRef">
+	<xs:element name="ExperimenterRef">
 		<xs:annotation>
 			<xs:documentation>
 				This empty element has a required Experimenter ID and an optional DocumentID attribute which refers to one of the Experimenters defined within OME.
@@ -1047,13 +1048,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "ExperimenterID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="ExperimenterID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Group">
+	<xs:element name="Group">
 		<xs:annotation>
 			<xs:documentation>
 				The Group ID and Name attributes are required.
@@ -1063,14 +1064,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Leader" minOccurs = "0"/>
-				<xs:element ref = "Contact" minOccurs = "0"/>
+				<xs:element ref="Leader" minOccurs="0"/>
+				<xs:element ref="Contact" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "Name" type = "xs:string"/>
-			<xs:attribute name = "ID" use = "required" type = "GroupID"/>
+			<xs:attribute name="Name" type="xs:string"/>
+			<xs:attribute name="ID" use="required" type="GroupID"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Leader">
+	<xs:element name="Leader">
 		<xs:annotation>
 			<xs:documentation>
 				Contact information for a Group leader specified using a reference to an Experimenter element defined elsewhere in the document.
@@ -1078,13 +1079,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "ExperimenterID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="ExperimenterID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name = "ExperimenterType">
+	<xs:complexType name="ExperimenterType">
 		<xs:annotation>
 			<xs:documentation>
 				An element type to specify an Experimenter under OME.
@@ -1092,16 +1093,16 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref = "FirstName"/>
-			<xs:element ref = "LastName"/>
-			<xs:element ref = "Email"/>
-			<xs:element ref = "Institution"/>
-			<xs:element ref = "OMEName" minOccurs = "0"/>
-			<xs:element ref = "GroupRef" maxOccurs = "unbounded"/>
+			<xs:element ref="FirstName"/>
+			<xs:element ref="LastName"/>
+			<xs:element ref="Email"/>
+			<xs:element ref="Institution"/>
+			<xs:element ref="OMEName" minOccurs="0"/>
+			<xs:element ref="GroupRef" maxOccurs="unbounded"/>
 		</xs:sequence>
-		<xs:attribute name = "ID" use = "required" type = "ExperimenterID"/>
+		<xs:attribute name="ID" use="required" type="ExperimenterID"/>
 	</xs:complexType>
-	<xs:element name = "Contact">
+	<xs:element name="Contact">
 		<xs:annotation>
 			<xs:documentation>
 				The Contact element describes the contact person for a group of experimenters - typically a project leader or lab manager.
@@ -1110,25 +1111,25 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "ExperimenterID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="ExperimenterID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "GroupRef">
+	<xs:element name="GroupRef">
 		<xs:annotation>
 			<xs:documentation>This empty element has a reference (the Group ID attribute) to a Group defined within OME.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "GroupID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="GroupID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "InstrumentRef">
+	<xs:element name="InstrumentRef">
 		<xs:annotation>
 			<xs:documentation>
 				This empty element can be used (via the required Instrument ID attribute) to refer to an Instrument defined within OME.
@@ -1136,13 +1137,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "InstrumentID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="InstrumentID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Institution" type = "xs:string">
+	<xs:element name="Institution" type="xs:string">
 		<xs:annotation>
 			<xs:documentation>
 				The organizing structure that people belong to other than groups.  A university, or company, etc.
@@ -1152,12 +1153,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "Dichroic" type = "FilterSpec">
+	<xs:element name="Dichroic" type="FilterSpec">
 		<xs:annotation>
 			<xs:documentation>The dichroic mirror used for this filter combination.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name = "ROI">
+	<xs:element name="ROI">
 		<xs:annotation>
 			<xs:documentation>
 				A four dimensional 'Region of Interest'.  The Z and T coordinates are optional.
@@ -1167,28 +1168,28 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "X0" use = "required" type = "xs:integer"/>
-			<xs:attribute name = "Y0" use = "required" type = "xs:integer"/>
-			<xs:attribute name = "Z0" type = "xs:integer"/>
-			<xs:attribute name = "T0" type = "xs:integer"/>
-			<xs:attribute name = "X1" use = "required" type = "xs:integer"/>
-			<xs:attribute name = "Y1" use = "required" type = "xs:integer"/>
-			<xs:attribute name = "Z1" type = "xs:integer"/>
-			<xs:attribute name = "T1" type = "xs:integer"/>
+			<xs:attribute name="X0" use="required" type="xs:integer"/>
+			<xs:attribute name="Y0" use="required" type="xs:integer"/>
+			<xs:attribute name="Z0" type="xs:integer"/>
+			<xs:attribute name="T0" type="xs:integer"/>
+			<xs:attribute name="X1" use="required" type="xs:integer"/>
+			<xs:attribute name="Y1" use="required" type="xs:integer"/>
+			<xs:attribute name="Z1" type="xs:integer"/>
+			<xs:attribute name="T1" type="xs:integer"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name = "FilterSpec">
+	<xs:complexType name="FilterSpec">
 		<xs:annotation>
 			<xs:documentation>
 				An element type specifying a filter specification.
 				Unlike the ManufactSpec, filters are referred to by lot number rather than serial number.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name = "Manufacturer" use = "required" type = "xs:string"/>
-		<xs:attribute name = "Model" use = "required" type = "xs:string"/>
-		<xs:attribute name = "LotNumber" use = "required" type = "xs:string"/>
+		<xs:attribute name="Manufacturer" use="required" type="xs:string"/>
+		<xs:attribute name="Model" use="required" type="xs:string"/>
+		<xs:attribute name="LotNumber" use="required" type="xs:string"/>
 	</xs:complexType>
-	<xs:element name = "LightSource">
+	<xs:element name="LightSource">
 		<xs:annotation>
 			<xs:documentation>
 				The lightsource for the instrument.  An instrument may have several light sources.
@@ -1198,22 +1199,24 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				A LightSource ID must be specified for each light source,
 				and the individual light sources can be referred to by their LightSource IDs (eg from ChannelInfo).
 				Lasers may have a Pump sub-element which refers to another LightSource used as a laser pump.
+				Moved Power into LightSource from Laser - ajp
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "ManufactSpec">
+				<xs:extension base="ManufactSpec">
 					<xs:choice>
-						<xs:element ref = "Laser"/>
-						<xs:element ref = "Filament"/>
-						<xs:element ref = "Arc"/>
+						<xs:element ref="Laser"/>
+						<xs:element ref="Filament"/>
+						<xs:element ref="Arc"/>
 					</xs:choice>
-					<xs:attribute name = "ID" use = "required" type = "LightSourceID"/>
+					<xs:attribute name="ID" use="required" type="LightSourceID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
+		<xs:attribute name="Power" type="xs:float"/>
 	</xs:element>
-	<xs:element name = "OTF">
+	<xs:element name="OTF">
 		<xs:annotation>
 			<xs:documentation>
 				The optical transfer function.  Filter ID refers to the set of filters used in computing the OTF.
@@ -1226,18 +1229,18 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "ObjectiveRef"/>
-				<xs:element ref = "FilterRef"/>
-				<xs:element ref = "Bin:BinaryFile"/>
+				<xs:element ref="ObjectiveRef"/>
+				<xs:element ref="FilterRef"/>
+				<xs:element ref="Bin:BinaryFile"/>
 			</xs:sequence>
-			<xs:attribute name = "ID" use = "required" type = "OTFID"/>
-			<xs:attribute name = "PixelType" use = "required" type = "PixelTypes"/>
-			<xs:attribute name = "OpticalAxisAvrg" use = "required" type = "xs:boolean"/>
-			<xs:attribute name = "SizeX" use = "required" type = "xs:positiveInteger"/>
-			<xs:attribute name = "SizeY" use = "required" type = "xs:positiveInteger"/>
+			<xs:attribute name="ID" use="required" type="OTFID"/>
+			<xs:attribute name="PixelType" use="required" type="PixelTypes"/>
+			<xs:attribute name="OpticalAxisAvrg" use="required" type="xs:boolean"/>
+			<xs:attribute name="SizeX" use="required" type="xs:positiveInteger"/>
+			<xs:attribute name="SizeY" use="required" type="xs:positiveInteger"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Dataset">
+	<xs:element name="Dataset">
 		<xs:annotation>
 			<xs:documentation>
 				An element specifying a collection of images that are always processed together.
@@ -1252,18 +1255,18 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Description" minOccurs = "0"/>
-				<xs:element ref = "ExperimenterRef" minOccurs = "0"/>
-				<xs:element ref = "GroupRef" minOccurs = "0"/>
-				<xs:element ref = "ProjectRef" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "CA:CustomAttributes" minOccurs = "0"/>
+				<xs:element ref="Description" minOccurs="0"/>
+				<xs:element ref="ExperimenterRef" minOccurs="0"/>
+				<xs:element ref="GroupRef" minOccurs="0"/>
+				<xs:element ref="ProjectRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "Name" use = "required" type = "xs:string"/>
-			<xs:attribute name = "ID" use = "required" type = "DatasetID"/>
-			<xs:attribute name = "Locked" default = "false" type = "xs:boolean"/>
+			<xs:attribute name="Name" use="required" type="xs:string"/>
+			<xs:attribute name="ID" use="required" type="DatasetID"/>
+			<xs:attribute name="Locked" default="false" type="xs:boolean"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "DatasetRef">
+	<xs:element name="DatasetRef">
 		<xs:annotation>
 			<xs:documentation>
 				The DatasetRef element refers to a Dataset by specifying the Dataset ID attribute.
@@ -1272,21 +1275,21 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "ID" use = "required" type = "DatasetID"/>
+			<xs:attribute name="ID" use="required" type="DatasetID"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "ImagingEnvironment">
+	<xs:element name="ImagingEnvironment">
 		<xs:annotation>
 			<xs:documentation>The Temperature is in Celsius, AirPressure is in millibars, Humidity and CO2Percent are percent-fractions from 0.0 to 1.0.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "Temperature" type = "xs:float"/>
-			<xs:attribute name = "AirPressure" type = "xs:float"/>
-			<xs:attribute name = "Humidity" type = "PercentFraction"/>
-			<xs:attribute name = "CO2Percent" type = "PercentFraction"/>
+			<xs:attribute name="Temperature" type="xs:float"/>
+			<xs:attribute name="AirPressure" type="xs:float"/>
+			<xs:attribute name="Humidity" type="PercentFraction"/>
+			<xs:attribute name="CO2Percent" type="PercentFraction"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "ChannelComponent">
+	<xs:element name="ChannelComponent">
 		<xs:annotation>
 			<xs:documentation>
 				Logical Channels are composed of ChannelComponents.  The Index attribute is an index into the channel dimension of the 5-D pixel array.
@@ -1295,8 +1298,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "Pixels" use = "required" type = "PixelsID"/>
-			<xs:attribute name = "ColorDomain" type = "xs:string">
+			<xs:attribute name="Pixels" use="required" type="PixelsID"/>
+			<xs:attribute name="ColorDomain" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>
 						Specifies which component of Photometric Interpretation to map a channel component to. i.e. w/ RGB this could be 'R', 'G', 'B'
@@ -1305,26 +1308,26 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name = "Index" use = "required" type = "xs:nonNegativeInteger">
+			<xs:attribute name="Index" use="required" type="xs:nonNegativeInteger">
 				<xs:annotation>
 					<xs:documentation>An index into the channel dimension of the 5-D pixel array</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Feature">
+	<xs:element name="Feature">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Feature" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xs:element ref = "CA:CustomAttributes" minOccurs = "0"/>
+				<xs:element ref="Feature" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "Tag" use = "required" type = "xs:string"/>
-			<xs:attribute name = "Name" type = "xs:string"/>
-			<xs:attribute name = "ID" use = "required" type = "FeatureID"/>
+			<xs:attribute name="Tag" use="required" type="xs:string"/>
+			<xs:attribute name="Name" type="xs:string"/>
+			<xs:attribute name="ID" use="required" type="FeatureID"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name = "Reference"/>
-	<xs:element name = "Laser">
+	<xs:element name="Laser">
 		<xs:annotation>
 			<xs:documentation>
 				Laser types are specified using two attributes - the Type and the lasing medium (Medium).  Type is a string which may be set to:
@@ -1333,44 +1336,45 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The Pulse attribute can be set to 'CW' (Continuous Wave),','Single','Q-Switched','Repetitive','Mode-Locked'.
 				The Power attribute specifies the nominal laser power in watts.
 				The Laser element may contain a Pump sub-element which refers to a LightSource used as a laser pump.
+				Removed Power - ajp
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref = "Pump" minOccurs = "0"/>
+				<xs:element ref="Pump" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name = "Type" use = "required">
+			<xs:attribute name="Type" use="required">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "Excimer"/>
-						<xs:enumeration value = "Gas"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Excimer"/>
+						<xs:enumeration value="Gas"/>
 						<xs:enumeration value = "Metal Vapor"/>
 						<xs:enumeration value = "Solid State"/>
-						<xs:enumeration value = "Dye"/>
-						<xs:enumeration value = "Semiconductor"/>
+						<xs:enumeration value="Dye"/>
+						<xs:enumeration value="Semiconductor"/>
 						<xs:enumeration value = "Free Electron"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
 			<xs:attribute name = "Medium" use = "required" type = "LaserMedia"/>
-			<xs:attribute name = "Wavelength" type = "xs:positiveInteger"/>
+			<xs:attribute name="Wavelength" type="xs:positiveInteger"/>
 			<xs:attribute name = "FrequencyDoubled" type = "xs:boolean"/>
-			<xs:attribute name = "Tunable" type = "xs:boolean"/>
-			<xs:attribute name = "Pulse">
+			<xs:attribute name="Tunable" type="xs:boolean"/>
+			<xs:attribute name="Pulse">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "CW"/>
-						<xs:enumeration value = "Single"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="CW"/>
+						<xs:enumeration value="Single"/>
 						<xs:enumeration value = "Q-Switched"/>
-						<xs:enumeration value = "Repetitive"/>
+						<xs:enumeration value="Repetitive"/>
 						<xs:enumeration value = "Mode-Locked"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "Power" type = "xs:float"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Arc">
+	
+	<xs:element name="Arc">
 		<xs:annotation>
 			<xs:documentation>
 				The Arc element is used to describe various kinds of Arc lamps - Hg, Xe, Hg-Xe.
@@ -1378,19 +1382,19 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "Type" use = "required">
+			<xs:attribute name="Type" use="required">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "Hg"/>
-						<xs:enumeration value = "Xe"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Hg"/>
+						<xs:enumeration value="Xe"/>
 						<xs:enumeration value = "Hg-Xe"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "Power" type = "xs:float"/>
+			<xs:attribute name="Power" type="xs:float"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Filament">
+	<xs:element name="Filament">
 		<xs:annotation>
 			<xs:documentation>
 				The Filament element is used to describe various kinds of filament bulbs such as Incadescent or Halogen.
@@ -1398,58 +1402,58 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:attribute name = "Type" use = "required">
+			<xs:attribute name="Type" use="required">
 				<xs:simpleType>
-					<xs:restriction base = "xs:string">
-						<xs:enumeration value = "Incandescent"/>
-						<xs:enumeration value = "Halogen"/>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Incandescent"/>
+						<xs:enumeration value="Halogen"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name = "Power" type = "xs:float"/>
+			<xs:attribute name="Power" type="xs:float"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "LightSourceRef">
+	<xs:element name="LightSourceRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "LightSourceID"/>
-					<xs:attribute name = "Attenuation" type = "PercentFraction"/>
-					<xs:attribute name = "Wavelength" type = "xs:positiveInteger"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="LightSourceID"/>
+					<xs:attribute name="Attenuation" type="PercentFraction"/>
+					<xs:attribute name="Wavelength" type="xs:positiveInteger"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "FilterRef">
+	<xs:element name="FilterRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "FilterID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="FilterID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "OTFRef">
+	<xs:element name="OTFRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "OTFID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="OTFID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "DetectorRef">
+	<xs:element name="DetectorRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "DetectorID"/>
-					<xs:attribute name = "Offset" type = "xs:float"/>
-					<xs:attribute name = "Gain" type = "xs:float"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="DetectorID"/>
+					<xs:attribute name="Offset" type="xs:float"/>
+					<xs:attribute name="Gain" type="xs:float"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "Pump">
+	<xs:element name="Pump">
 		<xs:annotation>
 			<xs:documentation>
 				The Pump element is a reference to a LightSource.  It is used within the Laser element to specify the light source for the laser's pump (if any).
@@ -1457,57 +1461,57 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "LightSourceID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="LightSourceID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "PlateRef">
+	<xs:element name="PlateRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "PlateID"/>
-					<xs:attribute name = "Well" use = "required">
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="PlateID"/>
+					<xs:attribute name="Well" use="required">
 						<xs:simpleType>
-							<xs:restriction base = "xs:string">
-								<xs:pattern value = "[A-Z]+[0-9]+"/>
+							<xs:restriction base="xs:string">
+								<xs:pattern value="[A-Z]+[0-9]+"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
-					<xs:attribute name = "Sample" type = "xs:integer"/>
+					<xs:attribute name="Sample" type="xs:integer"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "AuxLightSourceRef">
+	<xs:element name="AuxLightSourceRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "LightSourceID"/>
-					<xs:attribute name = "Attenuation" type = "PercentFraction"/>
-					<xs:attribute name = "Wavelength" type = "xs:positiveInteger"/>
-					<xs:attribute name = "Technique" type = "xs:string"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="LightSourceID"/>
+					<xs:attribute name="Attenuation" type="PercentFraction"/>
+					<xs:attribute name="Wavelength" type="xs:positiveInteger"/>
+					<xs:attribute name="Technique" type="xs:string"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name = "ObjectiveRef">
+	<xs:element name="ObjectiveRef">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base = "Reference">
-					<xs:attribute name = "ID" use = "required" type = "ObjectiveID"/>
+				<xs:extension base="Reference">
+					<xs:attribute name="ID" use="required" type="ObjectiveID"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name = "ChannelSpecType">
-		<xs:attribute name = "ChannelNumber" use = "required" type = "xs:integer">
+	<xs:complexType name="ChannelSpecType">
+		<xs:attribute name="ChannelNumber" use="required" type="xs:integer">
 			<xs:annotation>
 				<xs:documentation>Specifies the channel number in the pixel dump.  Channels are numbered from 0.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name = "BlackLevel" use = "required" type = "xs:float">
+		<xs:attribute name="BlackLevel" use="required" type="xs:float">
 			<xs:annotation>
 				<xs:documentation>The black level is used to scale pixel values to an 8 bit colorspace for display. For example, a 16 bit pixel value must be downscaled to fit an 8 bit display. 
 Any pixel value below the black value will be set to the minimum value of the scale range (0). 
@@ -1516,7 +1520,7 @@ Valid range of values for black level is less than the white level and within th
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name = "WhiteLevel" use = "required" type = "xs:float">
+		<xs:attribute name="WhiteLevel" use="required" type="xs:float">
 			<xs:annotation>
 				<xs:documentation>The white level is used  to scale pixel values to an 8 bit colorspace for display. For example, a 16 bit pixel value must be downscaled to fit an 8 bit display. 
 Any pixel value above the white value will be set to the maximum value of the scale range (255). 
@@ -1525,7 +1529,7 @@ The valid range for white level is greater than the black level and within the d
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name = "Gamma" type = "xs:float"/>
-		<xs:attribute name = "isOn" type = "xs:boolean"/>
+		<xs:attribute name="Gamma" type="xs:float"/>
+		<xs:attribute name="isOn" type="xs:boolean"/>
 	</xs:complexType>
 </xs:schema>
