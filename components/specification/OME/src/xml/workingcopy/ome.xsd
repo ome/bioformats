@@ -574,62 +574,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xs:documentation>A person's  email address.</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="Screen">
-		<xs:annotation>
-			<xs:documentation>
-				The Screen element is a grouping for Plates.
-				The required attribute is the Screen's Name and ID - both must be unique within the document.
-				The Screen element may contain an ExternalRef attribute that refers to an external database.
-				A description of the screen may be specified in the Description element.
-				Screens may contain overlapping sets of Plates i.e.  Screens and Plates have a many-to-many relationship.
-				Plates contain one or more ScreenRef elements to specify what screens they belong to.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="Description" minOccurs="0"/>
-			</xs:sequence>
-			<xs:attribute name="ID" use="required" type="ScreenID"/>
-			<xs:attribute name="Name" use="required" type="xs:string"/>
-			<xs:attribute name = "ExternRef" type = "ExternDBref"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="ScreenRef">
-		<xs:annotation>
-			<xs:documentation>
-				The ScreenRef element is a reference to a Screen element.
-				Plate elements may have one or more ScreenRef elements to define the screen that a plate belongs to.
-				Plates may belong to more than one screen.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="Reference">
-					<xs:attribute name="ID" use="required" type="ScreenID"/>
-				</xs:extension>
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="Plate">
-		<xs:annotation>
-			<xs:documentation>
-				This element identifies microtiter plates within a screen.
-				A plate can belong to more than one screen.
-				The Screen(s) that a plate belongs to are specified by the ScreenRef element.
-				The EternRef attribute may contain a reference to an external database.
-				The Plate ID and Name attributes are required.
-				The Name identifies the plate to the user.  It is used much like the Plate ID, and so must be unique within the document.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="ScreenRef" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute name="ID" use="required" type="PlateID"/>
-			<xs:attribute name="Name" use="required" type="xs:string"/>
-			<xs:attribute name="ExternRef" type="ExternDBref"/>
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="Objective">
 		<xs:annotation>
 			<xs:documentation>
@@ -919,9 +863,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xs:simpleType name="MIMEtype">
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
-	<xs:simpleType name="ExternDBref">
-		<xs:restriction base="xs:string"/>
-	</xs:simpleType>
 	<xs:simpleType name="Hex40">
 		<xs:restriction base="xs:hexBinary">
 			<xs:length value="20"/>
@@ -1082,19 +1023,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Pixels)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="PlateID">
-		<xs:restriction base="LSID">
-			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Plate)(:\S+)"/>
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="DisplayOptionsID">
 		<xs:restriction base="LSID">
 			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:DisplayOptions)(:\S+)"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="ScreenID">
-		<xs:restriction base="LSID">
-			<xs:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Screen)(:\S+)"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="LogicalChannelID">
@@ -1582,23 +1513,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xs:complexContent>
 				<xs:extension base="Reference">
 					<xs:attribute name="ID" use="required" type="LightSourceID"/>
-				</xs:extension>
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="PlateRef">
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="Reference">
-					<xs:attribute name="ID" use="required" type="PlateID"/>
-					<xs:attribute name="Well" use="required">
-						<xs:simpleType>
-							<xs:restriction base="xs:string">
-								<xs:pattern value="[A-Z]+[0-9]+"/>
-							</xs:restriction>
-						</xs:simpleType>
-					</xs:attribute>
-					<xs:attribute name="Sample" type="xs:integer"/>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
