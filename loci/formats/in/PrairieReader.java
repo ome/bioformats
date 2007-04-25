@@ -125,7 +125,7 @@ public class PrairieReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() throws FormatException, IOException {
+  public String[] getUsedFiles() {
     String[] s = new String[files.length + 2];
     System.arraycopy(files, 0, s, 0, files.length);
     s[files.length] = xmlFile;
@@ -164,13 +164,13 @@ public class PrairieReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly && tiff != null) tiff.close(fileOnly);
     else if (!fileOnly) close();
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     files = null;
     if (tiff != null) tiff.close();
     tiff = null;

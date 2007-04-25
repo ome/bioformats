@@ -25,9 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.browser;
 
 import ij.*;
-import ij.gui.GenericDialog;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import loci.formats.*;
 import loci.formats.ome.OMEXMLMetadataStore;
 
@@ -55,10 +56,10 @@ public class LociDataBrowser {
   /** The file format reader used by the plugin. */
   protected DimensionSwapper reader;
 
-  /** The file stitcher used by the reader.*/
+  /** The file stitcher used by the reader. */
   protected FileStitcher fStitch;
 
-  /** The CustomWindow used to display data.*/
+  /** The CustomWindow used to display data. */
   protected CustomWindow cw;
 
   /** The current file name. */
@@ -93,48 +94,50 @@ public class LociDataBrowser {
 
   private ImageStack stack;
 
-  // -- Constructor --
+  // -- Constructors --
 
-  /** Constructs a new data browser. */
-  public LociDataBrowser() {
-    fStitch = new FileStitcher();
-    reader = new DimensionSwapper(new ChannelSeparator(fStitch));
+  public LociDataBrowser(String name) {
+    this(null, null, name, 0, false);
+  }
+
+  public LociDataBrowser(String name, boolean merged) {
+    this(null, null, name, 0, merged);
+  }
+
+  public LociDataBrowser(IFormatReader r,
+    FileStitcher fs, String name, int seriesNo, boolean merged)
+  {
+    fStitch = fs;
+    if (fStitch == null) fStitch = new FileStitcher();
+    if (r == null) {
+      r = merged ? (IFormatReader)
+        new ChannelMerger(fStitch) : new ChannelSeparator(fStitch);
+    }
+    reader = new DimensionSwapper(r);
+    id = name;
+    series = seriesNo;
+    virtual = true;
+    try {
+      reader.setId(id);
+      reader.setSeries(series);
+    }
+    catch (Exception exc) {
+      exc.printStackTrace();
+      dumpException(exc);
+      String msg = exc.getMessage();
+      IJ.showMessage("4D Data Browser", "Sorry, there was a problem " +
+        "reading the data" + (msg == null ? "." : (": " + msg)));
+    }
+
 // TODO: macros
 //    macro = new MacroManager();
 //    macroThread = new Thread(macro, "MacroRecorder");
 //    macroThread.start();
   }
 
-  public LociDataBrowser(String name) {
-    this();
-    id = name;
-    virtual = true;
-  }
-
-  public LociDataBrowser(boolean merged) {
-    fStitch = new FileStitcher();
-    if (merged) reader = new DimensionSwapper(new ChannelMerger(fStitch));
-    else reader = new DimensionSwapper(new ChannelSeparator(fStitch));
-  }
-
-  public LociDataBrowser(String name, boolean merged) {
-    this(merged);
-    id = name;
-    virtual = true;
-  }
-
-  public LociDataBrowser(IFormatReader r, FileStitcher fs, String name) {
-    virtual = true;
-    reader = new DimensionSwapper(r);
-    fStitch = fs;
-    id = name;
-  }
-
   // -- LociDataBrowser API methods --
 
-  /**
-   * Displays the given ImageJ image in a 4D browser window.
-   */
+  /** Displays the given ImageJ image in a 4D browser window. */
   private void show(ImagePlus imp) {
     int stackSize = imp == null ? 0 : imp.getStackSize();
 
@@ -157,7 +160,7 @@ public class LociDataBrowser {
     cw = new CustomWindow(this, imp, new ImageCanvas(imp));
   }
 
-  /** Set the length of each dimensional axis and the dimension order. */
+  /** Sets the length of each dimensional axis and the dimension order. */
   public void setDimensions(int sizeZ, int sizeC, int sizeT, int z,
     int c, int t)
   {
@@ -179,12 +182,11 @@ public class LociDataBrowser {
     tIndex = t;
   }
 
-  /** Reset all dimensional data in case they've switched.*/
+  /** Resets all dimensional data in case they've switched. */
   public void setDimensions() {
     String order = null;
 
     try {
-      reader.setId(id);
       numZ = reader.getSizeZ();
       numC = reader.getEffectiveSizeC();
       numT = reader.getSizeT();
@@ -192,7 +194,7 @@ public class LociDataBrowser {
     }
     catch (Exception exc) {
       if (DEBUG) exc.printStackTrace();
-      exceptionMessage(exc);
+      dumpException(exc);
       return;
     }
 
@@ -218,44 +220,25 @@ public class LociDataBrowser {
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
-        exceptionMessage(exc);
+        dumpException(exc);
       }
     }
     return result;
   }
 
-  /** Sets the series to open. */
-  public void setSeries(int num) {
-    // TODO : this isn't the prettiest way of prompting for a series
-    GenericDialog datasets =
-      new GenericDialog("4D Data Browser Series Chooser");
-
-    String[] values = new String[num];
-    for (int i=0; i<values.length; i++) values[i] = "" + i;
-
-    datasets.addChoice("Series ", values, "0");
-
-    if (num > 1) datasets.showDialog();
-
-    series = Integer.parseInt(datasets.getNextChoice());
-  }
-
-  public static void exceptionMessage(Exception exc) {
-    if(DEBUG) {
-      String msg = exc.toString();
-      StackTraceElement[] ste = exc.getStackTrace();
-      for(int i = 0;i<ste.length;i++) {
-       msg = msg + "\n" + ste[i].toString();
-      }
-
-      IJ.showMessage(msg);
-    }
+  public static void dumpException(Exception exc) {
+    exc.printStackTrace();
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    exc.printStackTrace(new PrintStream(out));
+    String dump = new String(out.toByteArray());
+    String msg = "Sorry, there was a problem:\n\n" + dump;
+    IJ.showMessage("4D Data Browser", msg);
   }
 
   public void toggleCache(boolean cached) {
     if (cached != virtual) {
       virtual = !virtual;
-      run("");
+      run();
     }
   }
 
@@ -263,12 +246,12 @@ public class LociDataBrowser {
     if (reader.getReader() instanceof ChannelMerger) {
       IFormatReader parent = ((ReaderWrapper) reader).getReader();
       reader = new DimensionSwapper(new ChannelSeparator(parent));
-      run("");
+      run();
     }
     else if (reader.getReader() instanceof ChannelSeparator) {
       IFormatReader parent = ((ReaderWrapper) reader).getReader();
       reader = new DimensionSwapper(new ChannelMerger(parent));
-      run("");
+      run();
     }
     else {
       throw new RuntimeException("Unsupported reader class: " +
@@ -280,128 +263,99 @@ public class LociDataBrowser {
     return reader.getReader() instanceof ChannelMerger;
   }
 
-  public void run(String arg) {
+  public void run() {
 // TODO: macros
 //    macro = new MacroManager();
 //    macroThread = new Thread(macro, "MacroRecorder");
 //    macroThread.start();
 
-    boolean done2 = false;
-    String directory = "";
-    String name = "";
-    boolean quiet = false;
-
-    // get file name and virtual stack option
     stack = null;
-    while (!done2) {
-      try {
-        ImagePlusWrapper ipw = null;
+    try {
+      ImagePlusWrapper ipw = null;
 
-        // process input
-        lengths = new int[3];
+      // process input
+      lengths = new int[3];
 
-        if (virtual) {
-          synchronized (reader) {
-            reader.setId(id);
-            reader.setSeries(series);
-
-            int num = reader.getImageCount();
-            if(manager != null) {
-              manager.finish();
-              manager = null;
-            }
-            manager = new CacheManager(0, 0, 0, 0, 0, 0, 20, 0, 0,
-              this, id, CacheManager.T_AXIS,
-              CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
-
-            try {
-              setDimensions();
-
-              // CTR: stack must not be null
-              int sizeX = reader.getSizeX();
-              int sizeY = reader.getSizeY();
-              stack = new ImageStack(sizeX, sizeY);
-              // CTR: must add at least one image to the stack
-              stack.addSlice(id + " : 1", manager.getSlice(0, 0, 0));
-            }
-            catch (OutOfMemoryError e) {
-              IJ.outOfMemory("LociDataBrowser");
-              if (stack != null) stack.trim();
-            }
+      if (virtual) {
+        synchronized (reader) {
+          int num = reader.getImageCount();
+          if (manager != null) {
+            manager.finish();
+            manager = null;
           }
+          manager = new CacheManager(0, 0, 0, 0, 0, 0, 20, 0, 0,
+            this, id, CacheManager.T_AXIS,
+            CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
 
-          if (stack == null || stack.getSize() == 0) {
-            IJ.error("Sorry, there was a problem creating the image stack.");
-            return;
-          }
-          ImagePlus imp = new ImagePlus(id, stack);
-
-          FileInfo fi = new FileInfo();
           try {
-            OMEXMLMetadataStore store =
-              (OMEXMLMetadataStore) reader.getMetadataStore();
-            fi.description = store.dumpXML();
-          }
-          catch (Exception exc) {
-            exc.printStackTrace();
-            exceptionMessage(exc);
-          }
+            setDimensions();
 
-          imp.setFileInfo(fi);
-          show(imp);
+            // CTR: stack must not be null
+            int sizeX = reader.getSizeX();
+            int sizeY = reader.getSizeY();
+            stack = new ImageStack(sizeX, sizeY);
+            // CTR: must add at least one image to the stack
+            stack.addSlice(id + " : 1", manager.getSlice(0, 0, 0));
+          }
+          catch (OutOfMemoryError e) {
+            IJ.outOfMemory("4D Data Browser");
+            if (stack != null) stack.trim();
+          }
         }
-        else {
-          manager = null;
-          ipw = new ImagePlusWrapper(id, reader, fStitch, true);
-          setDimensions();
 
-          int stackSize = ipw.getImagePlus().getStackSize();
-          if (stackSize != numZ * numT * numC) {
-            System.err.println("Error, stack size mismatch with dimension " +
-              "sizes: stackSize=" + stackSize + ", numZ=" + numZ +
-              ", numT=" + numT + ", numC=" + numC);
-          }
-
-          FileInfo fi = ipw.getImagePlus().getOriginalFileInfo();
-          if (fi == null) fi = new FileInfo();
-          try {
-            fi.description = ((OMEXMLMetadataStore) ipw.store).dumpXML();
-          }
-          catch (Exception exc) {
-            exceptionMessage(exc);
-          }
-          ipw.getImagePlus().setFileInfo(fi);
-
-          show(ipw.getImagePlus());
+        if (stack == null || stack.getSize() == 0) {
+          IJ.error("Sorry, there was a problem creating the image stack.");
+          return;
         }
-        done2 = true;
+        ImagePlus imp = new ImagePlus(id, stack);
+
+        FileInfo fi = new FileInfo();
+
+        MetadataStore store = reader.getMetadataStore();
+        if (store instanceof OMEXMLMetadataStore) {
+          fi.description = ((OMEXMLMetadataStore) store).dumpXML();
+        }
+
+        imp.setFileInfo(fi);
+        show(imp);
       }
-      catch (Exception exc) {
-        exc.printStackTrace();
-        IJ.showStatus("");
-        if (!quiet) {
-          exceptionMessage(exc);
-          String msg = exc.getMessage();
-          IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
-            "reading the data" + (msg == null ? "." : (": " + msg)));
+      else {
+        manager = null;
+        ipw = new ImagePlusWrapper(id, reader, fStitch, true);
+        setDimensions();
+
+        int stackSize = ipw.getImagePlus().getStackSize();
+        if (stackSize != numZ * numT * numC) {
+          System.err.println("Error, stack size mismatch with dimension " +
+            "sizes: stackSize=" + stackSize + ", numZ=" + numZ +
+            ", numT=" + numT + ", numC=" + numC);
         }
-        if (DEBUG) System.err.println("Read error");
-        done2 = false;
+
+        FileInfo fi = ipw.getImagePlus().getOriginalFileInfo();
+        if (fi == null) fi = new FileInfo();
+
+        MetadataStore store = ipw.store;
+        if (store instanceof OMEXMLMetadataStore) {
+          fi.description = ((OMEXMLMetadataStore) store).dumpXML();
+        }
+
+        ipw.getImagePlus().setFileInfo(fi);
+        show(ipw.getImagePlus());
       }
     }
+    catch (Exception exc) { dumpException(exc); }
   }
 
   // -- Main method --
 
   /** Main method, for testing. */
   public static void main(String[] args) {
-    new ImageJ(null);
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<args.length; i++) {
-      if (i > 0) sb.append(" ");
-      sb.append(args[i]);
+    if (args.length < 1) {
+      System.out.println("Please specify a filename on the command line.");
+      System.exit(1);
     }
-    new LociDataBrowser().run(sb.toString());
+    new ImageJ(null);
+    new LociDataBrowser(args[0]).run();
   }
 
 }

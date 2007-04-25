@@ -123,13 +123,7 @@ public class TiffReader extends BaseTiffReader {
 
       // extract SizeZ, SizeC and SizeT from XML block
       if (tiffData != null) {
-        boolean rgb = false;
-        try {
-          rgb = isRGB();
-        }
-        catch (IOException exc) {
-          throw new FormatException(exc);
-        }
+        boolean rgb = isRGB();
 
         core = new CoreMetadata(tiffData.length);
         Arrays.fill(core.orderCertain, true);
@@ -521,7 +515,7 @@ public class TiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getSeriesCount() */
-  public int getSeriesCount() throws FormatException, IOException {
+  public int getSeriesCount() {
     return core.currentOrder.length;
   }
 

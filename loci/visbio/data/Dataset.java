@@ -569,22 +569,16 @@ public class Dataset extends ImageTransform {
     // load metadata for the first source file
     String fname = new File(ids[0]).getName();
     status(3, numTasks, "Reading " + fname + " metadata");
-    try { metadata = readers[0].getMetadata(); }
-    catch (IOException exc) { metadata = null; }
-    catch (FormatException exc) { metadata = null; }
+    metadata = readers[0].getMetadata();
     if (metadata == null) {
       System.err.println("Could not read metadata from " +
         fname + ". The file may be corrupt or invalid.");
       return;
     }
-    try {
-      MetadataStore ms = readers[0].getMetadataStore();
-      if (ms instanceof OMEXMLMetadataStore) {
-        ome = (OMENode) ((OMEXMLMetadataStore) ms).getRoot();
-      }
+    MetadataStore ms = readers[0].getMetadataStore();
+    if (ms instanceof OMEXMLMetadataStore) {
+      ome = (OMENode) ((OMEXMLMetadataStore) ms).getRoot();
     }
-    catch (IOException exc) { ome = null; }
-    catch (FormatException exc) { ome = null; }
 
     // construct metadata controls
     status(4, numTasks, "Finishing");

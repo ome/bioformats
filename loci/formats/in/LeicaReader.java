@@ -154,7 +154,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() throws FormatException, IOException {
+  public String[] getUsedFiles() {
     Vector v = new Vector();
     v.add(leiFilename);
     for (int i=0; i<files.length; i++) {
@@ -166,7 +166,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
       if (in != null) in.close();
       if (tiff != null) {
@@ -183,7 +183,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     super.close();
     leiFilename = null;
     files = null;
@@ -589,7 +589,7 @@ public class LeicaReader extends FormatReader {
   // -- Helper methods --
 
   /* @see BaseTiffReader#initMetadata() */
-  protected void initMetadata() {
+  protected void initMetadata() throws FormatException, IOException {
     if (headerIFDs == null) headerIFDs = ifds;
 
     for (int i=0; i<headerIFDs.length; i++) {
@@ -954,20 +954,12 @@ public class LeicaReader extends FormatReader {
     // However, the sizeC field will be adjusted anyway by
     // a later call to BaseTiffReader.initMetadata.
     if (core.sizeC != null) {
-      try {
-        int oldSeries = getSeries();
-        for (int i=0; i<core.sizeC.length; i++) {
-          setSeries(i);
-          core.sizeZ[i] /= core.sizeC[i];
-        }
-        setSeries(oldSeries);
+      int oldSeries = getSeries();
+      for (int i=0; i<core.sizeC.length; i++) {
+        setSeries(i);
+        core.sizeZ[i] /= core.sizeC[i];
       }
-      catch (FormatException exc) {
-        exc.printStackTrace();
-      }
-      catch (IOException exc) {
-        exc.printStackTrace();
-      }
+      setSeries(oldSeries);
     }
 
     Integer v = (Integer) getMeta("Real world resolution");
@@ -984,32 +976,19 @@ public class LeicaReader extends FormatReader {
     }
     else validBits = null;
 
-    // The metadata store we're working with.
-    MetadataStore store = new DummyMetadataStore();
-    try {
-      store = getMetadataStore();
-    }
-    catch (FormatException e) {
-      if (debug) e.printStackTrace();
-    }
-    catch (IOException e) {
-      if (debug) e.printStackTrace();
-    }
+    // the metadata store we're working with
+    MetadataStore store = getMetadataStore();
 
     byte[] f = new byte[4];
     for (int i=0; i<numSeries; i++) {
       core.orderCertain[i] = true;
       core.interleaved[i] = true;
-      try {
-        in.seek(0);
-        in.read(f);
-        core.littleEndian[i] = (f[0] == TiffTools.LITTLE &&
-          f[1] == TiffTools.LITTLE && f[2] == TiffTools.LITTLE &&
-          f[3] == TiffTools.LITTLE);
-      }
-      catch (Exception e) {
-        if (debug) e.printStackTrace();
-      }
+
+      in.seek(0);
+      in.read(f);
+      core.littleEndian[i] = (f[0] == TiffTools.LITTLE &&
+        f[1] == TiffTools.LITTLE && f[2] == TiffTools.LITTLE &&
+        f[3] == TiffTools.LITTLE);
 
       if (core.sizeC[i] == 0) core.sizeC[i] = 1;
       core.sizeT[i] += 1;
@@ -1068,21 +1047,10 @@ public class LeicaReader extends FormatReader {
 
       for (int j=0; j<core.sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
-        // TODO : get channel min/max from metadata
-        /*
-        try {
-          store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
-            getChannelGlobalMaximum(currentId, j), ii);
-        }
-        catch (FormatException exc) {
-          if (debug) exc.printStackTrace();
-        }
-        catch (IOException exc) {
-          if (debug) exc.printStackTrace();
-        }
-        */
+        // TODO: get channel min/max from metadata
+//        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
+//          getChannelGlobalMaximum(currentId, j), ii);
       }
-
     }
   }
 

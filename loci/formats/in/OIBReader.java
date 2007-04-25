@@ -195,7 +195,7 @@ public class OIBReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     super.close();
     String[] vars = {"dirName", "root", "dir", "document", "dis",
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",

@@ -91,7 +91,7 @@ public class OptionsWindow extends JFrame implements
 
   // -- Constructor --
   public OptionsWindow(int numZ, int numT, CustomWindow c) {
-    super("LOCI Data Browser - Options");
+    super("4D Data Browser - Options");
     setBackground(Color.gray);
 
     cw = c;
@@ -121,7 +121,7 @@ public class OptionsWindow extends JFrame implements
       }
       catch(Exception exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
     }
     else {
@@ -135,7 +135,7 @@ public class OptionsWindow extends JFrame implements
       }
       catch(Exception exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
     }
 
@@ -762,7 +762,7 @@ public class OptionsWindow extends JFrame implements
         }
         catch(Exception exc) {
           exc.printStackTrace();
-          LociDataBrowser.exceptionMessage(exc);
+          LociDataBrowser.dumpException(exc);
         }
         update = false;
         setBox(zGroup,0);
@@ -797,7 +797,7 @@ public class OptionsWindow extends JFrame implements
         }
         catch(Exception exc) {
           exc.printStackTrace();
-          LociDataBrowser.exceptionMessage(exc);
+          LociDataBrowser.dumpException(exc);
         }
         update = false;
         setBox(zGroup,0);
@@ -832,7 +832,7 @@ public class OptionsWindow extends JFrame implements
         }
         catch(Exception exc) {
           exc.printStackTrace();
-          LociDataBrowser.exceptionMessage(exc);
+          LociDataBrowser.dumpException(exc);
         }
         update = false;
         setBox(zGroup,0);
@@ -852,7 +852,7 @@ public class OptionsWindow extends JFrame implements
         }
         catch(Exception exc) {
           exc.printStackTrace();
-          LociDataBrowser.exceptionMessage(exc);
+          LociDataBrowser.dumpException(exc);
         }
         cw.db.setDimensions();
         if(cw.db.virtual) cw.db.manager.dimChange();

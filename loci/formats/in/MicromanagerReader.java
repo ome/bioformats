@@ -86,7 +86,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     super.close();
     if (tiffReader != null) tiffReader.close();
     tiffReader = null;
@@ -94,7 +94,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly) tiffReader.close(fileOnly);
     else close();
   }

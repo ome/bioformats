@@ -306,43 +306,34 @@ public class FluoviewReader extends BaseTiffReader {
   /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
     super.initMetadataStore();
-    try {
-      MetadataStore store = getMetadataStore();
-      store.setDimensions(new Float(voxelX), new Float(voxelY),
-        new Float(voxelZ), new Float(voxelC), new Float(voxelT), null);
+    MetadataStore store = getMetadataStore();
+    store.setDimensions(new Float(voxelX), new Float(voxelY),
+      new Float(voxelZ), new Float(voxelC), new Float(voxelT), null);
 
-      Double gamma = (Double) getMeta("Gamma");
-      for (int i=0; i<core.sizeC[0]; i++) {
-        store.setDisplayChannel(new Integer(i), null, null,
-          gamma == null ? null : new Float(gamma.floatValue()), null);
+    Double gamma = (Double) getMeta("Gamma");
+    for (int i=0; i<core.sizeC[0]; i++) {
+      store.setDisplayChannel(new Integer(i), null, null,
+        gamma == null ? null : new Float(gamma.floatValue()), null);
 
-        String gain = (String) getMeta("Gain Ch" + (i+1));
-        String voltage = (String) getMeta("PMT Voltage Ch" + (i+1));
-        String offset = (String) getMeta("Offset Ch" + (i+1));
+      String gain = (String) getMeta("Gain Ch" + (i+1));
+      String voltage = (String) getMeta("PMT Voltage Ch" + (i+1));
+      String offset = (String) getMeta("Offset Ch" + (i+1));
 
-        if (gain != null || voltage != null || offset != null) {
-          store.setDetector((String) getMeta("System Configuration"), null,
-            null, null, gain == null ? null : new Float(gain),
-            voltage == null ? null : new Float(voltage),
-            offset == null ? null : new Float(offset), null, new Integer(i));
-        }
+      if (gain != null || voltage != null || offset != null) {
+        store.setDetector((String) getMeta("System Configuration"), null,
+          null, null, gain == null ? null : new Float(gain),
+          voltage == null ? null : new Float(voltage),
+          offset == null ? null : new Float(offset), null, new Integer(i));
       }
+    }
 
-      String mag = (String) getMeta("Magnification");
-      if (mag != null && mag.toLowerCase().endsWith("x")) {
-        mag = mag.substring(0, mag.length() - 1);
-      }
-      else if (mag == null) mag = "1";
-      store.setObjective((String) getMeta("Objective Lens"), null, null, null,
-        new Float(mag), null, null);
-
+    String mag = (String) getMeta("Magnification");
+    if (mag != null && mag.toLowerCase().endsWith("x")) {
+      mag = mag.substring(0, mag.length() - 1);
     }
-    catch (FormatException fe) {
-      if (debug) fe.printStackTrace();
-    }
-    catch (IOException ie) {
-      if (debug) ie.printStackTrace();
-    }
+    else if (mag == null) mag = "1";
+    store.setObjective((String) getMeta("Objective Lens"), null, null, null,
+      new Float(mag), null, null);
   }
 
 }

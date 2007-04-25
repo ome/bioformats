@@ -412,19 +412,12 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     Float pixZ = store.getPixelSizeZ(null);
 
     // get dimensional axis lengths
-    String dimOrder = null;
-    int sizeX = -1, sizeY = -1;
-    int sizeZ = 1, sizeT = 1, sizeC = 1;
-    try {
-      sizeX = reader.getSizeX();
-      sizeY = reader.getSizeY();
-      sizeZ = reader.getSizeZ();
-      sizeT = reader.getSizeT();
-      sizeC = reader.getSizeC();
-      dimOrder = reader.getDimensionOrder();
-    }
-    catch (FormatException exc) { exc.printStackTrace(); }
-    catch (IOException exc) { exc.printStackTrace(); }
+    int sizeX = reader.getSizeX();
+    int sizeY = reader.getSizeY();
+    int sizeZ = reader.getSizeZ();
+    int sizeT = reader.getSizeT();
+    int sizeC = reader.getSizeC();
+    String dimOrder = reader.getDimensionOrder();
 
     // autodetect dimensional types
     String[] kind = new String[blocks];

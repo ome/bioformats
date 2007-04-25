@@ -639,7 +639,7 @@ public final class FormatTools {
    * to the given Z, C and T coordinates.
    */
   public static int getIndex(IFormatReader reader, int z, int c, int t)
-    throws FormatException, IOException
+    throws FormatException
   {
     String order = reader.getDimensionOrder();
     int zSize = reader.getSizeZ();
@@ -654,8 +654,7 @@ public final class FormatTools {
    * to the given Z, C and T coordinates.
    */
   public static int getIndex(String order, int zSize, int cSize, int tSize,
-    int num, int z, int c, int t)
-    throws FormatException, IOException
+    int num, int z, int c, int t) throws FormatException
   {
     // check DimensionOrder
     if (order == null) throw new FormatException("Dimension order is null");
@@ -714,7 +713,7 @@ public final class FormatTools {
    * to the given rasterized index value.
    */
   public static int[] getZCTCoords(IFormatReader reader, int index)
-    throws FormatException, IOException
+    throws FormatException
   {
     String order = reader.getDimensionOrder();
     int zSize = reader.getSizeZ();
@@ -729,8 +728,7 @@ public final class FormatTools {
    * index value.
    */
   public static int[] getZCTCoords(String order,
-    int zSize, int cSize, int tSize, int num, int index)
-    throws FormatException, IOException
+    int zSize, int cSize, int tSize, int num, int index) throws FormatException
   {
     // check DimensionOrder
     if (order == null) throw new FormatException("Dimension order is null");

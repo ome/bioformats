@@ -167,7 +167,7 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() throws FormatException, IOException {
+  public String[] getUsedFiles() {
     if (versionTwo) {
       return new String[] {currentIdsId == null ? "" : currentIdsId};
     }
@@ -175,7 +175,7 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     super.close();
     icsIn = null;
     currentIcsId = null;

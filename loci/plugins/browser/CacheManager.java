@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.browser;
 
 import ij.process.ImageProcessor;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.Stack;
@@ -231,7 +230,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         if (DEBUG) System.out.println("Error reading size of file.");
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
     }
     oldAxis = axis;
@@ -427,7 +426,7 @@ public class CacheManager implements Runnable {
         index = read.getIndex(curZ, curC, curT);
       }
       catch (Exception exc) {
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
         return -1;
       }
     }
@@ -452,11 +451,7 @@ public class CacheManager implements Runnable {
       }
       catch (FormatException exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
-      }
-      catch (IOException exc) {
-        exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
     }
 
@@ -497,7 +492,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
         return null;
       }
     }
@@ -529,7 +524,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
         return null;
       }
     }
@@ -597,7 +592,7 @@ public class CacheManager implements Runnable {
       int[] upSet = getUpSet(lowBound, upBound, axis, z, t, c);
       int[] lowSet = getLowSet(lowBound, upBound, axis, z, t, c);
 
-      result = new int [upSet.length + lowSet.length];
+      result = new int[upSet.length + lowSet.length];
 
       if (strategy == FORWARD_FIRST) {
         result = append(lowSet, upSet);
@@ -1096,7 +1091,7 @@ public class CacheManager implements Runnable {
           }
           catch (Exception exc) {
             exc.printStackTrace();
-            LociDataBrowser.exceptionMessage(exc);
+            LociDataBrowser.dumpException(exc);
             return null;
           }
         }
@@ -1188,7 +1183,7 @@ public class CacheManager implements Runnable {
           }
           catch (Exception exc) {
             exc.printStackTrace();
-            LociDataBrowser.exceptionMessage(exc);
+            LociDataBrowser.dumpException(exc);
             return null;
           }
         }
@@ -1214,7 +1209,7 @@ public class CacheManager implements Runnable {
   * @return An integer array containing the indeces of slices
   * to load in "correct" order (kind of arbitrary here).
   */
-  private int [] getRing(int fAxis, int sAxis,
+  private int[] getRing(int fAxis, int sAxis,
     int z,int t,int c,int r)
   {
     if (r == 0) {
@@ -1225,7 +1220,7 @@ public class CacheManager implements Runnable {
       }
       catch(Exception exc) {
         if(DEBUG) exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
 
       int[] result = {index};
@@ -1304,7 +1299,7 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {
                 if(DEBUG) exc.printStackTrace();
-                LociDataBrowser.exceptionMessage(exc);
+                LociDataBrowser.dumpException(exc);
               }
             }
 
@@ -1352,7 +1347,7 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {
                 if(DEBUG) exc.printStackTrace();
-                LociDataBrowser.exceptionMessage(exc);
+                LociDataBrowser.dumpException(exc);
               }
             }
 
@@ -1400,7 +1395,7 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {
                 if(DEBUG) exc.printStackTrace();
-                LociDataBrowser.exceptionMessage(exc);
+                LociDataBrowser.dumpException(exc);
               }
             }
 
@@ -1448,7 +1443,7 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {
                 if(DEBUG) exc.printStackTrace();
-                LociDataBrowser.exceptionMessage(exc);
+                LociDataBrowser.dumpException(exc);
               }
             }
 
@@ -1489,7 +1484,7 @@ public class CacheManager implements Runnable {
   private int[] getRect(int fAxis,int fLow,int fUp,
     int sAxis,int sLow,int sUp,int z,int t,int c)
   {
-    int [] result = {};
+    int[] result = {};
     int fSize,sSize,fMid,sMid;
     if (fAxis == Z_AXIS) {
       fSize = sizeZ;
@@ -1540,7 +1535,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
 
       result = append(toAdd,result);
@@ -1558,7 +1553,7 @@ public class CacheManager implements Runnable {
         }
         catch (Exception exc) {
           exc.printStackTrace();
-          LociDataBrowser.exceptionMessage(exc);
+          LociDataBrowser.dumpException(exc);
         }
 
         result = append(toAdd,result);
@@ -1576,7 +1571,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
 
       result = append(toAdd,result);
@@ -1594,7 +1589,7 @@ public class CacheManager implements Runnable {
         }
         catch (Exception exc) {
           exc.printStackTrace();
-          LociDataBrowser.exceptionMessage(exc);
+          LociDataBrowser.dumpException(exc);
         }
 
         result = append(toAdd,result);
@@ -1625,7 +1620,7 @@ public class CacheManager implements Runnable {
     int sAxis,int sLow,int sUp,
     int tAxis,int tLow,int tUp, int z,int t,int c)
   {
-          int [] result = {};
+    int[] result = {};
     int fSize,sSize,tSize,fMid,sMid,tMid;
     if (fAxis == Z_AXIS) {
       fSize = sizeZ;
@@ -1720,7 +1715,7 @@ public class CacheManager implements Runnable {
   private int[] getSpiral(int fAxis,int fLow,int fUp,
     int sAxis,int sLow,int sUp,int z,int t,int c)
   {
-    int [] result = {};
+    int[] result = {};
     int fMax, sMax, rMax;
 
     if (fAxis == Z_AXIS) {
@@ -1844,7 +1839,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         if (DEBUG) System.out.println("Error reading size of file.");
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
     }
   }
@@ -1862,7 +1857,7 @@ public class CacheManager implements Runnable {
         index = read.getIndex(i, aC - 1, aT - 1);
       }
       catch(Exception exc) {
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
 
       if (index != -1 && cache[index] != null) zInCache.add(new Integer(i));
@@ -1874,7 +1869,7 @@ public class CacheManager implements Runnable {
         index = read.getIndex(aZ - 1, aC - 1, i);
       }
       catch(Exception exc) {
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
 
       if (index != -1 && cache[index] != null) tInCache.add(new Integer(i));
@@ -1893,7 +1888,7 @@ public class CacheManager implements Runnable {
         coords = read.getZCTCoords(loadCopy[i]);
       }
       catch(Exception exc) {
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
       if (coords != null) {
         int myZ = coords[0];
@@ -1923,8 +1918,8 @@ public class CacheManager implements Runnable {
     if (tInd != null) tInd.setIndicator(tC, tL, sizeT);
   }
 
-  private static int [] makeInt(Object[] array) {
-    int [] result  = new int[array.length];
+  private static int[] makeInt(Object[] array) {
+    int[] result  = new int[array.length];
     for(int i = 0;i<result.length;i++) {
       result[i] = ((Integer) array[i]).intValue();
     }
@@ -1952,7 +1947,7 @@ public class CacheManager implements Runnable {
         }
       }
       catch(Exception exc){
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
       erase = false;
     }

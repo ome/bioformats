@@ -89,15 +89,24 @@ public class ZeissLSMReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() throws FormatException, IOException {
+  public int getThumbSizeX() {
     if (ifds.length == 1) return super.getThumbSizeX();
-    return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 1);
+    // TODO: populate thumbnail width in initFile instead of here!
+    try {
+      return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 1);
+    }
+    catch (FormatException exc) { return -1; }
   }
 
   /* @see loci.formats.IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() throws FormatException, IOException {
+  public int getThumbSizeY() {
     if (ifds.length == 1) return super.getThumbSizeY();
-    return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 1);
+    // TODO: populate thumbnail height in initFile instead of here!
+    try {
+      return TiffTools.getIFDIntValue(ifds[1],
+        TiffTools.IMAGE_LENGTH, false, 1);
+    }
+    catch (FormatException exc) { return -1; }
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
@@ -564,16 +573,8 @@ public class ZeissLSMReader extends BaseTiffReader {
     Float pixY = new Float(pixelSizeY == null ? "0" : pixelSizeY.toString());
     Float pixZ = new Float(pixelSizeZ == null ? "0" : pixelSizeZ.toString());
 
-    try {
-      MetadataStore store = getMetadataStore();
-      store.setDimensions(pixX, pixY, pixZ, null, null, null);
-    }
-    catch (FormatException e) {
-      if (debug) e.printStackTrace();
-    }
-    catch (IOException e) {
-      if (debug) e.printStackTrace();
-    }
+    MetadataStore store = getMetadataStore();
+    store.setDimensions(pixX, pixY, pixZ, null, null, null);
 
     // see if we have an associated MDB file
 
@@ -598,7 +599,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   /** Parses overlay-related fields. */
   protected void parseOverlays(long data, String suffix, boolean little)
-    throws IOException, FormatException
+    throws IOException
   {
     if (data == 0) return;
 

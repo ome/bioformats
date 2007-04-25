@@ -543,6 +543,7 @@ public abstract class BaseTiffReader extends FormatReader {
         creationDate = sdf.format(date);
       }
       catch (Exception e) {
+        // TODO: eliminate catch-all exception handling
         try {
           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
           SimpleDateFormat parse =
@@ -551,6 +552,7 @@ public abstract class BaseTiffReader extends FormatReader {
           creationDate = sdf.format(date);
         }
         catch (Exception ex) {
+          // TODO: eliminate catch-all exception handling
           if (debug) ex.printStackTrace();
           creationDate = null;
         }
@@ -623,7 +625,6 @@ public abstract class BaseTiffReader extends FormatReader {
       store.setInstrument(null, model, serialNumber, null, null);
     }
     catch (FormatException exc) { exc.printStackTrace(); }
-    catch (IOException ex) { ex.printStackTrace(); }
   }
 
   /**
@@ -689,9 +690,7 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getMetadataValue(String) */
-  public Object getMetadataValue(String field)
-    throws FormatException, IOException
-  {
+  public Object getMetadataValue(String field) {
     return getMeta(field);
   }
 

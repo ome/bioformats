@@ -100,12 +100,12 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() throws FormatException, IOException {
+  public String[] getUsedFiles() {
     return (String[]) allFiles.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
       if (tiff != null) {
         for (int i=0; i<tiff.length; i++) {
@@ -117,7 +117,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     currentId = null;
     files = null;
     if (tiff != null) {
@@ -129,11 +129,7 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Initializes the given PerkinElmer file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (currentId != null &&
-      (id.equals(currentId) || isUsedFile(currentId, id)))
-    {
-      return;
-    }
+    if (currentId != null && (id.equals(currentId) || isUsedFile(id))) return;
 
     status("Finding HTML companion file");
 

@@ -4,7 +4,7 @@
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including
-the 4D Data Browser, OME Plugin and Bio-Formats Exporter.
+the LOCI Data Browser, OME Plugin and Bio-Formats Exporter.
 Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
 Curtis Rueden, Philip Huettl and Francis Wong.
 
@@ -57,7 +57,7 @@ public class Importer implements ItemListener {
 
   private static final String VIEW_NONE = "Metadata only";
   private static final String VIEW_STANDARD = "Standard ImageJ";
-  private static final String VIEW_BROWSER = "4D Data Browser";
+  private static final String VIEW_BROWSER = "LOCI Data Browser";
   private static final String VIEW_IMAGE_5D = "Image5D";
   private static final String VIEW_VIEW_5D = "View5D";
 
@@ -128,7 +128,7 @@ public class Importer implements ItemListener {
     if (id == null || id.length() == 0) {
       if (location == null) {
         // open a dialog asking the user where their dataset is
-        gd = new GenericDialog("LOCI Bio-Formats Dataset Location");
+        gd = new GenericDialog("Bio-Formats Dataset Location");
         gd.addChoice("Location: ",
           new String[] {LOCATION_LOCAL, LOCATION_OME, LOCATION_HTTP},
             LOCATION_LOCAL);
@@ -154,7 +154,7 @@ public class Importer implements ItemListener {
         // if no valid filename, give up
         if (id == null || !new Location(id).exists()) {
           if (!quiet) {
-            IJ.error("LOCI Bio-Formats", "The specified file " +
+            IJ.error("Bio-Formats", "The specified file " +
               (id == null ? "" : ("(" + id + ") ")) + "does not exist.");
           }
           return;
@@ -166,7 +166,7 @@ public class Importer implements ItemListener {
       }
       else if (LOCATION_HTTP.equals(location)) {
         // prompt for URL
-        gd = new GenericDialog("LOCI Bio-Formats URL");
+        gd = new GenericDialog("Bio-Formats URL");
         gd.addStringField("URL: ", "http://", 30);
         gd.showDialog();
         if (gd.wasCanceled()) {
@@ -176,7 +176,7 @@ public class Importer implements ItemListener {
         id = gd.getNextString();
         fileName = id;
       }
-      else IJ.error("LOCI Bio-Formats", "Invalid location: " + location);
+      else IJ.error("Bio-Formats", "Invalid location: " + location);
     }
 
     String idType = "ID";
@@ -197,7 +197,7 @@ public class Importer implements ItemListener {
         IJ.showStatus("");
         if (!quiet) {
           String msg = exc.getMessage();
-          IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
+          IJ.error("Bio-Formats", "Sorry, there was a problem " +
             "reading the file" + (msg == null ? "." : (":\n" + msg)));
         }
         return;
@@ -242,7 +242,7 @@ public class Importer implements ItemListener {
     final String stackString = "View stack with: ";
 
     // prompt for parameters, if necessary
-    gd = new GenericDialog("LOCI Bio-Formats Import Options");
+    gd = new GenericDialog("Bio-Formats Import Options");
     gd.addCheckbox(mergeString, mergeChannels);
     gd.addCheckbox(colorizeString, colorize);
     gd.addCheckbox(splitString, splitWindows);
@@ -308,7 +308,7 @@ public class Importer implements ItemListener {
         fs = new FileStitcher(r, true);
         // prompt user to confirm detected file pattern
         id = FilePattern.findPattern(new Location(id));
-        gd = new GenericDialog("LOCI Bio-Formats File Stitching");
+        gd = new GenericDialog("Bio-Formats File Stitching");
         int len = id.length() + 1;
         if (len > 80) len = 80;
         gd.addStringField("Pattern: ", id, len);
@@ -403,7 +403,7 @@ public class Importer implements ItemListener {
       // -- Step 4a: prompt for the series to open, if necessary --
 
       if (seriesCount > 1) {
-        gd = new GenericDialog("LOCI Bio-Formats Series Options");
+        gd = new GenericDialog("Bio-Formats Series Options");
 
         GridBagLayout gdl = (GridBagLayout) gd.getLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -471,7 +471,7 @@ public class Importer implements ItemListener {
         }
         if (needRange) {
           IJ.showStatus("");
-          gd = new GenericDialog("LOCI Bio-Formats Range Options");
+          gd = new GenericDialog("Bio-Formats Range Options");
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) continue;
             gd.addMessage(seriesStrings[i].replaceAll("_", " "));
@@ -615,7 +615,7 @@ public class Importer implements ItemListener {
 
       // -- Step 4d: read pixel data --
 
-      // only read data explicitly if not using 4D Data Browser
+      // only read data explicitly if not using LOCI Data Browser
       if (!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + currentFile);
 
@@ -878,11 +878,11 @@ public class Importer implements ItemListener {
           long endTime = System.currentTimeMillis();
           double elapsed = (endTime - startTime) / 1000.0;
           if (num[i] == 1) {
-            IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds");
+            IJ.showStatus("Bio-Formats: " + elapsed + " seconds");
           }
           else {
             long average = (endTime - startTime) / num[i];
-            IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds (" +
+            IJ.showStatus("Bio-Formats: " + elapsed + " seconds (" +
               average + " ms per plane)");
           }
         }
@@ -947,8 +947,14 @@ public class Importer implements ItemListener {
       Prefs.set("bioformats.stackFormat", stackFormat);
 
       if (stackFormat.equals(VIEW_BROWSER)) {
-        LociDataBrowser ldb = new LociDataBrowser(r, fs, id);
-        ldb.run("");
+        boolean first = true;
+        for (int i=0; i<seriesCount; i++) {
+          if (!series[i]) continue;
+          IFormatReader reader = first ? r : null;
+          FileStitcher stitcher = first ? fs : null;
+          new LociDataBrowser(reader, stitcher, id, i, mergeChannels).run();
+          first = false;
+        }
       }
     }
     catch (Exception exc) {
@@ -960,7 +966,7 @@ public class Importer implements ItemListener {
         for(int i = 0;i<ste.length;i++) {
           msg = msg + "\n" + ste[i].toString();
         }
-        IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
+        IJ.error("Bio-Formats", "Sorry, there was a problem " +
           "reading the data" + (msg == null ? "." : (":\n" + msg)));
       }
     }

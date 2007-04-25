@@ -52,14 +52,14 @@ public class ChannelSeparator extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
+  public int getImageCount() {
     return reader.isRGB() ?
       (getSizeC() / reader.getEffectiveSizeC()) * reader.getImageCount() :
       reader.getImageCount();
   }
 
   /* @see IFormatReader#getDimensionOrder() */
-  public String getDimensionOrder() throws FormatException, IOException {
+  public String getDimensionOrder() {
     String order = super.getDimensionOrder();
     if (reader.isRGB()) {
       String newOrder = "XYC";
@@ -153,11 +153,11 @@ public class ChannelSeparator extends ReaderWrapper {
     lastImageSeries = -1;
   }
 
-  public int getIndex(int z, int c, int t) throws FormatException, IOException {
+  public int getIndex(int z, int c, int t) throws FormatException {
     return FormatTools.getIndex(this, z, c, t);
   }
 
-  public int[] getZCTCoords(int index) throws FormatException, IOException {
+  public int[] getZCTCoords(int index) throws FormatException {
     return FormatTools.getZCTCoords(this, index);
   }
 

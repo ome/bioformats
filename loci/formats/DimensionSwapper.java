@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.io.IOException;
-
 /** Handles swapping the dimension order of a file. */
 public class DimensionSwapper extends ReaderWrapper {
 
@@ -40,32 +38,32 @@ public class DimensionSwapper extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getSizeX() */
-  public int getSizeX() throws FormatException, IOException {
+  public int getSizeX() {
     return getCoreMetadata().sizeX[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeY() */
-  public int getSizeY() throws FormatException, IOException {
+  public int getSizeY() {
     return getCoreMetadata().sizeY[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeZ() */
-  public int getSizeZ() throws FormatException, IOException {
+  public int getSizeZ() {
     return getCoreMetadata().sizeZ[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeC() */
-  public int getSizeC() throws FormatException, IOException {
+  public int getSizeC() {
     return getCoreMetadata().sizeC[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeT() */
-  public int getSizeT() throws FormatException, IOException {
+  public int getSizeT() {
     return getCoreMetadata().sizeT[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getDimensionOrder() */
-  public String getDimensionOrder() throws FormatException, IOException {
+  public String getDimensionOrder() {
     return getCoreMetadata().currentOrder[getSeries()];
   }
 
@@ -77,8 +75,7 @@ public class DimensionSwapper extends ReaderWrapper {
    * Note that this method will throw an exception if X and Y do not appear in
    * positions 0 and 1 (although X and Y can be reversed).
    */
-  public void swapDimensions(String order)  throws FormatException, IOException
-  {
+  public void swapDimensions(String order) {
     if (order == null) return;
 
     String oldOrder = getDimensionOrder();

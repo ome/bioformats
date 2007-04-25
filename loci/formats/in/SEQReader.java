@@ -109,12 +109,7 @@ public class SEQReader extends BaseTiffReader {
       }
     }
 
-    try {
-      if (isRGB() && core.sizeC[0] != 3) core.sizeC[0] *= 3;
-    }
-    catch (IOException e) {
-      throw new FormatException(e);
-    }
+    if (isRGB() && core.sizeC[0] != 3) core.sizeC[0] *= 3;
 
     core.currentOrder[0] = "XY";
 

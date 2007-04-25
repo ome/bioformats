@@ -87,10 +87,10 @@ public abstract class ImageIOReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException { }
+  public void close(boolean fileOnly) throws IOException { }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException { }
+  public void close() throws IOException { }
 
   // -- Internal FormatReader API methods --
 

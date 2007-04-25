@@ -56,7 +56,7 @@ public class ImagePlusWrapper {
       }
       catch (Exception e) {
         e.printStackTrace();
-        LociDataBrowser.exceptionMessage(e);
+        LociDataBrowser.dumpException(e);
       }
 
       // get # images in all matching files
@@ -80,7 +80,7 @@ public class ImagePlusWrapper {
       }
       catch(Exception exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
 
       int num = fs.getImageCount();
@@ -210,11 +210,11 @@ public class ImagePlusWrapper {
       }
       catch (FormatException exc) {
         problem = exc;
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
       catch (IOException exc) {
         problem = exc;
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
       if (problem != null) {
         problem.printStackTrace();
@@ -227,11 +227,11 @@ public class ImagePlusWrapper {
       }
       catch (FormatException exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
       catch (IOException exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
     }
 

@@ -101,20 +101,20 @@ public class LegacyQTReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
       try {
         r.exec("openMovieFile.close()");
       }
       catch (ReflectException e) {
-        throw new FormatException("Close movie failed", e);
+        throw new IOException("Close movie failed", e);
       }
     }
     else close();
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     if (currentId == null) return;
 
     try {
@@ -124,7 +124,7 @@ public class LegacyQTReader extends FormatReader {
       r.exec("QTSession.close()");
     }
     catch (ReflectException e) {
-      throw new FormatException("Close movie failed", e);
+      throw new IOException("Close movie failed", e);
     }
     currentId = null;
   }

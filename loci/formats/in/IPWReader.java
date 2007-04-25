@@ -151,7 +151,7 @@ public class IPWReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     super.close();
 
     pixels = null;

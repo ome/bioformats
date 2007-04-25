@@ -96,23 +96,23 @@ public class SDTReader extends FormatReader {
   public boolean isThisType(byte[] block) { return false; }
 
   /* @see loci.formats.IFormatReader#getRGBChannelCount(String) */
-  public int getRGBChannelCount() throws FormatException, IOException {
+  public int getRGBChannelCount() {
     return intensity ? 1 : timeBins;
   }
 
   /* @see loci.formats.IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() throws FormatException, IOException {
+  public int[] getChannelDimLengths() {
     return intensity ? new int[] {channels} : new int[] {timeBins, channels};
   }
 
   /* @see loci.formats.IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() throws FormatException, IOException {
+  public String[] getChannelDimTypes() {
     return intensity ? new String[] {FormatTools.SPECTRA} :
       new String[] {FormatTools.LIFETIME, FormatTools.SPECTRA};
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
+  public boolean isInterleaved(int subC) {
     return !intensity && subC == 0;
   }
 

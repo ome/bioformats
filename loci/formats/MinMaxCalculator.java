@@ -192,7 +192,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   }
 
   /* @see IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     reader.close();
     chanMin = null;
     chanMax = null;

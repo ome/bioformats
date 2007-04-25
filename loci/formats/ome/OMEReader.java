@@ -192,32 +192,32 @@ public class OMEReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
+  public int getImageCount() {
     return numImages;
   }
 
   /* @see loci.formats.IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
+  public boolean isRGB() {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() throws FormatException, IOException {
+  public int getThumbSizeX() {
     return thumb.getWidth();
   }
 
   /* @see loci.formats.IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() throws FormatException, IOException {
+  public int getThumbSizeY() {
     return thumb.getHeight();
   }
 
   /* @see loci.formats.IFormatReader#isLittleEndian() */
-  public boolean isLittleEndian() throws FormatException, IOException {
+  public boolean isLittleEndian() {
     return true;
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
+  public boolean isInterleaved(int subC) {
     return false;
   }
 
@@ -267,13 +267,15 @@ public class OMEReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
-    if (fileOnly && rc != null) rc.logout();
+  public void close(boolean fileOnly) throws IOException {
+    if (fileOnly) {
+      if (rc != null) rc.logout();
+    }
     else close();
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     if (rc != null) rc.logout();
     thumb = null;
     rs = null;

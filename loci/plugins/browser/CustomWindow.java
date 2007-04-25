@@ -37,7 +37,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.formats.*;
 import org.openmicroscopy.xml.OMENode;
-import java.io.IOException;
 
 //import loci.ome.notebook.MetadataNotebook;
 
@@ -107,7 +106,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
       catch (Exception exc) {
         exc.printStackTrace();
-        LociDataBrowser.exceptionMessage(exc);
+        LociDataBrowser.dumpException(exc);
       }
     }
 
@@ -536,18 +535,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       catch (ReflectException exc) {
         JOptionPane.showMessageDialog(this,
           "Sorry, there has been an error creating the metadata editor.",
-          "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
-        LociDataBrowser.exceptionMessage(exc);
-      }
-      catch (IOException exc) {
-        JOptionPane.showMessageDialog(this,
-          "We could not find metadata for this file.",
-          "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
-      }
-      catch (FormatException exc) {
-        JOptionPane.showMessageDialog(this,
-          "A FormatException occured trying to get the metadata for this file.",
-          "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
+          "4D Data Browser", JOptionPane.ERROR_MESSAGE);
+        LociDataBrowser.dumpException(exc);
       }
     }
     else if (cmd.equals("options")) {

@@ -227,57 +227,57 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
+  public int getImageCount() {
     return totalImages[getSeries()];
   }
 
   /* @see IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
+  public boolean isRGB() {
     return reader.isRGB();
   }
 
   /* @see IFormatReader#getSizeX() */
-  public int getSizeX() throws FormatException, IOException {
+  public int getSizeX() {
     return width[getSeries()];
   }
 
   /* @see IFormatReader#getSizeY() */
-  public int getSizeY() throws FormatException, IOException {
+  public int getSizeY() {
     return height[getSeries()];
   }
 
   /* @see IFormatReader#getSizeZ() */
-  public int getSizeZ() throws FormatException, IOException {
+  public int getSizeZ() {
     return totalSizeZ[getSeries()];
   }
 
   /* @see IFormatReader#getSizeC() */
-  public int getSizeC() throws FormatException, IOException {
+  public int getSizeC() {
     return totalSizeC[getSeries()];
   }
 
   /* @see IFormatReader#getSizeT() */
-  public int getSizeT() throws FormatException, IOException {
+  public int getSizeT() {
     return totalSizeT[getSeries()];
   }
 
   /* @see IFormatReader#getPixelType() */
-  public int getPixelType() throws FormatException, IOException {
+  public int getPixelType() {
     return reader.getPixelType();
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
-  public int getEffectiveSizeC() throws FormatException, IOException {
+  public int getEffectiveSizeC() {
     return getImageCount() / (getSizeZ() * getSizeT());
   }
 
   /* @see IFormatReader#getRGBChannelCount() */
-  public int getRGBChannelCount() throws FormatException, IOException {
+  public int getRGBChannelCount() {
     return getSizeC() / getEffectiveSizeC();
   }
 
   /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() throws FormatException, IOException {
+  public int[] getChannelDimLengths() {
     int sno = getSeries();
     int len = lenC[sno].length;
     int[] cLengths = new int[len];
@@ -286,7 +286,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() throws FormatException, IOException {
+  public String[] getChannelDimTypes() {
     int sno = getSeries();
     int len = lenC[sno].length;
     String[] cTypes = new String[len];
@@ -295,37 +295,37 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() throws FormatException, IOException {
+  public int getThumbSizeX() {
     return reader.getThumbSizeX();
   }
 
   /* @see IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() throws FormatException, IOException {
+  public int getThumbSizeY() {
     return reader.getThumbSizeY();
   }
 
   /* @see IFormatReader#isLittleEndian() */
-  public boolean isLittleEndian() throws FormatException, IOException {
+  public boolean isLittleEndian() {
     return reader.isLittleEndian();
   }
 
   /* @see IFormatReader#getDimensionOrder() */
-  public String getDimensionOrder() throws FormatException, IOException {
+  public String getDimensionOrder() {
     return order[getSeries()];
   }
 
   /* @see IFormatReader#isOrderCertain() */
-  public boolean isOrderCertain() throws FormatException, IOException {
+  public boolean isOrderCertain() {
     return ag[getSeries()].isCertain();
   }
 
   /* @see IFormatReader#isInterleaved() */
-  public boolean isInterleaved() throws FormatException, IOException {
+  public boolean isInterleaved() {
     return reader.isInterleaved();
   }
 
   /* @see IFormatReader#isInterleaved(int) */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
+  public boolean isInterleaved(int subC) {
     return reader.isInterleaved(subC);
   }
 
@@ -416,7 +416,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (readers == null) reader.close(fileOnly);
     else {
       for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
@@ -430,7 +430,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     if (readers == null) reader.close();
     else {
       for (int i=0; i<readers.length; i++) readers[i].close();
@@ -442,17 +442,17 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getSeriesCount() */
-  public int getSeriesCount() throws FormatException, IOException {
+  public int getSeriesCount() {
     return reader.getSeriesCount();
   }
 
   /* @see IFormatReader#setSeries(int) */
-  public void setSeries(int no) throws FormatException, IOException {
+  public void setSeries(int no) throws FormatException {
     reader.setSeries(no);
   }
 
   /* @see IFormatReader#getSeries() */
-  public int getSeries() throws FormatException, IOException {
+  public int getSeries() {
     return reader.getSeries();
   }
 
@@ -485,7 +485,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() throws FormatException, IOException {
+  public String[] getUsedFiles() {
     // returning the files list directly here is fast, since we do not
     // have to call initFile on each constituent file; but we can only do so
     // when each constituent file does not itself have multiple used files
@@ -498,7 +498,17 @@ public class FileStitcher implements IFormatReader {
         String[][] used = new String[files.length][];
         int total = 0;
         for (int i=0; i<files.length; i++) {
-          readers[i].setId(files[i]);
+          try {
+            readers[i].setId(files[i]);
+          }
+          catch (FormatException exc) {
+            exc.printStackTrace();
+            return null;
+          }
+          catch (IOException exc) {
+            exc.printStackTrace();
+            return null;
+          }
           used[i] = readers[i].getUsedFiles();
           total += used[i].length;
         }
@@ -520,29 +530,27 @@ public class FileStitcher implements IFormatReader {
   public String getCurrentFile() { return currentId; }
 
   /* @see IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t) throws FormatException, IOException {
+  public int getIndex(int z, int c, int t) throws FormatException {
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
-  public int[] getZCTCoords(int index) throws FormatException, IOException {
+  public int[] getZCTCoords(int index) throws FormatException {
     return FormatTools.getZCTCoords(this, index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */
-  public Object getMetadataValue(String field)
-    throws FormatException, IOException
-  {
+  public Object getMetadataValue(String field) {
     return reader.getMetadataValue(field);
   }
 
   /* @see IFormatReader#getMetadata() */
-  public Hashtable getMetadata() throws FormatException, IOException {
+  public Hashtable getMetadata() {
     return reader.getMetadata();
   }
 
   /* @see IFormatReader#getCoreMetadata() */
-  public CoreMetadata getCoreMetadata() throws FormatException, IOException {
+  public CoreMetadata getCoreMetadata() {
     return reader.getCoreMetadata();
   }
 
@@ -562,12 +570,12 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getMetadataStore() */
-  public MetadataStore getMetadataStore() throws FormatException, IOException {
+  public MetadataStore getMetadataStore() {
     return reader.getMetadataStore();
   }
 
   /* @see IFormatReader#getMetadataStoreRoot() */
-  public Object getMetadataStoreRoot() throws FormatException, IOException {
+  public Object getMetadataStoreRoot() {
     return reader.getMetadataStoreRoot();
   }
 

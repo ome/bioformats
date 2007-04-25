@@ -113,7 +113,7 @@ public class LegacyZVIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
+  public int getImageCount() {
     return blockList.size();
   }
 

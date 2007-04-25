@@ -126,22 +126,32 @@ public class OIFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() throws FormatException, IOException {
-    return openThumbImage(0).getWidth();
+  public int getThumbSizeX() {
+    // TODO: populate thumbnail width in initFile instead of here!
+    try {
+      return openThumbImage(0).getWidth();
+    }
+    catch (FormatException exc) { return -1; }
+    catch (IOException exc) { return -1; }
   }
 
   /* @see loci.formats.IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() throws FormatException, IOException {
-    return openThumbImage(0).getHeight();
+  public int getThumbSizeY() {
+    // TODO: populate thumbnail height in initFile instead of here!
+    try {
+      return openThumbImage(0).getHeight();
+    }
+    catch (FormatException exc) { return -1; }
+    catch (IOException exc) { return -1; }
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() throws FormatException, IOException {
+  public String[] getUsedFiles() {
     return (String[]) usedFiles.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
       if (in != null) in.close();
       if (thumbReader != null) thumbReader.close(fileOnly);
@@ -155,7 +165,7 @@ public class OIFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     super.close();
     if (thumbReader != null) thumbReader.close();
     if (tiffReader != null) {

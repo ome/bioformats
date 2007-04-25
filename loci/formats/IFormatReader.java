@@ -38,25 +38,25 @@ public interface IFormatReader extends IFormatHandler {
   void setId(String id) throws FormatException, IOException;
 
   /** Determines the number of images in the current file. */
-  int getImageCount() throws FormatException, IOException;
+  int getImageCount();
 
   /** Checks if the images in the file are RGB. */
-  boolean isRGB() throws FormatException, IOException;
+  boolean isRGB();
 
   /** Gets the size of the X dimension. */
-  int getSizeX() throws FormatException, IOException;
+  int getSizeX();
 
   /** Gets the size of the Y dimension. */
-  int getSizeY() throws FormatException, IOException;
+  int getSizeY();
 
   /** Gets the size of the Z dimension. */
-  int getSizeZ() throws FormatException, IOException;
+  int getSizeZ();
 
   /** Gets the size of the C dimension. */
-  int getSizeC() throws FormatException, IOException;
+  int getSizeC();
 
   /** Gets the size of the T dimension. */
-  int getSizeT() throws FormatException, IOException;
+  int getSizeT();
 
   /**
    * Gets the pixel type.
@@ -65,39 +65,39 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if there was a problem parsing file metadata.
    * @throws IOException if there was an error reading from the file.
    */
-  int getPixelType() throws FormatException, IOException;
+  int getPixelType();
 
   /**
    * Gets the effective size of the C dimension, guaranteeing that
    * getEffectiveSizeC(id) * getSizeZ(id) * getSizeT(id) == getImageCount(id)
    * regardless of the result of isRGB(id).
    */
-  int getEffectiveSizeC() throws FormatException, IOException;
+  int getEffectiveSizeC();
 
   /** Gets the number of channels per RGB image (if not RGB, this returns 1). */
-  int getRGBChannelCount() throws FormatException, IOException;
+  int getRGBChannelCount();
 
   /**
    * Gets the lengths of each subdimension of C,
    * in fastest-to-sloweset rasterization order.
    */
-  int[] getChannelDimLengths() throws FormatException, IOException;
+  int[] getChannelDimLengths();
 
   /**
    * Gets the name of each subdimension of C,
    * in fastest-to-slowest rasterization order.
    * Common subdimensional types are enumerated in {@link FormatTools}.
    */
-  String[] getChannelDimTypes() throws FormatException, IOException;
+  String[] getChannelDimTypes();
 
   /** Get the size of the X dimension for the thumbnail. */
-  int getThumbSizeX() throws FormatException, IOException;
+  int getThumbSizeX();
 
   /** Get the size of the Y dimension for the thumbnail. */
-  int getThumbSizeY() throws FormatException, IOException;
+  int getThumbSizeY();
 
   /** Gets whether the data is in little-endian format. */
-  boolean isLittleEndian() throws FormatException, IOException;
+  boolean isLittleEndian();
 
   /**
    * Gets a five-character string representing the
@@ -113,19 +113,19 @@ public interface IFormatReader extends IFormatHandler {
    * the first dimension after X and Y (e.g., XYCTZ) and the
    * {@link #isInterleaved(String)} method will return true.
    */
-  String getDimensionOrder() throws FormatException, IOException;
+  String getDimensionOrder();
 
   /**
    * Gets whether the dimension order and sizes are known, or merely guesses.
    */
-  boolean isOrderCertain() throws FormatException, IOException;
+  boolean isOrderCertain();
 
   /**
    * Gets whether or not the channels are interleaved. This method exists
    * because X and Y must appear first in the dimension order. For
    * interleaved data, XYCTZ or XYCZT is used, and this method returns true.
    */
-  boolean isInterleaved() throws FormatException, IOException;
+  boolean isInterleaved();
 
   /**
    * Gets whether or not the given sub-channel is interleaved. This method
@@ -134,8 +134,7 @@ public interface IFormatReader extends IFormatHandler {
    * {@link loci.formats.in.SDTReader} handles spectral-lifetime data with
    * the interleaved lifetime bins and non-interleaved spectral channels.
    */
-  boolean isInterleaved(int subC)
-    throws FormatException, IOException;
+  boolean isInterleaved(int subC);
 
   /** Obtains the specified image from the current file. */
   BufferedImage openImage(int no)
@@ -173,22 +172,22 @@ public interface IFormatReader extends IFormatHandler {
    * Closes the currently open file. If the flag is set, this is all that
    * happens; if unset, it is equivalent to calling close().
    */
-  void close(boolean fileOnly) throws FormatException, IOException;
+  void close(boolean fileOnly) throws IOException;
 
   /**
    * Closes the currently open file and frees memory
    * allocated by this reader.
    */
-  void close() throws FormatException, IOException;
+  void close() throws IOException;
 
   /** Gets the number of series in this file. */
-  int getSeriesCount() throws FormatException, IOException;
+  int getSeriesCount();
 
   /** Activates the specified series. */
-  void setSeries(int no) throws FormatException, IOException;
+  void setSeries(int no) throws FormatException;
 
   /** Gets the currently active series. */
-  int getSeries() throws FormatException, IOException;
+  int getSeries();
 
   /** Specifies whether or not to normalize float data. */
   void setNormalized(boolean normalize);
@@ -203,7 +202,7 @@ public interface IFormatReader extends IFormatHandler {
   boolean isMetadataCollected();
 
   /** Returns an array of filenames needed to open this dataset. */
-  String[] getUsedFiles() throws FormatException, IOException;
+  String[] getUsedFiles();
 
   /** Returns the current file. */
   String getCurrentFile();
@@ -212,30 +211,30 @@ public interface IFormatReader extends IFormatHandler {
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  int getIndex(int z, int c, int t) throws FormatException, IOException;
+  int getIndex(int z, int c, int t) throws FormatException;
 
   /**
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  int[] getZCTCoords(int index) throws FormatException, IOException;
+  int[] getZCTCoords(int index) throws FormatException;
 
   /**
    * Obtains the specified metadata field's value for the current file.
    * @param field the name associated with the metadata field
    * @return the value, or null if the field doesn't exist
    */
-  Object getMetadataValue(String field) throws FormatException, IOException;
+  Object getMetadataValue(String field);
 
   /**
    * Obtains the hashtable containing the metadata field/value pairs from
    * the current file.
    * @return the hashtable containing all metadata from the file
    */
-  Hashtable getMetadata() throws FormatException, IOException;
+  Hashtable getMetadata();
 
   /** Obtains the core metadata values for the current file. */
-  CoreMetadata getCoreMetadata() throws FormatException, IOException;
+  CoreMetadata getCoreMetadata();
 
   /**
    * Specifies whether ugly metadata (entries with unprintable characters,
@@ -261,19 +260,15 @@ public interface IFormatReader extends IFormatHandler {
    * metadata store.
    * @return a metadata store implementation.
    */
-  MetadataStore getMetadataStore() throws FormatException, IOException;
+  MetadataStore getMetadataStore();
 
   /**
    * Retrieves the current metadata store's root object. It is guaranteed that
    * all file parsing has been performed by the reader prior to retrieval.
    * Requests for a full populated root object should be made using this method.
    * @return current metadata store's root object fully populated.
-   * @throws IOException if there is an IO error when reading the file specified
-   *   by <code>path</code>.
-   * @throws FormatException if the file specified by <code>path</code> is of an
-   *   unsupported type.
    */
-  Object getMetadataStoreRoot() throws FormatException, IOException;
+  Object getMetadataStoreRoot();
 
   /**
    * A utility method for test reading a file from the command line,

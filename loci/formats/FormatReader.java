@@ -121,9 +121,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /** Returns true if the given file name is in the used files list. */
-  protected boolean isUsedFile(String id, String file)
-    throws FormatException, IOException
-  {
+  protected boolean isUsedFile(String file) {
     String[] usedFiles = getUsedFiles();
     for (int i=0; i<usedFiles.length; i++) {
       if (usedFiles[i].equals(file) ||
@@ -185,7 +183,7 @@ public abstract class FormatReader extends FormatHandler
   public abstract boolean isThisType(byte[] block);
 
   /* @see IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
+  public int getImageCount() {
     return core.imageCount[series];
   }
 
@@ -195,55 +193,53 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
+  public boolean isRGB() {
     return core.rgb[series];
   }
 
   /* @see IFormatReader#getSizeX() */
-  public int getSizeX() throws FormatException, IOException {
+  public int getSizeX() {
     return core.sizeX[series];
   }
 
   /* @see IFormatReader#getSizeY() */
-  public int getSizeY() throws FormatException, IOException {
+  public int getSizeY() {
     return core.sizeY[series];
   }
 
   /* @see IFormatReader#getSizeZ() */
-  public int getSizeZ() throws FormatException, IOException {
+  public int getSizeZ() {
     return core.sizeZ[series];
   }
 
   /* @see IFormatReader#getSizeC() */
-  public int getSizeC() throws FormatException, IOException {
+  public int getSizeC() {
     return core.sizeC[series];
   }
 
   /* @see IFormatReader#getSizeT() */
-  public int getSizeT() throws FormatException, IOException {
+  public int getSizeT() {
     return core.sizeT[series];
   }
 
   /* @see IFormatReader#getPixelType() */
-  public int getPixelType() throws FormatException, IOException {
+  public int getPixelType() {
     return core.pixelType[series];
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
-  public int getEffectiveSizeC() throws FormatException, IOException {
+  public int getEffectiveSizeC() {
     // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
     return getImageCount() / (getSizeZ() * getSizeT());
   }
 
   /* @see IFormatReader#getRGBChannelCount() */
-  public int getRGBChannelCount() throws FormatException, IOException {
+  public int getRGBChannelCount() {
     return getSizeC() / getEffectiveSizeC();
   }
 
   /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths()
-    throws FormatException, IOException
-  {
+  public int[] getChannelDimLengths() {
     if (core.cLengths[series] == null) {
       core.cLengths[series] = new int[] {core.sizeC[series]};
     }
@@ -251,7 +247,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() throws FormatException, IOException {
+  public String[] getChannelDimTypes() {
     if (core.cTypes[series] == null) {
       core.cTypes[series] = new String[] {FormatTools.CHANNEL};
     }
@@ -259,41 +255,41 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() throws FormatException, IOException {
+  public int getThumbSizeX() {
     int sx = getSizeX();
     int sy = getSizeY();
     return sx > sy ? THUMBNAIL_DIMENSION : sx * THUMBNAIL_DIMENSION / sy;
   }
 
   /* @see IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() throws FormatException, IOException {
+  public int getThumbSizeY() {
     int sx = getSizeX();
     int sy = getSizeY();
     return sy > sx ? THUMBNAIL_DIMENSION : sy * THUMBNAIL_DIMENSION / sx;
   }
 
   /* @see IFormatReader.isLittleEndian() */
-  public boolean isLittleEndian() throws FormatException, IOException {
+  public boolean isLittleEndian() {
     return core.littleEndian[series];
   }
 
   /* @see IFormatReader#getDimensionOrder() */
-  public String getDimensionOrder() throws FormatException, IOException {
+  public String getDimensionOrder() {
     return core.currentOrder[series];
   }
 
   /* @see IFormatReader.isOrderCertain() */
-  public boolean isOrderCertain() throws FormatException, IOException {
+  public boolean isOrderCertain() {
     return core.orderCertain[series];
   }
 
   /* @see IFormatReader#isInterleaved() */
-  public boolean isInterleaved() throws FormatException, IOException {
+  public boolean isInterleaved() {
     return isInterleaved(0);
   }
 
   /* @see IFormatReader#isInterleaved(int) */
-  public boolean isInterleaved(int subC) throws FormatException, IOException {
+  public boolean isInterleaved(int subC) {
     return core.interleaved[series];
   }
 
@@ -333,7 +329,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
       if (in != null) in.close();
     }
@@ -341,19 +337,19 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     if (in != null) in.close();
     in = null;
     currentId = null;
   }
 
   /* @see IFormatReader#getSeriesCount() */
-  public int getSeriesCount() throws FormatException, IOException {
+  public int getSeriesCount() {
     return core.sizeX.length;
   }
 
   /* @see IFormatReader#setSeries(int) */
-  public void setSeries(int no) throws FormatException, IOException {
+  public void setSeries(int no) throws FormatException {
     if (no < 0 || no >= getSeriesCount()) {
       throw new FormatException("Invalid series: " + no);
     }
@@ -361,7 +357,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getSeries() */
-  public int getSeries() throws FormatException, IOException {
+  public int getSeries() {
     return series;
   }
 
@@ -396,7 +392,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() throws FormatException, IOException {
+  public String[] getUsedFiles() {
     return new String[] {currentId};
   }
 
@@ -406,31 +402,27 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t)
-    throws FormatException, IOException
-  {
+  public int getIndex(int z, int c, int t) throws FormatException {
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
-  public int[] getZCTCoords(int index) throws FormatException, IOException {
+  public int[] getZCTCoords(int index) throws FormatException {
     return FormatTools.getZCTCoords(this, index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */
-  public Object getMetadataValue(String field)
-    throws FormatException, IOException
-  {
+  public Object getMetadataValue(String field) {
     return getMeta(field);
   }
 
   /* @see IFormatReader#getMetadata() */
-  public Hashtable getMetadata() throws FormatException, IOException {
+  public Hashtable getMetadata() {
     return metadata;
   }
 
   /* @see IFormatReader#getCoreMetadata() */
-  public CoreMetadata getCoreMetadata() throws FormatException, IOException {
+  public CoreMetadata getCoreMetadata() {
     return core;
   }
 
@@ -460,12 +452,12 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getMetadataStore() */
-  public MetadataStore getMetadataStore() throws FormatException, IOException {
+  public MetadataStore getMetadataStore() {
     return metadataStore;
   }
 
   /* @see IFormatReader#getMetadataStoreRoot() */
-  public Object getMetadataStoreRoot() throws FormatException, IOException {
+  public Object getMetadataStoreRoot() {
     return getMetadataStore().getRoot();
   }
 

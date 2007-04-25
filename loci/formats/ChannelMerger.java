@@ -41,7 +41,7 @@ public class ChannelMerger extends ReaderWrapper {
   // -- ChannelMerger API methods --
 
   /** Determines whether the channels in the file can be merged. */
-  public boolean canMerge() throws FormatException, IOException {
+  public boolean canMerge() {
     int c = getSizeC();
     return c > 1 && c <= 4 && !reader.isRGB();
   }
@@ -49,14 +49,14 @@ public class ChannelMerger extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getImageCount() */
-  public int getImageCount() throws FormatException, IOException {
+  public int getImageCount() {
     int no = reader.getImageCount();
     if (canMerge()) no /= getSizeC();
     return no;
   }
 
   /* @see IFormatReader#getDimensionOrder() */
-  public String getDimensionOrder() throws FormatException, IOException {
+  public String getDimensionOrder() {
     String order = reader.getDimensionOrder();
     if (canMerge()) {
       StringBuffer sb = new StringBuffer(order);
@@ -71,7 +71,7 @@ public class ChannelMerger extends ReaderWrapper {
   }
 
   /* @see IFormatReader#isRGB() */
-  public boolean isRGB() throws FormatException, IOException {
+  public boolean isRGB() {
     return canMerge() || reader.isRGB();
   }
 
@@ -127,11 +127,11 @@ public class ChannelMerger extends ReaderWrapper {
       getThumbSizeY(), true);
   }
 
-  public int getIndex(int z, int c, int t) throws FormatException, IOException {
+  public int getIndex(int z, int c, int t) throws FormatException {
     return FormatTools.getIndex(this, z, c, t);
   }
 
-  public int[] getZCTCoords(int index) throws FormatException, IOException {
+  public int[] getZCTCoords(int index) throws FormatException {
     return FormatTools.getZCTCoords(this, index);
   }
 

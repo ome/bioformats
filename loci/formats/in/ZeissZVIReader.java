@@ -188,7 +188,7 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException {
+  public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
       if (in != null) in.close();
       if (legacy != null) legacy.close(fileOnly);
@@ -197,7 +197,7 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close() */
-  public void close() throws FormatException, IOException {
+  public void close() throws IOException {
     super.close();
     needLegacy = false;
 

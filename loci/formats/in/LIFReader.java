@@ -72,7 +72,7 @@ public class LIFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesCount() */
-  public int getSeriesCount() throws FormatException, IOException {
+  public int getSeriesCount() {
     return core.sizeX.length;
   }
 

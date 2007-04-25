@@ -108,6 +108,6 @@ public class LegacyPictReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws FormatException, IOException { }
+  public void close(boolean fileOnly) throws IOException { }
 
 }
