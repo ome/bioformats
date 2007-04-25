@@ -189,7 +189,14 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    setId(id, false); 
+  }
+
+  /* @see IFormatReader#setId(String, boolean) */
+  public void setId(String id, boolean force) 
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId) || force) initFile(id);
   }
 
   /* @see IFormatReader#isRGB() */
@@ -256,16 +263,24 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
-    int sx = getSizeX();
-    int sy = getSizeY();
-    return sx > sy ? THUMBNAIL_DIMENSION : sx * THUMBNAIL_DIMENSION / sy;
+    if (core.thumbSizeX[series] == 0) { 
+      int sx = getSizeX();
+      int sy = getSizeY();
+      core.thumbSizeX[series] =
+        sx > sy ? THUMBNAIL_DIMENSION : sx * THUMBNAIL_DIMENSION / sy;
+    } 
+    return core.thumbSizeX[series]; 
   }
 
   /* @see IFormatReader#getThumbSizeY() */
   public int getThumbSizeY() {
-    int sx = getSizeX();
-    int sy = getSizeY();
-    return sy > sx ? THUMBNAIL_DIMENSION : sy * THUMBNAIL_DIMENSION / sx;
+    if (core.thumbSizeY[series] == 0) { 
+      int sx = getSizeX();
+      int sy = getSizeY();
+      core.thumbSizeY[series] =
+        sy > sx ? THUMBNAIL_DIMENSION : sy * THUMBNAIL_DIMENSION / sx;
+    } 
+    return core.thumbSizeY[series]; 
   }
 
   /* @see IFormatReader.isLittleEndian() */

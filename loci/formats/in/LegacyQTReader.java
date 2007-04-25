@@ -107,7 +107,7 @@ public class LegacyQTReader extends FormatReader {
         r.exec("openMovieFile.close()");
       }
       catch (ReflectException e) {
-        throw new IOException("Close movie failed", e);
+        throw new IOException("Close movie failed");
       }
     }
     else close();
@@ -124,7 +124,7 @@ public class LegacyQTReader extends FormatReader {
       r.exec("QTSession.close()");
     }
     catch (ReflectException e) {
-      throw new IOException("Close movie failed", e);
+      throw new IOException("Close movie failed");
     }
     currentId = null;
   }

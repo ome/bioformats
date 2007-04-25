@@ -88,27 +88,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     return super.openThumbImage(no);
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() {
-    if (ifds.length == 1) return super.getThumbSizeX();
-    // TODO: populate thumbnail width in initFile instead of here!
-    try {
-      return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 1);
-    }
-    catch (FormatException exc) { return -1; }
-  }
-
-  /* @see loci.formats.IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() {
-    if (ifds.length == 1) return super.getThumbSizeY();
-    // TODO: populate thumbnail height in initFile instead of here!
-    try {
-      return TiffTools.getIFDIntValue(ifds[1],
-        TiffTools.IMAGE_LENGTH, false, 1);
-    }
-    catch (FormatException exc) { return -1; }
-  }
-
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
@@ -223,6 +202,13 @@ public class ZeissLSMReader extends BaseTiffReader {
     ifds = tempIFDs;
     initMetadata();
     ifds = TiffTools.getIFDs(in);
+ 
+    if (ifds.length > 1) {
+      core.thumbSizeX[0] = TiffTools.getIFDIntValue(ifds[1], 
+        TiffTools.IMAGE_WIDTH, false, 1);
+      core.thumbSizeY[0] = TiffTools.getIFDIntValue(ifds[1], 
+        TiffTools.IMAGE_LENGTH, false, 1);
+    } 
   }
 
   /* @see BaseTiffReader#initMetadata() */

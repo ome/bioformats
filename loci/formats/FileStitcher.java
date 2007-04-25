@@ -226,6 +226,13 @@ public class FileStitcher implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
   }
 
+  /* @see IFormatReader#setId(String, boolean) */
+  public void setId(String id, boolean force)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId) || force) initFile(id);
+  }
+
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     return totalImages[getSeries()];

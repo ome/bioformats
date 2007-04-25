@@ -167,6 +167,13 @@ public class ImageReader implements IFormatReader {
     getReader(id).setId(id);
   }
 
+  /* @see IFormatReader#setId(String, boolean) */
+  public void setId(String id, boolean force)
+    throws FormatException, IOException
+  {
+    getReader(id).setId(id, force);
+  }
+
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     return getReader().getImageCount();

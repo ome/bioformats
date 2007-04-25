@@ -37,6 +37,12 @@ public interface IFormatReader extends IFormatHandler {
   /** Sets the current file name. */
   void setId(String id) throws FormatException, IOException;
 
+  /** 
+   * Sets the current file name.  
+   * If 'force' is set, the reader will be re-initialized no matter what.
+   */
+  void setId(String id, boolean force) throws FormatException, IOException;
+
   /** Determines the number of images in the current file. */
   int getImageCount();
 

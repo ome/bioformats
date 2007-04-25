@@ -125,26 +125,6 @@ public class OIFReader extends FormatReader {
     return thumbReader.openImage(0);
   }
 
-  /* @see loci.formats.IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() {
-    // TODO: populate thumbnail width in initFile instead of here!
-    try {
-      return openThumbImage(0).getWidth();
-    }
-    catch (FormatException exc) { return -1; }
-    catch (IOException exc) { return -1; }
-  }
-
-  /* @see loci.formats.IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() {
-    // TODO: populate thumbnail height in initFile instead of here!
-    try {
-      return openThumbImage(0).getHeight();
-    }
-    catch (FormatException exc) { return -1; }
-    catch (IOException exc) { return -1; }
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     return (String[]) usedFiles.toArray(new String[0]);
@@ -367,6 +347,10 @@ public class OIFReader extends FormatReader {
         }
       }
     }
+
+    BufferedImage thumbImage = openThumbImage(0);
+    core.thumbSizeX[0] = thumbImage.getWidth();
+    core.thumbSizeY[0] = thumbImage.getHeight();
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();

@@ -29,6 +29,7 @@ import java.util.*;
 /** Encompasses core metadata values. */
 public class CoreMetadata {
   public int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, imageCount;
+  public int[] thumbSizeX, thumbSizeY; 
   public int[][] cLengths;
   public String[][] cTypes;
   public String[] currentOrder;
@@ -41,6 +42,8 @@ public class CoreMetadata {
     sizeZ = new int[series];
     sizeC = new int[series];
     sizeT = new int[series];
+    thumbSizeX = new int[series];
+    thumbSizeY = new int[series];
     pixelType = new int[series];
     imageCount = new int[series];
     cLengths = new int[series][];
