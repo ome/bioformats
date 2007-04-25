@@ -77,27 +77,18 @@ public class FileStitcher implements IFormatReader {
   /** Blank thumbnail bytes, for use when image counts vary between files. */
   private byte[][] blankThumbBytes;
 
-  /** Image dimensions. */
-  private int[] width, height;
-
   /** Number of images per file. */
   private int[] imagesPerFile;
-
-  /** Total number of image planes. */
-  private int[] totalImages;
-
-  /** Dimension order. */
-  private String[] order;
 
   /** Dimensional axis lengths per file. */
   private int[] sizeZ, sizeC, sizeT;
 
-  /** Total dimensional axis lengths. */
-  private int[] totalSizeZ, totalSizeC, totalSizeT;
-
   /** Component lengths for each axis type. */
   private int[][] lenZ, lenC, lenT;
 
+  /** Core metadata. */
+  private CoreMetadata core;
+  
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
@@ -223,42 +214,42 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
-    return totalImages[getSeries()];
+    return core.imageCount[getSeries()]; 
   }
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
-    return reader.isRGB();
+    return core.rgb[getSeries()];
   }
 
   /* @see IFormatReader#getSizeX() */
   public int getSizeX() {
-    return width[getSeries()];
+    return core.sizeX[getSeries()];
   }
 
   /* @see IFormatReader#getSizeY() */
   public int getSizeY() {
-    return height[getSeries()];
+    return core.sizeY[getSeries()];
   }
 
   /* @see IFormatReader#getSizeZ() */
   public int getSizeZ() {
-    return totalSizeZ[getSeries()];
+    return core.sizeZ[getSeries()];
   }
 
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() {
-    return totalSizeC[getSeries()];
+    return core.sizeC[getSeries()];
   }
 
   /* @see IFormatReader#getSizeT() */
   public int getSizeT() {
-    return totalSizeT[getSeries()];
+    return core.sizeT[getSeries()];
   }
 
   /* @see IFormatReader#getPixelType() */
   public int getPixelType() {
-    return reader.getPixelType();
+    return core.pixelType[getSeries()];
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
@@ -306,7 +297,7 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
-    return order[getSeries()];
+    return core.currentOrder[getSeries()];
   }
 
   /* @see IFormatReader#isOrderCertain() */
@@ -336,7 +327,7 @@ public class FileStitcher implements IFormatReader {
     // this file does not contain enough image planes
     int sno = getSeries();
     if (blankImage[sno] == null) {
-      blankImage[sno] = ImageTools.blankImage(width[sno], height[sno],
+      blankImage[sno] = ImageTools.blankImage(core.sizeX[sno], core.sizeY[sno],
         sizeC[sno], getPixelType());
     }
     return blankImage[sno];
@@ -355,7 +346,7 @@ public class FileStitcher implements IFormatReader {
     int sno = getSeries();
     if (blankBytes[sno] == null) {
       int bytes = FormatTools.getBytesPerPixel(getPixelType());
-      blankBytes[sno] = new byte[width[sno] * height[sno] *
+      blankBytes[sno] = new byte[core.sizeX[sno] * core.sizeY[sno] *
         bytes * getRGBChannelCount()];
     }
     return blankBytes[sno];
@@ -546,7 +537,7 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getCoreMetadata() */
   public CoreMetadata getCoreMetadata() {
-    return reader.getCoreMetadata();
+    return core;
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
@@ -703,6 +694,7 @@ public class FileStitcher implements IFormatReader {
     }
 
     reader.setId(files[0]);
+    core = reader.getCoreMetadata();
 
     int seriesCount = reader.getSeriesCount();
     ag = new AxisGuesser[seriesCount];
@@ -710,18 +702,11 @@ public class FileStitcher implements IFormatReader {
     blankBytes = new byte[seriesCount][];
     blankThumb = new BufferedImage[seriesCount];
     blankThumbBytes = new byte[seriesCount][];
-    width = new int[seriesCount];
-    height = new int[seriesCount];
     imagesPerFile = new int[seriesCount];
-    totalImages = new int[seriesCount];
-    order = new String[seriesCount];
     sizeZ = new int[seriesCount];
     sizeC = new int[seriesCount];
     sizeT = new int[seriesCount];
     boolean[] certain = new boolean[seriesCount];
-    totalSizeZ = new int[seriesCount];
-    totalSizeC = new int[seriesCount];
-    totalSizeT = new int[seriesCount];
     lenZ = new int[seriesCount][];
     lenC = new int[seriesCount][];
     lenT = new int[seriesCount][];
@@ -730,11 +715,11 @@ public class FileStitcher implements IFormatReader {
     int oldSeries = reader.getSeries();
     for (int i=0; i<seriesCount; i++) {
       reader.setSeries(i);
-      width[i] = reader.getSizeX();
-      height[i] = reader.getSizeY();
+      core.sizeX[i] = reader.getSizeX();
+      core.sizeY[i] = reader.getSizeY();
       imagesPerFile[i] = reader.getImageCount();
-      totalImages[i] = files.length * imagesPerFile[i];
-      order[i] = reader.getDimensionOrder();
+      core.imageCount[i] = files.length * imagesPerFile[i];
+      core.currentOrder[i] = reader.getDimensionOrder();
       sizeZ[i] = reader.getSizeZ();
       sizeC[i] = reader.getSizeC();
       sizeT[i] = reader.getSizeT();
@@ -744,14 +729,14 @@ public class FileStitcher implements IFormatReader {
 
     // guess at dimensions corresponding to file numbering
     for (int i=0; i<seriesCount; i++) {
-      ag[i] = new AxisGuesser(fp, order[i],
+      ag[i] = new AxisGuesser(fp, core.currentOrder[i],
         sizeZ[i], sizeT[i], sizeC[i], certain[i]);
     }
 
     // order may need to be adjusted
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
-      order[i] = ag[i].getAdjustedOrder();
+      core.currentOrder[i] = ag[i].getAdjustedOrder();
     }
     setSeries(oldSeries);
 
@@ -771,9 +756,9 @@ public class FileStitcher implements IFormatReader {
     int numC = ag[sno].getAxisCountC();
     int numT = ag[sno].getAxisCountT();
 
-    totalSizeZ[sno] = sizeZ[sno];
-    totalSizeC[sno] = sizeC[sno];
-    totalSizeT[sno] = sizeT[sno];
+    core.sizeZ[sno] = sizeZ[sno];
+    core.sizeC[sno] = sizeC[sno];
+    core.sizeT[sno] = sizeT[sno];
     lenZ[sno] = new int[numZ + 1];
     lenC[sno] = new int[numC + 1];
     lenT[sno] = new int[numT + 1];
@@ -784,15 +769,15 @@ public class FileStitcher implements IFormatReader {
     for (int i=0; i<axes.length; i++) {
       switch (axes[i]) {
         case AxisGuesser.Z_AXIS:
-          totalSizeZ[sno] *= count[i];
+          core.sizeZ[sno] *= count[i];
           lenZ[sno][z++] = count[i];
           break;
         case AxisGuesser.C_AXIS:
-          totalSizeC[sno] *= count[i];
+          core.sizeC[sno] *= count[i];
           lenC[sno][c++] = count[i];
           break;
         case AxisGuesser.T_AXIS:
-          totalSizeT[sno] *= count[i];
+          core.sizeT[sno] *= count[i];
           lenT[sno][t++] = count[i];
           break;
         default:
@@ -805,10 +790,10 @@ public class FileStitcher implements IFormatReader {
     int pixelType = getPixelType();
     boolean little = reader.isLittleEndian();
     MetadataStore s = reader.getMetadataStore();
-    s.setPixels(new Integer(width[sno]), new Integer(height[sno]),
-      new Integer(totalSizeZ[sno]), new Integer(totalSizeC[sno]),
-      new Integer(totalSizeT[sno]), new Integer(pixelType),
-      new Boolean(!little), order[sno], new Integer(sno), null);
+    s.setPixels(new Integer(core.sizeX[sno]), new Integer(core.sizeY[sno]),
+      new Integer(core.sizeZ[sno]), new Integer(core.sizeC[sno]),
+      new Integer(core.sizeT[sno]), new Integer(pixelType),
+      new Boolean(!little), core.currentOrder[sno], new Integer(sno), null);
   }
 
   /**
@@ -842,7 +827,7 @@ public class FileStitcher implements IFormatReader {
       }
     }
     int fno = FormatTools.positionToRaster(count, pos);
-    int ino = FormatTools.getIndex(order[sno], sizeZ[sno],
+    int ino = FormatTools.getIndex(core.currentOrder[sno], sizeZ[sno],
       reader.getEffectiveSizeC(), sizeT[sno], imagesPerFile[sno],
       posZ[0], posC[0], posT[0]);
 
@@ -1015,7 +1000,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) setId(id);
-    return order[getSeries()];
+    return core.currentOrder[getSeries()];
   }
 
   /** @deprecated Replaced by {@link #isOrderCertain()} */
