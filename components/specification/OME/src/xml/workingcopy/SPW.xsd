@@ -17,7 +17,7 @@
 -->
 
 <xsd:schema xmlns = "http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd"
-        targetNamespace = "http://www.openmicroscopy.org/XMLschemas/SPL/2.0-RC1/SPW.xsd"
+        targetNamespace = "http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd"
         xmlns:OME = "http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd"
         xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
         version = "2.0-RC1"
@@ -30,6 +30,13 @@
             Author:  Andrew J Patterson
         </xsd:documentation>
     </xsd:annotation>
+    <xsd:simpleType name="ExternDBref">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
     <xsd:element name="PlateDataset">
         <xsd:annotation>
             <xsd:documentation>
@@ -49,6 +56,29 @@
             </xsd:documentation>
         </xsd:annotation>        
     </xsd:element>
+    <xsd:element name="PlateRef">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="OME:Reference">
+                    <xsd:attribute name="ID" use="required" type="PlateID"/>
+                    <xsd:attribute name="Well" use="required">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:pattern value="[A-Z]+[0-9]+"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="Sample" type="xsd:integer"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="PlateID">
+        <xsd:restriction base="OME:LSID">
+            <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Plate)(:\S+)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
     <xsd:element name="Reagent">
         <xsd:annotation>
             <xsd:documentation>
@@ -57,9 +87,17 @@
         </xsd:annotation>      
         <xsd:complexType>
             <xsd:attribute name="Description">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
             <xsd:attribute name="Name">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
             <xsd:attribute name="ReagentIdentifier">
@@ -83,6 +121,73 @@
             </xsd:documentation>
         </xsd:annotation>     
     </xsd:element>
+    <xsd:element name="Screen">
+        <xsd:annotation>
+            <xsd:documentation>
+                The Screen element is a grouping for Plates.
+                The required attribute is the Screen's Name and ID - both must be unique within the document.
+                The Screen element may contain an ExternalRef attribute that refers to an external database.
+                A description of the screen may be specified in the Description element.
+                Screens may contain overlapping sets of Plates i.e.  Screens and Plates have a many-to-many relationship.
+                Plates contain one or more ScreenRef elements to specify what screens they belong to.
+                Added - ProtocolIdentifier, ProtocolDescription, ReagentSetDescription, ReagentSetIdentifier, and Type - ajp
+                Is ExternRef needed - not in EA model? - only in DB model - removed - ajp
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="OME:Description" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="ID" use="required" type="ScreenID"/>
+            <xsd:attribute name="Name" use="required" type="xsd:string"/>
+            <xsd:attribute name="ProtocolIdentifier" type="ExternDBref"/>
+            <xsd:attribute name="ProtocolDescription" type="xsd:string"/>
+            <xsd:attribute name="ReagentSetDescription" type="xsd:string"/>
+            <xsd:attribute name="ReagentSetIdentifier" type="xsd:string"/>
+            <xsd:attribute name="Type" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="ScreenID">
+        <xsd:restriction base="OME:LSID">
+            <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Screen)(:\S+)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="ScreenRef">
+        <xsd:annotation>
+            <xsd:documentation>
+                The ScreenRef element is a reference to a Screen element.
+                Plate elements may have one or more ScreenRef elements to define the screen that a plate belongs to.
+                Plates may belong to more than one screen.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="OME:Reference">
+                    <xsd:attribute name="ID" use="required" type="ScreenID"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Plate">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element identifies microtiter plates within a screen.
+                A plate can belong to more than one screen.
+                The Screen(s) that a plate belongs to are specified by the ScreenRef element.
+                The EternRef attribute may contain a reference to an external database.
+                The Plate ID and Name attributes are required.
+                The Name identifies the plate to the user.  It is used much like the Plate ID, and so must be unique within the document.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ScreenRef" maxOccurs="unbounded"/>
+            </xsd:sequence>
+            <xsd:attribute name="ID" use="required" type="PlateID"/>
+            <xsd:attribute name="Name" use="required" type="xsd:string"/>
+            <xsd:attribute name="ExternRef" type="ExternDBref"/>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="ScreenAcquisition">
         <xsd:annotation>
             <xsd:documentation>
@@ -94,9 +199,17 @@
         </xsd:annotation>     
         <xsd:complexType>
             <xsd:attribute name="EndTime" type="xsd:dateTime">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
             <xsd:attribute name="StartTime" type="xsd:dateTime">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
         </xsd:complexType>
@@ -126,18 +239,37 @@
         </xsd:annotation> 
         <xsd:complexType>
             <xsd:attribute name="Column" type="xsd:integer">
-                
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
             </xsd:attribute>
             <xsd:attribute name="ExternalDescription" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
             <xsd:attribute name="ExternalIdentifier" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
             <xsd:attribute name="Row" type="xsd:integer">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
             <xsd:attribute name="Type" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
                 
             </xsd:attribute>
         </xsd:complexType>
