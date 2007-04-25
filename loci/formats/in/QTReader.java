@@ -163,6 +163,7 @@ public class QTReader extends FormatReader {
     }
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
+      legacy.setId(currentId); 
       return legacy.openBytes(no);
     }
 
@@ -351,6 +352,7 @@ public class QTReader extends FormatReader {
     }
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
+      legacy.setId(currentId); 
       return legacy.openImage(no);
     }
 
@@ -411,7 +413,17 @@ public class QTReader extends FormatReader {
     offsets = new Vector();
     chunkSizes = new Vector();
     status("Parsing tags");
-    parse(0, 0, in.length());
+    
+    try { 
+      parse(0, 0, in.length());
+    } 
+    catch (Exception e) {
+      if (debug) e.printStackTrace();
+      useLegacy = true;
+      legacy = createLegacyReader();
+      legacy.setId(id);
+    }    
+
     core.imageCount[0] = offsets.size();
 
     status("Populating metadata");
