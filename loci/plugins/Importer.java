@@ -4,7 +4,7 @@
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including
-the LOCI Data Browser, OME Plugin and Bio-Formats Exporter.
+the 4D Data Browser, OME Plugin and Bio-Formats Exporter.
 Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
 Curtis Rueden, Philip Huettl and Francis Wong.
 
@@ -57,7 +57,7 @@ public class Importer implements ItemListener {
 
   private static final String VIEW_NONE = "Metadata only";
   private static final String VIEW_STANDARD = "Standard ImageJ";
-  private static final String VIEW_BROWSER = "LOCI Data Browser";
+  private static final String VIEW_BROWSER = "4D Data Browser";
   private static final String VIEW_IMAGE_5D = "Image5D";
   private static final String VIEW_VIEW_5D = "View5D";
 
@@ -615,7 +615,7 @@ public class Importer implements ItemListener {
 
       // -- Step 4d: read pixel data --
 
-      // only read data explicitly if not using LOCI Data Browser
+      // only read data explicitly if not using 4D Data Browser
       if (!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + currentFile);
 
