@@ -603,8 +603,8 @@ public class LeicaReader extends FormatReader {
           new Integer(DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0])));
         addMeta("Length of filename",
           new Integer(DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0])));
-        Integer fileExtLen = 
-          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])); 
+        Integer fileExtLen =
+          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0]));
         addMeta("Length of file extension", fileExtLen);
         addMeta("Image file extension",
           DataTools.stripString(new String(temp, 16, fileExtLen.intValue())));

@@ -155,16 +155,16 @@ public abstract class FormatReader extends FormatHandler
       if (!key.matches(".*[a-zA-Z].*")) return;
     }
     metadata.put(key, value);
- 
+
     try {
       MetadataStore store = getMetadataStore();
       if (store.getClass().getName().equals(
         "loci.formats.ome.OMEXMLMetadataStore"))
       {
-        Method m = store.getClass().getMethod("setOriginalMetadata", 
+        Method m = store.getClass().getMethod("setOriginalMetadata",
           new Class[] {String.class, String.class});
-        m.invoke(store, new Object[] {key, value.toString()});       
-      } 
+        m.invoke(store, new Object[] {key, value.toString()});
+      }
     }
     catch (Throwable t) {
       System.out.println("Error populating OME-XML");

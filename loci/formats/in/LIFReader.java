@@ -240,7 +240,7 @@ public class LIFReader extends FormatReader {
       if (token.indexOf("=") != -1) {
         int idx = token.indexOf("Identifier") + 12;
         if (idx == 11) idx = token.indexOf("Description") + 13;
-        
+
         key = token.substring(idx, token.indexOf("\"", idx + 1));
         idx = token.indexOf("Variant") + 9;
         value = token.substring(idx, token.indexOf("\"", idx + 1));
@@ -486,7 +486,7 @@ public class LIFReader extends FormatReader {
         new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
         new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null,
         null, null, null, null, ii, null, null, null, null, null);
-    
+
       Enumeration keys = metadata.keys();
       while (keys.hasMoreElements()) {
         String k = (String) keys.nextElement();

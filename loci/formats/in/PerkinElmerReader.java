@@ -371,14 +371,14 @@ public class PerkinElmerReader extends FormatReader {
         }
         addMeta(hashKeys[tNum], token);
         if (hashKeys[tNum].equals("Image Width")) {
-          core.sizeX[0] = Integer.parseInt(token); 
-        } 
+          core.sizeX[0] = Integer.parseInt(token);
+        }
         else if (hashKeys[tNum].equals("Image Length")) {
-          core.sizeY[0] = Integer.parseInt(token); 
-        } 
+          core.sizeY[0] = Integer.parseInt(token);
+        }
         else if (hashKeys[tNum].equals("Number of slices")) {
-          core.sizeZ[0] = Integer.parseInt(token); 
-        } 
+          core.sizeZ[0] = Integer.parseInt(token);
+        }
         else if (hashKeys[tNum].equals("Experiment details:")) details = token;
         else if (hashKeys[tNum].equals("Z slice space")) sliceSpace = token;
         tNum++;
@@ -405,17 +405,17 @@ public class PerkinElmerReader extends FormatReader {
           t.nextToken();
         }
         else if (pt < hashKeys.length) {
-          String token = t.nextToken(); 
+          String token = t.nextToken();
           addMeta(hashKeys[pt], token);
           if (hashKeys[pt].equals("Image Width")) {
-            core.sizeX[0] = Integer.parseInt(token); 
-          } 
+            core.sizeX[0] = Integer.parseInt(token);
+          }
           else if (hashKeys[pt].equals("Image Length")) {
-            core.sizeY[0] = Integer.parseInt(token); 
-          } 
+            core.sizeY[0] = Integer.parseInt(token);
+          }
           else if (hashKeys[pt].equals("Number of slices")) {
-            core.sizeZ[0] = Integer.parseInt(token); 
-          } 
+            core.sizeZ[0] = Integer.parseInt(token);
+          }
           else if (hashKeys[pt].equals("Experiment details:")) details = token;
           else if (hashKeys[pt].equals("Z slice space")) sliceSpace = token;
           pt++;
@@ -423,16 +423,16 @@ public class PerkinElmerReader extends FormatReader {
         else {
           String key = t.nextToken() + t.nextToken();
           String value = t.nextToken();
-          addMeta(key, value); 
+          addMeta(key, value);
           if (key.equals("Image Width")) {
-            core.sizeX[0] = Integer.parseInt(value); 
-          } 
+            core.sizeX[0] = Integer.parseInt(value);
+          }
           else if (key.equals("Image Length")) {
-            core.sizeY[0] = Integer.parseInt(value); 
-          } 
+            core.sizeY[0] = Integer.parseInt(value);
+          }
           else if (key.equals("Number of slices")) {
-            core.sizeZ[0] = Integer.parseInt(value); 
-          } 
+            core.sizeZ[0] = Integer.parseInt(value);
+          }
           else if (key.equals("Experiment details:")) details = value;
           else if (key.equals("Z slice space")) sliceSpace = value;
         }
@@ -493,20 +493,20 @@ public class PerkinElmerReader extends FormatReader {
         else if (!tokens[j].trim().equals("")) {
           addMeta(tokens[j].trim(), tokens[j+1].trim());
           if (tokens[j].trim().equals("Image Width")) {
-            core.sizeX[0] = Integer.parseInt(tokens[j+1].trim()); 
-          } 
+            core.sizeX[0] = Integer.parseInt(tokens[j+1].trim());
+          }
           else if (tokens[j].trim().equals("Image Length")) {
-            core.sizeY[0] = Integer.parseInt(tokens[j+1].trim()); 
-          } 
+            core.sizeY[0] = Integer.parseInt(tokens[j+1].trim());
+          }
           else if (tokens[j].trim().equals("Number of slices")) {
-            core.sizeZ[0] = Integer.parseInt(tokens[j+1].trim()); 
-          } 
+            core.sizeZ[0] = Integer.parseInt(tokens[j+1].trim());
+          }
           else if (tokens[j].trim().equals("Experiment details:")) {
             details = tokens[j+1].trim();
-          }  
+          }
           else if (tokens[j].trim().equals("Z slice space")) {
             sliceSpace = tokens[j+1].trim();
-          } 
+          }
         }
       }
       read.close();
@@ -591,7 +591,7 @@ public class PerkinElmerReader extends FormatReader {
     String pixelSizeX = (String) getMeta("Pixel Size X");
     String pixelSizeY = (String) getMeta("Pixel Size Y");
     store.setDimensions(pixelSizeX == null ? null : new Float(pixelSizeX),
-      pixelSizeY == null ? null : new Float(pixelSizeY), 
+      pixelSizeY == null ? null : new Float(pixelSizeY),
       null, null, null, null);
 
     // populate Image element

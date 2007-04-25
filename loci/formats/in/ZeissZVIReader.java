@@ -1643,11 +1643,11 @@ public class ZeissZVIReader extends FormatReader {
         break;
       case 2819:
         addMeta("Image Index Z", data);
-        zIndex = Integer.parseInt(DataTools.stripString(data)); 
+        zIndex = Integer.parseInt(DataTools.stripString(data));
         break;
       case 2820:
         addMeta("Image Channel Index", data);
-        cIndex = Integer.parseInt(DataTools.stripString(data)); 
+        cIndex = Integer.parseInt(DataTools.stripString(data));
         break;
       case 2821:
         addMeta("Image Index T", data);

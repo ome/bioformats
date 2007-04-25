@@ -244,7 +244,7 @@ public class IPWReader extends BaseTiffReader {
     addMeta("Image Description", description);
 
     // default values
-    
+
     core.sizeZ[0] = 1;
     core.sizeC[0] = 1;
     core.sizeT[0] = getImageCount();
@@ -268,11 +268,11 @@ public class IPWReader extends BaseTiffReader {
           data = token.trim();
         }
         addMeta(label, data);
-        if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data); 
+        if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data);
         else if (label.equals("slices")) core.sizeT[0] = Integer.parseInt(data);
         else if (label.equals("channels")) {
-          core.sizeC[0] = Integer.parseInt(data); 
-        } 
+          core.sizeC[0] = Integer.parseInt(data);
+        }
       }
     }
 

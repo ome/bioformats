@@ -93,7 +93,7 @@ public class SEQReader extends BaseTiffReader {
     addMeta("slices", "" + core.sizeT[0]);
 
     // parse the description to get channels, slices and times where applicable
-    String descr = (String) TiffTools.getIFDValue(ifds[0], 
+    String descr = (String) TiffTools.getIFDValue(ifds[0],
       TiffTools.IMAGE_DESCRIPTION);
     metadata.remove("Comment");
     if (descr != null) {
@@ -103,7 +103,7 @@ public class SEQReader extends BaseTiffReader {
         String label = token.substring(0, token.indexOf("="));
         String data = token.substring(token.indexOf("=") + 1);
         addMeta(label, data);
-        if (label.equals("channels")) core.sizeC[0] = Integer.parseInt(data); 
+        if (label.equals("channels")) core.sizeC[0] = Integer.parseInt(data);
         else if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data);
         else if (label.equals("slices")) core.sizeT[0] = Integer.parseInt(data);
       }

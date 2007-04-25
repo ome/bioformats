@@ -93,30 +93,30 @@ public class OMEXMLMetadataStore implements MetadataStore {
     return null;
   }
 
-  /** Creates a new key/value pair. */ 
+  /** Creates a new key/value pair. */
   public void setOriginalMetadata(String key, String value) {
     ImageNode image = (ImageNode) getChild(root, "Image", 0);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
-   
-    Vector original = 
+
+    Vector original =
       DOMUtil.getChildElements("OriginalMetadata", ca.getDOMElement());
     if (original.size() == 0) {
-      Element el = DOMUtil.createChild(root.getDOMElement(), 
+      Element el = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");
       el = DOMUtil.createChild(el, "SemanticType");
       OMEXMLNode node = OMEXMLNode.createNode(el);
       node.setAttribute("Name", "OriginalMetadata");
       node.setAttribute("AppliesTo", "I");
-      
+
       Element nameElement = DOMUtil.createChild(el, "Element");
-      OMEXMLNode nameNode = OMEXMLNode.createNode(nameElement); 
+      OMEXMLNode nameNode = OMEXMLNode.createNode(nameElement);
       nameNode.setAttribute("Name", "name");
       nameNode.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME");
       nameNode.setAttribute("DataType", "string");
-      
+
       Element valueElement = DOMUtil.createChild(el, "Element");
-      OMEXMLNode valueNode = OMEXMLNode.createNode(valueElement); 
+      OMEXMLNode valueNode = OMEXMLNode.createNode(valueElement);
       valueElement.setAttribute("Name", "value");
       valueElement.setAttribute("DBLocation", "ORIGINAL_METADATA.VALUE");
       valueElement.setAttribute("DataType", "string");

@@ -60,7 +60,7 @@ public class ReaderTest extends TestCase {
   // -- Static fields --
 
   private static boolean writeConfigFiles = false;
-  private static boolean testXML = false; 
+  private static boolean testXML = false;
   private static float timeMultiplier = 1f;
 
   private static StringBuffer configLine;
@@ -610,19 +610,19 @@ public class ReaderTest extends TestCase {
 
   /** Tests that OME-XML is valid. */
   public void testValidXML() {
-    try { 
+    try {
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.createRoot();
       reader.setMetadataStore(store);
       reader.setId(id);
-    
-      String xml = ((OMEXMLMetadataStore) reader.getMetadataStore()).dumpXML(); 
-      if (xml == null) writeLog(id + " failed OME-XML validation"); 
-      assertTrue(xml != null); 
+
+      String xml = ((OMEXMLMetadataStore) reader.getMetadataStore()).dumpXML();
+      if (xml == null) writeLog(id + " failed OME-XML validation");
+      assertTrue(xml != null);
     }
     catch (Exception e) {
-      writeLog(id + " failed OME-XML validation"); 
-      e.printStackTrace(); 
+      writeLog(id + " failed OME-XML validation");
+      e.printStackTrace();
       assertTrue(false);
     }
   }
@@ -661,7 +661,7 @@ public class ReaderTest extends TestCase {
   public static TestSuite suite(String id) {
     TestSuite suite = new TestSuite();
     if (testXML) suite.addTest(new ReaderTest("testValidXML", id));
-    else { 
+    else {
       suite.addTest(new ReaderTest("testBufferedImageDimensions", id));
       if (!writeConfigFiles) {
         suite.addTest(new ReaderTest("testByteArrayDimensions", id));
@@ -670,7 +670,7 @@ public class ReaderTest extends TestCase {
         suite.addTest(new ReaderTest("testImageCount", id));
         suite.addTest(new ReaderTest("testOMEXML", id));
         suite.addTest(new ReaderTest("testSaneUsedFiles", id));
-        suite.addTest(new ReaderTest("testValidXML", id)); 
+        suite.addTest(new ReaderTest("testValidXML", id));
       }
       if (config.initialized(id) || writeConfigFiles) {
         suite.addTest(new ReaderTest("testConsistent", id));
@@ -785,7 +785,7 @@ public class ReaderTest extends TestCase {
       for (int i=1; i<args.length; i++) {
         if (args[i].equals("-config")) ReaderTest.writeConfigFiles = true;
         else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
-        else if (args[i].equals("-xmlonly")) ReaderTest.testXML = true; 
+        else if (args[i].equals("-xmlonly")) ReaderTest.testXML = true;
         else if (args[i].equals("-time")) {
           ReaderTest.timeMultiplier = Float.parseFloat(args[i+1]);
         }

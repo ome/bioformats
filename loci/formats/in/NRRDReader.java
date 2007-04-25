@@ -46,7 +46,7 @@ public class NRRDReader extends FormatReader {
   /** Offset to pixel data. */
   private long offset;
 
-  // -- Constructor -- 
+  // -- Constructor --
 
   /** Constructs a new NRRD reader. */
   public NRRDReader() { super("NRRD", new String[] {"nrrd", "nhdr"}); }
@@ -56,7 +56,7 @@ public class NRRDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 4) return false;
-    return block[0] == 'N' && block[1] == 'R' && block[2] == 'R' && 
+    return block[0] == 'N' && block[1] == 'R' && block[2] == 'R' &&
       block[3] == 'D';
   }
 
@@ -83,36 +83,36 @@ public class NRRDReader extends FormatReader {
 
     // TODO : add support for additional encoding types
     if (dataFile == null) {
-      if (encoding.equals("raw")) { 
+      if (encoding.equals("raw")) {
         in.seek(offset + no * buf.length);
         in.read(buf);
         return buf;
       }
       else throw new FormatException("Unsupported encoding: " + encoding);
     }
-    return null; 
+    return null;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (core.pixelType[0] == FormatTools.FLOAT) {
-      byte[] b = openBytes(no); 
+      byte[] b = openBytes(no);
       float[] f = new float[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
       for (int i=0; i<f.length; i++) {
         f[i] = Float.intBitsToFloat(
           DataTools.bytesToInt(b, i*4, 4, core.littleEndian[0]));
-      } 
+      }
       if (normalizeData) f = DataTools.normalizeFloats(f);
-      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0], 
+      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0],
         core.sizeC[0], core.interleaved[0]);
     }
-    
+
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], core.interleaved[0], 
+      core.sizeC[0], core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
 
-  /* @see loci.formats.FormatReader#initFile(String) */ 
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
@@ -131,51 +131,51 @@ public class NRRDReader extends FormatReader {
 
     while (!finished) {
       line = in.readLine().trim();
-      if (!line.startsWith("#") && line.length() > 0 && 
-        !line.startsWith("NRRD")) 
+      if (!line.startsWith("#") && line.length() > 0 &&
+        !line.startsWith("NRRD"))
       {
         // parse key/value pair
         key = line.substring(0, line.indexOf(":")).trim();
-        v = line.substring(line.indexOf(":") + 1).trim(); 
-        addMeta(key, v); 
-      
+        v = line.substring(line.indexOf(":") + 1).trim();
+        addMeta(key, v);
+
         if (key.equals("type")) {
           if (v.indexOf("char") != -1 || v.indexOf("8") != -1) {
             core.pixelType[0] = FormatTools.UINT8;
           }
           else if (v.indexOf("short") != -1 || v.indexOf("16") != -1) {
-            core.pixelType[0] = FormatTools.UINT16; 
-          } 
-          else if (v.equals("int") || v.equals("signed int") || 
-            v.equals("int32") || v.equals("int32_t") || v.equals("uint") || 
-            v.equals("unsigned int") || v.equals("uint32") || 
-            v.equals("uint32_t")) 
-          {
-            core.pixelType[0] = FormatTools.UINT32; 
+            core.pixelType[0] = FormatTools.UINT16;
           }
-          else if (v.equals("float")) core.pixelType[0] = FormatTools.FLOAT; 
-          else if (v.equals("double")) core.pixelType[0] = FormatTools.DOUBLE; 
-          else throw new FormatException("Unsupported data type: " + v); 
+          else if (v.equals("int") || v.equals("signed int") ||
+            v.equals("int32") || v.equals("int32_t") || v.equals("uint") ||
+            v.equals("unsigned int") || v.equals("uint32") ||
+            v.equals("uint32_t"))
+          {
+            core.pixelType[0] = FormatTools.UINT32;
+          }
+          else if (v.equals("float")) core.pixelType[0] = FormatTools.FLOAT;
+          else if (v.equals("double")) core.pixelType[0] = FormatTools.DOUBLE;
+          else throw new FormatException("Unsupported data type: " + v);
         }
         else if (key.equals("dimension")) {
-          numDimensions = Integer.parseInt(v);  
+          numDimensions = Integer.parseInt(v);
         }
         else if (key.equals("sizes")) {
           StringTokenizer tokens = new StringTokenizer(v, " ");
           for (int i=0; i<numDimensions; i++) {
             String t = tokens.nextToken();
             int size = Integer.parseInt(t);
-            
-            if (numDimensions >= 3 && i == 0 && size > 1) core.sizeC[0] = size; 
+
+            if (numDimensions >= 3 && i == 0 && size > 1) core.sizeC[0] = size;
             else if (i == 0 || (core.sizeC[0] > 1 && i == 1)) {
               core.sizeX[0] = size;
-            } 
+            }
             else if (i == 1 || (core.sizeC[0] > 1 && i == 2)) {
               core.sizeY[0] = size;
-            } 
+            }
             else if (i == 2 || (core.sizeC[0] > 1 && i == 3)) {
               core.sizeZ[0] = size;
-            } 
+            }
             else if (i == 3 || (core.sizeC[0] > 1 && i == 4)) {
               core.sizeT[0] = size;
             }
@@ -188,13 +188,13 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("endian")) {
           core.littleEndian[0] = v.equals("little");
         }
-        else if (key.equals("min")) min = v; 
-        else if (key.equals("max")) max = v; 
-      } 
+        else if (key.equals("min")) min = v;
+        else if (key.equals("max")) max = v;
+      }
       if (line.length() == 0 && dataFile == null) finished = true;
       if (dataFile != null && in.getFilePointer() == in.length()) {
         finished = true;
-      } 
+      }
     }
 
     if (dataFile == null) offset = in.getFilePointer();
@@ -202,14 +202,14 @@ public class NRRDReader extends FormatReader {
 
     core.rgb[0] = core.sizeC[0] > 1;
     core.interleaved[0] = true;
-    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0]; 
-  
+    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
+
     MetadataStore store = getMetadataStore();
 
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]), 
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(core.littleEndian[0]), core.currentOrder[0], null, null);
   }
-  
+
 }

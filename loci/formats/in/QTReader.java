@@ -163,7 +163,7 @@ public class QTReader extends FormatReader {
     }
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
-      legacy.setId(currentId); 
+      legacy.setId(currentId);
       return legacy.openBytes(no);
     }
 
@@ -352,7 +352,7 @@ public class QTReader extends FormatReader {
     }
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
-      legacy.setId(currentId); 
+      legacy.setId(currentId);
       return legacy.openImage(no);
     }
 
@@ -399,7 +399,7 @@ public class QTReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
-    super.close(); 
+    super.close();
     prevPixels = null;
   }
 
@@ -413,16 +413,16 @@ public class QTReader extends FormatReader {
     offsets = new Vector();
     chunkSizes = new Vector();
     status("Parsing tags");
-    
-    try { 
+
+    try {
       parse(0, 0, in.length());
-    } 
+    }
     catch (Exception e) {
       if (debug) e.printStackTrace();
       useLegacy = true;
       legacy = createLegacyReader();
       legacy.setId(id);
-    }    
+    }
 
     core.imageCount[0] = offsets.size();
 
@@ -1174,14 +1174,14 @@ public class QTReader extends FormatReader {
     v.add((byte) (length & 0xff));
 
     v.add((byte) 0x00);
-    v.add(quant); 
+    v.add(quant);
 
     // add Huffman tables
 
     v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
 
-    length = (lumDcBits.length + lumDc.length + 
-      lumAcBits.length + lumAc.length)*2 + 6; 
+    length = (lumDcBits.length + lumDc.length +
+      lumAcBits.length + lumAc.length)*2 + 6;
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
 
@@ -1281,7 +1281,7 @@ public class QTReader extends FormatReader {
       v2.add(b2.toByteArray());
       v2.add((byte) 0xff);
       v2.add((byte) 0xd9);
-      
+
       BufferedImage top = bufferedJPEG(v.toByteArray());
       BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 

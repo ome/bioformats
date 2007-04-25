@@ -250,12 +250,12 @@ public class PrairieReader extends FormatReader {
               }
               else {
                 addMeta(pastPrefix + " " + prefix + " " + key, value);
-                if (pastPrefix.equals("PVScan") && 
-                  prefix.equals("Sequence") && key.equals("type")) 
+                if (pastPrefix.equals("PVScan") &&
+                  prefix.equals("Sequence") && key.equals("type"))
                 {
-                  isZ = value.equals("ZSeries"); 
+                  isZ = value.equals("ZSeries");
                 }
-              } 
+              }
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
                 Location current = new Location(id);
@@ -271,13 +271,13 @@ public class PrairieReader extends FormatReader {
             String value =
               el.substring(valueIndex, el.indexOf("\"", valueIndex));
             addMeta(key, value);
-          
+
             if (key.equals("pixelsPerLine")) {
               core.sizeX[0] = Integer.parseInt(value);
-            } 
+            }
             else if (key.equals("linesPerFrame")) {
               core.sizeY[0] = Integer.parseInt(value);
-            } 
+            }
           }
           if (!closed) {
             pastPrefix = prefix;

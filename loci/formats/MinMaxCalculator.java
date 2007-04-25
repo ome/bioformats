@@ -213,8 +213,8 @@ public class MinMaxCalculator extends ReaderWrapper {
     int numRGB = getRGBChannelCount();
 
     // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries()][ndx * numRGB] == 
-      planeMin[getSeries()][ndx * numRGB]) 
+    if (planeMin[getSeries()][ndx * numRGB] ==
+      planeMin[getSeries()][ndx * numRGB])
     {
       return;
     }
@@ -269,8 +269,8 @@ public class MinMaxCalculator extends ReaderWrapper {
     int numRGB = getRGBChannelCount();
 
     // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries()][ndx * numRGB] == 
-      planeMin[getSeries()][ndx * numRGB]) 
+    if (planeMin[getSeries()][ndx * numRGB] ==
+      planeMin[getSeries()][ndx * numRGB])
     {
       return;
     }
@@ -288,14 +288,14 @@ public class MinMaxCalculator extends ReaderWrapper {
       planeMax[getSeries()][pBase + c] = Double.NEGATIVE_INFINITY;
     }
 
-    boolean fp = getPixelType() == FormatTools.FLOAT || 
+    boolean fp = getPixelType() == FormatTools.FLOAT ||
       getPixelType() == FormatTools.DOUBLE;
 
     for (int i=0; i<pixels; i++) {
       for (int c=0; c<numRGB; c++) {
         int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
         long bits = DataTools.bytesToLong(b, idx, bytes, little);
-        double v = fp ? Double.longBitsToDouble(bits) : (double) bits; 
+        double v = fp ? Double.longBitsToDouble(bits) : (double) bits;
         if (v > chanMax[getSeries()][cBase + c]) {
           chanMax[getSeries()][cBase + c] = v;
         }

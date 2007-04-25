@@ -617,7 +617,7 @@ public class OIBReader extends FormatReader {
           }
         }
         else if (entryName.equals("OibInfo.txt")) { }
-        else { 
+        else {
         //else if (data[0] == (byte) 0xff && data[1] == (byte) 0xfe) {
           String ini = DataTools.stripString(new String(data));
           StringTokenizer st = new StringTokenizer(ini, "\n");
@@ -644,7 +644,7 @@ public class OIBReader extends FormatReader {
                 prefix.indexOf("Green") == -1 && prefix.indexOf("Blue") == -1)
               {
                 addMeta(prefix + key, value);
-              
+
                 if (prefix.startsWith("[Axis ") &&
                   prefix.endsWith("Parameters Common] - "))
                 {

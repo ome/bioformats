@@ -339,23 +339,23 @@ public class ND2Reader extends FormatReader {
                   String effectiveKey = prefix + " " + pre + " " + key;
                   if (!metadata.containsKey(effectiveKey)) {
                     addMeta(effectiveKey, value);
-                  
+
                     if (effectiveKey.equals(
                       "MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value"))
                     {
                       if (value != null) {
                         core.sizeC[0] = Integer.parseInt(value);
-                      } 
+                      }
                     }
                     else if (effectiveKey.endsWith("dTimeMSec value")) {
-                      long v = (long) Double.parseDouble(value); 
+                      long v = (long) Double.parseDouble(value);
                       if (!zs.contains(new Long(v))) {
                         core.sizeZ[0]++;
                         zs.add(new Long(v));
                       }
                     }
                     else if (effectiveKey.endsWith("dZPos value")) {
-                      long v = (long) Double.parseDouble(value); 
+                      long v = (long) Double.parseDouble(value);
                       if (!ts.contains(new Long(v))) {
                         core.sizeT[0]++;
                         ts.add(new Long(v));
@@ -439,13 +439,13 @@ public class ND2Reader extends FormatReader {
 
     if (core.sizeC[0] == 0) {
       core.sizeC[0] = openImage(0).getRaster().getNumBands();
-    } 
+    }
     if (core.sizeC[0] == 2) core.sizeC[0] = 1;
 
     core.currentOrder[0] = "XY";
-    long deltaT = ts.size() > 1 ? 
+    long deltaT = ts.size() > 1 ?
       ((Long) ts.get(1)).longValue() - ((Long) ts.get(0)).longValue() : 1;
-    long deltaZ = zs.size() > 1 ? 
+    long deltaZ = zs.size() > 1 ?
       ((Long) zs.get(1)).longValue() - ((Long) zs.get(0)).longValue() : 1;
 
     if (deltaT < deltaZ || deltaZ == 0) core.currentOrder[0] += "CTZ";

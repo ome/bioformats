@@ -274,7 +274,7 @@ public class ICSReader extends FormatReader {
           String k = key.toString().trim();
           String v = value.toString().trim();
           addMeta(k, v);
-        
+
           if (k.equals("layout sizes")) layoutSizes = v;
           else if (k.equals("layout order")) layoutOrder = v;
           else if (k.equals("representation byte_order")) byteOrder = v;
@@ -298,7 +298,7 @@ public class ICSReader extends FormatReader {
     StringTokenizer t1 = new StringTokenizer(layoutSizes);
     StringTokenizer t2 = new StringTokenizer(layoutOrder);
 
-    core.rgb[0] = layoutOrder.indexOf("ch") >= 0 && 
+    core.rgb[0] = layoutOrder.indexOf("ch") >= 0 &&
       layoutOrder.indexOf("ch") < layoutOrder.indexOf("x");
 
     String imageToken;

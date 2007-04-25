@@ -51,7 +51,7 @@ public class CoreMetadata {
     littleEndian = new boolean[series];
     interleaved = new boolean[series];
     seriesMetadata = new Hashtable[series];
-    for (int i=0; i<series; i++) seriesMetadata[i] = new Hashtable(); 
+    for (int i=0; i<series; i++) seriesMetadata[i] = new Hashtable();
   }
 
 }

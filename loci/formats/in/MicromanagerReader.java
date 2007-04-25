@@ -153,9 +153,9 @@ public class MicromanagerReader extends FormatReader {
 
         if (!open && !closed) {
           String value = token.substring(token.indexOf(":") + 1).trim();
-          value = value.substring(0, value.length() - 1); 
+          value = value.substring(0, value.length() - 1);
           addMeta(key, value);
-          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);  
+          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
         }
         else if (!closed){
           StringBuffer valueBuffer = new StringBuffer();
@@ -166,16 +166,16 @@ public class MicromanagerReader extends FormatReader {
           }
           String value = valueBuffer.toString();
           value.replaceAll("\n", "").trim();
-          value = value.substring(0, value.length() - 1); 
+          value = value.substring(0, value.length() - 1);
           addMeta(key, value);
-          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);  
+          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
         }
         else {
           String value =
             token.substring(token.indexOf("[") + 1, token.indexOf("]")).trim();
-          value = value.substring(0, value.length() - 1); 
+          value = value.substring(0, value.length() - 1);
           addMeta(key, value);
-          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);  
+          if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
         }
       }
     }

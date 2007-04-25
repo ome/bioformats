@@ -142,12 +142,12 @@ public class AliconaReader extends FormatReader {
       else if (key.equals("TextureImageOffset")) {
         textureOffset = Integer.parseInt(value);
       }
-      else if (key.equals("TexturePtr") && !value.equals("7")) hasC = true; 
+      else if (key.equals("TexturePtr") && !value.equals("7")) hasC = true;
       else if (key.equals("Voltage")) voltage = value;
       else if (key.equals("Magnification")) magnification = value;
-      else if (key.equals("PlanePntX")) pntX = value; 
-      else if (key.equals("PlanePntY")) pntY = value; 
-      else if (key.equals("PlanePntZ")) pntZ = value; 
+      else if (key.equals("PlanePntX")) pntX = value;
+      else if (key.equals("PlanePntY")) pntY = value;
+      else if (key.equals("PlanePntZ")) pntZ = value;
     }
 
     status("Populating metadata");
@@ -180,11 +180,11 @@ public class AliconaReader extends FormatReader {
     );
 
     if (voltage != null) {
-      store.setDetector(null, null, null, null, null, new Float(voltage), 
+      store.setDetector(null, null, null, null, null, new Float(voltage),
         null, null, null);
     }
     if (magnification != null) {
-      store.setObjective(null, null, null, null, new Float(magnification), 
+      store.setObjective(null, null, null, null, new Float(magnification),
         null, null);
     }
 

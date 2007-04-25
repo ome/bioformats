@@ -240,11 +240,11 @@ public class OIFReader extends FormatReader {
           filenames.put(new Integer(pos), value);
         }
         addMeta(prefix + key, value);
-      
-        if (prefix.startsWith("[Axis ") && 
-          prefix.endsWith("Parameters Common] - ")) 
+
+        if (prefix.startsWith("[Axis ") &&
+          prefix.endsWith("Parameters Common] - "))
         {
-          int ndx = 
+          int ndx =
             Integer.parseInt(prefix.substring(6, prefix.indexOf("P")).trim());
           if (key.equals("AxisCode")) code[ndx] = value;
           else if (key.equals("MaxSize")) size[ndx] = value;
@@ -331,16 +331,16 @@ public class OIFReader extends FormatReader {
       if (code[i].equals("\"X\"")) core.sizeX[0] = Integer.parseInt(size[i]);
       else if (code[i].equals("\"Y\"")) {
         core.sizeY[0] = Integer.parseInt(size[i]);
-      } 
+      }
       else if (code[i].equals("\"C\"")) {
         core.sizeC[0] = Integer.parseInt(size[i]);
-      } 
+      }
       else if (code[i].equals("\"T\"")) {
         core.sizeT[0] = Integer.parseInt(size[i]);
-      } 
+      }
       else if (code[i].equals("\"Z\"")) {
         core.sizeZ[0] = Integer.parseInt(size[i]);
-      } 
+      }
     }
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
@@ -354,7 +354,7 @@ public class OIFReader extends FormatReader {
       else if (core.sizeT[0] == 1) core.sizeZ[0]++;
     }
 
-    core.currentOrder[0] = 
+    core.currentOrder[0] =
       core.currentOrder[0].substring(1, core.currentOrder[0].length() - 1);
     if (core.currentOrder[0] == null) core.currentOrder[0] = "XYZTC";
     else {
@@ -363,7 +363,7 @@ public class OIFReader extends FormatReader {
         for (int i=0; i<names.length; i++) {
           if (core.currentOrder[0].indexOf(names[i]) == -1) {
             core.currentOrder[0] += names[i];
-          } 
+          }
         }
       }
     }
@@ -402,8 +402,8 @@ public class OIFReader extends FormatReader {
     for (int i=0; i<len; i++) {
       if (validBits[i] == 0) {
         validBits = null;
-        break; 
-      } 
+        break;
+      }
     }
 
     core.rgb[0] = tiffReader[0].isRGB();
@@ -429,7 +429,7 @@ public class OIFReader extends FormatReader {
     if (px != null) pixX = new Float(px);
     if (py != null) pixY = new Float(py);
     store.setDimensions(pixX, pixY, null, null, null, null);
-    
+
     for (int i=0; i<core.sizeC[0]; i++) {
       prefix = "[Channel " + (i+1) + " Parameters] - ";
       String name = (String) getMeta(prefix + "CH Name");

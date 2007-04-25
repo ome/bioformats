@@ -200,11 +200,11 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Pixel sampling size (X)", new Integer(hstream.readInt()));
     addMeta("Pixel sampling size (Y)", new Integer(hstream.readInt()));
     addMeta("Pixel sampling size (Z)", new Integer(hstream.readInt()));
-    
+
     float pixX = hstream.readFloat();
     float pixY = hstream.readFloat();
     float pixZ = hstream.readFloat();
-    
+
     addMeta("X element length (in um)", new Float(pixX));
     addMeta("Y element length (in um)", new Float(pixY));
     addMeta("Z element length (in um)", new Float(pixZ));
@@ -372,7 +372,7 @@ public class DeltavisionReader extends FormatReader {
 
     for (int w=0; w<core.sizeC[0]; w++) {
       store.setLogicalChannel(w, null,
-        new Float(extHdrFields[0][w][0].getNdFilter()), new Integer(waves[w]), 
+        new Float(extHdrFields[0][w][0].getNdFilter()), new Integer(waves[w]),
         new Integer((int) extHdrFields[0][w][0].getExFilter()),
         "Monochrome", "Wide-field", null);
     }

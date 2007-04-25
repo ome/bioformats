@@ -382,8 +382,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
     if (fileCache.get(this) == Boolean.FALSE) reopen();
     int available = dis != null ? dis.available() + ext :
       (int) (length() - getFilePointer());
-    if (available < 0) available = Integer.MAX_VALUE; 
-    return available; 
+    if (available < 0) available = Integer.MAX_VALUE;
+    return available;
   }
 
   public void mark(int readLimit) {
@@ -446,7 +446,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       while (fp > (length() - dis.available())) {
         while (fp - length() + dis.available() > Integer.MAX_VALUE) {
           dis.skipBytes(Integer.MAX_VALUE);
-        } 
+        }
         dis.skipBytes((int) (fp - (length() - dis.available())));
       }
     }
@@ -464,7 +464,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
         while (afp - fp > Integer.MAX_VALUE) {
           fp += dis.skipBytes(Integer.MAX_VALUE);
         }
-        int skip = dis.skipBytes((int) (afp - fp)); 
+        int skip = dis.skipBytes((int) (afp - fp));
         if (skip == 0) break;
         fp += skip;
       }

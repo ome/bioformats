@@ -421,44 +421,44 @@ public class BioRadReader extends FormatReader {
                 "Tx selector used (TX 3)"};
               break;
           }
-          
-          String value; 
+
+          String value;
           while (st.hasMoreTokens() && idx < keys.length) {
-            value = st.nextToken(); 
+            value = st.nextToken();
             addMeta(keys[idx], value);
             if (keys[idx].equals("Zoom factor (user selected)")) zoom = value;
             else if (keys[idx].equals("Z start")) zstart = value;
             else if (keys[idx].equals("Z stop")) zstop = value;
             else if (keys[idx].equals("Transmission detector 1 - gain")) {
               gain1 = value;
-            } 
+            }
             else if (keys[idx].equals("Transmission detector 2 - gain")) {
               gain2 = value;
-            } 
+            }
             else if (keys[idx].equals("Transmission detector 3 - gain")) {
               gain3 = value;
-            } 
+            }
             else if (keys[idx].equals("Transmission detector 1 - offset")) {
               offset1 = value;
-            } 
+            }
             else if (keys[idx].equals("Transmission detector 2 - offset")) {
               offset2 = value;
-            } 
+            }
             else if (keys[idx].equals("Transmission detector 3 - offset")) {
               offset3 = value;
-            } 
+            }
             else if (keys[idx].equals(
-              "Part number of excitation filter for laser 1")) 
+              "Part number of excitation filter for laser 1"))
             {
               ex1 = value;
             }
             else if (keys[idx].equals(
-              "Part number of excitation filter for laser 2")) 
+              "Part number of excitation filter for laser 2"))
             {
               ex2 = value;
             }
             else if (keys[idx].equals(
-              "Part number of excitation filter for laser 3")) 
+              "Part number of excitation filter for laser 3"))
             {
               ex3 = value;
             }
@@ -692,10 +692,10 @@ public class BioRadReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-      
-      double white = ramp1max; 
-      double black = ramp1min; 
-      
+
+      double white = ramp1max;
+      double black = ramp1min;
+
       store.setDisplayChannel(new Integer(i),  new Double(black),
         new Double(white), null, null);
     }
@@ -712,14 +712,14 @@ public class BioRadReader extends FormatReader {
     for (int i=0; i<3; i++) {
       String gain = i == 0 ? gain1 : i == 1 ? gain2 : gain3;
       String offset = i == 0 ? offset1 : i == 1 ? gain2 : gain3;
-      if (gain != null || offset != null) { 
+      if (gain != null || offset != null) {
         store.setDetector(null, null, null, null, gain == null ? null :
           new Float(gain), null, offset == null ? null : new Float(offset),
           null, new Integer(i));
       }
 
-      String exc = i == 0 ? ex1 : i == 1 ? ex2 : ex3; 
-      String ems = i == 0 ? em1 : i == 1 ? em2 : em3; 
+      String exc = i == 0 ? ex1 : i == 1 ? ex2 : ex3;
+      String ems = i == 0 ? em1 : i == 1 ? em2 : em3;
       if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
       if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
     }
