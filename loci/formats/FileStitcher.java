@@ -143,10 +143,7 @@ public class FileStitcher implements IFormatReader {
    *     <li>AxisGuesser.C_AXIS: channels</li>
    *   </ul>
    */
-  public int[] getAxisTypes(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) setId(id);
+  public int[] getAxisTypes() {
     return ag[getSeries()].getAxisTypes();
   }
 
@@ -159,19 +156,13 @@ public class FileStitcher implements IFormatReader {
    *     <li>AxisGuesser.C_AXIS: channels</li>
    *   </ul>
    */
-  public void setAxisTypes(String id, int[] axes)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) setId(id);
+  public void setAxisTypes(int[] axes) throws FormatException {
     ag[getSeries()].setAxisTypes(axes);
     computeAxisLengths();
   }
 
   /** Gets the file pattern object used to build the list of files. */
-  public FilePattern getFilePattern(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
+  public FilePattern getFilePattern() {
     return fp;
   }
 
@@ -179,10 +170,7 @@ public class FileStitcher implements IFormatReader {
    * Gets the axis guesser object used to guess
    * which dimensional axes are which.
    */
-  public AxisGuesser getAxisGuesser(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) setId(id);
+  public AxisGuesser getAxisGuesser() {
     return ag[getSeries()];
   }
 
@@ -774,7 +762,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /** Computes axis length arrays, and total axis lengths. */
-  protected void computeAxisLengths() throws FormatException, IOException {
+  protected void computeAxisLengths() throws FormatException {
     int sno = getSeries();
 
     int[] count = fp.getCount();
@@ -882,6 +870,40 @@ public class FileStitcher implements IFormatReader {
       }
     }
     return include;
+  }
+
+  // -- Deprecated FileStitcher API methods --
+
+  /** @deprecated Replaced by {@link #getAxisTypes()} */
+  public int[] getAxisTypes(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) setId(id);
+    return getAxisTypes();
+  }
+
+  /** @deprecated Replaced by {@link #setAxisTypes(int[])} */
+  public void setAxisTypes(String id, int[] axes)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) setId(id);
+    setAxisTypes(axes);
+  }
+
+  /** @deprecated Replaced by {@link #getFilePattern()} */
+  public FilePattern getFilePattern(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return getFilePattern();
+  }
+
+  /** @deprecated Replaced by {@link #getAxisGuesser()} */
+  public AxisGuesser getAxisGuesser(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return getAxisGuesser();
   }
 
   // -- Deprecated IFormatReader API methods --
