@@ -102,31 +102,25 @@ public class LegacyQTReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) {
-      try {
-        r.exec("openMovieFile.close()");
-      }
-      catch (ReflectException e) {
-        throw new IOException("Close movie failed");
+    try {
+      r.exec("openMovieFile.close()");
+      if (!fileOnly) {
+        r.exec("m.disposeQTObject()");
+        r.exec("imageTrack.disposeQTObject()");
+        r.exec("QTSession.close()");
       }
     }
-    else close();
+    catch (ReflectException e) {
+      IOException io = new IOException("Close movie failed");
+      io.initCause(e);
+      throw io;
+    }
+    if (!fileOnly) currentId = null;
   }
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
-    if (currentId == null) return;
-
-    try {
-      r.exec("openMovieFile.close()");
-      r.exec("m.disposeQTObject()");
-      r.exec("imageTrack.disposeQTObject()");
-      r.exec("QTSession.close()");
-    }
-    catch (ReflectException e) {
-      throw new IOException("Close movie failed");
-    }
-    currentId = null;
+    close(false);
   }
 
   /** Initializes the given QuickTime file. */
