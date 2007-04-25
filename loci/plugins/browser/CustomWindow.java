@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1G307  USA
 
 package loci.plugins.browser;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import ij.*;
 import ij.gui.*;
 //import ij.macro.MacroRunner;
@@ -36,12 +38,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.formats.*;
+//import loci.ome.notebook.Notebook;
 import org.openmicroscopy.xml.OMENode;
-
-//import loci.ome.notebook.MetadataNotebook;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
   AdjustmentListener, ChangeListener, ItemListener, KeyListener
@@ -61,7 +59,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- Fields - state --
 
   protected LociDataBrowser db;
-  protected CacheIndicator zIndicator,tIndicator;
+  protected CacheIndicator zIndicator, tIndicator;
   protected OptionsWindow ow;
 
   private String zString = Z_STRING;
@@ -83,6 +81,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private JCheckBox channelBox;
   private CardLayout switcher;
   private JPanel channelPanel;
+  private JSpinner fpsSpin;
   private String patternTitle;
   protected boolean update;
 
@@ -101,7 +100,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     if (db.fStitch != null) {
       try {
-        fp = db.fStitch.getFilePattern(id);
+        fp = db.fStitch.getFilePattern();
         patternTitle = fp.getPattern();
       }
       catch (Exception exc) {
@@ -161,7 +160,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     animate.addActionListener(this);
 
     // options button
-
     options = new JButton("Options");
     options.setActionCommand("options");
     options.addActionListener(this);
@@ -185,6 +183,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       xml.setActionCommand("xml");
     }
 
+    // channel GUI components
     switcher = new CardLayout();
     channelPanel = new JPanel(switcher);
     channelPanel.setOpaque(false);
@@ -206,46 +205,49 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     channelPanel.add("many", subPane);
 
     // repack to take extra panel into account
-    c = db.numC;
-
-    if (db.numC * db.numT * db.numZ == imp.getStackSize()) {
-      c = db.numC;
-    }
-    else c = 1;
-
+    c = db.numC * db.numT * db.numZ == imp.getStackSize() ? db.numC : 1;
     setC();
+
+    // frames per second
+    JLabel fpsLabel = new JLabel("Frame rate");
+    String fpsTip = "Animation frames per second";
+    fpsLabel.setToolTipText(fpsTip);
+    fpsSpin = new JSpinner(new SpinnerNumberModel(10, 1, 99, 1));
+    fpsSpin.addChangeListener(this);
+    fpsSpin.setToolTipText(fpsTip);
 
     JPanel zPanel = new JPanel(new BorderLayout());
     JPanel tPanel = new JPanel(new BorderLayout());
-    zPanel.add(zSliceSel,BorderLayout.CENTER);
-    tPanel.add(tSliceSel,BorderLayout.CENTER);
+    zPanel.add(zSliceSel, BorderLayout.CENTER);
+    tPanel.add(tSliceSel, BorderLayout.CENTER);
 
     if (db.virtual) {
       zIndicator = new CacheIndicator(zSliceSel);
       tIndicator = new CacheIndicator(tSliceSel);
-      zPanel.add(zIndicator,BorderLayout.SOUTH);
-      tPanel.add(tIndicator,BorderLayout.SOUTH);
+      zPanel.add(zIndicator, BorderLayout.SOUTH);
+      tPanel.add(tIndicator, BorderLayout.SOUTH);
     }
 
     //setup the layout
     lowPane = new Panel();
-    FormLayout layout = new FormLayout(
-        TAB + ",pref," + TAB + ",pref:grow," + TAB + ",pref," + TAB + ",pref,"
-        + TAB + ",pref," + TAB,
-        TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB);
+    FormLayout layout = new FormLayout(TAB + ",pref," + TAB + ",pref:grow," +
+      TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB,
+      TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB);
     lowPane.setLayout(layout);
     lowPane.setBackground(Color.white);
 
     cc = new CellConstraints();
 
-    lowPane.add(zLabel, cc.xy(2,2));
-    lowPane.add(zPanel, cc.xyw(4,2,5));
-    lowPane.add(channelPanel, cc.xy(10,2));
-    lowPane.add(tLabel, cc.xy(2,4));
-    lowPane.add(tPanel, cc.xyw(4,4,5));
-    lowPane.add(options, cc.xy(6,6));
-    if(xml != null) lowPane.add(xml, cc.xy(8,6));
-    lowPane.add(animate, cc.xy(10,6, "right,center"));
+    lowPane.add(zLabel, cc.xy(2, 2));
+    lowPane.add(zPanel, cc.xyw(4, 2, 5));
+    lowPane.add(channelPanel, cc.xyw(10, 2, 3));
+    lowPane.add(tLabel, cc.xy(2, 4));
+    lowPane.add(tPanel, cc.xyw(4, 4, 5));
+    lowPane.add(fpsLabel, cc.xy(10, 4));
+    lowPane.add(fpsSpin, cc.xy(12, 4));
+    lowPane.add(options, cc.xy(6, 6));
+    if(xml != null) lowPane.add(xml, cc.xy(8, 6));
+    lowPane.add(animate, cc.xyw(10, 6, 3, "right,center"));
 
     setBackground(Color.white);
     FormLayout layout2 = new FormLayout(
@@ -253,8 +255,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       TAB + "," + TAB + ",pref:grow," + TAB + ",pref," + TAB);
     setLayout(layout2);
     CellConstraints cc2 = new CellConstraints();
-    add(imagePane, cc2.xyw(1,3,3));
-    add(lowPane, cc2.xy(2,5));
+    add(imagePane, cc2.xyw(1, 3, 3));
+    add(lowPane, cc2.xy(2, 5));
 
     //final GUI tasks
     pack();
@@ -297,20 +299,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   public void setC() {
-    boolean hasThis = false;
-    int numThis = -1;
-    int value = -1;
-    hasThis = db.hasC;
-    numThis = db.numC;
-    value = c;
-    if (numThis > 2) {
+    if (db.numC > 2) {
       // C spinner
       switcher.last(channelPanel);
       SpinnerNumberModel snm = (SpinnerNumberModel) channelSpin.getModel();
-      snm.setMaximum((Comparable) new Integer(numThis));
-      snm.setValue(new Integer(value));
+      snm.setMaximum((Comparable) new Integer(db.numC));
+      snm.setValue(new Integer(c));
       c = ((Integer) channelSpin.getValue()).intValue();
-      if (!hasThis) {
+      if (!db.hasC) {
         channelSpin.setEnabled(false);
         cLabel.setEnabled(false);
         c = 1;
@@ -320,7 +316,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       // C checkbox
       switcher.first(channelPanel);
       c = channelBox.isSelected() ? 2 : 1;
-      if (!hasThis) {
+      if (!db.hasC) {
         channelBox.setEnabled(false);
         c = 1;
       }
@@ -573,7 +569,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       t = tSliceSel.getValue();
 
       if (!src.getValueIsAdjusting() || db.manager == null) showSlice(z, t, c);
-      else showTempSlice(z,t,c);
+      else showTempSlice(z, t, c);
     }
   }
 
@@ -594,12 +590,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- ChangeListener methods --
 
   public void stateChanged(ChangeEvent e) {
-    if(update) {
-      if( (JSpinner) e.getSource() == channelSpin) {
+    if (update) {
+      Object src = e.getSource();
+      if (src == channelSpin) {
         c = ((Integer) channelSpin.getValue()).intValue();
         z = zSliceSel.getValue();
         t = tSliceSel.getValue();
         showSlice(z, t, c);
+      }
+      else if (src == fpsSpin) {
+        setFps(((Integer) fpsSpin.getValue()).intValue());
       }
     }
   }

@@ -27,6 +27,8 @@ package loci.plugins.browser;
 import ij.*;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import loci.formats.*;
@@ -191,9 +193,12 @@ public class LociDataBrowser {
       numC = reader.getEffectiveSizeC();
       numT = reader.getSizeT();
       order = reader.getDimensionOrder();
+      if (DEBUG) {
+        System.out.println("setDimensions: numZ=" + numZ +
+          ", numC=" + numC + ", numT=" + numT + ", order=" + order);
+      }
     }
     catch (Exception exc) {
-      if (DEBUG) exc.printStackTrace();
       dumpException(exc);
       return;
     }
@@ -214,12 +219,11 @@ public class LociDataBrowser {
   /** Gets the slice number for the given Z, T and C indices. */
   public int getIndex(int z, int t, int c) {
     int result = -23;
-    synchronized(reader) {
+    synchronized (reader) {
       try {
         result = reader.getIndex(z, c, t);
       }
-      catch (Exception exc) {
-        if (DEBUG) exc.printStackTrace();
+      catch (FormatException exc) {
         dumpException(exc);
       }
     }
@@ -354,8 +358,16 @@ public class LociDataBrowser {
       System.out.println("Please specify a filename on the command line.");
       System.exit(1);
     }
-    new ImageJ(null);
-    new LociDataBrowser(args[0]).run();
+    ImageJ ij = new ImageJ(null);
+    LociDataBrowser ldb = new LociDataBrowser(args[0]);
+    ldb.run();
+    WindowAdapter closer = new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        System.exit(0);
+      }
+    };
+    ij.addWindowListener(closer);
+    ldb.cw.addWindowListener(closer);
   }
 
 }
