@@ -391,7 +391,7 @@ public class FileStitcher implements IFormatReader {
     int sno = getSeries();
     if (blankThumb[sno] == null) {
       blankThumb[sno] = ImageTools.blankImage(getThumbSizeX(),
-        getThumbSizeY(), sizeC[sno], FormatTools.UINT8);
+        getThumbSizeY(), sizeC[sno], getPixelType());
     }
     return blankThumb[sno];
   }
@@ -408,8 +408,9 @@ public class FileStitcher implements IFormatReader {
     // this file does not contain enough image planes
     int sno = getSeries();
     if (blankThumbBytes[sno] == null) {
+      int bytes = FormatTools.getBytesPerPixel(getPixelType());
       blankThumbBytes[sno] = new byte[getThumbSizeX() * getThumbSizeY() *
-        getRGBChannelCount()];
+        bytes * getRGBChannelCount()];
     }
     return blankThumbBytes[sno];
   }
@@ -723,7 +724,6 @@ public class FileStitcher implements IFormatReader {
     lenT = new int[seriesCount][];
 
     // analyze first file; assume each file has the same parameters
-
     int oldSeries = reader.getSeries();
     for (int i=0; i<seriesCount; i++) {
       reader.setSeries(i);
