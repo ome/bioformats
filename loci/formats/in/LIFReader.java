@@ -239,6 +239,8 @@ public class LIFReader extends FormatReader {
       String tmpToken = token;
       if (token.indexOf("=") != -1) {
         int idx = token.indexOf("Identifier") + 12;
+        if (idx == 11) idx = token.indexOf("Description") + 13;
+        
         key = token.substring(idx, token.indexOf("\"", idx + 1));
         idx = token.indexOf("Variant") + 9;
         value = token.substring(idx, token.indexOf("\"", idx + 1));
@@ -452,7 +454,11 @@ public class LIFReader extends FormatReader {
 
       Integer ii = new Integer(i);
 
-      store.setImage((String) seriesNames.get(i), null, null, ii);
+      String seriesName = (String) seriesNames.get(i);
+      if (seriesName == null || seriesName.trim().length() == 0) {
+        seriesName = "Series " + (i + 1);
+      }
+      store.setImage(seriesName, null, null, ii);
 
       store.setPixels(
         new Integer(core.sizeX[i]), // SizeX
@@ -475,12 +481,19 @@ public class LIFReader extends FormatReader {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
       }
 
-      String zoom =
-        (String) getMeta((String) seriesNames.get(i) + " - dblZoom");
+      String zoom = (String) getMeta(seriesName + " - dblZoom");
       store.setDisplayOptions(zoom == null ? null : new Float(zoom),
         new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
         new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null,
         null, null, null, null, ii, null, null, null, null, null);
+    
+      Enumeration keys = metadata.keys();
+      while (keys.hasMoreElements()) {
+        String k = (String) keys.nextElement();
+        if (k.startsWith(seriesName) || k.indexOf("-") == -1) {
+          core.seriesMetadata[i].put(k, metadata.get(k));
+        }
+      }
     }
   }
 

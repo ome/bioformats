@@ -45,7 +45,6 @@ public class ThumbLoader implements Runnable {
   // -- Fields --
 
   private IFormatReader ir;
-  private String id;
   private Panel[] p;
   private Dialog dialog;
   private boolean stop;
@@ -90,7 +89,6 @@ public class ThumbLoader implements Runnable {
   public void run() {
     try {
       IJ.showStatus("Gathering series information");
-      ir.setId(id); 
       int seriesCount = ir.getSeriesCount();
 
       // find image plane for each series and sort by size

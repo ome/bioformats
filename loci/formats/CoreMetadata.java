@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.util.*;
+
 /** Encompasses core metadata values. */
 public class CoreMetadata {
   public int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, imageCount;
@@ -31,6 +33,7 @@ public class CoreMetadata {
   public String[][] cTypes;
   public String[] currentOrder;
   public boolean[] orderCertain, rgb, littleEndian, interleaved;
+  public Hashtable[] seriesMetadata;
 
   public CoreMetadata(int series) {
     sizeX = new int[series];
@@ -47,6 +50,8 @@ public class CoreMetadata {
     rgb = new boolean[series];
     littleEndian = new boolean[series];
     interleaved = new boolean[series];
+    seriesMetadata = new Hashtable[series];
+    for (int i=0; i<series; i++) seriesMetadata[i] = new Hashtable(); 
   }
 
 }

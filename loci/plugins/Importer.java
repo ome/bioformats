@@ -31,13 +31,13 @@ import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.process.*;
+import ij.text.TextWindow;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.*;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.Box;
 import javax.swing.JFrame;
 import loci.formats.*;
@@ -361,11 +361,6 @@ public class Importer implements ItemListener {
         else cEnd[i] = num[i] - 1;
         cStep[i] = zStep[i] = tStep[i] = 1;
         StringBuffer sb = new StringBuffer();
-        if (seriesCount > 1) {
-          sb.append("Series_");
-          sb.append(i + 1);
-          sb.append(" - ");
-        }
         String name = store.getImageName(new Integer(i));
         if (name != null && name.length() > 0) {
           sb.append(name);
@@ -568,12 +563,15 @@ public class Importer implements ItemListener {
         IJ.showStatus("Populating metadata");
 
         // display standard metadata in a table in its own window
-        Hashtable meta = r.getMetadata();
-        meta.put("\t\t" + idType, currentFile);
+        Hashtable meta = new Hashtable();
+        if (r.getSeriesCount() == 1) meta = r.getMetadata(); 
+        meta.put(idType, currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(i);
+          meta.putAll(r.getCoreMetadata().seriesMetadata[i]); 
+          
           String s;
           if (seriesCount > 1) {
             StringBuffer sb = new StringBuffer();
@@ -585,27 +583,34 @@ public class Importer implements ItemListener {
             s = sb.toString();
           }
           else s = "";
-          meta.put("\t" + s + "SizeX", new Integer(r.getSizeX()));
-          meta.put("\t" + s + "SizeY", new Integer(r.getSizeY()));
-          meta.put("\t" + s + "SizeZ", new Integer(r.getSizeZ()));
-          meta.put("\t" + s + "SizeT", new Integer(r.getSizeT()));
-          meta.put("\t" + s + "SizeC", new Integer(r.getSizeC()));
-          meta.put("\t" + s + "IsRGB", new Boolean(r.isRGB()));
-          meta.put("\t" + s + "PixelType",
+          meta.put(s + "SizeX", new Integer(r.getSizeX()));
+          meta.put(s + "SizeY", new Integer(r.getSizeY()));
+          meta.put(s + "SizeZ", new Integer(r.getSizeZ()));
+          meta.put(s + "SizeT", new Integer(r.getSizeT()));
+          meta.put(s + "SizeC", new Integer(r.getSizeC()));
+          meta.put(s + "IsRGB", new Boolean(r.isRGB()));
+          meta.put(s + "PixelType",
             FormatTools.getPixelTypeString(r.getPixelType()));
-          meta.put("\t" + s + "LittleEndian",
-            new Boolean(r.isLittleEndian()));
-          meta.put("\t" + s + "DimensionOrder", r.getDimensionOrder());
-          meta.put("\t" + s + "IsInterleaved",
-            new Boolean(r.isInterleaved()));
+          meta.put(s + "LittleEndian", new Boolean(r.isLittleEndian()));
+          meta.put(s + "DimensionOrder", r.getDimensionOrder());
+          meta.put(s + "IsInterleaved", new Boolean(r.isInterleaved()));
         }
-        MetadataPane mp = new MetadataPane(meta);
-        JFrame frame = new JFrame("Metadata - " + currentFile);
-        frame.setContentPane(mp);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        WindowManager.addWindow(frame);
+
+        Enumeration keys = meta.keys();
+        StringBuffer sb = new StringBuffer();
+
+        while (keys.hasMoreElements()) {
+          Object key = keys.nextElement();
+          sb.append(key);
+          sb.append("\t \t");
+          sb.append(meta.get(key));
+          sb.append("\n");
+        }
+        
+        TextWindow tw = new TextWindow("Metadata - " + currentFile, 
+          "Key\t \tValue", sb.toString(), 400, 400);
+        tw.setVisible(true);
+        WindowManager.addWindow(tw);
       }
 
       // -- Step 4d: read pixel data --
