@@ -203,6 +203,7 @@ public class QTReader extends FormatReader {
       System.arraycopy(temp, 0, bytes, 0, bytes.length);
     }
 
+    /*
     if (flip) {
       // we need to flip the X and Y axes before displaying
 
@@ -239,6 +240,7 @@ public class QTReader extends FormatReader {
         }
       }
     }
+    */
 
     prevPixels = bytes;
     prevPlane = no;
@@ -294,11 +296,13 @@ public class QTReader extends FormatReader {
       }
     }
 
+    /*
     if (flip) {
       int t = core.sizeX[0];
       core.sizeX[0] = core.sizeY[0];
       core.sizeY[0] = t;
     }
+    */
 
     if (bitsPerPixel == 40 || bitsPerPixel == 8) {
       // invert the pixels
@@ -428,11 +432,13 @@ public class QTReader extends FormatReader {
         break;
     }
 
+    /*
     if (flip) {
       int tmp = core.sizeX[0];
       core.sizeX[0] = core.sizeY[0];
       core.sizeY[0] = tmp;
     }
+    */
 
     core.rgb[0] = bitsPerPixel < 40;
     core.sizeZ[0] = 1;
@@ -1269,6 +1275,7 @@ public class QTReader extends FormatReader {
 
       BufferedImage result = null;
 
+      /*
       if (flip) {
         result = new BufferedImage(top.getHeight() + bottom.getHeight(),
           top.getWidth(), top.getType());
@@ -1294,27 +1301,28 @@ public class QTReader extends FormatReader {
         }
       }
       else {
-        result = new BufferedImage(top.getWidth(),
-          top.getHeight() + bottom.getHeight(), top.getType());
+      */
+      result = new BufferedImage(top.getWidth(),
+        top.getHeight() + bottom.getHeight(), top.getType());
 
-        int topCount = 0;
-        int bottomCount = 0;
+      int topCount = 0;
+      int bottomCount = 0;
 
-        for (int i=0; i<result.getHeight(); i++) {
-          if (i % 2 == 0) {
-            for (int j=0; j<result.getWidth(); j++) {
-              result.setRGB(j, i, top.getRGB(j, topCount));
-            }
-            topCount++;
+      for (int i=0; i<result.getHeight(); i++) {
+        if (i % 2 == 0) {
+          for (int j=0; j<result.getWidth(); j++) {
+            result.setRGB(j, i, top.getRGB(j, topCount));
           }
-          else {
-            for (int j=0; j<result.getWidth(); j++) {
-              result.setRGB(j, i, bottom.getRGB(j, bottomCount));
-            }
-            bottomCount++;
+          topCount++;
+        }
+        else {
+          for (int j=0; j<result.getWidth(); j++) {
+            result.setRGB(j, i, bottom.getRGB(j, bottomCount));
           }
+          bottomCount++;
         }
       }
+      //}
 
       return result;
     }
