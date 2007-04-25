@@ -41,40 +41,43 @@ public class OptionsWindow extends JFrame implements
 {
   // -- Fields --
 
-  /**Constant dlu size for indents in GUI*/
+  /** Constant dlu size for indents in GUI. */
   private static final String TAB = "7dlu";
+
+  /** Default number of time points to cache. */
+  private static final int DEFAULT = 100;
 
   /** Parent window. */
   private CustomWindow cw;
 
-  /** The CacheManager for this instance of data browser.*/
+  /** The CacheManager for this instance of data browser. */
   private CacheManager manager;
 
-  /** The FileStitcher used to stich files together.*/
+  /** The FileStitcher used to stich files together. */
   private FileStitcher fs;
 
-  /** CheckBoxes to indicate which axes to store.*/
+  /** CheckBoxes to indicate which axes to store. */
   private JCheckBox zCheck, tCheck, cCheck;
 
-  /** CheckBoxes to control if caching is on or off */
+  /** CheckBoxes to control if caching is on or off. */
   private JCheckBox cacheToggle, mergeCheck;
 
-  /** Spinners for slice storage.*/
+  /** Spinners for slice storage. */
   private JSpinner zFSpin, zBSpin, tFSpin, tBSpin, cFSpin, cBSpin;
 
-  /** Combo Boxes for cache mode selection.*/
+  /** Combo Boxes for cache mode selection. */
   private JComboBox modeBox, stratBox;
 
-  /** Combo Boxes for dimensional priority selection.*/
+  /** Combo Boxes for dimensional priority selection. */
   private JComboBox topBox, midBox, lowBox;
 
   /** Button to reset CacheManager to default modes. */
   private JButton resetBtn;
 
-  /** A flag to turn off listening to gui components.*/
+  /** A flag to turn off listening to gui components. */
   private boolean update;
 
-  /** Storage of what priority settings used to be.*/
+  /** Storage of what priority settings used to be. */
   private int oldTop, oldMid, oldLow;
 
   JComboBox[] blockBoxes;
@@ -337,7 +340,7 @@ public class OptionsWindow extends JFrame implements
     zFSpin = new JSpinner(zFMod);
     SpinnerNumberModel zBMod = new SpinnerNumberModel(0, 0, 9999, 1);
     zBSpin = new JSpinner(zBMod);
-    SpinnerNumberModel tFMod = new SpinnerNumberModel(20, 0, 9999, 1);
+    SpinnerNumberModel tFMod = new SpinnerNumberModel(DEFAULT, 0, 9999, 1);
     tFSpin = new JSpinner(tFMod);
     SpinnerNumberModel tBMod = new SpinnerNumberModel(0, 0, 9999, 1);
     tBSpin = new JSpinner(tBMod);
@@ -491,7 +494,7 @@ public class OptionsWindow extends JFrame implements
     return -1;
   }
 
-  /** Set up the combo box to reflect appropriate axis.*/
+  /** Set up the combo box to reflect appropriate axis. */
   private void setBox(JComboBox thisBox, int index) {
     switch (order.charAt(index)) {
       case 'Z':
@@ -576,7 +579,7 @@ public class OptionsWindow extends JFrame implements
     }
   }
 
-  /** Enables/Disables CacheManager options in option window.*/
+  /** Enables/Disables CacheManager options in option window. */
   private void enableCache(boolean enable) {
     zCheck.setEnabled(enable);
     tCheck.setEnabled(enable);
@@ -635,14 +638,14 @@ public class OptionsWindow extends JFrame implements
           CacheManager.C_AXIS);
 
         Integer zeroI = new Integer(0);
-        Integer twentyI = new Integer(20);
+        Integer defaultI = new Integer(DEFAULT);
         zFSpin.setValue(zeroI);
         zBSpin.setValue(zeroI);
-        tFSpin.setValue(twentyI);
+        tFSpin.setValue(defaultI);
         tBSpin.setValue(zeroI);
         cFSpin.setValue(zeroI);
         cBSpin.setValue(zeroI);
-        manager.setSize(0, 0, 0, 20, 0, 0);
+        manager.setSize(0, 0, 0, DEFAULT, 0, 0);
 
         oldTop = topBox.getSelectedIndex();
         oldMid = midBox.getSelectedIndex();
