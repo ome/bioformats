@@ -55,7 +55,7 @@ public class EPSReader extends FormatReader {
     super("Encapsulated PostScript", new String[] {"eps", "epsi", "ps"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -118,7 +118,9 @@ public class EPSReader extends FormatReader {
       isRGB() ? 3 : 1, true);
   }
 
-  /** Initializes the given EPS file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("EPSReader.initFile(" + id + ")");
     super.initFile(id);

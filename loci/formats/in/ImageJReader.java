@@ -72,7 +72,7 @@ public abstract class ImageJReader extends FormatReader {
     }
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
@@ -127,12 +127,14 @@ public abstract class ImageJReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException { }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException { }
 
   // -- Internal FormatReader API methods --
 
-  /** Initializes the given file. */
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ImageJReader.initFile(" + id + ")");
     super.initFile(id);

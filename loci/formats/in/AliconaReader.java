@@ -45,7 +45,7 @@ public class AliconaReader extends FormatReader {
   /** Constructs a new Alicona reader. */
   public AliconaReader() { super("Alicona AL3D", "al3d"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -91,7 +91,9 @@ public class AliconaReader extends FormatReader {
       1, false, numBytes, true);
   }
 
-  /** Initializes the given Alicona file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("AliconaReader.initFile(" + id + ")");
     super.initFile(id);

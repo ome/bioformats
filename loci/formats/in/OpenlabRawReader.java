@@ -53,7 +53,7 @@ public class OpenlabRawReader extends FormatReader {
   /** Constructs a new RAW reader. */
   public OpenlabRawReader() { super("Openlab RAW", "raw"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -96,7 +96,9 @@ public class OpenlabRawReader extends FormatReader {
       core.sizeY[0], core.sizeC[0], false, bytesPerPixel, false);
   }
 
-  /** Initializes the given RAW file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OpenlabRawReader.initFile(" + id + ")");
     super.initFile(id);

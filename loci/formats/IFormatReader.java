@@ -34,15 +34,6 @@ public interface IFormatReader extends IFormatHandler {
   /** Checks if the given block is a valid header for this file format. */
   boolean isThisType(byte[] block);
 
-  /** Sets the current file name. */
-  void setId(String id) throws FormatException, IOException;
-
-  /** 
-   * Sets the current file name.  
-   * If 'force' is set, the reader will be re-initialized no matter what.
-   */
-  void setId(String id, boolean force) throws FormatException, IOException;
-
   /** Determines the number of images in the current file. */
   int getImageCount();
 
@@ -142,10 +133,6 @@ public interface IFormatReader extends IFormatHandler {
    */
   boolean isInterleaved(int subC);
 
-  /** Obtains the specified image from the current file. */
-  BufferedImage openImage(int no)
-    throws FormatException, IOException;
-
   /**
    * Obtains the specified image from the current file as a byte array.
    */
@@ -164,8 +151,8 @@ public interface IFormatReader extends IFormatHandler {
   byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException;
 
-  /** Obtains a thumbnail for the specified image from the current file. */
-  BufferedImage openThumbImage(int no)
+  /** Obtains the specified image from the current file. */
+  BufferedImage openImage(int no)
     throws FormatException, IOException;
 
   /**
@@ -174,17 +161,16 @@ public interface IFormatReader extends IFormatHandler {
    */
   byte[] openThumbBytes(int no) throws FormatException, IOException;
 
-  /**
-   * Closes the currently open file. If the flag is set, this is all that
-   * happens; if unset, it is equivalent to calling close().
-   */
-  void close(boolean fileOnly) throws IOException;
+  /** Obtains a thumbnail for the specified image from the current file. */
+  BufferedImage openThumbImage(int no)
+    throws FormatException, IOException;
 
   /**
-   * Closes the currently open file and frees memory
-   * allocated by this reader.
+   * Closes the currently open file. If the flag is set, this is all that
+   * happens; if unset, it is equivalent to calling
+   * {@link IFormatHandler#close()}.
    */
-  void close() throws IOException;
+  void close(boolean fileOnly) throws IOException;
 
   /** Gets the number of series in this file. */
   int getSeriesCount();

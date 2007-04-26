@@ -67,15 +67,8 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
-  public void saveBytes(String id, byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    throw new FormatException("Not implemented yet.");
-  }
-
-  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */ 
-  public void saveImage(String id, Image image, boolean last)
+  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
+  public void saveImage(Image image, boolean last)
     throws FormatException, IOException
   {
     BufferedImage img = (cm == null) ?
@@ -84,23 +77,23 @@ public abstract class ImageIOWriter extends FormatWriter {
       throw new FormatException("Floating point data not supported.");
     }
     out = new DataOutputStream(new BufferedOutputStream(
-      new FileOutputStream(id), 4096));
+      new FileOutputStream(currentId), 4096));
     ImageIO.write(img, kind, out);
   }
 
-  /* @see loci.formats.IFormatWriter#close() */
-  public void close() throws FormatException, IOException {
+  /* @see loci.formats.IFormatWriter#getPixelTypes() */
+  public int[] getPixelTypes() {
+    return new int[] {FormatTools.UINT8, FormatTools.UINT16};
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
     if (out != null) out.close();
     out = null;
     currentId = null;
-  }
-
-  /* @see loci.formats.IFormatWriter#canDoStacks(String) */ 
-  public boolean canDoStacks(String id) { return false; }
-
-  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
-  public int[] getPixelTypes(String id) throws FormatException, IOException {
-    return new int[] {FormatTools.UINT8, FormatTools.UINT16};
+    initialized = false;
   }
 
 }

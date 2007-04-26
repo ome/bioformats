@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.IOException;
+
 /** Interface for all biological file format readers and writers. */
 public interface IFormatHandler extends StatusReporter {
 
@@ -42,5 +44,17 @@ public interface IFormatHandler extends StatusReporter {
 
   /** Gets the default file suffixes for this file format. */
   String[] getSuffixes();
+
+  /** Sets the current file name. */
+  void setId(String id) throws FormatException, IOException;
+
+  /**
+   * Sets the current file name.
+   * @param force If set, the handler will be re-initialized no matter what.
+   */
+  void setId(String id, boolean force) throws FormatException, IOException;
+
+  /** Closes currently open file(s) and frees allocated memory. */
+  void close() throws IOException;
 
 }

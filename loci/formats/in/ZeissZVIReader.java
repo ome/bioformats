@@ -196,7 +196,9 @@ public class ZeissZVIReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     needLegacy = false;
@@ -212,7 +214,9 @@ public class ZeissZVIReader extends FormatReader {
     for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
   }
 
-  /** Initializes the given ZVI file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
     if (noPOI || needLegacy) {
@@ -2008,12 +2012,6 @@ public class ZeissZVIReader extends FormatReader {
       default:
         addMeta("" + tagID, data);
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new ZeissZVIReader().testRead(args);
   }
 
 }

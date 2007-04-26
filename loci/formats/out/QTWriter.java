@@ -149,27 +149,16 @@ public class QTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
-  public void saveBytes(String id, byte[] bytes, boolean last)
+  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
+  public void saveImage(Image image, boolean last)
     throws FormatException, IOException
   {
-    throw new FormatException("Not implemented yet.");
-  }
-
-  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
-  public void saveImage(String id, Image image, boolean last)
-    throws FormatException, IOException
-  {
-    if (image == null) {
-      throw new FormatException("Image is null");
-    }
-
-    if (legacy == null) {
-      legacy = new LegacyQTWriter();
-    }
+    if (image == null) throw new FormatException("Image is null");
+    if (legacy == null) legacy = new LegacyQTWriter();
 
     if (needLegacy) {
-      legacy.saveImage(id, image, last);
+      legacy.setId(currentId);
+      legacy.saveImage(image, last);
       return;
     }
 
@@ -222,21 +211,21 @@ public class QTWriter extends FormatWriter {
       }
     }
 
-    if (!id.equals(currentId)) {
-      close();
+    if (!initialized) {
+      initialized = true;
       setCodec();
       if (codec != 0) {
         needLegacy = true;
         legacy.setCodec(codec);
-        legacy.saveImage(id, image, last);
+        legacy.setId(currentId);
+        legacy.saveImage(image, last);
         return;
       }
 
       // -- write the header --
 
       offsets = new Vector();
-      currentId = id;
-      out = new RandomAccessFile(id, "rw");
+      out = new RandomAccessFile(currentId, "rw");
       created = (int) System.currentTimeMillis();
       numWritten = 0;
       numBytes = byteData.length * byteData[0].length;
@@ -582,8 +571,18 @@ public class QTWriter extends FormatWriter {
     }
   }
 
-  /* @see loci.formats.IFormatWriter#close() */
-  public void close() throws FormatException, IOException {
+  /* @see loci.formats.IFormatWriter#canDoStacks() */
+  public boolean canDoStacks() { return true; }
+
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes() {
+    return new int[] {FormatTools.UINT8, FormatTools.UINT16};
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
     if (out != null) out.close();
     out = null;
     numWritten = 0;
@@ -591,17 +590,11 @@ public class QTWriter extends FormatWriter {
     numBytes = 0;
     created = 0;
     offsets = null;
+    currentId = null;
+    initialized = false;
   }
 
-  /* @see loci.formats.IFormatWriter#canDoStacks(String) */
-  public boolean canDoStacks(String id) { return true; }
-
-  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
-  public int[] getPixelTypes(String id) throws FormatException, IOException {
-    return new int[] {FormatTools.UINT8, FormatTools.UINT16};
-  }
-
-  // -- Helper method --
+  // -- Helper methods --
 
   private void setCodec() {
     if (compression == null) compression = "Uncompressed";
@@ -613,12 +606,6 @@ public class QTWriter extends FormatWriter {
     else if (compression.equals("Sorenson")) codec = CODEC_SORENSON;
     else if (compression.equals("Sorenson 3")) codec = CODEC_SORENSON_3;
     else if (compression.equals("MPEG 4")) codec = CODEC_MPEG_4;
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws IOException, FormatException {
-    new QTWriter().testConvert(args);
   }
 
 }

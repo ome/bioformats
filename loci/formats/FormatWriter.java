@@ -47,6 +47,9 @@ public abstract class FormatWriter extends FormatHandler
   /** Current compression type. */
   protected String compression;
 
+  /** Whether the current file has been prepped for writing. */
+  protected boolean initialized;
+
   // -- Constructors --
 
   /** Constructs a format writer with the given name and default suffix. */
@@ -59,29 +62,32 @@ public abstract class FormatWriter extends FormatHandler
 
   // -- IFormatWriter API methods --
 
-  /* @see IFormatWriter#saveImage(String, Image, boolean) */
-  public abstract void saveImage(String id, Image image, boolean last)
-    throws FormatException, IOException;
+  /* @see IFormatWriter#saveBytes(byte[], boolean) */
+  public void saveBytes(byte[] bytes, boolean last)
+    throws FormatException, IOException
+  {
+    throw new FormatException("Not implemented yet.");
+  }
 
-  /** Reports whether the writer can save multiple images to a single file. */
-  public abstract boolean canDoStacks(String id);
+  /* @see IFormatWriter#canDoStacks() */
+  public boolean canDoStacks() { return false; }
 
-  /** Sets the color model. */
+  /* @see IFormatWriter#setColorModel(ColorModel) */
   public void setColorModel(ColorModel model) { cm = model; }
 
-  /** Gets the color model. */
+  /* @see IFormatWriter#getColorModel() */
   public ColorModel getColorModel() { return cm; }
 
-  /** Sets the frames per second to use when writing. */
+  /* @see IFormatWriter#setFramesPerSecond(int) */
   public void setFramesPerSecond(int rate) { fps = rate; }
 
-  /** Gets the frames per second to use when writing. */
+  /* @see IFormatWriter#getFramesPerSecond() */
   public int getFramesPerSecond() { return fps; }
 
-  /** Get the available compression types. */
+  /* @see IFormatWriter#getCompressionTypes() */
   public String[] getCompressionTypes() { return compressionTypes; }
 
-  /** Set the current compression type. */
+  /* @see IFormatWriter#setCompression(compress) */
   public void setCompression(String compress) throws FormatException {
     // check that this is a valid type
     for (int i=0; i<compressionTypes.length; i++) {
@@ -93,17 +99,15 @@ public abstract class FormatWriter extends FormatHandler
     throw new FormatException("Invalid compression type: " + compress);
   }
 
-  /* @see IFormatWriter#getPixelTypes(String) */
-  public int[] getPixelTypes(String id) throws FormatException, IOException {
+  /* @see IFormatWriter#getPixelTypes() */
+  public int[] getPixelTypes() {
     return new int[] {FormatTools.UINT8, FormatTools.UINT16,
       FormatTools.UINT32, FormatTools.FLOAT};
   }
 
-  /* @see IFormatWriter#isSupportedType(String, int) */
-  public boolean isSupportedType(String id, int type)
-    throws FormatException, IOException
-  {
-    int[] types = getPixelTypes(id);
+  /* @see IFormatWriter#isSupportedType(int) */
+  public boolean isSupportedType(int type) {
+    int[] types = getPixelTypes();
     for (int i=0; i<types.length; i++) {
       if (type == types[i]) return true;
     }
@@ -117,13 +121,60 @@ public abstract class FormatWriter extends FormatHandler
     return FormatTools.testConvert(this, args);
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#setId(String, boolean) */
+  public void setId(String id, boolean force)
+    throws FormatException, IOException
+  {
+    if (id.equals(currentId) && !force) return;
+    close();
+    currentId = id;
+    initialized = false;
+  }
+
   // -- Deprecated IFormatWriter API methods --
 
-  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
+  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
+  public void saveImage(String id, Image image, boolean last)
+    throws FormatException, IOException
+  {
+    setId(id);
+    saveImage(image, last);
+  }
+
+  /** @deprecated Replaced by {@link #canDoStacks()} */
+  public boolean canDoStacks(String id) throws FormatException {
+    try {
+      setId(id);
+    }
+    catch (IOException exc) {
+      // NB: should never happen
+      throw new FormatException(exc);
+    }
+    return canDoStacks(id);
+  }
+
+  /** @deprecated Replaced by {@link #getPixelTypes()} */
+  public int[] getPixelTypes(String id) throws FormatException, IOException {
+    setId(id);
+    return getPixelTypes(id);
+  }
+
+  /** @deprecated Replaced by {@link #isSupportedType(int type)} */
+  public boolean isSupportedType(String id, int type)
+    throws FormatException, IOException
+  {
+    setId(id);
+    return isSupportedType(type);
+  }
+
+  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    saveImage(id, image, last);
+    setId(id);
+    saveImage(image, last);
   }
 
 }

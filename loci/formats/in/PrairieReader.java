@@ -65,30 +65,7 @@ public class PrairieReader extends FormatReader {
     super("Prairie (TIFF)", new String[] {"tif", "tiff", "cfg", "xml"});
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-
-    // check if there is an XML file in the same directory
-    Location  f = new Location(name);
-    f = f.getAbsoluteFile();
-    Location parent = f.getParentFile();
-    String[] listing = parent.list();
-    int xmlCount = 0;
-    for (int i=0; i<listing.length; i++) {
-      if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++;
-    }
-
-    boolean xml = xmlCount > 0;
-
-    // just checking the filename isn't enough to differentiate between
-    // Prairie and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, 524304) && xml : xml;
-  }
-
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -169,7 +146,30 @@ public class PrairieReader extends FormatReader {
     else if (!fileOnly) close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open)) return false; // check extension
+
+    // check if there is an XML file in the same directory
+    Location  f = new Location(name);
+    f = f.getAbsoluteFile();
+    Location parent = f.getParentFile();
+    String[] listing = parent.list();
+    int xmlCount = 0;
+    for (int i=0; i<listing.length; i++) {
+      if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++;
+    }
+
+    boolean xml = xmlCount > 0;
+
+    // just checking the filename isn't enough to differentiate between
+    // Prairie and regular TIFF; open the file and check more thoroughly
+    return open ? checkBytes(name, 524304) && xml : xml;
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     files = null;
     if (tiff != null) tiff.close();
@@ -178,6 +178,8 @@ public class PrairieReader extends FormatReader {
     readXML = false;
     readCFG = false;
   }
+
+  // -- Internal FormatReader API methods --
 
   /* @see loci.formats.IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {

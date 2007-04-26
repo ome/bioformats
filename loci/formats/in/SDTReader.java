@@ -73,20 +73,17 @@ public class SDTReader extends FormatReader {
   public boolean isIntensity() { return intensity; }
 
   /** Gets the number of bins in the lifetime histogram. */
-  public int getTimeBinCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public int getTimeBinCount() {
     return timeBins;
   }
 
   /** Gets the number of spectral channels. */
-  public int getChannelCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public int getChannelCount() {
     return channels;
   }
 
   /** Gets object containing SDT header information. */
-  public SDTInfo getInfo(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+  public SDTInfo getInfo() {
     return info;
   }
 
@@ -173,7 +170,7 @@ public class SDTReader extends FormatReader {
       core.sizeY[series], getRGBChannelCount(), false, 2, true);
   }
 
-  // -- FormatReader API methods --
+  // -- Internal FormatReader API methods --
 
   /** Initializes the given SDT file. */
   protected void initFile(String id) throws FormatException, IOException {
@@ -213,6 +210,26 @@ public class SDTReader extends FormatReader {
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
+  }
+
+  // -- Deprecated API methods --
+
+  /** @deprecated Replaced by {@link #getTimeBinCount()} */
+  public int getTimeBinCount(String id) throws FormatException, IOException {
+    setId(id);
+    return getTimeBinCount();
+  }
+
+  /** @deprecated Replaced by {@link #getChannelCount()} */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    setId(id);
+    return getChannelCount();
+  }
+
+  /** @deprecated Replaced by {@link #getInfo()} */
+  public SDTInfo getInfo(String id) throws FormatException, IOException {
+    setId(id);
+    return getInfo();
   }
 
 }

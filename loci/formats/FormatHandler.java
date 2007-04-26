@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.IOException;
 import java.util.Vector;
 
 /** Abstract superclass of all biological file format readers and writers. */
@@ -130,6 +131,11 @@ public abstract class FormatHandler implements IFormatHandler {
 
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() { return suffixes; }
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    setId(id, false);
+  }
 
   // -- StatusReporter API methods --
 

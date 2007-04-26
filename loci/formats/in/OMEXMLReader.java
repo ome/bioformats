@@ -73,7 +73,7 @@ public class OMEXMLReader extends FormatReader {
   /** Constructs a new OME-XML reader. */
   public OMEXMLReader() { super("OME-XML", "ome"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -152,7 +152,9 @@ public class OMEXMLReader extends FormatReader {
       core.sizeY[series], 1, false, bpp[series], core.littleEndian[series]);
   }
 
-  /** Initializes the given OME-XML file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OMEXMLReader.initFile(" + id + ")");
     if (noOME) throw new FormatException(NO_OME_JAVA_MSG);

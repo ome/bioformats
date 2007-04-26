@@ -105,15 +105,8 @@ public class LegacyQTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
-  public void saveBytes(String id, byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    throw new FormatException("Not implemented yet.");
-  }
-
-  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
-  public void saveImage(String id, Image image, boolean last)
+  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
+  public void saveImage(Image image, boolean last)
     throws FormatException, IOException
   {
     if (tools == null) {
@@ -126,15 +119,15 @@ public class LegacyQTWriter extends FormatWriter {
     }
     if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
 
-    if (!id.equals(currentId)) {
-      currentId = id;
+    if (!initialized) {
+      initialized = true;
 
       try {
         r.exec("QTSession.open()");
         BufferedImage img = ImageTools.makeBuffered(image);
         width = img.getWidth();
         height = img.getHeight();
-        File f = new File(id);
+        File f = new File(currentId);
         r.setVar("f", f);
         r.setVar("width", (float) width);
         r.setVar("height", (float) height);
@@ -279,22 +272,20 @@ public class LegacyQTWriter extends FormatWriter {
     }
   }
 
-  /* @see loci.formats.IFormatWriter#close() */
-  public void close() throws FormatException, IOException {
+  /* @see loci.formats.IFormatWriter#canDoStacks() */
+  public boolean canDoStacks() { return true; }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
     r = null;
     numWritten = 0;
     width = 0;
     height = 0;
     pixels2 = null;
-  }
-
-  /* @see loci.formats.IFormatWriter#canDoStacks(String) */
-  public boolean canDoStacks(String id) { return true; }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws IOException, FormatException {
-    new LegacyQTWriter().testConvert(args);
+    currentId = null;
+    initialized = false;
   }
 
 }

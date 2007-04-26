@@ -29,7 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
-
 //import org.openmicroscopy.xml.*;
 //import org.openmicroscopy.xml.st.*;
 //import loci.formats.ome.OMEXMLMetadataStore;
@@ -61,12 +60,11 @@ public class TiffWriter extends FormatWriter {
    * depth, compression and units.  If this image is the last one in the file,
    * the last flag must be set.
    */
-  public void saveImage(String id, Image image, Hashtable ifd, boolean last)
+  public void saveImage(Image image, Hashtable ifd, boolean last)
     throws IOException, FormatException
   {
-    if (!id.equals(currentId)) {
-      close();
-      currentId = id;
+    if (!initialized) {
+      initialized = true;
       out =
         new BufferedOutputStream(new FileOutputStream(currentId, true), 4096);
 
@@ -99,33 +97,29 @@ public class TiffWriter extends FormatWriter {
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
 
     lastOffset += TiffTools.writeImage(img, ifd, out, lastOffset, last);
-    if (last) {
-      close();
-    }
+    if (last) close();
   }
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
-  public void saveBytes(String id, byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    throw new FormatException("Not implemented yet.");
-  }
-
   /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */
-  public void saveImage(String id, Image image, boolean last)
+  public void saveImage(Image image, boolean last)
     throws FormatException, IOException
   {
     Hashtable h = new Hashtable();
     if (compression == null) compression = "";
     h.put(new Integer(TiffTools.COMPRESSION), compression.equals("LZW") ?
       new Integer(TiffTools.LZW) : new Integer(TiffTools.UNCOMPRESSED));
-    saveImage(id, image, h, last);
+    saveImage(image, h, last);
   }
 
-  /* @see loci.formats.IFormatWriter#close() */
-  public void close() throws FormatException, IOException {
+  /* @see loci.formats.IFormatWriter#canDoStacks(String) */
+  public boolean canDoStacks() { return true; }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
     // write the metadata, if enabled
 
     /*
@@ -162,16 +156,18 @@ public class TiffWriter extends FormatWriter {
     if (out != null) out.close();
     out = null;
     currentId = null;
+    initialized = false;
     lastOffset = 0;
   }
 
-  /* @see loci.formats.IFormatWriter#canDoStacks(String) */
-  public boolean canDoStacks(String id) { return true; }
+  // -- Deprecated API methods --
 
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new TiffWriter().testConvert(args);
+  /** @deprecated Replaced by {@link #saveImage(Image, Hashtable, boolean)} */
+  public void saveImage(String id, Image image, Hashtable ifd, boolean last)
+    throws IOException, FormatException
+  {
+    setId(id);
+    saveImage(image, ifd, last);
   }
 
 }

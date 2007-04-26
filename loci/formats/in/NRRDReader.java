@@ -51,7 +51,7 @@ public class NRRDReader extends FormatReader {
   /** Constructs a new NRRD reader. */
   public NRRDReader() { super("NRRD", new String[] {"nrrd", "nhdr"}); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -111,6 +111,8 @@ public class NRRDReader extends FormatReader {
       core.sizeC[0], core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
+
+  // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {

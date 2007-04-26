@@ -65,7 +65,7 @@ public class LegacyQTReader extends FormatReader {
     super("QuickTime", "mov");
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
@@ -118,15 +118,17 @@ public class LegacyQTReader extends FormatReader {
     if (!fileOnly) currentId = null;
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     close(false);
   }
 
-  /** Initializes the given QuickTime file. */
-  protected void initFile(String id)
-    throws FormatException, IOException
-  {
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LegacyQTReader.initFile(" + id + ")");
 
     status("Checking for QuickTime Java");

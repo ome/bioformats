@@ -85,7 +85,25 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.openImage(0);
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    if (fileOnly) tiffReader.close(fileOnly);
+    else close();
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    String[] list = parent.list();
+    for (int i=0; i<list.length; i++) {
+      if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
+    }
+    return false;
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     if (tiffReader != null) tiffReader.close();
@@ -93,13 +111,9 @@ public class MicromanagerReader extends FormatReader {
     tiffs = null;
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) tiffReader.close(fileOnly);
-    else close();
-  }
+  // -- Internal FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#initFile(String) */
+  /* @see loci.formats.FormatReader#initFile(String) */
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     tiffReader = new TiffReader();
@@ -209,18 +223,6 @@ public class MicromanagerReader extends FormatReader {
       //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
       //  getChannelGlobalMaximum(id, i), null);
     }
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    String[] list = parent.list();
-    for (int i=0; i<list.length; i++) {
-      if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
-    }
-    return false;
   }
 
 }

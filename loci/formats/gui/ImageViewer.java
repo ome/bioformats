@@ -233,8 +233,8 @@ public class ImageViewer extends JFrame
     if (images == null) return;
     wait(true);
     try {
-      //myWriter.save(id, images);
-      boolean stack = myWriter.canDoStacks(id);
+      myWriter.setId(id);
+      boolean stack = myWriter.canDoStacks();
       ProgressMonitor progress = new ProgressMonitor(this,
         "Saving " + id, null, 0, stack ? images.length : 1);
       if (stack) {
@@ -242,14 +242,14 @@ public class ImageViewer extends JFrame
         for (int i=0; i<images.length; i++) {
           progress.setProgress(i);
           boolean canceled = progress.isCanceled();
-          myWriter.saveImage(id, images[i], i == images.length - 1 || canceled);
+          myWriter.saveImage(images[i], i == images.length - 1 || canceled);
           if (canceled) break;
         }
         progress.setProgress(images.length);
       }
       else {
         // save current image only
-        myWriter.saveImage(id, getImage(), true);
+        myWriter.saveImage(getImage(), true);
         progress.setProgress(1);
       }
     }

@@ -74,7 +74,7 @@ public class OpenlabReader extends FormatReader {
   /** Constructs a new OpenlabReader. */
   public OpenlabReader() { super("Openlab LIFF", "liff"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -309,14 +309,39 @@ public class OpenlabReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (super.isThisType(name, open)) return true; // check extension
+
+    if (open) {
+      byte[] b = new byte[8];
+      try {
+        in = new RandomAccessStream(name);
+        in.read(b);
+      }
+      catch (IOException e) {
+        if (debug) e.printStackTrace();
+        return false;
+      }
+      return isThisType(b);
+    }
+    else {
+      return name.indexOf(".") < 0; // file appears to have no extension
+    }
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     if (pict != null) pict.close();
     layerInfoList = null;
   }
 
-  /** Initialize the given Openlab LIFF file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OpenlabReader.initFile(" + id + ")");
     super.initFile(id);
@@ -571,7 +596,7 @@ public class OpenlabReader extends FormatReader {
       core.imageCount = new int[1];
       core.imageCount[0] = oldImages;
       if (layerInfoList[0].size() == 0) layerInfoList[0] = layerInfoList[1];
-    
+
       int x = core.sizeX[0];
       core.sizeX = new int[1];
       core.sizeX[0] = x;
@@ -681,29 +706,6 @@ public class OpenlabReader extends FormatReader {
     }
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true; // check extension
-
-    if (open) {
-      byte[] b = new byte[8];
-      try {
-        in = new RandomAccessStream(name);
-        in.read(b);
-      }
-      catch (IOException e) {
-        if (debug) e.printStackTrace();
-        return false;
-      }
-      return isThisType(b);
-    }
-    else {
-      return name.indexOf(".") < 0; // file appears to have no extension
-    }
-  }
-
   // -- Helper methods --
 
   /** Read the next tag. */
@@ -723,6 +725,8 @@ public class OpenlabReader extends FormatReader {
     else in.skipBytes(8);
     return nextTag;
   }
+
+  // -- Helper classes --
 
   /** Helper class for storing layer info. */
   protected class LayerInfo {

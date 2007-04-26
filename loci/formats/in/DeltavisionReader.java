@@ -79,7 +79,7 @@ public class DeltavisionReader extends FormatReader {
     super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -118,7 +118,9 @@ public class DeltavisionReader extends FormatReader {
       core.sizeY[0], 1, false, bytesPerPixel, core.littleEndian[0]);
   }
 
-  /** Initializes the given Deltavision file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("DeltavisionReader.initFile(" + id + ")");
     super.initFile(id);
@@ -406,6 +408,8 @@ public class DeltavisionReader extends FormatReader {
     store.setDefaultDisplaySettings(null);
   }
 
+  // -- Helper methods --
+
   /**
    * This method calculates the size of a w, t, z section depending on which
    * sequence is being used (either ZTW, WZT, or ZWT)
@@ -464,6 +468,8 @@ public class DeltavisionReader extends FormatReader {
     int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
     return getTotalOffset(currentZ, currentW, currentT) / smallOffset;
   }
+
+  // -- Helper classes --
 
   /**
    * This private class structure holds the details for the extended header

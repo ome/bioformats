@@ -88,7 +88,7 @@ public class FileStitcher implements IFormatReader {
 
   /** Core metadata. */
   private CoreMetadata core;
-  
+
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
@@ -214,7 +214,7 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
-    return core.imageCount[getSeries()]; 
+    return core.imageCount[getSeries()];
   }
 
   /* @see IFormatReader#isRGB() */
@@ -863,7 +863,7 @@ public class FileStitcher implements IFormatReader {
   public int[] getAxisTypes(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getAxisTypes();
   }
 
@@ -871,7 +871,7 @@ public class FileStitcher implements IFormatReader {
   public void setAxisTypes(String id, int[] axes)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     setAxisTypes(axes);
   }
 
@@ -879,7 +879,7 @@ public class FileStitcher implements IFormatReader {
   public FilePattern getFilePattern(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    setId(id);
     return getFilePattern();
   }
 
@@ -887,7 +887,7 @@ public class FileStitcher implements IFormatReader {
   public AxisGuesser getAxisGuesser(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    setId(id);
     return getAxisGuesser();
   }
 
@@ -895,61 +895,61 @@ public class FileStitcher implements IFormatReader {
 
   /** @deprecated Replaced by {@link #getImageCount()} */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getImageCount();
   }
 
   /** @deprecated Replaced by {@link #isRGB()} */
   public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return isRGB();
   }
 
   /** @deprecated Replaced by {@link #getSizeX()} */
   public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getSizeX();
   }
 
   /** @deprecated Replaced by {@link #getSizeY()} */
   public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getSizeY();
   }
 
   /** @deprecated Replaced by {@link #getSizeZ()} */
   public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getSizeZ();
   }
 
   /** @deprecated Replaced by {@link #getSizeC()} */
   public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getSizeC();
   }
 
   /** @deprecated Replaced by {@link #getSizeT()} */
   public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getSizeT();
   }
 
   /** @deprecated Replaced by {@link #getPixelType()} */
   public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getPixelType();
   }
 
   /** @deprecated Replaced by {@link #getEffectiveSizeC()} */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getImageCount() / (getSizeZ() * getSizeT());
   }
 
   /** @deprecated Replaced by {@link #getRGBChannelCount()} */
   public int getRGBChannelCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getSizeC() / getEffectiveSizeC();
   }
 
@@ -957,7 +957,7 @@ public class FileStitcher implements IFormatReader {
   public int[] getChannelDimLengths(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     int sno = getSeries();
     int len = lenC[sno].length;
     int[] cLengths = new int[len];
@@ -969,7 +969,7 @@ public class FileStitcher implements IFormatReader {
   public String[] getChannelDimTypes(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     int sno = getSeries();
     int len = lenC[sno].length;
     String[] cTypes = new String[len];
@@ -979,19 +979,19 @@ public class FileStitcher implements IFormatReader {
 
   /** @deprecated Replaced by {@link #getThumbSizeX()} */
   public int getThumbSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getThumbSizeX();
   }
 
   /** @deprecated Replaced by {@link #getThumbSizeY()} */
   public int getThumbSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getThumbSizeY();
   }
 
   /** @deprecated Replaced by {@link #isLittleEndian()} */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.isLittleEndian();
   }
 
@@ -999,19 +999,19 @@ public class FileStitcher implements IFormatReader {
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return core.currentOrder[getSeries()];
   }
 
   /** @deprecated Replaced by {@link #isOrderCertain()} */
   public boolean isOrderCertain(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return ag[getSeries()].isCertain();
   }
 
   /** @deprecated Replaced by {@link #isInterleaved()} */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.isInterleaved();
   }
 
@@ -1019,7 +1019,7 @@ public class FileStitcher implements IFormatReader {
   public boolean isInterleaved(String id, int subC)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.isInterleaved(subC);
   }
 
@@ -1027,7 +1027,7 @@ public class FileStitcher implements IFormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return openImage(no);
   }
 
@@ -1035,7 +1035,7 @@ public class FileStitcher implements IFormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return openBytes(no);
   }
 
@@ -1043,7 +1043,7 @@ public class FileStitcher implements IFormatReader {
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return openBytes(no, buf);
   }
 
@@ -1051,7 +1051,7 @@ public class FileStitcher implements IFormatReader {
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return openThumbImage(no);
   }
 
@@ -1059,31 +1059,31 @@ public class FileStitcher implements IFormatReader {
   public byte[] openThumbBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return openThumbBytes(no);
   }
 
   /** @deprecated Replaced by {@link #getSeriesCount()} */
   public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getSeriesCount();
   }
 
   /** @deprecated Replaced by {@link #setSeries(int)} */
   public void setSeries(String id, int no) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     reader.setSeries(no);
   }
 
   /** @deprecated Replaced by {@link #getSeries()} */
   public int getSeries(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getSeries();
   }
 
   /** @deprecated Replaced by {@link #getUsedFiles()} */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return getUsedFiles();
   }
 
@@ -1091,7 +1091,7 @@ public class FileStitcher implements IFormatReader {
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return FormatTools.getIndex(this, z, c, t);
   }
 
@@ -1099,7 +1099,7 @@ public class FileStitcher implements IFormatReader {
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return FormatTools.getZCTCoords(this, index);
   }
 
@@ -1107,13 +1107,13 @@ public class FileStitcher implements IFormatReader {
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getMetadataValue(field);
   }
 
   /** @deprecated Replaced by {@link #getMetadata()} */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getMetadata();
   }
 
@@ -1121,7 +1121,7 @@ public class FileStitcher implements IFormatReader {
   public CoreMetadata getCoreMetadata(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getCoreMetadata();
   }
 
@@ -1129,7 +1129,7 @@ public class FileStitcher implements IFormatReader {
   public MetadataStore getMetadataStore(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getMetadataStore();
   }
 
@@ -1137,7 +1137,7 @@ public class FileStitcher implements IFormatReader {
   public Object getMetadataStoreRoot(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) setId(id);
+    setId(id);
     return reader.getMetadataStoreRoot();
   }
 

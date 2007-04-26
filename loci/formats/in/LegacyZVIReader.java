@@ -81,7 +81,7 @@ public class LegacyZVIReader extends FormatReader {
   /** Constructs a new legacy ZVI reader. */
   public LegacyZVIReader() { super("Legacy ZVI", "zvi"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -91,6 +91,11 @@ public class LegacyZVIReader extends FormatReader {
       if (block[i] != ZVI_SIG[i]) return false;
     }
     return true;
+  }
+
+  /* @see loci.formats.IFormatReader#getImageCount() */
+  public int getImageCount() {
+    return blockList.size();
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -112,11 +117,6 @@ public class LegacyZVIReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */
-  public int getImageCount() {
-    return blockList.size();
-  }
-
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
@@ -129,7 +129,9 @@ public class LegacyZVIReader extends FormatReader {
     return zviBlock.readImage(in);
   }
 
-  /** Initializes the given ZVI file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LegacyZVIReader.initFile(" + id + ")");
     super.initFile(id);

@@ -129,7 +129,7 @@ public class GIFReader extends FormatReader {
     super("Graphics Interchange Format (GIF)", "gif");
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
@@ -170,7 +170,9 @@ public class GIFReader extends FormatReader {
       bytes.length / (core.sizeX[0] * core.sizeY[0]), false, 1, true);
   }
 
-  /** Initializes the given GIF file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("GIFReader.initFile(" + id + ")");
     super.initFile(id);

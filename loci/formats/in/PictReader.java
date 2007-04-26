@@ -110,74 +110,6 @@ public class PictReader extends FormatReader {
   /** Constructs a new PICT reader. */
   public PictReader() { super("PICT", new String[] {"pict", "pct"}); }
 
-  // -- FormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < 528) return false;
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    return ImageTools.getBytes(openImage(no), false, no % 3);
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    return open(bytes);
-  }
-
-  /** Initializes the given PICT file. */
-  protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("PictReader.initFile(" + id + ")");
-    super.initFile(id);
-    in = new RandomAccessStream(id);
-
-    status("Populating metadata");
-
-    core.littleEndian[0] = false;
-
-    // skip the header and read in the remaining bytes
-    int len = (int) (in.length() - 512);
-    bytes = new byte[len];
-    in.seek(512);
-    in.read(bytes);
-
-    byte[] b = new byte[20];
-    in.seek(512);
-    in.read(b);
-    Dimension d = getDimensions(b);
-
-    core.sizeX[0] = d.width;
-    while (core.sizeX[0] % 8 != 0) core.sizeX[0]++;
-    core.sizeY[0] = d.height;
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = 3;
-    core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYCZT";
-    core.rgb[0] = true;
-    core.interleaved[0] = true;
-    core.imageCount[0] = 1;
-
-    // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
-
-    core.pixelType[0] = FormatTools.UINT8;
-    store.setPixels(
-      new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
-      new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
-    }
-  }
-
   // -- PictReader API methods --
 
   /** Get the dimensions of a PICT file from the first 4 bytes after header. */
@@ -329,6 +261,76 @@ public class PictReader extends FormatReader {
           core.sizeY[0] + ", length=" + data.length);
       }
       return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0], 3, true);
+    }
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    if (block.length < 528) return false;
+    return true;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return ImageTools.getBytes(openImage(no), false, no % 3);
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    return open(bytes);
+  }
+
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (debug) debug("PictReader.initFile(" + id + ")");
+    super.initFile(id);
+    in = new RandomAccessStream(id);
+
+    status("Populating metadata");
+
+    core.littleEndian[0] = false;
+
+    // skip the header and read in the remaining bytes
+    int len = (int) (in.length() - 512);
+    bytes = new byte[len];
+    in.seek(512);
+    in.read(bytes);
+
+    byte[] b = new byte[20];
+    in.seek(512);
+    in.read(b);
+    Dimension d = getDimensions(b);
+
+    core.sizeX[0] = d.width;
+    while (core.sizeX[0] % 8 != 0) core.sizeX[0]++;
+    core.sizeY[0] = d.height;
+    core.sizeZ[0] = 1;
+    core.sizeC[0] = 3;
+    core.sizeT[0] = 1;
+    core.currentOrder[0] = "XYCZT";
+    core.rgb[0] = true;
+    core.interleaved[0] = true;
+    core.imageCount[0] = 1;
+
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+
+    core.pixelType[0] = FormatTools.UINT8;
+    store.setPixels(
+      new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
+      new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
+    for (int i=0; i<core.sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
 

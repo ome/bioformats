@@ -65,7 +65,7 @@ public class BMPReader extends FormatReader {
   /** Constructs a new BMP reader. */
   public BMPReader() { super("Windows Bitmap", "bmp"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -74,6 +74,12 @@ public class BMPReader extends FormatReader {
     }
     if (block[0] != 'B' || block[1] != 'M') return false;
     return true;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
+    return openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -130,19 +136,15 @@ public class BMPReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       core.sizeC[0], false);
   }
 
-  /** Initializes the given BMP file. */
+  // -- Internel FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BMPReader.initFile(" + id + ")");
     super.initFile(id);

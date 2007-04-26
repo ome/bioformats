@@ -75,7 +75,7 @@ public class IPWReader extends BaseTiffReader {
   /** Constructs a new IPW reader. */
   public IPWReader() { super("Image-Pro Workspace", "ipw"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -150,7 +150,9 @@ public class IPWReader extends BaseTiffReader {
       bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, core.littleEndian[0]);
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
 
@@ -163,36 +165,6 @@ public class IPWReader extends BaseTiffReader {
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
       "entry", "documentName", "entryName"};
     for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
-  }
-
-  /** Initializes the given IPW file. */
-  protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("IPWReader.initFile(" + id + ")");
-    if (noPOI) throw new FormatException(NO_POI_MSG);
-
-    currentId = id;
-    metadata = new Hashtable();
-    core = new CoreMetadata(1);
-    Arrays.fill(core.orderCertain, true);
-    getMetadataStore().createRoot();
-
-    in = new RandomAccessStream(id);
-
-    pixels = new Hashtable();
-    names = new Hashtable();
-
-    try {
-      r.setVar("fis", in);
-      r.exec("fs = new POIFSFileSystem(fis)");
-      r.exec("dir = fs.getRoot()");
-      parseDir(0, r.getVar("dir"));
-      status("Populating metadata");
-      initMetadata();
-    }
-    catch (Throwable t) {
-      noPOI = true;
-      if (debug) t.printStackTrace();
-    }
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -364,6 +336,38 @@ public class IPWReader extends BaseTiffReader {
     store.setImage(null, null, (String) getMeta("Version"), null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    }
+  }
+
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (debug) debug("IPWReader.initFile(" + id + ")");
+    if (noPOI) throw new FormatException(NO_POI_MSG);
+
+    currentId = id;
+    metadata = new Hashtable();
+    core = new CoreMetadata(1);
+    Arrays.fill(core.orderCertain, true);
+    getMetadataStore().createRoot();
+
+    in = new RandomAccessStream(id);
+
+    pixels = new Hashtable();
+    names = new Hashtable();
+
+    try {
+      r.setVar("fis", in);
+      r.exec("fs = new POIFSFileSystem(fis)");
+      r.exec("dir = fs.getRoot()");
+      parseDir(0, r.getVar("dir"));
+      status("Populating metadata");
+      initMetadata();
+    }
+    catch (Throwable t) {
+      noPOI = true;
+      if (debug) t.printStackTrace();
     }
   }
 

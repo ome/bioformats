@@ -62,7 +62,7 @@ public class PerkinElmerReader extends FormatReader {
       "csv", "htm", "tim", "zpo"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
@@ -116,7 +116,9 @@ public class PerkinElmerReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     currentId = null;
     files = null;
@@ -127,7 +129,9 @@ public class PerkinElmerReader extends FormatReader {
     }
   }
 
-  /** Initializes the given PerkinElmer file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (currentId != null && (id.equals(currentId) || isUsedFile(id))) return;
 

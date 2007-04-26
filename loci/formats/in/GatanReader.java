@@ -58,7 +58,7 @@ public class GatanReader extends FormatReader {
   /** Constructs a new Gatan reader. */
   public GatanReader() { super("Gatan Digital Micrograph", "dm3"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -102,7 +102,9 @@ public class GatanReader extends FormatReader {
       1, false, bytesPerPixel, core.littleEndian[0]);
   }
 
-  /** Initializes the given Gatan file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("GatanReader.initFile(" + id + ")");
     super.initFile(id);
@@ -237,10 +239,9 @@ public class GatanReader extends FormatReader {
     String mag = (String) getMeta("Indicated Magnification");
     store.setObjective(null, null, null, null,
       mag == null ? null : new Float(mag), null, null);
-
   }
 
-  // -- Helper method --
+  // -- Helper methods --
 
   /**
    * Parses Gatan DM3 tags.
@@ -248,7 +249,7 @@ public class GatanReader extends FormatReader {
    * http://rsb.info.nih.gov/ij/plugins/DM3Format.gj.html and
    * http://www-hrem.msm.cam.ac.uk/~cbb/info/dmformat/
    */
-  public void parseTags(int numTags, String parent) throws IOException {
+  private void parseTags(int numTags, String parent) throws IOException {
     byte[] temp = new byte[4];
     for (int i=0; i<numTags; i++) {
       byte type = in.readByte();  // can be 21 (data) or 20 (tag group)

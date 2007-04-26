@@ -49,15 +49,13 @@ public abstract class ImageIOReader extends FormatReader {
     super(name, suffixes);
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no)
-    throws FormatException, IOException
-  {
+  public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] b = ImageTools.getBytes(openImage(no), false, no);
     int bytesPerChannel = core.sizeX[0] * core.sizeY[0];
     if (b.length > bytesPerChannel) {
@@ -89,12 +87,14 @@ public abstract class ImageIOReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException { }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException { }
 
   // -- Internal FormatReader API methods --
 
-  /** Initializes the given file. */
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ImageIOReader.initFile(" + id + ")");
     super.initFile(id);

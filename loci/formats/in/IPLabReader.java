@@ -49,7 +49,7 @@ public class IPLabReader extends FormatReader {
   /** Constructs a new IPLab reader. */
   public IPLabReader() { super("IPLab", "ipl"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -95,7 +95,9 @@ public class IPLabReader extends FormatReader {
       core.rgb[0] ? core.sizeC[0] : 1, false, bps, core.littleEndian[0]);
   }
 
-  /** Initializes the given IPLab file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("IPLabReader.initFile(" + id + ")");
     super.initFile(id);

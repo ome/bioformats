@@ -67,7 +67,24 @@ public class AVIReader extends FormatReader {
   /** Constructs a new AVI reader. */
   public AVIReader() { super("Audio Video Interleave", "avi"); }
 
-  // -- FormatReader API methods --
+  // -- AVIReader API methods --
+
+  /** Reads a 4-byte String. */
+  public String readStringBytes() throws IOException {
+    byte[] list = new byte[4];
+    in.read(list);
+    return new String(list);
+  }
+
+  /**
+   * Throws a FormatException to apologize for the fact that
+   * AVI support is suboptimal.
+   */
+  private void whine(String msg) throws FormatException {
+    throw new FormatException(msg);
+  }
+
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -119,7 +136,9 @@ public class AVIReader extends FormatReader {
       core.sizeX[0], core.sizeY[0], core.sizeC[0], true);
   }
 
-  /** Initializes the given AVI file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("AVIReader.initFile(" + id + ")");
     super.initFile(id);
@@ -436,23 +455,6 @@ public class AVIReader extends FormatReader {
       store.setLogicalChannel(i, null, null, null, null,
         core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
     }
-  }
-
-  // -- AVIReader API methods --
-
-  /** Reads a 4-byte String. */
-  public String readStringBytes() throws IOException {
-    byte[] list = new byte[4];
-    in.read(list);
-    return new String(list);
-  }
-
-  /**
-   * Throws a FormatException to apologize for the fact that
-   * AVI support is suboptimal.
-   */
-  private void whine(String msg) throws FormatException {
-    throw new FormatException(msg);
   }
 
 }

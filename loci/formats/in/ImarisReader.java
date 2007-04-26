@@ -55,9 +55,64 @@ public class ImarisReader extends FormatReader {
   /** Constructs a new Imaris reader. */
   public ImarisReader() { super("Bitplane Imaris", "ims"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
-  /** Initializes the given Imaris file. */
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0]];
+    return openBytes(no, buf);
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    if (buf.length < core.sizeX[0] * core.sizeY[0]) {
+      throw new FormatException("Buffer too small.");
+    }
+
+    in.seek(offsets[no]);
+    int row = core.sizeY[0] - 1;
+    for (int i=0; i<core.sizeY[0]; i++) {
+      in.read(buf, row*core.sizeX[0], core.sizeX[0]);
+      row--;
+    }
+    return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0],
+      core.sizeY[0], 1, false);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open)) return false; // check extension
+    if (!open) return true; // not allowed to check the file contents
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      byte[] b = new byte[4];
+      ras.readFully(b);
+      ras.close();
+      return isThisType(b);
+    }
+    catch (IOException e) { return false; }
+  }
+
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ImarisReader.initFile(" + id + ")");
     super.initFile(id);
@@ -166,61 +221,6 @@ public class ImarisReader extends FormatReader {
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
-  }
-
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0]];
-    return openBytes(no, buf);
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0]) {
-      throw new FormatException("Buffer too small.");
-    }
-
-    in.seek(offsets[no]);
-    int row = core.sizeY[0] - 1;
-    for (int i=0; i<core.sizeY[0]; i++) {
-      in.read(buf, row*core.sizeX[0], core.sizeX[0]);
-      row--;
-    }
-    return buf;
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0],
-      core.sizeY[0], 1, false);
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!open) return true; // not allowed to check the file contents
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      byte[] b = new byte[4];
-      ras.readFully(b);
-      ras.close();
-      return isThisType(b);
-    }
-    catch (IOException e) { return false; }
   }
 
 }

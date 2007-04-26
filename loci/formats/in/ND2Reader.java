@@ -125,7 +125,7 @@ public class ND2Reader extends FormatReader {
   /** Constructs a new ND2 reader. */
   public ND2Reader() { super("Nikon ND2", new String[] {"nd2", "jp2"}); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -216,7 +216,9 @@ public class ND2Reader extends FormatReader {
     return img;
   }
 
-  /** Initializes the given ND2 file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ND2Reader.initFile(" + id + ")");
     if (noJ2k) throw new FormatException(NO_J2K_MSG);

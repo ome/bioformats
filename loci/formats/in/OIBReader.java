@@ -127,12 +127,27 @@ public class OIBReader extends FormatReader {
   /** Constructs a new OIB reader. */
   public OIBReader() { super("Fluoview FV1000 OIB", "oib"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return (block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0);
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    byte[] b = openBytes(no);
+    int bytes = b.length / (core.sizeX[series] * core.sizeY[series] *
+      getRGBChannelCount());
+
+    return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series],
+      getRGBChannelCount(), false, bytes, core.littleEndian[series],
+      validBits[series]);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -179,22 +194,9 @@ public class OIBReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+  // -- IFormatHandler API methods --
 
-    byte[] b = openBytes(no);
-    int bytes = b.length / (core.sizeX[series] * core.sizeY[series] *
-      getRGBChannelCount());
-
-    return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series],
-      getRGBChannelCount(), false, bytes, core.littleEndian[series],
-      validBits[series]);
-  }
-
-  /* @see loci.formats.IFormatReader#close() */
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     String[] vars = {"dirName", "root", "dir", "document", "dis",
@@ -203,7 +205,9 @@ public class OIBReader extends FormatReader {
     for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
   }
 
-  /** Initializes the given OIB file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OIBReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
@@ -521,7 +525,6 @@ public class OIBReader extends FormatReader {
         store.setLaser(null, null, new Integer(wave), null, null, null, null,
           null, null, null, new Integer(j));
       }
-
     }
   }
 

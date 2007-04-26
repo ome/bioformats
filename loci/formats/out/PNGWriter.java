@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.io.IOException;
-import loci.formats.*;
-
 /** PNGWriter is the file format writer for PNG files. */
 public class PNGWriter extends ImageIOWriter {
 
@@ -34,12 +31,6 @@ public class PNGWriter extends ImageIOWriter {
 
   public PNGWriter() {
     super("Portable Network Graphics", "png", "png");
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new PNGWriter().testConvert(args);
   }
 
 }

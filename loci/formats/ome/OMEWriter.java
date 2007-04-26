@@ -84,16 +84,19 @@ public class OMEWriter extends FormatWriter {
     metadata = store;
   }
 
-  // -- Internal FormatHandler API methods --
+  // -- Internal OMEWriter API methods --
 
+  /** Fires a status update event. */
   protected void status(String message) {
     status(new StatusEvent(message));
   }
 
+  /** Fires a status update event. */
   protected void status(int progress, int maximum, String message) {
     status(new StatusEvent(progress, maximum, message));
   }
 
+  /** Fires a status update event. */
   protected void status(StatusEvent e) {
     StatusListener[] l = getStatusListeners();
     for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
@@ -101,31 +104,42 @@ public class OMEWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
+  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
+  public void saveImage(java.awt.Image image, boolean last)
+    throws FormatException, IOException
+  {
+    byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),
+      !metadata.getBigEndian(null).booleanValue());
+    for (int i=0; i<b.length; i++) {
+      saveBytes(b[i], last && (i == b.length - 1));
+    }
+  }
+
   /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
-  public void saveBytes(String id, byte[] bytes, boolean last)
+  public void saveBytes(byte[] bytes, boolean last)
     throws FormatException, IOException
   {
     if (!validLogin) {
       // parse the ID string to get the server, user name and password
 
-      server = id.substring(0, id.lastIndexOf("?"));
-      int ndx = id.indexOf("&");
-      if (id.indexOf("user") != -1) {
-        user = id.substring(id.lastIndexOf("?") + 6, ndx);
-        pass = id.substring(ndx + 10);
+      server = currentId.substring(0, currentId.lastIndexOf("?"));
+      int ndx = currentId.indexOf("&");
+      if (currentId.indexOf("user") != -1) {
+        user = currentId.substring(currentId.lastIndexOf("?") + 6, ndx);
+        pass = currentId.substring(ndx + 10);
       }
       else {
         throw new FormatException("Invalid ID - must be of the form " +
-          "<server>?user=<username>&password=<password>"); 
+          "<server>?user=<username>&password=<password>");
       }
       login();
 
-      // initialize necessary services 
-     
+      // initialize necessary services
+
       df = (DataFactory) rs.getService(DataFactory.class);
       im = (ImportManager) rs.getService(ImportManager.class);
       pf = (PixelsFactory) rs.getService(PixelsFactory.class);
-    
+
       FieldsSpecification fields = new FieldsSpecification();
       fields.addWantedField("id");
       fields.addWantedField("experimenter");
@@ -139,27 +153,26 @@ public class OMEWriter extends FormatWriter {
       catch (Exception e) {
         throw new FormatException("Could not find repository.", e);
       }
-    
-      im.startImport(exp); 
-    
+
+      im.startImport(exp);
+
       if (metadata == null) {
-        throw new FormatException("Metadata store not specified."); 
-      } 
+        throw new FormatException("Metadata store not specified.");
+      }
     }
-  
+
     int z = metadata.getSizeZ(null).intValue();
     int c = metadata.getSizeC(null).intValue();
     int t = metadata.getSizeT(null).intValue();
     String order = metadata.getDimensionOrder(null);
 
-    ImageServer is = ImageServer.getHTTPImageServer(omeis, sessionKey); 
-    /* debug */ System.out.println("omeis : " + omeis); 
+    ImageServer is = ImageServer.getHTTPImageServer(omeis, sessionKey);
     if (pixelsId == -1) {
-      try { 
-        pixelsId = is.newPixels(metadata.getSizeX(null).intValue(), 
-          metadata.getSizeY(null).intValue(), z, c, t, 
+      try {
+        pixelsId = is.newPixels(metadata.getSizeX(null).intValue(),
+          metadata.getSizeY(null).intValue(), z, c, t,
           FormatTools.getBytesPerPixel(FormatTools.pixelTypeFromString(
-          metadata.getPixelType(null))), false, 
+          metadata.getPixelType(null))), false,
           metadata.getPixelType(null).equals("float"));
       }
       catch (ImageServerException e) {
@@ -167,28 +180,28 @@ public class OMEWriter extends FormatWriter {
       }
     }
 
-    try { 
+    try {
       int planeLength = metadata.getSizeX(null).intValue() *
         metadata.getSizeY(null).intValue() * FormatTools.getBytesPerPixel(
         FormatTools.pixelTypeFromString(metadata.getPixelType(null)));
       byte[][] b = ImageTools.splitChannels(bytes, bytes.length / planeLength,
         false, true);
-     
+
       for (int ch=0; ch<b.length; ch++) {
-        int[] coords = FormatTools.getZCTCoords(order, z, c, t, z*c*t, 
+        int[] coords = FormatTools.getZCTCoords(order, z, c, t, z*c*t,
           planesWritten);
-         
-        is.setPlane(pixelsId, coords[0], coords[1], coords[2], b[ch], 
+
+        is.setPlane(pixelsId, coords[0], coords[1], coords[2], b[ch],
           metadata.getBigEndian(null).booleanValue());
-        planesWritten++; 
-      } 
-    } 
+        planesWritten++;
+      }
+    }
     catch (ImageServerException e) {
       throw new FormatException("Failed to upload plane.", e);
     }
 
     if (last) {
-      try { 
+      try {
         pixelsId = is.finishPixels(pixelsId);
       }
       catch (ImageServerException e) {
@@ -224,13 +237,13 @@ public class OMEWriter extends FormatWriter {
       pixels.setPixelType(metadata.getPixelType(null));
 
       try {
-        pf.setThumbnail(pixels, 
+        pf.setThumbnail(pixels,
           CompositingSettings.createDefaultPGISettings(z, c, t));
       }
       catch (ImageServerException e) {
         throw new FormatException("Failed to create thumbnail.", e);
       }
-      
+
       df.update(pixels);
 
       LogicalChannel logical = (LogicalChannel) df.createNew("LogicalChannel");
@@ -240,7 +253,7 @@ public class OMEWriter extends FormatWriter {
       logical.setPhotometricInterpretation("monochrome");
       df.markForUpdate(logical);
 
-      PixelChannelComponent physical = 
+      PixelChannelComponent physical =
         (PixelChannelComponent) df.createNew("PixelChannelComponent");
       physical.setImage(img);
       physical.setPixels(pixels);
@@ -248,39 +261,30 @@ public class OMEWriter extends FormatWriter {
       physical.setLogicalChannel(logical);
       physical.setModuleExecution(ii);
       df.markForUpdate(physical);
-      
+
       ii.setStatus("FINISHED");
       df.markForUpdate(ii);
-      
+
       img.setDefaultPixels(pixels);
-      df.update(img); 
+      df.update(img);
 
-      close(); 
-    } 
-  }
-
-  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
-  public void saveImage(String id, java.awt.Image image, boolean last)
-    throws FormatException, IOException
-  {
-    byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image), 
-      !metadata.getBigEndian(null).booleanValue());
-    for (int i=0; i<b.length; i++) {
-      saveBytes(id, b[i], last && (i == b.length - 1));
+      close();
     }
-  }
-  
-  /* @see loci.formats.IFormatWriter#close() */
-  public void close() throws FormatException, IOException {
-    rc.logout(); 
-    pixelsId = -1;
-    validLogin = false;
-    planesWritten = 0;
-    metadata = null; 
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
-  public boolean canDoStacks(String id) { return true; }
+  public boolean canDoStacks() { return true; }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    rc.logout();
+    pixelsId = -1;
+    validLogin = false;
+    planesWritten = 0;
+    metadata = null;
+  }
 
   // -- StatusReporter API methods --
 
@@ -308,18 +312,18 @@ public class OMEWriter extends FormatWriter {
   }
 
   // -- Helper methods --
- 
+
   private void login() throws FormatException {
     while (server.lastIndexOf("/") > 7) {
-      server = server.substring(0, server.lastIndexOf("/")); 
-    } 
-    omeis = server + "/cgi-bin/omeis"; 
+      server = server.substring(0, server.lastIndexOf("/"));
+    }
+    omeis = server + "/cgi-bin/omeis";
     server += "/shoola";
     if (!server.startsWith("http://")) {
       server = "http://" + server;
-      omeis = "http://" + omeis; 
+      omeis = "http://" + omeis;
     }
- 
+
     status("Logging in to " + server);
 
     try {
@@ -332,7 +336,7 @@ public class OMEWriter extends FormatWriter {
     }
     catch (Exception e) {
       validLogin = false;
-      throw new FormatException("Login failed", e); 
+      throw new FormatException("Login failed", e);
     }
   }
 

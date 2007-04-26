@@ -44,7 +44,7 @@ public class LegacyPictReader extends FormatReader {
   /** Constructs a new PICT reader. */
   public LegacyPictReader() { super("PICT", "pict"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -78,7 +78,12 @@ public class LegacyPictReader extends FormatReader {
     return ImageTools.makeBuffered(qtTools.pictToImage(bytes));
   }
 
-  /** Initializes the given PICT file. */
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException { }
+
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LegacyPictReader.initFile(" + id + ")");
     super.initFile(id);
@@ -106,8 +111,5 @@ public class LegacyPictReader extends FormatReader {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
   }
-
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws IOException { }
 
 }

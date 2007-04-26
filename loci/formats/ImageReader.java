@@ -162,18 +162,6 @@ public class ImageReader implements IFormatReader {
     return false;
   }
 
-  /* @see IFormatReader#setId(String) */
-  public void setId(String id) throws FormatException, IOException {
-    getReader(id).setId(id);
-  }
-
-  /* @see IFormatReader#setId(String, boolean) */
-  public void setId(String id, boolean force)
-    throws FormatException, IOException
-  {
-    getReader(id).setId(id, force);
-  }
-
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     return getReader().getImageCount();
@@ -358,11 +346,6 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
   }
 
-  /* @see IFormatReader#close() */
-  public void close() throws IOException {
-    for (int i=0; i<readers.length; i++) readers[i].close();
-  }
-
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     for (int i=0; i<readers.length; i++) readers[i].setNormalized(normalize);
@@ -431,7 +414,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatHandler#getFormat() */
-  public String getFormat() { return "image"; }
+  public String getFormat() { return getReader().getFormat(); }
 
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
@@ -446,6 +429,23 @@ public class ImageReader implements IFormatReader {
       Arrays.sort(suffixes);
     }
     return suffixes;
+  }
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    getReader(id).setId(id);
+  }
+
+  /* @see IFormatHandler#setId(String, boolean) */
+  public void setId(String id, boolean force)
+    throws FormatException, IOException
+  {
+    getReader(id).setId(id, force);
+  }
+
+  /* @see IFormatHandler#close() */
+  public void close() throws IOException {
+    for (int i=0; i<readers.length; i++) readers[i].close();
   }
 
   // -- StatusReporter API methods --

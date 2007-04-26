@@ -65,12 +65,13 @@ public class MetamorphReader extends BaseTiffReader {
   private long[] emWavelength;
 
   private int mmPlanes; //number of metamorph planes
+
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() { super("Metamorph STK", "stk"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -299,7 +300,7 @@ public class MetamorphReader extends BaseTiffReader {
     return new Integer((int) emWavelength[i]);
   }
 
-  // -- Utility methods --
+  // -- Helper methods --
 
   /**
    * Populates metadata fields with some contained in MetaMorph UIC2 Tag.
@@ -725,6 +726,8 @@ public class MetamorphReader extends BaseTiffReader {
     }
     in.seek(saveLoc);
   }
+
+  // -- Utility methods --
 
   /** Converts a Julian date value into a human-readable string. */
   public static String decodeDate(int julian) {

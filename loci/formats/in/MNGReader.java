@@ -49,7 +49,7 @@ public class MNGReader extends FormatReader {
   /** Constructs a new MNG reader. */
   public MNGReader() { super("Multiple Network Graphics (MNG)", "mng"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -87,7 +87,9 @@ public class MNGReader extends FormatReader {
     return ImageIO.read(new ByteArrayInputStream(b));
   }
 
-  /** Initializes the given MNG file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("MNGReader.initFile(" + id + ")");
     super.initFile(id);

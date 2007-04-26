@@ -51,7 +51,7 @@ public class SlidebookReader extends FormatReader {
   /** Constructs a new Slidebook reader. */
   public SlidebookReader() { super("Intelligent Imaging Slidebook", "sld"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -87,7 +87,9 @@ public class SlidebookReader extends FormatReader {
       core.sizeY[0], 1, true, bpp, true);
   }
 
-  /** Initializes the given Slidebook file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("SlidebookReader.initFile(" + id + ")");
     super.initFile(id);

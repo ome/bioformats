@@ -68,6 +68,51 @@ public abstract class BaseTiffReader extends FormatReader {
     };
   }
 
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    return TiffTools.isValidHeader(block);
+  }
+
+  /* @see loci.formats.IFormatReader#getMetadataValue(String) */
+  public Object getMetadataValue(String field) {
+    return getMeta(field);
+  }
+
+  /* @see loci.formats.FormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
+    byte[] buf = new byte[getSizeX() * getSizeY() * bytesPerPixel *
+      getRGBChannelCount()];
+    return openBytes(no, buf);
+  }
+
+  /* @see loci.formats.FormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    TiffTools.getSamples(ifds[no], in, buf);
+    return swapIfRequired(buf);
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    return TiffTools.getImage(ifds[no], in);
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable and metadata store. */
@@ -682,52 +727,9 @@ public abstract class BaseTiffReader extends FormatReader {
     return byteArray;
   }
 
-  // -- FormatReader API methods --
+  // -- Internal FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return TiffTools.isValidHeader(block);
-  }
-
-  /* @see loci.formats.IFormatReader#getMetadataValue(String) */
-  public Object getMetadataValue(String field) {
-    return getMeta(field);
-  }
-
-  /* @see loci.formats.FormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    TiffTools.getSamples(ifds[no], in, buf);
-    return swapIfRequired(buf);
-  }
-
-  /* @see loci.formats.FormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
-    byte[] buf = new byte[getSizeX() * getSizeY() * bytesPerPixel *
-      getRGBChannelCount()];
-    return openBytes(no, buf);
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    return TiffTools.getImage(ifds[no], in);
-  }
-
-  /** Initializes the given TIFF file. */
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BaseTiffReader.initFile(" + id + ")");
     super.initFile(id);
@@ -761,7 +763,7 @@ public abstract class BaseTiffReader extends FormatReader {
       getEmWave(i),
       getExWave(i),
       getPhotometricInterpretation(i),
-      getMode(i), // aquisition mode
+      getMode(i), // acquisition mode
       null);
   }
 

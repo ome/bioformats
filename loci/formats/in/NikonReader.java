@@ -117,7 +117,7 @@ public class NikonReader extends BaseTiffReader {
     super("Nikon NEF (TIFF)", new String[] {"nef", "tif", "tiff"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -168,43 +168,6 @@ public class NikonReader extends BaseTiffReader {
   }
 
   // -- Internal BaseTiffReader API methods --
-
-  /* @see BaseTiffReader#initFile(String) */
-  protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("NikonReader.initFile(" + id + ")");
-    super.initFile(id);
-
-    in = new RandomAccessStream(id);
-    if (in.readShort() == 0x4949) in.order(true);
-
-    ifds = TiffTools.getIFDs(in);
-    if (ifds == null) throw new FormatException("No IFDs found");
-
-    // look for the SubIFD tag (330);
-
-    int offset = 0;
-    try {
-      offset = TiffTools.getIFDIntValue(ifds[0], 330, false, 0);
-    }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
-      long[] array = TiffTools.getIFDLongArray(ifds[0], 330, false);
-      offset = (int) array[array.length - 1];
-    }
-
-    Hashtable realImage = TiffTools.getIFD(in, 1, offset);
-    realImage.put(new Integer(TiffTools.VALID_BITS), new int[] {12, 12, 12});
-
-    original = ifds[0];
-    ifds[0] = realImage;
-    core.imageCount[0] = 1;
-
-    Object pattern = getMeta("CFA pattern");
-    if (pattern != null) {
-      realImage.put(new Integer(TiffTools.COLOR_MAP), getMeta("CFA pattern"));
-    }
-  }
 
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
@@ -274,6 +237,45 @@ public class NikonReader extends BaseTiffReader {
     }
     catch (IOException e) {
       if (debug) e.printStackTrace();
+    }
+  }
+
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (debug) debug("NikonReader.initFile(" + id + ")");
+    super.initFile(id);
+
+    in = new RandomAccessStream(id);
+    if (in.readShort() == 0x4949) in.order(true);
+
+    ifds = TiffTools.getIFDs(in);
+    if (ifds == null) throw new FormatException("No IFDs found");
+
+    // look for the SubIFD tag (330);
+
+    int offset = 0;
+    try {
+      offset = TiffTools.getIFDIntValue(ifds[0], 330, false, 0);
+    }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+      long[] array = TiffTools.getIFDLongArray(ifds[0], 330, false);
+      offset = (int) array[array.length - 1];
+    }
+
+    Hashtable realImage = TiffTools.getIFD(in, 1, offset);
+    realImage.put(new Integer(TiffTools.VALID_BITS), new int[] {12, 12, 12});
+
+    original = ifds[0];
+    ifds[0] = realImage;
+    core.imageCount[0] = 1;
+
+    Object pattern = getMeta("CFA pattern");
+    if (pattern != null) {
+      realImage.put(new Integer(TiffTools.COLOR_MAP), getMeta("CFA pattern"));
     }
   }
 

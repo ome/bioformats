@@ -66,7 +66,7 @@ public class FluoviewReader extends BaseTiffReader {
       new String[] {"tif", "tiff"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {

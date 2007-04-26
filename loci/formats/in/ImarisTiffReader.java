@@ -43,7 +43,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     super("Imaris 5 (TIFF)", "ims");
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -204,7 +204,6 @@ public class ImarisTiffReader extends BaseTiffReader {
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), null,
       core.currentOrder[0], null, null);
-
   }
 
 }

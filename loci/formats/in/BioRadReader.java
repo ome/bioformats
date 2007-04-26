@@ -72,7 +72,7 @@ public class BioRadReader extends FormatReader {
   /** Constructs a new BioRadReader. */
   public BioRadReader() { super("Bio-Rad PIC", "pic"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -110,7 +110,9 @@ public class BioRadReader extends FormatReader {
     return b;
   }
 
-  /** Initializes the given Bio-Rad file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
     super.initFile(id);
@@ -728,7 +730,11 @@ public class BioRadReader extends FormatReader {
     }
   }
 
-  public String noteString(int n, int l, int s, int t, int x, int y, String p) {
+  // -- Helper methods --
+
+  private String noteString(int n, int l,
+    int s, int t, int x, int y, String p)
+  {
     StringBuffer sb = new StringBuffer(100);
     sb.append("level=");
     sb.append(l);

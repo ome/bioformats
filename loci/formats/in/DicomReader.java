@@ -95,7 +95,7 @@ public class DicomReader extends FormatReader {
       new String[] {"dcm", "dicom"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -133,7 +133,9 @@ public class DicomReader extends FormatReader {
       1, false, bitsPerPixel / 8, core.littleEndian[0]);
   }
 
-  /** Initializes the given DICOM file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("DicomReader.initFile(" + id + ")");
     super.initFile(id);

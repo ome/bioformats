@@ -48,7 +48,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Constructs a new Zeiss LSM reader. */
   public ZeissLSMReader() { super("Zeiss Laser-Scanning Microscopy", "lsm"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -74,28 +74,6 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
       return false; // we went through the IFD; the ID wasn't found.
     }
-  }
-
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    if (2*no + 1 < ifds.length) return TiffTools.getImage(ifds[2*no + 1], in);
-    return super.openThumbImage(no);
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    ifds = TiffTools.getIFDs(in);
-    return TiffTools.getImage(ifds[2*no], in);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -128,88 +106,29 @@ public class ZeissLSMReader extends BaseTiffReader {
     return swapIfRequired(buf);
   }
 
-  /** Initializes the given Zeiss LSM file. */
-  protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("ZeissLSMReader.initFile(" + id + ")");
-    super.initFile(id);
-
-    // go through the IFD hashtable array and
-    // remove anything with NEW_SUBFILE_TYPE = 1
-    // NEW_SUBFILE_TYPE = 1 indicates that the IFD
-    // contains a thumbnail image
-
-    status("Removing thumbnails");
-
-    int numThumbs = 0;
-    long prevOffset = 0;
-    byte[] b = new byte[48];
-    byte[] c = new byte[48];
-    for (int i=0; i<ifds.length; i++) {
-      long subFileType = TiffTools.getIFDLongValue(ifds[i],
-        TiffTools.NEW_SUBFILE_TYPE, true, 0);
-      long[] offsets = TiffTools.getStripOffsets(ifds[i]);
-
-      if (subFileType == 1) {
-        ifds[i] = null;
-        numThumbs++;
-      }
-      else if (i > 0) {
-        // make sure that we don't grab the thumbnail by accident
-        // there's probably a better way to do this
-
-        in.seek(prevOffset);
-        in.read(b);
-        in.seek(offsets[0]);
-        in.read(c);
-
-        boolean equal = true;
-        for (int j=0; j<48; j++) {
-          if (b[j] != c[j]) {
-            equal = false;
-            j = 48;
-          }
-        }
-
-        if (equal) {
-          offsets[0] += (offsets[0] - prevOffset);
-          TiffTools.putIFDValue(ifds[i], TiffTools.STRIP_OFFSETS, offsets);
-        }
-      }
-      prevOffset = offsets[0];
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
     }
 
-    // now copy ifds to a temp array so that we can get rid of
-    // any null entries
-
-    int ifdPointer = 0;
-    Hashtable[] tempIFDs = new Hashtable[ifds.length - numThumbs];
-    for (int i=0; i<tempIFDs.length; i++) {
-      if (ifds[ifdPointer] != null) {
-        tempIFDs[i] = ifds[ifdPointer];
-        ifdPointer++;
-      }
-      else {
-        while ((ifds[ifdPointer] == null) && ifdPointer < ifds.length) {
-          ifdPointer++;
-        }
-        tempIFDs[i] = ifds[ifdPointer];
-        ifdPointer++;
-      }
-    }
-
-    // reset numImages and ifds
-    core.imageCount[0] = tempIFDs.length;
-    ifds = tempIFDs;
-    initMetadata();
     ifds = TiffTools.getIFDs(in);
- 
-    if (ifds.length > 1) {
-      core.thumbSizeX[0] = TiffTools.getIFDIntValue(ifds[1], 
-        TiffTools.IMAGE_WIDTH, false, 1);
-      core.thumbSizeY[0] = TiffTools.getIFDIntValue(ifds[1], 
-        TiffTools.IMAGE_LENGTH, false, 1);
-    } 
+    return TiffTools.getImage(ifds[2*no], in);
   }
+
+  /* @see loci.formats.IFormatReader#openThumbImage(int) */
+  public BufferedImage openThumbImage(int no)
+    throws FormatException, IOException
+  {
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    if (2*no + 1 < ifds.length) return TiffTools.getImage(ifds[2*no + 1], in);
+    return super.openThumbImage(no);
+  }
+
+  // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() {
@@ -581,6 +500,91 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (debug) debug("ZeissLSMReader.initFile(" + id + ")");
+    super.initFile(id);
+
+    // go through the IFD hashtable array and
+    // remove anything with NEW_SUBFILE_TYPE = 1
+    // NEW_SUBFILE_TYPE = 1 indicates that the IFD
+    // contains a thumbnail image
+
+    status("Removing thumbnails");
+
+    int numThumbs = 0;
+    long prevOffset = 0;
+    byte[] b = new byte[48];
+    byte[] c = new byte[48];
+    for (int i=0; i<ifds.length; i++) {
+      long subFileType = TiffTools.getIFDLongValue(ifds[i],
+        TiffTools.NEW_SUBFILE_TYPE, true, 0);
+      long[] offsets = TiffTools.getStripOffsets(ifds[i]);
+
+      if (subFileType == 1) {
+        ifds[i] = null;
+        numThumbs++;
+      }
+      else if (i > 0) {
+        // make sure that we don't grab the thumbnail by accident
+        // there's probably a better way to do this
+
+        in.seek(prevOffset);
+        in.read(b);
+        in.seek(offsets[0]);
+        in.read(c);
+
+        boolean equal = true;
+        for (int j=0; j<48; j++) {
+          if (b[j] != c[j]) {
+            equal = false;
+            j = 48;
+          }
+        }
+
+        if (equal) {
+          offsets[0] += (offsets[0] - prevOffset);
+          TiffTools.putIFDValue(ifds[i], TiffTools.STRIP_OFFSETS, offsets);
+        }
+      }
+      prevOffset = offsets[0];
+    }
+
+    // now copy ifds to a temp array so that we can get rid of
+    // any null entries
+
+    int ifdPointer = 0;
+    Hashtable[] tempIFDs = new Hashtable[ifds.length - numThumbs];
+    for (int i=0; i<tempIFDs.length; i++) {
+      if (ifds[ifdPointer] != null) {
+        tempIFDs[i] = ifds[ifdPointer];
+        ifdPointer++;
+      }
+      else {
+        while ((ifds[ifdPointer] == null) && ifdPointer < ifds.length) {
+          ifdPointer++;
+        }
+        tempIFDs[i] = ifds[ifdPointer];
+        ifdPointer++;
+      }
+    }
+
+    // reset numImages and ifds
+    core.imageCount[0] = tempIFDs.length;
+    ifds = tempIFDs;
+    initMetadata();
+    ifds = TiffTools.getIFDs(in);
+
+    if (ifds.length > 1) {
+      core.thumbSizeX[0] = TiffTools.getIFDIntValue(ifds[1],
+        TiffTools.IMAGE_WIDTH, false, 1);
+      core.thumbSizeY[0] = TiffTools.getIFDIntValue(ifds[1],
+        TiffTools.IMAGE_LENGTH, false, 1);
+    }
+  }
+
   // -- Helper methods --
 
   /** Parses overlay-related fields. */
@@ -733,12 +737,6 @@ public class ZeissLSMReader extends BaseTiffReader {
           break;
       }
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new ZeissLSMReader().testRead(args);
   }
 
 }

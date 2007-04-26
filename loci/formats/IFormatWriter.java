@@ -32,24 +32,20 @@ import java.io.IOException;
 public interface IFormatWriter extends IFormatHandler {
 
   /**
-   * Saves the given image to the specified (possibly already open) file.
+   * Saves the given image to the current file.
    * If this image is the last one in the file, the last flag must be set.
    */
-  void saveImage(String id, Image image, boolean last)
-    throws FormatException, IOException;
+  void saveImage(Image image, boolean last) throws FormatException, IOException;
 
   /**
-   * Saves the given byte array to the specified (possibly already open) file.
+   * Saves the given byte array to the current file.
    * If this is the last array to be written, the last flag must be set.
    */
-  void saveBytes(String id, byte[] bytes, boolean last)
+  void saveBytes(byte[] bytes, boolean last)
     throws FormatException, IOException;
 
-  /** Closes open files. */
-  void close() throws FormatException, IOException;
-
   /** Reports whether the writer can save multiple images to a single file. */
-  boolean canDoStacks(String id) throws FormatException;
+  boolean canDoStacks();
 
   /** Sets the color model. */
   void setColorModel(ColorModel cm);
@@ -67,11 +63,10 @@ public interface IFormatWriter extends IFormatHandler {
   String[] getCompressionTypes();
 
   /** Gets the supported pixel types. */
-  int[] getPixelTypes(String id) throws FormatException, IOException;
+  int[] getPixelTypes();
 
   /** Checks if the given pixel type is supported. */
-  boolean isSupportedType(String id, int type)
-    throws FormatException, IOException;
+  boolean isSupportedType(int type);
 
   /** Sets the current compression type. */
   void setCompression(String compress) throws FormatException;
@@ -81,7 +76,21 @@ public interface IFormatWriter extends IFormatHandler {
 
   // -- Deprecated API methods --
 
-  /** @deprecated Replaced by {@link #saveImage(String, Image, boolean)} */
+  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
+  void saveImage(String id, Image image, boolean last)
+    throws FormatException, IOException;
+
+  /** @deprecated Replaced by {@link #canDoStacks()} */
+  boolean canDoStacks(String id) throws FormatException;
+
+  /** @deprecated Replaced by {@link #getPixelTypes()} */
+  int[] getPixelTypes(String id) throws FormatException, IOException;
+
+  /** @deprecated Replaced by {@link #isSupportedType(int type)} */
+  boolean isSupportedType(String id, int type)
+    throws FormatException, IOException;
+
+  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
   void save(String id, Image image, boolean last)
     throws FormatException, IOException;
 

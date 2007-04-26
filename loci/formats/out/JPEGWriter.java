@@ -41,8 +41,8 @@ public class JPEGWriter extends ImageIOWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */
-  public void saveImage(String id, Image image, boolean last)
+  /* @see loci.formats.IFormatWriter#save(Image, boolean) */
+  public void saveImage(Image image, boolean last)
     throws FormatException, IOException
   {
     BufferedImage img = (cm == null) ?
@@ -51,18 +51,12 @@ public class JPEGWriter extends ImageIOWriter {
     if (type == FormatTools.UINT16 || type == FormatTools.INT16) {
       throw new FormatException("16-bit data not supported.");
     }
-    super.saveImage(id, image, last);
+    super.saveImage(image, last);
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
-  public int[] getPixelTypes(String id) throws FormatException, IOException {
+  public int[] getPixelTypes() {
     return new int[] {FormatTools.UINT8};
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new JPEGWriter().testConvert(args);
   }
 
 }

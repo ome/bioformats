@@ -599,20 +599,29 @@ public final class FormatTools {
     }
     String in = args[0];
     String out = args[1];
-    System.out.print(in + " -> " + out + " ");
 
     ImageReader reader = new ImageReader();
     reader.setId(in);
+    writer.setId(out);
+
+    // check file formats
+    System.out.print("Input format: ");
+    System.out.println("[" + reader.getFormat() + "]");
+    System.out.print("Output format: ");
+    System.out.println("[" + writer.getFormat() + "]");
+
+    // convert file
+    System.out.print(in + " -> " + out + " ");
 
     long start = System.currentTimeMillis();
-    int num = reader.getImageCount();
+    int num = writer.canDoStacks() ? reader.getImageCount() : 1;
     long mid = System.currentTimeMillis();
     long read = 0, write = 0;
     for (int i=0; i<num; i++) {
       long s = System.currentTimeMillis();
       Image image = reader.openImage(i);
       long m = System.currentTimeMillis();
-      writer.saveImage(out, image, i == num - 1);
+      writer.saveImage(image, i == num - 1);
       long e = System.currentTimeMillis();
       System.out.print(".");
       read += m - s;

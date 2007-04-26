@@ -131,7 +131,7 @@ public class QTReader extends FormatReader {
   /** Sets whether to use the legacy reader (QTJava) by default. */
   public void setLegacy(boolean legacy) { useLegacy = legacy; }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -333,7 +333,7 @@ public class QTReader extends FormatReader {
     }
   }
 
-  /* @See loci.formats.IFormatReader#openImage(int) */
+  /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -398,13 +398,17 @@ public class QTReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     prevPixels = null;
   }
 
-  /** Initializes the given QuickTime file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("QTReader.initFile(" + id + ")");
     super.initFile(id);
@@ -577,7 +581,7 @@ public class QTReader extends FormatReader {
   // -- Helper methods --
 
   /** Parse all of the atoms in the file. */
-  public void parse(int depth, long offset, long length)
+  private void parse(int depth, long offset, long length)
     throws FormatException, IOException
   {
     while (offset < length) {
@@ -658,12 +662,12 @@ public class QTReader extends FormatReader {
             int uncompressedSize = in.readInt();
 
             b = new byte[(int) (atomSize - 12)];
-            in.read(b); 
-          
+            in.read(b);
+
             Inflater inf = new Inflater();
             inf.setInput(b, 0, b.length);
             byte[] output = new byte[uncompressedSize];
-            try { 
+            try {
               inf.inflate(output);
             }
             catch (DataFormatException dfe) {
@@ -671,11 +675,11 @@ public class QTReader extends FormatReader {
               throw new FormatException("Compressed header not supported.");
             }
             inf.end();
-         
+
             RandomAccessStream oldIn = in;
             in = new RandomAccessStream(output);
             parse(0, 0, output.length);
-            in.close(); 
+            in.close();
             in = oldIn;
           }
           else throw new FormatException("Compressed header not supported.");
@@ -789,7 +793,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Checks if the given String is a container atom type. */
-  public boolean isContainer(String type) {
+  private boolean isContainer(String type) {
     for (int i=0; i<CONTAINER_TYPES.length; i++) {
       if (type.equals(CONTAINER_TYPES[i])) return true;
     }
@@ -797,7 +801,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Debugging method; prints information on an atom. */
-  public void print(int depth, long size, String type, byte[] data) {
+  private void print(int depth, long size, String type, byte[] data) {
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<depth; i++) sb.append(" ");
     sb.append(type + " : [" + size + "]");
@@ -805,7 +809,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Uncompresses an image plane according to the the codec identifier. */
-  public byte[] uncompress(byte[] pixs, String code)
+  private byte[] uncompress(byte[] pixs, String code)
     throws FormatException, IOException
   {
     // JPEG and mjpb codecs handled separately, so not included in this list
@@ -986,7 +990,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Uncompresses a MJPEG-B compressed image plane. */
-  public BufferedImage mjpbUncompress(byte[] input) throws FormatException {
+  private BufferedImage mjpbUncompress(byte[] input) throws FormatException {
     byte[] raw = null;
     byte[] raw2 = null;
     int pt = 16; // pointer into the compressed data
@@ -1377,7 +1381,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Uncompresses a JPEG compressed image plane. */
-  public BufferedImage bufferedJPEG(byte[] input) throws FormatException {
+  private BufferedImage bufferedJPEG(byte[] input) throws FormatException {
     // some planes have a 16 byte header that needs to be removed
     if (input[0] != (byte) 0xff || input[1] != (byte) 0xd8) {
       byte[] temp = input;
@@ -1394,7 +1398,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Uncompresses a QT RLE compressed image plane. */
-  public byte[] rleUncompress(byte[] input) throws FormatException, IOException
+  private byte[] rleUncompress(byte[] input) throws FormatException, IOException
   {
     if (input.length < 8) return prevPixels;
 
@@ -1537,12 +1541,6 @@ public class QTReader extends FormatReader {
   private LegacyQTReader createLegacyReader() {
     // use the same id mappings that this reader does
     return new LegacyQTReader();
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new QTReader().testRead(args);
   }
 
 }

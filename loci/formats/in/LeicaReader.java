@@ -75,7 +75,7 @@ public class LeicaReader extends FormatReader {
     super("Leica", new String[] {"lei", "tif", "tiff"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -182,7 +182,50 @@ public class LeicaReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".lei")) return true;
+    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+    if (!open) return true; // now allowed to be any more thorough
+
+    // just checking the filename isn't enough to differentiate between
+    // Leica and regular TIFF; open the file and check more thoroughly
+    Location file = new Location(name);
+    if (!file.exists()) return false;
+    long len = file.length();
+    if (len < 4) return false;
+
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
+      if (ifd == null) return false;
+
+      String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      int ndx = descr == null ? -1 : descr.indexOf("Series Name");
+
+      if (ndx == -1) return false;
+
+      String dir = new Location(name).getAbsoluteFile().getParent();
+      String[] listing = new Location(dir).list();
+      for (int i=0; i<listing.length; i++) {
+        if (listing[i].toLowerCase().endsWith(".lei")) return true;
+      }
+      return false;
+    }
+    catch (IOException exc) {
+      if (debug) exc.printStackTrace();
+    }
+    catch (ClassCastException exc) {
+      if (debug) exc.printStackTrace();
+    }
+    return false;
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     leiFilename = null;
@@ -198,7 +241,9 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  /** Initializes the given Leica file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LeicaReader.initFile(" + id + ")");
     String idLow = id.toLowerCase();
@@ -448,7 +493,7 @@ public class LeicaReader extends FormatReader {
             if (usedFiles != null && usedFiles.length == tempImages) {
               files[i] = new Vector();
               for (int k=0; k<usedFiles.length; k++) {
-                files[i].add(new Location(usedFiles[k]).getAbsolutePath()); 
+                files[i].add(new Location(usedFiles[k]).getAbsolutePath());
               }
               break;
             }
@@ -542,52 +587,8 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".lei")) return true;
-    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-    if (!open) return true; // now allowed to be any more thorough
-
-    // just checking the filename isn't enough to differentiate between
-    // Leica and regular TIFF; open the file and check more thoroughly
-    Location file = new Location(name);
-    if (!file.exists()) return false;
-    long len = file.length();
-    if (len < 4) return false;
-
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
-
-      String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      int ndx = descr == null ? -1 : descr.indexOf("Series Name");
-
-      if (ndx == -1) return false;
-
-      String dir = new Location(name).getAbsoluteFile().getParent();
-      String[] listing = new Location(dir).list();
-      for (int i=0; i<listing.length; i++) {
-        if (listing[i].toLowerCase().endsWith(".lei")) return true;
-      }
-      return false;
-    }
-    catch (IOException exc) {
-      if (debug) exc.printStackTrace();
-    }
-    catch (ClassCastException exc) {
-      if (debug) exc.printStackTrace();
-    }
-    return false;
-  }
-
   // -- Helper methods --
 
-  /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() throws FormatException, IOException {
     if (headerIFDs == null) headerIFDs = ifds;
 
@@ -951,7 +952,7 @@ public class LeicaReader extends FormatReader {
 
     // sizeC is null here if the file we opened was a TIFF.
     // However, the sizeC field will be adjusted anyway by
-    // a later call to BaseTiffReader.initMetadata.
+    // a later call to initMetadata.
     if (core.sizeC != null) {
       int oldSeries = getSeries();
       for (int i=0; i<core.sizeC.length; i++) {

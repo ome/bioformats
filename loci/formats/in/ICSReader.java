@@ -87,7 +87,7 @@ public class ICSReader extends FormatReader {
     super("Image Cytometry Standard", new String[] {"ics", "ids"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -174,7 +174,9 @@ public class ICSReader extends FormatReader {
     return new String[] {currentIdsId, currentIcsId};
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     icsIn = null;
@@ -183,7 +185,9 @@ public class ICSReader extends FormatReader {
     data = null;
   }
 
-  /** Initializes the given ICS file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ICSReader.initFile(" + id + ")");
     super.initFile(id);

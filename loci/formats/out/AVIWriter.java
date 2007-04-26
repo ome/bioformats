@@ -90,15 +90,8 @@ public class AVIWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
-  public void saveBytes(String id, byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    throw new FormatException("Not implemented yet.");
-  }
-
-  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
-  public void saveImage(String id, Image image, boolean last)
+  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
+  public void saveImage(Image image, boolean last)
     throws FormatException, IOException
   {
     if (image == null) {
@@ -109,12 +102,12 @@ public class AVIWriter extends FormatWriter {
     else img = ImageTools.makeBuffered(image);
     byte[][] byteData = ImageTools.getBytes(img);
 
-    if (!id.equals(currentId)) {
+    if (!initialized) {
+      initialized = true;
       planesWritten = 0;
-      currentId = id;
       bytesPerPixel = byteData.length;
 
-      file = new File(id);
+      file = new File(currentId);
       raFile = new RandomAccessFile(file, "rw");
       raFile.seek(raFile.length());
       saveFileSize = 4;
@@ -523,25 +516,22 @@ public class AVIWriter extends FormatWriter {
     }
   }
 
-  /* @see loci.formats.IFormatWriter#close() */
-  public void close() throws FormatException, IOException {
-    if (raFile != null) raFile.close();
-    raFile = null;
-    currentId = null;
-  }
+  /* @see loci.formats.IFormatWriter#canDoStacks() */
+  public boolean canDoStacks() { return true; }
 
-  /* @see loci.formats.IFormatWriter#canDoStacks(String) */ 
-  public boolean canDoStacks(String id) { return true; }
-
-  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
-  public int[] getPixelTypes(String id) throws FormatException, IOException {
+  /* @see loci.formats.IFormatWriter#getPixelTypes() */
+  public int[] getPixelTypes() {
     return new int[] {FormatTools.UINT8};
   }
 
-  // -- Main method --
+  // -- IFormatHandler API methods --
 
-  public static void main(String[] args) throws IOException, FormatException {
-    new AVIWriter().testConvert(args);
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    if (raFile != null) raFile.close();
+    raFile = null;
+    currentId = null;
+    initialized = false;
   }
 
 }

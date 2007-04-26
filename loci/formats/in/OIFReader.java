@@ -65,7 +65,7 @@ public class OIFReader extends FormatReader {
       new String[] {"oif", "roi", "pty", "lut", "bmp"});
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -144,7 +144,9 @@ public class OIFReader extends FormatReader {
     else close();
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     if (thumbReader != null) thumbReader.close();
@@ -156,7 +158,9 @@ public class OIFReader extends FormatReader {
     tiffs = null;
   }
 
-  /** Initializes the given OIF file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OIFReader.initFile(" + id + ")");
 
@@ -458,7 +462,6 @@ public class OIFReader extends FormatReader {
         }
       }
     }
-
   }
 
 }

@@ -64,16 +64,11 @@ public class LIFReader extends FormatReader {
   /** Constructs a new Leica LIF reader. */
   public LIFReader() { super("Leica Image File Format", "lif"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return block[0] == 0x70;
-  }
-
-  /* @see loci.formats.IFormatReader#getSeriesCount() */
-  public int getSeriesCount() {
-    return core.sizeX.length;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -116,7 +111,14 @@ public class LIFReader extends FormatReader {
       core.littleEndian[series], validBits[series]);
   }
 
-  /** Initializes the given LIF file. */
+  /* @see loci.formats.IFormatReader#getSeriesCount() */
+  public int getSeriesCount() {
+    return core.sizeX.length;
+  }
+
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LIFReader.initFile(" + id + ")");
     super.initFile(id);
