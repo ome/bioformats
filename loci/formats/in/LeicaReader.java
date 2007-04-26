@@ -448,8 +448,7 @@ public class LeicaReader extends FormatReader {
             if (usedFiles != null && usedFiles.length == tempImages) {
               files[i] = new Vector();
               for (int k=0; k<usedFiles.length; k++) {
-                files[i].add(new Location(dirPrefix,
-                  usedFiles[k]).getAbsolutePath());
+                files[i].add(new Location(usedFiles[k]).getAbsolutePath()); 
               }
               break;
             }
