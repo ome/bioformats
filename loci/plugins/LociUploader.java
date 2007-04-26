@@ -86,6 +86,7 @@ public class LociUploader implements PlugIn {
       IJ.showStatus("Starting upload...");
       OMEWriter ul = new OMEWriter(); 
       String id = server + "?user=" + user + "&password=" + pass; 
+      ul.setId(id);
 
       ImagePlus imp = WindowManager.getCurrentImage();
       if (imp == null) {
@@ -198,7 +199,7 @@ public class LociUploader implements PlugIn {
           }
         }
       
-        ul.saveBytes(id, toUpload, i == is.getSize() - 1); 
+        ul.saveBytes(toUpload, i == is.getSize() - 1); 
       }
 
       IJ.showStatus("Sending data to server...");
