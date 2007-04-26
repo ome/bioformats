@@ -590,15 +590,30 @@ public final class FormatTools {
   public static boolean testConvert(IFormatWriter writer, String[] args)
     throws FormatException, IOException
   {
+    String in = null, out = null;
+    if (args != null) {
+      for (int i=0; i<args.length; i++) {
+        if (args[i].startsWith("-") && args.length > 1) {
+          if (args[i].equals("-debug")) FormatHandler.setDebug(true);
+          else System.out.println("Ignoring unknown command flag: " + args[i]);
+        }
+        else {
+          if (in == null) in = args[i];
+          else if (out == null) out = args[i];
+          else System.out.println("Ignoring unknown argument: " + args[i]);
+        }
+      }
+    }
+    if (FormatHandler.debug) {
+      System.out.println("Debugging at level " + FormatHandler.debugLevel);
+    }
     String className = writer.getClass().getName();
-    if (args == null || args.length < 2) {
+    if (in == null || out == null) {
       System.out.println("To convert a file to " + writer.getFormat() +
         " format, run:");
-      System.out.println("  java " + className + " in_file out_file");
+      System.out.println("  java " + className + " [-debug] in_file out_file");
       return false;
     }
-    String in = args[0];
-    String out = args[1];
 
     ImageReader reader = new ImageReader();
     reader.setId(in);
