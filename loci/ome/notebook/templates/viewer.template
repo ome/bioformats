@@ -1,10 +1,5 @@
 # Template designed specifically for viewing (not editing) metadata.
 
-#font-style "Courier"
-#font-size "13"
-#font-color "0,100,255"
-#background-color "50,50,50"
-
 default-width "600"
 default-height "500"
 
@@ -70,8 +65,6 @@ tab {
       map "Image:Pixels:SizeT"
     }
   
-    # show some other component types 
- 
     field {
       name "Big Endian"
       type "bool"
@@ -81,9 +74,7 @@ tab {
 
     field {
       name "Pixel Type"
-      type "enum"
-      values {"uint8", "uint16", "float"}
-      default "float"
+      type "var"
       map "Image:Pixels:PixelType"
     }
   }
@@ -92,8 +83,6 @@ tab {
 tab {
 
   name "Experimenter Information"
-
-  # we don't need to have a group containing fields
 
   field {
     name "First Name"

@@ -95,23 +95,3 @@ tab {
     }
   }
 }
-
-tab {
-  name "Environment Information"
-
-  field {
-    name "Temperature"
-    type "var"
-  }
-
-  field {
-    name "Humidity (%)"
-    type "var"
-  }
-
-  field {
-    name "Time of day"
-    type "var"
-  }
-
-}
