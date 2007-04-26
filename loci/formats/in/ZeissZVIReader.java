@@ -183,7 +183,7 @@ public class ZeissZVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.rgb[0] ? core.sizeC[0] : 1, true, bpp == 3 ? 1 : bpp, true,
+      getRGBChannelCount(), true, bpp == 3 ? 1 : bpp, true,
       validBits);
   }
 
