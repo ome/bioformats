@@ -90,10 +90,14 @@ public class AVIWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * If this image is the last one in the file, the last flag must be set.
-   */
+  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
+  public void saveBytes(String id, byte[] bytes, boolean last)
+    throws FormatException, IOException
+  {
+    throw new FormatException("Not implemented yet.");
+  }
+
+  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
   public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
@@ -526,7 +530,7 @@ public class AVIWriter extends FormatWriter {
     currentId = null;
   }
 
-  /** Reports whether the writer can save multiple images to a single file. */
+  /* @see loci.formats.IFormatWriter#canDoStacks(String) */ 
   public boolean canDoStacks(String id) { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */

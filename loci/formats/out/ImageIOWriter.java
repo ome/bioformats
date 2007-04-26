@@ -67,10 +67,14 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * The last flag is ignored, since this writer produces single-image files.
-   */
+  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
+  public void saveBytes(String id, byte[] bytes, boolean last)
+    throws FormatException, IOException
+  {
+    throw new FormatException("Not implemented yet.");
+  }
+
+  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */ 
   public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException
   {
@@ -91,7 +95,7 @@ public abstract class ImageIOWriter extends FormatWriter {
     currentId = null;
   }
 
-  /** Reports whether the writer can save multiple images to a single file. */
+  /* @see loci.formats.IFormatWriter#canDoStacks(String) */ 
   public boolean canDoStacks(String id) { return false; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */

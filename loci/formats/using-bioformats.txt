@@ -127,13 +127,6 @@ to write files using Bio-Formats.
 
 Following is a list of known oddities.
 
-o While the IFormatReader API provides methods to read a byte array or
-  BufferedImage, the IFormatWriter API only accepts a java.awt.Image.
-  For completeness, we should add a method to IFormatWriter that accepts an
-  array of bytes for writing.  The only reason for not doing so is that no
-  one has needed this feature (yet).  If you think this would be useful,
-  it can be added.
-
 o IFormatWriter accepts Image objects, and not BufferedImages; yet all writers
   convert the Image to a BufferedImage.  You can still pass in a
   BufferedImage, but you are free to pass in any Image object.

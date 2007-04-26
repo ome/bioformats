@@ -38,6 +38,13 @@ public interface IFormatWriter extends IFormatHandler {
   void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException;
 
+  /**
+   * Saves the given byte array to the specified (possibly already open) file.
+   * If this is the last array to be written, the last flag must be set.
+   */
+  void saveBytes(String id, byte[] bytes, boolean last)
+    throws FormatException, IOException;
+
   /** Closes open files. */
   void close() throws FormatException, IOException;
 

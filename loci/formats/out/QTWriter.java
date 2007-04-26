@@ -149,6 +149,13 @@ public class QTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
+  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
+  public void saveBytes(String id, byte[] bytes, boolean last)
+    throws FormatException, IOException
+  {
+    throw new FormatException("Not implemented yet.");
+  }
+
   /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
   public void saveImage(String id, Image image, boolean last)
     throws FormatException, IOException

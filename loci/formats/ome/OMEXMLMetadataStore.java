@@ -155,7 +155,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
    * @param n the index of the element. If <code>null</code> the default index
    * of 0 will be used.
    */
-  public String getDescription(String description, Integer n) {
+  public String getDescription(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Image", "Description", ndx);
   }

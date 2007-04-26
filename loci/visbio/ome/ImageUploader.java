@@ -24,10 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import java.util.*;
+import loci.formats.FormatTools;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
-import loci.formats.ome.OMEUploader;
-import loci.formats.ome.UploadException;
+import loci.formats.ome.OMEWriter;
+import loci.formats.ome.OMEXMLMetadataStore;
 
 /**
  * ImageUploader is a helper class for uploading VisBio datasets
@@ -55,11 +56,31 @@ public class ImageUploader {
     String server, String username, String password)
   {
     try {  
-      OMEUploader ul = new OMEUploader(server, username, password);
-      String[] ids = data.getFilenames();
-      ul.uploadFile(ids[0], true);
+      OMEWriter writer = new OMEWriter();
+      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      store.setRoot(data.getOMENode());
+      writer.setMetadataStore(store);
+  
+      String id = server + "?user=" + username + "&password=" + password;
+
+      int numFiles = data.getFilenames().length;
+      int numImages = data.getImagesPerSource();
+
+      for (int i=0; i<numFiles; i++) {
+        for (int j=0; j<numImages; j++) {
+          int[] coords = FormatTools.getZCTCoords(store.getDimensionOrder(null),
+            store.getSizeZ(null).intValue(), store.getSizeC(null).intValue(), 
+            store.getSizeT(null).intValue(), 
+            numImages*numFiles, numImages*i + j);
+          writer.saveImage(id, 
+            data.getImage(new int[] {coords[0], coords[1], coords[2], j}), 
+            (i == numFiles - 1) && (j == numImages - 1));
+        }
+      }
+
+      writer.close();
     }
-    catch (UploadException exc) {
+    catch (Exception exc) {
       notifyListeners(new StatusEvent(1, 1,
         "Error uploading (see error console for details)"));
       exc.printStackTrace();

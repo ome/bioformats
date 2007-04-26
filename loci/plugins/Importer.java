@@ -39,7 +39,6 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.Box;
-import javax.swing.JFrame;
 import loci.formats.*;
 import loci.formats.ome.OMEReader;
 import loci.formats.ome.OMEXMLMetadataStore;
