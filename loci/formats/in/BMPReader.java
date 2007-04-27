@@ -138,6 +138,7 @@ public class BMPReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    assertId(true, 1);
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       core.sizeC[0], false);
   }
