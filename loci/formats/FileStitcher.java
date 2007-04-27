@@ -30,9 +30,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
- * Logic to stitch together files with similar names. Stitches based on the
- * first series for each file, and assumes that all files have the same
- * dimensions.
+ * Logic to stitch together files with similar names.
+ * Assumes that all files have the same dimensions.
  */
 public class FileStitcher implements IFormatReader {
 
@@ -324,7 +323,7 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isOrderCertain() */
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 2); 
-    return ag[getSeries()].isCertain();
+    return core.orderCertain[getSeries()];
   }
 
   /* @see IFormatReader#isInterleaved() */
@@ -344,7 +343,6 @@ public class FileStitcher implements IFormatReader {
     FormatTools.assertId(currentId, true, 2); 
     int[] q = computeIndices(no);
     int fno = q[0], ino = q[1];
-    readers[fno].setId(files[fno]);
     if (ino < readers[fno].getImageCount()) {
       return readers[fno].openImage(ino);
     }
@@ -363,7 +361,6 @@ public class FileStitcher implements IFormatReader {
     FormatTools.assertId(currentId, true, 2); 
     int[] q = computeIndices(no);
     int fno = q[0], ino = q[1];
-    readers[fno].setId(files[fno]);
     if (ino < readers[fno].getImageCount()) {
       return readers[fno].openBytes(ino);
     }
@@ -385,7 +382,6 @@ public class FileStitcher implements IFormatReader {
     FormatTools.assertId(currentId, true, 2); 
     int[] q = computeIndices(no);
     int fno = q[0], ino = q[1];
-    readers[fno].setId(files[fno]);
     return readers[fno].openBytes(ino, buf);
   }
 
@@ -396,7 +392,6 @@ public class FileStitcher implements IFormatReader {
     FormatTools.assertId(currentId, true, 2); 
     int[] q = computeIndices(no);
     int fno = q[0], ino = q[1];
-    readers[fno].setId(files[fno]);
     if (ino < readers[fno].getImageCount()) {
       return readers[fno].openThumbImage(ino);
     }
@@ -415,7 +410,6 @@ public class FileStitcher implements IFormatReader {
     FormatTools.assertId(currentId, true, 2); 
     int[] q = computeIndices(no);
     int fno = q[0], ino = q[1];
-    readers[fno].setId(files[fno]);
     if (ino < readers[fno].getImageCount()) {
       return readers[fno].openThumbBytes(ino);
     }
@@ -738,7 +732,6 @@ public class FileStitcher implements IFormatReader {
     }
 
     reader.setId(files[0]);
-    core = reader.getCoreMetadata();
 
     int seriesCount = reader.getSeriesCount();
     ag = new AxisGuesser[seriesCount];
@@ -756,14 +749,28 @@ public class FileStitcher implements IFormatReader {
     lenT = new int[seriesCount][];
 
     // analyze first file; assume each file has the same parameters
+    core = new CoreMetadata(seriesCount);
     int oldSeries = reader.getSeries();
     for (int i=0; i<seriesCount; i++) {
       reader.setSeries(i);
       core.sizeX[i] = reader.getSizeX();
       core.sizeY[i] = reader.getSizeY();
+      // NB: core.sizeZ populated in computeAxisLengths below
+      // NB: core.sizeC populated in computeAxisLengths below
+      // NB: core.sizeT populated in computeAxisLengths below
+      core.pixelType[i] = reader.getPixelType();
       imagesPerFile[i] = reader.getImageCount();
       core.imageCount[i] = files.length * imagesPerFile[i];
+      core.thumbSizeX[i] = reader.getThumbSizeX();
+      core.thumbSizeY[i] = reader.getThumbSizeY();
+      core.cLengths[i] = reader.getChannelDimLengths();
+      core.cTypes[i] = reader.getChannelDimTypes();
       core.currentOrder[i] = reader.getDimensionOrder();
+      // NB: core.orderCertain[i] populated below
+      core.rgb[i] = reader.isRGB();
+      core.littleEndian[i] = reader.isLittleEndian();
+      core.interleaved[i] = reader.isInterleaved();
+      core.seriesMetadata[i] = reader.getMetadata();
       sizeZ[i] = reader.getSizeZ();
       sizeC[i] = reader.getSizeC();
       sizeT[i] = reader.getSizeT();
@@ -781,6 +788,7 @@ public class FileStitcher implements IFormatReader {
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       core.currentOrder[i] = ag[i].getAdjustedOrder();
+      core.orderCertain[i] = ag[getSeries()].isCertain();
     }
     setSeries(oldSeries);
 
@@ -870,14 +878,14 @@ public class FileStitcher implements IFormatReader {
           i + ": " + axes[i]);
       }
     }
+
     int fno = FormatTools.positionToRaster(count, pos);
-    int ino = FormatTools.getIndex(core.currentOrder[sno], sizeZ[sno],
-      reader.getEffectiveSizeC(), sizeT[sno], imagesPerFile[sno],
-      posZ[0], posC[0], posT[0]);
 
     // configure the reader, in case we haven't done this one yet
     readers[fno].setId(files[fno]);
     readers[fno].setSeries(reader.getSeries());
+
+    int ino = FormatTools.getIndex(readers[fno], posZ[0], posC[0], posT[0]);
 
     return new int[] {fno, ino};
   }
