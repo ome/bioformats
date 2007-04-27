@@ -62,6 +62,7 @@ public class ImageUploader {
       writer.setMetadataStore(store);
   
       String id = server + "?user=" + username + "&password=" + password;
+      writer.setId(id);
 
       int numFiles = data.getFilenames().length;
       int numImages = data.getImagesPerSource();
@@ -72,9 +73,9 @@ public class ImageUploader {
             store.getSizeZ(null).intValue(), store.getSizeC(null).intValue(), 
             store.getSizeT(null).intValue(), 
             numImages*numFiles, numImages*i + j);
-          writer.saveImage(id, 
+          writer.saveImage(
             data.getImage(new int[] {coords[0], coords[1], coords[2], j}), 
-            (i == numFiles - 1) && (j == numImages - 1));
+            i == numFiles - 1 && j == numImages - 1);
         }
       }
 

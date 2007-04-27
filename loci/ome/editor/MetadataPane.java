@@ -318,7 +318,7 @@ public class MetadataPane extends JPanel
             (javax.swing.Icon)null,
             options,
             options[0]);
-    if(n == JOptionPane.YES_OPTION) saveCompanionFile(file);
+    if (n == JOptionPane.YES_OPTION) saveCompanionFile(file);
   }
 
   /** Save to the given file.*/
@@ -326,7 +326,7 @@ public class MetadataPane extends JPanel
     try {
       //use the node tree in the MetadataPane to write flattened OMECA
       //to a given file
-      if(testThirdParty(file)) {
+      if (testThirdParty(file)) {
         askCompanionInstead(file);
         return;
       }
@@ -364,26 +364,26 @@ public class MetadataPane extends JPanel
     }
   }
 
-  public void saveCompanionFile(File file) throws RuntimeException {
+  public void saveCompanionFile(File file) {
     File compFile = new File(file.getPath() + ".ome");
     if (compFile.exists()) compFile.delete();
     try {
       thisOmeNode.writeOME(compFile, false);
     }
     catch (Exception exc) {
-      if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+      if (exc instanceof RuntimeException) throw (RuntimeException) exc;
       else exc.printStackTrace();
     }
   }
 
-  public void saveTiffFile(File file) throws RuntimeException{
-    if(originalTIFF != null && originalTIFF.equals(file)) saveFile(file);
+  public void saveTiffFile(File file) {
+    if (originalTIFF != null && originalTIFF.equals(file)) saveFile(file);
     else {
       String id = currentFile.getPath();
       String outId = id + ".tif";
       File outFile = new File(outId);
-      if(outFile.exists()) outFile.delete();
-      if(reader == null) reader = new ImageReader();
+      if (outFile.exists()) outFile.delete();
+      if (reader == null) reader = new ImageReader();
       TiffWriter writer = new TiffWriter();
 
       int imageCount = 0;
@@ -395,8 +395,8 @@ public class MetadataPane extends JPanel
         reader.setId(id); 
         imageCount = reader.getImageCount();
       }
-      catch(Exception exc) {
-        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+      catch (Exception exc) {
+        if (exc instanceof RuntimeException) throw (RuntimeException) exc;
         else exc.printStackTrace();
       }
 
@@ -406,8 +406,8 @@ public class MetadataPane extends JPanel
         try {
           plane = reader.openImage(i);
         }
-        catch(Exception exc) {
-          if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+        catch (Exception exc) {
+          if (exc instanceof RuntimeException) throw (RuntimeException) exc;
           else exc.printStackTrace();
         }
 
@@ -420,10 +420,11 @@ public class MetadataPane extends JPanel
         // write plane to output file
 
         try {
-          writer.saveImage(outId, plane, ifd, i == imageCount - 1);
+          writer.setId(outId);
+          writer.saveImage(plane, ifd, i == imageCount - 1);
         }
-        catch(Exception exc) {
-          if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+        catch (Exception exc) {
+          if (exc instanceof RuntimeException) throw (RuntimeException) exc;
           else exc.printStackTrace();
         }
       }
@@ -435,11 +436,11 @@ public class MetadataPane extends JPanel
     }
   }
 
-  public void saveTiffFile(File file, String outId) throws RuntimeException{
+  public void saveTiffFile(File file, String outId) {
     String id = currentFile.getPath();
     File outFile = new File(outId);
-    if(outFile.exists()) outFile.delete();
-    if(reader == null) reader = new ImageReader();
+    if (outFile.exists()) outFile.delete();
+    if (reader == null) reader = new ImageReader();
     TiffWriter writer = new TiffWriter();
 
     int imageCount = 0;
@@ -451,8 +452,8 @@ public class MetadataPane extends JPanel
       reader.setId(id);
       imageCount = reader.getImageCount();
     }
-    catch(Exception exc) {
-      if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+    catch (Exception exc) {
+      if (exc instanceof RuntimeException) throw (RuntimeException) exc;
       else exc.printStackTrace();
     }
 
@@ -462,8 +463,8 @@ public class MetadataPane extends JPanel
       try {
         plane = reader.openImage(i);
       }
-      catch(Exception exc) {
-        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+      catch (Exception exc) {
+        if (exc instanceof RuntimeException) throw (RuntimeException) exc;
         else exc.printStackTrace();
       }
 
@@ -476,10 +477,11 @@ public class MetadataPane extends JPanel
       // write plane to output file
 
       try {
-        writer.saveImage(outId, plane, ifd, i == imageCount - 1);
+        writer.setId(outId);
+        writer.saveImage(plane, ifd, i == imageCount - 1);
       }
-      catch(Exception exc) {
-        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+      catch (Exception exc) {
+        if (exc instanceof RuntimeException) throw (RuntimeException) exc;
         else exc.printStackTrace();
       }
     }
@@ -490,7 +492,7 @@ public class MetadataPane extends JPanel
     }
   }
 
-  public void merge() throws RuntimeException {
+  public void merge() {
     if (currentFile != null) {
       String id = currentFile.getPath();
       ImageReader read = new ImageReader();
@@ -503,8 +505,8 @@ public class MetadataPane extends JPanel
         int imageCount = read.getImageCount();
 //        BufferedImage whatever = reader.openImage(id, imageCount/2);
       }
-      catch(Exception exc) {
-        if(exc instanceof RuntimeException) throw (RuntimeException)exc;
+      catch (Exception exc) {
+        if (exc instanceof RuntimeException) throw (RuntimeException) exc;
         else exc.printStackTrace();
       }
       OMENode ome = (OMENode)oms.getRoot();
@@ -609,7 +611,7 @@ public class MetadataPane extends JPanel
     }
 
     //creating tiffData from non-OME-Tiff
-    if(!isOMETiff) {
+    if (!isOMETiff) {
       for(int i = 0; i<pixList.size(); i++) {
         Element thisEle = (Element) pixList.get(i);
         DOMUtil.createChild(thisEle, "TiffData");
@@ -626,8 +628,8 @@ public class MetadataPane extends JPanel
         Vector dataEles = (Vector) tiffDataStore.get(thisID);
 
         //fixes if TiffData Elements not in File but should be
-        if(dataEles.size() == 0) {
-          if(!prompted) {
+        if (dataEles.size() == 0) {
+          if (!prompted) {
             Object[] options =
               {"Sounds good", "Cancel (Nothing bad will happen)"};
 
@@ -646,7 +648,7 @@ public class MetadataPane extends JPanel
               prompted = true;
           }
 
-          if(addElements) {
+          if (addElements) {
             DOMUtil.createChild(thisEle, "TiffData");
             continue;
           }
@@ -765,7 +767,7 @@ public class MetadataPane extends JPanel
         fileID = id;
         currentFile = file;
         File companionFile = new File(id + ".ome");
-        if(companionFile.exists()) {
+        if (companionFile.exists()) {
           Object[] options = {"Sounds good", "No, open original file"};
 
           int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
@@ -802,13 +804,13 @@ public class MetadataPane extends JPanel
         }
         ome = (OMENode) ms.getRoot();
 
-        if(doMerge) {
+        if (doMerge) {
           Merger merge = new Merger(ome, companionFile, this);
           ome = merge.getRoot();
         }
 
         //handle if tiff after reader has been constructed
-        if(originalTIFF != null) {
+        if (originalTIFF != null) {
           isOMETiff = checkOMETiff(file);
           storeTiffData(file);
         }
@@ -841,17 +843,17 @@ public class MetadataPane extends JPanel
               pixelsIDProblem = true;
               break;
             }
-            if(lowestInt == -1) {
+            if (lowestInt == -1) {
               lowestInt = pixNum;
               continue;
             }
-            if(lowestInt > pixNum) lowestInt = pixNum;
+            if (lowestInt > pixNum) lowestInt = pixNum;
           }
 
           minPixNum = lowestInt;
-          if(minPixNum == -1) pixelsIDProblem = true;
+          if (minPixNum == -1) pixelsIDProblem = true;
         }
-        catch(Exception exc) { exc.printStackTrace(); }
+        catch (Exception exc) { exc.printStackTrace(); }
 
         if (pixList.size() == 1) pixelsIDProblem = false;
 
@@ -961,7 +963,7 @@ public class MetadataPane extends JPanel
     thumb = null;
     internalDefs = new Hashtable();
     try { thisOmeNode = new OMENode(); }
-    catch(Exception e) { e.printStackTrace(); }
+    catch (Exception e) { e.printStackTrace(); }
 
     //use the list acquired from Template.xml to form the initial tabs
     Element[] tabList = tParse.getTabs();
@@ -1918,7 +1920,7 @@ public class MetadataPane extends JPanel
 
       imageLabel = null;
       if (name.endsWith("Pixels")) {
-        if(pixelsIDProblem || on == null) {
+        if (pixelsIDProblem || on == null) {
           if (thumb != null && !pixelsIDProblem) {
             tableThumb = thumb;
             tableImage = img;

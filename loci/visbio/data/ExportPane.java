@@ -245,7 +245,10 @@ public class ExportPane extends WizardPane {
                 DataUtility.extractImage(ff, false);
               task.setStatus(count++, max,
                 "Writing #" + (i + 1) + "/" + numTotal);
-              if (tiffSaver == null) saver.saveImage(filename, image, true);
+              if (tiffSaver == null) {
+                saver.setId(filename);
+                saver.saveImage(image, true);
+              }
               else {
                 // save image to TIFF file
                 Hashtable ifd = new Hashtable();
@@ -257,7 +260,8 @@ public class ExportPane extends WizardPane {
                   // do horizontal differencing
                   TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                 }
-                tiffSaver.saveImage(filename, image, ifd, true);
+                tiffSaver.setId(filename);
+                tiffSaver.saveImage(image, ifd, true);
               }
             }
             else {
@@ -273,7 +277,10 @@ public class ExportPane extends WizardPane {
                 task.setStatus(count++, max,
                   "Writing #" + img + "/" + numTotal);
                 boolean last = j == lengths[excl] - 1;
-                if (tiffSaver == null) saver.saveImage(filename, image, last);
+                if (tiffSaver == null) {
+                  saver.setId(filename);
+                  saver.saveImage(image, last);
+                }
                 else {
                   // save image to TIFF file
                   Hashtable ifd = new Hashtable();
@@ -285,7 +292,8 @@ public class ExportPane extends WizardPane {
                     // do horizontal differencing
                     TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                   }
-                  tiffSaver.saveImage(filename, image, ifd, last);
+                  tiffSaver.setId(filename);
+                  tiffSaver.saveImage(image, ifd, last);
                 }
               }
             }

@@ -246,7 +246,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       // read SDT file header
       SDTReader reader = new SDTReader();
-      SDTInfo info = reader.getInfo(file.getPath());
+      reader.setId(file.getPath());
+      SDTInfo info = reader.getInfo();
       reader.close();
       int offset = info.dataBlockOffs + 22;
       width = info.width;

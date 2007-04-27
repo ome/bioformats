@@ -318,13 +318,14 @@ public class MovieStitcher extends JFrame implements
       String s = file.getPath();
       output.setText(s);
       try {
-        if (!writer.canDoStacks(s)) {
+        writer.setId(s);
+        if (!writer.canDoStacks()) {
           includeZ.setEnabled(false);
           includeT.setEnabled(false);
           includeC.setEnabled(false);
         }
         codec.removeAllItems();
-        String[] codecs = writer.getWriter(s).getCompressionTypes();
+        String[] codecs = writer.getWriter().getCompressionTypes();
         if (codecs == null) codecs = new String[] {"Uncompressed"};
         for (int i=0; i<codecs.length; i++) {
           codec.addItem(codecs[i]);
@@ -493,8 +494,9 @@ public class MovieStitcher extends JFrame implements
       // determine appropriate pixel type
 
       int type = swap.getPixelType();
-      if (force && !writer.isSupportedType(out, type)) {
-        int[] types = writer.getPixelTypes(out);
+      writer.setId(out);
+      if (force && !writer.isSupportedType(type)) {
+        int[] types = writer.getPixelTypes();
         for (int i=0; i<types.length; i++) {
           if (types[i] > type) {
             if (i == 0) {
@@ -509,7 +511,7 @@ public class MovieStitcher extends JFrame implements
           if (i == types.length - 1) type = types[i];
         }
       }
-      else if (!force && !writer.isSupportedType(out, type)) {
+      else if (!force && !writer.isSupportedType(type)) {
         throw new FormatException("Unsupported pixel type: " + 
           FormatTools.getPixelTypeString(type) +
           "\nTo write to this format, the \"force\" box must be checked.\n" +
@@ -573,9 +575,8 @@ public class MovieStitcher extends JFrame implements
                   int ndx = swap.getIndex(zPos, cPos, tPos);
 
                   BufferedImage img = swap.openImage(ndx);
-                  if (force && 
-                    !writer.isSupportedType(out, swap.getPixelType())) 
-                  {
+                  writer.setId(out);
+                  if (force && !writer.isSupportedType(swap.getPixelType())) {
                     int pixelType = 0;
                     switch (type) {
                       case FormatTools.INT8:
@@ -602,8 +603,8 @@ public class MovieStitcher extends JFrame implements
                     img = ImageTools.makeType(img, pixelType);
                   }
 
-                  writer.saveImage(outFile, img, shutdown || 
-                    (filePlane == planesPerFile));
+                  writer.setId(outFile);
+                  writer.saveImage(img, shutdown || filePlane == planesPerFile);
                   if (shutdown) break;
                 }
               }

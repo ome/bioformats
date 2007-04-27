@@ -85,6 +85,7 @@ public class Exporter {
 
     try {
       IFormatWriter w = new ImageWriter().getWriter(outfile);
+      w.setId(outfile);
 
       // prompt for options
 
@@ -95,24 +96,21 @@ public class Exporter {
       int thisType = ImageTools.getPixelType((BufferedImage) firstImage);
       boolean forceType = false;
 
-      if ((codecs != null && codecs.length > 1) ||
-        !w.isSupportedType(null, thisType))
-      {
+      boolean notSupportedType = !w.isSupportedType(thisType);
+      if ((codecs != null && codecs.length > 1) || notSupportedType) {
         GenericDialog gd =
           new GenericDialog("LOCI Bio-Formats Exporter Options");
         if (codecs != null) {
           gd.addChoice("Compression type: ", codecs, codecs[0]);
         }
-        if (!w.isSupportedType(null, thisType)) {
+        if (notSupportedType) {
           gd.addCheckbox("Force compatible pixel type", true);
         }
         gd.showDialog();
         if (gd.wasCanceled()) return;
 
         if (codecs != null) w.setCompression(gd.getNextChoice());
-        if (!w.isSupportedType(null, thisType)) {
-          forceType = gd.getNextBoolean();
-        }
+        if (notSupportedType) forceType = gd.getNextBoolean();
       }
 
       // convert and save each slice
@@ -146,13 +144,13 @@ public class Exporter {
         }
 
         if (forceType) {
-          if (!w.isSupportedType(null, thisType)) {
-            int[] types = w.getPixelTypes(null);
+          if (notSupportedType) {
+            int[] types = w.getPixelTypes();
             img = ImageTools.makeType(img, types[types.length - 1]);
           }
-          w.saveImage(outfile, img, i == is.getSize() - 1);
+          w.saveImage(img, i == is.getSize() - 1);
         }
-        else w.saveImage(outfile, img, i == is.getSize() - 1);
+        else w.saveImage(img, i == is.getSize() - 1);
       }
     }
     catch (FormatException e) {
