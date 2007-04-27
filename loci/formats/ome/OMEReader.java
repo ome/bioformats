@@ -50,9 +50,6 @@ public class OMEReader extends FormatReader {
   /** String containing authentication information. */
   private String loginString;
 
-  /** Number of images. */
-  private int numImages;
-
   /** Current server. */
   private String server;
 
@@ -165,7 +162,14 @@ public class OMEReader extends FormatReader {
     core.pixelType[0] = FormatTools.pixelTypeFromString(pixels.getPixelType());
     core.currentOrder[0] = "XYZCT";
 
-    numImages = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    core.rgb[0] = false;
+
+    core.thumbSizeX[0] = thumb.getWidth();
+    core.thumbSizeY[0] = thumb.getHeight();
+
+    core.littleEndian[0] = true;
+    core.interleaved[0] = false;
 
     MetadataStore store = getMetadataStore();
     store.setPixels(
@@ -175,7 +179,7 @@ public class OMEReader extends FormatReader {
       new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]),
       new Integer(core.pixelType[0]),
-      new Boolean(!isLittleEndian()),
+      new Boolean(!core.littleEndian[0]),
       core.currentOrder[0],
       null,
       null);
@@ -191,39 +195,9 @@ public class OMEReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#getImageCount() */
-  public int getImageCount() {
-    return numImages;
-  }
-
-  /* @see loci.formats.IFormatReader#isRGB() */
-  public boolean isRGB() {
-    return false;
-  }
-
-  /* @see loci.formats.IFormatReader#getThumbSizeX() */
-  public int getThumbSizeX() {
-    return thumb.getWidth();
-  }
-
-  /* @see loci.formats.IFormatReader#getThumbSizeY() */
-  public int getThumbSizeY() {
-    return thumb.getHeight();
-  }
-
-  /* @see loci.formats.IFormatReader#isLittleEndian() */
-  public boolean isLittleEndian() {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isInterleaved(int) */
-  public boolean isInterleaved(int subC) {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    if (no < 0 || no >= numImages) {
+    if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }
     int[] indices = getZCTCoords(no);
@@ -245,7 +219,7 @@ public class OMEReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (no < 0 || no >= numImages) {
+    if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }
     byte[][] b = ImageTools.getPixelBytes(openThumbImage(no), true);
@@ -260,7 +234,7 @@ public class OMEReader extends FormatReader {
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    if (no < 0 || no >= numImages) {
+    if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }
     return thumb;
