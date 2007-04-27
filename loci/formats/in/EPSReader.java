@@ -210,6 +210,8 @@ public class EPSReader extends FormatReader {
 
     if (bps == 0) bps = 8;
 
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+
     core.sizeZ[0] = 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";

@@ -259,7 +259,7 @@ public class QTReader extends FormatReader {
       bytes = new byte[prevPixels.length - core.sizeY[0]*pad];
 
       for (int row=0; row<core.sizeY[0]; row++) {
-        System.arraycopy(prevPixels, row*(core.sizeY[0]+pad), bytes,
+        System.arraycopy(prevPixels, row*(core.sizeX[0]+pad), bytes,
           row*core.sizeX[0], core.sizeX[0]);
       }
     }

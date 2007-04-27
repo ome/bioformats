@@ -61,6 +61,7 @@ public class AVIReader extends FormatReader {
   private byte[] pr = null;
   private byte[] pg = null;
   private byte[] pb = null;
+  private boolean isRLE = false;
 
   // -- Constructor --
 
@@ -94,7 +95,7 @@ public class AVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf =
-      new byte[core.sizeX[0] * bmpScanLineSize * (bmpBitsPerPixel / 8)];
+      new byte[core.sizeY[0] * bmpScanLineSize * (bmpBitsPerPixel / 8)];
     return openBytes(no, buf);
   }
 
@@ -113,9 +114,17 @@ public class AVIReader extends FormatReader {
     long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek(fileOff);
 
+    if (isRLE) {
+      long nextOff = no < core.imageCount[0] - 1 ? 
+        ((Long) offsets.get(no + 1)).longValue() : in.length();    
+      byte[] b = new byte[(int) (nextOff - fileOff)];
+      in.read(b);
+      return decodeRLE(b);
+    }
+
     int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
     int scanline = core.sizeX[0] * (bmpBitsPerPixel / 8);
-
+    
     for (int i=core.sizeY[0] - 1; i>=0; i--) {
       in.read(buf, i*scanline, scanline);
       if (bmpBitsPerPixel != 8) {
@@ -302,7 +311,12 @@ public class AVIReader extends FormatReader {
                   }
                 }
 
-                if (bmpCompression != 0) {
+                if (bmpCompression == 1) {
+                  // MS RLE compression scheme
+
+                  isRLE = true;
+                } 
+                else if (bmpCompression != 0) {
                   whine("Sorry, compressed AVI files not supported.");
                 }
 
@@ -382,8 +396,8 @@ public class AVIReader extends FormatReader {
                 if (type.substring(2).equals("db") ||
                   type.substring(2).equals("dc"))
                 {
-                  offsets.add(new Long(in.getFilePointer()));
-                  in.skipBytes(core.sizeY[0] * bmpScanLineSize);
+                  if (size > 1000) offsets.add(new Long(in.getFilePointer()));
+                  in.skipBytes(size);
                 }
 
                 spos = in.getFilePointer();
@@ -455,6 +469,73 @@ public class AVIReader extends FormatReader {
       store.setLogicalChannel(i, null, null, null, null,
         core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
     }
+  }
+
+  /** Decodes an RLE-encoded frame. */
+  private byte[] decodeRLE(byte[] in) {
+    /* debug */ System.out.println("decoding input stream (" + in.length + ")"); 
+    
+    int pt = 0;
+    int code = 0;
+    int extra = 0;
+    byte stream = 0;
+
+    int pixelPt = 0;
+    int row = core.sizeX[0] * core.sizeC[0];
+    int rowPt = (core.sizeY[0] - 1) * row;
+    int frameSize = core.sizeY[0] * row;
+
+    byte[] output = new byte[frameSize];
+
+    while (rowPt >= 0) {
+      code = stream;
+
+      if (code == 0) {
+        stream = in[pt++];
+        if (stream == 0) {
+          rowPt -= row;
+          pixelPt = 0;
+        }
+        else if (stream == 1) return output; 
+        else if (stream == 2) {
+          stream = in[pt++];
+          pixelPt += stream;
+          stream = in[pt++];
+          rowPt -= stream * row;
+        }
+        else {
+          if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
+            return output;
+          }
+          
+          code = stream;
+          extra = stream & 0x01;
+          if (stream + code + extra > in.length) return output;
+
+          while (code-- > 0) {
+            stream = in[pt++];
+            output[rowPt + pixelPt] = stream;
+            pixelPt++;
+          }
+        
+          if (extra != 0) pt++; 
+        }
+      }
+      else {
+        if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
+          return output;
+        }
+           
+        stream = in[pt++];
+       
+        while (code-- > 0) {
+          output[rowPt + pixelPt] = stream;
+          pixelPt++;
+        }
+      }
+    }
+
+    return output; 
   }
 
 }
