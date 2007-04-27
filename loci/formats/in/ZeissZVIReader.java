@@ -119,14 +119,14 @@ public class ZeissZVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 1); 
+    FormatTools.assertId(currentId, false, 1);
     super.setMetadataStore(store);
     if (noPOI || needLegacy) legacy.setMetadataStore(store);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount()];
     return openBytes(no, buf);
@@ -136,7 +136,7 @@ public class ZeissZVIReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (noPOI || needLegacy) return legacy.openBytes(no, buf);
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
@@ -185,7 +185,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       getRGBChannelCount(), true, bpp == 3 ? 1 : bpp, true,
       validBits);

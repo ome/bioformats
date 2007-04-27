@@ -50,7 +50,7 @@ public class ChannelMerger extends ReaderWrapper {
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     int no = reader.getImageCount();
     if (canMerge()) no /= getSizeC();
     return no;
@@ -58,7 +58,7 @@ public class ChannelMerger extends ReaderWrapper {
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     String order = reader.getDimensionOrder();
     if (canMerge()) {
       StringBuffer sb = new StringBuffer(order);
@@ -74,13 +74,13 @@ public class ChannelMerger extends ReaderWrapper {
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return canMerge() || reader.isRGB();
   }
 
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     if (!canMerge()) return super.openImage(no);
     int sizeC = getSizeC();
     int[] nos = getZCTCoords(no);
@@ -103,7 +103,7 @@ public class ChannelMerger extends ReaderWrapper {
    * For convenience, the channels are sequential, i.e. "RRR...GGG...BBB".
    */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     if (!canMerge()) return super.openBytes(no);
     int sizeC = getSizeC();
     int[] nos = getZCTCoords(no);
@@ -127,7 +127,7 @@ public class ChannelMerger extends ReaderWrapper {
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     if (!canMerge()) return super.openThumbImage(no);
     return ImageTools.scale(openImage(no), getThumbSizeX(),
       getThumbSizeY(), true);

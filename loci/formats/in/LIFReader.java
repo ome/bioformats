@@ -73,7 +73,7 @@ public class LIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     bpp = bitsPerPixel[series];
     while (bpp % 8 != 0) bpp++;
     byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] *
@@ -85,7 +85,7 @@ public class LIFReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -108,7 +108,7 @@ public class LIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], isRGB() ? core.sizeC[series] : 1, false, bpp / 8,
       core.littleEndian[series], validBits[series]);

@@ -181,49 +181,49 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.imageCount[series];
   }
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.rgb[series];
   }
 
   /* @see IFormatReader#getSizeX() */
   public int getSizeX() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.sizeX[series];
   }
 
   /* @see IFormatReader#getSizeY() */
   public int getSizeY() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.sizeY[series];
   }
 
   /* @see IFormatReader#getSizeZ() */
   public int getSizeZ() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.sizeZ[series];
   }
 
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.sizeC[series];
   }
 
   /* @see IFormatReader#getSizeT() */
   public int getSizeT() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.sizeT[series];
   }
 
   /* @see IFormatReader#getPixelType() */
   public int getPixelType() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.pixelType[series];
   }
 
@@ -240,7 +240,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (core.cLengths[series] == null) {
       core.cLengths[series] = new int[] {core.sizeC[series]};
     }
@@ -249,7 +249,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (core.cTypes[series] == null) {
       core.cTypes[series] = new String[] {FormatTools.CHANNEL};
     }
@@ -258,7 +258,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (core.thumbSizeX[series] == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
@@ -270,7 +270,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getThumbSizeY() */
   public int getThumbSizeY() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (core.thumbSizeY[series] == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
@@ -282,19 +282,19 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader.isLittleEndian() */
   public boolean isLittleEndian() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.littleEndian[series];
   }
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.currentOrder[series];
   }
 
   /* @see IFormatReader.isOrderCertain() */
   public boolean isOrderCertain() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.orderCertain[series];
   }
 
@@ -305,7 +305,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.interleaved[series];
   }
 
@@ -320,14 +320,14 @@ public abstract class FormatReader extends FormatHandler
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return ImageTools.scale(openImage(no), getThumbSizeX(),
       getThumbSizeY(), false);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     BufferedImage img = openThumbImage(no);
     byte[][] bytes = ImageTools.getBytes(img);
     if (bytes.length == 1) return bytes[0];
@@ -348,7 +348,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core.sizeX.length;
   }
 
@@ -367,7 +367,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
-    FormatTools.assertId(currentId, false, 1); 
+    FormatTools.assertId(currentId, false, 1);
     if (currentId != null) {
       String s = "setNormalized called with open file.";
       if (debug && debugLevel >= 2) trace(s);
@@ -383,7 +383,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setMetadataCollected(boolean) */
   public void setMetadataCollected(boolean collect) {
-    FormatTools.assertId(currentId, false, 1); 
+    FormatTools.assertId(currentId, false, 1);
     if (currentId != null) {
       String s = "setMetadataCollected called with open file.";
       if (debug && debugLevel >= 2) trace(s);
@@ -399,7 +399,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return new String[] {currentId};
   }
 
@@ -410,37 +410,37 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getIndex(int, int, int) */
   public int getIndex(int z, int c, int t) throws FormatException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
   public int[] getZCTCoords(int index) throws FormatException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return FormatTools.getZCTCoords(this, index);
   }
 
   /* @see IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return getMeta(field);
   }
 
   /* @see IFormatReader#getMetadata() */
   public Hashtable getMetadata() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return metadata;
   }
 
   /* @see IFormatReader#getCoreMetadata() */
   public CoreMetadata getCoreMetadata() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return core;
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
   public void setMetadataFiltered(boolean filter) {
-    FormatTools.assertId(currentId, false, 1); 
+    FormatTools.assertId(currentId, false, 1);
     if (currentId != null) {
       String s = "setMetadataFiltered called with open file.";
       if (debug && debugLevel >= 2) trace(s);
@@ -456,7 +456,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 1); 
+    FormatTools.assertId(currentId, false, 1);
     if (currentId != null) {
       String s = "setMetadataStore called with open file.";
       if (debug && debugLevel >= 2) trace(s);
@@ -472,7 +472,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getMetadataStoreRoot() */
   public Object getMetadataStoreRoot() {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     return getMetadataStore().getRoot();
   }
 

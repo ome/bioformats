@@ -39,37 +39,37 @@ public class DimensionSwapper extends ReaderWrapper {
 
   /* @see loci.formats.IFormatReader#getSizeX() */
   public int getSizeX() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return getCoreMetadata().sizeX[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeY() */
   public int getSizeY() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return getCoreMetadata().sizeY[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeZ() */
   public int getSizeZ() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return getCoreMetadata().sizeZ[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeC() */
   public int getSizeC() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return getCoreMetadata().sizeC[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getSizeT() */
   public int getSizeT() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return getCoreMetadata().sizeT[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return getCoreMetadata().currentOrder[getSeries()];
   }
 
@@ -82,7 +82,7 @@ public class DimensionSwapper extends ReaderWrapper {
    * positions 0 and 1 (although X and Y can be reversed).
    */
   public void swapDimensions(String order) {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     if (order == null) return;
 
     String oldOrder = getDimensionOrder();

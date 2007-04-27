@@ -615,7 +615,6 @@ public final class FormatTools {
       return false;
     }
 
-
     long start = System.currentTimeMillis();
     System.out.print(in + " ");
     ImageReader reader = new ImageReader();

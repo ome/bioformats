@@ -53,7 +53,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.isRGB() ?
       (getSizeC() / reader.getEffectiveSizeC()) * reader.getImageCount() :
       reader.getImageCount();
@@ -61,7 +61,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     String order = super.getDimensionOrder();
     if (reader.isRGB()) {
       String newOrder = "XYC";
@@ -73,14 +73,14 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /* @see IFormatReader#isRGB() */
-  public boolean isRGB() { 
-    FormatTools.assertId(getCurrentFile(), true, 2); 
-    return false; 
+  public boolean isRGB() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return false;
   }
 
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -123,7 +123,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -150,7 +150,7 @@ public class ChannelSeparator extends ReaderWrapper {
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    FormatTools.assertId(getCurrentFile(), true, 2); 
+    FormatTools.assertId(getCurrentFile(), true, 2);
     return ImageTools.scale(openImage(no), getThumbSizeX(),
       getThumbSizeY(), true);
   }
