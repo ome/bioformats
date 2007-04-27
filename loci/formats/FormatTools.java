@@ -245,6 +245,8 @@ public final class FormatTools {
         System.out.println("\t" + e.getStatusMessage());
       }
     });
+    
+    reader.close(); 
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(true);
     reader.setMetadataCollected(doMeta);

@@ -483,6 +483,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatHandler#close() */
   public void close() throws IOException {
+    currentId = null; 
     for (int i=0; i<readers.length; i++) readers[i].close();
   }
 
