@@ -257,6 +257,8 @@ public class OverlayTransform extends DataTransform
         obj.notes = orig.notes;
         obj.drawing = false;
         obj.selected = true;
+        if (obj instanceof OverlayText) 
+          ((OverlayText) obj).computeTextBounds();
         overlays[ndx].add(obj);
       }
     }
@@ -376,6 +378,8 @@ public class OverlayTransform extends DataTransform
         obj.notes = notes;
         obj.drawing = false;
         obj.selected = false;
+        if (obj instanceof OverlayText) 
+          ((OverlayText) obj).computeTextBounds();
 
         overlays[ndx].add(obj);
       }
@@ -698,6 +702,13 @@ public class OverlayTransform extends DataTransform
 
     // recompute grid boxes for text overlays
     // 4/24 removed computeGridParameters method
+    for (int j=0; j<overlays.length; j++) {
+      for (int i=0; i<overlays[j].size(); i++) {
+        OverlayObject obj = (OverlayObject) overlays[j].get(i);
+        if (obj instanceof OverlayText) 
+          ((OverlayText) obj).computeTextBounds();
+      }
+    }
 
     notifyListeners(new TransformEvent(this, TransformEvent.DATA_CHANGED));
   }

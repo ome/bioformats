@@ -22,12 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.util;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import loci.visbio.overlays.*;
 import loci.visbio.view.TransformLink;
 import visad.*;
+import visad.util.CursorUtil;
 
 /** Utility methods for Overlays */
 public final class OverlayUtil {
@@ -35,7 +35,7 @@ public final class OverlayUtil {
   // -- Constants -- 
 
   /** Width of the selection layer beyond the object's boundaries */
-  protected static final float GLOW_WIDTH = 1.0f;
+  protected static final float GLOW_WIDTH = 5.0f; // in pixels
 
   /** Alpha of the selection layer */
   protected static final float GLOW_ALPHA = 0.15f; 
@@ -111,7 +111,6 @@ public final class OverlayUtil {
     float x2 = obj.getX2();
     float y1 = obj.getY();
     float y2 = obj.getY2();
-
     // compute corners of arrow tail
     float padding = 0.02f * overlay.getScalingValue();
     double xx = x2 - x1;
@@ -136,8 +135,7 @@ public final class OverlayUtil {
     b = dist;
     c = Math.sqrt(a * a + b * b);
 
-    double scl = 1; // for now
-    double d = GLOW_WIDTH * scl;
+    double d = GLOW_WIDTH * getMultiplier(link);
 
     // compute four corners of highlighted zone
     float c1x = (float) (x1 - x[0] * d + y[0] * (d * c) / b);
@@ -187,21 +185,22 @@ public final class OverlayUtil {
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
-    float delta = GLOW_WIDTH;
     float x1 = obj.getX();
     float x2 = obj.getX2();
     float y1 = obj.getY();
     float y2 = obj.getY2();
+
+    float delta = GLOW_WIDTH * getMultiplier(link);
 
     // Determine orientation of (x1, y1) relative to (x2, y2)
     // and flip if need be.
     // I've set up the code in this section based on the 
     // supposition that the box is oriented like this:
     //
-    // (x1, y1) +--------+
+    //       p1 +--------+
     //          |        |
     //          |        |
-    //          +--------+ (x2, y2)
+    //          +--------+ p2
     //
     // which means x1 is supposed to be _less_ than x2, but inconsistently,
     // y1 is supposed to be _greater_ than y2.
@@ -216,7 +215,8 @@ public final class OverlayUtil {
     // just throw down a translucent rectangle over the box
     float[][] setSamples = {
       {xx1 - delta, xx2 + delta, xx1 - delta, xx2 + delta},
-      {yy1 + delta, yy1 + delta, yy2 - delta, yy2 - delta}};
+      {yy1 + delta, yy1 + delta, yy2 - delta, yy2 - delta}
+    };
     
     // construct range samples
     float[][] rangeSamples = new float[4][4];
@@ -254,8 +254,19 @@ public final class OverlayUtil {
     float x2 = obj.getX2();
     float y1 = obj.getY();
     float y2 = obj.getY2();
+  
+    /*
+    // method for doing math in pixel coordinates part 1 of 2
+    float[] p1 = domainToPixel(link, new float[]{obj.getX(), obj.getY()});
+    float[] p2 = domainToPixel(link, new float[]{obj.getX2(), obj.getY2()});
 
-    float delta = GLOW_WIDTH;
+    float x1 = p1[0];
+    float x2 = p2[0];
+    float y1 = p1[1];
+    float y2 = p2[1];
+    */
+
+    float delta = GLOW_WIDTH * getMultiplier(link);
 
     // compute locations of grid points
     // (uses similar triangles instead of raw trig fcns)
@@ -269,13 +280,21 @@ public final class OverlayUtil {
     float dx2 = ratio * x;
     float dy2 = ratio * y;
 
-    float[] p1 = {x1 - dx1 - dx2, y1 + dy1 - dy2};
-    float[] p2 = {x2 - dx1 + dx2, y2 + dy1 + dy2};
-    float[] p3 = {x1 + dx1 - dx2, y1 - dy1 - dy2};
-    float[] p4 = {x2 + dx1 + dx2, y2 - dy1 + dy2};
+    float[] c1 = {x1 - dx1 - dx2, y1 + dy1 - dy2};
+    float[] c2 = {x2 - dx1 + dx2, y2 + dy1 + dy2};
+    float[] c3 = {x1 + dx1 - dx2, y1 - dy1 - dy2};
+    float[] c4 = {x2 + dx1 + dx2, y2 - dy1 + dy2};
 
-    float[][] setSamples = {{p1[0], p2[0], p3[0], p4[0]},
-                            {p1[1], p2[1], p3[1], p4[1]}};
+    float[][] setSamples = {{c1[0], c2[0], c3[0], c4[0]},
+                            {c1[1], c2[1], c3[1], c4[1]}}; 
+
+    /*
+    // method for doing math in pixel coordinates part 2 of 2
+    float[][] setSamplesPxl = {{c1[0], c2[0], c3[0], c4[0]},
+                            {c1[1], c2[1], c3[1], c4[1]}};
+
+    float[][] setSamples = pixelToDomain(link, setSamplesPxl);
+    */
 
     // construct range samples;
     Color col = GLOW_COLOR;
@@ -317,7 +336,7 @@ public final class OverlayUtil {
     float y2 = obj.getY2();
 
     float size = 0.02f * overlay.getScalingValue();
-    float delta = GLOW_WIDTH;
+    float delta = GLOW_WIDTH * getMultiplier(link);
 
     float xx1 = x1 - size - delta;
     float xx2 = x1 + size + delta;
@@ -437,7 +456,7 @@ public final class OverlayUtil {
     TupleType range = overlay.getRangeType();
     OverlayNodedObject nobj = (OverlayNodedObject) obj;
 
-    float delta = GLOW_WIDTH;
+    float delta = GLOW_WIDTH * getMultiplier(link);
     float[][] nodes = nobj.getNodes();
     int numNodes = nobj.getNumNodes(); 
 
@@ -524,7 +543,7 @@ public final class OverlayUtil {
     float rrx = cx > x1 ? cx - x1 : cx - x2;
     float rry = cy > y1 ? cy - y1 : cy - y2;
 
-    float scl = 1; // for now
+    float scl = getMultiplier(link); // for now
     float rx = rrx + GLOW_WIDTH * scl;
     float ry = rry + GLOW_WIDTH * scl;
 
@@ -577,7 +596,8 @@ public final class OverlayUtil {
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
-    float[][] corners = computeTextOutline((OverlayText) obj, overlay);
+    ((OverlayText) obj).computeTextBounds();
+    float[][] corners = computeOutline(obj, link);
 
     float[][] setSamples = {
       {corners[0][0], corners[1][0], corners[0][0], corners[1][0]},
@@ -619,7 +639,7 @@ public final class OverlayUtil {
     float y1 = obj.getY();
     float y2 = obj.getY2();
 
-    float[][] cnrs = computeOutline(obj, overlay);
+    float[][] cnrs = computeOutline(obj, link);
 
     float[][] setSamples = null;
     GriddedSet fieldSet = null;
@@ -655,56 +675,52 @@ public final class OverlayUtil {
     return field;
   }
 
-  // -- Helper Methods --
-
-  // Note: Both of these methods are basically the old 
-  // OverlayObject.computeGridParameters()
-  // methods, the first from OverlayText, the second from OverlayBox.
-
-  /** Computes the corners of an OverlayText object's outline */
-  private static float[][] computeTextOutline(OverlayText obj, 
-      OverlayTransform overlay) {
-    // Computing the grid for text overlays is difficult because the size of
-    // the overlay depends on the font metrics, which are obtained from an AWT
-    // component (in this case, window.getDisplay().getComponent() for a
-    // display window), but data transforms have no knowledge of which display
-    // windows are currently displaying them.
-
-    float x1 = obj.getX();
-    float x2 = obj.getX2();
-    float y1 = obj.getY();
-    float y2 = obj.getY2();
-
-    // HACK - for now, use this harebrained scheme to estimate the bounds
-    int sx = overlay.getScalingValueX();
-    int sy = overlay.getScalingValueY();
-    float mw = sx / 318f, mh = sy / 640f; // obtained through experimentation
-    FontMetrics fm = overlay.getFontMetrics();
-    x2 = x1 + mw * fm.stringWidth(obj.getText());
-    y2 = y1 + mh * fm.getHeight();
-
-    float padx = 0.02f * sx;
-    float pady = 0.02f * sy;
-    float xx1 = x1 - padx;
-    float xx2 = x2 + padx;
-    float yy1 = y1 - pady;
-    float yy2 = y2 + pady;
-
-    return new float[][]{{xx1, yy1}, {xx2, yy2}};
+  /** 
+   * Returns a multiplier suitable for scaling distances to pixel coordinates.
+   * Useful when the location of an event are unimportant, just the properties
+   * of the display. 
+   */
+  public static float getMultiplier(TransformLink link) {
+    DisplayImpl display = link.getHandler().getWindow().getDisplay();
+    return getMultiplier(display);
   }
 
+  /** 
+   * Returns a multiplier suitable for scaling distances to pixel coordinates.
+   * Useful when the location of an event are unimportant, just the properties
+   * of the display. 
+   */
+  public static float getMultiplier(DisplayImpl display) {
+    int[] p1 = {0,0};
+    int[] p2 = {0, 1000};
+    double[] d1 = CursorUtil.pixelToDomain(display, p1[0], p1[1]);
+    double[] d2 = CursorUtil.pixelToDomain(display, p2[0], p2[1]);
+    int px = p2[0] - p1[0];
+    int py = p2[1] - p1[1];
+    double dx = d2[0] - d1[0];
+    double dy = d2[1] - d1[1];
+    double pp = Math.sqrt(px * px + py * py);
+    double dd = Math.sqrt(dx * dx + dy * dy);
+    return (float) (dd / pp);
+  }
+
+  // -- Helper Methods --
+
+  // Note: This method is basically the old 
+  // OverlayObject.computeGridParameters()
+  // method from OverlayBox.
   /** Computes corners of an OverlayObject's outline */
   private static float[][] computeOutline(OverlayObject obj,
-     OverlayTransform overlay) { 
-    if (obj instanceof OverlayText) return computeTextOutline(
-        (OverlayText) obj, overlay);
-
+     TransformLink link) { 
+    DisplayImpl display = link.getHandler().getWindow().getDisplay();
     float x1 = obj.getX();
     float x2 = obj.getX2();
     float y1 = obj.getY();
     float y2 = obj.getY2();
 
-    float padding = 0.02f * overlay.getScalingValue();
+    float scl = 0;
+    if (obj instanceof OverlayText) scl = .25f;
+    float padding = GLOW_WIDTH * (scl + getMultiplier(link));
     boolean flipX = x2 < x1;
     float xx1 = flipX ? (x1 + padding) : (x1 - padding);
     float xx2 = flipX ? (x2 - padding) : (x2 + padding);
@@ -712,6 +728,67 @@ public final class OverlayUtil {
     float yy1 = flipY ? (y1 + padding) : (y1 - padding);
     float yy2 = flipY ? (y2 - padding) : (y2 + padding);
 
-    return new float[][]{{x1, y1}, {x2, y2}};
+    return new float[][]{{xx1, yy1}, {xx2, yy2}};
   }
+
+  /** Computes outline of a text object  */
+  private static float[][] computeTextOutline(OverlayObject obj,
+      OverlayTransform overlay) {
+    if (obj instanceof OverlayText) ((OverlayText) obj).computeTextBounds();
+    float x1 = obj.getX();
+    float x2 = obj.getX2();
+    float y1 = obj.getY();
+    float y2 = obj.getY2();
+
+    int sx = overlay.getScalingValueX(); 
+    int sy = overlay.getScalingValueY(); 
+
+    float padx = 0.02f * sx; 
+    float pady = 0.02f * sy; 
+    float xx1 = x1 - padx; 
+    float xx2 = x2 + padx; 
+    float yy1 = y1 - pady; 
+    float yy2 = y2 + pady; 
+
+    return new float[][]{{xx1, yy1}, {xx2, yy2}};
+  }
+
+  /** Converts float coordinates to a pixel coordinateis (as floats) */
+  private static float[] domainToPixel(TransformLink link, float[] d) {
+    DisplayImpl display = link.getHandler().getWindow().getDisplay();
+    double[] dDbl = new double[d.length]; // domain coordinates as doubles
+    for (int i=0; i<d.length; i++) dDbl[i] = (double) d[i];
+    int[] p = CursorUtil.domainToPixel(display, dDbl);
+    float[] pfloat = new float[p.length]; // pixel coordinates as floats
+    for (int i=0; i<p.length; i++) pfloat[i] = (float) p[i];
+    return pfloat;
+  }
+
+  /** Converts pixel coordinateis (as floats) to domain coordinates */
+  private static float[] pixelToDomain(TransformLink link, float[] p) {
+    DisplayImpl display = link.getHandler().getWindow().getDisplay();
+    // pixel coords cast down to ints here:
+    double[] d = CursorUtil.pixelToDomain(display,
+      (int) (p[0]+ 1), (int) (p[1] + 1));
+    float[] dfloat = new float[d.length]; // domain coordinates as floats
+    for (int i=0; i<d.length; i++) dfloat[i] = (float) d[i];
+    return dfloat;
+  }
+
+  /** Converts an array of pixels as floats to domain */
+  private static float[][] pixelToDomain(TransformLink link,
+      float[][] pixelSamples) {
+    DisplayImpl display = link.getHandler().getWindow().getDisplay();
+    float[][] domainSamples = new
+      float[pixelSamples.length][pixelSamples[0].length];
+    for (int i=0; i<pixelSamples[0].length; i++) {
+      // cast down to int here
+      double[] d = CursorUtil.pixelToDomain(display,
+          (int) (pixelSamples[0][i] + 1), (int) (pixelSamples[1][i] + 1));
+      domainSamples[0][i] = (float) d[0];
+      domainSamples[1][i] = (float) d[1];
+    }
+    return domainSamples;
+  }
+
 }

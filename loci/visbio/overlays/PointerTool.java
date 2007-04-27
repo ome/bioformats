@@ -27,6 +27,7 @@ import java.awt.event.InputEvent;
 import java.util.Vector;
 import loci.visbio.data.TransformEvent;
 import loci.visbio.util.MathUtil;
+import loci.visbio.util.OverlayUtil;
 import visad.DisplayEvent;
 import visad.DisplayImpl;
 
@@ -91,7 +92,8 @@ public class PointerTool extends OverlayTool {
       }
     }
 
-    double threshold = 0.02 * overlay.getScalingValue();
+    // Factor 8.5 obtained through trail and error.
+    double threshold = 8.5f * OverlayUtil.getMultiplier(display);
 
     if (dist < threshold) {
       if (shift) objs[ndx].setSelected(true);
