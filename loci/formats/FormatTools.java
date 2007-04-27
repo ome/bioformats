@@ -229,6 +229,7 @@ public final class FormatTools {
       System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
     }
 
+    System.out.println("Initializing reader");
     if (stitch) {
       reader = new FileStitcher(reader, true);
       String pat = FilePattern.findPattern(new Location(id));
@@ -239,14 +240,10 @@ public final class FormatTools {
     MinMaxCalculator minMaxCalc = null;
     if (minmax) reader = minMaxCalc = new MinMaxCalculator(reader);
 
-    System.out.println("Initializing reader");
-    reader.addStatusListener(new StatusListener() {
-      public void statusUpdated(StatusEvent e) {
-        System.out.println("\t" + e.getStatusMessage());
-      }
-    });
-    
-    reader.close(); 
+    StatusEchoer status = new StatusEchoer();
+    reader.addStatusListener(status);
+
+    reader.close();
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(true);
     reader.setMetadataCollected(doMeta);
@@ -408,6 +405,7 @@ public final class FormatTools {
     if (pixels) {
       System.out.println();
       System.out.print("Reading" + s + " pixel data ");
+      status.setVerbose(false);
       long s1 = System.currentTimeMillis();
       int num = reader.getImageCount();
       if (start < 0) start = 0;
@@ -422,6 +420,7 @@ public final class FormatTools {
       long s2 = System.currentTimeMillis();
       boolean mismatch = false;
       for (int i=start; i<=end; i++) {
+        status.setEchoNext(true);
         if (!fastBlit) {
           images[i - start] = thumbs ?
             reader.openThumbImage(i) : reader.openImage(i);
@@ -943,7 +942,7 @@ public final class FormatTools {
   /**
    * Asserts that the current file is either null, nor not, according to the
    * given flag. If the assertion fails, an IllegalStateException is thrown.
-   * @param currentId File name to test. 
+   * @param currentId File name to test.
    * @param notNull True iff id should be non-null.
    * @param depth How far back in the stack the calling method is; this name
    *   is reported as part of the exception message, if available. Use zero
@@ -971,6 +970,25 @@ public final class FormatTools {
     }
     else header = "";
     throw new IllegalStateException(header + msg);
+  }
+
+  // -- Helper classes --
+
+  /** Used by testRead to echo status messages to the console. */
+  private static class StatusEchoer implements StatusListener {
+    private boolean verbose = true;
+    private boolean next = true;
+
+    public void setVerbose(boolean value) { verbose = value; }
+    public void setEchoNext(boolean value) { next = value; }
+
+    public void statusUpdated(StatusEvent e) {
+      if (verbose) System.out.println("\t" + e.getStatusMessage());
+      else if (next) {
+        System.out.print(";");
+        next = false;
+      }
+    }
   }
 
 }
