@@ -62,13 +62,6 @@ public class TiffReader extends BaseTiffReader {
     core.sizeZ[0] = zSize;
   }
 
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#getSeriesCount() */
-  public int getSeriesCount() {
-    return core.currentOrder.length;
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */

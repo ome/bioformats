@@ -67,6 +67,7 @@ public class IPLabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bps * core.sizeC[0]];
     return openBytes(no, buf);
   }
@@ -75,6 +76,7 @@ public class IPLabReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -91,6 +93,7 @@ public class IPLabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
       core.rgb[0] ? core.sizeC[0] : 1, false, bps, core.littleEndian[0]);
   }

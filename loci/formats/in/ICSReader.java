@@ -96,6 +96,7 @@ public class ICSReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8) *
       getRGBChannelCount()];
     return openBytes(no, buf);
@@ -105,6 +106,7 @@ public class ICSReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -143,6 +145,7 @@ public class ICSReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     byte[] plane = openBytes(no);
     int channels = core.rgb[0] ? core.sizeC[0] : 1;
 
@@ -168,6 +171,7 @@ public class ICSReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1); 
     if (versionTwo) {
       return new String[] {currentIdsId == null ? "" : currentIdsId};
     }

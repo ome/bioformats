@@ -86,6 +86,7 @@ public class IPWReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     int c = getRGBChannelCount();
     if (c == 2) c++;
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * c *
@@ -97,6 +98,7 @@ public class IPWReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -140,6 +142,7 @@ public class IPWReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }

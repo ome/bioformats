@@ -136,6 +136,7 @@ public class GIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
     return openBytes(no, buf);
   }
@@ -144,6 +145,7 @@ public class GIFReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -165,6 +167,7 @@ public class GIFReader extends FormatReader {
   public BufferedImage openImage(int no)
     throws FormatException, IOException
   {
+    FormatTools.assertId(currentId, true, 1); 
     byte[] bytes = openBytes(no);
     return ImageTools.makeImage(bytes, core.sizeX[0], core.sizeY[0],
       bytes.length / (core.sizeX[0] * core.sizeY[0]), false, 1, true);

@@ -77,11 +77,13 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
+    FormatTools.assertId(currentId, true, 1); 
     return getMeta(field);
   }
 
   /* @see loci.formats.FormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -96,6 +98,7 @@ public abstract class BaseTiffReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -106,6 +109,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }

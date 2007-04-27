@@ -94,27 +94,32 @@ public class SDTReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#getRGBChannelCount(String) */
   public int getRGBChannelCount() {
+    FormatTools.assertId(currentId, true, 1); 
     return intensity ? 1 : timeBins;
   }
 
   /* @see loci.formats.IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
+    FormatTools.assertId(currentId, true, 1); 
     return intensity ? new int[] {channels} : new int[] {timeBins, channels};
   }
 
   /* @see loci.formats.IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
+    FormatTools.assertId(currentId, true, 1); 
     return intensity ? new String[] {FormatTools.SPECTRA} :
       new String[] {FormatTools.LIFETIME, FormatTools.SPECTRA};
   }
 
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
+    FormatTools.assertId(currentId, true, 1); 
     return !intensity && subC == 0;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     int c = getRGBChannelCount();
     byte[] buf = new byte[2 * c * core.sizeX[series] * core.sizeY[series]];
     return openBytes(no, buf);
@@ -124,6 +129,7 @@ public class SDTReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= timeBins * channels) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -166,6 +172,7 @@ public class SDTReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], getRGBChannelCount(), false, 2, true);
   }

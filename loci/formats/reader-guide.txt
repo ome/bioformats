@@ -19,6 +19,9 @@ String[] getUsedFiles() throws FormatException, IOException :
   dataset.  This method should return a list of all the files associated with
   the given file name (i.e. every file needed to display the current dataset).
   For an example of how this works, see loci.formats.in.PerkinElmerReader.
+  It is recommended that the first line of this method be
+  "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
+  is non-null.
 
 byte[] openBytes(int) throws FormatException, IOException :
   Returns a byte array containing the pixel data for the specified image from
@@ -27,7 +30,9 @@ byte[] openBytes(int) throws FormatException, IOException :
   returned by openBytes should correspond to the values returned by
   isLittleEndian() and isInterleaved().  Also, the length of the
   byte array should be [image width * image height * bytes per pixel].  Extra
-  bytes will generally be truncated.
+  bytes will generally be truncated. It is recommended that the first line of 
+  this method be "FormatTools.asserId(currentId, true, 1)" - this ensures that 
+  the file name is non-null.
 
 BufferedImage openImage(int) throws FormatException, IOException :
   Basically the same as openBytes, but returns a java.awt.image.BufferedImage
@@ -35,7 +40,9 @@ BufferedImage openImage(int) throws FormatException, IOException :
   by getting the corresponding byte array from openBytes, then returning
   loci.formats.ImageTools.makeImage(byte[], int width, int height, int
   numberOfChannels, boolean isInterleaved, int bytesPerPixel, boolean
-  isLittleEndian).
+  isLittleEndian). It is recommended that the first line of this method be
+  "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
+  is non-null.
 
 protected void initFile(String) throws FormatException, IOException :
   The majority of the file parsing logic should be placed in this method.  The

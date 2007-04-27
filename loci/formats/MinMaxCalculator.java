@@ -65,6 +65,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   public Double getChannelGlobalMinimum(int theC)
     throws FormatException, IOException
   {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     if (theC < 0 || theC >= getSizeC()) {
       throw new FormatException("Invalid channel index: " + theC);
     }
@@ -83,6 +84,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   public Double getChannelGlobalMaximum(int theC)
     throws FormatException, IOException
   {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     if (theC < 0 || theC >= getSizeC()) {
       throw new FormatException("Invalid channel index: " + theC);
     }
@@ -101,6 +103,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   public Double getChannelKnownMinimum(int theC)
     throws FormatException, IOException
   {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     return chanMin == null ? null : new Double(chanMin[getSeries()][theC]);
   }
 
@@ -111,6 +114,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   public Double getChannelKnownMaximum(int theC)
     throws FormatException, IOException
   {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     return chanMax == null ? null : new Double(chanMax[getSeries()][theC]);
   }
 
@@ -121,6 +125,7 @@ public class MinMaxCalculator extends ReaderWrapper {
    * embedded channel.  Returns null if the plane has not already been read.
    */
   public Double[] getPlaneMinimum(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     if (planeMin == null) return null;
 
     int numRGB = getRGBChannelCount();
@@ -143,6 +148,7 @@ public class MinMaxCalculator extends ReaderWrapper {
    * embedded channel.  Returns null if the plane has not already been read.
    */
   public Double[] getPlaneMaximum(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     if (planeMax == null) return null;
 
     int numRGB = getRGBChannelCount();
@@ -163,6 +169,7 @@ public class MinMaxCalculator extends ReaderWrapper {
    * getChannelGlobalMinimum/Maximum can be trusted.
    */
   public boolean isMinMaxPopulated() throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     return minMaxDone != null && minMaxDone[getSeries()] == getImageCount();
   }
 
@@ -170,6 +177,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     BufferedImage b = super.openImage(no);
     updateMinMax(b, no);
     return b;
@@ -177,6 +185,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     byte[] b = super.openBytes(no);
     updateMinMax(b, no);
     return b;
@@ -186,6 +195,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
+    FormatTools.assertId(getCurrentFile(), true, 2); 
     super.openBytes(no, buf);
     updateMinMax(buf, no);
     return buf;

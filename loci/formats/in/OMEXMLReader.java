@@ -82,6 +82,7 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     if (no < 0 || no >= core.imageCount[series]) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -148,6 +149,7 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1); 
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
       core.sizeY[series], 1, false, bpp[series], core.littleEndian[series]);
   }
