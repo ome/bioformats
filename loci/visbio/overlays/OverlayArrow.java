@@ -64,11 +64,11 @@ public class OverlayArrow extends OverlayObject {
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
     if (!hasData()) return null; // dont render zero length arrows
-    float padding = 0.02f * overlay.getScalingValue();
     double xx = x2 - x1;
     double yy = y2 - y1;
     double dist = Math.sqrt(xx * xx + yy * yy);
-    double mult = padding / dist;
+    double mult = 0.1; // something like aspect ratio
+
     float qx = (float) (mult * xx);
     float qy = (float) (mult * yy);
 

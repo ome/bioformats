@@ -112,11 +112,10 @@ public final class OverlayUtil {
     float y1 = obj.getY();
     float y2 = obj.getY2();
     // compute corners of arrow tail
-    float padding = 0.02f * overlay.getScalingValue();
     double xx = x2 - x1;
     double yy = y2 - y1;
     double dist = Math.sqrt(xx * xx + yy * yy);
-    double mult = padding / dist;
+    double mult = 0.1; // something like aspect ratio
     float qx = (float) (mult * xx);
     float qy = (float) (mult * yy);
 
