@@ -247,8 +247,11 @@ public final class FormatTools {
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(true);
     reader.setMetadataCollected(doMeta);
+    long s1 = System.currentTimeMillis();
     reader.setId(id);
-    if (minMaxCalc != null) minMaxCalc.setId(id);
+    long e1 = System.currentTimeMillis();
+    float sec1 = (e1 - s1) / 1000f;
+    System.out.println("Initialization took " + sec1 + "s");
 
     if (!normalize && reader.getPixelType() == FLOAT) {
       throw new FormatException("Sorry, unnormalized floating point " +
@@ -406,7 +409,6 @@ public final class FormatTools {
       System.out.println();
       System.out.print("Reading" + s + " pixel data ");
       status.setVerbose(false);
-      long s1 = System.currentTimeMillis();
       int num = reader.getImageCount();
       if (start < 0) start = 0;
       if (start >= num) start = num - 1;
@@ -415,7 +417,6 @@ public final class FormatTools {
       if (end < start) end = start;
 
       System.out.print("(" + start + "-" + end + ") ");
-      long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[end - start + 1];
       long s2 = System.currentTimeMillis();
       boolean mismatch = false;
@@ -459,11 +460,9 @@ public final class FormatTools {
       System.out.println("[done]");
 
       // output timing results
-      float sec = (e2 - s1) / 1000f;
+      float sec2 = (e2 - s2) / 1000f;
       float avg = (float) (e2 - s2) / images.length;
-      long initial = e1 - s1;
-      System.out.println(sec + "s elapsed (" +
-        avg + "ms per image, " + initial + "ms overhead)");
+      System.out.println(sec2 + "s elapsed (" + avg + "ms per image)");
 
       if (minmax) {
         // get computed min/max values
@@ -616,22 +615,17 @@ public final class FormatTools {
       return false;
     }
 
-    ImageReader reader = new ImageReader();
-    reader.setId(in);
-    writer.setId(out);
-
-    // check file formats
-    System.out.print("Input format: ");
-    System.out.println("[" + reader.getFormat() + "]");
-    System.out.print("Output format: ");
-    System.out.println("[" + writer.getFormat() + "]");
-
-    // convert file
-    System.out.print(in + " -> " + out + " ");
 
     long start = System.currentTimeMillis();
-    int num = writer.canDoStacks() ? reader.getImageCount() : 1;
+    System.out.print(in + " ");
+    ImageReader reader = new ImageReader();
+    reader.setId(in);
+    System.out.print("[" + reader.getFormat() + "] -> " + out + " ");
+    writer.setId(out);
+    System.out.print("[" + writer.getFormat() + "] ");
     long mid = System.currentTimeMillis();
+
+    int num = writer.canDoStacks() ? reader.getImageCount() : 1;
     long read = 0, write = 0;
     for (int i=0; i<num; i++) {
       long s = System.currentTimeMillis();
