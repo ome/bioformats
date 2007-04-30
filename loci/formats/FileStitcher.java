@@ -341,11 +341,17 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    int[] q = computeIndices(no);
-    int fno = q[0], ino = q[1];
-    if (ino < readers[fno].getImageCount()) {
-      return readers[fno].openImage(ino);
+    try { 
+      int[] q = computeIndices(no);
+      int fno = q[0], ino = q[1];
+      if (ino < readers[fno].getImageCount()) {
+        return readers[fno].openImage(ino);
+      }
     }
+    catch (FormatException e) {
+      if (FormatHandler.debug) e.printStackTrace(); 
+    }
+
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     int sno = getSeries();
@@ -353,17 +359,24 @@ public class FileStitcher implements IFormatReader {
       blankImage[sno] = ImageTools.blankImage(core.sizeX[sno], core.sizeY[sno],
         sizeC[sno], getPixelType());
     }
+    
     return blankImage[sno];
   }
 
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    int[] q = computeIndices(no);
-    int fno = q[0], ino = q[1];
-    if (ino < readers[fno].getImageCount()) {
-      return readers[fno].openBytes(ino);
+    try { 
+      int[] q = computeIndices(no);
+      int fno = q[0], ino = q[1];
+      if (ino < readers[fno].getImageCount()) {
+        return readers[fno].openBytes(ino);
+      }
     }
+    catch (FormatException e) {
+      if (FormatHandler.debug) e.printStackTrace();
+    }
+
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     int sno = getSeries();
@@ -380,9 +393,15 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
-    int[] q = computeIndices(no);
-    int fno = q[0], ino = q[1];
-    return readers[fno].openBytes(ino, buf);
+    try { 
+      int[] q = computeIndices(no);
+      int fno = q[0], ino = q[1];
+      return readers[fno].openBytes(ino, buf);
+    }
+    catch (FormatException e) {
+      if (FormatHandler.debug) e.printStackTrace();
+    }
+    return buf;
   }
 
   /* @see IFormatReader#openThumbImage(int) */
@@ -390,11 +409,17 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
-    int[] q = computeIndices(no);
-    int fno = q[0], ino = q[1];
-    if (ino < readers[fno].getImageCount()) {
-      return readers[fno].openThumbImage(ino);
+    try { 
+      int[] q = computeIndices(no);
+      int fno = q[0], ino = q[1];
+      if (ino < readers[fno].getImageCount()) {
+        return readers[fno].openThumbImage(ino);
+      }
     }
+    catch (FormatException e) {
+      if (FormatHandler.debug) e.printStackTrace();
+    }
+
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     int sno = getSeries();
@@ -408,10 +433,15 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    int[] q = computeIndices(no);
-    int fno = q[0], ino = q[1];
-    if (ino < readers[fno].getImageCount()) {
-      return readers[fno].openThumbBytes(ino);
+    try { 
+      int[] q = computeIndices(no);
+      int fno = q[0], ino = q[1];
+      if (ino < readers[fno].getImageCount()) {
+        return readers[fno].openThumbBytes(ino);
+      }
+    }
+    catch (FormatException e) {
+      if (FormatHandler.debug) e.printStackTrace();
     }
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
