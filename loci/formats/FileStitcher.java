@@ -278,22 +278,14 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 2);
-    int sno = getSeries();
-    int len = lenC[sno].length;
-    int[] cLengths = new int[len];
-    System.arraycopy(lenC[sno], 0, cLengths, 0, len);
-    return cLengths;
+    FormatTools.assertId(currentId, true, 1);
+    return core.cLengths[getSeries()];
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 2);
-    int sno = getSeries();
-    int len = lenC[sno].length;
-    String[] cTypes = new String[len];
-    Arrays.fill(cTypes, FormatTools.CHANNEL);
-    return cTypes;
+    FormatTools.assertId(currentId, true, 1);
+    return core.cTypes[getSeries()];
   }
 
   /* @see IFormatReader#getThumbSizeX() */
@@ -793,8 +785,8 @@ public class FileStitcher implements IFormatReader {
       core.imageCount[i] = files.length * imagesPerFile[i];
       core.thumbSizeX[i] = reader.getThumbSizeX();
       core.thumbSizeY[i] = reader.getThumbSizeY();
-      core.cLengths[i] = reader.getChannelDimLengths();
-      core.cTypes[i] = reader.getChannelDimTypes();
+      // NB: core.cLengths[i] populated in computeAxisLengths below
+      // NB: core.cTypes[i] populated in computeAxisLengths below
       core.currentOrder[i] = reader.getDimensionOrder();
       // NB: core.orderCertain[i] populated below
       core.rgb[i] = reader.isRGB();
@@ -818,14 +810,13 @@ public class FileStitcher implements IFormatReader {
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       core.currentOrder[i] = ag[i].getAdjustedOrder();
-      core.orderCertain[i] = ag[getSeries()].isCertain();
+      core.orderCertain[i] = ag[i].isCertain();
+      computeAxisLengths();
     }
     setSeries(oldSeries);
 
     // initialize used files list only when requested
     usedFiles = null;
-
-    computeAxisLengths();
   }
 
   /** Computes axis length arrays, and total axis lengths. */
@@ -847,8 +838,7 @@ public class FileStitcher implements IFormatReader {
     lenZ[sno][0] = sizeZ[sno];
     lenC[sno][0] = sizeC[sno];
     lenT[sno][0] = sizeT[sno];
-    int z = 1, c = 1, t = 1;
-    for (int i=0; i<axes.length; i++) {
+    for (int i=0, z=1, c=1, t=1; i<axes.length; i++) {
       switch (axes[i]) {
         case AxisGuesser.Z_AXIS:
           core.sizeZ[sno] *= count[i];
@@ -866,6 +856,30 @@ public class FileStitcher implements IFormatReader {
           throw new FormatException("Unknown axis type for axis #" +
             i + ": " + axes[i]);
       }
+    }
+
+    int[] cLengths = reader.getChannelDimLengths();
+    String[] cTypes = reader.getChannelDimTypes();
+    int cCount = 0;
+    for (int i=0; i<cLengths.length; i++) {
+      if (cLengths[i] > 1) cCount++;
+    }
+    for (int i=1; i<lenC[sno].length; i++) {
+      if (lenC[sno][i] > 1) cCount++;
+    }
+    core.cLengths[sno] = new int[cCount];
+    core.cTypes[sno] = new String[cCount];
+    int c = 0;
+    for (int i=0; i<cLengths.length; i++) {
+      if (cLengths[i] == 1) continue;
+      core.cLengths[sno][c] = cLengths[i];
+      core.cTypes[sno][c] = cTypes[i];
+      c++;
+    }
+    for (int i=1; i<lenC[sno].length; i++) {
+      if (lenC[sno][i] == 1) continue;
+      core.cLengths[sno][c] = lenC[sno][i];
+      core.cTypes[sno][c] = FormatTools.CHANNEL;
     }
 
     // populate metadata store
@@ -1026,7 +1040,7 @@ public class FileStitcher implements IFormatReader {
   /** @deprecated Replaced by {@link #getEffectiveSizeC()} */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
     setId(id);
-    return getImageCount() / (getSizeZ() * getSizeT());
+    return getEffectiveSizeC();
   }
 
   /** @deprecated Replaced by {@link #getRGBChannelCount()} */
@@ -1040,11 +1054,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    int sno = getSeries();
-    int len = lenC[sno].length;
-    int[] cLengths = new int[len];
-    System.arraycopy(lenC[sno], 0, cLengths, 0, len);
-    return cLengths;
+    return getChannelDimLengths();
   }
 
   /** @deprecated Replaced by {@link #getChannelDimTypes()} */
@@ -1052,29 +1062,25 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    int sno = getSeries();
-    int len = lenC[sno].length;
-    String[] cTypes = new String[len];
-    Arrays.fill(cTypes, FormatTools.CHANNEL);
-    return cTypes;
+    return getChannelDimTypes();
   }
 
   /** @deprecated Replaced by {@link #getThumbSizeX()} */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     setId(id);
-    return reader.getThumbSizeX();
+    return getThumbSizeX();
   }
 
   /** @deprecated Replaced by {@link #getThumbSizeY()} */
   public int getThumbSizeY(String id) throws FormatException, IOException {
     setId(id);
-    return reader.getThumbSizeY();
+    return getThumbSizeY();
   }
 
   /** @deprecated Replaced by {@link #isLittleEndian()} */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     setId(id);
-    return reader.isLittleEndian();
+    return isLittleEndian();
   }
 
   /** @deprecated Replaced by {@link #getDimensionOrder()} */
@@ -1082,19 +1088,19 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return core.currentOrder[getSeries()];
+    return getDimensionOrder();
   }
 
   /** @deprecated Replaced by {@link #isOrderCertain()} */
   public boolean isOrderCertain(String id) throws FormatException, IOException {
     setId(id);
-    return ag[getSeries()].isCertain();
+    return isOrderCertain();
   }
 
   /** @deprecated Replaced by {@link #isInterleaved()} */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     setId(id);
-    return reader.isInterleaved();
+    return isInterleaved();
   }
 
   /** @deprecated Replaced by {@link #isInterleaved(int)} */
@@ -1102,7 +1108,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return reader.isInterleaved(subC);
+    return isInterleaved(subC);
   }
 
   /** @deprecated Replaced by {@link #openImage(int)} */
@@ -1148,19 +1154,19 @@ public class FileStitcher implements IFormatReader {
   /** @deprecated Replaced by {@link #getSeriesCount()} */
   public int getSeriesCount(String id) throws FormatException, IOException {
     setId(id);
-    return reader.getSeriesCount();
+    return getSeriesCount();
   }
 
   /** @deprecated Replaced by {@link #setSeries(int)} */
   public void setSeries(String id, int no) throws FormatException, IOException {
     setId(id);
-    reader.setSeries(no);
+    setSeries(no);
   }
 
   /** @deprecated Replaced by {@link #getSeries()} */
   public int getSeries(String id) throws FormatException, IOException {
     setId(id);
-    return reader.getSeries();
+    return getSeries();
   }
 
   /** @deprecated Replaced by {@link #getUsedFiles()} */
@@ -1174,7 +1180,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return FormatTools.getIndex(this, z, c, t);
+    return getIndex(z, c, t);
   }
 
   /** @deprecated Replaced by {@link #getZCTCoords(int)} */
@@ -1182,7 +1188,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return FormatTools.getZCTCoords(this, index);
+    return getZCTCoords(index);
   }
 
   /** @deprecated Replaced by {@link #getMetadataValue(String)} */
@@ -1190,13 +1196,13 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return reader.getMetadataValue(field);
+    return getMetadataValue(field);
   }
 
   /** @deprecated Replaced by {@link #getMetadata()} */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     setId(id);
-    return reader.getMetadata();
+    return getMetadata();
   }
 
   /** @deprecated Replaced by {@link #getCoreMetadata()} */
@@ -1204,7 +1210,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return reader.getCoreMetadata();
+    return getCoreMetadata();
   }
 
   /** @deprecated Replaced by {@link #getMetadataStore()} */
@@ -1212,7 +1218,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return reader.getMetadataStore();
+    return getMetadataStore();
   }
 
   /** @deprecated Replaced by {@link #getMetadataStoreRoot()} */
@@ -1220,7 +1226,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     setId(id);
-    return reader.getMetadataStoreRoot();
+    return getMetadataStoreRoot();
   }
 
 }
