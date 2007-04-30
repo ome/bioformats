@@ -16,13 +16,9 @@
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 
-<xsd:schema xmlns = "http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd"
-        targetNamespace = "http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd"
-        xmlns:OME = "http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd"
-        xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-        version = "2.0-RC1"
-        elementFormDefault = "qualified">
-        <xsd:import namespace = "http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd" schemaLocation = "ome.xsd"/>
+<xsd:schema xmlns="http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd" targetNamespace="http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd" xmlns:OME="http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd" xmlns:AML="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/2.0-RC1/AnalysisModule.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.0-RC1" elementFormDefault="qualified">
+        <xsd:import namespace="http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd" schemaLocation="ome.xsd"/>
+        <xsd:import namespace="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/2.0-RC1/AnalysisModule.xsd" schemaLocation="AnalysisModule.xsd"/>
     <xsd:annotation>
         <xsd:documentation>
             Open Microscopy Environment
@@ -43,6 +39,25 @@
                 This is a link between a Dataset and a Plate.
             </xsd:documentation>
         </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="AML:Entry" maxOccurs="unbounded"/>
+                <xsd:element ref="AML:Description" minOccurs="0"/>
+                <xsd:element ref="OME:Dataset" minOccurs="0"/>
+                <xsd:element ref="Plate" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="Name" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>Tied to DB. LOOKUP_TABLES.NAME</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="64"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+        
     </xsd:element>
     <xsd:element name="PlateImage">
         <xsd:annotation>
@@ -54,7 +69,13 @@
                 Is it ScreenPlate? Nope - ajp
                 Probably not needed in xsd at all - ajp
             </xsd:documentation>
-        </xsd:annotation>        
+        </xsd:annotation>  
+        <xsd:complexType>
+            <xsd:sequence>
+            <xsd:element ref="OME:Image" minOccurs="0"/>
+            <xsd:element ref="PlateRef" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
     </xsd:element>
     <xsd:element name="PlateRef">
         <xsd:complexType>
@@ -86,21 +107,22 @@
             </xsd:documentation>
         </xsd:annotation>      
         <xsd:complexType>
-            <xsd:attribute name="Description">
+            <xsd:attribute name="ID" use="required" type="ReagentID"/>
+            <xsd:attribute name="Description" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
                 </xsd:annotation>     
                 
             </xsd:attribute>
-            <xsd:attribute name="Name">
+            <xsd:attribute name="Name" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
                 </xsd:annotation>     
                 
             </xsd:attribute>
-            <xsd:attribute name="ReagentIdentifier">
+            <xsd:attribute name="ReagentIdentifier" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
                         This is a reference to an external (to OME) representation of the Reagent.
@@ -111,6 +133,11 @@
             </xsd:attribute>
        </xsd:complexType>
     </xsd:element>
+    <xsd:simpleType name="ReagentID">
+        <xsd:restriction base="OME:LSID">
+            <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Reagent)(:\S+)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
     <xsd:element name="ReagentWell">
         <xsd:annotation>
             <xsd:documentation>
@@ -185,7 +212,15 @@
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="PlateID"/>
             <xsd:attribute name="Name" use="required" type="xsd:string"/>
-            <xsd:attribute name="ExternRef" type="ExternDBref"/>
+            <xsd:attribute name="Description" use="required" type="xsd:string"/>
+            <xsd:attribute name="Status" use="required" type="xsd:string"/>
+            <xsd:attribute name="ExternRef" type="ExternDBref">
+                <xsd:annotation>
+                    <xsd:documentation>
+						This is called ExternalIdentifier in the EA Diagrams
+                    </xsd:documentation>
+                </xsd:annotation>     	
+			</xsd:attribute>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="ScreenAcquisition">
@@ -198,6 +233,7 @@
             </xsd:documentation>
         </xsd:annotation>     
         <xsd:complexType>
+            <xsd:attribute name="ID" use="required" type="ScreenAcquisitionID"/>
             <xsd:attribute name="EndTime" type="xsd:dateTime">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -214,6 +250,12 @@
             </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
+    <xsd:simpleType name="ScreenAcquisitionID">
+        <xsd:restriction base="OME:LSID">
+            <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ScreenAcquisitation)(:\S+)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
     <xsd:element name="ScreenImage">
         <xsd:annotation>
             <xsd:documentation>
@@ -238,6 +280,7 @@
             </xsd:documentation>
         </xsd:annotation> 
         <xsd:complexType>
+            <xsd:attribute name="ID" use="required" type="WellID"/>
             <xsd:attribute name="Column" type="xsd:integer">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -274,5 +317,51 @@
             </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
+    <xsd:simpleType name="WellID">
+        <xsd:restriction base="OME:LSID">
+            <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Well)(:\S+)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="WellSample">
+        <xsd:annotation>
+            <xsd:documentation>
+               	A WellSample links an Image to a Well, a WellReagent links a Reagent to a Well.
+            </xsd:documentation>
+        </xsd:annotation> 
+        <xsd:complexType>
+            <xsd:attribute name="ID" use="required" type="WellSampleID"/>
+            <xsd:attribute name="Index" type="xsd:integer">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
+            </xsd:attribute>
+            <xsd:attribute name="PosX" type="xsd:integer">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
+                
+            </xsd:attribute>
+            <xsd:attribute name="PosY" type="xsd:integer">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
+                
+            </xsd:attribute>
+            <xsd:attribute name="Timepoint" type="xsd:integer">
+                <xsd:annotation>
+                    <xsd:documentation>
+                    </xsd:documentation>
+                </xsd:annotation>     
+                
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="WellSampleID">
+        <xsd:restriction base="OME:LSID">
+            <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:WellSample)(:\S+)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 </xsd:schema>
-    
