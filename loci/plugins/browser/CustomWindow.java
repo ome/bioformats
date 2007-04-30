@@ -188,7 +188,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     channelPanel = new JPanel(switcher);
     channelPanel.setOpaque(false);
 
-    channelBox = new JCheckBox("Transmitted");
+    channelBox = new JCheckBox("Transmitted", true);
     channelBox.setBackground(Color.white);
     channelPanel.add("one", channelBox);
     channelBox.addItemListener(this);
@@ -228,7 +228,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       tPanel.add(tIndicator, BorderLayout.SOUTH);
     }
 
-    //setup the layout
+    // set up the layout
     lowPane = new Panel();
     FormLayout layout = new FormLayout(TAB + ",pref," + TAB + ",pref:grow," +
       TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB,
@@ -315,7 +315,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     else {
       // C checkbox
       switcher.first(channelPanel);
-      c = channelBox.isSelected() ? 2 : 1;
+      c = channelBox.isSelected() ? 1 : 2;
       if (!db.hasC) {
         channelBox.setEnabled(false);
         c = 1;
@@ -581,7 +581,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
       z = zSliceSel.getValue();
       t = tSliceSel.getValue();
-      c = channels.isSelected() ? 2 : 1;
+      c = channels.isSelected() ? 1 : 2;
 
       showSlice(z, t, c);
     }
