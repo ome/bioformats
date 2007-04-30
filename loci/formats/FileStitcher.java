@@ -333,15 +333,10 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    try { 
-      int[] q = computeIndices(no);
-      int fno = q[0], ino = q[1];
-      if (ino < readers[fno].getImageCount()) {
-        return readers[fno].openImage(ino);
-      }
-    }
-    catch (FormatException e) {
-      if (FormatHandler.debug) e.printStackTrace(); 
+    int[] q = computeIndices(no);
+    int fno = q[0], ino = q[1];
+    if (ino < readers[fno].getImageCount()) {
+      return readers[fno].openImage(ino);
     }
 
     // return a blank image to cover for the fact that
@@ -358,15 +353,10 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    try { 
-      int[] q = computeIndices(no);
-      int fno = q[0], ino = q[1];
-      if (ino < readers[fno].getImageCount()) {
-        return readers[fno].openBytes(ino);
-      }
-    }
-    catch (FormatException e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    int[] q = computeIndices(no);
+    int fno = q[0], ino = q[1];
+    if (ino < readers[fno].getImageCount()) {
+      return readers[fno].openBytes(ino);
     }
 
     // return a blank image to cover for the fact that
@@ -385,14 +375,15 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
-    try { 
-      int[] q = computeIndices(no);
-      int fno = q[0], ino = q[1];
+    int[] q = computeIndices(no);
+    int fno = q[0], ino = q[1];
+    if (ino < readers[fno].getImageCount()) {
       return readers[fno].openBytes(ino, buf);
     }
-    catch (FormatException e) {
-      if (FormatHandler.debug) e.printStackTrace();
-    }
+
+    // return a blank image to cover for the fact that
+    // this file does not contain enough image planes
+    Arrays.fill(buf, (byte) 0);
     return buf;
   }
 
@@ -401,15 +392,10 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
-    try { 
-      int[] q = computeIndices(no);
-      int fno = q[0], ino = q[1];
-      if (ino < readers[fno].getImageCount()) {
-        return readers[fno].openThumbImage(ino);
-      }
-    }
-    catch (FormatException e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    int[] q = computeIndices(no);
+    int fno = q[0], ino = q[1];
+    if (ino < readers[fno].getImageCount()) {
+      return readers[fno].openThumbImage(ino);
     }
 
     // return a blank image to cover for the fact that
@@ -425,16 +411,12 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
-    try { 
-      int[] q = computeIndices(no);
-      int fno = q[0], ino = q[1];
-      if (ino < readers[fno].getImageCount()) {
-        return readers[fno].openThumbBytes(ino);
-      }
+    int[] q = computeIndices(no);
+    int fno = q[0], ino = q[1];
+    if (ino < readers[fno].getImageCount()) {
+      return readers[fno].openThumbBytes(ino);
     }
-    catch (FormatException e) {
-      if (FormatHandler.debug) e.printStackTrace();
-    }
+
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     int sno = getSeries();
@@ -929,7 +911,13 @@ public class FileStitcher implements IFormatReader {
     readers[fno].setId(files[fno]);
     readers[fno].setSeries(reader.getSeries());
 
-    int ino = FormatTools.getIndex(readers[fno], posZ[0], posC[0], posT[0]);
+    int ino;
+    if (posZ[0] < readers[fno].getSizeZ() &&
+      posC[0] < readers[fno].getSizeC() && posT[0] < readers[fno].getSizeT())
+    {
+      ino = FormatTools.getIndex(readers[fno], posZ[0], posC[0], posT[0]);
+    }
+    else ino = Integer.MAX_VALUE; // coordinates out of range
 
     return new int[] {fno, ino};
   }
