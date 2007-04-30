@@ -335,9 +335,15 @@ public final class FormatTools {
         System.out.print(" (effectively " + effSizeC + ")");
       }
       System.out.println();
+      int cProduct = 1;
       for (int i=0; i<cLengths.length; i++) {
         System.out.println("\t\t#" + (i + 1) + " = " +
           cTypes[i] + " (" + cLengths[i] + ")");
+        cProduct *= cLengths[i];
+      }
+      if (cLengths.length == 0 || cProduct != sizeC) {
+        System.out.println(
+          "\t************ Warning: C dimension mismatch ************");
       }
       System.out.println("\tSizeT = " + sizeT);
       if (imageCount != sizeZ * effSizeC * sizeT) {
