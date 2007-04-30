@@ -849,8 +849,14 @@ public class FileStitcher implements IFormatReader {
     for (int i=1; i<lenC[sno].length; i++) {
       if (lenC[sno][i] > 1) cCount++;
     }
-    core.cLengths[sno] = new int[cCount];
-    core.cTypes[sno] = new String[cCount];
+    if (cCount == 0) {
+      core.cLengths[sno] = new int[] {1};
+      core.cTypes[sno] = new String[] {FormatTools.CHANNEL};
+    }
+    else {
+      core.cLengths[sno] = new int[cCount];
+      core.cTypes[sno] = new String[cCount];
+    }
     int c = 0;
     for (int i=0; i<cLengths.length; i++) {
       if (cLengths[i] == 1) continue;
