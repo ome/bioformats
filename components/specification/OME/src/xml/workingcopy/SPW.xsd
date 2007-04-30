@@ -33,6 +33,36 @@
         </xsd:annotation>
         <xsd:restriction base="xsd:string"/>
     </xsd:simpleType>
+    <xsd:element name="Plate">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element identifies microtiter plates within a screen.
+                A plate can belong to more than one screen.
+                The Screen(s) that a plate belongs to are specified by the ScreenRef element.
+                The EternRef attribute may contain a reference to an external database.
+                The Plate ID and Name attributes are required.
+                The Name identifies the plate to the user.  It is used much like the Plate ID, and so must be unique within the document.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="PlateDataset" minOccurs="0"/>
+                <xsd:element ref="ScreenPlate" minOccurs="0"/>
+                <xsd:element ref="Well" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="ID" use="required" type="PlateID"/>
+            <xsd:attribute name="Name" use="required" type="xsd:string"/>
+            <xsd:attribute name="Description" use="required" type="xsd:string"/>
+            <xsd:attribute name="Status" use="required" type="xsd:string"/>
+            <xsd:attribute name="ExternRef" type="ExternDBref">
+                <xsd:annotation>
+                    <xsd:documentation>
+						This is called ExternalIdentifier in the EA Diagrams
+                    </xsd:documentation>
+                </xsd:annotation>     	
+			</xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="PlateDataset">
         <xsd:annotation>
             <xsd:documentation>
@@ -99,7 +129,6 @@
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Plate)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
     <xsd:element name="Reagent">
         <xsd:annotation>
             <xsd:documentation>
@@ -107,6 +136,9 @@
             </xsd:documentation>
         </xsd:annotation>      
         <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ReagentWell" minOccurs="0"/>
+            </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ReagentID"/>
             <xsd:attribute name="Description" type="xsd:string">
                 <xsd:annotation>
@@ -147,6 +179,12 @@
                 the same Well.
             </xsd:documentation>
         </xsd:annotation>     
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Reagent" minOccurs="0"/>
+                <xsd:element ref="Well" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
     </xsd:element>
     <xsd:element name="Screen">
         <xsd:annotation>
@@ -164,6 +202,9 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element ref="OME:Description" minOccurs="0"/>
+                <xsd:element ref="ScreenPlate" minOccurs="0"/>
+                <xsd:element ref="ScreenImage" minOccurs="0"/>
+                <xsd:element ref="ScreenAcquisition" minOccurs="0"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ScreenID"/>
             <xsd:attribute name="Name" use="required" type="xsd:string"/>
@@ -195,34 +236,6 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-    <xsd:element name="Plate">
-        <xsd:annotation>
-            <xsd:documentation>
-                This element identifies microtiter plates within a screen.
-                A plate can belong to more than one screen.
-                The Screen(s) that a plate belongs to are specified by the ScreenRef element.
-                The EternRef attribute may contain a reference to an external database.
-                The Plate ID and Name attributes are required.
-                The Name identifies the plate to the user.  It is used much like the Plate ID, and so must be unique within the document.
-            </xsd:documentation>
-        </xsd:annotation>
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="ScreenRef" maxOccurs="unbounded"/>
-            </xsd:sequence>
-            <xsd:attribute name="ID" use="required" type="PlateID"/>
-            <xsd:attribute name="Name" use="required" type="xsd:string"/>
-            <xsd:attribute name="Description" use="required" type="xsd:string"/>
-            <xsd:attribute name="Status" use="required" type="xsd:string"/>
-            <xsd:attribute name="ExternRef" type="ExternDBref">
-                <xsd:annotation>
-                    <xsd:documentation>
-						This is called ExternalIdentifier in the EA Diagrams
-                    </xsd:documentation>
-                </xsd:annotation>     	
-			</xsd:attribute>
-        </xsd:complexType>
-    </xsd:element>
     <xsd:element name="ScreenAcquisition">
         <xsd:annotation>
             <xsd:documentation>
@@ -233,6 +246,11 @@
             </xsd:documentation>
         </xsd:annotation>     
         <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Screen" minOccurs="0"/>
+                <xsd:element ref="WellSample" minOccurs="0"/>
+                <xsd:element ref="OME:Image" minOccurs="0"/>
+            </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ScreenAcquisitionID"/>
             <xsd:attribute name="EndTime" type="xsd:dateTime">
                 <xsd:annotation>
@@ -255,7 +273,6 @@
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ScreenAcquisitation)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
     <xsd:element name="ScreenImage">
         <xsd:annotation>
             <xsd:documentation>
@@ -263,6 +280,12 @@
                 a set of Images and the Screen they belong to.
             </xsd:documentation>
         </xsd:annotation>      
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Screen" minOccurs="0"/>
+                <xsd:element ref="OME:Image" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
     </xsd:element>
     <xsd:element name="ScreenPlate">
         <xsd:annotation>
@@ -270,6 +293,12 @@
                 A ScreenPlate serves as the link between a Screen and the Plates its composed of.
             </xsd:documentation>
         </xsd:annotation>     
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Screen" minOccurs="0"/>
+                <xsd:element ref="Plate" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
     </xsd:element>
     <xsd:element name="Well">
         <xsd:annotation>
@@ -280,6 +309,12 @@
             </xsd:documentation>
         </xsd:annotation> 
         <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="OME:Image" minOccurs="0"/>
+                <xsd:element ref="WellSample" minOccurs="0"/>
+                <xsd:element ref="Plate" minOccurs="0"/>
+                <xsd:element ref="ReagentWell" minOccurs="0"/>
+            </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="WellID"/>
             <xsd:attribute name="Column" type="xsd:integer">
                 <xsd:annotation>
@@ -329,6 +364,10 @@
             </xsd:documentation>
         </xsd:annotation> 
         <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="ScreenAcquisition" minOccurs="0"/>
+                <xsd:element ref="Well" minOccurs="0"/>
+            </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="WellSampleID"/>
             <xsd:attribute name="Index" type="xsd:integer">
                 <xsd:annotation>
