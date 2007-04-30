@@ -331,7 +331,7 @@ public class DicomReader extends FormatReader {
         new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSSSSS");
       Date d = parse.parse(stamp, new ParsePosition(0));
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      stamp = fmt.format(d);
+      if (d != null) stamp = fmt.format(d);
     }
 
     store.setImage(
