@@ -34,6 +34,9 @@ public class NRRDReader extends FormatReader {
 
   // -- Fields --
 
+  /** Helper reader. */
+  private ImageReader helper;
+
   /** Name of data file, if the current extension is 'nhdr'. */
   private String dataFile;
 
@@ -92,7 +95,7 @@ public class NRRDReader extends FormatReader {
       }
       else throw new FormatException("Unsupported encoding: " + encoding);
     }
-    return null;
+    return helper.openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
@@ -115,12 +118,19 @@ public class NRRDReader extends FormatReader {
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
 
+  /* @see loci.formats.IFormatReader#close() */
+  public void close() throws IOException {
+    super.close();
+    if (helper != null) helper.close();
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
+    helper = new ImageReader();
 
     boolean finished = false;
     String line, key, v;
@@ -171,7 +181,9 @@ public class NRRDReader extends FormatReader {
             String t = tokens.nextToken();
             int size = Integer.parseInt(t);
 
-            if (numDimensions >= 3 && i == 0 && size > 1) core.sizeC[0] = size;
+            if (numDimensions >= 3 && i == 0 && size > 1 && size <= 4) {
+              core.sizeC[0] = size;
+            } 
             else if (i == 0 || (core.sizeC[0] > 1 && i == 1)) {
               core.sizeX[0] = size;
             }
@@ -196,14 +208,17 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("min")) min = v;
         else if (key.equals("max")) max = v;
       }
-      if (line.length() == 0 && dataFile == null) finished = true;
-      if (dataFile != null && in.getFilePointer() == in.length()) {
+      
+      if ((line.length() == 0 && dataFile == null) || line == null) {
+        finished = true;
+      } 
+      if (dataFile != null && (in.length() - in.getFilePointer() < 2)) {
         finished = true;
       }
     }
 
     if (dataFile == null) offset = in.getFilePointer();
-    else throw new FormatException("Separate headers not supported.");
+    else helper.setId(dataFile);
 
     core.rgb[0] = core.sizeC[0] > 1;
     core.interleaved[0] = true;

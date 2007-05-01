@@ -115,7 +115,11 @@ public class LeicaReader extends FormatReader {
     int ndx = no % channelIndices.length;
     tiff[series][no].setId((String) files[series].get(no));
     byte[] b = tiff[series][no].openBytes(0);
-    b = ImageTools.splitChannels(b, core.sizeC[series], false,
+    
+    int c = b.length / (core.sizeX[series] * core.sizeY[series] * 
+      FormatTools.getBytesPerPixel(core.pixelType[series])); 
+    
+    b = ImageTools.splitChannels(b, c, false,
       isInterleaved())[channelIndices[ndx]];
     tiff[series][no].close();
     return b;
@@ -134,7 +138,9 @@ public class LeicaReader extends FormatReader {
     tiff[series][no].close();
 
     int ndx = no % channelIndices.length;
-    buf = ImageTools.splitChannels(buf, core.sizeC[series], false,
+    int c = buf.length / (core.sizeX[series] * core.sizeY[series] * 
+      FormatTools.getBytesPerPixel(core.pixelType[series])); 
+    buf = ImageTools.splitChannels(buf, c, false,
       isInterleaved())[channelIndices[ndx]];
     return buf;
   }
