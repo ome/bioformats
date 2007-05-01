@@ -329,14 +329,6 @@ public class ImageWriter implements IFormatWriter {
 
   // -- Deprecated IFormatWriter API methods --
 
-  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
-  public void saveImage(String id, Image image, boolean last)
-    throws FormatException, IOException
-  {
-    setId(id);
-    saveImage(image, last);
-  }
-
   /** @deprecated Replaced by {@link #canDoStacks()} */
   public boolean canDoStacks(String id) throws FormatException {
     try {

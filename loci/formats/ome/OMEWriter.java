@@ -104,7 +104,7 @@ public class OMEWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveImage(String, Image, boolean) */
+  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
   public void saveImage(java.awt.Image image, boolean last)
     throws FormatException, IOException
   {

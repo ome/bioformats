@@ -76,10 +76,6 @@ public interface IFormatWriter extends IFormatHandler {
 
   // -- Deprecated API methods --
 
-  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
-  void saveImage(String id, Image image, boolean last)
-    throws FormatException, IOException;
-
   /** @deprecated Replaced by {@link #canDoStacks()} */
   boolean canDoStacks(String id) throws FormatException;
 
