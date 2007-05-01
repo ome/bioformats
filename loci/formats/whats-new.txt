@@ -1,9 +1,19 @@
+* Added support for NRRD
+* Added support for Evotec Flex (requires LuraWave Java SDK with license code)
+* Added status event reporting to readers
 * Added API to toggle metadata collection
-* Deprecated methods in IFormatReader that accept the 'id' parameter
-* Deprecated IFormatWriter.save in favor of IFormatWriter.saveImage
+* Deprecated reader and writer methods that accept the 'id' parameter
+* Deprecated IFormatWriter.save in favor of saveImage and saveBytes
 * Removed "ignore color table" logic - replaced with Leica-specific solution
-* Moved dimension swapping and min/max calculation logic to delegates.
-* Miscellaneous bugfixes/tweaks in most readers
+* Moved dimension swapping and min/max calculation logic to delegates
+* Added support for compressed QuickTime headers
+* Fixed QuickTime Motion JPEG-B support
+* Fixed some memory issues (repeated small array allocations)
+* Fixed issues reading large (> 2 GB) files
+* Support for multiple dimensions rasterized into channels
+* Separate GUI logic into isolated loci.formats.gui package
+* Miscellaneous bugfixes and tweaks in most readers and writers
+* Many other bugfixes and improvements
 
 2007 Mar 16:
 * Fixed calibration bugs in importer plugin

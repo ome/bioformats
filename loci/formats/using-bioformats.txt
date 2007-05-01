@@ -72,17 +72,21 @@ The previous section described how to read pixels as they are stored in the
 file.  However, the native format isn't necessarily convenient, so Bio-Formats
 provides a few extras to make file reading more flexible.
 
-- loci.formats.FileStitcher extends IFormatReader, and uses advanced pattern
-  matching heuristics to group files that belong to the same dataset.
-- loci.formats.ChannelSeparator extends IFormatReader, and makes sure that
-  all planes are grayscale - RGB images are split into 3 separate grayscale
-  images.
-- loci.formats.ChannelMerger extends IFormatReader, and merges grayscale
-  images to RGB if the number of channels is greater than 1.
-- loci.formats.MinMaxCalculator extends IFormatReader, and provides an API
-  for retrieving the minimum and maximum pixel values for each channel.
-- loci.formats.DimensionSwapper extends IFormatReader, and provides an API
-  for changing the dimension order of a file.
+- There are a few "wrapper" readers (that implement IFormatReader) that take a
+  reader in the constructor, and manipulate the results somehow, for
+  convenience. Using them is similar to the java.io InputStream/OutputStream
+  model: just layer whichever functionality you need by nesting the wrappers.
+  + FileStitcher extends IFormatReader, and uses advanced pattern
+    matching heuristics to group files that belong to the same dataset.
+  + ChannelSeparator extends IFormatReader, and makes sure that
+    all planes are grayscale - RGB images are split into 3 separate grayscale
+    images.
+  + ChannelMerger extends IFormatReader, and merges grayscale
+    images to RGB if the number of channels is greater than 1.
+  + MinMaxCalculator extends IFormatReader, and provides an API
+    for retrieving the minimum and maximum pixel values for each channel.
+  + DimensionSwapper extends IFormatReader, and provides an API
+    for changing the dimension order of a file.
 - ImageTools provides a number of methods for manipulating BufferedImages and
   primitive type arrays.  In particular, there are methods to split and merge
   channels in a BufferedImage/array, as well as converting to a specific data
@@ -111,7 +115,7 @@ the same writer and output settings (compression, frames per second, etc.),
 and is especially useful for formats that do not support multiple images per
 file.
 
-A word of warning: IFormatWriter.saveImage(String, Image, boolean) accepts 
+A word of warning: IFormatWriter.saveImage(Image, boolean) accepts 
 generic java.awt.Images, and converts them to a BufferedImage under the hood.
 The problem is that not all formats support all types of data (e.g. JPEG
 does not support 16-bit data).  To prevent the possibility of corrupt or
@@ -127,8 +131,8 @@ to write files using Bio-Formats.
 
 Following is a list of known oddities.
 
-o IFormatWriter accepts Image objects, and not BufferedImages; yet all writers
-  convert the Image to a BufferedImage.  You can still pass in a
+o IFormatWriter accepts Image objects (not just BufferedImages); yet all
+  writers convert the Image to a BufferedImage.  You can still pass in a
   BufferedImage, but you are free to pass in any Image object.
 
 o All readers have another openBytes method that takes a pre-allocated byte
@@ -162,4 +166,5 @@ o Through specialized I/O classes, Bio-Formats is able to control the number of
   meet all of our goals.
 
 o RLE-compressed QuickTime movies will look funny if the planes are not read
-  in sequential order.
+  in sequential order, since proper decoding of a particular plane can depend
+  on the previous plane.
