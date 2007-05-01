@@ -27,7 +27,6 @@ import java.awt.event.InputEvent;
 import java.util.Vector;
 import loci.visbio.data.TransformEvent;
 import loci.visbio.util.MathUtil;
-import loci.visbio.util.OverlayUtil;
 import visad.DisplayEvent;
 import visad.DisplayImpl;
 
