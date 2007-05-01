@@ -48,13 +48,14 @@ public interface Codec {
   /**
    * Compresses a block of data.
    *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not an LZW-compressed data block.
+   * @param data The data to be compressed.
+   * @param x Length of the x dimension of the image data, if appropriate.
+   * @param y Length of the y dimension of the image data, if appropriate.
+   * @param dims The dimensions of the image data, if appropriate.
+   * @param options Options to be used during compression, if appropriate.
+   * @return The compressed data.
+   * @throws FormatException If input is not a compressed data block of the
+   *   appropriate type.
    */
   byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException;
@@ -62,13 +63,14 @@ public interface Codec {
   /**
    * Compresses a block of data.
    *
-   * @param data the data to be compressed
-   * @param x length of the x dimension of the image data, if appropriate
-   * @param y length of the y dimension of the image data, if appropriate
-   * @param dims the dimensions of the image data, if appropriate
-   * @param options options to be used during compression, if appropriate
-   * @return The compressed data
-   * @throws FormatException If input is not an LZW-compressed data block.
+   * @param data The data to be compressed.
+   * @param x Length of the x dimension of the image data, if appropriate.
+   * @param y Length of the y dimension of the image data, if appropriate.
+   * @param dims The dimensions of the image data, if appropriate.
+   * @param options Options to be used during compression, if appropriate.
+   * @return The compressed data.
+   * @throws FormatException If input is not a compressed data block of the
+   *   appropriate type.
    */
   byte[] compress(byte[][] data, int x, int y,
       int[] dims, Object options) throws FormatException;
@@ -76,20 +78,20 @@ public interface Codec {
   /**
    * Decompresses a block of data.
    *
-   * @param data the data to be decompressed
-   * @return The decompressed data
-   * @throws FormatException if data is not valid compressed data for this
-   *                         decompressor
+   * @param data the data to be decompressed.
+   * @return The decompressed data.
+   * @throws FormatException If data is not valid compressed data for this
+   *   decompressor.
    */
   byte[] decompress(byte[] data) throws FormatException;
 
   /**
    * Decompresses a block of data.
    *
-   * @param data the data to be decompressed
-   * @return The decompressed data
-   * @throws FormatException if data is not valid compressed data for this
-   *                         decompressor
+   * @param data The data to be decompressed.
+   * @return The decompressed data.
+   * @throws FormatException If data is not valid compressed data for this
+   *   decompressor.
    */
   byte[] decompress(byte[][] data) throws FormatException;
 

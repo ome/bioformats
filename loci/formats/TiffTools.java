@@ -173,6 +173,7 @@ public final class TiffTools {
   public static final int DEFLATE = 8;
   public static final int THUNDERSCAN = 32809;
   public static final int NIKON = 34713;
+  public static final int LURAWAVE = -1;
 
   // photometric interpretation types
   public static final int WHITE_IS_ZERO = 0;
@@ -1029,8 +1030,9 @@ public final class TiffTools {
     int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
 
     // If the subsequent color maps are empty, use the first IFD's color map
-    if (colorMap == null)
+    if (colorMap == null) {
       colorMap = getIFDIntArray(getFirstIFD(in), COLOR_MAP, false);
+    }
 
     // use special color map for YCbCr
     if (photoInterp == Y_CB_CR) {
@@ -1186,8 +1188,8 @@ public final class TiffTools {
         samplesPerPixel + "; numSamples=" + numSamples + ")");
     }
 
-    if (samplesPerPixel == 1 && (photoInterp == RGB_PALETTE ||
-      photoInterp == CFA_ARRAY))
+    if (samplesPerPixel == 1 &&
+      (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY))
     {
       samplesPerPixel = 3;
     }
@@ -1770,35 +1772,29 @@ public final class TiffTools {
         "(Group 4 Fax) compression mode is not supported");
     }
     else if (compression == LZW) {
-      LZWCodec c = new LZWCodec();
-      return c.decompress(input);
-      // return Compression.lzwUncompress(input);
+      return new LZWCodec().decompress(input);
     }
     else if (compression == JPEG) {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
     }
-    //else if (compression == NIKON) {
-    //  return Compression.nikonUncompress(input);
-    //}
-    else if (compression == NIKON) {
-      throw new FormatException("Sorry, Nikon compression mode is not " +
-        "supported; it will be added in the near future");
-    }
     else if (compression == PACK_BITS) {
-      PackbitsCodec c = new PackbitsCodec();
-      return c.decompress(input);
-
-      //return Compression.packBitsUncompress(input);
+      return new PackbitsCodec().decompress(input);
     }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      //return Compression.deflateUncompress(input);
-      AdobeDeflateCodec c = new AdobeDeflateCodec();
-      return c.decompress(input);
+      return new AdobeDeflateCodec().decompress(input);
     }
     else if (compression == THUNDERSCAN) {
       throw new FormatException("Sorry, " +
         "Thunderscan compression mode is not supported");
+    }
+    else if (compression == NIKON) {
+      //return new NikonCodec().decompress(input);
+      throw new FormatException("Sorry, Nikon compression mode is not " +
+        "supported; we hope to support it in the future");
+    }
+    else if (compression == LURAWAVE) {
+      return new LuraWaveCodec().decompress(input);
     }
     else {
       throw new FormatException(

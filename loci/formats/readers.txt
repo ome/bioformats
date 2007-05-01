@@ -72,6 +72,7 @@ loci.formats.in.ZeissLSMReader     # lsm
 loci.formats.in.SEQReader          # seq
 loci.formats.in.GelReader          # gel
 loci.formats.in.ImarisTiffReader   # ims
+loci.formats.in.FlexReader         # flex
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.LeicaReader        # lei, tif
