@@ -524,92 +524,97 @@ public final class OverlayUtil {
 
     int hlen = hlt ? len : 0;
     int goodSets = sets.size();
-    float[][] rangeSamples = new float[4][hlen + 4 * goodSets];
+    if (goodSets == 0 ) {
+      return null;
+    } 
+    else {
+      float[][] rangeSamples = new float[4][hlen + 4 * goodSets];
 
-    // fill nodes range samples;
-    Color col = GLOW_COLOR;
-    float r = col.getRed() / 255f;
-    float g = col.getGreen() / 255f;
-    float b = col.getBlue() / 255f;
+      // fill nodes range samples;
+      Color col = GLOW_COLOR;
+      float r = col.getRed() / 255f;
+      float g = col.getGreen() / 255f;
+      float b = col.getBlue() / 255f;
 
-    Arrays.fill(rangeSamples[0], 0, 4*goodSets, r);
-    Arrays.fill(rangeSamples[1], 0, 4*goodSets, g);
-    Arrays.fill(rangeSamples[2], 0, 4*goodSets, b);
-    Arrays.fill(rangeSamples[3], 0, 4*goodSets, GLOW_ALPHA);
+      Arrays.fill(rangeSamples[0], 0, 4*goodSets, r);
+      Arrays.fill(rangeSamples[1], 0, 4*goodSets, g);
+      Arrays.fill(rangeSamples[2], 0, 4*goodSets, b);
+      Arrays.fill(rangeSamples[3], 0, 4*goodSets, GLOW_ALPHA);
 
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    // Build circle and circle samples
-    // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, 
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      // Build circle and circle samples
+      // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, 
 
-    /*
-    System.out.println("2: isHighlightNode = " + hlt);
-    System.out.println("Thread.currentThread()" + Thread.currentThread());
-    */
-    Gridded2DSet hltSet = null;
-    if (hlt) {
-      float rad = 2 * delta;
-
-      // assemble a small circle
-      float[][] highlightSetSamples = new float[2][len];
-
-      // top half of circle
-      for (int i=0; i<arcLen; i++) {
-        highlightSetSamples[0][i] = c[0] + rad * ARC[0][i];
-        highlightSetSamples[1][i] = c[1] + rad * ARC[1][i];
-      }
-
-      // bottom half of circle
-      for (int i=0; i<arcLen; i++) {
-        int ndx = arcLen + i; 
-        highlightSetSamples[0][ndx] = c[0] + rad * ARC[0][i];
-        highlightSetSamples[1][ndx] = c[1] - rad * ARC[1][i];
-      }
-
-      try {
-        // build highlight set 
-        hltSet = new Gridded2DSet(domain, highlightSetSamples,
-          arcLen, 2, null, null, null, false);
-      }
-      catch (VisADException ex) { ex.printStackTrace(); }
-
-      col = HLT_COLOR;
-      r = col.getRed() / 255f;
-      g = col.getGreen() / 255f;
-      b = col.getBlue() / 255f;
-
-      Arrays.fill(rangeSamples[0], 4*goodSets, 4*goodSets + hlen, r);
-      Arrays.fill(rangeSamples[1], 4*goodSets, 4*goodSets + hlen, g);
-      Arrays.fill(rangeSamples[2], 4*goodSets, 4*goodSets + hlen, b);
-      Arrays.fill(rangeSamples[3], 4*goodSets, 4*goodSets + hlen, HLT_ALPHA);
-
-      sets.add(hltSet);
-    }
-
-    Gridded2DSet[] trueSets = new Gridded2DSet[sets.size()];
-    Object[] stuff = sets.toArray(trueSets);
-
-    FlatField field = null;
-    UnionSet fieldSet = null;
-    try {
       /*
-      for (int i=0; i<sets.length; i++) {
-        if (sets[i] == null) { 
-          System.out.println("sets[" + i + "] is null.");
-        }
-        else
-          System.out.println("sets[" + i + "].length = " + sets[i].getLength());
-      }
+      System.out.println("2: isHighlightNode = " + hlt);
+      System.out.println("Thread.currentThread()" + Thread.currentThread());
       */
+      Gridded2DSet hltSet = null;
+      if (hlt) {
+        float rad = 2 * delta;
 
-      fieldSet = new UnionSet (domain, trueSets);
-      FunctionType fieldType = new FunctionType(domain, range);
-      field = new FlatField(fieldType, fieldSet);
-      field.setSamples(rangeSamples);
+        // assemble a small circle
+        float[][] highlightSetSamples = new float[2][len];
+
+        // top half of circle
+        for (int i=0; i<arcLen; i++) {
+          highlightSetSamples[0][i] = c[0] + rad * ARC[0][i];
+          highlightSetSamples[1][i] = c[1] + rad * ARC[1][i];
+        }
+
+        // bottom half of circle
+        for (int i=0; i<arcLen; i++) {
+          int ndx = arcLen + i; 
+          highlightSetSamples[0][ndx] = c[0] + rad * ARC[0][i];
+          highlightSetSamples[1][ndx] = c[1] - rad * ARC[1][i];
+        }
+
+        try {
+          // build highlight set 
+          hltSet = new Gridded2DSet(domain, highlightSetSamples,
+            arcLen, 2, null, null, null, false);
+        }
+        catch (VisADException ex) { ex.printStackTrace(); }
+
+        col = HLT_COLOR;
+        r = col.getRed() / 255f;
+        g = col.getGreen() / 255f;
+        b = col.getBlue() / 255f;
+
+        Arrays.fill(rangeSamples[0], 4*goodSets, 4*goodSets + hlen, r);
+        Arrays.fill(rangeSamples[1], 4*goodSets, 4*goodSets + hlen, g);
+        Arrays.fill(rangeSamples[2], 4*goodSets, 4*goodSets + hlen, b);
+        Arrays.fill(rangeSamples[3], 4*goodSets, 4*goodSets + hlen, HLT_ALPHA);
+
+        sets.add(hltSet);
+      }
+
+      Gridded2DSet[] trueSets = new Gridded2DSet[sets.size()];
+      Object[] stuff = sets.toArray(trueSets);
+
+      FlatField field = null;
+      UnionSet fieldSet = null;
+      try {
+        /*
+        for (int i=0; i<sets.length; i++) {
+          if (sets[i] == null) { 
+            System.out.println("sets[" + i + "] is null.");
+          }
+          else
+            System.out.println("sets[" + i + "].length = " + sets[i].getLength());
+        }
+        */
+
+        fieldSet = new UnionSet (domain, trueSets);
+        FunctionType fieldType = new FunctionType(domain, range);
+        field = new FlatField(fieldType, fieldSet);
+        field.setSamples(rangeSamples);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+
+      return field;
     }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-
-    return field;
 
     /*
     // compute angle bisectors at each node
