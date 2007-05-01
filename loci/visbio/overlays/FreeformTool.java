@@ -63,6 +63,12 @@ public class FreeformTool extends OverlayTool {
    */
   protected static final double RECONNECT_THRESH = 1.0;
 
+  /** How close mouse must be to end node to resume drawing */
+  protected static final double RESUME_THRESH = 10.0;
+
+  /** Smoothing factor for "single exponential smoothing" */
+  protected static final float S = 0.35f;
+
   /** Constant for "erase" mode. */
   protected static final int ERASE = -1;
 
@@ -119,8 +125,7 @@ public class FreeformTool extends OverlayTool {
 
     double dpx = (double) px;
     double dpy = (double) py;
-    
-    // -- main
+
     // find closest freeform
     double maxThresh = ERASE_THRESH; 
     Info info = getClosestFreeform(display, dpx, dpy, 
@@ -143,7 +148,7 @@ public class FreeformTool extends OverlayTool {
           // enter erase mode
           setMode(ERASE);
         }
-        else if (dist < DRAW_THRESH) {
+        else if (dist < RESUME_THRESH) {
           // resume drawing
           if (seg == 0) freeform.reverseNodes();
           setMode(DRAW);
@@ -243,7 +248,6 @@ public class FreeformTool extends OverlayTool {
           (double) tailPxl[1]};
         double[] drag = {dpx, dpy};
 
-        // DISTANCE computation 
         // compare pair of ints with pair of floats
         double hdist = MathUtil.getDistance(drag, headPxlDbl);
         double tdist = MathUtil.getDistance(drag, tailPxlDbl);
@@ -280,14 +284,17 @@ public class FreeformTool extends OverlayTool {
         double distPxl = Math.sqrt (dxPxl*dxPxl + dyPxl*dyPxl);
 
         if (distPxl > DRAW_THRESH) {
-          freeform.setNextNode(dx, dy);
+          float[] s = smooth(new float[]{dx, dy}, new float[] {lastX, lastY});
+          freeform.setNextNode(s[0], s[1]);
           double len = freeform.getCurveLength();
-          freeform.setCurveLength(len + dist);
+          double[] sDbl = {(double) s[0], (double) s[1]};
+          double delta = MathUtil.getDistance(sDbl, last);
+          freeform.setCurveLength(len + delta);
           // I debated whether to call setBoundaries with every mouseDrag.
           // This is an efficient
           // method, but updating realtime for erasing requires an O(n)
           // scan of the nodes every time a node is deleted.
-          freeform.setBoundaries(dx, dy);
+          freeform.setBoundaries(s[0], s[1]);
         }
         // mode remains DRAW
       }
@@ -396,14 +403,15 @@ public class FreeformTool extends OverlayTool {
         // insert a node at the drag point if drag went far enough
         if (dragDist > DRAW_THRESH) {
           // first drag only
+          float[] s = smooth (new float[] {dx, dy}, prvCrdsFlt);
           if (tendril.tip < 0) {
-            freeform.insertNode(tendril.stop, dx, dy);
+            freeform.insertNode(tendril.stop, s[0], s[1]);
             tendril.stop++;
             tendril.tip = tendril.start + 1;
           }
           else { // later drags
             freeform.insertNode(tendril.tip+1, prvCrdsFlt[0], prvCrdsFlt[1]);
-            freeform.insertNode(tendril.tip+1, dx, dy);
+            freeform.insertNode(tendril.tip+1, s[0], s[1]);
             tendril.tip++;
             tendril.stop += 2;
           }
@@ -484,6 +492,18 @@ public class FreeformTool extends OverlayTool {
   }
 
   // -- Helper methods for mouse methods
+  
+  /** Calculates smoothed coordinates using "single exponential smoothing"
+   *  as described in Littlewood and Inman, _Computer-assisted DNA length
+   *  measurements..._. Nucleic Acids Research, V 10 No. 5. (1982) p. 1694 
+   */
+  private float[] smooth (float[] un, float[] cn1) {
+    float[] cn = new float[2];
+    for (int i=0; i<2; i++) {
+      cn[i] = S * un[i] + (1 - S) * cn1[i];
+    }
+    return cn;
+  }
   
   /** Slices a freeform in two. */
   private void slice(OverlayFreeform freef, double dist, int seg, double weight)
