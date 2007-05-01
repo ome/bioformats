@@ -35,7 +35,6 @@ import loci.formats.FormatTools;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.OverlayUtil;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.TransformLink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

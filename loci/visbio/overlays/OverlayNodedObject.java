@@ -166,38 +166,22 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
-
-    FlatField field = null;
-    Set fieldSet = null;
       
-    // determine number of samples
-    boolean circleFilled = false; // only works if nodes are also filled
-    // (all sets in a union set must have same manifold dimension)
-    int arcLen = ARC[0].length;
-    int len = 2 * arcLen;
-    int hlen = circleFilled ? len : len + 1;
-    int totalSamples = maxNodes;
-    if (isHighlightNode() && !filled) totalSamples += hlen;
-
-    float[][] rangeSamples = new float[4][totalSamples];
-
     // ******************************************************************
     // build nodes set and assign nodes range samples
     // ******************************************************************
-    SampledSet nodesSet = null;
+    SampledSet fieldSet = null;
     try {
-      nodesSet = new Gridded2DSet(domain,
+      fieldSet = new Gridded2DSet(domain,
         nodes, maxNodes, null, null, null, false);
       
       // I've written !isDrawing() to prevent a manifold dimension mismatch
       // that occurs when drawing filled polylines
       if (filled && !isDrawing()) {  
         Irregular2DSet roiSet =
-          DelaunayCustom.fillCheck((Gridded2DSet) nodesSet, false);
-        if (roiSet != null)  nodesSet = roiSet;
+          DelaunayCustom.fillCheck((Gridded2DSet) fieldSet, false);
+        if (roiSet != null) fieldSet = roiSet;
       }
-
-      fieldSet = nodesSet;
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     
@@ -207,72 +191,15 @@ public abstract class OverlayNodedObject extends OverlayObject {
     float g = col.getGreen() / 255f;
     float b = col.getBlue() / 255f;
 
-    Arrays.fill(rangeSamples[0], 0, maxNodes, r);
-    Arrays.fill(rangeSamples[1], 0, maxNodes, g);
-    Arrays.fill(rangeSamples[2], 0, maxNodes, b);
-    Arrays.fill(rangeSamples[3], 0, maxNodes, 1.0f);
-    
-    // **************************************************************
-    // make highlight set and fill highlight range samples
-    // **************************************************************
-    if (isHighlightNode() && !filled) {
-      SampledSet highlightSet = null;
-      float rad = RADIUS; 
-      // assemble highlight set samples
-      float[][] highlightSetSamples = new float[2][hlen];
-      float[] c = getNodeCoords(getHighlightedNodeIndex());
-
-      // top half of circle
-      for (int i=0; i<arcLen; i++) {
-        highlightSetSamples[0][i] = c[0] + rad * ARC[0][i];
-        highlightSetSamples[1][i] = c[1] + rad * ARC[1][i];
-      }
-
-      // bottom half of circle
-      for (int i=0; i<arcLen; i++) {
-        int ndx = circleFilled? arcLen + i : len - i - 1;
-        highlightSetSamples[0][ndx] = c[0] + rad * ARC[0][i];
-        highlightSetSamples[1][ndx] = c[1] - rad * ARC[1][i];
-      }
-
-      try {
-        // build highlight set 
-        if (circleFilled) {
-          highlightSet = new Gridded2DSet(domain, highlightSetSamples,
-            arcLen, 2, null, null, null, false);
-        }
-        else {
-          highlightSetSamples[0][len] = highlightSetSamples[0][0];
-          highlightSetSamples[1][len] = highlightSetSamples[1][0];
-          highlightSet = new Gridded2DSet(domain, highlightSetSamples,
-              highlightSetSamples[0].length, null, null, null, false);
-        }
-      }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      
-      // fill highlight range samples
-      float hltR = highlightColor.getRed() / 255f;
-      float hltG = highlightColor.getGreen() / 255f;
-      float hltB = highlightColor.getBlue() / 255f;
-      float hltA = HLT_ALPHA;
-
-      Arrays.fill(rangeSamples[0], maxNodes, totalSamples, hltR);
-      Arrays.fill(rangeSamples[1], maxNodes, totalSamples, hltG);
-      Arrays.fill(rangeSamples[2], maxNodes, totalSamples, hltB);
-      Arrays.fill(rangeSamples[3], maxNodes, totalSamples, hltA);
-
-      try {
-        // assemble a UnionSet of nodes and circle
-        SampledSet[] sets = new SampledSet[]{nodesSet, highlightSet};  
-        fieldSet = new UnionSet(domain, sets);
-      }
-      catch (VisADException exc) { exc.printStackTrace(); }
-    }
-    
-    // **********************************************************
-    // assemble ultimate field
-    // **********************************************************
+    if (fieldSet == null) System.out.println("yow!");
+    FlatField field = null;
     try {
+      float[][] rangeSamples = new float[4][fieldSet.getLength()];
+      Arrays.fill(rangeSamples[0], r);
+      Arrays.fill(rangeSamples[1], g);
+      Arrays.fill(rangeSamples[2], b);
+      Arrays.fill(rangeSamples[3], 1.0f);
+
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(rangeSamples);
@@ -282,15 +209,12 @@ public abstract class OverlayNodedObject extends OverlayObject {
       System.out.println("isHighlightNode() = " + isHighlightNode());
       System.out.println("filled  = " + filled);
       System.out.println("Thread.currentThread()" + Thread.currentThread());
-      System.out.println("totalSamples = " + totalSamples);
-      try {
-        System.out.println("nodesSet.getLength = " + nodesSet.getLength()); 
-      }
-      catch (VisADException exc2) {exc2.printStackTrace();}
       System.out.println("maxNodes = " + maxNodes); 
       System.out.println("numNodes = " + numNodes);
-      System.out.println("rangeSamples[0].length " + rangeSamples[0].length);
-
+      try {
+        System.out.println("fieldSet.getLength = " + fieldSet.getLength()); 
+      }
+      catch (VisADException exc2) {exc2.printStackTrace();}
     }
     catch (RemoteException exc) { exc.printStackTrace(); }
 
@@ -361,6 +285,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Highlight a node. */ 
   public void setHighlightNode(int i, Color c) {
+    // if (Thread.currentThread().getName().indexOf("ComputeDataThread") < 0)
+    // new Exception().printStackTrace();
     highlightNode = true;
     highlightIndex = i;
     highlightColor = c;
