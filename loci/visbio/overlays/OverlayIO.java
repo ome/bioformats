@@ -907,7 +907,7 @@ public final class OverlayIO {
       else if (input.startsWith("#") || input.matches("^[Xx]\t[Yy]")) {
         state = NODES; event = IGNORE;
       }
-      else if (input.matches("^[0-9]+\\.[0-9]+\\s[0-9]+\\.[0-9]+$")) {
+      else if (input.matches("^-?[0-9]+\\.[0-9]+\\s-?[0-9]+\\.[0-9]+$")) {
         state = NODES; event = PARSE;
       }
       else {
