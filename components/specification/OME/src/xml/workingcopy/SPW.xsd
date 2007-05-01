@@ -19,6 +19,7 @@
 <xsd:schema xmlns="http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd" targetNamespace="http://www.openmicroscopy.org/XMLschemas/SPW/2.0-RC1/SPW.xsd" xmlns:OME="http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd" xmlns:AML="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/2.0-RC1/AnalysisModule.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.0-RC1" elementFormDefault="qualified">
         <xsd:import namespace="http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd" schemaLocation="ome.xsd"/>
         <xsd:import namespace="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/2.0-RC1/AnalysisModule.xsd" schemaLocation="AnalysisModule.xsd"/>
+
     <xsd:annotation>
         <xsd:documentation>
             Open Microscopy Environment
@@ -26,6 +27,7 @@
             Author:  Andrew J Patterson
         </xsd:documentation>
     </xsd:annotation>
+
     <xsd:simpleType name="ExternDBref">
         <xsd:annotation>
             <xsd:documentation>
@@ -33,7 +35,8 @@
         </xsd:annotation>
         <xsd:restriction base="xsd:string"/>
     </xsd:simpleType>
-    <xsd:element name="Plate">
+ 
+   <xsd:element name="Plate">
         <xsd:annotation>
             <xsd:documentation>
                 This element identifies microtiter plates within a screen.
@@ -63,6 +66,7 @@
 			</xsd:attribute>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:element name="PlateDataset">
         <xsd:annotation>
             <xsd:documentation>
@@ -86,9 +90,9 @@
                     </xsd:restriction>
                 </xsd:simpleType>
             </xsd:attribute>
-        </xsd:complexType>
-        
+        </xsd:complexType>     
     </xsd:element>
+
     <xsd:element name="PlateImage">
         <xsd:annotation>
             <xsd:documentation>
@@ -107,6 +111,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:element name="PlateRef">
         <xsd:complexType>
             <xsd:complexContent>
@@ -124,11 +129,13 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:simpleType name="PlateID">
         <xsd:restriction base="OME:LSID">
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Plate)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
+
     <xsd:element name="Reagent">
         <xsd:annotation>
             <xsd:documentation>
@@ -144,15 +151,13 @@
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
-                </xsd:annotation>     
-                
+                </xsd:annotation>                   
             </xsd:attribute>
             <xsd:attribute name="Name" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
-                </xsd:annotation>     
-                
+                </xsd:annotation>                
             </xsd:attribute>
             <xsd:attribute name="ReagentIdentifier" type="xsd:string">
                 <xsd:annotation>
@@ -161,15 +166,16 @@
                         It serves as a foreign key into an external database. - aka ExternalIdentifier
                     </xsd:documentation>
                 </xsd:annotation>      
-                
             </xsd:attribute>
        </xsd:complexType>
     </xsd:element>
+
     <xsd:simpleType name="ReagentID">
         <xsd:restriction base="OME:LSID">
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Reagent)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
+
     <xsd:element name="ReagentWell">
         <xsd:annotation>
             <xsd:documentation>
@@ -186,6 +192,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:element name="Screen">
         <xsd:annotation>
             <xsd:documentation>
@@ -215,11 +222,13 @@
             <xsd:attribute name="Type" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:simpleType name="ScreenID">
         <xsd:restriction base="OME:LSID">
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Screen)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
+
     <xsd:element name="ScreenRef">
         <xsd:annotation>
             <xsd:documentation>
@@ -236,6 +245,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:element name="ScreenAcquisition">
         <xsd:annotation>
             <xsd:documentation>
@@ -257,22 +267,22 @@
                     <xsd:documentation>
                     </xsd:documentation>
                 </xsd:annotation>     
-                
             </xsd:attribute>
             <xsd:attribute name="StartTime" type="xsd:dateTime">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
                 </xsd:annotation>     
-                
             </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:simpleType name="ScreenAcquisitionID">
         <xsd:restriction base="OME:LSID">
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ScreenAcquisitation)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
+
     <xsd:element name="ScreenImage">
         <xsd:annotation>
             <xsd:documentation>
@@ -287,6 +297,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:element name="ScreenPlate">
         <xsd:annotation>
             <xsd:documentation>
@@ -300,6 +311,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:element name="Well">
         <xsd:annotation>
             <xsd:documentation>
@@ -326,37 +338,35 @@
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
-                </xsd:annotation>     
-                
+                </xsd:annotation>                 
             </xsd:attribute>
             <xsd:attribute name="ExternalIdentifier" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
-                </xsd:annotation>     
-                
+                </xsd:annotation>          
             </xsd:attribute>
             <xsd:attribute name="Row" type="xsd:integer">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
-                </xsd:annotation>     
-                
+                </xsd:annotation>         
             </xsd:attribute>
             <xsd:attribute name="Type" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
                 </xsd:annotation>     
-                
             </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:simpleType name="WellID">
         <xsd:restriction base="OME:LSID">
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Well)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
+
     <xsd:element name="WellSample">
         <xsd:annotation>
             <xsd:documentation>
@@ -379,28 +389,27 @@
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
-                </xsd:annotation>     
-                
+                </xsd:annotation>
             </xsd:attribute>
             <xsd:attribute name="PosY" type="xsd:integer">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
-                </xsd:annotation>     
-                
+                </xsd:annotation>
             </xsd:attribute>
             <xsd:attribute name="Timepoint" type="xsd:integer">
                 <xsd:annotation>
                     <xsd:documentation>
                     </xsd:documentation>
                 </xsd:annotation>     
-                
             </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:simpleType name="WellSampleID">
         <xsd:restriction base="OME:LSID">
             <xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:WellSample)(:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
+
 </xsd:schema>
