@@ -77,10 +77,11 @@ public class Exporter {
     if (outfile == null || outfile.length() == 0) {
       // open a dialog prompting for the filename to save
       SaveDialog sd = new SaveDialog("LOCI Bio-Formats Exporter", "", "");
-      outfile = new File(sd.getDirectory(), sd.getFileName()).getAbsolutePath();
-      if (outfile == null) {
-        return;
-      }
+      String dir = sd.getDirectory();
+      String name = sd.getFileName();
+      if (dir == null || name == null) return;
+      outfile = new File(dir, name).getAbsolutePath();
+      if (outfile == null) return;
     }
 
     try {
@@ -113,14 +114,22 @@ public class Exporter {
         if (notSupportedType) forceType = gd.getNextBoolean();
       }
 
-      // convert and save each slice
+      // convert and save slices
 
       ImageStack is = imp.getStack();
-      for (int i=0; i<is.getSize(); i++) {
-        IJ.showStatus("Saving plane " + (i + 1) + "/" + is.getSize());
-        IJ.showProgress((double) (i + 1) / is.getSize());
+      int size = is.getSize();
+      boolean doStack = w.canDoStacks() && size > 1;
+      int start = doStack ? 0 : imp.getCurrentSlice() - 1;
+      int end = doStack ? size : start + 1;
+
+      for (int i=start; i<end; i++) {
+        if (doStack) {
+          IJ.showStatus("Saving plane " + (i + 1) + "/" + size);
+          IJ.showProgress((double) (i + 1) / size);
+        }
+        else IJ.showStatus("Saving image");
         proc = is.getProcessor(i + 1);
-        
+
         BufferedImage img = null;
         int x = proc.getWidth();
         int y = proc.getHeight();
@@ -140,7 +149,7 @@ public class Exporter {
         else if (proc instanceof ColorProcessor) {
           byte[][] pix = new byte[3][x*y];
           ((ColorProcessor) proc).getRGB(pix[0], pix[1], pix[2]);
-          img = ImageTools.makeImage(pix, x, y); 
+          img = ImageTools.makeImage(pix, x, y);
         }
 
         if (forceType) {
@@ -148,9 +157,9 @@ public class Exporter {
             int[] types = w.getPixelTypes();
             img = ImageTools.makeType(img, types[types.length - 1]);
           }
-          w.saveImage(img, i == is.getSize() - 1);
+          w.saveImage(img, i == end - 1);
         }
-        else w.saveImage(img, i == is.getSize() - 1);
+        else w.saveImage(img, i == end - 1);
       }
     }
     catch (FormatException e) {
