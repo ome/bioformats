@@ -155,7 +155,8 @@ public class ChannelSeparator extends ReaderWrapper {
       getThumbSizeY(), true);
   }
 
-  public void close() {
+  public void close() throws IOException {
+    super.close(); 
     lastImage = null;
     lastImageIndex = -1;
     lastImageSeries = -1;

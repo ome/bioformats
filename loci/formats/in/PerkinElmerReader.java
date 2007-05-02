@@ -71,6 +71,7 @@ public class PerkinElmerReader extends FormatReader {
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (isTiff) {
+      tiff[no / core.sizeC[0]].setId(files[no / core.sizeC[0]]); 
       return tiff[no / core.sizeC[0]].openBytes(0);
     }
 
@@ -338,7 +339,7 @@ public class PerkinElmerReader extends FormatReader {
     for (int i=0; i<tiff.length; i++) {
       tiff[i] = new TiffReader();
       if (i > 0) tiff[i].setMetadataCollected(false);
-      tiff[i].setId(files[i]);
+      //tiff[i].setId(files[i]);
     }
 
     // highly questionable metadata parsing
@@ -547,7 +548,10 @@ public class PerkinElmerReader extends FormatReader {
     core.sizeC[0] = Integer.parseInt(wavelengths);
 
     core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
-    if (isTiff) core.pixelType[0] = tiff[0].getPixelType();
+    if (isTiff) {
+      tiff[0].setId(files[0]); 
+      core.pixelType[0] = tiff[0].getPixelType();
+    } 
     else {
       int bpp = openBytes(0).length / (core.sizeX[0] * core.sizeY[0]);
       switch (bpp) {

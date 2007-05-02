@@ -784,6 +784,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Parse a tag and place it in the metadata hashtable. */
   private void parseTag(String data, int tagID, int attribute) {
+    if (data == null || data.length() == 0) return; 
     switch (tagID) {
       case 222:
         addMeta("Compression", data);

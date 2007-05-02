@@ -995,11 +995,11 @@ public final class TiffTools {
           // remember that the universe collapses when we divide by 0
           if (bitsPerSample[i] != 0) {
             rowsPerStripArray[i] = (long) stripByteCounts[i] /
-              (imageLength * (bitsPerSample[i] / 8));
+              (imageWidth * (bitsPerSample[i] / 8));
           }
           else if (bitsPerSample[i] == 0 && i > 0) {
             rowsPerStripArray[i] = (long) stripByteCounts[i] /
-              (imageLength * (bitsPerSample[i - 1] / 8));
+              (imageWidth * (bitsPerSample[i - 1] / 8));
             bitsPerSample[i] = bitsPerSample[i - 1];
           }
           else {
@@ -1009,7 +1009,7 @@ public final class TiffTools {
         // case 2: we're outside bitsPerSample array bounds
         else if (i >= bitsPerSample.length) {
           rowsPerStripArray[i] = (long) stripByteCounts[i] /
-            (imageLength * (bitsPerSample[bitsPerSample.length - 1] / 8));
+            (imageWidth * (bitsPerSample[bitsPerSample.length - 1] / 8));
         }
       }
 
@@ -1384,9 +1384,10 @@ public final class TiffTools {
       // First wrap the byte arrays and then use the features of the
       // ByteBuffer to transform to a ShortBuffer. Finally, use the ShortBuffer
       // bulk get method to copy the data into a usable form for makeImage().
-      //int len = samples.length == 2 ? 3 : samples.length;
-      short[][] sampleData = new short[samplesPerPixel][samples[0].length / 2];
-      for (int i = 0; i < sampleData.length; i++) {
+      int len = samples.length == 2 ? 3 : samples.length;
+      
+      short[][] sampleData = new short[len][samples[0].length / 2];
+      for (int i = 0; i < samplesPerPixel; i++) {
         ShortBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asShortBuffer();
         sampleBuf.get(sampleData[i]);
       }

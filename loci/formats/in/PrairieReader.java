@@ -202,6 +202,7 @@ public class PrairieReader extends FormatReader {
       }
       else if (id.endsWith("cfg")) {
         if (metadata == null) metadata = new Hashtable();
+        if (core == null) core = new CoreMetadata(1); 
         cfgFile = id;
         readCFG = true;
       }
