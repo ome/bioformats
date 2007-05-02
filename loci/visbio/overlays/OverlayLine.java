@@ -32,8 +32,8 @@ import visad.*;
 /** OverlayLine is a measurement line overlay. */
 public class OverlayLine extends OverlayObject {
 
-  // -- Static Fields -- 
-  
+  // -- Static Fields --
+
   /** The names of the statistics this object reports */
   protected static String[] statTypes =  {"Coordinates", "Length"};
 
@@ -60,8 +60,8 @@ public class OverlayLine extends OverlayObject {
 
   // -- OverlayObject API methods --
 
-  /** Returns whether this object is drawable, i.e., is of nonzero 
-  *  size, area, length, etc. 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+  *  size, area, length, etc.
   */
   public boolean hasData() { return (x1 != x2 || y1 != y2); }
 
@@ -74,7 +74,7 @@ public class OverlayLine extends OverlayObject {
 
     float[][] setSamples = {{x1, x2}, {y1, y2}};
 
-    Color col = selected ? GLOW_COLOR : color; 
+    Color col = selected ? GLOW_COLOR : color;
     float r = col.getRed() / 255f;
     float g = col.getGreen() / 255f;
     float b = col.getBlue() / 255f;
@@ -108,16 +108,16 @@ public class OverlayLine extends OverlayObject {
   public String getStat(String name) {
     if (name.equals("Coordinates")) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
-    } 
+    }
     else if (name.equals("Length")) {
       float xx = x2 - x1;
       float yy = y2 - y1;
       float length = (float) Math.sqrt(xx * xx + yy * yy);
       return "" + length;
-    } 
+    }
     else return "No such statistic for this overlay type";
   }
- 
+
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     float xx = x2 - x1;

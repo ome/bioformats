@@ -58,8 +58,8 @@ public final class MathUtil {
    * @param a Coordinates of the line's first endpoint
    * @param b Coordinates of the line's second endpoint
    * @param v Coordinates of the standalone point
-   * @param segment Whether distance computation should be constrained to the given line segment
-   *
+   * @param segment Whether distance computation should be constrained
+   *   to the given line segment
    */
   public static double getDistance(double[] a, double[] b, double[] v,
     boolean segment)
@@ -73,7 +73,6 @@ public final class MathUtil {
    *
    * @param p Coordinates of the first point
    * @param v Coordinates of the second point
-   *
    */
   public static double getDistance (double[] p, double[] v) {
     int len = p.length;  // redundant with getProjection
@@ -91,11 +90,11 @@ public final class MathUtil {
    * @param a Coordinates of the segment's first endpoint
    * @param b Coordinates of the segment's second endpoint
    * @param v Coordinates of the point to be projected
-   * @param segment Whether the projection should be constrained to the given line segment
-   *
+   * @param segment Whether the projection should be constrained
+   *   to the given line segment
    */
-
-  public static double[] getProjection (double[] a, double[] b, double[] v, boolean segment)
+  public static double[] getProjection(double[] a,
+    double[] b, double[] v, boolean segment)
   {
     int len = a.length;
     // vectors
@@ -132,13 +131,13 @@ public final class MathUtil {
     else return b;
   }
 
-  /** Gets distance to a curve of points connected by straight line segments.  
-   *  Also returns a segment index and wieght describing the location of the 
+  /** Gets distance to a curve of points connected by straight line segments.
+   *  Also returns a segment index and wieght describing the location of the
    *  nearest point on the curve (see below).
    *
    *  @param x x coordinate of point in question
    *  @param y y coordinate of point in question
-   *  @return an array double[3] with element 0 the distance to the nearest 
+   *  @return an array double[3] with element 0 the distance to the nearest
    *  point on the curve, element 1 the node index i of one end of
    *  closest line segment (the other end being i+1), and element 2 the weight
    *  (between zero and one) for determining the location of the closest point
@@ -177,19 +176,20 @@ public final class MathUtil {
        }
     }
 
-    double[] retvals = {minDist, (double) seg, weight}; // 'seg' is always an integer;
+    // 'seg' is always an integer;
     // cast down to int in functions using this method.
+    double[] retvals = {minDist, (double) seg, weight};
     return retvals;
   }
 
-  /** Gets distance to a curve of points connected by straight line segments.  
-   *  Also returns a segment index and wieght describing the location of the 
+  /** Gets distance to a curve of points connected by straight line segments.
+   *  Also returns a segment index and wieght describing the location of the
    *  nearest point on the curve (see below).
    *  All math takes place in double precision (floats upcast).
    *
    *  @param x x coordinate of point in question
    *  @param y y coordinate of point in question
-   *  @return an array double[3] with element 0 the distance to the nearest 
+   *  @return an array double[3] with element 0 the distance to the nearest
    *  point on the curve, element 1 the node index i of one end of
    *  closest line segment (the other end being i+1), and element 2 the weight
    *  (between zero and one) for determining the location of the closest point
@@ -227,8 +227,9 @@ public final class MathUtil {
          }
        }
     }
-    double[] retvals = {minDist, (double) seg, weight}; // 'seg' is always an integer;
+    // 'seg' is always an integer;
     // cast down to int in functions using this method.
+    double[] retvals = {minDist, (double) seg, weight};
     return retvals;
   }
 

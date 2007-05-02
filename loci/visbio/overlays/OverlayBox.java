@@ -32,9 +32,9 @@ import visad.*;
 public class OverlayBox extends OverlayObject {
 
   // -- Static Fields --
-  
+
   /** The names of the statistics this object reports */
-  protected static String[] statTypes =  {"Coordinates", "Center", "Width", 
+  protected static String[] statTypes =  {"Coordinates", "Center", "Width",
     "Height", "Area", "Perimeter"};
 
   // -- Constructors --
@@ -62,7 +62,7 @@ public class OverlayBox extends OverlayObject {
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
-    if (!hasData()) return null; 
+    if (!hasData()) return null;
     // don't try to render a zero-area box
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
@@ -112,8 +112,8 @@ public class OverlayBox extends OverlayObject {
     return field;
   }
 
-  /** Returns whether this object is drawable, i.e., is of nonzero 
-   *  size, area, length, etc. 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
    */
   public boolean hasData() { return (x1 != x2 && y1 != y2); }
 
@@ -141,10 +141,10 @@ public class OverlayBox extends OverlayObject {
 
     if (name.equals("Coordinates")) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
-    } 
+    }
     else if (name.equals("Center")) {
-      return "(" + centerX + ", " + centerY + ")"; 
-    } 
+      return "(" + centerX + ", " + centerY + ")";
+    }
     else if (name.equals("Width")) {
       return "" + width;
     }
@@ -159,7 +159,7 @@ public class OverlayBox extends OverlayObject {
     }
     else return "No such statistic for this overlay type";
   }
-  
+
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     float xx = x2 - x1;

@@ -30,10 +30,10 @@ import visad.*;
 public abstract class OverlayObject {
 
   // -- Constants --
-  
+
   protected static final float GLOW_WIDTH = 1.0f;
 
-  protected static final float GLOW_ALPHA = 0.15f; 
+  protected static final float GLOW_ALPHA = 0.15f;
 
   protected static final Color GLOW_COLOR = Color.YELLOW;
 
@@ -88,7 +88,7 @@ public abstract class OverlayObject {
     this.overlay = overlay;
     overlay.setTextDrawn(false);
   }
-  
+
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
@@ -97,8 +97,8 @@ public abstract class OverlayObject {
   /** Computes the shortest distance from this overlay to the given point. */
   public abstract double getDistance(double x, double y);
 
-  /** Returns whether this object is drawable, i.e., is of nonzero 
-   *  size, area, length, etc. 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
    */
   public abstract boolean hasData();
 
@@ -148,7 +148,7 @@ public abstract class OverlayObject {
     this.x1 = x1;
     this.y1 = y1;
   }
-  
+
   /** Gets X coordinate of the overlay's first endpoint. */
   public float getX() { return x1; }
 

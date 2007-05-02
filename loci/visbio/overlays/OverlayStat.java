@@ -28,7 +28,7 @@ public class OverlayStat {
 
   // -- Static Fields --
   /** List of all OverlayObject subclasses */
-  public static final String[] OVERLAY_TYPES = 
+  public static final String[] OVERLAY_TYPES =
     {"Line", "Freeform", "Marker", "Text",
     "Oval", "Box", "Arrow", "Polyline"};
 
@@ -52,7 +52,7 @@ public class OverlayStat {
   /** Get list of all OverlayObject subclasses */
   public static String[] getOverlayTypes() { return OVERLAY_TYPES; }
 
-  /** 
+  /**
    * Returns statistic names for a particular class
    */
   protected static String[] getStatTypes(String overlayType) {
@@ -61,15 +61,15 @@ public class OverlayStat {
       OverlayArrow.getStatTypes();
     else if (overlayType.equals("Box")) statTypes =
       OverlayBox.getStatTypes();
-    else if (overlayType.equals("Freeform")) statTypes = 
+    else if (overlayType.equals("Freeform")) statTypes =
       OverlayFreeform.getStatTypes();
     else if (overlayType.equals("Line")) statTypes =
       OverlayLine.getStatTypes();
-    else if (overlayType.equals("Marker")) statTypes = 
+    else if (overlayType.equals("Marker")) statTypes =
       OverlayMarker.getStatTypes();
     else if (overlayType.equals("Oval")) statTypes =
       OverlayOval.getStatTypes();
-    else if (overlayType.equals("Polyline"))statTypes = 
+    else if (overlayType.equals("Polyline"))statTypes =
       OverlayPolyline.getStatTypes();
     else if (overlayType.equals("Text")) statTypes =
       OverlayText.getStatTypes();
@@ -83,7 +83,7 @@ public class OverlayStat {
 
   /** Gets the value of this OverlayStat. */
   public String getValue() { return value; }
-  
+
   // -- Object API methods --
 
   /** Gets a short string representation of this overlay arrow. */

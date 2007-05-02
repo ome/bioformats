@@ -28,9 +28,9 @@ package loci.visbio.overlays;
  */
 
 public class OverlayPolyline extends OverlayNodedObject {
-  
+
   // -- Fields --
-  
+
   // -- Constructors --
 
   /** Constructs an uninitialized freeform. */
@@ -51,7 +51,7 @@ public class OverlayPolyline extends OverlayNodedObject {
   // -- Internal OverlayObject API methods --
 
   // -- Object API methods --
-  
+
   // -- OverlayObject API methods --
   /** Gets a short string representation of this freeform. */
   public String toString() { return "Polyline"; }

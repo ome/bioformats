@@ -31,10 +31,9 @@ import visad.DisplayEvent;
 import visad.DisplayImpl;
 import visad.util.CursorUtil;
 
-
-//goals: 
+//goals:
 // eliminate errors in code
-// make code readable 
+// make code readable
 // consolidate code where possible
 
 /** FreeformTool is the tool for creating freeform objects. */
@@ -48,7 +47,7 @@ public class FreeformTool extends OverlayTool {
    */
   protected static final double DRAW_THRESH = 2.0;
 
-  /** 
+  /**
    * How close a mouseDrag event must be to a node
    * in order to erase it
    */
@@ -99,7 +98,7 @@ public class FreeformTool extends OverlayTool {
   protected int mode;
 
   /** Chunks of curve tracked during EDIT */
-  protected float[][] pre, post; 
+  protected float[][] pre, post;
 
   /** Point at which mouseDown occurs */
   protected float downX, downY;
@@ -127,8 +126,8 @@ public class FreeformTool extends OverlayTool {
     double dpy = (double) py;
 
     // find closest freeform
-    double maxThresh = ERASE_THRESH; 
-    Info info = getClosestFreeform(display, dpx, dpy, 
+    double maxThresh = ERASE_THRESH;
+    Info info = getClosestFreeform(display, dpx, dpy,
         maxThresh);
     OverlayFreeform target = info.freeform;
 
@@ -136,10 +135,10 @@ public class FreeformTool extends OverlayTool {
     if (target != null) {
       freeform = target;
 
-      double dist = info.dist; 
-      int seg = info.seg; 
-      double weight = info.wt; 
-      
+      double dist = info.dist;
+      int seg = info.seg;
+      double weight = info.wt;
+
       if ((seg == 0 && weight == 0.0) ||
           (seg == freeform.getNumNodes()-2 && weight == 1.0))
       {
@@ -165,8 +164,8 @@ public class FreeformTool extends OverlayTool {
           // begin editing
           // project click onto curve and insert a new node there,
           // unless nearest point on curve is a node itself
-          // 
-          // note: because of the way getDistSegWt() works, weight can 
+          //
+          // note: because of the way getDistSegWt() works, weight can
           // never be 0.0 except if seg = 0.
           if (weight == 1.0) { // nearest point on seg is the end node
             // determine projection on seg.
@@ -197,7 +196,7 @@ public class FreeformTool extends OverlayTool {
         setMode(INIT);
       }
     }
-    
+
     overlay.notifyListeners(new TransformEvent(overlay));
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
   } // end mouseDown
@@ -213,7 +212,7 @@ public class FreeformTool extends OverlayTool {
 
     double dpx = (double) px;
     double dpy = (double) py;
-    
+
     if (mode == INIT) {
       freeform = new OverlayFreeform(overlay, downX, downY, downX, downY);
       configureOverlay(freeform);
@@ -242,7 +241,7 @@ public class FreeformTool extends OverlayTool {
         //double[] drag = {(double) dx, (double) dy};
         int[] headPxl = CursorUtil.domainToPixel(display, headDbl);
         int[] tailPxl = CursorUtil.domainToPixel(display, tailDbl);
-        double[]  headPxlDbl = new double[] {(double) headPxl[0], 
+        double[]  headPxlDbl = new double[] {(double) headPxl[0],
           (double) headPxl[1]};
         double[] tailPxlDbl = new double[] {(double) tailPxl[0],
           (double) tailPxl[1]};
@@ -302,7 +301,7 @@ public class FreeformTool extends OverlayTool {
     else if (mode == ERASE) {
       if (freeform == null) {
         // DISTANCE COMPUTATION compare floats with floats
-        Info info = getClosestFreeform(display, 
+        Info info = getClosestFreeform(display,
             dpx, dpy, ERASE_THRESH);
         OverlayFreeform target = info.freeform;
         if (target != null) freeform = target;
@@ -373,7 +372,7 @@ public class FreeformTool extends OverlayTool {
       double[] prvCrdsDbl= {(double) prvCrdsFlt[0], (double) prvCrdsFlt[1]};
       int[] prvCrdsPxl = CursorUtil.domainToPixel(display, prvCrdsDbl);
       double[] prvCrdsPxlDbl = {(double) prvCrdsPxl[0], (double) prvCrdsPxl[1]};
-      
+
       // coords of this mouseDrag event
       double[] drag = {dpx, dpy};
       double dragDist = MathUtil.getDistance(drag, prvCrdsPxlDbl);
@@ -471,7 +470,7 @@ public class FreeformTool extends OverlayTool {
   } // end mouseDrag
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(DisplayEvent e, int px, int py, 
+  public void mouseUp(DisplayEvent e, int px, int py,
       float dx, float dy, int[] pos, int mods) {
     //print ("mouseUp", "mouseUp begun. mode = " + mode);
     if (mode == DRAW) {
@@ -492,10 +491,10 @@ public class FreeformTool extends OverlayTool {
   }
 
   // -- Helper methods for mouse methods
-  
+
   /** Calculates smoothed coordinates using "single exponential smoothing"
    *  as described in Littlewood and Inman, _Computer-assisted DNA length
-   *  measurements..._. Nucleic Acids Research, V 10 No. 5. (1982) p. 1694 
+   *  measurements..._. Nucleic Acids Research, V 10 No. 5. (1982) p. 1694
    */
   private float[] smooth (float[] un, float[] cn1) {
     float[] cn = new float[2];
@@ -504,7 +503,7 @@ public class FreeformTool extends OverlayTool {
     }
     return cn;
   }
-  
+
   /** Slices a freeform in two. */
   private void slice(OverlayFreeform freef, double dist, int seg, double weight)
   {
@@ -722,7 +721,7 @@ public class FreeformTool extends OverlayTool {
    *  the given point
    */
   /*
-  private OverlayFreeform getClosestFreeform( float dx, 
+  private OverlayFreeform getClosestFreeform( float dx,
       float dy, double thresh) {
     // returns only objects at the current dimensional position
     OverlayObject[] objects = overlay.getObjects();
@@ -741,7 +740,7 @@ public class FreeformTool extends OverlayTool {
             // fine check: actually compute minimum
             // distance to freeform (slower)
             double[] distSegWt =
-              // DISTANCE COMPUTATION 
+              // DISTANCE COMPUTATION
               // compare float[][] with ints
               MathUtil.getDistSegWt(currentFreeform.getNodes(), dx, dy);
             double distance = distSegWt[0];
@@ -760,7 +759,7 @@ public class FreeformTool extends OverlayTool {
   /** Returns the closest (subject to a threshhold) OverlayFreeform object to
    *  the given point
    */
-  protected Info getClosestFreeform(DisplayImpl display, double dpx, 
+  protected Info getClosestFreeform(DisplayImpl display, double dpx,
       double dpy, double thresh) {
     // returns only objects at the current dimensional position
     OverlayObject[] objects = overlay.getObjects();
@@ -776,12 +775,12 @@ public class FreeformTool extends OverlayTool {
           OverlayFreeform currentFreeform = (OverlayFreeform) currentObject;
           // performance opportunity:
           // I removed the check on the bounding box
-          // Should the getDistance method return a distance in 
+          // Should the getDistance method return a distance in
           // pixel coordinates?
-          double[][] nodesDbl = floatsToPixelDoubles(display, 
+          double[][] nodesDbl = floatsToPixelDoubles(display,
               currentFreeform.getNodes());
           double[] distSegWt =
-            // DISTANCE COMPUTATION 
+            // DISTANCE COMPUTATION
             // compare float[][] with ints
             MathUtil.getDistSegWt(nodesDbl, dpx, dpy);
           if (distSegWt[0] < thresh && distSegWt[0] < min[0]) {

@@ -122,11 +122,11 @@ public class AVIReader extends FormatReader {
     in.seek(fileOff);
 
     if (isRLE) {
-      byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()]; 
+      byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()];
       in.read(b);
-      
+
       b = decodeRLE(b);
-      if (no == core.imageCount[0] - 1) lastImage = null; 
+      if (no == core.imageCount[0] - 1) lastImage = null;
       byte[] colors = new byte[b.length * 3];
       for (int i=0; i<b.length; i++) {
         int ndx = b[i];
@@ -134,8 +134,8 @@ public class AVIReader extends FormatReader {
         colors[i*3] = pr[ndx];
         colors[i*3 + 1] = pg[ndx];
         colors[i*3 + 2] = pb[ndx];
-      } 
-      return colors; 
+      }
+      return colors;
     }
 
     int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
@@ -416,7 +416,7 @@ public class AVIReader extends FormatReader {
                   type.substring(2).equals("dc"))
                 {
                   offsets.add(new Long(in.getFilePointer()));
-                  lengths.add(new Long(size)); 
+                  lengths.add(new Long(size));
                   in.skipBytes(size);
                 }
 
@@ -491,7 +491,7 @@ public class AVIReader extends FormatReader {
     }
   }
 
-  /** 
+  /**
    * Decodes an RLE-encoded frame. This code was adapted from the FFMPEG source,
    * http://ffmpeg.mplayerhq.hu.
    */
@@ -509,13 +509,13 @@ public class AVIReader extends FormatReader {
     if (lastImage == null) lastImage = new byte[frameSize];
 
     while (rowPt >= 0 && pt < in.length - 1 && pixelPt < lastImage.length) {
-      stream = in[pt++]; 
-      if (stream < 0) stream += 256; 
+      stream = in[pt++];
+      if (stream < 0) stream += 256;
       code = stream;
 
       if (code == 0) {
         stream = in[pt++];
-        if (stream < 0) stream += 256; 
+        if (stream < 0) stream += 256;
         if (stream == 0) {
           rowPt -= row;
           pixelPt = 0;
@@ -523,10 +523,10 @@ public class AVIReader extends FormatReader {
         else if (stream == 1) return lastImage;
         else if (stream == 2) {
           stream = in[pt++];
-          if (stream < 0) stream += 256; 
+          if (stream < 0) stream += 256;
           pixelPt += stream;
           stream = in[pt++];
-          if (stream < 0) stream += 256; 
+          if (stream < 0) stream += 256;
           rowPt -= stream * row;
         }
         else {

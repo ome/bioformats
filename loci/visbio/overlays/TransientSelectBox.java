@@ -91,7 +91,7 @@ public class TransientSelectBox {
   public DataImpl getData() {
     if (x1 == x2 || y1 == y2) return null;  // don't construct a data object
     // for a zero-area box
-    
+
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
@@ -174,9 +174,8 @@ public class TransientSelectBox {
     return ret;
   }
 
-
-  /** 
-   * Gets domain coordinates of box corners 
+  /**
+   * Gets domain coordinates of box corners
    * Corners are returned as a double[4][2]
    */
   public double[][] getCornersDomain() {
@@ -197,9 +196,9 @@ public class TransientSelectBox {
                         {p2[0], p2[1]},
                         {p3[0], p3[1]}};
 
-    return ret; 
+    return ret;
   }
-  
+
   /** Gets X coordinate of the first endpoint. */
   public int getX1() { return x1; }
 

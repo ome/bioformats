@@ -30,8 +30,8 @@ import visad.*;
 
 /** OverlayText is a text string overlay. */
 public class OverlayText extends OverlayObject {
-  // -- Static Fields -- 
-  
+  // -- Static Fields --
+
   /** The names of the statistics this object reports */
   protected static String[] statTypes =  {"Coordinates"};
 
@@ -62,21 +62,21 @@ public class OverlayText extends OverlayObject {
   // -- OverlayText API methods --
 
   public void computeTextBounds() {
-    // Computing the grid for text overlays is difficult because the size of 
-    // the overlay depends on the font metrics, which are obtained from an AWT 
-    // component (in this case, window.getDisplay().getComponent() for a 
-    // display window), but data transforms have no knowledge of which display 
-    // windows are currently displaying them. 
+    // Computing the grid for text overlays is difficult because the size of
+    // the overlay depends on the font metrics, which are obtained from an AWT
+    // component (in this case, window.getDisplay().getComponent() for a
+    // display window), but data transforms have no knowledge of which display
+    // windows are currently displaying them.
 
-    // HACK - for now, use this harebrained scheme to estimate the bounds 
-    int sx = overlay.getScalingValueX(); 
-    int sy = overlay.getScalingValueY(); 
-    float mw = sx / 318f, mh = sy / 640f; // obtained through experimentation 
-    FontMetrics fm = overlay.getFontMetrics(); 
-    x2 = x1 + mw * fm.stringWidth(text); 
-    y2 = y1 + mh * fm.getHeight(); 
-  } 
- 
+    // HACK - for now, use this harebrained scheme to estimate the bounds
+    int sx = overlay.getScalingValueX();
+    int sy = overlay.getScalingValueY();
+    float mw = sx / 318f, mh = sy / 640f; // obtained through experimentation
+    FontMetrics fm = overlay.getFontMetrics();
+    x2 = x1 + mw * fm.stringWidth(text);
+    y2 = y1 + mh * fm.getHeight();
+  }
+
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
@@ -104,8 +104,8 @@ public class OverlayText extends OverlayObject {
     return field;
   }
 
-  /** Returns whether this object is drawable, i.e., is of nonzero 
-   *  size, area, length, etc. 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
    */
   public boolean hasData() { return true; }
 
@@ -124,7 +124,7 @@ public class OverlayText extends OverlayObject {
   public String getStat(String name) {
     if (name.equals("Coordinates")) {
       return "(" + x1 + ", " + y1 + ")";
-    } 
+    }
     else return "No such statistic for this overlay type";
   }
 

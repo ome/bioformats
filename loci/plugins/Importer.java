@@ -563,14 +563,14 @@ public class Importer implements ItemListener {
 
         // display standard metadata in a table in its own window
         Hashtable meta = new Hashtable();
-        if (r.getSeriesCount() == 1) meta = r.getMetadata(); 
+        if (r.getSeriesCount() == 1) meta = r.getMetadata();
         meta.put(idType, currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(i);
-          meta.putAll(r.getCoreMetadata().seriesMetadata[i]); 
-          
+          meta.putAll(r.getCoreMetadata().seriesMetadata[i]);
+
           String s;
           if (seriesCount > 1) {
             StringBuffer sb = new StringBuffer();
@@ -605,8 +605,8 @@ public class Importer implements ItemListener {
           sb.append(meta.get(key));
           sb.append("\n");
         }
-        
-        TextWindow tw = new TextWindow("Metadata - " + currentFile, 
+
+        TextWindow tw = new TextWindow("Metadata - " + currentFile,
           "Key\t \tValue", sb.toString(), 400, 400);
         tw.setVisible(true);
         WindowManager.addWindow(tw);
@@ -1076,7 +1076,7 @@ public class Importer implements ItemListener {
     // retrieve the spatial calibration information, if available
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus imp = new ImagePlus(r.getCurrentFile() + " - Ch" + (i+1), 
+      ImagePlus imp = new ImagePlus(r.getCurrentFile() + " - Ch" + (i+1),
         newStacks[i]);
       applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(), imp,
         r.getSeries());
@@ -1134,8 +1134,8 @@ public class Importer implements ItemListener {
     }
   }
 
-  private void makeRGB(ImagePlus imp, IFormatReader r, int c) 
-    throws FormatException, IOException 
+  private void makeRGB(ImagePlus imp, IFormatReader r, int c)
+    throws FormatException, IOException
   {
     ImageStack s = imp.getStack();
     ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
@@ -1155,7 +1155,7 @@ public class Importer implements ItemListener {
     for (int z=0; z<sizeZ; z++) {
       for (int t=0; t<sizeT; t++) {
         byte[][] bytes = new byte[c][];
-        for (int ch=0; ch<r.getSizeC()/c; ch++) { 
+        for (int ch=0; ch<r.getSizeC()/c; ch++) {
           for (int ch1=0; ch1<c; ch1++) {
             int ndx = r.getIndex(z, ch*c + ch1, t) + 1;
             bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
@@ -1166,7 +1166,7 @@ public class Importer implements ItemListener {
             new byte[s.getWidth() * s.getHeight()]);
           int ndx = r.getIndex(z, ch*c, t) + 1;
           newStack.addSlice(s.getSliceLabel(ndx), cp);
-        } 
+        }
       }
     }
     imp.setStack(imp.getTitle(), newStack);
@@ -1180,27 +1180,27 @@ public class Importer implements ItemListener {
       // convert to RGB if needed
 
       int pixelType = r.getPixelType();
-      if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 && 
-        (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8)) 
+      if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
+        (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8))
       {
-        makeRGB(imp, r, r.getSizeC()); 
+        makeRGB(imp, r, r.getSizeC());
       }
-      else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 && 
-        imp.getStackSize() == r.getSizeC()) 
+      else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
+        imp.getStackSize() == r.getSizeC())
       {
         // create a composite image - this feature is available starting in
         // ImageJ 1.38n
-      
+
         if (IJ.versionLessThan("1.38n")) {
           IJ.showMessage("Please upgrade to ImageJ 1.38n to use this feature.");
         }
-        else { 
+        else {
           imp = new CompositeImage(imp, r.getSizeC());
-        } 
+        }
       }
       else if (mergeChannels && r.getSizeC() >= 4) {
-        // ask the user what they would like to do... 
-    
+        // ask the user what they would like to do...
+
         int planes1 = r.getImageCount() / 2;
         if (planes1 * 2 < r.getImageCount()) planes1++;
         int planes2 = r.getImageCount() / 3;
@@ -1209,14 +1209,14 @@ public class Importer implements ItemListener {
         GenericDialog gd = new GenericDialog("Merging Options...");
         gd.addMessage("How would you like to merge this data?");
         gd.addChoice("", new String[] {
-          planes1 + " planes, 2 channels per plane", 
+          planes1 + " planes, 2 channels per plane",
           planes2 + " planes, 3 channels per plane", "Do not merge"}, "");
         gd.showDialog();
 
         if (gd.wasCanceled()) return;
-        
+
         int idx = gd.getNextChoiceIndex();
-     
+
         switch (idx) {
           case 0:
             makeRGB(imp, r, 2);
@@ -1300,7 +1300,7 @@ public class Importer implements ItemListener {
       }
     }
     catch (Exception e) {
-      /* debug */ e.printStackTrace(); 
+      /* debug */ e.printStackTrace();
       if (!concatenate) imp.show();
       else imps.add(imp);
     }

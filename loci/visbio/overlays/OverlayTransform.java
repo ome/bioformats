@@ -256,7 +256,7 @@ public class OverlayTransform extends DataTransform
         obj.notes = orig.notes;
         obj.drawing = false;
         obj.selected = true;
-        if (obj instanceof OverlayText) 
+        if (obj instanceof OverlayText)
           ((OverlayText) obj).computeTextBounds();
         overlays[ndx].add(obj);
       }
@@ -377,7 +377,7 @@ public class OverlayTransform extends DataTransform
         obj.notes = notes;
         obj.drawing = false;
         obj.selected = false;
-        if (obj instanceof OverlayText) 
+        if (obj instanceof OverlayText)
           ((OverlayText) obj).computeTextBounds();
 
         overlays[ndx].add(obj);
@@ -533,7 +533,7 @@ public class OverlayTransform extends DataTransform
   public static boolean isParentRequired() { return true; }
 
   // -- DataTransform API methods --
- 
+
   /**
    * Retrieves the data corresponding to the given dimensional position,
    * for the given display dimensionality.
@@ -542,7 +542,7 @@ public class OverlayTransform extends DataTransform
    */
   public Data getData(TransformLink link, int[] pos, int dim, DataCache cache) {
     // note to ACS: do not assume TransformLink is null.  It may be null!
-    // If so, assume some reasonable defaults when computing your selection 
+    // If so, assume some reasonable defaults when computing your selection
     // grids.
 
     if (dim != 2) {
@@ -619,7 +619,7 @@ public class OverlayTransform extends DataTransform
         if (selectBox != null) {
             selectData = selectBox.getData();
         }
-        
+
         // display only non-null data objects
         Vector v = new Vector();
         if (selectData != null) v.add(selectData);
@@ -704,7 +704,7 @@ public class OverlayTransform extends DataTransform
     for (int j=0; j<overlays.length; j++) {
       for (int i=0; i<overlays[j].size(); i++) {
         OverlayObject obj = (OverlayObject) overlays[j].get(i);
-        if (obj instanceof OverlayText) 
+        if (obj instanceof OverlayText)
           ((OverlayText) obj).computeTextBounds();
       }
     }

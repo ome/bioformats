@@ -219,10 +219,10 @@ public class Dataset extends ImageTransform {
     BufferedImage img = null;
 
     int numImg = -1;
-    try { 
+    try {
       // CTR TODO - This results in superfluous initFile calls!
-      readers[fileIndex].setId(ids[fileIndex]); 
-      numImg = readers[fileIndex].getImageCount(); 
+      readers[fileIndex].setId(ids[fileIndex]);
+      numImg = readers[fileIndex].getImageCount();
     }
     catch (IOException exc) { numImg = -1; }
     catch (FormatException exc) { numImg = -1; }
@@ -487,7 +487,7 @@ public class Dataset extends ImageTransform {
     status(1, numTasks, "Determining image count");
     String filename = "\"" + new File(ids[0]).getName() + "\"";
     try {
-      readers[0].setId(ids[0]); 
+      readers[0].setId(ids[0]);
       numImages = readers[0].getImageCount();
       format = readers[0].getFormat(ids[0]);
       if (format.startsWith("TIFF")) {

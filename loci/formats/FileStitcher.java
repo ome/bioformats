@@ -346,7 +346,7 @@ public class FileStitcher implements IFormatReader {
       blankImage[sno] = ImageTools.blankImage(core.sizeX[sno], core.sizeY[sno],
         sizeC[sno], getPixelType());
     }
-    
+
     return blankImage[sno];
   }
 

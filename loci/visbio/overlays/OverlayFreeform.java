@@ -54,5 +54,5 @@ public class OverlayFreeform extends OverlayNodedObject {
 
   /** Gets a short string representation of this freeform. */
   public String toString() { return "Freeform"; }
- 
+
 }

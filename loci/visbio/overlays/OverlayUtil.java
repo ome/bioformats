@@ -7,7 +7,9 @@ VisBio application for visualization of multidimensional
 biological image data. Copyright (C) 2002-@year@ Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,13 +34,13 @@ import visad.util.CursorUtil;
 /** Utility methods for Overlays */
 public final class OverlayUtil {
 
-  // -- Constants -- 
+  // -- Constants --
 
   /** Width of the selection layer beyond the object's boundaries */
   protected static final float GLOW_WIDTH = 5.0f; // in pixels
 
   /** Alpha of the selection layer */
-  protected static final float GLOW_ALPHA = 0.15f; 
+  protected static final float GLOW_ALPHA = 0.15f;
 
   /** Color of the selection layer */
   protected static final Color GLOW_COLOR = Color.yellow;
@@ -47,7 +49,7 @@ public final class OverlayUtil {
   protected static final Color HLT_COLOR = Color.green;
 
   /** Alpha of the highlight layer for noded object */
-  protected static final float HLT_ALPHA = 0.5f; 
+  protected static final float HLT_ALPHA = 0.5f;
 
   /** Color of the outline layer */
   protected static final Color OUTLINE_COLOR = Color.cyan;
@@ -87,8 +89,8 @@ public final class OverlayUtil {
 
   // -- Selection Layer Utility Methods --
 
-  /** Computes a type-specific selection layer for the given OverlayObject */ 
-  public static DataImpl getSelectionLayer(OverlayObject obj, 
+  /** Computes a type-specific selection layer for the given OverlayObject */
+  public static DataImpl getSelectionLayer(OverlayObject obj,
       TransformLink link, boolean outline) {
     DataImpl layer = null;
     if (!obj.hasData()) layer = null;
@@ -157,12 +159,12 @@ public final class OverlayUtil {
       {c1x, c2x, c4x, c3x},
       {c1y, c2y, c4y, c3y}
     };
-    
+
     // construct range samples
     float r = GLOW_COLOR.getRed() / 255f;
     float g = GLOW_COLOR.getGreen() / 255f;
     float bl = GLOW_COLOR.getBlue() / 255f;
-    
+
     float[][] rangeSamples = new float[4][setSamples[0].length];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
@@ -199,7 +201,7 @@ public final class OverlayUtil {
 
     // Determine orientation of (x1, y1) relative to (x2, y2)
     // and flip if need be.
-    // I've set up the code in this section based on the 
+    // I've set up the code in this section based on the
     // supposition that the box is oriented like this:
     //
     //       p1 +--------+
@@ -222,7 +224,7 @@ public final class OverlayUtil {
       {xx1 - delta, xx2 + delta, xx1 - delta, xx2 + delta},
       {yy1 + delta, yy1 + delta, yy2 - delta, yy2 - delta}
     };
-    
+
     // construct range samples
     float[][] rangeSamples = new float[4][4];
     float r = GLOW_COLOR.getRed() / 255f;
@@ -259,7 +261,7 @@ public final class OverlayUtil {
     float x2 = obj.getX2();
     float y1 = obj.getY();
     float y2 = obj.getY2();
-  
+
     /*
     // method for doing math in pixel coordinates part 1 of 2
     float[] p1 = domainToPixel(link, new float[]{obj.getX(), obj.getY()});
@@ -279,8 +281,8 @@ public final class OverlayUtil {
     float y = y2 - y1;
     float hyp = (float) Math.sqrt(x * x + y * y);
     float ratio = delta / hyp;
-    // offsets from endpoints of line segments 
-    float dx1 = ratio * y; 
+    // offsets from endpoints of line segments
+    float dx1 = ratio * y;
     float dy1 = ratio * x;
     float dx2 = ratio * x;
     float dy2 = ratio * y;
@@ -291,7 +293,7 @@ public final class OverlayUtil {
     float[] c4 = {x2 + dx1 + dx2, y2 - dy1 + dy2};
 
     float[][] setSamples = {{c1[0], c2[0], c3[0], c4[0]},
-                            {c1[1], c2[1], c3[1], c4[1]}}; 
+                            {c1[1], c2[1], c3[1], c4[1]}};
 
     /*
     // method for doing math in pixel coordinates part 2 of 2
@@ -328,7 +330,7 @@ public final class OverlayUtil {
 
     return field;
   }
-  
+
   /** Returns a selection layer for OverlayMarker objects */
   public static DataImpl getMarkerLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
@@ -375,7 +377,7 @@ public final class OverlayUtil {
         {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
       };
 
-      float[][] setSamples2 = { 
+      float[][] setSamples2 = {
         {x1 - delta, x1 + delta, x1 - delta, x1 + delta},
         {yy1, yy1, yy2, yy2}
       };
@@ -388,17 +390,17 @@ public final class OverlayUtil {
       float[][][] setSamples = {setSamples1, setSamples2, setSamples3};
 
       samplesLength = 12;
-      
-      Gridded2DSet[] sets = new Gridded2DSet[3]; 
+
+      Gridded2DSet[] sets = new Gridded2DSet[3];
       try {
         for (int j=0; j<3; j++) {
-          sets[j] = new Gridded2DSet(domain, setSamples[j], 2, 2, 
+          sets[j] = new Gridded2DSet(domain, setSamples[j], 2, 2,
               null, null, null, false);
         }
         domainSet = new UnionSet(domain, sets);
       }
       catch (VisADException ex) { ex.printStackTrace(); }
-      
+
       /*
       setSamples = new float[][]{
         {xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2,
@@ -411,9 +413,9 @@ public final class OverlayUtil {
       // Start with this:
       /*
       setSamples = new float[][] {
-        {xx1, x1 - delta, 
+        {xx1, x1 - delta,
           xx1, x1 - delta,},
-        {y1 + delta, y1 + delta, 
+        {y1 + delta, y1 + delta,
           y1 - delta, y1 - delta,}
       };
       */
@@ -423,11 +425,11 @@ public final class OverlayUtil {
       setSamples = new float[][] {
         {xx1, x1 - delta, x1 - delta + dx,
           xx1, x1 - delta, x1 -delta + dx},
-        {y1 + delta, y1 + delta, y1 + size + delta, 
+        {y1 + delta, y1 + delta, y1 + size + delta,
           y1 - delta, y1 - delta, y1 - size - delta}
       };
       */
-      // I would expect the second one to look like a sideways 'T', but 
+      // I would expect the second one to look like a sideways 'T', but
       // it looks like a triangle instead
     }
 
@@ -469,7 +471,7 @@ public final class OverlayUtil {
     synchronized (overlay) {
       delta = GLOW_WIDTH * getMultiplier(link);
       nodes = ono.getNodes();
-      numNodes = ono.getNumNodes(); 
+      numNodes = ono.getNumNodes();
       hlt = ono.isHighlightNode();
       if (hlt) hltIndex = ono.getHighlightedNodeIndex();
       c = ono.getNodeCoords(hltIndex);
@@ -499,10 +501,10 @@ public final class OverlayUtil {
       float[] v = new float[]{nodes[0][i+1] - nodes[0][i], nodes[1][i+1] -
           nodes[1][i]};
 
-      if (v[0] == 0 && v[1] == 0) continue; 
+      if (v[0] == 0 && v[1] == 0) continue;
         // nodes are colocational
       // angle of vector perpendicular to line
-      double theta =  Math.PI / 2 + Math.atan2(v[1], v[0]); 
+      double theta =  Math.PI / 2 + Math.atan2(v[1], v[0]);
 
       float dx = (float) (delta * Math.cos(theta));
       float dy = (float) (delta * Math.sin(theta));
@@ -526,7 +528,7 @@ public final class OverlayUtil {
     int goodSets = sets.size();
     if (goodSets == 0 ) {
       return null;
-    } 
+    }
     else {
       float[][] rangeSamples = new float[4][hlen + 4 * goodSets];
 
@@ -543,7 +545,7 @@ public final class OverlayUtil {
 
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       // Build circle and circle samples
-      // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, 
+      // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
       /*
       System.out.println("2: isHighlightNode = " + hlt);
@@ -564,13 +566,13 @@ public final class OverlayUtil {
 
         // bottom half of circle
         for (int i=0; i<arcLen; i++) {
-          int ndx = arcLen + i; 
+          int ndx = arcLen + i;
           highlightSetSamples[0][ndx] = c[0] + rad * ARC[0][i];
           highlightSetSamples[1][ndx] = c[1] - rad * ARC[1][i];
         }
 
         try {
-          // build highlight set 
+          // build highlight set
           hltSet = new Gridded2DSet(domain, highlightSetSamples,
             arcLen, 2, null, null, null, false);
         }
@@ -597,14 +599,15 @@ public final class OverlayUtil {
       try {
         /*
         for (int i=0; i<sets.length; i++) {
-          if (sets[i] == null) { 
+          if (sets[i] == null) {
             System.out.println("sets[" + i + "] is null.");
           }
-          else
-            System.out.println("sets[" + i + "].length = " + sets[i].getLength());
+          else {
+            System.out.println("sets[" + i + "].length = " +
+              sets[i].getLength());
+          }
         }
         */
-
         fieldSet = new UnionSet (domain, trueSets);
         FunctionType fieldType = new FunctionType(domain, range);
         field = new FlatField(fieldType, fieldSet);
@@ -627,10 +630,9 @@ public final class OverlayUtil {
         float[] v1 = {nodes[0][i] - nodes[0][i-1], nodes[1][i] - nodes[1][i-1]};
         float[] v2 = {nodes[0][i+1] - nodes[0][i], nodes[1][i+1] - nodes[1][i]};
 
-
     }*/
   }
-  
+
   /** Computes a selection layer for OverlayOval objects */
   public static DataImpl getOvalLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
@@ -733,7 +735,8 @@ public final class OverlayUtil {
   }
 
   /** Computes a standard outline layer for an OverlayObject */
-  public static DataImpl getOutlineLayer(OverlayObject obj, TransformLink link)   {
+  public static DataImpl getOutlineLayer(OverlayObject obj, TransformLink link)
+  {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
@@ -757,7 +760,7 @@ public final class OverlayUtil {
     }
     catch (VisADException exc) { exc.printStackTrace(); }
 
-    Color col = OUTLINE_COLOR; 
+    Color col = OUTLINE_COLOR;
     float r = col.getRed() / 255f;
     float g = col.getGreen() / 255f;
     float b = col.getBlue() / 255f;
@@ -779,20 +782,20 @@ public final class OverlayUtil {
     return field;
   }
 
-  /** 
+  /**
    * Returns a multiplier suitable for scaling distances to pixel coordinates.
    * Useful when the location of an event are unimportant, just the properties
-   * of the display. 
+   * of the display.
    */
   public static float getMultiplier(TransformLink link) {
     DisplayImpl display = link.getHandler().getWindow().getDisplay();
     return getMultiplier(display);
   }
 
-  /** 
+  /**
    * Returns a multiplier suitable for scaling distances to pixel coordinates.
    * Useful when the location of an event are unimportant, just the properties
-   * of the display. 
+   * of the display.
    */
   public static float getMultiplier(DisplayImpl display) {
     int[] p1 = {0,0};
@@ -810,12 +813,12 @@ public final class OverlayUtil {
 
   // -- Helper Methods --
 
-  // Note: This method is basically the old 
+  // Note: This method is basically the old
   // OverlayObject.computeGridParameters()
   // method from OverlayBox.
   /** Computes corners of an OverlayObject's outline */
   private static float[][] computeOutline(OverlayObject obj,
-     TransformLink link) { 
+     TransformLink link) {
     DisplayImpl display = link.getHandler().getWindow().getDisplay();
     float x1 = obj.getX();
     float x2 = obj.getX2();
@@ -844,15 +847,15 @@ public final class OverlayUtil {
     float y1 = obj.getY();
     float y2 = obj.getY2();
 
-    int sx = overlay.getScalingValueX(); 
-    int sy = overlay.getScalingValueY(); 
+    int sx = overlay.getScalingValueX();
+    int sy = overlay.getScalingValueY();
 
-    float padx = 0.02f * sx; 
-    float pady = 0.02f * sy; 
-    float xx1 = x1 - padx; 
-    float xx2 = x2 + padx; 
-    float yy1 = y1 - pady; 
-    float yy2 = y2 + pady; 
+    float padx = 0.02f * sx;
+    float pady = 0.02f * sy;
+    float xx1 = x1 - padx;
+    float xx2 = x2 + padx;
+    float yy1 = y1 - pady;
+    float yy2 = y2 + pady;
 
     return new float[][]{{xx1, yy1}, {xx2, yy2}};
   }

@@ -360,8 +360,9 @@ public class OptionsWindow extends JFrame implements
 
     FormLayout layout3 = new FormLayout(
       TAB + ",pref," + TAB + ",pref:grow," + TAB + ",pref:grow," + TAB,
-      "pref,pref,pref,pref," + TAB + ",pref,pref,pref,pref,pref,"
-      + TAB + ",pref," + TAB + ",pref,pref,pref," + TAB + ",pref," + TAB + ",pref," + TAB + ",pref");
+      "pref,pref,pref,pref," + TAB + ",pref,pref,pref,pref,pref," + TAB +
+      ",pref," + TAB + ",pref,pref,pref," + TAB + ",pref," + TAB +
+      ",pref," + TAB + ",pref");
     cachePane.setLayout(layout3);
     CellConstraints cc3 = new CellConstraints();
 

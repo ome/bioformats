@@ -388,7 +388,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     OMEXMLMetadataStore store = new OMEXMLMetadataStore();
     reader.setMetadataStore(store);
     try {
-      reader.setId(ids[0]); 
+      reader.setId(ids[0]);
       numImages = reader.getImageCount();
     }
     catch (IOException exc) {

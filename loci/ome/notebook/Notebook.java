@@ -1,21 +1,21 @@
-// 
+//
 // Notebook.java
 //
 
 /*
 OME Metadata Notebook application for exploration and editing of OME-XML and
 OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
-  
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-    
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
-      
+
 You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -43,7 +43,7 @@ public class Notebook extends JFrame implements ActionListener {
   // -- Constants --
 
   /** Template that is loaded automatically. */
-  private static final String DEFAULT_TEMPLATE = "templates/viewer.template"; 
+  private static final String DEFAULT_TEMPLATE = "templates/viewer.template";
 
   // -- Fields --
 
@@ -60,7 +60,7 @@ public class Notebook extends JFrame implements ActionListener {
   private Template currentTemplate;
 
   /** Current template file name. */
-  private String templateName; 
+  private String templateName;
 
   /** Foreground (font) color. */
   private Color foreground;
@@ -77,22 +77,22 @@ public class Notebook extends JFrame implements ActionListener {
   /** OME-CA root node for currently open image file. */
   private OMENode currentRoot;
 
-  // -- Constructor -- 
+  // -- Constructor --
 
   /** Constructs a new main window with the default template. */
   public Notebook(String template, String newfile) {
-    super("OME Notebook"); 
+    super("OME Notebook");
 
     // set up the main panel
 
     JPanel contentPane = new JPanel();
 
     // set up the menu bar
-    
+
     menubar = new JMenuBar();
-    
+
     JMenu file = new JMenu("File");
- 
+
     JMenuItem newFile = new JMenuItem("New...");
     newFile.setActionCommand("new");
     newFile.addActionListener(this);
@@ -126,10 +126,10 @@ public class Notebook extends JFrame implements ActionListener {
 
     // add the status bar
     progress = new JProgressBar(0, 1);
-    progress.setStringPainted(true); 
+    progress.setStringPainted(true);
     menubar.add(progress);
 
-    setJMenuBar(menubar); 
+    setJMenuBar(menubar);
 
     // provide a place to show metadata
 
@@ -142,10 +142,10 @@ public class Notebook extends JFrame implements ActionListener {
       loadTemplate(template);
     }
     else {
-      templateName = DEFAULT_TEMPLATE; 
+      templateName = DEFAULT_TEMPLATE;
       loadTemplate(Notebook.class.getResourceAsStream(DEFAULT_TEMPLATE));
     }
-  
+
     try {
       if (newfile != null) openFile(newfile);
     }
@@ -153,7 +153,7 @@ public class Notebook extends JFrame implements ActionListener {
       e.printStackTrace();
     }
 
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
   }
 
@@ -161,14 +161,14 @@ public class Notebook extends JFrame implements ActionListener {
 
   /** Load and apply a template from the specified file. */
   public void loadTemplate(String filename) {
-    // clear out previous template 
+    // clear out previous template
 
     progress.setString("Loading template " + filename);
 
     templateName = filename;
 
-    // parse the template file 
-    try { 
+    // parse the template file
+    try {
       loadTemplate(new Template(filename));
     }
     catch (IOException e) {
@@ -194,12 +194,12 @@ public class Notebook extends JFrame implements ActionListener {
     if (tabPane != null) getContentPane().remove(tabPane);
     tabPane = new JTabbedPane();
     getContentPane().add(tabPane);
-    
+
     // retrieve defined GUI parameters
-    setPreferredSize(new Dimension(currentTemplate.getDefaultWidth(), 
+    setPreferredSize(new Dimension(currentTemplate.getDefaultWidth(),
       currentTemplate.getDefaultHeight()));
 
-    font = new Font(currentTemplate.getFontStyle(), Font.PLAIN, 
+    font = new Font(currentTemplate.getFontStyle(), Font.PLAIN,
       currentTemplate.getFontSize());
 
     int[] fore = currentTemplate.getFontColor();
@@ -208,17 +208,17 @@ public class Notebook extends JFrame implements ActionListener {
     foreground = new Color(fore[0], fore[1], fore[2]);
     background = new Color(back[0], back[1], back[2]);
 
-    // set up all of the defined tabs and fields 
-    
+    // set up all of the defined tabs and fields
+
     TemplateTab[] tabs = currentTemplate.getTabs();
 
     for (int i=0; i<tabs.length; i++) {
       Vector groups = tabs[i].getAllGroups();
       Vector fields = tabs[i].getAllFields();
-  
+
       JScrollPane scroll = new JScrollPane();
       JPanel panel = new JPanel();
-      
+
       String rowString = "";
       String colString = "pref:grow,";
 
@@ -226,14 +226,14 @@ public class Notebook extends JFrame implements ActionListener {
 
       if (currentTemplate.editTemplateFields()) {
         colString = "30dlu,30dlu,3dlu,pref:grow,";
-        paddingColumns = 4; 
+        paddingColumns = 4;
       }
 
       int numRows = tabs[i].getRows();
       if (numRows < 1) numRows = 1;
       int numColumns = tabs[i].getColumns();
       if (numColumns < 2) numColumns = 2;
-      else numColumns += 2; 
+      else numColumns += 2;
       for (int j=0; j<numRows; j++) {
         rowString += "pref:grow,";
       }
@@ -244,63 +244,63 @@ public class Notebook extends JFrame implements ActionListener {
       panel.setLayout(l);
 
       scroll.getViewport().add(panel);
-   
+
       int[] rowNumber = new int[l.getColumnCount()];
       Arrays.fill(rowNumber, 1);
 
       CellConstraints cc = new CellConstraints();
 
       for (int j=0; j<groups.size(); j++) {
-        TemplateGroup group = (TemplateGroup) groups.get(j); 
-        for (int r=0; r<group.getRepetitions(); r++) { 
+        TemplateGroup group = (TemplateGroup) groups.get(j);
+        for (int r=0; r<group.getRepetitions(); r++) {
           FormLayout layout = (FormLayout) panel.getLayout();
-          if (tabs[i].getRows() == 0) { 
+          if (tabs[i].getRows() == 0) {
             for (int n=0; n<group.getNumFields() + 1; n++) {
               layout.appendRow(new RowSpec("pref:grow"));
             }
             panel.setLayout(layout);
-          } 
-    
-          panel.add(new JLabel(group.getName() + " #" + (r + 1)), 
+          }
+
+          panel.add(new JLabel(group.getName() + " #" + (r + 1)),
             cc.xyw(paddingColumns, rowNumber[paddingColumns - 1], 2));
           if (currentTemplate.editTemplateFields()) {
             JButton add = new JButton("+");
             add.setActionCommand("cloneGroup" + i + "-" + j);
             add.addActionListener(this);
             panel.add(add, cc.xy(1, rowNumber[0]));
-            rowNumber[0]++; 
-          
+            rowNumber[0]++;
+
             JButton remove = new JButton("-");
             remove.setActionCommand("removeGroup" + i + "-" + j);
             remove.addActionListener(this);
             panel.add(remove, cc.xy(2, rowNumber[1]));
-            rowNumber[1]++; 
-          } 
+            rowNumber[1]++;
+          }
 
           for (int k=0; k<group.getNumFields(); k++) {
-            TemplateField field = group.getField(r, k); 
-            if (field.getRow() != -1) { 
-              panel.add(new JLabel(field.getName()), 
-                cc.xy(field.getColumn() + paddingColumns, 
+            TemplateField field = group.getField(r, k);
+            if (field.getRow() != -1) {
+              panel.add(new JLabel(field.getName()),
+                cc.xy(field.getColumn() + paddingColumns,
                 field.getRow() + 1));
-              panel.add(field.getComponent(), 
-                cc.xywh(field.getColumn() + paddingColumns + 1, 
+              panel.add(field.getComponent(),
+                cc.xywh(field.getColumn() + paddingColumns + 1,
                 field.getRow() + 1, field.getWidth(), field.getHeight()));
-              rowNumber[field.getColumn() + paddingColumns - 1]++; 
-              rowNumber[field.getColumn() + paddingColumns]++; 
-            } 
+              rowNumber[field.getColumn() + paddingColumns - 1]++;
+              rowNumber[field.getColumn() + paddingColumns]++;
+            }
             else {
-              panel.add(new JLabel(field.getName()), 
+              panel.add(new JLabel(field.getName()),
                 cc.xy(paddingColumns + 1, rowNumber[paddingColumns]));
               rowNumber[paddingColumns]++;
-              panel.add(field.getComponent(), cc.xywh(paddingColumns + 2, 
-                rowNumber[paddingColumns + 1], field.getWidth(), 
+              panel.add(field.getComponent(), cc.xywh(paddingColumns + 2,
+                rowNumber[paddingColumns + 1], field.getWidth(),
                 field.getHeight()));
-              rowNumber[paddingColumns + 1]++; 
+              rowNumber[paddingColumns + 1]++;
             }
-            rowNumber[paddingColumns - 1]++; 
-          } 
-        } 
+            rowNumber[paddingColumns - 1]++;
+          }
+        }
       }
 
       FormLayout layout = (FormLayout) panel.getLayout();
@@ -310,52 +310,52 @@ public class Notebook extends JFrame implements ActionListener {
       panel.setLayout(layout);
 
       for (int j=0; j<fields.size(); j++) {
-        TemplateField f = tabs[i].getField(j); 
-        if (f.getRow() != -1 || f.getColumn() != -1) { 
+        TemplateField f = tabs[i].getField(j);
+        if (f.getRow() != -1 || f.getColumn() != -1) {
           int column = f.getColumn() == -1 ? 1 : f.getColumn();
           int row = f.getRow() == -1 ? rowNumber[column - 1] : f.getRow();
           int width = f.getWidth();
           int height = f.getHeight();
-         
+
           panel.add(new JLabel(f.getName()), cc.xyw(column, row, 1));
           panel.add(f.getComponent(), cc.xywh(column + 1, row, width, height));
-          rowNumber[column - 1]++; 
-        } 
+          rowNumber[column - 1]++;
+        }
         else {
-          panel.add(new JLabel(f.getName()), 
+          panel.add(new JLabel(f.getName()),
             cc.xyw(1, rowNumber[0], paddingColumns + 1));
-          rowNumber[0]++; 
-          panel.add(f.getComponent(), cc.xywh(paddingColumns + 1, 
+          rowNumber[0]++;
+          panel.add(f.getComponent(), cc.xywh(paddingColumns + 1,
             rowNumber[paddingColumns], f.getWidth(), f.getHeight()));
-          rowNumber[paddingColumns]++; 
+          rowNumber[paddingColumns]++;
         }
       }
-    
-      tabPane.add(scroll, tabs[i].getName()); 
+
+      tabPane.add(scroll, tabs[i].getName());
     }
-    
+
     setFontAndColors(this);
     changeEditable(currentTemplate.isEditable(), this);
     progress.setString("");
 
-    pack(); 
+    pack();
   }
 
   /** Recursively set the font and colors for the root and all children. */
   public void setFontAndColors(Container root) {
-    Component[] components = root instanceof JMenu ? 
+    Component[] components = root instanceof JMenu ?
       ((JMenu) root).getMenuComponents() : root.getComponents();
     for (int i=0; i<components.length; i++) {
       components[i].setFont(font);
       components[i].setForeground(foreground);
       components[i].setBackground(background);
 
-      if (components[i] instanceof JTextArea || 
-        components[i] instanceof JComboBox || 
-        components[i] instanceof JCheckBox) 
+      if (components[i] instanceof JTextArea ||
+        components[i] instanceof JComboBox ||
+        components[i] instanceof JCheckBox)
       {
-        LineBorder b = new LineBorder(foreground); 
-        ((JComponent) components[i]).setBorder(b); 
+        LineBorder b = new LineBorder(foreground);
+        ((JComponent) components[i]).setBorder(b);
       }
 
       if (components[i] instanceof Container) {
@@ -368,11 +368,11 @@ public class Notebook extends JFrame implements ActionListener {
   public void changeEditable(boolean enable, Container root) {
     Component[] c = root.getComponents();
     for (int i=0; i<c.length; i++) {
-      if (!(c[i] instanceof JMenuBar) && !(c[i] instanceof JMenu) && 
+      if (!(c[i] instanceof JMenuBar) && !(c[i] instanceof JMenu) &&
         !(c[i] instanceof JMenuItem) && !(c[i] instanceof JLabel) &&
         !(c[i] instanceof JScrollBar) && !(c[i] instanceof JTabbedPane))
-      {  
-        c[i].setEnabled(enable); 
+      {
+        c[i].setEnabled(enable);
       }
       if (c[i] instanceof Container) {
         changeEditable(enable, (Container) c[i]);
@@ -386,18 +386,18 @@ public class Notebook extends JFrame implements ActionListener {
     String cmd = e.getActionCommand();
 
     if (cmd.equals("new")) {
-      // check if the user wants to save the current metadata first 
+      // check if the user wants to save the current metadata first
 
-      int s = JOptionPane.showConfirmDialog(this, "Save current metadata?", "", 
-        JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE); 
-       
+      int s = JOptionPane.showConfirmDialog(this, "Save current metadata?", "",
+        JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+
       if (s == JOptionPane.YES_OPTION) {
         actionPerformed(new ActionEvent(this, -1, "save"));
-      } 
-      loadTemplate(currentTemplate); 
+      }
+      loadTemplate(currentTemplate);
     }
     else if (cmd.equals("open")) {
-      progress.setString("Opening file..."); 
+      progress.setString("Opening file...");
 
       try {
         ImageReader reader = new ImageReader();
@@ -407,7 +407,7 @@ public class Notebook extends JFrame implements ActionListener {
         if (status == JFileChooser.APPROVE_OPTION) {
           currentFile = chooser.getSelectedFile().getAbsolutePath();
         }
-        if (currentFile == null) return; 
+        if (currentFile == null) return;
 
         openFile(currentFile);
       }
@@ -417,7 +417,7 @@ public class Notebook extends JFrame implements ActionListener {
     }
     else if (cmd.equals("save")) {
       progress.setString("Saving metadata to companion file...");
-     
+
       if (currentRoot == null) {
         OMEXMLMetadataStore tmp = new OMEXMLMetadataStore();
         tmp.createRoot();
@@ -425,21 +425,21 @@ public class Notebook extends JFrame implements ActionListener {
       }
 
       currentTemplate.saveFields(currentRoot);
-   
-      // always save to the current filename + ".ome" 
-      
+
+      // always save to the current filename + ".ome"
+
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.setRoot(currentRoot);
 
       try {
         String name = currentFile;
-        
+
         if (name == null) {
           JFileChooser chooser = new JFileChooser();
-      
+
           FileFilter filter = new FileFilter() {
             public boolean accept(File f) {
-              return true; 
+              return true;
             }
             public String getDescription() {
               return "OME-XML files";
@@ -451,16 +451,16 @@ public class Notebook extends JFrame implements ActionListener {
           int status = chooser.showSaveDialog(this);
           if (status == JFileChooser.APPROVE_OPTION) {
             name = chooser.getSelectedFile().getAbsolutePath();
-            if (name == null) return; 
+            if (name == null) return;
           }
         }
-       
+
         if (name == null) return;
         if (!name.endsWith(".ome")) name += ".ome";
 
         File f = new File(name);
         currentRoot.writeOME(f, false);
-        progress.setString("Finished writing companion file (" + name + ")"); 
+        progress.setString("Finished writing companion file (" + name + ")");
       }
       catch (Exception io) {
         io.printStackTrace();
@@ -470,9 +470,9 @@ public class Notebook extends JFrame implements ActionListener {
       dispose();
     }
     else if (cmd.equals("load")) {
-      // prompt for the new template file 
+      // prompt for the new template file
       JFileChooser chooser = new JFileChooser();
-      
+
       FileFilter filter = new FileFilter() {
         public boolean accept(File f) {
           return f.getAbsolutePath().endsWith(".template") || f.isDirectory();
@@ -488,8 +488,8 @@ public class Notebook extends JFrame implements ActionListener {
       if (status == JFileChooser.APPROVE_OPTION) {
         loadTemplate(chooser.getSelectedFile().getAbsolutePath());
       }
-      try { 
-        if (currentFile != null) openFile(currentFile); 
+      try {
+        if (currentFile != null) openFile(currentFile);
       }
       catch (Exception exc) {
         exc.printStackTrace();
@@ -503,19 +503,19 @@ public class Notebook extends JFrame implements ActionListener {
       TemplateTab tab = currentTemplate.getTabs()[tabIndex];
       TemplateGroup group = tab.getGroup(groupIndex);
       group.setRepetitions(group.getRepetitions() + 1);
-      
-      int tabIdx = tabPane.getSelectedIndex(); 
-      
-      loadTemplate(currentTemplate); 
-      try { 
-        if (currentFile != null) openFile(currentFile); 
+
+      int tabIdx = tabPane.getSelectedIndex();
+
+      loadTemplate(currentTemplate);
+      try {
+        if (currentFile != null) openFile(currentFile);
       }
       catch (Exception exc) {
         exc.printStackTrace();
       }
 
-      tabPane.setSelectedIndex(tabIdx); 
-    } 
+      tabPane.setSelectedIndex(tabIdx);
+    }
     else if (cmd.startsWith("removeGroup")) {
       cmd = cmd.substring(11);
       int tabIndex = Integer.parseInt(cmd.substring(0, cmd.indexOf("-")));
@@ -523,18 +523,18 @@ public class Notebook extends JFrame implements ActionListener {
 
       TemplateTab tab = currentTemplate.getTabs()[tabIndex];
       TemplateGroup group = tab.getGroup(groupIndex);
-      group.setRepetitions(group.getRepetitions() - 1);  
-      
-      int tabIdx = tabPane.getSelectedIndex(); 
-      
-      loadTemplate(currentTemplate); 
-      try { 
-        if (currentFile != null) openFile(currentFile); 
+      group.setRepetitions(group.getRepetitions() - 1);
+
+      int tabIdx = tabPane.getSelectedIndex();
+
+      loadTemplate(currentTemplate);
+      try {
+        if (currentFile != null) openFile(currentFile);
       }
       catch (Exception exc) {
         exc.printStackTrace();
       }
-      
+
       tabPane.setSelectedIndex(tabIdx);
     }
 
@@ -543,25 +543,25 @@ public class Notebook extends JFrame implements ActionListener {
   // -- Helper methods --
 
   private void openFile(String file) throws Exception {
-    currentFile = file; 
+    currentFile = file;
     FileStitcher stitcher = new FileStitcher();
     progress.setString("Reading " + currentFile);
-    
+
     if (currentFile.endsWith(".ome")) {
-      File f = new File(currentFile); 
+      File f = new File(currentFile);
       currentRoot = new OMENode(f);
     }
     else {
       // first look for a companion file
       File companion = new File(currentFile + ".ome");
       if (companion.exists()) {
-        progress.setString("Reading companion file (" + companion + ")"); 
+        progress.setString("Reading companion file (" + companion + ")");
         currentRoot = new OMENode(companion);
       }
 
       stitcher.setMetadataStore(new OMEXMLMetadataStore());
-      stitcher.setId(currentFile); 
-      OMEXMLMetadataStore store = 
+      stitcher.setId(currentFile);
+      OMEXMLMetadataStore store =
         (OMEXMLMetadataStore) stitcher.getMetadataStore();
 
       if (companion.exists()) {
@@ -574,17 +574,17 @@ public class Notebook extends JFrame implements ActionListener {
           currentRoot = merge(currentRoot, (OMENode) store.getRoot());
         }
         else {
-          currentRoot = merge((OMENode) store.getRoot(), currentRoot); 
+          currentRoot = merge((OMENode) store.getRoot(), currentRoot);
         }
       }
       else currentRoot = (OMENode) store.getRoot();
       stitcher.close();
-    } 
-    progress.setString("Populating fields..."); 
-    currentTemplate.initializeFields(currentRoot); 
-    currentTemplate.populateFields(currentRoot); 
-    loadTemplate(currentTemplate); 
-    progress.setString(""); 
+    }
+    progress.setString("Populating fields...");
+    currentTemplate.initializeFields(currentRoot);
+    currentTemplate.populateFields(currentRoot);
+    loadTemplate(currentTemplate);
+    progress.setString("");
   }
 
   /**
@@ -600,7 +600,7 @@ public class Notebook extends JFrame implements ActionListener {
     if (temp instanceof OMENode) return (OMENode) temp;
     return null;
   }
-  
+
   /**
    * Merge two OME-XML trees.
    * This method was adapted from an earlier version of the OME Notebook,
@@ -629,7 +629,7 @@ public class Notebook extends JFrame implements ActionListener {
         if (isHighCustom && !isLowCustom) isHighCustom = false;
         else if (!isHighCustom && isLowCustom && !addedCustom) {
           result.getDOMElement().appendChild(createClone(
-            lowNode.getDOMElement(), 
+            lowNode.getDOMElement(),
             highNode.getDOMElement().getOwnerDocument()));
           addedCustom = true;
           isLowCustom = false;
@@ -639,19 +639,19 @@ public class Notebook extends JFrame implements ActionListener {
           else {
             if (ids.indexOf(lowID) > -1) {
               result.getDOMElement().appendChild(createClone(
-                lowNode.getDOMElement(), 
+                lowNode.getDOMElement(),
                 highNode.getDOMElement().getOwnerDocument()));
-              ids.add(lowID); 
+              ids.add(lowID);
             }
           }
         }
       }
     }
-    return result; 
+    return result;
   }
 
-  /** 
-   * Clones the specified DOM element, preserving the parent structure. 
+  /**
+   * Clones the specified DOM element, preserving the parent structure.
    * This method was adapted from an earlier version of the OME Notebook,
    * written by Christopher Peterson.
    */
@@ -666,7 +666,7 @@ public class Notebook extends JFrame implements ActionListener {
         clone.setAttribute(attr.getNodeName(), attr.getNodeValue());
       }
     }
-  
+
     if (el.hasChildNodes()) {
       NodeList nodes = el.getChildNodes();
       for (int i=0; i<nodes.getLength(); i++) {
@@ -676,7 +676,7 @@ public class Notebook extends JFrame implements ActionListener {
         }
       }
     }
-    return clone; 
+    return clone;
   }
 
   // -- Main method --
@@ -685,14 +685,14 @@ public class Notebook extends JFrame implements ActionListener {
     String template = null, data = null;
     for (int i=0; i<args.length; i++) {
       if (args[i].equals("-template")) {
-        if (args.length > i + 1) { 
+        if (args.length > i + 1) {
           template = args[++i];
         }
         else System.err.println("Please specify a template file");
       }
-      else data = args[i]; 
+      else data = args[i];
     }
-   
+
     new Notebook(template, data);
   }
 

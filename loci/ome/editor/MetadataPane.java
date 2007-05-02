@@ -392,7 +392,7 @@ public class MetadataPane extends JPanel
       try {
         xml = thisOmeNode.writeOME(false);
         xml = addTiffData(xml, file);
-        reader.setId(id); 
+        reader.setId(id);
         imageCount = reader.getImageCount();
       }
       catch (Exception exc) {
@@ -784,7 +784,7 @@ public class MetadataPane extends JPanel
         }
 
         //Set up thumbnails
-        reader.setId(id); 
+        reader.setId(id);
         int numSeries = reader.getSeriesCount();
 
         images = new BufferedImage[numSeries+1];

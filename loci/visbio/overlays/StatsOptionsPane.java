@@ -46,7 +46,7 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
   /** Action command for 'Toggle All Tabs' button */
   private static final String ALL = "all";
 
-  // -- Fields -- 
+  // -- Fields --
 
   /** All of the check boxes contained in all tabs */
   protected JCheckBox[][] checkBoxes;
@@ -54,7 +54,7 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
   /** The tabbed pane contained in this object */
   protected JTabbedPane tabs;
 
-  // -- Constructor -- 
+  // -- Constructor --
 
   /** Creates an StatsOptionsPane object */
   public StatsOptionsPane() {
@@ -66,20 +66,20 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
   }
 
   // -- StatsOptionsPane API methods --
- 
+
   /** Saves current pane selections to OptionManager */
   public void saveSettings() {
-    OptionManager om = (OptionManager) 
+    OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
- 
+
     String[] overlayTypes = OverlayStat.getOverlayTypes();
     for (int type=0; type<overlayTypes.length; type++) {
       String statTypes[] = OverlayStat.getStatTypes(overlayTypes[type]);
       for (int i=0; i<statTypes.length; i++) {
         String name = overlayTypes[type] + "." + statTypes[i];
         BioOption opt = om.getOption(name);
-        JCheckBox optBox = (JCheckBox) opt.getComponent(); 
-        JCheckBox proxyBox = checkBoxes[type][i]; 
+        JCheckBox optBox = (JCheckBox) opt.getComponent();
+        JCheckBox proxyBox = checkBoxes[type][i];
         optBox.setSelected(proxyBox.isSelected());
       }
     }
@@ -87,9 +87,9 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
 
   /** Loads current pane selections from OptionManager */
   public void loadSettings() {
-    OptionManager om = (OptionManager) 
+    OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
- 
+
     String[] overlayTypes = OverlayStat.getOverlayTypes();
 
     for (int type=0; type<overlayTypes.length; type++) {
@@ -97,31 +97,30 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
       for (int i=0; i<statTypes.length; i++) {
         String name = overlayTypes[type] + "." + statTypes[i];
         BioOption opt = om.getOption(name);
-        JCheckBox optBox = (JCheckBox) opt.getComponent(); 
+        JCheckBox optBox = (JCheckBox) opt.getComponent();
         checkBoxes[type][i].setSelected(optBox.isSelected());
       }
     }
   }
 
-  
   // -- ActionListener interface methods --
 
   /** Change selection state of check boxes depending on button pressed */
   public void actionPerformed (ActionEvent e) {
     if (ALL.equals(e.getActionCommand())) toggleAllTabs();
     else if (CURRENT.equals(e.getActionCommand())) toggleCurrentTab();
-  } 
+  }
 
   // -- Helper Methods --
 
   /** Makes the tabs of this ExportOptionsPane object */
   private JTabbedPane makeTabs() {
-    OptionManager om = (OptionManager) 
+    OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
 
     String[] overlayTypes = OverlayStat.getOverlayTypes();
     checkBoxes = new JCheckBox[overlayTypes.length][];
-    
+
     // populate checkbox array
     for (int type=0; type<overlayTypes.length; type++) {
       String statTypes[] = OverlayStat.getStatTypes(overlayTypes[type]);
@@ -144,12 +143,12 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
       rowString += "pref, 3dlu, pref";
 
       // initialize JGoodies stuff
-      FormLayout fl = new FormLayout("15dlu, pref, 15dlu", 
+      FormLayout fl = new FormLayout("15dlu, pref, 15dlu",
         rowString);
 
       PanelBuilder builder = new PanelBuilder(fl);
       CellConstraints cc = new CellConstraints();
-         
+
       // populate panel with the appropriate checkboxes
       for (int i=0; i<checkBoxes[type].length; i++) {
         builder.add(checkBoxes[type][i],  cc.xy(2, 2*(i + 1)));
@@ -157,10 +156,10 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
 
       // add a tab to the instance
       JPanel panel = builder.getPanel();
-      jtp.addTab(overlayTypes[type], null, panel, 
+      jtp.addTab(overlayTypes[type], null, panel,
           overlayTypes[type] + " statistics");
     }
-   
+
     return jtp;
   }
 
@@ -197,9 +196,9 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
     return panel;
   }
 
-  /** 
+  /**
    *  Selects or deselects all checkboxes in current tab.
-   *  Guesses which way to toggle based on number of selected 
+   *  Guesses which way to toggle based on number of selected
    *  check boxes in current tab--aims to toggle as many
    *  check boxes as possible
    */
@@ -212,19 +211,19 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
       if (box.isSelected()) netSelected++;
       else netSelected--;
     }
-    
+
     boolean moreSelected = netSelected < 0 ? false : true;
-      
+
     for (int i=0; i<currentTabCheckBoxes.length; i++) {
       JCheckBox box = currentTabCheckBoxes[i];
       box.setSelected(!moreSelected);
-    } 
+    }
   }
-  
+
   /** Selects or deselects all checkboxes in current tab.
-   *  Guesses which way to toggle based on number of selected 
+   *  Guesses which way to toggle based on number of selected
    *  check boxes in _current_ tab only, aiming to toggle as many
-   *  check boxes as possible in this tab 
+   *  check boxes as possible in this tab
    */
   protected void toggleAllTabs() {
     int ndx = tabs.getSelectedIndex();
@@ -237,15 +236,15 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
       if (box.isSelected()) netSelected++;
       else netSelected--;
     }
-    
+
     boolean moreSelected = netSelected < 0 ? false : true;
-      
+
     // loop thru all check boxes and toggle.
     for (int type=0; type<checkBoxes.length; type++) {
       for (int i=0; i<checkBoxes[type].length; i++) {
         JCheckBox box = checkBoxes[type][i];
         box.setSelected(!moreSelected);
-      } 
+      }
     }
   }
 }

@@ -92,11 +92,11 @@ public class OverlayArrow extends OverlayObject {
     }
     catch (VisADException exc) { exc.printStackTrace(); }
 
-    Color col = selected ? GLOW_COLOR : color; 
+    Color col = selected ? GLOW_COLOR : color;
     float r = col.getRed() / 255f;
     float g = col.getGreen() / 255f;
     float b = col.getBlue() / 255f;
-    
+
     float[][] rangeSamples = new float[4][setSamples[0].length];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
@@ -114,8 +114,8 @@ public class OverlayArrow extends OverlayObject {
     return field;
   }
 
-  /** Returns whether this object is drawable, i.e., is of nonzero 
-   *  size, area, length, etc. 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
    */
   public boolean hasData() { return (x1 != x2 || y1 != y2); }
 
@@ -129,10 +129,10 @@ public class OverlayArrow extends OverlayObject {
   public String getStat(String name) {
     if (name.equals("Tip coordinates")) {
       return "(" + x1 + ", " + y1 + ")";
-    } 
+    }
     else if (name.equals("Angle")) {
       return "" + getAngle();
-    } 
+    }
     else if (name.equals("Length")) {
       return "" + getLength();
     }
@@ -153,7 +153,7 @@ public class OverlayArrow extends OverlayObject {
     if (yy < 0) angle += 180;
     if (angle < 0) angle += 360;
     float length = (float) Math.sqrt(xx * xx + yy * yy);
-    
+
     String coords = "(" + x1 + ", " + y1 + ")";
     OverlayStat[] stats = {
       new OverlayStat("Tip coordinates", coords),
@@ -174,7 +174,7 @@ public class OverlayArrow extends OverlayObject {
   public boolean canBeFilled() { return true; }
 
   // -- Helper methods --
-  
+
   /** Computes the angle of this arrow */
   protected float getAngle() {
     float xx = x2 - x1;
@@ -186,7 +186,7 @@ public class OverlayArrow extends OverlayObject {
   }
 
   /** Computes the length of this arrow */
-  protected float getLength() { 
+  protected float getLength() {
     float xx = x2 - x1;
     float yy = y2 - y1;
     float length = (float) Math.sqrt(xx * xx + yy * yy);

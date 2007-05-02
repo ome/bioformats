@@ -114,7 +114,7 @@ public class PolylineTool extends OverlayTool {
         if (line.getNumNodes() > 1) {
           releaseLine();
         }
-        else { 
+        else {
           overlay.removeObject(line);
           unselect();
         }
@@ -185,7 +185,7 @@ public class PolylineTool extends OverlayTool {
       if (mode == ADJUST) {
         line.setNodeCoords(selectedNode, dx, dy);
         overlay.notifyListeners(new TransformEvent(overlay));
-      } 
+      }
       else if (mode == SELECTED_TAIL) {
         mode = ADJUST_TAIL;
         mouseDrag(e, px, py, dx, dy, pos, mods);
@@ -195,8 +195,8 @@ public class PolylineTool extends OverlayTool {
 
         // determine if near head
         double dist = getDistanceToNode(0, px, py, display);
-        
-        // if near, highlight head node 
+
+        // if near, highlight head node
         if (dist < THRESH) {
           line.setHighlightNode(selectedNode, CON);
           mode = CLOSE_LOOP;
@@ -213,14 +213,14 @@ public class PolylineTool extends OverlayTool {
         mouseMoved(e, px, py, dx, dy, pos, mods);
       }
     } // end synchronized (line)
-  } 
+  }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(DisplayEvent e, int px, int py, 
+  public void mouseUp(DisplayEvent e, int px, int py,
       float dx, float dy, int[] pos, int mods) {
     //System.out.println("up mode = " + mode);
     DisplayImpl display = (DisplayImpl) e.getDisplay();
-    //printMode("mouseUp"); // TEMP
+    //printMode("mouseUp");//TEMP
 
     synchronized (overlay) {
       if (overlay.hasToolChanged()) {
@@ -239,13 +239,13 @@ public class PolylineTool extends OverlayTool {
         line.setDrawing(false);
         mode = SELECT;
       }
-      else if (mode == SELECTED_TAIL) { 
+      else if (mode == SELECTED_TAIL) {
         line.turnOffHighlighting();
         mode = PLACE;
       }
       else if (mode == CLOSE_LOOP) {
         float[] c = line.getNodeCoords(0);
-        line.setLastNode(c[0], c[1]); 
+        line.setLastNode(c[0], c[1]);
         line.updateBoundingBox();
         line.computeLength();
         line.setDrawing(false);
@@ -260,7 +260,7 @@ public class PolylineTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse movement. */
-  public void mouseMoved(DisplayEvent e, int px, int py, 
+  public void mouseMoved(DisplayEvent e, int px, int py,
       float dx, float dy, int[] pos, int mods) {
     //System.out.println("moved mode = " + mode);
     DisplayImpl display = (DisplayImpl) e.getDisplay();
@@ -278,7 +278,7 @@ public class PolylineTool extends OverlayTool {
         if (ndxNode != null) {
           int ndx = ndxNode[0];
           int node = ndxNode[1];
-          //System.out.println("near node " + node + " of object " + obj); // TEMP 
+          //System.out.println("near node " + node + " of object " + obj);//TEMP
           deselectAll();
           line = (OverlayPolyline) objects[ndx];
           selectNode(line, node);
@@ -287,7 +287,7 @@ public class PolylineTool extends OverlayTool {
       }
       else if (mode == PLACE) {
         line.setNextNode(dx, dy);
-        
+
         // keep track of curve length
         // using frequent updates to curvelength in EXTEND, etc. instead
         float[] c = line.getNodeCoords(line.getNumNodes()-2);
@@ -299,17 +299,18 @@ public class PolylineTool extends OverlayTool {
         mode = BEG_EXTEND;
       }
       else if (mode == EXTEND || mode == EXTEND_ON_TAIL) {
-        // update curve 
+        // update curve
         adjustLastNode(line, dx, dy);
-              
-        // determine if near head 
+
+        // determine if near head
         double hdist = getDistanceToNode(0, px, py, display);
-        // determine if near last node placed 
-        double ldist = getDistanceToNode(line.getNumNodes() - 2, px, py, display);
-        
-        // if near ndx, highlight selected node differently 
-        int flag = -1; 
-        if (ldist < THRESH) 
+        // determine if near last node placed
+        double ldist =
+          getDistanceToNode(line.getNumNodes() - 2, px, py, display);
+
+        // if near ndx, highlight selected node differently
+        int flag = -1;
+        if (ldist < THRESH)
           if (hdist < ldist) flag = 0;
           else if (hdist > ldist) flag = 1;
           else ;
@@ -331,18 +332,19 @@ public class PolylineTool extends OverlayTool {
       else if (mode == BEG_EXTEND) {
         // update curve length
         adjustLastNode(line, dx, dy);
-        
-        // determine if near head 
+
+        // determine if near head
         double hdist = getDistanceToNode(0, px, py, display);
-        // determine if near last node placed 
-        double ldist = getDistanceToNode(line.getNumNodes() - 2, px, py, display);
+        // determine if near last node placed
+        double ldist =
+          getDistanceToNode(line.getNumNodes() - 2, px, py, display);
 
         // highlight first or last visible node if near
         if (hdist < THRESH) {
           line.setHighlightNode(line.getNumNodes()-1, CON);
           mode = CLOSE_LOOP;
         }
-       
+
         // switch modes if you've dragged far enough from last node placed
         if (ldist > 10.0) {
           mode = EXTEND;
@@ -350,13 +352,13 @@ public class PolylineTool extends OverlayTool {
       }
       else if (mode == CLOSE_LOOP) {
         line.setLastNode(dx, dy);
-        // determine if near head: 
+        // determine if near head:
         double dist = getDistanceToNode(0, px, py, display);
-       
-        // if not, turn off highlighting 
+
+        // if not, turn off highlighting
         if (dist > THRESH) {
           line.turnOffHighlighting();
-          mode = EXTEND; 
+          mode = EXTEND;
         }
       }
       else if (mode == SELECT) {
@@ -376,17 +378,17 @@ public class PolylineTool extends OverlayTool {
     }// end synchronized (line)
   }
 
-  // -- Helper methods -- 
-  
+  // -- Helper methods --
+
   /** Adjusts last node and curve length */
   private void adjustLastNode (OverlayPolyline line, float dx, float dy) {
     double lastSegLength = getLastSegmentLength();
     line.setLastNode(dx, dy);
     double newLastSegLength = getLastSegmentLength();
     double delta = newLastSegLength - lastSegLength;
-    line.setCurveLength(line.getCurveLength() + delta);     
+    line.setCurveLength(line.getCurveLength() + delta);
   }
-  
+
   /** Splits an overlay polyline in two */
   private void split (OverlayPolyline line, int selectedNode) {
     float[][] nodes = line.getNodes();
@@ -402,7 +404,7 @@ public class PolylineTool extends OverlayTool {
 
     // if a non-trivial polyline remains 'left' of deleted node
     if (selectedNode > 1) {
-      for (int i=0; i<2; i++) 
+      for (int i=0; i<2; i++)
         System.arraycopy(nodes[i], 0, n1[i], 0, numNodes1);
 
       l1 = new OverlayPolyline(overlay, n1);
@@ -415,7 +417,7 @@ public class PolylineTool extends OverlayTool {
     // if a non-trivial polyline remains 'right' of deleted node
     if (selectedNode < numNodes - 1) {
       for (int i=0; i<2; i++) {
-        System.arraycopy(nodes[i], numNodes1 + 1, n2[i], 0, 
+        System.arraycopy(nodes[i], numNodes1 + 1, n2[i], 0,
           numNodes2);
       }
       l2 = new OverlayPolyline(overlay, n2);
@@ -425,7 +427,6 @@ public class PolylineTool extends OverlayTool {
       l2.setSelected(false);
     }
   }
-
 
   /** Prints current mode and mouse event type: helpful for debugging */
   private void printMode(String method) {
@@ -449,7 +450,7 @@ public class PolylineTool extends OverlayTool {
   }
 
   /** Gets distance to the node specified, handling awkward casts. */
-  private double getDistanceToNode(int ndx, int px, int py, 
+  private double getDistanceToNode(int ndx, int px, int py,
     DisplayImpl display) {
     double[] dPxlDbl = {(double) px, (double) py};
     float[] nDom = line.getNodeCoords(ndx);
@@ -460,9 +461,9 @@ public class PolylineTool extends OverlayTool {
     return dist;
   }
 
-  /** Determines length of last line segment. */ 
+  /** Determines length of last line segment. */
   private double getLastSegmentLength() {
-    float[][] lastSeg = {line.getNodeCoords(line.getNumNodes() -1), 
+    float[][] lastSeg = {line.getNodeCoords(line.getNumNodes() -1),
       line.getNodeCoords(line.getNumNodes() - 2)};
     double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
       {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
@@ -486,7 +487,7 @@ public class PolylineTool extends OverlayTool {
     line = null;
     selectedNode = -1;
   }
-  
+
   /** Selects a particular node */
   private void selectNode(OverlayPolyline pln, int node) {
     line.setDrawing(false);
@@ -562,4 +563,4 @@ public class PolylineTool extends OverlayTool {
       System.out.println(out);
     }
   }
-} // end class PolylineTool 
+} // end class PolylineTool

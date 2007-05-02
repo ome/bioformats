@@ -30,9 +30,9 @@ import visad.*;
 
 /** OverlayMarker is a marker crosshairs overlay. */
 public class OverlayMarker extends OverlayObject {
-  
-  // -- Static Fields -- 
-  
+
+  // -- Static Fields --
+
   /** The names of the statistics this object reports */
   protected static String[] statTypes =  {"Coordinates"};
 
@@ -89,8 +89,8 @@ public class OverlayMarker extends OverlayObject {
     return field;
   }
 
-  /** Returns whether this object is drawable, i.e., is of nonzero 
-   *  size, area, length, etc. 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
    */
   public boolean hasData() { return true; }
 
@@ -105,15 +105,15 @@ public class OverlayMarker extends OverlayObject {
   public String getStat(String name) {
     if (name.equals("Coordinates")) {
       return "(" + x1 + ", " + y1 + ")";
-    } 
+    }
     else return "No such statistic for this overlay type";
   }
- 
+
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     return "Marker coordinates = (" + x1 + ", " + y1 + ")";
   }
- 
+
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 

@@ -521,7 +521,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
 
       // if any selected overlay is not filled, clear filled checkbox
       if (!obj.isFilled()) fill = false;
-      
+
       // if any selected overlay cannot be filled, disable filled checkbox
       if (!obj.canBeFilled()) enableFill = false;
 
@@ -578,7 +578,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
     filled.setEnabled(enableFill);
     text.setEnabled(enableText);
     text.setEditable(enableText);
-    
+
     if (sel.length > 0) {
       // leave GUI components alone if nothing is selected
       filled.setSelected(fill);
@@ -841,7 +841,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
   }
 
   // -- Helper methods --
-
 
   /** Sets the font text field to reflect the currently chosen font. */
   protected void refreshCurrentFont() {

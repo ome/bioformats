@@ -30,8 +30,8 @@ import org.openmicroscopy.xml.st.*;
  * A utility for reorganizing and converting QuickTime movies,
  * TIFF series and other 4D datasets.
  */
-public class MovieStitcher extends JFrame implements 
-  ActionListener, ChangeListener, Runnable 
+public class MovieStitcher extends JFrame implements
+  ActionListener, ChangeListener, Runnable
 {
 
   // -- Constants --
@@ -42,7 +42,7 @@ public class MovieStitcher extends JFrame implements
   // -- Fields --
 
   private FileStitcher reader = new FileStitcher(true);
-  private DimensionSwapper swap = new DimensionSwapper(reader); 
+  private DimensionSwapper swap = new DimensionSwapper(reader);
   private ImageWriter writer = new ImageWriter();
   private JFileChooser rc, wc;
   private boolean shutdown, force = true;
@@ -171,22 +171,22 @@ public class MovieStitcher extends JFrame implements
     row3.add(zChoice);
     row3.add(includeZ);
     row3.add(Box.createHorizontalStrut(4));
-    
+
     row3 = new RowPanel();
     row3.setLayout(new BoxLayout(row3, BoxLayout.X_AXIS));
     pane.add(row3);
     pane.add(Box.createVerticalStrut(9));
-    
+
     row3.add(tLabel);
     row3.add(tChoice);
     row3.add(includeT);
     row3.add(Box.createHorizontalStrut(4));
-    
+
     row3 = new RowPanel();
     row3.setLayout(new BoxLayout(row3, BoxLayout.X_AXIS));
     pane.add(row3);
     pane.add(Box.createVerticalStrut(9));
-    
+
     row3.add(cLabel);
     row3.add(cChoice);
     row3.add(includeC);
@@ -206,7 +206,7 @@ public class MovieStitcher extends JFrame implements
     fps = new JSpinner(new SpinnerNumberModel(10, 1, 100, 1));
     row4.add(fps);
     row4.add(Box.createHorizontalStrut(3));
-  
+
     JLabel codecLabel = new JLabel("Output compression type: ");
     row4.add(codecLabel);
     codec = new JComboBox(new String[0]);
@@ -226,7 +226,7 @@ public class MovieStitcher extends JFrame implements
     row5.add(qtJava);
 
     row5.add(Box.createHorizontalStrut(3));
-   
+
     forceType = new JCheckBox("Force", true);
     forceType.setActionCommand("force");
     forceType.addActionListener(this);
@@ -280,14 +280,14 @@ public class MovieStitcher extends JFrame implements
       if (file != null) wc.setCurrentDirectory(file);
       String pattern = FilePattern.findPattern(file);
       input.setText(pattern);
-    
+
       try {
         swap.setId(pattern);
-        
+
         if (swap.getSeriesCount() > 1 && series == null) {
           JLabel seriesLabel = new JLabel("Series: ");
-          series = new JSpinner(new SpinnerNumberModel(1, 1, 
-            swap.getSeriesCount(), 1)); 
+          series = new JSpinner(new SpinnerNumberModel(1, 1,
+            swap.getSeriesCount(), 1));
           series.addChangeListener(this);
           seriesRow.add(seriesLabel);
           seriesRow.add(series);
@@ -307,8 +307,8 @@ public class MovieStitcher extends JFrame implements
       catch (Exception exc) {
         exc.printStackTrace();
       }
-      
-      updateLabels(pattern); 
+
+      updateLabels(pattern);
     }
     else if ("output".equals(cmd)) {
       int rval = wc.showSaveDialog(this);
@@ -367,7 +367,7 @@ public class MovieStitcher extends JFrame implements
       }.start();
     }
   }
- 
+
   // -- ChangeListener methods --
 
   public void stateChanged(ChangeEvent e) {
@@ -381,7 +381,6 @@ public class MovieStitcher extends JFrame implements
       }
     }
   }
-
 
   // -- Runnable methods --
 
@@ -414,8 +413,8 @@ public class MovieStitcher extends JFrame implements
         String name = new FilePattern(in).getPrefix();
         String stitchDir = name + "-stitched";
         new File(f.getParent() + File.separator + stitchDir).mkdir();
-        out = f.getParent() + File.separator + stitchDir + 
-          File.separator + name + ".tif"; 
+        out = f.getParent() + File.separator + stitchDir +
+          File.separator + name + ".tif";
         out = out.replaceAll(File.separator + File.separator, File.separator);
         output.setText(out);
       }
@@ -439,7 +438,7 @@ public class MovieStitcher extends JFrame implements
       // swap dimensions based on user input
 
       String order = swap.getDimensionOrder();
-      
+
       if (zLabel.getText().indexOf("Time") != -1) {
         order = order.replace('Z', 'T') ;
       }
@@ -512,7 +511,7 @@ public class MovieStitcher extends JFrame implements
         }
       }
       else if (!force && !writer.isSupportedType(type)) {
-        throw new FormatException("Unsupported pixel type: " + 
+        throw new FormatException("Unsupported pixel type: " +
           FormatTools.getPixelTypeString(type) +
           "\nTo write to this format, the \"force\" box must be checked.\n" +
           "This may result in a loss of precision; for best results, " +
@@ -529,7 +528,7 @@ public class MovieStitcher extends JFrame implements
             String zBlock = "";
             String tBlock = "";
             String cBlock = "";
-            
+
             if (externalZ > 1) {
               String num = "" + i;
               while (num.length() < zDigits) num = "0" + num;
@@ -559,14 +558,14 @@ public class MovieStitcher extends JFrame implements
 
             int planesPerFile = internalZ * internalT * internalC;
             int filePlane = 0;
-    
+
             for (int z=0; z<internalZ; z++) {
               for (int t=0; t<internalT; t++) {
                 for (int c=0; c<internalC; c++) {
                   int zPos = z*externalZ + i;
                   int tPos = t*externalT + j;
                   int cPos = c*externalC + k;
-                 
+
                   progress.setString(outName + " " + (filePlane + 1) +
                     "/" + planesPerFile);
                   filePlane++;
@@ -580,25 +579,25 @@ public class MovieStitcher extends JFrame implements
                     int pixelType = 0;
                     switch (type) {
                       case FormatTools.INT8:
-                      case FormatTools.UINT8: 
+                      case FormatTools.UINT8:
                         pixelType = DataBuffer.TYPE_BYTE;
                         break;
-                      case FormatTools.INT16: 
+                      case FormatTools.INT16:
                         pixelType = DataBuffer.TYPE_USHORT;
                         break;
-                      case FormatTools.UINT16: 
+                      case FormatTools.UINT16:
                         pixelType = DataBuffer.TYPE_SHORT;
                         break;
                       case FormatTools.INT32:
-                      case FormatTools.UINT32: 
+                      case FormatTools.UINT32:
                         pixelType = DataBuffer.TYPE_INT;
                         break;
-                      case FormatTools.FLOAT: 
+                      case FormatTools.FLOAT:
                         pixelType = DataBuffer.TYPE_FLOAT;
                         break;
                       case FormatTools.DOUBLE:
                         pixelType = DataBuffer.TYPE_DOUBLE;
-                        break; 
+                        break;
                     }
                     img = ImageTools.makeType(img, pixelType);
                   }
@@ -609,18 +608,18 @@ public class MovieStitcher extends JFrame implements
                 }
               }
             }
-          
-            // if we're writing a TIFF file, insert an OME-XML block 
+
+            // if we're writing a TIFF file, insert an OME-XML block
             if (writer.getWriter(outFile) instanceof TiffWriter) {
               RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
-              
-              OMENode root = (OMENode) 
+
+              OMENode root = (OMENode)
                 ((OMEXMLMetadataStore) swap.getMetadataStore()).getRoot();
-                
-              // add TiffData element here 
+
+              // add TiffData element here
               Vector images = root.getChildNodes("Image");
               for (int p=0; p<images.size(); p++) {
-                PixelsNode pix = 
+                PixelsNode pix =
                   (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
                 DOMUtil.createChild(pix.getDOMElement(), "TiffData");
               }
@@ -681,7 +680,7 @@ public class MovieStitcher extends JFrame implements
 
   private void updateLabels(String pattern) {
     try {
-      swap.setId(pattern); 
+      swap.setId(pattern);
 
       String z = zLabel.getText();
       z = z.substring(0, z.indexOf("<"));
@@ -697,7 +696,7 @@ public class MovieStitcher extends JFrame implements
       c = c.substring(0, c.indexOf("<"));
       c += "<1-" + swap.getEffectiveSizeC() + ">";
       cLabel.setText(c);
-      
+
       includeZ.setEnabled(true);
       includeT.setEnabled(true);
       includeC.setEnabled(true);

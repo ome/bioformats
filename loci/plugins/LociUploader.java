@@ -88,8 +88,8 @@ public class LociUploader implements PlugIn {
   private void uploadStack() {
     try {
       IJ.showStatus("Starting upload...");
-      OMEWriter ul = new OMEWriter(); 
-      String id = server + "?user=" + user + "&password=" + pass; 
+      OMEWriter ul = new OMEWriter();
+      String id = server + "?user=" + user + "&password=" + pass;
       ul.setId(id);
 
       ImagePlus imp = WindowManager.getCurrentImage();
@@ -137,7 +137,7 @@ public class LociUploader implements PlugIn {
         store.setPixels(null, null, null, null, null,
           new Integer(FormatTools.UINT8), null, null, null, null);
       }
-      ul.setMetadataStore(store); 
+      ul.setMetadataStore(store);
 
       boolean little = !store.getBigEndian(null).booleanValue();
 
@@ -148,16 +148,16 @@ public class LociUploader implements PlugIn {
         byte[] toUpload = null;
 
         if (pix instanceof byte[]) {
-          toUpload = (byte[]) pix; 
+          toUpload = (byte[]) pix;
         }
         else if (pix instanceof short[]) {
           short[] s = (short[]) pix;
           toUpload = new byte[s.length * 2];
           for (int j=0; j<s.length; j++) {
-            toUpload[j*2] = little ? (byte) (s[j] & 0xff) : 
+            toUpload[j*2] = little ? (byte) (s[j] & 0xff) :
               (byte) ((s[j] >>> 8) & 0xff);
-            toUpload[j*2 + 1] = little ? (byte) ((s[j] >>> 8) & 0xff): 
-              (byte) (s[j] & 0xff); 
+            toUpload[j*2 + 1] = little ? (byte) ((s[j] >>> 8) & 0xff):
+              (byte) (s[j] & 0xff);
           }
         }
         else if (pix instanceof int[]) {
@@ -167,23 +167,23 @@ public class LociUploader implements PlugIn {
               rgb[1], rgb[2]);
             int channels = store.getSizeC(null).intValue();
             if (channels > 3) channels = 3;
-            toUpload = new byte[channels * rgb[0].length]; 
+            toUpload = new byte[channels * rgb[0].length];
             for (int j=0; j<channels; j++) {
-              System.arraycopy(rgb[j], 0, toUpload, 0, rgb[j].length); 
+              System.arraycopy(rgb[j], 0, toUpload, 0, rgb[j].length);
             }
           }
           else {
             int[] p = (int[]) pix;
             toUpload = new byte[4 * p.length];
             for (int j=0; j<p.length; j++) {
-              toUpload[j*4] = little ? (byte) (p[j] & 0xff) : 
-                (byte) ((p[j] >> 24) & 0xff); 
-              toUpload[j*4 + 1] = little ? (byte) ((p[j] >> 8) & 0xff) : 
-                (byte) ((p[j] >> 16) & 0xff); 
+              toUpload[j*4] = little ? (byte) (p[j] & 0xff) :
+                (byte) ((p[j] >> 24) & 0xff);
+              toUpload[j*4 + 1] = little ? (byte) ((p[j] >> 8) & 0xff) :
+                (byte) ((p[j] >> 16) & 0xff);
               toUpload[j*4 + 2] = little ? (byte) ((p[j] >> 16) & 0xff) :
-                (byte) ((p[j] >> 8) & 0xff); 
+                (byte) ((p[j] >> 8) & 0xff);
               toUpload[j*4 + 3] = little ? (byte) ((p[j] >> 24) & 0xff) :
-                (byte) (p[j] & 0xff); 
+                (byte) (p[j] & 0xff);
             }
           }
         }
@@ -192,22 +192,22 @@ public class LociUploader implements PlugIn {
           toUpload = new byte[f.length * 4];
           for (int j=0; j<f.length; j++) {
             int k = Float.floatToIntBits(f[j]);
-            toUpload[j*4] = little ? (byte) (k & 0xff) : 
-              (byte) ((k >> 24) & 0xff); 
-            toUpload[j*4 + 1] = little ? (byte) ((k >> 8) & 0xff) : 
-              (byte) ((k >> 16) & 0xff); 
+            toUpload[j*4] = little ? (byte) (k & 0xff) :
+              (byte) ((k >> 24) & 0xff);
+            toUpload[j*4 + 1] = little ? (byte) ((k >> 8) & 0xff) :
+              (byte) ((k >> 16) & 0xff);
             toUpload[j*4 + 2] = little ? (byte) ((k >> 16) & 0xff) :
-              (byte) ((k >> 8) & 0xff); 
+              (byte) ((k >> 8) & 0xff);
             toUpload[j*4 + 3] = little ? (byte) ((k >> 24) & 0xff) :
-              (byte) (k & 0xff); 
+              (byte) (k & 0xff);
           }
         }
-      
-        ul.saveBytes(toUpload, i == is.getSize() - 1); 
+
+        ul.saveBytes(toUpload, i == is.getSize() - 1);
       }
 
       IJ.showStatus("Sending data to server...");
-      ul.close(); 
+      ul.close();
       IJ.showStatus("Upload finished.");
     }
     catch (Exception e) {

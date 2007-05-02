@@ -45,8 +45,8 @@ public class ImagePlusWrapper {
    *   of the file names if you use file stitching
    * @param stitch true if use file stitching
    */
-  public ImagePlusWrapper(String name, IFormatReader r, FileStitcher fs, boolean stitch)
-    throws IOException, FormatException
+  public ImagePlusWrapper(String name, IFormatReader r, FileStitcher fs,
+    boolean stitch) throws IOException, FormatException
   {
     store = new OMEXMLMetadataStore();
     synchronized (r) {

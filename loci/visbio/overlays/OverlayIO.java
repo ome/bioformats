@@ -193,7 +193,7 @@ public final class OverlayIO {
           String type = st.nextToken().substring(1); // remove initial #
           int tok = 0;
 
-          if (count != lengths.length + 10) { 
+          if (count != lengths.length + 10) {
             // 10 == number of non-dim. fields in the overlay description
             String s = "line in data table has an insufficient number of " +
               "fields (" + count + " instead of " + (lengths.length + 10) + ")";
@@ -205,12 +205,12 @@ public final class OverlayIO {
           for (int i=0; i<pos.length; i++) {
             try {
               int p = Integer.parseInt(st.nextToken());
-              if (p > 0 && p <= lengths[i]) { 
+              if (p > 0 && p <= lengths[i]) {
                 // Is coordinate within range?
                 // Remember, in the overlay.txt files dimensional position
-                // coordinates are indexed from 1; inside visbio, 
+                // coordinates are indexed from 1; inside visbio,
                 // they're indexed from 0.
-                pos[i] = p-1; // shift from external to internal indexing 
+                pos[i] = p-1; // shift from external to internal indexing
                 tok++;
               } else {
                 pos = null;
@@ -224,7 +224,7 @@ public final class OverlayIO {
           }
 
           if (pos == null) {
-            displayErrorMsg(owner, lineNum, 
+            displayErrorMsg(owner, lineNum,
                 "line has an invalid dimensional position");
             return null;
           }
@@ -246,7 +246,7 @@ public final class OverlayIO {
           }
 
           catch (NumberFormatException exc) {
-            displayErrorMsg(owner, lineNum, 
+            displayErrorMsg(owner, lineNum,
                 "line has invalid coordinate values");
             return null;
           }
@@ -329,7 +329,7 @@ public final class OverlayIO {
 
           if (numNodes == nodes[0].length) {
             float[][] temp = new float[2][numNodes*2];
-            for (int i=0; i<2; i++) 
+            for (int i=0; i<2; i++)
               System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
             nodes = temp;
           }
@@ -341,13 +341,13 @@ public final class OverlayIO {
     if (!foundOverlays) {
       displayErrorMsg(owner, lineNum, "no overlays found");
       return null;
-    } 
+    }
     else if (loadedNodedObjects.size() > 0) {
       if (numNodedObjectsRestored + 1 < loadedNodedObjects.size()) {
-        displayErrorMsg(owner, lineNum, 
+        displayErrorMsg(owner, lineNum,
             "missing node lists for one or more Freeforms");
         return null;
-      } 
+      }
       else {
         // store last freeform read
         OverlayNodedObject ono = (OverlayNodedObject)
@@ -401,7 +401,7 @@ public final class OverlayIO {
       String posString = sb.toString();
       for (int j=0; j<overlays[i].size(); j++) {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
-        
+
         if (obj instanceof OverlayLine) lines.add(obj);
         if (obj instanceof OverlayFreeform) freeforms.add(obj);
         if (obj instanceof OverlayMarker) markers.add(obj);
@@ -435,7 +435,7 @@ public final class OverlayIO {
     }
 
     // print stats by object type
-    Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
+    Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes,
       arrows, polylines};
     String[] titles = OverlayStat.getOverlayTypes();
     for (int v=0; v<vectors.length; v++) {
@@ -461,7 +461,7 @@ public final class OverlayIO {
         }
       }
     }
-   
+
     // nodes of noded objects, one node per line
     for (int i=0; i<freeforms.size() + polylines.size(); i++) {
       // get the noded object from the appropriate Vector
@@ -479,7 +479,7 @@ public final class OverlayIO {
       yy1 = ono.getY();
       xx2 = ono.getX2();
       yy2 = ono.getY2();
-      
+
       // nodes header
       int k = 0;
       if (ono instanceof OverlayFreeform) k = ++freeformCount;
@@ -503,14 +503,14 @@ public final class OverlayIO {
 
     Vector[] overlays = overlay.overlays;
 
-		Vector lines = new Vector();
-		Vector markers = new Vector();
-		Vector freeforms = new Vector();
-		Vector texts = new Vector();
-		Vector ovals = new Vector();
-		Vector boxes = new Vector();
-		Vector arrows = new Vector();
-		Vector polylines = new Vector();
+    Vector lines = new Vector();
+    Vector markers = new Vector();
+    Vector freeforms = new Vector();
+    Vector texts = new Vector();
+    Vector ovals = new Vector();
+    Vector boxes = new Vector();
+    Vector arrows = new Vector();
+    Vector polylines = new Vector();
 
     // initialize worksheet
     HSSFWorkbook wb = new HSSFWorkbook();
@@ -518,16 +518,16 @@ public final class OverlayIO {
     HSSFRow r = null;
     HSSFCell c = null;
 
-    // create cell styles 
+    // create cell styles
     HSSFCellStyle text = wb.createCellStyle();
-    text.setDataFormat(HSSFDataFormat.getBuiltinFormat("text")); 
+    text.setDataFormat(HSSFDataFormat.getBuiltinFormat("text"));
 
     HSSFCellStyle integer = wb.createCellStyle();
     integer.setDataFormat((short) 1);
 
     HSSFCellStyle flt = wb.createCellStyle();
     flt.setDataFormat((short) 0); // "general" format
-    
+
     HSSFCellStyle hex = wb.createCellStyle();
     hex.setDataFormat((short) 0); // "general" format
 
@@ -542,7 +542,7 @@ public final class OverlayIO {
     // int numChars = header.length();
     // short numColsToMerge = (short) Math.ceil((float) numChars/(float)
     // (width));
-    
+
     short numColsToMerge = 12; // number of columns in overlay table header
 
     Region mergedCells = new Region (0, (short) 0, 0, numColsToMerge);
@@ -555,7 +555,7 @@ public final class OverlayIO {
     c.setCellValue(new HSSFRichTextString(header));
 
     // write table header
-  
+
     short cellnum = 0;
     r = s.createRow(++rownum);
     c = r.createCell(cellnum);
@@ -581,12 +581,12 @@ public final class OverlayIO {
     // overlays table
     for (int i=0; i<overlays.length; i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
-      
+
       for (int j=0; j<overlays[i].size(); j++) {
         cellnum = 0;
         // make new row
         r = s.createRow(++rownum);
-        
+
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
 
         // a 'rider' to this loop: keep track of noded objects
@@ -613,7 +613,7 @@ public final class OverlayIO {
 
         // x1
         c = r.createCell(cellnum++);
-        if (obj.hasEndpoint()) { 
+        if (obj.hasEndpoint()) {
           c.setCellStyle(flt);
           c.setCellValue(obj.x1);
         }
@@ -621,10 +621,10 @@ public final class OverlayIO {
           c.setCellStyle(text);
           c.setCellValue(new HSSFRichTextString(NOT_APPLICABLE));
         }
-        
-        // y1 
+
+        // y1
         c = r.createCell(cellnum++);
-        if (obj.hasEndpoint()) { 
+        if (obj.hasEndpoint()) {
           c.setCellStyle(flt);
           c.setCellValue(obj.y1);
         }
@@ -635,7 +635,7 @@ public final class OverlayIO {
 
         // x2
         c = r.createCell(cellnum++);
-        if (obj.hasEndpoint2()) { 
+        if (obj.hasEndpoint2()) {
           c.setCellStyle(flt);
           c.setCellValue(obj.x2);
         }
@@ -644,9 +644,9 @@ public final class OverlayIO {
           c.setCellValue(new HSSFRichTextString(NOT_APPLICABLE));
         }
 
-        // y2 
+        // y2
         c = r.createCell(cellnum++);
-        if (obj.hasEndpoint2()) { 
+        if (obj.hasEndpoint2()) {
           c.setCellStyle(flt);
           c.setCellValue(obj.y2);
         }
@@ -670,9 +670,9 @@ public final class OverlayIO {
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
         c.setCellValue(new HSSFRichTextString(
-              obj.canBeFilled() ? "" + 
+              obj.canBeFilled() ? "" +
               (obj.filled ? "true" : "false") : NOT_APPLICABLE));
-        
+
         // object group
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
@@ -684,11 +684,11 @@ public final class OverlayIO {
         c.setCellValue(new HSSFRichTextString(obj.notes.replaceAll("\t", " ")));
       }
     }
-    
+
     // write overlay statistics
-    Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes, 
+    Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes,
       arrows, polylines};
-    String[] titles = OverlayStat.getOverlayTypes(); 
+    String[] titles = OverlayStat.getOverlayTypes();
     for (int v=0; v<vectors.length ; v++) {
       if (vectors[v].size() > 0) {
         rownum += 2;
@@ -697,17 +697,17 @@ public final class OverlayIO {
         c = r.createCell(cellnum++);
         c.setCellStyle(text);
         c.setCellValue(new HSSFRichTextString(titles[v] + " Statistics"));
-                  
+
         for (int i=0; i<vectors[v].size(); i++) {
           OverlayObject obj = (OverlayObject) vectors[v].get(i);
           int index = i + 1; // index from 1 for readability
-          
+
           cellnum = 0;
           r = s.createRow(++rownum);
           c = r.createCell(cellnum++);
           c.setCellStyle(text);
           c.setCellValue(new HSSFRichTextString(titles[v] + " " + index));
-          
+
           String[] statTypes = OverlayStat.getStatTypes(titles[v]);
           OptionManager om = (OptionManager)
             VisBioFrame.getVisBio().getManager(OptionManager.class);
@@ -722,20 +722,20 @@ public final class OverlayIO {
               c = r.createCell(cellnum++);
               c.setCellStyle(text);
               c.setCellValue(new HSSFRichTextString(statTypes[j]));
-              
+
               c = r.createCell(cellnum++);
               c.setCellStyle(text);
               c.setCellValue(new HSSFRichTextString(obj.getStat(statTypes[j])));
             }
-          } 
+          }
         }
       }
-    } 
+    }
 
     // write nodes of noded objects
     int freeformCount = 0;
     int polylineCount = 0;
-    
+
     rownum += 2; // skip a row
     for (int i = 0; i<freeforms.size() + polylines.size(); i++) {
       OverlayNodedObject ono;
@@ -760,7 +760,7 @@ public final class OverlayIO {
       yy1 = ono.getY();
       xx2 = ono.getX2();
       yy2 = ono.getY2();
-            
+
       String hdr = ono + " " + k;
       c.setCellValue(new HSSFRichTextString(hdr));
       r = s.createRow(rownum++);
@@ -863,8 +863,8 @@ public final class OverlayIO {
     // generate errors elsewhere in loadOverlays.
     // Adding more states to the machine and/or more rigorous checking for
     // acceptable line formats in this machine would help reduce the number of
-    // exceptional cases not handled here.  
-    
+    // exceptional cases not handled here.
+
     int state = WAIT, event = BARF;
     if (current == WAIT) {
       if (input.matches("^\\s*$") || input.startsWith("#")) {
@@ -891,7 +891,7 @@ public final class OverlayIO {
           input.startsWith("Arrow") || input.startsWith("Polyline")) {
         state = TABLE; event = PARSE;
       }
-      else if (input.startsWith("#")) {state = TABLE; event = IGNORE;} 
+      else if (input.startsWith("#")) {state = TABLE; event = IGNORE;}
       // must check for freeform header first
       else {
         event = BARF; state = TABLE;
@@ -900,7 +900,7 @@ public final class OverlayIO {
       if (input.equals("")) {
         state = NODES; event = IGNORE;
       }
-      else if (input.matches("# Freeform \\d+ nodes:") || 
+      else if (input.matches("# Freeform \\d+ nodes:") ||
           input.matches("# Polyline \\d+ nodes:")) {
         state = NODES; event = INIT;
       }

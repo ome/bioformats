@@ -92,7 +92,7 @@ public class HelpManager extends LogicManager {
       buttons.add(vis2D);
 
       // create option for 2D visualization w/ overlays
-      JRadioButton visOver = new JRadioButton("In 2D with overlays", 
+      JRadioButton visOver = new JRadioButton("In 2D with overlays",
         !canDisplay3D);
       visOver.setEnabled(canDisplay2D);
       if (!LAFUtil.isMacLookAndFeel()) visOver.setMnemonic('o');
@@ -105,7 +105,7 @@ public class HelpManager extends LogicManager {
 
       // create panel for asking user about immediate visualization
       PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "15dlu, pref:grow, 15dlu", 
+        "15dlu, pref:grow, 15dlu",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"
       ));
       CellConstraints cc = new CellConstraints();
@@ -124,7 +124,7 @@ public class HelpManager extends LogicManager {
         bio.getManager(OptionManager.class);
       boolean success = om.checkMessage(dc,
         DISPLAY_DATA, false, visPanel, "VisBio");
-      if (success && !visNot.isSelected()) { 
+      if (success && !visNot.isSelected()) {
         if (!visOver.isSelected()) dc.doNewDisplay(vis3D.isSelected());
         else dc.doNewDisplayWithOverlays();
       }

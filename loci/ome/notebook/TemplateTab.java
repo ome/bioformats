@@ -5,17 +5,17 @@
 /*
 OME Metadata Notebook application for exploration and editing of OME-XML and
 OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
-  
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or 
+the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-     
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
-       
+
 You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -51,24 +51,24 @@ public class TemplateTab {
 
   // -- TemplateTab API methods --
 
-  public int getRows() { 
+  public int getRows() {
     if (rows == 0) {
       for (int i=0; i<fields.size(); i++) {
         rows += ((TemplateField) fields.get(i)).getHeight();
-      } 
-    
+      }
+
       for (int i=0; i<groups.size(); i++) {
         TemplateGroup g = (TemplateGroup) groups.get(i);
-        for (int k=0; k<g.getRepetitions(); k++) { 
+        for (int k=0; k<g.getRepetitions(); k++) {
           for (int j=0; j<g.getNumFields(); j++) {
             rows += g.getField(0, j).getHeight();
           }
-          rows++; 
-        } 
+          rows++;
+        }
       }
     }
-    
-    return rows; 
+
+    return rows;
   }
 
   public void setRows(int rows) { this.rows = rows; }
@@ -97,8 +97,8 @@ public class TemplateTab {
     for (int i=0; i<fields.size(); i++) {
       TemplateField t = (TemplateField) fields.get(i);
       if (t.getRow() == row && t.getColumn() == col) return t;
-    } 
-    return null; 
+    }
+    return null;
   }
 
   public void addGroup(TemplateGroup g) { groups.add(g); }

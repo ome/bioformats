@@ -115,16 +115,16 @@ public class RandomAccessStream extends InputStream implements DataInput {
     f = f.getAbsoluteFile();
     if (f.exists()) {
       raf = new RAFile(f, "r");
-      
+
       BufferedInputStream bis = new BufferedInputStream(
-        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD); 
-     
+        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+
       String path = f.getPath().toLowerCase();
 
       if (path.endsWith(".gz")) {
         dis = new DataInputStream(new GZIPInputStream(bis));
         compressed = true;
-     
+
         length = 0;
 
         while (dis.available() != 0) {
@@ -132,14 +132,14 @@ public class RandomAccessStream extends InputStream implements DataInput {
         }
 
         bis = new BufferedInputStream(
-          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD); 
+          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
         dis = new DataInputStream(new GZIPInputStream(bis));
       }
       /*
       else if (path.endsWith(".bz2")) {
         dis = new DataInputStream(new CBZip2InputStream(bis));
         compressed = true;
-     
+
         length = 0;
 
         while (dis.available() != 0) {
@@ -147,12 +147,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
         }
 
         bis = new BufferedInputStream(
-          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD); 
+          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
         dis = new DataInputStream(new CBZip2InputStream(bis));
       }
-      */ 
+      */
       else dis = new DataInputStream(bis);
-      
+
       if (!compressed) {
         length = raf.length();
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
@@ -161,7 +161,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
         bufferSizes[0] = MAX_OVERHEAD / 2;
         lastValid = 1;
         nextMark = MAX_OVERHEAD;
-      } 
+      }
     }
     else if (file.startsWith("http")) {
       raf = new RAUrl(Location.getMappedId(file), "r");
@@ -182,7 +182,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     raf = new RABytes(array);
     fp = 0;
     afp = 0;
-    length = raf.length(); 
+    length = raf.length();
   }
 
   // -- RandomAccessStream API methods --
@@ -337,7 +337,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     int status = checkEfficiency(array.length);
     int n = 0;
 
-    if (status == DIS) { 
+    if (status == DIS) {
       return read(array, 0, array.length);
     }
     else if (status == ARRAY) {
@@ -369,17 +369,17 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
     if (status == DIS) {
       int p = dis.read(array, offset, n);
-      if (p == -1) return -1; 
-      if ((p >= 0) && ((fp + p) < length)) { 
-        int k = p; 
-        while ((k >= 0) && (p < n) && ((afp + p) <= length) && 
+      if (p == -1) return -1;
+      if ((p >= 0) && ((fp + p) < length)) {
+        int k = p;
+        while ((k >= 0) && (p < n) && ((afp + p) <= length) &&
           ((offset + p) < array.length))
         {
-          k = dis.read(array, offset + p, n - p); 
-          if (k >= 0) p += k; 
+          k = dis.read(array, offset + p, n - p);
+          if (k >= 0) p += k;
         }
       }
-      n = p; 
+      n = p;
     }
     else if (status == ARRAY) {
       if ((buf.length - afp) < n) n = buf.length - (int) afp;
@@ -507,10 +507,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
       if (afp < fp) {
         dis.close();
-      
+
         BufferedInputStream bis = new BufferedInputStream(
-          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD); 
-    
+          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+
         String path = Location.getMappedId(file).toLowerCase();
 
         if (path.endsWith(".gz")) {
@@ -521,13 +521,13 @@ public class RandomAccessStream extends InputStream implements DataInput {
           dis = new DataInputStream(new CBZip2InputStream(bis));
         }
         */
-        fp = 0; 
+        fp = 0;
       }
 
       while (fp < afp) {
         fp += dis.skipBytes((int) (afp - fp));
       }
-      
+
       return DIS;
     }
 
@@ -630,10 +630,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
     f = f.getAbsoluteFile();
     if (f.exists()) {
       raf = new RAFile(f, "r");
-      
+
       BufferedInputStream bis = new BufferedInputStream(
-        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD); 
-     
+        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+
       String path = f.getPath().toLowerCase();
 
       if (path.endsWith(".gz")) {
@@ -647,13 +647,13 @@ public class RandomAccessStream extends InputStream implements DataInput {
       }
       */
       else dis = new DataInputStream(bis);
-      
+
       if (!compressed) {
         length = raf.length();
         buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
         raf.readFully(buf);
         raf.seek(0);
-      } 
+      }
     }
     else {
       raf = new RAUrl(Location.getMappedId(file), "r");

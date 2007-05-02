@@ -391,7 +391,7 @@ public class DataControls extends ControlPanel
     // construct overlays and add to data list and display window
     String overlaysName = data.getName() + "  overlays";
     OverlayTransform overlays = new OverlayTransform(data, overlaysName);
-    DataManager dm = (DataManager) 
+    DataManager dm = (DataManager)
       lm.getVisBio().getManager(DataManager.class);
     if (dm == null) return;
     dm.addData(overlays);

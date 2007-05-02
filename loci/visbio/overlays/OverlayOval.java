@@ -32,12 +32,12 @@ import visad.*;
 public class OverlayOval extends OverlayObject {
 
   // -- Static Fields --
-  
+
   /** The names of the statistics this object reports */
-  protected static String[] statTypes =  {"Coordinates", "Center", "Radius", 
+  protected static String[] statTypes =  {"Coordinates", "Center", "Radius",
     "Major Axis Length", "Minor Axis Length", "Area", "Eccentricity",
     "Circumference (approximate)"};
- 
+
   // -- Constants --
 
   /** Computed (X, Y) pairs for top 1/2 of a unit circle. */
@@ -93,8 +93,8 @@ public class OverlayOval extends OverlayObject {
 
   // -- OverlayObject API methods --
 
-  /** Returns whether this object is drawable, i.e., is of nonzero 
-   *  size, area, length, etc. 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
    */
   public boolean hasData() { return (x1 != x2 && y1 != y2); }
 
@@ -163,7 +163,6 @@ public class OverlayOval extends OverlayObject {
     return field;
   }
 
-  
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     double xdist = 0;
@@ -173,7 +172,7 @@ public class OverlayOval extends OverlayObject {
     if (y < y1 && y < y2) ydist = Math.min(y1, y2) - y;
     else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
     return Math.sqrt(xdist * xdist + ydist * ydist);
-  } 
+  }
 
   /** Returns a specific statistic of this object */
   public String getStat(String name) {
@@ -204,10 +203,10 @@ public class OverlayOval extends OverlayObject {
 
     if (name.equals("Coordinates")) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
-    } 
+    }
     else if (name.equals("Center")) {
       return "(" + centerX + ", " + centerY + ")";
-    } 
+    }
     else if (name.equals("Radius")) {
       return "(" + radiusX + ", " + radiusY + ")";
     }
@@ -293,7 +292,7 @@ public class OverlayOval extends OverlayObject {
       (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
 
     String coords = "(" + x1 + ", " + y1 + ")";
-    OverlayStat[] stats = { 
+    OverlayStat[] stats = {
       new OverlayStat("Coordinates", coords),
       new OverlayStat("Center", "(" + centerX + ", " + centerY + ")"),
       new OverlayStat("Radius", "(" + radiusX + ", " + radiusY + ")"),
@@ -301,7 +300,7 @@ public class OverlayOval extends OverlayObject {
       new OverlayStat("Minor Axis Length", "" + minor),
       new OverlayStat("Area", "" + area),
       new OverlayStat("Eccentricity", "" + eccen),
-      new OverlayStat("Circumference (approximate)", "" + circum) 
+      new OverlayStat("Circumference (approximate)", "" + circum)
     };
     return stats;
   }

@@ -42,7 +42,7 @@ public class OMEUtils {
   // -- Utils API methods --
 
   /** Login to the OME database */
-  public static void login(String server, String user, String pass) 
+  public static void login(String server, String user, String pass)
     throws MalformedURLException
   {
     rs = DataServer.getDefaultServices(server);
@@ -54,7 +54,7 @@ public class OMEUtils {
   }
 
   /** Login to the OME database */
-  public static void login(String server, String sessionKey) 
+  public static void login(String server, String sessionKey)
     throws MalformedURLException
   {
     rs = DataServer.getDefaultServices(server);
@@ -86,8 +86,8 @@ public class OMEUtils {
     return ids;
   }
 
-  /** 
-   * Display a OMETablePanel using the given IDs. 
+  /**
+   * Display a OMETablePanel using the given IDs.
    * @return a list of Image IDs
    */
   public static int[] showTable(int[] ids) throws ImageServerException {
@@ -101,9 +101,9 @@ public class OMEUtils {
     return showTable(images);
   }
 
-  /** 
-   * Display a OMETablePanel using the given Images. 
-   * @return a list of Image IDs 
+  /**
+   * Display a OMETablePanel using the given Images.
+   * @return a list of Image IDs
    */
   public static int[] showTable(Image[] images) throws ImageServerException {
     if (!loggedIn) return null;
@@ -129,12 +129,13 @@ public class OMEUtils {
     int numImages = images.length;
     Object[][] props = new Object[numImages][4];
     Object[][] details = new Object[numImages][10];
-                                                                                    Pixels p;
+
+    Pixels p;
     for (int i=0; i<props.length; i++) {
       props[i][0] = new Boolean(false);
       props[i][1] = images[i].getName() == null ? "" : images[i].getName();
       props[i][2] = String.valueOf(images[i].getID());
-      props[i][3] = images[i].getCreated() == null ? "" : 
+      props[i][3] = images[i].getCreated() == null ? "" :
         images[i].getCreated();
       p = images[i].getDefaultPixels();
 

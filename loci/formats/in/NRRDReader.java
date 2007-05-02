@@ -183,7 +183,7 @@ public class NRRDReader extends FormatReader {
 
             if (numDimensions >= 3 && i == 0 && size > 1 && size <= 4) {
               core.sizeC[0] = size;
-            } 
+            }
             else if (i == 0 || (core.sizeC[0] > 1 && i == 1)) {
               core.sizeX[0] = size;
             }
@@ -208,10 +208,10 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("min")) min = v;
         else if (key.equals("max")) max = v;
       }
-      
+
       if ((line.length() == 0 && dataFile == null) || line == null) {
         finished = true;
-      } 
+      }
       if (dataFile != null && (in.length() - in.getFilePointer() < 2)) {
         finished = true;
       }

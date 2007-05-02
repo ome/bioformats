@@ -210,7 +210,7 @@ public class OMEImage extends ImageTransform {
       if (imageId < 0) {
         try {
           OMEUtils.login(server, user, password);
-       
+
           // TODO : find a better way of handling multiple IDs
           int[] results = OMEUtils.showTable(OMEUtils.getAllImages());
           if (results == null) results = new int[0];
@@ -378,9 +378,9 @@ public class OMEImage extends ImageTransform {
     else {
       id += "?user=" + user + "&password=" + password + "&id=" + imageId;
     }
-   
+
     try {
-      downloader.setId(id); 
+      downloader.setId(id);
       sizeX = downloader.getSizeX();
       sizeY = downloader.getSizeY();
       sizeZ = downloader.getSizeZ();
@@ -424,9 +424,9 @@ public class OMEImage extends ImageTransform {
    * Called when this object is being discarded in favor of
    * another object with a matching state.
    */
-  public void discard() { 
+  public void discard() {
     try {
-      downloader.close(); 
+      downloader.close();
     }
     catch (Exception exc) { exc.printStackTrace(); }
   }

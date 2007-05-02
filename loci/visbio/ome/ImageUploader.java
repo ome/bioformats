@@ -55,12 +55,12 @@ public class ImageUploader {
   public void upload(loci.visbio.data.Dataset data,
     String server, String username, String password)
   {
-    try {  
+    try {
       OMEWriter writer = new OMEWriter();
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.setRoot(data.getOMENode());
       writer.setMetadataStore(store);
-  
+
       String id = server + "?user=" + username + "&password=" + password;
       writer.setId(id);
 
@@ -70,11 +70,11 @@ public class ImageUploader {
       for (int i=0; i<numFiles; i++) {
         for (int j=0; j<numImages; j++) {
           int[] coords = FormatTools.getZCTCoords(store.getDimensionOrder(null),
-            store.getSizeZ(null).intValue(), store.getSizeC(null).intValue(), 
-            store.getSizeT(null).intValue(), 
+            store.getSizeZ(null).intValue(), store.getSizeC(null).intValue(),
+            store.getSizeT(null).intValue(),
             numImages*numFiles, numImages*i + j);
           writer.saveImage(
-            data.getImage(new int[] {coords[0], coords[1], coords[2], j}), 
+            data.getImage(new int[] {coords[0], coords[1], coords[2], j}),
             i == numFiles - 1 && j == numImages - 1);
         }
       }

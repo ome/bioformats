@@ -5,17 +5,17 @@
 /*
 OME Metadata Notebook application for exploration and editing of OME-XML and
 OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
-   
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-     
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
-       
+
 You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -68,21 +68,21 @@ public class TemplateField {
   public TemplateField(String s) {
     if (s.indexOf("{") != -1 && s.lastIndexOf("}") != -1) {
       s = s.substring(s.indexOf("{") + 1, s.lastIndexOf("}")).trim();
-      
+
       StringTokenizer lines = new StringTokenizer(s, "\n");
       while (lines.hasMoreTokens()) {
         String line = lines.nextToken().trim();
-       
+
         String key = line.substring(0, line.indexOf(" ")).trim();
         String value = line.substring(line.indexOf(" ")).trim();
         value = value.substring(1, value.length() - 1);
 
-        if (key.startsWith("name")) name = value; 
-        else if (key.startsWith("type")) type = value; 
-        else if (key.startsWith("map")) omecaMap = value; 
+        if (key.startsWith("name")) name = value;
+        else if (key.startsWith("type")) type = value;
+        else if (key.startsWith("map")) omecaMap = value;
         else if (key.startsWith("repeated")) {
-          repeated = new Boolean(value).booleanValue(); 
-        } 
+          repeated = new Boolean(value).booleanValue();
+        }
         else if (key.startsWith("grid")) {
           row = Integer.parseInt(value.substring(0, value.indexOf(",")));
           column = Integer.parseInt(value.substring(value.indexOf(",") + 1));
@@ -90,10 +90,10 @@ public class TemplateField {
         else if (key.startsWith("span")) {
           width = Integer.parseInt(value.substring(0, value.indexOf(",")));
           height = Integer.parseInt(value.substring(value.indexOf(",") + 1));
-        }        
+        }
         else if (key.startsWith("values")) {
           StringTokenizer e = new StringTokenizer(value, "\", ");
-          Vector tokens = new Vector(); 
+          Vector tokens = new Vector();
           while (e.hasMoreTokens()) {
             String token = e.nextToken().trim();
             tokens.add(token);
@@ -103,7 +103,7 @@ public class TemplateField {
         }
         else if (key.startsWith("default")) {
           if (type.equals("var") || type.equals("enum")) {
-            defaultValue = value;    
+            defaultValue = value;
           }
           else if (type.equals("bool")) {
             defaultValue = new Boolean(value);
@@ -114,13 +114,13 @@ public class TemplateField {
         }
       }
     }
-  
-    // create the associate JComponent 
-    
+
+    // create the associate JComponent
+
     if (type.equals("var")) {
       JTextArea text = null;
       if (width != 1 || height != 1) {
-        text = new JTextArea((String) defaultValue, width, height); 
+        text = new JTextArea((String) defaultValue, width, height);
       }
       else text = new JTextArea((String) defaultValue);
       component = new JScrollPane();
@@ -134,9 +134,9 @@ public class TemplateField {
       ((JComboBox) component).setSelectedItem(defaultValue);
     }
     else if (type.equals("int")) {
-      if (defaultValue == null) defaultValue = new Integer(0); 
+      if (defaultValue == null) defaultValue = new Integer(0);
       int v = ((Integer) defaultValue).intValue();
-      component = 
+      component =
         new JSpinner(new SpinnerNumberModel(v, 0, Integer.MAX_VALUE, 1));
     }
   }
@@ -160,7 +160,7 @@ public class TemplateField {
     if (type.equals("var")) {
       JTextArea text = null;
       if (width != 1 || height != 1) {
-        text = new JTextArea((String) defaultValue, width, height); 
+        text = new JTextArea((String) defaultValue, width, height);
       }
       else text = new JTextArea((String) defaultValue);
       comp = new JScrollPane();
@@ -179,7 +179,7 @@ public class TemplateField {
     }
 
     rtn.setComponent(comp);
-    return rtn; 
+    return rtn;
   }
 
   public String getType() { return type; }
@@ -196,7 +196,7 @@ public class TemplateField {
 
   public String getName() { return name; }
 
-  public void setName(String name) { this.name = name; } 
+  public void setName(String name) { this.name = name; }
 
   public String getMap() { return omecaMap; }
 

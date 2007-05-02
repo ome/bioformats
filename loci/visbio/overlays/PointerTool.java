@@ -39,7 +39,7 @@ public class PointerTool extends OverlayTool {
   protected float grabX, grabY;
 
   /** Vector of "grabbed" objects */
-  protected Vector grabbed;  // the grabees 
+  protected Vector grabbed;  // the grabees
 
   /** The selection box which may be created by this tool */
   protected TransientSelectBox select;
@@ -55,7 +55,7 @@ public class PointerTool extends OverlayTool {
 
   /** Array of whether objects are selected at time of mouse press */
   protected boolean[] selected;
-  
+
   // -- Constructor --
 
   /** Constructs an overlay manipulation tool. */
@@ -74,7 +74,7 @@ public class PointerTool extends OverlayTool {
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
     DisplayImpl display = (DisplayImpl) e.getDisplay();
-    
+
     // pick nearest object
     objs = overlay.getObjects(pos);
     bounds = new float[objs.length][4];
@@ -96,7 +96,9 @@ public class PointerTool extends OverlayTool {
 
     if (dist < threshold) {
       if (shift) objs[ndx].setSelected(true);
-      else if (ctrl) objs[ndx].setSelected(ctrl ? !objs[ndx].isSelected() : true);
+      else if (ctrl) {
+        objs[ndx].setSelected(ctrl ? !objs[ndx].isSelected() : true);
+      }
       else {
         if (objs[ndx].isSelected()) {
           // grab all selected objects
@@ -119,8 +121,8 @@ public class PointerTool extends OverlayTool {
         // deselect all previously selected objects
         for (int i=0; i<objs.length; i++) objs[i].setSelected(false);
       }
-    
-      // assemble array of objects' bounding boxes 
+
+      // assemble array of objects' bounding boxes
       for (int i=0; i<objs.length; i++) {
         float[] bound = new float[4];
         bound[0] = objs[i].getX();
@@ -134,8 +136,8 @@ public class PointerTool extends OverlayTool {
         }
         bounds[i] = bound;
       }
-    
-      // compile array tracking initial selection state of all objs here 
+
+      // compile array tracking initial selection state of all objs here
       for (int i=0; i<objs.length; i++) { selected[i] = objs[i].isSelected(); }
 
       // instantiate selection box
@@ -217,7 +219,7 @@ public class PointerTool extends OverlayTool {
          * |    |
          * 3----2
          */
-        
+
         // express object corners in terms of TSB edge vectors
         // vector between corners 0 and 1
         double[] v1 = {c[1][0] - c[0][0], c[1][1] - c[0][1]};
@@ -226,24 +228,24 @@ public class PointerTool extends OverlayTool {
 
         // iterate through all 4 points of object bounding box
         // and check whether they're inside selection area
-        boolean inside = true; 
+        boolean inside = true;
         for (int j = 0; j<bounds[0].length && inside; j++) {
-          int xndx = j < 2 ? 0 : 2; 
-          int yndx = j % 2 == 0 ? 1 : 3; 
+          int xndx = j < 2 ? 0 : 2;
+          int yndx = j % 2 == 0 ? 1 : 3;
           double[] p = {bounds[i][xndx], bounds[i][yndx]};
           // the above three lines iterate through the pairs (0,1),
-          // (0,3), (2,1), (2, 3) of bounds[i] over the 
+          // (0,3), (2,1), (2, 3) of bounds[i] over the
           // duration of the loop
-          
+
           double[] vp = {p[0] - c[0][0], p[1] - c[0][1]}; // vector from c(0)
           // to p
 
           // cos of angle btw. vectors v1 and vp
-          double cos1 = (vp[0] * v1[0] + vp[1] * v1[1]) / 
+          double cos1 = (vp[0] * v1[0] + vp[1] * v1[1]) /
             (Math.sqrt(vp[0]*vp[0] + vp[1]*vp[1] + v1[0]*v1[0] + v1[1]*v1[1]));
-          
+
           // cos of angle btw. v2 and vp
-          double cos2 = (vp[0] * v2[0] + vp[1] * v2[1]) / 
+          double cos2 = (vp[0] * v2[0] + vp[1] * v2[1]) /
             (Math.sqrt(vp[0]*vp[0] + vp[1]*vp[1] + v2[0]*v2[0] + v2[1]*v2[1]));
 
           if (cos1 < 0 || cos2 < 0)  inside = false;
@@ -253,7 +255,7 @@ public class PointerTool extends OverlayTool {
             // point is outside selection area
             double[] proj1 = MathUtil.getProjection(c[0], c[3], p, false);
             double[] proj2 = MathUtil.getProjection(c[0], c[1], p, false);
-             
+
             double d1 = MathUtil.getDistance(proj1, c[0]);
             double d2 = MathUtil.getDistance(proj2, c[0]);
 
@@ -262,7 +264,7 @@ public class PointerTool extends OverlayTool {
 
             if (d1 > dv1 || d2 > dv2) inside = false;
           }
-        } // end for 
+        } // end for
 
         // code for dynamic list refresh
         if (inside) {
