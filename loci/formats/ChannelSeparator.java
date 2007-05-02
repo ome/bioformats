@@ -156,7 +156,7 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   public void close() throws IOException {
-    super.close(); 
+    super.close();
     lastImage = null;
     lastImageIndex = -1;
     lastImageSeries = -1;
