@@ -14,6 +14,7 @@
 * Separate GUI logic into isolated loci.formats.gui package
 * Miscellaneous bugfixes and tweaks in most readers and writers
 * Many other bugfixes and improvements
+* Added support for gzip-compressed files
 
 2007 Mar 16:
 * Fixed calibration bugs in importer plugin
