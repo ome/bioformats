@@ -29,10 +29,12 @@ import java.awt.TextField;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import ij.process.*;
+import ij.process.ColorProcessor;
 import ij.io.FileInfo;
-import loci.formats.*;
-import loci.formats.ome.*;
+import java.util.HashSet;
+import loci.formats.FormatTools;
+import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEWriter;
 
 /**
  * ImageJ plugin for uploading images to an OME server.
@@ -49,15 +51,17 @@ public class LociUploader implements PlugIn {
 
   // -- PlugIn API methods --
 
-  public synchronized void run(String arg) {
+  public void run(String arg) {
     // check that we can safely execute the plugin
+    if (!Util.checkVersion()) return;
+    HashSet missing = new HashSet();
+    Util.checkLibrary(Util.BIO_FORMATS, missing);
+    Util.checkLibrary(Util.OME_JAVA_XML, missing);
+    Util.checkLibrary(Util.OME_JAVA_DS, missing);
+    if (!Util.checkMissing(missing)) return;
 
-    if (Util.checkVersion() && Util.checkLibraries(true, true, true, false)) {
-      promptForLogin();
-      uploadStack();
-    }
-    else {
-    }
+    promptForLogin();
+    uploadStack();
   }
 
   // -- Helper methods --

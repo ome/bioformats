@@ -32,7 +32,79 @@ import java.util.Iterator;
 /** Utility methods common to multiple plugins. */
 public final class Util {
 
+  // -- Constants --
+
+  /** Identifier for checking the Bio-Formats library is present. */
+  public static final int BIO_FORMATS = 1;
+
+  /** Identifier for checking the OME Java OME-XML library is present. */
+  public static final int OME_JAVA_XML = 2;
+
+  /** Identifier for checking the OME Java OMEDS library is present. */
+  public static final int OME_JAVA_DS = 3;
+
+  /** Identifier for checking the JGoodies Forms library is present. */
+  public static final int FORMS = 4;
+
+  // -- Constructor --
+
   private Util() { }
+
+  // -- Utility methods --
+
+  /** Checks whether the given class is available. */
+  public static boolean checkClass(String className) {
+    try { Class.forName(className); }
+    catch (Throwable t) { return false; }
+    return true;
+  }
+
+  /**
+   * Checks for a required library.
+   * @param library One of:<ul>
+   *   <li>BIO_FORMATS</li>
+   *   <li>OME_JAVA_XML</li>
+   *   <li>OME_JAVA_DS</li>
+   *   <li>FORMS</li>
+   *   </ul>
+   */
+  public static void checkLibrary(int library, HashSet missing) {
+    switch (library) {
+      case BIO_FORMATS:
+        checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
+        checkLibrary("org.apache.poi.poifs.filesystem.POIFSFileSystem",
+          "poi-loci.jar", missing);
+        break;
+      case OME_JAVA_XML:
+        checkLibrary("org.openmicroscopy.xml.OMENode", "ome-java.jar", missing);
+        break;
+      case OME_JAVA_DS:
+        checkLibrary("org.openmicroscopy.ds.DataServer",
+          "ome-java.jar", missing);
+        checkLibrary("org.apache.xmlrpc.XmlRpcClient",
+          "xmlrpc-1.2-b1.jar", missing);
+        checkLibrary("org.apache.commons.httpclient.HttpClient",
+          "commons-httpclient-2.0-rc2.jar", missing);
+        checkLibrary("org.apache.commons.logging.Log",
+          "commons-logging.jar", missing);
+        break;
+      case FORMS:
+        checkLibrary("com.jgoodies.forms.layout.FormLayout",
+          "forms-1.0.4.jar", missing);
+        break;
+    }
+  }
+
+  /**
+   * Checks whether the given class is available; if not,
+   * adds the specified JAR file name to the hash set
+   * (presumably to report it missing to the user).
+   */
+  public static void checkLibrary(String className,
+    String jarFile, HashSet missing)
+  {
+    if (!checkClass(className)) missing.add(jarFile);
+  }
 
   /** Checks for a new enough version of the Java Runtime Environment. */
   public static boolean checkVersion() {
@@ -48,67 +120,28 @@ public final class Util {
   }
 
   /**
-   * Checks for libraries required by the LOCI plugins.
-   * @return true if libraries are present, false if some are missing.
+   * Reports missing libraries in the given hash set to the user.
+   * @return true iff no libraries are missing (the hash set is empty).
    */
-  public static boolean checkLibraries(boolean bioFormats,
-    boolean omeJavaXML, boolean omeJavaDS, boolean forms)
-  {
-    HashSet hs = new HashSet();
-    if (bioFormats) {
-      checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", hs);
-      checkLibrary("org.apache.poi.poifs.filesystem.POIFSFileSystem",
-        "poi-loci.jar", hs);
-    }
-    if (omeJavaXML) {
-      checkLibrary("org.openmicroscopy.xml.OMENode", "ome-java.jar", hs);
-    }
-    if (omeJavaDS) {
-      checkLibrary("org.openmicroscopy.ds.DataServer", "ome-java.jar", hs);
-      checkLibrary("org.apache.xmlrpc.XmlRpcClient", "xmlrpc-1.2-b1.jar", hs);
-      checkLibrary("org.apache.commons.httpclient.HttpClient",
-        "commons-httpclient-2.0-rc2.jar", hs);
-      checkLibrary("org.apache.commons.logging.Log", "commons-logging.jar", hs);
-    }
-    if (forms) {
-      checkLibrary("com.jgoodies.forms.layout.FormLayout",
-        "forms-1.0.4.jar", hs);
-    }
-    int missing = hs.size();
-    if (missing > 0) {
-      StringBuffer sb = new StringBuffer();
-      sb.append("The following librar");
-      sb.append(missing == 1 ? "y was" : "ies were");
-      sb.append(" not found:");
-      Iterator iter = hs.iterator();
-      for (int i=0; i<missing; i++) {
-        sb.append("\n    " + iter.next());
-      }
-      String them = missing == 1 ? "it" : "them";
-      sb.append("\nPlease download ");
-      sb.append(them);
-      sb.append(" from the LOCI website at");
-      sb.append("\n    http://www.loci.wisc.edu/software/");
-      sb.append("\nand place ");
-      sb.append(them);
-      sb.append(" in the ImageJ plugins folder.");
-      IJ.error("LOCI Plugins", sb.toString());
-      return false;
-    }
-    return true;
-  }
-
-  /** Checks whether the given class is available. */
-  public static boolean checkClass(String className) {
-    try { Class.forName(className); }
-    catch (Throwable t) { return false; }
-    return true;
-  }
-
-  private static void checkLibrary(String className,
-    String jarFile, HashSet hs)
-  {
-    if (!checkClass(className)) hs.add(jarFile);
+  public static boolean checkMissing(HashSet missing) {
+    int num = missing.size();
+    if (num == 0) return true;
+    StringBuffer sb = new StringBuffer();
+    sb.append("The following librar");
+    sb.append(num == 1 ? "y was" : "ies were");
+    sb.append(" not found:");
+    Iterator iter = missing.iterator();
+    for (int i=0; i<num; i++) sb.append("\n    " + iter.next());
+    String them = num == 1 ? "it" : "them";
+    sb.append("\nPlease download ");
+    sb.append(them);
+    sb.append(" from the LOCI website at");
+    sb.append("\n    http://www.loci.wisc.edu/software/");
+    sb.append("\nand place ");
+    sb.append(them);
+    sb.append(" in the ImageJ plugins folder.");
+    IJ.error("LOCI Plugins", sb.toString());
+    return false;
   }
 
 }

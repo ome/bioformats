@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.plugin.PlugIn;
+import java.util.HashSet;
 
 /**
  * ImageJ plugin for reading files using the LOCI Bio-Formats package.
@@ -48,13 +49,16 @@ public class LociImporter implements PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
-  public synchronized void run(String arg) {
+  public void run(String arg) {
     canceled = false;
     success = false;
     if ("about".equals(arg)) About.about();
-    else if (Util.checkVersion() &&
-      Util.checkLibraries(true, true, false, false))
-    {
+    else {
+      if (!Util.checkVersion()) return;
+      HashSet missing = new HashSet();
+      Util.checkLibrary(Util.BIO_FORMATS, missing);
+      Util.checkLibrary(Util.OME_JAVA_XML, missing);
+      if (!Util.checkMissing(missing)) return;
       new Importer(this).run(arg);
     }
   }

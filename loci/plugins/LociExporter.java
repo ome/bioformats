@@ -28,6 +28,7 @@ package loci.plugins;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import java.util.HashSet;
 
 /**
  * ImageJ plugin for writing files using the LOCI Bio-Formats package.
@@ -40,10 +41,7 @@ public class LociExporter implements PlugInFilter {
 
   // -- Fields --
 
-  /** Flag indicating whether last operation was successful. */
-  public boolean success = false;
-
-  /** Argument passed to setup(). */
+  /** Argument passed to setup method. */
   public String arg;
 
   private Exporter exporter;
@@ -58,10 +56,12 @@ public class LociExporter implements PlugInFilter {
   }
 
   /** Executes the plugin. */
-  public synchronized void run(ImageProcessor ip) {
-    success = false;
+  public void run(ImageProcessor ip) {
     if (!Util.checkVersion()) return;
-    if (!Util.checkLibraries(true, true, false, false)) return;
+    HashSet missing = new HashSet();
+    Util.checkLibrary(Util.BIO_FORMATS, missing);
+    Util.checkLibrary(Util.OME_JAVA_XML, missing);
+    if (!Util.checkMissing(missing)) return;
     if (exporter != null) exporter.run(ip);
   }
 

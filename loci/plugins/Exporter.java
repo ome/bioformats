@@ -58,7 +58,7 @@ public class Exporter {
   // -- Exporter API methods --
 
   /** Executes the plugin. */
-  public synchronized void run(ImageProcessor ip) {
+  public void run(ImageProcessor ip) {
     String outfile = null;
 
     if (plugin.arg != null && plugin.arg.startsWith("outfile=")) {
