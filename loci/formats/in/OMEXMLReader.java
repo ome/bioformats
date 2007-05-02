@@ -303,7 +303,8 @@ public class OMEXMLReader extends FormatReader {
     try {
       File f = new File(Location.getMappedId(id));
       f = f.getAbsoluteFile();
-      if (f.exists()) {
+      String path = f.getPath().toLowerCase();
+      if (f.exists() && path.endsWith(".ome")) {
         r.setVar("f", f);
         r.exec("ome = new OMENode(f)");
       }
