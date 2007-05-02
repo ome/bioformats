@@ -353,16 +353,16 @@ public class ND2Reader extends FormatReader {
                     }
                     else if (effectiveKey.endsWith("dTimeMSec value")) {
                       long v = (long) Double.parseDouble(value);
-                      if (!zs.contains(new Long(v))) {
-                        core.sizeZ[0]++;
-                        zs.add(new Long(v));
+                      if (!ts.contains(new Long(v))) {
+                        core.sizeT[0]++;
+                        ts.add(new Long(v));
                       }
                     }
                     else if (effectiveKey.endsWith("dZPos value")) {
                       long v = (long) Double.parseDouble(value);
-                      if (!ts.contains(new Long(v))) {
-                        core.sizeT[0]++;
-                        ts.add(new Long(v));
+                      if (!zs.contains(new Long(v))) {
+                        core.sizeZ[0]++;
+                        zs.add(new Long(v));
                       }
                     }
                   }
@@ -445,9 +445,6 @@ public class ND2Reader extends FormatReader {
       core.sizeC[0] = openImage(0).getRaster().getNumBands();
     }
     if (core.sizeC[0] == 2) core.sizeC[0] = 1;
-
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
     core.currentOrder[0] = "XY";
     long deltaT = ts.size() > 1 ?
@@ -535,6 +532,9 @@ public class ND2Reader extends FormatReader {
       }
 
     }
+
+    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
     core.rgb[0] = core.sizeC[0] == 3;
     core.interleaved[0] = true;
