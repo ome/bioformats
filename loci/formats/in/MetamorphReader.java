@@ -109,27 +109,27 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (stks.length == 1) return super.openBytes(no); 
-    return null; // TODO 
-  }
+  //public byte[] openBytes(int no) throws FormatException, IOException {
+    //FormatTools.assertId(currentId, true, 1);
+    //if (stks.length == 1) return super.openBytes(no); 
+    //return null; // TODO 
+  //}
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    if (stks.length == 1) return super.openBytes(no, buf); 
-    return null; // TODO 
-  }
+  //public byte[] openBytes(int no, byte[] buf)
+  //  throws FormatException, IOException
+  //{
+  //  FormatTools.assertId(currentId, true, 1);
+  //  if (stks.length == 1) return super.openBytes(no, buf); 
+  //  return null; // TODO 
+  //}
 
   /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (stks.length == 1) return super.openImage(no); 
-    return null; // TODO 
-  }
+  //public BufferedImage openImage(int no) throws FormatException, IOException {
+  //  FormatTools.assertId(currentId, true, 1);
+  //  if (stks.length == 1) return super.openImage(no); 
+  //  return null; // TODO 
+  //}
 
   // -- Internal BaseTiffReader API methods --
 
