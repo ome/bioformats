@@ -24,15 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.IOException;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import loci.formats.DataTools;
-import loci.formats.FormatException;
-import loci.formats.TiffIFDEntry;
-import loci.formats.TiffRational;
-import loci.formats.TiffTools;
+import loci.formats.*;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -281,6 +277,29 @@ public class MetamorphReader extends BaseTiffReader {
     catch (FormatException exc) {
       if (debug) exc.printStackTrace();
     }
+ 
+    Location abs = new Location(currentId).getAbsoluteFile();
+    String absPath = abs.getPath().substring(abs.getPath().lastIndexOf(File.separator)); 
+    Location ndfile = new Location(abs.getParent(), 
+      absPath.substring(0, absPath.indexOf("_")) + ".nd");
+    if (!ndfile.exists()) {
+      /* debug */ System.out.println(ndfile.getAbsolutePath() + " DOES NOT EXIST");
+      ndfile = new Location(ndfile.getAbsolutePath().replaceAll(".nd", ".ND"));
+    }
+
+    RandomAccessStream ndStream = 
+      new RandomAccessStream(ndfile.getAbsolutePath());
+    String line = ndStream.readLine().trim();
+
+    while (!line.equals("\"EndFile\"")) {
+      String key = line.substring(1, line.indexOf(",") - 1).trim();
+      String value = line.substring(line.indexOf(",") + 1).trim();
+     
+      addMeta(key, value);
+      
+      line = ndStream.readLine().trim(); 
+    }
+
   }
 
   /* @see BaseTiffReader#getImageName() */
