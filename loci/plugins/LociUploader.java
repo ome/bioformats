@@ -48,6 +48,7 @@ public class LociUploader implements PlugIn {
   private String server;
   private String user;
   private String pass;
+  private boolean canceled = false;
 
   // -- PlugIn API methods --
 
@@ -61,6 +62,11 @@ public class LociUploader implements PlugIn {
     if (!Util.checkMissing(missing)) return;
 
     promptForLogin();
+    if (canceled) {
+      canceled = false;
+      return;
+    }
+    
     uploadStack();
   }
 
@@ -75,6 +81,11 @@ public class LociUploader implements PlugIn {
 
     ((TextField) prompt.getStringFields().get(2)).setEchoChar('*');
     prompt.showDialog();
+
+    if (prompt.wasCanceled()) {
+      canceled = true;
+      return;
+    }
 
     server = prompt.getNextString();
     user = prompt.getNextString();

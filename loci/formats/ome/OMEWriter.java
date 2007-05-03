@@ -279,7 +279,7 @@ public class OMEWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    rc.logout();
+    if (rc != null) rc.logout();
     pixelsId = -1;
     validLogin = false;
     planesWritten = 0;
