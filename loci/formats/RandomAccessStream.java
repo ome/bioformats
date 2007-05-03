@@ -135,6 +135,25 @@ public class RandomAccessStream extends InputStream implements DataInput {
           new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
         dis = new DataInputStream(new GZIPInputStream(bis));
       }
+      else if (path.endsWith(".zip")) {
+        ZipFile zf = new ZipFile(Location.getMappedId(file));
+        InputStream zip = 
+          zf.getInputStream((ZipEntry) zf.entries().nextElement());
+        
+        compressed = true;
+
+        length = 0;
+
+        while (zip.available() != 0) {
+          zip.read();
+          length++;
+        }
+        
+        zf = new ZipFile(Location.getMappedId(file));
+        zip = new BufferedInputStream(zf.getInputStream(
+          (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
+        dis = new DataInputStream(zip); 
+      }
       /*
       else if (path.endsWith(".bz2")) {
         dis = new DataInputStream(new CBZip2InputStream(bis));
@@ -142,8 +161,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
         length = 0;
 
-        while (dis.available() != 0) {
-          length += dis.skipBytes(1024);
+        int s = 0;
+        while (s != -1) {
+          s = dis.read(); 
+          length++; 
         }
 
         bis = new BufferedInputStream(
@@ -516,6 +537,13 @@ public class RandomAccessStream extends InputStream implements DataInput {
         if (path.endsWith(".gz")) {
           dis = new DataInputStream(new GZIPInputStream(bis));
         }
+        else if (path.endsWith(".zip")) {
+          //dis = new DataInputStream(new ZipInputStream(bis));
+          ZipFile zf = new ZipFile(Location.getMappedId(file));
+          InputStream zip = new BufferedInputStream(zf.getInputStream(
+            (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
+          dis = new DataInputStream(zip); 
+        }
         /*
         else if (path.endsWith(".bz2")) {
           dis = new DataInputStream(new CBZip2InputStream(bis));
@@ -638,6 +666,13 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
       if (path.endsWith(".gz")) {
         dis = new DataInputStream(new GZIPInputStream(bis));
+        compressed = true;
+      }
+      else if (path.endsWith(".zip")) {
+        ZipFile zf = new ZipFile(Location.getMappedId(file));
+        InputStream zip = new BufferedInputStream(zf.getInputStream(
+          (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
+        dis = new DataInputStream(zip); 
         compressed = true;
       }
       /*
