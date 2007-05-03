@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
@@ -338,13 +339,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (c != null) cc = Integer.parseInt(c); 
       if (t != null) tc = Integer.parseInt(t); 
 
-      int numFiles = (z * c * t) / 
+      int numFiles = (zc * cc * tc) / 
         (core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC());
 
       stks = new String[numFiles];
-
-
-
+      // TODO : finish internal stitching logic 
     }
   }
 
