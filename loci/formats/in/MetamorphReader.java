@@ -62,6 +62,9 @@ public class MetamorphReader extends BaseTiffReader {
 
   private int mmPlanes; //number of metamorph planes
 
+  /** List of STK files in the dataset. */
+  private String[] stks;
+
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
@@ -102,6 +105,29 @@ public class MetamorphReader extends BaseTiffReader {
       }
       return false; // we went through the IFD; the ID wasn't found.
     }
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    if (stks.length == 1) return super.openBytes(no); 
+    return null; // TODO 
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    if (stks.length == 1) return super.openBytes(no, buf); 
+    return null; // TODO 
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    if (stks.length == 1) return super.openImage(no); 
+    return null; // TODO 
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -279,11 +305,11 @@ public class MetamorphReader extends BaseTiffReader {
     }
  
     Location abs = new Location(currentId).getAbsoluteFile();
-    String absPath = abs.getPath().substring(abs.getPath().lastIndexOf(File.separator)); 
+    String absPath = abs.getPath().substring(
+      abs.getPath().lastIndexOf(File.separator)); 
     Location ndfile = new Location(abs.getParent(), 
       absPath.substring(0, absPath.indexOf("_")) + ".nd");
     if (!ndfile.exists()) {
-      /* debug */ System.out.println(ndfile.getAbsolutePath() + " DOES NOT EXIST");
       ndfile = new Location(ndfile.getAbsolutePath().replaceAll(".nd", ".ND"));
     }
 
@@ -299,6 +325,26 @@ public class MetamorphReader extends BaseTiffReader {
         addMeta(key, value);
         line = ndStream.readLine().trim(); 
       }
+    
+      // figure out how many files we need 
+    
+      String z = (String) getMeta("NZSteps");
+      String c = (String) getMeta("NWavelengths");
+      String t = (String) getMeta("NTimePoints");
+
+      int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
+
+      if (z != null) zc = Integer.parseInt(z); 
+      if (c != null) cc = Integer.parseInt(c); 
+      if (t != null) tc = Integer.parseInt(t); 
+
+      int numFiles = (z * c * t) / 
+        (core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC());
+
+      stks = new String[numFiles];
+
+
+
     }
   }
 

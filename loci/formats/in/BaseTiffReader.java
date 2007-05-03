@@ -491,7 +491,8 @@ public abstract class BaseTiffReader extends FormatReader {
       TiffTools.SAMPLES_PER_PIXEL, false, 1);
     core.rgb[0] = samples > 1 || p == TiffTools.RGB_PALETTE ||
       p == TiffTools.CFA_ARRAY || p == TiffTools.RGB;
-    core.interleaved[0] = TiffTools.getSamplesPerPixel(ifds[0]) > 1;
+    //core.interleaved[0] = TiffTools.getSamplesPerPixel(ifds[0]) > 1;
+    core.interleaved[0] = true; 
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
     core.sizeX[0] =
