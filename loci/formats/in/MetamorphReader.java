@@ -287,19 +287,19 @@ public class MetamorphReader extends BaseTiffReader {
       ndfile = new Location(ndfile.getAbsolutePath().replaceAll(".nd", ".ND"));
     }
 
-    RandomAccessStream ndStream = 
-      new RandomAccessStream(ndfile.getAbsolutePath());
-    String line = ndStream.readLine().trim();
+    if (ndfile.exists()) {
+      RandomAccessStream ndStream = 
+        new RandomAccessStream(ndfile.getAbsolutePath());
+      String line = ndStream.readLine().trim();
 
-    while (!line.equals("\"EndFile\"")) {
-      String key = line.substring(1, line.indexOf(",") - 1).trim();
-      String value = line.substring(line.indexOf(",") + 1).trim();
+      while (!line.equals("\"EndFile\"")) {
+        String key = line.substring(1, line.indexOf(",") - 1).trim();
+        String value = line.substring(line.indexOf(",") + 1).trim();
      
-      addMeta(key, value);
-      
-      line = ndStream.readLine().trim(); 
+        addMeta(key, value);
+        line = ndStream.readLine().trim(); 
+      }
     }
-
   }
 
   /* @see BaseTiffReader#getImageName() */
