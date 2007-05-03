@@ -80,6 +80,7 @@ public class Importer implements ItemListener {
   private boolean concatenate;
 
   private Vector imps = new Vector();
+  private boolean quiet;
 
   // -- Constructor --
 
@@ -98,8 +99,7 @@ public class Importer implements ItemListener {
       if (arg.indexOf("open") == -1) arg = null;
     }
 
-    boolean quiet = arg != null &&
-      !arg.equals("") && arg.indexOf("open=") == -1;
+    quiet = arg != null && !arg.equals("") && arg.indexOf("open=") == -1;
 
     // -- Step 1: get filename to open --
 
@@ -1195,7 +1195,24 @@ public class Importer implements ItemListener {
           IJ.showMessage("Please upgrade to ImageJ 1.38n to use this feature.");
         }
         else {
-          imp = new CompositeImage(imp, r.getSizeC());
+          // use reflection to construct CompositeImage,
+          // in case ImageJ version is too old
+          ReflectedUniverse ru = new ReflectedUniverse();
+          try {
+            ru.exec("import ij.CompositeImage");
+            ru.setVar("imp", imp);
+            ru.setVar("sizeC", r.getSizeC());
+            imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
+          }
+          catch (ReflectException exc) {
+            exc.printStackTrace();
+            if (!quiet) {
+              String msg = exc.getMessage();
+              IJ.error("Bio-Formats", "Sorry, there was a problem " +
+                "constructing the composite image");
+            }
+            return;
+          }
         }
       }
       else if (mergeChannels && r.getSizeC() >= 4) {
