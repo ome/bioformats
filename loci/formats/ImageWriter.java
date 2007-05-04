@@ -43,17 +43,20 @@ public class ImageWriter implements IFormatWriter {
   /** List of writer classes. */
   private static ClassList writerClasses;
 
-  // -- Static initializer --
+  // -- Static helper methods --
 
-  static {
-    // load built-in writer classes from writers.txt file
-    try {
-      writerClasses = new ClassList("writers.txt", IFormatWriter.class);
+  private static ClassList getDefaultWriterClasses() {
+    if (writerClasses == null) {
+      // load built-in writer classes from writers.txt file
+      try {
+        writerClasses = new ClassList("writers.txt", IFormatWriter.class);
+      }
+      catch (IOException exc) {
+        exc.printStackTrace();
+        writerClasses = new ClassList(IFormatWriter.class);
+      }
     }
-    catch (IOException exc) {
-      exc.printStackTrace();
-      writerClasses = new ClassList(IFormatWriter.class);
-    }
+    return writerClasses;
   }
 
   // -- Fields --
@@ -86,7 +89,7 @@ public class ImageWriter implements IFormatWriter {
    * list of writer classes from writers.txt.
    */
   public ImageWriter() {
-    this(writerClasses);
+    this(getDefaultWriterClasses());
   }
 
   /** Constructs a new ImageWriter from the given list of writer classes. */

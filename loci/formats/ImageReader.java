@@ -42,17 +42,20 @@ public class ImageReader implements IFormatReader {
   /** List of reader classes. */
   private static ClassList readerClasses;
 
-  // -- Static initializer --
+  // -- Static helper methods --
 
-  static {
-    // load built-in reader classes from readers.txt file
-    try {
-      readerClasses = new ClassList("readers.txt", IFormatReader.class);
+  private static ClassList getDefaultReaderClasses() {
+    if (readerClasses == null) {
+      // load built-in reader classes from readers.txt file
+      try {
+        readerClasses = new ClassList("readers.txt", IFormatReader.class);
+      }
+      catch (IOException exc) {
+        exc.printStackTrace();
+        readerClasses = new ClassList(IFormatReader.class);
+      }
     }
-    catch (IOException exc) {
-      exc.printStackTrace();
-      readerClasses = new ClassList(IFormatReader.class);
-    }
+    return readerClasses;
   }
 
   // -- Fields --
@@ -79,7 +82,7 @@ public class ImageReader implements IFormatReader {
    * list of reader classes from readers.txt.
    */
   public ImageReader() {
-    this(readerClasses);
+    this(getDefaultReaderClasses());
   }
 
   /** Constructs a new ImageReader from the given list of reader classes. */
