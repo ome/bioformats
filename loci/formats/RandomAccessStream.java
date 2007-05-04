@@ -27,7 +27,6 @@ package loci.formats;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
-import loci.formats.in.CBZip2InputStream;
 
 /**
  * RandomAccessStream provides methods for "intelligent" reading of files and
