@@ -193,6 +193,18 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns true if we should collect metadata. */
   boolean isMetadataCollected();
 
+  /** Specifies whether or not to force grouping in multi-file formats. */
+  void setGroupFiles(boolean group);
+
+  /** Returns true if we should group files in multi-file formats.*/
+  boolean isGroupFiles();
+
+  /** 
+   * Returns true if it we have to group the files 
+   * in order to read the dataset. 
+   */
+  boolean mustGroupFiles(String id) throws FormatException, IOException;
+
   /** Returns an array of filenames needed to open this dataset. */
   String[] getUsedFiles();
 

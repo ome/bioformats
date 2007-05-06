@@ -62,6 +62,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to collect metadata. */
   protected boolean collectMetadata = true;
 
+  /** Whether or not to group multi-file formats. */
+  protected boolean group = true;
+
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore(String)} prevent "null" access.
@@ -363,6 +366,22 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
     return series;
+  }
+  
+  /* @see IFormatReader#setGroupFiles(boolean) */
+  public void setGroupFiles(boolean group) {
+    FormatTools.assertId(currentId, false, 1);
+    this.group = group;
+  }
+
+  /* @see IFormatReader#isGroupFiles() */
+  public boolean isGroupFiles() {
+    return group;
+  }
+
+  /* @see IFormatReader#mustGroupFiles(String) */
+  public boolean mustGroupFiles(String id) throws FormatException, IOException {
+    return false; 
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

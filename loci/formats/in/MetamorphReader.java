@@ -27,8 +27,7 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.DecimalFormat;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -69,7 +68,9 @@ public class MetamorphReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
-  public MetamorphReader() { super("Metamorph STK", "stk"); }
+  public MetamorphReader() { 
+    super("Metamorph STK", new String[] {"stk", "nd"}); 
+  }
 
   // -- IFormatReader API methods --
 
@@ -108,28 +109,161 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  //public byte[] openBytes(int no) throws FormatException, IOException {
-    //FormatTools.assertId(currentId, true, 1);
-    //if (stks.length == 1) return super.openBytes(no); 
-    //return null; // TODO 
-  //}
+  /* @see loci.formats.IFormatReader#mustGroupFiles(String) */
+  public boolean mustGroupFiles(String id) throws FormatException, IOException {
+    if (id.toLowerCase().endsWith(".nd")) return true;
+    return false; 
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    return stks == null ? super.getUsedFiles() : stks;
+  }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  //public byte[] openBytes(int no, byte[] buf)
-  //  throws FormatException, IOException
-  //{
-  //  FormatTools.assertId(currentId, true, 1);
-  //  if (stks.length == 1) return super.openBytes(no, buf); 
-  //  return null; // TODO 
-  //}
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    if (stks == null || stks.length == 1) return super.openBytes(no, buf); 
+  
+    int[] coords = FormatTools.getZCTCoords(this, no); 
+    int ndx = coords[1] * getEffectiveSizeC() + coords[2] * core.sizeT[0];
+    
+    RandomAccessStream tmp = new RandomAccessStream(stks[ndx]);
+    Hashtable[] fds = TiffTools.getIFDs(tmp);
+    TiffTools.getSamples(fds[coords[0]], tmp, buf);
+    tmp.close();
+    return buf; 
+  }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
-  //public BufferedImage openImage(int no) throws FormatException, IOException {
-  //  FormatTools.assertId(currentId, true, 1);
-  //  if (stks.length == 1) return super.openImage(no); 
-  //  return null; // TODO 
-  //}
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    if (stks == null || stks.length == 1) return super.openImage(no); 
+  
+    int[] coords = FormatTools.getZCTCoords(this, no); 
+    int ndx = no / core.sizeZ[0];
+
+    initFile(stks[ndx]); 
+    return TiffTools.getImage(ifds[coords[0]], in);
+  }
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (id.toLowerCase().endsWith(".nd")) {
+      if (currentId != null) {
+        String[] s = getUsedFiles();
+        for (int i=0; i<s.length; i++) {
+          if (id.equals(s[i])) return;
+        }
+      }
+
+      close();
+      currentId = id;
+      metadata = new Hashtable();
+
+      core = new CoreMetadata(1);
+      Arrays.fill(core.orderCertain, true);
+
+      // reinitialize the MetadataStore
+      getMetadataStore().createRoot();
+    
+      // find an associated STK file
+      String stkFile = id.substring(0, id.lastIndexOf("."));
+      String[] dirList = 
+        new Location(id).getAbsoluteFile().getParentFile().list();
+      for (int i=0; i<dirList.length; i++) {
+        String s = dirList[i].toLowerCase();
+        if (s.endsWith(".stk") && (dirList[i].startsWith(stkFile + "_w"))) {
+          stkFile = dirList[i];
+          break;
+        }
+      }
+      
+      super.initFile(stkFile); 
+    }
+    else super.initFile(id);
+ 
+    Location ndfile = null;
+
+    if (!id.toLowerCase().endsWith(".nd")) {
+      Location abs = new Location(currentId).getAbsoluteFile();
+      String absPath = abs.getPath().substring(
+        abs.getPath().lastIndexOf(File.separator)); 
+      ndfile = new Location(abs.getParent(), 
+        absPath.substring(0, absPath.indexOf("_")) + ".nd");
+      if (!ndfile.exists()) {
+        ndfile = 
+          new Location(ndfile.getAbsolutePath().replaceAll(".nd", ".ND"));
+      }
+    }
+    else {
+      ndfile = new Location(id);
+    }
+
+    if (ndfile.exists() && (mustGroupFiles(id) || isGroupFiles())) {
+      RandomAccessStream ndStream = 
+        new RandomAccessStream(ndfile.getAbsolutePath());
+      String line = ndStream.readLine().trim();
+
+      while (!line.equals("\"EndFile\"")) {
+        String key = line.substring(1, line.indexOf(",") - 1).trim();
+        String value = line.substring(line.indexOf(",") + 1).trim();
+     
+        addMeta(key, value);
+        line = ndStream.readLine().trim(); 
+      }
+    
+      // figure out how many files we need 
+    
+      String z = (String) getMeta("NZSteps");
+      String c = (String) getMeta("NWavelengths");
+      String t = (String) getMeta("NTimePoints");
+
+      int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
+
+      if (z != null) zc = Integer.parseInt(z); 
+      if (c != null) cc = Integer.parseInt(c); 
+      if (t != null) tc = Integer.parseInt(t); 
+
+      int numFiles = cc * tc; 
+
+      stks = new String[numFiles];
+   
+      String prefix = ndfile.getPath();
+      prefix = prefix.substring(prefix.lastIndexOf(File.separator) + 1,
+        prefix.lastIndexOf("."));
+
+      int pt = 0;
+      for (int i=0; i<tc; i++) {
+        for (int j=0; j<cc; j++) {
+          String chName = (String) getMeta("WaveName" + (j + 1));
+          chName = chName.substring(1, chName.length() - 1); 
+          stks[pt] = prefix + "_w" + (j + 1) + chName + "_t" + 
+            (i + 1) + ".STK";
+          pt++;
+        }
+      } 
+  
+      ndfile = ndfile.getAbsoluteFile(); 
+
+      for (int i=0; i<numFiles; i++) {
+        Location l = new Location(ndfile.getParent(), stks[i]);
+        if (!l.exists()) {
+          stks = null;
+          return;
+        }
+        stks[i] = l.getAbsolutePath();
+      } 
+    
+      core.sizeZ[0] = zc;
+      core.sizeC[0] = cc;
+      core.sizeT[0] = tc;
+      core.imageCount[0] = zc * tc * cc; 
+      core.currentOrder[0] = "XYZCT"; 
+    }
+  }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -303,47 +437,6 @@ public class MetamorphReader extends BaseTiffReader {
     }
     catch (FormatException exc) {
       if (debug) exc.printStackTrace();
-    }
- 
-    Location abs = new Location(currentId).getAbsoluteFile();
-    String absPath = abs.getPath().substring(
-      abs.getPath().lastIndexOf(File.separator)); 
-    Location ndfile = new Location(abs.getParent(), 
-      absPath.substring(0, absPath.indexOf("_")) + ".nd");
-    if (!ndfile.exists()) {
-      ndfile = new Location(ndfile.getAbsolutePath().replaceAll(".nd", ".ND"));
-    }
-
-    if (ndfile.exists()) {
-      RandomAccessStream ndStream = 
-        new RandomAccessStream(ndfile.getAbsolutePath());
-      String line = ndStream.readLine().trim();
-
-      while (!line.equals("\"EndFile\"")) {
-        String key = line.substring(1, line.indexOf(",") - 1).trim();
-        String value = line.substring(line.indexOf(",") + 1).trim();
-     
-        addMeta(key, value);
-        line = ndStream.readLine().trim(); 
-      }
-    
-      // figure out how many files we need 
-    
-      String z = (String) getMeta("NZSteps");
-      String c = (String) getMeta("NWavelengths");
-      String t = (String) getMeta("NTimePoints");
-
-      int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
-
-      if (z != null) zc = Integer.parseInt(z); 
-      if (c != null) cc = Integer.parseInt(c); 
-      if (t != null) tc = Integer.parseInt(t); 
-
-      int numFiles = (zc * cc * tc) / 
-        (core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC());
-
-      stks = new String[numFiles];
-      // TODO : finish internal stitching logic 
     }
   }
 

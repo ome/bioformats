@@ -106,6 +106,11 @@ public class LeicaReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#mustGroupFiles(String) */
+  public boolean mustGroupFiles(String id) throws FormatException, IOException {
+    return id.toLowerCase().endsWith(".lei");
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -200,6 +205,7 @@ public class LeicaReader extends FormatReader {
     if (lname.endsWith(".lei")) return true;
     else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
     if (!open) return true; // now allowed to be any more thorough
+    if (!isGroupFiles()) return false;
 
     // just checking the filename isn't enough to differentiate between
     // Leica and regular TIFF; open the file and check more thoroughly

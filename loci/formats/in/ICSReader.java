@@ -94,6 +94,11 @@ public class ICSReader extends FormatReader {
     return false;
   }
 
+  /* @see loci.formats.IFormatReader#mustGroupFiles(String) */
+  public boolean mustGroupFiles(String id) {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);

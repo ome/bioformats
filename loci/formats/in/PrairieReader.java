@@ -101,6 +101,12 @@ public class PrairieReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#mustGroupFiles(String) */
+  public boolean mustGroupFiles(String id) throws FormatException, IOException {
+    id = id.toLowerCase();
+    return id.endsWith(".cfg") || id.endsWith(".xml");
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
@@ -155,6 +161,7 @@ public class PrairieReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
+    if (!isGroupFiles()) return false;
 
     // check if there is an XML file in the same directory
     Location  f = new Location(name);

@@ -193,6 +193,18 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeries();
   }
 
+  public void setGroupFiles(boolean group) {
+    reader.setGroupFiles(group);
+  }
+
+  public boolean isGroupFiles() {
+    return reader.isGroupFiles();
+  }
+
+  public boolean mustGroupFiles(String id) throws FormatException, IOException {
+    return reader.mustGroupFiles(id);
+  }
+
   public void setNormalized(boolean normalize) {
     reader.setNormalized(normalize);
   }

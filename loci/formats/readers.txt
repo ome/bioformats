@@ -58,7 +58,7 @@ loci.formats.in.NRRDReader         # nrrd, nhrd
 # multi-extension messes
 loci.formats.in.ICSReader          # ics, ids
 loci.formats.in.OIFReader          # oif, various
-loci.formats.in.PerkinElmerReader  # csv, htm, tim, zpo [TIFF+companion]
+loci.formats.in.PerkinElmerReader  # csv, htm, tim, zpo [(TIFF or RAW)+companion]
 
 # readers requiring third-party libraries
 loci.formats.in.ZeissZVIReader     # zvi [POIFS]

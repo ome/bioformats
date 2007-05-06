@@ -472,6 +472,21 @@ public class FileStitcher implements IFormatReader {
     return reader.getSeries();
   }
 
+  /* @see IFormatReader#setGroupFiles(boolean) */
+  public void setGroupFiles(boolean group) {
+    for (int i=0; i<readers.length; i++) readers[i].setGroupFiles(group);
+  }
+
+  /* @see IFormatReader#isGroupFiles() */
+  public boolean isGroupFiles() {
+    return readers[0].isGroupFiles();
+  }
+
+  /* @see IFormatReader#mustGroupFiles(String) */
+  public boolean mustGroupFiles(String id) throws FormatException, IOException {
+    return readers[0].mustGroupFiles(id);
+  }
+
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     FormatTools.assertId(currentId, false, 2);

@@ -383,6 +383,22 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
   }
 
+  /* @see IFormatReader#setGroupFiles(boolean) */
+  public void setGroupFiles(boolean group) {
+    FormatTools.assertId(currentId, false, 2); 
+    for (int i=0; i<readers.length; i++) readers[i].setGroupFiles(group); 
+  }
+
+  /* @see IFormatReader#isGroupFiles() */
+  public boolean isGroupFiles() {
+    return readers[0].isGroupFiles();
+  }
+
+  /* @see IFormatReader#mustGroupFiles(String) */
+  public boolean mustGroupFiles(String id) throws FormatException, IOException {
+    return getReader(id).mustGroupFiles(id);
+  }
+
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     FormatTools.assertId(currentId, false, 2);
