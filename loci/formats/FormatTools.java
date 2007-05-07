@@ -99,6 +99,11 @@ public final class FormatTools {
    */
   public static final String POLARIZATION = "Polarization";
 
+  /** File grouping options. */
+  public static final int MUST_GROUP = 0;
+  public static final int CAN_GROUP = 1;
+  public static final int CANNOT_GROUP = 2;
+
   // -- Constructor --
 
   private FormatTools() { }

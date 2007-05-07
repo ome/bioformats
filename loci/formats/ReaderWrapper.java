@@ -201,8 +201,8 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isGroupFiles();
   }
 
-  public boolean mustGroupFiles(String id) throws FormatException, IOException {
-    return reader.mustGroupFiles(id);
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return reader.fileGroupOption(id);
   }
 
   public void setNormalized(boolean normalize) {

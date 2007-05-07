@@ -39,6 +39,11 @@ public abstract class FormatReader extends FormatHandler
   /** Default thumbnail width and height. */
   protected static final int THUMBNAIL_DIMENSION = 128;
 
+  /** File grouping options. */
+  public static final int MUST_GROUP = 0;
+  public static final int CAN_GROUP = 1;
+  public static final int CANNOT_GROUP = 2;
+
   // -- Fields --
 
   /** Current file. */
@@ -379,9 +384,11 @@ public abstract class FormatReader extends FormatHandler
     return group;
   }
 
-  /* @see IFormatReader#mustGroupFiles(String) */
-  public boolean mustGroupFiles(String id) throws FormatException, IOException {
-    return false; 
+  /* @see IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) 
+    throws FormatException, IOException 
+  {
+    return FormatTools.CANNOT_GROUP; 
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

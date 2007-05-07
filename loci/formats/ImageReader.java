@@ -394,9 +394,9 @@ public class ImageReader implements IFormatReader {
     return readers[0].isGroupFiles();
   }
 
-  /* @see IFormatReader#mustGroupFiles(String) */
-  public boolean mustGroupFiles(String id) throws FormatException, IOException {
-    return getReader(id).mustGroupFiles(id);
+  /* @see IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return getReader(id).fileGroupOption(id);
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

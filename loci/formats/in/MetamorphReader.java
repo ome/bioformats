@@ -109,10 +109,23 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#mustGroupFiles(String) */
-  public boolean mustGroupFiles(String id) throws FormatException, IOException {
-    if (id.toLowerCase().endsWith(".nd")) return true;
-    return false; 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    if (id.toLowerCase().endsWith(".nd")) return FormatTools.MUST_GROUP;
+
+    Location l = new Location(id).getAbsoluteFile();
+    String[] files = l.getParentFile().list();
+
+    for (int i=0; i<files.length; i++) {
+      String s = files[i].toLowerCase();
+      if (s.endsWith(".nd") && id.startsWith(files[i].substring(0, 
+        s.lastIndexOf("."))))
+      {
+        return FormatTools.CAN_GROUP;
+      }
+    }
+
+    return FormatTools.CANNOT_GROUP; 
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -202,7 +215,9 @@ public class MetamorphReader extends BaseTiffReader {
       ndfile = new Location(id);
     }
 
-    if (ndfile.exists() && (mustGroupFiles(id) || isGroupFiles())) {
+    if (ndfile.exists() && (fileGroupOption(id) == FormatTools.MUST_GROUP || 
+      isGroupFiles())) 
+    {
       RandomAccessStream ndStream = 
         new RandomAccessStream(ndfile.getAbsolutePath());
       String line = ndStream.readLine().trim();

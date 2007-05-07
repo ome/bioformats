@@ -106,9 +106,10 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#mustGroupFiles(String) */
-  public boolean mustGroupFiles(String id) throws FormatException, IOException {
-    return id.toLowerCase().endsWith(".lei");
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return id.toLowerCase().endsWith(".lei") ? FormatTools.MUST_GROUP : 
+      FormatTools.CAN_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */

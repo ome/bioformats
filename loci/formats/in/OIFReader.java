@@ -72,9 +72,9 @@ public class OIFReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#mustGroupFiles(String) */
-  public boolean mustGroupFiles(String id) throws FormatException, IOException {
-    return true;
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */

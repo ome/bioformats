@@ -482,9 +482,9 @@ public class FileStitcher implements IFormatReader {
     return readers[0].isGroupFiles();
   }
 
-  /* @see IFormatReader#mustGroupFiles(String) */
-  public boolean mustGroupFiles(String id) throws FormatException, IOException {
-    return readers[0].mustGroupFiles(id);
+  /* @see IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return readers[0].fileGroupOption(id);
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

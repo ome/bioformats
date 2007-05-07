@@ -200,10 +200,10 @@ public interface IFormatReader extends IFormatHandler {
   boolean isGroupFiles();
 
   /** 
-   * Returns true if it we have to group the files 
-   * in order to read the dataset. 
+   * Returns an int indicating that we cannot, must, or might group the files
+   * in a given dataset.
    */
-  boolean mustGroupFiles(String id) throws FormatException, IOException;
+  int fileGroupOption(String id) throws FormatException, IOException;
 
   /** Returns an array of filenames needed to open this dataset. */
   String[] getUsedFiles();
