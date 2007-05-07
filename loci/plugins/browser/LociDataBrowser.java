@@ -110,7 +110,6 @@ public class LociDataBrowser {
     FileStitcher fs, String name, int seriesNo, boolean merged)
   {
     fStitch = fs;
-    if (fStitch == null) fStitch = new FileStitcher();
     if (r == null) {
       r = merged ? (IFormatReader)
         new ChannelMerger(fStitch) : new ChannelSeparator(fStitch);
@@ -122,6 +121,10 @@ public class LociDataBrowser {
     try {
       reader.setId(id);
       reader.setSeries(series);
+      if (fStitch != null) { 
+        fStitch.setId(id);
+        fStitch.setSeries(series);
+      } 
     }
     catch (Exception exc) {
       exc.printStackTrace();
