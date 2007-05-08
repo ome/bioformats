@@ -87,8 +87,6 @@ public class ImageReader implements IFormatReader {
 
   /** Constructs a new ImageReader from the given list of reader classes. */
   public ImageReader(ClassList classList) {
-    readerClasses = classList; 
-    
     // add readers to the list
     Vector v = new Vector();
     Class[] c = classList.getClasses();
