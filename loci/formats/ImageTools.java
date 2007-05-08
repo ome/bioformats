@@ -1003,6 +1003,12 @@ public final class ImageTools {
       for (int j=c-1; j>=0; j--) {
         a[j] = b[interleaved ? i*c + j : i + j*w*h];
       }
+      if (c == 1) {
+        for (int j=1; j<a.length; j++) {
+          a[j] = a[0];
+        }
+      }
+      
       byte tmp = a[0];
       a[0] = a[2];
       a[2] = tmp;

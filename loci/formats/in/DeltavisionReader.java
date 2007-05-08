@@ -408,7 +408,7 @@ public class DeltavisionReader extends FormatReader {
         new Double(wave5Max.floatValue()), null);
     }
 
-    store.setDefaultDisplaySettings(null);
+    //store.setDefaultDisplaySettings(null);
   }
 
   // -- Helper methods --

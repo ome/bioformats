@@ -204,8 +204,11 @@ public class MetamorphReader extends BaseTiffReader {
       Location abs = new Location(currentId).getAbsoluteFile();
       String absPath = abs.getPath().substring(
         abs.getPath().lastIndexOf(File.separator)); 
-      ndfile = new Location(abs.getParent(), 
-        absPath.substring(0, absPath.indexOf("_")) + ".nd");
+      
+      int idx = id.indexOf("_");
+      if (idx == -1) idx = id.lastIndexOf(".");
+
+      ndfile = new Location(abs.getParent(), id.substring(0, idx) + ".nd");
       if (!ndfile.exists()) {
         ndfile = 
           new Location(ndfile.getAbsolutePath().replaceAll(".nd", ".ND"));

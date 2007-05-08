@@ -308,7 +308,6 @@ public class OmeisImporter {
         }
       }
       out.close();
-      reader.close();
       if (DEBUG) log("[done]");
 
       // tell OMEIS we're done
@@ -326,6 +325,8 @@ public class OmeisImporter {
       pixels.setAttribute("DimensionOrder", "XYZCT"); // ignored anyway
       if (DEBUG) log("Pixel attributes injected.");
     }
+
+    reader.close();
 
     // accumulate XML into buffer
     ByteArrayOutputStream xml = new ByteArrayOutputStream();

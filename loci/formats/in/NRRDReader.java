@@ -63,6 +63,12 @@ public class NRRDReader extends FormatReader {
       block[3] == 'D';
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    if (dataFile == null) return new String[] {currentId};
+    return new String[] {currentId, dataFile};
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
