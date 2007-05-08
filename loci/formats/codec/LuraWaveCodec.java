@@ -62,11 +62,9 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
   // -- Static initializer --
 
   static {
-    licenseCode = System.getProperty("lurawave.license");
     r = new ReflectedUniverse();
     try {
       r.exec("import com.luratech.lwf.lwfDecoder");
-      r.setVar("licenseCode", licenseCode);
       r.setVar("-1", -1);
       r.setVar("1024", 1024);
       r.setVar("0", 0);
@@ -88,10 +86,12 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
   /* @see Codec#decompress(byte[]) */
   public byte[] decompress(byte[] input) throws FormatException {
     if (noLuraWave) throw new FormatException(NO_LURAWAVE_MSG);
+    licenseCode = System.getProperty("lurawave.license");
     if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);
     r.setVar("stream",
       new BufferedInputStream(new ByteArrayInputStream(input), 4096));
     try {
+      r.setVar("licenseCode", licenseCode);
       r.exec("lwf = new lwfDecoder(stream, null, licenseCode)");
     }
     catch (ReflectException exc) {
