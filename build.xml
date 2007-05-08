@@ -14,6 +14,7 @@ Bio-Formats
                    loci/formats/*
     Main class:    loci.formats.ImageViewer
     Dependencies:  jai_imageio.jar (reflected)
+                   mdbtools-java.jar (reflected)
                    ome-java.jar (reflected)
                    poi-loci.jar (reflected)
     Targets:       style-formats
@@ -33,6 +34,7 @@ VisBio
                    ij.jar
                    jai_imageio.jar (bio-formats.jar)
                    looks-1.2.2.jar
+                   mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
                    visad-lite.jar
@@ -48,9 +50,9 @@ VisBio
 LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
     Folders:       loci/plugins
-                   loci/plugins/*
-                   loci/ome/viewer (temporary)
+                   loci/plugins/browser
                    loci/ome/upload
+                   loci/ome/util
     Main class:    loci.plugins.About
     IJ plugins:    loci.plugins.browser.LociDataBrowser
                    loci.plugins.LociImporter
@@ -61,6 +63,7 @@ LOCI Plugins for ImageJ
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
                    jai_imageio.jar (bio-formats.jar)
+                   mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -69,33 +72,35 @@ LOCI Plugins for ImageJ
                    jar-plugins
     License:       LGPL
 
-OME Notebook
-    JAR file:      ome-notebook.jar
-    Folder:        loci/ome/notebook
-    Main class:    loci.ome.editor.MetadataNotebook
+OME Notes
+    JAR file:      ome-notes.jar
+    Folder:        loci/ome/notes
+    Main class:    loci.ome.notes.Notes
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
                    jai_imageio.jar (bio-formats.jar)
+                   mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       style-notebook
-                   compile-notebook
-                   jar-notebook
+    Targets:       style-notes
+                   compile-notes
+                   jar-notes
     License:       LGPL
 
 OME Metadata Editor
     JAR file:      ome-editor.jar
     Folders:       loci/ome/editor
                    loci/ome/viewer
-    Main class:    loci.ome.editor.MetadataNotebook
+    Main class:    loci.ome.editor.MetadataEditor
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
                    jai_imageio.jar (bio-formats.jar)
+                   mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -175,7 +180,7 @@ Apache Jakarta Commons Logging
 JGoodies Forms
     JAR file:  forms-1.0.4.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
-    Notes:     Used for layout by VisBio and OME Metadata Notebook
+    Notes:     Used for layout by VisBio, 4D Data Browser and OME Notes
     License:   BSD
 
 ImageJ
@@ -193,8 +198,15 @@ Java Advanced Imaging Image I/O Tools
 JGoodies Looks
     JAR file:  looks-1.2.2.jar
     URL:       http://www.jgoodies.com/freeware/looks/index.html
-    Notes:     Used for a nicer Look & Feel by VisBio and OME Metadata Notebook
+    Notes:     Used for a nicer Look & Feel by VisBio and OME Metadata Editor
     License:   BSD
+
+MDB Tools (Java port)
+    JAR file:  mdbtools-java.jar
+    URLs:      http://mdbtools.sourceforge.net/
+               http://sourceforge.net/forum/message.php?msg_id=2550619
+    Notes:     Used by Bio-Formats for Zeiss LSM metadata in MDB database files
+    License:   LGPL
 
 L-M Fit
     JAR file:  lma.jar
@@ -207,7 +219,7 @@ OME Java
     JAR file:  ome-java.jar
     URL:       http://openmicroscopy.org/api/java/
     Notes:     Used by VisBio and the OME Plugin for ImageJ to connect to OME;
-               used by Bio-Formats and the OME Notebook to work with OME-XML
+               used by Bio-Formats and the OME Notes to work with OME-XML
     License:   LGPL
 
 Apache Jakarta POI
@@ -263,7 +275,7 @@ Apache XML-RPC
   </target>
 
   <target name="style"
-    depends="style-formats, style-visbio, style-plugins, style-notebook,
+    depends="style-formats, style-visbio, style-plugins, style-notes,
       style-editor, style-stitcher, style-slim, style-checks"
     description="check source code style for LOCI software packages"/>
 
@@ -277,11 +289,11 @@ Apache XML-RPC
 -->
   <target name="compile"
     depends="compile-formats, compile-visbio, compile-plugins,
-      compile-notebook, compile-editor, compile-stitcher, compile-slim"
+      compile-notes, compile-editor, compile-stitcher, compile-slim"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook,
+    depends="jar-formats, jar-visbio, jar-plugins, jar-notes,
       jar-editor, jar-stitcher, jar-slim, jar-checks"
     description="generate JAR files for LOCI software packages"/>
 
@@ -643,34 +655,34 @@ Apache XML-RPC
     </jar>
   </target>
 
-  <!-- OME Notebook -->
+  <!-- OME Notes -->
 
-  <target name="style-notebook" depends="copy-source, jar-checks"
-    description="check source code style for OME Notebook">
+  <target name="style-notes" depends="copy-source, jar-checks"
+    description="check source code style for OME Notes">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${notebook.source}"/>
+      <fileset dir="${dest.dir}" includes="${notes.source}"/>
     </checkstyle>
   </target>
 
-  <target name="compile-notebook" depends="copy-source"
-    description="compile classes for OME Notebook">
+  <target name="compile-notes" depends="copy-source"
+    description="compile classes for OME Notes">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${notebook.source}" classpath="${ext.jars}"
+      includes="${notes.source}" classpath="${ext.jars}"
       debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
-  <target name="jar-notebook"
-    depends="compile-notebook, copy-jars, jar-formats"
-    description="generate JAR file for OME Notebook">
+  <target name="jar-notes"
+    depends="compile-notes, copy-jars, jar-formats"
+    description="generate JAR file for OME Notes">
     <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${notebook.resources}"/>
+      <fileset dir="${src.dir}" includes="${notes.resources}"/>
     </copy>
-    <jar jarfile="${jar.dir}/${notebook.jar}" basedir="${classes.dir}"
-      includes="${notebook.files}">
+    <jar jarfile="${jar.dir}/${notes.jar}" basedir="${classes.dir}"
+      includes="${notes.files}">
       <manifest>
-        <attribute name="Main-Class" value="${notebook.main}"/>
-        <attribute name="Class-Path" value="${notebook.classpath}"/>
+        <attribute name="Main-Class" value="${notes.main}"/>
+        <attribute name="Class-Path" value="${notes.classpath}"/>
       </manifest>
     </jar>
   </target>

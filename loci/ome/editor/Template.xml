@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<NotebookTemplate Version="1.0">
+<EditorTemplate Version="1.0">
 	<OMEElement XMLName="Project" Description="Data having to do with this project." RefVars="%Name: $Name%">
 	  <OMEAttribute XMLName="ID"  Type="ID"/>
 	  <OMEAttribute XMLName="Name"  Description="The name of this project."/>
@@ -118,4 +118,4 @@
 		<OMEAttribute XMLName="Objective" Type="Ref"/>	
 	  <OMEAttribute XMLName="Filter" Type="Ref"/>	
 	</OMEElement>
-</NotebookTemplate>
+</EditorTemplate>

@@ -29,7 +29,7 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 /**
- * A simple xml parser to help set up the MetadataNotebook's gui
+ * A simple xml parser to help set up the MetadataEditor's gui
  * based on the commonly used data specified in Template.xml
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
@@ -108,7 +108,7 @@ public class TemplateParser {
     return root;
   }
 
-  /** Returns an array of Elements representing the tabs in the notebook. */
+  /** Returns an array of Elements representing the tabs in the editor. */
   public Element[] getTabs() {
     return tabList;
   }

@@ -47,7 +47,7 @@ import javax.xml.parsers.*;
  * A panel that displays OME-XML metadata.
  * Most of the gui code is in here.
  * If you want a panel instead of a window, instantiate this
- * instead of MetadataNotebook.
+ * instead of MetadataEditor.
  * Sadly you lose quite a bit of functionality such as the
  * various views if you choose to directly instatiate.
  *
@@ -244,8 +244,8 @@ public class MetadataPane extends JPanel
     //open initial file
     if (file != null) {
       setOMEXML(file);
-      if (getTopLevelAncestor() instanceof MetadataNotebook) {
-        MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+      if (getTopLevelAncestor() instanceof MetadataEditor) {
+        MetadataEditor mn = (MetadataEditor) getTopLevelAncestor();
         mn.setCurrentFile(file);
       }
     }
@@ -310,7 +310,7 @@ public class MetadataPane extends JPanel
 
     int n = JOptionPane.showOptionDialog(getTopLevelAncestor(),
             "The file you are trying to save to is a third-party format."
-            + " Currently Notebook can only save to TIFF or OMEXML files."
+            + " Currently only TIFF or OME-XML files can be saved."
             + " Would you like to save to a companion file instead?",
             "Can't Save to Third-Party Format",
             JOptionPane.YES_NO_OPTION,
@@ -347,8 +347,8 @@ public class MetadataPane extends JPanel
       }
       else {
         thisOmeNode.writeOME(file, false);
-        if (getTopLevelAncestor() instanceof MetadataNotebook) {
-          MetadataNotebook mdn = (MetadataNotebook) getTopLevelAncestor();
+        if (getTopLevelAncestor() instanceof MetadataEditor) {
+          MetadataEditor mdn = (MetadataEditor) getTopLevelAncestor();
           mdn.setTitle("OME Metadata Editor - " + file);
         }
       }
@@ -429,8 +429,8 @@ public class MetadataPane extends JPanel
         }
       }
       currentFile = new File(outId);
-      if (getTopLevelAncestor() instanceof MetadataNotebook) {
-        MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+      if (getTopLevelAncestor() instanceof MetadataEditor) {
+        MetadataEditor mn = (MetadataEditor) getTopLevelAncestor();
         mn.setCurrentFile(file);
       }
     }
@@ -486,8 +486,8 @@ public class MetadataPane extends JPanel
       }
     }
     currentFile = new File(outId);
-    if (getTopLevelAncestor() instanceof MetadataNotebook) {
-      MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+    if (getTopLevelAncestor() instanceof MetadataEditor) {
+      MetadataEditor mn = (MetadataEditor) getTopLevelAncestor();
       mn.setCurrentFile(file);
     }
   }
@@ -519,13 +519,13 @@ public class MetadataPane extends JPanel
       else {
         JOptionPane.showMessageDialog(this,
             "No companion file found to merge!!",
-            "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
+            "MetadataEditor Error", JOptionPane.ERROR_MESSAGE);
       }
     }
     else {
       JOptionPane.showMessageDialog(this,
             "You have not saved or opened a file to merge yet!",
-            "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
+            "MetadataEditor Error", JOptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -865,7 +865,7 @@ public class MetadataPane extends JPanel
              "This tiff file is corrupted. The ZCT index mapping is"
              + " unsupported by bioformats.\nYour metadata will not"
              + " populate correctly, our apologies.",
-          "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
+          "MetadataEditor Error", JOptionPane.ERROR_MESSAGE);
         }
         img = null;
         thumb = null;
@@ -897,7 +897,7 @@ public class MetadataPane extends JPanel
     if (doc == null) {
       JOptionPane.showMessageDialog(this,
           "Document is NULL.",
-          "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
+          "MetadataEditor Error", JOptionPane.ERROR_MESSAGE);
       System.out.println("Document is NULL.");
       return;
     }
@@ -1137,8 +1137,8 @@ public class MetadataPane extends JPanel
     }
     //change the "Tabs" menu in the original window to reflect the actual tabs
     //created (duplicate tabs are the reason for this)
-    if (getTopLevelAncestor() instanceof MetadataNotebook) {
-      MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+    if (getTopLevelAncestor() instanceof MetadataEditor) {
+      MetadataEditor mn = (MetadataEditor) getTopLevelAncestor();
       mn.changeTabMenu(tabNames);
     }
 
@@ -1932,7 +1932,7 @@ public class MetadataPane extends JPanel
           if (pixelsIDProblem) JOptionPane.showMessageDialog(this,
             "Thumbnails disabled due to multiple pixels with unsupported"
               + " ID naming scheme.",
-            "MetadataNotebook Error", JOptionPane.ERROR_MESSAGE);
+            "MetadataEditor Error", JOptionPane.ERROR_MESSAGE);
         }
         else {
           String thisID = on.getAttribute("ID");

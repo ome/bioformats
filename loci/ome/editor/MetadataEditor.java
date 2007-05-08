@@ -1,5 +1,5 @@
 //
-// MetadataNotebook.java
+// MetadataEditor.java
 //
 
 /*
@@ -42,7 +42,7 @@ import org.w3c.dom.*;
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
-public class MetadataNotebook extends JFrame
+public class MetadataEditor extends JFrame
   implements ActionListener, ItemListener, Runnable
 {
 
@@ -95,17 +95,17 @@ public class MetadataNotebook extends JFrame
 
   // -- Constructors --
 
-  public MetadataNotebook() {
+  public MetadataEditor() {
     this((String[]) null);
   }
 
-  /** Create a default notebook window with save function and editing enabled.*/
-  public MetadataNotebook(String[] args) {
+  /** Create a default editor window with save function and editing enabled.*/
+  public MetadataEditor(String[] args) {
     this(args, (OMENode) null, (String) null, true, true);
   }
 
   /**
-  * Create a notebook window with specified save and editing policies.
+  * Create an editor window with specified save and editing policies.
   * @param args an array of strings the first entry of which should be a
   * filename, otherwise, send a (String[]) null as this parameter.
   * @param ome An OMENode xml root to be launched if a filename is not
@@ -114,13 +114,13 @@ public class MetadataNotebook extends JFrame
   * that this is a temporary fix. If your file is OME-Tiff there's going
   * to be a problem if saving is enabled and you try to save to it, since
   * we're circumventing the code that flags TIFF files.
-  * @param title Sets the title of the notebook window, which is done by
+  * @param title Sets the title of the editor window, which is done by
   * default if a file URL is given in args, but otherwise should be set
   * using this String parameter.
   * @param addSave whether or not saving should be enabled
   * @param editable whether or not users should be able to edit the xml
   */
-  public MetadataNotebook(String[] args, OMENode ome, String title,
+  public MetadataEditor(String[] args, OMENode ome, String title,
     boolean addSave, boolean editable)
   {
     super("OME Metadata Editor");
@@ -174,7 +174,7 @@ public class MetadataNotebook extends JFrame
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new CardLayout());
     contentPanel.setBorder((EmptyBorder) null);
-    contentPanel.add("notebook", metadata);
+    contentPanel.add("editor", metadata);
     contentPanel.add("viewer", mdp);
     contentPanel.add("notes", noteP);
     contentPanel.add("scan", scanP);
@@ -335,7 +335,7 @@ public class MetadataNotebook extends JFrame
     setVisible(true);
   }
 
-  // -- MetadataNotebook API methods --
+  // -- MetadataEditor API methods --
 
   /** Sets the current file being displayed to this file. */
   protected void setCurrentFile(File aFile) {
@@ -444,7 +444,7 @@ public class MetadataNotebook extends JFrame
           opening = true;
           int rval = opener.showOpenDialog(this);
           if (rval == JFileChooser.APPROVE_OPTION) {
-            new Thread(this, "MetadataNotebook-Opener").start();
+            new Thread(this, "MetadataEditor-Opener").start();
           }
         }
       }
@@ -452,7 +452,7 @@ public class MetadataNotebook extends JFrame
         opening = true;
         int rval = opener.showOpenDialog(this);
         if (rval == JFileChooser.APPROVE_OPTION) {
-          new Thread(this, "MetadataNotebook-Opener").start();
+          new Thread(this, "MetadataEditor-Opener").start();
         }
       }
     }
@@ -462,7 +462,7 @@ public class MetadataNotebook extends JFrame
       opening = false;
       int rval = saver.showSaveDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
-        new Thread(this, "MetadataNotebook-Saver").start();
+        new Thread(this, "MetadataEditor-Saver").start();
         metadata.stateChanged(false);
       }
     }
@@ -503,7 +503,7 @@ public class MetadataNotebook extends JFrame
         "Built @date@\n\n" +
         "The OME Metadata Editor is LOCI software written by\n" +
         "Christopher Peterson.\n" +
-        "http://www.loci.wisc.edu/software/#notebook",
+        "http://www.loci.wisc.edu/software/#editor",
         "OME Metadata Editor", JOptionPane.INFORMATION_MESSAGE);
     }
     else if (cmd.startsWith("tabChange")) {
@@ -660,9 +660,9 @@ public class MetadataNotebook extends JFrame
 
   // -- Main method --
 
-  /**Test method for debug uses, or simply to bring up a notebook window
+  /**Test method for debug uses, or simply to bring up an editor window
   *  from the console or whatever.
   */
-  public static void main(String[] args) { new MetadataNotebook(args); }
+  public static void main(String[] args) { new MetadataEditor(args); }
 
 }
