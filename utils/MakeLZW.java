@@ -22,6 +22,7 @@ public class MakeLZW {
       String nf = "lzw-" + f;
       System.out.print("Converting " + f + " to " + nf);
       reader.setId(f); 
+      writer.setId(nf);
       int blocks = reader.getImageCount();
       OMENode ome = (OMENode) ms.getRoot();
       for (int b=0; b<blocks; b++) {
@@ -40,7 +41,7 @@ public class MakeLZW {
         TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
 
         // write file to disk
-        writer.saveImage(nf, img, ifd, b == blocks - 1);
+        writer.saveImage(img, ifd, b == blocks - 1);
       }
       System.out.println(" [done]");
     }

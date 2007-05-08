@@ -37,6 +37,7 @@ public class SewTiffs {
     TiffWriter out = new TiffWriter();
     String outId = base + "_C" + c + ".tiff";
     System.out.println("Writing " + outId);
+    out.setId(outId);
     System.out.print("   ");
     boolean comment = false;
     
@@ -65,14 +66,14 @@ public class SewTiffs {
           ifd = new Hashtable();
           TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, desc);
           comment = true;
-          out.saveImage(outId, image, ifd, t == num - 1);
+          out.saveImage(image, ifd, t == num - 1);
           System.out.print(".");
           continue;
         }
       }
 
       // write image plane
-      out.saveImage(outId, image, t == num - 1);
+      out.saveImage(image, t == num - 1);
 
       // update status
       System.out.print(".");

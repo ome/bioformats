@@ -44,7 +44,8 @@ public class ConvertToOmeTiff {
           TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
         }
         // write plane to output file
-        writer.saveImage(outId, plane, ifd, j == imageCount - 1);
+        writer.setId(outId);
+        writer.saveImage(plane, ifd, j == imageCount - 1);
         System.out.print(".");
       }
       System.out.println(" [done]");
