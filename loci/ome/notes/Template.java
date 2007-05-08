@@ -3,8 +3,8 @@
 //
 
 /*
-OME Metadata Notebook application for exploration and editing of OME-XML and
-OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
+OME Notes library for flexible organization and presentation of OME-XML
+metadata. Copyright (C) 2006-@year@ Melissa Linkert.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.notebook;
+package loci.ome.notes;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -513,7 +513,7 @@ public class Template {
       CustomAttributesNode ca = root.getCustomAttributes();
 
       if (ca != null) {
-        Vector elements = DOMUtil.getChildElements("NotebookField",
+        Vector elements = DOMUtil.getChildElements("NotesField",
           ca.getDOMElement());
         for (int i=0; i<elements.size(); i++) {
           Element el = (Element) elements.get(i);
@@ -590,10 +590,10 @@ public class Template {
 
     if (map == null || map.length() == 0) {
       // this is a custom unmapped field, which gets stored in a
-      // NotebookField ST
+      // NotesField ST
 
       CustomAttributesNode ca = root.getCustomAttributes();
-      Element el = DOMUtil.createChild(ca.getDOMElement(), "NotebookField");
+      Element el = DOMUtil.createChild(ca.getDOMElement(), "NotesField");
       OMEXMLNode newNode = OMEXMLNode.createNode(el);
       newNode.setAttribute("name", t.getName());
       newNode.setAttribute("value", value.toString());

@@ -1,10 +1,10 @@
 //
-// Notebook.java
+// Notes.java
 //
 
 /*
-OME Metadata Notebook application for exploration and editing of OME-XML and
-OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
+OME Notes library for flexible organization and presentation of OME-XML
+metadata. Copyright (C) 2006-@year@ Melissa Linkert.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.notebook;
+package loci.ome.notes;
 
 import com.jgoodies.forms.layout.*;
 import java.awt.*;
@@ -37,8 +37,8 @@ import loci.formats.ome.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
-/** Main notebook window. */
-public class Notebook extends JFrame implements ActionListener {
+/** Main OME Notes window. */
+public class Notes extends JFrame implements ActionListener {
 
   // -- Constants --
 
@@ -80,8 +80,8 @@ public class Notebook extends JFrame implements ActionListener {
   // -- Constructor --
 
   /** Constructs a new main window with the default template. */
-  public Notebook(String template, String newfile) {
-    super("OME Notebook");
+  public Notes(String template, String newfile) {
+    super("OME Notes");
 
     // set up the main panel
 
@@ -143,7 +143,7 @@ public class Notebook extends JFrame implements ActionListener {
     }
     else {
       templateName = DEFAULT_TEMPLATE;
-      loadTemplate(Notebook.class.getResourceAsStream(DEFAULT_TEMPLATE));
+      loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE));
     }
 
     try {
@@ -157,7 +157,7 @@ public class Notebook extends JFrame implements ActionListener {
     setVisible(true);
   }
 
-  // -- Notebook API methods --
+  // -- Notes API methods --
 
   /** Load and apply a template from the specified file. */
   public void loadTemplate(String filename) {
@@ -478,7 +478,7 @@ public class Notebook extends JFrame implements ActionListener {
           return f.getAbsolutePath().endsWith(".template") || f.isDirectory();
         }
         public String getDescription() {
-          return "OME Notebook Templates";
+          return "OME Notes Templates";
         }
       };
 
@@ -589,7 +589,7 @@ public class Notebook extends JFrame implements ActionListener {
 
   /**
    * Merge two OME-CA trees. When a conflict arises, use the value in 'over'.
-   * This method was adapted from an earlier version of the OME Notebook,
+   * This method was adapted from the OME Metadata Editor,
    * written by Christopher Peterson.
    *
    * @param high OMENode with higher priority
@@ -603,7 +603,7 @@ public class Notebook extends JFrame implements ActionListener {
 
   /**
    * Merge two OME-XML trees.
-   * This method was adapted from an earlier version of the OME Notebook,
+   * This method was adapted from the OME Metadata Editor,
    * written by Christopher Peterson.
    */
   private OMEXMLNode merge(OMEXMLNode high, OMEXMLNode low) {
@@ -652,7 +652,7 @@ public class Notebook extends JFrame implements ActionListener {
 
   /**
    * Clones the specified DOM element, preserving the parent structure.
-   * This method was adapted from an earlier version of the OME Notebook,
+   * This method was adapted from the OME Metadata Editor,
    * written by Christopher Peterson.
    */
   private Element createClone(Element el, Document doc) {
@@ -693,7 +693,7 @@ public class Notebook extends JFrame implements ActionListener {
       else data = args[i];
     }
 
-    new Notebook(template, data);
+    new Notes(template, data);
   }
 
 }

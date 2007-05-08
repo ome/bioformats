@@ -3,8 +3,8 @@
 //
 
 /*
-OME Metadata Notebook application for exploration and editing of OME-XML and
-OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
+OME Notes library for flexible organization and presentation of OME-XML
+metadata. Copyright (C) 2006-@year@ Melissa Linkert.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.notebook.editor;
+package loci.ome.notes.editor;
 
 import com.jgoodies.forms.layout.*;
 import java.awt.*;
@@ -30,11 +30,11 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import loci.ome.notebook.*;
+import loci.ome.notes.*;
 import loci.ome.viewer.MetadataPane;
 import org.openmicroscopy.xml.OMENode;
 
-/** Main class for notebook template editor. */
+/** Main class for OME Notes template editor. */
 public class TemplateEditor extends JFrame
   implements ActionListener, MouseListener
 {
@@ -97,7 +97,7 @@ public class TemplateEditor extends JFrame
 
   /** Constructs a new window with a blank template. */
   public TemplateEditor() {
-    super("OME Notebook Template Editor");
+    super("OME Notes Template Editor");
 
     tabs = new Vector();
     tabPanels = new Vector();
@@ -333,7 +333,7 @@ public class TemplateEditor extends JFrame
         public boolean accept(File f) {
           return f.getAbsolutePath().endsWith(".template") || f.isDirectory();
         }
-        public String getDescription() { return "OME Notebook templates"; }
+        public String getDescription() { return "OME Notes templates"; }
       };
 
       chooser.setFileFilter(filter);
