@@ -24,12 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.util.*;
+import java.util.Hashtable;
 
 /** Encompasses core metadata values. */
 public class CoreMetadata {
-  public int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, imageCount;
+  public int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
   public int[] thumbSizeX, thumbSizeY;
+  public int[] pixelType;
+  public int[] imageCount;
   public int[][] cLengths;
   public String[][] cTypes;
   public String[] currentOrder;
