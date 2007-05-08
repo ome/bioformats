@@ -163,13 +163,13 @@ public class ImageViewer extends JFrame
     fileSave.setActionCommand("save");
     fileSave.addActionListener(this);
     file.add(fileSave);
-    boolean canDoNotebook = false;
+    boolean canDoNotes = false;
     try {
-      Class c = Class.forName("loci.ome.notebook.Notebook");
-      if (c != null) canDoNotebook = true;
+      Class c = Class.forName("loci.ome.notes.Notes");
+      if (c != null) canDoNotes = true;
     }
     catch (Throwable t) { }
-    if (canDoNotebook) {
+    if (canDoNotes) {
       JMenuItem fileView = new JMenuItem("View Metadata...");
       fileView.setMnemonic('m');
       fileView.setEnabled(true);
@@ -366,12 +366,12 @@ public class ImageViewer extends JFrame
       }
     }
     else if ("view".equals(cmd)) {
-      // NB: avoid dependencies on optional loci.ome.notebook package
+      // NB: avoid dependencies on optional loci.ome.notes package
       ReflectedUniverse r = new ReflectedUniverse();
       try {
-        r.exec("import loci.ome.notebook.Notebook");
+        r.exec("import loci.ome.notes.Notes");
         r.setVar("filename", filename);
-        r.exec("new Notebook(null, filename)");
+        r.exec("new Notes(null, filename)");
       }
       catch (ReflectException exc) { exc.printStackTrace(); }
     }

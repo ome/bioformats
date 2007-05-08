@@ -38,7 +38,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.formats.*;
-//import loci.ome.notebook.Notebook;
+//import loci.ome.notes.Notes;
 import org.openmicroscopy.xml.OMENode;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
@@ -170,7 +170,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     try {
       // disable XML button if proper libraries are not installed
       Class.forName("org.openmicroscopy.xml.OMENode"); // ome-java.jar
-      Class.forName("loci.ome.notebook.MetadataNotebook"); // ome-notebook.jar
+      Class.forName("loci.ome.notes.Notes"); // ome-notes.jar
       Class.forName("com.jgoodies.forms.layout.FormLayout"); // forms-1.0.4.jar
     }
     catch (Throwable e) {
@@ -181,6 +181,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       xml = new JButton("Metadata");
       xml.addActionListener(this);
       xml.setActionCommand("xml");
+      xml.setEnabled(false);//TEMP
     }
 
     // channel GUI components
@@ -512,38 +513,35 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public synchronized void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     String cmd = e.getActionCommand();
-    if (cmd == null) cmd = ""; // prevent NullPointer
-    if (cmd.equals("xml")) {
-      String[] args = (String[]) null;
-
+    if ("xml".equals(cmd)) {
       String title = db.id;
       try {
-        OMENode ome = (OMENode)(db.reader.getMetadataStoreRoot());
+        OMENode ome = (OMENode) db.reader.getMetadataStoreRoot();
 
         ReflectedUniverse r = new ReflectedUniverse();
-        r.exec("import loci.ome.notebook.MetadataNotebook");
-        r.setVar("args", args);
+        r.exec("import loci.ome.notes.Notes");
         r.setVar("ome", ome);
         r.setVar("title", title);
-        r.setVar("false", false);
-        r.exec("new MetadataNotebook(args, ome, title, false, false)");
+        r.exec("new Notes(ome, title)");
       }
       catch (ReflectException exc) {
         JOptionPane.showMessageDialog(this,
-          "Sorry, there has been an error creating the metadata editor.",
+          "Sorry, there has been an error creating the metadata window.",
           "4D Data Browser", JOptionPane.ERROR_MESSAGE);
         LociDataBrowser.dumpException(exc);
       }
     }
-    else if (cmd.equals("options")) {
-      if (ow == null) ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
-        db.hasT ? db.numT : 1, this);
+    else if ("options".equals(cmd)) {
+      if (ow == null) {
+        ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
+          db.hasT ? db.numT : 1, this);
+      }
       ow.setVisible(true);
     }
     else if (src instanceof Timer) {
-          t = tSliceSel.getValue() + 1;
-          if ((t > db.numT)) t = 1;
-          tSliceSel.setValue(t);
+      t = tSliceSel.getValue() + 1;
+      if ((t > db.numT)) t = 1;
+      tSliceSel.setValue(t);
     }
     else if (src instanceof JButton) {
       if (animate.getText().equals(ANIM_STRING)) {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# notebook: a script for launching the OME Metadata Notebook
+# notes: a script for launching OME Notes
 
 # Required JARs: loci_tools.jar
 
@@ -11,7 +11,7 @@
 # the LOCI classes in your CLASSPATH, you can set the
 # LOCI_DEVEL environment variable to use them instead.
 
-PROG=loci.ome.notebook.Notebook
+PROG=loci.ome.notes.Notes
 
 if [ $LOCI_DEVEL ]
 then

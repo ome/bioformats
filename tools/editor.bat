@@ -1,6 +1,6 @@
 @echo off
 
-rem notebook: a script for launching the OME Metadata Notebook
+rem editor: a batch file for launching the OME Metadata Editor
 
 rem Required JARs: loci_tools.jar
 
@@ -11,7 +11,7 @@ rem If you are a developer working from source and have
 rem the LOCI classes in your CLASSPATH, you can set the
 rem LOCI_DEVEL environment variable to use them instead.
 
-set PROG=loci.ome.notebook.Notebook
+set PROG=loci.ome.editor.MetadataEditor
 
 if "%LOCI_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries
