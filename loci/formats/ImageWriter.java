@@ -40,23 +40,23 @@ public class ImageWriter implements IFormatWriter {
 
   // -- Static fields --
 
-  /** List of writer classes. */
-  private static ClassList writerClasses;
+  /** Default list of writer classes, for use with noargs constructor. */
+  private static ClassList defaultClasses;
 
   // -- Static helper methods --
 
   private static ClassList getDefaultWriterClasses() {
-    if (writerClasses == null) {
+    if (defaultClasses == null) {
       // load built-in writer classes from writers.txt file
       try {
-        writerClasses = new ClassList("writers.txt", IFormatWriter.class);
+        defaultClasses = new ClassList("writers.txt", IFormatWriter.class);
       }
       catch (IOException exc) {
         exc.printStackTrace();
-        writerClasses = new ClassList(IFormatWriter.class);
+        defaultClasses = new ClassList(IFormatWriter.class);
       }
     }
-    return writerClasses;
+    return defaultClasses;
   }
 
   // -- Fields --

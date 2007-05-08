@@ -39,23 +39,23 @@ public class ImageReader implements IFormatReader {
 
   // -- Static fields --
 
-  /** List of reader classes. */
-  private static ClassList readerClasses;
+  /** Default list of reader classes, for use with noargs constructor. */
+  private static ClassList defaultClasses;
 
   // -- Static helper methods --
 
   private static ClassList getDefaultReaderClasses() {
-    if (readerClasses == null) {
+    if (defaultClasses == null) {
       // load built-in reader classes from readers.txt file
       try {
-        readerClasses = new ClassList("readers.txt", IFormatReader.class);
+        defaultClasses = new ClassList("readers.txt", IFormatReader.class);
       }
       catch (IOException exc) {
         exc.printStackTrace();
-        readerClasses = new ClassList(IFormatReader.class);
+        defaultClasses = new ClassList(IFormatReader.class);
       }
     }
-    return readerClasses;
+    return defaultClasses;
   }
 
   // -- Fields --
