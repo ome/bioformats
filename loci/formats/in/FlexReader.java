@@ -72,15 +72,65 @@ public class FlexReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    // TODO: expand 8-bit -> 16-bit with multiplication by factor[no]
-    return super.openBytes(no, buf);
+
+    // expand pixel values with multiplication by factor[no]
+    byte[] bytes = super.openBytes(no, buf);
+    if (core.pixelType[0] == FormatTools.UINT8) {
+      int num = bytes.length;
+      for (int i=num-1; i>=0; i--) {
+        int q = (int) ((bytes[i] & 0xff) * factors[no]);
+        bytes[i] = (byte) (q & 0xff);
+      }
+    }
+    if (core.pixelType[0] == FormatTools.UINT16) {
+      int num = bytes.length / 2;
+      for (int i=num-1; i>=0; i--) {
+        int q = (int) ((bytes[i] & 0xff) * factors[no]);
+        byte b0 = (byte) (q & 0xff);
+        byte b1 = (byte) ((q >> 8) & 0xff);
+        int ndx = 2 * i;
+        if (core.littleEndian[0]) {
+          bytes[ndx] = b0;
+          bytes[ndx + 1] = b1;
+        }
+        else {
+          bytes[ndx] = b1;
+          bytes[ndx + 1] = b0;
+        }
+      }
+    }
+    else if (core.pixelType[0] == FormatTools.UINT32) {
+      int num = bytes.length / 4;
+      for (int i=num-1; i>=0; i--) {
+        int q = (int) ((bytes[i] & 0xff) * factors[no]);
+        byte b0 = (byte) (q & 0xff);
+        byte b1 = (byte) ((q >> 8) & 0xff);
+        byte b2 = (byte) ((q >> 16) & 0xff);
+        byte b3 = (byte) ((q >> 24) & 0xff);
+        int ndx = 4 * i;
+        if (core.littleEndian[0]) {
+          bytes[ndx] = b0;
+          bytes[ndx + 1] = b1;
+          bytes[ndx + 2] = b2;
+          bytes[ndx + 3] = b3;
+        }
+        else {
+          bytes[ndx] = b3;
+          bytes[ndx + 1] = b2;
+          bytes[ndx + 2] = b1;
+          bytes[ndx + 3] = b0;
+        }
+      }
+    }
+    return bytes;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    // TODO: expand 8-bit -> 16-bit with multiplication by factor[no]
-    return super.openImage(no);
+    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
+      getRGBChannelCount(), isInterleaved(),
+      FormatTools.getBytesPerPixel(core.pixelType[0]), isLittleEndian());
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -121,6 +171,7 @@ public class FlexReader extends BaseTiffReader {
 
     // parse factor values
     factors = new double[core.imageCount[0]];
+    int max = 0;
     for (int i=0; i<fsize; i++) {
       String factor = (String) f.get(i);
       double q = 1;
@@ -133,8 +184,14 @@ public class FlexReader extends BaseTiffReader {
         }
       }
       factors[i] = q;
+      if (q > factors[max]) max = i;
     }
     Arrays.fill(factors, fsize, factors.length, 1);
+
+    // determine pixel type
+    if (factors[max] > 256) core.pixelType[0] = FormatTools.UINT32;
+    else if (factors[max] > 1) core.pixelType[0] = FormatTools.UINT16;
+    else core.pixelType[0] = FormatTools.UINT8;
   }
 
   // -- Helper classes --
