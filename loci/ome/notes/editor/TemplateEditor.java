@@ -31,8 +31,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import loci.ome.notes.*;
-import loci.ome.viewer.MetadataPane;
-import org.openmicroscopy.xml.OMENode;
 
 /** Main class for OME Notes template editor. */
 public class TemplateEditor extends JFrame
@@ -42,21 +40,21 @@ public class TemplateEditor extends JFrame
   // -- Constants --
 
   /** List of component names. */
-  private String[] COMPONENT_NAMES = new String[] {"Text field",
+  private static final String[] COMPONENT_NAMES = new String[] {"Text field",
     "Number field", "Choice field", "Checkbox field"
   };
 
   /** List of component classes. */
-  private Class[] COMPONENTS = new Class[] {
+  private static final Class[] COMPONENTS = new Class[] {
     JTextField.class, JSpinner.class, JComboBox.class, JCheckBox.class
   };
 
   /** List of component types. */
-  private String[] COMPONENT_TYPES = new String[] {
+  private static final String[] COMPONENT_TYPES = new String[] {
     "var", "int", "enum", "bool"
   };
 
-  public static int TAB = 0, GROUP = 1, FIELD = 2;
+  public static final int TAB = 0, GROUP = 1, FIELD = 2;
 
   // -- Fields --
 
