@@ -1293,7 +1293,10 @@ public final class TiffTools {
           }
         }
         catch (Exception e) {
-          if (strip == 0) throw new FormatException(e);
+          if (strip == 0) {
+            if (e instanceof FormatException) throw (FormatException) e;
+            else throw new FormatException(e);
+          }
           byte[] bytes = new byte[samples[0].length];
           undifference(bytes, bitsPerSample, imageWidth, planarConfig,
             predictor);
