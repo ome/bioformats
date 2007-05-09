@@ -123,7 +123,7 @@ public abstract class FormatHandler implements IFormatHandler {
     for (int i=0; i<suffixes.length; i++) {
       if (lname.endsWith("." + suffixes[i])) return true;
       if (lname.endsWith("." + suffixes[i] + ".gz")) return true;
-      //if (lname.endsWith("." + suffixes[i] + ".bz2")) return true;
+      if (lname.endsWith("." + suffixes[i] + ".bz2")) return true;
       if (lname.endsWith("." + suffixes[i] + ".zip")) return true;
     }
     return false;
