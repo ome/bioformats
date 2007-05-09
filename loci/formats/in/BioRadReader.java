@@ -634,6 +634,57 @@ public class BioRadReader extends FormatReader {
 
     status("Populating metadata");
 
+    // look for companion metadata files
+
+    Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
+    String[] list = parent.list();
+
+    for (int i=0; i<list.length; i++) {
+      if (list[i].endsWith("data.raw")) {
+        RandomAccessStream raw = new RandomAccessStream(list[i]);
+        String line = raw.readLine();
+        while (line != null && line.length() > 0) {
+          if (line.charAt(0) != '[') {
+            String key = line.substring(0, line.indexOf("="));
+            String value = line.substring(line.indexOf("=") + 1);
+            addMeta(key.trim(), value.trim());
+          }
+          line = raw.readLine(); 
+        }
+        raw.close(); 
+      }
+      else if (list[i].endsWith("lse.xml")) {
+        RandomAccessStream raw = new RandomAccessStream(list[i]);
+        byte[] b = new byte[(int) raw.length()];
+        raw.read(b);
+        String xml = new String(b);
+
+        if (xml.indexOf("SectionInfo") != -1) {
+          int start = xml.indexOf("<SectionInfo>") + 13;
+          int end = xml.indexOf("</SectionInfo>");
+          xml = xml.substring(start, end);
+       
+          // parse the timestamps
+          while (xml.length() > 0) {
+            String element = xml.substring(0, xml.indexOf(">") + 1);
+            xml = xml.substring(xml.indexOf(">") + 1);
+          
+            int ndx = element.indexOf("TimeCompleted") + 15;
+            String stamp = element.substring(ndx, element.indexOf("\"", ndx));
+
+            String key = element.substring(1, element.indexOf("\"", 
+              element.indexOf("\"") + 1));
+            key = key.replace('\"', '\0');
+            key = key.replace('=', ' ');
+
+            addMeta(key + " Timestamp", stamp);
+          }
+        }
+        raw.close();
+        b = null;
+      }
+    }
+
     // Populate the metadata store
 
     // The metadata store we're working with.
