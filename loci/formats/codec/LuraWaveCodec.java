@@ -48,6 +48,8 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
     "lurawave.license system property (e.g., with -Dlurawave.license=XXXX " +
     "from the command line).";
 
+  public static final String INVALID_LICENSE_MSG = "Invalid license code: ";
+
   // -- Static fields --
 
   /** True iff the LuraWave decoding library is not available. */
@@ -95,7 +97,7 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
       r.exec("lwf = new lwfDecoder(stream, null, licenseCode)");
     }
     catch (ReflectException exc) {
-      throw new FormatException("Invalid license code: " + licenseCode, exc);
+      throw new FormatException(INVALID_LICENSE_MSG + licenseCode, exc);
     }
     int[] image8 = null;
     try {
