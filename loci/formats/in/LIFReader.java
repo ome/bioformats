@@ -27,7 +27,11 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import javax.xml.parsers.*;
 import loci.formats.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * LIFReader is the file format reader for Leica LIF files.
@@ -35,6 +39,12 @@ import loci.formats.*;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class LIFReader extends FormatReader {
+
+  // -- Constants --
+
+  /** Factory for generating SAX parsers. */
+  public static final SAXParserFactory SAX_FACTORY =
+    SAXParserFactory.newInstance();
 
   // -- Fields --
 
@@ -191,6 +201,28 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
+    // parse raw key/value pairs - adapted from FlexReader
+  
+    LIFHandler handler = new LIFHandler();
+  
+    // strip out invalid characters
+    for (int i=0; i<xml.length(); i++) {
+      if (Character.isISOControl(xml.charAt(i))) {
+        xml = xml.replace(xml.charAt(i), ' ');
+      }
+    }
+
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(new ByteArrayInputStream(xml.getBytes()), handler);
+    }
+    catch (ParserConfigurationException exc) {
+      throw new FormatException(exc);
+    } 
+    catch (SAXException exc) {
+      throw new FormatException(exc);
+    }
+    
     Vector elements = new Vector();
     seriesNames = new Vector();
 
@@ -235,18 +267,6 @@ public class LIFReader extends FormatReader {
 
       // if the element contains a key/value pair, parse it and put it in
       // the metadata hashtable
-
-      String tmpToken = token;
-      if (token.indexOf("=") != -1) {
-        int idx = token.indexOf("Identifier") + 12;
-        if (idx == 11) idx = token.indexOf("Description") + 13;
-
-        key = token.substring(idx, token.indexOf("\"", idx + 1));
-        idx = token.indexOf("Variant") + 9;
-        value = token.substring(idx, token.indexOf("\"", idx + 1));
-        if (key.indexOf("=") == -1) addMeta(prefix + " - " + key, value);
-      }
-      token = tmpToken;
 
       if (token.startsWith("ScannerSettingRecord")) {
         if (token.indexOf("csScanMode") != -1) {
@@ -494,6 +514,139 @@ public class LIFReader extends FormatReader {
           core.seriesMetadata[i].put(k, metadata.get(k));
         }
       }
+    }
+  }
+
+  // -- Helper class --
+
+  class LIFHandler extends DefaultHandler {
+    private String series;
+    private int count = 0;
+
+    public void startElement(String uri, String localName, String qName, 
+      Attributes attributes) 
+    {
+      if (qName.equals("Element")) {
+        series = attributes.getValue("Name"); 
+      }
+      else if (qName.equals("Experiment")) {
+        for (int i=0; i<attributes.getLength(); i++) {
+          addMeta(attributes.getQName(i), attributes.getValue(i));
+        }
+      }
+      else if (qName.equals("ChannelDescription")) {
+        String prefix = series + " - Channel " + count + " - ";
+        addMeta(prefix + "Min", attributes.getValue("Min"));
+        addMeta(prefix + "Max", attributes.getValue("Max"));
+        addMeta(prefix + "Resolution", attributes.getValue("Resolution"));
+        addMeta(prefix + "LUTName", attributes.getValue("LUTName"));
+        addMeta(prefix + "IsLUTInverted", attributes.getValue("IsLUTInverted"));
+        count++; 
+      }
+      else if (qName.equals("DimensionDescription")) {
+        String prefix = series + " - Dimension " + count + " - ";
+        addMeta(prefix + "NumberOfElements", 
+          attributes.getValue("NumberOfElements"));
+        addMeta(prefix + "Length", attributes.getValue("Length"));
+        addMeta(prefix + "Origin", attributes.getValue("Origin"));
+        addMeta(prefix + "DimID", attributes.getValue("DimID"));
+      }
+      else if (qName.equals("ScannerSettingRecord")) {
+        String key = attributes.getValue("Identifier") + " - " +
+          attributes.getValue("Description");
+        addMeta(series + " - " + key, attributes.getValue("Variant"));
+      }
+      else if (qName.equals("FilterSettingRecord")) {
+        String key = attributes.getValue("ObjectName") + " - " +
+          attributes.getValue("Description") + " - " + 
+          attributes.getValue("Attribute");
+        addMeta(series + " - " + key, attributes.getValue("Variant"));  
+      }
+      else if (qName.equals("ATLConfocalSettingDefinition")) {
+        for (int i=0; i<attributes.getLength(); i++) {
+          addMeta(series + " - " + attributes.getQName(i), 
+            attributes.getValue(i));
+        }
+      }
+      else if (qName.equals("Wheel")) {
+        String prefix = series + " - Wheel " + count + " - ";
+        addMeta(prefix + "Qualifier", attributes.getValue("Qualifier"));
+        addMeta(prefix + "FilterIndex", attributes.getValue("FilterIndex"));
+        addMeta(prefix + "FilterSpectrumPos", 
+          attributes.getValue("FilterSpectrumPos"));
+        addMeta(prefix + "IsSpectrumTurnMode", 
+          attributes.getValue("IsSpectrumTurnMode"));
+        addMeta(prefix + "IndexChanged", attributes.getValue("IndexChanged"));
+        addMeta(prefix + "SpectrumChanged", 
+          attributes.getValue("SpectrumChanged"));
+        count++; 
+      }
+      else if (qName.equals("WheelName")) {
+        String prefix = series + " - Wheel " + (count - 1) + " - WheelName ";
+        int ndx = 0;
+        while (getMeta(prefix + ndx) != null) ndx++;
+
+        addMeta(prefix + ndx, attributes.getValue("FilterName"));
+      }
+      else if (qName.equals("MultiBand")) {
+        String prefix = series + " - MultiBand Channel " + 
+          attributes.getValue("Channel") + " - "; 
+        addMeta(prefix + "LeftWorld", attributes.getValue("LeftWorld")); 
+        addMeta(prefix + "RightWorld", attributes.getValue("RightWorld")); 
+        addMeta(prefix + "DyeName", attributes.getValue("DyeName")); 
+      }
+      else if (qName.equals("LaserLineSetting")) {
+        String prefix = series + " - LaserLine " + 
+          attributes.getValue("LaserLine") + " - "; 
+        addMeta(prefix + "IntensityDev", attributes.getValue("IntensityDev")); 
+        addMeta(prefix + "IntensityLowDev", 
+          attributes.getValue("IntensityLowDev")); 
+        addMeta(prefix + "AOBSIntensityDev", 
+          attributes.getValue("AOBSIntensityDev")); 
+        addMeta(prefix + "AOBSIntensityLowDev", 
+          attributes.getValue("AOBSIntensityLowDev")); 
+        addMeta(prefix + "EnableDoubleMode", 
+          attributes.getValue("EnableDoubleMode")); 
+        addMeta(prefix + "LineIndex", attributes.getValue("LineIndex")); 
+        addMeta(prefix + "Qualifier", attributes.getValue("Qualifier")); 
+        addMeta(prefix + "SequenceIndex", 
+          attributes.getValue("SequenceIndex")); 
+      }
+      else if (qName.equals("Detector")) {
+        String prefix = series + " - Detector Channel " + 
+          attributes.getValue("Channel") + " - ";
+        addMeta(prefix + "IsActive", attributes.getValue("IsActive"));
+        addMeta(prefix + "IsReferenceUnitActivatedForCorrection", 
+          attributes.getValue("IsReferenceUnitActivatedForCorrection"));
+        addMeta(prefix + "Gain", attributes.getValue("Gain"));
+        addMeta(prefix + "Offset", attributes.getValue("Offset"));
+      }
+      else if (qName.equals("Laser")) {
+        String prefix = series + " Laser " + attributes.getValue("LaserName") +
+          " - ";
+        addMeta(prefix + "CanDoLinearOutputPower", 
+          attributes.getValue("CanDoLinearOutputPower"));
+        addMeta(prefix + "OutputPower", attributes.getValue("OutputPower"));
+        addMeta(prefix + "Wavelength", attributes.getValue("Wavelength"));
+      }
+      else if (qName.equals("TimeStamp")) {
+        String prefix = series + " - TimeStamp " + count + " - ";
+        addMeta(prefix + "HighInteger", attributes.getValue("HighInteger"));
+        addMeta(prefix + "LowInteger", attributes.getValue("LowInteger"));
+        count++; 
+      }
+      else if (qName.equals("ChannelScalingInfo")) {
+        String prefix = series + " - ChannelScalingInfo " + count + " - ";
+        addMeta(prefix + "WhiteValue", attributes.getValue("WhiteValue"));
+        addMeta(prefix + "BlackValue", attributes.getValue("BlackValue"));
+        addMeta(prefix + "GammaValue", attributes.getValue("GammaValue"));
+        addMeta(prefix + "Automatic", attributes.getValue("Automatic"));
+      }
+      else if (qName.equals("RelTimeStamp")) {
+        addMeta(series + " RelTimeStamp " + attributes.getValue("Frame"), 
+          attributes.getValue("Time")); 
+      }
+      else count = 0; 
     }
   }
 
