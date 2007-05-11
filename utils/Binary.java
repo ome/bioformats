@@ -32,7 +32,7 @@ public class Binary {
 
   public static void decode(String bits, int len, int offset) {
     int bitlen = bits.length();
-    for (int i=offset; i<bitlen-len; i+=len) {
+    for (int i=offset; i<=bitlen-len; i+=len) {
       String s = bits.substring(i, i + len);
       int q = Integer.parseInt(s, 2);
       if (q >= 32 && q != 127) System.out.print((char) q);
