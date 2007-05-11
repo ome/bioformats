@@ -379,6 +379,27 @@ public final class DataTools {
     return bytesToLong(bytes, 0, 8, little);
   }
 
+  // -- Byte swapping --
+
+  public static short swap(short x) {
+    return (short) ((x << 8) | ((x >> 8) & 0xFF));
+  }
+
+  public static char swap(char x) {
+    return (char) ((x << 8) | ((x >> 8) & 0xFF));
+  }
+
+  public static int swap(int x) {
+    return (int) ((swap((short) x) << 16) | (swap((short) (x >> 16)) & 0xFFFF));
+  }
+
+  public static long swap(long x) {
+    return (long) (((long) swap((int) x) << 32) |
+      ((long) swap((int) (x >> 32)) & 0xFFFFFFFFL));
+  }
+
+  // -- Miscellaneous --
+
   /** Remove null bytes from a string. */
   public static String stripString(String toStrip) {
     char[] toRtn = new char[toStrip.length()];
@@ -487,25 +508,6 @@ public final class DataTools {
     }
 
     return rtn;
-  }
-
-  // -- Byte swapping --
-
-  public static short swap(short x) {
-    return (short) ((x << 8) | ((x >> 8) & 0xFF));
-  }
-
-  public static char swap(char x) {
-    return (char) ((x << 8) | ((x >> 8) & 0xFF));
-  }
-
-  public static int swap(int x) {
-    return (int) ((swap((short) x) << 16) | (swap((short) (x >> 16)) & 0xFFFF));
-  }
-
-  public static long swap(long x) {
-    return (long) (((long) swap((int) x) << 32) |
-      ((long) swap((int) (x >> 32)) & 0xFFFFFFFFL));
   }
 
 }
