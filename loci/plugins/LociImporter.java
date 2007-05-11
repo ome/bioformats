@@ -40,10 +40,18 @@ public class LociImporter implements PlugIn {
 
   // -- Fields --
 
-  /** Flag indicating whether last operation was successful. */
+  /**
+   * Flag indicating whether last operation was successful.
+   * NB: This field must be updated properly, or the plugin
+   * will stop working correctly with HandleExtraFileTypes.
+   */
   public boolean success;
 
-  /** Flag indicating whether last operation was canceled. */
+  /**
+   * Flag indicating whether last operation was canceled.
+   * NB: This field must be updated properly, or the plugin
+   * will stop working correctly with HandleExtraFileTypes.
+   */
   public boolean canceled;
 
   // -- PlugIn API methods --
