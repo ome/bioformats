@@ -3,8 +3,8 @@
 //
 
 /*
-OME Notes library for flexible organization and presentation of OME-XML
-metadata. Copyright (C) 2006-@year@ Melissa Linkert.
+OME Metadata Notes application for exploration and editing of OME-XML and
+OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -25,6 +25,7 @@ package loci.ome.notes;
 
 import java.util.*;
 import javax.swing.*;
+import loci.formats.ImageTools;
 
 /** Stores information about a template field. */
 public class TemplateField {
@@ -43,14 +44,17 @@ public class TemplateField {
   /** The name of this field. */
   private String name;
 
-  /** Represents how this field should be mapped into OME-CA. */
-  private String omecaMap;
+  /** Represents how this field's name should be mapped into OME-CA. */
+  private String nameMap;
+
+  /** Represents how this field's value should be mapped into OME-CA. */
+  private String valueMap;
 
   /** Component used to represent this field. */
   private JComponent component;
 
   /** Row and column in the layout grid. */
-  private int row = -1, column = -1;
+  private int row = -1, column = 1;
 
   /** Width and height of the component (in terms of grid cells). */
   private int width = 1, height = 1;
@@ -77,9 +81,10 @@ public class TemplateField {
         String value = line.substring(line.indexOf(" ")).trim();
         value = value.substring(1, value.length() - 1);
 
-        if (key.startsWith("name")) name = value;
+        if (key.startsWith("nameMap")) nameMap = value;
+        else if (key.startsWith("name")) name = value;
         else if (key.startsWith("type")) type = value;
-        else if (key.startsWith("map")) omecaMap = value;
+        else if (key.startsWith("valueMap")) valueMap = value;
         else if (key.startsWith("repeated")) {
           repeated = new Boolean(value).booleanValue();
         }
@@ -133,6 +138,11 @@ public class TemplateField {
       component = new JComboBox(enums);
       ((JComboBox) component).setSelectedItem(defaultValue);
     }
+    else if (type.equals("thumbnail")) {
+      ImageIcon icon = 
+        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1)); 
+      component = new JLabel(icon, SwingConstants.LEFT); 
+    }
     else if (type.equals("int")) {
       if (defaultValue == null) defaultValue = new Integer(0);
       int v = ((Integer) defaultValue).intValue();
@@ -149,7 +159,8 @@ public class TemplateField {
     rtn.setDefaultValue(getDefaultValue());
     rtn.setEnums(getEnums());
     rtn.setName(getName());
-    rtn.setMap(getMap());
+    rtn.setNameMap(getNameMap());
+    rtn.setValueMap(getValueMap());
     rtn.setColumn(getColumn());
     rtn.setWidth(getWidth());
     rtn.setHeight(getHeight());
@@ -172,6 +183,11 @@ public class TemplateField {
     else if (type.equals("enum")) {
       comp = new JComboBox(enums);
       ((JComboBox) comp).setSelectedItem(defaultValue);
+    }
+    else if (type.equals("thumbnail")) {
+      ImageIcon icon = 
+        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1)); 
+      comp = new JLabel(icon, SwingConstants.LEFT); 
     }
     else if (type.equals("int")) {
       int v = ((Integer) defaultValue).intValue();
@@ -198,9 +214,13 @@ public class TemplateField {
 
   public void setName(String name) { this.name = name; }
 
-  public String getMap() { return omecaMap; }
+  public String getNameMap() { return nameMap; }
 
-  public void setMap(String map) { omecaMap = map; }
+  public void setNameMap(String map) { nameMap = map; }
+
+  public String getValueMap() { return valueMap; }
+
+  public void setValueMap(String map) { valueMap = map; }
 
   public JComponent getComponent() { return component; }
 

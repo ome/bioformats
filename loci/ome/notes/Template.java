@@ -3,8 +3,8 @@
 //
 
 /*
-OME Notes library for flexible organization and presentation of OME-XML
-metadata. Copyright (C) 2006-@year@ Melissa Linkert.
+OME Metadata Notes application for exploration and editing of OME-XML and
+OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -214,7 +214,7 @@ public class Template {
               // special case : number of repetitions depends on the file
               // we're opening
 
-              String map = group.getField(0, k).getMap();
+              String map = group.getField(0, k).getValueMap();
               map = map.substring(0, map.indexOf(":"));
 
               Class st = null;
@@ -237,7 +237,9 @@ public class Template {
         }
 
         for (int j=0; j<tabs[i].getNumFields(); j++) {
-          populateField(root, tabs[i].getField(j));
+          if (!tabs[i].getField(j).getType().equals("thumbnail")) {
+            populateField(root, tabs[i].getField(j));
+          } 
         }
       }
     }
@@ -293,8 +295,11 @@ public class Template {
         writer.write("  field {\n");
         writer.write("    name \"" + t.getName() + "\"\n");
         writer.write("    type \"" + t.getType() + "\"\n");
-        if (t.getMap() != null) {
-          writer.write("    map \"" + t.getMap() + "\"\n");
+        if (t.getValueMap() != null) {
+          writer.write("    valueMap \"" + t.getValueMap() + "\"\n");
+        }
+        if (t.getNameMap() != null) {
+          writer.write("    nameMap \"" + t.getNameMap() + "\"\n"); 
         }
         if (t.getDefaultValue() != null) {
           writer.write("    default \"" + t.getDefaultValue() + "\"\n");
@@ -328,8 +333,11 @@ public class Template {
           writer.write("    field {\n");
           writer.write("      name \"" + t.getName() + "\"\n");
           writer.write("      type \"" + t.getType() + "\"\n");
-          if (t.getMap() != null) {
-            writer.write("      map \"" + t.getMap() + "\"\n");
+          if (t.getValueMap() != null) {
+            writer.write("      valueMap \"" + t.getValueMap() + "\"\n");
+          }
+          if (t.getNameMap() != null) {
+            writer.write("      nameMap \"" + t.getNameMap() + "\"\n");
           }
           if (t.getDefaultValue() != null) {
             writer.write("      default \"" + t.getDefaultValue() + "\"\n");
@@ -367,14 +375,16 @@ public class Template {
       int fields = tabs[i].getNumFields();
       for (int j=0; j<fields; j++) {
         if (tabs[i].getField(j).isRepeated()) {
-          String map = tabs[i].getField(j).getMap();
+          String map = tabs[i].getField(j).getValueMap();
           if (map.indexOf("-") != -1) map = map.substring(0, map.indexOf("-"));
 
           try {
-            int nodeCount = getNodeCount(root, map);
+            int nodeCount = TemplateTools.getNodeCount(root, map);
             for (int k=1; k<nodeCount; k++) {
               TemplateField f = tabs[i].getField(j).copy();
-              f.setMap(map + "-" + k);
+              f.setValueMap(map + "-" + k);
+              f.setNameMap(f.getNameMap() + "-" + k); 
+              f.setRow(tabs[i].getField(j).getRow() + k); 
               tabs[i].addField(f);
             }
           }
@@ -390,14 +400,16 @@ public class Template {
         for (int k=0; k<fields; k++) {
           TemplateField f = g.getField(0, k).copy();
           if (f.isRepeated()) {
-            String map = f.getMap();
+            String map = f.getValueMap();
             if (map.indexOf("-") != -1) {
               map = map.substring(0, map.indexOf("-"));
             }
 
             try {
-              for (int m=1; m<getNodeCount(root, map); m++) {
-                f.setMap(map + "-" + k);
+              for (int m=1; m<TemplateTools.getNodeCount(root, map); m++) {
+                f.setValueMap(map + "-" + k);
+                f.setNameMap(f.getNameMap() + "-" + k);
+                f.setRow(g.getField(0, k).getRow() + m); 
                 g.addField(f);
               }
             }
@@ -503,90 +515,27 @@ public class Template {
 
   // -- Helper methods --
 
+  /** Populate the given TemplateField's name, if necessary. */
+  private void populateName(OMENode root, TemplateField t) throws Exception {
+    if (t.getNameMap() != null) { 
+      t.setName(TemplateTools.getString(root, t.getNameMap(), false));
+    } 
+  }
+
   /** Populate the given TemplateField. */
   private void populateField(OMENode root, TemplateField t) throws Exception {
-    OMEXMLNode node = findNode(root, t.getMap(), false);
-
-    if (node == null) {
-      // unmapped field
-
-      CustomAttributesNode ca = root.getCustomAttributes();
-
-      if (ca != null) {
-        Vector elements = DOMUtil.getChildElements("NotesField",
-          ca.getDOMElement());
-        for (int i=0; i<elements.size(); i++) {
-          Element el = (Element) elements.get(i);
-          if (DOMUtil.getAttribute("name", el).equals(t.getName())) {
-            String v = DOMUtil.getAttribute("value", el);
-            setComponentValue(t, t.getComponent(), v);
-          }
-        }
-      }
-
-      return;
-    }
-
-    String map = t.getMap();
-    map = map.substring(map.lastIndexOf(":") + 1);
-    if (map.indexOf("-") != -1) {
-      map = map.substring(0, map.indexOf("-"));
-    }
-
-    if (node instanceof AttributeNode) {
-      setComponentValue(t, t.getComponent(), node.getAttribute(map));
-      return;
-    }
-
-    String methodName1 = "get" + map;
-    String methodName2 = "is" + map;
-
-    if (map.equals("CreationDate")) methodName1 = "getCreated";
-
-    // retrieve the appropriate value
-
-    Method[] methods = node.getClass().getMethods();
-    for (int j=0; j<methods.length; j++) {
-      String name = methods[j].getName();
-
-      if ((name.equals(methodName1) || name.equals(methodName2)) &&
-        methods[j].getParameterTypes().length == 0)
-      {
-        Object o = methods[j].invoke(node, new Object[0]);
-        String s = o == null ? "" : o.toString();
-        String v = s.toLowerCase();
-
-        // populate the corresponding Swing component
-
-        setComponentValue(t, t.getComponent(), v);
-        break;
-      }
-    }
+    setComponentValue(t, t.getComponent(), 
+      TemplateTools.getString(root, t.getValueMap(), true)); 
+    populateName(root, t);
   }
 
   /** Save the given TemplateField. */
   private void saveField(OMENode root, TemplateField t) throws Exception {
-    OMEXMLNode node = findNode(root, t.getMap(), true);
+    OMEXMLNode node = TemplateTools.findNode(root, t.getValueMap(), true);
 
     JComponent c = t.getComponent();
-    Object value = null;
-
-    if (c instanceof JCheckBox) {
-      value = new Boolean(((JCheckBox) c).isSelected());
-    }
-    else if (c instanceof JComboBox) {
-      value = ((JComboBox) c).getSelectedItem();
-    }
-    else if (c instanceof JScrollPane) {
-      JScrollPane scroll = (JScrollPane) c;
-      JViewport view = scroll.getViewport();
-      value = ((JTextArea) view.getView()).getText();
-    }
-    else if (c instanceof JSpinner) {
-      value = ((JSpinner) c).getValue();
-    }
-
-    String map = t.getMap();
+    Object value = TemplateTools.getComponentValue(c);
+    String map = t.getValueMap();
 
     if (map == null || map.length() == 0) {
       // this is a custom unmapped field, which gets stored in a
@@ -622,148 +571,6 @@ public class Template {
         methods[j].invoke(node, new Object[] {new Integer(value.toString())});
       }
     }
-  }
-
-  /** Retrieve the number of nodes corresponding to this map. */
-  private int getNodeCount(OMENode root, String map) throws Exception {
-    if (map == null || map.length() == 0 || root == null) return 0;
-    map = map.substring(0, map.lastIndexOf(":"));
-    map = map.substring(map.lastIndexOf(":") + 1);
-    if (map.indexOf("-") != -1) map = map.substring(0, map.indexOf("-"));
-    return DOMUtil.findElementList(map, root.getOMEDocument(true)).size();
-  }
-
-  /**
-   * Find the OME-XML node corresponding to the given map string.
-   * If the 'create' flag is set, a new node will be created if one does not
-   * already exist.
-   */
-  private OMEXMLNode findNode(OMENode root, String map, boolean create)
-    throws Exception
-  {
-    if (map == null || map.length() == 0) return null;
-
-    // the 'map' string is a colon-separated list of nodes from the root
-    // to the field we want to read
-    //
-    // example: if we want to read the 'PixelType' value of a Pixels node,
-    // the value of 'map' would be 'Image:Pixels:PixelType'
-
-    String st = map.substring(0, map.indexOf(":"));
-    map = map.substring(map.indexOf(":") + 1);
-
-    int ndx = 0;
-    if (map.indexOf("-") != -1 && map.indexOf("OriginalMetadata") == -1) {
-      ndx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
-      map = map.substring(0, map.indexOf("-"));
-    }
-
-    Class stClass = null;
-
-    try {
-      stClass = Class.forName("org.openmicroscopy.xml." + st + "Node");
-    }
-    catch (ClassNotFoundException c) {
-      stClass = Class.forName("org.openmicroscopy.xml.st." + st + "Node");
-    }
-
-    Vector nodes = OMEXMLNode.createNodes(stClass,
-      DOMUtil.getChildElements(st, root.getDOMElement()));
-
-    if (nodes.size() == 0 && create) {
-      Class param = stClass.getName().startsWith("org.openmicroscopy.xml.st.") ?
-        CustomAttributesNode.class : root.getClass();
-      Constructor con = stClass.getConstructor(new Class[] {param});
-      nodes.add((OMEXMLNode) con.newInstance(new Object[] {root}));
-    }
-    else if (nodes.size() == 0) return null;
-
-    OMEXMLNode node = (OMEXMLNode) nodes.get(ndx < nodes.size() ? ndx : 0);
-
-    if (map.indexOf("OriginalMetadata") != -1 && map.indexOf("-") != -1) {
-      ndx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
-      map = map.substring(0, map.indexOf("-"));
-    }
-
-    while (map.indexOf(":") != -1) {
-      String type = map.substring(0, map.indexOf(":"));
-      map = map.substring(map.indexOf(":") + 1);
-
-      String methodName1 = "get" + type;
-      String methodName2 = "getDefault" + type;
-
-      if (node instanceof CustomAttributesNode) {
-        methodName2 = "getCAList";
-      }
-
-      // find the next node in the list
-
-      Method[] methods = node.getClass().getMethods();
-
-      for (int j=0; j<methods.length; j++) {
-        String name = methods[j].getName();
-        if (name.equals(methodName1) || name.equals(methodName2)) {
-          if (node instanceof CustomAttributesNode) {
-            Vector list = (Vector) methods[j].invoke(node, new Object[0]);
-
-            int count = -1;
-            for (int k=0; k<list.size(); k++) {
-              String className = list.get(k).getClass().getName();
-              int idx = className.lastIndexOf(".");
-              className = className.substring(idx + 1);
-
-              if (className.equals(type + "Node") ||
-                (className.equals("AttributeNode") &&
-                type.equals("OriginalMetadata")))
-              {
-                count++;
-                if (count == ndx) {
-                  node = (OMEXMLNode) list.get(k);
-                  if (type.equals("OriginalMetadata")) return node;
-                  break;
-                }
-              }
-            }
-          }
-          else node = (OMEXMLNode) methods[j].invoke(node, new Object[0]);
-
-          // check if we found a matching node; if not, create one
-          if (node == null ||
-            !node.getClass().getName().endsWith(type + "Node"))
-          {
-            Class target = null;
-
-            try {
-              target = Class.forName("org.openmicroscopy.xml." + type + "Node");
-            }
-            catch (ClassNotFoundException e) {
-              try {
-                target =
-                  Class.forName("org.openmicroscopy.xml.st." + type + "Node");
-              }
-              catch (ClassNotFoundException cfe) {
-                cfe.printStackTrace();
-              }
-            }
-
-            Class param =
-              target.getName().startsWith("org.openmicroscopy.xml.st.") ?
-              CustomAttributesNode.class : node.getClass();
-            Constructor con = target.getConstructor(new Class[] {param});
-
-            if (node == null) {
-              node = (OMEXMLNode) nodes.get(ndx < nodes.size() ? ndx : 0);
-              node = (OMEXMLNode) param.getConstructor(new Class[]
-                {node.getClass()}).newInstance(new Object[] {node});
-            }
-
-            node = (OMEXMLNode) con.newInstance(new Object[] {node});
-          }
-          break;
-        }
-      }
-    }
-    return node;
   }
 
   /** Sets the value of the given component, based on the given string. */

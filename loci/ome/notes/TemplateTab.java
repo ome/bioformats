@@ -73,7 +73,17 @@ public class TemplateTab {
 
   public void setRows(int rows) { this.rows = rows; }
 
-  public int getColumns() { return columns; }
+  public int getColumns() { 
+    if (columns != 0) return columns; 
+    int max = 1; 
+    
+    for (int i=0; i<fields.size(); i++) {
+      TemplateField f = (TemplateField) fields.get(i);
+      if (f.getColumn() > max) max = f.getColumn();
+    } 
+    columns = max;
+    return columns;
+  }
 
   public void setColumns(int columns) { this.columns = columns; }
 

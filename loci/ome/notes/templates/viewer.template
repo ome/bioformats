@@ -20,63 +20,69 @@ tab {
     field {
       name "Name"
       type "var"
-      map "Image:Name"
+      valueMap "Image:Name"
     }
 
     field {
       name "Creation Date"
       type "var"
-      map "Image:CreationDate"
+      valueMap "Image:CreationDate"
     }
 
     field {
       name "Description"
       type "var"
-      map "Image:Description"
+      valueMap "Image:Description"
     }
 
     field {
       name "Width"
       type "int"
-      map "Image:Pixels:SizeX"
+      valueMap "Image:Pixels:SizeX"
     }
   
     field {
       name "Height"
       type "int"
-      map "Image:Pixels:SizeY"
+      valueMap "Image:Pixels:SizeY"
     }
  
     field {
       name "Number of slices"
       type "int"
-      map "Image:Pixels:SizeZ"
+      valueMap "Image:Pixels:SizeZ"
     }
 
     field {
       name "Number of channels"
       type "int"
-      map "Image:Pixels:SizeC"
+      valueMap "Image:Pixels:SizeC"
     }
 
     field {
       name "Number of timepoints"
       type "int"
-      map "Image:Pixels:SizeT"
+      valueMap "Image:Pixels:SizeT"
     }
   
     field {
       name "Big Endian"
       type "bool"
       default "false"
-      map "Image:Pixels:BigEndian"
+      valueMap "Image:Pixels:BigEndian"
     }
 
     field {
       name "Pixel Type"
       type "var"
-      map "Image:Pixels:PixelType"
+      valueMap "Image:Pixels:PixelType"
     }
+  
+    field {
+      name "Thumbnail"
+      type "thumbnail"
+    }
+  
   }
 }
 
@@ -87,42 +93,34 @@ tab {
   field {
     name "First Name"
     type "var"
-    map "CustomAttributes:Experimenter:FirstName"
+    valueMap "CustomAttributes:Experimenter:FirstName"
   }
 
   field {
     name "Last Name"
     type "var"
-    map "CustomAttributes:Experimenter:LastName"
+    valueMap "CustomAttributes:Experimenter:LastName"
   }
 
   field {
     name "Email"
     type "var"
     span "1,3" 
-    map "CustomAttributes:Experimenter:Email"
+    valueMap "CustomAttributes:Experimenter:Email"
   }
 }
 
 tab {
-  name "Metadata hashtable"
+  name "Other metadata"
 
   grid "1,2"
 
   field {
-    name "Field name"
-    map "Image:CustomAttributes:OriginalMetadata:name"
+    nameMap "Image:CustomAttributes:OriginalMetadata:name"
+    valueMap "Image:CustomAttributes:OriginalMetadata:value"
     repeated "true" 
     type "var" 
     grid "1,1" 
-  }
-
-  field {
-    name "Field value"
-    map "Image:CustomAttributes:OriginalMetadata:value"
-    repeated "true"
-    type "var"
-    grid "1,3" 
   }
 
 }

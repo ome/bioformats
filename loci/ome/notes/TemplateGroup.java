@@ -3,8 +3,8 @@
 //
 
 /*
-OME Notes library for flexible organization and presentation of OME-XML
-metadata. Copyright (C) 2006-@year@ Melissa Linkert.
+OME Metadata Notes application for exploration and editing of OME-XML and
+OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -113,7 +113,7 @@ public class TemplateGroup {
    * Adjust the mapping so that the node index matches the repetition number.
    */
   private void adjustMap(TemplateField t, int repetition) {
-    String map = t.getMap();
+    String map = t.getValueMap();
     if (map == null) return;
 
     if (map.lastIndexOf("-") != -1) {
@@ -121,7 +121,7 @@ public class TemplateGroup {
     }
 
     map = map + "-" + repetition;
-    t.setMap(map);
+    t.setValueMap(map);
   }
 
 }
