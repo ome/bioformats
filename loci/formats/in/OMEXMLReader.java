@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.zip.*;
 import loci.formats.*;
 import loci.formats.codec.Base64Codec;
+import loci.formats.codec.CBZip2InputStream;
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.

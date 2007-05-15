@@ -361,9 +361,9 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#setSeries(int) */
-  public void setSeries(int no) throws FormatException {
+  public void setSeries(int no) {
     if (no < 0 || no >= getSeriesCount()) {
-      throw new FormatException("Invalid series: " + no);
+      throw new IllegalArgumentException("Invalid series: " + no);
     }
     series = no;
   }

@@ -320,7 +320,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#setSeries(int) */
-  public void setSeries(int no) throws FormatException {
+  public void setSeries(int no) {
     FormatTools.assertId(currentId, true, 2);
     getReader().setSeries(no);
   }

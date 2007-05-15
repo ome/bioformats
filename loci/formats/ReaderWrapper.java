@@ -185,7 +185,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesCount();
   }
 
-  public void setSeries(int no) throws FormatException {
+  public void setSeries(int no) {
     reader.setSeries(no);
   }
 

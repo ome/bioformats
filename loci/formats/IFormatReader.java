@@ -176,7 +176,7 @@ public interface IFormatReader extends IFormatHandler {
   int getSeriesCount();
 
   /** Activates the specified series. */
-  void setSeries(int no) throws FormatException;
+  void setSeries(int no);
 
   /** Gets the currently active series. */
   int getSeries();
