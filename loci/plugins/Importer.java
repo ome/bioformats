@@ -31,11 +31,9 @@ import ij.io.FileInfo;
 import ij.measure.Calibration;
 import ij.process.*;
 import ij.text.TextWindow;
-import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-import javax.swing.Box;
 import loci.formats.*;
 import loci.formats.ome.OMEReader;
 import loci.formats.ome.OMEXMLMetadataStore;
@@ -134,15 +132,11 @@ public class Importer {
     boolean viewBrowser = options.isViewBrowser();
     boolean viewView5D = options.isViewView5D();
 
-    // -- Step 4: read file --
+    // -- Step 4: analyze and read from data source --
 
     IJ.showStatus("Analyzing " + id);
 
     try {
-      // -- Step 4a: do some preparatory work --
-
-      if (viewImage5D) mergeChannels = false;
-
       FileStitcher fs = null;
       r.setMetadataFiltered(true);
       r.setId(id);
@@ -150,33 +144,24 @@ public class Importer {
       int pixelType = r.getPixelType();
       String currentFile = r.getCurrentFile();
 
+      // -- Step 4a: prompt for the file pattern, if necessary --
+
       if (groupFiles) {
-        fs = new FileStitcher(r, true);
-        // prompt user to confirm file pattern (or grab from macro options)
-        id = FilePattern.findPattern(idLoc);
-        GenericDialog gd = new GenericDialog("Bio-Formats File Stitching");
-        int len = id.length() + 1;
-        if (len > 80) len = 80;
-        gd.addStringField("Pattern: ", id, len);
-        gd.showDialog();
-        if (gd.wasCanceled()) {
-          plugin.canceled = true;
-          return;
-        }
-        id = gd.getNextString();
-        r = fs;
+        status = options.promptFilePattern();
+        if (!statusOk(status)) return;
+        id = options.getId();
       }
+
+      // CTR FIXME -- why is the file stitcher separate from the reader?
+      // (answer: because of the clunkiness of the 4D Data Browser integration)
+      if (groupFiles) r = fs = new FileStitcher(r, true);
       r = new ChannelSeparator(r);
       r.setId(id);
 
-      // store OME metadata into OME-XML structure, if available
+      // -- Step 4b: prompt for which series to import, if necessary --
 
+      // populate series-related variables
       int seriesCount = r.getSeriesCount();
-      boolean[] series = new boolean[seriesCount];
-      series[0] = true;
-
-      // build descriptive string and range for each series
-      String[] seriesStrings = new String[seriesCount];
       int[] num = new int[seriesCount];
       int[] sizeC = new int[seriesCount];
       int[] sizeZ = new int[seriesCount];
@@ -191,6 +176,7 @@ public class Importer {
       int[] tBegin = new int[seriesCount];
       int[] tEnd = new int[seriesCount];
       int[] tStep = new int[seriesCount];
+      boolean[] series = new boolean[seriesCount];
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(i);
         num[i] = r.getImageCount();
@@ -206,6 +192,13 @@ public class Importer {
         }
         else cEnd[i] = num[i] - 1;
         cStep[i] = zStep[i] = tStep[i] = 1;
+      }
+      series[0] = true;
+
+      // build descriptive label for each series
+      String[] seriesLabels = new String[seriesCount];
+      for (int i=0; i<seriesCount; i++) {
+        r.setSeries(i);
         StringBuffer sb = new StringBuffer();
         String name = store.getImageName(new Integer(i));
         if (name != null && name.length() > 0) {
@@ -243,72 +236,15 @@ public class Importer {
             sb.append(")");
           }
         }
-        seriesStrings[i] = sb.toString();
+        seriesLabels[i] = sb.toString();
       }
-
-      // -- Step 3a: prompt for the series to open, if necessary --
 
       if (seriesCount > 1) {
-        GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
-
-        GridBagLayout gdl = (GridBagLayout) gd.getLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-
-        Panel[] p = new Panel[seriesCount];
-        for (int i=0; i<seriesCount; i++) {
-          gd.addCheckbox(seriesStrings[i], series[i]);
-          r.setSeries(i);
-          int sx = r.getThumbSizeX() + 10;
-          int sy = r.getThumbSizeY();
-          p[i] = new Panel();
-          p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
-          gbc.gridy = i;
-          gdl.setConstraints(p[i], gbc);
-          gd.add(p[i]);
-        }
-        Util.addScrollBars(gd);
-        ThumbLoader loader = new ThumbLoader(r, p, gd);
-        gd.showDialog();
-        loader.stop();
-        if (gd.wasCanceled()) {
-          plugin.canceled = true;
-          return;
-        }
-
-        int[] widths = new int[seriesCount];
-        int[] heights = new int[seriesCount];
-        int[] types = new int[seriesCount];
-        int[] channels = new int[seriesCount];
-
-        for (int i=0; i<seriesCount; i++) {
-          series[i] = gd.getNextBoolean();
-          r.setSeries(i);
-          widths[i] = r.getSizeX();
-          heights[i] = r.getSizeY();
-          types[i] = r.getPixelType();
-          channels[i] = r.getSizeC();
-        }
-
-        if (concatenate) {
-          for (int i=0; i<seriesCount; i++) {
-            if (!series[i]) {
-              for (int j=0; j<seriesCount; j++) {
-                if (j != i && series[j] && widths[j] == widths[i] &&
-                  heights[j] == heights[i] && types[j] == types[i] &&
-                  channels[j] == channels[i])
-                {
-                  series[i] = true;
-                  j = seriesCount;
-                }
-              }
-            }
-          }
-        }
+        status = options.promptSeries(r, seriesLabels, series);
+        if (!statusOk(status)) return;
       }
 
-      // -- Step 4b: prompt for the range of planes to import, if necessary --
+      // -- Step 4c: prompt for the range of planes to import, if necessary --
 
       if (specifyRanges) {
         boolean needRange = false;
@@ -317,81 +253,9 @@ public class Importer {
         }
         if (needRange) {
           IJ.showStatus("");
-          GenericDialog gd = new GenericDialog("Bio-Formats Range Options");
-          for (int i=0; i<seriesCount; i++) {
-            if (!series[i]) continue;
-            gd.addMessage(seriesStrings[i].replaceAll("_", " "));
-            String s = seriesCount > 1 ? "_" + (i + 1) : "";
-            if (certain[i]) {
-              if (sizeC[i] > 1) {
-                gd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
-                gd.addNumericField("C_End" + s, cEnd[i] + 1, 0);
-                gd.addNumericField("C_Step" + s, cStep[i], 0);
-              }
-              if (sizeZ[i] > 1) {
-                gd.addNumericField("Z_Begin" + s, zBegin[i] + 1, 0);
-                gd.addNumericField("Z_End" + s, zEnd[i] + 1, 0);
-                gd.addNumericField("Z_Step" + s, zStep[i], 0);
-              }
-              if (sizeT[i] > 1) {
-                gd.addNumericField("T_Begin" + s, tBegin[i] + 1, 0);
-                gd.addNumericField("T_End" + s, tEnd[i] + 1, 0);
-                gd.addNumericField("T_Step" + s, tStep[i], 0);
-              }
-            }
-            else {
-              gd.addNumericField("Begin" + s, cBegin[i] + 1, 0);
-              gd.addNumericField("End" + s, cEnd[i] + 1, 0);
-              gd.addNumericField("Step" + s, cStep[i], 0);
-            }
-          }
-          Util.addScrollBars(gd);
-          gd.showDialog();
-          if (gd.wasCanceled()) {
-            plugin.canceled = true;
-            return;
-          }
-          for (int i=0; i<seriesCount; i++) {
-            if (!series[i]) continue;
-            if (certain[i]) {
-              if (sizeC[i] > 1) {
-                cBegin[i] = (int) gd.getNextNumber() - 1;
-                cEnd[i] = (int) gd.getNextNumber() - 1;
-                cStep[i] = (int) gd.getNextNumber();
-              }
-              if (sizeZ[i] > 1) {
-                zBegin[i] = (int) gd.getNextNumber() - 1;
-                zEnd[i] = (int) gd.getNextNumber() - 1;
-                zStep[i] = (int) gd.getNextNumber();
-              }
-              if (sizeT[i] > 1) {
-                tBegin[i] = (int) gd.getNextNumber() - 1;
-                tEnd[i] = (int) gd.getNextNumber() - 1;
-                tStep[i] = (int) gd.getNextNumber();
-              }
-            }
-            else {
-              cBegin[i] = (int) gd.getNextNumber() - 1;
-              cEnd[i] = (int) gd.getNextNumber() - 1;
-              cStep[i] = (int) gd.getNextNumber();
-            }
-            int maxC = certain[i] ? sizeC[i] : num[i];
-            if (cBegin[i] < 0) cBegin[i] = 0;
-            if (cBegin[i] >= maxC) cBegin[i] = maxC - 1;
-            if (cEnd[i] < cBegin[i]) cEnd[i] = cBegin[i];
-            if (cEnd[i] >= maxC) cEnd[i] = maxC - 1;
-            if (cStep[i] < 1) cStep[i] = 1;
-            if (zBegin[i] < 0) zBegin[i] = 0;
-            if (zBegin[i] >= sizeZ[i]) zBegin[i] = sizeZ[i] - 1;
-            if (zEnd[i] < zBegin[i]) zEnd[i] = zBegin[i];
-            if (zEnd[i] >= sizeZ[i]) zEnd[i] = sizeZ[i] - 1;
-            if (zStep[i] < 1) zStep[i] = 1;
-            if (tBegin[i] < 0) tBegin[i] = 0;
-            if (tBegin[i] >= sizeT[i]) tBegin[i] = sizeT[i] - 1;
-            if (tEnd[i] < tBegin[i]) tEnd[i] = tBegin[i];
-            if (tEnd[i] >= sizeT[i]) tEnd[i] = sizeT[i] - 1;
-            if (tStep[i] < 1) tStep[i] = 1;
-          }
+          status = options.promptRange(r, series, seriesLabels,
+            cBegin, cEnd, cStep, zBegin, zEnd, zStep, tBegin, tEnd, tStep);
+          if (!statusOk(status)) return;
         }
       }
       int[] cCount = new int[seriesCount];
@@ -403,14 +267,14 @@ public class Importer {
         tCount[i] = (tEnd[i] - tBegin[i] + tStep[i]) / tStep[i];
       }
 
-      // -- Step 4c: display metadata, when appropriate --
+      // -- Step 4d: display metadata, if appropriate --
 
       if (showMetadata) {
         IJ.showStatus("Populating metadata");
 
         // display standard metadata in a table in its own window
         Hashtable meta = new Hashtable();
-        if (r.getSeriesCount() == 1) meta = r.getMetadata();
+        if (seriesCount == 1) meta = r.getMetadata();
         meta.put(idType, currentFile);
         int digits = digits(seriesCount);
         for (int i=0; i<seriesCount; i++) {
@@ -429,7 +293,7 @@ public class Importer {
             s = sb.toString();
           }
           else s = "";
-          final String pad = " ";
+          final String pad = " "; // puts core values first when alphabetizing
           meta.put(pad + s + "SizeX", new Integer(r.getSizeX()));
           meta.put(pad + s + "SizeY", new Integer(r.getSizeY()));
           meta.put(pad + s + "SizeZ", new Integer(r.getSizeZ()));
@@ -465,7 +329,7 @@ public class Importer {
         WindowManager.addWindow(tw);
       }
 
-      // -- Step 4d: read pixel data --
+      // -- Step 4e: read pixel data --
 
       // only read data explicitly if not using 4D Data Browser
       if (!viewBrowser) {
@@ -701,6 +565,10 @@ public class Importer {
 
   // -- Helper methods --
 
+  /**
+   * Displays the given image stack according to
+   * the specified parameters and import options.
+   */
   private void showStack(ImageStack stack, String label,
     OMEXMLMetadataStore store, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
@@ -841,6 +709,9 @@ public class Importer {
       }
       else if (mergeChannels && r.getSizeC() >= 4) {
         // ask the user what they would like to do...
+        // CTR FIXME -- migrate into ImporterOptions?
+        // also test with macros, and merging multiple image stacks
+        // (i.e., what happens if this code executes more than once?)
 
         int planes1 = r.getImageCount() / 2;
         if (planes1 * 2 < r.getImageCount()) planes1++;
@@ -1008,6 +879,7 @@ public class Importer {
     imp.setStack(imp.getTitle(), newStack);
   }
 
+  /** Computes the given value's number of digits. */
   private int digits(int value) {
     int digits = 0;
     while (value > 0) {
@@ -1017,11 +889,13 @@ public class Importer {
     return digits;
   }
 
+  /** Verifies that the given status result is OK. */
   private boolean statusOk(int status) {
     if (status == ImporterOptions.STATUS_CANCELED) plugin.canceled = true;
     return status == ImporterOptions.STATUS_OK;
   }
 
+  /** Reports the given exception with stack trace in an ImageJ error dialog. */
   private void reportException(Throwable t, boolean quiet, String msg) {
     t.printStackTrace();
     IJ.showStatus("");
