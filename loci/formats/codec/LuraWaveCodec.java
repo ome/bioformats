@@ -39,15 +39,21 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
 
   // -- Constants --
 
+  /** System property to check for the LuraWave license code. */
+  public static final String LICENSE_PROPERTY = "lurawave.license";
+
+  /** Message displayed if the LuraWave LWF decoder library is not found. */
   public static final String NO_LURAWAVE_MSG =
     "The LuraWave decoding library, lwf_jsdk2.6.jar, is required to decode " +
     "this file. Please make sure it is present in your classpath.";
 
+  /** Message to display if no LuraWave license code is given. */
   public static final String NO_LICENSE_MSG =
     "No LuraWave license code was specified. Please set one in the " +
-    "lurawave.license system property (e.g., with -Dlurawave.license=XXXX " +
-    "from the command line).";
+    LICENSE_PROPERTY + " system property (e.g., with -D" + LICENSE_PROPERTY +
+    "=XXXX from the command line).";
 
+  /** Message to display if an invalid LuraWave license code is given. */
   public static final String INVALID_LICENSE_MSG = "Invalid license code: ";
 
   // -- Static fields --
@@ -88,7 +94,7 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
   /* @see Codec#decompress(byte[]) */
   public byte[] decompress(byte[] input) throws FormatException {
     if (noLuraWave) throw new FormatException(NO_LURAWAVE_MSG);
-    licenseCode = System.getProperty("lurawave.license");
+    licenseCode = System.getProperty(LICENSE_PROPERTY);
     if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);
     r.setVar("stream",
       new BufferedInputStream(new ByteArrayInputStream(input), 4096));
