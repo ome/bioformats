@@ -3,8 +3,8 @@
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including
-the 4D Data Browser, OME Plugin and Bio-Formats Exporter.
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
 Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
 Curtis Rueden, Philip Huettl and Francis Wong.
 
@@ -54,12 +54,12 @@ public class LociUploader implements PlugIn {
 
   public void run(String arg) {
     // check that we can safely execute the plugin
-    if (!Util.checkVersion()) return;
+    if (!Checker.checkVersion()) return;
     HashSet missing = new HashSet();
-    Util.checkLibrary(Util.BIO_FORMATS, missing);
-    Util.checkLibrary(Util.OME_JAVA_XML, missing);
-    Util.checkLibrary(Util.OME_JAVA_DS, missing);
-    if (!Util.checkMissing(missing)) return;
+    Checker.checkLibrary(Checker.BIO_FORMATS, missing);
+    Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
+    Checker.checkLibrary(Checker.OME_JAVA_DS, missing);
+    if (!Checker.checkMissing(missing)) return;
 
     promptForLogin();
     if (canceled) {

@@ -3,8 +3,8 @@
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including
-the 4D Data Browser, OME Plugin and Bio-Formats Exporter.
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
 Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
 Curtis Rueden, Philip Huettl and Francis Wong.
 
@@ -28,19 +28,15 @@ package loci.plugins;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
-import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.process.*;
 import ij.text.TextWindow;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.image.*;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import javax.swing.Box;
 import loci.formats.*;
-import loci.formats.codec.LuraWaveCodec;
 import loci.formats.ome.OMEReader;
 import loci.formats.ome.OMEXMLMetadataStore;
 import loci.plugins.browser.LociDataBrowser;
@@ -51,22 +47,7 @@ import loci.plugins.browser.LociDataBrowser;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class Importer implements ItemListener {
-
-  // -- Constants --
-
-  private static final String VIEW_NONE = "Metadata only";
-  private static final String VIEW_STANDARD = "Standard ImageJ";
-  private static final String VIEW_BROWSER = "4D Data Browser";
-  private static final String VIEW_IMAGE_5D = "Image5D";
-  private static final String VIEW_VIEW_5D = "View5D";
-
-  private static final String LOCATION_LOCAL = "Local machine";
-  private static final String LOCATION_HTTP = "Internet";
-  private static final String LOCATION_OME = "OME server";
-  private static final String[] LOCATIONS = {
-    LOCATION_LOCAL, LOCATION_HTTP, LOCATION_OME
-  };
+public class Importer {
 
   // -- Fields --
 
@@ -75,15 +56,6 @@ public class Importer implements ItemListener {
    * the canceled and success flags.
    */
   private LociImporter plugin;
-
-  private Checkbox mergeBox;
-  private Checkbox colorizeBox;
-  private Checkbox splitBox;
-  private Checkbox metadataBox;
-  private Checkbox groupBox;
-  private Checkbox concatenateBox;
-  private Checkbox rangeBox;
-  private Choice stackChoice;
 
   private Vector imps = new Vector();
 
@@ -95,263 +67,81 @@ public class Importer implements ItemListener {
 
   // -- Importer API methods --
 
-  private boolean getMacroValue(String options,
-    String key, boolean defaultValue)
-  {
-    String s = Macro.getValue(options, key, null);
-    return s == null ? defaultValue : s.equalsIgnoreCase("true");
-  }
-
   /** Executes the plugin. */
   public void run(String arg) {
-    // core option labels
-    final String mergeString = "Merge channels to RGB";
-    final String colorizeString = "Colorize channels";
-    final String splitString = "Open each channel in its own window";
-    final String metadataString = "Display associated metadata";
-    final String groupString = "Group files with similar names";
-    final String concatenateString = "Concatenate compatible series";
-    final String rangeString = "Specify range for each series";
-    final String stackString = "View stack with: ";
-
-    final String locationString = "Location: ";
-    final String idString = "Open";
-
-    GenericDialog gd; // reusable generic dialog variable
 
     // -- Step 1: parse core options --
 
-    // load preferences from IJ_Prefs.txt
-    boolean mergeChannels = Prefs.get("bioformats.mergeChannels", false);
-    boolean colorize = Prefs.get("bioformats.colorize", false);
-    boolean splitWindows = Prefs.get("bioformats.splitWindows", true);
-    boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
-    boolean groupFiles = Prefs.get("bioformats.groupFiles", false);
-    boolean concatenate = Prefs.get("bioformats.concatenate", false);
-    boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
-    String stackFormat = Prefs.get("bioformats.stackFormat", VIEW_STANDARD);
+    ImporterOptions options = new ImporterOptions();
+    options.loadPreferences();
+    options.parseArg(arg);
 
-    String location = null;
-    String id = null;
-    boolean quiet = false;
+    int status = options.promptLocation();
+    if (!statusOk(status)) return;
+    status = options.promptId();
+    if (!statusOk(status)) return;
 
-    // parse plugin arguments
-    if (arg != null && arg.length() > 0) {
-      if (new Location(arg).exists()) {
-        // old style arg: entire argument is a file path
+    String id = options.getId();
+    boolean quiet = options.isQuiet();
 
-        // probably called by HandleExtraFileTypes
+    Location idLoc = options.getIdLocation();
+    String idName = options.getIdName();
+    String idType = options.getIdType();
 
-        // NB: This functionality must not be removed, or the plugin
-        // will stop working correctly with HandleExtraFileTypes.
+    // -- Step 2: construct reader and check id --
 
-        location = LOCATION_LOCAL;
-        id = arg;
-        quiet = true; // suppress obnoxious error messages and such
-      }
-      else {
-        // new style arg: split up similar to a macro options string
-
-        // slightly different than macro options, in that boolean arguments
-        // must be of the form "key=true" rather than just "key"
-
-        // only the core options are supported for now
-
-        // NB: This functionality enables multiple plugin entries to achieve
-        // distinct behavior by calling the LociImporter plugin differently.
-
-        mergeChannels = getMacroValue(arg, mergeString, mergeChannels);
-        colorize = getMacroValue(arg, colorizeString, colorize);
-        splitWindows = getMacroValue(arg, colorizeString, splitWindows);
-        showMetadata = getMacroValue(arg, metadataString, showMetadata);
-        groupFiles = getMacroValue(arg, groupString, groupFiles);
-        concatenate = getMacroValue(arg, concatenateString, concatenate);
-        specifyRanges = getMacroValue(arg, rangeString, specifyRanges);
-        stackFormat = Macro.getValue(arg, stackString, stackFormat);
-
-        location = Macro.getValue(arg, locationString, location);
-        id = Macro.getValue(arg, idString, id);
-      }
-    }
-
-    // -- Step 1a: get location (type of data source) --
-
-    if (location == null) {
-      // open a dialog asking the user what kind of dataset to handle
-      // ask only if the location was not already specified somehow
-      // ImageJ will grab the value from the macro options, when possible
-      gd = new GenericDialog("Bio-Formats Dataset Location");
-      gd.addChoice(locationString, LOCATIONS, LOCATION_LOCAL);
-      gd.showDialog();
-      if (gd.wasCanceled()) {
-        plugin.canceled = true;
-        return;
-      }
-      location = gd.getNextChoice();
-    }
-
-    // verify that location is valid
-    boolean isLocal = LOCATION_LOCAL.equals(location);
-    boolean isHTTP = LOCATION_HTTP.equals(location);
-    boolean isOME = LOCATION_OME.equals(location);
-    if (!isLocal && !isHTTP && !isOME) {
-      if (!quiet) IJ.error("Bio-Formats", "Invalid location: " + location);
-      return;
-    }
-
-    // -- Step 1b: get id to open (e.g., filename or URL) --
-
-    if (id == null) {
-      if (isLocal) {
-        // prompt user for the filename (or grab from macro options)
-        OpenDialog od = new OpenDialog(idString, id);
-        String dir = od.getDirectory();
-        String name = od.getFileName();
-        if (dir == null || name == null) {
-          plugin.canceled = true;
-          return;
-        }
-        id = dir + name;
-      }
-      else if (isHTTP) {
-        // prompt user for the URL (or grab from macro options)
-        gd = new GenericDialog("Bio-Formats URL");
-        gd.addStringField("URL: ", "http://", 30);
-        gd.showDialog();
-        if (gd.wasCanceled()) {
-          plugin.canceled = true;
-          return;
-        }
-        id = gd.getNextString();
-      }
-      else { // isOME
-        IJ.runPlugIn("loci.plugins.OMEPlugin", "");
-        return;
-      }
-    }
-
-    // verify that id is valid
-    Location idLoc = null;
-    String idName = null;
-    String idType = null;
-    if (isLocal) {
-      if (id != null) idLoc = new Location(id);
-      if (idLoc == null || !idLoc.exists()) {
-        if (!quiet) {
-          IJ.error("Bio-Formats", idLoc == null ?
-            "No file was specified." :
-            "The specified file (" + id + ") does not exist.");
-        }
-        return;
-      }
-      idName = idLoc.getName();
-      idType = "Filename";
-    }
-    else if (isHTTP) {
-      if (id == null) {
-        if (!quiet) IJ.error("Bio-Formats", "No URL was specified.");
-        return;
-      }
-      idName = id;
-      idType = "URL";
-    }
-    else { // isOME
-      idType = "OME address";
-    }
-
-    // -- Step 2: identify file --
-
-    // determine whether we can handle this file
     IFormatReader r = null;
-    if (isLocal || isHTTP) {
+    if (options.isLocal() || options.isHTTP()) {
       IJ.showStatus("Identifying " + idName);
       ImageReader reader = new ImageReader();
       try { r = reader.getReader(id); }
-      catch (Exception exc) {
-        exc.printStackTrace();
-        IJ.showStatus("");
-        if (!quiet) {
-          String msg = exc.getMessage();
-          IJ.error("Bio-Formats", "Sorry, there was a problem " +
-            "reading the file" + (msg == null ? "." : (":\n" + msg)));
-        }
+      catch (FormatException exc) {
+        reportException(exc, quiet,
+          "Sorry, there was an error reading the file");
+        return;
+      }
+      catch (IOException exc) {
+        reportException(exc, quiet,
+          "Sorry, there was a I/O problem reading the file");
         return;
       }
     }
-    else r = new OMEReader();
+    else { // isOME
+      r = new OMEReader();
+    }
     OMEXMLMetadataStore store = new OMEXMLMetadataStore();
     r.setMetadataStore(store);
 
-    // -- Step 3: get parameter values --
-
     IJ.showStatus("");
 
-    Vector stackTypes = new Vector();
-    stackTypes.add(VIEW_NONE);
-    stackTypes.add(VIEW_STANDARD);
-    if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
-      stackTypes.add(VIEW_BROWSER);
-    }
-    if (Util.checkClass("i5d.Image5D")) stackTypes.add(VIEW_IMAGE_5D);
-    if (Util.checkClass("View5D_")) stackTypes.add(VIEW_VIEW_5D);
-    final String[] stackFormats = new String[stackTypes.size()];
-    stackTypes.copyInto(stackFormats);
+    // -- Step 3: get parameter values --
 
-    // prompt user for parameters (or grab from macro options)
-    gd = new GenericDialog("Bio-Formats Import Options");
-    gd.addCheckbox(mergeString, mergeChannels);
-    gd.addCheckbox(colorizeString, colorize);
-    gd.addCheckbox(splitString, splitWindows);
-    gd.addCheckbox(metadataString, showMetadata);
-    gd.addCheckbox(groupString, groupFiles);
-    gd.addCheckbox(concatenateString, concatenate);
-    gd.addCheckbox(rangeString, specifyRanges);
-    gd.addChoice(stackString, stackFormats, stackFormat);
+    status = options.promptOptions();
+    if (!statusOk(status)) return;
 
-    // extract GUI components from dialog and add listeners
-    Vector boxes = gd.getCheckboxes();
-    if (boxes != null) {
-      mergeBox = (Checkbox) boxes.get(0);
-      colorizeBox = (Checkbox) boxes.get(1);
-      splitBox = (Checkbox) boxes.get(2);
-      metadataBox = (Checkbox) boxes.get(3);
-      groupBox = (Checkbox) boxes.get(4);
-      concatenateBox = (Checkbox) boxes.get(5);
-      rangeBox = (Checkbox) boxes.get(6);
-      for (int i=0; i<boxes.size(); i++) {
-        ((Checkbox) boxes.get(i)).addItemListener(this);
-      }
-    }
-    Vector choices = gd.getChoices();
-    if (choices != null) {
-      stackChoice = (Choice) choices.get(0);
-      for (int i=0; i<choices.size(); i++) {
-        ((Choice) choices.get(i)).addItemListener(this);
-      }
-    }
+    String stackFormat = options.getStackFormat();
+    boolean mergeChannels = options.isMergeChannels();
+    boolean colorize = options.isColorize();
+    boolean splitWindows = options.isSplitWindows();
+    boolean showMetadata = options.isShowMetadata();
+    boolean groupFiles = options.isGroupFiles();
+    boolean concatenate = options.isConcatenate();
+    boolean specifyRanges = options.isSpecifyRanges();
 
-    gd.showDialog();
-    if (gd.wasCanceled()) {
-      plugin.canceled = true;
-      return;
-    }
-    mergeChannels = gd.getNextBoolean();
-    colorize = gd.getNextBoolean();
-    splitWindows = gd.getNextBoolean();
-    showMetadata = gd.getNextBoolean();
-    groupFiles = gd.getNextBoolean();
-    concatenate = gd.getNextBoolean();
-    specifyRanges = gd.getNextBoolean();
-    stackFormat = stackFormats[gd.getNextChoiceIndex()];
+    boolean viewNone = options.isViewNone();
+    boolean viewStandard = options.isViewStandard();
+    boolean viewImage5D = options.isViewImage5D();
+    boolean viewBrowser = options.isViewBrowser();
+    boolean viewView5D = options.isViewView5D();
 
-    // -- Step 4: open file --
+    // -- Step 4: read file --
 
     IJ.showStatus("Analyzing " + id);
 
     try {
       // -- Step 4a: do some preparatory work --
 
-      if (stackFormat.equals(VIEW_IMAGE_5D)) mergeChannels = false;
+      if (viewImage5D) mergeChannels = false;
 
       FileStitcher fs = null;
       r.setMetadataFiltered(true);
@@ -364,7 +154,7 @@ public class Importer implements ItemListener {
         fs = new FileStitcher(r, true);
         // prompt user to confirm file pattern (or grab from macro options)
         id = FilePattern.findPattern(idLoc);
-        gd = new GenericDialog("Bio-Formats File Stitching");
+        GenericDialog gd = new GenericDialog("Bio-Formats File Stitching");
         int len = id.length() + 1;
         if (len > 80) len = 80;
         gd.addStringField("Pattern: ", id, len);
@@ -456,10 +246,10 @@ public class Importer implements ItemListener {
         seriesStrings[i] = sb.toString();
       }
 
-      // -- Step 4a: prompt for the series to open, if necessary --
+      // -- Step 3a: prompt for the series to open, if necessary --
 
       if (seriesCount > 1) {
-        gd = new GenericDialog("Bio-Formats Series Options");
+        GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
 
         GridBagLayout gdl = (GridBagLayout) gd.getLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -478,7 +268,7 @@ public class Importer implements ItemListener {
           gdl.setConstraints(p[i], gbc);
           gd.add(p[i]);
         }
-        addScrollBars(gd);
+        Util.addScrollBars(gd);
         ThumbLoader loader = new ThumbLoader(r, p, gd);
         gd.showDialog();
         loader.stop();
@@ -527,7 +317,7 @@ public class Importer implements ItemListener {
         }
         if (needRange) {
           IJ.showStatus("");
-          gd = new GenericDialog("Bio-Formats Range Options");
+          GenericDialog gd = new GenericDialog("Bio-Formats Range Options");
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) continue;
             gd.addMessage(seriesStrings[i].replaceAll("_", " "));
@@ -555,7 +345,7 @@ public class Importer implements ItemListener {
               gd.addNumericField("Step" + s, cStep[i], 0);
             }
           }
-          addScrollBars(gd);
+          Util.addScrollBars(gd);
           gd.showDialog();
           if (gd.wasCanceled()) {
             plugin.canceled = true;
@@ -639,32 +429,38 @@ public class Importer implements ItemListener {
             s = sb.toString();
           }
           else s = "";
-          meta.put(s + "SizeX", new Integer(r.getSizeX()));
-          meta.put(s + "SizeY", new Integer(r.getSizeY()));
-          meta.put(s + "SizeZ", new Integer(r.getSizeZ()));
-          meta.put(s + "SizeT", new Integer(r.getSizeT()));
-          meta.put(s + "SizeC", new Integer(r.getSizeC()));
-          meta.put(s + "IsRGB", new Boolean(r.isRGB()));
-          meta.put(s + "PixelType",
+          final String pad = " ";
+          meta.put(pad + s + "SizeX", new Integer(r.getSizeX()));
+          meta.put(pad + s + "SizeY", new Integer(r.getSizeY()));
+          meta.put(pad + s + "SizeZ", new Integer(r.getSizeZ()));
+          meta.put(pad + s + "SizeT", new Integer(r.getSizeT()));
+          meta.put(pad + s + "SizeC", new Integer(r.getSizeC()));
+          meta.put(pad + s + "IsRGB", new Boolean(r.isRGB()));
+          meta.put(pad + s + "PixelType",
             FormatTools.getPixelTypeString(r.getPixelType()));
-          meta.put(s + "LittleEndian", new Boolean(r.isLittleEndian()));
-          meta.put(s + "DimensionOrder", r.getDimensionOrder());
-          meta.put(s + "IsInterleaved", new Boolean(r.isInterleaved()));
+          meta.put(pad + s + "LittleEndian", new Boolean(r.isLittleEndian()));
+          meta.put(pad + s + "DimensionOrder", r.getDimensionOrder());
+          meta.put(pad + s + "IsInterleaved", new Boolean(r.isInterleaved()));
         }
 
-        Enumeration keys = meta.keys();
-        StringBuffer sb = new StringBuffer();
+        // sort metadata keys
+        Enumeration e = meta.keys();
+        Vector v = new Vector();
+        while (e.hasMoreElements()) v.add(e.nextElement());
+        String[] keys = new String[v.size()];
+        v.copyInto(keys);
+        Arrays.sort(keys);
 
-        while (keys.hasMoreElements()) {
-          Object key = keys.nextElement();
-          sb.append(key);
-          sb.append("\t \t");
-          sb.append(meta.get(key));
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<keys.length; i++) {
+          sb.append(keys[i]);
+          sb.append("\t");
+          sb.append(meta.get(keys[i]));
           sb.append("\n");
         }
 
         TextWindow tw = new TextWindow("Metadata - " + currentFile,
-          "Key\t \tValue", sb.toString(), 400, 400);
+          "Key\tValue", sb.toString(), 400, 400);
         tw.setVisible(true);
         WindowManager.addWindow(tw);
       }
@@ -672,7 +468,7 @@ public class Importer implements ItemListener {
       // -- Step 4d: read pixel data --
 
       // only read data explicitly if not using 4D Data Browser
-      if (!stackFormat.equals(VIEW_BROWSER)) {
+      if (!viewBrowser) {
         IJ.showStatus("Reading " + currentFile);
 
         for (int i=0; i<seriesCount; i++) {
@@ -680,7 +476,7 @@ public class Importer implements ItemListener {
           r.setSeries(i);
 
           boolean[] load = new boolean[num[i]];
-          if (!stackFormat.equals(VIEW_NONE)) {
+          if (!viewNone) {
             if (certain[i]) {
               for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
                 for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
@@ -704,7 +500,11 @@ public class Importer implements ItemListener {
 
           long startTime = System.currentTimeMillis();
           long time = startTime;
-          ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
+
+          ImageStack stackB = null; // for byte images (8-bit)
+          ImageStack stackS = null; // for short images (16-bit)
+          ImageStack stackF = null; // for floating point images (32-bit)
+          ImageStack stackO = null; // for all other images (24-bit RGB)
 
           int w = r.getSizeX();
           int h = r.getSizeY();
@@ -769,203 +569,54 @@ public class Importer implements ItemListener {
             }
             String label = sb.toString();
 
-            // read bytes for jth plane
-            boolean first = true;
-            byte[] b = null;
-            while (true) {
-              // read LuraWave license code, if available
-              String code = Prefs.get("lurawave.license", null);
-              if (code != null) System.setProperty("lurawave.license", code);
-              try {
-                b = r.openBytes(j);
-                break;
-              }
-              catch (FormatException exc) {
-                String msg = exc.getMessage();
-                if (msg != null && (msg.equals(LuraWaveCodec.NO_LICENSE_MSG) ||
-                  msg.startsWith(LuraWaveCodec.INVALID_LICENSE_MSG)))
-                {
-                  // prompt user for LuraWave license code
-                  gd = new GenericDialog("LuraWave License Code");
-                  if (first) first = false;
-                  else gd.addMessage("Invalid license code; try again.");
-                  gd.addStringField("LuraWave_License Code: ", code, 16);
-                  gd.showDialog();
-                  if (gd.wasCanceled()) {
-                    plugin.canceled = true;
-                    return;
-                  }
-                  code = gd.getNextString();
-                  if (code != null) Prefs.set("lurawave.license", code);
-                }
-                else throw exc;
-              }
+            // get image processor for jth plane
+            ImageProcessor ip = Util.openProcessor(r, j);
+            if (ip == null) {
+              plugin.canceled = true;
+              return;
             }
 
-            // construct image processor and add to stack
-            ImageProcessor ip = null;
-
-            int bpp = FormatTools.getBytesPerPixel(type);
-
-            if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
-              // HACK - byte array dimensions are incorrect - image is probably
-              // a different size, but we have no way of knowing what size;
-              // so open this plane as a BufferedImage instead
-              BufferedImage bi = r.openImage(j);
-              b = ImageTools.padImage(b, r.isInterleaved(), c,
-                bi.getWidth() * bpp, w, h);
-            }
-
-            Object pixels = DataTools.makeDataArray(b, bpp,
-              type == FormatTools.FLOAT || type == FormatTools.DOUBLE,
-              r.isLittleEndian());
-
-            if (pixels instanceof byte[]) {
-              byte[] bytes = (byte[]) pixels;
-              if (bytes.length > w*h) {
-                byte[] tmp = bytes;
-                bytes = new byte[w*h];
-                System.arraycopy(tmp, 0, bytes, 0, bytes.length);
-              }
-
-              ip = new ByteProcessor(w, h, bytes, null);
+            // add plane to image stack
+            if (ip instanceof ByteProcessor) {
               if (stackB == null) stackB = new ImageStack(w, h);
               stackB.addSlice(label, ip);
             }
-            else if (pixels instanceof short[]) {
-              short[] s = (short[]) pixels;
-              if (s.length > w*h) {
-                short[] tmp = s;
-                s = new short[w*h];
-                System.arraycopy(tmp, 0, s, 0, s.length);
-              }
-
-              ip = new ShortProcessor(w, h, s, null);
+            else if (ip instanceof ShortProcessor) {
               if (stackS == null) stackS = new ImageStack(w, h);
               stackS.addSlice(label, ip);
             }
-            else if (pixels instanceof int[]) {
-              int[] s = (int[]) pixels;
-              if (s.length > w*h) {
-                int[] tmp = s;
-                s = new int[w*h];
-                System.arraycopy(tmp, 0, s, 0, s.length);
+            else if (ip instanceof FloatProcessor) {
+              // merge image plane into existing stack if possible
+              if (stackB != null) {
+                ip = ip.convertToByte(true);
+                stackB.addSlice(label, ip);
               }
-
-              ip = new FloatProcessor(w, h, s);
-              if (stackF == null) stackF = new ImageStack(w, h);
-              stackF.addSlice(label, ip);
-            }
-            else if (pixels instanceof float[]) {
-              float[] f = (float[]) pixels;
-              if (f.length > w*h) {
-                float[] tmp = f;
-                f = new float[w*h];
-                System.arraycopy(tmp, 0, f, 0, f.length);
-              }
-
-              if (c == 1) {
-                ip = new FloatProcessor(w, h, f, null);
-                if (stackF == null) stackF = new ImageStack(w, h);
-
-                if (stackB != null) {
-                  ip = ip.convertToByte(true);
-                  stackB.addSlice(label, ip);
-                  stackF = null;
-                }
-                else if (stackS != null) {
-                  ip = ip.convertToShort(true);
-                  stackS.addSlice(label, ip);
-                  stackF = null;
-                }
-                else stackF.addSlice(label, ip);
+              else if (stackS != null) {
+                ip = ip.convertToShort(true);
+                stackS.addSlice(label, ip);
               }
               else {
-                if (stackO == null) stackO = new ImageStack(w, h);
-                float[][] pix = new float[c][w*h];
-                if (!r.isInterleaved()) {
-                  for (int k=0; k<f.length; k+=c) {
-                    for (int l=0; l<c; l++) {
-                      pix[l][k / c] = f[k + l];
-                    }
-                  }
-                }
-                else {
-                  for (int k=0; k<c; k++) {
-                    System.arraycopy(f, k*pix[k].length, pix[k], 0,
-                      pix[k].length);
-                  }
-                }
-                byte[][] bytes = new byte[c][w*h];
-                for (int k=0; k<c; k++) {
-                  ip = new FloatProcessor(w, h, pix[k], null);
-                  ip = ip.convertToByte(true);
-                  bytes[k] = (byte[]) ip.getPixels();
-                }
-                ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
-                  pix.length >= 3 ? bytes[2] : new byte[w*h]);
-                stackO.addSlice(label, ip);
+                if (stackF == null) stackF = new ImageStack(w, h);
+                stackF.addSlice(label, ip);
               }
             }
-            else if (pixels instanceof double[]) {
-              double[] d = (double[]) pixels;
-              if (d.length > w*h) {
-                double[] tmp = d;
-                d = new double[w*h];
-                System.arraycopy(tmp, 0, d, 0, d.length);
-              }
-
-              ip = new FloatProcessor(w, h, d);
-              if (stackF == null) stackF = new ImageStack(w, h);
-              stackF.addSlice(label, ip);
+            else if (ip instanceof ColorProcessor) {
+              if (stackO == null) stackO = new ImageStack(w, h);
+              stackO.addSlice(label, ip);
             }
           }
 
           IJ.showStatus("Creating image");
           IJ.showProgress(1);
-          ImagePlus imp = null;
-          if (stackB != null) {
-            if (!mergeChannels && splitWindows) {
-              slice(stackB, sizeZ[i], sizeC[i], sizeT[i], fi, r, fs,
-                specifyRanges, colorize, mergeChannels, concatenate,
-                stackFormat, quiet);
-            }
-            else imp = new ImagePlus(currentFile, stackB);
-          }
-          if (stackS != null) {
-            if (!mergeChannels && splitWindows) {
-              slice(stackS, sizeZ[i], sizeC[i], sizeT[i], fi, r, fs,
-                specifyRanges, colorize, mergeChannels, concatenate,
-                stackFormat, quiet);
-            }
-            else imp = new ImagePlus(currentFile, stackS);
-          }
-          if (stackF != null) {
-            if (!mergeChannels && splitWindows) {
-              slice(stackF, sizeZ[i], sizeC[i], sizeT[i], fi, r, fs,
-                specifyRanges, colorize, mergeChannels, concatenate,
-                stackFormat, quiet);
-            }
-            else imp = new ImagePlus(currentFile, stackF);
-          }
-          if (stackO != null) {
-            if (!mergeChannels && splitWindows) {
-              slice(stackO, sizeZ[i], sizeC[i], sizeT[i], fi, r, fs,
-                specifyRanges, colorize, mergeChannels, concatenate,
-                stackFormat, quiet);
-            }
-            else imp = new ImagePlus(currentFile, stackO);
-          }
 
-          if (imp != null) {
-            // retrieve the spatial calibration information, if available
-            applyCalibration(store, imp, i);
-            imp.setFileInfo(fi);
-            imp.setDimensions(cCount[i], zCount[i], tCount[i]);
-            displayStack(imp, r, fs, mergeChannels,
-              concatenate, stackFormat, quiet);
-          }
+          showStack(stackB, currentFile, store, cCount[i], zCount[i],
+            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
+          showStack(stackS, currentFile, store, cCount[i], zCount[i],
+            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
+          showStack(stackF, currentFile, store, cCount[i], zCount[i],
+            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
+          showStack(stackO, currentFile, store, cCount[i], zCount[i],
+            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
 
           long endTime = System.currentTimeMillis();
           double elapsed = (endTime - startTime) / 1000.0;
@@ -978,6 +629,7 @@ public class Importer implements ItemListener {
               average + " ms per plane)");
           }
         }
+        r.close();
 
         if (concatenate) {
           Vector widths = new Vector();
@@ -1022,23 +674,15 @@ public class Importer implements ItemListener {
             ((ImagePlus) newImps.get(i)).show();
           }
         }
-
-        r.close();
       }
+
+      // -- Step 5: finish up --
 
       plugin.success = true;
 
-      // save parameter values to IJ_Prefs.txt
-      Prefs.set("bioformats.mergeChannels", mergeChannels);
-      Prefs.set("bioformats.colorize", colorize);
-      Prefs.set("bioformats.splitWindows", splitWindows);
-      Prefs.set("bioformats.showMetadata", showMetadata);
-      Prefs.set("bioformats.groupFiles", groupFiles);
-      Prefs.set("bioformats.concatenate", concatenate);
-      Prefs.set("bioformats.specifyRanges", specifyRanges);
-      Prefs.set("bioformats.stackFormat", stackFormat);
+      options.savePreferences();
 
-      if (stackFormat.equals(VIEW_BROWSER)) {
+      if (viewBrowser) {
         boolean first = true;
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
@@ -1050,96 +694,41 @@ public class Importer implements ItemListener {
       }
     }
     catch (Exception exc) {
-      exc.printStackTrace();
-      IJ.showStatus("");
-      if (!quiet) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(exc.toString());
-        StackTraceElement[] ste = exc.getStackTrace();
-        for (int i=0; i<ste.length; i++) {
-          sb.append("\n");
-          sb.append(ste[i].toString());
-        }
-        String msg = sb.toString();
-        IJ.error("Bio-Formats", "Sorry, there was a problem " +
-          "reading the data" + (msg == null ? "." : (":\n" + msg)));
-      }
-    }
-  }
-
-  // -- ItemListener API methods --
-
-  /** Handles toggling of mutually exclusive options. */
-  public void itemStateChanged(ItemEvent e) {
-    Object src = e.getSource();
-    if (src == mergeBox) {
-      if (mergeBox.getState()) {
-        colorizeBox.setState(false);
-        splitBox.setState(false);
-      }
-    }
-    else if (src == colorizeBox) {
-      if (colorizeBox.getState()) {
-        mergeBox.setState(false);
-        splitBox.setState(true);
-        // NB: temporary
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
-      }
-    }
-    else if (src == splitBox) {
-      if (splitBox.getState()) {
-        mergeBox.setState(false);
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
-      }
-    }
-    else if (src == metadataBox) {
-      if (!metadataBox.getState()) {
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_NONE)) stackChoice.select(VIEW_STANDARD);
-      }
-    }
-    else if (src == groupBox) {
-    }
-    else if (src == concatenateBox) {
-    }
-    else if (src == rangeBox) {
-      if (rangeBox.getState()) {
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_NONE) || s.equals(VIEW_BROWSER)) {
-          stackChoice.select(VIEW_STANDARD);
-        }
-      }
-    }
-    else if (src == stackChoice) {
-      String s = stackChoice.getSelectedItem();
-      if (s.equals(VIEW_NONE)) {
-        metadataBox.setState(true);
-        rangeBox.setState(false);
-      }
-      if (s.equals(VIEW_STANDARD)) {
-      }
-      else if (s.equals(VIEW_BROWSER)) {
-        colorizeBox.setState(false); // NB: temporary
-        splitBox.setState(false);
-        rangeBox.setState(false);
-      }
-      else if (s.equals(VIEW_IMAGE_5D)) {
-      }
-      else if (s.equals(VIEW_VIEW_5D)) {
-      }
+      reportException(exc, quiet,
+        "Sorry, there was a problem reading the data");
     }
   }
 
   // -- Helper methods --
 
+  private void showStack(ImageStack stack, String label,
+    OMEXMLMetadataStore store, int cCount, int zCount, int tCount,
+    int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
+    FileStitcher fs, ImporterOptions options)
+    throws FormatException, IOException
+  {
+    if (stack == null) return;
+    if (!options.isMergeChannels() && options.isSplitWindows()) {
+      slice(stack, sizeZ, sizeC, sizeT, fi, r, fs, options);
+    }
+    else {
+      ImagePlus imp = new ImagePlus(label, stack);
+
+      // retrieve the spatial calibration information, if available
+      applyCalibration(store, imp, r.getSeries());
+      imp.setFileInfo(fi);
+      imp.setDimensions(cCount, zCount, tCount);
+      displayStack(imp, r, fs, options);
+    }
+  }
+
   /** Opens each channel of the source stack in a separate window. */
   private void slice(ImageStack is, int z, int c, int t, FileInfo fi,
-    IFormatReader r, FileStitcher fs, boolean range, boolean colorize,
-    boolean mergeChannels, boolean concatenate, String stackFormat,
-    boolean quiet) throws FormatException, IOException
+    IFormatReader r, FileStitcher fs, ImporterOptions options)
+    throws FormatException, IOException
   {
+    boolean range = options.isSpecifyRanges();
+
     int step = 1;
     if (range) {
       step = c;
@@ -1180,7 +769,7 @@ public class Importer implements ItemListener {
 
       // colorize channels; mostly copied from the ImageJ source
 
-      if (colorize) {
+      if (options.isColorize()) {
         fi.reds = new byte[256];
         fi.greens = new byte[256];
         fi.blues = new byte[256];
@@ -1203,81 +792,21 @@ public class Importer implements ItemListener {
 
       imp.setFileInfo(fi);
       imp.setDimensions(1, r.getSizeZ(), r.getSizeT());
-      displayStack(imp, r, fs, mergeChannels, concatenate, stackFormat, quiet);
+      displayStack(imp, r, fs, options);
     }
-  }
-
-  /** Applies spatial calibrations to an image stack. */
-  private void applyCalibration(OMEXMLMetadataStore store, ImagePlus imp,
-    int series)
-  {
-    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
-    Integer ii = new Integer(series);
-
-    Float xf = store.getPixelSizeX(ii);
-    if (xf != null) xcal = xf.floatValue();
-    Float yf = store.getPixelSizeY(ii);
-    if (yf != null) ycal = yf.floatValue();
-    Float zf = store.getPixelSizeZ(ii);
-    if (zf != null) zcal = zf.floatValue();
-
-    if (xcal == xcal || ycal == ycal || zcal == zcal) {
-      Calibration cal = new Calibration();
-      cal.setUnit("micron");
-      cal.pixelWidth = xcal;
-      cal.pixelHeight = ycal;
-      cal.pixelDepth = zcal;
-      imp.setCalibration(cal);
-    }
-  }
-
-  private void makeRGB(ImagePlus imp, IFormatReader r, int c)
-    throws FormatException, IOException
-  {
-    ImageStack s = imp.getStack();
-    ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
-    for (int i=0; i<s.getSize(); i++) {
-      ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
-      newStack.addSlice(s.getSliceLabel(i + 1), p);
-    }
-    imp.setStack(imp.getTitle(), newStack);
-    adjustDisplay(imp);
-
-    s = imp.getStack();
-    newStack = new ImageStack(s.getWidth(), s.getHeight());
-
-    int sizeZ = r.getSizeZ();
-    int sizeT = r.getSizeT();
-
-    for (int z=0; z<sizeZ; z++) {
-      for (int t=0; t<sizeT; t++) {
-        byte[][] bytes = new byte[c][];
-        for (int ch=0; ch<r.getSizeC()/c; ch++) {
-          for (int ch1=0; ch1<c; ch1++) {
-            int ndx = r.getIndex(z, ch*c + ch1, t) + 1;
-            bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
-          }
-          ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
-          cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
-            new byte[s.getWidth() * s.getHeight()]);
-          int ndx = r.getIndex(z, ch*c, t) + 1;
-          newStack.addSlice(s.getSliceLabel(ndx), cp);
-        }
-      }
-    }
-    imp.setStack(imp.getTitle(), newStack);
   }
 
   /** Displays the image stack using the appropriate plugin. */
   private void displayStack(ImagePlus imp, IFormatReader r, FileStitcher fs,
-    boolean mergeChannels, boolean concatenate, String stackFormat,
-    boolean quiet)
+    ImporterOptions options)
   {
-    adjustDisplay(imp);
+    boolean mergeChannels = options.isMergeChannels();
+    boolean concatenate = options.isConcatenate();
+
+    Util.adjustColorRange(imp);
 
     try {
       // convert to RGB if needed
-
       int pixelType = r.getPixelType();
       if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
         (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8))
@@ -1304,12 +833,8 @@ public class Importer implements ItemListener {
             imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
           }
           catch (ReflectException exc) {
-            exc.printStackTrace();
-            if (!quiet) {
-              String msg = exc.getMessage();
-              IJ.error("Bio-Formats", "Sorry, there was a problem " +
-                "constructing the composite image");
-            }
+            reportException(exc, options.isQuiet(),
+              "Sorry, there was a problem constructing the composite image");
             return;
           }
         }
@@ -1346,12 +871,8 @@ public class Importer implements ItemListener {
       imp.setDimensions(
         imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()),
         imp.getNSlices(), imp.getNFrames());
-      if (stackFormat.equals(VIEW_STANDARD)) {
-        if (!concatenate) imp.show();
-        else imps.add(imp);
-      }
-      else if (stackFormat.equals(VIEW_BROWSER)) {}
-      else if (stackFormat.equals(VIEW_IMAGE_5D)) {
+      if (options.isViewBrowser()) { }
+      else if (options.isViewImage5D()) {
         int sizeZ = r.getSizeZ();
         int sizeT = r.getSizeT();
         int sizeC = r.getSizeC();
@@ -1389,7 +910,7 @@ public class Importer implements ItemListener {
         //ru.exec("i5d.setDimensions(sizeC, sizeZ, sizeT)");
         ru.exec("i5d.show()");
       }
-      else if (stackFormat.equals(VIEW_VIEW_5D)) {
+      else if (options.isViewView5D()) {
         int sizeZ = r.getSizeZ();
         int sizeC = r.getSizeC();
         int sizeT = r.getSizeT();
@@ -1414,6 +935,10 @@ public class Importer implements ItemListener {
         WindowManager.setTempCurrentImage(imp);
         IJ.run("View5D ", "");
       }
+      else if (!options.isViewNone()) {
+        if (!concatenate) imp.show();
+        else imps.add(imp);
+      }
     }
     catch (Exception exc) {
       exc.printStackTrace();
@@ -1422,86 +947,65 @@ public class Importer implements ItemListener {
     }
   }
 
-  private void adjustDisplay(ImagePlus imp) {
-    ImageStack s = imp.getStack();
-    double min = Double.MAX_VALUE;
-    double max = Double.MIN_VALUE;
-    for (int i=0; i<s.getSize(); i++) {
-      ImageProcessor p = s.getProcessor(i + 1);
-      p.resetMinAndMax();
-      if (p.getMin() < min) min = p.getMin();
-      if (p.getMax() > max) max = p.getMax();
-    }
+  /** Applies spatial calibrations to an image stack. */
+  private void applyCalibration(OMEXMLMetadataStore store,
+    ImagePlus imp, int series)
+  {
+    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
+    Integer ii = new Integer(series);
 
-    ImageProcessor p = imp.getProcessor();
-    if (p instanceof ColorProcessor) {
-      ((ColorProcessor) p).setMinAndMax(min, max, 3);
+    Float xf = store.getPixelSizeX(ii);
+    if (xf != null) xcal = xf.floatValue();
+    Float yf = store.getPixelSizeY(ii);
+    if (yf != null) ycal = yf.floatValue();
+    Float zf = store.getPixelSizeZ(ii);
+    if (zf != null) zcal = zf.floatValue();
+
+    if (xcal == xcal || ycal == ycal || zcal == zcal) {
+      Calibration cal = new Calibration();
+      cal.setUnit("micron");
+      cal.pixelWidth = xcal;
+      cal.pixelHeight = ycal;
+      cal.pixelDepth = zcal;
+      imp.setCalibration(cal);
     }
-    else p.setMinAndMax(min, max);
-    imp.setProcessor(imp.getTitle(), p);
   }
 
-  private void addScrollBars(Container pane) {
-    GridBagLayout layout = (GridBagLayout) pane.getLayout();
-
-    // extract components
-    int count = pane.getComponentCount();
-    Component[] c = new Component[count];
-    GridBagConstraints[] gbc = new GridBagConstraints[count];
-    for (int i=0; i<count; i++) {
-      c[i] = pane.getComponent(i);
-      gbc[i] = layout.getConstraints(c[i]);
+  private void makeRGB(ImagePlus imp, IFormatReader r, int c)
+    throws FormatException, IOException
+  {
+    ImageStack s = imp.getStack();
+    ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
+    for (int i=0; i<s.getSize(); i++) {
+      ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
+      newStack.addSlice(s.getSliceLabel(i + 1), p);
     }
+    imp.setStack(imp.getTitle(), newStack);
+    Util.adjustColorRange(imp);
 
-    // clear components
-    pane.removeAll();
-    layout.invalidateLayout(pane);
+    s = imp.getStack();
+    newStack = new ImageStack(s.getWidth(), s.getHeight());
 
-    // create new container panel
-    Panel newPane = new Panel();
-    GridBagLayout newLayout = new GridBagLayout();
-    newPane.setLayout(newLayout);
-    for (int i=0; i<count; i++) {
-      newLayout.setConstraints(c[i], gbc[i]);
-      newPane.add(c[i]);
-    }
+    int sizeZ = r.getSizeZ();
+    int sizeT = r.getSizeT();
 
-    // get preferred size for container panel
-    // NB: don't know a better way:
-    // - newPane.getPreferredSize() doesn't work
-    // - newLayout.preferredLayoutSize(newPane) doesn't work
-    Frame f = new Frame();
-    f.setLayout(new BorderLayout());
-    f.add(newPane, BorderLayout.CENTER);
-    f.pack();
-    final Dimension size = newPane.getSize();
-    f.remove(newPane);
-    f.dispose();
-
-    // compute best size for scrollable viewport
-    size.width += 15;
-    size.height += 15;
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    int maxWidth = 3 * screen.width / 4;
-    int maxHeight = 3 * screen.height / 4;
-    if (size.width > maxWidth) size.width = maxWidth;
-    if (size.height > maxHeight) size.height = maxHeight;
-
-    // create scroll pane
-    ScrollPane scroll = new ScrollPane() {
-      public Dimension getPreferredSize() {
-        return size;
+    for (int z=0; z<sizeZ; z++) {
+      for (int t=0; t<sizeT; t++) {
+        byte[][] bytes = new byte[c][];
+        for (int ch=0; ch<r.getSizeC()/c; ch++) {
+          for (int ch1=0; ch1<c; ch1++) {
+            int ndx = r.getIndex(z, ch*c + ch1, t) + 1;
+            bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
+          }
+          ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
+          cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
+            new byte[s.getWidth() * s.getHeight()]);
+          int ndx = r.getIndex(z, ch*c, t) + 1;
+          newStack.addSlice(s.getSliceLabel(ndx), cp);
+        }
       }
-    };
-    scroll.add(newPane);
-
-    // add scroll pane to original container
-    GridBagConstraints constraints = new GridBagConstraints();
-    constraints.fill = GridBagConstraints.BOTH;
-    constraints.weightx = 1.0;
-    constraints.weighty = 1.0;
-    layout.setConstraints(scroll, constraints);
-    pane.add(scroll);
+    }
+    imp.setStack(imp.getTitle(), newStack);
   }
 
   private int digits(int value) {
@@ -1511,6 +1015,21 @@ public class Importer implements ItemListener {
       digits++;
     }
     return digits;
+  }
+
+  private boolean statusOk(int status) {
+    if (status == ImporterOptions.STATUS_CANCELED) plugin.canceled = true;
+    return status == ImporterOptions.STATUS_OK;
+  }
+
+  private void reportException(Throwable t, boolean quiet, String msg) {
+    t.printStackTrace();
+    IJ.showStatus("");
+    if (!quiet) {
+      ByteArrayOutputStream buf = new ByteArrayOutputStream();
+      t.printStackTrace(new PrintStream(buf));
+      IJ.error("Bio-Formats", msg + ":\n" + buf.toString());
+    }
   }
 
   // -- Main method --

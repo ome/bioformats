@@ -3,8 +3,8 @@
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including
-the 4D Data Browser, OME Plugin and Bio-Formats Exporter.
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
 Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
 Curtis Rueden, Philip Huettl and Francis Wong.
 
@@ -30,8 +30,8 @@ import java.util.HashSet;
 
 /**
  * ImageJ plugin for reading files using the LOCI Bio-Formats package.
- * Wraps core logic in loci.plugins.Importer, to avoid direct references
- * to classes in the external Bio-Formats library.
+ * Wraps core logic in {@link loci.plugins.Importer}, to avoid direct
+ * references to classes in the external Bio-Formats library.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
@@ -62,11 +62,11 @@ public class LociImporter implements PlugIn {
     success = false;
     if ("about".equals(arg)) About.about();
     else {
-      if (!Util.checkVersion()) return;
+      if (!Checker.checkVersion()) return;
       HashSet missing = new HashSet();
-      Util.checkLibrary(Util.BIO_FORMATS, missing);
-      Util.checkLibrary(Util.OME_JAVA_XML, missing);
-      if (!Util.checkMissing(missing)) return;
+      Checker.checkLibrary(Checker.BIO_FORMATS, missing);
+      Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
+      if (!Checker.checkMissing(missing)) return;
       new Importer(this).run(arg);
     }
   }

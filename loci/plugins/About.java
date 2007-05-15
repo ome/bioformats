@@ -3,8 +3,8 @@
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including
-the 4D Data Browser, OME Plugin and Bio-Formats Exporter.
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
 Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
 Curtis Rueden, Philip Huettl and Francis Wong.
 
@@ -44,7 +44,7 @@ public final class About {
       "The Bio-Formats Importer and Exporter are written by\n" +
       "Melissa Linkert and Curtis Rueden.\n" +
       "http://www.loci.wisc.edu/ome/formats.html\n\n" +
-      "The OME Plugin for ImageJ is written by Philip Huettl\n" +
+      "The OME plugins for ImageJ are written by Philip Huettl\n" +
       "and Melissa Linkert.\n" +
       "http://www.loci.wisc.edu/ome/imagej.html",
       "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);

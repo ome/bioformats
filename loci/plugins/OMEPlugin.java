@@ -3,8 +3,10 @@
 //
 
 /*
-OME Plugin for ImageJ plugin for transferring images to and from an OME
-database. Copyright (C) 2004-@year@ Philip Huettl and Melissa Linkert.
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
+Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
+Curtis Rueden, Philip Huettl and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -30,7 +32,6 @@ import ij.process.ImageProcessor;
 import java.awt.TextField;
 import java.util.*;
 import loci.ome.util.OMEUtils;
-import loci.plugins.Util;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.Image;
 import org.openmicroscopy.ds.dto.Project;
@@ -83,13 +84,13 @@ public class OMEPlugin implements PlugIn {
 
   /** Executes the plugin. */
   public void run(String arg) {
-    if (!Util.checkVersion()) return;
+    if (!Checker.checkVersion()) return;
     HashSet missing = new HashSet();
-    Util.checkLibrary(Util.BIO_FORMATS, missing);
-    Util.checkLibrary(Util.OME_JAVA_XML, missing);
-    Util.checkLibrary(Util.OME_JAVA_DS, missing);
-    Util.checkLibrary(Util.FORMS, missing);
-    if (!Util.checkMissing(missing)) return;
+    Checker.checkLibrary(Checker.BIO_FORMATS, missing);
+    Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
+    Checker.checkLibrary(Checker.OME_JAVA_DS, missing);
+    Checker.checkLibrary(Checker.FORMS, missing);
+    if (!Checker.checkMissing(missing)) return;
     runPlugin();
   }
 
