@@ -41,10 +41,13 @@ public class SlidebookReader extends FormatReader {
   // -- Fields --
 
   /** Offset to pixel data. */
-  private long offset = 1792;
+  private long offset = 256;
 
   /** Number of bytes per pixel. */
   private int bpp;
+
+  private int uCount = 0;
+  private int planeCount = 0;
 
   // -- Constructor --
 
@@ -79,6 +82,15 @@ public class SlidebookReader extends FormatReader {
       throw new FormatException("Buffer too small.");
     }
     in.seek(offset + (no * core.sizeX[0] * core.sizeY[0] * 2));
+    
+    uCount = 0;
+    long fp1 = in.getFilePointer();
+    skipDataBlocks(planeCount);
+    long fp2 = in.getFilePointer();
+    offset += fp2 - fp1;
+    if (fp2 - fp1 > 0) planeCount = 1; 
+    else planeCount++; 
+
     in.read(buf);
     return buf;
   }
@@ -103,7 +115,7 @@ public class SlidebookReader extends FormatReader {
     in.skipBytes(4);
     core.littleEndian[0] = in.read() == 0x49;
 
-    bpp = 2; // this is a major assumption
+    bpp = 2;
 
     // check if there are multiple "series" - note that each series has the
     // same dimensions, so we can display each plane as part of the same series
@@ -229,6 +241,15 @@ public class SlidebookReader extends FormatReader {
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
+    if (core.imageCount[0] == 0) {
+      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * core.sizeZ[0];
+    }
+
+    if (core.sizeX[0] * core.sizeY[0] * 2 * core.imageCount[0] > in.length()) {
+      core.sizeX[0] /= 2; 
+      core.sizeY[0] /= 2; 
+    }
+
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
@@ -237,6 +258,45 @@ public class SlidebookReader extends FormatReader {
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
     }
+  }
+
+  // -- Helper methods --
+
+  private void skipDataBlocks(int n) throws IOException {
+    long fp = in.getFilePointer();
+  
+    int type = in.read(); 
+    in.skipBytes(3);
+    int one = in.read();
+    int two = in.read();
+
+    if ((one == 0x49 && two == 0x49) || (one == 0x4d && two == 0x4d)) {
+      if (type == 0x69) in.skipBytes(122);   
+      else if (type == 0x75 && uCount == n - 1) {
+        in.skipBytes(250);
+        int len = in.read();
+        while (((byte) len) > 0) {
+          int oldLen = len; 
+          in.skipBytes(len + 4);
+          len = in.read();
+          in.skipBytes(len + 3);
+          len = in.read();
+          if (in.read() != 0x43 && ((byte) len) > 0) { 
+            in.skipBytes(len + 2);
+            len = in.read();
+          }
+          else in.seek(in.getFilePointer() - 1); 
+        }
+        in.seek(in.getFilePointer() - 1); 
+      }
+      else if (type == 0x75) {
+        uCount++;
+        in.skipBytes(250); 
+      } 
+      else in.skipBytes(250); 
+      skipDataBlocks(n); 
+    }
+    else in.seek(fp);
   }
 
 }
