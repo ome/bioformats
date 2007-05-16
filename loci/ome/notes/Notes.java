@@ -87,69 +87,43 @@ public class Notes extends JFrame implements ActionListener {
 
   /** Constructs a new main window with the default template. */
   public Notes() {
-    this(null, null);
+    this(null, (String) null);
+  }
+
+  /** 
+   * Constructs a new main window with the given metadata, 
+   * and default template. 
+   */
+  public Notes(OMENode root) {
+    this(null, root);
+  }
+
+  /** Constructs a new main window with the given metadata and template. */
+  public Notes(String template, OMENode root) {
+    super("OME Notes");
+    setupWindow();
+  
+    // load the appropriate template
+
+    if (template != null) {
+      loadTemplate(template);
+    }
+    else {
+      templateName = DEFAULT_TEMPLATE; 
+      loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE));
+    }
+ 
+    currentRoot = root;
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
+    setVisible(true);
   }
 
   /** Constructs a new main window with the given template. */
   public Notes(String template, String newfile) {
     super("OME Notes"); 
+    setupWindow();
 
-    thumb = new Vector();
-
-    // set up the main panel
-
-    JPanel contentPane = new JPanel();
-
-    // set up the menu bar
-    
-    menubar = new JMenuBar();
-    
-    JMenu file = new JMenu("File");
- 
-    JMenuItem newFile = new JMenuItem("New...");
-    newFile.setActionCommand("new");
-    newFile.addActionListener(this);
-    file.add(newFile);
-
-    JMenuItem openFile = new JMenuItem("Open");
-    openFile.setActionCommand("open");
-    openFile.addActionListener(this);
-    file.add(openFile);
-
-    JMenuItem saveFile = new JMenuItem("Save");
-    saveFile.setActionCommand("save");
-    saveFile.addActionListener(this);
-    file.add(saveFile);
-
-    JMenuItem close = new JMenuItem("Close");
-    close.setActionCommand("close");
-    close.addActionListener(this);
-    file.add(close);
-
-    JMenu view = new JMenu("View");
-
-    JMenuItem loadTemplate = new JMenuItem("Switch Templates");
-    loadTemplate.setActionCommand("load");
-    loadTemplate.addActionListener(this);
-    view.add(loadTemplate);
-    view.add(new JSeparator());
-
-    menubar.add(file);
-    menubar.add(view);
-
-    // add the status bar
-    progress = new JProgressBar(0, 1);
-    progress.setStringPainted(true); 
-    menubar.add(progress);
-
-    setJMenuBar(menubar); 
-
-    // provide a place to show metadata
-
-    tabPane = new JTabbedPane();
-    contentPane.add(tabPane);
-
-    // load a default template
+    // load the appropriate template
 
     if (template != null) {
       loadTemplate(template);
@@ -510,6 +484,63 @@ public class Notes extends JFrame implements ActionListener {
 
   // -- Helper methods --
 
+  private void setupWindow() {
+    thumb = new Vector();
+
+    // set up the main panel
+
+    JPanel contentPane = new JPanel();
+
+    // set up the menu bar
+    
+    menubar = new JMenuBar();
+    
+    JMenu file = new JMenu("File");
+ 
+    JMenuItem newFile = new JMenuItem("New...");
+    newFile.setActionCommand("new");
+    newFile.addActionListener(this);
+    file.add(newFile);
+
+    JMenuItem openFile = new JMenuItem("Open");
+    openFile.setActionCommand("open");
+    openFile.addActionListener(this);
+    file.add(openFile);
+
+    JMenuItem saveFile = new JMenuItem("Save");
+    saveFile.setActionCommand("save");
+    saveFile.addActionListener(this);
+    file.add(saveFile);
+
+    JMenuItem close = new JMenuItem("Close");
+    close.setActionCommand("close");
+    close.addActionListener(this);
+    file.add(close);
+
+    JMenu view = new JMenu("View");
+
+    JMenuItem loadTemplate = new JMenuItem("Switch Templates");
+    loadTemplate.setActionCommand("load");
+    loadTemplate.addActionListener(this);
+    view.add(loadTemplate);
+    view.add(new JSeparator());
+
+    menubar.add(file);
+    menubar.add(view);
+
+    // add the status bar
+    progress = new JProgressBar(0, 1);
+    progress.setStringPainted(true); 
+    menubar.add(progress);
+
+    setJMenuBar(menubar); 
+
+    // provide a place to show metadata
+
+    tabPane = new JTabbedPane();
+    contentPane.add(tabPane);
+  }
+  
   private void openFile(String file) throws Exception {
     currentFile = file; 
     FileStitcher stitcher = new FileStitcher();
