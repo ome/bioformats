@@ -11,7 +11,7 @@ rem If you are a developer working from source and have
 rem the LOCI classes in your CLASSPATH, you can set the
 rem LOCI_DEVEL environment variable to use them instead.
 
-set PROG=loci.formats.ome.OMEImporter
+set PROG=loci.formats.ome.OMEWriter
 
 if "%LOCI_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries

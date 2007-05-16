@@ -340,4 +340,105 @@ public class OMEWriter extends FormatWriter {
     }
   }
 
+  // -- Main method --
+
+  public static void main(String[] args) throws Exception {
+    String server = null, user = null, pass = null;
+    String id = null;
+
+    // parse command-line arguments
+    boolean doUsage = false;
+    if (args.length == 0) doUsage = true;
+    for (int i=0; i<args.length; i++) {
+      if (args[i].startsWith("-")) {
+        // argument is a command line flag
+        String param = args[i];
+        try {
+          if (param.equalsIgnoreCase("-s")) server = args[++i];
+          else if (param.equalsIgnoreCase("-u")) user = args[++i];
+          else if (param.equalsIgnoreCase("-p")) pass = args[++i];
+          else if (param.equalsIgnoreCase("-h") || param.equalsIgnoreCase("-?"))
+          {
+            doUsage = true;
+          }
+          else {
+            System.err.println("Error: unknown flag: "+ param);
+            System.err.println();
+            doUsage = true;
+            break;
+          }
+        }
+        catch (ArrayIndexOutOfBoundsException exc) {
+          if (i == args.length - 1) {
+            System.err.println("Error: flag " + param + 
+              " must be followed by a parameter value.");
+            System.err.println();
+            doUsage = true;
+            break; 
+          }
+          else throw exc; 
+        }
+      }
+      else {
+        if (id == null) id = args[i];
+        else {
+          System.err.println("Error: unknown argument: " + args[i]);
+          System.err.println();
+        }
+      }
+    }
+  
+    if (id == null) doUsage = true;
+    if (doUsage) {
+      System.err.println("Usage: omeul [-s server.address] " +
+        "[-u username] [-p password] filename");
+      System.err.println();
+      System.exit(1);
+    }
+  
+    // ask for information if necessary 
+    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
+    if (server == null) {
+      System.out.print("Server address? ");
+      try { server = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+    if (user == null) {
+      System.out.print("Username? ");
+      try { user = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+    if (pass == null) {
+      System.out.print("Password? ");
+      try { pass = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+
+    if (server == null || user == null || pass == null) {
+      System.err.println("Error: could not obtain server login information");
+      System.exit(2);
+    }
+    System.out.println("Using server " + server + " as user " + user);
+
+    // create image uploader
+    OMEWriter uploader = new OMEWriter();
+    uploader.addStatusListener(new StatusListener() {
+      public void statusUpdated(StatusEvent e) {
+        System.out.println(e.getStatusMessage());
+      }
+    });
+
+    uploader.setId(server + "?user=" + user + "&password=" + pass);
+
+    FileStitcher reader = new FileStitcher();
+    reader.setMetadataStore(new OMEXMLMetadataStore()); 
+    reader.setId(id); 
+    uploader.setMetadataStore((OMEXMLMetadataStore) reader.getMetadataStore()); 
+    for (int i=0; i<reader.getImageCount(); i++) {
+      uploader.saveImage(reader.openImage(i), i == reader.getImageCount() - 1);
+    }
+    reader.close();
+    uploader.close();
+  }
+
 }
