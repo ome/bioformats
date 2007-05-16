@@ -337,13 +337,13 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t) throws FormatException {
+  public int getIndex(int z, int c, int t) {
     FormatTools.assertId(currentId, true, 2);
     return getReader().getIndex(z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
-  public int[] getZCTCoords(int index) throws FormatException {
+  public int[] getZCTCoords(int index) {
     FormatTools.assertId(currentId, true, 2);
     return getReader().getZCTCoords(index);
   }

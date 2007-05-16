@@ -435,13 +435,13 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t) throws FormatException {
+  public int getIndex(int z, int c, int t) {
     FormatTools.assertId(currentId, true, 1);
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
-  public int[] getZCTCoords(int index) throws FormatException {
+  public int[] getZCTCoords(int index) {
     FormatTools.assertId(currentId, true, 1);
     return FormatTools.getZCTCoords(this, index);
   }

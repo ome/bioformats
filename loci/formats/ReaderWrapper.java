@@ -223,11 +223,11 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public String getCurrentFile() { return reader.getCurrentFile(); }
 
-  public int getIndex(int z, int c, int t) throws FormatException {
+  public int getIndex(int z, int c, int t) {
     return reader.getIndex(z, c, t);
   }
 
-  public int[] getZCTCoords(int index) throws FormatException {
+  public int[] getZCTCoords(int index) {
     return reader.getZCTCoords(index);
   }
 

@@ -215,13 +215,13 @@ public interface IFormatReader extends IFormatHandler {
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  int getIndex(int z, int c, int t) throws FormatException;
+  int getIndex(int z, int c, int t);
 
   /**
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  int[] getZCTCoords(int index) throws FormatException;
+  int[] getZCTCoords(int index);
 
   /**
    * Obtains the specified metadata field's value for the current file.

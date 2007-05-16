@@ -565,12 +565,12 @@ public class FileStitcher implements IFormatReader {
   public String getCurrentFile() { return currentId; }
 
   /* @see IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t) throws FormatException {
+  public int getIndex(int z, int c, int t) {
     return FormatTools.getIndex(this, z, c, t);
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
-  public int[] getZCTCoords(int index) throws FormatException {
+  public int[] getZCTCoords(int index) {
     return FormatTools.getZCTCoords(this, index);
   }
 

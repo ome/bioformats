@@ -667,9 +667,7 @@ public final class FormatTools {
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  public static int getIndex(IFormatReader reader, int z, int c, int t)
-    throws FormatException
-  {
+  public static int getIndex(IFormatReader reader, int z, int c, int t) {
     String order = reader.getDimensionOrder();
     int zSize = reader.getSizeZ();
     int cSize = reader.getEffectiveSizeC();
@@ -683,47 +681,57 @@ public final class FormatTools {
    * to the given Z, C and T coordinates.
    */
   public static int getIndex(String order, int zSize, int cSize, int tSize,
-    int num, int z, int c, int t) throws FormatException
+    int num, int z, int c, int t)
   {
     // check DimensionOrder
-    if (order == null) throw new FormatException("Dimension order is null");
+    if (order == null) {
+      throw new IllegalArgumentException("Dimension order is null");
+    }
     if (!order.startsWith("XY")) {
-      throw new FormatException("Invalid dimension order: " + order);
+      throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
     int iz = order.indexOf("Z") - 2;
     int ic = order.indexOf("C") - 2;
     int it = order.indexOf("T") - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
-      throw new FormatException("Invalid dimension order: " + order);
+      throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
 
     // check SizeZ
-    if (zSize <= 0) throw new FormatException("Invalid Z size: " + zSize);
+    if (zSize <= 0) {
+      throw new IllegalArgumentException("Invalid Z size: " + zSize);
+    }
     if (z < 0 || z >= zSize) {
-      throw new FormatException("Invalid Z index: " + z + "/" + zSize);
+      throw new IllegalArgumentException("Invalid Z index: " + z + "/" + zSize);
     }
 
     // check SizeC
-    if (cSize <= 0) throw new FormatException("Invalid C size: " + cSize);
+    if (cSize <= 0) {
+      throw new IllegalArgumentException("Invalid C size: " + cSize);
+    }
     if (c < 0 || c >= cSize) {
-      throw new FormatException("Invalid C index: " + c + "/" + cSize);
+      throw new IllegalArgumentException("Invalid C index: " + c + "/" + cSize);
     }
 
     // check SizeT
-    if (tSize <= 0) throw new FormatException("Invalid T size: " + tSize);
+    if (tSize <= 0) {
+      throw new IllegalArgumentException("Invalid T size: " + tSize);
+    }
     if (t < 0 || t >= tSize) {
-      throw new FormatException("Invalid T index: " + t + "/" + tSize);
+      throw new IllegalArgumentException("Invalid T index: " + t + "/" + tSize);
     }
 
     // check image count
-    if (num <= 0) throw new FormatException("Invalid image count: " + num);
+    if (num <= 0) {
+      throw new IllegalArgumentException("Invalid image count: " + num);
+    }
     if (num != zSize * cSize * tSize) {
       // if this happens, there is probably a bug in metadata population --
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
-      throw new FormatException("ZCT size vs image count mismatch (sizeZ=" +
-        zSize + ", sizeC=" + cSize + ", sizeT=" + tSize + ", total=" + num +
-        ")");
+      throw new IllegalArgumentException("ZCT size vs image count mismatch " +
+        "(sizeZ=" + zSize + ", sizeC=" + cSize + ", sizeT=" + tSize +
+        ", total=" + num + ")");
     }
 
     // assign rasterization order
@@ -741,9 +749,7 @@ public final class FormatTools {
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  public static int[] getZCTCoords(IFormatReader reader, int index)
-    throws FormatException
-  {
+  public static int[] getZCTCoords(IFormatReader reader, int index) {
     String order = reader.getDimensionOrder();
     int zSize = reader.getSizeZ();
     int cSize = reader.getEffectiveSizeC();
@@ -757,41 +763,52 @@ public final class FormatTools {
    * index value.
    */
   public static int[] getZCTCoords(String order,
-    int zSize, int cSize, int tSize, int num, int index) throws FormatException
+    int zSize, int cSize, int tSize, int num, int index)
   {
     // check DimensionOrder
-    if (order == null) throw new FormatException("Dimension order is null");
+    if (order == null) {
+      throw new IllegalArgumentException("Dimension order is null");
+    }
     if (!order.startsWith("XY")) {
-      throw new FormatException("Invalid dimension order: " + order);
+      throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
     int iz = order.indexOf("Z") - 2;
     int ic = order.indexOf("C") - 2;
     int it = order.indexOf("T") - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
-      throw new FormatException("Invalid dimension order: " + order);
+      throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
 
     // check SizeZ
-    if (zSize <= 0) throw new FormatException("Invalid Z size: " + zSize);
+    if (zSize <= 0) {
+      throw new IllegalArgumentException("Invalid Z size: " + zSize);
+    }
 
     // check SizeC
-    if (cSize <= 0) throw new FormatException("Invalid C size: " + cSize);
+    if (cSize <= 0) {
+      throw new IllegalArgumentException("Invalid C size: " + cSize);
+    }
 
     // check SizeT
-    if (tSize <= 0) throw new FormatException("Invalid T size: " + tSize);
+    if (tSize <= 0) {
+      throw new IllegalArgumentException("Invalid T size: " + tSize);
+    }
 
     // check image count
-    if (num <= 0) throw new FormatException("Invalid image count: " + num);
+    if (num <= 0) {
+      throw new IllegalArgumentException("Invalid image count: " + num);
+    }
     if (num != zSize * cSize * tSize) {
       // if this happens, there is probably a bug in metadata population --
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
-      throw new FormatException("ZCT size vs image count mismatch (sizeZ=" +
-        zSize + ", sizeC=" + cSize + ", sizeT=" + tSize + ", total=" + num +
-        ")");
+      throw new IllegalArgumentException("ZCT size vs image count mismatch " +
+        "(sizeZ=" + zSize + ", sizeC=" + cSize + ", sizeT=" + tSize +
+        ", total=" + num + ")");
     }
     if (index < 0 || index >= num) {
-      throw new FormatException("Invalid image index: " + index + "/" + num);
+      throw new IllegalArgumentException("Invalid image index: " +
+        index + "/" + num);
     }
 
     // assign rasterization order
