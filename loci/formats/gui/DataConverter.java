@@ -1,13 +1,28 @@
 //
-// MovieStitcher.java
+// DataConverter.java
 //
 
 /*
-Coded in 2006-@year@ by Curtis Rueden.
-Permission is granted to use this code for anything.
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+Eric Kjellman and Brian Loranger.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.apps.stitcher;
+package loci.formats.gui;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -20,7 +35,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import loci.formats.*;
-import loci.formats.gui.GUITools;
 import loci.formats.ome.OMEXMLMetadataStore;
 import loci.formats.out.TiffWriter;
 import org.openmicroscopy.xml.*;
@@ -30,13 +44,13 @@ import org.openmicroscopy.xml.st.*;
  * A utility for reorganizing and converting QuickTime movies,
  * TIFF series and other 4D datasets.
  */
-public class MovieStitcher extends JFrame implements
+public class DataConverter extends JFrame implements
   ActionListener, ChangeListener, Runnable
 {
 
   // -- Constants --
 
-  private static final String TITLE = "Movie Stitcher";
+  private static final String TITLE = "Data Converter";
   private static final int COLUMNS = 24;
 
   // -- Fields --
@@ -58,7 +72,7 @@ public class MovieStitcher extends JFrame implements
 
   // -- Constructor --
 
-  public MovieStitcher() {
+  public DataConverter() {
     super(TITLE);
 
     // file choosers
@@ -719,7 +733,7 @@ public class MovieStitcher extends JFrame implements
   // -- Main method --
 
   public static void main(String[] args) {
-    new MovieStitcher().setVisible(true);
+    new DataConverter().setVisible(true);
   }
 
 }
