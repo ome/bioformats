@@ -104,7 +104,7 @@ public class Importer {
         return;
       }
     }
-    else { // isOME
+    else { // options.isOME
       r = new OMEReader();
     }
     OMEXMLMetadataStore store = new OMEXMLMetadataStore();
@@ -117,7 +117,6 @@ public class Importer {
     status = options.promptOptions();
     if (!statusOk(status)) return;
 
-    String stackFormat = options.getStackFormat();
     boolean mergeChannels = options.isMergeChannels();
     boolean colorize = options.isColorize();
     boolean splitWindows = options.isSplitWindows();
@@ -557,9 +556,13 @@ public class Importer {
         }
       }
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
       reportException(exc, quiet,
         "Sorry, there was a problem reading the data");
+    }
+    catch (IOException exc) {
+      reportException(exc, quiet,
+        "Sorry, there was an I/O problem reading the data");
     }
   }
 
@@ -665,108 +668,107 @@ public class Importer {
   }
 
   /** Displays the image stack using the appropriate plugin. */
-  private void displayStack(ImagePlus imp, IFormatReader r, FileStitcher fs,
-    ImporterOptions options)
+  private void displayStack(ImagePlus imp,
+    IFormatReader r, FileStitcher fs, ImporterOptions options)
   {
     boolean mergeChannels = options.isMergeChannels();
     boolean concatenate = options.isConcatenate();
 
     Util.adjustColorRange(imp);
 
-    try {
-      // convert to RGB if needed
-      int pixelType = r.getPixelType();
-      if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
-        (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8))
-      {
-        makeRGB(imp, r, r.getSizeC());
-      }
-      else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
-        imp.getStackSize() == r.getSizeC())
-      {
-        // create a composite image - this feature is available starting in
-        // ImageJ 1.38n
+    // convert to RGB if needed
+    int pixelType = r.getPixelType();
+    if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
+      (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8))
+    {
+      makeRGB(imp, r, r.getSizeC());
+    }
+    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
+      imp.getStackSize() == r.getSizeC())
+    {
+      // create a composite image - this feature is available starting in
+      // ImageJ 1.38n
 
-        if (IJ.versionLessThan("1.38n")) {
-          IJ.showMessage("Please upgrade to ImageJ 1.38n to use this feature.");
+      if (IJ.versionLessThan("1.38n")) {
+        IJ.showMessage("Please upgrade to ImageJ 1.38n to use this feature.");
+      }
+      else {
+        // use reflection to construct CompositeImage,
+        // in case ImageJ version is too old
+        ReflectedUniverse ru = new ReflectedUniverse();
+        try {
+          ru.exec("import ij.CompositeImage");
+          ru.setVar("imp", imp);
+          ru.setVar("sizeC", r.getSizeC());
+          imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
         }
-        else {
-          // use reflection to construct CompositeImage,
-          // in case ImageJ version is too old
-          ReflectedUniverse ru = new ReflectedUniverse();
-          try {
-            ru.exec("import ij.CompositeImage");
-            ru.setVar("imp", imp);
-            ru.setVar("sizeC", r.getSizeC());
-            imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
-          }
-          catch (ReflectException exc) {
-            reportException(exc, options.isQuiet(),
-              "Sorry, there was a problem constructing the composite image");
-            return;
-          }
+        catch (ReflectException exc) {
+          reportException(exc, options.isQuiet(),
+            "Sorry, there was a problem constructing the composite image");
+          return;
         }
       }
-      else if (mergeChannels && r.getSizeC() >= 4) {
-        // ask the user what they would like to do...
-        // CTR FIXME -- migrate into ImporterOptions?
-        // also test with macros, and merging multiple image stacks
-        // (i.e., what happens if this code executes more than once?)
+    }
+    else if (mergeChannels && r.getSizeC() >= 4) {
+      // ask the user what they would like to do...
+      // CTR FIXME -- migrate into ImporterOptions?
+      // also test with macros, and merging multiple image stacks
+      // (i.e., what happens if this code executes more than once?)
 
-        int planes1 = r.getImageCount() / 2;
-        if (planes1 * 2 < r.getImageCount()) planes1++;
-        int planes2 = r.getImageCount() / 3;
-        if (planes2 * 3 < r.getImageCount()) planes2++;
+      int planes1 = r.getImageCount() / 2;
+      if (planes1 * 2 < r.getImageCount()) planes1++;
+      int planes2 = r.getImageCount() / 3;
+      if (planes2 * 3 < r.getImageCount()) planes2++;
 
-        GenericDialog gd = new GenericDialog("Merging Options...");
-        gd.addMessage("How would you like to merge this data?");
-        gd.addChoice("", new String[] {
-          planes1 + " planes, 2 channels per plane",
-          planes2 + " planes, 3 channels per plane", "Do not merge"}, "");
-        gd.showDialog();
+      GenericDialog gd = new GenericDialog("Merging Options...");
+      gd.addMessage("How would you like to merge this data?");
+      gd.addChoice("", new String[] {
+        planes1 + " planes, 2 channels per plane",
+        planes2 + " planes, 3 channels per plane", "Do not merge"}, "");
+      gd.showDialog();
 
-        if (gd.wasCanceled()) return;
+      if (gd.wasCanceled()) return;
 
-        int idx = gd.getNextChoiceIndex();
+      int idx = gd.getNextChoiceIndex();
 
-        switch (idx) {
-          case 0:
-            makeRGB(imp, r, 2);
-            break;
-          case 1:
-            makeRGB(imp, r, 3);
-            break;
-        }
+      switch (idx) {
+        case 0:
+          makeRGB(imp, r, 2);
+          break;
+        case 1:
+          makeRGB(imp, r, 3);
+          break;
       }
+    }
 
-      imp.setDimensions(
-        imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()),
-        imp.getNSlices(), imp.getNFrames());
-      if (options.isViewBrowser()) { }
-      else if (options.isViewImage5D()) {
-        int sizeZ = r.getSizeZ();
-        int sizeT = r.getSizeT();
-        int sizeC = r.getSizeC();
-        if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
+    imp.setDimensions(
+      imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()),
+      imp.getNSlices(), imp.getNFrames());
+    if (options.isViewBrowser()) { }
+    else if (options.isViewImage5D()) {
+      int sizeZ = r.getSizeZ();
+      int sizeT = r.getSizeT();
+      int sizeC = r.getSizeC();
+      if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
 
-        // reorder stack to Image5D's preferred order: XYCZT
-        ImageStack is;
-        ImageStack stack = imp.getStack();
-        if (r.getDimensionOrder().equals("XYCZT")) is = stack;
-        else {
-          is = new ImageStack(r.getSizeX(), r.getSizeY());
-          for (int t=0; t<sizeT; t++) {
-            for (int z=0; z<sizeZ; z++) {
-              for (int c=0; c<sizeC; c++) {
-                int ndx = r.getIndex(z, c, t) + 1;
-                is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
-              }
+      // reorder stack to Image5D's preferred order: XYCZT
+      ImageStack is;
+      ImageStack stack = imp.getStack();
+      if (r.getDimensionOrder().equals("XYCZT")) is = stack;
+      else {
+        is = new ImageStack(r.getSizeX(), r.getSizeY());
+        for (int t=0; t<sizeT; t++) {
+          for (int z=0; z<sizeZ; z++) {
+            for (int c=0; c<sizeC; c++) {
+              int ndx = r.getIndex(z, c, t) + 1;
+              is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
             }
           }
         }
+      }
 
-        ReflectedUniverse ru = null;
-        ru = new ReflectedUniverse();
+      ReflectedUniverse ru = new ReflectedUniverse();
+      try {
         ru.exec("import i5d.Image5D");
         ru.setVar("title", imp.getTitle());
         ru.setVar("stack", is);
@@ -781,38 +783,38 @@ public class Importer {
         //ru.exec("i5d.setDimensions(sizeC, sizeZ, sizeT)");
         ru.exec("i5d.show()");
       }
-      else if (options.isViewView5D()) {
-        int sizeZ = r.getSizeZ();
-        int sizeC = r.getSizeC();
-        int sizeT = r.getSizeT();
-        if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
-        ChannelMerger ndxReader = new ChannelMerger(r);
-
-        // reorder stack to View5D's preferred order: XYZCT
-        if (!r.getDimensionOrder().equals("XYZCT")) {
-          ImageStack is = new ImageStack(r.getSizeX(), r.getSizeY());
-          ImageStack stack = imp.getStack();
-          for (int t=0; t<sizeT; t++) {
-            for (int c=0; c<sizeC; c++) {
-              for (int z=0; z<sizeZ; z++) {
-                int ndx = mergeChannels ? ndxReader.getIndex(z, c, t) + 1 :
-                  r.getIndex(z, c, t) + 1;
-                is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
-              }
-            }
-          }
-          imp.setStack(imp.getTitle(), is);
-        }
-        WindowManager.setTempCurrentImage(imp);
-        IJ.run("View5D ", "");
-      }
-      else if (!options.isViewNone()) {
-        if (!concatenate) imp.show();
-        else imps.add(imp);
+      catch (ReflectException exc) {
+        reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem interfacing with Image5D");
+        return;
       }
     }
-    catch (Exception exc) {
-      exc.printStackTrace();
+    else if (options.isViewView5D()) {
+      int sizeZ = r.getSizeZ();
+      int sizeC = r.getSizeC();
+      int sizeT = r.getSizeT();
+      if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
+      ChannelMerger ndxReader = new ChannelMerger(r);
+
+      // reorder stack to View5D's preferred order: XYZCT
+      if (!r.getDimensionOrder().equals("XYZCT")) {
+        ImageStack is = new ImageStack(r.getSizeX(), r.getSizeY());
+        ImageStack stack = imp.getStack();
+        for (int t=0; t<sizeT; t++) {
+          for (int c=0; c<sizeC; c++) {
+            for (int z=0; z<sizeZ; z++) {
+              int ndx = mergeChannels ? ndxReader.getIndex(z, c, t) + 1 :
+                r.getIndex(z, c, t) + 1;
+              is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
+            }
+          }
+        }
+        imp.setStack(imp.getTitle(), is);
+      }
+      WindowManager.setTempCurrentImage(imp);
+      IJ.run("View5D ", "");
+    }
+    else if (!options.isViewNone()) {
       if (!concatenate) imp.show();
       else imps.add(imp);
     }
@@ -842,9 +844,7 @@ public class Importer {
     }
   }
 
-  private void makeRGB(ImagePlus imp, IFormatReader r, int c)
-    throws FormatException, IOException
-  {
+  private void makeRGB(ImagePlus imp, IFormatReader r, int c) {
     ImageStack s = imp.getStack();
     ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
     for (int i=0; i<s.getSize(); i++) {
