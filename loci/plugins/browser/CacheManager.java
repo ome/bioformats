@@ -443,16 +443,10 @@ public class CacheManager implements Runnable {
 
     int[] coords;
     synchronized (read) {
-      try {
-        coords = read.getZCTCoords(index);
-        curZ = coords[0];
-        curC = coords[1];
-        curT = coords[2];
-      }
-      catch (FormatException exc) {
-        exc.printStackTrace();
-        LociDataBrowser.dumpException(exc);
-      }
+      coords = read.getZCTCoords(index);
+      curZ = coords[0];
+      curC = coords[1];
+      curT = coords[2];
     }
 
     ImageProcessor result = cache[index];

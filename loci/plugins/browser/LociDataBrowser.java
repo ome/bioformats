@@ -223,12 +223,7 @@ public class LociDataBrowser {
   public int getIndex(int z, int t, int c) {
     int result = -23;
     synchronized (reader) {
-      try {
-        result = reader.getIndex(z, c, t);
-      }
-      catch (FormatException exc) {
-        dumpException(exc);
-      }
+      result = reader.getIndex(z, c, t);
     }
     return result;
   }
