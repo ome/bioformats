@@ -254,55 +254,79 @@ public class ImporterOptions implements ItemListener {
    * @return status of operation
    */
   public int promptId() {
+    if (isLocal()) return promptIdLocal();
+    else if (isHTTP()) return promptIdHTTP();
+    else return promptIdOME(); // isOME
+  }
+
+  /**
+   * Gets the filename (id) to open from macro options,
+   * or user prompt if necessary.
+   * @return status of operation
+   */
+  public int promptIdLocal() {
     if (id == null) {
-      if (isLocal()) {
-        // prompt user for the filename (or grab from macro options)
-        OpenDialog od = new OpenDialog(LABEL_ID, id);
-        String dir = od.getDirectory();
-        String name = od.getFileName();
-        if (dir == null || name == null) return STATUS_CANCELED;
-        id = dir + name;
-      }
-      else if (isHTTP()) {
-        // prompt user for the URL (or grab from macro options)
-        GenericDialog gd = new GenericDialog("Bio-Formats URL");
-        gd.addStringField("URL: ", "http://", 30);
-        gd.showDialog();
-        if (gd.wasCanceled()) return STATUS_CANCELED;
-        id = gd.getNextString();
-      }
-      else { // isOME
-        // CTR FIXME -- eliminate this kludge
-        IJ.runPlugIn("loci.plugins.OMEPlugin", "");
-        return STATUS_FINISHED;
-      }
+      // prompt user for the filename (or grab from macro options)
+      OpenDialog od = new OpenDialog(LABEL_ID, id);
+      String dir = od.getDirectory();
+      String name = od.getFileName();
+      if (dir == null || name == null) return STATUS_CANCELED;
+      id = dir + name;
     }
 
     // verify that id is valid
-    if (isLocal()) {
-      if (id != null) idLoc = new Location(id);
-      if (idLoc == null || !idLoc.exists()) {
-        if (!quiet) {
-          IJ.error("Bio-Formats", idLoc == null ?
-            "No file was specified." :
-            "The specified file (" + id + ") does not exist.");
-        }
-        return STATUS_FINISHED;
+    if (id != null) idLoc = new Location(id);
+    if (idLoc == null || !idLoc.exists()) {
+      if (!quiet) {
+        IJ.error("Bio-Formats", idLoc == null ?
+          "No file was specified." :
+          "The specified file (" + id + ") does not exist.");
       }
-      idName = idLoc.getName();
-      idType = "Filename";
+      return STATUS_FINISHED;
     }
-    else if (isHTTP()) {
-      if (id == null) {
-        if (!quiet) IJ.error("Bio-Formats", "No URL was specified.");
-        return STATUS_FINISHED;
-      }
-      idName = id;
-      idType = "URL";
+    idName = idLoc.getName();
+    idType = "Filename";
+    return STATUS_OK;
+  }
+
+  /**
+   * Gets the URL (id) to open from macro options,
+   * or user prompt if necessary.
+   * @return status of operation
+   */
+  public int promptIdHTTP() {
+    if (id == null) {
+      // prompt user for the URL (or grab from macro options)
+      GenericDialog gd = new GenericDialog("Bio-Formats URL");
+      gd.addStringField("URL: ", "http://", 30);
+      gd.showDialog();
+      if (gd.wasCanceled()) return STATUS_CANCELED;
+      id = gd.getNextString();
     }
-    else { // isOME
-      idType = "OME address";
+
+    // verify that id is valid
+    if (id == null) {
+      if (!quiet) IJ.error("Bio-Formats", "No URL was specified.");
+      return STATUS_FINISHED;
     }
+    idName = id;
+    idType = "URL";
+    return STATUS_OK;
+  }
+
+  /**
+   * Gets the OME server and image (id) to open from macro options,
+   * or user prompt if necessary.
+   * @return status of operation
+   */
+  public int promptIdOME() {
+    if (id == null) {
+      // CTR FIXME -- eliminate this kludge
+      IJ.runPlugIn("loci.plugins.OMEPlugin", "");
+      return STATUS_FINISHED;
+    }
+
+    idType = "OME address";
     return STATUS_OK;
   }
 
