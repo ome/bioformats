@@ -109,18 +109,6 @@ OME Metadata Editor
                    jar-editor
     License:       LGPL
 
-Movie Stitcher
-    JAR file:      MovieStitcher.jar
-    Folders:       loci/apps/stitcher
-                   loci/formats
-                   loci/formats/*
-    Main class:    loci.apps.sticher.MovieStitcher
-    Dependencies:  None (custom built)
-    Targets:       style-stitcher
-                   compile-stitcher
-                   jar-stitcher
-    License:       Public domain
-
 Slim Plotter
     JAR file:      SlimPlotter.jar
     Folders:       loci/apps/slim
@@ -276,7 +264,7 @@ Apache XML-RPC
 
   <target name="style"
     depends="style-formats, style-visbio, style-plugins, style-notes,
-      style-editor, style-stitcher, style-slim, style-checks"
+      style-editor, style-slim, style-checks"
     description="check source code style for LOCI software packages"/>
 
 <!--
@@ -289,12 +277,12 @@ Apache XML-RPC
 -->
   <target name="compile"
     depends="compile-formats, compile-visbio, compile-plugins,
-      compile-notes, compile-editor, compile-stitcher, compile-slim"
+      compile-notes, compile-editor, compile-slim"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
     depends="jar-formats, jar-visbio, jar-plugins, jar-notes,
-      jar-editor, jar-stitcher, jar-slim, jar-checks"
+      jar-editor, jar-slim, jar-checks"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="tools" depends="jars"
@@ -715,35 +703,6 @@ Apache XML-RPC
       <manifest>
         <attribute name="Main-Class" value="${editor.main}"/>
         <attribute name="Class-Path" value="${editor.classpath}"/>
-      </manifest>
-    </jar>
-  </target>
-
-  <!-- Movie Stitcher -->
-
-  <target name="style-stitcher" depends="copy-source, jar-checks"
-    description="check source code style for Movie Stitcher">
-    <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${stitcher.source}"/>
-    </checkstyle>
-  </target>
-
-  <target name="compile-stitcher" depends="copy-source"
-    description="compile classes for Movie Stitcher">
-    <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${stitcher.source}" classpath="${ext.jars}"
-      debug="true" deprecation="true" source="1.4" target="1.4"/>
-  </target>
-
-  <target name="jar-stitcher" depends="compile-stitcher"
-    description="generate JAR file for Movie Stitcher">
-    <mkdir dir="${jar.dir}"/>
-    <jar jarfile="${jar.dir}/${stitcher.jar}" basedir="${classes.dir}"
-      includes="${stitcher.files}">
-      <manifest>
-        <attribute name="Main-Class" value="${stitcher.main}"/>
-        <attribute name="Class-Path" value="${stitcher.classpath}"/>
       </manifest>
     </jar>
   </target>
