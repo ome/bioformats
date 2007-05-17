@@ -192,59 +192,32 @@ public class QTReader extends FormatReader {
     in.seek(pixelOffset + offset);
     in.read(pixs);
 
-    canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
+    canUsePrevious = (prevPixels != null) && (prevPlane == no - 1) && 
+      !code.equals(altCodec);
 
     if (code.equals("jpeg") || code.equals("mjpb")) {
       byte[] s = ImageTools.getBytes(openImage(no), false, no);
       return s;
     }
 
-    byte[] bytes = uncompress(pixs, code);
+    byte[] bytes = null;
+    if (!code.equals("rpza")) bytes = uncompress(pixs, code);
+    else {
+      bytes = rpzaUncompress(pixs, canUsePrevious ? prevPixels : null); 
+    
+      for (int i=0; i<bytes.length; i++) {
+        bytes[i] = (byte) (255 - bytes[i]);
+      }
+      prevPlane = no;
+      return bytes; 
+    } 
+   
     // on rare occassions, we need to trim the data
     if (canUsePrevious && (prevPixels.length < bytes.length)) {
       byte[] temp = bytes;
       bytes = new byte[prevPixels.length];
       System.arraycopy(temp, 0, bytes, 0, bytes.length);
     }
-
-    /*
-    if (flip) {
-      // we need to flip the X and Y axes before displaying
-
-      byte[] tmp = bytes;
-      bytes = new byte[tmp.length];
-
-      int t = core.sizeX[0];
-      core.sizeX[0] = core.sizeY[0];
-      core.sizeY[0] = t;
-
-      int b = bytes.length / (core.sizeX[0] * core.sizeY[0]);
-
-      if (b % 3 != 0) {
-        for (int i=0; i<core.sizeX[0]; i++) {
-          for (int j=0; j<core.sizeY[0]; j++) {
-            for (int k=0; k<b; k++) {
-              int bndx = j * core.sizeX[0] * b + (core.sizeX[0] - i) + b;
-              int tndx = i * core.sizeY[0] * b + j + b;
-              bytes[bndx] = tmp[tndx];
-            }
-          }
-        }
-      }
-      else {
-        for (int i=0; i<3; i++) {
-          for (int j=0; j<core.sizeX[0]; j++) {
-            for (int k=0; k<core.sizeY[0]; k++) {
-              int q = i * core.sizeX[0] * core.sizeY[0];
-              int bndx = k * core.sizeX[0] + q + (core.sizeX[0] - j - 1);
-              int tndx = j * core.sizeY[0] + k + q;
-              bytes[bndx] = tmp[tndx];
-            }
-          }
-        }
-      }
-    }
-    */
 
     prevPixels = bytes;
     prevPlane = no;
@@ -257,7 +230,7 @@ public class QTReader extends FormatReader {
     int size = core.sizeX[0] * core.sizeY[0];
     if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
 
-    if (pad > 0 && !code.equals("rpza")) {
+    if (pad > 0) {
       bytes = new byte[prevPixels.length - core.sizeY[0]*pad];
 
       for (int row=0; row<core.sizeY[0]; row++) {
@@ -265,48 +238,6 @@ public class QTReader extends FormatReader {
           row*core.sizeX[0], core.sizeX[0]);
       }
     }
-    else if (code.equals("rpza")) {
-      bytes = new byte[prevPixels.length];
-
-      int cut = 0;
-
-      for (int i=core.sizeX[0]-1; i>=0; i--) {
-        byte[] redColumn = new byte[core.sizeY[0]];
-        byte[] greenColumn = new byte[core.sizeY[0]];
-        byte[] blueColumn = new byte[core.sizeY[0]];
-
-        for (int j=0; j<cut; j++) {
-          int ndx = (j + core.sizeY[0] - cut) * core.sizeX[0] + i;
-          redColumn[j] = prevPixels[ndx];
-          greenColumn[j] = prevPixels[ndx + size];
-          blueColumn[j] = prevPixels[ndx + 2 * size];
-        }
-
-        for (int j=cut; j<core.sizeY[0]; j++) {
-          int ndx = j * core.sizeX[0] + i;
-          redColumn[j] = prevPixels[ndx];
-          greenColumn[j] = prevPixels[ndx + size];
-          blueColumn[j] = prevPixels[ndx + 2 * size];
-        }
-
-        if (i > core.sizeX[0] - 1 - core.sizeY[0]) cut++;
-
-        for (int j=0; j<core.sizeY[0]; j++) {
-          int ndx = j * core.sizeX[0] + i;
-          bytes[ndx] = redColumn[j];
-          bytes[ndx + size] = greenColumn[j];
-          bytes[ndx + 2 * size] = blueColumn[j];
-        }
-      }
-    }
-
-    /*
-    if (flip) {
-      int t = core.sizeX[0];
-      core.sizeX[0] = core.sizeY[0];
-      core.sizeY[0] = t;
-    }
-    */
 
     if (bitsPerPixel == 40 || bitsPerPixel == 8) {
       // invert the pixels
@@ -818,180 +749,186 @@ public class QTReader extends FormatReader {
     // JPEG and mjpb codecs handled separately, so not included in this list
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) return rleUncompress(pixs);
-    else if (code.equals("rpza")) return rpzaUncompress(pixs);
+    else if (code.equals("rpza")) return rpzaUncompress(pixs, null);
     else {
       throw new FormatException("Sorry, " + codec + " codec is not supported");
     }
   }
 
-  /** Uncompresses an RPZA compressed image plane. */
-  private byte[] rpzaUncompress(byte[] input) throws FormatException {
-    bitsPerPixel = 8;
-    int[] out = new int[core.sizeX[0] * core.sizeY[0]];
+  /** 
+   * Uncompresses an RPZA compressed image plane. Adapted from the ffmpeg
+   * codec - see http://ffmpeg.mplayerhq.hu
+   */
+  private byte[] rpzaUncompress(byte[] input, byte[] rtn) 
+    throws FormatException 
+  {
+    int width = core.sizeX[0];
+    int stride = core.sizeX[0]; 
+    int rowInc = stride - 4;
+    int streamPtr = 0;
+    short opcode;
+    int nBlocks;
+    int colorA = 0, colorB;
+    int[] color4 = new int[4];
+    int index, idx;
+    int ta, tb;
+    int rowPtr = 0, pixelPtr = 0, blockPtr = 0;
+    int pixelX, pixelY;
+    int totalBlocks;
 
-    int pt = 1; // pointer into the array of compressed bytes
+    int[] pixels = new int[width * core.sizeY[0]];
+    if (rtn == null) rtn = new byte[width * core.sizeY[0] * 3];
 
-    // get the chunk size
-    int size = DataTools.bytesToInt(input, pt, 3, false);
-    pt += 3;
+    while (input[streamPtr] != (byte) 0xe1) streamPtr++;
+    streamPtr += 4;
 
-    int totalBlocks = ((core.sizeX[0] + 3) / 4) * ((core.sizeY[0] + 3) / 4);
-    int currentBlock = 0;
-    int blocksPerRow = ((core.sizeX[0] + 3) / 4);
-    int rowPtr = 0;
-    int pixelPtr = 0;
-    int colorA = 0, colorB = 0;
-
-    // process chunk data
-
-    while (pt + 4 < input.length && currentBlock < totalBlocks) {
-      byte opcode = input[pt];
-      pt++;
-
-      int nBlocks = (opcode & 0x1f) + 1;
+    totalBlocks = ((width + 3) / 4) * ((core.sizeY[0] + 3) / 4);
+  
+    while (streamPtr < input.length) {
+      opcode = input[streamPtr++];
+      nBlocks = (opcode & 0x1f) + 1;
 
       if ((opcode & 0x80) == 0) {
-        colorA = (opcode << 8) | input[pt];
-        pt++;
+        if (streamPtr >= input.length) break; 
+        colorA = (opcode << 8) | input[streamPtr++];
         opcode = 0;
-
-        if ((input[pt] & 0x80) != 0) {
+        if (streamPtr >= input.length) break; 
+        if ((input[streamPtr] & 0x80) != 0) {
           opcode = 0x20;
           nBlocks = 1;
         }
       }
-
+   
       switch (opcode & 0xe0) {
         case 0x80:
-          // skip blocks
-          while (nBlocks > 0) {
-            currentBlock++;
-            nBlocks--;
+          while (nBlocks-- > 0) {
             pixelPtr += 4;
-            if (pixelPtr >= core.sizeX[0] - 1) {
-              rowPtr += 4;
+            if (pixelPtr >= width) {
               pixelPtr = 0;
+              rowPtr += stride * 4;
             }
+            totalBlocks--;
           }
           break;
         case 0xa0:
-          // fill blocks with one color
-          colorA = DataTools.bytesToInt(input, pt, 2, false);
-          pt += 2;
-          while (nBlocks > 0) {
-            // fill the whole block with colorA
+          colorA = DataTools.bytesToInt(input, streamPtr, 2, false);
+          streamPtr += 2;
+          while (nBlocks-- > 0) {
+            blockPtr = rowPtr + pixelPtr;
+            for (pixelY=0; pixelY < 4; pixelY++) {
+              for (pixelX=0; pixelX < 4; pixelX++) {
+                if (blockPtr >= pixels.length) break; 
+                pixels[blockPtr] = colorA;
+              
+                short s = (short) (pixels[blockPtr] & 0x7fff);
 
-            for (int y=0; y<4; y++) {
-              for (int x=0; x<4; x++) {
-                if ((rowPtr + y)*core.sizeX[0] + pixelPtr + x < out.length) {
-                  out[(rowPtr + y)*core.sizeX[0] + pixelPtr + x] = colorA;
-                }
+                rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10)); 
+                rtn[blockPtr + pixels.length] = 
+                  (byte) (255 - ((s & 0x3e0) >> 5));
+                rtn[blockPtr + 2*pixels.length] = (byte) (255 - (s & 0x1f));
+
+                blockPtr++;
               }
+              blockPtr += rowInc; 
             }
-
             pixelPtr += 4;
-            if (pixelPtr >= core.sizeX[0] - 1) {
-              rowPtr += 4;
+            if (pixelPtr >= width) {
               pixelPtr = 0;
+              rowPtr += stride * 4;
             }
-            currentBlock++;
-            nBlocks--;
+            totalBlocks--;
           }
           break;
         case 0xc0:
-          colorA = DataTools.bytesToInt(input, pt, 2, false);
-          pt += 2;
-          break;
+          colorA = DataTools.bytesToInt(input, streamPtr, 2, false);
+          streamPtr += 2;
         case 0x20:
-          // fill blocks with 4 colors
-          colorA = DataTools.bytesToInt(input, pt, 2, false);
-          colorB = DataTools.bytesToInt(input, pt, 2, false);
-          pt += 4;
+          colorB = DataTools.bytesToInt(input, streamPtr, 2, false);
+          streamPtr += 2;
 
-          // sort out the colors
-          int[] colors = new int[4];
-          colors[0] = colorB;
-          colors[1] = 0;
-          colors[2] = 0;
-          colors[3] = colorA;
+          color4[0] = colorB;
+          color4[1] = 0;
+          color4[2] = 0;
+          color4[3] = colorA;
 
-          int ta = (colorA >> 10) & 0x1f;
-          int tb = (colorB >> 10) & 0x1f;
-          colors[1] |= ((11 * ta + 21 * tb) >> 5) << 10;
-          colors[2] |= ((21 * ta + 11 * tb) >> 5) << 10;
+          ta = (colorA >> 10) & 0x1f;
+          tb = (colorB >> 10) & 0x1f;
+          color4[1] |= ((11*ta + 21*tb) >> 5) << 10;
+          color4[2] |= ((21*ta + 11*tb) >> 5) << 10;
 
           ta = (colorA >> 5) & 0x1f;
           tb = (colorB >> 5) & 0x1f;
-          colors[1] |= ((11 * ta + 21 * tb) >> 5) << 5;
-          colors[2] |= ((21 * ta + 11 * tb) >> 5) << 5;
+          color4[1] |= ((11*ta + 21*tb) >> 5) << 5;
+          color4[2] |= ((21*ta + 11*tb) >> 5) << 5;
 
           ta = colorA & 0x1f;
           tb = colorB & 0x1f;
-          colors[1] |= ((11 * ta + 21 * tb) >> 5);
-          colors[2] |= ((21 * ta + 11 * tb) >> 5);
+          color4[1] |= ((11*ta + 21*tb) >> 5);
+          color4[2] |= ((21*ta + 11*tb) >> 5);
 
-          while (nBlocks > 0) {
-            for (int y=0; y<4; y++) {
-              if (pt >= input.length) break;
-              int ndx = input[pt];
-              pt++;
-              for (int x=0; x<4; x++) {
-                int idx = (ndx >> (2 * (3 - x))) & 0x03;
-                if ((rowPtr + y)*core.sizeX[0] + pixelPtr + x < out.length) {
-                  out[(rowPtr + y)*core.sizeX[0] + pixelPtr + x] = colors[idx];
-                }
+          while (nBlocks-- > 0) {
+            blockPtr = rowPtr + pixelPtr;
+            for (pixelY=0; pixelY<4; pixelY++) {
+              if (streamPtr >= input.length) break; 
+              index = input[streamPtr++];
+              for (pixelX=0; pixelX<4; pixelX++) {
+                idx = (index >> (2*(3 - pixelX))) & 0x03;
+                if (blockPtr >= pixels.length) break; 
+                pixels[blockPtr] = color4[idx];
+                
+                short s = (short) (pixels[blockPtr] & 0x7fff);
+
+                rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10)); 
+                rtn[blockPtr + pixels.length] = 
+                  (byte) (255 - ((s & 0x3e0) >> 5));
+                rtn[blockPtr + 2*pixels.length] = (byte) (255 - (s & 0x1f));
+
+                blockPtr++;
               }
+              blockPtr += rowInc; 
             }
-
             pixelPtr += 4;
-            if (pixelPtr >= core.sizeX[0] - 1) {
-              rowPtr += 4;
+            if (pixelPtr >= width) {
               pixelPtr = 0;
+              rowPtr += stride * 4;
             }
-            currentBlock++;
-            nBlocks--;
+            totalBlocks--;
           }
-
-          break;
+          break; 
         case 0x00:
-          // fill block with 16 colors
+          blockPtr = rowPtr + pixelPtr;
+          for (pixelY=0; pixelY < 4; pixelY++) {
+            for (pixelX=0; pixelX < 4; pixelX++) {
+              if ((pixelY != 0) || (pixelX != 0)) {
+                colorA = DataTools.bytesToInt(input, streamPtr, 2, false);
+                streamPtr += 2;
+              }
+              if (blockPtr >= pixels.length) break; 
+              pixels[blockPtr] = colorA;
+              
+              short s = (short) (pixels[blockPtr] & 0x7fff);
 
-          for (int y=0; y<4; y++) {
-            for (int x=0; x<4; x++) {
-              if (y != 0 || x != 0) {
-                colorA = DataTools.bytesToInt(input, pt, 2, false);
-                pt += 2;
-              }
-              if ((rowPtr + y)*core.sizeX[0] + pixelPtr + x < out.length) {
-                out[(rowPtr + y)*core.sizeX[0] + pixelPtr + x] = colorA;
-              }
+              rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10)); 
+              rtn[blockPtr + pixels.length] = (byte) (255 - ((s & 0x3e0) >> 5));
+              rtn[blockPtr + 2*pixels.length] = (byte) (255 - (s & 0x1f));
+              
+              blockPtr++;
             }
+            blockPtr += rowInc; 
           }
-
           pixelPtr += 4;
-          if (pixelPtr >= core.sizeX[0] - 1) {
-            rowPtr += 4;
+          if (pixelPtr >= width) {
             pixelPtr = 0;
+            rowPtr += stride * 4;
           }
-
-          currentBlock++;
+          totalBlocks--;
           break;
       }
     }
 
-    // convert int array to byte array and return
-    // note that the colors need to be reversed
-
-    byte[] rtn = new byte[out.length * 3];
-    for (int i=0; i<out.length; i++) {
-      int color = 65535 - out[i];
-      rtn[i] = (byte) ((color >> 10) & 0x1f);
-      rtn[i + out.length] = (byte) ((color >> 5) & 0x1f);
-      rtn[i + 2*out.length] = (byte) (color & 0x1f);
-    }
     return rtn;
   }
-
+  
   /** Uncompresses a MJPEG-B compressed image plane. */
   private BufferedImage mjpbUncompress(byte[] input) throws FormatException {
     byte[] raw = null;
