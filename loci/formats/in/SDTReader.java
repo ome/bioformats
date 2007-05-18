@@ -95,12 +95,6 @@ public class SDTReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#getRGBChannelCount(String) */
-  public int getRGBChannelCount() {
-    FormatTools.assertId(currentId, true, 1);
-    return intensity ? 1 : timeBins;
-  }
-
   /* @see loci.formats.IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);
@@ -208,7 +202,7 @@ public class SDTReader extends FormatReader {
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
     core.pixelType[0] = FormatTools.UINT16;
-    core.rgb[0] = getRGBChannelCount() > 1;
+    core.rgb[0] = !intensity;
     core.littleEndian[0] = true;
     core.imageCount[0] = channels;
 
