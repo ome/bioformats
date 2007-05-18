@@ -64,7 +64,10 @@ public class SDTReader extends FormatReader {
    * Toggles whether the reader should return intensity
    * data only (the sum of each lifetime histogram).
    */
-  public void setIntensity(boolean intensity) { this.intensity = intensity; }
+  public void setIntensity(boolean intensity) {
+    FormatTools.assertId(currentId, false, 1);
+    this.intensity = intensity;
+  }
 
   /**
    * Gets whether the reader is combining each lifetime
@@ -201,7 +204,7 @@ public class SDTReader extends FormatReader {
     core.sizeX[0] = info.width;
     core.sizeY[0] = info.height;
     core.sizeZ[0] = 1;
-    core.sizeC[0] = channels;
+    core.sizeC[0] = intensity ? channels : timeBins * channels;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYZTC";
     core.pixelType[0] = FormatTools.UINT16;
