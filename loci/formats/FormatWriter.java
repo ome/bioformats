@@ -114,13 +114,6 @@ public abstract class FormatWriter extends FormatHandler
     return false;
   }
 
-  /* @see IFormatWriter#testConvert(String[]) */
-  public boolean testConvert(String[] args)
-    throws FormatException, IOException
-  {
-    return FormatTools.testConvert(this, args);
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String, boolean) */

@@ -143,7 +143,7 @@ and Location.getMappedId(String).
   all of the metadata and dimension information, along with a window showing
   the images in the file.  ImageReader can take additional parameters; a
   brief listing is provided for reference, but it is recommended that you
-  take a look at the contents of FormatReader.testRead to see exactly what
+  take a look at the contents of ConsoleTools.testRead to see exactly what
   each one does.
 
     Argument            Action

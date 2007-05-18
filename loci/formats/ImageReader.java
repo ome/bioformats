@@ -447,11 +447,6 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].setMetadataStore(store);
   }
 
-  /* @see IFormatReader#testRead(String[]) */
-  public boolean testRead(String[] args) throws FormatException, IOException {
-    return FormatTools.testRead(this, args);
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */
@@ -527,7 +522,7 @@ public class ImageReader implements IFormatReader {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    if (!new ImageReader().testRead(args)) System.exit(1);
+    if (!ConsoleTools.testRead(new ImageReader(), args)) System.exit(1);
   }
 
   // -- Deprecated IFormatReader API methods --

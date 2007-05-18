@@ -274,12 +274,6 @@ public interface IFormatReader extends IFormatHandler {
    */
   Object getMetadataStoreRoot();
 
-  /**
-   * A utility method for test reading a file from the command line,
-   * and displaying the results in a simple display.
-   */
-  boolean testRead(String[] args) throws FormatException, IOException;
-
   // -- Deprecated API methods --
 
   /** @deprecated Replaced by {@link #getImageCount()} */

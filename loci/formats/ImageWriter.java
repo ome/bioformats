@@ -246,13 +246,6 @@ public class ImageWriter implements IFormatWriter {
     if (!ok) throw new FormatException("Invalid compression type: " + compress);
   }
 
-  /* @see IFormatWriter#testConvert(String[]) */
-  public boolean testConvert(String[] args)
-    throws FormatException, IOException
-  {
-    return FormatTools.testConvert(this, args);
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */
@@ -327,7 +320,7 @@ public class ImageWriter implements IFormatWriter {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    if (!new ImageWriter().testConvert(args)) System.exit(1);
+    if (!ConsoleTools.testConvert(new ImageWriter(), args)) System.exit(1);
   }
 
   // -- Deprecated IFormatWriter API methods --

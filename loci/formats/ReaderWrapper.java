@@ -261,10 +261,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMetadataStoreRoot();
   }
 
-  public boolean testRead(String[] args) throws FormatException, IOException {
-    return reader.testRead(args);
-  }
-
   // -- IFormatHandler API methods --
 
   public boolean isThisType(String name) {

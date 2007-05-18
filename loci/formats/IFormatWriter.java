@@ -71,9 +71,6 @@ public interface IFormatWriter extends IFormatHandler {
   /** Sets the current compression type. */
   void setCompression(String compress) throws FormatException;
 
-  /** A utility method for converting a file from the command line. */
-  boolean testConvert(String[] args) throws FormatException, IOException;
-
   // -- Deprecated API methods --
 
   /** @deprecated Replaced by {@link #canDoStacks()} */

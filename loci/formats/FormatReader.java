@@ -502,11 +502,6 @@ public abstract class FormatReader extends FormatHandler
     return getMetadataStore().getRoot();
   }
 
-  /* @see FormatReader#testRead(String[]) */
-  public boolean testRead(String[] args) throws FormatException, IOException {
-    return FormatTools.testRead(this, args);
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String, boolean) */

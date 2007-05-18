@@ -621,11 +621,6 @@ public class FileStitcher implements IFormatReader {
     return reader.getMetadataStoreRoot();
   }
 
-  /* @see IFormatReader#testRead(String[]) */
-  public boolean testRead(String[] args) throws FormatException, IOException {
-    return FormatTools.testRead(this, args);
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

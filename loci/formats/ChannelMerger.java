@@ -141,8 +141,4 @@ public class ChannelMerger extends ReaderWrapper {
     return FormatTools.getZCTCoords(this, index);
   }
 
-  public boolean testRead(String[] args) throws FormatException, IOException {
-    return FormatTools.testRead(this, args);
-  }
-
 }
