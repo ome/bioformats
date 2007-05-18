@@ -265,22 +265,29 @@ public final class ConsoleTools {
       System.out.println("\tWidth = " + sizeX);
       System.out.println("\tHeight = " + sizeY);
       System.out.println("\tSizeZ = " + sizeZ);
+      System.out.println("\tSizeT = " + sizeT);
       System.out.print("\tSizeC = " + sizeC);
       if (sizeC != effSizeC) {
         System.out.print(" (effectively " + effSizeC + ")");
       }
-      System.out.println();
       int cProduct = 1;
-      for (int i=0; i<cLengths.length; i++) {
-        System.out.println("\t\t#" + (i + 1) + " = " +
-          cTypes[i] + " (" + cLengths[i] + ")");
-        cProduct *= cLengths[i];
+      if (cLengths.length == 1 && FormatTools.CHANNEL.equals(cTypes[0])) {
+        cProduct = cLengths[0];
       }
+      else {
+        System.out.print(" (");
+        for (int i=0; i<cLengths.length; i++) {
+          if (i > 0) System.out.print(" x ");
+          System.out.print(cLengths[i] + " " + cTypes[i]);
+          cProduct *= cLengths[i];
+        }
+        System.out.print(")");
+      }
+      System.out.println();
       if (cLengths.length == 0 || cProduct != sizeC) {
         System.out.println(
           "\t************ Warning: C dimension mismatch ************");
       }
-      System.out.println("\tSizeT = " + sizeT);
       if (imageCount != sizeZ * effSizeC * sizeT) {
         System.out.println("\t************ Warning: ZCT mismatch ************");
       }
