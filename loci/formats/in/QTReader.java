@@ -192,7 +192,7 @@ public class QTReader extends FormatReader {
     in.seek(pixelOffset + offset);
     in.read(pixs);
 
-    canUsePrevious = (prevPixels != null) && (prevPlane == no - 1) && 
+    canUsePrevious = (prevPixels != null) && (prevPlane == no - 1) &&
       !code.equals(altCodec);
 
     if (code.equals("jpeg") || code.equals("mjpb")) {
@@ -203,15 +203,15 @@ public class QTReader extends FormatReader {
     byte[] bytes = null;
     if (!code.equals("rpza")) bytes = uncompress(pixs, code);
     else {
-      bytes = rpzaUncompress(pixs, canUsePrevious ? prevPixels : null); 
-    
+      bytes = rpzaUncompress(pixs, canUsePrevious ? prevPixels : null);
+
       for (int i=0; i<bytes.length; i++) {
         bytes[i] = (byte) (255 - bytes[i]);
       }
       prevPlane = no;
-      return bytes; 
-    } 
-   
+      return bytes;
+    }
+
     // on rare occassions, we need to trim the data
     if (canUsePrevious && (prevPixels.length < bytes.length)) {
       byte[] temp = bytes;
@@ -755,15 +755,15 @@ public class QTReader extends FormatReader {
     }
   }
 
-  /** 
+  /**
    * Uncompresses an RPZA compressed image plane. Adapted from the ffmpeg
    * codec - see http://ffmpeg.mplayerhq.hu
    */
-  private byte[] rpzaUncompress(byte[] input, byte[] rtn) 
-    throws FormatException 
+  private byte[] rpzaUncompress(byte[] input, byte[] rtn)
+    throws FormatException
   {
     int width = core.sizeX[0];
-    int stride = core.sizeX[0]; 
+    int stride = core.sizeX[0];
     int rowInc = stride - 4;
     int streamPtr = 0;
     short opcode;
@@ -783,22 +783,22 @@ public class QTReader extends FormatReader {
     streamPtr += 4;
 
     totalBlocks = ((width + 3) / 4) * ((core.sizeY[0] + 3) / 4);
-  
+
     while (streamPtr < input.length) {
       opcode = input[streamPtr++];
       nBlocks = (opcode & 0x1f) + 1;
 
       if ((opcode & 0x80) == 0) {
-        if (streamPtr >= input.length) break; 
+        if (streamPtr >= input.length) break;
         colorA = (opcode << 8) | input[streamPtr++];
         opcode = 0;
-        if (streamPtr >= input.length) break; 
+        if (streamPtr >= input.length) break;
         if ((input[streamPtr] & 0x80) != 0) {
           opcode = 0x20;
           nBlocks = 1;
         }
       }
-   
+
       switch (opcode & 0xe0) {
         case 0x80:
           while (nBlocks-- > 0) {
@@ -817,19 +817,19 @@ public class QTReader extends FormatReader {
             blockPtr = rowPtr + pixelPtr;
             for (pixelY=0; pixelY < 4; pixelY++) {
               for (pixelX=0; pixelX < 4; pixelX++) {
-                if (blockPtr >= pixels.length) break; 
+                if (blockPtr >= pixels.length) break;
                 pixels[blockPtr] = colorA;
-              
+
                 short s = (short) (pixels[blockPtr] & 0x7fff);
 
-                rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10)); 
-                rtn[blockPtr + pixels.length] = 
+                rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10));
+                rtn[blockPtr + pixels.length] =
                   (byte) (255 - ((s & 0x3e0) >> 5));
                 rtn[blockPtr + 2*pixels.length] = (byte) (255 - (s & 0x1f));
 
                 blockPtr++;
               }
-              blockPtr += rowInc; 
+              blockPtr += rowInc;
             }
             pixelPtr += 4;
             if (pixelPtr >= width) {
@@ -869,23 +869,23 @@ public class QTReader extends FormatReader {
           while (nBlocks-- > 0) {
             blockPtr = rowPtr + pixelPtr;
             for (pixelY=0; pixelY<4; pixelY++) {
-              if (streamPtr >= input.length) break; 
+              if (streamPtr >= input.length) break;
               index = input[streamPtr++];
               for (pixelX=0; pixelX<4; pixelX++) {
                 idx = (index >> (2*(3 - pixelX))) & 0x03;
-                if (blockPtr >= pixels.length) break; 
+                if (blockPtr >= pixels.length) break;
                 pixels[blockPtr] = color4[idx];
-                
+
                 short s = (short) (pixels[blockPtr] & 0x7fff);
 
-                rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10)); 
-                rtn[blockPtr + pixels.length] = 
+                rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10));
+                rtn[blockPtr + pixels.length] =
                   (byte) (255 - ((s & 0x3e0) >> 5));
                 rtn[blockPtr + 2*pixels.length] = (byte) (255 - (s & 0x1f));
 
                 blockPtr++;
               }
-              blockPtr += rowInc; 
+              blockPtr += rowInc;
             }
             pixelPtr += 4;
             if (pixelPtr >= width) {
@@ -894,7 +894,7 @@ public class QTReader extends FormatReader {
             }
             totalBlocks--;
           }
-          break; 
+          break;
         case 0x00:
           blockPtr = rowPtr + pixelPtr;
           for (pixelY=0; pixelY < 4; pixelY++) {
@@ -903,18 +903,18 @@ public class QTReader extends FormatReader {
                 colorA = DataTools.bytesToInt(input, streamPtr, 2, false);
                 streamPtr += 2;
               }
-              if (blockPtr >= pixels.length) break; 
+              if (blockPtr >= pixels.length) break;
               pixels[blockPtr] = colorA;
-              
+
               short s = (short) (pixels[blockPtr] & 0x7fff);
 
-              rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10)); 
+              rtn[blockPtr] = (byte) (255 - ((s & 0x7c00) >> 10));
               rtn[blockPtr + pixels.length] = (byte) (255 - ((s & 0x3e0) >> 5));
               rtn[blockPtr + 2*pixels.length] = (byte) (255 - (s & 0x1f));
-              
+
               blockPtr++;
             }
-            blockPtr += rowInc; 
+            blockPtr += rowInc;
           }
           pixelPtr += 4;
           if (pixelPtr >= width) {
@@ -928,7 +928,7 @@ public class QTReader extends FormatReader {
 
     return rtn;
   }
-  
+
   /** Uncompresses a MJPEG-B compressed image plane. */
   private BufferedImage mjpbUncompress(byte[] input) throws FormatException {
     byte[] raw = null;

@@ -372,7 +372,7 @@ public abstract class FormatReader extends FormatHandler
   public int getSeries() {
     return series;
   }
-  
+
   /* @see IFormatReader#setGroupFiles(boolean) */
   public void setGroupFiles(boolean group) {
     FormatTools.assertId(currentId, false, 1);
@@ -385,10 +385,10 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#fileGroupOption(String) */
-  public int fileGroupOption(String id) 
-    throws FormatException, IOException 
+  public int fileGroupOption(String id)
+    throws FormatException, IOException
   {
-    return FormatTools.CANNOT_GROUP; 
+    return FormatTools.CANNOT_GROUP;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

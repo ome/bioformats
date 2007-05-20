@@ -108,7 +108,7 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return id.toLowerCase().endsWith(".lei") ? FormatTools.MUST_GROUP : 
+    return id.toLowerCase().endsWith(".lei") ? FormatTools.MUST_GROUP :
       FormatTools.CAN_GROUP;
   }
 

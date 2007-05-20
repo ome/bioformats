@@ -104,7 +104,7 @@ public class PrairieReader extends FormatReader {
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     id = id.toLowerCase();
-    return (id.endsWith(".cfg") || id.endsWith(".xml")) ? 
+    return (id.endsWith(".cfg") || id.endsWith(".xml")) ?
       FormatTools.MUST_GROUP : FormatTools.CAN_GROUP;
   }
 

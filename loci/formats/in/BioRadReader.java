@@ -649,9 +649,9 @@ public class BioRadReader extends FormatReader {
             String value = line.substring(line.indexOf("=") + 1);
             addMeta(key.trim(), value.trim());
           }
-          line = raw.readLine(); 
+          line = raw.readLine();
         }
-        raw.close(); 
+        raw.close();
       }
       else if (list[i].endsWith("lse.xml")) {
         RandomAccessStream raw = new RandomAccessStream(list[i]);
@@ -663,16 +663,16 @@ public class BioRadReader extends FormatReader {
           int start = xml.indexOf("<SectionInfo>") + 13;
           int end = xml.indexOf("</SectionInfo>");
           xml = xml.substring(start, end);
-       
+
           // parse the timestamps
           while (xml.length() > 0) {
             String element = xml.substring(0, xml.indexOf(">") + 1);
             xml = xml.substring(xml.indexOf(">") + 1);
-          
+
             int ndx = element.indexOf("TimeCompleted") + 15;
             String stamp = element.substring(ndx, element.indexOf("\"", ndx));
 
-            String key = element.substring(1, element.indexOf("\"", 
+            String key = element.substring(1, element.indexOf("\"",
               element.indexOf("\"") + 1));
             key = key.replace('\"', '\0');
             key = key.replace('=', ' ');

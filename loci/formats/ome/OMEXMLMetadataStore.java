@@ -104,9 +104,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
     if (original.size() == 0) {
       Element el = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");
-      OMEXMLNode node = OMEXMLNode.createNode(el); 
-      node.setAttribute("xmlns", 
-        "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"); 
+      OMEXMLNode node = OMEXMLNode.createNode(el);
+      node.setAttribute("xmlns",
+        "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd");
       el = DOMUtil.createChild(el, "SemanticType");
       node = OMEXMLNode.createNode(el);
       node.setAttribute("Name", "OriginalMetadata");

@@ -82,14 +82,14 @@ public class SlidebookReader extends FormatReader {
       throw new FormatException("Buffer too small.");
     }
     in.seek(offset + (no * core.sizeX[0] * core.sizeY[0] * 2));
-    
+
     uCount = 0;
     long fp1 = in.getFilePointer();
     skipDataBlocks(planeCount);
     long fp2 = in.getFilePointer();
     offset += fp2 - fp1;
-    if (fp2 - fp1 > 0) planeCount = 1; 
-    else planeCount++; 
+    if (fp2 - fp1 > 0) planeCount = 1;
+    else planeCount++;
 
     in.read(buf);
     return buf;
@@ -246,8 +246,8 @@ public class SlidebookReader extends FormatReader {
     }
 
     if (core.sizeX[0] * core.sizeY[0] * 2 * core.imageCount[0] > in.length()) {
-      core.sizeX[0] /= 2; 
-      core.sizeY[0] /= 2; 
+      core.sizeX[0] /= 2;
+      core.sizeY[0] /= 2;
     }
 
     MetadataStore store = getMetadataStore();
@@ -264,37 +264,37 @@ public class SlidebookReader extends FormatReader {
 
   private void skipDataBlocks(int n) throws IOException {
     long fp = in.getFilePointer();
-  
-    int type = in.read(); 
+
+    int type = in.read();
     in.skipBytes(3);
     int one = in.read();
     int two = in.read();
 
     if ((one == 0x49 && two == 0x49) || (one == 0x4d && two == 0x4d)) {
-      if (type == 0x69) in.skipBytes(122);   
+      if (type == 0x69) in.skipBytes(122);
       else if (type == 0x75 && uCount == n - 1) {
         in.skipBytes(250);
         int len = in.read();
         while (((byte) len) > 0) {
-          int oldLen = len; 
+          int oldLen = len;
           in.skipBytes(len + 4);
           len = in.read();
           in.skipBytes(len + 3);
           len = in.read();
-          if (in.read() != 0x43 && ((byte) len) > 0) { 
+          if (in.read() != 0x43 && ((byte) len) > 0) {
             in.skipBytes(len + 2);
             len = in.read();
           }
-          else in.seek(in.getFilePointer() - 1); 
+          else in.seek(in.getFilePointer() - 1);
         }
-        in.seek(in.getFilePointer() - 1); 
+        in.seek(in.getFilePointer() - 1);
       }
       else if (type == 0x75) {
         uCount++;
-        in.skipBytes(250); 
-      } 
-      else in.skipBytes(250); 
-      skipDataBlocks(n); 
+        in.skipBytes(250);
+      }
+      else in.skipBytes(250);
+      skipDataBlocks(n);
     }
     else in.seek(fp);
   }

@@ -137,9 +137,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
       }
       else if (path.endsWith(".zip")) {
         ZipFile zf = new ZipFile(Location.getMappedId(file));
-        InputStream zip = 
+        InputStream zip =
           zf.getInputStream((ZipEntry) zf.entries().nextElement());
-        
+
         compressed = true;
 
         length = 0;
@@ -148,11 +148,11 @@ public class RandomAccessStream extends InputStream implements DataInput {
           zip.read();
           length++;
         }
-        
+
         zf = new ZipFile(Location.getMappedId(file));
         zip = new BufferedInputStream(zf.getInputStream(
           (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
-        dis = new DataInputStream(zip); 
+        dis = new DataInputStream(zip);
       }
       else if (path.endsWith(".bz2")) {
         bis.skip(2);
@@ -160,7 +160,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
         compressed = true;
 
         length = 0;
-      
+
         int s = 0;
 
         while (s != -1) {
@@ -542,10 +542,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
           ZipFile zf = new ZipFile(Location.getMappedId(file));
           InputStream zip = new BufferedInputStream(zf.getInputStream(
             (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
-          dis = new DataInputStream(zip); 
+          dis = new DataInputStream(zip);
         }
         else if (path.endsWith(".bz2")) {
-          bis.skip(2); 
+          bis.skip(2);
           dis = new DataInputStream(new CBZip2InputStream(bis));
         }
         fp = 0;
@@ -671,11 +671,11 @@ public class RandomAccessStream extends InputStream implements DataInput {
         ZipFile zf = new ZipFile(Location.getMappedId(file));
         InputStream zip = new BufferedInputStream(zf.getInputStream(
           (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
-        dis = new DataInputStream(zip); 
+        dis = new DataInputStream(zip);
         compressed = true;
       }
       else if (path.endsWith(".bz2")) {
-        bis.skip(2); 
+        bis.skip(2);
         dis = new DataInputStream(new CBZip2InputStream(bis));
         compressed = true;
       }

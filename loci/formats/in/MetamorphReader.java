@@ -68,8 +68,8 @@ public class MetamorphReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
-  public MetamorphReader() { 
-    super("Metamorph STK", new String[] {"stk", "nd"}); 
+  public MetamorphReader() {
+    super("Metamorph STK", new String[] {"stk", "nd"});
   }
 
   // -- IFormatReader API methods --
@@ -118,14 +118,14 @@ public class MetamorphReader extends BaseTiffReader {
 
     for (int i=0; i<files.length; i++) {
       String s = files[i].toLowerCase();
-      if (s.endsWith(".nd") && id.startsWith(files[i].substring(0, 
+      if (s.endsWith(".nd") && id.startsWith(files[i].substring(0,
         s.lastIndexOf("."))))
       {
         return FormatTools.CAN_GROUP;
       }
     }
 
-    return FormatTools.CANNOT_GROUP; 
+    return FormatTools.CANNOT_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -138,27 +138,27 @@ public class MetamorphReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (stks == null || stks.length == 1) return super.openBytes(no, buf); 
-  
-    int[] coords = FormatTools.getZCTCoords(this, no); 
+    if (stks == null || stks.length == 1) return super.openBytes(no, buf);
+
+    int[] coords = FormatTools.getZCTCoords(this, no);
     int ndx = coords[1] * getEffectiveSizeC() + coords[2] * core.sizeT[0];
-    
+
     RandomAccessStream tmp = new RandomAccessStream(stks[ndx]);
     Hashtable[] fds = TiffTools.getIFDs(tmp);
     TiffTools.getSamples(fds[coords[0]], tmp, buf);
     tmp.close();
-    return buf; 
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (stks == null || stks.length == 1) return super.openImage(no); 
-  
-    int[] coords = FormatTools.getZCTCoords(this, no); 
+    if (stks == null || stks.length == 1) return super.openImage(no);
+
+    int[] coords = FormatTools.getZCTCoords(this, no);
     int ndx = no / core.sizeZ[0];
 
-    initFile(stks[ndx]); 
+    initFile(stks[ndx]);
     return TiffTools.getImage(ifds[coords[0]], in);
   }
 
@@ -181,10 +181,10 @@ public class MetamorphReader extends BaseTiffReader {
 
       // reinitialize the MetadataStore
       getMetadataStore().createRoot();
-    
+
       // find an associated STK file
       String stkFile = id.substring(0, id.lastIndexOf("."));
-      String[] dirList = 
+      String[] dirList =
         new Location(id).getAbsoluteFile().getParentFile().list();
       for (int i=0; i<dirList.length; i++) {
         String s = dirList[i].toLowerCase();
@@ -193,24 +193,24 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         }
       }
-      
-      super.initFile(stkFile); 
+
+      super.initFile(stkFile);
     }
     else super.initFile(id);
- 
+
     Location ndfile = null;
 
     if (!id.toLowerCase().endsWith(".nd")) {
       Location abs = new Location(currentId).getAbsoluteFile();
       String absPath = abs.getPath().substring(
-        abs.getPath().lastIndexOf(File.separator)); 
-      
+        abs.getPath().lastIndexOf(File.separator));
+
       int idx = id.indexOf("_");
       if (idx == -1) idx = id.lastIndexOf(".");
 
       ndfile = new Location(abs.getParent(), id.substring(0, idx) + ".nd");
       if (!ndfile.exists()) {
-        ndfile = 
+        ndfile =
           new Location(ndfile.getAbsolutePath().replaceAll(".nd", ".ND"));
       }
     }
@@ -218,37 +218,37 @@ public class MetamorphReader extends BaseTiffReader {
       ndfile = new Location(id);
     }
 
-    if (ndfile.exists() && (fileGroupOption(id) == FormatTools.MUST_GROUP || 
-      isGroupFiles())) 
+    if (ndfile.exists() && (fileGroupOption(id) == FormatTools.MUST_GROUP ||
+      isGroupFiles()))
     {
-      RandomAccessStream ndStream = 
+      RandomAccessStream ndStream =
         new RandomAccessStream(ndfile.getAbsolutePath());
       String line = ndStream.readLine().trim();
 
       while (!line.equals("\"EndFile\"")) {
         String key = line.substring(1, line.indexOf(",") - 1).trim();
         String value = line.substring(line.indexOf(",") + 1).trim();
-     
+
         addMeta(key, value);
-        line = ndStream.readLine().trim(); 
+        line = ndStream.readLine().trim();
       }
-    
-      // figure out how many files we need 
-    
+
+      // figure out how many files we need
+
       String z = (String) getMeta("NZSteps");
       String c = (String) getMeta("NWavelengths");
       String t = (String) getMeta("NTimePoints");
 
       int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
 
-      if (z != null) zc = Integer.parseInt(z); 
-      if (c != null) cc = Integer.parseInt(c); 
-      if (t != null) tc = Integer.parseInt(t); 
+      if (z != null) zc = Integer.parseInt(z);
+      if (c != null) cc = Integer.parseInt(c);
+      if (t != null) tc = Integer.parseInt(t);
 
-      int numFiles = cc * tc; 
+      int numFiles = cc * tc;
 
       stks = new String[numFiles];
-   
+
       String prefix = ndfile.getPath();
       prefix = prefix.substring(prefix.lastIndexOf(File.separator) + 1,
         prefix.lastIndexOf("."));
@@ -257,14 +257,14 @@ public class MetamorphReader extends BaseTiffReader {
       for (int i=0; i<tc; i++) {
         for (int j=0; j<cc; j++) {
           String chName = (String) getMeta("WaveName" + (j + 1));
-          chName = chName.substring(1, chName.length() - 1); 
-          stks[pt] = prefix + "_w" + (j + 1) + chName + "_t" + 
+          chName = chName.substring(1, chName.length() - 1);
+          stks[pt] = prefix + "_w" + (j + 1) + chName + "_t" +
             (i + 1) + ".STK";
           pt++;
         }
-      } 
-  
-      ndfile = ndfile.getAbsoluteFile(); 
+      }
+
+      ndfile = ndfile.getAbsoluteFile();
 
       for (int i=0; i<numFiles; i++) {
         Location l = new Location(ndfile.getParent(), stks[i]);
@@ -273,13 +273,13 @@ public class MetamorphReader extends BaseTiffReader {
           return;
         }
         stks[i] = l.getAbsolutePath();
-      } 
-    
+      }
+
       core.sizeZ[0] = zc;
       core.sizeC[0] = cc;
       core.sizeT[0] = tc;
-      core.imageCount[0] = zc * tc * cc; 
-      core.currentOrder[0] = "XYZCT"; 
+      core.imageCount[0] = zc * tc * cc;
+      core.currentOrder[0] = "XYZCT";
     }
   }
 

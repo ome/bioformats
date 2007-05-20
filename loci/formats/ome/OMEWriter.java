@@ -370,13 +370,13 @@ public class OMEWriter extends FormatWriter {
         }
         catch (ArrayIndexOutOfBoundsException exc) {
           if (i == args.length - 1) {
-            System.err.println("Error: flag " + param + 
+            System.err.println("Error: flag " + param +
               " must be followed by a parameter value.");
             System.err.println();
             doUsage = true;
-            break; 
+            break;
           }
-          else throw exc; 
+          else throw exc;
         }
       }
       else {
@@ -387,7 +387,7 @@ public class OMEWriter extends FormatWriter {
         }
       }
     }
-  
+
     if (id == null) doUsage = true;
     if (doUsage) {
       System.err.println("Usage: omeul [-s server.address] " +
@@ -395,8 +395,8 @@ public class OMEWriter extends FormatWriter {
       System.err.println();
       System.exit(1);
     }
-  
-    // ask for information if necessary 
+
+    // ask for information if necessary
     BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
     if (server == null) {
       System.out.print("Server address? ");
@@ -431,9 +431,9 @@ public class OMEWriter extends FormatWriter {
     uploader.setId(server + "?user=" + user + "&password=" + pass);
 
     FileStitcher reader = new FileStitcher();
-    reader.setMetadataStore(new OMEXMLMetadataStore()); 
-    reader.setId(id); 
-    uploader.setMetadataStore((OMEXMLMetadataStore) reader.getMetadataStore()); 
+    reader.setMetadataStore(new OMEXMLMetadataStore());
+    reader.setId(id);
+    uploader.setMetadataStore((OMEXMLMetadataStore) reader.getMetadataStore());
     for (int i=0; i<reader.getImageCount(); i++) {
       uploader.saveImage(reader.openImage(i), i == reader.getImageCount() - 1);
     }

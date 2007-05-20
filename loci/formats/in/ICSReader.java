@@ -96,7 +96,7 @@ public class ICSReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return FormatTools.MUST_GROUP; 
+    return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
