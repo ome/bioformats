@@ -47,8 +47,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * An input stream that decompresses from the BZip2 format (without the file
@@ -178,7 +178,8 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
   }
 
   public int read(final byte[] dest, final int offs, final int len)
-    throws IOException {
+    throws IOException
+  {
     if (offs < 0) {
       throw new IndexOutOfBoundsException("offs(" + offs + ") < 0.");
     }
@@ -292,7 +293,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
       // Allocate data here instead in constructor, so we do not
       // allocate it if the input file is empty.
       if (this.data == null) {
-         this.data = new Data(this.blockSize100k);
+        this.data = new Data(this.blockSize100k);
       }
 
       // currBlockNo++;
@@ -732,38 +733,38 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
   }
 
   private void setupBlock() throws IOException {
-     if (this.data == null) return;
+    if (this.data == null) return;
 
-     final int[] cftab = this.data.cftab;
-     final int[] tt   = this.data.initTT(this.last + 1);
-     final byte[] ll8  = this.data.ll8;
-     cftab[0] = 0;
-     System.arraycopy(this.data.unzftab, 0, cftab, 1, 256);
+    final int[] cftab = this.data.cftab;
+    final int[] tt   = this.data.initTT(this.last + 1);
+    final byte[] ll8  = this.data.ll8;
+    cftab[0] = 0;
+    System.arraycopy(this.data.unzftab, 0, cftab, 1, 256);
 
-     for (int i = 1, c = cftab[0]; i <= 256; i++) {
-       c += cftab[i];
-       cftab[i] = c;
-     }
+    for (int i = 1, c = cftab[0]; i <= 256; i++) {
+      c += cftab[i];
+      cftab[i] = c;
+    }
 
-     for (int i = 0, lastShadow = this.last; i <= lastShadow; i++) {
-       tt[cftab[ll8[i] & 0xff]++] = i;
-     }
+    for (int i = 0, lastShadow = this.last; i <= lastShadow; i++) {
+      tt[cftab[ll8[i] & 0xff]++] = i;
+    }
 
-     if ((this.origPtr < 0) || (this.origPtr >= tt.length)) {
-       throw new IOException("stream corrupted");
-     }
+    if ((this.origPtr < 0) || (this.origPtr >= tt.length)) {
+      throw new IOException("stream corrupted");
+    }
 
-     this.suTPos = tt[this.origPtr];
-     this.suCount = 0;
-     this.suI2 = 0;
-     this.suCh2 = 256;  /* not a char and not EOF */
+    this.suTPos = tt[this.origPtr];
+    this.suCount = 0;
+    this.suI2 = 0;
+    this.suCh2 = 256;  /* not a char and not EOF */
 
-     if (this.blockRandomised) {
-       this.suRNToGo = 0;
-       this.suRTPos = 0;
-       setupRandPartA();
-     }
-     else setupNoRandPartA();
+    if (this.blockRandomised) {
+      this.suRNToGo = 0;
+      this.suRTPos = 0;
+      setupRandPartA();
+    }
+    else setupNoRandPartA();
   }
 
   private void setupRandPartA() throws IOException {
@@ -772,10 +773,8 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
       int suCh2Shadow = this.data.ll8[this.suTPos] & 0xff;
       this.suTPos = this.data.tt[this.suTPos];
       if (this.suRNToGo == 0) {
-         this.suRNToGo = BZip2Constants.R_NUMS[this.suRTPos] - 1;
-         if (++this.suRTPos == 512) {
-            this.suRTPos = 0;
-         }
+        this.suRNToGo = BZip2Constants.R_NUMS[this.suRTPos] - 1;
+        if (++this.suRTPos == 512) this.suRTPos = 0;
       }
       else this.suRNToGo--;
       this.suCh2 = suCh2Shadow ^= (this.suRNToGo == 1) ? 1 : 0;
@@ -792,22 +791,22 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
   }
 
   private void setupNoRandPartA() throws IOException {
-     if (this.suI2 <= this.last) {
-       this.suChPrev = this.suCh2;
-       int suCh2Shadow = this.data.ll8[this.suTPos] & 0xff;
-       this.suCh2 = suCh2Shadow;
-       this.suTPos = this.data.tt[this.suTPos];
-       this.suI2++;
-       this.currentChar = suCh2Shadow;
-       this.currentState = NO_RAND_PART_B_STATE;
-       this.crc.updateCRC(suCh2Shadow);
-     }
-     else {
-       this.currentState = NO_RAND_PART_A_STATE;
-       endBlock();
-       initBlock();
-       setupBlock();
-     }
+    if (this.suI2 <= this.last) {
+      this.suChPrev = this.suCh2;
+      int suCh2Shadow = this.data.ll8[this.suTPos] & 0xff;
+      this.suCh2 = suCh2Shadow;
+      this.suTPos = this.data.tt[this.suTPos];
+      this.suI2++;
+      this.currentChar = suCh2Shadow;
+      this.currentState = NO_RAND_PART_B_STATE;
+      this.crc.updateCRC(suCh2Shadow);
+    }
+    else {
+      this.currentState = NO_RAND_PART_A_STATE;
+      endBlock();
+      initBlock();
+      setupBlock();
+    }
   }
 
   private void setupRandPartB() throws IOException {
@@ -828,9 +827,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
       else this.suRNToGo--;
       this.suJ2 = 0;
       this.currentState = RAND_PART_C_STATE;
-      if (this.suRNToGo == 1) {
-         this.suZ ^= 1;
-      }
+      if (this.suRNToGo == 1) this.suZ ^= 1;
       setupRandPartC();
     }
     else {
@@ -931,7 +928,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
      * avoid unneccessary memory allocation when compressing small
      * files.
      */
-    final int[] initTT(int length) {
+    int[] initTT(int length) {
       int[] ttShadow = this.tt;
 
       // tt.length should always be >= length, but theoretically
@@ -939,7 +936,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
       // blocks.  Normally only the last block will be smaller
       // than others.
       if ((ttShadow == null) || (ttShadow.length < length)) {
-         this.tt = ttShadow = new int[length];
+        this.tt = ttShadow = new int[length];
       }
 
       return ttShadow;

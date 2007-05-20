@@ -374,9 +374,9 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
-  public void setGroupFiles(boolean group) {
+  public void setGroupFiles(boolean groupFiles) {
     FormatTools.assertId(currentId, false, 1);
-    this.group = group;
+    group = groupFiles;
   }
 
   /* @see IFormatReader#isGroupFiles() */

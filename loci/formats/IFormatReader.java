@@ -59,8 +59,6 @@ public interface IFormatReader extends IFormatHandler {
    * Gets the pixel type.
    * @return the pixel type as an enumeration from <code>FormatTools</code>
    * <i>static</i> pixel types such as <code>INT8</code>.
-   * @throws FormatException if there was a problem parsing file metadata.
-   * @throws IOException if there was an error reading from the file.
    */
   int getPixelType();
 

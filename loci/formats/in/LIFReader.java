@@ -519,6 +519,7 @@ public class LIFReader extends FormatReader {
 
   // -- Helper class --
 
+  /** SAX handler for parsing XML. */
   class LIFHandler extends DefaultHandler {
     private String series;
     private int count = 0;

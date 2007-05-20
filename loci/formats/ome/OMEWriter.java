@@ -169,11 +169,12 @@ public class OMEWriter extends FormatWriter {
     ImageServer is = ImageServer.getHTTPImageServer(omeis, sessionKey);
     if (pixelsId == -1) {
       try {
+        String pixelTypeString = metadata.getPixelType(null);
+        int pixelType = FormatTools.pixelTypeFromString(pixelTypeString);
         pixelsId = is.newPixels(metadata.getSizeX(null).intValue(),
           metadata.getSizeY(null).intValue(), z, c, t,
-          FormatTools.getBytesPerPixel(FormatTools.pixelTypeFromString(
-          metadata.getPixelType(null))), false,
-          metadata.getPixelType(null).equals("float"));
+          FormatTools.getBytesPerPixel(pixelType), false,
+          pixelTypeString.equals("float"));
       }
       catch (ImageServerException e) {
         throw new FormatException("Failed to create new pixels file.", e);
@@ -181,9 +182,11 @@ public class OMEWriter extends FormatWriter {
     }
 
     try {
+      String pixelTypeString = metadata.getPixelType(null);
+      int pixelType = FormatTools.pixelTypeFromString(pixelTypeString);
       int planeLength = metadata.getSizeX(null).intValue() *
-        metadata.getSizeY(null).intValue() * FormatTools.getBytesPerPixel(
-        FormatTools.pixelTypeFromString(metadata.getPixelType(null)));
+        metadata.getSizeY(null).intValue() *
+        FormatTools.getBytesPerPixel(pixelType);
       byte[][] b = ImageTools.splitChannels(bytes, bytes.length / planeLength,
         false, true);
 

@@ -454,7 +454,7 @@ public class DataConverter extends JFrame implements
       String order = swap.getDimensionOrder();
 
       if (zLabel.getText().indexOf("Time") != -1) {
-        order = order.replace('Z', 'T') ;
+        order = order.replace('Z', 'T');
       }
       else if (zLabel.getText().indexOf("Channel") != -1) {
         order = order.replace('Z', 'C');

@@ -196,6 +196,7 @@ public class FlexReader extends BaseTiffReader {
 
   // -- Helper classes --
 
+  /** SAX handler for parsing XML. */
   public class FlexHandler extends DefaultHandler {
     private Vector names, factors;
     public FlexHandler(Vector names, Vector factors) {
