@@ -201,7 +201,7 @@ public class PerkinElmerReader extends FormatReader {
       // specified file
 
       int d = ls[i].lastIndexOf(".");
-      while (d == -1 && i < ls.length) {
+      while (d == -1 && i < ls.length - 1) {
         i++;
         d = ls[i].lastIndexOf(".");
       }

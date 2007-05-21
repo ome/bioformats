@@ -67,6 +67,8 @@ public class BioRadReader extends FormatReader {
   /** Flag indicating current Bio-Rad PIC is packed with bytes. */
   private boolean byteFormat;
 
+  private Vector used;
+
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
@@ -78,6 +80,12 @@ public class BioRadReader extends FormatReader {
   public boolean isThisType(byte[] block) {
     if (block.length < 56) return false;
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
+  }
+
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    return (String[]) used.toArray(new String[0]); 
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -120,6 +128,9 @@ public class BioRadReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
     in.order(true);
+
+    used = new Vector();
+    used.add(currentId);
 
     status("Reading image dimensions");
 
@@ -641,7 +652,10 @@ public class BioRadReader extends FormatReader {
 
     for (int i=0; i<list.length; i++) {
       if (list[i].endsWith("data.raw")) {
-        RandomAccessStream raw = new RandomAccessStream(list[i]);
+        RandomAccessStream raw = new RandomAccessStream(
+          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
+        used.add(new Location(
+          parent.getAbsolutePath(), list[i]).getAbsolutePath()); 
         String line = raw.readLine();
         while (line != null && line.length() > 0) {
           if (line.charAt(0) != '[') {
@@ -654,7 +668,10 @@ public class BioRadReader extends FormatReader {
         raw.close();
       }
       else if (list[i].endsWith("lse.xml")) {
-        RandomAccessStream raw = new RandomAccessStream(list[i]);
+        RandomAccessStream raw = new RandomAccessStream(
+          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
+        used.add(new Location(
+          parent.getAbsolutePath(), list[i]).getAbsolutePath()); 
         byte[] b = new byte[(int) raw.length()];
         raw.read(b);
         String xml = new String(b);

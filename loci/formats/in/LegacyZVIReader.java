@@ -379,10 +379,13 @@ public class LegacyZVIReader extends FormatReader {
         core.currentOrder[0] = "XYTZC";
       }
 
+      if (core.currentOrder[0] == null) core.currentOrder[0] = "XYZCT";
+
       // save this image block's position
       blockList.add(zviBlock);
       pos += core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
 
+      core.imageCount[0] = blockList.size();
       core.sizeX[0] = openImage(0).getWidth();
       core.sizeY[0] = openImage(0).getHeight();
       core.sizeZ[0] = zSet.size();
@@ -390,7 +393,6 @@ public class LegacyZVIReader extends FormatReader {
       core.sizeT[0] = tSet.size();
       core.rgb[0] = bytesPerPixel == 3 || bytesPerPixel > 4;
       core.interleaved[0] = false;
-      core.imageCount[0] = blockList.size();
       core.littleEndian[0] = true;
 
       // Populate metadata store

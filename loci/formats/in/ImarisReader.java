@@ -205,11 +205,11 @@ public class ImarisReader extends FormatReader {
       null,
       null);
 
-    store.setImage(
-      (String) getMeta("Image name"),
-      (String) getMeta("Original date"),
-      (String) getMeta("Image comment"),
-      null);
+    String d = (String) getMeta("Original date");
+    if (d == null || d.trim().length() == 0) d = null;
+
+    store.setImage((String) getMeta("Image name"), d, 
+      (String) getMeta("Image comment"), null);
 
     store.setDimensions(
       new Float(dx),

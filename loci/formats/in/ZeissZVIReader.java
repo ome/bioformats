@@ -224,7 +224,7 @@ public class ZeissZVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
     if (noPOI || needLegacy) {
-      legacy.initFile(id);
+      legacy.setId(id);
       core = legacy.getCoreMetadata();
       return;
     }
@@ -314,6 +314,7 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         if (core.sizeZ[0] == core.sizeC[0] && core.sizeC[0] == core.sizeT[0]) {
+          legacy.setId(id);
           core.currentOrder[0] = legacy.getDimensionOrder();
         }
       }
