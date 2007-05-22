@@ -96,7 +96,7 @@ public abstract class ImageJReader extends FormatReader {
     if (noImageJ) throw new FormatException(NO_IJ);
 
     try {
-      Location file = new Location(currentId);
+      Location file = new Location(currentId).getAbsoluteFile();
       r.setVar("dir", file.getParent() + System.getProperty("file.separator"));
       r.setVar("name", file.getName());
       synchronized (ImageJReader.class) {
@@ -114,6 +114,9 @@ public abstract class ImageJReader extends FormatReader {
         catch (ReflectException exc) {
           // probably ImageJ version < 1.38f
         }
+      }
+      if (r.getVar("image") == null) {
+        throw new FormatException("ImageJ cannot read this image");
       }
       r.exec("size = image.getStackSize()");
       Image img = (Image) r.exec("image.getImage()");
