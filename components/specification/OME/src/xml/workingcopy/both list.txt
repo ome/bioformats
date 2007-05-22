@@ -2,19 +2,18 @@
  CreationDate
  Description
  Experimenter
- FormalInput
- FormalOutput
+ FormalInput CLI
+ FormalOutput CLI
  Group
- Index
- Path
- PixelType
+ Index CLI
+ Path CLI
+ PixelType CLI
  Pixels
- Repository
- SizeC
- SizeT
- SizeX
- SizeY
- SizeZ
+ Repository CLI
+ SizeC CLI
+ SizeT CLI
+ SizeX CLI
+ SizeZ CLI
 
 Additions
 ---------

@@ -943,6 +943,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Either LSID or internal consistent IDs for the file - ajp
+				Put in some samples of valid lsid and internal ID - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">

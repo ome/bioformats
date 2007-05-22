@@ -31,6 +31,7 @@
     <xsd:simpleType name="ExternDBref">
         <xsd:annotation>
             <xsd:documentation>
+				A type based on string used to store a referance to an object in an external database. 
             </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string"/>
