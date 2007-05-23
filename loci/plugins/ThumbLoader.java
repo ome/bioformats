@@ -125,6 +125,7 @@ public class ThumbLoader implements Runnable {
 
   // -- Helper classes --
 
+  /** Helper class for sorting series by iamge plane size. */
   public class SeriesInfo implements Comparable {
 
     private int index, size;
