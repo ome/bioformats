@@ -1,3 +1,11 @@
+* Better Slidebook support
+* Added support for Quicktime RPZA
+* Better Leica LIF metadata parsing
+* Added support for BioRad PIC companion files
+* Added support for bzip2-compressed files
+* Improved ImageJ plugins
+* Native support for FITS and PGM
+
 2007 May 2:
 * Added support for NRRD
 * Added support for Evotec Flex (requires LuraWave Java SDK with license code)
