@@ -218,7 +218,7 @@ public class ImageViewer extends JFrame
         if (i == 0) setImages(myReader, img);
         progress.setProgress(i + 2);
       }
-      myReader.close();
+      myReader.close(true);
     }
     catch (Exception exc) {
       exc.printStackTrace();
