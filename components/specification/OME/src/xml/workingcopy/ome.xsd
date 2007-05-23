@@ -94,7 +94,7 @@
 				<xsd:element ref="ObjectiveSettingsRef" minOccurs="0"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0"/>
 				<xsd:element ref="Thumbnail" minOccurs="0"/>
-				<xsd:element ref="ChannelInfo" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="DisplayOptions" minOccurs="0"/>
 				<xsd:element ref="StageLabel" minOccurs="0"/>
 				<xsd:element ref="SPW:PlateRef" minOccurs="0"/>
@@ -220,6 +220,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				FRAP Photoablation Optical-Trapping Photoactivation Fluorescence-Lifetime Spectral-Imaging Other
 				FP refers to fluorescent proteins, PGI/Docuemntation is not a 'data' image.
 				The optional Description element may contain free text to further describe the experiment.
+				Added Type Photobleaching - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -251,6 +252,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 								<xsd:enumeration value="OpticalTrapping"/>
 								<xsd:enumeration value="FluorescenceLifetime"/>
 								<xsd:enumeration value="SpectralImaging"/>
+								<xsd:enumeration value="Photobleaching"/>
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
@@ -269,7 +271,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ChannelInfo">
+	<xsd:element name="LogicalChannel">
 		<xsd:annotation>
 			<xsd:documentation>
 				There must be one per channel in the Image, even for a single-plane image.  In OME, Channels (e.g. 'FITC', 'Texas Red', etc) are specified as Logical Channels,
@@ -300,11 +302,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="LightSourceRef" minOccurs="0"/>
-				<xsd:element ref="AuxLightSourceRef" minOccurs="0"/>
 				<xsd:element ref="OTFRef" minOccurs="0"/>
 				<xsd:element ref="DetectorRef" minOccurs="0"/>
 				<xsd:element ref="FilterRef" minOccurs="0"/>
 				<xsd:element ref="ChannelComponent" maxOccurs="unbounded"/>
+				<xsd:element ref="SecondaryEmmisionFilterRef" minOccurs="0"/>
+				<xsd:element ref="SecondaryExcitationFilterRef" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
 			<xsd:attribute name="Name" type="xsd:string"/>
@@ -359,6 +362,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 						<xsd:enumeration value="FluorescenceCorrelationSpectroscopy"/>
 						<xsd:enumeration value="NearFieldScanningOpticalMicroscopy"/>
 						<xsd:enumeration value="SecondHarmonicGenerationImaging"/>
+						<xsd:enumeration value="Other"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
@@ -516,7 +520,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The OTF element contains an optical transfer function.
 				The same OTF can be used for all wavelengths, or there may be one per wavelength.
 				There may be multiple light sources, detectors, objectives and filters on a microscope.
-				Each of these has their own ID attribute, which can be referred to from ChannelInfo.
+				Each of these has their own ID attribute, which can be referred to from LogicalChannel.
 				It is understood that the light path configuration can be different for each channel,
 				but cannot be different for each timepoint or each plane of an XYZ stack.
 			</xsd:documentation>
@@ -587,10 +591,11 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:extension base="ManufactSpec">
 					<xsd:sequence>
 						<xsd:sequence>
-							<xsd:element ref="Coating"/>
+							<xsd:element ref="Correction"/>
 							<xsd:element ref="Immersion"/>
 							<xsd:element ref="LensNA"/>
-							<xsd:element ref="Magnification"/>
+							<xsd:element ref="NominalMagnification"/>
+							<xsd:element ref="CalibratedMagnification"/>
 							<xsd:element ref="WorkingDistance"/>
 						</xsd:sequence>
 					</xsd:sequence>
@@ -635,7 +640,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				ExFilter, Dichroic and EmFilter tags respectively.
 				Alternatively all three components may be specified by a single filter set.
 				There should be one filter element specified per wavelength in the image.  
-				The channel number associated with a filter set is specified in ChannelInfo's required ChannelComponent element and its Index attribute.
+				The channel number associated with a filter set is specified in LogicalChannel's required ChannelComponent element and its Index attribute.
 				All  elements are FilterSpec type, so they have the required attributes Manufacturer, Model, and LotNumber.
 				The ExFilter an EmFilter elements may also contain a Type attribute which may be set to
 				'LongPass', 'ShortPass', 'BandPass', or 'MultiPass'.
@@ -655,22 +660,28 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="ID" use="required" type="FilterID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Magnification" type="xsd:double">
+	<xsd:element name="NominalMagnification" type="xsd:integer">
 		<xsd:annotation>
-			<xsd:documentation>The magnification of the lens - i.e. '60.0' is a 60X lens.</xsd:documentation>
+			<xsd:documentation>The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Coating" type="Coating">
+	<xsd:element name="CalibratedMagnification" type="xsd:float">
+		<xsd:annotation>
+			<xsd:documentation>The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="Correction" type="Correction">
 		<xsd:annotation>
 			<xsd:documentation>The coating applied to the lens</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:simpleType name="Coating">
+	<xsd:simpleType name="Correction">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="UV"/>
 			<xsd:enumeration value="PlanApo"/>
 			<xsd:enumeration value="PlanFluor"/>
 			<xsd:enumeration value="SuperFluor"/>
+			<xsd:enumeration value="VioletCorrected"/>
 		</xsd:restriction>
 	</xsd:simpleType>	
 	<xsd:element name="Immersion" type="Immersion">
@@ -685,12 +696,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:enumeration value="WaterDipping"/>
 			<xsd:enumeration value="Air"/>
 			<xsd:enumeration value="Multi"/>
+			<xsd:enumeration value="Glycerol"/>
 			<xsd:enumeration value="Other"/>
 		</xsd:restriction>
 	</xsd:simpleType>	
 	<xsd:element name="WorkingDistance" type="xsd:float">
 		<xsd:annotation>
-			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number.</xsd:documentation>
+			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number. Units are um.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
 	<xsd:element name="LensNA" type="xsd:float">
@@ -755,15 +767,10 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The type of detector used to capture the image.
-				The Detector ID can be used as a reference within the ChannelInfo element in the Image element.
+				The Detector ID can be used as a reference within the LogicalChannel element in the Image element.
 				The Type attribute can be set to 'CCD','Intensified-CCD','Analog-Video','PMT','Photodiode','Spectroscopy','Life-time-Imaging','Correlation-Spectroscopy','FTIR'.
 				Possibly add new types EM-CCD, APD, and CMOS - ajp
 				Possibly add new optional attributes EM-Gain and Zoom - ajp
-				<xsd:enumeration value="EM-CCD"/>
-				<xsd:enumeration value="APD"/>
-				<xsd:enumeration value="CMOS"/>
-				<xsd:attribute name="EM-Gain" type="xsd:float"/>
-				<xsd:attribute name="Zoom" type="xsd:float"/>
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -772,6 +779,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					<xsd:attribute name="Gain" type="xsd:float"/>
 					<xsd:attribute name="Voltage" type="xsd:float"/>
 					<xsd:attribute name="Offset" type="xsd:float"/>
+					<xsd:attribute name="Zoom" type="xsd:float"/>
+					<xsd:attribute name="Amplification-Gain" type="xsd:float"/>
 					<xsd:attribute name="ID" use="required" type="DetectorID"/>
 					<xsd:attribute name="Type" use="required">
 						<xsd:simpleType>
@@ -785,6 +794,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 								<xsd:enumeration value="LifetimeImaging"/>
 								<xsd:enumeration value="CorrelationSpectroscopy"/>
 								<xsd:enumeration value="FTIR"/>
+								<xsd:enumeration value="EM-CCD"/>
+								<xsd:enumeration value="APD"/>
+								<xsd:enumeration value="CMOS"/>
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
@@ -1227,7 +1239,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				Each of the light source types has its own Type attribute to further differentiate the light source
 				(eg, Nd-YAG for Laser or Hg for Arc).
 				A LightSource ID must be specified for each light source,
-				and the individual light sources can be referred to by their LightSource IDs (eg from ChannelInfo).
+				and the individual light sources can be referred to by their LightSource IDs (eg from LogicalChannel).
 				Lasers may have a Pump sub-element which refers to another LightSource used as a laser pump.
 				Moved Power into LightSource from Laser - ajp
 			</xsd:documentation>
@@ -1323,7 +1335,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Logical Channels are composed of ChannelComponents.  The Index attribute is an index into the channel dimension of the 5-D pixel array.
-				If the Logical Channel specified by ChannelInfo has a PhotometricInterpretation attribute, then the ColorDomain attribute specifies which color channel
+				If the Logical Channel specified by LogicalChannel has a PhotometricInterpretation attribute, then the ColorDomain attribute specifies which color channel
 				this ChannelComponent belongs to.  For example 'R' for an 'RGB' PhotometricInterpretation.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1401,7 +1413,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:attribute>
 			<xsd:attribute name="LaserMedium" use="required" type="LaserMedia"/>
 			<xsd:attribute name="Wavelength" type="xsd:positiveInteger"/>
-			<xsd:attribute name="FrequencyMultiplication" type="FrequencyMultiplication"/>
+			<xsd:attribute name="FrequencyMultiplication" type="xsd:positiveInteger"/>
 			<xsd:attribute name="Tunable" type="xsd:boolean"/>
 			<xsd:attribute name="Pulse">
 				<xsd:simpleType>
@@ -1417,14 +1429,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="PockelCell" type="xsd:boolean"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:simpleType name="FrequencyMultiplication">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="x1"/>
-			<xsd:enumeration value="x2"/>
-			<xsd:enumeration value="x3"/>
-			<xsd:enumeration value="x4"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	
 	<xsd:element name="Arc">
 		<xsd:annotation>
@@ -1495,16 +1499,46 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="DetectorRef">
+		<xsd:annotation>
+			<xsd:documentation>
+				Added Voltage - ajp
+				Added ReadRate units of MHz - ajp
+				Added ReadOutRate units of Hz - ajp
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
 					<xsd:attribute name="ID" use="required" type="DetectorID"/>
 					<xsd:attribute name="Offset" type="xsd:float"/>
 					<xsd:attribute name="Gain" type="xsd:float"/>
+					<xsd:attribute name="Voltage" type="xsd:float"/>
+					<xsd:attribute name="ReadRate" type="xsd:float">
+						<xsd:annotation><xsd:documentation>Units of ReadRate is MHz</xsd:documentation></xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="ReadOutRate" type="xsd:float">
+						<xsd:annotation><xsd:documentation>The speed at which the detector can count pixels. Units of ReadOutRate is Hz</xsd:documentation></xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Binning" type="Binning">
+						<xsd:annotation><xsd:documentation>Represents the number of pixels that are combined to form larger pixels.</xsd:documentation></xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+	<xsd:simpleType name="Binning">
+		<xsd:annotation>
+			<xsd:documentation>
+				Predefined list of values for the number of pixels that can be combined to form larger pixels.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="1x1"/>
+			<xsd:enumeration value="2x2"/>
+			<xsd:enumeration value="4x4"/>
+			<xsd:enumeration value="8x8"/>
+		</xsd:restriction>
+	</xsd:simpleType>	
 	<xsd:element name="Pump">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1519,23 +1553,16 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="AuxLightSourceRef">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="LightSourceID"/>
-					<xsd:attribute name="Attenuation" type="PercentFraction"/>
-					<xsd:attribute name="Wavelength" type="xsd:positiveInteger"/>
-					<xsd:attribute name="Technique" type="xsd:string"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
 	<xsd:element name="ObjectiveRef">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
 					<xsd:attribute name="ID" use="required" type="ObjectiveID"/>
+					<xsd:attribute name="CorrectionCollar" type="xsd:float"/>
+					<xsd:attribute name="Medium" type="Medium"/>
+					<xsd:attribute name="RefractiveIndex" type="xsd:float">
+						<xsd:annotation><xsd:documentation>This is unit-less, it is a ratio.</xsd:documentation></xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
