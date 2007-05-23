@@ -76,7 +76,10 @@ public class FitsReader extends FormatReader {
     }
 
     in.seek(2880 + 2880 * (((count * 80) - 1) / 2880));
-    in.read(buf);
+    int line = core.sizeX[0] * FormatTools.getBytesPerPixel(core.pixelType[0]); 
+    for (int y=core.sizeY[0]-1; y>=0; y--) {
+      in.read(buf, y*line, line); 
+    }
     return buf;
   }
 
