@@ -117,8 +117,11 @@ public class TiffReader extends BaseTiffReader {
       // There is a version of WiscScan which writes OME-XML to every IFD,
       // but with SizeZ and SizeT equal to 1.
 
-      String s =
-        (String) TiffTools.getIFDValue(ifds[1], TiffTools.IMAGE_DESCRIPTION);
+      String s = null;
+      if (ifds.length > 1) {
+        s = (String)
+          TiffTools.getIFDValue(ifds[1], TiffTools.IMAGE_DESCRIPTION);
+      }
       boolean isWiscScan = s != null && s.indexOf("ome.xsd") != -1;
 
       // extract SizeZ, SizeC and SizeT from XML block
