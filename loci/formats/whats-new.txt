@@ -1,0 +1,163 @@
+* Better Slidebook support
+* Added support for Quicktime RPZA
+* Better Leica LIF metadata parsing
+* Added support for BioRad PIC companion files
+* Added support for bzip2-compressed files
+* Improved ImageJ plugins
+* Native support for FITS and PGM
+
+2007 May 2:
+* Added support for NRRD
+* Added support for Evotec Flex (requires LuraWave Java SDK with license code)
+* Added support for gzip-compressed files
+* Added support for compressed QuickTime headers
+* Fixed QuickTime Motion JPEG-B support
+* Fixed some memory issues (repeated small array allocations)
+* Fixed issues reading large (> 2 GB) files
+* Removed "ignore color table" logic - replaced with Leica-specific solution
+* Added status event reporting to readers
+* Added API to toggle metadata collection
+* Support for multiple dimensions rasterized into channels
+* Deprecated reader and writer methods that accept the 'id' parameter
+* Deprecated IFormatWriter.save in favor of saveImage and saveBytes
+* Moved dimension swapping and min/max calculation logic to delegates
+* Separate GUI logic into isolated loci.formats.gui package
+* Miscellaneous bugfixes and tweaks in most readers and writers
+* Many other bugfixes and improvements
+
+2007 Mar 16:
+* Fixed calibration bugs in importer plugin
+* Enhanced metadata support for additional formats
+* Fixed LSM bug
+
+2007 Mar 7:
+* Added support for Micro-Manager file format
+* Fixed several bugs -- Leica LIF, Leica LEI, ICS, ND2, and others
+* Enhanced metadata support for several formats
+* Load series preview thumbnails in the background
+* Better implementation of openBytes(String, int, byte[]) for most readers
+* Expanded unit testing framework
+
+2007 Feb 28:
+* Better series preview thumbnails
+* Fixed bugs with multi-channel Leica LEI
+* Fixed bugs with "ignore color tables" option in ImageJ plugin
+
+2007 Feb 26:
+* Many bugfixes: Leica LEI, ICS, FV1000 OIB, OME-XML and others
+* Better metadata parsing for BioRad PIC files
+* Enhanced API for calculating channel minimum and maximum values
+* Expanded MetadataStore API to include more semantic types
+* Added thumbnails to series chooser in ImageJ plugin
+* Fixed plugins that upload and download from an OME server
+
+2007 Feb 7:
+* Added plugin for downloading images from OME server
+* Improved HTTP import functionality
+* Added metadata filtering -- unreadable metadata is no longer shown
+* Better metadata table for multi-series datasets
+* Added support for calibration information in Gatan DM3
+* Eliminated need to install JAI Image I/O Tools to read ND2 files
+* Fixed ZVI bugs: metadata truncation, and other problems
+* Fixed bugs in Leica LIF: incorrect calibration, first series labeling
+* Fixed memory bug in Zeiss LSM
+* Many bugfixes: PerkinElmer, Deltavision, Leica LEI, LSM, ND2, and others
+* IFormatReader.close(boolean) method to close files temporarily
+* Replaced Compression utility class with extensible Compressor interface
+* Improved testing framework to use .bioformats configuration files
+
+2007 Jan 5:
+* Added support for Prairie TIFF
+* Fixed bugs in Zeiss LSM, OIB, OIF, and ND2
+* Improved API for writing files
+* Added feature to read files over HTTP
+* Fixed bugs in automated testing framework
+* Miscellaneous bugfixes
+
+2006 Dec 22:
+* Expanded ImageJ plugin to optionally use Image5D or View5D
+* Improved support for ND2 and JPEG-2000 files
+* Added automated testing framework
+* Fixed bugs in Zeiss ZVI reader
+* Miscellaneous bugfixes
+
+2006 Nov 30:
+* Added support for ND2/JPEG-2000
+* Added support for MRC
+* Added support for MNG
+* Improved support for floating-point images
+* Fixed problem with 2-channel Leica LIF data
+* Minor tweaks and bugfixes in many readers
+* Improved file stitching logic
+* Allow ImageJ plugin to be called from a macro
+
+2006 Nov 2:
+* Bugfixes and improvements for Leica LIF, Zeiss LSM, OIF and OIB
+* Colorize channels when they are split into separate windows
+* Fixed a bug with 4-channel datasets
+
+2006 Oct 31:
+* Added support for Imaris 5 files
+* Added support for RGB ICS images
+
+2006 Oct 30:
+* Added support for tiled TIFFs
+* Fixed bugs in ICS reader
+* Fixed importer plugin deadlock on some systems
+
+2006 Oct 27:
+* Multi-series support for Slidebook
+* Added support for Alicona AL3D
+* Fixed plane ordering issue with FV1000 OIB
+* Enhanced dimension detection in FV1000 OIF
+* Added preliminary support for reading NEF images
+* Added option to ignore color tables
+* Fixed ImageJ GUI problems
+* Fixed spatial calibration problem in ImageJ
+* Fixed some lingering bugs in Zeiss ZVI support
+* Fixed bugs in OME-XML reader
+* Tweaked ICS floating-point logic
+* Fixed memory leaks in all readers
+* Better file stitching logic
+
+2006 Oct 6:
+* Support for 3i SlideBook format (single series only for now)
+* Support for 16-bit RGB palette TIFF
+* Fixed bug preventing import of certain Metamorph STK files
+* Fixed some bugs in PerkinElmer UltraView support
+* Fixed some bugs in Leica LEI support
+* Fixed a bug in Zeiss ZVI support
+* Fixed bugs in Zeiss LSM support
+* Fixed a bug causing slow identification of Leica datasets
+* Fixed bugs in the channel merging logic
+* Fixed memory leak for OIB format
+* Better scaling of 48-bit RGB data to 24-bit RGB
+* Fixed duplicate channels bug in "open each channel in a separate window"
+* Fixed a bug preventing PICT import into ImageJ
+* Better integration with HandleExtraFileTypes
+* Better virtual stack support in Data Browser plugin
+* Fixed bug in native QuickTime random access
+* Keep aspect ratio for computed thumbnails
+* Much faster file stitching logic
+
+2006 Sep 27:
+* PerkinElmer: support for PE UltraView
+* Openlab LIFF: support for Openlab v5
+* Leica LEI: bugfixes, and support for multiple series
+* ZVI, OIB, IPW: more robust handling of these formats (eliminated
+  custom OLE parsing logic in favor of Apache POI)
+* OIB: better metadata parsing (but maybe still not perfect?)
+* LSM: fixed a bug preventing import of certain LSMs
+* Metamorph STK: fixed a bug resulting in duplicate image planes
+* User interface: use of system look & feel for file chooser dialog
+  when available
+* Better notification when JAR libraries are missing
+
+2006 Sep 6:
+* Leica LIF: multiple distinct image series within a single file
+* Zeiss ZVI: fixes and improvements contributed by Michel Boudinot
+* Zeiss LSM: fixed bugs preventing the import of certain LSM files
+* TIFF: fixed a bug preventing import of TIFFs created with Bio-Rad software
+
+2006 Mar 31:
+* First release
