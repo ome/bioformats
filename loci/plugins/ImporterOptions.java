@@ -33,6 +33,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Vector;
 import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
 import loci.formats.*;
 
 /**
@@ -80,6 +82,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_GROUP = "bioformats.groupFiles";
   public static final String PREF_CONCATENATE = "bioformats.concatenate";
   public static final String PREF_RANGE = "bioformats.specifyRanges";
+  public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -117,6 +120,7 @@ public class ImporterOptions implements ItemListener {
   private boolean groupFiles;
   private boolean concatenate;
   private boolean specifyRanges;
+  private boolean forceThumbnails;
 
   private String location;
   private String id;
@@ -136,6 +140,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isGroupFiles() { return groupFiles; }
   public boolean isConcatenate() { return concatenate; }
   public boolean isSpecifyRanges() { return specifyRanges; }
+  public boolean isForceThumbnails() { return forceThumbnails; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
   public boolean isViewStandard() { return VIEW_STANDARD.equals(stackFormat); }
@@ -167,6 +172,7 @@ public class ImporterOptions implements ItemListener {
     groupFiles = Prefs.get(PREF_GROUP, false);
     concatenate = Prefs.get(PREF_CONCATENATE, false);
     specifyRanges = Prefs.get(PREF_RANGE, false);
+    forceThumbnails = Prefs.get(PREF_THUMBNAIL, false); 
   }
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
@@ -440,13 +446,28 @@ public class ImporterOptions implements ItemListener {
       p[i] = new Panel();
       p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
       gbc.gridy = i;
+      if (forceThumbnails) {
+        IJ.showStatus("Reading thumbnail for series #" + (i + 1));
+        int z = r.getSizeZ() / 2;
+        int t = r.getSizeT() / 2;
+        int ndx = r.getIndex(z, 0, t);
+        try { 
+          ImageIcon icon = new ImageIcon(r.openThumbImage(ndx));
+          p[i].removeAll(); 
+          p[i].add(new JLabel(icon));
+        }
+        catch (Exception e) { }
+      } 
       gdl.setConstraints(p[i], gbc);
       gd.add(p[i]);
     }
     Util.addScrollBars(gd);
-    ThumbLoader loader = new ThumbLoader(r, p, gd);
-    gd.showDialog();
-    loader.stop();
+    if (forceThumbnails) gd.showDialog();
+    else {
+      ThumbLoader loader = new ThumbLoader(r, p, gd);
+      gd.showDialog();
+      loader.stop();
+    } 
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
     for (int i=0; i<seriesCount; i++) series[i] = gd.getNextBoolean();
