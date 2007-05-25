@@ -23,9 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import com.jgoodies.looks.LookUtils;
+//import com.jgoodies.looks.LookUtils;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 public class SpreadsheetLauncher {
 
@@ -37,6 +38,10 @@ public class SpreadsheetLauncher {
 
   protected static final String MAC_PATH = "/Applications/Microsoft Office 2004/Microsoft Excel";
 
+  // copied from LookUtils
+  // TODO can use LookUtils methods as soon as we update jgoodies.looks jar file
+  protected static final String OS_NAME = System.getProperty("os.name");
+
   // --  Fields --
   
   /** Path to spreadsheet executable */
@@ -47,9 +52,10 @@ public class SpreadsheetLauncher {
   /** Constructs a spreadsheet launcher */
   public SpreadsheetLauncher() {
     // determine OS
-    if (LookUtils.IS_OS_WINDOWS) path = WIN_PATH;
-    if (LookUtils.IS_OS_LINUX) path = LIN_PATH; 
-    if (LookUtils.IS_OS_MAC) path = MAC_PATH;
+    if (isWindows()) path = WIN_PATH;
+    else if (isLinux()) path = LIN_PATH; 
+    else if (isMac()) path = MAC_PATH;
+    else path = "";
   }
 
   // -- SpreadsheetLauncher API methods --
@@ -70,9 +76,34 @@ public class SpreadsheetLauncher {
     }
   }
 
+  // -- Helper methods --
+
+  /** Whether the OS is windows */ 
+  protected boolean isWindows() { 
+    // return LookUtils.IS_OS_WINDOWS_MODERN;
+    // copied from LookUtils:
+    return OS_NAME.startsWith("Windows");
+  }
+  
+  /** Whether the OS is mac */ 
+  protected boolean isMac() {
+    // return LookUtils.IS_OS_MAC;
+    // Copied from LookUtils
+    return OS_NAME.startsWith("Mac");
+  }
+
+  /** Whether OS is Linux */
+  protected boolean isLinux() {
+    // return LookUtils.IS_OS_LINUX;
+    return OS_NAME.toUpperCase(Locale.ENGLISH).startsWith("LINUX"); // copied from LookUtils
+  }
+
   /** Makes an error message from the given command */
   protected String makeCommandErrorMessage(String command) {
-    return "Could not launch spreadsheet using the following command:\n\t" + command;
+    String msg = "Could not launch spreadsheet using the following command:\n\t" 
+      + command + "\nYou may wish to specify the spreadsheet application path"
+      + " yourself in the Options menu.";
+    return msg;
   }
 
   /** makes an error message from the given file */
