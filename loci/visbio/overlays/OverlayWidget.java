@@ -701,14 +701,15 @@ public class OverlayWidget extends JPanel implements ActionListener,
       statsPane.loadSettings();
       int rval = overlayXLSBox.showDialog(this, "Export");
       if (rval != JFileChooser.APPROVE_OPTION) return;
-      // TODO save current options to OverlayManager
       File file = overlayXLSBox.getSelectedFile();
       statsPane.saveSettings();
       try {
         FileOutputStream fout = new FileOutputStream(file);
         HSSFWorkbook wb = overlay.exportOverlays();
-        wb.write(fout);
+        wb.write(fout); // TODO use a task here... this can be slow for 
+        // really big overlay sets
         fout.close();
+        launchSpreadsheet(file);
       }
       catch (IOException exc) {
         //update this TODO ACS
@@ -866,5 +867,22 @@ public class OverlayWidget extends JPanel implements ActionListener,
     if (!updateGUI) ignoreEvents = true;
     overlay.notifyListeners(new TransformEvent(overlay));
     if (!updateGUI) ignoreEvents = false;
+  }
+
+  /** Launches the spreadsheet */
+  protected void launchSpreadsheet(File file) {
+    try {
+      SpreadsheetLauncher launcher = new SpreadsheetLauncher();
+      launcher.launchSpreadsheet(file);
+    }
+    catch (SpreadsheetLaunchException ex) {
+      displayErrorMessage(ex.getMessage());
+    }
+  }
+
+  /** Displays an error message */
+  protected void displayErrorMessage(String message) {
+    JOptionPane.showMessageDialog((JComponent) this, message, 
+        "Could not launch spreadsheet", JOptionPane.ERROR_MESSAGE);
   }
 }
