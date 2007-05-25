@@ -64,6 +64,9 @@ public class OMEXMLMetadataStore implements MetadataStore {
   /** Each channel's global maximum. */
   private double[] channelMaximum;
 
+  /** First Image's CustomAttributes node. */
+  private CustomAttributesNode firstImageCA;
+
   // -- Constructor --
 
   /** Creates a new instance. */
@@ -95,37 +98,40 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
   /** Creates a new key/value pair. */
   public void setOriginalMetadata(String key, String value) {
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
-    CustomAttributesNode ca = (CustomAttributesNode)
-      getChild(image, "CustomAttributes", 0);
+    if (firstImageCA == null) { 
+      ImageNode image = (ImageNode) getChild(root, "Image", 0);
+      firstImageCA = 
+        (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
 
-    Vector original =
-      DOMUtil.getChildElements("OriginalMetadata", ca.getDOMElement());
-    if (original.size() == 0) {
-      Element el = DOMUtil.createChild(root.getDOMElement(),
-        "SemanticTypeDefinitions");
-      OMEXMLNode node = OMEXMLNode.createNode(el);
-      node.setAttribute("xmlns",
-        "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd");
-      el = DOMUtil.createChild(el, "SemanticType");
-      node = OMEXMLNode.createNode(el);
-      node.setAttribute("Name", "OriginalMetadata");
-      node.setAttribute("AppliesTo", "I");
+      Vector original = DOMUtil.getChildElements("OriginalMetadata", 
+        firstImageCA.getDOMElement());
+      if (original.size() == 0) {
+        Element el = DOMUtil.createChild(root.getDOMElement(),
+          "SemanticTypeDefinitions");
+        OMEXMLNode node = OMEXMLNode.createNode(el);
+        node.setAttribute("xmlns",
+          "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd");
+        el = DOMUtil.createChild(el, "SemanticType");
+        node = OMEXMLNode.createNode(el);
+        node.setAttribute("Name", "OriginalMetadata");
+        node.setAttribute("AppliesTo", "I");
 
-      Element nameElement = DOMUtil.createChild(el, "Element");
-      OMEXMLNode nameNode = OMEXMLNode.createNode(nameElement);
-      nameNode.setAttribute("Name", "name");
-      nameNode.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME");
-      nameNode.setAttribute("DataType", "string");
+        Element nameElement = DOMUtil.createChild(el, "Element");
+        OMEXMLNode nameNode = OMEXMLNode.createNode(nameElement);
+        nameNode.setAttribute("Name", "name");
+        nameNode.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME");
+        nameNode.setAttribute("DataType", "string");
 
-      Element valueElement = DOMUtil.createChild(el, "Element");
-      OMEXMLNode valueNode = OMEXMLNode.createNode(valueElement);
-      valueElement.setAttribute("Name", "value");
-      valueElement.setAttribute("DBLocation", "ORIGINAL_METADATA.VALUE");
-      valueElement.setAttribute("DataType", "string");
+        Element valueElement = DOMUtil.createChild(el, "Element");
+        OMEXMLNode valueNode = OMEXMLNode.createNode(valueElement);
+        valueElement.setAttribute("Name", "value");
+        valueElement.setAttribute("DBLocation", "ORIGINAL_METADATA.VALUE");
+        valueElement.setAttribute("DataType", "string");
+      }
     }
 
-    Element el = DOMUtil.createChild(ca.getDOMElement(), "OriginalMetadata");
+    Element el = 
+      DOMUtil.createChild(firstImageCA.getDOMElement(), "OriginalMetadata");
     OMEXMLNode node = OMEXMLNode.createNode(el);
     node.setAttribute("name", key);
     node.setAttribute("value", value);
