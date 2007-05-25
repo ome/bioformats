@@ -306,12 +306,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="DetectorRef" minOccurs="0"/>
 				<xsd:element ref="FilterRef" minOccurs="0"/>
 				<xsd:element ref="ChannelComponent" maxOccurs="unbounded"/>
-				<xsd:element ref="SecondaryEmmisionFilterRef" minOccurs="0"/>
-				<xsd:element ref="SecondaryExcitationFilterRef" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
 			<xsd:attribute name="Name" type="xsd:string"/>
 			<xsd:attribute name="SamplesPerPixel" type="xsd:integer"/>
+			<xsd:attribute name="SecondaryEmmisionFilter" type="EmFilterID"/>
+			<xsd:attribute name="SecondaryExcitationFilter" type="ExFilterID"/>
 			<xsd:attribute name="IlluminationType">
 				<xsd:annotation><xsd:documentation>
 					Attribute is called Illumination in EA diagram - ajp
@@ -638,7 +638,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>
 				Filters may be separate excitation dichroic mirror and emission filters specified by the
 				ExFilter, Dichroic and EmFilter tags respectively.
-				Alternatively all three components may be specified by a single filter set.
 				There should be one filter element specified per wavelength in the image.  
 				The channel number associated with a filter set is specified in LogicalChannel's required ChannelComponent element and its Index attribute.
 				All  elements are FilterSpec type, so they have the required attributes Manufacturer, Model, and LotNumber.
@@ -647,21 +646,31 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:choice>
+			<xsd:complexContent>
+				<xsd:extension base="FilterSpec">
+				<xsd:sequence>
 					<xsd:sequence>
-						<xsd:element ref="ExFilter"/>
-						<xsd:element ref="Dichroic"/>
-						<xsd:element ref="EmFilter"/>
+						<xsd:element ref="TransmittanceRange" maxOccurs="1"/>
 					</xsd:sequence>
-					<xsd:element ref="FilterSet"/>
-				</xsd:choice>
-			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="FilterID"/>
+				</xsd:sequence>
+				<xsd:attribute name="FilterWheel" type="xsd:string" />
+				<xsd:attribute name="ID" use="required" type="FilterID"/>
+				</xsd:extension>
+			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+	<xsd:element name="TransmittanceRange">
+		<xsd:complexType>
+			<xsd:attribute name="CutIn" type="xsd:integer" />
+			<xsd:attribute name="CutOut" type="xsd:integer" />
+			<xsd:attribute name="CutInTolerance" type="xsd:integer" />
+			<xsd:attribute name="CutOutTolerance" type="xsd:integer" />
+			<xsd:attribute name="Transmittance" type="xsd:integer" />
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:element name="NominalMagnification" type="xsd:integer">
-		<xsd:annotation>
+			<xsd:annotation>
 			<xsd:documentation>The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
@@ -758,10 +767,20 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="FilterSet" type="FilterSpec">
+	<xsd:element name="FilterSet">
 		<xsd:annotation>
 			<xsd:documentation>Filter set manufacturer specification</xsd:documentation>
 		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="FilterSpec">
+					<xsd:attribute name="ExFilterRef" type="FilterID" />
+					<xsd:attribute name="DichroicRef" type="DichroicID"/>
+					<xsd:attribute name="EmFilterRef" type="FilterID"/>
+					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Detector">
 		<xsd:annotation>
@@ -1017,9 +1036,29 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:LightSource)(:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="ExFilterID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ExFilter)(:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DichroicID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Dichroic)(:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="EmFilterID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:EmFilter)(:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="FilterID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Filter)(:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FilterSetID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:FilterSet)(:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="OTFID">
@@ -1229,7 +1268,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xsd:annotation>
 		<xsd:attribute name="Manufacturer" use="required" type="xsd:string"/>
 		<xsd:attribute name="Model" use="required" type="xsd:string"/>
-		<xsd:attribute name="LotNumber" use="required" type="xsd:string"/>
+		<xsd:attribute name="LotNumber" type="xsd:string"/>
 	</xsd:complexType>
 	<xsd:element name="LightSource">
 		<xsd:annotation>
@@ -1391,6 +1430,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The Power attribute specifies the nominal laser power in watts.
 				The Laser element may contain a Pump sub-element which refers to a LightSource used as a laser pump.
 				Removed Power - ajp
+				Added RepetitationRate - The is the rate in Hz at which the laser pulses. ajp
 				Added PockelCell attribute - ajp
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1421,12 +1461,18 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 						<xsd:enumeration value="CW"/>
 						<xsd:enumeration value="Single"/>
 						<xsd:enumeration value="QSwitched"/>
-						<xsd:enumeration value="Repetitive"/>
+						<xsd:enumeration value="Repetitive"/> 
 						<xsd:enumeration value="ModeLocked"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="PockelCell" type="xsd:boolean"/>
+			<xsd:attribute name="RepetitationRate" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>The is the rate in Hz at which the laser pulses if the Pulse type is 'Repetitive'
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -1502,8 +1548,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Added Voltage - ajp
-				Added ReadRate units of MHz - ajp
-				Added ReadOutRate units of Hz - ajp
+				Added ReadOutRate units of MHz - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1513,11 +1558,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					<xsd:attribute name="Offset" type="xsd:float"/>
 					<xsd:attribute name="Gain" type="xsd:float"/>
 					<xsd:attribute name="Voltage" type="xsd:float"/>
-					<xsd:attribute name="ReadRate" type="xsd:float">
-						<xsd:annotation><xsd:documentation>Units of ReadRate is MHz</xsd:documentation></xsd:annotation>
-					</xsd:attribute>
 					<xsd:attribute name="ReadOutRate" type="xsd:float">
-						<xsd:annotation><xsd:documentation>The speed at which the detector can count pixels. Units of ReadOutRate is Hz</xsd:documentation></xsd:annotation>
+						<xsd:annotation><xsd:documentation>The speed at which the detector can count pixels. Units of ReadOutRate is MHz. This is the bytes per second that can be read from the detector (like a baud rate). </xsd:documentation></xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Binning" type="Binning">
 						<xsd:annotation><xsd:documentation>Represents the number of pixels that are combined to form larger pixels.</xsd:documentation></xsd:annotation>
