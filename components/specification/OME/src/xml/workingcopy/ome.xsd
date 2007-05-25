@@ -653,19 +653,34 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 						<xsd:element ref="TransmittanceRange" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:sequence>
-				<xsd:attribute name="FilterWheel" type="xsd:string" />
+				<xsd:attribute name="FilterWheel" type="xsd:string" >
+					<xsd:annotation>
+						<xsd:documentation>
+							A filter 'wheel' in OME can refer to any arrangement of filters in a filter holder of any shape. It could, for example, be a filter slider.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
 				<xsd:attribute name="ID" use="required" type="FilterID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="TransmittanceRange">
+		<xsd:annotation>
+			<xsd:documentation>
+				CutIn Units: nm
+				CutOut Units: nm
+				CutInTolerance Units: nm
+				CutOutTolerance Units: nm
+				Transmittance Units: Percentage Fraction
+			</xsd:documentation>
+		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="CutIn" type="xsd:integer" />
-			<xsd:attribute name="CutOut" type="xsd:integer" />
+			<xsd:attribute name="CutIn" use="required" type="xsd:integer" />
+			<xsd:attribute name="CutOut" use="required" type="xsd:integer" />
 			<xsd:attribute name="CutInTolerance" type="xsd:integer" />
 			<xsd:attribute name="CutOutTolerance" type="xsd:integer" />
-			<xsd:attribute name="Transmittance" type="xsd:integer" />
+			<xsd:attribute name="Transmittance" use="required" type="xsd:integer" />
 		</xsd:complexType>
 	</xsd:element>
 	
