@@ -34,7 +34,8 @@ public class OverlayMarker extends OverlayObject {
   // -- Static Fields --
 
   /** The names of the statistics this object reports */
-  protected static String[] statTypes =  {"Coordinates"};
+  protected static final String COORDS = "Coordinates";
+  protected static final String[] STAT_TYPES =  {COORDS};
 
   // -- Constructors --
 
@@ -51,7 +52,7 @@ public class OverlayMarker extends OverlayObject {
   // -- Static methods --
 
   /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return statTypes;}
+  public static String[] getStatTypes() {return STAT_TYPES;}
 
   // -- OverlayObject API methods --
 
@@ -103,7 +104,7 @@ public class OverlayMarker extends OverlayObject {
 
   /** Returns a specific statistic of this object*/
   public String getStat(String name) {
-    if (name.equals("Coordinates")) {
+    if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")";
     }
     else return "No such statistic for this overlay type";
@@ -111,7 +112,7 @@ public class OverlayMarker extends OverlayObject {
 
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
-    return "Marker coordinates = (" + x1 + ", " + y1 + ")";
+    return "Marker " + COORDS + " = (" + x1 + ", " + y1 + ")";
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

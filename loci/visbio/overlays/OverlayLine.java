@@ -35,7 +35,9 @@ public class OverlayLine extends OverlayObject {
   // -- Static Fields --
 
   /** The names of the statistics this object reports */
-  protected static String[] statTypes =  {"Coordinates", "Length"};
+  protected static final String COORDS = "Coordinates";
+  protected static final String LENGTH = "Length";
+  protected static final String[] STAT_TYPES =  {COORDS, LENGTH};
 
   // -- Constructors --
 
@@ -56,7 +58,7 @@ public class OverlayLine extends OverlayObject {
   // -- Static methods --
 
   /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return statTypes;}
+  public static String[] getStatTypes() {return STAT_TYPES;}
 
   // -- OverlayObject API methods --
 
@@ -106,10 +108,10 @@ public class OverlayLine extends OverlayObject {
 
   /** Returns a specific statistic of this object */
   public String getStat(String name) {
-    if (name.equals("Coordinates")) {
+    if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
     }
-    else if (name.equals("Length")) {
+    else if (name.equals(LENGTH)) {
       float xx = x2 - x1;
       float yy = y2 - y1;
       float length = (float) Math.sqrt(xx * xx + yy * yy);
@@ -124,9 +126,9 @@ public class OverlayLine extends OverlayObject {
     float yy = y2 - y1;
     float length = (float) Math.sqrt(xx * xx + yy * yy);
 
-    return "Line coordinates = (" + x1 + ", " + y1 +
+    return "Line " + COORDS + " = (" + x1 + ", " + y1 +
       ")-(" + x2 + ", " + y2 + ")\n" +
-      "Length = " + length;
+      LENGTH + " = " + length;
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

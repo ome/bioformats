@@ -1,3 +1,4 @@
+<<<<<<< .mine
 //
 // OverlayNodedObject.java
 //
@@ -40,8 +41,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
   // -- Static Fields --
 
   /** The names of the statistics this object reports */
-  protected static String[] statTypes =  {"Bounds", "Nodes",
-    "Length"};
+  protected static final String BOUNDS = "Bounds";
+  protected static final String NODES = "Number of Nodes";
+  protected static final String LENGTH = "Length";
+  protected static final String[] STAT_TYPES =  {BOUNDS, NODES, LENGTH};
 
   // -- Constants --
 
@@ -145,7 +148,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
   // -- Static methods --
 
   /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() { return statTypes; }
+  public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
 
@@ -220,6 +223,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
     return field;
   }
+
   /**
    * Computes the shortest distance from this
    * object's bounding box to the given point.
@@ -242,13 +246,13 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Returns a specific statistic of this object */
   public String getStat(String name) {
-    if (name.equals("Bounds")) {
+    if (name.equals(BOUNDS)) {
       return "(" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")";
     }
-    else if (name.equals("Nodes")) {
+    else if (name.equals(NODES)) {
       return "" + numNodes;
     }
-    else if (name.equals("Length")) {
+    else if (name.equals(LENGTH)) {
       return "" + (float) curveLength;
     }
     else return "No such statistic for this overlay type";
@@ -256,9 +260,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
-    return "Bounds = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n" +
-      "Number of Nodes = " + numNodes + "\n" +
-      "Curve Length = " + (float) curveLength + "\n";
+    return BOUNDS + " = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n" +
+      NODES +" = " + numNodes + "\n" +
+      LENGTH + " = " + (float) curveLength + "\n";
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

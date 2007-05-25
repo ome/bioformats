@@ -34,9 +34,16 @@ public class OverlayOval extends OverlayObject {
   // -- Static Fields --
 
   /** The names of the statistics this object reports */
-  protected static String[] statTypes =  {"Coordinates", "Center", "Radius",
-    "Major Axis Length", "Minor Axis Length", "Area", "Eccentricity",
-    "Circumference (approximate)"};
+  public static final String COORDS = "Coordinates";
+  public static final String CTR = "Center";
+  public static final String RAD = "Radius";
+  public static final String MAJ = "Major Axis Length";
+  public static final String MIN = "Minor Axis Length";
+  public static final String AREA = "Area";
+  public static final String ECC = "Eccentricity";
+  public static final String CIRC = "Circumference (approximate)";
+  protected static final String[] STAT_TYPES =  {COORDS, CTR, RAD, MAJ, MIN,
+    AREA, ECC, CIRC};
 
   // -- Constants --
 
@@ -89,7 +96,7 @@ public class OverlayOval extends OverlayObject {
   // -- Static methods --
 
   /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() { return statTypes; }
+  public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
 
@@ -201,28 +208,28 @@ public class OverlayOval extends OverlayObject {
     float circum = (float) (Math.PI *
       (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
 
-    if (name.equals("Coordinates")) {
+    if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
     }
-    else if (name.equals("Center")) {
+    else if (name.equals(CTR)) {
       return "(" + centerX + ", " + centerY + ")";
     }
-    else if (name.equals("Radius")) {
+    else if (name.equals(RAD)) {
       return "(" + radiusX + ", " + radiusY + ")";
     }
-    else if (name.equals("Major Axis Length")) {
+    else if (name.equals(MAJ)) {
       return "" + major;
     }
-    else if (name.equals("Minor Axis Length")) {
+    else if (name.equals(MIN)) {
       return "" + minor;
     }
-    else if (name.equals("Area")) {
+    else if (name.equals(AREA)) {
       return "" + area;
     }
-    else if (name.equals("Eccentricity")) {
+    else if (name.equals(ECC)) {
       return "" + eccen;
     }
-    else if (name.equals("Circumference (approximate)")) {
+    else if (name.equals(CIRC)) {
       return "" + circum;
     }
     else return "No such statistic for this overlay type";
@@ -255,54 +262,12 @@ public class OverlayOval extends OverlayObject {
     float circum = (float) (Math.PI *
       (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
 
-    return "Oval coordinates = (" + x1 + ", " + y1 +
-      ")-(" + x2 + ", " + y2 + ")\n" +
-      "Center = (" + centerX + ", " + centerY + "), " +
-      "Radius = (" + radiusX + ", " + radiusY + ")\n" +
-      "Major = " + major + "; Minor = " + minor + "\n" +
-      "Area = " + area + "; Eccentricity = " + eccen + "\n" +
-      "Circumference = " + circum + " (approximate)";
-  }
-
-  /** Gets this object's statistics in array */
-  public OverlayStat[] getStatisticsArray() {
-    float xx = x2 - x1;
-    float yy = y2 - y1;
-    float centerX = x1 + xx / 2;
-    float centerY = y1 + yy / 2;
-    float radiusX = (xx < 0 ? -xx : xx) / 2;
-    float radiusY = (yy < 0 ? -yy : yy) / 2;
-    float major, minor;
-    if (radiusX > radiusY) {
-      major = radiusX;
-      minor = radiusY;
-    }
-    else {
-      major = radiusY;
-      minor = radiusX;
-    }
-    float eccen = (float) Math.sqrt(1 - (minor * minor) / (major * major));
-    float area = (float) (Math.PI * major * minor);
-
-    // ellipse circumference approximation algorithm due to Ramanujan found at
-    // http://mathforum.org/dr.math/faq/formulas/faq.ellipse.circumference.html
-    float mm = (major - minor) / (major + minor);
-    float q = 3 * mm * mm;
-    float circum = (float) (Math.PI *
-      (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
-
-    String coords = "(" + x1 + ", " + y1 + ")";
-    OverlayStat[] stats = {
-      new OverlayStat("Coordinates", coords),
-      new OverlayStat("Center", "(" + centerX + ", " + centerY + ")"),
-      new OverlayStat("Radius", "(" + radiusX + ", " + radiusY + ")"),
-      new OverlayStat("Major Axis Length", "" + major),
-      new OverlayStat("Minor Axis Length", "" + minor),
-      new OverlayStat("Area", "" + area),
-      new OverlayStat("Eccentricity", "" + eccen),
-      new OverlayStat("Circumference (approximate)", "" + circum)
-    };
-    return stats;
+    return "Oval " + COORDS + " = (" + x1 + ", " + y1 + "), " +
+      CTR + " = (" + centerX + ", " + centerY + "), " +
+      RAD + " = (" + radiusX + ", " + radiusY + ")\n" +
+      MAJ + " = " + major + "; " + MIN + " = " + minor + "\n" +
+      AREA + " = " + area + "; " + ECC + " = " + eccen + "\n" +
+      CIRC + " = " + circum;
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

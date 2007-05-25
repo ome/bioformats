@@ -75,8 +75,11 @@ public class OverlayWidget extends JPanel implements ActionListener,
 
   // -- GUI components - global --
 
-  /** File chooser for loading and saving overlays. */
-  protected JFileChooser overlayBox;
+  /** File chooser for saving overlays. */
+  protected JFileChooser overlaySaveBox;
+
+  /** File chooser for loading overlays. */
+  protected JFileChooser overlayLoadBox;
 
   /** File chooser for exporting overlays to .xls */
   protected JFileChooser overlayXLSBox;
@@ -172,11 +175,16 @@ public class OverlayWidget extends JPanel implements ActionListener,
     buttons.copyInto(buttonList);
     JPanel toolsRow = FormsUtil.makeRow(buttonList);
 
-    // file chooser for loading and saving overlays
-    overlayBox = new JFileChooser();
-    overlayBox.addChoosableFileFilter(new ExtensionFileFilter(
+    // file chooser for loading overlays
+    overlayLoadBox= new JFileChooser();
+    overlayLoadBox.addChoosableFileFilter(new ExtensionFileFilter(
       new String[] {"txt"}, "Overlay text files"));
-    overlayBox.setAccessory(new StatsOptionsPane());
+
+    // file chooser for saving overlays
+    overlaySaveBox = new JFileChooser();
+    overlaySaveBox.addChoosableFileFilter(new ExtensionFileFilter(
+      new String[] {"txt"}, "Overlay text files"));
+    overlaySaveBox.setAccessory(new StatsOptionsPane());
 
     overlayXLSBox = new JFileChooser();
     overlayXLSBox.addChoosableFileFilter(new ExtensionFileFilter(
@@ -655,9 +663,9 @@ public class OverlayWidget extends JPanel implements ActionListener,
       }
     }
     else if (src == load) {
-      int rval = overlayBox.showOpenDialog(this);
+      int rval = overlayLoadBox.showOpenDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
-      File file = overlayBox.getSelectedFile();
+      File file = overlayLoadBox.getSelectedFile();
       try {
         BufferedReader fin = new BufferedReader(new FileReader(file));
         overlay.loadOverlays(fin);
@@ -670,11 +678,11 @@ public class OverlayWidget extends JPanel implements ActionListener,
       }
     }
     else if (src == save) {
-      StatsOptionsPane statsPane = (StatsOptionsPane) overlayBox.getAccessory();
+      StatsOptionsPane statsPane = (StatsOptionsPane) overlaySaveBox.getAccessory();
       statsPane.loadSettings();
-      int rval = overlayBox.showSaveDialog(this);
+      int rval = overlaySaveBox.showSaveDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
-      File file = overlayBox.getSelectedFile();
+      File file = overlaySaveBox.getSelectedFile();
       statsPane.saveSettings();
       try {
         PrintWriter fout = new PrintWriter(new FileWriter(file));

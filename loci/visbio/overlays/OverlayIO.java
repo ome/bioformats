@@ -437,7 +437,7 @@ public final class OverlayIO {
     // print stats by object type
     Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes,
       arrows, polylines};
-    String[] titles = OverlayStat.getOverlayTypes();
+    String[] titles = OverlayUtil.getOverlayTypes();
     for (int v=0; v<vectors.length; v++) {
       if (vectors[v].size() > 0) {
         out.println(); // Throw in a blank
@@ -446,7 +446,7 @@ public final class OverlayIO {
           OverlayObject obj = (OverlayObject) vectors[v].get(i);
           int index = i + 1;
           out.println("# " + titles[v] + " " + index);
-          String[] stats = OverlayStat.getStatTypes(titles[v]);
+          String[] stats = OverlayUtil.getStatTypes(titles[v]);
           OptionManager om = (OptionManager)
             VisBioFrame.getVisBio().getManager(OptionManager.class);
           for (int j=0; j<stats.length; j++) {
@@ -688,7 +688,7 @@ public final class OverlayIO {
     // write overlay statistics
     Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes,
       arrows, polylines};
-    String[] titles = OverlayStat.getOverlayTypes();
+    String[] titles = OverlayUtil.getOverlayTypes();
     for (int v=0; v<vectors.length ; v++) {
       if (vectors[v].size() > 0) {
         rownum += 2;
@@ -708,7 +708,7 @@ public final class OverlayIO {
           c.setCellStyle(text);
           c.setCellValue(new HSSFRichTextString(titles[v] + " " + index));
 
-          String[] statTypes = OverlayStat.getStatTypes(titles[v]);
+          String[] statTypes = OverlayUtil.getStatTypes(titles[v]);
           OptionManager om = (OptionManager)
             VisBioFrame.getVisBio().getManager(OptionManager.class);
 

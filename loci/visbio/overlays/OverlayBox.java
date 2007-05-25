@@ -34,8 +34,14 @@ public class OverlayBox extends OverlayObject {
   // -- Static Fields --
 
   /** The names of the statistics this object reports */
-  protected static String[] statTypes =  {"Coordinates", "Center", "Width",
-    "Height", "Area", "Perimeter"};
+  protected static final String COORDS = "Coordinates";
+  protected static final String CTR = "Center";
+  protected static final String WD = "Width";
+  protected static final String HT = "Height";
+  protected static final String AREA = "Area";
+  protected static final String PERIM = "Perimeter";
+  protected static final String[] STAT_TYPES =  {COORDS, CTR, WD, HT, AREA,
+    PERIM};
 
   // -- Constructors --
 
@@ -56,7 +62,7 @@ public class OverlayBox extends OverlayObject {
   // -- Static methods --
 
   /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return statTypes;}
+  public static String[] getStatTypes() {return STAT_TYPES;}
 
   // -- OverlayObject API methods --
 
@@ -139,22 +145,28 @@ public class OverlayBox extends OverlayObject {
     float area = width * height;
     float perim = width + width + height + height;
 
+<<<<<<< .mine
+    if (name.equals(COORDS)) {
+      return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
+    } else if (name.equals(CTR)){
+=======
     if (name.equals("Coordinates")) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
     }
     else if (name.equals("Center")) {
+>>>>>>> .r2766
       return "(" + centerX + ", " + centerY + ")";
     }
-    else if (name.equals("Width")) {
+    else if (name.equals(WD)) {
       return "" + width;
     }
-    else if (name.equals("Height")) {
+    else if (name.equals(HT)) {
       return "" + height;
     }
-    else if (name.equals("Area")) {
+    else if (name.equals(AREA)) {
       return "" + area;
     }
-    else if (name.equals("Perimeter")) {
+    else if (name.equals(PERIM)){
       return "" + perim;
     }
     else return "No such statistic for this overlay type";
@@ -171,11 +183,11 @@ public class OverlayBox extends OverlayObject {
     float area = width * height;
     float perim = width + width + height + height;
 
-    return "Box coordinates = (" + x1 + ", " + y1 +
+    return "Box " + COORDS + " = (" + x1 + ", " + y1 +
       ")-(" + x2 + ", " + y2 + ")\n" +
-      "Center = (" + centerX + ", " + centerY + ")\n" +
-      "Width = " + width + "; Height = " + height + "\n" +
-      "Area = " + area + "; Perimeter = " + perim;
+      CTR + " = (" + centerX + ", " + centerY + ")\n" +
+      WD + " = " + width + "; " + HT + " = " + height + "\n" +
+      AREA + " = " + area + "; " + PERIM + " = " + perim;
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

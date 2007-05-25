@@ -61,9 +61,9 @@ public class OverlayManager extends LogicManager {
 
     // register Overlay options
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
-    String[] overlayTypes = OverlayStat.getOverlayTypes();
+    String[] overlayTypes = OverlayUtil.getOverlayTypes();
     for (int i=0; i<overlayTypes.length; i++) {
-      String[] statTypes = OverlayStat.getStatTypes(overlayTypes[i]);
+      String[] statTypes = OverlayUtil.getStatTypes(overlayTypes[i]);
       for (int j=0; j<statTypes.length; j++) {
         String name = overlayTypes[i] + "." + statTypes[j];
         om.addBooleanOption("Overlays", name, '|',

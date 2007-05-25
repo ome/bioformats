@@ -72,9 +72,10 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
     OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
 
-    String[] overlayTypes = OverlayStat.getOverlayTypes();
+    String[] overlayTypes = OverlayUtil.getOverlayTypes();
+
     for (int type=0; type<overlayTypes.length; type++) {
-      String statTypes[] = OverlayStat.getStatTypes(overlayTypes[type]);
+      String statTypes[] = OverlayUtil.getStatTypes(overlayTypes[type]);
       for (int i=0; i<statTypes.length; i++) {
         String name = overlayTypes[type] + "." + statTypes[i];
         BioOption opt = om.getOption(name);
@@ -89,11 +90,10 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
   public void loadSettings() {
     OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
-
-    String[] overlayTypes = OverlayStat.getOverlayTypes();
+    String[] overlayTypes = OverlayUtil.getOverlayTypes();
 
     for (int type=0; type<overlayTypes.length; type++) {
-      String statTypes[] = OverlayStat.getStatTypes(overlayTypes[type]);
+      String statTypes[] = OverlayUtil.getStatTypes(overlayTypes[type]);
       for (int i=0; i<statTypes.length; i++) {
         String name = overlayTypes[type] + "." + statTypes[i];
         BioOption opt = om.getOption(name);
@@ -118,12 +118,12 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
     OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
 
-    String[] overlayTypes = OverlayStat.getOverlayTypes();
+    String[] overlayTypes = OverlayUtil.getOverlayTypes();
     checkBoxes = new JCheckBox[overlayTypes.length][];
 
     // populate checkbox array
     for (int type=0; type<overlayTypes.length; type++) {
-      String statTypes[] = OverlayStat.getStatTypes(overlayTypes[type]);
+      String statTypes[] = OverlayUtil.getStatTypes(overlayTypes[type]);
       checkBoxes[type] = new JCheckBox[statTypes.length];
       for (int i=0; i<statTypes.length; i++) {
         checkBoxes[type][i] = new JCheckBox(statTypes[i]);

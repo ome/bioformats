@@ -35,8 +35,10 @@ public class OverlayArrow extends OverlayObject {
   // -- Static Fields --
 
   /** The names of the statistics this object reports */
-  protected static String[] statTypes = {"Tip coordinates", "Angle",
-    "Length"};
+  protected static final String TIP = "Tip Coordinates";
+  protected static final String ANGLE = "Angle";
+  protected static final String LENGTH = "Length";
+  protected static final String[] STAT_TYPES = {TIP, ANGLE, LENGTH};
 
   // -- Constructors --
 
@@ -57,7 +59,7 @@ public class OverlayArrow extends OverlayObject {
   // -- Static methods --
 
   /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return statTypes;}
+  public static String[] getStatTypes() {return STAT_TYPES;}
 
   // -- OverlayObject API methods --
 
@@ -127,13 +129,13 @@ public class OverlayArrow extends OverlayObject {
 
   /** Returns a specific statistic of this object */
   public String getStat(String name) {
-    if (name.equals("Tip coordinates")) {
+    if (name.equals(TIP)) {
       return "(" + x1 + ", " + y1 + ")";
     }
-    else if (name.equals("Angle")) {
+    else if (name.equals(ANGLE)) {
       return "" + getAngle();
     }
-    else if (name.equals("Length")) {
+    else if (name.equals(LENGTH)) {
       return "" + getLength();
     }
     else return "No such statistic for this overlay type";
@@ -141,27 +143,8 @@ public class OverlayArrow extends OverlayObject {
 
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
-    return "Arrow tip coordinates = (" + x1 + ", " + y1 + ")\n" +
-      "Angle = " + getAngle() + "; Length = " + getLength();
-  }
-
-  /** Gets this object's statistics in array */
-  public OverlayStat[] getStatisticsArray() {
-    float xx = x2 - x1;
-    float yy = y2 - y1;
-    float angle = (float) (180 * Math.atan(xx / yy) / Math.PI);
-    if (yy < 0) angle += 180;
-    if (angle < 0) angle += 360;
-    float length = (float) Math.sqrt(xx * xx + yy * yy);
-
-    String coords = "(" + x1 + ", " + y1 + ")";
-    OverlayStat[] stats = {
-      new OverlayStat("Tip coordinates", coords),
-      new OverlayStat("Angle", "" + angle),
-      new OverlayStat("Length", "" + length),
-    };
-
-    return stats;
+    return "Arrow " + TIP + " = (" + x1 + ", " + y1 + ")\n" +
+      ANGLE + " = " + getAngle() + "; " + LENGTH + " = " + getLength();
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

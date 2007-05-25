@@ -304,6 +304,7 @@ public class PolylineTool extends OverlayTool {
 
         // determine if near head
         double hdist = getDistanceToNode(0, px, py, display);
+
         // determine if near last node placed
         double ldist =
           getDistanceToNode(line.getNumNodes() - 2, px, py, display);
@@ -335,6 +336,7 @@ public class PolylineTool extends OverlayTool {
 
         // determine if near head
         double hdist = getDistanceToNode(0, px, py, display);
+
         // determine if near last node placed
         double ldist =
           getDistanceToNode(line.getNumNodes() - 2, px, py, display);
