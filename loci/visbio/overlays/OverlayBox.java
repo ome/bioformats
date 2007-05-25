@@ -145,16 +145,9 @@ public class OverlayBox extends OverlayObject {
     float area = width * height;
     float perim = width + width + height + height;
 
-<<<<<<< .mine
     if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
     } else if (name.equals(CTR)){
-=======
-    if (name.equals("Coordinates")) {
-      return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
-    }
-    else if (name.equals("Center")) {
->>>>>>> .r2766
       return "(" + centerX + ", " + centerY + ")";
     }
     else if (name.equals(WD)) {

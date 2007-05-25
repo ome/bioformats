@@ -1,4 +1,3 @@
-<<<<<<< .mine
 //
 // OverlayNodedObject.java
 //
