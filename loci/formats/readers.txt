@@ -52,6 +52,7 @@ loci.formats.in.SlidebookReader    # sld
 loci.formats.in.AliconaReader      # al3d
 loci.formats.in.MNGReader          # mng
 loci.formats.in.NRRDReader         # nrrd, nhrd
+loci.formats.in.KhorosReader       # xv 
 
 # multi-extension messes
 loci.formats.in.ICSReader          # ics, ids
