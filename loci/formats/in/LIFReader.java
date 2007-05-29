@@ -514,9 +514,14 @@ public class LIFReader extends FormatReader {
       Enumeration keys = metadata.keys();
       while (keys.hasMoreElements()) {
         String k = (String) keys.nextElement();
-        if (k.startsWith(seriesName) || k.indexOf("-") == -1) {
-          core.seriesMetadata[i].put(k, metadata.get(k));
+        boolean use = true; 
+        for (int j=0; j<seriesNames.size(); j++) {
+          if (j != i && k.startsWith((String) seriesNames.get(i))) {
+            use = false;
+            break;
+          }
         }
+        if (use) core.seriesMetadata[i].put(k, metadata.get(k));
       }
     }
   }
@@ -532,7 +537,9 @@ public class LIFReader extends FormatReader {
       Attributes attributes)
     {
       if (qName.equals("Element")) {
-        series = attributes.getValue("Name");
+        if (!attributes.getValue("Name").equals("DCROISet")) {
+          series = attributes.getValue("Name");
+        } 
       }
       else if (qName.equals("Experiment")) {
         for (int i=0; i<attributes.getLength(); i++) {
@@ -568,6 +575,16 @@ public class LIFReader extends FormatReader {
         addMeta(series + " - " + key, attributes.getValue("Variant"));
       }
       else if (qName.equals("ATLConfocalSettingDefinition")) {
+        if (series.indexOf("- Sequential Setting ") == -1) {
+          series += " - Sequential Setting 1";
+        }
+        else {
+          int ndx = series.indexOf(" - Sequential Setting ") + 22;
+          int n = Integer.parseInt(series.substring(ndx));
+          n++;
+          series = series.substring(0, ndx) + String.valueOf(n);
+        }
+      
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(series + " - " + attributes.getQName(i),
             attributes.getValue(i));
