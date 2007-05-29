@@ -64,8 +64,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
   /** Each channel's global maximum. */
   private double[] channelMaximum;
 
-  /** First Image's CustomAttributes node. */
-  private CustomAttributesNode firstImageCA;
+  /** DOM element that backs the first Image's CustomAttributes node. */
+  private Element firstImageCA;
 
   // -- Constructor --
 
@@ -100,11 +100,12 @@ public class OMEXMLMetadataStore implements MetadataStore {
   public void setOriginalMetadata(String key, String value) {
     if (firstImageCA == null) { 
       ImageNode image = (ImageNode) getChild(root, "Image", 0);
-      firstImageCA = 
+      CustomAttributesNode ca = 
         (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+      firstImageCA = ca.getDOMElement();
 
       Vector original = DOMUtil.getChildElements("OriginalMetadata", 
-        firstImageCA.getDOMElement());
+        ca.getDOMElement());
       if (original.size() == 0) {
         Element el = DOMUtil.createChild(root.getDOMElement(),
           "SemanticTypeDefinitions");
@@ -130,9 +131,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
       }
     }
 
-    Element el = 
-      DOMUtil.createChild(firstImageCA.getDOMElement(), "OriginalMetadata");
-    OMEXMLNode node = OMEXMLNode.createNode(el);
+    Element el = DOMUtil.createChild(firstImageCA, "OriginalMetadata");
+    OMEXMLNode node = new AttributeNode(el);
     node.setAttribute("name", key);
     node.setAttribute("value", value);
   }
