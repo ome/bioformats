@@ -101,6 +101,8 @@
 				<xsd:element ref="Pixels" maxOccurs="unbounded"/>
 				<xsd:element ref="Feature" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
+				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="MicrobeamManipulation" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ImageID"/>
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
@@ -227,6 +229,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:sequence>
 				<xsd:element ref="Description" minOccurs="0"/>
 				<xsd:element ref="ExperimenterRef"/>
+				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="Type" use="required">
 				<xsd:simpleType>
@@ -245,11 +248,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 								<xsd:enumeration value="IonImaging"/>
 								<xsd:enumeration value="Colocalization"/>
 								<xsd:enumeration value="PGIDocumentation"/>
-								<xsd:enumeration value="FRAP"/>
-								<xsd:enumeration value="Photoablation"/>
-								<xsd:enumeration value="Photoactivation"/>
-								<xsd:enumeration value="Uncaging"/>
-								<xsd:enumeration value="OpticalTrapping"/>
 								<xsd:enumeration value="FluorescenceLifetime"/>
 								<xsd:enumeration value="SpectralImaging"/>
 								<xsd:enumeration value="Photobleaching"/>
@@ -271,6 +269,47 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+
+	<xsd:element name="MicrobeamManipulation">
+		<xsd:annotation>
+			<xsd:documentation>
+				Defines a microbeam operation type and the region of the image it was applied to.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ROIRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="MicrobeamManipulationID"/>
+			<xsd:attribute name="Type" use="required">
+				<xsd:simpleType>
+					<xsd:list>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="FRAP"/>
+								<xsd:enumeration value="Photoablation"/>
+								<xsd:enumeration value="Photoactivation"/>
+								<xsd:enumeration value="Uncaging"/>
+								<xsd:enumeration value="OpticalTrapping"/>
+								<xsd:enumeration value="Other"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:list>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="MicrobeamManipulationRef">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="MicrobeamManipulationID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>	
 	<xsd:element name="LogicalChannel">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1031,6 +1070,16 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Experiment)(:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="MicrobeamManipulationID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:MicrobeamManipulation)(:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ROIID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ROI)(:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="InstrumentID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Instrument)(:\S+)"/>
@@ -1261,6 +1310,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				If they are not used, and the Image has more than one plane,
 				the entire set of planes is assumed to be included in the ROI.
 				Multiple ROIs may be specified - these are meant to be displayed somehow.
+				Added ID - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1272,8 +1322,19 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="Y1" use="required" type="xsd:integer"/>
 			<xsd:attribute name="Z1" type="xsd:integer"/>
 			<xsd:attribute name="T1" type="xsd:integer"/>
+			<xsd:attribute name="ID" use="required" type="ROIID"/>
 		</xsd:complexType>
 	</xsd:element>
+	<xsd:element name="ROIRef">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="ROIID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:complexType name="FilterSpec">
 		<xsd:annotation>
 			<xsd:documentation>
