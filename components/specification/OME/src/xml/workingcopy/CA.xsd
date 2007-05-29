@@ -57,7 +57,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref = "DatasetRef" minOccurs = "0" maxOccurs = "unbounded"/>
-				<xsd:element ref = "Feature" minOccurs = "0" maxOccurs = "unbounded"/>
+				<xsd:element ref = "Region" minOccurs = "0" maxOccurs = "unbounded"/>
 				<xsd:element ref = "CustomAttributes" minOccurs = "0"/>
 			</xsd:sequence>
 			<xsd:attribute name = "ID" use = "required" type = "OME:ImageID"/>
@@ -69,13 +69,13 @@
 			<xsd:attribute name = "DefaultPixels" type = "OME:PixelsID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name = "Feature">
+	<xsd:element name = "Region">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref = "Feature" minOccurs = "0" maxOccurs = "unbounded"/>
+				<xsd:element ref = "Region" minOccurs = "0" maxOccurs = "unbounded"/>
 				<xsd:element ref = "CustomAttributes" minOccurs = "0"/>
 			</xsd:sequence>
-			<xsd:attribute name = "ID" use = "required" type = "OME:FeatureID"/>
+			<xsd:attribute name = "ID" use = "required" type = "OME:RegionID"/>
 			<xsd:attribute name = "Name" type = "xsd:string"/>
 			<xsd:attribute name = "Tag" type = "xsd:string"/>
 		</xsd:complexType>

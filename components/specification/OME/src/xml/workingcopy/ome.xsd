@@ -99,32 +99,15 @@
 				<xsd:element ref="StageLabel" minOccurs="0"/>
 				<xsd:element ref="SPW:PlateRef" minOccurs="0"/>
 				<xsd:element ref="Pixels" maxOccurs="unbounded"/>
-				<xsd:element ref="Feature" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="AcquiredPixelsRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
 				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="MicrobeamManipulation" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ImageID"/>
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
-			<xsd:attribute name="PixelSizeX" type="xsd:float">
-				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="PixelSizeY" type="xsd:float">
-				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="PixelSizeZ" type="xsd:float">
-				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="TimeIncrement" type="xsd:float"/>
-			<xsd:attribute name="WaveStart" type="xsd:positiveInteger"/>
-			<xsd:attribute name="WaveIncrement" type="xsd:positiveInteger"/>
-			<xsd:attribute name="DefaultPixels" type="PixelsID">
+			<xsd:attribute name="DefaultPixels" use="required" type="PixelsID">
 				<xsd:annotation>
 					<xsd:documentation>More than one Pixels attribute may be associated with an Image. An Image will however have one "primary" set of Pixels. If a PixelsID is specified with this attribute, then that will be the "primary" pixels for this image. If this attribute
 is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be assumed to be the "primary" set.
@@ -152,9 +135,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			
 			<xsd:sequence>
 				<xsd:element ref="Bin:BinData" maxOccurs="unbounded"/>
+				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PixelsID"/>
 			<xsd:attribute name="DimensionOrder" use="required">
@@ -212,8 +195,81 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="PhysicalSizeX" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>Physical size of a pixel</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PhysicalSizeY" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>Physical size of a pixel</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PhysicalSizeZ" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>Physical size of a pixel</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TimeIncrement" type="xsd:float"/>
+			<xsd:attribute name="WaveStart" type="xsd:positiveInteger"/>
+			<xsd:attribute name="WaveIncrement" type="xsd:positiveInteger"/>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="AcquiredPixelsRef">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="PixelsID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:element name="Plane">
+		<xsd:annotation>
+			<xsd:documentation>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="PlaneTiming" type="PlaneTiming" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="StagePosition" type="StagePosition" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+			<xsd:attribute name="TheZ" use="required" type="xsd:integer"/>
+			<xsd:attribute name="TheT" use="required" type="xsd:integer"/>
+			<xsd:attribute name="TheC" use="required" type="xsd:integer"/>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="PlaneTiming">
+		<xsd:attribute name="DeltaT" use="required" type="xsd:float">
+			<xsd:annotation>
+				<xsd:documentation>
+					Units are seconds since the beginning of the experiment
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ExposureTime" use="required" type="xsd:float">
+			<xsd:annotation>
+				<xsd:documentation>
+					Units are seconds
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	
+	<xsd:complexType name="StagePosition">
+		<xsd:annotation>
+			<xsd:documentation>
+				All units are in the microscope reference frame
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="PositionX" use="required" type="xsd:float"/>
+		<xsd:attribute name="PositionY" use="required" type="xsd:float"/>
+		<xsd:attribute name="PositionZ" use="required" type="xsd:float"/>
+	</xsd:complexType>
+	
 	<xsd:element name="Experiment">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1058,9 +1114,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Image)(:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="FeatureID">
+	<xsd:simpleType name="RegionID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Feature)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Region)(:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ExperimenterID">
@@ -1480,15 +1536,15 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Feature">
+	<xsd:element name="Region">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Feature" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xsd:sequence>
 			<xsd:attribute name="Tag" use="required" type="xsd:string"/>
 			<xsd:attribute name="Name" type="xsd:string"/>
-			<xsd:attribute name="ID" use="required" type="FeatureID"/>
+			<xsd:attribute name="ID" use="required" type="RegionID"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:complexType name="Reference">
