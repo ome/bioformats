@@ -205,10 +205,14 @@ public class LIFReader extends FormatReader {
 
     LIFHandler handler = new LIFHandler();
 
+    xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml + 
+      "</LEICA>";
+
     // strip out invalid characters
     for (int i=0; i<xml.length(); i++) {
-      if (Character.isISOControl(xml.charAt(i))) {
-        xml = xml.replace(xml.charAt(i), ' ');
+      char c = xml.charAt(i);
+      if (Character.isISOControl(c) || !Character.isDefined(c)) {
+        xml = xml.replace(c, ' ');
       }
     }
 
