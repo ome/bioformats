@@ -228,7 +228,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="Description" minOccurs="0"/>
-				<xsd:element ref="ExperimenterRef"/>
+				<xsd:element ref="ExperimenterRef">
+					<xsd:annotation>
+						<xsd:documentation>
+						Why is this needed? Can an experiment contain another experiment? - ajp
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="Type" use="required">
@@ -274,12 +280,16 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Defines a microbeam operation type and the region of the image it was applied to.
+				The LightSourceRef element is a reference to a LightSource specified in the Instrument element which was used for a technique other than illumination for
+				the purpose of imaging.  For example, a laser used for photobleaching.
+				
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="ROIRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ROIRef" minOccurs="1" maxOccurs="unbounded"/>
 				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="LightSourceRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="MicrobeamManipulationID"/>
 			<xsd:attribute name="Type" use="required">
@@ -319,8 +329,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				constituting a ChannelComponent of the FTIR Logical Channel.  An RGB image where the Red, Green and Blue components do not reflect discrete probes but are
 				instead the output of a color camera would be treated similarly - one Logical channel with three ChannelComponents in this case.
 				The total number of ChannelComponents for a set of pixels must equal SizeC.
-				The AuxLightSourceRef element is a reference to a LightSource specified in the Instrument element which was used for a technique other than illumination for
-				the purpose of imaging.  For example, a laser used for photobleaching.
 				The SamplesPerPixel attribute is the number of channel components in the logical channel.
 				The IlluminationType attribute is a string enumeration which may be set to 'Transmitted', 'Epifluorescence', 'Oblique', or 'NonLinear'.
 				The optional PinholeAize attribute allows specifying adjustable pin hole diameters for confocal microscopes.
