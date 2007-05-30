@@ -281,8 +281,8 @@ public class Importer {
           r.setSeries(i);
           meta.putAll(r.getCoreMetadata().seriesMetadata[i]);
 
-          String s;
-          if (seriesCount > 1) {
+          String s = store.getImageName(new Integer(i));
+          if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
             StringBuffer sb = new StringBuffer();
             sb.append("Series ");
             int zeroes = digits - digits(i + 1);
@@ -291,7 +291,8 @@ public class Importer {
             sb.append(" ");
             s = sb.toString();
           }
-          else s = "";
+          else s += " ";
+
           final String pad = " "; // puts core values first when alphabetizing
           meta.put(pad + s + "SizeX", new Integer(r.getSizeX()));
           meta.put(pad + s + "SizeY", new Integer(r.getSizeY()));
