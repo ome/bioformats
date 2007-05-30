@@ -516,7 +516,7 @@ public class LIFReader extends FormatReader {
         String k = (String) keys.nextElement();
         boolean use = true; 
         for (int j=0; j<seriesNames.size(); j++) {
-          if (j != i && k.startsWith((String) seriesNames.get(i))) {
+          if (j != i && k.startsWith((String) seriesNames.get(j))) {
             use = false;
             break;
           }
