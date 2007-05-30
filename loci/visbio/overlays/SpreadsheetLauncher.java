@@ -89,7 +89,9 @@ public class SpreadsheetLauncher {
     SpreadsheetLaunchException
   {
     if (file.exists()) {
-      String command = appPath + " " + file.getAbsolutePath();
+      String command = formatPath(appPath) + " " +
+        formatPath(file.getAbsolutePath());
+
       try {
         Runtime.getRuntime().exec(command);
       }
@@ -103,6 +105,13 @@ public class SpreadsheetLauncher {
   }
 
   // -- Helper methods --
+
+  /** Formats path to avoid problems caused by embedded spaces. */
+  protected String formatPath(String plainPath) {
+    String formattedPath = plainPath;
+    if (isWindows()) formattedPath = "\"" + formattedPath + "\"";
+    return formattedPath;
+  }
 
   /** Whether the OS is windows. */
   protected static boolean isWindows() {
