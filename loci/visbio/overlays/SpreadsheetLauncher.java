@@ -28,92 +28,120 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+/** Launches an external spreadsheet application. */
 public class SpreadsheetLauncher {
 
-  // -- Constants -- 
+  // -- Constants --
 
-  protected static final String WIN_PATH = "C:\\Program Files\\Microsoft Office\\excel.exe";
+  /** Default path to spreadsheet (Excel) on Windows computers. */
+  protected static final String WIN_PATH =
+    "C:\\Program Files\\Microsoft Office\\excel.exe";
 
+  /** Default path to spreadsheet (OpenOffice) on Linux computers. */
   protected static final String LIN_PATH = "/usr/bin/oocalc";
 
-  protected static final String MAC_PATH = "/Applications/Microsoft Office 2004/Microsoft Excel";
+  /** Default path to spreadsheet (Excel) on Macintosh computers. */
+  protected static final String MAC_PATH =
+    "/Applications/Microsoft Office 2004/Microsoft Excel";
 
+  /** The name of the OS. */
   // copied from LookUtils
   // TODO can use LookUtils methods as soon as we update jgoodies.looks jar file
   protected static final String OS_NAME = System.getProperty("os.name");
 
   // --  Fields --
-  
-  /** Path to spreadsheet executable */
-  protected String path;
+
+  /** Path to spreadsheet executable. */
+  protected final String path;
 
   // -- Constructor --
 
-  /** Constructs a spreadsheet launcher */
-  public SpreadsheetLauncher() {
-    // determine OS
-    if (isWindows()) path = WIN_PATH;
-    else if (isLinux()) path = LIN_PATH; 
-    else if (isMac()) path = MAC_PATH;
-    else path = "";
+  /** Constructs a spreadsheet launcher. */
+  public SpreadsheetLauncher() throws SpreadsheetLaunchException{
+    path = getDefaultApplicationPath();
+  }
+
+  // -- Static SpreadsheetLauncher API methods
+
+  /** Returns the default spreadsheet application path for the current OS. */
+  public static String getDefaultApplicationPath() throws
+    SpreadsheetLaunchException
+  {
+    String def = "";
+    if (isWindows()) def = WIN_PATH;
+    else if (isLinux()) def = LIN_PATH;
+    else if (isMac()) def = MAC_PATH;
+    else {
+      throw new SpreadsheetLaunchException(makeCantIdentifyOSMessage());
+    }
+    return def;
   }
 
   // -- SpreadsheetLauncher API methods --
-   
-  /** Tries to launch the appropriate spreadsheet application */
+
+  /** Tries to launch the appropriate spreadsheet application. */
   public void launchSpreadsheet(File file) throws SpreadsheetLaunchException {
+    launchSpreadsheet(file, path);
+  }
+
+  /** Tries to launch the appropriate spreadsheet application. */
+  public void launchSpreadsheet(File file, String appPath) throws
+    SpreadsheetLaunchException
+  {
     if (file.exists()) {
-      String command = path + " " + file.getAbsolutePath();
+      String command = appPath + " " + file.getAbsolutePath();
       try {
         Runtime.getRuntime().exec(command);
       }
-      catch (IOException ex) { 
+      catch (IOException ex) {
         throw new SpreadsheetLaunchException(makeCommandErrorMessage(command));
       }
     }
     else {
-      throw new SpreadsheetLaunchException(makeFileErrorMessage(file));
+      throw new SpreadsheetLaunchException(makeFileDoesNotExistMessage(file));
     }
   }
 
   // -- Helper methods --
 
-  /** Whether the OS is windows */ 
-  protected boolean isWindows() { 
+  /** Whether the OS is windows. */
+  protected static boolean isWindows() {
     // return LookUtils.IS_OS_WINDOWS_MODERN;
     // copied from LookUtils:
     return OS_NAME.startsWith("Windows");
   }
-  
-  /** Whether the OS is mac */ 
-  protected boolean isMac() {
+
+  /** Whether the OS is mac. */
+  protected static boolean isMac() {
     // return LookUtils.IS_OS_MAC;
     // Copied from LookUtils
     return OS_NAME.startsWith("Mac");
   }
 
-  /** Whether OS is Linux */
-  protected boolean isLinux() {
+  /** Whether OS is Linux. */
+  protected static boolean isLinux() {
     // return LookUtils.IS_OS_LINUX;
-    return OS_NAME.toUpperCase(Locale.ENGLISH).startsWith("LINUX"); // copied from LookUtils
+    return OS_NAME.toUpperCase(Locale.ENGLISH).startsWith("LINUX");
+    // copied from LookUtils
   }
 
-  /** Makes an error message from the given command */
+  /** Makes an error message from the given command. */
   protected String makeCommandErrorMessage(String command) {
-    String msg = "Could not launch spreadsheet using the following command:\n\t" 
-      + command + "\nYou may wish to specify the spreadsheet application path"
-      + " yourself in the Options menu.";
+    String msg =
+      "Could not launch spreadsheet using the following command:\n\t" +
+      command + "\nYou may wish to change the spreadsheet application path" +
+      " in the 'File > Options...' menu.";
     return msg;
   }
 
-  /** makes an error message from the given file */
-  protected String makeFileErrorMessage(File file) {
-    return "Could not launch spreadsheet.  File does not exist:\n\t" + 
+  /** Makes an error message from the given file. */
+  protected String makeFileDoesNotExistMessage(File file) {
+    return "Could not launch spreadsheet.  File does not exist:\n\t" +
       file.getAbsolutePath();
   }
 
-  /** For testing */
-  public static void main (String[] args) {
-    SpreadsheetLauncher s = new SpreadsheetLauncher();
+  /** Returns an error message indicating the OS could not be identified. */
+  protected static String makeCantIdentifyOSMessage() {
+    return "Could not launch spreadsheet: could not identify OS.";
   }
 }

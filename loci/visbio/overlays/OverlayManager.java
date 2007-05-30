@@ -27,6 +27,7 @@ import loci.visbio.*;
 import loci.visbio.data.DataManager;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.OptionManager;
+import loci.visbio.state.SpreadsheetLaunchOption;
 
 /** OverlayManager is the manager encapsulating VisBio's overlay logic. */
 public class OverlayManager extends LogicManager {
@@ -71,6 +72,14 @@ public class OverlayManager extends LogicManager {
             true);
       }
     }
+
+    // add option for launching spreadsheet automatically
+    String path = "";
+    try {
+      path = SpreadsheetLauncher.getDefaultApplicationPath();
+    }
+    catch (SpreadsheetLaunchException ex) {}
+    om.addOption("General", new SpreadsheetLaunchOption('s', path, true));
 
     // help window
     bio.setSplashStatus(null);

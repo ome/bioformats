@@ -95,6 +95,15 @@ public class OptionManager extends LogicManager {
     return option;
   }
 
+  /** Adds an option allowing the user to enter a string. */
+  public StringOption addStringOption(String tab, String text, String tip,
+      String value, String label)
+  {
+    StringOption option = new StringOption(text, tip, value, label);
+    addOption(tab, option);
+    return option;
+  }
+
   /** Adds an option allowing the user to select from a dropdown list. */
   public ListOption addListOption(String tab,
     String text, String tip, String[] choices)

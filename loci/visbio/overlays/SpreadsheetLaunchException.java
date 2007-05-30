@@ -23,21 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import java.io.File;
-
-/** Exception thrown when spreadsheet launch command fails */
+/** Exception thrown when spreadsheet launch command fails. */
 public class SpreadsheetLaunchException extends Exception{
-  
-  // --  Fields --
-  
-  /** The command that caused this exception */
-  protected String command;
 
   // -- Constructor --
 
-  /** Constructs a new SpreadsheetLaunchException */
+  /** Constructs a new SpreadsheetLaunchException. */
   public SpreadsheetLaunchException(String msg) {
     super(msg);
   }
-
 }

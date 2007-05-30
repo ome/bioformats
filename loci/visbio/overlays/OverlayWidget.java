@@ -37,7 +37,11 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.*;
 import javax.swing.text.Document;
 import loci.formats.gui.ExtensionFileFilter;
+import loci.visbio.VisBioFrame;
 import loci.visbio.data.*;
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.SpreadsheetLaunchOption;
+import loci.visbio.state.SpreadsheetOptionStrategy;
 import loci.visbio.util.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import visad.util.Util;
@@ -81,7 +85,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
   /** File chooser for loading overlays. */
   protected JFileChooser overlayLoadBox;
 
-  /** File chooser for exporting overlays to .xls */
+  /** File chooser for exporting overlays to .xls format. */
   protected JFileChooser overlayXLSBox;
 
   /** Text field indicating current font. */
@@ -453,13 +457,13 @@ public class OverlayWidget extends JPanel implements ActionListener,
   }
 
   /** Sets notes for current overlay. */
-  public void setNotes(String text) { notes.setText(text); }
+  public void setNotes(String newText) { notes.setText(newText); }
 
   /** Gets notes for current overlay. */
   public String getNotes() { return notes.getText(); }
 
   /** Sets statistics for current overlay. */
-  public void setStatistics(String text) { stats.setText(text); }
+  public void setStatistics(String newText) { stats.setText(newText); }
 
   /** Gets statistics for current overlay. */
   public String getStatistics() { return stats.getText(); }
@@ -678,7 +682,8 @@ public class OverlayWidget extends JPanel implements ActionListener,
       }
     }
     else if (src == save) {
-      StatsOptionsPane statsPane = (StatsOptionsPane) overlaySaveBox.getAccessory();
+      StatsOptionsPane statsPane = (StatsOptionsPane)
+        overlaySaveBox.getAccessory();
       statsPane.loadSettings();
       int rval = overlaySaveBox.showSaveDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
@@ -706,13 +711,13 @@ public class OverlayWidget extends JPanel implements ActionListener,
       try {
         FileOutputStream fout = new FileOutputStream(file);
         HSSFWorkbook wb = overlay.exportOverlays();
-        wb.write(fout); // TODO use a task here... this can be slow for 
+        wb.write(fout); // TODO use a task here... this can be slow for
         // really big overlay sets
         fout.close();
         launchSpreadsheet(file);
       }
       catch (IOException exc) {
-        //update this TODO ACS
+        // TODO add error message or something more sophisticated?
         exc.printStackTrace();
       }
     }
@@ -869,20 +874,26 @@ public class OverlayWidget extends JPanel implements ActionListener,
     if (!updateGUI) ignoreEvents = false;
   }
 
-  /** Launches the spreadsheet */
+  /** Launches the spreadsheet. */
   protected void launchSpreadsheet(File file) {
-    try {
-      SpreadsheetLauncher launcher = new SpreadsheetLauncher();
-      launcher.launchSpreadsheet(file);
-    }
-    catch (SpreadsheetLaunchException ex) {
-      displayErrorMessage(ex.getMessage());
+    OptionManager om = (OptionManager)
+      VisBioFrame.getVisBio().getManager(OptionManager.class);
+    SpreadsheetLaunchOption opt = (SpreadsheetLaunchOption)
+      om.getOption(SpreadsheetOptionStrategy.getText());
+    if (opt.getSelected()) {
+      try {
+        SpreadsheetLauncher launcher = new SpreadsheetLauncher();
+        launcher.launchSpreadsheet(file, opt.getValue());
+      }
+      catch (SpreadsheetLaunchException ex) {
+        displayErrorMessage(ex.getMessage());
+      }
     }
   }
 
-  /** Displays an error message */
+  /** Displays an error message. */
   protected void displayErrorMessage(String message) {
-    JOptionPane.showMessageDialog((JComponent) this, message, 
+    JOptionPane.showMessageDialog((JComponent) this, message,
         "Could not launch spreadsheet", JOptionPane.ERROR_MESSAGE);
   }
 }
