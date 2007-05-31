@@ -486,7 +486,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="ExWave" type="xsd:positiveInteger"/>
 			<xsd:attribute name="EmWave" type="xsd:positiveInteger"/>
 			<xsd:attribute name="Fluor" type="xsd:string"/>
-			<xsd:attribute name="NdFilter" type="xsd:float"/>				
+			<xsd:attribute name="NdFilter" type="xsd:float"/>	
+			<xsd:attribute name="PockelCellSetting"  type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="DisplayOptions">
