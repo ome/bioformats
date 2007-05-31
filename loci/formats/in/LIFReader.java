@@ -575,8 +575,13 @@ public class LIFReader extends FormatReader {
         addMeta(series + " - " + key, attributes.getValue("Variant"));
       }
       else if (qName.equals("ATLConfocalSettingDefinition")) {
+        if (series.endsWith(" - Master sequential setting")) {
+          series = series.replaceAll(" - Master sequential setting",
+            " - Sequential Setting 0");
+        } 
+        
         if (series.indexOf("- Sequential Setting ") == -1) {
-          series += " - Sequential Setting 1";
+          series += " - Master sequential setting"; 
         }
         else {
           int ndx = series.indexOf(" - Sequential Setting ") + 22;
