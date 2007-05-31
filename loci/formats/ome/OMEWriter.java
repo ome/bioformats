@@ -149,6 +149,7 @@ public class OMEWriter extends FormatWriter {
 
       try {
         r = pf.findRepository(0);
+        r.setImageServerURL(omeis);
       }
       catch (Exception e) {
         throw new FormatException("Could not find repository.", e);
@@ -254,7 +255,7 @@ public class OMEWriter extends FormatWriter {
       logical.setModuleExecution(ii);
       logical.setFluor("Gray 00");
       logical.setPhotometricInterpretation("monochrome");
-      df.markForUpdate(logical);
+      df.update(logical);
 
       PixelChannelComponent physical =
         (PixelChannelComponent) df.createNew("PixelChannelComponent");
@@ -263,10 +264,10 @@ public class OMEWriter extends FormatWriter {
       physical.setIndex(new Integer(0));
       physical.setLogicalChannel(logical);
       physical.setModuleExecution(ii);
-      df.markForUpdate(physical);
+      df.update(physical);
 
       ii.setStatus("FINISHED");
-      df.markForUpdate(ii);
+      df.update(ii);
 
       img.setDefaultPixels(pixels);
       df.update(img);

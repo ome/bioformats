@@ -38,6 +38,7 @@ public class OMEUtils {
   private static PixelsFactory pf;
   private static RemoteCaller rc;
   private static DataServices rs;
+  private static String omeis;
 
   // -- Utils API methods --
 
@@ -45,6 +46,13 @@ public class OMEUtils {
   public static void login(String server, String user, String pass)
     throws MalformedURLException
   {
+    omeis = server;
+    if (omeis.indexOf("http://") != -1) {
+      omeis = omeis.substring(7, omeis.length());
+    }
+    omeis = "http://" + omeis.substring(0, omeis.indexOf("/")) + 
+      "/cgi-bin/omeis";
+
     rs = DataServer.getDefaultServices(server);
     rc = rs.getRemoteCaller();
     rc.login(user, pass);
@@ -57,6 +65,13 @@ public class OMEUtils {
   public static void login(String server, String sessionKey)
     throws MalformedURLException
   {
+    omeis = server;
+    if (omeis.indexOf("http://") != -1) {
+      omeis = omeis.substring(7, omeis.length());
+    }
+    omeis = "http://" + omeis.substring(0, omeis.indexOf("/")) + 
+      "/cgi-bin/omeis";
+    
     rs = DataServer.getDefaultServices(server);
     rc = rs.getRemoteCaller();
     rc.setSessionKey(sessionKey);
@@ -138,6 +153,10 @@ public class OMEUtils {
       props[i][3] = images[i].getCreated() == null ? "" :
         images[i].getCreated();
       p = images[i].getDefaultPixels();
+
+      Repository r = p.getRepository();
+      r.setImageServerURL(omeis); 
+      p.setRepository(r);
 
       if (p == null) continue;
       try {

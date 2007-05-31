@@ -109,7 +109,8 @@ public class OMEReader extends FormatReader {
     if (colon >= 0) server = server.substring(0, colon);
 
     currentId = server + ":" + imageId;
-
+    
+    String omeis = "http://" + server + "/cgi-bin/omeis";
     server = "http://" + server + "/shoola/";
 
     Criteria c = new Criteria();
@@ -146,6 +147,7 @@ public class OMEReader extends FormatReader {
 
     Image img = (Image) df.retrieveList(Image.class, c).get(0);
     pixels = img.getDefaultPixels();
+    pixels.getRepository().setImageServerURL(omeis);
 
     try {
       thumb = pf.getThumbnail(pixels);
