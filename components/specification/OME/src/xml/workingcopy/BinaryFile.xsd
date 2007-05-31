@@ -78,7 +78,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 					</attribute>
 					<attribute name="Length">
 						<annotation>
-							<documentation>Character count attribute for the BinData field. - ajp
+							<documentation>Character count attribute for the BinData field. This is the length of the base-64 encoded block. It allows easy skipping of the block when parsing the file.
 							Added in response to Evolution document - ajp</documentation>
 						</annotation>
 						<simpleType>
