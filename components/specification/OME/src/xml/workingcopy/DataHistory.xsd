@@ -4,9 +4,9 @@
 	 targetNamespace = "http://openmicroscopy.com/XMLschemas/DataHistory/IR3/DataHistory.xsd"
 	 xmlns:DH = "http://openmicroscopy.com/XMLschemas/DataHistory/IR3/DataHistory.xsd"
 	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	 xmlns:OME = "http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd"
+	 xmlns:OME = "http://www.openmicroscopy.org/XMLschemas/OME/2007-06"
 	 elementFormDefault = "qualified">
-	<import namespace = "http://www.openmicroscopy.org/XMLschemas/OME/2.0-RC1/ome.xsd" schemaLocation = "ome.xsd"/>
+	<import namespace = "http://www.openmicroscopy.org/XMLschemas/OME/2007-06" schemaLocation = "ome.xsd"/>
 	<element name = "Input">
 		<annotation>
 			<documentation>Identifies a set of attributes that satisfied a formal input.</documentation>
