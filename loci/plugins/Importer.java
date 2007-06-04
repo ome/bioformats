@@ -323,10 +323,11 @@ public class Importer {
           sb.append("\n");
         }
 
+        // NB: no need to register this with WindowManager; TextWindows are
+        // automatically registered
         TextWindow tw = new TextWindow("Metadata - " + currentFile,
           "Key\tValue", sb.toString(), 400, 400);
         tw.setVisible(true);
-        WindowManager.addWindow(tw);
       }
 
       // -- Step 4e: read pixel data --
@@ -473,14 +474,20 @@ public class Importer {
           IJ.showStatus("Creating image");
           IJ.showProgress(1);
 
-          showStack(stackB, currentFile, store, cCount[i], zCount[i],
-            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
-          showStack(stackS, currentFile, store, cCount[i], zCount[i],
-            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
-          showStack(stackF, currentFile, store, cCount[i], zCount[i],
-            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
-          showStack(stackO, currentFile, store, cCount[i], zCount[i],
-            tCount[i], sizeZ[i], sizeC[i], sizeT[i], fi, r, fs, options);
+          String seriesName = store.getImageName(new Integer(i));
+
+          showStack(stackB, currentFile + " - " + seriesName, store, 
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+            fi, r, fs, options);
+          showStack(stackS, currentFile + " - " + seriesName, store, 
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+            fi, r, fs, options);
+          showStack(stackF, currentFile + " - " + seriesName, store, 
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+            fi, r, fs, options);
+          showStack(stackO, currentFile + " - " + seriesName, store, 
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+            fi, r, fs, options);
 
           long endTime = System.currentTimeMillis();
           double elapsed = (endTime - startTime) / 1000.0;
