@@ -71,7 +71,7 @@ public class AliconaReader extends FormatReader {
     int pad = (8 - (core.sizeX[0] % 8)) % 8;
 
     if (buf.length < core.sizeX[0] * core.sizeY[0] * numBytes) {
-      throw new FormatException("Buffer to small.");
+      throw new FormatException("Buffer too small.");
     }
 
     long offset = textureOffset;

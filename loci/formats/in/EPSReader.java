@@ -59,7 +59,7 @@ public class EPSReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return false;
+    return new String(block).trim().startsWith("%!PS"); 
   }
 
   /* @see loci.formats.IFormatRaeder#openBytes(int) */

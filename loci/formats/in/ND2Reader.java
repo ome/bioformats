@@ -536,6 +536,11 @@ public class ND2Reader extends FormatReader {
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
+    if (core.imageCount[0] < core.sizeZ[0] * core.sizeT[0] * core.sizeC[0]) {
+      core.sizeT[0] = core.imageCount[0];
+      core.sizeZ[0] = 1;
+    } 
+
     core.rgb[0] = core.sizeC[0] == 3;
     core.interleaved[0] = true;
     core.littleEndian[0] = false;

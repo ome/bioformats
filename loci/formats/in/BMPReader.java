@@ -127,11 +127,12 @@ public class BMPReader extends FormatReader {
       else {
         for (int y=core.sizeY[0]-1; y>=0; y--) {
           for (int x=0; x<core.sizeX[0]; x++) {
-            buf[y*core.sizeX[0] + x + 2*pixels] = (byte) in.read();
-            buf[y*core.sizeX[0] + x + pixels] = (byte) in.read();
-            buf[y*core.sizeX[0] + x] = (byte) in.read();
-            for (int j=0; j<(bpp - 24) / 8; j++) in.read();
+            int off = y*core.sizeX[0] + x; 
+            buf[2*core.sizeX[0]*core.sizeY[0] + off] = (byte) in.read();
+            buf[core.sizeX[0]*core.sizeY[0] + off] = (byte) in.read();
+            buf[off] = (byte) in.read();
           }
+          in.skipBytes(2); 
         }
       }
     }
@@ -257,7 +258,6 @@ public class BMPReader extends FormatReader {
     core.interleaved[0] = true;
     core.imageCount[0] = 1;
     core.sizeZ[0] = 1;
-    //core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCTZ";
 
