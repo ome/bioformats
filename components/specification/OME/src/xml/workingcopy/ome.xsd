@@ -287,7 +287,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="ExperimenterRef">
 					<xsd:annotation>
 						<xsd:documentation>
-						Why is this needed? Can an experiment contain another experiment? - ajp
+						This is a link to the Experimenter who conducted the experiment - ajp
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
@@ -433,7 +433,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="PhotometricInterpretation" default="Monochrome">
 				<xsd:annotation>
 					<xsd:documentation>
-						Add more documentation - ajp
+						To Do - Add more documentation - ajp
 						Added ColorMap - ajp
 					</xsd:documentation>
 				</xsd:annotation>
@@ -740,24 +740,32 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:element name="Filter">
 		<xsd:annotation>
 			<xsd:documentation>
-				Filters may be separate excitation dichroic mirror and emission filters specified by the
-				ExFilter, Dichroic and EmFilter tags respectively.
+				A filter is either an excitation or emission filters.
 				There should be one filter element specified per wavelength in the image.  
 				The channel number associated with a filter set is specified in LogicalChannel's required ChannelComponent element and its Index attribute.
-				All  elements are FilterSpec type, so they have the required attributes Manufacturer, Model, and LotNumber.
-				The ExFilter an EmFilter elements may also contain a Type attribute which may be set to
+				It is based on the FilterSpec type, so has the required attributes Manufacturer, Model, and LotNumber.
+				It may also contain a Type attribute which may be set to
 				'LongPass', 'ShortPass', 'BandPass', or 'MultiPass'.
+				It can be associated with an optional FilterWheel - Note: this is not the same as a FilterSet
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="FilterSpec">
 				<xsd:sequence>
-					<xsd:sequence>
-						<xsd:element ref="TransmittanceRange" maxOccurs="1"/>
-					</xsd:sequence>
+					<xsd:element ref="TransmittanceRange" maxOccurs="1"/>
 				</xsd:sequence>
-				<xsd:attribute name="FilterWheel" type="xsd:string" >
+					<xsd:attribute name="Type">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="LongPass"/>
+								<xsd:enumeration value="ShortPass"/>
+								<xsd:enumeration value="BandPass"/>
+								<xsd:enumeration value="MultiPass"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="FilterWheel" type="xsd:string" >
 					<xsd:annotation>
 						<xsd:documentation>
 							A filter 'wheel' in OME can refer to any arrangement of filters in a filter holder of any shape. It could, for example, be a filter slider.
@@ -838,54 +846,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>The numerical aperture of the lens expressed as a floating point (real) number.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="ExFilter">
-		<xsd:annotation>
-			<xsd:documentation>
-				Excitation filter manufacturer specification.
-				The optional Type attribute may contain 'LongPass', 'ShortPass', 'BandPass', or 'MultiPass'.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="FilterSpec">
-					<xsd:attribute name="Type">
-						<xsd:simpleType>
-							<xsd:restriction base="xsd:string">
-								<xsd:enumeration value="LongPass"/>
-								<xsd:enumeration value="ShortPass"/>
-								<xsd:enumeration value="BandPass"/>
-								<xsd:enumeration value="MultiPass"/>
-							</xsd:restriction>
-						</xsd:simpleType>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="EmFilter">
-		<xsd:annotation>
-			<xsd:documentation>
-				Emission filter manufacturer specification.
-				The optional Type attribute may contain 'LongPass', 'ShortPass', 'BandPass', or 'MultiPass'.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="FilterSpec">
-					<xsd:attribute name="Type">
-						<xsd:simpleType>
-							<xsd:restriction base="xsd:string">
-								<xsd:enumeration value="LongPass"/>
-								<xsd:enumeration value="ShortPass"/>
-								<xsd:enumeration value="BandPass"/>
-								<xsd:enumeration value="MultiPass"/>
-							</xsd:restriction>
-						</xsd:simpleType>
-					</xsd:attribute>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
 	<xsd:element name="FilterSet">
 		<xsd:annotation>
 			<xsd:documentation>Filter set manufacturer specification</xsd:documentation>
@@ -907,8 +867,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The type of detector used to capture the image.
 				The Detector ID can be used as a reference within the LogicalChannel element in the Image element.
 				The Type attribute can be set to 'CCD','Intensified-CCD','Analog-Video','PMT','Photodiode','Spectroscopy','Life-time-Imaging','Correlation-Spectroscopy','FTIR'.
-				Possibly add new types EM-CCD, APD, and CMOS - ajp
-				Possibly add new optional attributes EM-Gain and Zoom - ajp
+				Added new types EM-CCD, APD, and CMOS - ajp
+				Added new optional attributes Amplification-Gain and Zoom - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1093,7 +1053,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Either LSID or internal consistent IDs for the file - ajp
-				Put in some samples of valid lsid and internal ID - ajp
+				To Do - Put in some samples of valid lsid and internal ID - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
@@ -1497,7 +1457,11 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="ID" use="required" type="DatasetID"/>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="DatasetID"/>
+				</xsd:extension>
+			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="ImagingEnvironment">
@@ -1552,12 +1516,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Reference is an empty complex type that is contained and extended by all the *Ref elements
-				Each *Ref element defines an attribute named ID of simple type *ID
+				Each *Ref element defines an attribute named ID of simple type *ID and any other information that is needed
 				Each simple type *ID is restricted to the base type LSID with an appropriate pattern
 				-- ajp
-				While the above sounds good it is not true in practice as 
-				some *Ref elements do not use Reference e.g. Dataset
-				Some *Ref elements also contain other attributes e.g. SPW:PlateRef
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:complexType>
