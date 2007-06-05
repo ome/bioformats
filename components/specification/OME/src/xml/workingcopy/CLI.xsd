@@ -63,14 +63,14 @@
 						<enumeration value = "executeGlobal"/>
 						<enumeration value = "startDataset"/>
 						<enumeration value = "startImage"/>
-						<enumeration value = "startFeature"/>
-						<enumeration value = "finishFeature"/>
+						<enumeration value = "startRegion"/>
+						<enumeration value = "finishRegion"/>
 						<enumeration value = "finishImage"/>
 						<enumeration value = "finishDataset"/>
 					</restriction>
 				</simpleType>
 			</attribute>
-			<attribute name = "MakesNewFeature" default = "false" type = "boolean"/>
+			<attribute name = "MakesNewRegion" default = "false" type = "boolean"/>
 		</complexType>
 	</element>
 	<element name = "CommandLine">
