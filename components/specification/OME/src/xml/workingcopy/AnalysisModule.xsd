@@ -131,7 +131,7 @@ Tied to DB. Table FORMAL_INPUTS Column USER_DEFINED
 			</sequence>
 			<attribute name = "IBelongTo">
 				<annotation>
-					<documentation>Concerning MakeNewFeature attribute of ExecutionInstructions, if a new feature type is made, then there are two possible places a formal output attribute can be stored: It can be stored as an attribute of the FeatureIterator, or it can be stored as an attribute of the new Feature.
+					<documentation>Concerning MakeNewRegion attribute of ExecutionInstructions, if a new region type is made, then there are two possible places a formal output attribute can be stored: It can be stored as an attribute of the RegionIterator, or it can be stored as an attribute of the new Region.
 This tag is supposed to specify which. Can be left blank if module does not make new iterator.
 Tied to DB. FORMAL_OUTPUTS.FEATURE_TAG
 Processed before storage to DB
@@ -139,7 +139,7 @@ Processed before storage to DB
 				</annotation>
 				<simpleType>
 					<restriction base = "string">
-						<enumeration value = "[Feature]"/>
+						<enumeration value = "[Region]"/>
 						<enumeration value = "[Iterator]"/>
 					</restriction>
 				</simpleType>
@@ -229,13 +229,13 @@ Tied to DB. Table PROGRAMS Column MODULE_TYPE
 					</restriction>
 				</simpleType>
 			</attribute>
-			<attribute name = "FeatureIterator">
+			<attribute name = "RegionIterator">
 				<annotation>
-					<documentation>If the module iterates over a feature, specify the iterator here. It will reference a feature via the TAG column of the FEATURES table.
-An example of a module that does not iterate over a feature is Find Cells. It examines one image at a time, hence it iterates over an image, not a feature. It produces zero or more features (Çell) per image. These Cell features belong to an image.
-This module would not get a FeatureIterator attribute.
-An example of a module that iterates over a feature is Find Golgi. It examines one CELL at a time. A cell is a feature, hence the module iterates over features, not images or datasets. It produces zero or more Golgi features per Cell feature. These Golgi features belong to a Cell feature.
-This module would get a FeatureIterator attribute of "CELL".
+					<documentation>If the module iterates over a region, specify the iterator here. It will reference a region via the TAG column of the REGIONS table.
+An example of a module that does not iterate over a region is Find Cells. It examines one image at a time, hence it iterates over an image, not a region. It produces zero or more regions (Çell) per image. These Cell regions belong to an image.
+This module would not get a RegionIterator attribute.
+An example of a module that iterates over a region is Find Golgi. It examines one CELL at a time. A cell is a region, hence the module iterates over regions, not images or datasets. It produces zero or more Golgi regions per Cell region. These Golgi regions belong to a Cell region.
+This module would get a RegionIterator attribute of "CELL".
 Tied to DB. Table PROGRAMS Column DEFAULT_ITERATOR
 					</documentation>
 				</annotation>
@@ -245,10 +245,10 @@ Tied to DB. Table PROGRAMS Column DEFAULT_ITERATOR
 					</restriction>
 				</simpleType>
 			</attribute>
-			<attribute name = "NewFeatureName">
+			<attribute name = "NewRegionName">
 				<annotation>
-					<documentation>If this module makes new features, then the new Feature's name needs to be specified here.
-If the module does not make new features, do not specify a value for this attribute.
+					<documentation>If this module makes new regions, then the new Region's name needs to be specified here.
+If the module does not make new regions, do not specify a value for this attribute.
 Tied to DB. PROGRAMS.NEW_FEATURE_TAG
 					</documentation>
 				</annotation>
