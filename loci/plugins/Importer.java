@@ -588,7 +588,7 @@ public class Importer {
   {
     if (stack == null) return;
     if (!options.isMergeChannels() && options.isSplitWindows()) {
-      slice(stack, sizeZ, sizeC, sizeT, fi, r, fs, options);
+      slice(stack, label, sizeZ, sizeC, sizeT, fi, r, fs, options);
     }
     else {
       ImagePlus imp = new ImagePlus(label, stack);
@@ -602,8 +602,8 @@ public class Importer {
   }
 
   /** Opens each channel of the source stack in a separate window. */
-  private void slice(ImageStack is, int z, int c, int t, FileInfo fi,
-    IFormatReader r, FileStitcher fs, ImporterOptions options)
+  private void slice(ImageStack is, String label, int z, int c, int t, 
+    FileInfo fi, IFormatReader r, FileStitcher fs, ImporterOptions options)
     throws FormatException, IOException
   {
     boolean range = options.isSpecifyRanges();
@@ -641,8 +641,7 @@ public class Importer {
     // retrieve the spatial calibration information, if available
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus imp = new ImagePlus(r.getCurrentFile() + " - Ch" + (i+1),
-        newStacks[i]);
+      ImagePlus imp = new ImagePlus(label + " - Ch" + (i+1), newStacks[i]);
       applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(), imp,
         r.getSeries());
 
