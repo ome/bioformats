@@ -51,7 +51,7 @@
 			<attribute name = "NodeID" use = "required" type = "string"/>
 			<attribute name = "ProgramName" use = "required" type = "string"/>
 			<attribute name = "IteratorTag" type = "string"/>
-			<attribute name = "NewFeatureTag" type = "string"/>
+			<attribute name = "NewRegionTag" type = "string"/>
 		</complexType>
 	</element>
 	<element name = "Links">
