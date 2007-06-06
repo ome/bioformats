@@ -1,3 +1,10 @@
+2007 June 6:
+* Fixed OME upload/download bugs
+* Fixed issues with ND2, EPS, Leica LIF, and OIF
+* Added support for Khoros XV
+* Minor improvements to the importer
+
+2007 May 24:
 * Better Slidebook support
 * Added support for Quicktime RPZA
 * Better Leica LIF metadata parsing
