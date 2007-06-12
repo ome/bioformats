@@ -426,7 +426,7 @@ public class LegacyZVIReader extends FormatReader {
     numC = cSet.size();
     numT = tSet.size();
     if (numZ * numC * numT != blockList.size()) {
-      System.err.println("Warning: image counts do not match. " + WHINING);
+      LogTools.println("Warning: image counts do not match. " + WHINING);
     }
   }
 
@@ -519,7 +519,7 @@ public class LegacyZVIReader extends FormatReader {
       imageSize = numPixels * bytesPerPixel;
       numChannels = pixelType == 1 ? 3 : 1;  // a total shot in the dark
       if (bytesPerPixel % numChannels != 0) {
-        System.err.println("Warning: incompatible bytesPerPixel (" +
+        LogTools.println("Warning: incompatible bytesPerPixel (" +
           bytesPerPixel + ") and numChannels (" + numChannels +
           "). Assuming grayscale data. " + WHINING);
         numChannels = 1;

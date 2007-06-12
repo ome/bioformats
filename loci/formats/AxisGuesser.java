@@ -283,21 +283,21 @@ public class AxisGuesser {
     Location file = args.length < 1 ?
       new Location(System.getProperty("user.dir")).listFiles()[0] :
       new Location(args[0]);
-    System.out.println("File = " + file.getAbsoluteFile());
+    LogTools.println("File = " + file.getAbsoluteFile());
     String pat = FilePattern.findPattern(file);
-    if (pat == null) System.out.println("No pattern found.");
+    if (pat == null) LogTools.println("No pattern found.");
     else {
-      System.out.println("Pattern = " + pat);
+      LogTools.println("Pattern = " + pat);
       FilePattern fp = new FilePattern(pat);
       if (fp.isValid()) {
-        System.out.println("Pattern is valid.");
+        LogTools.println("Pattern is valid.");
         String id = fp.getFiles()[0];
         if (!new Location(id).exists()) {
-          System.out.println("File '" + id + "' does not exist.");
+          LogTools.println("File '" + id + "' does not exist.");
         }
         else {
           // read dimensional information from first file
-          System.out.print("Reading first file ");
+          LogTools.print("Reading first file ");
           ImageReader reader = new ImageReader();
           reader.setId(id);
           String dimOrder = reader.getDimensionOrder();
@@ -306,12 +306,12 @@ public class AxisGuesser {
           int sizeC = reader.getSizeC();
           boolean certain = reader.isOrderCertain();
           reader.close();
-          System.out.println("[done]");
-          System.out.println("\tdimOrder = " + dimOrder +
+          LogTools.println("[done]");
+          LogTools.println("\tdimOrder = " + dimOrder +
             (certain ? " (certain)" : " (uncertain)"));
-          System.out.println("\tsizeZ = " + sizeZ);
-          System.out.println("\tsizeT = " + sizeT);
-          System.out.println("\tsizeC = " + sizeC);
+          LogTools.println("\tsizeZ = " + sizeZ);
+          LogTools.println("\tsizeT = " + sizeT);
+          LogTools.println("\tsizeC = " + sizeC);
 
           // guess axes
           AxisGuesser ag = new AxisGuesser(fp,
@@ -322,7 +322,7 @@ public class AxisGuesser {
           String[] prefixes = fp.getPrefixes();
           int[] axes = ag.getAxisTypes();
           String newOrder = ag.getAdjustedOrder();
-          System.out.println("Axis types:");
+          LogTools.println("Axis types:");
           for (int i=0; i<blocks.length; i++) {
             String axis;
             switch (axes[i]) {
@@ -338,15 +338,15 @@ public class AxisGuesser {
               default:
                 axis = "?";
             }
-            System.out.println("\t" + blocks[i] + "\t" +
+            LogTools.println("\t" + blocks[i] + "\t" +
               axis + " (prefix = " + prefixes[i] + ")");
           }
           if (!dimOrder.equals(newOrder)) {
-            System.out.println("Adjusted dimension order = " + newOrder);
+            LogTools.println("Adjusted dimension order = " + newOrder);
           }
         }
       }
-      else System.out.println("Pattern is invalid: " + fp.getErrorMessage());
+      else LogTools.println("Pattern is invalid: " + fp.getErrorMessage());
     }
   }
 

@@ -278,8 +278,8 @@ public class PerkinElmerReader extends FormatReader {
             files[filesPt] = workingDirPath + ls[i];
             filesPt++;
           }
-          catch (NumberFormatException f) {
-            if (debug) f.printStackTrace();
+          catch (NumberFormatException exc) {
+            if (debug) trace(exc);
           }
         }
       }
@@ -491,7 +491,7 @@ public class PerkinElmerReader extends FormatReader {
       }
       catch (Throwable th) {
         // CTR TODO - eliminate catch-all exception handling
-        if (debug) th.printStackTrace();
+        if (debug) trace(th);
       }
 
       for (int j=0; j<tokens.length; j++) {
@@ -645,8 +645,8 @@ public class PerkinElmerReader extends FormatReader {
         originY == null ? null : new Float(originY),
         originZ == null ? null : new Float(originZ), null);
     }
-    catch (NumberFormatException e) {
-      if (debug) e.printStackTrace();
+    catch (NumberFormatException exc) {
+      if (debug) trace(exc);
     }
 
     for (int i=0; i<core.sizeC[0]; i++) {

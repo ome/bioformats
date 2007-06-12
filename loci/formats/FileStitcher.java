@@ -537,11 +537,11 @@ public class FileStitcher implements IFormatReader {
             readers[i].setId(files[i]);
           }
           catch (FormatException exc) {
-            exc.printStackTrace();
+            LogTools.trace(exc);
             return null;
           }
           catch (IOException exc) {
-            exc.printStackTrace();
+            LogTools.trace(exc);
             return null;
           }
           used[i] = readers[i].getUsedFiles();
@@ -672,7 +672,7 @@ public class FileStitcher implements IFormatReader {
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (FormatHandler.debug) {
-      System.out.println("calling FileStitcher.initFile(" + id + ")");
+      LogTools.println("calling FileStitcher.initFile(" + id + ")");
     }
 
     currentId = id;
@@ -725,10 +725,10 @@ public class FileStitcher implements IFormatReader {
         }
         readers[i] = (IFormatReader) r;
       }
-      catch (InstantiationException exc) { exc.printStackTrace(); }
-      catch (IllegalAccessException exc) { exc.printStackTrace(); }
-      catch (NoSuchMethodException exc) { exc.printStackTrace(); }
-      catch (InvocationTargetException exc) { exc.printStackTrace(); }
+      catch (InstantiationException exc) { LogTools.trace(exc); }
+      catch (IllegalAccessException exc) { LogTools.trace(exc); }
+      catch (NoSuchMethodException exc) { LogTools.trace(exc); }
+      catch (InvocationTargetException exc) { LogTools.trace(exc); }
     }
 
     // sync reader configurations with original reader

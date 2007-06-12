@@ -147,8 +147,8 @@ public class ReaderTest extends TestCase {
       long l2 = System.currentTimeMillis();
       averagePlaneAccess = ((float) (l2 - l1)) / planesRead;
     }
-    catch (Exception e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
       success = false;
     }
     if (!success) writeLog(id + " failed BufferedImage test");
@@ -194,8 +194,8 @@ public class ReaderTest extends TestCase {
         }
       }
     }
-    catch (Exception e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
       success = false;
     }
     if (!success) writeLog(id + " failed byte array test");
@@ -236,8 +236,8 @@ public class ReaderTest extends TestCase {
         planesRead += imageCount;
       }
     }
-    catch (Exception e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
       success = false;
     }
     if (!success) writeLog(id + " failed thumbnail BufferedImage test");
@@ -272,8 +272,8 @@ public class ReaderTest extends TestCase {
         }
       }
     }
-    catch (Exception e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
       success = false;
     }
     if (!success) writeLog(id + " failed thumbnail byte array test");
@@ -300,8 +300,8 @@ public class ReaderTest extends TestCase {
         else break;
       }
     }
-    catch (Exception e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
       success = false;
     }
     if (!success) writeLog(id + " failed image count test");
@@ -360,8 +360,8 @@ public class ReaderTest extends TestCase {
         else break;
       }
     }
-    catch (Exception e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
       success = false;
     }
     if (!success) writeLog(id + " failed OME-XML sanity test");
@@ -380,9 +380,9 @@ public class ReaderTest extends TestCase {
     try {
       reader.setId(id);
     }
-    catch (Exception e) {
+    catch (Exception exc) {
       writeLog(id + " failed consistent metadata test");
-      if (FormatHandler.debug) e.printStackTrace();
+      if (FormatHandler.debug) LogTools.trace(exc);
       assertTrue(false);
     }
 
@@ -438,8 +438,8 @@ public class ReaderTest extends TestCase {
         w.write(configLine.toString());
         w.close();
       }
-      catch (Exception e) {
-        if (FormatHandler.debug) e.printStackTrace();
+      catch (Exception exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
 
         configLine = new StringBuffer();
         configLine.append("\"");
@@ -452,8 +452,8 @@ public class ReaderTest extends TestCase {
           w.write(configLine.toString());
           w.close();
         }
-        catch (IOException exc) {
-          if (FormatHandler.debug) exc.printStackTrace();
+        catch (IOException exc2) {
+          if (FormatHandler.debug) LogTools.trace(exc2);
           success = false;
         }
       }
@@ -467,8 +467,8 @@ public class ReaderTest extends TestCase {
           writeLog(id + " failed consistent series count check");
         }
       }
-      catch (Exception e) {
-        if (FormatHandler.debug) e.printStackTrace();
+      catch (Exception exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
         success = false;
       }
       if (success) {
@@ -532,8 +532,8 @@ public class ReaderTest extends TestCase {
             }
           }
         }
-        catch (Exception e) {
-          if (FormatHandler.debug) e.printStackTrace();
+        catch (Exception exc) {
+          if (FormatHandler.debug) LogTools.trace(exc);
           success = false;
         }
       }
@@ -601,8 +601,8 @@ public class ReaderTest extends TestCase {
       fs.close();
       assertTrue(true);
     }
-    catch (Exception e) {
-      if (FormatHandler.debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
       writeLog(id + " failed sane used files test");
     }
     assertTrue(false);
@@ -620,9 +620,9 @@ public class ReaderTest extends TestCase {
       if (xml == null) writeLog(id + " failed OME-XML validation");
       assertTrue(xml != null);
     }
-    catch (Exception e) {
+    catch (Exception exc) {
       writeLog(id + " failed OME-XML validation");
-      e.printStackTrace();
+      LogTools.trace(exc);
       assertTrue(false);
     }
   }
@@ -642,11 +642,11 @@ public class ReaderTest extends TestCase {
       used = reader.getUsedFiles();
       reader.close();
     }
-    catch (FormatException fe) {
-      if (FormatHandler.debug) fe.printStackTrace();
+    catch (FormatException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
     }
-    catch (IOException io) {
-      if (FormatHandler.debug) io.printStackTrace();
+    catch (IOException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
     }
   }
 
@@ -693,8 +693,8 @@ public class ReaderTest extends TestCase {
         String s = (String) configFiles.get(i);
         if (!config.isParsed(s)) config.addFile(s);
       }
-      catch (IOException e) {
-        if (FormatHandler.debug) e.printStackTrace();
+      catch (IOException exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
       }
     }
     return !config.testFile(file) && !file.endsWith(".bioformats");
@@ -718,7 +718,7 @@ public class ReaderTest extends TestCase {
     }
 
     if (subs == null) {
-      System.out.println("Invalid directory: " + root);
+      LogTools.println("Invalid directory: " + root);
       return;
     }
     ImageReader ir = new ImageReader();
@@ -763,8 +763,8 @@ public class ReaderTest extends TestCase {
         logFile = new FileWriter("bio-formats-test-" + date + ".log");
         logFile.flush();
       }
-      catch (IOException io) {
-        if (FormatHandler.debug) io.printStackTrace();
+      catch (IOException exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
       }
     }
     try {
@@ -772,11 +772,11 @@ public class ReaderTest extends TestCase {
       logFile.flush();
     }
     catch (IOException exc) {
-      if (FormatHandler.debug) exc.printStackTrace();
+      if (FormatHandler.debug) LogTools.trace(exc);
     }
   }
 
-  public static void debug(String s) { System.out.println(s); }
+  public static void debug(String s) { LogTools.println(s); }
 
   // -- Main method --
 
@@ -793,38 +793,38 @@ public class ReaderTest extends TestCase {
     }
     Vector files = new Vector();
     if (args == null || args.length == 0) {
-      System.out.println(
+      LogTools.println(
         "Please specify root folder to search for data files.");
       System.exit(1);
     }
-    System.out.print("Building file list...");
-    if (FormatHandler.debug) System.out.println();
+    LogTools.print("Building file list...");
+    if (FormatHandler.debug) LogTools.println();
     getFiles(new Location(args[0]).getAbsolutePath(), files);
-    System.out.println(files.size() + " found.");
+    LogTools.println(files.size() + " found.");
     while (files.size() > 0) {
       String id = (String) files.elementAt(0);
       String pattern = FilePattern.findPattern(new Location(id));
       if (pattern == null) pattern = id;
-      System.out.println("Testing " + pattern);
+      LogTools.println("Testing " + pattern);
       TestResult result = new TestResult();
       TestSuite suite = suite(id);
       suite.run(result);
       int total = result.runCount();
       int failed = result.failureCount();
       float failPercent = (float) (100 * ((double) failed / (double) total));
-      System.out.println(id + " - " + failed + " failures in " +
+      LogTools.println(id + " - " + failed + " failures in " +
         total + " tests (" + failPercent + "% failed)");
 
       // remove files part of the just-tested dataset from the list
       ReaderTest test = (ReaderTest) suite.testAt(0);
       String[] used = test.getUsedFiles();
       if (used == null) {
-        System.out.println("Warning: used files list is null for " + id);
+        LogTools.println("Warning: used files list is null for " + id);
 
         used = new FilePattern(pattern).getFiles();
         if (used != null) {
           for (int i=0; i<used.length; i++) {
-            if (FormatHandler.debug) System.out.println("Removing " + used[i]);
+            if (FormatHandler.debug) LogTools.println("Removing " + used[i]);
             files.removeElement(used[i]);
           }
         }
@@ -832,7 +832,7 @@ public class ReaderTest extends TestCase {
       }
       else {
         for (int i=0; i<used.length; i++) {
-          if (FormatHandler.debug) System.out.println("Removing " + used[i]);
+          if (FormatHandler.debug) LogTools.println("Removing " + used[i]);
           files.removeElement(used[i]);
         }
       }

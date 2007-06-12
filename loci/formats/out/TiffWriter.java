@@ -142,9 +142,7 @@ public class TiffWriter extends FormatWriter {
           TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION,
             xml.writeOME(true));
         }
-        catch (Exception e) {
-          e.printStackTrace();
-        }
+        catch (Exception e) { trace(e); }
       }
       else {
         throw new FormatException("Expecting an OMEXMLMetadataStore; got a " +

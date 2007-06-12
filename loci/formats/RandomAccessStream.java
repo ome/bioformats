@@ -709,7 +709,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
         !fileCache.get(files[ndx]).equals(Boolean.FALSE))
       {
         try { files[ndx].close(); }
-        catch (IOException e) { e.printStackTrace(); }
+        catch (IOException exc) { LogTools.trace(exc); }
         closed++;
       }
       ndx++;

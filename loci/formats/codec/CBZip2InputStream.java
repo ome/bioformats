@@ -49,6 +49,7 @@ package loci.formats.codec;
 
 import java.io.IOException;
 import java.io.InputStream;
+import loci.formats.LogTools;
 
 /**
  * An input stream that decompresses from the BZip2 format (without the file
@@ -74,7 +75,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
     //throw new IOException("crc error");
 
     // Just print a message, like the previous versions of this class did
-    System.err.println("BZip2 CRC error");
+    LogTools.println("BZip2 CRC error");
   }
 
   private void makeMaps() {

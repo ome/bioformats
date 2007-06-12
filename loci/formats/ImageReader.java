@@ -51,8 +51,8 @@ public class ImageReader implements IFormatReader {
         defaultClasses = new ClassList("readers.txt", IFormatReader.class);
       }
       catch (IOException exc) {
-        exc.printStackTrace();
         defaultClasses = new ClassList(IFormatReader.class);
+        LogTools.trace(exc);
       }
     }
     return defaultClasses;
@@ -98,7 +98,7 @@ public class ImageReader implements IFormatReader {
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (reader == null) {
-        System.err.println("Error: " + c[i].getName() +
+        LogTools.println("Error: " + c[i].getName() +
           " cannot be instantiated.");
         continue;
       }

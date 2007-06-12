@@ -1896,7 +1896,7 @@ public final class ImageTools {
     int[] pixels = new int[w * h];
     PixelGrabber pg = new PixelGrabber(image, 0, 0, w, h, pixels, 0, w);
     try { pg.grabPixels(); }
-    catch (InterruptedException exc) { exc.printStackTrace(); }
+    catch (InterruptedException exc) { LogTools.trace(exc); }
     BufferedImage result = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
     result.setRGB(0, 0, w, h, pixels, 0, w);
     return result;

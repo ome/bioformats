@@ -221,7 +221,7 @@ public class ImageViewer extends JFrame
       myReader.close(true);
     }
     catch (Exception exc) {
-      exc.printStackTrace();
+      LogTools.trace(exc);
       wait(false);
       return;
     }
@@ -253,7 +253,7 @@ public class ImageViewer extends JFrame
         progress.setProgress(1);
       }
     }
-    catch (Exception exc) { exc.printStackTrace(); }
+    catch (Exception exc) { LogTools.trace(exc); }
     wait(false);
   }
 
@@ -269,7 +269,7 @@ public class ImageViewer extends JFrame
       sizeC = reader.getEffectiveSizeC();
       //if (reader.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
     }
-    catch (Exception exc) { exc.printStackTrace(); }
+    catch (Exception exc) { LogTools.trace(exc); }
 
     fileSave.setEnabled(true);
     nSlider.removeChangeListener(this);
@@ -373,7 +373,7 @@ public class ImageViewer extends JFrame
         r.setVar("filename", filename);
         r.exec("new Notes(null, filename)");
       }
-      catch (ReflectException exc) { exc.printStackTrace(); }
+      catch (ReflectException exc) { LogTools.trace(exc); }
     }
     else if ("exit".equals(cmd)) dispose();
     else if ("about".equals(cmd)) {
@@ -400,7 +400,7 @@ public class ImageViewer extends JFrame
       int ndx = getImageIndex();
       int[] zct = {-1, -1, -1};
       try { zct = in.getZCTCoords(ndx); }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (Exception exc) { LogTools.trace(exc); }
       if (zct[0] >= 0) {
         zSlider.removeChangeListener(this);
         zSlider.setValue(zct[0] + 1);
@@ -421,7 +421,7 @@ public class ImageViewer extends JFrame
       // update N slider
       int ndx = -1;
       try { ndx = in.getIndex(getZ(), getC(), getT()); }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (Exception exc) { LogTools.trace(exc); }
       if (ndx >= 0) {
         nSlider.removeChangeListener(this);
         nSlider.setValue(ndx + 1);

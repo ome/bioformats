@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Vector;
 
 /** Abstract superclass of all biological file format readers and writers. */
@@ -83,23 +83,23 @@ public abstract class FormatHandler implements IFormatHandler {
     for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
   }
 
-  /** Issues a debugging statement. */
+  /** Issues a debugging statement. Convenience method for format handlers. */
   protected void debug(String s) {
-    // NB: could use a logger class or other means of output here, if desired
     String name = getClass().getName();
     String prefix = "loci.formats.";
     if (name.startsWith(prefix)) {
       name = name.substring(name.lastIndexOf(".") + 1);
     }
     String msg = System.currentTimeMillis() + ": " + name + ": " + s;
-    if (debugLevel > 3) trace(msg);
-    else System.out.println(msg);
+    if (debugLevel > 3) LogTools.trace(msg);
+    else LogTools.println(msg);
   }
 
-  /** Issues a stack trace. */
-  protected void trace(String s) {
-    new Exception(s).printStackTrace();
-  }
+  /** Issues a stack trace. Convenience method for format handlers. */
+  protected void trace(String s) { LogTools.trace(s); }
+
+  /** Issues a stack trace. Convenience method for format handlers. */
+  protected void trace(Throwable t) { LogTools.trace(t); }
 
   // -- IFormatHandler API methods --
 

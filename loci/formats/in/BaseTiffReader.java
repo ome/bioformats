@@ -601,9 +601,9 @@ public abstract class BaseTiffReader extends FormatReader {
           Date date = parse.parse(creationDate, new ParsePosition(0));
           creationDate = sdf.format(date);
         }
-        catch (Exception ex) {
+        catch (Exception exc) {
           // TODO: eliminate catch-all exception handling
-          if (debug) ex.printStackTrace();
+          if (debug) trace(exc);
           creationDate = null;
         }
       }
@@ -618,11 +618,11 @@ public abstract class BaseTiffReader extends FormatReader {
         try {
           setLogicalChannel(i);
         }
-        catch (FormatException e) {
-          if (debug) e.printStackTrace();
+        catch (FormatException exc) {
+          if (debug) trace(exc);
         }
-        catch (IOException e) {
-          if (debug) e.printStackTrace();
+        catch (IOException exc) {
+          if (debug) trace(exc);
         }
       }
 
@@ -674,7 +674,7 @@ public abstract class BaseTiffReader extends FormatReader {
         TiffTools.getIFDValue(ifd, TiffTools.MAKE);
       store.setInstrument(null, model, serialNumber, null, null);
     }
-    catch (FormatException exc) { exc.printStackTrace(); }
+    catch (FormatException exc) { trace(exc); }
   }
 
   /**

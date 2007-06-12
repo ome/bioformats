@@ -235,8 +235,8 @@ public class NikonReader extends BaseTiffReader {
         }
       }
     }
-    catch (IOException e) {
-      if (debug) e.printStackTrace();
+    catch (IOException exc) {
+      if (debug) trace(exc);
     }
   }
 
@@ -259,9 +259,9 @@ public class NikonReader extends BaseTiffReader {
     try {
       offset = TiffTools.getIFDIntValue(ifds[0], 330, false, 0);
     }
-    catch (Exception e) {
+    catch (Exception exc) {
       // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+      if (debug) trace(exc);
       long[] array = TiffTools.getIFDLongArray(ifds[0], 330, false);
       offset = (int) array[array.length - 1];
     }

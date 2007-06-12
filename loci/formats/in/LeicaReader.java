@@ -234,10 +234,10 @@ public class LeicaReader extends FormatReader {
       return false;
     }
     catch (IOException exc) {
-      if (debug) exc.printStackTrace();
+      if (debug) trace(exc);
     }
     catch (ClassCastException exc) {
-      if (debug) exc.printStackTrace();
+      if (debug) trace(exc);
     }
     return false;
   }

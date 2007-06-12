@@ -467,11 +467,11 @@ public class ZeissLSMReader extends BaseTiffReader {
         parseOverlays(linescanOverlayOffset, "OffsetLinescanOverlay", little);
       }
     }
-    catch (FormatException e) {
-      if (debug) e.printStackTrace();
+    catch (FormatException exc) {
+      if (debug) trace(exc);
     }
-    catch (IOException e) {
-      if (debug) e.printStackTrace();
+    catch (IOException exc) {
+      if (debug) trace(exc);
     }
 
     Object pixelSizeX = getMeta("VoxelSizeX");
@@ -496,8 +496,8 @@ public class ZeissLSMReader extends BaseTiffReader {
           MDBParser.parseDatabase((new Location(dir.getPath(),
             dirList[i])).getAbsolutePath(), metadata);
         }
-        catch (FormatException f) {
-          if (debug) f.printStackTrace();
+        catch (FormatException exc) {
+          if (debug) trace(exc);
         }
         i = dirList.length;
       }
@@ -653,8 +653,8 @@ public class ZeissLSMReader extends BaseTiffReader {
         put("DrawingElement" + i + "-" + suffix, new String(draw));
       }
     }
-    catch (ArithmeticException e) {
-      if (debug) e.printStackTrace();
+    catch (ArithmeticException exc) {
+      if (debug) trace(exc);
     }
   }
 

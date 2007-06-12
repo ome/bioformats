@@ -175,8 +175,8 @@ public abstract class FormatReader extends FormatHandler
       }
     }
     catch (Throwable t) {
-      System.out.println("Error populating OME-XML");
-      t.printStackTrace();
+      debug("Error populating OME-XML");
+      trace(t);
     }
   }
 
@@ -397,7 +397,7 @@ public abstract class FormatReader extends FormatHandler
     if (currentId != null) {
       String s = "setNormalized called with open file.";
       if (debug && debugLevel >= 2) trace(s);
-      else System.err.println("Warning: " + s);
+      else LogTools.println("Warning: " + s);
     }
     normalizeData = normalize;
   }
@@ -413,7 +413,7 @@ public abstract class FormatReader extends FormatHandler
     if (currentId != null) {
       String s = "setMetadataCollected called with open file.";
       if (debug && debugLevel >= 2) trace(s);
-      else System.err.println("Warning: " + s);
+      else LogTools.println("Warning: " + s);
     }
     collectMetadata = collect;
   }
@@ -470,7 +470,7 @@ public abstract class FormatReader extends FormatHandler
     if (currentId != null) {
       String s = "setMetadataFiltered called with open file.";
       if (debug && debugLevel >= 2) trace(s);
-      else System.err.println("Warning: " + s);
+      else LogTools.println("Warning: " + s);
     }
     filterMetadata = filter;
   }
@@ -486,7 +486,7 @@ public abstract class FormatReader extends FormatHandler
     if (currentId != null) {
       String s = "setMetadataStore called with open file.";
       if (debug && debugLevel >= 2) trace(s);
-      else System.err.println("Warning: " + s);
+      else LogTools.println("Warning: " + s);
     }
     metadataStore = store;
   }

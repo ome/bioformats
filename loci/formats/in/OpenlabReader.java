@@ -145,9 +145,9 @@ public class OpenlabReader extends FormatReader {
           System.arraycopy(tmp[i], 0, b, i * tmp[i].length, tmp[i].length);
         }
       }
-      catch (Exception e) {
+      catch (Exception exc) {
         // CTR TODO - eliminate catch-all exception handling
-        if (debug) e.printStackTrace();
+        if (debug) trace(exc);
 
         b = null;
         in.seek(info.layerStart + 12);
@@ -237,8 +237,8 @@ public class OpenlabReader extends FormatReader {
       LZOCodec lzoc = new LZOCodec();
       b = lzoc.decompress(c);
       if (b.length != size) {
-        System.err.println("LZOCodec failed to predict image size");
-        System.err.println(size + " expected, got " + b.length +
+        LogTools.println("LZOCodec failed to predict image size");
+        LogTools.println(size + " expected, got " + b.length +
           ". The image displayed may not be correct.");
       }
 
@@ -323,8 +323,8 @@ public class OpenlabReader extends FormatReader {
         in = new RandomAccessStream(name);
         in.read(b);
       }
-      catch (IOException e) {
-        if (debug) e.printStackTrace();
+      catch (IOException exc) {
+        if (debug) trace(exc);
         return false;
       }
       return isThisType(b);
@@ -386,11 +386,11 @@ public class OpenlabReader extends FormatReader {
         startPos = in.getFilePointer();
         nextTag = readTagHeader();
       }
-      catch (IOException e) {
-        if (debug) e.printStackTrace();
+      catch (IOException exc) {
+        if (debug) trace(exc);
 
         if (in.getFilePointer() >= in.length()) break;
-        else throw new FormatException(e.getMessage());
+        else throw new FormatException(exc.getMessage());
       }
 
       try {
@@ -500,9 +500,9 @@ public class OpenlabReader extends FormatReader {
 
         in.seek(nextTag);
       }
-      catch (Exception e) {
+      catch (Exception exc) {
         // CTR TODO - eliminate catch-all exception handling
-        if (debug) e.printStackTrace();
+        if (debug) trace(exc);
         in.seek(nextTag);
       }
     }

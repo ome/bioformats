@@ -366,17 +366,17 @@ public class OMEWriter extends FormatWriter {
             doUsage = true;
           }
           else {
-            System.err.println("Error: unknown flag: "+ param);
-            System.err.println();
+            LogTools.println("Error: unknown flag: "+ param);
+            LogTools.println();
             doUsage = true;
             break;
           }
         }
         catch (ArrayIndexOutOfBoundsException exc) {
           if (i == args.length - 1) {
-            System.err.println("Error: flag " + param +
+            LogTools.println("Error: flag " + param +
               " must be followed by a parameter value.");
-            System.err.println();
+            LogTools.println();
             doUsage = true;
             break;
           }
@@ -386,49 +386,49 @@ public class OMEWriter extends FormatWriter {
       else {
         if (id == null) id = args[i];
         else {
-          System.err.println("Error: unknown argument: " + args[i]);
-          System.err.println();
+          LogTools.println("Error: unknown argument: " + args[i]);
+          LogTools.println();
         }
       }
     }
 
     if (id == null) doUsage = true;
     if (doUsage) {
-      System.err.println("Usage: omeul [-s server.address] " +
+      LogTools.println("Usage: omeul [-s server.address] " +
         "[-u username] [-p password] filename");
-      System.err.println();
+      LogTools.println();
       System.exit(1);
     }
 
     // ask for information if necessary
     BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
     if (server == null) {
-      System.out.print("Server address? ");
+      LogTools.print("Server address? ");
       try { server = cin.readLine(); }
       catch (IOException exc) { }
     }
     if (user == null) {
-      System.out.print("Username? ");
+      LogTools.print("Username? ");
       try { user = cin.readLine(); }
       catch (IOException exc) { }
     }
     if (pass == null) {
-      System.out.print("Password? ");
+      LogTools.print("Password? ");
       try { pass = cin.readLine(); }
       catch (IOException exc) { }
     }
 
     if (server == null || user == null || pass == null) {
-      System.err.println("Error: could not obtain server login information");
+      LogTools.println("Error: could not obtain server login information");
       System.exit(2);
     }
-    System.out.println("Using server " + server + " as user " + user);
+    LogTools.println("Using server " + server + " as user " + user);
 
     // create image uploader
     OMEWriter uploader = new OMEWriter();
     uploader.addStatusListener(new StatusListener() {
       public void statusUpdated(StatusEvent e) {
-        System.out.println(e.getStatusMessage());
+        LogTools.println(e.getStatusMessage());
       }
     });
 

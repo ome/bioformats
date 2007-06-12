@@ -162,7 +162,7 @@ public class FlexReader extends BaseTiffReader {
     int nsize = n.size();
     int fsize = f.size();
     if (debug && (nsize != fsize || nsize != core.imageCount[0])) {
-      System.err.println("Warning: mismatch between image count, " +
+      LogTools.println("Warning: mismatch between image count, " +
         "names and factors (count=" + core.imageCount[0] +
         ", names=" + nsize + ", factors=" + fsize + ")");
     }
@@ -180,7 +180,7 @@ public class FlexReader extends BaseTiffReader {
       }
       catch (NumberFormatException exc) {
         if (debug) {
-          System.err.println("Warning: invalid factor #" + i + ": " + factor);
+          LogTools.println("Warning: invalid factor #" + i + ": " + factor);
         }
       }
       factors[i] = q;

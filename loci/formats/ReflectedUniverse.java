@@ -110,11 +110,11 @@ public class ReflectedUniverse {
         c = Class.forName(command, true, loader);
       }
       catch (NoClassDefFoundError err) {
-        if (debug) err.printStackTrace();
+        if (debug) LogTools.trace(err);
         throw new ReflectException("No such class: " + command, err);
       }
       catch (ClassNotFoundException exc) {
-        if (debug) exc.printStackTrace();
+        if (debug) LogTools.trace(exc);
         throw new ReflectException("No such class: " + command, exc);
       }
       setVar(varName, c);
@@ -199,7 +199,7 @@ public class ReflectedUniverse {
         result = constructor.newInstance(args);
       }
       catch (Exception exc) {
-        if (debug) exc.printStackTrace();
+        if (debug) LogTools.trace(exc);
         throw new ReflectException("Cannot instantiate object", exc);
       }
     }
@@ -249,7 +249,7 @@ public class ReflectedUniverse {
         result = method.invoke(var, args);
       }
       catch (Exception exc) {
-        if (debug) exc.printStackTrace();
+        if (debug) LogTools.trace(exc);
         throw new ReflectException("Cannot execute method: " +
           methodName, exc);
       }
@@ -326,7 +326,7 @@ public class ReflectedUniverse {
         field = varClass.getField(fieldName);
       }
       catch (NoSuchFieldException exc) {
-        if (debug) exc.printStackTrace();
+        if (debug) LogTools.trace(exc);
         throw new ReflectException("No such field: " + varName, exc);
       }
       Object fieldVal;
@@ -334,7 +334,7 @@ public class ReflectedUniverse {
         fieldVal = field.get(var);
       }
       catch (Exception exc) {
-        if (debug) exc.printStackTrace();
+        if (debug) LogTools.trace(exc);
         throw new ReflectException("Cannot get field value: " + varName, exc);
       }
       return fieldVal;

@@ -32,8 +32,7 @@ import java.util.Arrays;
 import java.util.Vector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import loci.formats.FormatTools;
-import loci.formats.MetadataStore;
+import loci.formats.*;
 import org.openmicroscopy.xml.*;
 import org.openmicroscopy.xml.st.*;
 import org.w3c.dom.Element;
@@ -77,10 +76,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
   /** Constructs a new OME-XML root node with the given XML block. */
   public void createRoot(String xml) {
     try { root = xml == null ? new OMENode() : new OMENode(xml); }
-    catch (TransformerException exc) { exc.printStackTrace(); }
-    catch (SAXException exc) { exc.printStackTrace(); }
-    catch (ParserConfigurationException exc) { exc.printStackTrace(); }
-    catch (IOException exc) { exc.printStackTrace(); }
+    catch (TransformerException exc) { LogTools.trace(exc); }
+    catch (SAXException exc) { LogTools.trace(exc); }
+    catch (ParserConfigurationException exc) { LogTools.trace(exc); }
+    catch (IOException exc) { LogTools.trace(exc); }
   }
 
   /**
@@ -89,10 +88,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
    */
   public String dumpXML() {
     try { return root == null ? null : root.writeOME(false); }
-    catch (TransformerException exc) { exc.printStackTrace(); }
-    catch (SAXException exc) { exc.printStackTrace(); }
-    catch (ParserConfigurationException exc) { exc.printStackTrace(); }
-    catch (IOException exc) { exc.printStackTrace(); }
+    catch (TransformerException exc) { LogTools.trace(exc); }
+    catch (SAXException exc) { LogTools.trace(exc); }
+    catch (ParserConfigurationException exc) { LogTools.trace(exc); }
+    catch (IOException exc) { LogTools.trace(exc); }
     return null;
   }
 
@@ -1121,7 +1120,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
       Constructor con = c.getConstructor(new Class[] {param});
       return (OMEXMLNode) con.newInstance(new Object[] {base});
     }
-    catch (Exception exc) { exc.printStackTrace(); }
+    catch (Exception exc) { LogTools.trace(exc); }
     return null;
   }
 
@@ -1155,7 +1154,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   /** Issues the given message as a warning. */
   private void warn(String msg) {
     //log.warn(msg);
-    System.err.println(msg);
+    LogTools.println(msg);
   }
 
 }

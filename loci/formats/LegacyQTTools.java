@@ -69,7 +69,7 @@ public class LegacyQTTools {
           new URL("file:/System/Library/Java/Extensions/QTJava.zip")
         };
       }
-      catch (MalformedURLException exc) { exc.printStackTrace(); }
+      catch (MalformedURLException exc) { LogTools.trace(exc); }
       return paths == null ? null : new URLClassLoader(paths);
     }
 
@@ -83,7 +83,7 @@ public class LegacyQTTools {
         try {
           paths = new URL[] {f.toURL()};
         }
-        catch (MalformedURLException exc) { exc.printStackTrace(); }
+        catch (MalformedURLException exc) { LogTools.trace(exc); }
         return paths == null ? null : new URLClassLoader(paths);
       }
     }
@@ -251,7 +251,7 @@ public class LegacyQTTools {
     }
     catch (Exception e) {
       try { r.exec("QTSession.close()"); }
-      catch (ReflectException exc) { exc.printStackTrace(); }
+      catch (ReflectException exc) { LogTools.trace(exc); }
       throw new FormatException("PICT extraction failed", e);
     }
   }

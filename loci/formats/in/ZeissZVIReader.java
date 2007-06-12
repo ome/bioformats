@@ -60,6 +60,7 @@ public class ZeissZVIReader extends FormatReader {
     }
     catch (Throwable t) {
       noPOI = true;
+      if (debug) LogTools.trace(t);
     }
     return r;
   }
@@ -327,20 +328,20 @@ public class ZeissZVIReader extends FormatReader {
           (core.sizeZ[0] > core.sizeT[0]) ? "XYZTC" : "XYTZC";
       }
     }
-    catch (ReflectException e) {
+    catch (ReflectException exc) {
       needLegacy = true;
-      if (debug) e.printStackTrace();
+      if (debug) trace(exc);
       initFile(id);
     }
 
     try {
       initMetadata();
     }
-    catch (FormatException e) {
-      if (debug) e.printStackTrace();
+    catch (FormatException exc) {
+      if (debug) trace(exc);
     }
-    catch (IOException e) {
-      if (debug) e.printStackTrace();
+    catch (IOException exc) {
+      if (debug) trace(exc);
     }
   }
 
@@ -421,8 +422,8 @@ public class ZeissZVIReader extends FormatReader {
         try {
           r.exec("dis.read(data)");
         }
-        catch (ReflectException e) {
-          if (debug) e.printStackTrace();
+        catch (ReflectException exc) {
+          if (debug) trace(exc);
         }
 
         String entryName = (String) r.getVar("entryName");

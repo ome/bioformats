@@ -141,8 +141,8 @@ public class PictReader extends FormatReader {
     try {
       while (driveDecoder()) { }
     }
-    catch (FormatException e) {
-      e.printStackTrace();
+    catch (FormatException exc) {
+      trace(exc);
       return ImageTools.makeBuffered(qtTools.pictToImage(pix));
     }
 

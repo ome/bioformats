@@ -391,18 +391,18 @@ public class MetamorphReader extends BaseTiffReader {
       }
       ifds = tempIFDs;
     }
-    catch (NullPointerException n) { n.printStackTrace(); }
-    catch (IOException io) { io.printStackTrace(); }
-    catch (FormatException e) { e.printStackTrace(); }
+    catch (NullPointerException exc) { trace(exc); }
+    catch (IOException exc) { trace(exc); }
+    catch (FormatException exc) { trace(exc); }
 
     try {
       super.initStandardMetadata();
     }
     catch (FormatException exc) {
-      if (debug) exc.printStackTrace();
+      if (debug) trace(exc);
     }
     catch (IOException exc) {
-      if (debug) exc.printStackTrace();
+      if (debug) trace(exc);
     }
 
     // parse (mangle) TIFF comment
@@ -457,7 +457,7 @@ public class MetamorphReader extends BaseTiffReader {
       core.sizeT[0] = getImageCount() / core.sizeZ[0];
     }
     catch (FormatException exc) {
-      if (debug) exc.printStackTrace();
+      if (debug) trace(exc);
     }
   }
 

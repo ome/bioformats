@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.util.*;
+import loci.formats.LogTools;
 
 /**
  * A class for writing arbitrary numbers of bits to a byte array.
@@ -122,7 +123,7 @@ public class BitWriter {
   public static void main(String[] args) {
     int max = 50000;
     // randomize values
-    System.out.println("Generating random list of " + max + " values");
+    LogTools.println("Generating random list of " + max + " values");
     int[] values = new int[max];
     int[] bits = new int[max];
     double log2 = Math.log(2);
@@ -133,38 +134,38 @@ public class BitWriter {
     }
 
     // write values out
-    System.out.println("Writing values to byte array");
+    LogTools.println("Writing values to byte array");
     BitWriter out = new BitWriter();
     for (int i=0; i<values.length; i++) out.write(values[i], bits[i]);
 
     // read values back in
-    System.out.println("Reading values from byte array");
+    LogTools.println("Reading values from byte array");
     BitBuffer bb = new BitBuffer(out.toByteArray());
     for (int i=0; i<values.length; i++) {
       int value = bb.getBits(bits[i]);
       if (value != values[i]) {
-        System.out.println("Value #" + i + " does not match (got " +
+        LogTools.println("Value #" + i + " does not match (got " +
           value + "; expected " + values[i] + "; " + bits[i] + " bits)");
       }
     }
 
     // Testing string functionality
     Random r = new Random();
-    System.out.println("Generating 5000 random bits for String test");
+    LogTools.println("Generating 5000 random bits for String test");
     StringBuffer sb = new StringBuffer(5000);
     for (int i = 0; i < 5000; i++) {
       sb.append(r.nextInt(2));
     }
     out = new BitWriter();
-    System.out.println("Writing values to byte array");
+    LogTools.println("Writing values to byte array");
     out.write(sb.toString());
-    System.out.println("Reading values from byte array");
+    LogTools.println("Reading values from byte array");
     bb = new BitBuffer(out.toByteArray());
     for (int i = 0; i < 5000; i++) {
       int value = bb.getBits(1);
       int expected = (sb.charAt(i) == '1') ? 1 : 0;
       if (value != expected) {
-        System.out.println("Bit #" + i + " does not match (got " + value +
+        LogTools.println("Bit #" + i + " does not match (got " + value +
           "; expected " + expected + ".");
       }
     }

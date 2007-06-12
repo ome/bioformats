@@ -30,6 +30,7 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import loci.formats.ImageTools;
+import loci.formats.LogTools;
 
 /**
  * A class for testing the ImageTools.makeImage methods.
@@ -100,7 +101,7 @@ public class ImageTester extends JPanel implements WindowListener {
     int wpad = 50, hpad = 100;
     int w = (screen.width - wpad) / chan.length;
     int h = (screen.height - hpad) / 6; //9;
-    System.out.println("Using images of size " + w + " x " + h);
+    LogTools.println("Using images of size " + w + " x " + h);
     int size = w * h;
     BufferedImage[] bimg1 = new BufferedImage[chan.length];
     BufferedImage[] bimg2 = new BufferedImage[chan.length];
@@ -116,7 +117,7 @@ public class ImageTester extends JPanel implements WindowListener {
 //    BufferedImage[] iimg3 = new BufferedImage[chan.length];
     for (int q=0; q<chan.length; q++) {
       int c = chan[q];
-      System.out.println("Building c=" + c + " images");
+      LogTools.println("Building c=" + c + " images");
       byte[][] bdata1 = new byte[c][size];
       byte[] bdata2 = new byte[c * size];
       byte[] bdata3 = new byte[c * size];
@@ -164,17 +165,17 @@ public class ImageTester extends JPanel implements WindowListener {
 //      iimg3[q] = ImageTools.makeImage(idata3, w, h, c, false);
     }
 
-    System.out.println("Rows are: byte[][], byte[] (interleaved), " +
+    LogTools.println("Rows are: byte[][], byte[] (interleaved), " +
       "byte[] (sequential)");
-    System.out.println("  short[][], short[] (interleaved), " +
+    LogTools.println("  short[][], short[] (interleaved), " +
       "short[] (sequential)");
-//    System.out.println("  int[][], int[] (interleaved), int[] (sequential)");
-    System.out.print("Columns are:");
+//    LogTools.println("  int[][], int[] (interleaved), int[] (sequential)");
+    LogTools.print("Columns are:");
     for (int q=0; q<chan.length; q++) {
-      if (q > 0) System.out.print(",");
-      System.out.print(" c=" + chan[q]);
+      if (q > 0) LogTools.print(",");
+      LogTools.print(" c=" + chan[q]);
     }
-    System.out.println();
+    LogTools.println();
 
     JFrame frame = new JFrame("ImageTester");
     BufferedImage[][] img = {

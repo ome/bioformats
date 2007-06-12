@@ -2468,7 +2468,7 @@ public final class TiffTools {
 
   /** Prints a debugging message with current time. */
   public static void debug(String message) {
-    System.out.println(System.currentTimeMillis() + ": " + message);
+    LogTools.println(System.currentTimeMillis() + ": " + message);
   }
 
 }

@@ -318,9 +318,7 @@ public class DataConverter extends JFrame implements
           pack();
         }
       }
-      catch (Exception exc) {
-        exc.printStackTrace();
-      }
+      catch (Exception exc) { LogTools.trace(exc); }
 
       updateLabels(pattern);
     }
@@ -345,9 +343,7 @@ public class DataConverter extends JFrame implements
           codec.addItem(codecs[i]);
         }
       }
-      catch (Exception exc) {
-        exc.printStackTrace();
-      }
+      catch (Exception exc) { LogTools.trace(exc); }
     }
     else if ("zChoice".equals(cmd)) {
       String newName = (String) zChoice.getSelectedItem();
@@ -390,9 +386,7 @@ public class DataConverter extends JFrame implements
         swap.setSeries(((Integer) series.getValue()).intValue() - 1);
         updateLabels(input.getText());
       }
-      catch (Exception exc) {
-        exc.printStackTrace();
-      }
+      catch (Exception exc) { LogTools.trace(exc); }
     }
   }
 
@@ -658,7 +652,7 @@ public class DataConverter extends JFrame implements
       if (swap != null) swap.close();
     }
     catch (Exception exc) {
-      exc.printStackTrace();
+      LogTools.trace(exc);
       String err = exc.getMessage();
       if (err == null) err = exc.getClass().getName();
       msg("Sorry, an error occurred: " + err);
@@ -715,9 +709,7 @@ public class DataConverter extends JFrame implements
       includeT.setEnabled(true);
       includeC.setEnabled(true);
     }
-    catch (Exception exc) {
-      exc.printStackTrace();
-    }
+    catch (Exception exc) { LogTools.trace(exc); }
   }
 
   // -- Helper classes --

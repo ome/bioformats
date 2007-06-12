@@ -356,8 +356,8 @@ public class QTReader extends FormatReader {
     try {
       parse(0, 0, in.length());
     }
-    catch (Exception e) {
-      if (debug) e.printStackTrace();
+    catch (Exception exc) {
+      if (debug) trace(exc);
       useLegacy = true;
       legacy = createLegacyReader();
       legacy.setId(id);
@@ -536,7 +536,7 @@ public class QTReader extends FormatReader {
       }
 
       if (atomSize < 0) {
-        System.err.println("QTReader: invalid atom size: " + atomSize);
+        LogTools.println("QTReader: invalid atom size: " + atomSize);
       }
 
       if (debug) {
@@ -604,8 +604,8 @@ public class QTReader extends FormatReader {
             try {
               inf.inflate(output);
             }
-            catch (DataFormatException dfe) {
-              if (debug) dfe.printStackTrace();
+            catch (DataFormatException exc) {
+              if (debug) trace(exc);
               throw new FormatException("Compressed header not supported.");
             }
             inf.end();

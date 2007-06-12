@@ -152,8 +152,8 @@ public class OMEReader extends FormatReader {
     try {
       thumb = pf.getThumbnail(pixels);
     }
-    catch (ImageServerException e) {
-      if (debug) e.printStackTrace();
+    catch (ImageServerException exc) {
+      if (debug) trace(exc);
     }
 
     core.sizeX[0] = pixels.getSizeX().intValue();

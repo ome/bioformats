@@ -27,8 +27,7 @@ package loci.formats.codec;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
-import loci.formats.FormatException;
-import loci.formats.ImageTools;
+import loci.formats.*;
 
 /**
  * This class implements JPEG decompression. Compression is not yet
@@ -67,10 +66,10 @@ public class JPEGCodec extends BaseCodec implements Codec {
     try {
       b = ImageIO.read(new ByteArrayInputStream(input));
     }
-    catch (IOException e) {
-      System.err.println("An I/O Error occurred decompressing image." +
-        " Stack dump follows:");
-      e.printStackTrace();
+    catch (IOException exc) {
+      LogTools.println(
+        "An I/O error occurred decompressing image. Stack dump follows:");
+      LogTools.trace(exc);
       return null;
     }
 

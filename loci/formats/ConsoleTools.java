@@ -96,22 +96,22 @@ public final class ConsoleTools {
             catch (NumberFormatException exc) { }
           }
           else if (args[i].equals("-map")) map = args[++i];
-          else System.out.println("Ignoring unknown command flag: " + args[i]);
+          else LogTools.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
           if (id == null) id = args[i];
-          else System.out.println("Ignoring unknown argument: " + args[i]);
+          else LogTools.println("Ignoring unknown argument: " + args[i]);
         }
       }
     }
     if (FormatHandler.debug) {
-      System.out.println("Debugging at level " + FormatHandler.debugLevel);
+      LogTools.println("Debugging at level " + FormatHandler.debugLevel);
     }
     if (id == null) {
       String className = reader.getClass().getName();
-      String format = reader.getFormat();
+      String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
       String[] s = {
-        "To test read a file in " + format + " format, run:",
+        "To test read a file in " + fmt + " format, run:",
         "  java " + className + " [-nopix] [-nometa] [-thumbs] [-minmax]",
         "    [-merge] [-stitch] [-separate] [-omexml] [-normalize]",
         "    [-fast] [-debug] [-range start end] [-series num] [-map id] file",
@@ -135,7 +135,7 @@ public final class ConsoleTools {
         "* = may result in loss of precision",
         ""
       };
-      for (int i=0; i<s.length; i++) System.out.println(s[i]);
+      for (int i=0; i<s.length; i++) LogTools.println(s[i]);
       return false;
     }
     if (map != null) Location.mapId(id, map);
@@ -155,16 +155,16 @@ public final class ConsoleTools {
     if (reader instanceof ImageReader) {
       // determine format
       ImageReader ir = (ImageReader) reader;
-      System.out.print("Checking file format ");
-      System.out.println("[" + ir.getFormat(id) + "]");
+      LogTools.print("Checking file format ");
+      LogTools.println("[" + ir.getFormat(id) + "]");
     }
     else {
       // verify format
-      System.out.print("Checking " + reader.getFormat() + " format ");
-      System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
+      LogTools.print("Checking " + reader.getFormat() + " format ");
+      LogTools.println(reader.isThisType(id) ? "[yes]" : "[no]");
     }
 
-    System.out.println("Initializing reader");
+    LogTools.println("Initializing reader");
     if (stitch) {
       reader = new FileStitcher(reader, true);
       String pat = FilePattern.findPattern(new Location(id));
@@ -186,7 +186,7 @@ public final class ConsoleTools {
     reader.setId(id);
     long e1 = System.currentTimeMillis();
     float sec1 = (e1 - s1) / 1000f;
-    System.out.println("Initialization took " + sec1 + "s");
+    LogTools.println("Initialization took " + sec1 + "s");
 
     if (!normalize && reader.getPixelType() == FormatTools.FLOAT) {
       throw new FormatException("Sorry, unnormalized floating point " +
@@ -194,11 +194,11 @@ public final class ConsoleTools {
     }
 
     // read basic metadata
-    System.out.println();
-    System.out.println("Reading core metadata");
-    System.out.println(stitch ?
+    LogTools.println();
+    LogTools.println("Reading core metadata");
+    LogTools.println(stitch ?
       "File pattern = " + id : "Filename = " + reader.getCurrentFile());
-    if (map != null) System.out.println("Mapped filename = " + map);
+    if (map != null) LogTools.println("Mapped filename = " + map);
     String[] used = reader.getUsedFiles();
     boolean usedValid = used != null && used.length > 0;
     if (usedValid) {
@@ -210,24 +210,24 @@ public final class ConsoleTools {
       }
     }
     if (!usedValid) {
-      System.out.println(
+      LogTools.println(
         "************ Warning: invalid used files list ************");
     }
     if (used == null) {
-      System.out.println("Used files = null");
+      LogTools.println("Used files = null");
     }
     else if (used.length == 0) {
-      System.out.println("Used files = []");
+      LogTools.println("Used files = []");
     }
     else if (used.length > 1) {
-      System.out.println("Used files:");
-      for (int u=0; u<used.length; u++) System.out.println("\t" + used[u]);
+      LogTools.println("Used files:");
+      for (int u=0; u<used.length; u++) LogTools.println("\t" + used[u]);
     }
     else if (!id.equals(used[0])) {
-      System.out.println("Used files = [" + used[0] + "]");
+      LogTools.println("Used files = [" + used[0] + "]");
     }
     int seriesCount = reader.getSeriesCount();
-    System.out.println("Series count = " + seriesCount);
+    LogTools.println("Series count = " + seriesCount);
     for (int j=0; j<seriesCount; j++) {
       reader.setSeries(j);
 
@@ -252,55 +252,55 @@ public final class ConsoleTools {
       boolean interleaved = reader.isInterleaved();
 
       // output basic metadata for series #i
-      System.out.println("Series #" + j + ":");
-      System.out.println("\tImage count = " + imageCount);
-      System.out.print("\tRGB = " + rgb + " (" + rgbChanCount + ")");
-      if (merge) System.out.print(" (merged)");
-      else if (separate) System.out.print(" (separated)");
+      LogTools.println("Series #" + j + ":");
+      LogTools.println("\tImage count = " + imageCount);
+      LogTools.print("\tRGB = " + rgb + " (" + rgbChanCount + ")");
+      if (merge) LogTools.print(" (merged)");
+      else if (separate) LogTools.print(" (separated)");
       if (rgb != (rgbChanCount != 1)) {
-        System.out.println("\t************ Warning: RGB mismatch ************");
+        LogTools.println("\t************ Warning: RGB mismatch ************");
       }
-      System.out.println();
-      System.out.println("\tInterleaved = " + interleaved);
-      System.out.println("\tWidth = " + sizeX);
-      System.out.println("\tHeight = " + sizeY);
-      System.out.println("\tSizeZ = " + sizeZ);
-      System.out.println("\tSizeT = " + sizeT);
-      System.out.print("\tSizeC = " + sizeC);
+      LogTools.println();
+      LogTools.println("\tInterleaved = " + interleaved);
+      LogTools.println("\tWidth = " + sizeX);
+      LogTools.println("\tHeight = " + sizeY);
+      LogTools.println("\tSizeZ = " + sizeZ);
+      LogTools.println("\tSizeT = " + sizeT);
+      LogTools.print("\tSizeC = " + sizeC);
       if (sizeC != effSizeC) {
-        System.out.print(" (effectively " + effSizeC + ")");
+        LogTools.print(" (effectively " + effSizeC + ")");
       }
       int cProduct = 1;
       if (cLengths.length == 1 && FormatTools.CHANNEL.equals(cTypes[0])) {
         cProduct = cLengths[0];
       }
       else {
-        System.out.print(" (");
+        LogTools.print(" (");
         for (int i=0; i<cLengths.length; i++) {
-          if (i > 0) System.out.print(" x ");
-          System.out.print(cLengths[i] + " " + cTypes[i]);
+          if (i > 0) LogTools.print(" x ");
+          LogTools.print(cLengths[i] + " " + cTypes[i]);
           cProduct *= cLengths[i];
         }
-        System.out.print(")");
+        LogTools.print(")");
       }
-      System.out.println();
+      LogTools.println();
       if (cLengths.length == 0 || cProduct != sizeC) {
-        System.out.println(
+        LogTools.println(
           "\t************ Warning: C dimension mismatch ************");
       }
       if (imageCount != sizeZ * effSizeC * sizeT) {
-        System.out.println("\t************ Warning: ZCT mismatch ************");
+        LogTools.println("\t************ Warning: ZCT mismatch ************");
       }
-      System.out.println("\tThumbnail size = " +
+      LogTools.println("\tThumbnail size = " +
         thumbSizeX + " x " + thumbSizeY);
-      System.out.println("\tEndianness = " +
+      LogTools.println("\tEndianness = " +
         (little ? "intel (little)" : "motorola (big)"));
-      System.out.println("\tDimension order = " + dimOrder +
+      LogTools.println("\tDimension order = " + dimOrder +
         (orderCertain ? " (certain)" : " (uncertain)"));
-      System.out.println("\tPixel type = " +
+      LogTools.println("\tPixel type = " +
         FormatTools.getPixelTypeString(pixelType));
       if (doMeta) {
-        System.out.println("\t-----");
+        LogTools.println("\t-----");
         int[] indices;
         if (imageCount > 6) {
           int q = imageCount / 2;
@@ -318,12 +318,12 @@ public final class ConsoleTools {
         for (int i=0; i<indices.length; i++) {
           zct[i] = reader.getZCTCoords(indices[i]);
           indices2[i] = reader.getIndex(zct[i][0], zct[i][1], zct[i][2]);
-          System.out.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
+          LogTools.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
             ", C " + zct[i][1] + ", T " + zct[i][2]);
           if (indices[i] != indices2[i]) {
-            System.out.println(" [mismatch: " + indices2[i] + "]");
+            LogTools.println(" [mismatch: " + indices2[i] + "]");
           }
-          else System.out.println();
+          else LogTools.println();
         }
       }
     }
@@ -355,8 +355,8 @@ public final class ConsoleTools {
 
     // read pixels
     if (pixels) {
-      System.out.println();
-      System.out.print("Reading" + s + " pixel data ");
+      LogTools.println();
+      LogTools.print("Reading" + s + " pixel data ");
       status.setVerbose(false);
       int num = reader.getImageCount();
       if (start < 0) start = 0;
@@ -365,7 +365,7 @@ public final class ConsoleTools {
       if (end >= num) end = num - 1;
       if (end < start) end = start;
 
-      System.out.print("(" + start + "-" + end + ") ");
+      LogTools.print("(" + start + "-" + end + ") ");
       BufferedImage[] images = new BufferedImage[end - start + 1];
       long s2 = System.currentTimeMillis();
       boolean mismatch = false;
@@ -393,26 +393,26 @@ public final class ConsoleTools {
         int pixType = ImageTools.getPixelType(images[i - start]);
         if (pixType != pixelType && !fastBlit) {
           if (!mismatch) {
-            System.out.println();
+            LogTools.println();
             mismatch = true;
           }
-          System.out.println("\tPlane #" + i + ": pixel type mismatch: " +
+          LogTools.println("\tPlane #" + i + ": pixel type mismatch: " +
             FormatTools.getPixelTypeString(pixType) + "/" +
             FormatTools.getPixelTypeString(pixelType));
         }
         else {
           mismatch = false;
-          System.out.print(".");
+          LogTools.print(".");
         }
       }
       long e2 = System.currentTimeMillis();
-      if (!mismatch) System.out.print(" ");
-      System.out.println("[done]");
+      if (!mismatch) LogTools.print(" ");
+      LogTools.println("[done]");
 
       // output timing results
       float sec2 = (e2 - s2) / 1000f;
       float avg = (float) (e2 - s2) / images.length;
-      System.out.println(sec2 + "s elapsed (" + avg + "ms per image)");
+      LogTools.println(sec2 + "s elapsed (" + avg + "ms per image)");
 
       if (minmax) {
         // get computed min/max values
@@ -431,50 +431,50 @@ public final class ConsoleTools {
         boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated();
 
         // output min/max results
-        System.out.println();
-        System.out.println("Min/max values:");
+        LogTools.println();
+        LogTools.println("Min/max values:");
         for (int c=0; c<sizeC; c++) {
-          System.out.println("\tChannel " + c + ":");
-          System.out.println("\t\tGlobal minimum = " +
+          LogTools.println("\tChannel " + c + ":");
+          LogTools.println("\t\tGlobal minimum = " +
             globalMin[c] + " (initially " + preGlobalMin[c] + ")");
-          System.out.println("\t\tGlobal maximum = " +
+          LogTools.println("\t\tGlobal maximum = " +
             globalMax[c] + " (initially " + preGlobalMax[c] + ")");
-          System.out.println("\t\tKnown minimum = " +
+          LogTools.println("\t\tKnown minimum = " +
             knownMin[c] + " (initially " + preKnownMin[c] + ")");
-          System.out.println("\t\tKnown maximum = " +
+          LogTools.println("\t\tKnown maximum = " +
             knownMax[c] + " (initially " + preKnownMax[c] + ")");
         }
-        System.out.print("\tFirst plane minimum(s) =");
-        if (planeMin == null) System.out.print(" none");
+        LogTools.print("\tFirst plane minimum(s) =");
+        if (planeMin == null) LogTools.print(" none");
         else {
           for (int subC=0; subC<planeMin.length; subC++) {
-            System.out.print(" " + planeMin[subC]);
+            LogTools.print(" " + planeMin[subC]);
           }
         }
-        System.out.print(" (initially");
-        if (prePlaneMin == null) System.out.print(" none");
+        LogTools.print(" (initially");
+        if (prePlaneMin == null) LogTools.print(" none");
         else {
           for (int subC=0; subC<prePlaneMin.length; subC++) {
-            System.out.print(" " + prePlaneMin[subC]);
+            LogTools.print(" " + prePlaneMin[subC]);
           }
         }
-        System.out.println(")");
-        System.out.print("\tFirst plane maximum(s) =");
-        if (planeMax == null) System.out.print(" none");
+        LogTools.println(")");
+        LogTools.print("\tFirst plane maximum(s) =");
+        if (planeMax == null) LogTools.print(" none");
         else {
           for (int subC=0; subC<planeMax.length; subC++) {
-            System.out.print(" " + planeMax[subC]);
+            LogTools.print(" " + planeMax[subC]);
           }
         }
-        System.out.print(" (initially");
-        if (prePlaneMax == null) System.out.print(" none");
+        LogTools.print(" (initially");
+        if (prePlaneMax == null) LogTools.print(" none");
         else {
           for (int subC=0; subC<prePlaneMax.length; subC++) {
-            System.out.print(" " + prePlaneMax[subC]);
+            LogTools.print(" " + prePlaneMax[subC]);
           }
         }
-        System.out.println(")");
-        System.out.println("\tMin/max populated = " +
+        LogTools.println(")");
+        LogTools.println("\tMin/max populated = " +
           isMinMaxPop + " (initially " + preIsMinMaxPop + ")");
       }
 
@@ -497,21 +497,21 @@ public final class ConsoleTools {
 
     // read format-specific metadata table
     if (doMeta) {
-      System.out.println();
-      System.out.println("Reading" + s + " metadata");
+      LogTools.println();
+      LogTools.println("Reading" + s + " metadata");
       Hashtable meta = reader.getMetadata();
       String[] keys = (String[]) meta.keySet().toArray(new String[0]);
       Arrays.sort(keys);
       for (int i=0; i<keys.length; i++) {
-        System.out.print(keys[i] + ": ");
-        System.out.println(reader.getMetadataValue(keys[i]));
+        LogTools.print(keys[i] + ": ");
+        LogTools.println(reader.getMetadataValue(keys[i]));
       }
     }
 
     // output OME-XML
     if (omexml) {
-      System.out.println();
-      System.out.println("Generating OME-XML");
+      LogTools.println();
+      LogTools.println("Generating OME-XML");
       MetadataStore ms = reader.getMetadataStore();
 
       // NB: avoid dependencies on optional loci.formats.ome package
@@ -521,15 +521,15 @@ public final class ConsoleTools {
         try {
           Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
           String xml = (String) m.invoke(ms, (Object[]) null);
-          System.out.println(FormatTools.indentXML(xml));
+          LogTools.println(FormatTools.indentXML(xml));
         }
         catch (Throwable t) {
-          System.out.println("Error generating OME-XML:");
-          t.printStackTrace();
+          LogTools.println("Error generating OME-XML:");
+          LogTools.trace(t);
         }
       }
       else {
-        System.out.println("OME-Java library not found; no OME-XML available");
+        LogTools.println("OME-Java library not found; no OME-XML available");
       }
     }
 
@@ -545,33 +545,33 @@ public final class ConsoleTools {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
           if (args[i].equals("-debug")) FormatHandler.setDebug(true);
-          else System.out.println("Ignoring unknown command flag: " + args[i]);
+          else LogTools.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
           if (in == null) in = args[i];
           else if (out == null) out = args[i];
-          else System.out.println("Ignoring unknown argument: " + args[i]);
+          else LogTools.println("Ignoring unknown argument: " + args[i]);
         }
       }
     }
     if (FormatHandler.debug) {
-      System.out.println("Debugging at level " + FormatHandler.debugLevel);
+      LogTools.println("Debugging at level " + FormatHandler.debugLevel);
     }
     String className = writer.getClass().getName();
     if (in == null || out == null) {
-      System.out.println("To convert a file to " + writer.getFormat() +
+      LogTools.println("To convert a file to " + writer.getFormat() +
         " format, run:");
-      System.out.println("  java " + className + " [-debug] in_file out_file");
+      LogTools.println("  java " + className + " [-debug] in_file out_file");
       return false;
     }
 
     long start = System.currentTimeMillis();
-    System.out.print(in + " ");
+    LogTools.print(in + " ");
     ImageReader reader = new ImageReader();
     reader.setId(in);
-    System.out.print("[" + reader.getFormat() + "] -> " + out + " ");
+    LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
     writer.setId(out);
-    System.out.print("[" + writer.getFormat() + "] ");
+    LogTools.print("[" + writer.getFormat() + "] ");
     long mid = System.currentTimeMillis();
 
     int num = writer.canDoStacks() ? reader.getImageCount() : 1;
@@ -582,19 +582,19 @@ public final class ConsoleTools {
       long m = System.currentTimeMillis();
       writer.saveImage(image, i == num - 1);
       long e = System.currentTimeMillis();
-      System.out.print(".");
+      LogTools.print(".");
       read += m - s;
       write += e - m;
     }
     long end = System.currentTimeMillis();
-    System.out.println(" [done]");
+    LogTools.println(" [done]");
 
     // output timing results
     float sec = (end - start) / 1000f;
     long initial = mid - start;
     float readAvg = (float) read / num;
     float writeAvg = (float) write / num;
-    System.out.println(sec + "s elapsed (" +
+    LogTools.println(sec + "s elapsed (" +
       readAvg + "+" + writeAvg + "ms per image, " + initial + "ms overhead)");
 
     return true;
@@ -611,9 +611,9 @@ public final class ConsoleTools {
     public void setEchoNext(boolean value) { next = value; }
 
     public void statusUpdated(StatusEvent e) {
-      if (verbose) System.out.println("\t" + e.getStatusMessage());
+      if (verbose) LogTools.println("\t" + e.getStatusMessage());
       else if (next) {
-        System.out.print(";");
+        LogTools.print(";");
         next = false;
       }
     }

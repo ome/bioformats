@@ -59,7 +59,7 @@ public final class MDBParser {
       r.exec("import mdbtools.libmdb.file");
       r.exec("import mdbtools.libmdb.mem");
     }
-    catch (Throwable exc) {
+    catch (Throwable t) {
       noMDB = true;
     }
     return r;
@@ -170,8 +170,8 @@ public final class MDBParser {
         }
       }
     }
-    catch (ReflectException re) {
-      re.printStackTrace();
+    catch (ReflectException exc) {
+      LogTools.trace(exc);
     }
   }
 

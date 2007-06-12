@@ -52,8 +52,8 @@ public class ImageWriter implements IFormatWriter {
         defaultClasses = new ClassList("writers.txt", IFormatWriter.class);
       }
       catch (IOException exc) {
-        exc.printStackTrace();
         defaultClasses = new ClassList(IFormatWriter.class);
+        LogTools.trace(exc);
       }
     }
     return defaultClasses;
@@ -105,7 +105,7 @@ public class ImageWriter implements IFormatWriter {
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (writer == null) {
-        System.err.println("Error: " + c[i].getName() +
+        LogTools.println("Error: " + c[i].getName() +
           " cannot be instantiated.");
         continue;
       }

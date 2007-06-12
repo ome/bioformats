@@ -74,11 +74,11 @@ public class ND2Reader extends FormatReader {
         j2kSpiClass = Class.forName(j2kReaderSpi);
       }
       catch (ClassNotFoundException exc) {
-        if (debug) exc.printStackTrace();
+        if (debug) LogTools.trace(exc);
         noJ2k = true;
       }
       catch (NoClassDefFoundError err) {
-        if (debug) err.printStackTrace();
+        if (debug) LogTools.trace(err);
         noJ2k = true;
       }
       IIORegistry registry = IIORegistry.getDefaultInstance();
@@ -102,9 +102,9 @@ public class ND2Reader extends FormatReader {
       ru.setVar("j2kSpi", j2kSpi);
       ru.exec("j2kReader = new J2KImageReader(j2kSpi)");
     }
-    catch (Throwable exc) {
-      if (debug) exc.printStackTrace();
+    catch (Throwable t) {
       noJ2k = true;
+      if (debug) LogTools.trace(t);
     }
     return ru;
   }

@@ -59,6 +59,7 @@ public class IPWReader extends BaseTiffReader {
     }
     catch (Throwable t) {
       noPOI = true;
+      if (debug) LogTools.trace(t);
     }
     return r;
   }
@@ -370,7 +371,7 @@ public class IPWReader extends BaseTiffReader {
     }
     catch (Throwable t) {
       noPOI = true;
-      if (debug) t.printStackTrace();
+      if (debug) trace(t);
     }
   }
 

@@ -225,7 +225,7 @@ public class EPSReader extends FormatReader {
           }
           catch (Exception exc) {
             // CTR TODO - eliminate catch-all exception handling
-            if (debug) exc.printStackTrace();
+            if (debug) trace(exc);
             core.sizeC[0] = Integer.parseInt(t.nextToken());
           }
         }

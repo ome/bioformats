@@ -439,11 +439,11 @@ public class OIBReader extends FormatReader {
     try {
       initMetadata();
     }
-    catch (FormatException e) {
-      if (debug) e.printStackTrace();
+    catch (FormatException exc) {
+      if (debug) trace(exc);
     }
-    catch (IOException e) {
-      if (debug) e.printStackTrace();
+    catch (IOException exc) {
+      if (debug) trace(exc);
     }
   }
 

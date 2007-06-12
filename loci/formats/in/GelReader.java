@@ -70,8 +70,8 @@ public class GelReader extends BaseTiffReader {
       long fmt = TiffTools.getIFDLongValue(ifds[1], MD_FILETAG, true, 128);
       addMeta("Data format", fmt == 2 ? "square root" : "linear");
     }
-    catch (FormatException f) {
-      f.printStackTrace();
+    catch (FormatException exc) {
+      trace(exc);
     }
 
     TiffRational scale =
