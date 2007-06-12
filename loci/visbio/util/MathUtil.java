@@ -85,6 +85,19 @@ public final class MathUtil {
   }
 
   /**
+   * Computes the minimum distance between the point p and the point v in
+   * double precision.
+   *
+   * @param p Coordinates of the first point
+   * @param v Coordinates of the second point
+   */
+  public static double getDistance (float[] p, float[] v) {
+    double[] pp = new double[p.length];
+    double[] vv = new double[v.length];
+    return getDistance(pp, vv);
+  }
+
+  /**
    * Computes the projection of the point v onto the line segment a-b.
    *
    * @param a Coordinates of the segment's first endpoint
@@ -282,6 +295,123 @@ public final class MathUtil {
     if (places > 0) result += "." + dec;
     result += " " + u;
     return result;
+  }
+  
+  // -- Vector Math Methods --
+
+  /** Computes the cross product of two 2D vectors. */
+  public static float cross2D(float[] v1, float[] v2) {
+    return v1[0] * v2[1] - v1[1] * v2[0];
+  }
+
+  /** Computes the N-D unit vector in the direction as the vector supplied. */
+  public static float[] unit(float[] v) {
+    float mag = mag(v);
+    float[] vHat = new float[v.length];
+    for (int i=0; i<v.length; i++) {
+      vHat[i] = v[i] / mag;
+    }
+    return vHat;
+  }
+
+  /** Computes the dot product of two N-D vectors */ 
+  public static float dot(float[] a, float[] b) {
+    float sum = 0f;
+    for (int i=0; i<a.length; i++) {
+      sum += a[i] * b[i]; 
+    }
+    return sum;
+  }
+
+  /** Computes the magnitude of an N-D vector. */
+  public static float mag(float[] a) {
+    return (float) Math.sqrt(dot(a, a));
+  }
+
+  /** Creates the vector p2-(minus) p1. */
+  public static float[] vector(float[] p1, float[] p2) {
+    // assumes p1, p2 have same lengths
+    if (p1.length != p2.length) return null;
+    int len = p1.length;
+    float[] v = new float[len];
+    for (int i=0; i<len; i++) {
+      v[i] = p1[i] - p2[i];
+    }
+    return v;
+  }
+
+  /** Whether the point a is inside the N-D box implied by points
+   *  b2 and b2 (i.e., in 2D, whether a is inside the box with diagonal
+   *  b1-b2; in 3D, whether a is inside the cube with diagonal b1-b2).
+   */ 
+  public static boolean between(float[] a, float[] b1, float[] b2) {
+    // assumes a, b1, b2 have same lengths
+    boolean between = true;
+    for (int i=0; i<a.length; i++) {
+      boolean flip = b1[i] < b2[i] ? false : true;
+      float lo = flip ? b2[i] : b1[i];
+      float hi = flip ? b1[i] : b2[i];
+      if (a[i] < lo || a[i] > hi) {
+        between = false; 
+        break;
+      }
+    }
+    return between;
+  }
+
+  /** Gets a unit vector which bisects (p1 - p2) and (p3 - p2).  */
+  public static float[] getBisectorVector2D(float[] p1, float[] p2, float[] p3)
+  { 
+    System.out.println("entering getBisectorVector2D ..."); //TEMP
+    float[] v1 = vector(p1, p2);
+    float[] v2 = vector(p3, p2);
+    float[] v1Hat = unit(v1);
+    float[] v2Hat = unit(v2);
+    float[] vAvg = {(v1Hat[0] + v2Hat[0]) / 2f, (v1Hat[1] + v2Hat[1]) / 2f};
+    
+    float[] bisector;
+    if (vAvg[0] == 0 && vAvg[1] == 0) {
+      float[] aBisector = new float[]{-v1[1], v1[0]};
+      bisector = unit(aBisector);
+    }
+    else {
+      bisector = unit(vAvg);
+    }
+      
+    // System.out.println("v1 = " + v1[0] + " " + v1[1]);
+    // System.out.println("v2 = " + v2[0] + " " + v2[1]);
+    // System.out.println("v1Hat = " + v1Hat[0] + " " + v1Hat[1]);
+    // System.out.println("v2Hat = " + v2Hat[0] + " " + v2Hat[1]);
+    // System.out.println("vAvg = " + vAvg[0] + " " + vAvg[1]);
+    // System.out.println("bisector = " + bisector[0] + " " + bisector[1]);
+    // System.out.println("p1a = " + p1a[0] + " " + p1a[1]);
+    // System.out.println("p2a = " + p2a[0] + " " + p2a[1]);
+    // System.out.println("p4a = " + p4a[0] + " " + p4a[1]);
+    // System.out.println("v42 = " + v42[0] + " " + v42[1]);
+    // System.out.println("v42Hat = " +v42Hat[0] + " " + v42Hat[1]);
+    return bisector;
+  }
+
+  /** Adds two N-D vectors. */
+  public static float[] add(float[] v1, float[] v2) {
+    // v1 and v2 should have same lengths
+    if (v1.length != v2.length) return null;
+    int len = v1.length;
+    float[] r = new float[v1.length];
+    for (int i=0; i<v1.length; i++) {
+      r[i] = v1[i] + v2[i];
+    }
+    return r;
+  }
+
+  /** Multiplies an N-D vector by a scalar. */
+  public static float[] scalarMultiply(float[] v, float s) {
+    int len = v.length;
+    float[] r = new float[len];
+    for (int i=0; i<len; i++) {
+      r[i] = v[i] * s;
+    }
+    return r;
   }
 
 }
