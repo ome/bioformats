@@ -67,6 +67,7 @@ public class LeicaReader extends FormatReader {
   private String leiFilename;
 
   private int bpp;
+  private Vector seriesNames;
 
   // -- Constructor --
 
@@ -354,6 +355,8 @@ public class LeicaReader extends FormatReader {
       leiFilename = id;
       in = new RandomAccessStream(id);
 
+      seriesNames = new Vector();
+
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
       core.littleEndian[0] = (fourBytes[0] == TiffTools.LITTLE &&
@@ -451,6 +454,14 @@ public class LeicaReader extends FormatReader {
           // test to make sure the path is valid
           Location test = new Location((String) f.get(f.size() - 1));
           if (tiffsExist) tiffsExist = test.exists();
+        
+          // get the series name from the stored file name 
+          int firstUnderscore = prefix.indexOf("_") + 1;
+          int secondUnderscore = prefix.indexOf("_", firstUnderscore); 
+          if (firstUnderscore != -1 && secondUnderscore != -1) {
+            String s = prefix.substring(firstUnderscore, secondUnderscore);
+            if (!seriesNames.contains(s)) seriesNames.add(s);
+          }
         }
 
         // at least one of the TIFF files was renamed
@@ -1060,7 +1071,7 @@ public class LeicaReader extends FormatReader {
         timestamp = fmt.format(date);
       }
 
-      store.setImage(null, timestamp, description, ii);
+      store.setImage((String) seriesNames.get(i), timestamp, description, ii);
 
       for (int j=0; j<core.sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
