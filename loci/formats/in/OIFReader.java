@@ -231,7 +231,7 @@ public class OIFReader extends FormatReader {
         String value = line.substring(line.indexOf("=") + 1).trim();
         if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1) {
           int pos = Integer.parseInt(key.substring(11));
-          filenames.put(new Integer(pos), value);
+          filenames.put(new Integer(pos), value.trim());
         }
         addMeta(prefix + key, value);
 
@@ -258,6 +258,15 @@ public class OIFReader extends FormatReader {
         }
         prefix = line + " - ";
       }
+    }
+
+    int reference = ((String) filenames.get(new Integer(0))).length();
+    int numFiles = filenames.size(); 
+    for (int i=0; i<numFiles; i++) {
+      String value = (String) filenames.get(new Integer(i));
+      if (value.length() > reference) {
+        filenames.remove(new Integer(i)); 
+      } 
     }
 
     status("Initializing helper readers");
@@ -302,8 +311,10 @@ public class OIFReader extends FormatReader {
           value = DataTools.stripString(value);
           if (key.equals("DataName")) {
             value = value.substring(1, value.length() - 1);
-            tiffs.add(i, tiffPath + File.separator + value);
-            tiffReader[i].setId((String) tiffs.get(i));
+            if (value.indexOf("-R") == -1) { 
+              tiffs.add(i, tiffPath + File.separator + value);
+              tiffReader[i].setId((String) tiffs.get(i));
+            } 
           }
           addMeta("Image " + i + " : " + key, value);
         }
