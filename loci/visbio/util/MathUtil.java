@@ -329,67 +329,15 @@ public final class MathUtil {
   }
 
   /** Creates the vector p2-(minus) p1. */
-  public static float[] vector(float[] p1, float[] p2) {
+  public static float[] vector(float[] p2, float[] p1) {
     // assumes p1, p2 have same lengths
-    if (p1.length != p2.length) return null;
-    int len = p1.length;
+    if (p2.length != p1.length) return null;
+    int len = p2.length;
     float[] v = new float[len];
     for (int i=0; i<len; i++) {
-      v[i] = p1[i] - p2[i];
+      v[i] = p2[i] - p1[i];
     }
     return v;
-  }
-
-  /** Whether the point a is inside the N-D box implied by points
-   *  b2 and b2 (i.e., in 2D, whether a is inside the box with diagonal
-   *  b1-b2; in 3D, whether a is inside the cube with diagonal b1-b2).
-   */ 
-  public static boolean between(float[] a, float[] b1, float[] b2) {
-    // assumes a, b1, b2 have same lengths
-    boolean between = true;
-    for (int i=0; i<a.length; i++) {
-      boolean flip = b1[i] < b2[i] ? false : true;
-      float lo = flip ? b2[i] : b1[i];
-      float hi = flip ? b1[i] : b2[i];
-      if (a[i] < lo || a[i] > hi) {
-        between = false; 
-        break;
-      }
-    }
-    return between;
-  }
-
-  /** Gets a unit vector which bisects (p1 - p2) and (p3 - p2).  */
-  public static float[] getBisectorVector2D(float[] p1, float[] p2, float[] p3)
-  { 
-    System.out.println("entering getBisectorVector2D ..."); //TEMP
-    float[] v1 = vector(p1, p2);
-    float[] v2 = vector(p3, p2);
-    float[] v1Hat = unit(v1);
-    float[] v2Hat = unit(v2);
-    float[] vAvg = {(v1Hat[0] + v2Hat[0]) / 2f, (v1Hat[1] + v2Hat[1]) / 2f};
-    
-    float[] bisector;
-    if (vAvg[0] == 0 && vAvg[1] == 0) {
-      float[] aBisector = new float[]{-v1[1], v1[0]};
-      bisector = unit(aBisector);
-    }
-    else {
-      bisector = unit(vAvg);
-    }
-      
-    // System.out.println("v1 = " + v1[0] + " " + v1[1]);
-    // System.out.println("v2 = " + v2[0] + " " + v2[1]);
-    // System.out.println("v1Hat = " + v1Hat[0] + " " + v1Hat[1]);
-    // System.out.println("v2Hat = " + v2Hat[0] + " " + v2Hat[1]);
-    // System.out.println("vAvg = " + vAvg[0] + " " + vAvg[1]);
-    // System.out.println("bisector = " + bisector[0] + " " + bisector[1]);
-    // System.out.println("p1a = " + p1a[0] + " " + p1a[1]);
-    // System.out.println("p2a = " + p2a[0] + " " + p2a[1]);
-    // System.out.println("p4a = " + p4a[0] + " " + p4a[1]);
-    // System.out.println("v42 = " + v42[0] + " " + v42[1]);
-    // System.out.println("v42Hat = " +v42Hat[0] + " " + v42Hat[1]);
-    return bisector;
   }
 
   /** Adds two N-D vectors. */
@@ -413,5 +361,91 @@ public final class MathUtil {
     }
     return r;
   }
+
+  // -- Computational Geometry Methods --
+
+  /** Whether the point a is inside the N-D box implied by points
+   *  b2 and b2 (i.e., in 2D, whether a is inside the box with diagonal
+   *  b1-b2; in 3D, whether a is inside the cube with diagonal b1-b2).
+   */ 
+  public static boolean inside(float[] a, float[] b1, float[] b2) {
+    // assumes a, b1, b2 have same lengths
+    boolean between = true;
+    for (int i=0; i<a.length; i++) {
+      boolean flip = b1[i] < b2[i] ? false : true;
+      float lo = flip ? b2[i] : b1[i];
+      float hi = flip ? b1[i] : b2[i];
+      if (a[i] < lo || a[i] > hi) {
+        between = false; 
+        break;
+      }
+    }
+    return between;
+  }
+
+  /** Obtains the z-coordinate of the cross product of the 2D vectors
+   *  p2-p1 and p3-p2, useful for determining whether the curve 
+   *  p1->p2->p3 is curving to the right or left. */
+  public static float orient2D(float[] p1, float[] p2, float[] p3) {
+    float x1 = p1[0]; float y1 = p1[1];
+    float x2 = p2[0]; float y2 = p2[1];
+    float x3 = p3[0]; float y3 = p3[1];
+    // z coord. of cross product of p2-(minus)p1 and p3-p2 
+    float z = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
+    return z;
+  }
+
+  /** Gets a vector perpendicular to the vector p2-p1, pointing to the right 
+   *  with respect to the direction of p2-p1. */
+  public static float[] getRightPerpendicularVector2D(float[] p2, float[] p1) {
+    float[] v = vector(p2, p1);
+    float[] vPerp = {v[1], -v[0]};
+    return unit(vPerp);
+  }
+
+  /** Gets a unit vector which bisects (p1 - p2) and (p3 - p2).  */
+  public static float[] getRightBisectorVector2D(float[] p1, float[] p2,
+      float[] p3)
+  { 
+    // System.out.println("entering getBisectorVector2D ..."); //TEMP
+    // Always retrieves the bisector vector on the right (as opposed to left)
+    // side of the angle made by the two vectors.
+
+    // z coord. of cross product of p2-(minus)p1 and p3-p2 
+    float z = orient2D(p1, p2, p3);
+
+    float[] v1 = vector(p1, p2);
+    float[] v2 = vector(p3, p2);
+    float[] v1Hat = unit(v1);
+    float[] v2Hat = unit(v2);
+    float[] vAvg = {(v1Hat[0] + v2Hat[0]) / 2f, (v1Hat[1] + v2Hat[1]) / 2f};
+
+    float[] aBisector = null; // ... says what?
+    if ((vAvg[0] == 0 && vAvg[1] == 0) || z == 0) {
+      // Sometimes, z can have a very small nonzero value even when 
+      // the points have the same x=coordinate
+      // (Apparently due to floating point arithmetic?)
+      // To handle that case, test for parallel vectors without referring to z,
+      // by comparing vAvg to <0, 0>.
+      float[] v = MathUtil.vector(p2, p1);
+      aBisector = new float[]{v[1], -v[0]};
+    }
+    else if (z < 0) {
+      // the curve is curving to the right--vAvg points right
+      aBisector = vAvg;
+    }
+    else if (z > 0) {
+      // the curve is curving to the left--vAvg points left
+      aBisector = new float[]{-vAvg[0], -vAvg[1]};
+    }
+
+    System.out.println("z = " + z);
+    System.out.println("vAvg = " + vAvg[0] + ", " + vAvg[1]);
+
+    float[] bisector = unit(aBisector);
+      
+    return bisector;
+  }
+
 
 }
