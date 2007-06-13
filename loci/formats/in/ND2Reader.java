@@ -163,11 +163,10 @@ public class ND2Reader extends FormatReader {
 
     in.seek(offsets[no]);
 
-    byte[] b;
-    if (no < getImageCount() - 1) {
-      b = new byte[(int) (offsets[no + 1] - offsets[no])];
-    }
-    else b = new byte[(int) (in.length() - offsets[no])];
+    long len = no < core.imageCount[0] - 1 ? offsets[no + 1] - offsets[no] :
+      in.length() - offsets[no];
+
+    byte[] b = new byte[(int) len]; 
     in.readFully(b);
 
     ByteArrayInputStream bis = new ByteArrayInputStream(b);
@@ -190,31 +189,6 @@ public class ND2Reader extends FormatReader {
     mciis.close();
     b = null;
 
-    int dataType = 0;
-    switch (core.pixelType[0]) {
-      case FormatTools.INT8:
-        throw new FormatException("Unsupported pixel type: int8");
-      case FormatTools.UINT8:
-        dataType = DataBuffer.TYPE_BYTE;
-        break;
-      case FormatTools.INT16:
-        dataType = DataBuffer.TYPE_SHORT;
-        break;
-      case FormatTools.UINT16:
-        dataType = DataBuffer.TYPE_USHORT;
-        break;
-      case FormatTools.INT32:
-      case FormatTools.UINT32:
-        dataType = DataBuffer.TYPE_INT;
-        break;
-      case FormatTools.FLOAT:
-        dataType = DataBuffer.TYPE_FLOAT;
-        break;
-      case FormatTools.DOUBLE:
-        dataType = DataBuffer.TYPE_DOUBLE;
-        break;
-    }
-
     return img;
   }
 
@@ -230,30 +204,31 @@ public class ND2Reader extends FormatReader {
 
     status("Calculating image offsets");
 
-    try {
-      File f = new File(Location.getMappedId(id));
-      if (f.exists()) {
-        r.setVar("id", Location.getMappedId(id));
-        r.setVar("read", "r");
-        r.setVar("size", 4096);
-        r.exec("in = new BEBufferedRandomAccessFile(id, read, size)");
-      }
-      else {
-        r.setVar("id", in);
-        r.setVar("size", 65536);
-        r.setVar("inc", 4096);
-        r.setVar("max", (int) in.length());
-        r.exec("in = new ISRandomAccessIO(id, size, inc, max)");
-      }
+    Vector vs = new Vector();
 
-      r.setVar("j2kMetadata", null);
-      r.exec("ff = new FileFormatReader(in, j2kMetadata)");
+    long pos = in.getFilePointer();
+    boolean lastBoxFound = false;
+    int length = 0;
+    int box = 0;
 
-      r.exec("ff.readFileFormat()");
-      r.exec("offsets = ff.getCodeStreamPos()");
-      offsets = (long[]) r.getVar("offsets");
+    while (!lastBoxFound) {
+      pos = in.getFilePointer();
+      length = in.readInt();
+      if (pos + length >= in.length()) lastBoxFound = true;
+      box = in.readInt();
+      pos = in.getFilePointer();
+      length -= 8;
+
+      if (box == 0x6a703263) { 
+        vs.add(new Long(in.getFilePointer())); 
+      }
+      if (!lastBoxFound) in.seek(pos + length); 
     }
-    catch (ReflectException e) { throw new FormatException(e); }
+
+    offsets = new long[vs.size()];
+    for (int i=0; i<offsets.length; i++) {
+      offsets[i] = ((Long) vs.get(i)).longValue();
+    }
 
     status("Finding XML metadata");
 
@@ -266,7 +241,7 @@ public class ND2Reader extends FormatReader {
     in.seek(offsets[offsets.length - 1]);
 
     boolean found = false;
-    int off = -1;
+    long off = -1;
     byte[] buf = new byte[2048];
     while (!found && in.getFilePointer() < in.length()) {
       int read = 0;
@@ -282,7 +257,7 @@ public class ND2Reader extends FormatReader {
       for (int i=0; i<read+9; i++) {
         if (buf[i] == (byte) 0xff && buf[i+1] == (byte) 0xd9) {
           found = true;
-          off = (int) (in.getFilePointer() - (read+10) + i);
+          off = in.getFilePointer() - (read + 10) + i;
           i = buf.length;
           break;
         }
@@ -300,18 +275,12 @@ public class ND2Reader extends FormatReader {
       // assume that this XML string will be malformed, since that's how both
       // sample files are; this means we need to manually parse it :-(
 
-      // first, let's strip out all comments
-
-      StringBuffer sb = new StringBuffer(xml);
-      while (sb.indexOf("<!--") != -1) {
-        int ndx = sb.indexOf("<!--");
-        sb.delete(ndx, sb.indexOf("-->", ndx));
-      }
-      xml = sb.toString();
-
       // strip out binary data at the end - this is irrelevant for our purposes
       xml = xml.substring(0, xml.lastIndexOf("</MetadataSeq>") + 14);
 
+      // strip out all comments
+      xml = xml.replaceAll("<!--*-->", "");
+      
       // each chunk appears on a separate line, so split up the chunks
 
       StringTokenizer st = new StringTokenizer(xml, "\r\n");
@@ -340,6 +309,9 @@ public class ND2Reader extends FormatReader {
 
                 // strip out the data types
                 if (key.indexOf("runtype") == -1) {
+                  if (prefix.startsWith("Metadata_V1.2")) {
+                    prefix = "";
+                  } 
                   String effectiveKey = prefix + " " + pre + " " + key;
                   if (!metadata.containsKey(effectiveKey)) {
                     addMeta(effectiveKey, value);
@@ -351,7 +323,7 @@ public class ND2Reader extends FormatReader {
                         core.sizeC[0] = Integer.parseInt(value);
                       }
                     }
-                    else if (effectiveKey.endsWith("dTimeMSec value")) {
+                    else if (effectiveKey.endsWith("dTimeAbsolute value")) {
                       long v = (long) Double.parseDouble(value);
                       if (!ts.contains(new Long(v))) {
                         core.sizeT[0]++;
@@ -401,7 +373,7 @@ public class ND2Reader extends FormatReader {
     int numInvalid = 0;
 
     for (int i=1; i<offsets.length; i++) {
-      if (offsets[i] - offsets[i - 1] < (core.sizeX[0] * core.sizeY[0] / 4)) {
+      if (offsets[i] - offsets[i - 1] < (core.sizeX[0] * core.sizeY[0] / 3)) {
         offsets[i - 1] = 0;
         numInvalid++;
       }
@@ -539,6 +511,12 @@ public class ND2Reader extends FormatReader {
     if (core.imageCount[0] < core.sizeZ[0] * core.sizeT[0] * core.sizeC[0]) {
       core.sizeT[0] = core.imageCount[0];
       core.sizeZ[0] = 1;
+    } 
+
+    if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] < core.imageCount[0]) {
+      core.sizeC[0] = 1;
+      core.sizeT[0] = 1;
+      core.sizeZ[0] = core.imageCount[0];
     } 
 
     core.rgb[0] = core.sizeC[0] == 3;
