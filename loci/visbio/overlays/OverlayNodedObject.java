@@ -423,6 +423,11 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
   }
 
+  /** Sets coordinates of last node. */
+  public void setLastNode(float[] c) {
+    setLastNode(c[0], c[1]);
+  }
+
   /** Prints node array of current freeform; for debugging */
   private void printNodes(float[][] nodes) {
     System.out.println("Printing nodes...");
@@ -440,6 +445,11 @@ public abstract class OverlayNodedObject extends OverlayObject {
     Arrays.fill(nodes[0], numNodes, maxNodes, x);
     Arrays.fill(nodes[1], numNodes++, maxNodes, y);
     // i.e., set all remaining nodes (as per maxNodes) to next node coords
+  }
+
+  /** Sets next node coordinates. */
+  public void setNextNode(float[] c) {
+    setNextNode(c[0], c[1]);
   }
 
   /**
