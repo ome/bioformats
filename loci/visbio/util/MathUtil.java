@@ -74,7 +74,7 @@ public final class MathUtil {
    * @param p Coordinates of the first point
    * @param v Coordinates of the second point
    */
-  public static double getDistance (double[] p, double[] v) {
+  public static double getDistance(double[] p, double[] v){
     int len = p.length;  // redundant with getProjection
     double sum = 0;
     for (int i=0; i<len; i++) {
@@ -91,7 +91,7 @@ public final class MathUtil {
    * @param p Coordinates of the first point
    * @param v Coordinates of the second point
    */
-  public static double getDistance (float[] p, float[] v) {
+  public static double getDistance(float[] p, float[] v){
     double[] pp = new double[p.length];
     double[] vv = new double[v.length];
     return getDistance(pp, vv);
@@ -169,24 +169,24 @@ public final class MathUtil {
       double xdist = x - nodes[0][0];
       double ydist = y - nodes[1][0];
       minDist = Math.sqrt(xdist * xdist + ydist * ydist);
-    } else {
-
+    }
+    else {
       for (int i=0; i<numNodes-1; i++) {
-         double[] a = {nodes[0][i], nodes[1][i]};
-         double[] b = {nodes[0][i+1], nodes[1][i+1]};
-         double[] p = {x, y};
+        double[] a = {nodes[0][i], nodes[1][i]};
+        double[] b = {nodes[0][i+1], nodes[1][i+1]};
+        double[] p = {x, y};
 
-         double[] proj = getProjection(a, b, p, true);
-         double dist = getDistance(p, proj);
+        double[] proj = getProjection(a, b, p, true);
+        double dist = getDistance(p, proj);
 
-         if (dist < minDist) {
-           minDist = dist;
-           seg = i;
-           double segDist = getDistance (a, b);
-           double fracDist = getDistance (a, proj);
-           weight = fracDist / segDist;
-         }
-       }
+        if (dist < minDist) {
+          minDist = dist;
+          seg = i;
+          double segDist = getDistance(a, b);
+          double fracDist = getDistance(a, proj);
+          weight = fracDist / segDist;
+        }
+      }
     }
 
     // 'seg' is always an integer;
@@ -221,24 +221,24 @@ public final class MathUtil {
       double xdist = x - nodes[0][0];
       double ydist = y - nodes[1][0];
       minDist = Math.sqrt(xdist * xdist + ydist * ydist);
-    } else {
-
+    }
+    else {
       for (int i=0; i<numNodes-1; i++) {
-         double[] a = {(double) nodes[0][i], (double) nodes[1][i]};
-         double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
-         double[] p = {(double) x, (double) y};
+        double[] a = {(double) nodes[0][i], (double) nodes[1][i]};
+        double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
+        double[] p = {(double) x, (double) y};
 
-         double[] proj = getProjection(a, b, p, true);
-         double dist = getDistance(p, proj);
+        double[] proj = getProjection(a, b, p, true);
+        double dist = getDistance(p, proj);
 
-         if (dist < minDist) {
-           minDist = dist;
-           seg = i;
-           double segDist = getDistance (a, b);
-           double fracDist = getDistance (a, proj);
-           weight = fracDist / segDist;
-         }
-       }
+        if (dist < minDist) {
+          minDist = dist;
+          seg = i;
+          double segDist = getDistance(a, b);
+          double fracDist = getDistance(a, proj);
+          weight = fracDist / segDist;
+        }
+      }
     }
     // 'seg' is always an integer;
     // cast down to int in functions using this method.
@@ -296,7 +296,7 @@ public final class MathUtil {
     result += " " + u;
     return result;
   }
-  
+
   // -- Vector Math Methods --
 
   /** Computes the cross product of two 2D vectors. */
@@ -314,11 +314,11 @@ public final class MathUtil {
     return vHat;
   }
 
-  /** Computes the dot product of two N-D vectors */ 
+  /** Computes the dot product of two N-D vectors. */
   public static float dot(float[] a, float[] b) {
     float sum = 0f;
     for (int i=0; i<a.length; i++) {
-      sum += a[i] * b[i]; 
+      sum += a[i] * b[i];
     }
     return sum;
   }
@@ -367,7 +367,7 @@ public final class MathUtil {
   /** Whether the point a is inside the N-D box implied by points
    *  b2 and b2 (i.e., in 2D, whether a is inside the box with diagonal
    *  b1-b2; in 3D, whether a is inside the cube with diagonal b1-b2).
-   */ 
+   */
   public static boolean inside(float[] a, float[] b1, float[] b2) {
     // assumes a, b1, b2 have same lengths
     boolean between = true;
@@ -376,7 +376,7 @@ public final class MathUtil {
       float lo = flip ? b2[i] : b1[i];
       float hi = flip ? b1[i] : b2[i];
       if (a[i] < lo || a[i] > hi) {
-        between = false; 
+        between = false;
         break;
       }
     }
@@ -384,18 +384,18 @@ public final class MathUtil {
   }
 
   /** Obtains the z-coordinate of the cross product of the 2D vectors
-   *  p2-p1 and p3-p2, useful for determining whether the curve 
+   *  p2-p1 and p3-p2, useful for determining whether the curve
    *  p1->p2->p3 is curving to the right or left. */
   public static float orient2D(float[] p1, float[] p2, float[] p3) {
     float x1 = p1[0]; float y1 = p1[1];
     float x2 = p2[0]; float y2 = p2[1];
     float x3 = p3[0]; float y3 = p3[1];
-    // z coord. of cross product of p2-(minus)p1 and p3-p2 
+    // z coord. of cross product of p2-(minus)p1 and p3-p2
     float z = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
     return z;
   }
 
-  /** Gets a vector perpendicular to the vector p2-p1, pointing to the right 
+  /** Gets a vector perpendicular to the vector p2-p1, pointing to the right
    *  with respect to the direction of p2-p1. */
   public static float[] getRightPerpendicularVector2D(float[] p2, float[] p1) {
     float[] v = vector(p2, p1);
@@ -406,12 +406,12 @@ public final class MathUtil {
   /** Gets a unit vector which bisects (p1 - p2) and (p3 - p2).  */
   public static float[] getRightBisectorVector2D(float[] p1, float[] p2,
       float[] p3)
-  { 
+  {
     // System.out.println("entering getBisectorVector2D ..."); //TEMP
     // Always retrieves the bisector vector on the right (as opposed to left)
     // side of the angle made by the two vectors.
 
-    // z coord. of cross product of p2-(minus)p1 and p3-p2 
+    // z coord. of cross product of p2-(minus)p1 and p3-p2
     float z = orient2D(p1, p2, p3);
 
     float[] v1 = vector(p1, p2);
@@ -422,7 +422,7 @@ public final class MathUtil {
 
     float[] aBisector = null; // ... says what?
     if ((vAvg[0] == 0 && vAvg[1] == 0) || z == 0) {
-      // Sometimes, z can have a very small nonzero value even when 
+      // Sometimes, z can have a very small nonzero value even when
       // the points have the same x=coordinate
       // (Apparently due to floating point arithmetic?)
       // To handle that case, test for parallel vectors without referring to z,
@@ -439,13 +439,9 @@ public final class MathUtil {
       aBisector = new float[]{-vAvg[0], -vAvg[1]};
     }
 
-    System.out.println("z = " + z);
-    System.out.println("vAvg = " + vAvg[0] + ", " + vAvg[1]);
-
     float[] bisector = unit(aBisector);
-      
+
     return bisector;
   }
-
 
 }
