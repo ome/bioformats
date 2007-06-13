@@ -476,16 +476,16 @@ public class Importer {
 
           String seriesName = store.getImageName(new Integer(i));
 
-          showStack(stackB, currentFile + " - " + seriesName, store, 
+          showStack(stackB, currentFile, seriesName, store, 
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
             fi, r, fs, options);
-          showStack(stackS, currentFile + " - " + seriesName, store, 
+          showStack(stackS, currentFile, seriesName, store, 
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
             fi, r, fs, options);
-          showStack(stackF, currentFile + " - " + seriesName, store, 
+          showStack(stackF, currentFile, seriesName, store, 
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
             fi, r, fs, options);
-          showStack(stackO, currentFile + " - " + seriesName, store, 
+          showStack(stackO, currentFile, seriesName, store, 
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
             fi, r, fs, options);
 
@@ -580,7 +580,7 @@ public class Importer {
    * Displays the given image stack according to
    * the specified parameters and import options.
    */
-  private void showStack(ImageStack stack, String label,
+  private void showStack(ImageStack stack, String file, String series,
     OMEXMLMetadataStore store, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
     FileStitcher fs, ImporterOptions options)
@@ -588,10 +588,12 @@ public class Importer {
   {
     if (stack == null) return;
     if (!options.isMergeChannels() && options.isSplitWindows()) {
-      slice(stack, label, sizeZ, sizeC, sizeT, fi, r, fs, options);
+      slice(stack, file, series, sizeZ, sizeC, sizeT, fi, r, fs, options);
     }
     else {
-      ImagePlus imp = new ImagePlus(label, stack);
+      ImagePlus imp = new ImagePlus(file + " - " + series, stack);
+      imp.setProperty("Info", "File full path=" + file + 
+        "\nSeries name=" + series + "\n");
 
       // retrieve the spatial calibration information, if available
       applyCalibration(store, imp, r.getSeries());
@@ -602,8 +604,9 @@ public class Importer {
   }
 
   /** Opens each channel of the source stack in a separate window. */
-  private void slice(ImageStack is, String label, int z, int c, int t, 
-    FileInfo fi, IFormatReader r, FileStitcher fs, ImporterOptions options)
+  private void slice(ImageStack is, String file, String series, int z, int c, 
+    int t, FileInfo fi, IFormatReader r, FileStitcher fs, 
+    ImporterOptions options)
     throws FormatException, IOException
   {
     boolean range = options.isSpecifyRanges();
@@ -641,7 +644,10 @@ public class Importer {
     // retrieve the spatial calibration information, if available
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus imp = new ImagePlus(label + " - Ch" + (i+1), newStacks[i]);
+      ImagePlus imp = new ImagePlus(file + " - " + series + " - Ch" + (i+1), 
+        newStacks[i]);
+      imp.setProperty("Info", "File full path=" + file +
+        "\nSeries name=" + series + "\n");
       applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(), imp,
         r.getSeries());
 
