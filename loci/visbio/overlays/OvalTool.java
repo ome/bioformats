@@ -49,9 +49,6 @@ public class OvalTool extends OverlayTool {
   {
     deselectAll();
     oval = new OverlayOval(overlay, dx, dy, dx, dy);
-    configureOverlay(oval);
-    OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    oval.setFilled(panel.isFilled());
     overlay.addObject(oval, pos);
   }
 

@@ -106,7 +106,6 @@ public class PolylineTool extends OverlayTool {
         line =  new OverlayPolyline(overlay, dx, dy, dx, dy);
         line.setDrawing(true);
         line.setSelected(true);
-        configureOverlay(line);
         overlay.addObject(line, pos);
         mode = PLACE;
       }
@@ -410,7 +409,6 @@ public class PolylineTool extends OverlayTool {
         System.arraycopy(nodes[i], 0, n1[i], 0, numNodes1);
 
       l1 = new OverlayPolyline(overlay, n1);
-      configureOverlay(l1);
       overlay.addObject(l1);
       l1.setDrawing(false);
       l1.setSelected(false);
@@ -423,7 +421,6 @@ public class PolylineTool extends OverlayTool {
           numNodes2);
       }
       l2 = new OverlayPolyline(overlay, n2);
-      configureOverlay(l2);
       overlay.addObject(l2);
       l2.setDrawing(false);
       l2.setSelected(false);

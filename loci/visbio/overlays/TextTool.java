@@ -50,7 +50,6 @@ public class TextTool extends OverlayTool {
     deselectAll();
     OverlayWidget controls = (OverlayWidget) overlay.getControls();
     text = new OverlayText(overlay, dx, dy, controls.getText());
-    configureOverlay(text);
     overlay.addObject(text, pos);
   }
 

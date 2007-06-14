@@ -49,9 +49,6 @@ public class ArrowTool extends OverlayTool {
   {
     deselectAll();
     arrow = new OverlayArrow(overlay, dx, dy, dx, dy);
-    configureOverlay(arrow);
-    OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    arrow.setFilled(panel.isFilled());
     overlay.addObject(arrow, pos);
   }
 

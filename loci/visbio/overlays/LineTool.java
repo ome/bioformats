@@ -49,7 +49,6 @@ public class LineTool extends OverlayTool {
   {
     deselectAll();
     line = new OverlayLine(overlay, dx, dy, dx, dy);
-    configureOverlay(line);
     overlay.addObject(line, pos);
   }
 

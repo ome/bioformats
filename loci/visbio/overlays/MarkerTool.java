@@ -49,7 +49,6 @@ public class MarkerTool extends OverlayTool {
   {
     deselectAll();
     marker = new OverlayMarker(overlay, dx, dy);
-    configureOverlay(marker);
     overlay.addObject(marker, pos);
   }
 

@@ -144,14 +144,6 @@ public class OverlayTool {
 
   // -- Helper methods --
 
-  /** Configures the given overlay to match the current settings. */
-  protected void configureOverlay(OverlayObject obj) {
-    OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    obj.setColor(panel.getActiveColor());
-    obj.setGroup(panel.getActiveGroup());
-    obj.setNotes(panel.getNotes());
-  }
-
   /** Deselect all selected overlays. */
   protected void deselectAll() {
     OverlayObject[] obj = overlay.getObjects();

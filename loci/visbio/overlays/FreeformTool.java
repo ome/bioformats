@@ -218,7 +218,6 @@ public class FreeformTool extends OverlayTool {
 
     if (mode == INIT) {
       freeform = new OverlayFreeform(overlay, downX, downY, downX, downY);
-      configureOverlay(freeform);
       overlay.addObject(freeform, pos);
       setMode(DRAW);
     }
@@ -502,7 +501,6 @@ public class FreeformTool extends OverlayTool {
       }
 
       f1 = new OverlayFreeform(overlay, f1Nodes);
-      configureOverlay(f1);
       overlay.addObject(f1);
       f1.setSelected(false);
       f1.setDrawing(false);
@@ -516,7 +514,6 @@ public class FreeformTool extends OverlayTool {
       }
 
       f2 = new OverlayFreeform(overlay, f2Nodes);
-      configureOverlay(f2);
       overlay.addObject(f2);
       f2.setSelected(false);
       f2.setDrawing(false);
@@ -659,7 +656,6 @@ public class FreeformTool extends OverlayTool {
     OverlayFreeform f3 = new OverlayFreeform (overlay, newNodes);
     overlay.removeObject(f1);
     overlay.removeObject(f2);
-    configureOverlay(f3);
     overlay.addObject(f3);
     freeform = f3; // store the new freeform
   }

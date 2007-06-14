@@ -154,6 +154,7 @@ public class OverlayTransform extends DataTransform
 
   /** Adds an overlay object at the given dimensional position. */
   public void addObject(OverlayObject obj, int[] pos) {
+    configureOverlay(obj);
     int ndx = FormatTools.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     synchronized (overlays) {
@@ -889,6 +890,15 @@ public class OverlayTransform extends DataTransform
   }
 
   // -- Helper methods --
+  
+  /** Configures the given overlay to match the current settings. */
+  protected void configureOverlay(OverlayObject obj) {
+    OverlayWidget panel = (OverlayWidget) getControls();
+    obj.setFilled(panel.isFilled());
+    obj.setColor(panel.getActiveColor());
+    obj.setGroup(panel.getActiveGroup());
+    obj.setNotes(panel.getNotes());
+  }
 
   /**
    * Updates the dimensional position based on

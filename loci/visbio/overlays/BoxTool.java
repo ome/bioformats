@@ -49,9 +49,6 @@ public class BoxTool extends OverlayTool {
   {
     deselectAll();
     box = new OverlayBox(overlay, dx, dy, dx, dy);
-    configureOverlay(box);
-    OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    box.setFilled(panel.isFilled());
     overlay.addObject(box, pos);
   }
 
