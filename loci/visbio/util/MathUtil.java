@@ -94,6 +94,8 @@ public final class MathUtil {
   public static double getDistance(float[] p, float[] v){
     double[] pp = new double[p.length];
     double[] vv = new double[v.length];
+    for (int i=0; i<p.length; i++) pp[i] = (double) p[i];
+    for (int i=0; i<v.length; i++) vv[i] = (double) v[i];
     return getDistance(pp, vv);
   }
 
