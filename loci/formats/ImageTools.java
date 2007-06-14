@@ -1025,8 +1025,8 @@ public final class ImageTools {
    * The "reverse" parameter is false if channels are in RGB order, true if
    * channels are in BGR order.
    */
-  public static byte[][] splitChannels(byte[] array, int c, boolean reverse,
-    boolean interleaved)
+  public static byte[][] splitChannels(byte[] array, int c, int bytes, 
+    boolean reverse, boolean interleaved)
   {
     byte[][] rtn = new byte[c][array.length / c];
 
@@ -1047,20 +1047,30 @@ public final class ImageTools {
     else {
       if (reverse) {
         int next = 0;
-        for (int i=0; i<array.length; i+=c) {
+        for (int i=0; i<array.length; i+=c*bytes) {
           for (int j=c-1; j>=0; j--) {
-            rtn[j][next] = array[i + j];
-          }
-          next++;
+            for (int k=0; k<bytes; k++) {
+              if (next < rtn[j].length) {
+                rtn[c - j - 1][next] = array[i + j*bytes + k];
+              } 
+              next++; 
+            }
+            next -= bytes; 
+          } 
+          next += bytes; 
         }
       }
       else {
         int next = 0;
-        for (int i=0; i<array.length; i+=c) {
+        for (int i=0; i<array.length; i+=c*bytes) {
           for (int j=0; j<c; j++) {
-            if (next < rtn[j].length) rtn[j][next] = array[i + j];
-          }
-          next++;
+            for (int k=0; k<bytes; k++) {
+              if (next < rtn[j].length) rtn[j][next] = array[i + j*bytes + k];
+              next++; 
+            }
+            next -= bytes; 
+          } 
+          next += bytes; 
         }
       }
     }

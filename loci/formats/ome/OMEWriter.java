@@ -189,7 +189,7 @@ public class OMEWriter extends FormatWriter {
         metadata.getSizeY(null).intValue() *
         FormatTools.getBytesPerPixel(pixelType);
       byte[][] b = ImageTools.splitChannels(bytes, bytes.length / planeLength,
-        false, true);
+        FormatTools.getBytesPerPixel(pixelType), false, true);
 
       for (int ch=0; ch<b.length; ch++) {
         int[] coords = FormatTools.getZCTCoords(order, z, c, t, z*c*t,

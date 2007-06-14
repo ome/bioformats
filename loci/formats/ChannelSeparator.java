@@ -85,25 +85,7 @@ public class ChannelSeparator extends ReaderWrapper {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int bytes = 0;
-    switch (getPixelType()) {
-      case 0:
-      case 1:
-        bytes = 1;
-        break;
-      case 2:
-      case 3:
-        bytes = 2;
-        break;
-      case 4:
-      case 5:
-      case 6:
-        bytes = 4;
-        break;
-      case 7:
-        bytes = 8;
-        break;
-    }
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
 
     byte[] b = openBytes(no);
 
@@ -140,7 +122,8 @@ public class ChannelSeparator extends ReaderWrapper {
         lastImageSeries = series;
       }
 
-      return ImageTools.splitChannels(lastImage, c,
+      return ImageTools.splitChannels(lastImage, c, 
+        FormatTools.getBytesPerPixel(getPixelType()),
         false, isInterleaved())[channel];
     }
     else return reader.openBytes(no);
