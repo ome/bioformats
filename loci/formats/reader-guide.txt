@@ -162,9 +162,8 @@ and Location.getMappedId(String).
     -series             Set the series number (for container file formats).
     -map                Specify file on disk to which name should be mapped.
 
-- If you wish to test using JUnit, loci.formats.test.ReaderTest provides seven
-  basic tests that work with all Bio-Formats readers.  To run the test suite,
-  use "java loci.formats.test.ReaderTest <path to data folder>".  See the
+- If you wish to test using TestNG, loci.formats.test.ReaderTest provides 15 
+  basic tests that work with all Bio-Formats readers.  See the
   ReaderTest source code for additional information.
 
 - For more details, please look at the source code and javadocs.  Studying
