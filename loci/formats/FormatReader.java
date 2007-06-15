@@ -337,7 +337,7 @@ public abstract class FormatReader extends FormatHandler
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     BufferedImage img = openThumbImage(no);
-    byte[][] bytes = ImageTools.getBytes(img);
+    byte[][] bytes = ImageTools.getPixelBytes(img, core.littleEndian[series]);
     if (bytes.length == 1) return bytes[0];
     byte[] rtn = new byte[getRGBChannelCount() * bytes[0].length];
     for (int i=0; i<getRGBChannelCount(); i++) {

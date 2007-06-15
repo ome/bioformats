@@ -220,7 +220,7 @@ public class BMPReader extends FormatReader {
 
     // read the palette, if it exists
 
-    if (offset != in.getFilePointer()) {
+    if (offset != in.getFilePointer() && nColors > 0) {
       palette = new byte[3][nColors];
 
       for (int i=0; i<nColors; i++) {
@@ -235,7 +235,7 @@ public class BMPReader extends FormatReader {
     addMeta("Indexed color", palette == null ? "false" : "true");
 
     status("Populating metadata");
-
+    
     core.sizeC[0] = (palette == null && bpp == 8) ? 1 : 3;
     if (bpp > 8) bpp /= 3;
     while (bpp % 8 != 0) bpp++;
