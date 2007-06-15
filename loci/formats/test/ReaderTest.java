@@ -109,12 +109,6 @@ public class ReaderTest {
           success = failX || failY || failC || failType;
           if (!success) {
             writeLog(file + " failed BufferedImage test");
-            /* debug */
-            System.out.println("failX : " + failX);
-            System.out.println("failY : " + failY);
-            System.out.println("failC : " + failC);
-            System.out.println("failType : " + failType);
-            /* end debug */
             break; 
           }
         }
