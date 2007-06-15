@@ -9,8 +9,6 @@ public abstract class CacheStrategy implements ICacheStrategy {
   // -- Constants --
 
   public static final int HIGH_PRIORITY = 0;
-  public static final int MEDIUM_PRIORITY = 1;
-  public static final int LOW_PRIORITY = 2;
 
   // -- Fields --
  
