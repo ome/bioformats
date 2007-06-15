@@ -102,6 +102,7 @@ public class ConfigurationFiles {
           entry.thumbs = new int[nSeries][2];
           entry.type = new int[nSeries];
           entry.littleEndian = new boolean[nSeries];
+          entry.md5 = new String[nSeries];
 
           for (int i=0; i<nSeries; i++) {
             ndx = line.indexOf("[series=" + i);
@@ -140,6 +141,8 @@ public class ConfigurationFiles {
               s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("little") + 7;
             entry.littleEndian[i] = s.substring(ndx).equals("true");
+            ndx = s.indexOf("md5") + 4;
+            entry.md5[i] = s.substring(ndx, s.indexOf(" ", ndx));
           }
 
           ndx = line.indexOf("access=") + 7;
@@ -225,6 +228,11 @@ public class ConfigurationFiles {
     return ((ConfigEntry) entries.get(id)).littleEndian[currentSeries];
   }
 
+  public String getMD5(String id) {
+    if (!initialized(id)) return null;
+    return ((ConfigEntry) entries.get(id)).md5[currentSeries];
+  }
+
   public float getTimePerPlane(String id) {
     if (!initialized(id)) return 0;
     return ((ConfigEntry) entries.get(id)).access;
@@ -252,6 +260,7 @@ public class ConfigurationFiles {
     private int[][] thumbs;
     private int[] type;
     private boolean[] littleEndian;
+    private String[] md5; 
     private float access;
     private int mem;
     private boolean test;
