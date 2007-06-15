@@ -94,7 +94,7 @@ public class FreeformTool extends OverlayTool {
   /** Tendril wraps info about an edit to a curve */
   protected Tendril tendril;
 
-  /** Stores the current mode (ERASE, CHILL, DRAW, EDIT) */
+  /** Stores the current mode (INIT, ERASE, CHILL, DRAW, EDIT) */
   protected int mode;
 
   /** Chunks of curve tracked during EDIT */
@@ -125,77 +125,80 @@ public class FreeformTool extends OverlayTool {
     double dpx = (double) px;
     double dpy = (double) py;
 
-    // find closest freeform
-    double maxThresh = ERASE_THRESH;
-    DistanceQuery distanceQuery = getClosestFreeform(display, dpx,
-        dpy, maxThresh);
-    OverlayFreeform target = distanceQuery.freeform;
+    // if ctl, erase
+    // else if near edit
+    
+    if (ctl) {
+      setMode(ERASE);
+      freeform = null;
+    }
+    else {
+      // Logic of this section:
+      // if close to freeform
+        // if near end node, resume drawing
+        // else begin editing
+      // else
+        // record initial click points
 
-    // operate on closest freeform
-    if (target != null) {
-      // editing operations on closest freeform
-      freeform = target;
+      // find closest freeform
+      double maxThresh = ERASE_THRESH;
+      DistanceQuery distanceQuery = getClosestFreeform(display, dpx,
+          dpy, maxThresh);
+      OverlayFreeform target = distanceQuery.freeform;
 
-      double dist = distanceQuery.dist;
-      int seg = distanceQuery.seg;
-      double weight = distanceQuery.wt;
+      // operate on closest freeform
+      if (target != null) {
+        // editing operations on closest freeform
+        freeform = target;
 
-      if (distanceQuery.isNearEndNode())
-      {
-        // near an end node
-        if (ctl && dist < ERASE_THRESH) {
-          // enter erase mode
-          setMode(ERASE);
-        }
-        else if (dist < RESUME_THRESH) {
+        double dist = distanceQuery.dist;
+        int seg = distanceQuery.seg;
+        double weight = distanceQuery.wt;
+
+        if (distanceQuery.isNearEndNode() && dist < RESUME_THRESH) {
           // resume drawing
           if (seg == 0) freeform.reverseNodes();
           setMode(DRAW);
         }
-      }
-      else {
-        // near an interior node
-        if (ctl && dist < ERASE_THRESH) {
-          // split and enter erase mode
-          slice(freeform, dist, seg, weight);
-          freeform = null;
-        }
-        else if (dist < EDIT_THRESH) {
-          // begin editing
-          // project click onto curve and insert a new node there,
-          // unless nearest point on curve is a node itself
-          //
-          // note: because of the way getDistSegWt() works, weight can
-          // never be 0.0 except if seg = 0.
-          if (weight == 1.0) { // nearest point on seg is the end node
-            // determine projection on seg.
-            float[] a = freeform.getNodeCoords(seg+1);
-            freeform.insertNode(seg+2, a[0], a[1]);
-            tendril = new Tendril (seg+1, seg+2, true);
-            splitNodes (freeform, seg, seg+3);
+        else {
+          // near an interior node
+          if (dist < EDIT_THRESH) {
+            // begin editing
+            // project click onto curve and insert a new node there,
+            // unless nearest point on curve is a node itself
+            //
+            // note: because of the way getDistSegWt() works, weight can
+            // never be 0.0 except if seg = 0.
+            if (weight == 1.0) { // nearest point on seg is the end node
+              // determine projection on seg.
+              float[] a = freeform.getNodeCoords(seg+1);
+              freeform.insertNode(seg+2, a[0], a[1]);
+              tendril = new Tendril (seg+1, seg+2, true);
+              splitNodes (freeform, seg, seg+3);
+            }
+            else {
+              // determine projection on seg.
+              // insert a pair of nodes there, starting a tendril
+              float[] a = freeform.getNodeCoords(seg);
+              float[] b = freeform.getNodeCoords(seg + 1);
+              float[] newXY = computePtOnSegment(a, b, (float) weight);
+              freeform.insertNode(seg + 1, newXY[0], newXY[1]);
+              freeform.insertNode(seg + 1, newXY[0], newXY[1]);
+              tendril = new Tendril(seg+1, seg+2, false);
+              splitNodes (freeform, seg+1, seg+3);
+            }
+            setMode(EDIT);
           }
-          else {
-            // determine projection on seg.
-            // insert a pair of nodes there, starting a tendril
-            float[] a = freeform.getNodeCoords(seg);
-            float[] b = freeform.getNodeCoords(seg + 1);
-            float[] newXY = computePtOnSegment(a, b, (float) weight);
-            freeform.insertNode(seg + 1, newXY[0], newXY[1]);
-            freeform.insertNode(seg + 1, newXY[0], newXY[1]);
-            tendril = new Tendril(seg+1, seg+2, false);
-            splitNodes (freeform, seg+1, seg+3);
-          }
-          setMode(EDIT);
         }
       }
-    }
-    else { // no freeform was sufficiently close
-      // drawing operations on new freeform
-      if (!ctl) {
-        // record initial coordinates of freeform
-        downX = dx;
-        downY = dy;
-        setMode(INIT);
+      else { // no freeform was sufficiently close
+        // drawing operations on new freeform
+        if (!ctl) {
+          // record initial coordinates of freeform
+          downX = dx;
+          downY = dy;
+          setMode(INIT);
+        }
       }
     }
 
@@ -253,6 +256,16 @@ public class FreeformTool extends OverlayTool {
       }
 
       if (minDist < DRAW_THRESH) {
+        System.out.println("I'm here");
+        System.out.println("freeform has the following nodes:");
+        freeform.printNodes();
+        System.out.println("other freeform has the following nodes:");
+        OverlayFreeform other = (OverlayFreeform) otherFreefs.get(index);
+        other.printNodes();
+        String s = closerToHead ? "head" : "tail";
+        System.out.println("connecting freeform to " + s + 
+            " of other freeform");
+
         connectFreeforms(freeform,
           (OverlayFreeform) otherFreefs.get(index), closerToHead);
         setMode(CHILL);
@@ -272,59 +285,23 @@ public class FreeformTool extends OverlayTool {
           freeform.setCurveLength(len + delta);
           // I debated whether to call setBoundaries with every mouseDrag.
           // This is an efficient
-          // method, but corresponding update when erasing
-          // erasing requires an O(n)
-          // scan of the nodes every time a node is deleted.
+          // method, but the corresponding update when erasing
+          // requires an O(n)
+          // scan of the nodes many times when a node is deleted.
           freeform.setBoundaries(s[0], s[1]);
         }
         // mode remains DRAW
       }
     }
     else if (mode == ERASE) {
-      if (freeform == null) {
-        // DISTANCE COMPUTATION compare floats with floats
-        DistanceQuery distanceQuery = getClosestFreeform(display,
-            dpx, dpy, ERASE_THRESH);
-        OverlayFreeform target = distanceQuery.freeform;
-        if (target != null) freeform = target;
+      if (ctl) {
+        float thresh = (float) ERASE_THRESH *
+          OverlayUtil.getMultiplier(display);
+        eraseNearestNodeWithin(thresh, dx, dy);
       }
-
-      if (freeform != null) {
-        // delete an end node if you're near enough
-        float[] beg = freeform.getNodeCoords(0);
-        float[] end = freeform.getNodeCoords(freeform.getNumNodes() - 1);
-
-        int[] dragPxl = {px, py};
-
-        double bdist = getPixelDistanceToClick(display, beg, dragPxl);
-        double edist = getPixelDistanceToClick(display, beg, dragPxl); 
-
-        boolean closerToEnd = edist < bdist ? true : false;
-        double mdist = closerToEnd ? edist : bdist;
-
-        if (mdist < ERASE_THRESH) {
-          if (!closerToEnd) freeform.reverseNodes();
-          if (ctl) {
-            float[] nearest = new float[2];
-            if (closerToEnd) nearest = end;
-            else nearest = beg;
-
-            // adjust curve length
-            int index = freeform.getNumNodes()-1; // last node in freef
-            float[] last = freeform.getNodeCoords(index);
-            double delta = MathUtil.getDistance(nearest, last);
-            freeform.setCurveLength(freeform.getCurveLength() - delta);
-
-            // delete last node
-            freeform.deleteNode(index);
-            if (!freeform.hasData()) {
-             setMode(CHILL);
-            }
-          }
-          else setMode(DRAW);
-        }
+      else {
+        setMode(DRAW);
       }
-      // do nothing if too far from curve
     }
     else if (mode == EDIT) {
       // extend tendril and or reconnect
@@ -442,7 +419,6 @@ public class FreeformTool extends OverlayTool {
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(DisplayEvent e, int px, int py,
       float dx, float dy, int[] pos, int mods) {
-    //print ("mouseUp", "mouseUp begun. mode = " + mode);
     if (mode == DRAW) {
       freeform.truncateNodeArray();
     }
@@ -466,103 +442,12 @@ public class FreeformTool extends OverlayTool {
    *  as described in Littlewood and Inman, _Computer-assisted DNA length
    *  measurements..._. Nucleic Acids Research, V 10 No. 5. (1982) p. 1694
    */
-  private float[] smooth (float[] un, float[] cn1) {
+  private float[] smooth(float[] un, float[] cn1) {
     float[] cn = new float[2];
     for (int i=0; i<2; i++) {
       cn[i] = S * un[i] + (1 - S) * cn1[i];
     }
     return cn;
-  }
-
-  /** Slices a freeform in two. */
-  private void slice(OverlayFreeform freef, double dist, int seg, double weight)
-  {
-    int f1Start, f2Start, f1Stop, f2Stop;
-    OverlayFreeform f1, f2;
-
-    f1Start = 0;
-    f1Stop = seg;
-    f2Start = seg + 1;
-    f2Stop = freef.getNumNodes() - 1;
-
-    // if nearest point is a node itself, exclude it from both halves
-    if (weight == 0.0) f1Stop = seg - 1;
-    else if (weight == 1.0) f2Start = seg + 2;
-
-    float[][] oldNodes = freef.getNodes();
-    int numNodes1 = f1Stop + 1;
-    int numNodes2 = f2Stop - f2Start + 1;
-
-    if (numNodes1 > 1) {
-      float[][] f1Nodes = new float[2][numNodes1];
-
-      for (int i=0; i<2; i++) {
-        System.arraycopy(oldNodes[i], 0, f1Nodes[i], 0, numNodes1);
-      }
-
-      f1 = new OverlayFreeform(overlay, f1Nodes);
-      overlay.addObject(f1);
-      f1.setSelected(false);
-      f1.setDrawing(false);
-    }
-
-    if (numNodes2 > 1) {
-      float[][] f2Nodes = new float[2][numNodes2];
-
-      for (int i = 0; i<2; i++) {
-        System.arraycopy(oldNodes[i], f2Start, f2Nodes[i], 0, numNodes2);
-      }
-
-      f2 = new OverlayFreeform(overlay, f2Nodes);
-      overlay.addObject(f2);
-      f2.setSelected(false);
-      f2.setDrawing(false);
-    }
-
-    // quietly dispose of the original freeform.
-    overlay.removeObject(freef);
-  }
-
-  /** Wraps distance and address of a freeform object. */
-  protected class DistanceQuery {
-    public double dist, wt;
-    public int seg;
-    public OverlayFreeform freeform;
-
-    /** Constructs a DistanceQuery object. */
-    public DistanceQuery(double[] distSegWt, OverlayFreeform f) {
-      this.freeform = f;
-      this.dist = distSegWt[0];
-      this.seg = (int) distSegWt[1];
-      this.wt = distSegWt[2];
-    }
-
-    /** Whether the nearest node is an end node. */
-    public boolean isNearEndNode() {
-      return (seg == 0 && wt == 0.0) ||
-        (seg == freeform.getNumNodes()-2 && wt == 1.0);
-    }
-  }
-
-  /** Wraps information for redrawing a curve
-   *  Appears like a 'tendril' on screen */
-  protected class Tendril {
-    public int start, stop, tip;
-    public boolean nodal;
-
-    public Tendril (int start, int stop, boolean nodal) {
-      this.start = start;
-      this.stop = stop;
-      this.nodal = nodal;
-      // initial value of tip is nonsensical.  Use as a check.
-      this.tip = -1;
-    }
-
-    public void increment() {
-      tendril.tip++;
-      tendril.start++;
-      tendril.stop++;
-    }
   }
 
   /**
@@ -583,6 +468,19 @@ public class FreeformTool extends OverlayTool {
     }
   }
 
+  /** Compiles a list of other freeforms at the current dimensional position. */
+  protected Vector getFreeforms(boolean includeThis) {
+    OverlayObject[] objs = overlay.getObjects();
+    otherFreefs = new Vector(10);
+    for (int i=0; i<objs.length; i++) {
+      if (objs[i] instanceof OverlayFreeform && 
+          (includeThis || objs[i] != freeform)) {
+        otherFreefs.add(objs[i]);
+      }
+    }
+    return otherFreefs;
+  }
+
   /**
    * Changes the edit mode. Depending on the new mode, some properties may
    * change: e.g., whether a freeform is selected in the list of overlays.
@@ -598,12 +496,7 @@ public class FreeformTool extends OverlayTool {
       freeform.setSelected(true);
 
       // create list of freeforms
-      OverlayObject[] objs = overlay.getObjects();
-      for (int i=0; i<objs.length; i++) {
-        if (objs[i] instanceof OverlayFreeform && objs[i] != freeform) {
-          otherFreefs.add(objs[i]);
-        }
-      }
+      otherFreefs = getFreeforms(false);
     }
     else if (mode == EDIT) {
       deselectAll();
@@ -613,9 +506,6 @@ public class FreeformTool extends OverlayTool {
     }
     else if (mode == ERASE) {
       deselectAll();
-      freeform.setDrawing(true);
-      freeform.setSelected(true);
-      otherFreefs.removeAllElements();
     }
     else if (mode == CHILL) {
       otherFreefs.removeAllElements();
@@ -645,12 +535,15 @@ public class FreeformTool extends OverlayTool {
     boolean head)
   {
     if (!head) f2.reverseNodes();
-    float[][] newNodes = new float[2][f1.getNumNodes()+f2.getNumNodes()];
+    float[][] f1Nodes = f1.getNodes();
+    float[][] f2Nodes = f2.getNodes();
+    int len1 = f1.getNumNodes();
+    int len2 = f2.getNumNodes();
+    float[][] newNodes = new float[2][len1 + len2];
 
     for (int i=0; i<2; i++) {
-      System.arraycopy(f1.getNodes()[i], 0, newNodes[i], 0, f1.getNumNodes());
-      System.arraycopy(f2.getNodes()[i], 0, newNodes[i],
-        f1.getNumNodes(), f2.getNumNodes());
+      System.arraycopy(f1Nodes[i], 0, newNodes[i], 0, len1); 
+      System.arraycopy(f2Nodes[i], 0, newNodes[i], len1, len2);
     }
 
     OverlayFreeform f3 = new OverlayFreeform (overlay, newNodes);
@@ -658,6 +551,45 @@ public class FreeformTool extends OverlayTool {
     overlay.removeObject(f2);
     overlay.addObject(f3);
     freeform = f3; // store the new freeform
+  }
+
+  /** Erases the nearest node of freeforms nearby. */
+  protected void eraseNearestNodeWithin(float thresh, float x, float y) {
+    Vector freefs = getFreeforms(true); // collect all other freeforms,
+    // including the current one tracked by this tool
+    if (freefs.size() == 0) return;
+    // compute closest node of closest freeform w/ respect to threshold
+    double minDist = Double.POSITIVE_INFINITY;
+    int minIndex = -1;
+    OverlayFreeform closest = null;
+    for (int i=0; i<freefs.size(); i++) {
+      OverlayFreeform current = (OverlayFreeform) freefs.get(i);
+      double[] distIndex = current.getNearestNode(x, y);
+      double dist = distIndex[0];
+      int index = (int) distIndex[1];
+      if (dist < thresh && dist < minDist) {
+        minDist = dist;
+        minIndex = index;
+        closest = current;
+      }
+    }
+
+    // remove that node if it exists, possibly splitting the freeform
+    // in two.
+    if (closest != null) {
+      OverlayFreeform[] children = closest.removeNode(minIndex);
+      // remove freeforms with 1 or 0 nodes that result 
+      if (closest.getNumNodes() <= 1) overlay.removeObject(closest);
+      removeEmptyFreeforms(children);
+    }
+  }
+
+  /** Removes any freeforms with one or fewer nodes */
+  protected void removeEmptyFreeforms(OverlayFreeform[] objs) {
+    for (int i=0; i<objs.length; i++) {
+      if (objs[i] == null) continue;
+      else if (objs[i].getNumNodes() <= 1) overlay.removeObject(objs[i]);
+    }
   }
 
   /** Returns the closest (subject to a threshhold) OverlayFreeform object to
@@ -758,6 +690,102 @@ public class FreeformTool extends OverlayTool {
       String header = "FreeformTool.";
       String out = header + methodName + ": " + message;
       System.out.println(out);
+    }
+  }
+
+
+  // -- Inner Classes -- 
+
+  /** 
+   * Wraps information about the distance from a point to a freeform object. 
+   * The nearest point is expressed in terms of its location on the freeform 
+   * using two variables:
+   * <code>seg</code> the segment on which the closest point lies, between
+   * nodes seg and seg+1
+   * <code>wt</code> the relative distance along the segment where the closest
+   * point lies, between 0.0 and 1.0
+   */
+  protected class DistanceQuery {
+
+    // -- Fields --
+
+    /** The index of the first node of the closest segment */ 
+    public int seg;
+
+    /**
+     * The weight, between 0.0 and 1.0, representing the relative distance 
+     * along the segment (seg, seg+1) that must be traveled from the node at
+     * index seg to reach the closest point on the curve.
+     */ 
+    public double wt;
+
+    /** The distance to the freeform. */
+    public double dist;
+
+    /** The nearest freeform itself. */
+    public OverlayFreeform freeform;
+
+    // -- Constructor -- 
+    
+    /** Constructs a DistanceQuery object. */
+    public DistanceQuery(double[] distSegWt, OverlayFreeform f) {
+      this.freeform = f;
+      this.dist = distSegWt[0];
+      this.seg = (int) distSegWt[1];
+      this.wt = distSegWt[2];
+    }
+
+    // -- Methods -- 
+    
+    /** Whether the nearest node is an end node. */
+    public boolean isNearEndNode() {
+      return (seg == 0 && wt == 0.0) ||
+        (seg == freeform.getNumNodes()-2 && wt == 1.0);
+    }
+  }
+
+  /** 
+   * The Tendril class wraps information for the temporary section of a 
+   * freeform, which appears like a 'tendril' on screen, created during an edit
+   * of an existing freeform. 
+   * The FreeformTool uses this information to modify the freeform if the
+   * edit is successful, or to remove the tendril if the edit is aborted.
+   *
+   * The section of the freeform represented by a tendril is actually a
+   * loop, not a single line, like loop of thread pushed through a needle. 
+   * The loop has two parts, between start and tip and between tip and stop.
+   * If an edit is completed, half of the tendril 
+   */
+  protected class Tendril {
+    
+    // -- Fields --
+
+    /** The index of the last node of the tendril. */
+    public int start;
+
+    /** The index of the last node of the tendril. */
+    public int stop; 
+
+    /** The index of the tip node of the tendril. */
+    public int tip;
+
+    /** Whether this tendril began on a node or in the middle of a segment. */
+    public boolean nodal;
+
+    /** Constructs a new tendril. */
+    public Tendril (int start, int stop, boolean nodal) {
+      this.start = start;
+      this.stop = stop;
+      this.nodal = nodal;
+      // initial value of tip is nonsensical.  Use as a check.
+      this.tip = -1;
+    }
+
+    /** Update the tendril to reflect that another node has been drawn. */
+    public void increment() {
+      tendril.tip++;
+      tendril.start++;
+      tendril.stop++;
     }
   }
 } // end class FreeformTool
