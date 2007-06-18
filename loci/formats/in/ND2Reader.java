@@ -30,7 +30,11 @@ import java.util.*;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.xml.parsers.*;
 import loci.formats.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * ND2Reader is the file format reader for Nikon ND2 files.
@@ -50,6 +54,10 @@ public class ND2Reader extends FormatReader {
 
   private static final String J2K_READER =
     "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
+
+  /** Factory for generating SAX parsers. */
+  public static final SAXParserFactory SAX_FACTORY = 
+    SAXParserFactory.newInstance();
 
   // -- Static fields --
 
@@ -117,6 +125,9 @@ public class ND2Reader extends FormatReader {
   /** Number of valid bits per pixel */
   private int[] validBits;
 
+  /** Whether or not the pixel data is compressed using JPEG 2000. */
+  private boolean isJPEG;
+
   private Vector zs = new Vector();
   private Vector ts = new Vector();
 
@@ -136,33 +147,57 @@ public class ND2Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] b = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0])];
+    return openBytes(no, b);
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf) 
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
+    if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
+    } 
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0]))
+    {
+      throw new FormatException("Buffer too small.");
     }
+   
+    in.seek(offsets[no]);
 
-    byte[][] pixels = ImageTools.getPixelBytes(openImage(no), false);
+    if (isJPEG) {
+      byte[][] pixels = ImageTools.getPixelBytes(openImage(no), false);
 
-    if (pixels.length == 1 || core.sizeC[0] == 1) {
-      return pixels[0];
+      for (int i=0; i<core.sizeC[0]; i++) {
+        System.arraycopy(pixels[i], 0, buf, i*pixels[i].length, 
+          pixels[i].length);
+      }
     }
-
-    byte[] b = new byte[core.sizeC[0] * pixels[0].length];
-    for (int i=0; i<core.sizeC[0]; i++) {
-      System.arraycopy(pixels[i], 0, b, i*pixels[0].length, pixels[i].length);
+    else {
+      in.read(buf);
     }
-    return b;
+ 
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (!isJPEG) {
+      return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
+        core.sizeC[0], core.interleaved[0], 
+        FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
+    }
+    
     FormatTools.assertId(currentId, true, 1);
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
     in.seek(offsets[no]);
-
+    
     long len = no < core.imageCount[0] - 1 ? offsets[no + 1] - offsets[no] :
       in.length() - offsets[no];
 
@@ -201,6 +236,80 @@ public class ND2Reader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessStream(id);
+
+    if (in.read() == -38 && in.read() == -50) {
+      // newer version of ND2 - doesn't use JPEG2000
+
+      isJPEG = false;
+      in.seek(0);
+      in.order(true);
+
+      while (in.getFilePointer() < in.length()) {
+        if (in.read() == -38 && in.read() == -50 && in.read() == -66 &&
+          in.read() == 10)
+        {
+          // found a data chunk
+          int len = in.readInt() + in.readInt();
+          in.skipBytes(4);
+
+          byte[] b = new byte[len];
+          in.read(b);
+
+          String s = new String(b);
+
+          if (s.startsWith("ImageDataSeq")) {
+            // found pixel data
+            int ndx = Integer.parseInt(s.substring(13, s.indexOf("!")));
+            offsets[ndx] = in.getFilePointer() - len + s.indexOf("!") + 9; 
+          }
+          else if (s.startsWith("Image")) {
+            // XML metadata
+            
+            ND2Handler handler = new ND2Handler();
+
+            s = s.substring(s.indexOf("!") + 1);
+
+            // strip out invalid characters
+            for (int i=0; i<s.length(); i++) {
+              char c = s.charAt(i);
+              if (Character.isISOControl(c) || !Character.isDefined(c)) {
+                s = s.replace(c, ' ');
+              } 
+            }
+          
+            try {
+              SAXParser parser = SAX_FACTORY.newSAXParser();
+              parser.parse(new ByteArrayInputStream(s.getBytes()), handler);
+            }
+            catch (ParserConfigurationException exc) {
+              throw new FormatException(exc);
+            } 
+            catch (SAXException exc) {
+              throw new FormatException(exc);
+            }
+          }
+
+          if (core.imageCount[0] > 0 && offsets == null) {
+            offsets = new long[core.imageCount[0]];
+          }
+
+          if (in.getFilePointer() < in.length() - 1) {
+            if (in.read() != -38) in.skipBytes(15);
+            else in.seek(in.getFilePointer() - 1);
+          } 
+        }
+      }
+
+      core.sizeC[0] = 1;
+      core.currentOrder[0] = "XYCZT";
+      core.rgb[0] = false;
+      core.littleEndian[0] = true;
+
+      return; 
+    }
+    else in.seek(0);
+
+    isJPEG = true;
 
     status("Calculating image offsets");
 
@@ -554,6 +663,46 @@ public class ND2Reader extends FormatReader {
       voltage == null ? null : new Float(voltage), null, null, null);
     store.setObjective(null, null, null, na == null ? null : new Float(na),
       mag == null ? null : new Float(mag), null, null);
+  }
+
+  // -- Helper class --
+
+  /** SAX handler for parsing XML. */
+  class ND2Handler extends DefaultHandler {
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (qName.equals("uiWidth")) {
+        core.sizeX[0] = Integer.parseInt(attributes.getValue("value"));
+      }
+      else if (qName.equals("uiWidthBytes")) {
+        int bytes = 
+          Integer.parseInt(attributes.getValue("value")) / core.sizeX[0];
+        switch (bytes) {
+          case 2:
+            core.pixelType[0] = FormatTools.UINT16;
+            break;
+          case 4:
+            core.pixelType[0] = FormatTools.UINT32;
+            break; 
+          default: core.pixelType[0] = FormatTools.UINT8;
+        }
+      } 
+      else if (qName.equals("uiHeight")) {
+        core.sizeY[0] = Integer.parseInt(attributes.getValue("value"));
+      }
+      else if (qName.equals("uiCount")) {
+        int n = Integer.parseInt(attributes.getValue("value")); 
+        if (core.imageCount[0] == 0) {
+          core.imageCount[0] = n;
+          core.sizeZ[0] = n;
+        } 
+        core.sizeT[0] = 1;
+      }
+      else {
+        addMeta(qName, attributes.getValue("value"));
+      }
+    }
   }
 
 }

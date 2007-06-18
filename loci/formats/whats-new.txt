@@ -1,6 +1,7 @@
 2007 June 18:
 * Fixed issues with ICS, ND2, MicroManager, Leica LEI, and FV1000 OIF
 * Added support for large (> 2 GB) ND2 files
+* Added support for new version of ND2
 * Minor enhancements to ImageJ importer
 * Implemented more flexible logging
 * Updated automated testing framework to use TestNG
