@@ -72,6 +72,7 @@ public class PreviewPane extends JPanel
     setBorder(new EmptyBorder(0, 10, 0, 0));
 
     reader = new ImageReader();
+    reader.setNormalized(true);
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     iconLabel = new JLabel();
