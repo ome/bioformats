@@ -30,22 +30,18 @@ import java.security.MessageDigest;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.ome.OMEXMLMetadataStore;
-import org.testng.*;
-import org.testng.xml.*;
 
 /** 
  * TestNG tester for Bio-Formats file format readers.
  * Details on failed tests are written to a log file, for easier processing.
  *
  * To run tests:
- * java -ea -mx512m loci.formats.test.ReaderTest <test group> <directory> <time>
+ * java -ea -mx512m -Dtestng.directory="/path/" -Dtestng.multiplier="1.0" \
+ *   org.testng.TestNG -sourcedir . testng.xml 
  */
 public class ReaderTest {
 
   // -- Fields --
-
-  /** Root data directory. */
-  public static String root;
 
   /** Whether or not this is the first time calling the data provider. */
   private boolean isFirstTime = true;
@@ -70,7 +66,7 @@ public class ReaderTest {
   public Object[][] createData() {
     if (isFirstTime) {
       toTest = new Vector(); 
-      getFiles(root, toTest);
+      getFiles(System.getProperty("testng.directory"), toTest);
       isFirstTime = false; 
     }
     String[] o = (String[]) toTest.toArray(new String[0]);
@@ -278,6 +274,8 @@ public class ReaderTest {
       reader.setMetadataStore(store);
       reader.setId(file);
 
+      store = (OMEXMLMetadataStore) reader.getMetadataStore();
+
       boolean success = true;
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
@@ -298,8 +296,8 @@ public class ReaderTest {
         boolean failType = !type.equalsIgnoreCase(store.getPixelType(ii)); 
 
         if (success) {
-          success = failX || failY || failZ || failC || failT || failBE ||
-            failType || failDE;
+          success = !(failX || failY || failZ || failC || failT || failBE ||
+            failDE || failType);
         }
         if (!success) break; 
       } 
@@ -322,7 +320,7 @@ public class ReaderTest {
       FileStitcher r = new FileStitcher();
       r.setId(file);
 
-      boolean success = true;;
+      boolean success = true;
       boolean failSeries = r.getSeriesCount() != config.getNumSeries(file);
        
       if (failSeries) {
@@ -334,7 +332,7 @@ public class ReaderTest {
       for (int i=0; i<r.getSeriesCount(); i++) {
         r.setSeries(i);
         config.setSeries(file, i);
-
+      
         boolean failX = config.getWidth(file) != r.getSizeX();
         boolean failY = config.getHeight(file) != r.getSizeY();
         boolean failZ = config.getZ(file) != r.getSizeZ();
@@ -344,13 +342,14 @@ public class ReaderTest {
           !config.getDimOrder(file).equals(r.getDimensionOrder()); 
         boolean failInt = config.isInterleaved(file) != r.isInterleaved(); 
         boolean failRGB = config.isRGB(file) != r.isRGB();
-        boolean failTX = config.getThumbX(file) != r.getThumbSizeX();
-        boolean failTY = config.getThumbY(file) != r.getThumbSizeY();
+        // TODO : uncomment this once the config files have been updated 
+        //boolean failTX = config.getThumbX(file) != r.getThumbSizeX();
+        //boolean failTY = config.getThumbY(file) != r.getThumbSizeY();
         boolean failType = config.getPixelType(file) != r.getPixelType();
         boolean failEndian = config.isLittleEndian(file) != r.isLittleEndian();
       
-        success = failX || failY || failZ || failC || failT || failDim ||
-          failInt || failRGB || failTX || failTY || failType || failEndian;
+        success = !(failX || failY || failZ || failC || failT || failDim ||
+          failInt || failRGB || /*failTX || failTY || */failType || failEndian);
      
         if (!success) {
           writeLog(file + " failed consistent metadata test");
@@ -417,10 +416,12 @@ public class ReaderTest {
   /**
    * @testng.test dataProvider = "provider"
    *              groups = "all" 
-   * @testng.parameters value = "timeMultiplier" 
    */
-  public void testAccessTime(String file, float timeMultiplier) {
+  public void testAccessTime(String file) {
     try {
+      float timeMultiplier = 
+        Float.parseFloat(System.getProperty("testng.multiplier")); 
+      
       FileStitcher reader = new FileStitcher();
       reader.setId(file);
 
@@ -510,13 +511,13 @@ public class ReaderTest {
    *              groups = "all pixels" 
    */
   public void testPixelsHashes(String file) {
+    boolean success = true;
     try { 
       // check the MD5 of the first plane in each series 
  
       FileStitcher reader = new FileStitcher();
       reader.setId(file);
 
-      boolean success = false;
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
         config.setSeries(file, i);
@@ -524,16 +525,17 @@ public class ReaderTest {
         if (!md5.equals(config.getMD5(file))) {
           writeLog(file + " failed pixels consistency (series " + i + ")");
           success = false;
-          break;
+          assert success;
+          return;
         }
       }
-      assert success; 
     }
     catch (Exception exc) {
       writeLog(file + " failed pixels consistency");
       writeLog(exc);
       assert false; 
     }
+    assert success; 
   }
 
   /**
@@ -653,6 +655,7 @@ public class ReaderTest {
   private static void getFiles(String root, Vector files) {
     Location f = new Location(root);
     String[] subs = f.list();
+    if (subs == null) subs = new String[0]; 
     Arrays.sort(subs);
 
     // make sure that if a config file exists, it is first on the list
@@ -707,7 +710,9 @@ public class ReaderTest {
     for (int i=0; i<configFiles.size(); i++) {
       try { 
         String s = (String) configFiles.get(i);
-        if (!config.isParsed(s)) config.addFile(s);
+        if (!config.isParsed(s)) {
+          config.addFile(s);
+        } 
       } 
       catch (IOException exc) {
         LogTools.trace(exc);
@@ -731,41 +736,6 @@ public class ReaderTest {
       }
       catch (IOException exc) { }
     }
-  }
-
-  // -- Main method --
-
-  public static void main(String[] args) {
-    if (args.length < 3) {
-      System.out.println("Usage:\njava loci.formats.test.ReaderTest " +
-        "<all | fast | xml | pixels | config> <data directory> " +
-        "<timing multiplier>");
-    }
-
-    ReaderTest.root = args[1]; 
-
-    XmlSuite suite = new XmlSuite();
-    suite.setName("bftest");
-
-    Hashtable params = new Hashtable();
-    params.put("timeMultiplier", args[2]);
-    suite.setParameters(params);
-
-    XmlTest test = new XmlTest(suite);
-    test.setName("bf-" + args[0]);
-    List classes = new ArrayList();
-    classes.add(new XmlClass("loci.formats.test.ReaderTest"));
-    test.setXmlClasses(classes); 
-    List groups = new ArrayList();
-    groups.add(args[0]);
-    test.setIncludedGroups(groups);
-
-    List suites = new ArrayList();
-    suites.add(suite);
-    TestNG tng = new TestNG();
-    tng.setSourcePath("."); 
-    tng.setXmlSuites(suites);
-    tng.run();
   }
 
 }

@@ -52,7 +52,7 @@ public class ConfigurationFiles {
   public boolean isParsed(String file) { return parsedFiles.contains(file); }
 
   public boolean initialized(String id) {
-    return entries.containsKey(id) && getNumSeries(id) <= currentSeries;
+    return entries.containsKey(id) && currentSeries <= getNumSeries(id);
   }
 
   /**
@@ -164,7 +164,7 @@ public class ConfigurationFiles {
   }
 
   public int getNumSeries(String id) {
-    if (!entries.contains(id)) return 0;
+    if (!entries.containsKey(id)) return 0;
     return ((ConfigEntry) entries.get(id)).numSeries;
   }
 
