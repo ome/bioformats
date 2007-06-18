@@ -37,7 +37,8 @@ import javax.swing.border.EmptyBorder;
 import loci.formats.*;
 
 /**
- * PreviewPane is a ...
+ * PreviewPane is a panel for use as a JFileChooser accessory, displaying
+ * a thumbnail for the selected image, loaded in a separate thread.
  */
 public class PreviewPane extends JPanel
   implements PropertyChangeListener, Runnable
@@ -45,17 +46,27 @@ public class PreviewPane extends JPanel
 
   // -- Fields --
 
-  private IFormatReader reader;
-  private JLabel iconLabel, resLabel, zctLabel, typeLabel;
-  private Thread loader;
-  private boolean loaderAlive;
+  /** Reader for use when loading thumbnails. */
+  protected IFormatReader reader;
+
+  /** Labels containing thumbnail and dimensional information. */
+  protected JLabel iconLabel, resLabel, zctLabel, typeLabel;
+
+  /** Thumbnail loading thread. */
+  protected Thread loader;
+
+  /** Flag indicating whether loader thread should keep running. */
+  protected boolean loaderAlive;
+
+  /** Current ID to load. */
+  protected String loadId;
+
+  /** Last ID loaded. */
+  protected String lastId;
 
   // -- Constructors --
 
-  public PreviewPane() {
-    this(null);
-  }
-
+  /** Constructs a preview pane for the given file chooser. */
   public PreviewPane(JFileChooser jc) {
     super();
     setBorder(new EmptyBorder(0, 10, 0, 0));
@@ -81,11 +92,17 @@ public class PreviewPane extends JPanel
     if (jc != null) {
       jc.setAccessory(this);
       jc.addPropertyChangeListener(this);
+
+      // start separate loader thread
+      loaderAlive = true;
+      loader = new Thread(this);
+      loader.start();
     }
   }
 
   // -- Componenet API methods --
 
+  /* @see java.awt.Component.getPreferredSize() */
   public Dimension getPreferredSize() {
     Dimension prefSize = super.getPreferredSize();
     return new Dimension(128, prefSize.height);
@@ -93,19 +110,15 @@ public class PreviewPane extends JPanel
 
   // -- PropertyChangeListener API methods --
 
+  /**
+   * Property change event, to listen for when a new
+   * file is selected, or the file chooser closes.
+   */
   public void propertyChange(PropertyChangeEvent e) {
     String prop = e.getPropertyName();
-    if (prop.equals("AccessibleDescription")) {
-      // start separate loader thread
-      loaderAlive = true;
-      loader = new Thread(this);
-      loader.start();
-    }
-    else if (prop.equals("JFileChooserDialogIsClosingProperty")) {
-      // stop separate loader thread
+    if (prop.equals("JFileChooserDialogIsClosingProperty")) {
+      // notify loader thread that it should stop
       loaderAlive = false;
-      try { loader.join(); }
-      catch (InterruptedException exc) { LogTools.trace(exc); }
     }
 
     if (!prop.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) return;
@@ -118,8 +131,7 @@ public class PreviewPane extends JPanel
 
   // -- Runnable API methods --
 
-  protected String loadId, lastId;
-
+  /** Thumbnail loading routine. */
   public void run() {
     while (loaderAlive) {
       try { Thread.sleep(100); }
@@ -152,7 +164,7 @@ public class PreviewPane extends JPanel
       if (id != loadId) continue;
 
       iconLabel.setIcon(id == null ? null :
-        new ImageIcon(makeImage(reader, "Loading...")));
+        new ImageIcon(makeImage("Loading...")));
       resLabel.setText(reader.getSizeX() + " x " + reader.getSizeY());
       zctLabel.setText(reader.getSizeZ() + "Z x " +
         reader.getSizeT() + "T x " + reader.getSizeC() + "C");
@@ -168,12 +180,19 @@ public class PreviewPane extends JPanel
       catch (FormatException exc) { LogTools.trace(exc); }
       catch (IOException exc) { LogTools.trace(exc); }
       iconLabel.setIcon(new ImageIcon(thumb == null ?
-        makeImage(reader, "Failed") : thumb));
+        makeImage("Failed") : thumb));
       repaint();
     }
   }
 
-  public BufferedImage makeImage(IFormatReader reader, String message) {
+  // -- Helper methods --
+
+  /**
+   * Creates a blank image with the given message painted on top (e.g.,
+   * a loading or error message), matching the size of the active reader's
+   * thumbnails.
+   */
+  private BufferedImage makeImage(String message) {
     int w = reader.getThumbSizeX(), h = reader.getThumbSizeY();
     if (w < 128) w = 128;
     if (h < 32) h = 32;
