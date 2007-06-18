@@ -23,10 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-//import com.jgoodies.looks.LookUtils;
+import com.jgoodies.plaf.LookUtils;
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 
 /** Launches an external spreadsheet application. */
 public class SpreadsheetLauncher {
@@ -43,11 +42,6 @@ public class SpreadsheetLauncher {
   /** Default path to spreadsheet (Excel) on Macintosh computers. */
   protected static final String MAC_PATH =
     "/Applications/Microsoft Office 2004/Microsoft Excel";
-
-  /** The name of the OS. */
-  // copied from LookUtils
-  // TODO can use LookUtils methods as soon as we update jgoodies.looks jar file
-  protected static final String OS_NAME = System.getProperty("os.name");
 
   // --  Fields --
 
@@ -115,23 +109,17 @@ public class SpreadsheetLauncher {
 
   /** Whether the OS is windows. */
   protected static boolean isWindows() {
-    // return LookUtils.IS_OS_WINDOWS_MODERN;
-    // copied from LookUtils:
-    return OS_NAME.startsWith("Windows");
+    return LookUtils.IS_OS_WINDOWS_MODERN;
   }
 
   /** Whether the OS is mac. */
   protected static boolean isMac() {
-    // return LookUtils.IS_OS_MAC;
-    // Copied from LookUtils
-    return OS_NAME.startsWith("Mac");
+    return LookUtils.IS_OS_MAC;
   }
 
   /** Whether OS is Linux. */
   protected static boolean isLinux() {
-    // return LookUtils.IS_OS_LINUX;
-    return OS_NAME.toUpperCase(Locale.ENGLISH).startsWith("LINUX");
-    // copied from LookUtils
+    return LookUtils.IS_OS_LINUX;
   }
 
   /** Makes an error message from the given command. */

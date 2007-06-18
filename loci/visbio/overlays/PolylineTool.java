@@ -50,7 +50,8 @@ public class PolylineTool extends OverlayTool {
 
   /** Maximum distance (in pixels) mouse can be from a node to be considered
    *  pointing to it. */
-  protected static final double THRESH = 7.0;
+  protected static final double THRESH =
+    OverlayNumericStrategy.getPolylineThreshold();
 
   /** Color for highlighting head or tail node of polyline when 'connecting'
    *  free end to fixed end */
@@ -383,13 +384,14 @@ public class PolylineTool extends OverlayTool {
 
   /** Adjusts last node and curve length */
   private void adjustLastNode (OverlayPolyline line, float dx, float dy) {
-    double lastSegLength = getLastSegmentLength();
+    double lastSegLength = line.getLastSegmentLength();
     line.setLastNode(dx, dy);
-    double newLastSegLength = getLastSegmentLength();
+    double newLastSegLength = line.getLastSegmentLength();
     double delta = newLastSegLength - lastSegLength;
     line.setCurveLength(line.getCurveLength() + delta);
   }
 
+  // TODO -- combine this method with the similar one for freeforms;
   /** Splits an overlay polyline in two */
   private void split (OverlayPolyline line, int selectedNode) {
     float[][] nodes = line.getNodes();
@@ -427,27 +429,6 @@ public class PolylineTool extends OverlayTool {
     }
   }
 
-  /** Prints current mode and mouse event type: helpful for debugging */
-  private void printMode(String method) {
-    String m;
-    switch (mode) {
-      case ERASE          : m = "erase"; break;
-      case WAIT           : m = "wait"; break;
-      case EXTEND         : m = "extend"; break;
-      case ADJUST         : m = "adjust"; break;
-      case SELECT         : m = "select"; break;
-      case PLACE          : m = "place"; break;
-      case ADJUST_TAIL    : m = "adjust tail"; break;
-      case CLOSE_LOOP     : m = "close loop"; break;
-      case SELECTED_TAIL  : m = "selected tail"; break;
-      case EXTEND_ON_TAIL : m = "extend on tail"; break;
-      case BEG_EXTEND     : m = "begin extend"; break;
-      default             : m = "unknown mode"; break;
-    }
-
-    System.out.println(method + "\t" + m);
-  }
-
   /** Gets distance to the node specified, handling awkward casts. */
   private double getDistanceToNode(int ndx, int px, int py,
     DisplayImpl display) {
@@ -458,15 +439,6 @@ public class PolylineTool extends OverlayTool {
     double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
     double dist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
     return dist;
-  }
-
-  /** Determines length of last line segment. */
-  private double getLastSegmentLength() {
-    float[][] lastSeg = {line.getNodeCoords(line.getNumNodes() -1),
-      line.getNodeCoords(line.getNumNodes() - 2)};
-    double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
-      {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
-    return MathUtil.getDistance(lastSegD[0], lastSegD[1]);
   }
 
   /** Ends drawing of the current line */
@@ -537,6 +509,8 @@ public class PolylineTool extends OverlayTool {
     else return new int[]{nearestPline, nearestNode};
   }
 
+  // -- Helper methods for debugging --
+
   /** Prints node array of current freeform; for debugging */
   private void printNodes(float[][] nodes) {
     System.out.println("Printing nodes...");
@@ -561,5 +535,26 @@ public class PolylineTool extends OverlayTool {
       String out = header + methodName + ": " + message;
       System.out.println(out);
     }
+  }
+
+  /** Prints current mode and mouse event type: helpful for debugging */
+  private void printMode(String method) {
+    String m;
+    switch (mode) {
+      case ERASE          : m = "erase"; break;
+      case WAIT           : m = "wait"; break;
+      case EXTEND         : m = "extend"; break;
+      case ADJUST         : m = "adjust"; break;
+      case SELECT         : m = "select"; break;
+      case PLACE          : m = "place"; break;
+      case ADJUST_TAIL    : m = "adjust tail"; break;
+      case CLOSE_LOOP     : m = "close loop"; break;
+      case SELECTED_TAIL  : m = "selected tail"; break;
+      case EXTEND_ON_TAIL : m = "extend on tail"; break;
+      case BEG_EXTEND     : m = "begin extend"; break;
+      default             : m = "unknown mode"; break;
+    }
+
+    System.out.println(method + "\t" + m);
   }
 } // end class PolylineTool

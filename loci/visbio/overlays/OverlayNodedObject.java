@@ -397,6 +397,15 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Gets length of curve */
   public double getCurveLength() { return curveLength; }
 
+  /** Determines length of last line segment in this curve. */
+  public double getLastSegmentLength() {
+    float[][] lastSeg = {getNodeCoords(getNumNodes()-1),
+      getNodeCoords(getNumNodes() - 2)};
+    double[][] lastSegD = {{(double) lastSeg[0][0], (double) lastSeg[0][1]},
+      {(double) lastSeg[1][0], (double) lastSeg[1][1]}};
+    return MathUtil.getDistance(lastSegD[0], lastSegD[1]);
+  }
+
   /** Sets length of curve */
   public void setCurveLength(double len) { curveLength = len; }
 
@@ -416,10 +425,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
   // note: call updateBoundingBox() after a series of changes to the node array
 
   /** Sets coordinates of an existing node */
-  public void setNodeCoords(int nodeIndex, float newX, float newY) {
-    if (nodeIndex >= 0 && nodeIndex < numNodes) {
-      nodes[0][nodeIndex] = newX;
-      nodes[1][nodeIndex] = newY;
+  public void setNodeCoords(int ndx, float newX, float newY) {
+    if (ndx >= 0 && ndx < numNodes) {
+      nodes[0][ndx] = newX;
+      nodes[1][ndx] = newY;
     }
     else {
       //TEMP:

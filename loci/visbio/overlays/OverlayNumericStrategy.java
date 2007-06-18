@@ -54,6 +54,10 @@ public class OverlayNumericStrategy {
   /** Smoothing factor for "single exponential smoothing" */
   protected static final float SMOOTHING_FACTOR = 0.35f;
 
+  /** Maximum distance (in pixels) mouse can be from a node to be considered
+   *  pointing to it. */
+  protected static final float POLYLINE_THRESH = 7.0f;
+
   // -- Constructor --
   
   /** Private constructor--ensure this object is not instantiated. */
@@ -78,4 +82,7 @@ public class OverlayNumericStrategy {
 
   /** Returns the single exponential smoothing factor. */
   public static double getSmoothingFactor() { return SMOOTHING_FACTOR; }
+  
+  /** Returns the polyline threshold. */
+  public static double getPolylineThreshold() { return POLYLINE_THRESH; }
 }
