@@ -260,6 +260,10 @@ public class ND2Reader extends FormatReader {
           if (s.startsWith("ImageDataSeq")) {
             // found pixel data
             int ndx = Integer.parseInt(s.substring(13, s.indexOf("!")));
+            if (core.sizeC[0] == 0) {
+              core.sizeC[0] = len / (core.sizeX[0] * core.sizeY[0] *
+                FormatTools.getBytesPerPixel(core.pixelType[0]));
+            }
             offsets[ndx] = in.getFilePointer() - len + s.indexOf("!") + 9; 
           }
           else if (s.startsWith("Image")) {
