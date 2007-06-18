@@ -1887,8 +1887,15 @@ public final class ImageTools {
       }
     }
 
-    BufferedImage result = makeBuffered(scaleAWT(source, width, height,
-      Image.SCALE_AREA_AVERAGING), source.getColorModel());
+    BufferedImage result = null;
+    try { 
+      result = makeBuffered(scaleAWT(source, width, height,
+        Image.SCALE_AREA_AVERAGING), source.getColorModel());
+    }
+    catch (Exception e) {
+      result = makeBuffered(scaleAWT(source, width, height, 
+        Image.SCALE_AREA_AVERAGING));
+    } 
     return padImage(result, finalWidth, finalHeight);
   }
 
