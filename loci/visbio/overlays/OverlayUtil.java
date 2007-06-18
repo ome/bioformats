@@ -1063,6 +1063,32 @@ public final class OverlayUtil {
     return trueSets;
   }
 
+  // -- Math Methods --
+
+  /** Calculates smoothed coordinates using "single exponential smoothing"
+   *  as described in Littlewood and Inman, _Computer-assisted DNA length
+   *  measurements..._. Nucleic Acids Research, V 10 No. 5. (1982) p. 1694
+   */
+  public static float[] smooth(float[] un, float[] cn1, float S) {
+    float[] cn = new float[2];
+    for (int i=0; i<2; i++) {
+      cn[i] = S * un[i] + (1 - S) * cn1[i];
+    }
+    return cn;
+  }
+
+  /** Casts an array of floats to doubles. */
+  public static double[][] floatsToPixelDoubles(DisplayImpl d, float[][] nodes) {
+    double[][] nodesDbl = new double[nodes.length][nodes[0].length];
+    for (int j=0; j<nodes[0].length; j++) {
+      int[] c = CursorUtil.domainToPixel(d, new double[]{
+        (double) nodes[0][j], (double) nodes[1][j]});
+      nodesDbl[0][j] = (double) c[0];
+      nodesDbl[1][j] = (double) c[1];
+    }
+    return nodesDbl;
+  }
+
   /** Prints a VisAD style group of points. */
   public static void print(float[][] points) {
     for (int i=0; i<points[0].length; i++) {

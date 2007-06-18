@@ -248,6 +248,21 @@ public final class MathUtil {
     return retvals;
   }
 
+  /**
+   * Computes a point along the line segment a[]-b[] based on the parameter
+   * weight.
+   */
+  public static float[] computePtOnSegment(float[] a, float[] b, float weight) {
+    if (a.length != b.length) return null;
+    int len = a.length;
+    float[] p = new float[len];
+    for (int i=0; i<len; i++) {
+      float d = b[i] - a[i];
+      p[i] = a[i] + d * weight;
+    }
+    return p;
+  }
+
   /** Rounds the value to nearest value along the given progression. */
   public static int getNearest(double val, int min, int max, int step) {
     int lo = (int) ((val - min) / step);
