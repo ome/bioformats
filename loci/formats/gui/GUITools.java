@@ -44,6 +44,7 @@ public final class GUITools {
 
   // -- File chooser --
 
+  /** Constructs a list of file filters for the given file format handler. */
   public static FileFilter[] buildFileFilters(IFormatHandler handler) {
     FileFilter[] ff = null;
 
@@ -101,8 +102,20 @@ public final class GUITools {
     return ff;
   }
 
+  /** Constructs a file chooser for the given file format handler. */
   public static JFileChooser buildFileChooser(IFormatHandler handler) {
-    return buildFileChooser(buildFileFilters(handler));
+    return buildFileChooser(handler, true);
+  }
+
+  /**
+   * Constructs a file chooser for the given file format handler.
+   * If preview flag is set, chooser has an preview pane showing
+   * a thumbnail and other information for the selected file.
+   */
+  public static JFileChooser buildFileChooser(IFormatHandler handler,
+    boolean preview)
+  {
+    return buildFileChooser(buildFileFilters(handler), preview);
   }
 
   /**
@@ -110,6 +123,18 @@ public final class GUITools {
    * as well as an "All supported file types" combo filter.
    */
   public static JFileChooser buildFileChooser(final FileFilter[] filters) {
+    return buildFileChooser(filters, true);
+  }
+
+  /**
+   * Builds a file chooser with the given file filters,
+   * as well as an "All supported file types" combo filter.
+   * If preview flag is set, chooser has an preview pane showing
+   * a thumbnail and other information for the selected file.
+   */
+  public static JFileChooser buildFileChooser(final FileFilter[] filters,
+    final boolean preview)
+  {
     // NB: must construct JFileChooser in the
     // AWT worker thread, to avoid deadlocks
     final JFileChooser[] jfc = new JFileChooser[1];
@@ -124,6 +149,7 @@ public final class GUITools {
         }
         for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
         if (combo != null) fc.setFileFilter(combo);
+        if (preview) new PreviewPane(fc);
         jfc[0] = fc;
       }
     };
