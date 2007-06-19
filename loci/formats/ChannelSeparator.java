@@ -51,6 +51,28 @@ public class ChannelSeparator extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+
+    // clear last image cache
+    lastImage = null;
+    lastImageIndex = -1;
+    lastImageSeries = -1;
+  }
+
+  /* @see IFormatReader#setId(id, force) */
+  public void setId(String id, boolean force)
+    throws FormatException, IOException
+  {
+    super.setId(id, force);
+
+    // clear last image cache
+    lastImage = null;
+    lastImageIndex = -1;
+    lastImageSeries = -1;
+  }
+
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
