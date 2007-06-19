@@ -26,10 +26,11 @@
 	<!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2002-2007 Open Microscopy Environment
+# Copyright (C) 2003-2007 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
-#       University of Dundee
+#       University of Dundee,
+#       University of Wisconsin at Madison
 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
@@ -136,7 +137,10 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Bin:BinData" maxOccurs="unbounded"/>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element ref="Bin:BinData"/>
+					<xsd:element ref="TiffData"/>
+				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PixelsID"/>
@@ -225,7 +229,57 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-		
+				
+	<xsd:element name="TiffData">
+		<xsd:annotation>
+			<xsd:documentation>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="IFD" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
+						Default is 0 (the first IFD).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstZ" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
+						Default is 0 (the first Z position).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstT" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the T position of the image plane at the specified IFD. Indexed from 0.
+						Default is 0 (the first T position).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstC" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
+						Default is 0 (the first C position).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="NumPlanes" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
+						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
+						file, unless an IFD is specified, in which case the default is 1.	
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:element name="Plane">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -413,7 +467,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
 			<xsd:attribute name="Name" type="xsd:string"/>
 			<xsd:attribute name="SamplesPerPixel" type="xsd:integer"/>
-			<xsd:attribute name="SecondaryEmmisionFilter" type="EmFilterID"/>
+			<xsd:attribute name="SecondaryEmissionFilter" type="EmFilterID"/>
 			<xsd:attribute name="SecondaryExcitationFilter" type="ExFilterID"/>
 			<xsd:attribute name="IlluminationType">
 				<xsd:annotation><xsd:documentation>
@@ -498,9 +552,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				RedChannel, GreenChannel, BlueChannel, and GreyChannel specify the scaling of pixel values to 8-bit colorspace values.
 				Display indicates to display the image as Greyscale or RGB.
 				The Projection element specifies that the display is a maximum intensity projection.
-				The range of Z-sections for the projection is specified with the Zstart and Zstop attributes.
+				The range of Z-sections for the projection is specified with the ZStart and ZStop attributes.
 				The Time element restricts the range of timepoints displayed.
-				The range of timepoints to display is specified by the Tstart and Tstop attributes.
+				The range of timepoints to display is specified by the TStart and TStop attributes.
 				The MIME type of the desired video format is specified by Movie's MIMEtype attribute.
 				The ROI element describes a 3-D region of interest.  It is up to the viewer to either display the ROI only,
 				or to simply mark it somehow.
@@ -587,13 +641,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The presence of this element indicates the user wants to view the Image as a maximum intensity projection.
-				The Zstart and Zstop attributes are optional.  If they are not specified, then the entire Z stack will be pro
+				The ZStart and ZStop attributes are optional.  If they are not specified, then the entire Z stack will be pro
  				z values are index from 0 to maxZ - 1
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="Zstart" type="xsd:integer"/>
-			<xsd:attribute name="Zstop" type="xsd:integer"/>
+			<xsd:attribute name="ZStart" type="xsd:integer"/>
+			<xsd:attribute name="ZStop" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Time">
@@ -607,8 +661,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="Tstart" type="xsd:integer"/>
-			<xsd:attribute name="Tstop" type="xsd:integer"/>
+			<xsd:attribute name="TStart" type="xsd:integer"/>
+			<xsd:attribute name="TStop" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Instrument">
@@ -1403,7 +1457,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>
 				The optical transfer function.  Filter ID refers to the set of filters used in computing the OTF.
 				BitsPerPixel is an integer '1', '8', '16'.
-				The OpticalAxisAvg is a boolean specifying wether or not optical axis averaging was done.
+				The OpticalAxisAveraged is a boolean specifying whether or not optical axis averaging was done.
 				SizeX, SizeY specify the width and height of the OTF.
 				This element must contain a BinData element containing the Base64-encoded OTF.
 				Both of these work the same way as they do for the Data element within Image.
@@ -1417,7 +1471,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
 			<xsd:attribute name="PixelType" use="required" type="PixelTypes"/>
-			<xsd:attribute name="OpticalAxisAvrg" use="required" type="xsd:boolean"/>
+			<xsd:attribute name="OpticalAxisAveraged" use="required" type="xsd:boolean"/>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger"/>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger"/>
 		</xsd:complexType>
@@ -1429,7 +1483,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				Images can belong to more than one Dataset, and a Dataset may contain more than one Image.
 				Images contain one or more DatasetRef elements to specify what datasets they belong to.
 				Once a Dataset has been processed in any way, its collection of images cannot be altered.
-				Wether or not the list of Images in this dataset can be altered is specified by the Locked attribute.
+				Whether or not the list of Images in this dataset can be altered is specified by the Locked attribute.
 				The ExperimenterRef and GroupRef elements specify the person and group this Dataset belongs to.
 				Projects may contain one or more Datasets, and Datasets may belong to one or more Projects.
 				This relationship is specified by listing ProjectRef elements within the Dataset element.
@@ -1527,12 +1581,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>
 				Laser types are specified using two attributes - the Type and the lasing medium (Medium).  Type is a string which may be set to:
 				'Excimer','Gas','Metal Vapor','Solid State','Dye','Semiconductor', or 'Free Electron'.  The Medium attribute specifies the actual lasing medium
-				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), wether or not the laser is FrequencyDoubled or Tunable may be specified.
+				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), whether or not the laser is FrequencyDoubled or Tuneable may be specified.
 				The Pulse attribute can be set to 'CW' (Continuous Wave),','Single','Q-Switched','Repetitive','Mode-Locked'.
 				The Power attribute specifies the nominal laser power in watts.
 				The Laser element may contain a Pump sub-element which refers to a LightSource used as a laser pump.
 				Removed Power - ajp
-				Added RepetitationRate - The is the rate in Hz at which the laser pulses. ajp
+				Added RepetitionRate - The is the rate in Hz at which the laser pulses. ajp
 				Added PockelCell attribute - ajp
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1556,7 +1610,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="LaserMedium" use="required" type="LaserMedia"/>
 			<xsd:attribute name="Wavelength" type="xsd:positiveInteger"/>
 			<xsd:attribute name="FrequencyMultiplication" type="xsd:positiveInteger"/>
-			<xsd:attribute name="Tunable" type="xsd:boolean"/>
+			<xsd:attribute name="Tuneable" type="xsd:boolean"/>
 			<xsd:attribute name="Pulse">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1569,7 +1623,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="PockelCell" type="xsd:boolean"/>
-			<xsd:attribute name="RepetitationRate" type="xsd:boolean">
+			<xsd:attribute name="RepetitionRate" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>The is the rate in Hz at which the laser pulses if the Pulse type is 'Repetitive'
 					</xsd:documentation>

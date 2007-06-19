@@ -2,11 +2,11 @@
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2007 Open Microscopy Environment
+    # Copyright (C) 2003-2007 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
-    #       University of Dundee
-    #
+    #       University of Dundee,
+    #       University of Wisconsin at Madison
     #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
@@ -15,7 +15,6 @@
     # Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-
 <xsd:schema xmlns="http://www.openmicroscopy.org/XMLschemas/SPW/2007-06" 
     targetNamespace="http://www.openmicroscopy.org/XMLschemas/SPW/2007-06" 
     xmlns:OME="http://www.openmicroscopy.org/XMLschemas/OME/2007-06" 
