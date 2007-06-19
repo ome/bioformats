@@ -84,6 +84,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   // -- Fields --
 
+  /** Synchronization object for nodes array */
+  protected Object nodesSync = new Object();
+
   /** Node array and associated tracking variables */
   protected float[][] nodes;
 
@@ -122,11 +125,13 @@ public abstract class OverlayNodedObject extends OverlayObject {
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
-    maxNodes = 100;
-    nodes = new float[2][maxNodes];
-    Arrays.fill(nodes[0], x1);
-    Arrays.fill(nodes[1], y1);
-    numNodes = 1;
+    synchronized (nodesSync) {
+      maxNodes = 100;
+      nodes = new float[2][maxNodes];
+      Arrays.fill(nodes[0], x1);
+      Arrays.fill(nodes[1], y1);
+      numNodes = 1;
+    }
     computeLength();
     turnOffHighlighting();
   }
@@ -135,9 +140,11 @@ public abstract class OverlayNodedObject extends OverlayObject {
   public OverlayNodedObject(OverlayTransform overlay, float[][] nodes) {
     super(overlay);
     x1=x2=y1=y2=0f;
-    this.nodes = nodes;
-    numNodes = nodes[0].length;
-    maxNodes = nodes[0].length;
+    synchronized (nodesSync) {
+      this.nodes = nodes;
+      numNodes = nodes[0].length;
+      maxNodes = nodes[0].length;
+    }
     updateBoundingBox();
     computeLength();
     turnOffHighlighting();
@@ -151,10 +158,12 @@ public abstract class OverlayNodedObject extends OverlayObject {
   // -- OverlayObject API methods --
 
   /** Returns whether this object is drawable, i.e., is of nonzero
-  *  size, area, length, etc.  */
+   *  size, area, length, etc.  */
   public boolean hasData() {
-    if (isDrawing()) return (numNodes > 0);
-    else return (numNodes > 1);
+    synchronized (nodesSync) {
+      if (isDrawing()) return (numNodes > 0);
+      else return (numNodes > 1);
+    }
     // NOTE: Not exactly consistent with the other overlay objects.
     // You want to see 1-node objects while drawing, but
     // want to delete them if after drawing is done.
@@ -172,8 +181,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // ******************************************************************
     SampledSet fieldSet = null;
     try {
-      fieldSet = new Gridded2DSet(domain,
-        nodes, maxNodes, null, null, null, false);
+      synchronized (nodesSync) {
+        fieldSet = new Gridded2DSet(domain,
+          nodes, maxNodes, null, null, null, false);
+      }
 
       // I've written !isDrawing() to prevent a manifold dimension mismatch
       // that occurs when drawing filled polylines
@@ -214,7 +225,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
       try {
         System.out.println("fieldSet.getLength = " + fieldSet.getLength());
       }
-      catch (VisADException exc2) {exc2.printStackTrace();}
+      catch (VisADException exc2) { exc2.printStackTrace(); }
     }
     catch (RemoteException exc) { exc.printStackTrace(); }
 
@@ -223,8 +234,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Compute the shortest distance from this object to the given point. */
   public double getDistance (double x, double y) {
-     double[] distSegWt = MathUtil.getDistSegWt(nodes, (float) x, (float) y);
-     return distSegWt[0];
+    synchronized (nodesSync) {
+      double[] distSegWt = MathUtil.getDistSegWt(nodes, (float) x, (float) y);
+      return distSegWt[0];
+    }
   }
 
   /** Gets the nearest node to the given point. */
@@ -232,12 +245,16 @@ public abstract class OverlayNodedObject extends OverlayObject {
     int minIndex = -1;
     double minDist = Double.POSITIVE_INFINITY;
     float[] p = new float[]{x, y};
-    for (int i=0; i<numNodes; i++) {
-      float[] c = {nodes[0][i], nodes[1][i]}; 
-      double dist = MathUtil.getDistance(c, p); 
-      if (dist < minDist) {
-        minIndex = i;
-        minDist = dist;
+
+    // check distance to all nodes
+    synchronized (nodesSync) {
+      for (int i=0; i<numNodes; i++) {
+        float[] c = {nodes[0][i], nodes[1][i]}; 
+        double dist = MathUtil.getDistance(c, p); 
+        if (dist < minDist) {
+          minIndex = i;
+          minDist = dist;
+        }
       }
     }
 
@@ -318,38 +335,43 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Returns coordinates of node at given index in the node array */
   public float[] getNodeCoords (int index) {
     float[] retvals = new float[2];
-    if (index < numNodes && index >= 0) {
-      retvals[0] = nodes[0][index];
-      retvals[1] = nodes[1][index];
-    } else {
-      retvals[0] = -1f;
-      retvals[1] = -1f;
+    synchronized(nodesSync) {
+      if (index < numNodes && index >= 0) {
+        retvals[0] = nodes[0][index];
+        retvals[1] = nodes[1][index];
+      } else {
+        retvals[0] = -1f;
+        retvals[1] = -1f;
+      }
     }
     return retvals;
   }
 
   /** Returns the node array */
   public float[][] getNodes() {
-    float[][] copy = new float[2][numNodes];
-    for (int i=0; i<2; i++)
-      System.arraycopy(nodes[i], 0, copy[i], 0, numNodes);
-    return copy;
+    synchronized(nodesSync) {
+      float[][] copy = new float[2][numNodes];
+      for (int i=0; i<2; i++) {
+        System.arraycopy(nodes[i], 0, copy[i], 0, numNodes);
+      }
+      return copy;
+    }
   }
 
   /** Returns the number of real nodes in the array */
-  public int getNumNodes() { return numNodes; }
+  public int getNumNodes() { synchronized(nodesSync) { return numNodes; } }
 
   /** Returns total number of nodes in array */
-  public int getMaxNodes() { return maxNodes; }
+  public int getMaxNodes() { synchronized(nodesSync) { return maxNodes; } }
 
   /** Gets most recent x-coordinate in node array. */
   public float getLastNodeX() {
-    return nodes[0][numNodes-1];
+    synchronized (nodesSync) { return nodes[0][numNodes-1]; }
   }
 
   /** Gets most recent y-coordinate in node array. */
   public float getLastNodeY() {
-    return nodes[1][numNodes-1];
+    synchronized(nodesSync) { return nodes[1][numNodes-1]; }
   }
 
   /** Changes coordinates of the overlay's first endpoint. */
@@ -357,9 +379,11 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // different from super:
     float dx = x1-this.x1;
     float dy = y1-this.y1;
-    for (int i=0; i<numNodes; i++) {
-      nodes[0][i] = nodes[0][i]+dx;
-      nodes[1][i] = nodes[1][i]+dy;
+    synchronized (nodesSync) {
+      for (int i=0; i<numNodes; i++) {
+        nodes[0][i] = nodes[0][i]+dx;
+        nodes[1][i] = nodes[1][i]+dy;
+      }
     }
 
     // same as super
@@ -369,9 +393,11 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Sets the node array to that provided--for loading from saved */
   public void setNodes(float[][] nodes) {
-    this.nodes = nodes;
-    numNodes = nodes[0].length;
-    maxNodes = numNodes;
+    synchronized (nodesSync) {
+      this.nodes = nodes;
+      numNodes = nodes[0].length;
+      maxNodes = numNodes;
+    }
     computeLength();
     updateBoundingBox();
   }
@@ -380,13 +406,15 @@ public abstract class OverlayNodedObject extends OverlayObject {
   public void updateBoundingBox() {
     if (numNodes == 0) return;
     float xmin, xmax, ymin, ymax;
-    xmin = xmax = nodes[0][0];
-    ymin = ymax = nodes[1][0];
-    for (int i=1; i < numNodes; i++) {
-      if (nodes[0][i] < xmin) xmin = nodes[0][i];
-      if (nodes[0][i] > xmax) xmax = nodes[0][i];
-      if (nodes[1][i] < ymin) ymin = nodes[1][i];
-      if (nodes[1][i] > ymax) ymax = nodes[1][i];
+    synchronized (nodesSync) {
+      xmin = xmax = nodes[0][0];
+      ymin = ymax = nodes[1][0];
+      for (int i=1; i < numNodes; i++) {
+        if (nodes[0][i] < xmin) xmin = nodes[0][i];
+        if (nodes[0][i] > xmax) xmax = nodes[0][i];
+        if (nodes[1][i] < ymin) ymin = nodes[1][i];
+        if (nodes[1][i] > ymax) ymax = nodes[1][i];
+      }
     }
     this.x1 = xmin;
     this.y1 = ymin;
@@ -411,12 +439,19 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Computes length of curve */
   public void computeLength() {
-    if (maxNodes != numNodes) truncateNodeArray();
+    boolean notFull = false;
+    synchronized (nodesSync) {
+      if (maxNodes != numNodes) notFull = true;
+    }
+    if (notFull) truncateNodeArray();
+
     double length = 0;
-    for (int i=0; i<numNodes-1; i++) {
-      double[] a = {(double) nodes[0][i], (double)nodes[1][i]};
-      double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
-      length += MathUtil.getDistance(a, b);
+    synchronized (nodesSync) {
+      for (int i=0; i<numNodes-1; i++) {
+        double[] a = {(double) nodes[0][i], (double)nodes[1][i]};
+        double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
+        length += MathUtil.getDistance(a, b);
+      }
     }
     this.curveLength = length;
   }
@@ -426,22 +461,20 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Sets coordinates of an existing node */
   public void setNodeCoords(int ndx, float newX, float newY) {
-    if (ndx >= 0 && ndx < numNodes) {
+    synchronized (nodesSync) {
       nodes[0][ndx] = newX;
       nodes[1][ndx] = newY;
-    }
-    else {
-      //TEMP:
-      //System.out.println("Out of bounds error. Can't reset node coordinates");
     }
   }
 
   /** Sets coordinates of last node. */
   public void setLastNode(float x, float y) {
     setNodeCoords(numNodes-1, x, y);
-    if (numNodes < maxNodes) {
-      Arrays.fill(nodes[0], numNodes, maxNodes, x);
-      Arrays.fill(nodes[1], numNodes, maxNodes, y);
+    synchronized (nodesSync) {
+      if (numNodes < maxNodes) {
+        Arrays.fill(nodes[0], numNodes, maxNodes, x);
+        Arrays.fill(nodes[1], numNodes, maxNodes, y);
+      }
     }
   }
 
@@ -452,13 +485,15 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   /** Sets next node coordinates. */
   public void setNextNode(float x, float y) {
-    if (numNodes >= maxNodes) {
-      maxNodes *= 2;
-      nodes = resizeNodeArray(nodes, maxNodes);
+    synchronized (nodesSync) {
+      if (numNodes >= maxNodes) {
+        maxNodes *= 2;
+        resizeNodeArray(maxNodes);
+      }
+      Arrays.fill(nodes[0], numNodes, maxNodes, x);
+      Arrays.fill(nodes[1], numNodes++, maxNodes, y);
+      // i.e., set all remaining nodes (as per maxNodes) to next node coords
     }
-    Arrays.fill(nodes[0], numNodes, maxNodes, x);
-    Arrays.fill(nodes[1], numNodes++, maxNodes, y);
-    // i.e., set all remaining nodes (as per maxNodes) to next node coords
   }
 
   /** Sets next node coordinates. */
@@ -471,25 +506,27 @@ public abstract class OverlayNodedObject extends OverlayObject {
    * before the node at the index provided.
    */
   public void insertNode(int index, float x, float y) {
-    if (index >= 0 && index < numNodes) {
-      // if array is full, make some more room.
-      if (numNodes >= maxNodes) { // numNodes should never exceed maxNodes but..
-        maxNodes *= 2;
-        nodes = resizeNodeArray(nodes, maxNodes);
-      }
-      for (int j = 0; j < 2; j++) {
-        for (int i = numNodes; i > index; i--) {
-          // right shift every node right of index by 1
-          nodes[j][i] = nodes[j][i-1];
+    synchronized (nodesSync) {
+      if (index >= 0 && index < numNodes) {
+        // if array is full, make some more room.
+        if (numNodes >= maxNodes) { // numNodes should never exceed maxNodes but..
+          maxNodes *= 2;
+          resizeNodeArray(maxNodes);
         }
+        for (int j = 0; j < 2; j++) {
+          for (int i = numNodes; i > index; i--) {
+            // right shift every node right of index by 1
+            nodes[j][i] = nodes[j][i-1];
+          }
+        }
+        nodes[0][index] = x;
+        nodes[1][index] = y;
+        numNodes++;
       }
-      nodes[0][index] = x;
-      nodes[1][index] = y;
-      numNodes++;
-    }
-    else {
-      //System.out.println("index not in range (0, numNodes). " +
-      //  "No node inserted");
+      else {
+        //System.out.println("index not in range (0, numNodes). " +
+        //  "No node inserted");
+      }
     }
   }
 
@@ -498,35 +535,39 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // assumes i1 < i2, both in bounds (less than numNodes)
     // checks whether i1 + 1 < i2, i.e., is there a non-zero
     // number of nodes to delete
-    if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) {
-      int victims = i2 - i1 - 1;
-      float[][] newNodes = new float[2][maxNodes - victims];
-      System.arraycopy(nodes[0], 0, newNodes[0], 0, i1 + 1);
-      System.arraycopy(nodes[1], 0, newNodes[1], 0, i1 + 1);
-      System.arraycopy(nodes[0], i2, newNodes[0], i1+1, maxNodes - i2);
-      System.arraycopy(nodes[1], i2, newNodes[1], i1+1, maxNodes - i2);
-      numNodes -= victims;
-      maxNodes -= victims;
-      nodes = newNodes;
-    } else {
-      //System.out.println("deleteBetween(int, int) out of bounds error");
+    synchronized(nodesSync) {
+      if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) {
+        int victims = i2 - i1 - 1;
+        float[][] newNodes = new float[2][maxNodes - victims];
+        System.arraycopy(nodes[0], 0, newNodes[0], 0, i1 + 1);
+        System.arraycopy(nodes[1], 0, newNodes[1], 0, i1 + 1);
+        System.arraycopy(nodes[0], i2, newNodes[0], i1+1, maxNodes - i2);
+        System.arraycopy(nodes[1], i2, newNodes[1], i1+1, maxNodes - i2);
+        numNodes -= victims;
+        maxNodes -= victims;
+        nodes = newNodes;
+      } else {
+        //System.out.println("deleteBetween(int, int) out of bounds error");
+      }
     }
   }
 
   /** Deletes a node from the node array */
   public void deleteNode(int index) {
-    if (index >=0 && index < numNodes) {
-      // built-in truncation
-      //System.out.println("OverlayObject.deleteNode(" + index +") called. " +
-      //  "numNodes = " + numNodes + ", maxNodes = " + maxNodes);
-      float [][] newNodes =  new float[2][numNodes-1];
-      System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
-      System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
-      System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
-      System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
-      numNodes--;
-      maxNodes = numNodes;
-      nodes = newNodes;
+    synchronized (nodesSync) {
+      if (index >=0 && index < numNodes) {
+        // built-in truncation
+        //System.out.println("OverlayObject.deleteNode(" + index +") called. " +
+        //  "numNodes = " + numNodes + ", maxNodes = " + maxNodes);
+        float [][] newNodes =  new float[2][numNodes-1];
+        System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
+        System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
+        System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
+        System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
+        numNodes--;
+        maxNodes = numNodes;
+        nodes = newNodes;
+      }
     }
   }
   
@@ -562,47 +603,50 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // create two new freeforms from the remainder of this freeform
     OverlayFreeform f1 = null, f2 = null;
 
-    // compute indices into the node array of this freeform 
-    int f1Start, f2Start, f1Stop, f2Stop;
-    f1Start = 0;
-    f1Stop = seg;
-    f2Start = seg + 1;
-    f2Stop = numNodes - 1;
+    synchronized (nodesSync) {
+      // compute indices into the node array of this freeform 
+      int f1Start, f2Start, f1Stop, f2Stop;
+      f1Start = 0;
+      f1Stop = seg;
+      f2Start = seg + 1;
+      f2Stop = numNodes - 1;
 
-    // if the cut point is a node itself, exclude that node from both halves
-    if (weight == 0.0) f1Stop = seg - 1;
-    else if (weight == 1.0) f2Start = seg + 2;
+      // if the cut point is a node itself, exclude that node from both halves
+      if (weight == 0.0) f1Stop = seg - 1;
+      else if (weight == 1.0) f2Start = seg + 2;
 
-    int numNodes1 = f1Stop + 1;
-    int numNodes2 = f2Stop - f2Start + 1;
+      int numNodes1 = f1Stop + 1;
+      int numNodes2 = f2Stop - f2Start + 1;
 
-    // create new object if number of nodes in object > 1
-    if (numNodes1 > 1) {
-      float[][] f1Nodes = new float[2][numNodes1];
+      // create new object if number of nodes in object > 1
+      if (numNodes1 > 1) {
+        float[][] f1Nodes = new float[2][numNodes1];
 
-      for (int i=0; i<2; i++) {
-        System.arraycopy(nodes[i], 0, f1Nodes[i], 0, numNodes1);
+        for (int i=0; i<2; i++) {
+          System.arraycopy(nodes[i], 0, f1Nodes[i], 0, numNodes1);
+        }
+
+        f1 = new OverlayFreeform(overlay, f1Nodes);
+        overlay.addObject(f1);
+        f1.setSelected(false);
+        f1.setDrawing(false);
       }
 
-      f1 = new OverlayFreeform(overlay, f1Nodes);
-      overlay.addObject(f1);
-      f1.setSelected(false);
-      f1.setDrawing(false);
-    }
+      // create new object if number of nodes in object > 1
+      if (numNodes2 > 1) {
+        float[][] f2Nodes = new float[2][numNodes2];
 
-    // create new object if number of nodes in object > 1
-    if (numNodes2 > 1) {
-      float[][] f2Nodes = new float[2][numNodes2];
+        for (int i = 0; i<2; i++) {
+          System.arraycopy(nodes[i], f2Start, f2Nodes[i], 0, numNodes2);
+        }
 
-      for (int i = 0; i<2; i++) {
-        System.arraycopy(nodes[i], f2Start, f2Nodes[i], 0, numNodes2);
+        f2 = new OverlayFreeform(overlay, f2Nodes);
+        overlay.addObject(f2);
+        f2.setSelected(false);
+        f2.setDrawing(false);
       }
 
-      f2 = new OverlayFreeform(overlay, f2Nodes);
-      overlay.addObject(f2);
-      f2.setSelected(false);
-      f2.setDrawing(false);
-    }
+    } // end synchronized
 
     // dispose of original freeform
     overlay.removeObject(this);
@@ -619,39 +663,41 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // of the node array s.t. maxNodes > numNodes during an interior edit before
     // an extension
     // A: Yes, if extend mode is entered directly from edit mode
-    float[][] temp = new float[2][maxNodes];
-    for (int j = 0; j < 2; j++) {
-      for (int i = 0; i < maxNodes; i++) {
-        temp[j][maxNodes-i-1] = nodes[j][i];
+    synchronized (nodesSync) {
+      float[][] temp = new float[2][maxNodes];
+      for (int j = 0; j < 2; j++) {
+        for (int i = 0; i < maxNodes; i++) {
+          temp[j][maxNodes-i-1] = nodes[j][i];
+        }
       }
+      nodes = temp;
     }
-    nodes = temp;
   }
 
   /** Deletes buffer nodes from the tail of the node array */
   public void truncateNodeArray() {
-    nodes = resizeNodeArray(nodes, numNodes);
+     resizeNodeArray(numNodes);
   }
 
   /** Resizes the node array, truncating if necessary. */
-  protected float[][] resizeNodeArray(float[][] a, int newLength) {
-    //System.out.println("resizing node array to "+ newLength); // TEMP
-    int loopMax = Math.min(a[0].length, newLength);
-    float[][] a2 = new float[2][newLength];
-    for (int j=0; j<2; j++) { //manually copy a to a2
-      for (int i=0; i<loopMax; i++) {
-        a2[j][i] = a[j][i];
+  // TODO is it possible to use System.arraycopy here?
+  protected void resizeNodeArray(int newLength) {
+    synchronized (nodesSync) {
+      int loopMax = Math.min(nodes[0].length, newLength);
+      float[][] a2 = new float[2][newLength];
+      for (int j=0; j<2; j++) { //manually copy nodes to a2
+        for (int i=0; i<loopMax; i++) {
+          a2[j][i] = nodes[j][i];
+        }
+        // case where newLength > a.length:
+        // fills rest of new array with nodes co-locational with last node
+        for (int i=loopMax; i < a2[0].length; i++) {
+          a2[j][i] = nodes[j][loopMax-1];
+        }
       }
-      // case where newLength > a.length:
-      // fills rest of new array with nodes co-locational with last node
-      for (int i=loopMax; i < a2[0].length; i++) {
-        a2[j][i] = a[j][loopMax-1];
-      }
+      nodes = a2;
+      maxNodes = newLength;
     }
-    maxNodes = newLength;
-    //System.out.println("resize completed. maxNodes = " +
-    //  maxNodes + " numNodes =  " + numNodes);
-    return a2;
   }
 
   // -- Helper Methods for Debugging -- 
@@ -659,13 +705,21 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Prints node array of current freeform; for debugging */
   private void printNodes(float[][] nodes) {
     System.out.println("Printing nodes...");
-    for (int i = 0; i < nodes[0].length; i++){
-      System.out.println(i+":("+nodes[0][i]+","+nodes[1][i]+")");
+    synchronized (nodesSync) {
+      for (int i = 0; i < nodes[0].length; i++){
+        System.out.println(i+":("+nodes[0][i]+","+nodes[1][i]+")");
+      }
     }
   }
 
   /** Prints node array of current freeform.  For debugging. */
   public void printNodes() {
     printNodes(nodes);
+  }
+
+  /** Prints current thread plus method name if provided */
+  public static void printThread(String methodName) {
+    System.out.println(methodName + ": currentThread()= " +
+        Thread.currentThread());
   }
 }

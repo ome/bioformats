@@ -498,19 +498,14 @@ public final class OverlayUtil {
     TupleType range = overlay.getRangeType();
     OverlayNodedObject ono = (OverlayNodedObject) obj;
 
-    float delta;
-    float[][] nodes;
-    float[] c;
-    int numNodes, hltIndex = 0;
-    boolean hlt;
-    synchronized (overlay) {
-      delta = GLOW_WIDTH * getMultiplier(link);
-      nodes = ono.getNodes();
-      numNodes = ono.getNumNodes();
-      hlt = ono.isHighlightNode();
-      if (hlt) hltIndex = ono.getHighlightedNodeIndex();
-      c = ono.getNodeCoords(hltIndex);
-    }
+    float delta = GLOW_WIDTH * getMultiplier(link);
+    float[][] nodes = ono.getNodes();
+    // OverlayNodedObject.printThread("OU.getNodedLayer()");
+    int numNodes = ono.getNumNodes();
+    boolean hlt = ono.isHighlightNode();
+    int hltIndex = 0;
+    if (hlt) hltIndex = ono.getHighlightedNodeIndex();
+    float[] c = ono.getNodeCoords(hltIndex);
 
     // arc and width params
     int arcLen = ARC[0].length;
@@ -916,19 +911,14 @@ public final class OverlayUtil {
     return domainSamples;
   }
 
-  // put this in ObjectUtil or something
   /** Connects a pair of VisAD-style 2D arrays of points */
-  public static float[][] adjoin(float[][] a, float b[][]) {
+  public static float[][] adjoin(float[][] a, float[][] b) {
     int alen = a[0].length;
     int blen = b[0].length;
     float[][] result = new float[a.length][alen + blen];
-    for (int j=0; j<a.length; j++) {
-      for (int i=0; i<alen; i++) {
-        result[j][i] = a[j][i];
-      }
-      for (int i=0; i<blen; i++) {
-        result[j][i+alen] = b[j][i];
-      }
+    for (int j=0; j<2; j++) {
+        System.arraycopy(a[j], 0, result[j], 0, alen);
+        System.arraycopy(b[j], 0, result[j], alen, blen);
     }
     return result;
   }
@@ -1050,7 +1040,7 @@ public final class OverlayUtil {
         }
         catch (VisADException ex2) {
           System.out.println("OverlayUtil: error making Gridded2DSets: " + 
-              "lefth tries produced invalid sets.");
+            "both tries produced invalid sets.");
           ex2.printStackTrace();
         }
       }
