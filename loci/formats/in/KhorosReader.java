@@ -54,7 +54,8 @@ public class KhorosReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1); 
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * getRGBChannelCount()];
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0])];
     return openBytes(no, buf);
   }
 
@@ -66,7 +67,7 @@ public class KhorosReader extends FormatReader {
     if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }
-    
+   
     in.seek(offset + 
       no * (core.sizeX[0] * core.sizeY[0] * getRGBChannelCount()));
     if (lut == null) in.read(buf);
@@ -95,8 +96,9 @@ public class KhorosReader extends FormatReader {
       float[] f = new float[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
       for (int i=0; i<f.length; i++) {
         f[i] = Float.intBitsToFloat(DataTools.bytesToInt(b, 
-          i*4, core.littleEndian[0]));
+          i*4, !core.littleEndian[0]));
       }
+      
       return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0], 
         core.sizeC[0], core.interleaved[0]); 
     }
@@ -165,21 +167,22 @@ public class KhorosReader extends FormatReader {
     int c = in.readInt();
     if (c > 1) {
       core.sizeC[0] = c;
-      lut = new byte[256 * c]; 
-      in.skipBytes(440);
+      int n = in.readInt();
+      lut = new byte[n * c]; 
+      in.skipBytes(436);
 
       for (int i=0; i<lut.length; i++) {
         int value = in.read(); 
-        if (i < 256) {
+        if (i < n) {
           lut[i*3] = (byte) value;
           lut[i*3 + 1] = (byte) value;
           lut[i*3 + 2] = (byte) value;
         }
-        else if (i < 512) {
-          lut[(i % 256)*3 + 1] = (byte) value;
+        else if (i < n*2) {
+          lut[(i % n)*3 + 1] = (byte) value;
         }
-        else if (i < 768) {
-          lut[(i % 256)*3 + 2] = (byte) value;
+        else if (i < n*3) {
+          lut[(i % n)*3 + 2] = (byte) value;
         }
       }
     }
