@@ -1681,7 +1681,7 @@ public final class TiffTools {
         else if (bps8) {
           // special case handles 8-bit data more quickly
           //if (planar == 2) { index = j+(i*(bytes.length / samples.length)); }
-          short b = bytes[index];
+          short b = (short) (bytes[index] & 0xff);
           index++;
 
           int ndx = startIndex + j;
