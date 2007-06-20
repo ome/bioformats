@@ -922,7 +922,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The Detector ID can be used as a reference within the LogicalChannel element in the Image element.
 				The Type attribute can be set to 'CCD','Intensified-CCD','Analog-Video','PMT','Photodiode','Spectroscopy','Life-time-Imaging','Correlation-Spectroscopy','FTIR'.
 				Added new types EM-CCD, APD, and CMOS - ajp
-				Added new optional attributes Amplification-Gain and Zoom - ajp
+				Added new optional attributes AmplificationGain and Zoom - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -932,7 +932,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					<xsd:attribute name="Voltage" type="xsd:float"/>
 					<xsd:attribute name="Offset" type="xsd:float"/>
 					<xsd:attribute name="Zoom" type="xsd:float"/>
-					<xsd:attribute name="Amplification-Gain" type="xsd:float"/>
+					<xsd:attribute name="AmplificationGain" type="xsd:float"/>
 					<xsd:attribute name="ID" use="required" type="DetectorID"/>
 					<xsd:attribute name="Type" use="required">
 						<xsd:simpleType>
