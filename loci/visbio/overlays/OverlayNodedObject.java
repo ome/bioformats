@@ -166,7 +166,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
     // NOTE: Not exactly consistent with the other overlay objects.
     // You want to see 1-node objects while drawing, but
-    // want to delete them if after drawing is done.
+    // want to delete them after drawing is done.
   }
 
   /** Gets VisAD data object representing this overlay. */
@@ -603,6 +603,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // create two new freeforms from the remainder of this freeform
     OverlayFreeform f1 = null, f2 = null;
 
+    float[][] f1Nodes = null, f2Nodes = null;
+
     synchronized (nodesSync) {
       // compute indices into the node array of this freeform 
       int f1Start, f2Start, f1Stop, f2Stop;
@@ -620,33 +622,35 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
       // create new object if number of nodes in object > 1
       if (numNodes1 > 1) {
-        float[][] f1Nodes = new float[2][numNodes1];
+        f1Nodes = new float[2][numNodes1];
 
         for (int i=0; i<2; i++) {
           System.arraycopy(nodes[i], 0, f1Nodes[i], 0, numNodes1);
         }
-
-        f1 = new OverlayFreeform(overlay, f1Nodes);
-        overlay.addObject(f1);
-        f1.setSelected(false);
-        f1.setDrawing(false);
       }
 
       // create new object if number of nodes in object > 1
       if (numNodes2 > 1) {
-        float[][] f2Nodes = new float[2][numNodes2];
+        f2Nodes = new float[2][numNodes2];
 
         for (int i = 0; i<2; i++) {
           System.arraycopy(nodes[i], f2Start, f2Nodes[i], 0, numNodes2);
         }
-
-        f2 = new OverlayFreeform(overlay, f2Nodes);
-        overlay.addObject(f2);
-        f2.setSelected(false);
-        f2.setDrawing(false);
       }
-
     } // end synchronized
+
+    if (f1Nodes != null) {
+      f1 = new OverlayFreeform(overlay, f1Nodes);
+      overlay.addObject(f1);
+      f1.setSelected(false);
+      f1.setDrawing(false);
+    }
+    if (f2Nodes != null) {
+      f2 = new OverlayFreeform(overlay, f2Nodes);
+      overlay.addObject(f2);
+      f2.setSelected(false);
+      f2.setDrawing(false);
+    }
 
     // dispose of original freeform
     overlay.removeObject(this);
