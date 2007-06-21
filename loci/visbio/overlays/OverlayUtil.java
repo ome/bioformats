@@ -939,29 +939,67 @@ public final class OverlayUtil {
 
     if (len <=1) return null;
 
+    boolean orientationChanged = false; // if this is true, right and left
+    // must be switched
     for (int i=0; i<len; i++) {
       float[] rightPt = new float[2];
       float[] leftPt = new float[2];
       
+      // System.out.println("index = " + i);
       if (i==0) { // Case 1: the first node
        
-        float[] p1 = new float[] {nodes[0][0], nodes[1][0]}; // first point
-        float[] p2 = new float[] {nodes[0][1], nodes[1][1]}; // second point
+        float[] p1 = new float[] {nodes[0][0], nodes[1][0]}; // first node 
+        float[] p2 = new float[] {nodes[0][1], nodes[1][1]}; // second node
         // get a perpendicular vector to the right of p2-p1
         float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
         rightPt = MathUtil.add(p1, MathUtil.scalarMultiply(vPerp, width)); 
         leftPt = MathUtil.add(p1, MathUtil.scalarMultiply(vPerp, -1f * width));
+        // System.out.print("First node: ");
+        // System.out.print("p1: "); print(p1);
+        // System.out.print("p2: "); print(p2);
+        // System.out.print("vPerp: "); print(vPerp);
+        // System.out.print("right pt: "); print(rightPt);
+        // System.out.print("left pt: "); print(leftPt);
       }
       else if (i == len - 1) { // Case 2: the last node
 
         float[] p1 = new float[] {nodes[0][i-1], nodes[1][i-1]}; // penultimate
-        float[] p2 = new float[] {nodes[0][i], nodes[1][i]}; // last point
+        // node
+        float[] p2 = new float[] {nodes[0][i], nodes[1][i]}; // last node 
+
+        boolean anti = false;
+        if (len >= 3) {
+          // test if antiparallel
+          float[] p0 = new float[] {nodes[0][i-2], nodes[1][i-2]}; // 3rd 2 last
+          float[] v1 = MathUtil.unit(MathUtil.vector(p1, p0));
+          float[] v2 = MathUtil.unit(MathUtil.vector(p2, p1));
+          if (MathUtil.opposite(v1, v2)) {
+            anti = true;
+            orientationChanged = orientationChanged ? false : true; // toggle
+          }
+        }
+
+        float[] vPerp;
+        if (anti) vPerp =
+          MathUtil.getRightPerpendicularVector2D(p1, p2);
+        // reversed p1 and p2 above!
+        else vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
+
         // get a perpendicular vector to the right of p2-p1
-        float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
         // add a multiple of this vector to the point p2, the last node in
         // the curve
-        rightPt = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width)); 
-        leftPt = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, -1f * width));
+        float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width)); 
+        float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, -1f * width));
+        rightPt = orientationChanged ? b : a;
+        leftPt = orientationChanged ? a : b;
+
+        // System.out.print("\nLast node:");
+        // System.out.print("p1: "); print(p1);
+        // System.out.print("p2: "); print(p2);
+        // System.out.print("vPerp: "); print(vPerp);
+        // System.out.print("right pt: "); print(rightPt);
+        // System.out.print("left pt: "); print(leftPt);
+        // System.out.println("orientation changed = "  + orientationChanged);
       }
       else { // Case 3: all interior nodes
 
@@ -969,22 +1007,53 @@ public final class OverlayUtil {
         float[] p2 = {nodes[0][i], nodes[1][i]};
         float[] p3 = {nodes[0][i+1], nodes[1][i+1]};
         
-        // obtain unit vectors bisecting p2-p1 and p3-p2
-        float[] bisector = MathUtil.getRightBisectorVector2D(p1, p2, p3);
-        float[] bisectorReflected = MathUtil.scalarMultiply(bisector, -1f);
+        // System.out.print("\nNode index " + i + ":");
+        // System.out.print("p1: "); print(p1);
+        // System.out.print("p2: "); print(p2);
+        // System.out.print("p3: "); print(p3);
 
-        // compute angle between the p2-p1 and bisector 
-        float sin = Math.abs(MathUtil.cross2D(bisector,
-              MathUtil.unit(MathUtil.vector(p2, p1))));
-        if (sin < 0.1f) sin = 0.1f; // keep a lower bound on this for safety 
-        // (the value of sin could become really small)
-        
-        // compute offset distance from curve
-        float offset = width / sin;
+        // check if p2-p3 and p3-p2 are antiparallel
+        // have to correct the strategy in this case
+        float[] v1 = MathUtil.unit(MathUtil.vector(p2, p1));
+        float[] v2 = MathUtil.unit(MathUtil.vector(p3, p2));
+        if (MathUtil.opposite(v1, v2)) {
+          // vectors are antiparallel. just use v1 to calculate right and left
+          float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1); 
+          float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width)); 
+          float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, -1f * width));
+          rightPt = orientationChanged ? b : a;
+          leftPt = orientationChanged ? a : b;
+          // System.out.print("vPerp: "); print(vPerp);
+          orientationChanged = orientationChanged ? false : true; // toggle
+        }
+        else {
+          // obtain unit vectors bisecting p2-p1 and p3-p2
+          float[] bisector = MathUtil.getRightBisectorVector2D(p1, p2, p3);
+          float[] bisectorReflected = MathUtil.scalarMultiply(bisector, -1f);
 
-        rightPt = MathUtil.add(p2, MathUtil.scalarMultiply(bisector, offset));
-        leftPt = MathUtil.add(p2, MathUtil.scalarMultiply(bisectorReflected,
-              offset));
+          // compute angle between the p2-p1 and bisector 
+          float sin = Math.abs(MathUtil.cross2D(bisector,
+                MathUtil.unit(MathUtil.vector(p2, p1))));
+          if (sin < 0.1f) sin = 0.1f; // keep a lower bound on this for safety 
+          // (the value of sin could become really small)
+          
+          // compute offset distance from curve
+          float offset = width / sin;
+
+          float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(bisector, offset));
+          float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(bisectorReflected,
+                offset));
+          rightPt = orientationChanged ? b : a;
+          leftPt = orientationChanged ? a : b;
+
+          // System.out.print("bisector: "); print(bisector);
+          // System.out.print("bisectorReflected: "); print(bisectorReflected);
+          // System.out.print("sin = " + sin);
+          // System.out.print("offset = " + offset);
+        }
+        // System.out.print("right pt: "); print(rightPt);
+        // System.out.print("left pt: "); print(leftPt);
+        // System.out.println("orientation changed = "  + orientationChanged);
       } // end else // TEMP
 
       // copy calculated values to storage arrays
@@ -995,7 +1064,7 @@ public final class OverlayUtil {
     } // end for
     
     // assemble an array of gridded sets representing the highlighting
-    Gridded2DSet[] sets = makeGridded2DSets(domain, nodes, right, left);
+    Gridded2DSet[] sets = makeGridded2DSets(domain, nodes, right, left, width);
     UnionSet fieldSets = null;
     fieldSets = new UnionSet(domain, sets);
 
@@ -1010,8 +1079,15 @@ public final class OverlayUtil {
    *  supposing node indices increase from left to right across the screen)
    */   
   public static Gridded2DSet[] makeGridded2DSets(RealTupleType domain,
-      float[][] nodes, float[][] right, float[][] left) {
-    int len = nodes[0].length;
+      float nodes[][], float[][] right, float[][] left, float width) {
+
+    // Note: 
+    // This method should probably determine whether Gridded2DSets will
+    // be invalid itself, but instead it relies on VisAD's Gridded2DSet
+    // constructor to do so.  If the constructor throws an exception, this
+    // method tries to construct the troublesome set differently.
+
+    int len = left[0].length;
     Vector sets = new Vector(100);
     for (int i=0; i<len-1; i++) {
       float[][] setSamples = {
@@ -1039,9 +1115,37 @@ public final class OverlayUtil {
           sets.add(set);
         }
         catch (VisADException ex2) {
-          System.out.println("OverlayUtil: error making Gridded2DSets: " + 
-            "both tries produced invalid sets.");
-          ex2.printStackTrace();
+          // make a plain rectangular set, disregarding left and right
+          // arrays
+          float[] p1 = {nodes[0][i], nodes[1][i]};
+          float[] p2 = {nodes[0][i+1], nodes[1][i+1]};
+
+          float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
+          float[] vPerpReflected = MathUtil.scalarMultiply(vPerp, -1f);
+          float[] s1 = MathUtil.add(p1, vPerp); 
+          float[] s2 = MathUtil.add(p2, vPerp); 
+          float[] s3 = MathUtil.add(p1, vPerpReflected);
+          float[] s4 = MathUtil.add(p2, vPerpReflected);
+
+          setSamples = new float[][]{
+            {s1[0], s2[0], s3[0], s4[0]},
+            {s1[1], s2[1], s3[1], s4[1]}
+          };
+
+          try {
+            Gridded2DSet set = new Gridded2DSet(domain, setSamples, 2, 2, null, 
+              null, null, false);
+            sets.add(set);
+          }
+          catch(VisADException ex3) {
+            System.out.println("OverlayUtil: error making Gridded2DSets: " + 
+              "all three tries produced invalid sets (index " + i + ").");
+            System.out.println("left points");
+            print(left);
+            System.out.println("\nright points");
+            print(right);
+            ex3.printStackTrace();
+          }
         }
       }
     } // end for

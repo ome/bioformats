@@ -458,24 +458,51 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   // -- OverlayNodedObject API Methods: node array mutators --
   // note: call updateBoundingBox() after a series of changes to the node array
+  
 
   /** Sets coordinates of an existing node */
-  public void setNodeCoords(int ndx, float newX, float newY) {
+  public void setNodeCoords(int ndx, float x, float y) {
+    // Outline of this method:
+    // make sure the node isn't the same as previous or next node
+    // if yes,
+      // delete new node
+      // make sure previous and next aren't the same
+      // if they are, delete one of them
+    // if no,
+      // change the coordinates
+    boolean sameAsPrev = false;
+    boolean sameAsNext = false;
     synchronized (nodesSync) {
-      nodes[0][ndx] = newX;
-      nodes[1][ndx] = newY;
+      if (ndx > 0 && (x == nodes[0][ndx-1] && y == nodes[1][ndx-1]))
+        sameAsPrev = true;
+      if (ndx < numNodes-1 && (x == nodes[0][ndx+1] && y == nodes[1][ndx+1]))
+        sameAsNext = true;
+    }
+    
+    if (sameAsPrev || sameAsNext) {
+      if (sameAsPrev && sameAsNext) {
+        deleteNode(ndx+1);
+        deleteNode(ndx);
+      }
+      else {
+        deleteNode(ndx);
+      }
+    }
+    else {
+      synchronized (nodesSync) {
+        nodes[0][ndx] = x;
+        nodes[1][ndx] = y;
+        if (ndx == numNodes-1 && numNodes < maxNodes) {
+          Arrays.fill(nodes[0], numNodes, maxNodes, x);
+          Arrays.fill(nodes[1], numNodes, maxNodes, y);
+        }
+      }
     }
   }
 
   /** Sets coordinates of last node. */
   public void setLastNode(float x, float y) {
     setNodeCoords(numNodes-1, x, y);
-    synchronized (nodesSync) {
-      if (numNodes < maxNodes) {
-        Arrays.fill(nodes[0], numNodes, maxNodes, x);
-        Arrays.fill(nodes[1], numNodes, maxNodes, y);
-      }
-    }
   }
 
   /** Sets coordinates of last node. */
@@ -486,13 +513,19 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Sets next node coordinates. */
   public void setNextNode(float x, float y) {
     synchronized (nodesSync) {
-      if (numNodes >= maxNodes) {
-        maxNodes *= 2;
-        resizeNodeArray(maxNodes);
+      if (numNodes > 0 && (x == nodes[0][numNodes-1] && y ==
+            nodes[1][numNodes-1])) {
+        // same as last node, do nothing
       }
-      Arrays.fill(nodes[0], numNodes, maxNodes, x);
-      Arrays.fill(nodes[1], numNodes++, maxNodes, y);
-      // i.e., set all remaining nodes (as per maxNodes) to next node coords
+      else {
+        if (numNodes >= maxNodes) {
+          maxNodes *= 2;
+          resizeNodeArray(maxNodes);
+        }
+        Arrays.fill(nodes[0], numNodes, maxNodes, x);
+        Arrays.fill(nodes[1], numNodes++, maxNodes, y);
+        // i.e., set all remaining nodes (as per maxNodes) to next node coords
+      }
     }
   }
 
