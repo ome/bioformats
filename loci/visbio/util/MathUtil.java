@@ -379,6 +379,23 @@ public final class MathUtil {
     return r;
   }
 
+  /** 
+   * Test whether two vectors are coordinate-wise opposite.
+   * @param u1 a unit vector
+   * @param u2 another unit vector 
+   */ 
+  public static boolean opposite(float[] v1, float[] v2) {
+    if (v1.length != v2.length) return false;
+    boolean opposite = true;
+    for (int i=0; i<v1.length; i++) {
+      if (v1[i] != -v2[i]) {
+        opposite = false;
+        break;
+      }
+    }
+    return opposite;
+  }
+
   // -- Computational Geometry Methods --
 
   /** Whether the point a is inside the N-D box implied by points
