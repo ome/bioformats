@@ -55,8 +55,8 @@
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="PlateDataset" minOccurs="0"/>
-                <xsd:element ref="ScreenPlate" minOccurs="0"/>
+                <xsd:element ref="OME:DatasetRef" minOccurs="0"/>
+                <xsd:element ref="ScreenRef" minOccurs="0"/>
                 <xsd:element ref="Well" minOccurs="0"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="PlateID"/>
@@ -70,51 +70,6 @@
                     </xsd:documentation>
                 </xsd:annotation>     	
 			</xsd:attribute>
-        </xsd:complexType>
-    </xsd:element>
-
-    <xsd:element name="PlateDataset">
-        <xsd:annotation>
-            <xsd:documentation>
-                This is a link between a Dataset and a Plate.
-            </xsd:documentation>
-        </xsd:annotation>
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="AML:Entry" maxOccurs="unbounded"/>
-                <xsd:element ref="AML:Description" minOccurs="0"/>
-                <xsd:element ref="OME:Dataset" minOccurs="0"/>
-                <xsd:element ref="Plate" minOccurs="0"/>
-            </xsd:sequence>
-            <xsd:attribute name="Name" use="required">
-                <xsd:annotation>
-                    <xsd:documentation>Tied to DB. LOOKUP_TABLES.NAME</xsd:documentation>
-                </xsd:annotation>
-                <xsd:simpleType>
-                    <xsd:restriction base="xsd:string">
-                        <xsd:maxLength value="64"/>
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:attribute>
-        </xsd:complexType>     
-    </xsd:element>
-
-    <xsd:element name="PlateImage">
-        <xsd:annotation>
-            <xsd:documentation>
-                A PlateImage is an image attribute that serves as a short-cut between
-                a set of Images and the Plate they belong to. 
-                
-                Not sure what this maps to in EA - ajp
-                Is it ScreenPlate? Nope - ajp
-                Probably not needed in xsd at all - ajp
-            </xsd:documentation>
-        </xsd:annotation>  
-        <xsd:complexType>
-            <xsd:sequence>
-            <xsd:element ref="OME:Image" minOccurs="0"/>
-            <xsd:element ref="PlateRef" minOccurs="0"/>
-            </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
 
@@ -149,9 +104,6 @@
             </xsd:documentation>
         </xsd:annotation>      
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="ReagentWell" minOccurs="0"/>
-            </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ReagentID"/>
             <xsd:attribute name="Description" type="xsd:string">
                 <xsd:annotation>
@@ -175,29 +127,21 @@
             </xsd:attribute>
        </xsd:complexType>
     </xsd:element>
-
+    <xsd:element name="ReagentRef">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="OME:Reference">
+                    <xsd:attribute name="ID" use="required" type="ReagentID"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    
     <xsd:simpleType name="ReagentID">
         <xsd:restriction base="OME:LSID">
             <xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Reagent:\S+)|(Reagent:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
-
-    <xsd:element name="ReagentWell">
-        <xsd:annotation>
-            <xsd:documentation>
-                A ReagentWell is used to link a Reagent to a Well (and from there to Plates and Screens)
-                A WellSample is an image attribute that also has a reference to Well.  Images
-                can be linked to Reagents in a Screen format by having WellSample and ReagentWell refer to
-                the same Well.
-            </xsd:documentation>
-        </xsd:annotation>     
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="Reagent" minOccurs="0"/>
-                <xsd:element ref="Well" minOccurs="0"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
 
     <xsd:element name="Screen">
         <xsd:annotation>
@@ -215,9 +159,9 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element ref="OME:Description" minOccurs="0"/>
-                <xsd:element ref="ScreenPlate" minOccurs="0"/>
-                <xsd:element ref="ScreenImage" minOccurs="0"/>
-                <xsd:element ref="ScreenAcquisition" minOccurs="0"/>
+                <xsd:element ref="Reagent" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="PlateRef" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="ScreenAcquisition" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ScreenID"/>
             <xsd:attribute name="Name" use="required" type="xsd:string"/>
@@ -251,7 +195,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-
+    
     <xsd:element name="ScreenAcquisition">
         <xsd:annotation>
             <xsd:documentation>
@@ -263,9 +207,7 @@
         </xsd:annotation>     
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="Screen" minOccurs="0"/>
-                <xsd:element ref="WellSample" minOccurs="0"/>
-                <xsd:element ref="OME:Image" minOccurs="0"/>
+                <xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ScreenAcquisitionID"/>
             <xsd:attribute name="EndTime" type="xsd:dateTime">
@@ -289,49 +231,19 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:element name="ScreenImage">
-        <xsd:annotation>
-            <xsd:documentation>
-                A ScreenImage is an image attribute that serves as a short-cut between
-                a set of Images and the Screen they belong to.
-            </xsd:documentation>
-        </xsd:annotation>      
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="Screen" minOccurs="0"/>
-                <xsd:element ref="OME:Image" minOccurs="0"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <xsd:element name="ScreenPlate">
-        <xsd:annotation>
-            <xsd:documentation>
-                A ScreenPlate serves as the link between a Screen and the Plates its composed of.
-            </xsd:documentation>
-        </xsd:annotation>     
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="Screen" minOccurs="0"/>
-                <xsd:element ref="Plate" minOccurs="0"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
     <xsd:element name="Well">
         <xsd:annotation>
             <xsd:documentation>
                 A Well is a component of the Well/Plate/Screen construct to describe screening applications.
                 Well is an abstract referand for various objects that describe things about a Well.
-                A WellSample links an Image to a Well, a WellReagent links a Reagent to a Well.
+                A WellSample links an Image to a Well, a ReagentRef links a Reagent to a Well.
             </xsd:documentation>
         </xsd:annotation> 
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="OME:Image" minOccurs="0"/>
-                <xsd:element ref="WellSample" minOccurs="0"/>
-                <xsd:element ref="Plate" minOccurs="0"/>
-                <xsd:element ref="ReagentWell" minOccurs="0"/>
+                <xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="PlateRef"/>
+                <xsd:element ref="ReagentRef" minOccurs="0"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="WellID"/>
             <xsd:attribute name="Column" type="xsd:integer">
@@ -376,13 +288,11 @@
     <xsd:element name="WellSample">
         <xsd:annotation>
             <xsd:documentation>
-               	A WellSample links an Image to a Well, a WellReagent links a Reagent to a Well.
             </xsd:documentation>
         </xsd:annotation> 
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="ScreenAcquisition" minOccurs="0"/>
-                <xsd:element ref="Well" minOccurs="0"/>
+                <xsd:element ref="ImageRef" minOccurs="0"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="WellSampleID"/>
             <xsd:attribute name="Index" type="xsd:integer">
@@ -418,4 +328,34 @@
         </xsd:restriction>
     </xsd:simpleType>
 
+    <xsd:element name="ImageRef">
+        <xsd:annotation>
+            <xsd:documentation>
+                The ImageRef element is a reference to a OME:Image element.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="OME:Reference">
+                    <xsd:attribute name="ID" use="required" type="OME:ImageID"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="WellSampleRef">
+        <xsd:annotation>
+            <xsd:documentation>
+                The WellSampleRef element is a reference to a WellSample element.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="OME:Reference">
+                    <xsd:attribute name="ID" use="required" type="WellSampleID"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    
 </xsd:schema>
