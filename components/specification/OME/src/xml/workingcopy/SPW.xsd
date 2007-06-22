@@ -207,7 +207,7 @@
         </xsd:annotation>     
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="WellSampleRef" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ScreenAcquisitionID"/>
             <xsd:attribute name="EndTime" type="xsd:dateTime">
