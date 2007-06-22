@@ -461,14 +461,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="LightSourceRef" minOccurs="0"/>
 				<xsd:element ref="OTFRef" minOccurs="0"/>
 				<xsd:element ref="DetectorRef" minOccurs="0"/>
-				<xsd:element ref="FilterRef" minOccurs="0"/>
+				<xsd:element ref="FilterSetRef" minOccurs="0"/>
 				<xsd:element ref="ChannelComponent" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
 			<xsd:attribute name="Name" type="xsd:string"/>
 			<xsd:attribute name="SamplesPerPixel" type="xsd:integer"/>
-			<xsd:attribute name="SecondaryEmissionFilter" type="EmFilterID"/>
-			<xsd:attribute name="SecondaryExcitationFilter" type="ExFilterID"/>
+			<xsd:attribute name="SecondaryEmissionFilter" type="FilterID"/>
+			<xsd:attribute name="SecondaryExcitationFilter" type="FilterID"/>
 			<xsd:attribute name="IlluminationType">
 				<xsd:annotation><xsd:documentation>
 					Attribute is called Illumination in EA diagram - ajp
@@ -689,7 +689,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="LightSource" maxOccurs="unbounded"/>
 				<xsd:element ref="Detector" maxOccurs="unbounded"/>
 				<xsd:element ref="Objective" maxOccurs="unbounded"/>
-				<xsd:element ref="Filter" maxOccurs="unbounded"/>
+				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="OTF" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
@@ -1179,19 +1179,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:LightSource:\S+)|(LightSource:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="ExFilterID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:ExFilter:\S+)|(ExFilter:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="DichroicID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Dichroic:\S+)|(Dichroic:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="EmFilterID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:EmFilter:\S+)|(EmFilter:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="FilterID">
@@ -1379,7 +1369,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	</xsd:element>
 	<xsd:element name="Dichroic" type="FilterSpec">
 		<xsd:annotation>
-			<xsd:documentation>The dichroic mirror used for this filter combination.</xsd:documentation>
+			<xsd:documentation>The dichromatic beamsplitter or dichroic mirror used for this filter combination.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
 	<xsd:element name="ROI">
@@ -1455,7 +1445,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:element name="OTF">
 		<xsd:annotation>
 			<xsd:documentation>
-				The optical transfer function.  Filter ID refers to the set of filters used in computing the OTF.
+				The optical transfer function. FilterSetRef refers to the set of filters used in computing the OTF.
 				BitsPerPixel is an integer '1', '8', '16'.
 				The OpticalAxisAveraged is a boolean specifying whether or not optical axis averaging was done.
 				SizeX, SizeY specify the width and height of the OTF.
@@ -1466,7 +1456,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="ObjectiveRef"/>
-				<xsd:element ref="FilterRef"/>
+				<xsd:element ref="FilterSetRef" minOccurs="0"/>
 				<xsd:element ref="Bin:BinaryFile"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
@@ -1682,11 +1672,11 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="FilterRef">
+	<xsd:element name="FilterSetRef">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="FilterID"/>
+					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
