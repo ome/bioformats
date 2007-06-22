@@ -690,6 +690,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="Detector" maxOccurs="unbounded"/>
 				<xsd:element ref="Objective" maxOccurs="unbounded"/>
 				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="OTF" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
@@ -1367,10 +1369,17 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Dichroic" type="FilterSpec">
+	<xsd:element name="Dichroic">
 		<xsd:annotation>
 			<xsd:documentation>The dichromatic beamsplitter or dichroic mirror used for this filter combination.</xsd:documentation>
 		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="FilterSpec">
+					<xsd:attribute name="ID" use="required" type="DichroicID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="ROI">
 		<xsd:annotation>

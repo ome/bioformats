@@ -71,8 +71,8 @@
                         <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.50" CO2Percent="0.50"/>
                         <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype0">
                         </ome:Thumbnail>
-                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name9" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                             SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name9" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                             SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                              PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                              ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor0" NdFilter="3.14159E0"
                              PockelCellSetting="0">
@@ -80,7 +80,7 @@
                             <ome:OTFRef ID="OTF:a"/>
                             <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                  Binning="1x1"/>
-                            <ome:FilterRef ID="Filter:a"/>
+                            <ome:FilterSetRef ID="FilterSet:a"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain0" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain1" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain2" Index="1"/>
@@ -169,8 +169,8 @@
                                 <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                                 <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype1">
                                 </ome:Thumbnail>
-                                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name15" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                                     SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name15" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                                     SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                                      PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                                      ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor1"
                                      NdFilter="3.14159E0" PockelCellSetting="0">
@@ -178,7 +178,7 @@
                                     <ome:OTFRef ID="OTF:a"/>
                                     <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                          Binning="1x1"/>
-                                    <ome:FilterRef ID="Filter:a"/>
+                                    <ome:FilterSetRef ID="FilterSet:a"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain3" Index="1"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain4" Index="1"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain5" Index="1"/>
@@ -272,8 +272,8 @@
                         <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                         <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype2">
                         </ome:Thumbnail>
-                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name22" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                             SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name22" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                             SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                              PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                              ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor2" NdFilter="3.14159E0"
                              PockelCellSetting="0">
@@ -281,7 +281,7 @@
                             <ome:OTFRef ID="OTF:a"/>
                             <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                  Binning="1x1"/>
-                            <ome:FilterRef ID="Filter:a"/>
+                            <ome:FilterSetRef ID="FilterSet:a"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain6" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain7" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain8" Index="1"/>
@@ -367,15 +367,15 @@
                 <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                 <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype3">
                 </ome:Thumbnail>
-                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name28" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                     SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted" PinholeSize="2"
+                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name28" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                     SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted" PinholeSize="2"
                      PhotometricInterpretation="Monochrome" Mode="WideField" ContrastMethod="Brightfield"
                      ExWave="2" EmWave="2" Fluor="Fluor3" NdFilter="3.14159E0" PockelCellSetting="0">
                     <ome:LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
                     <ome:OTFRef ID="OTF:a"/>
                     <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                          Binning="1x1"/>
-                    <ome:FilterRef ID="Filter:a"/>
+                    <ome:FilterSetRef ID="FilterSet:a"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain9" Index="1"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain10" Index="1"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain11" Index="1"/>
@@ -472,8 +472,8 @@
                                 <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                                 <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype4">
                                 </ome:Thumbnail>
-                                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name37" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                                     SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name37" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                                     SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                                      PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                                      ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor4"
                                      NdFilter="3.14159E0" PockelCellSetting="0">
@@ -481,7 +481,7 @@
                                     <ome:OTFRef ID="OTF:a"/>
                                     <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                          Binning="1x1"/>
-                                    <ome:FilterRef ID="Filter:a"/>
+                                    <ome:FilterSetRef ID="FilterSet:a"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain12" Index="1"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain13" Index="1"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain14" Index="1"/>
@@ -568,8 +568,8 @@
                         <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                         <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype5">
                         </ome:Thumbnail>
-                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name42" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                             SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name42" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                             SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                              PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                              ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor5" NdFilter="3.14159E0"
                              PockelCellSetting="0">
@@ -577,7 +577,7 @@
                             <ome:OTFRef ID="OTF:a"/>
                             <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                  Binning="1x1"/>
-                            <ome:FilterRef ID="Filter:a"/>
+                            <ome:FilterSetRef ID="FilterSet:a"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain15" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain16" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain17" Index="1"/>
@@ -700,8 +700,8 @@
                         <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                         <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype6">
                         </ome:Thumbnail>
-                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name55" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                             SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name55" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                             SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                              PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                              ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor6" NdFilter="3.14159E0"
                              PockelCellSetting="0">
@@ -709,7 +709,7 @@
                             <ome:OTFRef ID="OTF:a"/>
                             <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                  Binning="1x1"/>
-                            <ome:FilterRef ID="Filter:a"/>
+                            <ome:FilterSetRef ID="FilterSet:a"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain18" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain19" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain20" Index="1"/>
@@ -795,8 +795,8 @@
                                 <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                                 <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype7">
                                 </ome:Thumbnail>
-                                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name61" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                                     SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name61" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                                     SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                                      PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                                      ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor7"
                                      NdFilter="3.14159E0" PockelCellSetting="0">
@@ -804,7 +804,7 @@
                                     <ome:OTFRef ID="OTF:a"/>
                                     <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                          Binning="1x1"/>
-                                    <ome:FilterRef ID="Filter:a"/>
+                                    <ome:FilterSetRef ID="FilterSet:a"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain21" Index="1"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain22" Index="1"/>
                                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain23" Index="1"/>
@@ -906,15 +906,15 @@
                 <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                 <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype8">
                 </ome:Thumbnail>
-                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name69" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                     SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted" PinholeSize="2"
+                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name69" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                     SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted" PinholeSize="2"
                      PhotometricInterpretation="Monochrome" Mode="WideField" ContrastMethod="Brightfield"
                      ExWave="2" EmWave="2" Fluor="Fluor8" NdFilter="3.14159E0" PockelCellSetting="0">
                     <ome:LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
                     <ome:OTFRef ID="OTF:a"/>
                     <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                          Binning="1x1"/>
-                    <ome:FilterRef ID="Filter:a"/>
+                    <ome:FilterSetRef ID="FilterSet:a"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain24" Index="1"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain25" Index="1"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain26" Index="1"/>
@@ -1003,8 +1003,8 @@
                         <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                         <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype9">
                         </ome:Thumbnail>
-                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name75" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                             SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted"
+                        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name75" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                             SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted"
                              PinholeSize="2" PhotometricInterpretation="Monochrome" Mode="WideField"
                              ContrastMethod="Brightfield" ExWave="2" EmWave="2" Fluor="Fluor9" NdFilter="3.14159E0"
                              PockelCellSetting="0">
@@ -1012,7 +1012,7 @@
                             <ome:OTFRef ID="OTF:a"/>
                             <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                                  Binning="1x1"/>
-                            <ome:FilterRef ID="Filter:a"/>
+                            <ome:FilterSetRef ID="FilterSet:a"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain27" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain28" Index="1"/>
                             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain29" Index="1"/>
@@ -1128,15 +1128,15 @@
                 <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
                 <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype10">
                 </ome:Thumbnail>
-                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name87" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-                     SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted" PinholeSize="2"
+                <ome:LogicalChannel ID="LogicalChannel:a" Name="Name87" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+                     SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted" PinholeSize="2"
                      PhotometricInterpretation="Monochrome" Mode="WideField" ContrastMethod="Brightfield"
                      ExWave="2" EmWave="2" Fluor="Fluor10" NdFilter="3.14159E0" PockelCellSetting="0">
                     <ome:LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
                     <ome:OTFRef ID="OTF:a"/>
                     <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                          Binning="1x1"/>
-                    <ome:FilterRef ID="Filter:a"/>
+                    <ome:FilterSetRef ID="FilterSet:a"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain30" Index="1"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain31" Index="1"/>
                     <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain32" Index="1"/>
@@ -1245,11 +1245,11 @@
 <!--            <ome:Filament Type="Incandescent" Power="3.14159E0"/>-->
 <!--            <ome:Arc Type="Hg" Power="3.14159E0"/>-->
         </ome:LightSource>
-        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" Amplification-Gain="3.14159E0"
+        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer4" Model="Model4" SerialNumber="SerialNumber4"/>
-        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" Amplification-Gain="3.14159E0"
+        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer5" Model="Model5" SerialNumber="SerialNumber5"/>
-        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" Amplification-Gain="3.14159E0"
+        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer6" Model="Model6" SerialNumber="SerialNumber6"/>
         <ome:Objective ID="Objective:a" Manufacturer="Manufacturer7" Model="Model7" SerialNumber="SerialNumber7">
                 <ome:Correction>UV</ome:Correction>
@@ -1275,6 +1275,9 @@
                 <ome:CalibratedMagnification>3.14159E0</ome:CalibratedMagnification>
                 <ome:WorkingDistance>3.14159E0</ome:WorkingDistance>
         </ome:Objective>
+        <ome:FilterSet
+            ExFilterRef="Filter:a" DichroicRef="Dichroic:a" EmFilterRef="Filter:a"
+            ID="FilterSet:a" Manufacturer="Manufacturer0" Model="Model0" LotNumber="LotNumber0"/>
         <ome:Filter Type="LongPass" FilterWheel="FilterWheel0" ID="Filter:a" Manufacturer="Manufacturer10" Model="Model10"
              LotNumber="LotNumber0">
             <ome:TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
@@ -1287,9 +1290,11 @@
              LotNumber="LotNumber2">
             <ome:TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
         </ome:Filter>
+        <ome:Dichroic ID="Dichroic:a" Manufacturer="Manufacturer12" Model="Model12" LotNumber="LotNumber2"/>
+        <ome:Dichroic ID="Dichroic:a" Manufacturer="Manufacturer18" Model="Model18" LotNumber="LotNumber8"/>
         <ome:OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
             <ome:ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
-            <ome:FilterRef ID="Filter:a"/>
+            <ome:FilterSetRef ID="FilterSet:a"/>
             <bf:BinaryFile FileName="FileName0" Size="0">
                 <bf:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF12341234567890ABCDEF1234" Compression="none"/>
 <!--                <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>-->
@@ -1297,7 +1302,7 @@
         </ome:OTF>
         <ome:OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
             <ome:ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
-            <ome:FilterRef ID="Filter:a"/>
+            <ome:FilterSetRef ID="FilterSet:a"/>
             <bf:BinaryFile FileName="FileName1" Size="0">
                 <bf:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF12341234567890ABCDEF1234" Compression="none"/>
 <!--                <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>-->
@@ -1305,7 +1310,7 @@
         </ome:OTF>
         <ome:OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
             <ome:ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
-            <ome:FilterRef ID="Filter:a"/>
+            <ome:FilterSetRef ID="FilterSet:a"/>
             <bf:BinaryFile FileName="FileName2" Size="0">
                 <bf:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF12341234567890ABCDEF1234" Compression="none"/>
 <!--                <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>-->
@@ -1325,15 +1330,15 @@
         <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
         <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype11">
         </ome:Thumbnail>
-        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name93" SamplesPerPixel="0" SecondaryEmissionFilter="EmFilter:a"
-             SecondaryExcitationFilter="ExFilter:a" IlluminationType="Transmitted" PinholeSize="2"
+        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name93" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+             SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted" PinholeSize="2"
              PhotometricInterpretation="Monochrome" Mode="WideField" ContrastMethod="Brightfield" ExWave="2"
              EmWave="2" Fluor="Fluor11" NdFilter="3.14159E0" PockelCellSetting="0">
             <ome:LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
             <ome:OTFRef ID="OTF:a"/>
             <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                  Binning="1x1"/>
-            <ome:FilterRef ID="Filter:a"/>
+            <ome:FilterSetRef ID="FilterSet:a"/>
             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain33" Index="1"/>
             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain34" Index="1"/>
             <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain35" Index="1"/>
