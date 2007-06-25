@@ -553,6 +553,10 @@ public class DataControls extends ControlPanel
     if (id != TransformEvent.DATA_CHANGED) return;
     DataTransform data = (DataTransform) e.getSource();
     if (data != getSelectedData()) return;
+    //System.out.println("transform changed"); // TEMP
+    //System.out.println("e.getSource = " + data); // TEMP
+    //System.out.println("e.getSource().getClass().getName() = " +
+    //    data.getClass().getName()); // TEMP
     doDataInfo(data);
   }
 

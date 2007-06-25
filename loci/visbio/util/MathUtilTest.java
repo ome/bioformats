@@ -187,17 +187,21 @@ public class MathUtilTest extends TestCase {
     }
   }
 
-  /** Tests the opposite method */
-  public void testOpposite() {
+  /** Tests the same, different, and opposite methods. */
+  public void testSameEtc() {
     float[] v1 = {0f, 3f, 4f, 5f, -24.65f, 0f, 45f};
     float[] v2 = MathUtil.scalarMultiply(v1, -1f);
     float[] v3 = {v2[0]};
     
-    assertEquals(true, MathUtil.opposite(v1, v2));
-    assertEquals(false, MathUtil.opposite(v1, v3)); 
+    assertEquals(true, MathUtil.areSame(v1, v1));
+    assertEquals(false, MathUtil.areSame(v1, v2));
+    assertEquals(true, MathUtil.areDifferent(v1, v2));
+    assertEquals(false, MathUtil.areDifferent(v1, v1));
+    assertEquals(true, MathUtil.areOpposite(v1, v2));
+    assertEquals(false, MathUtil.areOpposite(v1, v3)); 
   }
 
-  // -- Computational Geometry Tests
+  // -- Computational Geometry Tests --
 
   /** Tests the MathUtil.inside() method */
   public void testInside() {

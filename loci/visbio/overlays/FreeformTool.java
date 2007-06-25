@@ -173,9 +173,9 @@ public class FreeformTool extends OverlayTool {
             // note: because of the way getDistSegWt() works, weight can
             // never be 0.0 except if seg = 0.
             if (weight == 1.0) { // nearest point on seg is the end node
-              // determine projection on seg.
               float[] a = freeform.getNodeCoords(seg+1);
-              freeform.insertNode(seg+2, a[0], a[1]);
+              // TODO move these inserts inside FreeformExtension
+              freeform.insertNode(seg+2, a[0], a[1], true);
               freeformExtension = new FreeformExtension(freeform, seg+1, seg+2,
                   true);
             }
@@ -185,8 +185,9 @@ public class FreeformTool extends OverlayTool {
               float[] a = freeform.getNodeCoords(seg);
               float[] b = freeform.getNodeCoords(seg + 1);
               float[] newXY = MathUtil.computePtOnSegment(a, b, (float) weight);
-              freeform.insertNode(seg + 1, newXY[0], newXY[1]);
-              freeform.insertNode(seg + 1, newXY[0], newXY[1]);
+              // TODO move thes inserts inside FreeformExtension
+              freeform.insertNode(seg + 1, newXY[0], newXY[1], true);
+              freeform.insertNode(seg + 1, newXY[0], newXY[1], true);
               freeformExtension = new FreeformExtension(freeform, seg+1, seg+2,
                   false);
             }
@@ -321,7 +322,7 @@ public class FreeformTool extends OverlayTool {
       freeform.deleteBetween(freeformExtension.start-1,
           freeformExtension.stop+1);
       if (freeformExtension.nodal) {
-        freeform.insertNode(freeformExtension.start, c[0], c[1]);
+        freeform.insertNode(freeformExtension.start, c[0], c[1], false);
       }
     }
 
@@ -399,19 +400,9 @@ public class FreeformTool extends OverlayTool {
   private void connectFreeforms(OverlayFreeform f1, OverlayFreeform f2,
     boolean head)
   {
+    // This method combines freeforms f1 and f2 to make a new freeform f3.
     if (!head) f2.reverseNodes();
-    float[][] f1Nodes = f1.getNodes();
-    float[][] f2Nodes = f2.getNodes();
-    int len1 = f1.getNumNodes();
-    int len2 = f2.getNumNodes();
-    float[][] newNodes = new float[2][len1 + len2];
-
-    for (int i=0; i<2; i++) {
-      System.arraycopy(f1Nodes[i], 0, newNodes[i], 0, len1); 
-      System.arraycopy(f2Nodes[i], 0, newNodes[i], len1, len2);
-    }
-
-    OverlayFreeform f3 = new OverlayFreeform (overlay, newNodes);
+    OverlayFreeform f3 = f1.connectTo(f2);
     overlay.removeObject(f1);
     overlay.removeObject(f2);
     overlay.addObject(f3);

@@ -384,8 +384,8 @@ public final class MathUtil {
    * @param u1 a unit vector
    * @param u2 another unit vector 
    */ 
-  public static boolean opposite(float[] v1, float[] v2) {
-    if (v1.length != v2.length) return false;
+  public static boolean areOpposite(float[] v1, float[] v2) {
+   /*    if (v1.length != v2.length) return false;
     boolean opposite = true;
     for (int i=0; i<v1.length; i++) {
       if (v1[i] != -v2[i]) {
@@ -394,7 +394,30 @@ public final class MathUtil {
       }
     }
     return opposite;
+    */
+    return areSame(v1, scalarMultiply(v2, -1f));
   }
+
+  /** Tests whether two arrays of floats are identical. */
+  public static boolean areSame(float[] a, float[] b) {
+    boolean same = true; 
+    if (a.length == b.length) { 
+      for (int i=0; i<a.length; i++){
+        if (a[i] != b[i]) {
+          same = false;
+          break;
+        }
+      }
+    }
+    else same = false;
+    return same;
+  }
+
+  /** Tests whether two arrays of floats are different. */
+  public static boolean areDifferent(float[] a, float[] b) {
+    return !areSame(a, b);
+  }
+
 
   // -- Computational Geometry Methods --
 

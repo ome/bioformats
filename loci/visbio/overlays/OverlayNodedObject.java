@@ -538,7 +538,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
    * Inserts a node at coordinates provided
    * before the node at the index provided.
    */
-  public void insertNode(int index, float x, float y) {
+  public void insertNode(int index, float x, float y, boolean colocationalOK) {
     synchronized (nodesSync) {
       if (index >= 0 && index < numNodes) {
         // if array is full, make some more room.
@@ -546,21 +546,53 @@ public abstract class OverlayNodedObject extends OverlayObject {
           maxNodes *= 2;
           resizeNodeArray(maxNodes);
         }
-        for (int j = 0; j < 2; j++) {
-          for (int i = numNodes; i > index; i--) {
-            // right shift every node right of index by 1
-            nodes[j][i] = nodes[j][i-1];
+
+        if (colocationalOK) {
+          insert(index, x, y);
+        } 
+        else {
+          boolean differentFromNext = false;
+          boolean differentFromPrev = false;
+          boolean notFirst = false;
+          float[] c = new float[]{x, y};
+          if (index < numNodes) {
+            differentFromNext = MathUtil.areDifferent(getNodeCoords(index), c);
+          }
+          if (index > 0) {
+            differentFromPrev = MathUtil.areDifferent(getNodeCoords(index-1), c);
+            notFirst = true;
+          }
+
+          /*
+           cases where you insert the node
+           -index = 0 and different from next
+           -index interior and different from next and different from previous
+          */
+          if ((!notFirst && differentFromNext) ||
+              (notFirst && differentFromPrev && differentFromNext)) {
+            insert(index, x, y);
+
           }
         }
-        nodes[0][index] = x;
-        nodes[1][index] = y;
-        numNodes++;
       }
       else {
         //System.out.println("index not in range (0, numNodes). " +
         //  "No node inserted");
       }
     }
+  }
+
+  /** Actually inserts a node. */
+  private void insert(int index, float x, float y) {
+    for (int j = 0; j < 2; j++) {
+      for (int i = numNodes; i > index; i--) {
+        // right shift every node right of index by 1
+        nodes[j][i] = nodes[j][i-1];
+      }
+    }
+    nodes[0][index] = x;
+    nodes[1][index] = y;
+    numNodes++;
   }
 
   /** Deletes a range of nodes from the node array */
@@ -570,12 +602,17 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // number of nodes to delete
     synchronized(nodesSync) {
       if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) {
-        int victims = i2 - i1 - 1;
+        int ii2 = i2;
+        // if adjacent-nodes-to-be are colococational,
+        // delete one of them
+        if (MathUtil.areSame(getNodeCoords(i1), getNodeCoords(i2))) 
+          ii2 += 1;
+        int victims = ii2 - i1 - 1;
         float[][] newNodes = new float[2][maxNodes - victims];
         System.arraycopy(nodes[0], 0, newNodes[0], 0, i1 + 1);
         System.arraycopy(nodes[1], 0, newNodes[1], 0, i1 + 1);
-        System.arraycopy(nodes[0], i2, newNodes[0], i1+1, maxNodes - i2);
-        System.arraycopy(nodes[1], i2, newNodes[1], i1+1, maxNodes - i2);
+        System.arraycopy(nodes[0], ii2, newNodes[0], i1+1, maxNodes - ii2);
+        System.arraycopy(nodes[1], ii2, newNodes[1], i1+1, maxNodes - ii2);
         numNodes -= victims;
         maxNodes -= victims;
         nodes = newNodes;
@@ -592,12 +629,18 @@ public abstract class OverlayNodedObject extends OverlayObject {
         // built-in truncation
         //System.out.println("OverlayObject.deleteNode(" + index +") called. " +
         //  "numNodes = " + numNodes + ", maxNodes = " + maxNodes);
-        float [][] newNodes =  new float[2][numNodes-1];
-        System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
-        System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
-        System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
-        System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
-        numNodes--;
+        int offset;
+        if (index > 0 && index < numNodes - 1 && 
+            MathUtil.areSame(getNodeCoords(index-1), getNodeCoords(index+1))) 
+          // colocational nodes exist
+          offset = 1;
+        else offset = 0;
+        float[][] newNodes =  new float[2][numNodes-1-offset];
+        System.arraycopy(nodes[0], 0, newNodes[0], 0, index-offset);
+        System.arraycopy(nodes[0], index+1, newNodes[0], index-offset, numNodes-index-1);
+        System.arraycopy(nodes[1], 0, newNodes[1], 0, index-offset);
+        System.arraycopy(nodes[1], index+1, newNodes[1], index-offset, numNodes-index-1);
+        numNodes -= 1 + offset;
         maxNodes = numNodes;
         nodes = newNodes;
       }
@@ -689,6 +732,37 @@ public abstract class OverlayNodedObject extends OverlayObject {
     overlay.removeObject(this);
 
     return new OverlayFreeform[]{f1, f2};
+  }
+
+  /** 
+   * Creates a new freeform by connecting the tail of this freeform to the
+   * head of the freeform supplied.
+   * @param f2 The freeform to connect to this freeform
+   */
+  public OverlayFreeform connectTo(OverlayFreeform f2) {
+    float[][] f1Nodes = this.getNodes();
+    float[][] f2Nodes = f2.getNodes();
+    int len1 = f1Nodes[0].length; 
+    int len2 = f2Nodes[0].length;
+
+    // Obtain coordinates of last node of f1 and first of f2.
+    float[] f1End = {f1Nodes[0][len1-1], f1Nodes[1][len1-1]};
+    float[] f2Beg = {f2Nodes[0][0], f2Nodes[1][0]};
+    // If the last node in f1 and the first node in f2 are the same,
+    // this method won't copy the last node of f1 into the node array used to
+    // construct f3.
+    int offset; 
+    if (MathUtil.areSame(f1End, f2Beg)) offset = 1; 
+    else offset = 0;
+
+    float[][] newNodes = new float[2][len1 + len2 - offset];
+    for (int i=0; i<2; i++) {
+      System.arraycopy(f1Nodes[i], 0, newNodes[i], 0, len1-offset); 
+      System.arraycopy(f2Nodes[i], 0, newNodes[i], len1-offset, len2);
+    }
+
+    OverlayFreeform f3 = new OverlayFreeform (overlay, newNodes);
+    return f3;
   }
 
   /** Reverses the node array (and therefore its internal orientation) */

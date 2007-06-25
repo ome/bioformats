@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.lang.reflect.*;
 import loci.visbio.util.InstanceServer;
 import loci.visbio.util.SplashScreen;
+// ACS -- import statements below are _temporary_ (for testing)
+import loci.visbio.VisBioFrame;
+import loci.visbio.data.DataManager;
 
 /**
  * VisBio is a biological visualization tool designed for easy
@@ -124,6 +127,19 @@ public final class VisBio extends Thread {
   {
     Object o = launch(args);
     if (o == null) System.out.println("VisBio is already running.");
+    // ACS - All code below temporary for testing purposes
+    else {
+      // load sdub data
+      VisBioFrame vbf = (VisBioFrame) o;
+      DataManager dm = (DataManager)
+        vbf.getManager(DataManager.class);
+      dm.openSampleData("sdub");
+      // This doesn't work: perhaps sdub data object isn't 'selected,' causing
+      // doNewDisplay...() to return prematurely
+      // DataControls controls = dm.getControls();
+      // controls.doNewDisplayWithOverlays();
+    }
+
   }
 
 }

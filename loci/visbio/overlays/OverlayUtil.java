@@ -973,7 +973,7 @@ public final class OverlayUtil {
           float[] p0 = new float[] {nodes[0][i-2], nodes[1][i-2]}; // 3rd 2 last
           float[] v1 = MathUtil.unit(MathUtil.vector(p1, p0));
           float[] v2 = MathUtil.unit(MathUtil.vector(p2, p1));
-          if (MathUtil.opposite(v1, v2)) {
+          if (MathUtil.areOpposite(v1, v2)) {
             anti = true;
             orientationChanged = orientationChanged ? false : true; // toggle
           }
@@ -1016,7 +1016,7 @@ public final class OverlayUtil {
         // have to correct the strategy in this case
         float[] v1 = MathUtil.unit(MathUtil.vector(p2, p1));
         float[] v2 = MathUtil.unit(MathUtil.vector(p3, p2));
-        if (MathUtil.opposite(v1, v2)) {
+        if (MathUtil.areOpposite(v1, v2)) {
           // vectors are antiparallel. just use v1 to calculate right and left
           float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1); 
           float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width)); 

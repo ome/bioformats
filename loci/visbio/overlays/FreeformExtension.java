@@ -185,14 +185,14 @@ public class FreeformExtension {
   /** Extends the tip of the freeform extension by "one" node. */
   public void extend(float[] c) {
     if (tip < 0) {
-      freeform.insertNode(stop, c[0], c[1]);
+      freeform.insertNode(stop, c[0], c[1], true);
       stop++;
       tip = start + 1;
     }
     else { // later drags
       float[] prev = getTipCoords();
-      freeform.insertNode(tip+1, prev[0], prev[1]);
-      freeform.insertNode(tip+1, c[0], c[1]);
+      freeform.insertNode(tip+1, prev[0], prev[1], true);
+      freeform.insertNode(tip+1, c[0], c[1], true);
       tip++;
       stop += 2;
     }
@@ -217,7 +217,7 @@ public class FreeformExtension {
       float[] b = freeform.getNodeCoords(seg + 1 + offset);
       float[] newXY = MathUtil.computePtOnSegment(a, b, (float) weight);
       int insertIndex = seg + 1 + offset;
-      freeform.insertNode(insertIndex, newXY[0], newXY[1]);
+      freeform.insertNode(insertIndex, newXY[0], newXY[1], true);
       if (!closerToPost) incrementAll();
       endIndex = insertIndex;
     }
