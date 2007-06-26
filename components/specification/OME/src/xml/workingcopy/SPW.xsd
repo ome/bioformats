@@ -49,15 +49,14 @@
                 A plate can belong to more than one screen.
                 The Screen(s) that a plate belongs to are specified by the ScreenRef element.
                 The Plate ID and Name attributes are required.
-				The Wells in a plate are numbers from the top-left corner in a grid starting at one.
-				i.e The top-left well of a plate is index (1,1)
+				The Wells in a plate are numbers from the top-left corner in a grid starting at zero.
+				i.e The top-left well of a plate is index (0,0)
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="OME:DatasetRef" minOccurs="0"/>
-                <xsd:element ref="ScreenRef" minOccurs="0"/>
-                <xsd:element ref="Well" minOccurs="0"/>
+                <xsd:element ref="ScreenRef" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="Well" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="PlateID"/>
             <xsd:attribute name="Name" use="required" type="xsd:string">
@@ -101,14 +100,6 @@
             <xsd:complexContent>
                 <xsd:extension base="OME:Reference">
                     <xsd:attribute name="ID" use="required" type="PlateID"/>
-                    <xsd:attribute name="Well" use="required">
-                        <xsd:simpleType>
-                            <xsd:restriction base="xsd:string">
-                                <xsd:pattern value="[A-Z]+[0-9]+"/>
-                            </xsd:restriction>
-                        </xsd:simpleType>
-                    </xsd:attribute>
-                    <xsd:attribute name="Sample" type="xsd:integer"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -297,14 +288,13 @@
                 A Well is a component of the Well/Plate/Screen construct to describe screening applications.
                 A Well has a number of WellSample elements that link to the Images collected in this well.
  				The ReagentRef links any Reagents that were used in this Well. A well is part of one or more Plates.
-				The origin for the row and column identifiers is the top left corner of the plate starting at one.
-				i.e The top left well of a plate is index (1,1)
+				The origin for the row and column identifiers is the top left corner of the plate starting at zero.
+				i.e The top left well of a plate is index (0,0)
             </xsd:documentation>
         </xsd:annotation> 
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
-                <xsd:element ref="PlateRef" maxOccurs="unbounded"/>
                 <xsd:element ref="ReagentRef" minOccurs="0"/>
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="WellID"/>
@@ -312,7 +302,7 @@
                 <xsd:annotation>
                     <xsd:documentation>
 						This is the column index of the well, the origin is the top left corner of the plate
-						with the first column of cells being column one. i.e top left is (1,1)
+						with the first column of cells being column zero. i.e top left is (0,0)
                     </xsd:documentation>
                 </xsd:annotation>     
             </xsd:attribute>
@@ -334,7 +324,7 @@
                 <xsd:annotation>
                     <xsd:documentation>
 						This is the row index of the well, the origin is the top left corner of the plate
-						with the first row of wells being column one. i.e top left is (1,1)
+						with the first row of wells being row zero. i.e top left is (0,0)
                     </xsd:documentation>
                 </xsd:annotation>         
             </xsd:attribute>
