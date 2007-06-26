@@ -237,27 +237,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
   }
 
-  /** Gets the nearest node to the given point. */
-  protected double[] getNearestNode(float x, float y) {
-    int minIndex = -1;
-    double minDist = Double.POSITIVE_INFINITY;
-    float[] p = new float[]{x, y};
-
-    // check distance to all nodes
-    synchronized (nodesSync) {
-      for (int i=0; i<numNodes; i++) {
-        float[] c = {nodes[0][i], nodes[1][i]}; 
-        double dist = MathUtil.getDistance(c, p); 
-        if (dist < minDist) {
-          minIndex = i;
-          minDist = dist;
-        }
-      }
-    }
-
-    return new double[]{minDist, (double) minIndex};
-  }
-
   /** Returns a specific statistic of this object */
   public String getStat(String name) {
     if (name.equals(BOUNDS)) {
@@ -285,12 +264,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
 
-  /** True iff there is a highlighted node. */
-  public boolean isHighlightNode() { return highlightNode; }
-
-  /** Returns index of highlighted node. */
-  public int getHighlightedNodeIndex() { return highlightIndex; }
-
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
 
@@ -299,8 +272,34 @@ public abstract class OverlayNodedObject extends OverlayObject {
   // currently, only non-noded objects can be resized this way.
   // (Actually could perform scaling on all nodes)
 
-  // -- Object API methods --
+  // -- OverlayNodedObject API methods --
 
+  /** True iff there is a highlighted node. */
+  public boolean isHighlightNode() { return highlightNode; }
+
+  /** Returns index of highlighted node. */
+  public int getHighlightedNodeIndex() { return highlightIndex; }
+
+  /** Gets the nearest node to the given point. */
+  protected double[] getNearestNode(float x, float y) {
+    int minIndex = -1;
+    double minDist = Double.POSITIVE_INFINITY;
+    float[] p = new float[]{x, y};
+
+    // check distance to all nodes
+    synchronized (nodesSync) {
+      for (int i=0; i<numNodes; i++) {
+        float[] c = {nodes[0][i], nodes[1][i]}; 
+        double dist = MathUtil.getDistance(c, p); 
+        if (dist < minDist) {
+          minIndex = i;
+          minDist = dist;
+        }
+      }
+    }
+
+    return new double[]{minDist, (double) minIndex};
+  }
   /** Computes the shortest distance from this object's bounding box to the
    * given point. */
   public double getDistanceToBoundingBox(double x, double y) {
@@ -663,78 +662,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return children;
   }
 
-  // NOTE: Right now this method returns Freeforms only, though it could be used
-  // on Polylines too. 
-  /** 
-   * Slices a noded object in two. 
-   * @param seg the index of the segment on which to slice
-   * @param weight the relative distance along the segment to slice
-   * The parameters seg and weight indicate a 'cut point' on the freeform. 
-   * If weight is strictly between 0 and 1, the cut point is actually between
-   * two nodes, and all nodes of the original object are transferred to 
-   * the child objects. 
-   */
-  // TODO -- combine this with 'split' method in polyline tool.
-  private OverlayFreeform[] slice(int seg, double weight)
-  {
-    // create two new freeforms from the remainder of this freeform
-    OverlayFreeform f1 = null, f2 = null;
-
-    float[][] f1Nodes = null, f2Nodes = null;
-
-    synchronized (nodesSync) {
-      // compute indices into the node array of this freeform 
-      int f1Start, f2Start, f1Stop, f2Stop;
-      f1Start = 0;
-      f1Stop = seg;
-      f2Start = seg + 1;
-      f2Stop = numNodes - 1;
-
-      // if the cut point is a node itself, exclude that node from both halves
-      if (weight == 0.0) f1Stop = seg - 1;
-      else if (weight == 1.0) f2Start = seg + 2;
-
-      int numNodes1 = f1Stop + 1;
-      int numNodes2 = f2Stop - f2Start + 1;
-
-      // create new object if number of nodes in object > 1
-      if (numNodes1 > 1) {
-        f1Nodes = new float[2][numNodes1];
-
-        for (int i=0; i<2; i++) {
-          System.arraycopy(nodes[i], 0, f1Nodes[i], 0, numNodes1);
-        }
-      }
-
-      // create new object if number of nodes in object > 1
-      if (numNodes2 > 1) {
-        f2Nodes = new float[2][numNodes2];
-
-        for (int i = 0; i<2; i++) {
-          System.arraycopy(nodes[i], f2Start, f2Nodes[i], 0, numNodes2);
-        }
-      }
-    } // end synchronized
-
-    if (f1Nodes != null) {
-      f1 = new OverlayFreeform(overlay, f1Nodes);
-      overlay.addObject(f1);
-      f1.setSelected(false);
-      f1.setDrawing(false);
-    }
-    if (f2Nodes != null) {
-      f2 = new OverlayFreeform(overlay, f2Nodes);
-      overlay.addObject(f2);
-      f2.setSelected(false);
-      f2.setDrawing(false);
-    }
-
-    // dispose of original freeform
-    overlay.removeObject(this);
-
-    return new OverlayFreeform[]{f1, f2};
-  }
-
   /** 
    * Creates a new freeform by connecting the tail of this freeform to the
    * head of the freeform supplied.
@@ -810,6 +737,80 @@ public abstract class OverlayNodedObject extends OverlayObject {
       nodes = a2;
       maxNodes = newLength;
     }
+  }
+
+  // -- Helper methods --
+  
+  // NOTE: Right now this method returns Freeforms only, though it could be used
+  // on Polylines too. 
+  /** 
+   * Slices a noded object in two. 
+   * @param seg the index of the segment on which to slice
+   * @param weight the relative distance along the segment to slice
+   * The parameters seg and weight indicate a 'cut point' on the freeform. 
+   * If weight is strictly between 0 and 1, the cut point is actually between
+   * two nodes, and all nodes of the original object are transferred to 
+   * the child objects. 
+   */
+  // TODO -- combine this with 'split' method in polyline tool.
+  private OverlayFreeform[] slice(int seg, double weight)
+  {
+    // create two new freeforms from the remainder of this freeform
+    OverlayFreeform f1 = null, f2 = null;
+
+    float[][] f1Nodes = null, f2Nodes = null;
+
+    synchronized (nodesSync) {
+      // compute indices into the node array of this freeform 
+      int f1Start, f2Start, f1Stop, f2Stop;
+      f1Start = 0;
+      f1Stop = seg;
+      f2Start = seg + 1;
+      f2Stop = numNodes - 1;
+
+      // if the cut point is a node itself, exclude that node from both halves
+      if (weight == 0.0) f1Stop = seg - 1;
+      else if (weight == 1.0) f2Start = seg + 2;
+
+      int numNodes1 = f1Stop + 1;
+      int numNodes2 = f2Stop - f2Start + 1;
+
+      // create new object if number of nodes in object > 1
+      if (numNodes1 > 1) {
+        f1Nodes = new float[2][numNodes1];
+
+        for (int i=0; i<2; i++) {
+          System.arraycopy(nodes[i], 0, f1Nodes[i], 0, numNodes1);
+        }
+      }
+
+      // create new object if number of nodes in object > 1
+      if (numNodes2 > 1) {
+        f2Nodes = new float[2][numNodes2];
+
+        for (int i = 0; i<2; i++) {
+          System.arraycopy(nodes[i], f2Start, f2Nodes[i], 0, numNodes2);
+        }
+      }
+    } // end synchronized
+
+    if (f1Nodes != null) {
+      f1 = new OverlayFreeform(overlay, f1Nodes);
+      overlay.addObject(f1);
+      f1.setSelected(false);
+      f1.setDrawing(false);
+    }
+    if (f2Nodes != null) {
+      f2 = new OverlayFreeform(overlay, f2Nodes);
+      overlay.addObject(f2);
+      f2.setSelected(false);
+      f2.setDrawing(false);
+    }
+
+    // dispose of original freeform
+    overlay.removeObject(this);
+
+    return new OverlayFreeform[]{f1, f2};
   }
 
   // -- Helper Methods for Debugging -- 

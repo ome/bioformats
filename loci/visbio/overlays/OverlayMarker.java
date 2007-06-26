@@ -60,13 +60,10 @@ public class OverlayMarker extends OverlayObject {
 
   // -- OverlayObject API methods --
 
-  /** Returns the defualt width of this marker. */
-  protected float getDefaultWidth() {
-    return 0.02f * overlay.getScalingValue();
-  }
-
-  /** Returns the width of this marker. */
-  protected float getWidth() { return width; }
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
+   */
+  public boolean hasData() { return true; }
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
@@ -101,11 +98,6 @@ public class OverlayMarker extends OverlayObject {
     return field;
   }
 
-  /** Returns whether this object is drawable, i.e., is of nonzero
-   *  size, area, length, etc.
-   */
-  public boolean hasData() { return true; }
-
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
     double xx = x1 - x;
@@ -136,6 +128,17 @@ public class OverlayMarker extends OverlayObject {
   public void rescale(float multiplier) {
     //width = getDefaultWidth() * multiplier;
   }
+
+  // -- Overlay Marker API methods --
+ 
+  /** Returns the defualt width of this marker. */
+  protected float getDefaultWidth() {
+    return 0.02f * overlay.getScalingValue();
+  }
+
+  /** Returns the width of this marker. */
+  protected float getWidth() { return width; }
+
 
   // -- Object API methods --
 

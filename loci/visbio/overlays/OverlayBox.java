@@ -66,6 +66,11 @@ public class OverlayBox extends OverlayObject {
 
   // -- OverlayObject API methods --
 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
+   */
+  public boolean hasData() { return (x1 != x2 && y1 != y2); }
+
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
     if (!hasData()) return null;
@@ -117,11 +122,6 @@ public class OverlayBox extends OverlayObject {
     catch (RemoteException exc) { exc.printStackTrace(); }
     return field;
   }
-
-  /** Returns whether this object is drawable, i.e., is of nonzero
-   *  size, area, length, etc.
-   */
-  public boolean hasData() { return (x1 != x2 && y1 != y2); }
 
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
