@@ -36,7 +36,8 @@ import visad.util.CursorUtil;
  * aborted.
  *
  * The section of the freeform represented by a freeform extension is actually a
- * loop, not a single line, like a giant 'loopie' on your shoelace. 
+ * loop, but it's thin (both sides overlap exactly) so it appears like a single
+ * line. 
  * The loop has two parts, between start and tip and between tip and stop.
  * If an edit is completed, half of the freeform extension is deleted along
  * with the subtended section of the original freeform.  As a result, the 
@@ -168,7 +169,7 @@ public class FreeformExtension {
     return distSegWt;
   }
 
-  /** Computes distance between drag and tip of extension. **/
+  /** Computes distance between mouse drag and tip of extension. **/
   public double computeDragDist(DisplayImpl display, int px, int py) {
     // coords of this mouseDrag event
     float[] prvCrdsFlt = getTipCoords();
@@ -180,7 +181,6 @@ public class FreeformExtension {
     double dragDist = MathUtil.getDistance(drag, prvCrdsPxlDbl);
     return dragDist;
   }
-
 
   /** Extends the tip of the freeform extension by "one" node. */
   public void extend(float[] c) {

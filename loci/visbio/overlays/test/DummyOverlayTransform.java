@@ -21,11 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.visbio.overlays;
+package loci.visbio.overlays.test;
 
 import java.util.*;
 import loci.formats.FormatTools;
 import loci.visbio.data.*;
+import loci.visbio.overlays.OverlayTransform;
 import loci.visbio.state.Dynamic;
 
 /** 

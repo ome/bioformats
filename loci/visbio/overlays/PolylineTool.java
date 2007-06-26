@@ -387,8 +387,9 @@ public class PolylineTool extends OverlayTool {
     }
   }
 
-  // TODO -- combine this method with the similar one for freeforms,
+  // TODO -- replace this method with the similar one for freeforms,
   // currently located in OverlayNodedObject.java
+  // Determine some way of combining the two.
   /** Splits an overlay polyline in two */
   private void split (OverlayPolyline line, int selectedNode) {
     float[][] nodes = line.getNodes();
@@ -426,7 +427,10 @@ public class PolylineTool extends OverlayTool {
     }
   }
 
-  /** Gets distance to the node specified, handling awkward casts. */
+  /** 
+   * Gets distance to the node specified in pixel coordinates, handling
+   * awkward casts. 
+   */ 
   private double getDistanceToNode(int ndx, int px, int py,
     DisplayImpl display) {
     double[] dPxlDbl = {(double) px, (double) py};
@@ -476,6 +480,8 @@ public class PolylineTool extends OverlayTool {
    *  Returns an array int[2], with item 0 the index of the nearest polyline
    *  in the objects array, item 1 the index of the nearest node in the nearest
    *  polyline */
+  // TODO can this make use of or be replaced by the OverlayNodedObject instance
+  // method with the same name?
   private int[] getNearestNode(DisplayImpl display,
       OverlayObject[] objects, int px, int py, double threshold) {
     Vector polylines = new Vector();

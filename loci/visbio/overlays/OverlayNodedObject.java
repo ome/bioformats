@@ -342,7 +342,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return retvals;
   }
 
-  /** Returns the node array */
+  /** Returns a copy of the node array */
   public float[][] getNodes() {
     synchronized(nodesSync) {
       float[][] copy = new float[2][numNodes];
@@ -353,10 +353,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
   }
 
-  /** Returns the number of real nodes in the array */
+  /** Returns the number of real nodes in the array. */
   public int getNumNodes() { synchronized(nodesSync) { return numNodes; } }
 
-  /** Returns total number of nodes in array */
+  /** Returns total number of nodes in array. */
   public int getMaxNodes() { synchronized(nodesSync) { return maxNodes; } }
 
   /** Gets most recent x-coordinate in node array. */
@@ -386,7 +386,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     this.y1 = y1;
   }
 
-  /** Sets the node array to that provided--for loading from saved */
+  /** Sets the node array to that provided--for loading from saved. */
   public void setNodes(float[][] nodes) {
     synchronized (nodesSync) {
       this.nodes = nodes;
@@ -397,7 +397,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
     updateBoundingBox();
   }
 
-  /** Updates the coordinates of the bounding box of a noded object */
+  /** 
+   * Updates the coordinates of the bounding box of a noded object by
+   * checking the entire node array. 
+   */
   public void updateBoundingBox() {
     if (numNodes == 0) return;
     float xmin, xmax, ymin, ymax;
@@ -417,7 +420,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     this.y2 = ymax;
   }
 
-  /** Gets length of curve */
+  /** Gets length of curve. */
   public double getCurveLength() { return curveLength; }
 
   /** Determines length of last line segment in this curve. */
@@ -429,10 +432,10 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return MathUtil.getDistance(lastSegD[0], lastSegD[1]);
   }
 
-  /** Sets length of curve */
+  /** Sets length of curve. */
   public void setCurveLength(double len) { curveLength = len; }
 
-  /** Computes length of curve */
+  /** Computes length of curve. */
   public void computeLength() {
     boolean notFull = false;
     synchronized (nodesSync) {
@@ -453,7 +456,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   // -- OverlayNodedObject API Methods: node array mutators --
   // note: call updateBoundingBox() after a series of changes to the node array
-  
 
   /** Sets coordinates of an existing node */
   public void setNodeCoords(int ndx, float x, float y) {
@@ -537,7 +539,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
     synchronized (nodesSync) {
       if (index >= 0 && index < numNodes) {
         // if array is full, make some more room.
-        if (numNodes >= maxNodes) { // numNodes should never exceed maxNodes but..
+        if (numNodes >= maxNodes) { 
+          // numNodes should never exceed maxNodes but I threw the > in anyway.
           maxNodes *= 2;
           resizeNodeArray(maxNodes);
         }
@@ -621,13 +624,15 @@ public abstract class OverlayNodedObject extends OverlayObject {
   public void deleteNode(int index) {
     synchronized (nodesSync) {
       if (index >=0 && index < numNodes) {
-        // built-in truncation
-        //System.out.println("OverlayObject.deleteNode(" + index +") called. " +
-        //  "numNodes = " + numNodes + ", maxNodes = " + maxNodes);
+        // This method includes built-in truncation: it doesn't bother to
+        // copy the extra nodes in the node array.
+        
+        // Check if this delete operation will result in two colocational nodes
+        // becoming adjacent in the node array.  If so, also delete one of 
+        // these nodes.
         int offset;
         if (index > 0 && index < numNodes - 1 && 
             MathUtil.areSame(getNodeCoords(index-1), getNodeCoords(index+1))) 
-          // colocational nodes exist
           offset = 1;
         else offset = 0;
         float[][] newNodes =  new float[2][numNodes-1-offset];
@@ -669,6 +674,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
    * two nodes, and all nodes of the original object are transferred to 
    * the child objects. 
    */
+  // TODO -- combine this with 'split' method in polyline tool.
   private OverlayFreeform[] slice(int seg, double weight)
   {
     // create two new freeforms from the remainder of this freeform

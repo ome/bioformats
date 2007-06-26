@@ -1,20 +1,52 @@
-package loci.visbio.overlays;
+//
+// OverlayNodedObjectTest.java
+//
+
+/*
+VisBio application for visualization of multidimensional
+biological image data. Copyright (C) 2002-@year@ Curtis Rueden.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.visbio.overlays.test;
 
 import junit.framework.TestCase;
+import loci.visbio.overlays.*;
 
+/** Test some critical methods of the OverlayNodedObject class. */
 public class OverlayNodedObjectTest extends TestCase {
 
+  /** Tolerance for comparing floats. */
   public static final float DELTA = 0f;
 
+  /** Overlay transform for test overlays. */
   protected OverlayTransform ot;
+  
+  /** Different testing OverlayNodedObjects. */
   protected OverlayFreeform f, g, h;
 
+  /** A set of nodes. */
   protected static final float[][] NODES = {{0f, 1f, 2f},
                                   {0f, 0f, 0f}};
 
+  /** Another set of nodes. */
   protected static final float[][] NODES2 = {{0f, 1f, 2f, 1f, 0f},
                                   {0f, 0f, 0f, 0f, 0f}};
 
+  /** This method runs before each test. */
   public void setUp() {
     DummyImageTransform it = new DummyImageTransform(null, "image");
     ot = new DummyOverlayTransform(it, "Howdy");
@@ -23,6 +55,7 @@ public class OverlayNodedObjectTest extends TestCase {
     h = new OverlayFreeform(ot, NODES2);
   }
 
+  /** This method runs after each test. */
   public void tearDown() {
   }
 

@@ -259,6 +259,7 @@ public class FreeformTool extends OverlayTool {
         }
       }
 
+      // if close, connect freeforms together
       if (minDist < DRAW_THRESH) {
         connectFreeforms(freeform,
           (OverlayFreeform) otherFreefs.get(index), closerToHead);
@@ -466,7 +467,7 @@ public class FreeformTool extends OverlayTool {
         if (currentObject instanceof OverlayFreeform) {
           OverlayFreeform currentFreeform = (OverlayFreeform) currentObject;
           // performance opportunity:
-          // I removed the check on the bounding box
+          // check distance to bounding box first.
           // Should the getDistance method return a distance in
           // pixel coordinates?
           double[][] nodesDbl = OverlayUtil.floatsToPixelDoubles(display,
@@ -524,7 +525,7 @@ public class FreeformTool extends OverlayTool {
     }
   }
 
-  // -- Inner Classes -- 
+  // -- Inner Class -- 
 
   /** 
    * Wraps information about the distance from a point to a freeform object. 

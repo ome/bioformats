@@ -1,0 +1,18 @@
+# VisBio (internal build) overlay file written Wed Jun 20 14:42:04 CDT 2007
+
+Overlay	Time (12)	Slice (9)	x1	y1	x2	y2	text	color	filled	group	notes
+Polyline	1	1	133.38931	24.959639	146.92873	62.976585	N/A	ffffff	false	None	
+
+# Polyline Statistics
+# Polyline 1
+#	Bounds	(133.38931, 24.959639), (146.92873, 62.976585)
+#	Number of Nodes	5
+#	Length	58.687347
+
+# Polyline 1 nodes:
+X	Y
+140.9462	40.34787
+142.52054	33.43887
+146.92873	24.959639
+133.38931	51.967545
+137.72752	62.976585

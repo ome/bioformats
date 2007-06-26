@@ -1,0 +1,64 @@
+# VisBio (internal build) overlay file written Wed Jun 20 14:39:40 CDT 2007
+
+Overlay	Time (12)	Slice (9)	x1	y1	x2	y2	text	color	filled	group	notes
+Polyline	1	1	73.14425	74.96266	92.3513	74.96266	N/A	ffffff	false	None	
+Polyline	1	1	81.9606	64.59916	106.83531	64.59916	N/A	ffffff	false	None	
+Polyline	1	1	90.776955	56.11993	114.707054	60.516567	N/A	ffffff	false	None	
+Polyline	1	1	89.20261	41.987885	109.669136	47.6407	N/A	ffffff	false	None	
+Polyline	1	1	96.44461	35.706974	127.616714	35.706974	N/A	ffffff	false	None	
+
+# Polyline Statistics
+# Polyline 1
+#	Bounds	(73.14425, 74.96266), (92.3513, 74.96266)
+#	Number of Nodes	2
+#	Length	19.207054
+# Polyline 2
+#	Bounds	(81.9606, 64.59916), (106.83531, 64.59916)
+#	Number of Nodes	3
+#	Length	37.469498
+# Polyline 3
+#	Bounds	(90.776955, 56.11993), (114.707054, 60.516567)
+#	Number of Nodes	4
+#	Length	47.989697
+# Polyline 4
+#	Bounds	(89.20261, 41.987885), (109.669136, 47.6407)
+#	Number of Nodes	4
+#	Length	43.18923
+# Polyline 5
+#	Bounds	(96.44461, 35.706974), (127.616714, 35.706974)
+#	Number of Nodes	6
+#	Length	107.05571
+
+# Polyline 1 nodes:
+X	Y
+73.14425	74.96266
+92.3513	74.96266
+
+# Polyline 2 nodes:
+X	Y
+81.9606	64.59916
+106.83531	64.59916
+94.240524	64.59916
+
+# Polyline 3 nodes:
+X	Y
+90.776955	56.11993
+114.707054	56.11993
+96.44461	56.11993
+92.666176	60.516567
+
+# Polyline 4 nodes:
+X	Y
+89.20261	47.6407
+109.669136	47.6407
+93.92565	47.6407
+89.832344	41.987885
+
+# Polyline 5 nodes:
+X	Y
+96.44461	35.706974
+127.616714	35.706974
+98.96357	35.706974
+120.059845	35.706974
+104.631226	35.706974
+115.33679	35.706974

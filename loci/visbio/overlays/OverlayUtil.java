@@ -154,7 +154,9 @@ public final class OverlayUtil {
     float x2 = obj.getX2();
     float y1 = obj.getY();
     float y2 = obj.getY2();
+
     // compute corners of arrow tail
+    // (this paragraph copied straight from OverlayArrow)
     double xx = x2 - x1;
     double yy = y2 - y1;
     double dist = Math.sqrt(xx * xx + yy * yy);
@@ -173,9 +175,9 @@ public final class OverlayUtil {
 
     // arrow lengths:
     double a, b, c;
-    a = Math.sqrt(qx * qx + qy * qy);
-    b = dist;
-    c = Math.sqrt(a * a + b * b);
+    a = Math.sqrt(qx * qx + qy * qy); // 1/2 width of tail
+    b = dist; // length from tail to tip
+    c = Math.sqrt(a * a + b * b); // length of side/hypotenuse
 
     double d = GLOW_WIDTH * getMultiplier(link);
 
@@ -299,16 +301,6 @@ public final class OverlayUtil {
     float y1 = obj.getY();
     float y2 = obj.getY2();
 
-    /*
-    // method for doing math in pixel coordinates part 1 of 2
-    float[] p1 = domainToPixel(link, new float[]{obj.getX(), obj.getY()});
-    float[] p2 = domainToPixel(link, new float[]{obj.getX2(), obj.getY2()});
-
-    float x1 = p1[0];
-    float x2 = p2[0];
-    float y1 = p1[1];
-    float y2 = p2[1];
-    */
 
     float delta = GLOW_WIDTH * getMultiplier(link);
 
@@ -332,13 +324,6 @@ public final class OverlayUtil {
     float[][] setSamples = {{c1[0], c2[0], c3[0], c4[0]},
                             {c1[1], c2[1], c3[1], c4[1]}};
 
-    /*
-    // method for doing math in pixel coordinates part 2 of 2
-    float[][] setSamplesPxl = {{c1[0], c2[0], c3[0], c4[0]},
-                            {c1[1], c2[1], c3[1], c4[1]}};
-
-    float[][] setSamples = pixelToDomain(link, setSamplesPxl);
-    */
 
     // construct range samples;
     Color col = GLOW_COLOR;
@@ -387,8 +372,8 @@ public final class OverlayUtil {
     float yy1 = y1 + size + delta;
     float yy2 = y1 - size - delta;
 
-    float dx = 0.0001f; // TEMP
-
+    // construct a cross shape, or if the marker is really small compared
+    // to the desired width (delta) of the selection layer, a box instead
     SampledSet domainSet = null;
     int samplesLength = 4;
     if (2 * delta > size) {
@@ -409,16 +394,20 @@ public final class OverlayUtil {
       // return cross shape
       // using a UnionSet for now--couldn't get a single
       // Gridded2D set to appear as a cross
+
+      // left branch
       float[][] setSamples1 = {
         {xx1, x1-delta, xx1, x1 - delta},
         {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
       };
 
+      // vertical part 
       float[][] setSamples2 = {
         {x1 - delta, x1 + delta, x1 - delta, x1 + delta},
         {yy1, yy1, yy2, yy2}
       };
 
+      // right branch
       float[][] setSamples3 = {
         {x1 + delta, xx2, x1 + delta, xx2},
         {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
@@ -439,6 +428,9 @@ public final class OverlayUtil {
       catch (VisADException ex) { ex.printStackTrace(); }
 
       /*
+      float dx = 0.0001;
+      // here's the code for creating a cross-shaped Gridded2DSet, 
+      // which doesn't quite work
       setSamples = new float[][]{
         {xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2,
           xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2},
@@ -446,7 +438,6 @@ public final class OverlayUtil {
           y1 - delta, y1 - delta, yy2, yy2, y1 - delta, y1 - delta}
       };*/
 
-      // Run this example by curtis:
       // Start with this:
       /*
       setSamples = new float[][] {
@@ -500,9 +491,15 @@ public final class OverlayUtil {
     TupleType range = overlay.getRangeType();
     OverlayNodedObject ono = (OverlayNodedObject) obj;
 
+    // This method builds a UnionSet of Gridded2DSets to highlight an Overlay
+    // Freeform or OverlayPolyline, plus (sometimes) a translucent circle over
+    // one of the nodes of the freeform or polyline to indicate that the mouse
+    // pointer is nearby.  It constructs a separate Gridded2DSet for
+    // each segment of the freeform or polyline, and an additional Gridded2DSet
+    // for the circle.
+
     float delta = GLOW_WIDTH * getMultiplier(link);
     float[][] nodes = ono.getNodes();
-    // OverlayNodedObject.printThread("OU.getNodedLayer()");
     int numNodes = ono.getNumNodes();
     boolean hlt = ono.isHighlightNode();
     int hltIndex = 0;
@@ -522,8 +519,6 @@ public final class OverlayUtil {
     Vector sets = buildNodesSets(domain, nodes, delta);
     samples = sets.size() * 4;
 
-    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    
     int hlen = hlt ? len : 0;
     float[][] rangeSamples = new float[4][samples+hlen];
 
@@ -891,23 +886,41 @@ public final class OverlayUtil {
       float width) {
     int len = nodes[0].length;
 
-    // Create two arrays to store the gridpoints: one to the right of the curve
-    // and another to the left (supposing the curve is oriented in order of
-    // increasing node indices, i.e., the first node is nodes[][0], the last
-    // is nodes[][nodes.length-1])
+    // Create two arrays to store the gridpoints: one to the 'right'
+    // of the curve and another to the 'left' (supposing the curve is oriented
+    // in order of increasing node indices, i.e., the first node is nodes[][0],
+    // the last is nodes[][nodes.length-1]).  
     float[][] right = new float[2][len]; // store the gridpts
     float[][] left = new float[2][len]; 
 
     if (len <=1) return null;
 
+    // The senses of left and right remain the same except when the curve 
+    // doubles back on itself, i.e., when two consecutive segments form an 
+    // angle of 180 degrees.  Then the flag 'orientationChanged' switches.
     boolean orientationChanged = false; // if this is true, right and left
     // must be switched
+    
+
+    // This loop computes the points to use in the Gridded2DSets.  The sets
+    // are constructed separately since each sets corner points are shared
+    // by two other sets (the front points of one set are the rear points of the
+    // next, etc.)
     for (int i=0; i<len; i++) {
+      // Each iteration of this loop computes a new pair of points
+      // rigthPt and leftPt.  The points are computed differently
+      // depending on whether the index i points to 
+      // 1) the first node
+      // 2) the last node
+      // 3) some interior node
       float[] rightPt = new float[2];
       float[] leftPt = new float[2];
       
       // System.out.println("index = " + i);
-      if (i==0) { // Case 1: the first node
+      if (i==0) { 
+        // Case 1: the first node
+        // Just compute points a distance 'width' from the first node,
+        // in the direction perpendicular to the first segment
        
         float[] p1 = new float[] {nodes[0][0], nodes[1][0]}; // first node 
         float[] p2 = new float[] {nodes[0][1], nodes[1][1]}; // second node
@@ -922,15 +935,18 @@ public final class OverlayUtil {
         // System.out.print("right pt: "); print(rightPt);
         // System.out.print("left pt: "); print(leftPt);
       }
-      else if (i == len - 1) { // Case 2: the last node
-
+      else if (i == len - 1) { 
+        // Case 2: the last node
+        // Just compute points a distance 'width' from the last node,
+        // in the direction perpendicular to the last segment
+        
         float[] p1 = new float[] {nodes[0][i-1], nodes[1][i-1]}; // penultimate
         // node
         float[] p2 = new float[] {nodes[0][i], nodes[1][i]}; // last node 
 
-        boolean anti = false;
+        // Test if the last segment doubles back on the second to last segment
+        boolean anti = false; // for 'antiparallel'
         if (len >= 3) {
-          // test if antiparallel
           float[] p0 = new float[] {nodes[0][i-2], nodes[1][i-2]}; // 3rd 2 last
           float[] v1 = MathUtil.unit(MathUtil.vector(p1, p0));
           float[] v2 = MathUtil.unit(MathUtil.vector(p2, p1));
@@ -943,7 +959,7 @@ public final class OverlayUtil {
         float[] vPerp;
         if (anti) vPerp =
           MathUtil.getRightPerpendicularVector2D(p1, p2);
-        // reversed p1 and p2 above!
+        // p1 and p2 above have been switched above to obtain a reflection 
         else vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
 
         // get a perpendicular vector to the right of p2-p1
@@ -962,7 +978,11 @@ public final class OverlayUtil {
         // System.out.print("left pt: "); print(leftPt);
         // System.out.println("orientation changed = "  + orientationChanged);
       }
-      else { // Case 3: all interior nodes
+      else { 
+        // Case 3: all interior nodes
+        // Compute points a perpendicular distance 'width' away from the curve
+        // as in cases 1 and 2.  This time, however, the points lie on the 
+        // the line bisecting the angle formed by adjacent segments.
 
         float[] p1 = {nodes[0][i-1], nodes[1][i-1]};
         float[] p2 = {nodes[0][i], nodes[1][i]};
@@ -973,8 +993,8 @@ public final class OverlayUtil {
         // System.out.print("p2: "); print(p2);
         // System.out.print("p3: "); print(p3);
 
+        // Test if the line doubles back on itself
         // check if p2-p3 and p3-p2 are antiparallel
-        // have to correct the strategy in this case
         float[] v1 = MathUtil.unit(MathUtil.vector(p2, p1));
         float[] v2 = MathUtil.unit(MathUtil.vector(p3, p2));
         if (MathUtil.areOpposite(v1, v2)) {
@@ -995,15 +1015,17 @@ public final class OverlayUtil {
           // compute angle between the p2-p1 and bisector 
           float sin = Math.abs(MathUtil.cross2D(bisector,
                 MathUtil.unit(MathUtil.vector(p2, p1))));
-          if (sin < 0.1f) sin = 0.1f; // keep a lower bound on this for safety 
-          // (the value of sin could become really small)
+          if (sin < 0.1f) sin = 0.1f; // keep a lower bound on this value to
+          // prevent 1/sin from becoming too large
           
           // compute offset distance from curve
           float offset = width / sin;
 
-          float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(bisector, offset));
-          float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(bisectorReflected,
+          float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(bisector,
                 offset));
+          float[] b = MathUtil.add(p2,
+              MathUtil.scalarMultiply(bisectorReflected, offset));
+
           rightPt = orientationChanged ? b : a;
           leftPt = orientationChanged ? a : b;
 
@@ -1047,6 +1069,10 @@ public final class OverlayUtil {
     int len = left[0].length;
     Vector sets = new Vector(100);
     for (int i=0; i<len-1; i++) {
+      // This loop constructs Gridded2D sets, one for each segment of a noded
+      // object (implied here by the arrays right and left).
+      // For each segment (between indices 'i' and 'i+1'), 
+      // try to construct a trapezoidal set:
       float[][] setSamples = {
         {right[0][i], right[0][i+1], left[0][i], left[0][i+1]},
         {right[1][i], right[1][i+1], left[1][i], left[1][i+1]}
@@ -1058,9 +1084,12 @@ public final class OverlayUtil {
         sets.add(set);
       }
       catch (VisADException ex) {
-        // If samples form an invalid set, the grid is bow-tie shaped.  
+        // If samples form an invalid set, the grid is most likely 
+        // bow-tie shaped.  
         // "Uncross" the box just by switching the order of the two
-        // left points
+        // left points.
+
+        // System.out.println("formed 1 invalid set");
         setSamples = new float[][]{
           {right[0][i], right[0][i+1], left[0][i+1], left[0][i]},
           {right[1][i], right[1][i+1], left[1][i+1], left[1][i]}
@@ -1072,8 +1101,12 @@ public final class OverlayUtil {
           sets.add(set);
         }
         catch (VisADException ex2) {
-          // make a plain rectangular set, disregarding left and right
-          // arrays
+          // If the uncrossed samples still form an invalid set, give up
+          // trying to make a trapezoidal set.
+          // Make a plain rectangular set, disregarding left and right
+          // arrays. Instead use the node array and calculate the corners of the
+          // set using perpendiculars to the line segment under consideration.
+          // System.out.println("formed 2 invalid sets");
           float[] p1 = {nodes[0][i], nodes[1][i]};
           float[] p2 = {nodes[0][i+1], nodes[1][i+1]};
 
@@ -1124,7 +1157,10 @@ public final class OverlayUtil {
     return cn;
   }
 
-  /** Casts an array of floats to doubles. */
+  /** 
+   * Casts and converts an array of floats in domain coordinates to doubles in
+   * pixel coordinates. 
+   */
   public static double[][] floatsToPixelDoubles(DisplayImpl d, float[][] nodes) {
     double[][] nodesDbl = new double[nodes.length][nodes[0].length];
     for (int j=0; j<nodes[0].length; j++) {
@@ -1139,7 +1175,7 @@ public final class OverlayUtil {
   /** Prints a VisAD style group of points. */
   public static void print(float[][] points) {
     for (int i=0; i<points[0].length; i++) {
-      System.out.println("[" + points[0][i] + "," + points[1][i] + "]");
+      print(points[0][i], points[1][i]);
     }
   }
 
@@ -1148,6 +1184,7 @@ public final class OverlayUtil {
     System.out.println("[" + x + "," + y + "]");
   }
 
+  /** Prints a point. */
   public static void print(float[] p) {
     print(p[0], p[1]); 
   }
