@@ -193,6 +193,8 @@ public class HelpManager extends LogicManager {
     // help topics
     bio.setSplashStatus(null);
     addHelpTopic("Introduction", "introduction.html");
+    addHelpTopic("Tutorials", "tutorials.html"); // tutorials index 
+    addHelpTopic("Tutorials/Getting started with measuring", "measuring.html");
   }
 
   private void makeVisPanel() {
