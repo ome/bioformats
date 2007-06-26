@@ -321,7 +321,7 @@ public final class MathUtil {
     return v1[0] * v2[1] - v1[1] * v2[0];
   }
 
-  /** Computes the N-D unit vector in the direction as the vector supplied. */
+  /** Computes the N-D unit vector in the direction of the vector supplied. */
   public static float[] unit(float[] v) {
     float mag = mag(v);
     float[] vHat = new float[v.length];
@@ -460,11 +460,15 @@ public final class MathUtil {
     return unit(vPerp);
   }
 
-  /** Gets a unit vector which bisects (p1 - p2) and (p3 - p2).  */
+  /** 
+   * Gets a unit vector which bisects (p1 - p2) and (p3 - p2). 
+   * This vector points to the 'right' side of the line defined by p1->p2->p3.
+   */ 
   public static float[] getRightBisectorVector2D(float[] p1, float[] p2,
       float[] p3)
   {
     // System.out.println("entering getBisectorVector2D ..."); //TEMP
+    
     // Always retrieves the bisector vector on the right (as opposed to left)
     // side of the angle made by the two vectors.
 
