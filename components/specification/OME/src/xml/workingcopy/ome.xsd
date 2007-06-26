@@ -98,7 +98,6 @@
 				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="DisplayOptions" minOccurs="0"/>
 				<xsd:element ref="StageLabel" minOccurs="0"/>
-				<xsd:element ref="SPW:PlateRef" minOccurs="0"/>
 				<xsd:element ref="Pixels" maxOccurs="unbounded"/>
 				<xsd:element ref="AcquiredPixelsRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
