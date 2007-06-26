@@ -91,16 +91,16 @@ public abstract class OverlayObject {
 
   // -- OverlayObject API methods --
 
+  /** Returns whether this object is drawable, i.e., is of nonzero
+   *  size, area, length, etc.
+   */
+  public abstract boolean hasData();
+
   /** Gets VisAD data object representing this overlay. */
   public abstract DataImpl getData();
 
   /** Computes the shortest distance from this overlay to the given point. */
   public abstract double getDistance(double x, double y);
-
-  /** Returns whether this object is drawable, i.e., is of nonzero
-   *  size, area, length, etc.
-   */
-  public abstract boolean hasData();
 
   /** Gets a specific overlay statistic */
   public abstract String getStat(String name);
