@@ -90,8 +90,9 @@ public class DicomReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
+  // "Digital Imaging and Communications in Medicine" is nasty long.
   public DicomReader() {
-    super("Digital Imaging and Communications in Medicine",
+    super("Digital Img. & Comm. in Med.",
       new String[] {"dcm", "dicom"});
   }
 

@@ -1075,7 +1075,7 @@ public class LeicaReader extends FormatReader {
 
       store.setImage((String) seriesNames.get(i), timestamp, description, ii);
 
-      for (int j=0; j<core.sizeC[0]; j++) {
+      for (int j=0; j<core.sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, ii);
         // TODO: get channel min/max from metadata
 //        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),

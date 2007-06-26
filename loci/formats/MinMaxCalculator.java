@@ -70,11 +70,13 @@ public class MinMaxCalculator extends ReaderWrapper {
       throw new FormatException("Invalid channel index: " + theC);
     }
 
+    int series = getSeries();
+    
     // check that all planes have been reade
-    if (minMaxDone == null || minMaxDone[getSeries()] < getImageCount()) {
+    if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
     }
-    return new Double(chanMin[getSeries()][theC]);
+    return new Double(chanMin[series][theC]);
   }
 
   /**
@@ -89,11 +91,13 @@ public class MinMaxCalculator extends ReaderWrapper {
       throw new FormatException("Invalid channel index: " + theC);
     }
 
+    int series = getSeries();
+    
     // check that all planes have been reade
-    if (minMaxDone == null || minMaxDone[getSeries()] < getImageCount()) {
+    if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
     }
-    return new Double(chanMax[getSeries()][theC]);
+    return new Double(chanMax[series][theC]);
   }
 
   /**
@@ -130,13 +134,14 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
-    if (planeMin[getSeries()][pBase] != planeMin[getSeries()][pBase]) {
+    int series = getSeries();
+    if (planeMin[series][pBase] != planeMin[series][pBase]) {
       return null;
     }
 
     Double[] min = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
-      min[c] = new Double(planeMin[getSeries()][pBase + c]);
+      min[c] = new Double(planeMin[series][pBase + c]);
     }
     return min;
   }
@@ -153,13 +158,14 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
-    if (planeMax[getSeries()][pBase] != planeMax[getSeries()][pBase]) {
+    int series = getSeries();
+    if (planeMax[series][pBase] != planeMax[series][pBase]) {
       return null;
     }
 
     Double[] max = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
-      max[c] = new Double(planeMax[getSeries()][pBase + c]);
+      max[c] = new Double(planeMax[series][pBase + c]);
     }
     return max;
   }
@@ -221,10 +227,11 @@ public class MinMaxCalculator extends ReaderWrapper {
     initMinMax();
 
     int numRGB = getRGBChannelCount();
-
+    int series = getSeries();
+    
     // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries()][ndx * numRGB] ==
-      planeMin[getSeries()][ndx * numRGB])
+    if (planeMin[series][ndx * numRGB] ==
+      planeMin[series][ndx * numRGB])
     {
       return;
     }
@@ -233,8 +240,8 @@ public class MinMaxCalculator extends ReaderWrapper {
     int cBase = coords[1] * numRGB;
     int pBase = ndx * numRGB;
     for (int c=0; c<numRGB; c++) {
-      planeMin[getSeries()][pBase + c] = Double.POSITIVE_INFINITY;
-      planeMax[getSeries()][pBase + c] = Double.NEGATIVE_INFINITY;
+      planeMin[series][pBase + c] = Double.POSITIVE_INFINITY;
+      planeMax[series][pBase + c] = Double.NEGATIVE_INFINITY;
     }
 
     WritableRaster pixels = b.getRaster();
@@ -242,29 +249,29 @@ public class MinMaxCalculator extends ReaderWrapper {
       for (int y=0; y<b.getHeight(); y++) {
         for (int c=0; c<numRGB; c++) {
           double v = pixels.getSampleDouble(x, y, c);
-          if (v > chanMax[getSeries()][cBase + c]) {
-            chanMax[getSeries()][cBase + c] = v;
+          if (v > chanMax[series][cBase + c]) {
+            chanMax[series][cBase + c] = v;
           }
-          if (v < chanMin[getSeries()][cBase + c]) {
-            chanMin[getSeries()][cBase + c] = v;
+          if (v < chanMin[series][cBase + c]) {
+            chanMin[series][cBase + c] = v;
           }
-          if (v > planeMax[getSeries()][pBase + c]) {
-            planeMax[getSeries()][pBase + c] = v;
+          if (v > planeMax[series][pBase + c]) {
+            planeMax[series][pBase + c] = v;
           }
-          if (v < planeMin[getSeries()][pBase + c]) {
-            planeMin[getSeries()][pBase + c] = v;
+          if (v < planeMin[series][pBase + c]) {
+            planeMin[series][pBase + c] = v;
           }
         }
       }
     }
 
-    minMaxDone[getSeries()]++;
+    minMaxDone[series]++;
 
-    if (minMaxDone[getSeries()] == getImageCount()) {
+    if (minMaxDone[series] == getImageCount()) {
       MetadataStore store = getMetadataStore();
       for (int c=0; c<getSizeC(); c++) {
-        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries()][c]),
-          new Double(chanMax[getSeries()][c]), new Integer(getSeries()));
+        store.setChannelGlobalMinMax(c, new Double(chanMin[series][c]),
+          new Double(chanMax[series][c]), new Integer(getSeries()));
       }
     }
   }
@@ -277,10 +284,10 @@ public class MinMaxCalculator extends ReaderWrapper {
     initMinMax();
 
     int numRGB = getRGBChannelCount();
-
+    int series = getSeries();
     // check whether min/max values have already been computed for this plane
-    if (planeMin[getSeries()][ndx * numRGB] ==
-      planeMin[getSeries()][ndx * numRGB])
+    if (planeMin[series][ndx * numRGB] ==
+      planeMin[series][ndx * numRGB])
     {
       return;
     }
@@ -294,8 +301,8 @@ public class MinMaxCalculator extends ReaderWrapper {
     int cBase = coords[1] * numRGB;
     int pBase = ndx * numRGB;
     for (int c=0; c<numRGB; c++) {
-      planeMin[getSeries()][pBase + c] = Double.POSITIVE_INFINITY;
-      planeMax[getSeries()][pBase + c] = Double.NEGATIVE_INFINITY;
+      planeMin[series][pBase + c] = Double.POSITIVE_INFINITY;
+      planeMax[series][pBase + c] = Double.NEGATIVE_INFINITY;
     }
 
     boolean fp = getPixelType() == FormatTools.FLOAT ||
@@ -306,28 +313,28 @@ public class MinMaxCalculator extends ReaderWrapper {
         int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
         long bits = DataTools.bytesToLong(b, idx, bytes, little);
         double v = fp ? Double.longBitsToDouble(bits) : (double) bits;
-        if (v > chanMax[getSeries()][cBase + c]) {
-          chanMax[getSeries()][cBase + c] = v;
+        if (v > chanMax[series][cBase + c]) {
+          chanMax[series][cBase + c] = v;
         }
-        if (v < chanMin[getSeries()][cBase + c]) {
-          chanMin[getSeries()][cBase + c] = v;
+        if (v < chanMin[series][cBase + c]) {
+          chanMin[series][cBase + c] = v;
         }
-        if (v > planeMax[getSeries()][ndx]) {
-          planeMax[getSeries()][ndx] = v;
+        if (v > planeMax[series][ndx]) {
+          planeMax[series][ndx] = v;
         }
-        if (v < planeMin[getSeries()][pBase + c]) {
-          planeMin[getSeries()][pBase + c] = v;
+        if (v < planeMin[series][pBase + c]) {
+          planeMin[series][pBase + c] = v;
         }
       }
     }
 
-    minMaxDone[getSeries()]++;
+    minMaxDone[series]++;
 
-    if (minMaxDone[getSeries()] == getImageCount()) {
+    if (minMaxDone[series] == getImageCount()) {
       MetadataStore store = getMetadataStore();
       for (int c=0; c<getSizeC(); c++) {
-        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries()][c]),
-          new Double(chanMax[getSeries()][c]), new Integer(getSeries()));
+        store.setChannelGlobalMinMax(c, new Double(chanMin[series][c]),
+          new Double(chanMax[series][c]), new Integer(getSeries()));
       }
     }
   }
@@ -335,24 +342,28 @@ public class MinMaxCalculator extends ReaderWrapper {
   /** Ensures internal min/max variables are initialized properly. */
   protected void initMinMax() throws FormatException, IOException {
     int seriesCount = getSeriesCount();
+    int oldSeries = getSeries();
 
     if (chanMin == null) {
       chanMin = new double[seriesCount][];
       for (int i=0; i<seriesCount; i++) {
+        setSeries(i);
         chanMin[i] = new double[getSizeC()];
         Arrays.fill(chanMin[i], Double.POSITIVE_INFINITY);
       }
+      setSeries(oldSeries);
     }
     if (chanMax == null) {
       chanMax = new double[seriesCount][];
       for (int i=0; i<seriesCount; i++) {
+        setSeries(i);  
         chanMax[i] = new double[getSizeC()];
         Arrays.fill(chanMax[i], Double.NEGATIVE_INFINITY);
       }
+      setSeries(oldSeries);
     }
     if (planeMin == null) {
       planeMin = new double[seriesCount][];
-      int oldSeries = getSeries();
       for (int i=0; i<seriesCount; i++) {
         setSeries(i);
         int numRGB = getRGBChannelCount();
@@ -363,7 +374,6 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
     if (planeMax == null) {
       planeMax = new double[seriesCount][];
-      int oldSeries = getSeries();
       for (int i=0; i<seriesCount; i++) {
         setSeries(i);
         int numRGB = getRGBChannelCount();

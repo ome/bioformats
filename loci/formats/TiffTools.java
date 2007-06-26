@@ -1593,6 +1593,7 @@ public final class TiffTools {
     int numBytes = bps0 / 8;
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
+    boolean bps16 = bps0 == 16;
 
     int width = 0;
     int height = 0;
@@ -1627,6 +1628,11 @@ public final class TiffTools {
     int count = 0;
 
     BitBuffer bb = new BitBuffer(bytes);
+    
+    byte[] copyByteArray = new byte[numBytes];
+    ByteBuffer nioBytes = MappedByteBuffer.wrap(bytes);
+    if (!littleEndian)
+      nioBytes.order(ByteOrder.LITTLE_ENDIAN);
 
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<samples.length; i++) {
@@ -1717,19 +1723,44 @@ public final class TiffTools {
               samples[2][ndx] = (short) (blue - colorMap[8]);
             }
           }
-        }
-        else {
-          byte[] b = new byte[numBytes];
+        }  // End if (bps8)
+        else if (bps16) {
+          int ndx = startIndex + j;
           if (numBytes + index < bytes.length) {
-            System.arraycopy(bytes, index, b, 0, numBytes);
+            samples[i][ndx] = nioBytes.getShort(index);
+          } else {
+            samples[i][ndx] = nioBytes.getShort(bytes.length - numBytes);
           }
-          else {
-            System.arraycopy(bytes, bytes.length - numBytes, b, 0, numBytes);
+          index += numBytes;
+
+          if (photoInterp == WHITE_IS_ZERO) { // invert color value
+            long max = 1;
+            for (int q=0; q<numBytes; q++) max *= 8;
+            samples[i][ndx] = (short) (max - samples[i][ndx]);
+          }
+          else if (photoInterp == RGB_PALETTE) {
+            index -= numBytes;
+
+            int x = samples[i][ndx];  // this is the index into the color table
+            int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
+            int cm = colorMap[cndx];
+            samples[i][ndx] = (short) (maxValue == 0 ?
+              (cm % (bpsPow - 1)) : cm);
+          }
+          else if (photoInterp == CMYK) {
+            samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
+          }
+        }  // End if (bps16)
+        else {
+          if (numBytes + index < bytes.length) {
+              System.arraycopy(bytes, index, copyByteArray, 0, numBytes);
+          } else {
+              System.arraycopy(bytes, bytes.length - numBytes, copyByteArray, 0, numBytes);
           }
           index += numBytes;
           int ndx = startIndex + j;
           samples[i][ndx] =
-            (short) DataTools.bytesToLong(b, !littleEndian);
+              (short) DataTools.bytesToLong(copyByteArray, !littleEndian);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             long max = 1;
@@ -1749,7 +1780,7 @@ public final class TiffTools {
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
           }
-        }
+        } // end else
       }
       if (photoInterp == RGB_PALETTE) index += (bps0 / 8);
     }

@@ -101,6 +101,7 @@ public abstract class FormatReader extends FormatHandler
       }
     }
 
+    series = 0;
     close();
     currentId = id;
     metadata = new Hashtable();
