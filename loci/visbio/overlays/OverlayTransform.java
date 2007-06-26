@@ -546,6 +546,9 @@ public class OverlayTransform extends DataTransform
     // If so, assume some reasonable defaults when computing your selection
     // grids.
 
+    // The current display
+    DisplayImpl display = link.getHandler().getWindow().getDisplay(); 
+
     if (dim != 2) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;
@@ -581,6 +584,10 @@ public class OverlayTransform extends DataTransform
             // compute overlay data for each non-text object
             for (int i=0, c=0; i<size && c<rgbSize; i++) {
               OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+              // rescale object if appropriate
+              // (currently applies only to OverlayMarkers)
+              if (obj.isScalable())
+                obj.rescale(OverlayUtil.getMultiplier(display)); 
               if (obj.hasText()) continue;
               rgbField.setSample(c++, obj.getData(), false);
             }

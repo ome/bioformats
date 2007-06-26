@@ -37,6 +37,9 @@ public class OverlayMarker extends OverlayObject {
   protected static final String COORDS = "Coordinates";
   protected static final String[] STAT_TYPES =  {COORDS};
 
+  /** The default width of the marker */
+  protected float width; 
+
   // -- Constructors --
 
   /** Constructs an uninitialized measurement marker. */
@@ -47,6 +50,7 @@ public class OverlayMarker extends OverlayObject {
     super(overlay);
     x1 = x;
     y1 = y;
+    width = getDefaultWidth(); 
   }
 
   // -- Static methods --
@@ -56,16 +60,23 @@ public class OverlayMarker extends OverlayObject {
 
   // -- OverlayObject API methods --
 
+  /** Returns the defualt width of this marker. */
+  protected float getDefaultWidth() {
+    return 0.02f * overlay.getScalingValue();
+  }
+
+  /** Returns the width of this marker. */
+  protected float getWidth() { return width; }
+
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
     if (!hasData()) return null;
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
-    float size = 0.02f * overlay.getScalingValue();
 
     float[][] setSamples = {
-      {x1, x1, x1, x1 + size, x1 - size},
-      {y1 + size, y1 - size, y1, y1, y1}
+      {x1, x1, x1, x1 + width, x1 - width},
+      {y1 + width, y1 - width, y1, y1, y1}
     };
     Color col = selected ? GLOW_COLOR : color;
     float r = col.getRed() / 255f;
@@ -117,6 +128,14 @@ public class OverlayMarker extends OverlayObject {
 
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
+
+  /** OverlayMarker's are scalable--returns true. */
+  public boolean isScalable() { return true; }
+
+  /** Rescales an OverlayMarker. */
+  public void rescale(float multiplier) {
+    //width = getDefaultWidth() * multiplier;
+  }
 
   // -- Object API methods --
 

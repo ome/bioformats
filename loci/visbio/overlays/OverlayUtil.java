@@ -179,7 +179,9 @@ public final class OverlayUtil {
 
     double d = GLOW_WIDTH * getMultiplier(link);
 
-    // compute four corners of highlighted zone
+    // compute four corners of highlighted zone, a trapezoidal area around the
+    // arrow, always a perpendicular distance d from the arrow's edge.
+    // (Formulas come from pen-and-paper geometry using similar triangles).
     float c1x = (float) (x1 - x[0] * d + y[0] * (d * c) / b);
     float c1y = (float) (y1 - x[1] * d + y[1] * (d * c) / b);
     float c2x = (float) (x2 + x[0] * d + y[0] * (a + d * (a + c) / b));
@@ -377,7 +379,7 @@ public final class OverlayUtil {
     float y1 = obj.getY();
     float y2 = obj.getY2();
 
-    float size = 0.02f * overlay.getScalingValue();
+    float size = ((OverlayMarker) obj).getWidth();
     float delta = GLOW_WIDTH * getMultiplier(link);
 
     float xx1 = x1 - size - delta;
@@ -516,17 +518,14 @@ public final class OverlayUtil {
     // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     
     int samples = 0;
-    UnionSet unionSet = null;
-    try {
-      unionSet = buildNodesSets(domain, nodes, delta);
-      samples = unionSet.getLength();
-    }
-    catch (VisADException ex) { ex.printStackTrace(); }
+
+    Vector sets = buildNodesSets(domain, nodes, delta);
+    samples = sets.size() * 4;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     
     int hlen = hlt ? len : 0;
-    float[][] rangeSamples = new float[4][samples];
+    float[][] rangeSamples = new float[4][samples+hlen];
 
     // fill nodes range samples;
     Color col = GLOW_COLOR;
@@ -535,22 +534,10 @@ public final class OverlayUtil {
     float b = col.getBlue() / 255f;
 
     // ADJUST THIS to account for circles later
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
-    Arrays.fill(rangeSamples[3], GLOW_ALPHA);
-
-    // REMOVE this when adding circles later
-    FlatField field = null;
-    try {
-      FunctionType fieldType = new FunctionType(domain, range);
-      field = new FlatField(fieldType, unionSet);
-      field.setSamples(rangeSamples);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-
-    return field;
+    Arrays.fill(rangeSamples[0], 0, samples, r);
+    Arrays.fill(rangeSamples[1], 0, samples, g);
+    Arrays.fill(rangeSamples[2], 0, samples, b);
+    Arrays.fill(rangeSamples[3], 0, samples, GLOW_ALPHA);
 
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     // Build circle and circle samples
@@ -560,7 +547,6 @@ public final class OverlayUtil {
     System.out.println("2: isHighlightNode = " + hlt);
     System.out.println("Thread.currentThread()" + Thread.currentThread());
     */
-    /*
     Gridded2DSet hltSet = null;
     if (hlt) {
       float rad = 2 * delta;
@@ -588,62 +574,38 @@ public final class OverlayUtil {
       }
       catch (VisADException ex) { ex.printStackTrace(); }
 
+      // fill highlight range samples
       col = HLT_COLOR;
       r = col.getRed() / 255f;
       g = col.getGreen() / 255f;
       b = col.getBlue() / 255f;
 
-      Arrays.fill(rangeSamples[0], 4*goodSets, 4*goodSets + hlen, r);
-      Arrays.fill(rangeSamples[1], 4*goodSets, 4*goodSets + hlen, g);
-      Arrays.fill(rangeSamples[2], 4*goodSets, 4*goodSets + hlen, b);
-      Arrays.fill(rangeSamples[3], 4*goodSets, 4*goodSets + hlen, HLT_ALPHA);
+      Arrays.fill(rangeSamples[0], samples, samples + hlen, r);
+      Arrays.fill(rangeSamples[1], samples, samples + hlen, g);
+      Arrays.fill(rangeSamples[2], samples, samples + hlen, b);
+      Arrays.fill(rangeSamples[3], samples, samples + hlen, HLT_ALPHA);
 
       sets.add(hltSet);
-
-      Gridded2DSet[] trueSets = new Gridded2DSet[sets.size()];
-      Object[] stuff = sets.toArray(trueSets);
-
-      FlatField field = null;
-      UnionSet fieldSet = null;
-      try {
-        /*
-        for (int i=0; i<sets.length; i++) {
-          if (sets[i] == null) {
-            System.out.println("sets[" + i + "] is null.");
-          }
-          else {
-            System.out.println("sets[" + i + "].length = " +
-              sets[i].getLength());
-          }
-        }
-        */
-    /*
-        fieldSet = new UnionSet (domain, trueSets);
-        FunctionType fieldType = new FunctionType(domain, range);
-        field = new FlatField(fieldType, fieldSet);
-        field.setSamples(rangeSamples);
-      }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-
-      return field;
     }
-    */
 
-    /*
-    // compute angle bisectors at each node
-    for (int i=0; i<numNodes; i++) {
-      if (i == 0){
-      }
-      if (i == numNodes - 1){
-      }
-      else {
-        float[] v1 = {nodes[0][i] - nodes[0][i-1], nodes[1][i] - nodes[1][i-1]};
-        float[] v2 = {nodes[0][i+1] - nodes[0][i], nodes[1][i+1] - nodes[1][i]};
+    // convert vector to an array
+    Gridded2DSet[] trueSets = new Gridded2DSet[sets.size()];
+    Object[] rubbish = sets.toArray(trueSets);
 
-    }*/
+    // form a union set and then a flat field
+    FlatField field = null;
+    UnionSet fieldSet = null;
+    try {
+      fieldSet = new UnionSet (domain, trueSets);
+      FunctionType fieldType = new FunctionType(domain, range);
+      field = new FlatField(fieldType, fieldSet);
+      field.setSamples(rangeSamples);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+
+    return field;
   }
-
   /** Computes a selection layer for OverlayOval objects */
   public static DataImpl getOvalLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
@@ -925,9 +887,8 @@ public final class OverlayUtil {
 
   /** Given a set of nodes, creates a UnionSet of Gridded2DSets to 
    *  highlight the nodes. */
-  public static UnionSet buildNodesSets(RealTupleType domain, float[][] nodes,
-      float width) 
-    throws VisADException {
+  public static Vector buildNodesSets(RealTupleType domain, float[][] nodes,
+      float width) {
     int len = nodes[0].length;
 
     // Create two arrays to store the gridpoints: one to the right of the curve
@@ -1064,11 +1025,7 @@ public final class OverlayUtil {
     } // end for
     
     // assemble an array of gridded sets representing the highlighting
-    Gridded2DSet[] sets = makeGridded2DSets(domain, nodes, right, left, width);
-    UnionSet fieldSets = null;
-    fieldSets = new UnionSet(domain, sets);
-
-    return fieldSets;
+    return makeGridded2DSets(domain, nodes, right, left, width);
   } 
 
   /** Makes valid Gridded2DSets from the arrays supplied.
@@ -1078,7 +1035,7 @@ public final class OverlayUtil {
    *  @param left The points on the left side of the noded object (again
    *  supposing node indices increase from left to right across the screen)
    */   
-  public static Gridded2DSet[] makeGridded2DSets(RealTupleType domain,
+  public static Vector makeGridded2DSets(RealTupleType domain,
       float nodes[][], float[][] right, float[][] left, float width) {
 
     // Note: 
@@ -1150,11 +1107,7 @@ public final class OverlayUtil {
       }
     } // end for
 
-    // Convert vector to array
-    Gridded2DSet[] trueSets = new Gridded2DSet[sets.size()];
-    Object[] garbage = sets.toArray(trueSets);
-
-    return trueSets;
+    return sets;
   }
 
   // -- Math Methods --

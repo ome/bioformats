@@ -105,9 +105,6 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** Index of the highlighted node */
   protected int highlightIndex;
 
-  /** Color to highlight highlighted node */
-  protected Color highlightColor;
-
   // -- Constructors --
 
   /** Constructs an uninitialized noded object. */
@@ -317,19 +314,17 @@ public abstract class OverlayNodedObject extends OverlayObject {
   }
 
   /** Highlight a node. */
-  public void setHighlightNode(int i, Color c) {
+  public void setHighlightNode(int i) {
     // if (Thread.currentThread().getName().indexOf("ComputeDataThread") < 0)
     // new Exception().printStackTrace();
     highlightNode = true;
     highlightIndex = i;
-    highlightColor = c;
   }
 
   /** Turn off node highlighting */
   public void turnOffHighlighting() {
     highlightNode = false;
     highlightIndex = -1;
-    highlightColor = null;
   }
 
   /** Returns coordinates of node at given index in the node array */

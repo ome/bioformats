@@ -202,6 +202,12 @@ public abstract class OverlayObject {
 
   /** Gets whether overlay is solid. */
   public boolean isFilled() { return filled; }
+  
+  /** Gets whether overlay is scalable. */
+  public boolean isScalable() { return false; }
+
+  /** Rescales this overlay object. */
+  public void rescale(float multiplier) {}
 
   /** Sets group to which this overlay belongs. */
   public void setGroup(String group) { this.group = group; }
