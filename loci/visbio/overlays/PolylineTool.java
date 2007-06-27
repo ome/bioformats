@@ -554,17 +554,38 @@ public class PolylineTool extends OverlayTool {
   private void printMode(String method) {
     String m;
     switch (mode) {
-      case WAIT           : m = "wait"; break;
-      case EXTEND         : m = "extend"; break;
-      case ADJUST         : m = "adjust"; break;
-      case SELECT         : m = "select"; break;
-      case PLACE          : m = "place"; break;
-      case ADJUST_TAIL    : m = "adjust tail"; break;
-      case CLOSE_LOOP     : m = "close loop"; break;
-      case SELECTED_TAIL  : m = "selected tail"; break;
-      case EXTEND_ON_TAIL : m = "extend on tail"; break;
-      case BEGIN_EXTEND   : m = "begin extend"; break;
-      default             : m = "unknown mode"; break;
+      case WAIT:
+        m = "wait";
+        break;
+      case EXTEND:
+        m = "extend";
+        break;
+      case ADJUST:
+        m = "adjust"; break;
+      case SELECT:
+        m = "select";
+        break;
+      case PLACE:
+        m = "place";
+        break;
+      case ADJUST_TAIL:
+        m = "adjust tail";
+        break;
+      case CLOSE_LOOP:
+        m = "close loop";
+        break;
+      case SELECTED_TAIL:
+        m = "selected tail";
+        break;
+      case EXTEND_ON_TAIL:
+        m = "extend on tail";
+        break;
+      case BEGIN_EXTEND:
+        m = "begin extend";
+        break;
+      default:
+        m = "unknown mode";
+        break;
     }
 
     System.out.println(method + "\t" + m);
