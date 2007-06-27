@@ -74,13 +74,13 @@ public class TransientSelectBox {
 
   // -- TransientSelectBox API Methods --
 
-  /** Sets coordinates of draggable box corner */
-  public void setCorner (int x, int y) {
+  /** Sets coordinates of draggable box corner. */
+  public void setCorner(int x, int y) {
     x2 = x;
     y2 = y;
   }
 
-  /** Returns the display on which this TSB exists */
+  /** Returns the display on which this TSB exists. */
   public DisplayImpl getActiveDisplay() { return display; }
 
   /** Returns a VisAD data object representing this box.
@@ -133,7 +133,7 @@ public class TransientSelectBox {
       outlineSet = new Gridded2DSet(domain, outlineSamples,
           outlineSamples[0].length, null, null, null, false);
     }
-    catch (SetException set ) { set.printStackTrace(); }
+    catch (SetException set) { set.printStackTrace(); }
     catch (VisADException exc) { exc.printStackTrace(); }
 
     float r = color.getRed() / 255f;
@@ -167,7 +167,7 @@ public class TransientSelectBox {
 
       // go Mallards
       wholeTeam = new DataImpl[] {inField, outField};
-      ret = new Tuple (wholeTeam, false);
+      ret = new Tuple(wholeTeam, false);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
@@ -176,7 +176,7 @@ public class TransientSelectBox {
 
   /**
    * Gets domain coordinates of box corners
-   * Corners are returned as a double[4][2]
+   * Corners are returned as a double[4][2].
    */
   public double[][] getCornersDomain() {
     /*
@@ -191,10 +191,10 @@ public class TransientSelectBox {
     double[] p2 = CursorUtil.pixelToDomain(getActiveDisplay(), x2, y2);
     double[] p3 = CursorUtil.pixelToDomain(getActiveDisplay(), x1, y2);
 
-    double[][] ret = {  {p0[0], p0[1]},
-                        {p1[0], p1[1]},
-                        {p2[0], p2[1]},
-                        {p3[0], p3[1]}};
+    double[][] ret = {{p0[0], p0[1]},
+                      {p1[0], p1[1]},
+                      {p2[0], p2[1]},
+                      {p3[0], p3[1]}};
 
     return ret;
   }

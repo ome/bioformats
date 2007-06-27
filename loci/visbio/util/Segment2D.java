@@ -27,7 +27,7 @@ import java.awt.geom.Point2D.Float;
 
 /** A 2D line segment. */
 public class Segment2D {
-  
+
   /** Endpoints. */
   protected Float a, b;
 
@@ -44,10 +44,9 @@ public class Segment2D {
   /** Whether another segment intersects this one. */
   public boolean intersects(Segment2D y) {
     // first check bounding box, then straddle
-    if (this.boundingBoxOverlapsBoundingBoxOf(y) && 
-        this.straddles(y) && y.straddles(this)) return true;
-    else return false;
- }
+    return (this.boundingBoxOverlapsBoundingBoxOf(y) &&
+        this.straddles(y) && y.straddles(this));
+  }
 
   /** Whether another segment meets the bounding box of this segment.
    *  True if either endpt of the supplied segment is in/on the bounding
@@ -59,7 +58,7 @@ public class Segment2D {
     float[] ya = {(float) y.getPtA().getX(), (float) y.getPtA().getY()};
     float[] yb = {(float) y.getPtB().getX(), (float) y.getPtB().getY()};
 
-    // inside is not strict--a point on the boundary is considered inside 
+    // inside is not strict--a point on the boundary is considered inside
     boolean meets = false;
     if ((MathUtil.inside(xa, ya, yb) || MathUtil.inside(xb, ya, yb)) ||
         (MathUtil.inside(ya, xa, xb) || MathUtil.inside(yb, xa, xb)))
@@ -67,7 +66,7 @@ public class Segment2D {
     return meets;
   }
 
-  /** Whether another segment crosses the line defined by this segment */
+  /** Whether another segment crosses the line defined by this segment. */
   public boolean straddles(Segment2D y) {
     // collect all parameters
     double ax = this.a.getX(); double ay = this.a.getY();
@@ -83,10 +82,9 @@ public class Segment2D {
     float cross2 = MathUtil.cross2D(v3, v2);
 
     // return true if cross products have opposite signs
-    if ((cross1 < 0 && cross2 > 0) ||
+    return ((cross1 < 0 && cross2 > 0) ||
         (cross1 > 0 && cross2 < 0) ||
-        cross1 == 0 || cross2 == 0) return true;
-    else return false;
+        cross1 == 0 || cross2 == 0);
   }
 
   public String toString() {

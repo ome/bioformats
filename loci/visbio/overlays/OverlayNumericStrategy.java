@@ -23,10 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-public class OverlayNumericStrategy {
+/** Provides threshholds and other constants to overlays classes. */
+public final class OverlayNumericStrategy {
 
   // -- Fields --
-  
+
   /**
    * When drawing or editing, how far mouse
    * must be dragged before new node is added.
@@ -35,7 +36,7 @@ public class OverlayNumericStrategy {
 
   /**
    * How close a mouseDrag event must be to a node
-   * in order to erase it
+   * in order to erase it.
    */
   protected static final double ERASE_THRESH = 10.0;
 
@@ -48,10 +49,10 @@ public class OverlayNumericStrategy {
    */
   protected static final double RECONNECT_THRESH = 1.0;
 
-  /** How close mouse must be to end node to resume drawing */
+  /** How close mouse must be to end node to resume drawing. */
   protected static final double RESUME_THRESH = 10.0;
 
-  /** Smoothing factor for "single exponential smoothing" */
+  /** Smoothing factor for "single exponential smoothing". */
   protected static final float SMOOTHING_FACTOR = 0.35f;
 
   /** Maximum distance (in pixels) mouse can be from a node to be considered
@@ -59,7 +60,7 @@ public class OverlayNumericStrategy {
   protected static final float POLYLINE_THRESH = 7.0f;
 
   // -- Constructor --
-  
+
   /** Private constructor--ensure this object is not instantiated. */
   private OverlayNumericStrategy() {}
 
@@ -82,7 +83,7 @@ public class OverlayNumericStrategy {
 
   /** Returns the single exponential smoothing factor. */
   public static double getSmoothingFactor() { return SMOOTHING_FACTOR; }
-  
+
   /** Returns the polyline threshold. */
   public static double getPolylineThreshold() { return POLYLINE_THRESH; }
 }

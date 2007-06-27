@@ -38,13 +38,13 @@ public class PointerTool extends OverlayTool {
   /** Location where an object was first "grabbed" with a mouse press. */
   protected float grabX, grabY;
 
-  /** Vector of "grabbed" objects */
+  /** Vector of "grabbed" objects. */
   protected Vector grabbed;  // the grabees
 
-  /** The selection box which may be created by this tool */
+  /** The selection box which may be created by this tool. */
   protected TransientSelectBox select;
 
-  /** Array of OverlayObjects at current dimensional position */
+  /** Array of OverlayObjects at current dimensional position. */
   protected OverlayObject[] objs;
 
   /**
@@ -53,7 +53,7 @@ public class PointerTool extends OverlayTool {
    */
   protected float[][] bounds;
 
-  /** Array of whether objects are selected at time of mouse press */
+  /** Array of whether objects are selected at time of mouse press. */
   protected boolean[] selected;
 
   // -- Constructor --
@@ -130,7 +130,8 @@ public class PointerTool extends OverlayTool {
         if (objs[i].hasEndpoint2()) {
           bound[2] = objs[i].getX2();
           bound[3] = objs[i].getY2();
-        } else {
+        }
+        else {
           bound[2] = bound[0];
           bound[3] = bound[1];
         }
@@ -142,7 +143,7 @@ public class PointerTool extends OverlayTool {
 
       // instantiate selection box
       select = new TransientSelectBox(overlay, display, px, py);
-      overlay.addTSB (select);
+      overlay.addTSB(select);
     }
 
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
@@ -192,7 +193,8 @@ public class PointerTool extends OverlayTool {
       grabX = dx;
       grabY = dy;
       overlay.notifyListeners(new TransformEvent(overlay));
-    } else if (select != null) {
+    }
+    else if (select != null) {
       // extend selection box
       select.setCorner(px, py);
 

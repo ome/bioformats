@@ -33,12 +33,12 @@ public class OverlayMarker extends OverlayObject {
 
   // -- Static Fields --
 
-  /** The names of the statistics this object reports */
+  /** The names of the statistics this object reports. */
   protected static final String COORDS = "Coordinates";
   protected static final String[] STAT_TYPES =  {COORDS};
 
-  /** The default width of the marker */
-  protected float width; 
+  /** The default width of the marker. */
+  protected float width;
 
   // -- Constructors --
 
@@ -50,13 +50,13 @@ public class OverlayMarker extends OverlayObject {
     super(overlay);
     x1 = x;
     y1 = y;
-    width = getDefaultWidth(); 
+    width = getDefaultWidth();
   }
 
   // -- Static methods --
 
-  /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return STAT_TYPES;}
+  /** Returns the names of the statistics this object reports. */
+  public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
 
@@ -105,7 +105,7 @@ public class OverlayMarker extends OverlayObject {
     return Math.sqrt(xx * xx + yy * yy);
   }
 
-  /** Returns a specific statistic of this object*/
+  /** Returns a specific statistic of this object. */
   public String getStat(String name) {
     if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")";
@@ -130,7 +130,7 @@ public class OverlayMarker extends OverlayObject {
   }
 
   // -- Overlay Marker API methods --
- 
+
   /** Returns the defualt width of this marker. */
   protected float getDefaultWidth() {
     return 0.02f * overlay.getScalingValue();
@@ -138,7 +138,6 @@ public class OverlayMarker extends OverlayObject {
 
   /** Returns the width of this marker. */
   protected float getWidth() { return width; }
-
 
   // -- Object API methods --
 

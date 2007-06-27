@@ -34,7 +34,7 @@ public class OverlayArrow extends OverlayObject {
 
   // -- Static Fields --
 
-  /** The names of the statistics this object reports */
+  /** The names of the statistics this object reports. */
   protected static final String TIP = "Tip Coordinates";
   protected static final String ANGLE = "Angle";
   protected static final String LENGTH = "Length";
@@ -58,8 +58,8 @@ public class OverlayArrow extends OverlayObject {
 
   // -- Static methods --
 
-  /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return STAT_TYPES;}
+  /** Returns the names of the statistics this object reports. */
+  public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
 
@@ -127,7 +127,7 @@ public class OverlayArrow extends OverlayObject {
       new double[] {x2, y2}, new double[] {x, y}, true);
   }
 
-  /** Returns a specific statistic of this object */
+  /** Returns a specific statistic of this object. */
   public String getStat(String name) {
     if (name.equals(TIP)) {
       return "(" + x1 + ", " + y1 + ")";
@@ -158,7 +158,7 @@ public class OverlayArrow extends OverlayObject {
 
   // -- Helper methods --
 
-  /** Computes the angle of this arrow */
+  /** Computes the angle of this arrow. */
   protected float getAngle() {
     float xx = x2 - x1;
     float yy = y2 - y1;
@@ -168,7 +168,7 @@ public class OverlayArrow extends OverlayObject {
     return angle;
   }
 
-  /** Computes the length of this arrow */
+  /** Computes the length of this arrow. */
   protected float getLength() {
     float xx = x2 - x1;
     float yy = y2 - y1;

@@ -379,11 +379,9 @@ public final class MathUtil {
     return r;
   }
 
-  /** 
+  /**
    * Test whether two vectors are coordinate-wise opposite.
-   * @param u1 a unit vector
-   * @param u2 another unit vector 
-   */ 
+   */
   public static boolean areOpposite(float[] v1, float[] v2) {
    /*    if (v1.length != v2.length) return false;
     boolean opposite = true;
@@ -400,8 +398,8 @@ public final class MathUtil {
 
   /** Tests whether two arrays of floats are identical. */
   public static boolean areSame(float[] a, float[] b) {
-    boolean same = true; 
-    if (a.length == b.length) { 
+    boolean same = true;
+    if (a.length == b.length) {
       for (int i=0; i<a.length; i++){
         if (a[i] != b[i]) {
           same = false;
@@ -417,7 +415,6 @@ public final class MathUtil {
   public static boolean areDifferent(float[] a, float[] b) {
     return !areSame(a, b);
   }
-
 
   // -- Computational Geometry Methods --
 
@@ -460,15 +457,15 @@ public final class MathUtil {
     return unit(vPerp);
   }
 
-  /** 
-   * Gets a unit vector which bisects (p1 - p2) and (p3 - p2). 
+  /**
+   * Gets a unit vector which bisects (p1 - p2) and (p3 - p2).
    * This vector points to the 'right' side of the line defined by p1->p2->p3.
-   */ 
+   */
   public static float[] getRightBisectorVector2D(float[] p1, float[] p2,
       float[] p3)
   {
     // System.out.println("entering getBisectorVector2D ..."); //TEMP
-    
+
     // Always retrieves the bisector vector on the right (as opposed to left)
     // side of the angle made by the two vectors.
 

@@ -102,7 +102,7 @@ public abstract class OverlayObject {
   /** Computes the shortest distance from this overlay to the given point. */
   public abstract double getDistance(double x, double y);
 
-  /** Gets a specific overlay statistic */
+  /** Gets a specific overlay statistic. */
   public abstract String getStat(String name);
 
   /** Retrieves useful statistics about this overlay. */
@@ -122,7 +122,7 @@ public abstract class OverlayObject {
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return false; }
 
-  /** True iff this overlay can be resized using X1, X2, Y1, Y2 entry boxes */
+  /** True iff this overlay can be resized using X1, X2, Y1, Y2 entry boxes. */
   public boolean areBoundsEditable() { return true; }
   // currently, only non-noded objects can be resized this way.
   // (Actually could perform some rad scaling on all nodes)
@@ -202,7 +202,7 @@ public abstract class OverlayObject {
 
   /** Gets whether overlay is solid. */
   public boolean isFilled() { return filled; }
-  
+
   /** Gets whether overlay is scalable. */
   public boolean isScalable() { return false; }
 

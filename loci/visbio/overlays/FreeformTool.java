@@ -23,18 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import loci.visbio.data.TransformEvent;
-import loci.visbio.util.MathUtil;
 import java.awt.event.InputEvent;
 import java.util.Vector;
+import loci.visbio.data.TransformEvent;
+import loci.visbio.util.MathUtil;
 import visad.DisplayEvent;
 import visad.DisplayImpl;
 import visad.util.CursorUtil;
-
-//goals:
-// eliminate errors in code
-// make code readable
-// consolidate code where possible
 
 /** FreeformTool is the tool for creating freeform objects. */
 public class FreeformTool extends OverlayTool {
@@ -50,7 +45,7 @@ public class FreeformTool extends OverlayTool {
 
   /**
    * How close a mouseDrag event must be to a node
-   * in order to erase it
+   * in order to erase it.
    */
   protected static final double ERASE_THRESH =
     OverlayNumericStrategy.getEraseThreshold();
@@ -66,11 +61,11 @@ public class FreeformTool extends OverlayTool {
   protected static final double RECONNECT_THRESH =
     OverlayNumericStrategy.getReconnectThreshold();
 
-  /** How close mouse must be to end node to resume drawing */
+  /** How close mouse must be to end node to resume drawing. */
   protected static final double RESUME_THRESH =
     OverlayNumericStrategy.getResumeThreshold();
 
-  /** Smoothing factor for "single exponential smoothing" */
+  /** Smoothing factor for "single exponential smoothing". */
   protected static final float S = (float)
     OverlayNumericStrategy.getSmoothingFactor();
 
@@ -86,7 +81,7 @@ public class FreeformTool extends OverlayTool {
   /** Constant for "edit" mode. */
   protected static final int EDIT = 2;
 
-  /** Constant for "init" mode */
+  /** Constant for "init" mode. */
   protected static final int INIT = 3;
 
   // -- Fields --
@@ -94,13 +89,13 @@ public class FreeformTool extends OverlayTool {
   /** Curve currently being drawn or modified. */
   protected OverlayFreeform freeform;
 
-  /** Other freeforms on the canvas */
+  /** Other freeforms on the canvas. */
   protected Vector otherFreefs;
 
-  /** FreeformExtension wraps info about an edit to a curve */
+  /** FreeformExtension wraps info about an edit to a curve. */
   protected FreeformExtension freeformExtension;
 
-  /** Stores the current mode (INIT, ERASE, CHILL, DRAW, EDIT) */
+  /** Stores the current mode (INIT, ERASE, CHILL, DRAW, EDIT). */
   protected int mode;
 
   /** Point at which mouseDown occurs. */
@@ -130,7 +125,7 @@ public class FreeformTool extends OverlayTool {
 
     // if ctl, erase
     // else if near edit
-    
+
     if (ctl) {
       setMode(ERASE);
       freeform = null;
@@ -230,8 +225,8 @@ public class FreeformTool extends OverlayTool {
     }
 
     if (ctl && mode == DRAW) {
-        freeform.truncateNodeArray();
-        setMode(ERASE);
+      freeform.truncateNodeArray();
+      setMode(ERASE);
     }
 
     if (mode == DRAW) {
@@ -269,7 +264,7 @@ public class FreeformTool extends OverlayTool {
         // compute distance from last node
         // DISTANCE COMPUTATION: compare floats and ints
         float[] last = {freeform.getLastNodeX(), freeform.getLastNodeY()};
-        double distPxl = getPixelDistanceToClick(display, last, 
+        double distPxl = getPixelDistanceToClick(display, last,
             new int[]{px, py});
 
         if (distPxl > DRAW_THRESH) {
@@ -313,7 +308,8 @@ public class FreeformTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(DisplayEvent e, int px, int py,
-      float dx, float dy, int[] pos, int mods) {
+      float dx, float dy, int[] pos, int mods)
+  {
     if (mode == DRAW) {
       freeform.truncateNodeArray();
     }
@@ -334,14 +330,14 @@ public class FreeformTool extends OverlayTool {
 
   // -- Helper methods for mouse methods
 
-
   /** Compiles a list of other freeforms at the current dimensional position. */
   protected Vector getFreeforms(boolean includeThis) {
     OverlayObject[] objs = overlay.getObjects();
     otherFreefs = new Vector(10);
     for (int i=0; i<objs.length; i++) {
-      if (objs[i] instanceof OverlayFreeform && 
-          (includeThis || objs[i] != freeform)) {
+      if (objs[i] instanceof OverlayFreeform &&
+          (includeThis || objs[i] != freeform))
+      {
         otherFreefs.add(objs[i]);
       }
     }
@@ -435,13 +431,13 @@ public class FreeformTool extends OverlayTool {
     // in two.
     if (closest != null) {
       OverlayFreeform[] children = closest.removeNode(minIndex);
-      // remove freeforms with 1 or 0 nodes that result 
+      // remove freeforms with 1 or 0 nodes that result
       if (closest.getNumNodes() <= 1) overlay.removeObject(closest);
       removeEmptyFreeforms(children);
     }
   }
 
-  /** Removes any freeforms with one or fewer nodes */
+  /** Removes any freeforms with one or fewer nodes. */
   protected void removeEmptyFreeforms(OverlayFreeform[] objs) {
     for (int i=0; i<objs.length; i++) {
       if (objs[i] == null) continue;
@@ -450,10 +446,11 @@ public class FreeformTool extends OverlayTool {
   }
 
   /** Returns the closest (subject to a threshhold) OverlayFreeform object to
-   *  the given point
+   *  the given point.
    */
   protected DistanceQuery getClosestFreeform(DisplayImpl display, double dpx,
-      double dpy, double thresh) {
+      double dpy, double thresh)
+  {
     // returns only objects at the current dimensional position
     OverlayObject[] objects = overlay.getObjects();
     // Q: Hey, are all of these OverlayFreeforms?
@@ -488,7 +485,8 @@ public class FreeformTool extends OverlayTool {
 
   /** Gets distance in pixels between a click and a point in domain coords. */
   private double getPixelDistanceToClick(DisplayImpl display, float[] p, int[]
-      click) {
+      click)
+  {
     // TODO Make this work for N-D arguments (not just 2D)
     double[] pDbl = new double[] {(double) p[0], (double) p[1]};
     int[] pPxl = CursorUtil.domainToPixel(display, pDbl);
@@ -525,11 +523,11 @@ public class FreeformTool extends OverlayTool {
     }
   }
 
-  // -- Inner Class -- 
+  // -- Inner Class --
 
-  /** 
-   * Wraps information about the distance from a point to a freeform object. 
-   * The nearest point is expressed in terms of its location on the freeform 
+  /**
+   * Wraps information about the distance from a point to a freeform object.
+   * The nearest point is expressed in terms of its location on the freeform
    * using two variables:
    * <code>seg</code> the segment on which the closest point lies, between
    * nodes seg and seg+1
@@ -540,14 +538,14 @@ public class FreeformTool extends OverlayTool {
 
     // -- Fields --
 
-    /** The index of the first node of the closest segment */ 
+    /** The index of the first node of the closest segment. */
     public int seg;
 
     /**
-     * The weight, between 0.0 and 1.0, representing the relative distance 
+     * The weight, between 0.0 and 1.0, representing the relative distance
      * along the segment (seg, seg+1) that must be traveled from the node at
      * index seg to reach the closest point on the curve.
-     */ 
+     */
     public double wt;
 
     /** The distance to the freeform. */
@@ -556,8 +554,8 @@ public class FreeformTool extends OverlayTool {
     /** The nearest freeform itself. */
     public OverlayFreeform freeform;
 
-    // -- Constructor -- 
-    
+    // -- Constructor --
+
     /** Constructs a DistanceQuery object. */
     public DistanceQuery(double[] distSegWt, OverlayFreeform f) {
       this.freeform = f;
@@ -566,8 +564,8 @@ public class FreeformTool extends OverlayTool {
       this.wt = distSegWt[2];
     }
 
-    // -- Methods -- 
-    
+    // -- Methods --
+
     /** Whether the nearest node is an end node. */
     public boolean isNearEndNode() {
       return (seg == 0 && wt == 0.0) ||

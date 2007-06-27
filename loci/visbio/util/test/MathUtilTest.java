@@ -30,7 +30,7 @@ import loci.visbio.util.MathUtil;
 public class MathUtilTest extends TestCase {
 
   // -- Constants --
-  
+
   public static final float DELTA = 0f;
 
   // -- Admin. Methods --
@@ -45,7 +45,7 @@ public class MathUtilTest extends TestCase {
     // nothing to do.
   }
 
-  // -- Vector Math Tests -- 
+  // -- Vector Math Tests --
 
   /** Tests MathUtil.mag(). */
   public void testMag() {
@@ -84,8 +84,8 @@ public class MathUtilTest extends TestCase {
     // vector 1
     //----------------------------------------------------------------------
     float[] v1 = {0f, 10f};
-    float mag1 = (float) Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1]); 
-    float[] v1hatExpected = {v1[0] / mag1, v1[1] / mag1};;
+    float mag1 = (float) Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1]);
+    float[] v1hatExpected = {v1[0] / mag1, v1[1] / mag1};
     float[] v1hat = MathUtil.unit(v1);
     for (int i=0; i<v1.length; i++) {
       assertEquals(v1hatExpected[i], v1hat[i], DELTA);
@@ -135,21 +135,21 @@ public class MathUtilTest extends TestCase {
     }
   }
 
-  /** Tests the MathUtil.vector() */
+  /** Tests the MathUtil.vector() method. */
   public void testVector() {
     float[] p1 = {3f, 4f, 0f};
     float[] p2 = {-1f, 5f, 6f};
     float[] v1Expected = {p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]};
 
     float[] v1 = MathUtil.vector(p1, p2);
-    
+
     assertEquals(v1.length, v1Expected.length);
     for (int i=0; i<v1.length; i++) {
       assertEquals(v1Expected[i], v1[i], DELTA);
     }
   }
 
-  /** Tests the MathUtil.add() method */
+  /** Tests the MathUtil.add() method. */
   public void testAdd() {
     float[] v1 = {0f, -1f, 2f};
     float[] v2 = {1f, 3f, 1f};
@@ -167,7 +167,7 @@ public class MathUtilTest extends TestCase {
     assertNull(r);
   }
 
-  /** Tests MathUtil.scalarMultiply() */
+  /** Tests MathUtil.scalarMultiply(). */
   public void testScalarMultiply() {
     float[] v = new float[100];
     float[] vs = new float[100];
@@ -192,39 +192,39 @@ public class MathUtilTest extends TestCase {
     float[] v1 = {0f, 3f, 4f, 5f, -24.65f, 0f, 45f};
     float[] v2 = MathUtil.scalarMultiply(v1, -1f);
     float[] v3 = {v2[0]};
-    
+
     assertEquals(true, MathUtil.areSame(v1, v1));
     assertEquals(false, MathUtil.areSame(v1, v2));
     assertEquals(true, MathUtil.areDifferent(v1, v2));
     assertEquals(false, MathUtil.areDifferent(v1, v1));
     assertEquals(true, MathUtil.areOpposite(v1, v2));
-    assertEquals(false, MathUtil.areOpposite(v1, v3)); 
+    assertEquals(false, MathUtil.areOpposite(v1, v3));
   }
 
   // -- Computational Geometry Tests --
 
-  /** Tests the MathUtil.inside() method */
+  /** Tests the MathUtil.inside() method. */
   public void testInside() {
     float[] a = {1f, 2f};
     float[] b1 = {0f, 0f};
     float[] b2 = {3f, 3f};
     float[] c = {1f, -1f};
 
-    assertEquals("a should be between b1 and b2", true, 
+    assertEquals("a should be between b1 and b2", true,
         MathUtil.inside(a, b1, b2));
 
-    assertEquals("a should be inside b2 and b1", true, 
+    assertEquals("a should be inside b2 and b1", true,
         MathUtil.inside(a, b2, b1));
-assertEquals("c should not be inside b1 and b2", false, 
+
+    assertEquals("c should not be inside b1 and b2", false,
         MathUtil.inside(c, b1, b2));
 
-    assertEquals("c should not be inside b2 and b1", false, 
+    assertEquals("c should not be inside b2 and b1", false,
         MathUtil.inside(c, b2, b1));
 
-    assertEquals("b1 should be inside b1 and b2", true, 
+    assertEquals("b1 should be inside b1 and b2", true,
         MathUtil.inside(b1, b1, b2));
   }
-
 
   /** Tests the computePointOnSegment method. */
   public void testSegment(){
@@ -234,7 +234,7 @@ assertEquals("c should not be inside b1 and b2", false,
     float[] p1 = MathUtil.computePtOnSegment(a, b, 0f);
     float[] p2 = MathUtil.computePtOnSegment(a, b, 1f);
     float[] p3 = MathUtil.computePtOnSegment(a, b, .5f);
-    
+
     float[] p3e = {2.5f, 3f};
 
     compareFloats(a, p1, DELTA);
@@ -242,12 +242,12 @@ assertEquals("c should not be inside b1 and b2", false,
     compareFloats(p3, p3e, DELTA);
   }
 
-  /** Tests the MathUtil.bisect() method */
-  public void testBisect () {
+  /** Tests the MathUtil.bisect() method. */
+  public void testBisect() {
     float[] p1 = {0f, 1f};
     float[] p2 = {0f, 0f};
     float[] p3 = {1f, 0f};
-   
+
     float[] p4Expected = MathUtil.unit(new float[]{-1f, -1f});
     float[] p4 = MathUtil.getRightBisectorVector2D(p1, p2, p3);
 
@@ -257,7 +257,7 @@ assertEquals("c should not be inside b1 and b2", false,
     }
   }
 
-  /** Tests the MathUtil.bisect() method */
+  /** Tests the MathUtil.bisect() method. */
   public void testRightBisectFlatCase() {
     float[] p1 = {0f, 0f};
     float[] p2 = {0f, 1f};
@@ -269,7 +269,7 @@ assertEquals("c should not be inside b1 and b2", false,
     assertEquals(vExpected.length, v.length);
     compareFloats(vExpected, v, DELTA);
 
-    float[] p4 = {1f, .2000000f}; 
+    float[] p4 = {1f, .2000000f};
     float[] p5 = {1f, .2000001f};
     float[] p6 = {1f, .20000015f};
     float[] vE2 = {1f, 0f};
@@ -301,7 +301,7 @@ assertEquals("c should not be inside b1 and b2", false,
     compareFloats(v4e, v4, DELTA);
   }
 
-  /** Tests the orient2D method */
+  /** Tests the orient2D method. */
   public void testOrient() {
     float[] p1 = {0f, 0f};
     float[] p2 = {0f, 1f};
@@ -317,8 +317,8 @@ assertEquals("c should not be inside b1 and b2", false,
     assertEquals(z2e, z2, DELTA);
   }
 
-  // -- Helper Methods -- 
-  
+  // -- Helper Methods --
+
   /** Compares two arrays of floats, item-wise. */
   public void compareFloats(float[] expected, float[] actual, float delta) {
     for (int i=0; i<expected.length; i++) {

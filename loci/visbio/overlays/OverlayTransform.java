@@ -117,13 +117,13 @@ public class OverlayTransform extends DataTransform
   /** Dimensional position of overlays stored in the clipboard. */
   protected int[] clipboardPos = null;
 
-  /** Transient Select Box, if active */
+  /** Transient Select Box, if active. */
   protected TransientSelectBox selectBox;
 
-  /** Type of last tool used */
+  /** Type of last tool used. */
   protected String lastToolType;
 
-  /** Whether last tool has changed */
+  /** Whether last tool has changed. */
   protected boolean toolChanged;
 
   // -- Constructor --
@@ -182,10 +182,10 @@ public class OverlayTransform extends DataTransform
   public void removeSelectedObjects() { removeSelectedObjects(pos); }
 
   /** Adds a transient selection box. */
-  public void addTSB (TransientSelectBox tsb) { selectBox = tsb; }
+  public void addTSB(TransientSelectBox tsb) { selectBox = tsb; }
 
   /** Removes transient selection box. */
-  public void removeTSB () { selectBox = null; }
+  public void removeTSB() { selectBox = null; }
 
   /** Removes selected overlay objects at the given dimensional position. */
   public void removeSelectedObjects(int[] pos) {
@@ -427,7 +427,7 @@ public class OverlayTransform extends DataTransform
 
   /** Exports the overlays as .xls to the given output file.*/
   public HSSFWorkbook exportOverlays() {
-    return OverlayIO.exportOverlays (this);
+    return OverlayIO.exportOverlays(this);
   }
 
   /** Gets domain type (XY). */
@@ -547,7 +547,7 @@ public class OverlayTransform extends DataTransform
     // grids.
 
     // The current display
-    DisplayImpl display = link.getHandler().getWindow().getDisplay(); 
+    DisplayImpl display = link.getHandler().getWindow().getDisplay();
 
     if (dim != 2) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
@@ -587,7 +587,7 @@ public class OverlayTransform extends DataTransform
               // rescale object if appropriate
               // (currently applies only to OverlayMarkers)
               if (obj.isScalable())
-                obj.rescale(OverlayUtil.getMultiplier(display)); 
+                obj.rescale(OverlayUtil.getMultiplier(display));
               if (obj.hasText()) continue;
               rgbField.setSample(c++, obj.getData(), false);
             }
@@ -625,7 +625,7 @@ public class OverlayTransform extends DataTransform
 
         // retrieve select box data
         if (selectBox != null) {
-            selectData = selectBox.getData();
+          selectData = selectBox.getData();
         }
 
         // display only non-null data objects
@@ -897,7 +897,7 @@ public class OverlayTransform extends DataTransform
   }
 
   // -- Helper methods --
-  
+
   /** Configures the given overlay to match the current settings. */
   protected void configureOverlay(OverlayObject obj) {
     OverlayWidget panel = (OverlayWidget) getControls();

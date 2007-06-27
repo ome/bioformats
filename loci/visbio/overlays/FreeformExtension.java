@@ -27,27 +27,27 @@ import loci.visbio.util.MathUtil;
 import visad.DisplayImpl;
 import visad.util.CursorUtil;
 
-/** 
- * The FreeformExtension class wraps information for the temporary section of a 
+/**
+ * The FreeformExtension class wraps information for the temporary section of a
  * freeform, which appears like a tendril on screen, created during an edit
- * of an existing freeform. 
+ * of an existing freeform.
  * The FreeformTool uses this information to modify the freeform if the
  * edit is successful, or to remove the freeform extension if the edit is
  * aborted.
  *
  * The section of the freeform represented by a freeform extension is actually a
  * loop, but it's thin (both sides overlap exactly) so it appears like a single
- * line. 
+ * line.
  * The loop has two parts, between start and tip and between tip and stop.
  * If an edit is completed, half of the freeform extension is deleted along
- * with the subtended section of the original freeform.  As a result, the 
- * tendril appears to be spliced into the old freeform. 
+ * with the subtended section of the original freeform.  As a result, the
+ * tendril appears to be spliced into the old freeform.
  */
 public class FreeformExtension {
-  
+
   // -- Static Fields --
 
-  /** Smoothing factor for "single exponential smoothing" */
+  /** Smoothing factor for "single exponential smoothing". */
   protected static final float SMOOTHING_FACTOR = (float)
     OverlayNumericStrategy.getSmoothingFactor();
 
@@ -74,7 +74,7 @@ public class FreeformExtension {
   protected int start;
 
   /** The index of the last node of the freeform extension. */
-  protected int stop; 
+  protected int stop;
 
   /** The index of the tip node of the freeform extension. */
   protected int tip;
@@ -82,9 +82,9 @@ public class FreeformExtension {
   /** Chunks of curve before and after the extension. */
   protected float[][] pre, post;
 
-  /** 
+  /**
    * Whether this freeform extension began on a node or in the middle of a
-   * segment. 
+   * segment.
    */
   protected boolean nodal;
 
@@ -92,7 +92,8 @@ public class FreeformExtension {
 
   /** Constructs a new freeform extension. */
   public FreeformExtension(OverlayFreeform freeform, int start, int stop,
-      boolean nodal) {
+      boolean nodal)
+  {
     this.freeform = freeform;
     this.start = start;
     this.stop = stop;
@@ -100,19 +101,20 @@ public class FreeformExtension {
     // initial value of tip is nonsensical.  Use as a check.
     this.tip = -1;
 
-    if (nodal) splitNodes (freeform, start - 1, stop + 1);
-    else splitNodes (freeform, start, stop + 1);
+    if (nodal) splitNodes(freeform, start - 1, stop + 1);
+    else splitNodes(freeform, start, stop + 1);
   }
 
   // -- Object API Methods --
-  
+
   /** Whether this extension has begun or remains in the initial state. */
   public boolean hasBegun() { return (tip >=0); }
 
-  /** Extends the extension, reconnecting it with the curve proper if 
+  /** Extends the extension, reconnecting it with the curve proper if
    *  appropriate. */
   public boolean extendOrReconnect(DisplayImpl display, float dx, float dy, int
-      px, int py, boolean shift) {
+      px, int py, boolean shift)
+  {
     boolean reconnected = false;
 
     double dpx = (double) px;
@@ -139,7 +141,7 @@ public class FreeformExtension {
       // insert a node at the drag point if drag went far enough
       if (dragDist > DRAW_THRESH) {
         float[] prev = getTipCoords();
-        float[] s = OverlayUtil.smooth (new float[] {dx, dy}, prev,
+        float[] s = OverlayUtil.smooth(new float[] {dx, dy}, prev,
             SMOOTHING_FACTOR);
         extend(s);
       }
@@ -163,7 +165,8 @@ public class FreeformExtension {
 
   /** Computes distance between a point and a section of the freeform. */
   public double[] getDistanceToSection(float[][] section, DisplayImpl display,
-      double dpx, double dpy) {
+      double dpx, double dpy)
+  {
     double[][] dbl = OverlayUtil.floatsToPixelDoubles(display, section);
     double[] distSegWt = MathUtil.getDistSegWt(dbl, dpx, dpy);
     return distSegWt;
@@ -231,7 +234,7 @@ public class FreeformExtension {
   }
 
   /** Returns the coordinates of the extension's tip or start node. */
-  public float[] getTipCoords() { 
+  public float[] getTipCoords() {
     float[] prev;
     if (tip >= 0) {
       // previous node is tendril.tip
@@ -243,10 +246,10 @@ public class FreeformExtension {
     }
     return prev;
   }
-  
-  /** 
-   * Simultaneously increments all extension pointers into node array, 
-   * to adjust for the insertion of a node before the base of the extension. 
+
+  /**
+   * Simultaneously increments all extension pointers into node array,
+   * to adjust for the insertion of a node before the base of the extension.
    */
   public void incrementAll() {
     tip++;
@@ -258,9 +261,9 @@ public class FreeformExtension {
    * Splits the node array into two parts.  The first part goes from a[0] to
    * a[index-1], the second from a[index2] to a[a.length -1].
    */
-  private void splitNodes(OverlayFreeform freeform, int index, int index2) {
+  private void splitNodes(OverlayFreeform f, int index, int index2) {
     // splits the array a into two (before the index specified)
-    float[][] a = freeform.getNodes();
+    float[][] a = f.getNodes();
     // print these guys
     int depth = a.length;
     int len = a[0].length; // assumes non-ragged array

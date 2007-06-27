@@ -34,7 +34,7 @@ public class OverlayLine extends OverlayObject {
 
   // -- Static Fields --
 
-  /** The names of the statistics this object reports */
+  /** The names of the statistics this object reports. */
   protected static final String COORDS = "Coordinates";
   protected static final String LENGTH = "Length";
   protected static final String[] STAT_TYPES =  {COORDS, LENGTH};
@@ -57,8 +57,8 @@ public class OverlayLine extends OverlayObject {
 
   // -- Static methods --
 
-  /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return STAT_TYPES;}
+  /** Returns the names of the statistics this object reports. */
+  public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
 
@@ -106,7 +106,7 @@ public class OverlayLine extends OverlayObject {
       new double[] {x2, y2}, new double[] {x, y}, true);
   }
 
-  /** Returns a specific statistic of this object */
+  /** Returns a specific statistic of this object. */
   public String getStat(String name) {
     if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";

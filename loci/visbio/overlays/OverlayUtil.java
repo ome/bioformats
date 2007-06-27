@@ -27,32 +27,32 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Vector;
-import loci.visbio.view.TransformLink;
 import loci.visbio.util.MathUtil;
+import loci.visbio.view.TransformLink;
 import visad.*;
 import visad.util.CursorUtil;
 
-/** Utility methods for Overlays */
+/** Utility methods for Overlays. */
 public final class OverlayUtil {
 
   // -- Constants --
 
-  /** Width of the selection layer beyond the object's boundaries */
+  /** Width of the selection layer beyond the object's boundaries. */
   protected static final float GLOW_WIDTH = 5.0f; // in pixels
 
-  /** Alpha of the selection layer */
+  /** Alpha of the selection layer. */
   protected static final float GLOW_ALPHA = 0.15f;
 
-  /** Color of the selection layer */
+  /** Color of the selection layer. */
   protected static final Color GLOW_COLOR = Color.yellow;
 
-  /** Color of the highlight layer for noded objects */
+  /** Color of the highlight layer for noded objects. */
   protected static final Color HLT_COLOR = Color.green;
 
-  /** Alpha of the highlight layer for noded object */
+  /** Alpha of the highlight layer for noded object. */
   protected static final float HLT_ALPHA = 0.5f;
 
-  /** Color of the outline layer */
+  /** Color of the outline layer. */
   protected static final Color OUTLINE_COLOR = Color.cyan;
 
   /** Computed (X, Y) pairs for top 1/2 of a unit circle. */
@@ -85,9 +85,9 @@ public final class OverlayUtil {
     return arc;
   }
 
-  /** List of all OverlayObject subclasses */
+  /** List of all OverlayObject subclasses. */
   public static final String[] OVERLAY_TYPES =
-    {"Line", "Freeform", "Marker", "Text",
+  {"Line", "Freeform", "Marker", "Text",
     "Oval", "Box", "Arrow", "Polyline"};
 
   // -- Constructor --
@@ -95,38 +95,39 @@ public final class OverlayUtil {
 
   // -- Statistics Utility Methods --
 
-  /** Get list of all OverlayObject subclasses */
+  /** Get list of all OverlayObject subclasses. */
   public static String[] getOverlayTypes() { return OVERLAY_TYPES; }
 
   /**
-   * Returns statistic names for a particular class
+   * Returns statistic names for a particular class.
    */
   protected static String[] getStatTypes(String overlayType) {
     String[] statTypes = null;
     if (overlayType.equals("Arrow")) statTypes =
-      OverlayArrow.getStatTypes();
+        OverlayArrow.getStatTypes();
     else if (overlayType.equals("Box")) statTypes =
-      OverlayBox.getStatTypes();
+        OverlayBox.getStatTypes();
     else if (overlayType.equals("Freeform")) statTypes =
-      OverlayFreeform.getStatTypes();
+        OverlayFreeform.getStatTypes();
     else if (overlayType.equals("Line")) statTypes =
-      OverlayLine.getStatTypes();
+        OverlayLine.getStatTypes();
     else if (overlayType.equals("Marker")) statTypes =
-      OverlayMarker.getStatTypes();
+        OverlayMarker.getStatTypes();
     else if (overlayType.equals("Oval")) statTypes =
-      OverlayOval.getStatTypes();
+        OverlayOval.getStatTypes();
     else if (overlayType.equals("Polyline"))statTypes =
-      OverlayPolyline.getStatTypes();
+        OverlayPolyline.getStatTypes();
     else if (overlayType.equals("Text")) statTypes =
-      OverlayText.getStatTypes();
+        OverlayText.getStatTypes();
     return statTypes;
   }
 
   // -- Selection Layer Utility Methods --
 
-  /** Computes a type-specific selection layer for the given OverlayObject */
+  /** Computes a type-specific selection layer for the given OverlayObject. */
   public static DataImpl getSelectionLayer(OverlayObject obj,
-      TransformLink link, boolean outline) {
+      TransformLink link, boolean outline)
+  {
     DataImpl layer = null;
     if (!obj.hasData()) layer = null;
     else if (outline) {
@@ -144,7 +145,7 @@ public final class OverlayUtil {
     return layer;
   }
 
-  /** Computes selection layer for OverlayArrow objects */
+  /** Computes selection layer for OverlayArrow objects. */
   public static DataImpl getArrowLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
@@ -225,7 +226,7 @@ public final class OverlayUtil {
     return field;
   }
 
-  /** Computes selection layer for OverlayBox objects */
+  /** Computes selection layer for OverlayBox objects. */
   public static DataImpl getBoxLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
@@ -290,7 +291,7 @@ public final class OverlayUtil {
     return field;
   }
 
-  /** Returns a selection layer for OverlayLine objects */
+  /** Returns a selection layer for OverlayLine objects. */
   public static DataImpl getLineLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
@@ -300,7 +301,6 @@ public final class OverlayUtil {
     float x2 = obj.getX2();
     float y1 = obj.getY();
     float y2 = obj.getY2();
-
 
     float delta = GLOW_WIDTH * getMultiplier(link);
 
@@ -323,7 +323,6 @@ public final class OverlayUtil {
 
     float[][] setSamples = {{c1[0], c2[0], c3[0], c4[0]},
                             {c1[1], c2[1], c3[1], c4[1]}};
-
 
     // construct range samples;
     Color col = GLOW_COLOR;
@@ -353,7 +352,7 @@ public final class OverlayUtil {
     return field;
   }
 
-  /** Returns a selection layer for OverlayMarker objects */
+  /** Returns a selection layer for OverlayMarker objects. */
   public static DataImpl getMarkerLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
@@ -401,7 +400,7 @@ public final class OverlayUtil {
         {y1 + delta, y1 + delta, y1 - delta, y1 - delta}
       };
 
-      // vertical part 
+      // vertical part
       float[][] setSamples2 = {
         {x1 - delta, x1 + delta, x1 - delta, x1 + delta},
         {yy1, yy1, yy2, yy2}
@@ -429,7 +428,7 @@ public final class OverlayUtil {
 
       /*
       float dx = 0.0001;
-      // here's the code for creating a cross-shaped Gridded2DSet, 
+      // here's the code for creating a cross-shaped Gridded2DSet,
       // which doesn't quite work
       setSamples = new float[][]{
         {xx1, x1 - delta, x1 - delta + dx, x1 + delta - dx, x1 + delta, xx2,
@@ -475,7 +474,7 @@ public final class OverlayUtil {
     // construct field
     FlatField field = null;
     try {
-      FunctionType fieldType = new FunctionType (domain, range);
+      FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, domainSet);
       field.setSamples(rangeSamples);
     }
@@ -484,7 +483,7 @@ public final class OverlayUtil {
     return field;
   }
 
-  /** Computes selection layer for OverlayNodedObject objects */
+  /** Computes selection layer for OverlayNodedObject objects. */
   public static DataImpl getNodedLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
@@ -513,7 +512,7 @@ public final class OverlayUtil {
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     // Build nodes sets
     // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-    
+
     int samples = 0;
 
     Vector sets = buildNodesSets(domain, nodes, delta);
@@ -591,7 +590,7 @@ public final class OverlayUtil {
     FlatField field = null;
     UnionSet fieldSet = null;
     try {
-      fieldSet = new UnionSet (domain, trueSets);
+      fieldSet = new UnionSet(domain, trueSets);
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(rangeSamples);
@@ -601,7 +600,8 @@ public final class OverlayUtil {
 
     return field;
   }
-  /** Computes a selection layer for OverlayOval objects */
+
+  /** Computes a selection layer for OverlayOval objects. */
   public static DataImpl getOvalLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
@@ -664,7 +664,7 @@ public final class OverlayUtil {
     return field;
   }
 
-  /** Computes a selection layer for OverlayText objects */
+  /** Computes a selection layer for OverlayText objects. */
   public static DataImpl getTextLayer(OverlayObject obj, TransformLink link) {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
     RealTupleType domain = overlay.getDomainType();
@@ -702,7 +702,7 @@ public final class OverlayUtil {
     return field;
   }
 
-  /** Computes a standard outline layer for an OverlayObject */
+  /** Computes a standard outline layer for an OverlayObject. */
   public static DataImpl getOutlineLayer(OverlayObject obj, TransformLink link)
   {
     OverlayTransform overlay = (OverlayTransform) link.getTransform();
@@ -768,7 +768,7 @@ public final class OverlayUtil {
   public static float getMultiplier(DisplayImpl display) {
     // This method may be a bit naive, obtaining the multiplier from
     // only one measurement.
-    int[] p1 = {0,0};
+    int[] p1 = {0, 0};
     int[] p2 = {0, 1000};
     double[] d1 = CursorUtil.pixelToDomain(display, p1[0], p1[1]);
     double[] d2 = CursorUtil.pixelToDomain(display, p2[0], p2[1]);
@@ -786,9 +786,10 @@ public final class OverlayUtil {
   // Note: This method is basically the old
   // OverlayObject.computeGridParameters()
   // method from OverlayBox.
-  /** Computes corners of an OverlayObject's outline */
+  /** Computes corners of an OverlayObject's outline. */
   private static float[][] computeOutline(OverlayObject obj,
-     TransformLink link) {
+     TransformLink link)
+  {
     DisplayImpl display = link.getHandler().getWindow().getDisplay();
     float x1 = obj.getX();
     float x2 = obj.getX2();
@@ -808,9 +809,10 @@ public final class OverlayUtil {
     return new float[][]{{xx1, yy1}, {xx2, yy2}};
   }
 
-  /** Computes outline of a text object  */
+  /** Computes outline of a text object.  */
   private static float[][] computeTextOutline(OverlayObject obj,
-      OverlayTransform overlay) {
+      OverlayTransform overlay)
+  {
     if (obj instanceof OverlayText) ((OverlayText) obj).computeTextBounds();
     float x1 = obj.getX();
     float x2 = obj.getX2();
@@ -852,9 +854,10 @@ public final class OverlayUtil {
     return dfloat;
   }
 
-  /** Converts an array of pixels as floats to domain */
+  /** Converts an array of pixels as floats to domain. */
   private static float[][] pixelToDomain(TransformLink link,
-      float[][] pixelSamples) {
+      float[][] pixelSamples)
+  {
     DisplayImpl display = link.getHandler().getWindow().getDisplay();
     float[][] domainSamples = new
       float[pixelSamples.length][pixelSamples[0].length];
@@ -868,39 +871,39 @@ public final class OverlayUtil {
     return domainSamples;
   }
 
-  /** Connects a pair of VisAD-style 2D arrays of points */
+  /** Connects a pair of VisAD-style 2D arrays of points. */
   public static float[][] adjoin(float[][] a, float[][] b) {
     int alen = a[0].length;
     int blen = b[0].length;
     float[][] result = new float[a.length][alen + blen];
     for (int j=0; j<2; j++) {
-        System.arraycopy(a[j], 0, result[j], 0, alen);
-        System.arraycopy(b[j], 0, result[j], alen, blen);
+      System.arraycopy(a[j], 0, result[j], 0, alen);
+      System.arraycopy(b[j], 0, result[j], alen, blen);
     }
     return result;
   }
 
-  /** Given a set of nodes, creates a UnionSet of Gridded2DSets to 
+  /** Given a set of nodes, creates a UnionSet of Gridded2DSets to
    *  highlight the nodes. */
   public static Vector buildNodesSets(RealTupleType domain, float[][] nodes,
-      float width) {
+      float width)
+  {
     int len = nodes[0].length;
 
     // Create two arrays to store the gridpoints: one to the 'right'
     // of the curve and another to the 'left' (supposing the curve is oriented
     // in order of increasing node indices, i.e., the first node is nodes[][0],
-    // the last is nodes[][nodes.length-1]).  
+    // the last is nodes[][nodes.length-1]).
     float[][] right = new float[2][len]; // store the gridpts
-    float[][] left = new float[2][len]; 
+    float[][] left = new float[2][len];
 
     if (len <=1) return null;
 
-    // The senses of left and right remain the same except when the curve 
-    // doubles back on itself, i.e., when two consecutive segments form an 
+    // The senses of left and right remain the same except when the curve
+    // doubles back on itself, i.e., when two consecutive segments form an
     // angle of 180 degrees.  Then the flag 'orientationChanged' switches.
     boolean orientationChanged = false; // if this is true, right and left
     // must be switched
-    
 
     // This loop computes the points to use in the Gridded2DSets.  The sets
     // are constructed separately since each sets corner points are shared
@@ -909,24 +912,24 @@ public final class OverlayUtil {
     for (int i=0; i<len; i++) {
       // Each iteration of this loop computes a new pair of points
       // rigthPt and leftPt.  The points are computed differently
-      // depending on whether the index i points to 
+      // depending on whether the index i points to
       // 1) the first node
       // 2) the last node
       // 3) some interior node
       float[] rightPt = new float[2];
       float[] leftPt = new float[2];
-      
+
       // System.out.println("index = " + i);
-      if (i==0) { 
+      if (i==0) {
         // Case 1: the first node
         // Just compute points a distance 'width' from the first node,
         // in the direction perpendicular to the first segment
-       
-        float[] p1 = new float[] {nodes[0][0], nodes[1][0]}; // first node 
+
+        float[] p1 = new float[] {nodes[0][0], nodes[1][0]}; // first node
         float[] p2 = new float[] {nodes[0][1], nodes[1][1]}; // second node
         // get a perpendicular vector to the right of p2-p1
         float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
-        rightPt = MathUtil.add(p1, MathUtil.scalarMultiply(vPerp, width)); 
+        rightPt = MathUtil.add(p1, MathUtil.scalarMultiply(vPerp, width));
         leftPt = MathUtil.add(p1, MathUtil.scalarMultiply(vPerp, -1f * width));
         // System.out.print("First node: ");
         // System.out.print("p1: "); print(p1);
@@ -935,14 +938,14 @@ public final class OverlayUtil {
         // System.out.print("right pt: "); print(rightPt);
         // System.out.print("left pt: "); print(leftPt);
       }
-      else if (i == len - 1) { 
+      else if (i == len - 1) {
         // Case 2: the last node
         // Just compute points a distance 'width' from the last node,
         // in the direction perpendicular to the last segment
-        
+
         float[] p1 = new float[] {nodes[0][i-1], nodes[1][i-1]}; // penultimate
         // node
-        float[] p2 = new float[] {nodes[0][i], nodes[1][i]}; // last node 
+        float[] p2 = new float[] {nodes[0][i], nodes[1][i]}; // last node
 
         // Test if the last segment doubles back on the second to last segment
         boolean anti = false; // for 'antiparallel'
@@ -958,15 +961,17 @@ public final class OverlayUtil {
 
         float[] vPerp;
         if (anti) vPerp =
-          MathUtil.getRightPerpendicularVector2D(p1, p2);
-        // p1 and p2 above have been switched above to obtain a reflection 
+            MathUtil.getRightPerpendicularVector2D(p1, p2);
+        // p1 and p2 above have been switched above to obtain a reflection
         else vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
 
         // get a perpendicular vector to the right of p2-p1
         // add a multiple of this vector to the point p2, the last node in
         // the curve
-        float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width)); 
-        float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, -1f * width));
+        float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width));
+        float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, -1f *
+              width));
+
         rightPt = orientationChanged ? b : a;
         leftPt = orientationChanged ? a : b;
 
@@ -978,16 +983,16 @@ public final class OverlayUtil {
         // System.out.print("left pt: "); print(leftPt);
         // System.out.println("orientation changed = "  + orientationChanged);
       }
-      else { 
+      else {
         // Case 3: all interior nodes
         // Compute points a perpendicular distance 'width' away from the curve
-        // as in cases 1 and 2.  This time, however, the points lie on the 
+        // as in cases 1 and 2.  This time, however, the points lie on the
         // the line bisecting the angle formed by adjacent segments.
 
         float[] p1 = {nodes[0][i-1], nodes[1][i-1]};
         float[] p2 = {nodes[0][i], nodes[1][i]};
         float[] p3 = {nodes[0][i+1], nodes[1][i+1]};
-        
+
         // System.out.print("\nNode index " + i + ":");
         // System.out.print("p1: "); print(p1);
         // System.out.print("p2: "); print(p2);
@@ -999,9 +1004,11 @@ public final class OverlayUtil {
         float[] v2 = MathUtil.unit(MathUtil.vector(p3, p2));
         if (MathUtil.areOpposite(v1, v2)) {
           // vectors are antiparallel. just use v1 to calculate right and left
-          float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1); 
-          float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width)); 
-          float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, -1f * width));
+          float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
+          float[] a = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, width));
+          float[] b = MathUtil.add(p2, MathUtil.scalarMultiply(vPerp, -1f *
+                width));
+
           rightPt = orientationChanged ? b : a;
           leftPt = orientationChanged ? a : b;
           // System.out.print("vPerp: "); print(vPerp);
@@ -1012,12 +1019,12 @@ public final class OverlayUtil {
           float[] bisector = MathUtil.getRightBisectorVector2D(p1, p2, p3);
           float[] bisectorReflected = MathUtil.scalarMultiply(bisector, -1f);
 
-          // compute angle between the p2-p1 and bisector 
+          // compute angle between the p2-p1 and bisector
           float sin = Math.abs(MathUtil.cross2D(bisector,
                 MathUtil.unit(MathUtil.vector(p2, p1))));
           if (sin < 0.1f) sin = 0.1f; // keep a lower bound on this value to
           // prevent 1/sin from becoming too large
-          
+
           // compute offset distance from curve
           float offset = width / sin;
 
@@ -1045,22 +1052,23 @@ public final class OverlayUtil {
       left[0][i] = leftPt[0];
       left[1][i] = leftPt[1];
     } // end for
-    
+
     // assemble an array of gridded sets representing the highlighting
     return makeGridded2DSets(domain, nodes, right, left, width);
-  } 
+  }
 
   /** Makes valid Gridded2DSets from the arrays supplied.
    *  @param nodes The nodes of the noded object
    *  @param right The points on the right side of the noded object (supposing
    *  node indices increase from left to right across the screen)
    *  @param left The points on the left side of the noded object (again
-   *  supposing node indices increase from left to right across the screen)
-   */   
+   *  supposing node indices increase from left to right across the screen).
+   */
   public static Vector makeGridded2DSets(RealTupleType domain,
-      float nodes[][], float[][] right, float[][] left, float width) {
+      float[][] nodes, float[][] right, float[][] left, float width)
+  {
 
-    // Note: 
+    // Note:
     // This method should probably determine whether Gridded2DSets will
     // be invalid itself, but instead it relies on VisAD's Gridded2DSet
     // constructor to do so.  If the constructor throws an exception, this
@@ -1071,7 +1079,7 @@ public final class OverlayUtil {
     for (int i=0; i<len-1; i++) {
       // This loop constructs Gridded2D sets, one for each segment of a noded
       // object (implied here by the arrays right and left).
-      // For each segment (between indices 'i' and 'i+1'), 
+      // For each segment (between indices 'i' and 'i+1'),
       // try to construct a trapezoidal set:
       float[][] setSamples = {
         {right[0][i], right[0][i+1], left[0][i], left[0][i+1]},
@@ -1079,13 +1087,13 @@ public final class OverlayUtil {
       };
 
       try {
-        Gridded2DSet set = new Gridded2DSet(domain, setSamples, 2, 2, null, 
+        Gridded2DSet set = new Gridded2DSet(domain, setSamples, 2, 2, null,
             null, null, false);
         sets.add(set);
       }
       catch (VisADException ex) {
-        // If samples form an invalid set, the grid is most likely 
-        // bow-tie shaped.  
+        // If samples form an invalid set, the grid is most likely
+        // bow-tie shaped.
         // "Uncross" the box just by switching the order of the two
         // left points.
 
@@ -1095,8 +1103,8 @@ public final class OverlayUtil {
           {right[1][i], right[1][i+1], left[1][i+1], left[1][i]}
         };
 
-        try { 
-          Gridded2DSet set = new Gridded2DSet(domain, setSamples, 2, 2, null, 
+        try {
+          Gridded2DSet set = new Gridded2DSet(domain, setSamples, 2, 2, null,
             null, null, false);
           sets.add(set);
         }
@@ -1112,8 +1120,8 @@ public final class OverlayUtil {
 
           float[] vPerp = MathUtil.getRightPerpendicularVector2D(p2, p1);
           float[] vPerpReflected = MathUtil.scalarMultiply(vPerp, -1f);
-          float[] s1 = MathUtil.add(p1, vPerp); 
-          float[] s2 = MathUtil.add(p2, vPerp); 
+          float[] s1 = MathUtil.add(p1, vPerp);
+          float[] s2 = MathUtil.add(p2, vPerp);
           float[] s3 = MathUtil.add(p1, vPerpReflected);
           float[] s4 = MathUtil.add(p2, vPerpReflected);
 
@@ -1123,12 +1131,12 @@ public final class OverlayUtil {
           };
 
           try {
-            Gridded2DSet set = new Gridded2DSet(domain, setSamples, 2, 2, null, 
+            Gridded2DSet set = new Gridded2DSet(domain, setSamples, 2, 2, null,
               null, null, false);
             sets.add(set);
           }
           catch(VisADException ex3) {
-            System.out.println("OverlayUtil: error making Gridded2DSets: " + 
+            System.out.println("OverlayUtil: error making Gridded2DSets: " +
               "all three tries produced invalid sets (index " + i + ").");
             System.out.println("left points");
             print(left);
@@ -1157,11 +1165,13 @@ public final class OverlayUtil {
     return cn;
   }
 
-  /** 
+  /**
    * Casts and converts an array of floats in domain coordinates to doubles in
-   * pixel coordinates. 
+   * pixel coordinates.
    */
-  public static double[][] floatsToPixelDoubles(DisplayImpl d, float[][] nodes) {
+  public static double[][] floatsToPixelDoubles(DisplayImpl d, float[][]
+      nodes)
+  {
     double[][] nodesDbl = new double[nodes.length][nodes[0].length];
     for (int j=0; j<nodes[0].length; j++) {
       int[] c = CursorUtil.domainToPixel(d, new double[]{
@@ -1179,13 +1189,13 @@ public final class OverlayUtil {
     }
   }
 
-  /** Prints a point. */ 
+  /** Prints a point. */
   public static void print(float x, float y) {
     System.out.println("[" + x + "," + y + "]");
   }
 
   /** Prints a point. */
   public static void print(float[] p) {
-    print(p[0], p[1]); 
+    print(p[0], p[1]);
   }
 }

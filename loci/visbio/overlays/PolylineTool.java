@@ -159,7 +159,8 @@ public class PolylineTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(DisplayEvent e, int px, int py,
-    float dx, float dy, int[] pos, int mods) {
+    float dx, float dy, int[] pos, int mods)
+  {
     // printMode("mouseDrag");
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
@@ -201,7 +202,8 @@ public class PolylineTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(DisplayEvent e, int px, int py,
-      float dx, float dy, int[] pos, int mods) {
+      float dx, float dy, int[] pos, int mods)
+  {
     // printMode("mouseUp");
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
@@ -242,7 +244,8 @@ public class PolylineTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse movement. */
   public void mouseMoved(DisplayEvent e, int px, int py,
-      float dx, float dy, int[] pos, int mods) {
+      float dx, float dy, int[] pos, int mods)
+  {
     DisplayImpl display = (DisplayImpl) e.getDisplay();
     // printMode("mouseMoved");
 
@@ -287,7 +290,6 @@ public class PolylineTool extends OverlayTool {
         // determine if near last node placed
         double ldist =
           getDistanceToNode(line.getNumNodes() - 2, px, py, display);
-
 
         // if near ndx, highlight selected node differently
         int flag = -1;
@@ -367,44 +369,44 @@ public class PolylineTool extends OverlayTool {
   // -- Helper methods --
 
   /** Adjusts last node and curve length */
-  private void adjustLastNode (OverlayPolyline line, float dx, float dy) {
-    int numNodes = line.getNumNodes();
+  private void adjustLastNode(OverlayPolyline pln, float dx, float dy) {
+    int numNodes = pln.getNumNodes();
     boolean adjust = false;
     if (numNodes > 1) {
       float[] d = {dx, dy};
-      float[] p = line.getNodeCoords(line.getNumNodes()-2);
+      float[] p = pln.getNodeCoords(line.getNumNodes()-2);
       if (MathUtil.areDifferent(d, p)) adjust = true;
     }
     else {
       adjust = true;
     }
     if (adjust) {
-      double lastSegLength = line.getLastSegmentLength();
-      line.setLastNode(dx, dy);
-      double newLastSegLength = line.getLastSegmentLength();
+      double lastSegLength = pln.getLastSegmentLength();
+      pln.setLastNode(dx, dy);
+      double newLastSegLength = pln.getLastSegmentLength();
       double delta = newLastSegLength - lastSegLength;
-      line.setCurveLength(line.getCurveLength() + delta);
+      pln.setCurveLength(line.getCurveLength() + delta);
     }
   }
 
-  // TODO -- replace this method with the similar one for freeforms,
+  // TODO -- combine this method with the similar one for freeforms,
   // currently located in OverlayNodedObject.java
   // Determine some way of combining the two.
   /** Splits an overlay polyline in two */
-  private void split (OverlayPolyline line, int selectedNode) {
+  private void split(OverlayPolyline line, int index) {
     float[][] nodes = line.getNodes();
     OverlayPolyline l1, l2;
 
     int numNodes = line.getNumNodes();
 
-    int numNodes1 = selectedNode;
-    int numNodes2 = numNodes - selectedNode - 1;
-    // selectedNode is an index into the node array;
+    int numNodes1 = index;
+    int numNodes2 = numNodes - index - 1;
+    // index is an index into the node array;
     float[][] n1 = new float[2][numNodes1];
     float[][] n2 = new float[2][numNodes2];
 
     // if a non-trivial polyline remains 'left' of deleted node
-    if (selectedNode > 1) {
+    if (index > 1) {
       for (int i=0; i<2; i++)
         System.arraycopy(nodes[i], 0, n1[i], 0, numNodes1);
 
@@ -415,7 +417,7 @@ public class PolylineTool extends OverlayTool {
     }
 
     // if a non-trivial polyline remains 'right' of deleted node
-    if (selectedNode < numNodes - 2) {
+    if (index < numNodes - 2) {
       for (int i=0; i<2; i++) {
         System.arraycopy(nodes[i], numNodes1 + 1, n2[i], 0,
           numNodes2);
@@ -427,18 +429,19 @@ public class PolylineTool extends OverlayTool {
     }
   }
 
-  /** 
+  /**
    * Gets distance to the node specified in pixel coordinates, handling
-   * awkward casts. 
-   */ 
+   * awkward casts.
+   */
   private double getDistanceToNode(int ndx, int px, int py,
-    DisplayImpl display) {
+    DisplayImpl display)
+  {
     double[] dPxlDbl = {(double) px, (double) py};
     float[] nDom = line.getNodeCoords(ndx);
     double[] nDomDbl = {(double) nDom[0], (double) nDom[1]};
     int[] nPxl = CursorUtil.domainToPixel(display, nDomDbl);
     double[] nPxlDbl = {(double) nPxl[0], (double) nPxl[1]};
-    double dist = MathUtil.getDistance (nPxlDbl, dPxlDbl);
+    double dist = MathUtil.getDistance(nPxlDbl, dPxlDbl);
     return dist;
   }
 
@@ -483,7 +486,8 @@ public class PolylineTool extends OverlayTool {
   // TODO can this make use of or be replaced by the OverlayNodedObject instance
   // method with the same name?
   private int[] getNearestNode(DisplayImpl display,
-      OverlayObject[] objects, int px, int py, double threshold) {
+      OverlayObject[] objects, int px, int py, double threshold)
+  {
     Vector polylines = new Vector();
     Vector indices = new Vector();
     double[] p = {(double) px, (double) py};
@@ -505,7 +509,7 @@ public class PolylineTool extends OverlayTool {
         double[] cDbl = {c[0], c[1]}; // auto cast
         int[] cPxl = CursorUtil.domainToPixel(display, cDbl);
         double[] cPxlDbl = {(double) cPxl[0], (double) cPxl[1]};
-        double dist = MathUtil.getDistance (cPxlDbl, p);
+        double dist = MathUtil.getDistance(cPxlDbl, p);
         if (dist < minDist && dist < threshold) {
           minDist = dist;
           nearestPline = ((Integer) indices.get(i)).intValue();
@@ -536,7 +540,7 @@ public class PolylineTool extends OverlayTool {
     }
   }
 
-  /** Prints a message for debugging */
+  /** Prints a message for debugging. */
   public void print(String methodName, String message) {
     boolean toggle = true;
     if (toggle) {
@@ -546,7 +550,7 @@ public class PolylineTool extends OverlayTool {
     }
   }
 
-  /** Prints current mode and mouse event type: helpful for debugging */
+  /** Prints current mode and mouse event type: helpful for debugging. */
   private void printMode(String method) {
     String m;
     switch (mode) {

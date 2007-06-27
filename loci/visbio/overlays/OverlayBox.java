@@ -33,7 +33,7 @@ public class OverlayBox extends OverlayObject {
 
   // -- Static Fields --
 
-  /** The names of the statistics this object reports */
+  /** The names of the statistics this object reports. */
   protected static final String COORDS = "Coordinates";
   protected static final String CTR = "Center";
   protected static final String WD = "Width";
@@ -61,8 +61,8 @@ public class OverlayBox extends OverlayObject {
 
   // -- Static methods --
 
-  /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return STAT_TYPES;}
+  /** Returns the names of the statistics this object reports. */
+  public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
 
@@ -134,7 +134,7 @@ public class OverlayBox extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
-  /** Returns a specific statistic of this object*/
+  /** Returns a specific statistic of this object. */
   public String getStat(String name) {
     float xx = x2 - x1;
     float yy = y2 - y1;
@@ -147,7 +147,8 @@ public class OverlayBox extends OverlayObject {
 
     if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")-(" + x2 + ", " + y2 + ")";
-    } else if (name.equals(CTR)){
+    }
+    else if (name.equals(CTR)) {
       return "(" + centerX + ", " + centerY + ")";
     }
     else if (name.equals(WD)) {

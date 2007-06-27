@@ -32,7 +32,7 @@ import visad.*;
 public class OverlayText extends OverlayObject {
   // -- Static Fields --
 
-  /** The names of the statistics this object reports */
+  /** The names of the statistics this object reports. */
   protected static final String COORDS = "Coordinates";
   protected static final String[] STAT_TYPES = {COORDS};
 
@@ -57,8 +57,8 @@ public class OverlayText extends OverlayObject {
 
   // -- Static methods --
 
-  /** Returns the names of the statistics this object reports */
-  public static String[] getStatTypes() {return STAT_TYPES;}
+  /** Returns the names of the statistics this object reports. */
+  public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayText API methods --
 
@@ -121,7 +121,7 @@ public class OverlayText extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
-  /** Returns a specific statistic of this object */
+  /** Returns a specific statistic of this object. */
   public String getStat(String name) {
     if (name.equals(COORDS)) {
       return "(" + x1 + ", " + y1 + ")";

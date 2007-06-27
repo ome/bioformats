@@ -35,28 +35,28 @@ import loci.visbio.VisBioFrame;
 import loci.visbio.state.BioOption;
 import loci.visbio.state.OptionManager;
 
-/** A tabbed pane full of checkboxes */
+/** A tabbed pane full of checkboxes. */
 public class StatsOptionsPane extends JPanel implements ActionListener {
 
   // -- Constants --
 
-  /** Action command for 'Toggle Current Tab' button */
+  /** Action command for 'Toggle Current Tab' button. */
   private static final String CURRENT = "current";
 
-  /** Action command for 'Toggle All Tabs' button */
+  /** Action command for 'Toggle All Tabs' button. */
   private static final String ALL = "all";
 
   // -- Fields --
 
-  /** All of the check boxes contained in all tabs */
+  /** All of the check boxes contained in all tabs. */
   protected JCheckBox[][] checkBoxes;
 
-  /** The tabbed pane contained in this object */
+  /** The tabbed pane contained in this object. */
   protected JTabbedPane tabs;
 
   // -- Constructor --
 
-  /** Creates an StatsOptionsPane object */
+  /** Creates an StatsOptionsPane object. */
   public StatsOptionsPane() {
     tabs = makeTabs();
     tabs.setPreferredSize(new Dimension(190, 230)); // trial and error
@@ -67,7 +67,7 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
 
   // -- StatsOptionsPane API methods --
 
-  /** Saves current pane selections to OptionManager */
+  /** Saves current pane selections to OptionManager. */
   public void saveSettings() {
     OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
@@ -75,7 +75,7 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
     String[] overlayTypes = OverlayUtil.getOverlayTypes();
 
     for (int type=0; type<overlayTypes.length; type++) {
-      String statTypes[] = OverlayUtil.getStatTypes(overlayTypes[type]);
+      String[] statTypes = OverlayUtil.getStatTypes(overlayTypes[type]);
       for (int i=0; i<statTypes.length; i++) {
         String name = overlayTypes[type] + "." + statTypes[i];
         BioOption opt = om.getOption(name);
@@ -86,14 +86,14 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
     }
   }
 
-  /** Loads current pane selections from OptionManager */
+  /** Loads current pane selections from OptionManager. */
   public void loadSettings() {
     OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
     String[] overlayTypes = OverlayUtil.getOverlayTypes();
 
     for (int type=0; type<overlayTypes.length; type++) {
-      String statTypes[] = OverlayUtil.getStatTypes(overlayTypes[type]);
+      String[] statTypes = OverlayUtil.getStatTypes(overlayTypes[type]);
       for (int i=0; i<statTypes.length; i++) {
         String name = overlayTypes[type] + "." + statTypes[i];
         BioOption opt = om.getOption(name);
@@ -105,15 +105,15 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
 
   // -- ActionListener interface methods --
 
-  /** Change selection state of check boxes depending on button pressed */
-  public void actionPerformed (ActionEvent e) {
+  /** Change selection state of check boxes depending on button pressed. */
+  public void actionPerformed(ActionEvent e) {
     if (ALL.equals(e.getActionCommand())) toggleAllTabs();
     else if (CURRENT.equals(e.getActionCommand())) toggleCurrentTab();
   }
 
   // -- Helper Methods --
 
-  /** Makes the tabs of this ExportOptionsPane object */
+  /** Makes the tabs of this ExportOptionsPane object. */
   private JTabbedPane makeTabs() {
     OptionManager om = (OptionManager)
       VisBioFrame.getVisBio().getManager(OptionManager.class);
@@ -123,7 +123,7 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
 
     // populate checkbox array
     for (int type=0; type<overlayTypes.length; type++) {
-      String statTypes[] = OverlayUtil.getStatTypes(overlayTypes[type]);
+      String[] statTypes = OverlayUtil.getStatTypes(overlayTypes[type]);
       checkBoxes[type] = new JCheckBox[statTypes.length];
       for (int i=0; i<statTypes.length; i++) {
         checkBoxes[type][i] = new JCheckBox(statTypes[i]);
@@ -163,7 +163,7 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
     return jtp;
   }
 
-  /** Makes a button bar with 2 buttons to toggle options */
+  /** Makes a button bar with 2 buttons to toggle options. */
   private JPanel makeButtons() {
     JButton toggleCurrent = new JButton("Toggle Current Tab");
     toggleCurrent.setActionCommand(CURRENT);
@@ -183,14 +183,14 @@ public class StatsOptionsPane extends JPanel implements ActionListener {
     return panel;
   }
 
-  private JPanel makePane(JTabbedPane tabs, JPanel buttons) {
-    FormLayout fl = new FormLayout( "3dlu, pref, 3dlu",
+  private JPanel makePane(JTabbedPane jtp, JPanel buttons) {
+    FormLayout fl = new FormLayout("3dlu, pref, 3dlu",
         "pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(fl);
     CellConstraints cc = new CellConstraints();
 
     builder.addLabel("Select statistics to save/export:", cc.xy(2, 1));
-    builder.add(tabs, cc.xy(2, 3));
+    builder.add(jtp, cc.xy(2, 3));
     builder.add(buttons, cc.xy(2, 5));
     JPanel panel = builder.getPanel();
     return panel;

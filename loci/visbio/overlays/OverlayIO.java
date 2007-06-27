@@ -117,7 +117,8 @@ public final class OverlayIO {
         displayErrorMsg(owner, lineNum, s);
         return null;
 
-      } else if (event == INIT) {
+      }
+      else if (event == INIT) {
         if (state == TABLE) {
           StringTokenizer st = new StringTokenizer("#" + line + "#", "\t");
           int count = st.countTokens();
@@ -163,11 +164,12 @@ public final class OverlayIO {
             loadedOverlays[i] = new Vector();
           }
 
-        } else if (state == NODES) {
+        }
+        else if (state == NODES) {
           if (numberOfNodedObjectsRead == loadedNodedObjects.size()) {
-            String s = "more \"Noded Object\" (Freeforms, Polylines) node"
-              + " lists " + "than Noded Objects (" + numberOfNodedObjectsRead
-              + ") specified in table";
+            String s = "more \"Noded Object\" (Freeforms, Polylines) node" +
+              " lists " + "than Noded Objects (" + numberOfNodedObjectsRead +
+              ") specified in table";
             displayErrorMsg(owner, lineNum, s);
             return null;
           }
@@ -185,8 +187,8 @@ public final class OverlayIO {
           numberOfNodedObjectsRead++;
           nodesChanged = true;
         }
-
-      } else if (event == PARSE) {
+      }
+      else if (event == PARSE) {
         if (state == TABLE) {
           StringTokenizer st = new StringTokenizer("#" + line + "#", "\t");
           int count = st.countTokens();
@@ -212,7 +214,8 @@ public final class OverlayIO {
                 // they're indexed from 0.
                 pos[i] = p-1; // shift from external to internal indexing
                 tok++;
-              } else {
+              }
+              else {
                 pos = null;
                 break;
               }
@@ -256,7 +259,8 @@ public final class OverlayIO {
           Color color;
           try {
             color = ColorUtil.hexToColor(st.nextToken());
-          } catch (NumberFormatException exc) {
+          }
+          catch (NumberFormatException exc) {
             displayErrorMsg(owner, lineNum, "line has invalid color value");
             continue;
           }
@@ -307,9 +311,10 @@ public final class OverlayIO {
           // add overlay to list
           loadedOverlays[r].add(obj);
           foundOverlays = true;
-        } else if (state == NODES) {
+        }
+        else if (state == NODES) {
 
-          String[] toks = trim.split("\\s");// split on whitespace
+          String[] toks = trim.split("\\s"); // split on whitespace
 
           float x, y;
           try {
@@ -496,8 +501,8 @@ public final class OverlayIO {
     }
   }
 
-  /** Saves overlays to a .xls workbook */
-  public static HSSFWorkbook exportOverlays (OverlayTransform overlay) {
+  /** Saves overlays to a .xls workbook. */
+  public static HSSFWorkbook exportOverlays(OverlayTransform overlay) {
     String[] dims = overlay.getDimTypes();
     int[] lengths = overlay.getLengths();
 
@@ -545,7 +550,7 @@ public final class OverlayIO {
 
     short numColsToMerge = 12; // number of columns in overlay table header
 
-    Region mergedCells = new Region (0, (short) 0, 0, numColsToMerge);
+    Region mergedCells = new Region(0, (short) 0, 0, numColsToMerge);
     s.addMergedRegion(mergedCells);
 
     r = s.createRow(rownum);
@@ -689,7 +694,7 @@ public final class OverlayIO {
     Vector[] vectors = {lines, freeforms, markers, texts, ovals, boxes,
       arrows, polylines};
     String[] titles = OverlayUtil.getOverlayTypes();
-    for (int v=0; v<vectors.length ; v++) {
+    for (int v=0; v<vectors.length; v++) {
       if (vectors[v].size() > 0) {
         rownum += 2;
         r = s.createRow(rownum);
@@ -876,32 +881,34 @@ public final class OverlayIO {
       else {
         state = WAIT; event = BARF;
       }
-    } else if (current == TABLE) {
+    }
+    else if (current == TABLE) {
       if (input.equals("")) {
         state = TABLE; event = IGNORE;
       }
-      else if (input.matches("# Freeform \\d+ nodes:")
-          || input.matches("# Polyline \\d+ nodes:"))
+      else if (input.matches("# Freeform \\d+ nodes:") ||
+          input.matches("# Polyline \\d+ nodes:"))
       {
         state = NODES; event = INIT;
       }
-      else if (input.startsWith("Line") || input.startsWith("Freeform")
-          || input.startsWith("Marker") || input.startsWith("Text") ||
+      else if (input.startsWith("Line") || input.startsWith("Freeform") ||
+          input.startsWith("Marker") || input.startsWith("Text") ||
           input.startsWith("Oval") || input.startsWith("Box") ||
-          input.startsWith("Arrow") || input.startsWith("Polyline")) {
+          input.startsWith("Arrow") || input.startsWith("Polyline"))
+      {
         state = TABLE; event = PARSE;
       }
-      else if (input.startsWith("#")) {state = TABLE; event = IGNORE;}
+      else if (input.startsWith("#")) { state = TABLE; event = IGNORE; }
       // must check for freeform header first
-      else {
-        event = BARF; state = TABLE;
-      }
-    } else if (current == NODES) {
+      else { event = BARF; state = TABLE; }
+    }
+    else if (current == NODES) {
       if (input.equals("")) {
         state = NODES; event = IGNORE;
       }
       else if (input.matches("# Freeform \\d+ nodes:") ||
-          input.matches("# Polyline \\d+ nodes:")) {
+          input.matches("# Polyline \\d+ nodes:"))
+      {
         state = NODES; event = INIT;
       }
       else if (input.startsWith("#") || input.matches("^[Xx]\t[Yy]")) {
@@ -921,8 +928,8 @@ public final class OverlayIO {
 
   /** Displays an alarm box */
   private static void displayErrorMsg(JComponent owner, int line, String msg) {
-    JOptionPane.showMessageDialog(owner, "Invalid overlay file: "
-      + msg + "\n" + "Error in line " + line ,
+    JOptionPane.showMessageDialog(owner, "Invalid overlay file: " +
+        msg + "\n" + "Error in line " + line ,
       "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
   }
 

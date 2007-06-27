@@ -38,7 +38,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   // -- Static Fields --
 
-  /** The names of the statistics this object reports */
+  /** The names of the statistics this object reports. */
   protected static final String BOUNDS = "Bounds";
   protected static final String NODES = "Number of Nodes";
   protected static final String LENGTH = "Length";
@@ -76,33 +76,33 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return arc;
   }
 
-  /** Alpha value for highlighting */
+  /** Alpha value for highlighting. */
   protected static final float HLT_ALPHA = 0.5f;
 
-  /** Radius in pixels of circle indicating a node is selected */
+  /** Radius in pixels of circle indicating a node is selected. */
   protected static final float RADIUS = 3.0f;
 
   // -- Fields --
 
-  /** Synchronization object for nodes array */
+  /** Synchronization object for nodes array. */
   protected Object nodesSync = new Object();
 
-  /** Node array and associated tracking variables */
+  /** Node array and associated tracking variables. */
   protected float[][] nodes;
 
-  /** Number of real nodes in the node array */
+  /** Number of real nodes in the node array. */
   protected int numNodes;
 
-  /** Total number of nodes (real + buffer) nodes in the node array */
+  /** Total number of nodes (real + buffer) nodes in the node array. */
   protected int maxNodes;
 
-  /** Length of curve of a noded object */
+  /** Length of curve of a noded object. */
   protected double curveLength;
 
-  /** Whether there is a higlighted node */
+  /** Whether there is a higlighted node. */
   protected boolean highlightNode;
 
-  /** Index of the highlighted node */
+  /** Index of the highlighted node. */
   protected int highlightIndex;
 
   // -- Constructors --
@@ -149,7 +149,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
   // -- Static methods --
 
-  /** Returns the names of the statistics this object reports */
+  /** Returns the names of the statistics this object reports. */
   public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
@@ -230,14 +230,14 @@ public abstract class OverlayNodedObject extends OverlayObject {
   }
 
   /** Compute the shortest distance from this object to the given point. */
-  public double getDistance (double x, double y) {
+  public double getDistance(double x, double y) {
     synchronized (nodesSync) {
       double[] distSegWt = MathUtil.getDistSegWt(nodes, (float) x, (float) y);
       return distSegWt[0];
     }
   }
 
-  /** Returns a specific statistic of this object */
+  /** Returns a specific statistic of this object. */
   public String getStat(String name) {
     if (name.equals(BOUNDS)) {
       return "(" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")";
@@ -267,7 +267,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
 
-  /** True iff this overlay can be resized using X1, X2, Y1, Y2 entry boxes */
+  /** True iff this overlay can be resized using X1, X2, Y1, Y2 entry boxes. */
   public boolean areBoundsEditable() { return false; }
   // currently, only non-noded objects can be resized this way.
   // (Actually could perform scaling on all nodes)
@@ -289,8 +289,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // check distance to all nodes
     synchronized (nodesSync) {
       for (int i=0; i<numNodes; i++) {
-        float[] c = {nodes[0][i], nodes[1][i]}; 
-        double dist = MathUtil.getDistance(c, p); 
+        float[] c = {nodes[0][i], nodes[1][i]};
+        double dist = MathUtil.getDistance(c, p);
         if (dist < minDist) {
           minIndex = i;
           minDist = dist;
@@ -320,20 +320,21 @@ public abstract class OverlayNodedObject extends OverlayObject {
     highlightIndex = i;
   }
 
-  /** Turn off node highlighting */
+  /** Turn off node highlighting. */
   public void turnOffHighlighting() {
     highlightNode = false;
     highlightIndex = -1;
   }
 
-  /** Returns coordinates of node at given index in the node array */
-  public float[] getNodeCoords (int index) {
+  /** Returns coordinates of node at given index in the node array. */
+  public float[] getNodeCoords(int index) {
     float[] retvals = new float[2];
     synchronized(nodesSync) {
       if (index < numNodes && index >= 0) {
         retvals[0] = nodes[0][index];
         retvals[1] = nodes[1][index];
-      } else {
+      }
+      else {
         retvals[0] = -1f;
         retvals[1] = -1f;
       }
@@ -341,7 +342,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return retvals;
   }
 
-  /** Returns a copy of the node array */
+  /** Returns a copy of the node array. */
   public float[][] getNodes() {
     synchronized(nodesSync) {
       float[][] copy = new float[2][numNodes];
@@ -396,9 +397,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
     updateBoundingBox();
   }
 
-  /** 
+  /**
    * Updates the coordinates of the bounding box of a noded object by
-   * checking the entire node array. 
+   * checking the entire node array.
    */
   public void updateBoundingBox() {
     if (numNodes == 0) return;
@@ -445,7 +446,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     double length = 0;
     synchronized (nodesSync) {
       for (int i=0; i<numNodes-1; i++) {
-        double[] a = {(double) nodes[0][i], (double)nodes[1][i]};
+        double[] a = {(double) nodes[0][i], (double) nodes[1][i]};
         double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
         length += MathUtil.getDistance(a, b);
       }
@@ -456,7 +457,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
   // -- OverlayNodedObject API Methods: node array mutators --
   // note: call updateBoundingBox() after a series of changes to the node array
 
-  /** Sets coordinates of an existing node */
+  /** Sets coordinates of an existing node. */
   public void setNodeCoords(int ndx, float x, float y) {
     // Outline of this method:
     // make sure the node isn't the same as previous or next node
@@ -474,7 +475,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
       if (ndx < numNodes-1 && (x == nodes[0][ndx+1] && y == nodes[1][ndx+1]))
         sameAsNext = true;
     }
-    
+
     if (sameAsPrev || sameAsNext) {
       if (sameAsPrev && sameAsNext) {
         deleteNode(ndx+1);
@@ -510,7 +511,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
   public void setNextNode(float x, float y) {
     synchronized (nodesSync) {
       if (numNodes > 0 && (x == nodes[0][numNodes-1] && y ==
-            nodes[1][numNodes-1])) {
+            nodes[1][numNodes-1]))
+      {
         // same as last node, do nothing
       }
       else {
@@ -538,7 +540,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     synchronized (nodesSync) {
       if (index >= 0 && index < numNodes) {
         // if array is full, make some more room.
-        if (numNodes >= maxNodes) { 
+        if (numNodes >= maxNodes) {
           // numNodes should never exceed maxNodes but I threw the > in anyway.
           maxNodes *= 2;
           resizeNodeArray(maxNodes);
@@ -546,7 +548,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
 
         if (colocationalOK) {
           insert(index, x, y);
-        } 
+        }
         else {
           boolean differentFromNext = false;
           boolean differentFromPrev = false;
@@ -556,7 +558,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
             differentFromNext = MathUtil.areDifferent(getNodeCoords(index), c);
           }
           if (index > 0) {
-            differentFromPrev = MathUtil.areDifferent(getNodeCoords(index-1), c);
+            differentFromPrev = MathUtil.areDifferent(
+                getNodeCoords(index-1), c);
             notFirst = true;
           }
 
@@ -566,7 +569,8 @@ public abstract class OverlayNodedObject extends OverlayObject {
            -index interior and different from next and different from previous
           */
           if ((!notFirst && differentFromNext) ||
-              (notFirst && differentFromPrev && differentFromNext)) {
+              (notFirst && differentFromPrev && differentFromNext))
+          {
             insert(index, x, y);
 
           }
@@ -592,17 +596,17 @@ public abstract class OverlayNodedObject extends OverlayObject {
     numNodes++;
   }
 
-  /** Deletes a range of nodes from the node array */
-  public void deleteBetween (int i1, int i2) {
+  /** Deletes a range of nodes from the node array. */
+  public void deleteBetween(int i1, int i2) {
     // assumes i1 < i2, both in bounds (less than numNodes)
     // checks whether i1 + 1 < i2, i.e., is there a non-zero
     // number of nodes to delete
     synchronized(nodesSync) {
-      if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) {
+      if (0 <= i1 && i2 < numNodes && i1 + 1 < i2) {
         int ii2 = i2;
         // if adjacent-nodes-to-be are colococational,
         // delete one of them
-        if (MathUtil.areSame(getNodeCoords(i1), getNodeCoords(i2))) 
+        if (MathUtil.areSame(getNodeCoords(i1), getNodeCoords(i2)))
           ii2 += 1;
         int victims = ii2 - i1 - 1;
         float[][] newNodes = new float[2][maxNodes - victims];
@@ -613,46 +617,49 @@ public abstract class OverlayNodedObject extends OverlayObject {
         numNodes -= victims;
         maxNodes -= victims;
         nodes = newNodes;
-      } else {
+      }
+      else {
         //System.out.println("deleteBetween(int, int) out of bounds error");
       }
     }
   }
 
-  /** Deletes a node from the node array */
+  /** Deletes a node from the node array. */
   public void deleteNode(int index) {
     synchronized (nodesSync) {
       if (index >=0 && index < numNodes) {
         // This method includes built-in truncation: it doesn't bother to
         // copy the extra nodes in the node array.
-        
+
         // Check if this delete operation will result in two colocational nodes
-        // becoming adjacent in the node array.  If so, also delete one of 
+        // becoming adjacent in the node array.  If so, also delete one of
         // these nodes.
         int offset;
-        if (index > 0 && index < numNodes - 1 && 
-            MathUtil.areSame(getNodeCoords(index-1), getNodeCoords(index+1))) 
+        if (index > 0 && index < numNodes - 1 &&
+            MathUtil.areSame(getNodeCoords(index-1), getNodeCoords(index+1)))
           offset = 1;
         else offset = 0;
         float[][] newNodes =  new float[2][numNodes-1-offset];
         System.arraycopy(nodes[0], 0, newNodes[0], 0, index-offset);
-        System.arraycopy(nodes[0], index+1, newNodes[0], index-offset, numNodes-index-1);
+        System.arraycopy(nodes[0], index+1, newNodes[0], index-offset,
+            numNodes-index-1);
         System.arraycopy(nodes[1], 0, newNodes[1], 0, index-offset);
-        System.arraycopy(nodes[1], index+1, newNodes[1], index-offset, numNodes-index-1);
+        System.arraycopy(nodes[1], index+1, newNodes[1], index-offset,
+            numNodes-index-1);
         numNodes -= 1 + offset;
         maxNodes = numNodes;
         nodes = newNodes;
       }
     }
   }
-  
+
   // NOTE: Right now this method returns Freeforms only, though it could be used
-  // on Polylines too. 
-  /** Deletes a node from the freeform object, creating two new freeforms 
-   *  if the node deleted is an interior node. 
+  // on Polylines too.
+  /** Deletes a node from the freeform object, creating two new freeforms
+   *  if the node deleted is an interior node.
    *  Returns resulting new freeforms if any. */
   public OverlayFreeform[] removeNode(int index) {
-    OverlayFreeform[] children = {null, null}; 
+    OverlayFreeform[] children = {null, null};
     if (index == 0 || index == numNodes - 1) {
       deleteNode(index);
     }
@@ -662,7 +669,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return children;
   }
 
-  /** 
+  /**
    * Creates a new freeform by connecting the tail of this freeform to the
    * head of the freeform supplied.
    * @param f2 The freeform to connect to this freeform
@@ -670,7 +677,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
   public OverlayFreeform connectTo(OverlayFreeform f2) {
     float[][] f1Nodes = this.getNodes();
     float[][] f2Nodes = f2.getNodes();
-    int len1 = f1Nodes[0].length; 
+    int len1 = f1Nodes[0].length;
     int len2 = f2Nodes[0].length;
 
     // Obtain coordinates of last node of f1 and first of f2.
@@ -679,21 +686,21 @@ public abstract class OverlayNodedObject extends OverlayObject {
     // If the last node in f1 and the first node in f2 are the same,
     // this method won't copy the last node of f1 into the node array used to
     // construct f3.
-    int offset; 
-    if (MathUtil.areSame(f1End, f2Beg)) offset = 1; 
+    int offset;
+    if (MathUtil.areSame(f1End, f2Beg)) offset = 1;
     else offset = 0;
 
     float[][] newNodes = new float[2][len1 + len2 - offset];
     for (int i=0; i<2; i++) {
-      System.arraycopy(f1Nodes[i], 0, newNodes[i], 0, len1-offset); 
+      System.arraycopy(f1Nodes[i], 0, newNodes[i], 0, len1-offset);
       System.arraycopy(f2Nodes[i], 0, newNodes[i], len1-offset, len2);
     }
 
-    OverlayFreeform f3 = new OverlayFreeform (overlay, newNodes);
+    OverlayFreeform f3 = new OverlayFreeform(overlay, newNodes);
     return f3;
   }
 
-  /** Reverses the node array (and therefore its internal orientation) */
+  /** Reverses the node array (and therefore its internal orientation). */
   public void reverseNodes() {
     truncateNodeArray();
     // Q: Is the above call ever necessary?
@@ -713,9 +720,9 @@ public abstract class OverlayNodedObject extends OverlayObject {
     }
   }
 
-  /** Deletes buffer nodes from the tail of the node array */
+  /** Deletes buffer nodes from the tail of the node array. */
   public void truncateNodeArray() {
-     resizeNodeArray(numNodes);
+    resizeNodeArray(numNodes);
   }
 
   /** Resizes the node array, truncating if necessary. */
@@ -740,28 +747,27 @@ public abstract class OverlayNodedObject extends OverlayObject {
   }
 
   // -- Helper methods --
-  
+
   // NOTE: Right now this method returns Freeforms only, though it could be used
-  // on Polylines too. 
-  /** 
-   * Slices a noded object in two. 
+  // on Polylines too.
+  /**
+   * Slices a noded object in two.
    * @param seg the index of the segment on which to slice
    * @param weight the relative distance along the segment to slice
-   * The parameters seg and weight indicate a 'cut point' on the freeform. 
+   * The parameters seg and weight indicate a 'cut point' on the freeform.
    * If weight is strictly between 0 and 1, the cut point is actually between
-   * two nodes, and all nodes of the original object are transferred to 
-   * the child objects. 
+   * two nodes, and all nodes of the original object are transferred to
+   * the child objects.
    */
   // TODO -- combine this with 'split' method in polyline tool.
-  private OverlayFreeform[] slice(int seg, double weight)
-  {
+  private OverlayFreeform[] slice(int seg, double weight) {
     // create two new freeforms from the remainder of this freeform
     OverlayFreeform f1 = null, f2 = null;
 
     float[][] f1Nodes = null, f2Nodes = null;
 
     synchronized (nodesSync) {
-      // compute indices into the node array of this freeform 
+      // compute indices into the node array of this freeform
       int f1Start, f2Start, f1Stop, f2Stop;
       f1Start = 0;
       f1Stop = seg;
@@ -813,14 +819,14 @@ public abstract class OverlayNodedObject extends OverlayObject {
     return new OverlayFreeform[]{f1, f2};
   }
 
-  // -- Helper Methods for Debugging -- 
+  // -- Helper Methods for Debugging --
 
   /** Prints node array of current freeform; for debugging */
-  private void printNodes(float[][] nodes) {
-    System.out.println("Printing nodes...");
+  private void printNodes(float[][] n) {
+    System.out.println("Printing n...");
     synchronized (nodesSync) {
-      for (int i = 0; i < nodes[0].length; i++){
-        System.out.println(i+":("+nodes[0][i]+","+nodes[1][i]+")");
+      for (int i = 0; i < n[0].length; i++){
+        System.out.println(i+":("+n[0][i]+","+n[1][i]+")");
       }
     }
   }
@@ -830,7 +836,7 @@ public abstract class OverlayNodedObject extends OverlayObject {
     printNodes(nodes);
   }
 
-  /** Prints current thread plus method name if provided */
+  /** Prints current thread plus method name if provided. */
   public static void printThread(String methodName) {
     System.out.println(methodName + ": currentThread()= " +
         Thread.currentThread());

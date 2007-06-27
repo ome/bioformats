@@ -33,7 +33,7 @@ public class OverlayOval extends OverlayObject {
 
   // -- Static Fields --
 
-  /** The names of the statistics this object reports */
+  /** The names of the statistics this object reports. */
   public static final String COORDS = "Coordinates";
   public static final String CTR = "Center";
   public static final String RAD = "Radius";
@@ -95,7 +95,7 @@ public class OverlayOval extends OverlayObject {
 
   // -- Static methods --
 
-  /** Returns the names of the statistics this object reports */
+  /** Returns the names of the statistics this object reports. */
   public static String[] getStatTypes() { return STAT_TYPES; }
 
   // -- OverlayObject API methods --
@@ -181,7 +181,7 @@ public class OverlayOval extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
-  /** Returns a specific statistic of this object */
+  /** Returns a specific statistic of this object. */
   public String getStat(String name) {
     float xx = x2 - x1;
     float yy = y2 - y1;

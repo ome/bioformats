@@ -41,7 +41,7 @@ public class OverlayFreeform extends OverlayNodedObject {
     super(overlay, x1, y1, x2, y2);
   }
 
-  /** Constructs a freeform from an array of nodes */
+  /** Constructs a freeform from an array of nodes. */
   public OverlayFreeform(OverlayTransform overlay, float[][] nodes) {
     super(overlay, nodes);
   }

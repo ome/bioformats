@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.util.test;
 
 import junit.framework.TestCase;
-import loci.visbio.util.Segment2D;
 import loci.visbio.util.MathUtil;
+import loci.visbio.util.Segment2D;
 
 /** Unit tests for the Segment2D class. */
 public class Segment2DTest extends TestCase {
@@ -98,7 +98,7 @@ public class Segment2DTest extends TestCase {
     assertEquals("c should overlap a", true,
         c.boundingBoxOverlapsBoundingBoxOf(a));
 
-    // disjoint segments whose boxes touch 
+    // disjoint segments whose boxes touch
     assertEquals("c should overlap b", true,
         c.boundingBoxOverlapsBoundingBoxOf(b));
     assertEquals("b should overlap c", true,
@@ -126,4 +126,4 @@ public class Segment2DTest extends TestCase {
         MathUtil.inside(cb, aa, ab));
   }
 
-} // @@@@@ 
+} // @@@@@
