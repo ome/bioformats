@@ -104,7 +104,8 @@ public class LZWCodec extends BaseCodec implements Codec {
    * @return The decompressed data
    * @throws FormatException If input is not an LZW-compressed data block.
    */
-  public byte[] decompress(byte[] input) throws FormatException {
+  public byte[] decompress(byte[] input, Object options) throws FormatException
+  {
     if (input == null || input.length == 0) return input;
 
     byte[][] symbolTable = new byte[4096][1];

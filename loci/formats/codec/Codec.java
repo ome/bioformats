@@ -78,6 +78,26 @@ public interface Codec {
   /**
    * Decompresses a block of data.
    *
+   * @param data the data to be decompressed
+   * @param options Options to be used during decompression.
+   * @return the decompressed data.
+   * @throws FormatException If data is not valid.
+   */
+  byte[] decompress(byte[] data, Object options) throws FormatException;
+
+  /**
+   * Decompresses a block of data.
+   *
+   * @param data the data to be decompressed
+   * @param options Options to be used during decompression.
+   * @return the decompressed data.
+   * @throws FormatException If data is not valid.
+   */
+  byte[] decompress(byte[][] data, Object options) throws FormatException;
+
+  /**
+   * Decompresses a block of data.
+   *
    * @param data the data to be decompressed.
    * @return The decompressed data.
    * @throws FormatException If data is not valid compressed data for this

@@ -91,8 +91,9 @@ public class LuraWaveCodec extends BaseCodec implements Codec {
     throw new FormatException("LuraWave compression not supported");
   }
 
-  /* @see Codec#decompress(byte[]) */
-  public byte[] decompress(byte[] input) throws FormatException {
+  /* @see Codec#decompress(byte[], Object) */
+  public byte[] decompress(byte[] input, Object options) throws FormatException
+  {
     if (noLuraWave) throw new FormatException(NO_LURAWAVE_MSG);
     licenseCode = System.getProperty(LICENSE_PROPERTY);
     if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);

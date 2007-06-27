@@ -143,6 +143,16 @@ public abstract class BaseCodec implements Codec {
     return compress(toCompress, x, y, dims, options);
   }
 
+  /* @see Codec#decompress(byte[]) */
+  public byte[] decompress(byte[] data) throws FormatException {
+    return decompress(data, null);
+  }
+
+  /* @see Codec#decompress(byte[][]) */
+  public byte[] decompress(byte[][] data) throws FormatException {
+    return decompress(data, null);
+  }
+
   /**
    * 2D data block decoding default implementation.
    * This method simply concatenates data[0] + data[1] + ... + data[i] into
@@ -153,7 +163,9 @@ public abstract class BaseCodec implements Codec {
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
-  public byte[] decompress(byte[][] data) throws FormatException {
+  public byte[] decompress(byte[][] data, Object options) 
+    throws FormatException 
+  {
     int len = 0;
     for (int i = 0; i < data.length; i++) {
       len += data[i].length;
@@ -164,7 +176,7 @@ public abstract class BaseCodec implements Codec {
       System.arraycopy(data[i], 0, toDecompress, curPos, data[i].length);
       curPos += data[i].length;
     }
-    return decompress(toDecompress);
+    return decompress(toDecompress, options);
   }
 
 }

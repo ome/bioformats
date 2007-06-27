@@ -61,7 +61,8 @@ public class PackbitsCodec extends BaseCodec implements Codec {
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
    */
-  public byte[] decompress(byte[] input) throws FormatException {
+  public byte[] decompress(byte[] input, Object options) throws FormatException
+  {
     ByteVector output = new ByteVector(input.length);
     int pt = 0;
     while (pt < input.length) {

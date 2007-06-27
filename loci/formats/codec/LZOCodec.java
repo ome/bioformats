@@ -65,7 +65,7 @@ public class LZOCodec extends BaseCodec implements Codec {
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
    */
-  public byte[] decompress(byte[] src) throws FormatException {
+  public byte[] decompress(byte[] src, Object options) throws FormatException {
     int ip = 0;
     int op = 0;
     byte[] dst = new byte[src.length];

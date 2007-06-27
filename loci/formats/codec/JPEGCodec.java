@@ -61,10 +61,15 @@ public class JPEGCodec extends BaseCodec implements Codec {
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
    */
-  public byte[] decompress(byte[] input) throws FormatException {
+  public byte[] decompress(byte[] input, Object options) throws FormatException
+  {
     BufferedImage b;
     try {
-      b = ImageIO.read(new ByteArrayInputStream(input));
+      RandomAccessStream s = new RandomAccessStream(input);
+      while (s.read() != (byte) 0xff || s.read() != (byte) 0xd8);
+      int offset = (int) s.getFilePointer() - 2;
+      b = ImageIO.read(new BufferedInputStream(new ByteArrayInputStream(input, 
+        offset, input.length - offset)));
     }
     catch (IOException exc) {
       LogTools.println(
