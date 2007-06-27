@@ -48,7 +48,7 @@ public class SlidebookReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Slidebook reader. */
-  public SlidebookReader() { super("Intelligent Imaging Slidebook", "sld"); }
+  public SlidebookReader() { super("Olympus Slidebook", "sld"); }
 
   // -- IFormatReader API methods --
 
@@ -62,7 +62,7 @@ public class SlidebookReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * 2];
+    byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] * 2];
     return openBytes(no, buf);
   }
 
@@ -74,30 +74,14 @@ public class SlidebookReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * 2) {
+    if (buf.length < core.sizeX[series] * core.sizeY[series] * 2) {
       throw new FormatException("Buffer too small.");
     }
 
-    int plane = core.sizeX[0] * core.sizeY[0] * 2;
+    int plane = core.sizeX[series] * core.sizeY[series] * 2;
   
     long relativeOffset = plane * no;
-    int ndx = 0;
-    long bytes = 0;
-
-    int oldNo = no;
-    while (relativeOffset - bytes > 4) {
-      long len = ((Long) pixelLengths.get(ndx)).longValue();
-      double planes = (double) len / plane;
-      if ((int) planes < planes) len += 2; 
-      
-      if (bytes + len <= relativeOffset) {
-        ndx++;
-        no -= (len / plane); 
-      }
-      bytes += len; 
-    }
-
-    long offset = ((Long) pixelOffsets.get(ndx)).longValue() + plane * no;
+    long offset = ((Long) pixelOffsets.get(series)).longValue() + plane * no;
     in.seek(offset); 
     in.read(buf);
     return buf;
@@ -143,7 +127,7 @@ public class SlidebookReader extends FormatReader {
         long fp = in.getFilePointer() - 6; 
         in.seek(fp);
         int len = in.read();
-        if (len > 0 && len < 32) { 
+        if (len > 0 && len <= 32) { 
           byte[] b = new byte[len];
           in.read(b);
           s = new String(b);
@@ -169,6 +153,10 @@ public class SlidebookReader extends FormatReader {
           else if (s.equals("CScaleBarAnnotation")) {
             in.skipBytes(52); 
           } 
+        }
+        else if (s != null && s.indexOf("Decon") != -1) {
+          in.seek(fp);
+          while (in.read() != ']');
         }
         else {
           in.seek(fp); 
@@ -205,6 +193,8 @@ public class SlidebookReader extends FormatReader {
         }
       }
     }
+
+    core = new CoreMetadata(pixelOffsets.size() - 1);
 
     status("Determining dimensions");
 
@@ -297,11 +287,21 @@ public class SlidebookReader extends FormatReader {
     if (core.sizeX[0] == 0) core.sizeX[0] = 512;
     if (core.sizeY[0] == 0) core.sizeY[0] = 512;
  
-    core.imageCount[0] = core.sizeC[0] * core.sizeZ[0] * core.sizeT[0];
-   
-    core.currentOrder[0] = "XYZCT"; 
-    core.pixelType[0] = FormatTools.UINT16; 
-    core.littleEndian[0] = true; 
+    for (int i=0; i<core.sizeX.length; i++) {
+      core.sizeX[i] = core.sizeX[0];
+      core.sizeY[i] = core.sizeY[0];
+      core.currentOrder[i] = "XYZCT"; 
+      core.pixelType[i] = FormatTools.UINT16; 
+      core.littleEndian[i] = true; 
+    
+      core.sizeC[i] = core.sizeC[0];
+      core.sizeT[i] = core.sizeT[0];
+      long len = ((Long) pixelLengths.get(i)).longValue();
+      core.sizeZ[i] = 
+        (int) (len / (core.sizeX[i] * core.sizeY[i] * 2 * core.sizeC[i]));
+       
+      core.imageCount[i] = core.sizeC[i] * core.sizeZ[i] * core.sizeT[i]; 
+    } 
   }
 
 }
