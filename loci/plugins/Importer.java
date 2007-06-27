@@ -696,31 +696,8 @@ public class Importer {
     {
       makeRGB(imp, r, r.getSizeC());
     }
-    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
-      imp.getStackSize() == r.getSizeC())
-    {
-      // create a composite image - this feature is available starting in
-      // ImageJ 1.38n
-
-      if (IJ.versionLessThan("1.38n")) {
-        IJ.showMessage("Please upgrade to ImageJ 1.38n to use this feature.");
-      }
-      else {
-        // use reflection to construct CompositeImage,
-        // in case ImageJ version is too old
-        ReflectedUniverse ru = new ReflectedUniverse();
-        try {
-          ru.exec("import ij.CompositeImage");
-          ru.setVar("imp", imp);
-          ru.setVar("sizeC", r.getSizeC());
-          imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
-        }
-        catch (ReflectException exc) {
-          reportException(exc, options.isQuiet(),
-            "Sorry, there was a problem constructing the composite image");
-          return;
-        }
-      }
+    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4) {
+      imp = new CustomImage(imp, r.getSizeC());
     }
     else if (mergeChannels && r.getSizeC() >= 4) {
       // ask the user what they would like to do...
