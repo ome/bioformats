@@ -1371,10 +1371,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       if (computeFWHMs) {
         log("Calculating full width half maxes");
         fwhmLines = new float[channels][3][2];
+        int grandTotal = 0;
         for (int c=0, cc=0; c<channels; c++) {
           if (!cVisible[c]) continue;
           // sum across all pixels
           int[] sums = new int[timeBins];
+          int sumTotal = 0;
           for (int t=0; t<timeBins; t++) {
             if (roiCount == 1) sums[t] = values[c][roiY][roiX][t];
             else {
@@ -1384,9 +1386,11 @@ public class SlimPlotter implements ActionListener, ChangeListener,
                 }
               }
             }
+            sumTotal += sums[t];
           }
           int maxSum = 0;
           for (int t=0; t<timeBins; t++) if (sums[t] > maxSum) maxSum = sums[t];
+          grandTotal += sumTotal;
           // find full width half max
           float half = maxSum / 2f;
           float fwhm1 = Float.NaN, fwhm2 = Float.NaN;
@@ -1410,12 +1414,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           while (s.length() < 3) s = " " + s;
           float h1 = 1000 * fwhm1, h2 = 1000 * fwhm2;
           log("\tChannel " + s + ": fwhm = " + (h2 - h1) + " ps");
+          log("\t             counts = " + sumTotal);
           log("\t             peak = " + sums[maxPeak]);
           log("\t             center = " + ((h1 + h2) / 2) + " ps");
           log("\t             range = [" + h1 + ", " + h2 + "] ps");
           if (plotCanceled) break;
           cc++;
         }
+        log("\tTotal counts = " + grandTotal);
       }
 
       // curve fitting
