@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.codec.MSRLECodec;
 
 /**
  * AVIReader is the file format reader for uncompressed AVI files.
@@ -50,13 +51,8 @@ public class AVIReader extends FormatReader {
   private int size = -1;
   private long pos;
 
-  // Stream Header chunk fields
-
-  private String fccStreamType;
-
   // Stream Format chunk fields
 
-  private int bmpSizeOfBitmap;
   private int bmpColorsUsed, bmpWidth;
   private int bmpCompression, bmpScanLineSize;
   private int bmpActualColorsUsed;
@@ -125,7 +121,13 @@ public class AVIReader extends FormatReader {
       byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()];
       in.read(b);
 
-      b = decodeRLE(b);
+      Object[] options = new Object[2];
+      options[1] = lastImage;
+      options[0] = new int[] {core.sizeX[0], core.sizeY[0]};
+
+      MSRLECodec codec = new MSRLECodec();
+      b = codec.decompress(b, options); 
+      lastImage = b; 
       if (no == core.imageCount[0] - 1) lastImage = null;
       byte[] colors = new byte[b.length * 3];
       for (int i=0; i<b.length; i++) {
@@ -266,12 +268,7 @@ public class AVIReader extends FormatReader {
 
               if (type.equals("strh")) {
                 spos = in.getFilePointer();
-
-                String fccStreamTypeOld = fccStreamType;
-                fccStreamType = readStringBytes();
-                if (!fccStreamType.equals("vids")) {
-                  fccStreamType = fccStreamTypeOld;
-                }
+                readStringBytes();
 
                 in.skipBytes(36);
 
@@ -294,7 +291,7 @@ public class AVIReader extends FormatReader {
                 in.skipBytes(2);
                 bmpBitsPerPixel = in.readShort();
                 bmpCompression = in.readInt();
-                bmpSizeOfBitmap = in.readInt();
+                in.skipBytes(4);
 
                 addMeta("Horizontal resolution", new Integer(in.readInt()));
                 addMeta("Vertical resolution", new Integer(in.readInt()));
@@ -352,9 +349,9 @@ public class AVIReader extends FormatReader {
                   pb = new byte[bmpColorsUsed];
 
                   for (int i=0; i<bmpColorsUsed; i++) {
-                    pb[i] = (byte) in.read();
-                    pg[i] = (byte) in.read();
-                    pr[i] = (byte) in.read();
+                    pb[i] = (byte) (in.read() & 0xff);
+                    pg[i] = (byte) (in.read() & 0xff);
+                    pr[i] = (byte) (in.read() & 0xff);
                     in.read();
                   }
                 }
@@ -464,8 +461,6 @@ public class AVIReader extends FormatReader {
     core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
     core.littleEndian[0] = true;
 
-    int bytesPerPixel = bmpBitsPerPixel / 8;
-
     if (bmpBitsPerPixel == 8) core.pixelType[0] = FormatTools.UINT8;
     else if (bmpBitsPerPixel == 16) core.pixelType[0] = FormatTools.UINT16;
     else if (bmpBitsPerPixel == 32) core.pixelType[0] = FormatTools.UINT32;
@@ -489,79 +484,6 @@ public class AVIReader extends FormatReader {
       store.setLogicalChannel(i, null, null, null, null,
         core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
     }
-  }
-
-  /**
-   * Decodes an RLE-encoded frame. This code was adapted from the FFMPEG source,
-   * http://ffmpeg.mplayerhq.hu.
-   */
-  private byte[] decodeRLE(byte[] in) {
-    int pt = 0;
-    short code = 0;
-    short extra = 0;
-    short stream = 0;
-
-    int pixelPt = 0;
-    int row = core.sizeX[0];
-    int rowPt = (core.sizeY[0] - 1) * row;
-    int frameSize = core.sizeY[0] * row;
-
-    if (lastImage == null) lastImage = new byte[frameSize];
-
-    while (rowPt >= 0 && pt < in.length - 1 && pixelPt < lastImage.length) {
-      stream = in[pt++];
-      if (stream < 0) stream += 256;
-      code = stream;
-
-      if (code == 0) {
-        stream = in[pt++];
-        if (stream < 0) stream += 256;
-        if (stream == 0) {
-          rowPt -= row;
-          pixelPt = 0;
-        }
-        else if (stream == 1) return lastImage;
-        else if (stream == 2) {
-          stream = in[pt++];
-          if (stream < 0) stream += 256;
-          pixelPt += stream;
-          stream = in[pt++];
-          if (stream < 0) stream += 256;
-          rowPt -= stream * row;
-        }
-        else {
-          if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
-            return lastImage;
-          }
-
-          code = stream;
-          extra = (short) (stream & 0x01);
-          if (stream + code + extra > in.length) return lastImage;
-
-          while (code-- > 0) {
-            stream = in[pt++];
-            lastImage[rowPt + pixelPt] = (byte) stream;
-            pixelPt++;
-          }
-
-          if (extra != 0) pt++;
-        }
-      }
-      else {
-        if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
-          return lastImage;
-        }
-
-        stream = in[pt++];
-
-        while (code-- > 0) {
-          lastImage[rowPt + pixelPt] = (byte) stream;
-          pixelPt++;
-        }
-      }
-    }
-
-    return lastImage;
   }
 
 }
