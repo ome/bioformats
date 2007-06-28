@@ -324,6 +324,13 @@ public class RandomAccessStream extends InputStream implements DataInput {
     return sb.toString();
   }
 
+  /** Read a string of length n. */
+  public String readString(int n) throws IOException {
+    byte[] b = new byte[n];
+    read(b);
+    return new String(b);
+  }
+
   /** Read eight input bytes and return a long value. */
   public long readLong() throws IOException {
     return DataTools.read8SignedBytes(this, littleEndian);
