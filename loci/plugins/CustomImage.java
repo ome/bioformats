@@ -5,10 +5,11 @@
 package loci.plugins;
 
 import ij.*;
+import ij.plugin.frame.ContrastAdjuster;
 import ij.process.*;
 import java.awt.*;
 import java.awt.image.*;
-import ij.plugin.frame.ContrastAdjuster;
+import loci.formats.FormatTools;
 
 /** Adapted from ij.CompositeImage - http://rsb.info.nih.gov/ij/ */
 public class CustomImage extends ImagePlus {
@@ -25,9 +26,14 @@ public class CustomImage extends ImagePlus {
 	int currentChannel = 0;
 	static int count;
 	boolean singleChannel;
+  protected String order;
+  protected int z, t;
 
-	public CustomImage(ImagePlus imp, int channels) {
-		ImageStack stack2;
+	public CustomImage(ImagePlus imp, String order, int z, int t, int channels) {
+    this.z = z;
+    this.t = t;
+    this.order = order;
+    ImageStack stack2;
 		boolean isRGB = imp.getBitDepth() == 24;
 		if (isRGB) stack2 = getRGBStack(imp);
 		else stack2 = imp.getStack();
@@ -116,20 +122,24 @@ public class CustomImage extends ImagePlus {
 		ImageProcessor iip = getProcessor();
 		cip[currentChannel].setMinAndMax(iip.getMin(), iip.getMax());
 		if (singleChannel) {
-			PixelGrabber pg = new PixelGrabber(cip[currentChannel].createImage(), 0, 0,
-        width, height, pixels[currentChannel], 0, width);
+			PixelGrabber pg = new PixelGrabber(cip[currentChannel].createImage(), 
+        0, 0, width, height, pixels[currentChannel], 0, width);
 			try { pg.grabPixels(); }
 			catch (InterruptedException e) { };
 		} 
     else {
-			for (int i=0; i<nChannels; ++i) {
-				PixelGrabber pg = new PixelGrabber(
-          cip[((currentSlice - 1) / nChannels) * nChannels + i].createImage(), 0,
-          0, width, height, pixels[i], 0, width);
-				try { pg.grabPixels(); }
-				catch (InterruptedException e){ };
-			}
-		}
+      int[] coords = FormatTools.getZCTCoords(order, z, nChannels, t, 
+        cip.length, currentSlice - 1); 
+      coords[1] = 0;  
+      for (int i=0; i<nChannels; ++i) {
+        int ndx = FormatTools.getIndex(order, z, nChannels, t, cip.length,
+          coords[0], i, coords[2]);  
+        PixelGrabber pg = new PixelGrabber(cip[ndx].createImage(),
+          0, 0, width, height, pixels[i], 0, width);
+  			try { pg.grabPixels(); }
+  		  catch (InterruptedException e){ };
+      }
+    }
 		if (singleChannel && nChannels <= 3) {
 			switch (currentChannel) {
 				case 0:
