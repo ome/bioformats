@@ -158,7 +158,6 @@ public class ICSReader extends FormatReader {
 
     if (bytes == 4) {
       float[] f = new float[core.sizeX[0] * core.sizeY[0] * channels];
-      int pt = 0;
       for (int i=0; i<f.length; i++) {
         int p = DataTools.bytesToInt(plane, i*4, 4, core.littleEndian[0]);
         f[i] = Float.intBitsToFloat(p);
@@ -255,10 +254,8 @@ public class ICSReader extends FormatReader {
     RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
     StringTokenizer t;
     String token;
-    b = new byte[(int) reader.length()];
-    reader.read(b);
+    String s = reader.readString((int) reader.length());
     reader.close();
-    String s = new String(b);
     StringTokenizer st = new StringTokenizer(s, "\n");
     String line = st.nextToken();
     line = st.nextToken();

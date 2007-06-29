@@ -98,18 +98,15 @@ public class FitsReader extends FormatReader {
     in = new RandomAccessStream(id);
     count = 1;
 
-    byte[] b = new byte[80];
-    in.read(b);
-    String line = new String(b);
+    String line = in.readString(80);
     if (!line.startsWith("SIMPLE")) {
       throw new FormatException("Unsupported FITS file.");
     }
   
     while (true) {
       count++;
-      in.read(b);
-      line = new String(b);
-    
+      line = in.readString(80); 
+
       // parse key/value pair 
       int ndx = line.indexOf("=");
       int comment = line.indexOf("/", ndx);

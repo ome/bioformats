@@ -102,24 +102,24 @@ public class OpenlabReader extends FormatReader {
     }
 
     in.skipBytes(24);
-    int volumeType = DataTools.read2SignedBytes(in, false);
+    int volumeType = in.readShort();
     in.skipBytes(272);
 
     int top, left, bottom, right;
 
     if (version == 2) {
       in.skipBytes(2);
-      top = DataTools.read2SignedBytes(in, false);
-      left = DataTools.read2SignedBytes(in, false);
-      bottom = DataTools.read2SignedBytes(in, false);
-      right = DataTools.read2SignedBytes(in, false);
+      top = in.readShort();
+      left = in.readShort();
+      bottom = in.readShort();
+      right = in.readShort();
 
       if (core.sizeX[series] == 0) core.sizeX[series] = right - left;
       if (core.sizeY[series] == 0) core.sizeY[series] = bottom - top;
     }
     else {
-      core.sizeX[series] = DataTools.read4SignedBytes(in, false);
-      core.sizeY[series] = DataTools.read4SignedBytes(in, false);
+      core.sizeX[series] = in.readInt();
+      core.sizeY[series] = in.readInt();
     }
 
     in.seek(info.layerStart);
@@ -225,11 +225,11 @@ public class OpenlabReader extends FormatReader {
       }
 
       in.skipBytes(24);
-      volumeType = DataTools.read2SignedBytes(in, false);
+      volumeType = in.readShort(); 
 
       in.skipBytes(280);
-      int size = DataTools.read4SignedBytes(in, false);
-      int compressedSize = DataTools.read4SignedBytes(in, false);
+      int size = in.readInt();
+      int compressedSize = in.readInt();
       b = new byte[size];
       byte[] c = new byte[compressedSize];
       in.read(c);
@@ -351,13 +351,13 @@ public class OpenlabReader extends FormatReader {
 
     status("Verifying Openlab LIFF format");
 
+    in.order(false);
     in.skipBytes(4);
-    byte[] b = new byte[4];
-    in.read(b);
-    String s = new String(b);
-    if (!s.equals("impr")) throw new FormatException("Invalid LIFF file.");
+    if (!in.readString(4).equals("impr")) {
+      throw new FormatException("Invalid LIFF file.");
+    }
 
-    version = DataTools.read4SignedBytes(in, false);
+    version = in.readInt();
 
     if (version != 2 && version != 5) {
       throw new FormatException("Invalid version : " + version);
@@ -367,7 +367,7 @@ public class OpenlabReader extends FormatReader {
     in.skipBytes(4);
 
     // read offset to first plane
-    int offset = DataTools.read4SignedBytes(in, false);
+    int offset = in.readInt();
     in.seek(offset);
 
     status("Finding image offsets");
@@ -403,19 +403,17 @@ public class OpenlabReader extends FormatReader {
           info.wavelength = -1;
 
           in.skipBytes(24);
-          int volumeType = DataTools.read2SignedBytes(in, false);
+          int volumeType = in.readShort();
 
           if (volumeType == MAC_1_BIT || volumeType == MAC_256_GREYS ||
             volumeType == MAC_256_COLORS ||
             (volumeType >= MAC_24_BIT && volumeType <= GREY_16_BIT))
           {
             in.skipBytes(16);
-            b = new byte[128];
-            in.read(b);
-            info.layerName = new String(b);
+            info.layerName = in.readString(128);
 
             if (!info.layerName.trim().equals("Original Image")) {
-              info.timestamp = DataTools.read8SignedBytes(in, false);
+              info.timestamp = in.readLong();
               layerInfoList[0].add(info);
             }
           }
@@ -423,11 +421,11 @@ public class OpenlabReader extends FormatReader {
         }
         else if (tag == 69) {
           in.skipBytes(4);
-          int units = DataTools.read2SignedBytes(in, false);
+          int units = in.readShort();
           in.skipBytes(12);
 
-          xCal = Float.intBitsToFloat(DataTools.read4SignedBytes(in, false));
-          yCal = Float.intBitsToFloat(DataTools.read4SignedBytes(in, false));
+          xCal = in.readFloat();
+          yCal = in.readFloat();
         }
         else if (tag == 72 || fmt.equals("USER")) {
           char aChar = (char) in.read();
@@ -443,7 +441,7 @@ public class OpenlabReader extends FormatReader {
             aChar = (char) in.read();
 
             if (aChar == 1) {
-              int numVars = DataTools.read2SignedBytes(in, false);
+              int numVars = in.readShort();
               while (numVars > 0) {
                 aChar = (char) in.read();
                 sb = new StringBuffer();
@@ -465,26 +463,21 @@ public class OpenlabReader extends FormatReader {
                 }
 
                 if (className.equals("CStringVariable")) {
-                  int strSize = DataTools.read4SignedBytes(in, false);
-                  b = new byte[strSize];
-                  in.read(b);
-                  varStringValue = new String(b);
+                  int strSize = in.readInt();
+                  varStringValue = in.readString(strSize);
                   varNumValue = Float.parseFloat(varStringValue);
 
                   in.skipBytes(1);
                 }
                 else if (className.equals("CFloatVariable")) {
-                  varNumValue = Double.longBitsToDouble(
-                    DataTools.read8SignedBytes(in, false));
+                  varNumValue = in.readDouble();
                   varStringValue = "" + varNumValue;
                 }
 
                 int baseClassVersion = in.read();
                 if (baseClassVersion == 1 || baseClassVersion == 2) {
-                  int strSize = DataTools.read4SignedBytes(in, false);
-                  b = new byte[strSize];
-                  in.read(b);
-                  varName = new String(b);
+                  int strSize = in.readInt();
+                  varName = in.readString(strSize);
                   in.skipBytes(baseClassVersion == 1 ? 3 : 2);
                 }
                 else {
@@ -531,29 +524,27 @@ public class OpenlabReader extends FormatReader {
       long nextTag = readTagHeader();
       if (fmt.equals("PICT")) {
         in.skipBytes(24);
-        int volumeType = DataTools.read2SignedBytes(in, false);
+        int volumeType = in.readShort();
         in.skipBytes(272);
 
         int top, left, bottom, right;
 
         if (version == 2) {
           in.skipBytes(2);
-          top = DataTools.read2SignedBytes(in, false);
-          left = DataTools.read2SignedBytes(in, false);
-          bottom = DataTools.read2SignedBytes(in, false);
-          right = DataTools.read2SignedBytes(in, false);
+          top = in.readShort();
+          left = in.readShort();
+          bottom = in.readShort();
+          right = in.readShort();
 
           if (core.sizeX[series] == 0) core.sizeX[series] = right - left;
           if (core.sizeY[series] == 0) core.sizeY[series] = bottom - top;
         }
         else {
-          core.sizeX[series] = DataTools.read4SignedBytes(in, false);
-          core.sizeY[series] = DataTools.read4SignedBytes(in, false);
+          core.sizeX[series] = in.readInt();
+          core.sizeY[series] = in.readInt();
         }
 
         in.seek(layer.layerStart);
-
-        b = new byte[0];
 
         if (version == 2) {
           nextTag = readTagHeader();
@@ -565,7 +556,7 @@ public class OpenlabReader extends FormatReader {
 
           // open image using pict reader
           try {
-            b = new byte[(int) (nextTag - in.getFilePointer())];
+            byte[] b = new byte[(int) (nextTag - in.getFilePointer())];
             in.read(b);
             BufferedImage img = pict.open(b);
             if (img.getRaster().getNumBands() != oldChannels ||
@@ -671,19 +662,15 @@ public class OpenlabReader extends FormatReader {
 
       switch (bpp[i]) {
         case 1:
-          core.pixelType[i] = FormatTools.INT8;
-          break;
-        case 2:
-          core.pixelType[i] = FormatTools.UINT16;
-          break;
         case 3:
           core.pixelType[i] = FormatTools.UINT8;
           break;
-        case 4:
-          core.pixelType[i] = FormatTools.INT32;
+        case 2:
+        case 6: 
+          core.pixelType[i] = FormatTools.UINT16;
           break;
-        case 6:
-          core.pixelType[i] = FormatTools.INT16;
+        case 4:
+          core.pixelType[i] = FormatTools.UINT32;
           break;
       }
 
@@ -714,11 +701,10 @@ public class OpenlabReader extends FormatReader {
   private long readTagHeader()
     throws IOException
   {
-    tag = DataTools.read2SignedBytes(in, false);
-    subTag = DataTools.read2SignedBytes(in, false);
+    tag = in.readShort();
+    subTag = in.readShort();
 
-    long nextTag = (version == 2 ? DataTools.read4SignedBytes(in, false) :
-      DataTools.read8SignedBytes(in, false));
+    long nextTag = (version == 2 ? in.readInt() : in.readLong());
 
     byte[] b = new byte[4];
     in.read(b);

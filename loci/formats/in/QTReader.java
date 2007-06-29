@@ -330,23 +330,13 @@ public class QTReader extends FormatReader {
     switch (bytesPerPixel) {
       case 0:
       case 1:
+      case 3:  
         core.pixelType[0] = FormatTools.UINT8;
         break;
       case 2:
-        core.pixelType[0] = FormatTools.INT16;
-        break;
-      case 3:
-        core.pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = FormatTools.UINT16;
         break;
     }
-
-    /*
-    if (flip) {
-      int tmp = core.sizeX[0];
-      core.sizeX[0] = core.sizeY[0];
-      core.sizeY[0] = tmp;
-    }
-    */
 
     core.rgb[0] = bitsPerPixel < 40;
     core.sizeZ[0] = 1;
@@ -483,9 +473,7 @@ public class QTReader extends FormatReader {
       if (atomSize < 0) atomSize += 4294967296L;
 
       // read the atom type
-      byte[] four = new byte[4];
-      in.read(four);
-      String atomType = new String(four);
+      String atomType = in.readString(4);
 
       // if atomSize is 1, then there is an 8 byte extended size
       if (atomSize == 1) {
@@ -608,10 +596,8 @@ public class QTReader extends FormatReader {
           in.readInt();
 
           for (int i=0; i<numEntries; i++) {
-            byte[] b = new byte[4];
-            in.read(b);
             if (i == 0) {
-              codec = new String(b);
+              codec = in.readString(4); 
               in.skipBytes(74);
 
               bitsPerPixel = in.readShort();
@@ -626,7 +612,7 @@ public class QTReader extends FormatReader {
               in.read();
             }
             else {
-              altCodec = new String(b);
+              altCodec = in.readString(4); 
               addMeta("Second codec", altCodec);
             }
           }
@@ -737,10 +723,8 @@ public class QTReader extends FormatReader {
 
     String test = null;
     boolean found = false;
-    byte[] b = new byte[4];
     while (!found && in.getFilePointer() < (in.length() - 4)) {
-      in.read(b);
-      test = new String(b);
+      test = in.readString(4);
       if (test.equals("moov")) {
         found = true;
         in.seek(in.getFilePointer() - 8);

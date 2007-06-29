@@ -30,8 +30,7 @@ import java.util.StringTokenizer;
 import loci.formats.*;
 
 /**
- * PGMReader is the file format reader for
- * Portable Gray Map (PGM) images.
+ * PGMReader is the file format reader for Portable Gray Map (PGM) images.
  *
  * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij). 
  */
@@ -123,26 +122,10 @@ public class PGMReader extends FormatReader {
 
     boolean isBlackAndWhite = false;
 
-    if (magic.equals("P1") || magic.equals("P2")) {
-      rawBits = false; 
-      core.sizeC[0] = 1; 
-      isBlackAndWhite = magic.equals("P1"); 
-    } 
-    else if (magic.equals("P3")) {
-      rawBits = false;
-      core.sizeC[0] = 3;
-    }
-    else if (magic.equals("P4") || magic.equals("P5")) {
-      rawBits = true;
-      core.sizeC[0] = 1;
-      isBlackAndWhite = magic.equals("P4"); 
-    }
-    else if (magic.equals("P6")) {
-      rawBits = true;
-      core.sizeC[0] = 3;
-    }
-    else throw new FormatException("Unsupported magic number: " + magic); 
- 
+    rawBits = magic.equals("P4") || magic.equals("P5") || magic.equals("P6");
+    core.sizeC[0] = (magic.equals("P3") || magic.equals("P6")) ? 3 : 1;
+    isBlackAndWhite = magic.equals("P1") || magic.equals("P4");
+
     String line = in.readLine().trim();
     while (line.startsWith("#") || line.length() == 0) line = in.readLine();
   

@@ -35,6 +35,7 @@ public class PNGReader extends ImageIOReader {
   // -- Constructor --
 
   /** Constructs a new PNGReader. */
-  public PNGReader() { super("Portable Network Graphics", new String[] {"png", "pnm"}); }
-
+  public PNGReader() { 
+    super("Portable Network Graphics", new String[] {"png", "pnm"});
+  }
 }

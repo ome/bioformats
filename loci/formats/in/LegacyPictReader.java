@@ -53,7 +53,6 @@ public class LegacyPictReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
     return ImageTools.getBytes(openImage(no), false, 3);
   }
 

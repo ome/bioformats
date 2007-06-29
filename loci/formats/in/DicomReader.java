@@ -92,8 +92,7 @@ public class DicomReader extends FormatReader {
   /** Constructs a new DICOM reader. */
   // "Digital Imaging and Communications in Medicine" is nasty long.
   public DicomReader() {
-    super("Digital Img. & Comm. in Med.",
-      new String[] {"dcm", "dicom"});
+    super("Digital Img. & Comm. in Med.", new String[] {"dcm", "dicom"});
   }
 
   // -- IFormatReader API methods --
@@ -153,20 +152,15 @@ public class DicomReader extends FormatReader {
 
     status("Verifying DICOM format");
 
-    byte[] four = new byte[4];
-    long pos = 0;
     in.seek(128);
-    in.read(four);
-    if ((new String(four)).equals("DICM")) {
+    if (in.readString(4).equals("DICM")) {
       // header exists, so we'll read it
-      in.seek(pos);
-      byte[] header = new byte[128];
-      in.read(header);
-      addMeta("Header information", new String(header));
+      in.seek(0);
+      addMeta("Header information", in.readString(128));
       in.readInt();
       location = 128;
     }
-    else in.seek(pos);
+    else in.seek(0);
 
     status("Reading tags");
 
@@ -187,9 +181,7 @@ public class DicomReader extends FormatReader {
       String s;
       switch (tag) {
         case TRANSFER_SYNTAX_UID:
-          byte[] st = new byte[elementLength];
-          in.read(st);
-          s = new String(st);
+          s = in.readString(elementLength); 
           addInfo(tag, s);
           if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
             throw new FormatException("Sorry, compressed DICOM images not " +
@@ -200,9 +192,7 @@ public class DicomReader extends FormatReader {
           }
           break;
         case NUMBER_OF_FRAMES:
-          st = new byte[elementLength];
-          in.read(st);
-          s = new String(st);
+          s = in.readString(elementLength);
           addInfo(tag, s);
           double frames = Double.parseDouble(s);
           if (frames > 1.0) core.imageCount[0] = (int) frames;
@@ -212,14 +202,10 @@ public class DicomReader extends FormatReader {
           addInfo(tag, samplesPerPixel);
           break;
         case PHOTOMETRIC_INTERPRETATION:
-          st = new byte[elementLength];
-          in.read(st);
-          String photoInterpretation = new String(st);
-          addInfo(tag, photoInterpretation);
+          addInfo(tag, in.readString(elementLength));
           break;
         case PLANAR_CONFIGURATION:
-          int planarConfiguration = in.readShort();
-          addInfo(tag, planarConfiguration);
+          addInfo(tag, in.readShort());
           break;
         case ROWS:
           core.sizeY[0] = in.readShort();
@@ -230,33 +216,23 @@ public class DicomReader extends FormatReader {
           addInfo(tag, core.sizeX[0]);
           break;
         case PIXEL_SPACING:
-          st = new byte[elementLength];
-          in.read(st);
-          String scale = new String(st);
-          addInfo(tag, scale);
+          addInfo(tag, in.readString(elementLength));
           break;
         case SLICE_SPACING:
-          st = new byte[elementLength];
-          in.read(st);
-          String spacing = new String(st);
-          addInfo(tag, spacing);
+          addInfo(tag, in.readString(elementLength));
           break;
         case BITS_ALLOCATED:
           bitsPerPixel = in.readShort();
           addInfo(tag, bitsPerPixel);
           break;
         case PIXEL_REPRESENTATION:
-          int pixelRepresentation = in.readShort();
-          addInfo(tag, pixelRepresentation);
+          addInfo(tag, in.readShort());
           break;
         case WINDOW_CENTER:
         case WINDOW_WIDTH:
         case RESCALE_INTERCEPT:
         case RESCALE_SLOPE:
-          st = new byte[elementLength];
-          in.read(st);
-          String c = new String(st);
-          addInfo(tag, c);
+          addInfo(tag, in.readString(elementLength));
           break;
         case PIXEL_DATA:
           if (elementLength != 0) {
@@ -402,9 +378,7 @@ public class DicomReader extends FormatReader {
       case ST:
       case TM:
       case UI:
-        byte[] s = new byte[elementLength];
-        in.read(s);
-        value = new String(s);
+        value = in.readString(elementLength);
         break;
       case US:
         if (elementLength == 2) value = Integer.toString(in.readShort());
@@ -417,9 +391,7 @@ public class DicomReader extends FormatReader {
         }
         break;
       case IMPLICIT_VR:
-        s = new byte[elementLength];
-        in.read(s);
-        value = new String(s);
+        value = in.readString(elementLength);
         if (elementLength <= 4 || elementLength > 44) value = null;
         break;
       case SQ:

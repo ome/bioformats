@@ -101,6 +101,7 @@ public class SlidebookReader extends FormatReader {
     if (debug) debug("SlidebookReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
+    in.order(true);
 
     status("Finding offsets to pixel data");
 
@@ -215,8 +216,8 @@ public class SlidebookReader extends FormatReader {
       int n = in.read(); 
       if (n == 'i') {
         in.skipBytes(79); 
-        core.sizeX[0] = DataTools.read2UnsignedBytes(in, true); 
-        core.sizeY[0] = DataTools.read2UnsignedBytes(in, true); 
+        core.sizeX[0] = in.readShort(); 
+        core.sizeY[0] = in.readShort(); 
         iCount++; 
       }
       else if (n == 'h') hCount++; 

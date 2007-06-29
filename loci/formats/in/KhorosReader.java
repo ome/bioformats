@@ -126,9 +126,7 @@ public class KhorosReader extends FormatReader {
     in.order(true); 
     int dependency = in.readInt();
 
-    byte[] comment = new byte[512];
-    in.read(comment);
-    addMeta("Comment", new String(comment));
+    addMeta("Comment", in.readString(512));
 
     in.order(dependency == 4 || dependency == 8);
 
@@ -143,8 +141,6 @@ public class KhorosReader extends FormatReader {
    
     switch (type) {
       case 0: 
-        core.pixelType[0] = FormatTools.UINT8; 
-        break;
       case 1: 
         core.pixelType[0] = FormatTools.UINT8; 
         break;

@@ -59,8 +59,7 @@ public class NRRDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 4) return false;
-    return block[0] == 'N' && block[1] == 'R' && block[2] == 'R' &&
-      block[3] == 'D';
+    return new String(block).startsWith("NRRD"); 
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */

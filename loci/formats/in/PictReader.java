@@ -64,7 +64,7 @@ public class PictReader extends FormatReader {
 
   static {
     int index = 0;
-    for (int i = 0; i < 256; i++) {
+    for (int i=0; i<256; i++) {
       EXPANSION_TABLE[index++] = (i & 128) == 0 ? (byte) 0 : (byte) 1;
       EXPANSION_TABLE[index++] = (i & 64) == 0 ? (byte) 0 : (byte) 1;
       EXPANSION_TABLE[index++] = (i & 32) == 0 ? (byte) 0 : (byte) 1;
@@ -78,6 +78,9 @@ public class PictReader extends FormatReader {
 
   // -- Fields --
 
+  /** Stream for reading pixel data. */
+  protected RandomAccessStream ras;
+
   /** Pixel bytes. */
   protected byte[] bytes;
 
@@ -89,9 +92,6 @@ public class PictReader extends FormatReader {
 
   /** Image state. */
   protected int pictState;
-
-  /** Pointer into the array of bytes representing the file. */
-  protected int pt;
 
   /** Vector of byte arrays representing individual rows. */
   protected Vector strips;
@@ -124,7 +124,7 @@ public class PictReader extends FormatReader {
   }
 
   /** Open a PICT image from an array of bytes (used by OpenlabReader). */
-  public BufferedImage open(byte[] pix) throws FormatException {
+  public BufferedImage open(byte[] pix) throws FormatException, IOException {
     // handles case when we call this method directly, instead of
     // through initFile(String)
     if (debug) debug("open");
@@ -136,7 +136,8 @@ public class PictReader extends FormatReader {
     state = 0;
     pictState = INITIAL;
     bytes = pix;
-    pt = 0;
+    ras = new RandomAccessStream(bytes);
+    ras.order(false);
 
     try {
       while (driveDecoder()) { }
@@ -339,35 +340,27 @@ public class PictReader extends FormatReader {
   // -- Helper methods --
 
   /** Loop through the remainder of the file and find relevant opcodes. */
-  private boolean driveDecoder() throws FormatException {
+  private boolean driveDecoder() throws FormatException, IOException {
     if (debug) debug("driveDecoder");
     int opcode;
 
     switch (pictState) {
       case INITIAL:
-        pt += 2;
-        // skip over frame
-        pt += 8;
-        int verOpcode =
-          DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
-        pt++;
-        int verNumber =
-          DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
-        pt++;
+        ras.skipBytes(10); 
+        int verOpcode = ras.read(); 
+        int verNumber = ras.read(); 
 
         if (verOpcode == 0x11 && verNumber == 0x01) versionOne = true;
         else if (verOpcode == 0x00 && verNumber == 0x11) {
           versionOne = false;
-          int verNumber2 =
-            DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-          pt += 2;
+          int verNumber2 = ras.readShort(); 
 
           if (verNumber2 != 0x02ff) {
             throw new FormatException("Invalid PICT file : " + verNumber2);
           }
 
           // skip over v2 header -- don't need it here
-          pt += 26;
+          ras.skipBytes(26); 
         }
         else throw new FormatException("Invalid PICT file");
 
@@ -376,18 +369,14 @@ public class PictReader extends FormatReader {
         return true;
 
       case STATE2:
-        if (versionOne) {
-          opcode = DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
-          pt++;
-        }
+        if (versionOne) opcode = ras.read(); 
         else {
           // if at odd boundary skip a byte for opcode in PICT v2
 
-          if ((pt & 0x1L) != 0) {
-            pt++;
+          if ((ras.getFilePointer() & 0x1L) != 0) {
+            ras.skipBytes(1); 
           }
-          opcode = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-          pt += 2;
+          opcode = ras.readShort(); 
         }
         return drivePictDecoder(opcode);
     }
@@ -395,7 +384,9 @@ public class PictReader extends FormatReader {
   }
 
   /** Handles the opcodes in the PICT file. */
-  private boolean drivePictDecoder(int opcode) throws FormatException {
+  private boolean drivePictDecoder(int opcode) 
+    throws FormatException, IOException
+  {
     if (debug) debug("drivePictDecoder");
 
     switch (opcode) {
@@ -407,39 +398,42 @@ public class PictReader extends FormatReader {
         handlePackBits(opcode);
         break;
       case PICT_CLIP_RGN:
-        int x = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-        pt += x;
+        int x = ras.readShort(); 
+        ras.skipBytes(x - 2); 
         break;
       case PICT_LONGCOMMENT:
-        pt += 2;
-        x = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-        pt += x + 2;
+        ras.skipBytes(2); 
+        x = ras.readShort();
+        ras.skipBytes(x);
         break;
       case PICT_END: // end of PICT
         state |= IMAGEAVAIL;
         return false;
     }
 
-    return (pt < bytes.length);
+    return ras.getFilePointer() < ras.length();
   }
 
   /** Handles bitmap and pixmap opcodes of PICT format. */
-  private void handlePackBits(int opcode) throws FormatException {
+  private void handlePackBits(int opcode) 
+    throws FormatException, IOException 
+  {
     if (debug) debug("handlePackBits(" + opcode + ")");
     if (opcode == PICT_9A) {
       // special case
       handlePixmap(opcode);
     }
     else {
-      rowBytes = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
+      rowBytes = ras.readShort();
       if (versionOne || (rowBytes & 0x8000) == 0) handleBitmap(opcode);
       else handlePixmap(opcode);
     }
   }
 
   /** Extract the image data in a PICT bitmap structure. */
-  private void handleBitmap(int opcode) throws FormatException {
+  private void handleBitmap(int opcode) 
+    throws FormatException, IOException 
+  {
     if (debug) debug("handleBitmap(" + opcode + ")");
     int row;
     byte[] buf;  // raw byte buffer for data from file
@@ -450,17 +444,13 @@ public class PictReader extends FormatReader {
 
     // read the bitmap data -- 3 rectangles + mode
 
-    int tlY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-    pt += 2;
-    int tlX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-    pt += 2;
-    int brY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-    pt += 2;
-    int brX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-    pt += 2;
+    int tlY = ras.readShort();
+    int tlX = ras.readShort(); 
+    int brY = ras.readShort(); 
+    int brX = ras.readShort(); 
 
     // skip next two rectangles
-    pt += 18;
+    ras.skipBytes(18); 
 
     core.sizeX[0] = brX - tlX;
     core.sizeY[0] = brY - tlY;
@@ -478,7 +468,7 @@ public class PictReader extends FormatReader {
 
     for (row=0; row < core.sizeY[0]; ++row) {
       if (rowBytes < 8) {  // data is not compressed
-        System.arraycopy(bytes, pt, buf, 0, rowBytes);
+        ras.read(buf, 0, rowBytes); 
 
         for (int j=buf.length; --j >= 0;) {
           buf[j] = (byte) ~buf[j];
@@ -487,18 +477,11 @@ public class PictReader extends FormatReader {
       }
       else {
         int rawLen;
-        if (rowBytes > 250) {
-          rawLen = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-          pt += 2;
-        }
-        else {
-          rawLen = DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
-          pt++;
-        }
+        if (rowBytes > 250) rawLen = ras.readShort(); 
+        else rawLen = ras.read(); 
 
         try {
-          System.arraycopy(bytes, pt, buf, 0, rawLen);
-          pt += rawLen;
+          ras.read(buf, 0, rawLen);
         }
         catch (ArrayIndexOutOfBoundsException e) {
           throw new FormatException("Sorry, vector data not supported.");
@@ -518,7 +501,9 @@ public class PictReader extends FormatReader {
   }
 
   /** Extracts the image data in a PICT pixmap structure. */
-  private void handlePixmap(int opcode) throws FormatException {
+  private void handlePixmap(int opcode) 
+    throws FormatException, IOException
+  {
     if (debug) debug("handlePixmap(" + opcode + ")");
     int pixelSize;
     int compCount;
@@ -529,28 +514,19 @@ public class PictReader extends FormatReader {
 
       // read the pixmap (9A)
 
-      pt += 4; // skip fake length and fake EOF
-
-      pt += 2;
+      ras.skipBytes(6);
 
       // read the bounding box
-      int tlY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      int tlX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      int brY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      int brX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
+      int tlY = ras.readShort(); 
+      int tlX = ras.readShort(); 
+      int brY = ras.readShort(); 
+      int brX = ras.readShort(); 
 
-      pt += 2; // undocumented extra short in the data structure
+      ras.skipBytes(18);
 
-      pt += 16;
-
-      pixelSize = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      compCount = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 16; // reserved
+      pixelSize = ras.readShort();
+      compCount = ras.readShort(); 
+      ras.skipBytes(14); 
 
       core.sizeX[0] = brX - tlX;
       core.sizeY[0] = brY - tlY;
@@ -569,51 +545,34 @@ public class PictReader extends FormatReader {
     }
     else {
       rowBytes &= 0x3fff;  // mask off flags
+      
+      int tlY = ras.readShort();
+      int tlX = ras.readShort(); 
+      int brY = ras.readShort(); 
+      int brX = ras.readShort(); 
 
-      int tlY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      int tlX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      int brY = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      int brX = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
+      ras.skipBytes(18);
 
-      // unnecessary data
-      pt += 18;
+      pixelSize = ras.readShort();
+      compCount = ras.readShort(); 
 
-      pixelSize = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      compCount = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-
-      // unnecessary data
-      pt += 14;
+      ras.skipBytes(14);
 
       // read the lookup table
 
-      pt += 4;
-      int flags = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
-      int count = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-      pt += 2;
+      ras.skipBytes(4);
+      int flags = ras.readShort(); 
+      int count = ras.readShort(); 
 
       count++;
       lookup = new short[3][count];
 
       for (int i=0; i<count; i++) {
-        int index = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-        pt += 2;
+        int index = ras.readShort(); 
         if ((flags & 0x8000) != 0) index = i;
-        lookup[0][index] =
-          DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
-        pt += 2;
-        lookup[1][index] =
-          DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
-        pt += 2;
-        lookup[2][index] =
-          DataTools.bytesToShort(bytes, pt, 2, core.littleEndian[0]);
-        pt += 2;
+        lookup[0][index] = ras.readShort();
+        lookup[1][index] = ras.readShort();
+        lookup[2][index] = ras.readShort();
       }
 
       core.sizeX[0] = brX - tlX;
@@ -621,16 +580,16 @@ public class PictReader extends FormatReader {
     }
 
     // skip over two rectangles
-    pt += 18;
+    ras.skipBytes(18);
 
-    if (opcode == PICT_BITSRGN || opcode == PICT_PACKBITSRGN) pt += 2;
+    if (opcode == PICT_BITSRGN || opcode == PICT_PACKBITSRGN) ras.skipBytes(2);
 
     handlePixmap(rowBytes, pixelSize, compCount);
   }
 
   /** Handles the unpacking of the image data. */
   private void handlePixmap(int rBytes, int pixelSize, int compCount)
-    throws FormatException
+    throws FormatException, IOException
   {
     if (debug) {
       debug("handlePixmap(" + rBytes + ", " +
@@ -675,7 +634,7 @@ public class PictReader extends FormatReader {
       }
       buf = new byte[bufSize];
       for (int row=0; row<core.sizeY[0]; row++) {
-        System.arraycopy(bytes, pt, buf, 0, rBytes);
+        ras.read(buf, 0, rBytes);
 
         switch (pixelSize) {
           case 16:
@@ -700,28 +659,21 @@ public class PictReader extends FormatReader {
       }
       buf = new byte[bufSize + 1 + bufSize / 128];
       for (int row=0; row<core.sizeY[0]; row++) {
-        if (rBytes > 250) {
-          rawLen = DataTools.bytesToInt(bytes, pt, 2, core.littleEndian[0]);
-          pt += 2;
-        }
-        else {
-          rawLen = DataTools.bytesToInt(bytes, pt, 1, core.littleEndian[0]);
-          pt++;
-        }
+        if (rBytes > 250) rawLen = ras.readShort(); 
+        else rawLen = ras.read(); 
 
         if (rawLen > buf.length) rawLen = buf.length;
 
-        if ((bytes.length - pt) <= rawLen) {
-          rawLen = bytes.length - pt - 1;
+        if ((ras.length() - ras.getFilePointer()) <= rawLen) {
+          rawLen = (int) (ras.length() - ras.getFilePointer() - 1); 
         }
 
         if (rawLen < 0) {
           rawLen = 0;
-          pt = bytes.length - 1;
+          ras.seek(ras.length() - 1);
         }
 
-        System.arraycopy(bytes, pt, buf, 0, rawLen);
-        pt += rawLen;
+        ras.read(buf, 0, rawLen);
 
         if (pixelSize == 16) {
           uBufI = new int[core.sizeX[0]];
@@ -805,11 +757,11 @@ public class PictReader extends FormatReader {
     int o;
     int t;
     byte v;
-    int count = 0; // number of pixels in a byte
-    int maskshift = 1; // num bits to shift mask
-    int pixelshift = 0; // num bits to shift pixel
+    int count = 8 / bitSize; // number of pixels in a byte
+    int maskshift = bitSize; // num bits to shift mask
+    int pixelshift = 8 - bitSize; // num bits to shift pixel
     int tpixelshift = 0;
-    int pixelshiftdelta = 0;
+    int pixelshiftdelta = bitSize;
     int mask = 0;
     int tmask; // temp mask
 
@@ -820,24 +772,12 @@ public class PictReader extends FormatReader {
     switch (bitSize) {
       case 1:
         mask = 0x80;
-        maskshift = 1;
-        count = 8;
-        pixelshift = 7;
-        pixelshiftdelta = 1;
         break;
       case 2:
         mask = 0xC0;
-        maskshift = 2;
-        count = 4;
-        pixelshift = 6;
-        pixelshiftdelta = 2;
         break;
       case 4:
         mask = 0xF0;
-        maskshift = 4;
-        count = 2;
-        pixelshift = 4;
-        pixelshiftdelta = 4;
         break;
     }
 

@@ -122,9 +122,6 @@ public class ND2Reader extends FormatReader {
   /** Array of image offsets. */
   private long[] offsets;
 
-  /** Number of valid bits per pixel */
-  private int[] validBits;
-
   /** Whether or not the pixel data is compressed using JPEG 2000. */
   private boolean isJPEG;
 
@@ -175,6 +172,7 @@ public class ND2Reader extends FormatReader {
         System.arraycopy(pixels[i], 0, buf, i*pixels[i].length, 
           pixels[i].length);
       }
+      pixels = null; 
     }
     else {
       in.read(buf);
@@ -327,7 +325,7 @@ public class ND2Reader extends FormatReader {
     while (!lastBoxFound) {
       pos = in.getFilePointer();
       length = in.readInt();
-      if (pos + length >= in.length()) lastBoxFound = true;
+      if (pos + length >= in.length() || length == 0) lastBoxFound = true;
       box = in.readInt();
       pos = in.getFilePointer();
       length -= 8;
@@ -342,6 +340,8 @@ public class ND2Reader extends FormatReader {
     for (int i=0; i<offsets.length; i++) {
       offsets[i] = ((Long) vs.get(i)).longValue();
     }
+    vs.clear();
+    vs = null;
 
     status("Finding XML metadata");
 
@@ -376,6 +376,8 @@ public class ND2Reader extends FormatReader {
         }
       }
     }
+
+    buf = null;
 
     status("Parsing XML");
 
@@ -475,6 +477,9 @@ public class ND2Reader extends FormatReader {
           }
         }
       }
+      b = null; 
+      xml = null; 
+      st = null; 
     }
 
     status("Populating metadata");
@@ -482,6 +487,8 @@ public class ND2Reader extends FormatReader {
     BufferedImage img = openImage(0);
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();
+    core.sizeC[0] = img.getRaster().getNumBands();
+    core.rgb[0] = core.sizeC[0] > 1;
 
     int numInvalid = 0;
 
@@ -526,9 +533,6 @@ public class ND2Reader extends FormatReader {
       pixSizeZ = Float.parseFloat(pixZ.trim());
     }
 
-    if (core.sizeC[0] == 0) {
-      core.sizeC[0] = openImage(0).getRaster().getNumBands();
-    }
     if (core.sizeC[0] == 2) core.sizeC[0] = 1;
 
     core.currentOrder[0] = "XY";
@@ -542,7 +546,7 @@ public class ND2Reader extends FormatReader {
 
     // we calculate this directly (instead of calling getEffectiveSizeC) because
     // sizeZ and sizeT have not been accurately set yet
-    int effectiveC = (core.sizeC[0] / 3) + 1;
+    int effectiveC = ((core.sizeC[0] - 1) / 3) + 1;
 
     if (core.imageCount[0] < core.sizeZ[0] * core.sizeT[0]) {
       if (core.sizeT[0] == core.imageCount[0]) {
@@ -592,15 +596,9 @@ public class ND2Reader extends FormatReader {
       }
     }
 
-    if (bits != 0) {
-      validBits = new int[core.sizeC[0] == 2 ? 3 : core.sizeC[0]];
-      for (int i=0; i<validBits.length; i++) validBits[i] = bits;
-    }
-    else validBits = null;
-
-    if (validBits == null) core.pixelType[0] = FormatTools.UINT8;
+    if (bits == 0) core.pixelType[0] = FormatTools.UINT8;
     else {
-      int bpp = validBits[0];
+      int bpp = bits; 
       while (bpp % 8 != 0) bpp++;
       switch (bpp) {
         case 8:
@@ -627,7 +625,6 @@ public class ND2Reader extends FormatReader {
     } 
 
     if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] < core.imageCount[0]) {
-      core.sizeC[0] = 1;
       core.sizeT[0] = 1;
       core.sizeZ[0] = core.imageCount[0];
     } 

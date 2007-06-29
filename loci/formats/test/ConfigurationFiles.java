@@ -140,9 +140,10 @@ public class ConfigurationFiles {
             entry.type[i] = FormatTools.pixelTypeFromString(
               s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("little") + 7;
-            entry.littleEndian[i] = s.substring(ndx).equals("true");
+            entry.littleEndian[i] = 
+              s.substring(ndx, s.indexOf(" ", ndx)).equals("true");
             ndx = s.indexOf("md5") + 4;
-            entry.md5[i] = s.substring(ndx, s.indexOf(" ", ndx));
+            entry.md5[i] = s.substring(ndx);
           }
 
           ndx = line.indexOf("access=") + 7;

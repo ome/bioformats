@@ -144,9 +144,6 @@ public class ImarisTiffReader extends BaseTiffReader {
       TiffTools.BITS_PER_SAMPLE);
     int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
 
-    // TODO : look into removing this logic, since it's copied directly from
-    // BaseTiffReader
-
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 

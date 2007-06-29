@@ -82,7 +82,8 @@ public class EPSReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * (bps / 8)) {
+    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * (bps / 8))
+    {
       throw new FormatException("Buffer too small.");
     }
 

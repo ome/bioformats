@@ -74,12 +74,10 @@ public class AliconaReader extends FormatReader {
       throw new FormatException("Buffer too small.");
     }
 
-    long offset = textureOffset;
-
     for (int i=0; i<numBytes; i++) {
-      in.seek(offset + (no * (core.sizeX[0] + pad)*core.sizeY[0]*(i+1)));
+      in.seek(textureOffset + (no * (core.sizeX[0] + pad)*core.sizeY[0]*(i+1)));
       for (int j=0; j<core.sizeX[0] * core.sizeY[0]; j++) {
-        buf[j*numBytes + i] = (byte) in.read();
+        buf[j*numBytes + i] = (byte) (in.read() & 0xff);
         if (j % core.sizeX[0] == core.sizeX[0] - 1) in.skipBytes(pad);
       }
     }
@@ -104,9 +102,7 @@ public class AliconaReader extends FormatReader {
 
     // check that this is a valid AL3D file
     status("Verifying Alicona format");
-    byte[] check = new byte[17];
-    in.read(check);
-    String magicString = new String(check);
+    String magicString = in.readString(17);
     if (!magicString.trim().equals("AliconaImaging")) {
       throw new FormatException("Invalid magic string : " +
         "expected 'AliconaImaging', got " + magicString);
@@ -117,9 +113,6 @@ public class AliconaReader extends FormatReader {
 
     status("Reading tags");
 
-    byte[] keyBytes = new byte[20];
-    byte[] valueBytes = new byte[30];
-
     int count = 2;
 
     boolean hasC = false;
@@ -127,16 +120,13 @@ public class AliconaReader extends FormatReader {
     String pntX = null, pntY = null, pntZ = null;
 
     for (int i=0; i<count; i++) {
-      in.read(keyBytes);
-      in.read(valueBytes);
-      in.skipBytes(2);
-
-      String key = new String(keyBytes);
-      String value = new String(valueBytes);
+      String key = in.readString(20);
+      String value = in.readString(30);
       key = key.trim();
       value = value.trim();
 
       addMeta(key, value);
+      in.skipBytes(2);
 
       if (key.equals("TagCount")) count += Integer.parseInt(value);
       else if (key.equals("Rows")) core.sizeY[0] = Integer.parseInt(value);

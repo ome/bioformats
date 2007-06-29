@@ -47,7 +47,7 @@ public class MNGReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new MNG reader. */
-  public MNGReader() { super("Multiple Network Graphics (MNG)", "mng"); }
+  public MNGReader() { super("Multiple Network Graphics", "mng"); }
 
   // -- IFormatReader API methods --
 
@@ -61,7 +61,6 @@ public class MNGReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
     return ImageTools.getBytes(openImage(no), true, core.sizeC[0]);
   }
 
@@ -96,6 +95,7 @@ public class MNGReader extends FormatReader {
     if (debug) debug("MNGReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
+    in.order(false);
 
     status("Verifying MNG format");
 
@@ -113,14 +113,14 @@ public class MNGReader extends FormatReader {
 
     status("Reading dimensions");
 
-    core.sizeX[0] = (int) DataTools.read4UnsignedBytes(in, false);
-    core.sizeY[0] = (int) DataTools.read4UnsignedBytes(in, false);
-    long fps = DataTools.read4UnsignedBytes(in, false);
-    long layerCounter = DataTools.read4UnsignedBytes(in, false);
+    core.sizeX[0] = in.readInt();
+    core.sizeY[0] = in.readInt();
+    int fps = in.readInt();
+    int layerCounter = in.readInt();
     in.skipBytes(4);
 
-    long playTime = DataTools.read4UnsignedBytes(in, false);
-    long profile = DataTools.read4UnsignedBytes(in, false);
+    int playTime = in.readInt();
+    int profile = in.readInt();
 
     in.skipBytes(4); // skip the CRC
 
@@ -131,7 +131,7 @@ public class MNGReader extends FormatReader {
     status("Finding image offsets");
 
     while (in.getFilePointer() < in.length()) {
-      long len = DataTools.read4UnsignedBytes(in, false);
+      int len = in.readInt();
       in.read(b);
       String code = new String(b);
 
@@ -147,7 +147,7 @@ public class MNGReader extends FormatReader {
       else if (code.equals("LOOP")) {
         stack.add(new Long(in.getFilePointer() + len + 4));
         in.skipBytes(1);
-        maxIterations = DataTools.read4SignedBytes(in, false);
+        maxIterations = in.readInt();
       }
       else if (code.equals("ENDL")) {
         int seek = ((Integer) stack.get(stack.size() - 1)).intValue();
@@ -162,7 +162,7 @@ public class MNGReader extends FormatReader {
         }
       }
 
-      in.seek(fp + (int) len + 4);
+      in.seek(fp + len + 4);
     }
 
     status("Populating metadata");

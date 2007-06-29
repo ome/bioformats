@@ -158,15 +158,16 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       RandomAccessStream ras = new RandomAccessStream(cz);
+      ras.order(little);
 
-      put("MagicNumber", DataTools.read4UnsignedBytes(ras, little));
-      put("StructureSize", DataTools.read4SignedBytes(ras, little));
-      put("DimensionX", DataTools.read4SignedBytes(ras, little));
-      put("DimensionY", DataTools.read4SignedBytes(ras, little));
+      put("MagicNumber", ras.readInt());
+      put("StructureSize", ras.readInt());
+      put("DimensionX", ras.readInt());
+      put("DimensionY", ras.readInt());
 
-      core.sizeZ[0] = DataTools.read4SignedBytes(ras, little);
-      int c = DataTools.read4SignedBytes(ras, little);
-      core.sizeT[0] = DataTools.read4SignedBytes(ras, little);
+      core.sizeZ[0] = ras.readInt();
+      int c = ras.readInt();
+      core.sizeT[0] = ras.readInt();
 
       if (c > core.sizeC[0] || c != 1) core.sizeC[0] = c;
       if (core.sizeC[0] == 0) core.sizeC[0]++;
@@ -187,7 +188,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DimensionChannels", core.sizeC[0]);
       put("DimensionTime", core.sizeT[0]);
 
-      int dataType = DataTools.read4SignedBytes(ras, little);
+      int dataType = ras.readInt();
       switch (dataType) {
         case 1:
           put("DataType", "8 bit unsigned integer");
@@ -213,9 +214,6 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (core.pixelType[0] == -1) {
         int[] bps = TiffTools.getBitsPerSample(ifd);
         switch (bps[0]) {
-          case 8:
-            core.pixelType[0] = FormatTools.UINT8;
-            break;
           case 16:
             core.pixelType[0] = FormatTools.UINT16;
             break;
@@ -227,18 +225,18 @@ public class ZeissLSMReader extends BaseTiffReader {
         }
       }
 
-      put("ThumbnailX", DataTools.read4SignedBytes(ras, little));
-      put("ThumbnailY", DataTools.read4SignedBytes(ras, little));
+      put("ThumbnailX", ras.readInt());
+      put("ThumbnailY", ras.readInt());
 
-      put("VoxelSizeX", DataTools.readDouble(ras, little));
-      put("VoxelSizeY", DataTools.readDouble(ras, little));
-      put("VoxelSizeZ", DataTools.readDouble(ras, little));
+      put("VoxelSizeX", ras.readDouble());
+      put("VoxelSizeY", ras.readDouble());
+      put("VoxelSizeZ", ras.readDouble());
 
-      put("OriginX", DataTools.readDouble(ras, little));
-      put("OriginY", DataTools.readDouble(ras, little));
-      put("OriginZ", DataTools.readDouble(ras, little));
+      put("OriginX", ras.readDouble());
+      put("OriginY", ras.readDouble());
+      put("OriginZ", ras.readDouble());
 
-      int scanType = DataTools.read2UnsignedBytes(ras, little);
+      int scanType = ras.readShort();
       switch (scanType) {
         case 0:
           put("ScanType", "x-y-z scan");
@@ -306,7 +304,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         store.setLogicalChannel(i, null, null, null, null, null, null, null);
       }
 
-      int spectralScan = DataTools.read2UnsignedBytes(ras, little);
+      int spectralScan = ras.readShort();
       switch (spectralScan) {
         case 0:
           put("SpectralScan", "no spectral scan");
@@ -318,7 +316,7 @@ public class ZeissLSMReader extends BaseTiffReader {
           put("SpectralScan", "no spectral scan");
       }
 
-      long type = DataTools.read4UnsignedBytes(ras, little);
+      long type = ras.readInt();
       switch ((int) type) {
         case 0:
           put("DataType2", "original scan data");
@@ -333,38 +331,38 @@ public class ZeissLSMReader extends BaseTiffReader {
           put("DataType2", "original scan data");
       }
 
-      long overlayOffset = DataTools.read4UnsignedBytes(ras, little);
-      long inputLUTOffset = DataTools.read4UnsignedBytes(ras, little);
-      long outputLUTOffset = DataTools.read4UnsignedBytes(ras, little);
-      long channelColorsOffset = DataTools.read4UnsignedBytes(ras, little);
+      long overlayOffset = ras.readInt();
+      long inputLUTOffset = ras.readInt();
+      long outputLUTOffset = ras.readInt();
+      long channelColorsOffset = ras.readInt();
 
-      put("TimeInterval", DataTools.readDouble(ras, little));
+      put("TimeInterval", ras.readDouble());
 
-      long channelDataTypesOffset = DataTools.read4UnsignedBytes(ras, little);
-      long scanInformationOffset = DataTools.read4UnsignedBytes(ras, little);
-      long ksDataOffset = DataTools.read4UnsignedBytes(ras, little);
-      long timeStampOffset = DataTools.read4UnsignedBytes(ras, little);
-      long eventListOffset = DataTools.read4UnsignedBytes(ras, little);
-      long roiOffset = DataTools.read4UnsignedBytes(ras, little);
-      long bleachRoiOffset = DataTools.read4UnsignedBytes(ras, little);
-      long nextRecordingOffset = DataTools.read4UnsignedBytes(ras, little);
+      long channelDataTypesOffset = ras.readInt();
+      long scanInformationOffset = ras.readInt();
+      long ksDataOffset = ras.readInt();
+      long timeStampOffset = ras.readInt();
+      long eventListOffset = ras.readInt();
+      long roiOffset = ras.readInt();
+      long bleachRoiOffset = ras.readInt();
+      long nextRecordingOffset = ras.readInt();
 
-      put("DisplayAspectX", DataTools.readDouble(ras, little));
-      put("DisplayAspectY", DataTools.readDouble(ras, little));
-      put("DisplayAspectZ", DataTools.readDouble(ras, little));
-      put("DisplayAspectTime", DataTools.readDouble(ras, little));
+      put("DisplayAspectX", ras.readDouble());
+      put("DisplayAspectY", ras.readDouble());
+      put("DisplayAspectZ", ras.readDouble());
+      put("DisplayAspectTime", ras.readDouble());
 
-      long meanOfRoisOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
-      long topoIsolineOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
-      long topoProfileOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
-      long linescanOverlayOffset = DataTools.read4UnsignedBytes(ras, little);
+      long meanOfRoisOverlayOffset = ras.readInt();
+      long topoIsolineOverlayOffset = ras.readInt();
+      long topoProfileOverlayOffset = ras.readInt();
+      long linescanOverlayOffset = ras.readInt();
 
-      put("ToolbarFlags", DataTools.read4UnsignedBytes(ras, little));
-      long channelWavelengthOffset = DataTools.read4UnsignedBytes(ras, little);
-      long channelFactorsOffset = DataTools.read4UnsignedBytes(ras, little);
+      put("ToolbarFlags", ras.readInt());
+      long channelWavelengthOffset = ras.readInt();
+      long channelFactorsOffset = ras.readInt();
 
-      double objectiveSphereCorrection = DataTools.readDouble(ras, little);
-      long unmixParamsOffset = DataTools.read4UnsignedBytes(ras, little);
+      double objectiveSphereCorrection = ras.readDouble();
+      long unmixParamsOffset = ras.readInt();
 
       // read referenced structures
 
@@ -419,10 +417,10 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       if (timeStampOffset != 0) {
         in.seek(timeStampOffset);
-        int blockSize = DataTools.read4SignedBytes(in, little);
-        int numberOfStamps = DataTools.read4SignedBytes(in, little);
+        int blockSize = in.readInt();
+        int numberOfStamps = in.readInt();
         for (int i=0; i<numberOfStamps; i++) {
-          put("TimeStamp" + i, DataTools.readDouble(in, little));
+          put("TimeStamp" + i, in.readDouble());
         }
       }
 

@@ -212,50 +212,33 @@ public class PerkinElmerReader extends FormatReader {
       if (s.startsWith(check) || check.startsWith(s) ||
         ((prefix != null) && (s.startsWith(prefix))))
       {
-        if (cfgPos == -1) {
-          if (filename.endsWith(".cfg")) {
-            cfgPos = i;
-            prefix = ls[i].substring(0, d);
-          }
+        if (cfgPos == -1 && filename.endsWith(".cfg")) {
+          cfgPos = i;
+          prefix = ls[i].substring(0, d);
         }
-
-        if (anoPos == -1) {
-          if (filename.endsWith(".ano")) {
-            anoPos = i;
-            prefix = ls[i].substring(0, d);
-          }
+        if (anoPos == -1 && filename.endsWith(".ano")) {
+          anoPos = i;
+          prefix = ls[i].substring(0, d);
         }
-
-        if (recPos == -1) {
-          if (filename.endsWith(".rec")) {
-            recPos = i;
-            prefix = ls[i].substring(0, d);
-          }
+        if (recPos == -1 && filename.endsWith(".rec")) {
+          recPos = i;
+          prefix = ls[i].substring(0, d);
         }
-
-        if (timPos == -1) {
-          if (filename.endsWith(".tim")) {
-            timPos = i;
-            prefix = ls[i].substring(0, d);
-          }
+        if (timPos == -1 && filename.endsWith(".tim")) {
+          timPos = i;
+          prefix = ls[i].substring(0, d);
         }
-        if (csvPos == -1) {
-          if (filename.endsWith(".csv")) {
-            csvPos = i;
-            prefix = ls[i].substring(0, d);
-          }
+        if (csvPos == -1 && filename.endsWith(".csv")) {
+          csvPos = i;
+          prefix = ls[i].substring(0, d);
         }
-        if (zpoPos == -1) {
-          if (filename.endsWith(".zpo")) {
-            zpoPos = i;
-            prefix = ls[i].substring(0, d);
-          }
+        if (zpoPos == -1 && filename.endsWith(".zpo")) {
+          zpoPos = i;
+          prefix = ls[i].substring(0, d);
         }
-        if (htmPos == -1) {
-          if (filename.endsWith(".htm")) {
-            htmPos = i;
-            prefix = ls[i].substring(0, d);
-          }
+        if (htmPos == -1 && filename.endsWith(".htm")) {
+          htmPos = i;
+          prefix = ls[i].substring(0, d);
         }
 
         if (filename.endsWith(".tif") || filename.endsWith(".tiff")) {
@@ -344,10 +327,7 @@ public class PerkinElmerReader extends FormatReader {
     for (int i=0; i<tiff.length; i++) {
       tiff[i] = new TiffReader();
       if (i > 0) tiff[i].setMetadataCollected(false);
-      //tiff[i].setId(files[i]);
     }
-
-    // highly questionable metadata parsing
 
     // we always parse the .tim and .htm files if they exist, along with
     // either the .csv file or the .zpo file
@@ -561,16 +541,14 @@ public class PerkinElmerReader extends FormatReader {
       int bpp = openBytes(0).length / (core.sizeX[0] * core.sizeY[0]);
       switch (bpp) {
         case 1:
-          core.pixelType[0] = FormatTools.INT8;
+        case 3: 
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 2:
           core.pixelType[0] = FormatTools.UINT16;
           break;
-        case 3:
-          core.pixelType[0] = FormatTools.INT8;
-          break;
         case 4:
-          core.pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.UINT32;
           break;
       }
     }
@@ -630,7 +608,7 @@ public class PerkinElmerReader extends FormatReader {
       new Integer(core.sizeC[0]), // SizeC
       new Integer(core.sizeT[0]), // SizeT
       new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!isLittleEndian()), // BigEndian
+      new Boolean(!core.littleEndian[0]), // BigEndian
       core.currentOrder[0], // DimensionOrder
       null, // Use image index 0
       null); // Use pixels index 0

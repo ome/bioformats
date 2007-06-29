@@ -145,9 +145,7 @@ public class BioRadReader extends FormatReader {
     boolean notes = (in.read() | in.read() | in.read() | in.read()) != 0;
     byteFormat = in.readShort() != 0;
     int imageNumber = in.readShort();
-    byte[] s = new byte[32];
-    in.read(s);
-    String name = new String(s);
+    String name = in.readString(32);
     int merged = in.readShort();
     int color1 = in.readShort();
     int fileId = in.readShort();
@@ -219,9 +217,7 @@ public class BioRadReader extends FormatReader {
       int type = in.readShort();
       int x = in.readShort();
       int y = in.readShort();
-      s = new byte[80];
-      in.read(s);
-      String text = new String(s);
+      String text = in.readString(80); 
 
       // be sure to remove binary data from the note text
       int ndx = text.length();
@@ -764,12 +760,8 @@ public class BioRadReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null);
-
-      double white = ramp1max;
-      double black = ramp1min;
-
-      store.setDisplayChannel(new Integer(i),  new Double(black),
-        new Double(white), null, null);
+      store.setDisplayChannel(new Integer(i), new Double(ramp1max),
+        new Double(ramp1min), null, null);
     }
     store.setDisplayOptions(zoom == null ? null : new Float(zoom),
       new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] >= 2),

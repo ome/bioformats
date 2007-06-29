@@ -50,9 +50,6 @@ public class DeltavisionReader extends FormatReader {
   /** Bytes per pixel. */
   private int bytesPerPixel;
 
-  /** Offset where the ExtHdr starts. */
-  protected int initExtHdrOffset = 1024;
-
   /** Size of one wave in the extended header. */
   protected int wSize;
 
@@ -63,7 +60,7 @@ public class DeltavisionReader extends FormatReader {
   protected int tSize;
 
   /**
-   * the Number of ints in each extended header section. These fields appear
+   * The number of ints in each extended header section. These fields appear
    * to be all blank but need to be skipped to get to the floats afterwards
    */
   protected int numIntsPerSection;
@@ -83,8 +80,7 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return (DataTools.bytesToShort(block, 0, 2, core.littleEndian[0]) ==
-      LITTLE_ENDIAN);
+    return false; 
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -346,6 +342,8 @@ public class DeltavisionReader extends FormatReader {
     extHdrFields =
       new DVExtHdrFields[core.sizeZ[0]][core.sizeC[0]][core.sizeT[0]];
 
+    hstream.close();
+
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
@@ -360,9 +358,9 @@ public class DeltavisionReader extends FormatReader {
 
     // Run through every timeslice, for each wavelength, for each z section
     // and fill in the Extended Header information array for that image
-    for (int z = 0; z < core.sizeZ[0]; z++) {
-      for (int t = 0; t < core.sizeT[0]; t++) {
-        for (int w = 0; w < core.sizeC[0]; w++) {
+    for (int z=0; z<core.sizeZ[0]; z++) {
+      for (int t=0; t<core.sizeT[0]; t++) {
+        for (int w=0; w<core.sizeC[0]; w++) {
           extHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z, w, t),
             numIntsPerSection, extHeader, core.littleEndian[0]);
 
@@ -571,62 +569,44 @@ public class DeltavisionReader extends FormatReader {
     protected DVExtHdrFields(int startingOffset, int numIntsPerSection,
       byte[] extHeader, boolean little)
     {
-      // skip over the int values that have nothing in them
-      offsetWithInts = startingOffset + (numIntsPerSection * 4);
+      try { 
+        RandomAccessStream ext = new RandomAccessStream(extHeader); 
+        ext.order(little); 
 
-      // DV files store the ND (neuatral density) Filter (normally expressed as
-      // a %T (transmittance)) as an OD (optical density) rating.
-      // To convert from one to the other the formula is %T = 10^(-OD) X 100.
-      oDFilter = Float.intBitsToFloat(
-        DataTools.bytesToInt(extHeader, offsetWithInts + 36, 4, little));
+        // skip over the int values that have nothing in them
+        offsetWithInts = startingOffset + (numIntsPerSection * 4);
 
-      // fill in the extended header information for the floats
-      photosensorReading =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts, 4, little));
-      timeStampSeconds =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 4, 4, little));
-      stageXCoord =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 8, 4, little));
-      stageYCoord =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 12, 4, little));
-      stageZCoord =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 16, 4, little));
-      minInten =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 20, 4, little));
-      maxInten =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 24, 4, little));
-      meanInten =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 28, 4, little));
-      expTime =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 32, 4, little));
-      ndFilter = (float) Math.pow(10.0, -oDFilter);
-      exFilter =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 40, 4, little));
-      emFilter =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 44, 4, little));
-      exWavelen =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 48, 4, little));
-      emWavelen =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 52, 4, little));
-      intenScaling =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 56, 4, little));
-      energyConvFactor =
-        Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 60, 4, little));
+        // DV files store the ND (neuatral density) Filter 
+        // (normally expressed as a %T (transmittance)) as an OD 
+        // (optical density) rating.
+        // To convert from one to the other the formula is %T = 10^(-OD) X 100.
+        ext.seek(offsetWithInts + 36);
+        oDFilter = ext.readFloat();
+
+        // fill in the extended header information for the floats
+        ext.seek(offsetWithInts); 
+        photosensorReading = ext.readFloat(); 
+        timeStampSeconds = ext.readFloat(); 
+        stageXCoord = ext.readFloat(); 
+        stageYCoord = ext.readFloat();
+        stageZCoord = ext.readFloat();
+        minInten = ext.readFloat(); 
+        maxInten = ext.readFloat(); 
+        meanInten = ext.readFloat();
+        expTime = ext.readFloat(); 
+        ndFilter = (float) Math.pow(10.0, -oDFilter);
+        ext.skipBytes(4); 
+     
+        exFilter = ext.readFloat();
+        emFilter = ext.readFloat();
+        exWavelen = ext.readFloat();  
+        emWavelen = ext.readFloat();
+        intenScaling = ext.readFloat();
+        energyConvFactor = ext.readFloat(); 
+      }
+      catch (IOException e) {
+        LogTools.trace(e);
+      }
     }
 
     /** Various getters for the Extended header fields. */

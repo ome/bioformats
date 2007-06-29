@@ -62,7 +62,6 @@ public class MRCReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bpp];
     return openBytes(no, buf);
   }
@@ -85,7 +84,6 @@ public class MRCReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], 1, true, bpp, core.littleEndian[0]);
   }
@@ -123,6 +121,7 @@ public class MRCReader extends FormatReader {
         core.pixelType[0] = FormatTools.UINT8;
         break;
       case 1:
+      case 6:
         bpp = 2;
         core.pixelType[0] = FormatTools.UINT16;
         break;
@@ -139,10 +138,6 @@ public class MRCReader extends FormatReader {
         bpp = 8;
         isFloat = true;
         core.pixelType[0] = FormatTools.DOUBLE;
-        break;
-      case 6:
-        bpp = 2;
-        core.pixelType[0] = FormatTools.UINT16;
         break;
       case 16:
         bpp = 2;
@@ -169,72 +164,36 @@ public class MRCReader extends FormatReader {
     addMeta("Pixel size (Y)", "" + (ylen / my));
     addMeta("Pixel size (Z)", "" + (zlen / mz));
 
-    float alpha = in.readFloat();
-    float beta = in.readFloat();
-    float gamma = in.readFloat();
-
-    addMeta("Alpha angle", "" + alpha);
-    addMeta("Beta angle", "" + beta);
-    addMeta("Gamma angle", "" + gamma);
+    addMeta("Alpha angle", "" + in.readFloat());
+    addMeta("Beta angle", "" + in.readFloat());
+    addMeta("Gamma angle", "" + in.readFloat());
 
     in.skipBytes(12);
 
     // min, max and mean pixel values
 
-    float min = in.readFloat();
-    float max = in.readFloat();
-    float mean = in.readFloat();
-
-    addMeta("Minimum pixel value", "" + min);
-    addMeta("Maximum pixel value", "" + max);
-    addMeta("Mean pixel value", "" + mean);
+    addMeta("Minimum pixel value", "" + in.readFloat());
+    addMeta("Maximum pixel value", "" + in.readFloat());
+    addMeta("Mean pixel value", "" + in.readFloat());
 
     in.skipBytes(4);
 
     extHeaderSize = in.readInt();
-    int creator = in.readShort();
-
-    in.skipBytes(30);
-
-    int nint = in.readShort();
-    int nreal = in.readShort();
-
-    in.skipBytes(28);
+     
+    in.skipBytes(64);
 
     int idtype = in.readShort();
-    int lens = in.readShort();
-    int nd1 = in.readShort();
-    int nd2 = in.readShort();
-    int vd1 = in.readShort();
-    int vd2 = in.readShort();
 
-    String type = "";
-    switch (idtype) {
-      case 0:
-        type = "mono";
-        break;
-      case 1:
-        type = "tilt";
-        break;
-      case 2:
-        type = "tilts";
-        break;
-      case 3:
-        type = "lina";
-        break;
-      case 4:
-        type = "lins";
-        break;
-      default:
-        type = "unknown";
-    }
+    String[] types = new String[] {"mono", "tilt", "tilts", "lina", "lins"};
+    String type = (idtype >= 0 && idtype < types.length) ? types[idtype] :
+      "unknown";
 
     addMeta("Series type", type);
-    addMeta("Lens", "" + lens);
-    addMeta("ND1", "" + nd1);
-    addMeta("ND2", "" + nd2);
-    addMeta("VD1", "" + vd1);
-    addMeta("VD2", "" + vd2);
+    addMeta("Lens", "" + in.readShort());
+    addMeta("ND1", "" + in.readShort());
+    addMeta("ND2", "" + in.readShort());
+    addMeta("VD1", "" + in.readShort());
+    addMeta("VD2", "" + in.readShort());
 
     float[] angles = new float[6];
     for (int i=0; i<angles.length; i++) {
@@ -247,10 +206,8 @@ public class MRCReader extends FormatReader {
     int nUsefulLabels = in.readInt();
     addMeta("Number of useful labels", "" + nUsefulLabels);
 
-    byte[] b = new byte[80];
     for (int i=0; i<10; i++) {
-      in.read(b);
-      addMeta("Label " + (i+1), new String(b));
+      addMeta("Label " + (i+1), in.readString(80));
     }
 
     in.skipBytes(extHeaderSize);

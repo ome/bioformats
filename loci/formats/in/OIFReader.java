@@ -48,9 +48,6 @@ public class OIFReader extends FormatReader {
   /** Helper reader to open the thumbnail. */
   protected BMPReader thumbReader;
 
-  /** Number of valid bits per pixel. */
-  protected int[] validBits;
-
   /** List of files in the current OIF dataset. */
   protected Vector usedFiles;
 
@@ -108,7 +105,7 @@ public class OIFReader extends FormatReader {
 
     BufferedImage b = tiffReader[no].openImage(0);
     ColorModel cm = ImageTools.makeColorModel(b.getRaster().getNumBands(),
-      b.getRaster().getTransferType(), validBits);
+      b.getRaster().getTransferType(), null);
     b = ImageTools.makeBuffered(b, cm);
     tiffReader[no].close();
     return b;
@@ -333,19 +330,12 @@ public class OIFReader extends FormatReader {
     status("Populating metadata");
 
     for (int i=0; i<9; i++) {
-      if (code[i].equals("\"X\"")) core.sizeX[0] = Integer.parseInt(size[i]);
-      else if (code[i].equals("\"Y\"")) {
-        core.sizeY[0] = Integer.parseInt(size[i]);
-      }
-      else if (code[i].equals("\"C\"")) {
-        core.sizeC[0] = Integer.parseInt(size[i]);
-      }
-      else if (code[i].equals("\"T\"")) {
-        core.sizeT[0] = Integer.parseInt(size[i]);
-      }
-      else if (code[i].equals("\"Z\"")) {
-        core.sizeZ[0] = Integer.parseInt(size[i]);
-      }
+      int ss = Integer.parseInt(size[i]); 
+      if (code[i].equals("\"X\"")) core.sizeX[0] = ss;
+      else if (code[i].equals("\"Y\"")) core.sizeY[0] = ss; 
+      else if (code[i].equals("\"C\"")) core.sizeC[0] = ss; 
+      else if (code[i].equals("\"T\"")) core.sizeT[0] = ss; 
+      else if (code[i].equals("\"Z\"")) core.sizeZ[0] = ss; 
     }
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
@@ -393,26 +383,6 @@ public class OIFReader extends FormatReader {
       default:
         throw new RuntimeException(
           "Unknown matching for pixel depth of: " + imageDepth);
-    }
-
-    validBits = new int[core.sizeC[0]];
-    if (validBits.length == 2) validBits = new int[3];
-    for (int i=0; i<validBits.length; i++) {
-      s = (String) getMeta("[Reference Image Parameter] - ValidBitCounts");
-      if (s != null) {
-        validBits[i] = Integer.parseInt(s);
-      }
-      else {
-        i = validBits.length;
-      }
-    }
-
-    int len = validBits.length;
-    for (int i=0; i<len; i++) {
-      if (validBits[i] == 0) {
-        validBits = null;
-        break;
-      }
     }
 
     core.rgb[0] = tiffReader[0].isRGB();

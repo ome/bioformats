@@ -92,7 +92,6 @@ public class ImarisReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], 1, false);
   }
@@ -136,10 +135,7 @@ public class ImarisReader extends FormatReader {
     addMeta("Version", new Integer(version));
     in.readInt();
 
-    byte[] name = new byte[128];
-    in.read(name);
-    String iName = new String(name);
-    addMeta("Image name", iName);
+    addMeta("Image name", in.readString(128));
 
     core.sizeX[0] = in.readShort();
     core.sizeY[0] = in.readShort();
@@ -150,20 +146,14 @@ public class ImarisReader extends FormatReader {
     core.sizeC[0] = in.readInt();
     in.skipBytes(2);
 
-    byte[] date = new byte[32];
-    in.read(date);
-    String origDate = new String(date);
-    addMeta("Original date", origDate);
+    addMeta("Original date", in.readString(32));
 
     float dx = in.readFloat();
     float dy = in.readFloat();
     float dz = in.readFloat();
     int mag = in.readShort();
 
-    byte[] com = new byte[128];
-    in.read(com);
-    String comment = new String(com);
-    addMeta("Image comment", comment);
+    addMeta("Image comment", in.readString(128));
     int isSurvey = in.readInt();
     addMeta("Survey performed", isSurvey == 0 ? "true" : "false");
 

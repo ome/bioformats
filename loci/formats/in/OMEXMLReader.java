@@ -113,7 +113,6 @@ public class OMEXMLReader extends FormatReader {
     }
     data = null;
 
-    //byte[] pixels = Compression.base64Decode(pix);
     Base64Codec e = new Base64Codec();
     byte[] pixels = e.base64Decode(pix);
     pix = null;
@@ -197,7 +196,8 @@ public class OMEXMLReader extends FormatReader {
           int ndx = test.indexOf("BigEndian");
           if (ndx != -1) {
             found = true;
-            String endian = test.substring(ndx + 11);
+            String endian = test.substring(ndx + 11).trim();
+            if (endian.startsWith("\"")) endian = endian.substring(1);
             endianness.add(new Boolean(!endian.toLowerCase().startsWith("t")));
             bigEndianPos.add(new Long(in.getFilePointer() - read - 9 + ndx));
             numDatasets++;

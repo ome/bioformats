@@ -111,9 +111,6 @@ public class OIBReader extends FormatReader {
   /** Vector containing T indices. */
   private Vector[] tIndices;
 
-  /** Number of valid bits per pixel. */
-  private int[][] validBits;
-
   private Vector rgb;
 
   /** Axis data. */
@@ -147,8 +144,7 @@ public class OIBReader extends FormatReader {
       getRGBChannelCount());
 
     return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series],
-      getRGBChannelCount(), false, bytes, core.littleEndian[series],
-      validBits[series]);
+      getRGBChannelCount(), false, bytes, core.littleEndian[series]);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -317,8 +313,6 @@ public class OIBReader extends FormatReader {
 
       core = new CoreMetadata(numSeries);
 
-      validBits = new int[numSeries][];
-
       for (int i=0; i<numSeries; i++) {
         core.sizeX[i] = ((Integer) width.get(i)).intValue();
         core.sizeY[i] = ((Integer) height.get(i)).intValue();
@@ -393,20 +387,6 @@ public class OIBReader extends FormatReader {
         nImages.setElementAt(new Integer(core.imageCount[i]), i);
         setSeries(oldSeries);
 
-        validBits[i] = new int[core.sizeC[i] == 2 ? 3 : core.sizeC[i]];
-        int vb = 0;
-        Enumeration k = metadata.keys();
-        while (k.hasMoreElements()) {
-          String key = k.nextElement().toString();
-          if (key.indexOf("ValidBitCounts") != -1) {
-            vb = Integer.parseInt((String) getMeta(key));
-          }
-        }
-        if (vb > 0) {
-          for (int j=0; j<validBits[i].length; j++) validBits[i][j] = vb;
-        }
-        else validBits[i] = null;
-
         core.rgb[i] = ((Boolean) rgb.get(i)).booleanValue();
         core.interleaved[i] = false;
       }
@@ -456,19 +436,10 @@ public class OIBReader extends FormatReader {
 
     for (int i=0; i<width.size(); i++) {
       switch (((Integer) bpp.get(0)).intValue() % 3) {
-        case 0:
-        case 1:
-          core.pixelType[i] = FormatTools.UINT8;
-          break;
         case 2:
           core.pixelType[i] = FormatTools.UINT16;
           break;
-        case 4:
-          core.pixelType[i] = FormatTools.UINT32;
-          break;
-        default:
-          throw new RuntimeException(
-            "Unknown matching for pixel byte width of: " + bpp);
+        default: core.pixelType[i] = FormatTools.UINT8; 
       }
 
       String acquisition = "[Acquisition Parameters Common] - ";

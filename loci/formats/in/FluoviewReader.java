@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
@@ -58,12 +59,14 @@ public class FluoviewReader extends BaseTiffReader {
   /** Pixel dimensions for this file. */
   private float voxelX = 0f, voxelY = 0f, voxelZ = 0f, voxelC = 0f, voxelT = 0f;
 
+  /** First image. */
+  private BufferedImage zeroImage = null;
+
   // -- Constructor --
 
   /** Constructs a new Fluoview TIFF reader. */
   public FluoviewReader() {
-    super("Olympus Fluoview/Andor Bio-imaging TIFF",
-      new String[] {"tif", "tiff"});
+    super("Olympus Fluoview/ABD TIFF", new String[] {"tif", "tiff"});
   }
 
   // -- IFormatReader API methods --
@@ -95,6 +98,53 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
     return false;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
+      return super.openBytes(no);
+    } 
+    return openBytes(no, new byte[core.sizeX[0] * 
+      FormatTools.getBytesPerPixel(core.pixelType[0])]); 
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
+      return super.openBytes(no, buf);
+    } 
+    FormatTools.assertId(currentId, false, 1);
+    if (no < 0 || no >= core.imageCount[0]) {
+      throw new FormatException("Invalid image number: " + no);
+    } 
+    if (buf.length < core.sizeX[0] * 
+      FormatTools.getBytesPerPixel(core.pixelType[0])) 
+    {
+      throw new FormatException("Buffer too small.");
+    }
+  
+    byte[] b = super.openBytes(0);
+    System.arraycopy(b, 0, buf, 0, buf.length);
+    return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
+      return super.openImage(no);
+    } 
+    
+    if (zeroImage == null) zeroImage = super.openImage(0);
+    return zeroImage.getSubimage(0, no, core.sizeX[0], 1); 
+  }
+
+  /* @see loci.formats.IFormatReader#close() */
+  public void close() throws IOException {
+    super.close();
+    zeroImage = null;
   }
 
   // -- IFormatHandler API methods --
@@ -137,9 +187,7 @@ public class FluoviewReader extends BaseTiffReader {
     put("Header Flag", ras.readShort());
     put("Image Type", (char) ras.read());
 
-    byte[] nameBytes = new byte[257];
-    ras.read(nameBytes);
-    put("Image name", new String(nameBytes));
+    put("Image name", ras.readString(257));
 
     ras.skipBytes(4); // skip pointer to data field
 
@@ -151,24 +199,20 @@ public class FluoviewReader extends BaseTiffReader {
     ras.skipBytes(4); // skip pointer to comment field
 
     // read dimension information
-    byte[] dimNameBytes = new byte[16];
-    byte[] dimCalibrationUnits = new byte[64];
     String[] names = new String[10];
     int[] sizes = new int[10];
     double[] resolutions = new double[10];
     for (int i=0; i<10; i++) {
-      ras.read(dimNameBytes);
-      names[i] = new String(dimNameBytes);
+      names[i] = ras.readString(16);
       sizes[i] = ras.readInt();
       double origin = ras.readDouble();
       resolutions[i] = ras.readDouble();
-      ras.read(dimCalibrationUnits);
 
       put("Dimension " + (i+1) + " Name", names[i]);
       put("Dimension " + (i+1) + " Size", sizes[i]);
       put("Dimension " + (i+1) + " Origin", origin);
       put("Dimension " + (i+1) + " Resolution", resolutions[i]);
-      put("Dimension " + (i+1) + " Units", new String(dimCalibrationUnits));
+      put("Dimension " + (i+1) + " Units", ras.readString(64));
     }
 
     ras.skipBytes(4); // skip pointer to spatial position data
@@ -185,13 +229,11 @@ public class FluoviewReader extends BaseTiffReader {
     put("Offset", ras.readDouble());
 
     // read gray channel data
-    ras.read(dimNameBytes);
-    put("Gray Channel Name", new String(dimNameBytes));
+    put("Gray Channel Name", ras.readString(16));
     put("Gray Channel Size", ras.readInt());
     put("Gray Channel Origin", ras.readDouble());
     put("Gray Channel Resolution", ras.readDouble());
-    ras.read(dimCalibrationUnits);
-    put("Gray Channel Units", new String(dimCalibrationUnits));
+    put("Gray Channel Units", ras.readString(64));
 
     ras.skipBytes(4); // skip pointer to thumbnail data
 
@@ -266,6 +308,14 @@ public class FluoviewReader extends BaseTiffReader {
 
     core.imageCount[0] = ifds.length;
 
+    if (core.imageCount[0] == 1 && (core.sizeT[0] == core.sizeY[0] || 
+      core.sizeZ[0] == core.sizeY[0]) && (core.sizeT[0] > core.imageCount[0] ||
+      core.sizeZ[0] > core.imageCount[0])) 
+    {
+      core.sizeY[0] = 1;
+      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * core.sizeC[0];
+    } 
+    
     // cut up the comment, if necessary
     String comment = (String) getMeta("Comment");
 

@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
@@ -39,26 +38,16 @@ public class GIFReader extends FormatReader {
 
   // -- Constants --
 
-  /** Status codes. */
-  private static final int STATUS_OK = 0;
-  private static final int STATUS_FORMAT_ERROR = 1;
-  private static final int STATUS_OPEN_ERROR = 2;
-
   /** Maximum buffer size. */
   private static final int MAX_STACK_SIZE = 4096;
 
   // -- Fields --
-
-  private int status;
 
   /** Global color table used. */
   private boolean gctFlag;
 
   /** Size of global color table. */
   private int gctSize;
-
-  /** Iterations; 0 = repeat forever. */
-  private int loopCount;
 
   /** Global color table. */
   private int[] gct;
@@ -75,12 +64,6 @@ public class GIFReader extends FormatReader {
   /** Background color. */
   private int bgColor;
 
-  /** Previous bg color. */
-  private int lastBgColor;
-
-  /** Pixel aspect ratio. */
-  private int pixelAspect;
-
   /** Local color table flag. */
   private boolean lctFlag;
 
@@ -93,9 +76,6 @@ public class GIFReader extends FormatReader {
   /** Current image rectangle. */
   private int ix, iy, iw, ih;
 
-  /** Last image rectangle. */
-  private Rectangle lastRect;
-
   /** Current data block. */
   private byte[] dBlock = new byte[256];
 
@@ -107,9 +87,6 @@ public class GIFReader extends FormatReader {
 
   /** Use transparent color. */
   private boolean transparency = false;
-
-  /** Delay in ms. */
-  private int delay = 0;
 
   /** Transparent color index. */
   private int transIndex;
@@ -126,7 +103,7 @@ public class GIFReader extends FormatReader {
 
   /** Constructs a new GIF reader. */
   public GIFReader() {
-    super("Graphics Interchange Format (GIF)", "gif");
+    super("Graphics Interchange Format", "gif");
   }
 
   // -- IFormatReader API methods --
@@ -154,6 +131,15 @@ public class GIFReader extends FormatReader {
     }
 
     int[] ints = (int[]) images.get(no);
+    if (no > 0) {
+      int[] prev = (int[]) images.get(no - 1); 
+      for (int i=0; i<ints.length; i++) {
+        if ((ints[i] & 0x00ffffff) == 0) {
+          ints[i] = prev[i];
+        }
+      }
+      images.setElementAt(ints, no); 
+    }
 
     for (int i=0; i<ints.length; i++) {
       buf[i] = (byte) ((ints[i] & 0xff0000) >> 16);
@@ -182,13 +168,11 @@ public class GIFReader extends FormatReader {
 
     status("Verifying GIF format");
 
-    status = STATUS_OK;
     in = new RandomAccessStream(id);
+    in.order(true);
     images = new Vector();
 
-    byte[] buf = new byte[6];
-    in.read(buf);
-    String ident = new String(buf);
+    String ident = in.readString(6);
 
     if (!ident.startsWith("GIF")) {
       throw new FormatException("Not a valid GIF file.");
@@ -196,19 +180,19 @@ public class GIFReader extends FormatReader {
 
     status("Reading dimensions");
 
-    core.sizeX[0] = DataTools.read2UnsignedBytes(in, true);
-    core.sizeY[0] = DataTools.read2UnsignedBytes(in, true);
+    core.sizeX[0] = in.readShort();
+    core.sizeY[0] = in.readShort();
 
-    int packed = DataTools.readUnsignedByte(in);
+    int packed = in.read() & 0xff;
     gctFlag = (packed & 0x80) != 0;
     gctSize = 2 << (packed & 7);
-    bgIndex = DataTools.readUnsignedByte(in);
-    pixelAspect = DataTools.readUnsignedByte(in);
+    bgIndex = in.read() & 0xff;
+    in.skipBytes(1); 
 
     if (gctFlag) {
       int nbytes = 3 * gctSize;
       byte[] c = new byte[nbytes];
-      int n = in.read(c);
+      in.read(c);
 
       gct = new int[256];
       int i = 0;
@@ -228,15 +212,15 @@ public class GIFReader extends FormatReader {
 
     boolean done = false;
     while (!done) {
-      int code = DataTools.readUnsignedByte(in);
+      int code = in.read() & 0xff;
       switch (code) {
         case 0x2c: // image separator:
-          ix = DataTools.read2UnsignedBytes(in, true);
-          iy = DataTools.read2UnsignedBytes(in, true);
-          iw = DataTools.read2UnsignedBytes(in, true);
-          ih = DataTools.read2UnsignedBytes(in, true);
-
-          packed = DataTools.readUnsignedByte(in);
+          ix = in.readShort();
+          iy = in.readShort();
+          iw = in.readShort();
+          ih = in.readShort();
+          
+          packed = in.read();
           lctFlag = (packed & 0x80) != 0;
           interlace = (packed & 0x40) != 0;
           lctSize = 2 << (packed & 7);
@@ -289,22 +273,20 @@ public class GIFReader extends FormatReader {
           if (transparency) act[transIndex] = save;
 
           lastDispose = dispose;
-          lastRect = new Rectangle(ix, iy, iw, ih);
-          lastBgColor = bgColor;
           lct = null;
 
           break;
         case 0x21: // extension
-          code = DataTools.readUnsignedByte(in);
+          code = in.read() & 0xff;
           switch (code) {
             case 0xf9: // graphics control extension
-              in.read();
-              packed = DataTools.readUnsignedByte(in);
+              in.skipBytes(1); 
+              packed = in.read() & 0xff;
               dispose = (packed & 0x1c) >> 1;
               transparency = (packed & 1) != 0;
-              delay = DataTools.read2UnsignedBytes(in, true) * 10;
-              transIndex = DataTools.readUnsignedByte(in);
-              in.read();
+              in.skipBytes(2); 
+              transIndex = in.read() & 0xff;
+              in.skipBytes(1); 
               break;
             case 0xff:  // application extension
               if (readBlock() == -1) {
@@ -319,7 +301,6 @@ public class GIFReader extends FormatReader {
                   if (dBlock[0] == 0x03) {
                     int b1 = ((int) dBlock[1]) & 0xff;
                     int b2 = ((int) dBlock[2]) & 0xff;
-                    loopCount = (b2 << 8) | b1;
                   }
                 }
                 while (blockSize > 0 && check != -1);
@@ -380,7 +361,7 @@ public class GIFReader extends FormatReader {
   /** Reads the next variable length block. */
   private int readBlock() throws IOException {
     if (in.getFilePointer() == in.length()) return -1;
-    blockSize = DataTools.readUnsignedByte(in);
+    blockSize = in.read() & 0xff;
     int n = 0;
     int count;
 
@@ -412,8 +393,8 @@ public class GIFReader extends FormatReader {
     if (pixelStack == null) pixelStack = new byte[MAX_STACK_SIZE + 1];
 
     // initialize GIF data stream decoder
-
-    dataSize = DataTools.readUnsignedByte(in);
+    
+    dataSize = in.read() & 0xff;
 
     clear = 1 << dataSize;
     eoi = clear + 1;
@@ -421,7 +402,7 @@ public class GIFReader extends FormatReader {
     oldCode = nullCode;
     codeSize = dataSize + 1;
     codeMask = (1 << codeSize) - 1;
-    for (code=0; code < clear; code++) {
+    for (code=0; code<clear; code++) {
       prefix[code] = 0;
       suffix[code] = (byte) code;
     }

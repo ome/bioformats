@@ -143,11 +143,6 @@ public class IPWReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
     byte[] b = openBytes(no);
     int bytes = b.length / (core.sizeX[0] * core.sizeY[0]);
     return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0],
@@ -290,9 +285,6 @@ public class IPWReader extends BaseTiffReader {
       else core.currentOrder[0] += "TZ";
     }
 
-    // TODO : look into removing this logic, as it appears to be copied directly
-    // from BaseTiffReader
-
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);
     int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
@@ -373,6 +365,8 @@ public class IPWReader extends BaseTiffReader {
       noPOI = true;
       if (debug) trace(t);
     }
+  
+    core.interleaved[0] = true; 
   }
 
   // -- Helper methods --
@@ -407,6 +401,9 @@ public class IPWReader extends BaseTiffReader {
         r.setVar("data", data);
         r.exec("dis.read(data)");
 
+        RandomAccessStream ds = new RandomAccessStream(data);
+        ds.order(true);
+
         String entryName = (String) r.getVar("entryName");
         String dirName = (String) r.getVar("dirName");
 
@@ -419,13 +416,12 @@ public class IPWReader extends BaseTiffReader {
         else if (entryName.equals("FrameRate")) {
           // should always be exactly 4 bytes
           // only exists if the file has more than one image
-          addMeta("Frame Rate", new Long(DataTools.bytesToInt(data, true)));
+          addMeta("Frame Rate", new Long(ds.readInt()));
         }
         else if (entryName.equals("FrameInfo")) {
           // should always be 16 bytes (if present)
           for(int i=0; i<data.length/2; i++) {
-            addMeta("FrameInfo "+i,
-              new Short(DataTools.bytesToShort(data, i*2, true)));
+            addMeta("FrameInfo "+i, new Short(ds.readShort()));
           }
         }
         else if (entryName.equals("ImageInfo")) {
@@ -448,10 +444,10 @@ public class IPWReader extends BaseTiffReader {
           names.put(imageNum, entryName);
           core.imageCount[0]++;
         }
+        ds.close(); 
         r.exec("dis.close()");
         if (debug) {
-          print(depth + 1, ((byte[])
-            r.getVar("data")).length + " bytes read.");
+          print(depth + 1, data.length + " bytes read.");
         }
       }
     }

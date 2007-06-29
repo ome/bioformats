@@ -57,17 +57,11 @@ public class LIFReader extends FormatReader {
   /** Extra dimensions. */
   private int[] extraDimensions;
 
-  /** Number of valid bits per pixel */
-  private int[][] validBits;
-
   private int bpp;
   private Vector xcal;
   private Vector ycal;
   private Vector zcal;
   private Vector seriesNames;
-
-  private Vector channelMins;
-  private Vector channelMaxs;
 
   // -- Constructor --
 
@@ -118,10 +112,9 @@ public class LIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no), core.sizeX[series],
-      core.sizeY[series], isRGB() ? core.sizeC[series] : 1, false, bpp / 8,
-      core.littleEndian[series], validBits[series]);
+      core.sizeY[series], getRGBChannelCount(), false, bpp / 8,
+      core.littleEndian[series]);
   }
 
   // -- Internal FormatReader API methods --
@@ -134,12 +127,11 @@ public class LIFReader extends FormatReader {
     offsets = new Vector();
 
     core.littleEndian[0] = true;
+    in.order(core.littleEndian[0]);
 
     xcal = new Vector();
     ycal = new Vector();
     zcal = new Vector();
-    channelMins = new Vector();
-    channelMaxs = new Vector();
 
     // read the header
 
@@ -162,15 +154,13 @@ public class LIFReader extends FormatReader {
 
     // number of Unicode characters in the XML block
 
-    int nc = DataTools.read4SignedBytes(in, core.littleEndian[0]);
-    byte[] s = new byte[nc * 2];
-    in.read(s);
-    String xml = DataTools.stripString(new String(s));
+    int nc = in.readInt();
+    String xml = DataTools.stripString(in.readString(nc * 2));
 
     status("Finding image offsets");
 
     while (in.getFilePointer() < in.length()) {
-      if (DataTools.read4SignedBytes(in, core.littleEndian[0]) != 0x70) {
+      if (in.readInt() != 0x70) {
         throw new FormatException("Invalid Memory Block");
       }
 
@@ -179,14 +169,13 @@ public class LIFReader extends FormatReader {
         throw new FormatException("Invalid Memory Description");
       }
 
-      int blockLength = DataTools.read4SignedBytes(in, core.littleEndian[0]);
+      int blockLength = in.readInt();
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
       }
 
-      int descrLength = DataTools.read4SignedBytes(in, core.littleEndian[0]);
-      byte[] memDescr = new byte[2*descrLength];
-      in.read(memDescr);
+      int descrLength = in.readInt();
+      in.skipBytes(descrLength * 2); 
 
       if (blockLength > 0) {
         offsets.add(new Long(in.getFilePointer()));
@@ -358,14 +347,6 @@ public class LIFReader extends FormatReader {
               numChannels++;
               if (numChannels == 1) {
                 bps.add(new Integer((String) tmp.get("Resolution")));
-                String sMin = (String) tmp.get("Min");
-                String sMax = (String) tmp.get("Max");
-                if (sMin != null && sMax != null) {
-                  double min = Double.parseDouble(sMin);
-                  double max = Double.parseDouble(sMax);
-                  channelMins.add(new Integer((int) min));
-                  channelMaxs.add(new Integer((int) max));
-                }
               }
             }
             else if (tmp.get("DimensionDescription DimID") != null) {
@@ -432,7 +413,6 @@ public class LIFReader extends FormatReader {
 
     core = new CoreMetadata(numDatasets);
     Arrays.fill(core.orderCertain, true);
-    validBits = new int[numDatasets][];
 
     for (int i=0; i<numDatasets; i++) {
       core.sizeX[i] = ((Integer) widths.get(i)).intValue();
@@ -457,11 +437,6 @@ public class LIFReader extends FormatReader {
       core.interleaved[i] = true;
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
       if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
-
-      validBits[i] = new int[core.sizeC[i] != 2 ? core.sizeC[i] : 3];
-      for (int j=0; j<validBits[i].length; j++) {
-        validBits[i][j] = bitsPerPixel[i];
-      }
 
       while (bitsPerPixel[i] % 8 != 0) bitsPerPixel[i]++;
       switch (bitsPerPixel[i]) {

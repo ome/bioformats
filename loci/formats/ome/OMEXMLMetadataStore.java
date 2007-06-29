@@ -28,8 +28,7 @@ package loci.formats.ome;
 //import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import loci.formats.*;
@@ -95,45 +94,49 @@ public class OMEXMLMetadataStore implements MetadataStore {
     return null;
   }
 
-  /** Creates a new key/value pair. */
-  public void setOriginalMetadata(String key, String value) {
-    if (firstImageCA == null) { 
-      ImageNode image = (ImageNode) getChild(root, "Image", 0);
-      CustomAttributesNode ca = 
-        (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-      firstImageCA = ca.getDOMElement();
+  /** 
+   * Add each of the key/value pairs in the hashtable as a new
+   * OriginalMetadata node.
+   */
+  public void populateOriginalMetadata(Hashtable h) {
+    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    firstImageCA = ca.getDOMElement();
 
-      Vector original = DOMUtil.getChildElements("OriginalMetadata", 
-        ca.getDOMElement());
-      if (original.size() == 0) {
-        Element el = DOMUtil.createChild(root.getDOMElement(),
-          "SemanticTypeDefinitions");
-        OMEXMLNode node = OMEXMLNode.createNode(el);
-        node.setAttribute("xmlns",
-          "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd");
-        el = DOMUtil.createChild(el, "SemanticType");
-        node = OMEXMLNode.createNode(el);
-        node.setAttribute("Name", "OriginalMetadata");
-        node.setAttribute("AppliesTo", "I");
+    Vector original = DOMUtil.getChildElements("OriginalMetadata", 
+      ca.getDOMElement());
+    if (original.size() == 0) {
+      Element el = DOMUtil.createChild(root.getDOMElement(),
+        "SemanticTypeDefinitions");
+      OMEXMLNode node = OMEXMLNode.createNode(el);
+      node.setAttribute("xmlns",
+        "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd");
+      el = DOMUtil.createChild(el, "SemanticType");
+      node = OMEXMLNode.createNode(el);
+      node.setAttribute("Name", "OriginalMetadata");
+      node.setAttribute("AppliesTo", "I");
 
-        Element nameElement = DOMUtil.createChild(el, "Element");
-        OMEXMLNode nameNode = OMEXMLNode.createNode(nameElement);
-        nameNode.setAttribute("Name", "name");
-        nameNode.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME");
-        nameNode.setAttribute("DataType", "string");
+      Element nameElement = DOMUtil.createChild(el, "Element");
+      OMEXMLNode nameNode = OMEXMLNode.createNode(nameElement);
+      nameNode.setAttribute("Name", "name");
+      nameNode.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME");
+      nameNode.setAttribute("DataType", "string");
 
-        Element valueElement = DOMUtil.createChild(el, "Element");
-        OMEXMLNode valueNode = OMEXMLNode.createNode(valueElement);
-        valueElement.setAttribute("Name", "value");
-        valueElement.setAttribute("DBLocation", "ORIGINAL_METADATA.VALUE");
-        valueElement.setAttribute("DataType", "string");
-      }
+      Element valueElement = DOMUtil.createChild(el, "Element");
+      OMEXMLNode valueNode = OMEXMLNode.createNode(valueElement);
+      valueElement.setAttribute("Name", "value");
+      valueElement.setAttribute("DBLocation", "ORIGINAL_METADATA.VALUE");
+      valueElement.setAttribute("DataType", "string");
     }
 
-    Element el = DOMUtil.createChild(firstImageCA, "OriginalMetadata");
-    OMEXMLNode node = new AttributeNode(el);
-    node.setAttribute("name", key);
-    node.setAttribute("value", value);
+    Object[] keys = h.keySet().toArray();
+    for (int i=0; i<h.size(); i++) {
+      Element el = DOMUtil.createChild(firstImageCA, "OriginalMetadata");
+      OMEXMLNode node = new AttributeNode(el);
+      node.setAttribute("name", keys[i].toString());
+      node.setAttribute("value", h.get(keys[i]).toString());
+    } 
   }
 
   // -- OMEXMLMetadataStore methods - individual attribute retrieval --

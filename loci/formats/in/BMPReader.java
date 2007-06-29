@@ -120,7 +120,7 @@ public class BMPReader extends FormatReader {
       if (core.sizeC[0] == 1) {
         for (int y=core.sizeY[0]-1; y>=0; y--) {
           for (int x=0; x<core.sizeX[0]; x++) {
-            buf[y*core.sizeX[0] + x] = (byte) in.read();
+            buf[y*core.sizeX[0] + x] = (byte) (in.read() & 0xff);
           }
         }
       }
@@ -128,11 +128,10 @@ public class BMPReader extends FormatReader {
         for (int y=core.sizeY[0]-1; y>=0; y--) {
           for (int x=0; x<core.sizeX[0]; x++) {
             int off = y*core.sizeX[0] + x; 
-            buf[2*core.sizeX[0]*core.sizeY[0] + off] = (byte) in.read();
-            buf[core.sizeX[0]*core.sizeY[0] + off] = (byte) in.read();
-            buf[off] = (byte) in.read();
+            buf[2*core.sizeX[0]*core.sizeY[0] + off] = (byte)(in.read() & 0xff);
+            buf[core.sizeX[0]*core.sizeY[0] + off] = (byte) (in.read() & 0xff);
+            buf[off] = (byte) (in.read() & 0xff);
           }
-          in.skipBytes(2); 
         }
       }
     }
@@ -160,9 +159,7 @@ public class BMPReader extends FormatReader {
 
     // read the first header - 14 bytes
 
-    byte[] two = new byte[2];
-    in.read(two);
-    addMeta("Magic identifier", new String(two));
+    addMeta("Magic identifier", in.readString(2));
 
     addMeta("File size (in bytes)", "" + in.readInt());
     in.skipBytes(4); // reserved
@@ -225,7 +222,7 @@ public class BMPReader extends FormatReader {
 
       for (int i=0; i<nColors; i++) {
         for (int j=palette.length; j>0; j--) {
-          palette[j][i] = (byte) in.read();
+          palette[j][i] = (byte) (in.read() & 0xff);
         }
         in.read();
       }

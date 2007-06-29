@@ -94,7 +94,6 @@ public class OpenlabRawReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], core.sizeC[0], false, bytesPerPixel, false);
   }
@@ -149,9 +148,9 @@ public class OpenlabRawReader extends FormatReader {
     addMeta("Height", new Integer(core.sizeY[0]));
     addMeta("Bytes per pixel", new Integer(bytesPerPixel));
 
+    int plane = core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
     for (int i=1; i<core.imageCount[0]; i++) {
-      offsets[i] =
-        offsets[i-1] + 288 + core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
+      offsets[i] = offsets[i - 1] + 288 + plane;
     }
 
     core.sizeZ[0] = core.imageCount[0];
@@ -166,13 +165,11 @@ public class OpenlabRawReader extends FormatReader {
 
     switch (bytesPerPixel) {
       case 1:
+      case 3:  
         core.pixelType[0] = FormatTools.UINT8;
         break;
       case 2:
         core.pixelType[0] = FormatTools.UINT16;
-        break;
-      case 3:
-        core.pixelType[0] = FormatTools.INT8;
         break;
       default:
         core.pixelType[0] = FormatTools.FLOAT;

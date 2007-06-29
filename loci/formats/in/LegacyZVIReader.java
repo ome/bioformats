@@ -134,6 +134,7 @@ public class LegacyZVIReader extends FormatReader {
     if (debug) debug("LegacyZVIReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
+    in.order(true);
 
     // Highly questionable decoding strategy:
     //
@@ -225,9 +226,9 @@ public class LegacyZVIReader extends FormatReader {
       if (!ok) continue;
 
       // read potential header information
-      int theZ = (int) DataTools.read4UnsignedBytes(in, true);
-      int theC = (int) DataTools.read4UnsignedBytes(in, true);
-      int theT = (int) DataTools.read4UnsignedBytes(in, true);
+      int theZ = in.readInt();
+      int theC = in.readInt();
+      int theT = in.readInt();
       pos += 12;
 
       // these byte should be 00
@@ -286,38 +287,38 @@ public class LegacyZVIReader extends FormatReader {
       status("Reading image header");
 
       // read more header information
-      core.sizeX[0] = (int) DataTools.read4UnsignedBytes(in, true);
-      core.sizeY[0] = (int) DataTools.read4UnsignedBytes(in, true);
+      core.sizeX[0] = in.readInt();
+      core.sizeY[0] = in.readInt();
       // don't know what this is for
-      int alwaysOne = (int) DataTools.read4UnsignedBytes(in, true);
-      bytesPerPixel = (int) DataTools.read4UnsignedBytes(in, true);
+      int alwaysOne = in.readInt();
+      bytesPerPixel = in.readInt();
       // not clear what this value signifies
-      int pixType = (int) DataTools.read4UnsignedBytes(in, true);
+      int pixType = in.readInt(); 
       // doesn't always equal bytesPerPixel * 8
-      int bitDepth = (int) DataTools.read4UnsignedBytes(in, true);
+      int bitDepth = in.readInt(); 
       pos += 24;
 
       String type = "";
       switch (pixType) {
         case 1:
           type = "8 bit rgb tuple, 24 bpp";
-          core.pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 2:
           type = "8 bit rgb quad, 32 bpp";
-          core.pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 3:
           type = "8 bit grayscale";
-          core.pixelType[0] = FormatTools.INT8;
+          core.pixelType[0] = FormatTools.UINT8;
           break;
         case 4:
           type = "16 bit signed int, 16 bpp";
-          core.pixelType[0] = FormatTools.INT16;
+          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 5:
           type = "32 bit int, 32 bpp";
-          core.pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.UINT32;
           break;
         case 6:
           type = "32 bit float, 32 bpp";
@@ -329,11 +330,11 @@ public class LegacyZVIReader extends FormatReader {
           break;
         case 8:
           type = "16 bit unsigned short triple, 48 bpp";
-          core.pixelType[0] = FormatTools.INT16;
+          core.pixelType[0] = FormatTools.UINT16;
           break;
         case 9:
           type = "32 bit int triple, 96 bpp";
-          core.pixelType[0] = FormatTools.INT32;
+          core.pixelType[0] = FormatTools.UINT32;
           break;
         default:
           type = "undefined pixel type (" + pixType + ")";
@@ -356,9 +357,9 @@ public class LegacyZVIReader extends FormatReader {
       numI++;
       // sorry not a very clever way to find dimension order
 
-      if ((numI == 2) && (cSet.size() == 2))  cFlag = 1;
-      if ((numI == 2) && (zSet.size() == 2))  zFlag = 1;
-      if ((numI == 2) && (tSet.size() == 2))  tFlag = 1;
+      if ((numI == 2) && (cSet.size() == 2)) cFlag = 1;
+      if ((numI == 2) && (zSet.size() == 2)) zFlag = 1;
+      if ((numI == 2) && (tSet.size() == 2)) tFlag = 1;
 
       if ((numI % 3 == 0) && (zSet.size() > 1) && (cFlag == 1)) {
         core.currentOrder[0] = "XYCZT";
