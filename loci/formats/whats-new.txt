@@ -1,5 +1,5 @@
 2007 July 2:
-* Fixed issues with ND2 and Slidebook
+* Fixed issues with ND2, Openlab LIFF and Slidebook
 * Added support for Visitech XYS
 * Added composite stack support to ImageJ importer
 
