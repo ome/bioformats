@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="5" verbose="1" name="bftest" junit="false" annotations="Javadoc">
+  <test name="all" junit="false">
+    <groups>
+      <run>
+        <include name="all"/>
+      </run>
+    </groups>
+    <classes>
+      <class name="loci.formats.test.ReaderTest"/>
+    </classes>
+  </test>
+</suite>
