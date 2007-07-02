@@ -1,3 +1,8 @@
+2007 July 2:
+* Fixed issues with ND2 and Slidebook
+* Added support for Visitech XYS
+* Added composite stack support to ImageJ importer
+
 2007 June 18:
 * Fixed issues with ICS, ND2, MicroManager, Leica LEI, and FV1000 OIF
 * Added support for large (> 2 GB) ND2 files
