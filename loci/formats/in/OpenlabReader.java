@@ -272,7 +272,14 @@ public class OpenlabReader extends FormatReader {
           bytesPerPixel = 3;
         }
       }
-      else if (volumeType == MAC_256_GREYS) return b; 
+      else if (volumeType == MAC_256_GREYS) {
+        byte[] tmp = b;
+        b = new byte[core.sizeX[series] * core.sizeY[series]]; 
+        for (int y=0; y<core.sizeY[series]; y++) {
+          System.arraycopy(tmp, y*(core.sizeX[series] + 16), b, 
+            y*core.sizeX[series], core.sizeX[series]);
+        }
+      }
       else if (volumeType < MAC_24_BIT) {
         throw new FormatException("Unsupported image type : " + volumeType);
       }
@@ -621,6 +628,7 @@ public class OpenlabReader extends FormatReader {
     int oldSeries = getSeries();
     for (int i=0; i<bpp.length; i++) {
       setSeries(i);
+      if (core.sizeC[i] == 0) core.sizeC[i] = 1; 
       bpp[i] = openBytes(0).length / (core.sizeX[i] * core.sizeY[i]);
     }
     setSeries(oldSeries);
