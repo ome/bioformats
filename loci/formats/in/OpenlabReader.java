@@ -272,6 +272,7 @@ public class OpenlabReader extends FormatReader {
           bytesPerPixel = 3;
         }
       }
+      else if (volumeType == MAC_256_GREYS) return b; 
       else if (volumeType < MAC_24_BIT) {
         throw new FormatException("Unsupported image type : " + volumeType);
       }
