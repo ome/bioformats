@@ -29,7 +29,8 @@
 # Copyright (C) 2002-2007 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
-#       University of Dundee
+#       University of Dundee,
+#       University of Wisconsin at Madison
 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
@@ -97,7 +98,6 @@
 				<xsd:element ref="LogicalChannel" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="DisplayOptions" minOccurs="0"/>
 				<xsd:element ref="StageLabel" minOccurs="0"/>
-				<xsd:element ref="SPW:PlateRef" minOccurs="0"/>
 				<xsd:element ref="Pixels" maxOccurs="unbounded"/>
 				<xsd:element ref="AcquiredPixelsRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
@@ -136,7 +136,10 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Bin:BinData" maxOccurs="unbounded"/>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element ref="Bin:BinData"/>
+					<xsd:element ref="TiffData"/>
+				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PixelsID"/>
@@ -225,7 +228,57 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-		
+				
+	<xsd:element name="TiffData">
+		<xsd:annotation>
+			<xsd:documentation>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="IFD" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
+						Default is 0 (the first IFD).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstZ" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
+						Default is 0 (the first Z position).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstT" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the T position of the image plane at the specified IFD. Indexed from 0.
+						Default is 0 (the first T position).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstC" type="xsd:integer" default="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
+						Default is 0 (the first C position).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="NumPlanes" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
+						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
+						file, unless an IFD is specified, in which case the default is 1.	
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:element name="Plane">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -407,14 +460,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="LightSourceRef" minOccurs="0"/>
 				<xsd:element ref="OTFRef" minOccurs="0"/>
 				<xsd:element ref="DetectorRef" minOccurs="0"/>
-				<xsd:element ref="FilterRef" minOccurs="0"/>
+				<xsd:element ref="FilterSetRef" minOccurs="0"/>
 				<xsd:element ref="ChannelComponent" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="LogicalChannelID"/>
 			<xsd:attribute name="Name" type="xsd:string"/>
 			<xsd:attribute name="SamplesPerPixel" type="xsd:integer"/>
-			<xsd:attribute name="SecondaryEmmisionFilter" type="EmFilterID"/>
-			<xsd:attribute name="SecondaryExcitationFilter" type="ExFilterID"/>
+			<xsd:attribute name="SecondaryEmissionFilter" type="FilterID"/>
+			<xsd:attribute name="SecondaryExcitationFilter" type="FilterID"/>
 			<xsd:attribute name="IlluminationType">
 				<xsd:annotation><xsd:documentation>
 					Attribute is called Illumination in EA diagram - ajp
@@ -498,9 +551,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				RedChannel, GreenChannel, BlueChannel, and GreyChannel specify the scaling of pixel values to 8-bit colorspace values.
 				Display indicates to display the image as Greyscale or RGB.
 				The Projection element specifies that the display is a maximum intensity projection.
-				The range of Z-sections for the projection is specified with the Zstart and Zstop attributes.
+				The range of Z-sections for the projection is specified with the ZStart and ZStop attributes.
 				The Time element restricts the range of timepoints displayed.
-				The range of timepoints to display is specified by the Tstart and Tstop attributes.
+				The range of timepoints to display is specified by the TStart and TStop attributes.
 				The MIME type of the desired video format is specified by Movie's MIMEtype attribute.
 				The ROI element describes a 3-D region of interest.  It is up to the viewer to either display the ROI only,
 				or to simply mark it somehow.
@@ -587,13 +640,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The presence of this element indicates the user wants to view the Image as a maximum intensity projection.
-				The Zstart and Zstop attributes are optional.  If they are not specified, then the entire Z stack will be pro
+				The ZStart and ZStop attributes are optional.  If they are not specified, then the entire Z stack will be pro
  				z values are index from 0 to maxZ - 1
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="Zstart" type="xsd:integer"/>
-			<xsd:attribute name="Zstop" type="xsd:integer"/>
+			<xsd:attribute name="ZStart" type="xsd:integer"/>
+			<xsd:attribute name="ZStop" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Time">
@@ -607,8 +660,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="Tstart" type="xsd:integer"/>
-			<xsd:attribute name="Tstop" type="xsd:integer"/>
+			<xsd:attribute name="TStart" type="xsd:integer"/>
+			<xsd:attribute name="TStop" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Instrument">
@@ -635,7 +688,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="LightSource" maxOccurs="unbounded"/>
 				<xsd:element ref="Detector" maxOccurs="unbounded"/>
 				<xsd:element ref="Objective" maxOccurs="unbounded"/>
-				<xsd:element ref="Filter" maxOccurs="unbounded"/>
+				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="OTF" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
@@ -868,7 +923,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The Detector ID can be used as a reference within the LogicalChannel element in the Image element.
 				The Type attribute can be set to 'CCD','Intensified-CCD','Analog-Video','PMT','Photodiode','Spectroscopy','Life-time-Imaging','Correlation-Spectroscopy','FTIR'.
 				Added new types EM-CCD, APD, and CMOS - ajp
-				Added new optional attributes Amplification-Gain and Zoom - ajp
+				Added new optional attributes AmplificationGain and Zoom - ajp
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -878,7 +933,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					<xsd:attribute name="Voltage" type="xsd:float"/>
 					<xsd:attribute name="Offset" type="xsd:float"/>
 					<xsd:attribute name="Zoom" type="xsd:float"/>
-					<xsd:attribute name="Amplification-Gain" type="xsd:float"/>
+					<xsd:attribute name="AmplificationGain" type="xsd:float"/>
 					<xsd:attribute name="ID" use="required" type="DetectorID"/>
 					<xsd:attribute name="Type" use="required">
 						<xsd:simpleType>
@@ -1057,122 +1112,112 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:\S+)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:\S+:\S+)|(\S+:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProjectID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Project)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Project:\S+)|(Project:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DatasetID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Dataset)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Dataset:\S+)|(Dataset:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ImageID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Image)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Image:\S+)|(Image:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="RegionID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Region)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Region:\S+)|(Region:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ExperimenterID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Experimenter)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Experimenter:\S+)|(Experimenter:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="GroupID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Group)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Group:\S+)|(Group:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ExperimentID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Experiment)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Experiment:\S+)|(Experiment:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="MicrobeamManipulationID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:MicrobeamManipulation)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:MicrobeamManipulation:\S+)|(MicrobeamManipulation:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ROIID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ROI)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="InstrumentID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Instrument)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Instrument:\S+)|(Instrument:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ObjectiveID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Objective)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Objective:\S+)|(Objective:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ObjectiveSettingsID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ObjectiveSettings)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:ObjectiveSettings:\S+)|(ObjectiveSettings:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="LightSourceID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:LightSource)(:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="ExFilterID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:ExFilter)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:LightSource:\S+)|(LightSource:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DichroicID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Dichroic)(:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="EmFilterID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:EmFilter)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Dichroic:\S+)|(Dichroic:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="FilterID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Filter)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Filter:\S+)|(Filter:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="FilterSetID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:FilterSet)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:FilterSet:\S+)|(FilterSet:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="OTFID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:OTF)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:OTF:\S+)|(OTF:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DetectorID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Detector)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Detector:\S+)|(Detector:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PixelsID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Pixels)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Pixels:\S+)|(Pixels:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DisplayOptionsID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:DisplayOptions)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:DisplayOptions:\S+)|(DisplayOptions:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="LogicalChannelID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:LogicalChannel)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:LogicalChannel:\S+)|(LogicalChannel:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PixelTypes">
@@ -1192,7 +1237,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	</xsd:simpleType>
 	<xsd:simpleType name="ModuleID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:)?(\S+\.\S+)+(:Module)(:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:element name="ProjectRef">
@@ -1323,10 +1368,17 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Dichroic" type="FilterSpec">
+	<xsd:element name="Dichroic">
 		<xsd:annotation>
-			<xsd:documentation>The dichroic mirror used for this filter combination.</xsd:documentation>
+			<xsd:documentation>The dichromatic beamsplitter or dichroic mirror used for this filter combination.</xsd:documentation>
 		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="FilterSpec">
+					<xsd:attribute name="ID" use="required" type="DichroicID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="ROI">
 		<xsd:annotation>
@@ -1401,9 +1453,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:element name="OTF">
 		<xsd:annotation>
 			<xsd:documentation>
-				The optical transfer function.  Filter ID refers to the set of filters used in computing the OTF.
+				The optical transfer function. FilterSetRef refers to the set of filters used in computing the OTF.
 				BitsPerPixel is an integer '1', '8', '16'.
-				The OpticalAxisAvg is a boolean specifying wether or not optical axis averaging was done.
+				The OpticalAxisAveraged is a boolean specifying whether or not optical axis averaging was done.
 				SizeX, SizeY specify the width and height of the OTF.
 				This element must contain a BinData element containing the Base64-encoded OTF.
 				Both of these work the same way as they do for the Data element within Image.
@@ -1412,12 +1464,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="ObjectiveRef"/>
-				<xsd:element ref="FilterRef"/>
+				<xsd:element ref="FilterSetRef" minOccurs="0"/>
 				<xsd:element ref="Bin:BinaryFile"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
 			<xsd:attribute name="PixelType" use="required" type="PixelTypes"/>
-			<xsd:attribute name="OpticalAxisAvrg" use="required" type="xsd:boolean"/>
+			<xsd:attribute name="OpticalAxisAveraged" use="required" type="xsd:boolean"/>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger"/>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger"/>
 		</xsd:complexType>
@@ -1429,7 +1481,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				Images can belong to more than one Dataset, and a Dataset may contain more than one Image.
 				Images contain one or more DatasetRef elements to specify what datasets they belong to.
 				Once a Dataset has been processed in any way, its collection of images cannot be altered.
-				Wether or not the list of Images in this dataset can be altered is specified by the Locked attribute.
+				Whether or not the list of Images in this dataset can be altered is specified by the Locked attribute.
 				The ExperimenterRef and GroupRef elements specify the person and group this Dataset belongs to.
 				Projects may contain one or more Datasets, and Datasets may belong to one or more Projects.
 				This relationship is specified by listing ProjectRef elements within the Dataset element.
@@ -1527,12 +1579,12 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>
 				Laser types are specified using two attributes - the Type and the lasing medium (Medium).  Type is a string which may be set to:
 				'Excimer','Gas','Metal Vapor','Solid State','Dye','Semiconductor', or 'Free Electron'.  The Medium attribute specifies the actual lasing medium
-				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), wether or not the laser is FrequencyDoubled or Tunable may be specified.
+				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), whether or not the laser is FrequencyDoubled or Tuneable may be specified.
 				The Pulse attribute can be set to 'CW' (Continuous Wave),','Single','Q-Switched','Repetitive','Mode-Locked'.
 				The Power attribute specifies the nominal laser power in watts.
 				The Laser element may contain a Pump sub-element which refers to a LightSource used as a laser pump.
 				Removed Power - ajp
-				Added RepetitationRate - The is the rate in Hz at which the laser pulses. ajp
+				Added RepetitionRate - The is the rate in Hz at which the laser pulses. ajp
 				Added PockelCell attribute - ajp
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1556,7 +1608,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="LaserMedium" use="required" type="LaserMedia"/>
 			<xsd:attribute name="Wavelength" type="xsd:positiveInteger"/>
 			<xsd:attribute name="FrequencyMultiplication" type="xsd:positiveInteger"/>
-			<xsd:attribute name="Tunable" type="xsd:boolean"/>
+			<xsd:attribute name="Tuneable" type="xsd:boolean"/>
 			<xsd:attribute name="Pulse">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -1569,7 +1621,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="PockelCell" type="xsd:boolean"/>
-			<xsd:attribute name="RepetitationRate" type="xsd:boolean">
+			<xsd:attribute name="RepetitionRate" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>The is the rate in Hz at which the laser pulses if the Pulse type is 'Repetitive'
 					</xsd:documentation>
@@ -1628,11 +1680,11 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="FilterRef">
+	<xsd:element name="FilterSetRef">
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="FilterID"/>
+					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
