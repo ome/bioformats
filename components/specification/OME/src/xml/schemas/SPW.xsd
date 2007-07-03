@@ -15,15 +15,15 @@
     # Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/XMLschemas/SPW/2007-06" 
-    targetNamespace="http://www.openmicroscopy.org/XMLschemas/SPW/2007-06" 
-    xmlns:OME="http://www.openmicroscopy.org/XMLschemas/OME/2007-06" 
-    xmlns:AML="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/2007-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
+    targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
+    xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
+    xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     version="1" 
     elementFormDefault="qualified">
-    <xsd:import namespace="http://www.openmicroscopy.org/XMLschemas/OME/2007-06" schemaLocation="ome.xsd"/>
-    <xsd:import namespace="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/2007-06" schemaLocation="AnalysisModule.xsd"/>
+    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd"/>
+    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
 
     <xsd:annotation>
         <xsd:documentation>
