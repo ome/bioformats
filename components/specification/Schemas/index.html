@@ -1,0 +1,48 @@
+<?xml version='1.0'?>
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<head>
+        <title>Open Microscopy Environment Schemas</title>
+</head>
+<body>
+<h1>Open Microscopy Environment Schemas</h1>
+<div class="head">
+<p>4th July 2007</p>
+</div>
+<div id="toc">
+<h2>Table of contents</h2>
+	<ol>
+		<li><a href="#intro">Introduction</a></li>
+		<li><a href="#history">History</a></li>
+		<li><a href="#schema.list">Schemas</a></li>
+	</ol>
+</div>
+<div id="intro">
+<h2>Introduction</h2>
+<p>This document outlines the XML Schemas created by the Open Microscopy Environment Group. Detailed information on the schemas and future development plans are available at <a href="http://www.ome-xml.org/">http://www.ome-xml.org/</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+</p>
+</div>
+<div id="history">
+<h2>History</h2>
+<p>This document describes the current XML Schemas using the current version scheme. For information on the schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the origional OME server.
+</p>
+</div>
+<div id="schema.list">
+<h2>Schemas</h2>
+<p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
+<ul>
+	<li>AnalysisChain - June 2007 Version 1 [<a href="AnalysisChain/2007-06/AnalysisChain.xsd">AnalysisChain.xsd</a>]The Analysis Chain schema. Analysis chains are how module outputs are connected to inputs of other modules.</li>
+	<li>AnalysisModule - June 2007 Version 1 [<a href="AnalysisModule/2007-06/AnalysisModule.xsd">AnalysisModule.xsd</a>] The Analysis Module Library schema. Analysis modules are image analysis algorithms or, more generally, how information is generated in OME. Makes use of CLI and MLI schemas.</li>
+	<li>BinaryFile - June 2007 Version 1 [<a href="BinaryFile/2007-06/BinaryFile.xsd">BinaryFile.xsd</a>] The Binary File schema is used to describes a file location, or the location of a fragment within a file.</li>
+	<li>CA - June 2007 Version 1 [<a href="CA/2007-06/CA.xsd">CA.xsd</a>] The standard custom attribute schema.</li>
+	<li>CLI - June 2007 Version 1 [<a href="CLI/2007-06/CLI.xsd">CLI.xsd</a>]The Command Line Interface sub-schema.</li>
+	<li>DataHistory - June 2007 Version 1 [<a href="DataHistory/2007-06/DataHistory.xsd">DataHistory.xsd</a>]The Data History schema. Data history describes the data dependency in OME.</li>
+	<li>MLI - June 2007 Version 1 [<a href="MLI/2007-06/MLI.xsd">MLI.xsd</a>]The Matlab Interface sub-schema.</li>
+	<li>OME - June 2007 Version 1 [<a href="OME/2007-06/OME.xsd">OME.xsd</a>]  The main schema which defines the OME ontology for microscopy. This schema makes use of all of the others.</li>
+	<li>SPW - June 2007 Version 1 [<a href="SPW/2007-06/SPW.xsd">SPW.xsd</a>] Short Description</li>
+	<li>STD - June 2007 Version 1 [<a href="STD/2007-06/STD.xsd">STD.xsd</a>]The Semantic Type definition schema. Once a Semantic Type is defined, data for the defined type can be imported into the OME server.</li>
+</ul>
+</div>
+<hr/>
+</body>
+</html>
