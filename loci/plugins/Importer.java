@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins;
 
 import ij.*;
-import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.measure.Calibration;
 import ij.process.*;
@@ -552,7 +551,7 @@ public class Importer {
       plugin.success = true;
 
       options.savePreferences();
-
+  
       if (viewBrowser) {
         boolean first = true;
         for (int i=0; i<seriesCount; i++) {
@@ -728,24 +727,12 @@ public class Importer {
       int planes2 = r.getImageCount() / 3;
       if (planes2 * 3 < r.getImageCount()) planes2++;
 
-      GenericDialog gd = new GenericDialog("Merging Options...");
-      gd.addMessage("How would you like to merge this data?");
-      gd.addChoice("", new String[] {
-        planes1 + " planes, 2 channels per plane",
-        planes2 + " planes, 3 channels per plane", "Do not merge"}, "");
-      gd.showDialog();
-
-      if (gd.wasCanceled()) return;
-
-      int idx = gd.getNextChoiceIndex();
-
-      switch (idx) {
-        case 0:
-          makeRGB(imp, r, 2);
-          break;
-        case 1:
-          makeRGB(imp, r, 3);
-          break;
+      if (options.promptMergeOption(planes1, planes2) == 
+        ImporterOptions.STATUS_OK) 
+      {
+        String option = options.getMergeOption();
+        if (option.indexOf("2 channels") != -1) makeRGB(imp, r, 2);
+        else if (option.indexOf("3 channels") != -1) makeRGB(imp, r, 3);
       }
     }
 

@@ -59,6 +59,8 @@ public class ImporterOptions implements ItemListener {
   public static final String VIEW_IMAGE_5D = "Image5D";
   public static final String VIEW_VIEW_5D = "View5D";
 
+  public static final String MERGE_DEFAULT = "Do not merge";
+  
   // class to check for each viewing option
   private static final String CLASS_BROWSER =
     "loci.plugins.browser.LociDataBrowser";
@@ -83,6 +85,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_CONCATENATE = "bioformats.concatenate";
   public static final String PREF_RANGE = "bioformats.specifyRanges";
   public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
+  public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -98,6 +101,7 @@ public class ImporterOptions implements ItemListener {
 
   public static final String LABEL_LOCATION = "Location: ";
   public static final String LABEL_ID = "Open";
+  public static final String LABEL_MERGE_OPTION = "Merging Options";
 
   // -- Fields - GUI components --
 
@@ -109,6 +113,7 @@ public class ImporterOptions implements ItemListener {
   private Checkbox groupBox;
   private Checkbox concatenateBox;
   private Checkbox rangeBox;
+  private Choice mergeChoice;
 
   // -- Fields - core options --
 
@@ -121,6 +126,7 @@ public class ImporterOptions implements ItemListener {
   private boolean concatenate;
   private boolean specifyRanges;
   private boolean forceThumbnails;
+  private String mergeOption;
 
   private String location;
   private String id;
@@ -141,6 +147,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isConcatenate() { return concatenate; }
   public boolean isSpecifyRanges() { return specifyRanges; }
   public boolean isForceThumbnails() { return forceThumbnails; }
+  public String getMergeOption() { return mergeOption; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
   public boolean isViewStandard() { return VIEW_STANDARD.equals(stackFormat); }
@@ -162,6 +169,16 @@ public class ImporterOptions implements ItemListener {
 
   // -- ImporterOptions API methods - mutators --
 
+  public void setStackFormat(String s) { stackFormat = s; }
+  public void setMergeChannels(boolean b) { mergeChannels = b; }
+  public void setColorize(boolean b) { colorize = b; }
+  public void setSplitWindows(boolean b) { splitWindows = b; }
+  public void setShowMetadata(boolean b) { showMetadata = b; }
+  public void setGroupFiles(boolean b) { groupFiles = b; }
+  public void setConcatenate(boolean b) { concatenate = b; }
+  public void setSpecifyRanges(boolean b) { specifyRanges = b; }
+  public void setForceThumbnails(boolean b) { forceThumbnails = b; }
+
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
     stackFormat = Prefs.get(PREF_STACK, VIEW_STANDARD);
@@ -173,6 +190,7 @@ public class ImporterOptions implements ItemListener {
     concatenate = Prefs.get(PREF_CONCATENATE, false);
     specifyRanges = Prefs.get(PREF_RANGE, false);
     forceThumbnails = Prefs.get(PREF_THUMBNAIL, false); 
+    mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT); 
   }
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
@@ -185,6 +203,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_GROUP, groupFiles);
     Prefs.set(PREF_CONCATENATE, concatenate);
     Prefs.set(PREF_RANGE, specifyRanges);
+    Prefs.set(PREF_MERGE_OPTION, mergeOption); 
   }
 
   /** Parses the plugin argument for parameter values. */
@@ -220,6 +239,7 @@ public class ImporterOptions implements ItemListener {
       concatenate = getMacroValue(arg, LABEL_CONCATENATE, concatenate);
       specifyRanges = getMacroValue(arg, LABEL_RANGE, specifyRanges);
       stackFormat = Macro.getValue(arg, LABEL_STACK, stackFormat);
+      mergeOption = Macro.getValue(arg, LABEL_MERGE_OPTION, mergeOption);
 
       location = Macro.getValue(arg, LABEL_LOCATION, location);
       id = Macro.getValue(arg, LABEL_ID, id);
@@ -334,6 +354,21 @@ public class ImporterOptions implements ItemListener {
 
     idType = "OME address";
     return STATUS_OK;
+  }
+
+  public int promptMergeOption(int one, int two) {
+    GenericDialog gd = new GenericDialog("Merging Options...");
+    
+    String[] options = new String[] {one + " planes, 2 channels per plane",
+      two + " planes, 3 channels per plane", MERGE_DEFAULT};
+    
+    gd.addMessage("How would you like to merge this data?");
+    gd.addChoice(LABEL_MERGE_OPTION, options, MERGE_DEFAULT); 
+    gd.showDialog();
+    if (gd.wasCanceled()) return STATUS_CANCELED;
+
+    mergeOption = options[gd.getNextChoiceIndex()]; 
+    return STATUS_OK; 
   }
 
   /**
