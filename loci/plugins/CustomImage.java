@@ -27,11 +27,12 @@ public class CustomImage extends ImagePlus {
 	static int count;
 	boolean singleChannel;
   protected String order;
-  protected int z, t;
+  protected int z, t, channels;
 
 	public CustomImage(ImagePlus imp, String order, int z, int t, int channels) {
     this.z = z;
     this.t = t;
+    this.channels = channels;
     this.order = order;
     ImageStack stack2;
 		boolean isRGB = imp.getBitDepth() == 24;
@@ -50,6 +51,14 @@ public class CustomImage extends ImagePlus {
 		Object info = imp.getProperty("Info");
 		if (info != null) setProperty("Info", imp.getProperty("Info"));
 	}
+
+  public int getStackSize() {
+    return z * t * channels;
+  }
+
+  public int getImageStackSize() {
+    return z * t * channels;
+  }
 
 	public Image getImage() {
 		if (img == null) updateImage();

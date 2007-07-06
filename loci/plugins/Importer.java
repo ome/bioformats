@@ -551,7 +551,7 @@ public class Importer {
       plugin.success = true;
 
       options.savePreferences();
-  
+ 
       if (viewBrowser) {
         boolean first = true;
         for (int i=0; i<seriesCount; i++) {
@@ -590,7 +590,7 @@ public class Importer {
       slice(stack, file, series, sizeZ, sizeC, sizeT, fi, r, fs, options);
     }
     else {
-      ImagePlus imp = new ImagePlus(file + " - " + series, stack);
+      ImagePlus imp = new ImagePlus(file + " - " + series, stack); 
       imp.setProperty("Info", "File full path=" + file + 
         "\nSeries name=" + series + "\n");
 
@@ -696,7 +696,11 @@ public class Importer {
       makeRGB(imp, r, r.getSizeC());
     }
     else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4) {
-      if (imp.getStackSize() == r.getSizeC() && !IJ.versionLessThan("1.38n")) {
+      // use compareTo instead of IJ.versionLessThan(...), because we want
+      // to suppress the error message
+      if (imp.getStackSize() == r.getSizeC() && 
+        ImageJ.VERSION.compareTo("1.38n") < 0) 
+      {
         // use reflection to construct CompositeImage,
         // in case ImageJ version is too old
         ReflectedUniverse ru = new ReflectedUniverse();
