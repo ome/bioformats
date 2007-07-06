@@ -51,14 +51,14 @@ loci.formats.in.EPSReader          # eps, epsi
 loci.formats.in.SlidebookReader    # sld
 loci.formats.in.AliconaReader      # al3d
 loci.formats.in.MNGReader          # mng
-loci.formats.in.NRRDReader         # nrrd, nhrd
+loci.formats.in.NRRDReader         # nrrd, nhdr
 loci.formats.in.KhorosReader       # xv 
 loci.formats.in.VisitechReader     # html, xys
 
 # multi-extension messes
 loci.formats.in.ICSReader          # ics, ids
 loci.formats.in.OIFReader          # oif, various
-loci.formats.in.PerkinElmerReader  # csv, htm, tim, zpo [(TIFF or RAW)+companion]
+loci.formats.in.PerkinElmerReader  # rec, ano, csv, htm, tim, zpo, 2, 3, 4, ...
 
 # readers requiring third-party libraries
 loci.formats.in.ZeissZVIReader     # zvi [POIFS]
