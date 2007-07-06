@@ -441,23 +441,6 @@ public class TiffReader extends BaseTiffReader {
       metadata.remove("Comment");
     }
 
-    // check for Improvision-style TIFF comment
-    boolean iv = comment != null && comment.startsWith("[Improvision Data]\n");
-    put("Improvision", iv ? "yes" : "no");
-    if (iv) {
-      // parse key/value pairs
-      StringTokenizer st = new StringTokenizer(comment, "\n");
-      while (st.hasMoreTokens()) {
-        String line = st.nextToken();
-        int equals = line.indexOf("=");
-        if (equals < 0) continue;
-        String key = line.substring(0, equals);
-        String value = line.substring(equals + 1);
-        addMeta(key, value);
-      }
-      metadata.remove("Comment");
-    }
-
     // check for MetaMorph-style TIFF comment
     boolean metamorph = comment != null && getMeta("Software") != null &&
       ((String) getMeta("Software")).indexOf("MetaMorph") != -1;

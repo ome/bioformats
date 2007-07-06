@@ -80,6 +80,7 @@ loci.formats.in.NikonReader        # nef, tif
 loci.formats.in.FluoviewReader     # tif
 loci.formats.in.PrairieReader      # xml, cfg, tif
 loci.formats.in.MicromanagerReader # txt, tif
+loci.formats.in.ImprovisionTiffReader # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffReader         # tif, tiff
