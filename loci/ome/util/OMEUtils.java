@@ -20,8 +20,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.util;
 
+import ij.gui.GenericDialog;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.util.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.ImageIcon;
+import loci.plugins.Util;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.Image;
 import org.openmicroscopy.ds.st.*;
@@ -185,9 +193,71 @@ public class OMEUtils {
       }
     }
 
-    String[] columns = {"", "Name", "ID", "Date Created"};
-    OMETablePanel table = new OMETablePanel(null, props, columns, details);
-    int[] results = table.getInput();
+    String[] columns = {"", "Name", "ID", "Date Created", "SizeX", "SizeY",
+      "SizeZ", "SizeC", "SizeT"};
+    
+    GenericDialog gd = new GenericDialog("OME Plugin");
+
+    GridBagLayout gdl = (GridBagLayout) gd.getLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 2;
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+    JPanel[] panes = new JPanel[numImages];
+    for (int i=0; i<numImages; i++) {
+      gd.addCheckbox((String) props[i][1], false);
+      panes[i] = new JPanel();
+      gbc.gridy = i;
+    
+      StringBuffer tip = new StringBuffer(); 
+      tip.append("<HTML>"); 
+      tip.append("Name: ");
+      tip.append((String) props[i][1]);
+      tip.append("<BR>ID: ");
+      tip.append((String) props[i][2]);
+      tip.append("<BR>Date Created: ");
+      tip.append((String) props[i][3]);
+      tip.append("<BR>Pixel type: ");
+      tip.append((String) details[i][2]);
+      tip.append("<BR>SizeX: ");
+      tip.append((String) details[i][3]);
+      tip.append("<BR>SizeY: ");
+      tip.append((String) details[i][4]);
+      tip.append("<BR>SizeZ: ");
+      tip.append((String) details[i][5]);
+      tip.append("<BR>SizeC: ");
+      tip.append((String) details[i][6]);
+      tip.append("<BR>SizeT: ");
+      tip.append((String) details[i][7]);
+      tip.append("<BR>Description: ");
+      tip.append((String) details[i][8]);
+      tip.append("</HTML>");
+
+      BufferedImage img = (BufferedImage) details[i][0];
+      panes[i].add(new JLabel(new ImageIcon(img)));
+      panes[i].setToolTipText(tip.toString());
+      gdl.setConstraints(panes[i], gbc);
+      gd.add(panes[i]);
+    }
+    Util.addScrollBars(gd);
+    gd.showDialog();
+    if (gd.wasCanceled()) return null; 
+
+    boolean[] checked = new boolean[numImages];
+    int numChecked = 0; 
+    for (int i=0; i<numImages; i++) {
+      checked[i] = gd.getNextBoolean();
+      if (checked[i]) numChecked++; 
+    }
+
+    int[] results = new int[numChecked];
+    int n = 0; 
+    for (int i=0; i<numImages; i++) {
+      if (checked[i]) {
+        results[n] = Integer.parseInt((String) props[i][2]);
+        n++;
+      }
+    }
     return results;
   }
 
