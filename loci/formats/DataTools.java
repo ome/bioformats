@@ -61,9 +61,7 @@ public final class DataTools {
   }
 
   /** Reads 1 unsigned byte [0, 255]. */
-  public static short readUnsignedByte(DataInput in)
-    throws IOException
-  {
+  public static short readUnsignedByte(DataInput in) throws IOException {
     short q = readSignedByte(in);
     if (q < 0) q += 256;
     return q;
