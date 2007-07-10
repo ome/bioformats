@@ -278,13 +278,16 @@ public class CacheComponent extends JPanel
 
     try {
       if (s.startsWith("Crosshair")) {
-        strategy = new CrosshairStrategy(forwardFirst, lengths, 
-          getForward(), getBackward());
+        strategy = new CrosshairStrategy(lengths);
       }
       else if (s.startsWith("Rectangle")) {
-        strategy = new RectangleStrategy(forwardFirst, lengths, 
-          getForward(), getBackward());
+        strategy = new RectangleStrategy(lengths);
       }
+      strategy.setForwardFirst(forwardFirst);
+      int[] fwd = getForward();
+      for (int i=0; i<fwd.length; i++) strategy.setForward(fwd[i], i);
+      int[] bwd = getBackward();
+      for (int i=0; i<bwd.length; i++) strategy.setBackward(bwd[i], i);
       cache.setStrategy(strategy); 
     }
     catch (CacheException exc) {
