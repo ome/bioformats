@@ -2,10 +2,11 @@
 // ByteArraySource.java
 //
 
-package loci.formats.cache;
+package loci.formats.cache.sources;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.cache.*;
 
 /** Retrieves byte arrays from a file, using Bio-Formats. */
 public class ByteArraySource extends CacheSource {
@@ -19,8 +20,11 @@ public class ByteArraySource extends CacheSource {
   public ByteArraySource(Object o) throws CacheException {
     super(o); 
     try {
-      reader = new FileStitcher();
-      reader.setId(o.toString()); 
+      if (o instanceof IFormatReader) reader = (IFormatReader) o;
+      else {
+        reader = new FileStitcher();
+        reader.setId(o.toString()); 
+      } 
     }
     catch (FormatException exc) { throw new CacheException(exc); }
     catch (IOException exc) { throw new CacheException(exc); }
