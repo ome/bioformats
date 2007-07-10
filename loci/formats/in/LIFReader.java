@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
@@ -632,9 +633,36 @@ public class LIFReader extends FormatReader {
         addMeta(prefix + "Wavelength", attributes.getValue("Wavelength"));
       }
       else if (qName.equals("TimeStamp")) {
-        String prefix = series + " - TimeStamp " + count + " - ";
-        addMeta(prefix + "HighInteger", attributes.getValue("HighInteger"));
-        addMeta(prefix + "LowInteger", attributes.getValue("LowInteger"));
+       
+        long high = Long.parseLong(attributes.getValue("HighInteger"));
+        long low = Long.parseLong(attributes.getValue("LowInteger"));
+ 
+        long stamp = 0;
+        high <<= 32;
+        if ((int) low < 0) {
+          low &= 0xffffffffL;
+        }
+        stamp = high + low;
+        
+        // Near as I can figure, this timestamp represents the number of 
+        // 100-nanosecond ticks since the ANSI/COBOL epoch (Jan 1, 1601).
+        // Note that the following logic does not handle negative timestamp
+        // values, so if the file in question was acquired prior to Jan 1 1601,
+        // the timestamp will not be parsed correctly.
+        
+        long seconds = stamp / 10000000; 
+
+        // subtract number of seconds until Unix epoch (Jan 1, 1970)
+
+        long secondsPerYear = (long) (60 * 60 * 24 * 365.25);
+        seconds -= secondsPerYear * (1970 - 1601); 
+       
+        Date d = new Date(seconds * 1000); 
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        StringBuffer sb = new StringBuffer();
+        fmt.format(d, sb, new FieldPosition(0));
+        addMeta(series + " - TimeStamp " + count, sb.toString());
+
         count++;
       }
       else if (qName.equals("ChannelScalingInfo")) {
