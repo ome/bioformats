@@ -39,21 +39,24 @@ public class ImageProcessorSource extends CacheSource {
     return r;
   }
 
+
   // -- Fields --
 
+  /** Reader from which to draw ImageProcessors. */
   private IFormatReader reader;
 
-  // -- Constructor --
+  // -- Constructors --
 
-  public ImageProcessorSource(Object o) throws CacheException {
-    super(o); 
-    try {
-      if (o instanceof IFormatReader) reader = (IFormatReader) o;
-      else {
-        reader = new FileStitcher();
-        reader.setId(o.toString()); 
-      } 
-    }
+  /** Constructs an ImageProcessor source from the given Bio-Formats reader. */
+  public ImageProcessorSource(IFormatReader r) throws CacheException {
+    super(r);
+    reader = r;
+  }
+
+  /** Constructs an ImageProcessor source drawing from the given file. */
+  public ImageProcessorSource(String id) throws CacheException {
+    this(new FileStitcher());
+    try { reader.setId(id); }
     catch (FormatException exc) { throw new CacheException(exc); }
     catch (IOException exc) { throw new CacheException(exc); }
   }

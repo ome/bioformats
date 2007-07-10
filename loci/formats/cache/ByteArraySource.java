@@ -12,19 +12,21 @@ public class ByteArraySource extends CacheSource {
 
   // -- Fields --
 
+  /** Reader from which to draw byte arrays. */
   private IFormatReader reader;
 
-  // -- Constructor --
+  // -- Constructors --
 
-  public ByteArraySource(Object o) throws CacheException {
-    super(o); 
-    try {
-      if (o instanceof IFormatReader) reader = (IFormatReader) o;
-      else {
-        reader = new FileStitcher();
-        reader.setId(o.toString()); 
-      } 
-    }
+  /** Constructs a byte array source from the given Bio-Formats reader. */
+  public ByteArraySource(IFormatReader r) throws CacheException {
+    super(r);
+    reader = r;
+  }
+
+  /** Constructs a byte array source drawing from the given file. */
+  public ByteArraySource(String id) throws CacheException {
+    this(new FileStitcher());
+    try { reader.setId(id); }
     catch (FormatException exc) { throw new CacheException(exc); }
     catch (IOException exc) { throw new CacheException(exc); }
   }

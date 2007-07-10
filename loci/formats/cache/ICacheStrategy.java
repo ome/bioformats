@@ -6,6 +6,16 @@ package loci.formats.cache;
 
 public interface ICacheStrategy {
 
+  // -- Constants --
+
+  int MIN_PRIORITY = -10;
+  int LOW_PRIORITY = -5;
+  int NORMAL_PRIORITY = 0;
+  int HIGH_PRIORITY = 5;
+  int MAX_PRIORITY = 10;
+
+  // -- ICacheStrategy API methods --
+
   /** 
    * Get the indices of the objects to cache, 
    * surrounding the object with the given index.

@@ -4,29 +4,43 @@
 
 package loci.formats.cache;
 
+import java.util.Arrays;
+
 public abstract class CacheStrategy implements ICacheStrategy {
 
   // -- Constants --
 
-  public static final int HIGH_PRIORITY = 0;
+  public static final int DEFAULT_FORWARD = 20;
+  public static final int DEFAULT_BACKWARD = 10;
 
   // -- Fields --
  
-  protected boolean forwardFirst;
-  protected int[] priorities;
-  protected int[] forward, backward;
+  /** Length of each dimensional axis. */
   protected int[] lengths;
 
-  // -- Constructor --
+  /** Whether or not forward slices should be loaded first. */
+  protected boolean forwardFirst;
 
-  public CacheStrategy(boolean forwardFirst, int[] lengths, 
-    int[] forward, int[] backward) 
-  {
+  /** Number of planes to cache forward along each axis. */
+  protected int[] forward;
+
+  /** Number of planes to cache backward along each axis. */
+  protected int[] backward;
+
+  /** Priority for caching each axis. Controls axis caching order. */
+  protected int[] priorities;
+
+  // -- Constructors --
+
+  public CacheStrategy(int[] lengths) {
     this.lengths = lengths;
-    this.forward = forward;
-    this.backward = backward;
-    this.forwardFirst = forwardFirst; 
+    forwardFirst = true;
+    forward = new int[lengths.length];
+    Arrays.fill(forward, DEFAULT_FORWARD);
+    backward = new int[lengths.length];
+    Arrays.fill(backward, DEFAULT_BACKWARD);
     priorities = new int[lengths.length];
+    Arrays.fill(priorities, NORMAL_PRIORITY);
   }
 
   // -- Abstract ICacheStrategy API methods --
@@ -77,7 +91,7 @@ public abstract class CacheStrategy implements ICacheStrategy {
     int basePriority = priorities[ndx];
     for (int i=0; i<priorities.length; i++) {
       if (priorities[i] >= basePriority && i != ndx) {
-        if (!(priorities[i] == basePriority && i < ndx)) { 
+        if (priorities[i] != basePriority || i >= ndx) { 
           return i;
         } 
       }

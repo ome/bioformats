@@ -7,24 +7,28 @@ package loci.formats.cache;
 import java.io.IOException;
 import loci.formats.*;
 
-/** Retrieves BufferedImages from a file, using Bio-Formats. */
+/**
+ * Retrieves BufferedImages from a data source (e.g., a file) using Bio-Formats.
+ */
 public class BufferedImageSource extends CacheSource {
 
   // -- Fields --
 
+  /** Reader from which to draw BufferedImages. */
   private IFormatReader reader;
 
-  // -- Constructor --
+  // -- Constructors --
 
-  public BufferedImageSource(Object o) throws CacheException {
-    super(o); 
-    try {
-      if (o instanceof IFormatReader) reader = (IFormatReader) o;
-      else {
-        reader = new FileStitcher();
-        reader.setId(o.toString()); 
-      } 
-    }
+  /** Constructs a BufferedImage source from the given Bio-Formats reader. */
+  public BufferedImageSource(IFormatReader r) throws CacheException {
+    super(r);
+    reader = r;
+  }
+
+  /** Constructs a BufferedImage source drawing from the given file. */
+  public BufferedImageSource(String id) throws CacheException {
+    this(new FileStitcher());
+    try { reader.setId(id); }
     catch (FormatException exc) { throw new CacheException(exc); }
     catch (IOException exc) { throw new CacheException(exc); }
   }
