@@ -2,11 +2,10 @@
 // BufferedImageSource.java
 //
 
-package loci.formats.cache.sources;
+package loci.formats.cache;
 
 import java.io.IOException;
 import loci.formats.*;
-import loci.formats.cache.*;
 
 /** Retrieves BufferedImages from a file, using Bio-Formats. */
 public class BufferedImageSource extends CacheSource {
