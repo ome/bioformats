@@ -94,7 +94,6 @@ public class OMEReader extends FormatReader {
     }
     else {
       sessionKey = id.substring(id.lastIndexOf("?") + 5, ndx);
-      ndx = id.indexOf("&", ndx + 1);
       imageId = id.substring(ndx + 4);
     }
 

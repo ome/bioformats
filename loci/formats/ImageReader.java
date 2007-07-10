@@ -424,6 +424,19 @@ public class ImageReader implements IFormatReader {
     return readers[0].isMetadataCollected();
   }
 
+  /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
+  public void setOriginalMetadataPopulated(boolean populate) {
+    FormatTools.assertId(currentId, false, 1);
+    for (int i=0; i<readers.length; i++) {
+      readers[i].setOriginalMetadataPopulated(populate);
+    }
+  }
+
+  /* @see IFormatReader#isOriginalMetadataPopulated() */
+  public boolean isOriginalMetadataPopulated() {
+    return readers[0].isOriginalMetadataPopulated(); 
+  }
+
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() {
     return getReader().getCurrentFile();

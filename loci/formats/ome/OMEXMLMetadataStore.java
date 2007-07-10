@@ -94,18 +94,16 @@ public class OMEXMLMetadataStore implements MetadataStore {
     return null;
   }
 
-  /** 
-   * Add each of the key/value pairs in the hashtable as a new
-   * OriginalMetadata node.
-   */
-  public void populateOriginalMetadata(Hashtable h) {
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
-    CustomAttributesNode ca = 
-      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    firstImageCA = ca.getDOMElement();
+  /** Add the key/value pair as a new OriginalMetadata node. */ 
+  public void populateOriginalMetadata(String key, String value) {
+    if (firstImageCA == null) { 
+      ImageNode image = (ImageNode) getChild(root, "Image", 0);
+      CustomAttributesNode ca = 
+        (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+      firstImageCA = ca.getDOMElement();
+    }
 
-    Vector original = DOMUtil.getChildElements("OriginalMetadata", 
-      ca.getDOMElement());
+    Vector original = DOMUtil.getChildElements("OriginalMetadata", firstImageCA);
     if (original.size() == 0) {
       Element el = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");
@@ -130,13 +128,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
       valueElement.setAttribute("DataType", "string");
     }
 
-    Object[] keys = h.keySet().toArray();
-    for (int i=0; i<h.size(); i++) {
-      Element el = DOMUtil.createChild(firstImageCA, "OriginalMetadata");
-      OMEXMLNode node = new AttributeNode(el);
-      node.setAttribute("name", keys[i].toString());
-      node.setAttribute("value", h.get(keys[i]).toString());
-    } 
+    Element el = DOMUtil.createChild(firstImageCA, "OriginalMetadata");
+    OMEXMLNode node = new AttributeNode(el);
+    node.setAttribute("name", key);
+    node.setAttribute("value", value);
   }
 
   // -- OMEXMLMetadataStore methods - individual attribute retrieval --

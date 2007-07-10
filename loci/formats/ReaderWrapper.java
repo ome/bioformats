@@ -217,6 +217,14 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public boolean isMetadataCollected() { return reader.isMetadataCollected(); }
 
+  public void setOriginalMetadataPopulated(boolean populate) {
+    reader.setOriginalMetadataPopulated(populate); 
+  }
+
+  public boolean isOriginalMetadataPopulated() {
+    return reader.isOriginalMetadataPopulated(); 
+  }
+
   public String[] getUsedFiles() {
     return reader.getUsedFiles();
   }

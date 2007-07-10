@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /** Abstract superclass of all biological file format readers. */
@@ -65,6 +66,9 @@ public abstract class FormatReader extends FormatHandler
 
   /** Whether or not to collect metadata. */
   protected boolean collectMetadata = true;
+
+  /** Whether or not to save proprietary metadata in the MetadataStore. */
+  protected boolean saveOriginalMetadata = false; 
 
   /** Whether or not to group multi-file formats. */
   protected boolean group = true;
@@ -162,6 +166,24 @@ public abstract class FormatReader extends FormatHandler
       // verify key contains at least one alphabetic character
       if (!key.matches(".*[a-zA-Z].*")) return;
     }
+    
+    if (saveOriginalMetadata) {
+      try {
+        MetadataStore store = getMetadataStore();
+        if (store.getClass().getName().equals(
+          "loci.formats.ome.OMEXMLMetadataStore"));
+        {
+          Method m = store.getClass().getMethod("populateOriginalMetadata",
+            new Class[] {String.class, String.class});
+          m.invoke(store, new Object[] {key, value});
+        }
+      }
+      catch (Throwable t) {
+        debug("Error populating OME-XML");
+        trace(t);
+      }
+    }
+    
     metadata.put(key, value);
   }
 
@@ -406,6 +428,22 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isMetadataCollected() */
   public boolean isMetadataCollected() {
     return collectMetadata;
+  }
+
+  /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
+  public void setOriginalMetadataPopulated(boolean populate) {
+    FormatTools.assertId(currentId, false, 1);
+    if (currentId != null) {
+      String s = "setOriginalMetadataPopulated called with open file.";
+      if (debug && debugLevel >= 2) trace(s);
+      else LogTools.println("Warning: " + s);
+    }
+    saveOriginalMetadata = populate;
+  }
+
+  /* @see IFormatReader#isOriginalMetadataPopulated() */
+  public boolean isOriginalMetadataPopulated() {
+    return saveOriginalMetadata;
   }
 
   /* @see IFormatReader#getUsedFiles() */

@@ -517,6 +517,22 @@ public class FileStitcher implements IFormatReader {
     return reader.isMetadataCollected();
   }
 
+  /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
+  public void setOriginalMetadataPopulated(boolean populate) {
+    FormatTools.assertId(currentId, false, 1);
+    if (readers == null) reader.setOriginalMetadataPopulated(populate);
+    else {
+      for (int i=0; i<readers.length; i++) {
+        readers[i].setOriginalMetadataPopulated(populate);
+      }
+    }
+  }
+
+  /* @see IFormatReader#isOriginalMetadataPopulated() */
+  public boolean isOriginalMetadataPopulated() {
+    return reader.isOriginalMetadataPopulated(); 
+  }
+
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 2);
