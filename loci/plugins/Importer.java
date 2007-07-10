@@ -29,7 +29,9 @@ import ij.*;
 import ij.io.FileInfo;
 import ij.measure.Calibration;
 import ij.process.*;
-import ij.text.TextWindow;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
@@ -322,11 +324,23 @@ public class Importer {
           sb.append("\n");
         }
 
-        // NB: no need to register this with WindowManager; TextWindows are
-        // automatically registered
-        TextWindow tw = new TextWindow("Metadata - " + currentFile,
-          "Key\tValue", sb.toString(), 400, 400);
-        tw.setVisible(true);
+        SearchablePanel spanel = new SearchablePanel(); 
+        spanel.setColumnHeadings("Key\tValue");
+        spanel.append(sb.toString());
+        Frame w = new Frame("Metadata - " + currentFile); 
+        w.add(spanel);
+        w.setSize(new Dimension(400, 400));
+        
+        w.addWindowListener(new WindowAdapter() {
+          public void windowClosing(WindowEvent e) {
+            Frame frame = (Frame) e.getSource();
+            frame.setVisible(false);
+            frame.dispose();
+          }
+        });
+        
+        WindowManager.addWindow(w); 
+        w.setVisible(true); 
       }
 
       // -- Step 4e: read pixel data --
