@@ -96,7 +96,7 @@ public class PreviewPane extends JPanel
 
       // start separate loader thread
       loaderAlive = true;
-      loader = new Thread(this);
+      loader = new Thread(this, "Preview");
       loader.start();
     }
   }
@@ -140,6 +140,17 @@ public class PreviewPane extends JPanel
 
       String id = loadId;
       if (id == lastId) continue;
+      if (id != null && lastId != null) {
+        String[] files = reader.getUsedFiles();
+        boolean found = false;
+        for (int i=0; i<files.length; i++) {
+          if (id.equals(files[i])) {
+            found = true;
+            break;
+          }
+        }
+        if (found) continue;
+      }
       lastId = id;
 
       iconLabel.setIcon(null);
@@ -153,13 +164,14 @@ public class PreviewPane extends JPanel
       catch (FormatException exc) {
         LogTools.trace(exc);
         resLabel.setText("Unsupported");
-        zctLabel.setText("format");
+        boolean badFormat = exc.getMessage().startsWith("Unknown file format");
+        zctLabel.setText(badFormat ? "format" : "file");
         continue;
       }
       catch (IOException exc) {
         LogTools.trace(exc);
         resLabel.setText("Unsupported");
-        zctLabel.setText("format");
+        zctLabel.setText("file");
         continue;
       }
       if (id != loadId) continue;

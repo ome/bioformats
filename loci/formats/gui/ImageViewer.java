@@ -345,7 +345,7 @@ public class ImageViewer extends JFrame
       if (rval == JFileChooser.APPROVE_OPTION) {
         final File file = chooser.getSelectedFile();
         if (file != null) {
-          new Thread() {
+          new Thread("ImageViewer-Opener") {
             public void run() { open(file.getAbsolutePath()); }
           }.start();
         }
@@ -359,7 +359,7 @@ public class ImageViewer extends JFrame
       if (rval == JFileChooser.APPROVE_OPTION) {
         final File file = chooser.getSelectedFile();
         if (file != null) {
-          new Thread() {
+          new Thread("ImageViewer-Saver") {
             public void run() { save(file.getPath()); }
           }.start();
         }

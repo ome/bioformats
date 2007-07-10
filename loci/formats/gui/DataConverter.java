@@ -366,13 +366,13 @@ public class DataConverter extends JFrame implements
       label = label.replaceAll(oldName, newName);
       cLabel.setText(label);
     }
-    else if ("convert".equals(cmd)) new Thread(this).start();
+    else if ("convert".equals(cmd)) new Thread(this, "Converter").start();
     else if ("force".equals(cmd)) {
       force = forceType.isSelected();
     }
     else if ("quit".equals(cmd)) {
       shutdown = true;
-      new Thread() {
+      new Thread("Quitter") {
         public void run() { dispose(); }
       }.start();
     }
