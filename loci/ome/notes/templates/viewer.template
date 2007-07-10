@@ -38,44 +38,44 @@ tab {
     field {
       name "Width"
       type "int"
-      valueMap "Image:Pixels:SizeX"
+      valueMap "Image:CustomAttributes:Pixels:SizeX"
     }
   
     field {
       name "Height"
       type "int"
-      valueMap "Image:Pixels:SizeY"
+      valueMap "Image:CustomAttributes:Pixels:SizeY"
     }
  
     field {
       name "Number of slices"
       type "int"
-      valueMap "Image:Pixels:SizeZ"
+      valueMap "Image:CustomAttributes:Pixels:SizeZ"
     }
 
     field {
       name "Number of channels"
       type "int"
-      valueMap "Image:Pixels:SizeC"
+      valueMap "Image:CustomAttributes:Pixels:SizeC"
     }
 
     field {
       name "Number of timepoints"
       type "int"
-      valueMap "Image:Pixels:SizeT"
+      valueMap "Image:CustomAttributes:Pixels:SizeT"
     }
   
     field {
       name "Big Endian"
       type "bool"
       default "false"
-      valueMap "Image:Pixels:BigEndian"
+      valueMap "Image:CustomAttributes:Pixels:BigEndian"
     }
 
     field {
       name "Pixel Type"
       type "var"
-      valueMap "Image:Pixels:PixelType"
+      valueMap "Image:CustomAttributes:Pixels:PixelType"
     }
   
     field {

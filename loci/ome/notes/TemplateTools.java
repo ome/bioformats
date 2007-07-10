@@ -42,10 +42,14 @@ public class TemplateTools {
 
       CustomAttributesNode ca = root.getCustomAttributes();
 
-      if (ca != null) {
+      if (ca != null && map != null) {
         Vector elements = DOMUtil.getChildElements("NotesField", 
           ca.getDOMElement());
-        int ndx = Integer.parseInt(map.substring(map.lastIndexOf("-") + 1));
+        int ndx = 0;
+        if (map.indexOf("-") != -1) {
+          ndx = Integer.parseInt(map.substring(map.lastIndexOf("-") + 1));
+        }
+        if (ndx >= elements.size()) return null;
         Element el = (Element) elements.get(ndx);
         return DOMUtil.getAttribute(value ? "value" : "name", el);
       } 
@@ -97,129 +101,38 @@ public class TemplateTools {
   public static OMEXMLNode findNode(OMENode root, String map, boolean create)
     throws Exception
   {
-    if (map == null || map.length() == 0) return null;
-
-    // the 'map' string is a colon-separated list of nodes from the root
-    // to the field we want to read
-    // 
-    // example: if we want to read the 'PixelType' value of a Pixels node,
-    // the value of 'map' would be 'Image:Pixels:PixelType'
-  
-    String st = map.substring(0, map.indexOf(":"));
-    map = map.substring(map.indexOf(":") + 1);
-
-    int ndx = 0;
-    if (map.indexOf("-") != -1 && map.indexOf("OriginalMetadata") == -1) {
-      ndx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
-      map = map.substring(0, map.indexOf("-"));
-    }
- 
-    Class stClass = null;
-
-    try {
-      stClass = Class.forName("org.openmicroscopy.xml." + st + "Node");
-    }
-    catch (ClassNotFoundException c) {
-      stClass = Class.forName("org.openmicroscopy.xml.st." + st + "Node");
+    if (map == null) return null; 
+    int elementCount = 0;
+    int last = map.indexOf(":");
+    while (last != -1) {
+      elementCount++;
+      last = map.indexOf(":", last + 1);
     }
 
-    Vector nodes = OMEXMLNode.createNodes(stClass, 
-      DOMUtil.getChildElements(st, root.getDOMElement())); 
-
-    if (nodes.size() == 0 && create) {
-      Class param = stClass.getName().startsWith("org.openmicroscopy.xml.st.") ?
-        CustomAttributesNode.class : root.getClass();
-      Constructor con = stClass.getConstructor(new Class[] {param});
-      nodes.add((OMEXMLNode) con.newInstance(new Object[] {root}));
-    }
-    else if (nodes.size() == 0) return null;
-
-    OMEXMLNode node = (OMEXMLNode) nodes.get(ndx < nodes.size() ? ndx : 0);
-
-    if (map.indexOf("OriginalMetadata") != -1 && map.indexOf("-") != -1) {
-      ndx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
-      map = map.substring(0, map.indexOf("-"));
-    }
-
-    while (map.indexOf(":") != -1) {
-      String type = map.substring(0, map.indexOf(":"));
+    String[] elements = new String[elementCount];
+    for (int i=0; i<elementCount; i++) {
+      elements[i] = map.substring(0, map.indexOf(":"));
       map = map.substring(map.indexOf(":") + 1);
-
-      String methodName1 = "get" + type;
-      String methodName2 = "getDefault" + type;
-
-      if (node instanceof CustomAttributesNode) {
-        methodName2 = "getCAList";
-      }
-
-      // find the next node in the list
-
-      Method[] methods = node.getClass().getMethods();
-
-      for (int j=0; j<methods.length; j++) {
-        String name = methods[j].getName();
-        if (name.equals(methodName1) || name.equals(methodName2)) {
-          if (node instanceof CustomAttributesNode) {
-            Vector list = (Vector) methods[j].invoke(node, new Object[0]);
-
-            int count = -1;
-            for (int k=0; k<list.size(); k++) {
-              String className = list.get(k).getClass().getName();
-              int idx = className.lastIndexOf(".");
-              className = className.substring(idx + 1);
-
-              if (className.equals(type + "Node") ||
-                (className.equals("AttributeNode") &&
-                type.equals("OriginalMetadata")))
-              {
-                count++;
-                if (count == ndx) {
-                  node = (OMEXMLNode) list.get(k);
-                  if (type.equals("OriginalMetadata")) return node;
-                  break;
-                }
-              }
-            }
-          }
-          else node = (OMEXMLNode) methods[j].invoke(node, new Object[0]);
-
-          // check if we found a matching node; if not, create one
-
-          if (node == null ||
-            !node.getClass().getName().endsWith(type + "Node"))
-          {
-            Class target = null;
-
-            try {
-              target = Class.forName("org.openmicroscopy.xml." + type + "Node");
-            }
-            catch (ClassNotFoundException e) {
-              try {
-                target =
-                  Class.forName("org.openmicroscopy.xml.st." + type + "Node");
-              }
-              catch (ClassNotFoundException cfe) {
-                cfe.printStackTrace();
-              }
-            }
-                                                                                             Class param =
-              target.getName().startsWith("org.openmicroscopy.xml.st.") ?
-              CustomAttributesNode.class : node.getClass();
-            Constructor con = target.getConstructor(new Class[] {param});
-
-            if (node == null) {
-              node = (OMEXMLNode) nodes.get(ndx < nodes.size() ? ndx : 0);
-              node = (OMEXMLNode) param.getConstructor(new Class[]
-                {node.getClass()}).newInstance(new Object[] {node});
-            }
-
-            node = (OMEXMLNode) con.newInstance(new Object[] {node});
-          }
-          break;
-        }
-      }
     }
-    return node;
+
+    OMEXMLNode node = root;
+    for (int i=0; i<elementCount; i++) {
+      Vector nodeList = DOMUtil.getChildElements(elements[i], 
+        node.getDOMElement());
+      if ((nodeList == null || nodeList.size() == 0) && create) {
+        // TODO : create the node
+        return null; 
+      }
+      else if (nodeList == null || nodeList.size() == 0) return null;
+
+      int idx = 0;
+      if (i == 0 && map.indexOf("-") != -1) {
+        idx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
+      }
+      node = OMEXMLNode.createNode((Element) nodeList.get(idx)); 
+    }
+   
+    return node; 
   }
 
   /** Get the value from the given component. */
