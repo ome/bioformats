@@ -11,8 +11,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import loci.formats.*;
 import loci.formats.cache.*;
-import loci.formats.cache.sources.*;
-import loci.formats.cache.strategies.*;
 
 /** GUI component for managing a cache. */
 public class CacheComponent extends JPanel 
