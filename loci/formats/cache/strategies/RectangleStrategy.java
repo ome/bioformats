@@ -4,6 +4,7 @@
 
 package loci.formats.cache.strategies;
 
+import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.cache.*;
 
@@ -59,8 +60,8 @@ public class RectangleStrategy extends CacheStrategy {
       for (int i=0; i<tmp.length; i++) tmp[i] = positions[i];
       list.add(tmp);
       positions = increment(positions, firstNdx);
-      if (Utils.equals(positions, pos)) {
-        firstNdx = Utils.nextPriority(firstNdx, priorities);
+      if (Arrays.equals(positions, pos)) {
+        firstNdx = nextPriority(firstNdx, priorities);
       }
       if (firstNdx == -1) {
         count = total;
@@ -81,7 +82,7 @@ public class RectangleStrategy extends CacheStrategy {
       if (pos[ndx] == lengths[ndx]) pos[ndx] = 0; 
       if (pos[ndx] > ends[ndx]) {
         pos[ndx] = begins[ndx];
-        return increment(pos, Utils.nextPriority(ndx, priorities));
+        return increment(pos, nextPriority(ndx, priorities));
       }
     }
     else {
@@ -89,7 +90,7 @@ public class RectangleStrategy extends CacheStrategy {
       if (pos[ndx] == -1) pos[ndx] = lengths[ndx] - 1; 
       if (pos[ndx] < begins[ndx]) {
         pos[ndx] = ends[ndx];
-        return increment(pos, Utils.nextPriority(ndx, priorities));
+        return increment(pos, nextPriority(ndx, priorities));
       }
     }
     return pos; 

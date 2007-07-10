@@ -4,6 +4,7 @@
 
 package loci.formats.cache.strategies;
 
+import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.cache.*;
 
@@ -53,8 +54,8 @@ public class CrosshairStrategy extends CacheStrategy {
       list.add(tmp); 
       positions = 
         increment(positions, firstNdx, begins[firstNdx], ends[firstNdx]);
-      if (Utils.equals(positions, pos)) {
-        firstNdx = Utils.nextPriority(firstNdx, priorities); 
+      if (Arrays.equals(positions, pos)) {
+        firstNdx = nextPriority(firstNdx, priorities); 
       }
 
       count++;

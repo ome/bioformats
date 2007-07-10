@@ -17,6 +17,8 @@ public abstract class CacheStrategy implements ICacheStrategy {
   protected int[] forward, backward;
   protected int[] lengths;
 
+  // -- Constructor --
+
   public CacheStrategy(boolean forwardFirst, int[] lengths, 
     int[] forward, int[] backward) 
   {
@@ -26,6 +28,11 @@ public abstract class CacheStrategy implements ICacheStrategy {
     this.forwardFirst = forwardFirst; 
     priorities = new int[lengths.length];
   }
+
+  // -- Abstract ICacheStrategy API methods --
+
+  /* @see ICacheStrategy#getLoadList(int[]) */
+  public abstract int[][] getLoadList(int[] pos) throws CacheException; 
 
   // -- ICacheStrategy API methods --
 
@@ -64,7 +71,18 @@ public abstract class CacheStrategy implements ICacheStrategy {
   /* @see ICacheStrategy#getLengths() */
   public int[] getLengths() { return lengths; }
 
-  /* @see ICacheStrategy#getLoadList(int[]) */
-  public abstract int[][] getLoadList(int[] pos) throws CacheException; 
+  // -- Utility methods --
+
+  public static int nextPriority(int ndx, int[] priorities) {
+    int basePriority = priorities[ndx];
+    for (int i=0; i<priorities.length; i++) {
+      if (priorities[i] >= basePriority && i != ndx) {
+        if (!(priorities[i] == basePriority && i < ndx)) { 
+          return i;
+        } 
+      }
+    }
+    return -1; 
+  }
 
 }
