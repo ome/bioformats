@@ -37,6 +37,8 @@ public class TemplateTools {
   {
     OMEXMLNode node = findNode(root, map, false);
 
+    if (node == null && map != null) return null;
+
     if (node == null) {
       // unmapped field
 
@@ -127,7 +129,10 @@ public class TemplateTools {
       else if (nodeList == null || nodeList.size() == 0) return null;
 
       int idx = indices[i];
-      node = OMEXMLNode.createNode((Element) nodeList.get(idx)); 
+      if (idx < nodeList.size()) {
+        node = OMEXMLNode.createNode((Element) nodeList.get(idx)); 
+      }
+      else return null;
     }
    
     return node; 

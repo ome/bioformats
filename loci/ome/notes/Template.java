@@ -585,13 +585,14 @@ public class Template {
   private void setComponentValue(TemplateField t, JComponent component,
     String v)
   {
+    if (v == null) return; 
     if (component instanceof JCheckBox) {
       ((JCheckBox) component).setSelected(v.startsWith("t"));
     }
     else if (component instanceof JComboBox) {
       String[] enums = t.getEnums();
       for (int k=0; k<enums.length; k++) {
-        if (enums[k].toLowerCase().equals(v)) {
+        if (enums[k].toLowerCase().equals(v.toLowerCase())) {
           ((JComboBox) component).setSelectedIndex(k);
           break;
         }

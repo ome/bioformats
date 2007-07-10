@@ -76,14 +76,14 @@ tab {
     field {
       name "Size Z"
       type "int"
-      valueMap "Image:Pixels:SizeZ"
+      valueMap "Image:CustomAttributes:Pixels:SizeZ"
     }
 
     field {
       name "Big Endian"
       type "bool"
       default "false"
-      valueMap "Image:Pixels:BigEndian" 
+      valueMap "Image:CustomAttributes:Pixels:BigEndian" 
     }
 
     field {
@@ -91,7 +91,7 @@ tab {
       type "enum"
       values {"uint8", "uint16", "float"}
       default "float"
-      valueMap "Image:Pixels:PixelType" 
+      valueMap "Image:CustomAttributes:Pixels:PixelType" 
     }
   }
 }
