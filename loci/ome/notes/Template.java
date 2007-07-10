@@ -376,14 +376,19 @@ public class Template {
       for (int j=0; j<fields; j++) {
         if (tabs[i].getField(j).isRepeated()) {
           String map = tabs[i].getField(j).getValueMap();
-          if (map.indexOf("-") != -1) map = map.substring(0, map.indexOf("-"));
 
           try {
             int nodeCount = TemplateTools.getNodeCount(root, map);
             for (int k=1; k<nodeCount; k++) {
               TemplateField f = tabs[i].getField(j).copy();
-              f.setValueMap(map + "-" + k);
-              f.setNameMap(f.getNameMap() + "-" + k); 
+              if (map.indexOf("-") != -1) {
+                f.setValueMap(map + "," + k);
+                f.setNameMap(f.getNameMap() + "," + k); 
+              } 
+              else {
+                f.setValueMap(map + "-" + k);
+                f.setNameMap(f.getNameMap() + "-" + k); 
+              } 
               f.setRow(tabs[i].getField(j).getRow() + k); 
               tabs[i].addField(f);
             }
@@ -401,14 +406,17 @@ public class Template {
           TemplateField f = g.getField(0, k).copy();
           if (f.isRepeated()) {
             String map = f.getValueMap();
-            if (map.indexOf("-") != -1) {
-              map = map.substring(0, map.indexOf("-"));
-            }
 
             try {
               for (int m=1; m<TemplateTools.getNodeCount(root, map); m++) {
-                f.setValueMap(map + "-" + k);
-                f.setNameMap(f.getNameMap() + "-" + k);
+                if (map.indexOf("-") != -1) {
+                  f.setValueMap(map + "," + k);
+                  f.setNameMap(f.getNameMap() + "," + k); 
+                } 
+                else {
+                  f.setValueMap(map + "-" + k);
+                  f.setNameMap(f.getNameMap() + "-" + k);
+                } 
                 f.setRow(g.getField(0, k).getRow() + m); 
                 g.addField(f);
               }

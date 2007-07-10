@@ -544,6 +544,7 @@ public class Notes extends JFrame implements ActionListener {
   private void openFile(String file) throws Exception {
     currentFile = file; 
     FileStitcher stitcher = new FileStitcher();
+    stitcher.setOriginalMetadataPopulated(true); 
     progress.setString("Reading " + currentFile);
    
     if (currentFile.endsWith(".ome")) {

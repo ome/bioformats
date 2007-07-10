@@ -117,10 +117,11 @@ public class TemplateGroup {
     if (map == null) return;
 
     if (map.lastIndexOf("-") != -1) {
-      map = map.substring(0, map.lastIndexOf("-"));
+      map += "," + repetition; 
     }
-
-    map = map + "-" + repetition;
+    else {
+      map = map + "-" + repetition;
+    } 
     t.setValueMap(map);
   }
 

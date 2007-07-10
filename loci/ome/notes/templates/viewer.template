@@ -116,8 +116,8 @@ tab {
   grid "1,2"
 
   field {
-    nameMap "Image:CustomAttributes:OriginalMetadata:name"
-    valueMap "Image:CustomAttributes:OriginalMetadata:value"
+    nameMap "Image:CustomAttributes:OriginalMetadata:name-0,0"
+    valueMap "Image:CustomAttributes:OriginalMetadata:value-0,0"
     repeated "true" 
     type "var" 
     grid "1,1" 

@@ -42,13 +42,12 @@ public class TemplateTools {
 
       CustomAttributesNode ca = root.getCustomAttributes();
 
+      int[] indices = getMapIndices(map);
+
       if (ca != null && map != null) {
         Vector elements = DOMUtil.getChildElements("NotesField", 
           ca.getDOMElement());
-        int ndx = 0;
-        if (map.indexOf("-") != -1) {
-          ndx = Integer.parseInt(map.substring(map.lastIndexOf("-") + 1));
-        }
+        int ndx = indices[indices.length - 1];
         if (ndx >= elements.size()) return null;
         Element el = (Element) elements.get(ndx);
         return DOMUtil.getAttribute(value ? "value" : "name", el);
@@ -109,6 +108,8 @@ public class TemplateTools {
       last = map.indexOf(":", last + 1);
     }
 
+    int[] indices = getMapIndices(map);
+
     String[] elements = new String[elementCount];
     for (int i=0; i<elementCount; i++) {
       elements[i] = map.substring(0, map.indexOf(":"));
@@ -125,10 +126,7 @@ public class TemplateTools {
       }
       else if (nodeList == null || nodeList.size() == 0) return null;
 
-      int idx = 0;
-      if (i == 0 && map.indexOf("-") != -1) {
-        idx = Integer.parseInt(map.substring(map.indexOf("-") + 1));
-      }
+      int idx = indices[i];
       node = OMEXMLNode.createNode((Element) nodeList.get(idx)); 
     }
    
@@ -155,6 +153,34 @@ public class TemplateTools {
     }
 
     return value;
+  }
+
+  /** Get the index for each element in the map. */
+  public static int[] getMapIndices(String map) {
+    if (map == null) return new int[0]; 
+    int elementCount = 0;
+    int last = map.indexOf(":");
+    while (last != -1) {
+      elementCount++;
+      last = map.indexOf(":", last + 1);
+    }
+
+    int[] indices = new int[elementCount];
+    Arrays.fill(indices, 0);
+    if (map.indexOf("-") == -1) return indices;
+
+    String indexList = map.substring(map.indexOf("-") + 1);
+    for (int i=0; i<elementCount; i++) {
+      if (indexList.indexOf(",") == -1) {
+        indices[i] = Integer.parseInt(indexList);
+      }
+      else {
+        indices[i] = Integer.parseInt(indexList.substring(0, 
+          indexList.indexOf(",")));
+        indexList = indexList.substring(indexList.indexOf(",") + 1); 
+      } 
+    }
+    return indices; 
   }
 
 }

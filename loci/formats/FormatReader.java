@@ -175,7 +175,7 @@ public abstract class FormatReader extends FormatHandler
         {
           Method m = store.getClass().getMethod("populateOriginalMetadata",
             new Class[] {String.class, String.class});
-          m.invoke(store, new Object[] {key, value});
+          m.invoke(store, new Object[] {key, value.toString()});
         }
       }
       catch (Throwable t) {
