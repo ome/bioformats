@@ -2,12 +2,11 @@
 // ImageProcessorSource.java
 //
 
-package loci.formats.cache.sources;
+package loci.formats.cache;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import loci.formats.*;
-import loci.formats.cache.*;
 
 /** Retrieves ImageJ image processors from a file, using Bio-Formats. */
 public class ImageProcessorSource extends CacheSource {
