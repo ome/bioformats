@@ -24,13 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
-import javax.xml.parsers.*;
 import loci.formats.*;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 /**
  * TiffReader is the file format reader for TIFF files, including OME-TIFF.

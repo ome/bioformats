@@ -301,7 +301,9 @@ public class ZeissZVIReader extends FormatReader {
         core.currentOrder[0] =
           "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
 
-        if (zIndex != -1 && tIndex != -1) {
+        int num = core.sizeZ[0] * core.sizeT[0] - core.sizeC[0];
+        if ((zIndex != -1 && tIndex != -1) && (zIndex != num && tIndex != num))
+        {
           if (zIndex != core.sizeZ[0]) {
             if (core.sizeZ[0] != 1) {
               core.currentOrder[0] =
@@ -324,8 +326,14 @@ public class ZeissZVIReader extends FormatReader {
           (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
       }
       else {
-        core.currentOrder[0] =
-          (core.sizeZ[0] > core.sizeT[0]) ? "XYZTC" : "XYTZC";
+        if (metadata.get("MultiChannelEnabled") != null) {
+          core.currentOrder[0] =
+            (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
+        }
+        else {
+          core.currentOrder[0] =
+            (core.sizeZ[0] > core.sizeT[0]) ? "XYZTC" : "XYTZC";
+        }
       }
     }
     catch (ReflectException exc) {
@@ -432,270 +440,84 @@ public class ZeissZVIReader extends FormatReader {
         boolean isContents = entryName.toUpperCase().equals("CONTENTS");
         Object directory = r.getVar("dir");
 
-        int pt = 0;
+        RandomAccessStream s = new RandomAccessStream(data);
+        s.order(true);
 
         if (dirName.toUpperCase().equals("ROOT ENTRY") ||
           dirName.toUpperCase().equals("ROOTENTRY"))
         {
           if (entryName.equals("Tags")) {
-            pt += 18;
-            int version = DataTools.bytesToInt(data, pt, 4, true);
-            pt += 4;
-
-            pt += 2;
-            int count = DataTools.bytesToInt(data, pt, 4, true); // # of tags
-            pt += 4;
-
-            // limit count to 4096
-            if (count > 4096) count = 4096;
-
-            for (int i=0; i<count; i++) {
-              int type = DataTools.bytesToInt(data, pt, 2, true);
-              pt += 2;
-
-              String value = "";
-              switch (type) {
-                case 0:
-                  break;
-                case 1:
-                  break;
-                case 2:
-                  value = "" + DataTools.bytesToInt(data, pt, 2, true);
-                  pt += 2;
-                  break;
-                case 3:
-                  value = "" + DataTools.bytesToInt(data, pt, 4, true);
-                  pt += 4;
-                  break;
-                case 4:
-                  value = "" + Float.intBitsToFloat(
-                    DataTools.bytesToInt(data, pt, 4, true));
-                  pt += 4;
-                  break;
-                case 5:
-                  value = "" + Double.longBitsToDouble(
-                    DataTools.bytesToLong(data, pt, 8, true));
-                  pt += 8;
-                  break;
-                case 7:
-                  value = "" + DataTools.bytesToLong(data, pt, 8, true);
-                  pt += 8;
-                  break;
-                case 69:
-                case 8:
-                  int len = DataTools.bytesToInt(data, pt, 4, true);
-                  pt += 4;
-                  value = new String(data, pt, len);
-                  pt += len;
-                  break;
-                case 20:
-                case 21:
-                  value = "" + DataTools.bytesToLong(data, pt, 8, true);
-                  pt += 8;
-                  break;
-                case 22:
-                case 23:
-                  value = "" + DataTools.bytesToInt(data, pt, 4, true);
-                  pt += 4;
-                  break;
-                case 66:
-                  int l = DataTools.bytesToInt(data, pt, 2, true);
-                  pt += 2;
-                  value = new String(data, pt - 2, l + 2);
-                  pt += l;
-                  break;
-                default:
-                  int oldPt = pt;
-                  while (DataTools.bytesToInt(data, pt, 2, true) != 3 &&
-                    pt < data.length)
-                  {
-                    pt += 2;
-                  }
-                  value = new String(data, oldPt - 2, pt - oldPt + 2);
-              }
-
-              pt += 2;
-              int tagID = DataTools.bytesToInt(data, pt, 4, true);
-              pt += 4;
-              pt += 2;
-              int attribute = DataTools.bytesToInt(data, pt, 4, true);
-              pt += 4;
-              parseTag(value, tagID, attribute);
-            }
+            parseTags(s); 
           }
         }
         else if (dirName.equals("Tags") && isContents) {
-          pt += 18;
-          int version = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 4;
-
-          pt += 2;
-          int count = DataTools.bytesToInt(data, pt, 4, true); // # of tags
-          pt += 4;
-
-          // limit count to 4096
-          if (count > 4096) count = 4096;
-
-          for (int i=0; i<count; i++) {
-            int type = DataTools.bytesToInt(data, pt, 2, true);
-            pt += 2;
-
-            String value = "";
-            switch (type) {
-              case 0:
-                break;
-              case 1:
-                break;
-              case 2:
-                value = "" + DataTools.bytesToInt(data, pt, 2, true);
-                pt += 2;
-                break;
-              case 3:
-                value = "" + DataTools.bytesToInt(data, pt, 4, true);
-                pt += 4;
-                break;
-              case 4:
-                value = "" + Float.intBitsToFloat(
-                  DataTools.bytesToInt(data, pt, 4, true));
-                pt += 4;
-                break;
-              case 5:
-                value = "" + Double.longBitsToDouble(
-                  DataTools.bytesToLong(data, pt, 8, true));
-                pt += 8;
-                break;
-              case 7:
-                value = "" + DataTools.bytesToLong(data, pt, 8, true);
-                pt += 8;
-                break;
-              case 69:
-              case 8:
-                int len = DataTools.bytesToInt(data, pt, 4, true);
-                pt += 4;
-                if (pt + len < data.length) {
-                  value = new String(data, pt, len);
-                  pt += len;
-                }
-                else return;
-                break;
-              case 20:
-              case 21:
-                value = "" + DataTools.bytesToLong(data, pt, 8, true);
-                pt += 8;
-                break;
-              case 22:
-              case 23:
-                value = "" + DataTools.bytesToInt(data, pt, 4, true);
-                pt += 4;
-                break;
-              case 66:
-                int l = DataTools.bytesToInt(data, pt, 2, true);
-                pt += 2;
-                value = new String(data, pt - 2, l + 2);
-                pt += l;
-                break;
-              default:
-                int oldPt = pt;
-                while (DataTools.bytesToInt(data, pt, 2, true) != 3 &&
-                  pt < data.length)
-                {
-                  pt += 2;
-                }
-                if (oldPt - 2 > 0 && pt < data.length) {
-                  value = new String(data, oldPt - 2, pt - oldPt + 2);
-                }
-                else return;
-            }
-
-            pt += 2;
-            int tagID = DataTools.bytesToInt(data, pt, 4, true);
-            pt += 4;
-            pt += 2;
-            int attribute = DataTools.bytesToInt(data, pt, 4, true);
-            pt += 4;
-            parseTag(value, tagID, attribute);
-          }
+          parseTags(s); 
         }
         else if (isContents && (dirName.equals("Image") ||
           dirName.toUpperCase().indexOf("ITEM") != -1) &&
           (data.length > core.sizeX[0]*core.sizeY[0]))
         {
-          pt += 2;
-          int version = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 4;
+          s.skipBytes(6); 
 
-          int vt = DataTools.bytesToInt(data, pt, 2, true);
-          pt += 2;
+          int vt = s.readShort();
           if (vt == 3) {
-            int type = DataTools.bytesToInt(data, pt, 4, true);
-            pt += 6;
+            s.skipBytes(6); 
           }
           else if (vt == 8) {
-            int l = DataTools.bytesToInt(data, pt, 2, true);
-            pt += 4 + l;
+            int l = s.readShort(); 
+            s.skipBytes(l + 2); 
           }
-          int len = DataTools.bytesToInt(data, pt, 2, true);
-          pt += 2;
-          if (data[pt] == 0 && data[pt + 1] == 0) pt += 2;
+          int len = s.readShort(); 
+          if (s.readShort() != 0) s.seek(s.getFilePointer() - 2); 
 
           String typeDescription = "";
-          if (pt + len <= data.length) {
-            typeDescription = new String(data, pt, len);
-            pt += len;
+          if (s.getFilePointer() + len <= s.length()) {
+            typeDescription = s.readString(len);
           }
           else break;
 
-          vt = DataTools.bytesToInt(data, pt, 2, true);
-          pt += 2;
+          vt = s.readShort();
           if (vt == 8) {
-            len = DataTools.bytesToInt(data, pt, 4, true);
-            pt += 6 + len;
+            len = s.readInt(); 
+            s.skipBytes(len + 2); 
           }
 
-          int tw = DataTools.bytesToInt(data, pt, 4, true);
+          int tw = s.readInt();
           if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
             core.sizeX[0] = tw;
           }
-          pt += 6;
-          int th = DataTools.bytesToInt(data, pt, 4, true);
+          s.skipBytes(2); 
+          int th = s.readInt(); 
           if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
             core.sizeY[0] = th;
           }
-          pt += 6;
+          s.skipBytes(2);
 
-          int zDepth = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 6;
-          int pixelFormat = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 6;
-          int numImageContainers = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 6;
-          int validBitsPerPixel = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 4;
+          int zDepth = s.readInt();
+          s.skipBytes(2);
+          int pixelFormat = s.readInt();
+          s.skipBytes(2);
+          int numImageContainers = s.readInt();
+          s.skipBytes(2);
+          int validBitsPerPixel = s.readInt();
 
           // VT_CLSID - PluginCLSID
-          while (DataTools.bytesToInt(data, pt, 2, true) != 65) {
-            pt += 2;
-          }
+          while (s.readShort() != 65);
 
           // VT_BLOB - Others
-          pt += 2;
-          len = DataTools.bytesToInt(data, pt, 4, true);
-          pt += len + 4;
+          len = s.readInt(); 
+          s.skipBytes(len); 
 
           // VT_STORED_OBJECT - Layers
-          pt += 2;
-          int oldPt = pt;
-          len = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 4;
+          s.skipBytes(2);
+          long old = s.getFilePointer();
+          len = s.readInt(); 
 
-          pt += 8;
+          s.skipBytes(8);
 
-          int tidx = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 4;
-          int cidx = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 4;
-          int zidx = DataTools.bytesToInt(data, pt, 4, true);
-          pt += 4;
+          int tidx = s.readInt();
+          int cidx = s.readInt(); 
+          int zidx = s.readInt(); 
 
           Integer zndx = new Integer(zidx);
           Integer cndx = new Integer(cidx);
@@ -705,21 +527,19 @@ public class ZeissZVIReader extends FormatReader {
           if (!cIndices.contains(cndx)) cIndices.add(cndx);
           if (!tIndices.contains(tndx)) tIndices.add(tndx);
 
-          pt = oldPt + 4 + len;
+          s.seek(old + len + 4);
 
-          boolean foundWidth =
-            DataTools.bytesToInt(data, pt, 4, true) == core.sizeX[0];
-          boolean foundHeight =
-            DataTools.bytesToInt(data, pt + 4, 4, true) == core.sizeY[0];
+          boolean foundWidth = s.readInt() == core.sizeX[0];
+          boolean foundHeight = s.readInt() == core.sizeY[0]; 
           boolean findFailed = false;
-          while ((!foundWidth || !foundHeight) && pt + 9 < data.length) {
-            pt++;
-            foundWidth =
-              DataTools.bytesToInt(data, pt, 4, true) == core.sizeX[0];
-            foundHeight =
-              DataTools.bytesToInt(data, pt + 4, 4, true) == core.sizeY[0];
+          while ((!foundWidth || !foundHeight) && 
+            s.getFilePointer() + 1 < s.length()) 
+          {
+            s.seek(s.getFilePointer() - 7); 
+            foundWidth = s.readInt() == core.sizeX[0]; 
+            foundHeight = s.readInt() == core.sizeY[0]; 
           }
-          pt -= 8;
+          s.seek(s.getFilePointer() - 16); 
           findFailed = !foundWidth && !foundHeight;
 
           // image header and data
@@ -727,9 +547,10 @@ public class ZeissZVIReader extends FormatReader {
           if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
             (dirName.equals("Image") && numImageContainers == 0))
           {
-            if (findFailed) pt = oldPt + 4 + len + 88;
-            byte[] o = new byte[data.length - pt];
-            System.arraycopy(data, pt, o, 0, o.length);
+            if (findFailed) s.seek(old + len + 92);
+            long fp = s.getFilePointer();
+            byte[] o = new byte[(int) (s.length() - fp)];
+            s.read(o);
 
             int imageNum = 0;
             if (dirName.toUpperCase().indexOf("ITEM") != -1) {
@@ -738,11 +559,11 @@ public class ZeissZVIReader extends FormatReader {
               imageNum = Integer.parseInt(num);
             }
 
-            offsets.put(new Integer(imageNum), new Integer(pt + 32));
+            offsets.put(new Integer(imageNum), new Integer((int) fp + 32));
             parsePlane(o, imageNum, directory, entryName);
           }
         }
-
+        s.close();
         data = null;
         r.exec("dis.close()");
       }
@@ -759,29 +580,112 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Parse a plane of data. */
   private void parsePlane(byte[] data, int num, Object directory, String entry)
+    throws IOException 
   {
-    int pt = 2;
-
-    int version = DataTools.bytesToInt(data, pt, 4, true);
-    pt += 6;
-    core.sizeX[0] = DataTools.bytesToInt(data, pt, 4, true);
-    pt += 4;
-    core.sizeY[0] = DataTools.bytesToInt(data, pt, 4, true);
-    pt += 4;
-    int depth = DataTools.bytesToInt(data, pt, 4, true); // z depth
-    pt += 4;
-    bpp = DataTools.bytesToInt(data, pt, 4, true);
-    pt += 4;
-    int pixelFormat = DataTools.bytesToInt(data, pt, 4, true); // ignore here
-    pt += 4;
-    int validBitsPerPixel = DataTools.bytesToInt(data, pt, 4, true);
-    pt += 4;
+    RandomAccessStream s = new RandomAccessStream(data);
+    s.order(true);
+    s.skipBytes(8);
+    
+    core.sizeX[0] = s.readInt(); 
+    core.sizeY[0] = s.readInt(); 
+    int depth = s.readInt(); 
+    bpp = s.readInt(); 
+    int pixelFormat = s.readInt(); 
+    int validBitsPerPixel = s.readInt(); 
 
     pixels.put(new Integer(num), directory);
     names.put(new Integer(num), entry);
     core.imageCount[0]++;
     if (bpp % 3 == 0) core.sizeC[0] = 3;
     else core.sizeC[0] = 1;
+  }
+
+  /** Parse all of the tags in a stream. */
+  private void parseTags(RandomAccessStream s) throws IOException {
+    s.skipBytes(24); 
+
+    int count = s.readInt(); 
+
+    // limit count to 4096
+    if (count > 4096) count = 4096;
+
+    for (int i=0; i<count; i++) {
+      if (s.getFilePointer() + 2 >= s.length()) break; 
+      int type = s.readShort(); 
+
+      String value = "";
+      switch (type) {
+        case 0:
+          break;
+        case 1:
+          break;
+        case 2:
+          value = "" + s.readShort(); 
+          break;
+        case 3:
+        case 22:
+        case 23:
+          value = "" + s.readInt(); 
+          break;
+        case 4:
+          value = "" + s.readFloat(); 
+          break;
+        case 5:
+          value = "" + s.readDouble(); 
+          break;
+        case 7:
+        case 20:
+        case 21:
+          value = "" + s.readLong(); 
+          break;
+        case 69:
+        case 8:
+          int len = s.readInt();
+          if (s.getFilePointer() + len < s.length()) {
+            value = s.readString(len);
+          }
+          else return; 
+          break;
+        case 66:
+          int l = s.readShort(); 
+          s.seek(s.getFilePointer() - 2);
+          value = s.readString(l + 2);
+          break;
+        default:
+          long old = s.getFilePointer(); 
+          while (s.readShort() != 3 && 
+            s.getFilePointer() + 2 < s.length());
+          long fp = s.getFilePointer() - 2; 
+          s.seek(old - 2);
+          value = s.readString((int) (fp - old + 2));
+      }
+  
+      s.skipBytes(2); 
+      int tagID = 0;
+      int attribute = 0; 
+    
+      try { tagID = s.readInt(); }
+      catch (IOException e) { }
+   
+      s.skipBytes(2); 
+   
+      try { attribute = s.readInt(); }
+      catch (IOException e) { }
+     
+      parseTag(value, tagID, attribute);
+      if (metadata.get("ImageWidth") != null) {
+        try { 
+          if (core.sizeX[0] == 0) core.sizeX[0] = Integer.parseInt(value); 
+        }
+        catch (NumberFormatException e) { }
+      } 
+      if (metadata.get("ImageHeight") != null) {
+        try { 
+          if (core.sizeY[0] == 0) core.sizeY[0] = Integer.parseInt(value); 
+        }
+        catch (NumberFormatException e) { }
+      } 
+    }
   }
 
   /** Parse a tag and place it in the metadata hashtable. */
