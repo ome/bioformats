@@ -14,39 +14,50 @@ public interface ICacheStrategy {
   int HIGH_PRIORITY = 5;
   int MAX_PRIORITY = 10;
 
+  int CENTERED_ORDER = 0;
+  int FORWARD_ORDER = 1;
+  int BACKWARD_ORDER = -1;
+
   // -- ICacheStrategy API methods --
 
   /** 
-   * Get the indices of the objects to cache, 
+   * Gets the indices of the objects to cache, 
    * surrounding the object with the given index.
    */
   int[][] getLoadList(int[] pos) throws CacheException;
 
-  /** Retrieve the priority for caching each axis. */
+  /** Retrieves the priority for caching each axis. */
   int[] getPriorities();
 
-  /** Set the priority for caching the given axis. */
+  /** Sets the priority for caching the given axis. */
   void setPriority(int priority, int axis);
 
-  /** Return true if forward slices should be loaded first. */
-  boolean getForwardFirst();
+  /**
+   * Retrieves the order in which slices should be loaded along each axis.
+   * @return An array whose constituents are each one of:<ul>
+   *   <li>CENTERED_ORDER</li>
+   *   <li>FORWARD_ORDER</li>
+   *   <li>BACKWARD_ORDER</li>
+   */
+  int[] getOrder();
 
-  /** Set whether or not forward slices should be loaded first. */
-  void setForwardFirst(boolean forwardFirst);
+  /**
+   * Sets the order in which slices should be loaded along each axis.
+   * @param order One of:<ul>
+   *   <li>CENTERED_ORDER</li>
+   *   <li>FORWARD_ORDER</li>
+   *   <li>BACKWARD_ORDER</li>
+   * @param axis The axis for which to set the order.
+   */
+  void setOrder(int order, int axis);
 
-  /** Retrieve the number of planes to cache forward along each axis. */
-  int[] getForward();
+  /** Retrieves the number of planes to cache along each axis. */
+  int[] getRange();
 
-  /** Set the number of planes to cache forward along the given axis. */
-  void setForward(int planes, int axis);
+  /** Sets the number of planes to cache along the given axis. */
+  void setRange(int planes, int axis);
 
-  /** Retrieve the number of planes to cache backward along each axis. */
-  int[] getBackward();
-
-  /** Set the number of planes to cache backward along the given axis. */
-  void setBackward(int planes, int axis);
-
-  /** Get the lengths of all the axes. */
+  /** Gets the lengths of all the axes. */
   int[] getLengths();
 
 }

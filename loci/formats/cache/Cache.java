@@ -92,7 +92,7 @@ public class Cache {
     if (pos == null) throw new CacheException("pos is null");
     if (pos.length != currentPos.length) {
       throw new CacheException("pos length mismatch (is " +
-        pos.length + ", expected " + currentPos.length);
+        pos.length + ", expected " + currentPos.length + ")");
     }
     int[] len = strategy.getLengths();
     for (int i=0; i<pos.length; i++) {
@@ -171,8 +171,7 @@ public class Cache {
         System.out.println("  strategy");
         System.out.println("  source");
         System.out.println("  position");
-        System.out.println("  forward");
-        System.out.println("  backward");
+        System.out.println("  range");
         System.out.println("  priority");
         System.out.println("  read");
         System.out.println("  exit");
@@ -192,9 +191,25 @@ public class Cache {
         ICacheStrategy strategy = cache.getStrategy();
         System.out.println("strategy = " + strategy.getClass().getName());
         printArray("\tpriorities", strategy.getPriorities());
-        System.out.println("\tforwardFirst = " + strategy.getForwardFirst());
-        printArray("\tforward", strategy.getForward());
-        printArray("\tbackward", strategy.getBackward());
+        int[] order = strategy.getOrder();
+        System.out.print("\torder =");
+        for (int i=0; i<order.length; i++) {
+          switch (order[i]) {
+            case ICacheStrategy.CENTERED_ORDER:
+              System.out.print(" C");
+              break;
+            case ICacheStrategy.FORWARD_ORDER:
+              System.out.print(" F");
+              break;
+            case ICacheStrategy.BACKWARD_ORDER:
+              System.out.print(" B");
+              break;
+            default:
+              System.out.print(" ?");
+          }
+        }
+        System.out.println();
+        printArray("\trange", strategy.getRange());
         printArray("\tlengths", strategy.getLengths());
         // output source information
         ICacheSource source = cache.getSource();
@@ -254,27 +269,14 @@ public class Cache {
         int t = Integer.parseInt(r.readLine().trim());
         cache.setCurrentPos(new int[] {z, c, t});
       }
-      else if (cmd.equals("forward")) {
+      else if (cmd.equals("range")) {
         System.out.print("Z: ");
         int z = Integer.parseInt(r.readLine().trim());
         System.out.print("C: ");
         int c = Integer.parseInt(r.readLine().trim());
         System.out.print("T: ");
         int t = Integer.parseInt(r.readLine().trim());
-        cache.getStrategy().setForward(z, 0);
-        cache.getStrategy().setForward(c, 1);
-        cache.getStrategy().setForward(t, 2);
-      }
-      else if (cmd.equals("backward")) {
-        System.out.print("Z: ");
-        int z = Integer.parseInt(r.readLine().trim());
-        System.out.print("C: ");
-        int c = Integer.parseInt(r.readLine().trim());
-        System.out.print("T: ");
-        int t = Integer.parseInt(r.readLine().trim());
-        cache.getStrategy().setBackward(z, 0);
-        cache.getStrategy().setBackward(c, 1);
-        cache.getStrategy().setBackward(t, 2);
+        cache.getStrategy().setRange(z, 0);
       }
       else if (cmd.equals("priority")) {
         System.out.println(ICacheStrategy.MIN_PRIORITY + " => min priority");
