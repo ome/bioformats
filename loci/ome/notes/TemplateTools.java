@@ -36,7 +36,6 @@ public class TemplateTools {
     throws Exception 
   {
     OMEXMLNode node = findNode(root, map, false);
-
     if (node == null && map != null) return null;
 
     if (node == null) {
@@ -178,6 +177,7 @@ public class TemplateTools {
     for (int i=0; i<elementCount; i++) {
       if (indexList.indexOf(",") == -1) {
         indices[i] = Integer.parseInt(indexList);
+        indexList = "0"; 
       }
       else {
         indices[i] = Integer.parseInt(indexList.substring(0, 

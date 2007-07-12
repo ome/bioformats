@@ -56,7 +56,7 @@ public class Template {
 
   /** Default background color (white). */
   private static final int[] DEFAULT_BACKGROUND_COLOR = new int[] {
-    255, 255, 255};
+    80, 80, 80};
 
   // -- Fields --
 
@@ -382,8 +382,24 @@ public class Template {
             for (int k=1; k<nodeCount; k++) {
               TemplateField f = tabs[i].getField(j).copy();
               if (map.indexOf("-") != -1) {
-                f.setValueMap(map + "," + k);
-                f.setNameMap(f.getNameMap() + "," + k); 
+                if (map.indexOf("OriginalMetadata") != -1) { 
+                  f.setValueMap(map + "," + k);
+                  f.setNameMap(f.getNameMap() + "," + k);
+                }
+                else {
+                  int comma = map.indexOf(",");
+                  if (comma == -1) comma = map.length() - 1;
+                  String mapBase = map.substring(0, map.indexOf("-") + 1);
+                  String mapSuffix = map.substring(comma, map.length());
+                  f.setValueMap(mapBase + k + mapSuffix); 
+               
+                  String nameMap = f.getNameMap();
+                  mapBase = nameMap.substring(0, nameMap.indexOf("-") + 1);
+                  comma = nameMap.indexOf(",");
+                  if (comma == -1) comma = nameMap.length() - 1;
+                  mapSuffix = nameMap.substring(comma, nameMap.length());
+                  f.setNameMap(mapBase + k + mapSuffix);
+                }
               } 
               else {
                 f.setValueMap(map + "-" + k);
@@ -410,8 +426,24 @@ public class Template {
             try {
               for (int m=1; m<TemplateTools.getNodeCount(root, map); m++) {
                 if (map.indexOf("-") != -1) {
-                  f.setValueMap(map + "," + k);
-                  f.setNameMap(f.getNameMap() + "," + k); 
+                  if (map.indexOf("OriginalMetadata") != -1) {
+                    f.setValueMap(map + "," + k);
+                    f.setNameMap(f.getNameMap() + "," + k);
+                  }
+                  else {
+                    int comma = map.indexOf(",");
+                    if (comma == -1) comma = map.length() - 1;
+                    String mapBase = map.substring(0, map.indexOf("-") + 1);
+                    String mapSuffix = map.substring(comma, map.length());
+                    f.setValueMap(mapBase + k + mapSuffix); 
+
+                    String nameMap = f.getNameMap();
+                    mapBase = nameMap.substring(0, nameMap.indexOf("-") + 1);
+                    comma = nameMap.indexOf(",");
+                    if (comma == -1) comma = nameMap.length() - 1;
+                    mapSuffix = nameMap.substring(comma, nameMap.length());
+                    f.setNameMap(mapBase + k + mapSuffix);
+                  }
                 } 
                 else {
                   f.setValueMap(map + "-" + k);

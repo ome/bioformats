@@ -116,12 +116,16 @@ public class TemplateGroup {
     String map = t.getValueMap();
     if (map == null) return;
 
-    if (map.lastIndexOf("-") != -1) {
-      map += "," + repetition; 
-    }
-    else {
-      map = map + "-" + repetition;
-    } 
+    int end = map.lastIndexOf("-");
+    if (end == -1) end = map.length();
+    String prefix = map.substring(0, end);
+
+    int start = map.indexOf(",");
+    if (start == -1) start = map.length();
+    String suffix = map.substring(start, map.length());
+
+    map = prefix + "-" + repetition + suffix; 
+
     t.setValueMap(map);
   }
 

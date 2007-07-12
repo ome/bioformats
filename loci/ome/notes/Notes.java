@@ -250,16 +250,17 @@ public class Notes extends JFrame implements ActionListener {
             rowNumber[col - 1]++;
             col++;
           }
-       
+      
           panel.add(new JLabel(group.getName() + " #" + (r + 1)), 
             CC.xy(col, rowNumber[col - 1]));
-          rowNumber[col - 1]++;
+          rowNumber[col - 1] += 3;
           col++;
 
           for (int k=0; k<group.getNumFields(); k++) {
             TemplateField field = group.getField(r, k);
             setupField(field, col, r, rowNumber, panel); 
           }
+          rowNumber[col - 1]++; 
         }
       }
 
