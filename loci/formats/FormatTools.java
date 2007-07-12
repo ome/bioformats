@@ -267,37 +267,49 @@ public final class FormatTools {
   }
 
   /**
-   * Computes a unique 1-D index corresponding to the multidimensional
-   * position given in the pos array, using the specified lengths array
-   * as the maximum value at each positional dimension.
+   * Computes a unique 1-D index corresponding
+   * to the given multidimensional position.
+   * @param lengths the maximum value for each positional dimension
+   * @param pos position along each dimensional axis
+   * @return rasterized index value
    */
   public static int positionToRaster(int[] lengths, int[] pos) {
-    int[] offsets = new int[lengths.length];
-    if (offsets.length > 0) offsets[0] = 1;
-    for (int i=1; i<offsets.length; i++) {
-      offsets[i] = offsets[i - 1] * lengths[i - 1];
-    }
+    int offset = 1;
     int raster = 0;
-    for (int i=0; i<pos.length; i++) raster += offsets[i] * pos[i];
+    for (int i=0; i<pos.length; i++) {
+      raster += offset * pos[i];
+      offset *= lengths[i];
+    }
     return raster;
   }
 
   /**
-   * Computes a unique 3-D position corresponding to the given raster
-   * value, using the specified lengths array as the maximum value at
-   * each positional dimension.
+   * Computes a unique N-D position corresponding
+   * to the given rasterized index value.
+   * @param lengths the maximum value at each positional dimension
+   * @param raster rasterized index value
+   * @return position along each dimensional axis
    */
   public static int[] rasterToPosition(int[] lengths, int raster) {
-    int[] offsets = new int[lengths.length];
-    if (offsets.length > 0) offsets[0] = 1;
-    for (int i=1; i<offsets.length; i++) {
-      offsets[i] = offsets[i - 1] * lengths[i - 1];
-    }
-    int[] pos = new int[lengths.length];
+    return rasterToPosition(lengths, raster, new int[lengths.length]);
+  }
+
+  /**
+   * Computes a unique N-D position corresponding
+   * to the given rasterized index value.
+   * @param lengths the maximum value at each positional dimension
+   * @param raster rasterized index value
+   * @param pos preallocated position array to populate with the result
+   * @return position along each dimensional axis
+   */
+  public static int[] rasterToPosition(int[] lengths, int raster, int[] pos) {
+    int offset = 1;
     for (int i=0; i<pos.length; i++) {
-      int q = i < pos.length - 1 ? raster % offsets[i + 1] : raster;
-      pos[i] = q / offsets[i];
+      int offset1 = offset * lengths[i];
+      int q = i < pos.length - 1 ? raster % offset1 : raster;
+      pos[i] = q / offset;
       raster -= q;
+      offset = offset1;
     }
     return pos;
   }
