@@ -226,8 +226,8 @@ public class CacheComponent extends JPanel
     for (int i=0; i<forward.size(); i++) {
       JSpinner f = (JSpinner) forward.get(i);
       JSpinner b = (JSpinner) backward.get(i);
-      strategy.setForward(((Integer) f.getValue()).intValue(), i);
-      strategy.setBackward(((Integer) b.getValue()).intValue(), i);
+//      strategy.setForward(((Integer) f.getValue()).intValue(), i);
+//      strategy.setBackward(((Integer) b.getValue()).intValue(), i);
     }
   }
 
@@ -283,11 +283,11 @@ public class CacheComponent extends JPanel
       else if (s.startsWith("Rectangle")) {
         strategy = new RectangleStrategy(lengths);
       }
-      strategy.setForwardFirst(forwardFirst);
+//      strategy.setForwardFirst(forwardFirst);
       int[] fwd = getForward();
-      for (int i=0; i<fwd.length; i++) strategy.setForward(fwd[i], i);
+//      for (int i=0; i<fwd.length; i++) strategy.setForward(fwd[i], i);
       int[] bwd = getBackward();
-      for (int i=0; i<bwd.length; i++) strategy.setBackward(bwd[i], i);
+//      for (int i=0; i<bwd.length; i++) strategy.setBackward(bwd[i], i);
       cache.setStrategy(strategy); 
     }
     catch (CacheException exc) {
