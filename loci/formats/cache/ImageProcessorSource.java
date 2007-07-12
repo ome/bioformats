@@ -11,8 +11,8 @@ import loci.formats.*;
 /** Retrieves ImageJ image processors from a file, using Bio-Formats. */
 public class ImageProcessorSource extends CacheSource {
 
-  // -- Constants -- 
- 
+  // -- Constants --
+
   private static final String NO_IJ_MSG =
     "ImageJ is required to use ImageProcessorSource. Please obtain ij.jar" +
     " from http://rsb.info.nih.gov/ij/download.html";
@@ -33,12 +33,11 @@ public class ImageProcessorSource extends CacheSource {
       r.exec("import ij.process.ShortProcessor");
     }
     catch (Throwable t) {
-      noIJ = true; 
-      LogTools.trace(t); 
+      noIJ = true;
+      LogTools.trace(t);
     }
     return r;
   }
-
 
   // -- Fields --
 
@@ -73,13 +72,13 @@ public class ImageProcessorSource extends CacheSource {
    * there are multiple channels, an array of ImageProcessors is returned
    * (one per channel).
    *
-   * @see loci.formats.cache.ICacheSource#getObject(int[], int[]) 
+   * @see loci.formats.cache.ICacheSource#getObject(int[], int[])
    */
   public Object getObject(int[] len, int[] pos) throws CacheException {
     if (noIJ) throw new CacheException(NO_IJ_MSG);
 
     int ndx = FormatTools.positionToRaster(len, pos);
-  
+
     try {
       int w = reader.getSizeX();
       int h = reader.getSizeY();
@@ -94,7 +93,7 @@ public class ImageProcessorSource extends CacheSource {
         // a different size, but we have no way of knowing what size;
         // so open this plane as a BufferedImage to find out
         BufferedImage bi = reader.openImage(ndx);
-        b = ImageTools.padImage(b, reader.isInterleaved(), c, 
+        b = ImageTools.padImage(b, reader.isInterleaved(), c,
           bi.getWidth() * bpp, w, h);
       }
 
@@ -103,12 +102,12 @@ public class ImageProcessorSource extends CacheSource {
         type == FormatTools.FLOAT || type == FormatTools.DOUBLE,
         reader.isLittleEndian());
 
-      // construct image processor 
+      // construct image processor
       r.setVar("ip", null);
       r.setVar("n", null);
-      r.setVar("w", w); 
-      r.setVar("h", h); 
-   
+      r.setVar("w", w);
+      r.setVar("h", h);
+
       if (pixels instanceof byte[]) {
         byte[] q = (byte[]) pixels;
         if (q.length > w * h * c) {
@@ -117,18 +116,18 @@ public class ImageProcessorSource extends CacheSource {
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
         r.setVar("q", q);
-        if (c == 1) r.exec("ip = new ByteProcessor(w, h, q, n)"); 
+        if (c == 1) r.exec("ip = new ByteProcessor(w, h, q, n)");
         else {
           r.exec("ip = new ColorProcessor(w, h)");
           byte[][] pix = new byte[3][w * h];
           for (int i=0; i<c; i++) {
-            System.arraycopy(q, i * w * h, pix[i], 0, w * h); 
+            System.arraycopy(q, i * w * h, pix[i], 0, w * h);
           }
-          r.setVar("red", pix[0]); 
-          r.setVar("green", pix[1]); 
-          r.setVar("blue", pix[2]); 
-          r.exec("ip.setRGB(red, green, blue)"); 
-        }       
+          r.setVar("red", pix[0]);
+          r.setVar("green", pix[1]);
+          r.setVar("blue", pix[2]);
+          r.exec("ip.setRGB(red, green, blue)");
+        }
       }
       else if (pixels instanceof short[]) {
         short[] q = (short[]) pixels;
@@ -137,23 +136,23 @@ public class ImageProcessorSource extends CacheSource {
           q = new short[w * h * c];
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
-        r.setVar("q", q); 
-        if (c == 1) r.exec("ip = new ShortProcessor(w, h, q, n)"); 
-        else { 
+        r.setVar("q", q);
+        if (c == 1) r.exec("ip = new ShortProcessor(w, h, q, n)");
+        else {
           short[][] pix = new short[3][w * h];
           for (int i=0; i<c; i++) {
-            System.arraycopy(q, i * w * h, pix[i], 0, w * h); 
+            System.arraycopy(q, i * w * h, pix[i], 0, w * h);
           }
-          r.setVar("redS", pix[0]); 
-          r.setVar("greenS", pix[1]); 
-          r.setVar("blueS", pix[2]); 
+          r.setVar("redS", pix[0]);
+          r.setVar("greenS", pix[1]);
+          r.setVar("blueS", pix[2]);
           r.setVar("nnull", null);
           r.exec("redProc = new ShortProcessor(w, h, redS, nnull)");
           r.exec("greenProc = new ShortProcessor(w, h, greenS, nnull)");
           r.exec("blueProc = new ShortProcessor(w, h, blueS, nnull)");
           return new Object[] {r.getVar("redProc"), r.getVar("greenProc"),
             r.getVar("blueProc")};
-        } 
+        }
       }
       else if (pixels instanceof int[]) {
         int[] q = (int[]) pixels;
@@ -162,23 +161,23 @@ public class ImageProcessorSource extends CacheSource {
           q = new int[w * h * c];
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
-        r.setVar("q", q); 
-        if (c == 1) r.exec("ip = new FloatProcessor(w, h, q)"); 
-        else { 
+        r.setVar("q", q);
+        if (c == 1) r.exec("ip = new FloatProcessor(w, h, q)");
+        else {
           int[][] pix = new int[3][w * h];
           for (int i=0; i<c; i++) {
-            System.arraycopy(q, i * w * h, pix[i], 0, w * h); 
+            System.arraycopy(q, i * w * h, pix[i], 0, w * h);
           }
-          r.setVar("redS", pix[0]); 
-          r.setVar("greenS", pix[1]); 
-          r.setVar("blueS", pix[2]); 
+          r.setVar("redS", pix[0]);
+          r.setVar("greenS", pix[1]);
+          r.setVar("blueS", pix[2]);
           r.setVar("nnull", null);
           r.exec("redProc = new FloatProcessor(w, h, redS)");
           r.exec("greenProc = new FloatProcessor(w, h, greenS)");
           r.exec("blueProc = new FloatProcessor(w, h, blueS)");
           return new Object[] {r.getVar("redProc"), r.getVar("greenProc"),
             r.getVar("blueProc")};
-        } 
+        }
       }
       else if (pixels instanceof float[]) {
         float[] q = (float[]) pixels;
@@ -189,8 +188,8 @@ public class ImageProcessorSource extends CacheSource {
         }
         if (c == 1) {
           // single channel -- use normal float processor
-          r.setVar("q", q); 
-          r.exec("ip = new FloatProcessor(w, h, q, n)"); 
+          r.setVar("q", q);
+          r.exec("ip = new FloatProcessor(w, h, q, n)");
         }
         else {
           // multiple channels -- convert floats to color processor
@@ -215,10 +214,10 @@ public class ImageProcessorSource extends CacheSource {
             bytes[i] = (byte[]) r.getVar("bytes");
           }
           r.exec("ip = new ColorProcessor(w, h)");
-          r.setVar("red", bytes[0]); 
-          r.setVar("green", bytes[1]); 
-          r.setVar("blue", pix.length >= 3 ? bytes[2] : new byte[w * h]); 
-          r.exec("ip.setRGB(red, green, blue)"); 
+          r.setVar("red", bytes[0]);
+          r.setVar("green", bytes[1]);
+          r.setVar("blue", pix.length >= 3 ? bytes[2] : new byte[w * h]);
+          r.exec("ip.setRGB(red, green, blue)");
         }
       }
       else if (pixels instanceof double[]) {
@@ -228,10 +227,10 @@ public class ImageProcessorSource extends CacheSource {
           q = new double[w * h];
           System.arraycopy(tmp, 0, q, 0, q.length);
         }
-        r.setVar("q", q); 
-        r.exec("ip = new FloatProcessor(w, h, q)"); 
+        r.setVar("q", q);
+        r.exec("ip = new FloatProcessor(w, h, q)");
       }
-      return r.getVar("ip"); 
+      return r.getVar("ip");
     }
     catch (Exception e) { throw new CacheException(e); }
   }

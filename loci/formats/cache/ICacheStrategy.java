@@ -20,8 +20,8 @@ public interface ICacheStrategy {
 
   // -- ICacheStrategy API methods --
 
-  /** 
-   * Gets the indices of the objects to cache, 
+  /**
+   * Gets the indices of the objects to cache,
    * surrounding the object with the given index.
    */
   int[][] getLoadList(int[] pos) throws CacheException;

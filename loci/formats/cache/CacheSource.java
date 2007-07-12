@@ -8,7 +8,7 @@ public abstract class CacheSource implements ICacheSource {
 
   // -- Constructors --
 
-  public CacheSource(Object o) { } 
+  public CacheSource(Object o) { }
 
   // -- ICacheSource API methods --
 
@@ -23,8 +23,8 @@ public abstract class CacheSource implements ICacheSource {
     Object[] o = new Object[pos.length];
     for (int i=0; i<o.length; i++) {
       o[i] = getObject(len, pos[i]);
-    } 
-    return o; 
+    }
+    return o;
   }
 
 }
