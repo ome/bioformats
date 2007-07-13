@@ -333,7 +333,10 @@ public class Notes extends JFrame implements ActionListener {
         actionPerformed(new ActionEvent(this, -1, "save"));
       }
       thumb.clear();
-      loadTemplate(currentTemplate); 
+      if (templateName.equals(DEFAULT_TEMPLATE)) { 
+        loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE)); 
+      }
+      else loadTemplate(templateName);
     }
     else if (cmd.equals("open")) {
       progress.setString("Opening file..."); 
@@ -347,7 +350,12 @@ public class Notes extends JFrame implements ActionListener {
           currentFile = chooser.getSelectedFile().getAbsolutePath();
         }
         if (currentFile == null) return; 
-
+      
+        thumb.clear();
+        if (templateName.equals(DEFAULT_TEMPLATE)) { 
+          loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE)); 
+        }
+        else loadTemplate(templateName);
         openFile(currentFile);
       }
       catch (Exception exc) {
@@ -590,6 +598,8 @@ public class Notes extends JFrame implements ActionListener {
 
       reader.close();
     } 
+ 
+    
     progress.setString("Populating fields..."); 
     currentTemplate.initializeFields(currentRoot); 
     currentTemplate.populateFields(currentRoot); 
