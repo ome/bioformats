@@ -544,8 +544,9 @@ public class Notes extends JFrame implements ActionListener {
   
   private void openFile(String file) throws Exception {
     currentFile = file; 
-    FileStitcher stitcher = new FileStitcher();
-    stitcher.setOriginalMetadataPopulated(true); 
+    ImageReader reader = new ImageReader();
+    reader.setNormalized(true); 
+    reader.setOriginalMetadataPopulated(true); 
     progress.setString("Reading " + currentFile);
    
     if (currentFile.endsWith(".ome")) {
@@ -560,10 +561,10 @@ public class Notes extends JFrame implements ActionListener {
         currentRoot = new OMENode(companion);
       }
 
-      stitcher.setMetadataStore(new OMEXMLMetadataStore());
-      stitcher.setId(currentFile); 
+      reader.setMetadataStore(new OMEXMLMetadataStore());
+      reader.setId(currentFile); 
       OMEXMLMetadataStore store = 
-        (OMEXMLMetadataStore) stitcher.getMetadataStore();
+        (OMEXMLMetadataStore) reader.getMetadataStore();
 
       if (companion.exists()) {
         // merge the two OMENode objects
@@ -582,12 +583,12 @@ public class Notes extends JFrame implements ActionListener {
       
       // grab thumbnails
 
-      for (int i=0; i<stitcher.getSeriesCount(); i++) { 
-        stitcher.setSeries(i); 
-        thumb.add(stitcher.openThumbImage(0));
+      for (int i=0; i<reader.getSeriesCount(); i++) { 
+        reader.setSeries(i); 
+        thumb.add(reader.openThumbImage(0));
       } 
 
-      stitcher.close();
+      reader.close();
     } 
     progress.setString("Populating fields..."); 
     currentTemplate.initializeFields(currentRoot); 
