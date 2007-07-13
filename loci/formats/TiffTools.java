@@ -1406,8 +1406,8 @@ public final class TiffTools {
       int[][] intData = new int[samplesPerPixel][samples[0].length / 3];
       for (int i=0; i<samplesPerPixel; i++) {
         for (int j=0; j<intData[i].length; j++) {
-          intData[i][j] = DataTools.bytesToInt(samples[i], j*3, 3, 
-            isLittleEndian(ifd)); 
+          intData[i][j] = DataTools.bytesToInt(samples[i], j*3, 3,
+            isLittleEndian(ifd));
         }
       }
       return ImageTools.makeImage(intData, (int) imageWidth, (int) imageLength);
@@ -1660,7 +1660,7 @@ public final class TiffTools {
           {
             s = (short) bb.getBits(bps0);
             if ((ndx % imageWidth) == imageWidth - 1) {
-              bb.skipBits((imageWidth * bps0 * sampleCount) % 8); 
+              bb.skipBits((imageWidth * bps0 * sampleCount) % 8);
             }
           }
           short b = s;
@@ -1682,7 +1682,7 @@ public final class TiffTools {
           }
           else if (photoInterp == CFA_ARRAY) {
             if (i == 0) {
-              int pixelIndex = (int) ((row + (count / cw))*imageWidth + col + 
+              int pixelIndex = (int) ((row + (count / cw))*imageWidth + col +
                 (count % cw));
 
               samples[colorMap[count]][pixelIndex] = s;
@@ -1770,9 +1770,9 @@ public final class TiffTools {
         else {
           if (numBytes + index < bytes.length) {
             System.arraycopy(bytes, index, copyByteArray, 0, numBytes);
-          } 
+          }
           else {
-            System.arraycopy(bytes, bytes.length - numBytes, copyByteArray, 
+            System.arraycopy(bytes, bytes.length - numBytes, copyByteArray,
               0, numBytes);
           }
           index += numBytes;

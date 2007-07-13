@@ -103,7 +103,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
       firstImageCA = ca.getDOMElement();
     }
 
-    Vector original = DOMUtil.getChildElements("OriginalMetadata", firstImageCA);
+    Vector original =
+      DOMUtil.getChildElements("OriginalMetadata", firstImageCA);
     if (original.size() == 0) {
       Element el = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");

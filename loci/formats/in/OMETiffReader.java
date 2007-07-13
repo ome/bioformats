@@ -59,7 +59,8 @@ public class OMETiffReader extends BaseTiffReader {
       ras.close();
       if (ifd == null) return false;
 
-      String comment = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      String comment = (String)
+        ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
       if (comment == null) return false;
       return comment.indexOf("ome.xsd") >= 0;
     }
