@@ -806,7 +806,9 @@ public final class TiffTools {
     {
       samplesPerPixel = 3;
     }
-    int bpp = getBitsPerSample(ifd)[0] / 8;
+    int bpp = getBitsPerSample(ifd)[0];
+    while ((bpp % 8) != 0) bpp++;
+    bpp /= 8;
     long width = getImageWidth(ifd);
     long length = getImageLength(ifd);
     byte[] b = new byte[(int) (width * length * samplesPerPixel * bpp)];
@@ -1251,7 +1253,7 @@ public final class TiffTools {
 
       undifference(data, bitsPerSample, imageWidth, planarConfig, predictor);
       unpackBytes(samples, 0, data, bitsPerSample, photoInterp, colorMap,
-        littleEndian, maxValue, planarConfig, 0, 1);
+        littleEndian, maxValue, planarConfig, 0, 1, imageWidth);
     }
     else {
       int overallOffset = 0;
@@ -1279,7 +1281,7 @@ public final class TiffTools {
             }
             unpackBytes(samples, offset, bytes, bitsPerSample,
               photoInterp, colorMap, littleEndian, maxValue, planarConfig,
-              strip, (int) numStrips);
+              strip, (int) numStrips, imageWidth);
             overallOffset += bytes.length / bitsPerSample.length;
           }
           else {
@@ -1304,7 +1306,7 @@ public final class TiffTools {
           if (planarConfig == 2) offset = overallOffset / samplesPerPixel;
           unpackBytes(samples, offset, bytes, bitsPerSample, photoInterp,
             colorMap, littleEndian, maxValue, planarConfig,
-            strip, (int) numStrips);
+            strip, (int) numStrips, imageWidth);
           overallOffset += bytes.length / bitsPerSample.length;
         }
       }
@@ -1316,7 +1318,8 @@ public final class TiffTools {
       undifference(altBytes, bitsPerSample,
         imageWidth, planarConfig, predictor);
       unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
-        photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 1);
+        photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 1,
+        imageWidth);
     }
 
     // construct field
@@ -1398,6 +1401,16 @@ public final class TiffTools {
       // Now make our image.
       return ImageTools.makeImage(sampleData,
         (int) imageWidth, (int) imageLength, validBits);
+    }
+    else if (bitsPerSample[0] == 24) {
+      int[][] intData = new int[samplesPerPixel][samples[0].length / 3];
+      for (int i=0; i<samplesPerPixel; i++) {
+        for (int j=0; j<intData[i].length; j++) {
+          intData[i][j] = DataTools.bytesToInt(samples[i], j*3, 3, 
+            isLittleEndian(ifd)); 
+        }
+      }
+      return ImageTools.makeImage(intData, (int) imageWidth, (int) imageLength);
     }
     else if (bitsPerSample[0] == 32) {
       int type = getIFDIntValue(ifd, SAMPLE_FORMAT);
@@ -1557,8 +1570,8 @@ public final class TiffTools {
    */
   public static void unpackBytes(short[][] samples, int startIndex,
     byte[] bytes, int[] bitsPerSample, int photoInterp, int[] colorMap,
-    boolean littleEndian, long maxValue, int planar, int strip, int numStrips)
-    throws FormatException
+    boolean littleEndian, long maxValue, int planar, int strip, int numStrips,
+    long imageWidth) throws FormatException
   {
     if (planar == 2) {
       planarUnpack(samples, startIndex, bytes, bitsPerSample, photoInterp,
@@ -1595,16 +1608,16 @@ public final class TiffTools {
     boolean bps8 = bps0 == 8;
     boolean bps16 = bps0 == 16;
 
-    int width = 0;
     int height = 0;
     if (photoInterp == CFA_ARRAY) {
-      width = colorMap[colorMap.length - 2];
+      imageWidth = colorMap[colorMap.length - 2];
       height = colorMap[colorMap.length - 1];
     }
+    else height = (int) (samples[0].length / imageWidth);
 
     int row = 0, col = 0;
 
-    if (width != 0) row = startIndex / width;
+    if (imageWidth != 0) row = startIndex / (int) imageWidth;
 
     int cw = 0;
     int ch = 0;
@@ -1646,9 +1659,11 @@ public final class TiffTools {
             photoInterp != RGB_PALETTE)))
           {
             s = (short) bb.getBits(bps0);
+            if ((ndx % imageWidth) == imageWidth - 1) {
+              bb.skipBits((imageWidth * bps0 * sampleCount) % 8); 
+            }
           }
           short b = s;
-
           if (photoInterp != CFA_ARRAY) samples[i][ndx] = s;
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
@@ -1667,7 +1682,8 @@ public final class TiffTools {
           }
           else if (photoInterp == CFA_ARRAY) {
             if (i == 0) {
-              int pixelIndex = (row + (count / cw))*width + col + (count % cw);
+              int pixelIndex = (int) ((row + (count / cw))*imageWidth + col + 
+                (count % cw));
 
               samples[colorMap[count]][pixelIndex] = s;
               count++;
@@ -1675,8 +1691,8 @@ public final class TiffTools {
               if (count == colorMap.length) {
                 count = 0;
                 col += cw*ch;
-                if (col == width) col = cw;
-                else if (col > width) {
+                if (col == imageWidth) col = cw;
+                else if (col > imageWidth) {
                   row += ch;
                   col = 0;
                 }
@@ -1753,9 +1769,11 @@ public final class TiffTools {
         }  // End if (bps16)
         else {
           if (numBytes + index < bytes.length) {
-              System.arraycopy(bytes, index, copyByteArray, 0, numBytes);
-          } else {
-              System.arraycopy(bytes, bytes.length - numBytes, copyByteArray, 0, numBytes);
+            System.arraycopy(bytes, index, copyByteArray, 0, numBytes);
+          } 
+          else {
+            System.arraycopy(bytes, bytes.length - numBytes, copyByteArray, 
+              0, numBytes);
           }
           index += numBytes;
           int ndx = startIndex + j;
