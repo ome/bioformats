@@ -29,8 +29,8 @@ import java.text.*;
 import java.util.*;
 import loci.formats.*;
 
-/** 
- * TCSReader is the file format reader for Leica TCS TIFF files. 
+/**
+ * TCSReader is the file format reader for Leica TCS TIFF files.
  */
 public class TCSReader extends BaseTiffReader {
 
@@ -49,27 +49,27 @@ public class TCSReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (!name.toLowerCase().endsWith("tif") && 
-      !name.toLowerCase().endsWith("tiff")) 
-    {  
-      return false; 
-    } 
-    
+    if (!name.toLowerCase().endsWith("tif") &&
+      !name.toLowerCase().endsWith("tiff"))
+    {
+      return false;
+    }
+
     try {
       RandomAccessStream ras = new RandomAccessStream(name);
       Hashtable ifd = TiffTools.getFirstIFD(ras);
       ras.close();
       if (ifd == null) return false;
-    
-      String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME)); 
+
+      String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
       if (document == null) return false;
       return document.startsWith("CHANNEL");
     }
-    catch (Exception e) { return false; } 
+    catch (Exception e) { return false; }
   }
-  
+
   // -- Internal BaseTiffReader API methods --
- 
+
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
@@ -82,27 +82,27 @@ public class TCSReader extends BaseTiffReader {
     SimpleDateFormat fmt = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.SSS");
 
     for (int i=0; i<ifds.length; i++) {
-      String document = 
+      String document =
         (String) ifds[i].get(new Integer(TiffTools.DOCUMENT_NAME));
-    
+
       int index = document.indexOf("INDEX");
       String c = document.substring(8, index).trim();
       ch[i] = Integer.parseInt(c);
-      if (ch[i] > channelCount) channelCount = ch[i]; 
+      if (ch[i] > channelCount) channelCount = ch[i];
 
-      String n = document.substring(index + 6, 
-        document.indexOf(" ", index + 6)).trim(); 
-      idx[i] = Integer.parseInt(n); 
-   
-      String date = document.substring(document.indexOf(" ", index + 6), 
-        document.indexOf("FORMAT")).trim(); 
-      stamp[i] = fmt.parse(date, new ParsePosition(0)).getTime(); 
+      String n = document.substring(index + 6,
+        document.indexOf(" ", index + 6)).trim();
+      idx[i] = Integer.parseInt(n);
+
+      String date = document.substring(document.indexOf(" ", index + 6),
+        document.indexOf("FORMAT")).trim();
+      stamp[i] = fmt.parse(date, new ParsePosition(0)).getTime();
     }
 
     core.sizeT[0] = 0;
     core.currentOrder[0] = core.rgb[0] ? "XYC" : "XY";
 
-    // determine the axis sizes and ordering 
+    // determine the axis sizes and ordering
     boolean unique = true;
     for (int i=0; i<stamp.length; i++) {
       for (int j=i+1; j<stamp.length; j++) {
@@ -113,17 +113,17 @@ public class TCSReader extends BaseTiffReader {
       }
       if (unique) {
         core.sizeT[0]++;
-        if (core.currentOrder[0].indexOf("T") < 0) core.currentOrder[0] += "T"; 
+        if (core.currentOrder[0].indexOf("T") < 0) core.currentOrder[0] += "T";
       }
       else if (i > 0) {
         if ((ch[i] != ch[i - 1]) && core.currentOrder[0].indexOf("C") < 0) {
           core.currentOrder[0] += "C";
         }
         else if (core.currentOrder[0].indexOf("Z") < 0) {
-          core.currentOrder[0] += "Z"; 
+          core.currentOrder[0] += "Z";
         }
       }
-      unique = true; 
+      unique = true;
     }
 
     if (core.currentOrder[0].indexOf("Z") < 0) core.currentOrder[0] += "Z";
@@ -131,13 +131,13 @@ public class TCSReader extends BaseTiffReader {
     if (core.currentOrder[0].indexOf("T") < 0) core.currentOrder[0] += "T";
 
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
-    if (channelCount == 0) channelCount = 1; 
+    if (channelCount == 0) channelCount = 1;
     core.sizeZ[0] = ifds.length / (core.sizeT[0] * channelCount);
     core.sizeC[0] *= channelCount;
-    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * channelCount; 
-  
-    // cut up comment 
- 
+    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * channelCount;
+
+    // cut up comment
+
     String comment = (String) getMeta("Comment");
     if (comment != null && comment.startsWith("[")) {
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -152,6 +152,6 @@ public class TCSReader extends BaseTiffReader {
       }
       metadata.remove("Comment");
     }
-  } 
+  }
 
 }

@@ -214,12 +214,12 @@ public class IPLabReader extends FormatReader {
         int size = in.readInt();
         if (size == 8) {
           // indexed lookup table
-          in.skipBytes(4); 
+          in.skipBytes(4);
           int type = in.readInt();
 
           String[] types = new String[] {
             "monochrome", "reverse monochrome", "BGR", "classify", "rainbow",
-            "red", "green", "blue", "cyan", "magenta", "yellow", 
+            "red", "green", "blue", "cyan", "magenta", "yellow",
             "saturated pixels"
           };
           String clutType = (type >= 0 && type < types.length) ? types[type] :
@@ -245,11 +245,11 @@ public class IPLabReader extends FormatReader {
         for (int i=0; i<core.sizeC[0]; i++) {
           int source = in.readInt();
           String[] types = new String[] {
-            "user", "plane", "sequence", "saturated plane", 
+            "user", "plane", "sequence", "saturated plane",
             "saturated sequence", "ROI"
           };
 
-          String sourceType = (source >= 0 && source < types.length) ? 
+          String sourceType = (source >= 0 && source < types.length) ?
             types[source] : "user";
           addMeta("NormalizationSource" + i, sourceType);
 
@@ -312,7 +312,7 @@ public class IPLabReader extends FormatReader {
       }
       else if (tag.equals("unit")) {
         // read in units
-        in.skipBytes(4); 
+        in.skipBytes(4);
 
         for (int i=0; i<4; i++) {
           int xResStyle = in.readInt();

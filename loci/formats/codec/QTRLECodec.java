@@ -15,11 +15,11 @@ public class QTRLECodec extends BaseCodec implements Codec {
     throws FormatException
   {
     throw new FormatException("QTRLE compression not supported.");
-  } 
+  }
 
   /* @see Codec#decompress(byte[], Object) */
   public byte[] decompress(byte[] data, Object options) throws FormatException {
-    if (options == null || !(options instanceof Object[])) return null; 
+    if (options == null || !(options instanceof Object[])) return null;
 
     Object[] o = (Object[]) options;
     byte[] prev = (byte[]) o[1];
@@ -51,7 +51,7 @@ public class QTRLECodec extends BaseCodec implements Codec {
           for (int i=0; i<start; i++) {
             off = i * x * bpp;
             System.arraycopy(prev, off, output, off, x * bpp);
-          } 
+          }
         }
         off += x * bpp;
 
@@ -64,8 +64,8 @@ public class QTRLECodec extends BaseCodec implements Codec {
       }
       else throw new FormatException("Unsupported header : " + header);
 
-      // uncompress remaining lines 
- 
+      // uncompress remaining lines
+
       int skip = 0; // number of bytes to skip
       byte rle = 0; // RLE code
 
@@ -77,12 +77,12 @@ public class QTRLECodec extends BaseCodec implements Codec {
 
         if (prev != null) {
           try {
-            System.arraycopy(prev, rowPointer, output, rowPointer, 
+            System.arraycopy(prev, rowPointer, output, rowPointer,
               (skip - 1) * bpp);
           }
-          catch (ArrayIndexOutOfBoundsException e) { } 
+          catch (ArrayIndexOutOfBoundsException e) { }
         }
-    
+
         off = rowPointer + ((skip - 1) * bpp);
         while (true) {
           rle = (byte) (s.read() & 0xff);
@@ -96,15 +96,15 @@ public class QTRLECodec extends BaseCodec implements Codec {
               }
               catch (ArrayIndexOutOfBoundsException e) { }
             }
-        
-            off += (skip - 1) * bpp; 
+
+            off += (skip - 1) * bpp;
           }
           else if (rle == -1) {
             if (off < (rowPointer + (x * bpp)) && prev != null) {
-              System.arraycopy(prev, off, output, off, rowPointer + 
+              System.arraycopy(prev, off, output, off, rowPointer +
                 (x * bpp) - off);
             }
-            break; 
+            break;
           }
           else if (rle < -1) {
             // unpack next pixel and copy it to output -(rle) times
@@ -114,9 +114,9 @@ public class QTRLECodec extends BaseCodec implements Codec {
                   off, bpp);
                 off += bpp;
               }
-              else break; 
+              else break;
             }
-            s.skipBytes(bpp); 
+            s.skipBytes(bpp);
           }
           else {
             // copy (rle) pixels to output
@@ -127,14 +127,14 @@ public class QTRLECodec extends BaseCodec implements Codec {
             }
             if (len < 0) len = 0;
             if (off > output.length) off = output.length;
-            s.read(output, off, len); 
-            off += len; 
+            s.read(output, off, len);
+            off += len;
           }
-          if (s.getFilePointer() >= s.length()) return output; 
+          if (s.getFilePointer() >= s.length()) return output;
         }
-        rowPointer += x * bpp; 
+        rowPointer += x * bpp;
       }
-      return output; 
+      return output;
     }
     catch (IOException e) {
       throw new FormatException(e);

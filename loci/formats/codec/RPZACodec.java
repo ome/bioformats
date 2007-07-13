@@ -2,7 +2,6 @@
 // RPZACodec.java
 //
 
-
 /*
 LOCI Bio-Formats package for reading and converting biological file formats.
 Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
@@ -32,7 +31,7 @@ import loci.formats.*;
  * adapted from the RPZA codec for ffmpeg - see http://ffmpeg.mplayerhq.hu
  */
 public class RPZACodec extends BaseCodec implements Codec {
- 
+
   /* @see Codec#compress(byte[], int, int, int[], Object) */
   public byte[] compress(byte[] input, int x, int y, int[] dims,
     Object options) throws FormatException
@@ -66,7 +65,7 @@ public class RPZACodec extends BaseCodec implements Codec {
 
     while (data[streamPtr] != (byte) 0xe1) streamPtr++;
     streamPtr += 4;
-    
+
     totalBlocks = ((x + 3) / 4) * ((y + 3) / 4);
 
     while (streamPtr < data.length) {
@@ -83,7 +82,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           nBlocks = 1;
         }
       }
-   
+
       switch (opcode & 0xe0) {
         case 0x80:
           while (nBlocks-- > 0) {
@@ -92,7 +91,7 @@ public class RPZACodec extends BaseCodec implements Codec {
               pixelPtr = 0;
               rowPtr += stride * 4;
             }
-            totalBlocks--; 
+            totalBlocks--;
           }
           break;
         case 0xa0:
@@ -106,17 +105,17 @@ public class RPZACodec extends BaseCodec implements Codec {
                 pixels[blockPtr] = colorA;
 
                 short s = (short) (pixels[blockPtr] & 0x7fff);
-                unpack(s, rtn, blockPtr, pixels.length); 
+                unpack(s, rtn, blockPtr, pixels.length);
                 blockPtr++;
               }
-              blockPtr += rowInc; 
+              blockPtr += rowInc;
             }
             pixelPtr += 4;
             if (pixelPtr >= x) {
               pixelPtr = 0;
               rowPtr += stride * 4;
             }
-            totalBlocks--; 
+            totalBlocks--;
           }
           break;
         case 0xc0:
@@ -124,8 +123,8 @@ public class RPZACodec extends BaseCodec implements Codec {
           if ((opcode & 0xe0) == 0xc0) {
             colorA = DataTools.bytesToInt(data, streamPtr, 2, false);
             streamPtr += 2;
-          } 
-      
+          }
+
           colorB = DataTools.bytesToInt(data, streamPtr, 2, false);
           streamPtr += 2;
 
@@ -133,7 +132,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           color4[1] = 0;
           color4[2] = 0;
           color4[3] = colorA;
-        
+
           ta = (colorA >> 10) & 0x1f;
           tb = (colorB >> 10) & 0x1f;
           color4[1] |= ((11*ta + 21*tb) >> 5) << 10;
@@ -170,7 +169,7 @@ public class RPZACodec extends BaseCodec implements Codec {
               pixelPtr = 0;
               rowPtr += stride * 4;
             }
-            totalBlocks--; 
+            totalBlocks--;
           }
           break;
         case 0x00:
@@ -188,7 +187,7 @@ public class RPZACodec extends BaseCodec implements Codec {
               unpack(s, rtn, blockPtr, pixels.length);
               blockPtr++;
             }
-            blockPtr += rowInc; 
+            blockPtr += rowInc;
           }
           pixelPtr += 4;
           if (pixelPtr >= x) {
@@ -199,7 +198,7 @@ public class RPZACodec extends BaseCodec implements Codec {
           break;
       }
     }
-    return rtn; 
+    return rtn;
   }
 
   // -- Helper methods --

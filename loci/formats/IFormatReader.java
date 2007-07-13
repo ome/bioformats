@@ -191,15 +191,15 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns true if we should collect metadata. */
   boolean isMetadataCollected();
 
-  /** 
-   * Specifies whether or not to save proprietary metadata 
-   * in the MetadataStore. 
+  /**
+   * Specifies whether or not to save proprietary metadata
+   * in the MetadataStore.
    */
   void setOriginalMetadataPopulated(boolean populate);
 
-  /** 
-   * Returns true if we should save proprietary metadata 
-   * in the MetadataStore. 
+  /**
+   * Returns true if we should save proprietary metadata
+   * in the MetadataStore.
    */
   boolean isOriginalMetadataPopulated();
 

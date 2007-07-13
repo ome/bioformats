@@ -439,7 +439,7 @@ public class OIBReader extends FormatReader {
         case 2:
           core.pixelType[i] = FormatTools.UINT16;
           break;
-        default: core.pixelType[i] = FormatTools.UINT8; 
+        default: core.pixelType[i] = FormatTools.UINT8;
       }
 
       String acquisition = "[Acquisition Parameters Common] - ";

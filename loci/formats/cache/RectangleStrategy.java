@@ -23,13 +23,13 @@ package loci.formats.cache;
  * The numbers indicate the order planes will be cached, with "0"
  * corresponding to the current dimensional position (Z2-T3).
  * <pre>
- *      T  0  1  2  3  4  5  6 
+ *      T  0  1  2  3  4  5  6
  *    Z /---------------------
- *    0 |    24 20  6 14 22   
- *    1 |    18 12  2 10 16  
- *    2 |     8  4  0  3  7   
- *    3 |    17 11  1  9 15   
- *    4 |    23 19  5 13 21   
+ *    0 |    24 20  6 14 22
+ *    1 |    18 12  2 10 16
+ *    2 |     8  4  0  3  7
+ *    3 |    17 11  1  9 15
+ *    4 |    23 19  5 13 21
  * </pre>
  */
 public class RectangleStrategy extends CacheStrategy {

@@ -39,7 +39,7 @@ public class VisitechReader extends FormatReader {
 
   // -- Constructor --
 
-  public VisitechReader() { 
+  public VisitechReader() {
     super("Visitech XYS", new String[] {"xys", "html"});
   }
 
@@ -54,20 +54,20 @@ public class VisitechReader extends FormatReader {
   public byte[] openBytes(int no) throws FormatException, IOException {
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, buf); 
+    return openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }
-    int plane = core.sizeX[0] * core.sizeY[0] * 
+    int plane = core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]);
-    if (buf.length < plane) { 
+    if (buf.length < plane) {
       throw new FormatException("Buffer too small.");
     }
 
@@ -78,7 +78,7 @@ public class VisitechReader extends FormatReader {
     RandomAccessStream s = new RandomAccessStream(file);
     s.skipBytes(382 + (plane + 164)*planeIndex);
     s.read(buf);
-    s.close(); 
+    s.close();
     return buf;
   }
 
@@ -91,8 +91,8 @@ public class VisitechReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
-    if (files == null) return new String[0]; 
-    return (String[]) files.toArray(new String[0]); 
+    if (files == null) return new String[0];
+    return (String[]) files.toArray(new String[0]);
   }
 
   // -- Internal FormatReader API methods --
@@ -100,21 +100,21 @@ public class VisitechReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-  
-    // first, make sure we have the HTML file 
- 
+
+    // first, make sure we have the HTML file
+
     if (!id.toLowerCase().endsWith("html")) {
       Location file = new Location(id).getAbsoluteFile();
       String path = file.getPath();
-      int ndx = path.lastIndexOf(File.separator); 
-      String base = path.substring(ndx + 1, path.indexOf(" ", ndx)); 
-   
+      int ndx = path.lastIndexOf(File.separator);
+      String base = path.substring(ndx + 1, path.indexOf(" ", ndx));
+
       currentId = null;
-      initFile(new Location(file.getParent(), 
+      initFile(new Location(file.getParent(),
         base + " Report.html").getAbsolutePath());
-      return; 
-    } 
- 
+      return;
+    }
+
     // parse the HTML file
 
     /* debug */ System.out.println(id);
@@ -122,7 +122,7 @@ public class VisitechReader extends FormatReader {
     String s = in.readString((int) in.length());
 
     // strip out "style", "a", and "script" tags
- 
+
     s = s.replaceAll("<[bB][rR]>", "\n");
     s = s.replaceAll("<[sS][tT][yY][lL][eE]\\p{ASCII}*?" +
       "[sS][tT][yY][lL][eE]>", "");
@@ -134,21 +134,21 @@ public class VisitechReader extends FormatReader {
       String token = st.nextToken().trim();
 
       if ((token.startsWith("<") && !token.startsWith("</")) ||
-        token.indexOf("pixels") != -1) 
+        token.indexOf("pixels") != -1)
       {
         token = token.replaceAll("<.*?>", "");
-        int ndx = token.indexOf(":"); 
-        
+        int ndx = token.indexOf(":");
+
         if (ndx != -1) {
-          addMeta(token.substring(0, ndx).trim(), 
+          addMeta(token.substring(0, ndx).trim(),
             token.substring(ndx + 1).trim());
         }
-     
+
         if (token.indexOf("pixels") != -1) {
           core.sizeC[0]++;
-          core.imageCount[0] += 
-            Integer.parseInt(token.substring(0, token.indexOf(" "))); 
-        } 
+          core.imageCount[0] +=
+            Integer.parseInt(token.substring(0, token.indexOf(" ")));
+        }
       }
     }
 
@@ -171,29 +171,29 @@ public class VisitechReader extends FormatReader {
 
     String xy = (String) metadata.get("Image dimensions");
     core.sizeX[0] = Integer.parseInt(xy.substring(1, xy.indexOf(",")).trim());
-    core.sizeY[0] = Integer.parseInt(xy.substring(xy.indexOf(",") + 1, 
+    core.sizeY[0] = Integer.parseInt(xy.substring(xy.indexOf(",") + 1,
       xy.length() - 1).trim());
     core.rgb[0] = false;
     core.currentOrder[0] = "XYZTC";
     core.interleaved[0] = false;
     core.littleEndian[0] = true;
 
-    // find pixels files - we think there is one channel per file 
-    
+    // find pixels files - we think there is one channel per file
+
     files = new Vector();
 
     Location file = new Location(id).getAbsoluteFile();
     String path = file.getPath();
-    int ndx = path.lastIndexOf(File.separator); 
-    String base = path.substring(ndx + 1, path.indexOf(" ", ndx)); 
+    int ndx = path.lastIndexOf(File.separator);
+    String base = path.substring(ndx + 1, path.indexOf(" ", ndx));
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      files.add(new Location(file.getParent(), 
-        base + " " + (i + 1) + ".xys").getAbsolutePath());  
+      files.add(new Location(file.getParent(),
+        base + " " + (i + 1) + ".xys").getAbsolutePath());
     }
-  
-    files.add(currentId); 
-  
+
+    files.add(currentId);
+
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
@@ -204,7 +204,7 @@ public class VisitechReader extends FormatReader {
       store.setLogicalChannel(i, null, null, null, null,
         core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
     }
-  
+
   }
 
 }

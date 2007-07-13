@@ -127,7 +127,7 @@ public class BMPReader extends FormatReader {
       else {
         for (int y=core.sizeY[0]-1; y>=0; y--) {
           for (int x=0; x<core.sizeX[0]; x++) {
-            int off = y*core.sizeX[0] + x; 
+            int off = y*core.sizeX[0] + x;
             buf[2*core.sizeX[0]*core.sizeY[0] + off] = (byte)(in.read() & 0xff);
             buf[core.sizeX[0]*core.sizeY[0] + off] = (byte) (in.read() & 0xff);
             buf[off] = (byte) (in.read() & 0xff);
@@ -232,7 +232,7 @@ public class BMPReader extends FormatReader {
     addMeta("Indexed color", palette == null ? "false" : "true");
 
     status("Populating metadata");
-    
+
     core.sizeC[0] = (palette == null && bpp == 8) ? 1 : 3;
     if (bpp > 8) bpp /= 3;
     while (bpp % 8 != 0) bpp++;

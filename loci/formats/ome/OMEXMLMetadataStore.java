@@ -94,11 +94,11 @@ public class OMEXMLMetadataStore implements MetadataStore {
     return null;
   }
 
-  /** Add the key/value pair as a new OriginalMetadata node. */ 
+  /** Add the key/value pair as a new OriginalMetadata node. */
   public void populateOriginalMetadata(String key, String value) {
-    if (firstImageCA == null) { 
+    if (firstImageCA == null) {
       ImageNode image = (ImageNode) getChild(root, "Image", 0);
-      CustomAttributesNode ca = 
+      CustomAttributesNode ca =
         (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
       firstImageCA = ca.getDOMElement();
     }

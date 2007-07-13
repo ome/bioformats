@@ -530,7 +530,7 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#isOriginalMetadataPopulated() */
   public boolean isOriginalMetadataPopulated() {
-    return reader.isOriginalMetadataPopulated(); 
+    return reader.isOriginalMetadataPopulated();
   }
 
   /* @see IFormatReader#getUsedFiles() */

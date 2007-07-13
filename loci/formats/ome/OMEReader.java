@@ -108,7 +108,7 @@ public class OMEReader extends FormatReader {
     if (colon >= 0) server = server.substring(0, colon);
 
     currentId = server + ":" + imageId;
-    
+
     String omeis = "http://" + server + "/cgi-bin/omeis";
     server = "http://" + server + "/shoola/";
 

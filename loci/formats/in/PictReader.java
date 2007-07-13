@@ -346,21 +346,21 @@ public class PictReader extends FormatReader {
 
     switch (pictState) {
       case INITIAL:
-        ras.skipBytes(10); 
-        int verOpcode = ras.read(); 
-        int verNumber = ras.read(); 
+        ras.skipBytes(10);
+        int verOpcode = ras.read();
+        int verNumber = ras.read();
 
         if (verOpcode == 0x11 && verNumber == 0x01) versionOne = true;
         else if (verOpcode == 0x00 && verNumber == 0x11) {
           versionOne = false;
-          int verNumber2 = ras.readShort(); 
+          int verNumber2 = ras.readShort();
 
           if (verNumber2 != 0x02ff) {
             throw new FormatException("Invalid PICT file : " + verNumber2);
           }
 
           // skip over v2 header -- don't need it here
-          ras.skipBytes(26); 
+          ras.skipBytes(26);
         }
         else throw new FormatException("Invalid PICT file");
 
@@ -369,14 +369,14 @@ public class PictReader extends FormatReader {
         return true;
 
       case STATE2:
-        if (versionOne) opcode = ras.read(); 
+        if (versionOne) opcode = ras.read();
         else {
           // if at odd boundary skip a byte for opcode in PICT v2
 
           if ((ras.getFilePointer() & 0x1L) != 0) {
-            ras.skipBytes(1); 
+            ras.skipBytes(1);
           }
-          opcode = ras.readShort(); 
+          opcode = ras.readShort();
         }
         return drivePictDecoder(opcode);
     }
@@ -384,7 +384,7 @@ public class PictReader extends FormatReader {
   }
 
   /** Handles the opcodes in the PICT file. */
-  private boolean drivePictDecoder(int opcode) 
+  private boolean drivePictDecoder(int opcode)
     throws FormatException, IOException
   {
     if (debug) debug("drivePictDecoder");
@@ -398,11 +398,11 @@ public class PictReader extends FormatReader {
         handlePackBits(opcode);
         break;
       case PICT_CLIP_RGN:
-        int x = ras.readShort(); 
-        ras.skipBytes(x - 2); 
+        int x = ras.readShort();
+        ras.skipBytes(x - 2);
         break;
       case PICT_LONGCOMMENT:
-        ras.skipBytes(2); 
+        ras.skipBytes(2);
         x = ras.readShort();
         ras.skipBytes(x);
         break;
@@ -415,8 +415,8 @@ public class PictReader extends FormatReader {
   }
 
   /** Handles bitmap and pixmap opcodes of PICT format. */
-  private void handlePackBits(int opcode) 
-    throws FormatException, IOException 
+  private void handlePackBits(int opcode)
+    throws FormatException, IOException
   {
     if (debug) debug("handlePackBits(" + opcode + ")");
     if (opcode == PICT_9A) {
@@ -431,8 +431,8 @@ public class PictReader extends FormatReader {
   }
 
   /** Extract the image data in a PICT bitmap structure. */
-  private void handleBitmap(int opcode) 
-    throws FormatException, IOException 
+  private void handleBitmap(int opcode)
+    throws FormatException, IOException
   {
     if (debug) debug("handleBitmap(" + opcode + ")");
     int row;
@@ -445,12 +445,12 @@ public class PictReader extends FormatReader {
     // read the bitmap data -- 3 rectangles + mode
 
     int tlY = ras.readShort();
-    int tlX = ras.readShort(); 
-    int brY = ras.readShort(); 
-    int brX = ras.readShort(); 
+    int tlX = ras.readShort();
+    int brY = ras.readShort();
+    int brX = ras.readShort();
 
     // skip next two rectangles
-    ras.skipBytes(18); 
+    ras.skipBytes(18);
 
     core.sizeX[0] = brX - tlX;
     core.sizeY[0] = brY - tlY;
@@ -468,7 +468,7 @@ public class PictReader extends FormatReader {
 
     for (row=0; row < core.sizeY[0]; ++row) {
       if (rowBytes < 8) {  // data is not compressed
-        ras.read(buf, 0, rowBytes); 
+        ras.read(buf, 0, rowBytes);
 
         for (int j=buf.length; --j >= 0;) {
           buf[j] = (byte) ~buf[j];
@@ -477,8 +477,8 @@ public class PictReader extends FormatReader {
       }
       else {
         int rawLen;
-        if (rowBytes > 250) rawLen = ras.readShort(); 
-        else rawLen = ras.read(); 
+        if (rowBytes > 250) rawLen = ras.readShort();
+        else rawLen = ras.read();
 
         try {
           ras.read(buf, 0, rawLen);
@@ -501,7 +501,7 @@ public class PictReader extends FormatReader {
   }
 
   /** Extracts the image data in a PICT pixmap structure. */
-  private void handlePixmap(int opcode) 
+  private void handlePixmap(int opcode)
     throws FormatException, IOException
   {
     if (debug) debug("handlePixmap(" + opcode + ")");
@@ -517,16 +517,16 @@ public class PictReader extends FormatReader {
       ras.skipBytes(6);
 
       // read the bounding box
-      int tlY = ras.readShort(); 
-      int tlX = ras.readShort(); 
-      int brY = ras.readShort(); 
-      int brX = ras.readShort(); 
+      int tlY = ras.readShort();
+      int tlX = ras.readShort();
+      int brY = ras.readShort();
+      int brX = ras.readShort();
 
       ras.skipBytes(18);
 
       pixelSize = ras.readShort();
-      compCount = ras.readShort(); 
-      ras.skipBytes(14); 
+      compCount = ras.readShort();
+      ras.skipBytes(14);
 
       core.sizeX[0] = brX - tlX;
       core.sizeY[0] = brY - tlY;
@@ -545,30 +545,30 @@ public class PictReader extends FormatReader {
     }
     else {
       rowBytes &= 0x3fff;  // mask off flags
-      
+
       int tlY = ras.readShort();
-      int tlX = ras.readShort(); 
-      int brY = ras.readShort(); 
-      int brX = ras.readShort(); 
+      int tlX = ras.readShort();
+      int brY = ras.readShort();
+      int brX = ras.readShort();
 
       ras.skipBytes(18);
 
       pixelSize = ras.readShort();
-      compCount = ras.readShort(); 
+      compCount = ras.readShort();
 
       ras.skipBytes(14);
 
       // read the lookup table
 
       ras.skipBytes(4);
-      int flags = ras.readShort(); 
-      int count = ras.readShort(); 
+      int flags = ras.readShort();
+      int count = ras.readShort();
 
       count++;
       lookup = new short[3][count];
 
       for (int i=0; i<count; i++) {
-        int index = ras.readShort(); 
+        int index = ras.readShort();
         if ((flags & 0x8000) != 0) index = i;
         lookup[0][index] = ras.readShort();
         lookup[1][index] = ras.readShort();
@@ -659,13 +659,13 @@ public class PictReader extends FormatReader {
       }
       buf = new byte[bufSize + 1 + bufSize / 128];
       for (int row=0; row<core.sizeY[0]; row++) {
-        if (rBytes > 250) rawLen = ras.readShort(); 
-        else rawLen = ras.read(); 
+        if (rBytes > 250) rawLen = ras.readShort();
+        else rawLen = ras.read();
 
         if (rawLen > buf.length) rawLen = buf.length;
 
         if ((ras.length() - ras.getFilePointer()) <= rawLen) {
-          rawLen = (int) (ras.length() - ras.getFilePointer() - 1); 
+          rawLen = (int) (ras.length() - ras.getFilePointer() - 1);
         }
 
         if (rawLen < 0) {

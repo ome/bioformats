@@ -126,7 +126,7 @@ public class LeicaReader extends FormatReader {
     int c = b.length / (core.sizeX[series] * core.sizeY[series] *
       FormatTools.getBytesPerPixel(core.pixelType[series]));
 
-    b = ImageTools.splitChannels(b, c, 
+    b = ImageTools.splitChannels(b, c,
       FormatTools.getBytesPerPixel(core.pixelType[series]), false,
       isInterleaved())[channelIndices[ndx]];
     tiff[series][no].close();
@@ -148,7 +148,7 @@ public class LeicaReader extends FormatReader {
     int ndx = no % channelIndices.length;
     int c = buf.length / (core.sizeX[series] * core.sizeY[series] *
       FormatTools.getBytesPerPixel(core.pixelType[series]));
-    buf = ImageTools.splitChannels(buf, c, 
+    buf = ImageTools.splitChannels(buf, c,
       FormatTools.getBytesPerPixel(core.pixelType[series]), false,
       isInterleaved())[channelIndices[ndx]];
     return buf;
@@ -456,10 +456,10 @@ public class LeicaReader extends FormatReader {
           // test to make sure the path is valid
           Location test = new Location((String) f.get(f.size() - 1));
           if (tiffsExist) tiffsExist = test.exists();
-        
-          // get the series name from the stored file name 
+
+          // get the series name from the stored file name
           int firstUnderscore = prefix.indexOf("_") + 1;
-          int secondUnderscore = prefix.indexOf("_", firstUnderscore); 
+          int secondUnderscore = prefix.indexOf("_", firstUnderscore);
           if (firstUnderscore != -1 && secondUnderscore != -1) {
             String s = prefix.substring(firstUnderscore, secondUnderscore);
             if (!seriesNames.contains(s)) seriesNames.add(s);

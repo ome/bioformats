@@ -14,11 +14,11 @@ public class MSRLECodec extends BaseCodec implements Codec {
     throws FormatException
   {
     throw new FormatException("MSRLE compression not supported.");
-  } 
+  }
 
   /* @see Codec#decompress(byte[], Object) */
   public byte[] decompress(byte[] data, Object options) throws FormatException {
-    if (options == null || !(options instanceof Object[])) return null; 
+    if (options == null || !(options instanceof Object[])) return null;
 
     Object[] o = (Object[]) options;
     byte[] prev = (byte[]) o[1];
@@ -63,7 +63,7 @@ public class MSRLECodec extends BaseCodec implements Codec {
           if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
             return prev;
           }
-       
+
           code = stream;
           extra = (short) (stream & 0x01);
           if (stream + code + extra > data.length) return prev;
@@ -73,14 +73,14 @@ public class MSRLECodec extends BaseCodec implements Codec {
             prev[rowPt + pixelPt] = (byte) stream;
             pixelPt++;
           }
-          if (extra != 0) pt++; 
+          if (extra != 0) pt++;
         }
       }
       else {
         if ((rowPt + pixelPt + stream > frameSize) || (rowPt < 0)) {
           return prev;
         }
-     
+
         stream = data[pt++];
 
         while (code-- > 0) {
@@ -88,7 +88,7 @@ public class MSRLECodec extends BaseCodec implements Codec {
           pixelPt++;
         }
       }
-    } 
+    }
 
     return prev;
   }

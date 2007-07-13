@@ -85,7 +85,7 @@ public class BioRadReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
-    return (String[]) used.toArray(new String[0]); 
+    return (String[]) used.toArray(new String[0]);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -217,7 +217,7 @@ public class BioRadReader extends FormatReader {
       int type = in.readShort();
       int x = in.readShort();
       int y = in.readShort();
-      String text = in.readString(80); 
+      String text = in.readString(80);
 
       // be sure to remove binary data from the note text
       int ndx = text.length();
@@ -651,7 +651,7 @@ public class BioRadReader extends FormatReader {
         RandomAccessStream raw = new RandomAccessStream(
           new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
         used.add(new Location(
-          parent.getAbsolutePath(), list[i]).getAbsolutePath()); 
+          parent.getAbsolutePath(), list[i]).getAbsolutePath());
         String line = raw.readLine();
         while (line != null && line.length() > 0) {
           if (line.charAt(0) != '[') {
@@ -667,7 +667,7 @@ public class BioRadReader extends FormatReader {
         RandomAccessStream raw = new RandomAccessStream(
           new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
         used.add(new Location(
-          parent.getAbsolutePath(), list[i]).getAbsolutePath()); 
+          parent.getAbsolutePath(), list[i]).getAbsolutePath());
         byte[] b = new byte[(int) raw.length()];
         raw.read(b);
         String xml = new String(b);

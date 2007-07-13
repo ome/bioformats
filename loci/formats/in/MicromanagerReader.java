@@ -65,7 +65,7 @@ public class MicromanagerReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiffReader.setId((String) tiffs.get(no)); 
+    tiffReader.setId((String) tiffs.get(no));
     return tiffReader.openBytes(0);
   }
 
@@ -77,7 +77,7 @@ public class MicromanagerReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiffReader.setId((String) tiffs.get(no)); 
+    tiffReader.setId((String) tiffs.get(no));
     return tiffReader.openBytes(0, buf);
   }
 
@@ -87,7 +87,7 @@ public class MicromanagerReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    tiffReader.setId((String) tiffs.get(no)); 
+    tiffReader.setId((String) tiffs.get(no));
     return tiffReader.openImage(0);
   }
 
@@ -202,7 +202,7 @@ public class MicromanagerReader extends FormatReader {
       }
     }
     tiffReader.setId((String) tiffs.get(0));
-   
+
     String z = (String) metadata.get("Slices");
     if (z != null) {
       core.sizeZ[0] = Integer.parseInt(z);
@@ -212,9 +212,9 @@ public class MicromanagerReader extends FormatReader {
     String t = (String) metadata.get("Frames");
     if (t != null) {
       core.sizeT[0 ] = Integer.parseInt(t);
-    } 
+    }
     else core.sizeT[0] = tiffs.size() / core.sizeC[0];
-    
+
     core.sizeX[0] = tiffReader.getSizeX();
     core.sizeY[0] = tiffReader.getSizeY();
     core.currentOrder[0] = "XYZCT";

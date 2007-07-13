@@ -132,13 +132,13 @@ public class GIFReader extends FormatReader {
 
     int[] ints = (int[]) images.get(no);
     if (no > 0) {
-      int[] prev = (int[]) images.get(no - 1); 
+      int[] prev = (int[]) images.get(no - 1);
       for (int i=0; i<ints.length; i++) {
         if ((ints[i] & 0x00ffffff) == 0) {
           ints[i] = prev[i];
         }
       }
-      images.setElementAt(ints, no); 
+      images.setElementAt(ints, no);
     }
 
     for (int i=0; i<ints.length; i++) {
@@ -187,7 +187,7 @@ public class GIFReader extends FormatReader {
     gctFlag = (packed & 0x80) != 0;
     gctSize = 2 << (packed & 7);
     bgIndex = in.read() & 0xff;
-    in.skipBytes(1); 
+    in.skipBytes(1);
 
     if (gctFlag) {
       int nbytes = 3 * gctSize;
@@ -219,7 +219,7 @@ public class GIFReader extends FormatReader {
           iy = in.readShort();
           iw = in.readShort();
           ih = in.readShort();
-          
+
           packed = in.read();
           lctFlag = (packed & 0x80) != 0;
           interlace = (packed & 0x40) != 0;
@@ -280,13 +280,13 @@ public class GIFReader extends FormatReader {
           code = in.read() & 0xff;
           switch (code) {
             case 0xf9: // graphics control extension
-              in.skipBytes(1); 
+              in.skipBytes(1);
               packed = in.read() & 0xff;
               dispose = (packed & 0x1c) >> 1;
               transparency = (packed & 1) != 0;
-              in.skipBytes(2); 
+              in.skipBytes(2);
               transIndex = in.read() & 0xff;
-              in.skipBytes(1); 
+              in.skipBytes(1);
               break;
             case 0xff:  // application extension
               if (readBlock() == -1) {
@@ -393,7 +393,7 @@ public class GIFReader extends FormatReader {
     if (pixelStack == null) pixelStack = new byte[MAX_STACK_SIZE + 1];
 
     // initialize GIF data stream decoder
-    
+
     dataSize = in.read() & 0xff;
 
     clear = 1 << dataSize;

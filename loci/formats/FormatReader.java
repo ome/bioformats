@@ -68,7 +68,7 @@ public abstract class FormatReader extends FormatHandler
   protected boolean collectMetadata = true;
 
   /** Whether or not to save proprietary metadata in the MetadataStore. */
-  protected boolean saveOriginalMetadata = false; 
+  protected boolean saveOriginalMetadata = false;
 
   /** Whether or not to group multi-file formats. */
   protected boolean group = true;
@@ -166,7 +166,7 @@ public abstract class FormatReader extends FormatHandler
       // verify key contains at least one alphabetic character
       if (!key.matches(".*[a-zA-Z].*")) return;
     }
-    
+
     if (saveOriginalMetadata) {
       try {
         MetadataStore store = getMetadataStore();
@@ -183,7 +183,7 @@ public abstract class FormatReader extends FormatHandler
         trace(t);
       }
     }
-    
+
     metadata.put(key, value);
   }
 

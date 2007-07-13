@@ -63,8 +63,8 @@ public class AdobeDeflateCodec extends BaseCodec implements Codec {
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
    */
-  public byte[] decompress(byte[] input, Object options) 
-    throws FormatException 
+  public byte[] decompress(byte[] input, Object options)
+    throws FormatException
   {
     try {
       Inflater inf = new Inflater(false);

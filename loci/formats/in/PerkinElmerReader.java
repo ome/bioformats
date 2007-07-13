@@ -541,7 +541,7 @@ public class PerkinElmerReader extends FormatReader {
       int bpp = openBytes(0).length / (core.sizeX[0] * core.sizeY[0]);
       switch (bpp) {
         case 1:
-        case 3: 
+        case 3:
           core.pixelType[0] = FormatTools.UINT8;
           break;
         case 2:

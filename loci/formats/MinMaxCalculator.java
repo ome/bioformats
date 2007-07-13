@@ -71,7 +71,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
 
     int series = getSeries();
-    
+
     // check that all planes have been reade
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
@@ -92,7 +92,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
 
     int series = getSeries();
-    
+
     // check that all planes have been reade
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
@@ -228,7 +228,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int numRGB = getRGBChannelCount();
     int series = getSeries();
-    
+
     // check whether min/max values have already been computed for this plane
     if (planeMin[series][ndx * numRGB] ==
       planeMin[series][ndx * numRGB])
@@ -356,7 +356,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (chanMax == null) {
       chanMax = new double[seriesCount][];
       for (int i=0; i<seriesCount; i++) {
-        setSeries(i);  
+        setSeries(i);
         chanMax[i] = new double[getSizeC()];
         Arrays.fill(chanMax[i], Double.NEGATIVE_INFINITY);
       }

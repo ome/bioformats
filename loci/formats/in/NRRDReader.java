@@ -59,7 +59,7 @@ public class NRRDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 4) return false;
-    return new String(block).startsWith("NRRD"); 
+    return new String(block).startsWith("NRRD");
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -235,7 +235,7 @@ public class NRRDReader extends FormatReader {
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(core.littleEndian[0]), core.currentOrder[0], null, null);
-  
+
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null,
         core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);

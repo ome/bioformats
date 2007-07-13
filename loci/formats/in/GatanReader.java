@@ -59,7 +59,7 @@ public class GatanReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block == null || block.length < 4) return false;
-    return DataTools.bytesToInt(block, false) == 3; 
+    return DataTools.bytesToInt(block, false) == 3;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -212,7 +212,7 @@ public class GatanReader extends FormatReader {
   private void parseTags(int numTags, String parent) throws IOException {
     for (int i=0; i<numTags; i++) {
       byte type = in.readByte();  // can be 21 (data) or 20 (tag group)
-      int length = in.readShort(); 
+      int length = in.readShort();
       String labelString = in.readString(length);
 
       // image data is in tag with type 21 and label 'Data'
@@ -221,19 +221,19 @@ public class GatanReader extends FormatReader {
 
       if (type == 21) {
         in.skipBytes(4);  // equal to '%%%%'
-        int n = in.readInt(); 
+        int n = in.readInt();
         int dataType = 0;
         if (n == 1) {
-          dataType = in.readInt(); 
+          dataType = in.readInt();
           String data;
-          in.order(core.littleEndian[0]); 
+          in.order(core.littleEndian[0]);
           switch (dataType) {
             case 2:
-            case 4: 
+            case 4:
               data = "" + in.readShort();
               break;
             case 3:
-            case 5:  
+            case 5:
               data = "" + in.readInt();
               break;
             case 6:
@@ -265,22 +265,22 @@ public class GatanReader extends FormatReader {
           }
           addMeta(labelString, data);
           if (labelString.equals("DataType")) datatype = Integer.parseInt(data);
-          in.order(!core.littleEndian[0]); 
+          in.order(!core.littleEndian[0]);
         }
         else if (n == 2) {
           in.order(core.littleEndian[0]);
           dataType = in.readInt();
           if (dataType == 18) { // this should always be true
-            length = in.readInt(); 
+            length = in.readInt();
           }
           addMeta(labelString, in.readString(length));
-          in.order(!core.littleEndian[0]); 
+          in.order(!core.littleEndian[0]);
         }
         else if (n == 3) {
           dataType = in.readInt();
           if (dataType == 20) { // this should always be true
-            dataType = in.readInt(); 
-            length = in.readInt(); 
+            dataType = in.readInt();
+            length = in.readInt();
 
             if ("Data".equals(labelString)) pixelDataNum++;
 
@@ -323,10 +323,10 @@ public class GatanReader extends FormatReader {
           // this is a normal struct of simple types
           if (dataType == 15) {
             int skip = in.readInt();
-            int numFields = in.readInt(); 
+            int numFields = in.readInt();
             for (int j=0; j<numFields; j++) {
-              skip += in.readInt(); 
-              dataType = in.readInt(); 
+              skip += in.readInt();
+              dataType = in.readInt();
 
               switch (dataType) {
                 case 2:
@@ -354,15 +354,15 @@ public class GatanReader extends FormatReader {
             int skip = 0;
             dataType = in.readInt();
             if (dataType == 15) { // should always be true
-              skip += in.readInt(); 
-              int numFields = in.readInt(); 
+              skip += in.readInt();
+              int numFields = in.readInt();
               for (int j=0; j<numFields; j++) {
-                skip += in.readInt(); 
-                dataType = in.readInt(); 
+                skip += in.readInt();
+                dataType = in.readInt();
 
                 switch (dataType) {
                   case 2:
-                  case 4:  
+                  case 4:
                     skip += 2;
                     break;
                   case 3:
@@ -387,7 +387,7 @@ public class GatanReader extends FormatReader {
       }
       else if (type == 20) {
         in.skipBytes(2);
-        parseTags(in.readInt(), labelString); 
+        parseTags(in.readInt(), labelString);
       }
     }
   }

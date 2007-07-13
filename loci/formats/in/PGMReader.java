@@ -32,14 +32,14 @@ import loci.formats.*;
 /**
  * PGMReader is the file format reader for Portable Gray Map (PGM) images.
  *
- * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij). 
+ * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij).
  */
 public class PGMReader extends FormatReader {
 
   // -- Fields --
 
   private boolean rawBits;
- 
+
   /** Offset to pixel data. */
   private long offset;
 
@@ -48,7 +48,7 @@ public class PGMReader extends FormatReader {
   /** Constructs a new PGMReader. */
   public PGMReader() { super("Portable Gray Map", "pgm"); }
 
-  // -- IFormatReader API methods -- 
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -59,8 +59,8 @@ public class PGMReader extends FormatReader {
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])]; 
-    return openBytes(no, buf); 
+      FormatTools.getBytesPerPixel(core.pixelType[0])];
+    return openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -76,17 +76,17 @@ public class PGMReader extends FormatReader {
     {
       throw new FormatException("Buffer too small.");
     }
-    
-    in.seek(offset); 
+
+    in.seek(offset);
     if (rawBits) in.read(buf);
     else {
-      int pt = 0; 
+      int pt = 0;
       while (pt < buf.length) {
         String line = in.readLine().trim();
         line = line.replaceAll("[^0-9]", " ");
         StringTokenizer t = new StringTokenizer(line, " ");
         while (t.hasMoreTokens()) {
-          int q = Integer.parseInt(t.nextToken().trim()); 
+          int q = Integer.parseInt(t.nextToken().trim());
           if (core.pixelType[0] == FormatTools.UINT16) {
             short s = (short) q;
             buf[pt] = (byte) ((s & 0xff00) >> 8);
@@ -98,7 +98,7 @@ public class PGMReader extends FormatReader {
             pt++;
           }
         }
-      } 
+      }
     }
 
     return buf;
@@ -107,7 +107,7 @@ public class PGMReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], core.interleaved[0], 
+      core.sizeC[0], core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
 
@@ -117,7 +117,7 @@ public class PGMReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
-  
+
     String magic = in.readLine().trim();
 
     boolean isBlackAndWhite = false;
@@ -128,35 +128,35 @@ public class PGMReader extends FormatReader {
 
     String line = in.readLine().trim();
     while (line.startsWith("#") || line.length() == 0) line = in.readLine();
-  
+
     line = line.replaceAll("[^0-9]", " ");
-    core.sizeX[0] = 
+    core.sizeX[0] =
       Integer.parseInt(line.substring(0, line.indexOf(" ")).trim());
-    core.sizeY[0] = 
+    core.sizeY[0] =
       Integer.parseInt(line.substring(line.indexOf(" ") + 1).trim());
-  
+
     if (!isBlackAndWhite) {
       int max = Integer.parseInt(in.readLine().trim());
       if (max > 255) core.pixelType[0] = FormatTools.UINT16;
       else core.pixelType[0] = FormatTools.UINT8;
     }
-  
-    offset = in.getFilePointer(); 
-    
+
+    offset = in.getFilePointer();
+
     core.rgb[0] = core.sizeC[0] == 3;
     core.currentOrder[0] = "XYCZT";
     core.littleEndian[0] = true;
     core.interleaved[0] = false;
-    core.sizeZ[0] = 1; 
-    core.sizeT[0] = 1; 
-    core.imageCount[0] = 1; 
-  
+    core.sizeZ[0] = 1;
+    core.sizeT[0] = 1;
+    core.imageCount[0] = 1;
+
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
-    
+
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null,
         core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);

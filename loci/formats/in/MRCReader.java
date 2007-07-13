@@ -179,7 +179,7 @@ public class MRCReader extends FormatReader {
     in.skipBytes(4);
 
     extHeaderSize = in.readInt();
-     
+
     in.skipBytes(64);
 
     int idtype = in.readShort();

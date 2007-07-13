@@ -447,28 +447,28 @@ public class ZeissZVIReader extends FormatReader {
           dirName.toUpperCase().equals("ROOTENTRY"))
         {
           if (entryName.equals("Tags")) {
-            parseTags(s); 
+            parseTags(s);
           }
         }
         else if (dirName.equals("Tags") && isContents) {
-          parseTags(s); 
+          parseTags(s);
         }
         else if (isContents && (dirName.equals("Image") ||
           dirName.toUpperCase().indexOf("ITEM") != -1) &&
           (data.length > core.sizeX[0]*core.sizeY[0]))
         {
-          s.skipBytes(6); 
+          s.skipBytes(6);
 
           int vt = s.readShort();
           if (vt == 3) {
-            s.skipBytes(6); 
+            s.skipBytes(6);
           }
           else if (vt == 8) {
-            int l = s.readShort(); 
-            s.skipBytes(l + 2); 
+            int l = s.readShort();
+            s.skipBytes(l + 2);
           }
-          int len = s.readShort(); 
-          if (s.readShort() != 0) s.seek(s.getFilePointer() - 2); 
+          int len = s.readShort();
+          if (s.readShort() != 0) s.seek(s.getFilePointer() - 2);
 
           String typeDescription = "";
           if (s.getFilePointer() + len <= s.length()) {
@@ -478,16 +478,16 @@ public class ZeissZVIReader extends FormatReader {
 
           vt = s.readShort();
           if (vt == 8) {
-            len = s.readInt(); 
-            s.skipBytes(len + 2); 
+            len = s.readInt();
+            s.skipBytes(len + 2);
           }
 
           int tw = s.readInt();
           if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
             core.sizeX[0] = tw;
           }
-          s.skipBytes(2); 
-          int th = s.readInt(); 
+          s.skipBytes(2);
+          int th = s.readInt();
           if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
             core.sizeY[0] = th;
           }
@@ -505,19 +505,19 @@ public class ZeissZVIReader extends FormatReader {
           while (s.readShort() != 65);
 
           // VT_BLOB - Others
-          len = s.readInt(); 
-          s.skipBytes(len); 
+          len = s.readInt();
+          s.skipBytes(len);
 
           // VT_STORED_OBJECT - Layers
           s.skipBytes(2);
           long old = s.getFilePointer();
-          len = s.readInt(); 
+          len = s.readInt();
 
           s.skipBytes(8);
 
           int tidx = s.readInt();
-          int cidx = s.readInt(); 
-          int zidx = s.readInt(); 
+          int cidx = s.readInt();
+          int zidx = s.readInt();
 
           Integer zndx = new Integer(zidx);
           Integer cndx = new Integer(cidx);
@@ -530,16 +530,16 @@ public class ZeissZVIReader extends FormatReader {
           s.seek(old + len + 4);
 
           boolean foundWidth = s.readInt() == core.sizeX[0];
-          boolean foundHeight = s.readInt() == core.sizeY[0]; 
+          boolean foundHeight = s.readInt() == core.sizeY[0];
           boolean findFailed = false;
-          while ((!foundWidth || !foundHeight) && 
-            s.getFilePointer() + 1 < s.length()) 
+          while ((!foundWidth || !foundHeight) &&
+            s.getFilePointer() + 1 < s.length())
           {
-            s.seek(s.getFilePointer() - 7); 
-            foundWidth = s.readInt() == core.sizeX[0]; 
-            foundHeight = s.readInt() == core.sizeY[0]; 
+            s.seek(s.getFilePointer() - 7);
+            foundWidth = s.readInt() == core.sizeX[0];
+            foundHeight = s.readInt() == core.sizeY[0];
           }
-          s.seek(s.getFilePointer() - 16); 
+          s.seek(s.getFilePointer() - 16);
           findFailed = !foundWidth && !foundHeight;
 
           // image header and data
@@ -580,18 +580,18 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Parse a plane of data. */
   private void parsePlane(byte[] data, int num, Object directory, String entry)
-    throws IOException 
+    throws IOException
   {
     RandomAccessStream s = new RandomAccessStream(data);
     s.order(true);
     s.skipBytes(8);
-    
-    core.sizeX[0] = s.readInt(); 
-    core.sizeY[0] = s.readInt(); 
-    int depth = s.readInt(); 
-    bpp = s.readInt(); 
-    int pixelFormat = s.readInt(); 
-    int validBitsPerPixel = s.readInt(); 
+
+    core.sizeX[0] = s.readInt();
+    core.sizeY[0] = s.readInt();
+    int depth = s.readInt();
+    bpp = s.readInt();
+    int pixelFormat = s.readInt();
+    int validBitsPerPixel = s.readInt();
 
     pixels.put(new Integer(num), directory);
     names.put(new Integer(num), entry);
@@ -602,16 +602,16 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Parse all of the tags in a stream. */
   private void parseTags(RandomAccessStream s) throws IOException {
-    s.skipBytes(24); 
+    s.skipBytes(24);
 
-    int count = s.readInt(); 
+    int count = s.readInt();
 
     // limit count to 4096
     if (count > 4096) count = 4096;
 
     for (int i=0; i<count; i++) {
-      if (s.getFilePointer() + 2 >= s.length()) break; 
-      int type = s.readShort(); 
+      if (s.getFilePointer() + 2 >= s.length()) break;
+      int type = s.readShort();
 
       String value = "";
       switch (type) {
@@ -620,23 +620,23 @@ public class ZeissZVIReader extends FormatReader {
         case 1:
           break;
         case 2:
-          value = "" + s.readShort(); 
+          value = "" + s.readShort();
           break;
         case 3:
         case 22:
         case 23:
-          value = "" + s.readInt(); 
+          value = "" + s.readInt();
           break;
         case 4:
-          value = "" + s.readFloat(); 
+          value = "" + s.readFloat();
           break;
         case 5:
-          value = "" + s.readDouble(); 
+          value = "" + s.readDouble();
           break;
         case 7:
         case 20:
         case 21:
-          value = "" + s.readLong(); 
+          value = "" + s.readLong();
           break;
         case 69:
         case 8:
@@ -644,47 +644,47 @@ public class ZeissZVIReader extends FormatReader {
           if (s.getFilePointer() + len < s.length()) {
             value = s.readString(len);
           }
-          else return; 
+          else return;
           break;
         case 66:
-          int l = s.readShort(); 
+          int l = s.readShort();
           s.seek(s.getFilePointer() - 2);
           value = s.readString(l + 2);
           break;
         default:
-          long old = s.getFilePointer(); 
-          while (s.readShort() != 3 && 
+          long old = s.getFilePointer();
+          while (s.readShort() != 3 &&
             s.getFilePointer() + 2 < s.length());
-          long fp = s.getFilePointer() - 2; 
+          long fp = s.getFilePointer() - 2;
           s.seek(old - 2);
           value = s.readString((int) (fp - old + 2));
       }
-  
-      s.skipBytes(2); 
+
+      s.skipBytes(2);
       int tagID = 0;
-      int attribute = 0; 
-    
+      int attribute = 0;
+
       try { tagID = s.readInt(); }
       catch (IOException e) { }
-   
-      s.skipBytes(2); 
-   
+
+      s.skipBytes(2);
+
       try { attribute = s.readInt(); }
       catch (IOException e) { }
-     
+
       parseTag(value, tagID, attribute);
       if (metadata.get("ImageWidth") != null) {
-        try { 
-          if (core.sizeX[0] == 0) core.sizeX[0] = Integer.parseInt(value); 
+        try {
+          if (core.sizeX[0] == 0) core.sizeX[0] = Integer.parseInt(value);
         }
         catch (NumberFormatException e) { }
-      } 
+      }
       if (metadata.get("ImageHeight") != null) {
-        try { 
-          if (core.sizeY[0] == 0) core.sizeY[0] = Integer.parseInt(value); 
+        try {
+          if (core.sizeY[0] == 0) core.sizeY[0] = Integer.parseInt(value);
         }
         catch (NumberFormatException e) { }
-      } 
+      }
     }
   }
 

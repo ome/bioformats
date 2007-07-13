@@ -176,7 +176,7 @@ public class LIFReader extends FormatReader {
       }
 
       int descrLength = in.readInt();
-      in.skipBytes(descrLength * 2); 
+      in.skipBytes(descrLength * 2);
 
       if (blockLength > 0) {
         offsets.add(new Long(in.getFilePointer()));
@@ -195,7 +195,7 @@ public class LIFReader extends FormatReader {
 
     LIFHandler handler = new LIFHandler();
 
-    xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml + 
+    xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml +
       "</LEICA>";
 
     // strip out invalid characters
@@ -490,7 +490,7 @@ public class LIFReader extends FormatReader {
       Enumeration keys = metadata.keys();
       while (keys.hasMoreElements()) {
         String k = (String) keys.nextElement();
-        boolean use = true; 
+        boolean use = true;
         for (int j=0; j<seriesNames.size(); j++) {
           if (j != i && k.startsWith((String) seriesNames.get(j))) {
             use = false;
@@ -515,7 +515,7 @@ public class LIFReader extends FormatReader {
       if (qName.equals("Element")) {
         if (!attributes.getValue("Name").equals("DCROISet")) {
           series = attributes.getValue("Name");
-        } 
+        }
       }
       else if (qName.equals("Experiment")) {
         for (int i=0; i<attributes.getLength(); i++) {
@@ -554,10 +554,10 @@ public class LIFReader extends FormatReader {
         if (series.endsWith(" - Master sequential setting")) {
           series = series.replaceAll(" - Master sequential setting",
             " - Sequential Setting 0");
-        } 
-        
+        }
+
         if (series.indexOf("- Sequential Setting ") == -1) {
-          series += " - Master sequential setting"; 
+          series += " - Master sequential setting";
         }
         else {
           int ndx = series.indexOf(" - Sequential Setting ") + 22;
@@ -565,7 +565,7 @@ public class LIFReader extends FormatReader {
           n++;
           series = series.substring(0, ndx) + String.valueOf(n);
         }
-      
+
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(series + " - " + attributes.getQName(i),
             attributes.getValue(i));
@@ -633,31 +633,31 @@ public class LIFReader extends FormatReader {
         addMeta(prefix + "Wavelength", attributes.getValue("Wavelength"));
       }
       else if (qName.equals("TimeStamp")) {
-       
+
         long high = Long.parseLong(attributes.getValue("HighInteger"));
         long low = Long.parseLong(attributes.getValue("LowInteger"));
- 
+
         long stamp = 0;
         high <<= 32;
         if ((int) low < 0) {
           low &= 0xffffffffL;
         }
         stamp = high + low;
-        
-        // Near as I can figure, this timestamp represents the number of 
+
+        // Near as I can figure, this timestamp represents the number of
         // 100-nanosecond ticks since the ANSI/COBOL epoch (Jan 1, 1601).
         // Note that the following logic does not handle negative timestamp
         // values, so if the file in question was acquired prior to Jan 1 1601,
         // the timestamp will not be parsed correctly.
-        
-        long seconds = stamp / 10000000; 
+
+        long seconds = stamp / 10000000;
 
         // subtract number of seconds until Unix epoch (Jan 1, 1970)
 
         long secondsPerYear = (long) (60 * 60 * 24 * 365.25);
-        seconds -= secondsPerYear * (1970 - 1601); 
-       
-        Date d = new Date(seconds * 1000); 
+        seconds -= secondsPerYear * (1970 - 1601);
+
+        Date d = new Date(seconds * 1000);
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         StringBuffer sb = new StringBuffer();
         fmt.format(d, sb, new FieldPosition(0));

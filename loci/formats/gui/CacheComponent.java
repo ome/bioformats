@@ -13,14 +13,14 @@ import loci.formats.*;
 import loci.formats.cache.*;
 
 /** GUI component for managing a cache. */
-public class CacheComponent extends JPanel 
+public class CacheComponent extends JPanel
   implements ActionListener, ChangeListener
 {
 
   // -- Fields --
 
   /** The cache that this component controls. */
-  private Cache cache; 
+  private Cache cache;
 
   /** File that the cache is working with. */
   private String file;
@@ -40,7 +40,7 @@ public class CacheComponent extends JPanel
   // -- Constructor --
 
   public CacheComponent(Cache cache, boolean doSource, String[] axisLabels,
-    String file, int[] lengths) 
+    String file, int[] lengths)
   {
     super();
     this.cache = cache;
@@ -60,12 +60,12 @@ public class CacheComponent extends JPanel
       doSource ? "pref,pref:grow,pref,pref:grow,pref" : "pref,pref:grow,pref");
     top.setLayout(layout);
 
-    // add source choices, if desired 
-    JComboBox sourceChooser = null; 
+    // add source choices, if desired
+    JComboBox sourceChooser = null;
     if (doSource) {
       JLabel label = new JLabel("Objects to cache: ");
       top.add(label, cc.xy(2, 2));
-      String[] sources = 
+      String[] sources =
         new String[] {"byte arrays", "BufferedImages", "ImageProcessors"};
       sourceChooser = new JComboBox(sources);
       sourceChooser.setActionCommand("source");
@@ -77,12 +77,12 @@ public class CacheComponent extends JPanel
 
     JLabel label = new JLabel("Caching strategy: ");
     top.add(label, cc.xy(2, doSource ? 4 : 2));
-    String[] strategies = new String[] {"Crosshair - forward first", 
-      "Crosshair - backward first", "Rectangle - forward first", 
+    String[] strategies = new String[] {"Crosshair - forward first",
+      "Crosshair - backward first", "Rectangle - forward first",
       "Rectangle - backward first"};
-    JComboBox strategyChooser = new JComboBox(strategies); 
-    strategyChooser.setActionCommand("strategy"); 
-    strategyChooser.addActionListener(this); 
+    JComboBox strategyChooser = new JComboBox(strategies);
+    strategyChooser.setActionCommand("strategy");
+    strategyChooser.addActionListener(this);
     top.add(strategyChooser, cc.xy(4, doSource ? 4 : 2));
 
     add(top);
@@ -111,7 +111,7 @@ public class CacheComponent extends JPanel
       JSpinner f = new JSpinner(new SpinnerNumberModel(1, 0, lengths[i], 1));
       middle.add(f, cc.xy(4, i*2 + 4));
       JSpinner b = new JSpinner(new SpinnerNumberModel(1, 0, lengths[i], 1));
-      middle.add(b, cc.xy(6, i*2 + 4)); 
+      middle.add(b, cc.xy(6, i*2 + 4));
       forward.add(f);
       backward.add(b);
     }
@@ -138,7 +138,7 @@ public class CacheComponent extends JPanel
     int skip = axisLabels.length / 3;
 
     for (int i=0; i<axisLabels.length; i++) {
-      JLabel l = new JLabel(""); 
+      JLabel l = new JLabel("");
       if (i % skip == 0) {
         l = new JLabel(priorities[i / skip]);
       }
@@ -147,19 +147,19 @@ public class CacheComponent extends JPanel
       ButtonGroup g = new ButtonGroup();
       for (int j=0; j<axisLabels.length; j++) {
         JRadioButton button = new JRadioButton(axisLabels[j], i == j);
-        priority[i][j] = button; 
-        button.addChangeListener(this); 
-        g.add(button); 
-        bottom.add(button, cc.xy((j + 2) * 2, (i + 1) * 2)); 
+        priority[i][j] = button;
+        button.addChangeListener(this);
+        g.add(button);
+        bottom.add(button, cc.xy((j + 2) * 2, (i + 1) * 2));
       }
     }
 
     add(bottom);
 
     JButton reset = new JButton("Reset");
-    reset.setActionCommand("reset"); 
+    reset.setActionCommand("reset");
     reset.addActionListener(this);
-    add(reset); 
+    add(reset);
   }
 
   // -- CacheComponent API methods --
@@ -168,7 +168,7 @@ public class CacheComponent extends JPanel
     return cache;
   }
 
-  // -- ActionListener API methods -- 
+  // -- ActionListener API methods --
 
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
@@ -177,24 +177,24 @@ public class CacheComponent extends JPanel
       // TODO - reset to reasonable defaults
     }
     else if (cmd.equals("source")) {
-      updateSource((JComboBox) e.getSource()); 
+      updateSource((JComboBox) e.getSource());
     }
     else if (cmd.equals("strategy")) {
-      updateStrategy((JComboBox) e.getSource()); 
+      updateStrategy((JComboBox) e.getSource());
     }
   }
 
   // -- ChangeListener API methods --
 
   public void stateChanged(ChangeEvent e) {
-    // make sure each axis is chosen only once 
+    // make sure each axis is chosen only once
     for (int ct=0; ct<priority.length; ct++) {
       for (int col=0; col<priority.length; col++) {
         int chosenNdx = -1;
-        
+
         for (int row=0; row<priority.length; row++) {
           if (priority[row][col].equals(e.getSource()) &&
-            priority[row][col].isSelected()) 
+            priority[row][col].isSelected())
           {
             chosenNdx = row;
             break;
@@ -202,27 +202,27 @@ public class CacheComponent extends JPanel
           else if (priority[row][col].isSelected() && chosenNdx == -1) {
             chosenNdx = row;
           }
-        } 
-        
+        }
+
         for (int row=0; row<priority.length; row++) {
           if (priority[row][col].isSelected() && row != chosenNdx) {
             priority[row][(col + 1) % priority.length].setSelected(true);
           }
         }
       }
-    } 
-  
-    // reset the cache's priorities 
+    }
+
+    // reset the cache's priorities
     ICacheStrategy strategy = cache.getStrategy();
 
     for (int row=0; row<priority.length; row++) {
       for (int col=0; col<priority.length; col++) {
         if (priority[row][col].isSelected()) {
-          strategy.setPriority(row, col); 
+          strategy.setPriority(row, col);
         }
       }
     }
-   
+
     for (int i=0; i<forward.size(); i++) {
       JSpinner f = (JSpinner) forward.get(i);
       JSpinner b = (JSpinner) backward.get(i);
@@ -238,7 +238,7 @@ public class CacheComponent extends JPanel
     for (int i=0; i<n.length; i++) {
       n[i] = ((Integer) ((JSpinner) forward.get(i)).getValue()).intValue();
     }
-    return n; 
+    return n;
   }
 
   private int[] getBackward() {
@@ -246,22 +246,22 @@ public class CacheComponent extends JPanel
     for (int i=0; i<n.length; i++) {
       n[i] = ((Integer) ((JSpinner) backward.get(i)).getValue()).intValue();
     }
-    return n; 
-  } 
+    return n;
+  }
 
   private void updateSource(JComboBox box) {
-    String s = (String) box.getSelectedItem(); 
+    String s = (String) box.getSelectedItem();
 
     CacheSource source = null;
     try {
       if (s.equals("byte arrays")) {
-        source = new ByteArraySource(file);  
+        source = new ByteArraySource(file);
       }
       else if (s.equals("BufferedImages")) {
-        source = new BufferedImageSource(file);  
+        source = new BufferedImageSource(file);
       }
       else if (s.equals("ImageProcessors")) {
-        source = new ImageProcessorSource(file);  
+        source = new ImageProcessorSource(file);
       }
       cache.setSource(source);
     }
@@ -288,7 +288,7 @@ public class CacheComponent extends JPanel
 //      for (int i=0; i<fwd.length; i++) strategy.setForward(fwd[i], i);
       int[] bwd = getBackward();
 //      for (int i=0; i<bwd.length; i++) strategy.setBackward(bwd[i], i);
-      cache.setStrategy(strategy); 
+      cache.setStrategy(strategy);
     }
     catch (CacheException exc) {
       LogTools.trace(exc);

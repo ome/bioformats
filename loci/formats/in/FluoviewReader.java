@@ -104,9 +104,9 @@ public class FluoviewReader extends BaseTiffReader {
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
       return super.openBytes(no);
-    } 
-    return openBytes(no, new byte[core.sizeX[0] * 
-      FormatTools.getBytesPerPixel(core.pixelType[0])]); 
+    }
+    return openBytes(no, new byte[core.sizeX[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0])]);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -115,17 +115,17 @@ public class FluoviewReader extends BaseTiffReader {
   {
     if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
       return super.openBytes(no, buf);
-    } 
+    }
     FormatTools.assertId(currentId, false, 1);
     if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
-    } 
-    if (buf.length < core.sizeX[0] * 
-      FormatTools.getBytesPerPixel(core.pixelType[0])) 
+    }
+    if (buf.length < core.sizeX[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0]))
     {
       throw new FormatException("Buffer too small.");
     }
-  
+
     byte[] b = super.openBytes(0);
     System.arraycopy(b, 0, buf, 0, buf.length);
     return buf;
@@ -135,10 +135,10 @@ public class FluoviewReader extends BaseTiffReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
       return super.openImage(no);
-    } 
-    
+    }
+
     if (zeroImage == null) zeroImage = super.openImage(0);
-    return zeroImage.getSubimage(0, no, core.sizeX[0], 1); 
+    return zeroImage.getSubimage(0, no, core.sizeX[0], 1);
   }
 
   /* @see loci.formats.IFormatReader#close() */
@@ -308,14 +308,14 @@ public class FluoviewReader extends BaseTiffReader {
 
     core.imageCount[0] = ifds.length;
 
-    if (core.imageCount[0] == 1 && (core.sizeT[0] == core.sizeY[0] || 
+    if (core.imageCount[0] == 1 && (core.sizeT[0] == core.sizeY[0] ||
       core.sizeZ[0] == core.sizeY[0]) && (core.sizeT[0] > core.imageCount[0] ||
-      core.sizeZ[0] > core.imageCount[0])) 
+      core.sizeZ[0] > core.imageCount[0]))
     {
       core.sizeY[0] = 1;
       core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * core.sizeC[0];
-    } 
-    
+    }
+
     // cut up the comment, if necessary
     String comment = (String) getMeta("Comment");
 

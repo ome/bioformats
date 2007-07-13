@@ -163,8 +163,8 @@ public abstract class BaseCodec implements Codec {
    * @throws FormatException If input is not a compressed data block of the
    *   appropriate type.
    */
-  public byte[] decompress(byte[][] data, Object options) 
-    throws FormatException 
+  public byte[] decompress(byte[][] data, Object options)
+    throws FormatException
   {
     int len = 0;
     for (int i = 0; i < data.length; i++) {

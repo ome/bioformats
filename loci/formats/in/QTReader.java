@@ -330,7 +330,7 @@ public class QTReader extends FormatReader {
     switch (bytesPerPixel) {
       case 0:
       case 1:
-      case 3:  
+      case 3:
         core.pixelType[0] = FormatTools.UINT8;
         break;
       case 2:
@@ -597,7 +597,7 @@ public class QTReader extends FormatReader {
 
           for (int i=0; i<numEntries; i++) {
             if (i == 0) {
-              codec = in.readString(4); 
+              codec = in.readString(4);
               in.skipBytes(74);
 
               bitsPerPixel = in.readShort();
@@ -612,7 +612,7 @@ public class QTReader extends FormatReader {
               in.read();
             }
             else {
-              altCodec = in.readString(4); 
+              altCodec = in.readString(4);
               addMeta("Second codec", altCodec);
             }
           }
@@ -690,31 +690,31 @@ public class QTReader extends FormatReader {
     throws FormatException, IOException
   {
     if (code.equals("raw ")) return pixs;
-    else if (code.equals("rle ")) { 
+    else if (code.equals("rle ")) {
       Object[] options = new Object[2];
-      options[0] = new int[] {core.sizeX[0], core.sizeY[0], 
-        bitsPerPixel < 40 ? bitsPerPixel / 8 : (bitsPerPixel - 32) / 8}; 
+      options[0] = new int[] {core.sizeX[0], core.sizeY[0],
+        bitsPerPixel < 40 ? bitsPerPixel / 8 : (bitsPerPixel - 32) / 8};
       options[1] = canUsePrevious ? prevPixels : null;
-      return new QTRLECodec().decompress(pixs, options); 
+      return new QTRLECodec().decompress(pixs, options);
     }
-    else if (code.equals("rpza")) { 
+    else if (code.equals("rpza")) {
       int[] options = new int[2];
       options[0] = core.sizeX[0];
       options[1] = core.sizeY[0];
-      return new RPZACodec().decompress(pixs, options); 
+      return new RPZACodec().decompress(pixs, options);
     }
-    else if (code.equals("mjpb")) { 
+    else if (code.equals("mjpb")) {
       int[] options = new int[4];
       options[0] = core.sizeX[0];
       options[1] = core.sizeY[0];
       options[2] = bitsPerPixel;
       options[3] = interlaced ? 1 : 0;
-      return new MJPBCodec().decompress(pixs, options); 
+      return new MJPBCodec().decompress(pixs, options);
     }
     else if (code.equals("jpeg")) {
       return new JPEGCodec().decompress(pixs);
     }
-    else throw new FormatException("Unsupported codec : " + code); 
+    else throw new FormatException("Unsupported codec : " + code);
   }
 
   /** Cut off header bytes from a resource fork file. */

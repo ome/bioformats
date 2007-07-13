@@ -187,7 +187,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
     else if (file.startsWith("http")) {
       raf = new RAUrl(Location.getMappedId(file), "r");
-      length = raf.length(); 
+      length = raf.length();
     }
     else throw new IOException("File not found : " + file);
     this.file = file;
@@ -698,7 +698,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
     else {
       raf = new RAUrl(Location.getMappedId(file), "r");
-      length = raf.length(); 
+      length = raf.length();
     }
     fileCache.put(this, Boolean.TRUE);
     openFiles++;

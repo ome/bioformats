@@ -365,8 +365,8 @@ public class IPWReader extends BaseTiffReader {
       noPOI = true;
       if (debug) trace(t);
     }
-  
-    core.interleaved[0] = true; 
+
+    core.interleaved[0] = true;
   }
 
   // -- Helper methods --
@@ -444,7 +444,7 @@ public class IPWReader extends BaseTiffReader {
           names.put(imageNum, entryName);
           core.imageCount[0]++;
         }
-        ds.close(); 
+        ds.close();
         r.exec("dis.close()");
         if (debug) {
           print(depth + 1, data.length + " bytes read.");

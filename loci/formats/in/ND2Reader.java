@@ -56,7 +56,7 @@ public class ND2Reader extends FormatReader {
     "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
 
   /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY = 
+  public static final SAXParserFactory SAX_FACTORY =
     SAXParserFactory.newInstance();
 
   // -- Static fields --
@@ -150,34 +150,34 @@ public class ND2Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf) 
+  public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
-    } 
+    }
     if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]))
     {
       throw new FormatException("Buffer too small.");
     }
-   
+
     in.seek(offsets[no]);
 
     if (isJPEG) {
       byte[][] pixels = ImageTools.getPixelBytes(openImage(no), false);
 
       for (int i=0; i<core.sizeC[0]; i++) {
-        System.arraycopy(pixels[i], 0, buf, i*pixels[i].length, 
+        System.arraycopy(pixels[i], 0, buf, i*pixels[i].length,
           pixels[i].length);
       }
-      pixels = null; 
+      pixels = null;
     }
     else {
       in.read(buf);
     }
- 
+
     return buf;
   }
 
@@ -185,21 +185,21 @@ public class ND2Reader extends FormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (!isJPEG) {
       return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-        core.sizeC[0], core.interleaved[0], 
+        core.sizeC[0], core.interleaved[0],
         FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
     }
-    
+
     FormatTools.assertId(currentId, true, 1);
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
 
     in.seek(offsets[no]);
-    
+
     long len = no < core.imageCount[0] - 1 ? offsets[no + 1] - offsets[no] :
       in.length() - offsets[no];
 
-    byte[] b = new byte[(int) len]; 
+    byte[] b = new byte[(int) len];
     in.readFully(b);
 
     ByteArrayInputStream bis = new ByteArrayInputStream(b);
@@ -262,11 +262,11 @@ public class ND2Reader extends FormatReader {
               core.sizeC[0] = len / (core.sizeX[0] * core.sizeY[0] *
                 FormatTools.getBytesPerPixel(core.pixelType[0]));
             }
-            offsets[ndx] = in.getFilePointer() - len + s.indexOf("!") + 9; 
+            offsets[ndx] = in.getFilePointer() - len + s.indexOf("!") + 9;
           }
           else if (s.startsWith("Image")) {
             // XML metadata
-            
+
             ND2Handler handler = new ND2Handler();
 
             s = s.substring(s.indexOf("!") + 1);
@@ -276,16 +276,16 @@ public class ND2Reader extends FormatReader {
               char c = s.charAt(i);
               if (Character.isISOControl(c) || !Character.isDefined(c)) {
                 s = s.replace(c, ' ');
-              } 
+              }
             }
-          
+
             try {
               SAXParser parser = SAX_FACTORY.newSAXParser();
               parser.parse(new ByteArrayInputStream(s.getBytes()), handler);
             }
             catch (ParserConfigurationException exc) {
               throw new FormatException(exc);
-            } 
+            }
             catch (SAXException exc) {
               throw new FormatException(exc);
             }
@@ -298,7 +298,7 @@ public class ND2Reader extends FormatReader {
           if (in.getFilePointer() < in.length() - 1) {
             if (in.read() != -38) in.skipBytes(15);
             else in.seek(in.getFilePointer() - 1);
-          } 
+          }
         }
       }
 
@@ -307,7 +307,7 @@ public class ND2Reader extends FormatReader {
       core.rgb[0] = false;
       core.littleEndian[0] = true;
 
-      return; 
+      return;
     }
     else in.seek(0);
 
@@ -330,10 +330,10 @@ public class ND2Reader extends FormatReader {
       pos = in.getFilePointer();
       length -= 8;
 
-      if (box == 0x6a703263) { 
-        vs.add(new Long(in.getFilePointer())); 
+      if (box == 0x6a703263) {
+        vs.add(new Long(in.getFilePointer()));
       }
-      if (!lastBoxFound) in.seek(pos + length); 
+      if (!lastBoxFound) in.seek(pos + length);
     }
 
     offsets = new long[vs.size()];
@@ -395,7 +395,7 @@ public class ND2Reader extends FormatReader {
 
       // strip out all comments
       xml = xml.replaceAll("<!--*-->", "");
-      
+
       // each chunk appears on a separate line, so split up the chunks
 
       StringTokenizer st = new StringTokenizer(xml, "\r\n");
@@ -426,7 +426,7 @@ public class ND2Reader extends FormatReader {
                 if (key.indexOf("runtype") == -1) {
                   if (prefix.startsWith("Metadata_V1.2")) {
                     prefix = "";
-                  } 
+                  }
                   String effectiveKey = prefix + " " + pre + " " + key;
                   if (!metadata.containsKey(effectiveKey)) {
                     addMeta(effectiveKey, value);
@@ -477,9 +477,9 @@ public class ND2Reader extends FormatReader {
           }
         }
       }
-      b = null; 
-      xml = null; 
-      st = null; 
+      b = null;
+      xml = null;
+      st = null;
     }
 
     status("Populating metadata");
@@ -598,7 +598,7 @@ public class ND2Reader extends FormatReader {
 
     if (bits == 0) core.pixelType[0] = FormatTools.UINT8;
     else {
-      int bpp = bits; 
+      int bpp = bits;
       while (bpp % 8 != 0) bpp++;
       switch (bpp) {
         case 8:
@@ -622,12 +622,12 @@ public class ND2Reader extends FormatReader {
     if (core.imageCount[0] < core.sizeZ[0] * core.sizeT[0] * core.sizeC[0]) {
       core.sizeT[0] = core.imageCount[0];
       core.sizeZ[0] = 1;
-    } 
+    }
 
     if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] < core.imageCount[0]) {
       core.sizeT[0] = 1;
       core.sizeZ[0] = core.imageCount[0];
-    } 
+    }
 
     core.rgb[0] = core.sizeC[0] == 3;
     core.interleaved[0] = true;
@@ -677,7 +677,7 @@ public class ND2Reader extends FormatReader {
         core.sizeX[0] = Integer.parseInt(attributes.getValue("value"));
       }
       else if (qName.equals("uiWidthBytes")) {
-        int bytes = 
+        int bytes =
           Integer.parseInt(attributes.getValue("value")) / core.sizeX[0];
         switch (bytes) {
           case 2:
@@ -685,19 +685,19 @@ public class ND2Reader extends FormatReader {
             break;
           case 4:
             core.pixelType[0] = FormatTools.UINT32;
-            break; 
+            break;
           default: core.pixelType[0] = FormatTools.UINT8;
         }
-      } 
+      }
       else if (qName.equals("uiHeight")) {
         core.sizeY[0] = Integer.parseInt(attributes.getValue("value"));
       }
       else if (qName.equals("uiCount")) {
-        int n = Integer.parseInt(attributes.getValue("value")); 
+        int n = Integer.parseInt(attributes.getValue("value"));
         if (core.imageCount[0] == 0) {
           core.imageCount[0] = n;
           core.sizeZ[0] = n;
-        } 
+        }
         core.sizeT[0] = 1;
       }
       else {

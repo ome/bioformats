@@ -293,9 +293,9 @@ public class LegacyZVIReader extends FormatReader {
       int alwaysOne = in.readInt();
       bytesPerPixel = in.readInt();
       // not clear what this value signifies
-      int pixType = in.readInt(); 
+      int pixType = in.readInt();
       // doesn't always equal bytesPerPixel * 8
-      int bitDepth = in.readInt(); 
+      int bitDepth = in.readInt();
       pos += 24;
 
       String type = "";

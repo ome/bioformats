@@ -31,7 +31,7 @@ import loci.formats.*;
 /** Reader for Khoros XV files. */
 public class KhorosReader extends FormatReader {
 
-  // -- Fields -- 
+  // -- Fields --
 
   /** Global lookup table. */
   private byte[] lut;
@@ -53,7 +53,7 @@ public class KhorosReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0])];
     return openBytes(no, buf);
@@ -63,17 +63,17 @@ public class KhorosReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1); 
+    FormatTools.assertId(currentId, true, 1);
     if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }
-   
-    in.seek(offset + 
+
+    in.seek(offset +
       no * (core.sizeX[0] * core.sizeY[0] * getRGBChannelCount()));
     if (lut == null) in.read(buf);
     else {
-      int plane = core.sizeX[0] * core.sizeY[0] * 
-        FormatTools.getBytesPerPixel(core.pixelType[0]); 
+      int plane = core.sizeX[0] * core.sizeY[0] *
+        FormatTools.getBytesPerPixel(core.pixelType[0]);
 
       for (int i=0; i<plane; i++) {
         int ndx = in.read();
@@ -86,25 +86,25 @@ public class KhorosReader extends FormatReader {
 
     return buf;
   }
- 
+
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1); 
-   
+    FormatTools.assertId(currentId, true, 1);
+
     if (core.pixelType[0] == FormatTools.FLOAT) {
       byte[] b = openBytes(no);
       float[] f = new float[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
       for (int i=0; i<f.length; i++) {
-        f[i] = Float.intBitsToFloat(DataTools.bytesToInt(b, 
+        f[i] = Float.intBitsToFloat(DataTools.bytesToInt(b,
           i*4, !core.littleEndian[0]));
       }
-      
-      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0], 
-        core.sizeC[0], core.interleaved[0]); 
+
+      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0],
+        core.sizeC[0], core.interleaved[0]);
     }
-    
+
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], core.interleaved[0], 
+      core.sizeC[0], core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
 
@@ -123,7 +123,7 @@ public class KhorosReader extends FormatReader {
     in.skipBytes(2);
     int release = in.read();
     int version = in.read();
-    in.order(true); 
+    in.order(true);
     int dependency = in.readInt();
 
     addMeta("Comment", in.readString(512));
@@ -136,27 +136,27 @@ public class KhorosReader extends FormatReader {
     core.imageCount[0] = in.readInt();
     if (core.imageCount[0] == 0) core.imageCount[0] = 1;
     core.sizeC[0] = in.readInt();
-    
-    int type = in.readInt(); 
-   
+
+    int type = in.readInt();
+
     switch (type) {
-      case 0: 
-      case 1: 
-        core.pixelType[0] = FormatTools.UINT8; 
+      case 0:
+      case 1:
+        core.pixelType[0] = FormatTools.UINT8;
         break;
-      case 2: 
+      case 2:
         core.pixelType[0] = FormatTools.UINT16;
         break;
-      case 4: 
-        core.pixelType[0] = FormatTools.UINT32; 
+      case 4:
+        core.pixelType[0] = FormatTools.UINT32;
         break;
-      case 5: 
-        core.pixelType[0] = FormatTools.FLOAT; 
+      case 5:
+        core.pixelType[0] = FormatTools.FLOAT;
         break;
-      case 9: 
-        core.pixelType[0] = FormatTools.DOUBLE; 
+      case 9:
+        core.pixelType[0] = FormatTools.DOUBLE;
         break;
-      default: throw new FormatException("Unsupported pixel type : " + type); 
+      default: throw new FormatException("Unsupported pixel type : " + type);
     }
 
     in.skipBytes(12);
@@ -164,11 +164,11 @@ public class KhorosReader extends FormatReader {
     if (c > 1) {
       core.sizeC[0] = c;
       int n = in.readInt();
-      lut = new byte[n * c]; 
+      lut = new byte[n * c];
       in.skipBytes(436);
 
       for (int i=0; i<lut.length; i++) {
-        int value = in.read(); 
+        int value = in.read();
         if (i < n) {
           lut[i*3] = (byte) value;
           lut[i*3 + 1] = (byte) value;
@@ -182,7 +182,7 @@ public class KhorosReader extends FormatReader {
         }
       }
     }
-    else in.skipBytes(440);  
+    else in.skipBytes(440);
     offset = in.getFilePointer();
 
     core.sizeZ[0] = core.imageCount[0];
@@ -191,13 +191,13 @@ public class KhorosReader extends FormatReader {
     core.interleaved[0] = false;
     core.littleEndian[0] = dependency == 4 || dependency == 8;
     core.currentOrder[0] = "XYCZT";
-  
+
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(core.littleEndian[0]), core.currentOrder[0], null, null);
-  
+
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null,
         core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);

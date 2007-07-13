@@ -181,7 +181,7 @@ public class DicomReader extends FormatReader {
       String s;
       switch (tag) {
         case TRANSFER_SYNTAX_UID:
-          s = in.readString(elementLength); 
+          s = in.readString(elementLength);
           addInfo(tag, s);
           if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
             throw new FormatException("Sorry, compressed DICOM images not " +

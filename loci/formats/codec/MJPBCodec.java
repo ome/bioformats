@@ -32,7 +32,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
     int[] o = (int[]) options;
     int x = o[0];
     int y = o[1];
-    int bits = o[2]; 
+    int bits = o[2];
     boolean interlaced = o[3] == 1;
 
     byte[] raw = null;
@@ -40,9 +40,9 @@ public class MJPBCodec extends BaseCodec implements Codec {
 
     try {
       RandomAccessStream ras = new RandomAccessStream(data);
-      ras.order(false); 
+      ras.order(false);
       ras.skipBytes(20);
-  
+
       byte[] lumDcBits = null, lumAcBits = null, lumDc = null, lumAc = null;
       byte[] quant = null;
 
@@ -51,16 +51,16 @@ public class MJPBCodec extends BaseCodec implements Codec {
       String s1 = new String(a);
       ras.seek(ras.getFilePointer() - 20);
       ras.read(a);
-      String s2 = new String(a); 
-      ras.skipBytes(12); 
+      String s2 = new String(a);
+      ras.skipBytes(12);
       if (s1.equals("mjpg") || s2.equals("mjpg")) {
         int extra = 16;
         if (s2.startsWith("m")) {
           extra = 0;
           ras.seek(4);
         }
-        ras.skipBytes(12); 
-    
+        ras.skipBytes(12);
+
         int offset = ras.readInt() + extra;
         int quantOffset = ras.readInt() + extra;
         int huffmanOffset = ras.readInt() + extra;
@@ -75,7 +75,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
           quant = new byte[len - 3];
           ras.read(quant);
         }
-   
+
         if (huffmanOffset != 0) {
           ras.seek(huffmanOffset);
           int len = ras.readShort();
@@ -108,7 +108,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
           ras.skipBytes(1);
           tables[i] = ras.read();
         }
-  
+
         ras.seek(sod);
         int numBytes = (int) (offset - ras.getFilePointer());
         if (offset == 0) numBytes = (int) (ras.length() - ras.getFilePointer());
@@ -120,7 +120,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
           int n = ras.readInt();
           ras.skipBytes(n);
           ras.seek(ras.getFilePointer() - 40);
-     
+
           numBytes = (int) (ras.length() - ras.getFilePointer());
           raw2 = new byte[numBytes];
           ras.read(raw2);
@@ -153,7 +153,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
       v.add(HEADER);
 
       v.add(new byte[] {(byte) 0xff, (byte) 0xdb});
-    
+
       int length = 67;
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
@@ -161,7 +161,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
       v.add(quant);
 
       v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
-      length = (lumDcBits.length + lumDc.length + lumAcBits.length + 
+      length = (lumDcBits.length + lumDc.length + lumAcBits.length +
         lumAc.length)*2 + 6;
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
@@ -185,7 +185,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
       length = (bits >= 40) ? 11 : 17;
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
-  
+
       int fieldHeight = y;
       if (interlaced) fieldHeight /= 2;
       if (y % 2 == 1) fieldHeight++;
@@ -229,11 +229,11 @@ public class MJPBCodec extends BaseCodec implements Codec {
         v.add((byte) 3);
         v.add((byte) 1);
       }
- 
+
       v.add((byte) 0);
       v.add((byte) 0x3f);
       v.add((byte) 0);
-  
+
       if (interlaced) {
         ByteVector v2 = new ByteVector(v.size());
         v2.add(v.toByteArray());
@@ -248,22 +248,22 @@ public class MJPBCodec extends BaseCodec implements Codec {
         JPEGCodec jpeg = new JPEGCodec();
         byte[] top = jpeg.decompress(v.toByteArray());
         byte[] bottom = jpeg.decompress(v2.toByteArray());
- 
+
         int bpp = bits < 40 ? bits / 8 : (bits - 32) / 8;
-        int ch = bits < 40 ? 3 : 1; 
+        int ch = bits < 40 ? 3 : 1;
         byte[] result = new byte[x * y * bpp * ch];
- 
+
         int topNdx = 0;
         int bottomNdx = 0;
-        
+
         for (int yy=0; yy<y; yy++) {
           if (yy % 2 == 0) {
-            System.arraycopy(top, topNdx*x*bpp, result, yy*x*bpp, x*bpp); 
-            topNdx++; 
+            System.arraycopy(top, topNdx*x*bpp, result, yy*x*bpp, x*bpp);
+            topNdx++;
           }
           else {
             System.arraycopy(bottom, bottomNdx*x*bpp, result, yy*x*bpp, x*bpp);
-            bottomNdx++; 
+            bottomNdx++;
           }
         }
         return result;

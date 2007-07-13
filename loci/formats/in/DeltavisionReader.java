@@ -80,7 +80,7 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return false; 
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -569,40 +569,40 @@ public class DeltavisionReader extends FormatReader {
     protected DVExtHdrFields(int startingOffset, int numIntsPerSection,
       byte[] extHeader, boolean little)
     {
-      try { 
-        RandomAccessStream ext = new RandomAccessStream(extHeader); 
-        ext.order(little); 
+      try {
+        RandomAccessStream ext = new RandomAccessStream(extHeader);
+        ext.order(little);
 
         // skip over the int values that have nothing in them
         offsetWithInts = startingOffset + (numIntsPerSection * 4);
 
-        // DV files store the ND (neuatral density) Filter 
-        // (normally expressed as a %T (transmittance)) as an OD 
+        // DV files store the ND (neuatral density) Filter
+        // (normally expressed as a %T (transmittance)) as an OD
         // (optical density) rating.
         // To convert from one to the other the formula is %T = 10^(-OD) X 100.
         ext.seek(offsetWithInts + 36);
         oDFilter = ext.readFloat();
 
         // fill in the extended header information for the floats
-        ext.seek(offsetWithInts); 
-        photosensorReading = ext.readFloat(); 
-        timeStampSeconds = ext.readFloat(); 
-        stageXCoord = ext.readFloat(); 
+        ext.seek(offsetWithInts);
+        photosensorReading = ext.readFloat();
+        timeStampSeconds = ext.readFloat();
+        stageXCoord = ext.readFloat();
         stageYCoord = ext.readFloat();
         stageZCoord = ext.readFloat();
-        minInten = ext.readFloat(); 
-        maxInten = ext.readFloat(); 
+        minInten = ext.readFloat();
+        maxInten = ext.readFloat();
         meanInten = ext.readFloat();
-        expTime = ext.readFloat(); 
+        expTime = ext.readFloat();
         ndFilter = (float) Math.pow(10.0, -oDFilter);
-        ext.skipBytes(4); 
-     
+        ext.skipBytes(4);
+
         exFilter = ext.readFloat();
         emFilter = ext.readFloat();
-        exWavelen = ext.readFloat();  
+        exWavelen = ext.readFloat();
         emWavelen = ext.readFloat();
         intenScaling = ext.readFloat();
-        energyConvFactor = ext.readFloat(); 
+        energyConvFactor = ext.readFloat();
       }
       catch (IOException e) {
         LogTools.trace(e);

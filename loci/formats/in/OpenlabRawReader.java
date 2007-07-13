@@ -165,7 +165,7 @@ public class OpenlabRawReader extends FormatReader {
 
     switch (bytesPerPixel) {
       case 1:
-      case 3:  
+      case 3:
         core.pixelType[0] = FormatTools.UINT8;
         break;
       case 2:

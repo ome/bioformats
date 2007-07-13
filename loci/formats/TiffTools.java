@@ -1641,7 +1641,7 @@ public final class TiffTools {
     int count = 0;
 
     BitBuffer bb = new BitBuffer(bytes);
-    
+
     byte[] copyByteArray = new byte[numBytes];
     ByteBuffer nioBytes = MappedByteBuffer.wrap(bytes);
     if (!littleEndian)

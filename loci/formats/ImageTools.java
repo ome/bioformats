@@ -1025,7 +1025,7 @@ public final class ImageTools {
    * The "reverse" parameter is false if channels are in RGB order, true if
    * channels are in BGR order.
    */
-  public static byte[][] splitChannels(byte[] array, int c, int bytes, 
+  public static byte[][] splitChannels(byte[] array, int c, int bytes,
     boolean reverse, boolean interleaved)
   {
     byte[][] rtn = new byte[c][array.length / c];
@@ -1052,12 +1052,12 @@ public final class ImageTools {
             for (int k=0; k<bytes; k++) {
               if (next < rtn[j].length) {
                 rtn[c - j - 1][next] = array[i + j*bytes + k];
-              } 
-              next++; 
+              }
+              next++;
             }
-            next -= bytes; 
-          } 
-          next += bytes; 
+            next -= bytes;
+          }
+          next += bytes;
         }
       }
       else {
@@ -1066,11 +1066,11 @@ public final class ImageTools {
           for (int j=0; j<c; j++) {
             for (int k=0; k<bytes; k++) {
               if (next < rtn[j].length) rtn[j][next] = array[i + j*bytes + k];
-              next++; 
+              next++;
             }
-            next -= bytes; 
-          } 
-          next += bytes; 
+            next -= bytes;
+          }
+          next += bytes;
         }
       }
     }
@@ -1888,14 +1888,14 @@ public final class ImageTools {
     }
 
     BufferedImage result = null;
-    try { 
+    try {
       result = makeBuffered(scaleAWT(source, width, height,
         Image.SCALE_AREA_AVERAGING), source.getColorModel());
     }
     catch (Exception e) {
-      result = makeBuffered(scaleAWT(source, width, height, 
+      result = makeBuffered(scaleAWT(source, width, height,
         Image.SCALE_AREA_AVERAGING));
-    } 
+    }
     return padImage(result, finalWidth, finalHeight);
   }
 

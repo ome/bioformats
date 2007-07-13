@@ -126,8 +126,8 @@ public class AVIReader extends FormatReader {
       options[0] = new int[] {core.sizeX[0], core.sizeY[0]};
 
       MSRLECodec codec = new MSRLECodec();
-      b = codec.decompress(b, options); 
-      lastImage = b; 
+      b = codec.decompress(b, options);
+      lastImage = b;
       if (no == core.imageCount[0] - 1) lastImage = null;
       byte[] colors = new byte[b.length * 3];
       for (int i=0; i<b.length; i++) {

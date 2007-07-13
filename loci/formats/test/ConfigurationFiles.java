@@ -140,7 +140,7 @@ public class ConfigurationFiles {
             entry.type[i] = FormatTools.pixelTypeFromString(
               s.substring(ndx, s.indexOf(" ", ndx)));
             ndx = s.indexOf("little") + 7;
-            entry.littleEndian[i] = 
+            entry.littleEndian[i] =
               s.substring(ndx, s.indexOf(" ", ndx)).equals("true");
             ndx = s.indexOf("md5") + 4;
             entry.md5[i] = s.substring(ndx);
@@ -261,7 +261,7 @@ public class ConfigurationFiles {
     private int[][] thumbs;
     private int[] type;
     private boolean[] littleEndian;
-    private String[] md5; 
+    private String[] md5;
     private float access;
     private int mem;
     private boolean test;

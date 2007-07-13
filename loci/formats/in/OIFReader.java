@@ -258,12 +258,12 @@ public class OIFReader extends FormatReader {
     }
 
     int reference = ((String) filenames.get(new Integer(0))).length();
-    int numFiles = filenames.size(); 
+    int numFiles = filenames.size();
     for (int i=0; i<numFiles; i++) {
       String value = (String) filenames.get(new Integer(i));
       if (value.length() > reference) {
-        filenames.remove(new Integer(i)); 
-      } 
+        filenames.remove(new Integer(i));
+      }
     }
 
     status("Initializing helper readers");
@@ -308,10 +308,10 @@ public class OIFReader extends FormatReader {
           value = DataTools.stripString(value);
           if (key.equals("DataName")) {
             value = value.substring(1, value.length() - 1);
-            if (value.indexOf("-R") == -1) { 
+            if (value.indexOf("-R") == -1) {
               tiffs.add(i, tiffPath + File.separator + value);
               tiffReader[i].setId((String) tiffs.get(i));
-            } 
+            }
           }
           addMeta("Image " + i + " : " + key, value);
         }
@@ -330,12 +330,12 @@ public class OIFReader extends FormatReader {
     status("Populating metadata");
 
     for (int i=0; i<9; i++) {
-      int ss = Integer.parseInt(size[i]); 
+      int ss = Integer.parseInt(size[i]);
       if (code[i].equals("\"X\"")) core.sizeX[0] = ss;
-      else if (code[i].equals("\"Y\"")) core.sizeY[0] = ss; 
-      else if (code[i].equals("\"C\"")) core.sizeC[0] = ss; 
-      else if (code[i].equals("\"T\"")) core.sizeT[0] = ss; 
-      else if (code[i].equals("\"Z\"")) core.sizeZ[0] = ss; 
+      else if (code[i].equals("\"Y\"")) core.sizeY[0] = ss;
+      else if (code[i].equals("\"C\"")) core.sizeC[0] = ss;
+      else if (code[i].equals("\"T\"")) core.sizeT[0] = ss;
+      else if (code[i].equals("\"Z\"")) core.sizeZ[0] = ss;
     }
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;

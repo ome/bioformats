@@ -32,7 +32,7 @@ import loci.formats.*;
  * FitsReader is the file format reader for
  * Flexible Image Transport System (FITS) images.
  *
- * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij). 
+ * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij).
  */
 public class FitsReader extends FormatReader {
 
@@ -49,16 +49,16 @@ public class FitsReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) { 
+  public boolean isThisType(byte[] block) {
     return true;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * 
+    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, buf); 
+    return openBytes(no, buf);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -69,16 +69,16 @@ public class FitsReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * 
-      FormatTools.getBytesPerPixel(core.pixelType[0])) 
+    if (buf.length < core.sizeX[0] * core.sizeY[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0]))
     {
       throw new FormatException("Buffer too small.");
     }
 
     in.seek(2880 + 2880 * (((count * 80) - 1) / 2880));
-    int line = core.sizeX[0] * FormatTools.getBytesPerPixel(core.pixelType[0]); 
+    int line = core.sizeX[0] * FormatTools.getBytesPerPixel(core.pixelType[0]);
     for (int y=core.sizeY[0]-1; y>=0; y--) {
-      in.read(buf, y*line, line); 
+      in.read(buf, y*line, line);
     }
     return buf;
   }
@@ -86,7 +86,7 @@ public class FitsReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], core.interleaved[0], 
+      core.sizeC[0], core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
 
@@ -102,12 +102,12 @@ public class FitsReader extends FormatReader {
     if (!line.startsWith("SIMPLE")) {
       throw new FormatException("Unsupported FITS file.");
     }
-  
+
     while (true) {
       count++;
-      line = in.readString(80); 
+      line = in.readString(80);
 
-      // parse key/value pair 
+      // parse key/value pair
       int ndx = line.indexOf("=");
       int comment = line.indexOf("/", ndx);
       if (comment < 0) comment = line.length();
@@ -119,7 +119,7 @@ public class FitsReader extends FormatReader {
         value = line.substring(ndx + 1, comment).trim();
       }
       else key = line.trim();
-      
+
       if (key.equals("END")) break;
 
       if (key.equals("BITPIX")) {
@@ -132,29 +132,29 @@ public class FitsReader extends FormatReader {
           default: throw new FormatException("Unsupported pixel type: " + bits);
         }
       }
-      else if (key.equals("NAXIS1")) core.sizeX[0] = Integer.parseInt(value); 
-      else if (key.equals("NAXIS2")) core.sizeY[0] = Integer.parseInt(value); 
-      else if (key.equals("NAXIS3")) core.sizeZ[0] = Integer.parseInt(value); 
+      else if (key.equals("NAXIS1")) core.sizeX[0] = Integer.parseInt(value);
+      else if (key.equals("NAXIS2")) core.sizeY[0] = Integer.parseInt(value);
+      else if (key.equals("NAXIS3")) core.sizeZ[0] = Integer.parseInt(value);
 
-      addMeta(key, value); 
+      addMeta(key, value);
     }
-  
-    core.sizeC[0] = 1;  
-    core.sizeT[0] = 1;  
+
+    core.sizeC[0] = 1;
+    core.sizeT[0] = 1;
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
     core.imageCount[0] = core.sizeZ[0];
     core.rgb[0] = false;
     core.littleEndian[0] = false;
     core.interleaved[0] = false;
     core.currentOrder[0] = "XYZCT";
-  
+
     MetadataStore store = getMetadataStore();
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
-  
-    store.setLogicalChannel(0, null, null, null, null, 
+
+    store.setLogicalChannel(0, null, null, null, null,
       "monochrome", null, null);
   }
 

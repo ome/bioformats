@@ -68,7 +68,7 @@ public class JPEGCodec extends BaseCodec implements Codec {
       RandomAccessStream s = new RandomAccessStream(input);
       while (s.read() != (byte) 0xff || s.read() != (byte) 0xd8);
       int offset = (int) s.getFilePointer() - 2;
-      b = ImageIO.read(new BufferedInputStream(new ByteArrayInputStream(input, 
+      b = ImageIO.read(new BufferedInputStream(new ByteArrayInputStream(input,
         offset, input.length - offset)));
     }
     catch (IOException exc) {

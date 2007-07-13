@@ -434,7 +434,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isOriginalMetadataPopulated() */
   public boolean isOriginalMetadataPopulated() {
-    return readers[0].isOriginalMetadataPopulated(); 
+    return readers[0].isOriginalMetadataPopulated();
   }
 
   /* @see IFormatReader#getCurrentFile() */

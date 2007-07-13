@@ -167,8 +167,8 @@ public class Base64Codec extends BaseCodec implements Codec {
    * @return The decoded data
    * @throws FormatException if data is not valid Base64 data
    */
-  public byte[] decompress(byte[] base64Data, Object options) 
-    throws FormatException 
+  public byte[] decompress(byte[] base64Data, Object options)
+    throws FormatException
   {
     // TODO: Add checks for invalid data.
     if (base64Data.length == 0) return new byte[0];

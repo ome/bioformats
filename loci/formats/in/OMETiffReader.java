@@ -31,7 +31,7 @@ import loci.formats.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-/** 
+/**
  * OMETiffReader is the file format reader for OME-TIFF files.
  * See http://www.loci.wisc.edu/ome/ome-tiff-spec.html
  */
@@ -47,27 +47,27 @@ public class OMETiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (!name.toLowerCase().endsWith("tif") && 
-      !name.toLowerCase().endsWith("tiff")) 
-    {  
-      return false; 
-    } 
-    
+    if (!name.toLowerCase().endsWith("tif") &&
+      !name.toLowerCase().endsWith("tiff"))
+    {
+      return false;
+    }
+
     try {
       RandomAccessStream ras = new RandomAccessStream(name);
       Hashtable ifd = TiffTools.getFirstIFD(ras);
       ras.close();
       if (ifd == null) return false;
-    
+
       String comment = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
       if (comment == null) return false;
-      return comment.indexOf("ome.xsd") >= 0; 
+      return comment.indexOf("ome.xsd") >= 0;
     }
-    catch (Exception e) { return false; } 
+    catch (Exception e) { return false; }
   }
-  
+
   // -- Internal BaseTiffReader API methods --
- 
+
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
@@ -85,8 +85,8 @@ public class OMETiffReader extends BaseTiffReader {
     catch (ParserConfigurationException exc) { }
     catch (SAXException exc) { }
     catch (IOException exc) { }
-  
-    // extract TiffData elements from XML 
+
+    // extract TiffData elements from XML
     Element[] pixels = null;
     Element[][] tiffData = null;
     if (doc != null) {
@@ -143,7 +143,7 @@ public class OMETiffReader extends BaseTiffReader {
         {
           core.pixelType[i]++;
         }
-        
+
         // MAJOR HACK: adjust SizeT to match the number of IFDs, if this file
         // was written by a buggy version of WiscScan
         if (isWiscScan) core.sizeT[i] = core.imageCount[0];
@@ -170,8 +170,8 @@ public class OMETiffReader extends BaseTiffReader {
           int firstT = nullFirstT ? 0 : Integer.parseInt(aFirstT);
           int numPlanes = nullNumPlanes ? (nullIfd ? core.imageCount[0] : 1) :
             Integer.parseInt(aNumPlanes);
-        
-          // populate ZCT matrix 
+
+          // populate ZCT matrix
           char d1st = core.currentOrder[i].charAt(2);
           char d2nd = core.currentOrder[i].charAt(3);
           int z = firstZ, t = firstT, c = firstC;
@@ -190,14 +190,14 @@ public class OMETiffReader extends BaseTiffReader {
                         t = 0;
                         c++;
                       }
-                      break; 
+                      break;
                     case 'C':
                       c++;
                       if (c >= sc) {
                         c = 0;
                         t++;
                       }
-                      break; 
+                      break;
                   }
                 }
                 break;
@@ -219,7 +219,7 @@ public class OMETiffReader extends BaseTiffReader {
                         c = 0;
                         z++;
                       }
-                      break; 
+                      break;
                   }
                 }
                 break;
@@ -234,21 +234,21 @@ public class OMETiffReader extends BaseTiffReader {
                         z = 0;
                         t++;
                       }
-                      break; 
+                      break;
                     case 'T':
                       t++;
                       if (t >= core.sizeT[i]) {
                         t = 0;
                         z++;
                       }
-                      break; 
+                      break;
                   }
                 }
-                break; 
+                break;
             }
           }
         }
-  
+
         // analyze ZCT matrix to determine best SizeZ, SizeC, and SizeT
         // for now, we only handle certain special cases:
         boolean success = false;
@@ -267,7 +267,7 @@ public class OMETiffReader extends BaseTiffReader {
           // NB: sizes are already correct; no corrections necessary
           continue;
         }
-     
+
         // 2) single Z, all T, all C
         success = true;
         theZ = -1;
@@ -287,7 +287,7 @@ public class OMETiffReader extends BaseTiffReader {
           core.sizeZ[i] = 1;
           continue;
         }
-      
+
         // 3) all Z, single T, all C
         success = true;
         theT = -1;
@@ -327,7 +327,7 @@ public class OMETiffReader extends BaseTiffReader {
           core.sizeC[i] = 1;
           continue;
         }
-       
+
         // 5) single Z, single T, all C
         success = true;
         theZ = -1;
@@ -335,17 +335,17 @@ public class OMETiffReader extends BaseTiffReader {
         for (int z=0; z<core.sizeZ[i] && success; z++) {
           for (int t=0; t<core.sizeT[i] && success; t++) {
             if (zct[z][0][t]) {
-              if (theZ < 0 && theT < 0) { 
+              if (theZ < 0 && theT < 0) {
                 theZ = z;
                 theT = t;
               }
-              else success = false; 
+              else success = false;
             }
             boolean state = theZ == z && theT == t;
             for (int c=0; c<sc && success; c++) {
               if (zct[z][c][t] != state) success = false;
             }
-          } 
+          }
         }
 
         if (success) {
@@ -364,11 +364,11 @@ public class OMETiffReader extends BaseTiffReader {
                 theZ = z;
                 theC = c;
               }
-              else success = false; 
+              else success = false;
             }
             boolean state = theZ == z && theC == c;
             for (int t=0; t<core.sizeT[i] && success; t++) {
-              if (zct[z][c][t] != state) success = false; 
+              if (zct[z][c][t] != state) success = false;
             }
           }
         }
@@ -388,9 +388,9 @@ public class OMETiffReader extends BaseTiffReader {
                 theC = c;
                 theT = t;
               }
-              else success = false; 
+              else success = false;
             }
-            boolean state = theC == c && theT == t; 
+            boolean state = theC == c && theT == t;
             for (int z=0; z<core.sizeZ[i] && success; z++) {
               if (zct[z][c][t] != state) success = false;
             }
@@ -421,18 +421,18 @@ public class OMETiffReader extends BaseTiffReader {
           core.sizeZ[i] = core.sizeT[i] = core.sizeC[i] = 1;
           continue;
         }
-      
+
         // no easy way to chop up TiffData mappings into regular ZCT dims
         throw new FormatException("Unsupported ZCT index mapping");
-      } 
+      }
     }
-  } 
+  }
 
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
     String comment = (String) getMeta("Comment");
     metadata.remove("Comment");
-  
+
     boolean isOMEXML;
     try {
       Class omexmlMeta = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
@@ -441,7 +441,7 @@ public class OMETiffReader extends BaseTiffReader {
     catch (Throwable t) {
       isOMEXML = false;
     }
-  
+
     if (isOMEXML) {
       ReflectedUniverse r = new ReflectedUniverse();
       try {
@@ -449,7 +449,7 @@ public class OMETiffReader extends BaseTiffReader {
         r.setVar("xmlStore", metadataStore);
         r.setVar("comment", comment);
         r.exec("xmlStore.createRoot(comment)");
-        return; 
+        return;
       }
       catch (ReflectException exc) {
         // OME Java probably not available; ignore this error
