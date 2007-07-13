@@ -185,10 +185,6 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
     store.setDimensions(new Float(fx), new Float(fy), new Float(fz),
       null, new Float(pixelSizeT / 1000000.0), null);
- 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, cNames[i], null, null, null, null, null, null);
-    }
   }
 
 }

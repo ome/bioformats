@@ -45,7 +45,7 @@ public class ICSReader extends FormatReader {
   /** Metadata field categories. */
   private static final String[] CATEGORIES = new String[] {
     "ics_version", "filename", "source", "layout", "representation",
-    "parameter", "sensor", "history", "end"
+    "parameter", "sensor", "history", "document", "view", "end"
   };
 
   /** Metadata field subcategories. */
@@ -53,13 +53,24 @@ public class ICSReader extends FormatReader {
     "file", "offset", "parameters", "order", "sizes", "coordinates",
     "significant_bits", "format", "sign", "compression", "byte_order",
     "origin", "scale", "units", "labels", "SCIL_TYPE", "type", "model",
-    "s_params"
+    "s_params", "laser", "gain1", "gain2", "gain3", "gain4", "dwell",
+    "shutter1", "shutter2", "shutter3", "pinhole", "laser1", "laser2",
+    "laser3", "objective", "PassCount", "step1", "step2", "step3", "view",
+    "view1", "date", "GMTdate", "label"
   };
 
   /** Metadata field sub-subcategories. */
   private static final String[] SUB_SUB_CATEGORIES = new String[] {
     "Channels", "PinholeRadius", "LambdaEx", "LambdaEm", "ExPhotonCnt",
-    "RefInxMedium", "NumAperture", "RefInxLensMedium", "PinholeSpacing"
+    "RefInxMedium", "NumAperture", "RefInxLensMedium", "PinholeSpacing",
+    "power", "wavelength", "name", "Type", "Magnification", "NA",
+    "WorkingDistance", "Immersion", "Pinhole", "Channel 1", "Channel 2",
+    "Channel 3", "Channel 4", "Gain 1", "Gain 2", "Gain 3", "Gain 4",
+    "Shutter 1", "Shutter 2", "Shutter 3", "Position", "Size", "Port",
+    "Cursor", "Color", "BlackLevel", "Saturation", "Gamma", "IntZoom",
+    "Live", "Synchronize", "ShowIndex", "AutoResize", "UseUnits", "Zoom",
+    "IgnoreAspect", "ShowCursor", "ShowAll", "Axis", "Order", "Tile", "scale",
+    "DimViewOption"
   };
 
   // -- Fields --

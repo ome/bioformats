@@ -153,6 +153,9 @@ public class FitsReader extends FormatReader {
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
+  
+    store.setLogicalChannel(0, null, null, null, null, 
+      "monochrome", null, null);
   }
 
 }

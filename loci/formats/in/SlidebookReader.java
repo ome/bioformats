@@ -303,6 +303,21 @@ public class SlidebookReader extends FormatReader {
        
       core.imageCount[i] = core.sizeC[i] * core.sizeZ[i] * core.sizeT[i]; 
     } 
+  
+    MetadataStore store = getMetadataStore();  
+
+    for (int i=0; i<core.sizeX.length; i++) { 
+      store.setPixels(new Integer(core.sizeX[i]), new Integer(core.sizeY[i]),
+        new Integer(core.sizeZ[i]), new Integer(core.sizeC[i]),
+        new Integer(core.sizeT[i]), new Integer(core.pixelType[i]),
+        new Boolean(!core.littleEndian[i]), core.currentOrder[i],
+        new Integer(i), null);
+
+      for (int j=0; j<core.sizeC[i]; j++) {
+        store.setLogicalChannel(j, null, null, null, null,
+          core.sizeC[i] == 1 ? "monochrome" : "RGB", null, new Integer(i));
+      }
+    } 
   }
 
 }
