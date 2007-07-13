@@ -28,11 +28,8 @@ public class CacheComponent extends JPanel
   /** Length of each axis. */
   private int[] lengths;
 
-  /** Spinners for choosing number of slices to cache ahead. */
-  private Vector forward;
-
-  /** Spinners for choosing number of slices to cache behind. */
-  private Vector backward;
+  /** Spinners for choosing range of slices to cache. */
+  private Vector range;
 
   /** Buttons for choosing axis priority. */
   private JRadioButton[][] priority;
@@ -40,121 +37,85 @@ public class CacheComponent extends JPanel
   // -- Constructor --
 
   public CacheComponent(Cache cache, boolean doSource, String[] axisLabels,
-    String file, int[] lengths)
+    String file)
   {
     super();
     this.cache = cache;
     this.file = file;
-    this.lengths = lengths;
+    this.lengths = cache.getStrategy().getLengths();
 
-    BoxLayout thisLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
-    setLayout(thisLayout);
+    // constants
+    final String[] strategies = new String[] {"Crosshair", "Rectangle"};
+    final String[] priorities = {"max", "high", "normal", "low", "min"};
+    final String[] order = {"centered", "forward", "backward"};
+
+    setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
     CellConstraints cc = new CellConstraints();
 
-    forward = new Vector();
-    backward = new Vector();
+    range = new Vector();
 
     JPanel top = new JPanel();
-    FormLayout layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref",
-      doSource ? "pref,pref:grow,pref,pref:grow,pref" : "pref,pref:grow,pref");
+    FormLayout layout = new FormLayout("pref:grow,3dlu,pref:grow",
+      doSource ? "pref:grow,3dlu,pref:grow" : "pref:grow");
     top.setLayout(layout);
 
     // add source choices, if desired
     JComboBox sourceChooser = null;
     if (doSource) {
       JLabel label = new JLabel("Objects to cache: ");
-      top.add(label, cc.xy(2, 2));
+      top.add(label, cc.xy(1, 1));
       String[] sources =
         new String[] {"byte arrays", "BufferedImages", "ImageProcessors"};
       sourceChooser = new JComboBox(sources);
       sourceChooser.setActionCommand("source");
       sourceChooser.addActionListener(this);
-      top.add(sourceChooser, cc.xy(4, 2));
+      top.add(sourceChooser, cc.xy(3, 1));
     }
 
     // add strategy choices
 
     JLabel label = new JLabel("Caching strategy: ");
-    top.add(label, cc.xy(2, doSource ? 4 : 2));
-    String[] strategies = new String[] {"Crosshair - forward first",
-      "Crosshair - backward first", "Rectangle - forward first",
-      "Rectangle - backward first"};
+    top.add(label, cc.xy(1, doSource ? 3 : 1));
     JComboBox strategyChooser = new JComboBox(strategies);
     strategyChooser.setActionCommand("strategy");
     strategyChooser.addActionListener(this);
-    top.add(strategyChooser, cc.xy(4, doSource ? 4 : 2));
+    top.add(strategyChooser, cc.xy(3, doSource ? 3 : 1));
 
     add(top);
 
     // add cache size choices
 
     JPanel middle = new JPanel();
-    String rowString = "pref,pref:grow,pref,";
-    for (int i=0; i<axisLabels.length; i++) {
-      rowString += "pref:grow,pref,";
-    }
-    layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref,pref:grow,pref",
-      rowString);
+    StringBuffer rows = new StringBuffer();
+    rows.append("pref:grow");
+    for (int i=0; i<axisLabels.length; i++) rows.append(",3dlu,pref:grow");
+    layout = new FormLayout(
+      "pref:grow,3dlu,pref:grow,3dlu,pref:grow,3dlu,pref:grow",
+      rows.toString());
     middle.setLayout(layout);
 
-    JLabel header = new JLabel("Axis");
-    middle.add(header, cc.xy(2, 2));
-    header = new JLabel("Forward");
-    middle.add(header, cc.xy(4, 2));
-    header = new JLabel("Backward");
-    middle.add(header, cc.xy(6, 2));
+    middle.add(new JLabel("Axis"), cc.xy(1, 1));
+    middle.add(new JLabel("Range"), cc.xy(3, 1));
+    middle.add(new JLabel("Priority"), cc.xy(5, 1));
+    middle.add(new JLabel("Order"), cc.xy(7, 1));
 
     for (int i=0; i<axisLabels.length; i++) {
       JLabel l = new JLabel(axisLabels[i]);
-      middle.add(l, cc.xy(2, i*2 + 4));
-      JSpinner f = new JSpinner(new SpinnerNumberModel(1, 0, lengths[i], 1));
-      middle.add(f, cc.xy(4, i*2 + 4));
-      JSpinner b = new JSpinner(new SpinnerNumberModel(1, 0, lengths[i], 1));
-      middle.add(b, cc.xy(6, i*2 + 4));
-      forward.add(f);
-      backward.add(b);
+      middle.add(l, cc.xy(1, i*2 + 3));
+      JSpinner r = new JSpinner(new SpinnerNumberModel(1, 0, lengths[i], 1));
+      middle.add(r, cc.xy(3, i*2 + 3));
+      range.add(r);
+      JComboBox prio = new JComboBox(priorities);
+      middle.add(prio, cc.xy(5, i*2 + 3));
+      JComboBox ord = new JComboBox(order);
+      middle.add(ord, cc.xy(7, i*2 + 3));
     }
 
     add(middle);
 
     if (sourceChooser != null) updateSource(sourceChooser);
     updateStrategy(strategyChooser);
-
-    // add priority choices
-
-    JPanel bottom = new JPanel();
-    String colString = "pref,pref:grow,pref,";
-    for (int i=0; i<axisLabels.length; i++) {
-      colString += "pref:grow,pref,";
-    }
-    layout = new FormLayout(colString, rowString);
-    bottom.setLayout(layout);
-
-    priority = new JRadioButton[axisLabels.length][axisLabels.length];
-    String[] priorities = new String[] {
-      "High priority", "Medium priority", "Low priority"
-    };
-    int skip = axisLabels.length / 3;
-
-    for (int i=0; i<axisLabels.length; i++) {
-      JLabel l = new JLabel("");
-      if (i % skip == 0) {
-        l = new JLabel(priorities[i / skip]);
-      }
-      bottom.add(l, cc.xy(2, (i + 1) * 2));
-
-      ButtonGroup g = new ButtonGroup();
-      for (int j=0; j<axisLabels.length; j++) {
-        JRadioButton button = new JRadioButton(axisLabels[j], i == j);
-        priority[i][j] = button;
-        button.addChangeListener(this);
-        g.add(button);
-        bottom.add(button, cc.xy((j + 2) * 2, (i + 1) * 2));
-      }
-    }
-
-    add(bottom);
 
     JButton reset = new JButton("Reset");
     reset.setActionCommand("reset");
@@ -223,28 +184,18 @@ public class CacheComponent extends JPanel
       }
     }
 
-    for (int i=0; i<forward.size(); i++) {
-      JSpinner f = (JSpinner) forward.get(i);
-      JSpinner b = (JSpinner) backward.get(i);
-//      strategy.setForward(((Integer) f.getValue()).intValue(), i);
-//      strategy.setBackward(((Integer) b.getValue()).intValue(), i);
+    for (int i=0; i<range.size(); i++) {
+      JSpinner r = (JSpinner) range.get(i);
+      strategy.setRange(((Integer) r.getValue()).intValue(), i);
     }
   }
 
   // -- Helper methods --
 
-  private int[] getForward() {
-    int[] n = new int[forward.size()];
+  private int[] getRange() {
+    int[] n = new int[range.size()];
     for (int i=0; i<n.length; i++) {
-      n[i] = ((Integer) ((JSpinner) forward.get(i)).getValue()).intValue();
-    }
-    return n;
-  }
-
-  private int[] getBackward() {
-    int[] n = new int[backward.size()];
-    for (int i=0; i<n.length; i++) {
-      n[i] = ((Integer) ((JSpinner) backward.get(i)).getValue()).intValue();
+      n[i] = ((Integer) ((JSpinner) range.get(i)).getValue()).intValue();
     }
     return n;
   }
@@ -284,10 +235,8 @@ public class CacheComponent extends JPanel
         strategy = new RectangleStrategy(lengths);
       }
 //      strategy.setForwardFirst(forwardFirst);
-      int[] fwd = getForward();
-//      for (int i=0; i<fwd.length; i++) strategy.setForward(fwd[i], i);
-      int[] bwd = getBackward();
-//      for (int i=0; i<bwd.length; i++) strategy.setBackward(bwd[i], i);
+      int[] rng = getRange();
+      for (int i=0; i<rng.length; i++) strategy.setRange(rng[i], i);
       cache.setStrategy(strategy);
     }
     catch (CacheException exc) {

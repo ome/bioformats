@@ -6,6 +6,7 @@ package loci.formats.cache;
 
 import java.io.*;
 import java.util.Arrays;
+import javax.swing.JFrame;
 import loci.formats.*;
 
 public class Cache {
@@ -171,27 +172,35 @@ public class Cache {
       String cmd = r.readLine().trim();
       if (cmd.equals("")) continue;
       else if (cmd.startsWith("e") || cmd.startsWith("q")) break; // exit/quit
+      else if (cmd.startsWith("g")) { // gui
+        JFrame frame = new JFrame("Cache controls");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        ReflectedUniverse ru = new ReflectedUniverse();
+        try {
+          ru.exec("import loci.formats.gui.CacheComponent");
+          ru.setVar("cache", cache);
+          ru.setVar("doSource", true);
+          ru.setVar("axes", new String[] {"Z", "C", "T"});
+          ru.setVar("id", id);
+          ru.exec("widget = new CacheComponent(cache, doSource, axes, id)");
+          ru.setVar("frame", frame);
+          ru.exec("frame.setContentPane(widget)");
+          frame.pack();
+          frame.setVisible(true);
+        }
+        catch (ReflectException exc) { LogTools.trace(exc); }
+      }
       else if (cmd.startsWith("h")) { // help
         LogTools.println("Available commands:");
+        LogTools.println("  gui      -- pops up a GUI to configure the cache");
         LogTools.println("  info     -- displays the cache state");
+        LogTools.println("  position -- changes the current position");
         LogTools.println("  strategy -- changes the cache strategy");
         LogTools.println("  source   -- changes the cache source");
-        LogTools.println("  position -- changes the current position");
         LogTools.println("  range    -- changes the cache ranges");
         LogTools.println("  priority -- changes the cache priorities");
         LogTools.println("  read     -- gets a plane from the cache");
         LogTools.println("  exit     -- quits the interpreter");
-      }
-      else if (cmd.startsWith("re")) { // read
-        LogTools.print("Z: ");
-        int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
-        int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
-        int t = Integer.parseInt(r.readLine().trim());
-        LogTools.println("Retrieving Z" + z + "-C" + c + "-T" + t);
-        Object o = cache.getObject(new int[] {z, c, t});
-        LogTools.println(o);
       }
       else if (cmd.startsWith("i")) { // info
         // output dimensional position
@@ -244,24 +253,54 @@ public class Cache {
         printArray("range", strategy.getRange());
         printArray("lengths", strategy.getLengths());
       }
-      else if (cmd.startsWith("st")) { // strategy
-        LogTools.println("0: crosshair");
-        LogTools.println("1: rectangle");
-        LogTools.print("> ");
-        int n = Integer.parseInt(r.readLine().trim());
-        int[] l = getLengths(reader);
-        switch (n) {
-          case 0:
-            cache.setStrategy(new CrosshairStrategy(l));
-            LogTools.println("Strategy set to crosshair");
-            break;
-          case 1:
-            cache.setStrategy(new RectangleStrategy(l));
-            LogTools.println("Strategy set to rectangle");
-            break;
-          default:
-            LogTools.println("Unknown strategy: " + n);
-        }
+      else if (cmd.startsWith("po")) { // position
+        LogTools.print("Z: ");
+        int z = Integer.parseInt(r.readLine().trim());
+        LogTools.print("C: ");
+        int c = Integer.parseInt(r.readLine().trim());
+        LogTools.print("T: ");
+        int t = Integer.parseInt(r.readLine().trim());
+        cache.setCurrentPos(new int[] {z, c, t});
+      }
+      else if (cmd.startsWith("pr")) { // priority
+        LogTools.println(ICacheStrategy.MIN_PRIORITY + " => min priority");
+        LogTools.println(ICacheStrategy.LOW_PRIORITY + " => low priority");
+        LogTools.println(
+          ICacheStrategy.NORMAL_PRIORITY + " => normal priority");
+        LogTools.println(ICacheStrategy.HIGH_PRIORITY + " => high priority");
+        LogTools.println(ICacheStrategy.MAX_PRIORITY + " => max priority");
+        LogTools.print("Z: ");
+        int z = Integer.parseInt(r.readLine().trim());
+        LogTools.print("C: ");
+        int c = Integer.parseInt(r.readLine().trim());
+        LogTools.print("T: ");
+        int t = Integer.parseInt(r.readLine().trim());
+        ICacheStrategy strategy = cache.getStrategy();
+        strategy.setPriority(z, 0);
+        strategy.setPriority(c, 1);
+        strategy.setPriority(t, 2);
+      }
+      else if (cmd.startsWith("ra")) { // range
+        LogTools.print("Z: ");
+        int z = Integer.parseInt(r.readLine().trim());
+        LogTools.print("C: ");
+        int c = Integer.parseInt(r.readLine().trim());
+        LogTools.print("T: ");
+        int t = Integer.parseInt(r.readLine().trim());
+        cache.getStrategy().setRange(z, 0);
+        cache.getStrategy().setRange(c, 1);
+        cache.getStrategy().setRange(t, 2);
+      }
+      else if (cmd.startsWith("re")) { // read
+        LogTools.print("Z: ");
+        int z = Integer.parseInt(r.readLine().trim());
+        LogTools.print("C: ");
+        int c = Integer.parseInt(r.readLine().trim());
+        LogTools.print("T: ");
+        int t = Integer.parseInt(r.readLine().trim());
+        LogTools.println("Retrieving Z" + z + "-C" + c + "-T" + t);
+        Object o = cache.getObject(new int[] {z, c, t});
+        LogTools.println(o);
       }
       else if (cmd.startsWith("so")) { // source
         LogTools.println("0: BufferedImage");
@@ -286,43 +325,24 @@ public class Cache {
             LogTools.println("Unknown source: " + n);
         }
       }
-      else if (cmd.startsWith("po")) { // position
-        LogTools.print("Z: ");
-        int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
-        int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
-        int t = Integer.parseInt(r.readLine().trim());
-        cache.setCurrentPos(new int[] {z, c, t});
-      }
-      else if (cmd.startsWith("ra")) { // range
-        LogTools.print("Z: ");
-        int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
-        int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
-        int t = Integer.parseInt(r.readLine().trim());
-        cache.getStrategy().setRange(z, 0);
-        cache.getStrategy().setRange(c, 1);
-        cache.getStrategy().setRange(t, 2);
-      }
-      else if (cmd.startsWith("pr")) { // priority
-        LogTools.println(ICacheStrategy.MIN_PRIORITY + " => min priority");
-        LogTools.println(ICacheStrategy.LOW_PRIORITY + " => low priority");
-        LogTools.println(
-          ICacheStrategy.NORMAL_PRIORITY + " => normal priority");
-        LogTools.println(ICacheStrategy.HIGH_PRIORITY + " => high priority");
-        LogTools.println(ICacheStrategy.MAX_PRIORITY + " => max priority");
-        LogTools.print("Z: ");
-        int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
-        int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
-        int t = Integer.parseInt(r.readLine().trim());
-        ICacheStrategy strategy = cache.getStrategy();
-        strategy.setPriority(z, 0);
-        strategy.setPriority(c, 1);
-        strategy.setPriority(t, 2);
+      else if (cmd.startsWith("st")) { // strategy
+        LogTools.println("0: crosshair");
+        LogTools.println("1: rectangle");
+        LogTools.print("> ");
+        int n = Integer.parseInt(r.readLine().trim());
+        int[] l = getLengths(reader);
+        switch (n) {
+          case 0:
+            cache.setStrategy(new CrosshairStrategy(l));
+            LogTools.println("Strategy set to crosshair");
+            break;
+          case 1:
+            cache.setStrategy(new RectangleStrategy(l));
+            LogTools.println("Strategy set to rectangle");
+            break;
+          default:
+            LogTools.println("Unknown strategy: " + n);
+        }
       }
       else LogTools.println("Unknown command: " + cmd);
     }
