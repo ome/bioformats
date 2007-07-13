@@ -12,7 +12,8 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
 
   // -- Constants --
 
-  public static final int DEFAULT_RANGE = 10;
+  /** Default cache range. */
+  public static final int DEFAULT_RANGE = 0;
 
   // -- Fields --
 
