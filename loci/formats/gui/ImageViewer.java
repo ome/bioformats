@@ -37,7 +37,7 @@ import loci.formats.*;
 
 /**
  * ImageViewer is a simple viewer/converter
- * for the LOCI Bio-Formats image formats.
+ * for the Bio-Formats image formats.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -47,7 +47,7 @@ public class ImageViewer extends JFrame
 
   // -- Constants --
 
-  protected static final String TITLE = "LOCI Bio-Formats Viewer";
+  protected static final String TITLE = "Bio-Formats Viewer";
   protected static final GraphicsConfiguration GC =
     ImageTools.getDefaultConfiguration();
 
@@ -379,6 +379,7 @@ public class ImageViewer extends JFrame
     else if ("about".equals(cmd)) {
       // HACK - JOptionPane prevents shutdown on dispose
       setDefaultCloseOperation(EXIT_ON_CLOSE);
+
       JOptionPane.showMessageDialog(this,
         "LOCI Bio-Formats\n" +
         "Built @date@\n\n" +
@@ -386,7 +387,7 @@ public class ImageViewer extends JFrame
         "Melissa Linkert, Curtis Rueden, Chris Allan, Eric Kjellman\n" +
         "and Brian Loranger.\n" +
         "http://www.loci.wisc.edu/ome/formats.html",
-        "LOCI Bio-Formats", JOptionPane.INFORMATION_MESSAGE);
+        "Bio-Formats", JOptionPane.INFORMATION_MESSAGE);
     }
   }
 
