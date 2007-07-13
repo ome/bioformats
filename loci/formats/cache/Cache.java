@@ -10,6 +10,11 @@ import loci.formats.*;
 
 public class Cache {
 
+  // -- Static fields --
+
+  /** Whether to generate debugging output. */
+  private static boolean debug = false;
+
   // -- Fields --
 
   /** Current cache strategy. */
@@ -122,9 +127,11 @@ public class Cache {
 
     for (int i=0; i<indices.length; i++) {
       int ndx = FormatTools.positionToRaster(len, indices[i]);
-      if (ndx >= 0 && cache[ndx] == null) {
+      if (cache[ndx] == null) {
+        if (debug) printArray("Loading position", indices[i]);
         cache[ndx] = source.getObject(len, indices[i]);
       }
+      else if (debug) printArray("Already in cache", indices[i]);
     }
   }
 
@@ -148,6 +155,7 @@ public class Cache {
       System.out.println("Please specify a filename containing image data.");
       System.exit(1);
     }
+    debug = true;
     ImageReader reader = new ImageReader();
     String id = args[0];
     System.out.println("Reading " + id);

@@ -84,7 +84,7 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
       case CENTERED_ORDER:
         if (value == 0) return 0;
         int vb = lengths[axis] - value;
-        return value <= vb ? 2 * value - 1 : 2 * vb;
+        return value <= vb ? value : vb;
       case FORWARD_ORDER:
         return value;
       case BACKWARD_ORDER:
@@ -145,36 +145,40 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
         dirty = false;
       }
 
-      // build load list from current pos, positions list, load order and range
-      int count = 0;
+      // count up number of load list entries
+      int c = 0;
       for (int i=0; i<positions.length; i++) {
         int[] ipos = positions[i];
 
-        // compute total distance from current pos
-        int dist = 0;
+        // verify position is close enough to current position
+        boolean ok = true;
         for (int j=0; j<ipos.length; j++) {
-          if (distance(j, ipos[j]) > range[j]) continue; // out of range
+          if (distance(j, ipos[j]) > range[j]) {
+            ok = false;
+            break;
+          }
         }
-
-        // position is in range
-        count++;
+        if (ok) c++; // in range
       }
 
-      loadList = new int[count][lengths.length];
-      int c = 0;
+      loadList = new int[c][lengths.length];
+      c = 0;
 
-      // populate load list
+      // build load list
       for (int i=0; i<positions.length; i++) {
         int[] ipos = positions[i];
 
-        // compute total distance from current pos
-        int dist = 0;
-        for (int j=0; j<ipos.length; j++) {
-          if (distance(j, ipos[j]) > range[j]) continue; // out of range
+        // verify position is close enough to current position
+        boolean ok = true;
+        for (int j=0; j<ipos.length && c<loadList.length; j++) {
+          if (distance(j, ipos[j]) > range[j]) {
+            ok = false;
+            break;
+          }
           int value = (pos[j] + ipos[j]) % lengths[j]; // normalize axis value
           loadList[c][j] = value;
         }
-        c++;
+        if (ok) c++; // in range; lock in load list entry
       }
     }
     return loadList;

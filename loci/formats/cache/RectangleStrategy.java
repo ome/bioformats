@@ -18,20 +18,18 @@ package loci.formats.cache;
  * prioritized according to the cache strategy's priority settings.
  * <p>
  * To illustrate the rectangle strategy, here is a diagram showing a case
- * in 2D with 56 dimensional positions (7Z x 8T). For both Z and T, order is
- * centered, range is 5, and priority is normal.
+ * in 2D with 35 dimensional positions (5Z x 7T). For both Z and T, order is
+ * centered, range is 2, and priority is normal.
  * The numbers indicate the order planes will be cached, with "0"
- * corresponding to the current dimensional position.
+ * corresponding to the current dimensional position (Z2-T3).
  * <pre>
- *      T  0  1  2  3  4  5  6  7
- *    Z /------------------------
- *    0 |
- *    1 |    24 20  7 16 23
- *    2 |    19 14  4  9 17
- *    3 |    10  3  0  1  6
- *    4 |    15  8  2  5 12
- *    5 |    22 18 11 13 21
- *    6 |
+ *      T  0  1  2  3  4  5  6 
+ *    Z /---------------------
+ *    0 |    24 20  6 14 22   
+ *    1 |    18 12  2 10 16  
+ *    2 |     8  4  0  3  7   
+ *    3 |    17 11  1  9 15   
+ *    4 |    23 19  5 13 21   
  * </pre>
  */
 public class RectangleStrategy extends CacheStrategy {
