@@ -156,7 +156,7 @@ public class QTReader extends FormatReader {
 
     boolean doLegacy = useLegacy;
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
-      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
+      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza")) 
     {
       if (debug) {
         debug("Unsupported codec (" + code + "); using QTJava reader");
@@ -270,7 +270,7 @@ public class QTReader extends FormatReader {
 
     boolean doLegacy = useLegacy;
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
-      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
+      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza")) 
     {
       if (debug) {
         debug("Unsupported codec (" + code + "); using QTJava reader");
@@ -321,6 +321,9 @@ public class QTReader extends FormatReader {
     }
 
     core.imageCount[0] = offsets.size();
+    if (chunkSizes.size() < core.imageCount[0]) {
+      core.imageCount[0] = chunkSizes.size();
+    }
 
     status("Populating metadata");
 
@@ -528,8 +531,8 @@ public class QTReader extends FormatReader {
           // TODO : adapt to use the value of flip
           flip = matrix[0][0] == 0 && matrix[1][0] != 0;
 
-          core.sizeX[0] = in.readInt();
-          core.sizeY[0] = in.readInt();
+          if (core.sizeX[0] == 0) core.sizeX[0] = in.readInt();
+          if (core.sizeY[0] == 0) core.sizeY[0] = in.readInt();
         }
         else if (atomType.equals("cmov")) {
           in.skipBytes(8);
@@ -566,6 +569,7 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stco")) {
           // we've found the plane offsets
 
+          if (offsets.size() > 0) break;
           spork = false;
           in.readInt();
           int numPlanes = in.readInt();
@@ -591,25 +595,28 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stsd")) {
           // found video codec and pixel depth information
 
-          in.readInt();
+          in.readInt(); 
           int numEntries = in.readInt();
-          in.readInt();
+          in.readInt(); 
 
           for (int i=0; i<numEntries; i++) {
             if (i == 0) {
               codec = in.readString(4);
-              in.skipBytes(74);
+              in.skipBytes(16);
+              if (in.readShort() == 0) {
+                in.skipBytes(56); 
 
-              bitsPerPixel = in.readShort();
-              if (codec.equals("rpza")) bitsPerPixel = 8;
-              in.readShort();
-              in.readDouble();
-              int fieldsPerPlane = in.read();
-              interlaced = fieldsPerPlane == 2;
-              addMeta("Codec", codec);
-              addMeta("Bits per pixel", new Integer(bitsPerPixel));
-              in.readDouble();
-              in.read();
+                bitsPerPixel = in.readShort();
+                if (codec.equals("rpza")) bitsPerPixel = 8;
+                in.readShort();
+                in.readDouble();
+                int fieldsPerPlane = in.read();
+                interlaced = fieldsPerPlane == 2;
+                addMeta("Codec", codec);
+                addMeta("Bits per pixel", new Integer(bitsPerPixel));
+                in.readDouble();
+                in.read();
+              } 
             }
             else {
               altCodec = in.readString(4);
