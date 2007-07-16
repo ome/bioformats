@@ -1,3 +1,10 @@
+2007 July 16:
+* Major improvements to caching package
+* Fixed several issues with ImageJ plugins
+* Better support for Improvision and Leica TCS TIFF files
+* Minor improvements to Leica LIF, ICS, QuickTime and Zeiss ZVI readers
+* Added searchable metadata window to ImageJ importer
+
 2007 July 2:
 * Fixed issues with ND2, Openlab LIFF and Slidebook
 * Added support for Visitech XYS
