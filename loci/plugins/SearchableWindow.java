@@ -1,6 +1,27 @@
 //
-// SearchablePanel.java
+// SearchableWindow.java
 //
+
+/*
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
+Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
+Curtis Rueden, Philip Huettl and Francis Wong.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 package loci.plugins;
 
@@ -12,33 +33,42 @@ import javax.swing.event.*;
 import ij.text.*;
 
 /** Text panel with search capabilities. */
-public class SearchablePanel extends TextPanel implements KeyListener {
+public class SearchableWindow extends TextWindow implements ActionListener {
 
+  protected TextPanel panel;
   protected int index;
 
-  // -- KeyListener API methods --
+  // -- Constructor --
 
-  public void keyPressed(KeyEvent e) {
-    // Ctrl+f is the command to open the search box 
-    if (e.isControlDown() && KeyEvent.getKeyText(e.getKeyCode()).equals("F")) {
-      new SearchBox(this); 
-      return; 
-    }
-    super.keyPressed(e); 
+  public SearchableWindow(String title, String headings, String data, 
+    int w, int h) 
+  {
+    super(title, headings, data, w, h);
+    index = -1;
+    panel = getTextPanel();
+  
+    MenuBar menubar = getMenuBar();
+    Menu menu = menubar.getMenu(0);
+    MenuItem search = new MenuItem("Search..."); 
+    search.addActionListener(this); 
+    menu.add(search);
   }
 
-  public void keyReleased(KeyEvent e) { }
-  public void keyTyped(KeyEvent e) { }
+  // -- ActionListener API methods --
 
-  // -- SearchablePanel API methods --
+  public void actionPerformed(ActionEvent e) {
+    new SearchBox(this);
+  }
+
+  // -- SearchableWindow API methods --
 
   public void selectLine(int index) {
-    int ys = getFontMetrics(getFont()).getHeight() + 2; // height of each row 
+    int ys = panel.getFontMetrics(getFont()).getHeight() + 2; 
     int y = ys * (index + 1) + 2;  // absolute y coordinate
-    int totalHeight = ys * getLineCount();
+    int totalHeight = ys * panel.getLineCount();
 
     Scrollbar ss = null;
-    Component[] components = getComponents();
+    Component[] components = panel.getComponents();
     for (int i=0; i<components.length; i++) {
       if (components[i] instanceof Scrollbar) {
         Scrollbar s = (Scrollbar) components[i];
@@ -48,27 +78,13 @@ public class SearchablePanel extends TextPanel implements KeyListener {
       }
     }
 
-    int height = getHeight();
+    int height = panel.getHeight();
 
     // convert absolute y value to scrollbar and relative y coordinates
     int min = ss.getMinimum();
     int scrollValue = min + index;
     ss.setValue(scrollValue);
-    adjustmentValueChanged(null);
-
-    int linesPerPanel = height / ys;
-    if (scrollValue >= linesPerPanel) {
-      int ticks = scrollValue;
-      if (ticks + linesPerPanel > getLineCount()) {
-        ticks = getLineCount() - linesPerPanel;
-      }
-      
-      y -= ys * (ticks + 2);
-    }
-
-    MouseEvent event = new MouseEvent(this, MouseEvent.MOUSE_PRESSED, 
-      System.currentTimeMillis(), InputEvent.BUTTON1_DOWN_MASK, 0, y, 1, false); 
-    mousePressed(event); 
+    panel.adjustmentValueChanged(null);
   }
 
   // -- Helper class --
@@ -77,9 +93,9 @@ public class SearchablePanel extends TextPanel implements KeyListener {
     private JTextField searchBox;
     private JCheckBox ignore;
     private boolean ignoreCase; 
-    private SearchablePanel searchPane;
+    private SearchableWindow searchPane;
 
-    public SearchBox(SearchablePanel searchPane) {
+    public SearchBox(SearchableWindow searchPane) {
       setTitle("Search..."); 
       this.searchPane = searchPane;
       FormLayout layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref",
@@ -119,34 +135,34 @@ public class SearchablePanel extends TextPanel implements KeyListener {
     public void actionPerformed(ActionEvent e) {
       String cmd = e.getActionCommand();
       if (cmd.equals("next")) {
-        searchPane.resetSelection(); 
+        searchPane.panel.resetSelection(); 
         String text = searchBox.getText(); 
         boolean found = false;
         int original = searchPane.index; 
         while (!found) {
           searchPane.index++;
-          if (searchPane.index >= searchPane.getLineCount()) {
+          if (searchPane.index >= searchPane.panel.getLineCount()) {
             searchPane.index = 0; 
           } 
-          if (searchPane.index == original) return;
-          String line = searchPane.getLine(searchPane.index);
+          if (searchPane.index == original) return; 
+          String line = searchPane.panel.getLine(searchPane.index);
           found = ignoreCase ? line.toLowerCase().indexOf(
             text.toLowerCase()) >= 0 : line.indexOf(text) >= 0; 
         }
         searchPane.selectLine(searchPane.index); 
       }
       else if (cmd.equals("previous")) {
-        searchPane.resetSelection(); 
+        searchPane.panel.resetSelection(); 
         String text = searchBox.getText();
         boolean found = false;
         int original = searchPane.index; 
         while (!found) {
           searchPane.index--;
           if (searchPane.index < 0) {
-            searchPane.index = searchPane.getLineCount() - 1;
+            searchPane.index = searchPane.panel.getLineCount() - 1;
           }
-          if (searchPane.index == original) return;
-          String line = searchPane.getLine(searchPane.index);
+          if (searchPane.index == original) return; 
+          String line = searchPane.panel.getLine(searchPane.index);
           found = ignoreCase ? line.toLowerCase().indexOf(
             text.toLowerCase()) >= 0 : line.indexOf(text) >= 0; 
         }

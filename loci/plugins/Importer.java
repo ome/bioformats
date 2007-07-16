@@ -324,22 +324,8 @@ public class Importer {
           sb.append("\n");
         }
 
-        SearchablePanel spanel = new SearchablePanel(); 
-        spanel.setColumnHeadings("Key\tValue");
-        spanel.append(sb.toString());
-        Frame w = new Frame("Metadata - " + currentFile); 
-        w.add(spanel);
-        w.setSize(new Dimension(400, 400));
-        
-        w.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-            Frame frame = (Frame) e.getSource();
-            frame.setVisible(false);
-            frame.dispose();
-          }
-        });
-        
-        WindowManager.addWindow(w); 
+        SearchableWindow w = new SearchableWindow("Metadata - " + id,
+          "Key\tValue", sb.toString(), 400, 400); 
         w.setVisible(true); 
       }
 
