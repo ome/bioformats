@@ -12,7 +12,4 @@ public interface ICacheSource {
   /** Get the object corresponding to the given index. */
   Object getObject(int[] len, int[] pos) throws CacheException;
 
-  /** Get the objects corresponding to the given indices. */
-  Object[] getObjects(int[] len, int[][] pos) throws CacheException;
-
 }

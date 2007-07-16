@@ -8,7 +8,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import loci.formats.*;
 
-/** Retrieves ImageJ image processors from a file, using Bio-Formats. */
+/**
+ * Retrieves ImageJ image processors from a data source
+ * (e.g., a file) using Bio-Formats.
+ */
 public class ImageProcessorSource extends CacheSource {
 
   // -- Constants --
@@ -39,33 +42,15 @@ public class ImageProcessorSource extends CacheSource {
     return r;
   }
 
-  // -- Fields --
-
-  /** Reader from which to draw ImageProcessors. */
-  private IFormatReader reader;
-
   // -- Constructors --
 
   /** Constructs an ImageProcessor source from the given Bio-Formats reader. */
-  public ImageProcessorSource(IFormatReader r) throws CacheException {
-    super(r);
-    reader = r;
-  }
+  public ImageProcessorSource(IFormatReader r) { super(r); }
 
-  /** Constructs an ImageProcessor source drawing from the given file. */
-  public ImageProcessorSource(String id) throws CacheException {
-    this(new FileStitcher());
-    try { reader.setId(id); }
-    catch (FormatException exc) { throw new CacheException(exc); }
-    catch (IOException exc) { throw new CacheException(exc); }
-  }
+  /** Constructs an ImageProcessor source that draws from the given file. */
+  public ImageProcessorSource(String id) throws CacheException { super(id); }
 
   // -- ICacheSource API methods --
-
-  /* @see loci.formats.cache.ICacheSource#getObjectCount() */
-  public int getObjectCount() {
-    return reader.getImageCount();
-  }
 
   /**
    * Returns an ImageProcessor; if the pixels require more than 8 bits and
@@ -232,7 +217,9 @@ public class ImageProcessorSource extends CacheSource {
       }
       return r.getVar("ip");
     }
-    catch (Exception e) { throw new CacheException(e); }
+    catch (FormatException e) { throw new CacheException(e); }
+    catch (IOException e) { throw new CacheException(e); }
+    catch (ReflectException e) { throw new CacheException(e); }
   }
 
 }
