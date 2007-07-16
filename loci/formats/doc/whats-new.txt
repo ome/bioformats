@@ -1,5 +1,4 @@
 2007 July 16:
-* Major improvements to caching package
 * Fixed several issues with ImageJ plugins
 * Better support for Improvision and Leica TCS TIFF files
 * Minor improvements to Leica LIF, ICS, QuickTime and Zeiss ZVI readers
