@@ -91,9 +91,17 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       metadata.remove("Comment");
     }
 
-    core.sizeZ[0] = Integer.parseInt((String) getMeta("TotalZPlanes"));
-    core.sizeC[0] = Integer.parseInt((String) getMeta("TotalChannels"));
-    core.sizeT[0] = Integer.parseInt((String) getMeta("TotalTimepoints"));
+    String tz = (String) getMeta("TotalZPlanes");
+    String tc = (String) getMeta("TotalChannels");
+    String tt = (String) getMeta("TotalTimepoints");
+    
+    if (tz == null) tz = "1";
+    if (tc == null) tc = "1";
+    if (tt == null) tt = "1";
+
+    core.sizeZ[0] = Integer.parseInt(tz);
+    core.sizeC[0] = Integer.parseInt(tc);
+    core.sizeT[0] = Integer.parseInt(tt);
 
     // parse each of the comments to determine axis ordering
 
