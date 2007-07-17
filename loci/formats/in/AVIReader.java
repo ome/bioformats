@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.codec.BitBuffer;
 import loci.formats.codec.MSRLECodec;
 
 /**
@@ -96,8 +97,15 @@ public class AVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    byte[] buf =
-      new byte[core.sizeY[0] * bmpScanLineSize * (bmpBitsPerPixel / 8)];
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    double p = ((double) bmpScanLineSize) / bmpBitsPerPixel;
+    int effectiveWidth = (int) (bmpScanLineSize / p);
+    if (effectiveWidth == 0 || effectiveWidth < core.sizeX[0]) {
+      effectiveWidth = core.sizeX[0];
+    }
+
+    byte[] buf = 
+      new byte[core.sizeY[0] * effectiveWidth * bytes * core.sizeC[0]];
     return openBytes(no, buf);
   }
 
@@ -110,7 +118,14 @@ public class AVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (buf.length < core.sizeY[0]*bmpScanLineSize*(bmpBitsPerPixel / 8)) {
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    double p = ((double) bmpScanLineSize) / bmpBitsPerPixel;
+    int effectiveWidth = (int) (bmpScanLineSize / p);
+    if (effectiveWidth == 0 || effectiveWidth < core.sizeX[0]) {
+      effectiveWidth = core.sizeX[0];
+    }
+
+    if (buf.length < core.sizeY[0]*effectiveWidth*bytes*core.sizeC[0]) {
       throw new FormatException("Buffer too small.");
     }
 
@@ -140,12 +155,32 @@ public class AVIReader extends FormatReader {
       return colors;
     }
 
+    if (bmpBitsPerPixel < 8) {
+      int rawSize = bytes * core.sizeY[0] * effectiveWidth * core.sizeC[0];
+      rawSize /= (8 / bmpBitsPerPixel);
+
+      byte[] b = new byte[rawSize];
+     
+      int len = rawSize / core.sizeY[0];
+      for (int y=0; y<core.sizeY[0]; y++) {
+        in.read(b, (core.sizeY[0] - y - 1) * len, len); 
+      }
+      
+      BitBuffer bb = new BitBuffer(b);
+
+      for (int i=0; i<buf.length; i++) {
+        buf[i] = (byte) bb.getBits(bmpBitsPerPixel);
+      } 
+
+      return buf;
+    }
+
     int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
     int scanline = core.sizeX[0] * (bmpBitsPerPixel / 8);
 
     for (int i=core.sizeY[0] - 1; i>=0; i--) {
       in.read(buf, i*scanline, scanline);
-      if (bmpBitsPerPixel != 8) {
+      if (bmpBitsPerPixel == 24) { 
         for (int j=0; j<core.sizeX[0]; j++) {
           byte r = buf[i*scanline + j*3 + 2];
           buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
@@ -154,6 +189,15 @@ public class AVIReader extends FormatReader {
       }
       in.skipBytes(pad * (bmpBitsPerPixel / 8));
     }
+    
+    if (bmpBitsPerPixel == 16) {
+      // channels are separated, need to swap them
+      byte[] r = new byte[core.sizeX[0] * core.sizeY[0] * 2];
+      System.arraycopy(buf, 2 * (buf.length / 3), r, 0, r.length);
+      System.arraycopy(buf, 0, buf, 2 * (buf.length / 3), r.length);
+      System.arraycopy(r, 0, buf, 0, r.length);
+    }
+    
     return buf;
   }
 
@@ -161,7 +205,8 @@ public class AVIReader extends FormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no),
-      core.sizeX[0], core.sizeY[0], core.sizeC[0], true);
+      core.sizeX[0], core.sizeY[0], core.sizeC[0], !core.interleaved[0], 
+      FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
 
   // -- Internal FormatReader API methods --
@@ -199,6 +244,10 @@ public class AVIReader extends FormatReader {
       in.read(list);
       in.seek(pos);
       listString = new String(list);
+      if (listString.equals(" JUN")) {
+        in.skipBytes(1);
+        pos++; 
+      }
 
       if (listString.equals("JUNK")) {
         type = readStringBytes();
@@ -335,7 +384,8 @@ public class AVIReader extends FormatReader {
                   whine("Sorry, compressed AVI files not supported.");
                 }
 
-                if (!(bmpBitsPerPixel == 8 || bmpBitsPerPixel == 24 ||
+                if (!(bmpBitsPerPixel == 4 || bmpBitsPerPixel == 8 || 
+                  bmpBitsPerPixel == 24 || bmpBitsPerPixel == 16 || 
                   bmpBitsPerPixel == 32))
                 {
                   whine("Sorry, " + bmpBitsPerPixel + " bits per pixel not " +
@@ -460,8 +510,9 @@ public class AVIReader extends FormatReader {
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
     core.littleEndian[0] = true;
+    core.interleaved[0] = bmpBitsPerPixel == 16;
 
-    if (bmpBitsPerPixel == 8) core.pixelType[0] = FormatTools.UINT8;
+    if (bmpBitsPerPixel <= 8) core.pixelType[0] = FormatTools.UINT8;
     else if (bmpBitsPerPixel == 16) core.pixelType[0] = FormatTools.UINT16;
     else if (bmpBitsPerPixel == 32) core.pixelType[0] = FormatTools.UINT32;
     else if (bmpBitsPerPixel == 24) core.pixelType[0] = FormatTools.UINT8;
