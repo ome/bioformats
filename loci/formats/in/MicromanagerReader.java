@@ -105,6 +105,7 @@ public class MicromanagerReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     String[] list = parent.list();
+    if (list == null) return false; 
     for (int i=0; i<list.length; i++) {
       if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
     }
