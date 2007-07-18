@@ -961,7 +961,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
-				The content model is ANY, which means that en entire XML sub-document can be placed here.
+				The content model is ANY, which means that an entire XML sub-document can be placed here.
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>

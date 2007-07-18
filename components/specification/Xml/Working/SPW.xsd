@@ -33,15 +33,6 @@
         </xsd:documentation>
     </xsd:annotation>
 
-    <xsd:simpleType name="ExternDBref">
-        <xsd:annotation>
-            <xsd:documentation>
-				A type based on string used to store a reference to an object in an external database. 
-            </xsd:documentation>
-        </xsd:annotation>
-        <xsd:restriction base="xsd:string"/>
-    </xsd:simpleType>
- 
     <xsd:element name="Plate">
         <xsd:annotation>
             <xsd:documentation>
@@ -77,11 +68,10 @@
 	                </xsd:documentation>
 	            </xsd:annotation>
 			</xsd:attribute>
-            <xsd:attribute name="ExternRef" type="ExternDBref">
+            <xsd:attribute name="ExternalIdentifier" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
-		                The EternRef attribute may contain a reference to an external database.
-						This is called ExternalIdentifier in the EA Diagrams
+                        The ExternalIdentifier attribute may contain a reference to an external database.
                     </xsd:documentation>
                 </xsd:annotation>     	
 			</xsd:attribute>
@@ -180,7 +170,7 @@
             </xsd:sequence>
             <xsd:attribute name="ID" use="required" type="ScreenID"/>
             <xsd:attribute name="Name" use="required" type="xsd:string"/>
-            <xsd:attribute name="ProtocolIdentifier" type="ExternDBref">
+            <xsd:attribute name="ProtocolIdentifier" type="xsd:string">
 			        <xsd:annotation>
 			            <xsd:documentation>
 							A pointer to an externally defined protocol, usually in a screening database.
@@ -316,7 +306,7 @@
             <xsd:attribute name="ExternalIdentifier" type="xsd:string">
                 <xsd:annotation>
                     <xsd:documentation>
-						A pointer to an externally defined identifier for this plate.
+                        The ExternalIdentifier attribute may contain a reference to an external database.
                     </xsd:documentation>
                 </xsd:annotation>           
             </xsd:attribute>
@@ -364,14 +354,14 @@
                     </xsd:documentation>
                 </xsd:annotation>     
             </xsd:attribute>
-            <xsd:attribute name="PosX" type="xsd:integer">
+            <xsd:attribute name="PosX" type="xsd:float">
                 <xsd:annotation>
                     <xsd:documentation>
 						The X position of the image within the well
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
-            <xsd:attribute name="PosY" type="xsd:integer">
+            <xsd:attribute name="PosY" type="xsd:float">
                 <xsd:annotation>
                     <xsd:documentation>
 						The Y position of the image within the well
