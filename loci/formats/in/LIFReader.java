@@ -171,8 +171,11 @@ public class LIFReader extends FormatReader {
       }
 
       int blockLength = in.readInt();
-      if (in.read() != 0x2a) {
-        throw new FormatException("Invalid Memory Description");
+      if (in.read() != 0x2a) { 
+        in.skipBytes(3);
+        if (in.read() != 0x2a) {
+          throw new FormatException("Invalid Memory Description");
+        } 
       }
 
       int descrLength = in.readInt();
@@ -650,19 +653,20 @@ public class LIFReader extends FormatReader {
         // values, so if the file in question was acquired prior to Jan 1 1601,
         // the timestamp will not be parsed correctly.
 
-        long seconds = stamp / 10000000;
+        long ms = stamp / 10000;
 
         // subtract number of seconds until Unix epoch (Jan 1, 1970)
 
-        long secondsPerYear = (long) (60 * 60 * 24 * 365.25);
-        seconds -= secondsPerYear * (1970 - 1601);
+        ms -= 11644444800000L;
 
-        Date d = new Date(seconds * 1000);
+        Date d = new Date(ms);
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         StringBuffer sb = new StringBuffer();
         fmt.format(d, sb, new FieldPosition(0));
-        addMeta(series + " - TimeStamp " + count, sb.toString());
-
+        
+        String n = String.valueOf(count);
+        while (n.length() < 4) n = "0" + n;
+        addMeta(series + " - TimeStamp " + n, sb.toString());
         count++;
       }
       else if (qName.equals("ChannelScalingInfo")) {
