@@ -8,7 +8,7 @@
  xmlns:spw="http://www.openmicroscopy.org/XMLschemas/SPW/2007-06"
  xmlns:am="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/2007-06"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/2007-06 file:/Users/andrew/Work/SVN/OME/src/xml/workingcopy/ome.xsd">
+ xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/2007-06/ome.xsd">
     <ome:Project Name="Name0" ID="Project:a">
         <ome:Description>
         </ome:Description>

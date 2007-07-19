@@ -2,7 +2,7 @@
 <ome:OME xmlns:bf="http://www.openmicroscopy.org/XMLschemas/BinaryFile/2007-06"
  xmlns:ome="http://www.openmicroscopy.org/XMLschemas/OME/2007-06"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/2007-06 file:/Users/andrew/Work/SVN/OME/src/xml/workingcopy/ome.xsd">
+ xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/2007-06/ome.xsd">
     <ome:Image ID="Image:a" Name="Name92" DefaultPixels="Pixels:b">
         <ome:CreationDate>2006-05-04T18:13:51.0Z</ome:CreationDate>
         <ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
