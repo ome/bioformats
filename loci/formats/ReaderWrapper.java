@@ -205,6 +205,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.fileGroupOption(id);
   }
 
+  public boolean isMetadataComplete() {
+    return reader.isMetadataComplete();
+  }
+
   public void setNormalized(boolean normalize) {
     reader.setNormalized(normalize);
   }

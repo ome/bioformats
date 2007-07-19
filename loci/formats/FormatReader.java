@@ -58,6 +58,9 @@ public abstract class FormatReader extends FormatHandler
   /** Core metadata values. */
   protected CoreMetadata core;
 
+  /** Whether or not the metadata is completely parsed. */
+  protected boolean complete = false;
+
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
 
@@ -307,7 +310,7 @@ public abstract class FormatReader extends FormatHandler
     return core.currentOrder[series];
   }
 
-  /* @see IFormatReader.isOrderCertain() */
+  /* @see IFormatReader#isOrderCertain() */
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 1);
     return core.orderCertain[series];
@@ -396,6 +399,11 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     return FormatTools.CANNOT_GROUP;
+  }
+
+  /* @see IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return complete;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

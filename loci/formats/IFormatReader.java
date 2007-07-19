@@ -209,6 +209,9 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns true if we should group files in multi-file formats.*/
   boolean isGroupFiles();
 
+  /** Returns true if this format's metadata is completely parsed. */
+  boolean isMetadataComplete();
+
   /**
    * Returns an int indicating that we cannot, must, or might group the files
    * in a given dataset.

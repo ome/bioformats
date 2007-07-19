@@ -399,6 +399,11 @@ public class ImageReader implements IFormatReader {
     return getReader(id).fileGroupOption(id);
   }
 
+  /* @see IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return readers[0].isMetadataComplete();
+  }
+
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     FormatTools.assertId(currentId, false, 2);
