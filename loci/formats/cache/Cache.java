@@ -285,7 +285,7 @@ public class Cache implements CacheReporter {
           ru.setVar("doSource", true);
           ru.setVar("axes", new String[] {"Z", "C", "T"});
           ru.setVar("id", id);
-          ru.exec("widget = new CacheComponent(cache, doSource, axes, id)");
+          ru.exec("widget = new CacheComponent(cache, axes, id)");
           ru.setVar("frame", frame);
           ru.exec("frame.setContentPane(widget)");
           frame.pack();

@@ -6,7 +6,6 @@ package loci.formats.gui;
 
 import com.jgoodies.forms.layout.*;
 import java.awt.event.*;
-import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.*;
 import loci.formats.*;
@@ -14,35 +13,42 @@ import loci.formats.cache.*;
 
 /** GUI component for managing a cache. */
 public class CacheComponent extends JPanel
-  implements ActionListener, ChangeListener
+  implements ActionListener, CacheListener, ChangeListener
 {
 
   // -- Constants --
 
+  protected static final String[] SOURCES =
+    {"Byte arrays", "BufferedImages", "ImageProcessors"};
   protected static final String[] STRATEGIES = {"Crosshair", "Rectangle"};
   protected static final String[] PRIORITIES =
-    {"maximum", "high", "normal", "low", "minimum"};
-  protected static final String[] ORDER = {"centered", "forward", "backward"};
+    {"Maximum", "High", "Normal", "Low", "Minimum"};
+  protected static final String[] ORDERS = {"Centered", "Forward", "Backward"};
 
   // -- Fields --
 
   /** The cache that this component controls. */
   private Cache cache;
 
-  /** File that the cache is working with. */
+  /** Spinners for choosing range of slices to cache. */
+  private JSpinner[] range;
+
+  /** Combo boxes for choosing axis priority. */
+  private JComboBox[] priority;
+
+  /** Combo boxes for choosing planar ordering. */
+  private JComboBox[] order;
+
+  /** File that the cache is working with (debugging only). */
   private String file;
 
-  /** Spinners for choosing range of slices to cache. */
-  private Vector range;
+  // -- Constructors --
 
-  /** Buttons for choosing axis priority. */
-  private JRadioButton[][] priority;
+  public CacheComponent(Cache cache, String[] axisLabels) {
+    this(cache, axisLabels, null);
+  }
 
-  // -- Constructor --
-
-  public CacheComponent(Cache cache, boolean doSource, String[] axisLabels,
-    String file)
-  {
+  public CacheComponent(Cache cache, String[] axisLabels, String file) {
     super();
     this.cache = cache;
     this.file = file;
@@ -51,163 +57,164 @@ public class CacheComponent extends JPanel
 
     CellConstraints cc = new CellConstraints();
 
-    range = new Vector();
-
     JPanel top = new JPanel();
     FormLayout layout = new FormLayout("pref,3dlu,pref:grow",
-      doSource ? "pref:grow,3dlu,pref:grow" : "pref:grow");
+      file == null ? "pref:grow" : "pref:grow,3dlu,pref:grow");
     top.setLayout(layout);
+
+    int col = 1, row = 1;
 
     // add source choices, if desired
     JComboBox sourceChooser = null;
-    if (doSource) {
+    if (file != null) {
       JLabel label = new JLabel("Objects to cache: ");
-      top.add(label, cc.xy(1, 1));
-      String[] sources =
-        new String[] {"byte arrays", "BufferedImages", "ImageProcessors"};
-      sourceChooser = new JComboBox(sources);
+      sourceChooser = new JComboBox(SOURCES);
       sourceChooser.setActionCommand("source");
       sourceChooser.addActionListener(this);
-      top.add(sourceChooser, cc.xy(3, 1));
+
+      col = 1;
+      top.add(label, cc.xy(col, row));
+      col += 2;
+      top.add(sourceChooser, cc.xy(col, row));
+      row += 2;
     }
 
     // add strategy choices
     JLabel label = new JLabel("Caching strategy: ");
-    top.add(label, cc.xy(1, doSource ? 3 : 1));
     JComboBox strategyChooser = new JComboBox(STRATEGIES);
     strategyChooser.setActionCommand("strategy");
     strategyChooser.addActionListener(this);
-    top.add(strategyChooser, cc.xy(3, doSource ? 3 : 1));
-    add(top);
+
+    col = 1;
+    top.add(label, cc.xy(col, row));
+    col += 2;
+    top.add(strategyChooser, cc.xy(col, row));
+    row += 2;
 
     // add cache size choices
 
-    JPanel middle = new JPanel();
+    JPanel bottom = new JPanel();
     StringBuffer rows = new StringBuffer();
     rows.append("pref:grow");
     for (int i=0; i<axisLabels.length; i++) rows.append(",3dlu,pref:grow");
     layout = new FormLayout(
       "pref:grow,3dlu,pref:grow,3dlu,pref:grow,3dlu,pref:grow",
       rows.toString());
-    middle.setLayout(layout);
+    bottom.setLayout(layout);
 
-    middle.add(new JLabel("Axis"), cc.xy(1, 1));
-    middle.add(new JLabel("Range"), cc.xy(3, 1));
-    middle.add(new JLabel("Priority"), cc.xy(5, 1));
-    middle.add(new JLabel("Order"), cc.xy(7, 1));
+    col = row = 1;
+    bottom.add(new JLabel("Axis"), cc.xy(col, row));
+    col += 2;
+    bottom.add(new JLabel("Range"), cc.xy(col, row));
+    col += 2;
+    bottom.add(new JLabel("Priority"), cc.xy(col, row));
+    col += 2;
+    bottom.add(new JLabel("Order"), cc.xy(col, row));
+    row += 2;
 
     int[] lengths = cache.getStrategy().getLengths();
+
+    range = new JSpinner[lengths.length];
+    priority = new JComboBox[lengths.length];
+    order = new JComboBox[lengths.length];
+
     for (int i=0; i<axisLabels.length; i++) {
       JLabel l = new JLabel(axisLabels[i]);
-      middle.add(l, cc.xy(1, i*2 + 3));
-      JSpinner r = new JSpinner(new SpinnerNumberModel(1, 0, lengths[i], 1));
-      middle.add(r, cc.xy(3, i*2 + 3));
-      range.add(r);
-      JComboBox prio = new JComboBox(PRIORITIES);
-      prio.setSelectedIndex(PRIORITIES.length / 2);
-      middle.add(prio, cc.xy(5, i*2 + 3));
-      JComboBox ord = new JComboBox(ORDER);
-      middle.add(ord, cc.xy(7, i*2 + 3));
+      range[i] = new JSpinner(new SpinnerNumberModel(0, 0, lengths[i], 1));
+      priority[i] = new JComboBox(PRIORITIES);
+      order[i] = new JComboBox(ORDERS);
+
+      col = 1;
+      bottom.add(l, cc.xy(col, row));
+      col += 2;
+      bottom.add(range[i], cc.xy(col, row));
+      col += 2;
+      bottom.add(priority[i], cc.xy(col, row));
+      col += 2;
+      bottom.add(order[i], cc.xy(col, row));
+      row += 2;
+
+      range[i].addChangeListener(this);
+      priority[i].addActionListener(this);
+      order[i].addActionListener(this);
     }
 
-    add(middle);
+    add(top);
+    add(Box.createVerticalStrut(9));
+    add(bottom);
 
-    if (sourceChooser != null) updateSource(sourceChooser);
-    updateStrategy(strategyChooser);
-
-    JButton reset = new JButton("Reset");
-    reset.setActionCommand("reset");
-    reset.addActionListener(this);
-    add(reset);
+    cache.addCacheListener(this);
   }
 
   // -- CacheComponent API methods --
 
   public Cache getCache() { return cache; }
 
+  public void dispose() {
+    cache.removeCacheListener(this);
+  }
+
   // -- ActionListener API methods --
 
+  /** Handles combo box changes. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
+    Object src = e.getSource();
 
-    if (cmd.equals("reset")) {
-      // TODO - reset to reasonable defaults
+    if ("source".equals(cmd)) updateSource((JComboBox) src);
+    else if ("strategy".equals(cmd)) updateStrategy((JComboBox) src);
+    else { // priority or order change
+      for (int i=0; i<priority.length; i++) {
+        if (src == priority[i]) {
+          updatePriority(i);
+          return;
+        }
+      }
+      for (int i=0; i<order.length; i++) {
+        if (src == order[i]) {
+          updateOrder(i);
+          return;
+        }
+      }
     }
-    else if (cmd.equals("source")) {
-      updateSource((JComboBox) e.getSource());
-    }
-    else if (cmd.equals("strategy")) {
-      updateStrategy((JComboBox) e.getSource());
-    }
+  }
+
+  // -- CacheListener API methods --
+
+  public void cacheUpdated(CacheEvent e) {
+    //TODO
   }
 
   // -- ChangeListener API methods --
 
+  /** Handles range spinner changes. */
   public void stateChanged(ChangeEvent e) {
-    // make sure each axis is chosen only once
-    for (int ct=0; ct<priority.length; ct++) {
-      for (int col=0; col<priority.length; col++) {
-        int chosenNdx = -1;
-
-        for (int row=0; row<priority.length; row++) {
-          if (priority[row][col].equals(e.getSource()) &&
-            priority[row][col].isSelected())
-          {
-            chosenNdx = row;
-            break;
-          }
-          else if (priority[row][col].isSelected() && chosenNdx == -1) {
-            chosenNdx = row;
-          }
-        }
-
-        for (int row=0; row<priority.length; row++) {
-          if (priority[row][col].isSelected() && row != chosenNdx) {
-            priority[row][(col + 1) % priority.length].setSelected(true);
-          }
-        }
+    Object src = e.getSource();
+    for (int i=0; i<range.length; i++) {
+      if (src == range[i]) {
+        updateRange(i);
+        return;
       }
-    }
-
-    // reset the cache's priorities
-    ICacheStrategy strategy = cache.getStrategy();
-
-    for (int row=0; row<priority.length; row++) {
-      for (int col=0; col<priority.length; col++) {
-        if (priority[row][col].isSelected()) {
-          strategy.setPriority(row, col);
-        }
-      }
-    }
-
-    for (int i=0; i<range.size(); i++) {
-      JSpinner r = (JSpinner) range.get(i);
-      strategy.setRange(((Integer) r.getValue()).intValue(), i);
     }
   }
 
   // -- Helper methods --
 
-  private int[] getRange() {
-    int[] n = new int[range.size()];
-    for (int i=0; i<n.length; i++) {
-      n[i] = ((Integer) ((JSpinner) range.get(i)).getValue()).intValue();
-    }
-    return n;
-  }
-
   private void updateSource(JComboBox box) {
     String s = (String) box.getSelectedItem();
 
-    CacheSource source = null;
+    ICacheSource source = null;
     try {
-      if (s.equals("byte arrays")) {
+      if (s.equals(SOURCES[0])) { // byte arrays
+        if (cache.getSource().getClass() == ByteArraySource.class) return;
         source = new ByteArraySource(file);
       }
-      else if (s.equals("BufferedImages")) {
+      else if (s.equals(SOURCES[1])) { // BufferedImages
+        if (cache.getSource().getClass() == BufferedImageSource.class) return;
         source = new BufferedImageSource(file);
       }
-      else if (s.equals("ImageProcessors")) {
+      else if (s.equals(SOURCES[2])) { // ImageProcessors
+        if (cache.getSource().getClass() == ImageProcessorSource.class) return;
         source = new ImageProcessorSource(file);
       }
       cache.setSource(source);
@@ -219,25 +226,75 @@ public class CacheComponent extends JPanel
 
   private void updateStrategy(JComboBox box) {
     String s = (String) box.getSelectedItem();
-    CacheStrategy strategy = null;
-
-    boolean forwardFirst = s.indexOf("forward") != -1;
+    ICacheStrategy strategy = null;
 
     try {
       int[] lengths = cache.getStrategy().getLengths();
-      if (s.startsWith("Crosshair")) {
+      if (s.equals(STRATEGIES[0])) { // Crosshair
+        if (cache.getStrategy().getClass() == CrosshairStrategy.class) return;
         strategy = new CrosshairStrategy(lengths);
       }
-      else if (s.startsWith("Rectangle")) {
+      else if (s.equals(STRATEGIES[1])) { // Rectangle
+        if (cache.getStrategy().getClass() == RectangleStrategy.class) return;
         strategy = new RectangleStrategy(lengths);
       }
-      int[] rng = getRange();
-      for (int i=0; i<rng.length; i++) strategy.setRange(rng[i], i);
       cache.setStrategy(strategy);
     }
     catch (CacheException exc) {
       LogTools.trace(exc);
     }
+  }
+
+  private void updateRange(int index) {
+    int rng = ((Integer) range[index].getValue()).intValue();
+
+    ICacheStrategy strategy = cache.getStrategy();
+    int[] ranges = strategy.getRange();
+    if (rng != ranges[index]) strategy.setRange(rng, index);
+  }
+
+  private void updatePriority(int index) {
+    String s = (String) priority[index].getSelectedItem();
+
+    int prio = 0;
+    if (s.equals(PRIORITIES[0])) { // Maximum
+      prio = ICacheStrategy.MAX_PRIORITY;
+    }
+    else if (s.equals(PRIORITIES[1])) { // High
+      prio = ICacheStrategy.HIGH_PRIORITY;
+    }
+    else if (s.equals(PRIORITIES[2])) { // Normal
+      prio = ICacheStrategy.NORMAL_PRIORITY;
+    }
+    else if (s.equals(PRIORITIES[3])) { // Low
+      prio = ICacheStrategy.LOW_PRIORITY;
+    }
+    else if (s.equals(PRIORITIES[4])) { // Minimum
+      prio = ICacheStrategy.MIN_PRIORITY;
+    }
+
+    ICacheStrategy strategy = cache.getStrategy();
+    int[] priorities = strategy.getPriorities();
+    if (prio != priorities[index]) strategy.setPriority(prio, index);
+  }
+
+  private void updateOrder(int index) {
+    String s = (String) order[index].getSelectedItem();
+
+    int ord = 0;
+    if (s.equals(ORDERS[0])) { // Centered
+      ord = ICacheStrategy.CENTERED_ORDER;
+    }
+    else if (s.equals(ORDERS[1])) { // Forward
+      ord = ICacheStrategy.FORWARD_ORDER;
+    }
+    else if (s.equals(ORDERS[2])) { // Backward
+      ord = ICacheStrategy.BACKWARD_ORDER;
+    }
+
+    ICacheStrategy strategy = cache.getStrategy();
+    int[] orders = strategy.getOrder();
+    if (ord != orders[index]) strategy.setOrder(ord, index);
   }
 
 }
