@@ -524,6 +524,20 @@ public class LIFReader extends FormatReader {
     private String fullSeries;
     private int count = 0;
     private boolean firstElement = true;
+    private boolean dcroiOpen = false;
+
+    public void endElement(String uri, String localName, String qName) {
+      if (qName.equals("Element")) {
+        if (dcroiOpen) {
+          dcroiOpen = false;
+          return;
+        }
+        if (fullSeries.indexOf("/") != -1) {
+          fullSeries = fullSeries.substring(0, fullSeries.lastIndexOf("/"));
+        }
+        else fullSeries = ""; 
+      } 
+    } 
 
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
@@ -532,8 +546,14 @@ public class LIFReader extends FormatReader {
         if (!attributes.getValue("Name").equals("DCROISet") && !firstElement) {
           series = attributes.getValue("Name");
           containerNames.add(series); 
+          if (fullSeries == null || fullSeries.equals("")) fullSeries = series;
+          else fullSeries += "/" + series;
         }
         else if (firstElement) firstElement = false; 
+        
+        if (attributes.getValue("Name").equals("DCROISet")) {
+          dcroiOpen = true;
+        }
       }
       else if (qName.equals("Experiment")) {
         for (int i=0; i<attributes.getLength(); i++) {
@@ -545,13 +565,12 @@ public class LIFReader extends FormatReader {
         if (containerCounts.size() < containerNames.size()) {
           containerCounts.add(new Integer(1));
         }
-        else {
+        else if (containerCounts.size() > 0) {
           int ndx = containerCounts.size() - 1;
           int n = ((Integer) containerCounts.get(ndx)).intValue();
           containerCounts.setElementAt(new Integer(n + 1), ndx);
         }
-        fullSeries = containerNames.get(containerNames.size() - 1) + 
-          "/" + series;
+        if (fullSeries == null || fullSeries.equals("")) fullSeries = series;
         seriesNames.add(fullSeries); 
       }
       else if (qName.equals("ChannelDescription")) {
