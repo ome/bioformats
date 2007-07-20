@@ -63,6 +63,8 @@ public class LIFReader extends FormatReader {
   private Vector ycal;
   private Vector zcal;
   private Vector seriesNames;
+  private Vector containerNames;
+  private Vector containerCounts;
 
   // -- Constructor --
 
@@ -201,6 +203,10 @@ public class LIFReader extends FormatReader {
   private void initMetadata(String xml) throws FormatException, IOException {
     // parse raw key/value pairs - adapted from FlexReader
 
+    containerNames = new Vector();
+    containerCounts = new Vector();
+    seriesNames = new Vector();
+
     LIFHandler handler = new LIFHandler();
 
     xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml +
@@ -226,7 +232,6 @@ public class LIFReader extends FormatReader {
     }
 
     Vector elements = new Vector();
-    seriesNames = new Vector();
 
     status("Populating native metadata");
 
@@ -320,8 +325,8 @@ public class LIFReader extends FormatReader {
       }
       else if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
-        seriesNames.add(token.substring(token.indexOf("=") + 2,
-          token.length() - 1));
+        //seriesNames.add(token.substring(token.indexOf("=") + 2,
+        //  token.length() - 1));
 
         numDatasets++;
         int numChannels = 0;
@@ -333,9 +338,10 @@ public class LIFReader extends FormatReader {
 
             if (token.startsWith("Element Name")) {
               // hack to override first series name
-              seriesNames.setElementAt(token.substring(token.indexOf("=") + 2,
-                token.length() - 1), seriesNames.size() - 1);
-              prefix = (String) seriesNames.get(seriesNames.size() - 1);
+              //seriesNames.setElementAt(token.substring(token.indexOf("=") + 2,
+              //  token.length() - 1), seriesNames.size() - 1);
+              //prefix = (String) seriesNames.get(seriesNames.size() - 1);
+              prefix = (String) seriesNames.get(numDatasets - 1); 
             }
 
             Hashtable tmp = new Hashtable();
@@ -515,23 +521,41 @@ public class LIFReader extends FormatReader {
   /** SAX handler for parsing XML. */
   class LIFHandler extends DefaultHandler {
     private String series;
+    private String fullSeries;
     private int count = 0;
+    private boolean firstElement = true;
 
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
       if (qName.equals("Element")) {
-        if (!attributes.getValue("Name").equals("DCROISet")) {
+        if (!attributes.getValue("Name").equals("DCROISet") && !firstElement) {
           series = attributes.getValue("Name");
+          containerNames.add(series); 
         }
+        else if (firstElement) firstElement = false; 
       }
       else if (qName.equals("Experiment")) {
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(attributes.getQName(i), attributes.getValue(i));
         }
       }
+      else if (qName.equals("Image")) {
+        containerNames.remove(series);
+        if (containerCounts.size() < containerNames.size()) {
+          containerCounts.add(new Integer(1));
+        }
+        else {
+          int ndx = containerCounts.size() - 1;
+          int n = ((Integer) containerCounts.get(ndx)).intValue();
+          containerCounts.setElementAt(new Integer(n + 1), ndx);
+        }
+        fullSeries = containerNames.get(containerNames.size() - 1) + 
+          "/" + series;
+        seriesNames.add(fullSeries); 
+      }
       else if (qName.equals("ChannelDescription")) {
-        String prefix = series + " - Channel " + count + " - ";
+        String prefix = fullSeries + " - Channel " + count + " - ";
         addMeta(prefix + "Min", attributes.getValue("Min"));
         addMeta(prefix + "Max", attributes.getValue("Max"));
         addMeta(prefix + "Resolution", attributes.getValue("Resolution"));
@@ -540,7 +564,7 @@ public class LIFReader extends FormatReader {
         count++;
       }
       else if (qName.equals("DimensionDescription")) {
-        String prefix = series + " - Dimension " + count + " - ";
+        String prefix = fullSeries + " - Dimension " + count + " - ";
         addMeta(prefix + "NumberOfElements",
           attributes.getValue("NumberOfElements"));
         addMeta(prefix + "Length", attributes.getValue("Length"));
@@ -550,37 +574,37 @@ public class LIFReader extends FormatReader {
       else if (qName.equals("ScannerSettingRecord")) {
         String key = attributes.getValue("Identifier") + " - " +
           attributes.getValue("Description");
-        addMeta(series + " - " + key, attributes.getValue("Variant"));
+        addMeta(fullSeries + " - " + key, attributes.getValue("Variant"));
       }
       else if (qName.equals("FilterSettingRecord")) {
         String key = attributes.getValue("ObjectName") + " - " +
           attributes.getValue("Description") + " - " +
           attributes.getValue("Attribute");
-        addMeta(series + " - " + key, attributes.getValue("Variant"));
+        addMeta(fullSeries + " - " + key, attributes.getValue("Variant"));
       }
       else if (qName.equals("ATLConfocalSettingDefinition")) {
-        if (series.endsWith(" - Master sequential setting")) {
-          series = series.replaceAll(" - Master sequential setting",
+        if (fullSeries.endsWith(" - Master sequential setting")) {
+          fullSeries = fullSeries.replaceAll(" - Master sequential setting",
             " - Sequential Setting 0");
         }
 
-        if (series.indexOf("- Sequential Setting ") == -1) {
-          series += " - Master sequential setting";
+        if (fullSeries.indexOf("- Sequential Setting ") == -1) {
+          fullSeries += " - Master sequential setting";
         }
         else {
-          int ndx = series.indexOf(" - Sequential Setting ") + 22;
-          int n = Integer.parseInt(series.substring(ndx));
+          int ndx = fullSeries.indexOf(" - Sequential Setting ") + 22;
+          int n = Integer.parseInt(fullSeries.substring(ndx));
           n++;
-          series = series.substring(0, ndx) + String.valueOf(n);
+          fullSeries = fullSeries.substring(0, ndx) + String.valueOf(n);
         }
 
         for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(series + " - " + attributes.getQName(i),
+          addMeta(fullSeries + " - " + attributes.getQName(i),
             attributes.getValue(i));
         }
       }
       else if (qName.equals("Wheel")) {
-        String prefix = series + " - Wheel " + count + " - ";
+        String prefix = fullSeries + " - Wheel " + count + " - ";
         addMeta(prefix + "Qualifier", attributes.getValue("Qualifier"));
         addMeta(prefix + "FilterIndex", attributes.getValue("FilterIndex"));
         addMeta(prefix + "FilterSpectrumPos",
@@ -593,21 +617,21 @@ public class LIFReader extends FormatReader {
         count++;
       }
       else if (qName.equals("WheelName")) {
-        String prefix = series + " - Wheel " + (count - 1) + " - WheelName ";
+        String prefix = fullSeries + " - Wheel " + (count - 1) + " - WheelName ";
         int ndx = 0;
         while (getMeta(prefix + ndx) != null) ndx++;
 
         addMeta(prefix + ndx, attributes.getValue("FilterName"));
       }
       else if (qName.equals("MultiBand")) {
-        String prefix = series + " - MultiBand Channel " +
+        String prefix = fullSeries + " - MultiBand Channel " +
           attributes.getValue("Channel") + " - ";
         addMeta(prefix + "LeftWorld", attributes.getValue("LeftWorld"));
         addMeta(prefix + "RightWorld", attributes.getValue("RightWorld"));
         addMeta(prefix + "DyeName", attributes.getValue("DyeName"));
       }
       else if (qName.equals("LaserLineSetting")) {
-        String prefix = series + " - LaserLine " +
+        String prefix = fullSeries + " - LaserLine " +
           attributes.getValue("LaserLine") + " - ";
         addMeta(prefix + "IntensityDev", attributes.getValue("IntensityDev"));
         addMeta(prefix + "IntensityLowDev",
@@ -624,7 +648,7 @@ public class LIFReader extends FormatReader {
           attributes.getValue("SequenceIndex"));
       }
       else if (qName.equals("Detector")) {
-        String prefix = series + " - Detector Channel " +
+        String prefix = fullSeries + " - Detector Channel " +
           attributes.getValue("Channel") + " - ";
         addMeta(prefix + "IsActive", attributes.getValue("IsActive"));
         addMeta(prefix + "IsReferenceUnitActivatedForCorrection",
@@ -633,8 +657,8 @@ public class LIFReader extends FormatReader {
         addMeta(prefix + "Offset", attributes.getValue("Offset"));
       }
       else if (qName.equals("Laser")) {
-        String prefix = series + " Laser " + attributes.getValue("LaserName") +
-          " - ";
+        String prefix = fullSeries + " Laser " + 
+          attributes.getValue("LaserName") + " - ";
         addMeta(prefix + "CanDoLinearOutputPower",
           attributes.getValue("CanDoLinearOutputPower"));
         addMeta(prefix + "OutputPower", attributes.getValue("OutputPower"));
@@ -671,18 +695,18 @@ public class LIFReader extends FormatReader {
         
         String n = String.valueOf(count);
         while (n.length() < 4) n = "0" + n;
-        addMeta(series + " - TimeStamp " + n, sb.toString());
+        addMeta(fullSeries + " - TimeStamp " + n, sb.toString());
         count++;
       }
       else if (qName.equals("ChannelScalingInfo")) {
-        String prefix = series + " - ChannelScalingInfo " + count + " - ";
+        String prefix = fullSeries + " - ChannelScalingInfo " + count + " - ";
         addMeta(prefix + "WhiteValue", attributes.getValue("WhiteValue"));
         addMeta(prefix + "BlackValue", attributes.getValue("BlackValue"));
         addMeta(prefix + "GammaValue", attributes.getValue("GammaValue"));
         addMeta(prefix + "Automatic", attributes.getValue("Automatic"));
       }
       else if (qName.equals("RelTimeStamp")) {
-        addMeta(series + " RelTimeStamp " + attributes.getValue("Frame"),
+        addMeta(fullSeries + " RelTimeStamp " + attributes.getValue("Frame"),
           attributes.getValue("Time"));
       }
       else count = 0;
