@@ -76,6 +76,11 @@ public class BioRadReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 56) return false;

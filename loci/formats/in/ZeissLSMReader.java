@@ -76,6 +76,11 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);

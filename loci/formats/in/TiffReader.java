@@ -43,6 +43,13 @@ public class TiffReader extends BaseTiffReader {
     super("Tagged Image File Format", new String[] {"tif", "tiff"});
   }
 
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   // -- Internal TiffReader API methods --
 
   /**

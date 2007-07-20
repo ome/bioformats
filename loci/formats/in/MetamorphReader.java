@@ -109,6 +109,11 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     if (id.toLowerCase().endsWith(".nd")) return FormatTools.MUST_GROUP;
