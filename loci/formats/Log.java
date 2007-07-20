@@ -56,7 +56,7 @@ public class Log {
   public void println(float x) { println("" + x); }
   public void println(int x) { println("" + x); }
   public void println(long x) { println("" + x); }
-  public void println(Object x) { println(x.toString()); }
+  public void println(Object x) { println("" + x); }
   public void println(String x) { print(x + NL); }
 
   public void trace(String s) { trace(new Exception(s)); }
