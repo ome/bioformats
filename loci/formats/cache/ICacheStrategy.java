@@ -4,7 +4,14 @@
 
 package loci.formats.cache;
 
-public interface ICacheStrategy {
+/**
+ * Interface for cache strategies. A cache strategy identifies which
+ * objects should be loaded into the cache, in which order. Unlike
+ * {@link ICacheSource}, it works with multidimensional (N-D) position arrays
+ * rather than rasterized (1-D) indices. The two are made equivalent via a
+ * mapping between the two, invoked within {@link Cache} as needed.
+ */
+public interface ICacheStrategy extends CacheReporter {
 
   // -- Constants --
 
@@ -22,7 +29,7 @@ public interface ICacheStrategy {
 
   /**
    * Gets the indices of the objects to cache,
-   * surrounding the object with the given index.
+   * surrounding the object at the given position.
    */
   int[][] getLoadList(int[] pos) throws CacheException;
 
@@ -33,7 +40,7 @@ public interface ICacheStrategy {
   void setPriority(int priority, int axis);
 
   /**
-   * Retrieves the order in which slices should be loaded along each axis.
+   * Retrieves the order in which objects should be loaded along each axis.
    * @return An array whose constituents are each one of:<ul>
    *   <li>CENTERED_ORDER</li>
    *   <li>FORWARD_ORDER</li>
@@ -42,7 +49,7 @@ public interface ICacheStrategy {
   int[] getOrder();
 
   /**
-   * Sets the order in which slices should be loaded along each axis.
+   * Sets the order in which objects should be loaded along each axis.
    * @param order One of:<ul>
    *   <li>CENTERED_ORDER</li>
    *   <li>FORWARD_ORDER</li>
@@ -51,11 +58,11 @@ public interface ICacheStrategy {
    */
   void setOrder(int order, int axis);
 
-  /** Retrieves the number of planes to cache along each axis. */
+  /** Retrieves the number of objects to cache along each axis. */
   int[] getRange();
 
-  /** Sets the number of planes to cache along the given axis. */
-  void setRange(int planes, int axis);
+  /** Sets the number of objects to cache along the given axis. */
+  void setRange(int num, int axis);
 
   /** Gets the lengths of all the axes. */
   int[] getLengths();

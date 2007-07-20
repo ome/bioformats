@@ -4,11 +4,13 @@
 
 package loci.formats.cache;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 import loci.formats.FormatTools;
 
-public abstract class CacheStrategy implements Comparator, ICacheStrategy {
+/** Superclass of cache strategies. */
+public abstract class CacheStrategy
+  implements CacheReporter, Comparator, ICacheStrategy
+{
 
   // -- Constants --
 
@@ -20,7 +22,7 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
   /** Length of each dimensional axis. */
   protected int[] lengths;
 
-  /** The order in which slices should be loaded along each axis. */
+  /** The order in which planes should be loaded along each axis. */
   protected int[] order;
 
   /** Number of planes to cache along each axis. */
@@ -30,8 +32,8 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
   protected int[] priorities;
 
   /**
-   * The list of dimensional positions to consider caching,
-   * in order of preference based on strategy, axis priority and slice order.
+   * The list of dimensional positions to consider caching, in order of
+   * preference based on strategy, axis priority and planar ordering.
    */
   private int[][] positions;
 
@@ -40,6 +42,9 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
    * before building the next load list.
    */
   private boolean dirty;
+
+  /** List of cache event listeners. */
+  protected Vector listeners;
 
   // -- Constructors --
 
@@ -54,27 +59,18 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
     Arrays.fill(priorities, NORMAL_PRIORITY);
     positions = getPossiblePositions();
     dirty = true;
+    listeners = new Vector();
   }
 
   // -- Abstract CacheStrategy API methods --
 
+  /**
+   * Gets positions to consider for possible inclusion in the cache,
+   * assuming a current position at the origin (0).
+   */
   protected abstract int[][] getPossiblePositions();
 
   // -- CacheStrategy API methods --
-
-  public int raster(int[] pos) {
-    return FormatTools.positionToRaster(lengths, pos);
-  }
-
-  public int[] pos(int raster) {
-    return FormatTools.rasterToPosition(lengths, raster);
-  }
-
-  public int[] pos(int raster, int[] pos) {
-    return FormatTools.rasterToPosition(lengths, raster, pos);
-  }
-
-  public int length() { return FormatTools.getRasterLength(lengths); }
 
   /**
    * Computes the distance from the given axis value to the
@@ -95,11 +91,56 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
     }
   }
 
+  // -- Internal CacheStrategy API methods --
+
+  /** Shortcut for converting N-D position to rasterized position. */
+  protected int raster(int[] pos) {
+    return FormatTools.positionToRaster(lengths, pos);
+  }
+
+  /** Shortcut for converting rasterized position to N-D position. */
+  protected int[] pos(int raster) {
+    return FormatTools.rasterToPosition(lengths, raster);
+  }
+
+  /**
+   * Shortcut for converting rasterized position to N-D position,
+   * using the given array instead of allocating a new one.
+   */
+  protected int[] pos(int raster, int[] pos) {
+    return FormatTools.rasterToPosition(lengths, raster, pos);
+  }
+
+  /** Shortcut for computing total number of positions. */
+  protected int length() { return FormatTools.getRasterLength(lengths); }
+
+  // -- CacheReporter API methods --
+
+  /* @see CacheReporter#addCacheListener(CacheListener) */
+  public void addCacheListener(CacheListener l) {
+    synchronized (listeners) { listeners.add(l); }
+  }
+
+  /* @see CacheReporter#removeCacheListener(CacheListener) */
+  public void removeCacheListener(CacheListener l) {
+    synchronized (listeners) { listeners.remove(l); }
+  }
+
+  /* @see CacheReporter#getCacheListeners() */
+  public CacheListener[] getCacheListeners() {
+    CacheListener[] l;
+    synchronized (listeners) {
+      l = new CacheListener[listeners.size()];
+      listeners.copyInto(l);
+    }
+    return l;
+  }
+
   // -- Comparator API methods --
 
   /**
    * Default comparator orders dimensional positions based on distance from the
-   * current position, taking into account axis priorities and slice ordering.
+   * current position, taking into account axis priorities and planar ordering.
    */
   public int compare(Object o1, Object o2) {
     int[] p1 = (int[]) o1;
@@ -198,6 +239,7 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
       priorities[axis] = priority;
       dirty = true;
     }
+    notifyListeners(new CacheEvent(this, CacheEvent.PRIORITIES_CHANGED));
   }
 
   /* @see ICacheStrategy#getOrder() */
@@ -215,21 +257,35 @@ public abstract class CacheStrategy implements Comparator, ICacheStrategy {
       this.order[axis] = order;
       dirty = true;
     }
+    notifyListeners(new CacheEvent(this, CacheEvent.ORDER_CHANGED));
   }
 
   /* @see ICacheStrategy#getRange() */
   public int[] getRange() { return range; }
 
   /* @see ICacheStrategy#setRange(int, int) */
-  public void setRange(int planes, int axis) {
-    if (planes < 0) {
+  public void setRange(int num, int axis) {
+    if (num < 0) {
       throw new IllegalArgumentException(
-        "Invalid range for axis #" + axis + ": " + planes);
+        "Invalid range for axis #" + axis + ": " + num);
     }
-    range[axis] = planes;
+    range[axis] = num;
+    notifyListeners(new CacheEvent(this, CacheEvent.RANGE_CHANGED));
   }
 
   /* @see ICacheStrategy#getLengths() */
   public int[] getLengths() { return lengths; }
+
+  // -- Helper methods --
+  
+  /** Informs listeners of a cache update. */
+  protected void notifyListeners(CacheEvent e) {
+    synchronized (listeners) {
+      for (int i=0; i<listeners.size(); i++) {
+        CacheListener l = (CacheListener) listeners.elementAt(i);
+        l.cacheUpdated(e);
+      }
+    }
+  }
 
 }

@@ -23,10 +23,9 @@ public class ByteArraySource extends CacheSource {
 
   // -- ICacheSource API methods --
 
-  /* @see loci.formats.cache.ICacheSource#getObject(int[], int[]) */
-  public Object getObject(int[] len, int[] pos) throws CacheException {
-    int ndx = FormatTools.positionToRaster(len, pos);
-    try { return reader.openBytes(ndx); }
+  /* @see loci.formats.cache.ICacheSource#getObject(int) */
+  public Object getObject(int index) throws CacheException {
+    try { return reader.openBytes(index); }
     catch (FormatException exc) { throw new CacheException(exc); }
     catch (IOException exc) { throw new CacheException(exc); }
   }

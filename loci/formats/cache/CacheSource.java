@@ -8,8 +8,8 @@ import java.io.IOException;
 import loci.formats.*;
 
 /**
- * Retrieves image planes from a data source
- * (e.g., a file) using Bio-Formats.
+ * Superclass of cache sources that retrieve image planes
+ * from a data source (e.g., a file) using Bio-Formats.
  */
 public abstract class CacheSource implements ICacheSource {
 
@@ -36,7 +36,7 @@ public abstract class CacheSource implements ICacheSource {
   /* @see loci.formats.cache.ICacheSource#getObjectCount() */
   public int getObjectCount() { return reader.getImageCount(); }
 
-  /* @see ICacheSource#getObject(int[], int[]) */
-  public abstract Object getObject(int[] len, int[] pos) throws CacheException;
+  /* @see ICacheSource#getObject(int) */
+  public abstract Object getObject(int index) throws CacheException;
 
 }

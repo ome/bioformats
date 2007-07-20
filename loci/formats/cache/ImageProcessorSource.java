@@ -57,12 +57,10 @@ public class ImageProcessorSource extends CacheSource {
    * there are multiple channels, an array of ImageProcessors is returned
    * (one per channel).
    *
-   * @see loci.formats.cache.ICacheSource#getObject(int[], int[])
+   * @see loci.formats.cache.ICacheSource#getObject(int)
    */
-  public Object getObject(int[] len, int[] pos) throws CacheException {
+  public Object getObject(int index) throws CacheException {
     if (noIJ) throw new CacheException(NO_IJ_MSG);
-
-    int ndx = FormatTools.positionToRaster(len, pos);
 
     try {
       int w = reader.getSizeX();
@@ -71,13 +69,13 @@ public class ImageProcessorSource extends CacheSource {
       int type = reader.getPixelType();
       int bpp = FormatTools.getBytesPerPixel(type);
 
-      byte[] b = reader.openBytes(ndx);
+      byte[] b = reader.openBytes(index);
 
       if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
         // HACK - byte array dimensions are incorrect - image is probably
         // a different size, but we have no way of knowing what size;
         // so open this plane as a BufferedImage to find out
-        BufferedImage bi = reader.openImage(ndx);
+        BufferedImage bi = reader.openImage(index);
         b = ImageTools.padImage(b, reader.isInterleaved(), c,
           bi.getWidth() * bpp, w, h);
       }

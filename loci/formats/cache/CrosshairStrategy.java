@@ -47,9 +47,7 @@ public class CrosshairStrategy extends CacheStrategy {
     for (int i=0; i<lengths.length; i++) len += lengths[i] - 1;
     int[][] p = new int[len][lengths.length];
     for (int i=0, c=0; i<lengths.length; i++) {
-      for (int j=1; j<lengths[i]; j++) {
-        p[++c][i] = j;
-      }
+      for (int j=1; j<lengths[i]; j++) p[++c][i] = j;
     }
     return p;
   }

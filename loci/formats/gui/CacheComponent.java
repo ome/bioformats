@@ -17,6 +17,13 @@ public class CacheComponent extends JPanel
   implements ActionListener, ChangeListener
 {
 
+  // -- Constants --
+
+  protected static final String[] STRATEGIES = {"Crosshair", "Rectangle"};
+  protected static final String[] PRIORITIES =
+    {"maximum", "high", "normal", "low", "minimum"};
+  protected static final String[] ORDER = {"centered", "forward", "backward"};
+
   // -- Fields --
 
   /** The cache that this component controls. */
@@ -24,9 +31,6 @@ public class CacheComponent extends JPanel
 
   /** File that the cache is working with. */
   private String file;
-
-  /** Length of each axis. */
-  private int[] lengths;
 
   /** Spinners for choosing range of slices to cache. */
   private Vector range;
@@ -42,12 +46,6 @@ public class CacheComponent extends JPanel
     super();
     this.cache = cache;
     this.file = file;
-    this.lengths = cache.getStrategy().getLengths();
-
-    // constants
-    final String[] strategies = new String[] {"Crosshair", "Rectangle"};
-    final String[] priorities = {"max", "high", "normal", "low", "min"};
-    final String[] order = {"centered", "forward", "backward"};
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -56,7 +54,7 @@ public class CacheComponent extends JPanel
     range = new Vector();
 
     JPanel top = new JPanel();
-    FormLayout layout = new FormLayout("pref:grow,3dlu,pref:grow",
+    FormLayout layout = new FormLayout("pref,3dlu,pref:grow",
       doSource ? "pref:grow,3dlu,pref:grow" : "pref:grow");
     top.setLayout(layout);
 
@@ -74,14 +72,12 @@ public class CacheComponent extends JPanel
     }
 
     // add strategy choices
-
     JLabel label = new JLabel("Caching strategy: ");
     top.add(label, cc.xy(1, doSource ? 3 : 1));
-    JComboBox strategyChooser = new JComboBox(strategies);
+    JComboBox strategyChooser = new JComboBox(STRATEGIES);
     strategyChooser.setActionCommand("strategy");
     strategyChooser.addActionListener(this);
     top.add(strategyChooser, cc.xy(3, doSource ? 3 : 1));
-
     add(top);
 
     // add cache size choices
@@ -100,15 +96,17 @@ public class CacheComponent extends JPanel
     middle.add(new JLabel("Priority"), cc.xy(5, 1));
     middle.add(new JLabel("Order"), cc.xy(7, 1));
 
+    int[] lengths = cache.getStrategy().getLengths();
     for (int i=0; i<axisLabels.length; i++) {
       JLabel l = new JLabel(axisLabels[i]);
       middle.add(l, cc.xy(1, i*2 + 3));
       JSpinner r = new JSpinner(new SpinnerNumberModel(1, 0, lengths[i], 1));
       middle.add(r, cc.xy(3, i*2 + 3));
       range.add(r);
-      JComboBox prio = new JComboBox(priorities);
+      JComboBox prio = new JComboBox(PRIORITIES);
+      prio.setSelectedIndex(PRIORITIES.length / 2);
       middle.add(prio, cc.xy(5, i*2 + 3));
-      JComboBox ord = new JComboBox(order);
+      JComboBox ord = new JComboBox(ORDER);
       middle.add(ord, cc.xy(7, i*2 + 3));
     }
 
@@ -125,9 +123,7 @@ public class CacheComponent extends JPanel
 
   // -- CacheComponent API methods --
 
-  public Cache getCache() {
-    return cache;
-  }
+  public Cache getCache() { return cache; }
 
   // -- ActionListener API methods --
 
@@ -228,13 +224,13 @@ public class CacheComponent extends JPanel
     boolean forwardFirst = s.indexOf("forward") != -1;
 
     try {
+      int[] lengths = cache.getStrategy().getLengths();
       if (s.startsWith("Crosshair")) {
         strategy = new CrosshairStrategy(lengths);
       }
       else if (s.startsWith("Rectangle")) {
         strategy = new RectangleStrategy(lengths);
       }
-//      strategy.setForwardFirst(forwardFirst);
       int[] rng = getRange();
       for (int i=0; i<rng.length; i++) strategy.setRange(rng[i], i);
       cache.setStrategy(strategy);
