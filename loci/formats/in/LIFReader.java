@@ -325,8 +325,6 @@ public class LIFReader extends FormatReader {
       }
       else if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
-        //seriesNames.add(token.substring(token.indexOf("=") + 2,
-        //  token.length() - 1));
 
         numDatasets++;
         int numChannels = 0;
@@ -338,10 +336,12 @@ public class LIFReader extends FormatReader {
 
             if (token.startsWith("Element Name")) {
               // hack to override first series name
-              //seriesNames.setElementAt(token.substring(token.indexOf("=") + 2,
-              //  token.length() - 1), seriesNames.size() - 1);
-              //prefix = (String) seriesNames.get(seriesNames.size() - 1);
-              prefix = (String) seriesNames.get(numDatasets - 1); 
+              int idx = numDatasets - 1;
+              if (idx >= seriesNames.size()) {
+                numDatasets = seriesNames.size();
+                idx = numDatasets - 1;
+              }
+              prefix = (String) seriesNames.get(idx); 
             }
 
             Hashtable tmp = new Hashtable();
@@ -571,7 +571,7 @@ public class LIFReader extends FormatReader {
           containerCounts.setElementAt(new Integer(n + 1), ndx);
         }
         if (fullSeries == null || fullSeries.equals("")) fullSeries = series;
-        seriesNames.add(fullSeries); 
+        seriesNames.add(fullSeries);
       }
       else if (qName.equals("ChannelDescription")) {
         String prefix = fullSeries + " - Channel " + count + " - ";
