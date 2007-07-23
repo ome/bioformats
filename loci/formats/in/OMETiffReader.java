@@ -135,6 +135,7 @@ public class OMETiffReader extends BaseTiffReader {
         core.imageCount[i] = ifds.length;
         int sc = core.sizeC[i];
         if (rgb) sc /= 3;
+        core.rgb[i] = rgb; 
         core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
         core.pixelType[i] = FormatTools.pixelTypeFromString(
           pixels[i].getAttribute("PixelType"));
