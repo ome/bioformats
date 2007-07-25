@@ -26,7 +26,6 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.text.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
@@ -695,26 +694,12 @@ public class LIFReader extends FormatReader {
         }
         stamp = high + low;
 
-        // Near as I can figure, this timestamp represents the number of
-        // 100-nanosecond ticks since the ANSI/COBOL epoch (Jan 1, 1601).
-        // Note that the following logic does not handle negative timestamp
-        // values, so if the file in question was acquired prior to Jan 1 1601,
-        // the timestamp will not be parsed correctly.
-
         long ms = stamp / 10000;
 
-        // subtract number of seconds until Unix epoch (Jan 1, 1970)
-
-        ms -= 11644444800000L;
-
-        Date d = new Date(ms);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        StringBuffer sb = new StringBuffer();
-        fmt.format(d, sb, new FieldPosition(0));
-        
         String n = String.valueOf(count);
         while (n.length() < 4) n = "0" + n;
-        addMeta(fullSeries + " - TimeStamp " + n, sb.toString());
+        addMeta(fullSeries + " - TimeStamp " + n, 
+          DataTools.convertDate(ms, DataTools.COBOL));
         count++;
       }
       else if (qName.equals("ChannelScalingInfo")) {

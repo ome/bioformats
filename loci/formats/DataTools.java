@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.*;
+import java.text.*;
+import java.util.Date;
 
 /**
  * A utility class with convenience methods for
@@ -34,6 +36,18 @@ import java.io.*;
  * @author Chris Allan callan at blackcat.ca
  */
 public final class DataTools {
+
+  // -- Constants --
+
+  /** Timestamp formats. */
+  public static final int UNIX = 0;  // January 1, 1970
+  public static final int VMS = 1;   // November 17, 1858
+  public static final int COBOL = 2;  // January 1, 1601
+
+  /** Milliseconds until UNIX epoch. */
+  public static final long UNIX_EPOCH = 0;
+  public static final long VMS_EPOCH = 3531859200000L;
+  public static final long COBOL_EPOCH = 11644444800000L;
 
   // -- Static fields --
 
@@ -506,6 +520,33 @@ public final class DataTools {
     }
 
     return rtn;
+  }
+
+  // -- Date handling --
+  
+  /** Converts the given timestamp into an ISO 8061 date. */
+  public static String convertDate(long stamp, int format) {
+    // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
+    // dates than you will ever need (or want)
+
+    long ms = stamp;
+
+    switch (format) {
+      case VMS:
+        ms -= VMS_EPOCH;
+        break;
+      case COBOL:
+        ms -= COBOL_EPOCH;
+        break;
+    }
+
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    StringBuffer sb = new StringBuffer();
+
+    Date d = new Date(ms);
+
+    fmt.format(d, sb, new FieldPosition(0));
+    return sb.toString(); 
   }
 
 }

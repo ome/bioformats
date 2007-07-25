@@ -359,7 +359,22 @@ public class ZeissZVIReader extends FormatReader {
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore();
 
-    store.setImage((String) getMeta("Title"), null, null, null);
+    String date = (String) getMeta("Acquisition Date 0");
+    if (date == null) date = (String) getMeta("Acquisition Date"); 
+    try { 
+      long stamp = Long.parseLong(date) / 1000000; 
+      date = DataTools.convertDate(stamp, DataTools.VMS);
+    }
+    catch (Exception e) { 
+      try {
+        date = (String) getMeta("File Date");
+        if (date == null) date = (String) getMeta("File Date 0");
+        long stamp = Long.parseLong(date) / 1000000;
+        date = DataTools.convertDate(stamp, DataTools.VMS);
+      }
+      catch (Exception ex) { date = null; } 
+    }
+    store.setImage((String) getMeta("Title"), date, null, null);
 
     if (bpp == 1 || bpp == 3) core.pixelType[0] = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core.pixelType[0] = FormatTools.UINT16;
@@ -386,9 +401,57 @@ public class ZeissZVIReader extends FormatReader {
       pixZ == null ? null : new Float(pixZ),
       null, null, null);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+    for (int i=0; i<getEffectiveSizeC(); i++) {
+      int idx = FormatTools.getIndex(this, 0, i, 0);
+      String name = (String) getMeta("Channel Name " + idx);
+      String emWave = (String) getMeta("Emission Wavelength " + idx);
+      String exWave = (String) getMeta("Excitation Wavelength " + idx);
+     
+      if (emWave != null && emWave.indexOf(".") != -1) {
+        emWave = emWave.substring(0, emWave.indexOf("."));
+      }
+      if (exWave != null && exWave.indexOf(".") != -1) {
+        exWave = exWave.substring(0, exWave.indexOf("."));
+      }
+
+      store.setLogicalChannel(i, name, null, 
+        emWave == null ? null : new Integer(emWave), 
+        exWave == null ? null : new Integer(exWave), null, null, null);
+   
+      String black = (String) getMeta("BlackValue " + idx);
+      String white = (String) getMeta("WhiteValue " + idx);
+      String gamma = (String) getMeta("GammaValue " + idx);
+      
+      store.setDisplayChannel(new Integer(i), 
+        black == null ? null : new Double(black), 
+        white == null ? null : new Double(white), 
+        gamma == null ? null : new Float(gamma), null); 
     }
+  
+    for (int i=0; i<core.imageCount[0]; i++) {
+      int[] zct = FormatTools.getZCTCoords(this, i);
+      String exposure = (String) getMeta("Exposure Time [ms] " + i);
+      store.setPlaneInfo(zct[0], zct[1], zct[2], null, 
+      exposure == null ? null : new Float(exposure), null);
+    }
+
+    String objectiveName = (String) getMeta("Objective Name 0");
+    if (objectiveName != null) {
+      objectiveName = DataTools.stripString(objectiveName);
+    }
+
+    String objectiveMag = (String) getMeta("Objective Magnification 0");
+    if (objectiveMag != null) {
+      objectiveMag = DataTools.stripString(objectiveMag);
+    }
+    else objectiveMag = "1.0";
+
+    String objectiveNA = (String) getMeta("Objective N.A. 0");
+    if (objectiveNA != null) objectiveNA = DataTools.stripString(objectiveNA);
+    else objectiveNA = "1.0"; 
+
+    store.setObjective(null, objectiveName, null, new Float(objectiveNA),
+      new Float(objectiveMag), null, null);
   }
 
   protected void parseDir(int depth, Object dir)
@@ -446,9 +509,7 @@ public class ZeissZVIReader extends FormatReader {
         if (dirName.toUpperCase().equals("ROOT ENTRY") ||
           dirName.toUpperCase().equals("ROOTENTRY"))
         {
-          if (entryName.equals("Tags")) {
-            parseTags(s);
-          }
+          if (entryName.equals("Tags")) parseTags(s); 
         }
         else if (dirName.equals("Tags") && isContents) {
           parseTags(s);
@@ -584,7 +645,8 @@ public class ZeissZVIReader extends FormatReader {
   {
     RandomAccessStream s = new RandomAccessStream(data);
     s.order(true);
-    s.skipBytes(8);
+
+    if (s.readInt() == 0) s.skipBytes(4);
 
     core.sizeX[0] = s.readInt();
     core.sizeY[0] = s.readInt();
@@ -672,1256 +734,467 @@ public class ZeissZVIReader extends FormatReader {
       try { attribute = s.readInt(); }
       catch (IOException e) { }
 
-      parseTag(value, tagID, attribute);
-      if (metadata.get("ImageWidth") != null) {
-        try {
+      String key = getKey(tagID);
+      if (key.equals("Image Index Z")) {
+        try { 
+          zIndex = Integer.parseInt(DataTools.stripString(value)); 
+        }
+        catch (NumberFormatException f) { }
+      }
+      else if (key.equals("Image Index T")) {
+        try { 
+          tIndex = Integer.parseInt(DataTools.stripString(value)); 
+        }
+        catch (NumberFormatException f) { }
+      }
+      else if (key.equals("Image Channel Index")) {
+        try { 
+          cIndex = Integer.parseInt(DataTools.stripString(value)); 
+        }
+        catch (NumberFormatException f) { }
+      }
+      else if (key.equals("ImageWidth")) {
+        try { 
           if (core.sizeX[0] == 0) core.sizeX[0] = Integer.parseInt(value);
         }
-        catch (NumberFormatException e) { }
+        catch (NumberFormatException f) { }
       }
-      if (metadata.get("ImageHeight") != null) {
-        try {
+      else if (key.equals("ImageHeight")) {
+        try { 
           if (core.sizeY[0] == 0) core.sizeY[0] = Integer.parseInt(value);
         }
-        catch (NumberFormatException e) { }
+        catch (NumberFormatException f) { }
       }
+
+      if (metadata.get(key) != null || metadata.get(key + " 0") != null) {
+        if (metadata.get(key) != null) {
+          metadata.remove(key);
+        }
+        
+        int ndx = 0;
+        while (metadata.get(key + " " + ndx) != null) ndx++;
+        key += " " + ndx; 
+      }
+      
+      addMeta(key, value);
+
     }
   }
 
-  /** Parse a tag and place it in the metadata hashtable. */
-  private void parseTag(String data, int tagID, int attribute) {
-    if (data == null || data.length() == 0) return;
+  /** Return the string corresponding to the given ID. */ 
+  private String getKey(int tagID) {
     switch (tagID) {
-      case 222:
-        addMeta("Compression", data);
-        break;
-      case 258:
-        addMeta("BlackValue", data);
-        break;
-      case 259:
-        addMeta("WhiteValue", data);
-        break;
-      case 260:
-        addMeta("ImageDataMappingAutoRange", data);
-        break;
-      case 261:
-        addMeta("Thumbnail", data);
-        break;
-      case 262:
-        addMeta("GammaValue", data);
-        break;
-      case 264:
-        addMeta("ImageOverExposure", data);
-        break;
-      case 265:
-        addMeta("ImageRelativeTime1", data);
-        break;
-      case 266:
-        addMeta("ImageRelativeTime2", data);
-        break;
-      case 267:
-        addMeta("ImageRelativeTime3", data);
-        break;
-      case 268:
-        addMeta("ImageRelativeTime4", data);
-        break;
-      case 333:
-        addMeta("RelFocusPosition1", data);
-        break;
-      case 334:
-        addMeta("RelFocusPosition2", data);
-        break;
-      case 513:
-        addMeta("ObjectType", data);
-        break;
-      case 515:
-        addMeta("ImageWidth", data);
-        break;
-      case 516:
-        addMeta("ImageHeight", data);
-        break;
-      case 517:
-        addMeta("Number Raw Count", data);
-        break;
-      case 518:
-        addMeta("PixelType", data);
-        break;
-      case 519:
-        addMeta("NumberOfRawImages", data);
-        break;
-      case 520:
-        addMeta("ImageSize", data);
-        break;
-      case 523:
-        addMeta("Acquisition pause annotation", data);
-        break;
-      case 530:
-        addMeta("Document Subtype", data);
-        break;
-      case 531:
-        addMeta("Acquisition Bit Depth", data);
-        break;
-      case 532:
-        addMeta("Image Memory Usage (RAM)", data);
-        break;
-      case 534:
-        addMeta("Z-Stack single representative", data);
-        break;
-      case 769:
-        addMeta("Scale Factor for X", data);
-        break;
-      case 770:
-        addMeta("Scale Unit for X", data);
-        break;
-      case 771:
-        addMeta("Scale Width", data);
-        break;
-      case 772:
-        addMeta("Scale Factor for Y", data);
-        break;
-      case 773:
-        addMeta("Scale Unit for Y", data);
-        break;
-      case 774:
-        addMeta("Scale Height", data);
-        break;
-      case 775:
-        addMeta("Scale Factor for Z", data);
-        break;
-      case 776:
-        addMeta("Scale Unit for Z", data);
-        break;
-      case 777:
-        addMeta("Scale Depth", data);
-        break;
-      case 778:
-        addMeta("Scaling Parent", data);
-        break;
-      case 1001:
-        addMeta("Date", data);
-        break;
-      case 1002:
-        addMeta("code", data);
-        break;
-      case 1003:
-        addMeta("Source", data);
-        break;
-      case 1004:
-        addMeta("Message", data);
-        break;
-      case 1025:
-        addMeta("Acquisition Date", data);
-        break;
-      case 1026:
-        addMeta("8-bit acquisition", data);
-        break;
-      case 1027:
-        addMeta("Camera Bit Depth", data);
-        break;
-      case 1029:
-        addMeta("MonoReferenceLow", data);
-        break;
-      case 1030:
-        addMeta("MonoReferenceHigh", data);
-        break;
-      case 1031:
-        addMeta("RedReferenceLow", data);
-        break;
-      case 1032:
-        addMeta("RedReferenceHigh", data);
-        break;
-      case 1033:
-        addMeta("GreenReferenceLow", data);
-        break;
-      case 1034:
-        addMeta("GreenReferenceHigh", data);
-        break;
-      case 1035:
-        addMeta("BlueReferenceLow", data);
-        break;
-      case 1036:
-        addMeta("BlueReferenceHigh", data);
-        break;
-      case 1041:
-        addMeta("FrameGrabber Name", data);
-        break;
-      case 1042:
-        addMeta("Camera", data);
-        break;
-      case 1044:
-        addMeta("CameraTriggerSignalType", data);
-        break;
-      case 1045:
-        addMeta("CameraTriggerEnable", data);
-        break;
-      case 1046:
-        addMeta("GrabberTimeout", data);
-        break;
-      case 1281:
-        addMeta("MultiChannelEnabled", data);
-        break;
-      case 1282:
-        addMeta("MultiChannel Color", data);
-        break;
-      case 1283:
-        addMeta("MultiChannel Weight", data);
-        break;
-      case 1284:
-        addMeta("Channel Name", data);
-        break;
-      case 1536:
-        addMeta("DocumentInformationGroup", data);
-        break;
-      case 1537:
-        addMeta("Title", data);
-        break;
-      case 1538:
-        addMeta("Author", data);
-        break;
-      case 1539:
-        addMeta("Keywords", data);
-        break;
-      case 1540:
-        addMeta("Comments", data);
-        break;
-      case 1541:
-        addMeta("SampleID", data);
-        break;
-      case 1542:
-        addMeta("Subject", data);
-        break;
-      case 1543:
-        addMeta("RevisionNumber", data);
-        break;
-      case 1544:
-        addMeta("Save Folder", data);
-        break;
-      case 1545:
-        addMeta("FileLink", data);
-        break;
-      case 1546:
-        addMeta("Document Type", data);
-        break;
-      case 1547:
-        addMeta("Storage Media", data);
-        break;
-      case 1548:
-        addMeta("File ID", data);
-        break;
-      case 1549:
-        addMeta("Reference", data);
-        break;
-      case 1550:
-        addMeta("File Date", data);
-        break;
-      case 1551:
-        addMeta("File Size", data);
-        break;
-      case 1553:
-        addMeta("Filename", data);
-        break;
-      case 1792:
-        addMeta("ProjectGroup", data);
-        break;
-      case 1793:
-        addMeta("Acquisition Date", data);
-        break;
-      case 1794:
-        addMeta("Last modified by", data);
-        break;
-      case 1795:
-        addMeta("User company", data);
-        break;
-      case 1796:
-        addMeta("User company logo", data);
-        break;
-      case 1797:
-        addMeta("Image", data);
-        break;
-      case 1800:
-        addMeta("User ID", data);
-        break;
-      case 1801:
-        addMeta("User Name", data);
-        break;
-      case 1802:
-        addMeta("User City", data);
-        break;
-      case 1803:
-        addMeta("User Address", data);
-        break;
-      case 1804:
-        addMeta("User Country", data);
-        break;
-      case 1805:
-        addMeta("User Phone", data);
-        break;
-      case 1806:
-        addMeta("User Fax", data);
-        break;
-      case 2049:
-        addMeta("Objective Name", data);
-        break;
-      case 2050:
-        addMeta("Optovar", data);
-        break;
-      case 2051:
-        addMeta("Reflector", data);
-        break;
-      case 2052:
-        addMeta("Condenser Contrast", data);
-        break;
-      case 2053:
-        addMeta("Transmitted Light Filter 1", data);
-        break;
-      case 2054:
-        addMeta("Transmitted Light Filter 2", data);
-        break;
-      case 2055:
-        addMeta("Reflected Light Shutter", data);
-        break;
-      case 2056:
-        addMeta("Condenser Front Lens", data);
-        break;
-      case 2057:
-        addMeta("Excitation Filter Name", data);
-        break;
-      case 2060:
-        addMeta("Transmitted Light Fieldstop Aperture", data);
-        break;
-      case 2061:
-        addMeta("Reflected Light Aperture", data);
-        break;
-      case 2062:
-        addMeta("Condenser N.A.", data);
-        break;
-      case 2063:
-        addMeta("Light Path", data);
-        break;
-      case 2064:
-        addMeta("HalogenLampOn", data);
-        break;
-      case 2065:
-        addMeta("Halogen Lamp Mode", data);
-        break;
-      case 2066:
-        addMeta("Halogen Lamp Voltage", data);
-        break;
-      case 2068:
-        addMeta("Fluorescence Lamp Level", data);
-        break;
-      case 2069:
-        addMeta("Fluorescence Lamp Intensity", data);
-        break;
-      case 2070:
-        addMeta("LightManagerEnabled", data);
-        break;
-      case 2071:
-        addMeta("tag_ID_2071", data);
-        break;
-      case 2072:
-        addMeta("Focus Position", data);
-        break;
-      case 2073:
-        addMeta("Stage Position X", data);
-        break;
-      case 2074:
-        addMeta("Stage Position Y", data);
-        break;
-      case 2075:
-        addMeta("Microscope Name", data);
-        break;
-      case 2076:
-        addMeta("Objective Magnification", data);
-        break;
-      case 2077:
-        addMeta("Objective N.A.", data);
-        break;
-      case 2078:
-        addMeta("MicroscopeIllumination", data);
-        break;
-      case 2079:
-        addMeta("External Shutter 1", data);
-        break;
-      case 2080:
-        addMeta("External Shutter 2", data);
-        break;
-      case 2081:
-        addMeta("External Shutter 3", data);
-        break;
-      case 2082:
-        addMeta("External Filter Wheel 1 Name", data);
-        break;
-      case 2083:
-        addMeta("External Filter Wheel 2 Name", data);
-        break;
-      case 2084:
-        addMeta("Parfocal Correction", data);
-        break;
-      case 2086:
-        addMeta("External Shutter 4", data);
-        break;
-      case 2087:
-        addMeta("External Shutter 5", data);
-        break;
-      case 2088:
-        addMeta("External Shutter 6", data);
-        break;
-      case 2089:
-        addMeta("External Filter Wheel 3 Name", data);
-        break;
-      case 2090:
-        addMeta("External Filter Wheel 4 Name", data);
-        break;
-      case 2103:
-        addMeta("Objective Turret Position", data);
-        break;
-      case 2104:
-        addMeta("Objective Contrast Method", data);
-        break;
-      case 2105:
-        addMeta("Objective Immersion Type", data);
-        break;
-      case 2107:
-        addMeta("Reflector Position", data);
-        break;
-      case 2109:
-        addMeta("Transmitted Light Filter 1 Position", data);
-        break;
-      case 2110:
-        addMeta("Transmitted Light Filter 2 Position", data);
-        break;
-      case 2112:
-        addMeta("Excitation Filter Position", data);
-        break;
-      case 2113:
-        addMeta("Lamp Mirror Position", data);
-        break;
-      case 2114:
-        addMeta("External Filter Wheel 1 Position", data);
-        break;
-      case 2115:
-        addMeta("External Filter Wheel 2 Position", data);
-        break;
-      case 2116:
-        addMeta("External Filter Wheel 3 Position", data);
-        break;
-      case 2117:
-        addMeta("External Filter Wheel 4 Position", data);
-        break;
-      case 2118:
-        addMeta("Lightmanager Mode", data);
-        break;
-      case 2119:
-        addMeta("Halogen Lamp Calibration", data);
-        break;
-      case 2120:
-        addMeta("CondenserNAGoSpeed", data);
-        break;
-      case 2121:
-        addMeta("TransmittedLightFieldstopGoSpeed", data);
-        break;
-      case 2122:
-        addMeta("OptovarGoSpeed", data);
-        break;
-      case 2123:
-        addMeta("Focus calibrated", data);
-        break;
-      case 2124:
-        addMeta("FocusBasicPosition", data);
-        break;
-      case 2125:
-        addMeta("FocusPower", data);
-        break;
-      case 2126:
-        addMeta("FocusBacklash", data);
-        break;
-      case 2127:
-        addMeta("FocusMeasurementOrigin", data);
-        break;
-      case 2128:
-        addMeta("FocusMeasurementDistance", data);
-        break;
-      case 2129:
-        addMeta("FocusSpeed", data);
-        break;
-      case 2130:
-        addMeta("FocusGoSpeed", data);
-        break;
-      case 2131:
-        addMeta("FocusDistance", data);
-        break;
-      case 2132:
-        addMeta("FocusInitPosition", data);
-        break;
-      case 2133:
-        addMeta("Stage calibrated", data);
-        break;
-      case 2134:
-        addMeta("StagePower", data);
-        break;
-      case 2135:
-        addMeta("StageXBacklash", data);
-        break;
-      case 2136:
-        addMeta("StageYBacklash", data);
-        break;
-      case 2137:
-        addMeta("StageSpeedX", data);
-        break;
-      case 2138:
-        addMeta("StageSpeedY", data);
-        break;
-      case 2139:
-        addMeta("StageSpeed", data);
-        break;
-      case 2140:
-        addMeta("StageGoSpeedX", data);
-        break;
-      case 2141:
-        addMeta("StageGoSpeedY", data);
-        break;
-      case 2142:
-        addMeta("StageStepDistanceX", data);
-        break;
-      case 2143:
-        addMeta("StageStepDistanceY", data);
-        break;
-      case 2144:
-        addMeta("StageInitialisationPositionX", data);
-        break;
-      case 2145:
-        addMeta("StageInitialisationPositionY", data);
-        break;
-      case 2146:
-        addMeta("MicroscopeMagnification", data);
-        break;
-      case 2147:
-        addMeta("ReflectorMagnification", data);
-        break;
-      case 2148:
-        addMeta("LampMirrorPosition", data);
-        break;
-      case 2149:
-        addMeta("FocusDepth", data);
-        break;
-      case 2150:
-        addMeta("MicroscopeType", data);
-        break;
-      case 2151:
-        addMeta("Objective Working Distance", data);
-        break;
-      case 2152:
-        addMeta("ReflectedLightApertureGoSpeed", data);
-        break;
-      case 2153:
-        addMeta("External Shutter", data);
-        break;
-      case 2154:
-        addMeta("ObjectiveImmersionStop", data);
-        break;
-      case 2155:
-        addMeta("Focus Start Speed", data);
-        break;
-      case 2156:
-        addMeta("Focus Acceleration", data);
-        break;
-      case 2157:
-        addMeta("ReflectedLightFieldstop", data);
-        break;
-      case 2158:
-        addMeta("ReflectedLightFieldstopGoSpeed", data);
-        break;
-      case 2159:
-        addMeta("ReflectedLightFilter 1", data);
-        break;
-      case 2160:
-        addMeta("ReflectedLightFilter 2", data);
-        break;
-      case 2161:
-        addMeta("ReflectedLightFilter1Position", data);
-        break;
-      case 2162:
-        addMeta("ReflectedLightFilter2Position", data);
-        break;
-      case 2163:
-        addMeta("TransmittedLightAttenuator", data);
-        break;
-      case 2164:
-        addMeta("ReflectedLightAttenuator", data);
-        break;
-      case 2165:
-        addMeta("Transmitted Light Shutter", data);
-        break;
-      case 2166:
-        addMeta("TransmittedLightAttenuatorGoSpeed", data);
-        break;
-      case 2167:
-        addMeta("ReflectedLightAttenuatorGoSpeed", data);
-        break;
-      case 2176:
-        addMeta("TransmittedLightVirtualFilterPosition", data);
-        break;
-      case 2177:
-        addMeta("TransmittedLightVirtualFilter", data);
-        break;
-      case 2178:
-        addMeta("ReflectedLightVirtualFilterPosition", data);
-        break;
-      case 2179:
-        addMeta("ReflectedLightVirtualFilter", data);
-        break;
-      case 2180:
-        addMeta("ReflectedLightHalogenLampMode", data);
-        break;
-      case 2181:
-        addMeta("ReflectedLightHalogenLampVoltage", data);
-        break;
-      case 2182:
-        addMeta("ReflectedLightHalogenLampColorTemperature", data);
-        break;
-      case 2183:
-        addMeta("ContrastManagerMode", data);
-        break;
-      case 2184:
-        addMeta("Dazzle Protection Active", data);
-        break;
-      case 2195:
-        addMeta("Zoom", data);
-        break;
-      case 2196:
-        addMeta("ZoomGoSpeed", data);
-        break;
-      case 2197:
-        addMeta("LightZoom", data);
-        break;
-      case 2198:
-        addMeta("LightZoomGoSpeed", data);
-        break;
-      case 2199:
-        addMeta("LightZoomCoupled", data);
-        break;
-      case 2200:
-        addMeta("TransmittedLightHalogenLampMode", data);
-        break;
-      case 2201:
-        addMeta("TransmittedLightHalogenLampVoltage", data);
-        break;
-      case 2202:
-        addMeta("TransmittedLightHalogenLampColorTemperature", data);
-        break;
-      case 2203:
-        addMeta("Reflected Coldlight Mode", data);
-        break;
-      case 2204:
-        addMeta("Reflected Coldlight Intensity", data);
-        break;
-      case 2205:
-        addMeta("Reflected Coldlight Color Temperature", data);
-        break;
-      case 2206:
-        addMeta("Transmitted Coldlight Mode", data);
-        break;
-      case 2207:
-        addMeta("Transmitted Coldlight Intensity", data);
-        break;
-      case 2208:
-        addMeta("Transmitted Coldlight Color Temperature", data);
-        break;
-      case 2209:
-        addMeta("Infinityspace Portchanger Position", data);
-        break;
-      case 2210:
-        addMeta("Beamsplitter Infinity Space", data);
-        break;
-      case 2211:
-        addMeta("TwoTv VisCamChanger Position", data);
-        break;
-      case 2212:
-        addMeta("Beamsplitter Ocular", data);
-        break;
-      case 2213:
-        addMeta("TwoTv CamerasChanger Position", data);
-        break;
-      case 2214:
-        addMeta("Beamsplitter Cameras", data);
-        break;
-      case 2215:
-        addMeta("Ocular Shutter", data);
-        break;
-      case 2216:
-        addMeta("TwoTv CamerasChangerCube", data);
-        break;
-      case 2218:
-        addMeta("Ocular Magnification", data);
-        break;
-      case 2219:
-        addMeta("Camera Adapter Magnification", data);
-        break;
-      case 2220:
-        addMeta("Microscope Port", data);
-        break;
-      case 2221:
-        addMeta("Ocular Total Magnification", data);
-        break;
-      case 2222:
-        addMeta("Field of View", data);
-        break;
-      case 2223:
-        addMeta("Ocular", data);
-        break;
-      case 2224:
-        addMeta("CameraAdapter", data);
-        break;
-      case 2225:
-        addMeta("StageJoystickEnabled", data);
-        break;
-      case 2226:
-        addMeta("ContrastManager Contrast Method", data);
-        break;
-      case 2229:
-        addMeta("CamerasChanger Beamsplitter Type", data);
-        break;
-      case 2235:
-        addMeta("Rearport Slider Position", data);
-        break;
-      case 2236:
-        addMeta("Rearport Source", data);
-        break;
-      case 2237:
-        addMeta("Beamsplitter Type Infinity Space", data);
-        break;
-      case 2238:
-        addMeta("Fluorescence Attenuator", data);
-        break;
-      case 2239:
-        addMeta("Fluorescence Attenuator Position", data);
-        break;
-      case 2261:
-        addMeta("Objective ID", data);
-        break;
-      case 2262:
-        addMeta("Reflector ID", data);
-        break;
-      case 2307:
-        addMeta("Camera Framestart Left", data);
-        break;
-      case 2308:
-        addMeta("Camera Framestart Top", data);
-        break;
-      case 2309:
-        addMeta("Camera Frame Width", data);
-        break;
-      case 2310:
-        addMeta("Camera Frame Height", data);
-        break;
-      case 2311:
-        addMeta("Camera Binning", data);
-        break;
-      case 2312:
-        addMeta("CameraFrameFull", data);
-        break;
-      case 2313:
-        addMeta("CameraFramePixelDistance", data);
-        break;
-      case 2318:
-        addMeta("DataFormatUseScaling", data);
-        break;
-      case 2319:
-        addMeta("CameraFrameImageOrientation", data);
-        break;
-      case 2320:
-        addMeta("VideoMonochromeSignalType", data);
-        break;
-      case 2321:
-        addMeta("VideoColorSignalType", data);
-        break;
-      case 2322:
-        addMeta("MeteorChannelInput", data);
-        break;
-      case 2323:
-        addMeta("MeteorChannelSync", data);
-        break;
-      case 2324:
-        addMeta("WhiteBalanceEnabled", data);
-        break;
-      case 2325:
-        addMeta("CameraWhiteBalanceRed", data);
-        break;
-      case 2326:
-        addMeta("CameraWhiteBalanceGreen", data);
-        break;
-      case 2327:
-        addMeta("CameraWhiteBalanceBlue", data);
-        break;
-      case 2331:
-        addMeta("CameraFrameScalingFactor", data);
-        break;
-      case 2562:
-        addMeta("Meteor Camera Type", data);
-        break;
-      case 2564:
-        addMeta("Exposure Time [ms]", data);
-        break;
-      case 2568:
-        addMeta("CameraExposureTimeAutoCalculate", data);
-        break;
-      case 2569:
-        addMeta("Meteor Gain Value", data);
-        break;
-      case 2571:
-        addMeta("Meteor Gain Automatic", data);
-        break;
-      case 2572:
-        addMeta("MeteorAdjustHue", data);
-        break;
-      case 2573:
-        addMeta("MeteorAdjustSaturation", data);
-        break;
-      case 2574:
-        addMeta("MeteorAdjustRedLow", data);
-        break;
-      case 2575:
-        addMeta("MeteorAdjustGreenLow", data);
-        break;
-      case 2576:
-        addMeta("Meteor Blue Low", data);
-        break;
-      case 2577:
-        addMeta("MeteorAdjustRedHigh", data);
-        break;
-      case 2578:
-        addMeta("MeteorAdjustGreenHigh", data);
-        break;
-      case 2579:
-        addMeta("MeteorBlue High", data);
-        break;
-      case 2582:
-        addMeta("CameraExposureTimeCalculationControl", data);
-        break;
-      case 2585:
-        addMeta("AxioCamFadingCorrectionEnable", data);
-        break;
-      case 2587:
-        addMeta("CameraLiveImage", data);
-        break;
-      case 2588:
-        addMeta("CameraLiveEnabled", data);
-        break;
-      case 2589:
-        addMeta("LiveImageSyncObjectName", data);
-        break;
-      case 2590:
-        addMeta("CameraLiveSpeed", data);
-        break;
-      case 2591:
-        addMeta("CameraImage", data);
-        break;
-      case 2592:
-        addMeta("CameraImageWidth", data);
-        break;
-      case 2593:
-        addMeta("CameraImageHeight", data);
-        break;
-      case 2594:
-        addMeta("CameraImagePixelType", data);
-        break;
-      case 2595:
-        addMeta("CameraImageShMemoryName", data);
-        break;
-      case 2596:
-        addMeta("CameraLiveImageWidth", data);
-        break;
-      case 2597:
-        addMeta("CameraLiveImageHeight", data);
-        break;
-      case 2598:
-        addMeta("CameraLiveImagePixelType", data);
-        break;
-      case 2599:
-        addMeta("CameraLiveImageShMemoryName", data);
-        break;
-      case 2600:
-        addMeta("CameraLiveMaximumSpeed", data);
-        break;
-      case 2601:
-        addMeta("CameraLiveBinning", data);
-        break;
-      case 2602:
-        addMeta("CameraLiveGainValue", data);
-        break;
-      case 2603:
-        addMeta("CameraLiveExposureTimeValue", data);
-        break;
-      case 2604:
-        addMeta("CameraLiveScalingFactor", data);
-        break;
-      case 2819:
-        addMeta("Image Index Z", data);
-        zIndex = Integer.parseInt(DataTools.stripString(data));
-        break;
-      case 2820:
-        addMeta("Image Channel Index", data);
-        cIndex = Integer.parseInt(DataTools.stripString(data));
-        break;
-      case 2821:
-        addMeta("Image Index T", data);
-        tIndex = Integer.parseInt(DataTools.stripString(data));
-        break;
-      case 2822:
-        addMeta("ImageTile Index", data);
-        break;
-      case 2823:
-        addMeta("Image acquisition Index", data);
-        break;
-      case 2827:
-        addMeta("Image IndexS", data);
-        break;
-      case 2841:
-        addMeta("Original Stage Position X", data);
-        break;
-      case 2842:
-        addMeta("Original Stage Position Y", data);
-        break;
-      case 3088:
-        addMeta("LayerDrawFlags", data);
-        break;
-      case 3334:
-        addMeta("RemainingTime", data);
-        break;
-      case 3585:
-        addMeta("User Field 1", data);
-        break;
-      case 3586:
-        addMeta("User Field 2", data);
-        break;
-      case 3587:
-        addMeta("User Field 3", data);
-        break;
-      case 3588:
-        addMeta("User Field 4", data);
-        break;
-      case 3589:
-        addMeta("User Field 5", data);
-        break;
-      case 3590:
-        addMeta("User Field 6", data);
-        break;
-      case 3591:
-        addMeta("User Field 7", data);
-        break;
-      case 3592:
-        addMeta("User Field 8", data);
-        break;
-      case 3593:
-        addMeta("User Field 9", data);
-        break;
-      case 3594:
-        addMeta("User Field 10", data);
-        break;
-      case 3840:
-        addMeta("ID", data);
-        break;
-      case 3841:
-        addMeta("Name", data);
-        break;
-      case 3842:
-        addMeta("Value", data);
-        break;
-      case 5501:
-        addMeta("PvCamClockingMode", data);
-        break;
-      case 8193:
-        addMeta("Autofocus Status Report", data);
-        break;
-      case 8194:
-        addMeta("Autofocus Position", data);
-        break;
-      case 8195:
-        addMeta("Autofocus Position Offset", data);
-        break;
-      case 8196:
-        addMeta("Autofocus Empty Field Threshold", data);
-        break;
-      case 8197:
-        addMeta("Autofocus Calibration Name", data);
-        break;
-      case 8198:
-        addMeta("Autofocus Current Calibration Item", data);
-        break;
-      case 20478:
-        addMeta("tag_ID_20478", data);
-        break;
-      case 65537:
-        addMeta("CameraFrameFullWidth", data);
-        break;
-      case 65538:
-        addMeta("CameraFrameFullHeight", data);
-        break;
-      case 65541:
-        addMeta("AxioCam Shutter Signal", data);
-        break;
-      case 65542:
-        addMeta("AxioCam Delay Time", data);
-        break;
-      case 65543:
-        addMeta("AxioCam Shutter Control", data);
-        break;
-      case 65544:
-        addMeta("AxioCam BlackRefIsCalculated", data);
-        break;
-      case 65545:
-        addMeta("AxioCam Black Reference", data);
-        break;
-      case 65547:
-        addMeta("Camera Shading Correction", data);
-        break;
-      case 65550:
-        addMeta("AxioCam Enhance Color", data);
-        break;
-      case 65551:
-        addMeta("AxioCam NIR Mode", data);
-        break;
-      case 65552:
-        addMeta("CameraShutterCloseDelay", data);
-        break;
-      case 65553:
-        addMeta("CameraWhiteBalanceAutoCalculate", data);
-        break;
-      case 65556:
-        addMeta("AxioCam NIR Mode Available", data);
-        break;
-      case 65557:
-        addMeta("AxioCam Fading Correction Available", data);
-        break;
-      case 65559:
-        addMeta("AxioCam Enhance Color Available", data);
-        break;
-      case 65565:
-        addMeta("MeteorVideoNorm", data);
-        break;
-      case 65566:
-        addMeta("MeteorAdjustWhiteReference", data);
-        break;
-      case 65567:
-        addMeta("MeteorBlackReference", data);
-        break;
-      case 65568:
-        addMeta("MeteorChannelInputCountMono", data);
-        break;
-      case 65570:
-        addMeta("MeteorChannelInputCountRGB", data);
-        break;
-      case 65571:
-        addMeta("MeteorEnableVCR", data);
-        break;
-      case 65572:
-        addMeta("Meteor Brightness", data);
-        break;
-      case 65573:
-        addMeta("Meteor Contrast", data);
-        break;
-      case 65575:
-        addMeta("AxioCam Selector", data);
-        break;
-      case 65576:
-        addMeta("AxioCam Type", data);
-        break;
-      case 65577:
-        addMeta("AxioCam Info", data);
-        break;
-      case 65580:
-        addMeta("AxioCam Resolution", data);
-        break;
-      case 65581:
-        addMeta("AxioCam Color Model", data);
-        break;
-      case 65582:
-        addMeta("AxioCam MicroScanning", data);
-        break;
-      case 65585:
-        addMeta("Amplification Index", data);
-        break;
-      case 65586:
-        addMeta("Device Command", data);
-        break;
-      case 65587:
-        addMeta("BeamLocation", data);
-        break;
-      case 65588:
-        addMeta("ComponentType", data);
-        break;
-      case 65589:
-        addMeta("ControllerType", data);
-        break;
-      case 65590:
-        addMeta("CameraWhiteBalanceCalculationRedPaint", data);
-        break;
-      case 65591:
-        addMeta("CameraWhiteBalanceCalculationBluePaint", data);
-        break;
-      case 65592:
-        addMeta("CameraWhiteBalanceSetRed", data);
-        break;
-      case 65593:
-        addMeta("CameraWhiteBalanceSetGreen", data);
-        break;
-      case 65594:
-        addMeta("CameraWhiteBalanceSetBlue", data);
-        break;
-      case 65595:
-        addMeta("CameraWhiteBalanceSetTargetRed", data);
-        break;
-      case 65596:
-        addMeta("CameraWhiteBalanceSetTargetGreen", data);
-        break;
-      case 65597:
-        addMeta("CameraWhiteBalanceSetTargetBlue", data);
-        break;
-      case 65598:
-        addMeta("ApotomeCamCalibrationMode", data);
-        break;
-      case 65599:
-        addMeta("ApoTome Grid Position", data);
-        break;
-      case 65600:
-        addMeta("ApotomeCamScannerPosition", data);
-        break;
-      case 65601:
-        addMeta("ApoTome Full Phase Shift", data);
-        break;
-      case 65602:
-        addMeta("ApoTome Grid Name", data);
-        break;
-      case 65603:
-        addMeta("ApoTome Staining", data);
-        break;
-      case 65604:
-        addMeta("ApoTome Processing Mode", data);
-        break;
-      case 65605:
-        addMeta("ApotmeCamLiveCombineMode", data);
-        break;
-      case 65606:
-        addMeta("ApoTome Filter Name", data);
-        break;
-      case 65607:
-        addMeta("Apotome Filter Strength", data);
-        break;
-      case 65608:
-        addMeta("ApotomeCamFilterHarmonics", data);
-        break;
-      case 65609:
-        addMeta("ApoTome Grating Period", data);
-        break;
-      case 65610:
-        addMeta("ApoTome Auto Shutter Used", data);
-        break;
-      case 65611:
-        addMeta("Apotome Cam Status", data);
-        break;
-      case 65612:
-        addMeta("ApotomeCamNormalize", data);
-        break;
-      case 65613:
-        addMeta("ApotomeCamSettingsManager", data);
-        break;
-      case 65614:
-        addMeta("DeepviewCamSupervisorMode", data);
-        break;
-      case 65615:
-        addMeta("DeepView Processing", data);
-        break;
-      case 65616:
-        addMeta("DeepviewCamFilterName", data);
-        break;
-      case 65617:
-        addMeta("DeepviewCamStatus", data);
-        break;
-      case 65618:
-        addMeta("DeepviewCamSettingsManager", data);
-        break;
-      case 65619:
-        addMeta("DeviceScalingName", data);
-        break;
-      case 65620:
-        addMeta("CameraShadingIsCalculated", data);
-        break;
-      case 65621:
-        addMeta("CameraShadingCalculationName", data);
-        break;
-      case 65622:
-        addMeta("CameraShadingAutoCalculate", data);
-        break;
-      case 65623:
-        addMeta("CameraTriggerAvailable", data);
-        break;
-      case 65626:
-        addMeta("CameraShutterAvailable", data);
-        break;
-      case 65627:
-        addMeta("AxioCam ShutterMicroScanningEnable", data);
-        break;
-      case 65628:
-        addMeta("ApotomeCamLiveFocus", data);
-        break;
-      case 65629:
-        addMeta("DeviceInitStatus", data);
-        break;
-      case 65630:
-        addMeta("DeviceErrorStatus", data);
-        break;
-      case 65631:
-        addMeta("ApotomeCamSliderInGridPosition", data);
-        break;
-      case 65632:
-        addMeta("Orca NIR Mode Used", data);
-        break;
-      case 65633:
-        addMeta("Orca Analog Gain", data);
-        break;
-      case 65634:
-        addMeta("Orca Analog Offset", data);
-        break;
-      case 65635:
-        addMeta("Orca Binning", data);
-        break;
-      case 65636:
-        addMeta("Orca Bit Depth", data);
-        break;
-      case 65637:
-        addMeta("ApoTome Averaging Count", data);
-        break;
-      case 65638:
-        addMeta("DeepView DoF", data);
-        break;
-      case 65639:
-        addMeta("DeepView EDoF", data);
-        break;
-      case 65643:
-        addMeta("DeepView Slider Name", data);
-        break;
-      case 65655:
-        addMeta("DeepView Slider Name", data);
-        break;
-      case 5439491:
-        addMeta("Acquisition Sofware", data);
-        break;
-      case 16777488:
-        addMeta("Excitation Wavelength", data);
-        break;
-      case 16777489:
-        addMeta("Emission Wavelength", data);
-        break;
-      case 101515267:
-        addMeta("File Name", data);
-        break;
+      case 222: return "Compression"; 
+      case 258: return "BlackValue";
+      case 259: return "WhiteValue";
+      case 260: return "ImageDataMappingAutoRange";
+      case 261: return "Thumbnail";
+      case 262: return "GammaValue";
+      case 264: return "ImageOverExposure";
+      case 265: return "ImageRelativeTime1";
+      case 266: return "ImageRelativeTime2";
+      case 267: return "ImageRelativeTime3";
+      case 268: return "ImageRelativeTime4";
+      case 333: return "RelFocusPosition1";
+      case 334: return "RelFocusPosition2";
+      case 513: return "ObjectType";
+      case 515: return "ImageWidth";
+      case 516: return "ImageHeight";
+      case 517: return "Number Raw Count";
+      case 518: return "PixelType";
+      case 519: return "NumberOfRawImages";
+      case 520: return "ImageSize";
+      case 523: return "Acquisition pause annotation";
+      case 530: return "Document Subtype";
+      case 531: return "Acquisition Bit Depth";
+      case 532: return "Image Memory Usage (RAM)";
+      case 534: return "Z-Stack single representative";
+      case 769: return "Scale Factor for X";
+      case 770: return "Scale Unit for X";
+      case 771: return "Scale Width";
+      case 772: return "Scale Factor for Y";
+      case 773: return "Scale Unit for Y";
+      case 774: return "Scale Height";
+      case 775: return "Scale Factor for Z";
+      case 776: return "Scale Unit for Z";
+      case 777: return "Scale Depth";
+      case 778: return "Scaling Parent";
+      case 1001: return "Date";
+      case 1002: return "code";
+      case 1003: return "Source";
+      case 1004: return "Message";
+      case 1025: return "Acquisition Date";
+      case 1026: return "8-bit acquisition";
+      case 1027: return "Camera Bit Depth";
+      case 1029: return "MonoReferenceLow";
+      case 1030: return "MonoReferenceHigh";
+      case 1031: return "RedReferenceLow";
+      case 1032: return "RedReferenceHigh";
+      case 1033: return "GreenReferenceLow";
+      case 1034: return "GreenReferenceHigh";
+      case 1035: return "BlueReferenceLow";
+      case 1036: return "BlueReferenceHigh";
+      case 1041: return "FrameGrabber Name";
+      case 1042: return "Camera";
+      case 1044: return "CameraTriggerSignalType";
+      case 1045: return "CameraTriggerEnable";
+      case 1046: return "GrabberTimeout";
+      case 1281: return "MultiChannelEnabled";
+      case 1282: return "MultiChannel Color";
+      case 1283: return "MultiChannel Weight";
+      case 1284: return "Channel Name";
+      case 1536: return "DocumentInformationGroup";
+      case 1537: return "Title";
+      case 1538: return "Author";
+      case 1539: return "Keywords";
+      case 1540: return "Comments";
+      case 1541: return "SampleID";
+      case 1542: return "Subject";
+      case 1543: return "RevisionNumber";
+      case 1544: return "Save Folder";
+      case 1545: return "FileLink";
+      case 1546: return "Document Type";
+      case 1547: return "Storage Media";
+      case 1548: return "File ID";
+      case 1549: return "Reference";
+      case 1550: return "File Date";
+      case 1551: return "File Size";
+      case 1553: return "Filename";
+      case 1792: return "ProjectGroup";
+      case 1793: return "Acquisition Date";
+      case 1794: return "Last modified by";
+      case 1795: return "User company";
+      case 1796: return "User company logo";
+      case 1797: return "Image";
+      case 1800: return "User ID";
+      case 1801: return "User Name";
+      case 1802: return "User City";
+      case 1803: return "User Address";
+      case 1804: return "User Country";
+      case 1805: return "User Phone";
+      case 1806: return "User Fax";
+      case 2049: return "Objective Name";
+      case 2050: return "Optovar";
+      case 2051: return "Reflector";
+      case 2052: return "Condenser Contrast";
+      case 2053: return "Transmitted Light Filter 1";
+      case 2054: return "Transmitted Light Filter 2";
+      case 2055: return "Reflected Light Shutter";
+      case 2056: return "Condenser Front Lens";
+      case 2057: return "Excitation Filter Name";
+      case 2060: return "Transmitted Light Fieldstop Aperture";
+      case 2061: return "Reflected Light Aperture";
+      case 2062: return "Condenser N.A.";
+      case 2063: return "Light Path";
+      case 2064: return "HalogenLampOn";
+      case 2065: return "Halogen Lamp Mode";
+      case 2066: return "Halogen Lamp Voltage";
+      case 2068: return "Fluorescence Lamp Level";
+      case 2069: return "Fluorescence Lamp Intensity";
+      case 2070: return "LightManagerEnabled";
+      case 2071: return "tag_ID_2071";
+      case 2072: return "Focus Position";
+      case 2073: return "Stage Position X";
+      case 2074: return "Stage Position Y";
+      case 2075: return "Microscope Name";
+      case 2076: return "Objective Magnification";
+      case 2077: return "Objective N.A.";
+      case 2078: return "MicroscopeIllumination";
+      case 2079: return "External Shutter 1";
+      case 2080: return "External Shutter 2";
+      case 2081: return "External Shutter 3";
+      case 2082: return "External Filter Wheel 1 Name";
+      case 2083: return "External Filter Wheel 2 Name";
+      case 2084: return "Parfocal Correction";
+      case 2086: return "External Shutter 4";
+      case 2087: return "External Shutter 5";
+      case 2088: return "External Shutter 6";
+      case 2089: return "External Filter Wheel 3 Name";
+      case 2090: return "External Filter Wheel 4 Name";
+      case 2103: return "Objective Turret Position";
+      case 2104: return "Objective Contrast Method";
+      case 2105: return "Objective Immersion Type";
+      case 2107: return "Reflector Position";
+      case 2109: return "Transmitted Light Filter 1 Position";
+      case 2110: return "Transmitted Light Filter 2 Position";
+      case 2112: return "Excitation Filter Position";
+      case 2113: return "Lamp Mirror Position";
+      case 2114: return "External Filter Wheel 1 Position";
+      case 2115: return "External Filter Wheel 2 Position";
+      case 2116: return "External Filter Wheel 3 Position";
+      case 2117: return "External Filter Wheel 4 Position";
+      case 2118: return "Lightmanager Mode";
+      case 2119: return "Halogen Lamp Calibration";
+      case 2120: return "CondenserNAGoSpeed";
+      case 2121: return "TransmittedLightFieldstopGoSpeed";
+      case 2122: return "OptovarGoSpeed";
+      case 2123: return "Focus calibrated";
+      case 2124: return "FocusBasicPosition";
+      case 2125: return "FocusPower";
+      case 2126: return "FocusBacklash";
+      case 2127: return "FocusMeasurementOrigin";
+      case 2128: return "FocusMeasurementDistance";
+      case 2129: return "FocusSpeed";
+      case 2130: return "FocusGoSpeed";
+      case 2131: return "FocusDistance";
+      case 2132: return "FocusInitPosition";
+      case 2133: return "Stage calibrated";
+      case 2134: return "StagePower";
+      case 2135: return "StageXBacklash";
+      case 2136: return "StageYBacklash";
+      case 2137: return "StageSpeedX";
+      case 2138: return "StageSpeedY";
+      case 2139: return "StageSpeed";
+      case 2140: return "StageGoSpeedX";
+      case 2141: return "StageGoSpeedY";
+      case 2142: return "StageStepDistanceX";
+      case 2143: return "StageStepDistanceY";
+      case 2144: return "StageInitialisationPositionX";
+      case 2145: return "StageInitialisationPositionY";
+      case 2146: return "MicroscopeMagnification";
+      case 2147: return "ReflectorMagnification";
+      case 2148: return "LampMirrorPosition";
+      case 2149: return "FocusDepth";
+      case 2150: return "MicroscopeType";
+      case 2151: return "Objective Working Distance";
+      case 2152: return "ReflectedLightApertureGoSpeed";
+      case 2153: return "External Shutter";
+      case 2154: return "ObjectiveImmersionStop";
+      case 2155: return "Focus Start Speed";
+      case 2156: return "Focus Acceleration";
+      case 2157: return "ReflectedLightFieldstop";
+      case 2158: return "ReflectedLightFieldstopGoSpeed";
+      case 2159: return "ReflectedLightFilter 1";
+      case 2160: return "ReflectedLightFilter 2";
+      case 2161: return "ReflectedLightFilter1Position";
+      case 2162: return "ReflectedLightFilter2Position";
+      case 2163: return "TransmittedLightAttenuator";
+      case 2164: return "ReflectedLightAttenuator";
+      case 2165: return "Transmitted Light Shutter";
+      case 2166: return "TransmittedLightAttenuatorGoSpeed";
+      case 2167: return "ReflectedLightAttenuatorGoSpeed";
+      case 2176: return "TransmittedLightVirtualFilterPosition";
+      case 2177: return "TransmittedLightVirtualFilter";
+      case 2178: return "ReflectedLightVirtualFilterPosition";
+      case 2179: return "ReflectedLightVirtualFilter";
+      case 2180: return "ReflectedLightHalogenLampMode";
+      case 2181: return "ReflectedLightHalogenLampVoltage";
+      case 2182: return "ReflectedLightHalogenLampColorTemperature";
+      case 2183: return "ContrastManagerMode";
+      case 2184: return "Dazzle Protection Active";
+      case 2195: return "Zoom";
+      case 2196: return "ZoomGoSpeed";
+      case 2197: return "LightZoom";
+      case 2198: return "LightZoomGoSpeed";
+      case 2199: return "LightZoomCoupled";
+      case 2200: return "TransmittedLightHalogenLampMode";
+      case 2201: return "TransmittedLightHalogenLampVoltage";
+      case 2202: return "TransmittedLightHalogenLampColorTemperature";
+      case 2203: return "Reflected Coldlight Mode";
+      case 2204: return "Reflected Coldlight Intensity";
+      case 2205: return "Reflected Coldlight Color Temperature";
+      case 2206: return "Transmitted Coldlight Mode";
+      case 2207: return "Transmitted Coldlight Intensity";
+      case 2208: return "Transmitted Coldlight Color Temperature";
+      case 2209: return "Infinityspace Portchanger Position";
+      case 2210: return "Beamsplitter Infinity Space";
+      case 2211: return "TwoTv VisCamChanger Position";
+      case 2212: return "Beamsplitter Ocular";
+      case 2213: return "TwoTv CamerasChanger Position";
+      case 2214: return "Beamsplitter Cameras";
+      case 2215: return "Ocular Shutter";
+      case 2216: return "TwoTv CamerasChangerCube";
+      case 2218: return "Ocular Magnification";
+      case 2219: return "Camera Adapter Magnification";
+      case 2220: return "Microscope Port";
+      case 2221: return "Ocular Total Magnification";
+      case 2222: return "Field of View";
+      case 2223: return "Ocular";
+      case 2224: return "CameraAdapter";
+      case 2225: return "StageJoystickEnabled";
+      case 2226: return "ContrastManager Contrast Method";
+      case 2229: return "CamerasChanger Beamsplitter Type";
+      case 2235: return "Rearport Slider Position";
+      case 2236: return "Rearport Source";
+      case 2237: return "Beamsplitter Type Infinity Space";
+      case 2238: return "Fluorescence Attenuator";
+      case 2239: return "Fluorescence Attenuator Position";
+      case 2261: return "Objective ID";
+      case 2262: return "Reflector ID";
+      case 2307: return "Camera Framestart Left";
+      case 2308: return "Camera Framestart Top";
+      case 2309: return "Camera Frame Width";
+      case 2310: return "Camera Frame Height";
+      case 2311: return "Camera Binning";
+      case 2312: return "CameraFrameFull";
+      case 2313: return "CameraFramePixelDistance";
+      case 2318: return "DataFormatUseScaling";
+      case 2319: return "CameraFrameImageOrientation";
+      case 2320: return "VideoMonochromeSignalType";
+      case 2321: return "VideoColorSignalType";
+      case 2322: return "MeteorChannelInput";
+      case 2323: return "MeteorChannelSync";
+      case 2324: return "WhiteBalanceEnabled";
+      case 2325: return "CameraWhiteBalanceRed";
+      case 2326: return "CameraWhiteBalanceGreen";
+      case 2327: return "CameraWhiteBalanceBlue";
+      case 2331: return "CameraFrameScalingFactor";
+      case 2562: return "Meteor Camera Type";
+      case 2564: return "Exposure Time [ms]";
+      case 2568: return "CameraExposureTimeAutoCalculate";
+      case 2569: return "Meteor Gain Value";
+      case 2571: return "Meteor Gain Automatic";
+      case 2572: return "MeteorAdjustHue";
+      case 2573: return "MeteorAdjustSaturation";
+      case 2574: return "MeteorAdjustRedLow";
+      case 2575: return "MeteorAdjustGreenLow";
+      case 2576: return "Meteor Blue Low";
+      case 2577: return "MeteorAdjustRedHigh";
+      case 2578: return "MeteorAdjustGreenHigh";
+      case 2579: return "MeteorBlue High";
+      case 2582: return "CameraExposureTimeCalculationControl";
+      case 2585: return "AxioCamFadingCorrectionEnable";
+      case 2587: return "CameraLiveImage";
+      case 2588: return "CameraLiveEnabled";
+      case 2589: return "LiveImageSyncObjectName";
+      case 2590: return "CameraLiveSpeed";
+      case 2591: return "CameraImage";
+      case 2592: return "CameraImageWidth";
+      case 2593: return "CameraImageHeight";
+      case 2594: return "CameraImagePixelType";
+      case 2595: return "CameraImageShMemoryName";
+      case 2596: return "CameraLiveImageWidth";
+      case 2597: return "CameraLiveImageHeight";
+      case 2598: return "CameraLiveImagePixelType";
+      case 2599: return "CameraLiveImageShMemoryName";
+      case 2600: return "CameraLiveMaximumSpeed";
+      case 2601: return "CameraLiveBinning";
+      case 2602: return "CameraLiveGainValue";
+      case 2603: return "CameraLiveExposureTimeValue";
+      case 2604: return "CameraLiveScalingFactor";
+      case 2819: return "Image Index Z";
+      case 2820: return "Image Channel Index";
+      case 2821: return "Image Index T";
+      case 2822: return "ImageTile Index";
+      case 2823: return "Image acquisition Index";
+      case 2827: return "Image IndexS";
+      case 2841: return "Original Stage Position X";
+      case 2842: return "Original Stage Position Y";
+      case 3088: return "LayerDrawFlags";
+      case 3334: return "RemainingTime";
+      case 3585: return "User Field 1";
+      case 3586: return "User Field 2";
+      case 3587: return "User Field 3";
+      case 3588: return "User Field 4";
+      case 3589: return "User Field 5";
+      case 3590: return "User Field 6";
+      case 3591: return "User Field 7";
+      case 3592: return "User Field 8";
+      case 3593: return "User Field 9";
+      case 3594: return "User Field 10";
+      case 3840: return "ID";
+      case 3841: return "Name";
+      case 3842: return "Value";
+      case 5501: return "PvCamClockingMode";
+      case 8193: return "Autofocus Status Report";
+      case 8194: return "Autofocus Position";
+      case 8195: return "Autofocus Position Offset";
+      case 8196: return "Autofocus Empty Field Threshold";
+      case 8197: return "Autofocus Calibration Name";
+      case 8198: return "Autofocus Current Calibration Item";
+      case 20478: return "tag_ID_20478";
+      case 65537: return "CameraFrameFullWidth";
+      case 65538: return "CameraFrameFullHeight";
+      case 65541: return "AxioCam Shutter Signal";
+      case 65542: return "AxioCam Delay Time";
+      case 65543: return "AxioCam Shutter Control";
+      case 65544: return "AxioCam BlackRefIsCalculated";
+      case 65545: return "AxioCam Black Reference";
+      case 65547: return "Camera Shading Correction";
+      case 65550: return "AxioCam Enhance Color";
+      case 65551: return "AxioCam NIR Mode";
+      case 65552: return "CameraShutterCloseDelay";
+      case 65553: return "CameraWhiteBalanceAutoCalculate";
+      case 65556: return "AxioCam NIR Mode Available";
+      case 65557: return "AxioCam Fading Correction Available";
+      case 65559: return "AxioCam Enhance Color Available";
+      case 65565: return "MeteorVideoNorm";
+      case 65566: return "MeteorAdjustWhiteReference";
+      case 65567: return "MeteorBlackReference";
+      case 65568: return "MeteorChannelInputCountMono";
+      case 65570: return "MeteorChannelInputCountRGB";
+      case 65571: return "MeteorEnableVCR";
+      case 65572: return "Meteor Brightness";
+      case 65573: return "Meteor Contrast";
+      case 65575: return "AxioCam Selector";
+      case 65576: return "AxioCam Type";
+      case 65577: return "AxioCam Info";
+      case 65580: return "AxioCam Resolution";
+      case 65581: return "AxioCam Color Model";
+      case 65582: return "AxioCam MicroScanning";
+      case 65585: return "Amplification Index";
+      case 65586: return "Device Command";
+      case 65587: return "BeamLocation";
+      case 65588: return "ComponentType";
+      case 65589: return "ControllerType";
+      case 65590: return "CameraWhiteBalanceCalculationRedPaint";
+      case 65591: return "CameraWhiteBalanceCalculationBluePaint";
+      case 65592: return "CameraWhiteBalanceSetRed";
+      case 65593: return "CameraWhiteBalanceSetGreen";
+      case 65594: return "CameraWhiteBalanceSetBlue";
+      case 65595: return "CameraWhiteBalanceSetTargetRed";
+      case 65596: return "CameraWhiteBalanceSetTargetGreen";
+      case 65597: return "CameraWhiteBalanceSetTargetBlue";
+      case 65598: return "ApotomeCamCalibrationMode";
+      case 65599: return "ApoTome Grid Position";
+      case 65600: return "ApotomeCamScannerPosition";
+      case 65601: return "ApoTome Full Phase Shift";
+      case 65602: return "ApoTome Grid Name";
+      case 65603: return "ApoTome Staining";
+      case 65604: return "ApoTome Processing Mode";
+      case 65605: return "ApotmeCamLiveCombineMode";
+      case 65606: return "ApoTome Filter Name";
+      case 65607: return "Apotome Filter Strength";
+      case 65608: return "ApotomeCamFilterHarmonics";
+      case 65609: return "ApoTome Grating Period";
+      case 65610: return "ApoTome Auto Shutter Used";
+      case 65611: return "Apotome Cam Status";
+      case 65612: return "ApotomeCamNormalize";
+      case 65613: return "ApotomeCamSettingsManager";
+      case 65614: return "DeepviewCamSupervisorMode";
+      case 65615: return "DeepView Processing";
+      case 65616: return "DeepviewCamFilterName";
+      case 65617: return "DeepviewCamStatus";
+      case 65618: return "DeepviewCamSettingsManager";
+      case 65619: return "DeviceScalingName";
+      case 65620: return "CameraShadingIsCalculated";
+      case 65621: return "CameraShadingCalculationName";
+      case 65622: return "CameraShadingAutoCalculate";
+      case 65623: return "CameraTriggerAvailable";
+      case 65626: return "CameraShutterAvailable";
+      case 65627: return "AxioCam ShutterMicroScanningEnable";
+      case 65628: return "ApotomeCamLiveFocus";
+      case 65629: return "DeviceInitStatus";
+      case 65630: return "DeviceErrorStatus";
+      case 65631: return "ApotomeCamSliderInGridPosition";
+      case 65632: return "Orca NIR Mode Used";
+      case 65633: return "Orca Analog Gain";
+      case 65634: return "Orca Analog Offset";
+      case 65635: return "Orca Binning";
+      case 65636: return "Orca Bit Depth";
+      case 65637: return "ApoTome Averaging Count";
+      case 65638: return "DeepView DoF";
+      case 65639: return "DeepView EDoF";
+      case 65643: return "DeepView Slider Name";
+      case 65655: return "DeepView Slider Name";
+      case 5439491: return "Acquisition Sofware";
+      case 16777488: return "Excitation Wavelength";
+      case 16777489: return "Emission Wavelength";
+      case 101515267: return "File Name";
       case 101253123:
       case 101777411:
-        addMeta("Image Name", data);
-        break;
-      default:
-        addMeta("" + tagID, data);
+        return "Image Name";
+      default: return "" + tagID; 
     }
   }
 

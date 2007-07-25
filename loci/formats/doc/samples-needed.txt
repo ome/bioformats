@@ -4,7 +4,6 @@ Alicona AL3D:
   - 16 bit data
 
 AVI:
-  - files with audio tracks and/or multiple video tracks
   - files compressed with a common, unsupported codec
   - 2+ GB files
 
@@ -51,7 +50,6 @@ Openlab LIFF:
 
 QuickTime:
   - any file compressed with a common, unsupported codec
-  - files with audio tracks and/or multiple video tracks
 
 Slidebook:
   - any, preferably acquired with most recent Slidebook software
@@ -75,4 +73,5 @@ Volocity MVD2:
     used
 
 Zeiss ZVI:
+  - JPEG compressed 
   - 2+ GB files
