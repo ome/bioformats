@@ -332,6 +332,14 @@ public final class BrowserLauncher {
           errorMessage = iae.getMessage();
           return false;
         }
+        catch (RuntimeException exc) {
+          // HACK: workaround for bug in Apache Axis2
+          Throwable cause = exc.getCause();
+          if (!(cause instanceof ClassNotFoundException)) throw exc;
+          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
+          errorMessage = cnfe.getMessage();
+          return false;
+        }
         break;
       case MRJ_2_1:
         try {
@@ -367,6 +375,14 @@ public final class BrowserLauncher {
           errorMessage = iae.getMessage();
           return false;
         }
+        catch (RuntimeException exc) {
+          // HACK: workaround for bug in Apache Axis2
+          Throwable cause = exc.getCause();
+          if (!(cause instanceof ClassNotFoundException)) throw exc;
+          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
+          errorMessage = cnfe.getMessage();
+          return false;
+        }
         break;
       case MRJ_3_0:
         try {
@@ -396,6 +412,14 @@ public final class BrowserLauncher {
           errorMessage = iae.getMessage();
           return false;
         }
+        catch (RuntimeException exc) {
+          // HACK: workaround for bug in Apache Axis2
+          Throwable cause = exc.getCause();
+          if (!(cause instanceof ClassNotFoundException)) throw exc;
+          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
+          errorMessage = cnfe.getMessage();
+          return false;
+        }
         break;
       case MRJ_3_1:
         try {
@@ -409,6 +433,14 @@ public final class BrowserLauncher {
         }
         catch (NoSuchMethodException nsme) {
           errorMessage = nsme.getMessage();
+          return false;
+        }
+        catch (RuntimeException exc) {
+          // HACK: workaround for bug in Apache Axis2
+          Throwable cause = exc.getCause();
+          if (!(cause instanceof ClassNotFoundException)) throw exc;
+          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
+          errorMessage = cnfe.getMessage();
           return false;
         }
         break;

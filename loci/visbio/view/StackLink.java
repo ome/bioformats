@@ -245,6 +245,12 @@ public class StackLink extends TransformLink {
       catch (ClassNotFoundException exc) { exc.printStackTrace(); }
       catch (IllegalAccessException exc) { exc.printStackTrace(); }
       catch (InstantiationException exc) { exc.printStackTrace(); }
+      catch (RuntimeException exc) {
+        // HACK: workaround for bug in Apache Axis2
+        Throwable cause = exc.getCause();
+        if (!(cause instanceof ClassNotFoundException)) throw exc;
+        exc.printStackTrace();
+      }
     }
     else if (numMaps > 1 && isImageRend) {
       // ImageRendererJ3D does not allow multiple mappings to Display.RGBA

@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -45,11 +43,6 @@ import org.xml.sax.SAXException;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEXMLMetadataStore implements MetadataStore {
-
-  // -- Static fields --
-
-  /** Logger for this class. */
-  //private static Log log = LogFactory.getLog(OMEXMLMetadataStore.class);
 
   // -- Fields --
 

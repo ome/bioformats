@@ -366,6 +366,11 @@ public class DataManager extends LogicManager {
       Class c = null;
       try { c = Class.forName(className); }
       catch (ClassNotFoundException exc) { }
+      catch (RuntimeException exc) {
+        // HACK: workaround for bug in Apache Axis2
+        Throwable cause = exc.getCause();
+        if (!(cause instanceof ClassNotFoundException)) throw exc;
+      }
       if (c == null) {
         System.err.println("Failed to identify transform #" + i +
           " class: " + className);

@@ -89,6 +89,13 @@ public class ND2Reader extends FormatReader {
         if (debug) LogTools.trace(err);
         noJ2k = true;
       }
+      catch (RuntimeException exc) {
+        // HACK: workaround for bug in Apache Axis2
+        Throwable cause = exc.getCause();
+        if (!(cause instanceof ClassNotFoundException)) throw exc;
+        if (debug) LogTools.trace(exc);
+        noJ2k = true;
+      }
       IIORegistry registry = IIORegistry.getDefaultInstance();
       if (j2kSpiClass != null) {
         Iterator providers = ServiceRegistry.lookupProviders(j2kSpiClass);

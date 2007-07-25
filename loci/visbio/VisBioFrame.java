@@ -369,6 +369,12 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
       else t.printStackTrace();
     }
     catch (NoSuchMethodException exc) { exc.printStackTrace(); }
+    catch (RuntimeException exc) {
+      // HACK: workaround for bug in Apache Axis2
+      Throwable cause = exc.getCause();
+      if (!(cause instanceof ClassNotFoundException)) throw exc;
+      exc.printStackTrace();
+    }
   }
 
   /** Gets VisBio program icon. */

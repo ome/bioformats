@@ -224,6 +224,12 @@ public class Template {
               catch (ClassNotFoundException c) {
                 st = Class.forName("org.openmicroscopy.xml.st." + map + "Node");
               }
+              catch (RuntimeException exc) {
+                // HACK: workaround for bug in Apache Axis2
+                Throwable cause = exc.getCause();
+                if (!(cause instanceof ClassNotFoundException)) throw exc;
+                st = Class.forName("org.openmicroscopy.xml.st." + map + "Node");
+              }
 
               Vector nodes = OMEXMLNode.createNodes(st,
                 DOMUtil.getChildElements(map, root.getDOMElement()));

@@ -117,6 +117,13 @@ public class ReflectedUniverse {
         if (debug) LogTools.trace(exc);
         throw new ReflectException("No such class: " + command, exc);
       }
+      catch (RuntimeException exc) {
+        // HACK: workaround for bug in Apache Axis2
+        Throwable cause = exc.getCause();
+        if (!(cause instanceof ClassNotFoundException)) throw exc;
+        if (debug) LogTools.trace(exc);
+        throw new ReflectException("No such class: " + command, exc);
+      }
       setVar(varName, c);
       return null;
     }

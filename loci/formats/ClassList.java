@@ -93,6 +93,12 @@ public class ClassList {
       catch (ExceptionInInitializerError err) {
         if (FormatHandler.debug) LogTools.trace(err);
       }
+      catch (RuntimeException exc) {
+        // HACK: workaround for bug in Apache Axis2
+        Throwable cause = exc.getCause();
+        if (!(cause instanceof ClassNotFoundException)) throw exc;
+        if (FormatHandler.debug) LogTools.trace(exc);
+      }
       if (c == null || (base != null && !base.isAssignableFrom(c))) {
         LogTools.println("Error: \"" + line + "\" is not valid.");
         continue;

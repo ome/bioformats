@@ -825,8 +825,7 @@ public final class OverlayIO {
         "class " + className + " does not extend OverlayObject.");
     }
     catch (ClassNotFoundException exc) {
-      System.err.println(classError +
-        "class " + className + " not found.");
+      System.err.println(classError + "class " + className + " not found.");
     }
     catch (IllegalAccessException exc) {
       System.err.println(classError +
@@ -843,6 +842,12 @@ public final class OverlayIO {
     catch (NoSuchMethodException exc) {
       System.err.println(classError +
         "no appropriate constructor for class " + className + ".");
+    }
+    catch (RuntimeException exc) {
+      // HACK: workaround for bug in Apache Axis2
+      Throwable cause = exc.getCause();
+      if (!(cause instanceof ClassNotFoundException)) throw exc;
+      System.err.println(classError + "class " + className + " not found.");
     }
     return obj;
   }

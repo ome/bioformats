@@ -229,6 +229,12 @@ public class ColorPane extends DialogPane
         catch (ClassNotFoundException exc) { exc.printStackTrace(); }
         catch (IllegalAccessException exc) { exc.printStackTrace(); }
         catch (InstantiationException exc) { exc.printStackTrace(); }
+        catch (RuntimeException exc) {
+          // HACK: workaround for bug in Apache Axis2
+          Throwable cause = exc.getCause();
+          if (!(cause instanceof ClassNotFoundException)) throw exc;
+          exc.printStackTrace();
+        }
       }
       if (dr == null) {
         // ImageRendererJ3D does not support multiple Display.RGBA mappings
