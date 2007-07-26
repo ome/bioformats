@@ -169,6 +169,13 @@ public class ImageWriter implements IFormatWriter {
     getWriter().saveBytes(bytes, last);
   }
 
+  /* @see IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries, 
+    boolean last) throws FormatException, IOException
+  {
+    getWriter().saveBytes(bytes, series, lastInSeries, last);
+  } 
+
   /* @see IFormatWriter#saveImage(Image, boolean) */
   public void saveImage(Image image, boolean last)
     throws FormatException, IOException
@@ -176,9 +183,21 @@ public class ImageWriter implements IFormatWriter {
     getWriter().saveImage(image, last);
   }
 
+  /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
+  public void saveImage(Image image, int series, boolean lastInSeries, 
+    boolean last) throws FormatException, IOException
+  {
+    getWriter().saveImage(image, series, lastInSeries, last);
+  }
+
   /* @see IFormatWriter#canDoStacks() */
   public boolean canDoStacks() {
     return getWriter().canDoStacks();
+  }
+
+  /* @see IFormatWriter#setMetadataRetrieve(MetadataRetrieve) */
+  public void setMetadataRetrieve(MetadataRetrieve r) {
+    for (int i=0; i<writers.length; i++) writers[i].setMetadataRetrieve(r);
   }
 
   /* @see IFormatWriter#setColorModel(ColorModel) */

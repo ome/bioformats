@@ -38,14 +38,34 @@ public interface IFormatWriter extends IFormatHandler {
   void saveImage(Image image, boolean last) throws FormatException, IOException;
 
   /**
+   * Saves the given image to the given series in the current file.
+   * If this image is the last one in the series, the lastInSeries flag
+   * must be set.
+   * If this image is the last one in the file, the last flag must be set.
+   */
+  void saveImage(Image image, int series, boolean lastInSeries, boolean last) 
+    throws FormatException, IOException;
+
+  /**
    * Saves the given byte array to the current file.
    * If this is the last array to be written, the last flag must be set.
    */
   void saveBytes(byte[] bytes, boolean last)
     throws FormatException, IOException;
 
+  /**
+   * Saves the given byte array to the given series in the current file.
+   * If this is the last array in the series, the lastInSeries flag must be set.
+   * If this is the last array to be written, the last flag must be set.
+   */
+  void saveBytes(byte[] bytes, int series, boolean lastInSeries, boolean last)
+    throws FormatException, IOException;
+
   /** Reports whether the writer can save multiple images to a single file. */
   boolean canDoStacks();
+
+  /** Sets the retrievable metadata. */
+  void setMetadataRetrieve(MetadataRetrieve r);
 
   /** Sets the color model. */
   void setColorModel(ColorModel cm);

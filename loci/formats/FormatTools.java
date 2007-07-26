@@ -446,4 +446,146 @@ public final class FormatTools {
     throw new IllegalStateException(header + msg);
   }
 
+  // -- Utility methods -- metadata conversion --
+
+  public static void convertMetadata(MetadataRetrieve source, 
+    MetadataStore dest)
+  {
+    Integer ii = null;
+    int globalPixCount = 0;
+
+    for (int i=0; i<source.getImageCount(); i++) {  
+      ii = new Integer(i); 
+      dest.setImage(source.getImageName(ii), source.getCreationDate(ii),
+        source.getDescription(ii), ii);
+    
+      dest.setDimensions(source.getPixelSizeX(ii), 
+        source.getPixelSizeY(ii), source.getPixelSizeZ(ii),
+        source.getPixelSizeC(ii), source.getPixelSizeT(ii), ii);
+    
+      for (int j=0; j<source.getPixelsCount(ii); j++) {
+        Integer p = new Integer(j); 
+        dest.setPixels(source.getSizeX(ii), source.getSizeY(ii),
+          source.getSizeZ(ii), source.getSizeC(ii), 
+          source.getSizeT(ii), 
+          new Integer(pixelTypeFromString(source.getPixelType(ii))), 
+          source.getBigEndian(ii), source.getDimensionOrder(ii), ii, p);
+   
+        dest.setDisplayOptions(source.getZoom(ii),
+          source.isRedChannelOn(ii), source.isGreenChannelOn(ii),
+          source.isBlueChannelOn(ii), source.isDisplayRGB(ii),
+          source.getColorMap(ii), source.getZStart(ii),
+          source.getZStop(ii), source.getTStart(ii),
+          source.getTStop(ii), ii, p, new Integer(0), new Integer(1),
+            new Integer(2), new Integer(0));
+
+        Integer globalPix = new Integer(globalPixCount);
+        for (int ch=0; ch<source.getChannelCount(globalPix); ch++) {
+          Integer c = new Integer(ch);
+          dest.setLogicalChannel(ch, source.getChannelName(globalPix, c),
+            source.getChannelNDFilter(globalPix, c), 
+            source.getEmWave(globalPix, c), source.getExWave(globalPix, c),
+            source.getPhotometricInterpretation(globalPix, c),
+            source.getMode(globalPix, c), globalPix);
+        
+          dest.setChannelGlobalMinMax(ch, source.getGlobalMin(globalPix, c),
+            source.getGlobalMax(globalPix, c), globalPix);
+        
+          dest.setDisplayChannel(c, source.getBlackLevel(globalPix, c),
+            source.getWhiteLevel(globalPix, c), source.getGamma(globalPix, c), 
+            globalPix);
+        } 
+
+        globalPixCount++; 
+      }
+  
+      dest.setImagingEnvironment(source.getTemperature(ii),
+        source.getAirPressure(ii), source.getHumidity(ii),
+        source.getCO2Percent(ii), ii);
+    }
+
+    for (int i=0; i<source.getExperimenterCount(); i++) {
+      ii = new Integer(i); 
+      dest.setExperimenter(source.getFirstName(ii), 
+        source.getLastName(ii), source.getEmail(ii),
+        source.getInstitution(ii), source.getDataDirectory(ii),
+        source.getGroup(ii), ii);
+    }
+
+    for (int i=0; i<source.getGroupCount(); i++) {
+      ii = new Integer(i); 
+      dest.setGroup(source.getGroupName(ii), source.getLeader(ii),
+        source.getContact(ii), ii);
+    }
+
+    for (int i=0; i<source.getInstrumentCount(); i++) {
+      ii = new Integer(i); 
+      dest.setInstrument(source.getManufacturer(ii),
+        source.getModel(ii), source.getSerialNumber(ii),
+        source.getType(ii), ii);
+    }
+
+    for (int i=0; i<source.getDisplayROICount(); i++) {
+      ii = new Integer(i); 
+      dest.setDisplayROI(source.getX0(ii), source.getY0(ii),
+        source.getZ0(ii), source.getX1(ii), source.getY1(ii),
+        source.getZ1(ii), source.getT0(ii), source.getT1(ii),
+        source.getDisplayOptions(ii), ii);
+    }
+
+    for (int i=0; i<source.getStageLabelCount(); i++) { 
+      ii = new Integer(i); 
+      dest.setStageLabel(source.getStageName(ii), source.getStageX(ii),
+        source.getStageY(ii), source.getStageZ(ii), ii);
+    }
+
+    ii = null;
+
+    dest.setPlaneInfo(0, 0, 0, source.getTimestamp(ii, ii, ii, ii),
+      source.getExposureTime(ii, ii, ii, ii), ii);
+
+    dest.setLightSource(source.getLightManufacturer(ii),
+      source.getLightModel(ii), source.getLightSerial(ii), ii, ii);
+
+    dest.setLaser(source.getLaserType(ii), source.getLaserMedium(ii),
+      source.getLaserWavelength(ii), source.isFrequencyDoubled(ii),
+      source.isTunable(ii), source.getPulse(ii),
+      source.getPower(ii), ii, ii, ii, ii);
+
+    dest.setFilament(source.getFilamentType(ii),
+      source.getFilamentPower(ii), ii, ii);
+
+    dest.setArc(source.getArcType(ii), source.getArcPower(ii), ii, ii);
+
+    dest.setDetector(source.getDetectorManufacturer(ii),
+      source.getDetectorModel(ii), source.getDetectorSerial(ii),
+      source.getDetectorType(ii), source.getDetectorGain(ii),
+      source.getDetectorVoltage(ii),
+      source.getDetectorOffset(ii), ii, ii);
+
+    dest.setObjective(source.getObjectiveManufacturer(ii),
+      source.getObjectiveModel(ii), source.getObjectiveSerial(ii), 
+      source.getLensNA(ii),
+      source.getObjectiveMagnification(ii), ii, ii);
+
+    dest.setExcitationFilter(source.getExcitationManufacturer(ii),
+      source.getExcitationModel(ii), source.getExcitationLotNumber(ii),
+      source.getExcitationType(ii), ii);
+
+    dest.setDichroic(source.getDichroicManufacturer(ii),
+      source.getDichroicModel(ii), source.getDichroicLotNumber(ii), ii);
+
+    dest.setEmissionFilter(source.getEmissionManufacturer(ii),
+      source.getEmissionModel(ii), source.getEmissionLotNumber(ii),
+      source.getEmissionType(ii), ii);
+
+    dest.setFilterSet(source.getFilterSetManufacturer(ii),
+      source.getFilterSetModel(ii), 
+      source.getFilterSetLotNumber(ii), ii, ii);
+
+    dest.setOTF(source.getOTFSizeX(ii), source.getOTFSizeY(ii),
+      source.getOTFPixelType(ii), source.getOTFPath(ii),
+      source.getOTFOpticalAxisAverage(ii), ii, ii, ii, ii);
+  }
+
 }

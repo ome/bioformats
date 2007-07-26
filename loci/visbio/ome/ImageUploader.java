@@ -69,8 +69,10 @@ public class ImageUploader {
 
       for (int i=0; i<numFiles; i++) {
         for (int j=0; j<numImages; j++) {
-          int[] coords = FormatTools.getZCTCoords(store.getDimensionOrder(null),
-            store.getSizeZ(null).intValue(), store.getSizeC(null).intValue(),
+          int[] coords = FormatTools.getZCTCoords(
+            store.getDimensionOrder(null),
+            store.getSizeZ(null).intValue(), 
+            store.getSizeC(null).intValue(),
             store.getSizeT(null).intValue(),
             numImages*numFiles, numImages*i + j);
           writer.saveImage(

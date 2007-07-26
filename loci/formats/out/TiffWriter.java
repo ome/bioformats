@@ -29,9 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
-//import org.openmicroscopy.xml.*;
-//import org.openmicroscopy.xml.st.*;
-//import loci.formats.ome.OMEXMLMetadataStore;
 
 /** TiffWriter is the file format writer for TIFF files. */
 public class TiffWriter extends FormatWriter {
@@ -39,17 +36,24 @@ public class TiffWriter extends FormatWriter {
   // -- Fields --
 
   /** The last offset written to. */
-  private int lastOffset;
+  protected int lastOffset;
 
   /** Current output stream. */
-  private BufferedOutputStream out;
+  protected BufferedOutputStream out;
 
-  // -- Constructor --
+  /** Image counts for each open series. */
+  protected Vector imageCounts;
+
+  // -- Constructors --
 
   public TiffWriter() {
-    super("Tagged Image File Format", new String[] {"tif", "tiff"});
+    this("Tagged Image File Format", new String[] {"tif", "tiff"});
+  }
+
+  public TiffWriter(String format, String[] exts) {
+    super(format, exts);
     lastOffset = 0;
-    compressionTypes = new String[] {"Uncompressed", "LZW"};
+    compressionTypes = new String[] {"Uncompressed", "LZW"}; 
   }
 
   // -- TiffWriter API methods --
@@ -63,7 +67,21 @@ public class TiffWriter extends FormatWriter {
   public void saveImage(Image image, Hashtable ifd, boolean last)
     throws IOException, FormatException
   {
+    saveImage(image, ifd, 0, last, last);
+  }
+
+  /**
+   * Saves the given image to the specified series in the current file.
+   * The IFD hashtable allows specification of TIFF parameters such as bit
+   * depth, compression and units. If this image is the last one in the series,
+   * the lastInSeries flag must be set. If this image is the last one in the 
+   * file, the last flag must be set.
+   */
+  public void saveImage(Image image, Hashtable ifd, int series, 
+    boolean lastInSeries, boolean last) throws IOException, FormatException
+  {
     if (!initialized) {
+      imageCounts = new Vector();
       initialized = true;
       out =
         new BufferedOutputStream(new FileOutputStream(currentId, true), 4096);
@@ -102,15 +120,22 @@ public class TiffWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#save(String, Image, boolean) */
-  public void saveImage(Image image, boolean last)
-    throws FormatException, IOException
+  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
+  public void saveImage(Image image, boolean last) 
+    throws FormatException, IOException 
+  {
+    saveImage(image, 0, last, last);
+  }
+
+  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
+  public void saveImage(Image image, int series, boolean lastInSeries, 
+    boolean last) throws FormatException, IOException
   {
     Hashtable h = new Hashtable();
     if (compression == null) compression = "";
     h.put(new Integer(TiffTools.COMPRESSION), compression.equals("LZW") ?
       new Integer(TiffTools.LZW) : new Integer(TiffTools.UNCOMPRESSED));
-    saveImage(image, h, last);
+    saveImage(image, h, series, lastInSeries, last);
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
@@ -120,37 +145,6 @@ public class TiffWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    // write the metadata, if enabled
-
-    /*
-    if (metadataEnabled && store != null && currentId != null) {
-      // TODO : use reflection to access the OMEXMLMetadataStore
-      if (store instanceof OMEXMLMetadataStore) {
-        try {
-          // writes valid OME-TIFF
-          RandomAccessFile raf = new RandomAccessFile(currentId, "rw");
-          RandomAccessStream in = new RandomAccessStream(currentId);
-          OMENode xml = (OMENode) ((OMEXMLMetadataStore) store).getRoot();
-          Vector images = xml.getChildNodes("Image");
-          for (int p=0; p<images.size(); p++) {
-            PixelsNode pix =
-              (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
-            DOMUtil.createChild(pix.getDOMElement(), "TiffData");
-          }
-
-          Hashtable[] ifds = TiffTools.getIFDs(in);
-          TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION,
-            xml.writeOME(true));
-        }
-        catch (Exception e) { trace(e); }
-      }
-      else {
-        throw new FormatException("Expecting an OMEXMLMetadataStore; got a " +
-          store.getClass());
-      }
-    }
-    */
-
     if (out != null) out.close();
     out = null;
     currentId = null;

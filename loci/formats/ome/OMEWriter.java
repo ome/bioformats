@@ -62,7 +62,7 @@ public class OMEWriter extends FormatWriter {
   /** Number of planes written. */
   private int planesWritten = 0;
 
-  private OMEXMLMetadataStore metadata;
+  private MetadataRetrieve metadata;
 
   private DataServices rs;
   private RemoteCaller rc;
@@ -80,7 +80,7 @@ public class OMEWriter extends FormatWriter {
 
   // -- OMEWriter API methods --
 
-  public void setMetadataStore(OMEXMLMetadataStore store) {
+  public void setMetadataStore(MetadataRetrieve store) {
     metadata = store;
   }
 
@@ -437,7 +437,7 @@ public class OMEWriter extends FormatWriter {
     FileStitcher reader = new FileStitcher();
     reader.setMetadataStore(new OMEXMLMetadataStore());
     reader.setId(id);
-    uploader.setMetadataStore((OMEXMLMetadataStore) reader.getMetadataStore());
+    uploader.setMetadataStore((MetadataRetrieve) reader.getMetadataStore());
     for (int i=0; i<reader.getImageCount(); i++) {
       uploader.saveImage(reader.openImage(i), i == reader.getImageCount() - 1);
     }

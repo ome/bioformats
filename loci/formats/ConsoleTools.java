@@ -299,6 +299,7 @@ public final class ConsoleTools {
         (orderCertain ? " (certain)" : " (uncertain)"));
       LogTools.println("\tPixel type = " +
         FormatTools.getPixelTypeString(pixelType));
+      LogTools.println("\tMetadata complete = " + reader.isMetadataComplete());
       if (doMeta) {
         LogTools.println("\t-----");
         int[] indices;
@@ -568,8 +569,25 @@ public final class ConsoleTools {
     long start = System.currentTimeMillis();
     LogTools.print(in + " ");
     ImageReader reader = new ImageReader();
+    reader.setOriginalMetadataPopulated(true); 
+
+    try {
+      Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
+      MetadataStore ms = (MetadataStore) c.newInstance();
+      reader.setMetadataStore(ms);
+    }
+    catch (Throwable t) { 
+      LogTools.println("OME-Java library not found."); 
+    }
+
     reader.setId(in);
     LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
+    
+    MetadataStore store = reader.getMetadataStore(); 
+    if (store instanceof MetadataRetrieve) {
+      writer.setMetadataRetrieve((MetadataRetrieve) store);
+    }
+
     writer.setId(out);
     LogTools.print("[" + writer.getFormat() + "] ");
     long mid = System.currentTimeMillis();

@@ -42,7 +42,12 @@ import org.xml.sax.SAXException;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class OMEXMLMetadataStore implements MetadataStore {
+public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
+
+  // -- Static fields --
+
+  /** Logger for this class. */
+  //private static Log log = LogFactory.getLog(OMEXMLMetadataStore.class);
 
   // -- Fields --
 
@@ -128,217 +133,842 @@ public class OMEXMLMetadataStore implements MetadataStore {
     node.setAttribute("value", value);
   }
 
-  // -- OMEXMLMetadataStore methods - individual attribute retrieval --
+  // -- MetadataRetrieve API methods --
 
-  /**
-   * Gets the nth OME/Image element's Name attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getImageCount() */
+  public int getImageCount() {
+    return getNodeCount("Image"); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getImageName(Integer) */ 
   public String getImageName(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Image", "Name", ndx);
   }
 
-  /**
-   * Gets the nth OME/Image element's CreationDate attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getCreationDate(Integer) */ 
   public String getCreationDate(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Image", "CreationDate", ndx);
   }
 
-  /**
-   * Gets the nth OME/Image element's Description attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getDescription(Integer) */ 
   public String getDescription(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Image", "Description", ndx);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeX attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getExperimenterCount() */
+  public int getExperimenterCount() {
+    return getNodeCount("Experimenter");
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getFirstName(Integer) */
+  public String getFirstName(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Experimenter", "FirstName", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLastName(Integer) */
+  public String getLastName(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Experimenter", "LastName", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getEmail(Integer) */
+  public String getEmail(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Experimenter", "Email", ndx);
+  }
+  
+  /* @see loci.formats.MetadataRetrieve#getInstitution(Integer) */
+  public String getInstitution(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Experimenter", "Institution", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDataDirectory(Integer) */
+  public String getDataDirectory(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Experimenter", "DataDirectory", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getGroup(Integer) */
+  public Object getGroup(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Experimenter", "Group", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getGroupCount() */
+  public int getGroupCount() {
+    return getNodeCount("Group"); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getGroupName(Integer) */
+  public String getGroupName(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Group", "Name", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLeader(Integer) */
+  public Object getLeader(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Group", "Leader", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getContact(Integer) */
+  public Object getContact(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Group", "Contact", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getInstrumentCount() */
+  public int getInstrumentCount() {
+    return getNodeCount("Instrument"); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getManufacturer(Integer) */
+  public String getManufacturer(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Instrument", "Manufacturer", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getModel(Integer) */
+  public String getModel(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Instrument", "Model", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getSerialNumber(Integer) */
+  public String getSerialNumber(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Instrument", "SerialNumber", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getType(Integer) */
+  public String getType(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Instrument", "Type", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeX(Integer) */ 
   public Float getPixelSizeX(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeX = getAttribute("Dimensions", "PixelSizeX", ndx);
     return pixelSizeX == null ? null : new Float(pixelSizeX);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeY attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeY(Integer) */ 
   public Float getPixelSizeY(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeY = getAttribute("Dimensions", "PixelSizeY", ndx);
     return pixelSizeY == null ? null : new Float(pixelSizeY);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeZ attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeZ(Integer) */ 
   public Float getPixelSizeZ(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeZ = getAttribute("Dimensions", "PixelSizeZ", ndx);
     return pixelSizeZ == null ? null : new Float(pixelSizeZ);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeC attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeC(Integer) */ 
   public Float getPixelSizeC(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeC = getAttribute("Dimensions", "PixelSizeC", ndx);
     return pixelSizeC == null ? null : new Float(pixelSizeC);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeT attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeT(Integer) */ 
   public Float getPixelSizeT(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeT = getAttribute("Dimensions", "PixelSizeT", ndx);
     return pixelSizeT == null ? null : new Float(pixelSizeT);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Pixels element's SizeX attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public Integer getSizeX(Integer n) {
+  /* @see loci.formats.MetadataRetrieve#getDisplayROICount() */
+  public int getDisplayROICount() {
+    return getNodeCount("DisplayROI"); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getX0(Integer) */
+  public Integer getX0(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
+    String x0 = getAttribute("DisplayROI", "X0", ndx); 
+    return x0 == null ? null : new Integer(x0); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getY0(Integer) */
+  public Integer getY0(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String y0 = getAttribute("DisplayROI", "Y0", ndx); 
+    return y0 == null ? null : new Integer(y0); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getZ0(Integer) */
+  public Integer getZ0(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String z0 = getAttribute("DisplayROI", "Z0", ndx); 
+    return z0 == null ? null : new Integer(z0); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getT0(Integer) */
+  public Integer getT0(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String t0 = getAttribute("DisplayROI", "T0", ndx); 
+    return t0 == null ? null : new Integer(t0); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getX1(Integer) */
+  public Integer getX1(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String x1 = getAttribute("DisplayROI", "X1", ndx); 
+    return x1 == null ? null : new Integer(x1); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getY1(Integer) */
+  public Integer getY1(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String y1 = getAttribute("DisplayROI", "Y1", ndx); 
+    return y1 == null ? null : new Integer(y1); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getZ1(Integer) */
+  public Integer getZ1(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String z1 = getAttribute("DisplayROI", "Z1", ndx); 
+    return z1 == null ? null : new Integer(z1); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getT1(Integer) */
+  public Integer getT1(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String t1 = getAttribute("DisplayROI", "T1", ndx); 
+    return t1 == null ? null : new Integer(t1); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#tgetDisplayOptions(Integer) */
+  public Object getDisplayOptions(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("DisplayROI", "DisplayOptions", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getPixelsCount(Integer) */
+  public int getPixelsCount(Integer n) {
+    return getNodeCount("Image") / getNodeCount("Pixels"); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getSizeX(Integer) */ 
+  public Integer getSizeX(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     String sizeX = getAttribute("Pixels", "SizeX", ndx);
     return sizeX == null ? null : new Integer(sizeX);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Pixels element's SizeY attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public Integer getSizeY(Integer n) {
-    int ndx = n == null ? 0 : n.intValue();
+  /* @see loci.formats.MetadataRetrieve#getSizeY(Integer) */ 
+  public Integer getSizeY(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     String sizeY = getAttribute("Pixels", "SizeY", ndx);
     return sizeY == null ? null : new Integer(sizeY);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Pixels element's SizeZ attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public Integer getSizeZ(Integer n) {
-    int ndx = n == null ? 0 : n.intValue();
+  /* @see loci.formats.MetadataRetrieve#getSizeZ(Integer) */ 
+  public Integer getSizeZ(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     String sizeZ = getAttribute("Pixels", "SizeZ", ndx);
     return sizeZ == null ? null : new Integer(sizeZ);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Pixels element's SizeC attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public Integer getSizeC(Integer n) {
-    int ndx = n == null ? 0 : n.intValue();
+  /* @see loci.formats.MetadataRetrieve#getSizeC(Integer) */ 
+  public Integer getSizeC(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     String sizeC = getAttribute("Pixels", "SizeC", ndx);
     return sizeC == null ? null : new Integer(sizeC);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Pixels element's SizeT attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public Integer getSizeT(Integer n) {
-    int ndx = n == null ? 0 : n.intValue();
+  /* @see loci.formats.MetadataRetrieve#getSizeT(Integer) */ 
+  public Integer getSizeT(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     String sizeT = getAttribute("Pixels", "SizeT", ndx);
     return sizeT == null ? null : new Integer(sizeT);
   }
 
-  /** Gets the nth OME/Image/CA/Pixels element's PixelType attribute. */
-  public String getPixelType(Integer n) {
-    int ndx = n == null ? 0 : n.intValue();
+  /* @see loci.formats.MetadataRetrieve#getPixelType(Integer) */ 
+  public String getPixelType(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     return getAttribute("Pixels", "PixelType", ndx);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Pixels element's BigEndian attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public Boolean getBigEndian(Integer n) {
-    int ndx = n == null ? 0 : n.intValue();
+  /* @see loci.formats.MetadataRetrieve#getBigEndian(Integer) */ 
+  public Boolean getBigEndian(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     String bigEndian = getAttribute("Pixels", "BigEndian", ndx);
     return bigEndian == null ? null :
       new Boolean(bigEndian.equalsIgnoreCase("true"));
   }
 
-  /**
-   * Gets the nth OME/Image/CA/Pixels element's DimensionOrder attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public String getDimensionOrder(Integer n) {
-    int ndx = n == null ? 0 : n.intValue();
+  /* @see loci.formats.MetadataRetrieve#getDimensionOrder(Integer) */ 
+  public String getDimensionOrder(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
     return getAttribute("Pixels", "DimensionOrder", ndx);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/StageLabel element's Name attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
-  public String getStageName(String name, Integer n) {
+  /* @see loci.formats.MetadataRetrieve#getStageLabelCount() */
+  public int getStageLabelCount() {
+    return getNodeCount("StageLabel"); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve(Integer) */ 
+  public String getStageName(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("StageLabel", "Name", ndx);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/StageLabel element's X attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve(Integer) */ 
   public Float getStageX(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String stageX = getAttribute("StageLabel", "X", ndx);
     return stageX == null ? null : new Float(stageX);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/StageLabel element's Y attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve(Integer) */ 
   public Float getStageY(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String stageY = getAttribute("StageLabel", "Y", ndx);
     return stageY == null ? null : new Float(stageY);
   }
 
-  /**
-   * Gets the nth OME/Image/CA/StageLabel element's Z attribute.
-   * @param n the index of the element. If <code>null</code> the default index
-   * of 0 will be used.
-   */
+  /* @see loci.formats.MetadataRetrieve(Integer) */ 
   public Float getStageZ(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String stageZ = getAttribute("StageLabel", "Z", ndx);
     return stageZ == null ? null : new Float(stageZ);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getChannelCount(Integer) */
+  public int getChannelCount(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    Vector v = DOMUtil.getChildElements("LogicalChannel", ca.getDOMElement());
+    return v.size();
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getChannelName(Integer, Integer) */
+  public String getChannelName(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    LogicalChannelNode ch = (LogicalChannelNode) 
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
+    return ch.getName(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getChannelNDFilter(Integer, Integer) */
+  public Float getChannelNDFilter(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    LogicalChannelNode ch = (LogicalChannelNode) 
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
+    return ch.getNDFilter(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getEmWave(Integer, Integer) */
+  public Integer getEmWave(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    LogicalChannelNode ch = (LogicalChannelNode) 
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
+    return ch.getEmissionWavelength(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getExWave(Integer, Integer) */
+  public Integer getExWave(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    LogicalChannelNode ch = (LogicalChannelNode) 
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
+    return ch.getExcitationWavelength(); 
+  }
+
+  /** 
+   * @see loci.formats.MetadataRetrieve#getPhotometricInterpretation(Integer, 
+   * Integer) 
+   */
+  public String getPhotometricInterpretation(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    LogicalChannelNode ch = (LogicalChannelNode) 
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
+    return ch.getPhotometricInterpretation(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getMode(Integer, Integer) */
+  public String getMode(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    LogicalChannelNode ch = (LogicalChannelNode) 
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
+    return ch.getMode(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getGlobalMin(Integer, Integer) */
+  public Double getGlobalMin(Integer pixels, Integer channel) {
+    int ndx = channel == null ? 0 : channel.intValue();
+    if (ndx >= channelMinimum.length) return null;
+    return new Double(channelMinimum[ndx]);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getGlobalMax(Integer, Integer) */
+  public Double getGlobalMax(Integer pixels, Integer channel) {
+    int ndx = channel == null ? 0 : channel.intValue();
+    if (ndx >= channelMaximum.length) return null;
+    return new Double(channelMaximum[ndx]);
+  }
+
+  /** 
+   * @see loci.formats.MetadataRetrieve#getTimestamp(Integer, Integer, 
+   * Integer, Integer) 
+   */
+  public Float getTimestamp(Integer pixels, Integer z, Integer c, Integer t) {
+    // TODO
+    return null;
+  }
+
+  /**
+   * @see loci.formats.MetadataRetrieve#getExposureTime(Integer, Integer,
+   * Integer, Integer)
+   */
+  public Float getExposureTime(Integer pixels, Integer z, Integer c, Integer t)
+  {
+    // TODO
+    return null;
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getTemperature(Integer) */
+  public Float getTemperature(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String temperature = getAttribute("ImagingEnvironment", "Temperature", ndx);
+    return temperature == null ? null : new Float(temperature);
+  }
+  
+  /* @see loci.formats.MetadataRetrieve#getAirPressure(Integer) */
+  public Float getAirPressure(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String pressure = getAttribute("ImagingEnvironment", "AirPressure", ndx);
+    return pressure == null ? null : new Float(pressure);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getHumidity(Integer) */
+  public Float getHumidity(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String humidity = getAttribute("ImagingEnvironment", "Humidity", ndx);
+    return humidity == null ? null : new Float(humidity);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getCO2Percent(Integer) */
+  public Float getCO2Percent(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String co2 = getAttribute("ImagingEnvironment", "CO2Percent", ndx);
+    return co2 == null ? null : new Float(co2);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getBlackLevel(Integer, Integer) */
+  public Double getBlackLevel(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    DisplayChannelNode display = (DisplayChannelNode) 
+      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue()); 
+    return display.getBlackLevel(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getWhiteLevel(Integer, Integer) */
+  public Double getWhiteLevel(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    DisplayChannelNode display = (DisplayChannelNode) 
+      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue()); 
+    return display.getWhiteLevel(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getGamma(Integer, Integer) */
+  public Float getGamma(Integer pixels, Integer channel) {
+    int ndx = pixels == null ? 0 : pixels.intValue();
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
+    CustomAttributesNode ca = 
+      (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
+    DisplayChannelNode display = (DisplayChannelNode) 
+      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue()); 
+    return display.getGamma(); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getZoom(Integer) */
+  public Float getZoom(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    String zoom = getAttribute("DisplayOptions", "Zoom", ndx); 
+    return zoom == null ? null : new Float(zoom); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#isRedChannelOn(Integer) */
+  public Boolean isRedChannelOn(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    String redOn = getAttribute("DisplayOptions", "RedChannelOn", ndx); 
+    return redOn == null ? null : new Boolean(redOn); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#isGreenChannelOn(Integer) */
+  public Boolean isGreenChannelOn(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    String greenOn = getAttribute("DisplayOptions", "GreenChannelOn", ndx); 
+    return greenOn == null ? null : new Boolean(greenOn); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#isBlueChannelOn(Integer) */
+  public Boolean isBlueChannelOn(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    String blueOn = getAttribute("DisplayOptions", "BlueChannelOn", ndx); 
+    return blueOn == null ? null : new Boolean(blueOn); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#isDisplayRGB(Integer) */
+  public Boolean isDisplayRGB(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    String displayRGB = getAttribute("DisplayOptions", "DisplayRGB", ndx);
+    return displayRGB == null ? null : new Boolean(displayRGB);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getColorMap(Integer) */
+  public String getColorMap(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    return getAttribute("DisplayOptions", "ColorMap", ndx); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getZStart(Integer) */
+  public Integer getZStart(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    String zstart = getAttribute("DisplayOptions", "ZStart", ndx);
+    return zstart == null ? null : new Integer(zstart);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getZStop(Integer) */
+  public Integer getZStop(Integer image) {
+    int ndx = image == null ? 0 : image.intValue();
+    String zstop = getAttribute("DisplayOptions", "ZStop", ndx);
+    return zstop == null ? null : new Integer(zstop);
+  }
+ 
+  /* @see loci.formats.MetadataRetrieve#getTStart(Integer) */
+  public Integer getTStart(Integer image) {
+    int ndx = image == null ? 0 : image.intValue(); 
+    String tstart = getAttribute("DisplayOptions", "TStart", ndx);
+    return tstart == null ? null : new Integer(tstart);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getTStop(Integer) */
+  public Integer getTStop(Integer image) {
+    int ndx = image == null ? 0 : image.intValue(); 
+    String tstop = getAttribute("DisplayOptions", "TStop", ndx);
+    return tstop == null ? null : new Integer(tstop);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLightManufacturer(Integer) */
+  public String getLightManufacturer(Integer light) {
+    int ndx = light == null ? 0 : light.intValue();
+    return getAttribute("LightSource", "Manufacturer", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLightModel(Integer) */
+  public String getLightModel(Integer light) {
+    int ndx = light == null ? 0 : light.intValue();
+    return getAttribute("LightSource", "Model", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLightSerial(Integer) */
+  public String getLightSerial(Integer light) {
+    int ndx = light == null ? 0 : light.intValue();
+    return getAttribute("LightSource", "SerialNumber", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLaserType(Integer) */
+  public String getLaserType(Integer laser) {
+    int ndx = laser == null ? 0 : laser.intValue();
+    return getAttribute("Laser", "Type", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLaserMedium(Integer) */
+  public String getLaserMedium(Integer laser) {
+    int ndx = laser == null ? 0 : laser.intValue();
+    return getAttribute("Laser", "Medium", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLaserWavelength(Integer) */
+  public Integer getLaserWavelength(Integer laser) {
+    int ndx = laser == null ? 0 : laser.intValue();
+    String wave = getAttribute("Laser", "Wavelength", ndx);
+    return wave == null ? null : new Integer(wave); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#isFrequencyDoubled(Integer) */
+  public Boolean isFrequencyDoubled(Integer laser) {
+    int ndx = laser == null ? 0 : laser.intValue();
+    String freq = getAttribute("Laser", "FrequencyDoubled", ndx);
+    return freq == null ? null : new Boolean(freq); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#isTunable(Integer) */
+  public Boolean isTunable(Integer laser) {
+    int ndx = laser == null ? 0 : laser.intValue();
+    String tunable = getAttribute("Laser", "Tunable", ndx);
+    return tunable == null ? null : new Boolean(tunable); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getPulse(Integer) */
+  public String getPulse(Integer laser) {
+    int ndx = laser == null ? 0 : laser.intValue();
+    return getAttribute("Laser", "Pulse", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getPower(Integer) */
+  public Float getPower(Integer laser) {
+    int ndx = laser == null ? 0 : laser.intValue();
+    String power = getAttribute("Laser", "Power", ndx);
+    return power == null ? null : new Float(power); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getFilamentType(Integer) */
+  public String getFilamentType(Integer filament) {
+    int ndx = filament == null ? 0 : filament.intValue();
+    return getAttribute("Filament", "Type", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getFilamentPower(Integer) */
+  public Float getFilamentPower(Integer filament) {
+    int ndx = filament == null ? 0 : filament.intValue();
+    String power = getAttribute("Filament", "Power", ndx);
+    return power == null ? null : new Float(power); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getArcType(Integer) */
+  public String getArcType(Integer arc) {
+    int ndx = arc == null ? 0 : arc.intValue();
+    return getAttribute("Arc", "Type", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getArcPower(Integer) */
+  public Float getArcPower(Integer arc) {
+    int ndx = arc == null ? 0 : arc.intValue();
+    String power = getAttribute("Arc", "Power", ndx);
+    return power == null ? null : new Float(power); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDetectorManufacturer(Integer) */
+  public String getDetectorManufacturer(Integer detector) {
+    int ndx = detector == null ? 0 : detector.intValue();
+    return getAttribute("Detector", "Manufacturer", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDetectorModel(Integer) */
+  public String getDetectorModel(Integer detector) {
+    int ndx = detector == null ? 0 : detector.intValue();
+    return getAttribute("Detector", "Model", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDetectorSerial(Integer) */
+  public String getDetectorSerial(Integer detector) {
+    int ndx = detector == null ? 0 : detector.intValue();
+    return getAttribute("Detector", "SerialNumber", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDetectorType(Integer) */
+  public String getDetectorType(Integer detector) {
+    int ndx = detector == null ? 0 : detector.intValue();
+    return getAttribute("Detector", "Type", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDetectorGain(Integer) */
+  public Float getDetectorGain(Integer detector) {
+    int ndx = detector == null ? 0 : detector.intValue();
+    String gain = getAttribute("Detector", "Gain", ndx);
+    return gain == null ? null : new Float(gain); 
+  }
+  
+  /* @see loci.formats.MetadataRetrieve#getDetectorVoltage(Integer) */
+  public Float getDetectorVoltage(Integer detector) {
+    int ndx = detector == null ? 0 : detector.intValue();
+    String voltage = getAttribute("Detector", "Voltage", ndx);
+    return voltage == null ? null : new Float(voltage); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDetectorOffset(Integer) */
+  public Float getDetectorOffset(Integer detector) {
+    int ndx = detector == null ? 0 : detector.intValue();
+    String offset = getAttribute("Detector", "Offset", ndx);
+    return offset == null ? null : new Float(offset); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getObjectiveManufacturer(Integer) */
+  public String getObjectiveManufacturer(Integer objective) {
+    int ndx = objective == null ? 0 : objective.intValue();
+    return getAttribute("Objective", "Manufacturer", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getObjectiveModel(Integer) */
+  public String getObjectiveModel(Integer objective) {
+    int ndx = objective == null ? 0 : objective.intValue();
+    return getAttribute("Objective", "Model", ndx);
+  } 
+
+  /* @see loci.formats.MetadataRetrieve#getObjectiveSerial(Integer) */
+  public String getObjectiveSerial(Integer objective) {
+    int ndx = objective == null ? 0 : objective.intValue();
+    return getAttribute("Objective", "SerialNumber", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getLensNA(Integer) */
+  public Float getLensNA(Integer objective) {
+    int ndx = objective == null ? 0 : objective.intValue();
+    String na = getAttribute("Objective", "LensNA", ndx);
+    return na == null ? null : new Float(na); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getObjectiveMagnification(Integer) */
+  public Float getObjectiveMagnification(Integer objective) {
+    int ndx = objective == null ? 0 : objective.intValue();
+    String mag = getAttribute("Objective", "Magnification", ndx);
+    return mag == null ? null : new Float(mag); 
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getExcitationManufacturer(Integer) */
+  public String getExcitationManufacturer(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("ExcitationFilter", "Manufacturer", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getExcitationModel(Integer) */
+  public String getExcitationModel(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("ExcitationFilter", "Model", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getExcitationLotNumber(Integer) */
+  public String getExcitationLotNumber(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("Objective", "LotNumber", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getExcitationType(Integer) */
+  public String getExcitationType(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("Objective", "Type", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDichroicManufacturer(Integer) */
+  public String getDichroicManufacturer(Integer dichroic) {
+    int ndx = dichroic == null ? 0 : dichroic.intValue();
+    return getAttribute("Dichroic", "Manufacturer", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDichroicModel(Integer) */
+  public String getDichroicModel(Integer dichroic) {
+    int ndx = dichroic == null ? 0 : dichroic.intValue();
+    return getAttribute("Dichroic", "Model", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getDichroicLotNumber(Integer) */
+  public String getDichroicLotNumber(Integer dichroic) {
+    int ndx = dichroic == null ? 0 : dichroic.intValue();
+    return getAttribute("Dichroic", "LotNumber", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getEmissionManufacturer(Integer) */
+  public String getEmissionManufacturer(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("EmissionFilter", "Manufacturer", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getEmissionModel(Integer) */
+  public String getEmissionModel(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("EmissionFilter", "Model", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getEmissionLotNumber(Integer) */
+  public String getEmissionLotNumber(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("EmissionFilter", "LotNumber", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getEmissionType(Integer) */
+  public String getEmissionType(Integer filter) {
+    int ndx = filter == null ? 0 : filter.intValue();
+    return getAttribute("EmissionFilter", "Type", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getFilterSetManufacturer(Integer) */
+  public String getFilterSetManufacturer(Integer filterSet) {
+    int ndx = filterSet == null ? 0 : filterSet.intValue();
+    return getAttribute("FilterSet", "Manufacturer", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getFilterSetModel(Integer) */
+  public String getFilterSetModel(Integer filterSet) {
+    int ndx = filterSet == null ? 0 : filterSet.intValue();
+    return getAttribute("FilterSet", "Model", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getFilterSetLotNumber(Integer) */
+  public String getFilterSetLotNumber(Integer filterSet) {
+    int ndx = filterSet == null ? 0 : filterSet.intValue();
+    return getAttribute("FilterSet", "LotNumber", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getOTFSizeX(Integer) */
+  public Integer getOTFSizeX(Integer otf) {
+    int ndx = otf == null ? 0 : otf.intValue(); 
+    String x = getAttribute("OTF", "SizeX", ndx);
+    return x == null ? null : new Integer(x);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getOTFSizeY(Integer) */
+  public Integer getOTFSizeY(Integer otf) {
+    int ndx = otf == null ? 0 : otf.intValue(); 
+    String y = getAttribute("OTF", "SizeY", ndx);
+    return y == null ? null : new Integer(y);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getOTFPixelType(Integer) */
+  public String getOTFPixelType(Integer otf) {
+    int ndx = otf == null ? 0 : otf.intValue(); 
+    return getAttribute("OTF", "PixelType", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getOTFPath(Integer) */
+  public String getOTFPath(Integer otf) {
+    int ndx = otf == null ? 0 : otf.intValue(); 
+    return getAttribute("OTF", "Path", ndx);
+  }
+
+  /* @see loci.formats.MetadataRetrieve#getOTFOpticalAxisAverage(Integer) */
+  public Boolean getOTFOpticalAxisAverage(Integer otf) {
+    int ndx = otf == null ? 0 : otf.intValue(); 
+    String x = getAttribute("OTF", "SizeX", ndx);
+    return x == null ? null : new Boolean(x);
   }
 
   // -- MetadataStore API methods --
@@ -359,8 +989,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   public Object getRoot() { return root; }
 
   /*
-   * @see loci.formats.MetadataStore#setImage(String,
-   *   String, String, Integer)
+   * @see loci.formats.MetadataStore#setImage(String, String, String, Integer)
    */
   public void setImage(String name,
     String creationDate, String description, Integer i)
@@ -544,7 +1173,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
     // Now populate the channel component
     PixelChannelComponentNode channel = (PixelChannelComponentNode)
-      getChild(ca, "PixelChannelComponent", channelIdx);
+      getChild(ca, "PixelChannelComponent", 0);
     channel.setLogicalChannel(logicalChannel);
     channel.setIndex(new Integer(channelIdx));
 
@@ -1141,6 +1770,16 @@ public class OMEXMLMetadataStore implements MetadataStore {
     if (elements == null || i >= elements.size()) return null;
     Element el = (Element) elements.get(i);
     return OMEXMLNode.createNode(el);
+  }
+
+  /**
+   * Retrieves the number of nodes associated with the given DOM element name.
+   * @param name the DOM element name
+   */
+  private int getNodeCount(String name) {
+    Element rel = root.getDOMElement();
+    Vector elements = DOMUtil.findElementList(name, rel.getOwnerDocument());
+    return elements.size(); 
   }
 
   /** Issues the given message as a warning. */

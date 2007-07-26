@@ -50,6 +50,8 @@ public abstract class FormatWriter extends FormatHandler
   /** Whether the current file has been prepped for writing. */
   protected boolean initialized;
 
+  protected MetadataRetrieve retrieve;
+
   // -- Constructors --
 
   /** Constructs a format writer with the given name and default suffix. */
@@ -69,8 +71,28 @@ public abstract class FormatWriter extends FormatHandler
     throw new FormatException("Not implemented yet.");
   }
 
+  /* @see IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries, 
+    boolean last) throws FormatException, IOException
+  {
+    throw new FormatException("Not implemented yet.");
+  }
+
+  /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
+  public void saveImage(Image image, int series, boolean lastInSeries, 
+    boolean last) throws FormatException, IOException
+  {
+    throw new FormatException("Not implemented yet.");
+  }
+
   /* @see IFormatWriter#canDoStacks() */
   public boolean canDoStacks() { return false; }
+
+  /* @see IFormatWriter#setMetadataRetrieve(MetadataRetrieve) */
+  public void setMetadataRetrieve(MetadataRetrieve r) {
+    FormatTools.assertId(currentId, false, 1);
+    retrieve = r;
+  }
 
   /* @see IFormatWriter#setColorModel(ColorModel) */
   public void setColorModel(ColorModel model) { cm = model; }
