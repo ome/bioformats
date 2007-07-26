@@ -28,9 +28,6 @@ import java.io.IOException;
 import java.lang.reflect.*;
 import loci.visbio.util.InstanceServer;
 import loci.visbio.util.SplashScreen;
-// ACS -- import statements below are _temporary_ (for testing)
-import loci.visbio.VisBioFrame;
-import loci.visbio.data.DataManager;
 
 /**
  * VisBio is a biological visualization tool designed for easy
