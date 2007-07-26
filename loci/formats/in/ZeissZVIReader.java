@@ -359,22 +359,7 @@ public class ZeissZVIReader extends FormatReader {
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore();
 
-    String date = (String) getMeta("Acquisition Date 0");
-    if (date == null) date = (String) getMeta("Acquisition Date"); 
-    try { 
-      long stamp = Long.parseLong(date) / 1000000; 
-      date = DataTools.convertDate(stamp, DataTools.VMS);
-    }
-    catch (Exception e) { 
-      try {
-        date = (String) getMeta("File Date");
-        if (date == null) date = (String) getMeta("File Date 0");
-        long stamp = Long.parseLong(date) / 1000000;
-        date = DataTools.convertDate(stamp, DataTools.VMS);
-      }
-      catch (Exception ex) { date = null; } 
-    }
-    store.setImage((String) getMeta("Title"), date, null, null);
+    store.setImage((String) getMeta("Title"), null, null, null);
 
     if (bpp == 1 || bpp == 3) core.pixelType[0] = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core.pixelType[0] = FormatTools.UINT16;
@@ -421,11 +406,19 @@ public class ZeissZVIReader extends FormatReader {
       String black = (String) getMeta("BlackValue " + idx);
       String white = (String) getMeta("WhiteValue " + idx);
       String gamma = (String) getMeta("GammaValue " + idx);
+     
+      Double blackValue = null, whiteValue = null;
+      Float gammaValue = null;
+
+      try { blackValue = new Double(black); }
+      catch (Exception e) { }
+      try { whiteValue = new Double(white); }
+      catch (Exception e) { }
+      try { gammaValue = new Float(gamma); }
+      catch (Exception e) { }
       
-      store.setDisplayChannel(new Integer(i), 
-        black == null ? null : new Double(black), 
-        white == null ? null : new Double(white), 
-        gamma == null ? null : new Float(gamma), null); 
+      store.setDisplayChannel(new Integer(i), blackValue, whiteValue, 
+        gammaValue, null); 
     }
   
     for (int i=0; i<core.imageCount[0]; i++) {

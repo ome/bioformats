@@ -41,12 +41,10 @@ public final class DataTools {
 
   /** Timestamp formats. */
   public static final int UNIX = 0;  // January 1, 1970
-  public static final int VMS = 1;   // November 17, 1858
-  public static final int COBOL = 2;  // January 1, 1601
+  public static final int COBOL = 1;  // January 1, 1601
 
   /** Milliseconds until UNIX epoch. */
   public static final long UNIX_EPOCH = 0;
-  public static final long VMS_EPOCH = 3531859200000L;
   public static final long COBOL_EPOCH = 11644444800000L;
 
   // -- Static fields --
@@ -532,9 +530,6 @@ public final class DataTools {
     long ms = stamp;
 
     switch (format) {
-      case VMS:
-        ms -= VMS_EPOCH;
-        break;
       case COBOL:
         ms -= COBOL_EPOCH;
         break;
