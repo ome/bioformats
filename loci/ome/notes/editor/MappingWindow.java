@@ -5,17 +5,17 @@
 /*
 OME Metadata Notes application for exploration and editing of OME-XML and
 OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
-    
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-             
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
-                             
+
 You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -33,7 +33,13 @@ import javax.swing.tree.*;
 //import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
-/** Window for choosing an OME-XML mapping. */
+/**
+ * Window for choosing an OME-XML mapping.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/editor/MappingWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/editor/MappingWindow.java">SVN</a></dd></dl>
+ */
 public class MappingWindow extends JPopupMenu implements ActionListener {
 
   // -- Constants --
@@ -43,7 +49,7 @@ public class MappingWindow extends JPopupMenu implements ActionListener {
   // -- Fields --
 
   protected TemplateEditor parent;
-  protected boolean nameMap; 
+  protected boolean nameMap;
   protected JTabbedPane tabPane;
 
   // -- Constructor --
@@ -54,15 +60,15 @@ public class MappingWindow extends JPopupMenu implements ActionListener {
     this.parent = parent;
     this.nameMap = nameMap;
 
-    tabPane = new JTabbedPane(); 
+    tabPane = new JTabbedPane();
 
     // set up search tab
 
     /* TODO
-    FormLayout layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref", 
+    FormLayout layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref",
       "pref,pref:grow,pref,pref:grow,pref");
     JPanel p = new JPanel(layout);
-    
+
     JTextField searchField = new JTextField();
     p.add(searchField, CC.xy(2, 2));
     JButton search = new JButton("Search");
@@ -73,23 +79,23 @@ public class MappingWindow extends JPopupMenu implements ActionListener {
     ok.setActionCommand("chooseMapping");
     ok.addActionListener(parent);
     p.add(ok, CC.xywh(2, 4, 3, 1));
-    
+
     tabPane.add(p, "Search");
-    */ 
+    */
 
     // set up schema tab
 
     /* TODO
-    layout = new FormLayout("pref,pref:grow,pref", 
-      "pref,pref:grow,pref,pref:grow,pref"); 
-    p = new JPanel(layout); 
-   
-    JPanel schemaPanel = new JPanel();  
+    layout = new FormLayout("pref,pref:grow,pref",
+      "pref,pref:grow,pref,pref:grow,pref");
+    p = new JPanel(layout);
+
+    JPanel schemaPanel = new JPanel();
     JScrollPane scroll = new JScrollPane();
     JTree tree = new JTree(new DefaultMutableTreeNode());
 
     try {
-      InputStream is = getClass().getResourceAsStream("schema.ome"); 
+      InputStream is = getClass().getResourceAsStream("schema.ome");
       byte[] b = new byte[is.available()];
       is.read(b);
       OMENode node = new OMENode(new String(b));
@@ -98,32 +104,32 @@ public class MappingWindow extends JPopupMenu implements ActionListener {
       ((DefaultTreeModel) tree.getModel()).setRoot(treeRoot);
       if (doc != null) {
         buildTree(doc.getDocumentElement(), treeRoot);
-        expandTree(tree, treeRoot); 
-      } 
+        expandTree(tree, treeRoot);
+      }
     }
     catch (Exception e) {
-      ((TemplateEditor) getParent()).error("Failed to load schema file", e); 
+      ((TemplateEditor) getParent()).error("Failed to load schema file", e);
     }
 
     tree.setPreferredSize(new Dimension(512, 256));
     schemaPanel.add(tree);
     scroll.add(schemaPanel);
-    p.add(scroll, CC.xy(2, 2)); 
+    p.add(scroll, CC.xy(2, 2));
     ok = new JButton("OK");
     ok.setActionCommand("chooseMapping");
     ok.addActionListener(parent);
     p.add(ok, CC.xy(2, 4));
 
     tabPane.add(p, "Choose from schema");
-    */ 
+    */
 
     // set up custom mapping tab
 
-    FormLayout layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref", 
-      "pref,pref:grow,pref,pref:grow,pref,pref:grow,pref"); 
+    FormLayout layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref",
+      "pref,pref:grow,pref,pref:grow,pref,pref:grow,pref");
     JPanel p = new JPanel(layout);
 
-    //JLabel msg = 
+    //JLabel msg =
     //  new JLabel("A mapping is a colon-separated path to an attribute.");
     //p.add(msg, CC.xywh(2, 2, 3, 1));
     JLabel label = new JLabel("Mapping:");
@@ -138,7 +144,7 @@ public class MappingWindow extends JPopupMenu implements ActionListener {
     tabPane.add(p, "Custom");
 
     add(tabPane);
-    setPreferredSize(new Dimension(512, 256)); 
+    setPreferredSize(new Dimension(512, 256));
     pack();
   }
 
@@ -151,14 +157,14 @@ public class MappingWindow extends JPopupMenu implements ActionListener {
   // -- Helper methods --
 
   private void buildTree(Element el, DefaultMutableTreeNode node) {
-    DefaultMutableTreeNode child = 
+    DefaultMutableTreeNode child =
       new DefaultMutableTreeNode(new ElementWrapper(el));
     node.add(child);
     NodeList nodeList = el.getChildNodes();
     for (int i=0; i<nodeList.getLength(); i++) {
       Node n = (Node) nodeList.item(i);
       if (n instanceof Element) buildTree((Element) n, child);
-    } 
+    }
   }
 
   private void expandTree(JTree tree, DefaultMutableTreeNode node) {
@@ -167,7 +173,7 @@ public class MappingWindow extends JPopupMenu implements ActionListener {
     Enumeration e = node.children();
     while (e.hasMoreElements()) {
       expandTree(tree, (DefaultMutableTreeNode) e.nextElement());
-    } 
+    }
   }
 
   // -- Helper class --

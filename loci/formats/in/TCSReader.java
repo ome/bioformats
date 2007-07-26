@@ -31,6 +31,10 @@ import loci.formats.*;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/TCSReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/TCSReader.java">SVN</a></dd></dl>
  */
 public class TCSReader extends BaseTiffReader {
 

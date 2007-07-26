@@ -36,6 +36,10 @@ import javax.swing.table.DefaultTableModel;
  * OMETablePanel is the class that handles the table used
  * in displaying the images selectable for download.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/util/OMETablePanel.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/util/OMETablePanel.java">SVN</a></dd></dl>
+ *
  * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert, linkert at wisc.edu
  */

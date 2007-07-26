@@ -38,6 +38,10 @@ import visad.util.Util;
 /**
  * Represents a link between a data transform and a display
  * that produces a single image.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/TransformLink.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/TransformLink.java">SVN</a></dd></dl>
  */
 public class TransformLink
   implements DisplayListener, Dynamic, Runnable, Saveable, TransformListener

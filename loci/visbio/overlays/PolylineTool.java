@@ -31,7 +31,13 @@ import visad.DisplayEvent;
 import visad.DisplayImpl;
 import visad.util.CursorUtil;
 
-/** FreeformTool is the tool for creating freeform objects. */
+/**
+ * FreeformTool is the tool for creating freeform objects.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/PolylineTool.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/PolylineTool.java">SVN</a></dd></dl>
+ */
 public class PolylineTool extends OverlayTool {
 
   // -- Constants --

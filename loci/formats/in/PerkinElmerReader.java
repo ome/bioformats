@@ -34,6 +34,10 @@ import loci.formats.*;
 /**
  * PerkinElmerReader is the file format reader for PerkinElmer files.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/PerkinElmerReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/PerkinElmerReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class PerkinElmerReader extends FormatReader {

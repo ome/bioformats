@@ -34,6 +34,10 @@ import javax.swing.text.Document;
 /**
  * OutputConsole provides an output stream that pipes to a JTextArea
  * Swing component in its own frame (instead of to a console window).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/OutputConsole.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/OutputConsole.java">SVN</a></dd></dl>
  */
 public class OutputConsole extends OutputStream {
 

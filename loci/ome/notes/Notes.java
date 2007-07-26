@@ -1,21 +1,21 @@
-// 
+//
 // Notes.java
 //
 
 /*
 OME Metadata Notes application for exploration and editing of OME-XML and
 OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
-  
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-    
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
-      
+
 You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,13 +38,19 @@ import loci.formats.ome.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
-/** Main notes window. */
+/**
+ * Main notes window.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/Notes.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/Notes.java">SVN</a></dd></dl>
+ */
 public class Notes extends JFrame implements ActionListener {
 
   // -- Constants --
 
   /** Template that is loaded automatically. */
-  private static final String DEFAULT_TEMPLATE = "templates/viewer.template"; 
+  private static final String DEFAULT_TEMPLATE = "templates/viewer.template";
 
   private static final CellConstraints CC = new CellConstraints();
 
@@ -63,7 +69,7 @@ public class Notes extends JFrame implements ActionListener {
   private Template currentTemplate;
 
   /** Current template file name. */
-  private String templateName; 
+  private String templateName;
 
   /** Foreground (font) color. */
   private Color foreground;
@@ -83,16 +89,16 @@ public class Notes extends JFrame implements ActionListener {
   /** Thumbnails for the current file. */
   private Vector thumb;
 
-  // -- Constructor -- 
+  // -- Constructor --
 
   /** Constructs a new main window with the default template. */
   public Notes() {
     this(null, (String) null);
   }
 
-  /** 
-   * Constructs a new main window with the given metadata, 
-   * and default template. 
+  /**
+   * Constructs a new main window with the given metadata,
+   * and default template.
    */
   public Notes(OMENode root) {
     this(null, root);
@@ -102,25 +108,25 @@ public class Notes extends JFrame implements ActionListener {
   public Notes(String template, OMENode root) {
     super("OME Notes");
     setupWindow();
-  
+
     // load the appropriate template
 
     if (template != null) {
       loadTemplate(template);
     }
     else {
-      templateName = DEFAULT_TEMPLATE; 
+      templateName = DEFAULT_TEMPLATE;
       loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE));
     }
- 
+
     currentRoot = root;
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
   }
 
   /** Constructs a new main window with the given template. */
   public Notes(String template, String newfile) {
-    super("OME Notes"); 
+    super("OME Notes");
     setupWindow();
 
     // load the appropriate template
@@ -129,10 +135,10 @@ public class Notes extends JFrame implements ActionListener {
       loadTemplate(template);
     }
     else {
-      templateName = DEFAULT_TEMPLATE; 
+      templateName = DEFAULT_TEMPLATE;
       loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE));
     }
-  
+
     try {
       if (newfile != null) openFile(newfile);
     }
@@ -140,7 +146,7 @@ public class Notes extends JFrame implements ActionListener {
       e.printStackTrace();
     }
 
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE); 
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
   }
 
@@ -148,14 +154,14 @@ public class Notes extends JFrame implements ActionListener {
 
   /** Load and apply a template from the specified file. */
   public void loadTemplate(String filename) {
-    // clear out previous template 
+    // clear out previous template
 
     progress.setString("Loading template " + filename);
 
     templateName = filename;
 
-    // parse the template file 
-    try { 
+    // parse the template file
+    try {
       loadTemplate(new Template(filename));
     }
     catch (IOException e) {
@@ -181,12 +187,12 @@ public class Notes extends JFrame implements ActionListener {
     if (tabPane != null) getContentPane().remove(tabPane);
     tabPane = new JTabbedPane();
     getContentPane().add(tabPane);
-    
+
     // retrieve defined GUI parameters
-    setPreferredSize(new Dimension(currentTemplate.getDefaultWidth(), 
+    setPreferredSize(new Dimension(currentTemplate.getDefaultWidth(),
       currentTemplate.getDefaultHeight()));
 
-    font = new Font(currentTemplate.getFontStyle(), Font.PLAIN, 
+    font = new Font(currentTemplate.getFontStyle(), Font.PLAIN,
       currentTemplate.getFontSize());
 
     int[] fore = currentTemplate.getFontColor();
@@ -195,17 +201,17 @@ public class Notes extends JFrame implements ActionListener {
     foreground = new Color(fore[0], fore[1], fore[2]);
     background = new Color(back[0], back[1], back[2]);
 
-    // set up all of the defined tabs and fields 
-    
+    // set up all of the defined tabs and fields
+
     TemplateTab[] tabs = currentTemplate.getTabs();
 
     for (int i=0; i<tabs.length; i++) {
       Vector groups = tabs[i].getAllGroups();
       Vector fields = tabs[i].getAllFields();
-  
+
       JScrollPane scroll = new JScrollPane();
       JPanel panel = new JPanel();
-     
+
       String rowString = "pref,";
       String colString = "pref,pref:grow,pref:grow,pref:grow,";
 
@@ -218,7 +224,7 @@ public class Notes extends JFrame implements ActionListener {
 
       for (int j=0; j<numColumns; j++) {
         colString += "pref:grow,pref,pref:grow,pref,";
-      } 
+      }
 
       FormLayout l = new FormLayout(colString, rowString);
       panel.setLayout(l);
@@ -232,7 +238,7 @@ public class Notes extends JFrame implements ActionListener {
         TemplateGroup group = (TemplateGroup) groups.get(j);
         for (int r=0; r<group.getRepetitions(); r++) {
           FormLayout layout = (FormLayout) panel.getLayout();
-     
+
           int col = 2;
 
           if (currentTemplate.editTemplateFields()) {
@@ -242,7 +248,7 @@ public class Notes extends JFrame implements ActionListener {
             panel.add(add, CC.xy(col, rowNumber[col - 1]));
             rowNumber[col - 1]++;
             col++;
-          
+
             JButton remove = new JButton("-");
             remove.setActionCommand("removeGroup" + i + "-" + j);
             remove.addActionListener(this);
@@ -250,50 +256,50 @@ public class Notes extends JFrame implements ActionListener {
             rowNumber[col - 1]++;
             col++;
           }
-      
-          panel.add(new JLabel(group.getName() + " #" + (r + 1)), 
+
+          panel.add(new JLabel(group.getName() + " #" + (r + 1)),
             CC.xy(col, rowNumber[col - 1]));
           rowNumber[col - 1] += 3;
           col++;
 
           for (int k=0; k<group.getNumFields(); k++) {
             TemplateField field = group.getField(r, k);
-            setupField(field, col, r, rowNumber, panel); 
+            setupField(field, col, r, rowNumber, panel);
           }
-          rowNumber[col - 1]++; 
+          rowNumber[col - 1]++;
         }
       }
 
       for (int j=0; j<fields.size(); j++) {
-        TemplateField f = tabs[i].getField(j); 
+        TemplateField f = tabs[i].getField(j);
         setupField(f, 2, 0, rowNumber, panel);
       }
 
-      tabPane.add(scroll, tabs[i].getName()); 
+      tabPane.add(scroll, tabs[i].getName());
     }
-    
+
     setFontAndColors(this);
     changeEditable(currentTemplate.isEditable(), this);
     progress.setString("");
 
-    pack(); 
+    pack();
   }
 
   /** Recursively set the font and colors for the root and all children. */
   public void setFontAndColors(Container root) {
-    Component[] components = root instanceof JMenu ? 
+    Component[] components = root instanceof JMenu ?
       ((JMenu) root).getMenuComponents() : root.getComponents();
     for (int i=0; i<components.length; i++) {
       components[i].setFont(font);
       components[i].setForeground(foreground);
       components[i].setBackground(background);
 
-      if (components[i] instanceof JTextArea || 
-        components[i] instanceof JComboBox || 
-        components[i] instanceof JCheckBox) 
+      if (components[i] instanceof JTextArea ||
+        components[i] instanceof JComboBox ||
+        components[i] instanceof JCheckBox)
       {
-        LineBorder b = new LineBorder(foreground); 
-        ((JComponent) components[i]).setBorder(b); 
+        LineBorder b = new LineBorder(foreground);
+        ((JComponent) components[i]).setBorder(b);
       }
 
       if (components[i] instanceof Container) {
@@ -306,11 +312,11 @@ public class Notes extends JFrame implements ActionListener {
   public void changeEditable(boolean enable, Container root) {
     Component[] c = root.getComponents();
     for (int i=0; i<c.length; i++) {
-      if (!(c[i] instanceof JMenuBar) && !(c[i] instanceof JMenu) && 
+      if (!(c[i] instanceof JMenuBar) && !(c[i] instanceof JMenu) &&
         !(c[i] instanceof JMenuItem) && !(c[i] instanceof JLabel) &&
         !(c[i] instanceof JScrollBar) && !(c[i] instanceof JTabbedPane))
-      {  
-        c[i].setEnabled(enable); 
+      {
+        c[i].setEnabled(enable);
       }
       if (c[i] instanceof Container) {
         changeEditable(enable, (Container) c[i]);
@@ -324,22 +330,22 @@ public class Notes extends JFrame implements ActionListener {
     String cmd = e.getActionCommand();
 
     if (cmd.equals("new")) {
-      // check if the user wants to save the current metadata first 
+      // check if the user wants to save the current metadata first
 
-      int s = JOptionPane.showConfirmDialog(this, "Save current metadata?", "", 
-        JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE); 
-       
+      int s = JOptionPane.showConfirmDialog(this, "Save current metadata?", "",
+        JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+
       if (s == JOptionPane.YES_OPTION) {
         actionPerformed(new ActionEvent(this, -1, "save"));
       }
       thumb.clear();
-      if (templateName.equals(DEFAULT_TEMPLATE)) { 
-        loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE)); 
+      if (templateName.equals(DEFAULT_TEMPLATE)) {
+        loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE));
       }
       else loadTemplate(templateName);
     }
     else if (cmd.equals("open")) {
-      progress.setString("Opening file..."); 
+      progress.setString("Opening file...");
 
       try {
         ImageReader reader = new ImageReader();
@@ -349,11 +355,11 @@ public class Notes extends JFrame implements ActionListener {
         if (status == JFileChooser.APPROVE_OPTION) {
           currentFile = chooser.getSelectedFile().getAbsolutePath();
         }
-        if (currentFile == null) return; 
-      
+        if (currentFile == null) return;
+
         thumb.clear();
-        if (templateName.equals(DEFAULT_TEMPLATE)) { 
-          loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE)); 
+        if (templateName.equals(DEFAULT_TEMPLATE)) {
+          loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE));
         }
         else loadTemplate(templateName);
         openFile(currentFile);
@@ -364,7 +370,7 @@ public class Notes extends JFrame implements ActionListener {
     }
     else if (cmd.equals("save")) {
       progress.setString("Saving metadata to companion file...");
-     
+
       if (currentRoot == null) {
         OMEXMLMetadataStore tmp = new OMEXMLMetadataStore();
         tmp.createRoot();
@@ -372,21 +378,21 @@ public class Notes extends JFrame implements ActionListener {
       }
 
       currentTemplate.saveFields(currentRoot);
-   
-      // always save to the current filename + ".ome" 
-      
+
+      // always save to the current filename + ".ome"
+
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.setRoot(currentRoot);
 
       try {
         String name = currentFile;
-        
+
         if (name == null) {
           JFileChooser chooser = new JFileChooser();
-      
+
           FileFilter filter = new FileFilter() {
             public boolean accept(File f) {
-              return true; 
+              return true;
             }
             public String getDescription() {
               return "OME-XML files";
@@ -398,16 +404,16 @@ public class Notes extends JFrame implements ActionListener {
           int status = chooser.showSaveDialog(this);
           if (status == JFileChooser.APPROVE_OPTION) {
             name = chooser.getSelectedFile().getAbsolutePath();
-            if (name == null) return; 
+            if (name == null) return;
           }
         }
-       
+
         if (name == null) return;
         if (!name.endsWith(".ome")) name += ".ome";
 
         File f = new File(name);
         currentRoot.writeOME(f, false);
-        progress.setString("Finished writing companion file (" + name + ")"); 
+        progress.setString("Finished writing companion file (" + name + ")");
       }
       catch (Exception io) {
         io.printStackTrace();
@@ -417,9 +423,9 @@ public class Notes extends JFrame implements ActionListener {
       dispose();
     }
     else if (cmd.equals("load")) {
-      // prompt for the new template file 
+      // prompt for the new template file
       JFileChooser chooser = new JFileChooser();
-      
+
       FileFilter filter = new FileFilter() {
         public boolean accept(File f) {
           return f.getAbsolutePath().endsWith(".template") || f.isDirectory();
@@ -435,8 +441,8 @@ public class Notes extends JFrame implements ActionListener {
       if (status == JFileChooser.APPROVE_OPTION) {
         loadTemplate(chooser.getSelectedFile().getAbsolutePath());
       }
-      try { 
-        if (currentFile != null) openFile(currentFile); 
+      try {
+        if (currentFile != null) openFile(currentFile);
       }
       catch (Exception exc) {
         exc.printStackTrace();
@@ -444,48 +450,48 @@ public class Notes extends JFrame implements ActionListener {
     }
     else if (cmd.startsWith("cloneGroup")) {
       cmd = cmd.substring(10);
-      int tabIndex = 
+      int tabIndex =
         Integer.parseInt(cmd.substring(0, cmd.indexOf("-")).trim());
-      int groupIndex = 
+      int groupIndex =
         Integer.parseInt(cmd.substring(cmd.indexOf("-") + 1).trim());
 
       TemplateTab tab = currentTemplate.getTabs()[tabIndex];
       TemplateGroup group = tab.getGroup(groupIndex);
       group.setRepetitions(group.getRepetitions() + 1);
-      
-      int tabIdx = tabPane.getSelectedIndex(); 
-      
-      loadTemplate(currentTemplate); 
-      try { 
-        if (currentFile != null) openFile(currentFile); 
+
+      int tabIdx = tabPane.getSelectedIndex();
+
+      loadTemplate(currentTemplate);
+      try {
+        if (currentFile != null) openFile(currentFile);
       }
       catch (Exception exc) {
         exc.printStackTrace();
       }
 
-      tabPane.setSelectedIndex(tabIdx); 
-    } 
+      tabPane.setSelectedIndex(tabIdx);
+    }
     else if (cmd.startsWith("removeGroup")) {
       cmd = cmd.substring(11);
-      int tabIndex = 
+      int tabIndex =
         Integer.parseInt(cmd.substring(0, cmd.indexOf("-")).trim());
-      int groupIndex = 
+      int groupIndex =
         Integer.parseInt(cmd.substring(cmd.indexOf("-") + 1).trim());
 
       TemplateTab tab = currentTemplate.getTabs()[tabIndex];
       TemplateGroup group = tab.getGroup(groupIndex);
-      group.setRepetitions(group.getRepetitions() - 1);  
-      
-      int tabIdx = tabPane.getSelectedIndex(); 
-      
-      loadTemplate(currentTemplate); 
-      try { 
-        if (currentFile != null) openFile(currentFile); 
+      group.setRepetitions(group.getRepetitions() - 1);
+
+      int tabIdx = tabPane.getSelectedIndex();
+
+      loadTemplate(currentTemplate);
+      try {
+        if (currentFile != null) openFile(currentFile);
       }
       catch (Exception exc) {
         exc.printStackTrace();
       }
-      
+
       tabPane.setSelectedIndex(tabIdx);
     }
 
@@ -501,11 +507,11 @@ public class Notes extends JFrame implements ActionListener {
     JPanel contentPane = new JPanel();
 
     // set up the menu bar
-    
+
     menubar = new JMenuBar();
-    
+
     JMenu file = new JMenu("File");
- 
+
     JMenuItem newFile = new JMenuItem("New...");
     newFile.setActionCommand("new");
     newFile.addActionListener(this);
@@ -539,39 +545,39 @@ public class Notes extends JFrame implements ActionListener {
 
     // add the status bar
     progress = new JProgressBar(0, 1);
-    progress.setStringPainted(true); 
+    progress.setStringPainted(true);
     menubar.add(progress);
 
-    setJMenuBar(menubar); 
+    setJMenuBar(menubar);
 
     // provide a place to show metadata
 
     tabPane = new JTabbedPane();
     contentPane.add(tabPane);
   }
-  
+
   private void openFile(String file) throws Exception {
-    currentFile = file; 
+    currentFile = file;
     ImageReader reader = new ImageReader();
-    reader.setNormalized(true); 
-    reader.setOriginalMetadataPopulated(true); 
+    reader.setNormalized(true);
+    reader.setOriginalMetadataPopulated(true);
     progress.setString("Reading " + currentFile);
-   
+
     if (currentFile.endsWith(".ome")) {
-      File f = new File(currentFile); 
+      File f = new File(currentFile);
       currentRoot = new OMENode(f);
     }
     else {
       // first look for a companion file
       File companion = new File(currentFile + ".ome");
       if (companion.exists()) {
-        progress.setString("Reading companion file (" + companion + ")"); 
+        progress.setString("Reading companion file (" + companion + ")");
         currentRoot = new OMENode(companion);
       }
 
       reader.setMetadataStore(new OMEXMLMetadataStore());
-      reader.setId(currentFile); 
-      OMEXMLMetadataStore store = 
+      reader.setId(currentFile);
+      OMEXMLMetadataStore store =
         (OMEXMLMetadataStore) reader.getMetadataStore();
 
       if (companion.exists()) {
@@ -584,33 +590,32 @@ public class Notes extends JFrame implements ActionListener {
           currentRoot = merge(currentRoot, (OMENode) store.getRoot());
         }
         else {
-          currentRoot = merge((OMENode) store.getRoot(), currentRoot); 
+          currentRoot = merge((OMENode) store.getRoot(), currentRoot);
         }
       }
       else currentRoot = (OMENode) store.getRoot();
-      
+
       // grab thumbnails
 
-      for (int i=0; i<reader.getSeriesCount(); i++) { 
-        reader.setSeries(i); 
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        reader.setSeries(i);
         thumb.add(reader.openThumbImage(0));
-      } 
+      }
 
       reader.close();
-    } 
- 
-    
-    progress.setString("Populating fields..."); 
-    currentTemplate.initializeFields(currentRoot); 
-    currentTemplate.populateFields(currentRoot); 
-    loadTemplate(currentTemplate); 
-    progress.setString(""); 
+    }
+
+    progress.setString("Populating fields...");
+    currentTemplate.initializeFields(currentRoot);
+    currentTemplate.populateFields(currentRoot);
+    loadTemplate(currentTemplate);
+    progress.setString("");
   }
 
   /** Set up a new field in the current tab. */
   private void setupField(TemplateField field, int col, int r, int[] rowNumber,
-    JPanel panel) 
-  { 
+    JPanel panel)
+  {
     JComponent c = field.getComponent();
 
     if (field.getType().equals("thumbnail")) {
@@ -625,34 +630,34 @@ public class Notes extends JFrame implements ActionListener {
           if (tempReader.getImageCount() > 0) {
             thumbnail = tempReader.openThumbImage(0);
           }
-          tempReader.close(); 
+          tempReader.close();
         }
         catch (Exception e) {
           e.printStackTrace();
         }
       }
-           
+
       if (thumbnail != null) {
         ((JLabel) c).setIcon(new ImageIcon(thumbnail));
-      } 
+      }
     }
-         
+
     int cndx = (field.getColumn() - 1) * 4 + col;
-    int rowNdx = field.getRow() == -1 ? rowNumber[cndx - 1] : 2*field.getRow(); 
-    FormLayout layout = (FormLayout) panel.getLayout(); 
+    int rowNdx = field.getRow() == -1 ? rowNumber[cndx - 1] : 2*field.getRow();
+    FormLayout layout = (FormLayout) panel.getLayout();
     if (rowNdx > layout.getRowCount() - 1) {
       layout.appendRow(new RowSpec("pref:grow"));
       layout.appendRow(new RowSpec("pref"));
     }
 
-    panel.add(new JLabel(field.getName()), CC.xy(cndx, rowNdx)); 
-    panel.add(c, CC.xy(cndx + 1, rowNdx)); 
-    
+    panel.add(new JLabel(field.getName()), CC.xy(cndx, rowNdx));
+    panel.add(c, CC.xy(cndx + 1, rowNdx));
+
     if (field.getRow() == -1) {
-      rowNumber[cndx - 1]++; 
-      rowNumber[cndx]++; 
-    } 
-  
+      rowNumber[cndx - 1]++;
+      rowNumber[cndx]++;
+    }
+
     if (rowNdx > rowNumber[1]) {
       for (int i=0; i<col - 1; i++) {
         rowNumber[i] = rowNdx + 2;
@@ -673,7 +678,7 @@ public class Notes extends JFrame implements ActionListener {
     if (temp instanceof OMENode) return (OMENode) temp;
     return null;
   }
-  
+
   /**
    * Merge two OME-XML trees.
    * This method was adapted from an earlier version of OME Notes,
@@ -702,7 +707,7 @@ public class Notes extends JFrame implements ActionListener {
         if (isHighCustom && !isLowCustom) isHighCustom = false;
         else if (!isHighCustom && isLowCustom && !addedCustom) {
           result.getDOMElement().appendChild(createClone(
-            lowNode.getDOMElement(), 
+            lowNode.getDOMElement(),
             highNode.getDOMElement().getOwnerDocument()));
           addedCustom = true;
           isLowCustom = false;
@@ -712,19 +717,19 @@ public class Notes extends JFrame implements ActionListener {
           else {
             if (ids.indexOf(lowID) > -1) {
               result.getDOMElement().appendChild(createClone(
-                lowNode.getDOMElement(), 
+                lowNode.getDOMElement(),
                 highNode.getDOMElement().getOwnerDocument()));
-              ids.add(lowID); 
+              ids.add(lowID);
             }
           }
         }
       }
     }
-    return result; 
+    return result;
   }
 
-  /** 
-   * Clones the specified DOM element, preserving the parent structure. 
+  /**
+   * Clones the specified DOM element, preserving the parent structure.
    * This method was adapted from an earlier version of OME Notes,
    * written by Christopher Peterson.
    */
@@ -739,7 +744,7 @@ public class Notes extends JFrame implements ActionListener {
         clone.setAttribute(attr.getNodeName(), attr.getNodeValue());
       }
     }
-  
+
     if (el.hasChildNodes()) {
       NodeList nodes = el.getChildNodes();
       for (int i=0; i<nodes.getLength(); i++) {
@@ -749,7 +754,7 @@ public class Notes extends JFrame implements ActionListener {
         }
       }
     }
-    return clone; 
+    return clone;
   }
 
   // -- Main method --
@@ -758,14 +763,14 @@ public class Notes extends JFrame implements ActionListener {
     String template = null, data = null;
     for (int i=0; i<args.length; i++) {
       if (args[i].equals("-template")) {
-        if (args.length > i + 1) { 
+        if (args.length > i + 1) {
           template = args[++i];
         }
         else System.err.println("Please specify a template file");
       }
-      else data = args[i]; 
+      else data = args[i];
     }
-   
+
     new Notes(template, data);
   }
 

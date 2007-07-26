@@ -27,7 +27,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import loci.visbio.util.SwingUtil;
 
-/** TaskControls is the control panel for managing tasks. */
+/**
+ * TaskControls is the control panel for managing tasks.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/TaskControls.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/TaskControls.java">SVN</a></dd></dl>
+ */
 public class TaskControls extends ControlPanel {
 
   // -- GUI components --

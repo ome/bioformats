@@ -36,6 +36,10 @@ import loci.formats.LogTools;
  * are left as abstract. 2D methods do simple concatenation and call to the 1D
  * methods
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/BaseCodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/BaseCodec.java">SVN</a></dd></dl>
+ *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
 public abstract class BaseCodec implements Codec {

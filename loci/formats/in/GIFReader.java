@@ -33,6 +33,10 @@ import loci.formats.*;
  * GIFReader is the file format reader for Graphics Interchange Format
  * (GIF) files.  Much of this code was adapted from the Animated GIF Reader
  * plugin for ImageJ (http://rsb.info.nih.gov/ij).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/GIFReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/GIFReader.java">SVN</a></dd></dl>
  */
 public class GIFReader extends FormatReader {
 

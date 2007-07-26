@@ -24,7 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.cache;
 
-/** Interface for components capable of reporting cache updates. */
+/**
+ * Interface for components capable of reporting cache updates.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/CacheReporter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/CacheReporter.java">SVN</a></dd></dl>
+ */
 public interface CacheReporter {
 
   /** Adds a listener for status update events. */

@@ -29,6 +29,10 @@ package loci.formats;
  * store the values from the entry's specific offset and is based on the TIFF
  * 6.0 specification of an IFD entry.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/TiffIFDEntry.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/TiffIFDEntry.java">SVN</a></dd></dl>
+ *
  * @author Chris Allan callan at blackcat.ca
  */
 public class TiffIFDEntry {

@@ -32,8 +32,8 @@ import org.w3c.dom.Element;
 public class TemplateTools {
 
   /** Get the value corresponding to the given map. */
-  public static String getString(OMENode root, String map, boolean value) 
-    throws Exception 
+  public static String getString(OMENode root, String map, boolean value)
+    throws Exception
   {
     OMEXMLNode node = findNode(root, map, false);
     if (node == null && map != null) return null;
@@ -46,15 +46,15 @@ public class TemplateTools {
       int[] indices = getMapIndices(map);
 
       if (ca != null && map != null) {
-        Vector elements = DOMUtil.getChildElements("NotesField", 
+        Vector elements = DOMUtil.getChildElements("NotesField",
           ca.getDOMElement());
         int ndx = indices[indices.length - 1];
         if (ndx >= elements.size()) return null;
         Element el = (Element) elements.get(ndx);
         return DOMUtil.getAttribute(value ? "value" : "name", el);
-      } 
-      return ""; 
-    } 
+      }
+      return "";
+    }
 
     String newMap = map.substring(map.lastIndexOf(":") + 1);
     if (newMap.indexOf("-") != -1) {
@@ -101,7 +101,7 @@ public class TemplateTools {
   public static OMEXMLNode findNode(OMENode root, String map, boolean create)
     throws Exception
   {
-    if (map == null) return null; 
+    if (map == null) return null;
     int elementCount = 0;
     int last = map.indexOf(":");
     while (last != -1) {
@@ -119,22 +119,22 @@ public class TemplateTools {
 
     OMEXMLNode node = root;
     for (int i=0; i<elementCount; i++) {
-      Vector nodeList = DOMUtil.getChildElements(elements[i], 
+      Vector nodeList = DOMUtil.getChildElements(elements[i],
         node.getDOMElement());
       if ((nodeList == null || nodeList.size() == 0) && create) {
         // TODO : create the node
-        return null; 
+        return null;
       }
       else if (nodeList == null || nodeList.size() == 0) return null;
 
       int idx = indices[i];
       if (idx < nodeList.size()) {
-        node = OMEXMLNode.createNode((Element) nodeList.get(idx)); 
+        node = OMEXMLNode.createNode((Element) nodeList.get(idx));
       }
       else return null;
     }
-   
-    return node; 
+
+    return node;
   }
 
   /** Get the value from the given component. */
@@ -161,7 +161,7 @@ public class TemplateTools {
 
   /** Get the index for each element in the map. */
   public static int[] getMapIndices(String map) {
-    if (map == null) return new int[0]; 
+    if (map == null) return new int[0];
     int elementCount = 0;
     int last = map.indexOf(":");
     while (last != -1) {
@@ -177,15 +177,15 @@ public class TemplateTools {
     for (int i=0; i<elementCount; i++) {
       if (indexList.indexOf(",") == -1) {
         indices[i] = Integer.parseInt(indexList);
-        indexList = "0"; 
+        indexList = "0";
       }
       else {
-        indices[i] = Integer.parseInt(indexList.substring(0, 
+        indices[i] = Integer.parseInt(indexList.substring(0,
           indexList.indexOf(",")));
-        indexList = indexList.substring(indexList.indexOf(",") + 1); 
-      } 
+        indexList = indexList.substring(indexList.indexOf(",") + 1);
+      }
     }
-    return indices; 
+    return indices;
   }
 
 }

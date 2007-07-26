@@ -27,7 +27,13 @@ package loci.plugins;
 
 import ij.ImageJ;
 
-/** Launches ImageJ; for use with LOCI's ImageJ Java Web Start bundle. */
+/**
+ * Launches ImageJ; for use with LOCI's ImageJ Java Web Start bundle.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/IJLauncher.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/IJLauncher.java">SVN</a></dd></dl>
+ */
 public class IJLauncher {
 
   public static void main(String[] args) {

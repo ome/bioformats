@@ -32,7 +32,13 @@ import javax.swing.*;
 import javax.swing.event.*;
 import ij.text.*;
 
-/** Text panel with search capabilities. */
+/**
+ * Text panel with search capabilities.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/SearchableWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/SearchableWindow.java">SVN</a></dd></dl>
+ */
 public class SearchableWindow extends TextWindow implements ActionListener {
 
   protected TextPanel panel;
@@ -40,17 +46,17 @@ public class SearchableWindow extends TextWindow implements ActionListener {
 
   // -- Constructor --
 
-  public SearchableWindow(String title, String headings, String data, 
-    int w, int h) 
+  public SearchableWindow(String title, String headings, String data,
+    int w, int h)
   {
     super(title, headings, data, w, h);
     index = -1;
     panel = getTextPanel();
-  
+
     MenuBar menubar = getMenuBar();
     Menu menu = menubar.getMenu(0);
-    MenuItem search = new MenuItem("Search..."); 
-    search.addActionListener(this); 
+    MenuItem search = new MenuItem("Search...");
+    search.addActionListener(this);
     menu.add(search);
   }
 
@@ -63,7 +69,7 @@ public class SearchableWindow extends TextWindow implements ActionListener {
   // -- SearchableWindow API methods --
 
   public void selectLine(int index) {
-    int ys = panel.getFontMetrics(getFont()).getHeight() + 2; 
+    int ys = panel.getFontMetrics(getFont()).getHeight() + 2;
     int y = ys * (index + 1) + 2;  // absolute y coordinate
     int totalHeight = ys * panel.getLineCount();
 
@@ -73,7 +79,7 @@ public class SearchableWindow extends TextWindow implements ActionListener {
       if (components[i] instanceof Scrollbar) {
         Scrollbar s = (Scrollbar) components[i];
         if (s.getOrientation() == Scrollbar.VERTICAL) {
-          ss = s; 
+          ss = s;
         }
       }
     }
@@ -92,11 +98,11 @@ public class SearchableWindow extends TextWindow implements ActionListener {
   class SearchBox extends JDialog implements ActionListener, ChangeListener {
     private JTextField searchBox;
     private JCheckBox ignore;
-    private boolean ignoreCase; 
+    private boolean ignoreCase;
     private SearchableWindow searchPane;
 
     public SearchBox(SearchableWindow searchPane) {
-      setTitle("Search..."); 
+      setTitle("Search...");
       this.searchPane = searchPane;
       FormLayout layout = new FormLayout("pref,pref:grow,pref,pref:grow,pref",
         "pref,pref:grow,pref,pref:grow,pref,pref:grow,pref");
@@ -106,7 +112,7 @@ public class SearchableWindow extends TextWindow implements ActionListener {
       searchBox = new JTextField();
 
       ignore = new JCheckBox("Ignore Case", false);
-      ignore.addChangeListener(this); 
+      ignore.addChangeListener(this);
       JButton next = new JButton("Find Next");
       next.setActionCommand("next");
       next.addActionListener(this);
@@ -116,7 +122,7 @@ public class SearchableWindow extends TextWindow implements ActionListener {
       JButton cancel = new JButton("Cancel");
       cancel.setActionCommand("cancel");
       cancel.addActionListener(this);
-      
+
       panel.add(searchBox, cc.xy(2, 2));
       panel.add(ignore, cc.xy(2, 4));
       panel.add(next, cc.xy(4, 2));
@@ -126,7 +132,7 @@ public class SearchableWindow extends TextWindow implements ActionListener {
       panel.setSize(new Dimension(350, 200));
       setContentPane(panel);
       setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-      setSize(new Dimension(350, 200)); 
+      setSize(new Dimension(350, 200));
       setVisible(true);
     }
 
@@ -135,44 +141,44 @@ public class SearchableWindow extends TextWindow implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       String cmd = e.getActionCommand();
       if (cmd.equals("next")) {
-        searchPane.panel.resetSelection(); 
-        String text = searchBox.getText(); 
+        searchPane.panel.resetSelection();
+        String text = searchBox.getText();
         boolean found = false;
-        int original = searchPane.index; 
+        int original = searchPane.index;
         while (!found) {
           searchPane.index++;
           if (searchPane.index >= searchPane.panel.getLineCount()) {
-            searchPane.index = 0; 
-          } 
-          if (searchPane.index == original) return; 
+            searchPane.index = 0;
+          }
+          if (searchPane.index == original) return;
           String line = searchPane.panel.getLine(searchPane.index);
           found = ignoreCase ? line.toLowerCase().indexOf(
-            text.toLowerCase()) >= 0 : line.indexOf(text) >= 0; 
+            text.toLowerCase()) >= 0 : line.indexOf(text) >= 0;
         }
-        searchPane.selectLine(searchPane.index); 
+        searchPane.selectLine(searchPane.index);
       }
       else if (cmd.equals("previous")) {
-        searchPane.panel.resetSelection(); 
+        searchPane.panel.resetSelection();
         String text = searchBox.getText();
         boolean found = false;
-        int original = searchPane.index; 
+        int original = searchPane.index;
         while (!found) {
           searchPane.index--;
           if (searchPane.index < 0) {
             searchPane.index = searchPane.panel.getLineCount() - 1;
           }
-          if (searchPane.index == original) return; 
+          if (searchPane.index == original) return;
           String line = searchPane.panel.getLine(searchPane.index);
           found = ignoreCase ? line.toLowerCase().indexOf(
-            text.toLowerCase()) >= 0 : line.indexOf(text) >= 0; 
+            text.toLowerCase()) >= 0 : line.indexOf(text) >= 0;
         }
-        searchPane.selectLine(searchPane.index); 
+        searchPane.selectLine(searchPane.index);
       }
       else if (cmd.equals("cancel")) {
         dispose();
       }
     }
- 
+
     // -- ChangeListener API methods --
 
     public void stateChanged(ChangeEvent e) {

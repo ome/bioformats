@@ -29,7 +29,13 @@ import javax.swing.event.ChangeEvent;
 import loci.visbio.data.DataTransform;
 import loci.visbio.util.*;
 
-/** Provides GUI controls for a display stack handler. */
+/**
+ * Provides GUI controls for a display stack handler.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/StackPanel.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/StackPanel.java">SVN</a></dd></dl>
+ */
 public class StackPanel extends TransformPanel {
 
   // -- Fields --

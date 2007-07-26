@@ -39,6 +39,10 @@ import loci.formats.*;
 /**
  * PreviewPane is a panel for use as a JFileChooser accessory, displaying
  * a thumbnail for the selected image, loaded in a separate thread.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/gui/PreviewPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/gui/PreviewPane.java">SVN</a></dd></dl>
  */
 public class PreviewPane extends JPanel
   implements PropertyChangeListener, Runnable

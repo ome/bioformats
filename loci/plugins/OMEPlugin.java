@@ -42,6 +42,10 @@ import org.openmicroscopy.is.PixelsFactory;
  * OMEPlugin is the ImageJ Plugin that allows image import and exports from
  * the OME database.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/OMEPlugin.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/OMEPlugin.java">SVN</a></dd></dl>
+ *
  * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */

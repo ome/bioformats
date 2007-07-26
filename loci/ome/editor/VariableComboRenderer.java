@@ -33,6 +33,10 @@ import javax.swing.table.TableCellRenderer;
  * A class to handle how to display a combobox cell even
  * when the cell is not being edited.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/VariableComboRenderer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/VariableComboRenderer.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class VariableComboRenderer extends JComboBox

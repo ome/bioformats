@@ -34,7 +34,13 @@ import loci.visbio.view.TransformLink;
 import org.w3c.dom.Element;
 import visad.*;
 
-/** DataTransform is the superclass of all data transform types. */
+/**
+ * DataTransform is the superclass of all data transform types.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/DataTransform.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/DataTransform.java">SVN</a></dd></dl>
+ */
 public abstract class DataTransform implements Dynamic, Saveable {
 
   // -- Constants --

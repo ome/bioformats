@@ -32,6 +32,10 @@ import loci.formats.*;
  * SDTReader is the file format reader for
  * Becker &amp; Hickl SPC-Image SDT files.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/SDTReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/SDTReader.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class SDTReader extends FormatReader {

@@ -30,6 +30,10 @@ import loci.formats.FormatException;
  * This class implements packbits decompression. Compression is not yet
  * implemented.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/PackbitsCodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/PackbitsCodec.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class PackbitsCodec extends BaseCodec implements Codec {

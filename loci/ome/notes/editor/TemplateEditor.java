@@ -5,17 +5,17 @@
 /*
 OME Metadata Notes application for exploration and editing of OME-XML and
 OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
-    
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-         
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Library General Public License for more details.
-                  
+
 You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -35,7 +35,13 @@ import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
 import loci.ome.notes.*;
 
-/** Main class for template editor. */
+/**
+ * Main class for template editor.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/editor/TemplateEditor.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/editor/TemplateEditor.java">SVN</a></dd></dl>
+ */
 public class TemplateEditor extends JFrame implements ActionListener {
 
   // -- Constants --
@@ -47,7 +53,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
   /** List of component classes. */
   protected static final Class[] COMPONENTS = new Class[] {
-    JTextField.class, JSpinner.class, JComboBox.class, JCheckBox.class, 
+    JTextField.class, JSpinner.class, JComboBox.class, JCheckBox.class,
     JLabel.class
   };
 
@@ -55,7 +61,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
   protected static final String[] COMPONENT_TYPES = new String[] {
     "var", "int", "enum", "bool", "thumbnail"
   };
-  
+
   public static final int TAB = 0, GROUP = 1, FIELD = 2;
 
   // -- Fields --
@@ -70,7 +76,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
   private String currentFile;
 
   private JTextField newTabName;
- 
+
   private PictureTransferHandler pictureHandler;
 
   private int lastMenuX = 0;
@@ -94,7 +100,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
     JMenuBar menubar = new JMenuBar();
 
     JMenu file = new JMenu("File");
-    
+
     JMenuItem newFile = new JMenuItem("New...");
     newFile.setActionCommand("new");
     newFile.addActionListener(this);
@@ -131,8 +137,8 @@ public class TemplateEditor extends JFrame implements ActionListener {
     JButton row = new JButton("Add Row");
     row.addActionListener(this);
     row.setActionCommand("add row");
-    
-    JButton col = new JButton("Add Column"); 
+
+    JButton col = new JButton("Add Column");
     col.addActionListener(this);
     col.setActionCommand("add col");
 
@@ -149,8 +155,8 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
     CellConstraints cc = new CellConstraints();
 
-    FormLayout layout = 
-      new FormLayout("pref:grow,pref,pref:grow,pref:grow,pref:grow", 
+    FormLayout layout =
+      new FormLayout("pref:grow,pref,pref:grow,pref:grow,pref:grow",
       "pref,5dlu:grow,pref:grow,pref:grow,pref:grow");
 
     JPanel contentPane = new JPanel(layout);
@@ -160,7 +166,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
     tabPane = new JTabbedPane();
     contentPane.add(tabPane, cc.xywh(3, 2, 3, 4));
 
-    FormLayout componentLayout = new FormLayout("pref:grow,pref:grow", 
+    FormLayout componentLayout = new FormLayout("pref:grow,pref:grow",
       "pref:grow,pref:grow,pref:grow,pref:grow,pref:grow,pref:grow");
     componentPane = new JPanel(componentLayout);
 
@@ -170,14 +176,14 @@ public class TemplateEditor extends JFrame implements ActionListener {
       for (int i=0; i<COMPONENTS.length; i++) {
         JLabel label = new JLabel(COMPONENT_NAMES[i]);
         componentPane.add(label, cc.xy(1, i + 2));
-        
-        JPanel panel = new JPanel(); 
-        JComponent component = (JComponent) COMPONENTS[i].newInstance(); 
-        component.setPreferredSize(new Dimension(64, 25)); 
-        component.setEnabled(false); 
-        panel.add(component); 
 
-        DraggableIcon img = new DraggableIcon(panel, -1, -1); 
+        JPanel panel = new JPanel();
+        JComponent component = (JComponent) COMPONENTS[i].newInstance();
+        component.setPreferredSize(new Dimension(64, 25));
+        component.setEnabled(false);
+        panel.add(component);
+
+        DraggableIcon img = new DraggableIcon(panel, -1, -1);
         img.setTransferHandler(pictureHandler);
         img.setEditable(false);
 
@@ -185,31 +191,31 @@ public class TemplateEditor extends JFrame implements ActionListener {
       }
     }
     catch (Exception e) {
-      error("Failed to create field list", e); 
+      error("Failed to create field list", e);
     }
 
     contentPane.add(componentPane, cc.xywh(1, 2, 1, 4));
 
-    setContentPane(contentPane);  
+    setContentPane(contentPane);
     setPreferredSize(new Dimension(768, 768));
     pack();
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
   }
-  
+
   // -- TemplateEditor API methods --
 
   // -- ActionListener API method --
 
-  public void actionPerformed(ActionEvent e) { 
+  public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-  
+
     if (cmd.equals("new")) {
       icons = new Hashtable[0];
       fields = new Hashtable[0];
 
-      tabPane.removeAll(); 
-      repaint(); 
+      tabPane.removeAll();
+      repaint();
     }
     else if (cmd.equals("open")) {
       JFileChooser chooser = new JFileChooser();
@@ -217,21 +223,21 @@ public class TemplateEditor extends JFrame implements ActionListener {
         public boolean accept(File f) {
           return f.getAbsolutePath().endsWith(".template") || f.isDirectory();
         }
-        public String getDescription() { return "OME Notes Templates"; } 
+        public String getDescription() { return "OME Notes Templates"; }
       };
-   
+
       chooser.setFileFilter(filter);
 
       int status = chooser.showOpenDialog(this);
       if (status == JFileChooser.APPROVE_OPTION) {
-        String file = chooser.getSelectedFile().getAbsolutePath(); 
-        try { 
-          Template t = new Template(file); 
+        String file = chooser.getSelectedFile().getAbsolutePath();
+        try {
+          Template t = new Template(file);
 
           TemplateTab[] tabs = t.getTabs();
           for (int i=0; i<tabs.length; i++) {
-            int rows = tabs[i].getRows(); 
-            int cols = tabs[i].getColumns(); 
+            int rows = tabs[i].getRows();
+            int cols = tabs[i].getColumns();
             if (cols == 0) cols = 1;
             if (rows == 0) rows = 1;
 
@@ -240,39 +246,39 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
             for (int j=0; j<tabs[i].getNumFields(); j++) {
               TemplateField f = tabs[i].getField(j);
-              
+
               int x = f.getRow();
               int y = f.getColumn();
               if (x == -1) x = 1;
               if (y == -1) y = j + 1;
-             
+
               Point p = new Point(x, y);
               DraggableIcon icon = (DraggableIcon) icons[i].get(p);
 
               icon.label = new JLabel(f.getName());
-          
+
               JPanel panel = new JPanel();
               panel.add(f.getComponent());
 
-              icon.setPanel(panel); 
+              icon.setPanel(panel);
             }
           }
         }
         catch (Exception exc) {
-          error("Failed to parse template", exc); 
+          error("Failed to parse template", exc);
         }
 
         tabPane.setSelectedIndex(0);
       }
     }
     else if (cmd.equals("save")) {
-      // build up the template from the components 
-      
-      TemplateTab[] tabs = new TemplateTab[tabPane.getTabCount()]; 
-     
+      // build up the template from the components
+
+      TemplateTab[] tabs = new TemplateTab[tabPane.getTabCount()];
+
       for (int i=0; i<tabs.length; i++) {
         tabs[i] = new TemplateTab();
-        tabs[i].setName(tabPane.getTitleAt(i)); 
+        tabs[i].setName(tabPane.getTitleAt(i));
         JComponent c = (JComponent) tabPane.getComponentAt(i);
         FormLayout layout = (FormLayout) c.getLayout();
 
@@ -284,7 +290,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
         for (int j=0; j<keys.length; j++) {
           Point p = (Point) keys[j];
           DraggableIcon icon = (DraggableIcon) icons[i].get(p);
-          TemplateField f = (TemplateField) fields[i].get(p); 
+          TemplateField f = (TemplateField) fields[i].get(p);
 
           if (icon.image != null) {
             Component[] components = icon.image.getComponents();
@@ -299,19 +305,19 @@ public class TemplateEditor extends JFrame implements ActionListener {
                 break;
               }
             }
-          
+
             f.setRow(p.y);
             f.setColumn(p.x);
             f.setDefaultValue(TemplateTools.getComponentValue(component));
-          
-            tabs[i].addField(f); 
+
+            tabs[i].addField(f);
           }
-        } 
+        }
       }
-      
+
       Template t = new Template(tabs, null);
 
-      // prompt for filename to save to 
+      // prompt for filename to save to
       if (currentFile == null) {
         JFileChooser chooser = new JFileChooser();
 
@@ -319,7 +325,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
           public boolean accept(File f) { return true; }
           public String getDescription() { return "All files"; }
         };
-      
+
         chooser.setFileFilter(filter);
 
         int status = chooser.showSaveDialog(this);
@@ -328,22 +334,22 @@ public class TemplateEditor extends JFrame implements ActionListener {
           if (currentFile == null) return;
         }
       }
-      
+
       try {
         t.save(currentFile);
       }
       catch (IOException io) {
-        error("Failed to save template", io); 
+        error("Failed to save template", io);
       }
     }
     else if (cmd.equals("quit")) dispose();
-    else if (cmd.equals("add row")) addRow(); 
-    else if (cmd.equals("add col")) addColumn(); 
+    else if (cmd.equals("add row")) addRow();
+    else if (cmd.equals("add col")) addColumn();
     else if (cmd.equals("prompt tab")) {
-      // prompt for tab name 
+      // prompt for tab name
       JPopupMenu menu = new JPopupMenu();
       newTabName = new JTextField();
-      newTabName.setPreferredSize(new Dimension(200, 25)); 
+      newTabName.setPreferredSize(new Dimension(200, 25));
       menu.add(newTabName);
       JButton b = new JButton("OK");
       b.addActionListener(this);
@@ -351,17 +357,17 @@ public class TemplateEditor extends JFrame implements ActionListener {
       menu.add(b);
 
       JComponent s = (JComponent) e.getSource();
-      menu.show(s, s.getX(), s.getY()); 
+      menu.show(s, s.getX(), s.getY());
       newTabName.grabFocus();
     }
     else if (cmd.equals("new tab")) {
-      newTabName.getParent().setVisible(false); 
-      addTab(newTabName.getText(), 2, 2); 
+      newTabName.getParent().setVisible(false);
+      addTab(newTabName.getText(), 2, 2);
     }
     else if (cmd.equals("setName")) {
-      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent(); 
-      DraggableIcon icon = (DraggableIcon) menu.getInvoker(); 
-      menu.setVisible(false); 
+      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent();
+      DraggableIcon icon = (DraggableIcon) menu.getInvoker();
+      menu.setVisible(false);
 
       String text = ((JTextField) menu.getComponents()[0]).getText();
 
@@ -373,24 +379,24 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
       // set the name
       if (icon.label != null) icon.remove(icon.label);
-      icon.remove(icon.image); 
+      icon.remove(icon.image);
       icon.label = new JLabel(text);
       icon.add(icon.label);
       icon.add(icon.image);
-      icon.getParent().repaint(); 
+      icon.getParent().repaint();
     }
     else if (cmd.equals("changeName")) {
       // prompt for new field name
       JPopupMenu menu = new JPopupMenu();
       JTextField field = new JTextField();
-      field.setPreferredSize(new Dimension(200, 25)); 
+      field.setPreferredSize(new Dimension(200, 25));
       menu.add(field);
       JButton b = new JButton("OK");
       b.addActionListener(this);
       b.setActionCommand("setName");
       menu.add(b);
-      menu.show(lastMenuComponent, lastMenuX, lastMenuY); 
-      field.grabFocus(); 
+      menu.show(lastMenuComponent, lastMenuX, lastMenuY);
+      field.grabFocus();
     }
     else if (cmd.equals("nameMap")) {
       JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent();
@@ -398,55 +404,55 @@ public class TemplateEditor extends JFrame implements ActionListener {
       menu.setVisible(false);
 
       MappingWindow w = new MappingWindow(this, true);
-      w.show(lastMenuComponent, lastMenuX, lastMenuY); 
+      w.show(lastMenuComponent, lastMenuX, lastMenuY);
     }
     else if (cmd.equals("map")) {
-      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent(); 
-      DraggableIcon icon = (DraggableIcon) menu.getInvoker(); 
-      menu.setVisible(false); 
-      
+      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent();
+      DraggableIcon icon = (DraggableIcon) menu.getInvoker();
+      menu.setVisible(false);
+
       MappingWindow w = new MappingWindow(this, false);
-      w.show(lastMenuComponent, lastMenuX, lastMenuY); 
+      w.show(lastMenuComponent, lastMenuX, lastMenuY);
     }
     else if (cmd.equals("repeat")) {
       JMenuItem item = (JMenuItem) e.getSource();
-      DraggableIcon icon = 
-        (DraggableIcon) ((JPopupMenu) item.getParent()).getInvoker(); 
+      DraggableIcon icon =
+        (DraggableIcon) ((JPopupMenu) item.getParent()).getInvoker();
       TemplateField f = getField(icon);
 
       if (item.getText().equals("Repeat this field")) {
         item.setText("Don't repeat this field");
-        f.setRepeated(true); 
+        f.setRepeated(true);
       }
       else {
         item.setText("Repeat this field");
-        f.setRepeated(false); 
-      } 
+        f.setRepeated(false);
+      }
     }
     else if (cmd.equals("removeField")) {
       JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent();
       DraggableIcon icon = (DraggableIcon) menu.getInvoker();
       menu.setVisible(false);
-      
+
       int idx = tabPane.getSelectedIndex();
       Object[] keys = icons[idx].keySet().toArray();
       for (int i=0; i<keys.length; i++) {
         if (icons[idx].get(keys[i]).equals(icon)) {
           icons[idx].remove(keys[i]);
           fields[idx].remove(keys[i]);
-          break; 
+          break;
         }
       }
-    
-      icon.remove(icon.label); 
-      icon.remove(icon.image); 
-      tabPane.repaint(); 
+
+      icon.remove(icon.label);
+      icon.remove(icon.image);
+      tabPane.repaint();
     }
     else if (cmd.startsWith("removeRow")) {
       int row = Integer.parseInt(cmd.substring(cmd.indexOf(":") + 1));
-      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent(); 
-      menu.setVisible(false); 
-      
+      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent();
+      menu.setVisible(false);
+
       JPanel pane = (JPanel) tabPane.getSelectedComponent();
       FormLayout layout = (FormLayout) pane.getLayout();
 
@@ -456,17 +462,17 @@ public class TemplateEditor extends JFrame implements ActionListener {
       int idx = tabPane.getSelectedIndex();
 
       for (int i=0; i<cols; i++) {
-        pane.remove((JComponent) icons[idx].get(new Point(i + 1, row + 1))); 
+        pane.remove((JComponent) icons[idx].get(new Point(i + 1, row + 1)));
       }
-    
+
       rekey(row, -1);
       layout.removeRow(row + 1);
-      tabPane.repaint(); 
+      tabPane.repaint();
     }
     else if (cmd.startsWith("removeColumn")) {
       int col = Integer.parseInt(cmd.substring(cmd.indexOf(":") + 1));
-      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent(); 
-      menu.setVisible(false); 
+      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent();
+      menu.setVisible(false);
 
       JPanel pane = (JPanel) tabPane.getSelectedComponent();
       FormLayout layout = (FormLayout) pane.getLayout();
@@ -474,22 +480,22 @@ public class TemplateEditor extends JFrame implements ActionListener {
       int rows = layout.getRowCount();
       int cols = layout.getColumnCount();
       int idx = tabPane.getSelectedIndex();
-     
+
       for (int i=0; i<rows; i++) {
         pane.remove((JComponent) icons[idx].get(new Point(col + 1, i + 1)));
       }
-     
+
       rekey(-1, col);
       layout.removeColumn(col + 1);
-      tabPane.repaint(); 
+      tabPane.repaint();
     }
     else if (cmd.equals("removeTab")) {
       int ndx = tabPane.getSelectedIndex();
       tabPane.remove(ndx);
-    
+
       Hashtable[] h = new Hashtable[icons.length - 1];
       Hashtable[] f = new Hashtable[fields.length - 1];
-   
+
       System.arraycopy(icons, 0, h, 0, ndx);
       System.arraycopy(icons, ndx + 1, h, ndx, h.length - ndx);
       System.arraycopy(fields, 0, f, 0, ndx);
@@ -500,8 +506,8 @@ public class TemplateEditor extends JFrame implements ActionListener {
     }
     else if (cmd.equals("specifyChoices")) {
       JMenuItem item = (JMenuItem) e.getSource();
-      DraggableIcon icon = 
-        (DraggableIcon) ((JPopupMenu) item.getParent()).getInvoker(); 
+      DraggableIcon icon =
+        (DraggableIcon) ((JPopupMenu) item.getParent()).getInvoker();
       TemplateField f = getField(icon);
 
       EnumWindow w = new EnumWindow(this, f.getEnums());
@@ -512,7 +518,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
       ButtonGroup g = new ButtonGroup();
 
       JRadioButton dataset = new JRadioButton("Use thumbnail from dataset");
-      dataset.setSelected(true); 
+      dataset.setSelected(true);
       g.add(dataset);
 
       JRadioButton file = new JRadioButton("Use thumbnail from file:");
@@ -522,19 +528,19 @@ public class TemplateEditor extends JFrame implements ActionListener {
       menu.add(file);
 
       JTextField field = new JTextField();
-      field.setPreferredSize(new Dimension(200, 25)); 
+      field.setPreferredSize(new Dimension(200, 25));
       menu.add(field);
-     
+
       JButton b = new JButton("OK");
       b.addActionListener(this);
       b.setActionCommand("applyThumbSource");
       menu.add(b);
-      menu.show(lastMenuComponent, lastMenuX, lastMenuY); 
+      menu.show(lastMenuComponent, lastMenuX, lastMenuY);
     }
     else if (cmd.equals("applyThumbSource")) {
-      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent(); 
-      DraggableIcon icon = (DraggableIcon) menu.getInvoker(); 
-     
+      JPopupMenu menu = (JPopupMenu) ((JComponent) e.getSource()).getParent();
+      DraggableIcon icon = (DraggableIcon) menu.getInvoker();
+
       Component[] c = menu.getComponents();
       JRadioButton dataset = (JRadioButton) c[0];
 
@@ -542,44 +548,44 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
       if (!dataset.isSelected()) {
         JTextField t = (JTextField) c[2];
-        text = t.getText(); 
-        getField(icon).setValueMap(text); 
-      } 
-      
-      menu.setVisible(false); 
-   
+        text = t.getText();
+        getField(icon).setValueMap(text);
+      }
+
+      menu.setVisible(false);
+
       if (text != null) {
-        try { 
+        try {
           ImageReader reader = new ImageReader();
           reader.setId(text);
           BufferedImage thumb = reader.openThumbImage(0);
           JLabel label = (JLabel) icon.image.getComponents()[0];
           label.setIcon(new ImageIcon(thumb));
-          reader.close(); 
+          reader.close();
         }
-        catch (FormatException exc) { 
-          error("Failed to open thumbnail (" + text + ")", exc); 
+        catch (FormatException exc) {
+          error("Failed to open thumbnail (" + text + ")", exc);
         }
-        catch (IOException exc) { 
-          error("Failed to open thumbnail (" + text + ")", exc); 
+        catch (IOException exc) {
+          error("Failed to open thumbnail (" + text + ")", exc);
         }
-      } 
-    } 
+      }
+    }
     else if (cmd.equals("ok")) {
-      // this event came from an instance of EnumWindow 
-      JPanel parent = (JPanel) ((JButton) e.getSource()).getParent(); 
+      // this event came from an instance of EnumWindow
+      JPanel parent = (JPanel) ((JButton) e.getSource()).getParent();
       EnumWindow menu = (EnumWindow) parent.getParent();
-      DraggableIcon icon = (DraggableIcon) menu.getInvoker(); 
+      DraggableIcon icon = (DraggableIcon) menu.getInvoker();
       TemplateField f = getField(icon);
-      menu.setVisible(false); 
+      menu.setVisible(false);
 
       String[] options = menu.getOptions();
-      f.setEnums(options); 
-     
+      f.setEnums(options);
+
       JComboBox box = (JComboBox) icon.image.getComponents()[0];
-      for (int i=0; i<options.length; i++) box.addItem(options[i]); 
-      repaint(); 
-    } 
+      for (int i=0; i<options.length; i++) box.addItem(options[i]);
+      repaint();
+    }
     else if (cmd.equals("chooseMapping")) {
       // this event came from an instance of MappingWindow
       JTabbedPane parent = (JTabbedPane) ((JButton) e.getSource()).getParent();
@@ -589,8 +595,6 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
       String omexmlMap = null;
 
-      
-      
       if (menu.nameMap) f.setNameMap(omexmlMap);
       else f.setValueMap(omexmlMap);
       menu.setVisible(false);
@@ -608,7 +612,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
         return (TemplateField) fields[idx].get(keys[i]);
       }
     }
-    return null; 
+    return null;
   }
 
   /** Update the icon and template hashtables. */
@@ -620,14 +624,14 @@ public class TemplateEditor extends JFrame implements ActionListener {
 
     for (int i=0; i<keys.length; i++) {
       Point p = (Point) keys[i];
-        
+
       if ((p.x == col + 1 && col != -1) || (p.y == row + 1 && row != -1)) {
         icons[idx].remove(keys[i]);
         fields[idx].remove(keys[i]);
-      } 
+      }
       else if ((p.x > col + 1 && col != -1) || (p.y > row + 1 && row != -1)) {
-        int x = col != -1 ? p.x - 1 : p.x; 
-        int y = col != -1 ? p.y - 1 : p.y; 
+        int x = col != -1 ? p.x - 1 : p.x;
+        int y = col != -1 ? p.y - 1 : p.y;
         Point k = new Point(x, y);
         h.put(k, icons[idx].get(keys[i]));
         f.put(k, fields[idx].get(keys[i]));
@@ -671,8 +675,8 @@ public class TemplateEditor extends JFrame implements ActionListener {
         addIcon(panel, x, y, tabPane.getTabCount());
       }
     }
-  
-    tabPane.addTab(name, panel); 
+
+    tabPane.addTab(name, panel);
   }
 
   /** Add a new column to the current tab. */
@@ -686,7 +690,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
     for (int i=0; i<layout.getColumnCount(); i++) {
       addIcon(selected, layout.getRowCount() - 1, i, ndx);
     }
-    tabPane.repaint(); 
+    tabPane.repaint();
   }
 
   /** Add a new row to the current tab. */
@@ -698,23 +702,23 @@ public class TemplateEditor extends JFrame implements ActionListener {
     int ndx = tabPane.getSelectedIndex();
 
     for (int i=0; i<layout.getRowCount(); i++) {
-      addIcon(selected, i, layout.getColumnCount() - 1, ndx); 
+      addIcon(selected, i, layout.getColumnCount() - 1, ndx);
     }
-    tabPane.repaint(); 
+    tabPane.repaint();
   }
 
   /** Add a field icon at the specified grid coordinates. */
   private void addIcon(JPanel p, int x, int y, int tab) {
-    CellConstraints cc = new CellConstraints(); 
-    DraggableIcon dummy = new DraggableIcon(new JPanel(), y + 1, x + 1); 
+    CellConstraints cc = new CellConstraints();
+    DraggableIcon dummy = new DraggableIcon(new JPanel(), y + 1, x + 1);
     dummy.setTransferHandler(pictureHandler);
-    dummy.setPreferredSize(new Dimension(128, 128));    
+    dummy.setPreferredSize(new Dimension(128, 128));
 
     JPopupMenu menu = new JPopupMenu();
     JMenuItem item = new JMenuItem("Change field name");
     item.addActionListener(this);
     item.setActionCommand("changeName");
-    menu.add(item); 
+    menu.add(item);
 
     item = new JMenuItem("Change name mapping");
     item.addActionListener(this);
@@ -749,25 +753,25 @@ public class TemplateEditor extends JFrame implements ActionListener {
     menu.add(item);
 
     dummy.menu = menu;
-    dummy.listener = this; 
+    dummy.listener = this;
     MouseListener popupListener = new PopupListener(menu);
     dummy.addMouseListener(popupListener);
-    
-    p.add(dummy, cc.xy(y + 1, x + 1)); 
-    icons[tab].put(new Point(y + 1, x + 1), dummy); 
-    fields[tab].put(new Point(y + 1, x + 1), new TemplateField()); 
+
+    p.add(dummy, cc.xy(y + 1, x + 1));
+    icons[tab].put(new Point(y + 1, x + 1), dummy);
+    fields[tab].put(new Point(y + 1, x + 1), new TemplateField());
   }
 
   /** Display an error message. */
   protected void error(String msg, Exception exc) {
     if (exc != null) {
-      StackTraceElement[] n = exc.getStackTrace(); 
+      StackTraceElement[] n = exc.getStackTrace();
       for (int i=0; i<n.length; i++) {
-        msg += "\n" + n[i]; 
+        msg += "\n" + n[i];
       }
-    } 
-    JOptionPane.showMessageDialog(this, msg, "Error!", 
-      JOptionPane.ERROR_MESSAGE); 
+    }
+    JOptionPane.showMessageDialog(this, msg, "Error!",
+      JOptionPane.ERROR_MESSAGE);
   }
 
   // -- Helper classes --
@@ -776,22 +780,22 @@ public class TemplateEditor extends JFrame implements ActionListener {
     JPopupMenu popup;
 
     PopupListener(JPopupMenu popupMenu) {
-      popup = popupMenu; 
+      popup = popupMenu;
     }
-  
+
     public void mousePressed(MouseEvent e) { maybeShowPopup(e); }
 
     public void mouseReleased(MouseEvent e) { maybeShowPopup(e); }
 
     private void maybeShowPopup(MouseEvent e) {
       if (e.isPopupTrigger()) {
-        lastMenuComponent = (JComponent) e.getComponent(); 
+        lastMenuComponent = (JComponent) e.getComponent();
         lastMenuX = e.getX();
         lastMenuY = e.getY();
         popup.show(e.getComponent(), e.getX(), e.getY());
       }
     }
-  
+
   }
 
   // -- Main method --

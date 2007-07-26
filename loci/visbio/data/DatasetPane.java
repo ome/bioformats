@@ -44,6 +44,10 @@ import visad.util.Util;
 /**
  * DatasetPane provides a full-featured set of options
  * for importing a multidimensional data series into VisBio.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/DatasetPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/DatasetPane.java">SVN</a></dd></dl>
  */
 public class DatasetPane extends WizardPane implements DocumentListener {
 

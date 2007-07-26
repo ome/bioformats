@@ -29,7 +29,13 @@ import java.io.*;
 import java.util.StringTokenizer;
 import loci.formats.*;
 
-/** File format reader for NRRD files;  see http://teem.sourceforge.net/nrrd. */
+/**
+ * File format reader for NRRD files;  see http://teem.sourceforge.net/nrrd.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/NRRDReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/NRRDReader.java">SVN</a></dd></dl>
+ */
 public class NRRDReader extends FormatReader {
 
   // -- Fields --

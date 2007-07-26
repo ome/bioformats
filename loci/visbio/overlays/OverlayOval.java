@@ -28,7 +28,13 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
 
-/** OverlayOval is a bounding oval overlay. */
+/**
+ * OverlayOval is a bounding oval overlay.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayOval.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayOval.java">SVN</a></dd></dl>
+ */
 public class OverlayOval extends OverlayObject {
 
   // -- Static Fields --

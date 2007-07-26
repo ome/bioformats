@@ -27,7 +27,13 @@ import javax.swing.JOptionPane;
 import loci.visbio.data.*;
 import visad.FlatField;
 
-/** MatlabFunction executes a MATLAB script or function on a data object. */
+/**
+ * MatlabFunction executes a MATLAB script or function on a data object.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ext/MatlabFunction.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ext/MatlabFunction.java">SVN</a></dd></dl>
+ */
 public class MatlabFunction extends ExternalFunction {
 
   // -- Constructors --

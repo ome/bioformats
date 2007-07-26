@@ -29,7 +29,13 @@ import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
 
-/** MetadataViewer is a simple application for displaying OME-XML metadata. */
+/**
+ * MetadataViewer is a simple application for displaying OME-XML metadata.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/viewer/MetadataViewer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/viewer/MetadataViewer.java">SVN</a></dd></dl>
+ */
 public class MetadataViewer extends JFrame
   implements ActionListener, Runnable
 {

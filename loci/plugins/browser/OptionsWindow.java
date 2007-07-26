@@ -35,7 +35,13 @@ import java.util.Vector;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-/** Window displaying custom virtualization options. */
+/**
+ * Window displaying custom virtualization options.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/OptionsWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/OptionsWindow.java">SVN</a></dd></dl>
+ */
 public class OptionsWindow extends JFrame implements
   ActionListener, ChangeListener, ItemListener
 {

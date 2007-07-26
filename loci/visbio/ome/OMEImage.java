@@ -43,6 +43,10 @@ import visad.*;
  * OMEImage keeps no data in memory itself, leaving that management to the
  * application, and just downloads data as necessary to return whatever the
  * application requests, according to the DataTransform API.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ome/OMEImage.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ome/OMEImage.java">SVN</a></dd></dl>
  */
 public class OMEImage extends ImageTransform {
 

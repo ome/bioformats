@@ -40,6 +40,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * To use it, the LuraWave decoder library, lwf_jsdk2.6.jar, must be available,
  * and a LuraWave license key must be specified in the lurawave.license system
  * property (e.g., <code>-Dlurawave.license=XXXX</code> on the command line).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/FlexReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/FlexReader.java">SVN</a></dd></dl>
  */
 public class FlexReader extends BaseTiffReader {
 

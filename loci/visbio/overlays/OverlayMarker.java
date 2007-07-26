@@ -28,7 +28,13 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
 
-/** OverlayMarker is a marker crosshairs overlay. */
+/**
+ * OverlayMarker is a marker crosshairs overlay.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayMarker.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayMarker.java">SVN</a></dd></dl>
+ */
 public class OverlayMarker extends OverlayObject {
 
   // -- Static Fields --

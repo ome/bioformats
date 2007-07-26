@@ -35,7 +35,13 @@ import javax.swing.event.ListSelectionListener;
 import loci.visbio.*;
 import loci.visbio.util.*;
 
-/** DisplayControls is the control panel for managing displays. */
+/**
+ * DisplayControls is the control panel for managing displays.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/DisplayControls.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/DisplayControls.java">SVN</a></dd></dl>
+ */
 public class DisplayControls extends ControlPanel
   implements ActionListener, ListSelectionListener
 {

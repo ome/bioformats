@@ -27,7 +27,13 @@ import java.util.Hashtable;
 import loci.formats.FormatTools;
 import visad.Data;
 
-/** Provides a simple caching mechanism for full-resolution data in memory. */
+/**
+ * Provides a simple caching mechanism for full-resolution data in memory.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/DataCache.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/DataCache.java">SVN</a></dd></dl>
+ */
 public class DataCache {
 
   // -- Constants --

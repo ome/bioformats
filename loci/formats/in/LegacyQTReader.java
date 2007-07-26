@@ -38,6 +38,10 @@ import loci.formats.*;
  *
  * Much of this code was based on the QuickTime Movie Opener for ImageJ
  * (available at http://rsb.info.nih.gov/ij/plugins/movie-opener.html).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/LegacyQTReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/LegacyQTReader.java">SVN</a></dd></dl>
  */
 public class LegacyQTReader extends FormatReader {
 

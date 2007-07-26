@@ -31,7 +31,13 @@ import java.net.URL;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-/** An application splash screen. */
+/**
+ * An application splash screen.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/SplashScreen.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/SplashScreen.java">SVN</a></dd></dl>
+ */
 public class SplashScreen extends JWindow {
 
   // -- Fields --

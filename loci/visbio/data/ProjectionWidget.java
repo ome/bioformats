@@ -34,6 +34,10 @@ import loci.visbio.util.*;
 /**
  * ProjectionWidget is a set of GUI controls
  * for a maximum intensity projection transform.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/ProjectionWidget.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/ProjectionWidget.java">SVN</a></dd></dl>
  */
 public class ProjectionWidget extends JPanel implements ActionListener {
 

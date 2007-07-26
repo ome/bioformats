@@ -56,6 +56,10 @@ import org.w3c.dom.NodeList;
  * add or subtract duplicate tables and get information
  * on the attributes being manipulated.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/ClickableTable.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/ClickableTable.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class ClickableTable extends JTable

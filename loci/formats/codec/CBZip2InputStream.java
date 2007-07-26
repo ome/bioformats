@@ -67,6 +67,10 @@ import loci.formats.LogTools;
  * buffered source stream.</p>
  *
  * <p>Instances of this class are not threadsafe.</p>
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/CBZip2InputStream.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/CBZip2InputStream.java">SVN</a></dd></dl>
  */
 public class CBZip2InputStream extends InputStream implements BZip2Constants {
 

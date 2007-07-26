@@ -32,6 +32,10 @@ import loci.formats.*;
  * MRCReader is the file format reader for MRC files.
  * Specifications available at
  * http://bio3d.colorado.edu/imod/doc/mrc_format.txt
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/MRCReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/MRCReader.java">SVN</a></dd></dl>
  */
 public class MRCReader extends FormatReader {
 

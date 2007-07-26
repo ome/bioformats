@@ -31,6 +31,10 @@ package loci.formats.cache;
  *    3 |    17 11  1  9 15
  *    4 |    23 19  5 13 21
  * </pre>
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/RectangleStrategy.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/RectangleStrategy.java">SVN</a></dd></dl>
  */
 public class RectangleStrategy extends CacheStrategy {
 

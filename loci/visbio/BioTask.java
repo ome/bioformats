@@ -32,7 +32,13 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-/** BioTask is a panel representing a particular VisBio task. */
+/**
+ * BioTask is a panel representing a particular VisBio task.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/BioTask.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/BioTask.java">SVN</a></dd></dl>
+ */
 public class BioTask extends JPanel implements ActionListener {
 
   // -- Fields --

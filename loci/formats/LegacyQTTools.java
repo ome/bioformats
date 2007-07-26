@@ -30,7 +30,13 @@ import java.awt.image.MemoryImageSource;
 import java.net.*;
 import java.util.StringTokenizer;
 
-/** Utility class for working with QuickTime for Java. */
+/**
+ * Utility class for working with QuickTime for Java.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/LegacyQTTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/LegacyQTTools.java">SVN</a></dd></dl>
+ */
 public class LegacyQTTools {
 
   // -- Constants --

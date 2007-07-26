@@ -39,6 +39,10 @@ import loci.formats.ome.OMEWriter;
 /**
  * ImageJ plugin for uploading images to an OME server.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/LociUploader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/LociUploader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linket at wisc.edu
  */
 public class LociUploader implements PlugIn {
@@ -66,7 +70,7 @@ public class LociUploader implements PlugIn {
       canceled = false;
       return;
     }
-    
+
     uploadStack();
   }
 

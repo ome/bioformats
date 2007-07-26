@@ -36,6 +36,10 @@ import loci.formats.*;
  * Much of this writer's code was adapted from Wayne Rasband's
  * AVI Movie Writer plugin for ImageJ
  * (available at http://rsb.info.nih.gov/ij/).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/out/AVIWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/out/AVIWriter.java">SVN</a></dd></dl>
  */
 public class AVIWriter extends FormatWriter {
 

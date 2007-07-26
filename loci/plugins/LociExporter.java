@@ -35,6 +35,10 @@ import java.util.HashSet;
  * Wraps core logic in {@link loci.plugins.Exporter}, to avoid direct
  * references to classes in the external Bio-Formats library.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/LociExporter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/LociExporter.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class LociExporter implements PlugInFilter {

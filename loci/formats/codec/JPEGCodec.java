@@ -32,6 +32,10 @@ import loci.formats.*;
 /**
  * This class implements JPEG decompression. Compression is not yet
  * implemented.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/JPEGCodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/JPEGCodec.java">SVN</a></dd></dl>
  */
 public class JPEGCodec extends BaseCodec implements Codec {
 

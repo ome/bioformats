@@ -39,7 +39,13 @@ import loci.visbio.VisBioFrame;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.Region;
 
-/** Utility methods for saving and loading overlays to and from disk. */
+/**
+ * Utility methods for saving and loading overlays to and from disk.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayIO.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayIO.java">SVN</a></dd></dl>
+ */
 public final class OverlayIO {
 
   // -- Constants --

@@ -16,7 +16,13 @@ import javax.swing.*;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
-/** An application for weighted spectral mapping. */
+/**
+ * An application for weighted spectral mapping.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/apps/MultiLUT.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/apps/MultiLUT.java">SVN</a></dd></dl>
+ */
 public class MultiLUT extends Object implements ActionListener {
 
   private static final int NFILES = 17;

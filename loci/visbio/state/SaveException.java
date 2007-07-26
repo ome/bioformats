@@ -23,7 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-/** Exception indicating a problem with saving or restoring an object state. */
+/**
+ * Exception indicating a problem with saving or restoring an object state.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/SaveException.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/SaveException.java">SVN</a></dd></dl>
+ */
 public class SaveException extends Exception {
 
   // -- Fields --

@@ -7,7 +7,13 @@ package loci.formats.codec;
 import java.io.IOException;
 import loci.formats.*;
 
-/** Methods for compressing and decompressing data using QuickTime RLE. */
+/**
+ * Methods for compressing and decompressing data using QuickTime RLE.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/QTRLECodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/QTRLECodec.java">SVN</a></dd></dl>
+ */
 public class QTRLECodec extends BaseCodec implements Codec {
 
   /* @see Codec#compress(byte[], int, int, int[], Object) */

@@ -24,7 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-/** A rational number (numerator over denominator). */
+/**
+ * A rational number (numerator over denominator).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/TiffRational.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/TiffRational.java">SVN</a></dd></dl>
+ */
 public class TiffRational extends Number implements Comparable {
 
   // -- Fields --

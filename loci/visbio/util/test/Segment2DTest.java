@@ -27,7 +27,13 @@ import junit.framework.TestCase;
 import loci.visbio.util.MathUtil;
 import loci.visbio.util.Segment2D;
 
-/** Unit tests for the Segment2D class. */
+/**
+ * Unit tests for the Segment2D class.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/test/Segment2DTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/test/Segment2DTest.java">SVN</a></dd></dl>
+ */
 public class Segment2DTest extends TestCase {
 
   public static final float DELTA = 0f;

@@ -26,6 +26,10 @@ package loci.formats.codec;
 
 /**
  * A growable array of bytes.
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/ByteVector.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/ByteVector.java">SVN</a></dd></dl>
+ *
  * @author Wayne Rasband wsr at nih.gov
  */
 public class ByteVector {

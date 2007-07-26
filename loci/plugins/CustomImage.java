@@ -11,7 +11,13 @@ import java.awt.*;
 import java.awt.image.*;
 import loci.formats.FormatTools;
 
-/** Adapted from ij.CompositeImage - http://rsb.info.nih.gov/ij/ */
+/**
+ * Adapted from ij.CompositeImage - http://rsb.info.nih.gov/ij/
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/CustomImage.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/CustomImage.java">SVN</a></dd></dl>
+ */
 public class CustomImage extends ImagePlus {
 
 	int[] awtImagePixels;
@@ -21,7 +27,7 @@ public class CustomImage extends ImagePlus {
 	Image awtImage;
 	int[][] pixels;
 	ImageProcessor[] cip;
-	Color[] colors = {Color.red, Color.green, Color.blue, Color.white, Color.cyan, 
+	Color[] colors = {Color.red, Color.green, Color.blue, Color.white, Color.cyan,
     Color.magenta, Color.yellow};
 	int currentChannel = 0;
 	static int count;
@@ -42,7 +48,7 @@ public class CustomImage extends ImagePlus {
 		if (channels < 2 || (stackSize % channels) != 0) {
 			throw new IllegalArgumentException(
       "channels<2 or stacksize not multiple of channels");
-	  }	
+	  }
     compositeImage = true;
 		setDimensions(channels, stackSize / channels, 1);
 		setup(channels, stack2);
@@ -64,12 +70,12 @@ public class CustomImage extends ImagePlus {
 		if (img == null) updateImage();
 		return img;
 	}
-	
+
 	public void updateChannelAndDraw() {
 		singleChannel = true;
 		updateAndDraw();
 	}
-	
+
 	public ImageProcessor getChannelProcessor() {
 		return cip[currentSlice];
 	}
@@ -88,17 +94,17 @@ public class CustomImage extends ImagePlus {
 		int nChannels = getNChannels();
 		int redValue, greenValue, blueValue;
 		int slice = getCurrentSlice();
-		
+
 		if (nChannels == 1) {
 			pixels = null;
 			awtImagePixels = null;
 			if (ip != null) img = ip.createImage();
 			return;
 		}
-	
-		if (cip != null && cip[0].getWidth() != width || 
-      cip[0].getHeight() != height || (pixels != null && 
-      pixels.length != nChannels)) 
+
+		if (cip != null && cip[0].getWidth() != width ||
+      cip[0].getHeight() != height || (pixels != null &&
+      pixels.length != nChannels))
     {
 			setup(nChannels, getStack());
 			pixels = null;
@@ -112,37 +118,37 @@ public class CustomImage extends ImagePlus {
 
 		if (slice - 1 != currentChannel) {
 			currentChannel = slice - 1;
-			getProcessor().setMinAndMax(cip[currentChannel].getMin(), 
+			getProcessor().setMinAndMax(cip[currentChannel].getMin(),
         cip[currentChannel].getMax());
 			ContrastAdjuster.update();
 		}
-				
+
 		if (awtImagePixels == null) {
 			awtImagePixels = new int[imageSize];
 			newPixels = true;
 			imageSource = null;
 		}
-		if (pixels == null || pixels.length != nChannels || 
-      pixels[0].length != imageSize) 
+		if (pixels == null || pixels.length != nChannels ||
+      pixels[0].length != imageSize)
     {
 			pixels = new int[nChannels][imageSize];
 		}
-		
+
 		ImageProcessor iip = getProcessor();
 		cip[currentChannel].setMinAndMax(iip.getMin(), iip.getMax());
 		if (singleChannel) {
-			PixelGrabber pg = new PixelGrabber(cip[currentChannel].createImage(), 
+			PixelGrabber pg = new PixelGrabber(cip[currentChannel].createImage(),
         0, 0, width, height, pixels[currentChannel], 0, width);
 			try { pg.grabPixels(); }
 			catch (InterruptedException e) { };
-		} 
+		}
     else {
-      int[] coords = FormatTools.getZCTCoords(order, z, nChannels, t, 
-        cip.length, currentSlice - 1); 
-      coords[1] = 0;  
+      int[] coords = FormatTools.getZCTCoords(order, z, nChannels, t,
+        cip.length, currentSlice - 1);
+      coords[1] = 0;
       for (int i=0; i<nChannels; ++i) {
         int ndx = FormatTools.getIndex(order, z, nChannels, t, cip.length,
-          coords[0], i, coords[2]);  
+          coords[0], i, coords[2]);
         PixelGrabber pg = new PixelGrabber(cip[ndx].createImage(),
           0, 0, width, height, pixels[i], 0, width);
   			try { pg.grabPixels(); }
@@ -154,14 +160,14 @@ public class CustomImage extends ImagePlus {
 				case 0:
 					for (int i=0; i<imageSize; ++i) {
 						redValue = (pixels[0][i] >> 16) & 0xff;
-						awtImagePixels[i] = 
+						awtImagePixels[i] =
               (awtImagePixels[i] & 0xff00ffff) | (redValue << 16);
 					}
 					break;
 				case 1:
 					for (int i=0; i<imageSize; ++i) {
 						greenValue = (pixels[1][i] >> 8) & 0xff;
-						awtImagePixels[i] = (awtImagePixels[i] & 0xffff00ff) | 
+						awtImagePixels[i] = (awtImagePixels[i] & 0xffff00ff) |
               (greenValue << 8);
 					}
 					break;
@@ -172,14 +178,14 @@ public class CustomImage extends ImagePlus {
 					}
 					break;
 			}
-		} 
+		}
     else {
 			for (int i=0; i<imageSize; ++i) {
 				redValue = 0; greenValue = 0; blueValue = 0;
 				for (int j=0; j<nChannels; ++j) {
 					redValue += (pixels[j][i] >> 16) & 0xff;
 					greenValue += (pixels[j][i]>>8) & 0xff;
-					blueValue += (pixels[j][i]) & 0xff; 
+					blueValue += (pixels[j][i]) & 0xff;
 					if (redValue > 255) redValue = 255;
 					if (greenValue > 255) greenValue = 255;
 					if (blueValue > 255) blueValue = 255;
@@ -189,17 +195,17 @@ public class CustomImage extends ImagePlus {
 		}
 		if (imageSource == null) {
 			imageColorModel = new DirectColorModel(32, 0xff0000, 0xff00, 0xff);
-			imageSource = new MemoryImageSource(width, height, imageColorModel, 
+			imageSource = new MemoryImageSource(width, height, imageColorModel,
         awtImagePixels, 0, width);
 			imageSource.setAnimated(true);
 			imageSource.setFullBufferUpdates(true);
 			awtImage = Toolkit.getDefaultToolkit().createImage(imageSource);
 			newPixels = false;
-		} 
+		}
     else if (newPixels){
 			imageSource.newPixels(awtImagePixels, imageColorModel, 0, width);
 			newPixels = false;
-		} 
+		}
     else imageSource.newPixels();
 		if (img == null && awtImage != null) img = awtImage;
 		singleChannel = false;
@@ -215,8 +221,8 @@ public class CustomImage extends ImagePlus {
 		byte[] b = new byte[size];
 		((ColorProcessor) iip).getRGB(r, g, b);
 		ImageStack stack = new ImageStack(w, h);
-		stack.addSlice("Red", r);	
-		stack.addSlice("Green", g);	
+		stack.addSlice("Red", r);
+		stack.addSlice("Green", g);
 		stack.addSlice("Blue", b);
 		stack.setColorModel(iip.getDefaultColorModel());
 		return stack;
@@ -239,12 +245,12 @@ public class CustomImage extends ImagePlus {
 		}
 		return new IndexColorModel(8, 256, rLut, gLut, bLut);
 	}
-	
+
 	public Color getChannelColor() {
 		int index = getCurrentSlice() - 1;
 		if (index < colors.length && colors[index] != Color.white) {
       return colors[index];
-	  }	
+	  }
   	return Color.black;
 	}
 

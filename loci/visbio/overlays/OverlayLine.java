@@ -29,7 +29,13 @@ import java.util.Arrays;
 import loci.visbio.util.MathUtil;
 import visad.*;
 
-/** OverlayLine is a measurement line overlay. */
+/**
+ * OverlayLine is a measurement line overlay.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayLine.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayLine.java">SVN</a></dd></dl>
+ */
 public class OverlayLine extends OverlayObject {
 
   // -- Static Fields --

@@ -26,7 +26,13 @@ package loci.visbio.overlays;
 import loci.visbio.data.TransformEvent;
 import visad.DisplayEvent;
 
-/** TextTool is the tool for creating text overlays. */
+/**
+ * TextTool is the tool for creating text overlays.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/TextTool.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/TextTool.java">SVN</a></dd></dl>
+ */
 public class TextTool extends OverlayTool {
 
   // -- Fields --

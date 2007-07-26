@@ -38,6 +38,10 @@ import loci.formats.codec.*;
  * Video codecs currently supported: raw, rle, jpeg, mjpb, rpza.
  * Additional video codecs will be added as time permits.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/QTReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/QTReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class QTReader extends FormatReader {
@@ -156,7 +160,7 @@ public class QTReader extends FormatReader {
 
     boolean doLegacy = useLegacy;
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
-      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza")) 
+      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
       if (debug) {
         debug("Unsupported codec (" + code + "); using QTJava reader");
@@ -270,7 +274,7 @@ public class QTReader extends FormatReader {
 
     boolean doLegacy = useLegacy;
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
-      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza")) 
+      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
       if (debug) {
         debug("Unsupported codec (" + code + "); using QTJava reader");
@@ -595,16 +599,16 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stsd")) {
           // found video codec and pixel depth information
 
-          in.readInt(); 
+          in.readInt();
           int numEntries = in.readInt();
-          in.readInt(); 
+          in.readInt();
 
           for (int i=0; i<numEntries; i++) {
             if (i == 0) {
               codec = in.readString(4);
               in.skipBytes(16);
               if (in.readShort() == 0) {
-                in.skipBytes(56); 
+                in.skipBytes(56);
 
                 bitsPerPixel = in.readShort();
                 if (codec.equals("rpza")) bitsPerPixel = 8;
@@ -616,7 +620,7 @@ public class QTReader extends FormatReader {
                 addMeta("Bits per pixel", new Integer(bitsPerPixel));
                 in.readDouble();
                 in.read();
-              } 
+              }
             }
             else {
               altCodec = in.readString(4);

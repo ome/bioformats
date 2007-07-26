@@ -38,6 +38,10 @@ import java.util.Vector;
  *
  * If unsuccessful (caught an exception), the application should create an
  * InstanceServer, thus becoming the active application instance.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/InstanceServer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/InstanceServer.java">SVN</a></dd></dl>
  */
 public class InstanceServer implements Runnable {
 

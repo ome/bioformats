@@ -24,7 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-/** Handles swapping the dimension order of a file. */
+/**
+ * Handles swapping the dimension order of a file.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DimensionSwapper.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/DimensionSwapper.java">SVN</a></dd></dl>
+ */
 public class DimensionSwapper extends ReaderWrapper {
 
   // -- Constructors --

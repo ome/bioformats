@@ -10,6 +10,10 @@ package loci.formats.cache;
  * {@link ICacheSource}, it works with multidimensional (N-D) position arrays
  * rather than rasterized (1-D) indices. The two are made equivalent via a
  * mapping between the two, invoked within {@link Cache} as needed.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/ICacheStrategy.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/ICacheStrategy.java">SVN</a></dd></dl>
  */
 public interface ICacheStrategy extends CacheReporter {
 

@@ -30,7 +30,13 @@ import loci.visbio.TaskManager;
 import loci.visbio.util.*;
 import visad.*;
 
-/** Provides logic for handling data transform thumbnails. */
+/**
+ * Provides logic for handling data transform thumbnails.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/ThumbnailHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/ThumbnailHandler.java">SVN</a></dd></dl>
+ */
 public class ThumbnailHandler implements Runnable, TransformListener {
 
   // -- Fields --

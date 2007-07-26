@@ -28,7 +28,13 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 import visad.*;
 
-/** DataUtil contains useful VisAD data functions. */
+/**
+ * DataUtil contains useful VisAD data functions.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/DataUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/DataUtil.java">SVN</a></dd></dl>
+ */
 public final class DataUtil {
 
   // -- Constructor --

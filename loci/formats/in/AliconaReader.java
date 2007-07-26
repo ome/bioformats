@@ -29,7 +29,13 @@ import java.io.*;
 
 import loci.formats.*;
 
-/** AliconaReader is the file format reader for Alicona AL3D files. */
+/**
+ * AliconaReader is the file format reader for Alicona AL3D files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/AliconaReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/AliconaReader.java">SVN</a></dd></dl>
+ */
 public class AliconaReader extends FormatReader {
 
   // -- Fields --

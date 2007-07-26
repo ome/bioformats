@@ -34,6 +34,10 @@ import loci.formats.*;
 /**
  * LegacyZVIReader is the legacy file format reader for Zeiss ZVI files.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/LegacyZVIReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/LegacyZVIReader.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  * @author Michel Boudinot Michel dot boudinot at iaf.cnrs-gif.fr

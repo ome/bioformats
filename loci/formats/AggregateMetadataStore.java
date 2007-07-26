@@ -32,6 +32,10 @@ import java.util.List;
  * A metadata store which delegates the actual storage to one or more <i>sub</i>
  * metadata stores.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/AggregateMetadataStore.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/AggregateMetadataStore.java">SVN</a></dd></dl>
+ *
  * @author Chris Allan callan at blackcat.ca
  */
 public class AggregateMetadataStore implements MetadataStore {

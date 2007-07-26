@@ -32,6 +32,10 @@ import loci.visbio.util.DialogPane;
 /**
  * OMELoginPane provides a dialog for obtaining
  * OME login information from the user.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ome/OMELoginPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ome/OMELoginPane.java">SVN</a></dd></dl>
  */
 public class OMELoginPane extends DialogPane {
 

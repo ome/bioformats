@@ -47,7 +47,13 @@ import loci.visbio.view.DisplayManager;
 import visad.util.GUIFrame;
 import visad.util.Util;
 
-/** VisBioFrame is the main GUI frame for VisBio. */
+/**
+ * VisBioFrame is the main GUI frame for VisBio.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/VisBioFrame.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/VisBioFrame.java">SVN</a></dd></dl>
+ */
 public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
 
   // -- Constants --

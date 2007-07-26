@@ -25,7 +25,13 @@ package loci.visbio.util;
 
 import java.awt.geom.Point2D.Float;
 
-/** A 2D line segment. */
+/**
+ * A 2D line segment.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/Segment2D.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/Segment2D.java">SVN</a></dd></dl>
+ */
 public class Segment2D {
 
   /** Endpoints. */

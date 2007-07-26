@@ -27,7 +27,13 @@ package loci.formats;
 import java.io.*;
 import java.util.Vector;
 
-/** Abstract superclass of all biological file format readers and writers. */
+/**
+ * Abstract superclass of all biological file format readers and writers.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/FormatHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/FormatHandler.java">SVN</a></dd></dl>
+ */
 public abstract class FormatHandler implements IFormatHandler {
 
   // -- Static fields --

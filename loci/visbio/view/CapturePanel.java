@@ -31,7 +31,13 @@ import javax.swing.JPanel;
 import loci.visbio.WindowManager;
 import loci.visbio.util.LAFUtil;
 
-/** Provides GUI controls for a display capture handler. */
+/**
+ * Provides GUI controls for a display capture handler.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/CapturePanel.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/CapturePanel.java">SVN</a></dd></dl>
+ */
 public class CapturePanel extends JPanel implements ActionListener {
 
   // -- Fields --

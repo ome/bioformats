@@ -26,7 +26,13 @@ package loci.formats;
 
 import java.util.Hashtable;
 
-/** Encompasses core metadata values. */
+/**
+ * Encompasses core metadata values.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/CoreMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/CoreMetadata.java">SVN</a></dd></dl>
+ */
 public class CoreMetadata {
   public int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
   public int[] thumbSizeX, thumbSizeY;

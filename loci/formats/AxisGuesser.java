@@ -32,6 +32,10 @@ import java.math.BigInteger;
  * dimensional axes (Z, T or C), potentially recommending an adjustment in
  * dimension order within the files, depending on the confidence of each guess.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/AxisGuesser.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/AxisGuesser.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class AxisGuesser {

@@ -38,7 +38,13 @@ import loci.visbio.ext.MatlabUtil;
 import loci.visbio.util.*;
 import visad.util.Util;
 
-/** SystemControls is the control panel for reporting system information. */
+/**
+ * SystemControls is the control panel for reporting system information.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/SystemControls.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/SystemControls.java">SVN</a></dd></dl>
+ */
 public class SystemControls extends ControlPanel implements ActionListener {
 
   // -- GUI components --

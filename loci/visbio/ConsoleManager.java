@@ -32,6 +32,10 @@ import loci.visbio.util.*;
 
 /**
  * ConsoleManager is the manager encapsulating VisBio's console output logic.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ConsoleManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ConsoleManager.java">SVN</a></dd></dl>
  */
 public class ConsoleManager extends LogicManager implements OutputListener {
 

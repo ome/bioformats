@@ -27,7 +27,13 @@ import com.jgoodies.plaf.LookUtils;
 import java.io.File;
 import java.io.IOException;
 
-/** Launches an external spreadsheet application. */
+/**
+ * Launches an external spreadsheet application.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/SpreadsheetLauncher.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/SpreadsheetLauncher.java">SVN</a></dd></dl>
+ */
 public class SpreadsheetLauncher {
 
   // -- Constants --

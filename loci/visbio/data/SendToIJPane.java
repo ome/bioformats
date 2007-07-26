@@ -37,6 +37,10 @@ import visad.VisADException;
 /**
  * SendToIJPane provides options for exporting part of a
  * multidimensional data series directly to an ImageJ instance.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/SendToIJPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/SendToIJPane.java">SVN</a></dd></dl>
  */
 public class SendToIJPane extends DialogPane {
 

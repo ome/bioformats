@@ -28,7 +28,13 @@ import java.io.File;
 import java.io.FileFilter;
 import java.math.BigInteger;
 
-/** NumberFilter is a helper filter for FilePattern.findPattern(). */
+/**
+ * NumberFilter is a helper filter for FilePattern.findPattern().
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/NumberFilter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/NumberFilter.java">SVN</a></dd></dl>
+ */
 public class NumberFilter implements FileFilter {
 
   // -- Fields --

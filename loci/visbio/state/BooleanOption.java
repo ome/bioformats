@@ -29,7 +29,13 @@ import loci.visbio.util.LAFUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
-/** BooleanOption is a true-or-false option in the VisBio Options dialog. */
+/**
+ * BooleanOption is a true-or-false option in the VisBio Options dialog.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/BooleanOption.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/BooleanOption.java">SVN</a></dd></dl>
+ */
 public class BooleanOption extends BioOption {
 
   // -- Fields --

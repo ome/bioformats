@@ -31,7 +31,13 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-/** A utility class for command line tools. */
+/**
+ * A utility class for command line tools.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ConsoleTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ConsoleTools.java">SVN</a></dd></dl>
+ */
 public final class ConsoleTools {
 
   // -- Constructor --
@@ -569,21 +575,21 @@ public final class ConsoleTools {
     long start = System.currentTimeMillis();
     LogTools.print(in + " ");
     ImageReader reader = new ImageReader();
-    reader.setOriginalMetadataPopulated(true); 
+    reader.setOriginalMetadataPopulated(true);
 
     try {
       Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
       MetadataStore ms = (MetadataStore) c.newInstance();
       reader.setMetadataStore(ms);
     }
-    catch (Throwable t) { 
-      LogTools.println("OME-Java library not found."); 
+    catch (Throwable t) {
+      LogTools.println("OME-Java library not found.");
     }
 
     reader.setId(in);
     LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
-    
-    MetadataStore store = reader.getMetadataStore(); 
+
+    MetadataStore store = reader.getMetadataStore();
     if (store instanceof MetadataRetrieve) {
       writer.setMetadataRetrieve((MetadataRetrieve) store);
     }

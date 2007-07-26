@@ -29,7 +29,13 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
 
-/** ColorUtil contains useful color table functions. */
+/**
+ * ColorUtil contains useful color table functions.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/ColorUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/ColorUtil.java">SVN</a></dd></dl>
+ */
 public final class ColorUtil {
 
   // -- Constants - Preset color tables --

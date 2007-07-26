@@ -37,6 +37,10 @@ import javax.swing.JFrame;
  * it drags all docked windows along with it.
  *
  * Docker also enables windows to snap to the edges of the screen, if desired.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/Docker.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/Docker.java">SVN</a></dd></dl>
  */
 public class Docker implements ComponentListener {
 

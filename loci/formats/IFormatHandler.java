@@ -26,7 +26,13 @@ package loci.formats;
 
 import java.io.IOException;
 
-/** Interface for all biological file format readers and writers. */
+/**
+ * Interface for all biological file format readers and writers.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/IFormatHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/IFormatHandler.java">SVN</a></dd></dl>
+ */
 public interface IFormatHandler extends StatusReporter {
 
   /** Checks if the given string is a valid filename for this file format. */

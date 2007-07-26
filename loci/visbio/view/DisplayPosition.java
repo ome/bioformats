@@ -30,7 +30,13 @@ import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
-/** DisplayPosition represents an orientation of VisAD display. */
+/**
+ * DisplayPosition represents an orientation of VisAD display.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/DisplayPosition.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/DisplayPosition.java">SVN</a></dd></dl>
+ */
 public class DisplayPosition implements Dynamic, Saveable {
 
   // -- Fields --

@@ -26,7 +26,13 @@ package loci.formats;
 
 import java.util.StringTokenizer;
 
-/** A utility class for format reader and writer implementations. */
+/**
+ * A utility class for format reader and writer implementations.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/FormatTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/FormatTools.java">SVN</a></dd></dl>
+ */
 public final class FormatTools {
 
   // -- Constants --
@@ -448,29 +454,29 @@ public final class FormatTools {
 
   // -- Utility methods -- metadata conversion --
 
-  public static void convertMetadata(MetadataRetrieve source, 
+  public static void convertMetadata(MetadataRetrieve source,
     MetadataStore dest)
   {
     Integer ii = null;
     int globalPixCount = 0;
 
-    for (int i=0; i<source.getImageCount(); i++) {  
-      ii = new Integer(i); 
+    for (int i=0; i<source.getImageCount(); i++) {
+      ii = new Integer(i);
       dest.setImage(source.getImageName(ii), source.getCreationDate(ii),
         source.getDescription(ii), ii);
-    
-      dest.setDimensions(source.getPixelSizeX(ii), 
+
+      dest.setDimensions(source.getPixelSizeX(ii),
         source.getPixelSizeY(ii), source.getPixelSizeZ(ii),
         source.getPixelSizeC(ii), source.getPixelSizeT(ii), ii);
-    
+
       for (int j=0; j<source.getPixelsCount(ii); j++) {
-        Integer p = new Integer(j); 
+        Integer p = new Integer(j);
         dest.setPixels(source.getSizeX(ii), source.getSizeY(ii),
-          source.getSizeZ(ii), source.getSizeC(ii), 
-          source.getSizeT(ii), 
-          new Integer(pixelTypeFromString(source.getPixelType(ii))), 
+          source.getSizeZ(ii), source.getSizeC(ii),
+          source.getSizeT(ii),
+          new Integer(pixelTypeFromString(source.getPixelType(ii))),
           source.getBigEndian(ii), source.getDimensionOrder(ii), ii, p);
-   
+
         dest.setDisplayOptions(source.getZoom(ii),
           source.isRedChannelOn(ii), source.isGreenChannelOn(ii),
           source.isBlueChannelOn(ii), source.isDisplayRGB(ii),
@@ -483,58 +489,58 @@ public final class FormatTools {
         for (int ch=0; ch<source.getChannelCount(globalPix); ch++) {
           Integer c = new Integer(ch);
           dest.setLogicalChannel(ch, source.getChannelName(globalPix, c),
-            source.getChannelNDFilter(globalPix, c), 
+            source.getChannelNDFilter(globalPix, c),
             source.getEmWave(globalPix, c), source.getExWave(globalPix, c),
             source.getPhotometricInterpretation(globalPix, c),
             source.getMode(globalPix, c), globalPix);
-        
+
           dest.setChannelGlobalMinMax(ch, source.getGlobalMin(globalPix, c),
             source.getGlobalMax(globalPix, c), globalPix);
-        
-          dest.setDisplayChannel(c, source.getBlackLevel(globalPix, c),
-            source.getWhiteLevel(globalPix, c), source.getGamma(globalPix, c), 
-            globalPix);
-        } 
 
-        globalPixCount++; 
+          dest.setDisplayChannel(c, source.getBlackLevel(globalPix, c),
+            source.getWhiteLevel(globalPix, c), source.getGamma(globalPix, c),
+            globalPix);
+        }
+
+        globalPixCount++;
       }
-  
+
       dest.setImagingEnvironment(source.getTemperature(ii),
         source.getAirPressure(ii), source.getHumidity(ii),
         source.getCO2Percent(ii), ii);
     }
 
     for (int i=0; i<source.getExperimenterCount(); i++) {
-      ii = new Integer(i); 
-      dest.setExperimenter(source.getFirstName(ii), 
+      ii = new Integer(i);
+      dest.setExperimenter(source.getFirstName(ii),
         source.getLastName(ii), source.getEmail(ii),
         source.getInstitution(ii), source.getDataDirectory(ii),
         source.getGroup(ii), ii);
     }
 
     for (int i=0; i<source.getGroupCount(); i++) {
-      ii = new Integer(i); 
+      ii = new Integer(i);
       dest.setGroup(source.getGroupName(ii), source.getLeader(ii),
         source.getContact(ii), ii);
     }
 
     for (int i=0; i<source.getInstrumentCount(); i++) {
-      ii = new Integer(i); 
+      ii = new Integer(i);
       dest.setInstrument(source.getManufacturer(ii),
         source.getModel(ii), source.getSerialNumber(ii),
         source.getType(ii), ii);
     }
 
     for (int i=0; i<source.getDisplayROICount(); i++) {
-      ii = new Integer(i); 
+      ii = new Integer(i);
       dest.setDisplayROI(source.getX0(ii), source.getY0(ii),
         source.getZ0(ii), source.getX1(ii), source.getY1(ii),
         source.getZ1(ii), source.getT0(ii), source.getT1(ii),
         source.getDisplayOptions(ii), ii);
     }
 
-    for (int i=0; i<source.getStageLabelCount(); i++) { 
-      ii = new Integer(i); 
+    for (int i=0; i<source.getStageLabelCount(); i++) {
+      ii = new Integer(i);
       dest.setStageLabel(source.getStageName(ii), source.getStageX(ii),
         source.getStageY(ii), source.getStageZ(ii), ii);
     }
@@ -564,7 +570,7 @@ public final class FormatTools {
       source.getDetectorOffset(ii), ii, ii);
 
     dest.setObjective(source.getObjectiveManufacturer(ii),
-      source.getObjectiveModel(ii), source.getObjectiveSerial(ii), 
+      source.getObjectiveModel(ii), source.getObjectiveSerial(ii),
       source.getLensNA(ii),
       source.getObjectiveMagnification(ii), ii, ii);
 
@@ -580,7 +586,7 @@ public final class FormatTools {
       source.getEmissionType(ii), ii);
 
     dest.setFilterSet(source.getFilterSetManufacturer(ii),
-      source.getFilterSetModel(ii), 
+      source.getFilterSetModel(ii),
       source.getFilterSetLotNumber(ii), ii, ii);
 
     dest.setOTF(source.getOTFSizeX(ii), source.getOTFSizeY(ii),

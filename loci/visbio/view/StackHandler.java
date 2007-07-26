@@ -35,6 +35,10 @@ import visad.*;
 /**
  * Provides logic for linking data transforms
  * to a 3D display as a stack of images.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/StackHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/StackHandler.java">SVN</a></dd></dl>
  */
 public class StackHandler extends TransformHandler {
 

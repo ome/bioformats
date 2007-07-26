@@ -42,6 +42,10 @@ import loci.formats.*;
  * Gets parameter values through a variety of means, including
  * preferences from IJ_Prefs.txt, plugin argument string, macro options,
  * and user input from dialog boxes.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/ImporterOptions.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/ImporterOptions.java">SVN</a></dd></dl>
  */
 public class ImporterOptions implements ItemListener {
 
@@ -60,7 +64,7 @@ public class ImporterOptions implements ItemListener {
   public static final String VIEW_VIEW_5D = "View5D";
 
   public static final String MERGE_DEFAULT = "Do not merge";
-  
+
   // class to check for each viewing option
   private static final String CLASS_BROWSER =
     "loci.plugins.browser.LociDataBrowser";
@@ -189,8 +193,8 @@ public class ImporterOptions implements ItemListener {
     groupFiles = Prefs.get(PREF_GROUP, false);
     concatenate = Prefs.get(PREF_CONCATENATE, false);
     specifyRanges = Prefs.get(PREF_RANGE, false);
-    forceThumbnails = Prefs.get(PREF_THUMBNAIL, false); 
-    mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT); 
+    forceThumbnails = Prefs.get(PREF_THUMBNAIL, false);
+    mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
   }
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
@@ -203,7 +207,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_GROUP, groupFiles);
     Prefs.set(PREF_CONCATENATE, concatenate);
     Prefs.set(PREF_RANGE, specifyRanges);
-    Prefs.set(PREF_MERGE_OPTION, mergeOption); 
+    Prefs.set(PREF_MERGE_OPTION, mergeOption);
   }
 
   /** Parses the plugin argument for parameter values. */
@@ -358,17 +362,17 @@ public class ImporterOptions implements ItemListener {
 
   public int promptMergeOption(int one, int two) {
     GenericDialog gd = new GenericDialog("Merging Options...");
-    
+
     String[] options = new String[] {one + " planes, 2 channels per plane",
       two + " planes, 3 channels per plane", MERGE_DEFAULT};
-    
+
     gd.addMessage("How would you like to merge this data?");
-    gd.addChoice(LABEL_MERGE_OPTION, options, MERGE_DEFAULT); 
+    gd.addChoice(LABEL_MERGE_OPTION, options, MERGE_DEFAULT);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
-    mergeOption = options[gd.getNextChoiceIndex()]; 
-    return STATUS_OK; 
+    mergeOption = options[gd.getNextChoiceIndex()];
+    return STATUS_OK;
   }
 
   /**
@@ -486,13 +490,13 @@ public class ImporterOptions implements ItemListener {
         int z = r.getSizeZ() / 2;
         int t = r.getSizeT() / 2;
         int ndx = r.getIndex(z, 0, t);
-        try { 
+        try {
           ImageIcon icon = new ImageIcon(r.openThumbImage(ndx));
-          p[i].removeAll(); 
+          p[i].removeAll();
           p[i].add(new JLabel(icon));
         }
         catch (Exception e) { }
-      } 
+      }
       gdl.setConstraints(p[i], gbc);
       gd.add(p[i]);
     }
@@ -502,7 +506,7 @@ public class ImporterOptions implements ItemListener {
       ThumbLoader loader = new ThumbLoader(r, p, gd);
       gd.showDialog();
       loader.stop();
-    } 
+    }
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
     for (int i=0; i<seriesCount; i++) series[i] = gd.getNextBoolean();

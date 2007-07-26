@@ -26,7 +26,13 @@ package loci.visbio;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
-/** ControlPanel is the superclass of all control panel types. */
+/**
+ * ControlPanel is the superclass of all control panel types.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ControlPanel.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ControlPanel.java">SVN</a></dd></dl>
+ */
 public class ControlPanel extends JPanel {
 
   // -- Fields --

@@ -28,6 +28,10 @@ import java.util.EventObject;
 /**
  * TransformEvent is the event generated when a
  * data transform's parameters are updated.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/TransformEvent.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/TransformEvent.java">SVN</a></dd></dl>
  */
 public class TransformEvent extends EventObject {
 

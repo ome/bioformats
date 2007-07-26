@@ -33,6 +33,10 @@ import java.util.Vector;
  * ClassList is a list of classes for use with ImageReader or ImageWriter,
  * parsed from a configuration file such as readers.txt or writers.txt.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ClassList.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ClassList.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ClassList {

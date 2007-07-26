@@ -25,7 +25,13 @@ package loci.visbio.util;
 
 import java.awt.AWTEvent;
 
-/** An event indicating an OutputConsole has produced output. */
+/**
+ * An event indicating an OutputConsole has produced output.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/OutputEvent.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/OutputEvent.java">SVN</a></dd></dl>
+ */
 public class OutputEvent extends AWTEvent {
 
   // -- Constructor --

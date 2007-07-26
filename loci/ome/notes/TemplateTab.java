@@ -25,7 +25,13 @@ package loci.ome.notes;
 
 import java.util.Vector;
 
-/** Stores information about a template tab. */
+/**
+ * Stores information about a template tab.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/TemplateTab.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/TemplateTab.java">SVN</a></dd></dl>
+ */
 public class TemplateTab {
 
   // -- Fields --
@@ -73,14 +79,14 @@ public class TemplateTab {
 
   public void setRows(int rows) { this.rows = rows; }
 
-  public int getColumns() { 
-    if (columns != 0) return columns; 
-    int max = 1; 
-    
+  public int getColumns() {
+    if (columns != 0) return columns;
+    int max = 1;
+
     for (int i=0; i<fields.size(); i++) {
       TemplateField f = (TemplateField) fields.get(i);
       if (f.getColumn() > max) max = f.getColumn();
-    } 
+    }
     columns = max;
     return columns;
   }

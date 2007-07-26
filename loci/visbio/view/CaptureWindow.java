@@ -37,7 +37,13 @@ import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
 import visad.*;
 
-/** CaptureWindow is a window for capturing display image sequences. */
+/**
+ * CaptureWindow is a window for capturing display image sequences.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/CaptureWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/CaptureWindow.java">SVN</a></dd></dl>
+ */
 public class CaptureWindow extends JFrame implements ActionListener,
   ChangeListener, ItemListener, ListSelectionListener
 {

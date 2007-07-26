@@ -49,6 +49,10 @@ package loci.formats.codec;
 /**
  * A simple class the hold and calculate the CRC for sanity checking
  * of the data.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/CRC.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/CRC.java">SVN</a></dd></dl>
  */
 public class CRC {
 

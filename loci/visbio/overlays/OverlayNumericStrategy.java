@@ -23,7 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-/** Provides threshholds and other constants to overlays classes. */
+/**
+ * Provides threshholds and other constants to overlays classes.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayNumericStrategy.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayNumericStrategy.java">SVN</a></dd></dl>
+ */
 public final class OverlayNumericStrategy {
 
   // -- Fields --

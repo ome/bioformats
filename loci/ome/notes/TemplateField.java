@@ -27,7 +27,13 @@ import java.util.*;
 import javax.swing.*;
 import loci.formats.ImageTools;
 
-/** Stores information about a template field. */
+/**
+ * Stores information about a template field.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/TemplateField.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/TemplateField.java">SVN</a></dd></dl>
+ */
 public class TemplateField {
 
   // -- Fields --
@@ -139,9 +145,9 @@ public class TemplateField {
       ((JComboBox) component).setSelectedItem(defaultValue);
     }
     else if (type.equals("thumbnail")) {
-      ImageIcon icon = 
-        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1)); 
-      component = new JLabel(icon, SwingConstants.LEFT); 
+      ImageIcon icon =
+        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1));
+      component = new JLabel(icon, SwingConstants.LEFT);
     }
     else if (type.equals("int")) {
       if (defaultValue == null) defaultValue = new Integer(0);
@@ -185,9 +191,9 @@ public class TemplateField {
       ((JComboBox) comp).setSelectedItem(defaultValue);
     }
     else if (type.equals("thumbnail")) {
-      ImageIcon icon = 
-        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1)); 
-      comp = new JLabel(icon, SwingConstants.LEFT); 
+      ImageIcon icon =
+        new ImageIcon(ImageTools.makeImage(new byte[1][1], 1, 1));
+      comp = new JLabel(icon, SwingConstants.LEFT);
     }
     else if (type.equals("int")) {
       int v = ((Integer) defaultValue).intValue();

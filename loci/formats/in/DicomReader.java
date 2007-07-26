@@ -34,6 +34,10 @@ import loci.formats.*;
  * DicomReader is the file format reader for DICOM files.
  * Much of this code is adapted from ImageJ's DICOM reader; see
  * http://rsb.info.nih.gov/ij/developer/source/ij/plugin/DICOM.java.html
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/DicomReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/DicomReader.java">SVN</a></dd></dl>
  */
 public class DicomReader extends FormatReader {
 

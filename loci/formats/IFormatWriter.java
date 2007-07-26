@@ -28,7 +28,13 @@ import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
-/** Interface for all biological file format writers. */
+/**
+ * Interface for all biological file format writers.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/IFormatWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/IFormatWriter.java">SVN</a></dd></dl>
+ */
 public interface IFormatWriter extends IFormatHandler {
 
   /**
@@ -43,7 +49,7 @@ public interface IFormatWriter extends IFormatHandler {
    * must be set.
    * If this image is the last one in the file, the last flag must be set.
    */
-  void saveImage(Image image, int series, boolean lastInSeries, boolean last) 
+  void saveImage(Image image, int series, boolean lastInSeries, boolean last)
     throws FormatException, IOException;
 
   /**

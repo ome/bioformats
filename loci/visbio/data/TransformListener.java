@@ -23,7 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
-/** Interface for listeners of data transform changes. */
+/**
+ * Interface for listeners of data transform changes.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/TransformListener.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/TransformListener.java">SVN</a></dd></dl>
+ */
 public interface TransformListener {
 
   /** Called when a data transform's parameters are updated. */

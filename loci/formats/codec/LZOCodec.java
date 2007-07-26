@@ -30,6 +30,10 @@ import loci.formats.FormatException;
  * This class implements LZO decompression. Compression is not yet
  * implemented.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/LZOCodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/LZOCodec.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class LZOCodec extends BaseCodec implements Codec {

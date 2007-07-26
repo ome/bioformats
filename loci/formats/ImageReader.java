@@ -33,6 +33,10 @@ import java.util.*;
  * It uses one instance of each reader subclass (specified in readers.txt,
  * or other class list source) to identify file formats and read data.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ImageReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ImageReader.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageReader implements IFormatReader {

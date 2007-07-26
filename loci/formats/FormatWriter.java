@@ -28,7 +28,13 @@ import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
-/** Abstract superclass of all biological file format writers. */
+/**
+ * Abstract superclass of all biological file format writers.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/FormatWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/FormatWriter.java">SVN</a></dd></dl>
+ */
 public abstract class FormatWriter extends FormatHandler
   implements IFormatWriter
 {
@@ -72,14 +78,14 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] bytes, int series, boolean lastInSeries, 
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     throw new FormatException("Not implemented yet.");
   }
 
   /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries, 
+  public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     throw new FormatException("Not implemented yet.");

@@ -28,7 +28,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import loci.visbio.util.SwingUtil;
 
-/** A class for keeping track of information about a window. */
+/**
+ * A class for keeping track of information about a window.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/WindowInfo.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/WindowInfo.java">SVN</a></dd></dl>
+ */
 public class WindowInfo implements WindowListener {
 
   // -- Constants --

@@ -43,6 +43,10 @@ import loci.plugins.browser.LociDataBrowser;
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/Importer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/Importer.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
@@ -325,8 +329,8 @@ public class Importer {
         }
 
         SearchableWindow w = new SearchableWindow("Metadata - " + id,
-          "Key\tValue", sb.toString(), 400, 400); 
-        w.setVisible(true); 
+          "Key\tValue", sb.toString(), 400, 400);
+        w.setVisible(true);
       }
 
       // -- Step 4e: read pixel data --
@@ -475,17 +479,17 @@ public class Importer {
 
           String seriesName = store.getImageName(new Integer(i));
 
-          showStack(stackB, currentFile, seriesName, store, 
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+          showStack(stackB, currentFile, seriesName, store,
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, fs, options);
-          showStack(stackS, currentFile, seriesName, store, 
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+          showStack(stackS, currentFile, seriesName, store,
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, fs, options);
-          showStack(stackF, currentFile, seriesName, store, 
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+          showStack(stackF, currentFile, seriesName, store,
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, fs, options);
-          showStack(stackO, currentFile, seriesName, store, 
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i], 
+          showStack(stackO, currentFile, seriesName, store,
+            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, fs, options);
 
           long endTime = System.currentTimeMillis();
@@ -551,7 +555,7 @@ public class Importer {
       plugin.success = true;
 
       options.savePreferences();
- 
+
       if (viewBrowser) {
         boolean first = true;
         for (int i=0; i<seriesCount; i++) {
@@ -590,8 +594,8 @@ public class Importer {
       slice(stack, file, series, sizeZ, sizeC, sizeT, fi, r, fs, options);
     }
     else {
-      ImagePlus imp = new ImagePlus(file + " - " + series, stack); 
-      imp.setProperty("Info", "File full path=" + file + 
+      ImagePlus imp = new ImagePlus(file + " - " + series, stack);
+      imp.setProperty("Info", "File full path=" + file +
         "\nSeries name=" + series + "\n");
 
       // retrieve the spatial calibration information, if available
@@ -603,8 +607,8 @@ public class Importer {
   }
 
   /** Opens each channel of the source stack in a separate window. */
-  private void slice(ImageStack is, String file, String series, int z, int c, 
-    int t, FileInfo fi, IFormatReader r, FileStitcher fs, 
+  private void slice(ImageStack is, String file, String series, int z, int c,
+    int t, FileInfo fi, IFormatReader r, FileStitcher fs,
     ImporterOptions options)
     throws FormatException, IOException
   {
@@ -643,7 +647,7 @@ public class Importer {
     // retrieve the spatial calibration information, if available
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus imp = new ImagePlus(file + " - " + series + " - Ch" + (i+1), 
+      ImagePlus imp = new ImagePlus(file + " - " + series + " - Ch" + (i+1),
         newStacks[i]);
       imp.setProperty("Info", "File full path=" + file +
         "\nSeries name=" + series + "\n");
@@ -698,8 +702,8 @@ public class Importer {
     else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4) {
       // use compareTo instead of IJ.versionLessThan(...), because we want
       // to suppress the error message
-      if (imp.getStackSize() == r.getSizeC() && 
-        ImageJ.VERSION.compareTo("1.38n") < 0) 
+      if (imp.getStackSize() == r.getSizeC() &&
+        ImageJ.VERSION.compareTo("1.38n") < 0)
       {
         // use reflection to construct CompositeImage,
         // in case ImageJ version is too old
@@ -710,15 +714,15 @@ public class Importer {
           ru.setVar("sizeC", r.getSizeC());
           imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
         }
-        catch (ReflectException exc) { 
-          imp = new CustomImage(imp, r.getDimensionOrder(), r.getSizeZ(), 
-            r.getSizeT(), r.getSizeC()); 
+        catch (ReflectException exc) {
+          imp = new CustomImage(imp, r.getDimensionOrder(), r.getSizeZ(),
+            r.getSizeT(), r.getSizeC());
         }
       }
       else {
-        imp = new CustomImage(imp, r.getDimensionOrder(), r.getSizeZ(), 
+        imp = new CustomImage(imp, r.getDimensionOrder(), r.getSizeZ(),
           r.getSizeT(), r.getSizeC());
-      } 
+      }
     }
     else if (mergeChannels && r.getSizeC() >= 4) {
       // ask the user what they would like to do...
@@ -731,8 +735,8 @@ public class Importer {
       int planes2 = r.getImageCount() / 3;
       if (planes2 * 3 < r.getImageCount()) planes2++;
 
-      if (options.promptMergeOption(planes1, planes2) == 
-        ImporterOptions.STATUS_OK) 
+      if (options.promptMergeOption(planes1, planes2) ==
+        ImporterOptions.STATUS_OK)
       {
         String option = options.getMergeOption();
         if (option.indexOf("2 channels") != -1) makeRGB(imp, r, 2);

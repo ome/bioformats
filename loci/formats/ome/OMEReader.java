@@ -42,6 +42,10 @@ import org.openmicroscopy.is.*;
  * [server]?key=[session key]&id=[image id]
  *
  * where [server] is the URL of the OME data server (not the image server).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEReader.java">SVN</a></dd></dl>
  */
 public class OMEReader extends FormatReader {
 

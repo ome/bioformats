@@ -36,6 +36,10 @@ import javax.swing.table.TableCellEditor;
  * more room in these cells to type long descriptions. When
  * clicked on, the cell expands by four times.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/VariableTextAreaEditor.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/VariableTextAreaEditor.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class VariableTextAreaEditor extends VariableTextEditor

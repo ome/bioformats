@@ -34,6 +34,10 @@ import visad.ScalarType;
 /**
  * BioColorWidget is a widget for controlling mappings
  * from range scalars to color scalars.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/BioColorWidget.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/BioColorWidget.java">SVN</a></dd></dl>
  */
 public class BioColorWidget extends JPanel {
 

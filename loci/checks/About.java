@@ -11,7 +11,13 @@ package loci.checks;
 
 import javax.swing.JOptionPane;
 
-/** Displays a small information dialog about this package. */
+/**
+ * Displays a small information dialog about this package.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/checks/About.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/checks/About.java">SVN</a></dd></dl>
+ */
 public final class About {
 
   private About() { }

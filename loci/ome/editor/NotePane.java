@@ -48,6 +48,10 @@ import org.w3c.dom.Element;
  * notes added to a particular OMEXML File by using the
  * preexisting NotePanels made by MetadataPane.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/NotePane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/NotePane.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class NotePane extends JScrollPane implements ActionListener {

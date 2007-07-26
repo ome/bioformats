@@ -35,7 +35,13 @@ import org.openmicroscopy.ds.dto.Image;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 
-/** Utility methods for retrieving data from an OME database. */
+/**
+ * Utility methods for retrieving data from an OME database.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/util/OMEUtils.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/util/OMEUtils.java">SVN</a></dd></dl>
+ */
 public class OMEUtils {
 
   // -- Fields --
@@ -58,7 +64,7 @@ public class OMEUtils {
     if (omeis.indexOf("http://") != -1) {
       omeis = omeis.substring(7, omeis.length());
     }
-    omeis = "http://" + omeis.substring(0, omeis.indexOf("/")) + 
+    omeis = "http://" + omeis.substring(0, omeis.indexOf("/")) +
       "/cgi-bin/omeis";
 
     rs = DataServer.getDefaultServices(server);
@@ -77,9 +83,9 @@ public class OMEUtils {
     if (omeis.indexOf("http://") != -1) {
       omeis = omeis.substring(7, omeis.length());
     }
-    omeis = "http://" + omeis.substring(0, omeis.indexOf("/")) + 
+    omeis = "http://" + omeis.substring(0, omeis.indexOf("/")) +
       "/cgi-bin/omeis";
-    
+
     rs = DataServer.getDefaultServices(server);
     rc = rs.getRemoteCaller();
     rc.setSessionKey(sessionKey);
@@ -163,7 +169,7 @@ public class OMEUtils {
       p = images[i].getDefaultPixels();
 
       Repository r = p.getRepository();
-      r.setImageServerURL(omeis); 
+      r.setImageServerURL(omeis);
       p.setRepository(r);
 
       if (p == null) continue;
@@ -195,7 +201,7 @@ public class OMEUtils {
 
     String[] columns = {"", "Name", "ID", "Date Created", "SizeX", "SizeY",
       "SizeZ", "SizeC", "SizeT"};
-    
+
     GenericDialog gd = new GenericDialog("OME Plugin");
 
     GridBagLayout gdl = (GridBagLayout) gd.getLayout();
@@ -208,9 +214,9 @@ public class OMEUtils {
       gd.addCheckbox((String) props[i][1], false);
       panes[i] = new JPanel();
       gbc.gridy = i;
-    
-      StringBuffer tip = new StringBuffer(); 
-      tip.append("<HTML>"); 
+
+      StringBuffer tip = new StringBuffer();
+      tip.append("<HTML>");
       tip.append("Name: ");
       tip.append((String) props[i][1]);
       tip.append("<BR>ID: ");
@@ -241,17 +247,17 @@ public class OMEUtils {
     }
     Util.addScrollBars(gd);
     gd.showDialog();
-    if (gd.wasCanceled()) return null; 
+    if (gd.wasCanceled()) return null;
 
     boolean[] checked = new boolean[numImages];
-    int numChecked = 0; 
+    int numChecked = 0;
     for (int i=0; i<numImages; i++) {
       checked[i] = gd.getNextBoolean();
-      if (checked[i]) numChecked++; 
+      if (checked[i]) numChecked++;
     }
 
     int[] results = new int[numChecked];
-    int n = 0; 
+    int n = 0;
     for (int i=0; i<numImages; i++) {
       if (checked[i]) {
         results[n] = Integer.parseInt((String) props[i][2]);

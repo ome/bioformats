@@ -11,7 +11,13 @@ package loci.checks;
 
 import com.puppycrawl.tools.checkstyle.api.*;
 
-/** A Checkstyle check for identifying multiple consecutive blank lines. */
+/**
+ * A Checkstyle check for identifying multiple consecutive blank lines.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/checks/BlankLinesCheck.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/checks/BlankLinesCheck.java">SVN</a></dd></dl>
+ */
 public class BlankLinesCheck extends Check {
 
   // -- Fields --

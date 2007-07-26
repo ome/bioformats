@@ -35,7 +35,13 @@ import loci.visbio.VisBioFrame;
 import loci.visbio.state.BioOption;
 import loci.visbio.state.OptionManager;
 
-/** A tabbed pane full of checkboxes. */
+/**
+ * A tabbed pane full of checkboxes.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/StatsOptionsPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/StatsOptionsPane.java">SVN</a></dd></dl>
+ */
 public class StatsOptionsPane extends JPanel implements ActionListener {
 
   // -- Constants --

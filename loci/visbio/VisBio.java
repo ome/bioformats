@@ -36,6 +36,10 @@ import loci.visbio.util.SplashScreen;
  * This class is the main gateway into the application. It creates and
  * displays a VisBioFrame via reflection, so that the splash screen appears
  * as quickly as possible, before the class loader gets too far along.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/VisBio.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/VisBio.java">SVN</a></dd></dl>
  */
 public final class VisBio extends Thread {
 

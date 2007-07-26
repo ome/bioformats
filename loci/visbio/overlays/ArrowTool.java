@@ -26,7 +26,13 @@ package loci.visbio.overlays;
 import loci.visbio.data.TransformEvent;
 import visad.DisplayEvent;
 
-/** ArrowTool is the tool for creating arrow overlays. */
+/**
+ * ArrowTool is the tool for creating arrow overlays.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/ArrowTool.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/ArrowTool.java">SVN</a></dd></dl>
+ */
 public class ArrowTool extends OverlayTool {
 
   // -- Fields --

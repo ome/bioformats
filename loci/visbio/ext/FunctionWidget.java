@@ -36,6 +36,10 @@ import loci.visbio.util.LAFUtil;
 /**
  * FunctionWidget is a set of GUI controls
  * for an ExternalFunction transform.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ext/FunctionWidget.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ext/FunctionWidget.java">SVN</a></dd></dl>
  */
 public class FunctionWidget extends JPanel implements ActionListener {
 

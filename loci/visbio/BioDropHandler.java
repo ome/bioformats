@@ -35,6 +35,10 @@ import loci.visbio.state.StateManager;
 /**
  * BioDropHandler provides drag and drop support
  * for handling file drops into VisBio.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/BioDropHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/BioDropHandler.java">SVN</a></dd></dl>
  */
 public class BioDropHandler extends TransferHandler {
 

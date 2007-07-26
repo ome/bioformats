@@ -32,6 +32,10 @@ import visad.util.CursorUtil;
 /**
  * TransientSelectBox represents the square that appears in a VisBio display
  * as a user drags the mouse to select overlays.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/TransientSelectBox.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/TransientSelectBox.java">SVN</a></dd></dl>
  */
 public class TransientSelectBox {
 

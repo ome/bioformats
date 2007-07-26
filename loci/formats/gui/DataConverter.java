@@ -43,6 +43,10 @@ import org.openmicroscopy.xml.st.*;
 /**
  * A utility for reorganizing and converting QuickTime movies,
  * TIFF series and other 4D datasets.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/gui/DataConverter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/gui/DataConverter.java">SVN</a></dd></dl>
  */
 public class DataConverter extends JFrame implements
   ActionListener, ChangeListener, Runnable

@@ -27,6 +27,10 @@ package loci.formats.ome;
 /**
  * OmeisException is the exception thrown when something
  * goes wrong performing a file format operation.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OmeisException.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OmeisException.java">SVN</a></dd></dl>
  */
 public class OmeisException extends Exception {
 

@@ -28,6 +28,10 @@ import org.w3c.dom.Element;
 /**
  * The Saveable interface provides methods for saving and restoring the
  * implementing object's state to and from a data stream.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/Saveable.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/Saveable.java">SVN</a></dd></dl>
  */
 public interface Saveable {
 

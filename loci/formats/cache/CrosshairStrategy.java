@@ -30,6 +30,10 @@ package loci.formats.cache;
  *    3 |           1
  *    4 |           5
  * </pre>
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/CrosshairStrategy.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/CrosshairStrategy.java">SVN</a></dd></dl>
  */
 public class CrosshairStrategy extends CacheStrategy {
 

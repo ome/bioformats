@@ -40,7 +40,13 @@ import org.w3c.dom.Element;
 import visad.*;
 import visad.util.Util;
 
-/** Provides logic for capturing display screenshots and movies. */
+/**
+ * Provides logic for capturing display screenshots and movies.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/CaptureHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/CaptureHandler.java">SVN</a></dd></dl>
+ */
 public class CaptureHandler implements Saveable {
 
   // -- Fields - GUI components --

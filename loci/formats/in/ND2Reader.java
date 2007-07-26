@@ -43,6 +43,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * version of the JJ2000 library, so it is important that either:
  * (1) the JJ2000 jar file is *not* in the classpath; or
  * (2) the JAI jar file precedes JJ2000 in the classpath.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ND2Reader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/ND2Reader.java">SVN</a></dd></dl>
  */
 public class ND2Reader extends FormatReader {
 

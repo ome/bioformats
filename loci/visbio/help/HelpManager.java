@@ -35,7 +35,13 @@ import loci.visbio.state.*;
 import loci.visbio.util.*;
 import visad.util.GUIFrame;
 
-/** HelpManager is the manager encapsulating VisBio's help window logic. */
+/**
+ * HelpManager is the manager encapsulating VisBio's help window logic.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/help/HelpManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/help/HelpManager.java">SVN</a></dd></dl>
+ */
 public class HelpManager extends LogicManager {
 
   // -- Constants --
@@ -193,7 +199,7 @@ public class HelpManager extends LogicManager {
     // help topics
     bio.setSplashStatus(null);
     addHelpTopic("Introduction", "introduction.html");
-    addHelpTopic("Tutorials", "tutorials.html"); // tutorials index 
+    addHelpTopic("Tutorials", "tutorials.html"); // tutorials index
     addHelpTopic("Tutorials/Getting started with measuring", "measuring.html");
   }
 

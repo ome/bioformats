@@ -36,7 +36,13 @@ import visad.java3d.*;
 import visad.util.ColorMapWidget;
 import visad.util.Util;
 
-/** A tool for visualization of spectral lifetime data. */
+/**
+ * A tool for visualization of spectral lifetime data.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/apps/slim/SlimPlotter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/apps/slim/SlimPlotter.java">SVN</a></dd></dl>
+ */
 public class SlimPlotter implements ActionListener, ChangeListener,
   DisplayListener, DocumentListener, Runnable, WindowListener
 {

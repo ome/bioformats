@@ -30,6 +30,10 @@ import loci.visbio.help.HelpManager;
 /**
  * ExtManager is the manager encapsulating VisBio's support for
  * external software interfaces (e.g., external programs or MATLAB).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ext/ExtManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ext/ExtManager.java">SVN</a></dd></dl>
  */
 public class ExtManager extends LogicManager {
 

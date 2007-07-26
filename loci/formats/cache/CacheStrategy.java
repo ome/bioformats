@@ -7,7 +7,13 @@ package loci.formats.cache;
 import java.util.*;
 import loci.formats.FormatTools;
 
-/** Superclass of cache strategies. */
+/**
+ * Superclass of cache strategies.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/CacheStrategy.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/CacheStrategy.java">SVN</a></dd></dl>
+ */
 public abstract class CacheStrategy
   implements CacheReporter, Comparator, ICacheStrategy
 {
@@ -277,7 +283,7 @@ public abstract class CacheStrategy
   public int[] getLengths() { return lengths; }
 
   // -- Helper methods --
-  
+
   /** Informs listeners of a cache update. */
   protected void notifyListeners(CacheEvent e) {
     synchronized (listeners) {

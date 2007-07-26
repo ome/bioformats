@@ -27,7 +27,13 @@ import java.awt.Color;
 import java.lang.reflect.Array;
 import java.util.StringTokenizer;
 
-/** ObjectUtil contains object and array manipulation functions. */
+/**
+ * ObjectUtil contains object and array manipulation functions.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/ObjectUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/ObjectUtil.java">SVN</a></dd></dl>
+ */
 public final class ObjectUtil {
 
   // -- Constructor --

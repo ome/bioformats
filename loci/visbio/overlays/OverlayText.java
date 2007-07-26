@@ -28,7 +28,13 @@ import java.awt.FontMetrics;
 import java.rmi.RemoteException;
 import visad.*;
 
-/** OverlayText is a text string overlay. */
+/**
+ * OverlayText is a text string overlay.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayText.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayText.java">SVN</a></dd></dl>
+ */
 public class OverlayText extends OverlayObject {
   // -- Static Fields --
 

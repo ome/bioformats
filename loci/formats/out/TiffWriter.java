@@ -30,7 +30,13 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 
-/** TiffWriter is the file format writer for TIFF files. */
+/**
+ * TiffWriter is the file format writer for TIFF files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/out/TiffWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/out/TiffWriter.java">SVN</a></dd></dl>
+ */
 public class TiffWriter extends FormatWriter {
 
   // -- Fields --
@@ -53,7 +59,7 @@ public class TiffWriter extends FormatWriter {
   public TiffWriter(String format, String[] exts) {
     super(format, exts);
     lastOffset = 0;
-    compressionTypes = new String[] {"Uncompressed", "LZW"}; 
+    compressionTypes = new String[] {"Uncompressed", "LZW"};
   }
 
   // -- TiffWriter API methods --
@@ -74,10 +80,10 @@ public class TiffWriter extends FormatWriter {
    * Saves the given image to the specified series in the current file.
    * The IFD hashtable allows specification of TIFF parameters such as bit
    * depth, compression and units. If this image is the last one in the series,
-   * the lastInSeries flag must be set. If this image is the last one in the 
+   * the lastInSeries flag must be set. If this image is the last one in the
    * file, the last flag must be set.
    */
-  public void saveImage(Image image, Hashtable ifd, int series, 
+  public void saveImage(Image image, Hashtable ifd, int series,
     boolean lastInSeries, boolean last) throws IOException, FormatException
   {
     if (!initialized) {
@@ -121,14 +127,14 @@ public class TiffWriter extends FormatWriter {
   // -- IFormatWriter API methods --
 
   /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
-  public void saveImage(Image image, boolean last) 
-    throws FormatException, IOException 
+  public void saveImage(Image image, boolean last)
+    throws FormatException, IOException
   {
     saveImage(image, 0, last, last);
   }
 
   /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries, 
+  public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     Hashtable h = new Hashtable();

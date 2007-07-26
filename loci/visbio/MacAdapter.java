@@ -27,7 +27,13 @@ import com.apple.eawt.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.OptionManager;
 
-/** An adapter for handling the Mac OS X application menu items. */
+/**
+ * An adapter for handling the Mac OS X application menu items.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/MacAdapter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/MacAdapter.java">SVN</a></dd></dl>
+ */
 public class MacAdapter extends ApplicationAdapter {
 
   // NB: This class will only compile on Macintosh systems. However, since

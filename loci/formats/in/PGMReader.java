@@ -33,6 +33,10 @@ import loci.formats.*;
  * PGMReader is the file format reader for Portable Gray Map (PGM) images.
  *
  * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/PGMReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/PGMReader.java">SVN</a></dd></dl>
  */
 public class PGMReader extends FormatReader {
 

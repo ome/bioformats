@@ -36,6 +36,10 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * LIFReader is the file format reader for Leica LIF files.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/LIFReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/LIFReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class LIFReader extends FormatReader {
@@ -177,11 +181,11 @@ public class LIFReader extends FormatReader {
       }
 
       int blockLength = in.readInt();
-      if (in.read() != 0x2a) { 
+      if (in.read() != 0x2a) {
         in.skipBytes(3);
         if (in.read() != 0x2a) {
           throw new FormatException("Invalid Memory Description");
-        } 
+        }
       }
 
       int descrLength = in.readInt();
@@ -340,7 +344,7 @@ public class LIFReader extends FormatReader {
                 numDatasets = seriesNames.size();
                 idx = numDatasets - 1;
               }
-              prefix = (String) seriesNames.get(idx); 
+              prefix = (String) seriesNames.get(idx);
             }
 
             Hashtable tmp = new Hashtable();
@@ -534,9 +538,9 @@ public class LIFReader extends FormatReader {
         if (fullSeries.indexOf("/") != -1) {
           fullSeries = fullSeries.substring(0, fullSeries.lastIndexOf("/"));
         }
-        else fullSeries = ""; 
-      } 
-    } 
+        else fullSeries = "";
+      }
+    }
 
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
@@ -544,12 +548,12 @@ public class LIFReader extends FormatReader {
       if (qName.equals("Element")) {
         if (!attributes.getValue("Name").equals("DCROISet") && !firstElement) {
           series = attributes.getValue("Name");
-          containerNames.add(series); 
+          containerNames.add(series);
           if (fullSeries == null || fullSeries.equals("")) fullSeries = series;
           else fullSeries += "/" + series;
         }
-        else if (firstElement) firstElement = false; 
-        
+        else if (firstElement) firstElement = false;
+
         if (attributes.getValue("Name").equals("DCROISet")) {
           dcroiOpen = true;
         }
@@ -675,7 +679,7 @@ public class LIFReader extends FormatReader {
         addMeta(prefix + "Offset", attributes.getValue("Offset"));
       }
       else if (qName.equals("Laser")) {
-        String prefix = fullSeries + " Laser " + 
+        String prefix = fullSeries + " Laser " +
           attributes.getValue("LaserName") + " - ";
         addMeta(prefix + "CanDoLinearOutputPower",
           attributes.getValue("CanDoLinearOutputPower"));
@@ -698,7 +702,7 @@ public class LIFReader extends FormatReader {
 
         String n = String.valueOf(count);
         while (n.length() < 4) n = "0" + n;
-        addMeta(fullSeries + " - TimeStamp " + n, 
+        addMeta(fullSeries + " - TimeStamp " + n,
           DataTools.convertDate(ms, DataTools.COBOL));
         count++;
       }

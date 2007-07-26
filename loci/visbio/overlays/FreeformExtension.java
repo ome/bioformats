@@ -42,6 +42,10 @@ import visad.util.CursorUtil;
  * If an edit is completed, half of the freeform extension is deleted along
  * with the subtended section of the original freeform.  As a result, the
  * tendril appears to be spliced into the old freeform.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/FreeformExtension.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/FreeformExtension.java">SVN</a></dd></dl>
  */
 public class FreeformExtension {
 

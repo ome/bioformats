@@ -28,7 +28,13 @@ import loci.formats.ReflectException;
 import loci.formats.ReflectedUniverse;
 import visad.*;
 
-/** MatlabUtil contains useful MATLAB functions. */
+/**
+ * MatlabUtil contains useful MATLAB functions.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ext/MatlabUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ext/MatlabUtil.java">SVN</a></dd></dl>
+ */
 public final class MatlabUtil {
 
   // -- Constructor --

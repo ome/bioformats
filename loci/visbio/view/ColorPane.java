@@ -41,7 +41,13 @@ import visad.browser.Convert;
 import visad.java2d.DisplayImplJ2D;
 import visad.util.ColorMapWidget;
 
-/** ColorPane is a dialog pane for adjusting color settings. */
+/**
+ * ColorPane is a dialog pane for adjusting color settings.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/ColorPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/ColorPane.java">SVN</a></dd></dl>
+ */
 public class ColorPane extends DialogPane
   implements ChangeListener, DocumentListener, ItemListener
 {

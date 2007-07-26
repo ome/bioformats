@@ -28,7 +28,13 @@ import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
 
-/** Stores data from a set of config files. */
+/**
+ * Stores data from a set of config files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/test/ConfigurationFiles.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/test/ConfigurationFiles.java">SVN</a></dd></dl>
+ */
 public class ConfigurationFiles {
 
   // -- Fields --

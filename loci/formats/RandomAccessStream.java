@@ -34,6 +34,10 @@ import loci.formats.codec.CBZip2InputStream;
  * byte arrays.  It also automagically deals with closing and reopening files
  * to prevent an IOException caused by too many open files.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/RandomAccessStream.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/RandomAccessStream.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert, linkert at wisc.edu
  */
 public class RandomAccessStream extends InputStream implements DataInput {

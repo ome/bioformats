@@ -51,6 +51,10 @@ import javax.xml.parsers.*;
  * Sadly you lose quite a bit of functionality such as the
  * various views if you choose to directly instatiate.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/MetadataPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/MetadataPane.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class MetadataPane extends JPanel

@@ -29,6 +29,10 @@ import java.io.*;
 /**
  * Interface for random access into structures (e.g., files or arrays).
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/IRandomAccess.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/IRandomAccess.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface IRandomAccess extends DataInput, DataOutput {

@@ -28,6 +28,10 @@ package loci.formats;
  * Thrown when a problem occurs with metadata stores (e.g., if initialization
  * is attempted and fails due to potentially missing prerequisites).
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataStoreException.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataStoreException.java">SVN</a></dd></dl>
+ *
  * @author Chris Allan callan at blackcat.ca
  */
 public class MetadataStoreException extends FormatException {

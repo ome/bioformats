@@ -33,7 +33,13 @@ import java.util.Vector;
 import javax.swing.*;
 import loci.visbio.help.HelpManager;
 
-/** PanelManager is the manager encapsulating VisBio's control panel logic. */
+/**
+ * PanelManager is the manager encapsulating VisBio's control panel logic.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/PanelManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/PanelManager.java">SVN</a></dd></dl>
+ */
 public class PanelManager extends LogicManager {
 
   // -- GUI components --

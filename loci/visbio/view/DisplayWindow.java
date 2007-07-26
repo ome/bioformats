@@ -42,6 +42,10 @@ import visad.*;
 /**
  * DisplayWindow is a window containing a 2D or 3D
  * VisAD display and associated controls.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/DisplayWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/DisplayWindow.java">SVN</a></dd></dl>
  */
 public class DisplayWindow extends JFrame
   implements ActionListener, DisplayListener, Dynamic, KeyListener, Saveable

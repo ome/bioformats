@@ -27,7 +27,13 @@ package loci.formats;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-/** A simple logging class. */
+/**
+ * A simple logging class.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/Log.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/Log.java">SVN</a></dd></dl>
+ */
 public class Log {
 
   // -- Constants --

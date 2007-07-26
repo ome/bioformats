@@ -55,6 +55,10 @@ import org.w3c.dom.*;
  * not at all clear in many cases how the OMEXML was generated
  * in the first place.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/WiscScanPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/WiscScanPane.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class WiscScanPane extends JTabbedPane

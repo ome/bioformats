@@ -29,7 +29,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import loci.formats.*;
 
-/** JPEGWriter is the file format writer for JPEG files. */
+/**
+ * JPEGWriter is the file format writer for JPEG files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/out/JPEGWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/out/JPEGWriter.java">SVN</a></dd></dl>
+ */
 public class JPEGWriter extends ImageIOWriter {
 
   // -- Constructor --

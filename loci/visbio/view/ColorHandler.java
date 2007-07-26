@@ -32,7 +32,13 @@ import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
 
-/** Provides logic for controlling a TransformLink's color settings. */
+/**
+ * Provides logic for controlling a TransformLink's color settings.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/ColorHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/ColorHandler.java">SVN</a></dd></dl>
+ */
 public class ColorHandler {
 
   // -- Constants --

@@ -24,7 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-/** Interface for components capable of reporting status updates. */
+/**
+ * Interface for components capable of reporting status updates.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/StatusReporter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/StatusReporter.java">SVN</a></dd></dl>
+ */
 public interface StatusReporter {
 
   /** Adds a listener for status update events. */

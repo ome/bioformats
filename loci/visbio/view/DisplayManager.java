@@ -33,7 +33,13 @@ import loci.visbio.state.*;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
-/** DisplayManager is the manager encapsulating VisBio's 2D and 3D displays. */
+/**
+ * DisplayManager is the manager encapsulating VisBio's 2D and 3D displays.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/DisplayManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/DisplayManager.java">SVN</a></dd></dl>
+ */
 public class DisplayManager extends LogicManager {
 
   // -- Constants --

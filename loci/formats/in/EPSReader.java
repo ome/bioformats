@@ -34,6 +34,10 @@ import loci.formats.*;
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
  * Some regular PostScript files are also supported.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/EPSReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/EPSReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class EPSReader extends FormatReader {

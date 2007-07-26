@@ -27,7 +27,13 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-/** Logic to automatically merge channels in a file. */
+/**
+ * Logic to automatically merge channels in a file.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ChannelMerger.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ChannelMerger.java">SVN</a></dd></dl>
+ */
 public class ChannelMerger extends ReaderWrapper {
 
   // -- Constructor --

@@ -28,7 +28,13 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.util.*;
 
-/** Logic to compute minimum and maximum values for each channel. */
+/**
+ * Logic to compute minimum and maximum values for each channel.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MinMaxCalculator.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MinMaxCalculator.java">SVN</a></dd></dl>
+ */
 public class MinMaxCalculator extends ReaderWrapper {
 
   // -- Fields --

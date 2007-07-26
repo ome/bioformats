@@ -34,6 +34,10 @@ import java.util.*;
  * It uses one instance of each writer subclass (specified in writers.txt,
  * or other class list source) to identify file formats and write data.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ImageWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ImageWriter.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageWriter implements IFormatWriter {
@@ -170,11 +174,11 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] bytes, int series, boolean lastInSeries, 
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     getWriter().saveBytes(bytes, series, lastInSeries, last);
-  } 
+  }
 
   /* @see IFormatWriter#saveImage(Image, boolean) */
   public void saveImage(Image image, boolean last)
@@ -184,7 +188,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries, 
+  public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
     getWriter().saveImage(image, series, lastInSeries, last);

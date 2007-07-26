@@ -31,6 +31,10 @@ import loci.formats.*;
 /**
  * LegacyPictReader is the old file format reader for Apple PICT files.
  * To use it, QuickTime for Java must be installed.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/LegacyPictReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/LegacyPictReader.java">SVN</a></dd></dl>
  */
 public class LegacyPictReader extends FormatReader {
 

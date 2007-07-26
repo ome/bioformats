@@ -75,6 +75,10 @@ import javax.swing.table.*;
  * This is a long overdue rewrite of a class of the same name that
  * first appeared in the swing table demos in 1997.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/util/TableSorter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/util/TableSorter.java">SVN</a></dd></dl>
+ *
  * @author Philip Milne
  * @author Brendon McLean
  * @author Dan van Enckevort

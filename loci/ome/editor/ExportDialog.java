@@ -37,6 +37,10 @@ import com.jgoodies.forms.layout.FormLayout;
  * Note that much of this code was found in an example in
  * the JDK 1.4 API Specs... ListDialog.java .
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/ExportDialog.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/ExportDialog.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class ExportDialog extends JDialog implements ActionListener {

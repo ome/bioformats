@@ -27,7 +27,13 @@ import loci.visbio.state.SaveException;
 import loci.visbio.state.Saveable;
 import org.w3c.dom.Element;
 
-/** LogicManager is the superclass of all VisBio logic handlers. */
+/**
+ * LogicManager is the superclass of all VisBio logic handlers.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/LogicManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/LogicManager.java">SVN</a></dd></dl>
+ */
 public class LogicManager implements Saveable {
 
   // -- Fields --

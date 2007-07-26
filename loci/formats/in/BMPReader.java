@@ -33,6 +33,10 @@ import loci.formats.*;
  * See http://astronomy.swin.edu.au/~pbourke/dataformats/bmp/ for a nice
  * description of the BMP file format.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/BMPReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/BMPReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class BMPReader extends FormatReader {

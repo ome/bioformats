@@ -29,6 +29,10 @@ import loci.formats.LogTools;
 
 /**
  * A class for reading arbitrary numbers of bits from a byte array.
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/BitBuffer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/BitBuffer.java">SVN</a></dd></dl>
+ *
  * @author Eric Kjellman egkjellman at wisc.edu
  */
 public class BitBuffer {

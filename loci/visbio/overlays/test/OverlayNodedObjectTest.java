@@ -26,7 +26,13 @@ package loci.visbio.overlays.test;
 import junit.framework.TestCase;
 import loci.visbio.overlays.*;
 
-/** Test some critical methods of the OverlayNodedObject class. */
+/**
+ * Test some critical methods of the OverlayNodedObject class.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/test/OverlayNodedObjectTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/test/OverlayNodedObjectTest.java">SVN</a></dd></dl>
+ */
 public class OverlayNodedObjectTest extends TestCase {
 
   /** Tolerance for comparing floats. */
@@ -34,7 +40,7 @@ public class OverlayNodedObjectTest extends TestCase {
 
   /** Overlay transform for test overlays. */
   protected OverlayTransform ot;
-  
+
   /** Different testing OverlayNodedObjects. */
   protected OverlayFreeform f, g, h;
 
@@ -59,53 +65,53 @@ public class OverlayNodedObjectTest extends TestCase {
   public void tearDown() {
   }
 
-  // -- Insertion Tests -- 
+  // -- Insertion Tests --
 
   // GLOSSARY: ONO = OverlayNodedObject
-  
+
   /** Tests inserting a node somewhere in the middle of an ONO's node array. */
   public void testInsertInterior() {
     float[] c = {5f, 5f};
     float[][] nodesExpected = {{0f, 5f, 1f, 2f}, {0f, 5f, 0f, 0f}};
-    f.insertNode(1, c[0], c[1], false); 
+    f.insertNode(1, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(nodesExpected, nodes);
   }
 
-  /** 
+  /**
    * Tests inserting a node somewhere in the middle of an ONO's node array
    * that is colocational with the next node in the array. The insert method
    * should detect this and fail to insert the node.
-   */ 
+   */
   public void testInsertCoInterior() {
     // insert should fail since nodes are colocational
     float[] c = {1f, 0f};
-    f.insertNode(1, c[0], c[1], false); 
+    f.insertNode(1, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(NODES, nodes);
   }
 
-  /** 
+  /**
    * Tests inserting a node somewhere in the middle of an ONO's node array
    * that is colocational with the previous node in the array. The insert method
    * should detect this and fail to insert the node.
-   */ 
+   */
   public void testInsertCoInterior2() {
     // insert should fail since nodes are colocational
     float[] c = {0f, 0f};
-    f.insertNode(1, c[0], c[1], false); 
+    f.insertNode(1, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(NODES, nodes);
   }
 
-  /** 
-   * Tests inserting a node just before the last node of an ONO's node array. 
+  /**
+   * Tests inserting a node just before the last node of an ONO's node array.
    * In this case, the node is colocational with the previous node in the array.
    * Basically redundant with previous two test cases.  Insertion should fail.
-   */ 
+   */
   public void testInsertCoPenultimate() {
     float[] c = {1f, 0f};
-    f.insertNode(2, c[0], c[1], false); 
+    f.insertNode(2, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(NODES, nodes);
   }
@@ -114,57 +120,56 @@ public class OverlayNodedObjectTest extends TestCase {
   public void testInsertFront() {
     float[] c = {5f, 5f};
     float[][] nodesExpected = {{5f, 0f, 1f, 2f}, {5f, 0f, 0f, 0f}};
-    f.insertNode(0, c[0], c[1], false); 
+    f.insertNode(0, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(nodesExpected, nodes);
   }
 
-  /** 
-   * Tests inserting a node at the beginning of an ONO's node array, 
+  /**
+   * Tests inserting a node at the beginning of an ONO's node array,
    * colocational with the array's first node. The insertion method should
-   * detect this and fail to insert the node. 
+   * detect this and fail to insert the node.
    */
   public void testInsertCoFront() {
     float[] c = {0f, 0f};
-    f.insertNode(0, c[0], c[1], false); 
+    f.insertNode(0, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(NODES, nodes);
   }
 
-  /** 
+  /**
    * Tests inserting a node at the back of an ONO's node array. This operation,
    * as currently implemented, should fail. There is a separate "setNextNode"
-   * method for this task. 
+   * method for this task.
    */
   public void testInsertBack() {
     // should fail--can't insert past last node
     float[] c = {5f, 5f};
-    f.insertNode(3, c[0], c[1], false); 
+    f.insertNode(3, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(NODES, nodes);
   }
 
-  /** 
-   * Tests inserting a node just before the last node of an ONO's node array. 
+  /**
+   * Tests inserting a node just before the last node of an ONO's node array.
    * (This operation should succeed.)
-   */ 
+   */
   public void testInsertPenultimate() {
     float[] c = {5f, 5f};
     float[][] nodesExpected = {{0f, 1f, 5f, 2f}, {0f, 0f, 5f, 0f}};
-    f.insertNode(2, c[0], c[1], false); 
+    f.insertNode(2, c[0], c[1], false);
     float[][] nodes = f.getNodes();
     compareNodes(nodesExpected, nodes);
   }
 
-
-  /** 
+  /**
    * Tests inserting a node before the first node of a one-node node array.
    * (This operation should succeed.)
-   */ 
+   */
   public void testInsertOne() {
     float[] c = {5f, 5f};
     float[][] nodesExpected = {{5f, 0f}, {5f, 0f}};
-    g.insertNode(0, c[0], c[1], false); 
+    g.insertNode(0, c[0], c[1], false);
     float[][] nodes = g.getNodes();
     compareNodes(nodesExpected, nodes);
   }
@@ -198,7 +203,7 @@ public class OverlayNodedObjectTest extends TestCase {
   /**
    * Tests deleting a node somewhere in the middle of an ONO's node array
    * such that two colocational nodes become adjacent.  The deletion method
-   * should detect this and cull one of the colocational nodes. 
+   * should detect this and cull one of the colocational nodes.
    */
   public void testDeleteCoInterior() {
     float[][] nodesExpected = {{0f, 1f, 0f}, {0f, 0f, 0f}};
@@ -219,7 +224,7 @@ public class OverlayNodedObjectTest extends TestCase {
 
   /**
    * Tests deleting an adjacent pair of nodes in an ONO's node array.
-   * This operation should not change the node array. 
+   * This operation should not change the node array.
    */
   public void testDeleteBetweenAdjacent() {
     f.deleteBetween(0, 1);
@@ -244,17 +249,17 @@ public class OverlayNodedObjectTest extends TestCase {
   /** Tests whether two freeforms connect correctly.*/
   public void testConnect() {
     OverlayFreeform f3 = f.connectTo(h);
-    float[][] nodesExpected = OverlayUtil.adjoin(NODES, NODES2); 
+    float[][] nodesExpected = OverlayUtil.adjoin(NODES, NODES2);
     float[][] nodes = f3.getNodes();
     compareNodes(nodesExpected, nodes);
   }
 
-  /** 
-   * Tests whether two freeforms connect correctly when the head of the 
+  /**
+   * Tests whether two freeforms connect correctly when the head of the
    * first freefom and the tail of the second freeform are located at the
    * same point.  The connectTo method should detect this and prune one of
    * these colocational points from the node array of the resulting freeform.
-   */ 
+   */
   public void testConnectFreeformsWithColocationalTailAndHead() {
     float[][] nodes1 = {{0f, 1f}, {0f, 1f}};
     float[][] nodes2 = {{1f, 2f}, {1f, 2f}};
@@ -267,22 +272,22 @@ public class OverlayNodedObjectTest extends TestCase {
   }
 
   // -- Helpers --
-  
-  /** 
-   * Compares values of floats in two arrays of points subject to the 
+
+  /**
+   * Compares values of floats in two arrays of points subject to the
    * static member DELTA of this class (probably equal to 0.0f).
    */
   public void compareNodes(float[][] e, float[][] a) {
     compareNodes(e, a, DELTA);
   }
 
-  /** 
+  /**
    * Compares values of floats in two arrays of points.  Asserts equality
    * of floats at each 2-D index of the arrays.  Also asserts that the arrays
    * have the same dimensions.
    * @param e the expected array of floats
    * @param a the actual array of floats
-   * @param delta the tolerance to pass to the assertEquals method.  
+   * @param delta the tolerance to pass to the assertEquals method.
    * Presumably floats that differ by an amount less than this tolerance
    * are considered equal.
    */

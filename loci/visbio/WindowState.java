@@ -26,7 +26,13 @@ package loci.visbio;
 import java.awt.Window;
 import loci.visbio.util.SwingUtil;
 
-/** A class containing a window's state. */
+/**
+ * A class containing a window's state.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/WindowState.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/WindowState.java">SVN</a></dd></dl>
+ */
 public class WindowState {
 
   // -- Fields --

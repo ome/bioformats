@@ -32,6 +32,10 @@ import org.w3c.dom.Element;
 /**
  * ResolutionOption is an option for changing image resolution
  * (two positive integers) in the VisBio Options dialog.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/ResolutionOption.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/ResolutionOption.java">SVN</a></dd></dl>
  */
 public class ResolutionOption extends BioOption {
 

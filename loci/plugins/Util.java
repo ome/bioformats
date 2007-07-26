@@ -34,7 +34,13 @@ import java.io.IOException;
 import loci.formats.*;
 import loci.formats.codec.LuraWaveCodec;
 
-/** Miscellaneous generally useful utility methods. */
+/**
+ * Miscellaneous generally useful utility methods.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/Util.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/Util.java">SVN</a></dd></dl>
+ */
 public final class Util {
 
   // -- Constructor --
@@ -105,7 +111,7 @@ public final class Util {
       type == FormatTools.FLOAT || type == FormatTools.DOUBLE,
       r.isLittleEndian());
 
-    // construct image processor 
+    // construct image processor
     ImageProcessor ip = null;
     if (pixels instanceof byte[]) {
       byte[] q = (byte[]) pixels;

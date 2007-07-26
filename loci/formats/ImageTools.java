@@ -35,6 +35,10 @@ import java.awt.image.*;
  * Much code was stolen and adapted from DrLaszloJamf's posts at:
  *   http://forum.java.sun.com/thread.jspa?threadID=522483
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ImageTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ImageTools.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public final class ImageTools {

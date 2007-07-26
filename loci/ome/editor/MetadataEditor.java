@@ -40,6 +40,10 @@ import org.w3c.dom.*;
 /**
  * An user-friendly application for displaying and editing OME-XML metadata.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/MetadataEditor.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/MetadataEditor.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class MetadataEditor extends JFrame

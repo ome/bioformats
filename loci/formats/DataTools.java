@@ -32,6 +32,10 @@ import java.util.Date;
  * A utility class with convenience methods for
  * reading, writing and decoding words.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DataTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/DataTools.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  */
@@ -521,7 +525,7 @@ public final class DataTools {
   }
 
   // -- Date handling --
-  
+
   /** Converts the given timestamp into an ISO 8061 date. */
   public static String convertDate(long stamp, int format) {
     // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
@@ -541,7 +545,7 @@ public final class DataTools {
     Date d = new Date(ms);
 
     fmt.format(d, sb, new FieldPosition(0));
-    return sb.toString(); 
+    return sb.toString();
   }
 
 }

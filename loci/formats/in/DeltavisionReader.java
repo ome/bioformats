@@ -31,6 +31,10 @@ import loci.formats.*;
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/DeltavisionReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/DeltavisionReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class DeltavisionReader extends FormatReader {

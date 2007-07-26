@@ -39,6 +39,10 @@ import org.w3c.dom.Element;
 
 /** Option to toggle whether spreadsheet automatically launches when overlays
  *  are exported.  Also allows user to specify path to spreadsheet application.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/SpreadsheetLaunchOption.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/SpreadsheetLaunchOption.java">SVN</a></dd></dl>
  */
 public class SpreadsheetLaunchOption extends BioOption
   implements ActionListener

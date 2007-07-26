@@ -27,7 +27,13 @@ import java.awt.image.BufferedImage;
 import loci.visbio.data.ImageTransform;
 import loci.visbio.data.DataTransform;
 
-/** DummyImageTransform is a fake ImageTransform. */
+/**
+ * DummyImageTransform is a fake ImageTransform.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/test/DummyImageTransform.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/test/DummyImageTransform.java">SVN</a></dd></dl>
+ */
 public class DummyImageTransform extends ImageTransform{
 
   // -- Constants --
@@ -38,8 +44,8 @@ public class DummyImageTransform extends ImageTransform{
   /**  An arbitrary fake height. */
   public static final int HEIGHT = 0;
 
-  /** 
-   * An arbitrary fake number of range components.  Matches the typical 
+  /**
+   * An arbitrary fake number of range components.  Matches the typical
    * R,G,B,Alpha range.
    */
   public static final int RC = 4;
@@ -62,7 +68,7 @@ public class DummyImageTransform extends ImageTransform{
   // -- ImageTransform API methods --
 
   /** Gets the width in pixels of each image. */
-  public int getImageWidth(){ return WIDTH; } 
+  public int getImageWidth(){ return WIDTH; }
 
   /** Gets the height in pixels of each image. */
   public int getImageHeight() { return HEIGHT; }
@@ -72,17 +78,17 @@ public class DummyImageTransform extends ImageTransform{
 
   /**
    * ImageTransform: "Obtains an image from the source(s) at the given
-   * dimensional position." This version just returns blank images. 
+   * dimensional position." This version just returns blank images.
    */
-  public BufferedImage getImage(int[] pos) { 
+  public BufferedImage getImage(int[] pos) {
     BufferedImage bi = new BufferedImage(getImageWidth(), getImageHeight(),
         BufferedImage.TYPE_INT_RGB);
     return bi;
   }
 
-  // -- DataTransform API methods -- 
+  // -- DataTransform API methods --
 
-  /** 
+  /**
    * DataTransform: "Gets whether this transform provides data of the given
    * dimensionality." Allow 2D and 3D for dummy version.
    */
@@ -98,13 +104,13 @@ public class DummyImageTransform extends ImageTransform{
    * global cache file."
    * Returns arbitrary string "LOCI".
    */
-  public String getCacheId(int[] pos, boolean global){ 
+  public String getCacheId(int[] pos, boolean global){
     return "LOCI";
   }
 
   // -- DataTransform methods overriden --
 
-  /** Return a fake lengths array. */ 
+  /** Return a fake lengths array. */
   public int[] getLengths() { return new int[]{1}; }
 
 }

@@ -28,40 +28,46 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import loci.formats.*;
 
-/** OMETiffWriter is the file format writer for OME-TIFF files. */
+/**
+ * OMETiffWriter is the file format writer for OME-TIFF files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/out/OMETiffWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/out/OMETiffWriter.java">SVN</a></dd></dl>
+ */
 public class OMETiffWriter extends TiffWriter {
 
   // -- Constructor --
 
   public OMETiffWriter() {
-    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"}); 
+    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
   }
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#close() */ 
-  public void close() throws IOException {  
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
     if (out != null) out.close();
     out = null;
     if (currentId != null && retrieve != null) {
-      // write OME-XML to the first IFD's comment  
-    
+      // write OME-XML to the first IFD's comment
+
       MetadataStore omexml = null;
 
       try {
         Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
         omexml = (MetadataStore) c.newInstance();
-     
-        if (c.isInstance(retrieve)) omexml = (MetadataStore) retrieve; 
+
+        if (c.isInstance(retrieve)) omexml = (MetadataStore) retrieve;
         else FormatTools.convertMetadata(retrieve, omexml);
-      
+
         Method m = omexml.getClass().getMethod("dumpXML", (Class[]) null);
         String xml = (String) m.invoke(omexml, (Object[]) null);
-        
-        // insert TiffData element 
+
+        // insert TiffData element
         int pix = xml.indexOf("<Pixels ");
         int end = xml.indexOf("/>", pix);
-        xml = xml.substring(0, end) + "><TiffData/></Pixels>" + 
+        xml = xml.substring(0, end) + "><TiffData/></Pixels>" +
           xml.substring(end + 2);
 
         TiffTools.overwriteComment(currentId, xml);
@@ -70,7 +76,7 @@ public class OMETiffWriter extends TiffWriter {
         LogTools.trace(t);
       }
     }
-    super.close(); 
+    super.close();
   }
 
 }

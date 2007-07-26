@@ -37,6 +37,10 @@ package loci.formats;
  * {@link MetadataStoreException} if they are unable to initialize
  * some of their dependencies.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataStore.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataStore.java">SVN</a></dd></dl>
+ *
  * @author Chris Allan callan at blackcat.ca
  *
  * TODO: Further work needs to be done to ensure the validity of the arguments

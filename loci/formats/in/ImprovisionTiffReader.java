@@ -31,6 +31,10 @@ import loci.formats.*;
 /**
  * ImprovisionTiffReader is the file format reader for
  * Improvision TIFF files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ImprovisionTiffReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/ImprovisionTiffReader.java">SVN</a></dd></dl>
  */
 public class ImprovisionTiffReader extends BaseTiffReader {
 
@@ -94,7 +98,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     String tz = (String) getMeta("TotalZPlanes");
     String tc = (String) getMeta("TotalChannels");
     String tt = (String) getMeta("TotalTimepoints");
-    
+
     if (tz == null) tz = "1";
     if (tc == null) tc = "1";
     if (tt == null) tt = "1";

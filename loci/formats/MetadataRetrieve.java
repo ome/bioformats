@@ -59,68 +59,68 @@ public interface MetadataRetrieve {
 
   /**
    * Gets the first name of the nth experimenter.
-   * @param n the index of the experimenter.  If <code>null</code> the default 
+   * @param n the index of the experimenter.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getFirstName(Integer n);
 
   /**
    * Gets the last name of the nth experimenter.
-   * @param n the index of the experimenter.  If <code>null</code> the default 
+   * @param n the index of the experimenter.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getLastName(Integer n);
 
   /**
    * Gets the email address of the nth experimenter.
-   * @param n the index of the experimenter.  If <code>null</code> the default 
+   * @param n the index of the experimenter.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getEmail(Integer n);
 
   /**
    * Gets the institution of the nth experimenter.
-   * @param n the index of the experimenter.  If <code>null</code> the default 
+   * @param n the index of the experimenter.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getInstitution(Integer n);
 
   /**
    * Gets the data directory of the nth experimenter.
-   * @param n the index of the experimenter.  If <code>null</code> the default 
+   * @param n the index of the experimenter.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getDataDirectory(Integer n);
 
   /**
    * Gets the group of the nth experimenter.
-   * @param n the index of the experimenter.  If <code>null</code> the default 
+   * @param n the index of the experimenter.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Object getGroup(Integer n);
 
   // -- Group attribute retrieval methods --
- 
+
   /** Returns the number of groups. */
   int getGroupCount();
 
   /**
    * Get the name of the nth group.
-   * @param n the index of the group.  If <code>null</code> the default 
+   * @param n the index of the group.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getGroupName(Integer n);
 
   /**
    * Get the leader of the nth group.
-   * @param n the index of the group.  If <code>null</code> the default 
+   * @param n the index of the group.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Object getLeader(Integer n);
 
   /**
    * Get the contact of the nth group.
-   * @param n the index of the group.  If <code>null</code> the default 
+   * @param n the index of the group.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Object getContact(Integer n);
@@ -132,28 +132,28 @@ public interface MetadataRetrieve {
 
   /**
    * Get the manufacturer of the nth instrument.
-   * @param n the index of the instrument.  If <code>null</code> the default 
+   * @param n the index of the instrument.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getManufacturer(Integer n);
 
   /**
    * Get the model of the nth instrument.
-   * @param n the index of the instrument.  If <code>null</code> the default 
+   * @param n the index of the instrument.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getModel(Integer n);
 
   /**
    * Get the serial number of the nth instrument.
-   * @param n the index of the instrument.  If <code>null</code> the default 
+   * @param n the index of the instrument.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getSerialNumber(Integer n);
 
   /**
    * Get the type of the nth instrument.
-   * @param n the index of the instrument.  If <code>null</code> the default 
+   * @param n the index of the instrument.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getType(Integer n);
@@ -202,63 +202,63 @@ public interface MetadataRetrieve {
 
   /**
    * Get the lower X bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getX0(Integer n);
 
   /**
    * Get the lower Y bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getY0(Integer n);
 
   /**
    * Get the lower Z bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getZ0(Integer n);
 
   /**
    * Get the lower T bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getT0(Integer n);
 
   /**
    * Get the upper X bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getX1(Integer n);
 
   /**
    * Get the upper Y bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getY1(Integer n);
 
   /**
    * Get the upper Z bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getZ1(Integer n);
 
   /**
    * Get the upper T bound of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getT1(Integer n);
 
   /**
    * Get the display options of the nth ROI.
-   * @param n the index of the ROI.  If <code>null</code> the default 
+   * @param n the index of the ROI.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Object getDisplayOptions(Integer n);
@@ -270,56 +270,56 @@ public interface MetadataRetrieve {
 
   /**
    * Gets the SizeX attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getSizeX(Integer image);
-  
+
   /**
    * Gets the SizeY attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getSizeY(Integer image);
 
   /**
    * Gets the SizeZ attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getSizeZ(Integer image);
 
   /**
    * Gets the SizeC attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getSizeC(Integer image);
 
   /**
    * Gets the SizeT attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Integer getSizeT(Integer image);
 
   /**
    * Gets the PixelType attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getPixelType(Integer image);
 
   /**
    * Gets the BigEndian attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   Boolean getBigEndian(Integer image);
 
   /**
    * Gets the DimensionOrder attribute of the given pixels in the given image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
    */
   String getDimensionOrder(Integer image);
@@ -371,17 +371,17 @@ public interface MetadataRetrieve {
    */
   String getChannelName(Integer pixels, Integer channel);
 
-  /** 
-   * Gets the ND filter value for the given channel in the given set of pixels. 
+  /**
+   * Gets the ND filter value for the given channel in the given set of pixels.
    * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
    * @param channel the index of the channel.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Float getChannelNDFilter(Integer pixels, Integer channel);
 
   /**
-   * Gets the emission wavelength of the given channel in the given 
+   * Gets the emission wavelength of the given channel in the given
    * set of pixels.
    * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
@@ -420,7 +420,7 @@ public interface MetadataRetrieve {
   String getMode(Integer pixels, Integer channel);
 
   /**
-   * Gets the minimum pixel value within the given channel in the 
+   * Gets the minimum pixel value within the given channel in the
    * given set of pixels.
    * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
@@ -430,7 +430,7 @@ public interface MetadataRetrieve {
   Double getGlobalMin(Integer pixels, Integer channel);
 
   /**
-   * Gets the maximum pixel value within the given channel in the 
+   * Gets the maximum pixel value within the given channel in the
    * given set of pixels.
    * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
@@ -456,7 +456,7 @@ public interface MetadataRetrieve {
   Float getTimestamp(Integer pixels, Integer z, Integer c, Integer t);
 
   /**
-   * Gets the exposure time of the plane with the given Z, C and T coordinates 
+   * Gets the exposure time of the plane with the given Z, C and T coordinates
    * in the given set of pixels.
    * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
@@ -503,124 +503,124 @@ public interface MetadataRetrieve {
 
   /**
    * Gets the black level of the given channel in the given set of pixels.
-   * @param pixels the index of the pixels.  If <code>null</code> the default 
+   * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
-   * @param channel the index of the channel.  If <code>null</code> the default 
+   * @param channel the index of the channel.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Double getBlackLevel(Integer pixels, Integer channel);
 
   /**
    * Gets the white level of the given channel in the given set of pixels.
-   * @param pixels the index of the pixels.  If <code>null</code> the default 
+   * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
-   * @param channel the index of the channel.  If <code>null</code> the default 
+   * @param channel the index of the channel.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Double getWhiteLevel(Integer pixels, Integer channel);
 
   /**
    * Gets the gamma value of the given channel in the given set of pixels.
-   * @param pixels the index of the pixels.  If <code>null</code> the default 
+   * @param pixels the index of the pixels.  If <code>null</code> the default
    * index of 0 will be used.
-   * @param channel the index of the channel.  If <code>null</code> the default 
+   * @param channel the index of the channel.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Float getGamma(Integer pixels, Integer channel);
 
   // -- DisplayOptions attribute retrieval methods --
 
   /**
-   * Gets the zoom value associated with the given pixels in the given image. 
-   * @param image the index of the image.  If <code>null</code> the default 
+   * Gets the zoom value associated with the given pixels in the given image.
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Float getZoom(Integer image);
 
   /**
    * Gets whether or not the red channel is activated.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Boolean isRedChannelOn(Integer image);
 
   /**
    * Gets whether or not the green channel is activated.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Boolean isGreenChannelOn(Integer image);
 
   /**
    * Gets whether or not the blue channel is activated.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Boolean isBlueChannelOn(Integer image);
 
   /**
    * Gets whether or not the given pixels are displayed as an RGB image.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Boolean isDisplayRGB(Integer image);
 
   /**
    * Gets the color map associated with the given pixels.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getColorMap(Integer image);
- 
+
   /**
    * Gets the minimum Z coordinate for which the display settings apply.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Integer getZStart(Integer image);
 
   /**
    * Gets the maximum Z coordinate for which the display settings apply.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Integer getZStop(Integer image);
 
   /**
    * Gets the minimum T coordinate for which the display settings apply.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Integer getTStart(Integer image);
 
   /**
    * Gets the maximum T coordinate for which the display settings apply.
-   * @param image the index of the image.  If <code>null</code> the default 
+   * @param image the index of the image.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Integer getTStop(Integer image);
 
   // -- LightSource attribute retrieval methods --
 
   /**
    * Gets the manufacturer of the given light source.
-   * @param light the index of the light.  If <code>null</code> the default 
+   * @param light the index of the light.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getLightManufacturer(Integer light);
 
   /**
    * Gets the model of the given light source.
-   * @param light the index of the light.  If <code>null</code> the default 
+   * @param light the index of the light.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getLightModel(Integer light);
 
   /**
    * Gets the serial number of the given light source.
-   * @param light the index of the light.  If <code>null</code> the default 
+   * @param light the index of the light.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getLightSerial(Integer light);
 
   // -- Laser attribute retrieval methods --
@@ -629,65 +629,65 @@ public interface MetadataRetrieve {
    * Gets the type of the given laser.
    * @param laser the index of the laser.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getLaserType(Integer laser);
 
   /**
    * Gets the medium of the given laser.
    * @param laser the index of the laser.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getLaserMedium(Integer laser);
 
   /**
    * Gets the wavelength of the given laser.
    * @param laser the index of the laser.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Integer getLaserWavelength(Integer laser);
 
   /**
    * Gets whether or not the frequency is doubled for the given laser.
    * @param laser the index of the laser.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
-  Boolean isFrequencyDoubled(Integer laser); 
+   */
+  Boolean isFrequencyDoubled(Integer laser);
 
   /**
    * Gets whether or not the given laser is tunable.
    * @param laser the index of the laser.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Boolean isTunable(Integer laser);
 
   /**
    * Gets the pulse of the given laser.
    * @param laser the index of the laser.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getPulse(Integer laser);
 
   /**
    * Gets the power (in watts) of the given laser.
    * @param laser the index of the laser.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Float getPower(Integer laser);
 
   // -- Filament attribute retrieval methods --
 
   /**
    * Gets the type of the given filament.
-   * @param filament the index of the filament.  If <code>null</code> the 
+   * @param filament the index of the filament.  If <code>null</code> the
    * default index of 0 will be used.
-   */ 
+   */
   String getFilamentType(Integer filament);
 
   /**
    * Gets the power (in watts) of the given filament.
-   * @param filament the index of the filament.  If <code>null</code> the 
+   * @param filament the index of the filament.  If <code>null</code> the
    * default index of 0 will be used.
-   */ 
+   */
   Float getFilamentPower(Integer filament);
 
   // -- Arc attribute retrieval methods --
@@ -696,14 +696,14 @@ public interface MetadataRetrieve {
    * Gets the type of the given arc.
    * @param arc the index of the arc.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   String getArcType(Integer arc);
 
   /**
    * Gets the power (in watts) of the given arc.
    * @param arc the index of the arc.  If <code>null</code> the default
    * index of 0 will be used.
-   */ 
+   */
   Float getArcPower(Integer arc);
 
   // -- Detector attribute retrieval methods --
@@ -907,14 +907,14 @@ public interface MetadataRetrieve {
    * @param otf the index of the OTF.  If <code>null</code> the
    * default index of 0 will be used.
    */
-  Integer getOTFSizeX(Integer otf); 
+  Integer getOTFSizeX(Integer otf);
 
   /**
    * Gets the height of the given OTF.
    * @param otf the index of the OTF.  If <code>null</code> the
    * default index of 0 will be used.
    */
-  Integer getOTFSizeY(Integer otf); 
+  Integer getOTFSizeY(Integer otf);
 
   /**
    * Gets the pixel type of the given OTF.

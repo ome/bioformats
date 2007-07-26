@@ -30,6 +30,10 @@ import javax.swing.JComboBox;
  * An extension of JComboBox that makes the widget slightly wider than normal,
  * to work around a bug in the Windows and GTK Look and Feels where combo boxes
  * are slightly too narrow.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/BioComboBox.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/BioComboBox.java">SVN</a></dd></dl>
  */
 public class BioComboBox extends JComboBox {
 

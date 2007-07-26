@@ -29,7 +29,13 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 
-/** MicromanagerReader is the file format reader for Micro-Manager files. */
+/**
+ * MicromanagerReader is the file format reader for Micro-Manager files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/MicromanagerReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/MicromanagerReader.java">SVN</a></dd></dl>
+ */
 public class MicromanagerReader extends FormatReader {
 
   // -- Constants --
@@ -105,7 +111,7 @@ public class MicromanagerReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     String[] list = parent.list();
-    if (list == null) return false; 
+    if (list == null) return false;
     for (int i=0; i<list.length; i++) {
       if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
     }

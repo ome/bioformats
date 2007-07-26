@@ -36,6 +36,10 @@ import loci.formats.codec.PackbitsCodec;
  * Most of this code was adapted from the PICT readers in JIMI
  * (http://java.sun.com/products/jimi/index.html), ImageMagick
  * (http://www.imagemagick.org), and Java QuickDraw.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/PictReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/PictReader.java">SVN</a></dd></dl>
  */
 public class PictReader extends FormatReader {
 

@@ -32,6 +32,10 @@ import java.util.Vector;
 /**
  * Pseudo-extension of java.io.File that supports reading over HTTP.
  * It is strongly recommended that you use this instead of java.io.File.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/Location.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/Location.java">SVN</a></dd></dl>
  */
 public class Location {
 

@@ -36,6 +36,10 @@ import loci.formats.*;
  * Specifications available at
  * http://www.improvision.com/support/tech_notes/detail.php?id=344
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/OpenlabRawReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/OpenlabRawReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class OpenlabRawReader extends FormatReader {

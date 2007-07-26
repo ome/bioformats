@@ -32,7 +32,13 @@ import javax.xml.transform.dom.DOMSource;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-/** XMLUtil contains useful functions for manipulating DOMs. */
+/**
+ * XMLUtil contains useful functions for manipulating DOMs.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/XMLUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/XMLUtil.java">SVN</a></dd></dl>
+ */
 public final class XMLUtil {
 
   // -- Static fields --

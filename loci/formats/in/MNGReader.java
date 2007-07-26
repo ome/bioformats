@@ -33,6 +33,10 @@ import loci.formats.*;
 /**
  * MNGReader is the file format reader for Multiple Network Graphics (MNG)
  * files.  Does not support JNG (JPEG Network Graphics).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/MNGReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/MNGReader.java">SVN</a></dd></dl>
  */
 public class MNGReader extends FormatReader {
 

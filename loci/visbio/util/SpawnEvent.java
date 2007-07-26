@@ -23,7 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
-/** An event indicating another application instance was spawned. */
+/**
+ * An event indicating another application instance was spawned.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/SpawnEvent.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/SpawnEvent.java">SVN</a></dd></dl>
+ */
 public class SpawnEvent {
 
   // -- Fields --

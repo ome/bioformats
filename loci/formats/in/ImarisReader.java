@@ -33,6 +33,10 @@ import loci.formats.*;
  * Specifications available at
  * http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ImarisReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/ImarisReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class ImarisReader extends FormatReader {

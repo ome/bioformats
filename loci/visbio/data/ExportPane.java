@@ -43,6 +43,10 @@ import visad.util.DataUtility;
 /**
  * ExportPane provides a full-featured set of options for exporting a
  * multidimensional data series from VisBio to several different formats.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/ExportPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/ExportPane.java">SVN</a></dd></dl>
  */
 public class ExportPane extends WizardPane {
 

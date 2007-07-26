@@ -34,6 +34,10 @@ import org.w3c.dom.Element;
  * Loads a template from a file, and stores the options associated with this
  * template.  See template-format.txt for details of how to construct a
  * valid template file.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/Template.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/Template.java">SVN</a></dd></dl>
  */
 public class Template {
 
@@ -245,7 +249,7 @@ public class Template {
         for (int j=0; j<tabs[i].getNumFields(); j++) {
           if (!tabs[i].getField(j).getType().equals("thumbnail")) {
             populateField(root, tabs[i].getField(j));
-          } 
+          }
         }
       }
     }
@@ -305,7 +309,7 @@ public class Template {
           writer.write("    valueMap \"" + t.getValueMap() + "\"\n");
         }
         if (t.getNameMap() != null) {
-          writer.write("    nameMap \"" + t.getNameMap() + "\"\n"); 
+          writer.write("    nameMap \"" + t.getNameMap() + "\"\n");
         }
         if (t.getDefaultValue() != null) {
           writer.write("    default \"" + t.getDefaultValue() + "\"\n");
@@ -388,7 +392,7 @@ public class Template {
             for (int k=1; k<nodeCount; k++) {
               TemplateField f = tabs[i].getField(j).copy();
               if (map.indexOf("-") != -1) {
-                if (map.indexOf("OriginalMetadata") != -1) { 
+                if (map.indexOf("OriginalMetadata") != -1) {
                   f.setValueMap(map + "," + k);
                   f.setNameMap(f.getNameMap() + "," + k);
                 }
@@ -397,8 +401,8 @@ public class Template {
                   if (comma == -1) comma = map.length() - 1;
                   String mapBase = map.substring(0, map.indexOf("-") + 1);
                   String mapSuffix = map.substring(comma, map.length());
-                  f.setValueMap(mapBase + k + mapSuffix); 
-               
+                  f.setValueMap(mapBase + k + mapSuffix);
+
                   String nameMap = f.getNameMap();
                   mapBase = nameMap.substring(0, nameMap.indexOf("-") + 1);
                   comma = nameMap.indexOf(",");
@@ -406,12 +410,12 @@ public class Template {
                   mapSuffix = nameMap.substring(comma, nameMap.length());
                   f.setNameMap(mapBase + k + mapSuffix);
                 }
-              } 
+              }
               else {
                 f.setValueMap(map + "-" + k);
-                f.setNameMap(f.getNameMap() + "-" + k); 
-              } 
-              f.setRow(tabs[i].getField(j).getRow() + k); 
+                f.setNameMap(f.getNameMap() + "-" + k);
+              }
+              f.setRow(tabs[i].getField(j).getRow() + k);
               tabs[i].addField(f);
             }
           }
@@ -441,7 +445,7 @@ public class Template {
                     if (comma == -1) comma = map.length() - 1;
                     String mapBase = map.substring(0, map.indexOf("-") + 1);
                     String mapSuffix = map.substring(comma, map.length());
-                    f.setValueMap(mapBase + k + mapSuffix); 
+                    f.setValueMap(mapBase + k + mapSuffix);
 
                     String nameMap = f.getNameMap();
                     mapBase = nameMap.substring(0, nameMap.indexOf("-") + 1);
@@ -450,12 +454,12 @@ public class Template {
                     mapSuffix = nameMap.substring(comma, nameMap.length());
                     f.setNameMap(mapBase + k + mapSuffix);
                   }
-                } 
+                }
                 else {
                   f.setValueMap(map + "-" + k);
                   f.setNameMap(f.getNameMap() + "-" + k);
-                } 
-                f.setRow(g.getField(0, k).getRow() + m); 
+                }
+                f.setRow(g.getField(0, k).getRow() + m);
                 g.addField(f);
               }
             }
@@ -563,15 +567,15 @@ public class Template {
 
   /** Populate the given TemplateField's name, if necessary. */
   private void populateName(OMENode root, TemplateField t) throws Exception {
-    if (t.getNameMap() != null) { 
+    if (t.getNameMap() != null) {
       t.setName(TemplateTools.getString(root, t.getNameMap(), false));
-    } 
+    }
   }
 
   /** Populate the given TemplateField. */
   private void populateField(OMENode root, TemplateField t) throws Exception {
-    setComponentValue(t, t.getComponent(), 
-      TemplateTools.getString(root, t.getValueMap(), true)); 
+    setComponentValue(t, t.getComponent(),
+      TemplateTools.getString(root, t.getValueMap(), true));
     populateName(root, t);
   }
 
@@ -623,7 +627,7 @@ public class Template {
   private void setComponentValue(TemplateField t, JComponent component,
     String v)
   {
-    if (v == null) return; 
+    if (v == null) return;
     if (component instanceof JCheckBox) {
       ((JCheckBox) component).setSelected(v.startsWith("t"));
     }

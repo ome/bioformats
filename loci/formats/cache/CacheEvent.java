@@ -24,7 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.cache;
 
-/** A event indicating a cache update. */
+/**
+ * A event indicating a cache update.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/CacheEvent.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/CacheEvent.java">SVN</a></dd></dl>
+ */
 public class CacheEvent {
 
   // -- Constants --

@@ -33,7 +33,13 @@ import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 
-/** Uploads images to an OME server. */
+/**
+ * Uploads images to an OME server.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEWriter.java">SVN</a></dd></dl>
+ */
 public class OMEWriter extends FormatWriter {
 
   // -- Fields --

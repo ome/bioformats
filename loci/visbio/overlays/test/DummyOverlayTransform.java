@@ -29,11 +29,15 @@ import loci.visbio.data.*;
 import loci.visbio.overlays.OverlayTransform;
 import loci.visbio.state.Dynamic;
 
-/** 
+/**
  * A fake overlay transform without widget or controls used for unit
- * testing on OverlayObjects. 
+ * testing on OverlayObjects.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/test/DummyOverlayTransform.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/test/DummyOverlayTransform.java">SVN</a></dd></dl>
  */
-public class DummyOverlayTransform extends OverlayTransform 
+public class DummyOverlayTransform extends OverlayTransform
   implements TransformListener
 {
 
@@ -55,7 +59,7 @@ public class DummyOverlayTransform extends OverlayTransform
    * "Modifies this object's state to match that of the given object.
    * If the argument is null, the object is initialized according to
    * its current state instead."
-   * 
+   *
    * This implementation is practically the same, just skips calling the
    * superclasses' initState methods and skips creating a widget and controls.
    */

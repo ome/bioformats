@@ -28,7 +28,13 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
-/** A general-purpose reflection wrapper class. */
+/**
+ * A general-purpose reflection wrapper class.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ReflectedUniverse.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ReflectedUniverse.java">SVN</a></dd></dl>
+ */
 public class ReflectedUniverse {
 
   // -- Fields --

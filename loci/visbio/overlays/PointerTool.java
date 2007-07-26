@@ -30,7 +30,13 @@ import loci.visbio.util.MathUtil;
 import visad.DisplayEvent;
 import visad.DisplayImpl;
 
-/** PointerTool is the tool for manipulating existing overlays. */
+/**
+ * PointerTool is the tool for manipulating existing overlays.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/PointerTool.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/PointerTool.java">SVN</a></dd></dl>
+ */
 public class PointerTool extends OverlayTool {
 
   // -- Fields --

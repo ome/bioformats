@@ -29,7 +29,13 @@ import com.jgoodies.forms.layout.FormLayout;
 import java.util.StringTokenizer;
 import javax.swing.JPanel;
 
-/** WarningPane provides a dialog box for displaying a warning to the user. */
+/**
+ * WarningPane provides a dialog box for displaying a warning to the user.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/WarningPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/WarningPane.java">SVN</a></dd></dl>
+ */
 public class WarningPane extends MessagePane {
 
   // -- Constructor --

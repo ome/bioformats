@@ -32,6 +32,10 @@ import java.util.*;
 /**
  * Logic to stitch together files with similar names.
  * Assumes that all files have the same dimensions.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/FileStitcher.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/FileStitcher.java">SVN</a></dd></dl>
  */
 public class FileStitcher implements IFormatReader {
 

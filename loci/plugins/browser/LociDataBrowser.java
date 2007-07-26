@@ -38,6 +38,10 @@ import loci.formats.ome.OMEXMLMetadataStore;
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
  * image data (stacks of image planes over time) with two-channel support.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/LociDataBrowser.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/LociDataBrowser.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson at wisc.edu
  * @author Francis Wong yutaiwong at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -121,10 +125,10 @@ public class LociDataBrowser {
     try {
       reader.setId(id);
       reader.setSeries(series);
-      if (fStitch != null) { 
+      if (fStitch != null) {
         fStitch.setId(id);
         fStitch.setSeries(series);
-      } 
+      }
     }
     catch (Exception exc) {
       exc.printStackTrace();

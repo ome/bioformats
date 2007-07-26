@@ -32,6 +32,10 @@ import loci.formats.*;
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ZeissZVIReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/ZeissZVIReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class ZeissZVIReader extends FormatReader {
@@ -391,7 +395,7 @@ public class ZeissZVIReader extends FormatReader {
       String name = (String) getMeta("Channel Name " + idx);
       String emWave = (String) getMeta("Emission Wavelength " + idx);
       String exWave = (String) getMeta("Excitation Wavelength " + idx);
-     
+
       if (emWave != null && emWave.indexOf(".") != -1) {
         emWave = emWave.substring(0, emWave.indexOf("."));
       }
@@ -399,14 +403,14 @@ public class ZeissZVIReader extends FormatReader {
         exWave = exWave.substring(0, exWave.indexOf("."));
       }
 
-      store.setLogicalChannel(i, name, null, 
-        emWave == null ? null : new Integer(emWave), 
+      store.setLogicalChannel(i, name, null,
+        emWave == null ? null : new Integer(emWave),
         exWave == null ? null : new Integer(exWave), null, null, null);
-   
+
       String black = (String) getMeta("BlackValue " + idx);
       String white = (String) getMeta("WhiteValue " + idx);
       String gamma = (String) getMeta("GammaValue " + idx);
-     
+
       Double blackValue = null, whiteValue = null;
       Float gammaValue = null;
 
@@ -416,15 +420,15 @@ public class ZeissZVIReader extends FormatReader {
       catch (Exception e) { }
       try { gammaValue = new Float(gamma); }
       catch (Exception e) { }
-      
-      store.setDisplayChannel(new Integer(i), blackValue, whiteValue, 
-        gammaValue, null); 
+
+      store.setDisplayChannel(new Integer(i), blackValue, whiteValue,
+        gammaValue, null);
     }
-  
+
     for (int i=0; i<core.imageCount[0]; i++) {
       int[] zct = FormatTools.getZCTCoords(this, i);
       String exposure = (String) getMeta("Exposure Time [ms] " + i);
-      store.setPlaneInfo(zct[0], zct[1], zct[2], null, 
+      store.setPlaneInfo(zct[0], zct[1], zct[2], null,
       exposure == null ? null : new Float(exposure), null);
     }
 
@@ -441,7 +445,7 @@ public class ZeissZVIReader extends FormatReader {
 
     String objectiveNA = (String) getMeta("Objective N.A. 0");
     if (objectiveNA != null) objectiveNA = DataTools.stripString(objectiveNA);
-    else objectiveNA = "1.0"; 
+    else objectiveNA = "1.0";
 
     store.setObjective(null, objectiveName, null, new Float(objectiveNA),
       new Float(objectiveMag), null, null);
@@ -502,7 +506,7 @@ public class ZeissZVIReader extends FormatReader {
         if (dirName.toUpperCase().equals("ROOT ENTRY") ||
           dirName.toUpperCase().equals("ROOTENTRY"))
         {
-          if (entryName.equals("Tags")) parseTags(s); 
+          if (entryName.equals("Tags")) parseTags(s);
         }
         else if (dirName.equals("Tags") && isContents) {
           parseTags(s);
@@ -729,31 +733,31 @@ public class ZeissZVIReader extends FormatReader {
 
       String key = getKey(tagID);
       if (key.equals("Image Index Z")) {
-        try { 
-          zIndex = Integer.parseInt(DataTools.stripString(value)); 
+        try {
+          zIndex = Integer.parseInt(DataTools.stripString(value));
         }
         catch (NumberFormatException f) { }
       }
       else if (key.equals("Image Index T")) {
-        try { 
-          tIndex = Integer.parseInt(DataTools.stripString(value)); 
+        try {
+          tIndex = Integer.parseInt(DataTools.stripString(value));
         }
         catch (NumberFormatException f) { }
       }
       else if (key.equals("Image Channel Index")) {
-        try { 
-          cIndex = Integer.parseInt(DataTools.stripString(value)); 
+        try {
+          cIndex = Integer.parseInt(DataTools.stripString(value));
         }
         catch (NumberFormatException f) { }
       }
       else if (key.equals("ImageWidth")) {
-        try { 
+        try {
           if (core.sizeX[0] == 0) core.sizeX[0] = Integer.parseInt(value);
         }
         catch (NumberFormatException f) { }
       }
       else if (key.equals("ImageHeight")) {
-        try { 
+        try {
           if (core.sizeY[0] == 0) core.sizeY[0] = Integer.parseInt(value);
         }
         catch (NumberFormatException f) { }
@@ -763,21 +767,21 @@ public class ZeissZVIReader extends FormatReader {
         if (metadata.get(key) != null) {
           metadata.remove(key);
         }
-        
+
         int ndx = 0;
         while (metadata.get(key + " " + ndx) != null) ndx++;
-        key += " " + ndx; 
+        key += " " + ndx;
       }
-      
+
       addMeta(key, value);
 
     }
   }
 
-  /** Return the string corresponding to the given ID. */ 
+  /** Return the string corresponding to the given ID. */
   private String getKey(int tagID) {
     switch (tagID) {
-      case 222: return "Compression"; 
+      case 222: return "Compression";
       case 258: return "BlackValue";
       case 259: return "WhiteValue";
       case 260: return "ImageDataMappingAutoRange";
@@ -1187,7 +1191,7 @@ public class ZeissZVIReader extends FormatReader {
       case 101253123:
       case 101777411:
         return "Image Name";
-      default: return "" + tagID; 
+      default: return "" + tagID;
     }
   }
 

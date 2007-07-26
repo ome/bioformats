@@ -34,6 +34,10 @@ import org.xml.sax.SAXException;
 /**
  * OMETiffReader is the file format reader for OME-TIFF files.
  * See http://www.loci.wisc.edu/ome/ome-tiff-spec.html
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/OMETiffReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/OMETiffReader.java">SVN</a></dd></dl>
  */
 public class OMETiffReader extends BaseTiffReader {
 
@@ -135,7 +139,7 @@ public class OMETiffReader extends BaseTiffReader {
         core.imageCount[i] = ifds.length;
         int sc = core.sizeC[i];
         if (rgb) sc /= 3;
-        core.rgb[i] = rgb; 
+        core.rgb[i] = rgb;
         core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
         core.pixelType[i] = FormatTools.pixelTypeFromString(
           pixels[i].getAttribute("PixelType"));

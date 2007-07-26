@@ -31,6 +31,10 @@ import java.util.Hashtable;
 /**
  * Abstract superclass of reader logic that wraps other readers.
  * All methods are simply delegated to the wrapped reader.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ReaderWrapper.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ReaderWrapper.java">SVN</a></dd></dl>
  */
 public abstract class ReaderWrapper implements IFormatReader {
 

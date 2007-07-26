@@ -29,7 +29,13 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-/** Abstract superclass of all biological file format readers. */
+/**
+ * Abstract superclass of all biological file format readers.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/FormatReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/FormatReader.java">SVN</a></dd></dl>
+ */
 public abstract class FormatReader extends FormatHandler
   implements IFormatReader
 {

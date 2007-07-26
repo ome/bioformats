@@ -34,7 +34,13 @@ import org.openmicroscopy.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 
-/** DatasetWidget is a set of GUI controls for a Dataset transform. */
+/**
+ * DatasetWidget is a set of GUI controls for a Dataset transform.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/DatasetWidget.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/DatasetWidget.java">SVN</a></dd></dl>
+ */
 public class DatasetWidget extends JPanel implements TreeSelectionListener {
 
   // -- Constants --

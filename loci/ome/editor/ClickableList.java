@@ -49,6 +49,10 @@ import org.w3c.dom.NodeList;
  * to the OMEXMLNodes that arrises from user interaction
  * with the GUI of a NotePanel.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/ClickableList.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/ClickableList.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class ClickableList extends JList

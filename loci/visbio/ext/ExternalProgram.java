@@ -32,6 +32,10 @@ import visad.*;
 /**
  * ExternalProgram is a transform that uses system calls to an external program
  * to evaluate a function, using stdin and stdout for binary data transfer.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ext/ExternalProgram.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ext/ExternalProgram.java">SVN</a></dd></dl>
  */
 public class ExternalProgram extends ExternalFunction {
 

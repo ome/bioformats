@@ -25,6 +25,10 @@ package loci.visbio.overlays;
 
 /**
  * OverlayFreeform is a freeform overlay.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayPolyline.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayPolyline.java">SVN</a></dd></dl>
  */
 
 public class OverlayPolyline extends OverlayNodedObject {

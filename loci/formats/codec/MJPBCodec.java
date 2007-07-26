@@ -7,7 +7,13 @@ package loci.formats.codec;
 import java.io.*;
 import loci.formats.*;
 
-/** Methods for compressing and decompressing QuickTime Motion JPEG-B data. */
+/**
+ * Methods for compressing and decompressing QuickTime Motion JPEG-B data.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/MJPBCodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/MJPBCodec.java">SVN</a></dd></dl>
+ */
 public class MJPBCodec extends BaseCodec implements Codec {
 
   // -- Constants --

@@ -25,7 +25,13 @@ package loci.visbio.state;
 
 import java.awt.Component;
 
-/** CustomOption is an option in the VisBio Options dialog. */
+/**
+ * CustomOption is an option in the VisBio Options dialog.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/CustomOption.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/CustomOption.java">SVN</a></dd></dl>
+ */
 public class CustomOption extends BioOption {
 
   // -- Fields --

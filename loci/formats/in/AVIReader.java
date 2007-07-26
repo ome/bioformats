@@ -36,6 +36,10 @@ import loci.formats.codec.MSRLECodec;
  *
  * Much of this form's code was adapted from Wayne Rasband's AVI Movie Reader
  * plugin for ImageJ (available at http://rsb.info.nih.gov/ij).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/AVIReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/AVIReader.java">SVN</a></dd></dl>
  */
 public class AVIReader extends FormatReader {
 
@@ -104,7 +108,7 @@ public class AVIReader extends FormatReader {
       effectiveWidth = core.sizeX[0];
     }
 
-    byte[] buf = 
+    byte[] buf =
       new byte[core.sizeY[0] * effectiveWidth * bytes * core.sizeC[0]];
     return openBytes(no, buf);
   }
@@ -160,17 +164,17 @@ public class AVIReader extends FormatReader {
       rawSize /= (8 / bmpBitsPerPixel);
 
       byte[] b = new byte[rawSize];
-     
+
       int len = rawSize / core.sizeY[0];
       for (int y=0; y<core.sizeY[0]; y++) {
-        in.read(b, (core.sizeY[0] - y - 1) * len, len); 
+        in.read(b, (core.sizeY[0] - y - 1) * len, len);
       }
-      
+
       BitBuffer bb = new BitBuffer(b);
 
       for (int i=0; i<buf.length; i++) {
         buf[i] = (byte) bb.getBits(bmpBitsPerPixel);
-      } 
+      }
 
       return buf;
     }
@@ -180,7 +184,7 @@ public class AVIReader extends FormatReader {
 
     for (int i=core.sizeY[0] - 1; i>=0; i--) {
       in.read(buf, i*scanline, scanline);
-      if (bmpBitsPerPixel == 24) { 
+      if (bmpBitsPerPixel == 24) {
         for (int j=0; j<core.sizeX[0]; j++) {
           byte r = buf[i*scanline + j*3 + 2];
           buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
@@ -189,7 +193,7 @@ public class AVIReader extends FormatReader {
       }
       in.skipBytes(pad * (bmpBitsPerPixel / 8));
     }
-    
+
     if (bmpBitsPerPixel == 16) {
       // channels are separated, need to swap them
       byte[] r = new byte[core.sizeX[0] * core.sizeY[0] * 2];
@@ -197,7 +201,7 @@ public class AVIReader extends FormatReader {
       System.arraycopy(buf, 0, buf, 2 * (buf.length / 3), r.length);
       System.arraycopy(r, 0, buf, 0, r.length);
     }
-    
+
     return buf;
   }
 
@@ -205,7 +209,7 @@ public class AVIReader extends FormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return ImageTools.makeImage(openBytes(no),
-      core.sizeX[0], core.sizeY[0], core.sizeC[0], !core.interleaved[0], 
+      core.sizeX[0], core.sizeY[0], core.sizeC[0], !core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
   }
 
@@ -246,7 +250,7 @@ public class AVIReader extends FormatReader {
       listString = new String(list);
       if (listString.equals(" JUN")) {
         in.skipBytes(1);
-        pos++; 
+        pos++;
       }
 
       if (listString.equals("JUNK")) {
@@ -384,8 +388,8 @@ public class AVIReader extends FormatReader {
                   whine("Sorry, compressed AVI files not supported.");
                 }
 
-                if (!(bmpBitsPerPixel == 4 || bmpBitsPerPixel == 8 || 
-                  bmpBitsPerPixel == 24 || bmpBitsPerPixel == 16 || 
+                if (!(bmpBitsPerPixel == 4 || bmpBitsPerPixel == 8 ||
+                  bmpBitsPerPixel == 24 || bmpBitsPerPixel == 16 ||
                   bmpBitsPerPixel == 32))
                 {
                   whine("Sorry, " + bmpBitsPerPixel + " bits per pixel not " +

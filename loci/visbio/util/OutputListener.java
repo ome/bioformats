@@ -23,7 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
-/** A listener for output console events. */
+/**
+ * A listener for output console events.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/OutputListener.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/OutputListener.java">SVN</a></dd></dl>
+ */
 public interface OutputListener {
 
   /** Used to notify listeners when an output console produces output. */

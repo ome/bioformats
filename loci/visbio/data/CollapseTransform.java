@@ -36,6 +36,10 @@ import visad.*;
 /**
  * CollapseTransform converts a dimensional axis
  * into a series of range components.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/data/CollapseTransform.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/data/CollapseTransform.java">SVN</a></dd></dl>
  */
 public class CollapseTransform extends ImageTransform {
 

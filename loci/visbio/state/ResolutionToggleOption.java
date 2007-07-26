@@ -33,6 +33,10 @@ import org.w3c.dom.Element;
 /**
  * ResolutionToggleOption is an option for toggling image resolution
  * (two positive integers) in the VisBio Options dialog.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/ResolutionToggleOption.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/ResolutionToggleOption.java">SVN</a></dd></dl>
  */
 public class ResolutionToggleOption extends BioOption
   implements ActionListener

@@ -32,7 +32,13 @@ import loci.visbio.view.TransformLink;
 import visad.*;
 import visad.util.CursorUtil;
 
-/** Utility methods for Overlays. */
+/**
+ * Utility methods for Overlays.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayUtil.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayUtil.java">SVN</a></dd></dl>
+ */
 public final class OverlayUtil {
 
   // -- Constants --

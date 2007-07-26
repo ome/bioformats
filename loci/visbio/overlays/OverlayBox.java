@@ -28,7 +28,13 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
 
-/** OverlayBox is a rectangle overlay. */
+/**
+ * OverlayBox is a rectangle overlay.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayBox.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayBox.java">SVN</a></dd></dl>
+ */
 public class OverlayBox extends OverlayObject {
 
   // -- Static Fields --

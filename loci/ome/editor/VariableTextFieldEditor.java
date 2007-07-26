@@ -34,6 +34,10 @@ import java.awt.Component;
  * of type "Ref" or type "Desc". Creates a JTextField to edit
  * this cell instead of something fancy.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/VariableTextFieldEditor.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/VariableTextFieldEditor.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class VariableTextFieldEditor extends VariableTextEditor

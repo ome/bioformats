@@ -10,6 +10,10 @@ import loci.formats.*;
 /**
  * Retrieves byte arrays from a data source
  * (e.g., a file) using Bio-Formats.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/ByteArraySource.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/ByteArraySource.java">SVN</a></dd></dl>
  */
 public class ByteArraySource extends CacheSource {
 

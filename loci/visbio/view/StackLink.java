@@ -36,6 +36,10 @@ import visad.util.CursorUtil;
 /**
  * Represents a link between a data transform and a display
  * that produces an image stack.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/view/StackLink.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/view/StackLink.java">SVN</a></dd></dl>
  */
 public class StackLink extends TransformLink {
 

@@ -37,6 +37,10 @@ import loci.formats.*;
  * ImageIOWriter is the superclass for file format writers that use the
  * javax.imageio library.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/out/ImageIOWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/out/ImageIOWriter.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class ImageIOWriter extends FormatWriter {

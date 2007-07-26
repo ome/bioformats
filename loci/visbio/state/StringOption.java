@@ -32,7 +32,7 @@ import com.jgoodies.forms.layout.*;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
-/** StringOption is a user-supplied string option in the VisBio Options 
+/** StringOption is a user-supplied string option in the VisBio Options
  * dialog. */
 public class StringOption extends BioOption {
 

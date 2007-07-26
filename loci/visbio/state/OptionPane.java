@@ -28,7 +28,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import loci.visbio.util.DialogPane;
 
-/** OptionPane provides a dialog box for adjusting VisBio's options. */
+/**
+ * OptionPane provides a dialog box for adjusting VisBio's options.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/state/OptionPane.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/state/OptionPane.java">SVN</a></dd></dl>
+ */
 public class OptionPane extends DialogPane {
 
   // -- Constants --

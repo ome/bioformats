@@ -38,6 +38,10 @@ import org.w3c.dom.*;
  * A panel that has a JList to display note names, and a JTextArea to display
  * the content of the note. Also has buttons for adding and deleting notes.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/NotePanel.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/NotePanel.java">SVN</a></dd></dl>
+ *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class NotePanel extends JPanel implements ListSelectionListener {

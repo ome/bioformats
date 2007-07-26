@@ -39,6 +39,10 @@ import org.xml.sax.SAXException;
  * A utility class for constructing and manipulating OME-XML DOMs. It requires
  * the org.openmicroscopy.xml package to compile (part of ome-java.jar).
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEXMLMetadataStore.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEXMLMetadataStore.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
@@ -137,22 +141,22 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
 
   /* @see loci.formats.MetadataRetrieve#getImageCount() */
   public int getImageCount() {
-    return getNodeCount("Image"); 
+    return getNodeCount("Image");
   }
 
-  /* @see loci.formats.MetadataRetrieve#getImageName(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getImageName(Integer) */
   public String getImageName(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Image", "Name", ndx);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getCreationDate(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getCreationDate(Integer) */
   public String getCreationDate(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Image", "CreationDate", ndx);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getDescription(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getDescription(Integer) */
   public String getDescription(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Image", "Description", ndx);
@@ -180,106 +184,106 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Experimenter", "Email", ndx);
   }
-  
+
   /* @see loci.formats.MetadataRetrieve#getInstitution(Integer) */
   public String getInstitution(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Experimenter", "Institution", ndx); 
+    return getAttribute("Experimenter", "Institution", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getDataDirectory(Integer) */
   public String getDataDirectory(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Experimenter", "DataDirectory", ndx); 
+    return getAttribute("Experimenter", "DataDirectory", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getGroup(Integer) */
   public Object getGroup(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Experimenter", "Group", ndx); 
+    return getAttribute("Experimenter", "Group", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getGroupCount() */
   public int getGroupCount() {
-    return getNodeCount("Group"); 
+    return getNodeCount("Group");
   }
 
   /* @see loci.formats.MetadataRetrieve#getGroupName(Integer) */
   public String getGroupName(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Group", "Name", ndx); 
+    return getAttribute("Group", "Name", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getLeader(Integer) */
   public Object getLeader(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Group", "Leader", ndx); 
+    return getAttribute("Group", "Leader", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getContact(Integer) */
   public Object getContact(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Group", "Contact", ndx); 
+    return getAttribute("Group", "Contact", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getInstrumentCount() */
   public int getInstrumentCount() {
-    return getNodeCount("Instrument"); 
+    return getNodeCount("Instrument");
   }
 
   /* @see loci.formats.MetadataRetrieve#getManufacturer(Integer) */
   public String getManufacturer(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Instrument", "Manufacturer", ndx); 
+    return getAttribute("Instrument", "Manufacturer", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getModel(Integer) */
   public String getModel(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Instrument", "Model", ndx); 
+    return getAttribute("Instrument", "Model", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getSerialNumber(Integer) */
   public String getSerialNumber(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Instrument", "SerialNumber", ndx); 
+    return getAttribute("Instrument", "SerialNumber", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getType(Integer) */
   public String getType(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("Instrument", "Type", ndx); 
+    return getAttribute("Instrument", "Type", ndx);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getPixelSizeX(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeX(Integer) */
   public Float getPixelSizeX(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeX = getAttribute("Dimensions", "PixelSizeX", ndx);
     return pixelSizeX == null ? null : new Float(pixelSizeX);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getPixelSizeY(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeY(Integer) */
   public Float getPixelSizeY(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeY = getAttribute("Dimensions", "PixelSizeY", ndx);
     return pixelSizeY == null ? null : new Float(pixelSizeY);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getPixelSizeZ(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeZ(Integer) */
   public Float getPixelSizeZ(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeZ = getAttribute("Dimensions", "PixelSizeZ", ndx);
     return pixelSizeZ == null ? null : new Float(pixelSizeZ);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getPixelSizeC(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeC(Integer) */
   public Float getPixelSizeC(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeC = getAttribute("Dimensions", "PixelSizeC", ndx);
     return pixelSizeC == null ? null : new Float(pixelSizeC);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getPixelSizeT(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getPixelSizeT(Integer) */
   public Float getPixelSizeT(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String pixelSizeT = getAttribute("Dimensions", "PixelSizeT", ndx);
@@ -288,118 +292,118 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
 
   /* @see loci.formats.MetadataRetrieve#getDisplayROICount() */
   public int getDisplayROICount() {
-    return getNodeCount("DisplayROI"); 
+    return getNodeCount("DisplayROI");
   }
 
   /* @see loci.formats.MetadataRetrieve#getX0(Integer) */
   public Integer getX0(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String x0 = getAttribute("DisplayROI", "X0", ndx); 
-    return x0 == null ? null : new Integer(x0); 
+    String x0 = getAttribute("DisplayROI", "X0", ndx);
+    return x0 == null ? null : new Integer(x0);
   }
 
   /* @see loci.formats.MetadataRetrieve#getY0(Integer) */
   public Integer getY0(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String y0 = getAttribute("DisplayROI", "Y0", ndx); 
-    return y0 == null ? null : new Integer(y0); 
+    String y0 = getAttribute("DisplayROI", "Y0", ndx);
+    return y0 == null ? null : new Integer(y0);
   }
 
   /* @see loci.formats.MetadataRetrieve#getZ0(Integer) */
   public Integer getZ0(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String z0 = getAttribute("DisplayROI", "Z0", ndx); 
-    return z0 == null ? null : new Integer(z0); 
+    String z0 = getAttribute("DisplayROI", "Z0", ndx);
+    return z0 == null ? null : new Integer(z0);
   }
 
   /* @see loci.formats.MetadataRetrieve#getT0(Integer) */
   public Integer getT0(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String t0 = getAttribute("DisplayROI", "T0", ndx); 
-    return t0 == null ? null : new Integer(t0); 
+    String t0 = getAttribute("DisplayROI", "T0", ndx);
+    return t0 == null ? null : new Integer(t0);
   }
 
   /* @see loci.formats.MetadataRetrieve#getX1(Integer) */
   public Integer getX1(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String x1 = getAttribute("DisplayROI", "X1", ndx); 
-    return x1 == null ? null : new Integer(x1); 
+    String x1 = getAttribute("DisplayROI", "X1", ndx);
+    return x1 == null ? null : new Integer(x1);
   }
 
   /* @see loci.formats.MetadataRetrieve#getY1(Integer) */
   public Integer getY1(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String y1 = getAttribute("DisplayROI", "Y1", ndx); 
-    return y1 == null ? null : new Integer(y1); 
+    String y1 = getAttribute("DisplayROI", "Y1", ndx);
+    return y1 == null ? null : new Integer(y1);
   }
 
   /* @see loci.formats.MetadataRetrieve#getZ1(Integer) */
   public Integer getZ1(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String z1 = getAttribute("DisplayROI", "Z1", ndx); 
-    return z1 == null ? null : new Integer(z1); 
+    String z1 = getAttribute("DisplayROI", "Z1", ndx);
+    return z1 == null ? null : new Integer(z1);
   }
 
   /* @see loci.formats.MetadataRetrieve#getT1(Integer) */
   public Integer getT1(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    String t1 = getAttribute("DisplayROI", "T1", ndx); 
-    return t1 == null ? null : new Integer(t1); 
+    String t1 = getAttribute("DisplayROI", "T1", ndx);
+    return t1 == null ? null : new Integer(t1);
   }
 
   /* @see loci.formats.MetadataRetrieve#tgetDisplayOptions(Integer) */
   public Object getDisplayOptions(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
-    return getAttribute("DisplayROI", "DisplayOptions", ndx); 
+    return getAttribute("DisplayROI", "DisplayOptions", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getPixelsCount(Integer) */
   public int getPixelsCount(Integer n) {
-    return getNodeCount("Image") / getNodeCount("Pixels"); 
+    return getNodeCount("Image") / getNodeCount("Pixels");
   }
 
-  /* @see loci.formats.MetadataRetrieve#getSizeX(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getSizeX(Integer) */
   public Integer getSizeX(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     String sizeX = getAttribute("Pixels", "SizeX", ndx);
     return sizeX == null ? null : new Integer(sizeX);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getSizeY(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getSizeY(Integer) */
   public Integer getSizeY(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     String sizeY = getAttribute("Pixels", "SizeY", ndx);
     return sizeY == null ? null : new Integer(sizeY);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getSizeZ(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getSizeZ(Integer) */
   public Integer getSizeZ(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     String sizeZ = getAttribute("Pixels", "SizeZ", ndx);
     return sizeZ == null ? null : new Integer(sizeZ);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getSizeC(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getSizeC(Integer) */
   public Integer getSizeC(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     String sizeC = getAttribute("Pixels", "SizeC", ndx);
     return sizeC == null ? null : new Integer(sizeC);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getSizeT(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getSizeT(Integer) */
   public Integer getSizeT(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     String sizeT = getAttribute("Pixels", "SizeT", ndx);
     return sizeT == null ? null : new Integer(sizeT);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getPixelType(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getPixelType(Integer) */
   public String getPixelType(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     return getAttribute("Pixels", "PixelType", ndx);
   }
 
-  /* @see loci.formats.MetadataRetrieve#getBigEndian(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getBigEndian(Integer) */
   public Boolean getBigEndian(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     String bigEndian = getAttribute("Pixels", "BigEndian", ndx);
@@ -407,7 +411,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
       new Boolean(bigEndian.equalsIgnoreCase("true"));
   }
 
-  /* @see loci.formats.MetadataRetrieve#getDimensionOrder(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve#getDimensionOrder(Integer) */
   public String getDimensionOrder(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
     return getAttribute("Pixels", "DimensionOrder", ndx);
@@ -415,30 +419,30 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
 
   /* @see loci.formats.MetadataRetrieve#getStageLabelCount() */
   public int getStageLabelCount() {
-    return getNodeCount("StageLabel"); 
+    return getNodeCount("StageLabel");
   }
 
-  /* @see loci.formats.MetadataRetrieve(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve(Integer) */
   public String getStageName(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("StageLabel", "Name", ndx);
   }
 
-  /* @see loci.formats.MetadataRetrieve(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve(Integer) */
   public Float getStageX(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String stageX = getAttribute("StageLabel", "X", ndx);
     return stageX == null ? null : new Float(stageX);
   }
 
-  /* @see loci.formats.MetadataRetrieve(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve(Integer) */
   public Float getStageY(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String stageY = getAttribute("StageLabel", "Y", ndx);
     return stageY == null ? null : new Float(stageY);
   }
 
-  /* @see loci.formats.MetadataRetrieve(Integer) */ 
+  /* @see loci.formats.MetadataRetrieve(Integer) */
   public Float getStageZ(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     String stageZ = getAttribute("StageLabel", "Z", ndx);
@@ -449,7 +453,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public int getChannelCount(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
     Vector v = DOMUtil.getChildElements("LogicalChannel", ca.getDOMElement());
     return v.size();
@@ -459,69 +463,69 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public String getChannelName(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    LogicalChannelNode ch = (LogicalChannelNode) 
-      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
-    return ch.getName(); 
+    LogicalChannelNode ch = (LogicalChannelNode)
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue());
+    return ch.getName();
   }
 
   /* @see loci.formats.MetadataRetrieve#getChannelNDFilter(Integer, Integer) */
   public Float getChannelNDFilter(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    LogicalChannelNode ch = (LogicalChannelNode) 
-      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
-    return ch.getNDFilter(); 
+    LogicalChannelNode ch = (LogicalChannelNode)
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue());
+    return ch.getNDFilter();
   }
 
   /* @see loci.formats.MetadataRetrieve#getEmWave(Integer, Integer) */
   public Integer getEmWave(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    LogicalChannelNode ch = (LogicalChannelNode) 
-      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
-    return ch.getEmissionWavelength(); 
+    LogicalChannelNode ch = (LogicalChannelNode)
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue());
+    return ch.getEmissionWavelength();
   }
 
   /* @see loci.formats.MetadataRetrieve#getExWave(Integer, Integer) */
   public Integer getExWave(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    LogicalChannelNode ch = (LogicalChannelNode) 
-      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
-    return ch.getExcitationWavelength(); 
+    LogicalChannelNode ch = (LogicalChannelNode)
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue());
+    return ch.getExcitationWavelength();
   }
 
-  /** 
-   * @see loci.formats.MetadataRetrieve#getPhotometricInterpretation(Integer, 
-   * Integer) 
+  /**
+   * @see loci.formats.MetadataRetrieve#getPhotometricInterpretation(Integer,
+   * Integer)
    */
   public String getPhotometricInterpretation(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    LogicalChannelNode ch = (LogicalChannelNode) 
-      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
-    return ch.getPhotometricInterpretation(); 
+    LogicalChannelNode ch = (LogicalChannelNode)
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue());
+    return ch.getPhotometricInterpretation();
   }
 
   /* @see loci.formats.MetadataRetrieve#getMode(Integer, Integer) */
   public String getMode(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    LogicalChannelNode ch = (LogicalChannelNode) 
-      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue()); 
-    return ch.getMode(); 
+    LogicalChannelNode ch = (LogicalChannelNode)
+      getChild(ca, "LogicalChannel", channel == null ? 0 : channel.intValue());
+    return ch.getMode();
   }
 
   /* @see loci.formats.MetadataRetrieve#getGlobalMin(Integer, Integer) */
@@ -538,9 +542,9 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     return new Double(channelMaximum[ndx]);
   }
 
-  /** 
-   * @see loci.formats.MetadataRetrieve#getTimestamp(Integer, Integer, 
-   * Integer, Integer) 
+  /**
+   * @see loci.formats.MetadataRetrieve#getTimestamp(Integer, Integer,
+   * Integer, Integer)
    */
   public Float getTimestamp(Integer pixels, Integer z, Integer c, Integer t) {
     // TODO
@@ -563,7 +567,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     String temperature = getAttribute("ImagingEnvironment", "Temperature", ndx);
     return temperature == null ? null : new Float(temperature);
   }
-  
+
   /* @see loci.formats.MetadataRetrieve#getAirPressure(Integer) */
   public Float getAirPressure(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
@@ -589,61 +593,61 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public Double getBlackLevel(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    DisplayChannelNode display = (DisplayChannelNode) 
-      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue()); 
-    return display.getBlackLevel(); 
+    DisplayChannelNode display = (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue());
+    return display.getBlackLevel();
   }
 
   /* @see loci.formats.MetadataRetrieve#getWhiteLevel(Integer, Integer) */
   public Double getWhiteLevel(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    DisplayChannelNode display = (DisplayChannelNode) 
-      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue()); 
-    return display.getWhiteLevel(); 
+    DisplayChannelNode display = (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue());
+    return display.getWhiteLevel();
   }
 
   /* @see loci.formats.MetadataRetrieve#getGamma(Integer, Integer) */
   public Float getGamma(Integer pixels, Integer channel) {
     int ndx = pixels == null ? 0 : pixels.intValue();
     ImageNode image = (ImageNode) getChild(root, "Image", ndx);
-    CustomAttributesNode ca = 
+    CustomAttributesNode ca =
       (CustomAttributesNode) getChild(image, "CustomAttributes", 0);
-    DisplayChannelNode display = (DisplayChannelNode) 
-      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue()); 
-    return display.getGamma(); 
+    DisplayChannelNode display = (DisplayChannelNode)
+      getChild(ca, "DisplayChannel", channel == null ? 0 : channel.intValue());
+    return display.getGamma();
   }
 
   /* @see loci.formats.MetadataRetrieve#getZoom(Integer) */
   public Float getZoom(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
-    String zoom = getAttribute("DisplayOptions", "Zoom", ndx); 
-    return zoom == null ? null : new Float(zoom); 
+    String zoom = getAttribute("DisplayOptions", "Zoom", ndx);
+    return zoom == null ? null : new Float(zoom);
   }
 
   /* @see loci.formats.MetadataRetrieve#isRedChannelOn(Integer) */
   public Boolean isRedChannelOn(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
-    String redOn = getAttribute("DisplayOptions", "RedChannelOn", ndx); 
-    return redOn == null ? null : new Boolean(redOn); 
+    String redOn = getAttribute("DisplayOptions", "RedChannelOn", ndx);
+    return redOn == null ? null : new Boolean(redOn);
   }
 
   /* @see loci.formats.MetadataRetrieve#isGreenChannelOn(Integer) */
   public Boolean isGreenChannelOn(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
-    String greenOn = getAttribute("DisplayOptions", "GreenChannelOn", ndx); 
-    return greenOn == null ? null : new Boolean(greenOn); 
+    String greenOn = getAttribute("DisplayOptions", "GreenChannelOn", ndx);
+    return greenOn == null ? null : new Boolean(greenOn);
   }
 
   /* @see loci.formats.MetadataRetrieve#isBlueChannelOn(Integer) */
   public Boolean isBlueChannelOn(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
-    String blueOn = getAttribute("DisplayOptions", "BlueChannelOn", ndx); 
-    return blueOn == null ? null : new Boolean(blueOn); 
+    String blueOn = getAttribute("DisplayOptions", "BlueChannelOn", ndx);
+    return blueOn == null ? null : new Boolean(blueOn);
   }
 
   /* @see loci.formats.MetadataRetrieve#isDisplayRGB(Integer) */
@@ -656,7 +660,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   /* @see loci.formats.MetadataRetrieve#getColorMap(Integer) */
   public String getColorMap(Integer image) {
     int ndx = image == null ? 0 : image.intValue();
-    return getAttribute("DisplayOptions", "ColorMap", ndx); 
+    return getAttribute("DisplayOptions", "ColorMap", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getZStart(Integer) */
@@ -672,17 +676,17 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     String zstop = getAttribute("DisplayOptions", "ZStop", ndx);
     return zstop == null ? null : new Integer(zstop);
   }
- 
+
   /* @see loci.formats.MetadataRetrieve#getTStart(Integer) */
   public Integer getTStart(Integer image) {
-    int ndx = image == null ? 0 : image.intValue(); 
+    int ndx = image == null ? 0 : image.intValue();
     String tstart = getAttribute("DisplayOptions", "TStart", ndx);
     return tstart == null ? null : new Integer(tstart);
   }
 
   /* @see loci.formats.MetadataRetrieve#getTStop(Integer) */
   public Integer getTStop(Integer image) {
-    int ndx = image == null ? 0 : image.intValue(); 
+    int ndx = image == null ? 0 : image.intValue();
     String tstop = getAttribute("DisplayOptions", "TStop", ndx);
     return tstop == null ? null : new Integer(tstop);
   }
@@ -721,21 +725,21 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public Integer getLaserWavelength(Integer laser) {
     int ndx = laser == null ? 0 : laser.intValue();
     String wave = getAttribute("Laser", "Wavelength", ndx);
-    return wave == null ? null : new Integer(wave); 
+    return wave == null ? null : new Integer(wave);
   }
 
   /* @see loci.formats.MetadataRetrieve#isFrequencyDoubled(Integer) */
   public Boolean isFrequencyDoubled(Integer laser) {
     int ndx = laser == null ? 0 : laser.intValue();
     String freq = getAttribute("Laser", "FrequencyDoubled", ndx);
-    return freq == null ? null : new Boolean(freq); 
+    return freq == null ? null : new Boolean(freq);
   }
 
   /* @see loci.formats.MetadataRetrieve#isTunable(Integer) */
   public Boolean isTunable(Integer laser) {
     int ndx = laser == null ? 0 : laser.intValue();
     String tunable = getAttribute("Laser", "Tunable", ndx);
-    return tunable == null ? null : new Boolean(tunable); 
+    return tunable == null ? null : new Boolean(tunable);
   }
 
   /* @see loci.formats.MetadataRetrieve#getPulse(Integer) */
@@ -748,7 +752,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public Float getPower(Integer laser) {
     int ndx = laser == null ? 0 : laser.intValue();
     String power = getAttribute("Laser", "Power", ndx);
-    return power == null ? null : new Float(power); 
+    return power == null ? null : new Float(power);
   }
 
   /* @see loci.formats.MetadataRetrieve#getFilamentType(Integer) */
@@ -761,7 +765,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public Float getFilamentPower(Integer filament) {
     int ndx = filament == null ? 0 : filament.intValue();
     String power = getAttribute("Filament", "Power", ndx);
-    return power == null ? null : new Float(power); 
+    return power == null ? null : new Float(power);
   }
 
   /* @see loci.formats.MetadataRetrieve#getArcType(Integer) */
@@ -774,7 +778,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public Float getArcPower(Integer arc) {
     int ndx = arc == null ? 0 : arc.intValue();
     String power = getAttribute("Arc", "Power", ndx);
-    return power == null ? null : new Float(power); 
+    return power == null ? null : new Float(power);
   }
 
   /* @see loci.formats.MetadataRetrieve#getDetectorManufacturer(Integer) */
@@ -805,21 +809,21 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public Float getDetectorGain(Integer detector) {
     int ndx = detector == null ? 0 : detector.intValue();
     String gain = getAttribute("Detector", "Gain", ndx);
-    return gain == null ? null : new Float(gain); 
+    return gain == null ? null : new Float(gain);
   }
-  
+
   /* @see loci.formats.MetadataRetrieve#getDetectorVoltage(Integer) */
   public Float getDetectorVoltage(Integer detector) {
     int ndx = detector == null ? 0 : detector.intValue();
     String voltage = getAttribute("Detector", "Voltage", ndx);
-    return voltage == null ? null : new Float(voltage); 
+    return voltage == null ? null : new Float(voltage);
   }
 
   /* @see loci.formats.MetadataRetrieve#getDetectorOffset(Integer) */
   public Float getDetectorOffset(Integer detector) {
     int ndx = detector == null ? 0 : detector.intValue();
     String offset = getAttribute("Detector", "Offset", ndx);
-    return offset == null ? null : new Float(offset); 
+    return offset == null ? null : new Float(offset);
   }
 
   /* @see loci.formats.MetadataRetrieve#getObjectiveManufacturer(Integer) */
@@ -832,7 +836,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public String getObjectiveModel(Integer objective) {
     int ndx = objective == null ? 0 : objective.intValue();
     return getAttribute("Objective", "Model", ndx);
-  } 
+  }
 
   /* @see loci.formats.MetadataRetrieve#getObjectiveSerial(Integer) */
   public String getObjectiveSerial(Integer objective) {
@@ -844,14 +848,14 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   public Float getLensNA(Integer objective) {
     int ndx = objective == null ? 0 : objective.intValue();
     String na = getAttribute("Objective", "LensNA", ndx);
-    return na == null ? null : new Float(na); 
+    return na == null ? null : new Float(na);
   }
 
   /* @see loci.formats.MetadataRetrieve#getObjectiveMagnification(Integer) */
   public Float getObjectiveMagnification(Integer objective) {
     int ndx = objective == null ? 0 : objective.intValue();
     String mag = getAttribute("Objective", "Magnification", ndx);
-    return mag == null ? null : new Float(mag); 
+    return mag == null ? null : new Float(mag);
   }
 
   /* @see loci.formats.MetadataRetrieve#getExcitationManufacturer(Integer) */
@@ -940,33 +944,33 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
 
   /* @see loci.formats.MetadataRetrieve#getOTFSizeX(Integer) */
   public Integer getOTFSizeX(Integer otf) {
-    int ndx = otf == null ? 0 : otf.intValue(); 
+    int ndx = otf == null ? 0 : otf.intValue();
     String x = getAttribute("OTF", "SizeX", ndx);
     return x == null ? null : new Integer(x);
   }
 
   /* @see loci.formats.MetadataRetrieve#getOTFSizeY(Integer) */
   public Integer getOTFSizeY(Integer otf) {
-    int ndx = otf == null ? 0 : otf.intValue(); 
+    int ndx = otf == null ? 0 : otf.intValue();
     String y = getAttribute("OTF", "SizeY", ndx);
     return y == null ? null : new Integer(y);
   }
 
   /* @see loci.formats.MetadataRetrieve#getOTFPixelType(Integer) */
   public String getOTFPixelType(Integer otf) {
-    int ndx = otf == null ? 0 : otf.intValue(); 
+    int ndx = otf == null ? 0 : otf.intValue();
     return getAttribute("OTF", "PixelType", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getOTFPath(Integer) */
   public String getOTFPath(Integer otf) {
-    int ndx = otf == null ? 0 : otf.intValue(); 
+    int ndx = otf == null ? 0 : otf.intValue();
     return getAttribute("OTF", "Path", ndx);
   }
 
   /* @see loci.formats.MetadataRetrieve#getOTFOpticalAxisAverage(Integer) */
   public Boolean getOTFOpticalAxisAverage(Integer otf) {
-    int ndx = otf == null ? 0 : otf.intValue(); 
+    int ndx = otf == null ? 0 : otf.intValue();
     String x = getAttribute("OTF", "SizeX", ndx);
     return x == null ? null : new Boolean(x);
   }
@@ -1779,7 +1783,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   private int getNodeCount(String name) {
     Element rel = root.getDOMElement();
     Vector elements = DOMUtil.findElementList(name, rel.getOwnerDocument());
-    return elements.size(); 
+    return elements.size();
   }
 
   /** Issues the given message as a warning. */

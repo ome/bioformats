@@ -13,7 +13,13 @@ import loci.formats.cache.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Constructor;
 
-/** GUI component for managing a cache. */
+/**
+ * GUI component for managing a cache.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/gui/CacheComponent.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/gui/CacheComponent.java">SVN</a></dd></dl>
+ */
 public class CacheComponent extends JPanel
   implements ActionListener, CacheListener, ChangeListener
 {
@@ -48,7 +54,6 @@ public class CacheComponent extends JPanel
     ICacheStrategy.FORWARD_ORDER,
     ICacheStrategy.BACKWARD_ORDER
   };
-
 
   // -- Fields --
 

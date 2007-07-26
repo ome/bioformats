@@ -49,6 +49,10 @@ package loci.formats.codec;
 /**
  * Base class for both the compress and decompress classes.
  * Holds common arrays, and static data.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/BZip2Constants.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/BZip2Constants.java">SVN</a></dd></dl>
  */
 public interface BZip2Constants {
 

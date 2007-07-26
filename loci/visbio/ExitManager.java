@@ -26,7 +26,13 @@ package loci.visbio;
 import com.jgoodies.plaf.LookUtils;
 import java.awt.event.*;
 
-/** ExitManager is the manager encapsulating VisBio's shutdown logic. */
+/**
+ * ExitManager is the manager encapsulating VisBio's shutdown logic.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ExitManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ExitManager.java">SVN</a></dd></dl>
+ */
 public class ExitManager extends LogicManager implements WindowListener {
 
   // -- Fields --

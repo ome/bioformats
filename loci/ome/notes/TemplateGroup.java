@@ -26,7 +26,13 @@ package loci.ome.notes;
 import java.awt.Point;
 import java.util.*;
 
-/** Stores information about a template group. */
+/**
+ * Stores information about a template group.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/TemplateGroup.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/TemplateGroup.java">SVN</a></dd></dl>
+ */
 public class TemplateGroup {
 
   // -- Fields --
@@ -124,7 +130,7 @@ public class TemplateGroup {
     if (start == -1) start = map.length();
     String suffix = map.substring(start, map.length());
 
-    map = prefix + "-" + repetition + suffix; 
+    map = prefix + "-" + repetition + suffix;
 
     t.setValueMap(map);
   }

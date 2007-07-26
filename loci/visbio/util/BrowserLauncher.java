@@ -80,6 +80,10 @@ import java.lang.reflect.*;
  * Andrea Cantatore, Larry Barowski, Trevor Bedzek, Frank Miedrich, and
  * Ron Rabakukk
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/util/BrowserLauncher.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/util/BrowserLauncher.java">SVN</a></dd></dl>
+ *
  * @author Eric Albert ejalbert at cs.stanford.edu
  * @version 1.4b1 (Released June 20, 2001)
  */

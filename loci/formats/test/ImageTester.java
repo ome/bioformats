@@ -35,6 +35,10 @@ import loci.formats.LogTools;
 /**
  * A class for testing the ImageTools.makeImage methods.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/test/ImageTester.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/test/ImageTester.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageTester extends JPanel implements WindowListener {

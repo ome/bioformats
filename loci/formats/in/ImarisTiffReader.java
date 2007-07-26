@@ -32,6 +32,10 @@ import loci.formats.*;
  * ImarisTiffReader is the file format reader for
  * Imaris 5 files (TIFF variant).
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ImarisTiffReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/ImarisTiffReader.java">SVN</a></dd></dl>
+ *
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class ImarisTiffReader extends BaseTiffReader {

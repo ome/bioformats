@@ -38,6 +38,10 @@ import loci.formats.ome.OMEXMLMetadataStore;
  * To run tests:
  * java -ea -mx512m -Dtestng.directory="/path/" -Dtestng.multiplier="1.0" \
  *   org.testng.TestNG -sourcedir . testng.xml
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/test/ReaderTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/test/ReaderTest.java">SVN</a></dd></dl>
  */
 public class ReaderTest {
 
@@ -289,7 +293,7 @@ public class ReaderTest {
         boolean failZ = reader.getSizeZ() != store.getSizeZ(ii).intValue();
         boolean failC = reader.getSizeC() != store.getSizeC(ii).intValue();
         boolean failT = reader.getSizeT() != store.getSizeT(ii).intValue();
-        boolean failBE = reader.isLittleEndian() == 
+        boolean failBE = reader.isLittleEndian() ==
           store.getBigEndian(ii).booleanValue();
         boolean failDE =
           !reader.getDimensionOrder().equals(store.getDimensionOrder(ii));

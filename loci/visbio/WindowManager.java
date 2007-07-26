@@ -36,6 +36,10 @@ import org.w3c.dom.Element;
 /**
  * WindowManager is the manager encapsulating VisBio's window logic,
  * including docking, resizing, minimization and cursor control.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/WindowManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/WindowManager.java">SVN</a></dd></dl>
  */
 public class WindowManager extends LogicManager implements WindowListener {
 

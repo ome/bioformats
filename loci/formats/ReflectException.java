@@ -27,6 +27,10 @@ package loci.formats;
 /**
  * ReflectException is the exception thrown when something
  * goes wrong performing a reflected operation with ReflectedUniverse.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ReflectException.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ReflectException.java">SVN</a></dd></dl>
  */
 public class ReflectException extends Exception {
 

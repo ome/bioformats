@@ -29,6 +29,10 @@ import java.io.*;
 /**
  * A wrapper for RandomAccessFile that implements the IRandomAccess interface.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/RAFile.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/RAFile.java">SVN</a></dd></dl>
+ *
  * @see IRandomAccess
  * @see java.io.RandomAccessFile
  *

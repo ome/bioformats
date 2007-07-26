@@ -29,7 +29,13 @@ import loci.visbio.help.HelpManager;
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.SpreadsheetLaunchOption;
 
-/** OverlayManager is the manager encapsulating VisBio's overlay logic. */
+/**
+ * OverlayManager is the manager encapsulating VisBio's overlay logic.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/overlays/OverlayManager.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/overlays/OverlayManager.java">SVN</a></dd></dl>
+ */
 public class OverlayManager extends LogicManager {
 
   // -- Constructor --

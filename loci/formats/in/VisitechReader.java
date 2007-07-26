@@ -29,7 +29,13 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 
-/** VisitechReader is the file format reader for Visitech XYS files. */
+/**
+ * VisitechReader is the file format reader for Visitech XYS files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/VisitechReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/VisitechReader.java">SVN</a></dd></dl>
+ */
 public class VisitechReader extends FormatReader {
 
   // -- Fields --

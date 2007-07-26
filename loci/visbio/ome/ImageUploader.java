@@ -33,6 +33,10 @@ import loci.formats.ome.OMEXMLMetadataStore;
 /**
  * ImageUploader is a helper class for uploading VisBio datasets
  * (OME images) to the Open Microscopy Environment.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/visbio/ome/ImageUploader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/visbio/ome/ImageUploader.java">SVN</a></dd></dl>
  */
 public class ImageUploader {
 
@@ -71,7 +75,7 @@ public class ImageUploader {
         for (int j=0; j<numImages; j++) {
           int[] coords = FormatTools.getZCTCoords(
             store.getDimensionOrder(null),
-            store.getSizeZ(null).intValue(), 
+            store.getSizeZ(null).intValue(),
             store.getSizeC(null).intValue(),
             store.getSizeT(null).intValue(),
             numImages*numFiles, numImages*i + j);

@@ -6,7 +6,13 @@ package loci.formats.codec;
 
 import loci.formats.*;
 
-/** Methods for compressing and decompressing data using Microsoft RLE. */
+/**
+ * Methods for compressing and decompressing data using Microsoft RLE.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/codec/MSRLECodec.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/codec/MSRLECodec.java">SVN</a></dd></dl>
+ */
 public class MSRLECodec extends BaseCodec implements Codec {
 
   /* @see Codec#compress(byte[], int, int, int[], Object) */
