@@ -336,12 +336,11 @@ public final class BrowserLauncher {
           errorMessage = iae.getMessage();
           return false;
         }
-        catch (RuntimeException exc) {
+        catch (RuntimeException rte) {
           // HACK: workaround for bug in Apache Axis2
-          Throwable cause = exc.getCause();
-          if (!(cause instanceof ClassNotFoundException)) throw exc;
-          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
-          errorMessage = cnfe.getMessage();
+          String msg = rte.getMessage();
+          if (msg != null && msg.indexOf("ClassNotFound") < 0) throw rte;
+          errorMessage = rte.getMessage();
           return false;
         }
         break;
@@ -379,12 +378,11 @@ public final class BrowserLauncher {
           errorMessage = iae.getMessage();
           return false;
         }
-        catch (RuntimeException exc) {
+        catch (RuntimeException rte) {
           // HACK: workaround for bug in Apache Axis2
-          Throwable cause = exc.getCause();
-          if (!(cause instanceof ClassNotFoundException)) throw exc;
-          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
-          errorMessage = cnfe.getMessage();
+          String msg = rte.getMessage();
+          if (msg != null && msg.indexOf("ClassNotFound") < 0) throw rte;
+          errorMessage = rte.getMessage();
           return false;
         }
         break;
@@ -416,12 +414,11 @@ public final class BrowserLauncher {
           errorMessage = iae.getMessage();
           return false;
         }
-        catch (RuntimeException exc) {
+        catch (RuntimeException rte) {
           // HACK: workaround for bug in Apache Axis2
-          Throwable cause = exc.getCause();
-          if (!(cause instanceof ClassNotFoundException)) throw exc;
-          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
-          errorMessage = cnfe.getMessage();
+          String msg = rte.getMessage();
+          if (msg != null && msg.indexOf("ClassNotFound") < 0) throw rte;
+          errorMessage = rte.getMessage();
           return false;
         }
         break;
@@ -439,12 +436,11 @@ public final class BrowserLauncher {
           errorMessage = nsme.getMessage();
           return false;
         }
-        catch (RuntimeException exc) {
+        catch (RuntimeException rte) {
           // HACK: workaround for bug in Apache Axis2
-          Throwable cause = exc.getCause();
-          if (!(cause instanceof ClassNotFoundException)) throw exc;
-          ClassNotFoundException cnfe = (ClassNotFoundException) cause;
-          errorMessage = cnfe.getMessage();
+          String msg = rte.getMessage();
+          if (msg != null && msg.indexOf("ClassNotFound") < 0) throw rte;
+          errorMessage = rte.getMessage();
           return false;
         }
         break;
