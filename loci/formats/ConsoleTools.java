@@ -146,6 +146,7 @@ public final class ConsoleTools {
     }
     if (map != null) Location.mapId(id, map);
     if (omexml) {
+      reader.setOriginalMetadataPopulated(true); 
       try {
         // NB: avoid dependencies on optional loci.formats.ome package
         Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
