@@ -531,14 +531,14 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   /* @see loci.formats.MetadataRetrieve#getGlobalMin(Integer, Integer) */
   public Double getGlobalMin(Integer pixels, Integer channel) {
     int ndx = channel == null ? 0 : channel.intValue();
-    if (ndx >= channelMinimum.length) return null;
+    if (channelMinimum == null || ndx >= channelMinimum.length) return null;
     return new Double(channelMinimum[ndx]);
   }
 
   /* @see loci.formats.MetadataRetrieve#getGlobalMax(Integer, Integer) */
   public Double getGlobalMax(Integer pixels, Integer channel) {
     int ndx = channel == null ? 0 : channel.intValue();
-    if (ndx >= channelMaximum.length) return null;
+    if (channelMaximum == null || ndx >= channelMaximum.length) return null;
     return new Double(channelMaximum[ndx]);
   }
 
@@ -547,7 +547,6 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
    * Integer, Integer)
    */
   public Float getTimestamp(Integer pixels, Integer z, Integer c, Integer t) {
-    // TODO
     return null;
   }
 
@@ -557,7 +556,6 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
    */
   public Float getExposureTime(Integer pixels, Integer z, Integer c, Integer t)
   {
-    // TODO
     return null;
   }
 
