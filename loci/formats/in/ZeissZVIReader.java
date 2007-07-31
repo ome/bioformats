@@ -330,7 +330,9 @@ public class ZeissZVIReader extends FormatReader {
           (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
       }
       else {
-        if (metadata.get("MultiChannelEnabled") != null) {
+        if (metadata.get("MultiChannelEnabled") != null || 
+          metadata.get("MultiChannelEnabled 0") != null) 
+        {
           core.currentOrder[0] =
             (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
         }
