@@ -489,10 +489,11 @@ public final class FormatTools {
         for (int ch=0; ch<source.getChannelCount(globalPix); ch++) {
           Integer c = new Integer(ch);
           dest.setLogicalChannel(ch, source.getChannelName(globalPix, c),
-            source.getChannelNDFilter(globalPix, c),
-            source.getEmWave(globalPix, c), source.getExWave(globalPix, c),
+            null, null, null, null, null, null, null, null, null, null, null,
             source.getPhotometricInterpretation(globalPix, c),
-            source.getMode(globalPix, c), globalPix);
+            source.getMode(globalPix, c), null, null, null, null, null,
+            source.getEmWave(globalPix, c), source.getExWave(globalPix, c),
+            null, source.getChannelNDFilter(globalPix, c), globalPix);
 
           dest.setChannelGlobalMinMax(ch, source.getGlobalMin(globalPix, c),
             source.getGlobalMax(globalPix, c), globalPix);

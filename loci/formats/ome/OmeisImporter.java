@@ -74,6 +74,7 @@ public class OmeisImporter {
   public OmeisImporter() {
     reader = new FileStitcher(new ChannelSeparator());
     store = new OMEXMLMetadataStore();
+    reader.setOriginalMetadataPopulated(true); 
     reader.setMetadataStore(store);
   }
 

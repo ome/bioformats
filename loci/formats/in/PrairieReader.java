@@ -348,7 +348,13 @@ public class PrairieReader extends FormatReader {
         store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null,
           null, null, null);
         for (int i=0; i<core.sizeC[0]; i++) {
-          store.setLogicalChannel(i, null, null, null, null, null, null, null);
+          String gain = (String) getMeta("pmtGain_" + i);
+          String offset = (String) getMeta("pmtOffset_" + i);
+   
+          store.setLogicalChannel(i, null, null, null, null, null, null, null,
+            null, offset == null ? null : new Float(offset), 
+            gain == null ? null : new Float(gain), null, null, null, null, 
+            null, null, null, null, null, null, null, null, null, null);
         }
 
         String date = (String) getMeta(" PVScan date");
@@ -367,14 +373,6 @@ public class PrairieReader extends FormatReader {
         store.setLaser(null, null, null, null, null, null,
           laserPower == null ? null : new Float(laserPower),
           null, null, null, null);
-
-        for (int i=0; i<4; i++) {
-          String gain = (String) getMeta("pmtGain_" + i);
-          String offset = (String) getMeta("pmtOffset_" + i);
-          store.setDetector(null, null, null, null,
-            gain == null ? null : new Float(gain), null,
-            offset == null ? null : new Float(offset), null, new Integer(i));
-        }
 
         String zoom = (String) getMeta("opticalZoom");
         if (zoom != null) {

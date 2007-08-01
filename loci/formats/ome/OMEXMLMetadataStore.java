@@ -1152,12 +1152,20 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   }
 
   /*
-   * @see loci.formats.MetadataStore#setLogicalChannel(int, String,
-   *   Float, Integer, Integer, String, String, Integer)
+   * @see loci.formats.MetadataStore#setLogicalChannel(int, String, Integer,
+   * Integer, Integer, Float, Float, Integer, Integer, Float, Float, String,
+   * Integer, String, String, String, Integer, Float, Float,
+   * Float, Integer, Integer, String, Float, Integer)
    */
-  public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
-    Integer emWave, Integer exWave, String photometricInterpretation,
-    String mode, Integer i)
+  public void setLogicalChannel(int channelIdx, String name,
+    Integer samplesPerPixel, Integer filter, Integer lightSource,
+    Float lightAttenuation, Integer lightWavelength, Integer otf, 
+    Integer detector, Float detectorOffset, Float detectorGain, 
+    String illuminationType, Integer pinholeSize, 
+    String photometricInterpretation, String mode, String contrastMethod, 
+    Integer auxLightSource, Float auxLightAttenuation, String auxTechnique, 
+    Integer auxLightWavelength, Integer emWave, Integer exWave, String fluor, 
+    Float ndFilter, Integer i)
   {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which LogicalChannel we want
@@ -1167,11 +1175,47 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     LogicalChannelNode logicalChannel =
       (LogicalChannelNode) getChild(ca, "LogicalChannel", 0);
     logicalChannel.setName(name);
-    logicalChannel.setNDFilter(ndFilter);
-    logicalChannel.setEmissionWavelength(emWave);
-    logicalChannel.setExcitationWavelength(exWave);
+    logicalChannel.setSamplesPerPixel(samplesPerPixel);
+    logicalChannel.setLightAttenuation(lightAttenuation);
+    logicalChannel.setLightWavelength(lightWavelength);
+    logicalChannel.setDetectorOffset(detectorOffset);
+    logicalChannel.setDetectorGain(detectorGain);
+    logicalChannel.setIlluminationType(illuminationType);
+    logicalChannel.setPinholeSize(pinholeSize);
     logicalChannel.setPhotometricInterpretation(photometricInterpretation);
     logicalChannel.setMode(mode);
+    logicalChannel.setContrastMethod(contrastMethod);
+    logicalChannel.setAuxLightAttenuation(auxLightAttenuation);
+    logicalChannel.setAuxTechnique(auxTechnique);
+    logicalChannel.setAuxLightWavelength(auxLightWavelength);
+    logicalChannel.setEmissionWavelength(emWave);
+    logicalChannel.setExcitationWavelength(exWave);
+    logicalChannel.setFluor(fluor);
+    logicalChannel.setNDFilter(ndFilter);
+
+    /*
+    int endx = filter == null ? 0 : filter.intValue();
+    FilterNode filterNode = (FilterNode) getChild(root, "Filter", endx);
+    logicalChannel.setFilter(filterNode);
+
+    endx = lightSource == null ? 0 : lightSource.intValue();
+    LightSourceNode light = 
+      (LightSourceNode) getChild(root, "LightSource", endx);
+    logicalChannel.setLightSource(light);
+
+    endx = otf == null ? 0 : otf.intValue();
+    OTFNode otfNode = (OTFNode) getChild(root, "OTF", endx);
+    logicalChannel.setOTF(otfNode);
+
+    endx = detector == null ? 0 : detector.intValue();
+    DetectorNode detectorNode = (DetectorNode) getChild(root, "Detector", endx);
+    logicalChannel.setDetector(detectorNode);
+
+    endx = auxLightSource == null ? 0 : auxLightSource.intValue();
+    LightSourceNode auxLight = 
+      (LightSourceNode) getChild(root, "LightSource", endx);
+    logicalChannel.setAuxLightSource(auxLight); 
+    */
 
     // Now populate the channel component
     PixelChannelComponentNode channel = (PixelChannelComponentNode)

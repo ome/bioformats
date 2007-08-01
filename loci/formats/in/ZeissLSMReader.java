@@ -310,7 +310,9 @@ public class ZeissLSMReader extends BaseTiffReader {
         null, // Image index
         null); // Pixels index
       for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null);
+        store.setLogicalChannel(i, null, null, null, null, null, null, null, 
+          null, null, null, null, null, null, null, null, null, null, null, 
+          null, null, null, null, null, null); 
       }
 
       int spectralScan = ras.readShort();

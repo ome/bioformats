@@ -536,8 +536,9 @@ public class AVIReader extends FormatReader {
       null); // Use pixels index 0
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null,
-        core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+        null, null, null, null, core.sizeC[0] == 1 ? "monochrome" : "RGB", 
+        null, null, null, null, null, null, null, null, null, null, null);
     }
   }
 

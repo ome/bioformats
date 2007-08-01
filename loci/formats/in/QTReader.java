@@ -368,7 +368,9 @@ public class QTReader extends FormatReader {
       null,
       null);
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null);
     }
 
     // this handles the case where the data and resource forks have been

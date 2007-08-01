@@ -480,18 +480,18 @@ public class OIBReader extends FormatReader {
       store.setDimensions(x == null ? null : new Float(x),
         y == null ? null : new Float(y), null, null, null, new Integer(i));
       for (int j=0; j<core.sizeC[0]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null,
-          null, new Integer(i));
-
         String prefix = "[Channel " + (j + 1) + " Parameters] - ";
         String gain = (String) getMeta(prefix + "AnalogPMTGain");
         String offset = (String) getMeta(prefix + "AnalogPMTOffset");
         String voltage = (String) getMeta(prefix + "AnalogPMTVoltage");
+       
+        store.setDetector(null, null, null, null, null, voltage == null ? null :
+          new Float(voltage), null, null, new Integer(j));
 
-        store.setDetector(null, null, null, null,
-          gain == null ? null : new Float(gain),
-          voltage == null ? null : new Float(voltage),
-          offset == null ? null : new Float(offset), null, new Integer(j));
+        store.setLogicalChannel(j, null, null, null, null, null, null, null, 
+          null, offset == null ? null : new Float(offset), 
+          gain == null ? null : new Float(gain), null, null, null, null, null, 
+          null, null, null, null, null, null, null, null, new Integer(i));
       }
 
       String laserCount = (String) getMeta(acquisition + "Number of use Laser");

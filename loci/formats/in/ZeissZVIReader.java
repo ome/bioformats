@@ -405,9 +405,10 @@ public class ZeissZVIReader extends FormatReader {
         exWave = exWave.substring(0, exWave.indexOf("."));
       }
 
-      store.setLogicalChannel(i, name, null,
-        emWave == null ? null : new Integer(emWave),
-        exWave == null ? null : new Integer(exWave), null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, 
+        null, null, null, null, null, null, null, null, null, null, null, null,
+        emWave == null ? null : new Integer(emWave), 
+        exWave == null ? null : new Integer(exWave), null, null, null); 
 
       String black = (String) getMeta("BlackValue " + idx);
       String white = (String) getMeta("WhiteValue " + idx);

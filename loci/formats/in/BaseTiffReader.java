@@ -758,15 +758,10 @@ public abstract class BaseTiffReader extends FormatReader {
    * @throws IOException if there is an error reading the file.
    */
   private void setLogicalChannel(int i) throws FormatException, IOException {
-    getMetadataStore().setLogicalChannel(
-      i,
-      getChannelName(i),
-      getNdFilter(i),
-      getEmWave(i),
-      getExWave(i),
-      getPhotometricInterpretation(i),
-      getMode(i), // acquisition mode
-      null);
+    getMetadataStore().setLogicalChannel(i, getChannelName(i), null, null, null,
+      null, null, null, null, null, null, null, null, 
+      getPhotometricInterpretation(i), getMode(i), null, null, null, null, null,
+      getEmWave(i), getExWave(i), null, getNdFilter(i), null);
   }
 
   private String getChannelName(int i) { return null; }

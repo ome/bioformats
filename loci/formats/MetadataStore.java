@@ -192,18 +192,39 @@ public interface MetadataStore {
    * particular pixels.
    * @param channelIdx the index of the channel within the pixels set.
    * @param name the logical channel's name.
-   * @param ndFilter the neutral-density filter value.
-   * @param emWave the emission wavelength.
-   * @param exWave the excitation wavelength.
+   * @param samplesPerPixel  
+   * @param filter index of the filter associated with this channel.
+   * @param lightSource index of the primary light source.
+   * @param lightAttenuation  the primary light source attenuation.
+   * @param lightWavelength the primary light source wavelength.
+   * @param otf the index of the OTF associated with this channel.
+   * @param detector  the index of the detector associated with this channel.
+   * @param detectorOffset the detector offset.
+   * @param detectorGain the detector gain.
+   * @param illuminationType the illumination type.
+   * @param pinholeSize the size of the pinhole.
    * @param photometricInterpretation the photometric interpretation type.
    * @param mode the acquisition mode.
+   * @param contrastMethod the constrast method name.
+   * @param auxLightSource index of the auxiliary light source.
+   * @param auxLightAttenuation the auxiliary light source attenuation.
+   * @param auxTechnique the auxiliary technique type.
+   * @param auxLightWavelength the auxiliary light source wavelength.
+   * @param emWave the emission wavelength.
+   * @param exWave the excitation wavelength.
+   * @param fluor the fluorescence type.
+   * @param ndFilter the neutral-density filter value.
    * @param i the index of the pixels set within the metadata store.
    */
-  void setLogicalChannel(int channelIdx, String name, Float ndFilter,
-                         Integer emWave, Integer exWave,
-                         String photometricInterpretation, String mode,
-                         Integer i);
-
+  void setLogicalChannel(int channelIdx, String name, Integer samplesPerPixel,
+    Integer filter, Integer lightSource, Float lightAttenuation,
+    Integer lightWavelength, Integer otf, Integer detector, 
+    Float detectorOffset, Float detectorGain, String illuminationType, 
+    Integer pinholeSize, String photometricInterpretation, String mode, 
+    String contrastMethod, Integer auxLightSource, Float auxLightAttenuation, 
+    String auxTechnique, Integer auxLightWavelength, Integer emWave, 
+    Integer exWave, String fluor, Float ndFilter, Integer i);
+    
   /**
    * Sets a channel's global min and global max in the metadata store for a
    * particular pixels set.

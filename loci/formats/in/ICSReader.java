@@ -509,8 +509,9 @@ public class ICSReader extends FormatReader {
     }
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, new Integer(emWave[i]),
-        new Integer(exWave[i]), null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+       null, null, null, null, null, null, null, null, null, null, null, 
+       new Integer(emWave[i]), new Integer(exWave[i]), null, null, null);
     }
   }
 

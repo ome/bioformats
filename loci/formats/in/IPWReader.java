@@ -335,7 +335,9 @@ public class IPWReader extends BaseTiffReader {
       core.currentOrder[0], null, null);
     store.setImage(null, null, (String) getMeta("Version"), null);
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null);
     }
   }
 

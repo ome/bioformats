@@ -187,7 +187,9 @@ public class MNGReader extends FormatReader {
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
       Boolean.TRUE, core.currentOrder[0], null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null);
     }
   }
 

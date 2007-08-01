@@ -1,3 +1,11 @@
+2007 Aug 1:
+* Added support for latest version of Leica LIF
+* Fixed several issues with Leica LIF, Zeiss ZVI
+* Better metadata mapping for Zeiss ZVI
+* Added OME-TIFF writer
+* Added MetadataRetrieve API for retrieving data from a MetadataStore
+* Miscellaneous bugfixes 
+
 2007 July 16:
 * Fixed several issues with ImageJ plugins
 * Better support for Improvision and Leica TCS TIFF files

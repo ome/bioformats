@@ -660,7 +660,9 @@ public class ND2Reader extends FormatReader {
     store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
       new Float(pixSizeZ), null, null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null);
     }
 
     String prefix = "MetadataSeq _SEQUENCE_INDEX=\"0\" ";

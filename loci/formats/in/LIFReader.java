@@ -495,7 +495,9 @@ public class LIFReader extends FormatReader {
 
       store.setDimensions(xf, yf, zf, null, null, ii);
       for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, ii);
+        store.setLogicalChannel(j, null, null, null, null, null, null, null, 
+          null, null, null, null, null, null, null, null, null, null, null, 
+          null, null, null, null, null, ii);
       }
 
       String zoom = (String) getMeta(seriesName + " - dblZoom");

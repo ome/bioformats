@@ -383,10 +383,11 @@ public class DeltavisionReader extends FormatReader {
     status("Populating metadata");
 
     for (int w=0; w<core.sizeC[0]; w++) {
-      store.setLogicalChannel(w, null,
-        new Float(extHdrFields[0][w][0].getNdFilter()), new Integer(waves[w]),
-        new Integer((int) extHdrFields[0][w][0].getExFilter()),
-        "Monochrome", "Wide-field", null);
+      store.setLogicalChannel(w, null, null, null, null, null, null, null, null,
+        null, null, null, null, "Monochrome", "Wide-field", null, null, null,
+        null, null, new Integer(waves[w]), 
+        new Integer((int) extHdrFields[0][w][0].getExFilter()), null, 
+        new Float(extHdrFields[0][w][0].getNdFilter()), null); 
     }
 
     store.setStageLabel("ome",

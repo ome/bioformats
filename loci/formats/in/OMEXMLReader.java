@@ -178,6 +178,36 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException(exc);
     }
 
+    r.setVar("ome", null);
+    try {
+      File f = new File(Location.getMappedId(id));
+      f = f.getAbsoluteFile();
+      String path = f.getPath().toLowerCase();
+      if (f.exists() && path.endsWith(".ome")) {
+        r.setVar("f", f);
+        r.exec("ome = new OMENode(f)");
+      }
+      else {
+        byte[] b = new byte[(int) in.length()];
+        long oldFp = in.getFilePointer();
+        in.seek(0);
+        in.read(b);
+        in.seek(oldFp);
+        r.setVar("s", new String(b));
+        r.exec("ome = new OMENode(s)");
+        b = null;
+      }
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
+    try {
+      r.exec("omexml.setRoot(ome)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
+
     status("Determining endianness");
 
     in.skipBytes(200);
@@ -305,36 +335,6 @@ public class OMEXMLReader extends FormatReader {
 
     status("Populating metadata");
 
-    r.setVar("ome", null);
-    try {
-      File f = new File(Location.getMappedId(id));
-      f = f.getAbsoluteFile();
-      String path = f.getPath().toLowerCase();
-      if (f.exists() && path.endsWith(".ome")) {
-        r.setVar("f", f);
-        r.exec("ome = new OMENode(f)");
-      }
-      else {
-        byte[] b = new byte[(int) in.length()];
-        long oldFp = in.getFilePointer();
-        in.seek(0);
-        in.read(b);
-        in.seek(oldFp);
-        r.setVar("s", new String(b));
-        r.exec("ome = new OMENode(s)");
-        b = null;
-      }
-    }
-    catch (ReflectException exc) {
-      throw new FormatException(exc);
-    }
-    try {
-      r.exec("omexml.setRoot(ome)");
-    }
-    catch (ReflectException exc) {
-      throw new FormatException(exc);
-    }
-
     core = new CoreMetadata(numDatasets);
 
     bpp = new int[numDatasets];
@@ -432,11 +432,20 @@ public class OMEXMLReader extends FormatReader {
     Arrays.fill(core.orderCertain, true);
 
     MetadataStore store = getMetadataStore();
-    for (int i=0; i<core.sizeC.length; i++) {
-      for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null,
-          null, new Integer(i));
+  
+    try {
+      if (store.getClass().getName().equals(
+        "loci.formats.ome.OMEXMLMetadataStore")) 
+      {
+        MetadataStore m = (MetadataStore) r.getVar("omexml");
+        store.setRoot(m.getRoot()); 
       }
+      else { 
+        FormatTools.convertMetadata((MetadataRetrieve) r.getVar("omexml"), store);
+      }
+    }
+    catch (ReflectException e) {
+      if (debug) LogTools.trace(e);
     }
 
     System.gc();

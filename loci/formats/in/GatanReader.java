@@ -195,7 +195,9 @@ public class GatanReader extends FormatReader {
 
     String gamma = (String) getMeta("Gamma");
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null);
       store.setDisplayChannel(new Integer(i), null, null,
         gamma == null ? null : new Float(gamma), null);
     }

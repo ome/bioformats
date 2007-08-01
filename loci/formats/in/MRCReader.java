@@ -240,7 +240,9 @@ public class MRCReader extends FormatReader {
     store.setDimensions(new Float(xlen / mx), new Float(ylen / my),
       new Float(zlen / mz), null, null, null);
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null);
+      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null);
       // TODO : get channel min/max from metadata
       //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
       //  getChannelGlobalMaximum(id, i), null);

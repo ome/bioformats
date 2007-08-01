@@ -193,17 +193,29 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /*
-   * @see MetadataStore#setLogicalChannel(int, String,
-   *   Float, Integer, Integer, String, String, Integer)
+   * @see MetadataStore#setLogicalChannel(int, String, Integer, Integer,
+   * Integer, Float, Integer, Integer, Integer, Float, Float, String,
+   * Integer, String, String, String, Integer, Float, String, Integer, Integer,
+   * Integer, String, Float, Integer)
    */
-  public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
-    Integer emWave, Integer exWave, String photometricInterpretation,
-    String mode, Integer i)
+  public void setLogicalChannel(int channelIdx, String name,
+    Integer samplesPerPixel, Integer filter, Integer lightSource,
+    Float lightAttenuation, Integer lightWavelength, Integer otf,
+    Integer detector, Float detectorOffset, Float detectorGain,
+    String illuminationType, Integer pinholeSize, 
+    String photometricInterpretation, String mode, String contrastMethod, 
+    Integer auxLightSource, Float auxLightAttenuation, String auxTechnique, 
+    Integer auxLightWavelength, Integer emWave, Integer exWave, String fluor, 
+    Float ndFilter, Integer i)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
-      s.setLogicalChannel(channelIdx, name, ndFilter, emWave, exWave,
-                          photometricInterpretation, mode, i);
+      s.setLogicalChannel(channelIdx, name, samplesPerPixel, filter,
+        lightSource, lightAttenuation, lightWavelength, otf, detector,
+        detectorOffset, detectorGain, illuminationType, pinholeSize,
+        photometricInterpretation, mode, contrastMethod, auxLightSource,
+        auxLightAttenuation, auxTechnique, auxLightWavelength, emWave, exWave,
+        fluor, ndFilter, i); 
     }
   }
 
