@@ -281,7 +281,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
       "Miscellaneous notes associated with the selected overlays");
 
     // stats text area
-    stats = new JTextArea(5, 3 * textWidth);
+    stats = new JTextArea(7, 3 * textWidth);
     stats.setEditable(false);
     stats.setBorder(new EtchedBorder());
     stats.setToolTipText("Statistics for the selected overlay");
@@ -337,8 +337,8 @@ public class OverlayWidget extends JPanel implements ActionListener,
     FormLayout layout = new FormLayout(
       "pref, 5dlu, pref, 3dlu, pref:grow, 5dlu, pref, 3dlu, pref:grow",
       "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, " +
-      "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
-      "pref, 3dlu, fill:pref:grow");
+      "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      "3dlu, pref, 9dlu, pref, 3dlu, fill:pref:grow");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
 
@@ -377,7 +377,11 @@ public class OverlayWidget extends JPanel implements ActionListener,
     builder.add(notes, cc.xyw(5, row, 5));
     row += 2;
     builder.add(ButtonBarFactory.buildCenteredBar(new JButton[] {
-      remove, copy, paste, dist, load, save, export}),
+      remove, copy, paste, dist}),
+      cc.xyw(1, row, 9, "center, center"));
+    row += 2;
+    builder.add(ButtonBarFactory.buildCenteredBar(new JButton[] {
+      load, save, export}),
       cc.xyw(1, row, 9, "center, center"));
     row += 2;
     builder.addSeparator("Statistics", cc.xyw(1, row, 9));
@@ -596,6 +600,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
     filled.setEnabled(enableFill);
     text.setEnabled(enableText);
     text.setEditable(enableText);
+    text.setText(words);
 
     if (sel.length > 0) {
       // leave GUI components alone if nothing is selected

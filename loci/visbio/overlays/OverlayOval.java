@@ -268,8 +268,8 @@ public class OverlayOval extends OverlayObject {
     float circum = (float) (Math.PI *
       (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
 
-    return "Oval " + COORDS + " = (" + x1 + ", " + y1 + "), " +
-      CTR + " = (" + centerX + ", " + centerY + "), " +
+    return "Oval " + COORDS + " = (" + x1 + ", " + y1 + ")\n" +
+      CTR + " = (" + centerX + ", " + centerY + ")\n" +
       RAD + " = (" + radiusX + ", " + radiusY + ")\n" +
       MAJ + " = " + major + "; " + MIN + " = " + minor + "\n" +
       AREA + " = " + area + "; " + ECC + " = " + eccen + "\n" +
