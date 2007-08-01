@@ -436,7 +436,8 @@ public class OIBReader extends FormatReader {
   /** Initialize metadata hashtable and OME-XML structure. */
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore();
-    store.setImage((String) getMeta("DataName"), null, null, null);
+    store.setImage((String) getMeta("[File Info] - DataName"), null,
+      null, null);
 
     for (int i=0; i<width.size(); i++) {
       switch (((Integer) bpp.get(0)).intValue() % 3) {

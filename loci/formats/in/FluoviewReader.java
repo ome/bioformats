@@ -120,7 +120,7 @@ public class FluoviewReader extends BaseTiffReader {
     if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
       return super.openBytes(no, buf);
     }
-    FormatTools.assertId(currentId, false, 1);
+    FormatTools.assertId(currentId, true, 1);
     if (no < 0 || no >= core.imageCount[0]) {
       throw new FormatException("Invalid image number: " + no);
     }

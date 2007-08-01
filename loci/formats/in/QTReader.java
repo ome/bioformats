@@ -325,7 +325,7 @@ public class QTReader extends FormatReader {
     }
 
     core.imageCount[0] = offsets.size();
-    if (chunkSizes.size() < core.imageCount[0]) {
+    if (chunkSizes.size() < core.imageCount[0] && chunkSizes.size() > 0) {
       core.imageCount[0] = chunkSizes.size();
     }
 
