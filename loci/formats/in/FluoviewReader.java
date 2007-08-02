@@ -130,7 +130,10 @@ public class FluoviewReader extends BaseTiffReader {
       throw new FormatException("Buffer too small.");
     }
 
-    byte[] b = super.openBytes(0);
+    byte[] b = new byte[core.sizeX[0] * 
+      (int) TiffTools.getImageLength(ifds[0]) * 
+      getRGBChannelCount() * FormatTools.getBytesPerPixel(core.pixelType[0])];
+    super.openBytes(0, b);
     System.arraycopy(b, 0, buf, 0, buf.length);
     return buf;
   }
@@ -276,7 +279,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (name.length() == 0) continue;
 
       if (name.equals("x")) {
-        core.sizeX[0] = size;
+        if (core.sizeX[0] == 0) core.sizeX[0] = size;
         voxelX = voxel;
       }
       else if (name.equals("y")) {
