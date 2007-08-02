@@ -419,10 +419,11 @@ public class ZeissLSMReader extends BaseTiffReader {
           StringBuffer sb = new StringBuffer();
           char current = (char) in.read();
           while (current != 0) {
-            sb.append(current);
+            if (current < 128) sb.append(current);
             current = (char) in.read();
           }
-          put("ChannelName" + i, sb.toString());
+          if (sb.length() <= 128) put("ChannelName" + i, sb.toString());
+          else put("ChannelName" + i, ""); 
         }
       }
 
