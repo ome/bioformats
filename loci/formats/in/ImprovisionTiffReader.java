@@ -107,6 +107,10 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     core.sizeC[0] = Integer.parseInt(tc);
     core.sizeT[0] = Integer.parseInt(tt);
 
+    if (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] < core.imageCount[0]) {
+      core.sizeC[0] = core.imageCount[0];
+    }
+
     // parse each of the comments to determine axis ordering
 
     long[] stamps = new long[ifds.length];
