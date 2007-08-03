@@ -13,6 +13,7 @@
         <file name="CLI.xsd"/>
         <file name="completesample.xml"/>
         <file name="DataHistory.xsd"/>
+        <file name="fromtiff.xml"/>
         <file name="min-sample.xml"/>
         <file name="MLI.xsd"/>
         <file name="ome.xsd"/>
