@@ -305,7 +305,11 @@ public class Dataset extends ImageTransform {
     if (file == null) {
       Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
       if (clip != null) {
-        Transferable t = clip.getContents(null);
+        Transferable t = null;
+        try {
+          t = clip.getContents(null);
+        }
+        catch (IllegalStateException exc) { } // clipboard contents unavailable
         if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
           String s = null;
           try { s = (String) t.getTransferData(DataFlavor.stringFlavor); }
