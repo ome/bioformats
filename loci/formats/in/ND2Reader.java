@@ -290,16 +290,18 @@ public class ND2Reader extends FormatReader {
               }
             }
 
-            try {
-              SAXParser parser = SAX_FACTORY.newSAXParser();
-              parser.parse(new ByteArrayInputStream(s.getBytes()), handler);
-            }
-            catch (ParserConfigurationException exc) {
-              throw new FormatException(exc);
-            }
-            catch (SAXException exc) {
-              throw new FormatException(exc);
-            }
+            if (s.trim().length() > 0) {
+              try {
+                SAXParser parser = SAX_FACTORY.newSAXParser();
+                parser.parse(new ByteArrayInputStream(s.getBytes()), handler);
+              }
+              catch (ParserConfigurationException exc) {
+                throw new FormatException(exc);
+              }
+              catch (SAXException exc) {
+                throw new FormatException(exc);
+              }
+            } 
           }
 
           if (core.imageCount[0] > 0 && offsets == null) {
@@ -312,10 +314,16 @@ public class ND2Reader extends FormatReader {
           }
         }
       }
+  
+      if (core.pixelType[0] == FormatTools.UINT32) {
+        core.sizeC[0] = 4;
+        core.pixelType[0] = FormatTools.UINT8;
+        core.interleaved[0] = true; 
+      }
 
-      core.sizeC[0] = 1;
+      if (core.sizeC[0] == 0) core.sizeC[0] = 1;
       core.currentOrder[0] = "XYCZT";
-      core.rgb[0] = false;
+      core.rgb[0] = core.sizeC[0] >= 3;
       core.littleEndian[0] = true;
 
       return;
@@ -619,7 +627,8 @@ public class ND2Reader extends FormatReader {
           core.pixelType[0] = FormatTools.UINT16;
           break;
         case 32:
-          core.pixelType[0] = FormatTools.UINT32;
+          core.pixelType[0] = FormatTools.UINT8;
+          core.sizeC[0] = 4;
           break;
         default:
           throw new FormatException("Unsupported bits per pixel: " + bpp);
@@ -640,7 +649,7 @@ public class ND2Reader extends FormatReader {
       core.sizeZ[0] = core.imageCount[0];
     }
 
-    core.rgb[0] = core.sizeC[0] == 3;
+    core.rgb[0] = core.sizeC[0] >= 3;
     core.interleaved[0] = true;
     core.littleEndian[0] = false;
 
