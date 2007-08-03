@@ -134,7 +134,7 @@ public class OutputConsole extends OutputStream {
     write(new byte[] {(byte) b}, 0, 1);
   }
 
-//  private boolean lastInvalid;
+  private boolean lastInvalid;
 
   public void write(byte[] b, int off, int len) throws IOException {
     final OutputConsole out = this;
@@ -151,6 +151,17 @@ public class OutputConsole extends OutputStream {
 //    // ignore blank lines following invalid output
 //    if (lastInvalid && s.trim().equals("")) return;
 //    lastInvalid = false;
+
+    // HACK - filter out stupid IOException clipboard stack trace on Mac OS X
+    if (s.startsWith("java.io.IOException: " +
+      "system clipboard data is unavailable"))
+    {
+      lastInvalid = true;
+      return;
+    }
+    // ignore remainder of stack trace
+    if (lastInvalid && s.startsWith("\tat ")) return;
+    lastInvalid = false;
 
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
