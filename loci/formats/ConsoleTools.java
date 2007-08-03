@@ -146,7 +146,7 @@ public final class ConsoleTools {
     }
     if (map != null) Location.mapId(id, map);
     if (omexml) {
-      reader.setOriginalMetadataPopulated(true); 
+      reader.setOriginalMetadataPopulated(true);
       try {
         // NB: avoid dependencies on optional loci.formats.ome package
         Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
@@ -516,7 +516,7 @@ public final class ConsoleTools {
       }
     }
 
-    // output OME-XML
+    // output and validate OME-XML
     if (omexml) {
       LogTools.println();
       LogTools.println("Generating OME-XML");
@@ -526,6 +526,7 @@ public final class ConsoleTools {
       if (ms.getClass().getName().equals(
         "loci.formats.ome.OMEXMLMetadataStore"))
       {
+        // output OME-XML
         try {
           Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
           String xml = (String) m.invoke(ms, (Object[]) null);
@@ -534,6 +535,68 @@ public final class ConsoleTools {
         catch (Throwable t) {
           LogTools.println("Error generating OME-XML:");
           LogTools.trace(t);
+        }
+
+        // check Java version (XML validation only works in Java 1.5+)
+        String version = System.getProperty("java.version");
+        int dot = version.indexOf(".");
+        if (dot >= 0) dot = version.indexOf(".", dot + 1);
+        float ver = Float.NaN;
+        if (dot >= 0) {
+          try {
+            ver = Float.parseFloat(version.substring(0, dot));
+          }
+          catch (NumberFormatException exc) { }
+        }
+        if (ver != ver) {
+          LogTools.println("Warning: cannot determine if Java version\"" +
+            version + "\" supports Java v1.5. OME-XML validation may fail.");
+        }
+
+        if (ver != ver || ver >= 1.5f) {
+          // validate OME-XML (Java 1.5+ only)
+          LogTools.println("Validating OME-XML");
+
+          // use reflection to avoid dependency on optional
+          // org.openmicroscopy.xml or javax.xml.validation packages
+          ReflectedUniverse r = new ReflectedUniverse();
+
+          try {
+            // look up a factory for the W3C XML Schema language
+            r.exec("import javax.xml.validation.SchemaFactory");
+            r.setVar("schemaPath", "http://www.w3.org/2001/XMLSchema");
+            r.exec("factory = SchemaFactory.newInstance(schemaPath)");
+
+            // compile the schema
+            r.exec("import java.net.URL");
+            r.setVar("omePath",
+              "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd");
+            r.exec("schemaLocation = new URL(omePath)");
+            r.exec("schema = factory.newSchema(schemaLocation)");
+
+            // get a validator from the schema
+            r.exec("validator = schema.newValidator()");
+
+            // prepare the XML source
+            r.exec("import javax.xml.transform.dom.DOMSource");
+            r.setVar("ms", ms);
+            r.exec("root = ms.getRoot()");
+            r.exec("domElement = root.getDOMElement()");
+            r.exec("source = new DOMSource(domElement)");
+
+            // validate the OME-XML
+            try {
+              r.exec("validator.validate(source)");
+              LogTools.println("No validation errors found.");
+            }
+            catch (ReflectException exc) {
+              // NB: validation errors are shown anyway
+            }
+          }
+          catch (ReflectException exc) {
+            LogTools.println("Error validating OME-XML:");
+            LogTools.trace(exc);
+          }
         }
       }
       else {
