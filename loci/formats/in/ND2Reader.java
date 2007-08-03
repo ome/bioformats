@@ -196,7 +196,7 @@ public class ND2Reader extends FormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (!isJPEG) {
       return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-        core.sizeC[0], core.interleaved[0],
+        core.sizeC[0], !core.interleaved[0],
         FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
     }
 
@@ -315,16 +315,11 @@ public class ND2Reader extends FormatReader {
         }
       }
   
-      if (core.pixelType[0] == FormatTools.UINT32) {
-        core.sizeC[0] = 4;
-        core.pixelType[0] = FormatTools.UINT8;
-        core.interleaved[0] = true; 
-      }
-
       if (core.sizeC[0] == 0) core.sizeC[0] = 1;
       core.currentOrder[0] = "XYCZT";
-      core.rgb[0] = core.sizeC[0] >= 3;
+      core.rgb[0] = core.sizeC[0] > 1;
       core.littleEndian[0] = true;
+      core.interleaved[0] = false;
 
       return;
     }
@@ -710,6 +705,24 @@ public class ND2Reader extends FormatReader {
             break;
           default: core.pixelType[0] = FormatTools.UINT8;
         }
+      }
+      else if (qName.equals("uiBpcInMemory")) {
+        if (attributes.getValue("value") == null) return; 
+    	int bits = Integer.parseInt(attributes.getValue("value"));
+        int bytes = bits / 8;
+        switch (bytes) {
+          case 1:
+            core.pixelType[0] = FormatTools.UINT8;
+            break;
+          case 2:
+        	core.pixelType[0] = FormatTools.UINT16;
+        	break;
+          case 4:
+        	core.pixelType[0] = FormatTools.UINT32;
+        	break;
+          default: core.pixelType[0] = FormatTools.UINT8;
+        }
+        addMeta(qName, attributes.getValue("value"));
       }
       else if (qName.equals("uiHeight")) {
         core.sizeY[0] = Integer.parseInt(attributes.getValue("value"));
