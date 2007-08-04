@@ -772,8 +772,8 @@ public final class OverlayUtil {
    * of the display.
    */
   public static float getMultiplier(DisplayImpl display) {
-    // This method may be a bit naive, obtaining the multiplier from
-    // only one measurement.
+    // NB: This method may be a bit naive,
+    // obtaining the multiplier from only one measurement.
     int[] p1 = {0, 0};
     int[] p2 = {0, 1000};
     double[] d1 = CursorUtil.pixelToDomain(display, p1[0], p1[1]);
@@ -784,7 +784,8 @@ public final class OverlayUtil {
     double dy = d2[1] - d1[1];
     double pp = Math.sqrt(px * px + py * py);
     double dd = Math.sqrt(dx * dx + dy * dy);
-    return (float) (dd / pp);
+    float mult = (float) (dd / pp);
+    return mult == mult ? mult : 1;
   }
 
   // -- Helper Methods --
@@ -1050,7 +1051,7 @@ public final class OverlayUtil {
         // System.out.print("right pt: "); print(rightPt);
         // System.out.print("left pt: "); print(leftPt);
         // System.out.println("orientation changed = "  + orientationChanged);
-      } // end else // TEMP
+      } // end else
 
       // copy calculated values to storage arrays
       right[0][i] = rightPt[0];
