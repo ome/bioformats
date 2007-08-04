@@ -527,9 +527,10 @@ public final class ConsoleTools {
         "loci.formats.ome.OMEXMLMetadataStore"))
       {
         // output OME-XML
+        String xml = null;
         try {
           Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
-          String xml = (String) m.invoke(ms, (Object[]) null);
+          xml = (String) m.invoke(ms, (Object[]) null);
           LogTools.println(FormatTools.indentXML(xml));
         }
         catch (Throwable t) {
@@ -578,11 +579,13 @@ public final class ConsoleTools {
             r.exec("validator = schema.newValidator()");
 
             // prepare the XML source
-            r.exec("import javax.xml.transform.dom.DOMSource");
+            r.exec("import java.io.StringReader");
+            r.exec("import javax.xml.transform.stream.StreamSource");
             r.setVar("ms", ms);
             r.exec("root = ms.getRoot()");
-            r.exec("domElement = root.getDOMElement()");
-            r.exec("source = new DOMSource(domElement)");
+            r.setVar("xml", xml);
+            r.exec("reader = new StringReader(xml)");
+            r.exec("source = new StreamSource(reader)");
 
             // validate the OME-XML
             try {
@@ -590,7 +593,8 @@ public final class ConsoleTools {
               LogTools.println("No validation errors found.");
             }
             catch (ReflectException exc) {
-              // NB: validation errors are shown anyway
+              // display validation errors
+              LogTools.println(exc.getCause().getCause().getMessage());
             }
           }
           catch (ReflectException exc) {
