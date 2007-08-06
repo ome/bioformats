@@ -575,6 +575,10 @@ public final class ConsoleTools {
             r.exec("schemaLocation = new URL(omePath)");
             r.exec("schema = factory.newSchema(schemaLocation)");
 
+            // HACK - workaround for weird Linux bug preventing use of
+            // schema.newValidator() method even though it is "public final"
+            r.setAccessibilityIgnored(true);
+
             // get a validator from the schema
             r.exec("validator = schema.newValidator()");
 
