@@ -46,6 +46,9 @@ public class ReflectedUniverse {
   /** Class loader for imported classes. */
   protected ClassLoader loader;
 
+  /** Whether to force our way past restrictive access modifiers. */
+  protected boolean force;
+
   /** Debugging flag. */
   protected boolean debug;
 
@@ -88,7 +91,7 @@ public class ReflectedUniverse {
       (c == char.class && o instanceof Character));
   }
 
-  // -- API methods --
+  // -- ReflectedUniverse API methods --
 
   /**
    * Executes a command in the universe. The following syntaxes are valid:
@@ -199,6 +202,7 @@ public class ReflectedUniverse {
       Constructor constructor = null;
       Constructor[] c = cl.getConstructors();
       for (int i=0; i<c.length; i++) {
+        if (force) c[i].setAccessible(true);
         Class[] params = c[i].getParameterTypes();
         if (params.length == args.length) {
           boolean match = true;
@@ -253,6 +257,7 @@ public class ReflectedUniverse {
       Method method = null;
       Method[] m = varClass.getMethods();
       for (int i=0; i<m.length; i++) {
+        if (force) m[i].setAccessible(true);
         if (methodName.equals(m[i].getName())) {
           Class[] params = m[i].getParameterTypes();
           if (params.length == args.length) {
@@ -387,6 +392,7 @@ public class ReflectedUniverse {
       Field field;
       try {
         field = varClass.getField(fieldName);
+        if (force) field.setAccessible(true);
       }
       catch (NoSuchFieldException exc) {
         if (debug) LogTools.trace(exc);
@@ -409,6 +415,12 @@ public class ReflectedUniverse {
     }
   }
 
+  /** Sets whether access modifiers (protected, private, etc.) are ignored. */
+  public void setAccessibilityIgnored(boolean ignore) { force = ignore; }
+
+  /** Gets whether access modifiers (protected, private, etc.) are ignored. */
+  public boolean isAccessibilityIgnored() { return force; }
+
   /** Enables or disables extended debugging output. */
   public void setDebug(boolean debug) { this.debug = debug; }
 
@@ -424,6 +436,10 @@ public class ReflectedUniverse {
     ReflectedUniverse r = new ReflectedUniverse();
     LogTools.println("Reflected universe test environment. " +
       "Type commands, or press ^D to quit.");
+    if (args.length > 0) {
+      r.setAccessibilityIgnored(true);
+      LogTools.println("Ignoring accessibility modifiers.");
+    }
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     while (true) {
       LogTools.print("> ");
