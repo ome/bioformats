@@ -341,6 +341,26 @@ public class ZeissZVIReader extends FormatReader {
       initFile(id);
     }
 
+
+    // rearrange axis sizes, if necessary 
+     
+    String t = (String) metadata.get("Image Index T");
+    if (t == null) t = (String) metadata.get("Image Index T 0");
+
+    String z = (String) metadata.get("Image Index Z");
+    if (z == null) z = (String) metadata.get("Image Index Z 0");
+
+    if (z != null && t != null) {
+      int firstZ = Integer.parseInt(z);
+      int firstT = Integer.parseInt(t);
+
+      if (firstZ >= core.sizeZ[0] || firstT >= core.sizeT[0]) {
+        int tmp = core.sizeZ[0];
+        core.sizeZ[0] = core.sizeT[0];
+        core.sizeT[0] = tmp;
+      }
+    }
+
     try {
       initMetadata();
     }
@@ -349,6 +369,21 @@ public class ZeissZVIReader extends FormatReader {
     }
     catch (IOException exc) {
       if (debug) trace(exc);
+    }
+  
+    // remove extra (invalid) metadata
+
+    String[] keys = (String[]) metadata.keySet().toArray(new String[0]);
+    for (int i=0; i<keys.length; i++) {
+      String n = keys[i];
+      if (n.indexOf(" ") != -1) {
+        n = n.substring(n.lastIndexOf(" ") + 1);
+        try {
+          int ndx = Integer.parseInt(n);
+          if (ndx >= core.sizeC[0]) metadata.remove(keys[i]);
+        }
+        catch (NumberFormatException e) { }
+      }
     }
   }
 
@@ -424,8 +459,11 @@ public class ZeissZVIReader extends FormatReader {
     for (int i=0; i<core.imageCount[0]; i++) {
       int[] zct = FormatTools.getZCTCoords(this, i);
       String exposure = (String) getMeta("Exposure Time [ms] " + i);
-      store.setPlaneInfo(zct[0], zct[1], zct[2], null,
-      exposure == null ? null : new Float(exposure), null);
+      Float exp = new Float(0.0);
+      try { exp = new Float(exposure); }
+      catch (Exception e) { }
+      
+      store.setPlaneInfo(zct[0], zct[1], zct[2], null, exp, null);
     }
 
     String objectiveName = (String) getMeta("Objective Name 0");
@@ -502,14 +540,10 @@ public class ZeissZVIReader extends FormatReader {
         if (dirName.toUpperCase().equals("ROOT ENTRY") ||
           dirName.toUpperCase().equals("ROOTENTRY"))
         {
-          /* debug */ System.out.println("************************"); 
           if (entryName.equals("Tags")) parseTags(s);
-          /* debug */ System.out.println("************************"); 
         }
         else if (dirName.equals("Tags") && isContents) {
-          /* debug */ System.out.println("************************"); 
           parseTags(s);
-          /* debug */ System.out.println("************************"); 
         }
         else if (isContents && (dirName.equals("Image") ||
           dirName.toUpperCase().indexOf("ITEM") != -1) &&
@@ -616,6 +650,10 @@ public class ZeissZVIReader extends FormatReader {
             parsePlane(o, imageNum, directory, entryName);
           }
         }
+        else {
+          try { parseTags(s); }
+          catch (IOException e) { }
+        }     
         s.close();
         data = null;
         r.exec("dis.close()");
@@ -755,7 +793,8 @@ public class ZeissZVIReader extends FormatReader {
 
       if (metadata.get(key) != null || metadata.get(key + " 0") != null) {
         if (metadata.get(key) != null) {
-          metadata.remove(key);
+          Object v = metadata.remove(key);
+          metadata.put(key + " 0", v); 
         }
 
         int ndx = 0;
@@ -763,10 +802,7 @@ public class ZeissZVIReader extends FormatReader {
         key += " " + ndx;
       }
 
-      /* debug */ System.out.println(key);
-
       addMeta(key, value);
-
     }
   }
 
