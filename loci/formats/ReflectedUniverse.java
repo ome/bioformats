@@ -97,6 +97,7 @@ public class ReflectedUniverse {
    * <li>var.method(param1, ..., paramN)
    * <li>var2 = var.method(param1, ..., paramN)
    * <li>ClassName.method(param1, ..., paramN)
+   * <li>var2 = ClassName.method(param1, ..., paramN)
    * <li>var2 = var
    * <p>
    * Important guidelines:
@@ -108,8 +109,10 @@ public class ReflectedUniverse {
    *     2) a static or instance field (i.e., no nested methods);
    *     3) a string literal (remember to escape the double quotes);
    *     4) an integer literal;
-   *     5) a long literal (ending in L);
-   *     or 6) a double literal (containing a decimal point).
+   *     6) a long literal (ending in L);
+   *     7) a double literal (containing a decimal point);
+   *     8) a boolean literal (true or false);
+   *     or 9) the null keyword.
    */
   public Object exec(String command) throws ReflectException {
     command = command.trim();
