@@ -432,10 +432,8 @@ public class OpenlabReader extends FormatReader {
 
         }
         else if (tag == 69) {
-          in.skipBytes(4);
-          int units = in.readShort();
-          in.skipBytes(12);
-
+          in.skipBytes(18);
+        
           xCal = in.readFloat();
           yCal = in.readFloat();
         }
@@ -528,16 +526,13 @@ public class OpenlabReader extends FormatReader {
     int oldChannels = openBytes(0).length / (core.sizeX[0] * core.sizeY[0] * 3);
     int oldWidth = core.sizeX[0];
 
-    int oldSize = 0;
     for (int i=0; i<tmp.size(); i++) {
       LayerInfo layer = (LayerInfo) tmp.get(i);
       in.seek(layer.layerStart);
 
       long nextTag = readTagHeader();
       if (fmt.equals("PICT")) {
-        in.skipBytes(24);
-        int volumeType = in.readShort();
-        in.skipBytes(272);
+        in.skipBytes(298);
 
         int top, left, bottom, right;
 

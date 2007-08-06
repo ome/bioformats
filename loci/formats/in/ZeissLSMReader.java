@@ -147,11 +147,6 @@ public class ZeissLSMReader extends BaseTiffReader {
   protected void initMetadata() {
     Hashtable ifd = ifds[0];
 
-    long data = 0;
-    int idata = 0;
-    double ddata = 0;
-    short sdata = 0;
-
     try {
       boolean little = TiffTools.isLittleEndian(ifd);
       in.order(little);
@@ -349,15 +344,13 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       put("TimeInterval", ras.readDouble());
 
-      long channelDataTypesOffset = ras.readInt();
-      long scanInformationOffset = ras.readInt();
-      long ksDataOffset = ras.readInt();
+      ras.skipBytes(12);
       long timeStampOffset = ras.readInt();
       long eventListOffset = ras.readInt();
       long roiOffset = ras.readInt();
       long bleachRoiOffset = ras.readInt();
-      long nextRecordingOffset = ras.readInt();
-
+      ras.skipBytes(4);
+    
       put("DisplayAspectX", ras.readDouble());
       put("DisplayAspectY", ras.readDouble());
       put("DisplayAspectZ", ras.readDouble());
@@ -369,12 +362,8 @@ public class ZeissLSMReader extends BaseTiffReader {
       long linescanOverlayOffset = ras.readInt();
 
       put("ToolbarFlags", ras.readInt());
-      long channelWavelengthOffset = ras.readInt();
-      long channelFactorsOffset = ras.readInt();
-
-      double objectiveSphereCorrection = ras.readDouble();
-      long unmixParamsOffset = ras.readInt();
-
+      ras.skipBytes(20);
+      
       // read referenced structures
 
       if (overlayOffset != 0) {
@@ -403,8 +392,8 @@ public class ZeissLSMReader extends BaseTiffReader {
         }
 
         long namesOffset = in.readInt() + channelColorsOffset;
-        int nameData = in.readInt();
-
+        in.skipBytes(4);
+ 
         // read in the intensity value for each color
 
         if (namesOffset >= 0) {
@@ -428,8 +417,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       if (timeStampOffset != 0) {
-        in.seek(timeStampOffset);
-        int blockSize = in.readInt();
+        in.seek(timeStampOffset + 4);
         int numberOfStamps = in.readInt();
         for (int i=0; i<numberOfStamps; i++) {
           put("TimeStamp" + i, in.readDouble());

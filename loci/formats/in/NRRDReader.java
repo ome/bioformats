@@ -49,9 +49,6 @@ public class NRRDReader extends FormatReader {
   /** Data encoding. */
   private String encoding;
 
-  /** The min and max values, if present. */
-  private String min, max;
-
   /** Offset to pixel data. */
   private long offset;
 
@@ -216,8 +213,6 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("endian")) {
           core.littleEndian[0] = v.equals("little");
         }
-        else if (key.equals("min")) min = v;
-        else if (key.equals("max")) max = v;
       }
 
       if ((line.length() == 0 && dataFile == null) || line == null) {

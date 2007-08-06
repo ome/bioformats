@@ -114,8 +114,6 @@ public class ChannelMerger extends ReaderWrapper {
     int sizeC = getSizeC();
     int[] nos = getZCTCoords(no);
     int z = nos[0], t = nos[2];
-    String dimOrder = reader.getDimensionOrder();
-    int ic = dimOrder.indexOf("C") - 2;
     byte[] bytes = null;
     for (int c=0; c<sizeC; c++) {
       byte[] b = reader.openBytes(reader.getIndex(z, c, t));

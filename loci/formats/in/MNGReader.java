@@ -119,14 +119,7 @@ public class MNGReader extends FormatReader {
 
     core.sizeX[0] = in.readInt();
     core.sizeY[0] = in.readInt();
-    int fps = in.readInt();
-    int layerCounter = in.readInt();
-    in.skipBytes(4);
-
-    int playTime = in.readInt();
-    int profile = in.readInt();
-
-    in.skipBytes(4); // skip the CRC
+    in.skipBytes(24);
 
     Vector stack = new Vector();
     int maxIterations = 0;

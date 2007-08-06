@@ -91,12 +91,6 @@ public class OIBReader extends FormatReader {
   /** Number of bytes per pixel. */
   private Vector bpp;
 
-  /** Thumbnail width. */
-  private int thumbWidth;
-
-  /** Thumbnail height. */
-  private int thumbHeight;
-
   /** Hashtable containing the directory entry for each plane. */
   private Vector pixels;
 
@@ -105,15 +99,6 @@ public class OIBReader extends FormatReader {
    * indexed by the plane number.
    */
   private Vector names;
-
-  /** Vector containing Z indices. */
-  private Vector[] zIndices;
-
-  /** Vector containing C indices. */
-  private Vector[] cIndices;
-
-  /** Vector containing T indices. */
-  private Vector[] tIndices;
 
   private Vector rgb;
 
@@ -215,10 +200,6 @@ public class OIBReader extends FormatReader {
     if (debug) debug("OIBReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
     super.initFile(id);
-
-    zIndices = new Vector[] {new Vector()};
-    cIndices = new Vector[] {new Vector()};
-    tIndices = new Vector[] {new Vector()};
 
     width = new Vector();
     height = new Vector();
@@ -542,11 +523,6 @@ public class OIBReader extends FormatReader {
 
         String entryName = (String) r.getVar("entryName");
         String dirName = (String) r.getVar("dirName");
-
-        boolean isContents = entryName.toUpperCase().equals("CONTENTS");
-        Object directory = r.getVar("dir");
-
-        int pt = 0;
 
         // check the first 2 bytes of the stream
 

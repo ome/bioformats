@@ -210,7 +210,7 @@ public class BioRadReader extends FormatReader {
 
     String zoom = null, zstart = null, zstop = null, mag = null;
     String gain1 = null, gain2 = null, gain3 = null;
-    String offset1 = null, offset2 = null, offset3 = null;
+    String offset1 = null;
     String ex1 = null, ex2 = null, ex3 = null;
     String em1 = null, em2 = null, em3 = null;
 
@@ -273,9 +273,6 @@ public class BioRadReader extends FormatReader {
           }
           break;
         case 21: // NOTE_TYPE_STRUCTURE
-          int structType = (x & 0xff00) >> 8;
-          int structVersion = x & 0xff;
-
           StringTokenizer st = new StringTokenizer(text, " ");
 
           String[] keys = new String[0];
@@ -460,12 +457,6 @@ public class BioRadReader extends FormatReader {
             }
             else if (keys[idx].equals("Transmission detector 1 - offset")) {
               offset1 = value;
-            }
-            else if (keys[idx].equals("Transmission detector 2 - offset")) {
-              offset2 = value;
-            }
-            else if (keys[idx].equals("Transmission detector 3 - offset")) {
-              offset3 = value;
             }
             else if (keys[idx].equals(
               "Part number of excitation filter for laser 1"))

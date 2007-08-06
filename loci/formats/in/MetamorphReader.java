@@ -214,9 +214,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     if (!id.toLowerCase().endsWith(".nd")) {
       Location abs = new Location(currentId).getAbsoluteFile();
-      String absPath = abs.getPath().substring(
-        abs.getPath().lastIndexOf(File.separator));
-
+    
       int idx = id.indexOf("_");
       if (idx == -1) idx = id.lastIndexOf(".");
 
@@ -306,7 +304,6 @@ public class MetamorphReader extends BaseTiffReader {
       // parse out the STK metadata from the UIC4TAG.
       TiffIFDEntry uic1tagEntry= TiffTools.getFirstIFDEntry(in, UIC1TAG);
       TiffIFDEntry uic2tagEntry=TiffTools.getFirstIFDEntry(in, UIC2TAG);
-      TiffIFDEntry uic3tagEntry=TiffTools.getFirstIFDEntry(in, UIC3TAG);
       TiffIFDEntry uic4tagEntry = TiffTools.getFirstIFDEntry(in, UIC4TAG);
       int planes = uic4tagEntry.getValueCount();
       mmPlanes = planes;

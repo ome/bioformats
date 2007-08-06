@@ -1265,8 +1265,6 @@ public final class TiffTools {
       for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
         try {
           if (DEBUG) debug("reading image strip #" + strip);
-          long actualRows = (row + rowsPerStrip > imageLength) ?
-            imageLength - row : rowsPerStrip;
           in.seek((int) stripOffsets[strip]);
 
           if (stripByteCounts[strip] > Integer.MAX_VALUE) {
@@ -1597,8 +1595,6 @@ public final class TiffTools {
       sampleCount -= trunc;
     }
 
-    int counter = 0;
-
     // rules on incrementing the index:
     // 1) if the planar configuration is set to 1 (interleaved), then add one
     //    to the index
@@ -1612,13 +1608,10 @@ public final class TiffTools {
     boolean bps8 = bps0 == 8;
     boolean bps16 = bps0 == 16;
 
-    int height = 0;
     if (photoInterp == CFA_ARRAY) {
       imageWidth = colorMap[colorMap.length - 2];
-      height = colorMap[colorMap.length - 1];
     }
-    else height = (int) (samples[0].length / imageWidth);
-
+  
     int row = 0, col = 0;
 
     if (imageWidth != 0) row = startIndex / (int) imageWidth;

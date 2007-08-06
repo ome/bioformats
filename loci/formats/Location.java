@@ -47,7 +47,6 @@ public class Location {
   // -- Fields --
 
   private boolean isURL = true;
-  private String path;
   private URL url;
   private File file;
 
@@ -56,7 +55,6 @@ public class Location {
   public Location(String pathname) {
     try {
       url = new URL(getMappedId(pathname));
-      path = pathname;
     }
     catch (MalformedURLException e) {
       isURL = false;
@@ -269,7 +267,6 @@ public class Location {
         Vector files = new Vector();
         while (!foundEnd) {
           byte[] b = new byte[is.available()];
-          int read = is.read(b);
           String s = new String(b);
           if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
 

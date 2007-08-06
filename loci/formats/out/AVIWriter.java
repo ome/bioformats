@@ -86,7 +86,6 @@ public class AVIWriter extends FormatWriter {
   private int xMod;
   private long frameOffset;
   private long frameOffset2;
-  private int savePlaneNum;
 
   // -- Constructor --
 
@@ -174,7 +173,6 @@ public class AVIWriter extends FormatWriter {
 
         DataTools.writeInt(raFile, 0, true); // dwReserved1 - set to 0
         // dwFlags - just set the bit for AVIF_HASINDEX
-        savePlaneNum = (int) raFile.getFilePointer();
         DataTools.writeInt(raFile, 0x10, true);
 
         // 10H AVIF_HASINDEX: The AVI file has an idx1 chunk containing

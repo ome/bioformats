@@ -84,7 +84,6 @@ public class SlidebookReader extends FormatReader {
 
     int plane = core.sizeX[series] * core.sizeY[series] * 2;
 
-    long relativeOffset = plane * no;
     long offset = ((Long) pixelOffsets.get(series)).longValue() + plane * no;
     in.seek(offset);
     in.read(buf);

@@ -126,9 +126,7 @@ public class KhorosReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
-    in.skipBytes(2);
-    int release = in.read();
-    int version = in.read();
+    in.skipBytes(4);
     in.order(true);
     int dependency = in.readInt();
 

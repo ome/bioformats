@@ -270,8 +270,6 @@ public class LIFReader extends FormatReader {
     Vector bps = new Vector();
     Vector extraDims = new Vector();
 
-    String prefix = "";
-
     while (ndx < elements.size()) {
       token = (String) elements.get(ndx);
 
@@ -344,7 +342,6 @@ public class LIFReader extends FormatReader {
                 numDatasets = seriesNames.size();
                 idx = numDatasets - 1;
               }
-              prefix = (String) seriesNames.get(idx);
             }
 
             Hashtable tmp = new Hashtable();

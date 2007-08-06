@@ -252,7 +252,7 @@ public class PerkinElmerReader extends FormatReader {
 
         try {
           String ext = filename.substring(filename.lastIndexOf(".") + 1);
-          int num = Integer.parseInt(ext);
+          Integer.parseInt(ext);
           isTiff = false;
           files[filesPt] = workingDirPath + ls[i];
           filesPt++;
@@ -260,7 +260,7 @@ public class PerkinElmerReader extends FormatReader {
         catch (NumberFormatException e) {
           try {
             String ext = filename.substring(filename.lastIndexOf(".") + 1);
-            int num = Integer.parseInt(ext, 16);
+            Integer.parseInt(ext, 16);
             isTiff = false;
             files[filesPt] = workingDirPath + ls[i];
             filesPt++;
@@ -518,7 +518,6 @@ public class PerkinElmerReader extends FormatReader {
     if (details != null) {
       t = new StringTokenizer(details);
       int tokenNum = 0;
-      int numTokens = t.countTokens();
       boolean foundId = false;
       String prevToken = "";
       while (t.hasMoreTokens()) {

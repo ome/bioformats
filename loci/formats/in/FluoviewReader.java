@@ -57,9 +57,6 @@ public class FluoviewReader extends BaseTiffReader {
 
   // -- Fields --
 
-  /** Flag indicating this is a Fluoview file. */
-  private boolean isFluoview;
-
   /** Pixel dimensions for this file. */
   private float voxelX = 0f, voxelY = 0f, voxelZ = 0f, voxelC = 0f, voxelT = 0f;
 
@@ -84,7 +81,6 @@ public class FluoviewReader extends BaseTiffReader {
 
     String test = new String(block);
     if (test.indexOf(FLUOVIEW_MAGIC_STRING) != -1) {
-      isFluoview = true;
       return true;
     }
 
@@ -179,7 +175,6 @@ public class FluoviewReader extends BaseTiffReader {
     byte[] buf = new byte[BLOCK_CHECK_LEN];
     in.seek(0);
     in.read(buf);
-    isFluoview = new String(buf).indexOf(FLUOVIEW_MAGIC_STRING) != -1;
 
     short[] s = TiffTools.getIFDShortArray(ifds[0], MMHEADER, true);
     byte[] mmheader = new byte[s.length];

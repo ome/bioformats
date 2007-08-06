@@ -54,18 +54,6 @@ public class QTReader extends FormatReader {
     "mdra", "rmra", "imag", "vnrp", "dinf"
   };
 
-  // Some MJPEG-B stuff.
-
-  /** Header data. */
-  private static final byte[] HEADER = new byte[] {
-    (byte) 0xff, (byte) 0xd8, 0x00, 0x10,
-    0x4a, 0x46, 0x49, 0x46, 0x00,  // 'JFIF'
-    0x01, 0x01,  // version number (major, minor)
-    0x00, // units; 0 => X and Y specify pixel aspect ratio
-    0x48, 0x48, // X and Y density
-    0x00, 0x00 // no thumbnail specified
-  };
-
   // -- Fields --
 
   /** Offset to start of pixel data. */
@@ -115,9 +103,6 @@ public class QTReader extends FormatReader {
 
   /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
   private boolean interlaced;
-
-  /** Gamma value. */
-  private double gamma;
 
   /** Flag indicating whether the resource and data fork are separated. */
   private boolean spork;

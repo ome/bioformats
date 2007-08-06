@@ -304,7 +304,7 @@ public class OMEXMLReader extends FormatReader {
         in.read(buf, 0, 14);
         while (!found) {
           if (in.getFilePointer() < in.length()) {
-            int numRead = in.read(buf, 14, 8192-14);
+            in.read(buf, 14, 8192-14);
 
             String test = new String(buf);
 
@@ -353,9 +353,8 @@ public class OMEXMLReader extends FormatReader {
 
       core.littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
 
-      Integer ndx = new Integer(i);
       Integer w = null, h = null, t = null, z = null, c = null;
-      String pixType = null, dimOrder = null;
+      String pixType = null;
       try {
         r.setVar("ndx", i);
         w = (Integer) r.exec("omexml.getSizeX(ndx)");

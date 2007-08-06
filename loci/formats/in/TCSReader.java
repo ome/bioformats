@@ -38,11 +38,6 @@ import loci.formats.*;
  */
 public class TCSReader extends BaseTiffReader {
 
-  // -- Fields --
-
-  private String[] cNames;
-  private int pixelSizeT;
-
   // -- Constructor --
 
   public TCSReader() {

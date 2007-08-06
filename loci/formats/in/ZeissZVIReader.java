@@ -77,12 +77,6 @@ public class ZeissZVIReader extends FormatReader {
   /** Number of bytes per pixel. */
   private int bpp;
 
-  /** Thumbnail width. */
-  private int thumbWidth;
-
-  /** Thumbnail height. */
-  private int thumbHeight;
-
   /** Hashtable containing the directory entry for each plane. */
   private Hashtable pixels;
 
@@ -163,7 +157,6 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("document = dir.getEntry(entryName)");
       r.exec("dis = new DocumentInputStream(document)");
       r.exec("numBytes = dis.available()");
-      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
       r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
       r.exec("blah = dis.skip(skipBytes)");
       r.setVar("data", buf);
@@ -405,7 +398,7 @@ public class ZeissZVIReader extends FormatReader {
         exWave = exWave.substring(0, exWave.indexOf("."));
       }
 
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, 
+      store.setLogicalChannel(i, name, null, null, null, null, null, null, 
         null, null, null, null, null, null, null, null, null, null, null, null,
         emWave == null ? null : new Integer(emWave), 
         exWave == null ? null : new Integer(exWave), null, null, null); 
@@ -509,10 +502,14 @@ public class ZeissZVIReader extends FormatReader {
         if (dirName.toUpperCase().equals("ROOT ENTRY") ||
           dirName.toUpperCase().equals("ROOTENTRY"))
         {
+          /* debug */ System.out.println("************************"); 
           if (entryName.equals("Tags")) parseTags(s);
+          /* debug */ System.out.println("************************"); 
         }
         else if (dirName.equals("Tags") && isContents) {
+          /* debug */ System.out.println("************************"); 
           parseTags(s);
+          /* debug */ System.out.println("************************"); 
         }
         else if (isContents && (dirName.equals("Image") ||
           dirName.toUpperCase().indexOf("ITEM") != -1) &&
@@ -531,9 +528,8 @@ public class ZeissZVIReader extends FormatReader {
           int len = s.readShort();
           if (s.readShort() != 0) s.seek(s.getFilePointer() - 2);
 
-          String typeDescription = "";
           if (s.getFilePointer() + len <= s.length()) {
-            typeDescription = s.readString(len);
+            s.skipBytes(len);
           }
           else break;
 
@@ -552,15 +548,11 @@ public class ZeissZVIReader extends FormatReader {
           if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
             core.sizeY[0] = th;
           }
-          s.skipBytes(2);
-
-          int zDepth = s.readInt();
-          s.skipBytes(2);
-          int pixelFormat = s.readInt();
-          s.skipBytes(2);
+       
+          s.skipBytes(14);
+         
           int numImageContainers = s.readInt();
-          s.skipBytes(2);
-          int validBitsPerPixel = s.readInt();
+          s.skipBytes(6);
 
           // VT_CLSID - PluginCLSID
           while (s.readShort() != 65);
@@ -650,11 +642,10 @@ public class ZeissZVIReader extends FormatReader {
 
     core.sizeX[0] = s.readInt();
     core.sizeY[0] = s.readInt();
-    int depth = s.readInt();
+    s.skipBytes(4);
     bpp = s.readInt();
-    int pixelFormat = s.readInt();
-    int validBitsPerPixel = s.readInt();
-
+    s.skipBytes(8);
+    
     pixels.put(new Integer(num), directory);
     names.put(new Integer(num), entry);
     core.imageCount[0]++;
@@ -724,15 +715,11 @@ public class ZeissZVIReader extends FormatReader {
 
       s.skipBytes(2);
       int tagID = 0;
-      int attribute = 0;
-
+    
       try { tagID = s.readInt(); }
       catch (IOException e) { }
 
-      s.skipBytes(2);
-
-      try { attribute = s.readInt(); }
-      catch (IOException e) { }
+      s.skipBytes(6);
 
       String key = getKey(tagID);
       if (key.equals("Image Index Z")) {
@@ -775,6 +762,8 @@ public class ZeissZVIReader extends FormatReader {
         while (metadata.get(key + " " + ndx) != null) ndx++;
         key += " " + ndx;
       }
+
+      /* debug */ System.out.println(key);
 
       addMeta(key, value);
 

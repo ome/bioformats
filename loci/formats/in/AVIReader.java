@@ -525,6 +525,9 @@ public class AVIReader extends FormatReader {
           "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
 
     MetadataStore store = getMetadataStore();
+    
+    store.setImage(currentId, null, null, null); 
+    
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), // SizeZ
       new Integer(core.sizeC[0]), // SizeC

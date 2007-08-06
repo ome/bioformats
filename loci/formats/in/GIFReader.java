@@ -62,12 +62,6 @@ public class GIFReader extends FormatReader {
   /** Active color table. */
   private int[] act;
 
-  /** Background color index. */
-  private int bgIndex;
-
-  /** Background color. */
-  private int bgColor;
-
   /** Local color table flag. */
   private boolean lctFlag;
 
@@ -190,7 +184,7 @@ public class GIFReader extends FormatReader {
     int packed = in.read() & 0xff;
     gctFlag = (packed & 0x80) != 0;
     gctSize = 2 << (packed & 7);
-    bgIndex = in.read() & 0xff;
+    in.skipBytes(1);
     in.skipBytes(1);
 
     if (gctFlag) {
@@ -209,8 +203,6 @@ public class GIFReader extends FormatReader {
         gct[i++] = 0xff000000 | (r << 16) | (g << 8) | b;
       }
     }
-
-    bgColor = gct[bgIndex];
 
     status("Reading data blocks");
 
@@ -254,7 +246,6 @@ public class GIFReader extends FormatReader {
           }
           else {
             act = gct;
-            if (bgIndex == transIndex) bgColor = 0;
           }
 
           int save = 0;
@@ -302,10 +293,6 @@ public class GIFReader extends FormatReader {
               if (app.equals("NETSCAPE2.0")) {
                 do {
                   check = readBlock();
-                  if (dBlock[0] == 0x03) {
-                    int b1 = ((int) dBlock[1]) & 0xff;
-                    int b2 = ((int) dBlock[2]) & 0xff;
-                  }
                 }
                 while (blockSize > 0 && check != -1);
               }
