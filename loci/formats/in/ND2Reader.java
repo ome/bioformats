@@ -253,20 +253,23 @@ public class ND2Reader extends FormatReader {
       in.seek(0);
       in.order(true);
 
+      byte[] b = new byte[1024 * 1024];
       while (in.getFilePointer() < in.length()) {
         if (in.read() == -38 && in.read() == -50 && in.read() == -66 &&
           in.read() == 10)
         {
           // found a data chunk
           int len = in.readInt() + in.readInt();
+          if (len > b.length) b = new byte[b.length + b.length];
           in.skipBytes(4);
 
-          byte[] b = new byte[len];
-          in.read(b);
+          in.readFully(b, 0, len);
 
-          String check = new String(b, 0, 12);
-
-          if (check.equals("ImageDataSeq")) {
+          if (len >= 12 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
+            b[3] == 'g' && b[4] == 'e' && b[5] == 'D' && b[6] == 'a' &&
+            b[7] == 't' && b[8] == 'a' && b[9] == 'S' && b[10] == 'e' &&
+            b[11] == 'q') // b.startsWith("ImageDataSeq")
+          {
             // found pixel data
           
             StringBuffer sb = new StringBuffer();
@@ -283,14 +286,17 @@ public class ND2Reader extends FormatReader {
             }
             offsets[ndx] = in.getFilePointer() - len + sb.length() + 21;
           }
-          else if (check.startsWith("Image")) {
+          //else if (check.startsWith("Image")) {
+          else if (len >= 5 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
+            b[3] == 'g' && b[4] == 'e') // b.startsWith("Image")
+          {
             // XML metadata
 
             ND2Handler handler = new ND2Handler();
 
             // strip out invalid characters
             int off = 0;
-            for (int i=0; i<b.length; i++) {
+            for (int i=0; i<len; i++) {
               char c = (char) b[i];
               if (off == 0 && c == '!') off = i + 1; 
               
@@ -303,7 +309,7 @@ public class ND2Reader extends FormatReader {
               b[off + 3] == 'm' && b[off + 4] == 'l')
             {
               ByteArrayInputStream s = 
-                new ByteArrayInputStream(b, off, b.length - off);
+                new ByteArrayInputStream(b, off, len - off);
 
               try {
                 SAXParser parser = SAX_FACTORY.newSAXParser();
