@@ -264,36 +264,50 @@ public class ND2Reader extends FormatReader {
           byte[] b = new byte[len];
           in.read(b);
 
-          String s = new String(b);
+          String check = new String(b, 0, 12);
 
-          if (s.startsWith("ImageDataSeq")) {
+          if (check.equals("ImageDataSeq")) {
             // found pixel data
-            int ndx = Integer.parseInt(s.substring(13, s.indexOf("!")));
+          
+            StringBuffer sb = new StringBuffer();
+            int pt = 13;
+            while (b[pt] != '!') {
+              sb.append((char) b[pt]);
+              pt++;
+            }
+            int ndx = Integer.parseInt(sb.toString());
+
             if (core.sizeC[0] == 0) {
               core.sizeC[0] = len / (core.sizeX[0] * core.sizeY[0] *
                 FormatTools.getBytesPerPixel(core.pixelType[0]));
             }
-            offsets[ndx] = in.getFilePointer() - len + s.indexOf("!") + 9;
+            offsets[ndx] = in.getFilePointer() - len + sb.length() + 21;
           }
-          else if (s.startsWith("Image")) {
+          else if (check.startsWith("Image")) {
             // XML metadata
 
             ND2Handler handler = new ND2Handler();
 
-            s = s.substring(s.indexOf("!") + 1);
-
             // strip out invalid characters
-            for (int i=0; i<s.length(); i++) {
-              char c = s.charAt(i);
+            int off = 0;
+            for (int i=0; i<b.length; i++) {
+              char c = (char) b[i];
+              if (off == 0 && c == '!') off = i + 1; 
+              
               if (Character.isISOControl(c) || !Character.isDefined(c)) {
-                s = s.replace(c, ' ');
+                b[i] = (byte) ' '; 
               }
             }
+         
+            if (b[off] == '<' && b[off + 1] == '?' && b[off + 2] == 'x' && 
+              b[off + 3] == 'm' && b[off + 4] == 'l')
+            {
+              ByteArrayInputStream s = 
+                new ByteArrayInputStream(b, off, b.length - off);
 
-            if (s.trim().length() > 0) {
               try {
                 SAXParser parser = SAX_FACTORY.newSAXParser();
-                parser.parse(new ByteArrayInputStream(s.getBytes()), handler);
+                parser.parse(s, handler);
               }
               catch (ParserConfigurationException exc) {
                 throw new FormatException(exc);
@@ -318,7 +332,7 @@ public class ND2Reader extends FormatReader {
       if (core.sizeC[0] == 0) core.sizeC[0] = 1;
       core.currentOrder[0] = "XYCZT";
       core.rgb[0] = core.sizeC[0] > 1;
-      core.littleEndian[0] = true;
+      core.littleEndian[0] = false;
       core.interleaved[0] = false;
 
       return;
