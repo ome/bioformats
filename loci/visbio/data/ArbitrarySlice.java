@@ -332,7 +332,7 @@ public class ArbitrarySlice extends DataTransform
       FlatField[] fields = new FlatField[n];
       for (int i=0; i<n; i++) {
         npos[axis] = i;
-        Data data = parent.getData(link, pos, 2, cache);
+        Data data = parent.getData(link, npos, 2, cache);
         if (data == null || !(data instanceof FlatField)) {
           System.err.println(name +
             ": parent image plane #" + (i + 1) + " is not valid");
