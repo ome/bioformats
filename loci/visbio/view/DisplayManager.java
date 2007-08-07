@@ -65,6 +65,9 @@ public class DisplayManager extends LogicManager {
   /** String for 3D texturing option. */
   public static final String TEXTURE3D = "Use 3D texturing";
 
+  /** String for stereo displays option. */
+  public static final String DO_STEREO = "Use stereo displays";
+
   /** String for eye separation setting. */
   public static final String EYE_DISTANCE = "Stereo eye separation";
 
@@ -268,6 +271,8 @@ public class DisplayManager extends LogicManager {
       "Toggles whether texture mapping is used for image planes", true);
     om.addBooleanOption("Visualization", TEXTURE3D, '3',
       "Toggles whether 3D textures are used for volume rendering", true);
+    om.addBooleanOption("Visualization", DO_STEREO, 'u',
+      "Toggles whether to use stereo displays if available", false);
     om.addNumericOption("Visualization", EYE_DISTANCE, null,
       "Adjusts eye separation for stereo displays", DEFAULT_EYE_SEPARATION);
     om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',

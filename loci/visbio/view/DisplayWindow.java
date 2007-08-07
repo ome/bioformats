@@ -181,7 +181,7 @@ public class DisplayWindow extends JFrame
     transformHandler.addTransform(trans);
     viewHandler.guessAspect();
     refresh();
-    manager.getVisBio().generateEvent(manager,
+    getVisBio().generateEvent(manager,
       "add data object to display", true);
   }
 
@@ -189,7 +189,7 @@ public class DisplayWindow extends JFrame
   public void removeTransform(DataTransform trans) {
     transformHandler.removeTransform(trans);
     refresh();
-    manager.getVisBio().generateEvent(manager,
+    getVisBio().generateEvent(manager,
       "remove data object from display", true);
   }
 
@@ -197,7 +197,7 @@ public class DisplayWindow extends JFrame
   public void removeAllTransforms() {
     transformHandler.removeAllTransforms();
     refresh();
-    manager.getVisBio().generateEvent(manager,
+    getVisBio().generateEvent(manager,
       "remove all data objects from display", true);
   }
 
@@ -319,7 +319,14 @@ public class DisplayWindow extends JFrame
     string = name + (threeD ? " (3D)" : " (2D)");
 
     if (display == null) {
-      display = DisplayUtil.makeDisplay(name, threeD, STEREO);
+      OptionManager om = (OptionManager)
+        getVisBio().getManager(OptionManager.class);
+      boolean doStereo = ((BooleanOption)
+        om.getOption(DisplayManager.DO_STEREO)).getValue();
+      GraphicsConfiguration gc = doStereo ? STEREO : null;
+
+      om.getOption(DisplayManager.EYE_DISTANCE);
+      display = DisplayUtil.makeDisplay(name, threeD, gc);
       setTransparencyMode(manager.isNiceTransparency());
       setTextureMapping(manager.isTextureMapped());
       set3DTexturing(manager.is3DTextured());
@@ -360,7 +367,7 @@ public class DisplayWindow extends JFrame
 
       // add display controls breakaway window to window manager
       WindowManager wm = (WindowManager)
-        manager.getVisBio().getManager(WindowManager.class);
+        getVisBio().getManager(WindowManager.class);
       wm.addWindow(controls.getWindow());
 
       // listen for key presses
