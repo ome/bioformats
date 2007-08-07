@@ -129,7 +129,7 @@ public class DataCache {
 
   /** Sets the data in the cache at the specified key. */
   protected void putCachedData(String key, Data d) {
-    if (key != null) hash.put(key, d);
+    if (key != null && d != null) hash.put(key, d);
   }
 
   /** Removes the data object at the specified key from the cache. */
