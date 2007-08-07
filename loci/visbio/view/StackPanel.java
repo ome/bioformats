@@ -132,7 +132,7 @@ public class StackPanel extends TransformPanel {
       DataTransform trans = (DataTransform) transformList.getSelectedValue();
       StackLink link = (StackLink) handler.getLink(trans);
       link.setStackAxis(stackBox.getSelectedIndex() - 1);
-      handler.rebuild();
+      handler.rebuild(false);
     }
     else if (cmd.equals("toggleSlices")) {
       DisplayWindow window = handler.getWindow();
