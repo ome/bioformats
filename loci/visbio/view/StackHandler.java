@@ -79,7 +79,7 @@ public class StackHandler extends TransformHandler {
     }
     else link = new TransformLink(this, trans);
     links.add(link);
-    rebuild();
+    rebuild(links.size() == 1);
     panel.addTransform(trans);
   }
 

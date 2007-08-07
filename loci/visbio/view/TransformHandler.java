@@ -125,7 +125,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
   /** Links the given data transform to the display. */
   public void addTransform(DataTransform trans) {
     links.add(new TransformLink(this, trans));
-    rebuild();
+    rebuild(links.size() == 1);
     panel.addTransform(trans);
   }
 
@@ -137,14 +137,14 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       link.destroy();
     }
     panel.removeTransform(trans);
-    rebuild();
+    rebuild(false);
   }
 
   /** Unlinks all data transforms from the display. */
   public void removeAllTransforms() {
     links.removeAllElements();
     panel.removeAllTransforms();
-    rebuild();
+    rebuild(false);
   }
 
   /** Moves the given transform up in the Z-order. */
@@ -345,7 +345,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       panel.addTransform(link.getTransform());
     }
 
-    rebuild();
+    rebuild(false);
     if (animating) startAnimation();
   }
 
@@ -383,10 +383,18 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
   }
 
   /** Rebuilds sliders and display mappings for all linked transforms. */
-  protected void rebuild() {
+  protected void rebuild(boolean resetColors) {
     synchronized (animSync) {
       TransformLink[] lnk = new TransformLink[links.size()];
       links.copyInto(lnk);
+
+      // HACK - temporary code to fix color refresh bug
+      for (int i=0; i<lnk.length; i++) {
+        ColorHandler colorHandler = lnk[i].getColorHandler();
+        if (colorHandler != null) {
+          colorHandler.colorTables = colorHandler.getTables();
+        }
+      }
 
       // clear old transforms
       DisplayImpl display = window.getDisplay();
@@ -509,7 +517,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       // reinitialize colors
       StateManager sm = (StateManager)
         window.getVisBio().getManager(StateManager.class);
-      boolean reset = !sm.isRestoring();
+      boolean reset = resetColors && !sm.isRestoring();
       for (int i=0; i<lnk.length; i++) {
         ColorHandler colorHandler = lnk[i].getColorHandler();
         if (colorHandler != null) colorHandler.initColors(reset);
