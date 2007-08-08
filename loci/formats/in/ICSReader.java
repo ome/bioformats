@@ -149,17 +149,6 @@ public class ICSReader extends FormatReader {
     }
     else System.arraycopy(data, offset, buf, 0, len);
 
-    // if it's version two, we need to flip the plane upside down
-    if (versionTwo) {
-      int scanline = core.sizeX[0] * bpp * core.sizeC[0];
-      for (int y=0; y<core.sizeY[0]; y++) {
-        for (int x=0; x<scanline; x++) {
-          byte bottom = buf[y*scanline + x];
-          buf[y*scanline + x] = buf[(core.sizeY[0] - y - 1)*scanline + x];
-          buf[(core.sizeY[0] - y - 1)*scanline + x] = bottom;
-        }
-      }
-    }
     return buf;
   }
 
@@ -414,7 +403,9 @@ public class ICSReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
-    store.setImage((String) getMeta("filename"), null, null, null);
+    String fname = (String) getMeta("filename");
+    if (fname == null) fname = currentId;
+    store.setImage(fname, null, null, null);
 
     // populate Pixels element
 
