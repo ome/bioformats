@@ -393,7 +393,9 @@ public class ZeissZVIReader extends FormatReader {
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore();
 
-    store.setImage((String) getMeta("Title"), null, null, null);
+    String fname = (String) getMeta("Title");
+    if (fname == null) fname = currentId;
+    store.setImage(fname, null, null, null);
 
     if (bpp == 1 || bpp == 3) core.pixelType[0] = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core.pixelType[0] = FormatTools.UINT16;

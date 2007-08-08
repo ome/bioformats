@@ -124,6 +124,7 @@ public abstract class ImageIOReader extends FormatReader {
 
     // populate the metadata store
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null); 
     store.setPixels(
       new Integer(core.sizeX[0]),
       new Integer(core.sizeY[0]),

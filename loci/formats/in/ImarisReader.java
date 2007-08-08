@@ -202,16 +202,12 @@ public class ImarisReader extends FormatReader {
     String d = (String) getMeta("Original date");
     if (d == null || d.trim().length() == 0) d = null;
 
-    store.setImage((String) getMeta("Image name"), d,
-      (String) getMeta("Image comment"), null);
+    String fname = (String) getMeta("Image name");
+    if (fname == null) fname = currentId;
+    store.setImage(fname, d, (String) getMeta("Image comment"), null);
 
-    store.setDimensions(
-      new Float(dx),
-      new Float(dy),
-      new Float(dz),
-      new Float(1),
-      new Float(1),
-      null);
+    store.setDimensions(new Float(dx), new Float(dy), new Float(dz), 
+      new Float(1), new Float(1), null);
 
     store.setObjective(null, null, null, null, new Float(mag), null, null);
 

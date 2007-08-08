@@ -46,7 +46,7 @@ public class PictReader extends FormatReader {
   // -- Constants --
 
   // opcodes that we need
-  private static final int PICT_CLIP_RGN = 0x1;
+  private static final int PICT_CLIP_RGN = 1;
   private static final int PICT_BITSRECT = 0x90;
   private static final int PICT_BITSRGN = 0x91;
   private static final int PICT_PACKBITSRECT = 0x98;
@@ -60,8 +60,8 @@ public class PictReader extends FormatReader {
   private static final int STATE2 = 2;
 
   // other stuff?
-  private static final int INFOAVAIL = 0x0002;
-  private static final int IMAGEAVAIL = 0x0004;
+  private static final int INFOAVAIL = 2;
+  private static final int IMAGEAVAIL = 4;
 
   /** Table used in expanding pixels that use less than 8 bits. */
   private static final byte[] EXPANSION_TABLE = new byte[256 * 8];
@@ -329,6 +329,7 @@ public class PictReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null);
 
     core.pixelType[0] = FormatTools.UINT8;
     store.setPixels(

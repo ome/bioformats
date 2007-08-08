@@ -232,6 +232,7 @@ public class MicromanagerReader extends FormatReader {
     core.imageCount[0] = tiffs.size();
 
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null); 
 
     store.setPixels(
       new Integer(core.sizeX[0]),

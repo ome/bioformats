@@ -599,22 +599,14 @@ public class PerkinElmerReader extends FormatReader {
       Date date = parse.parse(time, new ParsePosition(0));
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       time = fmt.format(date);
-
-      store.setImage(null, time, null, null);
     }
+    store.setImage(currentId, time, null, null);
 
     // populate Pixels element
-    store.setPixels(
-      new Integer(core.sizeX[0]), // SizeX
-      new Integer(core.sizeY[0]), // SizeY
-      new Integer(core.sizeZ[0]), // SizeZ
-      new Integer(core.sizeC[0]), // SizeC
-      new Integer(core.sizeT[0]), // SizeT
-      new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!core.littleEndian[0]), // BigEndian
-      core.currentOrder[0], // DimensionOrder
-      null, // Use image index 0
-      null); // Use pixels index 0
+    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
+      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
+      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
+      new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
 
     // populate StageLabel element
     String originX = (String) getMeta("Origin X");

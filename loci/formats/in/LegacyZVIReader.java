@@ -403,6 +403,7 @@ public class LegacyZVIReader extends FormatReader {
       // Populate metadata store
 
       MetadataStore store = getMetadataStore();
+      store.setImage(currentId, null, null, null); 
 
       store.setPixels(
         new Integer(core.sizeX[0]), // SizeX

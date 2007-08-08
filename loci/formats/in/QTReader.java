@@ -340,6 +340,7 @@ public class QTReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null);
 
     store.setPixels(
       new Integer(core.sizeX[0]),

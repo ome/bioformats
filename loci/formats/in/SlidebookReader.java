@@ -308,6 +308,7 @@ public class SlidebookReader extends FormatReader {
     }
 
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null);
 
     for (int i=0; i<core.sizeX.length; i++) {
       store.setPixels(new Integer(core.sizeX[i]), new Integer(core.sizeY[i]),

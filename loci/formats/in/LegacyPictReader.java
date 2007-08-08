@@ -107,6 +107,7 @@ public class LegacyPictReader extends FormatReader {
     core.littleEndian[0] = false;
 
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null); 
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), Boolean.TRUE,

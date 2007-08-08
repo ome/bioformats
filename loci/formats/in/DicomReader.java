@@ -323,11 +323,7 @@ public class DicomReader extends FormatReader {
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
-    store.setImage(
-      null, // name
-      stamp,
-      (String) getMeta("Image Type"),
-      null); // Use index 0
+    store.setImage(currentId, stamp, (String) getMeta("Image Type"), null);
 
     store.setInstrument(
       (String) getMeta("Manufacturer"),

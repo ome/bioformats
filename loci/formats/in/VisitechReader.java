@@ -201,6 +201,7 @@ public class VisitechReader extends FormatReader {
     files.add(currentId);
 
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null);
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
@@ -208,8 +209,9 @@ public class VisitechReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null, 
-        null, null, null, null, null, core.sizeC[i] == 1 ? "monochrome" : 
-        "RGB", null, null, null, null, null, null, null, null, null, null, null);
+        null, null, null, null, null, core.sizeC[0] == 1 ? 
+        "monochrome" : "RGB", null, null, null, null, null, null, null, null, 
+        null, null, null);
     }
 
   }
