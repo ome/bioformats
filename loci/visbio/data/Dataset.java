@@ -224,7 +224,6 @@ public class Dataset extends ImageTransform {
 
     int numImg = -1;
     try {
-      // CTR TODO - This results in superfluous initFile calls!
       readers[fileIndex].setId(ids[fileIndex]);
       numImg = readers[fileIndex].getImageCount();
     }
@@ -309,7 +308,9 @@ public class Dataset extends ImageTransform {
         try {
           t = clip.getContents(null);
         }
-        catch (IllegalStateException exc) { } // clipboard contents unavailable
+        catch (IllegalStateException exc) {
+          // clipboard contents unavailable
+        }
         if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
           String s = null;
           try { s = (String) t.getTransferData(DataFlavor.stringFlavor); }
