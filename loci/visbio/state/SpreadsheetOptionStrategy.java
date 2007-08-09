@@ -3,8 +3,8 @@
 //
 
 /*
-VisBio application for visualization of multidimensional
-biological image data. Copyright (C) 2002-@year@ Curtis Rueden.
+VisBio application for visualization of multidimensional biological
+image data. Copyright (C) 2002-@year@ Curtis Rueden and Abraham Sorber.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
