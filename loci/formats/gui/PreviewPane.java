@@ -105,7 +105,7 @@ public class PreviewPane extends JPanel
     }
   }
 
-  // -- Componenet API methods --
+  // -- Component API methods --
 
   /* @see java.awt.Component.getPreferredSize() */
   public Dimension getPreferredSize() {
