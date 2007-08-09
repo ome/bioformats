@@ -137,6 +137,7 @@ public class StateManager extends LogicManager {
    * and if not, prompts the user to save.
    */
   public boolean checkSave() {
+    if (true) return true; // CTR TEMP - disable save check for now
     if (saved) return true;
     int ans = JOptionPane.showConfirmDialog(bio,
       "Program state has been changed. Save before exiting?", "VisBio",
