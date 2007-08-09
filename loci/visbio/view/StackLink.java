@@ -184,6 +184,14 @@ public class StackLink extends TransformLink {
     if (this.volume == volume) return;
     this.volume = volume;
     if (volume) {
+      if (colorHandler.getOpacityModel() != ColorUtil.CURVED_ALPHA ||
+        colorHandler.getOpacityValue() == 255)
+      {
+        // guess at good default opacity settings
+        int opacity = 100 - volumeRes / 4;
+        colorHandler.setOpacity(opacity, ColorUtil.CURVED_ALPHA, true);
+      }
+
       // save slice visibility settings and hide slice data
       int len = renderers.size();
       visSlices = new boolean[len];
