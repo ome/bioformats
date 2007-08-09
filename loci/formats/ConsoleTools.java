@@ -596,16 +596,11 @@ public final class ConsoleTools {
             r.exec("source = new SAXSource(is)");
 
             // validate the OME-XML
-            try {
-              r.setVar("handler", new ValidationHandler());
-              r.exec("validator.setErrorHandler(handler)");
-              r.exec("validator.validate(source)");
-              LogTools.println("No validation errors found.");
-            }
-            catch (ReflectException exc) {
-              // display validation errors
-              LogTools.println(exc.getCause().getCause().getMessage());
-            }
+            ValidationHandler handler = new ValidationHandler();
+            r.setVar("handler", handler);
+            r.exec("validator.setErrorHandler(handler)");
+            r.exec("validator.validate(source)");
+            if (handler.ok()) LogTools.println("No validation errors found.");
           }
           catch (ReflectException exc) {
             LogTools.println("Error validating OME-XML:");
@@ -723,14 +718,19 @@ public final class ConsoleTools {
 
   /** Used by testRead to handle XML validation errors. */
   private static class ValidationHandler implements ErrorHandler {
+    private boolean ok = true;
+    public boolean ok() { return ok; }
     public void error(SAXParseException e) {
       LogTools.println("error: " + e.getMessage());
+      ok = false;
     }
     public void fatalError(SAXParseException e) {
       LogTools.println("fatal error: " + e.getMessage());
+      ok = false;
     }
     public void warning(SAXParseException e) {
       LogTools.println("warning: " + e.getMessage());
+      ok = false;
     }
   }
 
