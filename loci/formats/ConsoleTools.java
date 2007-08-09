@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
 
 /**
  * A utility class for command line tools.
@@ -564,8 +566,8 @@ public final class ConsoleTools {
 
           try {
             // look up a factory for the W3C XML Schema language
-            r.exec("import javax.xml.validation.SchemaFactory");
             r.setVar("schemaPath", "http://www.w3.org/2001/XMLSchema");
+            r.exec("import javax.xml.validation.SchemaFactory");
             r.exec("factory = SchemaFactory.newInstance(schemaPath)");
 
             // compile the schema
@@ -583,16 +585,20 @@ public final class ConsoleTools {
             r.exec("validator = schema.newValidator()");
 
             // prepare the XML source
-            r.exec("import java.io.StringReader");
-            r.exec("import javax.xml.transform.stream.StreamSource");
             r.setVar("ms", ms);
             r.exec("root = ms.getRoot()");
+            r.exec("import java.io.StringReader");
             r.setVar("xml", xml);
             r.exec("reader = new StringReader(xml)");
-            r.exec("source = new StreamSource(reader)");
+            r.exec("import org.xml.sax.InputSource");
+            r.exec("is = new InputSource(reader)");
+            r.exec("import javax.xml.transform.sax.SAXSource");
+            r.exec("source = new SAXSource(is)");
 
             // validate the OME-XML
             try {
+              r.setVar("handler", new ValidationHandler());
+              r.exec("validator.setErrorHandler(handler)");
               r.exec("validator.validate(source)");
               LogTools.println("No validation errors found.");
             }
@@ -712,6 +718,19 @@ public final class ConsoleTools {
         LogTools.print(";");
         next = false;
       }
+    }
+  }
+
+  /** Used by testRead to handle XML validation errors. */
+  private static class ValidationHandler implements ErrorHandler {
+    public void error(SAXParseException e) {
+      LogTools.println("error: " + e.getMessage());
+    }
+    public void fatalError(SAXParseException e) {
+      LogTools.println("fatal error: " + e.getMessage());
+    }
+    public void warning(SAXParseException e) {
+      LogTools.println("warning: " + e.getMessage());
     }
   }
 
