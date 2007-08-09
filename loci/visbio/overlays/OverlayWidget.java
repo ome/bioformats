@@ -696,6 +696,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
       StatsOptionsPane statsPane = (StatsOptionsPane)
         overlaySaveBox.getAccessory();
       statsPane.loadSettings();
+
+      // set default filename to a reasonable default
+      String defaultName = overlay.getParent().getName();
+      defaultName = defaultName.replaceAll("[^\\w]", ""); // sanitize name
+      overlaySaveBox.setSelectedFile(new File(defaultName + ".txt"));
+
       int rval = overlaySaveBox.showSaveDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = overlaySaveBox.getSelectedFile();
@@ -715,6 +721,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
       StatsOptionsPane statsPane = (StatsOptionsPane)
         overlayXLSBox.getAccessory();
       statsPane.loadSettings();
+
+      // set default filename to a reasonable default
+      String defaultName = overlay.getParent().getName();
+      defaultName = defaultName.replaceAll("[^\\w]", ""); // sanitize name
+      overlayXLSBox.setSelectedFile(new File(defaultName + ".xls"));
+
       int rval = overlayXLSBox.showDialog(this, "Export");
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = overlayXLSBox.getSelectedFile();
