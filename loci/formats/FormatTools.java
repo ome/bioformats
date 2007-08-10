@@ -134,7 +134,7 @@ public final class FormatTools {
     if (order == null) {
       throw new IllegalArgumentException("Dimension order is null");
     }
-    if (!order.startsWith("XY")) {
+    if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
     int iz = order.indexOf("Z") - 2;
@@ -215,7 +215,7 @@ public final class FormatTools {
     if (order == null) {
       throw new IllegalArgumentException("Dimension order is null");
     }
-    if (!order.startsWith("XY")) {
+    if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
     int iz = order.indexOf("Z") - 2;
