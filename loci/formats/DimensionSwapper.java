@@ -89,40 +89,66 @@ public class DimensionSwapper extends ReaderWrapper {
    */
   public void swapDimensions(String order) {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    if (order == null) return;
+
+    if (order == null) throw new IllegalArgumentException("order is null");
 
     String oldOrder = getDimensionOrder();
-
     if (order.equals(oldOrder)) return;
+
+    if (order.length() != 5) {
+      throw new IllegalArgumentException("order is unexpected length (" +
+        order.length() + ")");
+    }
+
+    int newX = order.indexOf("X");
+    int newY = order.indexOf("Y");
+    int newZ = order.indexOf("Z");
+    int newC = order.indexOf("C");
+    int newT = order.indexOf("T");
+
+    if (newX < 0) throw new IllegalArgumentException("X does not appear");
+    if (newY < 0) throw new IllegalArgumentException("Y does not appear");
+    if (newZ < 0) throw new IllegalArgumentException("Z does not appear");
+    if (newC < 0) throw new IllegalArgumentException("C does not appear");
+    if (newT < 0) throw new IllegalArgumentException("T does not appear");
+
+    if (newX > 1) {
+      throw new IllegalArgumentException("X in unexpected position (" +
+        newX + ")");
+    }
+    if (newY > 1) {
+      throw new IllegalArgumentException("Y in unexpected position (" +
+        newY + ")");
+    }
 
     int[] dims = new int[5];
 
-    int xndx = oldOrder.indexOf("X");
-    int yndx = oldOrder.indexOf("Y");
-    int zndx = oldOrder.indexOf("Z");
-    int cndx = oldOrder.indexOf("C");
-    int tndx = oldOrder.indexOf("T");
+    int oldX = oldOrder.indexOf("X");
+    int oldY = oldOrder.indexOf("Y");
+    int oldZ = oldOrder.indexOf("Z");
+    int oldC = oldOrder.indexOf("C");
+    int oldT = oldOrder.indexOf("T");
 
-    dims[xndx] = getSizeX();
-    dims[yndx] = getSizeY();
-    dims[zndx] = getSizeZ();
-    dims[cndx] = getSizeC();
-    dims[tndx] = getSizeT();
+    dims[oldX] = getSizeX();
+    dims[oldY] = getSizeY();
+    dims[oldZ] = getSizeZ();
+    dims[oldC] = getSizeC();
+    dims[oldT] = getSizeT();
 
     int series = getSeries();
     CoreMetadata core = getCoreMetadata();
 
-    core.sizeX[series] = dims[order.indexOf("X")];
-    core.sizeY[series] = dims[order.indexOf("Y")];
-    core.sizeZ[series] = dims[order.indexOf("Z")];
-    core.sizeC[series] = dims[order.indexOf("C")];
-    core.sizeT[series] = dims[order.indexOf("T")];
+    core.sizeX[series] = dims[newX];
+    core.sizeY[series] = dims[newY];
+    core.sizeZ[series] = dims[newZ];
+    core.sizeC[series] = dims[newC];
+    core.sizeT[series] = dims[newT];
     core.currentOrder[series] = order;
 
     MetadataStore store = getMetadataStore();
-    store.setPixels(new Integer(dims[xndx]), new Integer(dims[yndx]),
-      new Integer(dims[zndx]), new Integer(dims[cndx]),
-      new Integer(dims[tndx]), null, null, order, new Integer(series), null);
+    store.setPixels(new Integer(dims[newX]), new Integer(dims[newY]),
+      new Integer(dims[newZ]), new Integer(dims[newC]),
+      new Integer(dims[newT]), null, null, order, new Integer(series), null);
   }
 
 }
