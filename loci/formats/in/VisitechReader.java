@@ -111,19 +111,18 @@ public class VisitechReader extends FormatReader {
 
     if (!id.toLowerCase().endsWith("html")) {
       Location file = new Location(id).getAbsoluteFile();
-      String path = file.getPath();
+      String path = file.exists() ? file.getPath() : id;
       int ndx = path.lastIndexOf(File.separator);
       String base = path.substring(ndx + 1, path.indexOf(" ", ndx));
 
       currentId = null;
-      initFile(new Location(file.getParent(),
-        base + " Report.html").getAbsolutePath());
+      initFile(file.exists() ? new Location(file.getParent(), 
+        base + " Report.html").getAbsolutePath() : base + " Report.html");
       return;
     }
 
     // parse the HTML file
 
-    /* debug */ System.out.println(id);
     in = new RandomAccessStream(id);
     String s = in.readString((int) in.length());
 
@@ -188,18 +187,17 @@ public class VisitechReader extends FormatReader {
 
     files = new Vector();
 
-    Location file = new Location(id).getAbsoluteFile();
-    String path = file.getPath();
-    int ndx = path.lastIndexOf(File.separator);
-    String base = path.substring(ndx + 1, path.indexOf(" ", ndx));
+    int ndx = currentId.lastIndexOf(File.separator);
+    String base = currentId.substring(ndx + 1, currentId.indexOf(" ", ndx));
+  
+    File f = new File(currentId).getAbsoluteFile();
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      files.add(new Location(file.getParent(),
-        base + " " + (i + 1) + ".xys").getAbsolutePath());
+      files.add((f.exists() ? f.getParent() + File.separator : "") + base + 
+        " " + (i + 1) + ".xys");
     }
-
     files.add(currentId);
-
+    
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),

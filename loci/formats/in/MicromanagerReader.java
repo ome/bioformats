@@ -65,6 +65,15 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.isThisType(b);
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    String[] s = new String[tiffs.size() + 1];
+    tiffs.copyInto(s);
+    s[tiffs.size()] = currentId;
+    return s;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -109,8 +118,11 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    String[] list = parent.list();
+    File f = new File(name).getAbsoluteFile(); 
+    String[] list = null; 
+    if (f.exists()) list = f.getParentFile().list();
+    else list = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+
     if (list == null) return false;
     for (int i=0; i<list.length; i++) {
       if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
@@ -137,9 +149,9 @@ public class MicromanagerReader extends FormatReader {
 
     // find metadata.txt
 
-    Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
-    in = new RandomAccessStream(new Location(parent,
-      METADATA).getAbsolutePath());
+    File file = new File(currentId).getAbsoluteFile();
+    in = new RandomAccessStream(file.exists() ? new File(file.getParentFile(), 
+      METADATA).getAbsolutePath() : METADATA);
 
     // usually a small file, so we can afford to read it into memory
 
