@@ -351,7 +351,6 @@ public class ArbitrarySlice extends DataTransform
 
       // generate planar domain samples and corresponding interpolated values
       int res1 = res - 1;
-      float[][][] fieldSamples = new float[fields.length][][]; //TEMP
       float[][] planeSamples = new float[3][res * res];
       float[][] planeValues = new float[range.length][res * res];
       for (int r=0; r<res; r++) {
@@ -365,7 +364,6 @@ public class ArbitrarySlice extends DataTransform
         for (int c=0; c<res; c++) {
           float cc = (float) c / res1;
           int ndx = r * res + c;
-          //float xs = planeSamples[0][ndx] = (1 - cc) * xmin + cc * xmax;
           float xs = planeSamples[0][ndx] = (1 - cc) * xmin + cc * xmax;
           float ys = planeSamples[1][ndx] = (1 - cc) * ymin + cc * ymax;
           ys = h - ys; // lines are flipped
@@ -382,50 +380,44 @@ public class ArbitrarySlice extends DataTransform
             // interpolate the value of this pixel for each range component
             int xx = (int) xs, yy = (int) ys, zz = (int) zs;
             float wx = xs - xx, wy = ys - yy, wz = zs - zz;
-            float[][] values0 = null, values1 = null;
-            FlatField field0, field1;
-            if (wz == 0) {
-              // interpolate from a single field (z0 == z1)
-              try {
-                if (fieldSamples[zz] == null) { //TEMP
-                  fieldSamples[zz] = fields[zz].getFloats(false); //TEMP
-                } //TEMP
-                values0 = values1 = fieldSamples[zz];
-              }
-              catch (VisADException exc) { exc.printStackTrace(); }
-            }
-            else {
-              // interpolate between two fields
-              try {
-                if (fieldSamples[zz] == null) { //TEMP
-                  fieldSamples[zz] = fields[zz].getFloats(false); //TEMP
-                } //TEMP
-                if (fieldSamples[zz + 1] == null) { //TEMP
-                  fieldSamples[zz + 1] = fields[zz + 1].getFloats(false); //TEMP
-                } //TEMP
-                values0 = fieldSamples[zz];
-                values1 = fieldSamples[zz + 1];
-              }
-              catch (VisADException exc) { exc.printStackTrace(); }
-            }
+
             int ndx00 = w * yy + xx;
             int ndx10 = w * yy + xx + 1;
             int ndx01 = w * (yy + 1) + xx;
             int ndx11 = w * (yy + 1) + xx + 1;
+
+            FlatField field0, field1;
+            if (wz == 0) {
+              // interpolate from a single field (z0 == z1)
+              field0 = field1 = fields[zz];
+            }
+            else {
+              // interpolate between two fields
+              field0 = fields[zz];
+              field1 = fields[zz + 1];
+            }
+
+            double[] v000 = null, v100 = null, v010 = null, v110 = null;
+            double[] v001 = null, v101 = null, v011 = null, v111 = null;
+            try {
+              v000 = ((RealTuple) field0.getSample(ndx00)).getValues();
+              v100 = ((RealTuple) field0.getSample(ndx10)).getValues();
+              v010 = ((RealTuple) field0.getSample(ndx01)).getValues();
+              v110 = ((RealTuple) field0.getSample(ndx11)).getValues();
+              v001 = ((RealTuple) field1.getSample(ndx00)).getValues();
+              v101 = ((RealTuple) field1.getSample(ndx10)).getValues();
+              v011 = ((RealTuple) field1.getSample(ndx01)).getValues();
+              v111 = ((RealTuple) field1.getSample(ndx11)).getValues();
+            }
+            catch (VisADException exc) { exc.printStackTrace(); }
+            catch (RemoteException exc) { exc.printStackTrace(); }
+
             for (int k=0; k<range.length; k++) {
               // tri-linear interpolation (x, then y, then z)
-              float v000 = values0[k][ndx00];
-              float v100 = values0[k][ndx10];
-              float v010 = values0[k][ndx01];
-              float v110 = values0[k][ndx11];
-              float v001 = values1[k][ndx00];
-              float v101 = values1[k][ndx10];
-              float v011 = values1[k][ndx01];
-              float v111 = values1[k][ndx11];
-              float vx00 = (1 - wx) * v000 + wx * v100;
-              float vx10 = (1 - wx) * v010 + wx * v110;
-              float vx01 = (1 - wx) * v001 + wx * v101;
-              float vx11 = (1 - wx) * v011 + wx * v111;
+              float vx00 = (float) ((1 - wx) * v000[k] + wx * v100[k]);
+              float vx10 = (float) ((1 - wx) * v010[k] + wx * v110[k]);
+              float vx01 = (float) ((1 - wx) * v001[k] + wx * v101[k]);
+              float vx11 = (float) ((1 - wx) * v011[k] + wx * v111[k]);
               float vxy0 = (1 - wy) * vx00 + wy * vx10;
               float vxy1 = (1 - wy) * vx01 + wy * vx11;
               float vxyz = (1 - wz) * vxy0 + wz * vxy1;
