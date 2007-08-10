@@ -63,9 +63,6 @@ public class DisplayControls extends ControlPanel
   /** Button for showing a display onscreen. */
   protected JButton show;
 
-  /** Button for capturing display screenshots and movies. */
-  protected JButton capture;
-
   /** Button for removing a display from the list. */
   protected JButton remove;
 
@@ -104,14 +101,6 @@ public class DisplayControls extends ControlPanel
     show.setToolTipText("Displays the selected display onscreen");
     show.setEnabled(false);
 
-    // capture button
-    capture = new JButton("Capture");
-    capture.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) capture.setMnemonic('p');
-    capture.setToolTipText(
-      "Creates screenshots and movies for the selected display");
-    capture.setEnabled(false);
-
     // remove data button
     remove = new JButton("Remove");
     remove.addActionListener(this);
@@ -126,8 +115,6 @@ public class DisplayControls extends ControlPanel
     bsb.addGridded(add3D);
     bsb.addUnrelatedGap();
     bsb.addGridded(show);
-    bsb.addRelatedGap();
-    bsb.addGridded(capture);
     bsb.addRelatedGap();
     bsb.addGridded(remove);
     JPanel buttons = bsb.getPanel();
@@ -174,7 +161,6 @@ public class DisplayControls extends ControlPanel
   public void refresh() {
     DisplayWindow d = (DisplayWindow) displayList.getSelectedValue();
     show.setEnabled(isShowable(d));
-    capture.setEnabled(isShowable(d));
     remove.setEnabled(d != null);
   }
 
@@ -187,10 +173,6 @@ public class DisplayControls extends ControlPanel
     if (src == add2D) dm.createDisplay(this, false);
     else if (src == add3D) dm.createDisplay(this, true);
     else if (src == show) showDisplay();
-    else if (src == capture) {
-      DisplayWindow d = (DisplayWindow) displayList.getSelectedValue();
-      d.getCaptureHandler().getPanel().showCaptureWindow();
-    }
     else if (src == remove) {
       dm.removeDisplay((DisplayWindow) displayList.getSelectedValue());
     }

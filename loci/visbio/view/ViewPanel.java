@@ -68,7 +68,7 @@ public class ViewPanel extends JPanel
 
     // lay out components
     setLayout(new BorderLayout());
-    add(FormsUtil.makeColumn(new Object[] {"Appearance", doOrientationPanel(),
+    add(FormsUtil.makeColumn(new Object[] {doOrientationPanel(),
       doAspectPanel(), doAppearancePanel()}, "pref:grow", false));
   }
 

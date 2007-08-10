@@ -27,8 +27,8 @@ import com.jgoodies.plaf.LookUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import loci.formats.ReflectedUniverse;
 import loci.formats.ReflectException;
 import loci.visbio.VisBioFrame;
@@ -382,13 +382,22 @@ public class DisplayWindow extends JFrame
 
       // lay out components
       pane.add(display.getComponent(), BorderLayout.CENTER);
-      Object[] rows = {
-        viewHandler.getPanel(),
-        FormsUtil.makeRow(new Object[] {captureHandler.getPanel()}),
-        "Data",
-        transformHandler.getPanel(),
-        sliders
-      };
+
+      JPanel viewPanel = viewHandler.getPanel();
+      JPanel capturePanel = captureHandler.getPanel();
+      JPanel transformPanel = transformHandler.getPanel();
+
+      viewPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+      capturePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+      transformPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+      sliders.setBorder(new EmptyBorder(12, 0, 0, 0));
+
+      JTabbedPane tabs = new JTabbedPane();
+      tabs.addTab("Appearance", viewPanel);
+      tabs.addTab("Capture", capturePanel);
+      tabs.addTab("Data", transformPanel);
+
+      Object[] rows = {tabs, sliders};
       controls.setContentPane(FormsUtil.makeColumn(rows, null, true));
       pack();
       repack();

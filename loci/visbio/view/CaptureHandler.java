@@ -86,22 +86,22 @@ public class CaptureHandler implements Saveable {
 
   /** Gets positions on the list. */
   public Vector getPositions() {
-    return panel == null ? positions : panel.getCaptureWindow().getPositions();
+    return panel == null ? positions : panel.getPositions();
   }
 
   /** Gets movie speed. */
   public int getSpeed() {
-    return panel == null ? movieSpeed : panel.getCaptureWindow().getSpeed();
+    return panel == null ? movieSpeed : panel.getSpeed();
   }
 
   /** Gets movie frames per second. */
   public int getFPS() {
-    return panel == null ? movieFPS : panel.getCaptureWindow().getFPS();
+    return panel == null ? movieFPS : panel.getFPS();
   }
 
   /** Gets whether transitions use a smoothing sine function. */
   public boolean isSmooth() {
-    return panel == null ? movieSmooth : panel.getCaptureWindow().isSmooth();
+    return panel == null ? movieSmooth : panel.isSmooth();
   }
 
   /** Gets associated display window. */
@@ -115,8 +115,7 @@ public class CaptureHandler implements Saveable {
 
   /** Saves a snapshot of the display to a file specified by the user. */
   public void saveSnapshot() {
-    CaptureWindow captureWindow = panel.getCaptureWindow();
-    int rval = imageBox.showSaveDialog(captureWindow);
+    int rval = imageBox.showSaveDialog(window);
     if (rval != JFileChooser.APPROVE_OPTION) return;
 
     // determine file type
@@ -141,7 +140,7 @@ public class CaptureHandler implements Saveable {
       }
     }
     if (!tiff && !jpeg) {
-      JOptionPane.showMessageDialog(captureWindow, "Invalid filename (" +
+      JOptionPane.showMessageDialog(window, "Invalid filename (" +
         file + "): extension must indicate TIFF or JPEG format.",
         "Cannot export snapshot", JOptionPane.ERROR_MESSAGE);
       return;
@@ -178,10 +177,9 @@ public class CaptureHandler implements Saveable {
   public void captureMovie(Vector matrices, double secPerTrans,
     int framesPerSec, boolean sine, boolean movie)
   {
-    CaptureWindow captureWindow = panel.getCaptureWindow();
     final int size = matrices.size();
     if (size < 1) {
-      JOptionPane.showMessageDialog(captureWindow, "Must have at least " +
+      JOptionPane.showMessageDialog(window, "Must have at least " +
         "two display positions on the list.", "Cannot record movie",
         JOptionPane.ERROR_MESSAGE);
       return;
@@ -189,7 +187,7 @@ public class CaptureHandler implements Saveable {
 
     final DisplayImpl d = window.getDisplay();
     if (d == null) {
-      JOptionPane.showMessageDialog(captureWindow, "Display not found.",
+      JOptionPane.showMessageDialog(window, "Display not found.",
         "Cannot record movie", JOptionPane.ERROR_MESSAGE);
       return;
     }
@@ -203,13 +201,13 @@ public class CaptureHandler implements Saveable {
     String name = null;
     boolean tiff = false, jpeg = false;
     if (movie) {
-      int rval = movieBox.showSaveDialog(captureWindow);
+      int rval = movieBox.showSaveDialog(window);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       name = movieBox.getSelectedFile().getPath();
       if (name.indexOf(".") < 0) name += ".avi";
     }
     else {
-      int rval = imageBox.showSaveDialog(captureWindow);
+      int rval = imageBox.showSaveDialog(window);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       name = imageBox.getSelectedFile().getPath();
       String sel = ((ExtensionFileFilter)
@@ -345,22 +343,20 @@ public class CaptureHandler implements Saveable {
     }
 
     // set capture window state to match
-    CaptureWindow captureWindow = panel.getCaptureWindow();
-    captureWindow.setPositions(positions);
-    captureWindow.setSpeed(movieSpeed);
-    captureWindow.setFPS(movieFPS);
-    captureWindow.setSmooth(movieSmooth);
+    panel.setPositions(positions);
+    panel.setSpeed(movieSpeed);
+    panel.setFPS(movieFPS);
+    panel.setSmooth(movieSmooth);
   }
 
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("Display"). */
   public void saveState(Element el) throws SaveException {
-    CaptureWindow captureWindow = panel.getCaptureWindow();
-    Vector pos = captureWindow.getPositions();
-    int speed = captureWindow.getSpeed();
-    int fps = captureWindow.getFPS();
-    boolean smooth = captureWindow.isSmooth();
+    Vector pos = panel.getPositions();
+    int speed = panel.getSpeed();
+    int fps = panel.getFPS();
+    boolean smooth = panel.isSmooth();
 
     // save display positions
     int numPositions = pos.size();
@@ -429,9 +425,8 @@ public class CaptureHandler implements Saveable {
     final String msg = message;
     Util.invoke(false, new Runnable() {
       public void run() {
-        CaptureWindow window = panel.getCaptureWindow();
-        window.setProgressValue(value);
-        if (msg != null) window.setProgressMessage(msg);
+        panel.setProgressValue(value);
+        if (msg != null) panel.setProgressMessage(msg);
       }
     });
   }
