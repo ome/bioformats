@@ -79,6 +79,8 @@ public class PrairieReader extends FormatReader {
       return true; // we have no way of verifying further
     }
 
+    if (new String(block).indexOf("xml") != -1) return true;
+
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
 
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
@@ -177,6 +179,12 @@ public class PrairieReader extends FormatReader {
     for (int i=0; i<listing.length; i++) {
       if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++;
     }
+    if (xmlCount == 0) {
+      listing = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+      for (int i=0; i<listing.length; i++) {
+        if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++;
+      }
+    }
 
     boolean xml = xmlCount > 0;
 
@@ -201,6 +209,9 @@ public class PrairieReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("PrairieReader.initFile(" + id + ")");
 
+    if (metadata == null) metadata = new Hashtable();
+    if (core == null) core = new CoreMetadata(1);
+
     if (id.endsWith("xml") || id.endsWith("cfg")) {
       // we have been given the XML file that lists TIFF files (best case)
 
@@ -213,8 +224,6 @@ public class PrairieReader extends FormatReader {
         readXML = true;
       }
       else if (id.endsWith("cfg")) {
-        if (metadata == null) metadata = new Hashtable();
-        if (core == null) core = new CoreMetadata(1);
         cfgFile = id;
         readCFG = true;
       }
@@ -279,7 +288,7 @@ public class PrairieReader extends FormatReader {
               if (prefix.equals("File") && key.equals("filename")) {
                 Location current = new Location(id);
                 current = current.getAbsoluteFile();
-                f.add(current.getParent() + "/" + value);
+                f.add(value);
               }
             }
           }
@@ -383,20 +392,18 @@ public class PrairieReader extends FormatReader {
       }
 
       if (!readXML || !readCFG) {
-        Location file = new Location(id);
-        file = file.getAbsoluteFile();
-        Location parent = file.getParentFile();
-        String[] listing = parent.list();
-        Location next = null;
+        File file = new File(id).getAbsoluteFile();
+        File parent = file.getParentFile();
+        String[] listing = file.exists() ? parent.list() :
+          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
         for (int i=0; i<listing.length; i++) {
           String path = listing[i].toLowerCase();
           if ((!readXML && path.endsWith(".xml")) ||
             (readXML && path.endsWith(".cfg")))
           {
-            next = new Location(parent, path);
+            initFile(listing[i]);
           }
         }
-        if (next != null) initFile(next.getAbsolutePath());
       }
     }
     else {
@@ -415,6 +422,7 @@ public class PrairieReader extends FormatReader {
         }
       }
     }
+    if (currentId == null) currentId = id; 
   }
 
 }

@@ -207,7 +207,8 @@ public class ICSReader extends FormatReader {
     status("Finding companion file");
 
     Location l = new Location(id);
-    String icsId = l.getPath(), idsId = l.getPath();
+    //String icsId = l.getPath(), idsId = l.getPath();
+    String icsId = id, idsId = id; 
     int dot = id.lastIndexOf(".");
     String ext = dot < 0 ? "" : id.substring(dot + 1).toLowerCase();
     if (ext.equals("ics")) {
