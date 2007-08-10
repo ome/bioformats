@@ -69,6 +69,7 @@ public final class ConsoleTools {
     int start = 0;
     int end = Integer.MAX_VALUE;
     int series = 0;
+    String swapOrder = null;
     String map = null;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
@@ -103,6 +104,9 @@ public final class ConsoleTools {
             }
             catch (NumberFormatException exc) { }
           }
+          else if (args[i].equals("-swap")) {
+            swapOrder = args[++i].toUpperCase();
+          }
           else if (args[i].equals("-map")) map = args[++i];
           else LogTools.println("Ignoring unknown command flag: " + args[i]);
         }
@@ -120,9 +124,10 @@ public final class ConsoleTools {
       String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
       String[] s = {
         "To test read a file in " + fmt + " format, run:",
-        "  java " + className + " [-nopix] [-nometa] [-thumbs] [-minmax]",
-        "    [-merge] [-stitch] [-separate] [-omexml] [-normalize]",
-        "    [-fast] [-debug] [-range start end] [-series num] [-map id] file",
+        "  java " + className + " [-nopix] [-nometa] [-thumbs]",
+        "    [-minmax] [-merge] [-stitch] [-separate] [-omexml]",
+        "    [-normalize] [-fast] [-debug] [-range start end]",
+        "    [-series num] [-swap order] [-map id] file",
         "",
         "      file: the image file to read",
         "    -nopix: read metadata only, not pixels",
@@ -138,6 +143,7 @@ public final class ConsoleTools {
         "    -debug: turn on debugging output",
         "    -range: specify range of planes to read (inclusive)",
         "   -series: specify which image series to read",
+        "     -swap: override the default dimension order",
         "      -map: specify file on disk to which name should be mapped",
         "",
         "* = may result in loss of precision",
@@ -183,6 +189,8 @@ public final class ConsoleTools {
     if (merge) reader = new ChannelMerger(reader);
     MinMaxCalculator minMaxCalc = null;
     if (minmax) reader = minMaxCalc = new MinMaxCalculator(reader);
+    DimensionSwapper dimSwapper = null;
+    if (swapOrder != null) reader = dimSwapper = new DimensionSwapper(reader);
 
     StatusEchoer status = new StatusEchoer();
     reader.addStatusListener(status);
@@ -196,6 +204,7 @@ public final class ConsoleTools {
     long e1 = System.currentTimeMillis();
     float sec1 = (e1 - s1) / 1000f;
     LogTools.println("Initialization took " + sec1 + "s");
+    if (swapOrder != null) dimSwapper.swapDimensions(swapOrder);
 
     if (!normalize && reader.getPixelType() == FormatTools.FLOAT) {
       throw new FormatException("Sorry, unnormalized floating point " +
