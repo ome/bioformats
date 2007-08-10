@@ -107,9 +107,11 @@ public class OmeisImporter {
       if (!reader.isThisType(ids[i])) continue; // unknown format
       reader.setId(ids[i]);
       String[] files = reader.getUsedFiles();
+     
       if (files == null) continue; // invalid files list
       sb.setLength(0);
-      for (int j=0; j<files.length; j++) {
+     
+      for (int j=files.length - 1; j>=0; j--) {
         for (int ii=i; ii<fileIds.length; ii++) {
           if (files[j] == null) {
             log("Warning: FileID " + fileIds[ii] + " ('" +
@@ -121,7 +123,7 @@ public class OmeisImporter {
                 ids[ii] + "') already belongs to a group");
             }
             done[ii] = true;
-            if (j > 0) sb.append(" ");
+            if (j < files.length - 1) sb.append(" ");
             sb.append(fileIds[ii]);
             break;
           }
@@ -166,6 +168,7 @@ public class OmeisImporter {
       throw new FormatException("File list length mismatch for " + path +
         ": used=" + a2s(used) + "; ids=" + a2s(ids));
     }
+    
     boolean[] done = new boolean[ids.length];
     int numLeft = ids.length;
     for (int i=0; i<used.length; i++) {
