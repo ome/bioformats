@@ -137,7 +137,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // -- Page 1 --
 
     // file pattern field
-    groupField = new JTextField(25);
+    groupField = new JTextField(36);
     groupField.getDocument().addDocumentListener(this);
 
     // select file button
@@ -171,15 +171,15 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     useMicrons.addActionListener(this);
 
     // width in microns field
-    micronWidth = new JTextField(4);
+    micronWidth = new JTextField(8);
     micronWidth.setToolTipText("Width of each image in microns");
 
     // height in microns field
-    micronHeight = new JTextField(4);
+    micronHeight = new JTextField(8);
     micronHeight.setToolTipText("Height of each image in microns");
 
     // micron step size field
-    micronStep = new JTextField(4);
+    micronStep = new JTextField(8);
     micronStep.setToolTipText("Distance between slices in microns");
 
     // panel with micron-related widgets
@@ -599,7 +599,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     PanelBuilder builder = new PanelBuilder(new FormLayout(
       "pref, 3dlu, pref:grow", sb.toString()));
     CellConstraints cc = new CellConstraints();
-    JLabel pathLabel = new JLabel("File path");
+    JLabel pathLabel = new JLabel("Directory");
     pathLabel.setFont(pathLabel.getFont().deriveFont(Font.BOLD));
     builder.add(pathLabel, cc.xy(1, 1, "right, center"));
     builder.addLabel(path, cc.xy(3, 1, "left, center"));
