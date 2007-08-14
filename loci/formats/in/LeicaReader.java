@@ -469,10 +469,12 @@ public class LeicaReader extends FormatReader {
           // get the series name from the stored file name
           int firstUnderscore = prefix.indexOf("_") + 1;
           int secondUnderscore = prefix.indexOf("_", firstUnderscore);
+          String name = null;
           if (firstUnderscore != -1 && secondUnderscore != -1) {
             String s = prefix.substring(firstUnderscore, secondUnderscore);
-            if (!seriesNames.contains(s)) seriesNames.add(s);
+            if (!seriesNames.contains(s)) name = s;
           }
+          seriesNames.add(null);
         }
 
         // at least one of the TIFF files was renamed
