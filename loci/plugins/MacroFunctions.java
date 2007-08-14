@@ -11,6 +11,8 @@ import ij.macro.ExtensionDescriptor;
 import ij.plugin.PlugIn;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class MacroFunctions implements PlugIn, MacroExtension {
 
@@ -44,9 +46,21 @@ public class MacroFunctions implements PlugIn, MacroExtension {
     try {
       getClass().getMethod(name, c).invoke(this, args);
     }
-    catch (NoSuchMethodException exc) { exc.printStackTrace(); }
-    catch (IllegalAccessException exc) { exc.printStackTrace(); }
-    catch (InvocationTargetException exc) { exc.printStackTrace(); }
+    catch (NoSuchMethodException exc) {
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      exc.printStackTrace(new PrintStream(out));
+      IJ.error(new String(out.toByteArray()));
+    }
+    catch (IllegalAccessException exc) {
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      exc.printStackTrace(new PrintStream(out));
+      IJ.error(new String(out.toByteArray()));
+    }
+    catch (InvocationTargetException exc) {
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      exc.printStackTrace(new PrintStream(out));
+      IJ.error(new String(out.toByteArray()));
+    }
     return null;
   }
 
