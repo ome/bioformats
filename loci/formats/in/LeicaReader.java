@@ -470,11 +470,20 @@ public class LeicaReader extends FormatReader {
           int firstUnderscore = prefix.indexOf("_") + 1;
           int secondUnderscore = prefix.indexOf("_", firstUnderscore);
           String name = null;
-          if (firstUnderscore != -1 && secondUnderscore != -1) {
+          if (firstUnderscore < 0 || secondUnderscore < 0) name = prefix;
+          else {
             String s = prefix.substring(firstUnderscore, secondUnderscore);
-            if (!seriesNames.contains(s)) name = s;
+            if (seriesNames.contains(s)) {
+              int suffix = 2;
+              do {
+                name = s + "-" + suffix;
+                suffix++;
+              }
+              while (seriesNames.contains(name));
+            }
+            else name = s;
           }
-          seriesNames.add(null);
+          seriesNames.add(name);
         }
 
         // at least one of the TIFF files was renamed
