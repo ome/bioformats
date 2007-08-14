@@ -37,6 +37,15 @@ import java.util.Hashtable;
  */
 public interface IFormatReader extends IFormatHandler {
 
+  // -- Constants --
+
+  /** File grouping options. */
+  int MUST_GROUP = 0;
+  int CAN_GROUP = 1;
+  int CANNOT_GROUP = 2;
+
+  // -- IFormatReader API methods --
+
   /** Checks if the given block is a valid header for this file format. */
   boolean isThisType(byte[] block);
 
