@@ -38,6 +38,7 @@ import java.util.Date;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public final class DataTools {
 
