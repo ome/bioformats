@@ -466,7 +466,6 @@ Apache XML-RPC
       <link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>
       <link href="http://www.jdocs.com/looks/1.2.2/api/"/>
     </javadoc>
-    </javadoc>
     <zip zipfile="${build.dir}/visbio_docs.zip" basedir="${visbio.docs-dir}"/>
   </target>
 
