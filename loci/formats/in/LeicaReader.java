@@ -135,9 +135,12 @@ public class LeicaReader extends FormatReader {
     int c = b.length / (core.sizeX[series] * core.sizeY[series] *
       FormatTools.getBytesPerPixel(core.pixelType[series]));
 
-    b = ImageTools.splitChannels(b, c,
-      FormatTools.getBytesPerPixel(core.pixelType[series]), false,
-      isInterleaved())[channelIndices[ndx]];
+    // if a custom LUT is used, we don't want to split channels
+    if (channelIndices[ndx] > -1) {
+      b = ImageTools.splitChannels(b, c,
+        FormatTools.getBytesPerPixel(core.pixelType[series]), false,
+        isInterleaved())[channelIndices[ndx]];
+    }
     tiff[series][no].close();
     return b;
   }
@@ -157,9 +160,13 @@ public class LeicaReader extends FormatReader {
     int ndx = no % channelIndices.length;
     int c = buf.length / (core.sizeX[series] * core.sizeY[series] *
       FormatTools.getBytesPerPixel(core.pixelType[series]));
-    buf = ImageTools.splitChannels(buf, c,
-      FormatTools.getBytesPerPixel(core.pixelType[series]), false,
-      isInterleaved())[channelIndices[ndx]];
+    
+    // if a custom LUT is used, we don't want to split channels
+    if (channelIndices[ndx] > -1) {
+      buf = ImageTools.splitChannels(buf, c,
+        FormatTools.getBytesPerPixel(core.pixelType[series]), false,
+        isInterleaved())[channelIndices[ndx]];
+    }
     return buf;
   }
 
@@ -175,7 +182,10 @@ public class LeicaReader extends FormatReader {
 
     int ndx = no % channelIndices.length;
 
-    b = ImageTools.splitChannels(b)[channelIndices[ndx]];
+    // if a custom LUT is used, we don't want to split channels
+    if (channelIndices[ndx] > -1) {
+      b = ImageTools.splitChannels(b)[channelIndices[ndx]];
+    } 
     tiff[series][no].close();
     return b;
   }
@@ -987,7 +997,10 @@ public class LeicaReader extends FormatReader {
           else if (name.equals("Blue")) channelIndices[j] = 2;
           else if (name.equals("Gray")) channelIndices[j] = 0;
           else if (name.equals("Yellow")) channelIndices[j] = 0;
-          else if (name.equals("Geo (L&S)")) channelIndices[j] = 0;
+          else {
+            // using a custom LUT
+            channelIndices[j] = -1; 
+          }
 
           addMeta("LUT Channel " + j + " name", name);
           pt += length;
@@ -1070,6 +1083,12 @@ public class LeicaReader extends FormatReader {
         core.imageCount[i] != core.sizeC[i] * core.sizeZ[i] * core.sizeT[i];
 
       Integer ii = new Integer(i);
+
+      // if a custom LUT is used, we don't want to split channels
+      if (channelIndices[0] == -1) {
+        core.sizeC[i] *= 3;
+        core.rgb[i] = true; 
+      }  
 
       store.setPixels(
         new Integer(core.sizeX[i]),

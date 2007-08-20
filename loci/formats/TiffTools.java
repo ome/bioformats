@@ -1714,7 +1714,7 @@ public final class TiffTools {
             int x = (int) (b < 0 ? 256 + b : b);
             int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
             int cm = colorMap[cndx];
-            samples[i][ndx] = (short) (maxValue == 0 ? (cm % 255) : cm);
+            samples[i][ndx] = (short) (maxValue == 0 ? (cm / 256) : cm);
           }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
