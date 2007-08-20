@@ -248,8 +248,14 @@ public class LeicaReader extends FormatReader {
 
       if (ndx == -1) return false;
 
-      String dir = new Location(name).getAbsoluteFile().getParent();
-      String[] listing = new Location(dir).list();
+      File f = new File(name).getAbsoluteFile();
+      String[] listing = null; 
+      if (f.exists()) listing = f.getParentFile().list();
+      else {
+        listing = 
+          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+      }
+
       for (int i=0; i<listing.length; i++) {
         if (listing[i].toLowerCase().endsWith(".lei")) return true;
       }
@@ -447,11 +453,19 @@ public class LeicaReader extends FormatReader {
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4,
           core.littleEndian[0]);
-        String dirPrefix =
-          new Location(id).getAbsoluteFile().getParent();
-        dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
-
-        String[] listing = (new Location(dirPrefix)).list();
+       
+        File dirFile = new File(id).getAbsoluteFile();
+        String[] listing = null; 
+        String dirPrefix = ""; 
+        if (dirFile.exists()) {
+          listing = dirFile.getParentFile().list(); 
+          dirPrefix = dirFile.getParent(); 
+        } 
+        else {
+          listing = 
+            (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+        }
+        
         Vector list = new Vector();
 
         for (int k=0; k<listing.length; k++) {

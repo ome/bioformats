@@ -286,9 +286,13 @@ public class PrairieReader extends FormatReader {
               }
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
-                Location current = new Location(id);
-                current = current.getAbsoluteFile();
-                f.add(value);
+                File current = new File(id).getAbsoluteFile();
+                String dir = ""; 
+                if (current.exists()) {
+                  dir = current.getPath();
+                  dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
+                }
+                f.add(dir + value);
               }
             }
           }
@@ -360,7 +364,8 @@ public class PrairieReader extends FormatReader {
           String gain = (String) getMeta("pmtGain_" + i);
           String offset = (String) getMeta("pmtOffset_" + i);
    
-          store.setLogicalChannel(i, null, null, null, null, null, null, null,
+          store.setLogicalChannel(i, null, null, 
+            null, null, null, null, null,
             null, offset == null ? null : new Float(offset), 
             gain == null ? null : new Float(gain), null, null, null, null, 
             null, null, null, null, null, null, null, null, null, null);
@@ -382,6 +387,7 @@ public class PrairieReader extends FormatReader {
           laserPower == null ? null : new Float(laserPower),
           null, null, null, null);
 
+        /*
         String zoom = (String) getMeta("opticalZoom");
         if (zoom != null) {
           store.setDisplayOptions(new Float(zoom),
@@ -389,6 +395,7 @@ public class PrairieReader extends FormatReader {
             new Boolean(core.sizeC[0] > 2), Boolean.FALSE,
             null, null, null, null, null, null, null, null, null, null, null);
         }
+        */ 
       }
 
       if (!readXML || !readCFG) {
@@ -401,7 +408,12 @@ public class PrairieReader extends FormatReader {
           if ((!readXML && path.endsWith(".xml")) ||
             (readXML && path.endsWith(".cfg")))
           {
-            initFile(listing[i]);
+            String dir = "";
+            if (file.exists()) {
+              dir = parent.getPath();
+              if (!dir.endsWith(File.separator)) dir += File.separator; 
+            } 
+            initFile(dir + listing[i]);
           }
         }
       }
