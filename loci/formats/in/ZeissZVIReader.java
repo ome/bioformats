@@ -324,8 +324,8 @@ public class ZeissZVIReader extends FormatReader {
           (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
       }
       else {
-        if (metadata.get("MultiChannelEnabled") != null || 
-          metadata.get("MultiChannelEnabled 0") != null) 
+        if (metadata.get("MultiChannelEnabled") != null ||
+          metadata.get("MultiChannelEnabled 0") != null)
         {
           core.currentOrder[0] =
             (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
@@ -342,17 +342,17 @@ public class ZeissZVIReader extends FormatReader {
       initFile(id);
     }
 
-    // rearrange axis sizes, if necessary 
+    // rearrange axis sizes, if necessary
 
-    int lastZ = zIndices.size() == 0 ? Integer.MAX_VALUE : 
+    int lastZ = zIndices.size() == 0 ? Integer.MAX_VALUE :
       ((Integer) zIndices.get(zIndices.size() - 1)).intValue();
-    int lastT = tIndices.size() == 0 ? Integer.MAX_VALUE : 
+    int lastT = tIndices.size() == 0 ? Integer.MAX_VALUE :
       ((Integer) tIndices.get(tIndices.size() - 1)).intValue();
 
     if ((zIndex > lastZ || tIndex > lastT) && (zIndex == core.sizeC[0] - 1 ||
-      tIndex == core.sizeC[0] - 1 || 
+      tIndex == core.sizeC[0] - 1 ||
       (zIndex != 0 && zIndex % core.sizeC[0] == 0) ||
-      (tIndex != 0 && tIndex % core.sizeC[0] == 0)) && zIndex != lastT) 
+      (tIndex != 0 && tIndex % core.sizeC[0] == 0)) && zIndex != lastT)
     {
       if (zIndex >= core.sizeZ[0] || tIndex >= core.sizeT[0]) {
         int tmp = core.sizeZ[0];
@@ -370,7 +370,7 @@ public class ZeissZVIReader extends FormatReader {
     catch (IOException exc) {
       if (debug) trace(exc);
     }
-  
+
     // remove extra (invalid) metadata
 
     String[] keys = (String[]) metadata.keySet().toArray(new String[0]);
@@ -435,10 +435,10 @@ public class ZeissZVIReader extends FormatReader {
         exWave = exWave.substring(0, exWave.indexOf("."));
       }
 
-      store.setLogicalChannel(i, name, null, null, null, null, null, null, 
+      store.setLogicalChannel(i, name, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null, null, null,
-        emWave == null ? null : new Integer(emWave), 
-        exWave == null ? null : new Integer(exWave), null, null, null); 
+        emWave == null ? null : new Integer(emWave),
+        exWave == null ? null : new Integer(exWave), null, null, null);
 
       String black = (String) getMeta("BlackValue " + idx);
       String white = (String) getMeta("WhiteValue " + idx);
@@ -464,7 +464,7 @@ public class ZeissZVIReader extends FormatReader {
       Float exp = new Float(0.0);
       try { exp = new Float(exposure); }
       catch (Exception e) { }
-      
+
       store.setPlaneInfo(zct[0], zct[1], zct[2], null, exp, null);
     }
 
@@ -582,9 +582,9 @@ public class ZeissZVIReader extends FormatReader {
           if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
             core.sizeY[0] = th;
           }
-       
+
           s.skipBytes(14);
-         
+
           int numImageContainers = s.readInt();
           s.skipBytes(6);
 
@@ -653,7 +653,7 @@ public class ZeissZVIReader extends FormatReader {
         else {
           try { parseTags(s); }
           catch (IOException e) { }
-        }     
+        }
         s.close();
         data = null;
         r.exec("dis.close()");
@@ -683,7 +683,7 @@ public class ZeissZVIReader extends FormatReader {
     s.skipBytes(4);
     bpp = s.readInt();
     s.skipBytes(8);
-    
+
     pixels.put(new Integer(num), directory);
     names.put(new Integer(num), entry);
     core.imageCount[0]++;
@@ -753,7 +753,7 @@ public class ZeissZVIReader extends FormatReader {
 
       s.skipBytes(2);
       int tagID = 0;
-    
+
       try { tagID = s.readInt(); }
       catch (IOException e) { }
 
@@ -794,7 +794,7 @@ public class ZeissZVIReader extends FormatReader {
       if (metadata.get(key) != null || metadata.get(key + " 0") != null) {
         if (metadata.get(key) != null) {
           Object v = metadata.remove(key);
-          metadata.put(key + " 0", v); 
+          metadata.put(key + " 0", v);
         }
 
         int ndx = 0;

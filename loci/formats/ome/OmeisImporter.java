@@ -74,7 +74,7 @@ public class OmeisImporter {
   public OmeisImporter() {
     reader = new FileStitcher(new ChannelSeparator());
     store = new OMEXMLMetadataStore();
-    reader.setOriginalMetadataPopulated(true); 
+    reader.setOriginalMetadataPopulated(true);
     reader.setMetadataStore(store);
   }
 
@@ -107,10 +107,10 @@ public class OmeisImporter {
       if (!reader.isThisType(ids[i])) continue; // unknown format
       reader.setId(ids[i]);
       String[] files = reader.getUsedFiles();
-     
+
       if (files == null) continue; // invalid files list
       sb.setLength(0);
-     
+
       for (int j=files.length - 1; j>=0; j--) {
         for (int ii=i; ii<fileIds.length; ii++) {
           if (files[j] == null) {
@@ -168,7 +168,7 @@ public class OmeisImporter {
       throw new FormatException("File list length mismatch for " + path +
         ": used=" + a2s(used) + "; ids=" + a2s(ids));
     }
-    
+
     boolean[] done = new boolean[ids.length];
     int numLeft = ids.length;
     for (int i=0; i<used.length; i++) {

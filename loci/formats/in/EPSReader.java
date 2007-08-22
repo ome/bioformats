@@ -132,7 +132,7 @@ public class EPSReader extends FormatReader {
     else {
       long pos = ras.getFilePointer();
       ras.seek(pos);
- 
+
       char[] chars = new char[2];
 
       for (int i=0; i<buf.length; i++) {

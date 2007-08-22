@@ -206,7 +206,7 @@ public class ImarisReader extends FormatReader {
     if (fname == null) fname = currentId;
     store.setImage(fname, d, (String) getMeta("Image comment"), null);
 
-    store.setDimensions(new Float(dx), new Float(dy), new Float(dz), 
+    store.setDimensions(new Float(dx), new Float(dy), new Float(dz),
       new Float(1), new Float(1), null);
 
     store.setObjective(null, null, null, null, new Float(mag), null, null);

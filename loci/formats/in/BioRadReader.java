@@ -762,8 +762,8 @@ public class BioRadReader extends FormatReader {
       String gain = i == 0 ? gain1 : i == 1 ? gain2 : gain3;
       String offset = i == 0 ? offset1 : i == 1 ? gain2 : gain3;
       store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       offset == null ? null : new Float(offset), 
-       gain == null ? null : new Float(gain), null, null, null, null, null, 
+       offset == null ? null : new Float(offset),
+       gain == null ? null : new Float(gain), null, null, null, null, null,
        null, null, null, null, null, null, null, null, null);
       store.setDisplayChannel(new Integer(i), new Double(ramp1max),
         new Double(ramp1min), null, null);

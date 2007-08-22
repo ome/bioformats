@@ -214,7 +214,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     if (!id.toLowerCase().endsWith(".nd")) {
       Location abs = new Location(currentId).getAbsoluteFile();
-    
+
       int idx = id.indexOf("_");
       if (idx == -1) idx = id.lastIndexOf(".");
 

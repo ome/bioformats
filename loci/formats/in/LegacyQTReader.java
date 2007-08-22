@@ -222,15 +222,15 @@ public class LegacyQTReader extends FormatReader {
       core.littleEndian[0] = false;
 
       MetadataStore store = getMetadataStore();
-      store.setImage(currentId, null, null, null); 
+      store.setImage(currentId, null, null, null);
       store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
         new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
         new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
         Boolean.TRUE, core.currentOrder[0], null, null);
 
       for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null, 
-          null, null, null, null, null, null, null, null, null, null, null, 
+        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null, null, null, null, null,
           null, null, null, null, null, null);
       }
     }

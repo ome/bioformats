@@ -504,7 +504,7 @@ public final class DataTools {
 
     float min = Float.MAX_VALUE;
     float max = Float.MIN_VALUE;
-   
+
     for (int i=0; i<data.length; i++) {
       if (data[i] < min) min = data[i];
       if (data[i] > max) {

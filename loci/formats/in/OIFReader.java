@@ -373,7 +373,7 @@ public class OIFReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null); 
+    store.setImage(currentId, null, null, null);
 
     switch (imageDepth) {
       case 1:
@@ -419,12 +419,12 @@ public class OIFReader extends FormatReader {
       String name = (String) getMeta(prefix + "CH Name");
       String emWave = (String) getMeta(prefix + "EmissionWavelength");
       String exWave = (String) getMeta(prefix + "ExcitationWavelength");
-      
+
       prefix = "[Channel " + (i+1) + " Parameters] - ";
       String gain = (String) getMeta(prefix + "CountingPMTGain");
       String voltage = (String) getMeta(prefix + "CountingPMTVoltage");
       String offset = (String) getMeta(prefix + "CountingPMTOffset");
-     
+
       if (gain != null) gain.replaceAll("\"", "");
       if (voltage != null) voltage.replaceAll("\"", "");
       if (offset != null) offset.replaceAll("\"", "");
@@ -434,10 +434,10 @@ public class OIFReader extends FormatReader {
           null, null, new Integer(i));
       }
 
-      store.setLogicalChannel(i, name, null, null, null, null, null, null, 
-        null, offset == null ? null : new Float(offset), 
-        gain == null ? null : new Float(gain), null, null, null, null, null, 
-        null, null, null, null, emWave == null ? null : new Integer(emWave), 
+      store.setLogicalChannel(i, name, null, null, null, null, null, null,
+        null, offset == null ? null : new Float(offset),
+        gain == null ? null : new Float(gain), null, null, null, null, null,
+        null, null, null, null, emWave == null ? null : new Integer(emWave),
         exWave == null ? null : new Integer(exWave), null, null, null);
     }
 

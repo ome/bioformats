@@ -116,7 +116,7 @@ public class VisitechReader extends FormatReader {
       String base = path.substring(ndx + 1, path.indexOf(" ", ndx));
 
       currentId = null;
-      initFile(file.exists() ? new Location(file.getParent(), 
+      initFile(file.exists() ? new Location(file.getParent(),
         base + " Report.html").getAbsolutePath() : base + " Report.html");
       return;
     }
@@ -189,15 +189,15 @@ public class VisitechReader extends FormatReader {
 
     int ndx = currentId.lastIndexOf(File.separator);
     String base = currentId.substring(ndx + 1, currentId.indexOf(" ", ndx));
-  
+
     File f = new File(currentId).getAbsoluteFile();
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      files.add((f.exists() ? f.getParent() + File.separator : "") + base + 
+      files.add((f.exists() ? f.getParent() + File.separator : "") + base +
         " " + (i + 1) + ".xys");
     }
     files.add(currentId);
-    
+
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
@@ -206,9 +206,9 @@ public class VisitechReader extends FormatReader {
       new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, 
-        null, null, null, null, null, core.sizeC[0] == 1 ? 
-        "monochrome" : "RGB", null, null, null, null, null, null, null, null, 
+      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+        null, null, null, null, null, core.sizeC[0] == 1 ?
+        "monochrome" : "RGB", null, null, null, null, null, null, null, null,
         null, null, null);
     }
 

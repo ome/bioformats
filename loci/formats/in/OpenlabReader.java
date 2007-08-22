@@ -433,7 +433,7 @@ public class OpenlabReader extends FormatReader {
         }
         else if (tag == 69) {
           in.skipBytes(18);
-        
+
           xCal = in.readFloat();
           yCal = in.readFloat();
         }
@@ -698,7 +698,7 @@ public class OpenlabReader extends FormatReader {
         null, null, new Integer(i));
       for (int j=0; j<core.sizeC[0]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null, 
+          null, null, null, null, null, null, null, null, null, null, null,
           null, null, null, null, null, new Integer(i));
       }
     }

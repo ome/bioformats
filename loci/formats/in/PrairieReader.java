@@ -287,7 +287,7 @@ public class PrairieReader extends FormatReader {
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
                 File current = new File(id).getAbsoluteFile();
-                String dir = ""; 
+                String dir = "";
                 if (current.exists()) {
                   dir = current.getPath();
                   dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
@@ -363,11 +363,11 @@ public class PrairieReader extends FormatReader {
         for (int i=0; i<core.sizeC[0]; i++) {
           String gain = (String) getMeta("pmtGain_" + i);
           String offset = (String) getMeta("pmtOffset_" + i);
-   
-          store.setLogicalChannel(i, null, null, 
+
+          store.setLogicalChannel(i, null, null,
             null, null, null, null, null,
-            null, offset == null ? null : new Float(offset), 
-            gain == null ? null : new Float(gain), null, null, null, null, 
+            null, offset == null ? null : new Float(offset),
+            gain == null ? null : new Float(gain), null, null, null, null,
             null, null, null, null, null, null, null, null, null, null);
         }
 
@@ -395,7 +395,7 @@ public class PrairieReader extends FormatReader {
             new Boolean(core.sizeC[0] > 2), Boolean.FALSE,
             null, null, null, null, null, null, null, null, null, null, null);
         }
-        */ 
+        */
       }
 
       if (!readXML || !readCFG) {
@@ -411,8 +411,8 @@ public class PrairieReader extends FormatReader {
             String dir = "";
             if (file.exists()) {
               dir = parent.getPath();
-              if (!dir.endsWith(File.separator)) dir += File.separator; 
-            } 
+              if (!dir.endsWith(File.separator)) dir += File.separator;
+            }
             initFile(dir + listing[i]);
           }
         }
@@ -434,7 +434,7 @@ public class PrairieReader extends FormatReader {
         }
       }
     }
-    if (currentId == null) currentId = id; 
+    if (currentId == null) currentId = id;
   }
 
 }

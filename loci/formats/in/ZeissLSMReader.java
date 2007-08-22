@@ -305,9 +305,9 @@ public class ZeissLSMReader extends BaseTiffReader {
         null, // Image index
         null); // Pixels index
       for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null, 
-          null, null, null, null, null, null, null, null, null, null, null, 
-          null, null, null, null, null, null); 
+        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null, null, null, null, null,
+          null, null, null, null, null, null);
       }
 
       int spectralScan = ras.readShort();
@@ -350,7 +350,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       long roiOffset = ras.readInt();
       long bleachRoiOffset = ras.readInt();
       ras.skipBytes(4);
-    
+
       put("DisplayAspectX", ras.readDouble());
       put("DisplayAspectY", ras.readDouble());
       put("DisplayAspectZ", ras.readDouble());
@@ -363,7 +363,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       put("ToolbarFlags", ras.readInt());
       ras.skipBytes(20);
-      
+
       // read referenced structures
 
       if (overlayOffset != 0) {
@@ -393,7 +393,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
         long namesOffset = in.readInt() + channelColorsOffset;
         in.skipBytes(4);
- 
+
         // read in the intensity value for each color
 
         if (namesOffset >= 0) {
@@ -412,7 +412,7 @@ public class ZeissLSMReader extends BaseTiffReader {
             current = (char) in.read();
           }
           if (sb.length() <= 128) put("ChannelName" + i, sb.toString());
-          else put("ChannelName" + i, ""); 
+          else put("ChannelName" + i, "");
         }
       }
 

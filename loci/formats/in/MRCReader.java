@@ -92,10 +92,10 @@ public class MRCReader extends FormatReader {
       byte[] b = openBytes(no);
       float[] f = new float[b.length / 4];
       for (int i=0; i<f.length; i++) {
-        f[i] = Float.intBitsToFloat(DataTools.bytesToInt(b, i*4, 
-          4, core.littleEndian[0]));    	  
+        f[i] = Float.intBitsToFloat(DataTools.bytesToInt(b, i*4,
+          4, core.littleEndian[0]));
       }
-      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0], 1, 
+      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0], 1,
         core.interleaved[0]);
     }
 	return ImageTools.makeImage(openBytes(no), core.sizeX[0],
@@ -231,7 +231,7 @@ public class MRCReader extends FormatReader {
     core.interleaved[0] = true;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null); 
+    store.setImage(currentId, null, null, null);
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
       new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),

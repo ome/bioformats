@@ -1159,12 +1159,12 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
    */
   public void setLogicalChannel(int channelIdx, String name,
     Integer samplesPerPixel, Integer filter, Integer lightSource,
-    Float lightAttenuation, Integer lightWavelength, Integer otf, 
-    Integer detector, Float detectorOffset, Float detectorGain, 
-    String illuminationType, Integer pinholeSize, 
-    String photometricInterpretation, String mode, String contrastMethod, 
-    Integer auxLightSource, Float auxLightAttenuation, String auxTechnique, 
-    Integer auxLightWavelength, Integer emWave, Integer exWave, String fluor, 
+    Float lightAttenuation, Integer lightWavelength, Integer otf,
+    Integer detector, Float detectorOffset, Float detectorGain,
+    String illuminationType, Integer pinholeSize,
+    String photometricInterpretation, String mode, String contrastMethod,
+    Integer auxLightSource, Float auxLightAttenuation, String auxTechnique,
+    Integer auxLightWavelength, Integer emWave, Integer exWave, String fluor,
     Float ndFilter, Integer i)
   {
     int ndx = i == null ? 0 : i.intValue();
@@ -1199,7 +1199,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     logicalChannel.setFilter(filterNode);
 
     endx = lightSource == null ? 0 : lightSource.intValue();
-    LightSourceNode light = 
+    LightSourceNode light =
       (LightSourceNode) getChild(root, "LightSource", endx);
     logicalChannel.setLightSource(light);
 
@@ -1212,9 +1212,9 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     logicalChannel.setDetector(detectorNode);
 
     endx = auxLightSource == null ? 0 : auxLightSource.intValue();
-    LightSourceNode auxLight = 
+    LightSourceNode auxLight =
       (LightSourceNode) getChild(root, "LightSource", endx);
-    logicalChannel.setAuxLightSource(auxLight); 
+    logicalChannel.setAuxLightSource(auxLight);
     */
 
     // Now populate the channel component

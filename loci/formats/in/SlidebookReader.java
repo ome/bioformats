@@ -318,10 +318,10 @@ public class SlidebookReader extends FormatReader {
         new Integer(i), null);
 
       for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null, 
-          null, null, null, null, null, core.sizeC[i] == 1 ? "monochrome" : 
-          "RGB", null, null, null, null, null, null, null, null, null, null, 
-          new Integer(i)); 
+        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+          null, null, null, null, null, core.sizeC[i] == 1 ? "monochrome" :
+          "RGB", null, null, null, null, null, null, null, null, null, null,
+          new Integer(i));
       }
     }
   }

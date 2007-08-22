@@ -1612,7 +1612,7 @@ public final class TiffTools {
     if (photoInterp == CFA_ARRAY) {
       imageWidth = colorMap[colorMap.length - 2];
     }
-  
+
     int row = 0, col = 0;
 
     if (imageWidth != 0) row = startIndex / (int) imageWidth;

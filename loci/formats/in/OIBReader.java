@@ -465,13 +465,13 @@ public class OIBReader extends FormatReader {
         String gain = (String) getMeta(prefix + "AnalogPMTGain");
         String offset = (String) getMeta(prefix + "AnalogPMTOffset");
         String voltage = (String) getMeta(prefix + "AnalogPMTVoltage");
-       
+
         store.setDetector(null, null, null, null, null, voltage == null ? null :
           new Float(voltage), null, null, new Integer(j));
 
-        store.setLogicalChannel(j, null, null, null, null, null, null, null, 
-          null, offset == null ? null : new Float(offset), 
-          gain == null ? null : new Float(gain), null, null, null, null, null, 
+        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+          null, offset == null ? null : new Float(offset),
+          gain == null ? null : new Float(gain), null, null, null, null, null,
           null, null, null, null, null, null, null, null, new Integer(i));
       }
 

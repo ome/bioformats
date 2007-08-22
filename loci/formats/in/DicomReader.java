@@ -318,7 +318,7 @@ public class DicomReader extends FormatReader {
       Date d = parse.parse(stamp, new ParsePosition(0));
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       if (d != null) stamp = fmt.format(d);
-      else stamp = null; 
+      else stamp = null;
     }
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;

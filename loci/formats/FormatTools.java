@@ -187,7 +187,7 @@ public final class FormatTools {
     int v2 = iz == 2 ? z : (ic == 2 ? c : t);
     int len0 = iz == 0 ? zSize : (ic == 0 ? cSize : tSize);
     int len1 = iz == 1 ? zSize : (ic == 1 ? cSize : tSize);
-   
+
     return v0 + v1 * len0 + v2 * len0 * len1;
   }
 

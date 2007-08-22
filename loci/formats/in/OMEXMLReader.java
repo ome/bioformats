@@ -431,15 +431,15 @@ public class OMEXMLReader extends FormatReader {
     Arrays.fill(core.orderCertain, true);
 
     MetadataStore store = getMetadataStore();
-  
+
     try {
       if (store.getClass().getName().equals(
-        "loci.formats.ome.OMEXMLMetadataStore")) 
+        "loci.formats.ome.OMEXMLMetadataStore"))
       {
         MetadataStore m = (MetadataStore) r.getVar("omexml");
-        store.setRoot(m.getRoot()); 
+        store.setRoot(m.getRoot());
       }
-      else { 
+      else {
         FormatTools.convertMetadata((MetadataRetrieve) r.getVar("omexml"), store);
       }
     }

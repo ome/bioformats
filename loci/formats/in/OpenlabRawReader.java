@@ -137,18 +137,18 @@ public class OpenlabRawReader extends FormatReader {
     core.sizeC[0] = in.read();
     bytesPerPixel = in.read();
     in.read();
-   
+
     long stamp = in.readLong();
     Date timestamp = null;
     SimpleDateFormat sdf = null;
-    if (stamp > 0) { 
+    if (stamp > 0) {
       stamp /= 1000000;
       stamp -= (67 * 365.25 * 24 * 60 * 60);
-    
+
       timestamp = new Date(stamp);
       sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       addMeta("Timestamp", sdf.format(timestamp));
-    } 
+    }
     in.skipBytes(4);
     byte[] s = new byte[256];
     in.read(s);
@@ -188,7 +188,7 @@ public class OpenlabRawReader extends FormatReader {
         core.pixelType[0] = FormatTools.FLOAT;
     }
 
-    store.setImage((String) getMeta("Image name"), 
+    store.setImage((String) getMeta("Image name"),
       timestamp == null ? null : sdf.format(timestamp), null, null);
     store.setPixels(
       new Integer(core.sizeX[0]),

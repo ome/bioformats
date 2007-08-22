@@ -170,7 +170,7 @@ public class OMETiffReader extends BaseTiffReader {
           boolean nullFirstC = aFirstC == null || aFirstC.equals("");
           boolean nullFirstT = aFirstT == null || aFirstT.equals("");
           boolean nullNumPlanes = aNumPlanes == null || aNumPlanes.equals("");
-      
+
           int firstZ = nullFirstZ ? 0 : Integer.parseInt(aFirstZ);
           int firstC = nullFirstC ? 0 : Integer.parseInt(aFirstC);
           int firstT = nullFirstT ? 0 : Integer.parseInt(aFirstT);

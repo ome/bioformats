@@ -202,10 +202,10 @@ public class AggregateMetadataStore implements MetadataStore {
     Integer samplesPerPixel, Integer filter, Integer lightSource,
     Float lightAttenuation, Integer lightWavelength, Integer otf,
     Integer detector, Float detectorOffset, Float detectorGain,
-    String illuminationType, Integer pinholeSize, 
-    String photometricInterpretation, String mode, String contrastMethod, 
-    Integer auxLightSource, Float auxLightAttenuation, String auxTechnique, 
-    Integer auxLightWavelength, Integer emWave, Integer exWave, String fluor, 
+    String illuminationType, Integer pinholeSize,
+    String photometricInterpretation, String mode, String contrastMethod,
+    Integer auxLightSource, Float auxLightAttenuation, String auxTechnique,
+    Integer auxLightWavelength, Integer emWave, Integer exWave, String fluor,
     Float ndFilter, Integer i)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -215,7 +215,7 @@ public class AggregateMetadataStore implements MetadataStore {
         detectorOffset, detectorGain, illuminationType, pinholeSize,
         photometricInterpretation, mode, contrastMethod, auxLightSource,
         auxLightAttenuation, auxTechnique, auxLightWavelength, emWave, exWave,
-        fluor, ndFilter, i); 
+        fluor, ndFilter, i);
     }
   }
 

@@ -160,7 +160,7 @@ public class LeicaReader extends FormatReader {
     int ndx = no % channelIndices.length;
     int c = buf.length / (core.sizeX[series] * core.sizeY[series] *
       FormatTools.getBytesPerPixel(core.pixelType[series]));
-    
+
     // if a custom LUT is used, we don't want to split channels
     if (channelIndices[ndx] > -1) {
       buf = ImageTools.splitChannels(buf, c,
@@ -185,7 +185,7 @@ public class LeicaReader extends FormatReader {
     // if a custom LUT is used, we don't want to split channels
     if (channelIndices[ndx] > -1) {
       b = ImageTools.splitChannels(b)[channelIndices[ndx]];
-    } 
+    }
     tiff[series][no].close();
     return b;
   }
@@ -249,10 +249,10 @@ public class LeicaReader extends FormatReader {
       if (ndx == -1) return false;
 
       File f = new File(name).getAbsoluteFile();
-      String[] listing = null; 
+      String[] listing = null;
       if (f.exists()) listing = f.getParentFile().list();
       else {
-        listing = 
+        listing =
           (String[]) Location.getIdMap().keySet().toArray(new String[0]);
       }
 
@@ -453,19 +453,19 @@ public class LeicaReader extends FormatReader {
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4,
           core.littleEndian[0]);
-       
+
         File dirFile = new File(id).getAbsoluteFile();
-        String[] listing = null; 
-        String dirPrefix = ""; 
+        String[] listing = null;
+        String dirPrefix = "";
         if (dirFile.exists()) {
-          listing = dirFile.getParentFile().list(); 
-          dirPrefix = dirFile.getParent(); 
-        } 
+          listing = dirFile.getParentFile().list();
+          dirPrefix = dirFile.getParent();
+        }
         else {
-          listing = 
+          listing =
             (String[]) Location.getIdMap().keySet().toArray(new String[0]);
         }
-        
+
         Vector list = new Vector();
 
         for (int k=0; k<listing.length; k++) {
@@ -1013,7 +1013,7 @@ public class LeicaReader extends FormatReader {
           else if (name.equals("Yellow")) channelIndices[j] = 0;
           else {
             // using a custom LUT
-            channelIndices[j] = -1; 
+            channelIndices[j] = -1;
           }
 
           addMeta("LUT Channel " + j + " name", name);
@@ -1101,8 +1101,8 @@ public class LeicaReader extends FormatReader {
       // if a custom LUT is used, we don't want to split channels
       if (channelIndices[0] == -1) {
         core.sizeC[i] *= 3;
-        core.rgb[i] = true; 
-      }  
+        core.rgb[i] = true;
+      }
 
       store.setPixels(
         new Integer(core.sizeX[i]),
@@ -1129,8 +1129,8 @@ public class LeicaReader extends FormatReader {
       store.setImage((String) seriesNames.get(i), timestamp, description, ii);
 
       for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null, 
-          null, null, null, null, null, null, null, null, null, null, null, 
+        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null, null, null, null, null,
           null, null, null, null, null, null);
         // TODO: get channel min/max from metadata
 //        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),

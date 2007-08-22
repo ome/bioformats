@@ -118,8 +118,8 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    File f = new File(name).getAbsoluteFile(); 
-    String[] list = null; 
+    File f = new File(name).getAbsoluteFile();
+    String[] list = null;
     if (f.exists()) list = f.getParentFile().list();
     else list = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
 
@@ -150,7 +150,7 @@ public class MicromanagerReader extends FormatReader {
     // find metadata.txt
 
     File file = new File(currentId).getAbsoluteFile();
-    in = new RandomAccessStream(file.exists() ? new File(file.getParentFile(), 
+    in = new RandomAccessStream(file.exists() ? new File(file.getParentFile(),
       METADATA).getAbsolutePath() : METADATA);
 
     // usually a small file, so we can afford to read it into memory
@@ -244,7 +244,7 @@ public class MicromanagerReader extends FormatReader {
     core.imageCount[0] = tiffs.size();
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null); 
+    store.setImage(currentId, null, null, null);
 
     store.setPixels(
       new Integer(core.sizeX[0]),

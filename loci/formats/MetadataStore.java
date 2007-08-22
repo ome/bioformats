@@ -192,7 +192,7 @@ public interface MetadataStore {
    * particular pixels.
    * @param channelIdx the index of the channel within the pixels set.
    * @param name the logical channel's name.
-   * @param samplesPerPixel  
+   * @param samplesPerPixel
    * @param filter index of the filter associated with this channel.
    * @param lightSource index of the primary light source.
    * @param lightAttenuation  the primary light source attenuation.
@@ -218,13 +218,13 @@ public interface MetadataStore {
    */
   void setLogicalChannel(int channelIdx, String name, Integer samplesPerPixel,
     Integer filter, Integer lightSource, Float lightAttenuation,
-    Integer lightWavelength, Integer otf, Integer detector, 
-    Float detectorOffset, Float detectorGain, String illuminationType, 
-    Integer pinholeSize, String photometricInterpretation, String mode, 
-    String contrastMethod, Integer auxLightSource, Float auxLightAttenuation, 
-    String auxTechnique, Integer auxLightWavelength, Integer emWave, 
+    Integer lightWavelength, Integer otf, Integer detector,
+    Float detectorOffset, Float detectorGain, String illuminationType,
+    Integer pinholeSize, String photometricInterpretation, String mode,
+    String contrastMethod, Integer auxLightSource, Float auxLightAttenuation,
+    String auxTechnique, Integer auxLightWavelength, Integer emWave,
     Integer exWave, String fluor, Float ndFilter, Integer i);
-    
+
   /**
    * Sets a channel's global min and global max in the metadata store for a
    * particular pixels set.

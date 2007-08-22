@@ -231,7 +231,7 @@ public class NRRDReader extends FormatReader {
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null); 
+    store.setImage(currentId, null, null, null);
 
     store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
       new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),

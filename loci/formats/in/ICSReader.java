@@ -208,7 +208,7 @@ public class ICSReader extends FormatReader {
 
     Location l = new Location(id);
     //String icsId = l.getPath(), idsId = l.getPath();
-    String icsId = id, idsId = id; 
+    String icsId = id, idsId = id;
     int dot = id.lastIndexOf(".");
     String ext = dot < 0 ? "" : id.substring(dot + 1).toLowerCase();
     if (ext.equals("ics")) {
@@ -502,7 +502,7 @@ public class ICSReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       null, null, null, null, null, null, null, null, null, null, null, 
+       null, null, null, null, null, null, null, null, null, null, null,
        new Integer(emWave[i]), new Integer(exWave[i]), null, null, null);
     }
   }

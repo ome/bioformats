@@ -960,7 +960,7 @@ public final class ImageTools {
     boolean interleaved)
   {
     int[] rtn = new int[w * h];
-   
+
     byte[] b = null;
 
     // adapted from ImageJ's TypeConverter methods
