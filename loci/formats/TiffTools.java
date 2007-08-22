@@ -851,7 +851,8 @@ public final class TiffTools {
     boolean fakeRPS = rowsPerStripArray == null;
     boolean isTiled = stripOffsets == null;
 
-    long maxValue = getIFDLongValue(ifd, MAX_SAMPLE_VALUE, false, 0);
+    long[] maxes = getIFDLongArray(ifd, MAX_SAMPLE_VALUE, false);
+    long maxValue = maxes == null ? 0 : maxes[0];
 
     if (ifd.get(new Integer(VALID_BITS)) == null && bitsPerSample[0] > 0) {
       int[] validBits = bitsPerSample;
