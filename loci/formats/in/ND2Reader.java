@@ -186,7 +186,7 @@ public class ND2Reader extends FormatReader {
       pixels = null;
     }
     else {
-      in.read(buf);
+      in.readFully(buf);
     }
 
     return buf;
@@ -260,9 +260,18 @@ public class ND2Reader extends FormatReader {
         {
           // found a data chunk
           int len = in.readInt() + in.readInt();
-          if (len > b.length) b = new byte[b.length + b.length];
+          if (len > b.length) {
+            // make sure size at least doubles, for efficiency
+            int size = b.length + b.length;
+            if (size < len) size = len;
+            b = new byte[size];
+          }
           in.skipBytes(4);
 
+          if (debug) {
+            debug("Reading chunk of size " + len +
+              " at position " + in.getFilePointer());
+          }
           in.readFully(b, 0, len);
 
           if (len >= 12 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
@@ -271,7 +280,7 @@ public class ND2Reader extends FormatReader {
             b[11] == 'q') // b.startsWith("ImageDataSeq")
           {
             // found pixel data
-          
+
             StringBuffer sb = new StringBuffer();
             int pt = 13;
             while (b[pt] != '!') {
@@ -286,7 +295,6 @@ public class ND2Reader extends FormatReader {
             }
             offsets[ndx] = in.getFilePointer() - len + sb.length() + 21;
           }
-          //else if (check.startsWith("Image")) {
           else if (len >= 5 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
             b[3] == 'g' && b[4] == 'e') // b.startsWith("Image")
           {
@@ -298,17 +306,18 @@ public class ND2Reader extends FormatReader {
             int off = 0;
             for (int i=0; i<len; i++) {
               char c = (char) b[i];
-              if (off == 0 && c == '!') off = i + 1; 
-              
+              if (off == 0 && c == '!') off = i + 1;
+
               if (Character.isISOControl(c) || !Character.isDefined(c)) {
-                b[i] = (byte) ' '; 
+                b[i] = (byte) ' ';
               }
             }
-         
-            if (b[off] == '<' && b[off + 1] == '?' && b[off + 2] == 'x' && 
-              b[off + 3] == 'm' && b[off + 4] == 'l')
+
+            if (len - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
+              b[off + 2] == 'x' && b[off + 3] == 'm' &&
+              b[off + 4] == 'l') // b.substring(off, off + 5).equals("<?xml")
             {
-              ByteArrayInputStream s = 
+              ByteArrayInputStream s =
                 new ByteArrayInputStream(b, off, len - off);
 
               try {
@@ -321,7 +330,7 @@ public class ND2Reader extends FormatReader {
               catch (SAXException exc) {
                 throw new FormatException(exc);
               }
-            } 
+            }
           }
 
           if (core.imageCount[0] > 0 && offsets == null) {
@@ -334,7 +343,7 @@ public class ND2Reader extends FormatReader {
           }
         }
       }
-  
+
       if (core.sizeC[0] == 0) core.sizeC[0] = 1;
       core.currentOrder[0] = "XYCZT";
       core.rgb[0] = core.sizeC[0] > 1;
@@ -669,7 +678,7 @@ public class ND2Reader extends FormatReader {
     core.littleEndian[0] = false;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null); 
+    store.setImage(currentId, null, null, null);
     store.setPixels(
       new Integer(core.sizeX[0]),
       new Integer(core.sizeY[0]),
@@ -728,7 +737,7 @@ public class ND2Reader extends FormatReader {
         }
       }
       else if (qName.equals("uiBpcInMemory")) {
-        if (attributes.getValue("value") == null) return; 
+        if (attributes.getValue("value") == null) return;
     	int bits = Integer.parseInt(attributes.getValue("value"));
         int bytes = bits / 8;
         switch (bytes) {
