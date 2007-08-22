@@ -260,6 +260,7 @@ public class ZeissZVIReader extends FormatReader {
 
       core.sizeZ[0] = zIndices.size();
       core.sizeT[0] = tIndices.size();
+
       if (core.sizeC[0] != cIndices.size()) core.sizeC[0] *= cIndices.size();
 
       core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC();
@@ -341,20 +342,19 @@ public class ZeissZVIReader extends FormatReader {
       initFile(id);
     }
 
-
     // rearrange axis sizes, if necessary 
-     
-    String t = (String) metadata.get("Image Index T");
-    if (t == null) t = (String) metadata.get("Image Index T 0");
 
-    String z = (String) metadata.get("Image Index Z");
-    if (z == null) z = (String) metadata.get("Image Index Z 0");
+    int lastZ = zIndices.size() == 0 ? Integer.MAX_VALUE : 
+      ((Integer) zIndices.get(zIndices.size() - 1)).intValue();
+    int lastT = tIndices.size() == 0 ? Integer.MAX_VALUE : 
+      ((Integer) tIndices.get(tIndices.size() - 1)).intValue();
 
-    if (z != null && t != null) {
-      int firstZ = Integer.parseInt(z);
-      int firstT = Integer.parseInt(t);
-
-      if (firstZ >= core.sizeZ[0] || firstT >= core.sizeT[0]) {
+    if ((zIndex > lastZ || tIndex > lastT) && (zIndex == core.sizeC[0] - 1 ||
+      tIndex == core.sizeC[0] - 1 || 
+      (zIndex != 0 && zIndex % core.sizeC[0] == 0) ||
+      (tIndex != 0 && tIndex % core.sizeC[0] == 0)) && zIndex != lastT) 
+    {
+      if (zIndex >= core.sizeZ[0] || tIndex >= core.sizeT[0]) {
         int tmp = core.sizeZ[0];
         core.sizeZ[0] = core.sizeT[0];
         core.sizeT[0] = tmp;
@@ -544,9 +544,7 @@ public class ZeissZVIReader extends FormatReader {
         {
           if (entryName.equals("Tags")) parseTags(s);
         }
-        else if (dirName.equals("Tags") && isContents) {
-          parseTags(s);
-        }
+        else if (dirName.equals("Tags") && isContents) parseTags(s);
         else if (isContents && (dirName.equals("Image") ||
           dirName.toUpperCase().indexOf("ITEM") != -1) &&
           (data.length > core.sizeX[0]*core.sizeY[0]))
