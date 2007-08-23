@@ -145,6 +145,7 @@ public class LegacyQTTools {
       r.exec("import quicktime.std.movies.media.VideoMedia");
       r.exec("import quicktime.util.QTHandle");
       r.exec("import quicktime.util.RawEncodedImage");
+      r.exec("import quicktime.util.EndianOrder"); 
     }
     catch (ExceptionInInitializerError err) {
       noQT = true;
