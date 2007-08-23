@@ -167,12 +167,16 @@ public class Exporter {
       }
     }
     catch (FormatException e) {
-      IJ.error(e.getMessage());
       e.printStackTrace();
+      ByteArrayOutputStream buf = new ByteArrayOutputStream();
+      e.printStackTrace(new PrintStream(buf));
+      IJ.error(e.getMessage() + ":\n" + buf.toString());
     }
     catch (IOException e) {
-      IJ.error(e.getMessage());
       e.printStackTrace();
+      ByteArrayOutputStream buf = new ByteArrayOutputStream();
+      e.printStackTrace(new PrintStream(buf));
+      IJ.error(e.getMessage() + ":\n" + buf.toString());
     }
   }
 
