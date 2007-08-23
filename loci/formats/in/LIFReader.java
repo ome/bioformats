@@ -506,14 +506,9 @@ public class LIFReader extends FormatReader {
       Enumeration keys = metadata.keys();
       while (keys.hasMoreElements()) {
         String k = (String) keys.nextElement();
-        boolean use = true;
-        for (int j=0; j<seriesNames.size(); j++) {
-          if (j != i && k.startsWith((String) seriesNames.get(j))) {
-            use = false;
-            break;
-          }
+        if (k.startsWith((String) seriesNames.get(i) + " ")) {
+          core.seriesMetadata[i].put(k, metadata.get(k));
         }
-        if (use) core.seriesMetadata[i].put(k, metadata.get(k));
       }
     }
   }
