@@ -180,7 +180,7 @@ public class LegacyQTWriter extends FormatWriter {
       }
       catch (Exception e) {
         trace(e);
-        throw new FormatException("Legacy QuickTime writer failed.");
+        throw new FormatException("Legacy QuickTime writer failed", e);
       }
     }
 
@@ -255,7 +255,7 @@ public class LegacyQTWriter extends FormatWriter {
     }
     catch (Exception e) {
       trace(e);
-      throw new FormatException("Legacy QuickTime writer failed.");
+      throw new FormatException("Legacy QuickTime writer failed", e);
     }
     if (last) {
       try {
@@ -271,7 +271,7 @@ public class LegacyQTWriter extends FormatWriter {
       }
       catch (Exception e) {
         trace(e);
-        throw new FormatException("Legacy QuickTime writer failed.");
+        throw new FormatException("Legacy QuickTime writer failed", e);
       }
     }
   }
