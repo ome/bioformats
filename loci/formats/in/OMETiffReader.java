@@ -177,6 +177,12 @@ public class OMETiffReader extends BaseTiffReader {
           int numPlanes = nullNumPlanes ? (nullIfd ? core.imageCount[0] : 1) :
             Integer.parseInt(aNumPlanes);
 
+          // HACK: adjust first values, if this file
+          // was written by a buggy version of WiscScan
+          if (firstZ >= core.sizeZ[0]) firstZ = core.sizeZ[0] - 1;
+          if (firstC >= core.sizeC[0]) firstC = core.sizeC[0] - 1;
+          if (firstT >= core.sizeT[0]) firstT = core.sizeT[0] - 1;
+
           // populate ZCT matrix
           char d1st = core.currentOrder[i].charAt(2);
           char d2nd = core.currentOrder[i].charAt(3);
