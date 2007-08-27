@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
+import java.util.zip.*;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.MemoryCacheImageInputStream;
@@ -136,6 +137,11 @@ public class ND2Reader extends FormatReader {
   /** Whether or not the pixel data is compressed using JPEG 2000. */
   private boolean isJPEG;
 
+  /** Whether or not the pixel data is losslessly compressed. */
+  private boolean isLossless;
+
+  private boolean adjustImageCount;
+
   private Vector zs = new Vector();
   private Vector ts = new Vector();
 
@@ -173,7 +179,7 @@ public class ND2Reader extends FormatReader {
     {
       throw new FormatException("Buffer too small.");
     }
-
+  
     in.seek(offsets[no]);
 
     if (isJPEG) {
@@ -185,10 +191,16 @@ public class ND2Reader extends FormatReader {
       }
       pixels = null;
     }
-    else {
-      in.readFully(buf);
+    else if (isLossless) {
+      byte[] b = new byte[buf.length];
+      in.read(b);
+      Inflater decompresser = new Inflater();
+      decompresser.setInput(b);
+      try { decompresser.inflate(buf); }
+      catch (DataFormatException e) { throw new FormatException(e); }
+      decompresser.end();
     }
-
+    else in.readFully(buf);
     return buf;
   }
 
@@ -344,10 +356,20 @@ public class ND2Reader extends FormatReader {
         }
       }
 
+      if (isLossless) {
+        for (int i=0; i<offsets.length; i++) {
+          offsets[i] += i + 1;
+        }
+      }
+
       if (core.sizeC[0] == 0) core.sizeC[0] = 1;
       core.currentOrder[0] = "XYCZT";
       core.rgb[0] = core.sizeC[0] > 1;
-      core.littleEndian[0] = false;
+      if (core.sizeC[0] > 1 && adjustImageCount) {
+        core.imageCount[0] /= 3;
+        core.sizeZ[0] /= 3;
+      }
+      core.littleEndian[0] = isLossless;
       core.interleaved[0] = false;
 
       return;
@@ -736,9 +758,15 @@ public class ND2Reader extends FormatReader {
           default: core.pixelType[0] = FormatTools.UINT8;
         }
       }
+      else if (qName.equals("bValid")) {
+        adjustImageCount = attributes.getValue("value").equals("true");
+      }
+      else if (qName.equals("uiComp")) {
+        core.sizeC[0] = Integer.parseInt(attributes.getValue("value"));
+      }
       else if (qName.equals("uiBpcInMemory")) {
         if (attributes.getValue("value") == null) return;
-    	int bits = Integer.parseInt(attributes.getValue("value"));
+    	  int bits = Integer.parseInt(attributes.getValue("value"));
         int bytes = bits / 8;
         switch (bytes) {
           case 1:
@@ -764,6 +792,10 @@ public class ND2Reader extends FormatReader {
           core.sizeZ[0] = n;
         }
         core.sizeT[0] = 1;
+      }
+      else if (qName.equals("dCompressionParam")) {
+        isLossless = attributes.getValue("value").equals("1");
+        addMeta(qName, attributes.getValue("value"));
       }
       else {
         addMeta(qName, attributes.getValue("value"));
