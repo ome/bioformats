@@ -440,7 +440,8 @@ public class OMEXMLReader extends FormatReader {
         store.setRoot(m.getRoot());
       }
       else {
-        FormatTools.convertMetadata((MetadataRetrieve) r.getVar("omexml"), store);
+        FormatTools.convertMetadata((MetadataRetrieve)
+          r.getVar("omexml"), store);
       }
     }
     catch (ReflectException e) {

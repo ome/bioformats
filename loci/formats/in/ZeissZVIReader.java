@@ -448,11 +448,11 @@ public class ZeissZVIReader extends FormatReader {
       Float gammaValue = null;
 
       try { blackValue = new Double(black); }
-      catch (Exception e) { }
+      catch (NumberFormatException e) { }
       try { whiteValue = new Double(white); }
-      catch (Exception e) { }
+      catch (NumberFormatException e) { }
       try { gammaValue = new Float(gamma); }
-      catch (Exception e) { }
+      catch (NumberFormatException e) { }
 
       store.setDisplayChannel(new Integer(i), blackValue, whiteValue,
         gammaValue, null);
@@ -463,7 +463,7 @@ public class ZeissZVIReader extends FormatReader {
       String exposure = (String) getMeta("Exposure Time [ms] " + i);
       Float exp = new Float(0.0);
       try { exp = new Float(exposure); }
-      catch (Exception e) { }
+      catch (NumberFormatException e) { }
 
       store.setPlaneInfo(zct[0], zct[1], zct[2], null, exp, null);
     }

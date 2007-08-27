@@ -178,7 +178,7 @@ public class LegacyQTWriter extends FormatWriter {
 
         r.exec("imgDesc = seq.getDescription()");
       }
-      catch (Exception e) {
+      catch (ReflectException e) {
         trace(e);
         throw new FormatException("Legacy QuickTime writer failed", e);
       }
@@ -253,7 +253,7 @@ public class LegacyQTWriter extends FormatWriter {
       r.exec("videoMedia.addSample(imageHandle, zero, dataSize, " +
         "rate, imgDesc, one, sync)");
     }
-    catch (Exception e) {
+    catch (ReflectException e) {
       trace(e);
       throw new FormatException("Legacy QuickTime writer failed", e);
     }
@@ -269,7 +269,7 @@ public class LegacyQTWriter extends FormatWriter {
         r.exec("movie.addResource(omf, minusOne, name)");
         r.exec("QTSession.close()");
       }
-      catch (Exception e) {
+      catch (ReflectException e) {
         trace(e);
         throw new FormatException("Legacy QuickTime writer failed", e);
       }

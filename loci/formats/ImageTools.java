@@ -1891,13 +1891,13 @@ public final class ImageTools {
     }
 
     BufferedImage result = null;
+    Image scaled = scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
     try {
-      result = makeBuffered(scaleAWT(source, width, height,
-        Image.SCALE_AREA_AVERAGING), source.getColorModel());
+      result = makeBuffered(scaled, source.getColorModel());
     }
     catch (Exception e) {
-      result = makeBuffered(scaleAWT(source, width, height,
-        Image.SCALE_AREA_AVERAGING));
+      // CTR TODO - eliminate catch-all exception handling
+      result = makeBuffered(scaled);
     }
     return padImage(result, finalWidth, finalHeight);
   }

@@ -155,7 +155,7 @@ public class ReflectedUniverse {
       command = command.substring(eqIndex + 1).trim();
     }
 
-    Object result;
+    Object result = null;
 
     // parse parentheses
     int leftParen = command.indexOf("(");
@@ -229,10 +229,12 @@ public class ReflectedUniverse {
       }
 
       // invoke constructor
-      try {
-        result = constructor.newInstance(args);
-      }
-      catch (Exception exc) {
+      Exception exc = null;
+      try { result = constructor.newInstance(args); }
+      catch (InstantiationException e) { exc = e; }
+      catch (IllegalAccessException e) { exc = e; }
+      catch (InvocationTargetException e) { exc = e; }
+      if (exc != null) {
         if (debug) LogTools.trace(exc);
         throw new ReflectException("Cannot instantiate object", exc);
       }
@@ -280,13 +282,13 @@ public class ReflectedUniverse {
       }
 
       // invoke method
-      try {
-        result = method.invoke(var, args);
-      }
-      catch (Exception exc) {
+      Exception exc = null;
+      try { result = method.invoke(var, args); }
+      catch (IllegalAccessException e) { exc = e; }
+      catch (InvocationTargetException e) { exc = e; }
+      if (exc != null) {
         if (debug) LogTools.trace(exc);
-        throw new ReflectException("Cannot execute method: " +
-          methodName, exc);
+        throw new ReflectException("Cannot execute method: " + methodName, exc);
       }
     }
 
@@ -399,10 +401,8 @@ public class ReflectedUniverse {
         throw new ReflectException("No such field: " + varName, exc);
       }
       Object fieldVal;
-      try {
-        fieldVal = field.get(var);
-      }
-      catch (Exception exc) {
+      try { fieldVal = field.get(var); }
+      catch (IllegalAccessException exc) {
         if (debug) LogTools.trace(exc);
         throw new ReflectException("Cannot get field value: " + varName, exc);
       }

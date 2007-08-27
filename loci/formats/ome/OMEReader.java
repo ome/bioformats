@@ -135,10 +135,7 @@ public class OMEReader extends FormatReader {
     fs.addWantedField("Repository", "ImageServerURL");
     c.addWantedFields("default_pixels", fs);
 
-    try {
-      rs = DataServer.getDefaultServices(server);
-    }
-    catch (Exception e) { throw new FormatException(e); }
+    rs = DataServer.getDefaultServices(server);
 
     rc = rs.getRemoteCaller();
 

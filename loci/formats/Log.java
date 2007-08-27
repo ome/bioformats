@@ -48,6 +48,12 @@ public class Log {
     System.out.print(x);
   }
 
+  /** Flushes buffer to the log. Override to control how logging occurs. */
+  public void flush() {
+    // default implementation flushes the console
+    System.out.flush();
+  }
+
   public void print(boolean x) { print("" + x); }
   public void print(char x) { print("" + x); }
   public void print(double x) { print("" + x); }

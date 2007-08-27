@@ -419,7 +419,7 @@ public final class FormatTools {
   // -- Utility methods - sanity checking
 
   /**
-   * Asserts that the current file is either null, nor not, according to the
+   * Asserts that the current file is either null, or not, according to the
    * given flag. If the assertion fails, an IllegalStateException is thrown.
    * @param currentId File name to test.
    * @param notNull True iff id should be non-null.
@@ -453,6 +453,10 @@ public final class FormatTools {
 
   // -- Utility methods -- metadata conversion --
 
+  /**
+   * Copies information from a metadata retrieval object
+   * (source) into a metadata store (destination).
+   */
   public static void convertMetadata(MetadataRetrieve source,
     MetadataStore dest)
   {

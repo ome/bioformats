@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.ome;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import loci.formats.*;
-
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.managers.*;
@@ -157,7 +157,7 @@ public class OMEWriter extends FormatWriter {
         r = pf.findRepository(0);
         r.setImageServerURL(omeis);
       }
-      catch (Exception e) {
+      catch (ImageServerException e) {
         throw new FormatException("Could not find repository.", e);
       }
 
@@ -344,7 +344,7 @@ public class OMEWriter extends FormatWriter {
 
       validLogin = true;
     }
-    catch (Exception e) {
+    catch (MalformedURLException e) {
       validLogin = false;
       throw new FormatException("Login failed", e);
     }

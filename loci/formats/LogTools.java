@@ -67,4 +67,6 @@ public final class LogTools {
   public static void trace(String s) { log.trace(s); }
   public static void trace(Throwable t) { log.trace(t); }
 
+  public static void flush()  { log.flush(); }
+
 }

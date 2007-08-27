@@ -588,7 +588,7 @@ public final class TiffTools {
       try {
         if (fields[i].getInt(null) == value) return fields[i].getName();
       }
-      catch (Exception exc) { }
+      catch (IllegalAccessException exc) { }
     }
     return "" + value;
   }
@@ -1298,6 +1298,7 @@ public final class TiffTools {
           }
         }
         catch (Exception e) {
+          // CTR TODO - eliminate catch-all exception handling
           if (strip == 0) {
             if (e instanceof FormatException) throw (FormatException) e;
             else throw new FormatException(e);

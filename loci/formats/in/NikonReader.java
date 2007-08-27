@@ -263,8 +263,7 @@ public class NikonReader extends BaseTiffReader {
     try {
       offset = TiffTools.getIFDIntValue(ifds[0], 330, false, 0);
     }
-    catch (Exception exc) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (FormatException exc) {
       if (debug) trace(exc);
       long[] array = TiffTools.getIFDLongArray(ifds[0], 330, false);
       offset = (int) array[array.length - 1];

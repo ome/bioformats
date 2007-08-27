@@ -139,6 +139,7 @@ public class OpenlabReader extends FormatReader {
       in.skipBytes(298);
 
       // open image using pict reader
+      Exception exception = null;
       try {
         b = new byte[(int) (nextTag - in.getFilePointer())];
         in.read(b);
@@ -149,9 +150,10 @@ public class OpenlabReader extends FormatReader {
           System.arraycopy(tmp[i], 0, b, i * tmp[i].length, tmp[i].length);
         }
       }
-      catch (Exception exc) {
-        // CTR TODO - eliminate catch-all exception handling
-        if (debug) trace(exc);
+      catch (FormatException exc) { exception = exc; }
+      catch (IOException exc) { exception = exc; }
+      if (exception != null) {
+        if (debug) trace(exception);
 
         b = null;
         in.seek(info.layerStart + 12);

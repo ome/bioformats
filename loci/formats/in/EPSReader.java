@@ -226,8 +226,7 @@ public class EPSReader extends FormatReader {
             core.sizeY[0] = Integer.parseInt(t.nextToken());
             bps = Integer.parseInt(t.nextToken());
           }
-          catch (Exception exc) {
-            // CTR TODO - eliminate catch-all exception handling
+          catch (NumberFormatException exc) {
             if (debug) trace(exc);
             core.sizeC[0] = Integer.parseInt(t.nextToken());
           }

@@ -28,6 +28,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.File;
+import java.io.IOException;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
@@ -224,7 +225,12 @@ public class ImageViewer extends JFrame
       }
       myReader.close(true);
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      LogTools.trace(exc);
+      wait(false);
+      return;
+    }
+    catch (IOException exc) {
       LogTools.trace(exc);
       wait(false);
       return;
@@ -257,7 +263,8 @@ public class ImageViewer extends JFrame
         progress.setProgress(1);
       }
     }
-    catch (Exception exc) { LogTools.trace(exc); }
+    catch (FormatException exc) { LogTools.trace(exc); }
+    catch (IOException exc) { LogTools.trace(exc); }
     wait(false);
   }
 
@@ -267,13 +274,10 @@ public class ImageViewer extends JFrame
     in = reader;
     images = img;
 
-    try {
-      sizeZ = reader.getSizeZ();
-      sizeT = reader.getSizeT();
-      sizeC = reader.getEffectiveSizeC();
-      //if (reader.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
-    }
-    catch (Exception exc) { LogTools.trace(exc); }
+    sizeZ = reader.getSizeZ();
+    sizeT = reader.getSizeT();
+    sizeC = reader.getEffectiveSizeC();
+    //if (reader.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
 
     fileSave.setEnabled(true);
     nSlider.removeChangeListener(this);
@@ -404,8 +408,7 @@ public class ImageViewer extends JFrame
       // update Z, T and C sliders
       int ndx = getImageIndex();
       int[] zct = {-1, -1, -1};
-      try { zct = in.getZCTCoords(ndx); }
-      catch (Exception exc) { LogTools.trace(exc); }
+      zct = in.getZCTCoords(ndx);
       if (zct[0] >= 0) {
         zSlider.removeChangeListener(this);
         zSlider.setValue(zct[0] + 1);
@@ -424,9 +427,7 @@ public class ImageViewer extends JFrame
     }
     else {
       // update N slider
-      int ndx = -1;
-      try { ndx = in.getIndex(getZ(), getC(), getT()); }
-      catch (Exception exc) { LogTools.trace(exc); }
+      int ndx = in.getIndex(getZ(), getC(), getT());
       if (ndx >= 0) {
         nSlider.removeChangeListener(this);
         nSlider.setValue(ndx + 1);

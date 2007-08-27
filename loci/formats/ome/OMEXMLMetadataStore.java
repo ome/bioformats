@@ -26,6 +26,7 @@ package loci.formats.ome;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -1787,7 +1788,11 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
       Constructor con = c.getConstructor(new Class[] {param});
       return (OMEXMLNode) con.newInstance(new Object[] {base});
     }
-    catch (Exception exc) { LogTools.trace(exc); }
+    catch (ClassNotFoundException exc) { LogTools.trace(exc); }
+    catch (NoSuchMethodException exc) { LogTools.trace(exc); }
+    catch (InstantiationException exc) { LogTools.trace(exc); }
+    catch (IllegalAccessException exc) { LogTools.trace(exc); }
+    catch (InvocationTargetException exc) { LogTools.trace(exc); }
     return null;
   }
 

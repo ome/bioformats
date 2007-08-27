@@ -589,8 +589,7 @@ public abstract class BaseTiffReader extends FormatReader {
         Date date = parse.parse(creationDate, new ParsePosition(0));
         creationDate = sdf.format(date);
       }
-      catch (Exception e) {
-        // TODO: eliminate catch-all exception handling
+      catch (NullPointerException e) {
         try {
           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
           SimpleDateFormat parse =
@@ -598,8 +597,7 @@ public abstract class BaseTiffReader extends FormatReader {
           Date date = parse.parse(creationDate, new ParsePosition(0));
           creationDate = sdf.format(date);
         }
-        catch (Exception exc) {
-          // TODO: eliminate catch-all exception handling
+        catch (NullPointerException exc) {
           if (debug) trace(exc);
           creationDate = null;
         }

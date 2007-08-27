@@ -299,10 +299,11 @@ public class QTReader extends FormatReader {
     chunkSizes = new Vector();
     status("Parsing tags");
 
-    try {
-      parse(0, 0, in.length());
-    }
-    catch (Exception exc) {
+    Exception exc = null;
+    try { parse(0, 0, in.length()); }
+    catch (FormatException e) { exc = e; }
+    catch (IOException e) { exc = e; }
+    if (exc != null) {
       if (debug) trace(exc);
       useLegacy = true;
       legacy = createLegacyReader();

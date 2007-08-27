@@ -30,15 +30,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.*;
 import java.io.*;
-import java.util.Vector;
+//import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import loci.formats.*;
 import loci.formats.ome.OMEXMLMetadataStore;
-import loci.formats.out.TiffWriter;
-import org.openmicroscopy.xml.*;
-import org.openmicroscopy.xml.st.*;
+//import loci.formats.out.TiffWriter;
+//import org.openmicroscopy.xml.*;
+//import org.openmicroscopy.xml.st.*;
 
 /**
  * A utility for reorganizing and converting QuickTime movies,
@@ -322,7 +322,8 @@ public class DataConverter extends JFrame implements
           pack();
         }
       }
-      catch (Exception exc) { LogTools.trace(exc); }
+      catch (FormatException exc) { LogTools.trace(exc); }
+      catch (IOException exc) { LogTools.trace(exc); }
 
       updateLabels(pattern);
     }
@@ -347,7 +348,8 @@ public class DataConverter extends JFrame implements
           codec.addItem(codecs[i]);
         }
       }
-      catch (Exception exc) { LogTools.trace(exc); }
+      catch (FormatException exc) { LogTools.trace(exc); }
+      catch (IOException exc) { LogTools.trace(exc); }
     }
     else if ("zChoice".equals(cmd)) {
       String newName = (String) zChoice.getSelectedItem();
@@ -386,11 +388,8 @@ public class DataConverter extends JFrame implements
 
   public void stateChanged(ChangeEvent e) {
     if (e.getSource() == series) {
-      try {
-        swap.setSeries(((Integer) series.getValue()).intValue() - 1);
-        updateLabels(input.getText());
-      }
-      catch (Exception exc) { LogTools.trace(exc); }
+      swap.setSeries(((Integer) series.getValue()).intValue() - 1);
+      updateLabels(input.getText());
     }
   }
 
@@ -622,24 +621,28 @@ public class DataConverter extends JFrame implements
             }
 
             // if we're writing a TIFF file, insert an OME-XML block
-            if (writer.getWriter(outFile) instanceof TiffWriter) {
-              RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
-
-              OMENode root = (OMENode)
-                ((OMEXMLMetadataStore) swap.getMetadataStore()).getRoot();
-
-              // add TiffData element here
-              Vector images = root.getChildNodes("Image");
-              for (int p=0; p<images.size(); p++) {
-                PixelsNode pix =
-                  (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
-                DOMUtil.createChild(pix.getDOMElement(), "TiffData");
-              }
-
-              TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION,
-                root.writeOME(true));
-              raf.close();
-            }
+            // CTR TODO fix this code; it is wrong
+            // First of all, it writes OMECA-XML instead of OME-XML.
+            // Secondly, this logic should not be in the DataConverter itself;
+            // DataConverter should just use OMETiffWriter, which handles it.
+//            if (writer.getWriter(outFile) instanceof TiffWriter) {
+//              RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
+//
+//              OMENode root = (OMENode)
+//                ((OMEXMLMetadataStore) swap.getMetadataStore()).getRoot();
+//
+//              // add TiffData element here
+//              Vector images = root.getChildNodes("Image");
+//              for (int p=0; p<images.size(); p++) {
+//                PixelsNode pix =
+//                  (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
+//                DOMUtil.createChild(pix.getDOMElement(), "TiffData");
+//              }
+//
+//              TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION,
+//                root.writeOME(true));
+//              raf.close();
+//            }
           }
         }
       }
@@ -655,7 +658,15 @@ public class DataConverter extends JFrame implements
       progress.setValue(0);
       if (swap != null) swap.close();
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      LogTools.trace(exc);
+      String err = exc.getMessage();
+      if (err == null) err = exc.getClass().getName();
+      msg("Sorry, an error occurred: " + err);
+      progress.setString("");
+      progress.setValue(0);
+    }
+    catch (IOException exc) {
       LogTools.trace(exc);
       String err = exc.getMessage();
       if (err == null) err = exc.getClass().getName();
@@ -713,7 +724,8 @@ public class DataConverter extends JFrame implements
       includeT.setEnabled(true);
       includeC.setEnabled(true);
     }
-    catch (Exception exc) { LogTools.trace(exc); }
+    catch (FormatException exc) { LogTools.trace(exc); }
+    catch (IOException exc) { LogTools.trace(exc); }
   }
 
   // -- Helper classes --

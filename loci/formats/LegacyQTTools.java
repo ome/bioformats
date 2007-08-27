@@ -202,7 +202,7 @@ public class LegacyQTTools {
       r.exec("QTSession.close()");
       return new Dimension(width, height);
     }
-    catch (Exception e) {
+    catch (ReflectException e) {
       r.exec("QTSession.close()");
       throw new FormatException("PICT height determination failed", e);
     }
@@ -256,7 +256,7 @@ public class LegacyQTTools {
       return Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(
         width, height, colorModel, pixels, 0, intsPerRow));
     }
-    catch (Exception e) {
+    catch (ReflectException e) {
       try { r.exec("QTSession.close()"); }
       catch (ReflectException exc) { LogTools.trace(exc); }
       throw new FormatException("PICT extraction failed", e);

@@ -32,8 +32,9 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 /**
- * OMETiffReader is the file format reader for OME-TIFF files.
- * See http://www.loci.wisc.edu/ome/ome-tiff-spec.html
+ * OMETiffReader is the file format reader for
+ * <a href="http://www.loci.wisc.edu/ome/ome-tiff-spec.html">OME-TIFF</a>
+ * files.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/OMETiffReader.java">Trac</a>,
@@ -51,11 +52,11 @@ public class OMETiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (!name.toLowerCase().endsWith("tif") &&
-      !name.toLowerCase().endsWith("tiff"))
-    {
-      return false;
-    }
+    if (!super.isThisType(name, open)) return false; // check extension
+
+    // just checking the filename isn't enough to differentiate between
+    // OME-TIFF and regular TIFF; open the file and check more thoroughly
+    if (!open) return true;
 
     try {
       RandomAccessStream ras = new RandomAccessStream(name);
@@ -68,7 +69,7 @@ public class OMETiffReader extends BaseTiffReader {
       if (comment == null) return false;
       return comment.indexOf("ome.xsd") >= 0;
     }
-    catch (Exception e) { return false; }
+    catch (IOException e) { return false; }
   }
 
   // -- Internal BaseTiffReader API methods --

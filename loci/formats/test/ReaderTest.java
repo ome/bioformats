@@ -27,6 +27,7 @@ package loci.formats.test;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.ome.OMEXMLMetadataStore;
@@ -115,7 +116,12 @@ public class ReaderTest {
       }
       assert success;
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed BufferedImage test");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed BufferedImage test");
       writeLog(exc);
       assert false;
@@ -151,7 +157,12 @@ public class ReaderTest {
       if (!success) writeLog(file + " failed byte array test");
       assert success;
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed byte array test");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed byte array test");
       writeLog(exc);
       assert false;
@@ -192,7 +203,12 @@ public class ReaderTest {
       }
       assert success;
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed thumbnail BufferedImage test");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed thumbnail BufferedImage test");
       writeLog(exc);
       assert false;
@@ -228,7 +244,12 @@ public class ReaderTest {
       if (!success) writeLog(file + " failed thumbnail byte array test");
       assert success;
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed thumbnail byte array test");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed thumbnail byte array test");
       writeLog(exc);
       assert false;
@@ -237,7 +258,7 @@ public class ReaderTest {
 
   /**
    * @testng.test dataProvider = "provider"
-    *             groups = "all fast"
+   *              groups = "all fast"
    */
   public void testImageCount(String file) {
     try {
@@ -259,7 +280,12 @@ public class ReaderTest {
       if (!success) writeLog(file + " failed image count test");
       assert success;
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed image count test");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed image count test");
       writeLog(exc);
       assert false;
@@ -308,7 +334,12 @@ public class ReaderTest {
       if (!success) writeLog(file + " failed OME-XML sanity test");
       assert success;
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed OME-XML sanity test");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed OME-XML sanity test");
       writeLog(exc);
       assert false;
@@ -363,7 +394,12 @@ public class ReaderTest {
       }
       assert true;
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed consistent metadata test");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed consistent metadata test");
       writeLog(exc);
       assert false;
@@ -410,7 +446,12 @@ public class ReaderTest {
       }
       assert success;
     }
-    catch (Exception e) {
+    catch (FormatException e) {
+      writeLog(file + " failed memory test");
+      writeLog(e);
+      assert false;
+    }
+    catch (IOException e) {
       writeLog(file + " failed memory test");
       writeLog(e);
       assert false;
@@ -445,7 +486,12 @@ public class ReaderTest {
       }
       assert true;
     }
-    catch (Exception e) {
+    catch (FormatException e) {
+      writeLog(file + " failed consistent access time test");
+      writeLog(e);
+      assert false;
+    }
+    catch (IOException e) {
       writeLog(file + " failed consistent access time test");
       writeLog(e);
       assert false;
@@ -479,7 +525,12 @@ public class ReaderTest {
       reader.close();
       assert true;
     }
-    catch (Exception e) {
+    catch (FormatException e) {
+      writeLog(file + " failed sane used files test");
+      writeLog(e);
+      assert false;
+    }
+    catch (IOException e) {
       writeLog(file + " failed sane used files test");
       writeLog(e);
       assert false;
@@ -503,7 +554,12 @@ public class ReaderTest {
       reader.close();
       assert xml != null;
     }
-    catch (Exception e) {
+    catch (FormatException e) {
+      writeLog(file + " failed OME-XML validation");
+      writeLog(e);
+      assert false;
+    }
+    catch (IOException e) {
       writeLog(file + " failed OME-XML validation");
       writeLog(e);
       assert false;
@@ -534,7 +590,12 @@ public class ReaderTest {
         }
       }
     }
-    catch (Exception exc) {
+    catch (FormatException exc) {
+      writeLog(file + " failed pixels consistency");
+      writeLog(exc);
+      assert false;
+    }
+    catch (IOException exc) {
       writeLog(file + " failed pixels consistency");
       writeLog(exc);
       assert false;
@@ -547,6 +608,7 @@ public class ReaderTest {
    *              groups = "config"
    */
   public void writeConfigFiles(String file) {
+    Exception exc = null;
     try {
       FileStitcher reader = new FileStitcher();
       reader.setId(file);
@@ -595,7 +657,9 @@ public class ReaderTest {
       w.close();
       assert true;
     }
-    catch (Exception e) {
+    catch (FormatException e) { exc = e; }
+    catch (IOException e) { exc = e; }
+    if (exc != null) {
       try {
         File f = new File(new Location(file).getParent(), ".bioformats");
         BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
@@ -603,7 +667,7 @@ public class ReaderTest {
         w.close();
         assert true;
       }
-      catch (IOException exc) { }
+      catch (IOException e) { }
     }
   }
 
@@ -624,9 +688,7 @@ public class ReaderTest {
       }
       return sb.toString();
     }
-    catch (Exception e) {
-      writeLog(e);
-    }
+    catch (NoSuchAlgorithmException e) { writeLog(e); }
     return null;
   }
 
@@ -634,16 +696,14 @@ public class ReaderTest {
   private static void writeLog(String s) {
     if (logFile == null) createLogFile();
     LogTools.println(s);
-    try { logFile.flush(); }
-    catch (IOException exc) { }
+    LogTools.flush();
   }
 
   /** Writes the given exception's stack trace to the log file. */
   private static void writeLog(Exception e) {
     if (logFile == null) createLogFile();
     LogTools.trace(e);
-    try { logFile.flush(); }
-    catch (IOException exc) { }
+    LogTools.flush();
   }
 
   /** Creates a new log file. */
@@ -651,13 +711,10 @@ public class ReaderTest {
     try {
       String date = new Date().toString().replaceAll(":", "-");
       logFile = new FileWriter("bio-formats-test-" + date + ".log");
-      logFile.flush();
       TestLogger log = new TestLogger(logFile);
       LogTools.setLog(log);
     }
-    catch (IOException e) {
-
-    }
+    catch (IOException e) { }
   }
 
   /** Recursively generate a list of files to test. */
@@ -743,6 +800,11 @@ public class ReaderTest {
       try {
         if (writer != null) writer.write(x);
       }
+      catch (IOException exc) { }
+    }
+
+    public void flush() {
+      try { writer.flush(); }
       catch (IOException exc) { }
     }
   }

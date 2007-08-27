@@ -410,11 +410,6 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     FormatTools.assertId(currentId, false, 1);
-    if (currentId != null) {
-      String s = "setNormalized called with open file.";
-      if (debug && debugLevel >= 2) trace(s);
-      else LogTools.println("Warning: " + s);
-    }
     normalizeData = normalize;
   }
 
@@ -426,11 +421,6 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setMetadataCollected(boolean) */
   public void setMetadataCollected(boolean collect) {
     FormatTools.assertId(currentId, false, 1);
-    if (currentId != null) {
-      String s = "setMetadataCollected called with open file.";
-      if (debug && debugLevel >= 2) trace(s);
-      else LogTools.println("Warning: " + s);
-    }
     collectMetadata = collect;
   }
 
@@ -442,11 +432,6 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
   public void setOriginalMetadataPopulated(boolean populate) {
     FormatTools.assertId(currentId, false, 1);
-    if (currentId != null) {
-      String s = "setOriginalMetadataPopulated called with open file.";
-      if (debug && debugLevel >= 2) trace(s);
-      else LogTools.println("Warning: " + s);
-    }
     saveOriginalMetadata = populate;
   }
 
@@ -499,11 +484,6 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setMetadataFiltered(boolean) */
   public void setMetadataFiltered(boolean filter) {
     FormatTools.assertId(currentId, false, 1);
-    if (currentId != null) {
-      String s = "setMetadataFiltered called with open file.";
-      if (debug && debugLevel >= 2) trace(s);
-      else LogTools.println("Warning: " + s);
-    }
     filterMetadata = filter;
   }
 
@@ -515,11 +495,6 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(currentId, false, 1);
-    if (currentId != null) {
-      String s = "setMetadataStore called with open file.";
-      if (debug && debugLevel >= 2) trace(s);
-      else LogTools.println("Warning: " + s);
-    }
     metadataStore = store;
   }
 

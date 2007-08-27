@@ -603,6 +603,8 @@ public class OmeisImporter {
       else importer.importIds(fileIds);
     }
     catch (Exception exc) {
+      // NB: We really do want to catch all exception types here,
+      // to redirect output properly for the OME server.
       if (http) {
         importer.printHttpErrorHeader();
         System.out.println("An exception occurred while processing FileIDs:");
