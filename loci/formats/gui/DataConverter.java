@@ -35,7 +35,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+//import loci.formats.ome.OMEXMLMetadataStore;
 //import loci.formats.out.TiffWriter;
 //import org.openmicroscopy.xml.*;
 //import org.openmicroscopy.xml.st.*;
@@ -473,10 +473,11 @@ public class DataConverter extends JFrame implements
 
       swap.swapDimensions(order);
 
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-      store.createRoot();
-      swap.close();
-      swap.setMetadataStore(store);
+      // CTR TODO this code is probably no longer necessary
+//      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+//      store.createRoot();
+//      swap.close();
+//      swap.setMetadataStore(store);
 
       // determine internal and external dimensions for each axis
 

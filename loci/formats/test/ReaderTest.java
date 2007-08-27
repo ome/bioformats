@@ -30,6 +30,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import loci.formats.*;
+// NB: OME Java is required to run the test suite.
 import loci.formats.ome.OMEXMLMetadataStore;
 
 /**
