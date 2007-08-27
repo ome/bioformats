@@ -54,24 +54,24 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
+    if (!open) return true; // not allowed to check the file contents
 
-    if (open) {
-      try {
-        RandomAccessStream ras = new RandomAccessStream(name);
-        Hashtable ifd = TiffTools.getFirstIFD(ras);
-        ras.close();
-        if (ifd == null) return false;
+    // just checking the filename isn't enough to differentiate between
+    // Improvision and regular TIFF; open the file and check more thoroughly
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
+      if (ifd == null) return false;
 
-        String comment =
-          (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-        return comment == null ? false : comment.indexOf("Improvision") != -1;
-      }
-      catch (IOException exc) {
-        if (debug) trace(exc);
-        return false;
-      }
+      String comment =
+        (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      return comment == null ? false : comment.indexOf("Improvision") != -1;
     }
-    else return false;
+    catch (IOException exc) {
+      if (debug) trace(exc);
+      return false;
+    }
   }
 
   // -- Internal BaseTiffReader API methods --

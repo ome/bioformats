@@ -343,7 +343,7 @@ public class OpenlabReader extends FormatReader {
       }
       return isThisType(b);
     }
-    else {
+    else { // not allowed to check the file contents
       return name.indexOf(".") < 0; // file appears to have no extension
     }
   }
