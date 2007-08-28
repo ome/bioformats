@@ -56,7 +56,12 @@ public abstract class FormatWriter extends FormatHandler
   /** Whether the current file has been prepped for writing. */
   protected boolean initialized;
 
-  protected MetadataRetrieve metadataRetrieve;
+  /**
+   * Current metadata retrieval object. Should <b>never</b> be accessed
+   * directly as the semantics of {@link #getMetadataRetrieve(String)}
+   * prevent "null" access.
+   */
+  protected MetadataRetrieve metadataRetrieve = new DummyMetadata();
 
   // -- Constructors --
 
@@ -97,6 +102,9 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatWriter#setMetadataRetrieve(MetadataRetrieve) */
   public void setMetadataRetrieve(MetadataRetrieve retrieve) {
     FormatTools.assertId(currentId, false, 1);
+    if (retrieve == null) {
+      throw new IllegalArgumentException("Metadata object is null");
+    }
     metadataRetrieve = retrieve;
   }
 
