@@ -32,7 +32,7 @@ import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
@@ -318,8 +318,8 @@ public class LociDataBrowser {
         FileInfo fi = new FileInfo();
 
         MetadataStore store = reader.getMetadataStore();
-        if (store instanceof OMEXMLMetadataStore) {
-          fi.description = ((OMEXMLMetadataStore) store).dumpXML();
+        if (store instanceof OMEXMLMetadata) {
+          fi.description = ((OMEXMLMetadata) store).dumpXML();
         }
 
         imp.setFileInfo(fi);
@@ -341,8 +341,8 @@ public class LociDataBrowser {
         if (fi == null) fi = new FileInfo();
 
         MetadataStore store = ipw.store;
-        if (store instanceof OMEXMLMetadataStore) {
-          fi.description = ((OMEXMLMetadataStore) store).dumpXML();
+        if (store instanceof OMEXMLMetadata) {
+          fi.description = ((OMEXMLMetadata) store).dumpXML();
         }
 
         ipw.getImagePlus().setFileInfo(fi);

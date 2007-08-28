@@ -372,8 +372,7 @@ public class Notes extends JFrame implements ActionListener {
       progress.setString("Saving metadata to companion file...");
 
       if (currentRoot == null) {
-        OMEXMLMetadataStore tmp = new OMEXMLMetadataStore();
-        tmp.createRoot();
+        OMEXMLMetadata tmp = new OMEXMLMetadata();
         currentRoot = (OMENode) tmp.getRoot();
       }
 
@@ -381,7 +380,7 @@ public class Notes extends JFrame implements ActionListener {
 
       // always save to the current filename + ".ome"
 
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      OMEXMLMetadata store = new OMEXMLMetadata();
       store.setRoot(currentRoot);
 
       try {
@@ -575,10 +574,10 @@ public class Notes extends JFrame implements ActionListener {
         currentRoot = new OMENode(companion);
       }
 
-      reader.setMetadataStore(new OMEXMLMetadataStore());
+      reader.setMetadataStore(new OMEXMLMetadata());
       reader.setId(currentFile);
-      OMEXMLMetadataStore store =
-        (OMEXMLMetadataStore) reader.getMetadataStore();
+      OMEXMLMetadata store =
+        (OMEXMLMetadata) reader.getMetadataStore();
 
       if (companion.exists()) {
         // merge the two OMENode objects

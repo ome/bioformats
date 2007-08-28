@@ -29,7 +29,7 @@ import ij.process.*;
 import java.awt.image.*;
 import java.io.IOException;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 
 public class ImagePlusWrapper {
 
@@ -48,7 +48,7 @@ public class ImagePlusWrapper {
   public ImagePlusWrapper(String name, IFormatReader r, FileStitcher fs,
     boolean stitch) throws IOException, FormatException
   {
-    store = new OMEXMLMetadataStore();
+    store = new OMEXMLMetadata();
     synchronized (r) {
       try {
         store.createRoot();

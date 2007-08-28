@@ -37,7 +37,7 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.ome.OMEReader;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.plugins.browser.LociDataBrowser;
 
 /**
@@ -112,7 +112,7 @@ public class Importer {
     else { // options.isOME
       r = new OMEReader();
     }
-    OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+    OMEXMLMetadata store = new OMEXMLMetadata();
     r.setMetadataStore(store);
 
     IJ.showStatus("");
@@ -584,7 +584,7 @@ public class Importer {
    * the specified parameters and import options.
    */
   private void showStack(ImageStack stack, String file, String series,
-    OMEXMLMetadataStore store, int cCount, int zCount, int tCount,
+    OMEXMLMetadata store, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
     FileStitcher fs, ImporterOptions options)
     throws FormatException, IOException
@@ -651,7 +651,7 @@ public class Importer {
         newStacks[i]);
       imp.setProperty("Info", "File full path=" + file +
         "\nSeries name=" + series + "\n");
-      applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(), imp,
+      applyCalibration((OMEXMLMetadata) r.getMetadataStore(), imp,
         r.getSeries());
 
       // colorize channels; mostly copied from the ImageJ source
@@ -824,7 +824,7 @@ public class Importer {
   }
 
   /** Applies spatial calibrations to an image stack. */
-  private void applyCalibration(OMEXMLMetadataStore store,
+  private void applyCalibration(OMEXMLMetadata store,
     ImagePlus imp, int series)
   {
     double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;

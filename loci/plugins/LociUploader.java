@@ -33,7 +33,7 @@ import ij.process.ColorProcessor;
 import ij.io.FileInfo;
 import java.util.HashSet;
 import loci.formats.FormatTools;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEWriter;
 
 /**
@@ -115,7 +115,7 @@ public class LociUploader implements PlugIn {
       }
       ImageStack is = imp.getImageStack();
       FileInfo fi = imp.getOriginalFileInfo();
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      OMEXMLMetadata store = new OMEXMLMetadata();
 
       // if we opened this stack with the Bio-Formats importer, then the
       // appropriate OME-XML is in fi.description

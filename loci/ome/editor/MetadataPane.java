@@ -37,7 +37,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import loci.formats.*;
 import loci.formats.in.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
@@ -154,7 +154,7 @@ public class MetadataPane extends JPanel
 
   protected Hashtable tiffDataStore;
 
-  protected OMEXMLMetadataStore ms;
+  protected OMEXMLMetadata ms;
 
   // -- Fields - raw panel --
 
@@ -500,7 +500,7 @@ public class MetadataPane extends JPanel
     if (currentFile != null) {
       String id = currentFile.getPath();
       ImageReader read = new ImageReader();
-      OMEXMLMetadataStore oms = new OMEXMLMetadataStore();
+      OMEXMLMetadata oms = new OMEXMLMetadata();
       read.setMetadataStore(oms);
 
       try {
@@ -761,7 +761,7 @@ public class MetadataPane extends JPanel
 
       try {
         reader = new ImageReader();
-        ms = new OMEXMLMetadataStore();
+        ms = new OMEXMLMetadata();
         ms.createRoot();
 
         // tell reader to write metadata as it's being
