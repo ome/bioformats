@@ -152,7 +152,7 @@ public class LociUploader implements PlugIn {
         store.setPixels(null, null, null, null, null,
           new Integer(FormatTools.UINT8), null, null, null, null);
       }
-      ul.setMetadataStore(store);
+      ul.setMetadata(store);
 
       boolean little = !store.getBigEndian(null).booleanValue();
 

@@ -63,7 +63,7 @@ public class ImageUploader {
       OMEWriter writer = new OMEWriter();
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.setRoot(data.getOMENode());
-      writer.setMetadataStore(store);
+      writer.setMetadata(store);
 
       String id = server + "?user=" + username + "&password=" + password;
       writer.setId(id);
