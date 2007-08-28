@@ -558,7 +558,7 @@ public class ND2Reader extends FormatReader {
     int numInvalid = 0;
 
     for (int i=1; i<offsets.length; i++) {
-      if (offsets[i] - offsets[i - 1] < (core.sizeX[0] * core.sizeY[0] / 3)) {
+      if (offsets[i] - offsets[i - 1] < (core.sizeX[0] * core.sizeY[0] / 4)) {
         offsets[i - 1] = 0;
         numInvalid++;
       }
