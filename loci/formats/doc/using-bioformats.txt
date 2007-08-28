@@ -7,8 +7,8 @@ This document describes various things that are useful to know when working
 with Bio-Formats.  It is recommended that you obtain the Bio-Formats source
 by following the directions at http://www.loci.wisc.edu/software, rather than
 using an official release.  It is also recommended that you have a copy of the
-JavaDocs nearby; the notes that follow will make more sense when you see the
-API.
+JavaDocs nearby (available online at http://www.loci.wisc.edu/software/docs);
+the notes that follow will make more sense when you see the API.
 
 For a complete list of supported formats, see the Bio-Formats home page:
 http://www.loci.wisc.edu/ome/formats.html
