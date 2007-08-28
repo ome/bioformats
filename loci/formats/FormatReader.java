@@ -80,7 +80,7 @@ public abstract class FormatReader extends FormatHandler
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore(String)} prevent "null" access.
    */
-  protected MetadataStore metadataStore = new DummyMetadataStore();
+  protected MetadataStore metadataStore = new DummyMetadata();
 
   // -- Constructors --
 
