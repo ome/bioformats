@@ -46,10 +46,8 @@ public class AggregateMetadataStore implements MetadataStore {
   /**
    * Creates a new instance.
    * @param delegates of type {@link MetadataStore}.
-   * @throws MetadataStoreException if the constructor is unable to
-   * import pre-requisites of its delegates.
    */
-  public AggregateMetadataStore(List delegates) throws MetadataStoreException {
+  public AggregateMetadataStore(List delegates) {
     this.delegates = delegates;
   }
 
@@ -89,8 +87,8 @@ public class AggregateMetadataStore implements MetadataStore {
    * Throws a RuntimeException up to the caller.
    */
   public Object getRoot() {
-    throw new RuntimeException("Unsupported with AggregateMetadataStore. Use" +
-      " getDelegates() and getRoot().");
+    throw new RuntimeException("Unsupported with AggregateMetadataStore. " +
+      "Use getDelegates() and getRoot().");
   }
 
   /**
@@ -98,8 +96,8 @@ public class AggregateMetadataStore implements MetadataStore {
    * Throws a RuntimeException up to the caller.
    */
   public void setRoot(Object root) {
-    throw new RuntimeException("Unsupported with AggregateMetadataStore. Use" +
-      " getDelegates() and setRoot().");
+    throw new RuntimeException("Unsupported with AggregateMetadataStore. " +
+      "Use getDelegates() and setRoot().");
   }
 
   /* @see MetadataStore#setChannelGlobalMinMax(int, Double, Double, Integer) */

@@ -32,11 +32,6 @@ package loci.formats;
  * any specific storage medium (file, relational database, etc.) should be
  * expected to store and be expected to return with relationships maintained.
  *
- * It is expected that the constructors of all implementations of
- * <code>MetadataStore</code> interface throw a
- * {@link MetadataStoreException} if they are unable to initialize
- * some of their dependencies.
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataStore.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataStore.java">SVN</a></dd></dl>
