@@ -762,7 +762,6 @@ public class MetadataPane extends JPanel
       try {
         reader = new ImageReader();
         ms = new OMEXMLMetadata();
-        ms.createRoot();
 
         // tell reader to write metadata as it's being
         // parsed to an OMENode (DOM in memory)

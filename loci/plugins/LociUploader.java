@@ -115,17 +115,17 @@ public class LociUploader implements PlugIn {
       }
       ImageStack is = imp.getImageStack();
       FileInfo fi = imp.getOriginalFileInfo();
-      OMEXMLMetadata store = new OMEXMLMetadata();
+      OMEXMLMetadata store;
 
       // if we opened this stack with the Bio-Formats importer, then the
       // appropriate OME-XML is in fi.description
       if (fi != null && fi.description != null &&
         fi.description.endsWith("</OME>"))
       {
-        store.createRoot(fi.description);
+        store = new OMEXMLMetadata(fi.description);
       }
       else {
-        store.createRoot();
+        store = new OMEXMLMetadata();
         int pixelType = FormatTools.UINT8;
         switch (imp.getBitDepth()) {
           case 16: pixelType = FormatTools.UINT16; break;

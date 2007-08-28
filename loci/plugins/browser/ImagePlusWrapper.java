@@ -51,7 +51,6 @@ public class ImagePlusWrapper {
     store = new OMEXMLMetadata();
     synchronized (r) {
       try {
-        store.createRoot();
         r.setMetadataStore(store);
       }
       catch (Exception e) {
