@@ -28,7 +28,7 @@ import loci.formats.FormatTools;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
 import loci.formats.ome.OMEWriter;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 
 /**
  * ImageUploader is a helper class for uploading VisBio datasets
@@ -61,7 +61,7 @@ public class ImageUploader {
   {
     try {
       OMEWriter writer = new OMEWriter();
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      OMEXMLMetadata store = new OMEXMLMetadata();
       store.setRoot(data.getOMENode());
       writer.setMetadata(store);
 

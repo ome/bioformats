@@ -36,7 +36,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
 import visad.util.Util;
@@ -389,7 +389,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // get number of images and OME-XML metadata from the first file
     int numImages = 0;
     ImageReader reader = new ImageReader();
-    OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+    OMEXMLMetadata store = new OMEXMLMetadata();
     reader.setMetadataStore(store);
     try {
       reader.setId(ids[0]);

@@ -32,7 +32,7 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import javax.swing.JComponent;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
@@ -489,7 +489,7 @@ public class Dataset extends ImageTransform {
     readers = new ImageReader[ids.length];
     for (int i=0; i<ids.length; i++) {
       readers[i] = new ImageReader();
-      readers[i].setMetadataStore(new OMEXMLMetadataStore());
+      readers[i].setMetadataStore(new OMEXMLMetadata());
     }
 
     // determine number of images per source file
@@ -585,8 +585,8 @@ public class Dataset extends ImageTransform {
       return;
     }
     MetadataStore ms = readers[0].getMetadataStore();
-    if (ms instanceof OMEXMLMetadataStore) {
-      ome = (OMENode) ((OMEXMLMetadataStore) ms).getRoot();
+    if (ms instanceof OMEXMLMetadata) {
+      ome = (OMENode) ((OMEXMLMetadata) ms).getRoot();
     }
 
     // construct metadata controls
