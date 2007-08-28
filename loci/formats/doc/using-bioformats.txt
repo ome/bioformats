@@ -65,6 +65,9 @@ Alternatively, getMetadata() will return the entire Hashtable.
 Note that the keys in this Hashtable are different for each format, hence the
 name "format-specific metadata".
 
+See the Bio-Formats Metadata Guide for more information on the metadata
+capabilities that Bio-Formats provides.
+
                              File Reading Extras
                             ---------------------
 
