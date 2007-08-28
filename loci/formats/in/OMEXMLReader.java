@@ -170,9 +170,9 @@ public class OMEXMLReader extends FormatReader {
     in = new RandomAccessStream(id);
     ReflectedUniverse r = new ReflectedUniverse();
     try {
-      r.exec("import loci.formats.ome.OMEXMLMetadataStore");
+      r.exec("import loci.formats.ome.OMEXMLMetadata");
       r.exec("import org.openmicroscopy.xml.OMENode");
-      r.exec("omexml = new OMEXMLMetadataStore()");
+      r.exec("omexmlMeta = new OMEXMLMetadata()");
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);
@@ -202,7 +202,7 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException(exc);
     }
     try {
-      r.exec("omexml.setRoot(ome)");
+      r.exec("omexmlMeta.setRoot(ome)");
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);
@@ -343,7 +343,7 @@ public class OMEXMLReader extends FormatReader {
     int oldSeries = getSeries();
 
     try {
-      r.exec("omexml.setRoot(ome)");
+      r.exec("omexmlMeta.setRoot(ome)");
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);
@@ -357,14 +357,14 @@ public class OMEXMLReader extends FormatReader {
       String pixType = null;
       try {
         r.setVar("ndx", i);
-        w = (Integer) r.exec("omexml.getSizeX(ndx)");
-        h = (Integer) r.exec("omexml.getSizeY(ndx)");
-        t = (Integer) r.exec("omexml.getSizeT(ndx)");
-        z = (Integer) r.exec("omexml.getSizeZ(ndx)");
-        c = (Integer) r.exec("omexml.getSizeC(ndx)");
-        pixType = (String) r.exec("omexml.getPixelType(ndx)");
+        w = (Integer) r.exec("omexmlMeta.getSizeX(ndx)");
+        h = (Integer) r.exec("omexmlMeta.getSizeY(ndx)");
+        t = (Integer) r.exec("omexmlMeta.getSizeT(ndx)");
+        z = (Integer) r.exec("omexmlMeta.getSizeZ(ndx)");
+        c = (Integer) r.exec("omexmlMeta.getSizeC(ndx)");
+        pixType = (String) r.exec("omexmlMeta.getPixelType(ndx)");
         core.currentOrder[i] =
-          (String) r.exec("omexml.getDimensionOrder(ndx)");
+          (String) r.exec("omexmlMeta.getDimensionOrder(ndx)");
       }
       catch (ReflectException exc) {
         throw new FormatException(exc);
@@ -430,25 +430,20 @@ public class OMEXMLReader extends FormatReader {
     setSeries(oldSeries);
     Arrays.fill(core.orderCertain, true);
 
+    // populate assigned metadata store with the
+    // contents of the internal OME-XML metadata object
     MetadataStore store = getMetadataStore();
 
+    MetadataRetrieve omexmlMeta = null;
     try {
-      if (store.getClass().getName().equals(
-        "loci.formats.ome.OMEXMLMetadataStore"))
-      {
-        MetadataStore m = (MetadataStore) r.getVar("omexml");
-        store.setRoot(m.getRoot());
-      }
-      else {
-        FormatTools.convertMetadata((MetadataRetrieve)
-          r.getVar("omexml"), store);
-      }
+      omexmlMeta = (MetadataRetrieve) r.getVar("omexmlMeta");
     }
     catch (ReflectException e) {
       if (debug) LogTools.trace(e);
     }
 
-    System.gc();
+    String xml = MetadataTools.getOMEXML(omexmlMeta);
+    MetadataTools.convertMetadata(xml, store);
   }
 
   // -- Helper methods --

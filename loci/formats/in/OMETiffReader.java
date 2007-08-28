@@ -444,29 +444,8 @@ public class OMETiffReader extends BaseTiffReader {
   protected void initMetadataStore() {
     String comment = (String) getMeta("Comment");
     metadata.remove("Comment");
-
-    boolean isOMEXML;
-    try {
-      Class omexmlMeta = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
-      isOMEXML = omexmlMeta.isAssignableFrom(metadataStore.getClass());
-    }
-    catch (Throwable t) {
-      isOMEXML = false;
-    }
-
-    if (isOMEXML) {
-      ReflectedUniverse r = new ReflectedUniverse();
-      try {
-        r.exec("import loci.formats.ome.OMEXMLMetadataStore");
-        r.setVar("xmlStore", metadataStore);
-        r.setVar("comment", comment);
-        r.exec("xmlStore.createRoot(comment)");
-        return;
-      }
-      catch (ReflectException exc) {
-        // OME Java probably not available; ignore this error
-      }
-    }
+    MetadataStore store = getMetadataStore();
+    MetadataTools.convertMetadata(comment, store);
   }
 
 }

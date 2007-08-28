@@ -70,8 +70,19 @@ public interface IFormatWriter extends IFormatHandler {
   /** Reports whether the writer can save multiple images to a single file. */
   boolean canDoStacks();
 
-  /** Sets the retrievable metadata. */
+  /**
+   * Sets the metadata retrieval object from
+   * which to retrieve standardized metadata.
+   */
   void setMetadataRetrieve(MetadataRetrieve r);
+
+  /**
+   * Retrieves the current metadata retrieval object for this writer. You can
+   * be assured that this method will <b>never</b> return a <code>null</code>
+   * metadata retrieval object.
+   * @return A metadata retrieval object.
+   */
+  MetadataRetrieve getMetadataRetrieve();
 
   /** Sets the color model. */
   void setColorModel(ColorModel cm);

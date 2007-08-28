@@ -370,18 +370,6 @@ public class ImageReader implements IFormatReader {
     return getReader().getCoreMetadata();
   }
 
-  /* @see IFormatReader#getMetadataStore() */
-  public MetadataStore getMetadataStore() {
-    FormatTools.assertId(currentId, true, 2);
-    return getReader().getMetadataStore();
-  }
-
-  /* @see IFormatReader#getMetadataStoreRoot() */
-  public Object getMetadataStoreRoot() {
-    FormatTools.assertId(currentId, true, 2);
-    return getReader().getMetadataStoreRoot();
-  }
-
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     for (int i=0; i<readers.length; i++) readers[i].close(fileOnly);
@@ -467,6 +455,18 @@ public class ImageReader implements IFormatReader {
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(currentId, false, 2);
     for (int i=0; i<readers.length; i++) readers[i].setMetadataStore(store);
+  }
+
+  /* @see IFormatReader#getMetadataStore() */
+  public MetadataStore getMetadataStore() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().getMetadataStore();
+  }
+
+  /* @see IFormatReader#getMetadataStoreRoot() */
+  public Object getMetadataStoreRoot() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().getMetadataStoreRoot();
   }
 
   // -- IFormatHandler API methods --

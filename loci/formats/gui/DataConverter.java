@@ -30,15 +30,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.*;
 import java.io.*;
-//import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import loci.formats.*;
-//import loci.formats.ome.OMEXMLMetadataStore;
-//import loci.formats.out.TiffWriter;
-//import org.openmicroscopy.xml.*;
-//import org.openmicroscopy.xml.st.*;
 
 /**
  * A utility for reorganizing and converting QuickTime movies,
@@ -473,12 +468,6 @@ public class DataConverter extends JFrame implements
 
       swap.swapDimensions(order);
 
-      // CTR TODO this code is probably no longer necessary
-//      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-//      store.createRoot();
-//      swap.close();
-//      swap.setMetadataStore(store);
-
       // determine internal and external dimensions for each axis
 
       int internalZ = includeZ.isSelected() ? swap.getSizeZ() : 1;
@@ -620,30 +609,6 @@ public class DataConverter extends JFrame implements
                 }
               }
             }
-
-            // if we're writing a TIFF file, insert an OME-XML block
-            // CTR TODO fix this code; it is wrong
-            // First of all, it writes OMECA-XML instead of OME-XML.
-            // Secondly, this logic should not be in the DataConverter itself;
-            // DataConverter should just use OMETiffWriter, which handles it.
-//            if (writer.getWriter(outFile) instanceof TiffWriter) {
-//              RandomAccessFile raf = new RandomAccessFile(outFile, "rw");
-//
-//              OMENode root = (OMENode)
-//                ((OMEXMLMetadataStore) swap.getMetadataStore()).getRoot();
-//
-//              // add TiffData element here
-//              Vector images = root.getChildNodes("Image");
-//              for (int p=0; p<images.size(); p++) {
-//                PixelsNode pix =
-//                  (PixelsNode) ((ImageNode) images.get(p)).getDefaultPixels();
-//                DOMUtil.createChild(pix.getDOMElement(), "TiffData");
-//              }
-//
-//              TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION,
-//                root.writeOME(true));
-//              raf.close();
-//            }
           }
         }
       }

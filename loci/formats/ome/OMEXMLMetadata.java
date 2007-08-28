@@ -1,5 +1,5 @@
 //
-// OMEXMLMetadataStore.java
+// OMEXMLMetadata.java
 //
 
 /*
@@ -41,18 +41,13 @@ import org.xml.sax.SAXException;
  * the org.openmicroscopy.xml package to compile (part of ome-java.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEXMLMetadataStore.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEXMLMetadataStore.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEXMLMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEXMLMetadata.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
-
-  // -- Static fields --
-
-  /** Logger for this class. */
-  //private static Log log = LogFactory.getLog(OMEXMLMetadataStore.class);
+public class OMEXMLMetadata implements MetadataStore, MetadataRetrieve {
 
   // -- Fields --
 
@@ -68,12 +63,15 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   /** DOM element that backs the first Image's CustomAttributes node. */
   private Element firstImageCA;
 
-  // -- Constructor --
+  // -- Constructors --
 
-  /** Creates a new instance. */
-  public OMEXMLMetadataStore() { createRoot(); }
+  /** Creates a new OME-XML metadata object. */
+  public OMEXMLMetadata() { this(null); }
 
-  // -- OMEXMLMetadataStore API methods --
+  /** Creates a new OME-XML metadata object around the given OME-XML string. */
+  public OMEXMLMetadata(String xml) { createRoot(xml); }
+
+  // -- OMEXMLMetadata API methods --
 
   /** Constructs a new OME-XML root node with the given XML block. */
   public void createRoot(String xml) {
@@ -97,7 +95,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     return null;
   }
 
-  /** Add the key/value pair as a new OriginalMetadata node. */
+  /** Adds the key/value pair as a new OriginalMetadata node. */
   public void populateOriginalMetadata(String key, String value) {
     if (firstImageCA == null) {
       ImageNode image = (ImageNode) getChild(root, "Image", 0);
@@ -1126,7 +1124,7 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
     pixels.setSizeZ(sizeZ);
     pixels.setSizeC(sizeC);
     pixels.setSizeT(sizeT);
-    pixels.setPixelType(pixelTypeAsString(pixelType));
+    pixels.setPixelType(FormatTools.getPixelTypeString(pixelType.intValue()));
     pixels.setBigEndian(bigEndian);
     pixels.setDimensionOrder(dimensionOrder);
 
@@ -1684,35 +1682,6 @@ public class OMEXMLMetadataStore implements MetadataStore, MetadataRetrieve {
   }
 
   // -- Helper methods --
-
-  /**
-   * Gets the OME pixel type string from the Bio-Formats enumeration.
-   * @param pixelType the <i>pixel type</i> as an enumeration.
-   * @return the <i>pixel type</i> as a string.
-   */
-  private String pixelTypeAsString(Integer pixelType) {
-    if (pixelType == null) return null;
-
-    switch (pixelType.intValue()) {
-      case FormatTools.INT8:
-        return "int8";
-      case FormatTools.UINT8:
-        return "Uint8";
-      case FormatTools.INT16:
-        return "int16";
-      case FormatTools.UINT16:
-        return "Uint16";
-      case FormatTools.INT32:
-        return "int32";
-      case FormatTools.UINT32:
-        return "Uint32";
-      case FormatTools.FLOAT:
-        return "float";
-      case FormatTools.DOUBLE:
-        return "double";
-    }
-    throw new RuntimeException("Unknown pixel type: " + pixelType);
-  }
 
   /**
    * Creates default DisplayChannel nodes for use with DisplayOptions.

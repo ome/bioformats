@@ -62,9 +62,9 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
       r.exec("import java.util.Iterator");
     }
-    catch (Throwable t) {
+    catch (ReflectException exc) {
       noPOI = true;
-      if (debug) LogTools.trace(t);
+      if (debug) LogTools.trace(exc);
     }
     return r;
   }

@@ -66,16 +66,16 @@ public class OmeisImporter {
   /** Reader for handling file formats. */
   private FileStitcher reader;
 
-  /** Metadata store, for gathering OME-XML metadata. */
-  private OMEXMLMetadataStore store;
+  /** Metadata object, for gathering OME-XML metadata. */
+  private OMEXMLMetadata omexmlMeta;
 
   // -- Constructor --
 
   public OmeisImporter() {
     reader = new FileStitcher(new ChannelSeparator());
-    store = new OMEXMLMetadataStore();
+    omexmlMeta = new OMEXMLMetadata();
     reader.setOriginalMetadataPopulated(true);
-    reader.setMetadataStore(store);
+    reader.setMetadataStore(omexmlMeta);
   }
 
   // -- OmeisImporter API methods - main functionality --
@@ -189,7 +189,7 @@ public class OmeisImporter {
     int seriesCount = reader.getSeriesCount();
 
     // get DOM and Pixels elements for the file's OME-XML metadata
-    OMENode ome = (OMENode) store.getRoot();
+    OMENode ome = (OMENode) omexmlMeta.getRoot();
     Document omeDoc = null;
     try {
       omeDoc = ome.getOMEDocument(false);

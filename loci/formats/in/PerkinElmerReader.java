@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.*;
 import java.util.*;
@@ -468,15 +469,15 @@ public class PerkinElmerReader extends FormatReader {
       // use reflection to avoid dependency on Java 1.4-specific split method
       Class c = String.class;
       String[] tokens = new String[0];
+      Throwable th = null;
       try {
         Method split = c.getMethod("split", new Class[] {c});
         tokens = (String[]) split.invoke(new String(data),
           new Object[] {regex});
       }
-      catch (Throwable th) {
-        // CTR TODO - eliminate catch-all exception handling
-        if (debug) trace(th);
-      }
+      catch (NoSuchMethodException exc) { if (debug) trace(exc); }
+      catch (IllegalAccessException exc) { if (debug) trace(exc); }
+      catch (InvocationTargetException exc) { if (debug) trace(exc); }
 
       for (int j=0; j<tokens.length; j++) {
         if (tokens[j].indexOf("<") != -1) tokens[j] = "";

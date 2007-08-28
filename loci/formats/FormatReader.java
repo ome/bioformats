@@ -26,7 +26,6 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -172,19 +171,9 @@ public abstract class FormatReader extends FormatHandler
     }
 
     if (saveOriginalMetadata) {
-      try {
-        MetadataStore store = getMetadataStore();
-        if (store.getClass().getName().equals(
-          "loci.formats.ome.OMEXMLMetadataStore"));
-        {
-          Method m = store.getClass().getMethod("populateOriginalMetadata",
-            new Class[] {String.class, String.class});
-          m.invoke(store, new Object[] {key, value.toString()});
-        }
-      }
-      catch (Throwable t) {
-        debug("Error populating OME-XML");
-        trace(t);
+      MetadataStore store = getMetadataStore();
+      if (MetadataTools.isOMEXMLMetadata(store)) {
+        MetadataTools.populateOriginalMetadata(store, key, value.toString());
       }
     }
 

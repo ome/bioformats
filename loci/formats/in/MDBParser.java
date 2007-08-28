@@ -67,6 +67,7 @@ public final class MDBParser {
     }
     catch (Throwable t) {
       noMDB = true;
+      if (FormatHandler.debug) LogTools.trace(t);
     }
     return r;
   }

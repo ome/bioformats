@@ -179,7 +179,7 @@ public class ND2Reader extends FormatReader {
     {
       throw new FormatException("Buffer too small.");
     }
-  
+
     in.seek(offsets[no]);
 
     if (isJPEG) {

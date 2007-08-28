@@ -30,12 +30,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import loci.formats.*;
-// NB: OME Java is required to run the test suite.
-import loci.formats.ome.OMEXMLMetadataStore;
 
 /**
  * TestNG tester for Bio-Formats file format readers.
  * Details on failed tests are written to a log file, for easier processing.
+ *
+ * NB: {@link loci.formats.ome} and ome-java.jar
+ * are required for some of the tests.
  *
  * To run tests:
  * java -ea -mx512m -Dtestng.directory="/path/" -Dtestng.multiplier="1.0" \
@@ -299,13 +300,12 @@ public class ReaderTest {
    */
   public void testOMEXML(String file) {
     try {
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-      store.createRoot();
+      MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
       FileStitcher reader = new FileStitcher();
-      reader.setMetadataStore(store);
+      reader.setMetadataStore(omexmlMeta);
       reader.setId(file);
 
-      store = (OMEXMLMetadataStore) reader.getMetadataStore();
+      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
 
       boolean success = true;
       for (int i=0; i<reader.getSeriesCount(); i++) {
@@ -315,16 +315,16 @@ public class ReaderTest {
 
         String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
-        boolean failX = reader.getSizeX() != store.getSizeX(ii).intValue();
-        boolean failY = reader.getSizeY() != store.getSizeY(ii).intValue();
-        boolean failZ = reader.getSizeZ() != store.getSizeZ(ii).intValue();
-        boolean failC = reader.getSizeC() != store.getSizeC(ii).intValue();
-        boolean failT = reader.getSizeT() != store.getSizeT(ii).intValue();
+        boolean failX = reader.getSizeX() != retrieve.getSizeX(ii).intValue();
+        boolean failY = reader.getSizeY() != retrieve.getSizeY(ii).intValue();
+        boolean failZ = reader.getSizeZ() != retrieve.getSizeZ(ii).intValue();
+        boolean failC = reader.getSizeC() != retrieve.getSizeC(ii).intValue();
+        boolean failT = reader.getSizeT() != retrieve.getSizeT(ii).intValue();
         boolean failBE = reader.isLittleEndian() ==
-          store.getBigEndian(ii).booleanValue();
+          retrieve.getBigEndian(ii).booleanValue();
         boolean failDE =
-          !reader.getDimensionOrder().equals(store.getDimensionOrder(ii));
-        boolean failType = !type.equalsIgnoreCase(store.getPixelType(ii));
+          !reader.getDimensionOrder().equals(retrieve.getDimensionOrder(ii));
+        boolean failType = !type.equalsIgnoreCase(retrieve.getPixelType(ii));
 
         if (success) {
           success = !(failX || failY || failZ || failC || failT || failBE ||
@@ -544,13 +544,15 @@ public class ReaderTest {
    */
   public void testValidXML(String file) {
     try {
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-      store.createRoot();
+      MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
       FileStitcher reader = new FileStitcher();
-      reader.setMetadataStore(store);
+      reader.setMetadataStore(omexmlMeta);
       reader.setId(file);
 
-      String xml = ((OMEXMLMetadataStore) reader.getMetadataStore()).dumpXML();
+      MetadataRetrieve retrieve =
+        (MetadataRetrieve) reader.getMetadataStore();
+
+      String xml = MetadataTools.getOMEXML(retrieve);
       if (xml == null) writeLog(file + " failed OME-XML validation");
       reader.close();
       assert xml != null;

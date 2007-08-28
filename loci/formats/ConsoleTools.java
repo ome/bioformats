@@ -27,11 +27,8 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
 
 /**
  * A utility class for command line tools.
@@ -155,15 +152,8 @@ public final class ConsoleTools {
     if (map != null) Location.mapId(id, map);
     if (omexml) {
       reader.setOriginalMetadataPopulated(true);
-      try {
-        // NB: avoid dependencies on optional loci.formats.ome package
-        Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
-        MetadataStore ms = (MetadataStore) c.newInstance();
-        reader.setMetadataStore(ms);
-      }
-      catch (Throwable t) {
-        // NB: error messages for missing OME-Java are printed later
-      }
+      MetadataStore store = MetadataTools.createOMEXMLMetadata();
+      if (store != null) reader.setMetadataStore(store);
     }
 
     // check file format
@@ -532,90 +522,10 @@ public final class ConsoleTools {
       LogTools.println();
       LogTools.println("Generating OME-XML");
       MetadataStore ms = reader.getMetadataStore();
-
-      // NB: avoid dependencies on optional loci.formats.ome package
-      if (ms.getClass().getName().equals(
-        "loci.formats.ome.OMEXMLMetadataStore"))
-      {
-        // output OME-XML
-        String xml = null;
-        try {
-          Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
-          xml = (String) m.invoke(ms, (Object[]) null);
-          LogTools.println(FormatTools.indentXML(xml));
-        }
-        catch (Throwable t) {
-          LogTools.println("Error generating OME-XML:");
-          LogTools.trace(t);
-        }
-
-        // check Java version (XML validation only works in Java 1.5+)
-        String version = System.getProperty("java.version");
-        int dot = version.indexOf(".");
-        if (dot >= 0) dot = version.indexOf(".", dot + 1);
-        float ver = Float.NaN;
-        if (dot >= 0) {
-          try {
-            ver = Float.parseFloat(version.substring(0, dot));
-          }
-          catch (NumberFormatException exc) { }
-        }
-        if (ver != ver) {
-          LogTools.println("Warning: cannot determine if Java version\"" +
-            version + "\" supports Java v1.5. OME-XML validation may fail.");
-        }
-
-        if (ver != ver || ver >= 1.5f) {
-          // validate OME-XML (Java 1.5+ only)
-          LogTools.println("Validating OME-XML");
-
-          // use reflection to avoid dependency on optional
-          // org.openmicroscopy.xml or javax.xml.validation packages
-          ReflectedUniverse r = new ReflectedUniverse();
-
-          try {
-            // look up a factory for the W3C XML Schema language
-            r.setVar("schemaPath", "http://www.w3.org/2001/XMLSchema");
-            r.exec("import javax.xml.validation.SchemaFactory");
-            r.exec("factory = SchemaFactory.newInstance(schemaPath)");
-
-            // compile the schema
-            r.exec("import java.net.URL");
-            r.setVar("omePath",
-              "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd");
-            r.exec("schemaLocation = new URL(omePath)");
-            r.exec("schema = factory.newSchema(schemaLocation)");
-
-            // HACK - workaround for weird Linux bug preventing use of
-            // schema.newValidator() method even though it is "public final"
-            r.setAccessibilityIgnored(true);
-
-            // get a validator from the schema
-            r.exec("validator = schema.newValidator()");
-
-            // prepare the XML source
-            r.setVar("ms", ms);
-            r.exec("root = ms.getRoot()");
-            r.exec("import java.io.StringReader");
-            r.setVar("xml", xml);
-            r.exec("reader = new StringReader(xml)");
-            r.exec("import org.xml.sax.InputSource");
-            r.exec("is = new InputSource(reader)");
-            r.exec("import javax.xml.transform.sax.SAXSource");
-            r.exec("source = new SAXSource(is)");
-
-            // validate the OME-XML
-            ValidationHandler handler = new ValidationHandler();
-            r.setVar("handler", handler);
-            r.exec("validator.setErrorHandler(handler)");
-            r.exec("validator.validate(source)");
-            if (handler.ok()) LogTools.println("No validation errors found.");
-          }
-          catch (ReflectException exc) {
-            LogTools.println("Error validating OME-XML:");
-            LogTools.trace(exc);
-          }
-        }
+      if (MetadataTools.isOMEXMLMetadata(ms)) {
+        String xml = MetadataTools.getOMEXML((MetadataRetrieve) ms);
+        LogTools.println(MetadataTools.indentXML(xml));
+        MetadataTools.validateOMEXML(xml);
       }
       else {
         LogTools.println("OME-Java library not found; no OME-XML available");
@@ -658,20 +568,14 @@ public final class ConsoleTools {
     LogTools.print(in + " ");
     ImageReader reader = new ImageReader();
     reader.setOriginalMetadataPopulated(true);
-
-    try {
-      Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
-      MetadataStore ms = (MetadataStore) c.newInstance();
-      reader.setMetadataStore(ms);
-    }
-    catch (Throwable t) {
-      LogTools.println("OME-Java library not found.");
-    }
+    MetadataStore store = MetadataTools.createOMEXMLMetadata();
+    if (store == null) LogTools.println("OME-Java library not found.");
+    else reader.setMetadataStore(store);
 
     reader.setId(in);
     LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
 
-    MetadataStore store = reader.getMetadataStore();
+    store = reader.getMetadataStore();
     if (store instanceof MetadataRetrieve) {
       writer.setMetadataRetrieve((MetadataRetrieve) store);
     }
@@ -706,8 +610,6 @@ public final class ConsoleTools {
     return true;
   }
 
-  // -- Helper classes --
-
   /** Used by testRead to echo status messages to the console. */
   private static class StatusEchoer implements StatusListener {
     private boolean verbose = true;
@@ -722,24 +624,6 @@ public final class ConsoleTools {
         LogTools.print(";");
         next = false;
       }
-    }
-  }
-
-  /** Used by testRead to handle XML validation errors. */
-  private static class ValidationHandler implements ErrorHandler {
-    private boolean ok = true;
-    public boolean ok() { return ok; }
-    public void error(SAXParseException e) {
-      LogTools.println("error: " + e.getMessage());
-      ok = false;
-    }
-    public void fatalError(SAXParseException e) {
-      LogTools.println("fatal error: " + e.getMessage());
-      ok = false;
-    }
-    public void warning(SAXParseException e) {
-      LogTools.println("warning: " + e.getMessage());
-      ok = false;
     }
   }
 

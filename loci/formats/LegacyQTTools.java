@@ -145,7 +145,7 @@ public class LegacyQTTools {
       r.exec("import quicktime.std.movies.media.VideoMedia");
       r.exec("import quicktime.util.QTHandle");
       r.exec("import quicktime.util.RawEncodedImage");
-      r.exec("import quicktime.util.EndianOrder"); 
+      r.exec("import quicktime.util.EndianOrder");
     }
     catch (ExceptionInInitializerError err) {
       noQT = true;
@@ -157,11 +157,14 @@ public class LegacyQTTools {
     }
     catch (Throwable t) {
       noQT = true;
+      if (FormatHandler.debug) LogTools.trace(t);
     }
     finally {
       if (needClose) {
         try { r.exec("QTSession.close()"); }
-        catch (Throwable t) { }
+        catch (Throwable t) {
+          if (FormatHandler.debug) LogTools.trace(t);
+        }
       }
       initialized = true;
     }

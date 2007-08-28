@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.out;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import loci.formats.*;
 
 /**
@@ -49,32 +48,23 @@ public class OMETiffWriter extends TiffWriter {
   public void close() throws IOException {
     if (out != null) out.close();
     out = null;
-    if (currentId != null && retrieve != null) {
+    if (currentId != null) {
+      // extract OME-XML string from metadata object
+      MetadataRetrieve retrieve = getMetadataRetrieve();
+      String xml = MetadataTools.getOMEXML(retrieve);
+
+      // insert TiffData element
+      int pix = xml.indexOf("<Pixels ");
+      int end = xml.indexOf("/>", pix);
+      xml = xml.substring(0, end) + "><TiffData/></Pixels>" +
+        xml.substring(end + 2);
+
       // write OME-XML to the first IFD's comment
-
-      MetadataStore omexml = null;
-
       try {
-        Class c = Class.forName("loci.formats.ome.OMEXMLMetadataStore");
-        omexml = (MetadataStore) c.newInstance();
-
-        if (c.isInstance(retrieve)) omexml = (MetadataStore) retrieve;
-        else FormatTools.convertMetadata(retrieve, omexml);
-
-        Method m = omexml.getClass().getMethod("dumpXML", (Class[]) null);
-        String xml = (String) m.invoke(omexml, (Object[]) null);
-
-        // insert TiffData element
-        int pix = xml.indexOf("<Pixels ");
-        int end = xml.indexOf("/>", pix);
-        xml = xml.substring(0, end) + "><TiffData/></Pixels>" +
-          xml.substring(end + 2);
-
         TiffTools.overwriteComment(currentId, xml);
       }
-      catch (Throwable t) {
-        LogTools.trace(t);
-      }
+      catch (FormatException exc) { LogTools.trace(exc); }
+      catch (IOException exc) { LogTools.trace(exc); }
     }
     super.close();
   }

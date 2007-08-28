@@ -204,6 +204,11 @@ public class ImageWriter implements IFormatWriter {
     for (int i=0; i<writers.length; i++) writers[i].setMetadataRetrieve(r);
   }
 
+  /* @see IFormatReader#getMetadataStore() */
+  public MetadataRetrieve getMetadataRetrieve() {
+    return getWriter().getMetadataRetrieve();
+  }
+
   /* @see IFormatWriter#setColorModel(ColorModel) */
   public void setColorModel(ColorModel cm) {
     for (int i=0; i<writers.length; i++) writers[i].setColorModel(cm);

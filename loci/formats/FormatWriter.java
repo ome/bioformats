@@ -56,7 +56,7 @@ public abstract class FormatWriter extends FormatHandler
   /** Whether the current file has been prepped for writing. */
   protected boolean initialized;
 
-  protected MetadataRetrieve retrieve;
+  protected MetadataRetrieve metadataRetrieve;
 
   // -- Constructors --
 
@@ -95,9 +95,14 @@ public abstract class FormatWriter extends FormatHandler
   public boolean canDoStacks() { return false; }
 
   /* @see IFormatWriter#setMetadataRetrieve(MetadataRetrieve) */
-  public void setMetadataRetrieve(MetadataRetrieve r) {
+  public void setMetadataRetrieve(MetadataRetrieve retrieve) {
     FormatTools.assertId(currentId, false, 1);
-    retrieve = r;
+    metadataRetrieve = retrieve;
+  }
+
+  /* @see IFormatWriter#getMetadataRetrieve() */
+  public MetadataRetrieve getMetadataRetrieve() {
+    return metadataRetrieve;
   }
 
   /* @see IFormatWriter#setColorModel(ColorModel) */

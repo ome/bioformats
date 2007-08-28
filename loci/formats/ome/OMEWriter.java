@@ -86,8 +86,8 @@ public class OMEWriter extends FormatWriter {
 
   // -- OMEWriter API methods --
 
-  public void setMetadataStore(MetadataRetrieve store) {
-    metadata = store;
+  public void setMetadata(MetadataRetrieve meta) {
+    metadata = meta;
   }
 
   // -- Internal OMEWriter API methods --
@@ -441,9 +441,9 @@ public class OMEWriter extends FormatWriter {
     uploader.setId(server + "?user=" + user + "&password=" + pass);
 
     FileStitcher reader = new FileStitcher();
-    reader.setMetadataStore(new OMEXMLMetadataStore());
+    reader.setMetadataStore(new OMEXMLMetadata());
     reader.setId(id);
-    uploader.setMetadataStore((MetadataRetrieve) reader.getMetadataStore());
+    uploader.setMetadata((MetadataRetrieve) reader.getMetadataStore());
     for (int i=0; i<reader.getImageCount(); i++) {
       uploader.saveImage(reader.openImage(i), i == reader.getImageCount() - 1);
     }

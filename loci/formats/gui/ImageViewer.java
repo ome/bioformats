@@ -173,7 +173,9 @@ public class ImageViewer extends JFrame
       Class c = Class.forName("loci.ome.notes.Notes");
       if (c != null) canDoNotes = true;
     }
-    catch (Throwable t) { }
+    catch (Throwable t) {
+      if (FormatHandler.debug) LogTools.trace(t);
+    }
     if (canDoNotes) {
       JMenuItem fileView = new JMenuItem("View Metadata...");
       fileView.setMnemonic('m');

@@ -290,7 +290,7 @@ public interface IFormatReader extends IFormatHandler {
    * Retrieves the current metadata store for this reader. You can be
    * assured that this method will <b>never</b> return a <code>null</code>
    * metadata store.
-   * @return a metadata store implementation.
+   * @return A metadata store implementation.
    */
   MetadataStore getMetadataStore();
 
@@ -298,7 +298,7 @@ public interface IFormatReader extends IFormatHandler {
    * Retrieves the current metadata store's root object. It is guaranteed that
    * all file parsing has been performed by the reader prior to retrieval.
    * Requests for a full populated root object should be made using this method.
-   * @return current metadata store's root object fully populated.
+   * @return Current metadata store's root object fully populated.
    */
   Object getMetadataStoreRoot();
 

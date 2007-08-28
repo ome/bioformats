@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.util.StringTokenizer;
-
 /**
  * A utility class for format reader and writer implementations.
  *
@@ -350,19 +348,21 @@ public final class FormatTools {
    * @return string value for human-readable output.
    */
   public static String getPixelTypeString(int pixelType) {
-    return pixelType < 0 || pixelType >= pixelTypes.length ?
-      "unknown (" + pixelType + ")" : pixelTypes[pixelType];
+    if (pixelType < 0 || pixelType >= pixelTypes.length) {
+      throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
+    }
+    return pixelTypes[pixelType];
   }
 
   /**
    * Retrieves how many bytes per pixel the current plane or section has.
-   * @param type the pixel type as retrieved from
-   *   {@link IFormatReader#getPixelType(String)}.
+   * @param pixelType the pixel type as retrieved from
+   *   {@link IFormatReader#getPixelType()}.
    * @return the number of bytes per pixel.
    * @see IFormatReader#getPixelType(String)
    */
-  public static int getBytesPerPixel(int type) {
-    switch (type) {
+  public static int getBytesPerPixel(int pixelType) {
+    switch (pixelType) {
       case INT8:
       case UINT8:
         return 1;
@@ -376,44 +376,7 @@ public final class FormatTools {
       case DOUBLE:
         return 8;
     }
-    throw new RuntimeException("Unknown type with id: '" + type + "'");
-  }
-
-  // -- Utility methods - XML --
-
-  /** Indents XML to be more readable. */
-  public static String indentXML(String xml) { return indentXML(xml, 3); }
-
-  /** Indents XML by the given spacing to be more readable. */
-  public static String indentXML(String xml, int spacing) {
-    int indent = 0;
-    StringBuffer sb = new StringBuffer();
-    StringTokenizer st = new StringTokenizer(xml, "<>", true);
-    boolean element = false;
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
-      if (token.equals("")) continue;
-      if (token.equals("<")) {
-        element = true;
-        continue;
-      }
-      if (element && token.equals(">")) {
-        element = false;
-        continue;
-      }
-      if (element && token.startsWith("/")) indent -= spacing;
-      for (int j=0; j<indent; j++) sb.append(" ");
-      if (element) sb.append("<");
-      sb.append(token);
-      if (element) sb.append(">");
-      sb.append("\n");
-      if (element && !token.startsWith("?") &&
-        !token.startsWith("/") && !token.endsWith("/"))
-      {
-        indent += spacing;
-      }
-    }
-    return sb.toString();
+    throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
   }
 
   // -- Utility methods - sanity checking
@@ -449,153 +412,6 @@ public final class FormatTools {
     }
     else header = "";
     throw new IllegalStateException(header + msg);
-  }
-
-  // -- Utility methods -- metadata conversion --
-
-  /**
-   * Copies information from a metadata retrieval object
-   * (source) into a metadata store (destination).
-   */
-  public static void convertMetadata(MetadataRetrieve source,
-    MetadataStore dest)
-  {
-    Integer ii = null;
-    int globalPixCount = 0;
-
-    for (int i=0; i<source.getImageCount(); i++) {
-      ii = new Integer(i);
-      dest.setImage(source.getImageName(ii), source.getCreationDate(ii),
-        source.getDescription(ii), ii);
-
-      dest.setDimensions(source.getPixelSizeX(ii),
-        source.getPixelSizeY(ii), source.getPixelSizeZ(ii),
-        source.getPixelSizeC(ii), source.getPixelSizeT(ii), ii);
-
-      for (int j=0; j<source.getPixelsCount(ii); j++) {
-        Integer p = new Integer(j);
-        dest.setPixels(source.getSizeX(ii), source.getSizeY(ii),
-          source.getSizeZ(ii), source.getSizeC(ii),
-          source.getSizeT(ii),
-          new Integer(pixelTypeFromString(source.getPixelType(ii))),
-          source.getBigEndian(ii), source.getDimensionOrder(ii), ii, p);
-
-        dest.setDisplayOptions(source.getZoom(ii),
-          source.isRedChannelOn(ii), source.isGreenChannelOn(ii),
-          source.isBlueChannelOn(ii), source.isDisplayRGB(ii),
-          source.getColorMap(ii), source.getZStart(ii),
-          source.getZStop(ii), source.getTStart(ii),
-          source.getTStop(ii), ii, p, new Integer(0), new Integer(1),
-            new Integer(2), new Integer(0));
-
-        Integer globalPix = new Integer(globalPixCount);
-        for (int ch=0; ch<source.getChannelCount(globalPix); ch++) {
-          Integer c = new Integer(ch);
-          dest.setLogicalChannel(ch, source.getChannelName(globalPix, c),
-            null, null, null, null, null, null, null, null, null, null, null,
-            source.getPhotometricInterpretation(globalPix, c),
-            source.getMode(globalPix, c), null, null, null, null, null,
-            source.getEmWave(globalPix, c), source.getExWave(globalPix, c),
-            null, source.getChannelNDFilter(globalPix, c), globalPix);
-
-          dest.setChannelGlobalMinMax(ch, source.getGlobalMin(globalPix, c),
-            source.getGlobalMax(globalPix, c), globalPix);
-
-          dest.setDisplayChannel(c, source.getBlackLevel(globalPix, c),
-            source.getWhiteLevel(globalPix, c), source.getGamma(globalPix, c),
-            globalPix);
-        }
-
-        globalPixCount++;
-      }
-
-      dest.setImagingEnvironment(source.getTemperature(ii),
-        source.getAirPressure(ii), source.getHumidity(ii),
-        source.getCO2Percent(ii), ii);
-    }
-
-    for (int i=0; i<source.getExperimenterCount(); i++) {
-      ii = new Integer(i);
-      dest.setExperimenter(source.getFirstName(ii),
-        source.getLastName(ii), source.getEmail(ii),
-        source.getInstitution(ii), source.getDataDirectory(ii),
-        source.getGroup(ii), ii);
-    }
-
-    for (int i=0; i<source.getGroupCount(); i++) {
-      ii = new Integer(i);
-      dest.setGroup(source.getGroupName(ii), source.getLeader(ii),
-        source.getContact(ii), ii);
-    }
-
-    for (int i=0; i<source.getInstrumentCount(); i++) {
-      ii = new Integer(i);
-      dest.setInstrument(source.getManufacturer(ii),
-        source.getModel(ii), source.getSerialNumber(ii),
-        source.getType(ii), ii);
-    }
-
-    for (int i=0; i<source.getDisplayROICount(); i++) {
-      ii = new Integer(i);
-      dest.setDisplayROI(source.getX0(ii), source.getY0(ii),
-        source.getZ0(ii), source.getX1(ii), source.getY1(ii),
-        source.getZ1(ii), source.getT0(ii), source.getT1(ii),
-        source.getDisplayOptions(ii), ii);
-    }
-
-    for (int i=0; i<source.getStageLabelCount(); i++) {
-      ii = new Integer(i);
-      dest.setStageLabel(source.getStageName(ii), source.getStageX(ii),
-        source.getStageY(ii), source.getStageZ(ii), ii);
-    }
-
-    ii = null;
-
-    dest.setPlaneInfo(0, 0, 0, source.getTimestamp(ii, ii, ii, ii),
-      source.getExposureTime(ii, ii, ii, ii), ii);
-
-    dest.setLightSource(source.getLightManufacturer(ii),
-      source.getLightModel(ii), source.getLightSerial(ii), ii, ii);
-
-    dest.setLaser(source.getLaserType(ii), source.getLaserMedium(ii),
-      source.getLaserWavelength(ii), source.isFrequencyDoubled(ii),
-      source.isTunable(ii), source.getPulse(ii),
-      source.getPower(ii), ii, ii, ii, ii);
-
-    dest.setFilament(source.getFilamentType(ii),
-      source.getFilamentPower(ii), ii, ii);
-
-    dest.setArc(source.getArcType(ii), source.getArcPower(ii), ii, ii);
-
-    dest.setDetector(source.getDetectorManufacturer(ii),
-      source.getDetectorModel(ii), source.getDetectorSerial(ii),
-      source.getDetectorType(ii), source.getDetectorGain(ii),
-      source.getDetectorVoltage(ii),
-      source.getDetectorOffset(ii), ii, ii);
-
-    dest.setObjective(source.getObjectiveManufacturer(ii),
-      source.getObjectiveModel(ii), source.getObjectiveSerial(ii),
-      source.getLensNA(ii),
-      source.getObjectiveMagnification(ii), ii, ii);
-
-    dest.setExcitationFilter(source.getExcitationManufacturer(ii),
-      source.getExcitationModel(ii), source.getExcitationLotNumber(ii),
-      source.getExcitationType(ii), ii);
-
-    dest.setDichroic(source.getDichroicManufacturer(ii),
-      source.getDichroicModel(ii), source.getDichroicLotNumber(ii), ii);
-
-    dest.setEmissionFilter(source.getEmissionManufacturer(ii),
-      source.getEmissionModel(ii), source.getEmissionLotNumber(ii),
-      source.getEmissionType(ii), ii);
-
-    dest.setFilterSet(source.getFilterSetManufacturer(ii),
-      source.getFilterSetModel(ii),
-      source.getFilterSetLotNumber(ii), ii, ii);
-
-    dest.setOTF(source.getOTFSizeX(ii), source.getOTFSizeY(ii),
-      source.getOTFPixelType(ii), source.getOTFPath(ii),
-      source.getOTFOpticalAxisAverage(ii), ii, ii, ii, ii);
   }
 
 }
