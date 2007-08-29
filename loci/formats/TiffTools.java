@@ -589,6 +589,7 @@ public final class TiffTools {
         if (fields[i].getInt(null) == value) return fields[i].getName();
       }
       catch (IllegalAccessException exc) { }
+      catch (IllegalArgumentException exc) { } 
     }
     return "" + value;
   }
@@ -1404,7 +1405,7 @@ public final class TiffTools {
 
       // Now make our image.
       return ImageTools.makeImage(sampleData,
-        (int) imageWidth, (int) imageLength, validBits);
+        (int) imageWidth, (int) imageLength);
     }
     else if (bitsPerSample[0] == 24) {
       int[][] intData = new int[samplesPerPixel][samples[0].length / 3];
@@ -1809,6 +1810,7 @@ public final class TiffTools {
   public static byte[] uncompress(byte[] input, int compression)
     throws FormatException, IOException
   {
+    if (compression < 0) compression += 65536; 
     if (compression == UNCOMPRESSED) return input;
     else if (compression == CCITT_1D) {
       throw new FormatException(

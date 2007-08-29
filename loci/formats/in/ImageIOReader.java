@@ -96,7 +96,9 @@ public abstract class ImageIOReader extends FormatReader {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException { }
+  public void close() throws IOException { 
+    currentId = null; 
+  }
 
   // -- Internal FormatReader API methods --
 
