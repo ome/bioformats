@@ -5,7 +5,7 @@
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.TiffWriter;
 
 /** Converts the given files to OME-TIFF format. */
@@ -19,8 +19,8 @@ public class ConvertToOmeTiff {
     ImageReader reader = new ImageReader();
     TiffWriter writer = new TiffWriter();
     // record metadata to OME-XML format
-    OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-    reader.setMetadataStore(store);
+    OMEXMLMetadata omexmlMeta = new OMEXMLMetadata();
+    reader.setMetadataStore(omexmlMeta);
     for (int i=0; i<args.length; i++) {
       String id = args[i];
       String outId = id + ".tif";
@@ -29,7 +29,7 @@ public class ConvertToOmeTiff {
       int imageCount = reader.getImageCount();
       // insert TiffData element into OME-XML
       // currently handles only single series (single Image, single Pixels)
-      String xml = store.dumpXML();
+      String xml = omexmlMeta.dumpXML();
       int pix = xml.indexOf("<Pixels ");
       int end = xml.indexOf("/>", pix);
       xml = xml.substring(0, end) +

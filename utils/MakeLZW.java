@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import org.openmicroscopy.xml.OMENode;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.TiffWriter;
 
 /** Converts the given image file to an LZW-compressed TIFF. */
@@ -14,8 +14,8 @@ public class MakeLZW {
 
   public static void main(String[] args) throws Exception {
     ImageReader reader = new ImageReader();
-    OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
-    reader.setMetadataStore(ms);
+    OMEXMLMetadata omexmlMeta = new OMEXMLMetadata();
+    reader.setMetadataStore(omexmlMeta);
     TiffWriter writer = new TiffWriter();
     for (int i=0; i<args.length; i++) {
       String f = args[i];
@@ -24,7 +24,7 @@ public class MakeLZW {
       reader.setId(f); 
       writer.setId(nf);
       int blocks = reader.getImageCount();
-      OMENode ome = (OMENode) ms.getRoot();
+      OMENode ome = (OMENode) omexmlMeta.getRoot();
       for (int b=0; b<blocks; b++) {
         System.out.print(".");
         BufferedImage img = reader.openImage(b);

@@ -3,7 +3,7 @@
 //
 
 import loci.formats.ImageReader;
-import loci.formats.ome.OMEXMLMetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import org.openmicroscopy.xml.ImageNode;
 import org.openmicroscopy.xml.OMENode;
 
@@ -17,12 +17,11 @@ public class EditImageName {
     }
     ImageReader reader = new ImageReader();
     // record metadata to OME-XML format
-    reader.setMetadataStore(new OMEXMLMetadataStore());
+    reader.setMetadataStore(new OMEXMLMetadata());
     String id = args[0];
     System.out.print("Reading metadata ");
     reader.setId(id); 
-    OMEXMLMetadataStore store =
-      (OMEXMLMetadataStore) reader.getMetadataStore();
+    OMEXMLMetadata store = (OMEXMLMetadata) reader.getMetadataStore();
     System.out.println(" [done]");
     // get OME root node
     OMENode ome = (OMENode) store.getRoot();

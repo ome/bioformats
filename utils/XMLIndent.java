@@ -4,7 +4,7 @@
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 
 /** Indents XML to be more readable. Does not handle CDATA. */
 public class XMLIndent {
@@ -20,7 +20,7 @@ public class XMLIndent {
         sb.append(line);
       }
       in.close();
-      System.out.println(FormatTools.indentXML(sb.toString()));
+      System.out.println(MetadataTools.indentXML(sb.toString()));
     }
   }
 
