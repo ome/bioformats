@@ -84,7 +84,6 @@ public class LegacyQTWriter extends FormatWriter {
   /**
    * Sets the encoded movie's codec.
    * @param codec Codec value:<ul>
-   *   <li>QTWriter.CODEC_MOTION_JPEG_B</li>
    *   <li>QTWriter.CODEC_CINEPAK</li>
    *   <li>QTWriter.CODEC_ANIMATION</li>
    *   <li>QTWriter.CODEC_H_263</li>
@@ -172,6 +171,7 @@ public class LegacyQTWriter extends FormatWriter {
         r.exec("compressedImage = RawEncodedImage.fromQTHandle(imageHandle)");
 
         r.setVar("rate", 30);
+        
         r.exec("seq = new CSequence(gw, bounds, pixSize, codec, " +
           "CodecComponent.bestFidelityCodec, quality, quality, rate, null, " +
           "zero)");

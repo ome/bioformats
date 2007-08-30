@@ -117,7 +117,7 @@ public class QTWriter extends FormatWriter {
   public QTWriter() {
     super("QuickTime", "mov");
     compressionTypes = new String[] {
-      "Uncompressed", "Motion JPEG-B", "Cinepak", "Animation", "H.263",
+      "Uncompressed", /*"Motion JPEG-B", */"Cinepak", "Animation", "H.263",
       "Sorenson", "Sorenson 3", "MPEG 4"
     };
 
@@ -603,7 +603,7 @@ public class QTWriter extends FormatWriter {
   private void setCodec() {
     if (compression == null) compression = "Uncompressed";
     if (compression.equals("Uncompressed")) codec = CODEC_RAW;
-    else if (compression.equals("Motion JPEG-B")) codec = CODEC_MOTION_JPEG_B;
+    //else if (compression.equals("Motion JPEG-B")) codec = CODEC_MOTION_JPEG_B;
     else if (compression.equals("Cinepak")) codec = CODEC_CINEPAK;
     else if (compression.equals("Animation")) codec = CODEC_ANIMATION;
     else if (compression.equals("H.263")) codec = CODEC_H_263;
