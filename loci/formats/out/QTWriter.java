@@ -44,8 +44,9 @@ public class QTWriter extends FormatWriter {
 
   // -- Constants --
 
-  /** Value indicating Motion JPEG-B codec. */
-  public static final int CODEC_MOTION_JPEG_B = 1835692130;
+  // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
+  ///** Value indicating Motion JPEG-B codec. */
+  //public static final int CODEC_MOTION_JPEG_B = 1835692130;
 
   /** Value indicating Cinepack codec. */
   public static final int CODEC_CINEPAK = 1668704612;
@@ -117,8 +118,10 @@ public class QTWriter extends FormatWriter {
   public QTWriter() {
     super("QuickTime", "mov");
     compressionTypes = new String[] {
-      "Uncompressed", /*"Motion JPEG-B", */"Cinepak", "Animation", "H.263",
-      "Sorenson", "Sorenson 3", "MPEG 4"
+      "Uncompressed",
+      // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
+      //"Motion JPEG-B",
+      "Cinepak", "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG 4"
     };
 
   }
@@ -128,7 +131,6 @@ public class QTWriter extends FormatWriter {
   /**
    * Sets the encoded movie's codec.
    * @param codec Codec value:<ul>
-   *   <li>QTWriter.CODEC_MOTION_JPEG_B</li>
    *   <li>QTWriter.CODEC_CINEPAK</li>
    *   <li>QTWriter.CODEC_ANIMATION</li>
    *   <li>QTWriter.CODEC_H_263</li>
@@ -601,8 +603,9 @@ public class QTWriter extends FormatWriter {
   // -- Helper methods --
 
   private void setCodec() {
-    if (compression == null) compression = "Uncompressed";
+    if (compression == null) return;
     if (compression.equals("Uncompressed")) codec = CODEC_RAW;
+    // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
     //else if (compression.equals("Motion JPEG-B")) codec = CODEC_MOTION_JPEG_B;
     else if (compression.equals("Cinepak")) codec = CODEC_CINEPAK;
     else if (compression.equals("Animation")) codec = CODEC_ANIMATION;
