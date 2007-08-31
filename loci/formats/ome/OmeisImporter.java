@@ -80,6 +80,12 @@ public class OmeisImporter {
 
   // -- OmeisImporter API methods - main functionality --
 
+  /** Prints out the build date for the Bio-Formats OMEIS utility. */
+  public void printVersion() {
+    if (http) printHttpResponseHeader();
+    System.out.println("Bio-Formats OMEIS importer, built on @date@.");
+  }
+
   /**
    * Tests whether Bio-Formats is potentially capable of importing the given
    * file IDs. Outputs the IDs it can potentially import, one group per line,
@@ -575,13 +581,14 @@ public class OmeisImporter {
    */
   public static void main(String[] args) {
     OmeisImporter importer = new OmeisImporter();
-    boolean test = false;
+    boolean version = false, test = false;
     int[] fileIds = new int[args.length];
 
     // parse command line arguments
     int num = 0;
     for (int i=0; i<args.length; i++) {
-      if ("-test".equalsIgnoreCase(args[i])) test = true;
+      if ("-version".equalsIgnoreCase(args[i])) version = true;
+      else if ("-test".equalsIgnoreCase(args[i])) test = true;
       else if ("-http-response".equalsIgnoreCase(args[i])) http = true;
       else {
         try {
@@ -599,19 +606,20 @@ public class OmeisImporter {
 
     // process the IDs
     try {
-      if (test) importer.testIds(fileIds);
+      if (version) importer.printVersion();
+      else if (test) importer.testIds(fileIds);
       else importer.importIds(fileIds);
     }
-    catch (Exception exc) {
+    catch (Throwable t) {
       // NB: We really do want to catch all exception types here,
       // to redirect output properly for the OME server.
       if (http) {
         importer.printHttpErrorHeader();
         System.out.println("An exception occurred while processing FileIDs:");
-        exc.printStackTrace(System.out);
+        t.printStackTrace(System.out);
       }
       System.err.println("An exception occurred:");
-      exc.printStackTrace();
+      t.printStackTrace();
       System.exit(1);
     }
   }
