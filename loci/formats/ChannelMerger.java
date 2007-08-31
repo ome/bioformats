@@ -49,7 +49,7 @@ public class ChannelMerger extends ReaderWrapper {
   /** Determines whether the channels in the file can be merged. */
   public boolean canMerge() {
     int c = getSizeC();
-    return c > 1 && c <= 4 && !reader.isRGB();
+    return c > 1 && c <= 4 && !reader.isRGB() && !reader.isIndexed();
   }
 
   // -- IFormatReader API methods --

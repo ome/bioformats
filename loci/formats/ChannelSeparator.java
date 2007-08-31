@@ -82,7 +82,7 @@ public class ChannelSeparator extends ReaderWrapper {
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return reader.isRGB() ?
+    return (reader.isRGB() && !reader.isIndexed()) ?
       (getSizeC() / reader.getEffectiveSizeC()) * reader.getImageCount() :
       reader.getImageCount();
   }
@@ -91,7 +91,7 @@ public class ChannelSeparator extends ReaderWrapper {
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     String order = super.getDimensionOrder();
-    if (reader.isRGB()) {
+    if (reader.isRGB() && !reader.isIndexed()) {
       String newOrder = "XYC";
       if (order.indexOf("Z") > order.indexOf("T")) newOrder += "TZ";
       else newOrder += "ZT";
@@ -112,6 +112,8 @@ public class ChannelSeparator extends ReaderWrapper {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
+
+    if (isIndexed()) return reader.openImage(no);
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
 
@@ -138,7 +140,7 @@ public class ChannelSeparator extends ReaderWrapper {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (reader.isRGB()) {
+    if (reader.isRGB() && !reader.isIndexed()) {
       int c = getSizeC() / reader.getEffectiveSizeC();
       int source = no / c;
       int channel = no % c;
