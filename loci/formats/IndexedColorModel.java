@@ -26,7 +26,6 @@ package loci.formats;
 
 import java.awt.image.*;
 import java.io.IOException;
-/* debug */ import java.io.FileWriter;
 
 public class IndexedColorModel extends ColorModel {
 

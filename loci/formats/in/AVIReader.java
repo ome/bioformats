@@ -120,9 +120,9 @@ public class AVIReader extends FormatReader {
       effectiveWidth = core.sizeX[0];
     }
 
-    int size = core.sizeY[0] * effectiveWidth * bytes;
-    if (!isIndexed()) size *= core.sizeC[0];
-    byte[] buf = new byte[size];
+    int bufSize = core.sizeY[0] * effectiveWidth * bytes;
+    if (!isIndexed()) bufSize *= core.sizeC[0];
+    byte[] buf = new byte[bufSize];
     return openBytes(no, buf);
   }
 
@@ -142,10 +142,10 @@ public class AVIReader extends FormatReader {
       effectiveWidth = core.sizeX[0];
     }
 
-    int size = effectiveWidth * bytes * core.sizeY[0];
-    if (!isIndexed()) size *= core.sizeC[0];
+    int minSize = effectiveWidth * bytes * core.sizeY[0];
+    if (!isIndexed()) minSize *= core.sizeC[0];
 
-    if (buf.length < size) throw new FormatException("Buffer too small.");
+    if (buf.length < minSize) throw new FormatException("Buffer too small.");
 
     long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek(fileOff);
