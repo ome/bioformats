@@ -246,6 +246,21 @@ public abstract class FormatReader extends FormatHandler
     return getSizeC() / getEffectiveSizeC();
   }
 
+  /* @see IFormatReader#isIndexed() */
+  public boolean isIndexed() { 
+    return false;
+  }
+
+  /* @see IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    return null;
+  }
+
+  /* @see IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    return null;
+  }
+
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);

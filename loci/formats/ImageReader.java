@@ -229,6 +229,24 @@ public class ImageReader implements IFormatReader {
     return getReader().getRGBChannelCount();
   }
 
+  /* @see IFormatReader#isIndexed() */
+  public boolean isIndexed() { 
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().isIndexed();
+  }
+
+  /* @see IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().get8BitLookupTable();
+  }
+
+  /* @see IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().get16BitLookupTable();
+  }
+
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 2);

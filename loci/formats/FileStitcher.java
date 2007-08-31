@@ -280,6 +280,24 @@ public class FileStitcher implements IFormatReader {
     return getSizeC() / getEffectiveSizeC();
   }
 
+  /* @see IFormatReader#isIndexed() */
+  public boolean isIndexed() { 
+    FormatTools.assertId(currentId, true, 2);
+    return reader.isIndexed();
+  }
+
+  /* @see IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.get8BitLookupTable();
+  }
+
+  /* @see IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.get16BitLookupTable();
+  }
+
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);

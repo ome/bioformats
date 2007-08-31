@@ -117,6 +117,18 @@ public abstract class ReaderWrapper implements IFormatReader {
     return getSizeC() / getEffectiveSizeC();
   }
 
+  public boolean isIndexed() { 
+    return reader.isIndexed();
+  }
+
+  public byte[][] get8BitLookupTable() {
+    return reader.get8BitLookupTable();
+  }
+
+  public short[][] get16BitLookupTable() {
+    return reader.get16BitLookupTable();
+  }
+
   public int[] getChannelDimLengths() {
     return reader.getChannelDimLengths();
   }

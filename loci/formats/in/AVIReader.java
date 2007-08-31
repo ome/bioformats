@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
@@ -98,6 +98,18 @@ public class AVIReader extends FormatReader {
     return false;
   }
 
+  /* @see loci.formats.IFormatReader#isIndexed() */
+  public boolean isIndexed() {
+    FormatTools.assertId(currentId, true, 1);
+    return isRLE;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return new byte[][] {pr, pg, pb};
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -108,8 +120,9 @@ public class AVIReader extends FormatReader {
       effectiveWidth = core.sizeX[0];
     }
 
-    byte[] buf =
-      new byte[core.sizeY[0] * effectiveWidth * bytes * core.sizeC[0]];
+    int size = core.sizeY[0] * effectiveWidth * bytes;
+    if (!isIndexed()) size *= core.sizeC[0];
+    byte[] buf = new byte[size];
     return openBytes(no, buf);
   }
 
@@ -129,9 +142,10 @@ public class AVIReader extends FormatReader {
       effectiveWidth = core.sizeX[0];
     }
 
-    if (buf.length < core.sizeY[0]*effectiveWidth*bytes*core.sizeC[0]) {
-      throw new FormatException("Buffer too small.");
-    }
+    int size = effectiveWidth * bytes * core.sizeY[0];
+    if (!isIndexed()) size *= core.sizeC[0];
+
+    if (buf.length < size) throw new FormatException("Buffer too small.");
 
     long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek(fileOff);
@@ -145,18 +159,10 @@ public class AVIReader extends FormatReader {
       options[0] = new int[] {core.sizeX[0], core.sizeY[0]};
 
       MSRLECodec codec = new MSRLECodec();
-      b = codec.decompress(b, options);
-      lastImage = b;
+      buf = codec.decompress(b, options);
+      lastImage = buf;
       if (no == core.imageCount[0] - 1) lastImage = null;
-      byte[] colors = new byte[b.length * 3];
-      for (int i=0; i<b.length; i++) {
-        int ndx = b[i];
-        if (ndx < 0) ndx += 256;
-        colors[i*3] = pr[ndx];
-        colors[i*3 + 1] = pg[ndx];
-        colors[i*3 + 2] = pb[ndx];
-      }
-      return colors;
+      return buf; 
     }
 
     if (bmpBitsPerPixel < 8) {
@@ -208,9 +214,18 @@ public class AVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return ImageTools.makeImage(openBytes(no),
-      core.sizeX[0], core.sizeY[0], core.sizeC[0], !core.interleaved[0],
+    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+      core.sizeY[0], isIndexed() ? 1 : core.sizeC[0], !core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
+    if (isIndexed()) {
+      byte[][] table = get8BitLookupTable();
+      IndexedColorModel model = 
+        new IndexedColorModel(8, table[0].length, table);
+      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+        b.getData().getDataBuffer(), null);
+      b = new BufferedImage(model, raster, false, null); 
+    }
+    return b;
   }
 
   // -- Internal FormatReader API methods --
