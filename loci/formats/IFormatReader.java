@@ -91,7 +91,7 @@ public interface IFormatReader extends IFormatHandler {
   boolean isIndexed();
 
   /**
-   * Gets the 8-bit color lookup table associated with the most recently opened 
+   * Gets the 8-bit color lookup table associated with the most recently opened
    * image.
    * If no images have been opened, or if isIndexed() returns false, then
    * this returns null.  Also, if getPixelType() returns anything other than
@@ -100,7 +100,7 @@ public interface IFormatReader extends IFormatHandler {
   byte[][] get8BitLookupTable();
 
   /**
-   * Gets the 8-bit color lookup table associated with the most recently opened 
+   * Gets the 8-bit color lookup table associated with the most recently opened
    * image.
    * If no images have been opened, or if isIndexed() returns false, then
    * this returns null.  Also, if getPixelType() returns anything other than

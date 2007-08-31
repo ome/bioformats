@@ -281,7 +281,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#isIndexed() */
-  public boolean isIndexed() { 
+  public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 2);
     return reader.isIndexed();
   }

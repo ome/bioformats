@@ -589,7 +589,7 @@ public final class TiffTools {
         if (fields[i].getInt(null) == value) return fields[i].getName();
       }
       catch (IllegalAccessException exc) { }
-      catch (IllegalArgumentException exc) { } 
+      catch (IllegalArgumentException exc) { }
     }
     return "" + value;
   }
@@ -1810,7 +1810,7 @@ public final class TiffTools {
   public static byte[] uncompress(byte[] input, int compression)
     throws FormatException, IOException
   {
-    if (compression < 0) compression += 65536; 
+    if (compression < 0) compression += 65536;
     if (compression == UNCOMPRESSED) return input;
     else if (compression == CCITT_1D) {
       throw new FormatException(

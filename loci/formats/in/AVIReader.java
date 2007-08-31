@@ -162,7 +162,7 @@ public class AVIReader extends FormatReader {
       buf = codec.decompress(b, options);
       lastImage = buf;
       if (no == core.imageCount[0] - 1) lastImage = null;
-      return buf; 
+      return buf;
     }
 
     if (bmpBitsPerPixel < 8) {
@@ -214,16 +214,16 @@ public class AVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0],
       core.sizeY[0], isIndexed() ? 1 : core.sizeC[0], !core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
     if (isIndexed()) {
       byte[][] table = get8BitLookupTable();
-      IndexedColorModel model = 
+      IndexedColorModel model =
         new IndexedColorModel(8, table[0].length, table);
       WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
         b.getData().getDataBuffer(), null);
-      b = new BufferedImage(model, raster, false, null); 
+      b = new BufferedImage(model, raster, false, null);
     }
     return b;
   }

@@ -171,7 +171,7 @@ public class LegacyQTWriter extends FormatWriter {
         r.exec("compressedImage = RawEncodedImage.fromQTHandle(imageHandle)");
 
         r.setVar("rate", 30);
-        
+
         r.exec("seq = new CSequence(gw, bounds, pixSize, codec, " +
           "CodecComponent.bestFidelityCodec, quality, quality, rate, null, " +
           "zero)");

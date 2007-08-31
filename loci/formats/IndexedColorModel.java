@@ -35,7 +35,7 @@ public class IndexedColorModel extends ColorModel {
   private byte[] redByte, greenByte, blueByte, alphaByte;
   private short[] redShort, greenShort, blueShort, alphaShort;
   private int[] redInt, greenInt, blueInt, alphaInt;
-  
+
   /** Length of lookup table. */
   private int tableSize;
 
@@ -43,64 +43,64 @@ public class IndexedColorModel extends ColorModel {
 
   // -- Constructors --
 
-  public IndexedColorModel(int bits, int size, byte[][] table) 
+  public IndexedColorModel(int bits, int size, byte[][] table)
     throws IOException
   {
     super(bits);
-    
+
     if (table == null) throw new IOException("LUT cannot be null");
     for (int i=0; i<table.length; i++) {
       if (table[i].length < size) {
         throw new IOException("LUT " + i + " too small");
       }
     }
-    
+
     if (table.length > 0) redByte = table[0];
     if (table.length > 1) greenByte = table[1];
     if (table.length > 2) blueByte = table[2];
     if (table.length > 3) alphaByte = table[3];
     tableSize = size;
-    pixelBits = bits;  
+    pixelBits = bits;
   }
-  
-  public IndexedColorModel(int bits, int size, short[][] table) 
-    throws IOException 
+
+  public IndexedColorModel(int bits, int size, short[][] table)
+    throws IOException
   {
     super(bits);
-    
+
     if (table == null) throw new IOException("LUT cannot be null");
     for (int i=0; i<table.length; i++) {
       if (table[i].length < size) {
         throw new IOException("LUT " + i + " too small");
       }
     }
-    
+
     if (table.length > 0) redShort = table[0];
     if (table.length > 1) greenShort = table[1];
     if (table.length > 2) blueShort = table[2];
     if (table.length > 3) alphaShort = table[3];
     tableSize = size;
-    pixelBits = bits;  
+    pixelBits = bits;
   }
-  
-  public IndexedColorModel(int bits, int size, int[][] table) 
-    throws IOException 
+
+  public IndexedColorModel(int bits, int size, int[][] table)
+    throws IOException
   {
     super(bits);
-    
+
     if (table == null) throw new IOException("LUT cannot be null");
     for (int i=0; i<table.length; i++) {
       if (table[i].length < size) {
         throw new IOException("LUT " + i + " too small");
       }
     }
-    
+
     if (table.length > 0) redInt = table[0];
     if (table.length > 1) greenInt = table[1];
     if (table.length > 2) blueInt = table[2];
     if (table.length > 3) alphaInt = table[3];
     tableSize = size;
-    pixelBits = bits;  
+    pixelBits = bits;
   }
 
   // -- ColorModel API methods --
@@ -117,22 +117,22 @@ public class IndexedColorModel extends ColorModel {
       p[0] = (byte) red;
       p[1] = (byte) green;
       p[2] = (byte) blue;
-      
-      return p; 
+
+      return p;
     }
     if (redShort != null) {
       short[] p = pixel == null ? new short[3] : (short[]) pixel;
       p[0] = (short) red;
       p[1] = (short) green;
       p[2] = (short) blue;
-      return p; 
+      return p;
     }
     if (redInt != null) {
       int[] p = pixel == null ? new int[3] : (int[]) pixel;
       p[0] = red;
       p[1] = green;
       p[2] = blue;
-      return p; 
+      return p;
     }
     throw new UnsupportedOperationException("Invalid transfer type");
   }
@@ -145,21 +145,21 @@ public class IndexedColorModel extends ColorModel {
   /* @see java.awt.image.ColorModel#createCompatibleWritableRaster(int, int) */
   public WritableRaster createCompatibleWritableRaster(int w, int h) {
     WritableRaster raster;
-    
+
     if (pixelBits == 1 || pixelBits == 2 || pixelBits == 4) {
-      raster = Raster.createPackedRaster(DataBuffer.TYPE_BYTE, w, h, 1, 
+      raster = Raster.createPackedRaster(DataBuffer.TYPE_BYTE, w, h, 1,
         pixelBits, null);
     }
     else if (pixelBits <= 8) {
-      raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, w, h, 1, 
-        null); 
-    } 
+      raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, w, h, 1,
+        null);
+    }
     else if (pixelBits <= 16) {
       raster = Raster.createInterleavedRaster(DataBuffer.TYPE_USHORT, w, h, 1,
         null);
     }
     else {
-      throw new UnsupportedOperationException("Pixel bits > 16 not supported"); 
+      throw new UnsupportedOperationException("Pixel bits > 16 not supported");
     }
     return raster;
   }
@@ -174,7 +174,7 @@ public class IndexedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
   public int getBlue(int pixel) {
-    if (blueByte != null) return blueByte[pixel] & 0xff; 
+    if (blueByte != null) return blueByte[pixel] & 0xff;
     if (blueShort != null) return blueShort[pixel] & 0xffff;
     if (blueInt != null) return blueInt[pixel];
     return 0;
@@ -182,7 +182,7 @@ public class IndexedColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
   public int getGreen(int pixel) {
-    if (greenByte != null) return greenByte[pixel] & 0xff; 
+    if (greenByte != null) return greenByte[pixel] & 0xff;
     if (greenShort != null) return greenShort[pixel] & 0xffff;
     if (greenInt != null) return greenInt[pixel];
     return 0;

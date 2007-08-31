@@ -117,7 +117,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return getSizeC() / getEffectiveSizeC();
   }
 
-  public boolean isIndexed() { 
+  public boolean isIndexed() {
     return reader.isIndexed();
   }
 

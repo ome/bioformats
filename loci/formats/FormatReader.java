@@ -247,7 +247,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#isIndexed() */
-  public boolean isIndexed() { 
+  public boolean isIndexed() {
     return false;
   }
 
