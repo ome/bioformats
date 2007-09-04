@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import loci.formats.*;
 
@@ -57,11 +57,32 @@ public class KhorosReader extends FormatReader {
     return block[0] == (byte) 0xab && block[1] == 1;
   }
 
+  /* @see loci.formats.IFormatReader#isIndexed() */
+  public boolean isIndexed() {
+    FormatTools.assertId(currentId, true, 1);
+    return lut != null;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException {
+    FormatTools.assertId(currentId, true, 1);
+    byte[][] table = new byte[3][lut.length / 3];
+    int next = 0;
+    for (int i=0; i<table[0].length; i++) {
+      for (int j=0; j<table.length; j++) {
+        table[j][i] = lut[next++];
+      }
+    }
+    return table; 
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])];
+    int bufSize = core.sizeX[0] * core.sizeY[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0]);
+    if (!isIndexed()) bufSize *= core.sizeC[0];
+    byte[] buf = new byte[bufSize];
     return openBytes(no, buf);
   }
 
@@ -74,22 +95,13 @@ public class KhorosReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    in.seek(offset +
-      no * (core.sizeX[0] * core.sizeY[0] * getRGBChannelCount()));
-    if (lut == null) in.read(buf);
-    else {
-      int plane = core.sizeX[0] * core.sizeY[0] *
-        FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int bufSize = core.sizeX[0] * core.sizeY[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0]);
+    if (isIndexed()) bufSize *= core.sizeC[0];
+    if (buf.length < bufSize) throw new FormatException("Buffer too small.");
 
-      for (int i=0; i<plane; i++) {
-        int ndx = in.read();
-        if (ndx < 0) ndx += 256;
-        buf[i] = lut[ndx*3];
-        buf[i + plane] = lut[ndx*3 + 1];
-        buf[i + 2*plane] = lut[ndx*3 + 2];
-      }
-    }
-
+    in.seek(offset + no * bufSize);
+    in.read(buf, 0, bufSize); 
     return buf;
   }
 
@@ -109,9 +121,18 @@ public class KhorosReader extends FormatReader {
         core.sizeC[0], core.interleaved[0]);
     }
 
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], core.interleaved[0],
+    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+      core.sizeY[0], isIndexed() ? 1 : core.sizeC[0], core.interleaved[0],
       FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
+    if (isIndexed()) {
+      byte[][] table = get8BitLookupTable();
+      IndexedColorModel model = 
+        new IndexedColorModel(8, table[0].length, table);
+      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+        b.getData().getDataBuffer(), null);
+      b = new BufferedImage(model, raster, false, null); 
+    }
+    return b;
   }
 
   /* @see loci.formats.IFormatReader#close() */

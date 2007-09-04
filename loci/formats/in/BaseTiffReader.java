@@ -79,6 +79,62 @@ public abstract class BaseTiffReader extends FormatReader {
     return TiffTools.isValidHeader(block);
   }
 
+  /* @see loci.formats.IFormatReader#isIndexed() */
+  public boolean isIndexed() {
+    FormatTools.assertId(currentId, true, 1);  
+    return TiffTools.getIFDIntValue(ifds[0], 
+      TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE; 
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException {
+    FormatTools.assertId(currentId, true, 1);  
+    int[] bits = TiffTools.getBitsPerSample(ifds[0]);
+    if (bits[0] <= 8) {
+      int[] colorMap = 
+        (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+      byte[][] table = new byte[3][colorMap.length / 3];
+      int next = 0; 
+      for (int j=0; j<table.length; j++) {
+        for (int i=0; i<table[0].length; i++) {
+          if (core.littleEndian[0]) {
+            table[j][i] = (byte) (colorMap[next++] & 0xff);
+          }
+          else table[j][i] = (byte) ((colorMap[next++] & 0xff00) >> 8);
+        }
+      }
+
+      return table; 
+    }
+    return null; 
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException {
+    FormatTools.assertId(currentId, true, 1);  
+    int[] bits = TiffTools.getBitsPerSample(ifds[0]); 
+    if (bits[0] <= 16 && bits[0] > 8) {
+      int[] colorMap = 
+        (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+      short[][] table = new short[3][colorMap.length / 3];
+      int next = 0; 
+      for (int i=0; i<table.length; i++) {
+        for (int j=0; j<table[0].length; j++) {
+          if (core.littleEndian[0]) {
+            table[i][j] = (short) (colorMap[next++] & 0xffff);
+          }
+          else {
+            int n = colorMap[next++];
+            table[i][j] = 
+              (short) (((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
+          }
+        }
+      }
+      return table; 
+    }
+    return null; 
+  }
+
   /* @see loci.formats.IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
@@ -93,8 +149,9 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
-    byte[] buf = new byte[getSizeX() * getSizeY() * bytesPerPixel *
-      getRGBChannelCount()];
+    int bufSize = getSizeX() * getSizeY() * bytesPerPixel;
+    if (!isIndexed()) bufSize *= getRGBChannelCount();
+    byte[] buf = new byte[bufSize];
     return openBytes(no, buf);
   }
 
@@ -118,7 +175,23 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return TiffTools.getImage(ifds[no], in);
+    BufferedImage b = TiffTools.getImage(ifds[no], in);
+    if (isIndexed()) {
+      byte[][] table = get8BitLookupTable();
+      IndexedColorModel model = null;
+      if (table != null) {
+        model = new IndexedColorModel(8, table[0].length, table);
+      }
+      else {
+        short[][] t = get16BitLookupTable();
+        model = new IndexedColorModel(16, t[0].length, t);
+      }
+
+      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+        b.getData().getDataBuffer(), null);
+      b = new BufferedImage(model, raster, false, null);
+    }
+    return b;
   }
 
   // -- Internal BaseTiffReader API methods --

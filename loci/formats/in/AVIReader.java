@@ -105,7 +105,7 @@ public class AVIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable() throws FormatException {
     FormatTools.assertId(currentId, true, 1);
     return new byte[][] {pr, pg, pb};
   }

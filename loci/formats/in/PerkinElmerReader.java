@@ -109,7 +109,7 @@ public class PerkinElmerReader extends FormatReader {
     byte[] b = openBytes(no);
     int bpp = b.length / (core.sizeX[0] * core.sizeY[0]);
     return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0], 1,
-      false, bpp, true);
+      false, bpp, core.littleEndian[0]);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */

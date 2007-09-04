@@ -449,10 +449,13 @@ public class ZeissZVIReader extends FormatReader {
 
       try { blackValue = new Double(black); }
       catch (NumberFormatException e) { }
+      catch (NullPointerException e) { }
       try { whiteValue = new Double(white); }
       catch (NumberFormatException e) { }
+      catch (NullPointerException e) { }
       try { gammaValue = new Float(gamma); }
       catch (NumberFormatException e) { }
+      catch (NullPointerException e) { }
 
       store.setDisplayChannel(new Integer(i), blackValue, whiteValue,
         gammaValue, null);
@@ -464,7 +467,7 @@ public class ZeissZVIReader extends FormatReader {
       Float exp = new Float(0.0);
       try { exp = new Float(exposure); }
       catch (NumberFormatException e) { }
-
+      catch (NullPointerException e) { }
       store.setPlaneInfo(zct[0], zct[1], zct[2], null, exp, null);
     }
 

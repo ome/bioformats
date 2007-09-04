@@ -806,11 +806,6 @@ public final class TiffTools {
   {
     int samplesPerPixel = getSamplesPerPixel(ifd);
     int photoInterp = getPhotometricInterpretation(ifd);
-    if (samplesPerPixel == 1 && (photoInterp == RGB_PALETTE ||
-      photoInterp == CFA_ARRAY))
-    {
-      samplesPerPixel = 3;
-    }
     int bpp = getBitsPerSample(ifd)[0];
     while ((bpp % 8) != 0) bpp++;
     bpp /= 8;
@@ -857,11 +852,6 @@ public final class TiffTools {
 
     if (ifd.get(new Integer(VALID_BITS)) == null && bitsPerSample[0] > 0) {
       int[] validBits = bitsPerSample;
-      if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
-        int vb = validBits[0];
-        validBits = new int[3];
-        for (int i=0; i<validBits.length; i++) validBits[i] = vb;
-      }
       putIFDValue(ifd, VALID_BITS, validBits);
     }
 
@@ -1196,12 +1186,6 @@ public final class TiffTools {
         samplesPerPixel + "; numSamples=" + numSamples + ")");
     }
 
-    if (samplesPerPixel == 1 &&
-      (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY))
-    {
-      samplesPerPixel = 3;
-    }
-
     if (photoInterp == CFA_ARRAY) {
       int[] tempMap = new int[colorMap.length + 2];
       System.arraycopy(colorMap, 0, tempMap, 0, colorMap.length);
@@ -1209,8 +1193,6 @@ public final class TiffTools {
       tempMap[tempMap.length - 1] = (int) imageLength;
       colorMap = tempMap;
     }
-
-    //if (planarConfig == 2) numSamples *= samplesPerPixel;
 
     short[][] samples = new short[samplesPerPixel][numSamples];
     byte[] altBytes = new byte[0];
@@ -1386,10 +1368,6 @@ public final class TiffTools {
     int photoInterp = getPhotometricInterpretation(ifd);
 
     int[] validBits = getIFDIntArray(ifd, VALID_BITS, false);
-
-    if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
-      samplesPerPixel = 3;
-    }
 
     if (bitsPerSample[0] == 16 || bitsPerSample[0] == 12) {
       // First wrap the byte arrays and then use the features of the
@@ -1670,16 +1648,6 @@ public final class TiffTools {
             samples[i][ndx] =
               (short) (Integer.MAX_VALUE - samples[i][ndx]); // invert colors
           }
-          else if (photoInterp == RGB_PALETTE) {
-            int x = (int) (b < 0 ? 256 + b : b);
-            int red = colorMap[x % colorMap.length];
-            int green = colorMap[(x + bpsPow) %
-              colorMap.length];
-            int blue = colorMap[(x + 2*bpsPow) %
-              colorMap.length];
-            int[] components = {red, green, blue};
-            samples[i][ndx] = (short) components[i];
-          }
           else if (photoInterp == CFA_ARRAY) {
             if (i == 0) {
               int pixelIndex = (int) ((row + (count / cw))*imageWidth + col +
@@ -1711,13 +1679,6 @@ public final class TiffTools {
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
-          }
-          else if (photoInterp == RGB_PALETTE) {
-            index--;
-            int x = (int) (b < 0 ? 256 + b : b);
-            int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
-            int cm = colorMap[cndx];
-            samples[i][ndx] = (short) (maxValue == 0 ? (cm / 256) : cm);
           }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
@@ -1754,15 +1715,6 @@ public final class TiffTools {
             for (int q=0; q<numBytes; q++) max *= 8;
             samples[i][ndx] = (short) (max - samples[i][ndx]);
           }
-          else if (photoInterp == RGB_PALETTE) {
-            index -= numBytes;
-
-            int x = samples[i][ndx];  // this is the index into the color table
-            int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
-            int cm = colorMap[cndx];
-            samples[i][ndx] = (short) (maxValue == 0 ?
-              (cm % (bpsPow - 1)) : cm);
-          }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
           }
@@ -1785,22 +1737,11 @@ public final class TiffTools {
             for (int q=0; q<numBytes; q++) max *= 8;
             samples[i][ndx] = (short) (max - samples[i][ndx]);
           }
-          else if (photoInterp == RGB_PALETTE) {
-            index -= numBytes;
-
-            int x = samples[i][ndx];  // this is the index into the color table
-            int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
-            int cm = colorMap[cndx];
-
-            samples[i][ndx] = (short) (maxValue == 0 ?
-              (cm % (bpsPow - 1)) : cm);
-          }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
           }
         } // end else
       }
-      if (photoInterp == RGB_PALETTE) index += (bps0 / 8);
     }
   }
 

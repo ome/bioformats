@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
@@ -96,6 +96,7 @@ public class GIFReader extends FormatReader {
   private byte[] pixels;
 
   private Vector images;
+  private Vector colorTables;
 
   // -- Constructor --
 
@@ -108,6 +109,23 @@ public class GIFReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
+
+  /* @see loci.formats.IFormatReader#isIndexed() */
+  public boolean isIndexed() {
+    return true;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException {
+    FormatTools.assertId(currentId, true, 1); 
+    byte[][] table = new byte[3][act.length];
+    for (int i=0; i<act.length; i++) {
+      table[0][i] = (byte) ((act[i] >> 16) & 0xff);
+      table[1][i] = (byte) ((act[i] >> 8) & 0xff);
+      table[2][i] = (byte) (act[i] & 0xff);
+    }
+    return table; 
+  }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
@@ -128,22 +146,19 @@ public class GIFReader extends FormatReader {
       throw new FormatException("Buffer too small.");
     }
 
-    int[] ints = (int[]) images.get(no);
+    act = (int[]) colorTables.get(no);
+
+    buf = (byte[]) images.get(no);
     if (no > 0) {
-      int[] prev = (int[]) images.get(no - 1);
-      for (int i=0; i<ints.length; i++) {
-        if ((ints[i] & 0x00ffffff) == 0) {
-          ints[i] = prev[i];
+      byte[] prev = (byte[]) images.get(no - 1);
+      for (int i=0; i<buf.length; i++) {
+        if ((act[buf[i] & 0xff] & 0x00ffffff) == 0) {
+          buf[i] = prev[i];
         }
       }
-      images.setElementAt(ints, no);
+      images.setElementAt(buf, no);
     }
 
-    for (int i=0; i<ints.length; i++) {
-      buf[i] = (byte) ((ints[i] & 0xff0000) >> 16);
-      buf[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
-      buf[i + 2*ints.length] = (byte) (ints[i] & 0xff);
-    }
     return buf;
   }
 
@@ -153,8 +168,13 @@ public class GIFReader extends FormatReader {
   {
     FormatTools.assertId(currentId, true, 1);
     byte[] bytes = openBytes(no);
-    return ImageTools.makeImage(bytes, core.sizeX[0], core.sizeY[0],
+    BufferedImage b = ImageTools.makeImage(bytes, core.sizeX[0], core.sizeY[0],
       bytes.length / (core.sizeX[0] * core.sizeY[0]), false, 1, true);
+    byte[][] table = get8BitLookupTable();
+    IndexedColorModel model = new IndexedColorModel(8, table[0].length, table);
+    WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+      b.getData().getDataBuffer(), null);
+    return new BufferedImage(model, raster, false, null); 
   }
 
   // -- Internal FormatReader API methods --
@@ -169,6 +189,7 @@ public class GIFReader extends FormatReader {
     in = new RandomAccessStream(id);
     in.order(true);
     images = new Vector();
+    colorTables = new Vector();
 
     String ident = in.readString(6);
 
@@ -481,7 +502,7 @@ public class GIFReader extends FormatReader {
 
   private void setPixels() {
     // expose destination image's pixels as an int array
-    int[] dest = new int[core.sizeX[0] * core.sizeY[0]];
+    byte[] dest = new byte[core.sizeX[0] * core.sizeY[0]];
     int lastImage = -1;
 
     // fill in starting image contents based on last image's dispose code
@@ -492,7 +513,7 @@ public class GIFReader extends FormatReader {
       }
 
       if (lastImage != -1) {
-        int[] prev = (int[]) images.get(lastImage);
+        byte[] prev = (byte[]) images.get(lastImage);
         System.arraycopy(prev, 0, dest, 0, core.sizeX[0] * core.sizeY[0]);
       }
     }
@@ -534,10 +555,11 @@ public class GIFReader extends FormatReader {
         while (dx < dlim) {
           // map color and insert in destination
           int index = ((int) pixels[sx++]) & 0xff;
-          dest[dx++] = act[index];
+          dest[dx++] = (byte) index;
         }
       }
     }
+    colorTables.add(act);
     images.add(dest);
   }
 

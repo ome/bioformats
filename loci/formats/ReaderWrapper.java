@@ -121,11 +121,11 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isIndexed();
   }
 
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable() throws FormatException {
     return reader.get8BitLookupTable();
   }
 
-  public short[][] get16BitLookupTable() {
+  public short[][] get16BitLookupTable() throws FormatException {
     return reader.get16BitLookupTable();
   }
 

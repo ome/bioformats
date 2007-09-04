@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.IOException;
 import loci.formats.*;
 
@@ -80,10 +80,24 @@ public class BMPReader extends FormatReader {
     return true;
   }
 
+  /* @see loci.formats.IFormatReader#isIndexed() */
+  public boolean isIndexed() {
+    FormatTools.assertId(currentId, true, 1); 
+    return palette != null;  
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException {
+    FormatTools.assertId(currentId, true, 1);
+    return palette; 
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
+    int size = core.sizeX[0] * core.sizeY[0];
+    if (!isIndexed()) size *= core.sizeC[0];
+    byte[] buf = new byte[size];
     return openBytes(no, buf);
   }
 
@@ -98,9 +112,8 @@ public class BMPReader extends FormatReader {
 
     int pixels = core.sizeX[0] * core.sizeY[0];
 
-    if (buf.length < pixels * (bpp / 8)) {
-      throw new FormatException("Buffer too small.");
-    }
+    int size = isIndexed() ? pixels : pixels * (bpp / 8);
+    if (buf.length < size) throw new FormatException("Buffer too small.");
 
     if (compression != 0) {
       throw new FormatException("Compression type " + compression +
@@ -111,21 +124,14 @@ public class BMPReader extends FormatReader {
 
     if (palette != null && palette[0].length > 0) {
       for (int y=core.sizeY[0]-1; y>=0; y--) {
-        for (int x=0; x<core.sizeX[0]; x++) {
-          int val = in.read();
-          if (val < 0) val += 127;
-          buf[y*core.sizeX[0] + x] = palette[0][val];
-          buf[y*core.sizeX[0] + x + pixels] = palette[1][val];
-          buf[y*core.sizeX[0] + x + 2*pixels] = palette[2][val];
-        }
+        in.read(buf, y*core.sizeX[0], core.sizeX[0]); 
       }
+      return buf;
     }
     else {
       if (core.sizeC[0] == 1) {
         for (int y=core.sizeY[0]-1; y>=0; y--) {
-          for (int x=0; x<core.sizeX[0]; x++) {
-            buf[y*core.sizeX[0] + x] = (byte) (in.read() & 0xff);
-          }
+          in.read(buf, y*core.sizeX[0], core.sizeX[0]);
         }
       }
       else {
@@ -145,8 +151,17 @@ public class BMPReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], false);
+    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+      core.sizeY[0], core.sizeC[0], false);
+    if (isIndexed()) { 
+      byte[][] table = get8BitLookupTable();
+      IndexedColorModel model = 
+        new IndexedColorModel(8, table[0].length, table);
+      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+        b.getData().getDataBuffer(), null);
+      b = new BufferedImage(model, raster, false, null); 
+    } 
+    return b; 
   }
 
   // -- Internel FormatReader API methods --

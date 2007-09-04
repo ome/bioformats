@@ -236,13 +236,13 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable() throws FormatException {
     FormatTools.assertId(currentId, true, 2);
     return getReader().get8BitLookupTable();
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
-  public short[][] get16BitLookupTable() {
+  public short[][] get16BitLookupTable() throws FormatException {
     FormatTools.assertId(currentId, true, 2);
     return getReader().get16BitLookupTable();
   }
