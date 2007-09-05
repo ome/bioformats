@@ -226,9 +226,8 @@ public class ZeissZVIReader extends FormatReader {
       return buf;
     }
     catch (ReflectException e) {
-      throw new FormatException(e); 
-      //needLegacy = true;
-      //return openBytes(no, buf);
+      needLegacy = true;
+      return openBytes(no, buf);
     }
   }
 
