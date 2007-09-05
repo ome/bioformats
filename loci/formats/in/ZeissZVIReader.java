@@ -102,6 +102,9 @@ public class ZeissZVIReader extends FormatReader {
 
   private int zIndex = -1, cIndex = -1, tIndex = -1;
 
+  private boolean isTiled;
+  private int tileRows, tileColumns;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -148,22 +151,70 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     try {
-      Integer ii = new Integer(no);
-      Object directory = pixels.get(ii);
-      String name = (String) names.get(ii);
+      int tiles = tileRows * tileColumns;
+      if (tiles == 0) {
+        tiles = 1; 
+        tileRows = 1;
+        tileColumns = 1;
+      } 
+      int start = no * tiles;
+     
+      int bytes = 
+        FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount();
+      int ex = core.sizeX[0] / tileColumns;
+      int ey = core.sizeY[0] / tileRows;
+      int row = ex * bytes;
 
-      r.setVar("dir", directory);
-      r.setVar("entryName", name);
-      r.exec("document = dir.getEntry(entryName)");
-      r.exec("dis = new DocumentInputStream(document)");
-      r.exec("numBytes = dis.available()");
-      r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
-      r.exec("blah = dis.skip(skipBytes)");
-      r.setVar("data", buf);
-      r.exec("dis.read(data)");
+      int[] tileOrder = new int[tiles];
+      if (tiles == 1) tileOrder[0] = 0;
+      else {
+        int p = 0;
+        for (int r=0; r<tileRows; r++) {
+          for (int c=0; c<tileColumns; c++) {
+            int n = (no % core.sizeC[0]) + 
+              (tiles * core.sizeC[0] * (no / core.sizeC[0])); 
+            if (r % 2 == 0) {
+              tileOrder[p] = p*core.sizeC[0] + n; 
+            }
+            else {
+              tileOrder[p] = (tileColumns - c)*core.sizeC[0];
+              if (p > 0 && c == 0) tileOrder[p] += tileOrder[p - 1];
+              else if (c > 0) tileOrder[p] = tileOrder[p - 1] - core.sizeC[0]; 
+            }
+            p++; 
+          }
+        }
+      }
+
+      for (int i=start; i<start+tiles; i++) {
+        Integer ii = new Integer(tileOrder[i - start]);
+        Object directory = pixels.get(ii);
+        String name = (String) names.get(ii);
+
+        r.setVar("dir", directory);
+        r.setVar("entryName", name);
+        r.exec("document = dir.getEntry(entryName)");
+        r.exec("dis = new DocumentInputStream(document)");
+        r.exec("numBytes = dis.available()");
+        r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
+        r.exec("blah = dis.skip(skipBytes)");
+        r.setVar("data", buf);
+       
+        int xf = ((i - start) % tileColumns) * ex * bytes; 
+        int yf = ((i - start) / tileRows) * ey; 
+        int offset = yf*core.sizeX[0]*bytes + xf;
+        for (int y=0; y<ey; y++) {
+          r.setVar("offset", offset);
+          r.setVar("len", row);
+          try {
+            r.exec("dis.read(data, offset, len)");
+          }
+          catch (ReflectException e) { }
+          offset += core.sizeX[0]*bytes; 
+        }
+      }
 
       if (bpp > 6) bpp = 1;
-
       if (bpp == 3) {
         // reverse bytes in groups of 3 to account for BGR storage
         for (int i=0; i<buf.length; i+=3) {
@@ -172,12 +223,12 @@ public class ZeissZVIReader extends FormatReader {
           buf[i] = b;
         }
       }
-
       return buf;
     }
     catch (ReflectException e) {
-      needLegacy = true;
-      return openBytes(no, buf);
+      throw new FormatException(e); 
+      //needLegacy = true;
+      //return openBytes(no, buf);
     }
   }
 
@@ -263,7 +314,18 @@ public class ZeissZVIReader extends FormatReader {
 
       if (core.sizeC[0] != cIndices.size()) core.sizeC[0] *= cIndices.size();
 
-      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * getEffectiveSizeC();
+      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * 
+        (core.rgb[0] ? 1 : core.sizeC[0]);
+
+      if (isTiled) {
+        int lowerLeft = Integer.parseInt((String) getMeta("ImageTile Index 0"));
+        int middle = Integer.parseInt((String) getMeta("ImageTile Index 1"));
+
+        tileColumns = lowerLeft - middle - 1;
+        tileRows = (lowerLeft / tileColumns) + 1;
+        core.sizeX[0] *= tileColumns;
+        core.sizeY[0] *= tileRows;
+      }
 
       String s = (String) getMeta("Acquisition Bit Depth");
       if (s != null && s.trim().length() > 0) {
@@ -805,6 +867,7 @@ public class ZeissZVIReader extends FormatReader {
         key += " " + ndx;
       }
 
+      if (key.indexOf("ImageTile") != -1) isTiled = true; 
       addMeta(key, value);
     }
   }
