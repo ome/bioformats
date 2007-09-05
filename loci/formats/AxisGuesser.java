@@ -60,10 +60,10 @@ public class AxisGuesser {
   };
 
   /** Prefix endings indicating time dimension. */
-  protected static final String[] T = {"t", "tl", "tp"};
+  protected static final String[] T = {"t", "tl", "tp", "time"};
 
   /** Prefix endings indicating channel dimension. */
-  protected static final String[] C = {"c", "ch", "w"};
+  protected static final String[] C = {"c", "ch", "w", "wavelength"};
 
   protected static final BigInteger TWO = new BigInteger("2");
   protected static final BigInteger THREE = new BigInteger("3");
