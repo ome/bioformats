@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import loci.formats.MetadataTools;
 
-/** Indents XML to be more readable. Does not handle CDATA. */
+/** Indents XML to be more readable. */
 public class XMLIndent {
 
   public static void main(String[] args) throws Exception {
