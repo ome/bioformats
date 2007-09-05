@@ -27,6 +27,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
+import loci.formats.tools.ImageInfo;
 
 /**
  * ImageReader is the master file format reader for all supported formats.
@@ -561,8 +562,12 @@ public class ImageReader implements IFormatReader {
 
   // -- Main method --
 
+  /**
+   * @deprecated Replaced by
+   *   {@link loci.formats.tools.ImageInfo#main(String[])}
+   */
   public static void main(String[] args) throws FormatException, IOException {
-    if (!ConsoleTools.testRead(new ImageReader(), args)) System.exit(1);
+    ImageInfo.main(args);
   }
 
   // -- Deprecated IFormatReader API methods --
