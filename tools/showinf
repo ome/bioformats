@@ -12,7 +12,7 @@
 # the LOCI classes in your CLASSPATH, you can set the
 # LOCI_DEVEL environment variable to use them instead.
 
-PROG=loci.formats.ImageReader
+PROG=loci.formats.tools.ImageInfo
 
 if [ $LOCI_DEVEL ]
 then

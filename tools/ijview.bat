@@ -3,7 +3,7 @@
 rem ijview.bat: a batch file for displaying an image file in ImageJ
 rem             using the Bio-Formats Importer plugin
 
-rem Required JARs: loci_tools.jar; ij.jar
+rem Required JARs: loci_tools.jar, ij.jar
 
 rem JAR libraries must be in the same directory as this
 rem command line script for the command to function.  

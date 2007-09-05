@@ -11,7 +11,7 @@
 # the LOCI classes in your CLASSPATH, you can set the
 # LOCI_DEVEL environment variable to use them instead.
 
-PROG=loci.formats.ImageWriter
+PROG=loci.formats.tools.ImageConverter
 
 if [ $LOCI_DEVEL ]
 then
