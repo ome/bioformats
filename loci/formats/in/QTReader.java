@@ -126,6 +126,11 @@ public class QTReader extends FormatReader {
     return false;
   }
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(currentId, false, 1);

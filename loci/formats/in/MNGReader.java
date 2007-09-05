@@ -63,6 +63,11 @@ public class MNGReader extends FormatReader {
       block[6] == 0x1a && block[7] == 0x0a;
   }
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     return ImageTools.getBytes(openImage(no), true, core.sizeC[0]);

@@ -80,6 +80,11 @@ public class ImarisTiffReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */

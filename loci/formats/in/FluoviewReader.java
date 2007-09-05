@@ -100,6 +100,11 @@ public class FluoviewReader extends BaseTiffReader {
     return false;
   }
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {

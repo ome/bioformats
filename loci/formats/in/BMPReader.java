@@ -80,6 +80,11 @@ public class BMPReader extends FormatReader {
     return true;
   }
 
+  /* @see loci.formats.IFormatReader#isMetadataComplete() */
+  public boolean isMetadataComplete() {
+    return true;
+  }
+
   /* @see loci.formats.IFormatReader#isIndexed() */
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 1); 
