@@ -695,11 +695,14 @@ public class Importer {
     // convert to RGB if needed
     int pixelType = r.getPixelType();
     if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
-      (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8))
+      (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) &&
+      !r.isIndexed())
     {
       makeRGB(imp, r, r.getSizeC());
     }
-    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4) {
+    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
+      !r.isIndexed()) 
+    {
       // use compareTo instead of IJ.versionLessThan(...), because we want
       // to suppress the error message
       if (imp.getStackSize() == r.getSizeC() &&

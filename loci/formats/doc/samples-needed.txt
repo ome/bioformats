@@ -73,5 +73,6 @@ Volocity MVD2:
     used
 
 Zeiss ZVI:
-  - JPEG compressed 
+  - JPEG compressed
+  - tiled
   - 2+ GB files

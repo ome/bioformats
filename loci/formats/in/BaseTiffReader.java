@@ -87,18 +87,21 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() throws FormatException {
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);  
     int[] bits = TiffTools.getBitsPerSample(ifds[0]);
     if (bits[0] <= 8) {
       int[] colorMap = 
         (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+      
       byte[][] table = new byte[3][colorMap.length / 3];
       int next = 0; 
       for (int j=0; j<table.length; j++) {
         for (int i=0; i<table[0].length; i++) {
-          if (core.littleEndian[0]) {
-            table[j][i] = (byte) (colorMap[next++] & 0xff);
+          if (isLittleEndian()) {
+            int n = colorMap[next++];
+            if ((n & 0xffff) > 255) table[j][i] = (byte) ((n & 0xff00) >> 8);
+            else table[j][i] = (byte) (n & 0xff);
           }
           else table[j][i] = (byte) ((colorMap[next++] & 0xff00) >> 8);
         }
@@ -110,7 +113,7 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
-  public short[][] get16BitLookupTable() throws FormatException {
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);  
     int[] bits = TiffTools.getBitsPerSample(ifds[0]); 
     if (bits[0] <= 16 && bits[0] > 8) {

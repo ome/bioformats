@@ -287,13 +287,13 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() throws FormatException {
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
     return reader.get8BitLookupTable();
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
-  public short[][] get16BitLookupTable() throws FormatException {
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
     return reader.get16BitLookupTable();
   }

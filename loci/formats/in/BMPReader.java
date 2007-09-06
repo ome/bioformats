@@ -92,7 +92,7 @@ public class BMPReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() throws FormatException {
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return palette; 
   }

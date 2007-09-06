@@ -62,11 +62,6 @@ public class LeicaReader extends FormatReader {
   /** Number of series in the file. */
   private int numSeries;
 
-  /** Number of significant bits per pixel. */
-  private int[][] validBits;
-
-  private int[] channelIndices;
-
   /** Name of current LEI file */
   private String leiFilename;
 
@@ -111,6 +106,25 @@ public class LeicaReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#isIndexed() */
+  public boolean isIndexed() {
+    return true; 
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    tiff[0][0].setId((String) files[0].get(0)); 
+    return tiff[0][0].get8BitLookupTable(); 
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    tiff[0][0].setId((String) files[0].get(0)); 
+    return tiff[0][0].get16BitLookupTable(); 
+  }
+
   /* @see loci.formats.IFormatReader#isMetadataComplete() */
   public boolean isMetadataComplete() {
     return true;
@@ -128,20 +142,9 @@ public class LeicaReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-    int ndx = no % channelIndices.length;
     tiff[series][no].setId((String) files[series].get(no));
     byte[] b = tiff[series][no].openBytes(0);
-
-    int c = b.length / (core.sizeX[series] * core.sizeY[series] *
-      FormatTools.getBytesPerPixel(core.pixelType[series]));
-
-    // if a custom LUT is used, we don't want to split channels
-    if (channelIndices[ndx] > -1) {
-      b = ImageTools.splitChannels(b, c,
-        FormatTools.getBytesPerPixel(core.pixelType[series]), false,
-        isInterleaved())[channelIndices[ndx]];
-    }
-    tiff[series][no].close();
+    tiff[series][no].close(); 
     return b;
   }
 
@@ -156,17 +159,6 @@ public class LeicaReader extends FormatReader {
     tiff[series][no].setId((String) files[series].get(no));
     tiff[series][no].openBytes(0, buf);
     tiff[series][no].close();
-
-    int ndx = no % channelIndices.length;
-    int c = buf.length / (core.sizeX[series] * core.sizeY[series] *
-      FormatTools.getBytesPerPixel(core.pixelType[series]));
-
-    // if a custom LUT is used, we don't want to split channels
-    if (channelIndices[ndx] > -1) {
-      buf = ImageTools.splitChannels(buf, c,
-        FormatTools.getBytesPerPixel(core.pixelType[series]), false,
-        isInterleaved())[channelIndices[ndx]];
-    }
     return buf;
   }
 
@@ -179,13 +171,6 @@ public class LeicaReader extends FormatReader {
 
     tiff[series][no].setId((String) files[series].get(no));
     BufferedImage b = tiff[series][no].openImage(0);
-
-    int ndx = no % channelIndices.length;
-
-    // if a custom LUT is used, we don't want to split channels
-    if (channelIndices[ndx] > -1) {
-      b = ImageTools.splitChannels(b)[channelIndices[ndx]];
-    }
     tiff[series][no].close();
     return b;
   }
@@ -485,7 +470,7 @@ public class LeicaReader extends FormatReader {
           // read in each filename
           prefix = DataTools.stripString(new String(tempData,
             20 + 2*(j*nameLength), 2*nameLength));
-          f.add(dirPrefix + prefix);
+          f.add(dirPrefix + File.separator + prefix);
           // test to make sure the path is valid
           Location test = new Location((String) f.get(f.size() - 1));
           if (tiffsExist) tiffsExist = test.exists();
@@ -977,7 +962,6 @@ public class LeicaReader extends FormatReader {
 
         if (nChannels > 4) nChannels = 3;
         core.sizeC[i] = nChannels;
-        channelIndices = new int[nChannels];
 
         for (int j=0; j<nChannels; j++) {
           int v = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
@@ -1006,16 +990,6 @@ public class LeicaReader extends FormatReader {
 
           String name = DataTools.stripString(new String(temp, pt, length));
 
-          if (name.equals("Red")) channelIndices[j] = 0;
-          else if (name.equals("Green")) channelIndices[j] = 1;
-          else if (name.equals("Blue")) channelIndices[j] = 2;
-          else if (name.equals("Gray")) channelIndices[j] = 0;
-          else if (name.equals("Yellow")) channelIndices[j] = 0;
-          else {
-            // using a custom LUT
-            channelIndices[j] = -1;
-          }
-
           addMeta("LUT Channel " + j + " name", name);
           pt += length;
 
@@ -1040,18 +1014,6 @@ public class LeicaReader extends FormatReader {
     }
 
     Integer v = (Integer) getMeta("Real world resolution");
-
-    if (v != null) {
-      validBits = new int[core.sizeC.length][];
-
-      for (int i=0; i<validBits.length; i++) {
-        validBits[i] = new int[core.sizeC[i] == 2 ? 3 : core.sizeC[i]];
-        for (int j=0; j<validBits[i].length; j++) {
-          validBits[i][j] = v.intValue();
-        }
-      }
-    }
-    else validBits = null;
 
     // the metadata store we're working with
     MetadataStore store = getMetadataStore();
@@ -1098,11 +1060,8 @@ public class LeicaReader extends FormatReader {
 
       Integer ii = new Integer(i);
 
-      // if a custom LUT is used, we don't want to split channels
-      if (channelIndices[0] == -1) {
-        core.sizeC[i] *= 3;
-        core.rgb[i] = true;
-      }
+      core.rgb[i] = true;
+      core.sizeC[i] *= 3;
 
       store.setPixels(
         new Integer(core.sizeX[i]),

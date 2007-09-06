@@ -252,12 +252,12 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() throws FormatException {
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return null;
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
-  public short[][] get16BitLookupTable() throws FormatException {
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
     return null;
   }
 

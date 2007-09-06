@@ -29,7 +29,7 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.process.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.IOException;
 import loci.formats.*;
 import loci.formats.codec.LuraWaveCodec;
@@ -111,6 +111,20 @@ public final class Util {
       type == FormatTools.FLOAT || type == FormatTools.DOUBLE,
       r.isLittleEndian());
 
+    IndexColorModel cm = null;
+    IndexedColorModel model = null;
+    if (r.isIndexed()) {
+      byte[][] byteTable = r.get8BitLookupTable();
+      if (byteTable != null) {
+        cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],
+          byteTable[1], byteTable[2]);
+      }
+      else {
+        short[][] shortTable = r.get16BitLookupTable();
+        model = new IndexedColorModel(16, shortTable[0].length, shortTable); 
+      }
+    }
+
     // construct image processor
     ImageProcessor ip = null;
     if (pixels instanceof byte[]) {
@@ -121,6 +135,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
       ip = new ByteProcessor(w, h, q, null);
+      if (cm != null) ip.setColorModel(cm); 
     }
     else if (pixels instanceof short[]) {
       short[] q = (short[]) pixels;
@@ -129,7 +144,7 @@ public final class Util {
         q = new short[w * h];
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
-      ip = new ShortProcessor(w, h, q, null);
+      ip = new ShortProcessor(w, h, q, model);
     }
     else if (pixels instanceof int[]) {
       int[] q = (int[]) pixels;

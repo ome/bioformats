@@ -97,7 +97,7 @@ public interface IFormatReader extends IFormatHandler {
    * this returns null.  Also, if getPixelType() returns anything other than
    * <code>INT8</code> or <code>UINT8</code>, this method will return null.
    */
-  byte[][] get8BitLookupTable() throws FormatException;
+  byte[][] get8BitLookupTable() throws FormatException, IOException;
 
   /**
    * Gets the 8-bit color lookup table associated with the most recently opened
@@ -106,7 +106,7 @@ public interface IFormatReader extends IFormatHandler {
    * this returns null.  Also, if getPixelType() returns anything other than
    * <code>INT8</code> or <code>UINT8</code>, this method will return null.
    */
-  short[][] get16BitLookupTable() throws FormatException;
+  short[][] get16BitLookupTable() throws FormatException, IOException;
 
   /**
    * Gets the lengths of each subdimension of C,

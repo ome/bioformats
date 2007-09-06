@@ -483,6 +483,10 @@ public class ZeissZVIReader extends FormatReader {
       pixZ == null ? null : new Float(pixZ),
       null, null, null);
 
+    String scopeName = (String) getMeta("Microscope Name");
+    if (scopeName == null) scopeName = (String) getMeta("Microscope Name 0");
+    store.setInstrument(null, scopeName, null, null, null);
+
     for (int i=0; i<getEffectiveSizeC(); i++) {
       int idx = FormatTools.getIndex(this, 0, i, 0);
       String name = (String) getMeta("Channel Name " + idx);

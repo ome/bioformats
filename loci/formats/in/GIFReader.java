@@ -121,7 +121,7 @@ public class GIFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() throws FormatException {
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1); 
     byte[][] table = new byte[3][act.length];
     for (int i=0; i<act.length; i++) {
