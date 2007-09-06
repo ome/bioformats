@@ -3,6 +3,7 @@
 * Support for indexed color images
 * Command-line OME-XML validation
 * Bugfixes in most readers, especially Zeiss ZVI, PerkinElmer and Leica LEI
+* Initial version of Bio-Formats macro extensions for ImageJ
 
 2007 Aug 1:
 * Added support for latest version of Leica LIF
