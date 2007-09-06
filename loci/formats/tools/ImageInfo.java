@@ -525,7 +525,7 @@ public final class ImageInfo {
       MetadataStore ms = reader.getMetadataStore();
       if (MetadataTools.isOMEXMLMetadata(ms)) {
         String xml = MetadataTools.getOMEXML((MetadataRetrieve) ms);
-        LogTools.println(MetadataTools.indentXML(xml));
+        LogTools.println(XMLTools.indentXML(xml));
         MetadataTools.validateOMEXML(xml);
       }
       else {

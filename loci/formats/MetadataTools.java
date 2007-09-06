@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.util.StringTokenizer;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
@@ -143,106 +142,7 @@ public final class MetadataTools {
    * Java's XML validation facility. Requires Java 1.5+.
    */
   public static void validateOMEXML(String xml) {
-    // check Java version (XML validation only works in Java 1.5+)
-    String version = System.getProperty("java.version");
-    int dot = version.indexOf(".");
-    if (dot >= 0) dot = version.indexOf(".", dot + 1);
-    float ver = Float.NaN;
-    if (dot >= 0) {
-      try {
-        ver = Float.parseFloat(version.substring(0, dot));
-      }
-      catch (NumberFormatException exc) { }
-    }
-    if (ver != ver) {
-      LogTools.println("Warning: cannot determine if Java version\"" +
-        version + "\" supports Java v1.5. OME-XML validation may fail.");
-    }
-
-    if (ver != ver || ver >= 1.5f) {
-      // validate OME-XML (Java 1.5+ only)
-      LogTools.println("Validating OME-XML");
-
-      // use reflection to avoid dependency on optional
-      // org.openmicroscopy.xml or javax.xml.validation packages
-      ReflectedUniverse r = new ReflectedUniverse();
-
-      try {
-        // look up a factory for the W3C XML Schema language
-        r.setVar("schemaPath", "http://www.w3.org/2001/XMLSchema");
-        r.exec("import javax.xml.validation.SchemaFactory");
-        r.exec("factory = SchemaFactory.newInstance(schemaPath)");
-
-        // compile the schema
-        r.exec("import java.net.URL");
-        r.setVar("omePath",
-          "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd");
-        r.exec("schemaLocation = new URL(omePath)");
-        r.exec("schema = factory.newSchema(schemaLocation)");
-
-        // HACK - workaround for weird Linux bug preventing use of
-        // schema.newValidator() method even though it is "public final"
-        r.setAccessibilityIgnored(true);
-
-        // get a validator from the schema
-        r.exec("validator = schema.newValidator()");
-
-        // prepare the XML source
-        r.exec("import java.io.StringReader");
-        r.setVar("xml", xml);
-        r.exec("reader = new StringReader(xml)");
-        r.exec("import org.xml.sax.InputSource");
-        r.exec("is = new InputSource(reader)");
-        r.exec("import javax.xml.transform.sax.SAXSource");
-        r.exec("source = new SAXSource(is)");
-
-        // validate the OME-XML
-        ValidationHandler handler = new ValidationHandler();
-        r.setVar("handler", handler);
-        r.exec("validator.setErrorHandler(handler)");
-        r.exec("validator.validate(source)");
-        if (handler.ok()) LogTools.println("No validation errors found.");
-      }
-      catch (ReflectException exc) {
-        LogTools.println("Error validating OME-XML:");
-        LogTools.trace(exc);
-      }
-    }
-  }
-
-  /** Indents XML to be more readable. */
-  public static String indentXML(String xml) { return indentXML(xml, 3); }
-
-  /** Indents XML by the given spacing to be more readable. */
-  public static String indentXML(String xml, int spacing) {
-    int indent = 0;
-    StringBuffer sb = new StringBuffer();
-    StringTokenizer st = new StringTokenizer(xml, "<>", true);
-    boolean element = false;
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
-      if (token.equals("")) continue;
-      if (token.equals("<")) {
-        element = true;
-        continue;
-      }
-      if (element && token.equals(">")) {
-        element = false;
-        continue;
-      }
-      if (element && token.startsWith("/")) indent -= spacing;
-      for (int j=0; j<indent; j++) sb.append(" ");
-      if (element) sb.append("<");
-      sb.append(token);
-      if (element) sb.append(">");
-      sb.append("\n");
-      if (element && !token.startsWith("?") &&
-        !token.startsWith("/") && !token.endsWith("/"))
-      {
-        indent += spacing;
-      }
-    }
-    return sb.toString();
+    XMLTools.validateXML(xml, "OME-XML");
   }
 
   // -- Utility methods -- metadata conversion --
