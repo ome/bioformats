@@ -1,3 +1,9 @@
+2007 Sept 6:
+* Major improvements to ND2 support - lossless compression now supported
+* Support for indexed color images
+* Command-line OME-XML validation
+* Bugfixes in most readers, especially Zeiss ZVI, Perkin Elmer and Leica LEI
+
 2007 Aug 1:
 * Added support for latest version of Leica LIF
 * Fixed several issues with Leica LIF, Zeiss ZVI
