@@ -1,5 +1,5 @@
 //
-// XMLIndent.java
+// XMLValidate.java
 //
 
 /*
@@ -29,13 +29,13 @@ import java.io.FileReader;
 import loci.formats.XMLTools;
 
 /**
- * Indents XML to be more readable.
+ * Attempts to validate the given XML files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/tools/IndentXML.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/tools/IndentXML.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/tools/XMLValidate.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/tools/XMLValidate.java">SVN</a></dd></dl>
  */
-public class XMLIndent {
+public class XMLValidate {
 
   public static void main(String[] args) throws Exception {
     for (int i=0; i<args.length; i++) {
@@ -48,7 +48,7 @@ public class XMLIndent {
         sb.append(line);
       }
       in.close();
-      System.out.println(XMLTools.indentXML(sb.toString()));
+      XMLTools.validateXML(sb.toString(), args[i]);
     }
   }
 

@@ -72,7 +72,7 @@ public final class XMLTools {
     }
     if (ver != ver) {
       LogTools.println("Warning: cannot determine if Java version\"" +
-        version + "\" supports Java v1.5. " + label + " validation may fail.");
+        version + "\" supports Java v1.5. XML validation may fail.");
     }
 
     if (ver < 1.5f) return; // do not attempt validation if not Java 1.5+
