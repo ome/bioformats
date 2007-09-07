@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ome:OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2007-06"
+<OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2007-06"
     xmlns:std="http://www.openmicroscopy.org/Schemas/STD/2007-06"
-    xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
-    xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2007-06"
-    xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2007-06"
-    xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2007-06"
-    xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
-    xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
+ xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
+ xmlns="http://www.openmicroscopy.org/Schemas/OME/2007-06"
+ xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2007-06"
+ xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2007-06"
+ xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
+ xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06 http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd">
-    <ome:Project Name="Name0" ID="Project:a">
-        <ome:Description>
-        </ome:Description>
-        <ome:ExperimenterRef ID="Experimenter:a"/>
-        <ome:GroupRef ID="Group:a"/>
-    </ome:Project>
-    <ome:Dataset Name="Name1" ID="Dataset:a" Locked="false">
-        <ome:Description>
-        </ome:Description>
-        <ome:ExperimenterRef ID="Experimenter:a"/>
-        <ome:GroupRef ID="Group:a"/>
-        <ome:ProjectRef ID="Project:a"/>
+    <Project Name="Name0" ID="Project:a">
+        <Description>
+        </Description>
+        <ExperimenterRef ID="Experimenter:a"/>
+        <GroupRef ID="Group:a"/>
+    </Project>
+    <Dataset Name="Name1" ID="Dataset:a" Locked="false">
+        <Description>
+        </Description>
+        <ExperimenterRef ID="Experimenter:a"/>
+        <GroupRef ID="Group:a"/>
+        <ProjectRef ID="Project:a"/>
         <ca:CustomAttributes>
         </ca:CustomAttributes>
-    </ome:Dataset>
-    <ome:Experiment Type="FRET TimeLapse FourDPlus" ID="Experiment:a">
-        <ome:Description>
-        </ome:Description>
-        <ome:ExperimenterRef ID="Experimenter:a"/>
-        <ome:MicrobeamManipulationRef ID="MicrobeamManipulation:a"/>
-    </ome:Experiment>
+    </Dataset>
+    <Experiment Type="FRET TimeLapse FourDPlus" ID="Experiment:a">
+        <Description>
+        </Description>
+        <ExperimenterRef ID="Experimenter:a"/>
+        <MicrobeamManipulationRef ID="MicrobeamManipulation:a"/>
+    </Experiment>
     <spw:Plate ID="Plate:a" Name="Name2" Description="Description0" Status="Status0" ExternalIdentifier="ExternRef0">
         <spw:ScreenRef ID="Screen:a"/>
         <spw:ScreenRef ID="Screen:a"/>
@@ -64,8 +64,8 @@
     <spw:Screen ID="Screen:a" Name="Name3" ProtocolIdentifier="ProtocolIdentifier0" ProtocolDescription="ProtocolDescription0"
         ReagentSetDescription="ReagentSetDescription0" ReagentSetIdentifier="ReagentSetIdentifier0"
         Type="Type8">
-        <ome:Description>
-        </ome:Description>
+        <Description>
+        </Description>
         <spw:Reagent ID="Reagent:a" Description="Description1" Name="Name4" ReagentIdentifier="ReagentIdentifier0"/>
         <spw:Reagent ID="Reagent:a" Description="Description1" Name="Name4" ReagentIdentifier="ReagentIdentifier0"/>
         <spw:Reagent ID="Reagent:a" Description="Description1" Name="Name4" ReagentIdentifier="ReagentIdentifier0"/>
@@ -101,205 +101,205 @@
             <spw:WellSampleRef ID="WellSample:a"/>
         </spw:ScreenAcquisition>
     </spw:Screen>
-    <ome:Experimenter ID="Experimenter:a">
-        <ome:FirstName>FirstName0</ome:FirstName>
-        <ome:LastName>LastName0</ome:LastName>
-        <ome:Email>Email0</ome:Email>
-        <ome:Institution>Institution0</ome:Institution>
-        <ome:OMEName>OMEName0</ome:OMEName>
-        <ome:GroupRef ID="Group:a"/>
-        <ome:GroupRef ID="Group:a"/>
-        <ome:GroupRef ID="Group:a"/>
-    </ome:Experimenter>
-    <ome:Group Name="Name91" ID="Group:a">
-        <ome:Leader ID="Experimenter:a"/>
-        <ome:Contact ID="Experimenter:a"/>
-    </ome:Group>
-    <ome:Instrument ID="Instrument:a">
-        <ome:Microscope Type="Upright" Manufacturer="Manufacturer0" Model="Model0" SerialNumber="SerialNumber0"/>
-        <ome:LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer1" Model="Model1" SerialNumber="SerialNumber1">
-            <ome:Laser Type="Excimer" LaserMedium="HoYAG" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
+    <Experimenter ID="Experimenter:a">
+        <FirstName>FirstName0</FirstName>
+        <LastName>LastName0</LastName>
+        <Email>Email0</Email>
+        <Institution>Institution0</Institution>
+        <OMEName>OMEName0</OMEName>
+        <GroupRef ID="Group:a"/>
+        <GroupRef ID="Group:a"/>
+        <GroupRef ID="Group:a"/>
+    </Experimenter>
+    <Group Name="Name91" ID="Group:a">
+        <Leader ID="Experimenter:a"/>
+        <Contact ID="Experimenter:a"/>
+    </Group>
+    <Instrument ID="Instrument:a">
+        <Microscope Type="Upright" Manufacturer="Manufacturer0" Model="Model0" SerialNumber="SerialNumber0"/>
+        <LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer1" Model="Model1" SerialNumber="SerialNumber1">
+            <Laser Type="Excimer" LaserMedium="HoYAG" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
                  PockelCell="false" RepetitionRate="false">
-                <ome:Pump ID="LightSource:a"/>
-            </ome:Laser>
-<!--            <ome:Filament Type="Incandescent" Power="3.14159E0"/>-->
-<!--            <ome:Arc Type="Hg" Power="3.14159E0"/>-->
-        </ome:LightSource>
-        <ome:LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
-            <ome:Laser Type="Excimer" LaserMedium="CO2" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
+                <Pump ID="LightSource:a"/>
+            </Laser>
+<!--            <Filament Type="Incandescent" Power="3.14159E0"/>-->
+<!--            <Arc Type="Hg" Power="3.14159E0"/>-->
+        </LightSource>
+        <LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
+            <Laser Type="Excimer" LaserMedium="CO2" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
                  PockelCell="false" RepetitionRate="false">
-                <ome:Pump ID="LightSource:a"/>
-            </ome:Laser>
-<!--            <ome:Filament Type="Incandescent" Power="3.14159E0"/>-->
-<!--            <ome:Arc Type="Hg" Power="3.14159E0"/>-->
-        </ome:LightSource>
-        <ome:LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3">
-            <ome:Laser Type="Excimer" LaserMedium="HeNe" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
+                <Pump ID="LightSource:a"/>
+            </Laser>
+<!--            <Filament Type="Incandescent" Power="3.14159E0"/>-->
+<!--            <Arc Type="Hg" Power="3.14159E0"/>-->
+        </LightSource>
+        <LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3">
+            <Laser Type="Excimer" LaserMedium="HeNe" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
                  PockelCell="false" RepetitionRate="false">
-                <ome:Pump ID="LightSource:a"/>
-            </ome:Laser>
-<!--            <ome:Filament Type="Incandescent" Power="3.14159E0"/>-->
-<!--            <ome:Arc Type="Hg" Power="3.14159E0"/>-->
-        </ome:LightSource>
-        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
+                <Pump ID="LightSource:a"/>
+            </Laser>
+<!--            <Filament Type="Incandescent" Power="3.14159E0"/>-->
+<!--            <Arc Type="Hg" Power="3.14159E0"/>-->
+        </LightSource>
+        <Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer4" Model="Model4" SerialNumber="SerialNumber4"/>
-        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
+        <Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer5" Model="Model5" SerialNumber="SerialNumber5"/>
-        <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
+        <Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer6" Model="Model6" SerialNumber="SerialNumber6"/>
-        <ome:Objective ID="Objective:a" Manufacturer="Manufacturer7" Model="Model7" SerialNumber="SerialNumber7">
-                <ome:Correction>UV</ome:Correction>
-                <ome:Immersion>Oil</ome:Immersion>
-                <ome:LensNA>3.14159E0</ome:LensNA>
-                <ome:NominalMagnification>0</ome:NominalMagnification>
-                <ome:CalibratedMagnification>3.14159E0</ome:CalibratedMagnification>
-                <ome:WorkingDistance>3.14159E0</ome:WorkingDistance>
-        </ome:Objective>
-        <ome:Objective ID="Objective:a" Manufacturer="Manufacturer8" Model="Model8" SerialNumber="SerialNumber8">
-                <ome:Correction>UV</ome:Correction>
-                <ome:Immersion>Oil</ome:Immersion>
-                <ome:LensNA>3.14159E0</ome:LensNA>
-                <ome:NominalMagnification>0</ome:NominalMagnification>
-                <ome:CalibratedMagnification>3.14159E0</ome:CalibratedMagnification>
-                <ome:WorkingDistance>3.14159E0</ome:WorkingDistance>
-        </ome:Objective>
-        <ome:Objective ID="Objective:a" Manufacturer="Manufacturer9" Model="Model9" SerialNumber="SerialNumber9">
-                <ome:Correction>UV</ome:Correction>
-                <ome:Immersion>Oil</ome:Immersion>
-                <ome:LensNA>3.14159E0</ome:LensNA>
-                <ome:NominalMagnification>0</ome:NominalMagnification>
-                <ome:CalibratedMagnification>3.14159E0</ome:CalibratedMagnification>
-                <ome:WorkingDistance>3.14159E0</ome:WorkingDistance>
-        </ome:Objective>
-        <ome:FilterSet
+        <Objective ID="Objective:a" Manufacturer="Manufacturer7" Model="Model7" SerialNumber="SerialNumber7">
+                <Correction>UV</Correction>
+                <Immersion>Oil</Immersion>
+                <LensNA>3.14159E0</LensNA>
+                <NominalMagnification>0</NominalMagnification>
+                <CalibratedMagnification>3.14159E0</CalibratedMagnification>
+                <WorkingDistance>3.14159E0</WorkingDistance>
+        </Objective>
+        <Objective ID="Objective:a" Manufacturer="Manufacturer8" Model="Model8" SerialNumber="SerialNumber8">
+                <Correction>UV</Correction>
+                <Immersion>Oil</Immersion>
+                <LensNA>3.14159E0</LensNA>
+                <NominalMagnification>0</NominalMagnification>
+                <CalibratedMagnification>3.14159E0</CalibratedMagnification>
+                <WorkingDistance>3.14159E0</WorkingDistance>
+        </Objective>
+        <Objective ID="Objective:a" Manufacturer="Manufacturer9" Model="Model9" SerialNumber="SerialNumber9">
+                <Correction>UV</Correction>
+                <Immersion>Oil</Immersion>
+                <LensNA>3.14159E0</LensNA>
+                <NominalMagnification>0</NominalMagnification>
+                <CalibratedMagnification>3.14159E0</CalibratedMagnification>
+                <WorkingDistance>3.14159E0</WorkingDistance>
+        </Objective>
+        <FilterSet
             ExFilterRef="Filter:a" DichroicRef="Dichroic:a" EmFilterRef="Filter:a"
             ID="FilterSet:a" Manufacturer="Manufacturer0" Model="Model0" LotNumber="LotNumber0"/>
-        <ome:Filter Type="LongPass" FilterWheel="FilterWheel0" ID="Filter:a" Manufacturer="Manufacturer10" Model="Model10"
+        <Filter Type="LongPass" FilterWheel="FilterWheel0" ID="Filter:a" Manufacturer="Manufacturer10" Model="Model10"
              LotNumber="LotNumber0">
-            <ome:TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
-        </ome:Filter>
-        <ome:Filter Type="LongPass" FilterWheel="FilterWheel1" ID="Filter:a" Manufacturer="Manufacturer11" Model="Model11"
+            <TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
+        </Filter>
+        <Filter Type="LongPass" FilterWheel="FilterWheel1" ID="Filter:a" Manufacturer="Manufacturer11" Model="Model11"
              LotNumber="LotNumber1">
-            <ome:TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
-        </ome:Filter>
-        <ome:Filter Type="LongPass" FilterWheel="FilterWheel2" ID="Filter:a" Manufacturer="Manufacturer12" Model="Model12"
+            <TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
+        </Filter>
+        <Filter Type="LongPass" FilterWheel="FilterWheel2" ID="Filter:a" Manufacturer="Manufacturer12" Model="Model12"
              LotNumber="LotNumber2">
-            <ome:TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
-        </ome:Filter>
-        <ome:Dichroic ID="Dichroic:a" Manufacturer="Manufacturer12" Model="Model12" LotNumber="LotNumber2"/>
-        <ome:Dichroic ID="Dichroic:a" Manufacturer="Manufacturer18" Model="Model18" LotNumber="LotNumber8"/>
-        <ome:OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
-            <ome:ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
-            <ome:FilterSetRef ID="FilterSet:a"/>
+            <TransmittanceRange CutIn="0" CutOut="0" CutInTolerance="0" CutOutTolerance="0" Transmittance="0"/>
+        </Filter>
+        <Dichroic ID="Dichroic:a" Manufacturer="Manufacturer12" Model="Model12" LotNumber="LotNumber2"/>
+        <Dichroic ID="Dichroic:a" Manufacturer="Manufacturer18" Model="Model18" LotNumber="LotNumber8"/>
+        <OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
+            <ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
+            <FilterSetRef ID="FilterSet:a"/>
             <bf:BinaryFile FileName="FileName0" Size="0">
                 <bf:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF12341234567890ABCDEF1234" Compression="none"/>
 <!--                <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>-->
             </bf:BinaryFile>
-        </ome:OTF>
-        <ome:OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
-            <ome:ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
-            <ome:FilterSetRef ID="FilterSet:a"/>
+        </OTF>
+        <OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
+            <ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
+            <FilterSetRef ID="FilterSet:a"/>
             <bf:BinaryFile FileName="FileName1" Size="0">
                 <bf:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF12341234567890ABCDEF1234" Compression="none"/>
 <!--                <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>-->
             </bf:BinaryFile>
-        </ome:OTF>
-        <ome:OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
-            <ome:ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
-            <ome:FilterSetRef ID="FilterSet:a"/>
+        </OTF>
+        <OTF ID="OTF:a" PixelType="bit" OpticalAxisAveraged="false" SizeX="2" SizeY="2">
+            <ObjectiveRef ID="Objective:a" CorrectionCollar="3.14159E0" Medium="Air" RefractiveIndex="3.14159E0"/>
+            <FilterSetRef ID="FilterSet:a"/>
             <bf:BinaryFile FileName="FileName2" Size="0">
                 <bf:External href="http://www.oxygenxml.com/" SHA1="1234567890ABCDEF12341234567890ABCDEF1234" Compression="none"/>
 <!--                <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>-->
             </bf:BinaryFile>
-        </ome:OTF>
-    </ome:Instrument>
-    <ome:Image ID="Image:a" Name="Name92" DefaultPixels="Pixels:a">
-        <ome:CreationDate>2006-05-04T18:13:51.0Z</ome:CreationDate>
-        <ome:ExperimenterRef ID="Experimenter:a"/>
-        <ome:Description>
-        </ome:Description>
-        <ome:ExperimentRef ID="Experiment:a"/>
-        <ome:GroupRef ID="Group:a"/>
-        <ome:DatasetRef ID="Dataset:a"/>
-        <ome:InstrumentRef ID="Instrument:a"/>
-        <ome:ObjectiveSettingsRef ID="ObjectiveSettings:a"/>
-        <ome:ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
-        <ome:Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype11">
-        </ome:Thumbnail>
-        <ome:LogicalChannel ID="LogicalChannel:a" Name="Name93" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
+        </OTF>
+    </Instrument>
+    <Image ID="Image:a" Name="Name92" DefaultPixels="Pixels:a">
+        <CreationDate>2006-05-04T18:13:51.0Z</CreationDate>
+        <ExperimenterRef ID="Experimenter:a"/>
+        <Description>
+        </Description>
+        <ExperimentRef ID="Experiment:a"/>
+        <GroupRef ID="Group:a"/>
+        <DatasetRef ID="Dataset:a"/>
+        <InstrumentRef ID="Instrument:a"/>
+        <ObjectiveSettingsRef ID="ObjectiveSettings:a"/>
+        <ImagingEnvironment Temperature="3.14159E0" AirPressure="3.14159E0" Humidity="0.5" CO2Percent="0.5"/>
+        <Thumbnail href="http://www.oxygenxml.com/" MIMEtype="MIMEtype11">
+        </Thumbnail>
+        <LogicalChannel ID="LogicalChannel:a" Name="Name93" SamplesPerPixel="0" SecondaryEmissionFilter="Filter:a"
              SecondaryExcitationFilter="Filter:a" IlluminationType="Transmitted" PinholeSize="2"
              PhotometricInterpretation="Monochrome" Mode="WideField" ContrastMethod="Brightfield" ExWave="2"
              EmWave="2" Fluor="Fluor11" NdFilter="3.14159E0" PockelCellSetting="0">
-            <ome:LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
-            <ome:OTFRef ID="OTF:a"/>
-            <ome:DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
+            <LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
+            <OTFRef ID="OTF:a"/>
+            <DetectorRef ID="Detector:a" Offset="3.14159E0" Gain="3.14159E0" Voltage="3.14159E0" ReadOutRate="3.14159E0"
                  Binning="1x1"/>
-            <ome:FilterSetRef ID="FilterSet:a"/>
-            <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain33" Index="1"/>
-            <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain34" Index="1"/>
-            <ome:ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain35" Index="1"/>
-        </ome:LogicalChannel>
-        <ome:DisplayOptions Zoom="3.14159E0" ID="DisplayOptions:a" Display="RGB">
-            <ome:RedChannel ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0" isOn="false"/>
-            <ome:GreenChannel ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0" isOn="false"/>
-            <ome:BlueChannel ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0" isOn="false"/>
-            <ome:GreyChannel ColorMap="Greyscale" ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0"
+            <FilterSetRef ID="FilterSet:a"/>
+            <ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain33" Index="1"/>
+            <ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain34" Index="1"/>
+            <ChannelComponent Pixels="Pixels:a" ColorDomain="ColorDomain35" Index="1"/>
+        </LogicalChannel>
+        <DisplayOptions Zoom="3.14159E0" ID="DisplayOptions:a" Display="RGB">
+            <RedChannel ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0" isOn="false"/>
+            <GreenChannel ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0" isOn="false"/>
+            <BlueChannel ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0" isOn="false"/>
+            <GreyChannel ColorMap="Greyscale" ChannelNumber="0" BlackLevel="3.14159E0" WhiteLevel="3.14159E0" Gamma="3.14159E0"
                  isOn="false"/>
-            <ome:Projection ZStart="0" ZStop="0"/>
-            <ome:Time TStart="0" TStop="0"/>
-            <ome:ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0" ID="ROI:a"/>
-        </ome:DisplayOptions>
-        <ome:StageLabel Name="Name94" X="3.14159E0" Y="3.14159E0" Z="3.14159E0"/>
-        <ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
+            <Projection ZStart="0" ZStop="0"/>
+            <Time TStart="0" TStop="0"/>
+            <ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0" ID="ROI:a"/>
+        </DisplayOptions>
+        <StageLabel Name="Name94" X="3.14159E0" Y="3.14159E0" Z="3.14159E0"/>
+        <Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
              SizeC="2" SizeT="2" PhysicalSizeX="3.14159E0" PhysicalSizeY="3.14159E0" PhysicalSizeZ="3.14159E0"
              TimeIncrement="3.14159E0" WaveStart="2" WaveIncrement="2">
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
-            <ome:Plane TheZ="0" TheT="0" TheC="0">
-                <ome:PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
-                <ome:StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
-            </ome:Plane>
-        </ome:Pixels>
-        <ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
+            <Plane TheZ="0" TheT="0" TheC="0">
+                <PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
+                <StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
+            </Plane>
+        </Pixels>
+        <Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
              SizeC="2" SizeT="2" PhysicalSizeX="3.14159E0" PhysicalSizeY="3.14159E0" PhysicalSizeZ="3.14159E0"
              TimeIncrement="3.14159E0" WaveStart="2" WaveIncrement="2">
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
-            <ome:Plane TheZ="0" TheT="0" TheC="0">
-                <ome:PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
-                <ome:StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
-            </ome:Plane>
-        </ome:Pixels>
-        <ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
+            <Plane TheZ="0" TheT="0" TheC="0">
+                <PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
+                <StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
+            </Plane>
+        </Pixels>
+        <Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
              SizeC="2" SizeT="2" PhysicalSizeX="3.14159E0" PhysicalSizeY="3.14159E0" PhysicalSizeZ="3.14159E0"
              TimeIncrement="3.14159E0" WaveStart="2" WaveIncrement="2">
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
-            <ome:Plane TheZ="0" TheT="0" TheC="0">
-                <ome:PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
-                <ome:StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
-            </ome:Plane>
-        </ome:Pixels>
-        <ome:AcquiredPixelsRef ID="Pixels:a"/>
-        <ome:Region Tag="Tag22" Name="Name95" ID="Region:a">
-            <ome:Region Tag="Tag23" Name="Name96" ID="Region:a"/>
+            <Plane TheZ="0" TheT="0" TheC="0">
+                <PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
+                <StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
+            </Plane>
+        </Pixels>
+        <AcquiredPixelsRef ID="Pixels:a"/>
+        <Region Tag="Tag22" Name="Name95" ID="Region:a">
+            <Region Tag="Tag23" Name="Name96" ID="Region:a"/>
             <ca:CustomAttributes>
             </ca:CustomAttributes>
-        </ome:Region>
+        </Region>
         <ca:CustomAttributes>
         </ca:CustomAttributes>
-        <ome:ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0" ID="ROI:a"/>
-        <ome:MicrobeamManipulation ID="MicrobeamManipulation:a" Type="Photoactivation OpticalTrapping Other">
-            <ome:ROIRef ID="ROI:a"/>
-            <ome:ROIRef ID="ROI:a"/>
-            <ome:ROIRef ID="ROI:a"/>
-            <ome:ExperimenterRef ID="Experimenter:a"/>
-            <ome:LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
-        </ome:MicrobeamManipulation>
-    </ome:Image>
+        <ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0" ID="ROI:a"/>
+        <MicrobeamManipulation ID="MicrobeamManipulation:a" Type="Photoactivation OpticalTrapping Other">
+            <ROIRef ID="ROI:a"/>
+            <ROIRef ID="ROI:a"/>
+            <ROIRef ID="ROI:a"/>
+            <ExperimenterRef ID="Experimenter:a"/>
+            <LightSourceRef ID="LightSource:a" Attenuation="0.5" Wavelength="2"/>
+        </MicrobeamManipulation>
+    </Image>
     <std:SemanticTypeDefinitions>
         <std:SemanticType Name="Name97" AppliesTo="G">
             <std:Description>
@@ -351,7 +351,7 @@
         </std:SemanticType>
     </std:SemanticTypeDefinitions>
     <am:AnalysisModuleLibrary>
-        <am:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator0" NewRegionName="NewRegionName0"
+        <am:AnalysisModule isStreamAlgorithm="false"  ModuleType= "OME::Analysis::a" RegionIterator="RegionIterator0" NewRegionName="NewRegionName0"
              Category="Category0" ProgramID="ProgramID0" ModuleName="ModuleName0" ID="Module:a">
             <am:Description>Description3</am:Description>
             <am:Declaration>
@@ -687,4 +687,4 @@
     </am:AnalysisModuleLibrary>
    <ca:CustomAttributes>
     </ca:CustomAttributes>
-</ome:OME>
+</OME>
