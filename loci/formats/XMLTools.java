@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.*;
 import java.util.StringTokenizer;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
+import javax.xml.parsers.*;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A utility class for working with XML (not necessarily OME-XML).
@@ -78,9 +80,29 @@ public final class XMLTools {
     if (ver < 1.5f) return; // do not attempt validation if not Java 1.5+
 
     // get path to schema from root element using SAX
-    // CTR TODO
-    String schemaPath =
-      "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd";
+    LogTools.println("Parsing schema path");
+    ValidationSAXHandler saxHandler = new ValidationSAXHandler();
+    SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+    Exception exception = null;
+    try {
+      SAXParser saxParser = saxFactory.newSAXParser();
+      InputStream is = new ByteArrayInputStream(xml.getBytes());
+      saxParser.parse(is, saxHandler);
+    }
+    catch (ParserConfigurationException exc) { exception = exc; }
+    catch (SAXException exc) { exception = exc; }
+    catch (IOException exc) { exception = exc; }
+    if (exception != null) {
+      LogTools.println("Error parsing schema path from " + label + ":");
+      LogTools.trace(exception);
+      return;
+    }
+    String schemaPath = saxHandler.getSchemaPath();
+    if (schemaPath == null) {
+      LogTools.println("No schema path found. Validation cannot continue.");
+      return;
+    }
+    else LogTools.println(schemaPath);
 
     LogTools.println("Validating " + label);
 
@@ -117,11 +139,11 @@ public final class XMLTools {
       r.exec("source = new SAXSource(is)");
 
       // validate the XML
-      ValidationHandler handler = new ValidationHandler();
-      r.setVar("handler", handler);
-      r.exec("validator.setErrorHandler(handler)");
+      ValidationErrorHandler errorHandler = new ValidationErrorHandler();
+      r.setVar("errorHandler", errorHandler);
+      r.exec("validator.setErrorHandler(errorHandler)");
       r.exec("validator.validate(source)");
-      if (handler.ok()) LogTools.println("No validation errors found.");
+      if (errorHandler.ok()) LogTools.println("No validation errors found.");
     }
     catch (ReflectException exc) {
       LogTools.println("Error validating " + label + ":");
@@ -166,8 +188,46 @@ public final class XMLTools {
 
   // -- Helper classes --
 
-  /** Used by testRead to handle XML validation errors. */
-  private static class ValidationHandler implements ErrorHandler {
+  /** Used by validateXML to parse the XML block's schema path using SAX. */
+  private static class ValidationSAXHandler extends DefaultHandler {
+    private String schemaPath;
+    private boolean first;
+    public String getSchemaPath() { return schemaPath; }
+    public void startDocument() {
+      schemaPath = null;
+      first = true;
+    }
+    public void startElement(String uri,
+      String localName, String qName, Attributes attributes)
+    {
+      if (!first) return;
+      first = false;
+
+      int len = attributes.getLength();
+      String xmlns = null, xsiSchemaLocation = null;
+      for (int i=0; i<len; i++) {
+        String name = attributes.getQName(i);
+        if (name.equals("xmlns")) xmlns = attributes.getValue(i);
+        else if (name.equals("xsi:schemaLocation")) {
+          xsiSchemaLocation = attributes.getValue(i);
+        }
+      }
+      if (xmlns == null || xsiSchemaLocation == null) return; // not found
+
+      StringTokenizer st = new StringTokenizer(xsiSchemaLocation);
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken();
+        if (xmlns.equals(token)) {
+          // next token is the actual schema path
+          if (st.hasMoreTokens()) schemaPath = st.nextToken();
+          break;
+        }
+      }
+    }
+  }
+
+  /** Used by validateXML to handle XML validation errors. */
+  private static class ValidationErrorHandler implements ErrorHandler {
     private boolean ok = true;
     public boolean ok() { return ok; }
     public void error(SAXParseException e) {
@@ -185,3 +245,4 @@ public final class XMLTools {
   }
 
 }
+
