@@ -65,6 +65,7 @@ loci.formats.in.ZeissZVIReader     # zvi [POIFS]
 loci.formats.in.OIBReader          # oib [POIFS]
 loci.formats.in.IPWReader          # ipw [POIFS]
 loci.formats.in.ND2Reader          # nd2, jp2 [JAI-ImageIO]
+loci.formats.in.PCIReader          # cxd [POIFS]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.MetamorphReader    # stk
