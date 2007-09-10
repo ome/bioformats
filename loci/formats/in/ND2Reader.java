@@ -183,8 +183,13 @@ public class ND2Reader extends FormatReader {
     in.seek(offsets[no]);
 
     if (isJPEG) {
-      byte[][] pixels = ImageTools.getPixelBytes(openImage(no), false);
-
+      BufferedImage b = openImage(no);
+      byte[][] pixels = ImageTools.getPixelBytes(b, false);
+      if (pixels.length == 1 && core.sizeC[0] > 1) {
+        pixels = ImageTools.splitChannels(pixels[0], core.sizeC[0], 
+          FormatTools.getBytesPerPixel(core.pixelType[0]), false, 
+          !core.interleaved[0]);
+      }
       for (int i=0; i<core.sizeC[0]; i++) {
         System.arraycopy(pixels[i], 0, buf, i*pixels[i].length,
           pixels[i].length);

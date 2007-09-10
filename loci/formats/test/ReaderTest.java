@@ -378,14 +378,13 @@ public class ReaderTest {
           !config.getDimOrder(file).equals(r.getDimensionOrder());
         boolean failInt = config.isInterleaved(file) != r.isInterleaved();
         boolean failRGB = config.isRGB(file) != r.isRGB();
-        // TODO : uncomment this once the config files have been updated
-        //boolean failTX = config.getThumbX(file) != r.getThumbSizeX();
-        //boolean failTY = config.getThumbY(file) != r.getThumbSizeY();
+        boolean failTX = config.getThumbX(file) != r.getThumbSizeX();
+        boolean failTY = config.getThumbY(file) != r.getThumbSizeY();
         boolean failType = config.getPixelType(file) != r.getPixelType();
         boolean failEndian = config.isLittleEndian(file) != r.isLittleEndian();
 
         success = !(failX || failY || failZ || failC || failT || failDim ||
-          failInt || failRGB || /*failTX || failTY || */failType || failEndian);
+          failInt || failRGB || failTX || failTY || failType || failEndian);
 
         if (!success) {
           writeLog(file + " failed consistent metadata test");
