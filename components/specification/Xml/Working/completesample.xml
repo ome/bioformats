@@ -126,20 +126,20 @@
 <!--            <ome:Arc Type="Hg" Power="3.14159E0"/>-->
         </ome:LightSource>
         <ome:LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
-            <ome:Laser Type="Excimer" LaserMedium="CO2" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
+<!--            <ome:Laser Type="Excimer" LaserMedium="CO2" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
                  PockelCell="false" RepetitionRate="false">
                 <ome:Pump ID="LightSource:a"/>
-            </ome:Laser>
-<!--            <ome:Filament Type="Incandescent" Power="3.14159E0"/>-->
+            </ome:Laser>-->
+            <ome:Filament Type="Incandescent" Power="3.14159E0"/>
 <!--            <ome:Arc Type="Hg" Power="3.14159E0"/>-->
         </ome:LightSource>
         <ome:LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3">
-            <ome:Laser Type="Excimer" LaserMedium="HeNe" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
+ <!--           <ome:Laser Type="Excimer" LaserMedium="HeNe" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
                  PockelCell="false" RepetitionRate="false">
                 <ome:Pump ID="LightSource:a"/>
-            </ome:Laser>
+            </ome:Laser>-->
 <!--            <ome:Filament Type="Incandescent" Power="3.14159E0"/>-->
-<!--            <ome:Arc Type="Hg" Power="3.14159E0"/>-->
+            <ome:Arc Type="Hg" Power="3.14159E0"/>
         </ome:LightSource>
         <ome:Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer4" Model="Model4" SerialNumber="SerialNumber4"/>
