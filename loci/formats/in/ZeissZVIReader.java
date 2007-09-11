@@ -153,20 +153,20 @@ public class ZeissZVIReader extends FormatReader {
     try {
       int tiles = tileRows * tileColumns;
       if (tiles == 0) {
-        tiles = 1; 
+        tiles = 1;
         tileRows = 1;
         tileColumns = 1;
-      } 
+      }
       int start = no * tiles;
-     
-      int bytes = 
+
+      int bytes =
         FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount();
       int ex = core.sizeX[0] / tileColumns;
       int ey = core.sizeY[0] / tileRows;
       int row = ex * bytes;
 
       int[] tileOrder = new int[tiles];
-      if (tiles == 1) tileOrder[0] = 0;
+      if (tiles == 1) tileOrder[0] = no;
       else {
         int p = 0;
         for (int r=0; r<tileRows; r++) {
@@ -199,7 +199,7 @@ public class ZeissZVIReader extends FormatReader {
         r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
         r.exec("blah = dis.skip(skipBytes)");
         r.setVar("data", buf);
-       
+
         int xf = ((i - start) % tileColumns) * ex * bytes; 
         int yf = ((i - start) / tileRows) * ey; 
         int offset = yf*core.sizeX[0]*bytes + xf;
@@ -313,7 +313,7 @@ public class ZeissZVIReader extends FormatReader {
 
       if (core.sizeC[0] != cIndices.size()) core.sizeC[0] *= cIndices.size();
 
-      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] * 
+      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
         (core.rgb[0] ? 1 : core.sizeC[0]);
 
       if (isTiled) {
@@ -322,8 +322,11 @@ public class ZeissZVIReader extends FormatReader {
 
         tileColumns = lowerLeft - middle - 1;
         tileRows = (lowerLeft / tileColumns) + 1;
+        if (tileColumns < 0) tileColumns = 1;
+        if (tileRows < 0) tileRows = 1;
         core.sizeX[0] *= tileColumns;
         core.sizeY[0] *= tileRows;
+        if (tileColumns == 1 && tileRows == 1) isTiled = false; 
       }
 
       String s = (String) getMeta("Acquisition Bit Depth");
