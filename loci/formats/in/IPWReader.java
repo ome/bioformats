@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
@@ -107,50 +107,48 @@ public class IPWReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    try {
-      String directory = (String) pixels.get(new Integer(no));
-      String name = (String) names.get(new Integer(no));
-
-      r.setVar("dirName", directory);
-      r.exec("root = fs.getRoot()");
-
-      if (!directory.equals("Root Entry")) {
-        r.exec("dir = root.getEntry(dirName)");
-        r.setVar("entryName", name);
-        r.exec("document = dir.getEntry(entryName)");
-      }
-      else {
-        r.setVar("entryName", name);
-        r.exec("document = root.getEntry(entryName)");
-      }
-
-      r.exec("dis = new DocumentInputStream(document)");
-      r.exec("numBytes = dis.available()");
-      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes + 4];
-      r.setVar("data", b);
-      r.exec("dis.read(data)");
-
-      RandomAccessStream stream = new RandomAccessStream(b);
-      ifds = TiffTools.getIFDs(stream);
-      core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
-      TiffTools.getSamples(ifds[0], stream, buf);
-      stream.close();
-      return buf;
+    if (buf.length < core.sizeX[0] * core.sizeY[0] *
+      FormatTools.getBytesPerPixel(core.pixelType[0]) *
+      ((isRGB() && !isIndexed()) ? core.sizeC[0] : 1))
+    {
+      throw new FormatException("Buffer too small.");
     }
-    catch (ReflectException e) {
-      noPOI = true;
-      return null;
-    }
+
+    RandomAccessStream stream = getStream(no);
+    ifds = TiffTools.getIFDs(stream);
+    core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
+    TiffTools.getSamples(ifds[0], stream, buf);
+    stream.close();
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    byte[] b = openBytes(no);
-    int bytes = b.length / (core.sizeX[0] * core.sizeY[0]);
-    return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0],
-      bytes == 3 ? 3 : 1, false, bytes == 3 ? 1 : bytes, core.littleEndian[0]);
+    FormatTools.assertId(currentId, true, 1);
+    if (no < 0 || no >= getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    RandomAccessStream stream = getStream(no);
+    ifds = TiffTools.getIFDs(stream);
+    BufferedImage b = TiffTools.getImage(ifds[0], stream);
+    if (isIndexed()) {
+      IndexedColorModel model = null;
+      if (core.pixelType[0] == FormatTools.UINT8) {
+        byte[][] table = get8BitLookupTable();
+        model = new IndexedColorModel(8, table[0].length, table);
+      }
+      else if (core.pixelType[0] == FormatTools.UINT16) {
+        short[][] table = get16BitLookupTable();
+        model = new IndexedColorModel(16, table[0].length, table);
+      }
+      if (model != null) {
+        WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+          b.getData().getDataBuffer(), null);
+        b = new BufferedImage(model, raster, false, null);
+      }
+    }
+    return b;
   }
 
   // -- IFormatHandler API methods --
@@ -456,6 +454,40 @@ public class IPWReader extends BaseTiffReader {
           print(depth + 1, data.length + " bytes read.");
         }
       }
+    }
+  }
+
+  /** Retrieve the file corresponding to the given image number. */
+  private RandomAccessStream getStream(int no) throws IOException {
+    try {
+      String directory = (String) pixels.get(new Integer(no));
+      String name = (String) names.get(new Integer(no));
+
+      r.setVar("dirName", directory);
+      r.exec("root = fs.getRoot()");
+
+      if (!directory.equals("Root Entry")) {
+        r.exec("dir = root.getEntry(dirName)");
+        r.setVar("entryName", name);
+        r.exec("document = dir.getEntry(entryName)");
+      }
+      else {
+        r.setVar("entryName", name);
+        r.exec("document = root.getEntry(entryName)");
+      }
+
+      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("numBytes = dis.available()");
+      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
+      byte[] b = new byte[numBytes + 4];
+      r.setVar("data", b);
+      r.exec("dis.read(data)");
+
+      return new RandomAccessStream(b); 
+    }
+    catch (ReflectException e) {
+      noPOI = true;
+      return null;
     }
   }
 

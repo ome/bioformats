@@ -1,8 +1,9 @@
-2007 Sept 7:
+2007 Sept 11:
 * Major improvements to ND2 support - lossless compression now supported
 * Support for indexed color images
+* Added support for Simple-PCI .cxd files
 * Command-line OME-XML validation
-* Bugfixes in most readers, especially Zeiss ZVI, PerkinElmer and Leica LEI
+* Bugfixes in most readers, especially Zeiss ZVI, Metamorph, PerkinElmer and Leica LEI
 * Initial version of Bio-Formats macro extensions for ImageJ
 
 2007 Aug 1:
@@ -11,7 +12,7 @@
 * Better metadata mapping for Zeiss ZVI
 * Added OME-TIFF writer
 * Added MetadataRetrieve API for retrieving data from a MetadataStore
-* Miscellaneous bugfixes 
+* Miscellaneous bugfixes
 
 2007 July 16:
 * Fixed several issues with ImageJ plugins

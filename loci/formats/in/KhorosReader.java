@@ -97,7 +97,7 @@ public class KhorosReader extends FormatReader {
 
     int bufSize = core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]);
-    if (isIndexed()) bufSize *= core.sizeC[0];
+    if (!isIndexed()) bufSize *= core.sizeC[0];
     if (buf.length < bufSize) throw new FormatException("Buffer too small.");
 
     in.seek(offset + no * bufSize);
