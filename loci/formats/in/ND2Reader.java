@@ -186,8 +186,8 @@ public class ND2Reader extends FormatReader {
       BufferedImage b = openImage(no);
       byte[][] pixels = ImageTools.getPixelBytes(b, false);
       if (pixels.length == 1 && core.sizeC[0] > 1) {
-        pixels = ImageTools.splitChannels(pixels[0], core.sizeC[0], 
-          FormatTools.getBytesPerPixel(core.pixelType[0]), false, 
+        pixels = ImageTools.splitChannels(pixels[0], core.sizeC[0],
+          FormatTools.getBytesPerPixel(core.pixelType[0]), false,
           !core.interleaved[0]);
       }
       for (int i=0; i<core.sizeC[0]; i++) {
@@ -199,11 +199,31 @@ public class ND2Reader extends FormatReader {
     else if (isLossless) {
       byte[] b = new byte[buf.length];
       in.read(b);
+
+      if ((core.sizeX[0] % 2) != 0) {
+        buf = new byte[(core.sizeX[0] + 1) * core.sizeY[0] *
+          getRGBChannelCount() *
+          FormatTools.getBytesPerPixel(core.pixelType[0])];
+      }
+
       Inflater decompresser = new Inflater();
       decompresser.setInput(b);
       try { decompresser.inflate(buf); }
       catch (DataFormatException e) { throw new FormatException(e); }
       decompresser.end();
+
+      if ((core.sizeX[0] % 2) != 0) {
+        byte[] tmp = buf;
+        buf = new byte[core.sizeX[0] * core.sizeY[0] * getRGBChannelCount() *
+          FormatTools.getBytesPerPixel(core.pixelType[0])];
+        int row = core.sizeX[0] * getRGBChannelCount() *
+          FormatTools.getBytesPerPixel(core.pixelType[0]);
+        int padRow = (core.sizeX[0] + 1) * getRGBChannelCount() *
+          FormatTools.getBytesPerPixel(core.pixelType[0]);
+        for (int i=0; i<core.sizeY[0]; i++) {
+          System.arraycopy(tmp, padRow * i, buf, row * i, row);
+        }
+      }
     }
     else in.readFully(buf);
     return buf;
@@ -363,7 +383,7 @@ public class ND2Reader extends FormatReader {
 
       if (isLossless) {
         for (int i=0; i<offsets.length; i++) {
-          offsets[i] += i + 1;
+          offsets[i]++; 
         }
       }
 
@@ -559,6 +579,7 @@ public class ND2Reader extends FormatReader {
     core.sizeY[0] = img.getHeight();
     core.sizeC[0] = img.getRaster().getNumBands();
     core.rgb[0] = core.sizeC[0] > 1;
+    core.pixelType[0] = ImageTools.getPixelType(img);
 
     int numInvalid = 0;
 
@@ -666,8 +687,7 @@ public class ND2Reader extends FormatReader {
       }
     }
 
-    if (bits == 0) core.pixelType[0] = FormatTools.UINT8;
-    else {
+    if (bits != 0) {
       int bpp = bits;
       while (bpp % 8 != 0) bpp++;
       switch (bpp) {
@@ -799,7 +819,7 @@ public class ND2Reader extends FormatReader {
         core.sizeT[0] = 1;
       }
       else if (qName.equals("dCompressionParam")) {
-        isLossless = attributes.getValue("value").equals("1");
+        isLossless = !attributes.getValue("value").equals("0");
         addMeta(qName, attributes.getValue("value"));
       }
       else {
