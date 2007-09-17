@@ -26,7 +26,7 @@ package loci.formats.ome;
 
 /**
  * OmeisException is the exception thrown when something
- * goes wrong performing a file format operation.
+ * goes wrong communicating with the OME Image Server (OMEIS).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OmeisException.java">Trac</a>,

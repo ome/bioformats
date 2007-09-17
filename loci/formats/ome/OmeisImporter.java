@@ -34,7 +34,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * A command line utility used by OMEIS to interface with Bio-Formats.
+ * A command line utility used by the OME Image Server (OMEIS)
+ * to interface with Bio-Formats.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OmeisImporter.java">Trac</a>,
