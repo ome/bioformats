@@ -165,7 +165,7 @@ public class PerkinElmerReader extends FormatReader {
       String[] ls = parent.list();
       for (int i=0; i<ls.length; i++) {
         if (ls[i].toLowerCase().endsWith(".htm")) {
-          id = new Location(ls[i]).getAbsolutePath();
+          id = new Location(parent.getAbsolutePath(), ls[i]).getAbsolutePath();
           break;
         }
       }
@@ -575,9 +575,7 @@ public class PerkinElmerReader extends FormatReader {
     if (core.sizeT[0] <= 0) core.sizeT[0] = 1;
 
     if (sliceSpace != null) {
-      float spacing = Float.parseFloat(sliceSpace);
-      if (spacing <= 1f) core.currentOrder[0] += "TZ";
-      else core.currentOrder[0] += "ZT";
+      core.currentOrder[0] += "TZ";
     }
     else core.currentOrder[0] += "ZT"; // doesn't matter, since Z = T = 1
 

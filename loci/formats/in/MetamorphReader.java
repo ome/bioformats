@@ -160,7 +160,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
 
     int[] coords = FormatTools.getZCTCoords(this, no % core.sizeZ[series]);
-    int ndx = coords[1] * getEffectiveSizeC() + coords[2] * core.sizeT[series];
+    int ndx = no / core.sizeZ[series];
     String file = stks[series][ndx];
 
     if (r == null) r = new MetamorphReader();
@@ -179,8 +179,7 @@ public class MetamorphReader extends BaseTiffReader {
    
     if (r == null) r = new MetamorphReader();
     r.setId(file);
-    BufferedImage img = r.openImage(coords[0]);
-    return img;
+    return r.openImage(coords[0]);
   }
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -336,7 +335,7 @@ public class MetamorphReader extends BaseTiffReader {
       core.sizeT[0] = tc;
       core.imageCount[0] = zc * tc * cc;
       core.currentOrder[0] = "XYZCT";
-    
+
       if (stks.length > 1) {
         CoreMetadata newCore = new CoreMetadata(stks.length);
         for (int i=0; i<stks.length; i++) {
@@ -351,6 +350,7 @@ public class MetamorphReader extends BaseTiffReader {
           newCore.rgb[i] = core.rgb[0];
           newCore.littleEndian[i] = core.littleEndian[0];
           newCore.interleaved[i] = core.interleaved[0];
+          newCore.orderCertain[i] = true; 
         }
         newCore.sizeC[0] = stks[0].length / newCore.sizeT[0];
         newCore.sizeC[1] = stks[1].length / newCore.sizeT[1];

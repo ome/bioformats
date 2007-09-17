@@ -314,19 +314,26 @@ public class ZeissZVIReader extends FormatReader {
       if (core.sizeC[0] != cIndices.size()) core.sizeC[0] *= cIndices.size();
 
       core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
-        (core.rgb[0] ? 1 : core.sizeC[0]);
+        (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
 
       if (isTiled) {
-        int lowerLeft = Integer.parseInt((String) getMeta("ImageTile Index 0"));
-        int middle = Integer.parseInt((String) getMeta("ImageTile Index 1"));
+        String zeroIndex = (String) getMeta("ImageTile Index 0");
+        String oneIndex = (String) getMeta("ImageTile Index 1");
+        if (zeroIndex == null || oneIndex == null) {
+          isTiled = false;
+        }
+        else {
+          int lowerLeft = Integer.parseInt(zeroIndex);
+          int middle = Integer.parseInt(oneIndex);
 
-        tileColumns = lowerLeft - middle - 1;
-        tileRows = (lowerLeft / tileColumns) + 1;
-        if (tileColumns < 0) tileColumns = 1;
-        if (tileRows < 0) tileRows = 1;
-        core.sizeX[0] *= tileColumns;
-        core.sizeY[0] *= tileRows;
-        if (tileColumns == 1 && tileRows == 1) isTiled = false; 
+          tileColumns = lowerLeft - middle - 1;
+          tileRows = (lowerLeft / tileColumns) + 1;
+          if (tileColumns < 0) tileColumns = 1;
+          if (tileRows < 0) tileRows = 1;
+          core.sizeX[0] *= tileColumns;
+          core.sizeY[0] *= tileRows;
+          if (tileColumns == 1 && tileRows == 1) isTiled = false;
+        }
       }
 
       String s = (String) getMeta("Acquisition Bit Depth");
@@ -613,9 +620,15 @@ public class ZeissZVIReader extends FormatReader {
         if (dirName.toUpperCase().equals("ROOT ENTRY") ||
           dirName.toUpperCase().equals("ROOTENTRY"))
         {
-          if (entryName.equals("Tags")) parseTags(s);
+          if (entryName.equals("Tags")) {
+            try { parseTags(s); }
+            catch (EOFException e) { }
+          }
         }
-        else if (dirName.equals("Tags") && isContents) parseTags(s);
+        else if (dirName.equals("Tags") && isContents) {
+          try { parseTags(s); }
+          catch (EOFException e) { }
+        }
         else if (isContents && (dirName.equals("Image") ||
           dirName.toUpperCase().indexOf("ITEM") != -1) &&
           (data.length > core.sizeX[0]*core.sizeY[0]))
@@ -873,7 +886,7 @@ public class ZeissZVIReader extends FormatReader {
         key += " " + ndx;
       }
 
-      if (key.indexOf("ImageTile") != -1) isTiled = true; 
+      if (key.indexOf("ImageTile") != -1) isTiled = true;
       addMeta(key, value);
     }
   }

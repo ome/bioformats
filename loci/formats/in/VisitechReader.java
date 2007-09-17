@@ -82,7 +82,16 @@ public class VisitechReader extends FormatReader {
 
     String file = (String) files.get(fileIndex);
     RandomAccessStream s = new RandomAccessStream(file);
-    s.skipBytes(382 + (plane + 164)*planeIndex);
+    s.skipBytes(374);
+    boolean found = false;
+    while (!found) {
+      if (s.read() == (byte) 0xf0) {
+        found = true;
+        s.skipBytes(1);
+      }
+    }
+
+    s.skipBytes((plane + 164) * planeIndex);
     s.read(buf);
     s.close();
     return buf;
