@@ -3,10 +3,9 @@
 //
 
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
-import loci.formats.*;
+import loci.formats.ImageReader;
 import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.out.TiffWriter;
+import loci.formats.out.OMETiffWriter;
 
 /** Converts the given files to OME-TIFF format. */
 public class ConvertToOmeTiff {
@@ -17,37 +16,32 @@ public class ConvertToOmeTiff {
       return;
     }
     ImageReader reader = new ImageReader();
-    TiffWriter writer = new TiffWriter();
-    // record metadata to OME-XML format
-    OMEXMLMetadata omexmlMeta = new OMEXMLMetadata();
-    reader.setMetadataStore(omexmlMeta);
+    OMETiffWriter writer = new OMETiffWriter();
     for (int i=0; i<args.length; i++) {
       String id = args[i];
-      String outId = id + ".tif";
+      int dot = id.indexOf(".");
+      String outId = (dot >= 0 ? id.substring(0, dot) : id) + ".ome.tif";
       System.out.print("Converting " + id + " to " + outId + " ");
+
+      // record metadata to OME-XML format
+      OMEXMLMetadata omexmlMeta = new OMEXMLMetadata();
+      reader.setMetadataStore(omexmlMeta);
       reader.setId(id); 
-      int imageCount = reader.getImageCount();
-      // insert TiffData element into OME-XML
-      // currently handles only single series (single Image, single Pixels)
-      String xml = omexmlMeta.dumpXML();
-      int pix = xml.indexOf("<Pixels ");
-      int end = xml.indexOf("/>", pix);
-      xml = xml.substring(0, end) +
-        "><TiffData/></Pixels>" + xml.substring(end + 2);
+
+      // configure OME-TIFF writer
+      writer.setMetadataRetrieve(omexmlMeta);
+      writer.setId(outId);
+
       // write out image planes
+      int imageCount = reader.getImageCount();
       for (int j=0; j<imageCount; j++) {
         BufferedImage plane = reader.openImage(j);
-        Hashtable ifd = null;
-        if (j == 0) {
-          // save OME-XML metadata to TIFF file's first IFD
-          ifd = new Hashtable();
-          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
-        }
         // write plane to output file
-        writer.setId(outId);
-        writer.saveImage(plane, ifd, j == imageCount - 1);
+        writer.saveImage(plane, j == imageCount - 1);
         System.out.print(".");
       }
+      writer.close();
+      reader.close();
       System.out.println(" [done]");
     }
   }
