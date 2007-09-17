@@ -63,8 +63,12 @@ public class OMETiffWriter extends TiffWriter {
       try {
         TiffTools.overwriteComment(currentId, xml);
       }
-      catch (FormatException exc) { LogTools.trace(exc); }
-      catch (IOException exc) { LogTools.trace(exc); }
+      catch (FormatException exc) {
+        IOException io =
+          new IOException("Unable to append OME-XML comment");
+        io.initCause(exc);
+        throw io;
+      }
     }
     super.close();
   }
