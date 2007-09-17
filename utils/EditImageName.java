@@ -3,9 +3,8 @@
 //
 
 import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
 import loci.formats.ome.OMEXMLMetadata;
-import org.openmicroscopy.xml.ImageNode;
-import org.openmicroscopy.xml.OMENode;
 
 /** Edits the given file's image name (but does not save back to disk). */
 public class EditImageName {
@@ -21,16 +20,14 @@ public class EditImageName {
     String id = args[0];
     System.out.print("Reading metadata ");
     reader.setId(id); 
-    OMEXMLMetadata store = (OMEXMLMetadata) reader.getMetadataStore();
+    OMEXMLMetadata omexmlMeta = (OMEXMLMetadata) reader.getMetadataStore();
     System.out.println(" [done]");
-    // get OME root node
-    OMENode ome = (OMENode) store.getRoot();
-    // get first Image node
-    ImageNode image = (ImageNode) ome.getImages().get(0);
-    // get Image name
-    String name = image.getName();
+
+    // get image name
+    Integer zero = new Integer(0);
+    String name = omexmlMeta.getImageName(zero);
     System.out.println("Initial Image name = " + name);
-    // change Image name (reverse it)
+    // change image name (reverse it)
     char[] arr = name.toCharArray();
     for (int i=0; i<arr.length/2; i++) {
       int i2 = arr.length - i - 1;
@@ -41,11 +38,11 @@ public class EditImageName {
     }
     name = new String(arr);
     // save altered name back to OME-XML structure
-    image.setName(name);
+    omexmlMeta.setImage(name, null, null, zero);
     System.out.println("Updated Image name = " + name);
     // output full OME-XML block
     System.out.println("Full OME-XML dump:");
-    System.out.println(ome.writeOME(false));
+    System.out.println(MetadataTools.getOMEXML(omexmlMeta));
   }
 
 }
