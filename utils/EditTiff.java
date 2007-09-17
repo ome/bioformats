@@ -35,9 +35,11 @@ public class EditTiff {
       String xml = cin.readLine();
       System.out.print("Saving " + f);
       // save results back to the TIFF file
-      RandomAccessFile raf = new RandomAccessFile(args[i], "rw");
-      TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
-      raf.close();
+      TiffTools.overwriteComment(args[i], xml);
+      // or if you already have the file open for random access, you can use:
+      // RandomAccessFile raf = new RandomAccessFile(args[i], "rw");
+      // TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
+      // raf.close();
       System.out.println(" [done]");
     }
   }
