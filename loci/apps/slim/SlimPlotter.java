@@ -1163,7 +1163,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           ", percent=" + roiPercent + ", maxVal=" + maxVal + ")");
         for (int c=0; c<channels; c++) {
           for (int t=0; t<timeBins; t++) {
-            if (t > 0) out.print(" ");
+            if (t > 0) out.print("\t");
             float s = samps[timeBins * c + t];
             int is = (int) s;
             if (is == s) out.print(is);
