@@ -58,7 +58,7 @@ public abstract class FormatWriter extends FormatHandler
 
   /**
    * Current metadata retrieval object. Should <b>never</b> be accessed
-   * directly as the semantics of {@link #getMetadataRetrieve(String)}
+   * directly as the semantics of {@link #getMetadataRetrieve()}
    * prevent "null" access.
    */
   protected MetadataRetrieve metadataRetrieve = new DummyMetadata();
