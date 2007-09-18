@@ -49,6 +49,10 @@ public class LociFunctions extends MacroFunctions {
     rgbChannelCount[0] = new Double(r.getRGBChannelCount());
   }
 
+  public void isIndexed(String[] indexed) {
+    indexed[0] = r.isIndexed() ? "true" : "false";
+  }
+
   public void getChannelDimCount(Double[] channelDimCount) {
     channelDimCount[0] = new Double(r.getChannelDimLengths().length);
   }
@@ -240,6 +244,7 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("Ext.getPixelType(pixelType)");
       IJ.write("Ext.getEffectiveSizeC(effectiveSizeC)");
       IJ.write("Ext.getRGBChannelCount(rgbChannelCount)");
+      IJ.write("Ext.isIndexed(indexed)");
       IJ.write("Ext.getChannelDimCount(channelDimCount)");
       IJ.write("Ext.getChannelDimLength(i, channelDimLength)");
       IJ.write("Ext.getChannelDimType(i, channelDimType)");
