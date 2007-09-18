@@ -97,13 +97,6 @@ public class VisitechReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      1, core.interleaved[0], FormatTools.getBytesPerPixel(core.pixelType[0]),
-      core.littleEndian[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     if (files == null) return new String[0];

@@ -129,14 +129,6 @@ public class FlexReader extends BaseTiffReader {
     return bytes;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      getRGBChannelCount(), isInterleaved(),
-      FormatTools.getBytesPerPixel(core.pixelType[0]), isLittleEndian());
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */

@@ -162,19 +162,6 @@ public class LeicaReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    tiff[series][no].setId((String) files[series].get(no));
-    BufferedImage b = tiff[series][no].openImage(0);
-    tiff[series][no].close();
-    return b;
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);

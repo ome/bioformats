@@ -168,20 +168,6 @@ public class MetamorphReader extends BaseTiffReader {
     return r.openBytes(coords[0], buf);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (stks == null || stks[series].length == 1) return super.openImage(no);
-
-    int[] coords = FormatTools.getZCTCoords(this, no % core.sizeZ[series]);
-    int ndx = no / core.sizeZ[series];
-    String file = stks[series][ndx];
-   
-    if (r == null) r = new MetamorphReader();
-    r.setId(file);
-    return r.openImage(coords[0]);
-  }
-
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (id.toLowerCase().endsWith(".nd")) {

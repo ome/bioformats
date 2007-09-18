@@ -99,24 +99,6 @@ public class PerkinElmerReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (isTiff) {
-      int idx = no / core.sizeC[0];
-      tiff[idx].setId(files[idx]);
-      return tiff[idx].openImage(0);
-    }
-
-    byte[] b = openBytes(no);
-    int bpp = b.length / (core.sizeX[0] * core.sizeY[0]);
-    return ImageTools.makeImage(b, core.sizeX[0], core.sizeY[0], 1,
-      false, bpp, core.littleEndian[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);

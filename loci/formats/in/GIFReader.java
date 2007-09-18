@@ -167,21 +167,6 @@ public class GIFReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] bytes = openBytes(no);
-    BufferedImage b = ImageTools.makeImage(bytes, core.sizeX[0], core.sizeY[0],
-      bytes.length / (core.sizeX[0] * core.sizeY[0]), false, 1, true);
-    byte[][] table = get8BitLookupTable();
-    IndexedColorModel model = new IndexedColorModel(8, table[0].length, table);
-    WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
-      b.getData().getDataBuffer(), null);
-    return new BufferedImage(model, raster, false, null); 
-  }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

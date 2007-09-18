@@ -86,22 +86,6 @@ public class MRCReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (isFloat) {
-      byte[] b = openBytes(no);
-      float[] f = new float[b.length / 4];
-      for (int i=0; i<f.length; i++) {
-        f[i] = Float.intBitsToFloat(DataTools.bytesToInt(b, i*4,
-          4, core.littleEndian[0]));
-      }
-      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0], 1,
-        core.interleaved[0]);
-    }
-	return ImageTools.makeImage(openBytes(no), core.sizeX[0],
-      core.sizeY[0], 1, true, bpp, core.littleEndian[0]);
-  }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

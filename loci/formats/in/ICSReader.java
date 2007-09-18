@@ -152,31 +152,6 @@ public class ICSReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] plane = openBytes(no);
-    int channels = core.rgb[0] ? core.sizeC[0] : 1;
-
-    int bytes = bitsPerPixel / 8;
-
-    if (bytes == 4) {
-      float[] f = new float[core.sizeX[0] * core.sizeY[0] * channels];
-      for (int i=0; i<f.length; i++) {
-        int p = DataTools.bytesToInt(plane, i*4, 4, core.littleEndian[0]);
-        f[i] = Float.intBitsToFloat(p);
-      }
-
-      if (normalizeData) f = DataTools.normalizeFloats(f);
-
-      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0],
-        channels, true);
-    }
-
-    return ImageTools.makeImage(plane, core.sizeX[0], core.sizeY[0], channels,
-      true, bytes, core.littleEndian[0]);
-  }
-
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);

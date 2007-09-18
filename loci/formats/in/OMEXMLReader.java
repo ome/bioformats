@@ -152,13 +152,6 @@ public class OMEXMLReader extends FormatReader {
     return pixels;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    return ImageTools.makeImage(openBytes(no), core.sizeX[series],
-      core.sizeY[series], 1, false, bpp[series], core.littleEndian[series]);
-  }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

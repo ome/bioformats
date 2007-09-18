@@ -171,32 +171,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return swapIfRequired(buf);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    BufferedImage b = TiffTools.getImage(ifds[no], in);
-    if (isIndexed()) {
-      byte[][] table = get8BitLookupTable();
-      IndexedColorModel model = null;
-      if (table != null) {
-        model = new IndexedColorModel(8, table[0].length, table);
-      }
-      else {
-        short[][] t = get16BitLookupTable();
-        model = new IndexedColorModel(16, t[0].length, t);
-      }
-
-      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
-        b.getData().getDataBuffer(), null);
-      b = new BufferedImage(model, raster, false, null);
-    }
-    return b;
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable and metadata store. */

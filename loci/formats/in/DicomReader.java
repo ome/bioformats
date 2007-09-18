@@ -155,23 +155,6 @@ public class DicomReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
-      core.sizeY[0], indexed ? 1 : core.sizeC[0], core.interleaved[0], 
-      bitsPerPixel / 8, core.littleEndian[0]);
-    if (indexed) {
-      byte[][] table = get8BitLookupTable();
-      IndexedColorModel model =
-        new IndexedColorModel(8, table[0].length, table);
-      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
-        b.getData().getDataBuffer(), null);
-      b = new BufferedImage(model, raster, false, null);
-    }
-    return b;
-  }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

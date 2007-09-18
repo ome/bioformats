@@ -171,13 +171,6 @@ public class SDTReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    return ImageTools.makeImage(openBytes(no), core.sizeX[series],
-      core.sizeY[series], getRGBChannelCount(), false, 2, true);
-  }
-
   // -- Internal FormatReader API methods --
 
   /** Initializes the given SDT file. */

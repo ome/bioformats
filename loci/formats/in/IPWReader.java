@@ -122,35 +122,6 @@ public class IPWReader extends BaseTiffReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    RandomAccessStream stream = getStream(no);
-    ifds = TiffTools.getIFDs(stream);
-    BufferedImage b = TiffTools.getImage(ifds[0], stream);
-    if (isIndexed()) {
-      IndexedColorModel model = null;
-      if (core.pixelType[0] == FormatTools.UINT8) {
-        byte[][] table = get8BitLookupTable();
-        model = new IndexedColorModel(8, table[0].length, table);
-      }
-      else if (core.pixelType[0] == FormatTools.UINT16) {
-        short[][] table = get16BitLookupTable();
-        model = new IndexedColorModel(16, table[0].length, table);
-      }
-      if (model != null) {
-        WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
-          b.getData().getDataBuffer(), null);
-        b = new BufferedImage(model, raster, false, null);
-      }
-    }
-    return b;
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */

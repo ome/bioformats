@@ -105,21 +105,6 @@ public class OIFReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    BufferedImage b = tiffReader[no].openImage(0);
-    ColorModel cm = ImageTools.makeColorModel(b.getRaster().getNumBands(),
-      b.getRaster().getTransferType(), null);
-    b = ImageTools.makeBuffered(b, cm);
-    tiffReader[no].close();
-    return b;
-  }
-
   /* @see loci.formats.IFormatReader#openThumbImage(int) */
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException

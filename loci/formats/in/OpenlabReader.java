@@ -301,21 +301,6 @@ public class OpenlabReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    byte[] b = openBytes(no);
-    bytesPerPixel = b.length / (core.sizeX[series] * core.sizeY[series]);
-    if (bytesPerPixel > 3) bytesPerPixel = 3;
-    return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series],
-      bytesPerPixel == 3 ? 3 : 1, false,
-      bytesPerPixel == 3 ? 1 : bytesPerPixel, false);
-  }
-
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {

@@ -106,26 +106,6 @@ public class NRRDReader extends FormatReader {
     return helper.openBytes(no, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (core.pixelType[0] == FormatTools.FLOAT) {
-      byte[] b = openBytes(no);
-      float[] f = new float[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
-      for (int i=0; i<f.length; i++) {
-        f[i] = Float.intBitsToFloat(
-          DataTools.bytesToInt(b, i*4, 4, core.littleEndian[0]));
-      }
-      if (normalizeData) f = DataTools.normalizeFloats(f);
-      return ImageTools.makeImage(f, core.sizeX[0], core.sizeY[0],
-        core.sizeC[0], core.interleaved[0]);
-    }
-
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      core.sizeC[0], core.interleaved[0],
-      FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
-  }
-
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
     super.close();

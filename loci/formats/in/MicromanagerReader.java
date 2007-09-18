@@ -96,16 +96,6 @@ public class MicromanagerReader extends FormatReader {
     return tiffReader.openBytes(0, buf);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    tiffReader.setId((String) tiffs.get(no));
-    return tiffReader.openImage(0);
-  }
-
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {

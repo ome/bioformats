@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.*;
 
@@ -337,6 +339,50 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     return openBytes(no);
+  }
+
+  /* @see IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    byte[] buf = openBytes(no);
+
+    if (getPixelType() == FormatTools.FLOAT) {
+      float[] f = new float[buf.length / 4];
+      for (int i=0; i<f.length; i++) {
+        int p = DataTools.bytesToInt(buf, i*4, 4, isLittleEndian());
+        f[i] = Float.intBitsToFloat(p);
+      }
+
+      if (normalizeData) f = DataTools.normalizeFloats(f);
+      return ImageTools.makeImage(f, core.sizeX[series], core.sizeY[series],
+        getRGBChannelCount(), true);
+    }
+
+
+    BufferedImage b = ImageTools.makeImage(buf, core.sizeX[series],
+      core.sizeY[series], isIndexed() ? 1 : getRGBChannelCount(),
+      core.interleaved[0], FormatTools.getBytesPerPixel(core.pixelType[series]),
+      core.littleEndian[series]);
+    if (isIndexed()) {
+      IndexedColorModel model = null;
+      if (core.pixelType[series] == FormatTools.UINT8 || 
+        core.pixelType[series] == FormatTools.INT8)
+      {
+        byte[][] table = get8BitLookupTable();
+        model = new IndexedColorModel(8, table[0].length, table);
+      }
+      else if (core.pixelType[series] == FormatTools.UINT16 ||
+        core.pixelType[series] == FormatTools.INT16)
+      {
+        short[][] table = get16BitLookupTable();
+        model = new IndexedColorModel(16, table[0].length, table);
+      }
+      if (model != null) {
+        WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+          b.getData().getDataBuffer(), null);
+        b = new BufferedImage(model, raster, false, null);
+      }
+    }
+    return b;
   }
 
   /* @see IFormatReader#openThumbImage(int) */

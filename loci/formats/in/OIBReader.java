@@ -121,21 +121,6 @@ public class OIBReader extends FormatReader {
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    byte[] b = openBytes(no);
-    int bytes = b.length / (core.sizeX[series] * core.sizeY[series] *
-      getRGBChannelCount());
-
-    return ImageTools.makeImage(b, core.sizeX[series], core.sizeY[series],
-      getRGBChannelCount(), false, bytes, core.littleEndian[series]);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);

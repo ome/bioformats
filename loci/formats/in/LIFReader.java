@@ -121,13 +121,6 @@ public class LIFReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[series],
-      core.sizeY[series], getRGBChannelCount(), false, bpp / 8,
-      core.littleEndian[series]);
-  }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
