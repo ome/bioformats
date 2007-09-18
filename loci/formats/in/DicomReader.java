@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -90,6 +90,8 @@ public class DicomReader extends FormatReader {
   private boolean oddLocations;
   private boolean inSequence;
   private boolean bigEndianTransferSyntax;
+  private boolean indexed = false;
+  private byte[][] lut;
 
   // -- Constructor --
 
@@ -111,10 +113,24 @@ public class DicomReader extends FormatReader {
     return true;
   }
 
+  /* @see loci.formats.IFormatReader#isIndexed() */
+  public boolean isIndexed() {
+    FormatTools.assertId(currentId, true, 1);
+    return indexed;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return lut;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8)];
+    int bytes = core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8);
+    if (!indexed) bytes *= core.sizeC[0];
+    byte[] buf = new byte[bytes];
     return openBytes(no, buf);
   }
 
@@ -128,6 +144,7 @@ public class DicomReader extends FormatReader {
     }
 
     int bytes = core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8);
+    if (!indexed) bytes *= core.sizeC[0];
 
     if (buf.length < bytes) {
       throw new FormatException("Buffer too small.");
@@ -141,8 +158,18 @@ public class DicomReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-      1, false, bitsPerPixel / 8, core.littleEndian[0]);
+    BufferedImage b = ImageTools.makeImage(openBytes(no), core.sizeX[0], 
+      core.sizeY[0], indexed ? 1 : core.sizeC[0], core.interleaved[0], 
+      bitsPerPixel / 8, core.littleEndian[0]);
+    if (indexed) {
+      byte[][] table = get8BitLookupTable();
+      IndexedColorModel model =
+        new IndexedColorModel(8, table[0].length, table);
+      WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+        b.getData().getDataBuffer(), null);
+      b = new BufferedImage(model, raster, false, null);
+    }
+    return b;
   }
 
   // -- Internal FormatReader API methods --
@@ -269,11 +296,11 @@ public class DicomReader extends FormatReader {
     status("Populating metadata");
 
     core.sizeZ[0] = core.imageCount[0];
-    core.sizeC[0] = 1;
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    core.rgb[0] = core.sizeC[0] > 1;
     core.sizeT[0] = 1;
-    core.currentOrder[0] = "XYZTC";
-    core.rgb[0] = false;
-    core.interleaved[0] = false;
+    core.currentOrder[0] = "XYCZT";
+    core.interleaved[0] = true;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
@@ -340,11 +367,37 @@ public class DicomReader extends FormatReader {
   // -- Helper methods --
 
   private void addInfo(int tag, String value) throws IOException {
+    long oldFp = in.getFilePointer();
     String info = getHeaderInfo(tag, value);
     if (inSequence && info != null && vr != SQ) info = ">" + info;
     if (info != null && tag != ITEM) {
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) key = "" + tag;
+      if (key.equals("Samples per pixel")) {
+        core.sizeC[0] = Integer.parseInt(info.trim());
+        if (core.sizeC[0] > 1) core.rgb[0] = true;
+      }
+      else if (key.equals("Photometric Interpretation")) {
+        if (info.trim().equals("PALETTE COLOR")) {
+          indexed = true;
+          core.sizeC[0] = 3;
+          core.rgb[0] = true;
+          lut = new byte[3][];
+        }
+      }
+      else if (key.indexOf("Palette Color LUT Data") != -1) {
+        String color = key.substring(0, key.indexOf(" ")).trim();
+        int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
+        long fp = in.getFilePointer();
+        in.seek(oldFp + ndx*ndx);
+        lut[ndx] = new byte[elementLength / 2];
+        for (int i=0; i<lut[ndx].length; i++) {
+          lut[ndx][i] = (byte) (in.read() & 0xff);
+          in.skipBytes(1);
+        }
+        in.seek(fp);
+      }
+
       if (tag != PIXEL_DATA) addMeta(key, info);
     }
   }
@@ -407,8 +460,7 @@ public class DicomReader extends FormatReader {
       case SQ:
         value = "";
         boolean privateTag = ((tag >> 16) & 1) != 0;
-        if (tag == ICON_IMAGE_SEQUENCE || privateTag) skip = true;
-        break;
+        if (tag != ICON_IMAGE_SEQUENCE && !privateTag) break;
       default:
         skip = true;
     }
@@ -497,7 +549,7 @@ public class DicomReader extends FormatReader {
     }
 
     int elementWord = in.readShort();
-    int tag = groupWord << 16 | elementWord;
+    int tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
     elementLength = getLength();
 
     // HACK - needed to read some GE files
