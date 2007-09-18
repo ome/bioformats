@@ -61,6 +61,7 @@ public class ImagePlusWrapper {
       // get # images in all matching files
 
       fs.setId(name);
+      fs.setSeries(r.getSeries());
 
       try {
         if (stitch && fs == null) fs = new FileStitcher(r);
@@ -199,7 +200,9 @@ public class ImagePlusWrapper {
     synchronized (read) {
       Exception problem = null;
       try {
+        int series = read.getSeries();
         read.setId(name);
+        read.setSeries(series);
         dim = read.getDimensionOrder();
         sizeX = read.getSizeX();
         sizeY = read.getSizeY();

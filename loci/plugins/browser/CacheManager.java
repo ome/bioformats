@@ -223,6 +223,7 @@ public class CacheManager implements Runnable {
     synchronized (read) {
       try {
         read.setId(fileName);
+        read.setSeries(db.series);
         sizeZ = read.getSizeZ();
         sizeT = read.getSizeT();
         sizeC = read.getEffectiveSizeC();

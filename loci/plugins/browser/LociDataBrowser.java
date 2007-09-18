@@ -115,8 +115,14 @@ public class LociDataBrowser {
   {
     fStitch = fs;
     if (r == null) {
-      r = merged ? (IFormatReader)
-        new ChannelMerger(fStitch) : new ChannelSeparator(fStitch);
+      if (fStitch == null) {
+        r = merged ? (IFormatReader) new ChannelMerger() :
+          new ChannelSeparator();
+      }
+      else {
+        r = merged ? (IFormatReader)
+          new ChannelMerger(fStitch) : new ChannelSeparator(fStitch);
+      }
     }
     reader = new DimensionSwapper(r);
     id = name;
@@ -194,7 +200,6 @@ public class LociDataBrowser {
   /** Resets all dimensional data in case they've switched. */
   public void setDimensions() {
     String order = null;
-
     try {
       numZ = reader.getSizeZ();
       numC = reader.getEffectiveSizeC();

@@ -115,6 +115,7 @@ public class OptionsWindow extends JFrame implements
       try {
         id = cw.db.id;
         fs.setId(id);
+        fs.setSeries(cw.db.series);
         order = fs.getDimensionOrder().substring(2);
         sizeZ = fs.getSizeZ();
         sizeT = fs.getSizeT();
@@ -134,6 +135,7 @@ public class OptionsWindow extends JFrame implements
       try {
         id = cw.db.id;
         cw.db.reader.setId(id);
+        cw.db.reader.setSeries(cw.db.series);
         order = cw.db.reader.getDimensionOrder().substring(2);
         sizeZ = cw.db.reader.getSizeZ();
         sizeT = cw.db.reader.getSizeT();
@@ -739,6 +741,7 @@ public class OptionsWindow extends JFrame implements
           + String.valueOf(cChar);
         try {
           cw.db.reader.setId(id);
+          cw.db.reader.setSeries(cw.db.series);
           cw.db.reader.swapDimensions("XY" + order);
           sizeZ = cw.db.reader.getSizeZ();
           sizeT = cw.db.reader.getSizeT();
@@ -774,6 +777,7 @@ public class OptionsWindow extends JFrame implements
           + String.valueOf(cChar);
         try {
           cw.db.reader.setId(id);
+          cw.db.reader.setSeries(cw.db.series);
           cw.db.reader.swapDimensions("XY" + order);
           sizeZ = cw.db.reader.getSizeZ();
           sizeT = cw.db.reader.getSizeT();
@@ -809,6 +813,7 @@ public class OptionsWindow extends JFrame implements
           + String.valueOf(cChar);
         try {
           cw.db.reader.setId(id);
+          cw.db.reader.setSeries(cw.db.series);
           cw.db.reader.swapDimensions("XY" + order);
           sizeZ = cw.db.reader.getSizeZ();
           sizeT = cw.db.reader.getSizeT();
