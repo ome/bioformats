@@ -947,6 +947,7 @@ public class FileStitcher implements IFormatReader {
 
     // get Z, C and T positions
     int[] zct = getZCTCoords(no);
+    zct[1] *= getRGBChannelCount();
     int[] posZ = FormatTools.rasterToPosition(lenZ[sno], zct[0]);
     int[] posC = FormatTools.rasterToPosition(lenC[sno], zct[1]);
     int[] posT = FormatTools.rasterToPosition(lenT[sno], zct[2]);
