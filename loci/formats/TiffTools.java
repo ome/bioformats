@@ -868,9 +868,14 @@ public final class TiffTools {
       // don't rely on RowsPerStrip, since it's likely that if the file doesn't
       // have the StripByteCounts tag, it also won't have the RowsPerStrip tag
       stripByteCounts = new long[stripOffsets.length];
-      stripByteCounts[0] = stripOffsets[0];
-      for (int i=1; i<stripByteCounts.length; i++) {
-        stripByteCounts[i] = stripOffsets[i] - stripByteCounts[i-1];
+      if (stripByteCounts.length == 1) {
+        stripByteCounts[0] = imageWidth * imageLength * (bitsPerSample[0] / 8);
+      }
+      else {
+        stripByteCounts[0] = stripOffsets[0];
+        for (int i=1; i<stripByteCounts.length; i++) {
+          stripByteCounts[i] = stripOffsets[i] - stripByteCounts[i-1];
+        }
       }
     }
 
@@ -1511,7 +1516,7 @@ public final class TiffTools {
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
           samples[channelNum][ndx] =
-            (short) (Integer.MAX_VALUE - samples[channelNum][ndx]);
+            (short) ((65535 - samples[channelNum][ndx]) & 0xffff);
         }
         else if (photoInterp == CMYK) {
           samples[channelNum][ndx] =
@@ -1678,7 +1683,7 @@ public final class TiffTools {
           samples[i][ndx] = (short) (b < 0 ? Integer.MAX_VALUE + b : b);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
+            samples[i][ndx] = (short) ((65535 - samples[i][ndx]) & 0xffff);
           }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
