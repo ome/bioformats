@@ -471,17 +471,7 @@ public class ZeissZVIReader extends FormatReader {
     if (bpp == 1 || bpp == 3) core.pixelType[0] = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core.pixelType[0] = FormatTools.UINT16;
 
-    store.setPixels(
-      new Integer(core.sizeX[0]),
-      new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]),
-      new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]),
-      new Integer(core.pixelType[0]),
-      Boolean.FALSE,
-      core.currentOrder[0],
-      null,
-      null);
+    FormatTools.populatePixels(store, this);
 
     String pixX = (String) getMeta("Scale Factor for X");
     String pixY = (String) getMeta("Scale Factor for Y");

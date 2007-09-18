@@ -633,12 +633,7 @@ public abstract class BaseTiffReader extends FormatReader {
       MetadataStore store = getMetadataStore();
 
       // set the pixel values in the metadata store
-      store.setPixels(new Integer(getSizeX()),
-        new Integer(getSizeY()), new Integer(getSizeZ()),
-        new Integer(getSizeC()), new Integer(getSizeT()),
-        new Integer(getPixelType()),
-        new Boolean(!isLittleEndian()),
-        getDimensionOrder(), null, null);
+      FormatTools.populatePixels(store, this);
 
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
@@ -759,7 +754,10 @@ public abstract class BaseTiffReader extends FormatReader {
    * @return the image creation date.
    */
   protected String getImageCreationDate() {
-    return (String) TiffTools.getIFDValue(ifds[0], TiffTools.DATE_TIME);
+    Object o = TiffTools.getIFDValue(ifds[0], TiffTools.DATE_TIME);
+    if (o instanceof String) return (String) o;
+    if (o instanceof String[]) return ((String[]) o)[0];
+    return null;
   }
 
   /**

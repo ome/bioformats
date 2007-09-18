@@ -726,17 +726,7 @@ public class ND2Reader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
-    store.setPixels(
-      new Integer(core.sizeX[0]),
-      new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]),
-      new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]),
-      new Integer(core.pixelType[0]),
-      new Boolean(!isLittleEndian()),
-      core.currentOrder[0],
-      null,
-      null);
+    FormatTools.populatePixels(store, this);
 
     store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
       new Float(pixSizeZ), null, null, null);

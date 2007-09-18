@@ -289,17 +289,7 @@ public class BMPReader extends FormatReader {
 
     store.setImage(currentId, null, null, null);
 
-    store.setPixels(
-      new Integer(core.sizeX[0]),  // sizeX
-      new Integer(core.sizeY[0]), // sizeY
-      new Integer(core.sizeZ[0]), // sizeZ
-      new Integer(core.sizeC[0]), // sizeC
-      new Integer(core.sizeT[0]), // sizeT
-      new Integer(core.pixelType[0]),
-      new Boolean(false), // BigEndian
-      core.currentOrder[0], // Dimension order
-      null, // Use image index 0
-      null); // Use pixels index 0
+    FormatTools.populatePixels(store, this);
 
     // resolution is stored as pixels per meter; we want to convert to
     // microns per pixel

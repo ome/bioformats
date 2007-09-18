@@ -685,17 +685,6 @@ public class OpenlabReader extends FormatReader {
       }
 
       store.setImage("Series " + i, null, null, new Integer(i));
-      store.setPixels(
-        new Integer(core.sizeX[i]),
-        new Integer(core.sizeY[i]),
-        new Integer(core.sizeZ[i]),
-        new Integer(core.sizeC[i]),
-        new Integer(core.sizeT[i]),
-        new Integer(core.pixelType[i]),
-        new Boolean(!isLittleEndian()),
-        core.currentOrder[i],
-        new Integer(i),
-        null);
       store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
         null, null, new Integer(i));
       for (int j=0; j<core.sizeC[0]; j++) {
@@ -704,6 +693,7 @@ public class OpenlabReader extends FormatReader {
           null, null, null, null, null, new Integer(i));
       }
     }
+    FormatTools.populatePixels(store, this);
   }
 
   // -- Helper methods --

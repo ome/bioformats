@@ -192,10 +192,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     super.initMetadataStore();
     MetadataStore store = getMetadataStore();
 
-    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
-      new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
+    FormatTools.populatePixels(store, this);
 
     float fx = Float.parseFloat((String) getMeta("XCalibrationMicrons"));
     float fy = Float.parseFloat((String) getMeta("YCalibrationMicrons"));

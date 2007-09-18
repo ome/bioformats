@@ -347,17 +347,7 @@ public class PrairieReader extends FormatReader {
 
         MetadataStore store = getMetadataStore();
 
-        store.setPixels(
-          new Integer(core.sizeX[0]),
-          new Integer(core.sizeY[0]),
-          new Integer(core.sizeZ[0]),
-          new Integer(core.sizeC[0]),
-          new Integer(core.sizeT[0]),
-          new Integer(core.pixelType[0]),
-          new Boolean(!isLittleEndian()),
-          core.currentOrder[0],
-          null,
-          null);
+        FormatTools.populatePixels(store, this);
         store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null,
           null, null, null);
         for (int i=0; i<core.sizeC[0]; i++) {

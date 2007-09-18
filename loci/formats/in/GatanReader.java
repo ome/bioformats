@@ -169,17 +169,7 @@ public class GatanReader extends FormatReader {
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
 
-    store.setPixels(
-      new Integer(core.sizeX[0]), // SizeX
-      new Integer(core.sizeY[0]), // SizeY
-      new Integer(core.sizeZ[0]), // SizeZ
-      new Integer(core.sizeC[0]), // SizeC
-      new Integer(core.sizeT[0]), // SizeT
-      new Integer(core.pixelType[0]), // PixelType
-      new Boolean(!core.littleEndian[0]), // BigEndian
-      core.currentOrder[0], // DimensionOrder
-      null, // Use image index 0
-      null); // Use pixels index 0
+    FormatTools.populatePixels(store, this);
 
     Float pixX = new Float(1);
     Float pixY = new Float(1);

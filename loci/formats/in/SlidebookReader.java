@@ -311,12 +311,6 @@ public class SlidebookReader extends FormatReader {
     store.setImage(currentId, null, null, null);
 
     for (int i=0; i<core.sizeX.length; i++) {
-      store.setPixels(new Integer(core.sizeX[i]), new Integer(core.sizeY[i]),
-        new Integer(core.sizeZ[i]), new Integer(core.sizeC[i]),
-        new Integer(core.sizeT[i]), new Integer(core.pixelType[i]),
-        new Boolean(!core.littleEndian[i]), core.currentOrder[i],
-        new Integer(i), null);
-
       for (int j=0; j<core.sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, null,
           null, null, null, null, null, core.sizeC[i] == 1 ? "monochrome" :
@@ -324,6 +318,7 @@ public class SlidebookReader extends FormatReader {
           new Integer(i));
       }
     }
+    FormatTools.populatePixels(store, this);
   }
 
 }

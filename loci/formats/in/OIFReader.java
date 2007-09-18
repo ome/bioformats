@@ -399,17 +399,7 @@ public class OIFReader extends FormatReader {
     core.littleEndian[0] = true;
     core.interleaved[0] = false;
 
-    store.setPixels(
-      new Integer(core.sizeX[0]),
-      new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]),
-      new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]),
-      new Integer(core.pixelType[0]),
-      Boolean.FALSE,
-      "XYZTC",
-      null,
-      null);
+    FormatTools.populatePixels(store, this);
 
     prefix = "[Reference Image Parameter] - ";
     String px = (String) getMeta(prefix + "WidthConvertValue");

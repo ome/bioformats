@@ -353,10 +353,7 @@ public class DeltavisionReader extends FormatReader {
 
     hstream.close();
 
-    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]),
-      new Boolean(!core.littleEndian[0]), core.currentOrder[0], null, null);
+    FormatTools.populatePixels(store, this);
 
     store.setDimensions(new Float(pixX), new Float(pixY), new Float(pixZ),
       null, null, null);

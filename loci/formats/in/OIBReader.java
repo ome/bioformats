@@ -442,18 +442,6 @@ public class OIBReader extends FormatReader {
 
       store.setImage(null, stamp, null, null);
 
-      store.setPixels(
-        new Integer(core.sizeX[i]),
-        new Integer(core.sizeY[i]),
-        new Integer(core.sizeZ[i]),
-        new Integer(core.sizeC[i]),
-        new Integer(core.sizeT[i]),
-        new Integer(core.pixelType[i]),
-        new Boolean(false),
-        core.currentOrder[i],
-        new Integer(i),
-        null);
-
       String pre = "[Reference Image Parameter] - ";
       String x = (String) getMeta(pre + "WidthConvertValue");
       String y = (String) getMeta(pre + "HeightConvertValue");
@@ -486,6 +474,7 @@ public class OIBReader extends FormatReader {
           null, null, null, new Integer(j));
       }
     }
+    FormatTools.populatePixels(store, this);
   }
 
   protected void parseDir(int depth, Object dir)

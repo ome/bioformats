@@ -554,7 +554,7 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   Integer getEmWave(int i) {
-    if (emWavelength[i] == 0)  return null;
+    if (emWavelength == null || emWavelength[i] == 0)  return null;
     return new Integer((int) emWavelength[i]);
   }
 

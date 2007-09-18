@@ -205,11 +205,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     }
 
     MetadataStore store = getMetadataStore();
-
-    store.setPixels(new Integer(core.sizeX[0]), new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]), new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]), new Integer(core.pixelType[0]), null,
-      core.currentOrder[0], null, null);
+    FormatTools.populatePixels(store, this);
   }
 
 }

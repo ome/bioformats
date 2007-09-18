@@ -327,10 +327,7 @@ public class IPWReader extends BaseTiffReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
-    store.setPixels(null, null, new Integer(core.sizeZ[0]),
-      new Integer(core.sizeC[0]), new Integer(core.sizeT[0]),
-      new Integer(core.pixelType[0]), new Boolean(!isLittleEndian()),
-      core.currentOrder[0], null, null);
+    FormatTools.populatePixels(store, this);
     store.setImage(currentId, null, (String) getMeta("Version"), null);
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null, null,

@@ -165,6 +165,9 @@ public class PCIReader extends FormatReader {
       core.interleaved[0] = true;
       core.currentOrder[0] = "XYCZT"; 
       core.littleEndian[0] = true;  
+    
+      MetadataStore store = getMetadataStore();
+      FormatTools.populatePixels(store, this);
     }
     catch (ReflectException exc) {
       noPOI = true;

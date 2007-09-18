@@ -474,17 +474,7 @@ public class LIFReader extends FormatReader {
       }
       store.setImage(seriesName, null, null, ii);
 
-      store.setPixels(
-        new Integer(core.sizeX[i]), // SizeX
-        new Integer(core.sizeY[i]), // SizeY
-        new Integer(core.sizeZ[i]), // SizeZ
-        new Integer(core.sizeC[i]), // SizeC
-        new Integer(core.sizeT[i]), // SizeT
-        new Integer(core.pixelType[i]), // PixelType
-        new Boolean(!core.littleEndian[i]), // BigEndian
-        core.currentOrder[i], // DimensionOrder
-        ii, // Image index
-        null); // Pixels index
+      FormatTools.populatePixels(store, this);
 
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
       Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;

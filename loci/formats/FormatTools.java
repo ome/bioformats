@@ -379,6 +379,25 @@ public final class FormatTools {
     throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
   }
 
+  // -- Utility methods - metadata
+
+  /** 
+   * Populates the 'pixels' element of the given metadata store, using core
+   * metadata from the given reader.
+   */
+  public static void populatePixels(MetadataStore store, IFormatReader r) {
+    int oldSeries = r.getSeries();
+    for (int i=0; i<r.getSeriesCount(); i++) {
+      Integer ii = new Integer(i);
+      r.setSeries(i);
+      store.setPixels(new Integer(r.getSizeX()), new Integer(r.getSizeY()),
+        new Integer(r.getSizeZ()), new Integer(r.getSizeC()),
+        new Integer(r.getSizeT()), new Integer(r.getPixelType()),
+        new Boolean(!r.isLittleEndian()), r.getDimensionOrder(), null, ii);
+    }
+    r.setSeries(oldSeries);
+  }
+
   // -- Utility methods - sanity checking
 
   /**

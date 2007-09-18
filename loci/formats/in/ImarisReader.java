@@ -187,17 +187,7 @@ public class ImarisReader extends FormatReader {
     MetadataStore store = getMetadataStore();
 
     core.pixelType[0] = FormatTools.UINT8;
-    store.setPixels(
-      new Integer(core.sizeX[0]),
-      new Integer(core.sizeY[0]),
-      new Integer(core.sizeZ[0]),
-      new Integer(core.sizeC[0]),
-      new Integer(core.sizeT[0]),
-      new Integer(core.pixelType[0]),
-      new Boolean(!IS_LITTLE),
-      core.currentOrder[0],
-      null,
-      null);
+    FormatTools.populatePixels(store, this);
 
     String d = (String) getMeta("Original date");
     if (d == null || d.trim().length() == 0) d = null;

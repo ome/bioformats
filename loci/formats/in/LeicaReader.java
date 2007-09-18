@@ -1063,17 +1063,6 @@ public class LeicaReader extends FormatReader {
       core.rgb[i] = true;
       core.sizeC[i] *= 3;
 
-      store.setPixels(
-        new Integer(core.sizeX[i]),
-        new Integer(core.sizeY[i]),
-        new Integer(core.sizeZ[i]),
-        new Integer(core.sizeC[i] == 0 ? 1 : core.sizeC[i]), // SizeC
-        new Integer(core.sizeT[i]), // SizeT
-        new Integer(core.pixelType[i]), // PixelType
-        new Boolean(!core.littleEndian[i]), // BigEndian
-        core.currentOrder[i], // DimensionOrder
-        ii, null);
-
       String timestamp = (String) getMeta("Timestamp " + (i+1));
       String description = (String) getMeta("Image Description");
 
@@ -1096,6 +1085,7 @@ public class LeicaReader extends FormatReader {
 //          getChannelGlobalMaximum(currentId, j), ii);
       }
     }
+    FormatTools.populatePixels(store, this);
   }
 
   private boolean usedFile(String s) {

@@ -738,17 +738,7 @@ public class BioRadReader extends FormatReader {
       else core.currentOrder[0] += "T";
     }
 
-    store.setPixels(
-      new Integer(core.sizeX[0]), // SizeX
-      new Integer(core.sizeY[0]), // SizeY
-      new Integer(core.sizeZ[0]), // SizeZ
-      new Integer(core.sizeC[0]), // SizeC
-      new Integer(core.sizeT[0]), // SizeT
-      new Integer(core.pixelType[0]), // PixelType
-      Boolean.FALSE, // BigEndian
-      core.currentOrder[0], // DimensionOrder
-      null, // Use image index 0
-      null); // Use pixels index 0
+    FormatTools.populatePixels(store, this);
 
     // populate Dimensions element
     int size = pixelSize.size();
