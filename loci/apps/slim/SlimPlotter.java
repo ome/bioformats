@@ -14,6 +14,7 @@ import jaolho.data.lma.LMA;
 import jaolho.data.lma.LMAFunction;
 import jaolho.data.lma.implementations.JAMAMatrix;
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
 import java.rmi.RemoteException;
@@ -119,6 +120,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // fit parameters
   private float[][] tau;
+
+  // system clipboard helper
+  private TextTransfer clip = new TextTransfer();
+
+  // menu items
+  private JMenuItem menuFileExit;
+  private JMenuItem menuViewSaveProj;
+  private JMenuItem menuViewLoadProj;
 
   // GUI components for parameter dialog box
   private JDialog paramDialog;
@@ -656,6 +665,24 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
       intensityPane.add(iPlotPane);
 
+      JMenuBar menubar = new JMenuBar();
+      masterWindow.setJMenuBar(menubar);
+      JMenu menuFile = new JMenu("File");
+      menubar.add(menuFile);
+      menuFileExit = new JMenuItem("Exit");
+      menuFileExit.addActionListener(this);
+      menuFile.add(menuFileExit);
+
+      JMenu menuView = new JMenu("View");
+      menubar.add(menuView);
+      menuViewSaveProj = new JMenuItem("Save projection to clipboard");
+      menuViewSaveProj.addActionListener(this);
+      menuView.add(menuViewSaveProj);
+
+      menuViewLoadProj = new JMenuItem("Restore projection from clipboard");
+      menuViewLoadProj.addActionListener(this);
+      menuView.add(menuViewLoadProj);
+
       setProgress(progress, 970); // estimate: 97%
       if (progress.isCanceled()) System.exit(0);
 
@@ -1059,7 +1086,22 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   /** Handles checkbox and button presses. */
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == cToggle) {
+    if (src == menuFileExit) System.exit(0);
+    else if (src == menuViewSaveProj) {
+      String save = decayPlot.getProjectionControl().getSaveString();
+      clip.setClipboardContents(save);
+    }
+    else if (src == menuViewLoadProj) {
+      String save = clip.getClipboardContents();
+      if (save != null) {
+        try {
+          decayPlot.getProjectionControl().setSaveString(save);
+        }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (RemoteException exc) { exc.printStackTrace(); }
+      }
+    }
+    else if (src == cToggle) {
       // toggle visibility of this channel
       int c = cSlider.getValue() - 1;
       cVisible[c] = !cVisible[c];
@@ -1119,20 +1161,23 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           parallel.isSelected() ? DisplayImplJ3D.PARALLEL_PROJECTION :
           DisplayImplJ3D.PERSPECTIVE_PROJECTION);
       }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
     }
     else if (src == showData) decayRend.toggle(showData.isSelected());
     else if (src == showLine) lineRend.toggle(showLine.isSelected());
     else if (src == showBox) {
       try { decayPlot.getDisplayRenderer().setBoxOn(showBox.isSelected()); }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
     }
     else if (src == showScale) {
       try {
         boolean scale = showScale.isSelected();
         decayPlot.getGraphicsModeControl().setScaleEnable(scale);
       }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
     }
     else if (src == showFit) {
       fitRend.toggle(showFit.isSelected());
@@ -1211,7 +1256,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     if (src == cSlider) {
       int c = cSlider.getValue() - 1;
       try { ac.setCurrent(c); }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
       cToggle.removeActionListener(this);
       cToggle.setSelected(cVisible[c]);
       cToggle.addActionListener(this);
@@ -1672,7 +1718,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           resRef.setData(doResLines ? makeLines(res) : res);
         }
       }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
       setProgress(progress, ++p);
       progress.close();
 
@@ -1707,7 +1754,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         zMapRes.setRange(minZ, maxZ);
         decayPlot.reAutoScale();
       }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
     }
     decayPlot.enableAction();
     plotThread = null;
@@ -1999,6 +2047,38 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       String s = o.toString();
       println(s);
     }
+  }
+
+  /**
+   * Helper class for clipboard interaction, stolen from
+   * <a href="http://www.javapractices.com/Topic82.cjp">Java Practices</a>.
+   */
+  public final class TextTransfer implements ClipboardOwner {
+    public void setClipboardContents(String value) {
+      Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+      if (clipboard != null) {
+        clipboard.setContents(new StringSelection(value), this);
+      }
+    }
+
+    public String getClipboardContents() {
+      Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+      if (clipboard == null) return null;
+      String result = null;
+      Transferable contents = clipboard.getContents(null);
+      boolean hasTransferableText = contents != null &&
+        contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+      if (hasTransferableText) {
+        try {
+          result = (String) contents.getTransferData(DataFlavor.stringFlavor);
+        }
+        catch (UnsupportedFlavorException ex) { ex.printStackTrace(); }
+        catch (IOException ex) { ex.printStackTrace(); }
+      }
+      return result;
+    }
+
+    public void lostOwnership(Clipboard clipboard, Transferable contents) { }
   }
 
   // -- Main method --
