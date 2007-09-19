@@ -668,7 +668,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       MenuBar menubar = new MenuBar();
       masterWindow.setMenuBar(menubar);
       Menu menuFile = new Menu("File");
-      menubar.add(menuFile);
+//      menubar.add(menuFile);
       menuFileExit = new MenuItem("Exit");
       menuFileExit.addActionListener(this);
       menuFile.add(menuFileExit);
