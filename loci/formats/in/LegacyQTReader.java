@@ -86,12 +86,6 @@ public class LegacyQTReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    if (tools.isQTExpired()) {
-      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
-    }
-    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
-
     // paint frame into image
     try {
       r.setVar("time", times[no]);
@@ -102,18 +96,19 @@ public class LegacyQTReader extends FormatReader {
     catch (ReflectException re) {
       throw new FormatException("Open movie failed", re);
     }
-
     return ImageTools.makeBuffered(image);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     try {
-      r.exec("openMovieFile.close()");
-      if (!fileOnly) {
-        r.exec("m.disposeQTObject()");
-        r.exec("imageTrack.disposeQTObject()");
-        r.exec("QTSession.close()");
+      if (r.getVar("openMovieFile") != null) {
+        r.exec("openMovieFile.close()");
+        if (!fileOnly) {
+          r.exec("m.disposeQTObject()");
+          r.exec("imageTrack.disposeQTObject()");
+          r.exec("QTSession.close()");
+        }
       }
     }
     catch (ReflectException e) {
