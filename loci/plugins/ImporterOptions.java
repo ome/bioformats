@@ -63,6 +63,15 @@ public class ImporterOptions implements ItemListener {
   public static final String VIEW_IMAGE_5D = "Image5D";
   public static final String VIEW_VIEW_5D = "View5D";
 
+  // enumeration for stackOrder
+  public static final String ORDER_DEFAULT = "Default";
+  public static final String ORDER_XYZCT = "XYZCT";
+  public static final String ORDER_XYZTC = "XYZTC";
+  public static final String ORDER_XYCZT = "XYCZT";
+  public static final String ORDER_XYTCZ = "XYTCZ";
+  public static final String ORDER_XYCTZ = "XYCTZ";
+  public static final String ORDER_XYTZC = "XYTZC";
+
   public static final String MERGE_DEFAULT = "Do not merge";
 
   // class to check for each viewing option
@@ -81,6 +90,7 @@ public class ImporterOptions implements ItemListener {
 
   // keys for use in IJ_Prefs.txt
   public static final String PREF_STACK = "bioformats.stackFormat";
+  public static final String PREF_ORDER = "bioformats.stackOrder";
   public static final String PREF_MERGE = "bioformats.mergeChannels";
   public static final String PREF_COLORIZE = "bioformats.colorize";
   public static final String PREF_SPLIT = "bioformats.splitWindows";
@@ -93,6 +103,7 @@ public class ImporterOptions implements ItemListener {
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
+  public static final String LABEL_ORDER = "Stack order: ";
   public static final String LABEL_MERGE = "Merge channels to RGB";
   public static final String LABEL_COLORIZE = "Colorize channels";
   public static final String LABEL_SPLIT =
@@ -110,6 +121,7 @@ public class ImporterOptions implements ItemListener {
   // -- Fields - GUI components --
 
   private Choice stackChoice;
+  private Choice orderChoice;
   private Checkbox mergeBox;
   private Checkbox colorizeBox;
   private Checkbox splitBox;
@@ -122,6 +134,7 @@ public class ImporterOptions implements ItemListener {
   // -- Fields - core options --
 
   private String stackFormat;
+  private String stackOrder;
   private boolean mergeChannels;
   private boolean colorize;
   private boolean splitWindows;
@@ -143,6 +156,7 @@ public class ImporterOptions implements ItemListener {
   // -- ImporterOptions API methods - accessors --
 
   public String getStackFormat() { return stackFormat; }
+  public String getStackOrder() { return stackOrder; }
   public boolean isMergeChannels() { return mergeChannels; }
   public boolean isColorize() { return colorize; }
   public boolean isSplitWindows() { return splitWindows; }
@@ -174,6 +188,7 @@ public class ImporterOptions implements ItemListener {
   // -- ImporterOptions API methods - mutators --
 
   public void setStackFormat(String s) { stackFormat = s; }
+  public void setStackOrder(String s) { stackOrder = s; }
   public void setMergeChannels(boolean b) { mergeChannels = b; }
   public void setColorize(boolean b) { colorize = b; }
   public void setSplitWindows(boolean b) { splitWindows = b; }
@@ -186,6 +201,7 @@ public class ImporterOptions implements ItemListener {
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
     stackFormat = Prefs.get(PREF_STACK, VIEW_STANDARD);
+    stackOrder = Prefs.get(PREF_ORDER, ORDER_DEFAULT);
     mergeChannels = Prefs.get(PREF_MERGE, false);
     colorize = Prefs.get(PREF_COLORIZE, false);
     splitWindows = Prefs.get(PREF_SPLIT, true);
@@ -200,6 +216,7 @@ public class ImporterOptions implements ItemListener {
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
   public void savePreferences() {
     Prefs.set(PREF_STACK, stackFormat);
+    Prefs.set(PREF_ORDER, stackOrder);
     Prefs.set(PREF_MERGE, mergeChannels);
     Prefs.set(PREF_COLORIZE, colorize);
     Prefs.set(PREF_SPLIT, splitWindows);
@@ -389,9 +406,15 @@ public class ImporterOptions implements ItemListener {
     final String[] stackFormats = new String[stackTypes.size()];
     stackTypes.copyInto(stackFormats);
 
+    String[] stackOrders = new String[] {
+      ORDER_DEFAULT, ORDER_XYZCT, ORDER_XYZTC, ORDER_XYCZT, ORDER_XYCTZ,
+      ORDER_XYTZC, ORDER_XYTCZ
+    };
+
     // prompt user for parameters (or grab from macro options)
     GenericDialog gd = new GenericDialog("Bio-Formats Import Options");
     gd.addChoice(LABEL_STACK, stackFormats, stackFormat);
+    gd.addChoice(LABEL_ORDER, stackOrders, stackOrder);
     gd.addCheckbox(LABEL_MERGE, mergeChannels);
     gd.addCheckbox(LABEL_COLORIZE, colorize);
     gd.addCheckbox(LABEL_SPLIT, splitWindows);
@@ -404,6 +427,7 @@ public class ImporterOptions implements ItemListener {
     Vector choices = gd.getChoices();
     if (choices != null) {
       stackChoice = (Choice) choices.get(0);
+      orderChoice = (Choice) choices.get(1);
       for (int i=0; i<choices.size(); i++) {
         ((Choice) choices.get(i)).addItemListener(this);
       }
@@ -426,6 +450,7 @@ public class ImporterOptions implements ItemListener {
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
     stackFormat = stackFormats[gd.getNextChoiceIndex()];
+    stackOrder = stackOrders[gd.getNextChoiceIndex()];
     mergeChannels = gd.getNextBoolean();
     colorize = gd.getNextBoolean();
     splitWindows = gd.getNextBoolean();

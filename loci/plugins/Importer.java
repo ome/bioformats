@@ -61,6 +61,7 @@ public class Importer {
   private LociImporter plugin;
 
   private Vector imps = new Vector();
+  private String stackOrder = null;
 
   // -- Constructor --
 
@@ -380,6 +381,17 @@ public class Importer {
           int type = r.getPixelType();
 
           int q = 0;
+          stackOrder = options.getStackOrder();
+          if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
+            stackOrder = r.getDimensionOrder();
+          }
+          if (options.isViewView5D()) {
+            stackOrder = ImporterOptions.ORDER_XYZCT;
+          }
+          if (options.isViewImage5D()) {
+            stackOrder = ImporterOptions.ORDER_XYCZT;
+          }
+
           for (int j=0; j<num[i]; j++) {
             if (!load[j]) continue;
 
@@ -393,8 +405,10 @@ public class Importer {
             }
             IJ.showProgress((double) q++ / total);
 
+            int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
+
             // construct label for this slice
-            int[] zct = r.getZCTCoords(j);
+            int[] zct = r.getZCTCoords(ndx);
             StringBuffer sb = new StringBuffer();
             if (certain[i]) {
               boolean first = true;
@@ -438,7 +452,7 @@ public class Importer {
             String label = sb.toString();
 
             // get image processor for jth plane
-            ImageProcessor ip = Util.openProcessor(r, j);
+            ImageProcessor ip = Util.openProcessor(r, ndx);
             if (ip == null) {
               plugin.canceled = true;
               return;
@@ -625,6 +639,17 @@ public class Importer {
       newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
     }
 
+    int[][] indices = new int[c][is.getSize() / c];
+    int[] pt = new int[c];
+    Arrays.fill(pt, 0);
+
+    for (int i=0; i<is.getSize(); i++) {
+      int[] zct = FormatTools.getZCTCoords(stackOrder, r.getSizeZ(),
+        r.getSizeC(), r.getSizeT(), r.getImageCount(), i);
+      int cndx = zct[1];
+      indices[cndx][pt[cndx]++] = i;
+    }
+
     for (int i=0; i<c; i++) {
       if (range) {
         for (int j=z; j<=t; j+=((t - z + 1) / is.getSize())) {
@@ -635,11 +660,9 @@ public class Importer {
         }
       }
       else {
-        for (int j=0; j<z; j++) {
-          for (int k=0; k<t; k++) {
-            int s = r.getIndex(j, i, k) + 1;
-            newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
-          }
+        for (int j=0; j<indices[i].length; j++) {
+          newStacks[i].addSlice(is.getSliceLabel(indices[i][j] + 1),
+            is.getProcessor(indices[i][j] + 1));
         }
       }
     }
@@ -718,12 +741,12 @@ public class Importer {
           imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
         }
         catch (ReflectException exc) {
-          imp = new CustomImage(imp, r.getDimensionOrder(), r.getSizeZ(),
+          imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
             r.getSizeT(), r.getSizeC());
         }
       }
       else {
-        imp = new CustomImage(imp, r.getDimensionOrder(), r.getSizeZ(),
+        imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
           r.getSizeT(), r.getSizeC());
       }
     }
@@ -752,35 +775,14 @@ public class Importer {
       imp.getNSlices(), imp.getNFrames());
     if (options.isViewBrowser()) { }
     else if (options.isViewImage5D()) {
-      int sizeZ = r.getSizeZ();
-      int sizeT = r.getSizeT();
-      int sizeC = r.getSizeC();
-      if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
-
-      // reorder stack to Image5D's preferred order: XYCZT
-      ImageStack is;
-      ImageStack stack = imp.getStack();
-      if (r.getDimensionOrder().equals("XYCZT")) is = stack;
-      else {
-        is = new ImageStack(r.getSizeX(), r.getSizeY());
-        for (int t=0; t<sizeT; t++) {
-          for (int z=0; z<sizeZ; z++) {
-            for (int c=0; c<sizeC; c++) {
-              int ndx = r.getIndex(z, c, t) + 1;
-              is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
-            }
-          }
-        }
-      }
-
       ReflectedUniverse ru = new ReflectedUniverse();
       try {
         ru.exec("import i5d.Image5D");
         ru.setVar("title", imp.getTitle());
-        ru.setVar("stack", is);
-        ru.setVar("sizeC", sizeC);
-        ru.setVar("sizeZ", sizeZ);
-        ru.setVar("sizeT", sizeT);
+        ru.setVar("stack", imp.getStack());
+        ru.setVar("sizeC", r.getSizeC());
+        ru.setVar("sizeZ", r.getSizeZ());
+        ru.setVar("sizeT", r.getSizeT());
         ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
         ru.setVar("cal", imp.getCalibration());
         ru.setVar("fi", imp.getFileInfo());
@@ -796,27 +798,6 @@ public class Importer {
       }
     }
     else if (options.isViewView5D()) {
-      int sizeZ = r.getSizeZ();
-      int sizeC = r.getSizeC();
-      int sizeT = r.getSizeT();
-      if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
-      ChannelMerger ndxReader = new ChannelMerger(r);
-
-      // reorder stack to View5D's preferred order: XYZCT
-      if (!r.getDimensionOrder().equals("XYZCT")) {
-        ImageStack is = new ImageStack(r.getSizeX(), r.getSizeY());
-        ImageStack stack = imp.getStack();
-        for (int t=0; t<sizeT; t++) {
-          for (int c=0; c<sizeC; c++) {
-            for (int z=0; z<sizeZ; z++) {
-              int ndx = mergeChannels ? ndxReader.getIndex(z, c, t) + 1 :
-                r.getIndex(z, c, t) + 1;
-              is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
-            }
-          }
-        }
-        imp.setStack(imp.getTitle(), is);
-      }
       WindowManager.setTempCurrentImage(imp);
       IJ.run("View5D ", "");
     }
@@ -866,22 +847,29 @@ public class Importer {
     int sizeZ = r.getSizeZ();
     int sizeT = r.getSizeT();
 
-    for (int z=0; z<sizeZ; z++) {
-      for (int t=0; t<sizeT; t++) {
-        byte[][] bytes = new byte[c][];
-        for (int ch=0; ch<r.getSizeC()/c; ch++) {
-          for (int ch1=0; ch1<c; ch1++) {
-            int ndx = r.getIndex(z, ch*c + ch1, t) + 1;
-            bytes[ch1] = (byte[]) s.getProcessor(ndx).getPixels();
-          }
-          ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
-          cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
-            new byte[s.getWidth() * s.getHeight()]);
-          int ndx = r.getIndex(z, ch*c, t) + 1;
-          newStack.addSlice(s.getSliceLabel(ndx), cp);
-        }
-      }
+    int[][] indices = new int[c][s.getSize() / c];
+    int[] pt = new int[c];
+    Arrays.fill(pt, 0);
+
+    for (int i=0; i<s.getSize(); i++) {
+      int[] zct = FormatTools.getZCTCoords(stackOrder, sizeZ, r.getSizeC(),
+        sizeT, r.getImageCount(), i);
+      int cndx = zct[1];
+      indices[cndx][pt[cndx]++] = i;
     }
+
+    for (int i=0; i<indices[0].length; i++) {
+      ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
+      byte[][] bytes = new byte[indices.length][];
+      for (int j=0; j<indices.length; j++) {
+        bytes[j] = (byte[]) s.getProcessor(indices[j][i] + 1).getPixels();
+      }
+      cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
+        new byte[s.getWidth() * s.getHeight()]);
+      newStack.addSlice(s.getSliceLabel(
+        indices[indices.length - 1][i] + 1), cp);
+    }
+
     imp.setStack(imp.getTitle(), newStack);
   }
 

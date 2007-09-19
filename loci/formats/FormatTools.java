@@ -327,6 +327,15 @@ public final class FormatTools {
     return len;
   }
 
+  public static int getReorderedIndex(IFormatReader r, String order, int no)
+    throws FormatException
+  {
+    int[] zct = getZCTCoords(order, r.getSizeZ(), r.getSizeC(), r.getSizeT(),
+      r.getImageCount(), no);
+    return getIndex(r.getDimensionOrder(), r.getSizeZ(), r.getSizeC(),
+      r.getSizeT(), r.getImageCount(), zct[0], zct[1], zct[2]);
+  }
+
   // -- Utility methods - pixel types --
 
   /**
