@@ -1910,17 +1910,15 @@ public final class ImageTools {
    */
   public static BufferedImage makeBuffered(Image image) {
     if (image instanceof BufferedImage) return (BufferedImage) image;
+
     // TODO: better way to handle color model (don't just assume RGB)
     loadImage(image);
-    int w = image.getWidth(OBS), h = image.getHeight(OBS);
-    int[] pixels = new int[w * h];
-    PixelGrabber pg = new PixelGrabber(image, 0, 0, w, h, pixels, 0, w);
-    try { pg.grabPixels(); }
-    catch (InterruptedException exc) { LogTools.trace(exc); }
-    BufferedImage result = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-    result.setRGB(0, 0, w, h, pixels, 0, w);
-    return result;
-    //return makeBuffered(image, makeColorModel(3, DataBuffer.TYPE_INT));
+    BufferedImage img = new BufferedImage(image.getWidth(OBS),
+      image.getHeight(OBS), BufferedImage.TYPE_INT_RGB);
+    Graphics g = img.getGraphics();
+    g.drawImage(image, 0, 0, OBS);
+    g.dispose();
+    return img;
   }
 
   /**

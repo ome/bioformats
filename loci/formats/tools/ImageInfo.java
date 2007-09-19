@@ -61,6 +61,7 @@ public final class ImageInfo {
     boolean merge = false;
     boolean stitch = false;
     boolean separate = false;
+    boolean expand = false;
     boolean omexml = false;
     boolean normalize = false;
     boolean fastBlit = false;
@@ -79,6 +80,7 @@ public final class ImageInfo {
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
+          else if (args[i].equals("-expand")) expand = true;
           else if (args[i].equals("-omexml")) omexml = true;
           else if (args[i].equals("-normalize")) normalize = true;
           else if (args[i].equals("-fast")) fastBlit = true;
@@ -135,6 +137,7 @@ public final class ImageInfo {
         "    -merge: combine separate channels into RGB image",
         "   -stitch: stitch files with similar names",
         " -separate: split RGB image into separate channels",
+        "   -expand: expand indexed color to RGB",
         "   -omexml: populate OME-XML metadata",
         "-normalize: normalize floating point images*",
         "     -fast: paint RGB images as quickly as possible*",
@@ -178,6 +181,7 @@ public final class ImageInfo {
     }
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
+    if (expand) reader = new ChannelFiller(reader);
     MinMaxCalculator minMaxCalc = null;
     if (minmax) reader = minMaxCalc = new MinMaxCalculator(reader);
     DimensionSwapper dimSwapper = null;
