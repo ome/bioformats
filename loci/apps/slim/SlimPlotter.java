@@ -125,9 +125,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private TextTransfer clip = new TextTransfer();
 
   // menu items
-  private JMenuItem menuFileExit;
-  private JMenuItem menuViewSaveProj;
-  private JMenuItem menuViewLoadProj;
+  private MenuItem menuFileExit;
+  private MenuItem menuViewSaveProj;
+  private MenuItem menuViewLoadProj;
 
   // GUI components for parameter dialog box
   private JDialog paramDialog;
@@ -665,21 +665,21 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
       intensityPane.add(iPlotPane);
 
-      JMenuBar menubar = new JMenuBar();
-      masterWindow.setJMenuBar(menubar);
-      JMenu menuFile = new JMenu("File");
+      MenuBar menubar = new MenuBar();
+      masterWindow.setMenuBar(menubar);
+      Menu menuFile = new Menu("File");
       menubar.add(menuFile);
-      menuFileExit = new JMenuItem("Exit");
+      menuFileExit = new MenuItem("Exit");
       menuFileExit.addActionListener(this);
       menuFile.add(menuFileExit);
 
-      JMenu menuView = new JMenu("View");
+      Menu menuView = new Menu("View");
       menubar.add(menuView);
-      menuViewSaveProj = new JMenuItem("Save projection to clipboard");
+      menuViewSaveProj = new MenuItem("Save projection to clipboard");
       menuViewSaveProj.addActionListener(this);
       menuView.add(menuViewSaveProj);
 
-      menuViewLoadProj = new JMenuItem("Restore projection from clipboard");
+      menuViewLoadProj = new MenuItem("Restore projection from clipboard");
       menuViewLoadProj.addActionListener(this);
       menuView.add(menuViewLoadProj);
 
@@ -1097,8 +1097,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         try {
           decayPlot.getProjectionControl().setSaveString(save);
         }
-        catch (VisADException exc) { exc.printStackTrace(); }
-        catch (RemoteException exc) { exc.printStackTrace(); }
+        catch (VisADException exc) { }
+        catch (RemoteException exc) { }
       }
     }
     else if (src == cToggle) {
