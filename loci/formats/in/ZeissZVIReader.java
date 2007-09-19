@@ -170,17 +170,17 @@ public class ZeissZVIReader extends FormatReader {
         int p = 0;
         for (int r=0; r<tileRows; r++) {
           for (int c=0; c<tileColumns; c++) {
-            int n = (no % core.sizeC[0]) + 
-              (tiles * core.sizeC[0] * (no / core.sizeC[0])); 
+            int n = (no % core.sizeC[0]) +
+              (tiles * core.sizeC[0] * (no / core.sizeC[0]));
             if (r % 2 == 0) {
-              tileOrder[p] = p*core.sizeC[0] + n; 
+              tileOrder[p] = p*core.sizeC[0] + n;
             }
             else {
               tileOrder[p] = (tileColumns - c)*core.sizeC[0];
               if (p > 0 && c == 0) tileOrder[p] += tileOrder[p - 1];
-              else if (c > 0) tileOrder[p] = tileOrder[p - 1] - core.sizeC[0]; 
+              else if (c > 0) tileOrder[p] = tileOrder[p - 1] - core.sizeC[0];
             }
-            p++; 
+            p++;
           }
         }
       }
@@ -199,8 +199,8 @@ public class ZeissZVIReader extends FormatReader {
         r.exec("blah = dis.skip(skipBytes)");
         r.setVar("data", buf);
 
-        int xf = ((i - start) % tileColumns) * ex * bytes; 
-        int yf = ((i - start) / tileRows) * ey; 
+        int xf = ((i - start) % tileColumns) * ex * bytes;
+        int yf = ((i - start) / tileRows) * ey;
         int offset = yf*core.sizeX[0]*bytes + xf;
         for (int y=0; y<ey; y++) {
           r.setVar("offset", offset);
@@ -209,7 +209,7 @@ public class ZeissZVIReader extends FormatReader {
             r.exec("dis.read(data, offset, len)");
           }
           catch (ReflectException e) { }
-          offset += core.sizeX[0]*bytes; 
+          offset += core.sizeX[0]*bytes;
         }
       }
 

@@ -383,7 +383,7 @@ public class ND2Reader extends FormatReader {
 
       if (isLossless) {
         for (int i=0; i<offsets.length; i++) {
-          offsets[i]++; 
+          offsets[i]++;
         }
       }
 

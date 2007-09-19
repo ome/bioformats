@@ -208,9 +208,9 @@ public class MetamorphReader extends BaseTiffReader {
 
     Location ndfile = null;
 
-    if (id.toLowerCase().endsWith(".nd")) ndfile = new Location(id); 
+    if (id.toLowerCase().endsWith(".nd")) ndfile = new Location(id);
 
-    if (ndfile != null && ndfile.exists() && 
+    if (ndfile != null && ndfile.exists() &&
       (fileGroupOption(id) == FormatTools.MUST_GROUP || isGroupFiles()))
     {
       RandomAccessStream ndStream =
@@ -246,7 +246,7 @@ public class MetamorphReader extends BaseTiffReader {
       for (int i=0; i<cc; i++) {
         hasZ[i] = ((String) getMeta("WaveDoZ" + (i + 1))).equals("TRUE");
         if (i > 0 && hasZ[i] != hasZ[i - 1]) seriesCount = 2;
-      } 
+      }
 
       int channelsInFirstSeries = cc;
       if (seriesCount == 2) {
@@ -260,7 +260,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (seriesCount == 1) stks[0] = new String[numFiles];
       else {
         stks[0] = new String[channelsInFirstSeries * tc];
-        stks[1] = new String[(cc - channelsInFirstSeries) * tc]; 
+        stks[1] = new String[(cc - channelsInFirstSeries) * tc];
       }
 
       String prefix = ndfile.getPath();
@@ -272,8 +272,8 @@ public class MetamorphReader extends BaseTiffReader {
         for (int j=0; j<cc; j++) {
           String chName = (String) getMeta("WaveName" + (j + 1));
           chName = chName.substring(1, chName.length() - 1);
-          int seriesNdx = seriesCount == 1 ? 0 : (hasZ[j] ? 0 : 1); 
-          stks[seriesNdx][pt[seriesNdx]++] = 
+          int seriesNdx = seriesCount == 1 ? 0 : (hasZ[j] ? 0 : 1);
+          stks[seriesNdx][pt[seriesNdx]++] =
             prefix + "_w" + (j + 1) + chName + "_t" + (i + 1) + ".STK";
         }
       }
@@ -290,8 +290,8 @@ public class MetamorphReader extends BaseTiffReader {
               l = new Location(ndfile.getParent(), stks[s][f]);
               if (!l.exists()) {
                 // try replacing extension
-                stks[s][f] = stks[s][f].substring(0, 
-                  stks[s][f].lastIndexOf(".")) + ".TIF"; 
+                stks[s][f] = stks[s][f].substring(0,
+                  stks[s][f].lastIndexOf(".")) + ".TIF";
                 l = new Location(ndfile.getParent(), stks[s][f]);
                 if (!l.exists()) {
                   stks = null;
@@ -299,11 +299,11 @@ public class MetamorphReader extends BaseTiffReader {
                 }
               }
             }
-            
+
             if (!l.exists()) {
               // try replacing extension
-              stks[s][f] = stks[s][f].substring(0, 
-                stks[s][f].lastIndexOf(".")) + ".TIF"; 
+              stks[s][f] = stks[s][f].substring(0,
+                stks[s][f].lastIndexOf(".")) + ".TIF";
               l = new Location(ndfile.getParent(), stks[s][f]);
               if (!l.exists()) {
                 stks = null;
@@ -311,7 +311,7 @@ public class MetamorphReader extends BaseTiffReader {
               }
             }
           }
-          stks[s][f] = l.getAbsolutePath(); 
+          stks[s][f] = l.getAbsolutePath();
         }
       }
 
@@ -335,15 +335,15 @@ public class MetamorphReader extends BaseTiffReader {
           newCore.rgb[i] = core.rgb[0];
           newCore.littleEndian[i] = core.littleEndian[0];
           newCore.interleaved[i] = core.interleaved[0];
-          newCore.orderCertain[i] = true; 
+          newCore.orderCertain[i] = true;
         }
         newCore.sizeC[0] = stks[0].length / newCore.sizeT[0];
         newCore.sizeC[1] = stks[1].length / newCore.sizeT[1];
         newCore.sizeZ[1] = 1;
-        newCore.imageCount[0] = 
+        newCore.imageCount[0] =
           newCore.sizeC[0] * newCore.sizeT[0] * newCore.sizeZ[0];
         newCore.imageCount[1] = newCore.sizeC[1] * newCore.sizeT[1];
-        core = newCore; 
+        core = newCore;
       }
     }
   }
@@ -452,7 +452,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
       ifds = tempIFDs;
     }
-    catch (UnknownTagException exc) { trace(exc); } 
+    catch (UnknownTagException exc) { trace(exc); }
     catch (NullPointerException exc) { trace(exc); }
     catch (IOException exc) { trace(exc); }
     catch (FormatException exc) { trace(exc); }
@@ -516,7 +516,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
     try {
       if (core.sizeZ[0] == 0) {
-        core.sizeZ[0] = 
+        core.sizeZ[0] =
           TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
       }
       if (core.sizeT[0] == 0) core.sizeT[0] = getImageCount() / core.sizeZ[0];

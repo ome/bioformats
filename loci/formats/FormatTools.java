@@ -390,7 +390,7 @@ public final class FormatTools {
 
   // -- Utility methods - metadata
 
-  /** 
+  /**
    * Populates the 'pixels' element of the given metadata store, using core
    * metadata from the given reader.
    */

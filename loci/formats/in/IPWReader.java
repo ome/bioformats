@@ -450,7 +450,7 @@ public class IPWReader extends BaseTiffReader {
       r.setVar("data", b);
       r.exec("dis.read(data)");
 
-      return new RandomAccessStream(b); 
+      return new RandomAccessStream(b);
     }
     catch (ReflectException e) {
       noPOI = true;

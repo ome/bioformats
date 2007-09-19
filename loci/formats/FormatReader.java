@@ -357,14 +357,13 @@ public abstract class FormatReader extends FormatHandler
         getRGBChannelCount(), true);
     }
 
-
     BufferedImage b = ImageTools.makeImage(buf, core.sizeX[series],
       core.sizeY[series], isIndexed() ? 1 : getRGBChannelCount(),
       core.interleaved[0], FormatTools.getBytesPerPixel(core.pixelType[series]),
       core.littleEndian[series]);
     if (isIndexed()) {
       IndexedColorModel model = null;
-      if (core.pixelType[series] == FormatTools.UINT8 || 
+      if (core.pixelType[series] == FormatTools.UINT8 ||
         core.pixelType[series] == FormatTools.INT8)
       {
         byte[][] table = get8BitLookupTable();

@@ -28,9 +28,9 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 
-/** 
+/**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
- * 
+ *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/PCIReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/PCIReader.java">SVN</a></dd></dl>
@@ -41,7 +41,7 @@ public class PCIReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_POI_MSG = 
+  private static final String NO_POI_MSG =
     "Jakarta POI is required to read SimplePCI files. Please " +
     "obtain poi-loci.jar from http://loci.wisc.edu/ome/formats.html";
 
@@ -58,13 +58,13 @@ public class PCIReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import java.util.Iterator"); 
+      r.exec("import java.util.Iterator");
     }
     catch (ReflectException exc) {
       noPOI = true;
       if (debug) LogTools.trace(exc);
     }
-    return r; 
+    return r;
   }
 
   // -- Fields --
@@ -91,9 +91,9 @@ public class PCIReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount()];
-    return openBytes(no, buf); 
+    return openBytes(no, buf);
   }
-  
+
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
@@ -103,13 +103,13 @@ public class PCIReader extends FormatReader {
     if (no < 0 || no >= getImageCount()) {
       throw new FormatException("Invalid image number: " + no);
     }
-  
+
     if (buf.length < core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount())
     {
       throw new FormatException("Buffer too small.");
     }
-  
+
     Integer ii = new Integer(no);
     Object directory = imageDirectories.get(ii);
     String name = (String) imageFiles.get(ii);
@@ -126,7 +126,7 @@ public class PCIReader extends FormatReader {
     catch (ReflectException e) {
       throw new FormatException(NO_POI_MSG, e);
     }
-  
+
     return buf;
   }
 
@@ -149,14 +149,14 @@ public class PCIReader extends FormatReader {
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
-    
+
       core.sizeZ[0] = core.imageCount[0];
       core.sizeT[0] = 1;
       core.rgb[0] = core.sizeC[0] > 1;
       core.interleaved[0] = true;
-      core.currentOrder[0] = "XYCZT"; 
-      core.littleEndian[0] = true;  
-    
+      core.currentOrder[0] = "XYCZT";
+      core.littleEndian[0] = true;
+
       MetadataStore store = getMetadataStore();
       FormatTools.populatePixels(store, this);
     }
@@ -167,10 +167,10 @@ public class PCIReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void parseDir(int depth, Object dir) 
-    throws IOException, FormatException, ReflectException 
+  private void parseDir(int depth, Object dir)
+    throws IOException, FormatException, ReflectException
   {
-    r.setVar("dir", dir); 
+    r.setVar("dir", dir);
     r.exec("dirName = dir.getName()");
     r.setVar("depth", depth);
     r.exec("iter = dir.getEntries()");
@@ -200,7 +200,7 @@ public class PCIReader extends FormatReader {
         byte[] data = new byte[numBytes];
         r.setVar("data", data);
         r.exec("dis.read(data)");
-      
+
         String entryName = (String) r.getVar("entryName");
         String dirName = (String) r.getVar("dirName");
         RandomAccessStream s = new RandomAccessStream(data);
@@ -233,9 +233,9 @@ public class PCIReader extends FormatReader {
           Integer ii = new Integer(num);
           imageDirectories.put(ii, r.getVar("dir"));
           imageFiles.put(ii, entryName);
-      
+
           if (core.sizeX[0] != 0 && core.sizeY[0] != 0) {
-            core.sizeC[0] = data.length / (core.sizeX[0] * core.sizeY[0] * 
+            core.sizeC[0] = data.length / (core.sizeX[0] * core.sizeY[0] *
               FormatTools.getBytesPerPixel(core.pixelType[0]));
           }
         }
@@ -244,7 +244,7 @@ public class PCIReader extends FormatReader {
           int bits = (int) (s.readLong() & 0x1f00) >> 8;
           while (bits % 8 != 0) bits++;
           switch (bits) {
-            case 8: 
+            case 8:
               core.pixelType[0] = FormatTools.UINT8;
               break;
             case 16:
@@ -253,19 +253,19 @@ public class PCIReader extends FormatReader {
             case 32:
               core.pixelType[0] = FormatTools.UINT32;
               break;
-            default: 
+            default:
               throw new FormatException("Unsupported bits per pixel : " + bits);
           }
           s.order(true);
         }
         else if (entryName.indexOf("Image_Height") != -1) {
-          s.order(false); 
-          core.sizeY[0] = (int) ((s.readLong() & 0x1f00) >> 8) * 64; 
+          s.order(false);
+          core.sizeY[0] = (int) ((s.readLong() & 0x1f00) >> 8) * 64;
           s.order(true);
         }
         else if (entryName.indexOf("Image_Width") != -1) {
-          s.order(false); 
-          core.sizeX[0] = (int) ((s.readLong() & 0x1f00) >> 8) * 64; 
+          s.order(false);
+          core.sizeX[0] = (int) ((s.readLong() & 0x1f00) >> 8) * 64;
           s.order(true);
         }
         else if (entryName.indexOf("Time_From_Start") != -1) {

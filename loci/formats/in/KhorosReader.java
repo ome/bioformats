@@ -72,7 +72,7 @@ public class KhorosReader extends FormatReader {
         table[j][i] = lut[next++];
       }
     }
-    return table; 
+    return table;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -100,7 +100,7 @@ public class KhorosReader extends FormatReader {
     if (buf.length < bufSize) throw new FormatException("Buffer too small.");
 
     in.seek(offset + no * bufSize);
-    in.read(buf, 0, bufSize); 
+    in.read(buf, 0, bufSize);
     return buf;
   }
 

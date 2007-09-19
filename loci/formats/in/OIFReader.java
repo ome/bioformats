@@ -76,7 +76,7 @@ public class OIFReader extends FormatReader {
   public boolean isMetadataComplete() {
     return true;
   }
-  
+
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;

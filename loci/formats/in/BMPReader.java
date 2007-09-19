@@ -86,14 +86,14 @@ public class BMPReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isIndexed() */
   public boolean isIndexed() {
-    FormatTools.assertId(currentId, true, 1); 
-    return palette != null;  
+    FormatTools.assertId(currentId, true, 1);
+    return palette != null;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return palette; 
+    return palette;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int) */
@@ -128,7 +128,7 @@ public class BMPReader extends FormatReader {
 
     if (palette != null && palette[0].length > 0) {
       for (int y=core.sizeY[0]-1; y>=0; y--) {
-        in.read(buf, y*core.sizeX[0], core.sizeX[0]); 
+        in.read(buf, y*core.sizeX[0], core.sizeX[0]);
       }
       return buf;
     }
