@@ -2026,4 +2026,57 @@ public final class ImageTools {
       false, ColorModel.TRANSLUCENT, dataType);
   }
 
+  // -- Indexed color conversion --
+
+  /** Converts an indexed color BufferedImage to an RGB BufferedImage. */
+  public static BufferedImage indexedToRGB(BufferedImage img, boolean le) {
+    byte[][] indices = getPixelBytes(img, le);
+    if (indices.length > 1) return img;
+    if (getPixelType(img) == FormatTools.UINT8) {
+      IndexedColorModel model = (IndexedColorModel) img.getColorModel();
+      byte[][] b = new byte[3][indices[0].length];
+      for (int i=0; i<indices[0].length; i++) {
+        b[0][i] = (byte) (model.getRed(indices[0][i] & 0xff) & 0xff);
+        b[1][i] = (byte) (model.getGreen(indices[0][i] & 0xff) & 0xff);
+        b[2][i] = (byte) (model.getBlue(indices[0][i] & 0xff) & 0xff);
+      }
+      return makeImage(b, img.getWidth(), img.getHeight());
+    }
+    else if (getPixelType(img) == FormatTools.UINT16) {
+      IndexedColorModel model = (IndexedColorModel) img.getColorModel();
+      short[][] s = new short[3][indices[0].length / 2];
+      for (int i=0; i<s[0].length; i++) {
+        int ndx = DataTools.bytesToInt(indices[0], i*2, 2, le) & 0xffff;
+        s[0][i] = (short) (model.getRed(ndx) & 0xffff);
+        s[1][i] = (short) (model.getRed(ndx) & 0xffff);
+        s[2][i] = (short) (model.getRed(ndx) & 0xffff);
+      }
+      return makeImage(s, img.getWidth(), img.getHeight());
+    }
+    return null;
+  }
+
+  /** Converts a LUT and an array of indices into an array of RGB tuples. */
+  public static byte[][] indexedToRGB(byte[][] lut, byte[] b) {
+    byte[][] rtn = new byte[lut.length][b.length];
+
+    for (int i=0; i<b.length; i++) {
+      for (int j=0; j<lut.length; j++) {
+        rtn[j][i] = lut[j][b[i]];
+      }
+    }
+    return rtn;
+  }
+
+  /** Converts a LUT and an array of indices into an array of RGB tuples. */
+  public static short[][] indexedToRGB(short[][] lut, byte[] b, boolean le) {
+    short[][] rtn = new short[lut.length][b.length / 2];
+    for (int i=0; i<b.length/2; i++) {
+      for (int j=0; j<lut.length; j++) {
+        rtn[j][i] = lut[j][DataTools.bytesToShort(b, i*2, 2, le)];
+      }
+    }
+    return rtn;
+  }
+
 }
