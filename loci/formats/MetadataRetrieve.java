@@ -24,6 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+/**
+ * TODO - MetadataRetrieve javadoc.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataRetrieve.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataRetrieve.java">SVN</a></dd></dl>
+ */
 public interface MetadataRetrieve {
 
   // -- Image attribute retrieval methods --

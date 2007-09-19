@@ -27,6 +27,13 @@ package loci.formats;
 import java.awt.image.*;
 import java.io.IOException;
 
+/**
+ * TODO - IndexedColorModel javadoc.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/IndexedColorModel.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/IndexedColorModel.java">SVN</a></dd></dl>
+ */
 public class IndexedColorModel extends ColorModel {
 
   // -- Fields --
