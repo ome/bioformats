@@ -414,7 +414,7 @@ A temporary hack to be sure, but that's the way it works for now.
 	</simpleType>
 	<simpleType name = "ModuleID">
 		<restriction base = "OME:LSID">
-			<pattern value = "(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Module:\S+)|(Module:\S+)"/>
+			<pattern value = "(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</restriction>
 	</simpleType>
 	<element name = "Description" type = "string">

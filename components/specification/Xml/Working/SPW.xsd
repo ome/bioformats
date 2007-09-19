@@ -97,7 +97,7 @@
 
     <xsd:simpleType name="PlateID">
         <xsd:restriction base="OME:LSID">
-            <xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Plate:\S+)|(Plate:\S+)"/>
+            <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Plate:\S+)|(Plate:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -146,7 +146,7 @@
     
     <xsd:simpleType name="ReagentID">
         <xsd:restriction base="OME:LSID">
-            <xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Reagent:\S+)|(Reagent:\S+)"/>
+            <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Reagent:\S+)|(Reagent:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -214,7 +214,7 @@
 
     <xsd:simpleType name="ScreenID">
         <xsd:restriction base="OME:LSID">
-            <xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Screen:\S+)|(Screen:\S+)"/>
+            <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Screen:\S+)|(Screen:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -268,7 +268,7 @@
 
     <xsd:simpleType name="ScreenAcquisitionID">
         <xsd:restriction base="OME:LSID">
-            <xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:ScreenAcquisition:\S+)|(ScreenAcquisition:\S+)"/>
+            <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ScreenAcquisition:\S+)|(ScreenAcquisition:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -332,7 +332,7 @@
 
     <xsd:simpleType name="WellID">
         <xsd:restriction base="OME:LSID">
-            <xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Well:\S+)|(Well:\S+)"/>
+            <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Well:\S+)|(Well:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -380,7 +380,7 @@
 
     <xsd:simpleType name="WellSampleID">
         <xsd:restriction base="OME:LSID">
-            <xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:WellSample:\S+)|(WellSample:\S+)"/>
+            <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:WellSample:\S+)|(WellSample:\S+)"/>
         </xsd:restriction>
     </xsd:simpleType>
 
