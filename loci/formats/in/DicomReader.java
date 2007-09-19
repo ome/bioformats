@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.image.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -433,7 +432,8 @@ public class DicomReader extends FormatReader {
       case SQ:
         value = "";
         boolean privateTag = ((tag >> 16) & 1) != 0;
-        if (tag != ICON_IMAGE_SEQUENCE && !privateTag) break;
+        if (tag == ICON_IMAGE_SEQUENCE || privateTag) skip = true;
+        break;
       default:
         skip = true;
     }
