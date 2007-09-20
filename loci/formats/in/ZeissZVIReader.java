@@ -423,6 +423,60 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
+    // correct emission/excitation wavelengths, if necessary
+
+    if (metadata.size() > 0) {
+      // HACK
+      String lastEM =
+        (String) getMeta("Emission Wavelength " + (core.sizeC[0] - 1));
+      String nextToLastEM =
+        (String) getMeta("Emission Wavelength " + (core.sizeC[0] - 2));
+      if (lastEM == null || nextToLastEM == null ||
+        lastEM.equals(nextToLastEM))
+      {
+        String lastDye = (String) getMeta("Reflector " + (core.sizeC[0] - 1));
+        String nextToLastDye =
+          (String) getMeta("Reflector " + (core.sizeC[0] - 2));
+
+        lastDye = DataTools.stripString(lastDye);
+        nextToLastDye = DataTools.stripString(nextToLastDye);
+
+        if (nextToLastDye.indexOf("Rhodamine") != -1) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "580");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "540");
+        }
+        else if (nextToLastDye.indexOf("DAPI") != -1) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "461");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "359");
+        }
+        else if (nextToLastDye.startsWith("Alexa Fluor")) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "519");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "495");
+        }
+        else if (nextToLastDye.indexOf("Alexa Fluor") != -1) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "668");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "650");
+        }
+
+        if (lastDye.indexOf("Rhodamine") != -1) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "580");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "540");
+        }
+        else if (lastDye.indexOf("DAPI") != -1) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "461");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "359");
+        }
+        else if (lastDye.startsWith("Alexa Fluor")) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "519");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "495");
+        }
+        else if (lastDye.indexOf("Alexa Fluor") != -1) {
+          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "668");
+          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "650");
+        }
+      }
+    }
+
     try {
       initMetadata();
     }
@@ -719,6 +773,7 @@ public class ZeissZVIReader extends FormatReader {
           try { parseTags(s); }
           catch (IOException e) { }
         }
+
         s.close();
         data = null;
         r.exec("dis.close()");
