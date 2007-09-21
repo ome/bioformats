@@ -141,14 +141,16 @@ public class SDTReader extends FormatReader {
     if (intensity) {
       in.seek(off + 2 * core.sizeX[series] * core.sizeY[series] *
         timeBins * no);
+      byte[] timeBin = new byte[timeBins * 2];
       for (int y=0; y<core.sizeY[series]; y++) {
         for (int x=0; x<core.sizeX[series]; x++) {
           // read all lifetime bins at this pixel for this channel
 
           // combine lifetime bins into intensity value
           short sum = 0;
+          in.read(timeBin);
           for (int t=0; t<timeBins; t++) {
-            sum += DataTools.read2SignedBytes(in, true);
+            sum += DataTools.bytesToShort(timeBin, t*2, true);
           }
           int ndx = 2 * (core.sizeX[0] * y + x);
           buf[ndx] = (byte) (sum & 0xff);
