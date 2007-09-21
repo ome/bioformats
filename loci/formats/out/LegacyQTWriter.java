@@ -219,8 +219,7 @@ public class LegacyQTWriter extends FormatWriter {
           for (int x=0; x<width; x++) {
             r.setVar("thisByte", pixels[offset1++]);
             r.exec("b = EndianOrder.flipBigEndianToNative32(thisByte)");
-            byte b = ((Byte) r.getVar("b")).byteValue();
-            pixels2[offset2++] = b;
+            pixels2[offset2++] = ((Integer) r.getVar("b")).intValue();
           }
         }
       }
