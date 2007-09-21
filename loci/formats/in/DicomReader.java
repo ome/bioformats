@@ -28,6 +28,10 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.codec.*;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.*;
 
 /**
  * DicomReader is the file format reader for DICOM files.
@@ -92,6 +96,9 @@ public class DicomReader extends FormatReader {
   private boolean indexed = false;
   private byte[][] lut;
 
+  private boolean isJPEG = false;
+  private boolean isRLE = false;
+
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
@@ -142,6 +149,7 @@ public class DicomReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
+    int plane = core.sizeX[0] * core.sizeY[0] * core.sizeC[0];
     int bytes = core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8);
     if (!indexed) bytes *= core.sizeC[0];
 
@@ -150,7 +158,42 @@ public class DicomReader extends FormatReader {
     }
 
     in.seek(offsets + bytes * no);
+    if (isRLE) {
+      in.skipBytes(67);
+      while (in.read() == 0);
+      in.seek(in.getFilePointer() - 1);
+    }
     in.read(buf);
+
+    if (isRLE) {
+      PackbitsCodec codec = new PackbitsCodec();
+      buf = codec.decompress(buf);
+
+      int b = FormatTools.getBytesPerPixel(core.pixelType[0]);
+      if (b > 1) {
+        byte[][] tmp = new byte[b][plane];
+        for (int i=0; i<b; i++) {
+          System.arraycopy(buf, i*plane, tmp[i], 0, plane);
+        }
+        for (int i=0; i<plane; i++) {
+          for (int j=0; j<b; j++) {
+            buf[i*b + j] = core.littleEndian[0] ? tmp[b - j - 1][i] : tmp[j][i];
+          }
+        }
+      }
+
+      if (buf.length < plane * b) {
+        byte[] tmp = buf;
+        buf = new byte[plane * b];
+        System.arraycopy(tmp, 0, buf, 0, tmp.length);
+      }
+    }
+
+    if (isJPEG) {
+      JPEGCodec codec = new JPEGCodec();
+      buf = codec.decompress(buf);
+    }
+
     return buf;
   }
 
@@ -201,7 +244,9 @@ public class DicomReader extends FormatReader {
         case TRANSFER_SYNTAX_UID:
           s = in.readString(elementLength);
           addInfo(tag, s);
-          if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
+          if (s.startsWith("1.2.840.10008.1.2.4")) isJPEG = true;
+          else if (s.startsWith("1.2.840.10008.1.2.5")) isRLE = true;
+          else if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
             throw new FormatException("Sorry, compressed DICOM images not " +
               "supported");
           }
@@ -282,7 +327,7 @@ public class DicomReader extends FormatReader {
     core.rgb[0] = core.sizeC[0] > 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
-    core.interleaved[0] = true;
+    core.interleaved[0] = !(isJPEG || isRLE);
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
@@ -341,6 +386,7 @@ public class DicomReader extends FormatReader {
   private void addInfo(int tag, String value) throws IOException {
     long oldFp = in.getFilePointer();
     String info = getHeaderInfo(tag, value);
+
     if (inSequence && info != null && vr != SQ) info = ">" + info;
     if (info != null && tag != ITEM) {
       String key = (String) TYPES.get(new Integer(tag));
@@ -523,6 +569,11 @@ public class DicomReader extends FormatReader {
 
     int elementWord = in.readShort();
     int tag = ((groupWord << 16) & 0xffff0000) | (elementWord & 0xffff);
+
+    if (tag == PIXEL_DATA && (isRLE || isJPEG)) {
+      in.skipBytes(20);
+    }
+
     elementLength = getLength();
 
     // HACK - needed to read some GE files
