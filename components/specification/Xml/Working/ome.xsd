@@ -711,7 +711,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:element name="Experimenter">
 		<xsd:annotation>
 			<xsd:documentation>
-				This element describes a person who performed an imaging experiment.  Required elements are FirstName, LastName and Email.
+				This element describes a person who performed an imaging experiment.
 				This person may also be a user of the OME system, in which case the OMEName element contains their login name.
 				Experimenters may belong to one or more groups which are specified using one or more GroupRef elements.
 				Note while FirstName, LastName, Email and OMEName are all optional to be valid an Experimenter must have AT LEAST ONE present
@@ -996,7 +996,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
-				The content model is ANY, which means that an entire XML sub-document can be placed here.
+				The content model is currently ANY, but this is going to change to String in 
+				the near future. This is no longer the correct place for an XML sub-document
+				- use CustomAttributes instead.
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
@@ -1024,7 +1026,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:complexType name="ManufactSpec">
 		<xsd:attribute name="Manufacturer" use="required" type="xsd:string"/>
 		<xsd:attribute name="Model" use="required" type="xsd:string"/>
-		<xsd:attribute name="SerialNumber" use="required" type="xsd:string"/>
+		<xsd:attribute name="SerialNumber" type="xsd:string"/>
 	</xsd:complexType>
 	<xsd:element name="Thumbnail">
 		<xsd:annotation>

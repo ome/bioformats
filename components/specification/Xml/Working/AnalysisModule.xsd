@@ -23,7 +23,7 @@
 	xmlns:MLI = "http://www.openmicroscopy.org/Schemas/MLI/2007-06"
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2007-06"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	 version = "1"
+	 version = "2"
 	 elementFormDefault = "qualified">
 	<import namespace = "http://www.openmicroscopy.org/Schemas/CLI/2007-06" schemaLocation = "http://www.openmicroscopy.org/Schemas/CLI/2007-06/CLI.xsd"/>
 	<import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" schemaLocation = "http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06/BinaryFile.xsd"/>

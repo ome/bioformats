@@ -20,7 +20,7 @@
     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
     xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-    version="1" 
+    version="2" 
     elementFormDefault="qualified">
     <xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd"/>
     <xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>

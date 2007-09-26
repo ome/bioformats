@@ -19,6 +19,7 @@
         <file name="MLI.xsd"/>
         <file name="ome.xsd"/>
         <file name="sample-updated.ome.xml"/>
+        <file name="../../../../Desktop/scratch.xml"/>
         <file name="SPW.xsd"/>
         <file name="STD.xsd"/>
     </projectTree>
