@@ -202,8 +202,10 @@ public final class ImageInfo {
     if (swapOrder != null) dimSwapper.swapDimensions(swapOrder);
 
     if (!normalize && reader.getPixelType() == FormatTools.FLOAT) {
-      throw new FormatException("Sorry, unnormalized floating point " +
-        "data is not supported. Please use the '-normalize' option.");
+      LogTools.println("Warning: Java does not support " +
+        "display of unnormalized floating point data.");
+      LogTools.println("Please use the '-normalize' option " +
+        "to avoid receiving a cryptic exception.");
     }
 
     // read basic metadata
@@ -241,6 +243,9 @@ public final class ImageInfo {
     }
     int seriesCount = reader.getSeriesCount();
     LogTools.println("Series count = " + seriesCount);
+    MetadataStore ms = reader.getMetadataStore();
+    MetadataRetrieve mr = ms instanceof MetadataRetrieve ?
+      (MetadataRetrieve) ms : null;
     for (int j=0; j<seriesCount; j++) {
       reader.setSeries(j);
 
@@ -265,7 +270,9 @@ public final class ImageInfo {
       boolean interleaved = reader.isInterleaved();
 
       // output basic metadata for series #i
-      LogTools.println("Series #" + j + ":");
+      String seriesName = mr == null ? null : mr.getImageName(new Integer(j));
+      LogTools.println("Series #" + j +
+        (seriesName == null ? "" : " -- " + seriesName) + ":");
       LogTools.println("\tImage count = " + imageCount);
       LogTools.print("\tRGB = " + rgb + " (" + rgbChanCount + ")");
       if (merge) LogTools.print(" (merged)");
@@ -526,7 +533,6 @@ public final class ImageInfo {
     if (omexml) {
       LogTools.println();
       LogTools.println("Generating OME-XML");
-      MetadataStore ms = reader.getMetadataStore();
       if (MetadataTools.isOMEXMLMetadata(ms)) {
         String xml = MetadataTools.getOMEXML((MetadataRetrieve) ms);
         LogTools.println(XMLTools.indentXML(xml));
