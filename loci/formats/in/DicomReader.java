@@ -30,8 +30,8 @@ import java.util.*;
 import loci.formats.*;
 import loci.formats.codec.*;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.*;
+//import javax.imageio.ImageIO;
+//import javax.imageio.stream.*;
 
 /**
  * DicomReader is the file format reader for DICOM files.
