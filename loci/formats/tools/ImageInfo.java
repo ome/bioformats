@@ -260,6 +260,9 @@ public final class ImageInfo {
       int pixelType = reader.getPixelType();
       int effSizeC = reader.getEffectiveSizeC();
       int rgbChanCount = reader.getRGBChannelCount();
+      boolean indexed = reader.isIndexed();
+      byte[][] table8 = reader.get8BitLookupTable();
+      short[][] table16 = reader.get16BitLookupTable();
       int[] cLengths = reader.getChannelDimLengths();
       String[] cTypes = reader.getChannelDimTypes();
       int thumbSizeX = reader.getThumbSizeX();
@@ -277,11 +280,36 @@ public final class ImageInfo {
       LogTools.print("\tRGB = " + rgb + " (" + rgbChanCount + ")");
       if (merge) LogTools.print(" (merged)");
       else if (separate) LogTools.print(" (separated)");
+      LogTools.println();
       if (rgb != (rgbChanCount != 1)) {
         LogTools.println("\t************ Warning: RGB mismatch ************");
       }
-      LogTools.println();
       LogTools.println("\tInterleaved = " + interleaved);
+      LogTools.print("\tIndexed = " + indexed);
+      if (table8 != null) {
+        int len0 = table8.length;
+        int len1 = table8[0].length;
+        LogTools.print(" (8-bit LUT: " + table8.length + " x ");
+        LogTools.print(table8[0] == null ? "null" : "" + table8[0].length);
+        LogTools.print(")");
+      }
+      if (table16 != null) {
+        int len0 = table16.length;
+        int len1 = table16[0].length;
+        LogTools.print(" (16-bit LUT: " + table16.length + " x ");
+        LogTools.print(table16[0] == null ? "null" : "" + table16[0].length);
+        LogTools.print(")");
+      }
+      LogTools.println();
+      if (indexed) {
+        if (table8 == null && table16 == null) {
+          LogTools.println("\t************ Warning: no LUT ************");
+        }
+        else if (table8 != null && table16 != null) {
+          LogTools.println(
+            "\t************ Warning: multiple LUTs ************");
+        }
+      }
       LogTools.println("\tWidth = " + sizeX);
       LogTools.println("\tHeight = " + sizeY);
       LogTools.println("\tSizeZ = " + sizeZ);
