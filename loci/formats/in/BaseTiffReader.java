@@ -92,7 +92,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (bits[0] <= 8) {
       int[] colorMap =
         (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
-
+      if (colorMap == null) return null;
       byte[][] table = new byte[3][colorMap.length / 3];
       int next = 0;
       for (int j=0; j<table.length; j++) {
@@ -118,6 +118,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap =
         (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+      if (colorMap == null) return null;
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;
       for (int i=0; i<table.length; i++) {
