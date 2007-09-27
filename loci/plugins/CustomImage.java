@@ -34,12 +34,16 @@ public class CustomImage extends ImagePlus {
 	boolean singleChannel;
   protected String order;
   protected int z, t, channels;
+  boolean autoscale;
 
-	public CustomImage(ImagePlus imp, String order, int z, int t, int channels) {
+	public CustomImage(ImagePlus imp, String order, int z, int t, int channels,
+    boolean autoscale)
+  {
     this.z = z;
     this.t = t;
     this.channels = channels;
     this.order = order;
+    this.autoscale = autoscale;
     ImageStack stack2;
 		boolean isRGB = imp.getBitDepth() == 24;
 		if (isRGB) stack2 = getRGBStack(imp);
@@ -116,7 +120,7 @@ public class CustomImage extends ImagePlus {
 		}
 		if (slice > nChannels) slice = nChannels;
 
-		if (slice - 1 != currentChannel) {
+		if (slice - 1 != currentChannel && autoscale) {
 			currentChannel = slice - 1;
 			getProcessor().setMinAndMax(cip[currentChannel].getMin(),
         cip[currentChannel].getMax());
@@ -135,7 +139,7 @@ public class CustomImage extends ImagePlus {
 		}
 
 		ImageProcessor iip = getProcessor();
-		cip[currentChannel].setMinAndMax(iip.getMin(), iip.getMax());
+		if (autoscale) cip[currentChannel].setMinAndMax(iip.getMin(), iip.getMax());
 		if (singleChannel) {
 			PixelGrabber pg = new PixelGrabber(cip[currentChannel].createImage(),
         0, 0, width, height, pixels[currentChannel], 0, width);

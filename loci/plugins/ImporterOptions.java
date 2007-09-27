@@ -100,6 +100,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_RANGE = "bioformats.specifyRanges";
   public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
   public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
+  public static final String PREF_AUTOSCALE = "bioformats.autoscale";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -113,6 +114,7 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_CONCATENATE =
     "Concatenate compatible series";
   public static final String LABEL_RANGE = "Specify range for each series";
+  public static final String LABEL_AUTOSCALE = "Autoscale images";
 
   public static final String LABEL_LOCATION = "Location: ";
   public static final String LABEL_ID = "Open";
@@ -129,6 +131,7 @@ public class ImporterOptions implements ItemListener {
   private Checkbox groupBox;
   private Checkbox concatenateBox;
   private Checkbox rangeBox;
+  private Checkbox autoscaleBox;
   private Choice mergeChoice;
 
   // -- Fields - core options --
@@ -142,6 +145,7 @@ public class ImporterOptions implements ItemListener {
   private boolean groupFiles;
   private boolean concatenate;
   private boolean specifyRanges;
+  private boolean autoscale;
   private boolean forceThumbnails;
   private String mergeOption;
 
@@ -165,6 +169,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isConcatenate() { return concatenate; }
   public boolean isSpecifyRanges() { return specifyRanges; }
   public boolean isForceThumbnails() { return forceThumbnails; }
+  public boolean isAutoscale() { return autoscale; }
   public String getMergeOption() { return mergeOption; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
@@ -197,6 +202,7 @@ public class ImporterOptions implements ItemListener {
   public void setConcatenate(boolean b) { concatenate = b; }
   public void setSpecifyRanges(boolean b) { specifyRanges = b; }
   public void setForceThumbnails(boolean b) { forceThumbnails = b; }
+  public void setAutoscale(boolean b) { autoscale = b; }
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
@@ -210,6 +216,7 @@ public class ImporterOptions implements ItemListener {
     concatenate = Prefs.get(PREF_CONCATENATE, false);
     specifyRanges = Prefs.get(PREF_RANGE, false);
     forceThumbnails = Prefs.get(PREF_THUMBNAIL, false);
+    autoscale = Prefs.get(PREF_AUTOSCALE, true);
     mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
   }
 
@@ -225,6 +232,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_CONCATENATE, concatenate);
     Prefs.set(PREF_RANGE, specifyRanges);
     Prefs.set(PREF_MERGE_OPTION, mergeOption);
+    Prefs.set(PREF_AUTOSCALE, autoscale);
   }
 
   /** Parses the plugin argument for parameter values. */
@@ -261,6 +269,7 @@ public class ImporterOptions implements ItemListener {
       specifyRanges = getMacroValue(arg, LABEL_RANGE, specifyRanges);
       stackFormat = Macro.getValue(arg, LABEL_STACK, stackFormat);
       mergeOption = Macro.getValue(arg, LABEL_MERGE_OPTION, mergeOption);
+      autoscale = getMacroValue(arg, LABEL_AUTOSCALE, autoscale);
 
       location = Macro.getValue(arg, LABEL_LOCATION, location);
       id = Macro.getValue(arg, LABEL_ID, id);
@@ -422,6 +431,7 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_GROUP, groupFiles);
     gd.addCheckbox(LABEL_CONCATENATE, concatenate);
     gd.addCheckbox(LABEL_RANGE, specifyRanges);
+    gd.addCheckbox(LABEL_AUTOSCALE, autoscale);
 
     // extract GUI components from dialog and add listeners
     Vector choices = gd.getChoices();
@@ -441,6 +451,7 @@ public class ImporterOptions implements ItemListener {
       groupBox = (Checkbox) boxes.get(4);
       concatenateBox = (Checkbox) boxes.get(5);
       rangeBox = (Checkbox) boxes.get(6);
+      autoscaleBox = (Checkbox) boxes.get(7);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -458,6 +469,7 @@ public class ImporterOptions implements ItemListener {
     groupFiles = gd.getNextBoolean();
     concatenate = gd.getNextBoolean();
     specifyRanges = gd.getNextBoolean();
+    autoscale = gd.getNextBoolean();
 
     return STATUS_OK;
   }

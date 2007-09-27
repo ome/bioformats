@@ -29,9 +29,6 @@ import ij.*;
 import ij.io.FileInfo;
 import ij.measure.Calibration;
 import ij.process.*;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
@@ -130,6 +127,7 @@ public class Importer {
     boolean groupFiles = options.isGroupFiles();
     boolean concatenate = options.isConcatenate();
     boolean specifyRanges = options.isSpecifyRanges();
+    boolean autoscale = options.isAutoscale();
 
     boolean viewNone = options.isViewNone();
     boolean viewStandard = options.isViewStandard();
@@ -712,8 +710,7 @@ public class Importer {
   {
     boolean mergeChannels = options.isMergeChannels();
     boolean concatenate = options.isConcatenate();
-
-    Util.adjustColorRange(imp);
+    if (options.isAutoscale()) Util.adjustColorRange(imp);
 
     // convert to RGB if needed
     int pixelType = r.getPixelType();
@@ -721,7 +718,7 @@ public class Importer {
       (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) &&
       !r.isIndexed())
     {
-      makeRGB(imp, r, r.getSizeC());
+      makeRGB(imp, r, r.getSizeC(), options.isAutoscale());
     }
     else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
       !r.isIndexed()) 
@@ -742,12 +739,12 @@ public class Importer {
         }
         catch (ReflectException exc) {
           imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
-            r.getSizeT(), r.getSizeC());
+            r.getSizeT(), r.getSizeC(), options.isAutoscale());
         }
       }
       else {
         imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
-          r.getSizeT(), r.getSizeC());
+          r.getSizeT(), r.getSizeC(), options.isAutoscale());
       }
     }
     else if (mergeChannels && r.getSizeC() >= 4) {
@@ -765,8 +762,12 @@ public class Importer {
         ImporterOptions.STATUS_OK)
       {
         String option = options.getMergeOption();
-        if (option.indexOf("2 channels") != -1) makeRGB(imp, r, 2);
-        else if (option.indexOf("3 channels") != -1) makeRGB(imp, r, 3);
+        if (option.indexOf("2 channels") != -1) {
+          makeRGB(imp, r, 2, options.isAutoscale());
+        }
+        else if (option.indexOf("3 channels") != -1) {
+          makeRGB(imp, r, 3, options.isAutoscale());
+        }
       }
     }
 
@@ -831,7 +832,7 @@ public class Importer {
     }
   }
 
-  private void makeRGB(ImagePlus imp, IFormatReader r, int c) {
+  private void makeRGB(ImagePlus imp, IFormatReader r, int c, boolean scale) {
     ImageStack s = imp.getStack();
     ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
     for (int i=0; i<s.getSize(); i++) {
@@ -839,7 +840,7 @@ public class Importer {
       newStack.addSlice(s.getSliceLabel(i + 1), p);
     }
     imp.setStack(imp.getTitle(), newStack);
-    Util.adjustColorRange(imp);
+    if (scale) Util.adjustColorRange(imp);
 
     s = imp.getStack();
     newStack = new ImageStack(s.getWidth(), s.getHeight());
