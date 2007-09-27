@@ -62,24 +62,13 @@ public class SlidebookReader extends FormatReader {
       block[3] == 1 && block[4] == 0x49 && block[5] == 0x49 && block[6] == 0;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] * 2];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[series] * core.sizeY[series] * 2) {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     int plane = core.sizeX[series] * core.sizeY[series] * 2;
 
@@ -297,20 +286,23 @@ public class SlidebookReader extends FormatReader {
         (int) (len / (core.sizeX[i] * core.sizeY[i] * 2 * core.sizeC[i]));
 
       core.imageCount[i] = core.sizeC[i] * core.sizeZ[i] * core.sizeT[i];
+
+      core.indexed[i] = false;
+      core.falseColor[i] = false;
     }
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null);
+    FormatTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeX.length; i++) {
+      Integer ii = new Integer(i);
+      store.setImage(currentId, null, null, ii);
       for (int j=0; j<core.sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, core.sizeC[i] == 1 ? "monochrome" :
-          "RGB", null, null, null, null, null, null, null, null, null, null,
-          new Integer(i));
+          null, null, null, null, null, null, null, null, null, null, null,
+          null, null, null, null, null, ii);
       }
     }
-    FormatTools.populatePixels(store, this);
   }
 
 }

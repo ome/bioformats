@@ -72,22 +72,9 @@ public class OIFReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] b = tiffReader[no].openBytes(0);
-    tiffReader[no].close();
-    return b;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -95,9 +82,7 @@ public class OIFReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     tiffReader[no].openBytes(0, buf);
     tiffReader[no].close();
@@ -109,9 +94,7 @@ public class OIFReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     String dir =
       currentId.substring(0, currentId.lastIndexOf(File.separator) + 1);
@@ -382,6 +365,9 @@ public class OIFReader extends FormatReader {
     core.rgb[0] = tiffReader[0].isRGB();
     core.littleEndian[0] = true;
     core.interleaved[0] = false;
+    core.metadataComplete[0] = true;
+    core.indexed[0] = tiffReader[0].isIndexed();
+    core.falseColor[0] = false;
 
     FormatTools.populatePixels(store, this);
 

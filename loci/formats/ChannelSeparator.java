@@ -103,7 +103,7 @@ public class ChannelSeparator extends ReaderWrapper {
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return false;
+    return isIndexed() && !isFalseColor();
   }
 
   /* @see IFormatReader#openImage(int) */
@@ -154,7 +154,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
       return ImageTools.splitChannels(lastImage, c,
         FormatTools.getBytesPerPixel(getPixelType()),
-        false, isInterleaved())[channel];
+        false, !isInterleaved())[channel];
     }
     else return reader.openBytes(no);
   }

@@ -120,23 +120,12 @@ public class OIBReader extends FormatReader {
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] *
-      getRGBChannelCount() *
-      FormatTools.getBytesPerPixel(core.pixelType[series])];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     try {
       Integer ii = new Integer(no);
@@ -283,6 +272,9 @@ public class OIBReader extends FormatReader {
       core = new CoreMetadata(numSeries);
 
       for (int i=0; i<numSeries; i++) {
+        core.indexed[i] = false;
+        core.falseColor[i] = false;
+
         core.sizeX[i] = ((Integer) width.get(i)).intValue();
         core.sizeY[i] = ((Integer) height.get(i)).intValue();
 
@@ -358,6 +350,7 @@ public class OIBReader extends FormatReader {
 
         core.rgb[i] = ((Boolean) rgb.get(i)).booleanValue();
         core.interleaved[i] = false;
+        core.metadataComplete[i] = true;
       }
 
       Integer ii = new Integer(0);
@@ -400,10 +393,6 @@ public class OIBReader extends FormatReader {
 
   /** Initialize metadata hashtable and OME-XML structure. */
   private void initMetadata() throws FormatException, IOException {
-    MetadataStore store = getMetadataStore();
-    store.setImage((String) getMeta("[File Info] - DataName"), null,
-      null, null);
-
     for (int i=0; i<width.size(); i++) {
       switch (((Integer) bpp.get(0)).intValue() % 3) {
         case 2:
@@ -411,7 +400,15 @@ public class OIBReader extends FormatReader {
           break;
         default: core.pixelType[i] = FormatTools.UINT8;
       }
+    }
 
+    MetadataStore store = getMetadataStore();
+    String name = (String) getMeta("[File Info] - DataName");
+    if (name == null) name = currentId;
+
+    FormatTools.populatePixels(store, this);
+
+    for (int i=0; i<width.size(); i++) {
       String acquisition = "[Acquisition Parameters Common] - ";
 
       String stamp = (String) getMeta(acquisition + "ImageCaputreDate");
@@ -424,7 +421,7 @@ public class OIBReader extends FormatReader {
         stamp = fmt.format(date);
       }
 
-      store.setImage(null, stamp, null, null);
+      store.setImage(name, stamp, null, new Integer(i));
 
       String pre = "[Reference Image Parameter] - ";
       String x = (String) getMeta(pre + "WidthConvertValue");
@@ -432,11 +429,15 @@ public class OIBReader extends FormatReader {
 
       store.setDimensions(x == null ? null : new Float(x),
         y == null ? null : new Float(y), null, null, null, new Integer(i));
-      for (int j=0; j<core.sizeC[0]; j++) {
+      for (int j=0; j<core.sizeC[i]; j++) {
         String prefix = "[Channel " + (j + 1) + " Parameters] - ";
         String gain = (String) getMeta(prefix + "AnalogPMTGain");
         String offset = (String) getMeta(prefix + "AnalogPMTOffset");
         String voltage = (String) getMeta(prefix + "AnalogPMTVoltage");
+
+        if (gain != null) gain = gain.replaceAll("\"", "");
+        if (offset != null) offset = offset.replaceAll("\"", "");
+        if (voltage != null) voltage = voltage.replaceAll("\"", "");
 
         store.setDetector(null, null, null, null, null, voltage == null ? null :
           new Float(voltage), null, null, new Integer(j));
@@ -458,7 +459,6 @@ public class OIBReader extends FormatReader {
           null, null, null, new Integer(j));
       }
     }
-    FormatTools.populatePixels(store, this);
   }
 
   protected void parseDir(int depth, Object dir)

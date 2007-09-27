@@ -79,11 +79,6 @@ public class BioRadReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 56) return false;
@@ -96,24 +91,13 @@ public class BioRadReader extends FormatReader {
     return (String[]) used.toArray(new String[0]);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2)) {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     long offset = no * core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2);
     in.seek(offset + 76);
@@ -143,7 +127,7 @@ public class BioRadReader extends FormatReader {
 
     int ramp1min = in.readShort();
     int ramp1max = in.readShort();
-    boolean notes = (in.read() | in.read() | in.read() | in.read()) != 0;
+    boolean notes = in.readInt() != 0;
     byteFormat = in.readShort() != 0;
     int imageNumber = in.readShort();
     String name = in.readString(32);
@@ -197,6 +181,7 @@ public class BioRadReader extends FormatReader {
     core.rgb[0] = false;
     core.interleaved[0] = false;
     core.littleEndian[0] = LITTLE_ENDIAN;
+    core.metadataComplete[0] = true;
 
     status("Reading notes");
 
@@ -212,7 +197,7 @@ public class BioRadReader extends FormatReader {
       // read in note
 
       int level = in.readShort();
-      notes = (in.read() | in.read() | in.read() | in.read()) != 0;
+      notes = in.readInt() != 0;
       int num = in.readShort();
       int status = in.readShort();
       int type = in.readShort();
@@ -609,12 +594,9 @@ public class BioRadReader extends FormatReader {
     float[][][] colors = new float[numLuts][3][256];
     for (int i=0; i<numLuts; i++) {
       for (int l=0; l<256; l++) {
-        int qr = 0x000000ff & lut[i][l];
-        int qg = 0x000000ff & lut[i][l + 256];
-        int qb = 0x000000ff & lut[i][l + 512];
-        colors[i][0][l] = (float) qr;
-        colors[i][1][l] = (float) qg;
-        colors[i][2][l] = (float) qb;
+        colors[i][0][l] = (float) (lut[i][l] & 0xff);
+        colors[i][1][l] = (float) (lut[i][l + 256] & 0xff);
+        colors[i][2][l] = (float) (lut[i][l + 512] & 0xff);
       }
     }
 
@@ -689,6 +671,9 @@ public class BioRadReader extends FormatReader {
         b = null;
       }
     }
+
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
 
     // Populate the metadata store
 

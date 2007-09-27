@@ -56,27 +56,13 @@ public class FitsReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]))
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     in.seek(2880 + 2880 * (((count * 80) - 1) / 2880));
     int line = core.sizeX[0] * FormatTools.getBytesPerPixel(core.pixelType[0]);
@@ -143,6 +129,9 @@ public class FitsReader extends FormatReader {
     core.littleEndian[0] = false;
     core.interleaved[0] = false;
     core.currentOrder[0] = "XYZCT";
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
 
@@ -150,7 +139,7 @@ public class FitsReader extends FormatReader {
     FormatTools.populatePixels(store, this);
 
     store.setLogicalChannel(0, null, null, null, null, null, null, null, null,
-      null, null, null, null, "monochrome", null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null, null, null,
       null, null, null, null, null);
   }
 

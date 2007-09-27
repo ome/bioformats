@@ -109,16 +109,6 @@ public class GIFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isIndexed() */
-  public boolean isIndexed() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -131,24 +121,13 @@ public class GIFReader extends FormatReader {
     return table;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0]];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0]) {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     act = (int[]) colorTables.get(no);
 
@@ -156,7 +135,7 @@ public class GIFReader extends FormatReader {
     if (no > 0) {
       byte[] prev = (byte[]) images.get(no - 1);
       for (int i=0; i<buf.length; i++) {
-        if ((act[buf[i] & 0xff] & 0x00ffffff) == 0) {
+        if ((act[buf[i] & 0xff] & 0xffffff) == 0) {
           buf[i] = prev[i];
         }
       }
@@ -335,6 +314,9 @@ public class GIFReader extends FormatReader {
     core.rgb[0] = true;
     core.littleEndian[0] = true;
     core.interleaved[0] = true;
+    core.metadataComplete[0] = true;
+    core.indexed[0] = true;
+    core.falseColor[0] = false;
 
     // populate metadata store
 

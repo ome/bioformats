@@ -5,6 +5,7 @@
 package loci.formats.codec;
 
 import java.io.*;
+import java.util.Arrays;
 import loci.formats.*;
 
 /**
@@ -78,7 +79,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
           ras.seek(quantOffset);
           int len = ras.readShort();
           ras.skipBytes(1);
-          quant = new byte[len - 3];
+          quant = new byte[64];
           ras.read(quant);
         }
 
@@ -93,8 +94,45 @@ public class MJPBCodec extends BaseCodec implements Codec {
           ras.skipBytes(1);
           lumAcBits = new byte[16];
           ras.read(lumAcBits);
-          lumAc = new byte[162];
+
+          int sum = 0;
+
+          for (int i=0; i<lumAcBits.length; i++) {
+            sum += lumAcBits[i] & 0xff;
+          }
+
+          lumAc = new byte[sum];
           ras.read(lumAc);
+          /*
+          if (sum == 162) ras.read(lumAc);
+          else {
+            byte[] tmp = new byte[162];
+            ras.read(tmp);
+
+            ByteVector v = new ByteVector(sum);
+            int[] count = new int[lumAcBits.length];
+            Arrays.fill(count, (byte) 0);
+            for (int i=0; i<tmp.length; i++) {
+              int size = 0;
+              int val = tmp[i] & 0xff;
+              while (Math.pow(2, size) < val) size++;
+              if (count[size] < lumAcBits[size]) {
+                v.add(tmp[i]);
+                count[size]++;
+              }
+              else if (size == 8) {
+                for (int j=size+1; j<lumAcBits.length; j++) {
+                  if (count[j] < lumAcBits[j]) {
+                    v.add(tmp[i]);
+                    count[j]++;
+                  }
+                }
+              }
+            }
+
+            lumAc = v.toByteArray();
+          }
+          */
         }
 
         ras.seek(sof + 7);
@@ -160,10 +198,13 @@ public class MJPBCodec extends BaseCodec implements Codec {
 
       v.add(new byte[] {(byte) 0xff, (byte) 0xdb});
 
-      int length = 67;
+      int length = 4 + quant.length*2;
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
       v.add((byte) 0);
+      v.add(quant);
+
+      v.add((byte) 1);
       v.add(quant);
 
       v.add(new byte[] {(byte) 0xff, (byte) 0xc4});

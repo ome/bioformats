@@ -80,41 +80,17 @@ public class LIFReader extends FormatReader {
     return block[0] == 0x70;
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    bpp = bitsPerPixel[series];
-    while (bpp % 8 != 0) bpp++;
-    byte[] buf = new byte[core.sizeX[series] * core.sizeY[series] *
-      (bpp / 8) * getRGBChannelCount()];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    bpp = bitsPerPixel[series];
-    while (bpp % 8 != 0) bpp++;
-    int bytes = bpp / 8;
-    if (buf.length < core.sizeX[series] * core.sizeY[series] * bytes *
-      getRGBChannelCount())
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     long offset = ((Long) offsets.get(series)).longValue();
-    in.seek(offset + core.sizeX[series] * core.sizeY[series] *
-      bytes * no * getRGBChannelCount());
+    in.seek(offset + core.sizeX[series] * core.sizeY[series] * no *
+      FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount());
 
     in.read(buf);
     return buf;
@@ -439,11 +415,14 @@ public class LIFReader extends FormatReader {
         extraDimensions[i] = 1;
       }
 
+      core.metadataComplete[i] = true;
       core.littleEndian[i] = true;
-      core.rgb[i] = core.sizeC[i] > 1 && core.sizeC[i] < 4;
-      core.interleaved[i] = true;
+      core.rgb[i] = false;
+      core.interleaved[i] = false;
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
-      if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
+      core.imageCount[i] *= core.sizeC[i];
+      core.indexed[i] = false;
+      core.falseColor[i] = false;
 
       while (bitsPerPixel[i] % 8 != 0) bitsPerPixel[i]++;
       switch (bitsPerPixel[i]) {

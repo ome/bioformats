@@ -86,29 +86,14 @@ public class PCIReader extends FormatReader {
       block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount()];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     if (noPOI) throw new FormatException(NO_POI_MSG);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    if (buf.length < core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount())
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     Integer ii = new Integer(no);
     Object directory = imageDirectories.get(ii);
@@ -153,12 +138,21 @@ public class PCIReader extends FormatReader {
       core.sizeZ[0] = core.imageCount[0];
       core.sizeT[0] = 1;
       core.rgb[0] = core.sizeC[0] > 1;
-      core.interleaved[0] = true;
+      core.interleaved[0] = false;
       core.currentOrder[0] = "XYCZT";
       core.littleEndian[0] = true;
+      core.indexed[0] = false;
+      core.falseColor[0] = false;
+      core.metadataComplete[0] = true;
 
       MetadataStore store = getMetadataStore();
       FormatTools.populatePixels(store, this);
+      store.setImage(currentId, null, null, null);
+      for (int i=0; i<core.sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null, null, null, null, null,
+          null, null, null, null, null, null);
+      }
     }
     catch (ReflectException exc) {
       noPOI = true;

@@ -56,37 +56,20 @@ public class AliconaReader extends FormatReader {
     return (new String(block)).indexOf("Alicona") != -1;
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * numBytes];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     int pad = (8 - (core.sizeX[0] % 8)) % 8;
-
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * numBytes) {
-      throw new FormatException("Buffer too small.");
-    }
 
     for (int i=0; i<numBytes; i++) {
       in.seek(textureOffset + (no * (core.sizeX[0] + pad)*core.sizeY[0]*(i+1)));
       for (int j=0; j<core.sizeX[0] * core.sizeY[0]; j++) {
-        buf[j*numBytes + i] = (byte) (in.read() & 0xff);
+        buf[j*numBytes + i] = in.readByte();
         if (j % core.sizeX[0] == core.sizeX[0] - 1) in.skipBytes(pad);
       }
     }
@@ -122,10 +105,8 @@ public class AliconaReader extends FormatReader {
     String pntX = null, pntY = null, pntZ = null;
 
     for (int i=0; i<count; i++) {
-      String key = in.readString(20);
-      String value = in.readString(30);
-      key = key.trim();
-      value = value.trim();
+      String key = in.readString(20).trim();
+      String value = in.readString(30).trim();
 
       addMeta(key, value);
       in.skipBytes(2);
@@ -161,6 +142,9 @@ public class AliconaReader extends FormatReader {
 
     core.pixelType[0] = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
     core.currentOrder[0] = "XYCTZ";
+    core.metadataComplete[0] = true;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
 
     MetadataStore store = getMetadataStore();
 

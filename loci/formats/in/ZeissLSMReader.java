@@ -80,37 +80,13 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    byte[] b = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, b);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
-
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * bpp) {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     ifds = TiffTools.getIFDs(in);
     TiffTools.getSamples(ifds[2*no], in, buf);
@@ -122,9 +98,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     if (2*no + 1 < ifds.length) return TiffTools.getImage(ifds[2*no + 1], in);
     return super.openThumbImage(no);

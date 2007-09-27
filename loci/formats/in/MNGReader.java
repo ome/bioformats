@@ -63,14 +63,12 @@ public class MNGReader extends FormatReader {
       block[6] == 0x1a && block[7] == 0x0a;
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    return ImageTools.getBytes(openImage(no), true, core.sizeC[0]);
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    buf = ImageTools.getBytes(openImage(no), true, core.sizeC[0]);
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
@@ -177,6 +175,9 @@ public class MNGReader extends FormatReader {
     core.rgb[0] = core.sizeC[0] > 1;
     core.interleaved[0] = false;
     core.littleEndian[0] = false;
+    core.metadataComplete[0] = true;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);

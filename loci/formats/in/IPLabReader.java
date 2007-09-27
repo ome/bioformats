@@ -64,14 +64,7 @@ public class IPLabReader extends FormatReader {
     int size = DataTools.bytesToInt(block, 4, 4, little);
     if (size != 4) return false; // first block size should be 4
     int version = DataTools.bytesToInt(block, 8, 4, little);
-    if (version < 0x100e) return false; // invalid version
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * bps * core.sizeC[0]];
-    return openBytes(no, buf);
+    return version >= 0x100e;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -79,16 +72,11 @@ public class IPLabReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
-    int numPixels = core.sizeX[0] * core.sizeY[0] * core.sizeC[0];
-    if (buf.length < numPixels * bps) {
-      throw new FormatException("Buffer too small.");
-    }
-    in.seek(numPixels * bps * (no / core.sizeC[0]) + 44);
-
+    int numPixels = core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * bps;
+    in.seek(numPixels * (no / core.sizeC[0]) + 44);
     in.read(buf);
     return buf;
   }
@@ -128,7 +116,7 @@ public class IPLabReader extends FormatReader {
 
     String ptype;
     bps = 1;
-    switch ((int) filePixelType) {
+    switch (filePixelType) {
       case 0:
         ptype = "8 bit unsigned";
         core.pixelType[0] = FormatTools.UINT8;
@@ -161,7 +149,7 @@ public class IPLabReader extends FormatReader {
         break;
       case 6:
         ptype = "Color48";
-        core.pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.UINT16;
         bps = 2;
         break;
       case 10:
@@ -181,11 +169,14 @@ public class IPLabReader extends FormatReader {
     else core.currentOrder[0] += "ZTC";
 
     core.rgb[0] = core.sizeC[0] > 1;
-    core.interleaved[0] = true;
+    core.interleaved[0] = false;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-
+    store.setImage(currentId, null, null, null);
     FormatTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeC[0]; i++) {
@@ -218,7 +209,7 @@ public class IPLabReader extends FormatReader {
         else {
           // explicitly defined lookup table
           // length is 772
-          in.skipBytes(4 + 256 * 3);
+          in.skipBytes(772);
         }
       }
       else if (tag.equals("norm")) {
@@ -231,12 +222,13 @@ public class IPLabReader extends FormatReader {
           throw new FormatException("Bad normalization settings");
         }
 
+        String[] types = new String[] {
+          "user", "plane", "sequence", "saturated plane",
+          "saturated sequence", "ROI"
+        };
+
         for (int i=0; i<core.sizeC[0]; i++) {
           int source = in.readInt();
-          String[] types = new String[] {
-            "user", "plane", "sequence", "saturated plane",
-            "saturated sequence", "ROI"
-          };
 
           String sourceType = (source >= 0 && source < types.length) ?
             types[source] : "user";
@@ -266,11 +258,9 @@ public class IPLabReader extends FormatReader {
         // read in header labels
 
         int size = in.readInt();
-
         for (int i=0; i<size / 22; i++) {
           int num = in.readShort();
-          String name = in.readString(20);
-          addMeta("Header" + num, name);
+          addMeta("Header" + num, in.readString(20));
         }
       }
       else if (tag.equals("mmrc")) {
@@ -290,8 +280,7 @@ public class IPLabReader extends FormatReader {
         Integer x1 = new Integer(roiRight);
         Integer y0 = new Integer(roiBottom);
         Integer y1 = new Integer(roiTop);
-        store.setDisplayROI(
-          x0, y0, null, x1, y1, null, null, null, null, null);
+        store.setDisplayROI(x0, y0, null, x1, y1, null, null, null, null, null);
 
         in.skipBytes(8 * numRoiPts);
       }
@@ -321,7 +310,7 @@ public class IPLabReader extends FormatReader {
       }
       else if (tag.equals("view")) {
         // read in view
-        in.readInt();
+        in.skipBytes(4);
       }
       else if (tag.equals("plot")) {
         // read in plot
@@ -330,7 +319,7 @@ public class IPLabReader extends FormatReader {
       }
       else if (tag.equals("notes")) {
         // read in notes (image info)
-        in.readInt(); // size is 576
+        in.skipBytes(4);
         String descriptor = in.readString(64);
         String notes = in.readString(512);
         addMeta("Descriptor", descriptor);

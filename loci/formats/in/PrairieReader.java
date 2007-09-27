@@ -78,7 +78,8 @@ public class PrairieReader extends FormatReader {
       return true; // we have no way of verifying further
     }
 
-    if (new String(block).indexOf("xml") != -1) return true;
+    String s = new String(block);
+    if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
 
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
 
@@ -123,27 +124,14 @@ public class PrairieReader extends FormatReader {
     return s;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    tiff.setId(files[no]);
-    return tiff.openBytes(0);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
     tiff.setId(files[no]);
-    tiff.openBytes(0, buf);
-    return buf;
+    return tiff.openBytes(0, buf);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -166,12 +154,25 @@ public class PrairieReader extends FormatReader {
     String[] listing = parent.list();
     int xmlCount = 0;
     for (int i=0; i<listing.length; i++) {
-      if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++;
+      if (listing[i].toLowerCase().endsWith(".xml")) {
+        try {
+          RandomAccessStream s = new RandomAccessStream(
+            parent.getAbsolutePath() + File.separator + listing[i]);
+          if (s.readString(512).indexOf("PV") != -1) xmlCount++;
+        }
+        catch (IOException e) { }
+      }
     }
     if (xmlCount == 0) {
       listing = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
       for (int i=0; i<listing.length; i++) {
-        if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++;
+        if (listing[i].toLowerCase().endsWith(".xml")) {
+          try {
+            RandomAccessStream s = new RandomAccessStream(listing[i]);
+            if (s.readString(512).indexOf("PV") != -1) xmlCount++;
+          }
+          catch (IOException e) { }
+        }
       }
     }
 
@@ -328,6 +329,8 @@ public class PrairieReader extends FormatReader {
         core.rgb[0] = false;
         core.interleaved[0] = false;
         core.littleEndian[0] = tiff.isLittleEndian();
+        core.indexed[0] = tiff.isIndexed();
+        core.falseColor[0] = false;
 
         String px = (String) getMeta("micronsPerPixel_XAxis");
         String py = (String) getMeta("micronsPerPixel_YAxis");

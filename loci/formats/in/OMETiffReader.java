@@ -42,6 +42,13 @@ import org.xml.sax.SAXException;
  */
 public class OMETiffReader extends BaseTiffReader {
 
+  // -- Fields --
+
+  /** List of used files. */
+  private String[] used;
+
+  private Hashtable coordinateMap;
+
   // -- Constructor --
 
   public OMETiffReader() {
@@ -71,12 +78,126 @@ public class OMETiffReader extends BaseTiffReader {
     catch (IOException e) { return false; }
   }
 
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    return used;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
+
+    int[] zct = getZCTCoords(no);
+    int fileIndex = -1;
+    int[] savedCoords = new int[] {-1, -1, -1};
+    for (int i=0; i<coordinateMap.size(); i++) {
+      int[] firstZCT = (int[]) coordinateMap.get(new Integer(i));
+      if (firstZCT[0] <= zct[0] && firstZCT[1] <= zct[1] &&
+        firstZCT[2] <= zct[2] && firstZCT[0] >= savedCoords[0] &&
+        firstZCT[1] >= savedCoords[1] && firstZCT[2] >= savedCoords[2])
+      {
+        savedCoords = firstZCT;
+        fileIndex = i;
+      }
+    }
+    in = new RandomAccessStream(used[fileIndex]);
+    ifds = TiffTools.getIFDs(in);
+    TiffTools.getSamples(ifds[no % ifds.length], in, buf);
+    in.close();
+    return swapIfRequired(buf);
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
+    String imageId = (String) getMeta("Comment");
+    int ndx = imageId.indexOf("<Image");
+    ndx = imageId.indexOf("ID=\"", ndx);
+    imageId = imageId.substring(ndx + 4, imageId.indexOf("\"", ndx + 5));
+
+    Vector files = new Vector();
+    Location l = new Location(currentId);
+    l = l.getAbsoluteFile().getParentFile();
+    String[] fileList = l.list();
+    Vector tempComments = new Vector();
+
+    for (int i=0; i<fileList.length; i++) {
+      Hashtable ifd = TiffTools.getFirstIFD(new RandomAccessStream(
+        l.getAbsolutePath() + File.separator + fileList[i]));
+      if (ifd == null) continue;
+      String comment =
+        (String) TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+      tempComments.add(comment);
+      ndx = comment.indexOf("<Image");
+      ndx = comment.indexOf("ID=\"", ndx);
+      comment = comment.substring(ndx + 4, comment.indexOf("\"", ndx + 5));
+
+      String check = fileList[i].toLowerCase();
+      if ((check.endsWith(".tif") || check.endsWith(".tiff")) &&
+        comment.equals(imageId))
+      {
+        files.add(l.getAbsolutePath() + File.separator + fileList[i]);
+      }
+    }
+
+    used = (String[]) files.toArray(new String[0]);
+
+    // reorder TIFF files
+    coordinateMap = new Hashtable();
+    for (int i=0; i<files.size(); i++) {
+      String comment = (String) tempComments.get(i);
+      ByteArrayInputStream is = new ByteArrayInputStream(comment.getBytes());
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      Document doc = null;
+      try {
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        doc = builder.parse(is);
+      }
+      catch (ParserConfigurationException exc) { }
+      catch (SAXException exc) { }
+      catch (IOException exc) { }
+
+      Element[][] tiffData = null;
+      if (doc != null) {
+        int numSeries = doc.getElementsByTagName("Pixels").getLength();
+        tiffData = new Element[numSeries][];
+        Vector v = new Vector();
+        NodeList pixelsList = doc.getElementsByTagName("Pixels");
+        for (int j=0; j<numSeries; j++) {
+          NodeList list = ((Element) pixelsList.item(j)).getChildNodes();
+          int size = list.getLength();
+          v.clear();
+          for (int k=0; k<size; k++) {
+            Node node = list.item(k);
+            if ("TiffData".equals(node.getNodeName())) v.add(node);
+          }
+          tiffData[j] = new Element[v.size()];
+          v.copyInto(tiffData[j]);
+        }
+
+        String firstZ = tiffData[0][0].getAttribute("FirstZ");
+        String firstC = tiffData[0][0].getAttribute("FirstC");
+        String firstT = tiffData[0][0].getAttribute("FirstT");
+        if (firstZ == null || firstZ.equals("")) firstZ = "0";
+        if (firstC == null || firstC.equals("")) firstC = "0";
+        if (firstT == null || firstT.equals("")) firstT = "0";
+        coordinateMap.put(new Integer(i), new int[] {Integer.parseInt(firstZ),
+          Integer.parseInt(firstC), Integer.parseInt(firstT)});
+      }
+    }
+
+    int oldX = core.sizeX[0];
+    int oldY = core.sizeY[0];
     String comment = (String) getMeta("Comment");
 
     // convert string to DOM
@@ -133,14 +254,24 @@ public class OMETiffReader extends BaseTiffReader {
 
       for (int i=0; i<tiffData.length; i++) {
         core.sizeX[i] = Integer.parseInt(pixels[i].getAttribute("SizeX"));
+        if (core.sizeX[i] != oldX) {
+          LogTools.println("Mismatched width: OME-XML reports SizeX=" +
+            core.sizeX[i] + "; expecting " + oldX);
+          core.sizeX[i] = oldX;
+        }
         core.sizeY[i] = Integer.parseInt(pixels[i].getAttribute("SizeY"));
+        if (core.sizeY[i] != oldY) {
+          LogTools.println("Mismatched height: OME-XML reports SizeY=" +
+            core.sizeY[i] + "; expecting " + oldY);
+          core.sizeY[i] = oldY;
+        }
         core.sizeZ[i] = Integer.parseInt(pixels[i].getAttribute("SizeZ"));
         core.sizeC[i] = Integer.parseInt(pixels[i].getAttribute("SizeC"));
-        core.imageCount[i] = ifds.length;
+        core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
+        core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
         int sc = core.sizeC[i];
         if (rgb) sc /= 3;
         core.rgb[i] = rgb;
-        core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
         core.pixelType[i] = FormatTools.pixelTypeFromString(
           pixels[i].getAttribute("PixelType"));
         if (core.pixelType[i] == FormatTools.INT8 ||

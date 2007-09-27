@@ -78,13 +78,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return TiffTools.isValidHeader(block);
   }
 
-  /* @see loci.formats.IFormatReader#isIndexed() */
-  public boolean isIndexed() {
-    FormatTools.assertId(currentId, true, 1);
-    return TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE;
-  }
-
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -93,6 +86,7 @@ public abstract class BaseTiffReader extends FormatReader {
       int[] colorMap =
         (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
       if (colorMap == null) return null;
+
       byte[][] table = new byte[3][colorMap.length / 3];
       int next = 0;
       for (int j=0; j<table.length; j++) {
@@ -144,28 +138,13 @@ public abstract class BaseTiffReader extends FormatReader {
     return getMeta(field);
   }
 
-  /* @see loci.formats.FormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
-    int bufSize = getSizeX() * getSizeY() * bytesPerPixel;
-    if (!isIndexed()) bufSize *= getRGBChannelCount();
-    byte[] buf = new byte[bufSize];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.FormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     TiffTools.getSamples(ifds[no], in, buf);
     return swapIfRequired(buf);
@@ -545,7 +524,7 @@ public abstract class BaseTiffReader extends FormatReader {
       TiffTools.SAMPLES_PER_PIXEL, false, 1);
     core.rgb[0] = samples > 1 || p == TiffTools.RGB_PALETTE ||
       p == TiffTools.CFA_ARRAY || p == TiffTools.RGB;
-    core.interleaved[0] = true;
+    core.interleaved[0] = false;
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
     core.sizeX[0] =
@@ -555,6 +534,10 @@ public abstract class BaseTiffReader extends FormatReader {
     core.sizeZ[0] = 1;
     core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = ifds.length;
+    core.metadataComplete[0] = true;
+    core.indexed[0] = TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE;
+    core.falseColor[0] = false;
 
     int bitFormat = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLE_FORMAT);

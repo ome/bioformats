@@ -56,15 +56,10 @@ public class KhorosReader extends FormatReader {
     return block[0] == (byte) 0xab && block[1] == 1;
   }
 
-  /* @see loci.formats.IFormatReader#isIndexed() */
-  public boolean isIndexed() {
-    FormatTools.assertId(currentId, true, 1);
-    return lut != null;
-  }
-
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
+    if (lut == null) return null;
     byte[][] table = new byte[3][lut.length / 3];
     int next = 0;
     for (int i=0; i<table[0].length; i++) {
@@ -75,29 +70,16 @@ public class KhorosReader extends FormatReader {
     return table;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    int bufSize = core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]);
-    if (!isIndexed()) bufSize *= core.sizeC[0];
-    byte[] buf = new byte[bufSize];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     int bufSize = core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]);
-    if (!isIndexed()) bufSize *= core.sizeC[0];
-    if (buf.length < bufSize) throw new FormatException("Buffer too small.");
 
     in.seek(offset + no * bufSize);
     in.read(buf, 0, bufSize);
@@ -185,6 +167,9 @@ public class KhorosReader extends FormatReader {
     core.interleaved[0] = false;
     core.littleEndian[0] = dependency == 4 || dependency == 8;
     core.currentOrder[0] = "XYCZT";
+    core.indexed[0] = lut != null;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
@@ -192,7 +177,7 @@ public class KhorosReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, core.sizeC[0] == 1 ? "monochrome" : "RGB", null,
+        null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null);
     }
   }

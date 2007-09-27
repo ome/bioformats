@@ -42,6 +42,7 @@ public class CoreMetadata {
   public String[][] cTypes;
   public String[] currentOrder;
   public boolean[] orderCertain, rgb, littleEndian, interleaved;
+  public boolean[] indexed, falseColor, metadataComplete;
   public Hashtable[] seriesMetadata;
 
   public CoreMetadata(int series) {
@@ -61,8 +62,11 @@ public class CoreMetadata {
     rgb = new boolean[series];
     littleEndian = new boolean[series];
     interleaved = new boolean[series];
-    seriesMetadata = new Hashtable[series];
-    for (int i=0; i<series; i++) seriesMetadata[i] = new Hashtable();
+    indexed = new boolean[series];
+    falseColor = new boolean[series];
+    metadataComplete = new boolean[series];
+    seriesMetadata = new Hashtable[series]; for (int i=0; i<series; i++)
+    seriesMetadata[i] = new Hashtable();
   }
 
 }

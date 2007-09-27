@@ -114,11 +114,6 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
     super.close();

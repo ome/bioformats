@@ -105,11 +105,6 @@ public class LeicaReader extends FormatReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#isIndexed() */
-  public boolean isIndexed() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -124,27 +119,10 @@ public class LeicaReader extends FormatReader {
     return tiff[0][0].get16BitLookupTable();
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     return id.toLowerCase().endsWith(".lei") ? FormatTools.MUST_GROUP :
       FormatTools.CAN_GROUP;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    tiff[series][no].setId((String) files[series].get(no));
-    byte[] b = tiff[series][no].openBytes(0);
-    tiff[series][no].close();
-    return b;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -152,13 +130,9 @@ public class LeicaReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
     tiff[series][no].setId((String) files[series].get(no));
-    tiff[series][no].openBytes(0, buf);
-    tiff[series][no].close();
-    return buf;
+    return tiff[series][no].openBytes(0, buf);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -1046,8 +1020,12 @@ public class LeicaReader extends FormatReader {
 
       Integer ii = new Integer(i);
 
-      core.rgb[i] = true;
-      core.sizeC[i] *= 3;
+      core.rgb[i] = false;
+      //core.sizeC[i] *= 3;
+
+      core.indexed[i] = true;
+      core.falseColor[i] = true;
+      core.metadataComplete[i] = true;
 
       String timestamp = (String) getMeta("Timestamp " + (i+1));
       String description = (String) getMeta("Image Description");
@@ -1061,17 +1039,19 @@ public class LeicaReader extends FormatReader {
       }
 
       store.setImage((String) seriesNames.get(i), timestamp, description, ii);
+    }
+    FormatTools.populatePixels(store, this);
 
+    for (int i=0; i<core.sizeC.length; i++) {
       for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+        store.setLogicalChannel(j, null, null, null, null, null, null, null,
           null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null);
+          null, null, null, null, null, new Integer(i));
         // TODO: get channel min/max from metadata
 //        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
 //          getChannelGlobalMaximum(currentId, j), ii);
       }
     }
-    FormatTools.populatePixels(store, this);
   }
 
   private boolean usedFile(String s) {

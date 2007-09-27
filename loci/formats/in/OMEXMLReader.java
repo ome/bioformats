@@ -85,27 +85,28 @@ public class OMEXMLReader extends FormatReader {
     return new String(block, 0, 5).equals("<?xml");
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= core.imageCount[series]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     in.seek(((Integer) offsets[series].get(no)).intValue());
 
-    byte[] buf;
+    byte[] b;
     if (no < getImageCount() - 1) {
-      buf = new byte[((Integer) offsets[series].get(no + 1)).intValue() -
+      b = new byte[((Integer) offsets[series].get(no + 1)).intValue() -
         ((Integer) offsets[series].get(no)).intValue()];
     }
     else {
-      buf = new byte[(int) (in.length() -
+      b = new byte[(int) (in.length() -
         ((Integer) offsets[series].get(no)).intValue())];
     }
-    in.read(buf);
-    String data = new String(buf);
-    buf = null;
+    in.read(b);
+    String data = new String(b);
+    b = null;
 
     // retrieve the compressed pixel data
 
@@ -148,7 +149,8 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Error uncompressing zlib data.");
       }
     }
-    return pixels;
+    buf = pixels;
+    return buf; 
   }
 
   // -- Internal FormatReader API methods --
@@ -368,6 +370,8 @@ public class OMEXMLReader extends FormatReader {
       core.sizeC[i] = c.intValue();
       core.rgb[i] = false;
       core.interleaved[i] = false;
+      core.indexed[i] = false;
+      core.falseColor[i] = false;
 
       String type = pixType.toLowerCase();
       if (type.endsWith("16")) {

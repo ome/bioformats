@@ -88,30 +88,13 @@ public class IPWReader extends BaseTiffReader {
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    int c = getRGBChannelCount();
-    if (c == 2) c++;
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * c *
-      FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]) *
-      ((isRGB() && !isIndexed()) ? core.sizeC[0] : 1))
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     RandomAccessStream stream = getStream(no);
     ifds = TiffTools.getIFDs(stream);
@@ -337,7 +320,6 @@ public class IPWReader extends BaseTiffReader {
       if (debug) trace(t);
     }
 
-    core.interleaved[0] = true;
   }
 
   // -- Helper methods --

@@ -55,9 +55,12 @@ public class LegacyPictReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    return ImageTools.getBytes(openImage(no), false, 3);
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    buf = ImageTools.getBytes(openImage(no), false, 3);
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
@@ -105,6 +108,8 @@ public class LegacyPictReader extends FormatReader {
     core.interleaved[0] = false;
     core.imageCount[0] = 1;
     core.littleEndian[0] = false;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);

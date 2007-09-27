@@ -73,24 +73,12 @@ public class MicromanagerReader extends FormatReader {
     return s;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    tiffReader.setId((String) tiffs.get(no));
-    return tiffReader.openBytes(0);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
     tiffReader.setId((String) tiffs.get(no));
     return tiffReader.openBytes(0, buf);
   }
@@ -141,6 +129,7 @@ public class MicromanagerReader extends FormatReader {
     File file = new File(currentId).getAbsoluteFile();
     in = new RandomAccessStream(file.exists() ? new File(file.getParentFile(),
       METADATA).getAbsolutePath() : METADATA);
+    String parent = file.exists() ? file.getParentFile().getAbsolutePath() : "";
 
     // usually a small file, so we can afford to read it into memory
 
@@ -158,7 +147,8 @@ public class MicromanagerReader extends FormatReader {
       pos = s.indexOf("FileName", pos);
       if (pos == -1 || pos >= in.length()) break;
       String name = s.substring(s.indexOf(":", pos), s.indexOf(",", pos));
-      tiffs.add(0, name.substring(3, name.length() - 1));
+      tiffs.add(0,
+        parent + File.separator + name.substring(3, name.length() - 1));
       pos++;
     }
 
@@ -231,6 +221,9 @@ public class MicromanagerReader extends FormatReader {
     core.interleaved[0] = false;
     core.littleEndian[0] = tiffReader.isLittleEndian();
     core.imageCount[0] = tiffs.size();
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);

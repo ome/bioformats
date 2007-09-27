@@ -87,12 +87,22 @@ public class OpenlabReader extends FormatReader {
       block[5] == 109 && block[6] == 112 && block[7] == 114;
   }
 
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
+
+    buf = openBytes(no);
+    return buf;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     LayerInfo info = (LayerInfo) layerInfoList[series].get(no);
     in.seek(info.layerStart);
@@ -146,8 +156,11 @@ public class OpenlabReader extends FormatReader {
         BufferedImage img = pict.open(b);
         byte[][] tmp = ImageTools.getBytes(img);
         b = new byte[tmp.length * tmp[0].length];
-        for (int i=0; i<tmp.length; i++) {
-          System.arraycopy(tmp[i], 0, b, i * tmp[i].length, tmp[i].length);
+        int pt = 0;
+        for (int i=0; i<tmp[0].length; i++) {
+          for (int j=0; j<tmp.length; j++) {
+            b[pt++] = tmp[j][i];
+          }
         }
       }
       catch (FormatException exc) { exception = exc; }
@@ -603,6 +616,8 @@ public class OpenlabReader extends FormatReader {
       core.sizeY[1] = oldH;
     }
 
+    Arrays.fill(core.metadataComplete, true);
+
     status("Populating metadata");
 
     numSeries = core.imageCount.length;
@@ -672,13 +687,15 @@ public class OpenlabReader extends FormatReader {
       store.setImage("Series " + i, null, null, new Integer(i));
       store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
         null, null, new Integer(i));
-      for (int j=0; j<core.sizeC[0]; j++) {
+    }
+    FormatTools.populatePixels(store, this);
+    for (int i=0; i<numSeries; i++) {
+      for (int j=0; j<core.sizeC[i]; j++) {
         store.setLogicalChannel(j, null, null, null, null, null, null, null,
           null, null, null, null, null, null, null, null, null, null, null,
           null, null, null, null, null, new Integer(i));
       }
     }
-    FormatTools.populatePixels(store, this);
   }
 
   // -- Helper methods --

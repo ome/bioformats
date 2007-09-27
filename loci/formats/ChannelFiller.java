@@ -51,19 +51,34 @@ public class ChannelFiller extends ReaderWrapper {
     return false;
   }
 
+  /* @see IFormatReader#isFalseColor() */
+  public boolean isFalseColor() {
+    return false;
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
+    try {
+      return reader.isFalseColor() ? reader.get8BitLookupTable() : null;
+    }
+    catch (FormatException e) { }
+    catch (IOException e) { }
     return null;
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
+    try {
+      return reader.isFalseColor() ? reader.get16BitLookupTable() : null;
+    }
+    catch (FormatException e) { }
+    catch (IOException e) { }
     return null;
   }
 
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    if (reader.isIndexed()) {
+    if (reader.isIndexed() && !reader.isFalseColor()) {
       if (getPixelType() == FormatTools.UINT8) {
         byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(),
           reader.openBytes(no));
@@ -118,7 +133,7 @@ public class ChannelFiller extends ReaderWrapper {
 
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (reader.isIndexed()) {
+    if (reader.isIndexed() && !reader.isFalseColor()) {
       return ImageTools.indexedToRGB(reader.openImage(no), isLittleEndian());
     }
     return reader.openImage(no);

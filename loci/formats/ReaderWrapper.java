@@ -121,6 +121,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isIndexed();
   }
 
+  public boolean isFalseColor() {
+    return reader.isFalseColor();
+  }
+
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return reader.get8BitLookupTable();
   }

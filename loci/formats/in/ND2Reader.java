@@ -159,26 +159,13 @@ public class ND2Reader extends FormatReader {
       block[7] == 0x20;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] b = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, b);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]))
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     in.seek(offsets[no]);
 
@@ -233,7 +220,7 @@ public class ND2Reader extends FormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     if (!isJPEG) {
       return ImageTools.makeImage(openBytes(no), core.sizeX[0], core.sizeY[0],
-        core.sizeC[0], !core.interleaved[0],
+        core.sizeC[0], core.interleaved[0],
         FormatTools.getBytesPerPixel(core.pixelType[0]), core.littleEndian[0]);
     }
 
@@ -271,6 +258,18 @@ public class ND2Reader extends FormatReader {
     b = null;
 
     return img;
+  }
+
+  /* @see loci.formats.IFormatReader#close() */
+  public void close() throws IOException {
+    super.close();
+
+    offsets = null;
+    zs.clear();
+    ts.clear();
+    adjustImageCount = false;
+    isJPEG = false;
+    isLossless = false;
   }
 
   // -- Internal FormatReader API methods --
@@ -395,7 +394,19 @@ public class ND2Reader extends FormatReader {
         core.sizeZ[0] /= 3;
       }
       core.littleEndian[0] = isLossless;
-      core.interleaved[0] = false;
+      core.interleaved[0] = true;
+      core.indexed[0] = false;
+      core.falseColor[0] = false;
+      core.metadataComplete[0] = true;
+
+      MetadataStore store = getMetadataStore();
+      store.setImage(currentId, null, null, null);
+      FormatTools.populatePixels(store, this);
+      for (int i=0; i<core.sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null, null, null, null, null,
+          null, null, null, null, null, null);
+      }
 
       return;
     }
@@ -438,6 +449,8 @@ public class ND2Reader extends FormatReader {
     core.imageCount[0] = offsets.length;
 
     core.pixelType[0] = FormatTools.UINT8;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
 
     // read XML metadata from the end of the file
 
@@ -721,8 +734,9 @@ public class ND2Reader extends FormatReader {
     }
 
     core.rgb[0] = core.sizeC[0] >= 3;
-    core.interleaved[0] = true;
+    core.interleaved[0] = false;
     core.littleEndian[0] = false;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);

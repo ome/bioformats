@@ -69,26 +69,13 @@ public class EPSReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatRaeder#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf =
-      new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * (bps / 8)];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * (bps / 8))
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     if (isTiff) {
       long[] offsets = TiffTools.getStripOffsets(ifds[0]);
@@ -194,6 +181,19 @@ public class EPSReader extends FormatReader {
 
       core.imageCount[0] = 1;
       core.currentOrder[0] = "XYCZT";
+      core.metadataComplete[0] = true;
+      core.indexed[0] = false;
+      core.falseColor[0] = false;
+
+      MetadataStore store = getMetadataStore();
+      store.setImage(currentId, null, null, null);
+
+      FormatTools.populatePixels(store, this);
+      for (int i=0; i<core.sizeC[0]; i++) {
+        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+         null, null, null, null, null, null, null, null, null, null, null,
+         null, null, null, null, null, null);
+      }
 
       return;
     }
@@ -289,7 +289,6 @@ public class EPSReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-
     store.setImage(currentId, null, null, null);
 
     FormatTools.populatePixels(store, this);

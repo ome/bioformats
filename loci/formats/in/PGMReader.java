@@ -58,27 +58,13 @@ public class PGMReader extends FormatReader {
     return block[0] == 'P';
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]))
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     in.seek(offset);
     if (rawBits) in.read(buf);
@@ -146,6 +132,9 @@ public class PGMReader extends FormatReader {
     core.sizeZ[0] = 1;
     core.sizeT[0] = 1;
     core.imageCount[0] = 1;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
@@ -153,8 +142,7 @@ public class PGMReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null,
-        core.sizeC[0] == 1 ? "monochrome" : "RGB", null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null,
         null, null, null, null, null, null, null);
     }
   }

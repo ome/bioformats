@@ -91,6 +91,13 @@ public interface IFormatReader extends IFormatHandler {
   boolean isIndexed();
 
   /**
+   * Returns false if isIndexed is false, or if isIndexed is true and the lookup
+   * table represents "real" color data.  Returns true if isIndexed is true
+   * and the lookup table is only present to aid in visualization.
+   */
+  boolean isFalseColor();
+
+  /**
    * Gets the 8-bit color lookup table associated with
    * the most recently opened image.
    * If no images have been opened, or if isIndexed() returns false, then

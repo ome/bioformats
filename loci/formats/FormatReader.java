@@ -60,9 +60,6 @@ public abstract class FormatReader extends FormatHandler
   /** Core metadata values. */
   protected CoreMetadata core;
 
-  /** Whether or not the metadata is completely parsed. */
-  protected boolean complete = false;
-
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
 
@@ -250,7 +247,14 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#isIndexed() */
   public boolean isIndexed() {
-    return false;
+    FormatTools.assertId(currentId, true, 1);
+    return core.indexed[series];
+  }
+
+  /* @see IFormatReader#isFalseColor() */
+  public boolean isFalseColor() {
+    FormatTools.assertId(currentId, true, 1);
+    return core.falseColor[series];
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
@@ -334,11 +338,11 @@ public abstract class FormatReader extends FormatHandler
     return core.interleaved[series];
   }
 
-  /* @see IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    return openBytes(no);
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] buf = new byte[getSizeX() * getSizeY() * getRGBChannelCount() *
+      FormatTools.getBytesPerPixel(getPixelType())];
+    return openBytes(no, buf);
   }
 
   /* @see IFormatReader#openImage(int) */
@@ -453,7 +457,8 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#isMetadataComplete() */
   public boolean isMetadataComplete() {
-    return complete;
+    FormatTools.assertId(currentId, true, 1);
+    return core.metadataComplete[series];
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

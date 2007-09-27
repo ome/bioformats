@@ -125,29 +125,14 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount()];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     if (noPOI || needLegacy) return legacy.openBytes(no, buf);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    if (buf.length < core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount())
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     try {
       int tiles = tileRows * tileColumns;
@@ -297,7 +282,10 @@ public class ZeissZVIReader extends FormatReader {
       core.rgb[0] = core.sizeC[0] > 1 &&
         (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] != core.imageCount[0]);
       core.littleEndian[0] = true;
-      core.interleaved[0] = false;
+      core.interleaved[0] = true;
+      core.indexed[0] = false;
+      core.falseColor[0] = false;
+      core.metadataComplete[0] = true;
 
       core.sizeZ[0] = zIndices.size();
       core.sizeT[0] = tIndices.size();
@@ -310,6 +298,8 @@ public class ZeissZVIReader extends FormatReader {
       if (isTiled) {
         String zeroIndex = (String) getMeta("ImageTile Index 0");
         String oneIndex = (String) getMeta("ImageTile Index 1");
+        if (zeroIndex == null || zeroIndex.equals("")) zeroIndex = null;
+        if (oneIndex == null || oneIndex.equals("")) oneIndex = null;
         if (zeroIndex == null || oneIndex == null) {
           isTiled = false;
         }
@@ -437,6 +427,8 @@ public class ZeissZVIReader extends FormatReader {
         String lastDye = (String) getMeta("Reflector " + (core.sizeC[0] - 1));
         String nextToLastDye =
           (String) getMeta("Reflector " + (core.sizeC[0] - 2));
+        if (lastDye == null) lastDye = "";
+        if (nextToLastDye == null) nextToLastDye = "";
 
         lastDye = DataTools.stripString(lastDye);
         nextToLastDye = DataTools.stripString(nextToLastDye);
@@ -532,9 +524,8 @@ public class ZeissZVIReader extends FormatReader {
     if (scopeName == null) scopeName = (String) getMeta("Microscope Name 0");
     store.setInstrument(null, scopeName, null, null, null);
 
-    for (int i=0; i<getEffectiveSizeC(); i++) {
-      int idx = FormatTools.getIndex(this, 0, i, 0);
-      String name = (String) getMeta("Channel Name " + idx);
+    for (int i=0; i<core.sizeC[0]; i++) {
+      int idx = FormatTools.getIndex(this, 0, i % getEffectiveSizeC(), 0);
       String emWave = (String) getMeta("Emission Wavelength " + idx);
       String exWave = (String) getMeta("Excitation Wavelength " + idx);
 
@@ -544,8 +535,7 @@ public class ZeissZVIReader extends FormatReader {
       if (exWave != null && exWave.indexOf(".") != -1) {
         exWave = exWave.substring(0, exWave.indexOf("."));
       }
-
-      store.setLogicalChannel(i, name, null, null, null, null, null, null,
+      store.setLogicalChannel(i, null, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null, null, null,
         emWave == null ? null : new Integer(emWave),
         exWave == null ? null : new Integer(exWave), null, null, null);
@@ -578,7 +568,7 @@ public class ZeissZVIReader extends FormatReader {
       try { exp = new Float(exposure); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
-      store.setPlaneInfo(zct[0], zct[1], zct[2], null, exp, null);
+      store.setPlaneInfo(zct[0], zct[1], zct[2], new Float(0.0), exp, null);
     }
 
     String objectiveName = (String) getMeta("Objective Name 0");

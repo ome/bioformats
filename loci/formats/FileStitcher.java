@@ -286,6 +286,12 @@ public class FileStitcher implements IFormatReader {
     return reader.isIndexed();
   }
 
+  /* @see IFormatReader#isFalseColor() */
+  public boolean isFalseColor() {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.isFalseColor();
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);

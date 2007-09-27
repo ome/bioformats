@@ -1892,13 +1892,7 @@ public final class ImageTools {
 
     BufferedImage result = null;
     Image scaled = scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
-    try {
-      result = makeBuffered(scaled, source.getColorModel());
-    }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
-      result = makeBuffered(scaled);
-    }
+    result = makeBuffered(scaled, source.getColorModel());
     return padImage(result, finalWidth, finalHeight);
   }
 

@@ -199,33 +199,26 @@ public class OMEReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
     int[] indices = getZCTCoords(no);
     try {
-      byte[] b = pf.getPlane(pixels, indices[0], indices[1], indices[2], false);
-      return b;
+      buf = pf.getPlane(pixels, indices[0], indices[1], indices[2], false);
+      return buf;
     }
     catch (ImageServerException e) {
       throw new FormatException(e);
     }
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0],
-      core.sizeY[0], 1, false, FormatTools.getBytesPerPixel(core.pixelType[0]),
-      true);
-  }
-
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
     byte[][] b = ImageTools.getPixelBytes(openThumbImage(no), true);
     byte[] rtn = new byte[b.length * b[0].length];
     for (int i=0; i<b.length; i++) {
@@ -238,9 +231,8 @@ public class OMEReader extends FormatReader {
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
     return thumb;
   }
 

@@ -100,11 +100,6 @@ public class FluoviewReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
@@ -269,6 +264,7 @@ public class FluoviewReader extends BaseTiffReader {
 
     core.sizeZ[0] = core.sizeC[0] = core.sizeT[0] = 1;
     core.currentOrder[0] = "XY";
+    core.metadataComplete[0] = true;
 
     for (int i=0; i<10; i++) {
       String name = names[i];

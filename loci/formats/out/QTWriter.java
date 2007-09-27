@@ -45,8 +45,8 @@ public class QTWriter extends FormatWriter {
   // -- Constants --
 
   // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
-  ///** Value indicating Motion JPEG-B codec. */
-  //public static final int CODEC_MOTION_JPEG_B = 1835692130;
+  /** Value indicating Motion JPEG-B codec. */
+  public static final int CODEC_MOTION_JPEG_B = 1835692130;
 
   /** Value indicating Cinepack codec. */
   public static final int CODEC_CINEPAK = 1668704612;
@@ -120,7 +120,7 @@ public class QTWriter extends FormatWriter {
     compressionTypes = new String[] {
       "Uncompressed",
       // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
-      //"Motion JPEG-B",
+      "Motion JPEG-B",
       "Cinepak", "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG 4"
     };
 
@@ -606,7 +606,7 @@ public class QTWriter extends FormatWriter {
     if (compression == null) return;
     if (compression.equals("Uncompressed")) codec = CODEC_RAW;
     // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
-    //else if (compression.equals("Motion JPEG-B")) codec = CODEC_MOTION_JPEG_B;
+    else if (compression.equals("Motion JPEG-B")) codec = CODEC_MOTION_JPEG_B;
     else if (compression.equals("Cinepak")) codec = CODEC_CINEPAK;
     else if (compression.equals("Animation")) codec = CODEC_ANIMATION;
     else if (compression.equals("H.263")) codec = CODEC_H_263;

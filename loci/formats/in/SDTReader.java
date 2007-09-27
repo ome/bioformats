@@ -117,26 +117,13 @@ public class SDTReader extends FormatReader {
     return !intensity && subC == 0;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    int c = getRGBChannelCount();
-    byte[] buf = new byte[2 * c * core.sizeX[series] * core.sizeY[series]];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= timeBins * channels) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    int c = getRGBChannelCount();
-    if (buf.length < 2 * c * core.sizeX[series] * core.sizeY[series]) {
-      throw new FormatException("Buffer too small");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     if (intensity) {
       in.seek(off + 2 * core.sizeX[series] * core.sizeY[series] *
@@ -203,6 +190,9 @@ public class SDTReader extends FormatReader {
     core.rgb[0] = !intensity;
     core.littleEndian[0] = true;
     core.imageCount[0] = channels;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);

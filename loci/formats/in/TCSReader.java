@@ -66,11 +66,6 @@ public class TCSReader extends BaseTiffReader {
     catch (IOException e) { return false; }
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */

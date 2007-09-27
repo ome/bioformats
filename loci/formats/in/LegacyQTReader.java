@@ -74,10 +74,12 @@ public class LegacyQTReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    return ImageTools.getBytes(openImage(no), false, 3);
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    buf = ImageTools.getBytes(openImage(no), false, 3);
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
@@ -215,6 +217,8 @@ public class LegacyQTReader extends FormatReader {
       core.rgb[0] = true;
       core.interleaved[0] = false;
       core.littleEndian[0] = false;
+      core.indexed[0] = false;
+      core.falseColor[0] = false;
 
       MetadataStore store = getMetadataStore();
       store.setImage(currentId, null, null, null);
@@ -226,8 +230,7 @@ public class LegacyQTReader extends FormatReader {
           null, null, null, null, null, null);
       }
     }
-    catch (Exception e) {
-      // CTR TODO - eliminate catch-all exception handling
+    catch (ReflectException e) {
       throw new FormatException("Open movie failed", e);
     }
   }

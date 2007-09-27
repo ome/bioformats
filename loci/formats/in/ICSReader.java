@@ -113,27 +113,13 @@ public class ICSReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8) *
-      getRGBChannelCount()];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * (bitsPerPixel / 8) *
-      getRGBChannelCount())
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     int bpp = bitsPerPixel / 8;
 
@@ -322,9 +308,12 @@ public class ICSReader extends FormatReader {
 
     if (core.imageCount[0] == 0) core.imageCount[0] = 1;
     core.rgb[0] = core.rgb[0] && core.sizeC[0] > 1;
-    core.interleaved[0] = !core.rgb[0];
+    core.interleaved[0] = core.rgb[0];
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
     if (!core.rgb[0]) core.imageCount[0] *= core.sizeC[0];
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     String endian = byteOrder;
     core.littleEndian[0] = true;

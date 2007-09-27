@@ -236,6 +236,12 @@ public class ImageReader implements IFormatReader {
     return getReader().isIndexed();
   }
 
+  /* @see IFormatReader#isFalseColor() */
+  public boolean isFalseColor() {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().isFalseColor();
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
@@ -402,7 +408,7 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isGroupFiles() */
   public boolean isGroupFiles() {
-    return readers[0].isGroupFiles();
+    return getReader().isGroupFiles();
   }
 
   /* @see IFormatReader#fileGroupOption(String) */
@@ -412,7 +418,8 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isMetadataComplete() */
   public boolean isMetadataComplete() {
-    return readers[0].isMetadataComplete();
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().isMetadataComplete();
   }
 
   /* @see IFormatReader#setNormalized(boolean) */

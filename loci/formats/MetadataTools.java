@@ -165,7 +165,7 @@ public final class MetadataTools {
     }
     else {
       // metadata store is foreign; create an OME-XML
-      // metadata object and copy it into the destionation
+      // metadata object and copy it into the destination
       MetadataRetrieve src = (MetadataRetrieve) createOMEXMLMetadata(xml);
       convertMetadata(src, dest);
     }

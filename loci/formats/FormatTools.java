@@ -402,7 +402,7 @@ public final class FormatTools {
       store.setPixels(new Integer(r.getSizeX()), new Integer(r.getSizeY()),
         new Integer(r.getSizeZ()), new Integer(r.getSizeC()),
         new Integer(r.getSizeT()), new Integer(r.getPixelType()),
-        new Boolean(!r.isLittleEndian()), r.getDimensionOrder(), null, ii);
+        new Boolean(!r.isLittleEndian()), r.getDimensionOrder(), ii, null);
     }
     r.setSeries(oldSeries);
   }
@@ -440,6 +440,26 @@ public final class FormatTools {
     }
     else header = "";
     throw new IllegalStateException(header + msg);
+  }
+
+  /** Checks that the given plane number is valid for the given reader. */
+  public static void checkPlaneNumber(IFormatReader r, int no)
+    throws FormatException
+  {
+    if (no < 0 || no >= r.getImageCount()) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+  }
+
+  public static void checkBufferSize(IFormatReader r, int len)
+    throws FormatException
+  {
+    int size = r.getSizeX() * r.getSizeY() *
+      (r.isIndexed() ? 1 : r.getRGBChannelCount()) *
+      getBytesPerPixel(r.getPixelType());
+    if (size > len) {
+      throw new FormatException("Buffer too small.");
+    }
   }
 
 }

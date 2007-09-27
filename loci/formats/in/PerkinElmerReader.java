@@ -71,31 +71,30 @@ public class PerkinElmerReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
     if (isTiff) {
       tiff[no / core.sizeC[0]].setId(files[no / core.sizeC[0]]);
-      return tiff[no / core.sizeC[0]].openBytes(0);
+      return tiff[no / core.sizeC[0]].openBytes(0, buf);
     }
+
+    FormatTools.checkBufferSize(this, buf.length);
 
     String file = files[no];
     RandomAccessStream ras = new RandomAccessStream(file);
-    byte[] b = new byte[(int) ras.length() - 6]; // each file has 6 magic bytes
     ras.skipBytes(6);
-    ras.read(b);
+    ras.read(buf);
     ras.close();
-    return b;
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -127,6 +126,22 @@ public class PerkinElmerReader extends FormatReader {
         if (tiff[i] != null) tiff[i].close();
       }
     }
+  }
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (name.toLowerCase().endsWith(".cfg")) {
+      try {
+        RandomAccessStream s = new RandomAccessStream(name);
+        String ss = s.readString(512);
+        return ss.indexOf("Series") != -1;
+      }
+      catch (IOException e) {
+        if (debug) trace(e);
+        return false;
+      }
+    }
+    return super.isThisType(name, open);
   }
 
   // -- Internal FormatReader API methods --
@@ -528,7 +543,9 @@ public class PerkinElmerReader extends FormatReader {
       core.pixelType[0] = tiff[0].getPixelType();
     }
     else {
-      int bpp = openBytes(0).length / (core.sizeX[0] * core.sizeY[0]);
+      RandomAccessStream tmp = new RandomAccessStream(files[0]);
+      int bpp = (int) (tmp.length() - 6) / (core.sizeX[0] * core.sizeY[0]);
+      tmp.close();
       switch (bpp) {
         case 1:
         case 3:
@@ -563,6 +580,9 @@ public class PerkinElmerReader extends FormatReader {
     core.rgb[0] = isTiff ? tiff[0].isRGB() : false;
     core.interleaved[0] = false;
     core.littleEndian[0] = isTiff ? tiff[0].isLittleEndian() : true;
+    core.metadataComplete[0] = true;
+    core.indexed[0] = isTiff ? tiff[0].isIndexed() : false;
+    core.falseColor[0] = false;
 
     // Populate metadata store
 

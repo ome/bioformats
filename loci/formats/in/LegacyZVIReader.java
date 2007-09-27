@@ -97,21 +97,13 @@ public class LegacyZVIReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[((ZVIBlock) blockList.elementAt(no)).imageSize];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
     zviBlock.readBytes(in, buf);
@@ -121,12 +113,9 @@ public class LegacyZVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     if (debug) debug("Reading image #" + no + "...");
-
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
     return zviBlock.readImage(in);
   }
@@ -399,6 +388,8 @@ public class LegacyZVIReader extends FormatReader {
       core.rgb[0] = bytesPerPixel == 3 || bytesPerPixel > 4;
       core.interleaved[0] = false;
       core.littleEndian[0] = true;
+      core.indexed[0] = false;
+      core.falseColor[0] = false;
 
       // Populate metadata store
 

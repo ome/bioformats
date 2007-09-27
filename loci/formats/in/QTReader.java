@@ -126,11 +126,6 @@ public class QTReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(currentId, false, 1);
@@ -138,12 +133,13 @@ public class QTReader extends FormatReader {
     if (useLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     String code = codec;
     if (no >= getImageCount() - altPlanes) code = altCodec;
@@ -188,23 +184,23 @@ public class QTReader extends FormatReader {
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1) &&
       !code.equals(altCodec);
 
-    byte[] bytes = uncompress(pixs, code);
+    buf = uncompress(pixs, code);
     if (code.equals("rpza")) {
-      for (int i=0; i<bytes.length; i++) {
-        bytes[i] = (byte) (255 - bytes[i]);
+      for (int i=0; i<buf.length; i++) {
+        buf[i] = (byte) (255 - buf[i]);
       }
       prevPlane = no;
-      return bytes;
+      return buf;
     }
 
     // on rare occassions, we need to trim the data
-    if (canUsePrevious && (prevPixels.length < bytes.length)) {
-      byte[] temp = bytes;
-      bytes = new byte[prevPixels.length];
-      System.arraycopy(temp, 0, bytes, 0, bytes.length);
+    if (canUsePrevious && (prevPixels.length < buf.length)) {
+      byte[] temp = buf;
+      buf = new byte[prevPixels.length];
+      System.arraycopy(temp, 0, buf, 0, buf.length);
     }
 
-    prevPixels = bytes;
+    prevPixels = buf;
     prevPlane = no;
 
     // determine whether we need to strip out any padding bytes
@@ -217,28 +213,28 @@ public class QTReader extends FormatReader {
     if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
 
     if (pad > 0) {
-      bytes = new byte[prevPixels.length - core.sizeY[0]*pad];
+      buf = new byte[prevPixels.length - core.sizeY[0]*pad];
 
       for (int row=0; row<core.sizeY[0]; row++) {
-        System.arraycopy(prevPixels, row*(core.sizeX[0]+pad), bytes,
+        System.arraycopy(prevPixels, row*(core.sizeX[0]+pad), buf,
           row*core.sizeX[0], core.sizeX[0]);
       }
     }
 
     if ((bitsPerPixel == 40 || bitsPerPixel == 8) && !code.equals("mjpb")) {
       // invert the pixels
-      for (int i=0; i<bytes.length; i++) {
-        bytes[i] = (byte) (255 - bytes[i]);
+      for (int i=0; i<buf.length; i++) {
+        buf[i] = (byte) (255 - buf[i]);
       }
-      return bytes;
+      return buf;
     }
     else if (bitsPerPixel == 32) {
       // strip out alpha channel
-      byte[][] data = new byte[3][bytes.length / 4];
+      byte[][] data = new byte[3][buf.length / 4];
       for (int i=0; i<data[0].length; i++) {
-        data[0][i] = bytes[4*i + 1];
-        data[1][i] = bytes[4*i + 2];
-        data[2][i] = bytes[4*i + 3];
+        data[0][i] = buf[4*i + 1];
+        data[1][i] = buf[4*i + 2];
+        data[2][i] = buf[4*i + 3];
       }
 
       byte[] rtn = new byte[data.length * data[0].length];
@@ -247,17 +243,13 @@ public class QTReader extends FormatReader {
       }
       return rtn;
     }
-    else {
-      return bytes;
-    }
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     String code = codec;
     if (no >= getImageCount() - altPlanes) code = altCodec;
@@ -342,7 +334,10 @@ public class QTReader extends FormatReader {
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCZT";
     core.littleEndian[0] = false;
-    core.interleaved[0] = true;
+    core.interleaved[0] = false;
+    core.metadataComplete[0] = true;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();

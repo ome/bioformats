@@ -70,28 +70,13 @@ public class NRRDReader extends FormatReader {
     return new String[] {currentId, dataFile};
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    byte[] buf = new byte[core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    if (buf.length < core.sizeX[0] * core.sizeY[0] * core.sizeC[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]))
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     // TODO : add support for additional encoding types
     if (dataFile == null) {
@@ -203,11 +188,21 @@ public class NRRDReader extends FormatReader {
     }
 
     if (dataFile == null) offset = in.getFilePointer();
-    else helper.setId(dataFile);
+    else {
+      File f = new File(currentId);
+      if (f.exists() && f.getParentFile() != null) {
+        dataFile =
+          f.getParentFile().getAbsolutePath() + File.separator + dataFile;
+      }
+      helper.setId(dataFile);
+    }
 
     core.rgb[0] = core.sizeC[0] > 1;
     core.interleaved[0] = true;
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0];
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
@@ -216,7 +211,7 @@ public class NRRDReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, core.sizeC[0] == 1 ? "monochrome" : "RGB", null,
+        null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null);
     }
   }

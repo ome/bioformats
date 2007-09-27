@@ -72,22 +72,7 @@ public class BMPReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    if (block.length != 14) {
-      return false;
-    }
-    if (block[0] != 'B' || block[1] != 'M') return false;
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
-  /* @see loci.formats.IFormatReader#isIndexed() */
-  public boolean isIndexed() {
-    FormatTools.assertId(currentId, true, 1);
-    return palette != null;
+    return new String(block).startsWith("BM");
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -96,28 +81,13 @@ public class BMPReader extends FormatReader {
     return palette;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    int size = core.sizeX[0] * core.sizeY[0];
-    if (!isIndexed()) size *= core.sizeC[0];
-    byte[] buf = new byte[size];
-    return openBytes(no, buf);
-  }
-
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    int pixels = core.sizeX[0] * core.sizeY[0];
-
-    int size = isIndexed() ? pixels : pixels * (bpp / 8);
-    if (buf.length < size) throw new FormatException("Buffer too small.");
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     if (compression != 0) {
       throw new FormatException("Compression type " + compression +
@@ -126,27 +96,19 @@ public class BMPReader extends FormatReader {
 
     in.seek(global);
 
-    if (palette != null && palette[0].length > 0) {
+    if ((palette != null && palette[0].length > 0) || core.sizeC[0] == 1) {
       for (int y=core.sizeY[0]-1; y>=0; y--) {
         in.read(buf, y*core.sizeX[0], core.sizeX[0]);
       }
-      return buf;
     }
     else {
-      if (core.sizeC[0] == 1) {
-        for (int y=core.sizeY[0]-1; y>=0; y--) {
-          in.read(buf, y*core.sizeX[0], core.sizeX[0]);
-        }
+      for (int y=core.sizeY[0]-1; y>=0; y--) {
+        in.read(buf, y*core.sizeX[0]*3, core.sizeX[0]*3);
       }
-      else {
-        for (int y=core.sizeY[0]-1; y>=0; y--) {
-          for (int x=0; x<core.sizeX[0]; x++) {
-            int off = y*core.sizeX[0] + x;
-            buf[2*core.sizeX[0]*core.sizeY[0] + off] = (byte)(in.read() & 0xff);
-            buf[core.sizeX[0]*core.sizeY[0] + off] = (byte) (in.read() & 0xff);
-            buf[off] = (byte) (in.read() & 0xff);
-          }
-        }
+      for (int i=0; i<buf.length/3; i++) {
+        byte tmp = buf[i*3 + 2];
+        buf[i*3 + 2] = buf[i*3];
+        buf[i*3] = tmp;
       }
     }
     return buf;
@@ -229,9 +191,9 @@ public class BMPReader extends FormatReader {
 
       for (int i=0; i<nColors; i++) {
         for (int j=palette.length; j>0; j--) {
-          palette[j][i] = (byte) (in.read() & 0xff);
+          palette[j][i] = in.readByte();
         }
-        in.read();
+        in.skipBytes(1);
       }
     }
 
@@ -264,6 +226,9 @@ public class BMPReader extends FormatReader {
     core.sizeZ[0] = 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCTZ";
+    core.metadataComplete[0] = true;
+    core.indexed[0] = palette != null;
+    core.falseColor[0] = false;
 
     // Populate metadata store.
 

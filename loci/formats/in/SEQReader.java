@@ -55,13 +55,6 @@ public class SEQReader extends BaseTiffReader {
   /** Constructs a new Image-Pro SEQ reader. */
   public SEQReader() { super("Image-Pro Sequence", "seq"); }
 
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isMetadataComplete() */
-  public boolean isMetadataComplete() {
-    return true;
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */

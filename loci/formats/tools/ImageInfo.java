@@ -271,6 +271,7 @@ public final class ImageInfo {
       String dimOrder = reader.getDimensionOrder();
       boolean orderCertain = reader.isOrderCertain();
       boolean interleaved = reader.isInterleaved();
+      boolean metadataComplete = reader.isMetadataComplete();
 
       // output basic metadata for series #i
       String seriesName = mr == null ? null : mr.getImageName(new Integer(j));
@@ -347,7 +348,7 @@ public final class ImageInfo {
         (orderCertain ? " (certain)" : " (uncertain)"));
       LogTools.println("\tPixel type = " +
         FormatTools.getPixelTypeString(pixelType));
-      LogTools.println("\tMetadata complete = " + reader.isMetadataComplete());
+      LogTools.println("\tMetadata complete = " + metadataComplete);
       if (doMeta) {
         LogTools.println("\t-----");
         int[] indices;
