@@ -268,6 +268,12 @@ public class OMETiffReader extends BaseTiffReader {
         core.sizeZ[i] = Integer.parseInt(pixels[i].getAttribute("SizeZ"));
         core.sizeC[i] = Integer.parseInt(pixels[i].getAttribute("SizeC"));
         core.sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
+
+        // HACK: correct for erroneous negative size values
+        if (core.sizeZ[i] < 1) core.sizeZ[i] = 1;
+        if (core.sizeC[i] < 1) core.sizeC[i] = 1;
+        if (core.sizeT[i] < 1) core.sizeT[i] = 1;
+
         core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
         int sc = core.sizeC[i];
         if (rgb) sc /= 3;
