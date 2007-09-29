@@ -18,16 +18,18 @@
 <schema xmlns = "http://www.w3.org/2001/XMLSchema"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/STD/2007-06"
 	xmlns:STD = "http://www.openmicroscopy.org/Schemas/STD/2007-06"
-	 version = "1"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	 version = "2"
 	 elementFormDefault = "qualified">
-	<import namespace = "http://www.w3.org/XML/1998/namespace"/>
+	<import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<element name = "Element">
 		<annotation>
 			<documentation>Describes a field of a SemanticType</documentation>
 		</annotation>
 		<complexType>
 			<sequence>
-				<element ref = "STD:Description" minOccurs = "0"/>
+				<element ref = "STD:Label" minOccurs = "0" maxOccurs = "unbounded"/>
+				<element ref = "STD:Description" minOccurs = "0" maxOccurs = "unbounded"/>
 			</sequence>
 			<attribute name = "Name" use = "required">
 				<simpleType>
@@ -36,7 +38,7 @@
 					</restriction>
 				</simpleType>
 			</attribute>
-			<attribute name = "DBLocation" use = "required" type = "string"/>
+			<attribute name = "DBLocation" use = "optional" type = "string"/>
 			<attribute name = "DataType" use = "required">
 				<simpleType>
 					<restriction base = "string">
@@ -64,10 +66,18 @@
 		</annotation>
 		<complexType>
 			<sequence>
-				<element ref = "STD:Description" minOccurs = "0"/>
+				<element ref = "STD:Label" minOccurs = "0" maxOccurs = "unbounded"/>
+				<element ref = "STD:Description" minOccurs = "0" maxOccurs = "unbounded"/>
 				<element ref = "STD:Element" maxOccurs = "unbounded"/>
 			</sequence>
 			<attribute name = "Name" use = "required">
+				<simpleType>
+					<restriction base = "string">
+						<maxLength value = "64"/>
+					</restriction>
+				</simpleType>
+			</attribute>
+			<attribute name = "Parent" use = "optional">
 				<simpleType>
 					<restriction base = "string">
 						<maxLength value = "64"/>
@@ -119,9 +129,24 @@
 	<element name = "Description">
 		<annotation>
 			<documentation>
-				Just some free-form text to describe Images, Screens and Projects.
-				The content model is ANY, which means that en entire XML sub-document can be placed here.
+				Just some human-readable text to serve as documentation.
 			</documentation>
 		</annotation>
+		<complexType>
+			<simpleContent>
+				<extension base = "string">
+					<attribute ref = "xml:lang" default = "en"/>
+				</extension>
+			</simpleContent>
+		</complexType>
+	</element>
+	<element name = "Label">
+		<complexType>
+			<simpleContent>
+				<extension base = "string">
+					<attribute ref = "xml:lang" default = "en"/>
+				</extension>
+			</simpleContent>
+		</complexType>
 	</element>
 </schema>

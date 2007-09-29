@@ -23,7 +23,7 @@
 	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" 
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2007-06" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
-	version="1" 
+	version="2" 
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2007-06/STD.xsd"/>
@@ -33,7 +33,7 @@
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema 2.0-RC1
+			OME XML Schema June 2007 - Update Version 2 September 2007
 			Author:  Ilya G. Goldberg, Andrew J Patterson
 			Copyright 2002 - 2007 OME. All rights reserved.
 		</xsd:documentation>
@@ -684,13 +684,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="Microscope"/>
-				<xsd:element ref="LightSource" maxOccurs="unbounded"/>
-				<xsd:element ref="Detector" maxOccurs="unbounded"/>
-				<xsd:element ref="Objective" maxOccurs="unbounded"/>
+				<xsd:element ref="LightSource" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="OTF" maxOccurs="unbounded"/>
+				<xsd:element ref="OTF" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
 		</xsd:complexType>
@@ -708,14 +708,50 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="Z" type="xsd:float"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Experimenter" type="ExperimenterType">
+	<xsd:element name="Experimenter">
 		<xsd:annotation>
 			<xsd:documentation>
-				This element describes a person who performed an imaging experiment.  Required elements are FirstName, LastName and Email.
+				This element describes a person who performed an imaging experiment.
 				This person may also be a user of the OME system, in which case the OMEName element contains their login name.
 				Experimenters may belong to one or more groups which are specified using one or more GroupRef elements.
+				Note while FirstName, LastName, Email and OMEName are all optional to be valid an Experimenter must have AT LEAST ONE present
 			</xsd:documentation>
 		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice>
+					<xsd:annotation>
+						<xsd:documentation>
+							At lease one of (FirstName, LastName, Email, OMEName)
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:sequence>
+						<xsd:element ref="FirstName"/>
+						<xsd:element ref="LastName" minOccurs="0"/>
+						<xsd:element ref="Email" minOccurs="0"/>
+						<xsd:element ref="Institution" minOccurs="0"/>
+						<xsd:element ref="OMEName" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:sequence>
+						<xsd:element ref="LastName"/>
+						<xsd:element ref="Email" minOccurs="0"/>
+						<xsd:element ref="Institution" minOccurs="0"/>
+						<xsd:element ref="OMEName" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:sequence>
+						<xsd:element ref="Email"/>
+						<xsd:element ref="Institution" minOccurs="0"/>
+						<xsd:element ref="OMEName" minOccurs="0"/>
+					</xsd:sequence>
+					<xsd:sequence>
+						<xsd:element ref="Institution" minOccurs="0"/>
+						<xsd:element ref="OMEName"/>
+					</xsd:sequence>
+				</xsd:choice>
+				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="ExperimenterID"/>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="OMEName" type="xsd:string">
 		<xsd:annotation>
@@ -960,7 +996,9 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
-				The content model is ANY, which means that an entire XML sub-document can be placed here.
+				The content model is currently ANY, but this is going to change to String in 
+				the near future. This is no longer the correct place for an XML sub-document
+				- use CustomAttributes instead.
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
@@ -988,7 +1026,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:complexType name="ManufactSpec">
 		<xsd:attribute name="Manufacturer" use="required" type="xsd:string"/>
 		<xsd:attribute name="Model" use="required" type="xsd:string"/>
-		<xsd:attribute name="SerialNumber" use="required" type="xsd:string"/>
+		<xsd:attribute name="SerialNumber" type="xsd:string"/>
 	</xsd:complexType>
 	<xsd:element name="Thumbnail">
 		<xsd:annotation>
@@ -1111,112 +1149,112 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:\S+:\S+)|(\S+:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:\S+:\S+)|(\S+:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProjectID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Project:\S+)|(Project:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Project:\S+)|(Project:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DatasetID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Dataset:\S+)|(Dataset:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Dataset:\S+)|(Dataset:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ImageID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Image:\S+)|(Image:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Image:\S+)|(Image:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="RegionID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Region:\S+)|(Region:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Region:\S+)|(Region:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ExperimenterID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Experimenter:\S+)|(Experimenter:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Experimenter:\S+)|(Experimenter:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="GroupID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Group:\S+)|(Group:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Group:\S+)|(Group:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ExperimentID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Experiment:\S+)|(Experiment:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Experiment:\S+)|(Experiment:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="MicrobeamManipulationID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:MicrobeamManipulation:\S+)|(MicrobeamManipulation:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:MicrobeamManipulation:\S+)|(MicrobeamManipulation:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ROIID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="InstrumentID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Instrument:\S+)|(Instrument:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Instrument:\S+)|(Instrument:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ObjectiveID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Objective:\S+)|(Objective:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Objective:\S+)|(Objective:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ObjectiveSettingsID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:ObjectiveSettings:\S+)|(ObjectiveSettings:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ObjectiveSettings:\S+)|(ObjectiveSettings:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="LightSourceID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:LightSource:\S+)|(LightSource:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:LightSource:\S+)|(LightSource:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DichroicID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Dichroic:\S+)|(Dichroic:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Dichroic:\S+)|(Dichroic:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="FilterID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Filter:\S+)|(Filter:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Filter:\S+)|(Filter:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="FilterSetID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:FilterSet:\S+)|(FilterSet:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:FilterSet:\S+)|(FilterSet:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="OTFID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:OTF:\S+)|(OTF:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:OTF:\S+)|(OTF:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DetectorID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Detector:\S+)|(Detector:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Detector:\S+)|(Detector:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PixelsID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Pixels:\S+)|(Pixels:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Pixels:\S+)|(Pixels:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DisplayOptionsID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:DisplayOptions:\S+)|(DisplayOptions:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:DisplayOptions:\S+)|(DisplayOptions:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="LogicalChannelID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:LogicalChannel:\S+)|(LogicalChannel:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:LogicalChannel:\S+)|(LogicalChannel:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PixelTypes">
@@ -1236,7 +1274,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	</xsd:simpleType>
 	<xsd:simpleType name="ModuleID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Module:\S+)|(Module:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:element name="ProjectRef">
@@ -1299,23 +1337,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:complexType name="ExperimenterType">
-		<xsd:annotation>
-			<xsd:documentation>
-				An element type to specify an Experimenter under OME.
-				It consists of a Person element group and a login name specified under OMEName.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element ref="FirstName"/>
-			<xsd:element ref="LastName"/>
-			<xsd:element ref="Email"/>
-			<xsd:element ref="Institution"/>
-			<xsd:element ref="OMEName" minOccurs="0"/>
-			<xsd:element ref="GroupRef" maxOccurs="unbounded"/>
-		</xsd:sequence>
-		<xsd:attribute name="ID" use="required" type="ExperimenterID"/>
-	</xsd:complexType>
 	<xsd:element name="Contact">
 		<xsd:annotation>
 			<xsd:documentation>

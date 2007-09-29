@@ -23,13 +23,14 @@
 	xmlns:MLI = "http://www.openmicroscopy.org/Schemas/MLI/2007-06"
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2007-06"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	 version = "1"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version = "2"
 	 elementFormDefault = "qualified">
 	<import namespace = "http://www.openmicroscopy.org/Schemas/CLI/2007-06" schemaLocation = "http://www.openmicroscopy.org/Schemas/CLI/2007-06/CLI.xsd"/>
 	<import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" schemaLocation = "http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06/BinaryFile.xsd"/>
 	<import namespace = "http://www.openmicroscopy.org/Schemas/MLI/2007-06" schemaLocation = "http://www.openmicroscopy.org/Schemas/MLI/2007-06/MLI.xsd"/>
 	<import namespace = "http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation = "http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd"/>
-	<import namespace = "http://www.w3.org/XML/1998/namespace"/>
+	<import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<element name = "Entry">
 		<complexType>
 			<attribute name = "Value" use = "required">
@@ -414,7 +415,7 @@ A temporary hack to be sure, but that's the way it works for now.
 	</simpleType>
 	<simpleType name = "ModuleID">
 		<restriction base = "OME:LSID">
-			<pattern value = "(urn:lsid:([\w-\.]+\.[\w-\.]+)+:Module:\S+)|(Module:\S+)"/>
+			<pattern value = "(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</restriction>
 	</simpleType>
 	<element name = "Description" type = "string">
