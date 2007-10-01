@@ -55,6 +55,7 @@ loci.formats.in.NRRDReader         # nrrd, nhdr
 loci.formats.in.KhorosReader       # xv
 loci.formats.in.VisitechReader     # html, xys
 loci.formats.in.LIMReader          # lim
+loci.formats.in.PSDReader          # psd
 
 # multi-extension messes
 loci.formats.in.ICSReader          # ics, ids
