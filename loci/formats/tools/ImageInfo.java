@@ -302,14 +302,12 @@ public final class ImageInfo {
         LogTools.print(")");
       }
       LogTools.println();
-      if (indexed) {
-        if (table8 == null && table16 == null) {
-          LogTools.println("\t************ Warning: no LUT ************");
-        }
-        else if (table8 != null && table16 != null) {
-          LogTools.println(
-            "\t************ Warning: multiple LUTs ************");
-        }
+      if (indexed && table8 == null && table16 == null) {
+        LogTools.println("\t************ Warning: no LUT ************");
+      }
+      if (table8 != null && table16 != null) {
+        LogTools.println(
+          "\t************ Warning: multiple LUTs ************");
       }
       LogTools.println("\tWidth = " + sizeX);
       LogTools.println("\tHeight = " + sizeY);
