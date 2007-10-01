@@ -1,20 +1,23 @@
 2007 Oct 1:
-* Fixed bugs in DICOM, OME-TIFF, Leica LIF, Zeiss ZVI, Visitech, PerkinElmer and Metamorph
-* Addressed several efficiency issues
+* Added support for compressed DICOM images
+* Added support for uncompressed LIM files
+* Added support for Adobe Photoshop PSD files
+* Fixed bugs in DICOM, OME-TIFF, Leica LIF, Zeiss ZVI, Visitech, PerkinElmer
+  and Metamorph
 * Improved indexed color support
+* Addressed several efficiency issues
 * Fixed how multiple series are handled in 4D data browser
 * Added option to reorder stacks in importer plugin
 * Added option to turn off autoscaling in importer plugin
-* Added support for compressed DICOM images
-* Added support for uncompressed LIM files
-* Added support for Adobe Photoshop .psd files
+* Additional metadata convenience methods
 
 2007 Sept 11:
 * Major improvements to ND2 support - lossless compression now supported
 * Support for indexed color images
 * Added support for Simple-PCI .cxd files
 * Command-line OME-XML validation
-* Bugfixes in most readers, especially Zeiss ZVI, Metamorph, PerkinElmer and Leica LEI
+* Bugfixes in most readers, especially Zeiss ZVI, Metamorph, PerkinElmer and
+  Leica LEI
 * Initial version of Bio-Formats macro extensions for ImageJ
 
 2007 Aug 1:

@@ -28,7 +28,7 @@ import java.io.IOException;
 import loci.formats.*;
 import loci.formats.codec.PackbitsCodec;
 
-/** PSDReader is the file format reader for Photoshop .PSD files. */
+/** PSDReader is the file format reader for Photoshop PSD files. */
 public class PSDReader extends FormatReader {
 
   // -- Fields --
