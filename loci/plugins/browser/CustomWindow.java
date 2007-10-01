@@ -341,6 +341,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (db.manager != null) {
       index--;
       ImageProcessor clone = db.manager.getSlice(index).duplicate();
+      double bits = 255;
+      if (clone instanceof ShortProcessor) bits = 65535;
+      else if (clone instanceof FloatProcessor) bits = Float.MAX_VALUE - 1;
+
+      clone.setMinAndMax(0, bits);
       imp.setProcessor(patternTitle, clone);
 
       // now execute macros as needed
