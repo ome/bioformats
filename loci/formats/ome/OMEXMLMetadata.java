@@ -131,7 +131,7 @@ public class OMEXMLMetadata implements MetadataStore, MetadataRetrieve {
     }
 
     Element el = DOMUtil.createChild(firstImageCA, "OriginalMetadata");
-    OMEXMLNode node = new AttributeNode(el);
+    OMEXMLNode node = new CustomNode(el);
     node.setAttribute("name", key);
     node.setAttribute("value", value);
   }
