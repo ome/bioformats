@@ -109,9 +109,7 @@ public class ChannelSeparator extends ReaderWrapper {
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     if (isIndexed()) return reader.openImage(no);
 
@@ -136,9 +134,7 @@ public class ChannelSeparator extends ReaderWrapper {
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     if (reader.isRGB() && !reader.isIndexed()) {
       int c = getSizeC() / reader.getEffectiveSizeC();
@@ -168,6 +164,7 @@ public class ChannelSeparator extends ReaderWrapper {
       getThumbSizeY(), true);
   }
 
+  /* @see IFormatReader#close() */
   public void close() throws IOException {
     super.close();
     lastImage = null;

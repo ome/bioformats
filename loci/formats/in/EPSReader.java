@@ -122,10 +122,10 @@ public class EPSReader extends FormatReader {
       char[] chars = new char[2];
 
       for (int i=0; i<buf.length; i++) {
-        chars[0] = (char) ras.read();
-        while (chars[0] == '\n') chars[0] = (char) ras.read();
-        chars[1] = (char) ras.read();
-        while (chars[1] == '\n') chars[1] = (char) ras.read();
+        chars[0] = ras.readChar();
+        while (chars[0] == '\n') chars[0] = ras.readChar();
+        chars[1] = ras.readChar();
+        while (chars[1] == '\n') chars[1] = ras.readChar();
         String s = new String(chars);
         buf[i] = (byte) Integer.parseInt(s, 16);
       }

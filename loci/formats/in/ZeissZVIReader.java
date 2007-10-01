@@ -94,9 +94,6 @@ public class ZeissZVIReader extends FormatReader {
   /** Vector containing T indices. */
   private Vector tIndices;
 
-  /** Valid bits per pixel */
-  private int[] validBits;
-
   private Hashtable offsets;
 
   private int zIndex = -1, cIndex = -1, tIndex = -1;
@@ -316,16 +313,6 @@ public class ZeissZVIReader extends FormatReader {
           if (tileColumns == 1 && tileRows == 1) isTiled = false;
         }
       }
-
-      String s = (String) getMeta("Acquisition Bit Depth");
-      if (s != null && s.trim().length() > 0) {
-        validBits = new int[core.sizeC[0]];
-        if (core.sizeC[0] == 2) validBits = new int[3];
-        for (int i=0; i<core.sizeC[0]; i++) {
-          validBits[i] = Integer.parseInt(s.trim());
-        }
-      }
-      else validBits = null;
 
       if (cIndex != -1) {
         int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};

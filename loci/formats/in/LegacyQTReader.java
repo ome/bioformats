@@ -85,9 +85,8 @@ public class LegacyQTReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
+
     // paint frame into image
     try {
       r.setVar("time", times[no]);

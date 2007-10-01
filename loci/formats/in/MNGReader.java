@@ -74,9 +74,7 @@ public class MNGReader extends FormatReader {
   /* @see loci.formats.IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     long offset = ((Long) offsets.get(no)).longValue();
     in.seek(offset);

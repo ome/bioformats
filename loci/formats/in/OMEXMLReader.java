@@ -150,7 +150,7 @@ public class OMEXMLReader extends FormatReader {
       }
     }
     buf = pixels;
-    return buf; 
+    return buf;
   }
 
   // -- Internal FormatReader API methods --

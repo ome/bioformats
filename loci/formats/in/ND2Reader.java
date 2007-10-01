@@ -225,9 +225,7 @@ public class ND2Reader extends FormatReader {
     }
 
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= getImageCount()) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    FormatTools.checkPlaneNumber(this, no);
 
     in.seek(offsets[no]);
 

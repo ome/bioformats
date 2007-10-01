@@ -60,10 +60,18 @@ public class LIMReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    // TODO : add support for compressed files
-
     in.seek(0x94b);
     in.read(buf);
+
+    // swap red and blue channels
+    if (core.rgb[0]) {
+      for (int i=0; i<buf.length/3; i++) {
+        byte tmp = buf[i*3];
+        buf[i*3] = buf[i*3 + 2];
+        buf[i*3 + 2] = tmp;
+      }
+    }
+
     return buf;
   }
 
@@ -119,6 +127,16 @@ public class LIMReader extends FormatReader {
     core.indexed[0] = false;
     core.falseColor[0] = false;
     core.interleaved[0] = true;
+
+    MetadataStore store = getMetadataStore();
+    FormatTools.populatePixels(store, this);
+    store.setImage(currentId, null, null, null);
+    for (int i=0; i<core.sizeC[0]; i++) {
+      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null);
+    }
+
   }
 
 }

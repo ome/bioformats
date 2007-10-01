@@ -117,14 +117,8 @@ public class FluoviewReader extends BaseTiffReader {
       return super.openBytes(no, buf);
     }
     FormatTools.assertId(currentId, true, 1);
-    if (no < 0 || no >= core.imageCount[0]) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-    if (buf.length < core.sizeX[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]))
-    {
-      throw new FormatException("Buffer too small.");
-    }
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
 
     byte[] b = new byte[core.sizeX[0] *
       (int) TiffTools.getImageLength(ifds[0]) *
@@ -187,7 +181,7 @@ public class FluoviewReader extends BaseTiffReader {
     ras.order(isLittleEndian());
 
     put("Header Flag", ras.readShort());
-    put("Image Type", (char) ras.read());
+    put("Image Type", ras.readChar());
 
     put("Image name", ras.readString(257));
 

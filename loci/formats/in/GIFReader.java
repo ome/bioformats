@@ -186,9 +186,9 @@ public class GIFReader extends FormatReader {
       int j = 0;
       int r, g, b;
       while (i < gctSize) {
-        r = ((int) c[j++]) & 0xff;
-        g = ((int) c[j++]) & 0xff;
-        b = ((int) c[j++]) & 0xff;
+        r = c[j++] & 0xff;
+        g = c[j++] & 0xff;
+        b = c[j++] & 0xff;
         gct[i++] = 0xff000000 | (r << 16) | (g << 8) | b;
       }
     }
@@ -225,9 +225,9 @@ public class GIFReader extends FormatReader {
             int i = 0;
             int j = 0;
             while (i < lctSize) {
-              int r = ((int) c[j++]) & 0xff;
-              int g = ((int) c[j++]) & 0xff;
-              int b = ((int) c[j++]) & 0xff;
+              int r = c[j++] & 0xff;
+              int g = c[j++] & 0xff;
+              int b = c[j++] & 0xff;
               lct[i++] = 0xff000000 | (r << 16) + (g << 8) | b;
             }
 
