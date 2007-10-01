@@ -689,7 +689,9 @@ public abstract class BaseTiffReader extends FormatReader {
         stageX = x == null ? null : new Float((String) x);
         stageY = y == null ? null : new Float((String) y);
       }
-      store.setStageLabel(null, stageX, stageY, null, null);
+      if (stageX != null || stageY != null) {
+        store.setStageLabel(null, stageX, stageY, null, null);
+      }
 
       // populate Instrument element
       String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
