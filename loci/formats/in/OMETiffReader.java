@@ -94,6 +94,11 @@ public class OMETiffReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
+    if (used.length == 1) {
+      TiffTools.getSamples(ifds[no], in, buf);
+      return swapIfRequired(buf);
+    }
+
     int[] zct = getZCTCoords(no);
     int fileIndex = -1;
     int[] savedCoords = new int[] {-1, -1, -1};
@@ -132,21 +137,22 @@ public class OMETiffReader extends BaseTiffReader {
     Vector tempComments = new Vector();
 
     for (int i=0; i<fileList.length; i++) {
-      Hashtable ifd = TiffTools.getFirstIFD(new RandomAccessStream(
-        l.getAbsolutePath() + File.separator + fileList[i]));
-      if (ifd == null) continue;
-      String comment =
-        (String) TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-      tempComments.add(comment);
-      ndx = comment.indexOf("<Image");
-      ndx = comment.indexOf("ID=\"", ndx);
-      comment = comment.substring(ndx + 4, comment.indexOf("\"", ndx + 5));
-
       String check = fileList[i].toLowerCase();
-      if ((check.endsWith(".tif") || check.endsWith(".tiff")) &&
-        comment.equals(imageId))
-      {
-        files.add(l.getAbsolutePath() + File.separator + fileList[i]);
+      if (check.endsWith(".tif") || check.endsWith(".tiff")) {
+        Hashtable ifd = TiffTools.getFirstIFD(new RandomAccessStream(
+          l.getAbsolutePath() + File.separator + fileList[i]));
+        if (ifd == null) continue;
+        String comment =
+          (String) TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+        tempComments.add(comment);
+        ndx = comment.indexOf("<Image");
+        ndx = comment.indexOf("ID=\"", ndx);
+        if (ndx > -1) {
+          comment = comment.substring(ndx + 4, comment.indexOf("\"", ndx + 5));
+          if (comment.equals(imageId)) {
+            files.add(l.getAbsolutePath() + File.separator + fileList[i]);
+          }
+        }
       }
     }
 
@@ -293,6 +299,12 @@ public class OMETiffReader extends BaseTiffReader {
 
         core.currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
         core.orderCertain[i] = true;
+
+        if ((core.rgb[i] && (core.sizeZ[i] * core.sizeT[i] == ifds.length)) ||
+          (core.sizeC[i] * core.sizeZ[i] * core.sizeT[i] == ifds.length))
+        {
+          used = new String[] {currentId};
+        }
 
         boolean[][][] zct = new boolean[core.sizeZ[i]][sc][core.sizeT[i]];
 
