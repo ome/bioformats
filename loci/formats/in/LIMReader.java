@@ -127,6 +127,7 @@ public class LIMReader extends FormatReader {
     core.indexed[0] = false;
     core.falseColor[0] = false;
     core.interleaved[0] = true;
+    core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
     FormatTools.populatePixels(store, this);

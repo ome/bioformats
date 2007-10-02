@@ -289,6 +289,7 @@ public class SlidebookReader extends FormatReader {
 
       core.indexed[i] = false;
       core.falseColor[i] = false;
+      core.metadataComplete[i] = true;
     }
 
     MetadataStore store = getMetadataStore();
