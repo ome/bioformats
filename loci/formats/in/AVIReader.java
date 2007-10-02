@@ -28,10 +28,10 @@ import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.codec.BitBuffer;
-import loci.formats.codec.MSRLECodec;
+import loci.formats.codec.*;
 
 /**
- * AVIReader is the file format reader for uncompressed AVI files.
+ * AVIReader is the file format reader for AVI files.
  *
  * Much of this code was adapted from Wayne Rasband's AVI Movie Reader
  * plugin for ImageJ (available at http://rsb.info.nih.gov/ij).
@@ -41,6 +41,12 @@ import loci.formats.codec.MSRLECodec;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/AVIReader.java">SVN</a></dd></dl>
  */
 public class AVIReader extends FormatReader {
+
+  // -- Constants --
+
+  /** Supported compression types. */
+  private static final int MSRLE = 1;
+  private static final int MS_VIDEO = 1296126531;
 
   // -- Fields --
 
@@ -61,7 +67,6 @@ public class AVIReader extends FormatReader {
   private int bmpCompression, bmpScanLineSize;
   private short bmpBitsPerPixel;
   private byte[][] lut = null;
-  private boolean isRLE = false;
 
   private byte[] lastImage;
 
@@ -101,20 +106,7 @@ public class AVIReader extends FormatReader {
     long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek(fileOff);
 
-    if (isRLE) {
-      byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()];
-      in.read(b);
-
-      Object[] options = new Object[2];
-      options[1] = lastImage;
-      options[0] = new int[] {core.sizeX[0], core.sizeY[0]};
-
-      MSRLECodec codec = new MSRLECodec();
-      buf = codec.decompress(b, options);
-      lastImage = buf;
-      if (no == core.imageCount[0] - 1) lastImage = null;
-      return buf;
-    }
+    if (bmpCompression != 0) return uncompress(no, buf);
 
     if (bmpBitsPerPixel < 8) {
       int rawSize = bytes * core.sizeY[0] * effectiveWidth * core.sizeC[0];
@@ -320,11 +312,9 @@ public class AVIReader extends FormatReader {
                   bmpActualColorsUsed = 1 << bmpBitsPerPixel;
                 }
 
-                if (bmpCompression == 1) {
-                  // MS RLE compression scheme
-                  isRLE = true;
-                }
-                else if (bmpCompression != 0) {
+                if (bmpCompression != MSRLE && bmpCompression != 0 &&
+                  bmpCompression != MS_VIDEO)
+                {
                   throw new FormatException("Unsupported compression type " +
                     bmpCompression);
                 }
@@ -447,14 +437,14 @@ public class AVIReader extends FormatReader {
 
     core.imageCount[0] = offsets.size();
 
-    core.rgb[0] = bmpBitsPerPixel > 8 || isRLE;
+    core.rgb[0] = bmpBitsPerPixel > 8 || (bmpCompression != 0);
     core.sizeZ[0] = 1;
     core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
     core.littleEndian[0] = true;
     core.interleaved[0] = bmpBitsPerPixel != 16;
-    core.indexed[0] = isRLE;
+    core.indexed[0] = bmpBitsPerPixel == 8 && bmpCompression != 0;
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
 
@@ -467,6 +457,8 @@ public class AVIReader extends FormatReader {
           "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
     }
 
+    if (bmpCompression != 0) core.pixelType[0] = FormatTools.UINT8;
+
     MetadataStore store = getMetadataStore();
 
     store.setImage(currentId, null, null, null);
@@ -478,6 +470,39 @@ public class AVIReader extends FormatReader {
         null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null, null);
     }
+  }
+
+  // -- Helper methods --
+
+  private byte[] uncompress(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    byte[] b = new byte[(int) ((Long) lengths.get(no)).longValue()];
+    in.read(b);
+    if (bmpCompression == MSRLE) {
+      Object[] options = new Object[2];
+      options[1] = lastImage;
+      options[0] = new int[] {core.sizeX[0], core.sizeY[0]};
+      MSRLECodec codec = new MSRLECodec();
+      buf = codec.decompress(b, options);
+      lastImage = buf;
+      if (no == core.imageCount[0] - 1) lastImage = null;
+      return buf;
+    }
+    else if (bmpCompression == MS_VIDEO) {
+      Object[] options = new Object[4];
+      options[0] = new Integer(bmpBitsPerPixel);
+      options[1] = new Integer(core.sizeX[0]);
+      options[2] = new Integer(core.sizeY[0]);
+      options[3] = lastImage;
+
+      MSVideoCodec codec = new MSVideoCodec();
+      buf = codec.decompress(b, options);
+      lastImage = buf;
+      if (no == core.imageCount[0] - 1) lastImage = null;
+      return buf;
+    }
+    throw new FormatException("Unsupported compression : " + bmpCompression);
   }
 
 }
