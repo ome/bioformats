@@ -544,7 +544,7 @@ public class DeltavisionReader extends FormatReader {
      * element's variable with its extended header value.
      * @param startingOffset
      * @param numIntsPerSection
-     * @param in 
+     * @param in
      * @param little
      */
     protected DVExtHdrFields(int startingOffset, int numIntsPerSection,

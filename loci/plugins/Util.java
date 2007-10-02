@@ -121,7 +121,7 @@ public final class Util {
       }
       else {
         short[][] shortTable = r.get16BitLookupTable();
-        model = new IndexedColorModel(16, shortTable[0].length, shortTable); 
+        model = new IndexedColorModel(16, shortTable[0].length, shortTable);
       }
     }
 
@@ -135,7 +135,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
       ip = new ByteProcessor(w, h, q, null);
-      if (cm != null) ip.setColorModel(cm); 
+      if (cm != null) ip.setColorModel(cm);
     }
     else if (pixels instanceof short[]) {
       short[] q = (short[]) pixels;
