@@ -24,8 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.tools;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import loci.formats.XMLTools;
 
 /**
@@ -37,18 +36,29 @@ import loci.formats.XMLTools;
  */
 public class XMLValidate {
 
+  public static void process(String label, BufferedReader in)
+    throws IOException
+  {
+    StringBuffer sb = new StringBuffer();
+    while (true) {
+      String line = in.readLine();
+      if (line == null) break;
+      sb.append(line);
+    }
+    in.close();
+    XMLTools.validateXML(sb.toString(), label);
+  }
+
   public static void main(String[] args) throws Exception {
-    for (int i=0; i<args.length; i++) {
-      String f = args[i];
-      BufferedReader in = new BufferedReader(new FileReader(f));
-      StringBuffer sb = new StringBuffer();
-      while (true) {
-        String line = in.readLine();
-        if (line == null) break;
-        sb.append(line);
+    if (args.length == 0) {
+      // read from stdin
+      process("<stdin>", new BufferedReader(new InputStreamReader(System.in)));
+    }
+    else {
+      // read from file(s)
+      for (int i=0; i<args.length; i++) {
+        process(args[i], new BufferedReader(new FileReader(args[i])));
       }
-      in.close();
-      XMLTools.validateXML(sb.toString(), args[i]);
     }
   }
 
