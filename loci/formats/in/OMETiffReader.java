@@ -47,7 +47,7 @@ public class OMETiffReader extends BaseTiffReader {
   /** List of used files. */
   private String[] used;
 
-  private Hashtable coordinateMap;
+  private Hashtable[] coordinateMap;
 
   // -- Constructor --
 
@@ -102,8 +102,8 @@ public class OMETiffReader extends BaseTiffReader {
     int[] zct = getZCTCoords(no);
     int fileIndex = -1;
     int[] savedCoords = new int[] {-1, -1, -1};
-    for (int i=0; i<coordinateMap.size(); i++) {
-      int[] firstZCT = (int[]) coordinateMap.get(new Integer(i));
+    for (int i=0; i<coordinateMap[series].size(); i++) {
+      int[] firstZCT = (int[]) coordinateMap[series].get(new Integer(i));
       if (firstZCT[0] <= zct[0] && firstZCT[1] <= zct[1] &&
         firstZCT[2] <= zct[2] && firstZCT[0] >= savedCoords[0] &&
         firstZCT[1] >= savedCoords[1] && firstZCT[2] >= savedCoords[2])
@@ -130,76 +130,91 @@ public class OMETiffReader extends BaseTiffReader {
     ndx = imageId.indexOf("ID=\"", ndx);
     imageId = imageId.substring(ndx + 4, imageId.indexOf("\"", ndx + 5));
 
-    Vector files = new Vector();
-    Location l = new Location(currentId);
-    l = l.getAbsoluteFile().getParentFile();
-    String[] fileList = l.list();
-    Vector tempComments = new Vector();
+    int[] numIFDs = null;
 
-    for (int i=0; i<fileList.length; i++) {
-      String check = fileList[i].toLowerCase();
-      if (check.endsWith(".tif") || check.endsWith(".tiff")) {
-        Hashtable ifd = TiffTools.getFirstIFD(new RandomAccessStream(
-          l.getAbsolutePath() + File.separator + fileList[i]));
-        if (ifd == null) continue;
-        String comment =
-          (String) TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-        tempComments.add(comment);
-        ndx = comment.indexOf("<Image");
-        ndx = comment.indexOf("ID=\"", ndx);
-        if (ndx > -1) {
-          comment = comment.substring(ndx + 4, comment.indexOf("\"", ndx + 5));
-          if (comment.equals(imageId)) {
-            files.add(l.getAbsolutePath() + File.separator + fileList[i]);
+    // only look for files in the same dataset if LSIDs are present
+    if (imageId.indexOf("urn:lsid") != -1) {
+      Vector files = new Vector();
+      Location l = new Location(currentId);
+      l = l.getAbsoluteFile().getParentFile();
+      String[] fileList = l.list();
+      Vector tempComments = new Vector();
+
+      for (int i=0; i<fileList.length; i++) {
+        String check = fileList[i].toLowerCase();
+        if (check.endsWith(".tif") || check.endsWith(".tiff")) {
+          Hashtable ifd = TiffTools.getFirstIFD(new RandomAccessStream(
+            l.getAbsolutePath() + File.separator + fileList[i]));
+          if (ifd == null) continue;
+          String comment =
+            (String) TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+          tempComments.add(comment);
+          ndx = comment.indexOf("<Image");
+          ndx = comment.indexOf("ID=\"", ndx);
+          if (ndx > -1) {
+            comment =
+              comment.substring(ndx + 4, comment.indexOf("\"", ndx + 5));
+            if (comment.equals(imageId)) {
+              files.add(l.getAbsolutePath() + File.separator + fileList[i]);
+            }
+          }
+        }
+      }
+
+      used = (String[]) files.toArray(new String[0]);
+
+      // reorder TIFF files
+      for (int i=0; i<files.size(); i++) {
+        String comment = (String) tempComments.get(i);
+        ByteArrayInputStream is = new ByteArrayInputStream(comment.getBytes());
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document doc = null;
+        try {
+          DocumentBuilder builder = factory.newDocumentBuilder();
+          doc = builder.parse(is);
+        }
+        catch (ParserConfigurationException exc) { }
+        catch (SAXException exc) { }
+        catch (IOException exc) { }
+
+        if (doc != null) {
+          int numSeries = doc.getElementsByTagName("Pixels").getLength();
+          if (coordinateMap == null) coordinateMap = new Hashtable[numSeries];
+          if (numIFDs == null) numIFDs = new int[numSeries];
+          Vector v = new Vector();
+          NodeList pixelsList = doc.getElementsByTagName("Pixels");
+          Element[] tiffData = null;
+          for (int j=0; j<numSeries; j++) {
+            if (coordinateMap[j] == null) coordinateMap[j] = new Hashtable();
+            NodeList list = ((Element) pixelsList.item(j)).getChildNodes();
+            int size = list.getLength();
+            v.clear();
+            for (int k=0; k<size; k++) {
+              Node node = list.item(k);
+              if ("TiffData".equals(node.getNodeName())) v.add(node);
+            }
+            tiffData = new Element[v.size()];
+            v.copyInto(tiffData);
+
+            String firstZ = tiffData[0].getAttribute("FirstZ");
+            String firstC = tiffData[0].getAttribute("FirstC");
+            String firstT = tiffData[0].getAttribute("FirstT");
+            if (firstZ == null || firstZ.equals("")) firstZ = "0";
+            if (firstC == null || firstC.equals("")) firstC = "0";
+            if (firstT == null || firstT.equals("")) firstT = "0";
+            coordinateMap[j].put(new Integer(i),
+              new int[] {Integer.parseInt(firstZ),
+              Integer.parseInt(firstC), Integer.parseInt(firstT)});
+            numIFDs[j] += TiffTools.getIFDs(
+              new RandomAccessStream((String) files.get(i))).length;
           }
         }
       }
     }
-
-    used = (String[]) files.toArray(new String[0]);
-
-    // reorder TIFF files
-    coordinateMap = new Hashtable();
-    for (int i=0; i<files.size(); i++) {
-      String comment = (String) tempComments.get(i);
-      ByteArrayInputStream is = new ByteArrayInputStream(comment.getBytes());
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      Document doc = null;
-      try {
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        doc = builder.parse(is);
-      }
-      catch (ParserConfigurationException exc) { }
-      catch (SAXException exc) { }
-      catch (IOException exc) { }
-
-      Element[][] tiffData = null;
-      if (doc != null) {
-        int numSeries = doc.getElementsByTagName("Pixels").getLength();
-        tiffData = new Element[numSeries][];
-        Vector v = new Vector();
-        NodeList pixelsList = doc.getElementsByTagName("Pixels");
-        for (int j=0; j<numSeries; j++) {
-          NodeList list = ((Element) pixelsList.item(j)).getChildNodes();
-          int size = list.getLength();
-          v.clear();
-          for (int k=0; k<size; k++) {
-            Node node = list.item(k);
-            if ("TiffData".equals(node.getNodeName())) v.add(node);
-          }
-          tiffData[j] = new Element[v.size()];
-          v.copyInto(tiffData[j]);
-        }
-
-        String firstZ = tiffData[0][0].getAttribute("FirstZ");
-        String firstC = tiffData[0][0].getAttribute("FirstC");
-        String firstT = tiffData[0][0].getAttribute("FirstT");
-        if (firstZ == null || firstZ.equals("")) firstZ = "0";
-        if (firstC == null || firstC.equals("")) firstC = "0";
-        if (firstT == null || firstT.equals("")) firstT = "0";
-        coordinateMap.put(new Integer(i), new int[] {Integer.parseInt(firstZ),
-          Integer.parseInt(firstC), Integer.parseInt(firstT)});
-      }
+    else {
+      used = new String[] {currentId};
+      LogTools.println("Not searching for other files - " +
+        "Image LSID not present.");
     }
 
     int oldX = core.sizeX[0];
@@ -280,9 +295,9 @@ public class OMETiffReader extends BaseTiffReader {
         if (core.sizeC[i] < 1) core.sizeC[i] = 1;
         if (core.sizeT[i] < 1) core.sizeT[i] = 1;
 
-        core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
         int sc = core.sizeC[i];
         if (rgb) sc /= 3;
+        core.imageCount[i] = core.sizeZ[i] * sc * core.sizeT[i];
         core.rgb[i] = rgb;
         core.pixelType[i] = FormatTools.pixelTypeFromString(
           pixels[i].getAttribute("PixelType"));
@@ -300,10 +315,28 @@ public class OMETiffReader extends BaseTiffReader {
         core.currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
         core.orderCertain[i] = true;
 
-        if ((core.rgb[i] && (core.sizeZ[i] * core.sizeT[i] == ifds.length)) ||
-          (core.sizeC[i] * core.sizeZ[i] * core.sizeT[i] == ifds.length))
-        {
-          used = new String[] {currentId};
+        if (numIFDs != null) {
+          if (numIFDs[i] < core.imageCount[i]) {
+            LogTools.println("Too few IFDs; got " + numIFDs[i] + ", expected " +
+              core.imageCount[i]);
+          }
+          else if (numIFDs[i] > core.imageCount[i]) {
+            LogTools.println("Too many IFDs; got " + numIFDs[i] +
+              ", expected " + core.imageCount[i]);
+          }
+        }
+        else if (core.imageCount[i] > ifds.length) {
+          core.imageCount[i] = ifds.length;
+          if (core.sizeZ[i] > ifds.length) {
+            core.sizeZ[i] = ifds.length / (rgb ? core.sizeC[i] : 1);
+            core.sizeT[i] = 1;
+            if (!rgb) core.sizeC[i] = 1;
+          }
+          else if (core.sizeT[i] > ifds.length) {
+            core.sizeT[i] = ifds.length / (rgb ? core.sizeC[i] : 1);
+            core.sizeZ[i] = 1;
+            if (!rgb) core.sizeC[i] = 1;
+          }
         }
 
         boolean[][][] zct = new boolean[core.sizeZ[i]][sc][core.sizeT[i]];
@@ -409,182 +442,6 @@ public class OMETiffReader extends BaseTiffReader {
             }
           }
         }
-
-        // analyze ZCT matrix to determine best SizeZ, SizeC, and SizeT
-        // for now, we only handle certain special cases:
-        boolean success = false;
-        int theZ, theT, theC;
-
-        // 1) all Z, all T, all C
-        success = true;
-        for (int z=0; z<core.sizeZ[i] && success; z++) {
-          for (int t=0; t<core.sizeT[i] && success; t++) {
-            for (int c=0; c<sc && success; c++) {
-              if (!zct[z][c][t]) success = false;
-            }
-          }
-        }
-        if (success) {
-          // NB: sizes are already correct; no corrections necessary
-          continue;
-        }
-
-        // 2) single Z, all T, all C
-        success = true;
-        theZ = -1;
-        for (int z=0; z<core.sizeT[i] && success; z++) {
-          if (zct[z][0][0]) {
-            if (theZ < 0) theZ = z;
-            else success = false;
-          }
-          boolean state = theZ == z;
-          for (int t=0; t<core.sizeT[i] && success; t++) {
-            for (int c=0; c<sc && success; c++) {
-              if (zct[z][c][t] != state) success = false;
-            }
-          }
-        }
-        if (success) {
-          core.sizeZ[i] = 1;
-          continue;
-        }
-
-        // 3) all Z, single T, all C
-        success = true;
-        theT = -1;
-        for (int t=0; t<core.sizeT[i] && success; t++) {
-          if (zct[0][0][t]) {
-            if (theT < 0) theT = t;
-            else success = false;
-          }
-          boolean state = theT == t;
-          for (int z=0; z<core.sizeZ[i] && success; z++) {
-            for (int c=0; c<sc && success; c++) {
-              if (zct[z][c][t] != state) success = false;
-            }
-          }
-        }
-        if (success) {
-          core.sizeT[i] = 1;
-          continue;
-        }
-
-        // 4) all Z, all T, single C
-        success = true;
-        theC = -1;
-        for (int c=0; c<sc && success; c++) {
-          if (zct[0][c][0]) {
-            if (theC < 0) theC = c;
-            else success = false;
-          }
-          boolean state = theC == c;
-          for (int z=0; z<core.sizeZ[i] && success; z++) {
-            for (int t=0; t<core.sizeT[i] && success; t++) {
-              if (zct[z][c][t] != state) success = false;
-            }
-          }
-        }
-        if (success) {
-          core.sizeC[i] = 1;
-          continue;
-        }
-
-        // 5) single Z, single T, all C
-        success = true;
-        theZ = -1;
-        theT = -1;
-        for (int z=0; z<core.sizeZ[i] && success; z++) {
-          for (int t=0; t<core.sizeT[i] && success; t++) {
-            if (zct[z][0][t]) {
-              if (theZ < 0 && theT < 0) {
-                theZ = z;
-                theT = t;
-              }
-              else success = false;
-            }
-            boolean state = theZ == z && theT == t;
-            for (int c=0; c<sc && success; c++) {
-              if (zct[z][c][t] != state) success = false;
-            }
-          }
-        }
-
-        if (success) {
-          core.sizeZ[i] = core.sizeT[i] = 1;
-          continue;
-        }
-
-        // 6) single Z, all T, single C
-        success = true;
-        theZ = -1;
-        theC = -1;
-        for (int z=0; z<core.sizeZ[i] && success; z++) {
-          for (int c=0; c<sc && success; c++) {
-            if (zct[z][c][0]) {
-              if (theZ < 0 && theC < 0) {
-                theZ = z;
-                theC = c;
-              }
-              else success = false;
-            }
-            boolean state = theZ == z && theC == c;
-            for (int t=0; t<core.sizeT[i] && success; t++) {
-              if (zct[z][c][t] != state) success = false;
-            }
-          }
-        }
-        if (success) {
-          core.sizeZ[i] = core.sizeC[i] = 1;
-          continue;
-        }
-
-        // 7) all Z, single T, single C
-        success = true;
-        theT = -1;
-        theC = -1;
-        for (int t=0; t<core.sizeT[i] && success; t++) {
-          for (int c=0; c<sc && success; c++) {
-            if (zct[0][c][t]) {
-              if (theC < 0 && theT < 0) {
-                theC = c;
-                theT = t;
-              }
-              else success = false;
-            }
-            boolean state = theC == c && theT == t;
-            for (int z=0; z<core.sizeZ[i] && success; z++) {
-              if (zct[z][c][t] != state) success = false;
-            }
-          }
-        }
-        if (success) {
-          core.sizeT[i] = core.sizeC[i] = 1;
-          continue;
-        }
-
-        // 8) single Z, single T, single C
-        success = true;
-        theZ = -1;
-        theT = -1;
-        theC = -1;
-        int count = 0;
-        for (int z=0; z<core.sizeZ[i] && success; z++) {
-          for (int t=0; t<core.sizeT[i] && success; t++) {
-            for (int c=0; c<sc && success; c++) {
-              if (zct[z][c][t]) {
-                count++;
-                if (count > 1) success = false;
-              }
-            }
-          }
-        }
-        if (success) {
-          core.sizeZ[i] = core.sizeT[i] = core.sizeC[i] = 1;
-          continue;
-        }
-
-        // no easy way to chop up TiffData mappings into regular ZCT dims
-        throw new FormatException("Unsupported ZCT index mapping");
       }
     }
   }
