@@ -282,10 +282,7 @@ public class ImageViewer extends JFrame
     in = reader;
     images = img;
 
-    if (reader == null) {
-      sizeZ = sizeC = 1;
-      sizeT = img.length;
-    }
+    if (reader == null) sizeZ = sizeC = sizeT = 1;
     else {
       sizeZ = reader.getSizeZ();
       sizeT = reader.getSizeT();
