@@ -102,19 +102,23 @@ public class OMETiffReader extends BaseTiffReader {
     int[] zct = getZCTCoords(no);
     int fileIndex = -1;
     int[] savedCoords = new int[] {-1, -1, -1};
-    for (int i=0; i<coordinateMap[series].size(); i++) {
-      int[] firstZCT = (int[]) coordinateMap[series].get(new Integer(i));
+    Integer[] keys =
+      (Integer[]) coordinateMap[series].keySet().toArray(new Integer[0]);
+
+    for (int i=0; i<keys.length; i++) {
+      int[] firstZCT = (int[]) coordinateMap[series].get(keys[i]);
       if (firstZCT[0] <= zct[0] && firstZCT[1] <= zct[1] &&
         firstZCT[2] <= zct[2] && firstZCT[0] >= savedCoords[0] &&
         firstZCT[1] >= savedCoords[1] && firstZCT[2] >= savedCoords[2])
       {
         savedCoords = firstZCT;
-        fileIndex = i;
+        fileIndex = keys[i].intValue();
       }
     }
     in = new RandomAccessStream(used[fileIndex]);
     ifds = TiffTools.getIFDs(in);
-    TiffTools.getSamples(ifds[no % ifds.length], in, buf);
+    int firstIFD = ((int[]) coordinateMap[series].get(keys[fileIndex]))[3];
+    TiffTools.getSamples(ifds[firstIFD + (no % ifds.length)], in, buf);
     in.close();
     return swapIfRequired(buf);
   }
@@ -125,101 +129,138 @@ public class OMETiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    String imageId = (String) getMeta("Comment");
-    int ndx = imageId.indexOf("<Image");
-    ndx = imageId.indexOf("ID=\"", ndx);
-    imageId = imageId.substring(ndx + 4, imageId.indexOf("\"", ndx + 5));
+    String comment = (String) getMeta("Comment");
+    boolean lsids = true;
 
-    int[] numIFDs = null;
+    // find list of Image IDs
+    Vector v = new Vector();
+    String check = "<Image ";
+    int ndx = comment.indexOf(check);
+    while (ndx >= 0) {
+      int ii = comment.indexOf("ID=\"", ndx);
+      v.add(comment.substring(ii + 4, comment.indexOf("\"", ii + 5)));
+      ndx = comment.indexOf(check, ndx + 1);
+    }
+    String[] imageIds = (String[]) v.toArray(new String[0]);
+    for (int i=0; i<imageIds.length; i++) {
+      if (!imageIds[i].toLowerCase().startsWith("urn:lsid")) {
+        lsids = false;
+        break;
+      }
+    }
+
+    // find list of Pixels IDs
+    v.clear();
+    check = "<Pixels ";
+    ndx = comment.indexOf(check);
+    while (ndx >= 0) {
+      int ii = comment.indexOf("ID=\"", ndx);
+      v.add(comment.substring(ii + 4, comment.indexOf("\"", ii + 5)));
+      ndx = comment.indexOf(check, ndx + 1);
+    }
+    String[] pixelsIds = (String[]) v.toArray(new String[0]);
+    for (int i=0; i<pixelsIds.length; i++) {
+      if (!pixelsIds[i].toLowerCase().startsWith("urn:lsid")) {
+        lsids = false;
+        break;
+      }
+    }
+
+    int numSeries = pixelsIds.length;
+
+    int[] numIFDs = new int[numSeries];
 
     // only look for files in the same dataset if LSIDs are present
-    if (imageId.indexOf("urn:lsid") != -1) {
+    if (lsids) {
       Vector files = new Vector();
       Location l = new Location(currentId);
       l = l.getAbsoluteFile().getParentFile();
       String[] fileList = l.list();
-      Vector tempComments = new Vector();
+      coordinateMap = new Hashtable[numSeries];
+      for (int i=0; i<numSeries; i++) {
+        coordinateMap[i] = new Hashtable();
+      }
 
       for (int i=0; i<fileList.length; i++) {
-        String check = fileList[i].toLowerCase();
+        check = fileList[i].toLowerCase();
         if (check.endsWith(".tif") || check.endsWith(".tiff")) {
           Hashtable ifd = TiffTools.getFirstIFD(new RandomAccessStream(
             l.getAbsolutePath() + File.separator + fileList[i]));
           if (ifd == null) continue;
-          String comment =
+          comment =
             (String) TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-          tempComments.add(comment);
-          ndx = comment.indexOf("<Image");
-          ndx = comment.indexOf("ID=\"", ndx);
-          if (ndx > -1) {
-            comment =
-              comment.substring(ndx + 4, comment.indexOf("\"", ndx + 5));
-            if (comment.equals(imageId)) {
-              files.add(l.getAbsolutePath() + File.separator + fileList[i]);
+          boolean addToList = true;
+          for (int s=0; s<imageIds.length; s++) {
+            if (comment.indexOf(imageIds[s]) == -1) {
+              addToList = false;
+              break;
+            }
+          }
+          if (addToList) {
+            for (int s=0; s<pixelsIds.length; s++) {
+              if (comment.indexOf(pixelsIds[s]) == -1) {
+                addToList = false;
+              }
+            }
+          }
+
+          if (addToList) {
+            files.add(l.getAbsolutePath() + File.separator + fileList[i]);
+
+            ByteArrayInputStream is =
+              new ByteArrayInputStream(comment.getBytes());
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            Document doc = null;
+            try {
+              DocumentBuilder builder = factory.newDocumentBuilder();
+              doc = builder.parse(is);
+            }
+            catch (ParserConfigurationException exc) { }
+            catch (SAXException exc) { }
+            catch (IOException exc) { }
+
+            if (doc != null) {
+              NodeList pixelsList = doc.getElementsByTagName("Pixels");
+              for (int j=0; j<numSeries; j++) {
+                NodeList list = ((Element) pixelsList.item(j)).getChildNodes();
+                Element tiffData = null;
+                for (int q=0; q<list.getLength(); q++) {
+                  if (((Node) list.item(q)).getNodeName().equals("TiffData")) {
+                    tiffData = (Element) list.item(q);
+                    break;
+                  }
+                }
+                String firstZ = tiffData.getAttribute("FirstZ");
+                String firstC = tiffData.getAttribute("FirstC");
+                String firstT = tiffData.getAttribute("FirstT");
+                String firstIFD = tiffData.getAttribute("IFD");
+                if (firstZ == null || firstZ.equals("")) firstZ = "0";
+                if (firstC == null || firstC.equals("")) firstC = "0";
+                if (firstT == null || firstT.equals("")) firstT = "0";
+                if (firstIFD == null || firstIFD.equals("")) firstIFD = "0";
+                coordinateMap[j].put(new Integer(files.size() - 1),
+                  new int[] {Integer.parseInt(firstZ), Integer.parseInt(firstC),
+                  Integer.parseInt(firstT), Integer.parseInt(firstIFD)});
+                numIFDs[j] += TiffTools.getIFDs(new RandomAccessStream(
+                  (String) files.get(files.size() - 1))).length;
+              }
             }
           }
         }
       }
 
       used = (String[]) files.toArray(new String[0]);
-
-      // reorder TIFF files
-      for (int i=0; i<files.size(); i++) {
-        String comment = (String) tempComments.get(i);
-        ByteArrayInputStream is = new ByteArrayInputStream(comment.getBytes());
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        Document doc = null;
-        try {
-          DocumentBuilder builder = factory.newDocumentBuilder();
-          doc = builder.parse(is);
-        }
-        catch (ParserConfigurationException exc) { }
-        catch (SAXException exc) { }
-        catch (IOException exc) { }
-
-        if (doc != null) {
-          int numSeries = doc.getElementsByTagName("Pixels").getLength();
-          if (coordinateMap == null) coordinateMap = new Hashtable[numSeries];
-          if (numIFDs == null) numIFDs = new int[numSeries];
-          Vector v = new Vector();
-          NodeList pixelsList = doc.getElementsByTagName("Pixels");
-          Element[] tiffData = null;
-          for (int j=0; j<numSeries; j++) {
-            if (coordinateMap[j] == null) coordinateMap[j] = new Hashtable();
-            NodeList list = ((Element) pixelsList.item(j)).getChildNodes();
-            int size = list.getLength();
-            v.clear();
-            for (int k=0; k<size; k++) {
-              Node node = list.item(k);
-              if ("TiffData".equals(node.getNodeName())) v.add(node);
-            }
-            tiffData = new Element[v.size()];
-            v.copyInto(tiffData);
-
-            String firstZ = tiffData[0].getAttribute("FirstZ");
-            String firstC = tiffData[0].getAttribute("FirstC");
-            String firstT = tiffData[0].getAttribute("FirstT");
-            if (firstZ == null || firstZ.equals("")) firstZ = "0";
-            if (firstC == null || firstC.equals("")) firstC = "0";
-            if (firstT == null || firstT.equals("")) firstT = "0";
-            coordinateMap[j].put(new Integer(i),
-              new int[] {Integer.parseInt(firstZ),
-              Integer.parseInt(firstC), Integer.parseInt(firstT)});
-            numIFDs[j] += TiffTools.getIFDs(
-              new RandomAccessStream((String) files.get(i))).length;
-          }
-        }
-      }
     }
     else {
       used = new String[] {currentId};
       LogTools.println("Not searching for other files - " +
         "Image LSID not present.");
+      numIFDs[0] = ifds.length;
     }
 
     int oldX = core.sizeX[0];
     int oldY = core.sizeY[0];
-    String comment = (String) getMeta("Comment");
+    comment = (String) getMeta("Comment");
 
     // convert string to DOM
     ByteArrayInputStream is = new ByteArrayInputStream(comment.getBytes());
@@ -238,11 +279,11 @@ public class OMETiffReader extends BaseTiffReader {
     Element[][] tiffData = null;
     if (doc != null) {
       NodeList pixelsList = doc.getElementsByTagName("Pixels");
-      int numSeries = pixelsList.getLength();
-      Vector v = new Vector();
-      pixels = new Element[numSeries];
-      tiffData = new Element[numSeries][];
-      for (int i=0; i<numSeries; i++) {
+      int nSeries = pixelsList.getLength();
+      v = new Vector();
+      pixels = new Element[nSeries];
+      tiffData = new Element[nSeries][];
+      for (int i=0; i<nSeries; i++) {
         pixels[i] = (Element) pixelsList.item(i);
         NodeList list = pixels[i].getChildNodes();
         int size = list.getLength();
@@ -270,8 +311,12 @@ public class OMETiffReader extends BaseTiffReader {
     // extract SizeZ, SizeC and SizeT from XML block
     if (tiffData != null) {
       boolean rgb = isRGB();
+      boolean indexed = isIndexed();
+      boolean falseColor = isFalseColor();
       core = new CoreMetadata(tiffData.length);
       Arrays.fill(core.orderCertain, true);
+      Arrays.fill(core.indexed, indexed);
+      Arrays.fill(core.falseColor, falseColor);
 
       for (int i=0; i<tiffData.length; i++) {
         core.sizeX[i] = Integer.parseInt(pixels[i].getAttribute("SizeX"));
@@ -295,8 +340,14 @@ public class OMETiffReader extends BaseTiffReader {
         if (core.sizeC[i] < 1) core.sizeC[i] = 1;
         if (core.sizeT[i] < 1) core.sizeT[i] = 1;
 
+        if (rgb && indexed && core.sizeC[i] == 3) {
+          rgb = false;
+          core.indexed[i] = false;
+          core.falseColor[i] = false;
+        }
+
         int sc = core.sizeC[i];
-        if (rgb) sc /= 3;
+        if (rgb && sc > 1) sc /= 3;
         core.imageCount[i] = core.sizeZ[i] * sc * core.sizeT[i];
         core.rgb[i] = rgb;
         core.pixelType[i] = FormatTools.pixelTypeFromString(
@@ -315,7 +366,7 @@ public class OMETiffReader extends BaseTiffReader {
         core.currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
         core.orderCertain[i] = true;
 
-        if (numIFDs != null) {
+        if (numIFDs != null && lsids) {
           if (numIFDs[i] < core.imageCount[i]) {
             LogTools.println("Too few IFDs; got " + numIFDs[i] + ", expected " +
               core.imageCount[i]);
