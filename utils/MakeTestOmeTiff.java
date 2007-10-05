@@ -8,8 +8,8 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
-import loci.formats.FormatException;
-import loci.formats.FormatTools;
+import java.util.Calendar;
+import loci.formats.*;
 import loci.formats.out.TiffWriter;
 
 /** Creates a sample OME-TIFF dataset according to the given parameters. */
@@ -41,6 +41,7 @@ public class MakeTestOmeTiff {
       scramble = args[2].equalsIgnoreCase("-scramble");
       if (parity != (scramble ? 1 : 0)) usage = true;
     }
+
     if (usage) {
       System.out.println("Usage: java MakeTestOmeTiff name dist [-scramble]");
       System.out.println("\tseries1_SizeX series1_SizeY series1_SizeZ");
@@ -84,14 +85,17 @@ public class MakeTestOmeTiff {
     int[] sizeT = new int[numSeries];
     String[] dimOrder = new String[numSeries];
     BufferedImage[][] images = new BufferedImage[numSeries][];
+    int[] offsets = new int[numSeries];
     for (int s=0; s<numSeries; s++) {
       sizeX[s] = Integer.parseInt(args[leadParams + paramCount * s]);
       sizeY[s] = Integer.parseInt(args[leadParams + paramCount * s + 1]);
       sizeZ[s] = Integer.parseInt(args[leadParams + paramCount * s + 2]);
       sizeC[s] = Integer.parseInt(args[leadParams + paramCount * s + 3]);
       sizeT[s] = Integer.parseInt(args[leadParams + paramCount * s + 4]);
+      int len = sizeZ[s] * sizeC[s] * sizeT[s];
       dimOrder[s] = args[leadParams + paramCount * s + 5].toUpperCase();
-      images[s] = new BufferedImage[sizeZ[s] * sizeC[s] * sizeT[s]];
+      images[s] = new BufferedImage[len];
+      if (s < numSeries - 1) offsets[s + 1] = offsets[s] + len;
     }
     int ndx = 0;
 
@@ -180,6 +184,9 @@ public class MakeTestOmeTiff {
     String[][] filenames = new String[numSeries][];
     Hashtable lastHash = new Hashtable();
     boolean[][] last = new boolean[numSeries][];
+    Hashtable firstZ = new Hashtable();
+    Hashtable firstC = new Hashtable();
+    Hashtable firstT = new Hashtable();
     StringBuffer sb = new StringBuffer();
     for (int s=0; s<numSeries; s++) {
       int len = images[s].length;
@@ -187,12 +194,12 @@ public class MakeTestOmeTiff {
       last[s] = new boolean[len];
       for (int p=0; p<len; p++) {
         sb.append(name);
-        if (!allS) sb.append("_series" + s);
+        if (!allS && numSeries > 1) sb.append("_series" + (s + 1));
         int[] zct = FormatTools.getZCTCoords(dimOrder[s],
           sizeZ[s], sizeC[s], sizeT[s], len, p);
-        if (!allZ) sb.append("_Z" + zct[0]);
-        if (!allC) sb.append("_C" + zct[1]);
-        if (!allT) sb.append("_T" + zct[2]);
+        if (!allZ && sizeZ[s] > 1) sb.append("_Z" + (zct[0] + 1));
+        if (!allC && sizeC[s] > 1) sb.append("_C" + (zct[1] + 1));
+        if (!allT && sizeT[s] > 1) sb.append("_T" + (zct[2] + 1));
         sb.append(".ome.tif");
         filenames[s][p] = sb.toString();
         sb.setLength(0);
@@ -203,8 +210,81 @@ public class MakeTestOmeTiff {
         ImageIndex index = (ImageIndex) lastHash.get(key);
         if (index != null) last[index.series][index.plane] = false;
         lastHash.put(key, new ImageIndex(s, p));
+
+        // update FirstZ, FirstC and FirstT values for this filename
+        if (!allZ && sizeZ[s] > 1) {
+          firstZ.put(filenames[s][p], new Integer(zct[0]));
+        }
+        if (!allC && sizeC[s] > 1) {
+          firstC.put(filenames[s][p], new Integer(zct[1]));
+        }
+        if (!allT && sizeT[s] > 1) {
+          firstT.put(filenames[s][p], new Integer(zct[2]));
+        }
       }
     }
+
+    // build OME-XML block
+
+    // CreationDate is required; initialize a default value (current time)
+    // use ISO 8601 dateTime format (e.g., 1988-04-07T18:39:09)
+    sb.setLength(0);
+    Calendar now = Calendar.getInstance();
+    int year = now.get(Calendar.YEAR);
+    int month = now.get(Calendar.MONTH);
+    int day = now.get(Calendar.DAY_OF_MONTH);
+    int hour = now.get(Calendar.HOUR_OF_DAY);
+    int min = now.get(Calendar.MINUTE);
+    int sec = now.get(Calendar.SECOND);
+    sb.append(year);
+    sb.append("-");
+    if (month < 9) sb.append("0");
+    sb.append(month + 1);
+    sb.append("-");
+    if (day < 10) sb.append("0");
+    sb.append(day);
+    sb.append("T");
+    if (hour < 10) sb.append("0");
+    sb.append(hour);
+    sb.append(":");
+    if (min < 10) sb.append("0");
+    sb.append(min);
+    sb.append(":");
+    if (sec < 10) sb.append("0");
+    sb.append(sec);
+    String creationDate = sb.toString();
+
+    sb.setLength(0);
+    sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+      "<!-- Warning: this comment is an OME-XML metadata block, which " +
+      "contains crucial dimensional parameters and other important metadata. " +
+      "Please edit cautiously (if at all), and back up the original data " +
+      "before doing so. For more information, see the OME-TIFF web site: " +
+      "http://loci.wisc.edu/ome/ome-tiff.html. --><OME " +
+      "xmlns=\"http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\" " +
+      "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+      "xsi:schemaLocation=\"" +
+      "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\">");
+    for (int s=0; s<numSeries; s++) {
+      sb.append("<Image " +
+        "ID=\"org.openmicroscopy:Image:" + (s + 1) + "\" " +
+        "Name=\"" + name + "\" " +
+        "DefaultPixels=\"org.openmicroscopy:Pixels:" + (s + 1) + "\">" +
+        "<CreationDate>" + creationDate + "</CreationDate>" +
+        "<Pixels ID=\"Pixels:1\" " +
+        "DimensionOrder=\"" + dimOrder[s] + "\" " +
+        "PixelType=\"uint8\" " +
+        "BigEndian=\"true\" " +
+        "SizeX=\"" + sizeX[s] + "\" " +
+        "SizeY=\"" + sizeY[s] + "\" " +
+        "SizeZ=\"" + sizeZ[s] + "\" " +
+        "SizeC=\"" + sizeC[s] + "\" " +
+        "SizeT=\"" + sizeT[s] + "\">" +
+        "TIFF_DATA_SERIES_" + s + // placeholder
+        "</Pixels></Image>");
+    }
+    sb.append("</OME>");
+    String xmlTemplate = sb.toString();
 
     TiffWriter out = new TiffWriter();
     for (int s=0; s<numSeries; s++) {
@@ -218,12 +298,40 @@ public class MakeTestOmeTiff {
         System.out.println("\t\tZ" + zct[0] + " C" + zct[1] +
           " T" + zct[2] + " -> " + filenames[s][p] + (last[s][p] ? "*" : ""));
         out.setId(filenames[s][p]);
-        out.saveImage(images[s][p], last[s][p]);
+        // write comment stub, to be overwritten later
+        Hashtable ifd = new Hashtable();
+        TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, "");
+        out.saveImage(images[s][p], ifd, last[s][p]);
+        if (last[s][p]) {
+          // append OME-XML block
+          String xml = xmlTemplate;
+          for (int ss=0; ss<numSeries; ss++) {
+            String pattern = "TIFF_DATA_SERIES_" + ss;
+            if (allS) {
+              xml = xml.replaceFirst(pattern,
+                "<TiffData IFD=\"" + offsets[ss] + "\" " +
+                "NumPlanes=\"" + images[ss].length + "\"/>");
+            }
+            else if (s == ss) {
+              Integer fz = (Integer) firstZ.get(filenames[s][p]);
+              Integer fc = (Integer) firstC.get(filenames[s][p]);
+              Integer ft = (Integer) firstT.get(filenames[s][p]);
+              sb.setLength(0);
+              sb.append("<TiffData");
+              if (fz != null) sb.append(" FirstZ=\"" + fz + "\"");
+              if (fc != null) sb.append(" FirstC=\"" + fc + "\"");
+              if (ft != null) sb.append(" FirstT=\"" + ft + "\"");
+              sb.append("/>");
+              xml = xml.replaceFirst(pattern, sb.toString());
+            }
+            else {
+              xml = xml.replaceFirst(pattern, "<TiffData NumPlanes=\"0\"/>");
+            }
+          }
+          TiffTools.overwriteComment(filenames[s][p], xml);
+        }
       }
     }
-//    loci.formats.gui.ImageViewer view = new loci.formats.gui.ImageViewer();
-//    view.setImages(images[0]);
-//    view.setVisible(true);
   }
 
   private static class TextLine {
