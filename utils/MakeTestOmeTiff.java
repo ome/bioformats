@@ -44,11 +44,11 @@ public class MakeTestOmeTiff {
 
   /**
    * Constructs a TiffData element matching the given parameters.
-   * @param ifd Value to use for IFD attribute, or -1 for none.
+   * @param ifd Value to use for IFD attribute; 0 is default/none.
    * @param num Value to use for NumPlanes attribute, or -1 for none.
-   * @param firstZ Value to use for FirstZ attribute, or null for none.
-   * @param firstC Value to use for FirstC attribute, or null for none.
-   * @param firstT Value to use for FirstT attribute, or null for none.
+   * @param firstZ Value to use for FirstZ attribute; 0 is default/none.
+   * @param firstC Value to use for FirstC attribute; 0 is default/none.
+   * @param firstT Value to use for FirstT attribute; 0 is default/none.
    * @param order Dimension order; only used when scrambling.
    * @param sizeZ Number of focal planes; only used when scrambling.
    * @param sizeC Number of channels; only used when scrambling.
@@ -490,7 +490,7 @@ public class MakeTestOmeTiff {
                 if (!allI && ii != i || !allP && pp != p) {
                   // current Pixels is not part of this file
                   xml = xml.replaceFirst(pattern,
-                    tiffData(-1, 0, -1, -1, -1, dimOrder[ii][pp],
+                    tiffData(0, 0, 0, 0, 0, dimOrder[ii][pp],
                     sizeZ[ii][pp], sizeC[ii][pp], sizeT[ii][pp], total));
                   continue;
                 }
@@ -507,15 +507,16 @@ public class MakeTestOmeTiff {
                   int num = images[ii][pp].length;
                   if ((!allI || numImages == 1) && numPixels[i] == 1) {
                     // only one Pixels in this file; don't need IFD/NumPlanes
-                    ifd = num = -1;
+                    ifd = 0;
+                    num = -1;
                   }
                   xml = xml.replaceFirst(pattern,
-                    tiffData(ifd, num, -1, -1, -1, dimOrder[ii][pp],
+                    tiffData(ifd, num, 0, 0, 0, dimOrder[ii][pp],
                     sizeZ[ii][pp], sizeC[ii][pp], sizeT[ii][pp], total));
                 }
                 else { // pp == p
                   xml = xml.replaceFirst(pattern,
-                    tiffData(-1, -1, fz, fc, ft, dimOrder[ii][pp],
+                    tiffData(0, -1, fz, fc, ft, dimOrder[ii][pp],
                     sizeZ[ii][pp], sizeC[ii][pp], sizeT[ii][pp], total));
                 }
               }
