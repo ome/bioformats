@@ -436,7 +436,7 @@ public class MakeTestOmeTiff {
         "<CreationDate>" + creationDate + "</CreationDate>");
       for (int p=0; p<numPixels[i]; p++) {
         sb.append("<Pixels " +
-          "ID=\"org.openmicroscopy.Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
+          "ID=\"org.openmicroscopy:Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
           "DimensionOrder=\"" + dimOrder[i][p] + "\" " +
           "PixelType=\"uint8\" " +
           "BigEndian=\"true\" " +
