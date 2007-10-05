@@ -235,6 +235,7 @@ public class OMETiffReader extends BaseTiffReader {
                 }
                 Element[] tiffData = (Element[]) v.toArray(new Element[0]);
                 int[] smallestCoords = new int[4];
+                Arrays.fill(smallestCoords, Integer.MAX_VALUE);
                 for (int q=0; q<tiffData.length; q++) {
                   String firstZ = tiffData[q].getAttribute("FirstZ");
                   String firstC = tiffData[q].getAttribute("FirstC");
