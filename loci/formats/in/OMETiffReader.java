@@ -209,7 +209,8 @@ public class OMETiffReader extends BaseTiffReader {
 
             ByteArrayInputStream is =
               new ByteArrayInputStream(comment.getBytes());
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory =
+              DocumentBuilderFactory.newInstance();
             Document doc = null;
             try {
               DocumentBuilder builder = factory.newDocumentBuilder();
@@ -223,24 +224,40 @@ public class OMETiffReader extends BaseTiffReader {
               NodeList pixelsList = doc.getElementsByTagName("Pixels");
               for (int j=0; j<numSeries; j++) {
                 NodeList list = ((Element) pixelsList.item(j)).getChildNodes();
-                Element tiffData = null;
+                // if there are multiple TiffData elements, find the one with
+                // the smallest ZCT coordinates
+
+                v = new Vector();
                 for (int q=0; q<list.getLength(); q++) {
                   if (((Node) list.item(q)).getNodeName().equals("TiffData")) {
-                    tiffData = (Element) list.item(q);
-                    break;
+                    v.add(list.item(q));
                   }
                 }
-                String firstZ = tiffData.getAttribute("FirstZ");
-                String firstC = tiffData.getAttribute("FirstC");
-                String firstT = tiffData.getAttribute("FirstT");
-                String firstIFD = tiffData.getAttribute("IFD");
-                if (firstZ == null || firstZ.equals("")) firstZ = "0";
-                if (firstC == null || firstC.equals("")) firstC = "0";
-                if (firstT == null || firstT.equals("")) firstT = "0";
-                if (firstIFD == null || firstIFD.equals("")) firstIFD = "0";
+                Element[] tiffData = (Element[]) v.toArray(new Element[0]);
+                int[] smallestCoords = new int[4];
+                for (int q=0; q<tiffData.length; q++) {
+                  String firstZ = tiffData[q].getAttribute("FirstZ");
+                  String firstC = tiffData[q].getAttribute("FirstC");
+                  String firstT = tiffData[q].getAttribute("FirstT");
+                  String firstIFD = tiffData[q].getAttribute("IFD");
+                  if (firstZ == null || firstZ.equals("")) firstZ = "0";
+                  if (firstC == null || firstC.equals("")) firstC = "0";
+                  if (firstT == null || firstT.equals("")) firstT = "0";
+                  if (firstIFD == null || firstIFD.equals("")) firstIFD = "0";
+                  int z = Integer.parseInt(firstZ);
+                  int c = Integer.parseInt(firstC);
+                  int t = Integer.parseInt(firstT);
+                  if (z <= smallestCoords[0] && c <= smallestCoords[1] &&
+                    t <= smallestCoords[2])
+                  {
+                    smallestCoords[0] = z;
+                    smallestCoords[1] = c;
+                    smallestCoords[2] = t;
+                    smallestCoords[3] = Integer.parseInt(firstIFD);
+                  }
+                }
                 coordinateMap[j].put(new Integer(files.size() - 1),
-                  new int[] {Integer.parseInt(firstZ), Integer.parseInt(firstC),
-                  Integer.parseInt(firstT), Integer.parseInt(firstIFD)});
+                  smallestCoords);
                 numIFDs[j] += TiffTools.getIFDs(new RandomAccessStream(
                   (String) files.get(files.size() - 1))).length;
               }
