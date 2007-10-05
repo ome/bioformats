@@ -6,9 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Calendar;
+import java.util.*;
 import loci.formats.*;
 import loci.formats.out.TiffWriter;
 
@@ -30,6 +28,67 @@ public class MakeTestOmeTiff {
     }
     if (reverse) v = max - v;
     return v;
+  }
+
+  /** Fisher-Yates shuffle, stolen from Wikipedia. */
+  public static void shuffle(int[] array) {
+    Random r = new Random();
+    int n = array.length;
+    while (--n > 0) {
+      int k = r.nextInt(n + 1);  // 0 <= k <= n (!)
+      int temp = array[n];
+      array[n] = array[k];
+      array[k] = temp;
+    }
+  }
+
+  /**
+   * Constructs a TiffData element matching the given parameters.
+   * @param ifd Value to use for IFD attribute, or -1 for none.
+   * @param num Value to use for NumPlanes attribute, or -1 for none.
+   * @param firstZ Value to use for FirstZ attribute, or null for none.
+   * @param firstC Value to use for FirstC attribute, or null for none.
+   * @param firstT Value to use for FirstT attribute, or null for none.
+   * @param order Dimension order; only used when scrambling.
+   * @param sizeZ Number of focal planes; only used when scrambling.
+   * @param sizeC Number of channels; only used when scrambling.
+   * @param sizeT Number of time points; only used when scrambling.
+   * @param total Total number of IFDs in the file;
+   *   if null, no scrambling will be performed.
+   */
+  private static String tiffData(int ifd, int num,
+    int firstZ, int firstC, int firstT,
+    String order, int sizeZ, int sizeC, int sizeT, Integer total)
+  {
+    StringBuffer sb = new StringBuffer();
+    if (total == null) {
+      sb.append("<TiffData");
+      if (ifd > 0) sb.append(" IFD=\"" + ifd + "\"");
+      if (num >= 0) sb.append(" NumPlanes=\"" + num + "\"");
+      if (firstZ > 0) sb.append(" FirstZ=\"" + firstZ + "\"");
+      if (firstC > 0) sb.append(" FirstC=\"" + firstC + "\"");
+      if (firstT > 0) sb.append(" FirstT=\"" + firstT + "\"");
+      sb.append("/>");
+    }
+    else {
+      // scramble planes
+      if (ifd < 0) ifd = 0;
+      if (num < 0) num = total.intValue();
+      int len = sizeZ * sizeC * sizeT;
+      int index = FormatTools.getIndex(order,
+        sizeZ, sizeC, sizeT, len, firstZ, firstC, firstT);
+      int[] planes = new int[num];
+      for (int i=0; i<num; i++) planes[i] = index + i;
+      shuffle(planes);
+      for (int i=0; i<num; i++) {
+        int[] zct = FormatTools.getZCTCoords(order,
+          sizeZ, sizeC, sizeT, len, planes[i]);
+        sb.append("<TiffData IFD=\"" + (i + ifd) + "\"" +
+          " NumPlanes=\"1\" FirstZ=\"" + zct[0] + "\"" +
+          " FirstC=\"" + zct[1] + "\" FirstT=\"" + zct[2] + "\"/>");
+      }
+    }
+    return sb.toString();
   }
 
   public static void main(String[] args) throws FormatException, IOException {
@@ -147,6 +206,20 @@ public class MakeTestOmeTiff {
       System.exit(1);
     }
 
+    if (!dist.equals("ipzct") && !dist.equals("pzct") && !dist.equals("zct") &&
+      !dist.equals("zc") && !dist.equals("zt") && !dist.equals("ct") &&
+      !dist.equals("z") && !dist.equals("c") && !dist.equals("t") &&
+      !dist.equals("x"))
+    {
+      System.out.println("Invalid dist value: " + dist);
+      System.exit(2);
+    }
+    boolean allI = dist.indexOf("i") >= 0;
+    boolean allP = dist.indexOf("p") >= 0;
+    boolean allZ = dist.indexOf("z") >= 0;
+    boolean allC = dist.indexOf("c") >= 0;
+    boolean allT = dist.indexOf("t") >= 0;
+
     BufferedImage[][][] images = new BufferedImage[numImages][][];
     int[][] globalOffsets = new int[numImages][]; // IFD offsets across Images
     int[][] localOffsets = new int[numImages][]; // IFD offsets per Image
@@ -255,16 +328,12 @@ public class MakeTestOmeTiff {
     }
 
     System.out.println("Writing output files");
-    boolean allI = dist.indexOf("i") >= 0;
-    boolean allP = dist.indexOf("p") >= 0;
-    boolean allZ = dist.indexOf("z") >= 0;
-    boolean allC = dist.indexOf("c") >= 0;
-    boolean allT = dist.indexOf("t") >= 0;
 
     // determine filename for each image plane
     String[][][] filenames = new String[numImages][][];
     Hashtable lastHash = new Hashtable();
     boolean[][][] last = new boolean[numImages][][];
+    Hashtable ifdTotal = new Hashtable();
     Hashtable firstZ = new Hashtable();
     Hashtable firstC = new Hashtable();
     Hashtable firstT = new Hashtable();
@@ -297,6 +366,12 @@ public class MakeTestOmeTiff {
             last[index.image][index.pixels][index.plane] = false;
           }
           lastHash.put(key, new ImageIndex(i, p, j));
+
+          // update IFD count for this filename
+          Integer total = (Integer) ifdTotal.get(key);
+          if (total == null) total = new Integer(1);
+          else total = new Integer(total.intValue() + 1);
+          ifdTotal.put(key, total);
 
           // update FirstZ, FirstC and FirstT values for this filename
           if (!allZ && sizeZ[i][p] > 1) {
@@ -394,42 +469,54 @@ public class MakeTestOmeTiff {
             " -> " + filenames[i][p][j] + (last[i][p][j] ? "*" : ""));
           out.setId(filenames[i][p][j]);
           // write comment stub, to be overwritten later
-          Hashtable ifd = new Hashtable();
-          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, "");
-          out.saveImage(images[i][p][j], ifd, last[i][p][j]);
+          Hashtable ifdHash = new Hashtable();
+          TiffTools.putIFDValue(ifdHash, TiffTools.IMAGE_DESCRIPTION, "");
+          out.saveImage(images[i][p][j], ifdHash, last[i][p][j]);
           if (last[i][p][j]) {
-            // append OME-XML block
+            // inject OME-XML block
             String xml = xmlTemplate;
+            String key = filenames[i][p][j];
+            Integer fzObj = (Integer) firstZ.get(key);
+            Integer fcObj = (Integer) firstC.get(key);
+            Integer ftObj = (Integer) firstT.get(key);
+            int fz = fzObj == null ? 0 : fzObj.intValue();
+            int fc = fcObj == null ? 0 : fcObj.intValue();
+            int ft = ftObj == null ? 0 : ftObj.intValue();
+            Integer total = (Integer) ifdTotal.get(key);
+            if (!scramble) total = null;
             for (int ii=0; ii<numImages; ii++) {
               for (int pp=0; pp<numPixels[ii]; pp++) {
                 String pattern = "TIFF_DATA_IMAGE_" + ii + "_PIXELS_" + pp;
+                if (!allI && ii != i || !allP && pp != p) {
+                  // current Pixels is not part of this file
+                  xml = xml.replaceFirst(pattern,
+                    tiffData(-1, 0, -1, -1, -1, dimOrder[ii][pp],
+                    sizeZ[ii][pp], sizeC[ii][pp], sizeT[ii][pp], total));
+                  continue;
+                }
                 if (allP) {
-                  xml = xml.replaceFirst(pattern,
-                    "<TiffData IFD=\"" + globalOffsets[ii][pp] + "\" " +
-                    "NumPlanes=\"" + images[ii][pp].length + "\"/>");
-                }
-                else if (p == pp) {
+                  int ifd;
                   if (allI) {
-                    xml = xml.replaceFirst(pattern,
-                      "<TiffData IFD=\"" + localOffsets[ii][pp] + "\" " +
-                      "NumPlanes=\"" + images[ii][p].length + "\"/>");
+                    // all Images in one file; need to use global offset
+                    ifd = globalOffsets[ii][pp];
                   }
-                  else {
-                    Integer fz = (Integer) firstZ.get(filenames[i][p][j]);
-                    Integer fc = (Integer) firstC.get(filenames[i][p][j]);
-                    Integer ft = (Integer) firstT.get(filenames[i][p][j]);
-                    sb.setLength(0);
-                    sb.append("<TiffData");
-                    if (fz != null) sb.append(" FirstZ=\"" + fz + "\"");
-                    if (fc != null) sb.append(" FirstC=\"" + fc + "\"");
-                    if (ft != null) sb.append(" FirstT=\"" + ft + "\"");
-                    sb.append("/>");
-                    xml = xml.replaceFirst(pattern, sb.toString());
+                  else { // ii == i
+                    // one Image per file; use local offset
+                    ifd = localOffsets[ii][pp];
                   }
-                }
-                else {
+                  int num = images[ii][pp].length;
+                  if ((!allI || numImages == 1) && numPixels[i] == 1) {
+                    // only one Pixels in this file; don't need IFD/NumPlanes
+                    ifd = num = -1;
+                  }
                   xml = xml.replaceFirst(pattern,
-                    "<TiffData NumPlanes=\"0\"/>");
+                    tiffData(ifd, num, -1, -1, -1, dimOrder[ii][pp],
+                    sizeZ[ii][pp], sizeC[ii][pp], sizeT[ii][pp], total));
+                }
+                else { // pp == p
+                  xml = xml.replaceFirst(pattern,
+                    tiffData(-1, -1, fz, fc, ft, dimOrder[ii][pp],
+                    sizeZ[ii][pp], sizeC[ii][pp], sizeT[ii][pp], total));
                 }
               }
             }
