@@ -33,27 +33,96 @@ public class MakeTestOmeTiff {
   }
 
   public static void main(String[] args) throws FormatException, IOException {
-    int leadParams = 2, paramCount = 6;
-    boolean usage = false, scramble = false;
-    if (args == null || args.length < leadParams + paramCount) usage = true;
+    boolean usage = false;
+    
+    // parse command line arguments
+    String name = null;
+    String dist = null;
+    boolean scramble = false;
+    int numImages = 0;
+    int[] numPixels = null;
+    int[][] sizeX = null, sizeY = null;
+    int[][] sizeZ = null, sizeC = null, sizeT = null;
+    String[][] dimOrder = null;
+
+    if (args == null || args.length < 2) usage = true;
     else {
-      int parity = (args.length - leadParams) % paramCount;
-      scramble = args[2].equalsIgnoreCase("-scramble");
-      if (parity != (scramble ? 1 : 0)) usage = true;
+      name = args[0];
+      dist = args[1].toLowerCase();
+      scramble = args.length >= 2 && args[2].equalsIgnoreCase("-scramble");
+
+      int startIndex = scramble ? 3 : 2;
+
+      // count number of images
+      int ndx = startIndex;
+      while (ndx < args.length) {
+        int numPix = Integer.parseInt(args[ndx]);
+        ndx += 1 + 6 * numPix;
+        numImages++;
+      }
+
+      // parse pixels's dimensional information
+      if (ndx > args.length) usage = true;
+      else {
+        numPixels = new int[numImages];
+        sizeX = new int[numImages][];
+        sizeY = new int[numImages][];
+        sizeZ = new int[numImages][];
+        sizeC = new int[numImages][];
+        sizeT = new int[numImages][];
+        dimOrder = new String[numImages][];
+
+        ndx = startIndex;
+        for (int i=0; i<numImages; i++) {
+          numPixels[i] = Integer.parseInt(args[ndx++]);
+          sizeX[i] = new int[numPixels[i]];
+          sizeY[i] = new int[numPixels[i]];
+          sizeZ[i] = new int[numPixels[i]];
+          sizeC[i] = new int[numPixels[i]];
+          sizeT[i] = new int[numPixels[i]];
+          dimOrder[i] = new String[numPixels[i]];
+          for (int p=0; p<numPixels[i]; p++) {
+            sizeX[i][p] = Integer.parseInt(args[ndx++]);
+            sizeY[i][p] = Integer.parseInt(args[ndx++]);
+            sizeZ[i][p] = Integer.parseInt(args[ndx++]);
+            sizeC[i][p] = Integer.parseInt(args[ndx++]);
+            sizeT[i][p] = Integer.parseInt(args[ndx++]);
+            dimOrder[i][p] = args[ndx++].toUpperCase();
+          }
+        }
+      }
     }
 
     if (usage) {
-      System.out.println("Usage: java MakeTestOmeTiff name dist [-scramble]");
-      System.out.println("\tseries1_SizeX series1_SizeY series1_SizeZ");
-      System.out.println("\tseries1_SizeC series1_SizeT series1_DimOrder");
-      System.out.println("\t[series2_SizeX series2_SizeY series2_SizeZ");
-      System.out.println("\tseries2_SizeC series2_SizeT series2_DimOrder]");
-      System.out.println("\t[...]");
+      System.out.println(
+        "Usage: java MakeTestOmeTiff name dist [-scramble]");
+      System.out.println("         image1_NumPixels");
+      System.out.println("           image1_pixels1_SizeX " +
+        "image1_pixels1_SizeY image1_pixels1_SizeZ");
+      System.out.println("             image1_pixels1_SizeC " +
+        "image1_pixels1_SizeT image1_pixels1_DimOrder");
+      System.out.println("           image1_pixels2_SizeX " +
+        "image1_pixels2_SizeY image1_pixels2_SizeZ");
+      System.out.println("             image1_pixels2_SizeC " +
+        "image1_pixels2_SizeT image1_pixels2_DimOrder");
+      System.out.println("           [...]");
+      System.out.println("         image2_NumPixels");
+      System.out.println("           image2_pixels1_SizeX " +
+        "image2_pixels1_SizeY image1_pixels1_SizeZ");
+      System.out.println("             image2_pixels1_SizeC " +
+        "image2_pixels1_SizeT image1_pixels1_DimOrder");
+      System.out.println("           image2_pixels2_SizeX " +
+        "image2_pixels2_SizeY image1_pixels2_SizeZ");
+      System.out.println("             image2_pixels2_SizeC " +
+        "image2_pixels2_SizeT image1_pixels2_DimOrder");
+      System.out.println("           [...]");
+      System.out.println("         [...]");
       System.out.println();
       System.out.println("  name: prefix for filenames");
       System.out.println("  dist: code for how to distribute across files:");
-      System.out.println("    szct = all series + planes in one master file");
-      System.out.println("    zct = each series in its own file");
+      System.out.println("    ipzct = all Images + Pixels in one file");
+      System.out.println("    pzct = each Image in its own file");
+      System.out.println("    zct = each Pixels in its own file");
       System.out.println("    zc = all Z + C positions per file");
       System.out.println("    zt = all Z + T positions per file");
       System.out.println("    ct = all C + T positions per file");
@@ -62,164 +131,183 @@ public class MakeTestOmeTiff {
       System.out.println("    t = all T positions per file");
       System.out.println("    x = single plane per file");
       System.out.println("  -scramble: randomizes IFD ordering");
-      System.out.println("  series*_SizeX: width of image planes");
-      System.out.println("  series*_SizeY: height of image planes");
-      System.out.println("  series*_SizeZ: number of focal planes");
-      System.out.println("  series*_SizeC: number of channels");
-      System.out.println("  series*_SizeT: number of time points");
-      System.out.println("  series*_DimOrder: planar ordering: " +
-        "xyzct, xyztc, xyczt, xyctz, xytzc, xytcz");
+      System.out.println("  image*_pixels*_SizeX: width of image planes");
+      System.out.println("  image*_pixels*_SizeY: height of image planes");
+      System.out.println("  image*_pixels*_SizeZ: number of focal planes");
+      System.out.println("  image*_pixels*_SizeC: number of channels");
+      System.out.println("  image*_pixels*_SizeT: number of time points");
+      System.out.println("  image*_pixels*_DimOrder: planar ordering:");
+      System.out.println("    XYZCT, XYZTC, XYCZT, XYCTZ, XYTZC, or XYTCZ");
       System.out.println();
       System.out.println("Example:");
-      System.out.println("\tjava MakeTestOmeTiff test-image zct \\");
-      System.out.println("\t517 239 5 3 4 xyzct 431 555 1 2 7 xytcz");
+      System.out.println("  java MakeTestOmeTiff test ipzct \\");
+      System.out.println("    2 431 555 1 2 7 XYTCZ \\");
+      System.out.println("      348 461 2 1 6 XYZTC \\");
+      System.out.println("    1 517 239 5 3 4 XYCZT");
       System.exit(1);
     }
-    String name = args[0];
-    String dist = args[1].toLowerCase();
-    int numSeries = (args.length - leadParams) / paramCount;
-    int[] sizeX = new int[numSeries];
-    int[] sizeY = new int[numSeries];
-    int[] sizeZ = new int[numSeries];
-    int[] sizeC = new int[numSeries];
-    int[] sizeT = new int[numSeries];
-    String[] dimOrder = new String[numSeries];
-    BufferedImage[][] images = new BufferedImage[numSeries][];
-    int[] offsets = new int[numSeries];
-    for (int s=0; s<numSeries; s++) {
-      sizeX[s] = Integer.parseInt(args[leadParams + paramCount * s]);
-      sizeY[s] = Integer.parseInt(args[leadParams + paramCount * s + 1]);
-      sizeZ[s] = Integer.parseInt(args[leadParams + paramCount * s + 2]);
-      sizeC[s] = Integer.parseInt(args[leadParams + paramCount * s + 3]);
-      sizeT[s] = Integer.parseInt(args[leadParams + paramCount * s + 4]);
-      int len = sizeZ[s] * sizeC[s] * sizeT[s];
-      dimOrder[s] = args[leadParams + paramCount * s + 5].toUpperCase();
-      images[s] = new BufferedImage[len];
-      if (s < numSeries - 1) offsets[s + 1] = offsets[s] + len;
+
+    BufferedImage[][][] images = new BufferedImage[numImages][][];
+    int[][] globalOffsets = new int[numImages][]; // IFD offsets across Images
+    int[][] localOffsets = new int[numImages][]; // IFD offsets per Image
+    int globalOffset = 0, localOffset = 0;
+    for (int i=0; i<numImages; i++) {
+      images[i] = new BufferedImage[numPixels[i]][];
+      globalOffsets[i] = new int[numPixels[i]];
+      localOffsets[i] = new int[numPixels[i]];
+      localOffset = 0;
+      for (int p=0; p<numPixels[i]; p++) {
+        int len = sizeZ[i][p] * sizeC[i][p] * sizeT[i][p];
+        images[i][p] = new BufferedImage[len];
+        globalOffsets[i][p] = globalOffset;
+        globalOffset += len;
+        localOffsets[i][p] = localOffset;
+        localOffset += len;
+      }
     }
-    int ndx = 0;
 
     System.out.println("Generating image planes");
-    for (int s=0; s<numSeries; s++) {
-      int len = images[s].length;
-      System.out.print("\tSeries #" + (s + 1) + " - " +
-        sizeX[s] + " x " + sizeY[s] + ", " +
-        sizeZ[s] + "Z " + sizeC[s] + "C " + sizeT[s] + "T");
-      for (int p=0; p<len; p++) {
-        int[] zct = FormatTools.getZCTCoords(dimOrder[s],
-          sizeZ[s], sizeC[s], sizeT[s], len, p);
+    for (int i=0, ipNum=0; i<numImages; i++) {
+      System.out.println("  Image #" + (i + 1) + ":");
+      for (int p=0; p<numPixels[i]; p++, ipNum++) {
+        System.out.print("    Pixels #" + (p + 1) + " - " +
+          sizeX[i][p] + " x " + sizeY[i][p] + ", " +
+          sizeZ[i][p] + "Z " + sizeC[i][p] + "C " + sizeT[i][p] + "T");
+        int len = images[i][p].length;
+        for (int j=0; j<len; j++) {
+          int[] zct = FormatTools.getZCTCoords(dimOrder[i][p],
+            sizeZ[i][p], sizeC[i][p], sizeT[i][p], len, j);
 
-        System.out.print(".");
-        images[s][p] = new BufferedImage(
-          sizeX[s], sizeY[s], BufferedImage.TYPE_BYTE_GRAY);
-        Graphics2D g = images[s][p].createGraphics();
-        // draw gradient
-        boolean even = s % 2 == 0;
-        int type = s / 2;
-        if (even) {
-          // draw vertical gradient for even-numbered series
-          for (int y=0; y<sizeY[s]; y++) {
-            int v = gradient(type, y, sizeY[s]);
-            g.setColor(new Color(v, v, v));
-            g.drawLine(0, y, sizeX[s], y);
+          System.out.print(".");
+          images[i][p][j] = new BufferedImage(
+            sizeX[i][p], sizeY[i][p], BufferedImage.TYPE_BYTE_GRAY);
+          Graphics2D g = images[i][p][j].createGraphics();
+          // draw gradient
+          boolean even = ipNum % 2 == 0;
+          int type = ipNum / 2;
+          if (even) {
+            // draw vertical gradient for even-numbered pixelses
+            for (int y=0; y<sizeY[i][p]; y++) {
+              int v = gradient(type, y, sizeY[i][p]);
+              g.setColor(new Color(v, v, v));
+              g.drawLine(0, y, sizeX[i][p], y);
+            }
           }
-        }
-        else {
-          // draw horizontal gradient for odd-numbered series
-          for (int x=0; x<sizeX[s]; x++) {
-            int v = gradient(type, x, sizeX[s]);
-            g.setColor(new Color(v, v, v));
-            g.drawLine(x, 0, x, sizeY[s]);
+          else {
+            // draw horizontal gradient for odd-numbered pixelses
+            for (int x=0; x<sizeX[i][p]; x++) {
+              int v = gradient(type, x, sizeX[i][p]);
+              g.setColor(new Color(v, v, v));
+              g.drawLine(x, 0, x, sizeY[i][p]);
+            }
           }
-        }
 
-        // build list of text lines from planar information
-        Vector lines = new Vector();
-        Font font = g.getFont();
-        lines.add(new TextLine(name, font.deriveFont(32f), 5, -5));
-        lines.add(new TextLine(sizeX[s] + " x " + sizeY[s],
-          font.deriveFont(Font.ITALIC, 16f), 20, 10));
-        lines.add(new TextLine(dimOrder[s],
-          font.deriveFont(Font.ITALIC, 14f), 30, 5));
-        if (numSeries > 1) {
-          lines.add(new TextLine("Series #" + (s + 1) + "/" + numSeries,
-            font, 20, 5));
-        }
-        if (sizeZ[s] > 1) {
-          lines.add(new TextLine(
-            "Focal plane = " + (zct[0] + 1) + "/" + sizeZ[s], font, 20, 2));
-        }
-        if (sizeC[s] > 1) {
-          lines.add(new TextLine(
-            "Channel = " + (zct[1] + 1) + "/" + sizeC[s], font, 20, 2));
-        }
-        if (sizeT[s] > 1) {
-          lines.add(new TextLine(
-            "Time point = " + (zct[2] + 1) + "/" + sizeT[s], font, 20, 2));
-        }
+          // build list of text lines from planar information
+          Vector lines = new Vector();
+          Font font = g.getFont();
+          lines.add(new TextLine(name, font.deriveFont(32f), 5, -5));
+          lines.add(new TextLine(sizeX[i][p] + " x " + sizeY[i][p],
+            font.deriveFont(Font.ITALIC, 16f), 20, 10));
+          lines.add(new TextLine(dimOrder[i][p],
+            font.deriveFont(Font.ITALIC, 14f), 30, 5));
+          int space = 5;
+          if (numImages > 1) {
+            lines.add(new TextLine("Image #" + (i + 1) + "/" + numImages,
+              font, 20, space));
+            space = 2;
+          }
+          if (numPixels[i] > 1) {
+            lines.add(new TextLine("Pixels #" + (p + 1) + "/" + numPixels[i],
+              font, 20, space));
+            space = 2;
+          }
+          if (sizeZ[i][p] > 1) {
+            lines.add(new TextLine("Focal plane = " +
+              (zct[0] + 1) + "/" + sizeZ[i][p], font, 20, space));
+            space = 2;
+          }
+          if (sizeC[i][p] > 1) {
+            lines.add(new TextLine("Channel = " +
+              (zct[1] + 1) + "/" + sizeC[i][p], font, 20, space));
+            space = 2;
+          }
+          if (sizeT[i][p] > 1) {
+            lines.add(new TextLine("Time point = " +
+              (zct[2] + 1) + "/" + sizeT[i][p], font, 20, space));
+            space = 2;
+          }
 
-        // draw text lines to image
-        g.setColor(Color.white);
-        int yoff = 0;
-        for (int i=0; i<lines.size(); i++) {
-          TextLine text = (TextLine) lines.get(i);
-          g.setFont(text.font);
-          Rectangle2D r = g.getFont().getStringBounds(
-            text.line, g.getFontRenderContext());
-          yoff += r.getHeight() + text.ypad;
-          g.drawString(text.line, text.xoff, yoff);
+          // draw text lines to image
+          g.setColor(Color.white);
+          int yoff = 0;
+          for (int l=0; l<lines.size(); l++) {
+            TextLine text = (TextLine) lines.get(l);
+            g.setFont(text.font);
+            Rectangle2D r = g.getFont().getStringBounds(
+              text.line, g.getFontRenderContext());
+            yoff += r.getHeight() + text.ypad;
+            g.drawString(text.line, text.xoff, yoff);
+          }
+          g.dispose();
         }
-        g.dispose();
+        System.out.println();
       }
-      System.out.println();
     }
 
     System.out.println("Writing output files");
-    boolean allS = dist.indexOf("s") >= 0;
+    boolean allI = dist.indexOf("i") >= 0;
+    boolean allP = dist.indexOf("p") >= 0;
     boolean allZ = dist.indexOf("z") >= 0;
     boolean allC = dist.indexOf("c") >= 0;
     boolean allT = dist.indexOf("t") >= 0;
 
     // determine filename for each image plane
-    String[][] filenames = new String[numSeries][];
+    String[][][] filenames = new String[numImages][][];
     Hashtable lastHash = new Hashtable();
-    boolean[][] last = new boolean[numSeries][];
+    boolean[][][] last = new boolean[numImages][][];
     Hashtable firstZ = new Hashtable();
     Hashtable firstC = new Hashtable();
     Hashtable firstT = new Hashtable();
     StringBuffer sb = new StringBuffer();
-    for (int s=0; s<numSeries; s++) {
-      int len = images[s].length;
-      filenames[s] = new String[len];
-      last[s] = new boolean[len];
-      for (int p=0; p<len; p++) {
-        sb.append(name);
-        if (!allS && numSeries > 1) sb.append("_series" + (s + 1));
-        int[] zct = FormatTools.getZCTCoords(dimOrder[s],
-          sizeZ[s], sizeC[s], sizeT[s], len, p);
-        if (!allZ && sizeZ[s] > 1) sb.append("_Z" + (zct[0] + 1));
-        if (!allC && sizeC[s] > 1) sb.append("_C" + (zct[1] + 1));
-        if (!allT && sizeT[s] > 1) sb.append("_T" + (zct[2] + 1));
-        sb.append(".ome.tif");
-        filenames[s][p] = sb.toString();
-        sb.setLength(0);
-        last[s][p] = true;
+    for (int i=0; i<numImages; i++) {
+      filenames[i] = new String[numPixels[i]][];
+      last[i] = new boolean[numPixels[i]][];
+      for (int p=0; p<numPixels[i]; p++) {
+        int len = images[i][p].length;
+        filenames[i][p] = new String[len];
+        last[i][p] = new boolean[len];
+        for (int j=0; j<len; j++) {
+          sb.append(name);
+          if (!allI && numImages > 1) sb.append("_image" + (i + 1));
+          if (!allP && numPixels[i] > 1) sb.append("_pixels" + (p + 1));
+          int[] zct = FormatTools.getZCTCoords(dimOrder[i][p],
+            sizeZ[i][p], sizeC[i][p], sizeT[i][p], len, j);
+          if (!allZ && sizeZ[i][p] > 1) sb.append("_Z" + (zct[0] + 1));
+          if (!allC && sizeC[i][p] > 1) sb.append("_C" + (zct[1] + 1));
+          if (!allT && sizeT[i][p] > 1) sb.append("_T" + (zct[2] + 1));
+          sb.append(".ome.tif");
+          filenames[i][p][j] = sb.toString();
+          sb.setLength(0);
+          last[i][p][j] = true;
 
-        // update last flag for this filename
-        String key = filenames[s][p];
-        ImageIndex index = (ImageIndex) lastHash.get(key);
-        if (index != null) last[index.series][index.plane] = false;
-        lastHash.put(key, new ImageIndex(s, p));
+          // update last flag for this filename
+          String key = filenames[i][p][j];
+          ImageIndex index = (ImageIndex) lastHash.get(key);
+          if (index != null) {
+            last[index.image][index.pixels][index.plane] = false;
+          }
+          lastHash.put(key, new ImageIndex(i, p, j));
 
-        // update FirstZ, FirstC and FirstT values for this filename
-        if (!allZ && sizeZ[s] > 1) {
-          firstZ.put(filenames[s][p], new Integer(zct[0]));
-        }
-        if (!allC && sizeC[s] > 1) {
-          firstC.put(filenames[s][p], new Integer(zct[1]));
-        }
-        if (!allT && sizeT[s] > 1) {
-          firstT.put(filenames[s][p], new Integer(zct[2]));
+          // update FirstZ, FirstC and FirstT values for this filename
+          if (!allZ && sizeZ[i][p] > 1) {
+            firstZ.put(filenames[i][p][j], new Integer(zct[0]));
+          }
+          if (!allC && sizeC[i][p] > 1) {
+            firstC.put(filenames[i][p][j], new Integer(zct[1]));
+          }
+          if (!allT && sizeT[i][p] > 1) {
+            firstT.put(filenames[i][p][j], new Integer(zct[2]));
+          }
         }
       }
     }
@@ -265,70 +353,88 @@ public class MakeTestOmeTiff {
       "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
       "xsi:schemaLocation=\"" +
       "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\">");
-    for (int s=0; s<numSeries; s++) {
+    for (int i=0; i<numImages; i++) {
       sb.append("<Image " +
-        "ID=\"org.openmicroscopy:Image:" + (s + 1) + "\" " +
+        "ID=\"org.openmicroscopy:Image:" + (i + 1) + "\" " +
         "Name=\"" + name + "\" " +
-        "DefaultPixels=\"org.openmicroscopy:Pixels:" + (s + 1) + "\">" +
-        "<CreationDate>" + creationDate + "</CreationDate>" +
-        "<Pixels ID=\"Pixels:1\" " +
-        "DimensionOrder=\"" + dimOrder[s] + "\" " +
-        "PixelType=\"uint8\" " +
-        "BigEndian=\"true\" " +
-        "SizeX=\"" + sizeX[s] + "\" " +
-        "SizeY=\"" + sizeY[s] + "\" " +
-        "SizeZ=\"" + sizeZ[s] + "\" " +
-        "SizeC=\"" + sizeC[s] + "\" " +
-        "SizeT=\"" + sizeT[s] + "\">" +
-        "TIFF_DATA_SERIES_" + s + // placeholder
-        "</Pixels></Image>");
+        "DefaultPixels=\"org.openmicroscopy:Pixels:" + (i + 1) + "-1\">" +
+        "<CreationDate>" + creationDate + "</CreationDate>");
+      for (int p=0; p<numPixels[i]; p++) {
+        sb.append("<Pixels " +
+          "ID=\"org.openmicroscopy.Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
+          "DimensionOrder=\"" + dimOrder[i][p] + "\" " +
+          "PixelType=\"uint8\" " +
+          "BigEndian=\"true\" " +
+          "SizeX=\"" + sizeX[i][p] + "\" " +
+          "SizeY=\"" + sizeY[i][p] + "\" " +
+          "SizeZ=\"" + sizeZ[i][p] + "\" " +
+          "SizeC=\"" + sizeC[i][p] + "\" " +
+          "SizeT=\"" + sizeT[i][p] + "\">" +
+          "TIFF_DATA_IMAGE_" + i + "_PIXELS_" + p + // placeholder
+          "</Pixels>");
+      }
+      sb.append("</Image>");
     }
     sb.append("</OME>");
     String xmlTemplate = sb.toString();
 
     TiffWriter out = new TiffWriter();
-    for (int s=0; s<numSeries; s++) {
-      int len = images[s].length;
-      System.out.println("\tSeries #" + (s + 1) + " - " +
-        sizeX[s] + " x " + sizeY[s] + ", " +
-        sizeZ[s] + "Z " + sizeC[s] + "C " + sizeT[s] + "T:");
-      for (int p=0; p<len; p++) {
-        int[] zct = FormatTools.getZCTCoords(dimOrder[s],
-          sizeZ[s], sizeC[s], sizeT[s], len, p);
-        System.out.println("\t\tZ" + zct[0] + " C" + zct[1] +
-          " T" + zct[2] + " -> " + filenames[s][p] + (last[s][p] ? "*" : ""));
-        out.setId(filenames[s][p]);
-        // write comment stub, to be overwritten later
-        Hashtable ifd = new Hashtable();
-        TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, "");
-        out.saveImage(images[s][p], ifd, last[s][p]);
-        if (last[s][p]) {
-          // append OME-XML block
-          String xml = xmlTemplate;
-          for (int ss=0; ss<numSeries; ss++) {
-            String pattern = "TIFF_DATA_SERIES_" + ss;
-            if (allS) {
-              xml = xml.replaceFirst(pattern,
-                "<TiffData IFD=\"" + offsets[ss] + "\" " +
-                "NumPlanes=\"" + images[ss].length + "\"/>");
+    for (int i=0; i<numImages; i++) {
+        System.out.println("  Image #" + (i + 1) + ":");
+      for (int p=0; p<numPixels[i]; p++) {
+        System.out.println("    Pixels #" + (p + 1) + " - " +
+          sizeX[i][p] + " x " + sizeY[i][p] + ", " +
+          sizeZ[i][p] + "Z " + sizeC[i][p] + "C " + sizeT[i][p] + "T:");
+        int len = images[i][p].length;
+        for (int j=0; j<len; j++) {
+          int[] zct = FormatTools.getZCTCoords(dimOrder[i][p],
+            sizeZ[i][p], sizeC[i][p], sizeT[i][p], len, j);
+          System.out.println("      " +
+            "Z" + zct[0] + " C" + zct[1] + " T" + zct[2] +
+            " -> " + filenames[i][p][j] + (last[i][p][j] ? "*" : ""));
+          out.setId(filenames[i][p][j]);
+          // write comment stub, to be overwritten later
+          Hashtable ifd = new Hashtable();
+          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, "");
+          out.saveImage(images[i][p][j], ifd, last[i][p][j]);
+          if (last[i][p][j]) {
+            // append OME-XML block
+            String xml = xmlTemplate;
+            for (int ii=0; ii<numImages; ii++) {
+              for (int pp=0; pp<numPixels[ii]; pp++) {
+                String pattern = "TIFF_DATA_IMAGE_" + ii + "_PIXELS_" + pp;
+                if (allP) {
+                  xml = xml.replaceFirst(pattern,
+                    "<TiffData IFD=\"" + globalOffsets[ii][pp] + "\" " +
+                    "NumPlanes=\"" + images[ii][pp].length + "\"/>");
+                }
+                else if (p == pp) {
+                  if (allI) {
+                    xml = xml.replaceFirst(pattern,
+                      "<TiffData IFD=\"" + localOffsets[ii][pp] + "\" " +
+                      "NumPlanes=\"" + images[ii][p].length + "\"/>");
+                  }
+                  else {
+                    Integer fz = (Integer) firstZ.get(filenames[i][p][j]);
+                    Integer fc = (Integer) firstC.get(filenames[i][p][j]);
+                    Integer ft = (Integer) firstT.get(filenames[i][p][j]);
+                    sb.setLength(0);
+                    sb.append("<TiffData");
+                    if (fz != null) sb.append(" FirstZ=\"" + fz + "\"");
+                    if (fc != null) sb.append(" FirstC=\"" + fc + "\"");
+                    if (ft != null) sb.append(" FirstT=\"" + ft + "\"");
+                    sb.append("/>");
+                    xml = xml.replaceFirst(pattern, sb.toString());
+                  }
+                }
+                else {
+                  xml = xml.replaceFirst(pattern,
+                    "<TiffData NumPlanes=\"0\"/>");
+                }
+              }
             }
-            else if (s == ss) {
-              Integer fz = (Integer) firstZ.get(filenames[s][p]);
-              Integer fc = (Integer) firstC.get(filenames[s][p]);
-              Integer ft = (Integer) firstT.get(filenames[s][p]);
-              sb.setLength(0);
-              sb.append("<TiffData");
-              if (fz != null) sb.append(" FirstZ=\"" + fz + "\"");
-              if (fc != null) sb.append(" FirstC=\"" + fc + "\"");
-              if (ft != null) sb.append(" FirstT=\"" + ft + "\"");
-              sb.append("/>");
-              xml = xml.replaceFirst(pattern, sb.toString());
-            }
-            else {
-              xml = xml.replaceFirst(pattern, "<TiffData NumPlanes=\"0\"/>");
-            }
+            TiffTools.overwriteComment(filenames[i][p][j], xml);
           }
-          TiffTools.overwriteComment(filenames[s][p], xml);
         }
       }
     }
@@ -348,11 +454,13 @@ public class MakeTestOmeTiff {
   }
 
   private static class ImageIndex {
-    private int series;
+    private int image;
+    private int pixels;
     private int plane;
-    private ImageIndex(int series, int plane) {
-      this.series = series;
-      this.plane = plane;
+    private ImageIndex(int i, int p, int j) {
+      this.image = i;
+      this.pixels = p;
+      this.plane = j;
     }
   }
 
