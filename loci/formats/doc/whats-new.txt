@@ -1,3 +1,7 @@
+2007 Oct 5:
+* Critical OME-TIFF bugfixes
+* Added MS Video 1 codec for AVI
+
 2007 Oct 1:
 * Added support for compressed DICOM images
 * Added support for uncompressed LIM files
