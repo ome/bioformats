@@ -430,13 +430,13 @@ public class MakeTestOmeTiff {
       "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\">");
     for (int i=0; i<numImages; i++) {
       sb.append("<Image " +
-        "ID=\"org.openmicroscopy:Image:" + (i + 1) + "\" " +
+        "ID=\"openmicroscopy.org:Image:" + (i + 1) + "\" " +
         "Name=\"" + name + "\" " +
-        "DefaultPixels=\"org.openmicroscopy:Pixels:" + (i + 1) + "-1\">" +
+        "DefaultPixels=\"openmicroscopy.org:Pixels:" + (i + 1) + "-1\">" +
         "<CreationDate>" + creationDate + "</CreationDate>");
       for (int p=0; p<numPixels[i]; p++) {
         sb.append("<Pixels " +
-          "ID=\"org.openmicroscopy:Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
+          "ID=\"openmicroscopy.org:Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
           "DimensionOrder=\"" + dimOrder[i][p] + "\" " +
           "PixelType=\"uint8\" " +
           "BigEndian=\"true\" " +
