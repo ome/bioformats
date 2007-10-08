@@ -269,6 +269,16 @@ public final class FormatTools {
     return new int[] {z, c, t};
   }
 
+  /** Converts indices from the given dimension order to the native one. */
+  public static int getReorderedIndex(IFormatReader r, String order, int no)
+    throws FormatException
+  {
+    int[] zct = getZCTCoords(order, r.getSizeZ(), r.getSizeC(), r.getSizeT(),
+      r.getImageCount(), no);
+    return getIndex(r.getDimensionOrder(), r.getSizeZ(), r.getSizeC(),
+      r.getSizeT(), r.getImageCount(), zct[0], zct[1], zct[2]);
+  }
+
   /**
    * Computes a unique 1-D index corresponding
    * to the given multidimensional position.
@@ -325,15 +335,6 @@ public final class FormatTools {
     int len = 1;
     for (int i=0; i<lengths.length; i++) len *= lengths[i];
     return len;
-  }
-
-  public static int getReorderedIndex(IFormatReader r, String order, int no)
-    throws FormatException
-  {
-    int[] zct = getZCTCoords(order, r.getSizeZ(), r.getSizeC(), r.getSizeT(),
-      r.getImageCount(), no);
-    return getIndex(r.getDimensionOrder(), r.getSizeZ(), r.getSizeC(),
-      r.getSizeT(), r.getImageCount(), zct[0], zct[1], zct[2]);
   }
 
   // -- Utility methods - pixel types --
