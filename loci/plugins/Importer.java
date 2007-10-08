@@ -114,6 +114,7 @@ public class Importer {
     r.setMetadataStore(store);
 
     IJ.showStatus("");
+    r.addStatusListener(new StatusEchoer());
 
     // -- Step 3: get parameter values --
 
@@ -912,6 +913,15 @@ public class Importer {
       sb.append(args[i]);
     }
     new LociImporter().run(sb.toString());
+  }
+
+  // -- Helper classes --
+
+  /** Used to echo status messages to the ImageJ status bar. */
+  private static class StatusEchoer implements StatusListener {
+    public void statusUpdated(StatusEvent e) {
+      IJ.showStatus(e.getStatusMessage());
+    }
   }
 
 }
