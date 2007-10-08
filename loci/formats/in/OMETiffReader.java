@@ -212,6 +212,7 @@ public class OMETiffReader extends BaseTiffReader {
 
     // set ifdMap and fileMap based on TiffData elements
     for (int i=0; i<used.length; i++) {
+      status("Parsing " + used[i]);
       String com = (String) comments.get(i);
       ByteArrayInputStream is = new ByteArrayInputStream(com.getBytes());
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
