@@ -171,6 +171,7 @@ public class OMETiffReader extends BaseTiffReader {
     for (int i=0; i<fileList.length; i++) {
       check = fileList[i].toLowerCase();
       if (check.endsWith(".tif") || check.endsWith(".tiff")) {
+        status("Checking " + fileList[i]);
         ifds = TiffTools.getIFDs(new RandomAccessStream(l.getAbsolutePath() +
           File.separator + fileList[i]));
         // TODO - need accurate IFD count
