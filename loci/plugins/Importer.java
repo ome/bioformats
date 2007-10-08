@@ -804,8 +804,41 @@ public class Importer {
       IJ.run("View5D ", "");
     }
     else if (!options.isViewNone()) {
-      if (!concatenate) imp.show();
-      else imps.add(imp);
+      if (options.isIndividualWindows() && !(imp instanceof CustomImage)) {
+        ImageStack is = imp.getStack();
+        for (int i=0; i<is.getSize(); i++) {
+          ImageStack s = new ImageStack(is.getWidth(), is.getHeight());
+          int ndx = i + 1;
+          s.addSlice(is.getSliceLabel(ndx), is.getProcessor(ndx));
+
+          ImagePlus p = new ImagePlus(imp.getTitle(), s);
+          if (!concatenate) p.show();
+          else imps.add(p);
+        }
+      }
+      else if (options.isIndividualWindows()) {
+        ImageStack is = imp.getStack();
+
+        for (int zz=0; zz<r.getSizeZ(); zz++) {
+          for (int tt=0; tt<r.getSizeT(); tt++) {
+            ImageStack s = new ImageStack(is.getWidth(), is.getHeight());
+            for (int cc=0; cc<r.getSizeC(); cc++) {
+              int ndx = FormatTools.getIndex("XYCTZ", r.getSizeZ(),
+                r.getSizeC(), r.getSizeT(), is.getSize(), zz, cc, tt) + 1;
+              s.addSlice(is.getSliceLabel(ndx), is.getProcessor(ndx));
+            }
+            ImagePlus p = new ImagePlus(imp.getTitle(), s);
+            CustomImage custom = new CustomImage(p, "XYCTZ", 1, 1,
+              r.getSizeC(), options.isAutoscale());
+            if (!concatenate) custom.show();
+            else imps.add(custom);
+          }
+        }
+      }
+      else {
+        if (!concatenate) imp.show();
+        else imps.add(imp);
+      }
     }
   }
 

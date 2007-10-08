@@ -42,8 +42,29 @@ public class CustomImage extends ImagePlus {
     this.z = z;
     this.t = t;
     this.channels = channels;
-    this.order = order;
+    this.order = "XYCTZ";
     this.autoscale = autoscale;
+
+    if (!this.order.equals(order)) {
+      // reorder stack
+      ImageStack oldStack = imp.getStack();
+      ImageStack newStack =
+        new ImageStack(oldStack.getWidth(), oldStack.getHeight());
+
+      for (int zz=0; zz<z; zz++) {
+        for (int tt=0; tt<t; tt++) {
+          for (int cc=0; cc<channels; cc++) {
+            int ndx = FormatTools.getIndex(order, z, channels, t,
+              oldStack.getSize(), zz, cc, tt) + 1;
+            newStack.addSlice(oldStack.getSliceLabel(ndx),
+              oldStack.getProcessor(ndx));
+          }
+        }
+      }
+
+      imp.setStack(imp.getTitle(), newStack);
+    }
+
     ImageStack stack2;
 		boolean isRGB = imp.getBitDepth() == 24;
 		if (isRGB) stack2 = getRGBStack(imp);

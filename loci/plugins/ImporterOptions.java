@@ -94,6 +94,8 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_MERGE = "bioformats.mergeChannels";
   public static final String PREF_COLORIZE = "bioformats.colorize";
   public static final String PREF_SPLIT = "bioformats.splitWindows";
+  public static final String PREF_INDIVIDUAL = "bioformats.individualWindows";
+  public static final String PREF_SWAP = "bioformats.swapDimensions";
   public static final String PREF_METADATA = "bioformats.showMetadata";
   public static final String PREF_GROUP = "bioformats.groupFiles";
   public static final String PREF_CONCATENATE = "bioformats.concatenate";
@@ -109,6 +111,9 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_COLORIZE = "Colorize channels";
   public static final String LABEL_SPLIT =
     "Open each channel in its own window";
+  public static final String LABEL_INDIVIDUAL =
+    "Open each plane in its own window";
+  public static final String LABEL_SWAP = "Specify stack organization"; 
   public static final String LABEL_METADATA = "Display associated metadata";
   public static final String LABEL_GROUP = "Group files with similar names";
   public static final String LABEL_CONCATENATE =
@@ -127,6 +132,8 @@ public class ImporterOptions implements ItemListener {
   private Checkbox mergeBox;
   private Checkbox colorizeBox;
   private Checkbox splitBox;
+  private Checkbox individualBox;
+  private Checkbox swapBox;
   private Checkbox metadataBox;
   private Checkbox groupBox;
   private Checkbox concatenateBox;
@@ -141,6 +148,8 @@ public class ImporterOptions implements ItemListener {
   private boolean mergeChannels;
   private boolean colorize;
   private boolean splitWindows;
+  private boolean individualWindows;
+  private boolean swapDimensions;
   private boolean showMetadata;
   private boolean groupFiles;
   private boolean concatenate;
@@ -164,6 +173,8 @@ public class ImporterOptions implements ItemListener {
   public boolean isMergeChannels() { return mergeChannels; }
   public boolean isColorize() { return colorize; }
   public boolean isSplitWindows() { return splitWindows; }
+  public boolean isIndividualWindows() { return individualWindows; }
+  public boolean isSwapDimensions() { return swapDimensions; }
   public boolean isShowMetadata() { return showMetadata; }
   public boolean isGroupFiles() { return groupFiles; }
   public boolean isConcatenate() { return concatenate; }
@@ -197,6 +208,8 @@ public class ImporterOptions implements ItemListener {
   public void setMergeChannels(boolean b) { mergeChannels = b; }
   public void setColorize(boolean b) { colorize = b; }
   public void setSplitWindows(boolean b) { splitWindows = b; }
+  public void setIndividualWindows(boolean b) { individualWindows = b; }
+  public void setSwapDimensions(boolean b) { swapDimensions = b; }
   public void setShowMetadata(boolean b) { showMetadata = b; }
   public void setGroupFiles(boolean b) { groupFiles = b; }
   public void setConcatenate(boolean b) { concatenate = b; }
@@ -211,6 +224,8 @@ public class ImporterOptions implements ItemListener {
     mergeChannels = Prefs.get(PREF_MERGE, false);
     colorize = Prefs.get(PREF_COLORIZE, false);
     splitWindows = Prefs.get(PREF_SPLIT, true);
+    individualWindows = Prefs.get(PREF_INDIVIDUAL, false);
+    swapDimensions = Prefs.get(PREF_SWAP, false);
     showMetadata = Prefs.get(PREF_METADATA, false);
     groupFiles = Prefs.get(PREF_GROUP, false);
     concatenate = Prefs.get(PREF_CONCATENATE, false);
@@ -227,6 +242,8 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_MERGE, mergeChannels);
     Prefs.set(PREF_COLORIZE, colorize);
     Prefs.set(PREF_SPLIT, splitWindows);
+    Prefs.set(PREF_INDIVIDUAL, individualWindows);
+    Prefs.set(PREF_SWAP, swapDimensions);
     Prefs.set(PREF_METADATA, showMetadata);
     Prefs.set(PREF_GROUP, groupFiles);
     Prefs.set(PREF_CONCATENATE, concatenate);
@@ -263,6 +280,9 @@ public class ImporterOptions implements ItemListener {
       mergeChannels = getMacroValue(arg, LABEL_MERGE, mergeChannels);
       colorize = getMacroValue(arg, LABEL_COLORIZE, colorize);
       splitWindows = getMacroValue(arg, LABEL_COLORIZE, splitWindows);
+      individualWindows =
+        getMacroValue(arg, LABEL_INDIVIDUAL, individualWindows);
+      swapDimensions = getMacroValue(arg, LABEL_SWAP, swapDimensions);
       showMetadata = getMacroValue(arg, LABEL_METADATA, showMetadata);
       groupFiles = getMacroValue(arg, LABEL_GROUP, groupFiles);
       concatenate = getMacroValue(arg, LABEL_CONCATENATE, concatenate);
@@ -427,6 +447,8 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_MERGE, mergeChannels);
     gd.addCheckbox(LABEL_COLORIZE, colorize);
     gd.addCheckbox(LABEL_SPLIT, splitWindows);
+    gd.addCheckbox(LABEL_INDIVIDUAL, individualWindows);
+    gd.addCheckbox(LABEL_SWAP, swapDimensions);
     gd.addCheckbox(LABEL_METADATA, showMetadata);
     gd.addCheckbox(LABEL_GROUP, groupFiles);
     gd.addCheckbox(LABEL_CONCATENATE, concatenate);
@@ -447,11 +469,13 @@ public class ImporterOptions implements ItemListener {
       mergeBox = (Checkbox) boxes.get(0);
       colorizeBox = (Checkbox) boxes.get(1);
       splitBox = (Checkbox) boxes.get(2);
-      metadataBox = (Checkbox) boxes.get(3);
-      groupBox = (Checkbox) boxes.get(4);
-      concatenateBox = (Checkbox) boxes.get(5);
-      rangeBox = (Checkbox) boxes.get(6);
-      autoscaleBox = (Checkbox) boxes.get(7);
+      individualBox = (Checkbox) boxes.get(3);
+      swapBox = (Checkbox) boxes.get(4);
+      metadataBox = (Checkbox) boxes.get(5);
+      groupBox = (Checkbox) boxes.get(6);
+      concatenateBox = (Checkbox) boxes.get(7);
+      rangeBox = (Checkbox) boxes.get(8);
+      autoscaleBox = (Checkbox) boxes.get(9);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -465,6 +489,8 @@ public class ImporterOptions implements ItemListener {
     mergeChannels = gd.getNextBoolean();
     colorize = gd.getNextBoolean();
     splitWindows = gd.getNextBoolean();
+    individualWindows = gd.getNextBoolean();
+    swapDimensions = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
     groupFiles = gd.getNextBoolean();
     concatenate = gd.getNextBoolean();
