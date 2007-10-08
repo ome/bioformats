@@ -532,7 +532,7 @@ public abstract class BaseTiffReader extends FormatReader {
     core.sizeY[0] =
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
     core.sizeZ[0] = 1;
-    core.sizeC[0] = core.rgb[0] ? 3 : 1;
+    core.sizeC[0] = core.rgb[0] ? samples : 1;
     core.sizeT[0] = ifds.length;
     core.metadataComplete[0] = true;
     core.indexed[0] = TiffTools.getIFDIntValue(ifds[0],
