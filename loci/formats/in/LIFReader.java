@@ -148,9 +148,10 @@ public class LIFReader extends FormatReader {
         throw new FormatException("Invalid Memory Description");
       }
 
-      int blockLength = in.readInt();
+      long blockLength = in.readInt();
       if (in.read() != 0x2a) {
-        in.skipBytes(3);
+        in.seek(in.getFilePointer() - 5);
+        blockLength = in.readLong();
         if (in.read() != 0x2a) {
           throw new FormatException("Invalid Memory Description");
         }
@@ -162,8 +163,15 @@ public class LIFReader extends FormatReader {
       if (blockLength > 0) {
         offsets.add(new Long(in.getFilePointer()));
       }
-
-      in.skipBytes(blockLength);
+      long skipped = 0;
+      while (skipped < blockLength) {
+        if (blockLength - skipped > 4096) {
+          skipped += in.skipBytes(4096);
+        }
+        else {
+          skipped += in.skipBytes((int) (blockLength - skipped));
+        }
+      }
     }
     initMetadata(xml);
   }
