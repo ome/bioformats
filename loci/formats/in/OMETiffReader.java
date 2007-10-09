@@ -111,11 +111,8 @@ public class OMETiffReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    int ifd = ifdMap[currentSeries][no];
+    int ifd = ifdMap[series][no];
     int fileIndex = fileMap[currentSeries][no];
-
-    /* debug */ System.out.println("plane " + no + " : ifd=" + ifd +
-      ", file=" + fileIndex);
 
     in = new RandomAccessStream(used[fileIndex]);
     TiffTools.getSamples(fds[fileIndex][ifd], in, buf);
@@ -334,24 +331,6 @@ public class OMETiffReader extends BaseTiffReader {
           core.indexed[currentSeries] = isIndexed();
           core.falseColor[currentSeries] = isFalseColor();
 
-          try {
-            if (fds != null && fds[currentSeries] != null) {
-              int x = (int) TiffTools.getImageWidth(fds[currentSeries][0]);
-              int y = (int) TiffTools.getImageLength(fds[currentSeries][0]);
-              if (x != core.sizeX[currentSeries]) {
-                LogTools.println("Mismatched width: got " +
-                  core.sizeX[currentSeries] + ", expected " + x);
-                core.sizeX[currentSeries] = x;
-              }
-              if (y != core.sizeY[currentSeries]) {
-                LogTools.println("Mismatched height: got " +
-                  core.sizeY[currentSeries] + ", expected " + y);
-                core.sizeY[currentSeries] = y;
-              }
-            }
-          }
-          catch (FormatException e) { }
-
           if (core.rgb[currentSeries] && core.indexed[currentSeries] &&
             core.sizeC[currentSeries] == 3)
           {
@@ -378,7 +357,7 @@ public class OMETiffReader extends BaseTiffReader {
           core.orderCertain[currentSeries] = true;
         }
         if (numIFDs != null) {
-          numIFDs[currentSeries] += fds[currentSeries].length;
+          numIFDs[currentSeries] += fds[currentFile].length;
         }
 
         seriesCount++;
@@ -397,6 +376,25 @@ public class OMETiffReader extends BaseTiffReader {
         if (z == null || z.equals("")) z = "0";
         if (c == null || c.equals("")) c = "0";
         if (t == null || t.equals("")) t = "0";
+
+        try {
+          if (fds != null && fds[currentFile] != null) {
+            int f = Integer.parseInt(ifd);
+            int x = (int) TiffTools.getImageWidth(fds[currentFile][f]);
+            int y = (int) TiffTools.getImageLength(fds[currentFile][f]);
+            if (x != core.sizeX[currentSeries]) {
+              LogTools.println("Mismatched width: got " +
+                core.sizeX[currentSeries] + ", expected " + x);
+              core.sizeX[currentSeries] = x;
+            }
+            if (y != core.sizeY[currentSeries]) {
+              LogTools.println("Mismatched height: got " +
+                core.sizeY[currentSeries] + ", expected " + y);
+              core.sizeY[currentSeries] = y;
+            }
+          }
+        }
+        catch (FormatException e) { }
 
         int idx = FormatTools.getIndex(order, sizeZ, sizeC, sizeT,
           sizeZ * sizeC * sizeT, Integer.parseInt(z), Integer.parseInt(c),
