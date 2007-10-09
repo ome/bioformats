@@ -112,7 +112,7 @@ public class OMETiffReader extends BaseTiffReader {
     FormatTools.checkBufferSize(this, buf.length);
 
     int ifd = ifdMap[series][no];
-    int fileIndex = fileMap[currentSeries][no];
+    int fileIndex = fileMap[series][no];
 
     in = new RandomAccessStream(used[fileIndex]);
     TiffTools.getSamples(fds[fileIndex][ifd], in, buf);
@@ -403,7 +403,7 @@ public class OMETiffReader extends BaseTiffReader {
         if (tempIfdMap != null) {
           Vector v = new Vector(sizeZ * sizeC * sizeT);
           Vector y = new Vector(sizeZ * sizeC * sizeT);
-          if (tempIfdMap.size() >= seriesCount) {
+          if (tempIfdMap.size() >= seriesCount && tempIfdMap.size() > 0) {
             v = (Vector) tempIfdMap.get(seriesCount - 1);
             y = (Vector) tempFileMap.get(seriesCount - 1);
           }
@@ -424,8 +424,12 @@ public class OMETiffReader extends BaseTiffReader {
 
           if (tempIfdMap.size() > seriesCount) {
             tempIfdMap.setElementAt(v, seriesCount);
+            tempFileMap.setElementAt(y, seriesCount);
           }
-          else tempIfdMap.add(v);
+          else {
+            tempIfdMap.add(v);
+            tempFileMap.add(y);
+          }
         }
         else {
           ifdMap[currentSeries][idx] = Integer.parseInt(ifd);
