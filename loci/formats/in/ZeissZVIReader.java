@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.codec.JPEGCodec;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -100,6 +101,7 @@ public class ZeissZVIReader extends FormatReader {
 
   private boolean isTiled;
   private int tileRows, tileColumns;
+  private boolean isJPEG;
 
   // -- Constructor --
 
@@ -193,6 +195,11 @@ public class ZeissZVIReader extends FormatReader {
           catch (ReflectException e) { }
           offset += core.sizeX[0]*bytes;
         }
+
+        if (isJPEG) {
+          JPEGCodec codec = new JPEGCodec();
+          buf = codec.decompress(buf);
+        }
       }
 
       if (bpp > 6) bpp = 1;
@@ -279,7 +286,7 @@ public class ZeissZVIReader extends FormatReader {
       core.rgb[0] = core.sizeC[0] > 1 &&
         (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] != core.imageCount[0]);
       core.littleEndian[0] = true;
-      core.interleaved[0] = true;
+      core.interleaved[0] = !isJPEG;
       core.indexed[0] = false;
       core.falseColor[0] = false;
       core.metadataComplete[0] = true;
@@ -779,7 +786,10 @@ public class ZeissZVIReader extends FormatReader {
     core.sizeY[0] = s.readInt();
     s.skipBytes(4);
     bpp = s.readInt();
-    s.skipBytes(8);
+    //s.skipBytes(8);
+    s.skipBytes(4);
+    int valid = s.readInt();
+    isJPEG = valid == 0 || valid == 1;
 
     pixels.put(new Integer(num), directory);
     names.put(new Integer(num), entry);
