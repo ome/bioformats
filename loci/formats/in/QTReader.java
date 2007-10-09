@@ -304,7 +304,9 @@ public class QTReader extends FormatReader {
       if (debug) trace(exc);
       useLegacy = true;
       legacy = createLegacyReader();
-      legacy.setId(id);
+      legacy.setId(id, true);
+      core = legacy.getCoreMetadata();
+      return;
     }
 
     core.imageCount[0] = offsets.size();
@@ -585,6 +587,14 @@ public class QTReader extends FormatReader {
           for (int i=0; i<numEntries; i++) {
             if (i == 0) {
               codec = in.readString(4);
+
+              if (!codec.equals("raw ") && !codec.equals("rle ") &&
+                !codec.equals("rpza") && !codec.equals("mjpb") &&
+                !codec.equals("jpeg"))
+              {
+                throw new FormatException("Unsupported codec: " + codec);
+              }
+
               in.skipBytes(16);
               if (in.readShort() == 0) {
                 in.skipBytes(56);
