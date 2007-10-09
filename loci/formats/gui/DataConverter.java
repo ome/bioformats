@@ -97,6 +97,7 @@ public class DataConverter extends JFrame implements
     row1.add(Box.createHorizontalStrut(4));
 
     input = new JTextField(COLUMNS);
+    input.setEditable(false);
     row1.add(input);
     limitHeight(input);
 
@@ -124,6 +125,7 @@ public class DataConverter extends JFrame implements
     row2.add(Box.createHorizontalStrut(4));
 
     output = new JTextField(COLUMNS);
+    output.setEditable(false);
     row2.add(output);
     limitHeight(output);
 
