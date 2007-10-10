@@ -602,7 +602,8 @@ public class DataConverter extends JFrame implements
                         pixelType = DataBuffer.TYPE_DOUBLE;
                         break;
                     }
-                    img = ImageTools.makeType(img, pixelType);
+                    // TODO - come up with another way to do this...
+                    //img = ImageTools.makeType(img, pixelType);
                   }
 
                   writer.setId(outFile);
