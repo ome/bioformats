@@ -441,43 +441,53 @@ public final class ImageTools {
   public static byte[][] getBytes(BufferedImage image) {
     int dataType = DataBuffer.TYPE_BYTE;
     WritableRaster r = image.getRaster();
-    int tt = r.getTransferType();
-    if (tt == dataType) {
+    if (r.getTransferType() == dataType) {
       DataBuffer buffer = r.getDataBuffer();
       if (buffer instanceof DataBufferByte) {
         SampleModel model = r.getSampleModel();
+        // NB: Could implement additional checks for ComponentSampleModel
+        // with particular characteristics to also use this shortcut.
         if (model instanceof BandedSampleModel) {
           // return bytes directly, with no copy
           return ((DataBufferByte) buffer).getBankData();
         }
       }
     }
-
-    // convert to image with DataBufferByte and BandedSampleModel
+    //return getBytes(makeType(image, dataType));
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
-    ColorModel colorModel = makeColorModel(c, dataType);
-    if (colorModel == null) return null;
-    SampleModel model = new BandedSampleModel(dataType, w, h, c);
-    DataBuffer buffer = new DataBufferByte(w * h, c);
-    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
-    BufferedImage target = new BufferedImage(colorModel, raster, false, null);
-    Graphics2D g2 = target.createGraphics();
-    g2.drawRenderedImage(image, null);
-    g2.dispose();
-    return getBytes(target);
+    byte[][] samples = new byte[c][w * h];
+    int[] buf = new int[w * h];
+    for (int i=0; i<c; i++) {
+      r.getSamples(0, 0, w, h, i, buf);
+      for (int j=0; j<buf.length; j++) samples[i][j] = (byte) buf[j];
+    }
+    return samples;
   }
 
   /** Extracts pixel data as arrays of unsigned shorts, one per channel. */
   public static short[][] getShorts(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    int tt = r.getTransferType();
-    if (tt == DataBuffer.TYPE_USHORT) {
+    if (r.getTransferType() == DataBuffer.TYPE_USHORT) {
       DataBuffer buffer = r.getDataBuffer();
       if (buffer instanceof DataBufferUShort) {
-        return ((DataBufferUShort) buffer).getBankData();
+        SampleModel model = r.getSampleModel();
+        // NB: Could implement additional checks for ComponentSampleModel
+        // with particular characteristics to also use this shortcut.
+        if (model instanceof BandedSampleModel) {
+          // return shorts directly, with no copy
+          return ((DataBufferUShort) buffer).getBankData();
+        }
       }
     }
-    return getShorts(makeType(image, DataBuffer.TYPE_USHORT));
+    //return getShorts(makeType(image, DataBuffer.TYPE_USHORT));
+    int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
+    short[][] samples = new short[c][w * h];
+    int[] buf = new int[w * h];
+    for (int i=0; i<c; i++) {
+      r.getSamples(0, 0, w, h, i, buf);
+      for (int j=0; j<buf.length; j++) samples[i][j] = (short) buf[j];
+    }
+    return samples;
   }
 
   /** Extracts pixel data as arrays of signed integers, one per channel. */
@@ -488,13 +498,15 @@ public final class ImageTools {
       DataBuffer buffer = r.getDataBuffer();
       if (buffer instanceof DataBufferInt) {
         SampleModel model = r.getSampleModel();
+        // NB: Could implement additional checks for ComponentSampleModel
+        // with particular characteristics to also use this shortcut.
         if (model instanceof BandedSampleModel) {
           // return ints directly, with no copy
           return ((DataBufferInt) buffer).getBankData();
         }
       }
     }
-
+    // NB: an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
     int[][] samples = new int[c][w * h];
     for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
@@ -509,13 +521,15 @@ public final class ImageTools {
       DataBuffer buffer = r.getDataBuffer();
       if (buffer instanceof DataBufferFloat) {
         SampleModel model = r.getSampleModel();
+        // NB: Could implement additional checks for ComponentSampleModel
+        // with particular characteristics to also use this shortcut.
         if (model instanceof BandedSampleModel) {
-          // return ints directly, with no copy
+          // return floats directly, with no copy
           return ((DataBufferFloat) buffer).getBankData();
         }
       }
     }
-    // an order of magnitude faster than the naive makeType solution
+    // NB: an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
     float[][] samples = new float[c][w * h];
     for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
@@ -530,13 +544,15 @@ public final class ImageTools {
       DataBuffer buffer = r.getDataBuffer();
       if (buffer instanceof DataBufferDouble) {
         SampleModel model = r.getSampleModel();
+        // NB: Could implement additional checks for ComponentSampleModel
+        // with particular characteristics to also use this shortcut.
         if (model instanceof BandedSampleModel) {
-          // return ints directly, with no copy
+          // return doubles directly, with no copy
           return ((DataBufferDouble) buffer).getBankData();
         }
       }
     }
-    // an order of magnitude faster than the naive makeType solution
+    // NB: an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
     double[][] samples = new double[c][w * h];
     for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
@@ -553,7 +569,10 @@ public final class ImageTools {
   public static byte[][] getPixelBytes(BufferedImage img, boolean little) {
     Object pixels = getPixels(img);
 
-    if (pixels instanceof byte[][]) return (byte[][]) pixels;
+    if (pixels instanceof byte[][]) {
+      byte[][] b = (byte[][]) pixels;
+      return (byte[][]) pixels;
+    }
     else if (pixels instanceof short[][]) {
       short[][] s = (short[][]) pixels;
       byte[][] b = new byte[s.length][s[0].length * 2];
@@ -658,35 +677,39 @@ public final class ImageTools {
 
   // -- Image conversion --
 
-  /** Copies the given image into a result with the specified data type. */
-  public static BufferedImage makeType(BufferedImage image, int type) {
-    WritableRaster r = image.getRaster();
-    int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
-    ColorModel colorModel = makeColorModel(c, type);
-    if (colorModel == null) return null;
+  // NB: The commented out makeType method below is broken in that it results
+  // in rescaled data in some circumstances. We were using it for getBytes and
+  // getShorts, but due to this problem we implemented a different solution
+  // using Raster.getPixels instead. But we have left the makeType method here
+  // in case we decide to explore this issue any further in the future.
 
-    int s = w * h;
-    DataBuffer buf = null;
-    if (type == DataBuffer.TYPE_BYTE) buf = new DataBufferByte(s, c);
-    else if (type == DataBuffer.TYPE_USHORT) buf = new DataBufferUShort(s, c);
-    else if (type == DataBuffer.TYPE_INT) buf = new DataBufferInt(s, c);
-    else if (type == DataBuffer.TYPE_SHORT) buf = new DataBufferShort(s, c);
-    else if (type == DataBuffer.TYPE_FLOAT) buf = new DataBufferFloat(s, c);
-    else if (type == DataBuffer.TYPE_DOUBLE) buf = new DataBufferDouble(s, c);
-    if (buf == null) return null;
+//  /** Copies the given image into a result with the specified data type. */
+//  public static BufferedImage makeType(BufferedImage image, int type) {
+//    WritableRaster r = image.getRaster();
+//    int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
+//    ColorModel colorModel = makeColorModel(c, type);
+//    if (colorModel == null) return null;
+//
+//    int s = w * h;
+//    DataBuffer buf = null;
+//    if (type == DataBuffer.TYPE_BYTE) buf = new DataBufferByte(s, c);
+//    else if (type == DataBuffer.TYPE_USHORT) buf = new DataBufferUShort(s, c);
+//    else if (type == DataBuffer.TYPE_INT) buf = new DataBufferInt(s, c);
+//    else if (type == DataBuffer.TYPE_SHORT) buf = new DataBufferShort(s, c);
+//    else if (type == DataBuffer.TYPE_FLOAT) buf = new DataBufferFloat(s, c);
+//    else if (type == DataBuffer.TYPE_DOUBLE) buf = new DataBufferDouble(s, c);
+//    if (buf == null) return null;
+//
+//    SampleModel model = new BandedSampleModel(type, w, h, c);
+//    WritableRaster raster = Raster.createWritableRaster(model, buf, null);
+//    BufferedImage target = new BufferedImage(colorModel, raster, false, null);
+//    Graphics2D g2 = target.createGraphics();
+//    g2.drawRenderedImage(image, null);
+//    g2.dispose();
+//    return target;
+//  }
 
-    SampleModel model = new BandedSampleModel(type, w, h, c);
-    WritableRaster raster = Raster.createWritableRaster(model, buf, null);
-    BufferedImage target = new BufferedImage(colorModel, raster, false, null);
-    Graphics2D g2 = target.createGraphics();
-    g2.drawRenderedImage(image, null);
-    g2.dispose();
-    return target;
-  }
-
-  /**
-   * Get the bytes from an image, merging the channels as necessary.
-   */
+  /** Get the bytes from an image, merging the channels as necessary. */
   public static byte[] getBytes(BufferedImage img, boolean separated, int c) {
     byte[][] p = getBytes(img);
     if (separated || p.length == 1) return p[0];
