@@ -515,9 +515,7 @@ public final class DataTools {
     // now normalize; min => 0.0, max => 1.0
 
     for (int i=0; i<rtn.length; i++) {
-      rtn[i] = data[i] / max;
-      if (rtn[i] < 0f) rtn[i] = 0f;
-      if (rtn[i] > 1f) rtn[i] = 1f;
+      rtn[i] = (data[i] - min) / (max - min);
     }
 
     return rtn;

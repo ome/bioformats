@@ -1404,8 +1404,8 @@ public final class TiffTools {
         // float data
         float[][] floatData = new float[samplesPerPixel][samples[0].length / 4];
         for (int i=0; i<samplesPerPixel; i++) {
-          FloatBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asFloatBuffer();
-          sampleBuf.get(floatData[i]);
+          floatData[i] = (float[]) DataTools.makeDataArray(samples[i], 4, true,
+            isLittleEndian(ifd));
         }
         return ImageTools.makeImage(floatData,
           (int) imageWidth, (int) imageLength);

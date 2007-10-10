@@ -250,10 +250,8 @@ public final class ImageTools {
     else if (bps == 4) {
       float[][] floats = new float[data.length][data[0].length / bps];
       for (int i=0; i<floats.length; i++) {
-        for (int j=0; j<floats[0].length; j++) {
-          floats[i][j] = Float.intBitsToFloat(
-            DataTools.bytesToInt(data[i], j*4, 4, little));
-        }
+        floats[i] =
+          (float[]) DataTools.makeDataArray(data[i], bps, true, little);
       }
       return makeImage(floats, w, h);
     }

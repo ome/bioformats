@@ -350,11 +350,8 @@ public abstract class FormatReader extends FormatHandler
     byte[] buf = openBytes(no);
 
     if (getPixelType() == FormatTools.FLOAT) {
-      float[] f = new float[buf.length / 4];
-      for (int i=0; i<f.length; i++) {
-        int p = DataTools.bytesToInt(buf, i*4, 4, isLittleEndian());
-        f[i] = Float.intBitsToFloat(p);
-      }
+      float[] f =
+        (float[]) DataTools.makeDataArray(buf, 4, true, isLittleEndian());
 
       if (normalizeData) f = DataTools.normalizeFloats(f);
       return ImageTools.makeImage(f, core.sizeX[series], core.sizeY[series],

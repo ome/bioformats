@@ -118,11 +118,8 @@ public class ChannelSeparator extends ReaderWrapper {
     byte[] b = openBytes(no);
 
     if (getPixelType() == FormatTools.FLOAT) {
-      float[] f = new float[b.length / 4];
-      for (int i=0; i<b.length; i+=4) {
-        f[i/4] = Float.intBitsToFloat(DataTools.bytesToInt(b, i, 4,
-          isLittleEndian()));
-      }
+      float[] f =
+        (float[]) DataTools.makeDataArray(b, 4, true, isLittleEndian());
       if (isNormalized()) f = DataTools.normalizeFloats(f);
       return ImageTools.makeImage(f, getSizeX(), getSizeY());
     }
