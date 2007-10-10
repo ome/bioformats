@@ -886,11 +886,13 @@ public final class TiffTools {
       bitsPerSample = new int[bitsPerSample.length];
       for (int i=0; i<bitsPerSample.length; i++) bitsPerSample[i] = (int) temp;
       temp = stripOffsets[0];
+      /*
       stripOffsets = new long[bitsPerSample.length];
       for (int i=0; i<bitsPerSample.length; i++) {
         stripOffsets[i] = i == 0 ? temp :
           stripOffsets[i - 1] + stripByteCounts[i];
       }
+      */
 
       // we have two files that reverse the endianness for BitsPerSample,
       // StripOffsets, and StripByteCounts
@@ -1004,12 +1006,12 @@ public final class TiffTools {
         }
       }
 
-      samplesPerPixel = stripOffsets.length;
+      //samplesPerPixel = stripOffsets.length;
     }
 
     if (lastBitsZero) {
       bitsPerSample[bitsPerSample.length - 1] = 0;
-      samplesPerPixel--;
+      //samplesPerPixel--;
     }
 
     TiffRational xResolution = getIFDRationalValue(ifd, X_RESOLUTION, false);
@@ -1144,14 +1146,15 @@ public final class TiffTools {
 
     long numStrips = (imageLength + rowsPerStrip - 1) / rowsPerStrip;
 
-    if (isTiled) numStrips = stripOffsets.length;
+    if (isTiled || fakeRPS) numStrips = stripOffsets.length;
     if (planarConfig == 2) numStrips *= samplesPerPixel;
 
-    if (stripOffsets.length < numStrips) {
+    if (stripOffsets.length < numStrips && !fakeRPS) {
       throw new FormatException("StripOffsets length (" +
         stripOffsets.length + ") does not match expected " +
         "number of strips (" + numStrips + ")");
     }
+    else if (fakeRPS) numStrips = stripOffsets.length;
 
     if (stripByteCounts.length < numStrips) {
       throw new FormatException("StripByteCounts length (" +
@@ -1185,6 +1188,15 @@ public final class TiffTools {
       tempMap[tempMap.length - 2] = (int) imageWidth;
       tempMap[tempMap.length - 1] = (int) imageLength;
       colorMap = tempMap;
+    }
+
+    if (stripOffsets.length > 1 && (stripOffsets[stripOffsets.length - 1] ==
+      stripOffsets[stripOffsets.length - 2]))
+    {
+      long[] tmp = stripOffsets;
+      stripOffsets = new long[tmp.length - 1];
+      System.arraycopy(tmp, 0, stripOffsets, 0, stripOffsets.length);
+      numStrips--;
     }
 
     short[][] samples = new short[samplesPerPixel][numSamples];
@@ -1497,15 +1509,17 @@ public final class TiffTools {
         index++;
 
         int ndx = startIndex + j;
-        samples[channelNum][ndx] = (short) (b < 0 ? 256 + b : b);
+        if (ndx < samples[channelNum].length) {
+          samples[channelNum][ndx] = (short) (b < 0 ? 256 + b : b);
 
-        if (photoInterp == WHITE_IS_ZERO) { // invert color value
-          samples[channelNum][ndx] =
-            (short) ((65535 - samples[channelNum][ndx]) & 0xffff);
-        }
-        else if (photoInterp == CMYK) {
-          samples[channelNum][ndx] =
-            (short) (Integer.MAX_VALUE - samples[channelNum][ndx]);
+          if (photoInterp == WHITE_IS_ZERO) { // invert color value
+            samples[channelNum][ndx] =
+              (short) ((65535 - samples[channelNum][ndx]) & 0xffff);
+          }
+          else if (photoInterp == CMYK) {
+            samples[channelNum][ndx] =
+              (short) (Integer.MAX_VALUE - samples[channelNum][ndx]);
+          }
         }
       }
       else {
