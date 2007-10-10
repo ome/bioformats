@@ -406,14 +406,15 @@ public final class ImageTools {
   {
     ColorModel colorModel = makeColorModel(c, type);
     if (colorModel == null) return null;
-    int pixelStride = interleaved ? c : 1;
-    int scanlineStride = interleaved ? (c * w) : w;
-    if (c == 2) c++;
-    int[] bandOffsets = new int[c];
-    for (int i=0; i<c; i++) bandOffsets[i] = interleaved ? i : (i * w * h);
 
-    SampleModel model = new ComponentSampleModel(type, w, h, pixelStride,
-      scanlineStride, bandOffsets);
+    SampleModel model;
+    if (interleaved) {
+      int[] bandOffsets = new int[c];
+      for (int i=0; i<c; i++) bandOffsets[i] = i;
+      model = new PixelInterleavedSampleModel(type,
+        w, h, c, c * w, bandOffsets);
+    }
+    else model = new BandedSampleModel(type, w, h, c);
 
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
@@ -439,19 +440,11 @@ public final class ImageTools {
 
   /** Extracts pixel data as arrays of unsigned bytes, one per channel. */
   public static byte[][] getBytes(BufferedImage image) {
-    int dataType = DataBuffer.TYPE_BYTE;
     WritableRaster r = image.getRaster();
-    if (r.getTransferType() == dataType) {
-      DataBuffer buffer = r.getDataBuffer();
-      if (buffer instanceof DataBufferByte) {
-        SampleModel model = r.getSampleModel();
-        // NB: Could implement additional checks for ComponentSampleModel
-        // with particular characteristics to also use this shortcut.
-        if (model instanceof BandedSampleModel) {
-          // return bytes directly, with no copy
-          return ((DataBufferByte) buffer).getBankData();
-        }
-      }
+    if (canUseBankDataDirectly(image, 1,
+      DataBuffer.TYPE_BYTE, DataBufferByte.class))
+    {
+      return ((DataBufferByte) r.getDataBuffer()).getBankData();
     }
     //return getBytes(makeType(image, dataType));
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
@@ -467,17 +460,10 @@ public final class ImageTools {
   /** Extracts pixel data as arrays of unsigned shorts, one per channel. */
   public static short[][] getShorts(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    if (r.getTransferType() == DataBuffer.TYPE_USHORT) {
-      DataBuffer buffer = r.getDataBuffer();
-      if (buffer instanceof DataBufferUShort) {
-        SampleModel model = r.getSampleModel();
-        // NB: Could implement additional checks for ComponentSampleModel
-        // with particular characteristics to also use this shortcut.
-        if (model instanceof BandedSampleModel) {
-          // return shorts directly, with no copy
-          return ((DataBufferUShort) buffer).getBankData();
-        }
-      }
+    if (canUseBankDataDirectly(image, 2,
+      DataBuffer.TYPE_USHORT, DataBufferUShort.class))
+    {
+      return ((DataBufferUShort) r.getDataBuffer()).getBankData();
     }
     //return getShorts(makeType(image, DataBuffer.TYPE_USHORT));
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
@@ -493,18 +479,10 @@ public final class ImageTools {
   /** Extracts pixel data as arrays of signed integers, one per channel. */
   public static int[][] getInts(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    int tt = r.getTransferType();
-    if (tt == DataBuffer.TYPE_INT) {
-      DataBuffer buffer = r.getDataBuffer();
-      if (buffer instanceof DataBufferInt) {
-        SampleModel model = r.getSampleModel();
-        // NB: Could implement additional checks for ComponentSampleModel
-        // with particular characteristics to also use this shortcut.
-        if (model instanceof BandedSampleModel) {
-          // return ints directly, with no copy
-          return ((DataBufferInt) buffer).getBankData();
-        }
-      }
+    if (canUseBankDataDirectly(image, 4,
+      DataBuffer.TYPE_INT, DataBufferInt.class))
+    {
+      return ((DataBufferInt) r.getDataBuffer()).getBankData();
     }
     // NB: an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
@@ -516,18 +494,10 @@ public final class ImageTools {
   /** Extracts pixel data as arrays of floats, one per channel. */
   public static float[][] getFloats(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    int tt = r.getTransferType();
-    if (tt == DataBuffer.TYPE_FLOAT) {
-      DataBuffer buffer = r.getDataBuffer();
-      if (buffer instanceof DataBufferFloat) {
-        SampleModel model = r.getSampleModel();
-        // NB: Could implement additional checks for ComponentSampleModel
-        // with particular characteristics to also use this shortcut.
-        if (model instanceof BandedSampleModel) {
-          // return floats directly, with no copy
-          return ((DataBufferFloat) buffer).getBankData();
-        }
-      }
+    if (canUseBankDataDirectly(image, 4,
+      DataBuffer.TYPE_FLOAT, DataBufferFloat.class))
+    {
+      return ((DataBufferFloat) r.getDataBuffer()).getBankData();
     }
     // NB: an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
@@ -539,24 +509,49 @@ public final class ImageTools {
   /** Extracts pixel data as arrays of doubles, one per channel. */
   public static double[][] getDoubles(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    int tt = r.getTransferType();
-    if (tt == DataBuffer.TYPE_DOUBLE) {
-      DataBuffer buffer = r.getDataBuffer();
-      if (buffer instanceof DataBufferDouble) {
-        SampleModel model = r.getSampleModel();
-        // NB: Could implement additional checks for ComponentSampleModel
-        // with particular characteristics to also use this shortcut.
-        if (model instanceof BandedSampleModel) {
-          // return doubles directly, with no copy
-          return ((DataBufferDouble) buffer).getBankData();
-        }
-      }
+    if (canUseBankDataDirectly(image, 8,
+      DataBuffer.TYPE_DOUBLE, DataBufferDouble.class))
+    {
+      return ((DataBufferDouble) r.getDataBuffer()).getBankData();
     }
     // NB: an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
     double[][] samples = new double[c][w * h];
     for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
     return samples;
+  }
+
+  /**
+   * Whether we can return the data buffer's bank data
+   * without performing any copy or conversion operations.
+   */
+  private static boolean canUseBankDataDirectly(BufferedImage image,
+    int bytesPerPixel, int transferType, Class dataBufferClass)
+  {
+    WritableRaster r = image.getRaster();
+    int tt = r.getTransferType();
+    if (tt != transferType) return false;
+    DataBuffer buffer = r.getDataBuffer();
+    if (!dataBufferClass.isInstance(buffer)) return false;
+    SampleModel model = r.getSampleModel();
+    if (!(model instanceof ComponentSampleModel)) return false;
+    ComponentSampleModel csm = (ComponentSampleModel) model;
+    int pixelStride = csm.getPixelStride();
+    if (pixelStride != 1) return false;
+    int w = r.getWidth();
+    int scanlineStride = csm.getScanlineStride();
+    if (scanlineStride != w) return false;
+    int c = r.getNumBands();
+    int[] bandOffsets = csm.getBandOffsets();
+    if (bandOffsets.length != c) return false;
+    for (int i=0; i<bandOffsets.length; i++) {
+      if (bandOffsets[i] != 0) return false;
+    }
+    int[] bankIndices = csm.getBankIndices();
+    for (int i=0; i<bandOffsets.length; i++) {
+      if (bandOffsets[i] != i) return false;
+    }
+    return true;
   }
 
   /**
