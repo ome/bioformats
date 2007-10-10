@@ -159,7 +159,8 @@ public class Exporter {
         if (forceType) {
           if (notSupportedType) {
             int[] types = w.getPixelTypes();
-            img = ImageTools.makeType(img, types[types.length - 1]);
+            // TODO - come up with another way to do this...
+            //img = ImageTools.makeType(img, types[types.length - 1]);
           }
           w.saveImage(img, i == end - 1);
         }
