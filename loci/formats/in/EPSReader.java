@@ -167,7 +167,6 @@ public class EPSReader extends FormatReader {
       core.sizeZ[0] = 1;
       core.sizeT[0] = 1;
       core.sizeC[0] = TiffTools.getSamplesPerPixel(ifds[0]);
-      if (core.sizeC[0] == 2) core.sizeC[0] = 3;
       core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
       core.interleaved[0] = true;
       core.rgb[0] = core.sizeC[0] > 1;

@@ -1461,12 +1461,6 @@ public final class TiffTools {
         (int) imageLength, 1, false);
     }
 
-    if (samples.length == 2) {
-      byte[][] s = new byte[3][samples[0].length];
-      System.arraycopy(samples[0], 0, s[0], 0, s[0].length);
-      System.arraycopy(samples[1], 0, s[1], 0, s[1].length);
-      samples = s;
-    }
     return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
   }
 

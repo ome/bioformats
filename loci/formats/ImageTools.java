@@ -982,7 +982,6 @@ public final class ImageTools {
       list[i] = o;
     }
     if (c < 1 || c > 4) return null;
-    if (c == 2) c = 3; // blank B channel
 
     // compile results into a single array
     int w = images[0].getWidth(), h = images[0].getHeight();

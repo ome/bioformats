@@ -635,8 +635,6 @@ public class ND2Reader extends FormatReader {
       pixSizeZ = Float.parseFloat(pixZ.trim());
     }
 
-    if (core.sizeC[0] == 2) core.sizeC[0] = 1;
-
     core.currentOrder[0] = "XY";
     long deltaT = ts.size() > 1 ?
       ((Long) ts.get(1)).longValue() - ((Long) ts.get(0)).longValue() : 1;
