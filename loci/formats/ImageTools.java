@@ -52,21 +52,336 @@ public final class ImageTools {
 
   private ImageTools() { }
 
-  // -- Image construction --
+  // -- Image construction - from 1D (single channel) data arrays --
 
   /**
-   * Creates an image from the given data, performing type conversions as
-   * necessary.
-   * If the interleaved flag is set, the channels are assumed to be
-   * interleaved; otherwise they are assumed to be sequential.
-   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   * while "RRR...GGG...BBB..." is sequential.
+   * Creates an image from the given single-channel unsigned byte data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(byte[] data, int w, int h) {
+    return makeImage(new byte[][] {data}, w, h);
+  }
+
+  /**
+   * Creates an image from the given single-channel unsigned short data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(short[] data, int w, int h) {
+    return makeImage(new short[][] {data}, w, h);
+  }
+
+  /**
+   * Creates an image from the given single-channel signed int data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(int[] data, int w, int h) {
+    return makeImage(new int[][] {data}, w, h);
+  }
+
+  /**
+   * Creates an image from the given single-channel float data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(float[] data, int w, int h) {
+    return makeImage(new float[][] {data}, w, h);
+  }
+
+  /**
+   * Creates an image from the given single-channel double data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(double[] data, int w, int h) {
+    return makeImage(new double[][] {data}, w, h);
+  }
+
+  // -- Image construction - from 1D (interleaved or banded) data arrays --
+
+  /**
+   * Creates an image from the given unsigned byte data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param interleaved If set, the channels are assumed to be interleaved;
+   *   otherwise they are assumed to be sequential.
+   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   *   while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(byte[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    if (c == 1) return makeImage(data, w, h);
+    int dataType = DataBuffer.TYPE_BYTE;
+    if (c == 2) {
+      byte[] tmp = data;
+      data = new byte[(tmp.length / 2) * 3];
+      if (interleaved) {
+        for (int i=0; i<tmp.length/2; i++) {
+          data[i*3] = tmp[i*2];
+          data[i*3 + 1] = tmp[i*2 + 1];
+        }
+      }
+      else System.arraycopy(tmp, 0, data, 0, tmp.length);
+      c++;
+    }
+    DataBuffer buffer = new DataBufferByte(data, c * w * h);
+    return constructImage(c, dataType, w, h, interleaved, false, buffer);
+  }
+
+  /**
+   * Creates an image from the given unsigned short data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param interleaved If set, the channels are assumed to be interleaved;
+   *   otherwise they are assumed to be sequential.
+   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   *   while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(short[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    if (c == 1) return makeImage(data, w, h);
+    int dataType = DataBuffer.TYPE_USHORT;
+    if (c == 2) {
+      short[] tmp = data;
+      data = new short[(tmp.length / 2) * 3];
+      if (interleaved) {
+        for (int i=0; i<tmp.length/2; i++) {
+          data[i*3] = tmp[i*2];
+          data[i*3 + 1] = tmp[i*2 + 1];
+        }
+      }
+      else System.arraycopy(tmp, 0, data, 0, tmp.length);
+      c++;
+    }
+    DataBuffer buffer = new DataBufferUShort(data, c * w * h);
+    return constructImage(c, dataType, w, h, interleaved, false, buffer);
+  }
+
+  /**
+   * Creates an image from the given signed int data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param interleaved If set, the channels are assumed to be interleaved;
+   *   otherwise they are assumed to be sequential.
+   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   *   while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(int[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    if (c == 1) return makeImage(data, w, h);
+    int dataType = DataBuffer.TYPE_INT;
+    if (c == 2) {
+      int[] tmp = data;
+      data = new int[(tmp.length / 2) * 3];
+      if (interleaved) {
+        for (int i=0; i<tmp.length/2; i++) {
+          data[i*3] = tmp[i*2];
+          data[i*3 + 1] = tmp[i*2 + 1];
+        }
+      }
+      else System.arraycopy(tmp, 0, data, 0, tmp.length);
+      c++;
+    }
+    DataBuffer buffer = new DataBufferInt(data, c * w * h);
+    return constructImage(c, dataType, w, h, interleaved, false, buffer);
+  }
+
+  /**
+   * Creates an image from the given float data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param interleaved If set, the channels are assumed to be interleaved;
+   *   otherwise they are assumed to be sequential.
+   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   *   while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(float[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    if (c == 1) return makeImage(data, w, h);
+    int dataType = DataBuffer.TYPE_FLOAT;
+    if (c == 2) {
+      float[] tmp = data;
+      data = new float[(tmp.length / 2) * 3];
+      if (interleaved) {
+        for (int i=0; i<tmp.length/2; i++) {
+          data[i*3] = tmp[i*2];
+          data[i*3 + 1] = tmp[i*2 + 1];
+        }
+      }
+      else System.arraycopy(tmp, 0, data, 0, tmp.length);
+      c++;
+    }
+    DataBuffer buffer = new DataBufferFloat(data, c * w * h);
+    return constructImage(c, dataType, w, h, interleaved, false, buffer);
+  }
+
+  /**
+   * Creates an image from the given double data.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param interleaved If set, the channels are assumed to be interleaved;
+   *   otherwise they are assumed to be sequential.
+   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   *   while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(double[] data,
+    int w, int h, int c, boolean interleaved)
+  {
+    if (c == 1) return makeImage(data, w, h);
+    int dataType = DataBuffer.TYPE_DOUBLE;
+    if (c == 2) {
+      double[] tmp = data;
+      data = new double[(tmp.length / 2) * 3];
+      if (interleaved) {
+        for (int i=0; i<tmp.length/2; i++) {
+          data[i*3] = tmp[i*2];
+          data[i*3 + 1] = tmp[i*2 + 1];
+        }
+      }
+      else System.arraycopy(tmp, 0, data, 0, tmp.length);
+      c++;
+    }
+    DataBuffer buffer = new DataBufferDouble(data, c * w * h);
+    return constructImage(c, dataType, w, h, interleaved, false, buffer);
+  }
+
+  // -- Image construction - from 2D (banded) data arrays --
+
+  /**
+   * Creates an image from the given unsigned byte data.
+   * @param data Array containing image data.
+   *   It is assumed that each channel corresponds to one element of the array.
+   *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(byte[][] data, int w, int h) {
+    int dataType = DataBuffer.TYPE_BYTE;
+    DataBuffer buffer = new DataBufferByte(data, data[0].length);
+    return constructImage(data.length, dataType, w, h, false, true, buffer);
+  }
+
+  /**
+   * Creates an image from the given unsigned short data.
+   * @param data Array containing image data.
+   *   It is assumed that each channel corresponds to one element of the array.
+   *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(short[][] data, int w, int h) {
+    int dataType = DataBuffer.TYPE_USHORT;
+    DataBuffer buffer = new DataBufferUShort(data, data[0].length);
+    return constructImage(data.length, dataType, w, h, false, true, buffer);
+  }
+
+  /**
+   * Creates an image from the given signed int data.
+   * @param data Array containing image data.
+   *   It is assumed that each channel corresponds to one element of the array.
+   *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(int[][] data, int w, int h) {
+    int dataType = DataBuffer.TYPE_INT;
+    DataBuffer buffer = new DataBufferInt(data, data[0].length);
+    return constructImage(data.length, dataType, w, h, false, true, buffer);
+  }
+
+  /**
+   * Creates an image from the given single-precision floating point data.
+   * @param data Array containing image data.
+   *   It is assumed that each channel corresponds to one element of the array.
+   *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(float[][] data, int w, int h) {
+    int dataType = DataBuffer.TYPE_FLOAT;
+    DataBuffer buffer = new DataBufferFloat(data, data[0].length);
+    return constructImage(data.length, dataType, w, h, false, true, buffer);
+  }
+
+  /**
+   * Creates an image from the given double-precision floating point data.
+   * @param data Array containing image data.
+   *   It is assumed that each channel corresponds to one element of the array.
+   *   For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   */
+  public static BufferedImage makeImage(double[][] data, int w, int h) {
+    int dataType = DataBuffer.TYPE_DOUBLE;
+    DataBuffer buffer = new DataBufferDouble(data, data[0].length);
+    return constructImage(data.length, dataType, w, h, false, true, buffer);
+  }
+
+  // -- Image construction - with type conversion --
+
+  /**
+   * Creates an image from the given data,
+   * performing type conversions as necessary.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param interleaved If set, the channels are assumed to be interleaved;
+   *   otherwise they are assumed to be sequential.
+   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   *   while "RRR...GGG...BBB..." is sequential.
+   * @param bpp Denotes the number of bytes in the returned primitive type
+   *   (e.g. if bpp == 2, we should return an array of type short).
+   * @param little Whether byte array is in little-endian order.
    */
   public static BufferedImage makeImage(byte[] data, int w, int h, int c,
-    boolean interleaved, int bps, boolean little)
+    boolean interleaved, int bpp, boolean little)
   {
-    Object pixels = DataTools.makeDataArray(data, bps % 3 == 0 ? bps / 3 : bps,
-      false, little);
+    return makeImage(data, w, h, c, interleaved, bpp, false, little);
+  }
+
+  /**
+   * Creates an image from the given data,
+   * performing type conversions as necessary.
+   * @param data Array containing image data.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param interleaved If set, the channels are assumed to be interleaved;
+   *   otherwise they are assumed to be sequential.
+   *   For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   *   while "RRR...GGG...BBB..." is sequential.
+   * @param bpp Denotes the number of bytes in the returned primitive type
+   *   (e.g. if bpp == 2, we should return an array of type short).
+   * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
+   * @param little Whether byte array is in little-endian order.
+   */
+  public static BufferedImage makeImage(byte[] data, int w, int h, int c,
+    boolean interleaved, int bpp, boolean fp, boolean little)
+  {
+    Object pixels = DataTools.makeDataArray(data,
+      bpp % 3 == 0 ? bpp / 3 : bpp, fp, little);
 
     if (pixels instanceof byte[]) {
       return makeImage((byte[]) pixels, w, h, c, interleaved);
@@ -87,334 +402,126 @@ public final class ImageTools {
   }
 
   /**
-   * Creates an image from the given unsigned byte data.
-   * If the interleaved flag is set, the channels are assumed to be
-   * interleaved; otherwise they are assumed to be sequential.
-   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   * while "RRR...GGG...BBB..." is sequential.
+   * Creates an image from the given data,
+   * performing type conversions as necessary.
+   * @param data Array containing image data, one channel per element.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param bpp Denotes the number of bytes in the returned primitive type
+   *   (e.g. if bpp == 2, we should return an array of type short).
+   * @param little Whether byte array is in little-endian order.
    */
-  public static BufferedImage makeImage(byte[] data,
-    int w, int h, int c, boolean interleaved)
+  public static BufferedImage makeImage(byte[][] data,
+    int w, int h, int bpp, boolean little)
   {
-    if (c == 1) return makeImage(data, w, h);
-    int dataType = DataBuffer.TYPE_BYTE;
-    if (c == 2) {
-      byte[] tmp = data;
-      data = new byte[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
-      }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
-    DataBuffer buffer = new DataBufferByte(data, c * w * h);
-    return constructImage(c, dataType, w, h, interleaved, buffer);
+    return makeImage(data, w, h, bpp, false, little);
   }
 
   /**
-   * Creates an image from the given unsigned short data.
-   * If the interleaved flag is set, the channels are assumed to be
-   * interleaved; otherwise they are assumed to be sequential.
-   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   * while "RRR...GGG...BBB..." is sequential.
+   * Creates an image from the given data,
+   * performing type conversions as necessary.
+   * @param data Array containing image data, one channel per element.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param bpp Denotes the number of bytes in the returned primitive type
+   *   (e.g. if bpp == 2, we should return an array of type short).
+   * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
+   * @param little Whether byte array is in little-endian order.
    */
-  public static BufferedImage makeImage(short[] data,
-    int w, int h, int c, boolean interleaved)
+  public static BufferedImage makeImage(byte[][] data,
+    int w, int h, int bpp, boolean fp, boolean little)
   {
-    if (c == 1) return makeImage(data, w, h);
-    int dataType = DataBuffer.TYPE_USHORT;
-    if (c == 2) {
-      short[] tmp = data;
-      data = new short[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
+    int c = data.length;
+    Object v = null;
+    for (int i=0; i<c; i++) {
+      Object pixels = DataTools.makeDataArray(data[i],
+        bpp % 3 == 0 ? bpp / 3 : bpp, fp, little);
+      if (pixels instanceof byte[]) {
+        if (v == null) v = new byte[c][];
+        ((byte[][]) v)[i] = (byte[]) pixels;
       }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
-    DataBuffer buffer = new DataBufferUShort(data, c * w * h);
-    return constructImage(c, dataType, w, h, interleaved, buffer);
-  }
-
-  /**
-   * Creates an image from the given signed int data.
-   * If the interleaved flag is set, the channels are assumed to be
-   * interleaved; otherwise they are assumed to be sequential.
-   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   * while "RRR...GGG...BBB..." is sequential.
-   */
-  public static BufferedImage makeImage(int[] data,
-    int w, int h, int c, boolean interleaved)
-  {
-    if (c == 1) return makeImage(data, w, h);
-    int dataType = DataBuffer.TYPE_INT;
-    if (c == 2) {
-      int[] tmp = data;
-      data = new int[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
+      else if (pixels instanceof short[]) {
+        if (v == null) v = new short[c][];
+        ((short[][]) v)[i] = (short[]) pixels;
       }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
-    DataBuffer buffer = new DataBufferInt(data, c * w * h);
-    return constructImage(c, dataType, w, h, interleaved, buffer);
-  }
-
-  /**
-   * Creates an image from the given float data.
-   * If the interleaved flag is set, the channels are assumed to be
-   * interleaved; otherwise they are assumed to be sequential.
-   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   * while "RRR...GGG...BBB..." is sequential.
-   */
-  public static BufferedImage makeImage(float[] data,
-    int w, int h, int c, boolean interleaved)
-  {
-    if (c == 1) return makeImage(data, w, h);
-    int dataType = DataBuffer.TYPE_FLOAT;
-    if (c == 2) {
-      float[] tmp = data;
-      data = new float[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
+      else if (pixels instanceof int[]) {
+        if (v == null) v = new int[c][];
+        ((int[][]) v)[i] = (int[]) pixels;
       }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
-    DataBuffer buffer = new DataBufferFloat(data, c * w * h);
-    return constructImage(c, dataType, w, h, interleaved, buffer);
-  }
-
-  /**
-   * Creates an image from the given double data.
-   * If the interleaved flag is set, the channels are assumed to be
-   * interleaved; otherwise they are assumed to be sequential.
-   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   * while "RRR...GGG...BBB..." is sequential.
-   */
-  public static BufferedImage makeImage(double[] data,
-    int w, int h, int c, boolean interleaved)
-  {
-    if (c == 1) return makeImage(data, w, h);
-    int dataType = DataBuffer.TYPE_DOUBLE;
-    if (c == 2) {
-      double[] tmp = data;
-      data = new double[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
+      else if (pixels instanceof float[]) {
+        if (v == null) v = new float[c][];
+        ((float[][]) v)[i] = (float[]) pixels;
       }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
-    DataBuffer buffer = new DataBufferDouble(data, c * w * h);
-    return constructImage(c, dataType, w, h, interleaved, buffer);
-  }
-
-  /**
-   * Creates an image from the given data, performing type conversions as
-   * necessary.
-   * If the interleaved flag is set, the channels are assumed to be
-   * interleaved; otherwise they are assumed to be sequential.
-   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
-   * while "RRR...GGG...BBB..." is sequential.
-   */
-  public static BufferedImage makeImage(byte[][] data, int w, int h,
-    int bps, boolean little)
-  {
-    if (bps == 1) return makeImage(data, w, h);
-    else if (bps == 2) {
-      short[][] shorts = new short[data.length][data[0].length / bps];
-      for (int i=0; i<shorts.length; i++) {
-        for (int j=0; j<shorts[0].length; j++) {
-          shorts[i][j] = DataTools.bytesToShort(data[i], j*2, 2, little);
-        }
+      else if (pixels instanceof double[]) {
+        if (v == null) v = new double[c][];
+        ((double[][]) v)[i] = (double[]) pixels;
       }
-      return makeImage(shorts, w, h);
     }
-    else if (bps == 4) {
-      float[][] floats = new float[data.length][data[0].length / bps];
-      for (int i=0; i<floats.length; i++) {
-        floats[i] =
-          (float[]) DataTools.makeDataArray(data[i], bps, true, little);
-      }
-      return makeImage(floats, w, h);
-    }
-    else {
-      double[][] doubles = new double[data.length][data[0].length / bps];
-      for (int i=0; i<doubles.length; i++) {
-        for (int j=0; j<doubles[0].length; j++) {
-          doubles[i][j] = Double.longBitsToDouble(
-            DataTools.bytesToLong(data[i], j*bps, bps, little));
-        }
-      }
-      return makeImage(doubles, w, h);
-    }
+    if (v instanceof byte[][]) return makeImage((byte[][]) v, w, h);
+    else if (v instanceof short[][]) return makeImage((short[][]) v, w, h);
+    else if (v instanceof int[][]) return makeImage((int[][]) v, w, h);
+    else if (v instanceof float[][]) return makeImage((float[][]) v, w, h);
+    else if (v instanceof double[][]) return makeImage((double[][]) v, w, h);
+    return null;
   }
+
+  // -- Image construction - miscellaneous --
 
   /**
-   * Creates an image from the given unsigned byte data.
-   * It is assumed that each channel corresponds to one element of the array.
-   * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
+   * Creates a blank image with the given dimensions and transfer type.
+   * @param w Width of image plane.
+   * @param h Height of image plane.
+   * @param c Number of channels.
+   * @param type One of the following types:<ul>
+   *   <li>FormatReader.INT8</li>
+   *   <li>FormatReader.UINT8</li>
+   *   <li>FormatReader.INT16</li>
+   *   <li>FormatReader.UINT16</li>
+   *   <li>FormatReader.INT32</li>
+   *   <li>FormatReader.UINT32</li>
+   *   <li>FormatReader.FLOAT</li>
+   *   <li>FormatReader.DOUBLE</li>
+   * </ul>
    */
-  public static BufferedImage makeImage(byte[][] data, int w, int h) {
-    int dataType = DataBuffer.TYPE_BYTE;
-    ColorModel colorModel = makeColorModel(data.length, dataType);
-    if (colorModel == null) return null;
-    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
-    DataBuffer buffer = new DataBufferByte(data, data[0].length);
-    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
-    return new BufferedImage(colorModel, raster, false, null);
-  }
-
-  /**
-   * Creates an image from the given unsigned short data.
-   * It is assumed that each channel corresponds to one element of the array.
-   * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
-   */
-  public static BufferedImage makeImage(short[][] data, int w, int h) {
-    int dataType = DataBuffer.TYPE_USHORT;
-    ColorModel colorModel = makeColorModel(data.length, dataType);
-    if (colorModel == null) return null;
-    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
-    DataBuffer buffer = new DataBufferUShort(data, data[0].length);
-    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
-    return new BufferedImage(colorModel, raster, false, null);
-  }
-
-  /**
-   * Creates an image from the given signed int data.
-   * It is assumed that each channel corresponds to one element of the array.
-   * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
-   */
-  public static BufferedImage makeImage(int[][] data, int w, int h) {
-    int dataType = DataBuffer.TYPE_INT;
-    ColorModel colorModel = makeColorModel(data.length, dataType);
-    if (colorModel == null) return null;
-    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
-    DataBuffer buffer = new DataBufferInt(data, data[0].length);
-    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
-    return new BufferedImage(colorModel, raster, false, null);
-  }
-
-  /**
-   * Creates an image from the given single-precision floating point data.
-   * It is assumed that each channel corresponds to one element of the array.
-   * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
-   */
-  public static BufferedImage makeImage(float[][] data, int w, int h) {
-    int dataType = DataBuffer.TYPE_FLOAT;
-    ColorModel colorModel = makeColorModel(data.length, dataType);
-    if (colorModel == null) return null;
-    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
-    DataBuffer buffer = new DataBufferFloat(data, data[0].length);
-    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
-    return new BufferedImage(colorModel, raster, false, null);
-  }
-
-  /**
-   * Creates an image from the given double-precision floating point data.
-   * It is assumed that each channel corresponds to one element of the array.
-   * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
-   */
-  public static BufferedImage makeImage(double[][] data, int w, int h) {
-    int dataType = DataBuffer.TYPE_DOUBLE;
-    ColorModel colorModel = makeColorModel(data.length, dataType);
-    if (colorModel == null) return null;
-    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
-    DataBuffer buffer = new DataBufferDouble(data, data[0].length);
-    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
-    return new BufferedImage(colorModel, raster, false, null);
-  }
-
-  /** Creates an image from the given single-channel unsigned byte data. */
-  public static BufferedImage makeImage(byte[] data, int w, int h) {
-    return makeImage(new byte[][] {data}, w, h);
-  }
-
-  /** Creates an image from the given single-channel unsigned short data. */
-  public static BufferedImage makeImage(short[] data, int w, int h) {
-    return makeImage(new short[][] {data}, w, h);
-  }
-
-  /** Creates an image from the given single-channel signed int data. */
-  public static BufferedImage makeImage(int[] data, int w, int h) {
-    return makeImage(new int[][] {data}, w, h);
-  }
-
-  /** Creates an image from the given single-channel float data. */
-  public static BufferedImage makeImage(float[] data, int w, int h) {
-    return makeImage(new float[][] {data}, w, h);
-  }
-
-  /** Creates an image from the given single-channel double data. */
-  public static BufferedImage makeImage(double[] data, int w, int h) {
-    return makeImage(new double[][] {data}, w, h);
-  }
-
-  /** Create a blank image with the given dimensions and transfer type. */
   public static BufferedImage blankImage(int w, int h, int c, int type) {
-    int tt = 0;
-    DataBuffer buffer = null;
     switch (type) {
       case FormatTools.INT8:
       case FormatTools.UINT8:
-        tt = DataBuffer.TYPE_BYTE;
-        buffer = new DataBufferByte(new byte[c * w * h], c * w * h);
-        break;
+        return makeImage(new byte[c][w * h], w, h);
       case FormatTools.INT16:
       case FormatTools.UINT16:
-        tt = DataBuffer.TYPE_USHORT;
-        buffer = new DataBufferUShort(new short[c * w * h], c * w * h);
-        break;
+        return makeImage(new short[c][w * h], w, h);
       case FormatTools.INT32:
       case FormatTools.UINT32:
-        tt = DataBuffer.TYPE_INT;
-        buffer = new DataBufferInt(new int[c * w * h], c * w * h);
-        break;
+        return makeImage(new int[c][w * h], w, h);
       case FormatTools.FLOAT:
-        tt = DataBuffer.TYPE_FLOAT;
-        buffer = new DataBufferFloat(new float[c * w * h], c * w * h);
-        break;
+        return makeImage(new float[c][w * h], w, h);
       case FormatTools.DOUBLE:
-        tt = DataBuffer.TYPE_DOUBLE;
-        buffer = new DataBufferDouble(new double[c * w * h], c * w * h);
-        break;
+        return makeImage(new double[c][w * h], w, h);
     }
-
-    return constructImage(c, tt, w, h, true, buffer);
+    return null;
   }
 
-  /** Create an image with the given DataBuffer. */
+  /** Creates an image with the given DataBuffer. */
   private static BufferedImage constructImage(int c, int type, int w,
-    int h, boolean interleaved, DataBuffer buffer)
+    int h, boolean interleaved, boolean banded, DataBuffer buffer)
   {
     ColorModel colorModel = makeColorModel(c, type);
     if (colorModel == null) return null;
 
     SampleModel model;
-    if (interleaved) {
+    if (banded) model = new BandedSampleModel(type, w, h, c);
+    else if (interleaved) {
       int[] bandOffsets = new int[c];
       for (int i=0; i<c; i++) bandOffsets[i] = i;
       model = new PixelInterleavedSampleModel(type,
         w, h, c, c * w, bandOffsets);
     }
-    else model = new BandedSampleModel(type, w, h, c);
+    else {
+      int[] bandOffsets = new int[c];
+      for (int i=0; i<c; i++) bandOffsets[i] = i * w * h;
+      model = new ComponentSampleModel(type, w, h, 1, w, bandOffsets);
+    }
 
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
@@ -678,31 +785,31 @@ public final class ImageTools {
   // using Raster.getPixels instead. But we have left the makeType method here
   // in case we decide to explore this issue any further in the future.
 
-//  /** Copies the given image into a result with the specified data type. */
-//  public static BufferedImage makeType(BufferedImage image, int type) {
-//    WritableRaster r = image.getRaster();
-//    int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
-//    ColorModel colorModel = makeColorModel(c, type);
-//    if (colorModel == null) return null;
-//
-//    int s = w * h;
-//    DataBuffer buf = null;
-//    if (type == DataBuffer.TYPE_BYTE) buf = new DataBufferByte(s, c);
-//    else if (type == DataBuffer.TYPE_USHORT) buf = new DataBufferUShort(s, c);
-//    else if (type == DataBuffer.TYPE_INT) buf = new DataBufferInt(s, c);
-//    else if (type == DataBuffer.TYPE_SHORT) buf = new DataBufferShort(s, c);
-//    else if (type == DataBuffer.TYPE_FLOAT) buf = new DataBufferFloat(s, c);
-//    else if (type == DataBuffer.TYPE_DOUBLE) buf = new DataBufferDouble(s, c);
-//    if (buf == null) return null;
-//
-//    SampleModel model = new BandedSampleModel(type, w, h, c);
-//    WritableRaster raster = Raster.createWritableRaster(model, buf, null);
-//    BufferedImage target = new BufferedImage(colorModel, raster, false, null);
-//    Graphics2D g2 = target.createGraphics();
-//    g2.drawRenderedImage(image, null);
-//    g2.dispose();
-//    return target;
-//  }
+  ///** Copies the given image into a result with the specified data type. */
+  //public static BufferedImage makeType(BufferedImage image, int type) {
+  //  WritableRaster r = image.getRaster();
+  //  int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
+  //  ColorModel colorModel = makeColorModel(c, type);
+  //  if (colorModel == null) return null;
+  //
+  //  int s = w * h;
+  //  DataBuffer buf = null;
+  //  if (type == DataBuffer.TYPE_BYTE) buf = new DataBufferByte(s, c);
+  //  else if (type == DataBuffer.TYPE_USHORT) buf = new DataBufferUShort(s, c);
+  //  else if (type == DataBuffer.TYPE_INT) buf = new DataBufferInt(s, c);
+  //  else if (type == DataBuffer.TYPE_SHORT) buf = new DataBufferShort(s, c);
+  //  else if (type == DataBuffer.TYPE_FLOAT) buf = new DataBufferFloat(s, c);
+  //  else if (type == DataBuffer.TYPE_DOUBLE) buf = new DataBufferDouble(s, c);
+  //  if (buf == null) return null;
+  //
+  //  SampleModel model = new BandedSampleModel(type, w, h, c);
+  //  WritableRaster raster = Raster.createWritableRaster(model, buf, null);
+  //  BufferedImage target = new BufferedImage(colorModel, raster, false, null);
+  //  Graphics2D g2 = target.createGraphics();
+  //  g2.drawRenderedImage(image, null);
+  //  g2.dispose();
+  //  return target;
+  //}
 
   /** Get the bytes from an image, merging the channels as necessary. */
   public static byte[] getBytes(BufferedImage img, boolean separated, int c) {

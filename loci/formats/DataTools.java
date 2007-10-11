@@ -394,6 +394,56 @@ public final class DataTools {
     return bytesToLong(bytes, 0, 8, little);
   }
 
+  /**
+   * Convert a byte array to the appropriate primitive type array.
+   * @param b Byte array to convert.
+   * @param bpp Denotes the number of bytes in the returned primitive type
+   *   (e.g. if bpp == 2, we should return an array of type short).
+   * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
+   * @param little Whether byte array is in little-endian order.
+   */
+  public static Object makeDataArray(byte[] b,
+    int bpp, boolean fp, boolean little)
+  {
+    if (bpp == 1) return b;
+    else if (bpp == 2) {
+      short[] s = new short[b.length / 2];
+      for (int i=0; i<s.length; i++) {
+        s[i] = bytesToShort(b, i*2, 2, little);
+      }
+      return s;
+    }
+    else if (bpp == 4 && fp) {
+      float[] f = new float[b.length / 4];
+      for (int i=0; i<f.length; i++) {
+        f[i] = Float.intBitsToFloat(bytesToInt(b, i*4, 4, little));
+      }
+      return f;
+    }
+    else if (bpp == 4) {
+      int[] i = new int[b.length / 4];
+      for (int j=0; j<i.length; j++) {
+        i[j] = bytesToInt(b, j*4, 4, little);
+      }
+      return i;
+    }
+    else if (bpp == 8 && fp) {
+      double[] d = new double[b.length / 8];
+      for (int i=0; i<d.length; i++) {
+        d[i] = Double.longBitsToDouble(bytesToLong(b, i*8, 8, little));
+      }
+      return d;
+    }
+    else if (bpp == 8) {
+      long[] l = new long[b.length / 8];
+      for (int i=0; i<l.length; i++) {
+        l[i] = bytesToLong(b, i*8, 8, little);
+      }
+      return l;
+    }
+    return null;
+  }
+
   // -- Byte swapping --
 
   public static short swap(short x) {
@@ -443,54 +493,6 @@ public final class DataTools {
     String sub1 = s1.substring((slash1 == -1) ? 0 : slash1 + 1, n1);
     String sub2 = s2.substring((slash2 == -1) ? 0 : slash2 + 1, n2);
     return sub1.equals(sub2) || sub1.startsWith(sub2) || sub2.startsWith(sub1);
-  }
-
-  /**
-   * Convert a byte array to the appropriate primitive type array.
-   * The 'bpp' parameter denotes the number of bytes in the returned primitive
-   * type (e.g. if bpp == 2, we should return an array of type short).
-   * If 'fp' is set and bpp == 4 or bpp == 8, then return floats or doubles.
-   */
-  public static Object makeDataArray(byte[] b, int bpp, boolean fp,
-    boolean little)
-  {
-    if (bpp == 1) return b;
-    else if (bpp == 2) {
-      short[] s = new short[b.length / 2];
-      for (int i=0; i<s.length; i++) {
-        s[i] = bytesToShort(b, i*2, 2, little);
-      }
-      return s;
-    }
-    else if (bpp == 4 && fp) {
-      float[] f = new float[b.length / 4];
-      for (int i=0; i<f.length; i++) {
-        f[i] = Float.intBitsToFloat(bytesToInt(b, i*4, 4, little));
-      }
-      return f;
-    }
-    else if (bpp == 4) {
-      int[] i = new int[b.length / 4];
-      for (int j=0; j<i.length; j++) {
-        i[j] = bytesToInt(b, j*4, 4, little);
-      }
-      return i;
-    }
-    else if (bpp == 8 && fp) {
-      double[] d = new double[b.length / 8];
-      for (int i=0; i<d.length; i++) {
-        d[i] = Double.longBitsToDouble(bytesToLong(b, i*8, 8, little));
-      }
-      return d;
-    }
-    else if (bpp == 8) {
-      long[] l = new long[b.length / 8];
-      for (int i=0; i<l.length; i++) {
-        l[i] = bytesToLong(b, i*8, 8, little);
-      }
-      return l;
-    }
-    return null;
   }
 
   /**
