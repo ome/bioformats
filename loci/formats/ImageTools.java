@@ -122,18 +122,6 @@ public final class ImageTools {
   {
     if (c == 1) return makeImage(data, w, h);
     int dataType = DataBuffer.TYPE_BYTE;
-    if (c == 2) {
-      byte[] tmp = data;
-      data = new byte[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
-      }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
     DataBuffer buffer = new DataBufferByte(data, c * w * h);
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
@@ -154,18 +142,6 @@ public final class ImageTools {
   {
     if (c == 1) return makeImage(data, w, h);
     int dataType = DataBuffer.TYPE_USHORT;
-    if (c == 2) {
-      short[] tmp = data;
-      data = new short[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
-      }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
     DataBuffer buffer = new DataBufferUShort(data, c * w * h);
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
@@ -186,18 +162,6 @@ public final class ImageTools {
   {
     if (c == 1) return makeImage(data, w, h);
     int dataType = DataBuffer.TYPE_INT;
-    if (c == 2) {
-      int[] tmp = data;
-      data = new int[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
-      }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
     DataBuffer buffer = new DataBufferInt(data, c * w * h);
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
@@ -218,18 +182,6 @@ public final class ImageTools {
   {
     if (c == 1) return makeImage(data, w, h);
     int dataType = DataBuffer.TYPE_FLOAT;
-    if (c == 2) {
-      float[] tmp = data;
-      data = new float[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
-      }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
     DataBuffer buffer = new DataBufferFloat(data, c * w * h);
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
@@ -250,18 +202,6 @@ public final class ImageTools {
   {
     if (c == 1) return makeImage(data, w, h);
     int dataType = DataBuffer.TYPE_DOUBLE;
-    if (c == 2) {
-      double[] tmp = data;
-      data = new double[(tmp.length / 2) * 3];
-      if (interleaved) {
-        for (int i=0; i<tmp.length/2; i++) {
-          data[i*3] = tmp[i*2];
-          data[i*3 + 1] = tmp[i*2 + 1];
-        }
-      }
-      else System.arraycopy(tmp, 0, data, 0, tmp.length);
-      c++;
-    }
     DataBuffer buffer = new DataBufferDouble(data, c * w * h);
     return constructImage(c, dataType, w, h, interleaved, false, buffer);
   }
@@ -1884,7 +1824,7 @@ public final class ImageTools {
         type = ColorSpace.CS_GRAY;
         break;
       case 2:
-        type = ColorSpace.CS_sRGB;
+        type = TwoChannelColorSpace.CS_2C;
         break;
       case 3:
         type = ColorSpace.CS_sRGB;
@@ -1895,8 +1835,8 @@ public final class ImageTools {
       default:
         return null;
     }
-    return new ComponentColorModel(ColorSpace.getInstance(type), c == 4,
-      false, ColorModel.TRANSLUCENT, dataType);
+    return new ComponentColorModel(TwoChannelColorSpace.getInstance(type),
+      c == 4, false, ColorModel.TRANSLUCENT, dataType);
   }
 
   // -- Indexed color conversion --
