@@ -311,7 +311,7 @@ public final class TiffTools {
     for (int i = 0; i < numEntries; i++) {
       in.seek(offset + // The beginning of the IFD
         2 + // The width of the initial numEntries field
-        (BYTES_PER_ENTRY * i));
+        BYTES_PER_ENTRY * i);
 
       int entryTag = in.readShort() & 0xffff;
 
@@ -384,7 +384,7 @@ public final class TiffTools {
     if (numEntries == 0 || numEntries == 1) return ifd;
 
     for (int i=0; i<numEntries; i++) {
-      in.seek(offset + 2 + 12 * i);
+      in.seek(offset + 2 + BYTES_PER_ENTRY * i);
       int tag = in.readShort() & 0xffff;
       int type = in.readShort() & 0xffff;
       int count = in.readInt();
@@ -559,7 +559,7 @@ public final class TiffTools {
       }
       if (value != null) ifd.put(new Integer(tag), value);
     }
-    in.seek(offset + 2 + 12 * numEntries);
+    in.seek(offset + 2 + BYTES_PER_ENTRY * numEntries);
 
     return ifd;
   }
@@ -2032,7 +2032,7 @@ public final class TiffTools {
       }
       raf.seek(offset);
       num = DataTools.read2UnsignedBytes(raf, little);
-      if (i < ifd) raf.seek(offset + 2 + 12 * num);
+      if (i < ifd) raf.seek(offset + 2 + BYTES_PER_ENTRY * num);
     }
 
     // search directory entries for proper tag
@@ -2249,7 +2249,7 @@ public final class TiffTools {
 
     Object[] keys = ifd.keySet().toArray();
     Arrays.sort(keys); // sort IFD tags in ascending order
-    int ifdBytes = 2 + 12 * keys.length + 4;
+    int ifdBytes = 2 + BYTES_PER_ENTRY * keys.length + 4;
     long pixelBytes = 0;
     for (int i=0; i<stripsPerImage; i++) {
       stripByteCounts[i] = strips[i].length;
