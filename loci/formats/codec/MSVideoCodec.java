@@ -4,8 +4,8 @@
 
 package loci.formats.codec;
 
-import loci.formats.*;
-import java.io.*;
+import loci.formats.DataTools;
+import loci.formats.FormatException;
 
 /**
  * Methods for compressing and decompressing data using Microsoft Video 1.
