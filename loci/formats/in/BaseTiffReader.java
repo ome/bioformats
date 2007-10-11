@@ -760,6 +760,37 @@ public abstract class BaseTiffReader extends FormatReader {
     return byteArray;
   }
 
+  // -- Internal FormatReader API methods - metadata convenience --
+
+  protected void put(String key, Object value) {
+    if (value == null) return;
+    if (value instanceof String) value = ((String) value).trim();
+    addMeta(key, value);
+  }
+
+  protected void put(String key, int value) {
+    if (value == -1) return; // indicates missing value
+    addMeta(key, new Integer(value));
+  }
+
+  protected void put(String key, boolean value) {
+    put(key, new Boolean(value));
+  }
+  protected void put(String key, byte value) { put(key, new Byte(value)); }
+  protected void put(String key, char value) { put(key, new Character(value)); }
+  protected void put(String key, double value) { put(key, new Double(value)); }
+  protected void put(String key, float value) { put(key, new Float(value)); }
+  protected void put(String key, long value) { put(key, new Long(value)); }
+  protected void put(String key, short value) { put(key, new Short(value)); }
+
+  protected void put(String key, Hashtable ifd, int tag) {
+    put(key, TiffTools.getIFDValue(ifd, tag));
+  }
+
+  protected void putInt(String key, Hashtable ifd, int tag) {
+    put(key, TiffTools.getIFDIntValue(ifd, tag));
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -799,7 +830,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   private Float getNdFilter(int i) { return null; }
 
-  Integer getEmWave(int i) { return null; }
+  private Integer getEmWave(int i) { return null; }
 
   private Integer getExWave(int i) { return null; }
 
@@ -811,34 +842,4 @@ public abstract class BaseTiffReader extends FormatReader {
 
   private String getMode(int i) { return null; }
 
-  protected void put(String key, Object value) {
-    if (value == null) return;
-    if (value instanceof String) value = ((String) value).trim();
-    addMeta(key, value);
-  }
-
-  protected void put(String key, int value) {
-    if (value == -1) return; // indicates missing value
-    addMeta(key, new Integer(value));
-  }
-
-  protected void put(String key, boolean value) {
-    put(key, new Boolean(value));
-  }
-  protected void put(String key, byte value) { put(key, new Byte(value)); }
-  protected void put(String key, char value) {
-    put(key, new Character(value));
-  }
-  protected void put(String key, double value) { put(key, new Double(value)); }
-  protected void put(String key, float value) { put(key, new Float(value)); }
-  protected void put(String key, long value) { put(key, new Long(value)); }
-  protected void put(String key, short value) { put(key, new Short(value)); }
-
-  protected void put(String key, Hashtable ifd, int tag) {
-    put(key, TiffTools.getIFDValue(ifd, tag));
-  }
-
-  protected void putInt(String key, Hashtable ifd, int tag) {
-    put(key, TiffTools.getIFDIntValue(ifd, tag));
-  }
 }

@@ -64,60 +64,12 @@ public class OMETiffReader extends BaseTiffReader {
   private int[] numIFDs;
   private int[][] ifdMap, fileMap;
   private boolean lsids, isWiscScan;
-  private Hashtable[][] fds;
+  private Hashtable[][] ifdsUsed;
 
   // -- Constructor --
 
   public OMETiffReader() {
     super("OME-TIFF", new String[] {"tif", "tiff"});
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!open) return true; // not allowed to check the file contents
-
-    // just checking the filename isn't enough to differentiate between
-    // OME-TIFF and regular TIFF; open the file and check more thoroughly
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
-
-      String comment = (String)
-        ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      if (comment == null) return false;
-      return comment.indexOf("ome.xsd") >= 0;
-    }
-    catch (IOException e) { return false; }
-  }
-
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#getUsedFiles() */
-  public String[] getUsedFiles() {
-    FormatTools.assertId(currentId, true, 1);
-    return used;
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
-
-    int ifd = ifdMap[series][no];
-    int fileIndex = fileMap[series][no];
-
-    in = new RandomAccessStream(used[fileIndex]);
-    TiffTools.getSamples(fds[fileIndex][ifd], in, buf);
-    in.close();
-    return swapIfRequired(buf);
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -176,32 +128,26 @@ public class OMETiffReader extends BaseTiffReader {
       String check = fileList[i].toLowerCase();
       if (check.endsWith(".tif") || check.endsWith(".tiff")) {
         status("Checking " + fileList[i]);
-        ifds = TiffTools.getIFDs(new RandomAccessStream(l.getAbsolutePath() +
-          File.separator + fileList[i]));
-        if (ifds[0] == null) continue;
-        comment =
-          (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
+        String iid = l.getAbsolutePath() + File.separator + fileList[i];
+        String icomment = TiffTools.getComment(iid);
         boolean addToList = true;
         if (imageIDs != null) {
           for (int k=0; k<imageIDs.size(); k++) {
-            if (comment.indexOf((String) imageIDs.get(k)) == -1) {
+            if (icomment.indexOf((String) imageIDs.get(k)) == -1) {
               addToList = false;
               break;
             }
           }
           if (addToList) {
             for (int k=0; k<pixelsIDs.size(); k++) {
-              if (comment.indexOf((String) pixelsIDs.get(k)) == -1) {
+              if (icomment.indexOf((String) pixelsIDs.get(k)) == -1) {
                 addToList = false;
                 break;
               }
             }
           }
         }
-
-        if (addToList) {
-          files.add(l.getAbsolutePath() + File.separator + fileList[i]);
-        }
+        if (addToList) files.add(iid);
       }
     }
 
@@ -219,7 +165,7 @@ public class OMETiffReader extends BaseTiffReader {
     }
 
     used = (String[]) files.toArray(new String[0]);
-    fds = new Hashtable[used.length][];
+    ifdsUsed = new Hashtable[used.length][];
 
     for (int i=0; i<used.length; i++) {
       status("Parsing " + used[i]);
@@ -229,9 +175,9 @@ public class OMETiffReader extends BaseTiffReader {
       tempIfdCount = null;
       currentFile = i;
 
-      fds[i] = TiffTools.getIFDs(new RandomAccessStream(used[i]));
-      String c =
-        (String) TiffTools.getIFDValue(fds[i][0], TiffTools.IMAGE_DESCRIPTION);
+      ifdsUsed[i] = TiffTools.getIFDs(new RandomAccessStream(used[i]));
+      String c = (String)
+        TiffTools.getIFDValue(ifdsUsed[i][0], TiffTools.IMAGE_DESCRIPTION);
       try {
         SAXParser parser = SAX_FACTORY.newSAXParser();
         parser.parse(new ByteArrayInputStream(c.getBytes()), handler);
@@ -279,10 +225,58 @@ public class OMETiffReader extends BaseTiffReader {
     MetadataTools.convertMetadata(comment, store);
   }
 
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    return used;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
+    FormatTools.checkBufferSize(this, buf.length);
+
+    int ifd = ifdMap[series][no];
+    int fileIndex = fileMap[series][no];
+
+    in = new RandomAccessStream(used[fileIndex]);
+    TiffTools.getSamples(ifdsUsed[fileIndex][ifd], in, buf);
+    in.close();
+    return swapIfRequired(buf);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open)) return false; // check extension
+    if (!open) return true; // not allowed to check the file contents
+
+    // just checking the filename isn't enough to differentiate between
+    // OME-TIFF and regular TIFF; open the file and check more thoroughly
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
+      if (ifd == null) return false;
+
+      String comment = (String)
+        ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      if (comment == null) return false;
+      return comment.indexOf("ome.xsd") >= 0;
+    }
+    catch (IOException e) { return false; }
+  }
+
   // -- Helper class --
 
   /** SAX handler for parsing XML. */
-  class OMETiffHandler extends DefaultHandler {
+  private class OMETiffHandler extends DefaultHandler {
     private String order;
     private int sizeZ, sizeC, sizeT;
 
@@ -357,7 +351,7 @@ public class OMETiffReader extends BaseTiffReader {
           core.orderCertain[currentSeries] = true;
         }
         if (numIFDs != null) {
-          numIFDs[currentSeries] += fds[currentFile].length;
+          numIFDs[currentSeries] += ifdsUsed[currentFile].length;
         }
 
         seriesCount++;
@@ -370,7 +364,7 @@ public class OMETiffReader extends BaseTiffReader {
         String t = attributes.getValue("FirstT");
         if (ifd == null || ifd.equals("")) ifd = "0";
         if (numPlanes == null || numPlanes.equals("")) {
-          if (fds != null) numPlanes = "" + fds[currentSeries].length;
+          if (ifdsUsed != null) numPlanes = "" + ifdsUsed[currentSeries].length;
           else numPlanes = "" + ifds.length;
         }
         if (z == null || z.equals("")) z = "0";
@@ -378,10 +372,10 @@ public class OMETiffReader extends BaseTiffReader {
         if (t == null || t.equals("")) t = "0";
 
         try {
-          if (fds != null && fds[currentFile] != null) {
+          if (ifdsUsed != null && ifdsUsed[currentFile] != null) {
             int f = Integer.parseInt(ifd);
-            int x = (int) TiffTools.getImageWidth(fds[currentFile][f]);
-            int y = (int) TiffTools.getImageLength(fds[currentFile][f]);
+            int x = (int) TiffTools.getImageWidth(ifdsUsed[currentFile][f]);
+            int y = (int) TiffTools.getImageLength(ifdsUsed[currentFile][f]);
             if (x != core.sizeX[currentSeries]) {
               LogTools.println("Mismatched width: got " +
                 core.sizeX[currentSeries] + ", expected " + x);
@@ -442,4 +436,5 @@ public class OMETiffReader extends BaseTiffReader {
       }
     }
   }
+
 }

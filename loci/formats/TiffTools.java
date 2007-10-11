@@ -791,6 +791,33 @@ public final class TiffTools {
     return results;
   }
 
+  /** Convenience method for obtaining a file's first ImageDescription. */
+  public static String getComment(String id)
+    throws FormatException, IOException
+  {
+    // read first IFD
+    RandomAccessStream in = new RandomAccessStream(id);
+    Hashtable ifd = TiffTools.getFirstIFD(in);
+    in.close();
+
+    // extract comment
+    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+    String comment = null;
+    if (o instanceof String) comment = (String) o;
+    else if (o instanceof String[]) {
+      String[] s = (String[]) o;
+      if (s.length > 0) comment = s[0];
+    }
+    else if (o != null) comment = o.toString();
+
+    if (comment != null) {
+      // sanitize line feeds
+      comment = comment.replaceAll("\r\n", "\n");
+      comment = comment.replaceAll("\r", "\n");
+    }
+    return comment;
+  }
+
   // -- Image reading methods --
 
   /** Reads the image defined in the given IFD from the specified file. */
@@ -1971,15 +1998,6 @@ public final class TiffTools {
     }
   }
 
-  /** Convenience method for overwriting a file's first ImageDescription. */
-  public static void overwriteComment(String id, Object value)
-    throws FormatException, IOException
-  {
-    RandomAccessFile raf = new RandomAccessFile(id, "rw");
-    overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, value);
-    raf.close();
-  }
-
   /**
    * Surgically overwrites an existing IFD value with the given one. This
    * method requires that the IFD directory entry already exist. It
@@ -2086,6 +2104,15 @@ public final class TiffTools {
     }
 
     throw new FormatException("Tag not found (" + getIFDTagName(tag) + ")");
+  }
+
+  /** Convenience method for overwriting a file's first ImageDescription. */
+  public static void overwriteComment(String id, Object value)
+    throws FormatException, IOException
+  {
+    RandomAccessFile raf = new RandomAccessFile(id, "rw");
+    overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, value);
+    raf.close();
   }
 
   // -- Image writing methods --
