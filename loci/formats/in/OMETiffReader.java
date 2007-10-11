@@ -51,7 +51,7 @@ public class OMETiffReader extends BaseTiffReader {
   // -- Fields --
 
   /** List of used files. */
-  private String[] used;
+  private String[] usedFiles;
 
   /** List of Image IDs. */
   private Vector imageIDs;
@@ -181,22 +181,22 @@ public class OMETiffReader extends BaseTiffReader {
       }
     }
 
-    used = (String[]) files.toArray(new String[0]);
-    usedIFDs = new Hashtable[used.length][];
+    usedFiles = (String[]) files.toArray(new String[0]);
+    usedIFDs = new Hashtable[usedFiles.length][];
 
-    for (int i=0; i<used.length; i++) {
-      if (used[i].endsWith(currentId)) {
+    for (int i=0; i<usedFiles.length; i++) {
+      if (usedFiles[i].endsWith(currentId)) {
         usedIFDs[i] = ifds;
         continue;
       }
-      status("Parsing " + used[i]);
+      status("Parsing " + usedFiles[i]);
       currentSeries = -1;
       tempIfdMap = null;
       tempFileMap = null;
       tempIfdCount = null;
       currentFile = i;
 
-      usedIFDs[i] = TiffTools.getIFDs(new RandomAccessStream(used[i]));
+      usedIFDs[i] = TiffTools.getIFDs(new RandomAccessStream(usedFiles[i]));
       String c = (String)
         TiffTools.getIFDValue(usedIFDs[i][0], TiffTools.IMAGE_DESCRIPTION);
       try {
@@ -251,7 +251,7 @@ public class OMETiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
-    return used;
+    return usedFiles;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -265,7 +265,7 @@ public class OMETiffReader extends BaseTiffReader {
     int ifd = ifdMap[series][no];
     int fileIndex = fileMap[series][no];
 
-    in = new RandomAccessStream(used[fileIndex]);
+    in = new RandomAccessStream(usedFiles[fileIndex]);
     TiffTools.getSamples(usedIFDs[fileIndex][ifd], in, buf);
     in.close();
     return swapIfRequired(buf);
