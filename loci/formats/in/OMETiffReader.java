@@ -64,7 +64,7 @@ public class OMETiffReader extends BaseTiffReader {
   private int[] numIFDs;
   private int[][] ifdMap, fileMap;
   private boolean lsids, isWiscScan;
-  private Hashtable[][] ifdsUsed;
+  private Hashtable[][] usedIFDs;
 
   // -- Constructor --
 
@@ -164,10 +164,31 @@ public class OMETiffReader extends BaseTiffReader {
       fileMap[i] = new int[ii];
     }
 
+    // copy temp IFD/file maps
+
+    for (int i=0; i<tempIfdMap.size(); i++) {
+      Vector v = (Vector) tempIfdMap.get(i);
+      for (int j=0; j<v.size(); j++) {
+        ifdMap[i][j] = ((Integer) v.get(j)).intValue();
+      }
+      numIFDs[i] += v.size();
+    }
+
+    for (int i=0; i<tempFileMap.size(); i++) {
+      Vector v = (Vector) tempFileMap.get(i);
+      for (int j=0; j<v.size(); j++) {
+        fileMap[i][j] = ((Integer) v.get(j)).intValue();
+      }
+    }
+
     used = (String[]) files.toArray(new String[0]);
-    ifdsUsed = new Hashtable[used.length][];
+    usedIFDs = new Hashtable[used.length][];
 
     for (int i=0; i<used.length; i++) {
+      if (used[i].endsWith(currentId)) {
+        usedIFDs[i] = ifds;
+        continue;
+      }
       status("Parsing " + used[i]);
       currentSeries = -1;
       tempIfdMap = null;
@@ -175,9 +196,9 @@ public class OMETiffReader extends BaseTiffReader {
       tempIfdCount = null;
       currentFile = i;
 
-      ifdsUsed[i] = TiffTools.getIFDs(new RandomAccessStream(used[i]));
+      usedIFDs[i] = TiffTools.getIFDs(new RandomAccessStream(used[i]));
       String c = (String)
-        TiffTools.getIFDValue(ifdsUsed[i][0], TiffTools.IMAGE_DESCRIPTION);
+        TiffTools.getIFDValue(usedIFDs[i][0], TiffTools.IMAGE_DESCRIPTION);
       try {
         SAXParser parser = SAX_FACTORY.newSAXParser();
         parser.parse(new ByteArrayInputStream(c.getBytes()), handler);
@@ -245,7 +266,7 @@ public class OMETiffReader extends BaseTiffReader {
     int fileIndex = fileMap[series][no];
 
     in = new RandomAccessStream(used[fileIndex]);
-    TiffTools.getSamples(ifdsUsed[fileIndex][ifd], in, buf);
+    TiffTools.getSamples(usedIFDs[fileIndex][ifd], in, buf);
     in.close();
     return swapIfRequired(buf);
   }
@@ -351,7 +372,7 @@ public class OMETiffReader extends BaseTiffReader {
           core.orderCertain[currentSeries] = true;
         }
         if (numIFDs != null) {
-          numIFDs[currentSeries] += ifdsUsed[currentFile].length;
+          numIFDs[currentSeries] += usedIFDs[currentFile].length;
         }
 
         seriesCount++;
@@ -364,7 +385,7 @@ public class OMETiffReader extends BaseTiffReader {
         String t = attributes.getValue("FirstT");
         if (ifd == null || ifd.equals("")) ifd = "0";
         if (numPlanes == null || numPlanes.equals("")) {
-          if (ifdsUsed != null) numPlanes = "" + ifdsUsed[currentSeries].length;
+          if (usedIFDs != null) numPlanes = "" + usedIFDs[currentSeries].length;
           else numPlanes = "" + ifds.length;
         }
         if (z == null || z.equals("")) z = "0";
@@ -372,10 +393,10 @@ public class OMETiffReader extends BaseTiffReader {
         if (t == null || t.equals("")) t = "0";
 
         try {
-          if (ifdsUsed != null && ifdsUsed[currentFile] != null) {
+          if (usedIFDs != null && usedIFDs[currentFile] != null) {
             int f = Integer.parseInt(ifd);
-            int x = (int) TiffTools.getImageWidth(ifdsUsed[currentFile][f]);
-            int y = (int) TiffTools.getImageLength(ifdsUsed[currentFile][f]);
+            int x = (int) TiffTools.getImageWidth(usedIFDs[currentFile][f]);
+            int y = (int) TiffTools.getImageLength(usedIFDs[currentFile][f]);
             if (x != core.sizeX[currentSeries]) {
               LogTools.println("Mismatched width: got " +
                 core.sizeX[currentSeries] + ", expected " + x);
@@ -409,9 +430,9 @@ public class OMETiffReader extends BaseTiffReader {
 
           for (int i=1; i<Integer.parseInt(numPlanes); i++) {
             if (v.size() > idx + i) {
-              v.setElementAt(new Integer(Integer.parseInt(ifd) + 1), idx + i);
+              v.setElementAt(new Integer(Integer.parseInt(ifd) + i), idx + i);
             }
-            else v.add(new Integer(Integer.parseInt(ifd) + 1));
+            else v.add(new Integer(Integer.parseInt(ifd) + i));
             if (y.size() > idx + i) y.setElementAt(new Integer(0), idx + i);
             else y.add(new Integer(0));
           }
