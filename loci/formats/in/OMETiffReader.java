@@ -153,7 +153,6 @@ public class OMETiffReader extends BaseTiffReader {
 
     // parse grouped files
 
-    core = new CoreMetadata(seriesCount);
     ifdMap = new int[seriesCount][];
     fileMap = new int[seriesCount][];
     numIFDs = new int[seriesCount];
@@ -171,7 +170,7 @@ public class OMETiffReader extends BaseTiffReader {
       for (int j=0; j<v.size(); j++) {
         ifdMap[i][j] = ((Integer) v.get(j)).intValue();
       }
-      numIFDs[i] += v.size();
+      numIFDs[i] = v.size();
     }
 
     for (int i=0; i<tempFileMap.size(); i++) {
@@ -333,47 +332,66 @@ public class OMETiffReader extends BaseTiffReader {
         if (sizeC < 1) sizeC = 1;
         if (sizeT < 1) sizeT = 1;
 
-        if (core.sizeZ.length > currentSeries) {
-          core.sizeX[currentSeries] =
-            Integer.parseInt(attributes.getValue("SizeX"));
-          core.sizeY[currentSeries] =
-            Integer.parseInt(attributes.getValue("SizeY"));
-          core.sizeZ[currentSeries] = sizeZ;
-          core.sizeC[currentSeries] = sizeC;
-          core.sizeT[currentSeries] = sizeT;
-          core.currentOrder[currentSeries] = order;
-          core.rgb[currentSeries] = isRGB();
-          core.indexed[currentSeries] = isIndexed();
-          core.falseColor[currentSeries] = isFalseColor();
-
-          if (core.rgb[currentSeries] && core.indexed[currentSeries] &&
-            core.sizeC[currentSeries] == 3)
-          {
-            core.rgb[currentSeries] = false;
-            core.indexed[currentSeries] = false;
-            core.falseColor[currentSeries] = false;
-          }
-
-          int sc = core.sizeC[currentSeries];
-          if (core.rgb[currentSeries] && sc > 1) sc /= 3;
-          core.imageCount[currentSeries] =
-            core.sizeZ[currentSeries] * sc * core.sizeT[currentSeries];
-          core.pixelType[currentSeries] =
-            FormatTools.pixelTypeFromString(attributes.getValue("PixelType"));
-          if (core.pixelType[currentSeries] == FormatTools.INT8 ||
-            core.pixelType[currentSeries] == FormatTools.INT16 ||
-            core.pixelType[currentSeries] == FormatTools.INT32)
-          {
-            core.pixelType[currentSeries]++;
-          }
-
-          if (isWiscScan) core.sizeT[currentSeries] = core.imageCount[0];
-
-          core.orderCertain[currentSeries] = true;
+        if (core.sizeZ.length <= currentSeries) {
+          CoreMetadata tempCore = new CoreMetadata(currentSeries + 1);
+          int ss = core.sizeX.length;
+          System.arraycopy(core.sizeX, 0, tempCore.sizeX, 0, ss);
+          System.arraycopy(core.sizeY, 0, tempCore.sizeY, 0, ss);
+          System.arraycopy(core.sizeZ, 0, tempCore.sizeZ, 0, ss);
+          System.arraycopy(core.sizeC, 0, tempCore.sizeC, 0, ss);
+          System.arraycopy(core.sizeT, 0, tempCore.sizeT, 0, ss);
+          System.arraycopy(core.thumbSizeX, 0, tempCore.thumbSizeX, 0, ss);
+          System.arraycopy(core.thumbSizeY, 0, tempCore.thumbSizeY, 0, ss);
+          System.arraycopy(core.pixelType, 0, tempCore.pixelType, 0, ss);
+          System.arraycopy(core.imageCount, 0, tempCore.imageCount, 0, ss);
+          System.arraycopy(core.currentOrder, 0, tempCore.currentOrder, 0, ss);
+          System.arraycopy(core.orderCertain, 0, tempCore.orderCertain, 0, ss);
+          System.arraycopy(core.rgb, 0, tempCore.rgb, 0, ss);
+          System.arraycopy(core.littleEndian, 0, tempCore.littleEndian, 0, ss);
+          System.arraycopy(core.interleaved, 0, tempCore.interleaved, 0, ss);
+          System.arraycopy(core.indexed, 0, tempCore.indexed, 0, ss);
+          System.arraycopy(core.falseColor, 0, tempCore.falseColor, 0, ss);
+          System.arraycopy(core.metadataComplete, 0,
+            tempCore.metadataComplete, 0, ss);
+          core = tempCore;
         }
-        if (numIFDs != null) {
-          numIFDs[currentSeries] += usedIFDs[currentFile].length;
+
+        core.sizeX[currentSeries] =
+          Integer.parseInt(attributes.getValue("SizeX"));
+        core.sizeY[currentSeries] =
+          Integer.parseInt(attributes.getValue("SizeY"));
+        core.sizeZ[currentSeries] = sizeZ;
+        core.sizeC[currentSeries] = sizeC;
+        core.sizeT[currentSeries] = sizeT;
+        core.currentOrder[currentSeries] = order;
+        core.rgb[currentSeries] = isRGB();
+        core.indexed[currentSeries] = isIndexed();
+        core.falseColor[currentSeries] = isFalseColor();
+
+        if (core.rgb[currentSeries] && core.indexed[currentSeries] &&
+          core.sizeC[currentSeries] == 3)
+        {
+          core.rgb[currentSeries] = false;
+          core.indexed[currentSeries] = false;
+          core.falseColor[currentSeries] = false;
         }
+
+        int sc = core.sizeC[currentSeries];
+        if (core.rgb[currentSeries] && sc > 1) sc /= 3;
+        core.imageCount[currentSeries] =
+          core.sizeZ[currentSeries] * sc * core.sizeT[currentSeries];
+        core.pixelType[currentSeries] =
+          FormatTools.pixelTypeFromString(attributes.getValue("PixelType"));
+        if (core.pixelType[currentSeries] == FormatTools.INT8 ||
+          core.pixelType[currentSeries] == FormatTools.INT16 ||
+          core.pixelType[currentSeries] == FormatTools.INT32)
+        {
+          core.pixelType[currentSeries]++;
+        }
+
+        if (isWiscScan) core.sizeT[currentSeries] = core.imageCount[0];
+
+        core.orderCertain[currentSeries] = true;
 
         seriesCount++;
       }
@@ -422,24 +440,24 @@ public class OMETiffReader extends BaseTiffReader {
             v = (Vector) tempIfdMap.get(seriesCount - 1);
             y = (Vector) tempFileMap.get(seriesCount - 1);
           }
-
-          if (v.size() > idx) v.setElementAt(new Integer(ifd), idx);
-          else v.add(new Integer(ifd));
-          if (y.size() > idx) y.setElementAt(new Integer(0), idx);
-          else y.add(new Integer(0));
-
-          for (int i=1; i<Integer.parseInt(numPlanes); i++) {
-            if (v.size() > idx + i) {
-              v.setElementAt(new Integer(Integer.parseInt(ifd) + i), idx + i);
+          else {
+            for (int i=0; i<sizeZ*sizeC*sizeT; i++) {
+              v.add(new Integer(-1));
+              y.add(new Integer(-1));
             }
-            else v.add(new Integer(Integer.parseInt(ifd) + i));
-            if (y.size() > idx + i) y.setElementAt(new Integer(0), idx + i);
-            else y.add(new Integer(0));
           }
 
-          if (tempIfdMap.size() > seriesCount) {
-            tempIfdMap.setElementAt(v, seriesCount);
-            tempFileMap.setElementAt(y, seriesCount);
+          v.setElementAt(new Integer(ifd), idx);
+          y.setElementAt(new Integer(0), idx);
+
+          for (int i=1; i<Integer.parseInt(numPlanes); i++) {
+            v.setElementAt(new Integer(Integer.parseInt(ifd) + i), idx + i);
+            y.setElementAt(new Integer(0), idx + i);
+          }
+
+          if (tempIfdMap.size() >= seriesCount) {
+            tempIfdMap.setElementAt(v, seriesCount - 1);
+            tempFileMap.setElementAt(y, seriesCount - 1);
           }
           else {
             tempIfdMap.add(v);
