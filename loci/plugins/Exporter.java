@@ -99,23 +99,23 @@ public class Exporter {
       Image firstImage = proc.createImage();
       firstImage = ImageTools.makeBuffered(firstImage, proc.getColorModel());
       int thisType = ImageTools.getPixelType((BufferedImage) firstImage);
-      boolean forceType = false;
 
       boolean notSupportedType = !w.isSupportedType(thisType);
-      if ((codecs != null && codecs.length > 1) || notSupportedType) {
+      if (notSupportedType) {
+        IJ.error("Pixel type (" + FormatTools.getPixelTypeString(thisType) +
+          ") not supported by this format.");
+      }
+
+      if (codecs != null && codecs.length > 1) {
         GenericDialog gd =
           new GenericDialog("LOCI Bio-Formats Exporter Options");
         if (codecs != null) {
           gd.addChoice("Compression type: ", codecs, codecs[0]);
         }
-        if (notSupportedType) {
-          gd.addCheckbox("Force compatible pixel type", true);
-        }
         gd.showDialog();
         if (gd.wasCanceled()) return;
 
         if (codecs != null) w.setCompression(gd.getNextChoice());
-        if (notSupportedType) forceType = gd.getNextBoolean();
       }
 
       // convert and save slices
@@ -156,13 +156,8 @@ public class Exporter {
           img = ImageTools.makeImage(pix, x, y);
         }
 
-        if (forceType) {
-          if (notSupportedType) {
-            int[] types = w.getPixelTypes();
-            // TODO - come up with another way to do this...
-            //img = ImageTools.makeType(img, types[types.length - 1]);
-          }
-          w.saveImage(img, i == end - 1);
+        if (notSupportedType) {
+          IJ.error("Pixel type not supported by this format.");
         }
         else w.saveImage(img, i == end - 1);
       }
