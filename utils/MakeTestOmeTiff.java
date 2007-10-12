@@ -108,7 +108,7 @@ public class MakeTestOmeTiff {
     else {
       name = args[0];
       dist = args[1].toLowerCase();
-      scramble = args.length >= 2 && args[2].equalsIgnoreCase("-scramble");
+      scramble = args.length > 2 && args[2].equalsIgnoreCase("-scramble");
 
       int startIndex = scramble ? 3 : 2;
 
