@@ -1,0 +1,111 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+Generate Java classes from an OME XML (http://www.ome-xml.org) XSD document.
+"""
+
+#  
+#  Copyright (c) 2007 Chris Allan
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+#  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+#  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+#  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+#  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+#  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+#  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+#  SUCH DAMAGE.
+
+import logging
+import sys
+import os
+
+from fu import *
+
+from genshi.template import NewTextTemplate
+from getopt import getopt, GetoptError
+from xml import sax
+
+
+def usage(error):
+	"""
+	Prints usage so that we don't have to. :)
+	"""
+	cmd = sys.argv[0]
+	print """%s
+Usage: %s [-p package] -o <output_dir> <path/to/ome.xsd>
+Generates Java classes from an OME XML Schema definition.
+
+Examples:
+  %s -p ome.xml -o ome/xml schemas/ome.xsd
+
+Report bugs to Chris Allan <callan@blackcat.ca>""" % (error, cmd, cmd)
+	sys.exit(2)
+
+def main():
+	"""
+	Default main() that parses command line options and generates Java 
+	classes in the output directory.
+	"""
+	try:
+		options, args = getopt(sys.argv[1:], "o:p:")
+	except GetoptError, (msg, opt):
+		usage(msg)
+
+	if len(args) != 1:
+	    usage("Expecting single ome.xsd file path!")
+
+	outputDirectory = None
+	package = DEFAULT_PACKAGE
+	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
+		if option == "-p":
+			package = argument
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+
+	model = parseXmlSchema(args[0])
+	fu = TemplateInfo(outputDirectory, package)
+	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
+	for obj in model.objects.values():
+		f = open(os.path.join(outputDirectory, "%sNode.java" % obj.name), "w")
+		classContent = template.generate(fu=fu, klass=obj).render()
+		f.write(classContent)
+		f.close()
+
+def debugMain():
+	"""
+	Debugging main() that does not parse the command line and spits
+	generated data to STDOUT.
+	"""
+	outputDirectory = None
+	package = DEFAULT_PACKAGE
+
+	model = parseXmlSchema("tmp/ome.xsd")
+	fu = Fu(outputDirectory, package)
+	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
+	for obj in model.objects.values():
+		if obj.name == "Experimenter":
+			print " +--", obj.name
+			for prop in obj.properties.values():
+				print " +---- %s(%s) [%d:%d]" % \
+				    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
+			print "\n"
+			print template.generate(fu=fu, klass=obj).render()
+
+if __name__ == '__main__':
+#	debugMain()
+	main()

@@ -1,0 +1,142 @@
+/*
+ * ${fu.package}.${klass.name}Node
+ *
+ *-----------------------------------------------------------------------------
+ *
+ *  Copyright (C) 2007 Open Microscopy Environment
+ *      Massachusetts Institute of Technology,
+ *      National Institutes of Health,
+ *      University of Dundee,
+ *      University of Wisconsin-Madison
+ *
+ *
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by ${fu.user} via xsd-fu on ${fu.date}
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package ${fu.package};
+
+import java.util.Vector;
+import org.w3c.dom.Element;
+
+public class ${klass.name}Node extends ${klass.javaBase}
+{
+	// -- Constructor --
+	
+	public ${klass.name}Node(Element element)
+	{
+		super(element);
+	}
+	
+	// -- ${klass.name} API methods --
+{% for prop in klass.properties.values() %}\
+  {% choose %}\
+    {% when prop.isAttribute and prop.type[-2:] == "ID" and prop.name not in fu.DO_NOT_PROCESS %}
+	// Attribute which is an OME XML "ID"
+	public ${prop.javaType} get${prop.name}()
+	{
+		return (${prop.javaType}) 
+			getAttrReferencedNode("${prop.type[:-2]}", "${prop.name}");
+	}
+    {% end %}\
+    {% when prop.isAttribute and prop.name not in fu.DO_NOT_PROCESS %}
+	// Attribute
+	public ${prop.javaType} get${prop.name}()
+	{
+		return get${prop.javaType}Attribute("${prop.name}");
+	}
+
+	public void set${prop.name}(${prop.javaType} ${prop.javaArgumentName})
+	{
+		setAttribute("${prop.name}", ${prop.javaArgumentName});
+	}
+    {% end %}\
+    {% when not prop.isAttribute and prop.maxOccurs > 1 and prop.name[-3:] == "Ref" %}
+	// Element which occurs more than once and is an OME XML "Ref"
+	public int get${prop.name[:-3]}Count()
+	{
+		return getChildCount("${prop.name}");
+	}
+
+	public Vector get${prop.name[:-3]}List()
+	{
+		return getReferencedNodes("${prop.name[:-3]}", "${prop.name}");
+	}
+    {% end %}\
+    {% when not prop.isAttribute and prop.maxOccurs > 1 %}
+	// Element which occurs more than once
+	public int get${prop.name}Count()
+	{
+		return getChildCount("${prop.name}");
+	}
+
+	public Vector get${prop.name}List()
+	{
+		return getChildNodes("${prop.name}");
+	}
+    {% end %}\
+    {% when not prop.isAttribute and not prop.isComplex() %}
+	// Element which is not complex (has only a text node)
+	public ${prop.javaType} get${prop.name}()
+	{
+		return get${prop.javaType}CData("${prop.name}");
+	}
+    {% end %}\
+    {% when not prop.isAttribute and prop.isComplex() and prop.name[-3:] == "Ref" %}
+	// Element which is complex and is an OME XML "Ref"
+	public ${prop.javaType.replace("Ref", "")} get${prop.name[:-3]}()
+	{
+		return (${prop.javaType.replace("Ref", "")}) 
+			getReferencedNode("${prop.name[:-3]}", "${prop.name}");
+	}
+    {% end %}\
+    {% when not prop.isAttribute and prop.isComplex() %}
+	// Element which is complex (has sub-elements)
+	public ${prop.javaType} get${prop.name}()
+	{
+		return (${prop.javaType}) 
+			getChildNode("${prop.javaType[:-4]}", "${prop.name}");
+	}
+    {% end %}\
+    {% otherwise %}
+	// *** WARNING *** Unhandled or skipped property ${prop.name}
+    {% end %}\
+  {% end %}\
+{% end %}\
+
+	// -- OMEXMLNode API methods --
+	
+	public boolean hasID()
+	{
+{% choose %}\
+{% when "ID" in [prop.name for prop in klass.properties.values()] %}\
+		return true;
+{% end %}\
+{% otherwise %}\
+		return false;
+{% end %}\
+{% end %}\
+	}
+}
