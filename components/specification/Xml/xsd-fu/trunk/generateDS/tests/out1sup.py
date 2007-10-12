@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Generated Tue Aug 21 11:04:52 2007 by generateDS.py.
+# Generated Tue Oct  9 11:33:52 2007 by generateDS.py.
 #
 
 import sys
@@ -341,9 +341,9 @@ class person:
         for name, value in self.anyAttributes_.items():
             outfile.write(' %s="%s"' % (name, value, ))
     def exportChildren(self, outfile, level, name_='person'):
-        if self.getName() != None :
+        if self.get_name() != None :
             showIndent(outfile, level)
-            outfile.write('<name>%s</name>\n' % quote_xml(self.getName()))
+            outfile.write('<name>%s</name>\n' % quote_xml(self.get_name()))
         showIndent(outfile, level)
         outfile.write('<ratio>%s</ratio>\n' % quote_xml(self.get_ratio()))
         if self.imagesize:

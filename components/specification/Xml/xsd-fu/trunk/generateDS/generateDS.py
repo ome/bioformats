@@ -8,6 +8,7 @@ Usage:
     python generateDS.py [ options ] <xsd_file>
     python generateDS.py [ options ] -
 Options:
+    -h, --help               Display this help information.
     -o <outfilename>         Output file name for data representation classes
     -s <subclassfilename>    Output file name for subclasses
     -p <prefix>              Prefix string to be pre-pended to the class names
@@ -3689,8 +3690,8 @@ def main():
         ValidatorBodiesBasePath, UseOldGetterSetter, \
         UserMethodsPath
     args = sys.argv[1:]
-    options, args = getopt.getopt(args, 'fyo:s:p:a:b:mu:',
-        ['subclass-suffix=', 'root-element=', 'super=',
+    options, args = getopt.getopt(args, 'hfyo:s:p:a:b:mu:',
+        ['help', 'subclass-suffix=', 'root-element=', 'super=',
         'validator-bodies=', 'use-old-getter-setter',
         'user-methods=',
         ])
@@ -3701,7 +3702,9 @@ def main():
     nameSpace = 'xs:'
     superModule = '???'
     for option in options:
-        if option[0] == '-p':
+        if option[0] == '-h' or option[0] == '--help':
+            usage()
+        elif option[0] == '-p':
             prefix = option[1]
         elif option[0] == '-o':
             outFilename = option[1]

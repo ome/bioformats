@@ -140,6 +140,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Change history
 --------------
 
+Version 1.11a (10/11/2007)
+  * Various added features contributed by Chris Allan.  For more
+    information see:
+    http://www.rexx.com/~dkuhlman/generateDS.html#additional-features
+
 Version 1.10a (08/21/2007, again)
   * Added xs:int basic type.  Handle same as xs:integer.
   * Generate tests so that for elements declared with

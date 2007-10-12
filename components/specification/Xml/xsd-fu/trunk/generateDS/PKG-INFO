@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: generateDS
-Version: 1.10a
+Version: 1.11a
 Summary: Generation of Python data structures and XML parser from Xschema
 Home-page: http://www.rexx.com/~dkuhlman
 Author: Dave Kuhlman

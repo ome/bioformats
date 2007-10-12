@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup(name="generateDS",
-    version="1.10a",
+    version="1.11a",
     description="Generation of Python data structures and XML parser from Xschema",
     author="Dave Kuhlman",
     author_email="dkuhlman@rexx.com",
