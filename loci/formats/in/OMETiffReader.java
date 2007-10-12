@@ -368,16 +368,9 @@ public class OMETiffReader extends BaseTiffReader {
         core.indexed[currentSeries] = isIndexed();
         core.falseColor[currentSeries] = isFalseColor();
 
-        if (core.rgb[currentSeries] && core.indexed[currentSeries] &&
-          core.sizeC[currentSeries] == 3)
-        {
-          core.rgb[currentSeries] = false;
-          core.indexed[currentSeries] = false;
-          core.falseColor[currentSeries] = false;
-        }
-
         int sc = core.sizeC[currentSeries];
-        if (core.rgb[currentSeries] && sc > 1) sc /= 3;
+        if (core.rgb[currentSeries] && !core.indexed[currentSeries]) sc /= 3;
+        if (core.indexed[currentSeries]) core.sizeC[currentSeries] *= 3;
         core.imageCount[currentSeries] =
           core.sizeZ[currentSeries] * sc * core.sizeT[currentSeries];
         core.pixelType[currentSeries] =
