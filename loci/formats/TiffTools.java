@@ -540,7 +540,7 @@ public final class TiffTools {
         // Two SLONG's: the first represents the numerator of a fraction,
         // the second the denominator
         long pointer = bigTiff ? in.readLong() : in.readInt();
-        in.seek(pointer);
+        if (count > threshhold / 8) in.seek(pointer);
         if (count == 1) value = new TiffRational(in.readInt(), in.readInt());
         else {
           TiffRational[] rationals = new TiffRational[count];
@@ -1295,7 +1295,8 @@ public final class TiffTools {
       long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
       long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
 
-      byte[] data = new byte[(int) stripByteCounts[0] * stripOffsets.length];
+      byte[] data = new byte[(int) (imageWidth * imageLength *
+        samplesPerPixel * (bitsPerSample[0] / 8))];
 
       int row = 0;
       int col = 0;
@@ -1309,15 +1310,18 @@ public final class TiffTools {
 
         b = uncompress(b, compression);
 
-        int ext = (int) (stripByteCounts[0] / (tileWidth * tileLength));
+        int ext = (int) (b.length / (tileWidth * tileLength));
         int rowBytes = (int) (tileWidth * ext);
         if (tileWidth + col > imageWidth) {
           rowBytes = (int) ((imageWidth - col) * ext);
         }
 
         for (int j=0; j<tileLength; j++) {
-          System.arraycopy(b, rowBytes*j, data,
-            (int) ((row + j)*imageWidth*ext + ext*col), rowBytes);
+          if (row + j < imageLength) {
+            System.arraycopy(b, rowBytes*j, data,
+              (int) ((row + j)*imageWidth*ext + ext*col), rowBytes);
+          }
+          else break;
         }
 
         // update row and column
