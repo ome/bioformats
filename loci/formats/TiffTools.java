@@ -74,6 +74,9 @@ public final class TiffTools {
   public static final int SRATIONAL = 10;
   public static final int FLOAT = 11;
   public static final int DOUBLE = 12;
+  public static final int LONG8 = 16;
+  public static final int SLONG8 = 17;
+  public static final int IFD8 = 18;
 
   public static final int[] BYTES_PER_ELEMENT = {
     -1, // invalid type
@@ -89,6 +92,13 @@ public final class TiffTools {
     8, // SRATIONAL
     4, // FLOAT
     8, // DOUBLE
+    -1, // invalid type
+    -1, // invalid type
+    -1, // invalid type
+    -1, // invalid type
+    8, // LONG8
+    8, // SLONG8
+    8 // IFD8
   };
 
   // IFD tags
@@ -509,6 +519,18 @@ public final class TiffTools {
         else {
           long[] longs = new long[count];
           for (int j=0; j<count; j++) longs[j] = in.readInt();
+          value = longs;
+        }
+      }
+      else if (type == LONG8 || type == SLONG8 || type == IFD8) {
+        if (count > threshhold / 8) {
+          long pointer = bigTiff ? in.readLong() : in.readInt();
+          in.seek(pointer);
+        }
+        if (count == 1) value = new Long(in.readLong());
+        else {
+          long[] longs = new long[count];
+          for (int j=0; j<count; j++) longs[j] = in.readLong();
           value = longs;
         }
       }
@@ -1287,17 +1309,15 @@ public final class TiffTools {
 
         b = uncompress(b, compression);
 
-        int rowBytes = (int) (tileWidth *
-          (stripByteCounts[0] / (tileWidth*tileLength)));
+        int ext = (int) (stripByteCounts[0] / (tileWidth * tileLength));
+        int rowBytes = (int) (tileWidth * ext);
+        if (tileWidth + col > imageWidth) {
+          rowBytes = (int) ((imageWidth - col) * ext);
+        }
 
         for (int j=0; j<tileLength; j++) {
-          int len = rowBytes;
-          if (col*bytes + rowBytes > imageWidth*bytes) {
-            len = (int) (imageWidth*bytes - col*bytes);
-          }
-
-          System.arraycopy(b, j*rowBytes, data,
-            (int) ((row+j)*imageWidth*bytes + col*bytes), len);
+          System.arraycopy(b, rowBytes*j, data,
+            (int) ((row + j)*imageWidth*ext + ext*col), rowBytes);
         }
 
         // update row and column
