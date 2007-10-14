@@ -273,9 +273,9 @@ public final class FormatTools {
   public static int getReorderedIndex(IFormatReader r, String order, int no)
     throws FormatException
   {
-    int[] zct = getZCTCoords(order, r.getSizeZ(), r.getSizeC(), r.getSizeT(),
-      r.getImageCount(), no);
-    return getIndex(r.getDimensionOrder(), r.getSizeZ(), r.getSizeC(),
+    int[] zct = getZCTCoords(order, r.getSizeZ(), r.getEffectiveSizeC(),
+      r.getSizeT(), r.getImageCount(), no);
+    return getIndex(r.getDimensionOrder(), r.getSizeZ(), r.getEffectiveSizeC(),
       r.getSizeT(), r.getImageCount(), zct[0], zct[1], zct[2]);
   }
 

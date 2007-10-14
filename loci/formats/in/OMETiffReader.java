@@ -128,7 +128,9 @@ public class OMETiffReader extends BaseTiffReader {
       String check = fileList[i].toLowerCase();
       if (check.endsWith(".tif") || check.endsWith(".tiff")) {
         status("Checking " + fileList[i]);
-        String iid = fileList[i];
+        Location file = new Location(fileList[i]);
+        if (!file.exists()) file = new Location(l, fileList[i]);
+        String iid = file.getAbsolutePath();
         String icomment = TiffTools.getComment(iid);
         boolean addToList = true;
         if (imageIDs != null) {
