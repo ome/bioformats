@@ -629,10 +629,7 @@ public class Importer {
     boolean range = options.isSpecifyRanges();
 
     int step = 1;
-    if (range) {
-      step = c;
-      c = r.getSizeC();
-    }
+    if (range) step = c = r.getSizeC();
 
     ImageStack[] newStacks = new ImageStack[c];
     for (int i=0; i<newStacks.length; i++) {

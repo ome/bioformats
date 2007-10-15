@@ -100,25 +100,26 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_GROUP = "bioformats.groupFiles";
   public static final String PREF_CONCATENATE = "bioformats.concatenate";
   public static final String PREF_RANGE = "bioformats.specifyRanges";
+  public static final String PREF_AUTOSCALE = "bioformats.autoscale";
   public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
   public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
-  public static final String PREF_AUTOSCALE = "bioformats.autoscale";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
-  public static final String LABEL_ORDER = "Stack order: ";
-  public static final String LABEL_MERGE = "Merge channels to RGB";
+  public static final String LABEL_ORDER = "Stack_order: ";
+  public static final String LABEL_MERGE = "Merge_channels to RGB";
   public static final String LABEL_COLORIZE = "Colorize channels";
   public static final String LABEL_SPLIT =
-    "Open each channel in its own window";
+    "Split_channels into separate windows";
   public static final String LABEL_INDIVIDUAL =
-    "Open each plane in its own window";
-  public static final String LABEL_SWAP = "Specify stack organization"; 
-  public static final String LABEL_METADATA = "Display associated metadata";
-  public static final String LABEL_GROUP = "Group files with similar names";
+    "Split_planes into separate windows";
+  public static final String LABEL_SWAP = "Specify_stack organization"; 
+  public static final String LABEL_METADATA =
+    "Display_metadata in results window";
+  public static final String LABEL_GROUP = "Group_files with similar names";
   public static final String LABEL_CONCATENATE =
-    "Concatenate compatible series";
-  public static final String LABEL_RANGE = "Specify range for each series";
+    "Concatenate_series when compatible";
+  public static final String LABEL_RANGE = "Specify_range for each series";
   public static final String LABEL_AUTOSCALE = "Autoscale images";
 
   public static final String LABEL_LOCATION = "Location: ";
