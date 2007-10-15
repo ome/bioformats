@@ -89,9 +89,8 @@ public class LIFReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length);
 
     long offset = ((Long) offsets.get(series)).longValue();
-    in.seek(offset + core.sizeX[series] * core.sizeY[series] * no *
+    in.seek(offset + core.sizeX[series] * core.sizeY[series] * (long) no *
       FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount());
-
     in.read(buf);
     return buf;
   }

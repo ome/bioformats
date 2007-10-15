@@ -575,6 +575,7 @@ public class Importer {
           if (!series[i]) continue;
           IFormatReader reader = first ? r : null;
           FileStitcher stitcher = first ? fs : null;
+          //new LociDataBrowser(reader, id, i, mergeChannels).run();
           new LociDataBrowser(reader, stitcher, id, i, mergeChannels).run();
           first = false;
         }
@@ -604,7 +605,7 @@ public class Importer {
   {
     if (stack == null) return;
     if (!options.isMergeChannels() && options.isSplitWindows()) {
-      slice(stack, file, series, sizeZ, sizeC, sizeT, fi, r, fs, options);
+      slice(stack, file, series, zCount, cCount, tCount, fi, r, fs, options);
     }
     else {
       ImagePlus imp = new ImagePlus(file + " - " + series, stack);
@@ -651,11 +652,9 @@ public class Importer {
 
     for (int i=0; i<c; i++) {
       if (range) {
-        for (int j=z; j<=t; j+=((t - z + 1) / is.getSize())) {
-          int s = (i*step) + (j - z)*c + 1;
-          if (s - 1 < is.getSize()) {
-            newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
-          }
+        for (int j=0; j<z*t; j++) {
+          int ndx = j*step + 1;
+          newStacks[i].addSlice(is.getSliceLabel(ndx), is.getProcessor(ndx));
         }
       }
       else {
