@@ -97,6 +97,9 @@ public final class Util {
     int type = r.getPixelType();
     int bpp = FormatTools.getBytesPerPixel(type);
 
+    boolean signed = type == FormatTools.INT8 || type == FormatTools.INT16 ||
+      type == FormatTools.INT32;
+
     if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
       // HACK - byte array dimensions are incorrect - image is probably
       // a different size, but we have no way of knowing what size;
@@ -134,6 +137,13 @@ public final class Util {
         q = new byte[w * h];
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
+
+      if (signed) {
+        for (int i=0; i<q.length; i++) {
+          q[i] = (byte) (q[i] - 128);
+        }
+      }
+
       ip = new ByteProcessor(w, h, q, null);
       if (cm != null) ip.setColorModel(cm);
     }
@@ -144,6 +154,13 @@ public final class Util {
         q = new short[w * h];
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
+
+      if (signed) {
+        for (int i=0; i<q.length; i++) {
+          q[i] = (short) (q[i] - 32768);
+        }
+      }
+
       ip = new ShortProcessor(w, h, q, model);
     }
     else if (pixels instanceof int[]) {
@@ -153,6 +170,13 @@ public final class Util {
         q = new int[w * h];
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
+
+      if (signed) {
+        for (int i=0; i<q.length; i++) {
+          q[i] = (int) (q[i] - 2147483648L);
+        }
+      }
+
       ip = new FloatProcessor(w, h, q);
     }
     else if (pixels instanceof float[]) {
