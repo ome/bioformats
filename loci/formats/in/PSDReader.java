@@ -94,7 +94,8 @@ public class PSDReader extends FormatReader {
         for (int y=0; y<core.sizeY[0]; y++) {
           byte[] b = new byte[lens[c][y]];
           in.read(b);
-          b = codec.decompress(b);
+          b = codec.decompress(b, new Integer(core.sizeX[0] *
+            FormatTools.getBytesPerPixel(core.pixelType[0])));
           System.arraycopy(b, 0, buf, pt, b.length);
           pt += b.length;
         }

@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import loci.formats.FormatException;
+import loci.formats.RandomAccessStream;
 
 /**
  * This class is an interface for any kind of compression or decompression.
@@ -118,5 +119,19 @@ public interface Codec {
    *   decompressor.
    */
   byte[] decompress(byte[][] data) throws FormatException;
+
+  /**
+   * Decompresses data from the given RandomAccessStream.
+   *
+   * @param in The stream from which to read compressed data.
+   * @param options Options to be used during decompression.
+   * @return The decompressed data.
+   * @throws FormatException If data is not valid compressed data for this
+   *   decompressor.
+   */
+  byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException;
+
+
 
 }

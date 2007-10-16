@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import java.util.*;
 import loci.formats.FormatException;
 import loci.formats.LogTools;
+import loci.formats.RandomAccessStream;
 
 /**
  * BaseCodec contains default implementation and testing for classes
@@ -155,6 +157,29 @@ public abstract class BaseCodec implements Codec {
   /* @see Codec#decompress(byte[][]) */
   public byte[] decompress(byte[][] data) throws FormatException {
     return decompress(data, null);
+  }
+
+  /* @see Codec#decompress(byte[], Object) */
+  public byte[] decompress(byte[] data, Object options) throws FormatException
+  {
+    try {
+      return decompress(new RandomAccessStream(data), options);
+    }
+    catch (IOException exc) {
+      throw new FormatException(exc);
+    }
+  }
+
+  /* @see Codec#decompress(RandomAccessStream, Object) */
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException
+  {
+    try {
+      byte[] b = new byte[(int) in.length()];
+      in.read(b);
+      return decompress(b, options);
+    }
+    catch (IOException exc) { throw new FormatException(exc); }
   }
 
   /**

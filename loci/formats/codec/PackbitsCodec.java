@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.io.IOException;
 import loci.formats.FormatException;
+import loci.formats.RandomAccessStream;
 
 /**
  * This class implements packbits decompression. Compression is not yet
@@ -65,23 +67,28 @@ public class PackbitsCodec extends BaseCodec implements Codec {
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
    */
-  public byte[] decompress(byte[] input, Object options) throws FormatException
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException
   {
-    ByteVector output = new ByteVector(input.length);
-    int pt = 0;
-    while (pt < input.length) {
-      byte n = input[pt++];
-      if (n >= 0) { // 0 <= n <= 127
-        int len = pt + n + 1 > input.length ? (input.length - pt) : (n + 1);
-        output.add(input, pt, len);
-        pt += len;
+    int expected = ((Integer) options).intValue();
+    ByteVector output = new ByteVector(1024);
+    try {
+      while (output.size() < expected) {
+        byte n = in.readByte();
+        if (n >= 0) { // 0 <= n <= 127
+          for (int i=0; i<n + 1; i++) {
+            output.add(in.readByte());
+          }
+        }
+        else if (n != -128) { // -127 <= n <= -1
+          int len = -n + 1;
+          byte inp = in.readByte();
+          for (int i=0; i<len; i++) output.add(inp);
+        }
       }
-      else if (n != -128) { // -127 <= n <= -1
-        if (pt >= input.length) break;
-        int len = -n + 1;
-        byte inp = input[pt++];
-        for (int i=0; i<len; i++) output.add(inp);
-      }
+    }
+    catch (IOException exc) {
+      throw new FormatException(exc);
     }
     return output.toByteArray();
   }

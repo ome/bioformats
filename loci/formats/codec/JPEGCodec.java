@@ -60,20 +60,19 @@ public class JPEGCodec extends BaseCodec implements Codec {
   /**
    * Decodes an image strip using JPEG compression algorithm.
    *
-   * @param input input data to be decompressed
+   * @param in The stream from which to read compressed data.
    * @return The decompressed data
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
    */
-  public byte[] decompress(byte[] input, Object options) throws FormatException
+  public byte[] decompress(RandomAccessStream in, Object options)
+    throws FormatException
   {
     BufferedImage b;
     try {
-      RandomAccessStream s = new RandomAccessStream(input);
-      while (s.read() != (byte) 0xff || s.read() != (byte) 0xd8);
-      int offset = (int) s.getFilePointer() - 2;
-      b = ImageIO.read(new BufferedInputStream(new ByteArrayInputStream(input,
-        offset, input.length - offset)));
+      while (in.read() != (byte) 0xff || in.read() != (byte) 0xd8);
+      in.seek(in.getFilePointer() - 2);
+      b = ImageIO.read(new BufferedInputStream(in));
     }
     catch (IOException exc) {
       LogTools.println(

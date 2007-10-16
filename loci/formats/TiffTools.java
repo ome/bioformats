@@ -1291,6 +1291,10 @@ public final class TiffTools {
 
     if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
 
+    // number of uncompressed bytes in a strip
+    int size = (int)
+      (imageWidth * (bitsPerSample[0] / 8) * rowsPerStrip * samplesPerPixel);
+
     if (isTiled) {
       long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
       long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
@@ -1308,7 +1312,7 @@ public final class TiffTools {
         in.seek(stripOffsets[i]);
         in.read(b);
 
-        b = uncompress(b, compression);
+        b = uncompress(b, compression, data.length);
 
         int ext = (int) (b.length / (tileWidth * tileLength));
         int rowBytes = (int) (tileWidth * ext);
@@ -1352,7 +1356,7 @@ public final class TiffTools {
           byte[] bytes = new byte[(int) stripByteCounts[strip]];
           in.read(bytes);
           if (compression != PACK_BITS) {
-            bytes = uncompress(bytes, compression);
+            bytes = uncompress(bytes, compression, size);
             undifference(bytes, bitsPerSample,
               imageWidth, planarConfig, predictor);
             int offset = (int) (imageWidth * row);
@@ -1395,7 +1399,7 @@ public final class TiffTools {
 
     // only do this if the image uses PackBits compression
     if (altBytes.length != 0) {
-      altBytes = uncompress(altBytes, compression);
+      altBytes = uncompress(altBytes, compression, size);
       undifference(altBytes, bitsPerSample,
         imageWidth, planarConfig, predictor);
       unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
@@ -1835,7 +1839,7 @@ public final class TiffTools {
   // -- Decompression methods --
 
   /** Decodes a strip of data compressed with the given compression scheme. */
-  public static byte[] uncompress(byte[] input, int compression)
+  public static byte[] uncompress(byte[] input, int compression, int size)
     throws FormatException, IOException
   {
     if (compression < 0) compression += 65536;
@@ -1861,7 +1865,7 @@ public final class TiffTools {
         "Sorry, JPEG compression mode is not supported");
     }
     else if (compression == PACK_BITS) {
-      return new PackbitsCodec().decompress(input);
+      return new PackbitsCodec().decompress(input, new Integer(size));
     }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
       return new AdobeDeflateCodec().decompress(input);

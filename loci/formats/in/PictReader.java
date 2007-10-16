@@ -495,8 +495,7 @@ public class PictReader extends FormatReader {
         }
 
         PackbitsCodec c = new PackbitsCodec();
-        uBuf = c.decompress(buf);
-        //uBuf = Compression.packBitsUncompress(buf);
+        uBuf = c.decompress(buf, new Integer(core.sizeX[0] * core.sizeY[0]));
 
         // invert the pixels -- PICT images map zero to white
         for (int j=0; j<uBuf.length; j++) uBuf[j] = (byte) ~uBuf[j];
@@ -689,8 +688,7 @@ public class PictReader extends FormatReader {
         }
         else {
           PackbitsCodec c = new PackbitsCodec();
-          uBuf = c.decompress(buf);
-          //uBuf = Compression.packBitsUncompress(buf);
+          uBuf = c.decompress(buf, new Integer(core.sizeX[0] * core.sizeY[0]));
         }
 
         if (pixelSize < 8) {

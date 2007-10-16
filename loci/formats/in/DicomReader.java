@@ -24,9 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import javax.imageio.spi.*;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import loci.formats.*;
 import loci.formats.codec.*;
 
@@ -81,9 +84,6 @@ public class DicomReader extends FormatReader {
   /** Bits per pixel. */
   protected int bitsPerPixel;
 
-  /** Offset to first plane. */
-  protected int offsets;
-
   private int location;
   private int elementLength;
   private int vr;
@@ -91,6 +91,7 @@ public class DicomReader extends FormatReader {
   private boolean inSequence;
   private boolean bigEndianTransferSyntax;
   private byte[][] lut;
+  private long[] offsets;
 
   private boolean isJPEG = false;
   private boolean isRLE = false;
@@ -100,7 +101,7 @@ public class DicomReader extends FormatReader {
   /** Constructs a new DICOM reader. */
   // "Digital Imaging and Communications in Medicine" is nasty long.
   public DicomReader() {
-    super("Digital Img. & Comm. in Med.", new String[] {"dcm", "dicom"});
+    super("Digital Img. & Comm. in Med.", new String[] {"dic", "dcm", "dicom"});
   }
 
   // -- IFormatReader API methods --
@@ -127,17 +128,15 @@ public class DicomReader extends FormatReader {
     int bytes = core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]) *
       (isIndexed() ? 1 : core.sizeC[0]);
-    in.seek(offsets + bytes * no);
-    if (isRLE) {
-      in.skipBytes(67);
-      while (in.read() == 0);
-      in.seek(in.getFilePointer() - 1);
-    }
+    in.seek(offsets[no]);
     in.read(buf);
 
     if (isRLE) {
       PackbitsCodec codec = new PackbitsCodec();
-      buf = codec.decompress(buf);
+      byte[] t = codec.decompress(buf, new Integer(bytes));
+      Arrays.fill(buf, (byte) 0);
+      System.arraycopy(t, 0, buf, 0,
+        buf.length < t.length ? buf.length : t.length);
 
       int b = FormatTools.getBytesPerPixel(core.pixelType[0]);
       int plane = bytes / b;
@@ -196,6 +195,8 @@ public class DicomReader extends FormatReader {
 
     status("Reading tags");
 
+    long baseOffset = 0;
+
     boolean decodingTags = true;
 
     while (decodingTags) {
@@ -239,7 +240,9 @@ public class DicomReader extends FormatReader {
           addInfo(tag, in.readString(elementLength));
           break;
         case PLANAR_CONFIGURATION:
-          addInfo(tag, in.readShort());
+          short config = in.readShort();
+          if (config == 0) core.interleaved[0] = true;
+          addInfo(tag, config);
           break;
         case ROWS:
           core.sizeY[0] = in.readShort();
@@ -262,6 +265,7 @@ public class DicomReader extends FormatReader {
         case PIXEL_REPRESENTATION:
           addInfo(tag, in.readShort());
           break;
+        case 537262910:
         case WINDOW_CENTER:
         case WINDOW_WIDTH:
         case RESCALE_INTERCEPT:
@@ -270,7 +274,7 @@ public class DicomReader extends FormatReader {
           break;
         case PIXEL_DATA:
           if (elementLength != 0) {
-            offsets = (int) in.getFilePointer();
+            baseOffset = in.getFilePointer();
             addInfo(tag, location);
             decodingTags = false;
           }
@@ -278,7 +282,7 @@ public class DicomReader extends FormatReader {
           break;
         case 0x7f880010:
           if (elementLength != 0) {
-            offsets = location + 4;
+            baseOffset = location + 4;
             decodingTags = false;
           }
           break;
@@ -291,6 +295,35 @@ public class DicomReader extends FormatReader {
     }
     if (core.imageCount[0] == 0) core.imageCount[0] = 1;
 
+    int plane = core.sizeX[0] * core.sizeY[0] *
+      (lut == null ? core.sizeC[0] : 1) *
+      FormatTools.getBytesPerPixel(core.pixelType[0]);
+
+    status("Calculating image offsets");
+
+    offsets = new long[core.imageCount[0]];
+    for (int i=0; i<core.imageCount[0]; i++) {
+      if (isRLE) {
+        if (i == 0) in.seek(baseOffset);
+        else {
+          in.seek(offsets[i - 1]);
+          new PackbitsCodec().decompress(in, new Integer(plane));
+        }
+        in.skipBytes(67);
+        while (in.read() == 0);
+        offsets[i] = in.getFilePointer() - 1;
+      }
+      else if (isJPEG) {
+        if (i == 0) offsets[i] = baseOffset;
+        else {
+          in.seek(offsets[i - 1]);
+          new JPEGCodec().decompress(in, null);
+          offsets[i] = in.getFilePointer();
+        }
+      }
+      else offsets[i] = baseOffset + plane*i;
+    }
+
     status("Populating metadata");
 
     core.sizeZ[0] = core.imageCount[0];
@@ -298,7 +331,7 @@ public class DicomReader extends FormatReader {
     core.rgb[0] = core.sizeC[0] > 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
-    core.interleaved[0] = !(isJPEG || isRLE);
+    //core.interleaved[0] = core.interleaved[0] || !(isJPEG || isRLE);
     core.metadataComplete[0] = true;
     core.falseColor[0] = false;
 
@@ -380,7 +413,7 @@ public class DicomReader extends FormatReader {
         String color = key.substring(0, key.indexOf(" ")).trim();
         int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
         long fp = in.getFilePointer();
-        in.seek(oldFp + ndx*ndx);
+        in.seek(oldFp + 1);
         lut[ndx] = new byte[elementLength / 2];
         for (int i=0; i<lut[ndx].length; i++) {
           lut[ndx][i] = (byte) (in.read() & 0xff);
@@ -525,10 +558,7 @@ public class DicomReader extends FormatReader {
         else return (b[2] << 8) + b[3];
       default:
         vr = IMPLICIT_VR;
-        if (core.littleEndian[0]) {
-          return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
-        }
-        return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
+        return DataTools.bytesToInt(b, core.littleEndian[0]);
     }
   }
 
