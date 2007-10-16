@@ -76,6 +76,14 @@ public class ChannelFiller extends ReaderWrapper {
     return null;
   }
 
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    buf = openBytes(no);
+    return buf;
+  }
+
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     if (reader.isIndexed() && !reader.isFalseColor()) {

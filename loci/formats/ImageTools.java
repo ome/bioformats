@@ -1874,7 +1874,7 @@ public final class ImageTools {
 
     for (int i=0; i<b.length; i++) {
       for (int j=0; j<lut.length; j++) {
-        rtn[j][i] = lut[j][b[i]];
+        rtn[j][i] = lut[j][b[i] & 0xff];
       }
     }
     return rtn;

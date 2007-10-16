@@ -340,7 +340,8 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[getSizeX() * getSizeY() * getRGBChannelCount() *
+    byte[] buf = new byte[getSizeX() * getSizeY() *
+      (isIndexed() ? 1 : getRGBChannelCount()) *
       FormatTools.getBytesPerPixel(getPixelType())];
     return openBytes(no, buf);
   }
