@@ -364,6 +364,13 @@ public class ZeissZVIReader extends FormatReader {
           legacy.setId(id);
           core.currentOrder[0] = legacy.getDimensionOrder();
         }
+
+        char[] order = core.currentOrder[0].toCharArray();
+        for (int i=0; i<order.length; i++) {
+          if (order[i] == 'Z') order[i] = 'T';
+          else if (order[i] == 'T') order[i] = 'Z';
+        }
+        core.currentOrder[0] = new String(order);
       }
       else if (core.rgb[0]) {
         core.currentOrder[0] =
@@ -705,9 +712,9 @@ public class ZeissZVIReader extends FormatReader {
 
           s.skipBytes(8);
 
-          int tidx = s.readInt();
-          int cidx = s.readInt();
           int zidx = s.readInt();
+          int cidx = s.readInt();
+          int tidx = s.readInt();
 
           Integer zndx = new Integer(zidx);
           Integer cndx = new Integer(cidx);
