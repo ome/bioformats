@@ -138,11 +138,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
 
-      if (signed) {
-        for (int i=0; i<q.length; i++) {
-          q[i] = (byte) (q[i] - 128);
-        }
-      }
+      if (signed) q = DataTools.makeSigned(q);
 
       ip = new ByteProcessor(w, h, q, null);
       if (cm != null) ip.setColorModel(cm);
@@ -155,11 +151,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
 
-      if (signed) {
-        for (int i=0; i<q.length; i++) {
-          q[i] = (short) (q[i] - 32768);
-        }
-      }
+      if (signed) q = DataTools.makeSigned(q);
 
       ip = new ShortProcessor(w, h, q, model);
     }
@@ -171,11 +163,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
 
-      if (signed) {
-        for (int i=0; i<q.length; i++) {
-          q[i] = (int) (q[i] - 2147483648L);
-        }
-      }
+      if (signed) q = DataTools.makeSigned(q);
 
       ip = new FloatProcessor(w, h, q);
     }

@@ -350,13 +350,45 @@ public abstract class FormatReader extends FormatHandler
   public BufferedImage openImage(int no) throws FormatException, IOException {
     byte[] buf = openBytes(no);
 
-    if (getPixelType() == FormatTools.FLOAT) {
+    int pixelType = getPixelType();
+    if (pixelType == FormatTools.FLOAT) {
       float[] f =
         (float[]) DataTools.makeDataArray(buf, 4, true, isLittleEndian());
 
       if (normalizeData) f = DataTools.normalizeFloats(f);
       return ImageTools.makeImage(f, core.sizeX[series], core.sizeY[series],
         getRGBChannelCount(), true);
+    }
+
+    boolean signed = pixelType == FormatTools.INT8 ||
+      pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
+
+    if (signed) {
+      if (pixelType == FormatTools.INT8) {
+        buf = DataTools.makeSigned(buf);
+      }
+      else if (pixelType == FormatTools.INT16) {
+        short[] s =
+          (short[]) DataTools.makeDataArray(buf, 2, false, isLittleEndian());
+        s = DataTools.makeSigned(s);
+        for (int i=0; i<s.length; i++) {
+          byte high = (byte) (s[i] >> 8);
+          byte low = (byte) s[i];
+          buf[i*2] = isLittleEndian() ? low : high;
+          buf[i*2 + 1] = isLittleEndian() ? high : low;
+        }
+      }
+      else if (pixelType == FormatTools.INT32) {
+        int[] ii =
+          (int[]) DataTools.makeDataArray(buf, 4, false, isLittleEndian());
+        ii = DataTools.makeSigned(ii);
+        for (int i=0; i<ii.length; i++) {
+          buf[i*4] = (byte) (isLittleEndian() ? ii[i] : ii[i] >> 24);
+          buf[i*4 + 1] = (byte) (isLittleEndian() ? ii[i] >> 8 : ii[i] >> 16);
+          buf[i*4 + 2] = (byte) (isLittleEndian() ? ii[i] >> 16 : ii[i] >> 8);
+          buf[i*4 + 3] = (byte) (isLittleEndian() ? ii[i] >> 24 : ii[i]);
+        }
+      }
     }
 
     BufferedImage b = ImageTools.makeImage(buf, core.sizeX[series],

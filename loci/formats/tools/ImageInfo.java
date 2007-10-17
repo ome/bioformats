@@ -439,7 +439,7 @@ public final class ImageInfo {
 
         // check for pixel type mismatch
         int pixType = ImageTools.getPixelType(images[i - start]);
-        if (pixType != pixelType && !fastBlit) {
+        if (pixType != pixelType && pixType != pixelType + 1 && !fastBlit) {
           if (!mismatch) {
             LogTools.println();
             mismatch = true;

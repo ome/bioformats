@@ -92,6 +92,7 @@ public class DicomReader extends FormatReader {
   private boolean bigEndianTransferSyntax;
   private byte[][] lut;
   private long[] offsets;
+  private int scale;
 
   private boolean isJPEG = false;
   private boolean isRLE = false;
@@ -164,6 +165,8 @@ public class DicomReader extends FormatReader {
       buf = codec.decompress(buf);
     }
 
+    // TODO : correct pixel values according to value of 'scale'
+
     return buf;
   }
 
@@ -198,6 +201,7 @@ public class DicomReader extends FormatReader {
     long baseOffset = 0;
 
     boolean decodingTags = true;
+    boolean signed = false;
 
     while (decodingTags) {
       int tag = getNextTag();
@@ -263,12 +267,18 @@ public class DicomReader extends FormatReader {
           addInfo(tag, bitsPerPixel);
           break;
         case PIXEL_REPRESENTATION:
-          addInfo(tag, in.readShort());
+          short ss = in.readShort();
+          signed = ss == 1;
+          addInfo(tag, ss);
           break;
         case 537262910:
         case WINDOW_CENTER:
         case WINDOW_WIDTH:
         case RESCALE_INTERCEPT:
+          String intercept = in.readString(elementLength);
+          scale = Integer.parseInt(intercept.trim());
+          addInfo(tag, intercept);
+          break;
         case RESCALE_SLOPE:
           addInfo(tag, in.readString(elementLength));
           break;
@@ -331,7 +341,6 @@ public class DicomReader extends FormatReader {
     core.rgb[0] = core.sizeC[0] > 1;
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
-    //core.interleaved[0] = core.interleaved[0] || !(isJPEG || isRLE);
     core.metadataComplete[0] = true;
     core.falseColor[0] = false;
 
@@ -343,13 +352,13 @@ public class DicomReader extends FormatReader {
 
     switch (bitsPerPixel) {
       case 8:
-        core.pixelType[0] = FormatTools.UINT8;
+        core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
         break;
       case 16:
-        core.pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
         break;
       case 32:
-        core.pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = signed ? FormatTools.INT32 : FormatTools.UINT32;
         break;
     }
 

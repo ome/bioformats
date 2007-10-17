@@ -394,6 +394,30 @@ public final class DataTools {
     return bytesToLong(bytes, 0, 8, little);
   }
 
+  /** Convert a byte array to a signed byte array. */
+  public static byte[] makeSigned(byte[] b) {
+    for (int i=0; i<b.length; i++) {
+      b[i] = (byte) (b[i] + 128);
+    }
+    return b;
+  }
+
+  /** Convert a short array to a signed short array. */
+  public static short[] makeSigned(short[] s) {
+    for (int i=0; i<s.length; i++) {
+      s[i] = (short) (s[i] + 32768);
+    }
+    return s;
+  }
+
+  /** Convert an int array to a signed int array. */
+  public static int[] makeSigned(int[] i) {
+    for (int j=0; j<i.length; j++) {
+      i[j] = (int) (i[j] + 2147483648L);
+    }
+    return i;
+  }
+
   /**
    * Convert a byte array to the appropriate primitive type array.
    * @param b Byte array to convert.
