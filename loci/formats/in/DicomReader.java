@@ -181,6 +181,17 @@ public class DicomReader extends FormatReader {
 
     core.littleEndian[0] = true;
     location = 0;
+    isJPEG = false;
+    isRLE = false;
+    bigEndianTransferSyntax = false;
+    oddLocations = false;
+    inSequence = false;
+    bitsPerPixel = 0;
+    elementLength = 0;
+    vr = 0;
+    lut = null;
+    offsets = null;
+    scale = 0;
 
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
