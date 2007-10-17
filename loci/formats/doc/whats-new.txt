@@ -1,5 +1,9 @@
-2007 Oct 5:
+2007 Oct 17:
 * Critical OME-TIFF bugfixes
+* Fixed bugs in Leica LIF, Zeiss ZVI, TIFF, DICOM, and AVI readers
+* Added support for JPEG-compressed ZVI images
+* Added support for BigTIFF
+* Added importer plugin option to open each plane in a new window
 * Added MS Video 1 codec for AVI
 
 2007 Oct 1:
