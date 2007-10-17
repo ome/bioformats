@@ -1,0 +1,817 @@
+<!--
+build.xml
+
+Master ant build file for all Java software projects at LOCI.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+
+===============================================================================
+This build file handles the following projects:
+
+Bio-Formats
+    JAR file:      bio-formats.jar
+    Folders:       loci/formats
+                   loci/formats/*
+    Main class:    loci.formats.ImageViewer
+    Dependencies:  jai_imageio.jar (reflected)
+                   mdbtools-java.jar (reflected)
+                   ome-java.jar (reflected)
+                   poi-loci.jar (reflected)
+    Targets:       style-formats
+                   compile-formats
+                   jar-formats
+    License:       LGPL
+
+VisBio
+    JAR file:      visbio.jar
+    Folders:       loci/visbio
+                   loci/visbio/*
+    Main class:    loci.visbio.VisBio
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   forms-1.0.4.jar
+                   ij.jar
+                   jai_imageio.jar (bio-formats.jar)
+                   looks-1.2.2.jar
+                   mdbtools-java.jar (bio-formats.jar)
+                   ome-java.jar
+                   poi-loci.jar (bio-formats.jar)
+                   visad-lite.jar
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       style-visbio
+                   compile-visbio
+                   jar-visbio
+                   source-visbio
+                   docs-visbio
+                   dist-visbio
+    License:       GPL
+
+LOCI Plugins for ImageJ
+    JAR file:      loci_plugins.jar
+    Folders:       loci/plugins
+                   loci/plugins/browser
+                   loci/ome/upload
+                   loci/ome/util
+    Main class:    loci.plugins.About
+    IJ plugins:    loci.plugins.browser.LociDataBrowser
+                   loci.plugins.LociImporter
+                   loci.plugins.LociExporter
+                   loci.plugins.LociUploader
+                   loci.plugins.ome.OMEPlugin
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   jai_imageio.jar (bio-formats.jar)
+                   mdbtools-java.jar (bio-formats.jar)
+                   ome-java.jar (bio-formats.jar)
+                   poi-loci.jar (bio-formats.jar)
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       style-plugins
+                   compile-plugins
+                   jar-plugins
+    License:       LGPL
+
+OME Notes
+    JAR file:      ome-notes.jar
+    Folder:        loci/ome/notes
+    Main class:    loci.ome.notes.Notes
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   forms-1.0.4.jar
+                   jai_imageio.jar (bio-formats.jar)
+                   mdbtools-java.jar (bio-formats.jar)
+                   ome-java.jar
+                   poi-loci.jar (bio-formats.jar)
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       style-notes
+                   compile-notes
+                   jar-notes
+    License:       LGPL
+
+OME Metadata Editor
+    JAR file:      ome-editor.jar
+    Folders:       loci/ome/editor
+                   loci/ome/viewer
+    Main class:    loci.ome.editor.MetadataEditor
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   forms-1.0.4.jar
+                   jai_imageio.jar (bio-formats.jar)
+                   mdbtools-java.jar (bio-formats.jar)
+                   ome-java.jar
+                   poi-loci.jar (bio-formats.jar)
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       style-editor
+                   compile-editor
+                   jar-editor
+    License:       LGPL
+
+Slim Plotter
+    JAR file:      SlimPlotter.jar
+    Folders:       loci/apps/slim
+                   some loci/visbio
+    Main class:    loci.apps.slim.SlimPlotter
+    Dependencies:  bio-formats.jar
+                   lma.jar
+                   visad-lite.jar
+    Targets:       style-slim
+                   compile-slim
+                   jar-slim
+                   dist-slim
+    License:       Public domain
+
+LOCI Checkstyle checks
+    JAR file:      loci-checks.jar
+    Folders:       loci/checks
+    Main class:    loci.checks.About
+    Dependencies:  checkstyle-all-4.2.jar
+    Targets:       style-checks
+                   compile-checks
+                   jar-checks
+    License:       Public domain
+
+===============================================================================
+The following external dependencies (in the jar folder) may be required:
+
+Apple eAWT stubs
+    JAR file:  AppleJavaExtensions.jar
+    URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
+    Notes:     Required to compile VisBio on non-Mac OS X machines
+
+Ant-Contrib
+    JAR file:  ant-contrib-1.0b1.jar
+    URL:       http://ant-contrib.sourceforge.net/
+    Notes:     Used by tools target to iterate over JAR files ("for" task)
+    License:   Apache
+
+Checkstyle
+    JAR file:  checkstyle-all-4.2.jar
+    URL:       http://checkstyle.sourceforge.net/
+    Notes:     Used by style targets to check source code style conventions
+    License:   LGPL
+
+Apache Jakarta Commons HttpClient
+    JAR file:  commons-httpclient-2.0-rc2.jar
+    URL:       http://jakarta.apache.org/commons/httpclient/
+    Notes:     Required for OME Java to communicate with OME servers
+    License:   Apache
+
+Apache Jakarta Commons Logging
+    JAR file:  commons-logging.jar
+    URL:       http://jakarta.apache.org/commons/logging/
+    Notes:     Used by OME Java
+    License:   Apache
+
+JGoodies Forms
+    JAR file:  forms-1.0.4.jar
+    URL:       http://www.jgoodies.com/freeware/forms/index.html
+    Notes:     Used for layout by VisBio, 4D Data Browser and OME Notes
+    License:   BSD
+
+ImageJ
+    JAR file:  ij.jar
+    URL:       http://rsb.info.nih.gov/ij/
+    Notes:     Bundled with VisBio to achieve ImageJ interconnectivity
+    License:   Public domain
+
+Java Advanced Imaging Image I/O Tools
+    JAR file:  jai_imageio.jar
+    URL:       https://jai-imageio.dev.java.net/
+    Notes:     Used by Bio-Formats for JPEG2000 support (ND2, JP2)
+    License:   BSD
+
+JGoodies Looks
+    JAR file:  looks-1.2.2.jar
+    URL:       http://www.jgoodies.com/freeware/looks/index.html
+    Notes:     Used for a nicer Look & Feel by VisBio and OME Metadata Editor
+    License:   BSD
+
+MDB Tools (Java port)
+    JAR file:  mdbtools-java.jar
+    URLs:      http://mdbtools.sourceforge.net/
+               http://sourceforge.net/forum/message.php?msg_id=2550619
+    Notes:     Used by Bio-Formats for Zeiss LSM metadata in MDB database files
+    License:   LGPL
+
+L-M Fit
+    JAR file:  lma.jar
+    URL:       http://users.utu.fi/jaolho/
+    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
+               used by Slim Plotter
+    License:   LGPL
+
+OME Java
+    JAR file:  ome-java.jar
+    URL:       http://openmicroscopy.org/api/java/
+    Notes:     Used by VisBio and the OME Plugin for ImageJ to connect to OME;
+               used by Bio-Formats and the OME Notes to work with OME-XML
+    License:   LGPL
+
+Apache Jakarta POI
+    JAR file:  poi-loci.jar
+    URL:       http://jakarta.apache.org/poi/
+    Notes:     Used by Bio-Formats for OLE support (OIB, ZVI, IPW); based on
+               poi-2.5.1-final-20040804.jar, with bugfixes so that OLE v2 works
+    License:   Apache
+
+Skin Look and Feel
+    JAR file:  skinlf.jar
+    URL:       http://skinlf.l2fprod.com/
+    Notes:     Not used (may be used in the future for flexible skinning)
+    License:   Custom (BSD-like)
+
+VisAD
+    JAR file:  visad-lite.jar
+    URL:       http://www.ssec.wisc.edu/~billh/visad.html
+    Notes:     Stripped down VisAD library used by VisBio and Slim Plotter
+    License:   LGPL
+
+Apache XML-RPC
+    JAR file:  xmlrpc-1.2-b1.jar
+    URL:       http://ws.apache.org/xmlrpc/
+    Notes:     Required for OME Java to communicate with OME servers
+    License:   Apache
+-->
+
+<project name="LOCI Software" default="jars" basedir=".">
+  <description>
+    Master build file for all Java software projects at LOCI
+  </description>
+
+  <property file="build.properties"/>
+  <property file="${user.home}/.ant-global.properties"/>
+
+  <condition property="isUnix"><os family="unix"/></condition>
+
+  <!-- Non-core ant tasks -->
+
+  <taskdef resource="checkstyletask.properties"
+    classpath="jar/checkstyle-all-4.2.jar:build/jar/loci-checks.jar"/>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+    classpath="jar/ant-contrib-1.0b1.jar"/>
+
+  <!-- Global build targets -->
+
+  <target name="init">
+    <tstamp>
+      <format property="DATE" pattern="d MMMMM yyyy"/>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+  </target>
+
+  <target name="style"
+    depends="style-formats, style-visbio, style-plugins, style-notes,
+      style-editor, style-slim, style-checks"
+    description="check source code style for LOCI software packages"/>
+
+<!--
+  <target name="compile" depends="copy-source"
+    description="compile classes for LOCI software packages">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}" debug="true"
+      classpath="${ext.jars}" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+-->
+  <target name="compile"
+    depends="compile-formats, compile-visbio, compile-plugins,
+      compile-notes, compile-editor, compile-slim"
+    description="compile classes for LOCI software packages"/>
+
+  <target name="jars"
+    depends="jar-formats, jar-visbio, jar-plugins, jar-notes,
+      jar-editor, jar-slim, jar-checks"
+    description="generate JAR files for LOCI software packages"/>
+
+  <target name="tools" depends="jars"
+    description="create JAR file encompassing several LOCI tools">
+    <for list="${tools.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${jar.dir}/@{jar}" dest="${tools.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${jar.dir}/${tools.jar}" basedir="${tools.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${tools.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${tools.dir}"/>
+  </target>
+
+  <target name="docs" depends="copy-source"
+    description="generate javadocs for LOCI software packages">
+    <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
+      classpath="${ext.jars}" author="true" version="true" use="true"
+      nodeprecated="true" windowtitle="LOCI Software API">
+      <packageset dir="${dest.dir}"/>
+      <doctitle><![CDATA[<h1>LOCI Software</h1>]]></doctitle>
+      <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
+      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+      <link href="http://www.ssec.wisc.edu/~dglo/docs/"/>
+      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
+      <link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>
+      <link href="http://www.jdocs.com/looks/1.2.2/api/"/>
+    </javadoc>
+  </target>
+
+  <target name="clean" description="remove all build files">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-classes" description="remove classes from build folder">
+    <delete dir="${build.dir}/classes"/>
+  </target>
+
+  <target name="clean-dist"
+    description="remove distribution bundles from build folder">
+    <delete dir="${build.dir}/dist"/>
+  </target>
+
+  <target name="clean-docs" description="remove javadocs from build folder">
+    <delete dir="${build.dir}/docs"/>
+  </target>
+
+  <target name="clean-jars" description="remove JAR files from build folder">
+    <delete dir="${build.dir}/jar"/>
+  </target>
+
+  <target name="clean-src" description="remove source files from build folder">
+    <delete dir="${build.dir}/src"/>
+  </target>
+
+  <target name="dev-compile" description="compile classes in-place (no copy)">
+    <javac srcdir="." destdir="." debug="true" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4">
+      <include name="loci/**"/>
+    </javac>
+  </target>
+
+  <target name="dev-clean" description="remove classes in-place (no copy)">
+    <delete>
+      <fileset dir="." includes="loci/**/*.class"/>
+    </delete>
+  </target>
+
+  <!-- Internal build targets -->
+
+  <target name="copy-source" depends="init">
+    <!-- copy binary files without filtering -->
+    <copy todir="${dest.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="loci/**"
+        excludes="**/*.class **/*.java **/*.config **/*.txt ${ignore.source}"/>
+    </copy>
+    <!-- copy source files with filtering -->
+    <filter token="date" value="${DATE}"/>
+    <filter token="year" value="${YEAR}"/>
+    <filter token="visbio.version" value="${visbio.version}"/>
+    <copy todir="${dest.dir}" filtering="true" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="loci/**"
+        excludes="**/*.class ${ignore.source}"/>
+    </copy>
+  </target>
+
+  <target name="copy-jars">
+    <!-- copy needed external JARs into build jars folder -->
+    <copy todir="${jar.dir}" preservelastmodified="true">
+      <fileset dir="jar"/>
+    </copy>
+  </target>
+
+  <!-- Bio-Formats -->
+
+  <target name="style-formats" depends="copy-source, jar-checks"
+    description="check source code style for Bio-Formats">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${formats.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-formats" depends="copy-source"
+    description="compile classes for Bio-Formats">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${formats.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-formats" depends="compile-formats, copy-jars"
+    description="generate JAR file for Bio-Formats">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${formats.resources}"/>
+    </copy>
+    <mkdir dir="${jar.dir}"/>
+    <jar jarfile="${jar.dir}/${formats.jar}" basedir="${classes.dir}"
+      includes="${formats.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${formats.main}"/>
+        <attribute name="Class-Path" value="${formats.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- VisBio -->
+
+  <target name="style-visbio" depends="copy-source, jar-checks"
+    description="check source code style for VisBio">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${visbio.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-visbio" depends="copy-source"
+    description="compile classes for VisBio">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${visbio.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-visbio" depends="compile-visbio, copy-jars, jar-formats"
+    description="generate JAR file for VisBio">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${visbio.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/${visbio.jar}" basedir="${classes.dir}"
+      includes="${visbio.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${visbio.main}"/>
+        <attribute name="Class-Path" value="${visbio.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="source-visbio" depends="copy-source"
+    description="generate source bundle for VisBio">
+    <zip zipfile="${build.dir}/visbio_src.zip" basedir="${dest.dir}"
+      includes="loci/visbio/**"/>
+  </target>
+
+  <target name="docs-visbio" depends="copy-source"
+    description="generate javadocs for VisBio">
+    <javadoc sourcepath="${dest.dir}" destdir="${visbio.docs-dir}/docs/api"
+      classpath="${ext.jars}" author="true" version="true" use="true"
+      nodeprecated="true" windowtitle="LOCI Software API">
+      <packageset dir="${dest.dir}" includes="loci/visbio/**"/>
+      <doctitle><![CDATA[<h1>VisBio</h1>]]></doctitle>
+      <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
+      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+      <link href="http://www.ssec.wisc.edu/~dglo/docs/"/>
+      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
+      <link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>
+      <link href="http://www.jdocs.com/looks/1.2.2/api/"/>
+    </javadoc>
+    <zip zipfile="${build.dir}/visbio_docs.zip" basedir="${visbio.docs-dir}"/>
+  </target>
+
+  <target name="dist-visbio"
+    depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx,
+      dist-visbio-linux, dist-visbio-nojre"
+    description="create distribution bundles for VisBio"/>
+
+  <target name="dist-visbio-win32" depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Windows w/ JRE">
+    <copy todir="${visbio.win32-dir}/VisBio" preservelastmodified="true">
+      <fileset dir="dist/visbio/win32"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.win32-dir}/VisBio" eol="dos"
+      includes="${visbio.text-files}"/>
+    <untar src="dist/jre-win32.tar.gz" dest="${visbio.win32-dir}/VisBio"
+      overwrite="false" compression="gzip"/>
+    <zip destfile="${dist.dir}/visbio${visbio.version}_win32.zip"
+      basedir="${visbio.win32-dir}"/>
+  </target>
+
+  <target name="dist-visbio-win32-nojre" depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Windows no JRE">
+    <copy todir="${visbio.win32-nojre-dir}/VisBio"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/win32" excludes="launcher.cfg"/>
+      <fileset dir="dist/visbio/win32-nojre"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.win32-nojre-dir}/VisBio" eol="dos"
+      includes="${visbio.text-files}"/>
+    <zip destfile="${dist.dir}/visbio${visbio.version}_win32_nojre.zip"
+      basedir="${visbio.win32-nojre-dir}"/>
+  </target>
+
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-visbio-macosx" if="isUnix"
+    depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Mac OS X">
+    <copy todir="${visbio.macosx-dir}/VisBio"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/macosx"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.macosx-dir}/VisBio" eol="mac"
+      includes="${visbio.text-files}"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${visbio.macosx-dir}/VisBio"
+        includes="${visbio.macosx-exec}"/>
+    </chmod>
+    <copy
+      todir="${visbio.macosx-dir}/VisBio/VisBio.app/Contents/Resources/Java">
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
+    </copy>
+<!--
+    <tar destfile="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"
+      basedir="${visbio.macosx-dir}" compression="gzip"/>
+-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <echo>Building tar: visbio${visbio.version}_macosx.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="czf"/>
+      <arg value="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.macosx-dir}"/>
+      <arg value="VisBio"/>
+    </exec>
+  </target>
+
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-visbio-linux" if="isUnix"
+    depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Linux w/ JRE">
+    <copy todir="${visbio.linux-dir}/visbio${visbio.version}"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.linux-dir}/visbio${visbio.version}" eol="unix"
+      includes="${visbio.text-files}"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${visbio.linux-dir}/visbio${visbio.version}"
+        includes="${visbio.linux-exec}"/>
+    </chmod>
+<!--
+    <untar src="dist/jre-linux.tar.gz"
+      dest="${visbio.linux-dir}/visbio${visbio.version}"
+      overwrite="false" compression="gzip"/>
+-->
+    <!-- HACK - untar does not restore permissions; use exec instead -->
+    <echo>Expanding: jre-linux.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="xzf"/>
+      <arg value="dist/jre-linux.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.linux-dir}/visbio${visbio.version}"/>
+    </exec>
+<!--
+    <tar destfile="${dist.dir}/visbio${visbio.version}_linux.tar.gz"
+      basedir="${visbio.linux-dir}" compression="gzip"/>
+-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <echo>Building tar: visbio${visbio.version}_linux.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="czf"/>
+      <arg value="${dist.dir}/visbio${visbio.version}_linux.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.linux-dir}"/>
+      <arg value="visbio${visbio.version}"/>
+    </exec>
+  </target>
+
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-visbio-nojre" if="isUnix"
+    depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: cross-platform">
+    <copy todir="${visbio.nojre-dir}/visbio${visbio.version}"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.nojre-dir}/visbio${visbio.version}" eol="unix"
+      includes="${visbio.text-files}"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${visbio.nojre-dir}/visbio${visbio.version}"
+        includes="${visbio.linux-exec}"/>
+    </chmod>
+<!--
+    <tar destfile="${dist.dir}/visbio${visbio.version}.tar.gz"
+      basedir="${visbio.nojre-dir}" compression="gzip"/>
+-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <echo>Building tar: visbio${visbio.version}.tar.gz</echo>
+    <exec executable="tar">
+      <arg value="czf"/>
+      <arg value="${dist.dir}/visbio${visbio.version}.tar.gz"/>
+      <arg value="-C"/>
+      <arg value="${visbio.nojre-dir}"/>
+      <arg value="visbio${visbio.version}"/>
+    </exec>
+  </target>
+
+  <!-- LOCI Plugins for ImageJ -->
+
+  <target name="style-plugins" depends="copy-source, jar-checks"
+    description="check source code style for LOCI Plugins for ImageJ">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${plugins.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-plugins" depends="copy-source"
+    description="compile classes for LOCI Plugins for ImageJ">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${plugins.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-plugins" depends="compile-plugins, copy-jars, jar-formats"
+    description="generate JAR file for LOCI Plugins for ImageJ">
+    <jar jarfile="${jar.dir}/${plugins.jar}" basedir="${src.dir}/loci/plugins"
+      includes="plugins.config IJ_Props.txt">
+      <manifest>
+        <attribute name="Main-Class" value="${plugins.main}"/>
+      </manifest>
+    </jar>
+    <jar jarfile="${jar.dir}/${plugins.jar}" basedir="${classes.dir}"
+      includes="${plugins.files}"
+      excludes="loci/plugins/plugins.config loci/plugins/IJ_Props.txt"
+      update="true">
+    </jar>
+  </target>
+
+  <!-- OME Notes -->
+
+  <target name="style-notes" depends="copy-source, jar-checks"
+    description="check source code style for OME Notes">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${notes.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-notes" depends="copy-source"
+    description="compile classes for OME Notes">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${notes.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-notes"
+    depends="compile-notes, copy-jars, jar-formats"
+    description="generate JAR file for OME Notes">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${notes.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/${notes.jar}" basedir="${classes.dir}"
+      includes="${notes.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${notes.main}"/>
+        <attribute name="Class-Path" value="${notes.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- OME Metadata Editor -->
+
+  <target name="style-editor" depends="copy-source, jar-checks"
+    description="check source code style for OME Metadata Editor">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${editor.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-editor" depends="copy-source"
+    description="compile classes for OME Metadata Editor">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${editor.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-editor"
+    depends="compile-editor, copy-jars, jar-formats"
+    description="generate JAR file for OME Metadata Editor">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${editor.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/${editor.jar}" basedir="${classes.dir}"
+      includes="${editor.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${editor.main}"/>
+        <attribute name="Class-Path" value="${editor.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- Slim Plotter -->
+
+  <target name="style-slim" depends="copy-source, jar-checks"
+    description="check source code style for Slim Plotter">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${slim.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-slim" depends="copy-source"
+    description="compile classes for Slim Plotter">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${slim.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-slim" depends="compile-slim, copy-jars"
+    description="generate JAR file for Slim Plotter">
+    <jar jarfile="${jar.dir}/${slim.jar}" basedir="${classes.dir}"
+      includes="${slim.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${slim.main}"/>
+        <attribute name="Class-Path" value="${slim.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="dist-slim" if="isUnix"
+    depends="copy-jars, jar-formats, jar-slim"
+    description="create distribution bundle for Slim Plotter">
+    <copy todir="${slim.dist-dir}" preservelastmodified="true">
+      <fileset dir="dist/slim"/>
+      <fileset dir="${jar.dir}" includes="${slim.jar} ${slim.classpath}"/>
+    </copy>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${slim.dist-dir}" includes="${slim.exec}"/>
+    </chmod>
+<!--
+    <zip destfile="${dist.dir}/slim.zip" basedir="${dist.dir}/slim"/>
+-->
+    <!-- HACK - zip does not preserve permissions; use exec instead -->
+    <exec executable="zip" dir="${dist.dir}/slim">
+      <arg value="-r9"/>
+      <arg value="../slim.zip"/>
+      <arg value="SlimPlotter"/>
+    </exec>
+  </target>
+
+  <!-- LOCI Checkstyle checks -->
+
+  <target name="style-checks" depends="copy-source, jar-checks"
+    description="check source code style for LOCI Checkstyle checks">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${checks.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-checks" depends="copy-source"
+    description="compile classes for LOCI Checkstyle checks">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${checks.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-checks" depends="compile-checks, copy-jars"
+    description="generate JAR file for LOCI Checkstyle checks">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${checks.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/${checks.jar}" basedir="${classes.dir}"
+      includes="${checks.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${checks.main}"/>
+        <attribute name="Class-Path" value="${checks.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- ImageJ -->
+
+  <target name="ij-jws" depends="tools"
+    description="create JAR file encompassing ImageJ plus LOCI plugins">
+    <for list="${ij-jws.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${jar.dir}/@{jar}" dest="${ij-jws.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${jar.dir}/${ij-jws.jar}" basedir="${ij-jws.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${ij-jws.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${ij-jws.dir}"/>
+  </target>
+
+</project>
