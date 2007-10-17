@@ -1,0 +1,183 @@
+                  Bio-Formats Metadata Guide by Curtis Rueden
+
+                                   Overview
+                                  ----------
+
+This document provides an explanation of Bio-Formats's capabilities with
+respect to metadata. Bio-Formats provides metadata facilities on three
+distinct levels:
+
+1) Extraction of "core" metadata necessary to understand the image planes's
+   dimensional structure and binary encoding.
+
+2) Thorough parsing of additional metadata in each format's original structure.
+
+3) Standardization of proprietary metadata into the common OME data model.
+
+Each of these three facilities will be discussed in its own section.
+
+                                 Core Metadata
+                                ---------------
+
+For a series of images to form a coherent dataset, certain parameters are
+required to properly understand the data's structure. Such parameters
+constitute what Bio-Formats calls "core" metadata.
+
+The table below summarizes these parameters, with an explanation of each entry
+following. The first column lists methods of the IFormatReader interface
+relevant to obtaining core metadata values. The second column lists the
+corresponding field of the CoreMetadata class.
+
+      IFormatReader method | CoreMetadata parameter 
+     ----------------------+------------------------
+         getCoreMetadata() | (all)
+          getSeriesCount() | -
+           getImageCount() | imageCount
+                getSizeX() | sizeX
+                getSizeY() | sizeY
+                getSizeZ() | sizeZ
+                getSizeC() | sizeC
+                getSizeT() | sizeT
+       getEffectiveSizeC() | effectiveSizeC = imageCount / (sizeZ * sizeT)
+      getRGBChannelCount() | rgbChannelCount = sizeC / effectiveSizeC
+                   isRGB() | rgb (true iff rgbChannelCount > 1)
+           getThumbSizeX() | thumbSizeX
+           getThumbSizeY() | thumbSizeY
+            getPixelType() | pixelType
+    getChannelDimLengths() | cLengths
+      getChannelDimTypes() | cTypes
+       getDimensionOrder() | currentOrder
+          isOrderCertain() | orderCertain
+          isLittleEndian() | littleEndian
+           isInterleaved() | interleaved
+        isInterleaved(int) | -
+             getMetadata() | seriesMetadata
+
+CoreMetadata getCoreMetadata() :
+  TODO.
+
+int getSeriesCount() :
+  TODO. setSeries(int), getSeries().
+
+int getImageCount() :
+  TODO.
+
+int getSizeX() :
+  TODO.
+
+int getSizeY() :
+  TODO.
+
+int getSizeZ() :
+  TODO.
+
+int getSizeC() :
+  TODO.
+
+int getSizeT() :
+  TODO.
+
+int getEffectiveSizeC() :
+  TODO.
+
+int getRGBChannelCount() :
+  TODO.
+
+boolean isRGB() :
+  TODO.
+
+int getThumbSizeX() :
+  TODO.
+
+int getThumbSizeY() :
+  TODO.
+
+int getPixelType() :
+  TODO.
+
+int[] getChannelDimLengths() :
+  TODO.
+
+String[] getChannelDimTypes() :
+  TODO.
+
+String getDimensionOrder() :
+  TODO.
+
+boolean isOrderCertain() :
+  TODO.
+
+boolean isLittleEndian() :
+  TODO.
+
+boolean isInterleaved() :
+  TODO.
+
+boolean isInterleaved(int) :
+  TODO.
+
+Hashtable getMetadata() :
+  TODO.
+
+Metadata classes:
+  CoreMetadata
+
+                               Original Metadata
+                              -------------------
+
+void setMetadataCollected(boolean) :
+  TODO.
+
+boolean isMetadataCollected() :
+  TODO.
+
+Object getMetadataValue(String) :
+  TODO.
+
+Hashtable getMetadata() :
+  TODO.
+
+void setMetadataFiltered(boolean) :
+  TODO.
+
+boolean isMetadataFiltered() :
+  TODO.
+
+                          Standardization to OME-XML
+                         ----------------------------
+
+IFormatReader:
+
+void setOriginalMetadataPopulated(boolean) :
+  TODO.
+
+boolean isOriginalMetadataPopulated() :
+  TODO.
+
+void isMetadataComplete() :
+  TODO.
+
+void setMetadataStore(MetadataStore) :
+  TODO.
+
+void getMetadataStore() :
+  TODO.
+
+void getMetadataStoreRoot() :
+  TODO.
+
+IFormatWriter:
+
+void setMetadataRetrieve(MetadataRetrieve) :
+  TODO.
+
+MetadataRetrieve getMetadataRetrieve() :
+  TODO.
+
+Metadata classes:
+  MetadataStore
+  MetadataRetrieve
+  OMEXMLMetadata
+  DummyMetadata
+  AggregateMetadataStore
+  MetadataTools

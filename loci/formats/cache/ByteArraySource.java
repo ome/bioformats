@@ -1,0 +1,37 @@
+//
+// ByteArraySource.java
+//
+
+package loci.formats.cache;
+
+import java.io.IOException;
+import loci.formats.*;
+
+/**
+ * Retrieves byte arrays from a data source
+ * (e.g., a file) using Bio-Formats.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/cache/ByteArraySource.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/cache/ByteArraySource.java">SVN</a></dd></dl>
+ */
+public class ByteArraySource extends CacheSource {
+
+  // -- Constructors --
+
+  /** Constructs a byte array source from the given Bio-Formats reader. */
+  public ByteArraySource(IFormatReader r) { super(r); }
+
+  /** Constructs a byte array source that draws from the given file. */
+  public ByteArraySource(String id) throws CacheException { super(id); }
+
+  // -- ICacheSource API methods --
+
+  /* @see loci.formats.cache.ICacheSource#getObject(int) */
+  public Object getObject(int index) throws CacheException {
+    try { return reader.openBytes(index); }
+    catch (FormatException exc) { throw new CacheException(exc); }
+    catch (IOException exc) { throw new CacheException(exc); }
+  }
+
+}
