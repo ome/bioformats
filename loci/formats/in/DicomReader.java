@@ -271,14 +271,19 @@ public class DicomReader extends FormatReader {
           signed = ss == 1;
           addInfo(tag, ss);
           break;
+        case RESCALE_INTERCEPT:
+          String intercept = in.readString(elementLength);
+          if (intercept != null && !intercept.trim().equals("")) {
+            try { scale = (int) Float.parseFloat(intercept.trim()); }
+            catch (NumberFormatException exc) {
+              scale = 0;
+            }
+          }
+          addInfo(tag, intercept);
+          break;
         case 537262910:
         case WINDOW_CENTER:
         case WINDOW_WIDTH:
-        case RESCALE_INTERCEPT:
-          String intercept = in.readString(elementLength);
-          scale = Integer.parseInt(intercept.trim());
-          addInfo(tag, intercept);
-          break;
         case RESCALE_SLOPE:
           addInfo(tag, in.readString(elementLength));
           break;
@@ -343,6 +348,7 @@ public class DicomReader extends FormatReader {
     core.currentOrder[0] = "XYCZT";
     core.metadataComplete[0] = true;
     core.falseColor[0] = false;
+    if (isJPEG || isRLE) core.interleaved[0] = false;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
