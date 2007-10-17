@@ -240,8 +240,7 @@ public class PictReader extends FormatReader {
       return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0]);
     }
     else {
-      // 16 bit data
-      short[] data = new short[3 * core.sizeY[0] * core.sizeX[0]];
+      byte[] data = new byte[3 * core.sizeY[0] * core.sizeX[0]];
 
       int outIndex = 0;
       for (int i=0; i<core.sizeY[0]; i++) {
@@ -250,19 +249,16 @@ public class PictReader extends FormatReader {
         for (int j=0; j<row.length; j++, outIndex+=3) {
           if (j < core.sizeX[0]) {
             if (outIndex >= data.length - 2) break;
-            int s0 = (row[j] & 0x1f);
-            int s1 = (row[j] & 0x3e0) >> 5; // 0x1f << 5;
-            int s2 = (row[j] & 0x7c00) >> 10; // 0x1f << 10;
-            data[outIndex] = (short) s2;
-            data[outIndex+1] = (short) s1;
-            data[outIndex+2] = (short) s0;
+            data[outIndex] = (byte) ((row[j] & 0x7c00) >> 10);
+            data[outIndex+1] = (byte) ((row[j] & 0x3e0) >> 5);
+            data[outIndex+2] = (byte) (row[j] & 0x1f);
           }
           else j = row.length;
         }
       }
 
       if (debug) {
-        debug("openBytes: 16-bit data, " + core.sizeX[0] + " x " +
+        debug("openBytes: 8-bit RGB data, " + core.sizeX[0] + " x " +
           core.sizeY[0] + ", length=" + data.length);
       }
       return ImageTools.makeImage(data, core.sizeX[0], core.sizeY[0], 3, true);
