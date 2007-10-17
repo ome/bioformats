@@ -27,7 +27,6 @@ package loci.formats.in;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.*;
 
 /**
@@ -47,6 +46,7 @@ public class AVIReader extends FormatReader {
   /** Supported compression types. */
   private static final int MSRLE = 1;
   private static final int MS_VIDEO = 1296126531;
+  private static final int CINEPAK = 1684633187;
 
   // -- Fields --
 
@@ -310,10 +310,11 @@ public class AVIReader extends FormatReader {
                   // a value of 0 means we determine this based on the
                   // bits per pixel
                   bmpActualColorsUsed = 1 << bmpBitsPerPixel;
+                  bmpColorsUsed = bmpActualColorsUsed;
                 }
 
                 if (bmpCompression != MSRLE && bmpCompression != 0 &&
-                  bmpCompression != MS_VIDEO)
+                  bmpCompression != MS_VIDEO && bmpCompression != CINEPAK)
                 {
                   throw new FormatException("Unsupported compression type " +
                     bmpCompression);
@@ -395,6 +396,7 @@ public class AVIReader extends FormatReader {
                 if (type.substring(2).equals("db") ||
                   type.substring(2).equals("dc"))
                 {
+                  /* debug */ System.out.println("adding offset");
                   offsets.add(new Long(in.getFilePointer()));
                   lengths.add(new Long(size));
                   in.skipBytes(size);
@@ -459,6 +461,13 @@ public class AVIReader extends FormatReader {
 
     if (bmpCompression != 0) core.pixelType[0] = FormatTools.UINT8;
 
+    /* debug */
+    System.out.println("count : " + core.imageCount[0]);
+    System.out.println("Z : " + core.sizeZ[0]);
+    System.out.println("C : " + core.sizeC[0]);
+    System.out.println("T : " + core.sizeT[0]);
+    /* end debug */
+
     MetadataStore store = getMetadataStore();
 
     store.setImage(currentId, null, null, null);
@@ -497,6 +506,17 @@ public class AVIReader extends FormatReader {
       options[3] = lastImage;
 
       MSVideoCodec codec = new MSVideoCodec();
+      buf = codec.decompress(b, options);
+      lastImage = buf;
+      if (no == core.imageCount[0] - 1) lastImage = null;
+      return buf;
+    }
+    else if (bmpCompression == CINEPAK) {
+      Object[] options = new Object[2];
+      options[0] = new Integer(bmpBitsPerPixel);
+      options[1] = lastImage;
+
+      CinepakCodec codec = new CinepakCodec();
       buf = codec.decompress(b, options);
       lastImage = buf;
       if (no == core.imageCount[0] - 1) lastImage = null;
