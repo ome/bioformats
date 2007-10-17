@@ -14,7 +14,8 @@ public class TiffComment {
     }
     for (int i=0; i<args.length; i++) {
       String comment = TiffTools.getComment(args[i]);
-      if (comment != null) System.out.println(comment);
+      System.out.println(comment == null ?
+        args[i] + ": no TIFF comment found." : comment);
     }
   }
 

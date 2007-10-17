@@ -859,6 +859,7 @@ public final class TiffTools {
     RandomAccessStream in = new RandomAccessStream(id);
     Hashtable ifd = TiffTools.getFirstIFD(in);
     in.close();
+    if (ifd == null) return null;
 
     // extract comment
     Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
