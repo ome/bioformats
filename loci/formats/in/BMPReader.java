@@ -94,6 +94,8 @@ public class BMPReader extends FormatReader {
         " not supported");
     }
 
+    /* debug */ System.out.println("global offset : " + global);
+
     in.seek(global);
 
     if ((palette != null && palette[0].length > 0) || core.sizeC[0] == 1) {
@@ -103,12 +105,12 @@ public class BMPReader extends FormatReader {
     }
     else {
       for (int y=core.sizeY[0]-1; y>=0; y--) {
-        in.read(buf, y*core.sizeX[0]*3, core.sizeX[0]*3);
+        in.read(buf, y*core.sizeX[0]*core.sizeC[0], core.sizeX[0]*core.sizeC[0]);
       }
-      for (int i=0; i<buf.length/3; i++) {
-        byte tmp = buf[i*3 + 2];
-        buf[i*3 + 2] = buf[i*3];
-        buf[i*3] = tmp;
+      for (int i=0; i<buf.length/core.sizeC[0]; i++) {
+        byte tmp = buf[i*core.sizeC[0] + 2];
+        buf[i*core.sizeC[0] + 2] = buf[i*core.sizeC[0]];
+        buf[i*core.sizeC[0]] = tmp;
       }
     }
     return buf;
@@ -182,15 +184,21 @@ public class BMPReader extends FormatReader {
     addMeta("X resolution", "" + pixelSizeX);
     addMeta("Y resolution", "" + pixelSizeY);
     int nColors = in.readInt();
+    if (nColors == 0 && bpp != 32 && bpp != 24) {
+      nColors = bpp < 8 ? 1 << bpp : 256;
+    }
     in.skipBytes(4);
 
     // read the palette, if it exists
 
-    if (offset != in.getFilePointer() && nColors > 0) {
+    /* debug */ System.out.println("offset=" + offset + ", fp=" +
+      in.getFilePointer() + ", nColors=" + nColors);
+
+    if (nColors != 0) {
       palette = new byte[3][nColors];
 
       for (int i=0; i<nColors; i++) {
-        for (int j=palette.length; j>0; j--) {
+        for (int j=palette.length-1; j>=0; j--) {
           palette[j][i] = in.readByte();
         }
         in.skipBytes(1);
@@ -198,12 +206,14 @@ public class BMPReader extends FormatReader {
     }
 
     global = in.getFilePointer();
+
     addMeta("Indexed color", palette == null ? "false" : "true");
 
     status("Populating metadata");
 
     core.sizeC[0] = (palette == null && bpp == 8) ? 1 : 3;
-    if (bpp > 8) bpp /= 3;
+    if (bpp == 32) core.sizeC[0] = 4;
+    if (bpp > 8) bpp /= core.sizeC[0];
     while (bpp % 8 != 0) bpp++;
 
     switch (bpp) {
@@ -218,7 +228,9 @@ public class BMPReader extends FormatReader {
         break;
     }
 
-    if (core.sizeX[0] % 2 == 1) core.sizeX[0]++;
+    core.sizeX[0] = (int) ((in.length() - global) /
+      (core.sizeY[0] * (bpp / 8) * (palette != null ? 1 : core.sizeC[0])));
+
     core.rgb[0] = core.sizeC[0] > 1;
     core.littleEndian[0] = true;
     core.interleaved[0] = true;
