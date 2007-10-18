@@ -56,6 +56,7 @@ public class OIFReader extends FormatReader {
 
   protected String[] size = new String[9], code = new String[9];
   protected int imageDepth;
+  protected String thumbId;
 
   // -- Constructor --
 
@@ -96,13 +97,6 @@ public class OIFReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
-    String dir =
-      currentId.substring(0, currentId.lastIndexOf(File.separator) + 1);
-    dir += currentId.substring(currentId.lastIndexOf(File.separator) + 1) +
-      ".files" + File.separator;
-
-    String thumbId = dir + currentId.substring(currentId.lastIndexOf(
-      File.separator) + 1, currentId.lastIndexOf(".")) + "_Thumb.bmp";
     thumbReader.setId(thumbId);
     return thumbReader.openImage(0);
   }
@@ -206,6 +200,9 @@ public class OIFReader extends FormatReader {
           int pos = Integer.parseInt(key.substring(11));
           filenames.put(new Integer(pos), value.trim());
         }
+        else if (key.indexOf("Thumb") != -1) {
+          thumbId = value.trim();
+        }
         addMeta(prefix + key, value);
 
         if (prefix.startsWith("[Axis ") &&
@@ -254,6 +251,12 @@ public class OIFReader extends FormatReader {
       if (i > 0) tiffReader[i].setMetadataCollected(false);
     }
 
+    thumbId = thumbId.replaceAll("pty", "bmp");
+    thumbId = thumbId.substring(1, thumbId.length() - 1);
+    thumbId = thumbId.replace('\\', File.separatorChar);
+    thumbId = thumbId.replace('/', File.separatorChar);
+    thumbId = path + File.separator + thumbId;
+
     // open each INI file (.pty extension)
 
     status("Reading additional metadata");
@@ -261,8 +264,9 @@ public class OIFReader extends FormatReader {
     String tiffPath = null;
     RandomAccessStream ptyReader;
 
-    for (int i=0; i<core.imageCount[0]; i++) {
+    for (int i=0, ii=0; ii<core.imageCount[0]; i++, ii++) {
       String file = (String) filenames.get(new Integer(i));
+      while (file == null) file = (String) filenames.get(new Integer(++i));
       file = file.substring(1, file.length() - 1);
       file = file.replace('\\', File.separatorChar);
       file = file.replace('/', File.separatorChar);
@@ -285,11 +289,11 @@ public class OIFReader extends FormatReader {
           if (key.equals("DataName")) {
             value = value.substring(1, value.length() - 1);
             if (value.indexOf("-R") == -1) {
-              tiffs.add(i, tiffPath + File.separator + value);
-              tiffReader[i].setId((String) tiffs.get(i));
+              tiffs.add(ii, tiffPath + File.separator + value);
+              tiffReader[ii].setId((String) tiffs.get(ii));
             }
           }
-          addMeta("Image " + i + " : " + key, value);
+          addMeta("Image " + ii + " : " + key, value);
         }
       }
       ptyReader.close();
