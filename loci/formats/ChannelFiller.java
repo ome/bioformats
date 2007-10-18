@@ -80,44 +80,36 @@ public class ChannelFiller extends ReaderWrapper {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    buf = openBytes(no);
-    return buf;
-  }
-
-  /* @see IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
     if (reader.isIndexed() && !reader.isFalseColor()) {
       if (getPixelType() == FormatTools.UINT8) {
         byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(),
           reader.openBytes(no));
-        byte[] rtn = new byte[b.length * b[0].length];
         if (isInterleaved()) {
           int pt = 0;
           for (int i=0; i<b[0].length; i++) {
             for (int j=0; j<b.length; j++) {
-              rtn[pt++] = b[j][i];
+              buf[pt++] = b[j][i];
             }
           }
         }
         else {
           for (int i=0; i<b.length; i++) {
-            System.arraycopy(b[i], 0, rtn, i*b[i].length, b[i].length);
+            System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
           }
         }
-        return rtn;
+        return buf;
       }
       else {
         short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
           reader.openBytes(no), isLittleEndian());
-        byte[] rtn = new byte[s.length * s[0].length * 2];
 
         if (isInterleaved()) {
           int pt = 0;
           for (int i=0; i<s[0].length; i++) {
             for (int j=0; j<s.length; j++) {
-              rtn[pt++] = (byte) (isLittleEndian() ?
+              buf[pt++] = (byte) (isLittleEndian() ?
                 (s[j][i] & 0xff) : (s[j][i] >> 8));
-              rtn[pt++] = (byte) (isLittleEndian() ?
+              buf[pt++] = (byte) (isLittleEndian() ?
                 (s[j][i] >> 8) : (s[j][i] & 0xff));
             }
           }
@@ -126,17 +118,24 @@ public class ChannelFiller extends ReaderWrapper {
           int pt = 0;
           for (int i=0; i<s.length; i++) {
             for (int j=0; j<s[i].length; j++) {
-              rtn[pt++] = (byte) (isLittleEndian() ?
+              buf[pt++] = (byte) (isLittleEndian() ?
                 (s[j][i] & 0xff) : (s[j][i] >> 8));
-              rtn[pt++] = (byte) (isLittleEndian() ?
+              buf[pt++] = (byte) (isLittleEndian() ?
                 (s[j][i] >> 8) : (s[j][i] & 0xff));
             }
           }
         }
-        return rtn;
+        return buf;
       }
     }
-    return reader.openBytes(no);
+    return reader.openBytes(no, buf);
+  }
+
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    byte[] buf = new byte[getSizeX() * getSizeY() * getRGBChannelCount() *
+      FormatTools.getBytesPerPixel(getPixelType())];
+    return openBytes(no, buf);
   }
 
   /* @see IFormatReader#openImage(int) */
