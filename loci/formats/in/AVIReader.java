@@ -46,7 +46,7 @@ public class AVIReader extends FormatReader {
   /** Supported compression types. */
   private static final int MSRLE = 1;
   private static final int MS_VIDEO = 1296126531;
-  private static final int CINEPAK = 1684633187;
+  //private static final int CINEPAK = 1684633187;
 
   // -- Fields --
 
@@ -314,7 +314,7 @@ public class AVIReader extends FormatReader {
                 }
 
                 if (bmpCompression != MSRLE && bmpCompression != 0 &&
-                  bmpCompression != MS_VIDEO && bmpCompression != CINEPAK)
+                  bmpCompression != MS_VIDEO/* && bmpCompression != CINEPAK*/)
                 {
                   throw new FormatException("Unsupported compression type " +
                     bmpCompression);
@@ -511,6 +511,7 @@ public class AVIReader extends FormatReader {
       if (no == core.imageCount[0] - 1) lastImage = null;
       return buf;
     }
+    /*
     else if (bmpCompression == CINEPAK) {
       Object[] options = new Object[2];
       options[0] = new Integer(bmpBitsPerPixel);
@@ -522,6 +523,7 @@ public class AVIReader extends FormatReader {
       if (no == core.imageCount[0] - 1) lastImage = null;
       return buf;
     }
+    */
     throw new FormatException("Unsupported compression : " + bmpCompression);
   }
 
