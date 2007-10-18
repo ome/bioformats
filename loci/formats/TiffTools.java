@@ -304,9 +304,14 @@ public final class TiffTools {
     Boolean result = checkHeader(in);
     if (result == null) return null;
 
-    long offset = getFirstOffset(in);
+    in.seek(2);
+    boolean bigTiff = in.readShort() == BIG_TIFF_MAGIC_NUMBER;
 
-    return getIFD(in, 0, offset);
+    long offset = getFirstOffset(in, bigTiff);
+
+    Hashtable ifd = getIFD(in, 0, offset, bigTiff);
+    ifd.put(new Integer(BIG_TIFF), new Boolean(bigTiff));
+    return ifd;
   }
 
   /**
@@ -324,17 +329,20 @@ public final class TiffTools {
     Boolean result = checkHeader(in);
     if (result == null) return null;
 
+    in.seek(2);
+    boolean bigTiff = in.readShort() == BIG_TIFF_MAGIC_NUMBER;
+
     // Get the offset of the first IFD
-    long offset = getFirstOffset(in);
+    long offset = getFirstOffset(in, bigTiff);
 
     // The following loosely resembles the logic of getIFD()...
     in.seek(offset);
-    int numEntries = in.readShort() & 0xffff;
+    long numEntries = bigTiff ? in.readLong() : in.readShort() & 0xffff;
 
     for (int i = 0; i < numEntries; i++) {
       in.seek(offset + // The beginning of the IFD
         2 + // The width of the initial numEntries field
-        BYTES_PER_ENTRY * i);
+        (bigTiff ? BIG_TIFF_BYTES_PER_ENTRY : BYTES_PER_ENTRY) * i);
 
       int entryTag = in.readShort() & 0xffff;
 
@@ -345,13 +353,14 @@ public final class TiffTools {
       int entryType = in.readShort() & 0xffff;
 
       // Parse the entry's "ValueCount"
-      int valueCount = in.readInt();
+      int valueCount =
+        bigTiff ? (int) (in.readLong() & 0xffffffff) : in.readInt();
       if (valueCount < 0) {
         throw new RuntimeException("Count of '" + valueCount + "' unexpected.");
       }
 
       // Parse the entry's "ValueOffset"
-      int valueOffset = in.readInt();
+      long valueOffset = bigTiff ? in.readLong() : in.readInt();
 
       return new TiffIFDEntry(entryTag, entryType, valueCount, valueOffset);
     }

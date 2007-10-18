@@ -50,9 +50,9 @@ public class TiffIFDEntry {
    * The <i>Value Offset</i>, the file offset (in bytes) of the <i>Value</i>
    * for the field.
    */
-  private int valueOffset;
+  private long valueOffset;
 
-  public TiffIFDEntry(int tag, int type, int valueCount, int valueOffset) {
+  public TiffIFDEntry(int tag, int type, int valueCount, long valueOffset) {
     this.tag = tag;
     this.type = type;
     this.valueCount = valueCount;
@@ -81,6 +81,6 @@ public class TiffIFDEntry {
    * Retrieves the entry's <i>ValueOffset</i> value.
    * @return the entry's <i>ValueOffset</i> value.
    */
-  public int getValueOffset() { return valueOffset; }
+  public long getValueOffset() { return valueOffset; }
 
 }
