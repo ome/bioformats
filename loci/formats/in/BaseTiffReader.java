@@ -112,7 +112,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap =
         (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
-      if (colorMap == null) return null;
+      if (colorMap == null || colorMap.length < 65536 * 3) return null;
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;
       for (int i=0; i<table.length; i++) {
@@ -536,7 +536,9 @@ public abstract class BaseTiffReader extends FormatReader {
     core.sizeT[0] = ifds.length;
     core.metadataComplete[0] = true;
     core.indexed[0] = TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE;
+      TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE &&
+      (get8BitLookupTable() != null || get16BitLookupTable() != null);
+    if (core.sizeC[0] == 1 && !core.indexed[0]) core.rgb[0] = false;
     core.falseColor[0] = false;
 
     int bitFormat = TiffTools.getIFDIntValue(ifds[0],
@@ -555,7 +557,7 @@ public abstract class BaseTiffReader extends FormatReader {
           core.pixelType[0] = FormatTools.INT32;
           break;
         default:
-          core.pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = FormatTools.INT8;
       }
     }
     else {

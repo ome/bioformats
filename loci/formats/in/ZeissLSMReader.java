@@ -136,6 +136,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       int c = ras.readInt();
       core.sizeT[0] = ras.readInt();
 
+      if (isIndexed()) core.sizeC[0] = 3;
       if (c > core.sizeC[0] || c != 1) core.sizeC[0] = c;
       if (core.sizeC[0] == 0) core.sizeC[0]++;
 
