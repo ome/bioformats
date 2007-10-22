@@ -328,6 +328,11 @@ public class ND2Reader extends FormatReader {
                 FormatTools.getBytesPerPixel(core.pixelType[0]));
             }
             offsets[ndx] = in.getFilePointer() - len + sb.length() + 21;
+            while (offsets[ndx] - in.getFilePointer() +
+              len - 14 - sb.length() < 8)
+            {
+              offsets[ndx]++;
+            }
           }
           else if (len >= 5 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
             b[3] == 'g' && b[4] == 'e') // b.startsWith("Image")
@@ -378,12 +383,6 @@ public class ND2Reader extends FormatReader {
         }
       }
 
-      if (isLossless) {
-        for (int i=0; i<offsets.length; i++) {
-          offsets[i]++;
-        }
-      }
-
       if (core.sizeC[0] == 0) core.sizeC[0] = 1;
       core.currentOrder[0] = "XYCZT";
       core.rgb[0] = core.sizeC[0] > 1;
@@ -391,7 +390,7 @@ public class ND2Reader extends FormatReader {
         core.imageCount[0] /= 3;
         core.sizeZ[0] /= 3;
       }
-      core.littleEndian[0] = isLossless;
+      core.littleEndian[0] = true;
       core.interleaved[0] = true;
       core.indexed[0] = false;
       core.falseColor[0] = false;
@@ -731,7 +730,7 @@ public class ND2Reader extends FormatReader {
 
     core.rgb[0] = core.sizeC[0] >= 3;
     core.interleaved[0] = false;
-    core.littleEndian[0] = false;
+    core.littleEndian[0] = true;
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
