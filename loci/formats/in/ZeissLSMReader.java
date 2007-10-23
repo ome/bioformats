@@ -80,6 +80,39 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    int[] lut = (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+    if (lut == null || (core.pixelType[0] != FormatTools.UINT8 &&
+      core.pixelType[0] != FormatTools.INT8))
+    {
+      return null;
+    }
+    byte[][] bLut = new byte[3][256];
+    for (int i=0; i<bLut[0].length; i++) {
+      bLut[0][i] = (byte) ((lut[i] & 0xff0000) >> 16);
+      bLut[1][i] = (byte) ((lut[i] & 0xff00) >> 8);
+      bLut[2][i] = (byte) (lut[i] & 0xff);
+    }
+    return bLut;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    int[] lut = (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+    if (lut == null) return null;
+    short[][] s = new short[3][65536];
+    if (lut.length < s.length * s[0].length) return null;
+    for (int i=0; i<s.length; i++) {
+      for (int j=0; j<s[i].length; j++) {
+        s[i][j] = (short) (lut[i*s[i].length + j]);
+      }
+    }
+    return s;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
@@ -645,7 +678,8 @@ public class ZeissLSMReader extends BaseTiffReader {
       data = in.readInt();
       if (data < 0) data += 4294967296L;
       put("Type" + i + "-" + suffix, data);
-      put("Size" + i + "-" + suffix, in.readInt());
+      int v = in.readInt();
+      put("Size" + i + "-" + suffix, v);
 
       switch ((int) data) {
         case 1:

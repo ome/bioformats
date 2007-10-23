@@ -91,12 +91,7 @@ public abstract class BaseTiffReader extends FormatReader {
       int next = 0;
       for (int j=0; j<table.length; j++) {
         for (int i=0; i<table[0].length; i++) {
-          if (isLittleEndian()) {
-            int n = colorMap[next++];
-            if ((n & 0xffff) > 255) table[j][i] = (byte) ((n & 0xff00) >> 8);
-            else table[j][i] = (byte) (n & 0xff);
-          }
-          else table[j][i] = (byte) ((colorMap[next++] & 0xff00) >> 8);
+          table[j][i] = (byte) (colorMap[next++] & 0xff);
         }
       }
 
