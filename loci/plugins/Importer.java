@@ -123,7 +123,6 @@ public class Importer {
 
     boolean mergeChannels = options.isMergeChannels();
     boolean colorize = options.isColorize();
-    boolean splitWindows = options.isSplitWindows();
     boolean showMetadata = options.isShowMetadata();
     boolean groupFiles = options.isGroupFiles();
     boolean concatenate = options.isConcatenate();
@@ -189,12 +188,9 @@ public class Importer {
         sizeT[i] = r.getSizeT();
         certain[i] = r.isOrderCertain();
         cBegin[i] = zBegin[i] = tBegin[i] = 0;
-        if (certain[i]) {
-          cEnd[i] = sizeC[i] - 1;
-          zEnd[i] = sizeZ[i] - 1;
-          tEnd[i] = sizeT[i] - 1;
-        }
-        else cEnd[i] = num[i] - 1;
+        cEnd[i] = sizeC[i] - 1;
+        zEnd[i] = sizeZ[i] - 1;
+        tEnd[i] = sizeT[i] - 1;
         cStep[i] = zStep[i] = tStep[i] = 1;
       }
       series[0] = true;
@@ -345,18 +341,13 @@ public class Importer {
 
           boolean[] load = new boolean[num[i]];
           if (!viewNone) {
-            if (certain[i]) {
-              for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
-                for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
-                  for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
-                    int index = r.getIndex(z, c, t);
-                    load[index] = true;
-                  }
+            for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
+              for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
+                for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
+                  int index = r.getIndex(z, c, t);
+                  load[index] = true;
                 }
               }
-            }
-            else {
-              for (int j=cBegin[i]; j<=cEnd[i]; j+=cStep[i]) load[j] = true;
             }
           }
           int total = 0;
@@ -557,8 +548,18 @@ public class Importer {
             }
           }
 
+          boolean splitC = options.isSplitChannels();
+          boolean splitZ = options.isSplitFocalPlanes();
+          boolean splitT = options.isSplitTimepoints();
+
           for (int i=0; i<newImps.size(); i++) {
-            ((ImagePlus) newImps.get(i)).show();
+            ImagePlus imp = (ImagePlus) newImps.get(i);
+            imp.show();
+            if (splitC || splitZ || splitT) {
+              IJ.runPlugIn("loci.plugins.Slicer", "sliceZ=" + splitZ +
+                ", sliceC=" + splitC + ", sliceT=" + splitT + ", stackOrder=" +
+                stackOrder + ", keepOriginal=false");
+            }
           }
         }
       }
@@ -604,101 +605,15 @@ public class Importer {
     throws FormatException, IOException
   {
     if (stack == null) return;
-    if (!options.isMergeChannels() && options.isSplitWindows()) {
-      slice(stack, file, series, zCount, cCount, tCount, fi, r, fs, options);
-    }
-    else {
-      ImagePlus imp = new ImagePlus(file + " - " + series, stack);
-      imp.setProperty("Info", "File full path=" + file +
-        "\nSeries name=" + series + "\n");
-
-      // retrieve the spatial calibration information, if available
-      applyCalibration(store, imp, r.getSeries());
-      imp.setFileInfo(fi);
-      imp.setDimensions(cCount, zCount, tCount);
-      displayStack(imp, r, fs, options);
-    }
-  }
-
-  /** Opens each channel of the source stack in a separate window. */
-  private void slice(ImageStack is, String file, String series, int z, int c,
-    int t, FileInfo fi, IFormatReader r, FileStitcher fs,
-    ImporterOptions options)
-    throws FormatException, IOException
-  {
-    boolean range = options.isSpecifyRanges();
-
-    int step = 1;
-    if (range) step = c = r.getSizeC();
-
-    ImageStack[] newStacks = new ImageStack[c];
-    for (int i=0; i<newStacks.length; i++) {
-      newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
-    }
-
-    int[][] indices = new int[c][is.getSize() / c];
-    int[] pt = new int[c];
-    Arrays.fill(pt, 0);
-
-    for (int i=0; i<is.getSize(); i++) {
-      int[] zct = FormatTools.getZCTCoords(stackOrder, r.getSizeZ(),
-        r.getSizeC(), r.getSizeT(), r.getImageCount(), i);
-      int cndx = zct[1];
-      indices[cndx][pt[cndx]++] = i;
-    }
-
-    for (int i=0; i<c; i++) {
-      if (range) {
-        for (int j=0; j<z*t; j++) {
-          int ndx = j*step + 1;
-          newStacks[i].addSlice(is.getSliceLabel(ndx), is.getProcessor(ndx));
-        }
-      }
-      else {
-        for (int j=0; j<indices[i].length; j++) {
-          newStacks[i].addSlice(is.getSliceLabel(indices[i][j] + 1),
-            is.getProcessor(indices[i][j] + 1));
-        }
-      }
-    }
+    ImagePlus imp = new ImagePlus(file + " - " + series, stack);
+    imp.setProperty("Info", "File full path=" + file +
+      "\nSeries name=" + series + "\n");
 
     // retrieve the spatial calibration information, if available
-
-    for (int i=0; i<newStacks.length; i++) {
-      ImagePlus imp = new ImagePlus(file + " - " + series + " - Ch" + (i+1),
-        newStacks[i]);
-      imp.setProperty("Info", "File full path=" + file +
-        "\nSeries name=" + series + "\n");
-      applyCalibration((OMEXMLMetadata) r.getMetadataStore(), imp,
-        r.getSeries());
-
-      // colorize channels; mostly copied from the ImageJ source
-
-      if (options.isColorize()) {
-        fi.reds = new byte[256];
-        fi.greens = new byte[256];
-        fi.blues = new byte[256];
-
-        for (int j=0; j<256; j++) {
-          switch (i) {
-            case 0: fi.reds[j] = (byte) j; break;
-            case 1: fi.greens[j] = (byte) j; break;
-            case 2: fi.blues[j] = (byte) j; break;
-          }
-        }
-
-        ImageProcessor ip = imp.getProcessor();
-        ColorModel cm =
-          new IndexColorModel(8, 256, fi.reds, fi.greens, fi.blues);
-
-        ip.setColorModel(cm);
-        if (imp.getStackSize() > 1) imp.getStack().setColorModel(cm);
-      }
-
-      imp.setFileInfo(fi);
-      imp.setDimensions(1, r.getSizeZ(), r.getSizeT());
-      displayStack(imp, r, fs, options);
-    }
+    applyCalibration(store, imp, r.getSeries());
+    imp.setFileInfo(fi);
+    imp.setDimensions(cCount, zCount, tCount);
+    displayStack(imp, r, fs, options);
   }
 
   /** Displays the image stack using the appropriate plugin. */
@@ -707,6 +622,9 @@ public class Importer {
   {
     boolean mergeChannels = options.isMergeChannels();
     boolean concatenate = options.isConcatenate();
+    int nChannels = imp.getNChannels();
+    int nSlices = imp.getNSlices();
+    int nFrames = imp.getNFrames();
     if (options.isAutoscale()) Util.adjustColorRange(imp);
 
     // convert to RGB if needed
@@ -768,9 +686,13 @@ public class Importer {
       }
     }
 
-    imp.setDimensions(
-      imp.getStackSize() / (imp.getNSlices() * imp.getNFrames()),
-      imp.getNSlices(), imp.getNFrames());
+    boolean splitC = options.isSplitChannels();
+    boolean splitZ = options.isSplitFocalPlanes();
+    boolean splitT = options.isSplitTimepoints();
+
+    imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
+      nSlices, nFrames);
+
     if (options.isViewBrowser()) { }
     else if (options.isViewImage5D()) {
       ReflectedUniverse ru = new ReflectedUniverse();
@@ -800,41 +722,15 @@ public class Importer {
       IJ.run("View5D ", "");
     }
     else if (!options.isViewNone()) {
-      if (options.isIndividualWindows() && !(imp instanceof CustomImage)) {
-        ImageStack is = imp.getStack();
-        for (int i=0; i<is.getSize(); i++) {
-          ImageStack s = new ImageStack(is.getWidth(), is.getHeight());
-          int ndx = i + 1;
-          s.addSlice(is.getSliceLabel(ndx), is.getProcessor(ndx));
-
-          ImagePlus p = new ImagePlus(imp.getTitle(), s);
-          if (!concatenate) p.show();
-          else imps.add(p);
+      if (!concatenate) {
+        imp.show();
+        if (splitC || splitZ || splitT) {
+          IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
+            " slice_c=" + splitC + " slice_t=" + splitT +
+            " stack_order=" + stackOrder + " keep_original=false");
         }
       }
-      else if (options.isIndividualWindows()) {
-        ImageStack is = imp.getStack();
-
-        for (int zz=0; zz<r.getSizeZ(); zz++) {
-          for (int tt=0; tt<r.getSizeT(); tt++) {
-            ImageStack s = new ImageStack(is.getWidth(), is.getHeight());
-            for (int cc=0; cc<r.getSizeC(); cc++) {
-              int ndx = FormatTools.getIndex("XYCTZ", r.getSizeZ(),
-                r.getSizeC(), r.getSizeT(), is.getSize(), zz, cc, tt) + 1;
-              s.addSlice(is.getSliceLabel(ndx), is.getProcessor(ndx));
-            }
-            ImagePlus p = new ImagePlus(imp.getTitle(), s);
-            CustomImage custom = new CustomImage(p, "XYCTZ", 1, 1,
-              r.getSizeC(), options.isAutoscale());
-            if (!concatenate) custom.show();
-            else imps.add(custom);
-          }
-        }
-      }
-      else {
-        if (!concatenate) imp.show();
-        else imps.add(imp);
-      }
+      else imps.add(imp);
     }
   }
 
@@ -883,8 +779,8 @@ public class Importer {
     Arrays.fill(pt, 0);
 
     for (int i=0; i<s.getSize(); i++) {
-      int[] zct = FormatTools.getZCTCoords(stackOrder, sizeZ, r.getEffectiveSizeC(),
-        sizeT, r.getImageCount(), i);
+      int[] zct = FormatTools.getZCTCoords(stackOrder, sizeZ,
+        r.getEffectiveSizeC(), sizeT, r.getImageCount(), i);
       int cndx = zct[1];
       indices[cndx][pt[cndx]++] = i;
     }

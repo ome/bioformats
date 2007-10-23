@@ -93,8 +93,9 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_ORDER = "bioformats.stackOrder";
   public static final String PREF_MERGE = "bioformats.mergeChannels";
   public static final String PREF_COLORIZE = "bioformats.colorize";
-  public static final String PREF_SPLIT = "bioformats.splitWindows";
-  public static final String PREF_INDIVIDUAL = "bioformats.individualWindows";
+  public static final String PREF_C = "bioformats.splitWindows";
+  public static final String PREF_Z = "bioformats.splitFocalPlanes";
+  public static final String PREF_T = "bioformats.splitTimepoints";
   public static final String PREF_SWAP = "bioformats.swapDimensions";
   public static final String PREF_METADATA = "bioformats.showMetadata";
   public static final String PREF_GROUP = "bioformats.groupFiles";
@@ -109,11 +110,11 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_ORDER = "Stack_order: ";
   public static final String LABEL_MERGE = "Merge_channels to RGB";
   public static final String LABEL_COLORIZE = "Colorize channels";
-  public static final String LABEL_SPLIT =
-    "Split_channels into separate windows";
-  public static final String LABEL_INDIVIDUAL =
-    "Split_planes into separate windows";
-  public static final String LABEL_SWAP = "Specify_stack organization"; 
+  public static final String LABEL_C = "Split_channels into separate windows";
+  public static final String LABEL_Z =
+    "Split_focal planes into separate windows";
+  public static final String LABEL_T = "Split_timepoints into separate windows";
+  public static final String LABEL_SWAP = "Specify_stack organization";
   public static final String LABEL_METADATA =
     "Display_metadata in results window";
   public static final String LABEL_GROUP = "Group_files with similar names";
@@ -132,8 +133,9 @@ public class ImporterOptions implements ItemListener {
   private Choice orderChoice;
   private Checkbox mergeBox;
   private Checkbox colorizeBox;
-  private Checkbox splitBox;
-  private Checkbox individualBox;
+  private Checkbox splitCBox;
+  private Checkbox splitZBox;
+  private Checkbox splitTBox;
   private Checkbox swapBox;
   private Checkbox metadataBox;
   private Checkbox groupBox;
@@ -148,8 +150,9 @@ public class ImporterOptions implements ItemListener {
   private String stackOrder;
   private boolean mergeChannels;
   private boolean colorize;
-  private boolean splitWindows;
-  private boolean individualWindows;
+  private boolean splitChannels;
+  private boolean splitFocalPlanes;
+  private boolean splitTimepoints;
   private boolean swapDimensions;
   private boolean showMetadata;
   private boolean groupFiles;
@@ -173,8 +176,9 @@ public class ImporterOptions implements ItemListener {
   public String getStackOrder() { return stackOrder; }
   public boolean isMergeChannels() { return mergeChannels; }
   public boolean isColorize() { return colorize; }
-  public boolean isSplitWindows() { return splitWindows; }
-  public boolean isIndividualWindows() { return individualWindows; }
+  public boolean isSplitChannels() { return splitChannels; }
+  public boolean isSplitFocalPlanes() { return splitFocalPlanes; }
+  public boolean isSplitTimepoints() { return splitTimepoints; }
   public boolean isSwapDimensions() { return swapDimensions; }
   public boolean isShowMetadata() { return showMetadata; }
   public boolean isGroupFiles() { return groupFiles; }
@@ -208,8 +212,9 @@ public class ImporterOptions implements ItemListener {
   public void setStackOrder(String s) { stackOrder = s; }
   public void setMergeChannels(boolean b) { mergeChannels = b; }
   public void setColorize(boolean b) { colorize = b; }
-  public void setSplitWindows(boolean b) { splitWindows = b; }
-  public void setIndividualWindows(boolean b) { individualWindows = b; }
+  public void setSplitChannels(boolean b) { splitChannels = b; }
+  public void setSplitFocalPlanes(boolean b) { splitFocalPlanes = b; }
+  public void setSplitTimepoints(boolean b) { splitTimepoints = b; }
   public void setSwapDimensions(boolean b) { swapDimensions = b; }
   public void setShowMetadata(boolean b) { showMetadata = b; }
   public void setGroupFiles(boolean b) { groupFiles = b; }
@@ -224,8 +229,9 @@ public class ImporterOptions implements ItemListener {
     stackOrder = Prefs.get(PREF_ORDER, ORDER_DEFAULT);
     mergeChannels = Prefs.get(PREF_MERGE, false);
     colorize = Prefs.get(PREF_COLORIZE, false);
-    splitWindows = Prefs.get(PREF_SPLIT, true);
-    individualWindows = Prefs.get(PREF_INDIVIDUAL, false);
+    splitChannels = Prefs.get(PREF_C, true);
+    splitFocalPlanes = Prefs.get(PREF_Z, false);
+    splitTimepoints = Prefs.get(PREF_T, false);
     swapDimensions = Prefs.get(PREF_SWAP, false);
     showMetadata = Prefs.get(PREF_METADATA, false);
     groupFiles = Prefs.get(PREF_GROUP, false);
@@ -242,8 +248,9 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_ORDER, stackOrder);
     Prefs.set(PREF_MERGE, mergeChannels);
     Prefs.set(PREF_COLORIZE, colorize);
-    Prefs.set(PREF_SPLIT, splitWindows);
-    Prefs.set(PREF_INDIVIDUAL, individualWindows);
+    Prefs.set(PREF_C, splitChannels);
+    Prefs.set(PREF_Z, splitFocalPlanes);
+    Prefs.set(PREF_T, splitTimepoints);
     Prefs.set(PREF_SWAP, swapDimensions);
     Prefs.set(PREF_METADATA, showMetadata);
     Prefs.set(PREF_GROUP, groupFiles);
@@ -280,9 +287,9 @@ public class ImporterOptions implements ItemListener {
 
       mergeChannels = getMacroValue(arg, LABEL_MERGE, mergeChannels);
       colorize = getMacroValue(arg, LABEL_COLORIZE, colorize);
-      splitWindows = getMacroValue(arg, LABEL_COLORIZE, splitWindows);
-      individualWindows =
-        getMacroValue(arg, LABEL_INDIVIDUAL, individualWindows);
+      splitChannels = getMacroValue(arg, LABEL_C, splitChannels);
+      splitFocalPlanes = getMacroValue(arg, LABEL_Z, splitFocalPlanes);
+      splitTimepoints = getMacroValue(arg, LABEL_T, splitTimepoints);
       swapDimensions = getMacroValue(arg, LABEL_SWAP, swapDimensions);
       showMetadata = getMacroValue(arg, LABEL_METADATA, showMetadata);
       groupFiles = getMacroValue(arg, LABEL_GROUP, groupFiles);
@@ -447,8 +454,9 @@ public class ImporterOptions implements ItemListener {
     gd.addChoice(LABEL_ORDER, stackOrders, stackOrder);
     gd.addCheckbox(LABEL_MERGE, mergeChannels);
     gd.addCheckbox(LABEL_COLORIZE, colorize);
-    gd.addCheckbox(LABEL_SPLIT, splitWindows);
-    gd.addCheckbox(LABEL_INDIVIDUAL, individualWindows);
+    gd.addCheckbox(LABEL_C, splitChannels);
+    gd.addCheckbox(LABEL_Z, splitFocalPlanes);
+    gd.addCheckbox(LABEL_T, splitTimepoints);
     gd.addCheckbox(LABEL_SWAP, swapDimensions);
     gd.addCheckbox(LABEL_METADATA, showMetadata);
     gd.addCheckbox(LABEL_GROUP, groupFiles);
@@ -469,14 +477,15 @@ public class ImporterOptions implements ItemListener {
     if (boxes != null) {
       mergeBox = (Checkbox) boxes.get(0);
       colorizeBox = (Checkbox) boxes.get(1);
-      splitBox = (Checkbox) boxes.get(2);
-      individualBox = (Checkbox) boxes.get(3);
-      swapBox = (Checkbox) boxes.get(4);
-      metadataBox = (Checkbox) boxes.get(5);
-      groupBox = (Checkbox) boxes.get(6);
-      concatenateBox = (Checkbox) boxes.get(7);
-      rangeBox = (Checkbox) boxes.get(8);
-      autoscaleBox = (Checkbox) boxes.get(9);
+      splitCBox = (Checkbox) boxes.get(2);
+      splitZBox = (Checkbox) boxes.get(3);
+      splitTBox = (Checkbox) boxes.get(4);
+      swapBox = (Checkbox) boxes.get(5);
+      metadataBox = (Checkbox) boxes.get(6);
+      groupBox = (Checkbox) boxes.get(7);
+      concatenateBox = (Checkbox) boxes.get(8);
+      rangeBox = (Checkbox) boxes.get(9);
+      autoscaleBox = (Checkbox) boxes.get(10);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -489,8 +498,9 @@ public class ImporterOptions implements ItemListener {
     stackOrder = stackOrders[gd.getNextChoiceIndex()];
     mergeChannels = gd.getNextBoolean();
     colorize = gd.getNextBoolean();
-    splitWindows = gd.getNextBoolean();
-    individualWindows = gd.getNextBoolean();
+    splitChannels = gd.getNextBoolean();
+    splitFocalPlanes = gd.getNextBoolean();
+    splitTimepoints = gd.getNextBoolean();
     swapDimensions = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
     groupFiles = gd.getNextBoolean();
@@ -729,7 +739,7 @@ public class ImporterOptions implements ItemListener {
       }
       else if (s.equals(VIEW_BROWSER)) {
         colorizeBox.setState(false); // NB: temporary
-        splitBox.setState(false);
+        splitCBox.setState(false);
         rangeBox.setState(false);
       }
       else if (s.equals(VIEW_IMAGE_5D)) {
@@ -741,7 +751,7 @@ public class ImporterOptions implements ItemListener {
     else if (src == mergeBox) {
       if (mergeBox.getState()) {
         colorizeBox.setState(false);
-        splitBox.setState(false);
+        splitCBox.setState(false);
         String s = stackChoice.getSelectedItem();
         if (s.equals(VIEW_IMAGE_5D)) stackChoice.select(VIEW_STANDARD);
       }
@@ -749,14 +759,14 @@ public class ImporterOptions implements ItemListener {
     else if (src == colorizeBox) {
       if (colorizeBox.getState()) {
         mergeBox.setState(false);
-        splitBox.setState(true);
+        splitCBox.setState(true);
         // NB: temporary
         String s = stackChoice.getSelectedItem();
         if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
       }
     }
-    else if (src == splitBox) {
-      if (splitBox.getState()) {
+    else if (src == splitCBox) {
+      if (splitCBox.getState()) {
         mergeBox.setState(false);
         String s = stackChoice.getSelectedItem();
         if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
