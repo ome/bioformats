@@ -190,7 +190,7 @@ public final class TiffTools {
   public static final int DEFLATE = 8;
   public static final int THUNDERSCAN = 32809;
   public static final int NIKON = 34713;
-  public static final int LURAWAVE = -1;
+  public static final int LURAWAVE = 65535;
 
   // photometric interpretation types
   public static final int WHITE_IS_ZERO = 0;
