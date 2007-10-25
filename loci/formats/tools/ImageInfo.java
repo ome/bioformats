@@ -58,6 +58,7 @@ public final class ImageInfo {
     boolean doMeta = true;
     boolean thumbs = false;
     boolean minmax = false;
+    boolean fill = false;
     boolean merge = false;
     boolean stitch = false;
     boolean separate = false;
@@ -77,6 +78,7 @@ public final class ImageInfo {
           else if (args[i].equals("-nometa")) doMeta = false;
           else if (args[i].equals("-thumbs")) thumbs = true;
           else if (args[i].equals("-minmax")) minmax = true;
+          else if (args[i].equals("-fill")) fill = true;
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
@@ -134,6 +136,7 @@ public final class ImageInfo {
         "   -nometa: output only core metadata",
         "   -thumbs: read thumbnails instead of normal pixels",
         "   -minmax: compute min/max statistics",
+        "     -fill: convert indexed color images to RGB",
         "    -merge: combine separate channels into RGB image",
         "   -stitch: stitch files with similar names",
         " -separate: split RGB image into separate channels",
@@ -179,6 +182,7 @@ public final class ImageInfo {
       String pat = FilePattern.findPattern(new Location(id));
       if (pat != null) id = pat;
     }
+    if (fill) reader = new ChannelFiller(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (expand) reader = new ChannelFiller(reader);

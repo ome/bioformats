@@ -48,10 +48,15 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     String in = null, out = null;
+    boolean stitch = false, separate = false, merge = false, fill = false;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
           if (args[i].equals("-debug")) FormatHandler.setDebug(true);
+          else if (args[i].equals("-stitch")) stitch = true;
+          else if (args[i].equals("-separate")) separate = true;
+          else if (args[i].equals("-merge")) merge = true;
+          else if (args[i].equals("-fill")) fill = true;
           else LogTools.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
@@ -74,7 +79,12 @@ public final class ImageConverter {
 
     long start = System.currentTimeMillis();
     LogTools.print(in + " ");
-    ImageReader reader = new ImageReader();
+    IFormatReader reader = new ImageReader();
+    if (stitch) reader = new FileStitcher(reader);
+    if (separate) reader = new ChannelSeparator(reader);
+    if (merge) reader = new ChannelMerger(reader);
+    if (fill) reader = new ChannelFiller(reader);
+
     reader.setOriginalMetadataPopulated(true);
     MetadataStore store = MetadataTools.createOMEXMLMetadata();
     if (store == null) LogTools.println("OME-Java library not found.");
