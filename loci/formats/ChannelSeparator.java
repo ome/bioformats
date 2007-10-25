@@ -128,8 +128,10 @@ public class ChannelSeparator extends ReaderWrapper {
       bytes, isLittleEndian());
   }
 
-  /* @see IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(getCurrentFile(), true, 2);
     FormatTools.checkPlaneNumber(this, no);
 
@@ -145,11 +147,22 @@ public class ChannelSeparator extends ReaderWrapper {
         lastImageSeries = series;
       }
 
-      return ImageTools.splitChannels(lastImage, c,
+      byte[] t = ImageTools.splitChannels(lastImage, c,
         FormatTools.getBytesPerPixel(getPixelType()),
         false, !isInterleaved())[channel];
+      System.arraycopy(t, 0, buf, 0, t.length);
+      return buf;
     }
-    else return reader.openBytes(no);
+    else return reader.openBytes(no, buf);
+  }
+
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    FormatTools.checkPlaneNumber(this, no);
+    byte[] buf = new byte[getSizeX() * getSizeY() * getRGBChannelCount() *
+      FormatTools.getBytesPerPixel(getPixelType())];
+    return openBytes(no, buf);
   }
 
   /* @see IFormatReader#openThumbImage(int) */
