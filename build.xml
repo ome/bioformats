@@ -17,6 +17,10 @@ Bio-Formats
                    mdbtools-java.jar (reflected)
                    ome-java.jar (reflected)
                    poi-loci.jar (reflected)
+                   grib-5.1.03.jar (reflected)
+                   bufr-1.1.00.jar (reflected)
+                   slf4j-jdk14.jar (reflected)
+                   netcdf-4.0.jar (reflected)
     Targets:       style-formats
                    compile-formats
                    jar-formats
@@ -37,6 +41,10 @@ VisBio
                    mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
+                   grib-5.1.03.jar (bio-formats.jar)
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   slf4j-jdk14.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
                    visad-lite.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-visbio
@@ -66,6 +74,10 @@ LOCI Plugins for ImageJ
                    mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
+                   grib-5.1.03.jar (bio-formats.jar)
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   slf4j-jdk14.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-plugins
                    compile-plugins
@@ -84,6 +96,10 @@ OME Notes
                    mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
+                   grib-5.1.03.jar (bio-formats.jar)
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   slf4j-jdk14.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-notes
                    compile-notes
@@ -103,6 +119,10 @@ OME Metadata Editor
                    mdbtools-java.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
+                   grib-5.1.03.jar (bio-formats.jar)
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   slf4j-jdk14.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-editor
                    compile-editor
@@ -216,6 +236,12 @@ Apache Jakarta POI
     Notes:     Used by Bio-Formats for OLE support (OIB, ZVI, IPW); based on
                poi-2.5.1-final-20040804.jar, with bugfixes so that OLE v2 works
     License:   Apache
+
+NetCDF
+    JAR files: netcdf-4.0.jar, grib-5.1.03.jar, bufr-1.1.00.jar, slf4j-jdk14.jar
+    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
+    Notes:     Used by Bio-Formats for Imaris 5.5 support.
+    License:   LGPL
 
 Skin Look and Feel
     JAR file:  skinlf.jar

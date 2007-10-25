@@ -58,6 +58,8 @@ public class ImarisTiffReader extends BaseTiffReader {
     }
 
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
+    boolean big = (block[0] == 0x4d && block[1] == 0x4d);
+    if (!little && !big) return false;
 
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
     if (ifdlocation < 0) return false;
