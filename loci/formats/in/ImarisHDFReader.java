@@ -27,8 +27,6 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
-import ucar.ma2.*;
-import ucar.nc2.*;
 
 /**
  * Reader for Imaris 5.5 (HDF) files.
