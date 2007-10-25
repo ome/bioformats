@@ -29,7 +29,6 @@ import ij.*;
 import ij.io.FileInfo;
 import ij.measure.Calibration;
 import ij.process.*;
-import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
