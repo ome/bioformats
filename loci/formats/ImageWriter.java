@@ -28,7 +28,6 @@ import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.util.*;
-import loci.formats.tools.ImageConverter;
 
 /**
  * ImageWriter is the master file format writer for all supported formats.
@@ -344,16 +343,6 @@ public class ImageWriter implements IFormatWriter {
   public StatusListener[] getStatusListeners() {
     // NB: all writers should have the same status listeners
     return writers[0].getStatusListeners();
-  }
-
-  // -- Main method --
-
-  /**
-   * @deprecated Replaced by
-   *   {@link loci.formats.tools.ImageConverter#main(String[])}
-   */
-  public static void main(String[] args) throws FormatException, IOException {
-    ImageConverter.main(args);
   }
 
   // -- Deprecated IFormatWriter API methods --
