@@ -6,7 +6,6 @@ package loci.plugins;
 
 import ij.IJ;
 import java.io.IOException;
-import javax.swing.JOptionPane;
 import loci.formats.*;
 import loci.formats.ome.OMEXMLMetadata;
 
@@ -260,10 +259,9 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("Ext.getMetadataValue(field, value)");
       IJ.write("Ext.getSeriesName(seriesName)");
 
-      JOptionPane.showMessageDialog(null,
+      IJ.showMessage("LOCI Plugins for ImageJ",
         "The macro extensions are designed to be used within a macro.\n" +
-        "Instructions on doing so have been printed to the Results window.\n",
-        "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
+        "Instructions on doing so have been printed to the Results window.");
     }
   }
 

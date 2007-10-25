@@ -98,12 +98,12 @@ public class Importer {
       try { r = reader.getReader(id); }
       catch (FormatException exc) {
         reportException(exc, quiet,
-          "Sorry, there was an error reading the file");
+          "Sorry, there was an error reading the file.");
         return;
       }
       catch (IOException exc) {
         reportException(exc, quiet,
-          "Sorry, there was a I/O problem reading the file");
+          "Sorry, there was a I/O problem reading the file.");
         return;
       }
     }
@@ -584,11 +584,11 @@ public class Importer {
     }
     catch (FormatException exc) {
       reportException(exc, quiet,
-        "Sorry, there was a problem reading the data");
+        "Sorry, there was a problem reading the data.");
     }
     catch (IOException exc) {
       reportException(exc, quiet,
-        "Sorry, there was an I/O problem reading the data");
+        "Sorry, there was an I/O problem reading the data.");
     }
   }
 
@@ -818,12 +818,14 @@ public class Importer {
 
   /** Reports the given exception with stack trace in an ImageJ error dialog. */
   private void reportException(Throwable t, boolean quiet, String msg) {
-    t.printStackTrace();
     IJ.showStatus("");
     if (!quiet) {
       ByteArrayOutputStream buf = new ByteArrayOutputStream();
       t.printStackTrace(new PrintStream(buf));
-      IJ.error("Bio-Formats", msg + ":\n" + buf.toString());
+      String s = new String(buf.toByteArray());
+      StringTokenizer st = new StringTokenizer(s, "\n\r");
+      while (st.hasMoreTokens()) IJ.write(st.nextToken());
+      IJ.error("Bio-Formats Importer", msg);
     }
   }
 
