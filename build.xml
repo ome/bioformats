@@ -223,6 +223,12 @@ L-M Fit
                used by Slim Plotter
     License:   LGPL
 
+NetCDF
+    JAR files: netcdf-4.0.jar, grib-5.1.03.jar, bufr-1.1.00.jar, slf4j-jdk14.jar
+    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
+    Notes:     Used by Bio-Formats for HDF support (Imaris 5.5)
+    License:   LGPL
+
 OME Java
     JAR file:  ome-java.jar
     URL:       http://openmicroscopy.org/api/java/
@@ -236,12 +242,6 @@ Apache Jakarta POI
     Notes:     Used by Bio-Formats for OLE support (OIB, ZVI, IPW); based on
                poi-2.5.1-final-20040804.jar, with bugfixes so that OLE v2 works
     License:   Apache
-
-NetCDF
-    JAR files: netcdf-4.0.jar, grib-5.1.03.jar, bufr-1.1.00.jar, slf4j-jdk14.jar
-    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
-    Notes:     Used by Bio-Formats for Imaris 5.5 support.
-    License:   LGPL
 
 Skin Look and Feel
     JAR file:  skinlf.jar
