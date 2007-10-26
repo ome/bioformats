@@ -139,6 +139,15 @@ public class FlexReader extends BaseTiffReader {
     // parse factors from XML
     String xml = (String) TiffTools.getIFDValue(ifds[0],
       FLEX, true, String.class);
+
+    // HACK - workaround for Windows and Mac OS X bug where
+    // SAX parser fails due to imporperly handled mu characters.
+    char[] c = xml.toCharArray();
+    for (int i=0; i<c.length; i++) {
+      if (c[i] < ' ' || c[i] > '~') c[i] = '?';
+    }
+    xml = new String(c);
+
     Vector n = new Vector();
     Vector f = new Vector();
     FlexHandler handler = new FlexHandler(n, f);
