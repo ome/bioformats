@@ -95,7 +95,8 @@ public class OpenlabReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    buf = openBytes(no);
+    byte[] t = openBytes(no);
+    System.arraycopy(t, 0, buf, 0, t.length);
     return buf;
   }
 
