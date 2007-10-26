@@ -69,7 +69,7 @@ public class ImarisHDFReader extends FormatReader {
 
   private byte[][][] previousImage;
   private int previousImageNumber;
-  private String[] channelParameters;
+  private Vector channelParameters;
 
   // -- Constructor --
 
@@ -149,6 +149,7 @@ public class ImarisHDFReader extends FormatReader {
 
     previousImageNumber = -1;
     MetadataStore store = getMetadataStore();
+    store.setImage(currentId, null, null, null);
 
     try {
       r.setVar("currentId", id);
@@ -165,7 +166,7 @@ public class ImarisHDFReader extends FormatReader {
     findGroup("DataSetInfo", "root", "dataSetInfo");
     findGroup("DataSet", "root", "dataSet");
 
-    channelParameters = new String[8];
+    channelParameters = new Vector();
 
     try {
       List l = new Vector();
@@ -188,6 +189,42 @@ public class ImarisHDFReader extends FormatReader {
     core.indexed[0] = false;
 
     FormatTools.populatePixels(store, this);
+
+    for (int i=0; i<core.sizeC[0]; i++) {
+      String[] params = (String[]) channelParameters.get(i);
+
+      Float gainValue = null;
+      try { gainValue = new Float(params[0]); }
+      catch (NumberFormatException e) { }
+      catch (NullPointerException e) { }
+      Integer pinholeValue = null, emWaveValue = null, exWaveValue = null;
+      try { pinholeValue = new Integer(params[5]); }
+      catch (NumberFormatException e) { }
+      catch (NullPointerException e) { }
+      try { emWaveValue = new Integer(params[1]); }
+      catch (NumberFormatException e) { }
+      catch (NullPointerException e) { }
+      try { exWaveValue = new Integer(params[2]); }
+      catch (NumberFormatException e) { }
+      catch (NullPointerException e) { }
+
+      store.setLogicalChannel(i, params[6], null,
+        null, null, null, null, null, null, null, gainValue, null,
+        pinholeValue, null, params[7], null, null, null, null,
+        null, emWaveValue, exWaveValue, null, null, null);
+
+      Double minValue = null, maxValue = null;
+      try { minValue = new Double(params[4]); }
+      catch (NumberFormatException exc) { }
+      catch (NullPointerException exc) { }
+      try { maxValue = new Double(params[3]); }
+      catch (NumberFormatException exc) { }
+      catch (NullPointerException exc) { }
+
+      if (minValue != null && maxValue != null) {
+        store.setChannelGlobalMinMax(i, minValue, maxValue, null);
+      }
+    }
   }
 
   // -- Helper methods --
@@ -253,80 +290,43 @@ public class ImarisHDFReader extends FormatReader {
       if (debug) LogTools.println("Parsing group: " + groupName);
       r.exec("attributes = group.getAttributes()");
       List l = (List) r.getVar("attributes");
+      String[] params = new String[8];
       for (int j=0; j<l.size(); j++) {
         r.setVar("attr", l.get(j));
         r.exec("name = attr.getName()");
         String name = (String) r.getVar("name");
         String v = getValue("group", (String) r.getVar("name"));
         if (groupName.startsWith("Channel_")) {
-          if (name.equals("Gain")) channelParameters[0] = v;
-          else if (name.equals("LSMEmissionWavelength")) {
-            channelParameters[1] = v;
-          }
-          else if (name.equals("LSMExcitationWavelength")) {
-            channelParameters[2] = v;
-          }
-          else if (name.equals("Max")) channelParameters[3] = v;
-          else if (name.equals("Min")) channelParameters[4] = v;
-          else if (name.equals("Pinhole")) channelParameters[5] = v;
-          else if (name.equals("Name")) channelParameters[6] = v;
-          else if (name.equals("MicroscopyMode")) channelParameters[7] = v;
+          if (name.equals("Gain")) params[0] = v;
+          else if (name.equals("LSMEmissionWavelength")) params[1] = v;
+          else if (name.equals("LSMExcitationWavelength")) params[2] = v;
+          else if (name.equals("Max")) params[3] = v;
+          else if (name.equals("Min")) params[4] = v;
+          else if (name.equals("Pinhole")) params[5] = v;
+          else if (name.equals("Name")) params[6] = v;
+          else if (name.equals("MicroscopyMode")) params[7] = v;
         }
       }
 
       if (groupName.indexOf("/Channel_") != -1) {
         for (int j=0; j<6; j++) {
-          if (channelParameters[j] != null) {
-            if (channelParameters[j].indexOf(" ") != -1) {
-              channelParameters[j] = channelParameters[j].substring(
-                channelParameters[j].indexOf(" ") + 1);
+          if (params[j] != null) {
+            if (params[j].indexOf(" ") != -1) {
+              params[j] = params[j].substring(params[j].indexOf(" ") + 1);
             }
-            if (channelParameters[j].indexOf("-") != -1) {
-              int idx = channelParameters[j].indexOf("-");
-              float a =
-                Float.parseFloat(channelParameters[j].substring(0, idx));
-              float b =
-                Float.parseFloat(channelParameters[j].substring(idx + 1));
-              channelParameters[j] = "" + ((int) (b - a));
+            if (params[j].indexOf("-") != -1) {
+              int idx = params[j].indexOf("-");
+              float a = Float.parseFloat(params[j].substring(0, idx));
+              float b = Float.parseFloat(params[j].substring(idx + 1));
+              params[j] = "" + ((int) (b - a));
             }
-            if (channelParameters[j].indexOf(".") != -1) {
-              channelParameters[j] = channelParameters[j].substring(0,
-                channelParameters[j].indexOf("."));
+            if (params[j].indexOf(".") != -1) {
+              params[j] = params[j].substring(0, params[j].indexOf("."));
             }
           }
         }
 
-        Float gainValue = null;
-        try { gainValue = new Float(channelParameters[0]); }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-        Integer pinholeValue = null, emWaveValue = null, exWaveValue = null;
-        try { pinholeValue = new Integer(channelParameters[5]); }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-        try { emWaveValue = new Integer(channelParameters[1]); }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-        try { exWaveValue = new Integer(channelParameters[2]); }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-
-        MetadataStore store = getMetadataStore();
-        store.setLogicalChannel(core.sizeC[0], channelParameters[6], null,
-          null, null, null, null, null, null, null, gainValue, null,
-          pinholeValue, null, channelParameters[7], null, null, null, null,
-          null, emWaveValue, exWaveValue, null, null, null);
-
-        Double minValue = null, maxValue = null;
-        try { minValue = new Double(channelParameters[4]); }
-        catch (NumberFormatException exc) { }
-        catch (NullPointerException exc) { }
-        try { maxValue = new Double(channelParameters[3]); }
-        catch (NumberFormatException exc) { }
-        catch (NullPointerException exc) { }
-
-        store.setChannelGlobalMinMax(core.sizeC[0], minValue, maxValue, null);
-
+        channelParameters.add(params);
         core.sizeC[0]++;
       }
 
