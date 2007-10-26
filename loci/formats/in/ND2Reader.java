@@ -691,7 +691,7 @@ public class ND2Reader extends FormatReader {
     }
 
     Arrays.fill(core.interleaved, false);
-    Arrays.fill(core.littleEndian, true);
+    Arrays.fill(core.littleEndian, false);
     Arrays.fill(core.metadataComplete, true);
 
     MetadataStore store = getMetadataStore();
