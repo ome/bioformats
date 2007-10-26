@@ -88,14 +88,7 @@ public class ImarisReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
     if (!open) return true; // not allowed to check the file contents
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      byte[] b = new byte[4];
-      ras.readFully(b);
-      ras.close();
-      return isThisType(b);
-    }
-    catch (IOException e) { return false; }
+    return checkBytes(name, 8);
   }
 
   // -- Internal FormatReader API methods --

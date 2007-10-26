@@ -296,59 +296,13 @@ public class OIBReader extends FormatReader {
         if (core.sizeZ[i] == 0) core.sizeZ[i]++;
         if (core.sizeT[i] == 0) core.sizeT[i]++;
 
-        core.currentOrder[i] =
-          (core.sizeZ[i] > core.sizeT[i]) ? "XYCZT" : "XYCTZ";
-
-        core.imageCount[i] = ((Integer) nImages.get(i)).intValue();
-
-        if (core.imageCount[i] > core.sizeZ[i] * core.sizeT[i] * core.sizeC[i])
-        {
-          int diff = core.imageCount[i] -
-            (core.sizeZ[i] * core.sizeT[i] * core.sizeC[i]);
-
-          if (diff % core.sizeZ[i] == 0 && core.sizeZ[i] > 1) {
-            while (core.imageCount[i] >
-              core.sizeZ[i] * core.sizeT[i] * core.sizeC[i])
-            {
-              core.sizeT[i]++;
-            }
-          }
-          else if (diff % core.sizeT[i] == 0 && core.sizeT[i] > 1) {
-            while (core.imageCount[i] >
-              core.sizeZ[i] * core.sizeT[i] * core.sizeC[i])
-            {
-              core.sizeZ[i]++;
-            }
-          }
-          else if (diff % core.sizeC[i] == 0) {
-            if (core.sizeZ[i] > core.sizeT[i]) {
-              while (core.imageCount[i] >
-                core.sizeZ[i] * core.sizeC[i] * core.sizeT[i])
-              {
-                core.sizeZ[i]++;
-              }
-            }
-            else {
-              while (core.imageCount[i] >
-                core.sizeZ[i] * core.sizeC[i] * core.sizeT[i])
-              {
-                core.sizeT[i]++;
-              }
-            }
-          }
-        }
-
-        int oldSeries = getSeries();
-        setSeries(i);
-        while (core.imageCount[i] <
-          core.sizeZ[i] * core.sizeT[i] * getEffectiveSizeC())
-        {
-          core.imageCount[i]++;
-        }
-        nImages.setElementAt(new Integer(core.imageCount[i]), i);
-        setSeries(oldSeries);
+        core.currentOrder[i] = "XYCZT";
+        core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
 
         core.rgb[i] = ((Boolean) rgb.get(i)).booleanValue();
+        if (core.rgb[i]) core.imageCount[i] /= core.sizeC[i];
+        nImages.setElementAt(new Integer(core.imageCount[i]), i);
+
         core.interleaved[i] = false;
         core.metadataComplete[i] = true;
       }
@@ -549,7 +503,6 @@ public class OIBReader extends FormatReader {
         }
         else if (entryName.equals("OibInfo.txt")) { }
         else {
-        //else if (data[0] == (byte) 0xff && data[1] == (byte) 0xfe) {
           String ini = DataTools.stripString(new String(data));
           StringTokenizer st = new StringTokenizer(ini, "\n");
           String prefix = "";

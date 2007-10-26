@@ -396,7 +396,6 @@ public class AVIReader extends FormatReader {
                 if (type.substring(2).equals("db") ||
                   type.substring(2).equals("dc"))
                 {
-                  /* debug */ System.out.println("adding offset");
                   offsets.add(new Long(in.getFilePointer()));
                   lengths.add(new Long(size));
                   in.skipBytes(size);
@@ -460,13 +459,6 @@ public class AVIReader extends FormatReader {
     }
 
     if (bmpCompression != 0) core.pixelType[0] = FormatTools.UINT8;
-
-    /* debug */
-    System.out.println("count : " + core.imageCount[0]);
-    System.out.println("Z : " + core.sizeZ[0]);
-    System.out.println("C : " + core.sizeC[0]);
-    System.out.println("T : " + core.sizeT[0]);
-    /* end debug */
 
     MetadataStore store = getMetadataStore();
 

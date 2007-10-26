@@ -563,21 +563,15 @@ public class ND2Reader extends FormatReader {
                                 int x = core.sizeX[0];
                                 int y = core.sizeY[0];
                                 int z = core.sizeZ[0];
-                                int ts = core.sizeT[0];
+                                int tSize = core.sizeT[0];
                                 int c = core.sizeC[0];
                                 core = new CoreMetadata(numSeries);
                                 Arrays.fill(core.sizeX, x);
                                 Arrays.fill(core.sizeY, y);
                                 Arrays.fill(core.sizeZ, z);
                                 Arrays.fill(core.sizeC, c);
-                                Arrays.fill(core.sizeT, ts);
+                                Arrays.fill(core.sizeT, tSize);
                               }
-                              int cs = core.sizeC[0];
-                              int ts = core.sizeT[0];
-                              int zs = core.sizeZ[0];
-                              if (cs == 0) cs = 1;
-                              if (ts == 0) ts = 1;
-                              if (zs == 0) zs = 1;
                             }
                             else if (dim.startsWith("T")) {
                               Arrays.fill(core.sizeT, v);
