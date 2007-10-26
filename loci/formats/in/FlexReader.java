@@ -141,7 +141,7 @@ public class FlexReader extends BaseTiffReader {
       FLEX, true, String.class);
 
     // HACK - workaround for Windows and Mac OS X bug where
-    // SAX parser fails due to imporperly handled mu characters.
+    // SAX parser fails due to improperly handled mu (181) characters.
     char[] c = xml.toCharArray();
     for (int i=0; i<c.length; i++) {
       if (c[i] < ' ' || c[i] > '~') c[i] = '?';
