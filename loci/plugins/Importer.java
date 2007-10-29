@@ -604,7 +604,16 @@ public class Importer {
     throws FormatException, IOException
   {
     if (stack == null) return;
-    ImagePlus imp = new ImagePlus(file + " - " + series, stack);
+    String title = file.substring(file.lastIndexOf(File.separator) + 1);
+    if (series != null && !file.endsWith(series)) {
+      title += " - " + series;
+    }
+    if (title.length() > 128) {
+      String a = title.substring(0, 122);
+      String b = title.substring(title.length() - 122);
+      title = a + "..." + b;
+    }
+    ImagePlus imp = new ImagePlus(title, stack);
     imp.setProperty("Info", "File full path=" + file +
       "\nSeries name=" + series + "\n");
 
