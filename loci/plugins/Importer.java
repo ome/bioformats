@@ -609,8 +609,8 @@ public class Importer {
       title += " - " + series;
     }
     if (title.length() > 128) {
-      String a = title.substring(0, 122);
-      String b = title.substring(title.length() - 122);
+      String a = title.substring(0, 62);
+      String b = title.substring(title.length() - 62);
       title = a + "..." + b;
     }
     ImagePlus imp = new ImagePlus(title, stack);
