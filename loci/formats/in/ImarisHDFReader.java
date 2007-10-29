@@ -70,6 +70,7 @@ public class ImarisHDFReader extends FormatReader {
   private byte[][][] previousImage;
   private int previousImageNumber;
   private Vector channelParameters;
+  private float pixelSizeX, pixelSizeY, pixelSizeZ;
 
   // -- Constructor --
 
@@ -189,6 +190,8 @@ public class ImarisHDFReader extends FormatReader {
     core.indexed[0] = false;
 
     FormatTools.populatePixels(store, this);
+    store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
+      new Float(pixelSizeZ), null, null, null);
 
     for (int i=0; i<core.sizeC[0]; i++) {
       String[] params = (String[]) channelParameters.get(i);
@@ -201,10 +204,20 @@ public class ImarisHDFReader extends FormatReader {
       try { pinholeValue = new Integer(params[5]); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
-      try { emWaveValue = new Integer(params[1]); }
+      try {
+        if (params[1].indexOf("-") != -1) {
+          params[1] = params[1].substring(params[1].indexOf("-") + 1);
+        }
+        emWaveValue = new Integer(params[1]);
+      }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
-      try { exWaveValue = new Integer(params[2]); }
+      try {
+        if (params[2].indexOf("-") != -1) {
+          params[2] = params[2].substring(params[2].indexOf("-") + 1);
+        }
+        exWaveValue = new Integer(params[2]);
+      }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
 
@@ -257,8 +270,14 @@ public class ImarisHDFReader extends FormatReader {
       else if (name.equals("FileTimePoints")) {
         core.sizeT[0] = Integer.parseInt(st.trim());
       }
-      else if (name.equals("FileTimePoints")) {
-        core.sizeT[0] = Integer.parseInt(st.trim());
+      else if (name.equals("RecordingEntrySampleSpacing")) {
+        pixelSizeX = Float.parseFloat(st.trim());
+      }
+      else if (name.equals("RecordingEntryLineSpacing")) {
+        pixelSizeY = Float.parseFloat(st.trim());
+      }
+      else if (name.equals("RecordingEntryPlaneSpacing")) {
+        pixelSizeZ = Float.parseFloat(st.trim());
       }
 
       if (st != null) addMeta(name, st);
@@ -296,7 +315,7 @@ public class ImarisHDFReader extends FormatReader {
         r.exec("name = attr.getName()");
         String name = (String) r.getVar("name");
         String v = getValue("group", (String) r.getVar("name"));
-        if (groupName.startsWith("Channel_")) {
+        if (groupName.startsWith("/DataSetInfo/Channel_")) {
           if (name.equals("Gain")) params[0] = v;
           else if (name.equals("LSMEmissionWavelength")) params[1] = v;
           else if (name.equals("LSMExcitationWavelength")) params[2] = v;
@@ -315,10 +334,7 @@ public class ImarisHDFReader extends FormatReader {
               params[j] = params[j].substring(params[j].indexOf(" ") + 1);
             }
             if (params[j].indexOf("-") != -1) {
-              int idx = params[j].indexOf("-");
-              float a = Float.parseFloat(params[j].substring(0, idx));
-              float b = Float.parseFloat(params[j].substring(idx + 1));
-              params[j] = "" + ((int) (b - a));
+              params[j] = params[j].substring(params[j].indexOf("-") + 1);
             }
             if (params[j].indexOf(".") != -1) {
               params[j] = params[j].substring(0, params[j].indexOf("."));
