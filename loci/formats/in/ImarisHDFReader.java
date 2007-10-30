@@ -62,6 +62,10 @@ public class ImarisHDFReader extends FormatReader {
       noNetCDF = true;
       if (debug) LogTools.trace(exc);
     }
+    catch (UnsupportedClassVersionError exc) {
+      noNetCDF = true;
+      if (debug) LogTools.trace(exc);
+    }
     return r;
   }
 
