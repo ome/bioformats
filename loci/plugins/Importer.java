@@ -788,7 +788,7 @@ public class Importer {
 
     for (int i=0; i<s.getSize(); i++) {
       int[] zct = FormatTools.getZCTCoords(stackOrder, sizeZ,
-        r.getEffectiveSizeC(), sizeT, r.getImageCount(), i);
+        c, sizeT, r.getImageCount() / (r.getSizeC() / c), i % c);
       int cndx = zct[1];
       indices[cndx][pt[cndx]++] = i;
     }
