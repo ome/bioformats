@@ -148,6 +148,8 @@ public class ImarisHDFReader extends FormatReader {
 
     if (noNetCDF) throw new FormatException(NO_NETCDF_MSG);
 
+    pixelSizeX = pixelSizeY = pixelSizeZ = 1.0f;
+
     previousImageNumber = -1;
     MetadataStore store = getMetadataStore();
     store.setImage(currentId, null, null, null);
@@ -234,7 +236,7 @@ public class ImarisHDFReader extends FormatReader {
       catch (NumberFormatException exc) { }
       catch (NullPointerException exc) { }
 
-      if (minValue != null && maxValue != null) {
+      if (minValue != null && maxValue != null && maxValue.doubleValue() > 0) {
         store.setChannelGlobalMinMax(i, minValue, maxValue, null);
       }
     }
@@ -319,8 +321,12 @@ public class ImarisHDFReader extends FormatReader {
           if (name.equals("Gain")) params[0] = v;
           else if (name.equals("LSMEmissionWavelength")) params[1] = v;
           else if (name.equals("LSMExcitationWavelength")) params[2] = v;
-          else if (name.equals("Max")) params[3] = v;
-          else if (name.equals("Min")) params[4] = v;
+          else if (name.equals("Max")) {
+            params[3] = v;
+          }
+          else if (name.equals("Min")) {
+            params[4] = v;
+          }
           else if (name.equals("Pinhole")) params[5] = v;
           else if (name.equals("Name")) params[6] = v;
           else if (name.equals("MicroscopyMode")) params[7] = v;
