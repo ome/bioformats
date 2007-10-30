@@ -236,9 +236,11 @@ public class ZeissZVIReader extends FormatReader {
     needLegacy = false;
 
     if (legacy != null) legacy.close();
-    pixels = null;
-    names = null;
-    offsets = null;
+    pixels = names = offsets = null;
+    zIndices = cIndices = tIndices = null;
+    bpp = tileRows = tileColumns = 0;
+    zIndex = cIndex = tIndex = -1;
+    needLegacy = isTiled = isJPEG = false;
 
     String[] vars = {"dirName", "root", "dir", "document", "dis",
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
@@ -659,106 +661,109 @@ public class ZeissZVIReader extends FormatReader {
           dirName.toUpperCase().indexOf("ITEM") != -1) &&
           (data.length > core.sizeX[0]*core.sizeY[0]))
         {
-          s.skipBytes(6);
-
-          int vt = s.readShort();
-          if (vt == 3) {
+          try {
             s.skipBytes(6);
-          }
-          else if (vt == 8) {
-            int l = s.readShort();
-            s.skipBytes(l + 2);
-          }
-          int len = s.readShort();
-          if (s.readShort() != 0) s.seek(s.getFilePointer() - 2);
 
-          if (s.getFilePointer() + len <= s.length()) {
-            s.skipBytes(len);
-          }
-          else break;
+            int vt = s.readShort();
+            if (vt == 3) {
+              s.skipBytes(6);
+            }
+            else if (vt == 8) {
+              int l = s.readShort();
+              s.skipBytes(l + 2);
+            }
+            int len = s.readShort();
+            if (s.readShort() != 0) s.seek(s.getFilePointer() - 2);
 
-          vt = s.readShort();
-          if (vt == 8) {
-            len = s.readInt();
-            s.skipBytes(len + 2);
-          }
+            if (s.getFilePointer() + len <= s.length()) {
+              s.skipBytes(len);
+            }
+            else break;
 
-          int tw = s.readInt();
-          if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
-            core.sizeX[0] = tw;
-          }
-          s.skipBytes(2);
-          int th = s.readInt();
-          if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
-            core.sizeY[0] = th;
-          }
-
-          s.skipBytes(14);
-
-          int numImageContainers = s.readInt();
-          s.skipBytes(6);
-
-          // VT_CLSID - PluginCLSID
-          while (s.readShort() != 65);
-
-          // VT_BLOB - Others
-          len = s.readInt();
-          s.skipBytes(len);
-
-          // VT_STORED_OBJECT - Layers
-          s.skipBytes(2);
-          long old = s.getFilePointer();
-          len = s.readInt();
-
-          s.skipBytes(8);
-
-          int zidx = s.readInt();
-          int cidx = s.readInt();
-          int tidx = s.readInt();
-
-          Integer zndx = new Integer(zidx);
-          Integer cndx = new Integer(cidx);
-          Integer tndx = new Integer(tidx);
-
-          if (!zIndices.contains(zndx)) zIndices.add(zndx);
-          if (!cIndices.contains(cndx)) cIndices.add(cndx);
-          if (!tIndices.contains(tndx)) tIndices.add(tndx);
-
-          s.seek(old + len + 4);
-
-          boolean foundWidth = s.readInt() == core.sizeX[0];
-          boolean foundHeight = s.readInt() == core.sizeY[0];
-          boolean findFailed = false;
-          while ((!foundWidth || !foundHeight) &&
-            s.getFilePointer() + 1 < s.length())
-          {
-            s.seek(s.getFilePointer() - 7);
-            foundWidth = s.readInt() == core.sizeX[0];
-            foundHeight = s.readInt() == core.sizeY[0];
-          }
-          s.seek(s.getFilePointer() - 16);
-          findFailed = !foundWidth && !foundHeight;
-
-          // image header and data
-
-          if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
-            (dirName.equals("Image") && numImageContainers == 0))
-          {
-            if (findFailed) s.seek(old + len + 92);
-            long fp = s.getFilePointer();
-            byte[] o = new byte[(int) (s.length() - fp)];
-            s.read(o);
-
-            int imageNum = 0;
-            if (dirName.toUpperCase().indexOf("ITEM") != -1) {
-              String num = dirName.substring(5);
-              num = num.substring(0, num.length() - 1);
-              imageNum = Integer.parseInt(num);
+            vt = s.readShort();
+            if (vt == 8) {
+              len = s.readInt();
+              s.skipBytes(len + 2);
             }
 
-            offsets.put(new Integer(imageNum), new Integer((int) fp + 32));
-            parsePlane(o, imageNum, directory, entryName);
+            int tw = s.readInt();
+            if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
+              core.sizeX[0] = tw;
+            }
+            s.skipBytes(2);
+            int th = s.readInt();
+            if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
+              core.sizeY[0] = th;
+            }
+
+            s.skipBytes(14);
+
+            int numImageContainers = s.readInt();
+            s.skipBytes(6);
+
+            // VT_CLSID - PluginCLSID
+            while (s.readShort() != 65);
+
+            // VT_BLOB - Others
+            len = s.readInt();
+            s.skipBytes(len);
+
+            // VT_STORED_OBJECT - Layers
+            s.skipBytes(2);
+            long old = s.getFilePointer();
+            len = s.readInt();
+
+            s.skipBytes(8);
+
+            int zidx = s.readInt();
+            int cidx = s.readInt();
+            int tidx = s.readInt();
+
+            Integer zndx = new Integer(zidx);
+            Integer cndx = new Integer(cidx);
+            Integer tndx = new Integer(tidx);
+
+            if (!zIndices.contains(zndx)) zIndices.add(zndx);
+            if (!cIndices.contains(cndx)) cIndices.add(cndx);
+            if (!tIndices.contains(tndx)) tIndices.add(tndx);
+
+            s.seek(old + len + 4);
+
+            boolean foundWidth = s.readInt() == core.sizeX[0];
+            boolean foundHeight = s.readInt() == core.sizeY[0];
+            boolean findFailed = false;
+            while ((!foundWidth || !foundHeight) &&
+              s.getFilePointer() + 1 < s.length())
+            {
+              s.seek(s.getFilePointer() - 7);
+              foundWidth = s.readInt() == core.sizeX[0];
+              foundHeight = s.readInt() == core.sizeY[0];
+            }
+            s.seek(s.getFilePointer() - 16);
+            findFailed = !foundWidth && !foundHeight;
+
+            // image header and data
+
+            if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
+              (dirName.equals("Image") && numImageContainers == 0))
+            {
+              if (findFailed) s.seek(old + len + 92);
+              long fp = s.getFilePointer();
+              byte[] o = new byte[(int) (s.length() - fp)];
+              s.read(o);
+
+              int imageNum = 0;
+              if (dirName.toUpperCase().indexOf("ITEM") != -1) {
+                String num = dirName.substring(5);
+                num = num.substring(0, num.length() - 1);
+                imageNum = Integer.parseInt(num);
+              }
+
+              offsets.put(new Integer(imageNum), new Integer((int) fp + 32));
+              parsePlane(o, imageNum, directory, entryName);
+            }
           }
+          catch (EOFException exc) { }
         }
         else {
           try { parseTags(s); }
