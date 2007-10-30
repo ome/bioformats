@@ -144,7 +144,7 @@ public class DeltavisionReader extends FormatReader {
         break;
       case 1:
         pixel = "16 bit signed integer";
-        core.pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.INT16;
         bytesPerPixel = 2;
         break;
       case 2:
@@ -153,8 +153,8 @@ public class DeltavisionReader extends FormatReader {
         bytesPerPixel = 4;
         break;
       case 3:
-        pixel = "32 bit complex";
-        core.pixelType[0] = FormatTools.UINT32;
+        pixel = "16 bit complex";
+        core.pixelType[0] = FormatTools.INT16;
         bytesPerPixel = 4;
         break;
       case 4:
@@ -427,6 +427,8 @@ public class DeltavisionReader extends FormatReader {
         break;
     }
   }
+
+  // -- DeltavisionReader API methods --
 
   /**
    * Given any specific Z, W, and T of a plane, determine the totalOffset from
