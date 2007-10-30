@@ -71,6 +71,7 @@ public class ImarisHDFReader extends FormatReader {
   private int previousImageNumber;
   private Vector channelParameters;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
+  private float minX, minY, minZ, maxX, maxY, maxZ;
 
   // -- Constructor --
 
@@ -191,6 +192,10 @@ public class ImarisHDFReader extends FormatReader {
     core.interleaved[0] = false;
     core.indexed[0] = false;
 
+    if (pixelSizeX == 1) pixelSizeX = (maxX - minX) / core.sizeX[0];
+    if (pixelSizeY == 1) pixelSizeY = (maxY - minY) / core.sizeY[0];
+    if (pixelSizeZ == 1) pixelSizeZ = (maxZ - minZ) / core.sizeZ[0];
+
     FormatTools.populatePixels(store, this);
     store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
       new Float(pixelSizeZ), null, null, null);
@@ -281,6 +286,12 @@ public class ImarisHDFReader extends FormatReader {
       else if (name.equals("RecordingEntryPlaneSpacing")) {
         pixelSizeZ = Float.parseFloat(st.trim());
       }
+      else if (name.equals("ExtMax0")) maxX = Float.parseFloat(st.trim());
+      else if (name.equals("ExtMax1")) maxY = Float.parseFloat(st.trim());
+      else if (name.equals("ExtMax2")) maxZ = Float.parseFloat(st.trim());
+      else if (name.equals("ExtMin0")) minX = Float.parseFloat(st.trim());
+      else if (name.equals("ExtMin1")) minY = Float.parseFloat(st.trim());
+      else if (name.equals("ExtMin2")) minZ = Float.parseFloat(st.trim());
 
       if (st != null) addMeta(name, st);
       return st;
