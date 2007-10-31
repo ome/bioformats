@@ -52,7 +52,7 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
-  protected Vector offsets;
+  private Vector offsets;
 
   /** Bits per pixel. */
   private int[] bitsPerPixel;
@@ -93,6 +93,17 @@ public class LIFReader extends FormatReader {
       FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount());
     in.read(buf);
     return buf;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    bitsPerPixel = extraDimensions = null;
+    bpp = 0;
+    offsets = xcal = ycal = zcal = null;
+    containerNames = containerCounts = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -289,6 +300,7 @@ public class LIFReader extends FormatReader {
             ts.setElementAt(new Integer(t), ts.size() - 1);
           }
         }
+        /*
         else if (token.indexOf("dblVoxel") != -1) {
           int index = token.indexOf("Variant") + 7;
           String size = token.substring(index + 2,
@@ -298,6 +310,7 @@ public class LIFReader extends FormatReader {
           else if (token.indexOf("Y") != -1) ycal.add(new Float(cal));
           else if (token.indexOf("Z") != -1) zcal.add(new Float(cal));
         }
+        */
       }
       else if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
@@ -345,16 +358,21 @@ public class LIFReader extends FormatReader {
               int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
               int id = Integer.parseInt((String)
                 tmp.get("DimensionDescription DimID"));
+              float size = Float.parseFloat((String) tmp.get("Length"));
+              if (size < 0) size *= -1;
 
               switch (id) {
                 case 1:
                   widths.add(new Integer(w));
+                  xcal.add(new Float((size * 1000000) / w));
                   break;
                 case 2:
                   heights.add(new Integer(w));
+                  ycal.add(new Float((size * 1000000) / w));
                   break;
                 case 3:
                   zs.add(new Integer(w));
+                  zcal.add(new Float((size * 1000000) / w));
                   break;
                 case 4:
                   ts.add(new Integer(w));
