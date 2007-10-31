@@ -56,8 +56,6 @@ public class BioRadReader extends FormatReader {
     "MERGE_MAXIMUM", "MERGE_OPT12", "MERGE_OPT12_V2"
   };
 
-  // Note types
-
   /** List of note types. */
   public static final String[] NOTE_NAMES = {
     "0", "LIVE", "FILE1", "NUMBER", "USER", "LINE", "COLLECT", "FILE2",
@@ -103,6 +101,15 @@ public class BioRadReader extends FormatReader {
     in.seek(offset + 76);
     in.read(buf);
     return buf;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    byteFormat = false;
+    used = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -657,14 +664,16 @@ public class BioRadReader extends FormatReader {
             xml = xml.substring(xml.indexOf(">") + 1);
 
             int ndx = element.indexOf("TimeCompleted") + 15;
-            String stamp = element.substring(ndx, element.indexOf("\"", ndx));
+            if (ndx > 14) {
+              String stamp = element.substring(ndx, element.indexOf("\"", ndx));
 
-            String key = element.substring(1, element.indexOf("\"",
-              element.indexOf("\"") + 1));
-            key = key.replace('\"', '\0');
-            key = key.replace('=', ' ');
+              String key = element.substring(1, element.indexOf("\"",
+                element.indexOf("\"") + 1));
+              key = key.replace('\"', '\0');
+              key = key.replace('=', ' ');
 
-            addMeta(key + " Timestamp", stamp);
+              addMeta(key + " Timestamp", stamp);
+            }
           }
         }
         raw.close();
