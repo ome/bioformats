@@ -27,20 +27,32 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
-import ij.plugin.PlugIn;
+import ij.plugin.filter.PlugInFilter;
+import ij.process.ImageProcessor;
 import loci.formats.FormatTools;
 
-public class Slicer implements PlugIn {
+public class Slicer implements PlugInFilter {
 
   // -- Fields --
 
   /** Flag indicating whether last operation was canceled. */
   public boolean canceled;
 
-  // -- PlugIn API methods --
+  /** Plugin options. */
+  private String arg;
 
-  /** Executes the plugin. */
-  public void run(String arg) {
+  /** Current image stack. */
+  private ImagePlus imp;
+
+  // -- PlugInFilter API methods --
+
+  public int setup(String arg, ImagePlus imp) {
+    this.arg = arg;
+    this.imp = imp;
+    return DOES_ALL + NO_CHANGES;
+  }
+
+  public void run(ImageProcessor ip) {
     boolean sliceZ = false;
     boolean sliceC = false;
     boolean sliceT = false;
@@ -79,16 +91,15 @@ public class Slicer implements PlugIn {
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
     }
 
-    ImagePlus current = WindowManager.getCurrentImage();
-    ImageStack stack = current.getImageStack();
+    ImageStack stack = imp.getImageStack();
 
-    if (current instanceof CompositeImage) return;
+    if (imp instanceof CompositeImage) return;
 
-    int sizeZ = current.getNSlices();
-    int sizeC = current.getNChannels();
-    int sizeT = current.getNFrames();
+    int sizeZ = imp.getNSlices();
+    int sizeC = imp.getNChannels();
+    int sizeT = imp.getNFrames();
 
-    if (current instanceof CustomImage) sliceC = false;
+    if (imp instanceof CustomImage) sliceC = false;
 
     int slicesPerStack = stack.getSize();
     if (sliceZ) slicesPerStack /= sizeZ;
@@ -113,17 +124,17 @@ public class Slicer implements PlugIn {
     }
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus ip = new ImagePlus(current.getTitle(), newStacks[i]);
-      ip.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
+      ImagePlus p = new ImagePlus(imp.getTitle(), newStacks[i]);
+      p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
-      if (current instanceof CustomImage) {
-        CustomImage c = new CustomImage(ip, stackOrder, sliceZ ? 1 : sizeZ,
+      if (imp instanceof CustomImage) {
+        CustomImage c = new CustomImage(p, stackOrder, sliceZ ? 1 : sizeZ,
           sliceT ? 1 : sizeT, sliceC ? 1 : sizeC, true);
         c.show();
       }
-      else ip.show();
+      else p.show();
     }
-    if (!keepOriginal) current.close();
+    if (!keepOriginal) imp.close();
   }
 
 }
