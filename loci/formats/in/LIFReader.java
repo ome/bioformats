@@ -300,17 +300,15 @@ public class LIFReader extends FormatReader {
             ts.setElementAt(new Integer(t), ts.size() - 1);
           }
         }
-        /*
         else if (token.indexOf("dblVoxel") != -1) {
           int index = token.indexOf("Variant") + 7;
           String size = token.substring(index + 2,
             token.indexOf("\"", index + 3));
           float cal = Float.parseFloat(size) * 1000000;
-          if (token.indexOf("X") != -1) xcal.add(new Float(cal));
-          else if (token.indexOf("Y") != -1) ycal.add(new Float(cal));
-          else if (token.indexOf("Z") != -1) zcal.add(new Float(cal));
+          if (token.indexOf("Z") != -1 && xcal.size() > zcal.size()) {
+            zcal.add(new Float(cal));
+          }
         }
-        */
       }
       else if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
