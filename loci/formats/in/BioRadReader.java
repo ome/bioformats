@@ -25,8 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -70,6 +69,8 @@ public class BioRadReader extends FormatReader {
 
   private Vector used;
 
+  private String[] picFiles;
+
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
@@ -97,9 +98,19 @@ public class BioRadReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    long offset = no * core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2);
-    in.seek(offset + 76);
-    in.read(buf);
+    if (picFiles != null) {
+      int file = no % picFiles.length;
+      RandomAccessStream ras = new RandomAccessStream(picFiles[file]);
+      long offset = (no / picFiles.length) *
+        core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2);
+      ras.seek(offset + 76);
+      ras.read(buf);
+      ras.close();
+    }
+    else {
+      in.seek(no * core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2) + 76);
+      in.read(buf);
+    }
     return buf;
   }
 
@@ -110,6 +121,7 @@ public class BioRadReader extends FormatReader {
     super.close();
     byteFormat = false;
     used = null;
+    picFiles = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -653,6 +665,50 @@ public class BioRadReader extends FormatReader {
         raw.read(b);
         String xml = new String(b);
 
+        // parse dataset dimensions
+        if (xml.indexOf("<Pixels ") != -1) {
+          int start = xml.indexOf("<Pixels");
+          int end = xml.indexOf("/>", start);
+          String s = xml.substring(start, end);
+
+          int zs = s.indexOf("SizeZ=") + 7;
+          int z =
+            zs == 6 ? 1 : Integer.parseInt(s.substring(zs, s.indexOf("\"", zs)));
+          int cs = s.indexOf("SizeC=") + 7;
+          int c =
+            cs == 6 ? 1 : Integer.parseInt(s.substring(cs, s.indexOf("\"", cs)));
+          int ts = s.indexOf("SizeT=") + 7;
+          int t =
+            ts == 6 ? 1 : Integer.parseInt(s.substring(ts, s.indexOf("\"", ts)));
+
+          core.sizeZ[0] = z;
+          core.sizeC[0] = c;
+          core.sizeT[0] = t;
+
+          int numFiles = (z * c * t) / core.imageCount[0];
+
+          picFiles = new String[numFiles];
+          int ndx = 0;
+          used.remove(currentId);
+          for (int j=0; j<list.length; j++) {
+            if (list[j].toLowerCase().endsWith(".pic")) {
+              if (ndx == picFiles.length) {
+                core.sizeC[0]++;
+                c++;
+                String[] tmp = picFiles;
+                picFiles = new String[ndx * core.sizeC[0]];
+                System.arraycopy(tmp, 0, picFiles, 0, tmp.length);
+              }
+              picFiles[ndx] =
+                new Location(parent.getAbsolutePath(), list[j]).getAbsolutePath();
+              used.add(picFiles[ndx++]);
+            }
+          }
+          Arrays.sort(picFiles);
+
+          core.imageCount[0] = z * c * t;
+        }
+
         if (xml.indexOf("SectionInfo") != -1) {
           int start = xml.indexOf("<SectionInfo>") + 13;
           int end = xml.indexOf("</SectionInfo>");
@@ -697,32 +753,7 @@ public class BioRadReader extends FormatReader {
     core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT8 :
       FormatTools.UINT16;
 
-    core.currentOrder[0] = "XY";
-    int[] dims = new int[] {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
-    int max = 0;
-    int min = Integer.MAX_VALUE;
-    int median = 1;
-
-    for (int i=0; i<dims.length; i++) {
-      if (dims[i] < min) min = dims[i];
-      if (dims[i] > max) max = dims[i];
-      else median = dims[i];
-    }
-
-    int[] orderedDims = new int[] {max, median, min};
-    for (int i=0; i<orderedDims.length; i++) {
-      if (orderedDims[i] == core.sizeZ[0] &&
-        core.currentOrder[0].indexOf("Z") == -1)
-      {
-        core.currentOrder[0] += "Z";
-      }
-      else if (orderedDims[i] == core.sizeC[0] &&
-        core.currentOrder[0].indexOf("C") == -1)
-      {
-        core.currentOrder[0] += "C";
-      }
-      else core.currentOrder[0] += "T";
-    }
+    core.currentOrder[0] = "XYCTZ";
 
     FormatTools.populatePixels(store, this);
 
