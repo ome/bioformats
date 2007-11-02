@@ -75,7 +75,7 @@ public class CustomImage extends ImagePlus {
       "channels<2 or stacksize not multiple of channels");
 	  }
     compositeImage = true;
-		setDimensions(channels, stackSize / channels, 1);
+    setDimensions(channels, stackSize / channels, 1);
 		setup(channels, stack2);
 		setStack(imp.getTitle(), stack2);
 		setCalibration(imp.getCalibration());
@@ -116,8 +116,8 @@ public class CustomImage extends ImagePlus {
 
 	public void updateImage() {
 		int imageSize = width * height;
-		int nChannels = getNChannels();
-		int redValue, greenValue, blueValue;
+		int nChannels = channels;
+		int redValue, greenValue, blueValue, alphaValue;
 		int slice = getCurrentSlice();
 
 		if (nChannels == 1) {
@@ -202,24 +202,38 @@ public class CustomImage extends ImagePlus {
 						awtImagePixels[i] = (awtImagePixels[i] & 0xffffff00) | blueValue;
 					}
 					break;
-			}
+		    case 3:
+          for (int i=0; i<imageSize; ++i) {
+            alphaValue = pixels[3][i] & 0xff;
+            awtImagePixels[i] =
+              (awtImagePixels[i] & 0xffffff) | (alphaValue << 24);
+          }
+          break;
+      }
 		}
     else {
 			for (int i=0; i<imageSize; ++i) {
-				redValue = 0; greenValue = 0; blueValue = 0;
+				redValue = 0; greenValue = 0; blueValue = 0; alphaValue = 0;
 				for (int j=0; j<nChannels; ++j) {
 					redValue += (pixels[j][i] >> 16) & 0xff;
 					greenValue += (pixels[j][i]>>8) & 0xff;
 					blueValue += (pixels[j][i]) & 0xff;
-					if (redValue > 255) redValue = 255;
+				  alphaValue += ((pixels[j][i]) >> 24) & 0xff;
+          if (redValue > 255) redValue = 255;
 					if (greenValue > 255) greenValue = 255;
 					if (blueValue > 255) blueValue = 255;
-				}
-				awtImagePixels[i] = (redValue << 16) | (greenValue << 8) | (blueValue);
+          if (alphaValue > 255) alphaValue = 255;
+        }
+				awtImagePixels[i] = (alphaValue << 24) | (redValue << 16) |
+          (greenValue << 8) | (blueValue);
 			}
 		}
 		if (imageSource == null) {
-			imageColorModel = new DirectColorModel(32, 0xff0000, 0xff00, 0xff);
+      if (channels == 4) {
+        imageColorModel = new DirectColorModel(32, 0xff0000, 0xff00, 0xff,
+          0xff000000);
+      }
+      else imageColorModel = new DirectColorModel(32, 0xff0000, 0xff00, 0xff);
 			imageSource = new MemoryImageSource(width, height, imageColorModel,
         awtImagePixels, 0, width);
 			imageSource.setAnimated(true);
@@ -244,8 +258,8 @@ public class CustomImage extends ImagePlus {
 		byte[] r = new byte[size];
 		byte[] g = new byte[size];
 		byte[] b = new byte[size];
-		((ColorProcessor) iip).getRGB(r, g, b);
-		ImageStack stack = new ImageStack(w, h);
+    ((ColorProcessor) iip).getRGB(r, g, b);
+    ImageStack stack = new ImageStack(w, h);
 		stack.addSlice("Red", r);
 		stack.addSlice("Green", g);
 		stack.addSlice("Blue", b);

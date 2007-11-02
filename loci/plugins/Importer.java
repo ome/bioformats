@@ -643,7 +643,7 @@ public class Importer {
     {
       makeRGB(imp, r, r.getSizeC(), options.isAutoscale());
     }
-    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
+    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() <= 4 &&
       !r.isIndexed())
     {
       // use compareTo instead of IJ.versionLessThan(...), because we want
@@ -670,7 +670,7 @@ public class Importer {
           r.getSizeT(), r.getSizeC(), options.isAutoscale());
       }
     }
-    else if (mergeChannels && r.getSizeC() >= 4) {
+    else if (mergeChannels && r.getSizeC() > 4) {
       // ask the user what they would like to do...
       // CTR FIXME -- migrate into ImporterOptions?
       // also test with macros, and merging multiple image stacks
@@ -680,8 +680,10 @@ public class Importer {
       if (planes1 * 2 < r.getImageCount()) planes1++;
       int planes2 = r.getImageCount() / 3;
       if (planes2 * 3 < r.getImageCount()) planes2++;
+      int planes3 = r.getImageCount() / 4;
+      if (planes3 * 4 < r.getImageCount()) planes3++;
 
-      if (options.promptMergeOption(planes1, planes2) ==
+      if (options.promptMergeOption(planes1, planes2, planes3) ==
         ImporterOptions.STATUS_OK)
       {
         String option = options.getMergeOption();
@@ -690,6 +692,10 @@ public class Importer {
         }
         else if (option.indexOf("3 channels") != -1) {
           makeRGB(imp, r, 3, options.isAutoscale());
+        }
+        else if (option.indexOf("4 channels") != -1) {
+          imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
+            r.getSizeT() * planes3, 4, options.isAutoscale());
         }
       }
     }
