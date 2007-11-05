@@ -74,7 +74,7 @@ public class BioRadReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
-  public BioRadReader() { super("Bio-Rad PIC", "pic"); }
+  public BioRadReader() { super("Bio-Rad PIC", new String[] {"pic", "xml"}); }
 
   // -- IFormatReader API methods --
 
@@ -116,6 +116,13 @@ public class BioRadReader extends FormatReader {
 
   // -- IFormatHandler API methods --
 
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".pic") || lname.endsWith("lse.xml")) return true;
+    return false;
+  }
+
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
@@ -129,6 +136,20 @@ public class BioRadReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
+
+    if (id.toLowerCase().endsWith(".xml")) {
+      Location l = new Location(id).getAbsoluteFile().getParentFile();
+      String[] list = l.list();
+      for (int i=0; i<list.length; i++) {
+        if (list[i].toLowerCase().endsWith(".pic")) {
+          id = new Location(l.getAbsolutePath(), list[i]).getAbsolutePath();
+        }
+      }
+      if (id.toLowerCase().endsWith(".xml")) {
+        throw new FormatException("No .pic files found - invalid dataset.");
+      }
+    }
+
     super.initFile(id);
     in = new RandomAccessStream(id);
     in.order(true);
