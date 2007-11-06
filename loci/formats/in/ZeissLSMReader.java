@@ -121,7 +121,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    ifds = TiffTools.getIFDs(in);
     TiffTools.getSamples(ifds[2*no], in, buf);
     return swapIfRequired(buf);
   }
