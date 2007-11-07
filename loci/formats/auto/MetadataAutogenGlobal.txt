@@ -1,0 +1,13 @@
+[2004]
+class = OMEXML2004Metadata
+id = OMEXML2004Metadata.java
+package = org.openmicroscopy.xml
+version = 2004 (FC)
+
+[200706]
+class = OMEXML200706Metadata
+id = OMEXML200706Metadata.java
+package = ome.xml.r2007_06
+version = 2007-06
+
+[-]
