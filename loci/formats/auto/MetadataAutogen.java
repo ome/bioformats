@@ -54,6 +54,8 @@ public class MetadataAutogen {
 
   public static void main(String[] args) throws IOException {
     System.out.print("Parsing input files... ");
+    File ome = new File("ome");
+    if (!ome.exists()) ome.mkdir();
 
     // parse global input file
     versions = parseGlobal();
@@ -99,7 +101,8 @@ public class MetadataAutogen {
 
     String version = null;
     Hashtable vars = null;
-    BufferedReader in = new BufferedReader(new FileReader(GLOBAL_SRC));
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+      MetadataAutogen.class.getResourceAsStream(GLOBAL_SRC)));
     while (true) {
       String line = in.readLine();
       if (line == null) break;
@@ -127,23 +130,25 @@ public class MetadataAutogen {
     return hash;
   }
 
-  private static String parseHeader(String id) {
-    int len = (int) new File(id).length();
-    byte[] b = null;
-    try {
-      DataInputStream in = new DataInputStream(new FileInputStream(id));
-      b = new byte[len];
-      in.readFully(b);
-      in.close();
+  private static String parseHeader(String id) throws IOException {
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+      MetadataAutogen.class.getResourceAsStream(id)));
+    StringBuffer sb = new StringBuffer();
+    while (true) {
+      String line = in.readLine();
+      if (line == null) break;
+      sb.append(line);
+      sb.append("\n");
     }
-    catch (IOException exc) { exc.printStackTrace(); }
-    return new String(b);
+    in.close();
+    return sb.toString();
   }
 
   private static Vector parseNodes() throws IOException {
     Vector nodes = new Vector();
     Node node = null;
-    BufferedReader in = new BufferedReader(new FileReader(NODES_SRC));
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+      MetadataAutogen.class.getResourceAsStream(NODES_SRC)));
     while (true) {
       String line = in.readLine();
       if (line == null) break;
@@ -209,7 +214,7 @@ public class MetadataAutogen {
         first = false;
       }
       // OME-XML implementation
-      doSetters("OMEXML" + key + "Metadata.java", value, node, false);
+      doSetters("ome/OMEXML" + key + "Metadata.java", value, node, false);
     }
   }
 
@@ -226,7 +231,7 @@ public class MetadataAutogen {
         first = false;
       }
       // OME-XML implementations
-      doGetters("OMEXML" + key + "Metadata.java", value, node, false);
+      doGetters("ome/OMEXML" + key + "Metadata.java", value, node, false);
     }
   }
 
@@ -455,9 +460,9 @@ public class MetadataAutogen {
       header = retrieveHeader;
       vars = basicVars;
     }
-    else { // id.startsWith("OMEXML")
+    else { // id.startsWith("ome/OMEXML")
       header = omexmlHeader;
-      vars = (Hashtable) versions.get(id.substring(6, id.length() - 13));
+      vars = (Hashtable) versions.get(id.substring(10, id.length() - 13));
     }
     header = filterHeader(header, vars);
     out.write(id, header);
