@@ -89,6 +89,7 @@ public class ImporterOptions implements ItemListener {
   };
 
   // keys for use in IJ_Prefs.txt
+  public static final String PREF_FIRST = "bioformats.firstTime";
   public static final String PREF_STACK = "bioformats.stackFormat";
   public static final String PREF_ORDER = "bioformats.stackOrder";
   public static final String PREF_MERGE = "bioformats.mergeChannels";
@@ -146,6 +147,7 @@ public class ImporterOptions implements ItemListener {
 
   // -- Fields - core options --
 
+  private boolean firstTime;
   private String stackFormat;
   private String stackOrder;
   private boolean mergeChannels;
@@ -172,6 +174,7 @@ public class ImporterOptions implements ItemListener {
 
   // -- ImporterOptions API methods - accessors --
 
+  public boolean isFirstTime() { return firstTime; }
   public String getStackFormat() { return stackFormat; }
   public String getStackOrder() { return stackOrder; }
   public boolean isMergeChannels() { return mergeChannels; }
@@ -225,6 +228,7 @@ public class ImporterOptions implements ItemListener {
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
+    firstTime = Prefs.get(PREF_FIRST, true);
     stackFormat = Prefs.get(PREF_STACK, VIEW_STANDARD);
     stackOrder = Prefs.get(PREF_ORDER, ORDER_DEFAULT);
     mergeChannels = Prefs.get(PREF_MERGE, false);
@@ -244,6 +248,7 @@ public class ImporterOptions implements ItemListener {
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
   public void savePreferences() {
+    Prefs.set(PREF_FIRST, false);
     Prefs.set(PREF_STACK, stackFormat);
     Prefs.set(PREF_ORDER, stackOrder);
     Prefs.set(PREF_MERGE, mergeChannels);
@@ -349,6 +354,17 @@ public class ImporterOptions implements ItemListener {
    * @return status of operation
    */
   public int promptIdLocal() {
+    if (firstTime && IJ.isMacOSX()) {
+      // present user with one-time dialog box
+      IJ.showMessage("Bio-Formats",
+        "Please note: There is a bug in Java on Mac OS X with the\n" +
+        "native file chooser that crashes ImageJ if you click on a file\n" +
+        "in cxd, ipw, oib or zvi format while in column view mode.\n" +
+        "You can work around the problem by switching to list view\n" +
+        "(press Command+2) or by checking the \"Use JFileChooser\n" +
+        "to Open/Save\" option in the Edit>Options>Input/Output...\n" +
+        "dialog. This message will not appear again.");
+    }
     if (id == null) {
       // prompt user for the filename (or grab from macro options)
       OpenDialog od = new OpenDialog(LABEL_ID, id);
