@@ -11,7 +11,7 @@ This build file handles the following projects:
 Bio-Formats
     JAR file:      bio-formats.jar
     Folders:       loci/formats
-                   loci/formats/*
+                   loci/formats/* (except loci/formats/auto)
     Main class:    loci.formats.ImageViewer
     Dependencies:  jai_imageio.jar (reflected)
                    mdbtools-java.jar (reflected)
@@ -422,7 +422,8 @@ Apache XML-RPC
     description="compile classes for Bio-Formats">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${formats.source}" classpath="${ext.jars}"
+      includes="${formats.source}" excludes="${formats.exclude}"
+      classpath="${ext.jars}"
       debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
