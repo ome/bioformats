@@ -439,7 +439,7 @@ public class MakeTestOmeTiff {
         sb.append("<Pixels " +
           "ID=\"openmicroscopy.org:Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
           "DimensionOrder=\"" + dimOrder[i][p] + "\" " +
-          "PixelType=\"uint8\" " +
+          "PixelType=\"Uint8\" " +
           "BigEndian=\"true\" " +
           "SizeX=\"" + sizeX[i][p] + "\" " +
           "SizeY=\"" + sizeY[i][p] + "\" " +
