@@ -79,7 +79,8 @@ public class OMETiffReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     OMETiffHandler handler = new OMETiffHandler();
-    String comment = (String) getMeta("Comment");
+    String comment =
+      (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
 
     currentSeries = -1;
     seriesCount = 0;
@@ -293,6 +294,18 @@ public class OMETiffReader extends BaseTiffReader {
       return comment.indexOf("ome.xsd") >= 0;
     }
     catch (IOException e) { return false; }
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    usedFiles = null;
+    usedIFDs = null;
+    imageIDs = pixelsIDs = null;
+    tempIfdMap = tempFileMap = tempIfdCount = null;
+    numIFDs = null;
+    ifdMap = fileMap = null;
+    lsids = isWiscScan = false;
   }
 
   // -- Helper class --
