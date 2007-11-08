@@ -427,6 +427,7 @@ public class MakeTestOmeTiff {
       "xmlns=\"http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\" " +
       "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
       "xsi:schemaLocation=\"" +
+      "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd " +
       "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\">");
     for (int i=0; i<numImages; i++) {
       sb.append("<Image " +
