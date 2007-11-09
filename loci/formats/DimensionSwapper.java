@@ -146,9 +146,7 @@ public class DimensionSwapper extends ReaderWrapper {
     core.currentOrder[series] = order;
 
     MetadataStore store = getMetadataStore();
-    store.setPixels(new Integer(dims[newX]), new Integer(dims[newY]),
-      new Integer(dims[newZ]), new Integer(dims[newC]),
-      new Integer(dims[newT]), null, null, order, new Integer(series), null);
+    FormatTools.populatePixels(store, this);
   }
 
 }
