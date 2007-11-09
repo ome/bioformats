@@ -124,7 +124,22 @@ public class Slicer implements PlugInFilter {
     }
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus p = new ImagePlus(imp.getTitle(), newStacks[i]);
+      String title = imp.getTitle();
+
+      int[] zct = FormatTools.getZCTCoords(stackOrder, sliceZ ? sizeZ : 1,
+        sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
+
+      if (sliceZ) title += " - Z=" + zct[0];
+      if (sliceT) {
+        if (sliceZ) title += " T=" + zct[2];
+        else title += " - T=" + zct[2];
+      }
+      if (sliceC) {
+        if (sliceZ || sliceT) title += " C=" + zct[1];
+        else title += " - C=" + zct[1];
+      }
+
+      ImagePlus p = new ImagePlus(title, newStacks[i]);
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
       if (imp instanceof CustomImage) {
