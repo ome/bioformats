@@ -59,6 +59,7 @@ public class Cache implements CacheReporter {
     this.source = source;
     listeners = new Vector();
     reset();
+    recache();
   }
 
   // -- Cache API methods --
@@ -72,6 +73,19 @@ public class Cache implements CacheReporter {
 
     int ndx = FormatTools.positionToRaster(strategy.getLengths(), pos);
     return cache[ndx];
+  }
+
+  /**
+   * Returns true if the object at the given dimensional position is
+   * in the cache.
+   */
+  public boolean isInCache(int[] pos) throws CacheException {
+    return isInCache(FormatTools.positionToRaster(strategy.getLengths(), pos));
+  }
+
+  /** Returns true if the object at the given index is in the cache. */
+  public boolean isInCache(int pos) throws CacheException {
+    return inCache[pos];
   }
 
   /** Reallocates the cache. */
@@ -102,8 +116,8 @@ public class Cache implements CacheReporter {
     }
     this.strategy = strategy;
     notifyListeners(new CacheEvent(this, CacheEvent.STRATEGY_CHANGED));
-//    reset();
-//    recache();
+    reset();
+    recache();
   }
 
   /** Sets the cache's caching source. */
@@ -111,8 +125,8 @@ public class Cache implements CacheReporter {
     if (source == null) throw new CacheException("source is null");
     this.source = source;
     notifyListeners(new CacheEvent(this, CacheEvent.SOURCE_CHANGED));
-//    reset();
-//    recache();
+    reset();
+    recache();
   }
 
   /** Sets the current dimensional position. */
@@ -132,7 +146,7 @@ public class Cache implements CacheReporter {
     System.arraycopy(pos, 0, currentPos, 0, pos.length);
     int ndx = FormatTools.positionToRaster(len, pos);
     notifyListeners(new CacheEvent(this, CacheEvent.POSITION_CHANGED, ndx));
-//    recache();
+    recache();
   }
 
   // -- CacheReporter API methods --
