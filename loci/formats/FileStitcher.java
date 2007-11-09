@@ -842,6 +842,31 @@ public class FileStitcher implements IFormatReader {
 
     reader.setId(files[0]);
 
+    String[] originalUsedFiles = reader.getUsedFiles();
+
+    boolean doNotStitch = true;
+    for (int i=0; i<files.length; i++) {
+      boolean found = false;
+      for (int j=0; j<originalUsedFiles.length; j++) {
+        if (originalUsedFiles[j].endsWith(files[i])) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        doNotStitch = false;
+        break;
+      }
+    }
+
+    if (doNotStitch) {
+      // the reader for this file uses its own stitching logic that is probably
+      // smarter than FileStitcher
+      readers = new IFormatReader[] {reader};
+      files = new String[] {files[0]};
+      fp = new FilePattern(files[0]);
+    }
+
     int seriesCount = reader.getSeriesCount();
     ag = new AxisGuesser[seriesCount];
     blankImage = new BufferedImage[seriesCount];
