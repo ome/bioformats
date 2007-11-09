@@ -159,9 +159,19 @@ public class SDTReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    off = timeBins = channels = 0;
+    info = null;
+    intensity = true;
+  }
+
   // -- Internal FormatReader API methods --
 
-  /** Initializes the given SDT file. */
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("SDTReader.initFile(" + id + ")");
     super.initFile(id);

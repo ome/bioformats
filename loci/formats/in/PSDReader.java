@@ -105,6 +105,14 @@ public class PSDReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API Methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    lut = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

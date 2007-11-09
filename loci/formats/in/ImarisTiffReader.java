@@ -93,9 +93,9 @@ public class ImarisTiffReader extends BaseTiffReader {
     return open ? checkBytes(name, 1024) : true;
   }
 
-  // -- Internal BaseTiffReader API methods --
+  // -- Internal FormatReader API methods --
 
-  /* @see BaseTiffReader#initFile(String) */
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ImarisTiffReader.initFile(" + id + ")");
     super.initFile(id);

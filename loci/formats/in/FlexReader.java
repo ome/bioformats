@@ -128,6 +128,14 @@ public class FlexReader extends BaseTiffReader {
     return bytes;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    factors = null;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */

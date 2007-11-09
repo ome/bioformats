@@ -120,6 +120,15 @@ public class LegacyZVIReader extends FormatReader {
     return zviBlock.readImage(in);
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    blockList = null;
+    bytesPerPixel = numZ = numC = numT = cFlag = zFlag = tFlag = 0;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

@@ -93,6 +93,14 @@ public class MNGReader extends FormatReader {
     return ImageIO.read(new ByteArrayInputStream(b));
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    offsets = lengths = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

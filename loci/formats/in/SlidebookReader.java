@@ -78,6 +78,14 @@ public class SlidebookReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    metadataOffsets = pixelOffsets = pixelLengths = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

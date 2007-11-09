@@ -79,20 +79,20 @@ public class ICSReader extends FormatReader {
   // -- Fields --
 
   /** Current filename. */
-  protected String currentIcsId;
-  protected String currentIdsId;
+  private String currentIcsId;
+  private String currentIdsId;
 
   /** Current ICS file. */
-  protected Location icsIn;
+  private Location icsIn;
 
   /** Number of bits per pixel. */
-  protected int bitsPerPixel;
+  private int bitsPerPixel;
 
   /** Flag indicating whether current file is v2.0. */
-  protected boolean versionTwo;
+  private boolean versionTwo;
 
   /** Image data. */
-  protected byte[] data;
+  private byte[] data;
 
   // -- Constructor --
 
@@ -155,6 +155,8 @@ public class ICSReader extends FormatReader {
     currentIcsId = null;
     currentIdsId = null;
     data = null;
+    bitsPerPixel = 0;
+    versionTwo = false;
   }
 
   // -- Internal FormatReader API methods --
@@ -223,6 +225,7 @@ public class ICSReader extends FormatReader {
     StringTokenizer st = new StringTokenizer(s, "\n");
     String line = st.nextToken();
     line = st.nextToken();
+    boolean signed = false;
     while (line != null && !line.trim().equals("end")) {
       t = new StringTokenizer(line);
       StringBuffer key = new StringBuffer();
@@ -256,6 +259,9 @@ public class ICSReader extends FormatReader {
           else if (k.equals("representation format")) rFormat = v;
           else if (k.equals("representation compression")) compression = v;
           else if (k.equals("parameter scale")) scale = v;
+          else if (k.equals("representation sign")) {
+            signed = v.equals("signed");
+          }
         }
         else {
           key.append(token);
@@ -397,13 +403,13 @@ public class ICSReader extends FormatReader {
 
       switch (bitsPerPixel) {
         case 8:
-          core.pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
           break;
         case 16:
-          core.pixelType[0] = FormatTools.UINT16;
+          core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
           break;
         case 32:
-          core.pixelType[0] = FormatTools.UINT32;
+          core.pixelType[0] = signed ? FormatTools.INT32 : FormatTools.UINT32;
           break;
       }
     }

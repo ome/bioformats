@@ -114,12 +114,6 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#close() */
-  public void close() throws IOException {
-    super.close();
-    if (r != null) r.close();
-  }
-
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     if (id.toLowerCase().endsWith(".nd")) return FormatTools.MUST_GROUP;
@@ -161,6 +155,21 @@ public class MetamorphReader extends BaseTiffReader {
     r.setId(file);
     return r.openBytes(coords[0], buf);
   }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatReader#close() */
+  public void close() throws IOException {
+    super.close();
+    if (r != null) r.close();
+    r = null;
+    imageName = imageCreationDate = null;
+    emWavelength = null;
+    stks = null;
+    mmPlanes = 0;
+  }
+
+  // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {

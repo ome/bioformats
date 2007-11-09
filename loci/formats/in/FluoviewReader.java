@@ -58,7 +58,7 @@ public class FluoviewReader extends BaseTiffReader {
   // -- Fields --
 
   /** Pixel dimensions for this file. */
-  private float voxelX = 0f, voxelY = 0f, voxelZ = 0f, voxelC = 0f, voxelT = 0f;
+  private float voxelX = 1f, voxelY = 1f, voxelZ = 1f, voxelC = 1f, voxelT = 1f;
 
   /** First image. */
   private BufferedImage zeroImage = null;
@@ -138,12 +138,6 @@ public class FluoviewReader extends BaseTiffReader {
     return zeroImage.getSubimage(0, no, core.sizeX[0], 1);
   }
 
-  /* @see loci.formats.IFormatReader#close() */
-  public void close() throws IOException {
-    super.close();
-    zeroImage = null;
-  }
-
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
@@ -153,6 +147,13 @@ public class FluoviewReader extends BaseTiffReader {
     // just checking the filename isn't enough to differentiate between
     // Fluoview and regular TIFF; open the file and check more thoroughly
     return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
+  }
+
+  /* @see loci.formats.IFormatReader#close() */
+  public void close() throws IOException {
+    super.close();
+    voxelX = voxelY = voxelZ = voxelC = voxelT = 1f;
+    zeroImage = null;
   }
 
   // -- Internal BaseTiffReader API methods --

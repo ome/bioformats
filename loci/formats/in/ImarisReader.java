@@ -91,6 +91,12 @@ public class ImarisReader extends FormatReader {
     return checkBytes(name, 8);
   }
 
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    offsets = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

@@ -86,6 +86,14 @@ public class VisitechReader extends FormatReader {
     return (String[]) files.toArray(new String[0]);
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    files = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

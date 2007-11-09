@@ -280,7 +280,16 @@ public class QTReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
+    if (legacy != null) {
+      legacy.close();
+      legacy = null;
+    }
+    offsets = null;
     prevPixels = null;
+    codec = altCodec = null;
+    pixelOffset = pixelBytes = bitsPerPixel = rawSize = 0;
+    prevPlane = altPlanes = 0;
+    canUsePrevious = useLegacy = false;
   }
 
   // -- Internal FormatReader API methods --

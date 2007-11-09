@@ -79,7 +79,7 @@ public class DicomReader extends FormatReader {
   // -- Fields --
 
   /** Bits per pixel. */
-  protected int bitsPerPixel;
+  private int bitsPerPixel;
 
   private int location;
   private int elementLength;
@@ -165,6 +165,18 @@ public class DicomReader extends FormatReader {
     // TODO : correct pixel values according to value of 'scale'
 
     return buf;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    bitsPerPixel = location = elementLength = vr = scale = 0;
+    oddLocations = inSequence = bigEndianTransferSyntax = false;
+    isJPEG = isRLE = false;
+    lut = null;
+    offsets = null;
   }
 
   // -- Internal FormatReader API methods --

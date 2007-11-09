@@ -72,6 +72,14 @@ public class FitsReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    count = 0;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -108,8 +116,8 @@ public class FitsReader extends FormatReader {
         int bits = Integer.parseInt(value);
         switch (bits) {
           case 8: core.pixelType[0] = FormatTools.UINT8; break;
-          case 16: core.pixelType[0] = FormatTools.UINT16; break;
-          case 32: core.pixelType[0] = FormatTools.UINT32; break;
+          case 16: core.pixelType[0] = FormatTools.INT16; break;
+          case 32: core.pixelType[0] = FormatTools.INT32; break;
           case -32: core.pixelType[0] = FormatTools.FLOAT; break;
           default: throw new FormatException("Unsupported pixel type: " + bits);
         }

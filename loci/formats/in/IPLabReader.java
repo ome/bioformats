@@ -81,6 +81,14 @@ public class IPLabReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    bps = dataSize = 0;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -124,7 +132,7 @@ public class IPLabReader extends FormatReader {
         break;
       case 1:
         ptype = "16 bit signed short";
-        core.pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = FormatTools.INT16;
         bps = 2;
         break;
       case 2:
@@ -134,7 +142,7 @@ public class IPLabReader extends FormatReader {
         break;
       case 3:
         ptype = "32 bit signed long";
-        core.pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.INT32;
         bps = 4;
         break;
       case 4:

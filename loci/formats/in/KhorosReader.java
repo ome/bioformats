@@ -49,7 +49,7 @@ public class KhorosReader extends FormatReader {
   /** Constructs a new Khoros reader. */
   public KhorosReader() { super("Khoros XV", "xv"); }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
@@ -86,14 +86,18 @@ public class KhorosReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     lut = null;
     offset = 0;
   }
 
-  /** Initialize the given file. */
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
@@ -117,6 +121,8 @@ public class KhorosReader extends FormatReader {
 
     switch (type) {
       case 0:
+        core.pixelType[0] = FormatTools.INT8;
+        break;
       case 1:
         core.pixelType[0] = FormatTools.UINT8;
         break;

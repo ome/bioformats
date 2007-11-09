@@ -74,6 +74,13 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    cNames = null;
+    pixelSizeT = 1;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */

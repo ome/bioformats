@@ -229,6 +229,11 @@ public class LeicaReader extends FormatReader {
         }
       }
     }
+    ifds = headerIFDs = null;
+    tiff = null;
+    files = null;
+    seriesNames = null;
+    numSeries = bpp = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -1002,7 +1007,7 @@ public class LeicaReader extends FormatReader {
           core.pixelType[i] = FormatTools.UINT16;
           break;
         case 3:
-          core.pixelType[i] = FormatTools.UINT8;
+          core.pixelType[i] = FormatTools.INT8;
           break;
         case 4:
           core.pixelType[i] = FormatTools.INT32;

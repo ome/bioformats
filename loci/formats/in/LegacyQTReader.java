@@ -117,7 +117,11 @@ public class LegacyQTReader extends FormatReader {
       io.initCause(e);
       throw io;
     }
-    if (!fileOnly) currentId = null;
+    if (!fileOnly) {
+      currentId = null;
+      times = null;
+      image = null;
+    }
   }
 
   // -- IFormatHandler API methods --

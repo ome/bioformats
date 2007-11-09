@@ -145,6 +145,20 @@ public class GIFReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    gctFlag = lctFlag = interlace = transparency = false;
+    gctSize = lctSize = ix = iy = iw = ih = blockSize = 0;
+    dispose = lastDispose = transIndex = 0;
+    gct = lct = act;
+    prefix = null;
+    suffix = pixelStack = pixels = null;
+    images = colorTables = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

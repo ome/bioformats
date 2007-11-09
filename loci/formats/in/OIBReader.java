@@ -164,6 +164,11 @@ public class OIBReader extends FormatReader {
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
       "entry", "documentName", "entryName"};
     for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
+    nImages = width = height = nChannels = tSize = zSize = null;
+    bpp = pixels = names = rgb = null;
+    for (int i=0; i<labels.length; i++) {
+      labels[i] = dims[i] = starts[i] = stops[i] = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

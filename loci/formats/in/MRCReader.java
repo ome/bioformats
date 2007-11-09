@@ -75,6 +75,15 @@ public class MRCReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    bpp = extHeaderSize = 0;
+    isFloat = false;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -108,6 +117,9 @@ public class MRCReader extends FormatReader {
         core.pixelType[0] = FormatTools.UINT8;
         break;
       case 1:
+        bpp = 2;
+        core.pixelType[0] = FormatTools.INT16;
+        break;
       case 6:
         bpp = 2;
         core.pixelType[0] = FormatTools.UINT16;

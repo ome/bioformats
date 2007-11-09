@@ -185,10 +185,10 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    files = null;
     if (tiff != null) tiff.close();
+    currentId = xmlFile = cfgFile = null;
     tiff = null;
-    currentId = null;
+    files = null;
     readXML = false;
     readCFG = false;
   }

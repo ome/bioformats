@@ -43,13 +43,13 @@ public class BMPReader extends FormatReader {
   // -- Fields --
 
   /** Offset to the image data. */
-  protected int offset;
+  private int offset;
 
   /** Number of bits per pixel. */
-  protected int bpp;
+  private int bpp;
 
   /** The palette for indexed color images. */
-  protected byte[][] palette;
+  private byte[][] palette;
 
   /**
    * Compression type:
@@ -58,7 +58,7 @@ public class BMPReader extends FormatReader {
    * 2 = 4 bit run length encoding,
    * 3 = RGB bitmap with mask.
    */
-  protected int compression;
+  private int compression;
 
   /** Offset to image data. */
   private long global;
@@ -94,8 +94,6 @@ public class BMPReader extends FormatReader {
         " not supported");
     }
 
-    /* debug */ System.out.println("global offset : " + global);
-
     in.seek(global);
 
     if ((palette != null && palette[0].length > 0) || core.sizeC[0] == 1) {
@@ -104,8 +102,9 @@ public class BMPReader extends FormatReader {
       }
     }
     else {
+      int row = core.sizeX[0] * core.sizeC[0];
       for (int y=core.sizeY[0]-1; y>=0; y--) {
-        in.read(buf, y*core.sizeX[0]*core.sizeC[0], core.sizeX[0]*core.sizeC[0]);
+        in.read(buf, y*row, row);
       }
       for (int i=0; i<buf.length/core.sizeC[0]; i++) {
         byte tmp = buf[i*core.sizeC[0] + 2];
@@ -114,6 +113,16 @@ public class BMPReader extends FormatReader {
       }
     }
     return buf;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    offset = bpp = compression = 0;
+    global = 0;
+    palette = null;
   }
 
   // -- Internel FormatReader API methods --
@@ -190,9 +199,6 @@ public class BMPReader extends FormatReader {
     in.skipBytes(4);
 
     // read the palette, if it exists
-
-    /* debug */ System.out.println("offset=" + offset + ", fp=" +
-      in.getFilePointer() + ", nColors=" + nColors);
 
     if (nColors != 0) {
       palette = new byte[3][nColors];

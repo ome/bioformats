@@ -145,6 +145,14 @@ public abstract class BaseTiffReader extends FormatReader {
     return swapIfRequired(buf);
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    ifds = null;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable and metadata store. */

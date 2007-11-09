@@ -49,8 +49,8 @@ public class GatanReader extends FormatReader {
 
   private int bytesPerPixel;
 
-  protected int pixelDataNum = 0;
-  protected int datatype;
+  private int pixelDataNum = 0;
+  private int datatype;
 
   // -- Constructor --
 
@@ -76,6 +76,16 @@ public class GatanReader extends FormatReader {
     in.seek(pixelOffset);
     in.read(buf);
     return buf;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    pixelOffset = 0;
+    bytesPerPixel = pixelDataNum = datatype = 0;
+    pixelSizes = null;
   }
 
   // -- Internal FormatReader API methods --

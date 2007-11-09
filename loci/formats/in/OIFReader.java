@@ -86,7 +86,6 @@ public class OIFReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
 
     tiffReader[no].openBytes(0, buf);
-    tiffReader[no].close();
     return buf;
   }
 
@@ -132,7 +131,14 @@ public class OIFReader extends FormatReader {
         if (tiffReader[i] != null) tiffReader[i].close();
       }
     }
-    tiffs = null;
+    tiffs = usedFiles = null;
+    tiffReader = null;
+    thumbReader = null;
+    thumbId = null;
+    imageDepth = 0;
+    for (int i=0; i<size.length; i++) {
+      size[i] = code[i] = null;
+    }
   }
 
   // -- Internal FormatReader API methods --

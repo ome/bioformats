@@ -127,12 +127,8 @@ public class NikonReader extends BaseTiffReader {
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
 
-    if (block.length < 3) {
-      return false;
-    }
-    if (block.length < 8) {
-      return true; // we have no way of verifying further
-    }
+    if (block.length < 3) return false;
+    if (block.length < 8) return true; // we have no way of verifying further
 
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
 
@@ -169,6 +165,13 @@ public class NikonReader extends BaseTiffReader {
     // just checking the filename isn't enough to differentiate between
     // Nikon and regular TIFF; open the file and check more thoroughly
     return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    makerNoteOffset = 0;
+    original = null;
   }
 
   // -- Internal BaseTiffReader API methods --

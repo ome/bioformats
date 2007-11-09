@@ -153,6 +153,16 @@ public class OMEXMLReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    bpp = null;
+    offsets = null;
+    compression = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -374,13 +384,14 @@ public class OMEXMLReader extends FormatReader {
       core.falseColor[i] = false;
 
       String type = pixType.toLowerCase();
+      boolean signed = type.charAt(0) != 'u';
       if (type.endsWith("16")) {
         bpp[i] = 2;
-        core.pixelType[i] = FormatTools.UINT16;
+        core.pixelType[i] = signed ? FormatTools.INT16 : FormatTools.UINT16;
       }
       else if (type.endsWith("32")) {
         bpp[i] = 4;
-        core.pixelType[i] = FormatTools.UINT32;
+        core.pixelType[i] = signed ? FormatTools.INT32 : FormatTools.UINT32;
       }
       else if (type.equals("float")) {
         bpp[i] = 4;
@@ -388,7 +399,7 @@ public class OMEXMLReader extends FormatReader {
       }
       else {
         bpp[i] = 1;
-        core.pixelType[i] = FormatTools.UINT8;
+        core.pixelType[i] = signed ? FormatTools.INT8 : FormatTools.UINT8;
       }
 
       // calculate the number of raw bytes of pixel data that we are expecting

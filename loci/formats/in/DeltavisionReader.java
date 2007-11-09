@@ -100,6 +100,16 @@ public class DeltavisionReader extends FormatReader {
     return buf;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    extSize = bytesPerPixel = wSize = zSize = tSize = 0;
+    numIntsPerSection = numFloatsPerSection = 0;
+    extHdrFields = null;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

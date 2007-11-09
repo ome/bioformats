@@ -120,12 +120,16 @@ public class PerkinElmerReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     currentId = null;
-    files = null;
     if (tiff != null) {
       for (int i=0; i<tiff.length; i++) {
         if (tiff[i] != null) tiff[i].close();
       }
     }
+    tiff = null;
+    allFiles = null;
+    files = null;
+    details = sliceSpace = null;
+    isTiff = true;
   }
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
