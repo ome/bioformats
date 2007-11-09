@@ -378,6 +378,13 @@ public class FileStitcher implements IFormatReader {
     return blankImage[sno];
   }
 
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return openImage(no).getSubimage(x, y, w, h);
+  }
+
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
@@ -398,6 +405,15 @@ public class FileStitcher implements IFormatReader {
     return blankBytes[sno];
   }
 
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] buffer = new byte[w * h *
+      FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount()];
+    return openBytes(no, buffer, x, y, w, h);
+  }
+
   /* @see IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
@@ -412,6 +428,36 @@ public class FileStitcher implements IFormatReader {
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     Arrays.fill(buf, (byte) 0);
+    return buf;
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] bytes = openBytes(no);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int ch = getRGBChannelCount();
+    if (buf.length < w * h * bpp * ch) {
+      throw new FormatException("Buffer too small.");
+    }
+
+    for (int yy=y; yy<y + h; yy++) {
+      for (int xx=x; xx<x + w; xx++) {
+        for (int cc=0; cc<ch; cc++) {
+          int oldNdx = -1, newNdx = -1;
+          if (isInterleaved()) {
+            oldNdx = yy*getSizeX()*bpp*ch + xx*bpp*ch + cc*bpp;
+            newNdx = (yy - y)*w*bpp*ch + (xx - x)*bpp*ch + cc*bpp;
+          }
+          else {
+            oldNdx = cc*getSizeX()*getSizeY()*bpp + yy*getSizeX()*bpp + xx*bpp;
+            newNdx = cc*w*h*bpp + (yy - y)*w*bpp + (xx - x)*bpp;
+          }
+          System.arraycopy(bytes, oldNdx, buf, newNdx, bpp);
+        }
+      }
+    }
     return buf;
   }
 

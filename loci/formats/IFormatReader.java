@@ -180,6 +180,13 @@ public interface IFormatReader extends IFormatHandler {
   byte[] openBytes(int no) throws FormatException, IOException;
 
   /**
+   * Obtains a sub-image of the specified image, whose upper-left corner is
+   * given by (x, y).
+   */
+  byte[] openBytes(int no, int x, int y, int width, int height)
+    throws FormatException, IOException;
+
+  /**
    * Obtains the specified image from the current file into a pre-allocated byte
    * array of (sizeX * sizeY * bytesPerPixel).
    * @param no the image index within the file.
@@ -192,8 +199,31 @@ public interface IFormatReader extends IFormatHandler {
   byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException;
 
+  /**
+   * Obtains a sub-image of the specified image into a pre-allocated byte array.
+   * @param no the image index within the file.
+   * @param buf a pre-allocated buffer.
+   * @param x X coordinate of the upper-left corner of the sub-image
+   * @param y Y coordinate of the upper-left corner of the sub-image
+   * @param width of the sub-image
+   * @param height of the sub-image
+   * @return the pre-allocated buffer <code>buf</code> for convenience.
+   * @throws FormatException if there was a problem parsing the metadata of the
+   * file.
+   * @throws IOException if there was a problem reading the file.
+   */
+  byte[] openBytes(int no, byte[] buf, int x, int y, int width, int height)
+    throws FormatException, IOException;
+
   /** Obtains the specified image from the current file. */
   BufferedImage openImage(int no)
+    throws FormatException, IOException;
+
+  /**
+   * Obtains a sub-image of the specified image, whose upper-left corner is
+   * given by (x, y).
+   */
+  BufferedImage openImage(int no, int x, int y, int width, int height)
     throws FormatException, IOException;
 
   /**

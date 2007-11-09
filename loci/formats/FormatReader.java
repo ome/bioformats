@@ -418,6 +418,54 @@ public abstract class FormatReader extends FormatHandler
     return b;
   }
 
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int ch = getRGBChannelCount();
+    byte[] newBuffer = new byte[w * h * ch * bpp];
+    return openBytes(no, newBuffer, x, y, w, h);
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] bytes = openBytes(no);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int ch = getRGBChannelCount();
+    if (buf.length < w * h * bpp * ch) {
+      throw new FormatException("Buffer too small.");
+    }
+
+    for (int yy=y; yy<y + h; yy++) {
+      for (int xx=x; xx<x + w; xx++) {
+        for (int cc=0; cc<ch; cc++) {
+          int oldNdx = -1, newNdx = -1;
+          if (isInterleaved()) {
+            oldNdx = yy*getSizeX()*bpp*ch + xx*bpp*ch + cc*bpp;
+            newNdx = (yy - y)*w*bpp*ch + (xx - x)*bpp*ch + cc*bpp;
+          }
+          else {
+            oldNdx = cc*getSizeX()*getSizeY()*bpp + yy*getSizeX()*bpp + xx*bpp;
+            newNdx = cc*w*h*bpp + (yy - y)*w*bpp + (xx - x)*bpp;
+          }
+          System.arraycopy(bytes, oldNdx, buf, newNdx, bpp);
+        }
+      }
+    }
+
+    return buf;
+  }
+
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return openImage(no).getSubimage(x, y, w, h);
+  }
+
   /* @see IFormatReader#openThumbImage(int) */
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException

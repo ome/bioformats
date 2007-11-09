@@ -313,10 +313,26 @@ public class ImageReader implements IFormatReader {
     return getReader().openImage(no);
   }
 
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().openImage(no, x, y, w, h);
+  }
+
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
     return getReader().openBytes(no);
+  }
+
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().openBytes(no, x, y, w, h);
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
@@ -325,6 +341,14 @@ public class ImageReader implements IFormatReader {
   {
     FormatTools.assertId(currentId, true, 2);
     return getReader().openBytes(no, buf);
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 2);
+    return getReader().openBytes(no, buf, x, y, w, h);
   }
 
   /* @see IFormatReader#openThumbImage(int) */
