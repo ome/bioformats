@@ -481,6 +481,9 @@ public class OMETiffReader extends BaseTiffReader {
           }
         }
       }
+      else if (qName.equals("OriginalMetadata")) {
+        addMeta(attributes.getValue("name"), attributes.getValue("value"));
+      }
     }
   }
 
