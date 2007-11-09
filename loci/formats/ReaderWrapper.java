@@ -173,14 +173,32 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.openImage(no);
   }
 
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return reader.openImage(no, x, y, w, h);
+  }
+
   public byte[] openBytes(int no) throws FormatException, IOException {
     return reader.openBytes(no);
+  }
+
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return reader.openBytes(no, x, y, w, h);
   }
 
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     return reader.openBytes(no, buf);
+  }
+
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return reader.openBytes(no, buf, x, y, w, h);
   }
 
   public BufferedImage openThumbImage(int no)
