@@ -16,8 +16,8 @@ distinct levels:
 
 Each of these three facilities will be discussed in its own section.
 
-                                 Core Metadata
-                                ---------------
+                               I. Core Metadata
+                              ------------------
 
 For a series of images to form a coherent dataset, certain parameters are
 required to properly understand the data's structure. Such parameters
@@ -26,12 +26,13 @@ constitute what Bio-Formats calls "core" metadata.
 The table below summarizes these parameters, with an explanation of each entry
 following. The first column lists methods of the IFormatReader interface
 relevant to obtaining core metadata values. The second column lists the
-corresponding field of the CoreMetadata class.
+corresponding field of the CoreMetadata class, which encapsulates all of the
+core metadata parameters within a single object.
 
       IFormatReader method | CoreMetadata parameter 
      ----------------------+------------------------
          getCoreMetadata() | (all)
-          getSeriesCount() | -
+          getSeriesCount() | imageCount.length (e.g.)
            getImageCount() | imageCount
                 getSizeX() | sizeX
                 getSizeY() | sizeY
@@ -53,131 +54,199 @@ corresponding field of the CoreMetadata class.
         isInterleaved(int) | -
              getMetadata() | seriesMetadata
 
-CoreMetadata getCoreMetadata() :
-  TODO.
+  CoreMetadata getCoreMetadata() :
+    TODO.
 
-int getSeriesCount() :
-  TODO. setSeries(int), getSeries().
+  int getSeriesCount() :
+    TODO. setSeries(int), getSeries().
 
-int getImageCount() :
-  TODO.
+  int getImageCount() :
+    TODO.
 
-int getSizeX() :
-  TODO.
+  int getSizeX() :
+    TODO.
 
-int getSizeY() :
-  TODO.
+  int getSizeY() :
+    TODO.
 
-int getSizeZ() :
-  TODO.
+  int getSizeZ() :
+    TODO.
 
-int getSizeC() :
-  TODO.
+  int getSizeC() :
+    TODO.
 
-int getSizeT() :
-  TODO.
+  int getSizeT() :
+    TODO.
 
-int getEffectiveSizeC() :
-  TODO.
+  int getEffectiveSizeC() :
+    TODO.
 
-int getRGBChannelCount() :
-  TODO.
+  int getRGBChannelCount() :
+    TODO.
 
-boolean isRGB() :
-  TODO.
+  boolean isRGB() :
+    TODO.
 
-int getThumbSizeX() :
-  TODO.
+  int getThumbSizeX() :
+    TODO.
 
-int getThumbSizeY() :
-  TODO.
+  int getThumbSizeY() :
+    TODO.
 
-int getPixelType() :
-  TODO.
+  int getPixelType() :
+    TODO.
 
-int[] getChannelDimLengths() :
-  TODO.
+  int[] getChannelDimLengths() :
+    TODO.
 
-String[] getChannelDimTypes() :
-  TODO.
+  String[] getChannelDimTypes() :
+    TODO.
 
-String getDimensionOrder() :
-  TODO.
+  String getDimensionOrder() :
+    TODO.
 
-boolean isOrderCertain() :
-  TODO.
+  boolean isOrderCertain() :
+    TODO.
 
-boolean isLittleEndian() :
-  TODO.
+  boolean isLittleEndian() :
+    TODO.
 
-boolean isInterleaved() :
-  TODO.
+  boolean isInterleaved() :
+    TODO.
 
-boolean isInterleaved(int) :
-  TODO.
+  boolean isInterleaved(int) :
+    TODO.
 
-Hashtable getMetadata() :
-  TODO.
+  Hashtable getMetadata() :
+    TODO.
 
-Metadata classes:
-  CoreMetadata
+                             II. Original Metadata
+                            -----------------------
 
-                               Original Metadata
-                              -------------------
+Every format names and organizes its metadata differently. Bio-Formats
+preserves this organization and naming structure as much as possible,
+transferring all such information into a hashtable filled with key/value
+string pairs. You can obtain this hashtable of "original" metadata from the
+format reader by calling the getMetadata() method. You can use the format
+reader's setMetadataCollected(boolean) method to control whether Bio-Formats
+collects the original metadata.  original metadata is collected at all.
 
-void setMetadataCollected(boolean) :
-  TODO.
+The following methods of IFormatReader relate to original metadata handling:
 
-boolean isMetadataCollected() :
-  TODO.
+  void setMetadataCollected(boolean) :
+    Controls whether the format reader collects original metadata at all.
 
-Object getMetadataValue(String) :
-  TODO.
+  boolean isMetadataCollected() :
+    Reports whether the format reader is configured to collect original
+    metadata.
 
-Hashtable getMetadata() :
-  TODO.
+  Object getMetadataValue(String) :
+    Gets the value correesponding to the given metadata key from the
+    original metadata hashtable. This method is a shortcut for calling
+    getMetadata().get(String).
 
-void setMetadataFiltered(boolean) :
-  TODO.
+  Hashtable getMetadata() :
+    Gets the hashtable (not a copy) containing the original metadata
+    key/value pairs.
 
-boolean isMetadataFiltered() :
-  TODO.
+  void setMetadataFiltered(boolean) :
+    Controls whether metadata pairs with extremely long values or containing
+    certain unprintable characters should be filtered out of the results.
+    This method is useful to reduce the amount of bloat and unreadable garbage
+    in the original metadata list.
 
-                          Standardization to OME-XML
-                         ----------------------------
+  boolean isMetadataFiltered() :
+    Reports whether the format reader is configured to filter out metadata
+    pairs with extremely long values or containing certain unprintable
+    characters.
 
-IFormatReader:
+                        III. Standardization to OME-XML
+                       ---------------------------------
 
-void setOriginalMetadataPopulated(boolean) :
-  TODO.
+While it is handy that Bio-Formats can read the pixels from a large number of
+proprietary formats, the library's main purpose is to standardize those
+formats' metadata into a single structure: OME-XML. By converting the metadata
+into OME-XML, applications can support a single metadata standard, and delegate
+the metadata processing for specific third party formats to Bio-Formats.
 
-boolean isOriginalMetadataPopulated() :
-  TODO.
+For each format, Bio-Formats is currently able to integrate a number of
+metadata parameters into the OME-XML schema proper, but every format has a few
+that do not fit into the schema, for a variety of reasons. As such, we also
+provide functionality to store all the "original" key/value pairs into the
+OME-XML structure as custom attributes.
 
-void isMetadataComplete() :
-  TODO.
+TODO - Paragraph explaining MetadataStore/MetadataRetrieve API, and how we can
+standardize into any metadata standard, not just OME-XML, with the proper
+implementation of these interfaces (e.g., OMEROMetadataStore), as well as
+feed one metadata standard into another with
+MetadataTools.convertMetadata(MetadataRetrieve, MetadataStore).
 
-void setMetadataStore(MetadataStore) :
-  TODO.
+TODO - Explain DummyMetadata and AggregateMetadataStore.
 
-void getMetadataStore() :
-  TODO.
+TODO - Explain that there is one implementation per version of the OME-XML
+schema (2004 and 2007-06 right now), and that there is code for autogenerating
+these implementations in the loci.formats.auto package (though understanding
+the autogenerator is certainly "extra credit" and not necessary to use the
+metadata API). loci.formats.ome.OMEXMLMetadata is the abstract superclass of
+all concrete OME-XML metadata classes. OMEXMLMetadata implements both
+MetadataStore and MetadataRetrieve.
 
-void getMetadataStoreRoot() :
-  TODO.
+TODO - Explain how we have isolated all dependencies on the OME Java library
+(in ome-java.jar) into the loci.formats.ome package, and made that package
+optional at compile time, using Java reflection. The loci.formats.MetadataTools
+class provides a mechanism to create OME-XML metadata objects without importing
+the loci.formats.ome classes directly.
 
-IFormatWriter:
+The following methods of IFormatReader relate to OME-XML metadata processing:
 
-void setMetadataRetrieve(MetadataRetrieve) :
-  TODO.
+  void setOriginalMetadataPopulated(boolean) :
+    Controls whether Bio-Formats shoehorns the original metadata key/value
+    pairs into OME-XML as custom attributes.
 
-MetadataRetrieve getMetadataRetrieve() :
-  TODO.
+  boolean isOriginalMetadataPopulated() :
+    Reports whether Bio-Formats is configured to populate the original
+    metadata key/value pairs into OME-XML as custom attributes.
 
-Metadata classes:
-  MetadataStore
-  MetadataRetrieve
-  OMEXMLMetadata
-  DummyMetadata
-  AggregateMetadataStore
-  MetadataTools
+  void isMetadataComplete() :
+    Reports whether we are confident that Bio-Formats fully converts all
+    relevant metadata fields into the OME-XML schema. Some metadata-sensitive
+    applications (e.g., OMERO) use this when deciding whether to flag a
+    particular format as "supported."
+
+  void setMetadataStore(MetadataStore) :
+    TODO.
+
+  void getMetadataStore() :
+    TODO.
+
+  void getMetadataStoreRoot() :
+    TODO.
+
+The following methods of IFormatWriter relate to OME-XML metadata processing:
+
+  void setMetadataRetrieve(MetadataRetrieve) :
+    Provides a metadata retrieval object to the format writer to use when
+    writing that format's metadata.
+
+  MetadataRetrieve getMetadataRetrieve() :
+    Obtains the metadata retrieval object currently associated with the writer.
+
+MetadataStore methods:
+
+  TODO - Don't actually list them all; there are too many.
+
+MetadataRetrieve methods:
+
+  TODO - Don't actually list them all; there are too many.
+
+OMEXMLMetadata methods:
+
+  TODO - 
+
+MetadataTools methods:
+
+  TODO
+
+AggregateMetadataStore methods:
+
+  TODO
