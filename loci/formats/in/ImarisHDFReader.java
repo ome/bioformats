@@ -76,6 +76,7 @@ public class ImarisHDFReader extends FormatReader {
   private Vector channelParameters;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
   private float minX, minY, minZ, maxX, maxY, maxZ;
+  private int seriesCount;
 
   // -- Constructor --
 
@@ -105,7 +106,7 @@ public class ImarisHDFReader extends FormatReader {
         r.exec("ncfile = NetcdfFile.open(currentId)");
         r.exec("g = ncfile.getRootGroup()");
         findGroup("DataSet", "g", "g");
-        findGroup("ResolutionLevel_0", "g", "g");
+        findGroup("ResolutionLevel_" + series, "g", "g");
         findGroup("TimePoint_" + zct[2], "g", "g");
         findGroup("Channel_" + zct[1], "g", "g");
         r.setVar("name", "Data");
@@ -121,9 +122,9 @@ public class ImarisHDFReader extends FormatReader {
     }
     previousImageNumber = no;
 
-    for (int y=0; y<core.sizeY[0]; y++) {
-      System.arraycopy(previousImage[zct[0]][y], 0, buf, y*core.sizeX[0],
-        core.sizeX[0]);
+    for (int y=0; y<core.sizeY[series]; y++) {
+      System.arraycopy(previousImage[zct[0]][y], 0, buf, y*core.sizeX[series],
+        core.sizeX[series]);
     }
 
     return buf;
@@ -143,6 +144,7 @@ public class ImarisHDFReader extends FormatReader {
     super.close();
     previousImageNumber = -1;
     previousImage = null;
+    seriesCount = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -155,9 +157,10 @@ public class ImarisHDFReader extends FormatReader {
 
     pixelSizeX = pixelSizeY = pixelSizeZ = 1.0f;
 
+    seriesCount = 0;
+
     previousImageNumber = -1;
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null);
 
     try {
       r.setVar("currentId", id);
@@ -180,73 +183,104 @@ public class ImarisHDFReader extends FormatReader {
       List l = new Vector();
       l.add(r.getVar("dataSetInfo"));
       parseGroups(l);
+      l.clear();
+      l.add(r.getVar("dataSet"));
+      parseGroups(l);
     }
     catch (ReflectException exc) {
       if (debug) LogTools.trace(exc);
     }
 
-    core.currentOrder[0] = "XYZCT";
-    core.rgb[0] = false;
-    core.thumbSizeX[0] = 128;
-    core.thumbSizeY[0] = 128;
-    core.pixelType[0] = FormatTools.UINT8;
-    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-    core.orderCertain[0] = true;
-    core.littleEndian[0] = true;
-    core.interleaved[0] = false;
-    core.indexed[0] = false;
+    if (seriesCount > 1) {
+      int x = core.sizeX[0];
+      int y = core.sizeY[0];
+      int z = core.sizeZ[0];
+      int c = core.sizeC[0];
+      int t = core.sizeT[0];
+      core = new CoreMetadata(seriesCount);
+      Arrays.fill(core.sizeX, x);
+      Arrays.fill(core.sizeY, y);
+      Arrays.fill(core.sizeZ, z);
+      Arrays.fill(core.sizeC, c);
+      Arrays.fill(core.sizeT, t);
 
-    if (pixelSizeX == 1) pixelSizeX = (maxX - minX) / core.sizeX[0];
-    if (pixelSizeY == 1) pixelSizeY = (maxY - minY) / core.sizeY[0];
-    if (pixelSizeZ == 1) pixelSizeZ = (maxZ - minZ) / core.sizeZ[0];
+      for (int i=1; i<seriesCount; i++) {
+        findGroup("ResolutionLevel_" + i, "dataSet", "g");
+        findGroup("TimePoint_0", "g", "g");
+        findGroup("Channel_0", "g", "g");
+        core.sizeX[i] = Integer.parseInt(getValue("g", "ImageSizeX"));
+        core.sizeY[i] = Integer.parseInt(getValue("g", "ImageSizeY"));
+      }
+    }
+
+    Arrays.fill(core.currentOrder, "XYZCT");
+    Arrays.fill(core.rgb, false);
+    Arrays.fill(core.thumbSizeX, 128);
+    Arrays.fill(core.thumbSizeY, 128);
+    Arrays.fill(core.pixelType, FormatTools.UINT8);
+    Arrays.fill(core.imageCount, core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
+    Arrays.fill(core.orderCertain, true);
+    Arrays.fill(core.littleEndian, true);
+    Arrays.fill(core.interleaved, false);
+    Arrays.fill(core.indexed, false);
 
     FormatTools.populatePixels(store, this);
-    store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
-      new Float(pixelSizeZ), null, null, null);
+    for (int i=0; i<seriesCount; i++) {
+      float px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
+      if (px == 1) px = (maxX - minX) / core.sizeX[i];
+      if (py == 1) py = (maxY - minY) / core.sizeY[i];
+      if (pz == 1) pz = (maxZ - minZ) / core.sizeZ[i];
+      store.setDimensions(new Float(px), new Float(py), new Float(pz),
+        null, null, new Integer(i));
+    }
 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      String[] params = (String[]) channelParameters.get(i);
+    for (int s=0; s<seriesCount; s++) {
+      store.setImage("Resolution Level " + s, null, null, new Integer(s));
+      for (int i=0; i<core.sizeC[s]; i++) {
+        String[] params = (String[]) channelParameters.get(i);
 
-      Float gainValue = null;
-      try { gainValue = new Float(params[0]); }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
-      Integer pinholeValue = null, emWaveValue = null, exWaveValue = null;
-      try { pinholeValue = new Integer(params[5]); }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
-      try {
-        if (params[1].indexOf("-") != -1) {
-          params[1] = params[1].substring(params[1].indexOf("-") + 1);
+        Float gainValue = null;
+        try { gainValue = new Float(params[0]); }
+        catch (NumberFormatException e) { }
+        catch (NullPointerException e) { }
+        Integer pinholeValue = null, emWaveValue = null, exWaveValue = null;
+        try { pinholeValue = new Integer(params[5]); }
+        catch (NumberFormatException e) { }
+        catch (NullPointerException e) { }
+        try {
+          if (params[1].indexOf("-") != -1) {
+            params[1] = params[1].substring(params[1].indexOf("-") + 1);
+          }
+          emWaveValue = new Integer(params[1]);
         }
-        emWaveValue = new Integer(params[1]);
-      }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
-      try {
-        if (params[2].indexOf("-") != -1) {
-          params[2] = params[2].substring(params[2].indexOf("-") + 1);
+        catch (NumberFormatException e) { }
+        catch (NullPointerException e) { }
+        try {
+          if (params[2].indexOf("-") != -1) {
+            params[2] = params[2].substring(params[2].indexOf("-") + 1);
+          }
+          exWaveValue = new Integer(params[2]);
         }
-        exWaveValue = new Integer(params[2]);
-      }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
+        catch (NumberFormatException e) { }
+        catch (NullPointerException e) { }
 
-      store.setLogicalChannel(i, params[6], null,
-        null, null, null, null, null, null, null, gainValue, null,
-        pinholeValue, null, params[7], null, null, null, null,
-        null, emWaveValue, exWaveValue, null, null, null);
+        store.setLogicalChannel(i, params[6], null,
+          null, null, null, null, null, null, null, gainValue, null,
+          pinholeValue, null, params[7], null, null, null, null,
+          null, emWaveValue, exWaveValue, null, null, new Integer(s));
 
-      Double minValue = null, maxValue = null;
-      try { minValue = new Double(params[4]); }
-      catch (NumberFormatException exc) { }
-      catch (NullPointerException exc) { }
-      try { maxValue = new Double(params[3]); }
-      catch (NumberFormatException exc) { }
-      catch (NullPointerException exc) { }
+        Double minValue = null, maxValue = null;
+        try { minValue = new Double(params[4]); }
+        catch (NumberFormatException exc) { }
+        catch (NullPointerException exc) { }
+        try { maxValue = new Double(params[3]); }
+        catch (NumberFormatException exc) { }
+        catch (NullPointerException exc) { }
 
-      if (minValue != null && maxValue != null && maxValue.doubleValue() > 0) {
-        store.setChannelGlobalMinMax(i, minValue, maxValue, null);
+        if (minValue != null && maxValue != null && maxValue.doubleValue() > 0)
+        {
+          store.setChannelGlobalMinMax(i, minValue, maxValue, new Integer(s));
+        }
       }
     }
   }
@@ -324,6 +358,14 @@ public class ImarisHDFReader extends FormatReader {
       r.exec("groupName = group.getName()");
       String groupName = (String) r.getVar("groupName");
       if (debug) LogTools.println("Parsing group: " + groupName);
+
+      if (groupName.startsWith("/DataSet/ResolutionLevel_")) {
+        int slash = groupName.indexOf("/", 25);
+        int n = Integer.parseInt(groupName.substring(25,
+          slash == -1 ? groupName.length() : slash));
+        if (n == seriesCount) seriesCount++;
+      }
+
       r.exec("attributes = group.getAttributes()");
       List l = (List) r.getVar("attributes");
       String[] params = new String[8];
@@ -349,22 +391,28 @@ public class ImarisHDFReader extends FormatReader {
       }
 
       if (groupName.indexOf("/Channel_") != -1) {
-        for (int j=0; j<6; j++) {
-          if (params[j] != null) {
-            if (params[j].indexOf(" ") != -1) {
-              params[j] = params[j].substring(params[j].indexOf(" ") + 1);
-            }
-            if (params[j].indexOf("-") != -1) {
-              params[j] = params[j].substring(params[j].indexOf("-") + 1);
-            }
-            if (params[j].indexOf(".") != -1) {
-              params[j] = params[j].substring(0, params[j].indexOf("."));
+        int ndx = groupName.indexOf("/Channel_") + 9;
+        int end = groupName.indexOf("/", ndx);
+        if (end == -1) end = groupName.length();
+        int n = Integer.parseInt(groupName.substring(ndx, end));
+        if (n == core.sizeC[0]) {
+          for (int j=0; j<6; j++) {
+            if (params[j] != null) {
+              if (params[j].indexOf(" ") != -1) {
+                params[j] = params[j].substring(params[j].indexOf(" ") + 1);
+              }
+              if (params[j].indexOf("-") != -1) {
+                params[j] = params[j].substring(params[j].indexOf("-") + 1);
+              }
+              if (params[j].indexOf(".") != -1) {
+                params[j] = params[j].substring(0, params[j].indexOf("."));
+              }
             }
           }
-        }
 
-        channelParameters.add(params);
-        core.sizeC[0]++;
+          channelParameters.add(params);
+          core.sizeC[0]++;
+        }
       }
 
       r.exec("groups = group.getGroups()");
