@@ -8,7 +8,7 @@ String Description   the full description of the image
 
 [Experimenter]
 an experimenter in the metadata store with a particular index
-2004: CA/Experimenter+
+2004: CustomAttributes/Experimenter+
 200706: Experimenter+
 String FirstName      the first name of the experimenter
 String LastName       the last name of the experimenter
@@ -19,7 +19,7 @@ Object Group          the group to which the experimenter belongs
 
 [Group]
 a group in the metadata store with a particular index
-2004: CA/Group+
+2004: CustomAttributes/Group+
 200706: Group+
 String Name     the name of the group
 Object Leader   the leader of the group
@@ -27,7 +27,7 @@ Object Contact  the contact for the group
 
 [Instrument]
 an instrument in the metadata store with a particular index
-2004: CA/Instrument+
+2004: CustomAttributes/Instrument+
 200706: Instrument+
 String Manufacturer  the name of the manufacturer
 String Model         the model number of the instrument
@@ -36,7 +36,7 @@ String Type          the type of the instrument
 
 [Dimensions]
 a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value)
-2004: Image+/CA/Dimensions
+2004: Image+/CustomAttributes/Dimensions
 200706: Image+
 Float PixelSizeX  size of an individual pixel's X axis in microns
 Float PixelSizeY  size of an individual pixel's Y axis in microns
@@ -46,7 +46,7 @@ Float PixelSizeT  distance between adjacent time points in seconds
 
 [DisplayROI]
 a 5D bounding box region of interest and a set of display options in the metadata store with a particular index
-2004: Image+/CA/DisplayROI
+2004: Image+/CustomAttributes/DisplayROI
 Integer X0             the starting X coordinate
 Integer Y0             the starting Y coordinate
 Integer Z0             the starting Z coordinate
@@ -59,7 +59,7 @@ Object DisplayOptions  the display options to attach to this region of interest
 
 [Pixels]
 a pixels set in the metadata store with a particular image and pixels index
-2004: Image+/CA/Pixels+
+2004: Image+/CustomAttributes/Pixels+
 Integer SizeX          size of an individual plane or section's X axis (width)
 Integer SizeY          size of an individual plane of section's Y axis (height)
 Integer SizeZ          number of optical sections per channel, per timepoint (per stack)
@@ -71,7 +71,7 @@ String DimensionOrder  the dimension order of the pixels set
 
 [StageLabel]
 a stage label in the metadata store with a particular index
-2004: Image+/CA/StageLabel+
+2004: Image+/CustomAttributes/StageLabel+
 String Name  a name for the stage label
 Float X      x coordinate of the stage
 Float Y      y coordinate of the stage
@@ -79,7 +79,7 @@ Float Z      z coordinate of the stage
 
 [LogicalChannel]
 a logical channel and physical channel in the metadata store for a particular pixels
-2004: Image+/CA/LogicalChannel+
+2004: Image+/CustomAttributes/LogicalChannel+
 String Name                       the logical channel's name
 Integer SamplesPerPixel           CTR TODO
 Integer Filter                    index of the filter associated with this channel
@@ -115,7 +115,7 @@ Float NdFilter                    the neutral-density filter value
 
 [ImagingEnvironment]
 the imaging environment for a particular image
-2004: Image+/CA/ImagingEnvironment
+2004: Image+/CustomAttributes/ImagingEnvironment
 Float Temperature  CTR TODO
 Float AirPressure  CTR TODO
 Float Humidity     CTR TODO
@@ -124,7 +124,7 @@ Float Co2Percent   CTR TODO
 #TODO these go with DisplayOptions
 #[DisplayChannel]
 #information about the specified channel for a particular image
-#2004: Image+/CA/DisplayChannel+
+#2004: Image+/CustomAttributes/DisplayChannel+
 #Integer ChannelNumber  CTR TODO
 #Double BlackLevel      CTR TODO
 #Double WhiteLevel      CTR TODO
@@ -132,7 +132,7 @@ Float Co2Percent   CTR TODO
 
 [DisplayOptions]
 various display options for a particular pixels set
-2004: Image+/CA/DisplayOptions
+2004: Image+/CustomAttributes/DisplayOptions
 Float Zoom              CTR TODO
 Boolean RedChannelOn    CTR TODO
 Boolean GreenChannelOn  CTR TODO
@@ -146,14 +146,14 @@ Integer TStop           CTR TODO
 
 [LightSource]
 a light source for a particular instrument
-2004: CA/LightSource+
+2004: CustomAttributes/LightSource+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String SerialNumber  CTR TODO
 
 [Laser]
 a laser for a particular instrument
-2004: CA/Laser+
+2004: CustomAttributes/Laser+
 String Type               CTR TODO
 String Medium             CTR TODO
 Integer Wavelength        CTR TODO
@@ -164,19 +164,19 @@ Float Power               CTR TODO
 
 [Filament]
 a filament for a particular instrument
-2004: CA/Filament+
+2004: CustomAttributes/Filament+
 String Type  CTR TODO
 Float Power  CTR TODO
 
 [Arc]
 an arc for a particular instrument
-2004: CA/Arc+
+2004: CustomAttributes/Arc+
 String Type  CTR TODO
 Float Power  CTR TODO
 
 [Detector]
 a detector for a particular instrument
-2004: CA/Detector+
+2004: CustomAttributes/Detector+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String SerialNumber  CTR TODO
@@ -187,7 +187,7 @@ Float Offset         CTR TODO
 
 [Objective]
 an objective for a particular instrument
-2004: CA/Objective+
+2004: CustomAttributes/Objective+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String SerialNumber  CTR TODO
@@ -197,7 +197,7 @@ Float Magnification  CTR TODO
 #TODO maybe combine this filter stuff better
 #[ExcitationFilter] 
 #an excitation filter for a particular instrument
-#2004: CA/ExcitationFilter+
+#2004: CustomAttributes/ExcitationFilter+
 #String Manufacturer  CTR TODO
 #String Model         CTR TODO
 #String LotNumber     CTR TODO
@@ -205,14 +205,14 @@ Float Magnification  CTR TODO
 
 [Dichroic]
 a dichroic for a particular instrument
-2004: CA/Dichroic+
+2004: CustomAttributes/Dichroic+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String LotNumber     CTR TODO
 
 [EmissionFilter]
 an emission filter for a particular instrument
-2004: CA/EmissionFilter+
+2004: CustomAttributes/EmissionFilter+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String LotNumber     CTR TODO
@@ -220,14 +220,14 @@ String Type          CTR TODO
 
 [FilterSet]
 a filter set for a particular instrument
-2004: CA/FilterSet+
+2004: CustomAttributes/FilterSet+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String LotNumber     CTR TODO
 
 [OTF]
 an OTF for a particular instrument
-2004: CA/OTF+
+2004: CustomAttributes/OTF+
 Integer SizeX               CTR TODO
 Integer SizeY               CTR TODO
 String PixelType            CTR TODO

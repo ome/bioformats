@@ -6,8 +6,10 @@
 LOCI Bio-Formats package for reading and converting biological file formats.
 Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
 Eric Kjellman and Brian Loranger.
+
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published bythe Free Software Foundation; either version 2 of the License, or
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -29,6 +31,11 @@ import java.util.*;
 /**
  * Automatically generates code for the MetadataStore and MetadataRetrieve
  * interfaces, as well as the implementations for various flavors of OME-XML.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/auto/MetadataAutogen.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/auto/MetadataAutogen.java">SVN</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class MetadataAutogen {
@@ -74,11 +81,15 @@ public class MetadataAutogen {
     // generate classes
     for (int i=0; i<nodes.size(); i++) {
       Node node = (Node) nodes.get(i);
+      doGetters(node);
+    }
+    for (int i=0; i<nodes.size(); i++) {
+      Node node = (Node) nodes.get(i);
       doSetters(node);
     }
     for (int i=0; i<nodes.size(); i++) {
       Node node = (Node) nodes.get(i);
-      doGetters(node);
+      doHelpers(node);
     }
     out.closeFiles();
 
@@ -201,23 +212,6 @@ public class MetadataAutogen {
     return nodes;
   }
 
-  /** Generates setter methods for each output source file. */
-  private static void doSetters(Node node) throws IOException {
-    boolean first = true;
-    Enumeration e = node.paths.keys();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      String value = (String) node.paths.get(key);
-      if (first) {
-        // MetadataStore interface
-        doSetters("MetadataStore.java", value, node, true);
-        first = false;
-      }
-      // OME-XML implementation
-      doSetters("ome/OMEXML" + key + "Metadata.java", value, node, false);
-    }
-  }
-
   /** Generates getter methods for each output source file. */
   private static void doGetters(Node node) throws IOException {
     boolean first = true;
@@ -235,6 +229,127 @@ public class MetadataAutogen {
     }
   }
 
+  /** Generates setter methods for each output source file. */
+  private static void doSetters(Node node) throws IOException {
+    boolean first = true;
+    Enumeration e = node.paths.keys();
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      String value = (String) node.paths.get(key);
+      if (first) {
+        // MetadataStore interface
+        doSetters("MetadataStore.java", value, node, true);
+        first = false;
+      }
+      // OME-XML implementation
+      doSetters("ome/OMEXML" + key + "Metadata.java", value, node, false);
+    }
+  }
+
+  /** Generates helper methods for each output source file. */
+  private static void doHelpers(Node node) throws IOException {
+    Enumeration e = node.paths.keys();
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      String value = (String) node.paths.get(key);
+      // OME-XML implementation
+      doHelpers("ome/OMEXML" + key + "Metadata.java", value, node);
+    }
+  }
+
+  /** Generates getter methods for the given node and source file. */
+  private static void doGetters(String id, String path, Node node,
+    boolean iface) throws IOException
+  {
+    String end = iface ? ");" : ")";
+    LineTracker lt = new LineTracker();
+
+    // parse path
+    Vector indices = getIndices(path);
+    int psize = node.params.size();
+    int isize = indices.size();
+
+    lt.add("  // -- " + node.name + " attribute retrieval methods --");
+    lt.newline();
+    lt.newline();
+
+    for (int i=0; i<psize; i++) {
+      Param pi = (Param) node.params.get(i);
+      if (i > 0) lt.newline();
+
+      // javadoc
+      if (iface) {
+        lt.add("  /**");
+        lt.newline();
+        lt.add("   * Gets ");
+        lt.addTokens(pi.doc + " for a particular " + node.name + ".", "   * ");
+        lt.newline();
+        for (int j=0; j<isize; j++) {
+          Param pj = (Param) indices.get(j);
+          lt.add("   * @param " + toVarName(pj.name) + " ");
+          lt.addTokens(pj.doc + ".", "   *   ");
+          lt.newline();
+        }
+        lt.add("   */");
+        lt.newline();
+      }
+      else {
+        StringBuffer sb = new StringBuffer();
+        sb.append("@see loci.formats.MetadataRetrieve#get" +
+          node.name + pi.name + "(");
+        for (int j=0; j<isize; j++) {
+          Param pj = (Param) indices.get(j);
+          sb.append(pj.type);
+          sb.append(j < isize - 1 ? ", " : ")");
+        }
+        if (sb.length() <= 72) {
+          lt.add("  /* " + sb.toString() + " */");
+          lt.newline();
+        }
+        else {
+          lt.add("  /*");
+          lt.newline();
+          lt.add("   * ");
+          lt.addTokens(sb.toString(), "   *   ");
+          lt.newline();
+          lt.add("   */");
+          lt.newline();
+        }
+      }
+      // method signature
+      lt.add("  ");
+      if (!iface) lt.add("public ");
+      lt.add(pi.type + " get" + node.name + pi.name + "(");
+      for (int j=0; j<isize; j++) {
+        // parameters
+        Param pj = (Param) indices.get(j);
+        lt.add(pj.getArg(true, true, j == 0, j == isize - 1, end));
+      }
+      if (!iface) {
+        // opening brace
+        if (lt.hasWrapped()) {
+          lt.newline();
+          lt.add(" ");
+        }
+        lt.add(" {", "  ");
+      }
+      lt.newline();
+      // method body
+      if (!iface) {
+        lt.add("    // TODO");
+        // closing brace
+        lt.newline();
+        lt.add("    return null;");
+        lt.newline();
+        lt.add("  }");
+        lt.newline();
+      }
+    }
+
+    // output results
+    out.write(id, lt.toString());
+  }
+
   /** Generates setter methods for the given node and source file. */
   private static void doSetters(String id, String path, Node node,
     boolean iface) throws IOException
@@ -244,8 +359,9 @@ public class MetadataAutogen {
 
     // parse path
     Vector indices = getIndices(path);
-    int size = node.params.size();
-    int total = size + indices.size();
+    int psize = node.params.size();
+    int isize = indices.size();
+    int total = psize + isize;
 
     // javadoc
     if (iface) {
@@ -256,7 +372,7 @@ public class MetadataAutogen {
       lt.newline();
       for (int i=0; i<total; i++) {
         Param p = (Param)
-          (i < size ? node.params.get(i) : indices.get(i - size));
+          (i < psize ? node.params.get(i) : indices.get(i - psize));
         lt.add("   * @param " + toVarName(p.name) + " ");
         lt.addTokens(p.doc + ".", "   *   ");
         lt.newline();
@@ -269,7 +385,7 @@ public class MetadataAutogen {
       sb.append("@see loci.formats.MetadataStore#set" + node.name + "(");
       for (int i=0; i<total; i++) {
         Param p = (Param)
-          (i < size ? node.params.get(i) : indices.get(i - size));
+          (i < psize ? node.params.get(i) : indices.get(i - psize));
         sb.append(p.type);
         sb.append(i < total - 1 ? ", " : ")");
       }
@@ -293,14 +409,9 @@ public class MetadataAutogen {
     lt.add("void set" + node.name + "(");
     for (int i=0; i<total; i++) {
       // parameters
-      StringBuffer sb = new StringBuffer();
-      if (i > 0) sb.append(" ");
-      Param p = (Param) (i < size ? node.params.get(i) : indices.get(i - size));
-      sb.append(p.type);
-      sb.append(" ");
-      sb.append(toVarName(p.name));
-      sb.append(i < total - 1 ? "," : end);
-      lt.add(sb.toString(), "    ");
+      Param p = (Param)
+        (i < psize ? node.params.get(i) : indices.get(i - psize));
+      lt.add(p.getArg(true, true, i == 0, i == total - 1, end), "    ");
     }
     if (!iface) {
       // opening brace
@@ -313,7 +424,25 @@ public class MetadataAutogen {
     lt.newline();
     // method body
     if (!iface) {
-      lt.add("    // TODO");
+      String varName = toVarName(node.name);
+      lt.add("    " + node.name + "Node " + varName +
+        " = get" + node.name + "(");
+      for (int i=0; i<isize; i++) {
+        Param p = (Param) indices.get(i);
+        lt.add(p.getArg(true, false, i == 0, false, null), "    ");
+      }
+      lt.add(" true);", "    ");
+      lt.newline();
+      for (int i=0; i<psize; i++) {
+        Param p = (Param) node.params.get(i);
+        lt.add("    if (" + toVarName(p.name) + " != null) {");
+        lt.newline();
+        lt.add("      " + varName +
+          ".set" + p.name + "(" + toVarName(p.name) + ");");
+        lt.newline();
+        lt.add("    }");
+        lt.newline();
+      }
       // closing brace
       lt.newline();
       lt.add("  }");
@@ -323,11 +452,11 @@ public class MetadataAutogen {
     out.write(id, lt.toString());
   }
 
-  /** Generates getter methods for the given node and source file. */
-  private static void doGetters(String id, String path, Node node,
-    boolean iface) throws IOException
+  /** Generates helper methods for the given node and source file. */
+  private static void doHelpers(String id, String path, Node node)
+    throws IOException
   {
-    String end = iface ? ");" : ")";
+    String end = ")";
     LineTracker lt = new LineTracker();
 
     // parse path
@@ -335,82 +464,88 @@ public class MetadataAutogen {
     int psize = node.params.size();
     int isize = indices.size();
 
-    for (int i=0; i<psize; i++) {
-      Param p = (Param) node.params.get(i);
-      if (i > 0) lt.newline();
-
-      // javadoc
-      if (iface) {
-        lt.add("  /**");
+    // method signature
+    lt.add("  // " + path);
+    lt.newline();
+    lt.add("  private " + node.name + "Node get" + node.name + "(");
+    for (int i=0; i<isize; i++) {
+      // parameters
+      StringBuffer sb = new StringBuffer();
+      if (i > 0) sb.append(" ");
+      Param p = (Param) indices.get(i);
+      sb.append(p.type);
+      sb.append(" ");
+      sb.append(toVarName(p.name));
+      sb.append(",");
+      lt.add(sb.toString(), "    ");
+    }
+    lt.add(" boolean create)", "    ");
+    // opening brace
+    if (lt.hasWrapped()) {
+      lt.newline();
+      lt.add(" ");
+    }
+    lt.add(" {", "  ");
+    lt.newline();
+    // method body
+    int n = 0;
+    lt.add("    List list;");
+    lt.newline();
+    lt.add("    int ndx, count;");
+    lt.newline();
+    StringTokenizer st = new StringTokenizer(path, "/");
+    lt.add("    // get OME node");
+    lt.newline();
+    lt.add("    OMENode ome = (OMENode) root;");
+    lt.newline();
+    String var = "ome";
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      boolean multi = false;
+      if (token.endsWith("+")) {
+        multi = true;
+        token = token.substring(0, token.length() - 1);
+      }
+      lt.add("    // get " + token + " node");
+      lt.newline();
+      String varToken = toVarName(token);
+      String nextVar = token.equals("CustomAttributes") ? "ca" : varToken;
+      if (multi) {
+        lt.add("    ndx = i2i(" + varToken + "Index);");
         lt.newline();
-        lt.add("   * Gets ");
-        lt.addTokens(p.doc + " for a particular " + node.name + ".", "   * ");
+        lt.add("    count = " + var + ".count" + token + "s();");
         lt.newline();
-        for (int j=0; j<isize; j++) {
-          Param pj = (Param) indices.get(j);
-          lt.add("   * @param " + toVarName(pj.name) + " ");
-          lt.addTokens(pj.doc + ".", "   *   ");
-          lt.newline();
-        }
-        lt.add("   */");
+        lt.add("    if (!create && ndx >= count) return null;");
+        lt.newline();
+        lt.add("    for (int i=count; i<=ndx; i++) " +
+           "new " + token + "Node(" + var + ");");
+        lt.newline();
+        lt.add("    list = " + var + ".get" + token + "s();");
+        lt.newline();
+        lt.add("    " + token + "Node " + nextVar +
+          " = (" + token + "Node) list.get(ndx);");
         lt.newline();
       }
       else {
-        StringBuffer sb = new StringBuffer();
-        sb.append("@see loci.formats.MetadataRetrieve#get" +
-          node.name + p.name + "("); for (int j=0; j<isize; j++) {
-          Param pj = (Param) indices.get(j);
-          sb.append(pj.type);
-          sb.append(j < isize - 1 ? ", " : ")");
-        }
-        if (sb.length() <= 72) {
-          lt.add("  /* " + sb.toString() + " */");
-          lt.newline();
-        }
-        else {
-          lt.add("  /*");
-          lt.newline();
-          lt.add("   * ");
-          lt.addTokens(sb.toString(), "   *   ");
-          lt.newline();
-          lt.add("   */");
-          lt.newline();
-        }
-      }
-      // method signature
-      lt.add("  ");
-      if (!iface) lt.add("public ");
-      lt.add(p.type + " get" + node.name + p.name + "(");
-      for (int j=0; j<isize; j++) {
-        // parameters
-        StringBuffer sb = new StringBuffer();
-        if (j > 0) sb.append(" ");
-        Param pj = (Param) indices.get(j);
-        sb.append(pj.type);
-        sb.append(" ");
-        sb.append(toVarName(pj.name));
-        sb.append(j < isize - 1 ? "," : end);
-        lt.add(sb.toString(), "    ");
-      }
-      if (!iface) {
-        // opening brace
-        if (lt.hasWrapped()) {
-          lt.newline();
-          lt.add(" ");
-        }
-        lt.add(" {", "  ");
-      }
-      lt.newline();
-      // method body
-      if (!iface) {
-        lt.add("    // TODO");
-        // closing brace
+        lt.add("    " + token + "Node " + nextVar +
+          " = " + var + ".get" + token + "();");
         lt.newline();
-        lt.add("  }");
+        lt.add("    if (" + nextVar + " == null) {");
+        lt.newline();
+        lt.add("      if (!create) return null;");
+        lt.newline();
+        lt.add("      " + nextVar + " = new " + token + "Node(" + var + ");");
+        lt.newline();
+        lt.add("    }");
         lt.newline();
       }
+      var = nextVar;
     }
-
+    lt.add("    return " + var + ";");
+    lt.newline();
+    // closing brace
+    lt.add("  }");
+    lt.newline();
     // output results
     out.write(id, lt.toString());
   }
@@ -499,6 +634,17 @@ public class MetadataAutogen {
   /** A helper class for storing information about node parameters. */
   private static class Param {
     private String name, type, doc;
+    public String getArg(boolean doName, boolean doType,
+      boolean first, boolean last, String end)
+    {
+      StringBuffer sb = new StringBuffer();
+      if (!first) sb.append(" ");
+      if (doType) sb.append(type);
+      if (doType && doName) sb.append(" ");
+      if (doName) sb.append(toVarName(name));
+      sb.append(last ? end : ",");
+      return sb.toString();
+    }
   }
 
   /** A helper class for managing line output with intelligent wrapping. */

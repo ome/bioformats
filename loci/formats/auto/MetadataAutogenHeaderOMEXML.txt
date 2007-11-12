@@ -32,10 +32,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
+import ${basePackage}.*;
+import ${basePackage}.${subPackage}.*;
+import java.util.List;
+
 /**
  * A utility class for constructing and manipulating OME-XML DOMs for the
- * ${version} of OME-XML. It requires the
- * ${omexml-package} packages to compile (part of ome-java.jar).
+ * ${version} version of OME-XML. It requires the
+ * ${basePackage} package to compile (part of ome-java.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/${id}">Trac</a>,
