@@ -31,7 +31,7 @@ import ij.io.OpenDialog;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
@@ -104,6 +104,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_AUTOSCALE = "bioformats.autoscale";
   public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
   public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
+  public static final String PREF_SERIES = "bioformats.series";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -125,6 +126,8 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_LOCATION = "Location: ";
   public static final String LABEL_ID = "Open";
   public static final String LABEL_MERGE_OPTION = "Merging Options";
+  public static final String LABEL_WINDOWLESS = "windowless";
+  public static final String LABEL_SERIES = "series";
 
   // -- Fields - GUI components --
 
@@ -158,7 +161,9 @@ public class ImporterOptions implements ItemListener {
   private boolean specifyRanges;
   private boolean autoscale;
   private boolean forceThumbnails;
+  private boolean windowless;
   private String mergeOption;
+  private String seriesString;
 
   private String location;
   private String id;
@@ -184,6 +189,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isSpecifyRanges() { return specifyRanges; }
   public boolean isForceThumbnails() { return forceThumbnails; }
   public boolean isAutoscale() { return autoscale; }
+  public boolean isWindowless() { return windowless; }
   public String getMergeOption() { return mergeOption; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
@@ -219,6 +225,7 @@ public class ImporterOptions implements ItemListener {
   public void setSpecifyRanges(boolean b) { specifyRanges = b; }
   public void setForceThumbnails(boolean b) { forceThumbnails = b; }
   public void setAutoscale(boolean b) { autoscale = b; }
+  public void setWindowless(boolean b) { windowless = b; }
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
@@ -237,6 +244,7 @@ public class ImporterOptions implements ItemListener {
     forceThumbnails = Prefs.get(PREF_THUMBNAIL, false);
     autoscale = Prefs.get(PREF_AUTOSCALE, true);
     mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
+    seriesString = Prefs.get(PREF_SERIES, "0");
   }
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
@@ -255,6 +263,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_RANGE, specifyRanges);
     Prefs.set(PREF_MERGE_OPTION, mergeOption);
     Prefs.set(PREF_AUTOSCALE, autoscale);
+    Prefs.set(PREF_SERIES, seriesString);
   }
 
   /** Parses the plugin argument for parameter values. */
@@ -294,6 +303,8 @@ public class ImporterOptions implements ItemListener {
       stackFormat = Macro.getValue(arg, LABEL_STACK, stackFormat);
       mergeOption = Macro.getValue(arg, LABEL_MERGE_OPTION, mergeOption);
       autoscale = getMacroValue(arg, LABEL_AUTOSCALE, autoscale);
+      windowless = getMacroValue(arg, LABEL_WINDOWLESS, windowless);
+      seriesString = Macro.getValue(arg, LABEL_SERIES, "0");
 
       location = Macro.getValue(arg, LABEL_LOCATION, location);
       id = Macro.getValue(arg, LABEL_ID, id);
@@ -422,6 +433,7 @@ public class ImporterOptions implements ItemListener {
   }
 
   public int promptMergeOption(int one, int two, int three) {
+    if (windowless) return STATUS_OK;
     GenericDialog gd = new GenericDialog("Merging Options...");
 
     String[] options = new String[] {one + " planes, 2 channels per plane",
@@ -521,6 +533,8 @@ public class ImporterOptions implements ItemListener {
    * @return status of operation
    */
   public int promptFilePattern() {
+    if (windowless) return STATUS_OK;
+
     id = FilePattern.findPattern(idLoc);
 
     // prompt user to confirm file pattern (or grab from macro options)
@@ -545,6 +559,21 @@ public class ImporterOptions implements ItemListener {
   public int promptSeries(IFormatReader r,
     String[] seriesLabels, boolean[] series)
   {
+    if (windowless) {
+      if (seriesString != null) {
+        if (seriesString.startsWith("[")) {
+          seriesString = seriesString.substring(1, seriesString.length() - 2);
+        }
+        Arrays.fill(series, false);
+        StringTokenizer tokens = new StringTokenizer(seriesString, " ");
+        while (tokens.hasMoreTokens()) {
+          String token = tokens.nextToken().trim();
+          int n = Integer.parseInt(token);
+          if (n < series.length) series[n] = true;
+        }
+      }
+      return STATUS_OK;
+    }
     int seriesCount = r.getSeriesCount();
 
     // prompt user to specify series inclusion (or grab from macro options)
@@ -588,7 +617,14 @@ public class ImporterOptions implements ItemListener {
     }
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
-    for (int i=0; i<seriesCount; i++) series[i] = gd.getNextBoolean();
+    seriesString = "[";
+    for (int i=0; i<seriesCount; i++) {
+      series[i] = gd.getNextBoolean();
+      if (series[i]) {
+        seriesString += i + " ";
+      }
+    }
+    seriesString += "]";
 
     if (concatenate) {
       // toggle on compatible series

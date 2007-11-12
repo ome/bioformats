@@ -82,6 +82,7 @@ public class Importer {
 
     String id = options.getId();
     boolean quiet = options.isQuiet();
+    boolean windowless = options.isWindowless();
 
     Location idLoc = options.getIdLocation();
     String idName = options.getIdName();
@@ -116,7 +117,7 @@ public class Importer {
 
     // -- Step 3: get parameter values --
 
-    status = options.promptOptions();
+    if (!windowless) status = options.promptOptions();
     if (!statusOk(status)) return;
 
     boolean mergeChannels = options.isMergeChannels();
@@ -644,7 +645,7 @@ public class Importer {
 
     if (mergeChannels) {
       IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-        " merge=true");
+        " merge=true merge_option=[" + options.getMergeOption() + "]");
     }
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),

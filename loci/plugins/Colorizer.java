@@ -50,6 +50,7 @@ public class Colorizer implements PlugInFilter {
   private boolean merge;
   private boolean color;
   private int colorNdx;
+  private String mergeOption;
 
   // -- PlugInFilter API methods --
 
@@ -93,6 +94,7 @@ public class Colorizer implements PlugInFilter {
       merge = Boolean.parseBoolean(Macro.getValue(arg, "merge", "true"));
       color = Boolean.parseBoolean(Macro.getValue(arg, "colorize", "false"));
       colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "0"));
+      mergeOption = Macro.getValue(arg, "merge_option", null);
     }
 
     ImageStack stack = imp.getImageStack();
@@ -170,17 +172,20 @@ public class Colorizer implements PlugInFilter {
 
         ImporterOptions options = new ImporterOptions();
 
-        if (options.promptMergeOption(planes1, planes2, planes3) ==
-          ImporterOptions.STATUS_OK)
-        {
-          String option = options.getMergeOption();
-          if (option.indexOf("2 channels") != -1) {
+        if (mergeOption == null) {
+          int status = options.promptMergeOption(planes1, planes2, planes3);
+          if (status == ImporterOptions.STATUS_OK) {
+            mergeOption = options.getMergeOption();
+          }
+        }
+        if (mergeOption != null) {
+          if (mergeOption.indexOf("2 channels") != -1) {
             newImp = makeRGB(newImp, stack, 2);
           }
-          else if (option.indexOf("3 channels") != -1) {
+          else if (mergeOption.indexOf("3 channels") != -1) {
             newImp = makeRGB(newImp, stack, 3);
           }
-          else if (option.indexOf("4 channels") != -1) {
+          else if (mergeOption.indexOf("4 channels") != -1) {
             newImp = new CustomImage(imp, stackOrder, nSlices,
               nTimes * planes3, 4, true);
           }
@@ -188,6 +193,7 @@ public class Colorizer implements PlugInFilter {
       }
     }
 
+    newImp.setTitle(imp.getTitle());
     newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
       nSlices, nTimes);
     newImp.show();
