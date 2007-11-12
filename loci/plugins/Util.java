@@ -27,6 +27,7 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.measure.Calibration;
 import ij.process.*;
 import java.awt.*;
 import java.awt.image.*;
@@ -213,6 +214,86 @@ public final class Util {
     }
 
     return ip;
+  }
+
+  /**
+   * Converts the given array of ImageProcessors into a single-slice
+   * RGB ImagePlus.
+   */
+  public static ImagePlus makeRGB(ImageProcessor[] p) {
+    if (p.length == 1) return new ImagePlus("", p[0]);
+
+    // check that all processors are of the same type and size
+    boolean sameType = true;
+    int width = p[0].getWidth();
+    int height = p[0].getHeight();
+    boolean byteProc = p[0] instanceof ByteProcessor;
+    boolean shortProc = p[0] instanceof ShortProcessor;
+    boolean floatProc = p[0] instanceof FloatProcessor;
+    for (int i=1; i<p.length; i++) {
+      int w = p[i].getWidth();
+      int h = p[i].getHeight();
+      boolean b = p[i] instanceof ByteProcessor;
+      boolean s = p[i] instanceof ShortProcessor;
+      boolean f = p[i] instanceof FloatProcessor;
+      if (w != width || h != height || b != byteProc || s != shortProc ||
+        f != floatProc)
+      {
+        sameType = false;
+        break;
+      }
+    }
+
+    if (!sameType || p.length > 4 || p[0] instanceof ColorProcessor) {
+      return null;
+    }
+
+    ImagePlus imp = null;
+
+    if (p.length < 4 && byteProc) {
+      ColorProcessor cp = new ColorProcessor(width, height);
+      byte[][] bytes = new byte[p.length][];
+      for (int i=0; i<p.length; i++) {
+        bytes[i] = (byte[]) p[i].getPixels();
+      }
+      cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
+        new byte[width * height]);
+      imp = new ImagePlus("", cp);
+    }
+    else if (p.length <= 4) {
+      ImageStack tmpStack = new ImageStack(width, height);
+      for (int i=0; i<p.length; i++) {
+        tmpStack.addSlice("", p[i]);
+      }
+      imp = new CustomImage(new ImagePlus("", tmpStack), "XYCZT", 1, 1,
+        p.length, true);
+    }
+
+    return imp;
+  }
+
+  /** Applies spatial calibrations to an image stack. */
+  public static void applyCalibration(MetadataRetrieve store,
+    ImagePlus imp, int series)
+  {
+    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
+    Integer ii = new Integer(series);
+
+    Float xf = store.getPixelSizeX(ii);
+    if (xf != null) xcal = xf.floatValue();
+    Float yf = store.getPixelSizeY(ii);
+    if (yf != null) ycal = yf.floatValue();
+    Float zf = store.getPixelSizeZ(ii);
+    if (zf != null) zcal = zf.floatValue();
+
+    if (xcal == xcal || ycal == ycal || zcal == zcal) {
+      Calibration cal = new Calibration();
+      cal.setUnit("micron");
+      cal.pixelWidth = xcal;
+      cal.pixelHeight = ycal;
+      cal.pixelDepth = zcal;
+      imp.setCalibration(cal);
+    }
   }
 
   /** Adds AWT scroll bars to the given container. */

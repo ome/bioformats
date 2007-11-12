@@ -24,16 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.browser;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import loci.formats.*;
-import java.util.Vector;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import loci.formats.*;
+import loci.formats.cache.*;
 
 /**
  * Window displaying custom virtualization options.
@@ -45,7 +45,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class OptionsWindow extends JFrame implements
   ActionListener, ChangeListener, ItemListener
 {
-  // -- Fields --
+  // -- Constants --
 
   /** Constant dlu size for indents in GUI. */
   private static final String TAB = "7dlu";
@@ -53,23 +53,16 @@ public class OptionsWindow extends JFrame implements
   /** Default number of time points to cache. */
   private static final int DEFAULT = 100;
 
+  // -- Fields --
+
   /** Parent window. */
   private CustomWindow cw;
-
-  /** The CacheManager for this instance of data browser. */
-  private CacheManager manager;
-
-  /** The FileStitcher used to stich files together. */
-  private FileStitcher fs;
-
-  /** CheckBoxes to indicate which axes to store. */
-  private JCheckBox zCheck, tCheck, cCheck;
 
   /** CheckBoxes to control if caching is on or off. */
   private JCheckBox cacheToggle, mergeCheck;
 
   /** Spinners for slice storage. */
-  private JSpinner zFSpin, zBSpin, tFSpin, tBSpin, cFSpin, cBSpin;
+  private JSpinner zSpin, tSpin, cSpin;
 
   /** Combo Boxes for cache mode selection. */
   private JComboBox modeBox, stratBox;
@@ -77,7 +70,7 @@ public class OptionsWindow extends JFrame implements
   /** Combo Boxes for dimensional priority selection. */
   private JComboBox topBox, midBox, lowBox;
 
-  /** Button to reset CacheManager to default modes. */
+  /** Button to reset cache to default modes. */
   private JButton resetBtn;
 
   /** A flag to turn off listening to gui components. */
@@ -86,9 +79,8 @@ public class OptionsWindow extends JFrame implements
   /** Storage of what priority settings used to be. */
   private int oldTop, oldMid, oldLow;
 
-  JComboBox[] blockBoxes;
   String id = null, order = null, suffix = null;
-  String[] prefixes = null, blocks = null;
+  String[] prefixes = null;
   int sizeZ = -1, sizeT = -1, sizeC = -1;
   int[] axes = null;
   FilePattern fp = null;
@@ -98,79 +90,52 @@ public class OptionsWindow extends JFrame implements
   // -- Constructor --
   public OptionsWindow(int numZ, int numT, CustomWindow c) {
     super("4D Data Browser - Options");
-    setBackground(Color.gray);
+    setBackground(Color.GRAY);
 
     cw = c;
-
-    manager = cw.db.manager;
-
-    fs = cw.db.fStitch;
 
     update = false;
 
     Border etchB = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 
     // get FilePattern Data
-    if (fs != null) {
-      try {
-        id = cw.db.id;
-        fs.setId(id);
-        fs.setSeries(cw.db.series);
-        order = fs.getDimensionOrder().substring(2);
-        sizeZ = fs.getSizeZ();
-        sizeT = fs.getSizeT();
-        sizeC = fs.getSizeC();
-        axes = fs.getAxisTypes();
-        fp = fs.getFilePattern();
-        prefixes = fp.getPrefixes();
-        blocks = fp.getBlocks();
-        suffix = fp.getSuffix();
-      }
-      catch (Exception exc) {
-        exc.printStackTrace();
-        LociDataBrowser.dumpException(exc);
-      }
+    try {
+      id = cw.db.id;
+      cw.db.reader.setId(id);
+      cw.db.reader.setSeries(cw.db.series);
+      order = cw.db.reader.getDimensionOrder().substring(2);
+      sizeZ = cw.db.reader.getSizeZ();
+      sizeT = cw.db.reader.getSizeT();
+      sizeC = cw.db.reader.getSizeC();
     }
-    else {
-      try {
-        id = cw.db.id;
-        cw.db.reader.setId(id);
-        cw.db.reader.setSeries(cw.db.series);
-        order = cw.db.reader.getDimensionOrder().substring(2);
-        sizeZ = cw.db.reader.getSizeZ();
-        sizeT = cw.db.reader.getSizeT();
-        sizeC = cw.db.reader.getSizeC();
-      }
-      catch (Exception exc) {
-        exc.printStackTrace();
-        LociDataBrowser.dumpException(exc);
-      }
+    catch (FormatException exc) {
+      LociDataBrowser.dumpException(exc);
+    }
+    catch (IOException exc) {
+      LociDataBrowser.dumpException(exc);
     }
 
     // add Display Pane
 
     JPanel disPane = new JPanel();
-    TitledBorder disB = BorderFactory.createTitledBorder(etchB,
-      "Custom Axes");
+    TitledBorder disB = BorderFactory.createTitledBorder(etchB, "Custom Axes");
 
     disPane.setBorder(disB);
 
     JLabel sliceLab = new JLabel("\u00B7" + "Slice-Groups in File" + "\u00B7");
-    JLabel blockLab = new JLabel("\u00B7" + "Blocks in Filenames" + "\u00B7");
 
-    Vector blockLabelsV = new Vector();
-    JLabel[] blockLabels = {new JLabel()};
-    if (fs != null) {
-      for (int i = 0;i<blocks.length;i++) {
-        JLabel temp = new JLabel("Block " + blocks[i] + ":");
-        blockLabelsV.add(temp);
-      }
-      Object[] blockLabelsO = blockLabelsV.toArray();
-      blockLabels = new JLabel[blockLabelsO.length];
-      for (int i = 0;i<blockLabelsO.length;i++) {
-        blockLabels[i] = (JLabel) blockLabelsO[i];
-        blockLabels[i].setForeground(getColor(i));
-      }
+    int left = id.indexOf("<");
+    int right = id.indexOf(">");
+    if (left != -1 && right != -1 && left < right) fp = new FilePattern(id);
+    else fp = new FilePattern(new Location(id));
+
+    try {
+      prefixes = fp.getPrefixes();
+      suffix = fp.getSuffix();
+    }
+    catch (NullPointerException exc) {
+      // eat this exception, as it's only generated by images downloaded from
+      // an OME server
     }
 
     Object[] choices = {"Z-Depth", "Time", "Channel"};
@@ -184,54 +149,14 @@ public class OptionsWindow extends JFrame implements
     tGroup.addActionListener(this);
     cGroup.addActionListener(this);
 
-    if (fs != null) {
-      Vector blockBoxesV = new Vector();
-      for (int i = 0;i<blocks.length;i++) {
-        JComboBox temp = new JComboBox(choices);
-        if (axes[i] == AxisGuesser.Z_AXIS) temp.setSelectedIndex(0);
-        else if (axes[i] == AxisGuesser.T_AXIS) temp.setSelectedIndex(1);
-        else temp.setSelectedIndex(2);
-        temp.setActionCommand("Block1");
-        temp.addActionListener(this);
-        blockBoxesV.add(temp);
-      }
-      Object[] blockBoxesO = blockBoxesV.toArray();
-      blockBoxes = new JComboBox[blockBoxesO.length];
-      for (int i = 0;i<blockBoxesO.length;i++) {
-        JComboBox temp = (JComboBox) blockBoxesO[i];
-        temp.setForeground(getColor(i));
-        blockBoxes[i] = temp;
-      }
-    }
-
     JPanel slicePanel = new JPanel();
     slicePanel.add(sliceLab);
-    slicePanel.setBackground(Color.darkGray);
-    sliceLab.setForeground(Color.lightGray);
-    JPanel blockPanel = new JPanel();
-    blockPanel.add(blockLab);
-    blockPanel.setBackground(Color.darkGray);
-    blockLab.setForeground(Color.lightGray);
-
-    JPanel filePane = new JPanel();
-    if (fs!=null) {
-      filePane = new JPanel(new FlowLayout());
-      for (int i = 0;i<prefixes.length;i++) {
-        JLabel prefLab = new JLabel(prefixes[i]);
-        JLabel blokLab = new JLabel(blocks[i]);
-        blokLab.setForeground(getColor(i));
-        filePane.add(prefLab);
-        filePane.add(blokLab);
-      }
-      JLabel sufLab = new JLabel(suffix);
-      filePane.add(sufLab);
-    }
+    slicePanel.setBackground(Color.DARK_GRAY);
+    sliceLab.setForeground(Color.LIGHT_GRAY);
 
     JLabel zLab, tLab, cLab, fileLab;
-    int[] internalSizes = null;
-
-    internalSizes = new int[3];
-    for (int i = 0;i<internalSizes.length;i++) {
+    int[] internalSizes = new int[3];
+    for (int i=0; i<internalSizes.length; i++) {
       internalSizes[i] = getOrderSize(i);
     }
 
@@ -241,13 +166,12 @@ public class OptionsWindow extends JFrame implements
     fileLab = new JLabel("Filename:");
 
     String rowString = "pref," + TAB + ",pref,pref,pref," + TAB + ",pref,pref";
-    for (int i = 0; i<blockLabels.length;i++) {
+    for (int i=0; i<internalSizes.length; i++) {
       rowString += ",pref";
     }
 
-    FormLayout layout = new FormLayout(
-        TAB + ",pref," + TAB + ",pref:grow," + TAB,
-        rowString);
+    String colString = TAB + ",pref," + TAB + ",pref:grow," + TAB;
+    FormLayout layout = new FormLayout(colString, rowString);
     disPane.setLayout(layout);
     CellConstraints cc = new CellConstraints();
 
@@ -262,15 +186,6 @@ public class OptionsWindow extends JFrame implements
       disPane.add(cLab, cc.xy(2, 5));
       disPane.add(cGroup, cc.xy(4, 5));
     }
-    if (fs != null) {
-      disPane.add(blockPanel, cc.xyw(1, 7, 5));
-      disPane.add(fileLab, cc.xy(2, 8));
-      disPane.add(filePane, cc.xy(4, 8));
-      for (int i = 0;i<blockLabels.length;i++) {
-        disPane.add(blockLabels[i], cc.xy(2, 9+i));
-        disPane.add(blockBoxes[i], cc.xy(4, 9+i));
-      }
-    }
 
     //set up animation options pane
 
@@ -284,8 +199,6 @@ public class OptionsWindow extends JFrame implements
     JLabel modeL = new JLabel("Cache Mode:");
     JLabel stratL = new JLabel("Loading Strategy:");
     JLabel sizeL = new JLabel("\u00B7" + "Slices to Store" + "\u00B7");
-    JLabel forL = new JLabel("Forward");
-    JLabel backL = new JLabel("Backward");
     JLabel zL = new JLabel("Z:");
     JLabel tL = new JLabel("T:");
     JLabel cL = new JLabel("C:");
@@ -297,38 +210,26 @@ public class OptionsWindow extends JFrame implements
 
     JPanel typePanel = new JPanel();
     typePanel.add(typeL);
-    typePanel.setBackground(Color.darkGray);
-    typeL.setForeground(Color.lightGray);
+    typePanel.setBackground(Color.DARK_GRAY);
+    typeL.setForeground(Color.LIGHT_GRAY);
     JPanel sizePanel = new JPanel();
     sizePanel.add(sizeL);
-    sizePanel.setBackground(Color.darkGray);
-    sizeL.setForeground(Color.lightGray);
+    sizePanel.setBackground(Color.DARK_GRAY);
+    sizeL.setForeground(Color.LIGHT_GRAY);
     JPanel priorPanel = new JPanel();
     priorPanel.add(priorL);
-    priorPanel.setBackground(Color.darkGray);
-    priorL.setForeground(Color.lightGray);
+    priorPanel.setBackground(Color.DARK_GRAY);
+    priorL.setForeground(Color.LIGHT_GRAY);
     JPanel genPanel = new JPanel();
     genPanel.add(genL);
-    genPanel.setBackground(Color.darkGray);
-    genL.setForeground(Color.lightGray);
-
-    zCheck = new JCheckBox("Z");
-    tCheck = new JCheckBox("T");
-    tCheck.setSelected(true);
-    cCheck = new JCheckBox("C");
-    JPanel checkPanel = new JPanel(new GridLayout(1, 3));
-    checkPanel.add(zCheck);
-    checkPanel.add(tCheck);
-    checkPanel.add(cCheck);
-    zCheck.addItemListener(this);
-    tCheck.addItemListener(this);
-    cCheck.addItemListener(this);
+    genPanel.setBackground(Color.DARK_GRAY);
+    genL.setForeground(Color.LIGHT_GRAY);
 
     cacheToggle = new JCheckBox("Cache Images (on/off)");
     cacheToggle.setSelected(cw.db.virtual);
     cacheToggle.addItemListener(this);
 
-    String[] modes = {"Crosshair", "Rectangle", "Cross/Rect"};
+    String[] modes = {"Crosshair", "Rectangle"};
     modeBox = new JComboBox(modes);
     String[] strats = {"Forward", "Surround"};
     stratBox = new JComboBox(strats);
@@ -344,26 +245,17 @@ public class OptionsWindow extends JFrame implements
     midBox.addActionListener(this);
     lowBox.addActionListener(this);
 
-    SpinnerNumberModel zFMod = new SpinnerNumberModel(0, 0, 9999, 1);
-    zFSpin = new JSpinner(zFMod);
-    SpinnerNumberModel zBMod = new SpinnerNumberModel(0, 0, 9999, 1);
-    zBSpin = new JSpinner(zBMod);
-    SpinnerNumberModel tFMod = new SpinnerNumberModel(DEFAULT, 0, 9999, 1);
-    tFSpin = new JSpinner(tFMod);
-    SpinnerNumberModel tBMod = new SpinnerNumberModel(0, 0, 9999, 1);
-    tBSpin = new JSpinner(tBMod);
-    SpinnerNumberModel cFMod = new SpinnerNumberModel(0, 0, 9999, 1);
-    cFSpin = new JSpinner(cFMod);
-    SpinnerNumberModel cBMod = new SpinnerNumberModel(0, 0, 9999, 1);
-    cBSpin = new JSpinner(cBMod);
-    zFSpin.addChangeListener(this);
-    zBSpin.addChangeListener(this);
-    tFSpin.addChangeListener(this);
-    tBSpin.addChangeListener(this);
-    cFSpin.addChangeListener(this);
-    cBSpin.addChangeListener(this);
+    SpinnerNumberModel zMod = new SpinnerNumberModel(0, 0, 9999, 1);
+    zSpin = new JSpinner(zMod);
+    SpinnerNumberModel tMod = new SpinnerNumberModel(DEFAULT, 0, 9999, 1);
+    tSpin = new JSpinner(tMod);
+    SpinnerNumberModel cMod = new SpinnerNumberModel(0, 0, 9999, 1);
+    cSpin = new JSpinner(cMod);
+    zSpin.addChangeListener(this);
+    tSpin.addChangeListener(this);
+    cSpin.addChangeListener(this);
 
-    resetBtn = new JButton("Reset CacheManager to Default");
+    resetBtn = new JButton("Reset cache to default");
     resetBtn.addActionListener(this);
 
     FormLayout layout3 = new FormLayout(
@@ -376,23 +268,17 @@ public class OptionsWindow extends JFrame implements
 
     cachePane.add(typePanel, cc3.xyw(1, 1, 7));
     cachePane.add(axesL, cc3.xyw(2, 2, 3));
-    cachePane.add(checkPanel, cc3.xy(6, 2));
     cachePane.add(modeL, cc3.xyw(2, 3, 3));
     cachePane.add(modeBox, cc3.xy(6, 3));
     cachePane.add(stratL, cc3.xyw(2, 4, 3));
     cachePane.add(stratBox, cc3.xy(6, 4));
     cachePane.add(sizePanel, cc3.xyw(1, 6, 7));
-    cachePane.add(forL, cc3.xy(4, 7));
-    cachePane.add(backL, cc3.xy(6, 7));
     cachePane.add(zL, cc3.xy(2, 8));
-    cachePane.add(zFSpin, cc3.xy(4, 8));
-    cachePane.add(zBSpin, cc3.xy(6, 8));
+    cachePane.add(zSpin, cc3.xy(4, 8));
     cachePane.add(tL, cc3.xy(2, 9));
-    cachePane.add(tFSpin, cc3.xy(4, 9));
-    cachePane.add(tBSpin, cc3.xy(6, 9));
+    cachePane.add(tSpin, cc3.xy(4, 9));
     cachePane.add(cL, cc3.xy(2, 10));
-    cachePane.add(cFSpin, cc3.xy(4, 10));
-    cachePane.add(cBSpin, cc3.xy(6, 10));
+    cachePane.add(cSpin, cc3.xy(4, 10));
     cachePane.add(priorPanel, cc3.xyw(1, 12, 7));
     cachePane.add(topL, cc3.xyw(2, 14, 3));
     cachePane.add(topBox, cc3.xy(6, 14));
@@ -417,8 +303,7 @@ public class OptionsWindow extends JFrame implements
     mergeCheck.setSelected(cw.db.isMerged());
     mergeCheck.addItemListener(this);
 
-    FormLayout inputLayout = new FormLayout(
-      TAB + ",pref:grow," + TAB, "pref");
+    FormLayout inputLayout = new FormLayout(TAB + ",pref:grow," + TAB, "pref");
     inputPane.setLayout(inputLayout);
     CellConstraints cci = new CellConstraints();
 
@@ -426,12 +311,9 @@ public class OptionsWindow extends JFrame implements
 
     //configure/layout content pane
 
-    JPanel viewPanel = new JPanel();
+    FormLayout lastLayout = new FormLayout("pref:grow", "pref,pref,pref");
+    JPanel viewPanel = new JPanel(lastLayout);
 
-    FormLayout lastLayout = new FormLayout(
-      "pref:grow",
-      "pref,pref,pref");
-    viewPanel.setLayout(lastLayout);
     CellConstraints ccs = new CellConstraints();
 
     viewPanel.add(cachePane, ccs.xy(1, 1));
@@ -442,7 +324,7 @@ public class OptionsWindow extends JFrame implements
     oldMid = midBox.getSelectedIndex();
     oldLow = lowBox.getSelectedIndex();
 
-    JScrollPane jsp = new JScrollPane((Component)viewPanel);
+    JScrollPane jsp = new JScrollPane((Component) viewPanel);
     Dimension viewSize = viewPanel.getPreferredSize();
     jsp.setPreferredSize(new Dimension(viewSize.width + 20, 600));
     setContentPane(jsp);
@@ -457,65 +339,30 @@ public class OptionsWindow extends JFrame implements
     update = true;
   }
 
-  private int getBoxIndex(JComboBox jcb) {
-    for (int i = 0;i<blockBoxes.length;i++) {
-      if (jcb == blockBoxes[i]) return i;
-    }
-    return -1;
-  }
-
   public static Color getColor(int i) {
     switch (i) {
       case 0:
-        return Color.blue;
+        return Color.BLUE;
       case 1:
-        return Color.green;
+        return Color.GREEN;
       case 2:
-        return Color.red;
+        return Color.RED;
       case 3:
-        return Color.magenta;
+        return Color.MAGENTA;
       case 4:
-        return Color.orange;
+        return Color.ORANGE;
       default:
-        int next = i;
-        Color tempColor = getColor(i%5);
-        while (next > 4) {
-          next -= 5;
-          tempColor = tempColor.darker();
+        Color tempColor = getColor(i % 5);
+        for (int j=0; j<i/5; j++) {
+          tempColor.darker();
         }
         return tempColor;
     }
   }
 
-  /**
-  * Converts a combo box index into a CacheManager constant
-  * signifying an axis.
-  */
-  private int getConv(int index) {
-    switch (index) {
-      case 0:
-        return CacheManager.Z_AXIS;
-      case 1:
-        return CacheManager.T_AXIS;
-      case 2:
-        return CacheManager.C_AXIS;
-    }
-    return -1;
-  }
-
   /** Set up the combo box to reflect appropriate axis. */
   private void setBox(JComboBox thisBox, int index) {
-    switch (order.charAt(index)) {
-      case 'Z':
-        thisBox.setSelectedIndex(0);
-        break;
-      case 'T':
-        thisBox.setSelectedIndex(1);
-        break;
-      case 'C':
-        thisBox.setSelectedIndex(2);
-        break;
-    }
+    thisBox.setSelectedIndex(convertChar(order.charAt(index)));
   }
 
   private char convertInt(int index) {
@@ -526,53 +373,21 @@ public class OptionsWindow extends JFrame implements
         return 'T';
       case 2:
         return 'C';
-      default:
-        return 'Q';
     }
+    return 'Q';
   }
 
   private int convertChar(char c) {
-    switch (c) {
-      case 'Z':
-        return 0;
-      case 'T':
-        return 1;
-      case 'C':
-        return 2;
-      default:
-        return 'Q';
-    }
+    return c == 'Z' ? 0 : c == 'T' ? 1 : c == 'C' ? 2 : -1;
   }
 
   private int getOrderSize(int i) {
-    int thisSize = 1;
-    switch (order.charAt(i)) {
-      case 'Z':
-        thisSize = sizeZ;
-        if (fs != null) thisSize /= getBlockCount(0);
-        break;
-      case 'T':
-        thisSize = sizeT;
-        if (fs != null) thisSize /= getBlockCount(1);
-        break;
-      case 'C':
-        thisSize = sizeC;
-        if (fs != null) thisSize /= getBlockCount(2);
-        break;
-    }
-    return thisSize;
+    char c = order.charAt(i);
+    return c == 'Z' ? sizeZ : c == 'T' ? sizeT : c == 'C' ? sizeC : 1;
   }
 
-  private int getBlockCount(int index) {
-    int total = 0;
-    int[] blockSizes = fp.getCount();
-    for (int i = 0;i<blockBoxes.length;i++) {
-      if (blockBoxes[i].getSelectedIndex() == index) {
-        total += blockSizes[i];
-      }
-    }
-    if (total == 0) total = 1;
-    return total;
+  private int convert(int ndx) {
+    return order.indexOf(convertInt(ndx));
   }
 
   private int getAxis(int i) {
@@ -583,29 +398,21 @@ public class OptionsWindow extends JFrame implements
         return AxisGuesser.T_AXIS;
       case 2:
         return AxisGuesser.C_AXIS;
-      default:
-        return -55555;
     }
+    return -55555;
   }
 
-  /** Enables/Disables CacheManager options in option window. */
+  /** Enables/Disables cache options in option window. */
   private void enableCache(boolean enable) {
-    zCheck.setEnabled(enable);
-    tCheck.setEnabled(enable);
-    cCheck.setEnabled(enable);
-
     modeBox.setEnabled(enable);
     stratBox.setEnabled(enable);
     topBox.setEnabled(enable);
     midBox.setEnabled(enable);
     lowBox.setEnabled(enable);
 
-    zBSpin.setEnabled(enable);
-    zFSpin.setEnabled(enable);
-    tBSpin.setEnabled(enable);
-    tFSpin.setEnabled(enable);
-    cBSpin.setEnabled(enable);
-    cFSpin.setEnabled(enable);
+    zSpin.setEnabled(enable);
+    tSpin.setEnabled(enable);
+    cSpin.setEnabled(enable);
 
     resetBtn.setEnabled(enable);
   }
@@ -613,307 +420,262 @@ public class OptionsWindow extends JFrame implements
   // -- ActionListener API methods --
 
   public void actionPerformed(ActionEvent e) {
-    if (update) {
-      Object source = e.getSource();
+    if (!update) return;
+    Object source = e.getSource();
 
-      if (source == modeBox) {
-        if (modeBox.getSelectedIndex() == 0)
-          manager.setMode(CacheManager.CROSS_MODE);
-        else if (modeBox.getSelectedIndex() == 1)
-          manager.setMode(CacheManager.RECT_MODE);
-        else //modeBox.getSelectedIndex() == 2
-          manager.setMode(CacheManager.CROSS_MODE | CacheManager.RECT_MODE);
+    if (source == modeBox) {
+      // change cache strategy
+
+      int[] lengths = cw.db.cache.getStrategy().getLengths();
+      int ndx = modeBox.getSelectedIndex();
+      try {
+        CacheStrategy strategy = ndx == 0 ?
+          (CacheStrategy) new CrosshairStrategy(lengths) :
+          (CacheStrategy) new RectangleStrategy(lengths);
+        cw.db.cache.setStrategy(strategy);
       }
-      else if (source == stratBox) {
-        if (stratBox.getSelectedIndex() == 0)
-          manager.setStrategy(CacheManager.FORWARD_FIRST);
-        else //stratBox.getSelectedIndex() == 1
-          manager.setStrategy(CacheManager.SURROUND_FIRST);
+      catch (CacheException exc) {
+        LociDataBrowser.dumpException(exc);
       }
-      else if (source == resetBtn) {
-        update = false;
-        zCheck.setSelected(false);
-        tCheck.setSelected(true);
-        cCheck.setSelected(false);
-        manager.setAxis(CacheManager.T_AXIS);
-        modeBox.setSelectedIndex(0);
-        manager.setMode(CacheManager.CROSS_MODE);
-        stratBox.setSelectedIndex(0);
-        manager.setStrategy(CacheManager.FORWARD_FIRST);
-        topBox.setSelectedIndex(1);
-        midBox.setSelectedIndex(0);
-        lowBox.setSelectedIndex(2);
-        manager.setPriority(CacheManager.T_AXIS, CacheManager.Z_AXIS,
-          CacheManager.C_AXIS);
 
-        Integer zeroI = new Integer(0);
-        Integer defaultI = new Integer(DEFAULT);
-        zFSpin.setValue(zeroI);
-        zBSpin.setValue(zeroI);
-        tFSpin.setValue(defaultI);
-        tBSpin.setValue(zeroI);
-        cFSpin.setValue(zeroI);
-        cBSpin.setValue(zeroI);
-        manager.setSize(0, 0, 0, DEFAULT, 0, 0);
-
-        oldTop = topBox.getSelectedIndex();
-        oldMid = midBox.getSelectedIndex();
-        oldLow = lowBox.getSelectedIndex();
-        update = true;
-      }
-      else if (source == topBox) {
-        int newTop = topBox.getSelectedIndex();
-        if (newTop == oldTop) return;
-        if (newTop == oldMid) {
-          update = false;
-          midBox.setSelectedIndex(oldTop);
-          oldMid = oldTop;
-          update = true;
-        }
-        if (newTop == oldLow) {
-          update = false;
-          lowBox.setSelectedIndex(oldTop);
-          oldLow = oldTop;
-          update = true;
-        }
-
-        oldTop = newTop;
-        manager.setPriority(getConv(topBox.getSelectedIndex()),
-         getConv(midBox.getSelectedIndex()),
-         getConv(lowBox.getSelectedIndex()));
-      }
-      else if (source == midBox) {
-        int newMid = midBox.getSelectedIndex();
-        if (newMid == oldMid) return;
-        if (newMid == oldTop) {
-          update = false;
-          topBox.setSelectedIndex(oldMid);
-          oldTop = oldMid;
-          update = true;
-        }
-        if (newMid == oldLow) {
-          update = false;
-          lowBox.setSelectedIndex(oldMid);
-          oldLow = oldMid;
-          update = true;
-        }
-
-        oldMid = newMid;
-        manager.setPriority(getConv(topBox.getSelectedIndex()),
-         getConv(midBox.getSelectedIndex()),
-         getConv(lowBox.getSelectedIndex()));
-      }
-      else if (source == lowBox) {
-        int newLow = lowBox.getSelectedIndex();
-        if (newLow == oldLow) return;
-        if (newLow == oldTop) {
-          update = false;
-          topBox.setSelectedIndex(oldLow);
-          oldTop = oldLow;
-          update = true;
-        }
-        if (newLow == oldMid) {
-          update = false;
-          midBox.setSelectedIndex(oldLow);
-          oldMid = oldLow;
-          update = true;
-        }
-
-        oldLow = newLow;
-        manager.setPriority(getConv(topBox.getSelectedIndex()),
-         getConv(midBox.getSelectedIndex()),
-         getConv(lowBox.getSelectedIndex()));
-      }
-      else if (source == zGroup) {
-        char oldChar = order.charAt(0);
-        int sel = zGroup.getSelectedIndex();
-        char zChar = convertInt(sel);
-
-        sel = tGroup.getSelectedIndex();
-        char tChar = convertInt(sel);
-        if (tChar == zChar) tChar = oldChar;
-
-        sel = cGroup.getSelectedIndex();
-        char cChar = convertInt(sel);
-        if (cChar == zChar) cChar = oldChar;
-
-        order = String.valueOf(zChar) + String.valueOf(tChar)
-          + String.valueOf(cChar);
-        try {
-          cw.db.reader.setId(id);
-          cw.db.reader.setSeries(cw.db.series);
-          cw.db.reader.swapDimensions("XY" + order);
-          sizeZ = cw.db.reader.getSizeZ();
-          sizeT = cw.db.reader.getSizeT();
-          sizeC = cw.db.reader.getSizeC();
-        }
-        catch (Exception exc) {
-          exc.printStackTrace();
-          LociDataBrowser.dumpException(exc);
-        }
-        update = false;
-        setBox(zGroup, 0);
-        setBox(tGroup, 1);
-        setBox(cGroup, 2);
-        update = true;
-        cw.db.setDimensions();
-        if (cw.db.virtual) cw.db.manager.dimChange();
-        cw.updateControls();
-      }
-      else if (source == tGroup) {
-        char oldChar = order.charAt(1);
-        int sel = tGroup.getSelectedIndex();
-        char tChar = convertInt(sel);
-
-        sel = zGroup.getSelectedIndex();
-        char zChar = convertInt(sel);
-        if (zChar == tChar) zChar = oldChar;
-
-        sel = cGroup.getSelectedIndex();
-        char cChar = convertInt(sel);
-        if (cChar == tChar) cChar = oldChar;
-
-        order = String.valueOf(zChar) + String.valueOf(tChar)
-          + String.valueOf(cChar);
-        try {
-          cw.db.reader.setId(id);
-          cw.db.reader.setSeries(cw.db.series);
-          cw.db.reader.swapDimensions("XY" + order);
-          sizeZ = cw.db.reader.getSizeZ();
-          sizeT = cw.db.reader.getSizeT();
-          sizeC = cw.db.reader.getSizeC();
-        }
-        catch (Exception exc) {
-          exc.printStackTrace();
-          LociDataBrowser.dumpException(exc);
-        }
-        update = false;
-        setBox(zGroup, 0);
-        setBox(tGroup, 1);
-        setBox(cGroup, 2);
-        update = true;
-        cw.db.setDimensions();
-        if (cw.db.virtual) cw.db.manager.dimChange();
-        cw.updateControls();
-      }
-      else if (source == cGroup) {
-        char oldChar = order.charAt(2);
-        int sel = cGroup.getSelectedIndex();
-        char cChar = convertInt(sel);
-
-        sel = zGroup.getSelectedIndex();
-        char zChar = convertInt(sel);
-        if (zChar == cChar) zChar = oldChar;
-
-        sel = tGroup.getSelectedIndex();
-        char tChar = convertInt(sel);
-        if (tChar == cChar) tChar = oldChar;
-
-        order = String.valueOf(zChar) + String.valueOf(tChar)
-          + String.valueOf(cChar);
-        try {
-          cw.db.reader.setId(id);
-          cw.db.reader.setSeries(cw.db.series);
-          cw.db.reader.swapDimensions("XY" + order);
-          sizeZ = cw.db.reader.getSizeZ();
-          sizeT = cw.db.reader.getSizeT();
-          sizeC = cw.db.reader.getSizeC();
-        }
-        catch (Exception exc) {
-          exc.printStackTrace();
-          LociDataBrowser.dumpException(exc);
-        }
-        update = false;
-        setBox(zGroup, 0);
-        setBox(tGroup, 1);
-        setBox(cGroup, 2);
-        update = true;
-        cw.db.setDimensions();
-        if (cw.db.virtual) cw.db.manager.dimChange();
-        cw.updateControls();
-      }
-      else if (getBoxIndex((JComboBox)source) >= 0) {
-        cw.update = false;
-        int index = getBoxIndex((JComboBox)source);
-        axes[index] = getAxis(blockBoxes[index].getSelectedIndex());
-        try {
-          fs.setAxisTypes(axes);
-        }
-        catch (Exception exc) {
-          exc.printStackTrace();
-          LociDataBrowser.dumpException(exc);
-        }
-        cw.db.setDimensions();
-        if (cw.db.virtual) cw.db.manager.dimChange();
-        cw.updateControls();
-        cw.update = true;
-      }
+      // set ranges, priorities, order
+      updatePriorities();
+      updateRanges();
+      updateOrder();
+      updateCacheIndicators();
     }
+    else if (source == stratBox) {
+      // change order in which axes are cached
+      updateOrder();
+    }
+    else if (source == resetBtn) {
+      // reset cache parameters to default values
+      update = false;
+      modeBox.setSelectedIndex(0);
+      stratBox.setSelectedIndex(0);
+
+      int[] lengths = cw.db.cache.getStrategy().getLengths();
+      try {
+        cw.db.cache.setStrategy(new CrosshairStrategy(lengths));
+      }
+      catch (CacheException exc) {
+        LociDataBrowser.dumpException(exc);
+      }
+
+      int[] priorities = new int[] {ICacheStrategy.NORMAL_PRIORITY,
+        ICacheStrategy.MAX_PRIORITY, ICacheStrategy.MIN_PRIORITY};
+      int[] ranges = new int[] {0, 100, 0};
+
+      for (int i=0; i<lengths.length; i++) {
+        cw.db.cache.getStrategy().setOrder(ICacheStrategy.FORWARD_ORDER, i);
+        cw.db.cache.getStrategy().setPriority(priorities[i], convert(i));
+        cw.db.cache.getStrategy().setRange(ranges[i], convert(i));
+      }
+
+      topBox.setSelectedIndex(1);
+      midBox.setSelectedIndex(0);
+      lowBox.setSelectedIndex(2);
+
+      Integer zeroI = new Integer(0);
+      Integer defaultI = new Integer(DEFAULT);
+      zSpin.setValue(zeroI);
+      tSpin.setValue(defaultI);
+      cSpin.setValue(zeroI);
+
+      oldTop = topBox.getSelectedIndex();
+      oldMid = midBox.getSelectedIndex();
+      oldLow = lowBox.getSelectedIndex();
+      update = true;
+    }
+    else if (source == topBox) {
+      // update priorities, based on change to "top priority"
+      int newTop = topBox.getSelectedIndex();
+      if (newTop == oldTop) return;
+      if (newTop == oldMid) {
+        update = false;
+        midBox.setSelectedIndex(oldTop);
+        oldMid = oldTop;
+        update = true;
+      }
+      if (newTop == oldLow) {
+        update = false;
+        lowBox.setSelectedIndex(oldTop);
+        oldLow = oldTop;
+        update = true;
+      }
+
+      oldTop = newTop;
+      updatePriorities();
+    }
+    else if (source == midBox) {
+      // update priorities, based on change to "medium priority"
+      int newMid = midBox.getSelectedIndex();
+      if (newMid == oldMid) return;
+      if (newMid == oldTop) {
+        update = false;
+        topBox.setSelectedIndex(oldMid);
+        oldTop = oldMid;
+        update = true;
+      }
+      if (newMid == oldLow) {
+        update = false;
+        lowBox.setSelectedIndex(oldMid);
+        oldLow = oldMid;
+        update = true;
+      }
+
+      oldMid = newMid;
+      updatePriorities();
+    }
+    else if (source == lowBox) {
+      // update priorities, based on change to "low priority"
+      int newLow = lowBox.getSelectedIndex();
+      if (newLow == oldLow) return;
+      if (newLow == oldTop) {
+        update = false;
+        topBox.setSelectedIndex(oldLow);
+        oldTop = oldLow;
+        update = true;
+      }
+      if (newLow == oldMid) {
+        update = false;
+        midBox.setSelectedIndex(oldLow);
+        oldMid = oldLow;
+        update = true;
+      }
+
+      oldLow = newLow;
+      updatePriorities();
+    }
+    else if (source == zGroup) {
+      char oldChar = order.charAt(0);
+      int sel = zGroup.getSelectedIndex();
+      char zChar = convertInt(sel);
+
+      sel = tGroup.getSelectedIndex();
+      char tChar = convertInt(sel);
+      if (tChar == zChar) tChar = oldChar;
+
+      sel = cGroup.getSelectedIndex();
+      char cChar = convertInt(sel);
+      if (cChar == zChar) cChar = oldChar;
+
+      updateGroups(zChar, tChar, cChar);
+    }
+    else if (source == tGroup) {
+      char oldChar = order.charAt(1);
+      int sel = tGroup.getSelectedIndex();
+      char tChar = convertInt(sel);
+
+      sel = zGroup.getSelectedIndex();
+      char zChar = convertInt(sel);
+      if (zChar == tChar) zChar = oldChar;
+
+      sel = cGroup.getSelectedIndex();
+      char cChar = convertInt(sel);
+      if (cChar == tChar) cChar = oldChar;
+
+      updateGroups(zChar, tChar, cChar);
+    }
+    else if (source == cGroup) {
+      char oldChar = order.charAt(2);
+      int sel = cGroup.getSelectedIndex();
+      char cChar = convertInt(sel);
+
+      sel = zGroup.getSelectedIndex();
+      char zChar = convertInt(sel);
+      if (zChar == cChar) zChar = oldChar;
+
+      sel = tGroup.getSelectedIndex();
+      char tChar = convertInt(sel);
+      if (tChar == cChar) tChar = oldChar;
+      updateGroups(zChar, tChar, cChar);
+    }
+    updateCacheIndicators();
   }
 
   public void itemStateChanged(ItemEvent e) {
-    if (update) {
-      Object source = e.getItemSelectable();
+    if (!update) return;
+    Object source = e.getItemSelectable();
 
-      //if this is the only selected checkbox, leave it selected
-      if (source == zCheck && e.getStateChange() == ItemEvent.DESELECTED &&
-        !tCheck.isSelected() && !cCheck.isSelected())
-      {
-        update = false;
-        zCheck.setSelected(true);
-        update = true;
-        return;
-      }
-      else if (source == tCheck && e.getStateChange() == ItemEvent.DESELECTED &&
-        !zCheck.isSelected() && !cCheck.isSelected())
-      {
-        update = false;
-        tCheck.setSelected(true);
-        update = true;
-        return;
-      }
-      else if (source == cCheck && e.getStateChange() == ItemEvent.DESELECTED &&
-        !tCheck.isSelected() && !zCheck.isSelected())
-      {
-        update = false;
-        cCheck.setSelected(true);
-        update = true;
-        return;
-      }
-      else if (source == cacheToggle) {
-        if (e.getStateChange() == ItemEvent.DESELECTED) {
-          cw.db.toggleCache(false);
-        }
-        else {
-          cw.db.toggleCache(true);
-        }
-      }
-      else if (source == mergeCheck) {
-        cw.db.toggleMerge();
-      }
-
-      int zState = 0x00, tState = 0x00, cState = 0x00;
-
-      if (zCheck.isSelected()) zState = CacheManager.Z_AXIS;
-      if (tCheck.isSelected()) tState = CacheManager.T_AXIS;
-      if (cCheck.isSelected()) cState = CacheManager.C_AXIS;
-
-      int finalState = (zState | tState | cState);
-      if (manager != null) manager.setAxis(finalState);
+    if (source == cacheToggle) {
+      cw.db.toggleCache(e.getStateChange() != ItemEvent.DESELECTED);
     }
+    else if (source == mergeCheck) {
+      cw.db.toggleMerge();
+    }
+    updateCacheIndicators();
   }
 
   // -- ChangeListener API methods --
 
   public void stateChanged(ChangeEvent e) {
-    if (update) {
-      int zF = ((Integer) zFSpin.getValue()).intValue();
-      int zB = ((Integer) zBSpin.getValue()).intValue();
-      int tF = ((Integer) tFSpin.getValue()).intValue();
-      int tB = ((Integer) tBSpin.getValue()).intValue();
-      int cF = ((Integer) cFSpin.getValue()).intValue();
-      int cB = ((Integer) cBSpin.getValue()).intValue();
-      manager.setSize(zB, zF, tB, tF, cB, cF);
+    if (!update) return;
+    updateRanges();
+    updateCacheIndicators();
+  }
+
+  // -- Helper methods --
+
+  private void updateRanges() {
+    int z = ((Integer) zSpin.getValue()).intValue();
+    int t = ((Integer) tSpin.getValue()).intValue();
+    int c = ((Integer) cSpin.getValue()).intValue();
+
+    int[] ranges = new int[] {z, t, c};
+
+    ICacheStrategy strategy = cw.db.cache.getStrategy();
+    for (int i=0; i<strategy.getLengths().length; i++) {
+      strategy.setRange(ranges[i], convert(i));
     }
   }
+
+  private void updatePriorities() {
+    cw.db.cache.getStrategy().setPriority(ICacheStrategy.MAX_PRIORITY,
+      convert(topBox.getSelectedIndex()));
+    cw.db.cache.getStrategy().setPriority(ICacheStrategy.NORMAL_PRIORITY,
+      convert(midBox.getSelectedIndex()));
+    cw.db.cache.getStrategy().setPriority(ICacheStrategy.MIN_PRIORITY,
+      convert(lowBox.getSelectedIndex()));
+  }
+
+  private void updateOrder() {
+    int cacheOrder = stratBox.getSelectedIndex() == 0 ?
+      ICacheStrategy.FORWARD_ORDER : ICacheStrategy.CENTERED_ORDER;
+    for (int i=0; i<cw.db.cache.getStrategy().getLengths().length; i++) {
+      cw.db.cache.getStrategy().setOrder(cacheOrder, i);
+    }
+  }
+
+  private void updateGroups(char zChar, char tChar, char cChar) {
+    order = new String(new char[] {zChar, tChar, cChar});
+    try {
+      cw.db.reader.setId(id);
+      cw.db.reader.setSeries(cw.db.series);
+      cw.db.reader.swapDimensions("XY" + order);
+      sizeZ = cw.db.reader.getSizeZ();
+      sizeT = cw.db.reader.getSizeT();
+      sizeC = cw.db.reader.getSizeC();
+    }
+    catch (Exception exc) {
+      LociDataBrowser.dumpException(exc);
+    }
+    update = false;
+    setBox(zGroup, 0);
+    setBox(tGroup, 1);
+    setBox(cGroup, 2);
+    update = true;
+    cw.db.setDimensions();
+    cw.updateControls();
+  }
+
+  private void updateCacheIndicators() {
+    if (cw.zIndicator != null) {
+      cw.zIndicator.setIndicator(cw.db.cache, sizeZ, order.indexOf("Z"));
+    }
+    if (cw.tIndicator != null) {
+      cw.tIndicator.setIndicator(cw.db.cache, sizeT, order.indexOf("T"));
+    }
+  }
+
 }

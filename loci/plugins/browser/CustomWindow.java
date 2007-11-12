@@ -24,21 +24,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1G307  USA
 
 package loci.plugins.browser;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.*;
 import ij.*;
 import ij.gui.*;
-//import ij.macro.MacroRunner;
 import ij.measure.Calibration;
 import ij.process.*;
 import java.awt.*;
 import java.awt.event.*;
-//import java.util.Vector;
+import java.awt.image.IndexColorModel;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.*;
 import loci.formats.*;
-//import loci.ome.notes.Notes;
+import loci.formats.cache.*;
+import loci.plugins.Util;
 import org.openmicroscopy.xml.OMENode;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
@@ -62,10 +60,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   protected CacheIndicator zIndicator, tIndicator;
   protected OptionsWindow ow;
 
-  private String zString = Z_STRING;
-  private String tString = T_STRING;
   private int fps = 10;
   private int z = 1, t = 1, c = 1;
+  private byte[] lut;
+  private byte[] nullLut;
 
   // -- Fields - widgets --
 
@@ -94,24 +92,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     ow = null;
     update = true;
 
+    lut = new byte[256];
+    nullLut = new byte[256];
+    for (int i=0; i<lut.length; i++) {
+      lut[i] = (byte) i;
+      nullLut[i] = 0;
+    }
+
     String id = db.id;
 
-    FilePattern fp = null;
-
-    if (db.fStitch != null) {
-      try {
-        fp = db.fStitch.getFilePattern();
-        patternTitle = fp.getPattern();
-      }
-      catch (Exception exc) {
-        exc.printStackTrace();
-        LociDataBrowser.dumpException(exc);
-      }
-    }
-
-    if (fp == null) {
-      patternTitle = db.reader == null ? id : db.reader.getCurrentFile();
-    }
+    patternTitle = db.reader == null ? id : db.reader.getCurrentFile();
     setTitle(patternTitle);
 
     // create panel for image canvas
@@ -129,34 +119,32 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     imagePane.add(ic);
 
     // Z scroll bar label
-    zLabel = new JLabel(zString);
+    zLabel = new JLabel(Z_STRING);
     zLabel.setHorizontalTextPosition(JLabel.LEFT);
-    if (!db.hasZ) zLabel.setEnabled(false);
+    zLabel.setEnabled(db.numZ > 1);
 
     // T scroll bar label
-    tLabel = new JLabel(tString);
+    tLabel = new JLabel(T_STRING);
     tLabel.setHorizontalTextPosition(JLabel.LEFT);
-    if (!db.hasT) tLabel.setEnabled(false);
+    tLabel.setEnabled(db.numT > 1);
 
     // Z scroll bar
-    zSliceSel = new JScrollBar(JScrollBar.HORIZONTAL,
-      1, 1, 1, db.hasZ ? db.numZ + 1 : 2);
-    if (!db.hasZ) zSliceSel.setEnabled(false);
+    zSliceSel = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, db.numZ + 1);
+    zSliceSel.setEnabled(db.numZ > 1);
     zSliceSel.addAdjustmentListener(this);
     zSliceSel.setUnitIncrement(1);
     zSliceSel.setBlockIncrement(5);
 
     // T scroll bar
-    tSliceSel = new JScrollBar(JScrollBar.HORIZONTAL,
-      1, 1, 1, db.hasT ? db.numT + 1 : 2);
-    if (!db.hasT) tSliceSel.setEnabled(false);
+    tSliceSel = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, db.numT + 1);
+    tSliceSel.setEnabled(db.numT > 1);
     tSliceSel.addAdjustmentListener(this);
     tSliceSel.setUnitIncrement(1);
     tSliceSel.setBlockIncrement(5);
 
     // animate button
     animate = new JButton(ANIM_STRING);
-    if (!db.hasT && !db.hasZ) animate.setEnabled(false);
+    animate.setEnabled(db.numT * db.numZ > 1);
     animate.addActionListener(this);
 
     // options button
@@ -190,12 +178,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     channelPanel.setOpaque(false);
 
     channelBox = new JCheckBox("Transmitted", true);
-    channelBox.setBackground(Color.white);
+    channelBox.setBackground(Color.WHITE);
     channelPanel.add("one", channelBox);
     channelBox.addItemListener(this);
 
     JPanel subPane = new JPanel(new FlowLayout());
-    subPane.setBackground(Color.white);
+    subPane.setBackground(Color.WHITE);
     cLabel = new JLabel("channel");
     SpinnerModel model = new SpinnerNumberModel(1, 1, db.numC, 1);
     channelSpin = new JSpinner(model);
@@ -206,7 +194,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     channelPanel.add("many", subPane);
 
     // repack to take extra panel into account
-    c = db.numC * db.numT * db.numZ == imp.getStackSize() ? db.numC : 1;
+    c = db.numC;
     setC();
 
     // frames per second
@@ -247,29 +235,24 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     lowPane.add(fpsLabel, cc.xy(10, 4));
     lowPane.add(fpsSpin, cc.xy(12, 4));
     lowPane.add(options, cc.xy(6, 6));
-    if(xml != null) lowPane.add(xml, cc.xy(8, 6));
+    if (xml != null) lowPane.add(xml, cc.xy(8, 6));
     lowPane.add(animate, cc.xyw(10, 6, 3, "right,center"));
 
     setBackground(Color.white);
-    FormLayout layout2 = new FormLayout(
-      TAB + ",pref:grow," + TAB,
+    FormLayout layout2 = new FormLayout(TAB + ",pref:grow," + TAB,
       TAB + "," + TAB + ",pref:grow," + TAB + ",pref," + TAB);
     setLayout(layout2);
     CellConstraints cc2 = new CellConstraints();
     add(imagePane, cc2.xyw(1, 3, 3));
     add(lowPane, cc2.xy(2, 5));
 
-    //final GUI tasks
     pack();
-
-    showSlice(z, t, c);
-
+    showSlice(z, t, c, false);
     updateControls();
 
     // listen for arrow key presses
     addKeyListener(this);
     ic.addKeyListener(this);
-
   }
 
   // -- CustomWindow methods --
@@ -277,17 +260,19 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void updateControls() {
     update = false;
     zSliceSel.setMinimum(1);
-    zSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
-    zSliceSel.setEnabled(db.hasZ);
-    if(zIndicator != null) {
-      zIndicator.setVisible(db.hasZ);
+    zSliceSel.setMaximum(db.numZ + 1);
+    zSliceSel.setEnabled(db.numZ > 1);
+    zLabel.setEnabled(db.numZ > 1);
+    if (zIndicator != null) {
+      zIndicator.setVisible(db.numZ > 1);
       zIndicator.repaint();
     }
     tSliceSel.setMinimum(1);
-    tSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
-    tSliceSel.setEnabled(db.hasT);
-    if(tIndicator != null) {
-      tIndicator.setVisible(db.hasT);
+    tSliceSel.setMaximum(db.numT + 1);
+    tSliceSel.setEnabled(db.numT > 1);
+    tLabel.setEnabled(db.numT > 1);
+    if (tIndicator != null) {
+      tIndicator.setVisible(db.numT > 1);
       tIndicator.repaint();
     }
     setC();
@@ -307,7 +292,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       snm.setMaximum((Comparable) new Integer(db.numC));
       snm.setValue(new Integer(c));
       c = ((Integer) channelSpin.getValue()).intValue();
-      if (!db.hasC) {
+      if (db.numC == 1) {
         channelSpin.setEnabled(false);
         cLabel.setEnabled(false);
         c = 1;
@@ -317,7 +302,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       // C checkbox
       switcher.first(channelPanel);
       c = channelBox.isSelected() ? 1 : 2;
-      if (!db.hasC) {
+      if (db.numC == 1) {
         channelBox.setEnabled(false);
         c = 1;
       }
@@ -325,81 +310,92 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   /** Selects and shows slice defined by z, t and c. */
-  public synchronized void showSlice(int zVal, int tVal, int cVal) {
+  public synchronized void showSlice(int zVal, int tVal, int cVal,
+    boolean temp)
+  {
     int index = db.getIndex(zVal - 1, tVal - 1, cVal - 1);
     if (LociDataBrowser.DEBUG) {
       IJ.log("showSlice: index=" + index +
         "; z=" + zVal + "; t=" + tVal + "; c=" + cVal);
     }
-    showSlice(index);
+    showSlice(index, temp);
   }
 
   /** Selects and shows slice defined by index. */
-  public void showSlice(int index) {
-    index++;
+  public void showSlice(int index, boolean temp) {
+    if (db.cache != null || temp) {
+      int numPlanes = db.merged ? db.reader.getSizeC() : 1;
+      int[][] zct = new int[numPlanes][3];
+      ImageProcessor[] processors = new ImageProcessor[numPlanes];
+      for (int i=0; i<numPlanes; i++) {
+        if (i == 0) zct[i] = FormatTools.getZCTCoords(db.reader, index);
+        else {
+          System.arraycopy(zct[i - 1], 0, zct[i], 0, zct[i].length);
+          zct[i][1]++;
+        }
 
-    if (db.manager != null) {
-      index--;
-      ImageProcessor clone = db.manager.getSlice(index).duplicate();
-      double bits = 255;
-      if (clone instanceof ShortProcessor) bits = 65535;
-      else if (clone instanceof FloatProcessor) bits = Float.MAX_VALUE - 1;
+        int zIndex = -1;
+        int tIndex = -1;
+        int cIndex = -1;
 
-      clone.setMinAndMax(0, bits);
-      imp.setProcessor(patternTitle, clone);
+        int zv = zct[i][0];
+        int cv = zct[i][1];
+        int tv = zct[i][2];
 
-      // now execute macros as needed
-// TODO: macros
-//      Vector macros = db.macro.getMacros();
-//      for (int i=0; i<macros.size(); i++) {
-//        MacroRunner runner = new MacroRunner((String) macros.get(i));
-//      }
+        int[] newZCT = new int[3];
 
-      index = 1;
-      return;
-    }
+        for (int j=0; j<zct[i].length; j++) {
+          char ch = db.reader.getDimensionOrder().charAt(j + 2);
+          newZCT[j] = ch == 'Z' ? zv : ch == 'C' ? cv : tv;
+          if (ch == 'Z') zIndex = j;
+          else if (ch == 'T') tIndex = j;
+          else cIndex = j;
+        }
 
-    if (index >= 1 && index <= imp.getStackSize()) {
-      synchronized (imp) {
-        imp.setSlice(index);
+        try {
+          db.cache.setCurrentPos(newZCT);
+
+          // update cache indicators
+          if (zIndicator != null) {
+            zIndicator.setIndicator(db.cache, db.reader.getSizeZ(), zIndex);
+          }
+          if (tIndicator != null) {
+            tIndicator.setIndicator(db.cache, db.reader.getSizeT(), tIndex);
+          }
+
+          processors[i] = (ImageProcessor) db.cache.getObject(newZCT);
+          if (!temp) {
+            double bits = 255;
+            if (processors[i] instanceof ShortProcessor) bits = 65535;
+            else if (processors[i] instanceof FloatProcessor) {
+              bits = Float.MAX_VALUE - 1;
+            }
+          }
+          if (i == numPlanes - 1) {
+            newZCT[cIndex] -= (numPlanes - 1);
+            db.cache.setCurrentPos(newZCT);
+          }
+        }
+        catch (CacheException e) {
+          LociDataBrowser.dumpException(e);
+        }
+        catch (FormatException e) {
+          LociDataBrowser.dumpException(e);
+        }
       }
-      imp.updateAndDraw();
+
+      ImagePlus p = Util.makeRGB(processors);
+      ImageProcessor proc = p.getProcessor();
+      if (db.colorize && processors.length == 1) {
+        int[] coords = FormatTools.getZCTCoords(db.reader, index);
+        proc.setColorModel(new IndexColorModel(8, 256,
+          coords[1] == 0 ? lut : nullLut, coords[1] == 1 ? lut : nullLut,
+          coords[1] == 2 ? lut : nullLut));
+      }
+      imp.setProcessor(patternTitle, proc);
     }
-    else if (LociDataBrowser.DEBUG) {
-      IJ.log("invalid index: " + index + " (size = " + imp.getStackSize() +
-        "; zSliceSel = " + zSliceSel.getValue() +
-        "; tSliceSel = " + tSliceSel.getValue() + ")");
-    }
 
-    // now execute macros as needed
-// TODO: macros
-//    Vector macros = db.macro.getMacros();
-//    for (int i=0; i<macros.size(); i++) {
-//      MacroRunner runner = new MacroRunner((String) macros.get(i));
-//    }
-
-    repaint();
-  }
-
-  /** Selects and shows slice defined by z, t and c. */
-  public synchronized void showTempSlice(int zVal, int tVal, int cVal) {
-    int index = db.getIndex(zVal - 1, tVal - 1, cVal - 1);
-    if (LociDataBrowser.DEBUG) {
-      IJ.log("showSlice: index=" + index +
-        "; z=" + zVal + "; t=" + tVal + "; c=" + cVal);
-    }
-    showTempSlice(index);
-  }
-
-  public void showTempSlice(int index) {
-    imp.setProcessor(patternTitle, db.manager.getTempSlice(index));
     imp.updateAndDraw();
-
-    if (LociDataBrowser.DEBUG) {
-      IJ.log("invalid index: " + index + " (size = " + imp.getStackSize() +
-        "; zSliceSel = " + zSliceSel.getValue() +
-        "; tSliceSel = " + tSliceSel.getValue() + ")");
-    }
     repaint();
   }
 
@@ -407,106 +403,128 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   /** Adds 3rd and 4th dimension slice position. */
   public void drawInfo(Graphics g) {
-    if(update) {
-      if (db == null) return;
-      int zVal = zSliceSel == null ? 1 : zSliceSel.getValue();
-      int tVal = tSliceSel == null ? 1 : tSliceSel.getValue();
-
-      int textGap = 0;
-
-      int nSlices = db.numZ * db.numT * db.numC;
-      int current = imp.getCurrentSlice();
-      if (db.manager != null) {
-        current = db.manager.getSlice();
-        current++;
-      }
-
-      StringBuffer sb = new StringBuffer();
-      sb.append(current);
-      sb.append("/");
-      sb.append(nSlices);
-      sb.append("; ");
-      if (db.hasZ) {
-        sb.append(zString);
-        sb.append(": ");
-        sb.append(zVal);
-        sb.append("/");
-        sb.append(db.numZ);
-        sb.append("; ");
-      }
-      if (db.hasT) {
-        sb.append(tString);
-        sb.append(": ");
-        sb.append(tVal);
-        sb.append("/");
-        sb.append(db.numT);
-        sb.append("; ");
-      }
-      if (db.names != null) {
-        String name = db.names[current - 1];
-        if (name != null) {
-          sb.append(name);
-          sb.append("; ");
-        }
-      }
-
-      int width = imp.getWidth(), height = imp.getHeight();
-      Calibration cal = imp.getCalibration();
-      if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
-        sb.append(IJ.d2s(width * cal.pixelWidth, 2));
-        sb.append("x");
-        sb.append(IJ.d2s(height * cal.pixelHeight, 2));
-        sb.append(" ");
-        sb.append(cal.getUnits());
-        sb.append(" (");
-        sb.append(width);
-        sb.append("x");
-        sb.append(height);
-        sb.append("); ");
-      }
-      else {
-        sb.append(width);
-        sb.append("x");
-        sb.append(height);
-        sb.append(" pixels; ");
-      }
-      int type = imp.getType();
-      int stackSize = imp.getStackSize();
-      if (db.manager != null) stackSize = db.manager.getSize();
-      int size = (width * height * stackSize) / 1048576;
-      switch (type) {
-        case ImagePlus.GRAY8:
-          sb.append("8-bit grayscale");
-          break;
-        case ImagePlus.GRAY16:
-          sb.append("16-bit grayscale");
-          size *= 2;
-          break;
-        case ImagePlus.GRAY32:
-          sb.append("32-bit grayscale");
-          size *= 4;
-          break;
-        case ImagePlus.COLOR_256:
-          sb.append("8-bit color");
-          break;
-        case ImagePlus.COLOR_RGB:
-          sb.append("RGB");
-          size *= 4;
-          break;
-      }
-      sb.append("; ");
-      sb.append(size);
-      sb.append("M");
-
-      Insets insets = super.getInsets();
-      g.drawString(sb.toString(), 5, insets.top + textGap);
-    }
+    if (!update || db == null) return;
+    super.drawInfo(g);
   }
 
   /** Sets the frames per second, and adjust the timer accordingly. */
   public void setFps(int value) {
     fps = value;
     if (animationTimer != null) animationTimer.setDelay(1000 / fps);
+  }
+
+  public String createSubtitle() {
+    int zVal = zSliceSel == null ? 1 : zSliceSel.getValue();
+    int tVal = tSliceSel == null ? 1 : tSliceSel.getValue();
+
+    int textGap = 0;
+
+    int nSlices = db.numZ * db.numT * db.numC;
+    int current = imp.getCurrentSlice();
+    if (db.cache != null) {
+      int[] zct = db.cache.getCurrentPos();
+      current = FormatTools.positionToRaster(
+        db.cache.getStrategy().getLengths(), zct);
+      current++;
+    }
+    if (db.merged) {
+      current--;
+      current /= db.reader.getSizeC();
+      current++;
+    }
+
+    StringBuffer sb = new StringBuffer();
+    sb.append(current);
+    sb.append("/");
+    sb.append(nSlices);
+    sb.append("; ");
+    if (db.numZ > 1) {
+      sb.append(Z_STRING);
+      sb.append(": ");
+      sb.append(zVal);
+      sb.append("/");
+      sb.append(db.numZ);
+      sb.append("; ");
+    }
+    if (db.numT > 1) {
+      sb.append(T_STRING);
+      sb.append(": ");
+      sb.append(tVal);
+      sb.append("/");
+      sb.append(db.numT);
+      sb.append("; ");
+    }
+    if (db.names != null) {
+      String name = db.names[current - 1];
+      if (name != null) {
+        sb.append(name);
+        sb.append("; ");
+      }
+    }
+
+    int width = imp.getWidth(), height = imp.getHeight();
+    Calibration cal = imp.getCalibration();
+    if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
+      sb.append(IJ.d2s(width * cal.pixelWidth, 2));
+      sb.append("x");
+      sb.append(IJ.d2s(height * cal.pixelHeight, 2));
+      sb.append(" ");
+      sb.append(cal.getUnits());
+      sb.append(" (");
+      sb.append(width);
+      sb.append("x");
+      sb.append(height);
+      sb.append("); ");
+    }
+    else {
+      sb.append(width);
+      sb.append("x");
+      sb.append(height);
+      sb.append(" pixels; ");
+    }
+    int type = imp.getType();
+    int stackSize = imp.getStackSize();
+    if (db.cache != null) {
+      try {
+        stackSize = db.cache.getStrategy().getLoadList(
+          db.cache.getCurrentPos()).length;
+      }
+      catch (CacheException exc) {
+        LociDataBrowser.dumpException(exc);
+      }
+    }
+    int size = (width * height * stackSize) / 1048576;
+    switch (type) {
+      case ImagePlus.GRAY8:
+        sb.append("8-bit grayscale");
+        break;
+      case ImagePlus.GRAY16:
+        sb.append("16-bit grayscale");
+        size *= 2;
+        break;
+      case ImagePlus.GRAY32:
+        sb.append("32-bit grayscale");
+        size *= 4;
+        break;
+      case ImagePlus.COLOR_256:
+        sb.append("8-bit color");
+        break;
+      case ImagePlus.COLOR_RGB:
+        sb.append("RGB");
+        size *= 3;
+      break;
+    }
+    sb.append("; ");
+    if (size > 0) {
+      sb.append(size);
+      sb.append("M");
+    }
+    else {
+      size = (width * height * stackSize) / 1024;
+      sb.append(size);
+      sb.append("K");
+    }
+    return sb.toString();
   }
 
   // -- Component methods --
@@ -530,22 +548,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         r.exec("new Notes(ome, title)");
       }
       catch (ReflectException exc) {
-        JOptionPane.showMessageDialog(this,
-          "Sorry, there has been an error creating the metadata window.",
-          "4D Data Browser", JOptionPane.ERROR_MESSAGE);
         LociDataBrowser.dumpException(exc);
       }
     }
     else if ("options".equals(cmd)) {
-      if (ow == null) {
-        ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
-          db.hasT ? db.numT : 1, this);
-      }
+      if (ow == null) ow = new OptionsWindow(db.numZ, db.numT, this);
       ow.setVisible(true);
     }
     else if (src instanceof Timer) {
       t = tSliceSel.getValue() + 1;
-      if ((t > db.numT)) t = 1;
+      if (t > db.numT) t = 1;
       tSliceSel.setValue(t);
     }
     else if (src instanceof JButton) {
@@ -565,45 +577,41 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- AdjustmentListener methods --
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
-    if(update) {
-      JScrollBar src = (JScrollBar) adjustmentEvent.getSource();
+    if (!update) return;
+    JScrollBar src = (JScrollBar) adjustmentEvent.getSource();
 
-      z = zSliceSel.getValue();
-      t = tSliceSel.getValue();
+    z = zSliceSel.getValue();
+    t = tSliceSel.getValue();
 
-      if (!src.getValueIsAdjusting() || db.manager == null) showSlice(z, t, c);
-      else showTempSlice(z, t, c);
-    }
+    showSlice(z, t, c, src.getValueIsAdjusting() || db.cache != null);
   }
 
   // -- ItemListener methods --
 
   public synchronized void itemStateChanged(ItemEvent e) {
-    if(update) {
-      JCheckBox channels = (JCheckBox) e.getSource();
+    if (!update) return;
+    JCheckBox channels = (JCheckBox) e.getSource();
 
-      z = zSliceSel.getValue();
-      t = tSliceSel.getValue();
-      c = channels.isSelected() ? 1 : 2;
+    z = zSliceSel.getValue();
+    t = tSliceSel.getValue();
+    c = channels.isSelected() ? 1 : 2;
 
-      showSlice(z, t, c);
-    }
+    showSlice(z, t, c, false);
   }
 
   // -- ChangeListener methods --
 
   public void stateChanged(ChangeEvent e) {
-    if (update) {
-      Object src = e.getSource();
-      if (src == channelSpin) {
-        c = ((Integer) channelSpin.getValue()).intValue();
-        z = zSliceSel.getValue();
-        t = tSliceSel.getValue();
-        showSlice(z, t, c);
-      }
-      else if (src == fpsSpin) {
-        setFps(((Integer) fpsSpin.getValue()).intValue());
-      }
+    if (!update) return;
+    Object src = e.getSource();
+    if (src == channelSpin) {
+      c = ((Integer) channelSpin.getValue()).intValue();
+      z = zSliceSel.getValue();
+      t = tSliceSel.getValue();
+      showSlice(z, t, c, false);
+    }
+    else if (src == fpsSpin) {
+      setFps(((Integer) fpsSpin.getValue()).intValue());
     }
   }
 
@@ -641,7 +649,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void windowClosed(WindowEvent e) {
     if (animationTimer != null) animationTimer.stop();
-    if (db.manager != null) db.manager.finish();
     super.windowClosed(e);
   }
 

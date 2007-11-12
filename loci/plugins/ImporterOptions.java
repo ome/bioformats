@@ -97,7 +97,6 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_C = "bioformats.splitWindows";
   public static final String PREF_Z = "bioformats.splitFocalPlanes";
   public static final String PREF_T = "bioformats.splitTimepoints";
-  public static final String PREF_SWAP = "bioformats.swapDimensions";
   public static final String PREF_METADATA = "bioformats.showMetadata";
   public static final String PREF_GROUP = "bioformats.groupFiles";
   public static final String PREF_CONCATENATE = "bioformats.concatenate";
@@ -115,7 +114,6 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_Z =
     "Split_focal planes into separate windows";
   public static final String LABEL_T = "Split_timepoints into separate windows";
-  public static final String LABEL_SWAP = "Specify_stack organization";
   public static final String LABEL_METADATA =
     "Display_metadata in results window";
   public static final String LABEL_GROUP = "Group_files with similar names";
@@ -137,7 +135,6 @@ public class ImporterOptions implements ItemListener {
   private Checkbox splitCBox;
   private Checkbox splitZBox;
   private Checkbox splitTBox;
-  private Checkbox swapBox;
   private Checkbox metadataBox;
   private Checkbox groupBox;
   private Checkbox concatenateBox;
@@ -155,7 +152,6 @@ public class ImporterOptions implements ItemListener {
   private boolean splitChannels;
   private boolean splitFocalPlanes;
   private boolean splitTimepoints;
-  private boolean swapDimensions;
   private boolean showMetadata;
   private boolean groupFiles;
   private boolean concatenate;
@@ -182,7 +178,6 @@ public class ImporterOptions implements ItemListener {
   public boolean isSplitChannels() { return splitChannels; }
   public boolean isSplitFocalPlanes() { return splitFocalPlanes; }
   public boolean isSplitTimepoints() { return splitTimepoints; }
-  public boolean isSwapDimensions() { return swapDimensions; }
   public boolean isShowMetadata() { return showMetadata; }
   public boolean isGroupFiles() { return groupFiles; }
   public boolean isConcatenate() { return concatenate; }
@@ -218,7 +213,6 @@ public class ImporterOptions implements ItemListener {
   public void setSplitChannels(boolean b) { splitChannels = b; }
   public void setSplitFocalPlanes(boolean b) { splitFocalPlanes = b; }
   public void setSplitTimepoints(boolean b) { splitTimepoints = b; }
-  public void setSwapDimensions(boolean b) { swapDimensions = b; }
   public void setShowMetadata(boolean b) { showMetadata = b; }
   public void setGroupFiles(boolean b) { groupFiles = b; }
   public void setConcatenate(boolean b) { concatenate = b; }
@@ -236,7 +230,6 @@ public class ImporterOptions implements ItemListener {
     splitChannels = Prefs.get(PREF_C, true);
     splitFocalPlanes = Prefs.get(PREF_Z, false);
     splitTimepoints = Prefs.get(PREF_T, false);
-    swapDimensions = Prefs.get(PREF_SWAP, false);
     showMetadata = Prefs.get(PREF_METADATA, false);
     groupFiles = Prefs.get(PREF_GROUP, false);
     concatenate = Prefs.get(PREF_CONCATENATE, false);
@@ -256,7 +249,6 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_C, splitChannels);
     Prefs.set(PREF_Z, splitFocalPlanes);
     Prefs.set(PREF_T, splitTimepoints);
-    Prefs.set(PREF_SWAP, swapDimensions);
     Prefs.set(PREF_METADATA, showMetadata);
     Prefs.set(PREF_GROUP, groupFiles);
     Prefs.set(PREF_CONCATENATE, concatenate);
@@ -295,7 +287,6 @@ public class ImporterOptions implements ItemListener {
       splitChannels = getMacroValue(arg, LABEL_C, splitChannels);
       splitFocalPlanes = getMacroValue(arg, LABEL_Z, splitFocalPlanes);
       splitTimepoints = getMacroValue(arg, LABEL_T, splitTimepoints);
-      swapDimensions = getMacroValue(arg, LABEL_SWAP, swapDimensions);
       showMetadata = getMacroValue(arg, LABEL_METADATA, showMetadata);
       groupFiles = getMacroValue(arg, LABEL_GROUP, groupFiles);
       concatenate = getMacroValue(arg, LABEL_CONCATENATE, concatenate);
@@ -474,7 +465,6 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_C, splitChannels);
     gd.addCheckbox(LABEL_Z, splitFocalPlanes);
     gd.addCheckbox(LABEL_T, splitTimepoints);
-    gd.addCheckbox(LABEL_SWAP, swapDimensions);
     gd.addCheckbox(LABEL_METADATA, showMetadata);
     gd.addCheckbox(LABEL_GROUP, groupFiles);
     gd.addCheckbox(LABEL_CONCATENATE, concatenate);
@@ -497,12 +487,11 @@ public class ImporterOptions implements ItemListener {
       splitCBox = (Checkbox) boxes.get(2);
       splitZBox = (Checkbox) boxes.get(3);
       splitTBox = (Checkbox) boxes.get(4);
-      swapBox = (Checkbox) boxes.get(5);
-      metadataBox = (Checkbox) boxes.get(6);
-      groupBox = (Checkbox) boxes.get(7);
-      concatenateBox = (Checkbox) boxes.get(8);
-      rangeBox = (Checkbox) boxes.get(9);
-      autoscaleBox = (Checkbox) boxes.get(10);
+      metadataBox = (Checkbox) boxes.get(5);
+      groupBox = (Checkbox) boxes.get(6);
+      concatenateBox = (Checkbox) boxes.get(7);
+      rangeBox = (Checkbox) boxes.get(8);
+      autoscaleBox = (Checkbox) boxes.get(9);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -518,7 +507,6 @@ public class ImporterOptions implements ItemListener {
     splitChannels = gd.getNextBoolean();
     splitFocalPlanes = gd.getNextBoolean();
     splitTimepoints = gd.getNextBoolean();
-    swapDimensions = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
     groupFiles = gd.getNextBoolean();
     concatenate = gd.getNextBoolean();
@@ -755,9 +743,11 @@ public class ImporterOptions implements ItemListener {
       if (s.equals(VIEW_STANDARD)) {
       }
       else if (s.equals(VIEW_BROWSER)) {
-        colorizeBox.setState(false); // NB: temporary
         splitCBox.setState(false);
+        splitZBox.setState(false);
+        splitTBox.setState(false);
         rangeBox.setState(false);
+        concatenateBox.setState(false); // TEMPORARY
       }
       else if (s.equals(VIEW_IMAGE_5D)) {
         mergeBox.setState(false);
@@ -776,10 +766,7 @@ public class ImporterOptions implements ItemListener {
     else if (src == colorizeBox) {
       if (colorizeBox.getState()) {
         mergeBox.setState(false);
-        splitCBox.setState(true);
-        // NB: temporary
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+        splitCBox.setState(!stackChoice.getSelectedItem().equals(VIEW_BROWSER));
       }
     }
     else if (src == splitCBox) {
@@ -796,8 +783,16 @@ public class ImporterOptions implements ItemListener {
       }
     }
     else if (src == groupBox) {
+      if (groupBox.getState() && getLocation().equals(LOCATION_OME)) {
+        groupBox.setState(false);
+      }
     }
     else if (src == concatenateBox) {
+      if (concatenateBox.getState()) {
+        // TEMPORARY
+        String s = stackChoice.getSelectedItem();
+        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+      }
     }
     else if (src == rangeBox) {
       if (rangeBox.getState()) {

@@ -27,11 +27,11 @@ package loci.plugins.browser;
 import ij.*;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import ij.process.ImageProcessor;
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import loci.plugins.Util;
 import loci.formats.*;
+import loci.formats.cache.*;
 import loci.formats.ome.OMEXMLMetadata;
 
 /**
@@ -62,17 +62,11 @@ public class LociDataBrowser {
   /** The file format reader used by the plugin. */
   protected DimensionSwapper reader;
 
-  /** The file stitcher used by the reader. */
-  protected FileStitcher fStitch;
-
   /** The CustomWindow used to display data. */
   protected CustomWindow cw;
 
   /** The current file name. */
   protected String id;
-
-  /** Whether dataset has multiple Z, T and C positions. */
-  protected boolean hasZ, hasT, hasC;
 
   /** Number of Z, T and C positions. */
   protected int numZ, numT, numC;
@@ -86,44 +80,23 @@ public class LociDataBrowser {
   /** Whether stack is accessed from disk as needed. */
   protected boolean virtual;
 
-  /** Cache manager (if virtual stack is used). */
-  protected CacheManager manager;
-
-//  /** Macro manager - allows us to perform operations on a virtual stack. */
-//  protected MacroManager macro;
-
-//  /** Macro manager thread. */
-//  protected Thread macroThread;
-
   /** Series to use in a multi-series file. */
   protected int series;
 
+  protected Cache cache;
   private ImageStack stack;
+  protected boolean merged;
+  protected boolean colorize;
 
   // -- Constructors --
 
-  public LociDataBrowser(String name) {
-    this(null, null, name, 0, false);
-  }
-
-  public LociDataBrowser(String name, boolean merged) {
-    this(null, null, name, 0, merged);
-  }
-
-  public LociDataBrowser(IFormatReader r,
-    FileStitcher fs, String name, int seriesNo, boolean merged)
+  public LociDataBrowser(IFormatReader r, String name, int seriesNo,
+    boolean merged, boolean colorize)
   {
-    fStitch = fs;
-    if (r == null) {
-      if (fStitch == null) {
-        r = merged ? (IFormatReader) new ChannelMerger() :
-          new ChannelSeparator();
-      }
-      else {
-        r = merged ? (IFormatReader)
-          new ChannelMerger(fStitch) : new ChannelSeparator(fStitch);
-      }
-    }
+    this.merged = merged;
+    this.colorize = colorize;
+
+    if (r == null) r = new ChannelSeparator();
     reader = new DimensionSwapper(r);
     id = name;
     series = seriesNo;
@@ -131,23 +104,19 @@ public class LociDataBrowser {
     try {
       reader.setId(id);
       reader.setSeries(series);
-      if (fStitch != null) {
-        fStitch.setId(id);
-        fStitch.setSeries(series);
-      }
     }
     catch (Exception exc) {
-      exc.printStackTrace();
       dumpException(exc);
-      String msg = exc.getMessage();
-      IJ.showMessage("4D Data Browser", "Sorry, there was a problem " +
-        "reading the data" + (msg == null ? "." : (": " + msg)));
     }
 
-// TODO: macros
-//    macro = new MacroManager();
-//    macroThread = new Thread(macro, "MacroRecorder");
-//    macroThread.start();
+    if (this.merged) {
+      int c = reader.getSizeC();
+      int type = reader.getPixelType();
+
+      if (c > 3 || (type != FormatTools.INT8 && type != FormatTools.UINT8)) {
+        this.merged = false;
+      }
+    }
   }
 
   // -- LociDataBrowser API methods --
@@ -183,10 +152,6 @@ public class LociDataBrowser {
     numC = sizeC;
     numT = sizeT;
 
-    hasZ = numZ > 1;
-    hasC = numC > 1;
-    hasT = numT > 1;
-
     lengths = new int[3];
     lengths[z] = numZ;
     lengths[c] = numC;
@@ -199,33 +164,15 @@ public class LociDataBrowser {
 
   /** Resets all dimensional data in case they've switched. */
   public void setDimensions() {
-    String order = null;
     try {
-      numZ = reader.getSizeZ();
-      numC = reader.getEffectiveSizeC();
-      numT = reader.getSizeT();
-      order = reader.getDimensionOrder();
-      if (DEBUG) {
-        System.out.println("setDimensions: numZ=" + numZ +
-          ", numC=" + numC + ", numT=" + numT + ", order=" + order);
-      }
+      String order = reader.getDimensionOrder().substring(2);
+      setDimensions(reader.getSizeZ(), merged ? 1 : reader.getEffectiveSizeC(),
+        reader.getSizeT(), order.indexOf("Z"), order.indexOf("C"),
+        order.indexOf("T"));
     }
     catch (Exception exc) {
       dumpException(exc);
-      return;
     }
-
-    hasZ = numZ > 1;
-    hasC = numC > 1;
-    hasT = numT > 1;
-
-    zIndex = order.indexOf("Z") - 2;
-    cIndex = order.indexOf("C") - 2;
-    tIndex = order.indexOf("T") - 2;
-
-    lengths[zIndex] = numZ;
-    lengths[tIndex] = numT;
-    lengths[cIndex] = numC;
   }
 
   /** Gets the slice number for the given Z, T and C indices. */
@@ -238,9 +185,8 @@ public class LociDataBrowser {
   }
 
   public static void dumpException(Exception exc) {
-    exc.printStackTrace();
+    LogTools.trace(exc);
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    exc.printStackTrace(new PrintStream(out));
     String dump = new String(out.toByteArray());
     String msg = "Sorry, there was a problem:\n\n" + dump;
     IJ.showMessage("4D Data Browser", msg);
@@ -254,32 +200,20 @@ public class LociDataBrowser {
   }
 
   public void toggleMerge() {
-    if (reader.getReader() instanceof ChannelMerger) {
-      IFormatReader parent = ((ReaderWrapper) reader).getReader();
-      reader = new DimensionSwapper(new ChannelSeparator(parent));
-      run();
+    if (numC <= 3 && (reader.getPixelType() == FormatTools.INT8 ||
+      reader.getPixelType() == FormatTools.UINT8))
+    {
+      merged = !merged;
     }
-    else if (reader.getReader() instanceof ChannelSeparator) {
-      IFormatReader parent = ((ReaderWrapper) reader).getReader();
-      reader = new DimensionSwapper(new ChannelMerger(parent));
-      run();
-    }
-    else {
-      throw new RuntimeException("Unsupported reader class: " +
-        reader.getClass().getName());
-    }
+    else merged = false;
+    run();
   }
 
   public boolean isMerged() {
-    return reader.getReader() instanceof ChannelMerger;
+    return merged;
   }
 
   public void run() {
-// TODO: macros
-//    macro = new MacroManager();
-//    macroThread = new Thread(macro, "MacroRecorder");
-//    macroThread.start();
-
     stack = null;
     try {
       ImagePlusWrapper ipw = null;
@@ -287,16 +221,41 @@ public class LociDataBrowser {
       // process input
       lengths = new int[3];
 
+      ImagePlus imp = null;
+
       if (virtual) {
         synchronized (reader) {
           int num = reader.getImageCount();
-          if (manager != null) {
-            manager.finish();
-            manager = null;
+
+          // assemble axis lengths in the proper order
+          int z = reader.getSizeZ();
+          int c = reader.getSizeC();
+          int t = reader.getSizeT();
+          int tAxis = -1;
+          int zAxis = -1;
+          int cAxis = -1;
+          String order = reader.getDimensionOrder();
+          for (int i=0; i<lengths.length; i++) {
+            char ch = order.charAt(i + 2);
+            lengths[i] = ch == 'Z' ? z : ch == 'C' ? c : t;
+            if (ch == 'T') tAxis = i;
+            else if (ch == 'Z') zAxis = i;
+            else cAxis = i;
           }
-          manager = new CacheManager(0, 0, 0, 0, 0, 0, 20, 0, 0,
-            this, id, CacheManager.T_AXIS,
-            CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
+
+          ImageProcessorSource source = new ImageProcessorSource(reader);
+          CrosshairStrategy strategy = new CrosshairStrategy(lengths);
+
+          strategy.setRange(100, tAxis);
+          for (int i=0; i<lengths.length; i++) {
+            strategy.setOrder(ICacheStrategy.FORWARD_ORDER, i);
+          }
+          strategy.setPriority(ICacheStrategy.MAX_PRIORITY, tAxis);
+          strategy.setPriority(ICacheStrategy.NORMAL_PRIORITY, zAxis);
+          strategy.setPriority(ICacheStrategy.MIN_PRIORITY, cAxis);
+
+          cache = new Cache(strategy, source);
+          cache.setCurrentPos(new int[] {0, 0, 0});
 
           try {
             setDimensions();
@@ -306,7 +265,8 @@ public class LociDataBrowser {
             int sizeY = reader.getSizeY();
             stack = new ImageStack(sizeX, sizeY);
             // CTR: must add at least one image to the stack
-            stack.addSlice(id + " : 1", manager.getSlice(0, 0, 0));
+            stack.addSlice(id + " : 1",
+              (ImageProcessor) cache.getObject(new int[] {0, 0, 0}));
           }
           catch (OutOfMemoryError e) {
             IJ.outOfMemory("4D Data Browser");
@@ -318,63 +278,34 @@ public class LociDataBrowser {
           IJ.error("Sorry, there was a problem creating the image stack.");
           return;
         }
-        ImagePlus imp = new ImagePlus(id, stack);
-
-        FileInfo fi = new FileInfo();
-
-        MetadataStore store = reader.getMetadataStore();
-        if (store instanceof OMEXMLMetadata) {
-          fi.description = ((OMEXMLMetadata) store).dumpXML();
-        }
-
-        imp.setFileInfo(fi);
-        show(imp);
+        imp = new ImagePlus(id, stack);
       }
       else {
-        manager = null;
-        ipw = new ImagePlusWrapper(id, reader, fStitch, true);
+        cache = null;
+        ipw = new ImagePlusWrapper(id, reader);
         setDimensions();
+        imp = ipw.getImagePlus();
 
-        int stackSize = ipw.getImagePlus().getStackSize();
-        if (stackSize != numZ * numT * numC) {
-          System.err.println("Error, stack size mismatch with dimension " +
-            "sizes: stackSize=" + stackSize + ", numZ=" + numZ +
+        if (imp.getStackSize() != numZ * numT * numC) {
+          LogTools.println("Error, stack size mismatch with dimension " +
+            "sizes: stackSize=" + imp.getStackSize() + ", numZ=" + numZ +
             ", numT=" + numT + ", numC=" + numC);
         }
-
-        FileInfo fi = ipw.getImagePlus().getOriginalFileInfo();
-        if (fi == null) fi = new FileInfo();
-
-        MetadataStore store = ipw.store;
-        if (store instanceof OMEXMLMetadata) {
-          fi.description = ((OMEXMLMetadata) store).dumpXML();
-        }
-
-        ipw.getImagePlus().setFileInfo(fi);
-        show(ipw.getImagePlus());
       }
+
+      FileInfo fi = imp.getOriginalFileInfo();
+      if (fi == null) fi = new FileInfo();
+
+      MetadataStore store = virtual ? reader.getMetadataStore() : ipw.store;
+      if (store instanceof OMEXMLMetadata) {
+        fi.description = ((OMEXMLMetadata) store).dumpXML();
+        Util.applyCalibration((MetadataRetrieve) store, imp, series);
+      }
+
+      imp.setFileInfo(fi);
+      show(imp);
     }
     catch (Exception exc) { dumpException(exc); }
-  }
-
-  // -- Main method --
-
-  /** Main method, for testing. */
-  public static void main(String[] args) {
-    if (args.length < 1) {
-      System.out.println("Please specify a filename on the command line.");
-      System.exit(1);
-    }
-    ImageJ ij = new ImageJ(null);
-    LociDataBrowser ldb = new LociDataBrowser(args[0]);
-    ldb.run();
-    WindowAdapter closer = new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        System.exit(0);
-      }
-    };
-    ij.addWindowListener(closer);
-    ldb.cw.addWindowListener(closer);
   }
 
 }

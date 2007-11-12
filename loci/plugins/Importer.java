@@ -27,7 +27,6 @@ package loci.plugins;
 
 import ij.*;
 import ij.io.FileInfo;
-import ij.measure.Calibration;
 import ij.process.*;
 import java.io.*;
 import java.util.*;
@@ -149,8 +148,11 @@ public class Importer {
       // -- Step 4a: prompt for the file pattern, if necessary --
 
       if (groupFiles) {
-        status = options.promptFilePattern();
-        if (!statusOk(status)) return;
+        try {
+          status = options.promptFilePattern();
+          if (!statusOk(status)) return;
+        }
+        catch (NullPointerException e) { }
         id = options.getId();
       }
 
@@ -555,9 +557,9 @@ public class Importer {
             ImagePlus imp = (ImagePlus) newImps.get(i);
             imp.show();
             if (splitC || splitZ || splitT) {
-              IJ.runPlugIn("loci.plugins.Slicer", "sliceZ=" + splitZ +
-                ", sliceC=" + splitC + ", sliceT=" + splitT + ", stackOrder=" +
-                stackOrder + ", keepOriginal=false");
+              IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
+                ", slice_c=" + splitC + ", slice_t=" + splitT +
+                ", stack_order=" + stackOrder + ", keep_original=false");
             }
           }
         }
@@ -574,9 +576,7 @@ public class Importer {
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           IFormatReader reader = first ? r : null;
-          FileStitcher stitcher = first ? fs : null;
-          //new LociDataBrowser(reader, id, i, mergeChannels).run();
-          new LociDataBrowser(reader, stitcher, id, i, mergeChannels).run();
+          new LociDataBrowser(reader, id, i, mergeChannels, colorize).run();
           first = false;
         }
       }
@@ -618,7 +618,7 @@ public class Importer {
       "\nSeries name=" + series + "\n");
 
     // retrieve the spatial calibration information, if available
-    applyCalibration(store, imp, r.getSeries());
+    Util.applyCalibration(store, imp, r.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
     displayStack(imp, r, fs, options);
@@ -629,80 +629,23 @@ public class Importer {
     IFormatReader r, FileStitcher fs, ImporterOptions options)
   {
     boolean mergeChannels = options.isMergeChannels();
+    boolean colorize = options.isColorize();
     boolean concatenate = options.isConcatenate();
     int nChannels = imp.getNChannels();
     int nSlices = imp.getNSlices();
     int nFrames = imp.getNFrames();
     if (options.isAutoscale()) Util.adjustColorRange(imp);
 
-    // convert to RGB if needed
-    int pixelType = r.getPixelType();
-    if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() < 4 &&
-      (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) &&
-      !r.isIndexed())
-    {
-      makeRGB(imp, r, r.getSizeC(), options.isAutoscale());
-    }
-    else if (mergeChannels && r.getSizeC() > 1 && r.getSizeC() <= 4 &&
-      !r.isIndexed())
-    {
-      // use compareTo instead of IJ.versionLessThan(...), because we want
-      // to suppress the error message
-      if (imp.getStackSize() == r.getSizeC() &&
-        ImageJ.VERSION.compareTo("1.38n") < 0)
-      {
-        // use reflection to construct CompositeImage,
-        // in case ImageJ version is too old
-        ReflectedUniverse ru = new ReflectedUniverse();
-        try {
-          ru.exec("import ij.CompositeImage");
-          ru.setVar("imp", imp);
-          ru.setVar("sizeC", r.getSizeC());
-          imp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
-        }
-        catch (ReflectException exc) {
-          imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
-            r.getSizeT(), r.getSizeC(), options.isAutoscale());
-        }
-      }
-      else {
-        imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
-          r.getSizeT(), r.getSizeC(), options.isAutoscale());
-      }
-    }
-    else if (mergeChannels && r.getSizeC() > 4) {
-      // ask the user what they would like to do...
-      // CTR FIXME -- migrate into ImporterOptions?
-      // also test with macros, and merging multiple image stacks
-      // (i.e., what happens if this code executes more than once?)
-
-      int planes1 = r.getImageCount() / 2;
-      if (planes1 * 2 < r.getImageCount()) planes1++;
-      int planes2 = r.getImageCount() / 3;
-      if (planes2 * 3 < r.getImageCount()) planes2++;
-      int planes3 = r.getImageCount() / 4;
-      if (planes3 * 4 < r.getImageCount()) planes3++;
-
-      if (options.promptMergeOption(planes1, planes2, planes3) ==
-        ImporterOptions.STATUS_OK)
-      {
-        String option = options.getMergeOption();
-        if (option.indexOf("2 channels") != -1) {
-          makeRGB(imp, r, 2, options.isAutoscale());
-        }
-        else if (option.indexOf("3 channels") != -1) {
-          makeRGB(imp, r, 3, options.isAutoscale());
-        }
-        else if (option.indexOf("4 channels") != -1) {
-          imp = new CustomImage(imp, stackOrder, r.getSizeZ(),
-            r.getSizeT() * planes3, 4, options.isAutoscale());
-        }
-      }
-    }
-
     boolean splitC = options.isSplitChannels();
     boolean splitZ = options.isSplitFocalPlanes();
     boolean splitT = options.isSplitTimepoints();
+
+    if (!concatenate && mergeChannels) imp.show();
+
+    if (mergeChannels) {
+      IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+        " merge=true");
+    }
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
       nSlices, nFrames);
@@ -742,76 +685,31 @@ public class Importer {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
             " slice_c=" + splitC + " slice_t=" + splitT +
             " stack_order=" + stackOrder + " keep_original=false");
+          if (colorize) {
+            int[] openImages = WindowManager.getIDList();
+            for (int i=0; i<openImages.length; i++) {
+              ImagePlus p = WindowManager.getImage(openImages[i]);
+              String title = p.getTitle();
+              if (title.startsWith(imp.getTitle()) &&
+                title.indexOf("C=") != -1)
+              {
+                int channel =
+                  Integer.parseInt(title.substring(title.indexOf("C=") + 2));
+                WindowManager.setCurrentWindow(p.getWindow());
+                IJ.runPlugIn("loci.plugins.Colorizer",
+                  "stack_order=" + stackOrder + " merge=false colorize=true" +
+                  " ndx=" + (channel % 3) + " ");
+              }
+            }
+          }
+        }
+        else if (colorize) {
+          IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+            " merge=false colorize=true ndx=0 ");
         }
       }
       else imps.add(imp);
     }
-  }
-
-  /** Applies spatial calibrations to an image stack. */
-  private void applyCalibration(OMEXMLMetadata store,
-    ImagePlus imp, int series)
-  {
-    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
-    Integer ii = new Integer(series);
-
-    Float xf = store.getPixelSizeX(ii);
-    if (xf != null) xcal = xf.floatValue();
-    Float yf = store.getPixelSizeY(ii);
-    if (yf != null) ycal = yf.floatValue();
-    Float zf = store.getPixelSizeZ(ii);
-    if (zf != null) zcal = zf.floatValue();
-
-    if (xcal == xcal || ycal == ycal || zcal == zcal) {
-      Calibration cal = new Calibration();
-      cal.setUnit("micron");
-      cal.pixelWidth = xcal;
-      cal.pixelHeight = ycal;
-      cal.pixelDepth = zcal;
-      imp.setCalibration(cal);
-    }
-  }
-
-  private void makeRGB(ImagePlus imp, IFormatReader r, int c, boolean scale) {
-    ImageStack s = imp.getStack();
-    ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
-    for (int i=0; i<s.getSize(); i++) {
-      ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
-      newStack.addSlice(s.getSliceLabel(i + 1), p);
-    }
-    imp.setStack(imp.getTitle(), newStack);
-    if (scale) Util.adjustColorRange(imp);
-
-    s = imp.getStack();
-    newStack = new ImageStack(s.getWidth(), s.getHeight());
-
-    int sizeZ = r.getSizeZ();
-    int sizeT = r.getSizeT();
-
-    int[][] indices = new int[c][s.getSize() / c];
-    int[] pt = new int[c];
-    Arrays.fill(pt, 0);
-
-    for (int i=0; i<s.getSize(); i++) {
-      int[] zct = FormatTools.getZCTCoords(stackOrder, sizeZ,
-        c, sizeT, r.getImageCount() / (r.getSizeC() / c), i % c);
-      int cndx = zct[1];
-      indices[cndx][pt[cndx]++] = i;
-    }
-
-    for (int i=0; i<indices[0].length; i++) {
-      ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
-      byte[][] bytes = new byte[indices.length][];
-      for (int j=0; j<indices.length; j++) {
-        bytes[j] = (byte[]) s.getProcessor(indices[j][i] + 1).getPixels();
-      }
-      cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
-        new byte[s.getWidth() * s.getHeight()]);
-      newStack.addSlice(s.getSliceLabel(
-        indices[indices.length - 1][i] + 1), cp);
-    }
-
-    imp.setStack(imp.getTitle(), newStack);
   }
 
   /** Computes the given value's number of digits. */
