@@ -71,6 +71,7 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- Fields --
 
+  private int previousSeries;
   private byte[][][] previousImage;
   private int previousImageNumber;
   private Vector channelParameters;
@@ -101,7 +102,8 @@ public class ImarisHDFReader extends FormatReader {
     int[] zct = FormatTools.getZCTCoords(this, no);
     int[] oldZCT = previousImageNumber == -1 ? new int[] {-1, -1, -1} :
       FormatTools.getZCTCoords(this, previousImageNumber);
-    if (zct[1] != oldZCT[1] || zct[2] != oldZCT[2]) {
+    if (zct[1] != oldZCT[1] || zct[2] != oldZCT[2] || series != previousSeries)
+    {
       try {
         r.exec("ncfile = NetcdfFile.open(currentId)");
         r.exec("g = ncfile.getRootGroup()");
@@ -126,6 +128,7 @@ public class ImarisHDFReader extends FormatReader {
       System.arraycopy(previousImage[zct[0]][y], 0, buf, y*core.sizeX[series],
         core.sizeX[series]);
     }
+    previousSeries = series;
 
     return buf;
   }
@@ -142,6 +145,7 @@ public class ImarisHDFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
     super.close();
+    previousSeries = -1;
     previousImageNumber = -1;
     previousImage = null;
     seriesCount = 0;
