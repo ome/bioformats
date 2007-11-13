@@ -102,6 +102,11 @@ public class ZeissZVIReader extends FormatReader {
   private boolean isTiled;
   private int tileRows, tileColumns;
   private boolean isJPEG;
+  private int alphaIndex;
+
+  // -- debug --
+
+  private Vector directories = new Vector();
 
   // -- Constructor --
 
@@ -132,6 +137,18 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) return legacy.openBytes(no, buf);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
+
+    /*
+    int[] zct = FormatTools.getZCTCoords(this, no);
+    if (alphaIndex != -1) {
+      if ((alphaIndex == 3 && (zct[1] == 0 || zct[1] == 2)) ||
+        (alphaIndex == 0 && (zct[1] == 1 || zct[1] == 3)))
+      {
+        zct[1] = 2 - zct[1];
+        no = FormatTools.getIndex(this, zct[0], zct[1], zct[2]);
+      }
+    }
+    */
 
     try {
       int tiles = tileRows * tileColumns;
@@ -278,8 +295,14 @@ public class ZeissZVIReader extends FormatReader {
       //  in.setExtend((4096 - (int) (in.length() % 4096)));
       //}
 
+      in.order(true);
+      in.seek(30);
+      int size = (int) Math.pow(2, in.readShort());
+      in.seek(0);
+
       r.setVar("fis", in);
-      r.exec("fs = new POIFSFileSystem(fis)");
+      r.setVar("size", size);
+      r.exec("fs = new POIFSFileSystem(fis, size)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
 
@@ -601,6 +624,8 @@ public class ZeissZVIReader extends FormatReader {
     r.setVar("depth", depth);
     r.exec("iter = dir.getEntries()");
     Iterator iter = (Iterator) r.getVar("iter");
+    String dirName = (String) r.getVar("dirName");
+    directories.add(dirName);
     while (iter.hasNext()) {
       r.setVar("entry", iter.next());
       r.exec("isInstance = entry.isDirectoryEntry()");
@@ -623,12 +648,9 @@ public class ZeissZVIReader extends FormatReader {
         r.exec("dis = new DocumentInputStream(entry)");
         r.exec("numBytes = dis.available()");
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-        byte[] data = new byte[numbytes + 4]; // append 0 for final offset
+        byte[] data = new byte[numbytes];
         r.setVar("data", data);
 
-        // Suppressing an exception here looks like poor style.
-        // However, this at least gives us a chance at reading files with
-        // corrupt blocks.
         try {
           r.exec("dis.read(data)");
         }
@@ -637,7 +659,6 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         String entryName = (String) r.getVar("entryName");
-        String dirName = (String) r.getVar("dirName");
 
         boolean isContents = entryName.toUpperCase().equals("CONTENTS");
         Object directory = r.getVar("dir");
@@ -775,6 +796,7 @@ public class ZeissZVIReader extends FormatReader {
         r.exec("dis.close()");
       }
     }
+    directories.remove(dirName);
   }
 
   /** Debugging helper method. */
@@ -798,7 +820,6 @@ public class ZeissZVIReader extends FormatReader {
     core.sizeY[0] = s.readInt();
     s.skipBytes(4);
     bpp = s.readInt();
-    //s.skipBytes(8);
     s.skipBytes(4);
     int valid = s.readInt();
     isJPEG = valid == 0 || valid == 1;

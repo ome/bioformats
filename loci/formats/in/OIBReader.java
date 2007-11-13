@@ -196,8 +196,15 @@ public class OIBReader extends FormatReader {
       if (in.length() % 4096 != 0) {
         in.setExtend(4096 - (int) (in.length() % 4096));
       }
+
+      in.order(true);
+      in.seek(30);
+      int blockSize = (int) Math.pow(2, in.readShort());
+      in.seek(0);
+
       r.setVar("fis", in);
-      r.exec("fs = new POIFSFileSystem(fis)");
+      r.setVar("size", blockSize);
+      r.exec("fs = new POIFSFileSystem(fis, size)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
 
@@ -428,6 +435,8 @@ public class OIBReader extends FormatReader {
     r.setVar("depth", depth);
     r.exec("iter = dir.getEntries()");
     Iterator iter = (Iterator) r.getVar("iter");
+
+    String dirName = (String) r.getVar("dirName");
     while (iter.hasNext()) {
       r.setVar("entry", iter.next());
       r.exec("isInstance = entry.isDirectoryEntry()");
@@ -449,12 +458,11 @@ public class OIBReader extends FormatReader {
         r.exec("dis = new DocumentInputStream(entry)");
         r.exec("numBytes = dis.available()");
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-        byte[] data = new byte[numbytes + 4]; // append 0 for final offset
+        byte[] data = new byte[numbytes];
         r.setVar("data", data);
         r.exec("dis.read(data)");
 
         String entryName = (String) r.getVar("entryName");
-        String dirName = (String) r.getVar("dirName");
 
         // check the first 2 bytes of the stream
 

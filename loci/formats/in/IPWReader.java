@@ -308,8 +308,12 @@ public class IPWReader extends BaseTiffReader {
     names = new Hashtable();
 
     try {
+      in.order(true);
+      in.seek(30);
+      int size = (int) Math.pow(2, in.readShort());
+      in.seek(0);
       r.setVar("fis", in);
-      r.exec("fs = new POIFSFileSystem(fis)");
+      r.exec("fs = new POIFSFileSystem(fis, size)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
       status("Populating metadata");
