@@ -198,7 +198,7 @@ public class ZeissZVIReader extends FormatReader {
 
         if (isJPEG) {
           JPEGCodec codec = new JPEGCodec();
-          buf = codec.decompress(buf);
+          buf = codec.decompress(buf, new Boolean(core.littleEndian[0]));
         }
       }
 

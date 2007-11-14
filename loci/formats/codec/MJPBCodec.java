@@ -293,8 +293,8 @@ public class MJPBCodec extends BaseCodec implements Codec {
         v2.add((byte) 0xd9);
 
         JPEGCodec jpeg = new JPEGCodec();
-        byte[] top = jpeg.decompress(v.toByteArray());
-        byte[] bottom = jpeg.decompress(v2.toByteArray());
+        byte[] top = jpeg.decompress(v.toByteArray(), Boolean.FALSE);
+        byte[] bottom = jpeg.decompress(v2.toByteArray(), Boolean.FALSE);
 
         int bpp = bits < 40 ? bits / 8 : (bits - 32) / 8;
         int ch = bits < 40 ? 3 : 1;
@@ -319,7 +319,7 @@ public class MJPBCodec extends BaseCodec implements Codec {
         v.add(b.toByteArray());
         v.add((byte) 0xff);
         v.add((byte) 0xd9);
-        return new JPEGCodec().decompress(v.toByteArray());
+        return new JPEGCodec().decompress(v.toByteArray(), Boolean.FALSE);
       }
     }
     catch (IOException e) {

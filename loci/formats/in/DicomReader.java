@@ -159,7 +159,7 @@ public class DicomReader extends FormatReader {
 
     if (isJPEG) {
       JPEGCodec codec = new JPEGCodec();
-      buf = codec.decompress(buf);
+      buf = codec.decompress(buf, new Boolean(core.littleEndian[0]));
     }
 
     // TODO : correct pixel values according to value of 'scale'
@@ -352,7 +352,7 @@ public class DicomReader extends FormatReader {
         if (i == 0) offsets[i] = baseOffset;
         else {
           in.seek(offsets[i - 1]);
-          new JPEGCodec().decompress(in, null);
+          new JPEGCodec().decompress(in, new Boolean(core.littleEndian[0]));
           offsets[i] = in.getFilePointer();
         }
       }

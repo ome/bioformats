@@ -721,7 +721,8 @@ public class QTReader extends FormatReader {
       return new MJPBCodec().decompress(pixs, options);
     }
     else if (code.equals("jpeg")) {
-      return new JPEGCodec().decompress(pixs);
+      return new JPEGCodec().decompress(pixs,
+        new Boolean(core.littleEndian[0]));
     }
     else throw new FormatException("Unsupported codec : " + code);
   }
