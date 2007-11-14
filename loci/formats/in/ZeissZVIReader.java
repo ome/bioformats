@@ -102,11 +102,6 @@ public class ZeissZVIReader extends FormatReader {
   private boolean isTiled;
   private int tileRows, tileColumns;
   private boolean isJPEG;
-  private int alphaIndex;
-
-  // -- debug --
-
-  private Vector directories = new Vector();
 
   // -- Constructor --
 
@@ -137,18 +132,6 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) return legacy.openBytes(no, buf);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
-
-    /*
-    int[] zct = FormatTools.getZCTCoords(this, no);
-    if (alphaIndex != -1) {
-      if ((alphaIndex == 3 && (zct[1] == 0 || zct[1] == 2)) ||
-        (alphaIndex == 0 && (zct[1] == 1 || zct[1] == 3)))
-      {
-        zct[1] = 2 - zct[1];
-        no = FormatTools.getIndex(this, zct[0], zct[1], zct[2]);
-      }
-    }
-    */
 
     try {
       int tiles = tileRows * tileColumns;
@@ -220,12 +203,14 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       if (bpp > 6) bpp = 1;
-      if (bpp == 3) {
+      if (bpp == 3 || bpp == 6) {
         // reverse bytes in groups of 3 to account for BGR storage
-        for (int i=0; i<buf.length; i+=3) {
-          byte b = buf[i + 2];
-          buf[i + 2] = buf[i];
-          buf[i] = b;
+        byte[] bb = new byte[bpp / 3];
+        int bp = bpp / 3;
+        for (int i=0; i<buf.length; i+=bpp) {
+          System.arraycopy(buf, i + 2*bp, bb, 0, bp);
+          System.arraycopy(buf, i, buf, i + 2*bp, bp);
+          System.arraycopy(bb, 0, buf, i, bp);
         }
       }
       return buf;
@@ -439,62 +424,6 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
-    // correct emission/excitation wavelengths, if necessary
-
-    if (metadata.size() > 0) {
-      // HACK
-      String lastEM =
-        (String) getMeta("Emission Wavelength " + (core.sizeC[0] - 1));
-      String nextToLastEM =
-        (String) getMeta("Emission Wavelength " + (core.sizeC[0] - 2));
-      if (lastEM == null || nextToLastEM == null ||
-        lastEM.equals(nextToLastEM))
-      {
-        String lastDye = (String) getMeta("Reflector " + (core.sizeC[0] - 1));
-        String nextToLastDye =
-          (String) getMeta("Reflector " + (core.sizeC[0] - 2));
-        if (lastDye == null) lastDye = "";
-        if (nextToLastDye == null) nextToLastDye = "";
-
-        lastDye = DataTools.stripString(lastDye);
-        nextToLastDye = DataTools.stripString(nextToLastDye);
-
-        if (nextToLastDye.indexOf("Rhodamine") != -1) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "580");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "540");
-        }
-        else if (nextToLastDye.indexOf("DAPI") != -1) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "461");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "359");
-        }
-        else if (nextToLastDye.startsWith("Alexa Fluor")) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "519");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "495");
-        }
-        else if (nextToLastDye.indexOf("Alexa Fluor") != -1) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 2), "668");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 2), "650");
-        }
-
-        if (lastDye.indexOf("Rhodamine") != -1) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "580");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "540");
-        }
-        else if (lastDye.indexOf("DAPI") != -1) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "461");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "359");
-        }
-        else if (lastDye.startsWith("Alexa Fluor")) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "519");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "495");
-        }
-        else if (lastDye.indexOf("Alexa Fluor") != -1) {
-          addMeta("Emission Wavelength " + (core.sizeC[0] - 1), "668");
-          addMeta("Excitation Wavelength " + (core.sizeC[0] - 1), "650");
-        }
-      }
-    }
-
     try {
       initMetadata();
     }
@@ -503,21 +432,6 @@ public class ZeissZVIReader extends FormatReader {
     }
     catch (IOException exc) {
       if (debug) trace(exc);
-    }
-
-    // remove extra (invalid) metadata
-
-    String[] keys = (String[]) metadata.keySet().toArray(new String[0]);
-    for (int i=0; i<keys.length; i++) {
-      String n = keys[i];
-      if (n.indexOf(" ") != -1) {
-        n = n.substring(n.lastIndexOf(" ") + 1);
-        try {
-          int ndx = Integer.parseInt(n);
-          if (ndx >= core.sizeC[0]) metadata.remove(keys[i]);
-        }
-        catch (NumberFormatException e) { }
-      }
     }
   }
 
@@ -625,7 +539,6 @@ public class ZeissZVIReader extends FormatReader {
     r.exec("iter = dir.getEntries()");
     Iterator iter = (Iterator) r.getVar("iter");
     String dirName = (String) r.getVar("dirName");
-    directories.add(dirName);
     while (iter.hasNext()) {
       r.setVar("entry", iter.next());
       r.exec("isInstance = entry.isDirectoryEntry()");
@@ -636,11 +549,9 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("dirName = dir.getName()");
 
       if (isInstance)  {
-        status("Parsing embedded folder (" + (depth + 1) + ")");
         parseDir(depth + 1, r.getVar("entry"));
       }
       else if (isDocument) {
-        status("Parsing embedded file (" + depth + ")");
         r.exec("entryName = entry.getName()");
         if (debug) {
           print(depth + 1, "Found document: " + r.getVar("entryName"));
@@ -796,7 +707,6 @@ public class ZeissZVIReader extends FormatReader {
         r.exec("dis.close()");
       }
     }
-    directories.remove(dirName);
   }
 
   /** Debugging helper method. */
@@ -931,19 +841,9 @@ public class ZeissZVIReader extends FormatReader {
         catch (NumberFormatException f) { }
       }
 
-      if (metadata.get(key) != null || metadata.get(key + " 0") != null) {
-        if (metadata.get(key) != null) {
-          Object v = metadata.remove(key);
-          metadata.put(key + " 0", v);
-        }
-
-        int ndx = 0;
-        while (metadata.get(key + " " + ndx) != null) ndx++;
-        key += " " + ndx;
-      }
-
       if (key.indexOf("ImageTile") != -1) isTiled = true;
-      addMeta(key, value);
+      if (cIndex != -1) addMeta(key + " " + cIndex, value);
+      else addMeta(key, value);
     }
   }
 
