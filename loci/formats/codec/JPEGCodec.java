@@ -26,13 +26,10 @@ package loci.formats.codec;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.*;
 import javax.imageio.stream.ImageInputStream;
 import loci.formats.*;
-
-import com.sun.media.imageioimpl.plugins.clib.CLibImageReader;
 
 /**
  * This class implements JPEG decompression. Compression is not yet
@@ -81,12 +78,6 @@ public class JPEGCodec extends BaseCodec implements Codec {
       b = ImageIO.read(new BufferedInputStream(in));
     }
     catch (IOException exc) {
-      //LogTools.println(
-      //  "An I/O error occurred decompressing image. Stack dump follows:");
-      //LogTools.trace(exc);
-      //return null;
-
-      System.setProperty("com.sun.media.imageio.disableCodecLib", "false");
       try {
         Class jpegSpi = Class.forName(
           "com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi");
@@ -119,7 +110,6 @@ public class JPEGCodec extends BaseCodec implements Codec {
     }
     byte[][] buf = ImageTools.getPixelBytes(b,
       ((Boolean) options).booleanValue());
-    /* debug */ System.out.println("bytes per channel : " + buf[0].length);
     byte[] rtn = new byte[buf.length * buf[0].length];
     if (buf.length == 1) rtn = buf[0];
     else {
