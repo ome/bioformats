@@ -643,9 +643,13 @@ public class Importer {
 
     if (!concatenate && mergeChannels) imp.show();
 
-    if (mergeChannels) {
+    if (mergeChannels && options.isWindowless()) {
       IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
         " merge=true merge_option=[" + options.getMergeOption() + "]");
+    }
+    else if (mergeChannels) {
+      IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+        " merge=true ");
     }
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),

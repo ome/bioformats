@@ -180,10 +180,22 @@ public class Colorizer implements PlugInFilter {
         }
         if (mergeOption != null) {
           if (mergeOption.indexOf("2 channels") != -1) {
-            newImp = makeRGB(newImp, stack, 2);
+            if (imp.getType() == ImagePlus.GRAY8) {
+              newImp = makeRGB(newImp, stack, 2);
+            }
+            else {
+              newImp = new CustomImage(imp, stackOrder, nSlices,
+                nTimes * planes1, 2, true);
+            }
           }
           else if (mergeOption.indexOf("3 channels") != -1) {
-            newImp = makeRGB(newImp, stack, 3);
+            if (imp.getType() == ImagePlus.GRAY8) {
+              newImp = makeRGB(newImp, stack, 3);
+            }
+            else {
+              newImp = new CustomImage(imp, stackOrder, nSlices,
+                nTimes * planes2, 3, true);
+            }
           }
           else if (mergeOption.indexOf("4 channels") != -1) {
             newImp = new CustomImage(imp, stackOrder, nSlices,
