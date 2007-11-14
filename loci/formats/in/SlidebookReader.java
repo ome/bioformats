@@ -217,7 +217,12 @@ public class SlidebookReader extends FormatReader {
     }
 
     core.rgb[0] = false;
-    core.sizeC[0] = iCount < 5 ? iCount : 1;
+    core.sizeC[0] = iCount;
+    if (core.sizeX[0] * core.sizeY[0] * 2 * (uCount + hCount - 1) >=
+      in.length())
+    {
+      core.sizeC[0] = 1;
+    }
 
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
@@ -292,6 +297,10 @@ public class SlidebookReader extends FormatReader {
       long len = ((Long) pixelLengths.get(i)).longValue();
       core.sizeZ[i] =
         (int) (len / (core.sizeX[i] * core.sizeY[i] * 2 * core.sizeC[i]));
+
+      if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
+      if (core.sizeT[i] == 0) core.sizeT[i] = 1;
+      if (core.sizeC[i] == 0) core.sizeC[i] = 1;
 
       core.imageCount[i] = core.sizeC[i] * core.sizeZ[i] * core.sizeT[i];
 
