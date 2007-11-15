@@ -58,6 +58,7 @@ public class IPWReader extends BaseTiffReader {
       r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import org.apache.poi.util.RandomAccessStream");
       r.exec("import java.util.Iterator");
     }
     catch (Throwable t) {
@@ -88,6 +89,30 @@ public class IPWReader extends BaseTiffReader {
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    RandomAccessStream stream = getStream(0);
+    ifds = TiffTools.getIFDs(stream);
+    int[] bits = TiffTools.getBitsPerSample(ifds[0]);
+    if (bits[0] <= 8) {
+      int[] colorMap =
+        (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+      if (colorMap == null) return null;
+
+      byte[][] table = new byte[3][colorMap.length / 3];
+      int next = 0;
+      for (int j=0; j<table.length; j++) {
+        for (int i=0; i<table[0].length; i++) {
+          table[j][i] = (byte) (colorMap[next++] >> 8);
+        }
+      }
+
+      return table;
+    }
+    return null;
+  }
+
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
@@ -101,6 +126,29 @@ public class IPWReader extends BaseTiffReader {
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
     TiffTools.getSamples(ifds[0], stream, buf);
     stream.close();
+
+    if (core.pixelType[0] == FormatTools.UINT16 ||
+      core.pixelType[0] == FormatTools.INT16)
+    {
+      for (int i=0; i<buf.length; i+=2) {
+        byte b = buf[i];
+        buf[i] = buf[i + 1];
+        buf[i + 1] = b;
+      }
+    }
+    else if (core.pixelType[0] == FormatTools.UINT32 ||
+      core.pixelType[0] == FormatTools.INT32)
+    {
+      for (int i=0; i<buf.length; i+=4) {
+        byte b = buf[i];
+        buf[i] = buf[i + 3];
+        buf[i + 3] = b;
+        b = buf[i + 1];
+        buf[i + 1] = buf[i + 2];
+        buf[i + 2] = b;
+      }
+    }
+
     return buf;
   }
 
@@ -115,6 +163,8 @@ public class IPWReader extends BaseTiffReader {
     header = null;
     tags = null;
 
+    try { r.exec("fis.close()"); }
+    catch (ReflectException e) { }
     String[] vars = {"dirName", "root", "dir", "document", "dis",
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
       "entry", "documentName", "entryName"};
@@ -141,10 +191,10 @@ public class IPWReader extends BaseTiffReader {
         r.exec("document = root.getEntry(entryName)");
       }
 
-      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("dis = new DocumentInputStream(document, fis)");
       r.exec("numBytes = dis.available()");
       int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes + 4]; // append 0 for final offset
+      byte[] b = new byte[numBytes];
       r.setVar("data", b);
       r.exec("dis.read(data)");
 
@@ -158,7 +208,7 @@ public class IPWReader extends BaseTiffReader {
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
 
     if (!core.rgb[0]) {
-      core.rgb[0] = TiffTools.getIFDIntValue(ifds[0],
+      core.indexed[0] = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.PHOTOMETRIC_INTERPRETATION, false, 1) ==
         TiffTools.RGB_PALETTE;
     }
@@ -311,8 +361,12 @@ public class IPWReader extends BaseTiffReader {
       in.order(true);
       in.seek(30);
       int size = (int) Math.pow(2, in.readShort());
-      in.seek(0);
-      r.setVar("fis", in);
+      in.close();
+      r.setVar("file", currentId);
+      r.exec("fis = new RandomAccessStream(file)");
+      r.setVar("size", size);
+      r.setVar("littleEndian", true);
+      r.exec("fis.order(littleEndian)");
       r.exec("fs = new POIFSFileSystem(fis, size)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
@@ -351,7 +405,7 @@ public class IPWReader extends BaseTiffReader {
       else if (isDocument) {
         status("Parsing embedded file (" + depth + ")");
         r.exec("entryName = entry.getName()");
-        r.exec("dis = new DocumentInputStream(entry)");
+        r.exec("dis = new DocumentInputStream(entry, fis)");
         r.exec("numBytes = dis.available()");
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
         byte[] data = new byte[numbytes + 4]; // append 0 for final offset
@@ -429,7 +483,7 @@ public class IPWReader extends BaseTiffReader {
         r.exec("document = root.getEntry(entryName)");
       }
 
-      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("dis = new DocumentInputStream(document, fis)");
       r.exec("numBytes = dis.available()");
       int numBytes = ((Integer) r.getVar("numBytes")).intValue();
       byte[] b = new byte[numBytes + 4];

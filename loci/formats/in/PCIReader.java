@@ -58,6 +58,7 @@ public class PCIReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import org.apache.poi.util.RandomAccessStream");
       r.exec("import java.util.Iterator");
     }
     catch (ReflectException exc) {
@@ -103,13 +104,31 @@ public class PCIReader extends FormatReader {
       r.setVar("dir", directory);
       r.setVar("entryName", name);
       r.exec("document = dir.getEntry(entryName)");
-      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("dis = new DocumentInputStream(document, fis)");
       r.exec("numBytes = dis.available()");
       r.setVar("data", buf);
       r.exec("dis.read(data)");
     }
     catch (ReflectException e) {
       throw new FormatException(NO_POI_MSG, e);
+    }
+
+    if (core.pixelType[0] == FormatTools.UINT16) {
+      for (int i=0; i<buf.length; i+=2) {
+        byte b = buf[i];
+        buf[i] = buf[i + 1];
+        buf[i + 1] = b;
+      }
+    }
+    else if (core.pixelType[0] == FormatTools.UINT32) {
+      for (int i=0; i<buf.length; i+=4) {
+        byte b = buf[i];
+        buf[i] = buf[i + 3];
+        buf[i + 3] = b;
+        b = buf[i + 1];
+        buf[i + 1] = buf[i + 2];
+        buf[i + 2] = b;
+      }
     }
 
     return buf;
@@ -122,6 +141,8 @@ public class PCIReader extends FormatReader {
     super.close();
     imageDirectories = imageFiles = null;
     currentParent = null;
+    try { r.exec("fis.close()"); }
+    catch (ReflectException e) { }
   }
 
   // -- Internal FormatReader API methods --
@@ -141,9 +162,13 @@ public class PCIReader extends FormatReader {
       in.order(true);
       in.seek(30);
       int size = (int) Math.pow(2, in.readShort());
-      in.seek(0);
+      in.close();
 
-      r.setVar("fis", in);
+      r.setVar("file", currentId);
+      r.setVar("size", size);
+      r.exec("fis = new RandomAccessStream(file)");
+      r.setVar("littleEndian", true);
+      r.exec("fis.order(littleEndian)");
       r.exec("fs = new POIFSFileSystem(fis, size)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
@@ -201,7 +226,7 @@ public class PCIReader extends FormatReader {
       else if (isDocument) {
         r.exec("entryName = entry.getName()");
         if (debug) print(depth + 1, (String) r.getVar("entryName"));
-        r.exec("dis = new DocumentInputStream(entry)");
+        r.exec("dis = new DocumentInputStream(entry, fis)");
         r.exec("numBytes = dis.available()");
         int numBytes = ((Integer) r.getVar("numBytes")).intValue();
         byte[] data = new byte[numBytes];

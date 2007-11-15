@@ -60,6 +60,7 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import org.apache.poi.util.RandomAccessStream");
       r.exec("import java.util.Iterator");
     }
     catch (ReflectException exc) {
@@ -96,6 +97,7 @@ public class ZeissZVIReader extends FormatReader {
   private Vector tIndices;
 
   private Hashtable offsets;
+  private Hashtable coordinates;
 
   private int zIndex = -1, cIndex = -1, tIndex = -1;
 
@@ -177,7 +179,7 @@ public class ZeissZVIReader extends FormatReader {
         r.setVar("dir", directory);
         r.setVar("entryName", name);
         r.exec("document = dir.getEntry(entryName)");
-        r.exec("dis = new DocumentInputStream(document)");
+        r.exec("dis = new DocumentInputStream(document, fis)");
         r.exec("numBytes = dis.available()");
         r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
         r.exec("blah = dis.skip(skipBytes)");
@@ -213,6 +215,15 @@ public class ZeissZVIReader extends FormatReader {
           System.arraycopy(bb, 0, buf, i, bp);
         }
       }
+
+      if (bpp % 2 == 0) {
+        for (int i=0; i<buf.length; i+=2) {
+          byte b = buf[i];
+          buf[i] = buf[i + 1];
+          buf[i + 1] = b;
+        }
+      }
+
       return buf;
     }
     catch (ReflectException e) {
@@ -238,11 +249,14 @@ public class ZeissZVIReader extends FormatReader {
     needLegacy = false;
 
     if (legacy != null) legacy.close();
-    pixels = names = offsets = null;
+    pixels = names = offsets = coordinates = null;
     zIndices = cIndices = tIndices = null;
     bpp = tileRows = tileColumns = 0;
     zIndex = cIndex = tIndex = -1;
     needLegacy = isTiled = isJPEG = false;
+
+    try { r.exec("fis.close()"); }
+    catch (ReflectException e) { }
 
     String[] vars = {"dirName", "root", "dir", "document", "dis",
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
@@ -265,6 +279,7 @@ public class ZeissZVIReader extends FormatReader {
     pixels = new Hashtable();
     names = new Hashtable();
     offsets = new Hashtable();
+    coordinates = new Hashtable();
     zIndices = new Vector();
     cIndices = new Vector();
     tIndices = new Vector();
@@ -283,9 +298,12 @@ public class ZeissZVIReader extends FormatReader {
       in.order(true);
       in.seek(30);
       int size = (int) Math.pow(2, in.readShort());
-      in.seek(0);
+      in.close();
 
-      r.setVar("fis", in);
+      r.setVar("file", currentId);
+      r.exec("fis = new RandomAccessStream(file)");
+      r.setVar("littleEndian", true);
+      r.exec("fis.order(littleEndian)");
       r.setVar("size", size);
       r.exec("fs = new POIFSFileSystem(fis, size)");
       r.exec("dir = fs.getRoot()");
@@ -331,72 +349,31 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
 
-      if (cIndex != -1) {
-        int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
-        int max = 0, min = Integer.MAX_VALUE, maxNdx = 0, minNdx = 0;
-        String[] axes = {"Z", "C", "T"};
-
-        for (int i=0; i<dims.length; i++) {
-          if (dims[i] > max) {
-            max = dims[i];
-            maxNdx = i;
-          }
-          if (dims[i] < min) {
-            min = dims[i];
-            minNdx = i;
-          }
+      core.currentOrder[0] = "XY";
+      for (int i=0; i<coordinates.size()-1; i++) {
+        int[] zct1 = (int[]) coordinates.get(new Integer(i));
+        int[] zct2 = (int[]) coordinates.get(new Integer(i + 1));
+        int deltaZ = zct2[0] - zct1[0];
+        int deltaC = zct2[1] - zct1[1];
+        int deltaT = zct2[2] - zct1[2];
+        if (deltaZ > 0 && core.currentOrder[0].indexOf("Z") == -1) {
+          core.currentOrder[0] += "Z";
         }
-
-        int medNdx = 0;
-        for (int i=0; i<3; i++) {
-          if (i != maxNdx && i != minNdx) medNdx = i;
+        if (deltaC > 0 && core.currentOrder[0].indexOf("C") == -1) {
+          core.currentOrder[0] += "C";
         }
-
-        core.currentOrder[0] =
-          "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
-
-        int num = core.sizeZ[0] * core.sizeT[0] - core.sizeC[0];
-        if ((zIndex != -1 && tIndex != -1) && (zIndex != num && tIndex != num))
-        {
-          if (zIndex != core.sizeZ[0]) {
-            if (core.sizeZ[0] != 1) {
-              core.currentOrder[0] =
-                core.currentOrder[0].replaceAll("Z", "") + "Z";
-            }
-            else {
-              core.currentOrder[0] =
-                core.currentOrder[0].replaceAll("T", "") + "T";
-            }
-          }
+        if (deltaT > 0 && core.currentOrder[0].indexOf("T") == -1) {
+          core.currentOrder[0] += "T";
         }
-
-        if (core.sizeZ[0] == core.sizeC[0] && core.sizeC[0] == core.sizeT[0]) {
-          legacy.setId(id);
-          core.currentOrder[0] = legacy.getDimensionOrder();
-        }
-
-        char[] order = core.currentOrder[0].toCharArray();
-        for (int i=0; i<order.length; i++) {
-          if (order[i] == 'Z') order[i] = 'T';
-          else if (order[i] == 'T') order[i] = 'Z';
-        }
-        core.currentOrder[0] = new String(order);
       }
-      else if (core.rgb[0]) {
-        core.currentOrder[0] =
-          (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
+      if (core.currentOrder[0].indexOf("C") == -1) {
+        core.currentOrder[0] += "C";
       }
-      else {
-        if (metadata.get("MultiChannelEnabled") != null ||
-          metadata.get("MultiChannelEnabled 0") != null)
-        {
-          core.currentOrder[0] =
-            (core.sizeZ[0] > core.sizeT[0]) ? "XYCZT" : "XYCTZ";
-        }
-        else {
-          core.currentOrder[0] =
-            (core.sizeZ[0] > core.sizeT[0]) ? "XYZTC" : "XYTZC";
-        }
+      if (core.currentOrder[0].indexOf("Z") == -1) {
+        core.currentOrder[0] += "Z";
+      }
+      if (core.currentOrder[0].indexOf("T") == -1) {
+        core.currentOrder[0] += "T";
       }
     }
     catch (ReflectException exc) {
@@ -556,7 +533,7 @@ public class ZeissZVIReader extends FormatReader {
         if (debug) {
           print(depth + 1, "Found document: " + r.getVar("entryName"));
         }
-        r.exec("dis = new DocumentInputStream(entry)");
+        r.exec("dis = new DocumentInputStream(entry, fis)");
         r.exec("numBytes = dis.available()");
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
         byte[] data = new byte[numbytes];
@@ -690,6 +667,9 @@ public class ZeissZVIReader extends FormatReader {
                 num = num.substring(0, num.length() - 1);
                 imageNum = Integer.parseInt(num);
               }
+
+              coordinates.put(new Integer(imageNum),
+                new int[] {zidx, cidx, tidx});
 
               offsets.put(new Integer(imageNum), new Integer((int) fp + 32));
               parsePlane(o, imageNum, directory, entryName);

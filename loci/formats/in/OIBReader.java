@@ -59,6 +59,7 @@ public class OIBReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import org.apache.poi.util.RandomAccessStream");
       r.exec("import java.util.Iterator");
     }
     catch (ReflectException exc) {
@@ -137,10 +138,10 @@ public class OIBReader extends FormatReader {
       r.exec("dir = root.getEntry(dirName)");
       r.setVar("entryName", name);
       r.exec("document = dir.getEntry(entryName)");
-      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("dis = new DocumentInputStream(document, fis)");
       r.exec("numBytes = dis.available()");
       int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes + 4]; // append 0 for final offset
+      byte[] b = new byte[numBytes];
       r.setVar("data", b);
       r.exec("dis.read(data)");
 
@@ -148,6 +149,15 @@ public class OIBReader extends FormatReader {
       Hashtable[] ifds = TiffTools.getIFDs(stream);
       TiffTools.getSamples(ifds[0], stream, buf);
       stream.close();
+
+      if (getPixelType() == FormatTools.UINT16) {
+        for (int i=0; i<buf.length; i+=2) {
+          byte s = buf[i];
+          buf[i] = buf[i + 1];
+          buf[i + 1] = s;
+        }
+      }
+
       return buf;
     }
     catch (ReflectException e) {
@@ -160,6 +170,8 @@ public class OIBReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
+    try { r.exec("fis.close()"); }
+    catch (ReflectException e) { }
     String[] vars = {"dirName", "root", "dir", "document", "dis",
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
       "entry", "documentName", "entryName"};
@@ -193,16 +205,21 @@ public class OIBReader extends FormatReader {
 
     try {
       in = new RandomAccessStream(id);
-      if (in.length() % 4096 != 0) {
-        in.setExtend(4096 - (int) (in.length() % 4096));
-      }
 
       in.order(true);
       in.seek(30);
       int blockSize = (int) Math.pow(2, in.readShort());
-      in.seek(0);
 
-      r.setVar("fis", in);
+      int extend = blockSize - (int) (in.length() % blockSize);
+      if (extend == blockSize) extend = 0;
+      in.close();
+
+      r.setVar("file", currentId);
+      r.setVar("extend", extend);
+      r.exec("fis = new RandomAccessStream(file)");
+      r.setVar("littleEndian", true);
+      r.exec("fis.order(littleEndian)");
+      r.exec("fis.setExtend(extend)");
       r.setVar("size", blockSize);
       r.exec("fs = new POIFSFileSystem(fis, size)");
       r.exec("dir = fs.getRoot()");
@@ -328,10 +345,10 @@ public class OIBReader extends FormatReader {
       r.exec("dir = root.getEntry(dirName)");
       r.setVar("entryName", name);
       r.exec("document = dir.getEntry(entryName)");
-      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("dis = new DocumentInputStream(document, fis)");
       r.exec("numBytes = dis.available()");
       int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes + 4]; // append 0 for final offset
+      byte[] b = new byte[numBytes];
       r.setVar("data", b);
       r.exec("dis.read(data)");
 
@@ -455,7 +472,7 @@ public class OIBReader extends FormatReader {
         if (debug) {
           print(depth + 1, "Found document: " + r.getVar("entryName"));
         }
-        r.exec("dis = new DocumentInputStream(entry)");
+        r.exec("dis = new DocumentInputStream(entry, fis)");
         r.exec("numBytes = dis.available()");
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
         byte[] data = new byte[numbytes];
