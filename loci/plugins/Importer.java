@@ -139,7 +139,6 @@ public class Importer {
     IJ.showStatus("Analyzing " + id);
 
     try {
-      FileStitcher fs = null;
       r.setMetadataFiltered(true);
       r.setId(id);
 
@@ -155,11 +154,10 @@ public class Importer {
         }
         catch (NullPointerException e) { }
         id = options.getId();
+        if (id == null) id = currentFile;
       }
 
-      // CTR FIXME -- why is the file stitcher separate from the reader?
-      // (answer: because of the clunkiness of the 4D Data Browser integration)
-      if (groupFiles) r = fs = new FileStitcher(r, true);
+      if (groupFiles) r = new FileStitcher(r, true);
       r = new ChannelSeparator(r);
       r.setId(id);
 
@@ -487,16 +485,16 @@ public class Importer {
 
           showStack(stackB, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, fs, options);
+            fi, r, options);
           showStack(stackS, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, fs, options);
+            fi, r, options);
           showStack(stackF, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, fs, options);
+            fi, r, options);
           showStack(stackO, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, fs, options);
+            fi, r, options);
 
           long endTime = System.currentTimeMillis();
           double elapsed = (endTime - startTime) / 1000.0;
@@ -601,12 +599,17 @@ public class Importer {
   private void showStack(ImageStack stack, String file, String series,
     OMEXMLMetadata store, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
-    FileStitcher fs, ImporterOptions options)
+    ImporterOptions options)
     throws FormatException, IOException
   {
     if (stack == null) return;
+    String[] used = r.getUsedFiles();
     String title = file.substring(file.lastIndexOf(File.separator) + 1);
-    if (series != null && !file.endsWith(series)) {
+    if (used.length > 1) {
+      FilePattern fp = new FilePattern(new Location(file));
+      if (fp != null) title = fp.getPattern();
+    }
+    if (series != null && !file.endsWith(series) && r.getSeriesCount() > 1) {
       title += " - " + series;
     }
     if (title.length() > 128) {
@@ -622,12 +625,12 @@ public class Importer {
     Util.applyCalibration(store, imp, r.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
-    displayStack(imp, r, fs, options);
+    displayStack(imp, r, options);
   }
 
   /** Displays the image stack using the appropriate plugin. */
   private void displayStack(ImagePlus imp,
-    IFormatReader r, FileStitcher fs, ImporterOptions options)
+    IFormatReader r, ImporterOptions options)
   {
     boolean mergeChannels = options.isMergeChannels();
     boolean colorize = options.isColorize();
