@@ -11,16 +11,17 @@ This build file handles the following projects:
 Bio-Formats
     JAR file:      bio-formats.jar
     Folders:       loci/formats
-                   loci/formats/* (except loci/formats/auto)
+                   loci/formats/* (except auto and test)
     Main class:    loci.formats.ImageViewer
-    Dependencies:  jai_imageio.jar (reflected)
-                   mdbtools-java.jar (reflected)
-                   ome-java.jar (reflected)
-                   poi-loci.jar (reflected)
+    Dependencies:  bufr-1.1.00.jar (reflected)
+                   clibwrapper_jiio.jar (reflected)
                    grib-5.1.03.jar (reflected)
-                   bufr-1.1.00.jar (reflected)
-                   slf4j-jdk14.jar (reflected)
+                   jai_imageio.jar (reflected)
+                   mdbtools-java.jar (reflected)
                    netcdf-4.0.jar (reflected)
+                   ome-java.jar (reflected, except in loci/formats/ome)
+                   poi-loci.jar (reflected)
+                   slf4j-jdk14.jar (reflected)
     Targets:       style-formats
                    compile-formats
                    jar-formats
@@ -32,19 +33,20 @@ VisBio
                    loci/visbio/*
     Main class:    loci.visbio.VisBio
     Dependencies:  bio-formats.jar
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   clibwrapper_jiio.jar (bio-formats.jar)
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
+                   grib-5.1.03.jar (bio-formats.jar)
                    ij.jar
                    jai_imageio.jar (bio-formats.jar)
                    looks-1.2.2.jar
                    mdbtools-java.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
-                   grib-5.1.03.jar (bio-formats.jar)
-                   bufr-1.1.00.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
                    visad-lite.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-visbio
@@ -62,22 +64,24 @@ LOCI Plugins for ImageJ
                    loci/ome/upload
                    loci/ome/util
     Main class:    loci.plugins.About
-    IJ plugins:    loci.plugins.browser.LociDataBrowser
-                   loci.plugins.LociImporter
+    IJ plugins:    loci.plugins.Colorizer
                    loci.plugins.LociExporter
+                   loci.plugins.LociFunctions
+                   loci.plugins.LociImporter
                    loci.plugins.LociUploader
-                   loci.plugins.ome.OMEPlugin
+                   loci.plugins.Slicer
     Dependencies:  bio-formats.jar
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   clibwrapper_jiio.jar (bio-formats.jar)
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
+                   grib-5.1.03.jar (bio-formats.jar)
                    jai_imageio.jar (bio-formats.jar)
                    mdbtools-java.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
-                   grib-5.1.03.jar (bio-formats.jar)
-                   bufr-1.1.00.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-plugins
                    compile-plugins
@@ -89,44 +93,22 @@ OME Notes
     Folder:        loci/ome/notes
     Main class:    loci.ome.notes.Notes
     Dependencies:  bio-formats.jar
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   clibwrapper_jiio.jar (bio-formats.jar)
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
+                   grib-5.1.03.jar (bio-formats.jar)
                    jai_imageio.jar (bio-formats.jar)
                    mdbtools-java.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
-                   grib-5.1.03.jar (bio-formats.jar)
-                   bufr-1.1.00.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-notes
                    compile-notes
                    jar-notes
-    License:       LGPL
-
-OME Metadata Editor
-    JAR file:      ome-editor.jar
-    Folders:       loci/ome/editor
-                   loci/ome/viewer
-    Main class:    loci.ome.editor.MetadataEditor
-    Dependencies:  bio-formats.jar
-                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
-                   commons-logging.jar (ome-java.jar)
-                   forms-1.0.4.jar
-                   jai_imageio.jar (bio-formats.jar)
-                   mdbtools-java.jar (bio-formats.jar)
-                   ome-java.jar
-                   poi-loci.jar (bio-formats.jar)
-                   grib-5.1.03.jar (bio-formats.jar)
-                   bufr-1.1.00.jar (bio-formats.jar)
-                   slf4j-jdk14.jar (bio-formats.jar)
-                   netcdf-4.0.jar (bio-formats.jar)
-                   xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       style-editor
-                   compile-editor
-                   jar-editor
     License:       LGPL
 
 Slim Plotter
@@ -142,6 +124,30 @@ Slim Plotter
                    jar-slim
                    dist-slim
     License:       Public domain
+
+OME Metadata Editor
+    JAR file:      ome-editor.jar
+    Folders:       loci/ome/editor
+                   loci/ome/viewer
+    Main class:    loci.ome.editor.MetadataEditor
+    Dependencies:  bio-formats.jar
+                   bufr-1.1.00.jar (bio-formats.jar)
+                   clibwrapper_jiio.jar (bio-formats.jar)
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   forms-1.0.4.jar
+                   grib-5.1.03.jar (bio-formats.jar)
+                   jai_imageio.jar (bio-formats.jar)
+                   mdbtools-java.jar (bio-formats.jar)
+                   netcdf-4.0.jar (bio-formats.jar)
+                   ome-java.jar
+                   poi-loci.jar (bio-formats.jar)
+                   slf4j-jdk14.jar (bio-formats.jar)
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       style-editor
+                   compile-editor
+                   jar-editor
+    License:       LGPL
 
 LOCI Checkstyle checks
     JAR file:      loci-checks.jar
@@ -159,61 +165,69 @@ The following external dependencies (in the jar folder) may be required:
 Apple eAWT stubs
     JAR file:  AppleJavaExtensions.jar
     URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
-    Notes:     Required to compile VisBio on non-Mac OS X machines
+    Notes:     required to compile VisBio on non-Mac OS X machines
 
 Ant-Contrib
     JAR file:  ant-contrib-1.0b1.jar
     URL:       http://ant-contrib.sourceforge.net/
-    Notes:     Used by tools target to iterate over JAR files ("for" task)
+    Notes:     used by tools target to iterate over JAR files ("for" task)
     License:   Apache
 
 Checkstyle
     JAR file:  checkstyle-all-4.2.jar
     URL:       http://checkstyle.sourceforge.net/
-    Notes:     Used by style targets to check source code style conventions
+    Notes:     used by style targets to check source code style conventions
     License:   LGPL
 
 Apache Jakarta Commons HttpClient
     JAR file:  commons-httpclient-2.0-rc2.jar
     URL:       http://jakarta.apache.org/commons/httpclient/
-    Notes:     Required for OME Java to communicate with OME servers
+    Notes:     required for OME Java to communicate with OME servers
     License:   Apache
 
 Apache Jakarta Commons Logging
     JAR file:  commons-logging.jar
     URL:       http://jakarta.apache.org/commons/logging/
-    Notes:     Used by OME Java
+    Notes:     used by OME Java
     License:   Apache
 
 JGoodies Forms
     JAR file:  forms-1.0.4.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
-    Notes:     Used for layout by VisBio, 4D Data Browser and OME Notes
+    Notes:     used for layout by VisBio, 4D Data Browser and OME Notes
     License:   BSD
 
 ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
-    Notes:     Bundled with VisBio to achieve ImageJ interconnectivity
+    Notes:     used by LOCI plugins for ImageJ;
+               bundled with VisBio to achieve ImageJ interconnectivity
     License:   Public domain
 
 Java Advanced Imaging Image I/O Tools
-    JAR file:  jai_imageio.jar
+    JAR files: jai_imageio.jar, clibwrapper_jiio.jar
     URL:       https://jai-imageio.dev.java.net/
-    Notes:     Used by Bio-Formats for JPEG2000 support (ND2, JP2)
+    Notes:     used by Bio-Formats via reflection for JPEG2000 support
+               (ND2, JP2) and lossless JPEG decompression (DICOM)
     License:   BSD
+
+JUnit
+    JAR file:  junit.jar
+    URL:       http://www.junit.org/
+    Notes:     unit testing framework used for a few VisBio unit tests
+    License:   Common Public License
 
 JGoodies Looks
     JAR file:  looks-1.2.2.jar
     URL:       http://www.jgoodies.com/freeware/looks/index.html
-    Notes:     Used for a nicer Look & Feel by VisBio and OME Metadata Editor
+    Notes:     used for a nicer Look & Feel by VisBio and OME Metadata Editor
     License:   BSD
 
 MDB Tools (Java port)
     JAR file:  mdbtools-java.jar
     URLs:      http://mdbtools.sourceforge.net/
                http://sourceforge.net/forum/message.php?msg_id=2550619
-    Notes:     Used by Bio-Formats for Zeiss LSM metadata in MDB database files
+    Notes:     used by Bio-Formats for Zeiss LSM metadata in MDB database files
     License:   LGPL
 
 L-M Fit
@@ -224,41 +238,52 @@ L-M Fit
     License:   LGPL
 
 NetCDF
-    JAR files: netcdf-4.0.jar, grib-5.1.03.jar, bufr-1.1.00.jar, slf4j-jdk14.jar
+    JAR files: netcdf-4.0.jar, bufr-1.1.00.jar, grib-5.1.03.jar, slf4j-jdk14.jar
     URL:       http://www.unidata.ucar.edu/software/netcdf-java/
-    Notes:     Used by Bio-Formats for HDF support (Imaris 5.5)
+    Notes:     used by Bio-Formats via reflection for HDF support (Imaris 5.5)
     License:   LGPL
 
 OME Java
     JAR file:  ome-java.jar
     URL:       http://openmicroscopy.org/api/java/
-    Notes:     Used by VisBio and the OME Plugin for ImageJ to connect to OME;
-               used by Bio-Formats and the OME Notes to work with OME-XML
+    Notes:     used by VisBio and the OME upload and download plugins for
+               ImageJ to connect to OME;
+               used by Bio-Formats and OME Notes to work with OME-XML
     License:   LGPL
 
 Apache Jakarta POI
     JAR file:  poi-loci.jar
     URL:       http://jakarta.apache.org/poi/
-    Notes:     Used by Bio-Formats for OLE support (OIB, ZVI, IPW); based on
-               poi-2.5.1-final-20040804.jar, with bugfixes so that OLE v2 works
+    Notes:     based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2
+               and memory efficiency improvements;
+               used by Bio-Formats via reflection for OLE support
+               (CXD, IPW, OIB, ZVI);
+               used by VisBio overlays logic for XLS export feature
     License:   Apache
 
 Skin Look and Feel
     JAR file:  skinlf.jar
     URL:       http://skinlf.l2fprod.com/
-    Notes:     Not used (may be used in the future for flexible skinning)
+    Notes:     not used (may be used in the future for flexible skinning)
     License:   Custom (BSD-like)
+
+TestNG
+    JAR file:  testng-5.6-jdk14.jar
+    URL:       http://testng.org/
+    Notes:     testing framework used for Bio-Formats test suite
+    License:   Apache
 
 VisAD
     JAR file:  visad-lite.jar
     URL:       http://www.ssec.wisc.edu/~billh/visad.html
-    Notes:     Stripped down VisAD library used by VisBio and Slim Plotter
+    Notes:     stripped down VisAD library used by VisBio and Slim Plotter
+               for interactive visualization
     License:   LGPL
 
 Apache XML-RPC
     JAR file:  xmlrpc-1.2-b1.jar
     URL:       http://ws.apache.org/xmlrpc/
-    Notes:     Required for OME Java to communicate with OME servers
+    Notes:     required for OME Java to communicate with OME servers
     License:   Apache
 -->
 
@@ -315,11 +340,18 @@ Apache XML-RPC
     description="create JAR file encompassing several LOCI tools">
     <for list="${tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
-        <unjar src="${jar.dir}/@{jar}" dest="${tools.dir}">
-          <patternset>
-            <exclude name="META-INF/**"/>
-          </patternset>
-        </unjar>
+        <property name="jar.present" value="false"/>
+        <available file="${jar.dir}/@{jar}" property="@{jar}.present"/>
+        <if>
+          <equals arg1="${@{jar}.present}" arg2="true" />
+          <then>
+            <unjar src="${jar.dir}/@{jar}" dest="${tools.dir}">
+              <patternset>
+                <exclude name="META-INF/**"/>
+              </patternset>
+            </unjar>
+          </then>
+        </if>
       </sequential>
     </for>
     <jar jarfile="${jar.dir}/${tools.jar}" basedir="${tools.dir}">
@@ -390,7 +422,7 @@ Apache XML-RPC
     <!-- copy binary files without filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="loci/**"
-        excludes="**/*.class **/*.java **/*.config **/*.txt ${ignore.source}"/>
+        excludes="**/*.java **/*.config **/*.txt ${ignore.source}"/>
     </copy>
     <!-- copy source files with filtering -->
     <filter token="date" value="${DATE}"/>
@@ -398,7 +430,7 @@ Apache XML-RPC
     <filter token="visbio.version" value="${visbio.version}"/>
     <copy todir="${dest.dir}" filtering="true" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="loci/**"
-        excludes="**/*.class ${ignore.source}"/>
+        excludes="${ignore.source}"/>
     </copy>
   </target>
 
