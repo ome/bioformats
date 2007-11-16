@@ -42,16 +42,16 @@ public final class About {
     JOptionPane.showMessageDialog(null,
       "LOCI Plugins for ImageJ\n" +
       "Built @date@\n\n" +
-      "Copyright 2006-@year@ Laboratory for Optical and Computational\n" +
+      "Copyright 2005-@year@ Laboratory for Optical and Computational\n" +
       "Instrumentation; http://www.loci.wisc.edu/software\n\n" +
-      "The 4D Data Browser is written by Christopher Peterson,\n" +
-      "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
-      "http://www.loci.wisc.edu/4d/#browser\n\n" +
+      "The 4D Data Browser is written by Melissa Linkert,\n" +
+      "Christopher Peterson, Francis Wong and Curtis Rueden.\n" +
+      "http://www.loci.wisc.edu/ome/browser.html\n\n" +
       "The Bio-Formats Importer and Exporter are written by\n" +
       "Melissa Linkert and Curtis Rueden.\n" +
       "http://www.loci.wisc.edu/ome/formats.html\n\n" +
-      "The OME plugins for ImageJ are written by Philip Huettl\n" +
-      "and Melissa Linkert.\n" +
+      "The OME plugins for ImageJ are written by Melissa Linkert\n" +
+      "and Philip Huettl.\n" +
       "http://www.loci.wisc.edu/ome/imagej.html",
       "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
   }
