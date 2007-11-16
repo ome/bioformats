@@ -1921,8 +1921,8 @@ public final class TiffTools {
           s[b] += s[b - len];
         }
         for (int i=0; i<s.length; i++) {
-          input[little ? i*2 : i*2 + 1] = (byte) (s[i] & 0xff);
-          input[little ? i*2 + 1 : i*2] = (byte) ((s[i] >> 8) & 0xff);
+          input[little ? i*2 + 1: i*2] = (byte) (s[i] & 0xff);
+          input[little ? i*2 : i*2 + 1] = (byte) ((s[i] >> 8) & 0xff);
         }
       }
     }
