@@ -215,15 +215,6 @@ public class ZeissZVIReader extends FormatReader {
           System.arraycopy(bb, 0, buf, i, bp);
         }
       }
-
-      if (bpp % 2 == 0) {
-        for (int i=0; i<buf.length; i+=2) {
-          byte b = buf[i];
-          buf[i] = buf[i + 1];
-          buf[i + 1] = b;
-        }
-      }
-
       return buf;
     }
     catch (ReflectException e) {
