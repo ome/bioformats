@@ -340,7 +340,6 @@ Apache XML-RPC
     description="create JAR file encompassing several LOCI tools">
     <for list="${tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
-        <property name="jar.present" value="false"/>
         <available file="${jar.dir}/@{jar}" property="@{jar}.present"/>
         <if>
           <equals arg1="${@{jar}.present}" arg2="true" />
