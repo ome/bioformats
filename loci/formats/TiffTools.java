@@ -1347,7 +1347,8 @@ public final class TiffTools {
         }
       }
 
-      undifference(data, bitsPerSample, imageWidth, planarConfig, predictor);
+      undifference(data, bitsPerSample, imageWidth, planarConfig, predictor,
+        littleEndian);
       unpackBytes(samples, 0, data, bitsPerSample, photoInterp, colorMap,
         littleEndian, maxValue, planarConfig, 0, 1, imageWidth);
     }
@@ -1368,7 +1369,7 @@ public final class TiffTools {
           if (compression != PACK_BITS) {
             bytes = uncompress(bytes, compression, size);
             undifference(bytes, bitsPerSample,
-              imageWidth, planarConfig, predictor);
+              imageWidth, planarConfig, predictor, littleEndian);
             int offset = (int) (imageWidth * row);
             if (planarConfig == 2) {
               offset = overallOffset / samplesPerPixel;
@@ -1396,7 +1397,7 @@ public final class TiffTools {
           }
           byte[] bytes = new byte[samples[0].length];
           undifference(bytes, bitsPerSample, imageWidth, planarConfig,
-            predictor);
+            predictor, littleEndian);
           int offset = (int) (imageWidth * row);
           if (planarConfig == 2) offset = overallOffset / samplesPerPixel;
           unpackBytes(samples, offset, bytes, bitsPerSample, photoInterp,
@@ -1411,7 +1412,7 @@ public final class TiffTools {
     if (altBytes.length != 0) {
       altBytes = uncompress(altBytes, compression, size);
       undifference(altBytes, bitsPerSample,
-        imageWidth, planarConfig, predictor);
+        imageWidth, planarConfig, predictor, littleEndian);
       unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
         photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 1,
         imageWidth);
@@ -1900,15 +1901,29 @@ public final class TiffTools {
 
   /** Undoes in-place differencing according to the given predictor value. */
   public static void undifference(byte[] input, int[] bitsPerSample,
-    long width, int planarConfig, int predictor) throws FormatException
+    long width, int planarConfig, int predictor, boolean little)
+    throws FormatException
   {
     if (predictor == 2) {
       if (DEBUG) debug("reversing horizontal differencing");
       int len = bitsPerSample.length;
       if (bitsPerSample[len - 1] == 0) len = 1;
-      for (int b=0; b<input.length; b++) {
-        if (b / len % width == 0) continue;
-        input[b] += input[b - len];
+      if (bitsPerSample[0] <= 8) {
+        for (int b=0; b<input.length; b++) {
+          if (b / len % width == 0) continue;
+          input[b] += input[b - len];
+        }
+      }
+      else if (bitsPerSample[0] <= 16) {
+        short[] s = (short[]) DataTools.makeDataArray(input, 2, false, !little);
+        for (int b=0; b<s.length; b++) {
+          if (b / len % width == 0) continue;
+          s[b] += s[b - len];
+        }
+        for (int i=0; i<s.length; i++) {
+          input[little ? i*2 : i*2 + 1] = (byte) (s[i] & 0xff);
+          input[little ? i*2 + 1 : i*2] = (byte) ((s[i] >> 8) & 0xff);
+        }
       }
     }
     else if (predictor != 1) {
