@@ -84,6 +84,9 @@ public class JPEGCodec extends BaseCodec implements Codec {
         IIORegistry registry = IIORegistry.getDefaultInstance();
         Object jpeg = registry.getServiceProviderByClass(jpegSpi);
 
+        if (jpeg == null) {
+          throw new FormatException("Cannot locate JPEG decoder");
+        }
         javax.imageio.ImageReader r =
           ((ImageReaderSpi) jpeg).createReaderInstance();
 
@@ -96,16 +99,12 @@ public class JPEGCodec extends BaseCodec implements Codec {
         b = r.read(0);
       }
       catch (IOException e) {
-        LogTools.println("An I/O error occurred while decompressing image. " +
-          "Stack dump follows:");
-        LogTools.trace(e);
-        return null;
+        throw new FormatException(
+          "An I/O error occurred while decompressing the image", e);
       }
       catch (ClassNotFoundException e) {
-        LogTools.println("An I/O error occurred while decompressing image. " +
-          "Stack dump follows:");
-        LogTools.trace(e);
-        return null;
+        throw new FormatException(
+          "An I/O error occurred while decompressing the image", e);
       }
     }
     byte[][] buf = ImageTools.getPixelBytes(b,
