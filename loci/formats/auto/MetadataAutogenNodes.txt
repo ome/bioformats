@@ -148,8 +148,8 @@ Float NdFilter                    the neutral-density filter value
 [PlaneInfo]
 the plane information for a particular X-Y plane (section) within a particular pixels set
 NOTE: The implementation of this method is optional as this is a transitional type. More information about the PlaneInfo type can be found <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
-200706: Image+/Pixels+/Plane
-2003FC: Image+/Pixels+/-
+200706: Image+/Pixels+/Plane+
+2003FC: Image+/Pixels+/Plane+/-
 Integer TheZ        the optical section index
 Integer TheC        the channel index
 Integer TheT        the timepoint
