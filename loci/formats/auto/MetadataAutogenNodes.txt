@@ -1,15 +1,39 @@
+#
+# MetadataAutogenNodes.txt
+#
+
+# LOCI Bio-Formats package for reading and converting biological file formats.
+# Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+# Eric Kjellman and Brian Loranger.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 [Image]
 an image in the metadata store with a particular index
-2004: Image+
+-
 200706: Image+
+2003FC: Image+
 String Name          the full name of the image
 String CreationDate  the creation date of the image
 String Description   the full description of the image
 
 [Experimenter]
 an experimenter in the metadata store with a particular index
-2004: CustomAttributes/Experimenter+
+-
 200706: Experimenter+
+2003FC: CA/Experimenter+
 String FirstName      the first name of the experimenter
 String LastName       the last name of the experimenter
 String Email          the e-mail address of the experimenter
@@ -19,59 +43,74 @@ Object Group          the group to which the experimenter belongs
 
 [Group]
 a group in the metadata store with a particular index
-2004: CustomAttributes/Group+
+-
 200706: Group+
+2003FC: CA/Group+
 String Name     the name of the group
 Object Leader   the leader of the group
 Object Contact  the contact for the group
 
 [Instrument]
 an instrument in the metadata store with a particular index
-2004: CustomAttributes/Instrument+
+-
 200706: Instrument+
+2003FC: CA/Instrument+
 String Manufacturer  the name of the manufacturer
 String Model         the model number of the instrument
 String SerialNumber  the serial number of the instrument
 String Type          the type of the instrument
 
 [Dimensions]
-a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value)
-2004: Image+/CustomAttributes/Dimensions
+a set of pixel dimensions in the metadata store with a particular index
+Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
 200706: Image+
-Float PixelSizeX  size of an individual pixel's X axis in microns
-Float PixelSizeY  size of an individual pixel's Y axis in microns
-Float PixelSizeZ  size of an individual pixel's Z axis in microns
-Float PixelSizeC  distance between adjacent wavelengths in nanometers
-Float PixelSizeT  distance between adjacent time points in seconds
+2003FC: Image+/CA/Dimensions
+Float PhysicalSizeX  size of an individual pixel's X axis in microns
+*2003FC: PixelSizeX
+Float PhysicalSizeY  size of an individual pixel's Y axis in microns
+*2003FC: PixelSizeY
+Float PhysicalSizeZ  size of an individual pixel's Z axis in microns
+*2003FC: PixelSizeZ
+Float TimeIncrement  distance between adjacent time points in seconds
+*2003FC: PixelSizeT
+Integer WaveStart    starting wavelength in nanometers
+*2003FC: -
+Float WaveIncrement  distance between adjacent wavelengths in nanometers
+*2003FC: PixelSizeC
 
 [DisplayROI]
 a 5D bounding box region of interest and a set of display options in the metadata store with a particular index
-2004: Image+/CustomAttributes/DisplayROI
+-
+200706: Image+/ROI
+2003FC: Image+/CA/DisplayROI
 Integer X0             the starting X coordinate
 Integer Y0             the starting Y coordinate
 Integer Z0             the starting Z coordinate
+Integer T0             the starting timepoint
 Integer X1             the ending X coordinate
 Integer Y1             the ending Y coordinate
 Integer Z1             the ending Z coordinate
-Integer T0             the starting timepoint
 Integer T1             the ending timepoint
 Object DisplayOptions  the display options to attach to this region of interest
 
 [Pixels]
 a pixels set in the metadata store with a particular image and pixels index
-2004: Image+/CustomAttributes/Pixels+
+-
+200706: Image+/Pixels+
+2003FC: Image+/CA/Pixels+
 Integer SizeX          size of an individual plane or section's X axis (width)
 Integer SizeY          size of an individual plane of section's Y axis (height)
 Integer SizeZ          number of optical sections per channel, per timepoint (per stack)
 Integer SizeC          number of channels per timepoint
 Integer SizeT          number of timepoints
-Integer PixelType      the pixel type; one of the enumerated static values present in {@link FormatReader}
+String PixelType       the pixel type
 Boolean BigEndian      if the pixels set is big endian or not
 String DimensionOrder  the dimension order of the pixels set
 
 [StageLabel]
 a stage label in the metadata store with a particular index
-2004: Image+/CustomAttributes/StageLabel+
+200706: Image+/StageLabel+
+2003FC: Image+/CA/StageLabel+
 String Name  a name for the stage label
 Float X      x coordinate of the stage
 Float Y      y coordinate of the stage
@@ -79,7 +118,9 @@ Float Z      z coordinate of the stage
 
 [LogicalChannel]
 a logical channel and physical channel in the metadata store for a particular pixels
-2004: Image+/CustomAttributes/LogicalChannel+
+-
+200706: Image+/LogicalChannel+
+2003FC: Image+/CA/LogicalChannel+
 String Name                       the logical channel's name
 Integer SamplesPerPixel           CTR TODO
 Integer Filter                    index of the filter associated with this channel
@@ -104,27 +145,33 @@ Integer ExWave                    the excitation wavelength
 String Fluor                      the fluorescence type
 Float NdFilter                    the neutral-density filter value
 
-#TODO 200706 only
-#[PlaneInfo]
-#the plane information for a particular X-Y plane (section) within a particular pixels set.<br><br>NOTE: The implementation of this method is optional as this is a transitional type. More information about the PlaneInfo type can be found <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
-#int TheZ            the optical section index
-#int TheC            the channel index
-#int TheT            the timepoint
-#Float Timestamp     the time of acquisition in seconds of the plane (section) with zero being the start of acquisition
-#Float ExposureTime  exposureTime exposure time in seconds.
+[PlaneInfo]
+the plane information for a particular X-Y plane (section) within a particular pixels set
+NOTE: The implementation of this method is optional as this is a transitional type. More information about the PlaneInfo type can be found <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
+200706: Image+/Pixels+/Plane
+#2003FC: -
+int TheZ            the optical section index
+int TheC            the channel index
+int TheT            the timepoint
+Float Timestamp     the time of acquisition in seconds of the plane (section) with zero being the start of acquisition
+Float ExposureTime  exposureTime exposure time in seconds.
 
 [ImagingEnvironment]
 the imaging environment for a particular image
-2004: Image+/CustomAttributes/ImagingEnvironment
+-
+200706: Image+/ImagingEnvironment
+2003FC: Image+/CA/ImagingEnvironment
 Float Temperature  CTR TODO
 Float AirPressure  CTR TODO
 Float Humidity     CTR TODO
 Float Co2Percent   CTR TODO
 
-#TODO these go with DisplayOptions
+#TODO figure out how to solve problem with multiple subtypes of ChannelSpecType 
 #[DisplayChannel]
 #information about the specified channel for a particular image
-#2004: Image+/CustomAttributes/DisplayChannel+
+#-
+#200706: ChannelSpecType
+#2003FC: Image+/CA/DisplayChannel+
 #Integer ChannelNumber  CTR TODO
 #Double BlackLevel      CTR TODO
 #Double WhiteLevel      CTR TODO
@@ -132,7 +179,9 @@ Float Co2Percent   CTR TODO
 
 [DisplayOptions]
 various display options for a particular pixels set
-2004: Image+/CustomAttributes/DisplayOptions
+-
+200706: Image+/DisplayOptions
+2003FC: Image+/CA/DisplayOptions
 Float Zoom              CTR TODO
 Boolean RedChannelOn    CTR TODO
 Boolean GreenChannelOn  CTR TODO
@@ -146,14 +195,18 @@ Integer TStop           CTR TODO
 
 [LightSource]
 a light source for a particular instrument
-2004: CustomAttributes/LightSource+
+-
+200706: Instrument+/LightSource+
+2003FC: CA/Instrument+/@LightSource+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String SerialNumber  CTR TODO
 
 [Laser]
 a laser for a particular instrument
-2004: CustomAttributes/Laser+
+-
+200706: Instrument+/LightSource+/Laser
+2003FC: CA/Instrument+/@LightSource+/@Laser
 String Type               CTR TODO
 String Medium             CTR TODO
 Integer Wavelength        CTR TODO
@@ -164,19 +217,25 @@ Float Power               CTR TODO
 
 [Filament]
 a filament for a particular instrument
-2004: CustomAttributes/Filament+
+-
+200706: Instrument+/LightSource+/Filament
+2003FC: CA/Instrument+/@LightSource+/@Filament
 String Type  CTR TODO
 Float Power  CTR TODO
 
 [Arc]
 an arc for a particular instrument
-2004: CustomAttributes/Arc+
+-
+200706: Instrument+/LightSource+/Arc
+2003FC: CA/Instrument+/@LightSource+/@Arc
 String Type  CTR TODO
 Float Power  CTR TODO
 
 [Detector]
 a detector for a particular instrument
-2004: CustomAttributes/Detector+
+-
+200706: Instrument+/Detector+
+2003FC: CA/Instrument+/@Detector+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String SerialNumber  CTR TODO
@@ -187,51 +246,68 @@ Float Offset         CTR TODO
 
 [Objective]
 an objective for a particular instrument
-2004: CustomAttributes/Objective+
+-
+200706: Instrument+/Objective+
+2003FC: CA/Instrument+/@Objective+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String SerialNumber  CTR TODO
 Float LensNA         CTR TODO
 Float Magnification  CTR TODO
 
-#TODO maybe combine this filter stuff better
-#[ExcitationFilter] 
-#an excitation filter for a particular instrument
-#2004: CustomAttributes/ExcitationFilter+
-#String Manufacturer  CTR TODO
-#String Model         CTR TODO
-#String LotNumber     CTR TODO
-#String Type          CTR TODO
-
-[Dichroic]
-a dichroic for a particular instrument
-2004: CustomAttributes/Dichroic+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String LotNumber     CTR TODO
-
-[EmissionFilter]
-an emission filter for a particular instrument
-2004: CustomAttributes/EmissionFilter+
+#TODO figure out how to reconcile the two filter models
+[ExcitationFilter] 
+an excitation filter for a particular instrument
+-
+#200706: ?
+2003FC: CA/ExcitationFilter+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String LotNumber     CTR TODO
 String Type          CTR TODO
 
+#TODO figure out how to reconcile the two filter models
+[Dichroic]
+a dichroic for a particular instrument
+-
+#200706: ?
+2003FC: CA/Dichroic+
+String Manufacturer  CTR TODO
+String Model         CTR TODO
+String LotNumber     CTR TODO
+
+#TODO figure out how to reconcile the two filter models
+[EmissionFilter]
+an emission filter for a particular instrument
+-
+#200706: ?
+2003FC: CA/EmissionFilter+
+String Manufacturer  CTR TODO
+String Model         CTR TODO
+String LotNumber     CTR TODO
+String Type          CTR TODO
+
+#TODO figure out how to reconcile the two filter models
 [FilterSet]
 a filter set for a particular instrument
-2004: CustomAttributes/FilterSet+
+-
+#200706: ?
+2003FC: CA/FilterSet+
 String Manufacturer  CTR TODO
 String Model         CTR TODO
 String LotNumber     CTR TODO
 
 [OTF]
-an OTF for a particular instrument
-2004: CustomAttributes/OTF+
-Integer SizeX               CTR TODO
-Integer SizeY               CTR TODO
-String PixelType            CTR TODO
-String Path                 CTR TODO
-Boolean OpticalAxisAverage  CTR TODO
+an optical transfer function for a particular instrument
+-
+200706: Instrument+/OTF+
+2003FC: CA/Instrument+/@OTF+
+Integer SizeX                CTR TODO
+Integer SizeY                CTR TODO
+String PixelType             CTR TODO
+String Path                  CTR TODO
+*200706: -
+Boolean OpticalAxisAveraged  CTR TODO
+*2003FC: OpticalAxisAverage
 
 [-]
