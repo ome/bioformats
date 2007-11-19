@@ -149,10 +149,10 @@ Float NdFilter                    the neutral-density filter value
 the plane information for a particular X-Y plane (section) within a particular pixels set
 NOTE: The implementation of this method is optional as this is a transitional type. More information about the PlaneInfo type can be found <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
 200706: Image+/Pixels+/Plane
-#2003FC: -
-int TheZ            the optical section index
-int TheC            the channel index
-int TheT            the timepoint
+2003FC: Image+/Pixels+/-
+Integer TheZ        the optical section index
+Integer TheC        the channel index
+Integer TheT        the timepoint
 Float Timestamp     the time of acquisition in seconds of the plane (section) with zero being the start of acquisition
 Float ExposureTime  exposureTime exposure time in seconds.
 
@@ -256,46 +256,46 @@ Float LensNA         CTR TODO
 Float Magnification  CTR TODO
 
 #TODO figure out how to reconcile the two filter models
-[ExcitationFilter] 
-an excitation filter for a particular instrument
--
+#[ExcitationFilter] 
+#an excitation filter for a particular instrument
+#-
 #200706: ?
-2003FC: CA/ExcitationFilter+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String LotNumber     CTR TODO
-String Type          CTR TODO
+#2003FC: CA/ExcitationFilter+
+#String Manufacturer  CTR TODO
+#String Model         CTR TODO
+#String LotNumber     CTR TODO
+#String Type          CTR TODO
 
 #TODO figure out how to reconcile the two filter models
-[Dichroic]
-a dichroic for a particular instrument
--
+#[Dichroic]
+#a dichroic for a particular instrument
+#-
 #200706: ?
-2003FC: CA/Dichroic+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String LotNumber     CTR TODO
-
+#2003FC: CA/Dichroic+
+#String Manufacturer  CTR TODO
+#String Model         CTR TODO
+#String LotNumber     CTR TODO
+#
 #TODO figure out how to reconcile the two filter models
-[EmissionFilter]
-an emission filter for a particular instrument
--
+#[EmissionFilter]
+#an emission filter for a particular instrument
+#-
 #200706: ?
-2003FC: CA/EmissionFilter+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String LotNumber     CTR TODO
-String Type          CTR TODO
-
+#2003FC: CA/EmissionFilter+
+#String Manufacturer  CTR TODO
+#String Model         CTR TODO
+#String LotNumber     CTR TODO
+#String Type          CTR TODO
+#
 #TODO figure out how to reconcile the two filter models
-[FilterSet]
-a filter set for a particular instrument
--
+#[FilterSet]
+#a filter set for a particular instrument
+#-
 #200706: ?
-2003FC: CA/FilterSet+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String LotNumber     CTR TODO
+#2003FC: CA/FilterSet+
+#String Manufacturer  CTR TODO
+#String Model         CTR TODO
+#String LotNumber     CTR TODO
 
 [OTF]
 an optical transfer function for a particular instrument

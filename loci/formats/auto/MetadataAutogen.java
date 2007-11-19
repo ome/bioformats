@@ -366,10 +366,11 @@ public class MetadataAutogen {
 
       // method body
       if (version != null) {
+        boolean noSupport = last.equals("-");
         String mappedName = getParamName(pi.name, version);
-        if (mappedName.equals("-")) {
+        if (noSupport || mappedName.equals("-")) {
           Hashtable vars = (Hashtable) versions.get(version);
-          lt.add("    // NB: " + pi.name +
+          lt.add("    // NB: " + (noSupport ? node.name : pi.name) +
             " unsupported for schema version " + vars.get("version"));
           lt.newline();
           lt.add("    return null;");
@@ -496,39 +497,48 @@ public class MetadataAutogen {
 
     // method body
     if (version != null) {
-      String varName = toVarName(last);
-      lt.add("    " + last + "Node " + varName +
-        " = get" + last + "(");
-      for (int i=0; i<isize; i++) {
-        Param p = (Param) indices.get(i);
-        lt.add(p.getArg(true, false, i == 0, false, null), "    ");
+      boolean noSupport = last.equals("-");
+      if (noSupport) {
+        Hashtable vars = (Hashtable) versions.get(version);
+        lt.add("    // NB: " + node.name +
+          " unsupported for schema version " + vars.get("version"));
+        lt.newline();
       }
-      lt.add(" true);", "      ");
-      lt.newline();
-      for (int i=0; i<psize; i++) {
-        Param p = (Param) node.params.get(i);
-        String mappedName = getParamName(p.name, version);
-        if (mappedName.equals("-")) {
-          Hashtable vars = (Hashtable) versions.get(version);
-          lt.add("    // NB: " + p.name +
-            " unsupported for schema version " + vars.get("version"));
-          lt.newline();
+      else {
+        String varName = toVarName(last);
+        lt.add("    " + last + "Node " + varName +
+          " = get" + last + "(");
+        for (int i=0; i<isize; i++) {
+          Param p = (Param) indices.get(i);
+          lt.add(p.getArg(true, false, i == 0, false, null), "    ");
         }
-        else {
-          String ante = "    if (" + toVarName(p.name) + " != null) ";
-          String cons = varName + ".set" + mappedName +
-            "(" + toVarName(p.name) + ");";
-          if (ante.length() + cons.length() <= 80) {
-            lt.add(ante + cons);
+        lt.add(" true);", "      ");
+        lt.newline();
+        for (int i=0; i<psize; i++) {
+          Param p = (Param) node.params.get(i);
+          String mappedName = getParamName(p.name, version);
+          if (mappedName.equals("-")) {
+            Hashtable vars = (Hashtable) versions.get(version);
+            lt.add("    // NB: " + p.name +
+              " unsupported for schema version " + vars.get("version"));
             lt.newline();
           }
           else {
-            lt.add(ante + "{");
-            lt.newline();
-            lt.add("      " + cons);
-            lt.newline();
-            lt.add("    }");
-            lt.newline();
+            String ante = "    if (" + toVarName(p.name) + " != null) ";
+            String cons = varName + ".set" + mappedName +
+              "(" + toVarName(p.name) + ");";
+            if (ante.length() + cons.length() <= 80) {
+              lt.add(ante + cons);
+              lt.newline();
+            }
+            else {
+              lt.add(ante + "{");
+              lt.newline();
+              lt.add("      " + cons);
+              lt.newline();
+              lt.add("    }");
+              lt.newline();
+            }
           }
         }
       }
