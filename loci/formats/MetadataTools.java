@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
-
 /**
  * A utility class for working with metadata objects,
  * including {@link MetadataStore}, {@link MetadataRetrieve},
@@ -95,15 +92,16 @@ public final class MetadataTools {
    * Adds the specified key/value pair as a new OriginalMetadata node
    * to the given OME-XML metadata object.
    * Does nothing unless the given object is an OME-XML metadata object.
-   * @param o An object of type {@link loci.formats.ome.OMEXMLMetadata}.
+   * @param omexmlMeta An object of type
+   *   {@link loci.formats.ome.OMEXMLMetadata}.
    * @param key Metadata key to populate.
    * @param value Metadata value corresponding to the specified key.
    */
-  public static void populateOriginalMetadata(Object o,
+  public static void populateOriginalMetadata(Object omexmlMeta,
     String key, String value)
   {
     ReflectedUniverse r = new ReflectedUniverse();
-    r.setVar("omexmlMeta", o);
+    r.setVar("omexmlMeta", omexmlMeta);
     r.setVar("key", key);
     r.setVar("value", value);
     try {
@@ -312,26 +310,6 @@ public final class MetadataTools {
     dest.setOTF(src.getOTFSizeX(ii), src.getOTFSizeY(ii),
       src.getOTFPixelType(ii), src.getOTFPath(ii),
       src.getOTFOpticalAxisAverage(ii), ii, ii, ii, ii);
-  }
-
-  // -- Helper classes --
-
-  /** Used by testRead to handle XML validation errors. */
-  private static class ValidationHandler implements ErrorHandler {
-    private boolean ok = true;
-    public boolean ok() { return ok; }
-    public void error(SAXParseException e) {
-      LogTools.println("error: " + e.getMessage());
-      ok = false;
-    }
-    public void fatalError(SAXParseException e) {
-      LogTools.println("fatal error: " + e.getMessage());
-      ok = false;
-    }
-    public void warning(SAXParseException e) {
-      LogTools.println("warning: " + e.getMessage());
-      ok = false;
-    }
   }
 
 }
