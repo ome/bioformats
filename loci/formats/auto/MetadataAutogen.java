@@ -797,46 +797,6 @@ public class MetadataAutogen {
     }
   }
 
-  /** A helper class for managing line output with intelligent wrapping. */
-  public static class LineTracker {
-    private static final int MAX_LEN = 80;
-    private Vector lines = new Vector();
-    private StringBuffer line = new StringBuffer();
-    private boolean wrapped = false;
-    public void newline() {
-      lines.add(line.toString());
-      line.setLength(0);
-      wrapped = false;
-    }
-    public void add(String s) { add(s, ""); }
-    public void add(String s, String lead) {
-      if (line.length() + s.length() > MAX_LEN) {
-        newline();
-        wrapped = true;
-        s = lead + s.trim();
-      }
-      line.append(s);
-    }
-    public void addTokens(String s, String lead) {
-      StringTokenizer st = new StringTokenizer(s);
-      String lastToken = st.hasMoreTokens() ? st.nextToken() : null;
-      if (lastToken != null) add(lastToken);
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        if (!lastToken.endsWith("(")) token = " " + token;
-        add(token, lead);
-        lastToken = token;
-      }
-    }
-    public boolean hasWrapped() { return wrapped; }
-    public String toString() {
-      StringBuffer sb = new StringBuffer();
-      for (int i=0; i<lines.size(); i++) sb.append(lines.get(i) + "\n");
-      if (line.length() > 0) sb.append(line);
-      return sb.toString();
-    }
-  }
-
   /** A helper class for managing open output files. */
   public static class OutFiles {
     private Hashtable files = new Hashtable();
