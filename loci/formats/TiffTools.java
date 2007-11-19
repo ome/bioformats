@@ -1103,7 +1103,9 @@ public final class TiffTools {
         }
       }
 
-      //samplesPerPixel = stripOffsets.length;
+      for (int i=0; i<stripByteCounts.length; i++) {
+        stripByteCounts[i] *= 2;
+      }
     }
 
     if (lastBitsZero) {
