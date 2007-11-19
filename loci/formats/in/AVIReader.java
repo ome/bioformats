@@ -69,6 +69,7 @@ public class AVIReader extends FormatReader {
   private byte[][] lut = null;
 
   private byte[] lastImage;
+  private int lastImageNo;
 
   // -- Constructor --
 
@@ -80,12 +81,6 @@ public class AVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return new String(block).startsWith("RIFF");
-  }
-
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    return lut;
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -169,6 +164,7 @@ public class AVIReader extends FormatReader {
     bmpBitsPerPixel = 0;
     lut = null;
     lastImage = null;
+    lastImageNo = -1;
   }
 
   // -- Internal FormatReader API methods --
@@ -184,6 +180,7 @@ public class AVIReader extends FormatReader {
 
     offsets = new Vector();
     lengths = new Vector();
+    lastImageNo = -1;
 
     String listString;
 
@@ -456,13 +453,13 @@ public class AVIReader extends FormatReader {
     core.imageCount[0] = offsets.size();
 
     core.rgb[0] = bmpBitsPerPixel > 8 || (bmpCompression != 0);
+    core.indexed[0] = false;
     core.sizeZ[0] = 1;
-    core.sizeC[0] = core.rgb[0] ? 3 : 1;
     core.sizeT[0] = core.imageCount[0];
-    core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
     core.littleEndian[0] = true;
     core.interleaved[0] = bmpBitsPerPixel != 16;
-    core.indexed[0] = bmpBitsPerPixel == 8 && bmpCompression != 0;
+    core.sizeC[0] = core.rgb[0] ? 3 : 1;
+    core.currentOrder[0] = core.sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
 
@@ -499,26 +496,24 @@ public class AVIReader extends FormatReader {
     in.read(b);
     if (bmpCompression == MSRLE) {
       Object[] options = new Object[2];
-      options[1] = lastImage;
+      options[1] = (lastImageNo == no - 1) ? lastImage : null;
       options[0] = new int[] {core.sizeX[0], core.sizeY[0]};
       MSRLECodec codec = new MSRLECodec();
       buf = codec.decompress(b, options);
       lastImage = buf;
-      if (no == core.imageCount[0] - 1) lastImage = null;
-      return buf;
+      lastImageNo = no;
     }
     else if (bmpCompression == MS_VIDEO) {
       Object[] options = new Object[4];
       options[0] = new Integer(bmpBitsPerPixel);
       options[1] = new Integer(core.sizeX[0]);
       options[2] = new Integer(core.sizeY[0]);
-      options[3] = lastImage;
+      options[3] = (lastImageNo == no - 1) ? lastImage : null;
 
       MSVideoCodec codec = new MSVideoCodec();
       buf = codec.decompress(b, options);
       lastImage = buf;
-      if (no == core.imageCount[0] - 1) lastImage = null;
-      return buf;
+      lastImageNo = no;
     }
     /*
     else if (bmpCompression == CINEPAK) {
@@ -533,7 +528,17 @@ public class AVIReader extends FormatReader {
       return buf;
     }
     */
-    throw new FormatException("Unsupported compression : " + bmpCompression);
+    else {
+      throw new FormatException("Unsupported compression : " + bmpCompression);
+    }
+    b = buf;
+    buf = new byte[b.length * core.sizeC[0]];
+    for (int i=0; i<b.length; i++) {
+      buf[i*core.sizeC[0]] = lut[0][b[i] & 0xff];
+      buf[i*core.sizeC[0] + 1] = lut[1][b[i] & 0xff];
+      buf[i*core.sizeC[0] + 2] = lut[2][b[i] & 0xff];
+    }
+    return buf;
   }
 
 }
