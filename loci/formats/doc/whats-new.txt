@@ -1,3 +1,17 @@
+2007 Nov 20:
+* Fixed bugs in ND2, Leica LIF, DICOM, Zeiss ZVI, Zeiss LSM, FV1000 OIB,
+  FV1000 OIF, BMP, Evotec Flex, BioRad PIC, Slidebook, TIFF
+* Added new ImageJ plugins to slice stacks and do "smart" RGB merging
+* Added "windowless" importer plugin - collects all import parameters from
+  IJ_Prefs.txt, without prompting the user
+* Improved stack slicing and colorizing logic in importer plugin
+* Added support for DICOM files compressed with lossless JPEG
+* Added support for signed pixel data
+* Added support for Imaris 5.5 files
+* Added 4 channel merging to importer plugin
+* Added API methods for reading subimages
+* Major updates to the 4D Data Browser
+
 2007 Oct 17:
 * Critical OME-TIFF bugfixes
 * Fixed bugs in Leica LIF, Zeiss ZVI, TIFF, DICOM, and AVI readers
