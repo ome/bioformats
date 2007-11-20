@@ -277,7 +277,11 @@ public class PictReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    buf = ImageTools.getBytes(openImage(no), false, no % 3);
+    FormatTools.checkBufferSize(this, buf.length);
+    byte[][] b = ImageTools.getPixelBytes(openImage(no), core.littleEndian[0]);
+    for (int i=0; i<b.length; i++) {
+      System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
+    }
     return buf;
   }
 

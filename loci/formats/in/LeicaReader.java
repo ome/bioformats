@@ -986,7 +986,6 @@ public class LeicaReader extends FormatReader {
     byte[] f = new byte[4];
     for (int i=0; i<numSeries; i++) {
       core.orderCertain[i] = true;
-      core.interleaved[i] = true;
 
       in.seek(0);
       in.read(f);
@@ -999,36 +998,14 @@ public class LeicaReader extends FormatReader {
       core.currentOrder[i] = core.sizeC[i] == 1 ? "XYZTC" : "XYCZT";
       if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
 
-      switch (bpp) {
-        case 1:
-          core.pixelType[i] = FormatTools.UINT8;
-          break;
-        case 2:
-          core.pixelType[i] = FormatTools.UINT16;
-          break;
-        case 3:
-          core.pixelType[i] = FormatTools.INT8;
-          break;
-        case 4:
-          core.pixelType[i] = FormatTools.INT32;
-          break;
-        case 6:
-          core.pixelType[i] = FormatTools.INT16;
-          break;
-        case 8:
-          core.pixelType[i] = FormatTools.DOUBLE;
-          break;
-      }
-
-      core.rgb[i] =
-        core.imageCount[i] != core.sizeC[i] * core.sizeZ[i] * core.sizeT[i];
-
       Integer ii = new Integer(i);
 
-      core.rgb[i] = false;
-      //core.sizeC[i] *= 3;
-
-      core.indexed[i] = true;
+      tiff[i][0].setId((String) files[i].get(0));
+      core.indexed[i] = tiff[i][0].isIndexed();
+      core.rgb[i] = tiff[i][0].isRGB();
+      if (core.rgb[i]) core.sizeC[i] *= 3;
+      core.interleaved[i] = tiff[i][0].isInterleaved();
+      core.pixelType[i] = tiff[i][0].getPixelType();
       core.falseColor[i] = true;
       core.metadataComplete[i] = true;
 

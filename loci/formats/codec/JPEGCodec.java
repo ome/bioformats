@@ -26,6 +26,7 @@ package loci.formats.codec;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.*;
 import javax.imageio.stream.ImageInputStream;
@@ -75,7 +76,21 @@ public class JPEGCodec extends BaseCodec implements Codec {
     try {
       while (in.read() != (byte) 0xff || in.read() != (byte) 0xd8);
       in.seek(in.getFilePointer() - 2);
-      b = ImageIO.read(new BufferedInputStream(in));
+
+      Iterator it = ImageIO.getImageReadersBySuffix("jpg");
+      javax.imageio.ImageReader r = null;
+      String cname = "com.sun.imageio.plugins.jpeg.JPEGImageReader";
+      while (it.hasNext()) {
+        Object tmp = it.next();
+        if (tmp.getClass().getName().equals(cname)) {
+          r = (javax.imageio.ImageReader) tmp;
+        }
+      }
+
+      if (r == null) throw new IOException("");
+
+      r.setInput(ImageIO.createImageInputStream(new BufferedInputStream(in)));
+      b = r.read(0);
     }
     catch (IOException exc) {
       try {
@@ -94,7 +109,8 @@ public class JPEGCodec extends BaseCodec implements Codec {
         while (in.read() != (byte) 0xff || in.read() != (byte) 0xd8);
         in.seek(in.getFilePointer() - 2);
 
-        ImageInputStream ii = ImageIO.createImageInputStream(in);
+        ImageInputStream ii =
+          ImageIO.createImageInputStream(new BufferedInputStream(in));
         r.setInput(ii);
         b = r.read(0);
       }

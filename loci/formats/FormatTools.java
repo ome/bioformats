@@ -459,7 +459,8 @@ public final class FormatTools {
       (r.isIndexed() ? 1 : r.getRGBChannelCount()) *
       getBytesPerPixel(r.getPixelType());
     if (size > len) {
-      throw new FormatException("Buffer too small.");
+      throw new FormatException("Buffer too small (got " + len +
+        ", expected " + size + ").");
     }
   }
 

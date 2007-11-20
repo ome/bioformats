@@ -178,7 +178,7 @@ public class PCIReader extends FormatReader {
       core.rgb[0] = core.sizeC[0] > 1;
       core.interleaved[0] = false;
       core.currentOrder[0] = "XYCZT";
-      core.littleEndian[0] = true;
+      core.littleEndian[0] = false;
       core.indexed[0] = false;
       core.falseColor[0] = false;
       core.metadataComplete[0] = true;

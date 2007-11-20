@@ -91,7 +91,7 @@ public abstract class BaseTiffReader extends FormatReader {
       int next = 0;
       for (int j=0; j<table.length; j++) {
         for (int i=0; i<table[0].length; i++) {
-          table[j][i] = (byte) (colorMap[next++] & 0xff);
+          table[j][i] = (byte) ((colorMap[next++] >> 8) & 0xff);
         }
       }
 
@@ -525,8 +525,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
     int samples = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1);
-    core.rgb[0] = samples > 1 || p == TiffTools.RGB_PALETTE ||
-      p == TiffTools.CFA_ARRAY || p == TiffTools.RGB;
+    core.rgb[0] = samples > 1 || p == TiffTools.RGB;
     core.interleaved[0] = false;
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
@@ -538,8 +537,7 @@ public abstract class BaseTiffReader extends FormatReader {
     core.sizeC[0] = core.rgb[0] ? samples : 1;
     core.sizeT[0] = ifds.length;
     core.metadataComplete[0] = true;
-    core.indexed[0] = TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE &&
+    core.indexed[0] = p == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
     if (core.sizeC[0] == 1 && !core.indexed[0]) core.rgb[0] = false;
     core.falseColor[0] = false;

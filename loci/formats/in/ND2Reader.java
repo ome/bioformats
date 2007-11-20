@@ -729,6 +729,11 @@ public class ND2Reader extends FormatReader {
       core.imageCount[0] = core.sizeC[0] * core.sizeZ[0] * core.sizeT[0];
     }
 
+    if (core.imageCount[0] == 0) core.imageCount[0] = 1;
+    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
+    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+
     Arrays.fill(core.sizeZ, core.sizeZ[0]);
     Arrays.fill(core.sizeT, core.sizeT[0]);
     Arrays.fill(core.imageCount, core.imageCount[0]);
@@ -737,15 +742,22 @@ public class ND2Reader extends FormatReader {
     core.pixelType[0] = FormatTools.UINT8;
     offsets = new long[1][2];
     offsets[0][0] = ((Long) vs.get(0)).longValue();
-    offsets[0][1] = ((Long) vs.get(1)).longValue();
+    if (offsets[0].length > 1 && vs.size() > 1) {
+      offsets[0][1] = ((Long) vs.get(1)).longValue();
+    }
     BufferedImage img = openImage(0);
     Arrays.fill(core.sizeX, img.getWidth());
     Arrays.fill(core.sizeY, img.getHeight());
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    int c = img.getRaster().getNumBands() * core.sizeC[0];
+    int numBands = img.getRaster().getNumBands();
+    int c = numBands > 1 ? numBands : core.sizeC[0];
     Arrays.fill(core.sizeC, c);
-    Arrays.fill(core.rgb, img.getRaster().getNumBands() > 1);
+    Arrays.fill(core.rgb, numBands > 1);
     Arrays.fill(core.pixelType, ImageTools.getPixelType(img));
+
+    if (!core.rgb[0] && core.imageCount[0] == 1) {
+      Arrays.fill(core.sizeC, 1);
+    }
 
     if (vs.size() < core.imageCount[0]) {
       Arrays.fill(core.imageCount, vs.size());

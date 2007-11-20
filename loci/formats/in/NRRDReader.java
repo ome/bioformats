@@ -90,10 +90,15 @@ public class NRRDReader extends FormatReader {
     return helper.openBytes(no, buf);
   }
 
+  // -- IFormatHandler API methods --
+
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
     super.close();
     if (helper != null) helper.close();
+    helper = null;
+    dataFile = encoding = null;
+    offset = 0;
   }
 
   // -- Internal FormatReader API methods --
