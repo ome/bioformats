@@ -201,7 +201,15 @@ public class MetadataAutogen {
         // path to XML element for a particular schema version
         String version = line.substring(0, colon).trim();
         String path = line.substring(colon + 1).trim();
-        node.paths.put(version, path);
+        if (version.equalsIgnoreCase("Default")) {
+          // populate all known versions with the default
+          Enumeration en = versions.keys();
+          while (en.hasMoreElements()) {
+            String key = (String) en.nextElement();
+            if (!node.paths.contains(key)) node.paths.put(key, path);
+          }
+        }
+        else node.paths.put(version, path);
         continue;
       }
 
@@ -271,7 +279,7 @@ public class MetadataAutogen {
       String key = (String) e.nextElement();
       String value = (String) node.paths.get(key);
       // OME-XML implementation
-      doHelpers("ome/OMEXML" + key + "Metadata.java", value);
+      doHelpers("ome/OMEXML" + key + "Metadata.java", value, key);
     }
   }
 
@@ -378,8 +386,7 @@ public class MetadataAutogen {
         }
         else {
           String varName = toVarName(last);
-          lt.add("    " + last + "Node " + varName +
-            " = get" + last + "(");
+          lt.add("    " + last + "Node " + varName + " = get" + last + "(");
           for (int j=0; j<isize; j++) {
             Param pj = (Param) indices.get(j);
             lt.add(pj.getArg(true, false, j == 0, false, null), "      ");
@@ -387,7 +394,8 @@ public class MetadataAutogen {
           lt.add(" false);", "      ");
           lt.newline();
           String ante = "    return " + varName + " == null ? null :";
-          String cons = varName + ".get" + pi.name + "();";
+          String cons = varName + "." +
+            (pi.type.equals("Boolean") ? "is" : "get") + mappedName + "();";
           if (ante.length() + cons.length() <= 79) {
             lt.add(ante + " " + cons);
             lt.newline();
@@ -552,7 +560,9 @@ public class MetadataAutogen {
   }
 
   /** Generates helper methods for the given node and source file. */
-  private static void doHelpers(String id, String path) throws IOException {
+  private static void doHelpers(String id,
+    String path, String version) throws IOException
+  {
     // only generate each path's helper method once
     if (helpers.contains(id + ":" + path)) return;
     helpers.add(id + ":" + path);
@@ -572,6 +582,12 @@ public class MetadataAutogen {
     String last = getLastPathElement(path);
     Vector indices = getIndices(path);
     int isize = indices.size();
+
+    if (last.equals("-")) return; // unsupported node type for this version
+
+    // parse version-specific configuration
+    Hashtable vars = (Hashtable) versions.get(version);
+    boolean legacy = "true".equals(vars.get("legacy"));
 
     // method signature
     lt.add("  // " + path);
@@ -626,11 +642,18 @@ public class MetadataAutogen {
       var = toVarName(token);
       lt.add("    // get " + token + " node");
       lt.newline();
+      boolean ca = pVar.equals("ca");
       if (token.equals("CA")) token = "CustomAttributes";
       if (multi) {
         lt.add("    ndx = i2i(" + var + "Index);");
         lt.newline();
-        lt.add("    count = " + pVar + ".count" + token + "List();");
+        if (ca) {
+          lt.add("    count = " + pVar + ".countCAList(\"" + token + "\");");
+        }
+        else if (legacy) {
+          lt.add("    count = " + pVar + ".count" + token + "List();");
+        }
+        else lt.add("    count = " + pVar + ".get" + token + "Count();");
         lt.newline();
         lt.add("    if (!create && ndx >= count) return null;");
         lt.newline();
@@ -648,15 +671,38 @@ public class MetadataAutogen {
             token + "Node(" + pVar + ");");
           lt.newline();
         }
-        lt.add("    list = " + pVar + ".get" + token + "List();");
+        if (ca) {
+          lt.add("    list = " + pVar + "." + "getCAList(\"" + token + "\");");
+        }
+        else lt.add("    list = " + pVar + ".get" + token + "List();");
         lt.newline();
         lt.add("    " + token + "Node " + var +
           " = (" + token + "Node) list.get(ndx);");
         lt.newline();
       }
       else {
-        lt.add("    " + token + "Node " + var +
-          " = " + pVar + ".get" + token + "();");
+        if (ca || ref) {
+          lt.add("    " + token + "Node " + var + " = null;");
+          lt.newline();
+          if (ca) lt.add("    count = ca.countCAList(\"" + token + "\");");
+          else lt.add("    count = " + pVar + ".count" + token + "List();");
+          lt.newline();
+          lt.add("    if (count >= 1) {");
+          lt.newline();
+          lt.add("      " + var + " = (" + token + "Node)");
+          if (ca) {
+            lt.add(" ca.getCAList(\"" + token + "\").get(0);", "        ");
+          }
+          else {
+            lt.add(" " + pVar + ".get" + token + "List().get(0);", "        ");
+          }
+          lt.newline();
+          lt.add("    }");
+        }
+        else {
+          lt.add("    " + token + "Node " + var +
+            " = " + pVar + ".get" + token + "();");
+        }
         lt.newline();
         lt.add("    if (" + var + " == null) {");
         lt.newline();
