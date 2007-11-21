@@ -474,7 +474,7 @@ public final class FormatTools {
     IFormatReader[] underlying = r.getUnderlyingReaders();
     if (underlying != null) {
       for (int i=0; i<underlying.length; i++) {
-        if (underlying[i].getClass().equals(c)) return underlying[i];
+        if (underlying[i].getClass().isInstance(c)) return underlying[i];
       }
       for (int i=0; i<underlying.length; i++) {
         IFormatReader t = getReader(underlying[i], c);
