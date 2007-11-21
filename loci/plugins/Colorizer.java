@@ -91,8 +91,9 @@ public class Colorizer implements PlugInFilter {
     }
     else {
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
-      merge = Boolean.parseBoolean(Macro.getValue(arg, "merge", "true"));
-      color = Boolean.parseBoolean(Macro.getValue(arg, "colorize", "false"));
+      merge = new Boolean(Macro.getValue(arg, "merge", "true")).booleanValue();
+      color =
+        new Boolean(Macro.getValue(arg, "colorize", "false")).booleanValue();
       colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "0"));
       mergeOption = Macro.getValue(arg, "merge_option", null);
     }
@@ -206,8 +207,13 @@ public class Colorizer implements PlugInFilter {
     }
 
     newImp.setTitle(imp.getTitle());
-    newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
-      nSlices, nTimes);
+    if (newImp instanceof CustomImage) {
+      newImp.setDimensions(nChannels, nSlices, nTimes);
+    }
+    else {
+      newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
+        nSlices, nTimes);
+    }
     newImp.show();
     imp.close();
   }

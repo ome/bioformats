@@ -99,8 +99,6 @@ public class Slicer implements PlugInFilter {
     int sizeC = imp.getNChannels();
     int sizeT = imp.getNFrames();
 
-    if (imp instanceof CustomImage) sliceC = false;
-
     int slicesPerStack = stack.getSize();
     if (sliceZ) slicesPerStack /= sizeZ;
     if (sliceC) slicesPerStack /= sizeC;
@@ -142,7 +140,7 @@ public class Slicer implements PlugInFilter {
       ImagePlus p = new ImagePlus(title, newStacks[i]);
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
-      if (imp instanceof CustomImage) {
+      if (imp instanceof CustomImage && !sliceC) {
         CustomImage c = new CustomImage(p, stackOrder, sliceZ ? 1 : sizeZ,
           sliceT ? 1 : sizeT, sliceC ? 1 : sizeC, true);
         c.show();
