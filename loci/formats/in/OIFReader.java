@@ -355,7 +355,7 @@ public class OIFReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null);
+    store.setImage(null, null, null, null);
 
     switch (imageDepth) {
       case 1:

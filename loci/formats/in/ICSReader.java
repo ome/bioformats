@@ -372,9 +372,7 @@ public class ICSReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
-    String fname = (String) getMeta("filename");
-    if (fname == null) fname = currentId;
-    store.setImage(fname, null, null, null);
+    store.setImage(null, null, null, null);
 
     // populate Pixels element
 

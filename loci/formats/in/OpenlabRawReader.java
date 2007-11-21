@@ -182,7 +182,7 @@ public class OpenlabRawReader extends FormatReader {
         core.pixelType[0] = FormatTools.FLOAT;
     }
 
-    store.setImage((String) getMeta("Image name"),
+    store.setImage(null,
       timestamp == null ? null : sdf.format(timestamp), null, null);
     FormatTools.populatePixels(store, this);
     for (int i=0; i<core.sizeC[0]; i++) {

@@ -767,7 +767,7 @@ public class BioRadReader extends FormatReader {
     MetadataStore store = getMetadataStore();
 
     // populate Image element
-    store.setImage(name, null, null, null);
+    store.setImage(null, null, null, null);
 
     // populate Pixels element
     in.seek(14);

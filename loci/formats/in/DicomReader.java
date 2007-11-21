@@ -408,7 +408,7 @@ public class DicomReader extends FormatReader {
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
-    store.setImage(currentId, stamp, (String) getMeta("Image Type"), null);
+    store.setImage(null, stamp, (String) getMeta("Image Type"), null);
 
     store.setInstrument(
       (String) getMeta("Manufacturer"),

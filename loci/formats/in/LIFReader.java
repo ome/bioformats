@@ -466,7 +466,7 @@ public class LIFReader extends FormatReader {
       if (seriesName == null || seriesName.trim().length() == 0) {
         seriesName = "Series " + (i + 1);
       }
-      store.setImage(seriesName, null, null, ii);
+      store.setImage(null, null, null, ii);
 
       FormatTools.populatePixels(store, this);
 

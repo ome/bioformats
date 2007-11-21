@@ -185,7 +185,7 @@ public class PCIReader extends FormatReader {
 
       MetadataStore store = getMetadataStore();
       FormatTools.populatePixels(store, this);
-      store.setImage(currentId, null, null, null);
+      store.setImage(null, null, null, null);
       for (int i=0; i<core.sizeC[0]; i++) {
         store.setLogicalChannel(i, null, null, null, null, null, null, null,
           null, null, null, null, null, null, null, null, null, null, null,

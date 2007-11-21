@@ -636,8 +636,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
       // populate Image element
 
-      store.setImage(getImageName(),
-        creationDate, getImageDescription(), null);
+      store.setImage(null, creationDate, getImageDescription(), null);
 
       // populate Logical Channel elements
       for (int i=0; i<getSizeC(); i++) {

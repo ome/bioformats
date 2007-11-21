@@ -609,7 +609,7 @@ public class PerkinElmerReader extends FormatReader {
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       time = fmt.format(date);
     }
-    store.setImage(currentId, time, null, null);
+    store.setImage(null, time, null, null);
 
     // populate Pixels element
     FormatTools.populatePixels(store, this);

@@ -218,7 +218,7 @@ public class MRCReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null);
+    store.setImage(null, null, null, null);
     FormatTools.populatePixels(store, this);
 
     Float x = new Float(xlen / mx);

@@ -343,7 +343,7 @@ public class DeltavisionReader extends FormatReader {
 
     if (title == null) title = "";
     title = title.length() == 0 ? null : title;
-    store.setImage(id, null, title, null);
+    store.setImage(null, null, title, null);
 
     // Run through every timeslice, for each wavelength, for each z section
     // and fill in the Extended Header information array for that image

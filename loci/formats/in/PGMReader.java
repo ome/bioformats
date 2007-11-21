@@ -146,7 +146,7 @@ public class PGMReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null);
+    store.setImage(null, null, null, null);
     FormatTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeC[0]; i++) {

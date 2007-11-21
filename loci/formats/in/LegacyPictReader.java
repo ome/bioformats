@@ -110,7 +110,7 @@ public class LegacyPictReader extends FormatReader {
     core.falseColor[0] = false;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null);
+    store.setImage(null, null, null, null);
     FormatTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeC[0]; i++) {

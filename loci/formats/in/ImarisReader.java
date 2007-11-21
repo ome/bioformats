@@ -172,7 +172,7 @@ public class ImarisReader extends FormatReader {
 
     core.pixelType[0] = FormatTools.UINT8;
 
-    store.setImage(currentId, null, null, null);
+    store.setImage(null, null, null, null);
     FormatTools.populatePixels(store, this);
 
     store.setDimensions(new Float(dx), new Float(dy), new Float(dz),

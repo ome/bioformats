@@ -476,7 +476,7 @@ public class AVIReader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
 
-    store.setImage(currentId, null, null, null);
+    store.setImage(null, null, null, null);
 
     FormatTools.populatePixels(store, this);
 

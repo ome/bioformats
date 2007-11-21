@@ -361,7 +361,7 @@ public class PrairieReader extends FormatReader {
           SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
           date = fmt.format(d);
         }
-        store.setImage(currentId, date, null, null);
+        store.setImage(null, date, null, null);
 
         String laserPower = (String) getMeta("laserPower_0");
 

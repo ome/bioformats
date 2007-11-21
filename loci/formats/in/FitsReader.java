@@ -143,7 +143,7 @@ public class FitsReader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
 
-    store.setImage(currentId, null, null, null);
+    store.setImage(null, null, null, null);
     FormatTools.populatePixels(store, this);
 
     store.setLogicalChannel(0, null, null, null, null, null, null, null, null,
