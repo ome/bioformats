@@ -644,6 +644,11 @@ public abstract class FormatReader extends FormatHandler
     return getMetadataStore().getRoot();
   }
 
+  /* @see IFormatReader#getUnderlyingReaders() */
+  public IFormatReader[] getUnderlyingReaders() {
+    return null;
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String, boolean) */

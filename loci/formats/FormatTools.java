@@ -464,4 +464,24 @@ public final class FormatTools {
     }
   }
 
+  // -- Utility methods -- other
+
+  /**
+   * Recursively look for the first underlying reader that is an
+   * instance of the given class.
+   */
+  public static IFormatReader getReader(IFormatReader r, Class c) {
+    IFormatReader[] underlying = r.getUnderlyingReaders();
+    if (underlying != null) {
+      for (int i=0; i<underlying.length; i++) {
+        if (underlying[i].getClass().equals(c)) return underlying[i];
+      }
+      for (int i=0; i<underlying.length; i++) {
+        IFormatReader t = getReader(underlying[i], c);
+        if (t != null) return t;
+      }
+    }
+    return null;
+  }
+
 }

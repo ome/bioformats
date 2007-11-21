@@ -518,6 +518,11 @@ public class ImageReader implements IFormatReader {
     return getReader().getMetadataStoreRoot();
   }
 
+  /* @see IFormatReader#getUnderlyingReaders() */
+  public IFormatReader[] getUnderlyingReaders() {
+    return getReaders();
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

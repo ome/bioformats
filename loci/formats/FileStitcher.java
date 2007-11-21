@@ -716,6 +716,11 @@ public class FileStitcher implements IFormatReader {
     return reader.getMetadataStoreRoot();
   }
 
+  /* @see IFormatReader#getUnderlyingReaders() */
+  public IFormatReader[] getUnderlyingReaders() {
+    return readers;
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

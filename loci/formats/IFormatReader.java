@@ -360,6 +360,12 @@ public interface IFormatReader extends IFormatHandler {
    */
   Object getMetadataStoreRoot();
 
+  /**
+   * Retrieves all underlying readers.  Returns null if there are no underlying
+   * readers.
+   */
+  IFormatReader[] getUnderlyingReaders();
+
   // -- Deprecated API methods --
 
   /** @deprecated Replaced by {@link #getImageCount()} */

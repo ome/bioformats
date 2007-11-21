@@ -311,6 +311,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMetadataStoreRoot();
   }
 
+  public IFormatReader[] getUnderlyingReaders() {
+    return new IFormatReader[] {reader};
+  }
+
   // -- IFormatHandler API methods --
 
   public boolean isThisType(String name) {
