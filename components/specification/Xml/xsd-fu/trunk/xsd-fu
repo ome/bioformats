@@ -76,6 +76,9 @@ def main():
 			package = argument
 	if outputDirectory is None:
 		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+	    print "Output directory '%s' does not exist!" % outputDirectory
+	    sys.exit(1)
 
 	model = parseXmlSchema(args[0])
 	fu = TemplateInfo(outputDirectory, package)
@@ -95,10 +98,10 @@ def debugMain():
 	package = DEFAULT_PACKAGE
 
 	model = parseXmlSchema("tmp/ome.xsd")
-	fu = Fu(outputDirectory, package)
+	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
-		if obj.name == "Experimenter":
+		if obj.name == "Laser":
 			print " +--", obj.name
 			for prop in obj.properties.values():
 				print " +---- %s(%s) [%d:%d]" % \
@@ -109,3 +112,4 @@ def debugMain():
 if __name__ == '__main__':
 #	debugMain()
 	main()
+

@@ -38,22 +38,60 @@
 
 package ${fu.package};
 
+import ome.xml.DOMUtil;
+import ome.xml.OMEXMLNode;
+
 import java.util.Vector;
+import java.util.List;
+
 import org.w3c.dom.Element;
 
 public class ${klass.name}Node extends ${klass.javaBase}
 {
-	// -- Constructor --
+	// -- Constructors --
 	
+	/** Constructs a ${klass.name} node with an associated DOM element. */
 	public ${klass.name}Node(Element element)
 	{
 		super(element);
 	}
-	
+
+	/**
+	 * Constructs a ${klass.name} node with an associated DOM element beneath
+	 * a given parent.
+	 */
+	public ${klass.name}Node(OMEXMLNode parent)
+	{
+		this(parent, true);
+	}
+
+	/**
+	 * Constructs a ${klass.name} node with an associated DOM element beneath
+	 * a given parent.
+	 */
+	public ${klass.name}Node(OMEXMLNode parent, boolean attach)
+	{
+		super(DOMUtil.createChild(parent.getDOMElement(),
+		                          "${klass.name}", attach));
+	}
+
 	// -- ${klass.name} API methods --
 {% for prop in klass.properties.values() %}\
   {% choose %}\
-    {% when prop.isAttribute and prop.type[-2:] == "ID" and prop.name not in fu.DO_NOT_PROCESS %}
+    {% when prop.isReference %}
+	// Virtual, inferred back reference ${prop.name}
+	public List get${prop.javaType}List()
+	{
+		return getReferringNodes("${prop.javaType}");
+	}
+	
+	public int count${prop.javaType}List()
+	{
+		return getReferringCount("${prop.javaType}");
+	}
+    {% end %}\
+    {% when prop.isAttribute and prop.type[-2:] == "ID" and \
+       prop.name not in fu.DO_NOT_PROCESS %}
 	// Attribute which is an OME XML "ID"
 	public ${prop.javaType} get${prop.name}()
 	{
@@ -140,3 +178,4 @@ public class ${klass.name}Node extends ${klass.javaBase}
 {% end %}\
 	}
 }
+

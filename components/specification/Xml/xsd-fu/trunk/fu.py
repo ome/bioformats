@@ -29,6 +29,8 @@ an OME XML (http://www.ome.xml.org) XSD document.
 
 import logging
 import re
+import os
+
 from generateDS.generateDS import *
 from xml import sax
 
@@ -43,6 +45,10 @@ except ImportError:
 	from datetime import datetime
 	def now():
 		return datetime.now()
+
+# Default logger configuration
+#logging.basicConfig(level=logging.DEBUG,
+#                    format='%(asctime)s %(levelname)s %(message)s')
 
 # A global mapping from XSD Schema types and Java types
 JAVA_TYPE_MAP = {
@@ -73,7 +79,7 @@ DEFAULT_BASE_CLASS = "OMEXMLNode"
 # The default Java package for OME XML model objects.
 DEFAULT_PACKAGE = "org.openmicroscopy.xml2007"
 
-# The base template for class processing.
+# The default template for class processing.
 CLASS_TEMPLATE = "templates/Class.template"
 
 class ModelProcessingError(Exception):
@@ -81,17 +87,44 @@ class ModelProcessingError(Exception):
 	Raised when there is an error during model processing.
 	"""
 	pass
+
+class ReferenceDelegate(object):
+	"""
+	A "virtual" property delegate to be used with "reference" 
+	OMEModelProperty instances. This delegate conforms loosely to the same
+	interface as a delegate coming from generateDS.
+	"""
+	def __init__(self, dataType):
+		self.name = dataType + "_BackReference"
+		self.dataType = dataType
+		# Ensures property code which is looking for elements or attributes
+		# which conform to an enumeration can function.
+		self.values = None
+	
+	def getMaxOccurs(self):
+		return 9999
+
+	def getMinOccurs(self):
+		return 0
+
+	def getType(self):
+		return self.dataType
+
+	def getName(self):
+		return self.name
 	
 class OMEModelProperty(object):
 	"""
 	An aggregate type representing either an OME XML Schema element or 
-	attribute.
+	attribute. This class equates conceptually to an instance variable which
+	may be of a singular type or a collection.
 	"""
 	
 	def __init__(self, delegate, model):
 		self.model = model
 		self.delegate = delegate
 		self.isAttribute = False
+		self.isReference = False
 
 	def _get_type(self):
 		if self.isAttribute:
@@ -128,6 +161,9 @@ class OMEModelProperty(object):
 			# Handle XML Schema types that directly map to Java types
 			return JAVA_TYPE_MAP[self.type]
 		except KeyError:
+			# Hand back the type of references
+			if self.isReference:
+				return self.type
 			# Hand back the type of complex types
 			if not self.isAttribute and self.delegate.isComplex():
 				return self.type + "Node"
@@ -194,7 +230,15 @@ class OMEModelProperty(object):
 		"""
 		return klass(element, model)
 	fromElement = classmethod(fromElement)
-	
+
+	def fromReference(klass, reference, model):
+		"""
+		Instantiates a property from a "virtual" OME XML schema reference.
+		"""
+		instance = klass(reference, model)
+		instance.isReference = True
+		return instance
+	fromReference = classmethod(fromReference)
 
 class OMEModelObject(object):
 	"""
@@ -223,7 +267,7 @@ class OMEModelObject(object):
 		name = element.getName()
 		self.properties[name] = \
 			OMEModelProperty.fromElement(element, self.model)
-			
+
 	def _get_javaBase(self):
 		base = self.element.getBase()
 		if base is None:
@@ -315,6 +359,28 @@ class OMEModel(object):
 			if children:
 				self.processTree(children, element)
 
+	def postProcessReferences(self):
+		"""
+		Examines the list of objects in the model for instances that conform
+		to the OME XML Schema referential object naming conventions and
+		injects properties into referenced objects to provide back links.
+		"""
+		references = dict()
+		for o in self.objects.values():
+			for prop in o.properties.values():
+				if prop.type[-3:] == "Ref":
+					shortName = prop.type[:-3]
+					if prop.type not in references:
+						references[shortName] = list()
+					references[shortName].append(o.name)
+
+		for o in self.objects.values():
+			if o.name in references:
+				for ref in references[o.name]:
+					delegate = ReferenceDelegate(ref)
+					prop = OMEModelProperty.fromReference(delegate, self)
+					o.properties[ref] = prop
+
 	def process(klass, contentHandler):
 		"""
 		Main process entry point. All instantiations of this class should be
@@ -325,6 +391,7 @@ class OMEModel(object):
 		model = klass()
 		model.topLevelSimpleTypes = contentHandler.topLevelSimpleTypes
 		model.processTree(elements)
+		model.postProcessReferences()
 		return model
 	process = classmethod(process)
 	
