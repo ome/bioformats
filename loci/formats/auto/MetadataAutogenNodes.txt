@@ -20,6 +20,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# Path key:
+# 1) Elements ending in plus (+) have maxOccurs > 1 and generate an index
+#    parameter to allow differentiation between them.
+# 2) Elements beginning with at (@) are not direct children of the previous
+#    element, but instead reference the parent indirectly somehow.
+# 3) Elements beginning with at-bang (@!) also use a parent reference but
+#    the API is slightly different -- e.g., for a LightSource accessing its
+#    child Laser, the method is lightSource.getLaserListByLightSource() rather
+#    than lightSource.getLaserList().
+# 4) Overridden attributes ending in percent (%) mark a type conflict that
+#    must be resolved by calling type conversion methods from the 
+#    OMEXMLMetadata superclass.
+
 [Image]
 an image in the metadata store with a particular index
 -
@@ -38,7 +51,8 @@ String FirstName      the first name of the experimenter
 String LastName       the last name of the experimenter
 String Email          the e-mail address of the experimenter
 String Institution    the institution for which the experimenter belongs
-String DataDirectory  the fully qualified path to the experimenter's data
+#CTR TODO - decide whether to include DataDirectory
+#String DataDirectory  the fully qualified path to the experimenter's data
 #CTR TODO - complexify
 #Object Group          the group to which the experimenter belongs
 
@@ -53,20 +67,22 @@ String Name     the name of the group
 #CTR TODO - complexify
 #Object Contact  the contact for the group
 
-[Instrument]
-an instrument in the metadata store with a particular index
--
-Default: Instrument+
-2003FC: CA/Instrument+
-String Manufacturer  the name of the manufacturer
-String Model         the model number of the instrument
-String SerialNumber  the serial number of the instrument
-String Type          the type of the instrument
+#CTR TODO - Instrument shouldn't have any attributes directly... right?
+#           so why are they in the 2003 FC CA schema...?
+#[Instrument]
+#an instrument in the metadata store with a particular index
+#-
+#Default: Instrument+
+#2003FC: CA/Instrument+
+#String Manufacturer  the name of the manufacturer
+#String Model         the model number of the instrument
+#String SerialNumber  the serial number of the instrument
+#String Type          the type of the instrument
 
 [Dimensions]
 a set of pixel dimensions in the metadata store with a particular index
 Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
-Default: Image+
+Default: Image+/Pixels+
 2003FC: Image+/CA/Dimensions
 Float PhysicalSizeX  size of an individual pixel's X axis in microns
 *2003FC: PixelSizeX
@@ -78,8 +94,8 @@ Float TimeIncrement  distance between adjacent time points in seconds
 *2003FC: PixelSizeT
 Integer WaveStart    starting wavelength in nanometers
 *2003FC: -
-Float WaveIncrement  distance between adjacent wavelengths in nanometers
-*2003FC: PixelSizeC
+Integer WaveIncrement  distance between adjacent wavelengths in nanometers
+*2003FC: PixelSizeC%
 
 [DisplayROI]
 a 5D bounding box region of interest and a set of display options in the metadata store with a particular index
@@ -114,6 +130,7 @@ String DimensionOrder  the dimension order of the pixels set
 
 [StageLabel]
 a stage label in the metadata store with a particular index
+-
 Default: Image+/StageLabel
 2003FC: Image+/CA/StageLabel
 String Name  a name for the stage label
@@ -126,48 +143,93 @@ a logical channel and physical channel in the metadata store for a particular pi
 -
 Default: Image+/LogicalChannel+
 2003FC: Image+/CA/LogicalChannel+
+#CTR TODO - where has auxiliary light source gone...?
+#Integer AuxLightSource            the index of the auxiliary light source
+#Float AuxLightAttenuation         the auxiliary light source attenuation
+#String AuxTechnique               the auxiliary technique type
+#Integer AuxLightWavelength        the auxiliary light source wavelength
 String Name                       the logical channel's name
 Integer SamplesPerPixel           CTR TODO
-#CTR TODO - complexify
-#Integer Filter                    the index of the filter associated with this channel
-#CTR TODO - complexify
-#Integer LightSource               the index of the primary light source
-Float LightAttenuation            the primary light source attenuation
-Integer LightWavelength           the primary light source wavelength
-#CTR TODO - complexify
-#Integer OTF                       the index of the OTF associated with this channel
-#CTR TODO - complexify
-#Integer Detector                  the index of the detector associated with this channel
-Float DetectorOffset              the detector offset
-Float DetectorGain                the detector gain
+# CTR TODO - complexify
+#Integer SecondaryEmissionFilter  an index...
+# CTR TODO - complexify
+#Integer SecondaryExcitationFilter  an index...
 String IlluminationType           the illumination type
 Integer PinholeSize               the size of the pinhole
 String PhotometricInterpretation  the photometric interpretation type
 String Mode                       the acquisition mode
 String ContrastMethod             the constrast method name
-#CTR TODO - complexify
-#Integer AuxLightSource            the index of the auxiliary light source
-Float AuxLightAttenuation         the auxiliary light source attenuation
-String AuxTechnique               the auxiliary technique type
-Integer AuxLightWavelength        the auxiliary light source wavelength
-Integer EmWave                    the emission wavelength
-*2003FC: EmissionWavelength
 Integer ExWave                    the excitation wavelength
 *2003FC: ExcitationWavelength
+Integer EmWave                    the emission wavelength
+*2003FC: EmissionWavelength
 String Fluor                      the fluorescence type
 Float NdFilter                    the neutral-density filter value
 *2003FC: NDFilter
+Integer PockelCellSetting         CTR TODO
+*2003FC: -
+
+[ChannelLightSource]
+the light source associated with a particular logical channel
+-
+Default: Image+/LogicalChannel+/LightSourceRef
+2003FC: Image+/CA/LogicalChannel+
+#CTR TODO - complexify
+#Integer LightSource        the index of the primary light source
+Float Attenuation          the primary light source attenuation
+*2003FC: LightAttenuation
+Integer Wavelength         the primary light source wavelength
+*2003FC: LightWavelength
+
+#[ChannelOTF]
+#the optical transfer function associated with a particular logical channel
+#-
+#Default: Image+/LogicalChannel+/OTFRef
+#2003FC: x
+#CTR TODO - complexify
+#Integer OTF  the index of the OTF associated with this channel
+
+[ChannelDetector]
+the detector associated with a particular logical channel
+-
+Default: Image+/LogicalChannel+/DetectorRef
+2003FC: Image+/CA/LogicalChannel+
+#CTR TODO - complexify
+#Integer Detector         the index of the detector associated with this channel
+Float Offset             the detector offset
+*2003FC: DetectorOffset
+Float Gain               the detector gain
+*2003FC: DetectorGain
+
+# CTR TODO - finish/add this - LogicalChannel/FilterSetRef
+#[ChannelFilterSet]
 
 [PlaneInfo]
 the plane information for a particular X-Y plane (section) within a particular pixels set
 NOTE: The implementation of this method is optional as this is a transitional type. More information about the PlaneInfo type can be found <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
 Default: Image+/Pixels+/Plane+
-2003FC: Image+/Pixels+/Plane+/-
+2003FC: -
 Integer TheZ        the optical section index
 Integer TheC        the channel index
 Integer TheT        the timepoint
-Float Timestamp     the time of acquisition in seconds of the plane (section) with zero being the start of acquisition
-Float ExposureTime  exposureTime exposure time in seconds.
+
+[PlaneTiming]
+the timing information for a particular X-Y plane (section) within a particular pixels set
+-
+Default: Image+/Pixels+/Plane+/PlaneTiming
+2003FC: -
+Float DeltaT        the time in seconds since the beginning of the experiment
+Float ExposureTime  the exposure time in seconds
+
+[StagePosition]
+the stage position for a particular X-Y plane (section) within a particular pixels set
+-
+Default: Image+/Pixels+/Plane+/StagePosition
+2003FC: -
+Float PositionX  the X coordinate of the stage position
+Float PositionY  the Y coordinate of the stage position
+Float PositionZ  the Z coordinate of the stage position
+
 
 [ImagingEnvironment]
 the imaging environment for a particular image
@@ -219,8 +281,7 @@ String SerialNumber  CTR TODO
 a laser for a particular instrument
 -
 Default: Instrument+/LightSource+/Laser
-2003FC: CA/Instrument+/@LightSource+/@Laser
-#TODO 2003FC needs to call lightSource.getLaserListByLightSource...
+2003FC: CA/Instrument+/@LightSource+/@!Laser
 String Type               CTR TODO
 String Medium             CTR TODO
 Integer Wavelength        CTR TODO

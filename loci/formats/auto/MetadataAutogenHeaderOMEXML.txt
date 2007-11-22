@@ -49,3 +49,16 @@ import java.util.List;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class ${class} extends OMEXMLMetadata {
+
+  // -- OMEXMLMetadata API methods --
+
+  /* @see OMEXMLMetadata#createRoot(String) */
+  public void createRoot(String xml) {
+    // CTR TEMP
+  }
+
+  /* @see OMEXMLMetadata#dumpXML() */
+  public String dumpXML() {
+    // CTR TEMP
+    return null;
+  }

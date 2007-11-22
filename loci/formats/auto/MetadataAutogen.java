@@ -192,7 +192,7 @@ public class MetadataAutogen {
         }
         String version = line.substring(1, colon).trim();
         String paramName = line.substring(colon + 1).trim();
-        paramMap.put(version + "/" + param.name, paramName);
+        paramMap.put(version + ":" + node.name + ":" + param.name, paramName);
         continue;
       }
 
@@ -204,9 +204,11 @@ public class MetadataAutogen {
         if (version.equalsIgnoreCase("Default")) {
           // populate all known versions with the default
           Enumeration en = versions.keys();
+          Vector indices = getIndices(path);
           while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
             if (!node.paths.contains(key)) node.paths.put(key, path);
+            node.indices = indices;
           }
         }
         else node.paths.put(version, path);
@@ -279,7 +281,8 @@ public class MetadataAutogen {
       String key = (String) e.nextElement();
       String value = (String) node.paths.get(key);
       // OME-XML implementation
-      doHelpers("ome/OMEXML" + key + "Metadata.java", value, key);
+      String id = "ome/OMEXML" + key + "Metadata.java";
+      doHelpers(id, value, node.indices, key);
     }
   }
 
@@ -300,7 +303,7 @@ public class MetadataAutogen {
 
     // parse path
     String last = getLastPathElement(path);
-    Vector indices = getIndices(path);
+    Vector indices = node.indices;
     int psize = node.params.size();
     int isize = indices.size();
 
@@ -375,7 +378,7 @@ public class MetadataAutogen {
       // method body
       if (version != null) {
         boolean noSupport = last.equals("-");
-        String mappedName = getParamName(pi.name, version);
+        String mappedName = getParamName(pi.name, node.name, version);
         if (noSupport || mappedName.equals("-")) {
           Hashtable vars = (Hashtable) versions.get(version);
           lt.add("    // NB: " + (noSupport ? node.name : pi.name) +
@@ -394,8 +397,19 @@ public class MetadataAutogen {
           lt.add(" false);", "      ");
           lt.newline();
           String ante = "    return " + varName + " == null ? null :";
+
+          boolean convert = false;
+          if (mappedName.endsWith("%")) {
+            mappedName = mappedName.substring(0, mappedName.length() - 1);
+            convert = true;
+          }
           String cons = varName + "." +
-            (pi.type.equals("Boolean") ? "is" : "get") + mappedName + "();";
+            (pi.type.equals("Boolean") ? "is" : "get") + mappedName + "()";
+          if (convert) {
+            cons = toVarName(node.name) +
+              mappedName + "To" + pi.type + "(" + cons + ")";
+          }
+          cons += ";";
           if (ante.length() + cons.length() <= 79) {
             lt.add(ante + " " + cons);
             lt.newline();
@@ -434,7 +448,7 @@ public class MetadataAutogen {
 
     // parse path
     String last = getLastPathElement(path);
-    Vector indices = getIndices(path);
+    Vector indices = node.indices;
     int psize = node.params.size();
     int isize = indices.size();
     int total = psize + isize;
@@ -524,7 +538,7 @@ public class MetadataAutogen {
         lt.newline();
         for (int i=0; i<psize; i++) {
           Param p = (Param) node.params.get(i);
-          String mappedName = getParamName(p.name, version);
+          String mappedName = getParamName(p.name, node.name, version);
           if (mappedName.equals("-")) {
             Hashtable vars = (Hashtable) versions.get(version);
             lt.add("    // NB: " + p.name +
@@ -533,8 +547,17 @@ public class MetadataAutogen {
           }
           else {
             String ante = "    if (" + toVarName(p.name) + " != null) ";
-            String cons = varName + ".set" + mappedName +
-              "(" + toVarName(p.name) + ");";
+            boolean convert = false;
+            if (mappedName.endsWith("%")) {
+              mappedName = mappedName.substring(0, mappedName.length() - 1);
+              convert = true;
+            }
+            String cons = toVarName(p.name);
+            if (convert) {
+              cons = toVarName(node.name) +
+                mappedName + "From" + p.type + "(" + cons + ")";
+            }
+            cons = varName + ".set" + mappedName + "(" + cons + ");";
             if (ante.length() + cons.length() <= 80) {
               lt.add(ante + cons);
               lt.newline();
@@ -561,7 +584,7 @@ public class MetadataAutogen {
 
   /** Generates helper methods for the given node and source file. */
   private static void doHelpers(String id,
-    String path, String version) throws IOException
+    String path, Vector indices, String version) throws IOException
   {
     // only generate each path's helper method once
     if (helpers.contains(id + ":" + path)) return;
@@ -580,7 +603,6 @@ public class MetadataAutogen {
 
     // parse path
     String last = getLastPathElement(path);
-    Vector indices = getIndices(path);
     int isize = indices.size();
 
     if (last.equals("-")) return; // unsupported node type for this version
@@ -629,9 +651,13 @@ public class MetadataAutogen {
     StringTokenizer st = new StringTokenizer(path, "/");
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
-      boolean ref = false;
+      boolean ref = false, bang = false;
       if (token.startsWith("@")) {
-        token = token.substring(1);
+        if (token.startsWith("@!")) {
+          token = token.substring(2);
+          bang = true;
+        }
+        else token = token.substring(1);
         ref = true;
       }
       boolean multi = false;
@@ -682,10 +708,14 @@ public class MetadataAutogen {
       }
       else {
         if (ca || ref) {
+          String extra = bang ? "By" + pToken : "";
           lt.add("    " + token + "Node " + var + " = null;");
           lt.newline();
           if (ca) lt.add("    count = ca.countCAList(\"" + token + "\");");
-          else lt.add("    count = " + pVar + ".count" + token + "List();");
+          else {
+            lt.add("    count = " + pVar +
+              ".count" + token + "List" + extra + "();");
+          }
           lt.newline();
           lt.add("    if (count >= 1) {");
           lt.newline();
@@ -694,7 +724,8 @@ public class MetadataAutogen {
             lt.add(" ca.getCAList(\"" + token + "\").get(0);", "        ");
           }
           else {
-            lt.add(" " + pVar + ".get" + token + "List().get(0);", "        ");
+            lt.add(" " + pVar + ".get" + token +
+              "List" + extra + "().get(0);", "        ");
           }
           lt.newline();
           lt.add("    }");
@@ -804,26 +835,27 @@ public class MetadataAutogen {
   }
 
   /** Gets overridden parameter name for the given version, if any. */
-  private static String getParamName(String name, String version) {
-    String paramName = (String) paramMap.get(version + "/" + name);
+  private static String getParamName(String name,
+    String nodeName, String version)
+  {
+    String paramName = (String)
+      paramMap.get(version + ":" + nodeName + ":" + name);
     return paramName == null ? name : paramName;
   }
 
   /** Gets last element of a node path. */
   private static String getLastPathElement(String path) {
     int first = path.lastIndexOf("/") + 1;
-    if (path.charAt(first) == '@') first++;
-    int last = path.length();
-    if (path.endsWith("+")) last--;
-    return path.substring(first, last);
+    return path.substring(first).replaceAll("[@\\!\\+]", "");
   }
 
   // -- Helper classes --
 
   /** A helper class for storing information about a node. */
   private static class Node {
-    private String name = null, desc = null, extra = null;
+    private String name, desc, extra;
     private Hashtable paths = new Hashtable();
+    private Vector indices;
     private Vector params = new Vector();
   }
 
