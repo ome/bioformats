@@ -355,7 +355,7 @@ public class OIBReader extends FormatReader {
       RandomAccessStream stream = new RandomAccessStream(b);
       Hashtable[] ifds = TiffTools.getIFDs(stream);
 
-      Arrays.fill(core.littleEndian, !TiffTools.isLittleEndian(ifds[0]));
+      Arrays.fill(core.littleEndian, TiffTools.isLittleEndian(ifds[0]));
     }
     catch (ReflectException e) {
       throw new FormatException(e);
