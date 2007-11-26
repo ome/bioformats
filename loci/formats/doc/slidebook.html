@@ -1,26 +1,53 @@
-<html>
+<html><body>
 
-<b>File format name:</b> Slidebook<BR>
-<b>Maintainer:</b> <a href="http://www.intelligent-imaging.com">Intelligent Imaging</a>, <a href="http://www.olympus.com">Olympus</a><BR>
-<b>Software that produces this:</b>Olympus/Intelligent Imaging Slidebook<BR>
-<b>Other software that reads this format:</b>Olympus/Intelligent Imaging Slidebook<BR>
-<b>Specifications:</b> none :-(<BR>
-<b>Structure:</b><BR>
+<b>File format name:</b> Slidebook<br>
+<b>Maintainer:</b>
+<a href="http://www.intelligent-imaging.com">Intelligent Imaging</a>,
+<a href="http://www.olympus.com">Olympus</a><br>
+<b>Software that produces this:</b> Olympus/Intelligent Imaging Slidebook<br>
+<b>Other software that reads this format:</b>
+Olympus/Intelligent Imaging Slidebook<br>
+<b>Specifications:</b> none :-(<br>
+<b>Structure:</b><br>
 
-<H3>Please note: we have not received any specifications or sample data from the manufacturers.  The structure described is based on a handful of files generated prior to June 2007.  If you have any information on this format, we would encourage you to contact us.</H3><BR><BR>
+<h3>Please note: we have not received any specifications or sample data from
+the manufacturers.  The structure described is based on a handful of files
+generated prior to June 2007.  If you have any information on this format, we
+would encourage you to contact us.</h3><br><br>
 
 Files appear to begin with 4 magic bytes - 0x6c 00 00 01
-Following this is two bytes which indicate the endianness; if these bytes are both equal to 0x49 ('I'), then the data is little endian.  Otherwise, if these bytes are both equal to 0x4d ('M') then the data is big endian; any other value indicates an invalid file.<BR>
-Analysis indicates that Slidebook files are made up of data blocks that are either 128 or 256 bytes in size.  Each block has a six byte identifier; the first byte is an ASCII character, and is used to determine what type of data is stored in the block.  The remaining five bytes can be ignored.<BR>
+Following this is two bytes which indicate the endianness; if these bytes are
+both equal to 0x49 ('I'), then the data is little endian.  Otherwise, if these
+bytes are both equal to 0x4d ('M') then the data is big endian; any other value
+indicates an invalid file.<br>
+Analysis indicates that Slidebook files are made up of data blocks that are
+either 128 or 256 bytes in size.  Each block has a six byte identifier; the
+first byte is an ASCII character, and is used to determine what type of data is
+stored in the block.  The remaining five bytes can be ignored.<br>
 As far as we can tell, there are 3 types of data contained in Slidebook files:
+<ol>
+<li>generic, unreadable metadata</li>
+<li>pixel data</li>
+<li>annotations</li>
+</ol>
+Pixel data is found by looping through the file, skipping each data block until
+we find something that isn't identified as "generic metadata", and doesn't
+contain "Annotation".  It is important to do this through the entire file,
+because individual planes are stored contiguously, but we are not guaranteed
+to get all of the planes in one chunk.  All blocks of pixel data are
+immediately followed by a generic metadata block with the 'h' identifier
+byte.<br><br>
 
-  (1) generic, unreadable metadata
-  (2) pixel data
-  (3) annotations
+The trickiest part of this format is trying to figure out the dimensions.
+We're pretty sure that the width and height are found in bytes 81-82 and 83-84
+(respectively) of an 'i' block.  The Z, C and T dimensions are calculated from
+the number of 'h', 'i' and 'u' blocks in the file.  These calculations are by
+no means guaranteed to be accurate.  We used to compute Z, C and T based on the
+count for each type of annotation; however, this proved to be even less
+accurate in some cases.  The chances of an inaccurate calculation are *greatly*
+increased if the Slidebook file contains image montage - we try to split
+montages into single images, but be warned that this may fail.<br><br>
 
-Pixel data is found by looping through the file, skipping each data block until we find something that isn't identified as "generic metadata", and doesn't contain "Annotation".  It is important to do this through the entire file, because individual planes are stored contiguously, but we are not guaranteed to get all of the planes in one chunk.  All blocks of pixel data are immediately followed by a generic metadata block with the 'h' identifier byte.<BR><BR>
+Finally, as far as we know, all Slidebook files use 16 bits per pixel.<br><br>
 
-The trickiest part of this format is trying to figure out the dimensions.  We're pretty sure that the width and height are found in bytes 81-82 and 83-84 (respectively) of an 'i' block.  The Z, C and T dimensions are calculated from the number of 'h', 'i' and 'u' blocks in the file.  These calculations are by no means guaranteed to be accurate.  We used to compute Z, C and T based on the count for each type of annotation; however, this proved to be even less accurate in some cases.  The chances of an inaccurate calculation are *greatly* increased if the Slidebook file contains image montage - we try to split montages into single images, but be warned that this may fail.<BR><BR>
-Finally, as far as we know, all Slidebook files use 16 bits per pixel.<BR><BR>
-
-</html>
+</body></html>
