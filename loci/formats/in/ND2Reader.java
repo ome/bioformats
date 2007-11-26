@@ -594,9 +594,10 @@ public class ND2Reader extends FormatReader {
               // get key/value pairs
               while (s.indexOf("=") != -1) {
                 int eq = s.indexOf("=");
+                int end = s.indexOf("\"", eq + 2);
+                if (eq < 0 || end < 0) break;
                 String key = s.substring(0, eq).trim();
-                String value =
-                  s.substring(eq + 2, s.indexOf("\"", eq + 2)).trim();
+                String value = s.substring(eq + 2, end).trim();
 
                 // strip out the data types
                 if (key.indexOf("runtype") == -1) {
