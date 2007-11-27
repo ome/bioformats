@@ -166,7 +166,6 @@ public class SDTReader extends FormatReader {
     super.close();
     off = timeBins = channels = 0;
     info = null;
-    intensity = true;
   }
 
   // -- Internal FormatReader API methods --
