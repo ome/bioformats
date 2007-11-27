@@ -56,11 +56,13 @@ loci.formats.in.KhorosReader       # xv
 loci.formats.in.VisitechReader     # html, xys
 loci.formats.in.LIMReader          # lim
 loci.formats.in.PSDReader          # psd
+loci.formats.in.InCellReader       # xdce
 
 # multi-extension messes
 loci.formats.in.ICSReader          # ics, ids
 loci.formats.in.OIFReader          # oif, various
 loci.formats.in.PerkinElmerReader  # rec, ano, csv, htm, tim, zpo, 2, 3, 4, ...
+loci.formats.in.TCSReader # xml, tif
 
 # readers requiring third-party libraries
 loci.formats.in.ZeissZVIReader     # zvi [POIFS]
@@ -85,7 +87,6 @@ loci.formats.in.FluoviewReader     # tif
 loci.formats.in.PrairieReader      # xml, cfg, tif
 loci.formats.in.MicromanagerReader # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
-loci.formats.in.TCSReader # tif
 loci.formats.in.OMETiffReader # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
