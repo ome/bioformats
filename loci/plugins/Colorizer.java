@@ -27,6 +27,7 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
 import java.awt.image.IndexColorModel;
@@ -99,6 +100,7 @@ public class Colorizer implements PlugInFilter {
     }
 
     ImageStack stack = imp.getImageStack();
+    Calibration calibration = imp.getCalibration();
 
     int nChannels = imp.getNChannels();
     int nTimes = imp.getNFrames();
@@ -214,6 +216,7 @@ public class Colorizer implements PlugInFilter {
       newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
         nSlices, nTimes);
     }
+    newImp.setCalibration(calibration);
     newImp.show();
     imp.close();
   }

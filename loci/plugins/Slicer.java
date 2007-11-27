@@ -27,6 +27,7 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import loci.formats.FormatTools;
@@ -92,6 +93,7 @@ public class Slicer implements PlugInFilter {
     }
 
     ImageStack stack = imp.getImageStack();
+    Calibration calibration = imp.getCalibration();
 
     if (imp instanceof CompositeImage) return;
 
@@ -140,6 +142,7 @@ public class Slicer implements PlugInFilter {
       ImagePlus p = new ImagePlus(title, newStacks[i]);
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
+      p.setCalibration(calibration);
       if (imp instanceof CustomImage && !sliceC) {
         CustomImage c = new CustomImage(p, stackOrder, sliceZ ? 1 : sizeZ,
           sliceT ? 1 : sizeT, sliceC ? 1 : sizeC, true);
