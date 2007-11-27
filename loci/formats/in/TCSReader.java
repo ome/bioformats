@@ -289,12 +289,31 @@ public class TCSReader extends FormatReader {
       Arrays.fill(core.interleaved, false);
       Arrays.fill(core.indexed, tiffReaders[0].isIndexed());
       Arrays.fill(core.falseColor, true);
+
+      MetadataStore store = getMetadataStore();
+
+      for (int i=0; i<x.size(); i++) {
+        store.setImage((String) seriesNames.get(i), null, null, new Integer(i));
+      }
+
+      FormatTools.populatePixels(store, this);
+
+      for (int i=0; i<x.size(); i++) {
+        for (int cc=0; cc<core.sizeC[i]; cc++) {
+          store.setLogicalChannel(cc, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, 
+            null, null, null, null, null, null, null, null, new Integer(i));
+        }
+        store.setDimensions((Float) xcal.get(i), (Float) ycal.get(i),
+          (Float) zcal.get(i), null, null, new Integer(i));
+      }
     }
     else {
       tiffs = new Vector();
       tiffs.add(id);
       tiffReaders = new TiffReader[1];
       tiffReaders[0] = new TiffReader();
+      tiffReaders[0].setMetadataStore(getMetadataStore());
       tiffReaders[0].setId(id);
       in = new RandomAccessStream(id);
 
@@ -383,7 +402,6 @@ public class TCSReader extends FormatReader {
       }
       core = tiffReaders[0].getCoreMetadata();
     }
-
   }
 
   // -- Helper class --
@@ -425,7 +443,10 @@ public class TCSReader extends FormatReader {
         seriesNames.add(fullSeries);
       }
       else if (qName.equals("ChannelDescription")) {
-        String prefix = fullSeries + " - Channel " + count + " - ";
+        String prefix = "Channel " + count + " - ";
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
         }
@@ -436,7 +457,10 @@ public class TCSReader extends FormatReader {
         else c.add(new Integer(count));
       }
       else if (qName.equals("DimensionDescription")) {
-        String prefix = fullSeries + " - Dimension " + count + " - ";
+        String prefix = "Dimension " + count + " - ";
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
         }
@@ -468,7 +492,10 @@ public class TCSReader extends FormatReader {
       else if (qName.equals("ScannerSettingRecord")) {
         String key = attributes.getValue("Identifier") + " - " +
           attributes.getValue("Description");
-        addMeta(fullSeries + " - " + key, attributes.getValue("Variant"));
+        if (fullSeries != null && !fullSeries.equals("")) {
+          key = fullSeries + " - " + key;
+        }
+        addMeta(key, attributes.getValue("Variant"));
       }
       else if (qName.equals("FilterSettingRecord")) {
         String key = attributes.getValue("ObjectName") + " - " +
@@ -480,66 +507,83 @@ public class TCSReader extends FormatReader {
         }
       }
       else if (qName.equals("ATLConfocalSettingDefinition")) {
-        if (fullSeries.endsWith(" - Master sequential setting")) {
-          fullSeries = fullSeries.replaceAll(" - Master sequential setting",
-            " - Sequential Setting 0");
+        if (fullSeries.endsWith("Master sequential setting")) {
+          fullSeries = fullSeries.replaceAll("Master sequential setting",
+            "Sequential Setting 0");
         }
 
-        if (fullSeries.indexOf(" - Sequential Setting ") == -1) {
-          fullSeries += " - Master sequential setting";
+        /* debug */ System.out.println(fullSeries);
+        if (fullSeries.indexOf("Sequential Setting ") == -1) {
+          if (fullSeries.equals("")) fullSeries = "Master sequential setting";
+          else fullSeries += " - Master sequential setting";
         }
         else {
-          int ndx = fullSeries.indexOf(" - Sequential Setting ") + 22;
+          int ndx = fullSeries.indexOf("Sequential Setting ") + 19;
           int n = Integer.parseInt(fullSeries.substring(ndx)) + 1;
           fullSeries = fullSeries.substring(0, ndx) + String.valueOf(n);
         }
+        String prefix = "";
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - ";
+        }
         for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(fullSeries + " - " + attributes.getQName(i),
-            attributes.getValue(i));
+          addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
         }
       }
       else if (qName.equals("Wheel")) {
-        String prefix = fullSeries + " - Wheel " + count + " - ";
+        String prefix = "Wheel " + count + " - ";
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
-          addMeta(prefix + " - " + attributes.getQName(i),
-            attributes.getValue(i));
+          addMeta(prefix + attributes.getQName(i), attributes.getValue(i));
         }
         count++;
       }
       else if (qName.equals("WheelName")) {
-        String prefix =
-          fullSeries + " - Wheel " + (count - 1) + " - WheelName ";
+        String prefix = "Wheel " + (count - 1) + " - WheelName ";
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         int ndx = 0;
         while (getMeta(prefix + ndx) != null) ndx++;
         addMeta(prefix + ndx, attributes.getValue("FilterName"));
       }
       else if (qName.equals("MultiBand")) {
-        String prefix = fullSeries + " - MultiBand Channel " +
-          attributes.getValue("Channel") + " - ";
+        String prefix = "MultiBand Channel " + attributes.getValue("Channel");
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(prefix + " - " + attributes.getQName(i),
             attributes.getValue(i));
         }
       }
       else if (qName.equals("LaserLineSetting")) {
-        String prefix = fullSeries + " - LaserLine " +
-          attributes.getValue("LaserLine") + " - ";
+        String prefix = "LaserLine " + attributes.getValue("LaserLine");
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(prefix + " - " + attributes.getQName(i),
             attributes.getValue(i));
         }
       }
       else if (qName.equals("Detector")) {
-        String prefix = fullSeries + " - Detector Channel "+
-          attributes.getValue("Channel") + " - ";
+        String prefix = "Detector Channel " + attributes.getValue("Channel");
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(prefix + " - " + attributes.getQName(i),
             attributes.getValue(i));
         }
       }
       else if (qName.equals("Laser")) {
-        String prefix = fullSeries + " Laser " +
-          attributes.getValue("LaserName") + " - ";
+        String prefix = "Laser " + attributes.getValue("LaserName");
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(prefix + " - " + attributes.getQName(i),
             attributes.getValue(i));
@@ -563,7 +607,10 @@ public class TCSReader extends FormatReader {
         count++;
       }
       else if (qName.equals("ChannelScalingInfo")) {
-        String prefix = fullSeries + " - ChannelScalingInfo " + count + " - ";
+        String prefix = "ChannelScalingInfo " + count;
+        if (fullSeries != null && !fullSeries.equals("")) {
+          prefix = fullSeries + " - " + prefix;
+        }
         for (int i=0; i<attributes.getLength(); i++) {
           addMeta(prefix + " - " + attributes.getQName(i),
             attributes.getValue(i));
