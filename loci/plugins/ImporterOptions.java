@@ -36,6 +36,7 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import loci.formats.*;
+import loci.formats.in.SDTReader;
 
 /**
  * Helper class for managing Bio-Formats Importer options.
@@ -247,6 +248,12 @@ public class ImporterOptions implements ItemListener {
     mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
     seriesString = Prefs.get(PREF_SERIES, "0");
     windowless = Prefs.get(PREF_WINDOWLESS, false);
+
+    // set SDT intensity property, if available
+    String sdtIntensity = Prefs.get(SDTReader.INTENSITY_PROPERTY, null);
+    if (sdtIntensity != null) {
+      System.setProperty(SDTReader.INTENSITY_PROPERTY, sdtIntensity);
+    }
   }
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
