@@ -105,6 +105,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
   public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
   public static final String PREF_SERIES = "bioformats.series";
+  public static final String PREF_WINDOWLESS = "bioformats.windowless";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -245,6 +246,7 @@ public class ImporterOptions implements ItemListener {
     autoscale = Prefs.get(PREF_AUTOSCALE, true);
     mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
     seriesString = Prefs.get(PREF_SERIES, "0");
+    windowless = Prefs.get(PREF_WINDOWLESS, false);
   }
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
@@ -264,6 +266,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_MERGE_OPTION, mergeOption);
     Prefs.set(PREF_AUTOSCALE, autoscale);
     Prefs.set(PREF_SERIES, seriesString);
+    Prefs.set(PREF_WINDOWLESS, windowless);
   }
 
   /** Parses the plugin argument for parameter values. */
