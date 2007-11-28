@@ -62,10 +62,11 @@ public class PackbitsCodec extends BaseCodec implements Codec {
    * Decodes a PackBits (Macintosh RLE) compressed image.
    * Adapted from the TIFF 6.0 specification, page 42.
    *
-   * @param input input data to be decompressed
+   * @param in stream containing input data to be decompressed
+   * @param options options to be used during compression, if appropriate
    * @return The decompressed data
-   * @throws FormatException if data is not valid compressed data for this
-   *                         decompressor
+   * @throws FormatException if data is not valid
+   *   compressed data for this decompressor
    */
   public byte[] decompress(RandomAccessStream in, Object options)
     throws FormatException
