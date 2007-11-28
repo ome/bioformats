@@ -72,7 +72,7 @@ public class ImarisHDFReader extends FormatReader {
   // -- Fields --
 
   private int previousSeries;
-  private byte[][][] previousImage;
+  private Object previousImage;
   private int previousImageNumber;
   private Vector channelParameters;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
@@ -115,7 +115,7 @@ public class ImarisHDFReader extends FormatReader {
         r.exec("var = g.findVariable(name)");
         r.exec("pixelData = var.read()");
         r.exec("data = pixelData.copyToNDJavaArray()");
-        previousImage = (byte[][][]) r.getVar("data");
+        previousImage = r.getVar("data");
       }
       catch (ReflectException exc) {
         if (debug) LogTools.trace(exc);
@@ -125,8 +125,36 @@ public class ImarisHDFReader extends FormatReader {
     previousImageNumber = no;
 
     for (int y=0; y<core.sizeY[series]; y++) {
-      System.arraycopy(previousImage[zct[0]][y], 0, buf, y*core.sizeX[series],
-        core.sizeX[series]);
+      if (previousImage instanceof byte[][][]) {
+        System.arraycopy(((byte[][][]) previousImage)[zct[0]][y], 0, buf,
+          y*core.sizeX[series], core.sizeX[series]);
+      }
+      else if (previousImage instanceof short[][][]) {
+        short[] s = ((short[][][]) previousImage)[zct[0]][y];
+        for (int i=0; i<core.sizeX[series]; i++) {
+          buf[y*core.sizeX[series]*2 + i*2] = (byte) ((s[i] >> 8) & 0xff);
+          buf[y*core.sizeX[series]*2 + i*2 + 1] = (byte) (s[i] & 0xff);
+        }
+      }
+      else if (previousImage instanceof int[][][]) {
+        int[] s = ((int[][][]) previousImage)[zct[0]][y];
+        for (int i=0; i<core.sizeX[series]; i++) {
+          buf[y*core.sizeX[series]*4 + i*4] = (byte) ((s[i] >> 24) & 0xff);
+          buf[y*core.sizeX[series]*4 + i*4 + 1] = (byte) ((s[i] >> 16) & 0xff);
+          buf[y*core.sizeX[series]*4 + i*4 + 2] = (byte) ((s[i] >> 8) & 0xff);
+          buf[y*core.sizeX[series]*4 + i*4 + 3] = (byte) (s[i] & 0xff);
+        }
+      }
+      else if (previousImage instanceof float[][][]) {
+        float[] s = ((float[][][]) previousImage)[zct[0]][y];
+        for (int i=0; i<core.sizeX[series]; i++) {
+          int v = Float.floatToIntBits(s[i]);
+          buf[y*core.sizeX[series]*4 + i*4] = (byte) ((v >> 24) & 0xff);
+          buf[y*core.sizeX[series]*4 + i*4 + 1] = (byte) ((v >> 16) & 0xff);
+          buf[y*core.sizeX[series]*4 + i*4 + 2] = (byte) ((v >> 8) & 0xff);
+          buf[y*core.sizeX[series]*4 + i*4 + 3] = (byte) (v & 0xff);
+        }
+      }
     }
     previousSeries = series;
 
@@ -217,11 +245,36 @@ public class ImarisHDFReader extends FormatReader {
       }
     }
 
+    try {
+      findGroup("ResolutionLevel_0", "dataSet", "g");
+      findGroup("TimePoint_0", "g", "g");
+      findGroup("Channel_0", "g", "g");
+      r.setVar("name", "Data");
+      r.exec("var = g.findVariable(name)");
+      r.exec("pixelData = var.read()");
+      r.exec("data = pixelData.copyToNDJavaArray()");
+      Object pix = r.getVar("data");
+      if (pix instanceof byte[][][]) {
+        Arrays.fill(core.pixelType, FormatTools.UINT8);
+      }
+      else if (pix instanceof short[][][]) {
+        Arrays.fill(core.pixelType, FormatTools.UINT16);
+      }
+      else if (pix instanceof int[][][]) {
+        Arrays.fill(core.pixelType, FormatTools.UINT32);
+      }
+      else if (pix instanceof float[][][]) {
+        Arrays.fill(core.pixelType, FormatTools.FLOAT);
+      }
+    }
+    catch (ReflectException exc) {
+      if (debug) LogTools.trace(exc);
+    }
+
     Arrays.fill(core.currentOrder, "XYZCT");
     Arrays.fill(core.rgb, false);
     Arrays.fill(core.thumbSizeX, 128);
     Arrays.fill(core.thumbSizeY, 128);
-    Arrays.fill(core.pixelType, FormatTools.UINT8);
     Arrays.fill(core.imageCount, core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
     Arrays.fill(core.orderCertain, true);
     Arrays.fill(core.littleEndian, true);
