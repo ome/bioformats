@@ -165,7 +165,9 @@ public class VisitechReader extends FormatReader {
             core.sizeY[0] = Integer.parseInt(value.substring(n + 1,
               value.length() - 1).trim());
           }
-
+          else if (key.startsWith("Channel Selection")) {
+            core.sizeC[0]++;
+          }
           addMeta(key, value);
         }
 
@@ -174,10 +176,20 @@ public class VisitechReader extends FormatReader {
           core.imageCount[0] +=
             Integer.parseInt(token.substring(0, token.indexOf(" ")));
         }
+        else if (token.startsWith("Time Series")) {
+          int idx = token.indexOf(";") + 1;
+          String ss = token.substring(idx, token.indexOf(" ", idx)).trim();
+          core.sizeT[0] = Integer.parseInt(ss);
+        }
       }
     }
 
-    core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
+    if (core.sizeT[0] == 0) {
+      core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
+    }
+    if (core.imageCount[0] == 0) {
+      core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+    }
     core.rgb[0] = false;
     core.currentOrder[0] = "XYZTC";
     core.interleaved[0] = false;
@@ -190,8 +202,8 @@ public class VisitechReader extends FormatReader {
 
     files = new Vector();
 
-    int ndx = currentId.lastIndexOf(File.separator);
-    String base = currentId.substring(ndx + 1, currentId.indexOf(" ", ndx));
+    int ndx = currentId.lastIndexOf(File.separator) + 1;
+    String base = currentId.substring(ndx, currentId.lastIndexOf(" "));
 
     File f = new File(currentId).getAbsoluteFile();
 
