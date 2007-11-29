@@ -30,15 +30,23 @@ import loci.formats.*;
 
 public class LegacyND2Reader extends FormatReader {
 
+  private static boolean noSDK = false;
+
   private static ReflectedUniverse r = createReflectedUniverse();
   private static ReflectedUniverse createReflectedUniverse() {
     r = null;
     try {
       r = new ReflectedUniverse();
       r.exec("import ND_to_Image6D");
+      System.loadLibrary("Nd2SdkWrapperI6D");
     }
     catch (ReflectException e) {
-      LogTools.trace(e);
+      if (debug) LogTools.trace(e);
+      noSDK = true;
+    }
+    catch (UnsatisfiedLinkError e) {
+      if (debug) LogTools.trace(e);
+      noSDK = true;
     }
     return r;
   }
@@ -123,13 +131,7 @@ public class LegacyND2Reader extends FormatReader {
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    try {
-      System.loadLibrary("Nd2SdkWrapperI6D");
-    }
-    catch (UnsatisfiedLinkError e) {
-      return false;
-    }
-    return true;
+    return !noSDK;
   }
 
   // -- Internal FormatReader API methods --
