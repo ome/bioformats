@@ -47,6 +47,10 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Tag identifying a Zeiss LSM file. */
   private static final int ZEISS_ID = 34412;
 
+  // -- Fields --
+
+  private double pixelSizeX, pixelSizeY, pixelSizeZ;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -228,9 +232,13 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("ThumbnailX", ras.readInt());
       put("ThumbnailY", ras.readInt());
 
-      put("VoxelSizeX", ras.readDouble());
-      put("VoxelSizeY", ras.readDouble());
-      put("VoxelSizeZ", ras.readDouble());
+      pixelSizeX = ras.readDouble();
+      pixelSizeY = ras.readDouble();
+      pixelSizeZ = ras.readDouble();
+
+      put("VoxelSizeX", new Double(pixelSizeX));
+      put("VoxelSizeY", new Double(pixelSizeY));
+      put("VoxelSizeZ", new Double(pixelSizeZ));
 
       put("OriginX", ras.readDouble());
       put("OriginY", ras.readDouble());
@@ -458,13 +466,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (debug) trace(exc);
     }
 
-    Object pixelSizeX = getMeta("VoxelSizeX");
-    Object pixelSizeY = getMeta("VoxelSizeY");
-    Object pixelSizeZ = getMeta("VoxelSizeZ");
-
-    Float pixX = new Float(pixelSizeX == null ? "0" : pixelSizeX.toString());
-    Float pixY = new Float(pixelSizeY == null ? "0" : pixelSizeY.toString());
-    Float pixZ = new Float(pixelSizeZ == null ? "0" : pixelSizeZ.toString());
+    Float pixX = new Float((float) pixelSizeX);
+    Float pixY = new Float((float) pixelSizeY);
+    Float pixZ = new Float((float) pixelSizeZ);
 
     MetadataStore store = getMetadataStore();
     store.setDimensions(pixX, pixY, pixZ, null, null, null);
