@@ -64,8 +64,9 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       ras.close();
       if (ifd == null) return false;
 
-      String comment =
-        (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      Object c = ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      String comment = c instanceof String ? (String) c :
+        c instanceof String[] ? ((String[]) c)[0] : null;
       return comment == null ? false : comment.indexOf("Improvision") != -1;
     }
     catch (IOException exc) {
