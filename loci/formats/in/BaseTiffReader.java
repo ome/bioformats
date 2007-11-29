@@ -548,7 +548,10 @@ public abstract class BaseTiffReader extends FormatReader {
     while (bps % 8 != 0) bps++;
     if (bps == 24 || bps == 48) bps /= 3;
 
-    if (bitFormat == 3) core.pixelType[0] = FormatTools.FLOAT;
+    if (bitFormat == 3) {
+      core.pixelType[0] = FormatTools.FLOAT;
+      core.littleEndian[0] = true;
+    }
     else if (bitFormat == 2) {
       switch (bps) {
         case 16:
