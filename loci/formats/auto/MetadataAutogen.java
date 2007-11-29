@@ -313,6 +313,7 @@ public class MetadataAutogen {
 
     for (int i=0; i<psize; i++) {
       Param pi = (Param) node.params.get(i);
+      String piName = stripPrefix(pi.name);
       if (i > 0) lt.newline();
 
       // javadoc
@@ -324,7 +325,8 @@ public class MetadataAutogen {
         lt.newline();
         for (int j=0; j<isize; j++) {
           Param pj = (Param) indices.get(j);
-          lt.add("   * @param " + toVarName(pj.name) + " ");
+          String pjName = stripPrefix(pj.name);
+          lt.add("   * @param " + toVarName(pjName) + " ");
           lt.addTokens(pj.doc + ".", "   *   ");
           lt.newline();
         }
@@ -333,7 +335,7 @@ public class MetadataAutogen {
       }
       else {
         String lead = "@see loci.formats.MetadataRetrieve#get" +
-          node.name + pi.name + "(";
+          node.name + piName + "(";
         StringBuffer sb = new StringBuffer();
         for (int j=0; j<isize; j++) {
           Param pj = (Param) indices.get(j);
@@ -359,7 +361,7 @@ public class MetadataAutogen {
       // method signature
       lt.add("  ");
       if (version != null) lt.add("public ");
-      lt.add(pi.type + " get" + node.name + pi.name + "(");
+      lt.add(pi.type + " get" + node.name + piName + "(");
       for (int j=0; j<isize; j++) {
         // parameters
         Param pj = (Param) indices.get(j);
@@ -381,30 +383,31 @@ public class MetadataAutogen {
         String mappedName = getParamName(pi.name, node.name, version);
         if (noSupport || mappedName.equals("-")) {
           Hashtable vars = (Hashtable) versions.get(version);
-          lt.add("    // NB: " + (noSupport ? node.name : pi.name) +
+          lt.add("    // NB: " + (noSupport ? node.name : piName) +
             " unsupported for schema version " + vars.get("version"));
           lt.newline();
           lt.add("    return null;");
           lt.newline();
         }
         else {
-          String varName = toVarName(last);
-          lt.add("    " + last + "Node " + varName + " = get" + last + "(");
+          String prefix = getPrefix(mappedName);
+          mappedName = stripPrefix(mappedName);
+          String lastVar = toVarName(last);
+          lt.add("    " + last + "Node " + lastVar + " = get" + last + "(");
           for (int j=0; j<isize; j++) {
             Param pj = (Param) indices.get(j);
             lt.add(pj.getArg(true, false, j == 0, false, null), "      ");
           }
           lt.add(" false);", "      ");
           lt.newline();
-          String ante = "    return " + varName + " == null ? null :";
+          String ante = "    return " + lastVar + " == null ? null :";
 
           boolean convert = false;
           if (mappedName.endsWith("%")) {
             mappedName = mappedName.substring(0, mappedName.length() - 1);
             convert = true;
           }
-          String cons = varName + "." +
-            (pi.type.equals("Boolean") ? "is" : "get") + mappedName + "()";
+          String cons = lastVar + "." + prefix + mappedName + "()";
           if (convert) {
             cons = toVarName(node.name) +
               mappedName + "To" + pi.type + "(" + cons + ")";
@@ -467,7 +470,8 @@ public class MetadataAutogen {
       for (int i=0; i<total; i++) {
         Param p = (Param)
           (i < psize ? node.params.get(i) : indices.get(i - psize));
-        lt.add("   * @param " + toVarName(p.name) + " ");
+        String pName = stripPrefix(p.name);
+        lt.add("   * @param " + toVarName(pName) + " ");
         lt.addTokens(p.doc + ".", "   *   ");
         lt.newline();
       }
@@ -527,8 +531,8 @@ public class MetadataAutogen {
         lt.newline();
       }
       else {
-        String varName = toVarName(last);
-        lt.add("    " + last + "Node " + varName +
+        String lastVar = toVarName(last);
+        lt.add("    " + last + "Node " + lastVar +
           " = get" + last + "(");
         for (int i=0; i<isize; i++) {
           Param p = (Param) indices.get(i);
@@ -546,18 +550,21 @@ public class MetadataAutogen {
             lt.newline();
           }
           else {
-            String ante = "    if (" + toVarName(p.name) + " != null) ";
+            String prefix = getPrefix(mappedName);
+            mappedName = stripPrefix(mappedName);
+            String varName = toVarName(stripPrefix(p.name));
+            String ante = "    if (" + varName + " != null) ";
             boolean convert = false;
             if (mappedName.endsWith("%")) {
               mappedName = mappedName.substring(0, mappedName.length() - 1);
               convert = true;
             }
-            String cons = toVarName(p.name);
+            String cons = varName;
             if (convert) {
               cons = toVarName(node.name) +
                 mappedName + "From" + p.type + "(" + cons + ")";
             }
-            cons = varName + ".set" + mappedName + "(" + cons + ");";
+            cons = lastVar + ".set" + mappedName + "(" + cons + ");";
             if (ante.length() + cons.length() <= 80) {
               lt.add(ante + cons);
               lt.newline();
@@ -648,6 +655,7 @@ public class MetadataAutogen {
     String var = "ome";
     String pVar = "ome", pToken = "OME";
     String endElement = null, endVar = null;
+    int multiCount = 0;
     StringTokenizer st = new StringTokenizer(path, "/");
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
@@ -671,7 +679,8 @@ public class MetadataAutogen {
       boolean ca = pVar.equals("ca");
       if (token.equals("CA")) token = "CustomAttributes";
       if (multi) {
-        lt.add("    ndx = i2i(" + var + "Index);");
+        Param indexParam = (Param) indices.get(multiCount++);
+        lt.add("    ndx = i2i(" + toVarName(indexParam.name) + ");");
         lt.newline();
         if (ca) {
           lt.add("    count = " + pVar + ".countCAList(\"" + token + "\");");
@@ -767,9 +776,28 @@ public class MetadataAutogen {
     char[] c = attr.toCharArray();
     for (int i=0; i<c.length; i++) {
       if (c[i] >= 'A' && c[i] <= 'Z') c[i] += 'a' - 'A';
-      else break;
+      else {
+        if (i > 1) c[i - 1] += 'A' - 'a'; // keep last character capitalized
+        break;
+      }
     }
     return new String(c);
+  }
+
+  /** Strips off any lower case prefix from the given attribute name. */
+  private static String stripPrefix(String attr) {
+    char[] c = attr.toCharArray();
+    int i = 0;
+    while (i < c.length && c[i] >= 'a' && c[i] <= 'z') i++;
+    return i > 0 ? attr.substring(i) : attr;
+  }
+
+  /** Gets any lower case prefix from the given attribute name. */
+  private static String getPrefix(String attr) {
+    char[] c = attr.toCharArray();
+    int i = 0;
+    while (i < c.length && c[i] >= 'a' && c[i] <= 'z') i++;
+    return i > 0 ? attr.substring(0, i) : "get";
   }
 
   /** Gets parameter list corresponding to needed indices for a node. */
@@ -783,7 +811,7 @@ public class MetadataAutogen {
         if (t.endsWith("+")) {
           Param p = new Param();
           t = t.substring(t.startsWith("@") ? 1 : 0, t.length() - 1);
-          p.name = toVarName(t) + "Index";
+          p.name = t + "Index";
           p.type = "Integer";
           p.doc = "index of the " + t;
           indices.add(p);
@@ -869,7 +897,7 @@ public class MetadataAutogen {
       if (!first) sb.append(" ");
       if (doType) sb.append(type);
       if (doType && doName) sb.append(" ");
-      if (doName) sb.append(toVarName(name));
+      if (doName) sb.append(toVarName(stripPrefix(name)));
       sb.append(last ? end : ",");
       return sb.toString();
     }

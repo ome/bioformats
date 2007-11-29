@@ -24,14 +24,16 @@
 # 1) Elements ending in plus (+) have maxOccurs > 1 and generate an index
 #    parameter to allow differentiation between them.
 # 2) Elements beginning with at (@) are not direct children of the previous
-#    element, but instead reference the parent indirectly somehow.
+#    element, but instead reference the parent via an ID reference.
 # 3) Elements beginning with at-bang (@!) also use a parent reference but
 #    the API is slightly different -- e.g., for a LightSource accessing its
 #    child Laser, the method is lightSource.getLaserListByLightSource() rather
 #    than lightSource.getLaserList().
-# 4) Overridden attributes ending in percent (%) mark a type conflict that
-#    must be resolved by calling type conversion methods from the 
+# 4) Overridden attributes ending in percent (%) indicate a type conflict
+#    that must be resolved by calling type conversion methods from the 
 #    OMEXMLMetadata superclass.
+# 5) Attributes starting with small case indicate a method prefix other than
+#    "get" -- e.g., "isTunable" overrides default "getTunable" method name.
 
 [Image]
 an image in the metadata store with a particular index
@@ -84,15 +86,15 @@ a set of pixel dimensions in the metadata store with a particular index
 Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
 Default: Image+/Pixels+
 2003FC: Image+/CA/Dimensions
-Float PhysicalSizeX  size of an individual pixel's X axis in microns
+Float PhysicalSizeX    size of an individual pixel's X axis in microns
 *2003FC: PixelSizeX
-Float PhysicalSizeY  size of an individual pixel's Y axis in microns
+Float PhysicalSizeY    size of an individual pixel's Y axis in microns
 *2003FC: PixelSizeY
-Float PhysicalSizeZ  size of an individual pixel's Z axis in microns
+Float PhysicalSizeZ    size of an individual pixel's Z axis in microns
 *2003FC: PixelSizeZ
-Float TimeIncrement  distance between adjacent time points in seconds
+Float TimeIncrement    distance between adjacent time points in seconds
 *2003FC: PixelSizeT
-Integer WaveStart    starting wavelength in nanometers
+Integer WaveStart      starting wavelength in nanometers
 *2003FC: -
 Integer WaveIncrement  distance between adjacent wavelengths in nanometers
 *2003FC: PixelSizeC%
@@ -100,16 +102,16 @@ Integer WaveIncrement  distance between adjacent wavelengths in nanometers
 [DisplayROI]
 a 5D bounding box region of interest and a set of display options in the metadata store with a particular index
 -
-Default: Image+/ROI
-2003FC: Image+/CA/DisplayROI
-Integer X0             the starting X coordinate
-Integer Y0             the starting Y coordinate
-Integer Z0             the starting Z coordinate
-Integer T0             the starting timepoint
-Integer X1             the ending X coordinate
-Integer Y1             the ending Y coordinate
-Integer Z1             the ending Z coordinate
-Integer T1             the ending timepoint
+Default: Image+/DisplayOptions/ROI+
+2003FC: Image+/CA/DisplayROI+
+Integer X0  the starting X coordinate
+Integer Y0  the starting Y coordinate
+Integer Z0  the starting Z coordinate
+Integer T0  the starting timepoint
+Integer X1  the ending X coordinate
+Integer Y1  the ending Y coordinate
+Integer Z1  the ending Z coordinate
+Integer T1  the ending timepoint
 #CTR TODO - complexify
 #Object DisplayOptions  the display options to attach to this region of interest
 
@@ -125,7 +127,7 @@ Integer SizeC          number of channels per timepoint
 Integer SizeT          number of timepoints
 String PixelType       the pixel type
 #CTR TODO - why not working?
-#Boolean BigEndian      if the pixels set is big endian or not
+#Boolean isBigEndian    if the pixels set is big endian or not
 String DimensionOrder  the dimension order of the pixels set
 
 [StageLabel]
@@ -257,16 +259,17 @@ various display options for a particular pixels set
 -
 Default: Image+/DisplayOptions
 2003FC: Image+/CA/DisplayOptions
-Float Zoom              CTR TODO
-Boolean RedChannelOn    CTR TODO
-Boolean GreenChannelOn  CTR TODO
-Boolean BlueChannelOn   CTR TODO
-Boolean DisplayRGB      CTR TODO
-String ColorMap         CTR TODO
-Integer ZStart          CTR TODO
-Integer ZStop           CTR TODO
-Integer TStart          CTR TODO
-Integer TStop           CTR TODO
+Float Zoom                CTR TODO
+#TODO need to split this into separate blocks for each of R, G, B & maybe gray
+#Boolean isRedChannelOn    CTR TODO
+#Boolean isGreenChannelOn  CTR TODO
+#Boolean isBlueChannelOn   CTR TODO
+#Boolean isDisplayRGB      CTR TODO
+#String ColorMap           CTR TODO
+#Integer ZStart            CTR TODO
+#Integer ZStop             CTR TODO
+#Integer TStart            CTR TODO
+#Integer TStop             CTR TODO
 
 [LightSource]
 a light source for a particular instrument
@@ -282,13 +285,17 @@ a laser for a particular instrument
 -
 Default: Instrument+/LightSource+/Laser
 2003FC: CA/Instrument+/@LightSource+/@!Laser
-String Type               CTR TODO
-String Medium             CTR TODO
-Integer Wavelength        CTR TODO
-Boolean FrequencyDoubled  CTR TODO
-Boolean Tunable           CTR TODO
-String Pulse              CTR TODO
-Float Power               CTR TODO
+String Type                      CTR TODO
+String LaserMedium               CTR TODO
+*2003FC: Medium
+Integer Wavelength               CTR TODO
+Integer FrequencyMultiplication  CTR TODO
+*2003FC: isFrequencyDoubled%
+Boolean Tuneable                 CTR TODO
+*2003FC: isTunable
+String Pulse                     CTR TODO
+Float Power                      CTR TODO
+*200706: -
 
 [Filament]
 a filament for a particular instrument
@@ -324,11 +331,14 @@ an objective for a particular instrument
 -
 Default: Instrument+/Objective+
 2003FC: CA/Instrument+/@Objective+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String SerialNumber  CTR TODO
-Float LensNA         CTR TODO
-Float Magnification  CTR TODO
+String Manufacturer            CTR TODO
+String Model                   CTR TODO
+String SerialNumber            CTR TODO
+Float LensNA                   CTR TODO
+Integer NominalMagnification   CTR TODO
+*2003FC: -
+Float CalibratedMagnification  CTR TODO
+*2003FC: Magnification
 
 #TODO figure out how to reconcile the two filter models
 #[ExcitationFilter] 
@@ -380,6 +390,6 @@ String PixelType             CTR TODO
 String Path                  CTR TODO
 *200706: -
 Boolean OpticalAxisAveraged  CTR TODO
-*2003FC: OpticalAxisAverage
+*2003FC: isOpticalAxisAverage
 
 [-]
