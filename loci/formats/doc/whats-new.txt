@@ -1,3 +1,11 @@
+2007 Dec 1:
+* Updated OME plugin for ImageJ to support downloading from OMERO
+* Fixed bug with floating point TIFFs
+* Fixed bugs in Visitech, Zeiss LSM, Imaris 5.5 (HDF)
+* Added alternate ND2 reader that uses Nikon's native libraries
+* Fixed calibration and series name settings in importer
+* Added basic support for InCell 1000 datasets
+
 2007 Nov 21:
 * Fixed bugs in ND2, Leica LIF, DICOM, Zeiss ZVI, Zeiss LSM, FV1000 OIB,
   FV1000 OIF, BMP, Evotec Flex, BioRad PIC, Slidebook, TIFF

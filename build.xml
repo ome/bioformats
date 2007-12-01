@@ -20,6 +20,8 @@ Bio-Formats
                    mdbtools-java.jar (reflected)
                    netcdf-4.0.jar (reflected)
                    ome-java.jar (reflected, except in loci/formats/ome)
+                   omero-client.jar (reflected)
+                   omero-common.jar (reflected)
                    poi-loci.jar (reflected)
                    slf4j-jdk14.jar (reflected)
     Targets:       style-formats
@@ -45,6 +47,8 @@ VisBio
                    mdbtools-java.jar (bio-formats.jar)
                    netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar
+                   omero-client.jar
+                   omero-common.jar
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    visad-lite.jar
@@ -80,6 +84,8 @@ LOCI Plugins for ImageJ
                    mdbtools-java.jar (bio-formats.jar)
                    netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar (bio-formats.jar)
+                   omero-client.jar (bio-formats.jar)
+                   omero-common.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -103,6 +109,8 @@ OME Notes
                    mdbtools-java.jar (bio-formats.jar)
                    netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar
+                   omero-client.jar
+                   omero-common.jar
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -251,6 +259,18 @@ OME Java
                used by Bio-Formats and OME Notes to work with OME-XML
     License:   LGPL
 
+OMERO Common
+    JAR file:  omero-common.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by VisBio and Bio-Formats to connect to OMERO
+    Licence:   LGPL
+
+OMERO Client
+    JAR file:  omero-client.jar
+    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    Notes:     used by VisBio and Bio-Formats to connect to OMERO
+    Licence:   LGPL
+
 Apache Jakarta POI
     JAR file:  poi-loci.jar
     URL:       http://jakarta.apache.org/poi/
@@ -303,6 +323,7 @@ Apache XML-RPC
     classpath="jar/checkstyle-all-4.2.jar:build/jar/loci-checks.jar"/>
   <taskdef resource="net/sf/antcontrib/antcontrib.properties"
     classpath="jar/ant-contrib-1.0b1.jar"/>
+  <taskdef resource="net/sf/antcontrib/antlib.xml" />
 
   <!-- Global build targets -->
 
