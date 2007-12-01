@@ -85,8 +85,9 @@ public class ImporterOptions implements ItemListener {
   public static final String LOCATION_LOCAL = "Local machine";
   public static final String LOCATION_HTTP = "Internet";
   public static final String LOCATION_OME = "OME server";
+  public static final String LOCATION_OMERO = "OMERO server";
   public static final String[] LOCATIONS = {
-    LOCATION_LOCAL, LOCATION_HTTP, LOCATION_OME
+    LOCATION_LOCAL, LOCATION_HTTP, LOCATION_OME, LOCATION_OMERO
   };
 
   // keys for use in IJ_Prefs.txt
@@ -207,6 +208,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isLocal() { return LOCATION_LOCAL.equals(location); }
   public boolean isHTTP() { return LOCATION_HTTP.equals(location); }
   public boolean isOME() { return LOCATION_OME.equals(location); }
+  public boolean isOMERO() { return LOCATION_OMERO.equals(location); }
 
   public Location getIdLocation() { return idLoc; }
   public String getIdName() { return idName; }
@@ -342,7 +344,8 @@ public class ImporterOptions implements ItemListener {
     boolean isLocal = LOCATION_LOCAL.equals(location);
     boolean isHTTP = LOCATION_HTTP.equals(location);
     boolean isOME = LOCATION_OME.equals(location);
-    if (!isLocal && !isHTTP && !isOME) {
+    boolean isOMERO = LOCATION_OMERO.equals(location);
+    if (!isLocal && !isHTTP && !isOME && !isOMERO) {
       if (!quiet) IJ.error("Bio-Formats", "Invalid location: " + location);
       return STATUS_FINISHED;
     }
@@ -829,7 +832,9 @@ public class ImporterOptions implements ItemListener {
       }
     }
     else if (src == groupBox) {
-      if (groupBox.getState() && getLocation().equals(LOCATION_OME)) {
+      if (groupBox.getState() && (getLocation().equals(LOCATION_OME) ||
+        getLocation().equals(LOCATION_OMERO)))
+      {
         groupBox.setState(false);
       }
     }

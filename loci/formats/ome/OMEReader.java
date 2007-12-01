@@ -83,38 +83,37 @@ public class OMEReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (id.equals(loginString)) return;
+
+    OMECredentials cred = OMEUtils.parseCredentials(id);
+    id = String.valueOf(cred.imageID);
+
     super.initFile(id);
 
-    loginString = id;
-    server = id.substring(0, id.lastIndexOf("?"));
-    int ndx = id.indexOf("&");
-    String user = null;
-    String pass = null;
-    if (id.indexOf("user") != -1) {
-      user = id.substring(id.lastIndexOf("?") + 6, ndx);
-      pass = id.substring(ndx + 10, id.indexOf("&", ndx + 1));
-      ndx = id.indexOf("&", ndx + 1);
-      imageId = id.substring(ndx + 4);
-    }
-    else {
-      sessionKey = id.substring(id.lastIndexOf("?") + 5, ndx);
-      imageId = id.substring(ndx + 4);
-    }
-
     // do sanity check on server name
-    if (server.startsWith("http:")) {
-      server = server.substring(5);
+    if (cred.server.startsWith("http:")) {
+      cred.server = cred.server.substring(5);
     }
-    while (server.startsWith("/")) server = server.substring(1);
-    int slash = server.indexOf("/");
-    if (slash >= 0) server = server.substring(0, slash);
-    int colon = server.indexOf(":");
-    if (colon >= 0) server = server.substring(0, colon);
+    while (cred.server.startsWith("/")) cred.server = cred.server.substring(1);
+    int slash = cred.server.indexOf("/");
+    if (slash >= 0) cred.server = cred.server.substring(0, slash);
+    int colon = cred.server.indexOf(":");
+    if (colon >= 0) cred.server = cred.server.substring(0, colon);
 
-    currentId = server + ":" + imageId;
+    currentId = cred.server + ":" + cred.imageID;
 
-    String omeis = "http://" + server + "/cgi-bin/omeis";
-    server = "http://" + server + "/shoola/";
+    String omeis = "http://" + cred.server + "/cgi-bin/omeis";
+    cred.server = "http://" + cred.server + "/shoola/";
+    cred.isOMERO = false;
+
+    try {
+      OMEUtils.login(cred);
+    }
+    catch (ReflectException e) {
+      throw new FormatException(e);
+    }
+
+    String user = cred.username;
+    String pass = cred.password;
 
     Criteria c = new Criteria();
     c.addWantedField("id");
@@ -128,14 +127,14 @@ public class OMEReader extends FormatReader {
     c.addWantedField("default_pixels", "ImageServerID");
     c.addWantedField("default_pixels", "Repository");
     c.addWantedField("default_pixels.Repository", "ImageServerURL");
-    c.addFilter("id", "=", imageId);
+    c.addFilter("id", "=", String.valueOf(cred.imageID));
 
     FieldsSpecification fs = new FieldsSpecification();
     fs.addWantedField("Repository");
     fs.addWantedField("Repository", "ImageServerURL");
     c.addWantedFields("default_pixels", fs);
 
-    rs = DataServer.getDefaultServices(server);
+    rs = DataServer.getDefaultServices(cred.server);
 
     rc = rs.getRemoteCaller();
 

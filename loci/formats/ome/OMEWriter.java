@@ -84,12 +84,6 @@ public class OMEWriter extends FormatWriter {
     super("Open Microscopy Environment", "");
   }
 
-  // -- OMEWriter API methods --
-
-  public void setMetadata(MetadataRetrieve meta) {
-    metadata = meta;
-  }
-
   // -- Internal OMEWriter API methods --
 
   /** Fires a status update event. */
@@ -109,6 +103,11 @@ public class OMEWriter extends FormatWriter {
   }
 
   // -- IFormatWriter API methods --
+
+  /* @see loci.formats.IFormatWriter#setMetadata(MetadataRetrieve) */
+  public void setMetadata(MetadataRetrieve meta) {
+    metadata = meta;
+  }
 
   /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
   public void saveImage(java.awt.Image image, boolean last)

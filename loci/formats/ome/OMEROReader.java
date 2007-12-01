@@ -131,23 +131,22 @@ public class OMEROReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("OMEROReader.initFile(" + id + ")");
 
-    StringTokenizer st = new StringTokenizer(id, "\n");
-    serverName = st.nextToken();
-    port = st.nextToken();
-    username = st.nextToken();
-    password = st.nextToken();
-    id = st.nextToken();
+    OMECredentials cred = OMEUtils.parseCredentials(id);
+    id = String.valueOf(cred.imageID);
     super.initFile(id);
 
+    cred.isOMERO = true;
+
     try {
-      r.setVar("username", username);
-      r.setVar("password", password);
-      r.setVar("serverName", serverName);
-      r.setVar("port", Integer.parseInt(port));
-      r.setVar("id", Long.parseLong(id));
-      r.setVar("idObj", new Long(id));
-      r.exec("login = new Login(username, password)");
-      r.exec("server = new Server(serverName, port)");
+      r.setVar("user", cred.username);
+      r.setVar("pass", cred.password);
+      r.setVar("port", Integer.parseInt(cred.port));
+      r.setVar("sname", cred.server);
+      r.setVar("id", cred.imageID);
+      r.setVar("idObj", new Long(cred.imageID));
+
+      r.exec("login = new Login(user, pass)");
+      r.exec("server = new Server(sname, port)");
       r.exec("sf = new ServiceFactory(server, login)");
       r.exec("query = sf.getQueryService()");
       r.exec("raw = sf.createRawPixelsStore()");

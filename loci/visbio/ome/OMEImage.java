@@ -28,8 +28,9 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
 import loci.formats.*;
+import loci.formats.ome.OMECredentials;
 import loci.formats.ome.OMEReader;
-import loci.ome.util.OMEUtils;
+import loci.formats.ome.OMEUtils;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
@@ -70,7 +71,7 @@ public class OMEImage extends ImageTransform {
   protected String password;
 
   /** ID for this image. */
-  protected int imageId;
+  protected long imageId;
 
   /** Optional task for constructor progress. */
   protected BioTask task;
@@ -167,7 +168,7 @@ public class OMEImage extends ImageTransform {
   public String getPassword() { return password; }
 
   /** Gets the image ID for the associated OME image. */
-  public int getImageId() { return imageId; }
+  public long getImageId() { return imageId; }
 
   // -- ImageTransform API methods --
 
@@ -192,7 +193,7 @@ public class OMEImage extends ImageTransform {
    * using the given defaults.
    */
   public static DataTransform makeTransform(DataManager dm,
-    String server, String sessionKey, String user, int imageId)
+    String server, String sessionKey, String user, long imageId)
   {
     String password = null;
     Component parent = dm.getControls();
@@ -213,11 +214,15 @@ public class OMEImage extends ImageTransform {
       // get image ID to download
       if (imageId < 0) {
         try {
-          OMEUtils.login(server, user, password);
+          OMECredentials cred = new OMECredentials();
+          cred.username = user;
+          cred.server = server;
+          cred.password = password;
+          OMEUtils.login(cred);
 
           // TODO : find a better way of handling multiple IDs
-          int[] results = OMEUtils.showTable(OMEUtils.getAllImages());
-          if (results == null) results = new int[0];
+          long[] results = new OMEUtils().showTable(cred);
+          if (results == null) results = new long[0];
           if (results.length > 0) {
             imageId = results[0];
           }
@@ -249,9 +254,10 @@ public class OMEImage extends ImageTransform {
 
     // make sure everything goes ok
     try {
+      // TODO
       return sessionKey != null ?
-        new OMEImage(server, sessionKey, imageId, task) :
-        new OMEImage(server, user, password, imageId, task);
+        new OMEImage(server, sessionKey, (int) imageId, task) :
+        new OMEImage(server, user, password, (int) imageId, task);
     }
     catch (Exception exc) {
       exc.printStackTrace();

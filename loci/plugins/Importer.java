@@ -32,6 +32,7 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.ome.OMEReader;
+import loci.formats.ome.OMEROReader;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.plugins.browser.LociDataBrowser;
 
@@ -106,6 +107,7 @@ public class Importer {
         return;
       }
     }
+    else if (options.isOMERO()) r = new OMEROReader();
     else { // options.isOME
       r = new OMEReader();
     }
@@ -136,7 +138,10 @@ public class Importer {
 
     // -- Step 4: analyze and read from data source --
 
-    IJ.showStatus("Analyzing " + id);
+    // 'id' contains the user's password if we are opening from OME/OMERO
+    String a = id;
+    if (options.isOME() || options.isOMERO()) a = "...";
+    IJ.showStatus("Analyzing " + a);
 
     try {
       r.setMetadataFiltered(true);
