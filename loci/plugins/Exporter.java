@@ -99,6 +99,9 @@ public class Exporter {
       Image firstImage = proc.createImage();
       firstImage = ImageTools.makeBuffered(firstImage, proc.getColorModel());
       int thisType = ImageTools.getPixelType((BufferedImage) firstImage);
+      if (proc instanceof ColorProcessor) {
+        thisType = FormatTools.UINT8;
+      }
 
       boolean notSupportedType = !w.isSupportedType(thisType);
       if (notSupportedType) {
@@ -120,13 +123,17 @@ public class Exporter {
 
       // convert and save slices
 
+      boolean fakeRGB =
+        imp instanceof CustomImage || imp instanceof CompositeImage;
+      int n = fakeRGB ? imp.getNChannels() : 1;
+
       ImageStack is = imp.getStack();
       int size = is.getSize();
       boolean doStack = w.canDoStacks() && size > 1;
       int start = doStack ? 0 : imp.getCurrentSlice() - 1;
       int end = doStack ? size : start + 1;
 
-      for (int i=start; i<end; i++) {
+      for (int i=start; i<end; i+=n) {
         if (doStack) {
           IJ.showStatus("Saving plane " + (i + 1) + "/" + size);
           IJ.showProgress((double) (i + 1) / size);
@@ -139,16 +146,43 @@ public class Exporter {
         int y = proc.getHeight();
 
         if (proc instanceof ByteProcessor) {
-          byte[] b = (byte[]) proc.getPixels();
-          img = ImageTools.makeImage(b, x, y);
+          if (fakeRGB) {
+            byte[][] b = new byte[n][];
+            for (int j=0; j<n; j++) {
+              b[j] = (byte[]) is.getProcessor(i + j + 1).getPixels();
+            }
+            img = ImageTools.makeImage(b, x, y);
+          }
+          else {
+            byte[] b = (byte[]) proc.getPixels();
+            img = ImageTools.makeImage(b, x, y);
+          }
         }
         else if (proc instanceof ShortProcessor) {
-          short[] s = (short[]) proc.getPixels();
-          img = ImageTools.makeImage(s, x, y);
+          if (fakeRGB) {
+            short[][] s = new short[n][];
+            for (int j=0; j<n; j++) {
+              s[j] = (short[]) is.getProcessor(i + j + 1).getPixels();
+            }
+            img = ImageTools.makeImage(s, x, y);
+          }
+          else {
+            short[] s = (short[]) proc.getPixels();
+            img = ImageTools.makeImage(s, x, y);
+          }
         }
         else if (proc instanceof FloatProcessor) {
-          float[] b = (float[]) proc.getPixels();
-          img = ImageTools.makeImage(b, x, y);
+          if (fakeRGB) {
+            float[][] f = new float[n][];
+            for (int j=0; j<n; j++) {
+              f[j] = (float[]) is.getProcessor(i + j + 1).getPixels();
+            }
+            img = ImageTools.makeImage(f, x, y);
+          }
+          else {
+            float[] b = (float[]) proc.getPixels();
+            img = ImageTools.makeImage(b, x, y);
+          }
         }
         else if (proc instanceof ColorProcessor) {
           byte[][] pix = new byte[3][x*y];
