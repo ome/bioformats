@@ -54,6 +54,9 @@ public class AxisGuesser {
   /** Axis type for channels. */
   public static final int C_AXIS = 3;
 
+  /** Axis type for series. */
+  public static final int S_AXIS = 4;
+
   /** Prefix endings indicating space dimension. */
   protected static final String[] Z = {
     "fp", "sec", "z", "zs", "focal", "focalplane"
@@ -64,6 +67,9 @@ public class AxisGuesser {
 
   /** Prefix endings indicating channel dimension. */
   protected static final String[] C = {"c", "ch", "w", "wavelength"};
+
+  /** Prefix endings indicating series dimension. */
+  protected static final String[] S = {"s", "series"};
 
   protected static final BigInteger TWO = new BigInteger("2");
   protected static final BigInteger THREE = new BigInteger("3");
@@ -116,7 +122,7 @@ public class AxisGuesser {
     BigInteger[] step = fp.getStep();
     int[] count = fp.getCount();
     axisTypes = new int[count.length];
-    boolean foundZ = false, foundT = false, foundC = false;
+    boolean foundZ = false, foundT = false, foundC = false, foundS = false;
 
     // -- 1) fill in "known" axes based on known patterns and conventions --
 
@@ -162,6 +168,16 @@ public class AxisGuesser {
         if (p.equals(C[j])) {
           axisTypes[i] = C_AXIS;
           foundC = true;
+          break;
+        }
+      }
+      if (axisTypes[i] != UNKNOWN_AXIS) continue;
+
+      // check against known series prefixes
+      for (int j=0; j<S.length; j++) {
+        if (p.equals(S[j])) {
+          axisTypes[i] = S_AXIS;
+          foundS = true;
           break;
         }
       }
@@ -240,6 +256,7 @@ public class AxisGuesser {
    *     <li>Z_AXIS: focal planes</li>
    *     <li>T_AXIS: time points</li>
    *     <li>C_AXIS: channels</li>
+   *     <li>S_AXIS: series</li>
    *   </ul>
    */
   public int[] getAxisTypes() { return axisTypes; }
@@ -251,6 +268,7 @@ public class AxisGuesser {
    *     <li>Z_AXIS: focal planes</li>
    *     <li>T_AXIS: time points</li>
    *     <li>C_AXIS: channels</li>
+   *     <li>S_AXIS: series</li>
    *   </ul>
    */
   public void setAxisTypes(int[] axes) { axisTypes = axes; }
@@ -264,12 +282,16 @@ public class AxisGuesser {
   /** Gets the number of C axes in the pattern. */
   public int getAxisCountC() { return getAxisCount(C_AXIS); }
 
+  /** Gets the number of S axes in the pattern. */
+  public int getAxisCountS() { return getAxisCount(S_AXIS); }
+
   /** Gets the number of axes in the pattern of the given type.
    *  @param axisType One of:
    *   <ul>
    *     <li>Z_AXIS: focal planes</li>
    *     <li>T_AXIS: time points</li>
    *     <li>C_AXIS: channels</li>
+   *     <li>S_AXIS: series</li>
    *   </ul>
    */
   public int getAxisCount(int axisType) {
