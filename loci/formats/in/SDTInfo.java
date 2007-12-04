@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import loci.formats.RandomAccessStream;
 
 /**
@@ -469,9 +470,17 @@ public class SDTInfo {
     in.readFully(infoBytes);
     info = new String(infoBytes);
 
-    // save file info to metadata table
-    if (meta != null) meta.put("File Info", info);
-    // TODO: parse individual parameters from info string and store them
+    StringTokenizer st = new StringTokenizer(info, "\n");
+    int count = st.countTokens();
+    st.nextToken();
+    String key = null, value = null;
+    for (int i=1; i<count-1; i++) {
+      String token = st.nextToken().trim();
+      if (token.indexOf(":") == -1) continue;
+      key = token.substring(0, token.indexOf(":")).trim();
+      value = token.substring(token.indexOf(":") + 1).trim();
+      meta.put(key, value);
+    }
 
     // read setup
     in.seek(setupOffs);
@@ -479,34 +488,44 @@ public class SDTInfo {
     in.readFully(setupBytes);
     setup = new String(setupBytes);
 
-    // save setup to metadata table
-    if (meta != null) meta.put("Setup", setup);
-    // TODO: parse individual parameters from setup string and store them
+    st = new StringTokenizer(setup, "\n");
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken().trim();
 
-    // extract dimensional parameters from setup string
-    int xIndex = setup.indexOf(X_STRING);
-    if (xIndex > 0) {
-      int ndx = xIndex + X_STRING.length();
-      int end = setup.indexOf("]", ndx);
-      width = Integer.parseInt(setup.substring(ndx, end));
-    }
-    int yIndex = setup.indexOf(Y_STRING);
-    if (yIndex > 0) {
-      int ndx = yIndex + Y_STRING.length();
-      int end = setup.indexOf("]", ndx);
-      height = Integer.parseInt(setup.substring(ndx, end));
-    }
-    int tIndex = setup.indexOf(T_STRING);
-    if (tIndex > 0) {
-      int ndx = tIndex + T_STRING.length();
-      int end = setup.indexOf("]", ndx);
-      timeBins = Integer.parseInt(setup.substring(ndx, end));
-    }
-    int cIndex = setup.indexOf(C_STRING);
-    if (cIndex > 0) {
-      int ndx = cIndex + C_STRING.length();
-      int end = setup.indexOf("]", ndx);
-      channels = Integer.parseInt(setup.substring(ndx, end));
+      if (token.startsWith("#SP") || token.startsWith("#DI") ||
+        token.startsWith("#PR") || token.startsWith("#MP"))
+      {
+        int open = token.indexOf("[");
+        key = token.substring(open + 1, token.indexOf(",", open));
+        value = token.substring(token.lastIndexOf(",") + 1, token.length() - 1);
+      }
+      else if (token.startsWith("#TR") || token.startsWith("#WI")) {
+        key = token.substring(0, token.indexOf("[")).trim();
+        value = token.substring(token.indexOf("[") + 1, token.indexOf("]"));
+      }
+
+      if (key != null && value != null) meta.put(key, value);
+
+      if (token.indexOf(X_STRING) != -1) {
+        int ndx = token.indexOf(X_STRING) + X_STRING.length();
+        int end = token.indexOf("]", ndx);
+        width = Integer.parseInt(token.substring(ndx, end));
+      }
+      else if (token.indexOf(Y_STRING) != -1) {
+        int ndx = token.indexOf(Y_STRING) + Y_STRING.length();
+        int end = token.indexOf("]", ndx);
+        height = Integer.parseInt(token.substring(ndx, end));
+      }
+      else if (token.indexOf(T_STRING) != -1) {
+        int ndx = token.indexOf(T_STRING) + T_STRING.length();
+        int end = token.indexOf("]", ndx);
+        timeBins = Integer.parseInt(token.substring(ndx, end));
+      }
+      else if (token.indexOf(C_STRING) != -1) {
+        int ndx = token.indexOf(C_STRING) + C_STRING.length();
+        int end = token.indexOf("]", ndx);
+        channels = Integer.parseInt(token.substring(ndx, end));
+      }
     }
 
     // read measurement data

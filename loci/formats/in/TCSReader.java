@@ -513,7 +513,6 @@ public class TCSReader extends FormatReader {
             "Sequential Setting 0");
         }
 
-        /* debug */ System.out.println(fullSeries);
         if (fullSeries.indexOf("Sequential Setting ") == -1) {
           if (fullSeries.equals("")) fullSeries = "Master sequential setting";
           else fullSeries += " - Master sequential setting";
