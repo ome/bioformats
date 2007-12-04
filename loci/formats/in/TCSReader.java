@@ -329,6 +329,7 @@ public class TCSReader extends FormatReader {
       for (int i=0; i<ifds.length; i++) {
         String document =
           (String) ifds[i].get(new Integer(TiffTools.DOCUMENT_NAME));
+        if (document == null) continue;
 
         int index = document.indexOf("INDEX");
         String c = document.substring(8, index).trim();
