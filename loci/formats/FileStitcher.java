@@ -98,6 +98,7 @@ public class FileStitcher implements IFormatReader {
 
   private String[] seriesBlocks;
   private Vector fileVector;
+  private Vector seriesNames;
 
   // -- Constructors --
 
@@ -858,6 +859,7 @@ public class FileStitcher implements IFormatReader {
 
       seriesBlocks = (String[]) sBlock.toArray(new String[0]);
       fileVector = new Vector();
+      seriesNames = new Vector();
 
       String file = fp.getFiles()[0];
       Location dir = new Location(file).getAbsoluteFile().getParentFile();
@@ -1147,10 +1149,10 @@ public class FileStitcher implements IFormatReader {
     int pixelType = getPixelType();
     boolean little = reader.isLittleEndian();
     MetadataStore s = reader.getMetadataStore();
-    s.setPixels(new Integer(core.sizeX[sno]), new Integer(core.sizeY[sno]),
-      new Integer(core.sizeZ[sno]), new Integer(core.sizeC[sno]),
-      new Integer(core.sizeT[sno]), new Integer(pixelType),
-      new Boolean(!little), core.currentOrder[sno], new Integer(sno), null);
+    for (int i=0; i<core.sizeX.length; i++) {
+      s.setImage((String) seriesNames.get(i), null, null, new Integer(i));
+    }
+    FormatTools.populatePixels(s, this);
   }
 
   /**
@@ -1249,6 +1251,11 @@ public class FileStitcher implements IFormatReader {
       FilePattern newPattern = getPattern(list, dir, prefix + i);
       if (blockNum == seriesBlocks.length - 1) {
         fileVector.add(newPattern.getFiles());
+        String name = newPattern.getPattern();
+        if (name.indexOf(File.separator) != -1) {
+          name = name.substring(name.lastIndexOf(File.separator) + 1);
+        }
+        seriesNames.add(name);
       }
       else {
         String next = seriesBlocks[blockNum + 1];
