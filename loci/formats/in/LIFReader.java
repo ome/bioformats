@@ -419,6 +419,7 @@ public class LIFReader extends FormatReader {
 
     core = new CoreMetadata(numDatasets);
     Arrays.fill(core.orderCertain, true);
+    Arrays.fill(core.currentOrder, "XYCZT");
 
     for (int i=0; i<numDatasets; i++) {
       core.sizeX[i] = ((Integer) widths.get(i)).intValue();
@@ -426,8 +427,6 @@ public class LIFReader extends FormatReader {
       core.sizeZ[i] = ((Integer) zs.get(i)).intValue();
       core.sizeC[i] = ((Integer) channels.get(i)).intValue();
       core.sizeT[i] = ((Integer) ts.get(i)).intValue();
-      core.currentOrder[i] =
-        (core.sizeZ[i] > core.sizeT[i]) ? "XYCZT" : "XYCTZ";
 
       bitsPerPixel[i] = ((Integer) bps.get(i)).intValue();
       extraDimensions[i] = ((Integer) extraDims.get(i)).intValue();
