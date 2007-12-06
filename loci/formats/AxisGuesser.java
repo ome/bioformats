@@ -69,7 +69,7 @@ public class AxisGuesser {
   protected static final String[] C = {"c", "ch", "w", "wavelength"};
 
   /** Prefix endings indicating series dimension. */
-  protected static final String[] S = {"s", "series"};
+  protected static final String[] S = {"s", "series", "e"};
 
   protected static final BigInteger TWO = new BigInteger("2");
   protected static final BigInteger THREE = new BigInteger("3");

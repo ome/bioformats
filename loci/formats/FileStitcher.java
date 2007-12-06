@@ -96,6 +96,9 @@ public class FileStitcher implements IFormatReader {
   /** Current series number. */
   private int series;
 
+  private String[] seriesBlocks;
+  private Vector fileVector;
+
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
@@ -818,7 +821,7 @@ public class FileStitcher implements IFormatReader {
     return reader.getStatusListeners();
   }
 
-  // -- Helper methods --
+  // -- Internal FormatReader API methods --
 
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
@@ -845,56 +848,29 @@ public class FileStitcher implements IFormatReader {
       seriesInFile = false;
 
       String[] blockPrefixes = fp.getPrefixes();
-      BigInteger[] firsts = fp.getFirst();
-      BigInteger[] steps = fp.getStep();
-      String sBlock = null;
-      BigInteger first = null;
-      BigInteger step = null;
+      Vector sBlock = new Vector();
 
       for (int i=0; i<axes.length; i++) {
         if (axes[i] == AxisGuesser.S_AXIS) {
-          seriesCount = count[i];
-          sBlock = blockPrefixes[i];
-          first = firsts[i];
-          step = steps[i];
+          sBlock.add(blockPrefixes[i]);
         }
       }
 
-      files = new String[seriesCount][];
+      seriesBlocks = (String[]) sBlock.toArray(new String[0]);
+      fileVector = new Vector();
 
       String file = fp.getFiles()[0];
-      String dir =
-        new Location(file).getAbsoluteFile().getParentFile().getPath();
-      String prefix = fp.getPrefix();
-      String suffix = fp.getSuffix();
+      Location dir = new Location(file).getAbsoluteFile().getParentFile();
+      String[] fs = dir.list();
 
-      Vector[] v = new Vector[seriesCount];
-      for (int i=0; i<v.length; i++) {
-        v[i] = new Vector();
-      }
-      String[] list = new Location(dir).list();
-      for (int i=0; i<list.length; i++) {
-        if (list[i].indexOf(File.separator) != -1) {
-          list[i] = list[i].substring(list[i].lastIndexOf(File.separator));
-        }
-        if (list[i].startsWith(prefix) && list[i].endsWith(suffix)) {
-          for (int j=0; j<seriesCount; j++) {
-            BigInteger bb = new BigInteger(j + "");
-            bb = bb.multiply(step);
-            bb = bb.add(first);
-            if (list[i].indexOf(sBlock + bb.toString()) != -1) {
-              v[j].add(list[i]);
-              break;
-            }
-          }
-        }
-      }
+      setFiles(fs, seriesBlocks[0], fp.getFirst()[0], fp.getLast()[0],
+        fp.getStep()[0], "", 0);
+
+      seriesCount = fileVector.size();
+      files = new String[seriesCount][];
 
       for (int i=0; i<seriesCount; i++) {
-        String[] test = (String[]) v[i].toArray(new String[0]);
-        String p = FilePattern.findPattern(test[0], dir, test);
-        FilePattern pat = new FilePattern(p);
-        files[i] = pat.getFiles();
+        files[i] = (String[]) fileVector.get(i);
       }
     }
 
@@ -918,7 +894,7 @@ public class FileStitcher implements IFormatReader {
       for (int j=0; j<files[i].length; j++) {
         if (!new Location(files[i][j]).exists()) {
           throw new FormatException("File #" + i +
-            " (" + files[i] + ") does not exist.");
+            " (" + files[i][j] + ") does not exist.");
         }
       }
     }
@@ -1076,6 +1052,8 @@ public class FileStitcher implements IFormatReader {
     // initialize used files list only when requested
     usedFiles = null;
   }
+
+  // -- Helper methods --
 
   /** Computes axis length arrays, and total axis lengths. */
   protected void computeAxisLengths() throws FormatException {
@@ -1241,6 +1219,49 @@ public class FileStitcher implements IFormatReader {
       }
     }
     return include;
+  }
+
+  private FilePattern getPattern(String[] f, String dir, String block)
+  {
+    Vector v = new Vector();
+    for (int i=0; i<f.length; i++) {
+      if (f[i].indexOf(block) != -1 && new Location(f[i]).exists()) {
+        v.add(f[i]);
+      }
+    }
+    f = (String[]) v.toArray(new String[0]);
+    return new FilePattern(FilePattern.findPattern(f[0], dir, f));
+  }
+
+  private void setFiles(String[] list, String prefix, BigInteger first,
+    BigInteger last, BigInteger step, String dir, int blockNum)
+  {
+    long f = first.longValue();
+    long l = last.longValue();
+    long s = step.longValue();
+    for (long i=f; i<=l; i+=s) {
+      FilePattern newPattern = getPattern(list, dir, prefix + i);
+      if (blockNum == seriesBlocks.length - 1) {
+        fileVector.add(newPattern.getFiles());
+      }
+      else {
+        String next = seriesBlocks[blockNum + 1];
+        String[] blocks = newPattern.getPrefixes();
+        BigInteger fi = null;
+        BigInteger la = null;
+        BigInteger st = null;
+        for (int q=0; q<blocks.length; q++) {
+          if (blocks[q].indexOf(next) != -1) {
+            fi = newPattern.getFirst()[q];
+            la = newPattern.getLast()[q];
+            st = newPattern.getStep()[q];
+            break;
+          }
+        }
+
+        setFiles(newPattern.getFiles(), next, fi, la, st, dir, blockNum + 1);
+      }
+    }
   }
 
   // -- Deprecated FileStitcher API methods --
