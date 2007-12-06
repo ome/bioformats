@@ -31,6 +31,7 @@ import ij.io.OpenDialog;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -612,7 +613,9 @@ public class ImporterOptions implements ItemListener {
         int t = r.getSizeT() / 2;
         int ndx = r.getIndex(z, 0, t);
         try {
-          ImageIcon icon = new ImageIcon(r.openThumbImage(ndx));
+          BufferedImage img = r.openThumbImage(ndx);
+          if (isAutoscale()) img = ImageTools.autoscale(img);
+          ImageIcon icon = new ImageIcon(img);
           p[i].removeAll();
           p[i].add(new JLabel(icon));
         }
@@ -624,7 +627,7 @@ public class ImporterOptions implements ItemListener {
     Util.addScrollBars(gd);
     if (forceThumbnails) gd.showDialog();
     else {
-      ThumbLoader loader = new ThumbLoader(r, p, gd);
+      ThumbLoader loader = new ThumbLoader(r, p, gd, isAutoscale());
       gd.showDialog();
       loader.stop();
     }

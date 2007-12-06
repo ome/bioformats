@@ -1490,6 +1490,23 @@ public final class ImageTools {
     return input;
   }
 
+  /** Perform autoscaling on the given BufferedImage. */
+  public static BufferedImage autoscale(BufferedImage img) {
+    byte[][] pixels = getPixelBytes(img, true);
+    double min = Double.MAX_VALUE;
+    double max = 0.0;
+    int bits = pixels[0].length / (img.getWidth() * img.getHeight()) * 8;
+    for (int i=0; i<pixels.length; i++) {
+      Double[] mm = scanData(pixels[0], bits, true);
+      double tmin = mm[0].doubleValue();
+      double tmax = mm[1].doubleValue();
+      if (tmin < min) min = tmin;
+      if (tmax > max) max = tmax;
+    }
+
+    return autoscale(img, (int) min, (int) max);
+  }
+
   /**
    * Perform autoscaling on the given BufferedImage;
    * map min to 0 and max to 255.  If the BufferedImage has 8 bit data, then

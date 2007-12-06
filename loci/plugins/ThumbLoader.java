@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
+import loci.formats.ImageTools;
 
 /**
  * Loads thumbnails for Bio-Formats Importer
@@ -51,6 +52,7 @@ public class ThumbLoader implements Runnable {
   private IFormatReader ir;
   private Panel[] p;
   private Dialog dialog;
+  private boolean scale;
   private boolean stop;
   private Thread loader;
 
@@ -62,10 +64,12 @@ public class ThumbLoader implements Runnable {
    * @param p the panels upon which to populate the results
    * @param dialog the dialog containing the panels
    */
-  public ThumbLoader(IFormatReader ir, Panel[] p, Dialog dialog) {
+  public ThumbLoader(IFormatReader ir, Panel[] p, Dialog dialog, boolean scale)
+  {
     this.ir = ir;
     this.p = p;
     this.dialog = dialog;
+    this.scale = scale;
     loader = new Thread(this, "BioFormats-ThumbLoader");
     loader.start();
   }
@@ -113,6 +117,7 @@ public class ThumbLoader implements Runnable {
         int t = ir.getSizeT() / 2;
         int ndx = ir.getIndex(z, 0, t);
         BufferedImage thumb = ir.openThumbImage(ndx);
+        if (scale) thumb = ImageTools.autoscale(thumb);
         ImageIcon icon = new ImageIcon(thumb);
         p[ii].removeAll();
         p[ii].add(new JLabel(icon));
