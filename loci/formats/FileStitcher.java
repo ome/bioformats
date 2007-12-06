@@ -861,10 +861,11 @@ public class FileStitcher implements IFormatReader {
 
       String file = fp.getFiles()[0];
       Location dir = new Location(file).getAbsoluteFile().getParentFile();
+      String dpath = dir.getAbsolutePath();
       String[] fs = dir.list();
 
       setFiles(fs, seriesBlocks[0], fp.getFirst()[0], fp.getLast()[0],
-        fp.getStep()[0], "", 0);
+        fp.getStep()[0], dpath, 0);
 
       seriesCount = fileVector.size();
       files = new String[seriesCount][];
@@ -1225,8 +1226,13 @@ public class FileStitcher implements IFormatReader {
   {
     Vector v = new Vector();
     for (int i=0; i<f.length; i++) {
+      if (f[i].indexOf(File.separator) != -1) {
+        f[i] = f[i].substring(f[i].lastIndexOf(File.separator) + 1);
+      }
+      if (dir.endsWith(File.separator)) f[i] = dir + f[i];
+      else f[i] = dir + File.separator + f[i];
       if (f[i].indexOf(block) != -1 && new Location(f[i]).exists()) {
-        v.add(f[i]);
+        v.add(f[i].substring(f[i].lastIndexOf(File.separator) + 1));
       }
     }
     f = (String[]) v.toArray(new String[0]);
