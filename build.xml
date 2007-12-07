@@ -323,7 +323,10 @@ Apache XML-RPC
     classpath="jar/checkstyle-all-4.2.jar:build/jar/loci-checks.jar"/>
   <taskdef resource="net/sf/antcontrib/antcontrib.properties"
     classpath="jar/ant-contrib-1.0b1.jar"/>
-  <taskdef resource="net/sf/antcontrib/antlib.xml" />
+  <!-- HACK - some environments do not install the antcontrib tasks properly
+    from antcontrib.properties above; also load them from antlib.xml -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml"
+    classpath="jar/ant-contrib-1.0b1.jar"/>
 
   <!-- Global build targets -->
 
