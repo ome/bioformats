@@ -319,8 +319,12 @@ Apache XML-RPC
 
   <!-- Non-core ant tasks -->
 
+  <!-- NB - We do not reference build/jar/loci-checks.jar directly, as doing so
+    causes loci-checks.jar to be locked by some file systems (Windows in
+    particular), which causes the clean and clean-jars targets to fail. -->
   <taskdef resource="checkstyletask.properties"
-    classpath="jar/checkstyle-all-4.2.jar:build/jar/loci-checks.jar"/>
+    classpath="jar/checkstyle-all-4.2.jar:jar/loci-checks.jar"/>
+
   <taskdef resource="net/sf/antcontrib/antcontrib.properties"
     classpath="jar/ant-contrib-1.0b1.jar"/>
   <!-- HACK - some environments do not install the antcontrib tasks properly
