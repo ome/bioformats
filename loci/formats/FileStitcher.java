@@ -1150,7 +1150,9 @@ public class FileStitcher implements IFormatReader {
     boolean little = reader.isLittleEndian();
     MetadataStore s = reader.getMetadataStore();
     for (int i=0; i<core.sizeX.length; i++) {
-      s.setImage((String) seriesNames.get(i), null, null, new Integer(i));
+      if (seriesNames != null) {
+        s.setImage((String) seriesNames.get(i), null, null, new Integer(i));
+      }
     }
     FormatTools.populatePixels(s, this);
   }
