@@ -54,7 +54,7 @@ public class ReaderTest {
   private boolean isFirstTime = true;
 
   /** List of files to test. */
-  private static Vector toTest;
+  private String[][] toTest;
 
   /** List of configuration files. */
   private static Vector configFiles = new Vector();
@@ -72,14 +72,17 @@ public class ReaderTest {
    */
   public Object[][] createData() {
     if (isFirstTime) {
-      toTest = new Vector();
-      getFiles(System.getProperty("testng.directory"), toTest);
+      Vector v = new Vector();
+      getFiles(System.getProperty("testng.directory"), v);
+      v = removeDuplicates(v);
       isFirstTime = false;
+      String[] o = (String[]) v.toArray(new String[0]);
+      toTest = new String[o.length][1];
+      for (int i=0; i<o.length; i++) {
+        toTest[i][0] = o[i];
+      }
     }
-    String[] o = (String[]) toTest.toArray(new String[0]);
-    String[][] rtn = new String[o.length][1];
-    for (int i=0; i<o.length; i++) { rtn[i][0] = o[i]; }
-    return rtn;
+    return toTest;
   }
 
   // -- Tests --
@@ -787,6 +790,35 @@ public class ReaderTest {
       }
     }
     return !config.testFile(file) && !file.endsWith(".bioformats");
+  }
+
+  /** Remove duplicates from a file list. */
+  private static Vector removeDuplicates(Vector files) {
+    Vector rtn = new Vector();
+    try {
+      for (int i=0; i<files.size(); i++) {
+        if (files.get(i) == null) continue;
+        FileStitcher f = new FileStitcher();
+        f.setId((String) files.get(i));
+        String[] used = f.getUsedFiles();
+        rtn.add(used[0]);
+        for (int q=1; q<used.length; q++) {
+          int ndx = files.indexOf(used[q]);
+          if (ndx > -1) files.setElementAt(null, ndx);
+          if (used[q].indexOf(File.separator) != -1) {
+            String s =
+              used[q].substring(used[q].lastIndexOf(File.separator) + 1);
+            ndx = files.indexOf(s);
+            if (ndx > -1) files.setElementAt(null, ndx);
+          }
+        }
+        f.close();
+      }
+    }
+    catch (FormatException e) { e.printStackTrace(); }
+    catch (IOException e) { e.printStackTrace(); }
+    files = rtn;
+    return rtn;
   }
 
   // -- Helper class --
