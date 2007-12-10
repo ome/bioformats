@@ -154,8 +154,14 @@ public class Exporter {
 
       // convert and save slices
 
-      boolean fakeRGB =
-        imp instanceof CustomImage || imp instanceof CompositeImage;
+      Class c = null;
+      try {
+        c = Class.forName("ij.CompositeImage");
+      }
+      catch (ClassNotFoundException e) {
+        IJ.error("Please upgrade to ImageJ 1.39l or later.");
+      }
+      boolean fakeRGB = imp.getClass().equals(c);
       int n = fakeRGB ? imp.getNChannels() : 1;
 
       ImageStack is = imp.getStack();

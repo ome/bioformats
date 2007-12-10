@@ -30,7 +30,9 @@ import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
-import loci.formats.FormatTools;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import loci.formats.*;
 
 public class Slicer implements PlugInFilter {
 
@@ -95,7 +97,14 @@ public class Slicer implements PlugInFilter {
     ImageStack stack = imp.getImageStack();
     Calibration calibration = imp.getCalibration();
 
-    if (imp instanceof CompositeImage) return;
+    Class c = null;
+    try {
+      c = Class.forName("ij.CompositeImage");
+    }
+    catch (ClassNotFoundException e) {
+      IJ.error("Please upgrade to ImageJ 1.39l or later.");
+    }
+    if (imp.getClass().equals(c)) return;
 
     int sizeZ = imp.getNSlices();
     int sizeC = imp.getNChannels();
@@ -143,10 +152,19 @@ public class Slicer implements PlugInFilter {
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
       p.setCalibration(calibration);
-      if (imp instanceof CustomImage && !sliceC) {
-        CustomImage c = new CustomImage(p, stackOrder, sliceZ ? 1 : sizeZ,
-          sliceT ? 1 : sizeT, sliceC ? 1 : sizeC, true);
-        c.show();
+      if (imp.getClass().equals(c) && !sliceC) {
+        try {
+          ReflectedUniverse r = new ReflectedUniverse();
+          r.exec("import ij.CompositeImage");
+          r.setVar("p", p);
+          r.exec("c = new CompositeImage(p, CompositeImage.COMPOSITE)");
+          r.exec("c.show()");
+        }
+        catch (ReflectException e) {
+          ByteArrayOutputStream s = new ByteArrayOutputStream();
+          e.printStackTrace(new PrintStream(s));
+          IJ.error(s.toString());
+        }
       }
       else p.show();
     }

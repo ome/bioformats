@@ -265,8 +265,8 @@ public final class Util {
       for (int i=0; i<p.length; i++) {
         tmpStack.addSlice("", p[i]);
       }
-      imp = new CustomImage(new ImagePlus("", tmpStack), "XYCZT", 1, 1,
-        p.length, true);
+      imp = new CompositeImage(new ImagePlus("", tmpStack),
+        CompositeImage.COMPOSITE);
     }
 
     return imp;

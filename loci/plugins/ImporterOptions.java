@@ -446,13 +446,15 @@ public class ImporterOptions implements ItemListener {
     return STATUS_OK;
   }
 
-  public int promptMergeOption(int one, int two, int three) {
+  public int promptMergeOption(int[] nums) {
     if (windowless) return STATUS_OK;
     GenericDialog gd = new GenericDialog("Merging Options...");
 
-    String[] options = new String[] {one + " planes, 2 channels per plane",
-      two + " planes, 3 channels per plane",
-      three + " planes, 4 channels per plane", MERGE_DEFAULT};
+    String[] options = new String[7];
+    options[6] = MERGE_DEFAULT;
+    for (int i=0; i<6; i++) {
+      options[i] = nums[i] + " planes, " + (i + 2) + " channels per plane";
+    }
 
     gd.addMessage("How would you like to merge this data?");
     gd.addChoice(LABEL_MERGE_OPTION, options, MERGE_DEFAULT);

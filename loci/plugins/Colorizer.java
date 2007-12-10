@@ -31,10 +31,27 @@ import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
 import java.awt.image.IndexColorModel;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import loci.formats.*;
 
 public class Colorizer implements PlugInFilter {
+
+  // -- Static fields --
+
+  private static ReflectedUniverse r = createReflectedUniverse();
+  private static ReflectedUniverse createReflectedUniverse() {
+    r = null;
+    try {
+      r = new ReflectedUniverse();
+      r.exec("import ij.CompositeImage");
+    }
+    catch (ReflectException exc) {
+      IJ.error("Please upgrade to ImageJ 1.39l or later.");
+    }
+    return r;
+  }
 
   // -- Fields --
 
@@ -106,8 +123,14 @@ public class Colorizer implements PlugInFilter {
     int nTimes = imp.getNFrames();
     int nSlices = imp.getNSlices();
 
-    if (imp instanceof CompositeImage || imp instanceof CustomImage ||
-      stack.isRGB() || (nChannels == 1 && !color))
+    Class c = null;
+    try {
+      c = Class.forName("ij.CompositeImage");
+    }
+    catch (ClassNotFoundException e) { }
+
+    if (imp.getClass().equals(c) || stack.isRGB() ||
+      (nChannels == 1 && !color))
     {
       return;
     }
@@ -138,32 +161,23 @@ public class Colorizer implements PlugInFilter {
       if (nChannels < 4 && type == ImagePlus.GRAY8) {
         newImp = makeRGB(newImp, stack, nChannels);
       }
-      else if (nChannels <= 4 && type != ImagePlus.COLOR_256) {
-        // use compareTo instead of IJ.versionLessThan(...), because we want
-        // to suppress the error message
-        if (imp.getStackSize() == nChannels &&
-          ImageJ.VERSION.compareTo("1.38n") < 0)
-        {
+      else if (nChannels <= 7 && type != ImagePlus.COLOR_256) {
+        if (!IJ.versionLessThan("1.39l")) {
           // use reflection to construct CompositeImage,
           // in case ImageJ version is too old
-          ReflectedUniverse ru = new ReflectedUniverse();
           try {
-            ru.exec("import ij.CompositeImage");
-            ru.setVar("imp", imp);
-            ru.setVar("sizeC", nChannels);
-            newImp = (ImagePlus) ru.exec("new CompositeImage(imp, sizeC)");
+            r.setVar("imp", imp);
+            newImp = (ImagePlus)
+              r.exec("new CompositeImage(imp, CompositeImage.COMPOSITE)");
           }
           catch (ReflectException exc) {
-            newImp = new CustomImage(imp, stackOrder, nSlices,
-              nTimes, nChannels, true);
+            ByteArrayOutputStream s = new ByteArrayOutputStream();
+            exc.printStackTrace(new PrintStream(s));
+            IJ.error(s.toString());
           }
         }
-        else {
-          newImp = new CustomImage(imp, stackOrder, nSlices,
-            nTimes, nChannels, true);
-        }
       }
-      else if (nChannels > 4) {
+      else if (nChannels > 7) {
         // ask the user what they would like to do...
 
         int planes1 = stack.getSize() / 2;
@@ -173,46 +187,50 @@ public class Colorizer implements PlugInFilter {
         int planes3 = stack.getSize() / 4;
         if (planes3 * 4 < stack.getSize()) planes3++;
 
+        int[] num = new int[6];
+        for (int i=0; i<num.length; i++) {
+          num[i] = stack.getSize() / (i + 2);
+          if (num[i] * (i + 2) < stack.getSize()) num[i]++;
+        }
+
         ImporterOptions options = new ImporterOptions();
 
         if (mergeOption == null) {
-          int status = options.promptMergeOption(planes1, planes2, planes3);
+          int status = options.promptMergeOption(num);
           if (status == ImporterOptions.STATUS_OK) {
             mergeOption = options.getMergeOption();
           }
         }
-        if (mergeOption != null) {
-          if (mergeOption.indexOf("2 channels") != -1) {
-            if (imp.getType() == ImagePlus.GRAY8) {
-              newImp = makeRGB(newImp, stack, 2);
-            }
-            else {
-              newImp = new CustomImage(imp, stackOrder, nSlices,
-                nTimes * planes1, 2, true);
+
+        try {
+          if (mergeOption != null) {
+            int ndx = mergeOption.indexOf("channels");
+            if (ndx != -1) {
+              int n = Integer.parseInt(mergeOption.substring(ndx - 2, ndx - 1));
+              if (imp.getType() == ImagePlus.GRAY8 && n < 4) {
+                newImp = makeRGB(newImp, stack, n);
+              }
+              else {
+                imp.setDimensions(n, imp.getNSlices()*num[n - 2],
+                  imp.getNFrames());
+                r.setVar("imp", imp);
+                r.exec("mode = CompositeImage.COMPOSITE");
+                r.exec("newImp = new CompositeImage(imp, mode)");
+                newImp = (ImagePlus) r.getVar("newImp");
+              }
             }
           }
-          else if (mergeOption.indexOf("3 channels") != -1) {
-            if (imp.getType() == ImagePlus.GRAY8) {
-              newImp = makeRGB(newImp, stack, 3);
-            }
-            else {
-              newImp = new CustomImage(imp, stackOrder, nSlices,
-                nTimes * planes2, 3, true);
-            }
-          }
-          else if (mergeOption.indexOf("4 channels") != -1) {
-            newImp = new CustomImage(imp, stackOrder, nSlices,
-              nTimes * planes3, 4, true);
-          }
+        }
+        catch (ReflectException e) {
+          ByteArrayOutputStream s = new ByteArrayOutputStream();
+          e.printStackTrace(new PrintStream(s));
+          IJ.error(s.toString());
         }
       }
     }
 
     newImp.setTitle(imp.getTitle());
-    if (newImp instanceof CustomImage) {
-      newImp.setDimensions(nChannels, nSlices, nTimes);
-    }
-    else {
+    if (!newImp.getClass().equals(c)) {
       newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
         nSlices, nTimes);
     }

@@ -28,7 +28,6 @@ package loci.plugins;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
 import java.awt.TextField;
 import java.util.*;
 import loci.formats.ReflectException;
