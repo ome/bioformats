@@ -27,6 +27,7 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.io.FileInfo;
 import ij.io.SaveDialog;
 import ij.process.*;
 import java.awt.Image;
@@ -90,6 +91,36 @@ public class Exporter {
 
     try {
       IFormatWriter w = new ImageWriter().getWriter(outfile);
+      FileInfo fi = imp.getOriginalFileInfo();
+      String xml = fi == null ? null : fi.description == null ? null :
+        fi.description.indexOf("xml") == -1 ? null : fi.description;
+      MetadataStore store = MetadataTools.createOMEXMLMetadata(xml);
+      if (store == null) IJ.error("OME-Java library not found.");
+      else if (store instanceof MetadataRetrieve) {
+        if (xml == null) {
+          int ptype = 0;
+          switch (imp.getType()) {
+            case ImagePlus.GRAY8:
+            case ImagePlus.COLOR_256:
+            case ImagePlus.COLOR_RGB:
+              ptype = FormatTools.UINT8;
+              break;
+            case ImagePlus.GRAY16:
+              ptype = FormatTools.UINT16;
+              break;
+            case ImagePlus.GRAY32:
+              ptype = FormatTools.FLOAT;
+              break;
+          }
+
+          store.setPixels(new Integer(imp.getWidth()),
+            new Integer(imp.getHeight()), new Integer(imp.getNSlices()),
+            new Integer(imp.getNChannels()), new Integer(imp.getNFrames()),
+            new Integer(ptype), Boolean.FALSE, "XYCZT", null, null);
+        }
+        w.setMetadataRetrieve((MetadataRetrieve) store);
+      }
+
       w.setId(outfile);
 
       // prompt for options
