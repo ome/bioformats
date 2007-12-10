@@ -97,8 +97,7 @@ public class SEQReader extends BaseTiffReader {
     addMeta("slices", "" + core.sizeT[0]);
 
     // parse the description to get channels, slices and times where applicable
-    String descr = (String) TiffTools.getIFDValue(ifds[0],
-      TiffTools.IMAGE_DESCRIPTION);
+    String descr = TiffTools.getComment(ifds[0]);
     metadata.remove("Comment");
     if (descr != null) {
       StringTokenizer tokenizer = new StringTokenizer(descr, "\n");

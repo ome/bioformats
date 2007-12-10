@@ -860,14 +860,9 @@ public final class TiffTools {
     return results;
   }
 
-  /** Convenience method for obtaining a file's first ImageDescription. */
-  public static String getComment(String id)
-    throws FormatException, IOException
-  {
-    // read first IFD
-    RandomAccessStream in = new RandomAccessStream(id);
-    Hashtable ifd = TiffTools.getFirstIFD(in);
-    in.close();
+
+  /** Convenience method for obtaining the ImageDescription from an IFD. */
+  public static String getComment(Hashtable ifd) {
     if (ifd == null) return null;
 
     // extract comment
@@ -886,6 +881,17 @@ public final class TiffTools {
       comment = comment.replaceAll("\r", "\n");
     }
     return comment;
+  }
+
+  /** Convenience method for obtaining a file's first ImageDescription. */
+  public static String getComment(String id)
+    throws FormatException, IOException
+  {
+    // read first IFD
+    RandomAccessStream in = new RandomAccessStream(id);
+    Hashtable ifd = TiffTools.getFirstIFD(in);
+    in.close();
+    return getComment(ifd);
   }
 
   // -- Image reading methods --

@@ -79,8 +79,7 @@ public class OMETiffReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     OMETiffHandler handler = new OMETiffHandler();
-    String comment =
-      (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
+    String comment = TiffTools.getComment(ifds[0]);
 
     currentSeries = -1;
     seriesCount = 0;
@@ -109,7 +108,7 @@ public class OMETiffReader extends BaseTiffReader {
 
     String s = null;
     if (ifds.length > 1) {
-      s = (String) TiffTools.getIFDValue(ifds[1], TiffTools.IMAGE_DESCRIPTION);
+      s = TiffTools.getComment(ifds[1]);
     }
     isWiscScan = s != null && s.indexOf("ome.xsd") != -1;
 
@@ -199,8 +198,7 @@ public class OMETiffReader extends BaseTiffReader {
       currentFile = i;
 
       usedIFDs[i] = TiffTools.getIFDs(new RandomAccessStream(usedFiles[i]));
-      String c = (String)
-        TiffTools.getIFDValue(usedIFDs[i][0], TiffTools.IMAGE_DESCRIPTION);
+      String c = TiffTools.getComment(usedIFDs[i][0]);
       try {
         SAXParser parser = SAX_FACTORY.newSAXParser();
         parser.parse(new ByteArrayInputStream(c.getBytes()), handler);
@@ -242,10 +240,7 @@ public class OMETiffReader extends BaseTiffReader {
 
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
-    Object c = TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
-    String comment = null;
-    if (c instanceof String) comment = (String) c;
-    else if (c instanceof String[]) comment = ((String[]) c)[0];
+    String comment = TiffTools.getComment(ifds[0]);
     metadata.remove("Comment");
     MetadataStore store = getMetadataStore();
     MetadataTools.convertMetadata(comment, store);

@@ -386,8 +386,7 @@ public class TCSReader extends FormatReader {
 
       // cut up comment
 
-      String comment =
-        (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
+      String comment = TiffTools.getComment(ifds[0]);
       if (comment != null && comment.startsWith("[")) {
         StringTokenizer st = new StringTokenizer(comment, "\n");
         while (st.hasMoreTokens()) {

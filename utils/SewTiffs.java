@@ -56,11 +56,7 @@ public class SewTiffs {
         ras.close();
 
         // preserve TIFF comment
-        Object descObj =
-          TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-        String desc = null;
-        if (descObj instanceof String) desc = (String) descObj;
-        else if (descObj instanceof String[]) desc = ((String[]) descObj)[0];
+        String desc = TiffTools.getComment(ifd);
 
         if (desc != null) {
           ifd = new Hashtable();

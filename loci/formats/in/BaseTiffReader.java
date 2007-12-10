@@ -508,14 +508,7 @@ public abstract class BaseTiffReader extends FormatReader {
     put("NumberOfChannels", numC);
 
     // TIFF comment
-    String comment = null;
-    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-    if (o instanceof String) comment = (String) o;
-    else if (o instanceof String[]) {
-      String[] s = (String[]) o;
-      if (s.length > 0) comment = s[0];
-    }
-    else if (o != null) comment = o.toString();
+    String comment = TiffTools.getComment(ifd);
     if (comment != null) {
       // sanitize comment
       comment = comment.replaceAll("\r\n", "\n"); // CR-LF to LF

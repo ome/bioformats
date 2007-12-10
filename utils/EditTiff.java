@@ -25,8 +25,7 @@ public class EditTiff {
       fin.close();
       if (ifd == null) System.out.println("Warning: first IFD is null!");
       // extract TIFF comment from IFD
-      String ome = (String)
-        TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+      String ome = TiffTools.getComment(ifd);
       System.out.println("[done]");
       // display comment, and prompt for changes
       System.out.println("Comment =");

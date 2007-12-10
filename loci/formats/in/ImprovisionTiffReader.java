@@ -129,8 +129,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     cNames = new String[core.sizeC[0]];
 
     for (int i=0; i<ifds.length; i++) {
-      comment = (String) TiffTools.getIFDValue(ifds[i],
-        TiffTools.IMAGE_DESCRIPTION);
+      comment = TiffTools.getComment(ifds[i]);
       comment = comment.replaceAll("\r\n", "\n");
       comment = comment.replaceAll("\r", "\n");
       StringTokenizer st = new StringTokenizer(comment, "\n");
