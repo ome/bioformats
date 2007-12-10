@@ -242,7 +242,10 @@ public class OMETiffReader extends BaseTiffReader {
 
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
-    String comment = (String) getMeta("Comment");
+    Object c = TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
+    String comment = null;
+    if (c instanceof String) comment = (String) c;
+    else if (c instanceof String[]) comment = ((String[]) c)[0];
     metadata.remove("Comment");
     MetadataStore store = getMetadataStore();
     MetadataTools.convertMetadata(comment, store);
