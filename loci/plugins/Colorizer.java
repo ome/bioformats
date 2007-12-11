@@ -165,7 +165,7 @@ public class Colorizer implements PlugInFilter {
           // use reflection to construct CompositeImage,
           // in case ImageJ version is too old
           try {
-            r.setVar("imp", imp);
+            r.setVar("imp", Util.reorder(imp, stackOrder, "XYCZT"));
             newImp = (ImagePlus)
               r.exec("new CompositeImage(imp, CompositeImage.COMPOSITE)");
           }
@@ -216,7 +216,7 @@ public class Colorizer implements PlugInFilter {
               else if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG)) {
                 imp.setDimensions(n, imp.getNSlices()*num[n - 2],
                   imp.getNFrames());
-                r.setVar("imp", imp);
+                r.setVar("imp", Util.reorder(imp, stackOrder, "XYCZT"));
                 r.exec("mode = CompositeImage.COMPOSITE");
                 r.exec("newImp = new CompositeImage(imp, mode)");
                 newImp = (ImagePlus) r.getVar("newImp");

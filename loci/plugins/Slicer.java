@@ -156,7 +156,7 @@ public class Slicer implements PlugInFilter {
         try {
           ReflectedUniverse r = new ReflectedUniverse();
           r.exec("import ij.CompositeImage");
-          r.setVar("p", p);
+          r.setVar("p", Util.reorder(p, stackOrder, "XYCZT"));
           r.exec("c = new CompositeImage(p, CompositeImage.COMPOSITE)");
           r.exec("c.show()");
         }
