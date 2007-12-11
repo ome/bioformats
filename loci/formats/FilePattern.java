@@ -420,11 +420,16 @@ public class FilePattern {
           else {
             while (j < width && !same[j]) j++;
             String p = findPattern(name, nameList, jx, indexList[i] + j, "");
-            if (p == null) {
+            char c = name.charAt(indexList[i] - 1);
+            // check if this block represents the series axis
+            if (p == null && c != 'S' && c != 's' && c != 'E' && c != 'e') {
               // unable to find an appropriate breakdown of numerical blocks
               return null;
             }
-            sb.append(p);
+            else if (p == null) {
+              sb.append(name.charAt(endList[i] - 1));
+            }
+            else sb.append(p);
           }
         }
       }

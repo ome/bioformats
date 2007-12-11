@@ -655,6 +655,7 @@ public class FileStitcher implements IFormatReader {
       // each constituent file has multiple used files; we must build the list
       // this could happen with, e.g., a stitched collection of ICS/IDS pairs
       // we have no datasets structured this way, so this logic is untested
+      /*
       if (usedFiles == null) {
         String[][][] used = new String[files.length][][];
         int total = 0;
@@ -683,7 +684,8 @@ public class FileStitcher implements IFormatReader {
           }
         }
       }
-      return usedFiles;
+      */
+      return reader.getUsedFiles();
     }
     // assume every constituent file has no other used files
     // this logic could fail if the first constituent has no extra used files,
@@ -831,7 +833,12 @@ public class FileStitcher implements IFormatReader {
     }
 
     currentId = id;
-    fp = findPattern(id);
+
+    fp = findPattern(currentId);
+    String[] tmpFiles = fp.getFiles();
+    Arrays.sort(tmpFiles);
+
+    fp = new FilePattern(new Location(tmpFiles[0]));
 
     reader.setId(fp.getFiles()[0]);
 
