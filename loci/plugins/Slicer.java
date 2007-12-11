@@ -101,9 +101,7 @@ public class Slicer implements PlugInFilter {
     try {
       c = Class.forName("ij.CompositeImage");
     }
-    catch (ClassNotFoundException e) {
-      IJ.error("Please upgrade to ImageJ 1.39l or later.");
-    }
+    catch (ClassNotFoundException e) { }
     if (imp.getClass().equals(c)) return;
 
     int sizeZ = imp.getNSlices();
@@ -152,7 +150,9 @@ public class Slicer implements PlugInFilter {
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
       p.setCalibration(calibration);
-      if (imp.getClass().equals(c) && !sliceC) {
+      if (imp.getClass().equals(c) && !sliceC &&
+        Util.checkVersion("1.39l", Util.COMPOSITE_MSG))
+      {
         try {
           ReflectedUniverse r = new ReflectedUniverse();
           r.exec("import ij.CompositeImage");

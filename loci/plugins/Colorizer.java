@@ -47,9 +47,7 @@ public class Colorizer implements PlugInFilter {
       r = new ReflectedUniverse();
       r.exec("import ij.CompositeImage");
     }
-    catch (ReflectException exc) {
-      IJ.error("Please upgrade to ImageJ 1.39l or later.");
-    }
+    catch (ReflectException exc) { }
     return r;
   }
 
@@ -136,6 +134,7 @@ public class Colorizer implements PlugInFilter {
     }
 
     ImagePlus newImp = new ImagePlus();
+    boolean closeOriginal = true;
 
     if (color) {
       ImageStack newStack = new ImageStack(stack.getWidth(), stack.getHeight());
@@ -162,7 +161,7 @@ public class Colorizer implements PlugInFilter {
         newImp = makeRGB(newImp, stack, nChannels);
       }
       else if (nChannels <= 7 && type != ImagePlus.COLOR_256) {
-        if (!IJ.versionLessThan("1.39l")) {
+        if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG)) {
           // use reflection to construct CompositeImage,
           // in case ImageJ version is too old
           try {
@@ -175,6 +174,10 @@ public class Colorizer implements PlugInFilter {
             exc.printStackTrace(new PrintStream(s));
             IJ.error(s.toString());
           }
+        }
+        else {
+          closeOriginal = false;
+          newImp = null;
         }
       }
       else if (nChannels > 7) {
@@ -210,13 +213,17 @@ public class Colorizer implements PlugInFilter {
               if (imp.getType() == ImagePlus.GRAY8 && n < 4) {
                 newImp = makeRGB(newImp, stack, n);
               }
-              else {
+              else if (Util.checkVersion("1.39l", Util.COMPOSITE_MSG)) {
                 imp.setDimensions(n, imp.getNSlices()*num[n - 2],
                   imp.getNFrames());
                 r.setVar("imp", imp);
                 r.exec("mode = CompositeImage.COMPOSITE");
                 r.exec("newImp = new CompositeImage(imp, mode)");
                 newImp = (ImagePlus) r.getVar("newImp");
+              }
+              else {
+                closeOriginal = false;
+                newImp = null;
               }
             }
           }
@@ -229,14 +236,16 @@ public class Colorizer implements PlugInFilter {
       }
     }
 
-    newImp.setTitle(imp.getTitle());
-    if (!newImp.getClass().equals(c)) {
-      newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
-        nSlices, nTimes);
+    if (newImp != null) {
+      newImp.setTitle(imp.getTitle());
+      if (!newImp.getClass().equals(c)) {
+        newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
+          nSlices, nTimes);
+      }
+      newImp.setCalibration(calibration);
+      newImp.show();
     }
-    newImp.setCalibration(calibration);
-    newImp.show();
-    imp.close();
+    if (closeOriginal) imp.close();
   }
 
   // -- Helper methods --

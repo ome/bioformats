@@ -31,7 +31,7 @@ import ij.measure.Calibration;
 import ij.process.*;
 import java.awt.*;
 import java.awt.image.*;
-import java.io.IOException;
+import java.io.*;
 import loci.formats.*;
 import loci.formats.codec.LuraWaveCodec;
 
@@ -43,6 +43,13 @@ import loci.formats.codec.LuraWaveCodec;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/Util.java">SVN</a></dd></dl>
  */
 public final class Util {
+
+  // -- Constants --
+
+  /** Message to be displayed if we try to use CompositeImage with IJ < 1.39l */
+  public static final String COMPOSITE_MSG =
+    "ImageJ 1.39l or later is required to merge >8 bit or >3 channel data";
+
 
   // -- Constructor --
 
@@ -260,13 +267,24 @@ public final class Util {
         new byte[width * height]);
       imp = new ImagePlus("", cp);
     }
-    else if (p.length <= 4) {
+    else if (p.length <= 7 && Util.checkVersion("1.39l", COMPOSITE_MSG)) {
       ImageStack tmpStack = new ImageStack(width, height);
       for (int i=0; i<p.length; i++) {
         tmpStack.addSlice("", p[i]);
       }
-      imp = new CompositeImage(new ImagePlus("", tmpStack),
-        CompositeImage.COMPOSITE);
+      try {
+        ReflectedUniverse r = new ReflectedUniverse();
+        r.exec("import ij.CompositeImage");
+        ImagePlus ii = new ImagePlus("", tmpStack);
+        r.setVar("ii", ii);
+        r.exec("imp = new CompositeImage(ii, CompositeImage.COMPOSITE)");
+        imp = (ImagePlus) r.getVar("imp");
+      }
+      catch (ReflectException e) {
+        ByteArrayOutputStream s = new ByteArrayOutputStream();
+        e.printStackTrace(new PrintStream(s));
+        IJ.error(s.toString());
+      }
     }
 
     return imp;
@@ -381,6 +399,20 @@ public final class Util {
     }
     else p.setMinAndMax(min, max);
     imp.setProcessor(imp.getTitle(), p);
+  }
+
+  /**
+   * Returns true the current ImageJ version is greater than or equal to the
+   * specified version.  Displays the given warning if the current version is
+   * less than the specified version.
+   */
+  public static boolean checkVersion(String target, String msg) {
+    String current = IJ.getVersion();
+    if (current.compareTo(target) < 0) {
+      IJ.showMessage(msg);
+      return false;
+    }
+    return true;
   }
 
 }

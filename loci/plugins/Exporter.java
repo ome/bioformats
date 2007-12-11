@@ -158,9 +158,7 @@ public class Exporter {
       try {
         c = Class.forName("ij.CompositeImage");
       }
-      catch (ClassNotFoundException e) {
-        IJ.error("Please upgrade to ImageJ 1.39l or later.");
-      }
+      catch (ClassNotFoundException e) { }
       boolean fakeRGB = imp.getClass().equals(c);
       int n = fakeRGB ? imp.getNChannels() : 1;
 
