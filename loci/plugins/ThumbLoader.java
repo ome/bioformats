@@ -34,6 +34,7 @@ import java.util.Arrays;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageTools;
 
@@ -117,7 +118,9 @@ public class ThumbLoader implements Runnable {
         int t = ir.getSizeT() / 2;
         int ndx = ir.getIndex(z, 0, t);
         BufferedImage thumb = ir.openThumbImage(ndx);
-        if (scale) thumb = ImageTools.autoscale(thumb);
+        if (scale && ir.getPixelType() != FormatTools.FLOAT) {
+          thumb = ImageTools.autoscale(thumb);
+        }
         ImageIcon icon = new ImageIcon(thumb);
         p[ii].removeAll();
         p[ii].add(new JLabel(icon));

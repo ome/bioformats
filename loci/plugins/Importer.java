@@ -145,6 +145,7 @@ public class Importer {
 
     try {
       r.setMetadataFiltered(true);
+      r.setNormalized(true);
       r.setId(id);
 
       int pixelType = r.getPixelType();

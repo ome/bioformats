@@ -616,7 +616,9 @@ public class ImporterOptions implements ItemListener {
         int ndx = r.getIndex(z, 0, t);
         try {
           BufferedImage img = r.openThumbImage(ndx);
-          if (isAutoscale()) img = ImageTools.autoscale(img);
+          if (isAutoscale() && r.getPixelType() != FormatTools.FLOAT) {
+            img = ImageTools.autoscale(img);
+          }
           ImageIcon icon = new ImageIcon(img);
           p[i].removeAll();
           p[i].add(new JLabel(icon));
