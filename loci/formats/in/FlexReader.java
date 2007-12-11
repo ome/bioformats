@@ -145,7 +145,8 @@ public class FlexReader extends BaseTiffReader {
     core.orderCertain[0] = false;
 
     // parse factors from XML
-    String xml = TiffTools.getComment(ifds[0]);
+    String xml = (String) TiffTools.getIFDValue(ifds[0],
+      FLEX, true, String.class);
 
     // HACK - workaround for Windows and Mac OS X bug where
     // SAX parser fails due to improperly handled mu (181) characters.
