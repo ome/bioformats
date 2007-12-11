@@ -63,18 +63,23 @@ public class VisitechReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    int plane = core.sizeX[0] * core.sizeY[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int plane = core.sizeX[series] * core.sizeY[series] *
+      FormatTools.getBytesPerPixel(core.pixelType[series]);
 
-    int div = core.sizeZ[0] * core.sizeT[0];
-    int fileIndex = no / div;
+    int div = core.sizeZ[series] * core.sizeT[series];
+    int fileIndex = (series * core.sizeC[series]) + no / div;
     int planeIndex = no % div;
 
     String file = (String) files.get(fileIndex);
     RandomAccessStream s = new RandomAccessStream(file);
-    s.skipBytes(374);
+    s.seek(374);
     while (s.read() != (byte) 0xf0);
-    s.skipBytes((plane + 164) * planeIndex + 1);
+    s.skipBytes(1);
+    if (s.readInt() == 0) s.skipBytes(4 + ((plane + 164) * planeIndex));
+    else {
+      if (planeIndex == 0) s.seek(s.getFilePointer() - 4);
+      else s.skipBytes((plane + 164) * planeIndex - 4);
+    }
     s.read(buf);
     s.close();
     return buf;
@@ -130,6 +135,7 @@ public class VisitechReader extends FormatReader {
 
     StringTokenizer st = new StringTokenizer(s, "\n");
     String token = null, key = null, value = null;
+    int numSeries = 0;
     while (st.hasMoreTokens()) {
       token = st.nextToken().trim();
 
@@ -168,6 +174,9 @@ public class VisitechReader extends FormatReader {
           else if (key.startsWith("Channel Selection")) {
             core.sizeC[0]++;
           }
+          else if (key.startsWith("Microscope XY")) {
+            numSeries++;
+          }
           addMeta(key, value);
         }
 
@@ -186,17 +195,37 @@ public class VisitechReader extends FormatReader {
 
     if (core.sizeT[0] == 0) {
       core.sizeT[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeC[0]);
+      if (core.sizeT[0] == 0) core.sizeT[0] = 1;
     }
     if (core.imageCount[0] == 0) {
       core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
     }
-    core.rgb[0] = false;
-    core.currentOrder[0] = "XYZTC";
-    core.interleaved[0] = false;
-    core.littleEndian[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
-    core.metadataComplete[0] = true;
+
+    if (numSeries > 1) {
+      int x = core.sizeX[0];
+      int y = core.sizeY[0];
+      int z = core.sizeZ[0];
+      int c = core.sizeC[0] / numSeries;
+      int t = core.sizeT[0];
+      int count = z * c * t;
+      int ptype = core.pixelType[0];
+      core = new CoreMetadata(numSeries);
+      Arrays.fill(core.sizeX, x);
+      Arrays.fill(core.sizeY, y);
+      Arrays.fill(core.sizeZ, z);
+      Arrays.fill(core.sizeC, c);
+      Arrays.fill(core.sizeT, t);
+      Arrays.fill(core.imageCount, count);
+      Arrays.fill(core.pixelType, ptype);
+    }
+
+    Arrays.fill(core.rgb, false);
+    Arrays.fill(core.currentOrder, "XYZTC");
+    Arrays.fill(core.interleaved, false);
+    Arrays.fill(core.littleEndian, true);
+    Arrays.fill(core.indexed, false);
+    Arrays.fill(core.falseColor, false);
+    Arrays.fill(core.metadataComplete, true);
 
     // find pixels files - we think there is one channel per file
 
@@ -207,7 +236,8 @@ public class VisitechReader extends FormatReader {
 
     File f = new File(currentId).getAbsoluteFile();
 
-    for (int i=0; i<core.sizeC[0]; i++) {
+    if (numSeries == 0) numSeries = 1;
+    for (int i=0; i<core.sizeC[0]*numSeries; i++) {
       files.add((f.exists() ? f.getParent() + File.separator : "") + base +
         " " + (i + 1) + ".xys");
     }
