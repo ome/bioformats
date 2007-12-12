@@ -94,12 +94,12 @@ public class Location {
     else idMap.put(id, filename);
   }
 
-  /** Maps the given id to the given file. */
-  public static void mapFile(String id, IRandomAccess file) {
+  /** Maps the given id to the given random access handle. */
+  public static void mapFile(String id, IRandomAccess ira) {
     if (idMap == null) idMap = new Hashtable();
     if (id == null) return;
-    if (file == null) idMap.remove(id);
-    else idMap.put(id, file);
+    if (ira == null) idMap.remove(id);
+    else idMap.put(id, ira);
   }
 
   /**
@@ -120,14 +120,14 @@ public class Location {
     return filename == null ? id : filename;
   }
 
-  /** Gets the file for the given id. */
+  /** Gets the random access handle for the given id. */
   public static IRandomAccess getMappedFile(String id) {
     if (idMap == null) return null;
-    IRandomAccess file = null;
+    IRandomAccess ira = null;
     if (id != null && (idMap.get(id) instanceof IRandomAccess)) {
-      file = (IRandomAccess) idMap.get(id);
+      ira = (IRandomAccess) idMap.get(id);
     }
-    return file;
+    return ira;
   }
 
   public static Hashtable getIdMap() { return idMap; }
