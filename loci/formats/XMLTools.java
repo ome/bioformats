@@ -208,7 +208,9 @@ public final class XMLTools {
       for (int i=0; i<len; i++) {
         String name = attributes.getQName(i);
         if (name.equals("xmlns")) xmlns = attributes.getValue(i);
-        else if (name.equals("xsi:schemaLocation")) {
+        int colon = name.lastIndexOf(":");
+        if (colon >= 0) name = name.substring(colon + 1); // strip namespace
+        else if (name.equals("schemaLocation")) {
           xsiSchemaLocation = attributes.getValue(i);
         }
       }
