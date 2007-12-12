@@ -128,7 +128,7 @@ public final class ImageInfo {
       String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
       String[] s = {
         "To test read a file in " + fmt + " format, run:",
-        "  java " + className + " [-nopix] [-nometa] [-thumbs]",
+        "  showinf [-nopix] [-nometa] [-thumbs]",
         "    [-minmax] [-merge] [-stitch] [-separate] [-omexml]",
         "    [-normalize] [-fast] [-debug] [-range start end]",
         "    [-series num] [-swap order] [-map id] file",

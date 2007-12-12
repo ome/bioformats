@@ -73,7 +73,7 @@ public final class ImageConverter {
     if (in == null || out == null) {
       LogTools.println("To convert a file to " + writer.getFormat() +
         " format, run:");
-      LogTools.println("  java " + className + " [-debug] in_file out_file");
+      LogTools.println("  bfconvert [-debug] in_file out_file");
       return false;
     }
 
