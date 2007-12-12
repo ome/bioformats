@@ -47,8 +47,8 @@ VisBio
                    mdbtools-java.jar (bio-formats.jar)
                    netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar
-                   omero-client.jar
-                   omero-common.jar
+                   omero-client.jar (bio-formats.jar)
+                   omero-common.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    visad-lite.jar
@@ -109,8 +109,8 @@ OME Notes
                    mdbtools-java.jar (bio-formats.jar)
                    netcdf-4.0.jar (bio-formats.jar)
                    ome-java.jar
-                   omero-client.jar
-                   omero-common.jar
+                   omero-client.jar (bio-formats.jar)
+                   omero-common.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
