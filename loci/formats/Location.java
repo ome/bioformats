@@ -94,6 +94,14 @@ public class Location {
     else idMap.put(id, filename);
   }
 
+  /** Maps the given id to the given file. */
+  public static void mapFile(String id, IRandomAccess file) {
+    if (idMap == null) idMap = new Hashtable();
+    if (id == null) return;
+    if (file == null) idMap.remove(id);
+    else idMap.put(id, file);
+  }
+
   /**
    * Gets the actual filename on disk for the given id. Typically the id itself
    * is the filename, but in some cases may not be; e.g., if OMEIS has renamed
@@ -105,8 +113,21 @@ public class Location {
    */
   public static String getMappedId(String id) {
     if (idMap == null) return id;
-    String filename = id == null ? null : (String) idMap.get(id);
+    String filename = null;
+    if (id != null && (idMap.get(id) instanceof String)) {
+      filename = (String) idMap.get(id);
+    }
     return filename == null ? id : filename;
+  }
+
+  /** Gets the file for the given id. */
+  public static IRandomAccess getMappedFile(String id) {
+    if (idMap == null) return null;
+    IRandomAccess file = null;
+    if (id != null && (idMap.get(id) instanceof IRandomAccess)) {
+      file = (IRandomAccess) idMap.get(id);
+    }
+    return file;
   }
 
   public static Hashtable getIdMap() { return idMap; }

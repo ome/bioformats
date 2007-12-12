@@ -193,6 +193,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
       raf = new RAUrl(Location.getMappedId(file), "r");
       length = raf.length();
     }
+    else if (Location.getMappedFile(file) != null) {
+      raf = Location.getMappedFile(file);
+      length = raf.length();
+    }
     else throw new IOException("File not found : " + file);
     this.file = file;
     fp = 0;
@@ -700,8 +704,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
         raf.seek(0);
       }
     }
-    else {
+    else if (file.startsWith("http")) {
       raf = new RAUrl(Location.getMappedId(file), "r");
+      length = raf.length();
+    }
+    else if (Location.getMappedFile(file) != null) {
+      raf = Location.getMappedFile(file);
       length = raf.length();
     }
     fileCache.put(this, Boolean.TRUE);
