@@ -66,6 +66,7 @@ public final class ImageInfo {
     boolean omexml = false;
     boolean normalize = false;
     boolean fastBlit = false;
+    boolean preload = false;
     int start = 0;
     int end = Integer.MAX_VALUE;
     int series = 0;
@@ -87,6 +88,7 @@ public final class ImageInfo {
           else if (args[i].equals("-normalize")) normalize = true;
           else if (args[i].equals("-fast")) fastBlit = true;
           else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
+          else if (args[i].equals("-preload")) preload = true;
           else if (args[i].equals("-level")) {
             try {
               FormatHandler.setDebugLevel(Integer.parseInt(args[++i]));
@@ -149,6 +151,9 @@ public final class ImageInfo {
         "   -series: specify which image series to read",
         "     -swap: override the default dimension order",
         "      -map: specify file on disk to which name should be mapped",
+        "  -preload: pre-read entire file into a buffer; significantly",
+        "            reduces the time required to read the images, but",
+        "            requires more memory",
         "",
         "* = may result in loss of precision",
         ""
@@ -157,6 +162,15 @@ public final class ImageInfo {
       return false;
     }
     if (map != null) Location.mapId(id, map);
+    else if (preload) {
+      RandomAccessStream f = new RandomAccessStream(id);
+      byte[] b = new byte[(int) f.length()];
+      f.read(b);
+      f.close();
+      RABytes file = new RABytes(b);
+      Location.mapFile(id, file);
+    }
+
     if (omexml) {
       reader.setOriginalMetadataPopulated(true);
       MetadataStore store = MetadataTools.createOMEXMLMetadata();
