@@ -117,7 +117,11 @@ public class RandomAccessStream extends InputStream implements DataInput {
   public RandomAccessStream(String file) throws IOException {
     File f = new File(Location.getMappedId(file));
     f = f.getAbsoluteFile();
-    if (f.exists()) {
+    if (Location.getMappedFile(file) != null) {
+      raf = Location.getMappedFile(file);
+      length = raf.length();
+    }
+    else if (f.exists()) {
       raf = new RAFile(f, "r");
 
       BufferedInputStream bis = new BufferedInputStream(
@@ -191,10 +195,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
     else if (file.startsWith("http")) {
       raf = new RAUrl(Location.getMappedId(file), "r");
-      length = raf.length();
-    }
-    else if (Location.getMappedFile(file) != null) {
-      raf = Location.getMappedFile(file);
       length = raf.length();
     }
     else throw new IOException("File not found : " + file);
@@ -671,7 +671,11 @@ public class RandomAccessStream extends InputStream implements DataInput {
   private void reopen() throws IOException {
     File f = new File(Location.getMappedId(file));
     f = f.getAbsoluteFile();
-    if (f.exists()) {
+    if (Location.getMappedFile(file) != null) {
+      raf = Location.getMappedFile(file);
+      length = raf.length();
+    }
+    else if (f.exists()) {
       raf = new RAFile(f, "r");
 
       BufferedInputStream bis = new BufferedInputStream(
@@ -706,10 +710,6 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
     else if (file.startsWith("http")) {
       raf = new RAUrl(Location.getMappedId(file), "r");
-      length = raf.length();
-    }
-    else if (Location.getMappedFile(file) != null) {
-      raf = Location.getMappedFile(file);
       length = raf.length();
     }
     fileCache.put(this, Boolean.TRUE);
