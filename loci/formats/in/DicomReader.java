@@ -223,17 +223,14 @@ public class DicomReader extends FormatReader {
     boolean decodingTags = true;
     boolean signed = false;
 
+    core.interleaved[0] = true;
+
     while (decodingTags) {
       int tag = getNextTag();
 
+      if (elementLength == 0) continue;
+
       if ((location & 1) != 0) oddLocations = true;
-      if (inSequence) {
-        addInfo(tag, null);
-        if (in.getFilePointer() >= (in.length() - 4)) {
-          decodingTags = false;
-        }
-        continue;
-      }
 
       String s;
       switch (tag) {
@@ -322,7 +319,8 @@ public class DicomReader extends FormatReader {
           }
           break;
         default:
-          addInfo(tag, null);
+          s = in.readString(elementLength);
+          addInfo(tag, s);
       }
       if (in.getFilePointer() >= (in.length() - 4)) {
         decodingTags = false;
@@ -350,10 +348,24 @@ public class DicomReader extends FormatReader {
       }
       else if (isJPEG) {
         if (i == 0) offsets[i] = baseOffset;
-        else {
-          in.seek(offsets[i - 1]);
-          new JPEGCodec().decompress(in, new Boolean(core.littleEndian[0]));
-          offsets[i] = in.getFilePointer();
+        else offsets[i] = offsets[i - 1] + 3;
+
+        byte[] buf = new byte[8192];
+        boolean found = false;
+        while (!found) {
+          for (int q=0; q<buf.length-1; q++) {
+            if (buf[q] == (byte) 0xff && buf[q + 1] == (byte) 0xd8) {
+              found = true;
+              offsets[i] = in.getFilePointer() + q - 8192;
+              break;
+            }
+          }
+          if (!found) {
+            for (int q=0; q<4; q++) {
+              buf[q] = buf[buf.length + q - 4];
+            }
+            in.read(buf, 4, buf.length - 4);
+          }
         }
       }
       else offsets[i] = baseOffset + plane*i;
@@ -426,10 +438,12 @@ public class DicomReader extends FormatReader {
 
   private void addInfo(int tag, String value) throws IOException {
     long oldFp = in.getFilePointer();
+    String oldValue = value;
     String info = getHeaderInfo(tag, value);
 
-    if (inSequence && info != null && vr != SQ) info = ">" + info;
     if (info != null && tag != ITEM) {
+      if (info.trim().equals("")) info = oldValue;
+
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) key = "" + tag;
       if (key.equals("Samples per pixel")) {
@@ -457,7 +471,9 @@ public class DicomReader extends FormatReader {
         in.seek(fp);
       }
 
-      if (tag != PIXEL_DATA) addMeta(key, info);
+      if (tag != PIXEL_DATA) {
+        addMeta(key, info);
+      }
     }
   }
 
@@ -561,10 +577,7 @@ public class DicomReader extends FormatReader {
           return in.readInt();
         }
         vr = IMPLICIT_VR;
-        if (core.littleEndian[0]) {
-          return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
-        }
-        return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
+        return DataTools.bytesToInt(b, core.littleEndian[0]);
       case AE:
       case AS:
       case AT:
@@ -589,8 +602,7 @@ public class DicomReader extends FormatReader {
       case UT:
       case QQ:
         // Explicit VR with 16-bit length
-        if (core.littleEndian[0]) return (b[3] << 8) + b[2];
-        else return (b[2] << 8) + b[3];
+        return DataTools.bytesToShort(b, 2, 2, core.littleEndian[0]);
       default:
         vr = IMPLICIT_VR;
         return DataTools.bytesToInt(b, core.littleEndian[0]);
@@ -600,9 +612,9 @@ public class DicomReader extends FormatReader {
   private int getNextTag() throws IOException {
     int groupWord = in.readShort();
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
-      core.littleEndian[0] = false;
+      //core.littleEndian[0] = false;
       groupWord = 0x0008;
-      in.order(false);
+      //in.order(false);
     }
 
     int elementWord = in.readShort();
@@ -613,6 +625,10 @@ public class DicomReader extends FormatReader {
     }
 
     elementLength = getLength();
+
+    if (elementLength == 0 && tag == PIXEL_DATA) {
+      elementLength = getLength();
+    }
 
     // HACK - needed to read some GE files
     // The element length must be even!
