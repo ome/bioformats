@@ -64,6 +64,7 @@ public class ImporterOptions implements ItemListener {
   public static final String VIEW_BROWSER = "4D Data Browser";
   public static final String VIEW_IMAGE_5D = "Image5D";
   public static final String VIEW_VIEW_5D = "View5D";
+  public static final String VIEW_HYPERSTACK = "Hyperstack";
 
   // enumeration for stackOrder
   public static final String ORDER_DEFAULT = "Default";
@@ -201,6 +202,9 @@ public class ImporterOptions implements ItemListener {
   public boolean isViewImage5D() { return VIEW_IMAGE_5D.equals(stackFormat); }
   public boolean isViewBrowser() { return VIEW_BROWSER.equals(stackFormat); }
   public boolean isViewView5D() { return VIEW_VIEW_5D.equals(stackFormat); }
+  public boolean isViewHyperstack() {
+    return VIEW_HYPERSTACK.equals(stackFormat);
+  }
 
   public String getLocation() { return location; }
   public String getId() { return id; }
@@ -476,6 +480,9 @@ public class ImporterOptions implements ItemListener {
     if (Checker.checkClass(CLASS_BROWSER)) stackTypes.add(VIEW_BROWSER);
     if (Checker.checkClass(CLASS_IMAGE_5D)) stackTypes.add(VIEW_IMAGE_5D);
     if (Checker.checkClass(CLASS_VIEW_5D)) stackTypes.add(VIEW_VIEW_5D);
+    if (IJ.getVersion().compareTo("1.39l") >= 0) {
+      stackTypes.add(VIEW_HYPERSTACK);
+    }
     final String[] stackFormats = new String[stackTypes.size()];
     stackTypes.copyInto(stackFormats);
 
@@ -809,6 +816,17 @@ public class ImporterOptions implements ItemListener {
         mergeBox.setState(false);
       }
       else if (s.equals(VIEW_VIEW_5D)) {
+      }
+      else if (s.equals(VIEW_HYPERSTACK)) {
+        orderChoice.select(ORDER_XYCZT);
+      }
+    }
+    else if (src == orderChoice) {
+      String s = orderChoice.getSelectedItem();
+      if (!s.equals(ORDER_XYCZT) &&
+        stackChoice.getSelectedItem().equals(VIEW_HYPERSTACK))
+      {
+        stackChoice.select(VIEW_STANDARD);
       }
     }
     else if (src == mergeBox) {

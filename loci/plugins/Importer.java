@@ -384,7 +384,7 @@ public class Importer {
           if (options.isViewView5D()) {
             stackOrder = ImporterOptions.ORDER_XYZCT;
           }
-          if (options.isViewImage5D()) {
+          if (options.isViewImage5D() || options.isViewHyperstack()) {
             stackOrder = ImporterOptions.ORDER_XYCZT;
           }
 
@@ -693,6 +693,7 @@ public class Importer {
       IJ.run("View5D ", "");
     }
     else if (!options.isViewNone()) {
+      imp.setOpenAsHyperStack(options.isViewHyperstack());
       if (!concatenate) {
         imp.show();
         if (splitC || splitZ || splitT) {
