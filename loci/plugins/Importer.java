@@ -563,8 +563,9 @@ public class Importer {
             imp.show();
             if (splitC || splitZ || splitT) {
               IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-                ", slice_c=" + splitC + ", slice_t=" + splitT +
-                ", stack_order=" + stackOrder + ", keep_original=false");
+                " slice_c=" + splitC + " slice_t=" + splitT +
+                " stack_order=" + stackOrder + " keep_original=false " +
+                "hyper_stack=" + options.isViewHyperstack() + " ");
             }
           }
         }
@@ -654,11 +655,12 @@ public class Importer {
 
     if (mergeChannels && options.isWindowless()) {
       IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-        " merge=true merge_option=[" + options.getMergeOption() + "]");
+        " merge=true merge_option=[" + options.getMergeOption() + "] " +
+        "hyper_stack=" + options.isViewHyperstack() + " ");
     }
     else if (mergeChannels) {
       IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-        " merge=true ");
+        " merge=true hyper_stack=" + options.isViewHyperstack() + " ");
     }
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
@@ -699,7 +701,8 @@ public class Importer {
         if (splitC || splitZ || splitT) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
             " slice_c=" + splitC + " slice_t=" + splitT +
-            " stack_order=" + stackOrder + " keep_original=false");
+            " stack_order=" + stackOrder + " keep_original=false " +
+            "hyper_stack=" + options.isViewHyperstack() + " ");
           if (colorize) {
             int[] openImages = WindowManager.getIDList();
             for (int i=0; i<openImages.length; i++) {
@@ -713,14 +716,16 @@ public class Importer {
                 WindowManager.setCurrentWindow(p.getWindow());
                 IJ.runPlugIn("loci.plugins.Colorizer",
                   "stack_order=" + stackOrder + " merge=false colorize=true" +
-                  " ndx=" + (channel % 3) + " ");
+                  " ndx=" + (channel % 3) + " hyper_stack=" +
+                  options.isViewHyperstack() + " ");
               }
             }
           }
         }
         else if (colorize) {
           IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-            " merge=false colorize=true ndx=0 ");
+            " merge=false colorize=true ndx=0 hyper_stack=" +
+            options.isViewHyperstack() + " ");
         }
       }
       else imps.add(imp);

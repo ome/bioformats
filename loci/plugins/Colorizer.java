@@ -65,6 +65,7 @@ public class Colorizer implements PlugInFilter {
   private String stackOrder;
   private boolean merge;
   private boolean color;
+  private boolean hyperstack;
   private int colorNdx;
   private String mergeOption;
 
@@ -87,6 +88,7 @@ public class Colorizer implements PlugInFilter {
       gd.addCheckbox("Colorize", false);
       gd.addChoice("Stack order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
         "XYZTC", "XYTCZ", "XYTZC"}, "XYCZT");
+      gd.addCheckbox("Open as HyperStack", false);
       gd.showDialog();
 
       if (gd.wasCanceled()) {
@@ -97,6 +99,7 @@ public class Colorizer implements PlugInFilter {
       merge = gd.getNextBoolean();
       color = gd.getNextBoolean();
       stackOrder = gd.getNextChoice();
+      hyperstack = gd.getNextBoolean();
 
       if (color) {
         gd = new GenericDialog("Choose color...");
@@ -112,6 +115,8 @@ public class Colorizer implements PlugInFilter {
         new Boolean(Macro.getValue(arg, "colorize", "false")).booleanValue();
       colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "0"));
       mergeOption = Macro.getValue(arg, "merge_option", null);
+      hyperstack =
+        new Boolean(Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
     }
 
     ImageStack stack = imp.getImageStack();
@@ -243,6 +248,9 @@ public class Colorizer implements PlugInFilter {
           nSlices, nTimes);
       }
       newImp.setCalibration(calibration);
+      if (IJ.getVersion().compareTo("1.39l") >= 0) {
+        newImp.setOpenAsHyperStack(hyperstack);
+      }
       newImp.show();
     }
     if (closeOriginal) imp.close();

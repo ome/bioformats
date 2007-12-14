@@ -61,6 +61,7 @@ public class Slicer implements PlugInFilter {
     boolean sliceT = false;
     String stackOrder = null;
     boolean keepOriginal = false;
+    boolean hyperstack = false;
 
     if (arg == null || arg.trim().equals("")) {
       // prompt for slicing options
@@ -70,6 +71,7 @@ public class Slicer implements PlugInFilter {
       gd.addCheckbox("Split Z slices", false);
       gd.addCheckbox("Split timepoints", false);
       gd.addCheckbox("Keep original stack", false);
+      gd.addCheckbox("Open as HyperStack", false);
       gd.addChoice("Stack order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
         "XYZTC", "XYTCZ", "XYTZC"}, "XYCZT");
       gd.showDialog();
@@ -83,6 +85,7 @@ public class Slicer implements PlugInFilter {
       sliceZ = gd.getNextBoolean();
       sliceT = gd.getNextBoolean();
       keepOriginal = gd.getNextBoolean();
+      hyperstack = gd.getNextBoolean();
       stackOrder = gd.getNextChoice();
     }
     else {
@@ -91,6 +94,8 @@ public class Slicer implements PlugInFilter {
       sliceT = Boolean.parseBoolean(Macro.getValue(arg, "slice_t", "false"));
       keepOriginal = Boolean.parseBoolean(Macro.getValue(arg,
         "keep_original", "false"));
+      hyperstack =
+        Boolean.parseBoolean(Macro.getValue(arg, "hyper_stack", "false"));
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
     }
 
@@ -150,6 +155,9 @@ public class Slicer implements PlugInFilter {
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
       p.setCalibration(calibration);
+      if (IJ.getVersion().compareTo("1.39l") >= 0) {
+        p.setOpenAsHyperStack(hyperstack);
+      }
       if (imp.getClass().equals(c) && !sliceC &&
         Util.checkVersion("1.39l", Util.COMPOSITE_MSG))
       {
