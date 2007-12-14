@@ -20,15 +20,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# Add new metadata entity and property definitions to this file.
+
 # Path key:
 # 1) Elements ending in plus (+) have maxOccurs > 1 and generate an index
 #    parameter to allow differentiation between them.
 # 2) Elements beginning with at (@) are not direct children of the previous
 #    element, but instead reference the parent via an ID reference.
 # 3) Elements beginning with at-bang (@!) also use a parent reference but
-#    the API is slightly different -- e.g., for a LightSource accessing its
-#    child Laser, the method is lightSource.getLaserListByLightSource() rather
-#    than lightSource.getLaserList().
+#    the API is slightly different -- e.g., for a LightSource accessing a
+#    child Laser, the method is lightSource.getLaserListByLightSource()
+#    rather than lightSource.getLaserList().
 # 4) Overridden attributes ending in percent (%) indicate a type conflict
 #    that must be resolved by calling type conversion methods from the 
 #    OMEXMLMetadata superclass.
@@ -52,22 +54,21 @@ Default: Experimenter+
 String FirstName      the first name of the experimenter
 String LastName       the last name of the experimenter
 String Email          the e-mail address of the experimenter
-String Institution    the institution for which the experimenter belongs
-#CTR TODO - decide whether to include DataDirectory
-#String DataDirectory  the fully qualified path to the experimenter's data
+String Institution    the institution to which the experimenter belongs
+String DataDirectory  the fully qualified path to the experimenter's data
+*200706: -
 #CTR TODO - complexify
-#Object Group          the group to which the experimenter belongs
+#GroupIndex Group      the group to which the experimenter belongs
 
 [Group]
 a group in the metadata store with a particular index
 -
 Default: Group+
 2003FC: CA/Group+
-String Name     the name of the group
-#CTR TODO - complexify
-#Object Leader   the leader of the group
-#CTR TODO - complexify
-#Object Contact  the contact for the group
+String Name                the name of the group
+#CTR START HERE
+#ExperimenterIndex Leader   the leader of the group
+#ExperimenterIndex Contact  the contact for the group
 
 #CTR TODO - Instrument shouldn't have any attributes directly... right?
 #           so why are they in the 2003 FC CA schema...?
@@ -104,16 +105,16 @@ a 5D bounding box region of interest and a set of display options in the metadat
 -
 Default: Image+/DisplayOptions/ROI+
 2003FC: Image+/CA/DisplayROI+
-Integer X0  the starting X coordinate
-Integer Y0  the starting Y coordinate
-Integer Z0  the starting Z coordinate
-Integer T0  the starting timepoint
-Integer X1  the ending X coordinate
-Integer Y1  the ending Y coordinate
-Integer Z1  the ending Z coordinate
-Integer T1  the ending timepoint
+Integer X0                          the starting X coordinate
+Integer Y0                          the starting Y coordinate
+Integer Z0                          the starting Z coordinate
+Integer T0                          the starting timepoint
+Integer X1                          the ending X coordinate
+Integer Y1                          the ending Y coordinate
+Integer Z1                          the ending Z coordinate
+Integer T1                          the ending timepoint
 #CTR TODO - complexify
-#Object DisplayOptions  the display options to attach to this region of interest
+#DisplayOptionsIndex DisplayOptions  the display options to attach to this region of interest
 
 [Pixels]
 a pixels set in the metadata store with a particular image and pixels index
@@ -122,12 +123,12 @@ Default: Image+/Pixels+
 2003FC: Image+/CA/Pixels+
 Integer SizeX          size of an individual plane or section's X axis (width)
 Integer SizeY          size of an individual plane of section's Y axis (height)
-Integer SizeZ          number of optical sections per channel, per timepoint (per stack)
+Integer SizeZ          number of optical sections per stack
 Integer SizeC          number of channels per timepoint
 Integer SizeT          number of timepoints
 String PixelType       the pixel type
-#CTR TODO - why not working?
-#Boolean isBigEndian    if the pixels set is big endian or not
+Boolean BigEndian      if the pixels set is big endian or not
+*2003FC: isBigEndian
 String DimensionOrder  the dimension order of the pixels set
 
 [StageLabel]
@@ -150,65 +151,66 @@ Default: Image+/LogicalChannel+
 #Float AuxLightAttenuation         the auxiliary light source attenuation
 #String AuxTechnique               the auxiliary technique type
 #Integer AuxLightWavelength        the auxiliary light source wavelength
-String Name                       the logical channel's name
-Integer SamplesPerPixel           CTR TODO
+String Name                            the logical channel's name
+Integer SamplesPerPixel                CTR TODO
 # CTR TODO - complexify
-#Integer SecondaryEmissionFilter  an index...
+#FilterIndex SecondaryEmissionFilter    CTR TODO
 # CTR TODO - complexify
-#Integer SecondaryExcitationFilter  an index...
-String IlluminationType           the illumination type
-Integer PinholeSize               the size of the pinhole
-String PhotometricInterpretation  the photometric interpretation type
-String Mode                       the acquisition mode
-String ContrastMethod             the constrast method name
-Integer ExWave                    the excitation wavelength
+#FilterIndex SecondaryExcitationFilter  CTR TODO
+String IlluminationType                the illumination type
+Integer PinholeSize                    the size of the pinhole
+String PhotometricInterpretation       the photometric interpretation type
+String Mode                            the acquisition mode
+String ContrastMethod                  the constrast method name
+Integer ExWave                         the excitation wavelength
 *2003FC: ExcitationWavelength
-Integer EmWave                    the emission wavelength
+Integer EmWave                         the emission wavelength
 *2003FC: EmissionWavelength
-String Fluor                      the fluorescence type
-Float NdFilter                    the neutral-density filter value
+String Fluor                           the fluorescence type
+Float NdFilter                         the neutral-density filter value
 *2003FC: NDFilter
-Integer PockelCellSetting         CTR TODO
+Integer PockelCellSetting              CTR TODO
 *2003FC: -
 
-[ChannelLightSource]
+[LightSourceSettings]
 the light source associated with a particular logical channel
 -
 Default: Image+/LogicalChannel+/LightSourceRef
 2003FC: Image+/CA/LogicalChannel+
 #CTR TODO - complexify
-#Integer LightSource        the index of the primary light source
-Float Attenuation          the primary light source attenuation
+#LightSourceIndex ID  the index of the primary light source
+*2003FC: LightSource
+Float Attenuation    the primary light source attenuation
 *2003FC: LightAttenuation
-Integer Wavelength         the primary light source wavelength
+Integer Wavelength   the primary light source wavelength
 *2003FC: LightWavelength
 
-#[ChannelOTF]
+#[OTFSettings]
 #the optical transfer function associated with a particular logical channel
 #-
 #Default: Image+/LogicalChannel+/OTFRef
 #2003FC: x
 #CTR TODO - complexify
-#Integer OTF  the index of the OTF associated with this channel
+#OTFIndex OTF  the index of the OTF associated with this channel
 
-[ChannelDetector]
+[DetectorSettings]
 the detector associated with a particular logical channel
 -
 Default: Image+/LogicalChannel+/DetectorRef
 2003FC: Image+/CA/LogicalChannel+
 #CTR TODO - complexify
-#Integer Detector         the index of the detector associated with this channel
-Float Offset             the detector offset
+#DetectorIndex Detector  the index of the detector associated with this channel
+Float Offset            the detector offset
 *2003FC: DetectorOffset
-Float Gain               the detector gain
+Float Gain              the detector gain
 *2003FC: DetectorGain
 
 # CTR TODO - finish/add this - LogicalChannel/FilterSetRef
 #[ChannelFilterSet]
 
-[PlaneInfo]
-the plane information for a particular X-Y plane (section) within a particular pixels set
-NOTE: The implementation of this method is optional as this is a transitional type. More information about the PlaneInfo type can be found <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
+[Plane]
+the plane information for a specific X-Y plane (section) within a particular pixels set
+-
 Default: Image+/Pixels+/Plane+
 2003FC: -
 Integer TheZ        the optical section index
@@ -216,7 +218,7 @@ Integer TheC        the channel index
 Integer TheT        the timepoint
 
 [PlaneTiming]
-the timing information for a particular X-Y plane (section) within a particular pixels set
+the timing information for a specific X-Y plane (section) within a particular pixels set
 -
 Default: Image+/Pixels+/Plane+/PlaneTiming
 2003FC: -
@@ -224,14 +226,13 @@ Float DeltaT        the time in seconds since the beginning of the experiment
 Float ExposureTime  the exposure time in seconds
 
 [StagePosition]
-the stage position for a particular X-Y plane (section) within a particular pixels set
+the stage position for a specific X-Y plane (section) within a particular pixels set
 -
 Default: Image+/Pixels+/Plane+/StagePosition
 2003FC: -
 Float PositionX  the X coordinate of the stage position
 Float PositionY  the Y coordinate of the stage position
 Float PositionZ  the Z coordinate of the stage position
-
 
 [ImagingEnvironment]
 the imaging environment for a particular image

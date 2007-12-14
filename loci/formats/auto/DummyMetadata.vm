@@ -1,5 +1,5 @@
 //
-// MetadataStore.java
+// DummyMetadata.java
 //
 
 /*
@@ -25,26 +25,46 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by ${user} via MetadataAutogen on ${timestamp}
+ * Created by $user via MetadataAutogen on $timestamp
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats;
+package loci.formats.meta;
 
 /**
- * A proxy whose responsibility it is to marshal biological image data into a
- * particular storage medium.
- *
- * The <code>MetadataStore</code> interface encompasses the basic metadata that
- * any specific storage medium (file, relational database, etc.) should be
- * expected to store and be expected to return with relationships maintained.
+ * A dummy implementation for {@link MetadataStore} and
+ * {@link MetadataRetrieve} that is used when no other
+ * metadata implementations are available.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataStore.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataStore.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DummyMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/DummyMetadata.java">SVN</a></dd></dl>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface MetadataStore {
+public class DummyMetadata implements MetadataRetrieve, MetadataStore {
+
+  // -- MetadataRetrieve API methods --
+
+#foreach ($entity in $entities)
+  // -- $entity.name() property retrieval --
+
+#foreach ($prop in $entity.props())
+  /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
+  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+    return null;
+  }
+
+#end
+#end
+  // -- MetadataStore API methods --
+
+#foreach ($entity in $entities)
+  /* @see MetadataStore#set$entity.name()($entity.argsList(true, false)) */
+  public void set$entity.name()($entity.argsList(true, true)) {
+  }
+
+#end
+}

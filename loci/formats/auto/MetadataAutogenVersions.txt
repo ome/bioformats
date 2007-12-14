@@ -1,5 +1,5 @@
 #
-# MetadataAutogenGlobal.txt
+# MetadataAutogenVersions.txt
 #
 
 # LOCI Bio-Formats package for reading and converting biological file formats.
@@ -20,10 +20,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# Add new OME-XML schema version definitions to this file.
+
 [200706]
 class = OMEXML200706Metadata
 id = OMEXML200706Metadata.java
-basePackage = ome.xml.r2007_06
+basePackage = ome.xml.r200706
 subPackage = ome
 version = 2007-06
 legacy = false

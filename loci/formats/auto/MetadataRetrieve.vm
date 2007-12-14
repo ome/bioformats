@@ -1,5 +1,5 @@
 //
-// ${id}
+// MetadataRetrieve.java
 //
 
 /*
@@ -25,40 +25,37 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by ${user} via MetadataAutogen on ${timestamp}
+ * Created by $user via MetadataAutogen on $timestamp
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.ome;
-
-import ${basePackage}.*;
-import ${basePackage}.${subPackage}.*;
-import java.util.List;
+package loci.formats.meta;
 
 /**
- * A utility class for constructing and manipulating OME-XML DOMs for the
- * ${version} version of OME-XML. It requires the
- * ${basePackage} package to compile (part of ome-java.jar).
+ * TODO - MetadataRetrieve javadoc.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/${id}">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/${id}">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataRetrieve.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataRetrieve.java">SVN</a></dd></dl>
  *
- * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class ${class} extends OMEXMLMetadata {
+public interface MetadataRetrieve {
 
-  // -- OMEXMLMetadata API methods --
+#foreach ($entity in $entities)
+  // -- $entity.name() property retrieval --
 
-  /* @see OMEXMLMetadata#createRoot(String) */
-  public void createRoot(String xml) {
-    // CTR TEMP
-  }
+#foreach ($prop in $entity.props())
+  /**
+   * Gets $prop.desc() for a particular $entity.name() object.
+#foreach ($prop in $entity.indices())
+   * @param $prop.varName() $prop.desc()
+#end
+   */
+  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true));
 
-  /* @see OMEXMLMetadata#dumpXML() */
-  public String dumpXML() {
-    // CTR TEMP
-    return null;
-  }
+#end
+#end
+}

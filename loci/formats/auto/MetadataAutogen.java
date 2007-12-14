@@ -27,6 +27,9 @@ package loci.formats.auto;
 import java.io.*;
 import java.text.DateFormat;
 import java.util.*;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 
 /**
  * Automatically generates code for the MetadataStore and MetadataRetrieve
@@ -42,82 +45,110 @@ public class MetadataAutogen {
 
   // -- Constants --
 
-  public static final String STORE_SRC = "MetadataAutogenHeaderStore.txt";
-  public static final String RETRIEVE_SRC = "MetadataAutogenHeaderRetrieve.txt";
-  public static final String OMEXML_SRC = "MetadataAutogenHeaderOMEXML.txt";
-  public static final String GLOBAL_SRC = "MetadataAutogenGlobal.txt";
-  public static final String NODES_SRC = "MetadataAutogenNodes.txt";
+  /** Path to versions definition file. */
+  public static final String VERSION_SRC = "MetadataAutogenVersions.txt";
 
-  // -- Static fields --
-
-  private static Hashtable versions;
-  private static Hashtable basicVars;
-  private static String storeHeader;
-  private static String retrieveHeader;
-  private static String omexmlHeader;
-  private static OutFiles out = new OutFiles();
-  private static HashSet getters = new HashSet();
-  private static HashSet setters = new HashSet();
-  private static HashSet helpers = new HashSet();
-  private static Hashtable paramMap = new Hashtable();
+  /** Path to entities definition file. */
+  public static final String ENTITY_SRC = "MetadataAutogenEntities.txt";
 
   // -- Main method --
 
-  public static void main(String[] args) throws IOException {
-    System.out.print("Parsing input files... ");
+  public static void main(String[] args) throws Exception {
+    // create needed directories
     File ome = new File("ome");
     if (!ome.exists()) ome.mkdir();
+    File meta = new File("meta");
+    if (!meta.exists()) meta.mkdir();
 
-    // parse global input file
-    versions = parseGlobal();
+    // initialize Velocity engine; enable loading of templates as resources
+    VelocityEngine ve = new VelocityEngine();
+    Properties p = new Properties();
+    p.setProperty("resource.loader", "class");
+    p.setProperty("class.resource.loader.class",
+      "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+    ve.init(p);
 
-    // parse header input files
-    storeHeader = parseHeader(STORE_SRC);
-    retrieveHeader = parseHeader(RETRIEVE_SRC);
-    omexmlHeader = parseHeader(OMEXML_SRC);
+    // populate Velocity context
+    VelocityContext context = new VelocityContext();
+    context.put("name", "World");
+    context.put("user", System.getProperty("user.name"));
+    DateFormat dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM);
+    DateFormat timeFmt = DateFormat.getTimeInstance(DateFormat.LONG);
+    Date date = Calendar.getInstance().getTime();
+    context.put("timestamp", dateFmt.format(date) + " " + timeFmt.format(date));
 
-    // parse nodes input file
-    Vector nodes = parseNodes();
+    // parse versions file
+    Hashtable versions = parseVersions();
 
-    System.out.println("done.");
-    System.out.println("Generating classes...");
+    // parse entities file
+    Vector entities = parseEntities();
+    context.put("entities", entities);
 
-    // generate classes
-    for (int i=0; i<nodes.size(); i++) {
-      Node node = (Node) nodes.get(i);
-      doGetters(node);
+    // process templates
+    processTemplate(ve, context,
+      "MetadataStore.vm", "meta/MetadataStore.java");
+    processTemplate(ve, context,
+      "MetadataRetrieve.vm", "meta/MetadataRetrieve.java");
+    processTemplate(ve, context,
+      "DummyMetadata.vm", "meta/DummyMetadata.java");
+    processTemplate(ve, context,
+      "AggregateMetadata.vm", "meta/AggregateMetadata.java");
+
+    Enumeration versionKeys = versions.keys();
+    while (versionKeys.hasMoreElements()) {
+      String versionKey = (String) versionKeys.nextElement();
+
+      // first entity with each distinct path end node for this version
+      HashSet nodes = new HashSet();
+      Vector unique = new Vector();
+      for (int i=0; i<entities.size(); i++) {
+        Entity entity = (Entity) entities.get(i);
+        String last = entity.last(versionKey);
+        if (nodes.contains(last) || last.equals("-")) continue;
+        nodes.add(last);
+        unique.add(entity);
+      }
+      context.put("unique", unique);
+
+      Hashtable vars = (Hashtable) versions.get(versionKey);
+      // update context
+      context.put("versionKey", versionKey);
+      Enumeration varKeys = vars.keys();
+      while (varKeys.hasMoreElements()) {
+        String name = (String) varKeys.nextElement();
+        String value = (String) vars.get(name);
+        context.put(name, value);
+      }
+      processTemplate(ve, context,
+        "OMEXMLMetadata.vm", "ome/OMEXML" + versionKey + "Metadata.java");
     }
-    for (int i=0; i<nodes.size(); i++) {
-      Node node = (Node) nodes.get(i);
-      doSetters(node);
-    }
-    for (int i=0; i<nodes.size(); i++) {
-      Node node = (Node) nodes.get(i);
-      doHelpers(node);
-    }
-    out.closeFiles();
-
-    System.out.println("Autogeneration complete.");
   }
 
   // -- Helper methods --
 
-  private static Hashtable parseGlobal() throws IOException {
-    Hashtable hash = new Hashtable();
-    String user = System.getProperty("user.name");
-    DateFormat dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM);
-    DateFormat timeFmt = DateFormat.getTimeInstance(DateFormat.LONG);
-    Date date = Calendar.getInstance().getTime();
-    String timestamp = dateFmt.format(date) + " " + timeFmt.format(date);
+  private static void processTemplate(VelocityEngine ve,
+    VelocityContext context, String inFile, String outFile)
+    // NB: No choice, as VelocityEngine.getTemplate(String) throws Exception
+    throws Exception
+  {
+    System.out.print("Writing " + outFile + ": ");
+    Template t = ve.getTemplate("loci/formats/auto/" + inFile);
+    StringWriter writer = new StringWriter();
+    t.merge(context, writer);
+    PrintWriter out = new PrintWriter(new FileWriter(outFile));
+    out.print(writer.toString());
+    out.close();
+    System.out.println("done.");
+  }
 
-    basicVars = new Hashtable();
-    basicVars.put("user", user);
-    basicVars.put("timestamp", timestamp);
+  private static Hashtable parseVersions() throws IOException {
+    System.out.println("Reading " + VERSION_SRC + ":");
+    Hashtable versions = new Hashtable();
 
-    String version = null;
+    String versionKey = null;
     Hashtable vars = null;
     BufferedReader in = new BufferedReader(new InputStreamReader(
-      MetadataAutogen.class.getResourceAsStream(GLOBAL_SRC)));
+      MetadataAutogen.class.getResourceAsStream(VERSION_SRC)));
     while (true) {
       String line = in.readLine();
       if (line == null) break;
@@ -128,12 +159,11 @@ public class MetadataAutogen {
 
       if (line.startsWith("[")) {
         // version header
-        if (version != null) hash.put(version, vars);
+        if (versionKey != null) versions.put(versionKey, vars);
         if (line.startsWith("[-")) break;
-        version = line.substring(1, line.length() - 1);
+        versionKey = line.substring(1, line.length() - 1);
         vars = new Hashtable();
-        vars.put("user", user);
-        vars.put("timestamp", timestamp);
+        System.out.println("\t" + versionKey);
         continue;
       }
       int equals = line.indexOf("=");
@@ -142,29 +172,16 @@ public class MetadataAutogen {
       vars.put(key, val);
     }
     in.close();
-    return hash;
+    return versions;
   }
 
-  private static String parseHeader(String id) throws IOException {
+  public static Vector parseEntities() throws IOException {
+    System.out.println("Reading " + ENTITY_SRC + ":");
+    Vector entities = new Vector();
+    Entity entity = null;
+    Property prop = null;
     BufferedReader in = new BufferedReader(new InputStreamReader(
-      MetadataAutogen.class.getResourceAsStream(id)));
-    StringBuffer sb = new StringBuffer();
-    while (true) {
-      String line = in.readLine();
-      if (line == null) break;
-      sb.append(line);
-      sb.append("\n");
-    }
-    in.close();
-    return sb.toString();
-  }
-
-  private static Vector parseNodes() throws IOException {
-    Vector nodes = new Vector();
-    Node node = null;
-    Param param = null;
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-      MetadataAutogen.class.getResourceAsStream(NODES_SRC)));
+      MetadataAutogen.class.getResourceAsStream(ENTITY_SRC)));
     while (true) {
       String line = in.readLine();
       if (line == null) break;
@@ -174,13 +191,14 @@ public class MetadataAutogen {
       if (line.equals("")) continue; // blank line
 
       if (line.startsWith("[")) {
-        // node header
-        if (node != null) nodes.add(node);
+        // entity header
+        if (entity != null) entities.add(entity);
         if (line.startsWith("[-")) break;
-        node = new Node();
-        node.name = line.substring(1, line.length() - 1);
-        node.desc = in.readLine();
-        node.extra = in.readLine();
+        String name = line.substring(1, line.length() - 1);
+        String desc = in.readLine();
+        String extra = in.readLine();
+        entity = new Entity(name, desc, extra);
+        System.out.println("\t" + name);
         continue;
       }
 
@@ -190,28 +208,18 @@ public class MetadataAutogen {
           System.err.println("Warning: invalid line: " + line);
           continue;
         }
-        String version = line.substring(1, colon).trim();
-        String paramName = line.substring(colon + 1).trim();
-        paramMap.put(version + ":" + node.name + ":" + param.name, paramName);
+        String versionKey = line.substring(1, colon).trim();
+        String propName = line.substring(colon + 1).trim();
+        prop.addMappedName(versionKey, propName);
         continue;
       }
 
       int colon = line.indexOf(":");
       if (colon >= 0) {
         // path to XML element for a particular schema version
-        String version = line.substring(0, colon).trim();
+        String versionKey = line.substring(0, colon).trim();
         String path = line.substring(colon + 1).trim();
-        if (version.equalsIgnoreCase("Default")) {
-          // populate all known versions with the default
-          Enumeration en = versions.keys();
-          Vector indices = getIndices(path);
-          while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
-            if (!node.paths.contains(key)) node.paths.put(key, path);
-            node.indices = indices;
-          }
-        }
-        else node.paths.put(version, path);
+        entity.addPath(versionKey, path);
         continue;
       }
 
@@ -223,711 +231,20 @@ public class MetadataAutogen {
         continue;
       }
 
-      // parameter
-      param = new Param();
-      param.type = st.nextToken();
-      param.name = st.nextToken();
+      // property
+      String propType = st.nextToken();
+      String propName = st.nextToken();
       StringBuffer sb = new StringBuffer();
       if (st.hasMoreTokens()) sb.append(st.nextToken());
       while (st.hasMoreTokens()) {
         sb.append(" ");
         sb.append(st.nextToken());
       }
-      param.doc = sb.toString();
-      node.params.add(param);
+      String propDoc = sb.toString();
+      prop = new Property(propName, propType, propDoc, entity, false);
     }
     in.close();
-    return nodes;
-  }
-
-  /** Generates getter methods for each output source file. */
-  private static void doGetters(Node node) throws IOException {
-    boolean first = true;
-    Enumeration e = node.paths.keys();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      String value = (String) node.paths.get(key);
-      if (first) {
-        // MetadataRetrieve interface
-        doGetters("MetadataRetrieve.java", value, node, null);
-        first = false;
-      }
-      // OME-XML implementations
-      doGetters("ome/OMEXML" + key + "Metadata.java", value, node, key);
-    }
-  }
-
-  /** Generates setter methods for each output source file. */
-  private static void doSetters(Node node) throws IOException {
-    boolean first = true;
-    Enumeration e = node.paths.keys();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      String value = (String) node.paths.get(key);
-      if (first) {
-        // MetadataStore interface
-        doSetters("MetadataStore.java", value, node, null);
-        first = false;
-      }
-      // OME-XML implementation
-      doSetters("ome/OMEXML" + key + "Metadata.java", value, node, key);
-    }
-  }
-
-  /** Generates helper methods for each output source file. */
-  private static void doHelpers(Node node) throws IOException {
-    Enumeration e = node.paths.keys();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      String value = (String) node.paths.get(key);
-      // OME-XML implementation
-      String id = "ome/OMEXML" + key + "Metadata.java";
-      doHelpers(id, value, node.indices, key);
-    }
-  }
-
-  /** Generates getter methods for the given node and source file. */
-  private static void doGetters(String id, String path, Node node,
-    String version) throws IOException
-  {
-    String end = version == null ? ");" : ")";
-    LineTracker lt = new LineTracker();
-
-    // prepend getters section comment
-    if (version != null && !getters.contains(id)) {
-      getters.add(id);
-      lt.add("  // -- MetadataRetrieve API methods --");
-      lt.newline();
-      lt.newline();
-    }
-
-    // parse path
-    String last = getLastPathElement(path);
-    Vector indices = node.indices;
-    int psize = node.params.size();
-    int isize = indices.size();
-
-    lt.add("  // - " + node.name + " attribute retrieval -");
-    lt.newline();
-    lt.newline();
-
-    for (int i=0; i<psize; i++) {
-      Param pi = (Param) node.params.get(i);
-      String piName = stripPrefix(pi.name);
-      if (i > 0) lt.newline();
-
-      // javadoc
-      if (version == null) {
-        lt.add("  /**");
-        lt.newline();
-        lt.add("   * Gets ");
-        lt.addTokens(pi.doc + " for a particular " + node.name + ".", "   * ");
-        lt.newline();
-        for (int j=0; j<isize; j++) {
-          Param pj = (Param) indices.get(j);
-          String pjName = stripPrefix(pj.name);
-          lt.add("   * @param " + toVarName(pjName) + " ");
-          lt.addTokens(pj.doc + ".", "   *   ");
-          lt.newline();
-        }
-        lt.add("   */");
-        lt.newline();
-      }
-      else {
-        String lead = "@see loci.formats.MetadataRetrieve#get" +
-          node.name + piName + "(";
-        StringBuffer sb = new StringBuffer();
-        for (int j=0; j<isize; j++) {
-          Param pj = (Param) indices.get(j);
-          sb.append(pj.type);
-          sb.append(j < isize - 1 ? ", " : ")");
-        }
-        if (lead.length() + sb.length() <= 72) {
-          lt.add("  /* ");
-          lt.addTokens(lead + sb.toString(), null);
-          lt.add(" */");
-          lt.newline();
-        }
-        else {
-          lt.add("  /*");
-          lt.newline();
-          lt.add("   * ");
-          lt.addTokens(lead + " " + sb.toString(), "   *   ");
-          lt.newline();
-          lt.add("   */");
-          lt.newline();
-        }
-      }
-      // method signature
-      lt.add("  ");
-      if (version != null) lt.add("public ");
-      lt.add(pi.type + " get" + node.name + piName + "(");
-      for (int j=0; j<isize; j++) {
-        // parameters
-        Param pj = (Param) indices.get(j);
-        lt.add(pj.getArg(true, true, j == 0, j == isize - 1, end), "    ");
-      }
-      if (version != null) {
-        // opening brace
-        if (lt.hasWrapped()) {
-          lt.newline();
-          lt.add(" ");
-        }
-        lt.add(" {", "  ");
-      }
-      lt.newline();
-
-      // method body
-      if (version != null) {
-        boolean noSupport = last.equals("-");
-        String mappedName = getParamName(pi.name, node.name, version);
-        if (noSupport || mappedName.equals("-")) {
-          Hashtable vars = (Hashtable) versions.get(version);
-          lt.add("    // NB: " + (noSupport ? node.name : piName) +
-            " unsupported for schema version " + vars.get("version"));
-          lt.newline();
-          lt.add("    return null;");
-          lt.newline();
-        }
-        else {
-          String prefix = getPrefix(mappedName);
-          mappedName = stripPrefix(mappedName);
-          String lastVar = toVarName(last);
-          lt.add("    " + last + "Node " + lastVar + " = get" + last + "(");
-          for (int j=0; j<isize; j++) {
-            Param pj = (Param) indices.get(j);
-            lt.add(pj.getArg(true, false, j == 0, false, null), "      ");
-          }
-          lt.add(" false);", "      ");
-          lt.newline();
-          String ante = "    return " + lastVar + " == null ? null :";
-
-          boolean convert = false;
-          if (mappedName.endsWith("%")) {
-            mappedName = mappedName.substring(0, mappedName.length() - 1);
-            convert = true;
-          }
-          String cons = lastVar + "." + prefix + mappedName + "()";
-          if (convert) {
-            cons = toVarName(node.name) +
-              mappedName + "To" + pi.type + "(" + cons + ")";
-          }
-          cons += ";";
-          if (ante.length() + cons.length() <= 79) {
-            lt.add(ante + " " + cons);
-            lt.newline();
-          }
-          else {
-            lt.add(ante);
-            lt.newline();
-            lt.add("      " + cons);
-            lt.newline();
-          }
-        }
-        // closing brace
-        lt.add("  }");
-        lt.newline();
-      }
-    }
-
-    // output results
-    out.write(id, lt.toString());
-  }
-
-  /** Generates setter methods for the given node and source file. */
-  private static void doSetters(String id, String path, Node node,
-    String version) throws IOException
-  {
-    String end = version == null ? ");" : ")";
-    LineTracker lt = new LineTracker();
-
-    // prepend setters section comment
-    if (version != null && !setters.contains(id)) {
-      setters.add(id);
-      lt.add("  // -- MetadataStore API methods --");
-      lt.newline();
-      lt.newline();
-    }
-
-    // parse path
-    String last = getLastPathElement(path);
-    Vector indices = node.indices;
-    int psize = node.params.size();
-    int isize = indices.size();
-    int total = psize + isize;
-
-    // javadoc
-    if (version == null) {
-      lt.add("  /**");
-      lt.newline();
-      lt.add("   * Sets ");
-      lt.addTokens(node.desc + ".", "   * ");
-      if (!node.extra.equals("-")) {
-        lt.add(" ", "   *");
-        lt.addTokens(node.extra, "   * ");
-      }
-      lt.newline();
-      for (int i=0; i<total; i++) {
-        Param p = (Param)
-          (i < psize ? node.params.get(i) : indices.get(i - psize));
-        String pName = stripPrefix(p.name);
-        lt.add("   * @param " + toVarName(pName) + " ");
-        lt.addTokens(p.doc + ".", "   *   ");
-        lt.newline();
-      }
-      lt.add("   */");
-      lt.newline();
-    }
-    else {
-      String lead = "@see loci.formats.MetadataStore#set" + node.name + "(";
-      StringBuffer sb = new StringBuffer();
-      for (int i=0; i<total; i++) {
-        Param p = (Param)
-          (i < psize ? node.params.get(i) : indices.get(i - psize));
-        sb.append(p.type);
-        sb.append(i < total - 1 ? ", " : ")");
-      }
-      if (lead.length() + sb.length() <= 72) {
-        lt.add("  /* " + lead + sb.toString() + " */");
-        lt.newline();
-      }
-      else {
-        lt.add("  /*");
-        lt.newline();
-        lt.add("   * ");
-        lt.addTokens(lead + " " + sb.toString(), "   *   ");
-        lt.newline();
-        lt.add("   */");
-        lt.newline();
-      }
-    }
-    // method signature
-    lt.add("  ");
-    if (version != null) lt.add("public ");
-    lt.add("void set" + node.name + "(");
-    for (int i=0; i<total; i++) {
-      // parameters
-      Param p = (Param)
-        (i < psize ? node.params.get(i) : indices.get(i - psize));
-      lt.add(p.getArg(true, true, i == 0, i == total - 1, end), "    ");
-    }
-    if (version != null) {
-      // opening brace
-      if (lt.hasWrapped()) {
-        lt.newline();
-        lt.add(" ");
-      }
-      lt.add(" {", "  ");
-    }
-    lt.newline();
-
-    // method body
-    if (version != null) {
-      boolean noSupport = last.equals("-");
-      if (noSupport) {
-        Hashtable vars = (Hashtable) versions.get(version);
-        lt.add("    // NB: " + node.name +
-          " unsupported for schema version " + vars.get("version"));
-        lt.newline();
-      }
-      else {
-        String lastVar = toVarName(last);
-        lt.add("    " + last + "Node " + lastVar +
-          " = get" + last + "(");
-        for (int i=0; i<isize; i++) {
-          Param p = (Param) indices.get(i);
-          lt.add(p.getArg(true, false, i == 0, false, null), "    ");
-        }
-        lt.add(" true);", "      ");
-        lt.newline();
-        for (int i=0; i<psize; i++) {
-          Param p = (Param) node.params.get(i);
-          String mappedName = getParamName(p.name, node.name, version);
-          if (mappedName.equals("-")) {
-            Hashtable vars = (Hashtable) versions.get(version);
-            lt.add("    // NB: " + p.name +
-              " unsupported for schema version " + vars.get("version"));
-            lt.newline();
-          }
-          else {
-            String prefix = getPrefix(mappedName);
-            mappedName = stripPrefix(mappedName);
-            String varName = toVarName(stripPrefix(p.name));
-            String ante = "    if (" + varName + " != null) ";
-            boolean convert = false;
-            if (mappedName.endsWith("%")) {
-              mappedName = mappedName.substring(0, mappedName.length() - 1);
-              convert = true;
-            }
-            String cons = varName;
-            if (convert) {
-              cons = toVarName(node.name) +
-                mappedName + "From" + p.type + "(" + cons + ")";
-            }
-            cons = lastVar + ".set" + mappedName + "(" + cons + ");";
-            if (ante.length() + cons.length() <= 80) {
-              lt.add(ante + cons);
-              lt.newline();
-            }
-            else {
-              lt.add(ante + "{");
-              lt.newline();
-              lt.add("      " + cons);
-              lt.newline();
-              lt.add("    }");
-              lt.newline();
-            }
-          }
-        }
-      }
-      // closing brace
-      lt.add("  }");
-      lt.newline();
-    }
-
-    // output results
-    out.write(id, lt.toString());
-  }
-
-  /** Generates helper methods for the given node and source file. */
-  private static void doHelpers(String id,
-    String path, Vector indices, String version) throws IOException
-  {
-    // only generate each path's helper method once
-    if (helpers.contains(id + ":" + path)) return;
-    helpers.add(id + ":" + path);
-
-    String end = ")";
-    LineTracker lt = new LineTracker();
-
-    // prepend helpers section comment
-    if (!helpers.contains(id)) {
-      helpers.add(id);
-      lt.add("  // -- Helper methods --");
-      lt.newline();
-      lt.newline();
-    }
-
-    // parse path
-    String last = getLastPathElement(path);
-    int isize = indices.size();
-
-    if (last.equals("-")) return; // unsupported node type for this version
-
-    // parse version-specific configuration
-    Hashtable vars = (Hashtable) versions.get(version);
-    boolean legacy = "true".equals(vars.get("legacy"));
-
-    // method signature
-    lt.add("  // " + path);
-    lt.newline();
-    lt.add("  private " + last + "Node get" + last + "(");
-    for (int i=0; i<isize; i++) {
-      // parameters
-      StringBuffer sb = new StringBuffer();
-      if (i > 0) sb.append(" ");
-      Param p = (Param) indices.get(i);
-      sb.append(p.type);
-      sb.append(" ");
-      sb.append(toVarName(p.name));
-      sb.append(",");
-      lt.add(sb.toString(), "    ");
-    }
-    lt.add(" boolean create)", "    ");
-    // opening brace
-    if (lt.hasWrapped()) {
-      lt.newline();
-      lt.add(" ");
-    }
-    lt.add(" {", "  ");
-    lt.newline();
-
-    // method body
-    lt.add("    int ndx, count;");
-    lt.newline();
-    lt.add("    List list;");
-    lt.newline();
-    lt.add("    // get OME node");
-    lt.newline();
-    lt.add("    OMENode ome = (OMENode) root;");
-    lt.newline();
-
-    String var = "ome";
-    String pVar = "ome", pToken = "OME";
-    String endElement = null, endVar = null;
-    int multiCount = 0;
-    StringTokenizer st = new StringTokenizer(path, "/");
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken();
-      boolean ref = false, bang = false;
-      if (token.startsWith("@")) {
-        if (token.startsWith("@!")) {
-          token = token.substring(2);
-          bang = true;
-        }
-        else token = token.substring(1);
-        ref = true;
-      }
-      boolean multi = false;
-      if (token.endsWith("+")) {
-        token = token.substring(0, token.length() - 1);
-        multi = true;
-      }
-      var = toVarName(token);
-      lt.add("    // get " + token + " node");
-      lt.newline();
-      boolean ca = pVar.equals("ca");
-      if (token.equals("CA")) token = "CustomAttributes";
-      if (multi) {
-        Param indexParam = (Param) indices.get(multiCount++);
-        lt.add("    ndx = i2i(" + toVarName(indexParam.name) + ");");
-        lt.newline();
-        if (ca) {
-          lt.add("    count = " + pVar + ".countCAList(\"" + token + "\");");
-        }
-        else if (legacy) {
-          lt.add("    count = " + pVar + ".count" + token + "List();");
-        }
-        else lt.add("    count = " + pVar + ".get" + token + "Count();");
-        lt.newline();
-        lt.add("    if (!create && ndx >= count) return null;");
-        lt.newline();
-        if (ref) {
-          lt.add("    for (int i=count; i<=ndx; i++) {");
-          lt.newline();
-          lt.add("      new " + token +
-            "Node(ca).set" + pToken + "(" + pVar + ");");
-          lt.newline();
-          lt.add("    }");
-          lt.newline();
-        }
-        else {
-          lt.add("    for (int i=count; i<=ndx; i++) new " +
-            token + "Node(" + pVar + ");");
-          lt.newline();
-        }
-        if (ca) {
-          lt.add("    list = " + pVar + "." + "getCAList(\"" + token + "\");");
-        }
-        else lt.add("    list = " + pVar + ".get" + token + "List();");
-        lt.newline();
-        lt.add("    " + token + "Node " + var +
-          " = (" + token + "Node) list.get(ndx);");
-        lt.newline();
-      }
-      else {
-        if (ca || ref) {
-          String extra = bang ? "By" + pToken : "";
-          lt.add("    " + token + "Node " + var + " = null;");
-          lt.newline();
-          if (ca) lt.add("    count = ca.countCAList(\"" + token + "\");");
-          else {
-            lt.add("    count = " + pVar +
-              ".count" + token + "List" + extra + "();");
-          }
-          lt.newline();
-          lt.add("    if (count >= 1) {");
-          lt.newline();
-          lt.add("      " + var + " = (" + token + "Node)");
-          if (ca) {
-            lt.add(" ca.getCAList(\"" + token + "\").get(0);", "        ");
-          }
-          else {
-            lt.add(" " + pVar + ".get" + token +
-              "List" + extra + "().get(0);", "        ");
-          }
-          lt.newline();
-          lt.add("    }");
-        }
-        else {
-          lt.add("    " + token + "Node " + var +
-            " = " + pVar + ".get" + token + "();");
-        }
-        lt.newline();
-        lt.add("    if (" + var + " == null) {");
-        lt.newline();
-        lt.add("      if (!create) return null;");
-        lt.newline();
-        lt.add("      " + var + " = new " + token +
-          "Node(" + (ref ? "ca" : pVar) + ");");
-        lt.newline();
-        if (ref) {
-          lt.add("      " + var + ".set" + pToken + "(" + pVar + ");");
-          lt.newline();
-        }
-        lt.add("    }");
-        lt.newline();
-      }
-      pToken = token;
-      pVar = var;
-    }
-    lt.add("    return " + var + ";");
-    lt.newline();
-
-    // closing brace
-    lt.add("  }");
-    lt.newline();
-    // output results
-    out.write(id, lt.toString());
-  }
-
-  /** Converts attribute name in CamelCase to variable in variableCase. */
-  private static String toVarName(String attr) {
-    char[] c = attr.toCharArray();
-    for (int i=0; i<c.length; i++) {
-      if (c[i] >= 'A' && c[i] <= 'Z') c[i] += 'a' - 'A';
-      else {
-        if (i > 1) c[i - 1] += 'A' - 'a'; // keep last character capitalized
-        break;
-      }
-    }
-    return new String(c);
-  }
-
-  /** Strips off any lower case prefix from the given attribute name. */
-  private static String stripPrefix(String attr) {
-    char[] c = attr.toCharArray();
-    int i = 0;
-    while (i < c.length && c[i] >= 'a' && c[i] <= 'z') i++;
-    return i > 0 ? attr.substring(i) : attr;
-  }
-
-  /** Gets any lower case prefix from the given attribute name. */
-  private static String getPrefix(String attr) {
-    char[] c = attr.toCharArray();
-    int i = 0;
-    while (i < c.length && c[i] >= 'a' && c[i] <= 'z') i++;
-    return i > 0 ? attr.substring(0, i) : "get";
-  }
-
-  /** Gets parameter list corresponding to needed indices for a node. */
-  private static Vector getIndices(String path) {
-    Vector indices = new Vector();
-    if (path != null) {
-      StringTokenizer st = new StringTokenizer(path, "/>");
-      int tokens = st.countTokens();
-      for (int i=0; i<tokens; i++) {
-        String t = st.nextToken();
-        if (t.endsWith("+")) {
-          Param p = new Param();
-          t = t.substring(t.startsWith("@") ? 1 : 0, t.length() - 1);
-          p.name = t + "Index";
-          p.type = "Integer";
-          p.doc = "index of the " + t;
-          indices.add(p);
-        }
-      }
-    }
-    return indices;
-  }
-
-  /** Writes header for the given output source file. */
-  private static void writeHeader(String id) throws IOException {
-    System.out.println(id);
-
-    String header = null;
-    Hashtable vars = null;
-    if (id.startsWith("MetadataStore")) {
-      header = storeHeader;
-      vars = basicVars;
-    }
-    else if (id.startsWith("MetadataRetrieve")) {
-      header = retrieveHeader;
-      vars = basicVars;
-    }
-    else { // id.startsWith("ome/OMEXML")
-      header = omexmlHeader;
-      vars = (Hashtable) versions.get(id.substring(10, id.length() - 13));
-    }
-    header = filterHeader(header, vars);
-    out.write(id, header);
-  }
-
-  /** Writes footer for the given output source file. */
-  private static void writeFooter(String id) throws IOException {
-    out.write(id, "}");
-  }
-
-  /**
-   * Filters tokens for the given header, filling in
-   * the values from the specified hashtable.
-   */
-  private static String filterHeader(String header, Hashtable vars) {
-    Enumeration e = vars.keys();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      String val = (String) vars.get(key);
-      header = header.replaceAll("\\$\\{" + key + "\\}", val);
-    }
-    return header;
-  }
-
-  /** Gets overridden parameter name for the given version, if any. */
-  private static String getParamName(String name,
-    String nodeName, String version)
-  {
-    String paramName = (String)
-      paramMap.get(version + ":" + nodeName + ":" + name);
-    return paramName == null ? name : paramName;
-  }
-
-  /** Gets last element of a node path. */
-  private static String getLastPathElement(String path) {
-    int first = path.lastIndexOf("/") + 1;
-    return path.substring(first).replaceAll("[@\\!\\+]", "");
-  }
-
-  // -- Helper classes --
-
-  /** A helper class for storing information about a node. */
-  private static class Node {
-    private String name, desc, extra;
-    private Hashtable paths = new Hashtable();
-    private Vector indices;
-    private Vector params = new Vector();
-  }
-
-  /** A helper class for storing information about node parameters. */
-  private static class Param {
-    private String name, type, doc;
-    public String getArg(boolean doName, boolean doType,
-      boolean first, boolean last, String end)
-    {
-      StringBuffer sb = new StringBuffer();
-      if (!first) sb.append(" ");
-      if (doType) sb.append(type);
-      if (doType && doName) sb.append(" ");
-      if (doName) sb.append(toVarName(stripPrefix(name)));
-      sb.append(last ? end : ",");
-      return sb.toString();
-    }
-  }
-
-  /** A helper class for managing open output files. */
-  public static class OutFiles {
-    private Hashtable files = new Hashtable();
-    public void write(String id, String s) throws IOException {
-      getWriter(id).println(s);
-    }
-    public void closeFiles() throws IOException {
-      Enumeration e = files.keys();
-      while (e.hasMoreElements()) {
-        String id = (String) e.nextElement();
-        PrintWriter out = (PrintWriter) files.get(id);
-        writeFooter(id);
-        out.close();
-      }
-      files.clear();
-    }
-    private void openFile(String id) throws IOException {
-      PrintWriter out = new PrintWriter(new FileWriter(id));
-      files.put(id, out);
-      writeHeader(id);
-    }
-    private PrintWriter getWriter(String id) throws IOException {
-      if (files.get(id) == null) openFile(id);
-      return (PrintWriter) files.get(id);
-    }
+    return entities;
   }
 
 }

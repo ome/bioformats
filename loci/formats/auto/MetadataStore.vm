@@ -1,5 +1,5 @@
 //
-// MetadataRetrieve.java
+// MetadataStore.java
 //
 
 /*
@@ -25,21 +25,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by ${user} via MetadataAutogen on ${timestamp}
+ * Created by $user via MetadataAutogen on $timestamp
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats;
+package loci.formats.meta;
 
 /**
- * TODO - MetadataRetrieve javadoc.
+ * A proxy whose responsibility it is to marshal biological image data into a
+ * particular storage medium.
+ *
+ * The <code>MetadataStore</code> interface encompasses the basic metadata that
+ * any specific storage medium (file, relational database, etc.) should be
+ * expected to store into its backing data model.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataRetrieve.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataRetrieve.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataStore.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataStore.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface MetadataRetrieve {
+public interface MetadataStore {
+
+#foreach ($entity in $entities)
+  /**
+   * $entity.doc()
+#foreach ($prop in $entity.props())
+   * @param $prop.varName() $prop.desc()
+#end
+#foreach ($prop in $entity.indices())
+   * @param $prop.varName() $prop.desc()
+#end
+   */
+  public void set$entity.name()($entity.argsList(true, true));
+
+#end
+}
