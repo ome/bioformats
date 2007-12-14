@@ -67,7 +67,7 @@ public class TiffReader extends BaseTiffReader {
   /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
-    String comment = (String) getMeta("Comment");
+    String comment = TiffTools.getComment(ifds[0]);
 
     status("Checking comment style");
 
@@ -79,6 +79,32 @@ public class TiffReader extends BaseTiffReader {
       int nl = comment.indexOf("\n");
       put("ImageJ", nl < 0 ? comment.substring(7) : comment.substring(7, nl));
       metadata.remove("Comment");
+
+      core.sizeZ[0] = 1;
+      core.sizeC[0] = 1;
+      core.sizeT[0] = 1;
+
+      // parse ZCT sizes
+      StringTokenizer st = new StringTokenizer(comment, "\n");
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken();
+        if (token.startsWith("channels=")) {
+          core.sizeC[0] =
+            Integer.parseInt(token.substring(token.indexOf("=") + 1));
+        }
+        else if (token.startsWith("slices=")) {
+          core.sizeZ[0] =
+            Integer.parseInt(token.substring(token.indexOf("=") + 1));
+        }
+        else if (token.startsWith("frames=")) {
+          core.sizeT[0] =
+            Integer.parseInt(token.substring(token.indexOf("=") + 1));
+        }
+      }
+      if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] == 1) {
+        core.sizeT[0] = core.imageCount[0];
+      }
+      core.currentOrder[0] = "XYCZT";
     }
 
     // check for MetaMorph-style TIFF comment
