@@ -152,6 +152,7 @@ public class Slicer implements PlugInFilter {
       }
 
       ImagePlus p = new ImagePlus(title, newStacks[i]);
+      p.setProperty("Info", imp.getProperty("Info"));
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
       p.setCalibration(calibration);

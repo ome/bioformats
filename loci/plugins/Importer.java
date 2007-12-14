@@ -315,20 +315,7 @@ public class Importer {
         }
 
         // sort metadata keys
-        Enumeration e = meta.keys();
-        Vector v = new Vector();
-        while (e.hasMoreElements()) v.add(e.nextElement());
-        String[] keys = new String[v.size()];
-        v.copyInto(keys);
-        Arrays.sort(keys);
-
-        StringBuffer sb = new StringBuffer();
-        for (int i=0; i<keys.length; i++) {
-          sb.append(keys[i]);
-          sb.append("\t");
-          sb.append(meta.get(keys[i]));
-          sb.append("\n");
-        }
+        StringBuffer sb = getMetadataString(meta, "\t");
 
         SearchableWindow w = new SearchableWindow("Metadata - " + id,
           "Key\tValue", sb.toString(), 400, 400);
@@ -362,6 +349,9 @@ public class Importer {
           // dump OME-XML to ImageJ's description field, if available
           FileInfo fi = new FileInfo();
           fi.description = store.dumpXML();
+
+          // place metadata key/value pairs in ImageJ's info field
+          StringBuffer metadata = getMetadataString(r.getMetadata(), " = ");
 
           long startTime = System.currentTimeMillis();
           long time = startTime;
@@ -491,16 +481,16 @@ public class Importer {
 
           showStack(stackB, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options);
+            fi, r, options, metadata);
           showStack(stackS, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options);
+            fi, r, options, metadata);
           showStack(stackF, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options);
+            fi, r, options, metadata);
           showStack(stackO, currentFile, seriesName, store,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options);
+            fi, r, options, metadata);
 
           long endTime = System.currentTimeMillis();
           double elapsed = (endTime - startTime) / 1000.0;
@@ -606,7 +596,7 @@ public class Importer {
   private void showStack(ImageStack stack, String file, String series,
     OMEXMLMetadata store, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
-    ImporterOptions options)
+    ImporterOptions options, StringBuffer metadata)
     throws FormatException, IOException
   {
     if (stack == null) return;
@@ -625,8 +615,7 @@ public class Importer {
       title = a + "..." + b;
     }
     ImagePlus imp = new ImagePlus(title, stack);
-    imp.setProperty("Info", "File full path=" + file +
-      "\nSeries name=" + series + "\n");
+    imp.setProperty("Info", metadata.toString());
 
     // retrieve the spatial calibration information, if available
     Util.applyCalibration(store, imp, r.getSeries());
@@ -759,6 +748,25 @@ public class Importer {
       while (st.hasMoreTokens()) IJ.write(st.nextToken());
       IJ.error("Bio-Formats Importer", msg);
     }
+  }
+
+  /** Return a StringBuffer with each key/value pair on its own line. */
+  private StringBuffer getMetadataString(Hashtable meta, String separator) {
+    Enumeration e = meta.keys();
+    Vector v = new Vector();
+    while (e.hasMoreElements()) v.add(e.nextElement());
+    String[] keys = new String[v.size()];
+    v.copyInto(keys);
+    Arrays.sort(keys);
+
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<keys.length; i++) {
+      sb.append(keys[i]);
+      sb.append(separator);
+      sb.append(meta.get(keys[i]));
+      sb.append("\n");
+    }
+    return sb;
   }
 
   // -- Main method --
