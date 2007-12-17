@@ -146,7 +146,7 @@ public class ReaderTest {
         reader.setSeries(i);
         int x = reader.getSizeX();
         int y = reader.getSizeY();
-        int c = reader.getRGBChannelCount();
+        int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
         int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
 
         int expected = x * y * c * bytes;
@@ -181,6 +181,7 @@ public class ReaderTest {
   public void testThumbnailImageDimensions(String file) {
     try {
       FileStitcher reader = new FileStitcher();
+      reader.setNormalized(true);
       reader.setId(file);
 
       boolean success = true;
@@ -228,12 +229,13 @@ public class ReaderTest {
     try {
       boolean success = true;
       FileStitcher reader = new FileStitcher();
+      reader.setNormalized(true);
       reader.setId(file);
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
         int x = reader.getThumbSizeX();
         int y = reader.getThumbSizeY();
-        int c = reader.getRGBChannelCount();
+        int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
         int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
 
         int expected = x * y * c * bytes;
