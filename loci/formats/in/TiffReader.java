@@ -81,7 +81,6 @@ public class TiffReader extends BaseTiffReader {
       metadata.remove("Comment");
 
       core.sizeZ[0] = 1;
-      core.sizeC[0] = 1;
       core.sizeT[0] = 1;
 
       // parse ZCT sizes
@@ -101,7 +100,7 @@ public class TiffReader extends BaseTiffReader {
             Integer.parseInt(token.substring(token.indexOf("=") + 1));
         }
       }
-      if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] == 1) {
+      if (core.sizeZ[0] * core.sizeT[0] * core.sizeC[0] == core.sizeC[0]) {
         core.sizeT[0] = core.imageCount[0];
       }
       core.currentOrder[0] = "XYCZT";

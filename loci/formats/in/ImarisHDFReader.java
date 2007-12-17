@@ -100,8 +100,10 @@ public class ImarisHDFReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
+    if (previousImageNumber > getImageCount()) previousImageNumber = -1;
     int[] oldZCT = previousImageNumber == -1 ? new int[] {-1, -1, -1} :
       FormatTools.getZCTCoords(this, previousImageNumber);
+
     if (zct[1] != oldZCT[1] || zct[2] != oldZCT[2] || series != previousSeries)
     {
       try {
@@ -242,8 +244,11 @@ public class ImarisHDFReader extends FormatReader {
         findGroup("Channel_0", "g", "g");
         core.sizeX[i] = Integer.parseInt(getValue("g", "ImageSizeX"));
         core.sizeY[i] = Integer.parseInt(getValue("g", "ImageSizeY"));
+        core.sizeZ[i] = Integer.parseInt(getValue("g", "ImageSizeZ"));
+        core.imageCount[i] = core.sizeZ[i] * core.sizeC[0] * core.sizeT[0];
       }
     }
+    core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
 
     try {
       findGroup("ResolutionLevel_0", "dataSet", "g");
@@ -275,7 +280,6 @@ public class ImarisHDFReader extends FormatReader {
     Arrays.fill(core.rgb, false);
     Arrays.fill(core.thumbSizeX, 128);
     Arrays.fill(core.thumbSizeY, 128);
-    Arrays.fill(core.imageCount, core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
     Arrays.fill(core.orderCertain, true);
     Arrays.fill(core.littleEndian, true);
     Arrays.fill(core.interleaved, false);

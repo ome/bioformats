@@ -148,7 +148,9 @@ public class TCSReader extends FormatReader {
 
       String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
       if (document == null) document = "";
-      String software = (String) ifd.get(new Integer(TiffTools.SOFTWARE));
+      Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
+      String software = s instanceof String ? (String) s :
+        s instanceof String[] ? ((String[]) s)[0] : null;
       if (software == null) software = "";
       return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
     }
