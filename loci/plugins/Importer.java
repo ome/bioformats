@@ -378,99 +378,71 @@ public class Importer {
             stackOrder = ImporterOptions.ORDER_XYCZT;
           }
 
-          for (int j=0; j<num[i]; j++) {
-            if (!load[j]) continue;
-
-            // limit message update rate
-            long clock = System.currentTimeMillis();
-            if (clock - time >= 100) {
-              IJ.showStatus("Reading " +
-                (seriesCount > 1 ? ("series " + (i + 1) + ", ") : "") +
-                "plane " + (j + 1) + "/" + num[i]);
-              time = clock;
+          if (options.isVirtual()) {
+            boolean needComposite = options.isMergeChannels() &&
+              (r.getSizeC() > 3 || (r.getPixelType() != FormatTools.UINT8 &&
+              r.getPixelType() != FormatTools.INT8));
+            stackB = new CustomStack(w, h, null, id, r, (needComposite ||
+              !options.isMergeChannels()) ? 1 : r.getSizeC());
+            for (int j=0; j<num[i]; j++) {
+              ((CustomStack) stackB).addSlice(constructSliceLabel(j, r, store,
+                i, new int[][] {zCount, cCount, tCount}));
             }
-            IJ.showProgress((double) q++ / total);
+          }
+          else {
+            for (int j=0; j<num[i]; j++) {
+              if (!load[j]) continue;
 
-            int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
-
-            // construct label for this slice
-            int[] zct = r.getZCTCoords(ndx);
-            StringBuffer sb = new StringBuffer();
-            if (certain[i]) {
-              boolean first = true;
-              if (cCount[i] > 1) {
-                if (first) first = false;
-                else sb.append("; ");
-                sb.append("ch:");
-                sb.append(zct[1] + 1);
-                sb.append("/");
-                sb.append(sizeC[i]);
+              // limit message update rate
+              long clock = System.currentTimeMillis();
+              if (clock - time >= 100) {
+                IJ.showStatus("Reading " +
+                  (seriesCount > 1 ? ("series " + (i + 1) + ", ") : "") +
+                  "plane " + (j + 1) + "/" + num[i]);
+                time = clock;
               }
-              if (zCount[i] > 1) {
-                if (first) first = false;
-                else sb.append("; ");
-                sb.append("z:");
-                sb.append(zct[0] + 1);
-                sb.append("/");
-                sb.append(sizeZ[i]);
-              }
-              if (tCount[i] > 1) {
-                if (first) first = false;
-                else sb.append("; ");
-                sb.append("t:");
-                sb.append(zct[2] + 1);
-                sb.append("/");
-                sb.append(sizeT[i]);
-              }
-            }
-            else {
-              sb.append("no:");
-              sb.append(j + 1);
-              sb.append("/");
-              sb.append(num[i]);
-            }
-            // put image name at the end, in case it is too long
-            String imageName = store.getImageName(new Integer(i));
-            if (imageName != null) {
-              sb.append(" - ");
-              sb.append(imageName);
-            }
-            String label = sb.toString();
+              IJ.showProgress((double) q++ / total);
 
-            // get image processor for jth plane
-            ImageProcessor ip = Util.openProcessor(r, ndx);
-            if (ip == null) {
-              plugin.canceled = true;
-              return;
-            }
+              int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
 
-            // add plane to image stack
-            if (ip instanceof ByteProcessor) {
-              if (stackB == null) stackB = new ImageStack(w, h);
-              stackB.addSlice(label, ip);
-            }
-            else if (ip instanceof ShortProcessor) {
-              if (stackS == null) stackS = new ImageStack(w, h);
-              stackS.addSlice(label, ip);
-            }
-            else if (ip instanceof FloatProcessor) {
-              // merge image plane into existing stack if possible
-              if (stackB != null) {
-                ip = ip.convertToByte(true);
+              String label = constructSliceLabel(ndx, r, store, i,
+                new int[][] {zCount, cCount, tCount});
+
+              // get image processor for jth plane
+              ImageProcessor ip = Util.openProcessor(r, ndx);
+              if (ip == null) {
+                plugin.canceled = true;
+                return;
+              }
+
+              // add plane to image stack
+              if (ip instanceof ByteProcessor) {
+                if (stackB == null) stackB = new ImageStack(w, h);
                 stackB.addSlice(label, ip);
               }
-              else if (stackS != null) {
-                ip = ip.convertToShort(true);
+              else if (ip instanceof ShortProcessor) {
+                if (stackS == null) stackS = new ImageStack(w, h);
                 stackS.addSlice(label, ip);
               }
-              else {
-                if (stackF == null) stackF = new ImageStack(w, h);
-                stackF.addSlice(label, ip);
+              else if (ip instanceof FloatProcessor) {
+                // merge image plane into existing stack if possible
+                if (stackB != null) {
+                  ip = ip.convertToByte(true);
+                  stackB.addSlice(label, ip);
+                }
+                else if (stackS != null) {
+                  ip = ip.convertToShort(true);
+                  stackS.addSlice(label, ip);
+                }
+                else {
+                  if (stackF == null) stackF = new ImageStack(w, h);
+                  stackF.addSlice(label, ip);
+                }
               }
-            }
-            else if (ip instanceof ColorProcessor) {
-              if (stackO == null) stackO = new ImageStack(w, h);
-              stackO.addSlice(label, ip);
+              else if (ip instanceof ColorProcessor) {
+                if (stackO == null) stackO = new ImageStack(w, h);
+                stackO.addSlice(label, ip);
+              }
             }
           }
 
@@ -503,7 +475,6 @@ public class Importer {
               average + " ms per plane)");
           }
         }
-        r.close();
 
         if (concatenate) {
           Vector widths = new Vector();
@@ -600,21 +571,7 @@ public class Importer {
     throws FormatException, IOException
   {
     if (stack == null) return;
-    String[] used = r.getUsedFiles();
-    String title = file.substring(file.lastIndexOf(File.separator) + 1);
-    if (used.length > 1) {
-      FilePattern fp = new FilePattern(new Location(file));
-      if (fp != null) title = fp.getPattern();
-    }
-    if (series != null && !file.endsWith(series) && r.getSeriesCount() > 1) {
-      title += " - " + series;
-    }
-    if (title.length() > 128) {
-      String a = title.substring(0, 62);
-      String b = title.substring(title.length() - 62);
-      title = a + "..." + b;
-    }
-    ImagePlus imp = new ImagePlus(title, stack);
+    ImagePlus imp = new ImagePlus(getTitle(r, file, series), stack);
     imp.setProperty("Info", metadata.toString());
 
     // retrieve the spatial calibration information, if available
@@ -729,6 +686,74 @@ public class Importer {
       digits++;
     }
     return digits;
+  }
+
+  /** Get an appropriate stack title, given the file name. */
+  private String getTitle(IFormatReader r, String file, String series) {
+    String[] used = r.getUsedFiles();
+    String title = file.substring(file.lastIndexOf(File.separator) + 1);
+    if (used.length > 1) {
+      FilePattern fp = new FilePattern(new Location(file));
+      if (fp != null) title = fp.getPattern();
+    }
+    if (series != null && !file.endsWith(series) && r.getSeriesCount() > 1) {
+      title += " - " + series;
+    }
+    if (title.length() > 128) {
+      String a = title.substring(0, 62);
+      String b = title.substring(title.length() - 62);
+      title = a + "..." + b;
+    }
+    return title;
+  }
+
+  /** Construct slice label. */
+  private String constructSliceLabel(int ndx, IFormatReader r,
+    MetadataRetrieve store, int series, int[][] counts)
+  {
+    r.setSeries(series);
+    int[] zct = r.getZCTCoords(ndx);
+    StringBuffer sb = new StringBuffer();
+    if (r.isOrderCertain()) {
+      boolean first = true;
+      if (counts[1][series] > 1) {
+        if (first) first = false;
+        else sb.append("; ");
+        sb.append("ch:");
+        sb.append(zct[1] + 1);
+        sb.append("/");
+        sb.append(r.getSizeC());
+      }
+      if (counts[0][series] > 1) {
+        if (first) first = false;
+        else sb.append("; ");
+        sb.append("z:");
+        sb.append(zct[0] + 1);
+        sb.append("/");
+        sb.append(r.getSizeZ());
+      }
+      if (counts[2][series] > 1) {
+        if (first) first = false;
+        else sb.append("; ");
+        sb.append("t:");
+        sb.append(zct[2] + 1);
+        sb.append("/");
+        sb.append(r.getSizeT());
+      }
+    }
+    else {
+      sb.append("no:");
+      sb.append(ndx + 1);
+      sb.append("/");
+      sb.append(r.getImageCount());
+    }
+    // put image name at the end, in case it is too long
+    String imageName = store.getImageName(new Integer(series));
+    if (imageName != null) {
+      sb.append(" - ");
+      sb.append(imageName);
+    }
+    return sb.toString();
   }
 
   /** Verifies that the given status result is OK. */

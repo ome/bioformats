@@ -110,6 +110,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
   public static final String PREF_SERIES = "bioformats.series";
   public static final String PREF_WINDOWLESS = "bioformats.windowless";
+  public static final String PREF_VIRTUAL = "bioformats.virtual";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -133,6 +134,7 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_MERGE_OPTION = "Merging Options";
   public static final String LABEL_WINDOWLESS = "windowless";
   public static final String LABEL_SERIES = "series";
+  public static final String LABEL_VIRTUAL = "Use virtual stack";
 
   // -- Fields - GUI components --
 
@@ -149,6 +151,7 @@ public class ImporterOptions implements ItemListener {
   private Checkbox rangeBox;
   private Checkbox autoscaleBox;
   private Choice mergeChoice;
+  private Checkbox virtualBox;
 
   // -- Fields - core options --
 
@@ -169,6 +172,7 @@ public class ImporterOptions implements ItemListener {
   private boolean windowless;
   private String mergeOption;
   private String seriesString;
+  private boolean virtual;
 
   private String location;
   private String id;
@@ -196,6 +200,7 @@ public class ImporterOptions implements ItemListener {
   public boolean isAutoscale() { return autoscale; }
   public boolean isWindowless() { return windowless; }
   public String getMergeOption() { return mergeOption; }
+  public boolean isVirtual() { return virtual; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
   public boolean isViewStandard() { return VIEW_STANDARD.equals(stackFormat); }
@@ -235,6 +240,7 @@ public class ImporterOptions implements ItemListener {
   public void setForceThumbnails(boolean b) { forceThumbnails = b; }
   public void setAutoscale(boolean b) { autoscale = b; }
   public void setWindowless(boolean b) { windowless = b; }
+  public void setVirtual(boolean b) { virtual = b; }
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
@@ -255,6 +261,7 @@ public class ImporterOptions implements ItemListener {
     mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
     seriesString = Prefs.get(PREF_SERIES, "0");
     windowless = Prefs.get(PREF_WINDOWLESS, false);
+    virtual = Prefs.get(PREF_VIRTUAL, false);
 
     // set SDT intensity property, if available
     String sdtIntensity = Prefs.get(SDTReader.INTENSITY_PROPERTY, null);
@@ -281,6 +288,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_AUTOSCALE, autoscale);
     Prefs.set(PREF_SERIES, seriesString);
     Prefs.set(PREF_WINDOWLESS, windowless);
+    Prefs.set(PREF_VIRTUAL, virtual);
   }
 
   /** Parses the plugin argument for parameter values. */
@@ -322,6 +330,7 @@ public class ImporterOptions implements ItemListener {
       autoscale = getMacroValue(arg, LABEL_AUTOSCALE, autoscale);
       windowless = getMacroValue(arg, LABEL_WINDOWLESS, windowless);
       seriesString = Macro.getValue(arg, LABEL_SERIES, "0");
+      virtual = getMacroValue(arg, LABEL_VIRTUAL, virtual);
 
       location = Macro.getValue(arg, LABEL_LOCATION, location);
       id = Macro.getValue(arg, LABEL_ID, id);
@@ -505,6 +514,7 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_CONCATENATE, concatenate);
     gd.addCheckbox(LABEL_RANGE, specifyRanges);
     gd.addCheckbox(LABEL_AUTOSCALE, autoscale);
+    gd.addCheckbox(LABEL_VIRTUAL, virtual);
 
     // extract GUI components from dialog and add listeners
     Vector choices = gd.getChoices();
@@ -527,6 +537,7 @@ public class ImporterOptions implements ItemListener {
       concatenateBox = (Checkbox) boxes.get(7);
       rangeBox = (Checkbox) boxes.get(8);
       autoscaleBox = (Checkbox) boxes.get(9);
+      virtualBox = (Checkbox) boxes.get(10);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -547,6 +558,7 @@ public class ImporterOptions implements ItemListener {
     concatenate = gd.getNextBoolean();
     specifyRanges = gd.getNextBoolean();
     autoscale = gd.getNextBoolean();
+    virtual = gd.getNextBoolean();
 
     return STATUS_OK;
   }
