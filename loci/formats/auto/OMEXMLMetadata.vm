@@ -71,6 +71,9 @@ public class $class extends OMEXMLMetadata {
   // -- $entity.name() property retrieval --
 #foreach ($prop in $entity.props())
 #set ($mappedName = $prop.mappedName($versionKey))
+#set ($convert = $mappedName.endsWith("%"))
+#set ($mappedName = $mappedName.replaceAll("%", ""))
+#set ($mappedPrefix = $prop.mappedPrefix($versionKey))
 
   public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
 #if ($mappedName == "-")
@@ -78,7 +81,11 @@ public class $class extends OMEXMLMetadata {
     return null;
 #else
     ${last}Node $lastVar = get$last($entity.indicesList(false, true), false);
-    return $lastVar == null ? null : ${lastVar}.get$mappedName();
+#if ($convert)
+    return $lastVar == null ? null : $lastVar${mappedName}To$prop.type()(${lastVar}.$mappedPrefix$mappedName());
+#else
+    return $lastVar == null ? null : ${lastVar}.$mappedPrefix$mappedName();
+#end##if
 #end##if
   }
 #end##foreach $prop
@@ -92,12 +99,17 @@ public class $class extends OMEXMLMetadata {
   public void set$entity.name()($entity.argsList(true, true)) {
     ${last}Node $lastVar = get$last($entity.indicesList(false, true), true);
 #foreach ($prop in $entity.props())
+#set ($varName = $prop.varName())
 #set ($mappedName = $prop.mappedName($versionKey))
-#set ($mappedNameVar = $prop.mappedNameVar($versionKey))
+#set ($convert = $mappedName.endsWith("%"))
+#set ($mappedName = $mappedName.replaceAll("%", ""))
+#set ($mappedVarName = $prop.mappedVarName($versionKey))
 #if ($mappedName == "-")
     // NB: $prop.name() unsupported for schema version $version
+#elseif ($convert)
+    if ($varName != null) ${lastVar}.set$mappedName($lastVar${mappedName}From$prop.type()($varName));
 #else
-    if ($mappedNameVar != null) ${lastVar}.set$mappedName($mappedNameVar);
+    if ($varName != null) ${lastVar}.set$mappedName($varName);
 #end##if
 #end##foreach $prop
   }

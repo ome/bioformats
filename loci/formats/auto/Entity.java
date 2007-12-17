@@ -170,7 +170,7 @@ public class Entity {
         break;
       }
     }
-    return new String(c);
+    return new String(c).replaceAll("[@!+%]", "");
   }
 
   // -- Internal Entity API methods --

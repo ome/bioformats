@@ -62,16 +62,14 @@ public class Property {
     nameMap = new Hashtable();
 
     // strip off any lower case prefix
-    char[] c = name.toCharArray();
-    int i = 0;
-    while (i < c.length && c[i] >= 'a' && c[i] <= 'z') i++;
-    if (i > 0) {
-      prefix = name.substring(0, i);
-      name = name.substring(i);
+    int prefixIndex = getPrefixIndex(name);
+    if (prefixIndex > 0) {
+      prefix = name.substring(0, prefixIndex);
+      name = name.substring(prefixIndex);
     }
     else prefix = "get";
 
-    varName = entity.toVarName(new String(c));
+    varName = entity.toVarName(name);
   }
 
   // -- Property API methods --
@@ -79,12 +77,11 @@ public class Property {
   public String name() { return name; }
 
   public String mappedName(String version) {
-    String s = (String) nameMap.get(version);
-    return s == null ? name : s;
-  }
-
-  public String mappedNameVar(String version) {
-    return entity.toVarName(mappedName(version));
+    String mapped = (String) nameMap.get(version);
+    if (mapped == null) return name;
+    // strip off any lower case prefix
+    int prefixIndex = getPrefixIndex(mapped);
+    return mapped.substring(prefixIndex);
   }
 
   public String desc() { return desc; }
@@ -93,10 +90,30 @@ public class Property {
 
   public String prefix() { return prefix; }
 
+  public String mappedPrefix(String version) {
+    String mapped = (String) nameMap.get(version);
+    if (mapped == null) return prefix;
+    int prefixIndex = getPrefixIndex(mapped);
+    return prefixIndex > 0 ? mapped.substring(0, prefixIndex) : "get";
+  }
+
   public String varName() { return varName; }
+
+  public String mappedVarName(String version) {
+    return entity.toVarName(mappedName(version));
+  }
 
   public void addMappedName(String version, String name) {
     nameMap.put(version, name);
+  }
+
+  // -- Helper methods --
+
+  protected int getPrefixIndex(String s) {
+    char[] c = s.toCharArray();
+    int i = 0;
+    while (i < c.length && c[i] >= 'a' && c[i] <= 'z') i++;
+    return i;
   }
 
 }
