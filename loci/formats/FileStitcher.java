@@ -99,6 +99,7 @@ public class FileStitcher implements IFormatReader {
   private String[] seriesBlocks;
   private Vector fileVector;
   private Vector seriesNames;
+  private boolean seriesInFile;
 
   // -- Constructors --
 
@@ -372,11 +373,14 @@ public class FileStitcher implements IFormatReader {
   public BufferedImage openImage(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
     int[] q = computeIndices(no);
-    int sno = getSeries();
+    int sno = seriesInFile ? 0 : getSeries();
     int fno = q[0], ino = q[1];
+    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
       return readers[sno][fno].openImage(ino);
     }
+
+    sno = getSeries();
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
@@ -399,11 +403,14 @@ public class FileStitcher implements IFormatReader {
   public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
     int[] q = computeIndices(no);
-    int sno = getSeries();
+    int sno = seriesInFile ? 0 : getSeries();
     int fno = q[0], ino = q[1];
+    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
       return readers[sno][fno].openBytes(ino);
     }
+
+    sno = getSeries();
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
@@ -430,8 +437,9 @@ public class FileStitcher implements IFormatReader {
   {
     FormatTools.assertId(currentId, true, 2);
     int[] q = computeIndices(no);
-    int sno = getSeries();
+    int sno = seriesInFile ? 0 : getSeries();
     int fno = q[0], ino = q[1];
+    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
       return readers[sno][fno].openBytes(ino, buf);
     }
@@ -478,11 +486,14 @@ public class FileStitcher implements IFormatReader {
   {
     FormatTools.assertId(currentId, true, 2);
     int[] q = computeIndices(no);
-    int sno = getSeries();
+    int sno = seriesInFile ? 0 : getSeries();
     int fno = q[0], ino = q[1];
+    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
       return readers[sno][fno].openThumbImage(ino);
     }
+
+    sno = getSeries();
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
@@ -497,11 +508,14 @@ public class FileStitcher implements IFormatReader {
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 2);
     int[] q = computeIndices(no);
-    int sno = getSeries();
+    int sno = seriesInFile ? 0 : getSeries();
     int fno = q[0], ino = q[1];
+    if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
       return readers[sno][fno].openThumbBytes(ino);
     }
+
+    sno = getSeries();
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
@@ -564,7 +578,7 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
     FormatTools.assertId(currentId, true, 2);
-    return series == 0 ? reader.getSeries() : series;
+    return seriesInFile ? reader.getSeries() : series;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -848,7 +862,7 @@ public class FileStitcher implements IFormatReader {
       reader.isOrderCertain());
 
     int seriesCount = reader.getSeriesCount();
-    boolean seriesInFile = true;
+    seriesInFile = true;
     if (guesser.getAxisCountS() > 0) {
       int[] count = fp.getCount();
       int[] axes = guesser.getAxisTypes();
@@ -1026,7 +1040,8 @@ public class FileStitcher implements IFormatReader {
       // NB: core.sizeT populated in computeAxisLengths below
       core.pixelType[i] = rr.getPixelType();
       imagesPerFile[i] = rr.getImageCount();
-      core.imageCount[i] = files[i].length * imagesPerFile[i];
+      core.imageCount[i] =
+        imagesPerFile[i] * files[seriesInFile ? 0 : i].length;
       core.thumbSizeX[i] = rr.getThumbSizeX();
       core.thumbSizeY[i] = rr.getThumbSizeY();
       // NB: core.cLengths[i] populated in computeAxisLengths below
@@ -1067,7 +1082,7 @@ public class FileStitcher implements IFormatReader {
 
   /** Computes axis length arrays, and total axis lengths. */
   protected void computeAxisLengths() throws FormatException {
-    int sno = getSeries();
+    int sno = seriesInFile ? 0 : getSeries();
 
     FilePattern p = new FilePattern(FilePattern.findPattern(files[sno][0],
       new Location(files[sno][0]).getAbsoluteFile().getParentFile().getPath(),
@@ -1077,14 +1092,16 @@ public class FileStitcher implements IFormatReader {
 
     try {
       readers[sno][0].setId(files[sno][0]);
+      readers[sno][0].setSeries(seriesInFile ? getSeries() : 0);
     }
     catch (IOException e) {
       throw new FormatException(e);
     }
 
-    ag[sno] = new AxisGuesser(p, readers[sno][0].getDimensionOrder(),
+    ag[getSeries()] = new AxisGuesser(p, readers[sno][0].getDimensionOrder(),
       readers[sno][0].getSizeZ(), readers[sno][0].getSizeT(),
       readers[sno][0].getSizeC(), readers[sno][0].isOrderCertain());
+    sno = getSeries();
     int[] axes = ag[sno].getAxisTypes();
     int numZ = ag[sno].getAxisCountZ();
     int numC = ag[sno].getAxisCountC();
@@ -1197,6 +1214,8 @@ public class FileStitcher implements IFormatReader {
     }
 
     int fno = FormatTools.positionToRaster(count, pos);
+
+    if (seriesInFile) sno = 0;
 
     // configure the reader, in case we haven't done this one yet
     readers[sno][fno].setId(files[sno][fno]);
