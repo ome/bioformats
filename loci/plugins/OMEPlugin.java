@@ -148,7 +148,7 @@ public class OMEPlugin implements PlugIn {
   public void logout() {
     IJ.showStatus("OME: Logging out...");
     IJ.showProgress(.99);
-    OMEUtils.logout();
+    OMEUtils.logout(cred.isOMERO);
     IJ.showStatus("OME: Completed");
   }
 

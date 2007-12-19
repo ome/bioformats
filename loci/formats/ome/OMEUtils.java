@@ -21,7 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.ome;
 
 import ij.gui.GenericDialog;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -95,6 +98,10 @@ public class OMEUtils {
     return r;
   }
 
+  private static boolean loggedIn = false;
+  private static boolean omePixelsInitialized = false;
+  private static boolean omeroPixelsInitialized = false;
+
   // -- Utils API methods --
 
   /**
@@ -145,6 +152,7 @@ public class OMEUtils {
   /** Login to an OME/OMERO server. */
   public static void login(OMECredentials credentials) throws ReflectException
   {
+    if (loggedIn) return;
     r.setVar("user", credentials.username);
     r.setVar("pass", credentials.password);
     r.setVar("sname", credentials.server);
@@ -154,6 +162,9 @@ public class OMEUtils {
       r.exec("login = new Login(user, pass)");
       r.exec("server = new Server(sname, port)");
       r.exec("sf = new ServiceFactory(server, login)");
+      r.exec("thumbs = sf.createThumbnailService()");
+      r.exec("admin = sf.getAdminService()");
+      r.exec("eventContext = admin.getEventContext()");
     }
     else {
       String s = (String) r.getVar("sname");
@@ -179,11 +190,21 @@ public class OMEUtils {
       r.exec("df = rs.getService(dfClass)");
       r.exec("pf = rs.getService(pfClass)");
     }
+    loggedIn = true;
   }
 
   /** Log out of OME/OMERO server. */
-  public static void logout() {
+  public static void logout(boolean isOMERO) {
+    loggedIn = false;
+    omePixelsInitialized = false;
+    omeroPixelsInitialized = false;
 
+    if (!isOMERO) {
+      try {
+        r.exec("rc.logout()");
+      }
+      catch (ReflectException e) { }
+    }
   }
 
   /** Get the width of every accessible image on the server. */
@@ -454,6 +475,7 @@ public class OMEUtils {
   // -- OME-specific helper methods --
 
   private static void getAllImages() throws ReflectException {
+    if (omePixelsInitialized) return;
     r.exec("c = new Criteria()");
     setImageCriteria();
     try {
@@ -463,6 +485,7 @@ public class OMEUtils {
       throw new ReflectException(e);
     }
     r.exec("l = df.retrieveList(imageClass, c)");
+    omePixelsInitialized = true;
   }
 
   private static int[] getOMEIntValues(String func) throws ReflectException {
@@ -542,12 +565,10 @@ public class OMEUtils {
   // -- OMERO-specific helper methods --
 
   private static void getAllPixels() throws ReflectException {
-    r.exec("thumbs = sf.createThumbnailService()");
-    r.exec("admin = sf.getAdminService()");
-    r.exec("eventContext = admin.getEventContext()");
+    if (omeroPixelsInitialized) return;
     r.exec("uid = eventContext.getCurrentUserId()");
     r.exec("filter = new Filter()");
-    r.exec("filter.owner(uid)");
+    r.exec("filter = filter.owner(uid)");
     r.exec("query = sf.getQueryService()");
     r.setVar("q", "select p from Pixels as p " +
       "left outer join fetch p.pixelsDimensions " +
@@ -555,9 +576,25 @@ public class OMEUtils {
       "left outer join fetch p.channels " +
       "left outer join fetch p.image");
     r.exec("params = new Parameters(filter)");
-    r.exec("params.addId(uid)");
     r.exec("results = query.findAllByQuery(q, params)");
+
+    List results = (List) r.getVar("results");
+    long uid = ((Long) r.getVar("uid")).longValue();
+    for (int i=0; i<results.size(); i++) {
+      r.setVar("i", i);
+      r.exec("obj = results.get(i)");
+      r.exec("obj = new PixelsData(obj)");
+      r.exec("owner = obj.getOwner()");
+      r.exec("id = owner.getId()");
+      long testId = ((Long) r.getVar("id")).longValue();
+      if (testId != uid) {
+        results.remove(i);
+        i--;
+      }
+    }
+
     r.exec("len = results.size()");
+    omeroPixelsInitialized = true;
   }
 
   private static int[] getIntValues(String func) throws ReflectException {
