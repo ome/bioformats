@@ -27,7 +27,9 @@ to automatically detect the format of a file and delegate subsequent calls to
 the appropriate reader.
 
 Prior to retrieving pixels or metadata, it is necessary to call setId(String)
-on the reader instance, passing in the name of the file to read.
+on the reader instance, passing in the name of the file to read.  Some formats
+allow multiple series (5D image stacks) per file; in this case you may wish to
+call setSeries(int) to change which series is being read.
 
 Raw pixels are always retrieved one plane at a time.  Planes can be returned
 either in a byte array, or in a java.awt.image.BufferedImage (using
@@ -43,14 +45,15 @@ appropriate accessor method in parentheses:
 
 - image width (getSizeX())
 - image height (getSizeY())
-- total number of images per file (getImageCount())
-- number of slices per file (getSizeZ())
-- number of timepoints per file (getSizeT())
-- number of actual channels per file (getSizeC())
+- number of series per file (getSeriesCount())
+- total number of images per series (getImageCount())
+- number of slices in the current series (getSizeZ())
+- number of timepoints in the current series (getSizeT())
+- number of actual channels in the current series (getSizeC())
 - number of channels per image (getRGBChannelCount())
-- the ordering of the images within the file (getDimensionOrder())
+- the ordering of the images within the current series (getDimensionOrder())
 - whether each image is RGB (isRGB())
-- whether the pixel bytes in little-endian order (isLittleEndian())
+- whether the pixel bytes are in little-endian order (isLittleEndian())
 - whether the channels in an image are interleaved (isInterleaved())
 - the type of pixel data in this file (getPixelType())
 
@@ -86,6 +89,8 @@ provides a few extras to make file reading more flexible.
     images.
   + ChannelMerger extends IFormatReader, and merges grayscale
     images to RGB if the number of channels is greater than 1.
+  + ChannelFiller extends IFormatReader, and converts indexed color images to
+    RGB images.
   + MinMaxCalculator extends IFormatReader, and provides an API
     for retrieving the minimum and maximum pixel values for each channel.
   + DimensionSwapper extends IFormatReader, and provides an API
@@ -101,6 +106,7 @@ provides a few extras to make file reading more flexible.
 The following file formats can be written using Bio-Formats:
 
 - TIFF (uncompressed or LZW)
+- OME-TIFF (uncompressed or LZW)
 - JPEG
 - PNG
 - AVI (uncompressed)
@@ -118,7 +124,7 @@ the same writer and output settings (compression, frames per second, etc.),
 and is especially useful for formats that do not support multiple images per
 file.
 
-A word of warning: IFormatWriter.saveImage(Image, boolean) accepts 
+A word of warning: IFormatWriter.saveImage(Image, boolean) accepts
 generic java.awt.Images, and converts them to a BufferedImage under the hood.
 The problem is that not all formats support all types of data (e.g. JPEG
 does not support 16-bit data).  To prevent the possibility of corrupt or
