@@ -249,7 +249,9 @@ public class Colorizer implements PlugInFilter {
           nSlices, nTimes);
       }
       newImp.setCalibration(calibration);
-      if (IJ.getVersion().compareTo("1.39l") >= 0) {
+      if (IJ.getVersion().compareTo("1.39l") >= 0 &&
+        !(newImp instanceof CompositeImage))
+      {
         newImp.setOpenAsHyperStack(hyperstack);
       }
       newImp.show();
