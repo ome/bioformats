@@ -438,25 +438,6 @@ public class LeicaReader extends FormatReader {
           // test to make sure the path is valid
           Location test = new Location((String) f.get(f.size() - 1));
           if (tiffsExist) tiffsExist = test.exists();
-
-          // get the series name from the stored file name
-          int firstUnderscore = prefix.indexOf("_") + 1;
-          int secondUnderscore = prefix.indexOf("_", firstUnderscore);
-          String name = null;
-          if (firstUnderscore < 0 || secondUnderscore < 0) name = prefix;
-          else {
-            String s = prefix.substring(firstUnderscore, secondUnderscore);
-            if (seriesNames.contains(s)) {
-              int suffix = 2;
-              do {
-                name = s + "-" + suffix;
-                suffix++;
-              }
-              while (seriesNames.contains(name));
-            }
-            else name = s;
-          }
-          seriesNames.add(name);
         }
 
         // at least one of the TIFF files was renamed
@@ -615,6 +596,8 @@ public class LeicaReader extends FormatReader {
   protected void initMetadata() throws FormatException, IOException {
     if (headerIFDs == null) headerIFDs = ifds;
 
+    int fileLength = 0;
+
     for (int i=0; i<headerIFDs.length; i++) {
       byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
       if (temp != null) {
@@ -624,8 +607,8 @@ public class LeicaReader extends FormatReader {
           new Integer(DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0])));
         addMeta("Number of Series",
           new Integer(DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0])));
-        addMeta("Length of filename",
-          new Integer(DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0])));
+        fileLength = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
+        addMeta("Length of filename", new Integer(fileLength));
         Integer fileExtLen =
           new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0]));
         addMeta("Length of file extension", fileExtLen);
@@ -637,18 +620,37 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // the image data
         // ID_IMAGES
+        RandomAccessStream s = new RandomAccessStream(temp);
+        s.order(core.littleEndian[0]);
 
-        core.sizeZ[i] = DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0]);
-        core.sizeX[i] = DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0]);
-        core.sizeY[i] = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
+        core.sizeZ[i] = s.readInt();
+        core.sizeX[i] = s.readInt();
+        core.sizeY[i] = s.readInt();
 
         addMeta("Number of images", new Integer(core.sizeZ[i]));
         addMeta("Image width", new Integer(core.sizeX[i]));
         addMeta("Image height", new Integer(core.sizeY[i]));
-        addMeta("Bits per Sample",
-          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])));
-        addMeta("Samples per pixel",
-          new Integer(DataTools.bytesToInt(temp, 16, 4, core.littleEndian[0])));
+        addMeta("Bits per Sample", new Integer(s.readInt()));
+        addMeta("Samples per pixel", new Integer(s.readInt()));
+
+        String prefix = DataTools.stripString(s.readString(fileLength * 2));
+        s.close();
+
+        StringTokenizer st = new StringTokenizer(prefix, "_");
+        StringBuffer buf = new StringBuffer();
+        st.nextToken();
+        while (st.hasMoreTokens()) {
+          String token = st.nextToken();
+          String lcase = token.toLowerCase();
+          if (!lcase.endsWith(".tif") && !lcase.endsWith(".tiff") &&
+            !lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
+            !lcase.startsWith("z0"))
+          {
+            if (buf.length() > 0) buf.append("_");
+            buf.append(token);
+          }
+        }
+        seriesNames.add(buf.toString());
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(20));
