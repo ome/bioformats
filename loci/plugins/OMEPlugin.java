@@ -78,6 +78,7 @@ public class OMEPlugin implements PlugIn {
     String server = Prefs.get("downloader.server", "");
     String user = Prefs.get("downloader.user", "");
     String port = Prefs.get("downloader.port", "");
+    String type = Prefs.get("downloader.type", "OME");
 
     if (server.startsWith("http:")) server = server.substring(5);
     while (server.startsWith("/")) server = server.substring(1);
@@ -86,7 +87,7 @@ public class OMEPlugin implements PlugIn {
     int colon = server.indexOf(":");
     if (colon >= 0) server = server.substring(0, colon);
 
-    gd.addChoice("Server type: ", new String[] {"OME", "OMERO"}, "OME");
+    gd.addChoice("Server type: ", new String[] {"OME", "OMERO"}, type);
     gd.addStringField("Server:      ", server, 30);
     gd.addStringField("Port:        ", port, 30);
     gd.addStringField("Username:    ", user, 30);
@@ -103,8 +104,7 @@ public class OMEPlugin implements PlugIn {
       return;
     }
 
-    String type = gd.getNextChoice();
-
+    type = gd.getNextChoice();
     server = gd.getNextString();
 
     // do sanity check on server name
@@ -131,13 +131,14 @@ public class OMEPlugin implements PlugIn {
     }
     catch (ReflectException e) {
       IJ.error("Login failed");
-      e.printStackTrace(); 
+      e.printStackTrace();
       getInput();
     }
 
     Prefs.set("downloader.server", server);
     Prefs.set("downloader.user", cred.username);
     Prefs.set("downloader.port", cred.port);
+    Prefs.set("downloader.type", type);
   }
 
   public static void setPlugin(boolean isCancelled) {
@@ -162,6 +163,45 @@ public class OMEPlugin implements PlugIn {
         cancelPlugin = false;
         return;
       }
+
+      // prompt for search criteria
+
+      GenericDialog searchBox = new GenericDialog("Image search...");
+      if (!cred.isOMERO) {
+        String[] names = OMEUtils.getAllExperimenters(cred.isOMERO);
+        String[] tmp = names;
+        names = new String[tmp.length + 1];
+        names[0] = "";
+        System.arraycopy(tmp, 0, names, 1, tmp.length);
+        searchBox.addChoice("Experimenter: ", names, names[0]);
+      }
+      searchBox.addStringField("Creation date (yyyy-mm-dd): ", "");
+      searchBox.addStringField("Image ID: ", "");
+      searchBox.showDialog();
+
+      if (searchBox.wasCanceled()) {
+        cancelPlugin = true;
+        return;
+      }
+
+      String name = cred.isOMERO ? null : searchBox.getNextChoice();
+      String created = searchBox.getNextString();
+      String id = searchBox.getNextString();
+
+      String firstName = null, lastName = null;
+      if (name != null && name.indexOf(",") != -1) {
+        lastName = name.substring(0, name.indexOf(",")).trim();
+        firstName = name.substring(name.indexOf(",") + 2).trim();
+      }
+      if (firstName != null && firstName.trim().equals("")) firstName = null;
+      if (lastName != null && lastName.trim().equals("")) lastName = null;
+      if (created != null && created.trim().equals("")) created = null;
+      if (id != null && id.trim().equals("")) id = null;
+
+      // filter images based on search terms
+      OMEUtils.filterPixels(firstName, lastName, created, id, cred.isOMERO);
+
+      // retrieve image selection(s)
 
       long[] images = new OMEUtils().showTable(cred);
       if (images == null || images.length == 0) {

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
+import ij.IJ;
 import ij.gui.GenericDialog;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -207,6 +208,110 @@ public class OMEUtils {
     }
   }
 
+  /** Get the names of every experimenter in the database. */
+  public static String[] getAllExperimenters(boolean isOMERO)
+    throws ReflectException
+  {
+    List exps = null;
+    if (isOMERO) {
+      String[] rtn = new String[1];
+      r.exec("uid = eventContext.getCurrentUserId()");
+      r.exec("exp = admin.getExperimenter(uid)");
+      r.exec("fname = exp.getFirstName()");
+      r.exec("lname = exp.getLastName()");
+      rtn[0] = r.getVar("lname") + ", " + r.getVar("fname");
+      return rtn;
+    }
+
+    getAllImages();
+    r.exec("c = new Criteria()");
+    r.setVar("OME_ID", "id");
+    r.setVar("OME_FIRST_NAME", "FirstName");
+    r.setVar("OME_LAST_NAME", "LastName");
+    r.exec("c.addWantedField(OME_ID)");
+    r.exec("c.addWantedField(OME_FIRST_NAME)");
+    r.exec("c.addWantedField(OME_LAST_NAME)");
+
+    r.setVar("exp", "Experimenter");
+    r.exec("exps = df.retrieveList(exp, c)");
+
+    exps = (List) r.getVar("exps");
+    String[] rtn = new String[exps.size()];
+    for (int i=0; i<exps.size(); i++) {
+      r.setVar("exp", exps.get(i));
+      if (isOMERO) r.exec("exp = new ExperimenterData(exp)");
+      r.exec("fname = exp.getFirstName()");
+      r.exec("lname = exp.getLastName()");
+      rtn[i] = r.getVar("lname") + ", " + r.getVar("fname");
+    }
+    return rtn;
+  }
+
+  /** Filter available pixels to match given criteria. */
+  public static void filterPixels(String firstName, String lastName,
+    String created, String id, boolean isOMERO)
+    throws ReflectException
+  {
+    if (isOMERO) getAllPixels();
+    else getAllImages();
+
+    int len = ((Integer) r.getVar("len")).intValue();
+    List results = (List) r.getVar(isOMERO ? "results" : "l");
+    List newResults = new Vector();
+    for (int i=0; i<len; i++) {
+      r.setVar("obj", results.get(i));
+      String fname = null, lname = null, create = null, pid = null;
+      if (isOMERO) {
+        r.exec("pix = new PixelsData(obj)");
+        r.exec("v = obj.getId()");
+        pid = r.getVar("v").toString();
+        r.exec("img = pix.getImage()");
+        r.exec("owner = pix.getOwner()");
+        r.exec("fname = owner.getFirstName()");
+        r.exec("lname = owner.getLastName()");
+
+        try {
+          r.exec("created = img.getInserted()");
+          create = ((Timestamp) r.getVar("created")).toString();
+        }
+        catch (Exception e) {
+          create = null;
+        }
+
+        fname = (String) r.getVar("fname");
+        lname = (String) r.getVar("lname");
+      }
+      else {
+        r.exec("created = obj.getCreated()");
+        create = (String) r.getVar("created");
+        r.exec("id = obj.getID()");
+        pid = r.getVar("id").toString();
+        r.exec("owner = obj.getOwner()");
+        r.exec("fname = owner.getFirstName()");
+        r.exec("lname = owner.getLastName()");
+        fname = (String) r.getVar("fname");
+        lname = (String) r.getVar("lname");
+      }
+
+      if ((firstName == null || firstName.equals(fname)) &&
+        (lastName == null || lastName.equals(lname)) &&
+        (created == null || created.equals(create) ||
+        created.startsWith(create)) && (id == null || id.equals(pid)))
+      {
+        newResults.add(results.get(i));
+      }
+    }
+
+    if (isOMERO) {
+      r.setVar("results", newResults);
+      r.exec("len = results.size()");
+    }
+    else {
+      r.setVar("l", newResults);
+      r.exec("len = l.size()");
+    }
+  }
+
   /** Get the width of every accessible image on the server. */
   public static int[] getAllWidths(boolean isOMERO) throws ReflectException {
     if (isOMERO) return getIntValues("getSizeX");
@@ -261,7 +366,6 @@ public class OMEUtils {
     }
 
     getAllImages();
-    r.exec("len = l.size()");
     int len = ((Integer) r.getVar("len")).intValue();
     String[] rtn = new String[len];
     for (int i=0; i<len; i++) {
@@ -293,7 +397,6 @@ public class OMEUtils {
     }
 
     getAllImages();
-    r.exec("len = l.size()");
     int len = ((Integer) r.getVar("len")).intValue();
     String[] rtn = new String[len];
     for (int i=0; i<len; i++) {
@@ -316,11 +419,11 @@ public class OMEUtils {
         r.exec("obj = results.get(i)");
         r.exec("obj = new PixelsData(obj)");
         r.exec("image = obj.getImage()");
-        try { 
-          r.exec("name = image.getInserted()"); 
+        try {
+          r.exec("name = image.getInserted()");
           rtn[i] = ((Timestamp) r.getVar("name")).toString();
         }
-        catch (Exception e) { 
+        catch (Exception e) {
           rtn[i] = new Timestamp(System.currentTimeMillis()).toString();
         }
       }
@@ -328,7 +431,6 @@ public class OMEUtils {
     }
 
     getAllImages();
-    r.exec("len = l.size()");
     int len = ((Integer) r.getVar("len")).intValue();
     String[] rtn = new String[len];
     for (int i=0; i<len; i++) {
@@ -349,7 +451,6 @@ public class OMEUtils {
     }
 
     getAllImages();
-    r.exec("len = l.size()");
     int len = ((Integer) r.getVar("len")).intValue();
     BufferedImage[] rtn = new BufferedImage[len];
     for (int i=0; i<len; i++) {
@@ -367,7 +468,6 @@ public class OMEUtils {
     if (isOMERO) return getLongValues("getId");
 
     getAllImages();
-    r.exec("len = l.size()");
     int len = ((Integer) r.getVar("len")).intValue();
     long[] rtn = new long[len];
     for (int i=0; i<len; i++) {
@@ -391,6 +491,11 @@ public class OMEUtils {
     String[] descr = getAllDescriptions(cred.isOMERO);
     String[] created = getAllDates(cred.isOMERO);
     BufferedImage[] thumbs = getAllThumbnails(cred.isOMERO);
+
+    if (ids.length == 0) {
+      IJ.error("No images found!");
+      return ids;
+    }
 
     // TODO : consolidate this with ImporterOptions.promptSeries logic.
 
@@ -485,12 +590,12 @@ public class OMEUtils {
       throw new ReflectException(e);
     }
     r.exec("l = df.retrieveList(imageClass, c)");
+    r.exec("len = l.size()");
     omePixelsInitialized = true;
   }
 
   private static int[] getOMEIntValues(String func) throws ReflectException {
     getAllImages();
-    r.exec("len = l.size()");
     int len = ((Integer) r.getVar("len")).intValue();
     int[] rtn = new int[len];
     for (int i=0; i<len; i++) {
@@ -507,7 +612,6 @@ public class OMEUtils {
     throws ReflectException
   {
     getAllImages();
-    r.exec("len = l.size()");
     int len = ((Integer) r.getVar("len")).intValue();
     String[] rtn = new String[len];
     for (int i=0; i<len; i++) {
@@ -592,7 +696,6 @@ public class OMEUtils {
         i--;
       }
     }
-
     r.exec("len = results.size()");
     omeroPixelsInitialized = true;
   }
