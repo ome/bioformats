@@ -1,7 +1,9 @@
 function [result] = bfopen(id)
 
-% portions of this code were adapted from:
+% Portions of this code were adapted from:
 % http://www.mathworks.com/support/solutions/data/1-2WPAYR.html?solution=1-2WPAYR
+%
+% Thanks to Ville Rantanen for his performance improvements.
 
 r = loci.formats.ChannelSeparator();
 r.setId(id);
@@ -12,19 +14,13 @@ for s = 1:numSeries
     w = r.getSizeX();
     h = r.getSizeY();
     numImages = r.getImageCount();
-    arr = double(zeros([h, w, 1])); % use uint8 with imshow?
+    arr = double(zeros([h, w, 1]));
     for i = 0:numImages-1
         fprintf('.');
         img = r.openImage(i);
         % convert Java BufferedImage to MATLAB image
         B = img.getData.getPixels(0, 0, w, h, []);
-        ndx = 1;
-        for y = 1:h
-            for x = 1:w
-                arr(y,x,1) = B(ndx);
-                ndx = ndx + 1;
-            end
-        end
+        arr = reshape(B, [w h])';
         % plot the image plane in a new figure
         figure;
         pcolor(arr);
