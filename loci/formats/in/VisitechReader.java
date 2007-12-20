@@ -111,7 +111,7 @@ public class VisitechReader extends FormatReader {
       Location file = new Location(id).getAbsoluteFile();
       String path = file.exists() ? file.getPath() : id;
       int ndx = path.lastIndexOf(File.separator);
-      String base = path.substring(ndx + 1, path.indexOf(" ", ndx));
+      String base = path.substring(ndx + 1, path.lastIndexOf(" "));
 
       String suffix = " Report.html";
       currentId = null;
@@ -244,15 +244,18 @@ public class VisitechReader extends FormatReader {
     files.add(currentId);
 
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
+    for (int i=0; i<numSeries; i++) {
+      store.setImage("Position " + i, null, null, new Integer(i));
+    }
     FormatTools.populatePixels(store, this);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null);
+    for (int i=0; i<numSeries; i++) {
+      for (int j=0; j<core.sizeC[i]; j++) {
+        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+          null, null, null, null, null, null, null, null, null, null, null,
+          null, null, null, null, null, new Integer(i));
+      }
     }
-
   }
 
 }
