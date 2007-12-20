@@ -15,9 +15,9 @@ for s = 1:numSeries
     h = r.getSizeY();
     numImages = r.getImageCount();
     arr = double(zeros([h, w, 1]));
-    for i = 0:numImages-1
+    for i = 1:numImages
         fprintf('.');
-        img = r.openImage(i);
+        img = r.openImage(i - 1);
         % convert Java BufferedImage to MATLAB image
         B = img.getData.getPixels(0, 0, w, h, []);
         arr = reshape(B, [w h])';
