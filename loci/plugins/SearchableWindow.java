@@ -56,6 +56,7 @@ public class SearchableWindow extends TextWindow implements ActionListener {
     MenuBar menubar = getMenuBar();
     Menu menu = menubar.getMenu(0);
     MenuItem search = new MenuItem("Search...");
+    search.setActionCommand("search");
     search.addActionListener(this);
     menu.add(search);
   }
@@ -63,7 +64,10 @@ public class SearchableWindow extends TextWindow implements ActionListener {
   // -- ActionListener API methods --
 
   public void actionPerformed(ActionEvent e) {
-    new SearchBox(this);
+    if ("search".equals(e.getActionCommand())) {
+      new SearchBox(this);
+    }
+    else panel.actionPerformed(e);
   }
 
   // -- SearchableWindow API methods --
