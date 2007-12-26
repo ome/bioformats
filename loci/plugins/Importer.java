@@ -245,10 +245,12 @@ public class Importer {
         seriesLabels[i] = sb.toString();
       }
 
-      if (seriesCount > 1) {
+      if (seriesCount > 1 && !options.openAllSeries()) {
         status = options.promptSeries(r, seriesLabels, series);
         if (!statusOk(status)) return;
       }
+
+      if (options.openAllSeries()) Arrays.fill(series, true);
 
       // -- Step 4c: prompt for the range of planes to import, if necessary --
 
