@@ -978,6 +978,7 @@ public class FileStitcher implements IFormatReader {
       }
     }
 
+    reader.setId(files[0][0]);
     String[] originalUsedFiles = reader.getUsedFiles();
 
     boolean doNotStitch = true;
