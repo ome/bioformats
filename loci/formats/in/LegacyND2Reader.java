@@ -28,32 +28,45 @@ import java.io.*;
 import java.util.Arrays;
 import loci.formats.*;
 
+/**
+ * LegacyND2Reader is a file format reader for Nikon ND2 files that uses
+ * the Nikon ND2 SDK - it is only usable on Windows machines.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/LegacyND2Reader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/LegacyND2Reader.java">SVN</a></dd></dl>
+ */
 public class LegacyND2Reader extends FormatReader {
 
-  private static boolean noSDK = false;
+  // -- Constants --
 
-  private static ReflectedUniverse r = createReflectedUniverse();
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
+  /** Modality types. */
+  private static final int WIDE_FIELD = 0;
+  private static final int BRIGHT_FIELD = 1;
+  private static final int LASER_SCAN_CONFOCAL = 2;
+  private static final int SPIN_DISK_CONFOCAL = 3;
+  private static final int SWEPT_FIELD_CONFOCAL = 4;
+  private static final int MULTI_PHOTON = 5;
+
+  // -- Static initializers --
+
+  private static boolean libraryFound = true;
+
+  static {
     try {
-      r = new ReflectedUniverse();
-      r.exec("import ND_to_Image6D");
-      System.loadLibrary("Nd2SdkWrapperI6D");
-    }
-    catch (ReflectException e) {
-      if (debug) LogTools.trace(e);
-      noSDK = true;
+      System.loadLibrary("LegacyND2Reader");
     }
     catch (UnsatisfiedLinkError e) {
       if (debug) LogTools.trace(e);
-      noSDK = true;
+      libraryFound = false;
     }
-    return r;
   }
 
   // -- Constructor --
 
-  public LegacyND2Reader() { super("Nikon ND2 (Legacy)", "nd2"); }
+  public LegacyND2Reader() {
+    super("Nikon ND2 (Legacy)", new String[] {"jp2", "nd2"});
+  }
 
   // -- IFormatReader API methods --
 
@@ -71,44 +84,20 @@ public class LegacyND2Reader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
+    getImage(buf, getSeries(), zct[0], zct[1], zct[2]);
 
-    r.setVar("z", zct[0]);
-    r.setVar("c", zct[1]);
-    r.setVar("t", zct[2]);
-    r.setVar("series", series);
-
-    if (core.pixelType[series] == FormatTools.UINT8) {
-      r.setVar("pix", buf);
-      try {
-        r.exec("helper.copyNd2ImageByte(pix, c, z, t, series)");
-      }
-      catch (ReflectException e) {
-        if (debug) LogTools.trace(e);
-      }
-    }
-    else {
-      int size = getRGBChannelCount() * core.sizeX[series] * core.sizeY[series];
-      short[] s = new short[size];
-      r.setVar("s", s);
-      try {
-        r.exec("helper.copyNd2ImageShort(s, c, z, t, series)");
-      }
-      catch (ReflectException e) {
-        if (debug) LogTools.trace(e);
-      }
-      for (int j=0; j<s.length; j++) {
-        buf[j*2] = (byte) ((s[j] >> 8) & 0xff);
-        buf[j*2 + 1] = (byte) (s[j] & 0xff);
-      }
-    }
-
-    if (getRGBChannelCount() > 1) {
-      int b = FormatTools.getBytesPerPixel(core.pixelType[series]);
-      for (int i=0; i<buf.length; i+=b*getRGBChannelCount()) {
-        for (int j=0; j<b; j++) {
-          byte t = buf[i + j];
-          buf[i + j] = buf[i + (getRGBChannelCount() - 1)*b + j];
-          buf[i + (getRGBChannelCount() - 1)*b + j] = t;
+    if (core.rgb[series]) {
+      int bpc = FormatTools.getBytesPerPixel(core.pixelType[series]);
+      int bpp = core.sizeC[series] * bpc;
+      int line = core.sizeX[series] * bpp;
+      for (int y=0; y<core.sizeY[series]; y++) {
+        for (int x=0; x<core.sizeX[series]; x++) {
+          for (int b=0; b<bpc; b++) {
+            byte blue = buf[y*line + x*bpp + bpc*(core.sizeC[series] - 1) + b];
+            buf[y*line + x*bpp + bpc*(core.sizeC[series] - 1) + b] =
+              buf[y*line + x*bpp + b];
+            buf[y*line + x*bpp + b] = blue;
+          }
         }
       }
     }
@@ -118,20 +107,10 @@ public class LegacyND2Reader extends FormatReader {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (currentId != null) {
-      try {
-        r.exec("helper.closeNd2()");
-      }
-      catch (ReflectException e) { }
-    }
-    super.close();
-  }
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    return !noSDK;
+  /* @see IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String file, boolean open) {
+    if (!super.isThisType(file, open)) return false;
+    return libraryFound;
   }
 
   // -- Internal FormatReader API methods --
@@ -141,77 +120,69 @@ public class LegacyND2Reader extends FormatReader {
     if (debug) debug("LegacyND2Reader.initFile(" + id + ")");
     super.initFile(id);
 
-    String parent =
-      new Location(id).getAbsoluteFile().getParentFile().getAbsolutePath();
-    String relPath = new Location(id).getPath();
-    relPath = relPath.substring(relPath.lastIndexOf(File.separator) + 1);
-    if (!parent.endsWith(File.separator)) parent += File.separator;
-    r.setVar("parent", parent);
-    r.setVar("relPath", relPath);
-    try {
-      r.exec("helper = new ND_to_Image6D()");
-      r.exec("success = helper.openNd2(parent, relPath)");
-      boolean success = ((Boolean) r.getVar("success")).booleanValue();
-      if (!success) {
-        throw new FormatException("Failed to open ND2 file.");
+    openFile(id);
+    int numSeries = getNumSeries();
+    core = new CoreMetadata(numSeries);
+
+    for (int i=0; i<numSeries; i++) {
+      core.sizeX[i] = getWidth(i);
+      if (core.sizeX[i] % 2 != 0) core.sizeX[i]++;
+      core.sizeY[i] = getHeight(i);
+      core.sizeZ[i] = getZSlices(i);
+      core.sizeT[i] = getTFrames(i);
+      core.sizeC[i] = getChannels(i);
+      int bytes = getBytesPerPixel(i);
+      if (bytes % 3 == 0) {
+        core.sizeC[i] *= 3;
+        bytes /= 3;
       }
-
-      // populate core metadata
-
-      r.setVar("name", "points");
-      r.exec("seriesCount = helper.getNd2Param(name)");
-      core = new CoreMetadata(((Integer) r.getVar("seriesCount")).intValue());
-      r.setVar("name", "width");
-      r.exec("val = helper.getNd2Param(name)");
-      Arrays.fill(core.sizeX, ((Integer) r.getVar("val")).intValue());
-      if (core.sizeX[0] % 2 != 0) Arrays.fill(core.sizeX, core.sizeX[0] + 1);
-      r.setVar("name", "height");
-      r.exec("val = helper.getNd2Param(name)");
-      Arrays.fill(core.sizeY, ((Integer) r.getVar("val")).intValue());
-      r.setVar("name", "zstacks");
-      r.exec("val = helper.getNd2Param(name)");
-      Arrays.fill(core.sizeZ, ((Integer) r.getVar("val")).intValue());
-      r.setVar("name", "channels");
-      r.exec("val = helper.getNd2Param(name)");
-      Arrays.fill(core.sizeC, ((Integer) r.getVar("val")).intValue());
-      r.setVar("name", "timeslices");
-      r.exec("val = helper.getNd2Param(name)");
-      Arrays.fill(core.sizeT, ((Integer) r.getVar("val")).intValue());
-      r.setVar("name", "bpp");
-      r.exec("val = helper.getNd2Param(name)");
-      Arrays.fill(core.pixelType, ((Integer) r.getVar("val")).intValue() == 8 ?
-        FormatTools.UINT8 : FormatTools.UINT16);
-      r.setVar("name", "color");
-      r.exec("val = helper.getNd2Param(name)");
-      Arrays.fill(core.rgb, ((Integer) r.getVar("val")).intValue() > 1);
-      Arrays.fill(core.indexed, false);
-
-      if (core.rgb[0]) {
-        Arrays.fill(core.sizeC, ((Integer) r.getVar("val")).intValue());
+      switch (bytes) {
+        case 1:
+          core.pixelType[i] = FormatTools.UINT8;
+          break;
+        case 2:
+          core.pixelType[i] = FormatTools.UINT16;
+          break;
+        case 4:
+          core.pixelType[i] = FormatTools.FLOAT;
+          break;
       }
+      core.rgb[i] = core.sizeC[i] > 1;
+      core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
     }
-    catch (ReflectException e) {
-      throw new FormatException(e);
-    }
-
-    Arrays.fill(core.imageCount, core.sizeZ[0] * core.sizeT[0] *
-      (core.rgb[0] ? 1 : core.sizeC[0]));
     Arrays.fill(core.interleaved, true);
+    Arrays.fill(core.littleEndian, true);
     Arrays.fill(core.currentOrder, "XYCZT");
-    Arrays.fill(core.littleEndian, false);
+    Arrays.fill(core.indexed, false);
+    Arrays.fill(core.falseColor, false);
 
     MetadataStore store = getMetadataStore();
-    for (int i=0; i<core.sizeX.length; i++) {
-      store.setImage("Series " + i, null, null, new Integer(i));
+    for (int i=0; i<numSeries; i++) {
+      store.setImage(null, null, null, new Integer(i));
     }
     FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeX.length; i++) {
-      for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, new Integer(i));
-      }
-    }
   }
+
+  // -- Native methods --
+
+  public native void openFile(String filename);
+  public native int getNumSeries();
+  public native int getWidth(int s);
+  public native int getHeight(int s);
+  public native int getZSlices(int s);
+  public native int getTFrames(int s);
+  public native int getChannels(int s);
+  public native int getBytesPerPixel(int s);
+  public native byte[] getImage(byte[] buf, int s, int z, int c, int t);
+  public native double getDX(int s, int z, int c, int t);
+  public native double getDY(int s, int z, int c, int t);
+  public native double getDZ(int s, int z, int c, int t);
+  public native double getDT(int s, int z, int c, int t);
+  public native double getWavelength(int s, int z, int c, int t);
+  public native String getChannelName(int s, int z, int c, int t);
+  public native double getMagnification(int s, int z, int c, int t);
+  public native double getNA(int s, int z, int c, int t);
+  public native String getObjectiveName(int s, int z, int c, int t);
+  public native int getModality(int s, int z, int c, int t);
 
 }
