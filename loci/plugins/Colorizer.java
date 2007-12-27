@@ -110,13 +110,12 @@ public class Colorizer implements PlugInFilter {
     }
     else {
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
-      merge = new Boolean(Macro.getValue(arg, "merge", "true")).booleanValue();
-      color =
-        new Boolean(Macro.getValue(arg, "colorize", "false")).booleanValue();
+      merge = Boolean.parseBoolean(Macro.getValue(arg, "merge", "true"));
+      color = Boolean.parseBoolean(Macro.getValue(arg, "colorize", "false"));
       colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "0"));
       mergeOption = Macro.getValue(arg, "merge_option", null);
       hyperstack =
-        new Boolean(Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
+        Boolean.parseBoolean(Macro.getValue(arg, "hyper_stack", "false"));
     }
 
     ImageStack stack = imp.getImageStack();
@@ -204,10 +203,21 @@ public class Colorizer implements PlugInFilter {
 
         ImporterOptions options = new ImporterOptions();
 
+        boolean spectral =
+          stack.getSliceLabel(1).indexOf(FormatTools.SPECTRA) != -1;
+
         if (mergeOption == null) {
-          int status = options.promptMergeOption(num);
+          int status = options.promptMergeOption(num, spectral);
           if (status == ImporterOptions.STATUS_OK) {
             mergeOption = options.getMergeOption();
+          }
+          // TEMP - remove this once spectral projection is implemented
+          while (mergeOption.equals(ImporterOptions.MERGE_PROJECTION)) {
+            IJ.error("Spectral projection has not been implemented.");
+            status = options.promptMergeOption(num, spectral);
+            if (status == ImporterOptions.STATUS_OK) {
+              mergeOption = options.getMergeOption();
+            }
           }
         }
 
@@ -232,6 +242,11 @@ public class Colorizer implements PlugInFilter {
                 newImp = null;
               }
             }
+            else if (mergeOption.equals(ImporterOptions.MERGE_PROJECTION)) {
+              // TODO
+              // Add spectral projection logic here (see ticket #86).
+            }
+            else closeOriginal = false;
           }
         }
         catch (ReflectException e) {

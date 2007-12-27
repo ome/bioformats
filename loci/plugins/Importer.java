@@ -718,16 +718,24 @@ public class Importer {
   {
     r.setSeries(series);
     int[] zct = r.getZCTCoords(ndx);
+    int[] subC = r.getChannelDimLengths();
+    String[] subCTypes = r.getChannelDimTypes();
     StringBuffer sb = new StringBuffer();
     if (r.isOrderCertain()) {
       boolean first = true;
       if (counts[1][series] > 1) {
         if (first) first = false;
         else sb.append("; ");
-        sb.append("ch:");
-        sb.append(zct[1] + 1);
-        sb.append("/");
-        sb.append(r.getSizeC());
+        int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
+        for (int i=0; i<subC.length; i++) {
+          if (!subCTypes[i].equals(FormatTools.CHANNEL)) sb.append(subCTypes[i]);
+          else sb.append("ch");
+          sb.append(":");
+          sb.append(subCPos[i] + 1);
+          sb.append("/");
+          sb.append(subC[i]);
+          if (i < subC.length - 1) sb.append("; ");
+        }
       }
       if (counts[0][series] > 1) {
         if (first) first = false;

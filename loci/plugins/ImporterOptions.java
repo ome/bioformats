@@ -75,7 +75,9 @@ public class ImporterOptions implements ItemListener {
   public static final String ORDER_XYCTZ = "XYCTZ";
   public static final String ORDER_XYTZC = "XYTZC";
 
+  // merging options
   public static final String MERGE_DEFAULT = "Do not merge";
+  public static final String MERGE_PROJECTION = "Spectral projection";
 
   // class to check for each viewing option
   private static final String CLASS_BROWSER =
@@ -468,12 +470,13 @@ public class ImporterOptions implements ItemListener {
     return STATUS_OK;
   }
 
-  public int promptMergeOption(int[] nums) {
+  public int promptMergeOption(int[] nums, boolean spectral) {
     if (windowless) return STATUS_OK;
     GenericDialog gd = new GenericDialog("Merging Options...");
 
-    String[] options = new String[7];
+    String[] options = new String[spectral ? 8 : 7];
     options[6] = MERGE_DEFAULT;
+    if (spectral) options[7] = MERGE_PROJECTION;
     for (int i=0; i<6; i++) {
       options[i] = nums[i] + " planes, " + (i + 2) + " channels per plane";
     }
@@ -484,6 +487,7 @@ public class ImporterOptions implements ItemListener {
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
     mergeOption = options[gd.getNextChoiceIndex()];
+
     return STATUS_OK;
   }
 
