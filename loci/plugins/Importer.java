@@ -643,7 +643,10 @@ public class Importer {
       IJ.run("View5D ", "");
     }
     else if (!options.isViewNone()) {
-      imp.setOpenAsHyperStack(options.isViewHyperstack());
+      if (IJ.getVersion().compareTo("1.39l") >= 0) {
+        imp.setOpenAsHyperStack(options.isViewHyperstack());
+      }
+
       if (!concatenate) {
         imp.show();
         if (splitC || splitZ || splitT) {
