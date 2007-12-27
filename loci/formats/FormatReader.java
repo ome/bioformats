@@ -157,9 +157,9 @@ public abstract class FormatReader extends FormatHandler
       if (val.length() == 0) return;
 
       // verify key & value are reasonable length
-//      int maxLen = 8192;
-//      if (key.length() > maxLen) return;
-//      if (val.length() > maxLen) return;
+      int maxLen = 8192;
+      if (key.length() > maxLen) return;
+      if (val.length() > maxLen) return;
 
       // verify key & value start with printable characters
       if (key.charAt(0) < 32) return;
