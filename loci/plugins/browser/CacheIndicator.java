@@ -59,9 +59,10 @@ public class CacheIndicator extends JComponent {
     this.cache = cache;
     cacheLength = length;
     this.axis = axis;
-    synchronized (cache) {
-      numAxes = cache.getCurrentPos().length;
-    }
+
+    // NB: think more on whether this should be synchronized (cache)
+    numAxes = cache.getCurrentPos().length;
+
     doUpdate = true;
     repaint();
   }
@@ -83,10 +84,10 @@ public class CacheIndicator extends JComponent {
     try {
       int[] currentPos = null;
       int[][] loadList = null;
-      synchronized (cache) {
-        currentPos = cache.getCurrentPos();
-        loadList = cache.getStrategy().getLoadList(currentPos);
-      }
+
+      // NB: think more on whether this should be synchronized (cache)
+      currentPos = cache.getCurrentPos();
+      loadList = cache.getStrategy().getLoadList(currentPos);
 
       int[] pos = new int[currentPos.length];
       System.arraycopy(currentPos, 0, pos, 0, pos.length);
@@ -110,9 +111,9 @@ public class CacheIndicator extends JComponent {
         }
 
         boolean inCache = false;
-        synchronized (cache) {
-          inCache = cache.isInCache(pos);
-        }
+
+        // NB: think more on whether this should be synchronized (cache)
+        inCache = cache.isInCache(pos);
 
         if (inCache) g.setColor(Color.BLUE);
         else if (inLoadList) g.setColor(Color.RED);
