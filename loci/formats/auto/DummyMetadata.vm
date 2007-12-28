@@ -1,0 +1,70 @@
+//
+// DummyMetadata.java
+//
+
+/*
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+Eric Kjellman and Brian Loranger.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by $user via MetadataAutogen on $timestamp
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package loci.formats.meta;
+
+/**
+ * A dummy implementation for {@link MetadataStore} and
+ * {@link MetadataRetrieve} that is used when no other
+ * metadata implementations are available.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DummyMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/DummyMetadata.java">SVN</a></dd></dl>
+ *
+ * @author Chris Allan callan at blackcat.ca
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public class DummyMetadata implements MetadataRetrieve, MetadataStore {
+
+  // -- MetadataRetrieve API methods --
+
+#foreach ($entity in $entities)
+  // -- $entity.name() property retrieval --
+
+#foreach ($prop in $entity.props())
+  /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
+  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+    return null;
+  }
+
+#end
+#end
+  // -- MetadataStore API methods --
+
+#foreach ($entity in $entities)
+  /* @see MetadataStore#set$entity.name()($entity.argsList(true, false)) */
+  public void set$entity.name()($entity.argsList(true, true)) {
+  }
+
+#end
+}
