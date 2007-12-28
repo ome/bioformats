@@ -105,6 +105,7 @@ public class TCSReader extends FormatReader {
     }
     n += no;
 
+    if (tiffReaders.length == 1) return tiffReaders[0].openBytes(n, buf);
     return tiffReaders[n].openBytes(0, buf);
   }
 
