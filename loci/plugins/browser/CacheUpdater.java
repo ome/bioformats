@@ -27,6 +27,14 @@ package loci.plugins.browser;
 import loci.formats.LogTools;
 import loci.formats.cache.*;
 
+/**
+ * Thread responsible for updating the cache
+ * (loading and dropping planes) in the background.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/CacheUpdater.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/CacheUpdater.java">SVN</a></dd></dl>
+ */
 public class CacheUpdater extends Thread {
 
   // -- Fields --

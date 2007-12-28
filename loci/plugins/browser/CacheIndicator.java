@@ -28,6 +28,14 @@ import javax.swing.*;
 import java.awt.*;
 import loci.formats.cache.*;
 
+/**
+ * Indicator GUI component showing which planes are currently in the cache
+ * for a given dimensional axis at a particular dimensional position.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/CacheIndicator.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/CacheIndicator.java">SVN</a></dd></dl>
+ */
 public class CacheIndicator extends JComponent {
 
   // -- Constants --

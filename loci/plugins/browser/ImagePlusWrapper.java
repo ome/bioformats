@@ -31,13 +31,23 @@ import loci.formats.*;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.plugins.Util;
 
+/**
+ * Wrapper for an ImagePlus that uses an
+ * IFormatReader to populate a MetadataStore.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/ImagePlusWrapper.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/ImagePlusWrapper.java">SVN</a></dd></dl>
+ */
 public class ImagePlusWrapper {
 
   // -- Fields --
 
   protected MetadataStore store;
   private ImagePlus imp;
-  private int numTotal; // total number of images
+
+  /** Total number of image planes. */
+  private int numTotal;
 
   // -- Constructor --
 
@@ -62,7 +72,7 @@ public class ImagePlusWrapper {
       int sizeC = r.getSizeC();
 
       if (LociDataBrowser.DEBUG) {
-        LogTools.println("numTotal = "+numTotal);
+        LogTools.println("numTotal = " + numTotal);
       }
 
       int num = r.getImageCount();
@@ -73,7 +83,7 @@ public class ImagePlusWrapper {
       for (int i=0; i<num; i++) {
         long clock = System.currentTimeMillis();
         if (clock - time >= 50) {
-          IJ.showStatus("Reading plane "+(i+1)+"/"+num);
+          IJ.showStatus("Reading plane " + (i + 1) + "/" + num);
           time = clock;
         }
         IJ.showProgress((double) i / num);

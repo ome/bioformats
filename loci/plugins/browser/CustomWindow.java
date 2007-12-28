@@ -39,6 +39,13 @@ import loci.formats.cache.*;
 import loci.plugins.Util;
 import org.openmicroscopy.xml.OMENode;
 
+/**
+ * Extension of ImageWindow with additional UI trimmings for 4D navigation.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/CustomWindow.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/CustomWindow.java">SVN</a></dd></dl>
+ */
 public class CustomWindow extends ImageWindow implements ActionListener,
   AdjustmentListener, ChangeListener, ItemListener, KeyListener
 {
