@@ -62,6 +62,11 @@ public class LegacyND2Reader extends FormatReader {
     }
   }
 
+  // -- Fields --
+
+  /** Reader to delegate to if this one fails. */
+  private ND2Reader goodReader;
+
   // -- Constructor --
 
   public LegacyND2Reader() {
@@ -82,6 +87,8 @@ public class LegacyND2Reader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
+
+    if (goodReader != null) return goodReader.openBytes(no, buf);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
     getImage(buf, getSeries(), zct[0], zct[1], zct[2]);
@@ -120,44 +127,52 @@ public class LegacyND2Reader extends FormatReader {
     if (debug) debug("LegacyND2Reader.initFile(" + id + ")");
     super.initFile(id);
 
-    openFile(id);
-    int numSeries = getNumSeries();
-    core = new CoreMetadata(numSeries);
+    try {
+      openFile(id);
+      int numSeries = getNumSeries();
+      core = new CoreMetadata(numSeries);
 
-    for (int i=0; i<numSeries; i++) {
-      core.sizeX[i] = getWidth(i);
-      if (core.sizeX[i] % 2 != 0) core.sizeX[i]++;
-      core.sizeY[i] = getHeight(i);
-      core.sizeZ[i] = getZSlices(i);
-      core.sizeT[i] = getTFrames(i);
-      core.sizeC[i] = getChannels(i);
-      int bytes = getBytesPerPixel(i);
-      if (bytes % 3 == 0) {
-        core.sizeC[i] *= 3;
-        bytes /= 3;
+      for (int i=0; i<numSeries; i++) {
+        core.sizeX[i] = getWidth(i);
+        if (core.sizeX[i] % 2 != 0) core.sizeX[i]++;
+        core.sizeY[i] = getHeight(i);
+        core.sizeZ[i] = getZSlices(i);
+        core.sizeT[i] = getTFrames(i);
+        core.sizeC[i] = getChannels(i);
+        int bytes = getBytesPerPixel(i);
+        if (bytes % 3 == 0) {
+          core.sizeC[i] *= 3;
+          bytes /= 3;
+        }
+        switch (bytes) {
+          case 1:
+            core.pixelType[i] = FormatTools.UINT8;
+            break;
+          case 2:
+            core.pixelType[i] = FormatTools.UINT16;
+            break;
+          case 4:
+            core.pixelType[i] = FormatTools.FLOAT;
+            break;
+        }
+        core.rgb[i] = core.sizeC[i] > 1;
+        core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
       }
-      switch (bytes) {
-        case 1:
-          core.pixelType[i] = FormatTools.UINT8;
-          break;
-        case 2:
-          core.pixelType[i] = FormatTools.UINT16;
-          break;
-        case 4:
-          core.pixelType[i] = FormatTools.FLOAT;
-          break;
-      }
-      core.rgb[i] = core.sizeC[i] > 1;
-      core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
+      Arrays.fill(core.interleaved, true);
+      Arrays.fill(core.littleEndian, true);
+      Arrays.fill(core.currentOrder, "XYCZT");
+      Arrays.fill(core.indexed, false);
+      Arrays.fill(core.falseColor, false);
     }
-    Arrays.fill(core.interleaved, true);
-    Arrays.fill(core.littleEndian, true);
-    Arrays.fill(core.currentOrder, "XYCZT");
-    Arrays.fill(core.indexed, false);
-    Arrays.fill(core.falseColor, false);
+    catch (Exception e) {
+      goodReader = new ND2Reader();
+      goodReader.setId(currentId);
+      core = goodReader.getCoreMetadata();
+      metadata = goodReader.getMetadata();
+    }
 
     MetadataStore store = getMetadataStore();
-    for (int i=0; i<numSeries; i++) {
+    for (int i=0; i<core.sizeX.length; i++) {
       store.setImage(null, null, null, new Integer(i));
     }
     FormatTools.populatePixels(store, this);
