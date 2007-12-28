@@ -139,12 +139,14 @@ public class LociDataBrowser {
       return;
     }
     if (cw != null) {
+      cache.removeCacheListener(cw);
       cw.ow.dispose();
       cw.ow = null;
       cw.dispose();
       cw = null;
     }
     cw = new CustomWindow(this, imp, new ImageCanvas(imp));
+    cache.addCacheListener(cw);
   }
 
   /** Sets the length of each dimensional axis and the dimension order. */
@@ -262,8 +264,7 @@ public class LociDataBrowser {
             cache.setCurrentPos(new int[] {0, 0, 0});
           }
           if (cacheThread != null) cacheThread.quit();
-          cacheThread = new CacheUpdater(cache,
-            new CacheIndicator[0], new int[0], new int[0]);
+          cacheThread = new CacheUpdater(cache);
           cacheThread.start();
 
           try {

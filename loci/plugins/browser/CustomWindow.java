@@ -47,7 +47,7 @@ import org.openmicroscopy.xml.OMENode;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/CustomWindow.java">SVN</a></dd></dl>
  */
 public class CustomWindow extends ImageWindow implements ActionListener,
-  AdjustmentListener, ChangeListener, ItemListener, KeyListener
+  AdjustmentListener, CacheListener, ChangeListener, ItemListener, KeyListener
 {
 
   // -- Constants --
@@ -58,7 +58,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private static final String ANIM_STRING = "Animate";
   private static final String STOP_STRING = "Stop";
 
-  /**Constant dlu size for indents in GUI*/
+  /** Constant dlu size for indents in GUI. */
   private static final String TAB = "5dlu";
 
   // -- Fields - state --
@@ -71,6 +71,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private int z = 1, t = 1, c = 1;
   private byte[] lut;
   private byte[] nullLut;
+
+  private String patternTitle;
+  protected boolean update;
 
   // -- Fields - widgets --
 
@@ -87,8 +90,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private CardLayout switcher;
   private JPanel channelPanel;
   private JSpinner fpsSpin;
-  private String patternTitle;
-  protected boolean update;
 
   // -- Constructor --
 
@@ -609,17 +610,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     showSlice(z, t, c, src.getValueIsAdjusting() || db.cache != null);
   }
 
-  // -- ItemListener methods --
+  // -- CacheListener API methods --
 
-  public synchronized void itemStateChanged(ItemEvent e) {
-    if (!update) return;
-    JCheckBox channels = (JCheckBox) e.getSource();
-
-    z = zSliceSel.getValue();
-    t = tSliceSel.getValue();
-    c = channels.isSelected() ? 1 : 2;
-
-    showSlice(z, t, c, false);
+  public void cacheUpdated(CacheEvent e) {
+    //System.out.println("cacheUpdated: " + e);
   }
 
   // -- ChangeListener methods --
@@ -636,6 +630,19 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     else if (src == fpsSpin) {
       setFps(((Integer) fpsSpin.getValue()).intValue());
     }
+  }
+
+  // -- ItemListener methods --
+
+  public synchronized void itemStateChanged(ItemEvent e) {
+    if (!update) return;
+    JCheckBox channels = (JCheckBox) e.getSource();
+
+    z = zSliceSel.getValue();
+    t = tSliceSel.getValue();
+    c = channels.isSelected() ? 1 : 2;
+
+    showSlice(z, t, c, false);
   }
 
   // -- KeyListener methods --
@@ -672,6 +679,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void windowClosed(WindowEvent e) {
     if (animationTimer != null) animationTimer.stop();
+    if (db.cacheThread != null) db.cacheThread.quit();
     super.windowClosed(e);
   }
 

@@ -44,7 +44,11 @@ public class CacheUpdater extends Thread {
   private int[] lengths, axes;
   private boolean quit;
 
-  // -- Constructor --
+  // -- Constructors --
+
+  public CacheUpdater(Cache cache) {
+    this(cache, new CacheIndicator[0], new int[0], new int[0]);
+  }
 
   public CacheUpdater(Cache cache, CacheIndicator[] indicators, int[] lengths,
     int[] axes)
