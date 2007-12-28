@@ -59,7 +59,9 @@ public class CacheIndicator extends JComponent {
     this.cache = cache;
     cacheLength = length;
     this.axis = axis;
-    numAxes = cache.getCurrentPos().length;
+    synchronized (cache) {
+      numAxes = cache.getCurrentPos().length;
+    }
     doUpdate = true;
     repaint();
   }
@@ -76,10 +78,15 @@ public class CacheIndicator extends JComponent {
     if (cacheLength == 0) return;
 
     int pixelsPerIndex = getWidth() / cacheLength;
+    if (pixelsPerIndex * cacheLength < getWidth()) pixelsPerIndex++;
 
     try {
-      int[] currentPos = cache.getCurrentPos();
-      int[][] loadList = cache.getStrategy().getLoadList(currentPos);
+      int[] currentPos = null;
+      int[][] loadList = null;
+      synchronized (cache) {
+        currentPos = cache.getCurrentPos();
+        loadList = cache.getStrategy().getLoadList(currentPos);
+      }
 
       int[] pos = new int[currentPos.length];
       System.arraycopy(currentPos, 0, pos, 0, pos.length);
@@ -102,10 +109,19 @@ public class CacheIndicator extends JComponent {
           }
         }
 
-        if (cache.isInCache(pos)) g.setColor(Color.BLUE);
+        boolean inCache = false;
+        synchronized (cache) {
+          inCache = cache.isInCache(pos);
+        }
+
+        if (inCache) g.setColor(Color.BLUE);
         else if (inLoadList) g.setColor(Color.RED);
         else g.setColor(Color.WHITE);
-        g.fillRect(i*pixelsPerIndex + 1, 1, pixelsPerIndex, getHeight() - 2);
+        int len = pixelsPerIndex;
+        if (i == cacheLength - 1) {
+          len = getWidth() - i*pixelsPerIndex - 2;
+        }
+        g.fillRect(i*pixelsPerIndex + 1, 1, len, getHeight() - 2);
       }
     }
     catch (CacheException e) { }

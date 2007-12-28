@@ -426,16 +426,18 @@ public class OptionsWindow extends JFrame implements
     if (source == modeBox) {
       // change cache strategy
 
-      int[] lengths = cw.db.cache.getStrategy().getLengths();
-      int ndx = modeBox.getSelectedIndex();
-      try {
-        CacheStrategy strategy = ndx == 0 ?
-          (CacheStrategy) new CrosshairStrategy(lengths) :
-          (CacheStrategy) new RectangleStrategy(lengths);
-        cw.db.cache.setStrategy(strategy);
-      }
-      catch (CacheException exc) {
-        LociDataBrowser.dumpException(exc);
+      synchronized (cw.db.cache) {
+        int[] lengths = cw.db.cache.getStrategy().getLengths();
+        int ndx = modeBox.getSelectedIndex();
+        try {
+          CacheStrategy strategy = ndx == 0 ?
+            (CacheStrategy) new CrosshairStrategy(lengths) :
+            (CacheStrategy) new RectangleStrategy(lengths);
+          cw.db.cache.setStrategy(strategy);
+        }
+        catch (CacheException exc) {
+          LociDataBrowser.dumpException(exc);
+        }
       }
 
       // set ranges, priorities, order
@@ -454,22 +456,24 @@ public class OptionsWindow extends JFrame implements
       modeBox.setSelectedIndex(0);
       stratBox.setSelectedIndex(0);
 
-      int[] lengths = cw.db.cache.getStrategy().getLengths();
-      try {
-        cw.db.cache.setStrategy(new CrosshairStrategy(lengths));
-      }
-      catch (CacheException exc) {
-        LociDataBrowser.dumpException(exc);
-      }
+      synchronized (cw.db.cache) {
+        int[] lengths = cw.db.cache.getStrategy().getLengths();
+        try {
+          cw.db.cache.setStrategy(new CrosshairStrategy(lengths));
+        }
+        catch (CacheException exc) {
+          LociDataBrowser.dumpException(exc);
+        }
 
-      int[] priorities = new int[] {ICacheStrategy.NORMAL_PRIORITY,
-        ICacheStrategy.MAX_PRIORITY, ICacheStrategy.MIN_PRIORITY};
-      int[] ranges = new int[] {0, 100, 0};
+        int[] priorities = new int[] {ICacheStrategy.NORMAL_PRIORITY,
+          ICacheStrategy.MAX_PRIORITY, ICacheStrategy.MIN_PRIORITY};
+        int[] ranges = new int[] {0, 100, 0};
 
-      for (int i=0; i<lengths.length; i++) {
-        cw.db.cache.getStrategy().setOrder(ICacheStrategy.FORWARD_ORDER, i);
-        cw.db.cache.getStrategy().setPriority(priorities[i], convert(i));
-        cw.db.cache.getStrategy().setRange(ranges[i], convert(i));
+        for (int i=0; i<lengths.length; i++) {
+          cw.db.cache.getStrategy().setOrder(ICacheStrategy.FORWARD_ORDER, i);
+          cw.db.cache.getStrategy().setPriority(priorities[i], convert(i));
+          cw.db.cache.getStrategy().setRange(ranges[i], convert(i));
+        }
       }
 
       topBox.setSelectedIndex(1);
@@ -624,26 +628,32 @@ public class OptionsWindow extends JFrame implements
 
     int[] ranges = new int[] {z, t, c};
 
-    ICacheStrategy strategy = cw.db.cache.getStrategy();
-    for (int i=0; i<strategy.getLengths().length; i++) {
-      strategy.setRange(ranges[i], convert(i));
+    synchronized (cw.db.cache) {
+      ICacheStrategy strategy = cw.db.cache.getStrategy();
+      for (int i=0; i<strategy.getLengths().length; i++) {
+        strategy.setRange(ranges[i], convert(i));
+      }
     }
   }
 
   private void updatePriorities() {
-    cw.db.cache.getStrategy().setPriority(ICacheStrategy.MAX_PRIORITY,
-      convert(topBox.getSelectedIndex()));
-    cw.db.cache.getStrategy().setPriority(ICacheStrategy.NORMAL_PRIORITY,
-      convert(midBox.getSelectedIndex()));
-    cw.db.cache.getStrategy().setPriority(ICacheStrategy.MIN_PRIORITY,
-      convert(lowBox.getSelectedIndex()));
+    synchronized (cw.db.cache) {
+      cw.db.cache.getStrategy().setPriority(ICacheStrategy.MAX_PRIORITY,
+        convert(topBox.getSelectedIndex()));
+      cw.db.cache.getStrategy().setPriority(ICacheStrategy.NORMAL_PRIORITY,
+        convert(midBox.getSelectedIndex()));
+      cw.db.cache.getStrategy().setPriority(ICacheStrategy.MIN_PRIORITY,
+        convert(lowBox.getSelectedIndex()));
+    }
   }
 
   private void updateOrder() {
     int cacheOrder = stratBox.getSelectedIndex() == 0 ?
       ICacheStrategy.FORWARD_ORDER : ICacheStrategy.CENTERED_ORDER;
-    for (int i=0; i<cw.db.cache.getStrategy().getLengths().length; i++) {
-      cw.db.cache.getStrategy().setOrder(cacheOrder, i);
+    synchronized (cw.db.cache) {
+      for (int i=0; i<cw.db.cache.getStrategy().getLengths().length; i++) {
+        cw.db.cache.getStrategy().setOrder(cacheOrder, i);
+      }
     }
   }
 

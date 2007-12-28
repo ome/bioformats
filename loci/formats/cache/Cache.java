@@ -47,16 +47,20 @@ public class Cache implements CacheReporter {
   /** List of cache event listeners. */
   protected Vector listeners;
 
+  /** Whether or not we want to manually update the cache. */
+  protected boolean manualUpdate;
+
   // -- Constructors --
 
   /** Constructs an object cache with the given cache strategy and source. */
-  public Cache(ICacheStrategy strategy, ICacheSource source)
-    throws CacheException
+  public Cache(ICacheStrategy strategy, ICacheSource source,
+    boolean manualUpdate) throws CacheException
   {
     if (strategy == null) throw new CacheException("strategy is null");
     if (source == null) throw new CacheException("source is null");
     this.strategy = strategy;
     this.source = source;
+    this.manualUpdate = manualUpdate;
     listeners = new Vector();
     reset();
     recache();
@@ -117,7 +121,7 @@ public class Cache implements CacheReporter {
     this.strategy = strategy;
     notifyListeners(new CacheEvent(this, CacheEvent.STRATEGY_CHANGED));
     reset();
-    recache();
+    if (!manualUpdate) recache();
   }
 
   /** Sets the cache's caching source. */
@@ -126,7 +130,7 @@ public class Cache implements CacheReporter {
     this.source = source;
     notifyListeners(new CacheEvent(this, CacheEvent.SOURCE_CHANGED));
     reset();
-    recache();
+    if (!manualUpdate) recache();
   }
 
   /** Sets the current dimensional position. */
@@ -146,7 +150,38 @@ public class Cache implements CacheReporter {
     System.arraycopy(pos, 0, currentPos, 0, pos.length);
     int ndx = FormatTools.positionToRaster(len, pos);
     notifyListeners(new CacheEvent(this, CacheEvent.POSITION_CHANGED, ndx));
-    recache();
+    if (!manualUpdate) recache();
+  }
+
+  /** Updates the given plane. */
+  public void recache(int n) throws CacheException {
+    int[][] indices = strategy.getLoadList(currentPos);
+    int[] len = strategy.getLengths();
+
+    for (int i=0; i<inCache.length; i++) {
+      boolean found = false;
+      for (int j=0; j<indices.length; j++) {
+        if (i == FormatTools.positionToRaster(len, indices[j])) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        inCache[i] = false;
+        if (cache[i] != null) {
+          cache[i] = null;
+          notifyListeners(new CacheEvent(this, CacheEvent.OBJECT_DROPPED, i));
+        }
+      }
+    }
+
+    int ndx = FormatTools.positionToRaster(len, indices[n]);
+    if (ndx >= 0) inCache[ndx] = true;
+
+    if (cache[ndx] == null) {
+      cache[ndx] = source.getObject(ndx);
+      notifyListeners(new CacheEvent(this, CacheEvent.OBJECT_LOADED, ndx));
+    }
   }
 
   // -- CacheReporter API methods --
@@ -192,28 +227,8 @@ public class Cache implements CacheReporter {
     // each time through the loop only (i.e., only when a recache call occurs)
     //
     // /lo
-    int[][] indices = strategy.getLoadList(currentPos);
-    int[] len = strategy.getLengths();
-
-    Arrays.fill(inCache, false);
-    for (int i=0; i<indices.length; i++) {
-      int ndx = FormatTools.positionToRaster(len, indices[i]);
-      if (ndx >= 0) inCache[ndx] = true;
-    }
-
-    for (int i=0; i<cache.length; i++) {
-      if (!inCache[i] && cache[i] != null) {
-        cache[i] = null;
-        notifyListeners(new CacheEvent(this, CacheEvent.OBJECT_DROPPED, i));
-      }
-    }
-
-    for (int i=0; i<indices.length; i++) {
-      int ndx = FormatTools.positionToRaster(len, indices[i]);
-      if (cache[ndx] == null) {
-        cache[ndx] = source.getObject(ndx);
-        notifyListeners(new CacheEvent(this, CacheEvent.OBJECT_LOADED, ndx));
-      }
+    for (int i=0; i<strategy.getLoadList(currentPos).length; i++) {
+      recache(i);
     }
   }
 
@@ -242,7 +257,7 @@ public class Cache implements CacheReporter {
     LogTools.println("Initializing cache");
     final Cache cache = new Cache(
       new CrosshairStrategy(getLengths(reader)),
-      new BufferedImageSource(reader));
+      new BufferedImageSource(reader), false);
     CacheListener l = new CacheListener() {
       public void cacheUpdated(CacheEvent e) {
         int type = e.getType();

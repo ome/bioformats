@@ -83,6 +83,9 @@ public class LociDataBrowser {
   /** Series to use in a multi-series file. */
   protected int series;
 
+  /** Thread for updating the cache. */
+  protected CacheUpdater cacheThread;
+
   protected Cache cache;
   private ImageStack stack;
   protected boolean merged;
@@ -254,8 +257,14 @@ public class LociDataBrowser {
           strategy.setPriority(ICacheStrategy.NORMAL_PRIORITY, zAxis);
           strategy.setPriority(ICacheStrategy.MIN_PRIORITY, cAxis);
 
-          cache = new Cache(strategy, source);
-          cache.setCurrentPos(new int[] {0, 0, 0});
+          cache = new Cache(strategy, source, true);
+          synchronized (cache) {
+            cache.setCurrentPos(new int[] {0, 0, 0});
+          }
+          if (cacheThread != null) cacheThread.quit();
+          cacheThread = new CacheUpdater(cache,
+            new CacheIndicator[0], new int[0], new int[0]);
+          cacheThread.start();
 
           try {
             setDimensions();
@@ -265,8 +274,13 @@ public class LociDataBrowser {
             int sizeY = reader.getSizeY();
             stack = new ImageStack(sizeX, sizeY);
             // CTR: must add at least one image to the stack
-            stack.addSlice(id + " : 1",
-              (ImageProcessor) cache.getObject(new int[] {0, 0, 0}));
+            ImageProcessor slice = null;
+            while (slice == null) {
+              synchronized (cache) {
+                slice = (ImageProcessor) cache.getObject(new int[] {0, 0, 0});
+              }
+            }
+            stack.addSlice(id + " : 1", slice);
           }
           catch (OutOfMemoryError e) {
             IJ.outOfMemory("4D Data Browser");

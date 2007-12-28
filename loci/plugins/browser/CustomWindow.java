@@ -353,17 +353,21 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         }
 
         try {
-          db.cache.setCurrentPos(newZCT);
-
-          // update cache indicators
-          if (zIndicator != null) {
-            zIndicator.setIndicator(db.cache, db.reader.getSizeZ(), zIndex);
+          synchronized (db.cache) {
+            db.cache.setCurrentPos(newZCT);
           }
-          if (tIndicator != null) {
-            tIndicator.setIndicator(db.cache, db.reader.getSizeT(), tIndex);
-          }
+          if (db.cacheThread != null) db.cacheThread.quit();
+          db.cacheThread = new CacheUpdater(db.cache,
+            new CacheIndicator[] {zIndicator, tIndicator},
+            new int[] {db.reader.getSizeZ(), db.reader.getSizeT()},
+            new int[] {zIndex, tIndex});
+          db.cacheThread.start();
 
-          processors[i] = (ImageProcessor) db.cache.getObject(newZCT);
+          while (processors[i] == null) {
+            synchronized (db.cache) {
+              processors[i] = (ImageProcessor) db.cache.getObject(newZCT);
+            }
+          }
           if (!temp) {
             double bits = 255;
             if (processors[i] instanceof ShortProcessor) bits = 65535;
@@ -373,7 +377,15 @@ public class CustomWindow extends ImageWindow implements ActionListener,
           }
           if (i == numPlanes - 1) {
             newZCT[cIndex] -= (numPlanes - 1);
-            db.cache.setCurrentPos(newZCT);
+            synchronized (db.cache) {
+              db.cache.setCurrentPos(newZCT);
+            }
+            if (db.cacheThread != null) db.cacheThread.quit();
+            db.cacheThread = new CacheUpdater(db.cache,
+              new CacheIndicator[] {zIndicator, tIndicator},
+              new int[] {db.reader.getSizeZ(), db.reader.getSizeT()},
+              new int[] {zIndex, tIndex});
+            db.cacheThread.start();
           }
         }
         catch (CacheException e) {
@@ -422,10 +434,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     int nSlices = db.numZ * db.numT * db.numC;
     int current = imp.getCurrentSlice();
     if (db.cache != null) {
-      int[] zct = db.cache.getCurrentPos();
-      current = FormatTools.positionToRaster(
-        db.cache.getStrategy().getLengths(), zct);
-      current++;
+      synchronized (db.cache) {
+        int[] zct = db.cache.getCurrentPos();
+        current = FormatTools.positionToRaster(
+          db.cache.getStrategy().getLengths(), zct);
+        current++;
+      }
     }
     if (db.merged) {
       current--;
@@ -486,8 +500,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     int stackSize = imp.getStackSize();
     if (db.cache != null) {
       try {
-        stackSize = db.cache.getStrategy().getLoadList(
-          db.cache.getCurrentPos()).length;
+        synchronized (db.cache) {
+          stackSize = db.cache.getStrategy().getLoadList(
+            db.cache.getCurrentPos()).length;
+        }
       }
       catch (CacheException exc) {
         LociDataBrowser.dumpException(exc);
