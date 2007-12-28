@@ -143,9 +143,11 @@ public class OMEUtils {
 
       int ndx = s.indexOf("&");
       credentials.username = s.substring(s.lastIndexOf("?") + 6, ndx);
-      credentials.password = s.substring(ndx + 10, s.indexOf("&", ndx + 1));
+      int end = s.indexOf("&", ndx + 1);
+      if (end == -1) end = s.length();
+      credentials.password = s.substring(ndx + 10, end);
       ndx = s.indexOf("&", ndx + 1);
-      credentials.imageID = Long.parseLong(s.substring(ndx + 4));
+      if (ndx > 0) credentials.imageID = Long.parseLong(s.substring(ndx + 4));
     }
     return credentials;
   }
@@ -249,7 +251,7 @@ public class OMEUtils {
 
   /** Filter available pixels to match given criteria. */
   public static void filterPixels(String firstName, String lastName,
-    String created, String id, boolean isOMERO)
+    String imageName, String created, String id, boolean isOMERO)
     throws ReflectException
   {
     if (isOMERO) getAllPixels();
@@ -260,12 +262,15 @@ public class OMEUtils {
     List newResults = new Vector();
     for (int i=0; i<len; i++) {
       r.setVar("obj", results.get(i));
-      String fname = null, lname = null, create = null, pid = null;
+      String fname = null, lname = null, iname = null,
+        create = null, pid = null;
       if (isOMERO) {
         r.exec("pix = new PixelsData(obj)");
         r.exec("v = obj.getId()");
         pid = r.getVar("v").toString();
         r.exec("img = pix.getImage()");
+        r.exec("imageName = img.getName()");
+        iname = (String) r.getVar("imageName");
         r.exec("owner = pix.getOwner()");
         r.exec("fname = owner.getFirstName()");
         r.exec("lname = owner.getLastName()");
@@ -286,6 +291,8 @@ public class OMEUtils {
         create = (String) r.getVar("created");
         r.exec("id = obj.getID()");
         pid = r.getVar("id").toString();
+        r.exec("imageName = obj.getName()");
+        iname = (String) r.getVar("imageName");
         r.exec("owner = obj.getOwner()");
         r.exec("fname = owner.getFirstName()");
         r.exec("lname = owner.getLastName()");
@@ -295,6 +302,8 @@ public class OMEUtils {
 
       if ((firstName == null || firstName.equals(fname)) &&
         (lastName == null || lastName.equals(lname)) &&
+        (imageName == null ||
+        iname.toLowerCase().indexOf(imageName.toLowerCase()) != -1) &&
         (created == null || created.equals(create) ||
         created.startsWith(create)) && (id == null || id.equals(pid)))
       {
@@ -538,7 +547,7 @@ public class OMEUtils {
         names[i] = names[i].substring(names[i].lastIndexOf(File.separator) + 1);
       }
 
-      gd.addCheckbox(names[i], false);
+      gd.addCheckbox(names[i] + " (" + ids[i] + ")", false);
       p[i] = new Panel();
       if (cred.isOMERO) {
         p[i].add(Box.createRigidArea(new Dimension(128, 128)));

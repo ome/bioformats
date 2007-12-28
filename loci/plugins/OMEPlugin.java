@@ -51,6 +51,7 @@ public class OMEPlugin implements PlugIn {
 
   private OMECredentials cred;
   private static boolean cancelPlugin;
+  private String arg;
 
   // -- PlugIn API methods --
 
@@ -63,6 +64,7 @@ public class OMEPlugin implements PlugIn {
     Checker.checkLibrary(Checker.OME_JAVA_DS, missing);
     Checker.checkLibrary(Checker.FORMS, missing);
     if (!Checker.checkMissing(missing)) return;
+    this.arg = arg;
     runPlugin();
   }
 
@@ -73,58 +75,57 @@ public class OMEPlugin implements PlugIn {
    * the OME login fields and whether the stack is in the time or space domain
    */
   private void getInput() {
-    GenericDialog gd = new GenericDialog("OME Login");
-
     String server = Prefs.get("downloader.server", "");
     String user = Prefs.get("downloader.user", "");
     String port = Prefs.get("downloader.port", "");
     String type = Prefs.get("downloader.type", "OME");
+    String pass = null;
+    if (arg == null || arg.trim().equals("")) {
+      GenericDialog gd = new GenericDialog("OME Login");
 
-    if (server.startsWith("http:")) server = server.substring(5);
-    while (server.startsWith("/")) server = server.substring(1);
-    int slash = server.indexOf("/");
-    if (slash >= 0) server = server.substring(0, slash);
-    int colon = server.indexOf(":");
-    if (colon >= 0) server = server.substring(0, colon);
+      server = formatServerName(server);
 
-    gd.addChoice("Server type: ", new String[] {"OME", "OMERO"}, type);
-    gd.addStringField("Server:      ", server, 30);
-    gd.addStringField("Port:        ", port, 30);
-    gd.addStringField("Username:    ", user, 30);
-    gd.addStringField("Password:    ", "", 30);
+      gd.addChoice("Server_type: ", new String[] {"OME", "OMERO"}, type);
+      gd.addStringField("Server:      ", server, 30);
+      gd.addStringField("Port:        ", port, 30);
+      gd.addStringField("Username:    ", user, 30);
+      gd.addStringField("Password:    ", "", 30);
 
-    // star out the password field
+      // star out the password field
 
-    Vector v = gd.getStringFields();
-    ((TextField) v.get(3)).setEchoChar('*');
+      Vector v = gd.getStringFields();
+      ((TextField) v.get(3)).setEchoChar('*');
 
-    gd.showDialog();
-    if (gd.wasCanceled()) {
-      cancelPlugin = true;
-      return;
+      gd.showDialog();
+      if (gd.wasCanceled()) {
+        cancelPlugin = true;
+        return;
+      }
+
+      type = gd.getNextChoice();
+      server = gd.getNextString();
+      port = gd.getNextString();
+      user = gd.getNextString();
+      pass = gd.getNextString();
     }
-
-    type = gd.getNextChoice();
-    server = gd.getNextString();
+    else {
+      server = Macro.getValue(arg, "server", server);
+      user = Macro.getValue(arg, "username", user);
+      port = Macro.getValue(arg, "port", port);
+      type = Macro.getValue(arg, "server_type", type);
+      pass = Macro.getValue(arg, "password", "");
+    }
 
     // do sanity check on server name
     if (type.equals("OME")) {
-      if (server.startsWith("http:")) {
-        server = server.substring(5);
-      }
-      while (server.startsWith("/")) server = server.substring(1);
-      slash = server.indexOf("/");
-      if (slash >= 0) server = server.substring(0, slash);
-      colon = server.indexOf(":");
-      if (colon >= 0) server = server.substring(0, colon);
-      server = "http://" + server + "/shoola/";
+      server = "http://" + formatServerName(server) + "/shoola/";
     }
 
     cred = new OMECredentials();
     cred.server = server;
-    cred.port = gd.getNextString();
-    cred.username = gd.getNextString();
-    cred.password = gd.getNextString();
+    cred.port = port;
+    cred.username = user;
+    cred.password = pass;
     cred.isOMERO = type.equals("OMERO");
     try {
       OMEUtils.login(cred);
@@ -136,8 +137,8 @@ public class OMEPlugin implements PlugIn {
     }
 
     Prefs.set("downloader.server", server);
-    Prefs.set("downloader.user", cred.username);
-    Prefs.set("downloader.port", cred.port);
+    Prefs.set("downloader.user", user);
+    Prefs.set("downloader.port", port);
     Prefs.set("downloader.type", type);
   }
 
@@ -166,44 +167,61 @@ public class OMEPlugin implements PlugIn {
 
       // prompt for search criteria
 
-      GenericDialog searchBox = new GenericDialog("Image search...");
-      if (!cred.isOMERO) {
-        String[] names = OMEUtils.getAllExperimenters(cred.isOMERO);
-        String[] tmp = names;
-        names = new String[tmp.length + 1];
-        names[0] = "";
-        System.arraycopy(tmp, 0, names, 1, tmp.length);
-        searchBox.addChoice("Experimenter: ", names, names[0]);
+      String name = null, firstName = null, lastName = null, iname = null,
+        created = null, id = null;
+      if (arg == null || arg.trim().equals("")) {
+        GenericDialog searchBox = new GenericDialog("Image search...");
+        if (!cred.isOMERO) {
+          String[] names = OMEUtils.getAllExperimenters(cred.isOMERO);
+          String[] tmp = names;
+          names = new String[tmp.length + 1];
+          names[0] = "";
+          System.arraycopy(tmp, 0, names, 1, tmp.length);
+          searchBox.addChoice("Experimenter: ", names, names[0]);
+        }
+        searchBox.addStringField("Image_name: ", "");
+        searchBox.addStringField("Creation date (yyyy-mm-dd): ", "");
+        searchBox.addStringField("Image_ID: ", "");
+        searchBox.showDialog();
+
+        if (searchBox.wasCanceled()) {
+          cancelPlugin = true;
+          return;
+        }
+
+        name = cred.isOMERO ? null : searchBox.getNextChoice();
+        iname = searchBox.getNextString();
+        created = searchBox.getNextString();
+        id = searchBox.getNextString();
       }
-      searchBox.addStringField("Creation date (yyyy-mm-dd): ", "");
-      searchBox.addStringField("Image ID: ", "");
-      searchBox.showDialog();
-
-      if (searchBox.wasCanceled()) {
-        cancelPlugin = true;
-        return;
+      else {
+        name = Macro.getValue(arg, "owner_name", "");
+        iname = Macro.getValue(arg, "image_name", "");
+        created = Macro.getValue(arg, "creation", "");
+        id = Macro.getValue(arg, "image_id", "");
       }
-
-      String name = cred.isOMERO ? null : searchBox.getNextChoice();
-      String created = searchBox.getNextString();
-      String id = searchBox.getNextString();
-
-      String firstName = null, lastName = null;
       if (name != null && name.indexOf(",") != -1) {
         lastName = name.substring(0, name.indexOf(",")).trim();
         firstName = name.substring(name.indexOf(",") + 2).trim();
       }
+
       if (firstName != null && firstName.trim().equals("")) firstName = null;
       if (lastName != null && lastName.trim().equals("")) lastName = null;
+      if (iname != null && iname.trim().equals("")) iname = null;
       if (created != null && created.trim().equals("")) created = null;
       if (id != null && id.trim().equals("")) id = null;
 
       // filter images based on search terms
-      OMEUtils.filterPixels(firstName, lastName, created, id, cred.isOMERO);
+      OMEUtils.filterPixels(firstName, lastName, iname, created, id,
+        cred.isOMERO);
 
       // retrieve image selection(s)
 
-      long[] images = new OMEUtils().showTable(cred);
+      long[] images = null;
+      if (arg == null || arg.trim().equals("")) {
+        images = new OMEUtils().showTable(cred);
+      }
+
       if (images == null || images.length == 0) {
         logout();
         return;
@@ -214,7 +232,7 @@ public class OMEPlugin implements PlugIn {
         String type = cred.isOMERO ? "OMERO server" : "OME server";
         String file = "location=[" + type + "] open=[" + cred.server +
           (cred.isOMERO ? ":" + cred.port : "") + "?user=" + cred.username +
-          "&password=" + cred.password + "&id=" + images[i] + "]";
+          "&password=" + cred.password + "&id=" + images[i] + "] "  + arg;
         IJ.runPlugIn("loci.plugins.LociImporter", file);
 
         if (cancelPlugin) return;
@@ -236,6 +254,19 @@ public class OMEPlugin implements PlugIn {
     }
 
     IJ.showProgress(1);
+  }
+
+  // -- Helper methods --
+
+  private static String formatServerName(String server) {
+    String rtn = server;
+    if (rtn.startsWith("http:")) rtn = rtn.substring(5);
+    while (rtn.startsWith("/")) rtn = rtn.substring(1);
+    int slash = rtn.indexOf("/");
+    if (slash >= 0) rtn = rtn.substring(0, slash);
+    int colon = rtn.indexOf(":");
+    if (colon >= 0) rtn = rtn.substring(0, colon);
+    return rtn;
   }
 
 }
