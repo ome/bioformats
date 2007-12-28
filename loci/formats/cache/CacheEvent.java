@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.cache;
 
+import java.lang.reflect.Field;
+
 /**
  * A event indicating a cache update.
  *
@@ -96,5 +98,22 @@ public class CacheEvent {
    * OBJECT_LOADED and OBJECT_DROPPED.
    */
   public int getIndex() { return index; }
+
+  // -- Object API methods --
+
+  public String toString() {
+    // scan public fields to determine type name
+    String sType = "unknown";
+    Field[] fields = getClass().getFields();
+    for (int i=0; i<fields.length; i++) {
+      try {
+        if (fields[i].getInt(null) == type) sType = fields[i].getName();
+      }
+      catch (IllegalAccessException exc) { }
+      catch (IllegalArgumentException exc) { }
+    }
+    return super.toString() +
+      ": source=[" + source + "] type=" + sType + " index=" + index;
+  }
 
 }
