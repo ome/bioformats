@@ -78,8 +78,8 @@ public class CacheIndicator extends JComponent {
 
     if (cacheLength == 0) return;
 
-    int pixelsPerIndex = getWidth() / cacheLength;
-    if (pixelsPerIndex * cacheLength < getWidth()) pixelsPerIndex++;
+    int pixelsPerIndex = (getWidth() - 2) / (cacheLength + 1);
+    int remainder = (getWidth() - 2) - (pixelsPerIndex * cacheLength);
 
     try {
       int[] currentPos = null;
@@ -92,6 +92,7 @@ public class CacheIndicator extends JComponent {
       int[] pos = new int[currentPos.length];
       System.arraycopy(currentPos, 0, pos, 0, pos.length);
 
+      int start = 1;
       for (int i=0; i<cacheLength; i++) {
         pos[axis] = i;
 
@@ -119,10 +120,9 @@ public class CacheIndicator extends JComponent {
         else if (inLoadList) g.setColor(Color.RED);
         else g.setColor(Color.WHITE);
         int len = pixelsPerIndex;
-        if (i == cacheLength - 1) {
-          len = getWidth() - i*pixelsPerIndex - 2;
-        }
-        g.fillRect(i*pixelsPerIndex + 1, 1, len, getHeight() - 2);
+        if (i < remainder) len++;
+        g.fillRect(start, 1, len, getHeight() - 2);
+        start += len;
       }
     }
     catch (CacheException e) { }
