@@ -41,6 +41,8 @@ public class CacheUpdater extends Thread {
   public CacheUpdater(Cache cache, CacheIndicator[] indicators, int[] lengths,
     int[] axes)
   {
+    super("4D-Data-Browser-Cache-Updater");
+    setPriority(Thread.MIN_PRIORITY);
     this.cache = cache;
     this.indicators = indicators;
     this.lengths = lengths;
