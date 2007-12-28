@@ -202,108 +202,57 @@ public class SlidebookReader extends FormatReader {
     int iCount = 0;
     int hCount = 0;
     int uCount = 0;
+    int prevSeries = -1;
+    int prevSeriesU = -1;
     for (int i=0; i<metadataOffsets.size(); i++) {
       long off = ((Long) metadataOffsets.get(i)).longValue();
       in.seek(off);
       int n = in.read();
       if (n == 'i') {
-        in.skipBytes(79);
-        core.sizeX[0] = in.readShort();
-        core.sizeY[0] = in.readShort();
         iCount++;
+        in.skipBytes(81);
+        for (int j=1; j<pixelOffsets.size(); j++) {
+          if ((in.getFilePointer() <
+            ((Long) pixelOffsets.get(j)).longValue()) ||
+            (j == pixelOffsets.size() - 1))
+          {
+            core.sizeY[j - 1] = in.readShort();
+            if (prevSeries != j - 1) {
+              iCount = 1;
+            }
+            prevSeries = j - 1;
+            core.sizeC[j - 1] = iCount;
+            break;
+          }
+        }
+      }
+      else if (n == 'u') {
+        uCount++;
+        for (int j=1; j<pixelOffsets.size(); j++) {
+          if ((in.getFilePointer() <
+            ((Long) pixelOffsets.get(j)).longValue()) ||
+            (j == pixelOffsets.size() - 1))
+          {
+            if (prevSeriesU != j - 1) {
+              uCount = 1;
+            }
+            prevSeriesU = j - 1;
+            core.sizeT[j - 1] = uCount;
+            break;
+          }
+        }
       }
       else if (n == 'h') hCount++;
-      else if (n == 'u') uCount++;
     }
-
-    core.rgb[0] = false;
-    core.sizeC[0] = iCount;
-    if (core.sizeX[0] * core.sizeY[0] * 2 * (uCount + hCount - 1) >=
-      in.length())
-    {
-      core.sizeC[0] = 1;
-    }
-
-    if (core.sizeC[0] == 0) core.sizeC[0] = 1;
-    if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
-    if (core.sizeT[0] == 0) core.sizeT[0] = 1;
-
-    if (core.sizeX[0] * core.sizeY[0] * 2 * core.sizeC[0] *
-      core.sizeZ[0] * core.sizeT[0] != pixelBytes && hCount > 0)
-    {
-      core.sizeZ[0] = hCount / core.sizeC[0];
-    }
-
-    int n = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-
-    if (uCount == core.sizeZ[0] * core.sizeT[0]) uCount = n;
-    if (uCount < core.sizeZ[0] * core.sizeT[0] * core.sizeC[0]) {
-      int planesPerMontage = (n * 2) / uCount;
-
-      while (planesPerMontage > 1) {
-        core.sizeY[0] /= 2;
-        planesPerMontage /= 2;
-        if (planesPerMontage > 1) {
-          core.sizeX[0] /= 2;
-          planesPerMontage /= 2;
-        }
-      }
-      if (core.sizeC[0] == 1) core.sizeC[0] = 2;
-      else core.sizeT[0] *= 2;
-    }
-    else if (uCount > core.sizeZ[0] * core.sizeT[0] * core.sizeC[0]) {
-      int planesPerMontage =
-        (int) ((core.sizeX[0] * core.sizeY[0] * 2) / (pixelBytes / uCount));
-      if (planesPerMontage % 2 != 0) planesPerMontage++;
-      if (planesPerMontage == 2) planesPerMontage += 2;
-      if (planesPerMontage == 0) planesPerMontage++;
-
-      int plane = core.sizeX[0] * core.sizeY[0];
-      while (uCount * core.sizeC[0] * (plane*2 / planesPerMontage) <
-        (pixelBytes - plane))
-      {
-        uCount++;
-      }
-
-      while (planesPerMontage > 1 &&
-        core.sizeX[0] * core.sizeY[0] * 2 * uCount > pixelBytes)
-      {
-        core.sizeY[0] /= 2;
-        planesPerMontage /= 2;
-        if (planesPerMontage > 1 &&
-          core.sizeX[0] * core.sizeY[0] * 2 * uCount > pixelBytes)
-        {
-          core.sizeX[0] /= 2;
-          planesPerMontage /= 2;
-        }
-        else planesPerMontage = 1;
-      }
-      core.sizeZ[0] = uCount;
-    }
-
-    // couldn't find the dimensions; these are reasonable guesses
-    if (core.sizeX[0] == 0) core.sizeX[0] = 512;
-    if (core.sizeY[0] == 0) core.sizeY[0] = 512;
 
     for (int i=0; i<core.sizeX.length; i++) {
-      core.sizeX[i] = core.sizeX[0];
-      core.sizeY[i] = core.sizeY[0];
-      core.currentOrder[i] = "XYZCT";
+      long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
+      core.sizeZ[i] = 1;
+      core.imageCount[i] = core.sizeZ[i] * core.sizeT[i] * core.sizeC[i];
+      core.sizeX[i] = (int) (pixels / (core.imageCount[i] * core.sizeY[i]));
       core.pixelType[i] = FormatTools.UINT16;
+      core.currentOrder[i] = "XYZTC";
       core.littleEndian[i] = true;
-
-      core.sizeC[i] = core.sizeC[0];
-      core.sizeT[i] = core.sizeT[0];
-      long len = ((Long) pixelLengths.get(i)).longValue();
-      core.sizeZ[i] =
-        (int) (len / (core.sizeX[i] * core.sizeY[i] * 2 * core.sizeC[i]));
-
-      if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
-      if (core.sizeT[i] == 0) core.sizeT[i] = 1;
-      if (core.sizeC[i] == 0) core.sizeC[i] = 1;
-
-      core.imageCount[i] = core.sizeC[i] * core.sizeZ[i] * core.sizeT[i];
-
       core.indexed[i] = false;
       core.falseColor[i] = false;
       core.metadataComplete[i] = true;
