@@ -1,3 +1,20 @@
+2007 Dec 28:
+* Fixed bugs in Leica LEI, Leica TCS, SDT, Leica LIF, Visitech, DICOM, Imaris 5.5 (HDF), and Slidebook readers
+* Better parsing of comments in TIFF files exported from ImageJ
+* Fixed problem with exporting 48-bit RGB data
+* Added logic to read multi-series datasets spread across multiple files
+* Improved channel merging in ImageJ - requires ImageJ 1.39l
+* Support for hyperstacks and virtual stacks in ImageJ - requires ImageJ 1.39l
+* Added API for reading directly from a byte array or InputStream
+* Metadata key/value pairs are now stored in ImageJ's "Info" property
+* Improved OMERO download plugin - it is now much faster
+* Added "open all series" option to ImageJ importer
+* ND2 reader based on Nikon's SDK now uses our own native bindings
+* Fixed metadata saving bug in ImageJ
+* Added sub-channel labels to ImageJ windows
+* Major updates to 4D Data Browser
+* Minor updates to automated testing suite
+
 2007 Dec 1:
 * Updated OME plugin for ImageJ to support downloading from OMERO
 * Fixed bug with floating point TIFFs
