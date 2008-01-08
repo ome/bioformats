@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * FluoviewReader is the file format reader for
@@ -62,6 +63,11 @@ public class FluoviewReader extends BaseTiffReader {
 
   /** First image. */
   private BufferedImage zeroImage = null;
+
+  // hardware settings
+  private String[] gains, voltages, offsets, channelNames, lensNA;
+  private String mag, detManu, objManu, comment;
+  private Double gamma;
 
   // -- Constructor --
 
@@ -315,7 +321,13 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     // cut up the comment, if necessary
-    String comment = (String) getMeta("Comment");
+    comment = TiffTools.getComment(ifds[0]);
+
+    gains = new String[core.sizeC[0]];
+    offsets = new String[core.sizeC[0]];
+    voltages = new String[core.sizeC[0]];
+    channelNames = new String[core.sizeC[0]];
+    lensNA = new String[core.sizeC[0]];
 
     if (comment != null && comment.startsWith("[")) {
       int start = comment.indexOf("[Acquisition Parameters]");
@@ -333,6 +345,50 @@ public class FluoviewReader extends BaseTiffReader {
             String key = token.substring(0, eq);
             String value = token.substring(eq + 1);
             addMeta(key, value);
+            if (key.startsWith("Gain Ch")) {
+              for (int i=0; i<gains.length; i++) {
+                if (gains[i] == null) {
+                  gains[i] = value;
+                  break;
+                }
+              }
+            }
+            else if (key.startsWith("PMT Voltage Ch")) {
+              for (int i=0; i<voltages.length; i++) {
+                if (voltages[i] == null) {
+                  voltages[i] = value;
+                  break;
+                }
+              }
+            }
+            else if (key.startsWith("Offset Ch")) {
+              for (int i=0; i<offsets.length; i++) {
+                if (offsets[i] == null) {
+                  offsets[i] = value;
+                  break;
+                }
+              }
+            }
+            else if (key.equals("Magnification")) mag = value;
+            else if (key.equals("System Configuration")) detManu = value;
+            else if (key.equals("Objective Lens")) objManu = value;
+            else if (key.equals("Gamma")) gamma = new Double(value);
+            else if (key.startsWith("Channel ") && key.endsWith("Dye")) {
+              for (int i=0; i<channelNames.length; i++) {
+                if (channelNames[i] == null) {
+                  channelNames[i] = value;
+                  break;
+                }
+              }
+            }
+            else if (key.startsWith("Confocal Aperture-Ch")) {
+              for (int i=0; i<lensNA.length; i++) {
+                if (lensNA[i] == null) {
+                  lensNA[i] = value.substring(0, value.length() - 2);
+                  break;
+                }
+              }
+            }
           }
         }
       }
@@ -355,33 +411,57 @@ public class FluoviewReader extends BaseTiffReader {
   protected void initMetadataStore() {
     super.initMetadataStore();
     MetadataStore store = getMetadataStore();
-    store.setDimensions(new Float(voxelX), new Float(voxelY),
-      new Float(voxelZ), new Float(voxelC), new Float(voxelT), null);
+    store.setImageName("", 0);
+    store.setImageDescription(comment, 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
-    Double gamma = (Double) getMeta("Gamma");
+    // populate Dimensions
+    store.setDimensionsPhysicalSizeX(new Float(voxelX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(voxelY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(voxelZ), 0, 0);
+    store.setDimensionsTimeIncrement(new Float(voxelT), 0, 0);
+    if ((int) voxelC > 0) {
+      store.setDimensionsWaveIncrement(new Integer((int) voxelC), 0, 0);
+    }
+
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setDisplayChannel(new Integer(i), null, null,
-        gamma == null ? null : new Float(gamma.floatValue()), null);
-
-      String gain = (String) getMeta("Gain Ch" + (i+1));
-      String voltage = (String) getMeta("PMT Voltage Ch" + (i+1));
-      String offset = (String) getMeta("Offset Ch" + (i+1));
-
-      if (gain != null || voltage != null || offset != null) {
-        store.setDetector((String) getMeta("System Configuration"), null,
-          null, null, gain == null ? null : new Float(gain),
-          voltage == null ? null : new Float(voltage),
-          offset == null ? null : new Float(offset), null, new Integer(i));
+      if (channelNames[i] != null) {
+        store.setLogicalChannelName(channelNames[i].trim(), 0, i);
+      }
+      if (lensNA[i] != null) {
+        store.setObjectiveLensNA(new Float(lensNA[i]), 0, i);
+      }
+      if (gains[i] != null) {
+        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+      }
+      if (offsets[i] != null) {
+        store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
       }
     }
 
-    String mag = (String) getMeta("Magnification");
+    /*
+    for (int i=0; i<core.sizeC[0]; i++) {
+      // CTR CHECK
+//      store.setDisplayChannel(new Integer(i), null, null,
+//        gamma == null ? null : new Float(gamma.floatValue()), null);
+
+      if (voltages[i] != null) {
+        if (detManu != null) store.setDetectorManufacturer(detManu, 0, 0);
+        store.setDetectorVoltage(new Float(voltages[i]), 0, 0);
+      }
+    }
+
     if (mag != null && mag.toLowerCase().endsWith("x")) {
       mag = mag.substring(0, mag.length() - 1);
     }
     else if (mag == null) mag = "1";
-    store.setObjective((String) getMeta("Objective Lens"), null, null, null,
-      new Float(mag), null, null);
+
+    if (objManu != null) store.setObjectiveManufacturer(objManu, 0, 0);
+    if (mag != null) {
+      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+    }
+    */
   }
 
 }

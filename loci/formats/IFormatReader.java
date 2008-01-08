@@ -27,6 +27,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Interface for all biological file format readers.

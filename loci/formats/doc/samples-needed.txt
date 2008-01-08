@@ -45,6 +45,9 @@ ND2:
   - any files acquired with most recent NIS Elements
   - multi-Z, multi-T
 
+Olympus CellR:
+  - any
+
 Openlab LIFF:
   - 32 bit integer data
 
@@ -71,6 +74,9 @@ Volocity ACFF:
 Volocity MVD2:
   - anything - please specify dimensions and which version of Volocity was
     used
+
+Zeiss LSM:
+  - anything compressed with an algorithm other than LZW
 
 Zeiss ZVI:
   - JPEG compressed

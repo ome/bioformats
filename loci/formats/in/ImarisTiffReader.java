@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ImarisTiffReader is the file format reader for
@@ -129,6 +130,8 @@ public class ImarisTiffReader extends BaseTiffReader {
       }
     }
 
+    String comment = TiffTools.getComment(ifds[0]);
+
     status("Populating metadata");
 
     core.sizeC[0] = ifds.length - 1;
@@ -183,8 +186,6 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     status("Parsing comment");
 
-    String comment = (String) getMeta("Comment");
-
     // likely an INI-style comment, although we can't be sure
 
     if (comment != null && comment.startsWith("[")) {
@@ -202,7 +203,8 @@ public class ImarisTiffReader extends BaseTiffReader {
     }
 
     MetadataStore store = getMetadataStore();
-    FormatTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    MetadataTools.populatePixels(store, this);
   }
 
 }

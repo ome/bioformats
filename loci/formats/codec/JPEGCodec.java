@@ -123,13 +123,33 @@ public class JPEGCodec extends BaseCodec implements Codec {
           "An I/O error occurred while decompressing the image", e);
       }
     }
-    byte[][] buf = ImageTools.getPixelBytes(b,
-      ((Boolean) options).booleanValue());
+
+    boolean littleEndian = false, interleaved = false;
+    if (options instanceof Boolean) {
+      littleEndian = ((Boolean) options).booleanValue();
+    }
+    else {
+      Object[] o = (Object[]) options;
+      littleEndian = ((Boolean) o[0]).booleanValue();
+      interleaved = ((Boolean) o[1]).booleanValue();
+    }
+
+    byte[][] buf = ImageTools.getPixelBytes(b, littleEndian);
     byte[] rtn = new byte[buf.length * buf[0].length];
     if (buf.length == 1) rtn = buf[0];
     else {
-      for (int i=0; i<buf.length; i++) {
-        System.arraycopy(buf[i], 0, rtn, i*buf[0].length, buf[i].length);
+      if (interleaved) {
+        int next = 0;
+        for (int i=0; i<buf[0].length; i++) {
+          for (int j=0; j<buf.length; j++) {
+            rtn[next++] = buf[j][i];
+          }
+        }
+      }
+      else {
+        for (int i=0; i<buf.length; i++) {
+          System.arraycopy(buf[i], 0, rtn, i*buf[0].length, buf[i].length);
+        }
       }
     }
     return rtn;

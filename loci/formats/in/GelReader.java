@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * GelReader is the file format reader for
@@ -102,8 +103,12 @@ public class GelReader extends BaseTiffReader {
     core.sizeT[series] = core.imageCount[series];
 
     MetadataStore store = getMetadataStore();
-    store.setDimensions(new Float(scale.floatValue()),
-      new Float(scale.floatValue()), null, null, null, null);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    Float pixelSize = new Float(scale.floatValue());
+    store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
   }
 
 }

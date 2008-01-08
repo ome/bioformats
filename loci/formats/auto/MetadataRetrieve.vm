@@ -43,19 +43,19 @@ package loci.formats.meta;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface MetadataRetrieve {
-
 #foreach ($entity in $entities)
-  // -- $entity.name() property retrieval --
 
+  // - $entity.name() property retrieval -
 #foreach ($prop in $entity.props())
+
   /**
    * Gets $prop.desc() for a particular $entity.name() object.
 #foreach ($prop in $entity.indices())
    * @param $prop.varName() $prop.desc()
 #end
    */
-  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true));
+  $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true));
+#end
+#end
 
-#end
-#end
 }

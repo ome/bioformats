@@ -107,8 +107,11 @@ public class TiffReader extends BaseTiffReader {
     }
 
     // check for MetaMorph-style TIFF comment
-    boolean metamorph = comment != null && getMeta("Software") != null &&
-      ((String) getMeta("Software")).indexOf("MetaMorph") != -1;
+    Object software = TiffTools.getIFDValue(ifds[0], TiffTools.SOFTWARE);
+    String check = software instanceof String ? (String) software :
+      software instanceof String[] ? ((String[]) software)[0] : null;
+    boolean metamorph = comment != null && software != null &&
+      check.indexOf("MetaMorph") != -1;
     put("MetaMorph", metamorph ? "yes" : "no");
 
     if (metamorph) {

@@ -4,7 +4,9 @@
 
 import java.awt.image.BufferedImage;
 import loci.formats.ImageReader;
-import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.formats.out.OMETiffWriter;
 
 /** Converts the given files to OME-TIFF format. */
@@ -24,12 +26,12 @@ public class ConvertToOmeTiff {
       System.out.print("Converting " + id + " to " + outId + " ");
 
       // record metadata to OME-XML format
-      OMEXMLMetadata omexmlMeta = new OMEXMLMetadata();
+      MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
       reader.setMetadataStore(omexmlMeta);
       reader.setId(id); 
 
       // configure OME-TIFF writer
-      writer.setMetadataRetrieve(omexmlMeta);
+      writer.setMetadataRetrieve((MetadataRetrieve) omexmlMeta);
       writer.setId(outId);
 
       // write out image planes

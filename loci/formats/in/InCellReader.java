@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -155,13 +156,16 @@ public class InCellReader extends FormatReader {
     core.littleEndian[0] = tiffReaders[0].isLittleEndian();
 
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-    FormatTools.populatePixels(store, this);
-    for (int c=0; c<core.sizeC[0]; c++) {
-      store.setLogicalChannel(c, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
-    }
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int c=0; c<core.sizeC[0]; c++) {
+//      store.setLogicalChannel(c, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null);
+//    }
   }
 
   // -- Helper class --

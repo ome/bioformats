@@ -37,7 +37,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import java.util.Hashtable;
 import java.util.Vector;
-import org.openmicroscopy.xml.OMEXMLNode;
+import ome.xml.OMEXMLNode;
 
 /**
  * A class to handle a combobox editor that chooses its items

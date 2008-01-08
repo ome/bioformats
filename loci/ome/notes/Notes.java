@@ -34,9 +34,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
 import loci.formats.gui.GUITools;
-import loci.formats.ome.*;
-import org.openmicroscopy.xml.*;
-import org.w3c.dom.*;
+import loci.formats.meta.*;
 
 /**
  * Main notes window.
@@ -83,11 +81,10 @@ public class Notes extends JFrame implements ActionListener {
   /** Name of the current image file. */
   private String currentFile;
 
-  /** OME-CA root node for currently open image file. */
-  private OMENode currentRoot;
-
   /** Thumbnails for the current file. */
   private Vector thumb;
+
+  private AggregateMetadata metadata;
 
   // -- Constructor --
 
@@ -100,12 +97,12 @@ public class Notes extends JFrame implements ActionListener {
    * Constructs a new main window with the given metadata,
    * and default template.
    */
-  public Notes(OMENode root) {
-    this(null, root);
+  public Notes(AggregateMetadata store) {
+    this(null, store);
   }
 
   /** Constructs a new main window with the given metadata and template. */
-  public Notes(String template, OMENode root) {
+  public Notes(String template, AggregateMetadata store) {
     super("OME Notes");
     setupWindow();
 
@@ -119,7 +116,7 @@ public class Notes extends JFrame implements ActionListener {
       loadTemplate(Notes.class.getResourceAsStream(DEFAULT_TEMPLATE));
     }
 
-    currentRoot = root;
+    metadata = store;
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
   }
@@ -371,17 +368,11 @@ public class Notes extends JFrame implements ActionListener {
     else if (cmd.equals("save")) {
       progress.setString("Saving metadata to companion file...");
 
-      if (currentRoot == null) {
-        OMEXMLMetadata tmp = new OMEXMLMetadata();
-        currentRoot = (OMENode) tmp.getRoot();
-      }
-
-      currentTemplate.saveFields(currentRoot);
+      currentTemplate.saveFields(metadata);
 
       // always save to the current filename + ".ome"
 
-      OMEXMLMetadata store = new OMEXMLMetadata();
-      store.setRoot(currentRoot);
+      metadata = new AggregateMetadata(new ArrayList());
 
       try {
         String name = currentFile;
@@ -410,8 +401,16 @@ public class Notes extends JFrame implements ActionListener {
         if (name == null) return;
         if (!name.endsWith(".ome")) name += ".ome";
 
+        java.util.List delegates = metadata.getDelegates();
+        String xml = null;
+        for (int i=0; i<delegates.size(); i++) {
+          if (MetadataTools.isOMEXMLMetadata(delegates.get(i))) {
+            xml = MetadataTools.getOMEXML((MetadataRetrieve) delegates.get(i));
+          }
+        }
         File f = new File(name);
-        currentRoot.writeOME(f, false);
+        FileWriter writer = new FileWriter(f);
+        writer.write(xml);
         progress.setString("Finished writing companion file (" + name + ")");
       }
       catch (Exception io) {
@@ -562,22 +561,29 @@ public class Notes extends JFrame implements ActionListener {
     reader.setOriginalMetadataPopulated(true);
     progress.setString("Reading " + currentFile);
 
+    metadata = new AggregateMetadata(new ArrayList());
+
     if (currentFile.endsWith(".ome")) {
-      File f = new File(currentFile);
-      currentRoot = new OMENode(f);
+      RandomAccessStream s = new RandomAccessStream(currentFile);
+      String xml = s.readString((int) s.length());
+      s.close();
+      metadata.addDelegate(MetadataTools.createOMEXMLMetadata(xml));
     }
     else {
       // first look for a companion file
       File companion = new File(currentFile + ".ome");
+      MetadataStore companionStore = null, readerStore = null;
       if (companion.exists()) {
         progress.setString("Reading companion file (" + companion + ")");
-        currentRoot = new OMENode(companion);
+        RandomAccessStream s = new RandomAccessStream(currentFile);
+        String xml = s.readString((int) s.length());
+        s.close();
+        companionStore = MetadataTools.createOMEXMLMetadata(xml);
       }
 
-      reader.setMetadataStore(new OMEXMLMetadata());
+      reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
       reader.setId(currentFile);
-      OMEXMLMetadata store =
-        (OMEXMLMetadata) reader.getMetadataStore();
+      readerStore = reader.getMetadataStore();
 
       if (companion.exists()) {
         // merge the two OMENode objects
@@ -586,13 +592,15 @@ public class Notes extends JFrame implements ActionListener {
         progress.setString("Merging companion and original file...");
 
         if (currentTemplate.preferCompanion()) {
-          currentRoot = merge(currentRoot, (OMENode) store.getRoot());
+          metadata.addDelegate(companionStore);
+          metadata.addDelegate(readerStore);
         }
         else {
-          currentRoot = merge((OMENode) store.getRoot(), currentRoot);
+          metadata.addDelegate(readerStore);
+          metadata.addDelegate(companionStore);
         }
       }
-      else currentRoot = (OMENode) store.getRoot();
+      else metadata.addDelegate(readerStore);
 
       // grab thumbnails
 
@@ -605,8 +613,8 @@ public class Notes extends JFrame implements ActionListener {
     }
 
     progress.setString("Populating fields...");
-    currentTemplate.initializeFields(currentRoot);
-    currentTemplate.populateFields(currentRoot);
+    currentTemplate.initializeFields(metadata);
+    currentTemplate.populateFields(metadata);
     loadTemplate(currentTemplate);
     progress.setString("");
   }
@@ -662,98 +670,6 @@ public class Notes extends JFrame implements ActionListener {
         rowNumber[i] = rowNdx + 2;
       }
     }
-  }
-
-  /**
-   * Merge two OME-CA trees. When a conflict arises, use the value in 'over'.
-   * This method was adapted from an earlier version of OME Notes,
-   * written by Christopher Peterson.
-   *
-   * @param high OMENode with higher priority
-   * @param low OMENode with lower priority
-   */
-  private OMENode merge(OMENode high, OMENode low) {
-    OMEXMLNode temp = merge((OMEXMLNode) high, (OMEXMLNode) low);
-    if (temp instanceof OMENode) return (OMENode) temp;
-    return null;
-  }
-
-  /**
-   * Merge two OME-XML trees.
-   * This method was adapted from an earlier version of OME Notes,
-   * written by Christopher Peterson.
-   */
-  private OMEXMLNode merge(OMEXMLNode high, OMEXMLNode low) {
-    OMEXMLNode result = high;
-    Vector highList = result.getChildNodes();
-    Vector lowList = low.getChildNodes();
-    Vector ids = new Vector();
-
-    boolean isHighCustom = false;
-    boolean isLowCustom = false;
-    boolean addedCustom = false;
-
-    for (int i=0; i<highList.size(); i++) {
-      OMEXMLNode highNode = (OMEXMLNode) highList.get(i);
-      String highID = highNode.getLSID();
-      if (highID == null) isHighCustom = true;
-
-      for (int j=0; j<lowList.size(); j++) {
-        OMEXMLNode lowNode = (OMEXMLNode) lowList.get(j);
-        String lowID = lowNode.getLSID();
-        if (lowID == null) isLowCustom = true;
-
-        if (isHighCustom && !isLowCustom) isHighCustom = false;
-        else if (!isHighCustom && isLowCustom && !addedCustom) {
-          result.getDOMElement().appendChild(createClone(
-            lowNode.getDOMElement(),
-            highNode.getDOMElement().getOwnerDocument()));
-          addedCustom = true;
-          isLowCustom = false;
-        }
-        else if (!isHighCustom && !isLowCustom) {
-          if (lowID.equals(highID)) merge(highNode, lowNode);
-          else {
-            if (ids.indexOf(lowID) > -1) {
-              result.getDOMElement().appendChild(createClone(
-                lowNode.getDOMElement(),
-                highNode.getDOMElement().getOwnerDocument()));
-              ids.add(lowID);
-            }
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Clones the specified DOM element, preserving the parent structure.
-   * This method was adapted from an earlier version of OME Notes,
-   * written by Christopher Peterson.
-   */
-  private Element createClone(Element el, Document doc) {
-    String tag = el.getTagName();
-    Element clone = doc.createElement(tag);
-
-    if (el.hasAttributes()) {
-      NamedNodeMap map = el.getAttributes();
-      for (int i=0; i<map.getLength(); i++) {
-        Node attr = map.item(i);
-        clone.setAttribute(attr.getNodeName(), attr.getNodeValue());
-      }
-    }
-
-    if (el.hasChildNodes()) {
-      NodeList nodes = el.getChildNodes();
-      for (int i=0; i<nodes.getLength(); i++) {
-        Node node = nodes.item(i);
-        if (node instanceof Element) {
-          clone.appendChild(createClone((Element) node, doc));
-        }
-      }
-    }
-    return clone;
   }
 
   // -- Main method --

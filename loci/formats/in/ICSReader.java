@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import java.util.zip.*;
 import loci.formats.*;
 import loci.formats.codec.ByteVector;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
@@ -93,6 +94,9 @@ public class ICSReader extends FormatReader {
 
   /** Image data. */
   private byte[] data;
+
+  /** Emission and excitation wavelength. */
+  private String em, ex;
 
   // -- Constructor --
 
@@ -259,9 +263,9 @@ public class ICSReader extends FormatReader {
           else if (k.equals("representation format")) rFormat = v;
           else if (k.equals("representation compression")) compression = v;
           else if (k.equals("parameter scale")) scale = v;
-          else if (k.equals("representation sign")) {
-            signed = v.equals("signed");
-          }
+          else if (k.equals("representation sign")) signed = v.equals("signed");
+          else if (k.equals("sensor s_params LambdaEm")) em = v;
+          else if (k.equals("sensor s_params LambdaEx")) ex = v;
         }
         else {
           key.append(token);
@@ -371,8 +375,9 @@ public class ICSReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-
-    store.setImage(null, null, null, null);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
     // populate Pixels element
 
@@ -417,7 +422,7 @@ public class ICSReader extends FormatReader {
 
     core.currentOrder[0] = o.trim();
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
     String pixelSizes = scale;
     o = layoutOrder;
@@ -425,22 +430,25 @@ public class ICSReader extends FormatReader {
       StringTokenizer pixelSizeTokens = new StringTokenizer(pixelSizes);
       StringTokenizer axisTokens = new StringTokenizer(o);
 
-      Float pixX = null, pixY = null, pixZ = null, pixC = null, pixT = null;
+      Float pixX = null, pixY = null, pixZ = null, pixT = null;
+      Integer pixC = null;
 
       while (pixelSizeTokens.hasMoreTokens()) {
         String axis = axisTokens.nextToken().trim().toLowerCase();
         String size = pixelSizeTokens.nextToken().trim();
         if (axis.equals("x")) pixX = new Float(size);
         else if (axis.equals("y")) pixY = new Float(size);
-        else if (axis.equals("ch")) pixC = new Float(size);
         else if (axis.equals("z")) pixZ = new Float(size);
         else if (axis.equals("t")) pixT = new Float(size);
+        else if (axis.equals("ch")) pixC = new Integer(size);
       }
-      store.setDimensions(pixX, pixY, pixZ, pixC, pixT, null);
+      store.setDimensionsPhysicalSizeX(pixX, 0, 0);
+      store.setDimensionsPhysicalSizeY(pixY, 0, 0);
+      store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
+      store.setDimensionsTimeIncrement(pixT, 0, 0);
+      store.setDimensionsWaveIncrement(pixC, 0, 0);
     }
 
-    String em = (String) getMeta("sensor s_params LambdaEm");
-    String ex = (String) getMeta("sensor s_params LambdaEx");
     int[] emWave = new int[core.sizeC[0]];
     int[] exWave = new int[core.sizeC[0]];
     if (em != null) {
@@ -456,11 +464,16 @@ public class ICSReader extends FormatReader {
       }
     }
 
+    /*
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       null, null, null, null, null, null, null, null, null, null, null,
-       new Integer(emWave[i]), new Integer(exWave[i]), null, null, null);
+      // CTR CHECK
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//       null, null, null, null, null, null, null, null, null, null, null,
+//       new Integer(emWave[i]), new Integer(exWave[i]), null, null, null);
+      store.setLogicalChannelEmWave(new Integer(emWave[i]), 0, i);
+      store.setLogicalChannelExWave(new Integer(exWave[i]), 0, i);
     }
+    */
   }
 
 }

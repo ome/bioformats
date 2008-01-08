@@ -30,7 +30,7 @@ import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
 import loci.visbio.util.SwingUtil;
-import org.openmicroscopy.xml.DOMUtil;
+import ome.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 

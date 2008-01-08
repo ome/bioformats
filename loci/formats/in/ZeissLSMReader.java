@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -296,13 +297,17 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       MetadataStore store = getMetadataStore();
+      store.setImageName("", 0);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
-      FormatTools.populatePixels(store, this);
-      for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null);
-      }
+      MetadataTools.populatePixels(store, this);
+      // CTR CHECK
+//      for (int i=0; i<core.sizeC[0]; i++) {
+//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null);
+//      }
 
       int spectralScan = ras.readShort();
       switch (spectralScan) {
@@ -471,7 +476,9 @@ public class ZeissLSMReader extends BaseTiffReader {
     Float pixZ = new Float((float) pixelSizeZ);
 
     MetadataStore store = getMetadataStore();
-    store.setDimensions(pixX, pixY, pixZ, null, null, null);
+    store.setDimensionsPhysicalSizeX(pixX, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
 
     // see if we have an associated MDB file
 

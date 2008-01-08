@@ -26,115 +26,65 @@ package loci.ome.notes;
 import java.lang.reflect.*;
 import java.util.*;
 import javax.swing.*;
-import org.openmicroscopy.xml.*;
-import org.w3c.dom.Element;
+import loci.formats.meta.AggregateMetadata;
 
 public class TemplateTools {
 
   /** Get the value corresponding to the given map. */
-  public static String getString(OMENode root, String map, boolean value)
-    throws Exception
+  public static String getString(AggregateMetadata store, String map,
+    boolean value) throws Exception
   {
-    OMEXMLNode node = findNode(root, map, false);
-    if (node == null && map != null) return null;
+    if (map == null || store == null) return null;
 
-    if (node == null) {
-      // unmapped field
-
-      CustomAttributesNode ca = root.getCustomAttributes();
-
-      int[] indices = getMapIndices(map);
-
-      if (ca != null && map != null) {
-        Vector elements = DOMUtil.getChildElements("NotesField",
-          ca.getDOMElement());
-        int ndx = indices[indices.length - 1];
-        if (ndx >= elements.size()) return null;
-        Element el = (Element) elements.get(ndx);
-        return DOMUtil.getAttribute(value ? "value" : "name", el);
-      }
-      return "";
+    int openParentheses = map.indexOf("(");
+    String method = null, params = null;
+    if (openParentheses != -1) {
+      method = map.substring(0, openParentheses);
+      params = map.substring(openParentheses + 1, map.length() - 1);
     }
+    else method = map;
 
-    String newMap = map.substring(map.lastIndexOf(":") + 1);
-    if (newMap.indexOf("-") != -1) {
-      newMap = newMap.substring(0, newMap.indexOf("-"));
-    }
+    method = "get" + method;
 
-    if (node instanceof AttributeNode) {
-      return node.getAttribute(newMap);
-    }
-
-    String methodName1 = "get" + newMap;
-    String methodName2 = "is" + newMap;
-
-    if (newMap.equals("CreationDate")) methodName1 = "getCreated";
-
-    // retrieve the appropriate value
-
-    Method[] methods = node.getClass().getMethods();
-    for (int j=0; j<methods.length; j++) {
-      String name = methods[j].getName();
-
-      if ((name.equals(methodName1) || name.equals(methodName2)) &&
-        methods[j].getParameterTypes().length == 0)
-      {
-        Object o = methods[j].invoke(node, new Object[0]);
-        String s = o == null ? "" : o.toString();
-        String v = s.toLowerCase();
-        return v;
+    int[] indices = null;
+    if (params != null) {
+      StringTokenizer s = new StringTokenizer(params, ",");
+      int count = s.countTokens();
+      indices = new int[count];
+      for (int i=0; i<count; i++) {
+        indices[i] = Integer.parseInt(s.nextToken().trim());
       }
     }
-    return "";
+
+    Class[] c = null;
+    Object[] o = null;
+    if (indices != null) {
+      c = new Class[indices.length];
+      Arrays.fill(c, Integer.TYPE);
+      o = new Object[indices.length];
+      for (int i=0; i<indices.length; i++) {
+        o[i] = new Integer(indices[i]);
+      }
+    }
+
+    Method m = AggregateMetadata.class.getMethod(method, c);
+    Object r = m.invoke(store, o);
+
+    return r == null ? null : r.toString();
   }
 
   /** Get the number of nodes matching this map. */
-  public static int getNodeCount(OMENode root, String map) throws Exception {
+  public static int getNodeCount(AggregateMetadata store, String map)
+    throws Exception
+  {
+    /*
     if (map == null || map.length() == 0 || root == null) return 0;
     map = map.substring(0, map.lastIndexOf(":"));
     map = map.substring(map.lastIndexOf(":") + 1);
     if (map.indexOf("-") != -1) map = map.substring(0, map.indexOf("-"));
     return DOMUtil.findElementList(map, root.getOMEDocument(true)).size();
-  }
-
-  /** Find the OME-XML node corresponding to the given map string. */
-  public static OMEXMLNode findNode(OMENode root, String map, boolean create)
-    throws Exception
-  {
-    if (map == null) return null;
-    int elementCount = 0;
-    int last = map.indexOf(":");
-    while (last != -1) {
-      elementCount++;
-      last = map.indexOf(":", last + 1);
-    }
-
-    int[] indices = getMapIndices(map);
-
-    String[] elements = new String[elementCount];
-    for (int i=0; i<elementCount; i++) {
-      elements[i] = map.substring(0, map.indexOf(":"));
-      map = map.substring(map.indexOf(":") + 1);
-    }
-
-    OMEXMLNode node = root;
-    for (int i=0; i<elementCount; i++) {
-      Vector nodeList = DOMUtil.getChildElements(elements[i],
-        node.getDOMElement());
-      if ((nodeList == null || nodeList.size() == 0) && create) {
-        // TODO : create the node
-        return null;
-      }
-      else if (nodeList == null || nodeList.size() == 0) return null;
-
-      int idx = indices[i];
-      if (idx < nodeList.size()) {
-        node = OMEXMLNode.createNode((Element) nodeList.get(idx));
-      }
-      else return null;
-    }
-
-    return node;
+    */
+    return 1;
   }
 
   /** Get the value from the given component. */
@@ -157,35 +107,6 @@ public class TemplateTools {
     }
 
     return value;
-  }
-
-  /** Get the index for each element in the map. */
-  public static int[] getMapIndices(String map) {
-    if (map == null) return new int[0];
-    int elementCount = 0;
-    int last = map.indexOf(":");
-    while (last != -1) {
-      elementCount++;
-      last = map.indexOf(":", last + 1);
-    }
-
-    int[] indices = new int[elementCount];
-    Arrays.fill(indices, 0);
-    if (map.indexOf("-") == -1) return indices;
-
-    String indexList = map.substring(map.indexOf("-") + 1);
-    for (int i=0; i<elementCount; i++) {
-      if (indexList.indexOf(",") == -1) {
-        indices[i] = Integer.parseInt(indexList);
-        indexList = "0";
-      }
-      else {
-        indices[i] = Integer.parseInt(indexList.substring(0,
-          indexList.indexOf(",")));
-        indexList = indexList.substring(indexList.indexOf(",") + 1);
-      }
-    }
-    return indices;
   }
 
 }

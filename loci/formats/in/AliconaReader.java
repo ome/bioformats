@@ -21,11 +21,12 @@ You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+ 
 package loci.formats.in;
 
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
@@ -109,8 +110,8 @@ public class AliconaReader extends FormatReader {
     int count = 2;
 
     boolean hasC = false;
-    String voltage = null, magnification = null;
-    String pntX = null, pntY = null, pntZ = null;
+    String voltage = null, magnification = null, workingDistance = null;
+    String pntX = null, pntY = null;
 
     for (int i=0; i<count; i++) {
       String key = in.readString(20).trim();
@@ -131,9 +132,9 @@ public class AliconaReader extends FormatReader {
       else if (key.equals("TexturePtr") && !value.equals("7")) hasC = true;
       else if (key.equals("Voltage")) voltage = value;
       else if (key.equals("Magnification")) magnification = value;
-      else if (key.equals("PlanePntX")) pntX = value;
-      else if (key.equals("PlanePntY")) pntY = value;
-      else if (key.equals("PlanePntZ")) pntZ = value;
+      else if (key.equals("PixelSizeXMeter")) pntX = value;
+      else if (key.equals("PixelSizeYMeter")) pntY = value;
+      else if (key.equals("WorkingDistance")) workingDistance = value;
     }
 
     status("Populating metadata");
@@ -155,30 +156,35 @@ public class AliconaReader extends FormatReader {
     core.falseColor[0] = false;
 
     MetadataStore store = getMetadataStore();
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    store.setImageName("", 0);
+    MetadataTools.populatePixels(store, this);
 
-    store.setImage(null, null, null, null);
+    // CTR CHECK
 
-    FormatTools.populatePixels(store, this);
-
+    // According to the spec, the voltage and magnification values are those
+    // used when the dataset was acquired, i.e. detector settings.
+    /*
     if (voltage != null) {
-      store.setDetector(null, null, null, null, null, new Float(voltage),
-        null, null, null);
+      store.setDetectorVoltage(new Float(voltage), 0, 0);
     }
     if (magnification != null) {
-      store.setObjective(null, null, null, null, new Float(magnification),
-        null, null);
+      store.setObjectiveCalibratedMagnification(
+        new Float(magnification), 0, 0);
+    }
+    */
+
+    // TODO : workingDistance stores the working distance of the Objective
+
+    if (pntX != null && pntY != null) {
+      float pixelSizeX = Float.parseFloat(pntX) / 1000000;
+      float pixelSizeY = Float.parseFloat(pntY) / 1000000;
+
+      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     }
 
-    if (pntX != null && pntY != null && pntZ != null) {
-      store.setDimensions(new Float(pntX.trim()), new Float(pntY.trim()),
-        new Float(pntZ.trim()), null, null, null);
-    }
-
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       null, null, null, null, null, null, null, null, null, null, null, null,
-       null, null, null, null);
-    }
   }
 
 }

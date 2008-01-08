@@ -25,10 +25,12 @@ package loci.visbio.ome;
 
 import java.util.*;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEWriter;
-import loci.formats.ome.OMEXMLMetadata;
 
 /**
  * ImageUploader is a helper class for uploading VisBio datasets
@@ -61,9 +63,10 @@ public class ImageUploader {
   {
     try {
       OMEWriter writer = new OMEWriter();
-      OMEXMLMetadata store = new OMEXMLMetadata();
+      MetadataStore store = MetadataTools.createOMEXMLMetadata();
       store.setRoot(data.getOMENode());
-      writer.setMetadata(store);
+      MetadataRetrieve retrieve = (MetadataRetrieve) store;
+      writer.setMetadata(retrieve);
 
       String id = server + "?user=" + username + "&password=" + password;
       writer.setId(id);
@@ -74,10 +77,10 @@ public class ImageUploader {
       for (int i=0; i<numFiles; i++) {
         for (int j=0; j<numImages; j++) {
           int[] coords = FormatTools.getZCTCoords(
-            store.getDimensionOrder(null),
-            store.getSizeZ(null).intValue(),
-            store.getSizeC(null).intValue(),
-            store.getSizeT(null).intValue(),
+            retrieve.getPixelsDimensionOrder(0, 0),
+            retrieve.getPixelsSizeZ(0, 0).intValue(),
+            retrieve.getPixelsSizeC(0, 0).intValue(),
+            retrieve.getPixelsSizeT(0, 0).intValue(),
             numImages*numFiles, numImages*i + j);
           writer.saveImage(
             data.getImage(new int[] {coords[0], coords[1], coords[2], j}),

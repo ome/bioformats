@@ -31,6 +31,7 @@ import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+import ome.xml.DOMUtil;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 

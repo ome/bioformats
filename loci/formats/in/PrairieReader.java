@@ -28,6 +28,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * PrairieReader is the file format reader for
@@ -242,6 +243,10 @@ public class PrairieReader extends FormatReader {
       int fileIndex = 1;
       if (id.endsWith(".xml")) core.imageCount[0] = 0;
 
+      float pixelSizeX = 1f, pixelSizeY = 1f;
+      String date = null, laserPower = null;
+      Vector gains = new Vector(), offsets = new Vector();
+
       String pastPrefix = "";
       for (int i=1; i<elements.size(); i++) {
         String el = (String) elements.get(i);
@@ -273,6 +278,9 @@ public class PrairieReader extends FormatReader {
                 {
                   isZ = value.equals("ZSeries");
                 }
+                if (prefix.equals("PVScan") && key.equals("date")) {
+                  date = value;
+                }
               }
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
@@ -300,6 +308,16 @@ public class PrairieReader extends FormatReader {
             else if (key.equals("linesPerFrame")) {
               core.sizeY[0] = Integer.parseInt(value);
             }
+            else if (key.equals("micronsPerPixel_XAxis")) {
+              pixelSizeX = Float.parseFloat(value);
+            }
+            else if (key.equals("micronsPerPixel_YAxis")) {
+              pixelSizeY = Float.parseFloat(value);
+            }
+            else if (key.startsWith("pmtGain_")) gains.add(value);
+            else if (key.startsWith("pmtOffset_")) offsets.add(value);
+            else if (key.equals(" PVScan date")) date = value;
+            else if (key.equals("laserPower_0")) laserPower = value;
           }
           if (!closed) {
             pastPrefix = prefix;
@@ -332,28 +350,25 @@ public class PrairieReader extends FormatReader {
         core.indexed[0] = tiff.isIndexed();
         core.falseColor[0] = false;
 
-        String px = (String) getMeta("micronsPerPixel_XAxis");
-        String py = (String) getMeta("micronsPerPixel_YAxis");
-        float pixSizeX = px == null ? 0f : Float.parseFloat(px);
-        float pixSizeY = py == null ? 0f : Float.parseFloat(py);
-
         MetadataStore store = getMetadataStore();
+        store.setImageName("", 0);
 
-        FormatTools.populatePixels(store, this);
-        store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null,
-          null, null, null);
+        MetadataTools.populatePixels(store, this);
+        store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
+        store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
         for (int i=0; i<core.sizeC[0]; i++) {
-          String gain = (String) getMeta("pmtGain_" + i);
-          String offset = (String) getMeta("pmtOffset_" + i);
+          String gain = (String) gains.get(i);
+          String offset = (String) offsets.get(i);
 
-          store.setLogicalChannel(i, null, null,
-            null, null, null, null, null,
-            null, offset == null ? null : new Float(offset),
-            gain == null ? null : new Float(gain), null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null);
+          /*
+          if (offset != null) {
+            store.setDetectorSettingsOffset(new Float(offset), 0, i);
+          }
+          if (gain != null) {
+            store.setDetectorSettingsGain(new Float(gain), 0, i);
+          }
+          */
         }
-
-        String date = (String) getMeta(" PVScan date");
 
         if (date != null) {
           SimpleDateFormat parse = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
@@ -361,14 +376,15 @@ public class PrairieReader extends FormatReader {
           SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
           date = fmt.format(d);
         }
-        store.setImage(null, date, null, null);
+        store.setImageCreationDate(date, 0);
 
-        String laserPower = (String) getMeta("laserPower_0");
+        /*
+        if (laserPower != null) {
+          store.setLaserPower(new Float(laserPower), 0, 0);
+        }
+        */
 
-        store.setLaser(null, null, null, null, null, null,
-          laserPower == null ? null : new Float(laserPower),
-          null, null, null, null);
-
+        // CTR CHECK
         /*
         String zoom = (String) getMeta("opticalZoom");
         if (zoom != null) {

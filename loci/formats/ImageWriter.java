@@ -28,6 +28,7 @@ import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.util.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * ImageWriter is the master file format writer for all supported formats.

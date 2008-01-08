@@ -20,69 +20,69 @@ tab {
     field {
       name "Name"
       type "var"
-      valueMap "Image:Name"
+      valueMap "ImageName"
     }
 
     field {
       name "Creation Date"
       type "var"
-      valueMap "Image:CreationDate"
+      valueMap "ImageCreationDate"
     }
 
     field {
       name "Description"
       type "var"
-      valueMap "Image:Description"
+      valueMap "ImageDescription"
     }
 
     field {
       name "Width"
       type "int"
-      valueMap "Image:CustomAttributes:Pixels:SizeX"
+      valueMap "PixelsSizeX(0)"
     }
-  
+
     field {
       name "Height"
       type "int"
-      valueMap "Image:CustomAttributes:Pixels:SizeY"
+      valueMap "PixelsSizeY(0)"
     }
- 
+
     field {
       name "Number of slices"
       type "int"
-      valueMap "Image:CustomAttributes:Pixels:SizeZ"
+      valueMap "PixelsSizeZ(0)"
     }
 
     field {
       name "Number of channels"
       type "int"
-      valueMap "Image:CustomAttributes:Pixels:SizeC"
+      valueMap "PixelsSizeC(0)"
     }
 
     field {
       name "Number of timepoints"
       type "int"
-      valueMap "Image:CustomAttributes:Pixels:SizeT"
+      valueMap "PixelsSizeT(0)"
     }
-  
+
     field {
       name "Big Endian"
       type "bool"
       default "false"
-      valueMap "Image:CustomAttributes:Pixels:BigEndian"
+      valueMap "PixelsBigEndian(0)"
     }
 
     field {
       name "Pixel Type"
       type "var"
-      valueMap "Image:CustomAttributes:Pixels:PixelType"
+      valueMap "PixelsPixelType(0)"
     }
-  
+
     field {
       name "Thumbnail"
       type "thumbnail"
     }
-  
+
   }
 }
 
@@ -93,20 +93,20 @@ tab {
   field {
     name "First Name"
     type "var"
-    valueMap "CustomAttributes:Experimenter:FirstName"
+    valueMap "ExperimenterFirstName(0)"
   }
 
   field {
     name "Last Name"
     type "var"
-    valueMap "CustomAttributes:Experimenter:LastName"
+    valueMap "ExperimenterLastName(0)"
   }
 
   field {
     name "Email"
     type "var"
-    span "1,3" 
-    valueMap "CustomAttributes:Experimenter:Email"
+    span "1,3"
+    valueMap "ExperimenterEmail(0)"
   }
 }
 
@@ -115,12 +115,12 @@ tab {
 
   grid "1,2"
 
-  field {
-    nameMap "Image:CustomAttributes:OriginalMetadata:name-0,0"
-    valueMap "Image:CustomAttributes:OriginalMetadata:value-0,0"
-    repeated "true" 
-    type "var" 
-    grid "1,1" 
-  }
+  #field {
+  #  nameMap "Image:CustomAttributes:OriginalMetadata:name-0,0"
+  #  valueMap "Image:CustomAttributes:OriginalMetadata:value-0,0"
+  #  repeated "true" 
+  #  type "var" 
+  #  grid "1,1" 
+  #}
 
 }

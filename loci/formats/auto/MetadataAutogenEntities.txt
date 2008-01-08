@@ -1,5 +1,5 @@
 #
-# MetadataAutogenNodes.txt
+# MetadataAutogenEntities.txt
 #
 
 # LOCI Bio-Formats package for reading and converting biological file formats.
@@ -22,7 +22,7 @@
 
 # Add new metadata entity and property definitions to this file.
 
-# Path key:
+# Path key and syntax notes:
 # 1) Elements ending in plus (+) have maxOccurs > 1 and generate an index
 #    parameter to allow differentiation between them.
 # 2) Elements beginning with at (@) are not direct children of the previous
@@ -37,6 +37,9 @@
 # 5) Attributes starting with small case indicate a method prefix other than
 #    "get" -- e.g., "isTunable" overrides default "getTunable" method name.
 
+
+### Entities for 5D Image information ###
+
 [Image]
 an image in the metadata store with a particular index
 -
@@ -46,41 +49,20 @@ String CreationDate  the creation date of the image
 *2003FC: Created
 String Description   the full description of the image
 
-[Experimenter]
-an experimenter in the metadata store with a particular index
+[Pixels]
+a pixels set in the metadata store with a particular image and pixels index
 -
-Default: Experimenter+
-2003FC: CA/Experimenter+
-String FirstName      the first name of the experimenter
-String LastName       the last name of the experimenter
-String Email          the e-mail address of the experimenter
-String Institution    the institution to which the experimenter belongs
-String DataDirectory  the fully qualified path to the experimenter's data
-*200706: -
-#CTR TODO - complexify
-#GroupIndex Group      the group to which the experimenter belongs
-
-[Group]
-a group in the metadata store with a particular index
--
-Default: Group+
-2003FC: CA/Group+
-String Name                the name of the group
-#CTR START HERE
-#ExperimenterIndex Leader   the leader of the group
-#ExperimenterIndex Contact  the contact for the group
-
-#CTR TODO - Instrument shouldn't have any attributes directly... right?
-#           so why are they in the 2003 FC CA schema...?
-#[Instrument]
-#an instrument in the metadata store with a particular index
-#-
-#Default: Instrument+
-#2003FC: CA/Instrument+
-#String Manufacturer  the name of the manufacturer
-#String Model         the model number of the instrument
-#String SerialNumber  the serial number of the instrument
-#String Type          the type of the instrument
+Default: Image+/Pixels+
+2003FC: Image+/CA/Pixels+
+Integer SizeX          size of an individual plane or section's X axis (width)
+Integer SizeY          size of an individual plane of section's Y axis (height)
+Integer SizeZ          number of optical sections per stack
+Integer SizeC          number of channels per timepoint
+Integer SizeT          number of timepoints
+String PixelType       the pixel type
+Boolean BigEndian      if the pixels set is big endian or not
+*2003FC: isBigEndian
+String DimensionOrder  the dimension order of the pixels set
 
 [Dimensions]
 a set of pixel dimensions in the metadata store with a particular index
@@ -100,113 +82,15 @@ Integer WaveStart      starting wavelength in nanometers
 Integer WaveIncrement  distance between adjacent wavelengths in nanometers
 *2003FC: PixelSizeC%
 
-[DisplayROI]
-a 5D bounding box region of interest and a set of display options in the metadata store with a particular index
+[ImagingEnvironment]
+the imaging environment for a particular image
 -
-Default: Image+/DisplayOptions/ROI+
-2003FC: Image+/CA/DisplayROI+
-Integer X0                          the starting X coordinate
-Integer Y0                          the starting Y coordinate
-Integer Z0                          the starting Z coordinate
-Integer T0                          the starting timepoint
-Integer X1                          the ending X coordinate
-Integer Y1                          the ending Y coordinate
-Integer Z1                          the ending Z coordinate
-Integer T1                          the ending timepoint
-#CTR TODO - complexify
-#DisplayOptionsIndex DisplayOptions  the display options to attach to this region of interest
-
-[Pixels]
-a pixels set in the metadata store with a particular image and pixels index
--
-Default: Image+/Pixels+
-2003FC: Image+/CA/Pixels+
-Integer SizeX          size of an individual plane or section's X axis (width)
-Integer SizeY          size of an individual plane of section's Y axis (height)
-Integer SizeZ          number of optical sections per stack
-Integer SizeC          number of channels per timepoint
-Integer SizeT          number of timepoints
-String PixelType       the pixel type
-Boolean BigEndian      if the pixels set is big endian or not
-*2003FC: isBigEndian
-String DimensionOrder  the dimension order of the pixels set
-
-[StageLabel]
-a stage label in the metadata store with a particular index
--
-Default: Image+/StageLabel
-2003FC: Image+/CA/StageLabel
-String Name  a name for the stage label
-Float X      x coordinate of the stage
-Float Y      y coordinate of the stage
-Float Z      z coordinate of the stage
-
-[LogicalChannel]
-a logical channel and physical channel in the metadata store for a particular pixels
--
-Default: Image+/LogicalChannel+
-2003FC: Image+/CA/LogicalChannel+
-#CTR TODO - where has auxiliary light source gone...?
-#Integer AuxLightSource            the index of the auxiliary light source
-#Float AuxLightAttenuation         the auxiliary light source attenuation
-#String AuxTechnique               the auxiliary technique type
-#Integer AuxLightWavelength        the auxiliary light source wavelength
-String Name                            the logical channel's name
-Integer SamplesPerPixel                CTR TODO
-# CTR TODO - complexify
-#FilterIndex SecondaryEmissionFilter    CTR TODO
-# CTR TODO - complexify
-#FilterIndex SecondaryExcitationFilter  CTR TODO
-String IlluminationType                the illumination type
-Integer PinholeSize                    the size of the pinhole
-String PhotometricInterpretation       the photometric interpretation type
-String Mode                            the acquisition mode
-String ContrastMethod                  the constrast method name
-Integer ExWave                         the excitation wavelength
-*2003FC: ExcitationWavelength
-Integer EmWave                         the emission wavelength
-*2003FC: EmissionWavelength
-String Fluor                           the fluorescence type
-Float NdFilter                         the neutral-density filter value
-*2003FC: NDFilter
-Integer PockelCellSetting              CTR TODO
-*2003FC: -
-
-[LightSourceSettings]
-the light source associated with a particular logical channel
--
-Default: Image+/LogicalChannel+/LightSourceRef
-2003FC: Image+/CA/LogicalChannel+
-#CTR TODO - complexify
-#LightSourceIndex ID  the index of the primary light source
-*2003FC: LightSource
-Float Attenuation    the primary light source attenuation
-*2003FC: LightAttenuation
-Integer Wavelength   the primary light source wavelength
-*2003FC: LightWavelength
-
-#[OTFSettings]
-#the optical transfer function associated with a particular logical channel
-#-
-#Default: Image+/LogicalChannel+/OTFRef
-#2003FC: x
-#CTR TODO - complexify
-#OTFIndex OTF  the index of the OTF associated with this channel
-
-[DetectorSettings]
-the detector associated with a particular logical channel
--
-Default: Image+/LogicalChannel+/DetectorRef
-2003FC: Image+/CA/LogicalChannel+
-#CTR TODO - complexify
-#DetectorIndex Detector  the index of the detector associated with this channel
-Float Offset            the detector offset
-*2003FC: DetectorOffset
-Float Gain              the detector gain
-*2003FC: DetectorGain
-
-# CTR TODO - finish/add this - LogicalChannel/FilterSetRef
-#[ChannelFilterSet]
+Default: Image+/ImagingEnvironment
+2003FC: Image+/CA/ImagingEnvironment
+Float Temperature  CTR TODO
+Float AirPressure  CTR TODO
+Float Humidity     CTR TODO
+Float CO2Percent   CTR TODO
 
 [Plane]
 the plane information for a specific X-Y plane (section) within a particular pixels set
@@ -234,15 +118,61 @@ Float PositionX  the X coordinate of the stage position
 Float PositionY  the Y coordinate of the stage position
 Float PositionZ  the Z coordinate of the stage position
 
-[ImagingEnvironment]
-the imaging environment for a particular image
+
+### Entities for Instrument settings for a particular Image ###
+
+[LogicalChannel]
+a logical channel and physical channel in the metadata store for a particular pixels
 -
-Default: Image+/ImagingEnvironment
-2003FC: Image+/CA/ImagingEnvironment
-Float Temperature  CTR TODO
-Float AirPressure  CTR TODO
-Float Humidity     CTR TODO
-Float CO2Percent   CTR TODO
+Default: Image+/LogicalChannel+
+2003FC: Image+/CA/LogicalChannel+
+String Name                            the logical channel's name
+Integer SamplesPerPixel                CTR TODO
+String IlluminationType                the illumination type
+Integer PinholeSize                    the size of the pinhole
+String PhotometricInterpretation       the photometric interpretation type
+String Mode                            the acquisition mode
+String ContrastMethod                  the constrast method name
+Integer ExWave                         the excitation wavelength
+*2003FC: ExcitationWavelength
+Integer EmWave                         the emission wavelength
+*2003FC: EmissionWavelength
+String Fluor                           the fluorescence type
+Float NdFilter                         the neutral-density filter value
+*2003FC: NDFilter
+Integer PockelCellSetting              CTR TODO
+*2003FC: -
+
+[DetectorSettings]
+the detector associated with a particular logical channel
+-
+Default: Image+/LogicalChannel+/DetectorRef
+2003FC: Image+/CA/LogicalChannel+
+#CTR TODO - complexify
+#DetectorIndex Detector  the index of the detector associated with this channel
+Float Offset            the detector offset
+*2003FC: DetectorOffset
+Float Gain              the detector gain
+*2003FC: DetectorGain
+
+[LightSourceSettings]
+the light source associated with a particular logical channel
+-
+Default: Image+/LogicalChannel+/LightSourceRef
+2003FC: Image+/CA/LogicalChannel+
+#CTR TODO - complexify
+#LightSourceIndex ID  the index of the primary light source
+#*2003FC: LightSource
+Float Attenuation    the primary light source attenuation
+*2003FC: LightAttenuation
+Integer Wavelength   the primary light source wavelength
+*2003FC: LightWavelength
+
+
+### CTR TODO Unclassified Entities ###
+
+# CTR TODO - finish/add this - LogicalChannel/FilterSetRef
+#[ChannelFilterSet]
 
 #TODO figure out how to solve problem with multiple subtypes of ChannelSpecType 
 #[DisplayChannel]
@@ -255,12 +185,12 @@ Float CO2Percent   CTR TODO
 #Double WhiteLevel      CTR TODO
 #Float Gamma            CTR TODO
 
-[DisplayOptions]
-various display options for a particular pixels set
--
-Default: Image+/DisplayOptions
-2003FC: Image+/CA/DisplayOptions
-Float Zoom                CTR TODO
+#[DisplayOptions]
+#various display options for a particular pixels set
+#-
+#Default: Image+/DisplayOptions
+#2003FC: Image+/CA/DisplayOptions
+#Float Zoom                CTR TODO
 #TODO need to split this into separate blocks for each of R, G, B & maybe gray
 #Boolean isRedChannelOn    CTR TODO
 #Boolean isGreenChannelOn  CTR TODO
@@ -271,6 +201,45 @@ Float Zoom                CTR TODO
 #Integer ZStop             CTR TODO
 #Integer TStart            CTR TODO
 #Integer TStop             CTR TODO
+
+[DisplayROI]
+a 5D bounding box region of interest in the metadata store with a particular index
+-
+Default: Image+/DisplayOptions/ROI+
+2003FC: Image+/CA/DisplayROI+
+Integer X0                          the starting X coordinate
+Integer Y0                          the starting Y coordinate
+Integer Z0                          the starting Z coordinate
+Integer T0                          the starting timepoint
+Integer X1                          the ending X coordinate
+Integer Y1                          the ending Y coordinate
+Integer Z1                          the ending Z coordinate
+Integer T1                          the ending timepoint
+
+[StageLabel]
+a stage label in the metadata store with a particular index
+-
+Default: Image+/StageLabel
+2003FC: Image+/CA/StageLabel
+String Name  a name for the stage label
+Float X      x coordinate of the stage
+Float Y      y coordinate of the stage
+Float Z      z coordinate of the stage
+
+
+### Entities for Instrument hardware -- these DO NOT vary by Image ###
+
+#CTR TODO - Instrument shouldn't have any attributes directly... right?
+#           so why are they in the 2003 FC CA schema...?
+#[Instrument]
+#an instrument in the metadata store with a particular index
+#-
+#Default: Instrument+
+#2003FC: CA/Instrument+
+#String Manufacturer  the name of the manufacturer
+#String Model         the model number of the instrument
+#String SerialNumber  the serial number of the instrument
+#String Type          the type of the instrument
 
 [LightSource]
 a light source for a particular instrument
@@ -392,5 +361,20 @@ String Path                  CTR TODO
 *200706: -
 Boolean OpticalAxisAveraged  CTR TODO
 *2003FC: isOpticalAxisAverage
+
+
+### Entities for Experimenter details ###
+
+[Experimenter]
+an experimenter in the metadata store with a particular index
+-
+Default: Experimenter+
+2003FC: CA/Experimenter+
+String FirstName      the first name of the experimenter
+String LastName       the last name of the experimenter
+String Email          the e-mail address of the experimenter
+String Institution    the institution to which the experimenter belongs
+String DataDirectory  the fully qualified path to the experimenter's data
+*200706: -
 
 [-]

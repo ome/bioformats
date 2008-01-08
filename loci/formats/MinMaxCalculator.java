@@ -27,6 +27,7 @@ package loci.formats;
 import java.awt.image.*;
 import java.io.IOException;
 import java.util.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Logic to compute minimum and maximum values for each channel.
@@ -287,8 +288,9 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (minMaxDone[series] == getImageCount()) {
       MetadataStore store = getMetadataStore();
       for (int c=0; c<getSizeC(); c++) {
-        store.setChannelGlobalMinMax(c, new Double(chanMin[series][c]),
-          new Double(chanMax[series][c]), new Integer(getSeries()));
+        // CTR FIXME
+//        store.setChannelGlobalMinMax(c, new Double(chanMin[series][c]),
+//          new Double(chanMax[series][c]), new Integer(getSeries()));
       }
     }
   }
@@ -359,8 +361,9 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (minMaxDone[getSeries()] == getImageCount()) {
       MetadataStore store = getMetadataStore();
       for (int c=0; c<getSizeC(); c++) {
-        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries()][c]),
-          new Double(chanMax[getSeries()][c]), new Integer(getSeries()));
+        // CTR FIXME
+//        store.setChannelGlobalMinMax(c, new Double(chanMin[getSeries()][c]),
+//          new Double(chanMax[getSeries()][c]), new Integer(getSeries()));
       }
     }
   }

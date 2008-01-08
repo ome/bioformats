@@ -37,8 +37,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import loci.formats.*;
 import loci.formats.in.*;
+import loci.formats.ome.OMEXML2003FCMetadata;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.*;
+import ome.xml.DOMUtil;
+import ome.xml.OMEXMLNode;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
@@ -500,7 +503,7 @@ public class MetadataPane extends JPanel
     if (currentFile != null) {
       String id = currentFile.getPath();
       ImageReader read = new ImageReader();
-      OMEXMLMetadata oms = new OMEXMLMetadata();
+      OMEXMLMetadata oms = new OMEXML2003FCMetadata();
       read.setMetadataStore(oms);
 
       try {
@@ -761,7 +764,7 @@ public class MetadataPane extends JPanel
 
       try {
         reader = new ImageReader();
-        ms = new OMEXMLMetadata();
+        ms = new OMEXML2003FCMetadata();
 
         // tell reader to write metadata as it's being
         // parsed to an OMENode (DOM in memory)
@@ -1066,8 +1069,8 @@ public class MetadataPane extends JPanel
         inOmeList = ome.getChildNodes(aName);
       }
       else {
-        if (ome.getChild("CustomAttributes") != null)
-          inOmeList = ome.getChild("CustomAttributes").getChildNodes(aName);
+        if (ome.getChildNode("CustomAttributes") != null)
+          inOmeList = ome.getChildNode("CustomAttributes").getChildNodes(aName);
       }
       int vSize = 0;
       if (inOmeList != null) vSize = inOmeList.size();
@@ -1277,9 +1280,9 @@ public class MetadataPane extends JPanel
           {
             v = DOMUtil.getChildElements(aName, tp.oNode.getDOMElement());
           }
-          else if (tp.oNode.getChild("CustomAttributes") != null) {
+          else if (tp.oNode.getChildNode("CustomAttributes") != null) {
             v = DOMUtil.getChildElements(aName,
-              tp.oNode.getChild("CustomAttributes").getDOMElement());
+              tp.oNode.getChildNode("CustomAttributes").getDOMElement());
           }
 
           if (v.size() == 0) {
@@ -1527,7 +1530,7 @@ public class MetadataPane extends JPanel
         n = (OMEXMLNode) r.getVar("result");
       }
       else {
-        caNode = (CustomAttributesNode) parent.getChild("CustomAttributes");
+        caNode = (CustomAttributesNode) parent.getChildNode("CustomAttributes");
         if (caNode != null) {
           r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
           r.exec("import org.openmicroscopy.xml.st." +

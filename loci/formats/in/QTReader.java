@@ -30,6 +30,7 @@ import java.util.Vector;
 import java.util.zip.*;
 import loci.formats.*;
 import loci.formats.codec.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * QTReader is the file format reader for QuickTime movie files.
@@ -352,14 +353,16 @@ public class QTReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null);
-    }
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null);
+//    }
 
     // this handles the case where the data and resource forks have been
     // separated

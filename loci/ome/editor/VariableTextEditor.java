@@ -37,7 +37,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.DefaultStyledDocument;
-import org.openmicroscopy.xml.DOMUtil;
+import ome.xml.DOMUtil;
 
 /**
  * An abstract superclass that will be extended by the cell editors

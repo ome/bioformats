@@ -39,19 +39,19 @@ tab {
   field {
     name "First name"
     type "var"
-    valueMap "CustomAttributes:Experimenter:FirstName" 
+    valueMap "ExperimenterFirstName(0)"
   }
 
   field {
     name "Last name"
     type "var"
-    valueMap "CustomAttributes:Experimenter:LastName" 
+    valueMap "ExperimenterLastName(0)"
   }
 
   field {
     name "Email"
     type "var"
-    valueMap "CustomAttributes:Experimenter:Email" 
+    valueMap "ExperimenterEmail(0)"
   }
 
   field {
@@ -66,24 +66,24 @@ tab {
   group {
     count "2"
     name "Image"
-    
+
     field {
       name "Image Name"
       type "var"
-      valueMap "Image:Name" 
+      valueMap "ImageName(0)"
     }
 
     field {
       name "Size Z"
       type "int"
-      valueMap "Image:CustomAttributes:Pixels:SizeZ"
+      valueMap "PixelsSizeZ(0, 0)"
     }
 
     field {
       name "Big Endian"
       type "bool"
       default "false"
-      valueMap "Image:CustomAttributes:Pixels:BigEndian" 
+      valueMap "PixelsBigEndian(0, 0)"
     }
 
     field {
@@ -91,7 +91,7 @@ tab {
       type "enum"
       values {"uint8", "uint16", "float"}
       default "float"
-      valueMap "Image:CustomAttributes:Pixels:PixelType" 
+      valueMap "PixelsPixelType(0, 0)"
     }
   }
 }

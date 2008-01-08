@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
@@ -184,13 +185,16 @@ public class PCIReader extends FormatReader {
       core.metadataComplete[0] = true;
 
       MetadataStore store = getMetadataStore();
-      FormatTools.populatePixels(store, this);
-      store.setImage(null, null, null, null);
-      for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null);
-      }
+      store.setImageName("", 0);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+      MetadataTools.populatePixels(store, this);
+      // CTR CHECK
+//      for (int i=0; i<core.sizeC[0]; i++) {
+//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null);
+//      }
     }
     catch (ReflectException exc) {
       noPOI = true;

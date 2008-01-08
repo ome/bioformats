@@ -36,7 +36,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
 import visad.util.Util;
@@ -389,7 +390,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // get number of images and OME-XML metadata from the first file
     int numImages = 0;
     ImageReader reader = new ImageReader();
-    OMEXMLMetadata store = new OMEXMLMetadata();
+    MetadataStore store = MetadataTools.createOMEXMLMetadata();
     reader.setMetadataStore(store);
     try {
       reader.setId(ids[0]);
@@ -411,9 +412,10 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     }
 
     // get physical pixel sizes (if any)
-    Float pixX = store.getPixelSizeX(null);
-    Float pixY = store.getPixelSizeY(null);
-    Float pixZ = store.getPixelSizeZ(null);
+    MetadataRetrieve retrieve = (MetadataRetrieve) store;
+    Float pixX = retrieve.getDimensionsPhysicalSizeX(0, 0);
+    Float pixY = retrieve.getDimensionsPhysicalSizeY(0, 0);
+    Float pixZ = retrieve.getDimensionsPhysicalSizeZ(0, 0);
 
     // get dimensional axis lengths
     int sizeX = reader.getSizeX();

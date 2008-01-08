@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * IPWReader is the file format reader for Image-Pro Workspace (IPW) files.
@@ -252,7 +253,8 @@ public class IPWReader extends BaseTiffReader {
       }
     }
 
-    addMeta("Version", new String(header).trim());
+    String version = new String(header).trim();
+    addMeta("Version", version);
 
     Hashtable h = ifds[0];
     core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
@@ -329,14 +331,19 @@ public class IPWReader extends BaseTiffReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
-    FormatTools.populatePixels(store, this);
-    store.setImage(null, null, (String) getMeta("Version"), null);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
-    }
+    MetadataTools.populatePixels(store, this);
+    store.setImageDescription(version, 0);
+
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null);
+//    }
   }
 
   // -- Internal FormatReader API methods --

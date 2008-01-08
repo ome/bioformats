@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * LegacyQTReader is a file format reader for QuickTime movie files.
@@ -226,14 +227,17 @@ public class LegacyQTReader extends FormatReader {
       core.falseColor[0] = false;
 
       MetadataStore store = getMetadataStore();
-      store.setImage(null, null, null, null);
-      FormatTools.populatePixels(store, this);
+      store.setImageName("", 0);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+      MetadataTools.populatePixels(store, this);
 
-      for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null);
-      }
+      // CTR CHECK
+//      for (int i=0; i<core.sizeC[0]; i++) {
+//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null);
+//      }
     }
     catch (ReflectException e) {
       throw new FormatException("Open movie failed", e);

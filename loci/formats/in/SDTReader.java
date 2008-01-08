@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * SDTReader is the file format reader for
@@ -222,13 +223,16 @@ public class SDTReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null);
-    }
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null);
+//    }
   }
 
   // -- Deprecated API methods --

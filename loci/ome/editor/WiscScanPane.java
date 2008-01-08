@@ -23,23 +23,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.editor;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
-
-import java.util.Vector;
-import java.util.Arrays;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Arrays;
+import java.util.Vector;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import ome.xml.DOMUtil;
+import ome.xml.OMEXMLNode;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
@@ -567,8 +566,8 @@ public class WiscScanPane extends JTabbedPane
         tiEle = newNode.getDOMElement();
       }
       else {
-        if (ome.getChild("CustomAttributes") != null) {
-          Node thisNode = (Node) ome.getChild(
+        if (ome.getChildNode("CustomAttributes") != null) {
+          Node thisNode = (Node) ome.getChildNode(
             "CustomAttributes").getDOMElement();
           thisNode.removeChild((Node)tiEle);
           tiEle = null;
@@ -584,8 +583,8 @@ public class WiscScanPane extends JTabbedPane
         phEle = newNode.getDOMElement();
       }
       else {
-        if (ome.getChild("CustomAttributes") != null) {
-          Node thisNode = (Node) ome.getChild(
+        if (ome.getChildNode("CustomAttributes") != null) {
+          Node thisNode = (Node) ome.getChildNode(
             "CustomAttributes").getDOMElement();
           thisNode.removeChild((Node)phEle);
           phEle = null;
@@ -602,8 +601,8 @@ public class WiscScanPane extends JTabbedPane
         pmtT.setEnabled(true);
       }
       else {
-        if (ome.getChild("CustomAttributes") != null) {
-          Node thisNode = (Node) ome.getChild(
+        if (ome.getChildNode("CustomAttributes") != null) {
+          Node thisNode = (Node) ome.getChildNode(
             "CustomAttributes").getDOMElement();
           thisNode.removeChild((Node)pmtEle);
           pmtEle = null;

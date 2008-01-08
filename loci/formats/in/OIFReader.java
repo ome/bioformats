@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * OIFReader is the file format reader for Fluoview FV 1000 OIF files.
@@ -355,7 +356,6 @@ public class OIFReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
 
     switch (imageDepth) {
       case 1:
@@ -379,15 +379,13 @@ public class OIFReader extends FormatReader {
     core.indexed[0] = tiffReader[0].isIndexed();
     core.falseColor[0] = false;
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
     prefix = "[Reference Image Parameter] - ";
     String px = (String) getMeta(prefix + "WidthConvertValue");
     String py = (String) getMeta(prefix + "HeightConvertValue");
-    Float pixX = null, pixY = null;
-    if (px != null) pixX = new Float(px);
-    if (py != null) pixY = new Float(py);
-    store.setDimensions(pixX, pixY, null, null, null, null);
+    if (px != null) store.setDimensionsPhysicalSizeX(new Float(px), 0, 0);
+    if (py != null) store.setDimensionsPhysicalSizeY(new Float(py), 0, 0);
 
     for (int i=0; i<core.sizeC[0]; i++) {
       prefix = "[Channel " + (i+1) + " Parameters] - ";
@@ -404,21 +402,30 @@ public class OIFReader extends FormatReader {
       if (voltage != null) voltage.replaceAll("\"", "");
       if (offset != null) offset.replaceAll("\"", "");
 
-      if (voltage != null) {
-        store.setDetector(null, null, null, null, null, new Float(voltage),
-          null, null, new Integer(i));
+      // CTR CHECK
+      if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
+
+      // populate DetectorSettings
+      if (offset != null) {
+        store.setDetectorSettingsOffset(new Float(offset), 0, i);
+      }
+      if (gain != null) {
+        store.setDetectorSettingsGain(new Float(gain), 0, i);
       }
 
-      store.setLogicalChannel(i, name, null, null, null, null, null, null,
-        null, offset == null ? null : new Float(offset),
-        gain == null ? null : new Float(gain), null, null, null, null, null,
-        null, null, null, null, emWave == null ? null : new Integer(emWave),
-        exWave == null ? null : new Integer(exWave), null, null, null);
+      // populate LogicalChannel
+      if (emWave != null) {
+        store.setLogicalChannelEmWave(new Integer(emWave), 0, i);
+      }
+      if (exWave != null) {
+        store.setLogicalChannelExWave(new Integer(exWave), 0, i);
+      }
     }
 
     String mag = (String) getMeta("Image 0 : Magnification");
     if (mag != null) {
-      store.setObjective(null, null, null, null, new Float(mag), null, null);
+      // CTR CHECK
+      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     }
 
     String num =
@@ -428,10 +435,8 @@ public class OIFReader extends FormatReader {
       for (int i=0; i<numLasers; i++) {
         String wave = (String) getMeta("[Acquisition Parameters Common] - " +
           "LaserWavelength0" + (i+1));
-        if (wave != null) {
-          store.setLaser(null, null, new Integer(wave), null, null, null, null,
-            null, null, null, new Integer(i));
-        }
+        // CTR CHECK
+        if (wave != null) store.setLaserWavelength(new Integer(wave), 0, i);
       }
     }
   }

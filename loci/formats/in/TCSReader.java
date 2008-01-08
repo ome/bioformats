@@ -30,6 +30,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.in.TiffReader;
+import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -210,9 +211,9 @@ public class TCSReader extends FormatReader {
       String xml = prefix + in.readString((int) in.length()) + suffix;
 
       for (int i=0; i<xml.length(); i++) {
-        char c = xml.charAt(i);
-        if (Character.isISOControl(c) || !Character.isDefined(c)) {
-          xml = xml.replace(c, ' ');
+        char ch = xml.charAt(i);
+        if (Character.isISOControl(ch) || !Character.isDefined(ch)) {
+          xml = xml.replace(ch, ' ');
         }
       }
 
@@ -296,19 +297,23 @@ public class TCSReader extends FormatReader {
       MetadataStore store = getMetadataStore();
 
       for (int i=0; i<x.size(); i++) {
-        store.setImage((String) seriesNames.get(i), null, null, new Integer(i));
+        store.setImageName((String) seriesNames.get(i), i);
+        store.setImageCreationDate(
+          DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
       }
 
-      FormatTools.populatePixels(store, this);
+      MetadataTools.populatePixels(store, this);
 
       for (int i=0; i<x.size(); i++) {
-        for (int cc=0; cc<core.sizeC[i]; cc++) {
-          store.setLogicalChannel(cc, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, 
-            null, null, null, null, null, null, null, null, new Integer(i));
-        }
-        store.setDimensions((Float) xcal.get(i), (Float) ycal.get(i),
-          (Float) zcal.get(i), null, null, new Integer(i));
+        // CTR CHECK
+//        for (int cc=0; cc<core.sizeC[i]; cc++) {
+//          store.setLogicalChannel(cc, null, null, null, null, null, null, null,
+//            null, null, null, null, null, null, null, null, 
+//            null, null, null, null, null, null, null, null, new Integer(i));
+//        }
+        store.setDimensionsPhysicalSizeX((Float) xcal.get(i), i, 0);
+        store.setDimensionsPhysicalSizeY((Float) ycal.get(i), i, 0);
+        store.setDimensionsPhysicalSizeZ((Float) zcal.get(i), i, 0);
       }
     }
     else {
@@ -335,8 +340,8 @@ public class TCSReader extends FormatReader {
         if (document == null) continue;
 
         int index = document.indexOf("INDEX");
-        String c = document.substring(8, index).trim();
-        ch[i] = Integer.parseInt(c);
+        String s = document.substring(8, index).trim();
+        ch[i] = Integer.parseInt(s);
         if (ch[i] > channelCount) channelCount = ch[i];
 
         String n = document.substring(index + 6,

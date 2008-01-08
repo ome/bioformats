@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ImprovisionTiffReader is the file format reader for
@@ -42,6 +43,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   private String[] cNames;
   private int pixelSizeT;
+  private float pixelSizeX, pixelSizeY, pixelSizeZ;
 
   // -- Constructor --
 
@@ -91,7 +93,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     put("Improvision", "yes");
 
     // parse key/value pairs in the comment
-    String comment = (String) getMeta("Comment");
+    String comment = TiffTools.getComment(ifds[0]);
+    String tz = null, tc = null, tt = null;
     if (comment != null) {
       StringTokenizer st = new StringTokenizer(comment, "\n");
       while (st.hasMoreTokens()) {
@@ -101,13 +104,21 @@ public class ImprovisionTiffReader extends BaseTiffReader {
         String key = line.substring(0, equals);
         String value = line.substring(equals + 1);
         addMeta(key, value);
+        if (key.equals("TotalZPlanes")) tz = value;
+        else if (key.equals("TotalChannels")) tc = value;
+        else if (key.equals("TotalTimepoints")) tt = value;
+        else if (key.equals("XCalibrationMicrons")) {
+          pixelSizeX = Float.parseFloat(value);
+        }
+        else if (key.equals("YCalibrationMicrons")) {
+          pixelSizeY = Float.parseFloat(value);
+        }
+        else if (key.equals("ZCalibrationMicrons")) {
+          pixelSizeZ = Float.parseFloat(value);
+        }
       }
       metadata.remove("Comment");
     }
-
-    String tz = (String) getMeta("TotalZPlanes");
-    String tc = (String) getMeta("TotalChannels");
-    String tt = (String) getMeta("TotalTimepoints");
 
     if (tz == null) tz = "1";
     if (tc == null) tc = "1";
@@ -198,15 +209,14 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   protected void initMetadataStore() {
     super.initMetadataStore();
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
-    float fx = Float.parseFloat((String) getMeta("XCalibrationMicrons"));
-    float fy = Float.parseFloat((String) getMeta("YCalibrationMicrons"));
-    float fz = Float.parseFloat((String) getMeta("ZCalibrationMicrons"));
-
-    store.setDimensions(new Float(fx), new Float(fy), new Float(fz),
-      null, new Float(pixelSizeT / 1000000.0), null);
+    store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
+    store.setDimensionsTimeIncrement(new Float(pixelSizeT / 1000000.0), 0, 0);
   }
 
 }

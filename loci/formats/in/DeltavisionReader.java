@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
@@ -315,6 +316,9 @@ public class DeltavisionReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
     in.seek(224);
 
@@ -336,27 +340,45 @@ public class DeltavisionReader extends FormatReader {
     extHdrFields =
       new DVExtHdrFields[core.sizeZ[0]][core.sizeC[0]][core.sizeT[0]];
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
-    store.setDimensions(new Float(pixX), new Float(pixY), new Float(pixZ),
-      null, null, null);
+    store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(pixZ), 0, 0);
 
     if (title == null) title = "";
     title = title.length() == 0 ? null : title;
-    store.setImage(null, null, title, null);
+    store.setImageDescription(title, 0);
 
     // Run through every timeslice, for each wavelength, for each z section
     // and fill in the Extended Header information array for that image
+    int p = 0;
+    int offset = HEADER_LENGTH + numIntsPerSection * 4;
     for (int z=0; z<core.sizeZ[0]; z++) {
       for (int t=0; t<core.sizeT[0]; t++) {
         for (int w=0; w<core.sizeC[0]; w++) {
-          in.seek(HEADER_LENGTH);
-          extHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z, w, t),
-            numIntsPerSection, in, core.littleEndian[0]);
+          in.seek(offset + getTotalOffset(z, w, t));
+          extHdrFields[z][w][t] = new DVExtHdrFields(in);
 
-          store.setPlaneInfo(z, w, t,
+          // plane timing
+          store.setPlaneTheZ(new Integer(z), 0, 0, p);
+          store.setPlaneTheC(new Integer(w), 0, 0, p);
+          store.setPlaneTheT(new Integer(t), 0, 0, p);
+          store.setPlaneTimingDeltaT(
             new Float(extHdrFields[z][w][t].getTimeStampSeconds()),
-            new Float(extHdrFields[z][w][t].getExpTime()), null);
+            0, 0, p);
+          store.setPlaneTimingExposureTime(
+            new Float(extHdrFields[z][w][t].getExpTime()), 0, 0, p);
+
+          // stage position
+          store.setStagePositionPositionX(
+            new Float(extHdrFields[z][w][t].getStageXCoord()), 0, 0, p);
+          store.setStagePositionPositionY(
+            new Float(extHdrFields[z][w][t].getStageYCoord()), 0, 0, p);
+          store.setStagePositionPositionZ(
+            new Float(extHdrFields[z][w][t].getStageZCoord()), 0, 0, p);
+
+          p++;
         }
       }
     }
@@ -364,40 +386,34 @@ public class DeltavisionReader extends FormatReader {
     status("Populating metadata");
 
     for (int w=0; w<core.sizeC[0]; w++) {
-      store.setLogicalChannel(w, null, null, null, null, null, null, null, null,
-        null, null, null, null, "Monochrome", "Wide-field", null, null, null,
-        null, null, new Integer(waves[w]),
-        new Integer((int) extHdrFields[0][w][0].getExFilter()), null,
-        new Float(extHdrFields[0][w][0].getNdFilter()), null);
-    }
+      store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
+      store.setLogicalChannelExWave(
+        new Integer((int) extHdrFields[0][w][0].getExFilter()), 0, w);
+      store.setLogicalChannelNdFilter(
+        new Float(extHdrFields[0][w][0].getNdFilter()), 0, w);
 
-    store.setStageLabel("ome",
-      new Float(extHdrFields[0][0][0].getStageXCoord()),
-      new Float(extHdrFields[0][0][0].getStageYCoord()),
-      new Float(extHdrFields[0][0][0].getStageZCoord()), null);
-
-    if (core.sizeC[0] > 0) {
-      store.setChannelGlobalMinMax(0, new Double(wave1Min.floatValue()),
-        new Double(wave1Max.floatValue()), null);
+    // CTR CHECK
+//    if (core.sizeC[0] > 0) {
+//      store.setChannelGlobalMinMax(0, new Double(wave1Min.floatValue()),
+//        new Double(wave1Max.floatValue()), null);
+//    }
+//    if (core.sizeC[0] > 1) {
+//      store.setChannelGlobalMinMax(1, new Double(wave2Min.floatValue()),
+//        new Double(wave2Max.floatValue()), null);
+//    }
+//    if (core.sizeC[0] > 2) {
+//      store.setChannelGlobalMinMax(2, new Double(wave3Min.floatValue()),
+//        new Double(wave3Max.floatValue()), null);
+//    }
+//    if (core.sizeC[0] > 3) {
+//      store.setChannelGlobalMinMax(3, new Double(wave4Min.floatValue()),
+//        new Double(wave4Max.floatValue()), null);
+//    }
+//    if (core.sizeC[0] > 4) {
+//      store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()),
+//        new Double(wave5Max.floatValue()), null);
+//    }
     }
-    if (core.sizeC[0] > 1) {
-      store.setChannelGlobalMinMax(1, new Double(wave2Min.floatValue()),
-        new Double(wave2Max.floatValue()), null);
-    }
-    if (core.sizeC[0] > 2) {
-      store.setChannelGlobalMinMax(2, new Double(wave3Min.floatValue()),
-        new Double(wave3Max.floatValue()), null);
-    }
-    if (core.sizeC[0] > 3) {
-      store.setChannelGlobalMinMax(3, new Double(wave4Min.floatValue()),
-        new Double(wave4Max.floatValue()), null);
-    }
-    if (core.sizeC[0] > 4) {
-      store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()),
-        new Double(wave5Max.floatValue()), null);
-    }
-
-    //store.setDefaultDisplaySettings(null);
   }
 
   // -- Helper methods --
@@ -550,32 +566,8 @@ public class DeltavisionReader extends FormatReader {
       return s;
     }
 
-    /**
-     * Given the starting offset of a specific entry in the extended header
-     * this method will go through each element in the entry and fill each
-     * element's variable with its extended header value.
-     * @param startingOffset
-     * @param numIntsPerSection
-     * @param in
-     * @param little
-     */
-    protected DVExtHdrFields(int startingOffset, int numIntsPerSection,
-      RandomAccessStream in, boolean little)
-    {
+    protected DVExtHdrFields(RandomAccessStream in) {
       try {
-        long fp = in.getFilePointer();
-        // skip over the int values that have nothing in them
-        offsetWithInts = startingOffset + (numIntsPerSection * 4);
-
-        // DV files store the ND (neuatral density) Filter
-        // (normally expressed as a %T (transmittance)) as an OD
-        // (optical density) rating.
-        // To convert from one to the other the formula is %T = 10^(-OD) X 100.
-        in.skipBytes(offsetWithInts + 36);
-        oDFilter = in.readFloat();
-
-        // fill in the extended header information for the floats
-        in.seek(fp + offsetWithInts);
         photosensorReading = in.readFloat();
         timeStampSeconds = in.readFloat();
         stageXCoord = in.readFloat();
@@ -583,11 +575,14 @@ public class DeltavisionReader extends FormatReader {
         stageZCoord = in.readFloat();
         minInten = in.readFloat();
         maxInten = in.readFloat();
-        meanInten = in.readFloat();
         expTime = in.readFloat();
-        ndFilter = (float) Math.pow(10.0, -oDFilter);
         in.skipBytes(4);
 
+        // DV files store the ND (neuatral density) Filter
+        // (normally expressed as a %T (transmittance)) as an OD
+        // (optical density) rating.
+        // To convert from one to the other the formula is %T = 10^(-OD) X 100.
+        ndFilter = (float) Math.pow(10.0, -1 * in.readFloat());
         exFilter = in.readFloat();
         emFilter = in.readFloat();
         exWavelen = in.readFloat();

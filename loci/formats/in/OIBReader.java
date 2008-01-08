@@ -28,6 +28,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * OIBReader is the file format reader for Fluoview FV1000 OIB files.
@@ -389,7 +390,7 @@ public class OIBReader extends FormatReader {
     String name = (String) getMeta("[File Info] - DataName");
     if (name == null) name = currentId;
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<width.size(); i++) {
       String acquisition = "[Acquisition Parameters Common] - ";
@@ -404,14 +405,15 @@ public class OIBReader extends FormatReader {
         stamp = fmt.format(date);
       }
 
-      store.setImage(name, stamp, null, new Integer(i));
+      store.setImageName(name, i);
+      store.setImageCreationDate(stamp, i);
 
       String pre = "[Reference Image Parameter] - ";
       String x = (String) getMeta(pre + "WidthConvertValue");
       String y = (String) getMeta(pre + "HeightConvertValue");
+      if (x != null) store.setDimensionsPhysicalSizeX(new Float(x), i, 0);
+      if (y != null) store.setDimensionsPhysicalSizeY(new Float(y), i, 0);
 
-      store.setDimensions(x == null ? null : new Float(x),
-        y == null ? null : new Float(y), null, null, null, new Integer(i));
       for (int j=0; j<core.sizeC[i]; j++) {
         String prefix = "[Channel " + (j + 1) + " Parameters] - ";
         String gain = (String) getMeta(prefix + "AnalogPMTGain");
@@ -422,13 +424,17 @@ public class OIBReader extends FormatReader {
         if (offset != null) offset = offset.replaceAll("\"", "");
         if (voltage != null) voltage = voltage.replaceAll("\"", "");
 
-        store.setDetector(null, null, null, null, null, voltage == null ? null :
-          new Float(voltage), null, null, new Integer(j));
+        // populate Detector
+        // CTR CHECK
+        if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, j);
 
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, offset == null ? null : new Float(offset),
-          gain == null ? null : new Float(gain), null, null, null, null, null,
-          null, null, null, null, null, null, null, null, new Integer(i));
+        // populate DetectorSettings
+        if (offset != null) {
+          store.setDetectorSettingsOffset(new Float(offset), 0, j);
+        }
+        if (gain != null) {
+          store.setDetectorSettingsGain(new Float(gain), 0, j);
+        }
       }
 
       String laserCount = (String) getMeta(acquisition + "Number of use Laser");
@@ -438,8 +444,8 @@ public class OIBReader extends FormatReader {
         String wave =
           (String) getMeta(acquisition + "LaserWavelength0" + (j + 1));
         if (wave == null) wave = "0";
-        store.setLaser(null, null, new Integer(wave), null, null, null, null,
-          null, null, null, new Integer(j));
+        // CTR CHECK
+        store.setLaserWavelength(new Integer(wave), 0, j);
       }
     }
   }

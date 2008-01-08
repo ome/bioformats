@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * VisitechReader is the file format reader for Visitech XYS files.
@@ -245,17 +246,20 @@ public class VisitechReader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
     for (int i=0; i<numSeries; i++) {
-      store.setImage("Position " + i, null, null, new Integer(i));
+      store.setImageName("Position " + i, i);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
     }
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
-    for (int i=0; i<numSeries; i++) {
-      for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, new Integer(i));
-      }
-    }
+    // CTR CHECK
+//    for (int i=0; i<numSeries; i++) {
+//      for (int j=0; j<core.sizeC[i]; j++) {
+//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, new Integer(i));
+//      }
+//    }
   }
 
 }

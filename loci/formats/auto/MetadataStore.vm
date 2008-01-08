@@ -49,17 +49,25 @@ package loci.formats.meta;
  */
 public interface MetadataStore {
 
-#foreach ($entity in $entities)
-  /**
-   * $entity.doc()
-#foreach ($prop in $entity.props())
-   * @param $prop.varName() $prop.desc()
-#end
-#foreach ($prop in $entity.indices())
-   * @param $prop.varName() $prop.desc()
-#end
-   */
-  public void set$entity.name()($entity.argsList(true, true));
+  void createRoot();
 
-#end
+  Object getRoot();
+
+  void setRoot(Object root);
+#foreach ($entity in $entities)
+
+  // - $entity.name() property storage -
+#foreach ($prop in $entity.props())
+
+  /**
+   * Sets the $prop.name() property for $entity.doc()
+   * @param $prop.varName() $prop.desc()
+#foreach ($indexProp in $entity.indices())
+   * @param $indexProp.varName() $indexProp.desc()
+#end##foreach $indexProp
+   */
+  void set$entity.name()$prop.name()($prop.type() $prop.varName(), $entity.indicesList(true, true));
+#end##foreach $prop
+#end##foreach $entity
+
 }

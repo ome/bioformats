@@ -30,6 +30,7 @@ import java.nio.ShortBuffer;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
@@ -587,11 +588,12 @@ public abstract class BaseTiffReader extends FormatReader {
     try {
       // the metadata store we're working with
       MetadataStore store = getMetadataStore();
+      store.setImageName("", 0);
 
       // set the pixel values in the metadata store
-      FormatTools.populatePixels(store, this);
+      MetadataTools.populatePixels(store, this);
 
-      // populate Experimenter element
+      // populate Experimenter
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
       if (artist != null) {
         String firstName = null, lastName = null;
@@ -603,8 +605,9 @@ public abstract class BaseTiffReader extends FormatReader {
         }
         String email = (String)
           TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
-        store.setExperimenter(firstName, lastName, email,
-          null, null, null, null);
+        store.setExperimenterFirstName(firstName, 0);
+        store.setExperimenterLastName(lastName, 0);
+        store.setExperimenterEmail(email, 0);
       }
 
       // format the creation date to ISO 8061
@@ -630,11 +633,14 @@ public abstract class BaseTiffReader extends FormatReader {
         }
       }
 
-      // populate Image element
+      // populate Image
 
-      store.setImage(null, creationDate, getImageDescription(), null);
+      store.setImageCreationDate(creationDate, 0);
+      store.setImageDescription(getImageDescription(), 0);
 
-      // populate Logical Channel elements
+      // CHECK
+      // populate LogicalChannel
+      /*
       for (int i=0; i<getSizeC(); i++) {
         try {
           setLogicalChannel(i);
@@ -646,6 +652,7 @@ public abstract class BaseTiffReader extends FormatReader {
           if (debug) trace(exc);
         }
       }
+      */
 
       // set the X and Y pixel dimensions
 
@@ -671,10 +678,10 @@ public abstract class BaseTiffReader extends FormatReader {
           break;
       }
 
-      store.setDimensions(new Float(pixX), new Float(pixY), null,
-        null, null, null);
+      store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
 
-      // populate StageLabel element
+      // populate StageLabel
       Object x = TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
       Object y = TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
       Float stageX;
@@ -687,15 +694,20 @@ public abstract class BaseTiffReader extends FormatReader {
         stageX = x == null ? null : new Float((String) x);
         stageY = y == null ? null : new Float((String) y);
       }
+      // CHECK
+      /*
       if (stageX != null || stageY != null) {
-        store.setStageLabel(null, stageX, stageY, null, null);
+        store.setStageLabelX(stageX, 0);
+        store.setStageLabelY(stageY, 0);
       }
+      */
 
-      // populate Instrument element
-      String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
-      String serialNumber = (String)
-        TiffTools.getIFDValue(ifd, TiffTools.MAKE);
-      store.setInstrument(null, model, serialNumber, null, null);
+      // populate Instrument
+      // CTR CHECK
+//      String make = (String) TiffTools.getIFDValue(ifd, TiffTools.MAKE);
+//      String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
+//      store.setInstrumentModel(model, 0);
+//      store.setInstrumentManufacturer(make, 0);
     }
     catch (FormatException exc) { trace(exc); }
   }
@@ -722,7 +734,7 @@ public abstract class BaseTiffReader extends FormatReader {
    * @return the image description.
    */
   protected String getImageDescription() {
-    return (String) getMeta("Comment");
+    return TiffTools.getComment(ifds[0]);
   }
 
   /**
@@ -818,10 +830,14 @@ public abstract class BaseTiffReader extends FormatReader {
    * @throws IOException if there is an error reading the file.
    */
   private void setLogicalChannel(int i) throws FormatException, IOException {
-    getMetadataStore().setLogicalChannel(i, getChannelName(i), null, null, null,
-      null, null, null, null, null, null, null, null,
-      getPhotometricInterpretation(i), getMode(i), null, null, null, null, null,
-      getEmWave(i), getExWave(i), null, getNdFilter(i), null);
+    MetadataStore store = getMetadataStore();
+    store.setLogicalChannelName(getChannelName(i), 0, i);
+    store.setLogicalChannelPhotometricInterpretation(
+      getPhotometricInterpretation(i), 0, i);
+    store.setLogicalChannelMode(getMode(i), 0, i);
+    store.setLogicalChannelEmWave(getEmWave(i), 0, i);
+    store.setLogicalChannelExWave(getExWave(i), 0, i);
+    store.setLogicalChannelNdFilter(getNdFilter(i), 0, i);
   }
 
   private String getChannelName(int i) { return null; }

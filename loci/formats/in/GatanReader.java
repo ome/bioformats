@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -51,6 +52,8 @@ public class GatanReader extends FormatReader {
 
   private int pixelDataNum = 0;
   private int datatype;
+
+  private String gamma, mag;
 
   // -- Constructor --
 
@@ -157,9 +160,10 @@ public class GatanReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-
-    FormatTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
 
     Float pixX = new Float(1);
     Float pixY = new Float(1);
@@ -177,20 +181,25 @@ public class GatanReader extends FormatReader {
       pixZ = new Float((String) pixelSizes.get(2));
     }
 
-    store.setDimensions(pixX, pixY, pixZ, null, null, null);
+    store.setDimensionsPhysicalSizeX(pixX, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
 
-    String gamma = (String) getMeta("Gamma");
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
-      store.setDisplayChannel(new Integer(i), null, null,
-        gamma == null ? null : new Float(gamma), null);
+      // CTR CHECK
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null);
+
+      // CTR CHECK
+//      store.setDisplayChannel(new Integer(i), null, null,
+//        gamma == null ? null : new Float(gamma), null);
     }
 
-    String mag = (String) getMeta("Indicated Magnification");
-    store.setObjective(null, null, null, null,
-      mag == null ? null : new Float(mag), null, null);
+    // CTR CHECK
+    //if (mag != null) {
+    //  store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+    //}
   }
 
   // -- Helper methods --
@@ -257,6 +266,8 @@ public class GatanReader extends FormatReader {
           }
           addMeta(labelString, data);
           if (labelString.equals("DataType")) datatype = Integer.parseInt(data);
+          else if (labelString.equals("Gamma")) gamma = data;
+          else if (labelString.equals("Indicated Magnification")) mag = data;
           in.order(!core.littleEndian[0]);
         }
         else if (n == 2) {
@@ -265,7 +276,10 @@ public class GatanReader extends FormatReader {
           if (dataType == 18) { // this should always be true
             length = in.readInt();
           }
-          addMeta(labelString, in.readString(length));
+          String data = in.readString(length);
+          addMeta(labelString, data);
+          if (labelString.equals("Gamma")) gamma = data;
+          else if (labelString.equals("Indicated Magnification")) mag = data;
           in.order(!core.littleEndian[0]);
         }
         else if (n == 3) {

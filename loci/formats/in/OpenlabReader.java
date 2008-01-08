@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.codec.LZOCodec;
+import loci.formats.meta.MetadataStore;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
@@ -685,18 +686,22 @@ public class OpenlabReader extends FormatReader {
           break;
       }
 
-      store.setImage("Series " + i, null, null, new Integer(i));
-      store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
-        null, null, new Integer(i));
+      store.setImageName("Series " + i, i);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      store.setDimensionsPhysicalSizeX(new Float(xCal), i, 0);
+      store.setDimensionsPhysicalSizeY(new Float(yCal), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Float(zCal), i, 0);
     }
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<numSeries; i++) {
-      for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, new Integer(i));
-      }
-    }
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<numSeries; i++) {
+//      for (int j=0; j<core.sizeC[i]; j++) {
+//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, new Integer(i));
+//      }
+//    }
   }
 
   // -- Helper methods --

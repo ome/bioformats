@@ -27,8 +27,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 import javax.swing.*;
-import org.openmicroscopy.xml.*;
-import org.w3c.dom.Element;
+import loci.formats.meta.AggregateMetadata;
 
 /**
  * Loads a template from a file, and stores the options associated with this
@@ -105,10 +104,8 @@ public class Template {
   /** Parses the template options from the given InputStream. */
   public void parse(InputStream is) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(is);
-
     byte[] b = new byte[bis.available()];
     bis.read(b);
-
     String s = new String(b);
 
     StringTokenizer lines = new StringTokenizer(s, "\n");
@@ -206,8 +203,8 @@ public class Template {
    * Populates the fields using the given OME root node and the
    * template's OME-CA mapping.
    */
-  public void populateFields(OMENode root) {
-    if (root == null) return;
+  public void populateFields(AggregateMetadata store) {
+    if (store == null) return;
 
     try {
       for (int i=0; i<tabs.length; i++) {
@@ -215,40 +212,19 @@ public class Template {
           TemplateGroup group = tabs[i].getGroup(j);
           for (int k=0; k<group.getNumFields(); k++) {
             if (group.getRepetitions() == 0) {
-              // special case : number of repetitions depends on the file
-              // we're opening
-
               String map = group.getField(0, k).getValueMap();
-              map = map.substring(0, map.indexOf(":"));
-
-              Class st = null;
-              try {
-                st = Class.forName("org.openmicroscopy.xml." + map + "Node");
-              }
-              catch (ClassNotFoundException c) {
-                st = Class.forName("org.openmicroscopy.xml.st." + map + "Node");
-              }
-              catch (RuntimeException exc) {
-                // HACK: workaround for bug in Apache Axis2
-                String msg = exc.getMessage();
-                if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-                st = Class.forName("org.openmicroscopy.xml.st." + map + "Node");
-              }
-
-              Vector nodes = OMEXMLNode.createNodes(st,
-                DOMUtil.getChildElements(map, root.getDOMElement()));
-              group.setRepetitions(nodes.size());
+              group.setRepetitions(TemplateTools.getNodeCount(store, map));
             }
 
             for (int r=0; r<group.getRepetitions(); r++) {
-              populateField(root, group.getField(r, k));
+              populateField(store, group.getField(r, k));
             }
           }
         }
 
         for (int j=0; j<tabs[i].getNumFields(); j++) {
           if (!tabs[i].getField(j).getType().equals("thumbnail")) {
-            populateField(root, tabs[i].getField(j));
+            populateField(store, tabs[i].getField(j));
           }
         }
       }
@@ -259,8 +235,8 @@ public class Template {
   }
 
   /** Save fields to given OME root node. */
-  public void saveFields(OMENode root) {
-    if (root == null) return;
+  public void saveFields(AggregateMetadata store) {
+    if (store == null) return;
 
     try {
       for (int i=0; i<tabs.length; i++) {
@@ -268,13 +244,13 @@ public class Template {
           TemplateGroup group = tabs[i].getGroup(j);
           for (int k=0; k<group.getNumFields(); k++) {
             for (int r=0; r<group.getRepetitions(); r++) {
-              saveField(root, group.getField(r, k));
+              saveField(store, group.getField(r, k));
             }
           }
         }
 
         for (int j=0; j<tabs[i].getNumFields(); j++) {
-          saveField(root, tabs[i].getField(j));
+          saveField(store, tabs[i].getField(j));
         }
       }
     }
@@ -380,7 +356,7 @@ public class Template {
   }
 
   /** Determine number of repetitions for each repeatable field. */
-  public void initializeFields(OMENode root) {
+  public void initializeFields(AggregateMetadata store) {
     for (int i=0; i<tabs.length; i++) {
       int fields = tabs[i].getNumFields();
       for (int j=0; j<fields; j++) {
@@ -388,32 +364,28 @@ public class Template {
           String map = tabs[i].getField(j).getValueMap();
 
           try {
-            int nodeCount = TemplateTools.getNodeCount(root, map);
+            int nodeCount = TemplateTools.getNodeCount(store, map);
             for (int k=1; k<nodeCount; k++) {
               TemplateField f = tabs[i].getField(j).copy();
-              if (map.indexOf("-") != -1) {
-                if (map.indexOf("OriginalMetadata") != -1) {
-                  f.setValueMap(map + "," + k);
-                  f.setNameMap(f.getNameMap() + "," + k);
-                }
-                else {
-                  int comma = map.indexOf(",");
-                  if (comma == -1) comma = map.length() - 1;
-                  String mapBase = map.substring(0, map.indexOf("-") + 1);
-                  String mapSuffix = map.substring(comma, map.length());
-                  f.setValueMap(mapBase + k + mapSuffix);
-
-                  String nameMap = f.getNameMap();
-                  mapBase = nameMap.substring(0, nameMap.indexOf("-") + 1);
-                  comma = nameMap.indexOf(",");
-                  if (comma == -1) comma = nameMap.length() - 1;
-                  mapSuffix = nameMap.substring(comma, nameMap.length());
-                  f.setNameMap(mapBase + k + mapSuffix);
-                }
+              if (map.indexOf("OriginalMetadata") != -1) {
+                f.setValueMap(map + "," + k);
+                f.setNameMap(f.getNameMap() + "," + k);
               }
               else {
-                f.setValueMap(map + "-" + k);
-                f.setNameMap(f.getNameMap() + "-" + k);
+                int paren = map.indexOf("(");
+                if (paren == -1) f.setValueMap(map + "(" + k + ")");
+                else {
+                  String prefix = map.substring(0, map.indexOf(")"));
+                  f.setValueMap(prefix + "," + k + ")");
+                }
+
+                String nameMap = f.getNameMap();
+                paren = nameMap.indexOf("(");
+                if (paren == -1) f.setNameMap(nameMap + "(" + k + ")");
+                else {
+                  String prefix = nameMap.substring(0, nameMap.indexOf(")"));
+                  f.setNameMap(prefix + "," + k + ")");
+                }
               }
               f.setRow(tabs[i].getField(j).getRow() + k);
               tabs[i].addField(f);
@@ -434,30 +406,26 @@ public class Template {
             String map = f.getValueMap();
 
             try {
-              for (int m=1; m<TemplateTools.getNodeCount(root, map); m++) {
-                if (map.indexOf("-") != -1) {
-                  if (map.indexOf("OriginalMetadata") != -1) {
-                    f.setValueMap(map + "," + k);
-                    f.setNameMap(f.getNameMap() + "," + k);
-                  }
-                  else {
-                    int comma = map.indexOf(",");
-                    if (comma == -1) comma = map.length() - 1;
-                    String mapBase = map.substring(0, map.indexOf("-") + 1);
-                    String mapSuffix = map.substring(comma, map.length());
-                    f.setValueMap(mapBase + k + mapSuffix);
-
-                    String nameMap = f.getNameMap();
-                    mapBase = nameMap.substring(0, nameMap.indexOf("-") + 1);
-                    comma = nameMap.indexOf(",");
-                    if (comma == -1) comma = nameMap.length() - 1;
-                    mapSuffix = nameMap.substring(comma, nameMap.length());
-                    f.setNameMap(mapBase + k + mapSuffix);
-                  }
+              for (int m=1; m<TemplateTools.getNodeCount(store, map); m++) {
+                if (map.indexOf("OriginalMetadata") != -1) {
+                  f.setValueMap(map + "," + k);
+                  f.setNameMap(f.getNameMap() + "," + k);
                 }
                 else {
-                  f.setValueMap(map + "-" + k);
-                  f.setNameMap(f.getNameMap() + "-" + k);
+                  int paren = map.indexOf("(");
+                  if (paren == -1) f.setValueMap(map + "(" + k + ")");
+                  else {
+                    String prefix = map.substring(0, map.indexOf(")"));
+                    f.setValueMap(prefix + "," + k + ")");
+                  }
+
+                  String nameMap = f.getNameMap();
+                  paren = nameMap.indexOf("(");
+                  if (paren == -1) f.setNameMap(nameMap + "(" + k + ")");
+                  else {
+                    String prefix = nameMap.substring(0, nameMap.indexOf(")"));
+                    f.setNameMap(prefix + "," + k + ")");
+                  }
                 }
                 f.setRow(g.getField(0, k).getRow() + m);
                 g.addField(f);
@@ -566,59 +534,84 @@ public class Template {
   // -- Helper methods --
 
   /** Populate the given TemplateField's name, if necessary. */
-  private void populateName(OMENode root, TemplateField t) throws Exception {
+  private void populateName(AggregateMetadata store, TemplateField t)
+    throws Exception
+  {
     if (t.getNameMap() != null) {
-      t.setName(TemplateTools.getString(root, t.getNameMap(), false));
+      t.setName(TemplateTools.getString(store, t.getNameMap(), false));
     }
   }
 
   /** Populate the given TemplateField. */
-  private void populateField(OMENode root, TemplateField t) throws Exception {
+  private void populateField(AggregateMetadata store, TemplateField t)
+    throws Exception
+  {
     setComponentValue(t, t.getComponent(),
-      TemplateTools.getString(root, t.getValueMap(), true));
-    populateName(root, t);
+      TemplateTools.getString(store, t.getValueMap(), true));
+    populateName(store, t);
   }
 
   /** Save the given TemplateField. */
-  private void saveField(OMENode root, TemplateField t) throws Exception {
-    OMEXMLNode node = TemplateTools.findNode(root, t.getValueMap(), true);
+  private void saveField(AggregateMetadata store, TemplateField t)
+    throws Exception
+  {
+    String map = t.getValueMap();
 
     JComponent c = t.getComponent();
     Object value = TemplateTools.getComponentValue(c);
-    String map = t.getValueMap();
 
-    if (map == null || map.length() == 0) {
-      // this is a custom unmapped field, which gets stored in a
-      // NotesField ST
+    if (map == null || map.length() == 0) return;
 
-      CustomAttributesNode ca = root.getCustomAttributes();
-      Element el = DOMUtil.createChild(ca.getDOMElement(), "NotesField");
-      OMEXMLNode newNode = OMEXMLNode.createNode(el);
-      newNode.setAttribute("name", t.getName());
-      newNode.setAttribute("value", value.toString());
-      return;
+    String method = null, params = null;
+    int ndx = map.indexOf("(");
+
+    if (ndx != -1) {
+      method = map.substring(0, ndx);
+      params = map.substring(ndx + 1, map.length() - 1);
     }
+    else method = map;
 
-    map = map.substring(map.lastIndexOf(":") + 1);
-    if (map.indexOf("-") != -1) {
-      map = map.substring(0, map.indexOf("-"));
-    }
-
-    String methodName = "set" + map;
-
-    if (map.equals("CreationDate")) methodName = "setCreated";
-
-    Method[] methods = node.getClass().getMethods();
-    for (int j=0; j<methods.length; j++) {
-      String name = methods[j].getName();
-
-      Class[] params = methods[j].getParameterTypes();
-
-      if (name.equals(methodName) && params[0].equals(String.class)) {
-        methods[j].invoke(node, new Object[] {value});
+    int[] indices = null;
+    if (params != null) {
+      StringTokenizer s = new StringTokenizer(params, ",");
+      int count = s.countTokens();
+      indices = new int[count];
+      for (int i=0; i<count; i++) {
+        indices[i] = Integer.parseInt(s.nextToken().trim());
       }
-      else if (name.equals(methodName) && params[0].equals(Integer.class)) {
-        methods[j].invoke(node, new Object[] {new Integer(value.toString())});
+    }
+
+    method = "set" + method;
+
+    Vector v = new Vector();
+    Method[] methods = AggregateMetadata.class.getMethods();
+    v.addAll(Arrays.asList(methods));
+    methods = AggregateMetadata.class.getDeclaredMethods();
+    v.addAll(Arrays.asList(methods));
+
+    Method m;
+    for (int i=0; i<v.size(); i++) {
+      m = (Method) v.get(i);
+      if (m.getName().equals(method)) {
+        Class[] paramTypes = m.getParameterTypes();
+        Object[] o = new Object[paramTypes.length];
+
+        // convert value to appropriate type
+
+        if (paramTypes[0].isAssignableFrom(value.getClass())) o[0] = value;
+        else {
+          Constructor ctor =
+            paramTypes[0].getConstructor(new Class[] {value.getClass()});
+          o[0] = ctor.newInstance(new Object[] {value});
+        }
+
+        for (int j=1; j<o.length; j++) {
+          if (indices == null) o[j] = new Integer(0);
+          else o[j] = new Integer(indices[j]);
+        }
+
+        m.invoke(store, o);
+        break;
       }
     }
   }

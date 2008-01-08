@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -459,32 +460,37 @@ public class LIFReader extends FormatReader {
           break;
       }
 
-      Integer ii = new Integer(i);
-
       String seriesName = (String) seriesNames.get(i);
       if (seriesName == null || seriesName.trim().length() == 0) {
         seriesName = "Series " + (i + 1);
       }
-      store.setImage(seriesName, null, null, ii);
+      store.setImageName(seriesName, i);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
 
-      FormatTools.populatePixels(store, this);
+      MetadataTools.populatePixels(store, this);
 
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
       Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
       Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
 
-      store.setDimensions(xf, yf, zf, null, null, ii);
-      for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, ii);
-      }
+      store.setDimensionsPhysicalSizeX(xf, i, 0);
+      store.setDimensionsPhysicalSizeY(yf, i, 0);
+      store.setDimensionsPhysicalSizeZ(zf, i, 0);
 
-      String zoom = (String) getMeta(seriesName + " - dblZoom");
-      store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-        new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
-        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null,
-        null, null, null, null, ii, null, null, null, null, null);
+      // CTR CHECK
+//      for (int j=0; j<core.sizeC[i]; j++) {
+//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, ii);
+//      }
+
+      // CTR CHECK
+//      String zoom = (String) getMeta(seriesName + " - dblZoom");
+//      store.setDisplayOptions(zoom == null ? null : new Float(zoom),
+//        new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
+//        new Boolean(core.sizeC[i] > 2), new Boolean(isRGB()), null,
+//        null, null, null, null, ii, null, null, null, null, null);
 
       Enumeration keys = metadata.keys();
       while (keys.hasMoreElements()) {

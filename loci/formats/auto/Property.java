@@ -42,11 +42,12 @@ public class Property {
   private String name;
   private String type;
   private String desc;
+  private Entity entity;
   private String prefix;
   private String varName;
+  private boolean node;
 
   private Hashtable nameMap;
-  private Entity entity;
 
   // -- Constructor --
 
@@ -70,6 +71,12 @@ public class Property {
     else prefix = "get";
 
     varName = entity.toVarName(name);
+
+    // parse any carat from object type
+    if (type.startsWith("^")) {
+      node = true;
+      type = type.substring(1);
+    }
   }
 
   // -- Property API methods --
@@ -102,6 +109,8 @@ public class Property {
   public String mappedVarName(String version) {
     return entity.toVarName(mappedName(version));
   }
+
+  public boolean isNode() { return node; }
 
   public void addMappedName(String version, String name) {
     nameMap.put(version, name);

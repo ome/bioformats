@@ -30,6 +30,8 @@ import java.util.zip.*;
 import loci.formats.*;
 import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CBZip2InputStream;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
@@ -176,7 +178,8 @@ public class OMEXMLReader extends FormatReader {
     try {
       r.exec("import loci.formats.ome.OMEXMLMetadata");
       r.exec("import org.openmicroscopy.xml.OMENode");
-      r.exec("omexmlMeta = new OMEXMLMetadata()");
+      r.exec("import loci.formats.MetadataTools");
+      r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata()");
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);

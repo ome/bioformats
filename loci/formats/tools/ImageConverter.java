@@ -27,6 +27,8 @@ package loci.formats.tools;
 import java.awt.Image;
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ImageConverter is a utility class for converting a file between formats.

@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
@@ -195,14 +196,16 @@ public class EPSReader extends FormatReader {
       core.falseColor[0] = false;
 
       MetadataStore store = getMetadataStore();
-      store.setImage(null, null, null, null);
-
-      FormatTools.populatePixels(store, this);
-      for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-         null, null, null, null, null, null, null, null, null, null, null,
-         null, null, null, null, null, null);
-      }
+      store.setImageName("", 0);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+      MetadataTools.populatePixels(store, this);
+      // CTR CHECK
+//      for (int i=0; i<core.sizeC[0]; i++) {
+//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//         null, null, null, null, null, null, null, null, null, null, null,
+//         null, null, null, null, null, null);
+//      }
 
       return;
     }
@@ -298,14 +301,15 @@ public class EPSReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(currentId, null, null, null);
+    store.setImageName("", 0);
 
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       null, null, null, null, null, null, null, null, null, null, null, null,
-       null, null, null, null);
-    }
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//       null, null, null, null, null, null, null, null, null, null, null, null,
+//       null, null, null, null);
+//    }
   }
 
 }

@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * MNGReader is the file format reader for Multiple Network Graphics (MNG)
@@ -186,14 +187,16 @@ public class MNGReader extends FormatReader {
     core.falseColor[0] = false;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
-    }
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null);
+//    }
   }
 
 }

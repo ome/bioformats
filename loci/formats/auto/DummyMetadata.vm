@@ -47,24 +47,39 @@ package loci.formats.meta;
 public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // -- MetadataRetrieve API methods --
-
 #foreach ($entity in $entities)
-  // -- $entity.name() property retrieval --
+
+  // - $entity.name() property retrieval -
 
 #foreach ($prop in $entity.props())
   /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
   public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
     return null;
   }
+#end##foreach $prop
+#end##foreaach $entity
 
-#end
-#end
   // -- MetadataStore API methods --
 
-#foreach ($entity in $entities)
-  /* @see MetadataStore#set$entity.name()($entity.argsList(true, false)) */
-  public void set$entity.name()($entity.argsList(true, true)) {
+  public void createRoot() {
   }
 
-#end
+  public Object getRoot() {
+    return null;
+  }
+
+  public void setRoot(Object root) {
+  }
+
+#foreach ($entity in $entities)
+
+  // - $entity.name() property storage -
+#foreach ($prop in $entity.props())
+
+  /* @see MetadataStore#set$entity.name()($entity.argsList(true, false)) */
+  public void set$entity.name()$prop.name()($prop.type() $prop.varName(), $entity.indicesList(true, true)) {
+  }
+#end##foreach $prop
+#end##foreach $entity
+
 }

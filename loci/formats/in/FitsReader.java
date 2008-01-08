@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * FitsReader is the file format reader for
@@ -142,13 +143,15 @@ public class FitsReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
 
-    store.setImage(null, null, null, null);
-    FormatTools.populatePixels(store, this);
-
-    store.setLogicalChannel(0, null, null, null, null, null, null, null, null,
-      null, null, null, null, null, null, null, null, null, null, null,
-      null, null, null, null, null);
+    // CTR CHECK
+//    store.setLogicalChannel(0, null, null, null, null, null, null, null, null,
+//      null, null, null, null, null, null, null, null, null, null, null,
+//      null, null, null, null, null);
   }
 
 }

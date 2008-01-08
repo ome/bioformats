@@ -27,6 +27,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Abstract superclass of reader logic that wraps other readers.

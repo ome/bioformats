@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.ome;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * Uploads images to an OME server.
@@ -125,7 +125,7 @@ public class OMEWriter extends FormatWriter {
     throws FormatException, IOException
   {
     byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),
-      !metadata.getBigEndian(null).booleanValue());
+      !metadata.getPixelsBigEndian(0, 0).booleanValue());
     for (int i=0; i<b.length; i++) {
       saveBytes(b[i], last && (i == b.length - 1));
     }
@@ -182,13 +182,13 @@ public class OMEWriter extends FormatWriter {
       }
     }
 
-    int x = metadata.getSizeX(null).intValue();
-    int y = metadata.getSizeY(null).intValue();
-    int z = metadata.getSizeZ(null).intValue();
-    int c = metadata.getSizeC(null).intValue();
-    int t = metadata.getSizeT(null).intValue();
-    String order = metadata.getDimensionOrder(null);
-    String pixelTypeString = metadata.getPixelType(null);
+    int x = metadata.getPixelsSizeX(0, 0).intValue();
+    int y = metadata.getPixelsSizeY(0, 0).intValue();
+    int z = metadata.getPixelsSizeZ(0, 0).intValue();
+    int c = metadata.getPixelsSizeC(0, 0).intValue();
+    int t = metadata.getPixelsSizeT(0, 0).intValue();
+    String order = metadata.getPixelsDimensionOrder(0, 0);
+    String pixelTypeString = metadata.getPixelsPixelType(0, 0);
     int pixelType = FormatTools.pixelTypeFromString(pixelTypeString);
     int bpp = FormatTools.getBytesPerPixel(pixelType);
 
@@ -226,7 +226,7 @@ public class OMEWriter extends FormatWriter {
         r.setVar("cndx", coords[1]);
         r.setVar("tndx", coords[2]);
         r.setVar("bytes", b[ch]);
-        r.setVar("bigEndian", metadata.getBigEndian(null).booleanValue());
+        r.setVar("bigEndian", metadata.getPixelsBigEndian(0, 0).booleanValue());
 
         r.setVar("pixelsId", credentials.imageID);
         r.exec("is.setPlane(pixelsId, zndx, cndx, tndx, bytes, bigEndian)");
@@ -243,12 +243,12 @@ public class OMEWriter extends FormatWriter {
         credentials.imageID = ((Long) r.getVar("pixelsId")).longValue();
 
         r.setVar("NOW", "now");
-        r.setVar("creationDate", metadata.getCreationDate(null));
-        if (metadata.getImageName(null) != null) {
-          r.setVar("imageName", metadata.getImageName(null));
+        r.setVar("creationDate", metadata.getImageCreationDate(0));
+        if (metadata.getImageName(0) != null) {
+          r.setVar("imageName", metadata.getImageName(0));
         }
         else r.setVar("imageName", "new image " + credentials.imageID);
-        r.setVar("imageDescription", metadata.getDescription(null));
+        r.setVar("imageDescription", metadata.getImageDescription(0));
 
         r.setVar("IMAGE_CLASS", "org.openmicroscopy.ds.dto.Image");
         r.exec("IMAGE_CLASS = Class.forName(IMAGE_CLASS)");
@@ -480,7 +480,7 @@ public class OMEWriter extends FormatWriter {
     uploader.setId(server + "?user=" + user + "&password=" + pass);
 
     FileStitcher reader = new FileStitcher();
-    reader.setMetadataStore(new OMEXMLMetadata());
+    reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
     reader.setId(id);
     uploader.setMetadata((MetadataRetrieve) reader.getMetadataStore());
     for (int i=0; i<reader.getImageCount(); i++) {

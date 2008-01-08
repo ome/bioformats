@@ -36,7 +36,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
-import org.openmicroscopy.xml.DOMUtil;
+import ome.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 

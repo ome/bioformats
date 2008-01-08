@@ -27,6 +27,7 @@ package loci.formats.ome;
 import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * OMEROReader is the file format reader for downloading images from an
@@ -201,16 +202,19 @@ public class OMEROReader extends FormatReader {
       String description = (String) r.getVar("description");
 
       MetadataStore store = getMetadataStore();
-      store.setImage(name, null, description, null);
-      FormatTools.populatePixels(store, this);
+      store.setImageName(name, 0);
+      store.setImageDescription(description, 0);
+      MetadataTools.populatePixels(store, this);
 
-      store.setDimensions(new Float((float) px), new Float((float) py),
-        new Float((float) pz), null, null, null);
-      for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null);
-      }
+      store.setDimensionsPhysicalSizeX(new Float((float) px), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Float((float) py), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Float((float) pz), 0, 0);
+      // CTR CHECK
+//      for (int i=0; i<core.sizeC[0]; i++) {
+//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null);
+//      }
     }
     catch (ReflectException e) {
       throw new FormatException(e);

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.editor;
 
+import ome.xml.OMEXMLNode;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;

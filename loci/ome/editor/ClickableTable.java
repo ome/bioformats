@@ -46,7 +46,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
-import org.openmicroscopy.xml.*;
+import ome.xml.DOMUtil;
+import ome.xml.OMEXMLNode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -481,7 +482,7 @@ public class ClickableTable extends JTable
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
         }
         else {
-          OMEXMLNode realParent = tp.tPanel.ome.getChild("CustomAttributes");
+          OMEXMLNode realParent = tp.tPanel.ome.getChildNode("CustomAttributes");
           parentEle = realParent.getDOMElement();
           //remove the node in question from its (CustomAttributes) parent
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
@@ -507,7 +508,7 @@ public class ClickableTable extends JTable
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
         }
         else {
-          OMEXMLNode realParent = tp.tPanel.oNode.getChild("CustomAttributes");
+          OMEXMLNode realParent = tp.tPanel.oNode.getChildNode("CustomAttributes");
           Element parentEle = realParent.getDOMElement();
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
 

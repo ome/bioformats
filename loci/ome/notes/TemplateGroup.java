@@ -122,17 +122,12 @@ public class TemplateGroup {
     String map = t.getValueMap();
     if (map == null) return;
 
-    int end = map.lastIndexOf("-");
-    if (end == -1) end = map.length();
-    String prefix = map.substring(0, end);
-
-    int start = map.indexOf(",");
-    if (start == -1) start = map.length();
-    String suffix = map.substring(start, map.length());
-
-    map = prefix + "-" + repetition + suffix;
-
-    t.setValueMap(map);
+    int ndx = map.indexOf(")");
+    if (ndx == -1) t.setValueMap(map + "(" + repetition + ")");
+    else {
+      map = map.substring(0, ndx);
+      t.setValueMap(map + "," + repetition + ")");
+    }
   }
 
 }

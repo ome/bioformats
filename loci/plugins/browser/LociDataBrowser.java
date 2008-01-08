@@ -31,8 +31,9 @@ import ij.process.ImageProcessor;
 import java.io.ByteArrayOutputStream;
 import loci.plugins.Util;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.formats.cache.*;
-import loci.formats.ome.OMEXMLMetadata;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
@@ -139,14 +140,12 @@ public class LociDataBrowser {
       return;
     }
     if (cw != null) {
-      cache.removeCacheListener(cw);
       cw.ow.dispose();
       cw.ow = null;
       cw.dispose();
       cw = null;
     }
     cw = new CustomWindow(this, imp, new ImageCanvas(imp));
-    cache.addCacheListener(cw);
   }
 
   /** Sets the length of each dimensional axis and the dimension order. */
@@ -264,7 +263,8 @@ public class LociDataBrowser {
             cache.setCurrentPos(new int[] {0, 0, 0});
           }
           if (cacheThread != null) cacheThread.quit();
-          cacheThread = new CacheUpdater(cache);
+          cacheThread = new CacheUpdater(cache,
+            new CacheIndicator[0], new int[0], new int[0]);
           cacheThread.start();
 
           try {
@@ -312,9 +312,10 @@ public class LociDataBrowser {
       if (fi == null) fi = new FileInfo();
 
       MetadataStore store = virtual ? reader.getMetadataStore() : ipw.store;
-      if (store instanceof OMEXMLMetadata) {
-        fi.description = ((OMEXMLMetadata) store).dumpXML();
-        Util.applyCalibration((MetadataRetrieve) store, imp, series);
+      if (MetadataTools.isOMEXMLMetadata(store)) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) store;
+        fi.description = MetadataTools.getOMEXML(retrieve);
+        Util.applyCalibration(retrieve, imp, series);
       }
 
       imp.setFileInfo(fi);

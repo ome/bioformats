@@ -26,8 +26,8 @@ package loci.formats.in;
 
 import java.io.*;
 import java.util.Vector;
-
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
@@ -259,16 +259,18 @@ public class SlidebookReader extends FormatReader {
     }
 
     MetadataStore store = getMetadataStore();
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeX.length; i++) {
-      Integer ii = new Integer(i);
-      store.setImage(currentId, null, null, ii);
-      for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, ii);
-      }
+      store.setImageName("Series " + i, i);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+      // CTR CHECK
+//      for (int j=0; j<core.sizeC[i]; j++) {
+//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, ii);
+//      }
     }
   }
 

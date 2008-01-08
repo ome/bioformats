@@ -28,6 +28,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * LeicaReader is the file format reader for Leica files.
@@ -598,22 +599,26 @@ public class LeicaReader extends FormatReader {
 
     int fileLength = 0;
 
+    int resolution = -1;
+    String description = null;
+    String[] timestamps = null;
+
     for (int i=0; i<headerIFDs.length; i++) {
       byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
       if (temp != null) {
         // the series data
         // ID_SERIES
-        addMeta("Version",
-          new Integer(DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0])));
-        addMeta("Number of Series",
-          new Integer(DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0])));
-        fileLength = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
+        RandomAccessStream stream = new RandomAccessStream(temp);
+        stream.order(core.littleEndian[0]);
+        addMeta("Version", new Integer(stream.readInt()));
+        addMeta("Number of Series", new Integer(stream.readInt()));
+        fileLength = stream.readInt();
         addMeta("Length of filename", new Integer(fileLength));
-        Integer fileExtLen =
-          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0]));
+        Integer fileExtLen = new Integer(stream.readInt());
         addMeta("Length of file extension", fileExtLen);
         addMeta("Image file extension",
-          DataTools.stripString(new String(temp, 16, fileExtLen.intValue())));
+          DataTools.stripString(stream.readString(fileExtLen.intValue())));
+        stream.close();
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(15));
@@ -657,10 +662,15 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // dimension description
         // ID_DIMDESCR
-        int pt = 0;
-        addMeta("Voxel Version", new Integer(
-          DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0])));
-        int voxelType = DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0]);
+
+        RandomAccessStream stream = new RandomAccessStream(temp);
+        stream.order(core.littleEndian[0]);
+
+        /* debug */ System.out.println("stream.length = " + stream.length());
+
+        addMeta("Voxel Version", new Integer(stream.readInt()));
+        int voxelType = stream.readInt();
+        /* debug */ System.out.println("voxelType = " + voxelType);
         String type = "";
         switch (voxelType) {
           case 0:
@@ -676,24 +686,30 @@ public class LeicaReader extends FormatReader {
 
         addMeta("VoxelType", type);
 
-        bpp = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
+        bpp = stream.readInt();
+        /* debug */ System.out.println("bpp = " + bpp);
         addMeta("Bytes per pixel", new Integer(bpp));
-        addMeta("Real world resolution",
-          new Integer(DataTools.bytesToInt(temp, 12, 4, core.littleEndian[0])));
-        int length = DataTools.bytesToInt(temp, 16, 4, core.littleEndian[0]);
+        resolution = stream.readInt();
+        /* debug */ System.out.println("resolution = " + resolution);
+        addMeta("Real world resolution", new Integer(resolution));
+        int length = stream.readInt();
+        /* debug */ System.out.println("length = " + length);
         addMeta("Maximum voxel intensity",
-          DataTools.stripString(new String(temp, 20, length)));
-        pt = 20 + length;
-        pt += 4;
+          DataTools.stripString(stream.readString(length * 2)));
+        /* debug */ System.out.println(getMeta("Maximum voxel intensity"));
+        length = stream.readInt();
         addMeta("Minimum voxel intensity",
-          DataTools.stripString(new String(temp, pt, length)));
-        pt += length;
-        length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4 + length + 4;
-
-        length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
+          DataTools.stripString(stream.readString(length * 2)));
+        /* debug */ System.out.println(getMeta("Minimum voxel intensity"));
+        length = stream.readInt();
+        /* debug */ System.out.println("length = " + length);
+        stream.skipBytes(length * 2);
+        stream.skipBytes(4); // version number
+        length = stream.readInt();
+        /* debug */ System.out.println("nDims = " + length);
         for (int j=0; j<length; j++) {
-          int dimId = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
+          int dimId = stream.readInt();
+          /* debug */ System.out.println("dimId = " + dimId);
           String dimType = "";
           switch (dimId) {
             case 0:
@@ -781,38 +797,26 @@ public class LeicaReader extends FormatReader {
 
           //if (dimType.equals("channel")) numChannels++;
           addMeta("Dim" + j + " type", dimType);
-          pt += 4;
-          addMeta("Dim" + j + " size", new Integer(
-            DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0])));
-          pt += 4;
-          int dist = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
+          addMeta("Dim" + j + " size", new Integer(stream.readInt()));
+          int dist = stream.readInt();
           addMeta("Dim" + j + " distance between sub-dimensions",
             new Integer(dist));
-          pt += 4;
 
-          int len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
+          int len = stream.readInt();
           addMeta("Dim" + j + " physical length",
-            DataTools.stripString(new String(temp, pt, len)));
-          pt += len;
+            DataTools.stripString(stream.readString(len * 2)));
 
-          len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
+          len = stream.readInt();
           addMeta("Dim" + j + " physical origin",
-            DataTools.stripString(new String(temp, pt, len)));
-          pt += len;
-
-          len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
-          addMeta("Dim" + j + " name",
-            DataTools.stripString(new String(temp, pt, len)));
-          pt += len;
-
-          len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
-          addMeta("Dim" + j + " description",
-            DataTools.stripString(new String(temp, pt, len)));
+            DataTools.stripString(stream.readString(len * 2)));
         }
+        int len = stream.readInt();
+        addMeta("Series name", DataTools.stripString(stream.readString(len)));
+
+        len = stream.readInt();
+        addMeta("Series description",
+          DataTools.stripString(stream.readString(len)));
+        stream.close();
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(30));
@@ -828,52 +832,51 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // time data
         // ID_TIMEINFO
-        int nDims = DataTools.bytesToInt(temp, 0, 4, core.littleEndian[0]);
-        addMeta("Number of time-stamped dimensions", new Integer(nDims));
-        addMeta("Time-stamped dimension",
-          new Integer(DataTools.bytesToInt(temp, 4, 4, core.littleEndian[0])));
 
-        int pt = 8;
+        RandomAccessStream stream = new RandomAccessStream(temp);
+        stream.order(core.littleEndian[0]);
+        stream.seek(0);
+
+        /* debug */ System.out.println("length = " + stream.length());
+
+        int nDims = stream.readInt();
+        addMeta("Number of time-stamped dimensions", new Integer(nDims));
+        addMeta("Time-stamped dimension", new Integer(stream.readInt()));
 
         for (int j=0; j < nDims; j++) {
-          int v = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
+          int v = stream.readInt();
           addMeta("Dimension " + j + " ID", new Integer(v));
-          pt += 4;
-          v = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
+          v = stream.readInt();
           addMeta("Dimension " + j + " size", new Integer(v));
-          pt += 4;
-          v = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
+          v = stream.readInt();
           addMeta("Dimension " + j + " distance between dimensions",
             new Integer(v));
-          pt += 4;
         }
 
-        int numStamps = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4;
+        int numStamps = stream.readInt();
         addMeta("Number of time-stamps", new Integer(numStamps));
+        timestamps = new String[numStamps];
         for (int j=0; j<numStamps; j++) {
-          addMeta("Timestamp " + j,
-            DataTools.stripString(new String(temp, pt, 64)));
-          pt += 64;
+          timestamps[j] = DataTools.stripString(stream.readString(64));
+          addMeta("Timestamp " + j, timestamps[j]);
         }
 
-        int numTMs = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4;
-        addMeta("Number of time-markers", new Integer(numTMs));
-        for (int j=0; j<numTMs; j++) {
-          int numDims = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
+        if (stream.getFilePointer() < stream.length()) {
+          int numTMs = stream.readInt();
+          addMeta("Number of time-markers", new Integer(numTMs));
+          for (int j=0; j<numTMs; j++) {
+            int numDims = stream.readInt();
 
-          for (int k=0; k<numDims; k++) {
-            int v = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-            addMeta("Time-marker " + j +
-              " Dimension " + k + " coordinate", new Integer(v));
-            pt += 4;
+            for (int k=0; k<numDims; k++) {
+              int v = stream.readInt();
+              addMeta("Time-marker " + j +
+                " Dimension " + k + " coordinate", new Integer(v));
+            }
+            addMeta("Time-marker " + j,
+              DataTools.stripString(stream.readString(64)));
           }
-          addMeta("Time-marker " + j,
-            DataTools.stripString(new String(temp, pt, 64)));
-          pt += 64;
         }
+        stream.close();
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(50));
@@ -888,79 +891,68 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // experiment data
         // ID_EXPERIMENT
-        int pt = 8;
-        int len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4;
 
-        addMeta("Image Description",
-          DataTools.stripString(new String(temp, pt, 2*len)));
-        pt += 2*len;
-        len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4;
+        RandomAccessStream stream = new RandomAccessStream(temp);
+        stream.order(core.littleEndian[0]);
+        stream.seek(8);
+
+        int len = stream.readInt();
+        description = DataTools.stripString(stream.readString(len * 2));
+        addMeta("Image Description", description);
+        len = stream.readInt();
 
         addMeta("Main file extension",
-          DataTools.stripString(new String(temp, pt, 2*len)));
-        pt += 2*len;
+          DataTools.stripString(stream.readString(len * 2)));
 
-        len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4;
+        len = stream.readInt();
         addMeta("Single image format identifier",
-          DataTools.stripString(new String(temp, pt, 2*len)));
-        pt += 2*len;
+          DataTools.stripString(stream.readString(len * 2)));
 
-        len = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4;
+        len = stream.readInt();
         addMeta("Single image extension",
-          DataTools.stripString(new String(temp, pt, 2*len)));
+          DataTools.stripString(stream.readString(len * 2)));
+        stream.close();
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(70));
       if (temp != null) {
         // LUT data
         // ID_LUTDESC
-        int pt = 0;
-        int nChannels = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-        pt += 4;
+
+        RandomAccessStream stream = new RandomAccessStream(temp);
+        stream.order(core.littleEndian[0]);
+
+        int nChannels = stream.readInt();
         addMeta("Number of LUT channels", new Integer(nChannels));
-        addMeta("ID of colored dimension",
-          new Integer(DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0])));
-        pt += 4;
+        addMeta("ID of colored dimension", new Integer(stream.readInt()));
 
         if (nChannels > 4) nChannels = 3;
         core.sizeC[i] = nChannels;
 
         for (int j=0; j<nChannels; j++) {
-          int v = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
+          int v = stream.readInt();
           addMeta("LUT Channel " + j + " version", new Integer(v));
-          pt += 4;
 
-          int invert = DataTools.bytesToInt(temp, pt, 1, core.littleEndian[0]);
-          pt += 1;
+          int invert = stream.read();
           boolean inverted = invert == 1;
           addMeta("LUT Channel " + j + " inverted?",
             new Boolean(inverted).toString());
 
-          int length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
+          int length = stream.readInt();
           addMeta("LUT Channel " + j + " description",
-            DataTools.stripString(new String(temp, pt, length)));
+            DataTools.stripString(stream.readString(length)));
 
-          pt += length;
-          length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
+          length = stream.readInt();
           addMeta("LUT Channel " + j + " filename",
-            DataTools.stripString(new String(temp, pt, length)));
-          pt += length;
-          length = DataTools.bytesToInt(temp, pt, 4, core.littleEndian[0]);
-          pt += 4;
+            DataTools.stripString(stream.readString(length)));
+          length = stream.readInt();
 
-          String name = DataTools.stripString(new String(temp, pt, length));
+          String name = DataTools.stripString(stream.readString(length));
 
           addMeta("LUT Channel " + j + " name", name);
-          pt += length;
-
-          pt += 8;
+          stream.skipBytes(8);
         }
+        stream.close();
       }
     }
 
@@ -978,8 +970,6 @@ public class LeicaReader extends FormatReader {
       }
       setSeries(oldSeries);
     }
-
-    Integer v = (Integer) getMeta("Real world resolution");
 
     // the metadata store we're working with
     MetadataStore store = getMetadataStore();
@@ -999,37 +989,39 @@ public class LeicaReader extends FormatReader {
       core.currentOrder[i] = core.sizeC[i] == 1 ? "XYZTC" : "XYCZT";
       if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
 
-      Integer ii = new Integer(i);
-
       tiff[i][0].setId((String) files[i].get(0));
       core.indexed[i] = tiff[i][0].isIndexed();
       core.rgb[i] = tiff[i][0].isRGB();
-      if (core.rgb[i]) core.sizeC[i] *= 3;
+      if (core.rgb[i] && core.sizeC[i] == 1) core.sizeC[i] = 3;
       core.interleaved[i] = tiff[i][0].isInterleaved();
       core.pixelType[i] = tiff[i][0].getPixelType();
       core.falseColor[i] = true;
       core.metadataComplete[i] = true;
 
-      String timestamp = (String) getMeta("Timestamp " + (i+1));
-      String description = (String) getMeta("Image Description");
-
-      if (timestamp != null) {
+      if (i < timestamps.length && timestamps[i] != null) {
         SimpleDateFormat parse =
           new SimpleDateFormat("yyyy:MM:dd,HH:mm:ss:SSS");
-        Date date = parse.parse(timestamp, new ParsePosition(0));
+        Date date = parse.parse(timestamps[i], new ParsePosition(0));
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        timestamp = fmt.format(date);
+        timestamps[i] = fmt.format(date);
+        store.setImageCreationDate(timestamps[i], i);
+      }
+      else {
+        store.setImageCreationDate(DataTools.convertDate(
+          System.currentTimeMillis(), DataTools.UNIX), i);
       }
 
-      store.setImage((String) seriesNames.get(i), timestamp, description, ii);
+      store.setImageName((String) seriesNames.get(i), i);
+      store.setImageDescription(description, i);
     }
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeC.length; i++) {
       for (int j=0; j<core.sizeC[i]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, new Integer(i));
+        // CTR CHECK
+//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, new Integer(i));
         // TODO: get channel min/max from metadata
 //        store.setChannelGlobalMinMax(j, getChannelGlobalMinimum(currentId, j),
 //          getChannelGlobalMaximum(currentId, j), ii);

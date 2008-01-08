@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
@@ -147,9 +148,18 @@ public class ImarisReader extends FormatReader {
     core.imageCount[0] = core.sizeZ[0] * core.sizeC[0];
     offsets = new int[core.imageCount[0]];
 
+    float[] gains = new float[core.sizeC[0]];
+    float[] detectorOffsets = new float[core.sizeC[0]];
+    float[] pinholes = new float[core.sizeC[0]];
+
     for (int i=0; i<core.sizeC[0]; i++) {
-      int offset = 332 + ((i + 1) * 168) + (i * core.sizeX[0] *
-        core.sizeY[0] * core.sizeZ[0]);
+      addMeta("Channel #" + i + " Comment", in.readString(128));
+      gains[i] = in.readFloat();
+      detectorOffsets[i] = in.readFloat();
+      pinholes[i] = in.readFloat();
+      in.skipBytes(24);
+      int offset = 332 + (164 * core.sizeC[0]) +
+        (i * core.sizeX[0] * core.sizeY[0] * core.sizeZ[0]);
       for (int j=0; j<core.sizeZ[0]; j++) {
         offsets[i*core.sizeZ[0] + j] =
           offset + (j * core.sizeX[0] * core.sizeY[0]);
@@ -169,22 +179,32 @@ public class ImarisReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
     core.pixelType[0] = FormatTools.UINT8;
+    MetadataTools.populatePixels(store, this);
 
-    store.setImage(null, null, null, null);
-    FormatTools.populatePixels(store, this);
+    store.setDimensionsPhysicalSizeX(new Float(dx), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(dy), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(dz), 0, 0);
+    store.setDimensionsTimeIncrement(new Float(1), 0, 0);
+    store.setDimensionsWaveIncrement(new Integer(1), 0, 0);
 
-    store.setDimensions(new Float(dx), new Float(dy), new Float(dz),
-      new Float(1), new Float(1), null);
-
-    store.setObjective(null, null, null, null, new Float(mag), null, null);
-
+    // CTR CHECK
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
+      if ((int) pinholes[i] > 0) {
+        store.setLogicalChannelPinholeSize(new Integer((int) pinholes[i]),
+          0, i);
+      }
+      if (gains[i] > 0) {
+        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+      }
+      store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
     }
+
+    // CTR CHECK
+    //store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
   }
 
 }

@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
@@ -226,13 +227,15 @@ public class MicromanagerReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-
-    FormatTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
     for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
+      // CTR CHECK
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null);
       // TODO : retrieve min/max from the metadata
       //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
       //  getChannelGlobalMaximum(id, i), null);

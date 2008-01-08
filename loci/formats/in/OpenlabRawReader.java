@@ -27,8 +27,8 @@ package loci.formats.in;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * OpenlabRawReader is the file format reader for Openlab RAW files.
@@ -169,6 +169,7 @@ public class OpenlabRawReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
 
     switch (bytesPerPixel) {
       case 1:
@@ -182,14 +183,20 @@ public class OpenlabRawReader extends FormatReader {
         core.pixelType[0] = FormatTools.FLOAT;
     }
 
-    store.setImage(null,
-      timestamp == null ? null : sdf.format(timestamp), null, null);
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null);
+    if (timestamp != null) {
+      store.setImageCreationDate(sdf.format(timestamp), 0);
     }
+    else {
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    }
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null);
+//    }
   }
 
 }

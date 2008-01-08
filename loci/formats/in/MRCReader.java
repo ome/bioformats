@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * MRCReader is the file format reader for MRC files.
@@ -218,8 +219,10 @@ public class MRCReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-    FormatTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
 
     Float x = new Float(xlen / mx);
     Float y = new Float(ylen / my);
@@ -228,15 +231,9 @@ public class MRCReader extends FormatReader {
     if (y.floatValue() == Float.POSITIVE_INFINITY) y = new Float(1.0);
     if (z.floatValue() == Float.POSITIVE_INFINITY) z = new Float(1.0);
 
-    store.setDimensions(x, y, z, null, null, null);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
-      // TODO : get channel min/max from metadata
-      //store.setChannelGlobalMinMax(i, getChannelGlobalMinimum(id, i),
-      //  getChannelGlobalMaximum(id, i), null);
-    }
+    store.setDimensionsPhysicalSizeX(x, 0, 0);
+    store.setDimensionsPhysicalSizeY(y, 0, 0);
+    store.setDimensionsPhysicalSizeZ(z, 0, 0);
   }
 
 }

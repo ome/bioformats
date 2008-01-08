@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ImageInfo is a utility class for reading a file
@@ -67,6 +69,7 @@ public final class ImageInfo {
     boolean normalize = false;
     boolean fastBlit = false;
     boolean preload = false;
+    String omexmlVersion = null;
     int start = 0;
     int end = Integer.MAX_VALUE;
     int series = 0;
@@ -89,6 +92,7 @@ public final class ImageInfo {
           else if (args[i].equals("-fast")) fastBlit = true;
           else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
           else if (args[i].equals("-preload")) preload = true;
+          else if (args[i].equals("-version")) omexmlVersion = args[++i];
           else if (args[i].equals("-level")) {
             try {
               FormatHandler.setDebugLevel(Integer.parseInt(args[++i]));
@@ -154,6 +158,7 @@ public final class ImageInfo {
         "  -preload: pre-read entire file into a buffer; significantly",
         "            reduces the time required to read the images, but",
         "            requires more memory",
+        "  -version: specify which OME-XML version should be generated",
         "",
         "* = may result in loss of precision",
         ""
@@ -173,7 +178,8 @@ public final class ImageInfo {
 
     if (omexml) {
       reader.setOriginalMetadataPopulated(true);
-      MetadataStore store = MetadataTools.createOMEXMLMetadata();
+      MetadataStore store =
+        MetadataTools.createOMEXMLMetadata(null, omexmlVersion);
       if (store != null) reader.setMetadataStore(store);
     }
 
@@ -292,7 +298,7 @@ public final class ImageInfo {
       boolean metadataComplete = reader.isMetadataComplete();
 
       // output basic metadata for series #i
-      String seriesName = mr == null ? null : mr.getImageName(new Integer(j));
+      String seriesName = mr == null ? null : mr.getImageName(j);
       LogTools.println("Series #" + j +
         (seriesName == null ? "" : " -- " + seriesName) + ":");
       LogTools.println("\tImage count = " + imageCount);

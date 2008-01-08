@@ -34,6 +34,7 @@ import java.awt.image.*;
 import java.io.*;
 import loci.formats.*;
 import loci.formats.codec.LuraWaveCodec;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * Miscellaneous generally useful utility methods.
@@ -291,17 +292,16 @@ public final class Util {
   }
 
   /** Applies spatial calibrations to an image stack. */
-  public static void applyCalibration(MetadataRetrieve store,
+  public static void applyCalibration(MetadataRetrieve retrieve,
     ImagePlus imp, int series)
   {
     double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
-    Integer ii = new Integer(series);
 
-    Float xf = store.getPixelSizeX(ii);
+    Float xf = retrieve.getDimensionsPhysicalSizeX(0, 0);
     if (xf != null) xcal = xf.floatValue();
-    Float yf = store.getPixelSizeY(ii);
+    Float yf = retrieve.getDimensionsPhysicalSizeY(0, 0);
     if (yf != null) ycal = yf.floatValue();
-    Float zf = store.getPixelSizeZ(ii);
+    Float zf = retrieve.getDimensionsPhysicalSizeZ(0, 0);
     if (zf != null) zcal = zf.floatValue();
 
     if (xcal == xcal || ycal == ycal || zcal == zcal) {

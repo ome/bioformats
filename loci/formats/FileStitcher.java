@@ -29,6 +29,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Logic to stitch together files with similar names.
@@ -1176,10 +1177,10 @@ public class FileStitcher implements IFormatReader {
     MetadataStore s = reader.getMetadataStore();
     for (int i=0; i<core.sizeX.length; i++) {
       if (seriesNames != null) {
-        s.setImage((String) seriesNames.get(i), null, null, new Integer(i));
+        s.setImageName((String) seriesNames.get(i), i);
       }
     }
-    FormatTools.populatePixels(s, this);
+    MetadataTools.populatePixels(s, this);
   }
 
   /**

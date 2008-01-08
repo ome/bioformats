@@ -162,6 +162,7 @@ public final class TiffTools {
   public static final int S_MIN_SAMPLE_VALUE = 340;
   public static final int S_MAX_SAMPLE_VALUE = 341;
   public static final int TRANSFER_RANGE = 342;
+  public static final int JPEG_TABLES = 347;
   public static final int JPEG_PROC = 512;
   public static final int JPEG_INTERCHANGE_FORMAT = 513;
   public static final int JPEG_INTERCHANGE_FORMAT_LENGTH = 514;
@@ -867,6 +868,7 @@ public final class TiffTools {
 
     // extract comment
     Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+    /* debug */ System.out.println(o);
     String comment = null;
     if (o instanceof String) comment = (String) o;
     else if (o instanceof String[]) {
@@ -1309,6 +1311,11 @@ public final class TiffTools {
 
     if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
 
+    byte[] jpegTable = null;
+    if (compression == JPEG) {
+      jpegTable = (byte[]) TiffTools.getIFDValue(ifd, JPEG_TABLES);
+    }
+
     // number of uncompressed bytes in a strip
     int size = (int)
       (imageWidth * (bitsPerSample[0] / 8) * rowsPerStrip * samplesPerPixel);
@@ -1316,6 +1323,8 @@ public final class TiffTools {
     if (isTiled) {
       long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
       long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
+
+      /* debug */ System.out.println("tile = " + tileWidth + "x" + tileLength);
 
       byte[] data = new byte[(int) (imageWidth * imageLength *
         samplesPerPixel * (bitsPerSample[0] / 8))];
@@ -1330,7 +1339,16 @@ public final class TiffTools {
         in.seek(stripOffsets[i]);
         in.read(b);
 
-        b = uncompress(b, compression, data.length);
+        int len = (int)
+          (tileWidth * tileLength * samplesPerPixel * (bitsPerSample[0] / 8));
+
+        if (jpegTable != null) {
+          byte[] q = new byte[jpegTable.length + b.length - 4];
+          System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
+          System.arraycopy(b, 2, q, jpegTable.length - 2, b.length - 2);
+          b = uncompress(q, compression, len);
+        }
+        else b = uncompress(b, compression, len);
 
         int ext = (int) (b.length / (tileWidth * tileLength));
         int rowBytes = (int) (tileWidth * ext);
@@ -1880,8 +1898,8 @@ public final class TiffTools {
       return new LZWCodec().decompress(input);
     }
     else if (compression == JPEG) {
-      throw new FormatException(
-        "Sorry, JPEG compression mode is not supported");
+      return new JPEGCodec().decompress(input,
+        new Object[] {Boolean.TRUE, Boolean.TRUE});
     }
     else if (compression == PACK_BITS) {
       return new PackbitsCodec().decompress(input, new Integer(size));

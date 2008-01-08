@@ -72,10 +72,9 @@ public class Entity {
 
   public String name() { return name; }
 
-  /** Javadoc for this entity's MetadataStore setter method. */
+  /** Javadoc for this entity's MetadataStore setter methods. */
   public String doc() {
     StringBuffer sb = new StringBuffer();
-    sb.append("Sets ");
     sb.append(desc);
     sb.append(".");
     if (!"-".equals(extra)) {
@@ -151,7 +150,7 @@ public class Entity {
         if (t.endsWith("+")) {
           t = t.substring(t.startsWith("@") ? 1 : 0, t.length() - 1);
           Property p = new Property(t + "Index",
-            "Integer", "index of the " + t, this, true);
+            "int", "index of the " + t, this, true);
           indices.add(p);
         }
       }

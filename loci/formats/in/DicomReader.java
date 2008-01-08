@@ -29,6 +29,7 @@ import java.text.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.codec.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * DicomReader is the file format reader for DICOM files.
@@ -93,6 +94,8 @@ public class DicomReader extends FormatReader {
 
   private boolean isJPEG = false;
   private boolean isRLE = false;
+
+  private String date, time, imageType;
 
   // -- Constructor --
 
@@ -384,6 +387,7 @@ public class DicomReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
 
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
     if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
@@ -401,10 +405,7 @@ public class DicomReader extends FormatReader {
     }
 
     // populate OME-XML node
-    FormatTools.populatePixels(store, this);
-
-    String date = (String) getMeta("Content Date");
-    String time = (String) getMeta("Content Time");
+    MetadataTools.populatePixels(store, this);
 
     String stamp = null;
 
@@ -420,18 +421,19 @@ public class DicomReader extends FormatReader {
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
-    store.setImage(null, stamp, (String) getMeta("Image Type"), null);
+    store.setImageCreationDate(stamp, 0);
+    store.setImageDescription(imageType, 0);
 
-    store.setInstrument(
-      (String) getMeta("Manufacturer"),
-      (String) getMeta("Manufacturer's Model Name"),
-      null, null, null);
+    // CTR CHECK
+//    store.setInstrumentManufacturer((String) getMeta("Manufacturer"), 0);
+//    store.setInstrumentModel((String) getMeta("Manufacturer's Model Name"), 0);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       null, null, null, null, null, null, null, null, null, null, null, null,
-       null, null, null, null);
-    }
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//       null, null, null, null, null, null, null, null, null, null, null, null,
+//       null, null, null, null);
+//    }
   }
 
   // -- Helper methods --
@@ -470,6 +472,9 @@ public class DicomReader extends FormatReader {
         }
         in.seek(fp);
       }
+      else if (key.equals("Content Time")) time = info;
+      else if (key.equals("Content Date")) date = info;
+      else if (key.equals("Image Type")) imageType = info;
 
       if (tag != PIXEL_DATA) {
         addMeta(key, info);

@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * IPLabReader is the file format reader for IPLab (.IPL) files.
@@ -184,14 +185,17 @@ public class IPLabReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-    FormatTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null);
-    }
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null);
+//    }
 
     status("Reading tags");
 
@@ -255,11 +259,13 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationWhite" + i, new Double(white));
 
           store = getMetadataStore();
-          store.setChannelGlobalMinMax(i, new Double(min),
-            new Double(max), null);
+          // CTR CHECK
+//          store.setChannelGlobalMinMax(i, new Double(min),
+//            new Double(max), null);
 
-          store.setDisplayChannel(new Integer(core.sizeC[0]), new Double(black),
-            new Double(white), new Float(gamma), null);
+          // CTR CHECK
+//          store.setDisplayChannel(new Integer(core.sizeC[0]), new Double(black),
+//            new Double(white), new Float(gamma), null);
         }
       }
       else if (tag.equals("head")) {
@@ -288,7 +294,10 @@ public class IPLabReader extends FormatReader {
         Integer x1 = new Integer(roiRight);
         Integer y0 = new Integer(roiBottom);
         Integer y1 = new Integer(roiTop);
-        store.setDisplayROI(x0, y0, null, x1, y1, null, null, null, null, null);
+        //store.setDisplayROIX0(x0, 0, 0);
+        //store.setDisplayROIY0(y0, 0, 0);
+        //store.setDisplayROIX1(x1, 0, 0);
+        //store.setDisplayROIY1(y1, 0, 0);
 
         in.skipBytes(8 * numRoiPts);
       }
@@ -310,7 +319,8 @@ public class IPLabReader extends FormatReader {
 
           if (i == 0) {
             Float pixelSize = new Float(1 / (float) unitsPerPixel);
-            store.setDimensions(pixelSize, pixelSize, null, null, null, null);
+            store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+            store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
           }
 
           addMeta("UnitName" + i, new Long(xUnitName));
@@ -333,7 +343,8 @@ public class IPLabReader extends FormatReader {
         addMeta("Descriptor", descriptor);
         addMeta("Notes", notes);
 
-        store.setImage(currentId, null, notes, null);
+        store.setImageName(currentId, 0);
+        store.setImageDescription(notes, 0);
       }
 
       if (in.getFilePointer() + 4 <= in.length()) {

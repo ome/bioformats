@@ -549,7 +549,7 @@ public final class DataTools {
 
   // -- Date handling --
 
-  /** Converts the given timestamp into an ISO 8061 date. */
+  /** Converts the given timestamp into an ISO 8601 date. */
   public static String convertDate(long stamp, int format) {
     // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
     // dates than you will ever need (or want)
@@ -562,7 +562,7 @@ public final class DataTools {
         break;
     }
 
-    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     StringBuffer sb = new StringBuffer();
 
     Date d = new Date(ms);

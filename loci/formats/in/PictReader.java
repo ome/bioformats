@@ -30,6 +30,7 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.codec.PackbitsCodec;
+import loci.formats.meta.MetadataStore;
 
 /**
  * PictReader is the file format reader for Apple PICT files.
@@ -332,16 +333,19 @@ public class PictReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
     core.pixelType[0] = ImageTools.getPixelType(openImage(0));
 
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null);
-    }
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null);
+//    }
   }
 
   // -- Helper methods --

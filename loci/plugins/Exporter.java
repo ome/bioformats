@@ -34,6 +34,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Core logic for the LOCI Exporter ImageJ plugin.
@@ -113,10 +115,14 @@ public class Exporter {
               break;
           }
 
-          store.setPixels(new Integer(imp.getWidth()),
-            new Integer(imp.getHeight()), new Integer(imp.getNSlices()),
-            new Integer(imp.getNChannels()), new Integer(imp.getNFrames()),
-            new Integer(ptype), Boolean.FALSE, "XYCZT", null, null);
+          store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
+          store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
+          store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
+          store.setPixelsSizeC(new Integer(imp.getNChannels()), 0, 0);
+          store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
+          store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
+          store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
+          store.setPixelsDimensionOrder("XYCZT", 0, 0);
         }
         w.setMetadataRetrieve((MetadataRetrieve) store);
       }

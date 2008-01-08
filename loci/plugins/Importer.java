@@ -31,9 +31,10 @@ import ij.process.*;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEReader;
 import loci.formats.ome.OMEROReader;
-import loci.formats.ome.OMEXMLMetadata;
 import loci.plugins.browser.LociDataBrowser;
 
 /**
@@ -111,7 +112,8 @@ public class Importer {
     else { // options.isOME
       r = new OMEReader();
     }
-    OMEXMLMetadata store = new OMEXMLMetadata();
+    MetadataStore store = MetadataTools.createOMEXMLMetadata();
+    MetadataRetrieve retrieve = (MetadataRetrieve) store;
     r.setMetadataStore(store);
 
     IJ.showStatus("");
@@ -206,7 +208,7 @@ public class Importer {
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(i);
         StringBuffer sb = new StringBuffer();
-        String name = store.getImageName(new Integer(i));
+        String name = retrieve.getImageName(i);
         if (name != null && name.length() > 0) {
           sb.append(name);
           sb.append(": ");
@@ -290,7 +292,7 @@ public class Importer {
           r.setSeries(i);
           meta.putAll(r.getCoreMetadata().seriesMetadata[i]);
 
-          String s = store.getImageName(new Integer(i));
+          String s = retrieve.getImageName(i);
           if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
             StringBuffer sb = new StringBuffer();
             sb.append("Series ");
@@ -350,7 +352,7 @@ public class Importer {
 
           // dump OME-XML to ImageJ's description field, if available
           FileInfo fi = new FileInfo();
-          fi.description = store.dumpXML();
+          fi.description = MetadataTools.getOMEXML(retrieve);
 
           // place metadata key/value pairs in ImageJ's info field
           StringBuffer metadata = getMetadataString(r.getMetadata(), " = ");
@@ -387,8 +389,8 @@ public class Importer {
             stackB = new CustomStack(w, h, null, id, r, (needComposite ||
               !options.isMergeChannels()) ? 1 : r.getSizeC());
             for (int j=0; j<num[i]; j++) {
-              ((CustomStack) stackB).addSlice(constructSliceLabel(j, r, store,
-                i, new int[][] {zCount, cCount, tCount}));
+              ((CustomStack) stackB).addSlice(constructSliceLabel(j, r,
+              retrieve, i, new int[][] {zCount, cCount, tCount}));
             }
           }
           else {
@@ -407,7 +409,7 @@ public class Importer {
 
               int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
 
-              String label = constructSliceLabel(ndx, r, store, i,
+              String label = constructSliceLabel(ndx, r, retrieve, i,
                 new int[][] {zCount, cCount, tCount});
 
               // get image processor for jth plane
@@ -451,18 +453,18 @@ public class Importer {
           IJ.showStatus("Creating image");
           IJ.showProgress(1);
 
-          String seriesName = store.getImageName(new Integer(i));
+          String seriesName = retrieve.getImageName(i);
 
-          showStack(stackB, currentFile, seriesName, store,
+          showStack(stackB, currentFile, seriesName, retrieve,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, options, metadata);
-          showStack(stackS, currentFile, seriesName, store,
+          showStack(stackS, currentFile, seriesName, retrieve,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, options, metadata);
-          showStack(stackF, currentFile, seriesName, store,
+          showStack(stackF, currentFile, seriesName, retrieve,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, options, metadata);
-          showStack(stackO, currentFile, seriesName, store,
+          showStack(stackO, currentFile, seriesName, retrieve,
             cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
             fi, r, options, metadata);
 
@@ -567,7 +569,7 @@ public class Importer {
    * the specified parameters and import options.
    */
   private void showStack(ImageStack stack, String file, String series,
-    OMEXMLMetadata store, int cCount, int zCount, int tCount,
+    MetadataRetrieve retrieve, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
     ImporterOptions options, StringBuffer metadata)
     throws FormatException, IOException
@@ -577,7 +579,7 @@ public class Importer {
     imp.setProperty("Info", metadata.toString());
 
     // retrieve the spatial calibration information, if available
-    Util.applyCalibration(store, imp, r.getSeries());
+    Util.applyCalibration(retrieve, imp, r.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
     displayStack(imp, r, options);
@@ -699,7 +701,10 @@ public class Importer {
     String title = file.substring(file.lastIndexOf(File.separator) + 1);
     if (used.length > 1) {
       FilePattern fp = new FilePattern(new Location(file));
-      if (fp != null) title = fp.getPattern();
+      if (fp != null) {
+        title = fp.getPattern();
+        title = title.substring(title.lastIndexOf(File.separator) + 1);
+      }
     }
     if (series != null && !file.endsWith(series) && r.getSeriesCount() > 1) {
       title += " - " + series;
@@ -714,7 +719,7 @@ public class Importer {
 
   /** Construct slice label. */
   private String constructSliceLabel(int ndx, IFormatReader r,
-    MetadataRetrieve store, int series, int[][] counts)
+    MetadataRetrieve retrieve, int series, int[][] counts)
   {
     r.setSeries(series);
     int[] zct = r.getZCTCoords(ndx);
@@ -761,7 +766,7 @@ public class Importer {
       sb.append(r.getImageCount());
     }
     // put image name at the end, in case it is too long
-    String imageName = store.getImageName(new Integer(series));
+    String imageName = retrieve.getImageName(series);
     if (imageName != null) {
       sb.append(" - ");
       sb.append(imageName);

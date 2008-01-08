@@ -27,6 +27,8 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.*;
 import java.io.IOException;
+import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
  * Abstract superclass of all biological file format writers.
@@ -89,12 +91,11 @@ public abstract class FormatWriter extends FormatHandler
     FormatTools.assertId(currentId, true, 1);
     MetadataRetrieve r = getMetadataRetrieve();
     if (r == null) throw new FormatException("MetadataRetrieve cannot be null");
-    Integer ss = new Integer(series);
-    int width = r.getSizeX(ss).intValue();
-    int height = r.getSizeY(ss).intValue();
-    int channels = r.getSizeC(ss).intValue();
-    int type = FormatTools.pixelTypeFromString(r.getPixelType(ss));
-    boolean littleEndian = !r.getBigEndian(ss).booleanValue();
+    int width = r.getPixelsSizeX(series, 0).intValue();
+    int height = r.getPixelsSizeY(series, 0).intValue();
+    int channels = r.getPixelsSizeC(series, 0).intValue();
+    int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
+    boolean littleEndian = !r.getPixelsBigEndian(series, 0).booleanValue();
 
     BufferedImage img = ImageTools.makeImage(bytes, width, height, channels,
       true, FormatTools.getBytesPerPixel(type), littleEndian);

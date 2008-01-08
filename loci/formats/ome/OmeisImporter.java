@@ -28,7 +28,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import loci.formats.*;
-import org.openmicroscopy.xml.DOMUtil;
+import loci.formats.ome.OMEXML2003FCMetadata;
+import ome.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,7 +75,7 @@ public class OmeisImporter {
 
   public OmeisImporter() {
     reader = new FileStitcher(new ChannelSeparator());
-    omexmlMeta = new OMEXMLMetadata();
+    omexmlMeta = new OMEXML2003FCMetadata();
     reader.setOriginalMetadataPopulated(true);
     reader.setMetadataStore(omexmlMeta);
   }

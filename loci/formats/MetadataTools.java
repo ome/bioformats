@@ -24,6 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
+
 /**
  * A utility class for working with metadata objects,
  * including {@link MetadataStore}, {@link MetadataRetrieve},
@@ -61,14 +64,36 @@ public final class MetadataTools {
    *   or null if the class is not available.
    */
   public static MetadataStore createOMEXMLMetadata(String xml) {
+    return createOMEXMLMetadata(xml, null);
+  }
+
+  /**
+   * Creates an OME-XML metadata object using reflection, to avoid
+   * direct dependencies on the optional {@link loci.formats.ome} package,
+   * wrapping a DOM representation of the given OME-XML string.
+   *
+   * @param version The OME-XML version to use.  If null, the latest version is
+   *   used.
+   * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
+   *   or null if the class is not available.
+   */
+  public static MetadataStore createOMEXMLMetadata(String xml, String version) {
+    if (xml != null) throw new RuntimeException("CTR FIXME"); // TEMP
     MetadataStore store = null;
     ReflectedUniverse r = new ReflectedUniverse();
     try {
-      r.exec("import loci.formats.ome.OMEXMLMetadata");
+      r.exec("import ome.xml.OMEXMLFactory");
+      if (version == null) {
+        version = (String) r.exec("OMEXMLFactory.LATEST_VERSION");
+      }
+      String metaClass = "OMEXML" + version.replaceAll("-", "") + "Metadata";
+      r.exec("import loci.formats.ome." + metaClass);
       r.setVar("xml", xml);
-      store = (MetadataStore) r.exec("new OMEXMLMetadata(xml)");
+      /* debug */ System.out.println("metaClass = " + metaClass);
+      // CTR FIXME need to pass XML as an argument here... eventually
+      store = (MetadataStore) r.exec("new " + metaClass + "()");
     }
-    catch (ReflectException exc) { }
+    catch (ReflectException exc) { exc.printStackTrace(); }
     return store;
   }
 
@@ -86,6 +111,27 @@ public final class MetadataTools {
     }
     catch (ReflectException exc) { }
     return false;
+  }
+
+  /**
+   * Populates the 'pixels' element of the given metadata store, using core
+   * metadata from the given reader.
+   */
+  public static void populatePixels(MetadataStore store, IFormatReader r) {
+    int oldSeries = r.getSeries();
+    for (int i=0; i<r.getSeriesCount(); i++) {
+      r.setSeries(i);
+      store.setPixelsSizeX(new Integer(r.getSizeX()), i, 0);
+      store.setPixelsSizeY(new Integer(r.getSizeY()), i, 0);
+      store.setPixelsSizeZ(new Integer(r.getSizeZ()), i, 0);
+      store.setPixelsSizeC(new Integer(r.getSizeC()), i, 0);
+      store.setPixelsSizeT(new Integer(r.getSizeT()), i, 0);
+      store.setPixelsPixelType(
+        FormatTools.getPixelTypeString(r.getPixelType()), i, 0);
+      store.setPixelsBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
+      store.setPixelsDimensionOrder(r.getDimensionOrder(), i, 0);
+    }
+    r.setSeries(oldSeries);
   }
 
   /**
@@ -174,6 +220,7 @@ public final class MetadataTools {
    * (source) into a metadata store (destination).
    */
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
+    /* CTR FIXME
     Integer ii = null;
     int globalPixCount = 0;
 
@@ -310,6 +357,7 @@ public final class MetadataTools {
     dest.setOTF(src.getOTFSizeX(ii), src.getOTFSizeY(ii),
       src.getOTFPixelType(ii), src.getOTFPath(ii),
       src.getOTFOpticalAxisAverage(ii), ii, ii, ii, ii);
+    */
   }
 
 }

@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.meta.MetadataStore;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -104,6 +105,13 @@ public class ZeissZVIReader extends FormatReader {
   private boolean isTiled;
   private int tileRows, tileColumns;
   private boolean isJPEG;
+
+  private String firstImageTile, secondImageTile;
+  private float pixelSizeX, pixelSizeY, pixelSizeZ;
+  private String microscopeName;
+  private Vector emWave, exWave, channelNames;
+  private Vector whiteValue, blackValue, gammaValue, exposureTime;
+  private String userName, userCompany, mag, na;
 
   // -- Constructor --
 
@@ -275,6 +283,14 @@ public class ZeissZVIReader extends FormatReader {
     cIndices = new Vector();
     tIndices = new Vector();
 
+    emWave = new Vector();
+    exWave = new Vector();
+    channelNames = new Vector();
+    whiteValue = new Vector();
+    blackValue = new Vector();
+    gammaValue = new Vector();
+    exposureTime = new Vector();
+
     try {
       in = new RandomAccessStream(id);
 
@@ -319,16 +335,18 @@ public class ZeissZVIReader extends FormatReader {
         (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
 
       if (isTiled) {
-        String zeroIndex = (String) getMeta("ImageTile Index 0");
-        String oneIndex = (String) getMeta("ImageTile Index 1");
-        if (zeroIndex == null || zeroIndex.equals("")) zeroIndex = null;
-        if (oneIndex == null || oneIndex.equals("")) oneIndex = null;
-        if (zeroIndex == null || oneIndex == null) {
+        if (firstImageTile == null || firstImageTile.equals("")) {
+          firstImageTile = null;
+        }
+        if (secondImageTile == null || secondImageTile.equals("")) {
+          secondImageTile = null;
+        }
+        if (firstImageTile == null || secondImageTile == null) {
           isTiled = false;
         }
         else {
-          int lowerLeft = Integer.parseInt(zeroIndex);
-          int middle = Integer.parseInt(oneIndex);
+          int lowerLeft = Integer.parseInt(firstImageTile);
+          int middle = Integer.parseInt(secondImageTile);
 
           tileColumns = lowerLeft - middle - 1;
           tileRows = (lowerLeft / tileColumns) + 1;
@@ -408,47 +426,74 @@ public class ZeissZVIReader extends FormatReader {
   /** Initialize metadata hashtable and OME-XML structure. */
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore();
-
-    store.setImage(null, null, null, null);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
     if (bpp == 1 || bpp == 3) core.pixelType[0] = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core.pixelType[0] = FormatTools.UINT16;
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
-    String pixX = (String) getMeta("Scale Factor for X");
-    String pixY = (String) getMeta("Scale Factor for Y");
-    String pixZ = (String) getMeta("Scale Factor for Z");
+    store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
 
-    store.setDimensions(
-      pixX == null ? null : new Float(pixX),
-      pixY == null ? null : new Float(pixY),
-      pixZ == null ? null : new Float(pixZ),
-      null, null, null);
+    // CTR CHECK
+//    store.setInstrumentModel(microscopeName, 0);
 
-    String scopeName = (String) getMeta("Microscope Name");
-    if (scopeName == null) scopeName = (String) getMeta("Microscope Name 0");
-    store.setInstrument(null, scopeName, null, null, null);
+    // trim metadata arrays
+    String[] s = (String[]) exposureTime.toArray(new String[0]);
+    exposureTime.clear();
+    for (int i=0; i<s.length; i++) {
+      if (!s[i].trim().equals("")) exposureTime.add(s[i]);
+    }
+
+    s = (String[]) emWave.toArray(new String[0]);
+    emWave.clear();
+    for (int i=0; i<s.length; i++) {
+      if (!s[i].trim().equals("")) emWave.add(s[i]);
+    }
+
+    s = (String[]) exWave.toArray(new String[0]);
+    exWave.clear();
+    for (int i=0; i<s.length; i++) {
+      if (!s[i].trim().equals("")) exWave.add(s[i]);
+    }
+
+    s = (String[]) channelNames.toArray(new String[0]);
+    channelNames.clear();
+    for (int i=0; i<s.length; i++) {
+      if (!s[i].trim().equals("")) channelNames.add(s[i]);
+    }
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      int idx = FormatTools.getIndex(this, 0, i % getEffectiveSizeC(), 0);
-      String emWave = (String) getMeta("Emission Wavelength " + idx);
-      String exWave = (String) getMeta("Excitation Wavelength " + idx);
+      int idx = i % getEffectiveSizeC();
+      String em = idx < emWave.size() ? (String) emWave.get(idx) : null;
+      String ex = idx < exWave.size() ? (String) exWave.get(idx) : null;
 
-      if (emWave != null && emWave.indexOf(".") != -1) {
-        emWave = emWave.substring(0, emWave.indexOf("."));
+      if (em != null && em.indexOf(".") != -1) {
+        em = em.substring(0, em.indexOf("."));
       }
-      if (exWave != null && exWave.indexOf(".") != -1) {
-        exWave = exWave.substring(0, exWave.indexOf("."));
+      if (ex != null && ex.indexOf(".") != -1) {
+        ex = ex.substring(0, ex.indexOf("."));
       }
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        emWave == null ? null : new Integer(emWave),
-        exWave == null ? null : new Integer(exWave), null, null, null);
+      if (em != null && !em.trim().equals("")) {
+        store.setLogicalChannelEmWave(new Integer(em), 0, idx);
+      }
+      if (ex != null && !ex.trim().equals("")) {
+        store.setLogicalChannelExWave(new Integer(ex), 0, idx);
+      }
+      if (idx < channelNames.size()) {
+        store.setLogicalChannelName((String) channelNames.get(idx), 0, idx);
+      }
 
-      String black = (String) getMeta("BlackValue " + idx);
-      String white = (String) getMeta("WhiteValue " + idx);
-      String gamma = (String) getMeta("GammaValue " + idx);
+      String black =
+        idx < blackValue.size() ? (String) blackValue.get(idx) : null;
+      String white =
+        idx < whiteValue.size() ? (String) whiteValue.get(idx) : null;
+      String gamma =
+        idx < gammaValue.size() ? (String) gammaValue.get(idx) : null;
 
       Double blackValue = null, whiteValue = null;
       Float gammaValue = null;
@@ -463,37 +508,53 @@ public class ZeissZVIReader extends FormatReader {
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
 
-      store.setDisplayChannel(new Integer(i), blackValue, whiteValue,
-        gammaValue, null);
+      // CTR CHECK
+//      store.setDisplayChannel(new Integer(i), blackValue, whiteValue,
+//        gammaValue, null);
     }
 
-    for (int i=0; i<core.imageCount[0]; i++) {
-      int[] zct = FormatTools.getZCTCoords(this, i);
-      String exposure = (String) getMeta("Exposure Time [ms] " + i);
+    for (int plane=0; plane<core.imageCount[0]; plane++) {
+      int[] zct = FormatTools.getZCTCoords(this, plane);
+      String exposure =
+        zct[1] < exposureTime.size() ? (String) exposureTime.get(zct[1]) : null;
       Float exp = new Float(0.0);
       try { exp = new Float(exposure); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
-      store.setPlaneInfo(zct[0], zct[1], zct[2], new Float(0.0), exp, null);
+      store.setPlaneTheZ(new Integer(zct[0]), 0, 0, plane);
+      store.setPlaneTheC(new Integer(zct[1]), 0, 0, plane);
+      store.setPlaneTheT(new Integer(zct[2]), 0, 0, plane);
+      store.setPlaneTimingExposureTime(exp, 0, 0, plane);
+      store.setPlaneTimingDeltaT(new Float(0.0), 0, 0, plane);
     }
 
-    String objectiveName = (String) getMeta("Objective Name 0");
-    if (objectiveName != null) {
-      objectiveName = DataTools.stripString(objectiveName);
+    // set experimenter data
+    if (userName != null) {
+      int space = userName.indexOf(" ");
+      String firstName = space == -1 ? "": userName.substring(0, space);
+      String lastName = userName.substring(space + 1);
+      if (firstName.trim().equals("")) firstName = null;
+      if (lastName.trim().equals("")) lastName = null;
+      if (firstName != null || lastName != null) {
+        store.setExperimenterFirstName(firstName, 0);
+        store.setExperimenterLastName(lastName, 0);
+        if (userCompany != null) {
+          store.setExperimenterInstitution(userCompany, 0);
+        }
+      }
     }
 
-    String objectiveMag = (String) getMeta("Objective Magnification 0");
-    if (objectiveMag != null) {
-      objectiveMag = DataTools.stripString(objectiveMag);
-    }
-    else objectiveMag = "1.0";
+    // TODO : Objective Working Distance
 
-    String objectiveNA = (String) getMeta("Objective N.A. 0");
-    if (objectiveNA != null) objectiveNA = DataTools.stripString(objectiveNA);
-    else objectiveNA = "1.0";
 
-    store.setObjective(null, objectiveName, null, new Float(objectiveNA),
-      new Float(objectiveMag), null, null);
+    // CTR CHECK - use Objective, combined w/ ObjectiveSettings once it exists?
+//    String objectiveName = (String) getMeta("Objective Name 0");
+//
+//    if (mag == null) mag = "1.0";
+//    if (na == null) na = "1.0";
+//
+//    store.setObjective(null, objectiveName, null, new Float(na),
+//      new Float(mag), null, null);
   }
 
   protected void parseDir(int depth, Object dir)
@@ -779,21 +840,22 @@ public class ZeissZVIReader extends FormatReader {
       s.skipBytes(6);
 
       String key = getKey(tagID);
+      value = DataTools.stripString(value);
       if (key.equals("Image Index Z")) {
         try {
-          zIndex = Integer.parseInt(DataTools.stripString(value));
+          zIndex = Integer.parseInt(value);
         }
         catch (NumberFormatException f) { }
       }
       else if (key.equals("Image Index T")) {
         try {
-          tIndex = Integer.parseInt(DataTools.stripString(value));
+          tIndex = Integer.parseInt(value);
         }
         catch (NumberFormatException f) { }
       }
       else if (key.equals("Image Channel Index")) {
         try {
-          cIndex = Integer.parseInt(DataTools.stripString(value));
+          cIndex = Integer.parseInt(value);
         }
         catch (NumberFormatException f) { }
       }
@@ -811,8 +873,74 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       if (key.indexOf("ImageTile") != -1) isTiled = true;
-      if (cIndex != -1) addMeta(key + " " + cIndex, value);
-      else addMeta(key, value);
+      if (cIndex != -1) key += " " + cIndex;
+      addMeta(key, value);
+
+      if (key.equals("ImageTile Index") || key.equals("ImageTile Index 0")) {
+        firstImageTile = value;
+      }
+      else if (key.equals("ImageTile Index 1")) secondImageTile = value;
+      else if (key.equals("Scale Factor for X")) {
+        pixelSizeX = Float.parseFloat(value);
+      }
+      else if (key.equals("Scale Factor for Y")) {
+        pixelSizeY = Float.parseFloat(value);
+      }
+      else if (key.equals("Scale Factor for Z")) {
+        pixelSizeZ = Float.parseFloat(value);
+      }
+      else if (key.equals("Microscope Name") || key.equals("Microscope Name 0"))
+      {
+        microscopeName = value;
+      }
+      else if (key.startsWith("Emission Wavelength")) {
+        if (cIndex != -1) {
+          while (cIndex >= emWave.size()) emWave.add("");
+          emWave.setElementAt(value, cIndex);
+        }
+      }
+      else if (key.startsWith("Excitation Wavelength")) {
+        if (cIndex != -1) {
+          while (cIndex >= exWave.size()) exWave.add("");
+          exWave.setElementAt(value, cIndex);
+        }
+      }
+      else if (key.startsWith("Channel Name")) {
+        if (cIndex != -1) {
+          while (cIndex >= channelNames.size()) channelNames.add("");
+          channelNames.setElementAt(value, cIndex);
+        }
+      }
+      else if (key.startsWith("BlackValue")) {
+        if (cIndex != -1) {
+          while (cIndex >= blackValue.size()) blackValue.add("");
+          blackValue.setElementAt(value, cIndex);
+        }
+      }
+      else if (key.startsWith("WhiteValue")) {
+        if (cIndex != -1) {
+          while (cIndex >= whiteValue.size()) whiteValue.add("");
+          whiteValue.setElementAt(value, cIndex);
+        }
+      }
+      else if (key.startsWith("GammaValue")) {
+        if (cIndex != -1) {
+          while (cIndex >= gammaValue.size()) gammaValue.add("");
+          gammaValue.setElementAt(value, cIndex);
+        }
+      }
+      else if (key.startsWith("Exposure Time [ms]")) {
+        if (cIndex != -1) {
+          while (cIndex >= exposureTime.size()) exposureTime.add("");
+          exposureTime.setElementAt(value, cIndex);
+        }
+      }
+      else if (key.startsWith("User Name")) {
+        if (value != null && !value.trim().equals("")) userName = value;
+      }
+      else if (key.equals("User company")) userCompany = value;
+      else if (key.startsWith("Objective Magnification")) mag = value;
+      else if (key.startsWith("Objective N.A.")) na = value;
     }
   }
 
@@ -1187,7 +1315,7 @@ public class ZeissZVIReader extends FormatReader {
       case 65602: return "ApoTome Grid Name";
       case 65603: return "ApoTome Staining";
       case 65604: return "ApoTome Processing Mode";
-      case 65605: return "ApotmeCamLiveCombineMode";
+      case 65605: return "ApotomeCamLiveCombineMode";
       case 65606: return "ApoTome Filter Name";
       case 65607: return "Apotome Filter Strength";
       case 65608: return "ApotomeCamFilterHarmonics";

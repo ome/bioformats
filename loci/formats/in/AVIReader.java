@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.codec.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * AVIReader is the file format reader for AVI files.
@@ -475,16 +476,17 @@ public class AVIReader extends FormatReader {
     if (bmpCompression != 0) core.pixelType[0] = FormatTools.UINT8;
 
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
 
-    store.setImage(null, null, null, null);
-
-    FormatTools.populatePixels(store, this);
-
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-        null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null);
-    }
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null);
+//    }
   }
 
   // -- Helper methods --

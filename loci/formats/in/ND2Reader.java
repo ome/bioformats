@@ -33,6 +33,7 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -146,6 +147,9 @@ public class ND2Reader extends FormatReader {
   private Vector ts = new Vector();
 
   private int numSeries;
+
+  private float pixelSizeX, pixelSizeY, pixelSizeZ;
+  private String gain, voltage, mag, na;
 
   // -- Constructor --
 
@@ -483,15 +487,17 @@ public class ND2Reader extends FormatReader {
       }
 
       MetadataStore store = getMetadataStore();
-      store.setImage(null, null, null, null);
-      FormatTools.populatePixels(store, this);
+      MetadataTools.populatePixels(store, this);
       for (int i=0; i<core.sizeC.length; i++) {
-        store.setImage(currentId, null, null, new Integer(i));
-        for (int j=0; j<core.sizeC[i]; j++) {
-          store.setLogicalChannel(j, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, new Integer(i));
-        }
+        store.setImageName("Series " + i, i);
+        store.setImageCreationDate(
+          DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+        // CTR CHECK
+//        for (int j=0; j<core.sizeC[i]; j++) {
+//          store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//            null, null, null, null, null, null, null, null, null, null, null,
+//            null, null, null, null, null, new Integer(i));
+//        }
       }
 
       return;
@@ -606,8 +612,6 @@ public class ND2Reader extends FormatReader {
                   }
                   String effectiveKey = prefix + " " + pre + " " + key;
                   if (!metadata.containsKey(effectiveKey)) {
-                    addMeta(effectiveKey, value);
-
                     if (effectiveKey.endsWith("dTimeMSec value")) {
                       long v = (long) Double.parseDouble(value);
                       if (!ts.contains(new Long(v))) {
@@ -680,6 +684,7 @@ public class ND2Reader extends FormatReader {
                         }
                       }
                     }
+                    parseKeyAndValue(effectiveKey, value);
                   }
                   else {
                     String v = (String) getMeta(effectiveKey);
@@ -694,9 +699,7 @@ public class ND2Reader extends FormatReader {
                         }
                       }
                     }
-                    if (parse) {
-                      addMeta(effectiveKey, value);
-                    }
+                    if (parse) parseKeyAndValue(effectiveKey, value);
                   }
                 }
                 s = s.substring(s.indexOf("\"", eq + 2) + 1);
@@ -778,53 +781,43 @@ public class ND2Reader extends FormatReader {
       }
     }
 
-    // determine the pixel size
-    String pixX = (String)
-      getMeta("CalibrationSeq _SEQUENCE_INDEX=\"0\" dCalibration value");
-    String pixZ = (String)
-      getMeta("CalibrationSeq _SEQUENCE_INDEX=\"0\" dAspect value");
-
-    float pixSizeX = 0f;
-    float pixSizeZ = 0f;
-
-    if (pixX != null && pixX.length() > 0) {
-      pixSizeX = Float.parseFloat(pixX.trim());
-    }
-    if (pixZ != null && pixZ.length() > 0) {
-      pixSizeZ = Float.parseFloat(pixZ.trim());
-    }
-
     Arrays.fill(core.interleaved, false);
     Arrays.fill(core.littleEndian, false);
     Arrays.fill(core.metadataComplete, true);
 
     MetadataStore store = getMetadataStore();
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
     for (int i=0; i<numSeries; i++) {
-      Integer ii = new Integer(i);
-      store.setImage(currentId, null, null, ii);
+      store.setImageName(currentId, i);
 
-      store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
-        new Float(pixSizeZ), null, null, ii);
-      for (int j=0; j<core.sizeC[0]; j++) {
-        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, ii);
-      }
+      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
+      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
+      // CTR CHECK
+//      for (int j=0; j<core.sizeC[0]; j++) {
+//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, ii);
+//      }
     }
 
     String prefix = "MetadataSeq _SEQUENCE_INDEX=\"0\" ";
 
-    String gain = (String) getMeta(prefix + "dGain value");
-    String voltage = (String) getMeta(prefix + "dLampVoltage value");
-    String mag = (String) getMeta(prefix + "dObjectiveMag value");
-    String na = (String) getMeta(prefix + "dObjectiveNA value");
+    /*
+    // populate DetectorSettings
+    if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
 
-    store.setDetector(null, null, null, null,
-      gain == null ? null : new Float(gain),
-      voltage == null ? null : new Float(voltage), null, null, null);
-    store.setObjective(null, null, null, na == null ? null : new Float(na),
-      mag == null ? null : new Float(mag), null, null);
+    // populate Detector
+    // CTR CHECK
+    if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
+
+    // populate Objective
+    // CTR CHECK
+    if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);
+    if (mag != null) {
+      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+    }
+    */
   }
 
   // -- Helper class --
@@ -873,7 +866,7 @@ public class ND2Reader extends FormatReader {
           	break;
           default: core.pixelType[0] = FormatTools.UINT8;
         }
-        addMeta(qName, attributes.getValue("value"));
+        parseKeyAndValue(qName, attributes.getValue("value"));
       }
       else if (qName.equals("uiHeight")) {
         core.sizeY[0] = Integer.parseInt(attributes.getValue("value"));
@@ -924,11 +917,40 @@ public class ND2Reader extends FormatReader {
       else if (qName.equals("dCompressionParam")) {
         int v = Integer.parseInt(attributes.getValue("value"));
         isLossless = v > 0;
-        addMeta(qName, attributes.getValue("value"));
+        parseKeyAndValue(qName, attributes.getValue("value"));
       }
       else {
-        addMeta(qName, attributes.getValue("value"));
+        parseKeyAndValue(qName, attributes.getValue("value"));
       }
+    }
+  }
+
+  // -- Helper methods --
+
+  private void parseKeyAndValue(String key, String value) {
+    addMeta(key, value);
+    if (key.equals("CalibrationSeq _SEQUENCE_INDEX=\"0\" dCalibration value")) {
+      pixelSizeX = Float.parseFloat(value);
+      pixelSizeY = pixelSizeX;
+    }
+    else if (key.equals("CalibrationSeq _SEQUENCE_INDEX=\"0\" dAspect value")) {
+      pixelSizeZ = Float.parseFloat(value);
+    }
+    else if (key.equals("MetadataSeq _SEQUENCE_INDEX=\"0\" dGain value")) {
+      gain = value;
+    }
+    else if (key.equals("MetadataSeq _SEQUENCE_INDEX=\"0\" dLampVoltage value"))
+    {
+      voltage = value;
+    }
+    else if (key.equals("MetadataSeq " +
+      "_SEQUENCE_INDEX=\"0\" dObjectiveMag value"))
+    {
+      mag = value;
+    }
+    else if (key.equals("MetadataSeq _SEQUENCE_INDEX=\"0\" dObjectiveNA value"))
+    {
+      na = value;
     }
   }
 

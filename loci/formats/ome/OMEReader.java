@@ -27,6 +27,7 @@ package loci.formats.ome;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * OMEReader retrieves images on demand from an OME database.
@@ -219,12 +220,13 @@ public class OMEReader extends FormatReader {
     core.interleaved[0] = false;
 
     MetadataStore store = getMetadataStore();
-    FormatTools.populatePixels(store, this);
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null);
-    }
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null);
+//    }
   }
 
   // -- IFormatReader API methods --

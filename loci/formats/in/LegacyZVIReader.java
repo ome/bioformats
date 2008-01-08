@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * LegacyZVIReader is the legacy file format reader for Zeiss ZVI files.
@@ -403,15 +404,17 @@ public class LegacyZVIReader extends FormatReader {
       // Populate metadata store
 
       MetadataStore store = getMetadataStore();
-      store.setImage(null, null, null, null);
+      store.setImageName("", 0);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+      MetadataTools.populatePixels(store, this);
 
-      FormatTools.populatePixels(store, this);
-
-      for (int i=0; i<core.sizeC[0]; i++) {
-        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-          null, null, null, null, null, null, null, null, null, null, null,
-          null, null, null, null, null, null);
-      }
+      // CTR CHECK
+//      for (int i=0; i<core.sizeC[0]; i++) {
+//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null);
+//      }
     }
 
     status("Verifying image count");

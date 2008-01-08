@@ -7,7 +7,7 @@ package loci.plugins;
 import ij.IJ;
 import java.io.IOException;
 import loci.formats.*;
-import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.meta.MetadataRetrieve;
 
 /**
   * This class provides macro extensions for ImageJ for Bio-Formats and other
@@ -25,7 +25,7 @@ public class LociFunctions extends MacroFunctions {
 
   public LociFunctions() {
     r = new FileStitcher(true);
-    r.setMetadataStore(new OMEXMLMetadata());
+    r.setMetadataStore(MetadataTools.createOMEXMLMetadata());
   }
 
   // -- LociFunctions API methods - loci.formats.IFormatReader --
@@ -180,8 +180,8 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void getSeriesName(String[] seriesName) {
-    OMEXMLMetadata ms = (OMEXMLMetadata) r.getMetadataStore();
-    seriesName[0] = ms.getImageName(new Integer(r.getSeries()));
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    seriesName[0] = retrieve.getImageName(r.getSeries());
   }
 
   // -- PlugIn API methods --

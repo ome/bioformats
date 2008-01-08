@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Reader for Imaris 5.5 (HDF) files.
@@ -285,18 +286,21 @@ public class ImarisHDFReader extends FormatReader {
     Arrays.fill(core.interleaved, false);
     Arrays.fill(core.indexed, false);
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
     for (int i=0; i<seriesCount; i++) {
       float px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
       if (px == 1) px = (maxX - minX) / core.sizeX[i];
       if (py == 1) py = (maxY - minY) / core.sizeY[i];
       if (pz == 1) pz = (maxZ - minZ) / core.sizeZ[i];
-      store.setDimensions(new Float(px), new Float(py), new Float(pz),
-        null, null, new Integer(i));
+      store.setDimensionsPhysicalSizeX(new Float(px), i, 0);
+      store.setDimensionsPhysicalSizeY(new Float(py), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Float(pz), i, 0);
     }
 
     for (int s=0; s<seriesCount; s++) {
-      store.setImage("Resolution Level " + s, null, null, new Integer(s));
+      store.setImageName("Resolution Level " + s, s);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), s);
       for (int i=0; i<core.sizeC[s]; i++) {
         String[] params = (String[]) channelParameters.get(i);
 
@@ -325,10 +329,15 @@ public class ImarisHDFReader extends FormatReader {
         catch (NumberFormatException e) { }
         catch (NullPointerException e) { }
 
-        store.setLogicalChannel(i, params[6], null,
-          null, null, null, null, null, null, null, gainValue, null,
-          pinholeValue, null, params[7], null, null, null, null,
-          null, emWaveValue, exWaveValue, null, null, new Integer(s));
+        // CHECK
+        /*
+        store.setLogicalChannelName(params[6], s, i);
+        store.setDetectorSettingsGain(gainValue, s, i);
+        store.setLogicalChannelPinholeSize(pinholeValue, s, i);
+        store.setLogicalChannelMode(params[7], s, i);
+        store.setLogicalChannelEmWave(emWaveValue, s, i);
+        store.setLogicalChannelExWave(exWaveValue, s, i);
+        */
 
         Double minValue = null, maxValue = null;
         try { minValue = new Double(params[4]); }
@@ -338,10 +347,11 @@ public class ImarisHDFReader extends FormatReader {
         catch (NumberFormatException exc) { }
         catch (NullPointerException exc) { }
 
-        if (minValue != null && maxValue != null && maxValue.doubleValue() > 0)
-        {
-          store.setChannelGlobalMinMax(i, minValue, maxValue, new Integer(s));
-        }
+        // CTR CHECK
+//        if (minValue != null && maxValue != null && maxValue.doubleValue() > 0)
+//        {
+//          store.setChannelGlobalMinMax(i, minValue, maxValue, new Integer(s));
+//        }
       }
     }
   }

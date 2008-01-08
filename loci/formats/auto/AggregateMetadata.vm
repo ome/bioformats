@@ -140,18 +140,22 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     throw new RuntimeException("Unsupported with AggregateMetadata. " +
       "Use getDelegates() and setRoot().");
   }
-
 #foreach ($entity in $entities)
-  /* @see MetadataStore#set$entity.name()($entity.argsList(true, false)) */
-  public void set$entity.name()($entity.argsList(true, true)) {
+
+  // - $entity.name() property storage -
+#foreach ($prop in $entity.props())
+
+  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(), $entity.indicesList(true, false)) */
+  public void set$entity.name()$prop.name()($prop.type() $prop.varName(), $entity.indicesList(true, true)) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
-        store.set$entity.name()($entity.argsList(false, true));
+        store.set$entity.name()$prop.name()($prop.varName(), $entity.indicesList(false, true));
       }
     }
   }
+#end##foreach $prop
+#end##foreach $entity
 
-#end
 }

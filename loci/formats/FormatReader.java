@@ -29,6 +29,8 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.*;
+import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Abstract superclass of all biological file format readers.

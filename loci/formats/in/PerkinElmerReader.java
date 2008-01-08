@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * PerkinElmerReader is the file format reader for PerkinElmer files.
@@ -183,6 +184,10 @@ public class PerkinElmerReader extends FormatReader {
     String[] ls = workingDir.list();
 
     allFiles.add(id);
+
+    float pixelSizeX = 1f, pixelSizeY = 1f;
+    String finishTime = null, startTime = null;
+    float originX = 0f, originY = 0f, originZ = 0f;
 
     status("Searching for all metadata companion files");
 
@@ -384,6 +389,32 @@ public class PerkinElmerReader extends FormatReader {
         }
         else if (hashKeys[tNum].equals("Experiment details:")) details = token;
         else if (hashKeys[tNum].equals("Z slice space")) sliceSpace = token;
+        else if (hashKeys[tNum].equals("Pixel Size X")) {
+          pixelSizeX = Float.parseFloat(token);
+        }
+        else if (hashKeys[tNum].equals("Pixel Size Y")) {
+          pixelSizeY = Float.parseFloat(token);
+        }
+        else if (hashKeys[tNum].equals("Finish Time:")) finishTime = token;
+        else if (hashKeys[tNum].equals("Start Time:")) startTime = token;
+        else if (hashKeys[tNum].equals("Origin X")) {
+          try {
+            originX = Float.parseFloat(token);
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (hashKeys[tNum].equals("Origin Y")) {
+          try {
+            originY = Float.parseFloat(token);
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (hashKeys[tNum].equals("Origin Z")) {
+          try {
+            originZ = Float.parseFloat(token);
+          }
+          catch (NumberFormatException e) { }
+        }
         tNum++;
       }
       read.close();
@@ -421,6 +452,23 @@ public class PerkinElmerReader extends FormatReader {
           }
           else if (hashKeys[pt].equals("Experiment details:")) details = token;
           else if (hashKeys[pt].equals("Z slice space")) sliceSpace = token;
+          else if (hashKeys[pt].equals("Pixel Size X")) {
+            pixelSizeX = Float.parseFloat(token);
+          }
+          else if (hashKeys[pt].equals("Pixel Size Y")) {
+            pixelSizeY = Float.parseFloat(token);
+          }
+          else if (hashKeys[pt].equals("Finish Time:")) finishTime = token;
+          else if (hashKeys[pt].equals("Start Time:")) startTime = token;
+          else if (hashKeys[pt].equals("Origin X")) {
+            originX = Float.parseFloat(token);
+          }
+          else if (hashKeys[pt].equals("Origin Y")) {
+            originY = Float.parseFloat(token);
+          }
+          else if (hashKeys[pt].equals("Origin Z")) {
+            originZ = Float.parseFloat(token);
+          }
           pt++;
         }
         else {
@@ -438,6 +486,17 @@ public class PerkinElmerReader extends FormatReader {
           }
           else if (key.equals("Experiment details:")) details = value;
           else if (key.equals("Z slice space")) sliceSpace = value;
+          else if (key.equals("Pixel Size X")) {
+            pixelSizeX = Float.parseFloat(value);
+          }
+          else if (key.equals("Pixel Size Y")) {
+            pixelSizeY = Float.parseFloat(value);
+          }
+          else if (key.equals("Finish Time:")) finishTime = value;
+          else if (key.equals("Start Time:")) startTime = value;
+          else if (key.equals("Origin X")) originX = Float.parseFloat(value);
+          else if (key.equals("Origin Y")) originY = Float.parseFloat(value);
+          else if (key.equals("Origin Z")) originZ = Float.parseFloat(value);
         }
         tNum++;
       }
@@ -460,6 +519,11 @@ public class PerkinElmerReader extends FormatReader {
 
     // be aggressive about parsing the HTML file, since it's the only one that
     // explicitly defines the number of wavelengths and timepoints
+
+    Vector exposureTimes = new Vector();
+    Vector zPositions = new Vector();
+    Vector emWaves = new Vector();
+    Vector exWaves = new Vector();
 
     if (htmPos != -1) {
       tempFile = new Location(workingDir, ls[htmPos]);
@@ -489,26 +553,78 @@ public class PerkinElmerReader extends FormatReader {
       }
 
       for (int j=0; j<tokens.length-1; j+=2) {
-        if (tokens[j].indexOf("Wavelength") != -1) {
+        if (tokens[j].indexOf("Exposure") != -1) {
           addMeta("Camera Data " + tokens[j].charAt(13), tokens[j]);
+
+          int ndx = tokens[j].indexOf("Exposure") + 9;
+          String exposure =
+            tokens[j].substring(ndx, tokens[j].indexOf(" ", ndx)).trim();
+          if (exposure.endsWith(",")) {
+            exposure = exposure.substring(0, exposure.length() - 1);
+          }
+          exposureTimes.add(new Float(exposure));
+
+          if (tokens[j].indexOf("nm") != -1) {
+            int nmIndex = tokens[j].indexOf("nm");
+            int paren = tokens[j].lastIndexOf("(", nmIndex);
+            int slash = tokens[j].lastIndexOf("/", nmIndex);
+            if (slash == -1) slash = nmIndex;
+            emWaves.add(
+              new Integer(tokens[j].substring(paren + 1, slash).trim()));
+            if (tokens[j].indexOf("nm", nmIndex + 3) != -1) {
+              nmIndex = tokens[j].indexOf("nm", nmIndex + 3);
+              paren = tokens[j].lastIndexOf(" ", nmIndex);
+              slash = tokens[j].lastIndexOf("/", nmIndex);
+              if (slash == -1) slash = nmIndex + 2;
+              exWaves.add(
+                new Integer(tokens[j].substring(paren + 1, slash).trim()));
+            }
+          }
+
           j--;
         }
+        else if (tokens[j + 1].trim().equals("Slice Z positions")) {
+          for (int q=j + 2; q<tokens.length; q++) {
+            if (!tokens[q].trim().equals("")) {
+              zPositions.add(new Float(tokens[q].trim()));
+            }
+          }
+        }
         else if (!tokens[j].trim().equals("")) {
-          addMeta(tokens[j].trim(), tokens[j+1].trim());
-          if (tokens[j].trim().equals("Image Width")) {
-            core.sizeX[0] = Integer.parseInt(tokens[j+1].trim());
+          tokens[j] = tokens[j].trim();
+          tokens[j + 1] = tokens[j + 1].trim();
+          addMeta(tokens[j], tokens[j + 1]);
+          if (tokens[j].equals("Image Width")) {
+            core.sizeX[0] = Integer.parseInt(tokens[j + 1]);
           }
-          else if (tokens[j].trim().equals("Image Length")) {
-            core.sizeY[0] = Integer.parseInt(tokens[j+1].trim());
+          else if (tokens[j].equals("Image Length")) {
+            core.sizeY[0] = Integer.parseInt(tokens[j + 1]);
           }
-          else if (tokens[j].trim().equals("Number of slices")) {
-            core.sizeZ[0] = Integer.parseInt(tokens[j+1].trim());
+          else if (tokens[j].equals("Number of slices")) {
+            core.sizeZ[0] = Integer.parseInt(tokens[j + 1]);
           }
-          else if (tokens[j].trim().equals("Experiment details:")) {
-            details = tokens[j+1].trim();
+          else if (tokens[j].equals("Experiment details:")) {
+            details = tokens[j + 1];
           }
-          else if (tokens[j].trim().equals("Z slice space")) {
-            sliceSpace = tokens[j+1].trim();
+          else if (tokens[j].equals("Z slice space")) {
+            sliceSpace = tokens[j + 1];
+          }
+          else if (tokens[j].equals("Pixel Size X")) {
+            pixelSizeX = Float.parseFloat(tokens[j + 1]);
+          }
+          else if (tokens[j].equals("Pixel Size Y")) {
+            pixelSizeY = Float.parseFloat(tokens[j + 1]);
+          }
+          else if (tokens[j].equals("Finish Time:")) finishTime = tokens[j + 1];
+          else if (tokens[j].equals("Start Time:")) startTime = tokens[j + 1];
+          else if (tokens[j].equals("Origin X")) {
+            originX = Float.parseFloat(tokens[j + 1]);
+          }
+          else if (tokens[j].equals("Origin Y")) {
+            originY = Float.parseFloat(tokens[j + 1]);
+          }
+          else if (tokens[j].equals("Origin Z")) {
+            originZ = Float.parseFloat(tokens[j + 1]);
           }
         }
       }
@@ -539,6 +655,8 @@ public class PerkinElmerReader extends FormatReader {
 
     status("Populating metadata");
 
+    if (core.sizeZ[0] <= 0) core.sizeZ[0] = 1;
+
     core.sizeC[0] = Integer.parseInt(wavelengths);
 
     core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
@@ -564,22 +682,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    core.currentOrder[0] = "XYC";
-
-    if (core.sizeZ[0] <= 0) {
-      core.sizeZ[0] = 1;
-      core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
-    }
-    if (core.sizeC[0] <= 0) {
-      core.sizeC[0] = 1;
-      core.sizeT[0] = getImageCount() / (core.sizeZ[0] * core.sizeC[0]);
-    }
-    if (core.sizeT[0] <= 0) core.sizeT[0] = 1;
-
-    if (sliceSpace != null) {
-      core.currentOrder[0] += "TZ";
-    }
-    else core.currentOrder[0] += "ZT"; // doesn't matter, since Z = T = 1
+    core.currentOrder[0] = "XYCTZ";
 
     core.rgb[0] = isTiff ? tiff[0].isRGB() : false;
     core.interleaved[0] = false;
@@ -592,47 +695,79 @@ public class PerkinElmerReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
 
     // populate Dimensions element
-    String pixelSizeX = (String) getMeta("Pixel Size X");
-    String pixelSizeY = (String) getMeta("Pixel Size Y");
-    store.setDimensions(pixelSizeX == null ? null : new Float(pixelSizeX),
-      pixelSizeY == null ? null : new Float(pixelSizeY),
-      null, null, null, null);
+    store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
 
     // populate Image element
-    String time = (String) getMeta("Finish Time:");
-
-    if (time != null) {
+    if (finishTime != null) {
       SimpleDateFormat parse = new SimpleDateFormat("HH:mm:ss (MM/dd/yyyy)");
-      Date date = parse.parse(time, new ParsePosition(0));
+      Date date = parse.parse(finishTime, new ParsePosition(0));
       SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      time = fmt.format(date);
+      finishTime = fmt.format(date);
     }
-    store.setImage(null, time, null, null);
+    store.setImageCreationDate(finishTime, 0);
 
     // populate Pixels element
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
+
+    // populate LogicalChannel element
+    for (int i=0; i<core.sizeC[0]; i++) {
+      if (i < emWaves.size()) {
+        store.setLogicalChannelEmWave((Integer) emWaves.get(i), 0, i);
+      }
+      if (i < exWaves.size()) {
+        store.setLogicalChannelExWave((Integer) exWaves.get(i), 0, i);
+      }
+    }
+
+    // populate plane info
+
+    long start = 0, end = 0;
+    if (startTime != null) {
+      SimpleDateFormat parse = new SimpleDateFormat("HH:mm:ss (MM/dd/yyyy)");
+      Date date = parse.parse(startTime, new ParsePosition(0));
+      start = date.getTime();
+    }
+    if (finishTime != null) {
+      SimpleDateFormat parse = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      Date date = parse.parse(finishTime, new ParsePosition(0));
+      end = date.getTime();
+    }
+    long range = end - start;
+    float msPerPlane = (float) range / core.imageCount[0];
+
+    int plane = 0;
+    for (int zi=0; zi<core.sizeZ[0]; zi++) {
+      for (int ti=0; ti<core.sizeT[0]; ti++) {
+        for (int ci=0; ci<core.sizeC[0]; ci++) {
+          store.setPlaneTheZ(new Integer(zi), 0, 0, plane);
+          store.setPlaneTheC(new Integer(ci), 0, 0, plane);
+          store.setPlaneTheT(new Integer(ti), 0, 0, plane);
+          store.setPlaneTimingDeltaT(new Float((plane * msPerPlane) / 1000),
+            0, 0, plane);
+          store.setPlaneTimingExposureTime(
+            (Float) exposureTimes.get(ci), 0, 0, plane);
+          if (zi < zPositions.size()) {
+            store.setStagePositionPositionX(new Float(0.0), 0, 0, plane);
+            store.setStagePositionPositionY(new Float(0.0), 0, 0, plane);
+            store.setStagePositionPositionZ((Float) zPositions.get(zi),
+              0, 0, plane);
+          }
+          plane++;
+        }
+      }
+    }
 
     // populate StageLabel element
-    String originX = (String) getMeta("Origin X");
-    String originY = (String) getMeta("Origin Y");
-    String originZ = (String) getMeta("Origin Z");
+    /*
+    store.setStageLabelX(new Float(originX), 0);
+    store.setStageLabelY(new Float(originY), 0);
+    store.setStageLabelZ(new Float(originZ), 0);
+    */
 
-    try {
-      store.setStageLabel(null, originX == null ? null : new Float(originX),
-        originY == null ? null : new Float(originY),
-        originZ == null ? null : new Float(originZ), null);
-    }
-    catch (NumberFormatException exc) {
-      if (debug) trace(exc);
-    }
-
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null);
-    }
   }
 
 }

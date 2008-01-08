@@ -33,7 +33,9 @@ import ij.process.ColorProcessor;
 import ij.io.FileInfo;
 import java.util.HashSet;
 import loci.formats.FormatTools;
-import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEWriter;
 
 /**
@@ -115,46 +117,48 @@ public class LociUploader implements PlugIn {
       }
       ImageStack is = imp.getImageStack();
       FileInfo fi = imp.getOriginalFileInfo();
-      OMEXMLMetadata store;
+      MetadataStore store;
 
       // if we opened this stack with the Bio-Formats importer, then the
       // appropriate OME-XML is in fi.description
       if (fi != null && fi.description != null &&
         fi.description.endsWith("</OME>"))
       {
-        store = new OMEXMLMetadata(fi.description);
+        store = MetadataTools.createOMEXMLMetadata(fi.description);
       }
       else {
-        store = new OMEXMLMetadata();
+        store = MetadataTools.createOMEXMLMetadata();
         int pixelType = FormatTools.UINT8;
         switch (imp.getBitDepth()) {
           case 16: pixelType = FormatTools.UINT16; break;
           case 32: pixelType = FormatTools.FLOAT; break;
         }
 
-        store.setPixels(
-          new Integer(imp.getWidth()),
-          new Integer(imp.getHeight()),
-          new Integer(imp.getNSlices()),
-          new Integer(imp.getNChannels()),
-          new Integer(imp.getNFrames()),
-          new Integer(pixelType),
-          fi == null ? Boolean.TRUE : new Boolean(!fi.intelByteOrder),
-          "XYCZT",  // TODO : figure out a way to calculate the dimension order
-          null,
-          null);
+        store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
+        store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
+        store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
+        store.setPixelsSizeC(new Integer(imp.getNChannels()), 0, 0);
+        store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
+        store.setPixelsPixelType(
+          FormatTools.getPixelTypeString(pixelType), 0, 0);
+        store.setPixelsBigEndian(fi == null ?
+          Boolean.TRUE : new Boolean(!fi.intelByteOrder), 0, 0);
+        // TODO : figure out a way to calculate the dimension order
+        store.setPixelsDimensionOrder("XYCZT", 0, 0);
 
         String name = fi == null ? imp.getTitle() : fi.fileName;
-        store.setImage(name, null, fi == null ? null : fi.info, null);
+        store.setImageName(name, 0);
+        if (fi != null) store.setImageDescription(fi.info, 0);
 
       }
       if (is.getProcessor(1) instanceof ColorProcessor) {
-        store.setPixels(null, null, null, null, null,
-          new Integer(FormatTools.UINT8), null, null, null, null);
+        store.setPixelsPixelType(
+          FormatTools.getPixelTypeString(FormatTools.UINT8), 0, 0);
       }
-      ul.setMetadata(store);
+      MetadataRetrieve retrieve = (MetadataRetrieve) store;
+      ul.setMetadata(retrieve);
 
-      boolean little = !store.getBigEndian(null).booleanValue();
+      boolean little = !retrieve.getPixelsBigEndian(0, 0).booleanValue();
 
       for (int i=0; i<is.getSize(); i++) {
         IJ.showStatus("Reading plane " + (i+1) + "/" + is.getSize());
@@ -180,7 +184,7 @@ public class LociUploader implements PlugIn {
             byte[][] rgb = new byte[3][((int[]) pix).length];
             ((ColorProcessor) is.getProcessor(i+1)).getRGB(rgb[0],
               rgb[1], rgb[2]);
-            int channels = store.getSizeC(null).intValue();
+            int channels = retrieve.getPixelsSizeC(0, 0).intValue();
             if (channels > 3) channels = 3;
             toUpload = new byte[channels * rgb[0].length];
             for (int j=0; j<channels; j++) {

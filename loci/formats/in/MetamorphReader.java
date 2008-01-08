@@ -221,21 +221,32 @@ public class MetamorphReader extends BaseTiffReader {
         new RandomAccessStream(ndfile.getAbsolutePath());
       String line = ndStream.readLine().trim();
 
+      int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
+      String z = null, c = null, t = null;
+      boolean[] hasZ = new boolean[cc];
+      String[] waveNames = new String[cc];
+
       while (!line.equals("\"EndFile\"")) {
         String key = line.substring(1, line.indexOf(",") - 1).trim();
         String value = line.substring(line.indexOf(",") + 1).trim();
 
         addMeta(key, value);
+        if (key.equals("NZSteps")) z = value;
+        else if (key.equals("NWavelengths")) c = value;
+        else if (key.equals("NTimePoints")) t = value;
+        else if (key.startsWith("WaveDoZ")) {
+          int ndx = Integer.parseInt(key.substring(7, key.length())) - 1;
+          hasZ[ndx] = value.equals("TRUE");
+        }
+        else if (key.startsWith("WaveName")) {
+          int ndx = Integer.parseInt(key.substring(8, key.length())) - 1;
+          waveNames[ndx] = value;
+        }
+
         line = ndStream.readLine().trim();
       }
 
       // figure out how many files we need
-
-      String z = (String) getMeta("NZSteps");
-      String c = (String) getMeta("NWavelengths");
-      String t = (String) getMeta("NTimePoints");
-
-      int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
 
       if (z != null) zc = Integer.parseInt(z);
       if (c != null) cc = Integer.parseInt(c);
@@ -245,10 +256,8 @@ public class MetamorphReader extends BaseTiffReader {
 
       // determine series count
 
-      boolean[] hasZ = new boolean[cc];
       int seriesCount = 1;
       for (int i=0; i<cc; i++) {
-        hasZ[i] = ((String) getMeta("WaveDoZ" + (i + 1))).equals("TRUE");
         if (i > 0 && hasZ[i] != hasZ[i - 1]) seriesCount = 2;
       }
 
@@ -271,14 +280,16 @@ public class MetamorphReader extends BaseTiffReader {
       prefix = prefix.substring(prefix.lastIndexOf(File.separator) + 1,
         prefix.lastIndexOf("."));
 
+      for (int i=0; i<cc; i++) {
+        waveNames[i] = waveNames[i].substring(1, waveNames[i].length() - 1);
+      }
+
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
         for (int j=0; j<cc; j++) {
-          String chName = (String) getMeta("WaveName" + (j + 1));
-          chName = chName.substring(1, chName.length() - 1);
           int seriesNdx = seriesCount == 1 ? 0 : (hasZ[j] ? 0 : 1);
           stks[seriesNdx][pt[seriesNdx]++] =
-            prefix + "_w" + (j + 1) + chName + "_t" + (i + 1) + ".STK";
+            prefix + "_w" + (j + 1) + waveNames[j] + "_t" + (i + 1) + ".STK";
         }
       }
 
@@ -472,7 +483,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
 
     // parse (mangle) TIFF comment
-    String descr = (String) getMeta("Comment");
+    String descr = TiffTools.getComment(ifds[0]);
     if (descr != null) {
       StringTokenizer st = new StringTokenizer(descr, "\n");
       StringBuffer sb = new StringBuffer();

@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.Arrays;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * LegacyND2Reader is a file format reader for Nikon ND2 files that uses
@@ -173,9 +174,19 @@ public class LegacyND2Reader extends FormatReader {
 
     MetadataStore store = getMetadataStore();
     for (int i=0; i<core.sizeX.length; i++) {
-      store.setImage(null, null, null, new Integer(i));
+      store.setImageName("Series " + i, i);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
     }
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
+    // CTR CHECK
+//    for (int i=0; i<core.sizeX.length; i++) {
+//      for (int j=0; j<core.sizeC[i]; j++) {
+//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
+//          null, null, null, null, null, null, null, null, null, null, null,
+//          null, null, null, null, null, new Integer(i));
+//      }
+//    }
   }
 
   // -- Native methods --

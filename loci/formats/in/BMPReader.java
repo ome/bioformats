@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * BMPReader is the file format reader for Microsoft Bitmap (BMP) files.
@@ -252,10 +253,10 @@ public class BMPReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-
-    store.setImage(null, null, null, null);
-
-    FormatTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
 
     // resolution is stored as pixels per meter; we want to convert to
     // microns per pixel
@@ -263,14 +264,15 @@ public class BMPReader extends FormatReader {
     float correctedX = (1 / (float) pixelSizeX) * 1000000;
     float correctedY = (1 / (float) pixelSizeY) * 1000000;
 
-    store.setDimensions(new Float(correctedX), new Float(correctedY), null,
-      null, null, null);
+    store.setDimensionsPhysicalSizeX(new Float(correctedX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(correctedY), 0, 0);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       null, null, null, null, null, null, null, null, null, null, null, null,
-       null, null, null, null);
-    }
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//       null, null, null, null, null, null, null, null, null, null, null, null,
+//       null, null, null, null);
+//    }
   }
 
 }

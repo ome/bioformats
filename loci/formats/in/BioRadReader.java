@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
@@ -765,56 +766,70 @@ public class BioRadReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
-    // populate Image element
-    store.setImage(null, null, null, null);
-
-    // populate Pixels element
+    // populate Pixels
     in.seek(14);
     core.pixelType[0] = in.readShort() == 1 ? FormatTools.UINT8 :
       FormatTools.UINT16;
 
     core.currentOrder[0] = "XYCTZ";
 
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
 
-    // populate Dimensions element
+    // populate Dimensions
     int size = pixelSize.size();
     Float pixelSizeX = null, pixelSizeY = null, pixelSizeZ = null;
     if (size >= 1) pixelSizeX = new Float((String) pixelSize.get(0));
     if (size >= 2) pixelSizeY = new Float((String) pixelSize.get(1));
     if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
-    store.setDimensions(pixelSizeX, pixelSizeY, pixelSizeZ, null, null, null);
+    store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(pixelSizeZ, 0, 0);
 
+    /*
     for (int i=0; i<core.sizeC[0]; i++) {
       String gain = i == 0 ? gain1 : i == 1 ? gain2 : gain3;
       String offset = i == 0 ? offset1 : i == 1 ? gain2 : gain3;
-      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-       offset == null ? null : new Float(offset),
-       gain == null ? null : new Float(gain), null, null, null, null, null,
-       null, null, null, null, null, null, null, null, null);
-      store.setDisplayChannel(new Integer(i), new Double(ramp1max),
-        new Double(ramp1min), null, null);
+      Integer ii = new Integer(i);
+      if (offset != null) {
+        store.setDetectorSettingsOffset(new Float(offset), 0, 0);
+      }
+      if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
+      // CTR CHECK
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
+//       offset == null ? null : new Float(offset),
+//       gain == null ? null : new Float(gain), null, null, null, null, null,
+//       null, null, null, null, null, null, null, null, null);
+      // CTR FIXME
+//      store.setDisplayChannel(ii, new Double(ramp1max),
+//        new Double(ramp1min), null, null);
     }
-    store.setDisplayOptions(zoom == null ? null : new Float(zoom),
-      new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] >= 2),
-      new Boolean(core.sizeC[0] >= 3), Boolean.FALSE, null,
-      zstart == null ? null :
-      new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
-      null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
-      null, null, core.sizeC[0] > 1 ? new Integer(0) : null,
-      core.sizeC[0] > 1 ? new Integer(1) : null,
-      core.sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
+    // CTR FIXME
+//    store.setDisplayOptions(zoom == null ? null : new Float(zoom),
+//      new Boolean(core.sizeC[0] > 1), new Boolean(core.sizeC[0] >= 2),
+//      new Boolean(core.sizeC[0] >= 3), Boolean.FALSE, null,
+//      zstart == null ? null :
+//      new Integer((int) (new Double(zstart).doubleValue())), zstop == null ?
+//      null : new Integer((int) (new Double(zstop).doubleValue())), null, null,
+//      null, null, core.sizeC[0] > 1 ? new Integer(0) : null,
+//      core.sizeC[0] > 1 ? new Integer(1) : null,
+//      core.sizeC[0] > 1 ? new Integer(2) : null, new Integer(0));
 
     for (int i=0; i<3; i++) {
       String exc = i == 0 ? ex1 : i == 1 ? ex2 : ex3;
       String ems = i == 0 ? em1 : i == 1 ? em2 : em3;
-      if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
-      if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
+      // CTR FIXME
+//      if (exc != null) store.setExcitationFilter(null, null, exc, null, null);
+//      if (ems != null) store.setEmissionFilter(null, null, ems, null, null);
     }
     if (mag != null) {
-      store.setObjective(null, null, null, null, new Float(mag), null, null);
+      // CTR CHECK
+      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     }
+    */
   }
 
   // -- Helper methods --

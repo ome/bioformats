@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import loci.formats.meta.MetadataStore;
+
 /**
  * Handles swapping the dimension order of a file.
  *
@@ -146,7 +148,7 @@ public class DimensionSwapper extends ReaderWrapper {
     core.currentOrder[series] = order;
 
     MetadataStore store = getMetadataStore();
-    FormatTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this);
   }
 
 }

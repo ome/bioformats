@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import loci.formats.*;
+import loci.formats.meta.MetadataStore;
 
 /**
  * PGMReader is the file format reader for Portable Gray Map (PGM) images.
@@ -146,14 +147,17 @@ public class PGMReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     MetadataStore store = getMetadataStore();
-    store.setImage(null, null, null, null);
-    FormatTools.populatePixels(store, this);
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
 
-    for (int i=0; i<core.sizeC[0]; i++) {
-      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null);
-    }
+    // CTR CHECK
+//    for (int i=0; i<core.sizeC[0]; i++) {
+//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null, null, null, null,
+//        null, null, null, null, null, null, null);
+//    }
   }
 
 }

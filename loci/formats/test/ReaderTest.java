@@ -30,6 +30,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * TestNG tester for Bio-Formats file format readers.
@@ -316,20 +318,24 @@ public class ReaderTest {
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
 
-        Integer ii = new Integer(i);
-
         String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
-        boolean failX = reader.getSizeX() != retrieve.getSizeX(ii).intValue();
-        boolean failY = reader.getSizeY() != retrieve.getSizeY(ii).intValue();
-        boolean failZ = reader.getSizeZ() != retrieve.getSizeZ(ii).intValue();
-        boolean failC = reader.getSizeC() != retrieve.getSizeC(ii).intValue();
-        boolean failT = reader.getSizeT() != retrieve.getSizeT(ii).intValue();
+        boolean failX = reader.getSizeX() !=
+          retrieve.getPixelsSizeX(i, 0).intValue();
+        boolean failY = reader.getSizeY() !=
+          retrieve.getPixelsSizeY(i, 0).intValue();
+        boolean failZ = reader.getSizeZ() !=
+          retrieve.getPixelsSizeZ(i, 0).intValue();
+        boolean failC = reader.getSizeC() !=
+          retrieve.getPixelsSizeC(i, 0).intValue();
+        boolean failT = reader.getSizeT() !=
+          retrieve.getPixelsSizeT(i, 0).intValue();
         boolean failBE = reader.isLittleEndian() ==
-          retrieve.getBigEndian(ii).booleanValue();
-        boolean failDE =
-          !reader.getDimensionOrder().equals(retrieve.getDimensionOrder(ii));
-        boolean failType = !type.equalsIgnoreCase(retrieve.getPixelType(ii));
+          retrieve.getPixelsBigEndian(i, 0).booleanValue();
+        boolean failDE = !reader.getDimensionOrder().equals(
+          retrieve.getPixelsDimensionOrder(i, 0));
+        boolean failType = !type.equalsIgnoreCase(
+          retrieve.getPixelsPixelType(i, 0));
 
         if (success) {
           success = !(failX || failY || failZ || failC || failT || failBE ||
