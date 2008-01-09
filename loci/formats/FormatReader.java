@@ -440,25 +440,8 @@ public abstract class FormatReader extends FormatHandler
     if (buf.length < w * h * bpp * ch) {
       throw new FormatException("Buffer too small.");
     }
-
-    for (int yy=y; yy<y + h; yy++) {
-      for (int xx=x; xx<x + w; xx++) {
-        for (int cc=0; cc<ch; cc++) {
-          int oldNdx = -1, newNdx = -1;
-          if (isInterleaved()) {
-            oldNdx = yy*getSizeX()*bpp*ch + xx*bpp*ch + cc*bpp;
-            newNdx = (yy - y)*w*bpp*ch + (xx - x)*bpp*ch + cc*bpp;
-          }
-          else {
-            oldNdx = cc*getSizeX()*getSizeY()*bpp + yy*getSizeX()*bpp + xx*bpp;
-            newNdx = cc*w*h*bpp + (yy - y)*w*bpp + (xx - x)*bpp;
-          }
-          System.arraycopy(bytes, oldNdx, buf, newNdx, bpp);
-        }
-      }
-    }
-
-    return buf;
+    return ImageTools.getSubimage(bytes, buf, getSizeX(), getSizeY(), x, y,
+      w, h, bpp, ch, isInterleaved());
   }
 
   /* @see IFormatReader#openImage(int, int, int, int, int) */

@@ -127,6 +127,37 @@ public class ChannelMerger extends ReaderWrapper {
     return bytes;
   }
 
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int ch = getRGBChannelCount();
+    byte[] newBuffer = new byte[w * h * ch * bpp];
+    return openBytes(no, newBuffer, x, y, w, h);
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] bytes = openBytes(no);
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int ch = getRGBChannelCount();
+    if (buf.length < w * h * bpp * ch) {
+      throw new FormatException("Buffer too small.");
+    }
+    return ImageTools.getSubimage(bytes, buf, getSizeX(), getSizeY(), x, y,
+      w, h, bpp, ch, isInterleaved());
+  }
+
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return openImage(no).getSubimage(x, y, w, h);
+  }
+
   /* @see IFormatReader#openThumbImage(int) */
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException

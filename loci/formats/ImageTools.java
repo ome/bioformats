@@ -1654,6 +1654,30 @@ public final class ImageTools {
     return rtn;
   }
 
+  public static byte[] getSubimage(byte[] src, byte[] dest, int originalWidth,
+    int originalHeight, int x, int y, int w, int h, int bpp, int channels,
+    boolean interleaved)
+  {
+    for (int yy=y; yy<y + h; yy++) {
+      for (int xx=x; xx<x + w; xx++) {
+        for (int cc=0; cc<channels; cc++) {
+          int oldNdx = -1, newNdx = -1;
+          if (interleaved) {
+            oldNdx = yy*originalWidth*bpp*channels + xx*bpp*channels + cc*bpp;
+            newNdx = (yy - y)*w*bpp*channels + (xx - x)*bpp*channels + cc*bpp;
+          }
+          else {
+            oldNdx =
+              bpp*(cc*originalWidth*originalHeight + yy*originalWidth + xx);
+            newNdx = bpp*(cc*w*h + (yy - y)*w + (xx - x));
+          }
+          System.arraycopy(src, oldNdx, dest, newNdx, bpp);
+        }
+      }
+    }
+    return dest;
+  }
+
   // -- Image scaling --
 
   /** Copies the source image into the target, applying scaling. */
