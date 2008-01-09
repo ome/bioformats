@@ -138,7 +138,6 @@ public class Colorizer implements PlugInFilter {
     }
 
     ImagePlus newImp = new ImagePlus();
-    newImp.setProperty("Info", imp.getProperty("Info"));
     boolean closeOriginal = true;
 
     if (color) {
@@ -259,6 +258,7 @@ public class Colorizer implements PlugInFilter {
 
     if (newImp != null) {
       newImp.setTitle(imp.getTitle());
+      newImp.setProperty("Info", imp.getProperty("Info"));
       if (!newImp.getClass().equals(c)) {
         newImp.setDimensions(newImp.getStackSize() / (nSlices * nTimes),
           nSlices, nTimes);
