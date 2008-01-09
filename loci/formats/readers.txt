@@ -60,13 +60,12 @@ loci.formats.in.InCellReader       # xdce
 
 # multi-extension messes
 loci.formats.in.ICSReader          # ics, ids
-loci.formats.in.OIFReader          # oif, various
 loci.formats.in.PerkinElmerReader  # rec, ano, csv, htm, tim, zpo, 2, 3, 4, ...
 loci.formats.in.TCSReader # xml, tif
 
 # readers requiring third-party libraries
+loci.formats.in.FV1000Reader    # oib, oif, various
 loci.formats.in.ZeissZVIReader     # zvi [POIFS]
-loci.formats.in.OIBReader          # oib [POIFS]
 loci.formats.in.IPWReader          # ipw [POIFS]
 loci.formats.in.LegacyND2Reader    # nd2, jp2 [Nikon SDK - Windows only]
 loci.formats.in.ND2Reader          # nd2, jp2 [JAI-ImageIO]
@@ -80,6 +79,7 @@ loci.formats.in.SEQReader          # seq
 loci.formats.in.GelReader          # gel
 loci.formats.in.ImarisTiffReader   # ims
 loci.formats.in.FlexReader         # flex
+loci.formats.in.SVSReader          # svs
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.LeicaReader        # lei, tif

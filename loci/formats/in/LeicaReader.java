@@ -666,11 +666,8 @@ public class LeicaReader extends FormatReader {
         RandomAccessStream stream = new RandomAccessStream(temp);
         stream.order(core.littleEndian[0]);
 
-        /* debug */ System.out.println("stream.length = " + stream.length());
-
         addMeta("Voxel Version", new Integer(stream.readInt()));
         int voxelType = stream.readInt();
-        /* debug */ System.out.println("voxelType = " + voxelType);
         String type = "";
         switch (voxelType) {
           case 0:
@@ -687,29 +684,21 @@ public class LeicaReader extends FormatReader {
         addMeta("VoxelType", type);
 
         bpp = stream.readInt();
-        /* debug */ System.out.println("bpp = " + bpp);
         addMeta("Bytes per pixel", new Integer(bpp));
         resolution = stream.readInt();
-        /* debug */ System.out.println("resolution = " + resolution);
         addMeta("Real world resolution", new Integer(resolution));
         int length = stream.readInt();
-        /* debug */ System.out.println("length = " + length);
         addMeta("Maximum voxel intensity",
           DataTools.stripString(stream.readString(length * 2)));
-        /* debug */ System.out.println(getMeta("Maximum voxel intensity"));
         length = stream.readInt();
         addMeta("Minimum voxel intensity",
           DataTools.stripString(stream.readString(length * 2)));
-        /* debug */ System.out.println(getMeta("Minimum voxel intensity"));
         length = stream.readInt();
-        /* debug */ System.out.println("length = " + length);
         stream.skipBytes(length * 2);
         stream.skipBytes(4); // version number
         length = stream.readInt();
-        /* debug */ System.out.println("nDims = " + length);
         for (int j=0; j<length; j++) {
           int dimId = stream.readInt();
-          /* debug */ System.out.println("dimId = " + dimId);
           String dimType = "";
           switch (dimId) {
             case 0:
@@ -836,8 +825,6 @@ public class LeicaReader extends FormatReader {
         RandomAccessStream stream = new RandomAccessStream(temp);
         stream.order(core.littleEndian[0]);
         stream.seek(0);
-
-        /* debug */ System.out.println("length = " + stream.length());
 
         int nDims = stream.readInt();
         addMeta("Number of time-stamped dimensions", new Integer(nDims));

@@ -868,7 +868,6 @@ public final class TiffTools {
 
     // extract comment
     Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-    /* debug */ System.out.println(o);
     String comment = null;
     if (o instanceof String) comment = (String) o;
     else if (o instanceof String[]) {
@@ -1324,8 +1323,6 @@ public final class TiffTools {
       long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
       long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
 
-      /* debug */ System.out.println("tile = " + tileWidth + "x" + tileLength);
-
       byte[] data = new byte[(int) (imageWidth * imageLength *
         samplesPerPixel * (bitsPerSample[0] / 8))];
 
@@ -1393,7 +1390,15 @@ public final class TiffTools {
           byte[] bytes = new byte[(int) stripByteCounts[strip]];
           in.read(bytes);
           if (compression != PACK_BITS) {
-            bytes = uncompress(bytes, compression, size);
+            if (jpegTable != null) {
+              byte[] q = new byte[jpegTable.length + bytes.length - 4];
+              System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
+              System.arraycopy(bytes, 2, q, jpegTable.length - 2,
+                bytes.length - 2);
+              bytes = uncompress(q, compression, size);
+            }
+            else bytes = uncompress(bytes, compression, size);
+
             undifference(bytes, bitsPerSample,
               imageWidth, planarConfig, predictor, littleEndian);
             int offset = (int) (imageWidth * row);
