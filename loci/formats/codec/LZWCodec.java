@@ -112,6 +112,9 @@ public class LZWCodec extends BaseCodec implements Codec {
   {
     if (input == null || input.length == 0) return input;
 
+    int maxLength = -1;
+    if (options != null) maxLength = ((Integer) options).intValue();
+
     byte[][] symbolTable = new byte[4096][1];
     int bitsToRead = 9;
     int nextSymbol = 258;
@@ -133,12 +136,14 @@ public class LZWCodec extends BaseCodec implements Codec {
         code = bb.getBits(bitsToRead);
         if (code == EOI_CODE || code == -1) break;
         out.add(symbolTable[code]);
+        if (out.size() >= maxLength && maxLength != -1) break;
         oldCode = code;
       }
       else {
         if (code < nextSymbol) {
           // code is in table
           out.add(symbolTable[code]);
+          if (out.size() >= maxLength && maxLength != -1) break;
           // add string to table
           ByteVector symbol = new ByteVector(byteBuffer1);
           try {
@@ -159,6 +164,7 @@ public class LZWCodec extends BaseCodec implements Codec {
           symbol.add(symbolTable[oldCode][0]);
           byte[] outString = symbol.toByteArray();
           out.add(outString);
+          if (out.size() >= maxLength && maxLength != -1) break;
           symbolTable[nextSymbol] = outString; //**
           oldCode = code;
           nextSymbol++;

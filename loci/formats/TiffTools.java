@@ -1318,6 +1318,7 @@ public final class TiffTools {
     // number of uncompressed bytes in a strip
     int size = (int)
       (imageWidth * (bitsPerSample[0] / 8) * rowsPerStrip * samplesPerPixel);
+    if (planarConfig == 2) size /= samplesPerPixel;
 
     if (isTiled) {
       long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
@@ -1382,7 +1383,7 @@ public final class TiffTools {
       for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
         try {
           if (DEBUG) debug("reading image strip #" + strip);
-          in.seek((int) stripOffsets[strip]);
+          in.seek(stripOffsets[strip]);
 
           if (stripByteCounts[strip] > Integer.MAX_VALUE) {
             throw new FormatException("Sorry, StripByteCounts > " +
@@ -1901,7 +1902,7 @@ public final class TiffTools {
         "(Group 4 Fax) compression mode is not supported");
     }
     else if (compression == LZW) {
-      return new LZWCodec().decompress(input);
+      return new LZWCodec().decompress(input, new Integer(size));
     }
     else if (compression == JPEG) {
       return new JPEGCodec().decompress(input,
