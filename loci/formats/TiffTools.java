@@ -1349,14 +1349,15 @@ public final class TiffTools {
 
         int ext = (int) (b.length / (tileWidth * tileLength));
         int rowBytes = (int) (tileWidth * ext);
-        if (tileWidth + col > imageWidth) {
-          rowBytes = (int) ((imageWidth - col) * ext);
-        }
 
         for (int j=0; j<tileLength; j++) {
           if (row + j < imageLength) {
-            System.arraycopy(b, rowBytes*j, data,
-              (int) ((row + j)*imageWidth*ext + ext*col), rowBytes);
+            int rowLen = rowBytes;
+            int offset = (int) ((row + j) * imageWidth * ext + ext * col);
+            if (col + tileWidth > imageWidth) {
+              rowLen = ext * (int) (imageWidth - col);
+            }
+            System.arraycopy(b, rowBytes*j, data, offset, rowLen);
           }
           else break;
         }
