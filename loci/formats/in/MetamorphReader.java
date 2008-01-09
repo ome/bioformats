@@ -197,9 +197,7 @@ public class MetamorphReader extends BaseTiffReader {
       String[] dirList = parent.list();
       for (int i=0; i<dirList.length; i++) {
         String s = dirList[i].toLowerCase();
-        if (s.endsWith(".stk") && (dirList[i].indexOf(stkFile.substring(
-          stkFile.lastIndexOf(File.separator) + 1) + "_w") != -1))
-        {
+        if (dirList[i].startsWith(stkFile) && s.endsWith(".stk")) {
           stkFile =
             new Location(parent.getPath(), dirList[i]).getAbsolutePath();
           break;
@@ -223,8 +221,8 @@ public class MetamorphReader extends BaseTiffReader {
 
       int zc = core.sizeZ[0], cc = core.sizeC[0], tc = core.sizeT[0];
       String z = null, c = null, t = null;
-      boolean[] hasZ = new boolean[cc];
-      String[] waveNames = new String[cc];
+      Vector hasZ = new Vector();
+      Vector waveNames = new Vector();
 
       while (!line.equals("\"EndFile\"")) {
         String key = line.substring(1, line.indexOf(",") - 1).trim();
@@ -235,12 +233,10 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("NWavelengths")) c = value;
         else if (key.equals("NTimePoints")) t = value;
         else if (key.startsWith("WaveDoZ")) {
-          int ndx = Integer.parseInt(key.substring(7, key.length())) - 1;
-          hasZ[ndx] = value.equals("TRUE");
+          hasZ.add(new Boolean(value.toLowerCase()));
         }
         else if (key.startsWith("WaveName")) {
-          int ndx = Integer.parseInt(key.substring(8, key.length())) - 1;
-          waveNames[ndx] = value;
+          waveNames.add(value); 
         }
 
         line = ndStream.readLine().trim();
@@ -258,14 +254,17 @@ public class MetamorphReader extends BaseTiffReader {
 
       int seriesCount = 1;
       for (int i=0; i<cc; i++) {
-        if (i > 0 && hasZ[i] != hasZ[i - 1]) seriesCount = 2;
+        boolean hasZ1 = ((Boolean) hasZ.get(i)).booleanValue();
+        boolean hasZ2 =
+          i == 0 ? false : ((Boolean) hasZ.get(i - 1)).booleanValue();
+        if (i > 0 && hasZ1 != hasZ2) seriesCount = 2;
       }
 
       int channelsInFirstSeries = cc;
       if (seriesCount == 2) {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
-          if (hasZ[i]) channelsInFirstSeries++;
+          if (((Boolean) hasZ.get(i)).booleanValue()) channelsInFirstSeries++;
         }
       }
 
@@ -281,15 +280,23 @@ public class MetamorphReader extends BaseTiffReader {
         prefix.lastIndexOf("."));
 
       for (int i=0; i<cc; i++) {
-        waveNames[i] = waveNames[i].substring(1, waveNames[i].length() - 1);
+        if (waveNames.get(i) != null) {
+          String name = (String) waveNames.get(i);
+          waveNames.setElementAt(name.substring(1, name.length() - 1), i);
+        }
       }
 
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
         for (int j=0; j<cc; j++) {
-          int seriesNdx = seriesCount == 1 ? 0 : (hasZ[j] ? 0 : 1);
-          stks[seriesNdx][pt[seriesNdx]++] =
-            prefix + "_w" + (j + 1) + waveNames[j] + "_t" + (i + 1) + ".STK";
+          int seriesNdx = seriesCount == 1 ? 0 :
+            (((Boolean) hasZ.get(j)).booleanValue() ? 0 : 1);
+          stks[seriesNdx][pt[seriesNdx]] = prefix;
+          if (waveNames.get(j) != null) {
+            stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1) + waveNames.get(j);
+          }
+          stks[seriesNdx][pt[seriesNdx]] += "_t" + (i + 1) + ".STK";
+          pt[seriesNdx]++;
         }
       }
 
