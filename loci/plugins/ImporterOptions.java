@@ -114,6 +114,7 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_WINDOWLESS = "bioformats.windowless";
   public static final String PREF_VIRTUAL = "bioformats.virtual";
   public static final String PREF_ALL_SERIES = "bioformats.openAllSeries";
+  public static final String PREF_CROP = "bioformats.crop";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -139,6 +140,7 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_SERIES = "series";
   public static final String LABEL_VIRTUAL = "Use virtual stack";
   public static final String LABEL_ALL_SERIES = "Open all series";
+  public static final String LABEL_CROP = "Crop on import";
 
   // -- Fields - GUI components --
 
@@ -157,6 +159,7 @@ public class ImporterOptions implements ItemListener {
   private Choice mergeChoice;
   private Checkbox virtualBox;
   private Checkbox allSeriesBox;
+  private Checkbox cropBox;
 
   // -- Fields - core options --
 
@@ -179,6 +182,7 @@ public class ImporterOptions implements ItemListener {
   private String seriesString;
   private boolean virtual;
   private boolean openAllSeries;
+  private boolean crop;
 
   private String location;
   private String id;
@@ -208,6 +212,7 @@ public class ImporterOptions implements ItemListener {
   public String getMergeOption() { return mergeOption; }
   public boolean isVirtual() { return virtual; }
   public boolean openAllSeries() { return openAllSeries; }
+  public boolean doCrop() { return crop; }
 
   public boolean isViewNone() { return VIEW_NONE.equals(stackFormat); }
   public boolean isViewStandard() { return VIEW_STANDARD.equals(stackFormat); }
@@ -249,6 +254,7 @@ public class ImporterOptions implements ItemListener {
   public void setWindowless(boolean b) { windowless = b; }
   public void setVirtual(boolean b) { virtual = b; }
   public void setOpenAllSeries(boolean b) { openAllSeries = b; }
+  public void setCrop(boolean b) { crop = b; }
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
@@ -271,6 +277,7 @@ public class ImporterOptions implements ItemListener {
     windowless = Prefs.get(PREF_WINDOWLESS, false);
     virtual = Prefs.get(PREF_VIRTUAL, false);
     openAllSeries = Prefs.get(PREF_ALL_SERIES, false);
+    crop = Prefs.get(PREF_CROP, false);
 
     // set SDT intensity property, if available
     String sdtIntensity = Prefs.get(SDTReader.INTENSITY_PROPERTY, null);
@@ -299,6 +306,7 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_WINDOWLESS, windowless);
     Prefs.set(PREF_VIRTUAL, virtual);
     Prefs.set(PREF_ALL_SERIES, openAllSeries);
+    Prefs.set(PREF_CROP, crop);
   }
 
   /** Parses the plugin argument for parameter values. */
@@ -342,6 +350,7 @@ public class ImporterOptions implements ItemListener {
       seriesString = Macro.getValue(arg, LABEL_SERIES, "0");
       virtual = getMacroValue(arg, LABEL_VIRTUAL, virtual);
       openAllSeries = getMacroValue(arg, LABEL_ALL_SERIES, openAllSeries);
+      crop = getMacroValue(arg, LABEL_CROP, crop);
 
       location = Macro.getValue(arg, LABEL_LOCATION, location);
       id = Macro.getValue(arg, LABEL_ID, id);
@@ -522,6 +531,7 @@ public class ImporterOptions implements ItemListener {
     gd.addCheckbox(LABEL_C, splitChannels);
     gd.addCheckbox(LABEL_Z, splitFocalPlanes);
     gd.addCheckbox(LABEL_T, splitTimepoints);
+    gd.addCheckbox(LABEL_CROP, crop);
     gd.addCheckbox(LABEL_METADATA, showMetadata);
     gd.addCheckbox(LABEL_GROUP, groupFiles);
     gd.addCheckbox(LABEL_CONCATENATE, concatenate);
@@ -546,13 +556,14 @@ public class ImporterOptions implements ItemListener {
       splitCBox = (Checkbox) boxes.get(2);
       splitZBox = (Checkbox) boxes.get(3);
       splitTBox = (Checkbox) boxes.get(4);
-      metadataBox = (Checkbox) boxes.get(5);
-      groupBox = (Checkbox) boxes.get(6);
-      concatenateBox = (Checkbox) boxes.get(7);
-      rangeBox = (Checkbox) boxes.get(8);
-      autoscaleBox = (Checkbox) boxes.get(9);
-      virtualBox = (Checkbox) boxes.get(10);
-      allSeriesBox = (Checkbox) boxes.get(11);
+      cropBox = (Checkbox) boxes.get(5);
+      metadataBox = (Checkbox) boxes.get(6);
+      groupBox = (Checkbox) boxes.get(7);
+      concatenateBox = (Checkbox) boxes.get(8);
+      rangeBox = (Checkbox) boxes.get(9);
+      autoscaleBox = (Checkbox) boxes.get(10);
+      virtualBox = (Checkbox) boxes.get(11);
+      allSeriesBox = (Checkbox) boxes.get(12);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -568,6 +579,7 @@ public class ImporterOptions implements ItemListener {
     splitChannels = gd.getNextBoolean();
     splitFocalPlanes = gd.getNextBoolean();
     splitTimepoints = gd.getNextBoolean();
+    crop = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
     groupFiles = gd.getNextBoolean();
     concatenate = gd.getNextBoolean();
@@ -703,6 +715,46 @@ public class ImporterOptions implements ItemListener {
             break;
           }
         }
+      }
+    }
+
+    return STATUS_OK;
+  }
+
+  public int promptCropSize(IFormatReader r, String[] labels, boolean[] series,
+    Rectangle[] box)
+  {
+    GenericDialog gd = new GenericDialog("Bio-Formats Crop Options");
+    for (int i=0; i<series.length; i++) {
+      if (!series[i]) continue;
+      gd.addMessage(labels[i].replaceAll("_", " "));
+      gd.addNumericField("X_Coordinate", 0, 0);
+      gd.addNumericField("Y_Coordinate", 0, 0);
+      gd.addNumericField("Width", 0, 0);
+      gd.addNumericField("Height", 0, 0);
+    }
+    gd.showDialog();
+    if (gd.wasCanceled()) return STATUS_CANCELED;
+
+    for (int i=0; i<series.length; i++) {
+      if (!series[i]) continue;
+      r.setSeries(i);
+      box[i].x = (int) gd.getNextNumber();
+      box[i].y = (int) gd.getNextNumber();
+      box[i].width = (int) gd.getNextNumber();
+      box[i].height = (int) gd.getNextNumber();
+
+      if (box[i].x < 0) box[i].x = 0;
+      if (box[i].y < 0) box[i].y = 0;
+      if (box[i].x >= r.getSizeX()) box[i].x = r.getSizeX() - box[i].width - 1;
+      if (box[i].y >= r.getSizeY()) box[i].y = r.getSizeY() - box[i].height - 1;
+      if (box[i].width < 1) box[i].width = 1;
+      if (box[i].height < 1) box[i].height = 1;
+      if (box[i].width + box[i].x > r.getSizeX()) {
+        box[i].width = r.getSizeX() - box[i].x;
+      }
+      if (box[i].height + box[i].y > r.getSizeY()) {
+        box[i].height = r.getSizeY() - box[i].y;
       }
     }
 

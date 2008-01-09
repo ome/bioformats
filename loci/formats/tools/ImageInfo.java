@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -73,6 +74,7 @@ public final class ImageInfo {
     int start = 0;
     int end = Integer.MAX_VALUE;
     int series = 0;
+    int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
     String swapOrder = null;
     String map = null;
     if (args != null) {
@@ -93,6 +95,13 @@ public final class ImageInfo {
           else if (args[i].equals("-debug")) FormatHandler.setDebug(true);
           else if (args[i].equals("-preload")) preload = true;
           else if (args[i].equals("-version")) omexmlVersion = args[++i];
+          else if (args[i].equals("-crop")) {
+            StringTokenizer st = new StringTokenizer(args[++i], ",");
+            xCoordinate = Integer.parseInt(st.nextToken());
+            yCoordinate = Integer.parseInt(st.nextToken());
+            width = Integer.parseInt(st.nextToken());
+            height = Integer.parseInt(st.nextToken());
+          }
           else if (args[i].equals("-level")) {
             try {
               FormatHandler.setDebugLevel(Integer.parseInt(args[++i]));
@@ -159,6 +168,7 @@ public final class ImageInfo {
         "            reduces the time required to read the images, but",
         "            requires more memory",
         "  -version: specify which OME-XML version should be generated",
+        "     -crop: crop images before displaying; argument is 'x,y,w,h'",
         "",
         "* = may result in loss of precision",
         ""
@@ -437,6 +447,9 @@ public final class ImageInfo {
       if (end >= num) end = num - 1;
       if (end < start) end = start;
 
+      if (width == 0) width = reader.getSizeX();
+      if (height == 0) height = reader.getSizeY();
+
       LogTools.print("(" + start + "-" + end + ") ");
       BufferedImage[] images = new BufferedImage[end - start + 1];
       long s2 = System.currentTimeMillis();
@@ -444,14 +457,14 @@ public final class ImageInfo {
       for (int i=start; i<=end; i++) {
         status.setEchoNext(true);
         if (!fastBlit) {
-          images[i - start] = thumbs ?
-            reader.openThumbImage(i) : reader.openImage(i);
+          images[i - start] = thumbs ? reader.openThumbImage(i) :
+            reader.openImage(i, xCoordinate, yCoordinate, width, height);
         }
         else {
           int x = reader.getSizeX();
           int y = reader.getSizeY();
           byte[] b = thumbs ? reader.openThumbBytes(i) :
-            reader.openBytes(i);
+            reader.openBytes(i, xCoordinate, yCoordinate, width, height);
           Object pix = DataTools.makeDataArray(b,
             FormatTools.getBytesPerPixel(reader.getPixelType()),
             reader.getPixelType() == FormatTools.FLOAT,

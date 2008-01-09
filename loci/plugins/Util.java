@@ -68,9 +68,25 @@ public final class Util {
   public static ImageProcessor openProcessor(IFormatReader r, int no)
     throws FormatException, IOException
   {
+    return openProcessor(r, no, null);
+  }
+
+  /**
+   * Creates an ImageJ image processor object using the given format reader
+   * for the image plane at the given position.
+   *
+   * @param r Format reader to use for reading the data.
+   * @param no Position of image plane.
+   * @param crop Image cropping specifications, or null if no cropping
+   *   is to be done.
+   */
+  public static ImageProcessor openProcessor(IFormatReader r, int no,
+    Rectangle crop) throws FormatException, IOException
+  {
     // read byte array
     boolean first = true;
     byte[] b = null;
+    boolean doCrop = crop != null;
     while (true) {
       // read LuraWave license code, if available
       String code = Prefs.get(LuraWaveCodec.LICENSE_PROPERTY, null);
@@ -78,7 +94,10 @@ public final class Util {
         System.setProperty(LuraWaveCodec.LICENSE_PROPERTY, code);
       }
       try {
-        b = r.openBytes(no);
+        if (doCrop) {
+          b = r.openBytes(no, crop.x, crop.y, crop.width, crop.height);
+        }
+        else b = r.openBytes(no);
         break;
       }
       catch (FormatException exc) {
@@ -100,8 +119,8 @@ public final class Util {
       }
     }
 
-    int w = r.getSizeX();
-    int h = r.getSizeY();
+    int w = doCrop ? crop.width : r.getSizeX();
+    int h = doCrop ? crop.height : r.getSizeY();
     int c = r.getRGBChannelCount();
     int type = r.getPixelType();
     int bpp = FormatTools.getBytesPerPixel(type);
@@ -113,7 +132,9 @@ public final class Util {
       // HACK - byte array dimensions are incorrect - image is probably
       // a different size, but we have no way of knowing what size;
       // so open this plane as a BufferedImage to find out
-      BufferedImage bi = r.openImage(no);
+      BufferedImage bi = doCrop ?
+        r.openImage(no, crop.x, crop.y, crop.width, crop.height) :
+        r.openImage(no);
       b = ImageTools.padImage(b, r.isInterleaved(), c,
         bi.getWidth() * bpp, w, h);
     }

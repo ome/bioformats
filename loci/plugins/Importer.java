@@ -28,6 +28,7 @@ package loci.plugins;
 import ij.*;
 import ij.io.FileInfo;
 import ij.process.*;
+import java.awt.Rectangle;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
@@ -131,6 +132,7 @@ public class Importer {
     boolean concatenate = options.isConcatenate();
     boolean specifyRanges = options.isSpecifyRanges();
     boolean autoscale = options.isAutoscale();
+    boolean cropOnImport = options.doCrop();
 
     boolean viewNone = options.isViewNone();
     boolean viewStandard = options.isViewStandard();
@@ -277,7 +279,16 @@ public class Importer {
         tCount[i] = (tEnd[i] - tBegin[i] + tStep[i]) / tStep[i];
       }
 
-      // -- Step 4d: display metadata, if appropriate --
+      Rectangle[] cropOptions = new Rectangle[seriesCount];
+      for (int i=0; i<cropOptions.length; i++) {
+        if (series[i] && cropOnImport) cropOptions[i] = new Rectangle();
+      }
+      if (cropOnImport) {
+        status = options.promptCropSize(r, seriesLabels, series, cropOptions);
+        if (!statusOk(status)) return;
+      }
+
+      // -- Step 4e: display metadata, if appropriate --
 
       if (showMetadata) {
         IJ.showStatus("Populating metadata");
@@ -365,8 +376,8 @@ public class Importer {
           ImageStack stackF = null; // for floating point images (32-bit)
           ImageStack stackO = null; // for all other images (24-bit RGB)
 
-          int w = r.getSizeX();
-          int h = r.getSizeY();
+          int w = cropOnImport ? cropOptions[i].width : r.getSizeX();
+          int h = cropOnImport ? cropOptions[i].height : r.getSizeY();
           int c = r.getRGBChannelCount();
           int type = r.getPixelType();
 
@@ -413,7 +424,7 @@ public class Importer {
                 new int[][] {zCount, cCount, tCount});
 
               // get image processor for jth plane
-              ImageProcessor ip = Util.openProcessor(r, ndx);
+              ImageProcessor ip = Util.openProcessor(r, ndx, cropOptions[i]);
               if (ip == null) {
                 plugin.canceled = true;
                 return;
