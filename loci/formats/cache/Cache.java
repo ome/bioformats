@@ -5,7 +5,6 @@
 package loci.formats.cache;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.JFrame;
 import loci.formats.*;

@@ -70,10 +70,10 @@ public class SVSReader extends BaseTiffReader {
 
     String comment = TiffTools.getComment(ifds[0]);
     // one line per series
-    StringTokenizer series = new StringTokenizer(comment, "\n");
+    StringTokenizer st = new StringTokenizer(comment, "\n");
     int seriesNumber = 0;
-    while (series.hasMoreTokens()) {
-      StringTokenizer tokens = new StringTokenizer(series.nextToken(), "|");
+    while (st.hasMoreTokens()) {
+      StringTokenizer tokens = new StringTokenizer(st.nextToken(), "|");
       while (tokens.hasMoreTokens()) {
         String t = tokens.nextToken();
         if (t.indexOf("=") == -1) {

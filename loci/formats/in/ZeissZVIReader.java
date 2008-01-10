@@ -495,22 +495,22 @@ public class ZeissZVIReader extends FormatReader {
       String gamma =
         idx < gammaValue.size() ? (String) gammaValue.get(idx) : null;
 
-      Double blackValue = null, whiteValue = null;
-      Float gammaValue = null;
+      Double blackVal = null, whiteVal = null;
+      Float gammaVal = null;
 
-      try { blackValue = new Double(black); }
+      try { blackVal = new Double(black); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
-      try { whiteValue = new Double(white); }
+      try { whiteVal = new Double(white); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
-      try { gammaValue = new Float(gamma); }
+      try { gammaVal = new Float(gamma); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
 
       // CTR CHECK
-//      store.setDisplayChannel(new Integer(i), blackValue, whiteValue,
-//        gammaValue, null);
+//      store.setDisplayChannel(new Integer(i), blackVal, whiteVal,
+//        gammaVal, null);
     }
 
     for (int plane=0; plane<core.imageCount[0]; plane++) {
