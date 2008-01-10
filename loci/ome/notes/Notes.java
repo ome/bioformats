@@ -32,9 +32,13 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
-import loci.formats.*;
+import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
+import loci.formats.RandomAccessStream;
 import loci.formats.gui.GUITools;
-import loci.formats.meta.*;
+import loci.formats.meta.AggregateMetadata;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Main notes window.
