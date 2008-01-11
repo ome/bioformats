@@ -233,9 +233,10 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("ThumbnailX", ras.readInt());
       put("ThumbnailY", ras.readInt());
 
-      pixelSizeX = ras.readDouble();
-      pixelSizeY = ras.readDouble();
-      pixelSizeZ = ras.readDouble();
+      // pixel sizes are stored in meters, we need them in microns
+      pixelSizeX = ras.readDouble() * 1000000;
+      pixelSizeY = ras.readDouble() * 1000000;
+      pixelSizeZ = ras.readDouble() * 1000000;
 
       put("VoxelSizeX", new Double(pixelSizeX));
       put("VoxelSizeY", new Double(pixelSizeY));
