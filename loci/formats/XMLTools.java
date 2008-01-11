@@ -156,6 +156,7 @@ public final class XMLTools {
 
   /** Indents XML by the given spacing to be more readable. */
   public static String indentXML(String xml, int spacing) {
+    if (xml == null) return null; // garbage in, garbage out
     int indent = 0;
     StringBuffer sb = new StringBuffer();
     StringTokenizer st = new StringTokenizer(xml, "<>", true);
