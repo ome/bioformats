@@ -72,8 +72,8 @@ public final class MetadataTools {
    * direct dependencies on the optional {@link loci.formats.ome} package,
    * wrapping a DOM representation of the given OME-XML string.
    *
-   * @param version The OME-XML version to use.  If null, the latest version is
-   *   used.
+   * @param version The OME-XML version to use.
+   *   If null, the latest version is used.
    * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
    *   or null if the class is not available.
    */
@@ -89,7 +89,6 @@ public final class MetadataTools {
       String metaClass = "OMEXML" + version.replaceAll("-", "") + "Metadata";
       r.exec("import loci.formats.ome." + metaClass);
       r.setVar("xml", xml);
-      /* debug */ System.out.println("metaClass = " + metaClass);
       // CTR FIXME need to pass XML as an argument here... eventually
       store = (MetadataStore) r.exec("new " + metaClass + "()");
     }
