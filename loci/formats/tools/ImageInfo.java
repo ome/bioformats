@@ -596,7 +596,11 @@ public final class ImageInfo {
     // output and validate OME-XML
     if (omexml) {
       LogTools.println();
-      LogTools.println("Generating OME-XML");
+      String version = MetadataTools.getOMEXMLVersion(ms);
+      if (version == null) LogTools.println("Generating OME-XML");
+      else {
+        LogTools.println("Generating OME-XML (schema version " + version + ")");
+      }
       if (MetadataTools.isOMEXMLMetadata(ms)) {
         String xml = MetadataTools.getOMEXML((MetadataRetrieve) ms);
         LogTools.println(XMLTools.indentXML(xml));
