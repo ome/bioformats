@@ -50,7 +50,7 @@ public class OmeisImporter {
   // -- Constants --
 
   /** Debugging flag. */
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
 
   /** Network path to OMEIS. */
   private static final String OMEIS_PATH = "http://localhost/cgi-bin/omeis";
