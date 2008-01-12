@@ -79,33 +79,40 @@ public abstract class OMEXMLMetadata
   /** Adds the key/value pair as a new OriginalMetadata node. */
   public void populateOriginalMetadata(String key, String value) {
     if (firstImageCA == null) {
-      Element image = DOMUtil.getChildElement("Image", root.getDOMElement());
+      Element ome = root.getDOMElement();
+      Element image = DOMUtil.getChildElement("Image", ome);
+      if (image == null) image = DOMUtil.createChild(ome, "Image", true);
       firstImageCA = DOMUtil.getChildElement("CustomAttributes", image);
+      if (firstImageCA == null) {
+        firstImageCA = DOMUtil.createChild(image, "CustomAttributes", true);
+      }
     }
-    Vector omList = DOMUtil.getChildElements("OriginalMetadata", firstImageCA);
+    final String originalMetadata = "OriginalMetadata";
+    Vector omList = DOMUtil.getChildElements(originalMetadata, firstImageCA);
     if (omList.size() == 0) {
       Element std = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");
       DOMUtil.setAttribute("xmlns",
         "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd", std);
       Element st = DOMUtil.createChild(std, "SemanticType");
-      DOMUtil.setAttribute("Name", "OriginalMetadata", st);
+      DOMUtil.setAttribute("Name", originalMetadata, st);
       DOMUtil.setAttribute("AppliesTo", "I", st);
 
       Element nameElement = DOMUtil.createChild(st, "Element");
-      DOMUtil.setAttribute("Name", "name", nameElement);
+      DOMUtil.setAttribute("Name", "Name", nameElement);
       DOMUtil.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME", nameElement);
       DOMUtil.setAttribute("DataType", "string", nameElement);
 
       Element valueElement = DOMUtil.createChild(st, "Element");
-      DOMUtil.setAttribute("Name", "value", valueElement);
+      DOMUtil.setAttribute("Name", "Value", valueElement);
       DOMUtil.setAttribute("DBLocation",
         "ORIGINAL_METADATA.VALUE", valueElement);
       DOMUtil.setAttribute("DataType", "string", valueElement);
     }
-    Element om = DOMUtil.createChild(firstImageCA, "OriginalMetadata");
-    DOMUtil.setAttribute("name", key, om);
-    DOMUtil.setAttribute("value", value, om);
+    Element om = DOMUtil.createChild(firstImageCA, originalMetadata);
+    DOMUtil.setAttribute("ID", root.makeID(originalMetadata), om);
+    DOMUtil.setAttribute("Name", key, om);
+    DOMUtil.setAttribute("Value", value, om);
   }
 
   // -- MetadataRetrieve API methods --
