@@ -72,7 +72,7 @@ public final class MetadataTools {
    * direct dependencies on the optional {@link loci.formats.ome} package,
    * wrapping a DOM representation of the given OME-XML string.
    *
-   * @param version The OME-XML version to use.
+   * @param version The OME-XML version to use (e.g., "2003FC" or "200706").
    *   If null, the latest version is used.
    * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
    *   or null if the class is not available.
@@ -86,7 +86,8 @@ public final class MetadataTools {
       if (version == null) {
         version = (String) r.exec("OMEXMLFactory.LATEST_VERSION");
       }
-      String metaClass = "OMEXML" + version.replaceAll("-", "") + "Metadata";
+      String metaClass = "OMEXML" +
+        version.replaceAll("[^\\w]", "") + "Metadata";
       r.exec("import loci.formats.ome." + metaClass);
       r.setVar("xml", xml);
       // CTR FIXME need to pass XML as an argument here... eventually
@@ -110,6 +111,19 @@ public final class MetadataTools {
     }
     catch (ReflectException exc) { }
     return false;
+  }
+
+  /**
+   * Gets the schema version for the given OME-XML metadata object.
+   * @return OME-XML schema version, or null if the object is not
+   *   an instance of {@link loci.formats.ome.OMEXMLMetadata}.
+   */
+  public static String getOMEXMLVersion(Object o) {
+    String name = o.getClass().getName();
+    final String prefix = "loci.formats.ome.OMEXML";
+    final String suffix = "Metadata";
+    if (!name.startsWith(prefix) || !name.endsWith(suffix)) return null;
+    return name.substring(prefix.length(), name.length() - suffix.length());
   }
 
   /**
