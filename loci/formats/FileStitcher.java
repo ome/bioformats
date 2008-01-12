@@ -850,10 +850,10 @@ public class FileStitcher implements IFormatReader {
     currentId = id;
 
     fp = findPattern(currentId);
-    String[] tmpFiles = fp.getFiles();
-    Arrays.sort(tmpFiles);
-
-    fp = new FilePattern(new Location(tmpFiles[0]));
+    // CTR: This code breaks omebf!
+    //String[] tmpFiles = fp.getFiles();
+    //Arrays.sort(tmpFiles);
+    //fp = new FilePattern(new Location(tmpFiles[0]));
 
     reader.setId(fp.getFiles()[0]);
 
