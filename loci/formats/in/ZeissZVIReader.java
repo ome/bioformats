@@ -329,7 +329,7 @@ public class ZeissZVIReader extends FormatReader {
       core.sizeZ[0] = zIndices.size();
       core.sizeT[0] = tIndices.size();
 
-      if (core.sizeC[0] != cIndices.size()) core.sizeC[0] *= cIndices.size();
+      core.sizeC[0] *= cIndices.size();
 
       core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
         (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
