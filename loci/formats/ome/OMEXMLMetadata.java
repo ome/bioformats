@@ -82,7 +82,7 @@ public abstract class OMEXMLMetadata
       Element ome = root.getDOMElement();
       Element image = DOMUtil.getChildElement("Image", ome);
       if (image == null) {
-        setImageName(null, 0); // force creation of Image element
+        setImageName("", 0); // HACK - force creation of Image element
         image = DOMUtil.getChildElement("Image", ome);
       }
       imageCA = DOMUtil.getChildElement("CustomAttributes", image);
