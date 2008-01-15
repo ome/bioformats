@@ -594,7 +594,6 @@ public final class ImageTools {
     for (int i=0; i<bandOffsets.length; i++) {
       if (bandOffsets[i] != 0) return false;
     }
-    int[] bankIndices = csm.getBankIndices();
     for (int i=0; i<bandOffsets.length; i++) {
       if (bandOffsets[i] != i) return false;
     }
@@ -612,7 +611,6 @@ public final class ImageTools {
     Object pixels = getPixels(img);
 
     if (pixels instanceof byte[][]) {
-      byte[][] b = (byte[][]) pixels;
       return (byte[][]) pixels;
     }
     else if (pixels instanceof short[][]) {

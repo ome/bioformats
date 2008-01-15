@@ -865,7 +865,6 @@ public class FileStitcher implements IFormatReader {
     int seriesCount = reader.getSeriesCount();
     seriesInFile = true;
     if (guesser.getAxisCountS() > 0) {
-      int[] count = fp.getCount();
       int[] axes = guesser.getAxisTypes();
 
       seriesInFile = false;
@@ -1172,8 +1171,6 @@ public class FileStitcher implements IFormatReader {
     }
 
     // populate metadata store
-    int pixelType = getPixelType();
-    boolean little = reader.isLittleEndian();
     MetadataStore s = reader.getMetadataStore();
     for (int i=0; i<core.sizeX.length; i++) {
       if (seriesNames != null) {

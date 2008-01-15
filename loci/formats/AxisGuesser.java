@@ -122,7 +122,7 @@ public class AxisGuesser {
     BigInteger[] step = fp.getStep();
     int[] count = fp.getCount();
     axisTypes = new int[count.length];
-    boolean foundZ = false, foundT = false, foundC = false, foundS = false;
+    boolean foundZ = false, foundT = false;
 
     // -- 1) fill in "known" axes based on known patterns and conventions --
 
@@ -167,7 +167,6 @@ public class AxisGuesser {
       for (int j=0; j<C.length; j++) {
         if (p.equals(C[j])) {
           axisTypes[i] = C_AXIS;
-          foundC = true;
           break;
         }
       }
@@ -177,7 +176,6 @@ public class AxisGuesser {
       for (int j=0; j<S.length; j++) {
         if (p.equals(S[j])) {
           axisTypes[i] = S_AXIS;
-          foundS = true;
           break;
         }
       }
@@ -188,7 +186,6 @@ public class AxisGuesser {
         step[i].equals(BigInteger.ONE) && suffix.equalsIgnoreCase(".pic"))
       {
         axisTypes[i] = C_AXIS;
-        foundC = true;
         break;
       }
     }

@@ -43,9 +43,6 @@ public class IndexedColorModel extends ColorModel {
   private short[] redShort, greenShort, blueShort, alphaShort;
   private int[] redInt, greenInt, blueInt, alphaInt;
 
-  /** Length of lookup table. */
-  private int tableSize;
-
   private int pixelBits;
 
   // -- Constructors --
@@ -66,7 +63,6 @@ public class IndexedColorModel extends ColorModel {
     if (table.length > 1) greenByte = table[1];
     if (table.length > 2) blueByte = table[2];
     if (table.length > 3) alphaByte = table[3];
-    tableSize = size;
     pixelBits = bits;
   }
 
@@ -86,7 +82,6 @@ public class IndexedColorModel extends ColorModel {
     if (table.length > 1) greenShort = table[1];
     if (table.length > 2) blueShort = table[2];
     if (table.length > 3) alphaShort = table[3];
-    tableSize = size;
     pixelBits = bits;
   }
 
@@ -106,7 +101,6 @@ public class IndexedColorModel extends ColorModel {
     if (table.length > 1) greenInt = table[1];
     if (table.length > 2) blueInt = table[2];
     if (table.length > 3) alphaInt = table[3];
-    tableSize = size;
     pixelBits = bits;
   }
 
@@ -117,7 +111,7 @@ public class IndexedColorModel extends ColorModel {
     int red = (rgb >> 16) & 0xff;
     int green = (rgb >> 8) & 0xff;
     int blue = rgb & 0xff;
-    int alpha = (rgb >>> 24);
+    //int alpha = (rgb >>> 24);
 
     if (redByte != null) {
       byte[] p = pixel == null ? new byte[3] : (byte[]) pixel;

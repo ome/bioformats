@@ -439,8 +439,8 @@ public class DataConverter extends JFrame implements
       }
       catch (NullPointerException npe) { }
 
-      boolean isQT = swap.getFormat().equals("QuickTime");
-      boolean useQTJ = isQT && qtJava.isSelected();
+      //boolean isQT = swap.getFormat().equals("QuickTime");
+      //boolean useQTJ = isQT && qtJava.isSelected();
       //((QTReader) reader.getReader(QTReader.class)).setLegacy(useQTJ);
 
       // swap dimensions based on user input
@@ -479,8 +479,6 @@ public class DataConverter extends JFrame implements
       int externalZ = includeZ.isSelected() ? 1 : swap.getSizeZ();
       int externalT = includeT.isSelected() ? 1 : swap.getSizeT();
       int externalC = includeC.isSelected() ? 1 : swap.getEffectiveSizeC();
-
-      int numFiles = externalZ * externalT * externalC;
 
       int zDigits = ("" + externalZ).length();
       int tDigits = ("" + externalT).length();

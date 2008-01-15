@@ -36,10 +36,6 @@ public class MSVideoCodec extends BaseCodec implements Codec {
     byte[] lastImage = (byte[]) optionsArray[3];
 
     int pt = 0;
-
-    int blocksPerRow = (width + 3) / 4;
-    int blocksPerColumn = (height + 3) / 4;
-
     int row = 0;
     int column = 0;
 

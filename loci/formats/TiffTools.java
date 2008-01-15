@@ -902,7 +902,6 @@ public final class TiffTools {
     throws FormatException, IOException
   {
     int samplesPerPixel = getSamplesPerPixel(ifd);
-    int photoInterp = getPhotometricInterpretation(ifd);
     int bpp = getBitsPerSample(ifd)[0];
     while ((bpp % 8) != 0) bpp++;
     bpp /= 8;
@@ -1330,8 +1329,6 @@ public final class TiffTools {
       int row = 0;
       int col = 0;
 
-      int bytes = bitsPerSample[0] / 8;
-
       for (int i=0; i<stripOffsets.length; i++) {
         byte[] b = new byte[(int) stripByteCounts[i]];
         in.seek(stripOffsets[i]);
@@ -1507,7 +1504,6 @@ public final class TiffTools {
     long imageWidth = getImageWidth(ifd);
     long imageLength = getImageLength(ifd);
     int samplesPerPixel = getSamplesPerPixel(ifd);
-    int photoInterp = getPhotometricInterpretation(ifd);
 
     if (bitsPerSample[0] == 16 || bitsPerSample[0] == 12) {
       // First wrap the byte arrays and then use the features of the
@@ -1718,7 +1714,6 @@ public final class TiffTools {
     //    j + (i*(bytes.length / sampleCount))
 
     int bps0 = bitsPerSample[0];
-    int bpsPow = (int) Math.pow(2, bps0);
     int numBytes = bps0 / 8;
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
@@ -1776,7 +1771,6 @@ public final class TiffTools {
               bb.skipBits((imageWidth * bps0 * sampleCount) % 8);
             }
           }
-          short b = s;
           if (photoInterp != CFA_ARRAY) samples[i][ndx] = s;
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
