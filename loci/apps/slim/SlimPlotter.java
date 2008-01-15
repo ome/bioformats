@@ -172,7 +172,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private RealType bType, cType;
   private RealTupleType bc, bv, bcv;
   private FunctionType bcvFunc, bcvFuncFit, bcvFuncRes;
-  private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapFit, vMapRes;
+  private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapRes;
+  //private ScalarMap vMapFit;
   private DataRenderer decayRend, fitRend, resRend, lineRend, fwhmRend;
   private DataReferenceImpl decayRef, fwhmRef, fitRef, resRef;
   private DisplayImpl iPlot, decayPlot;
@@ -1446,7 +1447,6 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           // find full width half max
           float half = maxSum / 2f;
           float fwhm1 = Float.NaN, fwhm2 = Float.NaN;
-          boolean up = true;
           for (int t=0; t<timeBins-1; t++) {
             if (sums[t] <= half && sums[t + 1] >= half) { // upslope
               float q = (half - sums[t]) / (sums[t + 1] - sums[t]);
@@ -2027,12 +2027,10 @@ public class SlimPlotter implements ActionListener, ChangeListener,
    * RuntimeException.printStackTrace() exceptions within LMA library.
    */
   public class ConsoleStream extends PrintStream {
-    private PrintStream ps;
     private boolean ignore;
 
     public ConsoleStream(OutputStream out) {
       super(out);
-      ps = (PrintStream) out;
     }
 
     public void println(String s) {
