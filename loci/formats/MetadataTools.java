@@ -109,7 +109,9 @@ public final class MetadataTools {
       Class c = (Class) r.getVar("OMEXMLMetadata");
       return c.isInstance(o);
     }
-    catch (ReflectException exc) { }
+    catch (ReflectException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
+    }
     return false;
   }
 
@@ -166,7 +168,9 @@ public final class MetadataTools {
     try {
       r.exec("omexmlMeta.populateOriginalMetadata(key, value)");
     }
-    catch (ReflectException exc) { }
+    catch (ReflectException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
+    }
   }
 
   /**
@@ -190,7 +194,9 @@ public final class MetadataTools {
     try {
       return (String) r.exec("omexmlMeta.dumpXML()");
     }
-    catch (ReflectException exc) { }
+    catch (ReflectException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
+    }
     return null;
   }
 
@@ -218,7 +224,9 @@ public final class MetadataTools {
         r.setVar("omexmlMeta", dest);
         r.exec("omexmlMeta.createRoot(xml)");
       }
-      catch (ReflectException exc) { }
+      catch (ReflectException exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
+      }
     }
     else {
       // metadata store is foreign; create an OME-XML
