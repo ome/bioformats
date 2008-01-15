@@ -8,7 +8,6 @@ import ij.ImageStack;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
-import java.io.File;
 import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
@@ -20,14 +19,14 @@ public class Read_Image implements PlugIn {
     OpenDialog od = new OpenDialog("Open Image File...", arg);
     String dir = od.getDirectory();
     String name = od.getFileName();
-    String id = dir + File.separator + name;
+    String id = dir + name;
     ImageReader r = new ImageReader();
     try {
       IJ.showStatus("Examining file " + name);
       r.setId(id);
       int num = r.getImageCount();
       int width = r.getSizeX();
-      int height = r.getSizeX();
+      int height = r.getSizeY();
       ImageStack stack = new ImageStack(width, height);
       for (int i=0; i<num; i++) {
         IJ.showStatus("Reading image plane #" + (i + 1) + "/" + num);
