@@ -61,7 +61,7 @@ public abstract class OMEXMLMetadata
   protected double[] channelMaximum;
 
   /** DOM element that backs the first Image's CustomAttributes node. */
-  private Element firstImageCA;
+  private Element imageCA;
 
   // -- Constructors --
 
@@ -78,17 +78,20 @@ public abstract class OMEXMLMetadata
 
   /** Adds the key/value pair as a new OriginalMetadata node. */
   public void populateOriginalMetadata(String key, String value) {
-    if (firstImageCA == null) {
+    if (imageCA == null) {
       Element ome = root.getDOMElement();
       Element image = DOMUtil.getChildElement("Image", ome);
-      if (image == null) image = DOMUtil.createChild(ome, "Image", true);
-      firstImageCA = DOMUtil.getChildElement("CustomAttributes", image);
-      if (firstImageCA == null) {
-        firstImageCA = DOMUtil.createChild(image, "CustomAttributes", true);
+      if (image == null) {
+        setImageName(null, 0); // force creation of Image element
+        image = DOMUtil.getChildElement("Image", ome);
+      }
+      imageCA = DOMUtil.getChildElement("CustomAttributes", image);
+      if (imageCA == null) {
+        imageCA = DOMUtil.createChild(image, "CustomAttributes", true);
       }
     }
     final String originalMetadata = "OriginalMetadata";
-    Vector omList = DOMUtil.getChildElements(originalMetadata, firstImageCA);
+    Vector omList = DOMUtil.getChildElements(originalMetadata, imageCA);
     if (omList.size() == 0) {
       Element std = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");
@@ -109,7 +112,7 @@ public abstract class OMEXMLMetadata
         "ORIGINAL_METADATA.VALUE", valueElement);
       DOMUtil.setAttribute("DataType", "string", valueElement);
     }
-    Element om = DOMUtil.createChild(firstImageCA, originalMetadata);
+    Element om = DOMUtil.createChild(imageCA, originalMetadata);
     DOMUtil.setAttribute("ID", root.makeID(originalMetadata), om);
     DOMUtil.setAttribute("Name", key, om);
     DOMUtil.setAttribute("Value", value, om);
