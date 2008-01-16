@@ -26,7 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
+import java.util.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataStore;
 
@@ -48,9 +48,64 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Tag identifying a Zeiss LSM file. */
   private static final int ZEISS_ID = 34412;
 
+  /** Data types. */
+  private static final int TYPE_SUBBLOCK = 0;
+  private static final int TYPE_ASCII = 2;
+  private static final int TYPE_LONG = 4;
+  private static final int TYPE_RATIONAL = 5;
+
+  /** Subblock types. */
+  private static final int SUBBLOCK_RECORDING = 0x10000000;
+  private static final int SUBBLOCK_LASERS = 0x30000000;
+  private static final int SUBBLOCK_LASER = 0x50000000;
+  private static final int SUBBLOCK_TRACKS = 0x20000000;
+  private static final int SUBBLOCK_TRACK = 0x40000000;
+  private static final int SUBBLOCK_DETECTION_CHANNELS = 0x60000000;
+  private static final int SUBBLOCK_DETECTION_CHANNEL = 0x70000000;
+  private static final int SUBBLOCK_ILLUMINATION_CHANNELS = 0x80000000;
+  private static final int SUBBLOCK_ILLUMINATION_CHANNEL = 0x90000000;
+  private static final int SUBBLOCK_BEAM_SPLITTERS = 0xa0000000;
+  private static final int SUBBLOCK_BEAM_SPLITTER = 0xb0000000;
+  private static final int SUBBLOCK_DATA_CHANNELS = 0xc0000000;
+  private static final int SUBBLOCK_DATA_CHANNEL = 0xd0000000;
+  private static final int SUBBLOCK_TIMERS = 0x11000000;
+  private static final int SUBBLOCK_TIMER = 0x12000000;
+  private static final int SUBBLOCK_MARKERS = 0x13000000;
+  private static final int SUBBLOCK_MARKER = 0x14000000;
+  private static final int SUBBLOCK_END = (int) 0xffffffff;
+
+  private static final int SUBBLOCK_GAMMA = 1;
+  private static final int SUBBLOCK_BRIGHTNESS = 2;
+  private static final int SUBBLOCK_CONTRAST = 3;
+  private static final int SUBBLOCK_RAMP = 4;
+  private static final int SUBBLOCK_KNOTS = 5;
+  private static final int SUBBLOCK_PALETTE = 6;
+
+  /** Data types. */
+  private static final int RECORDING_ENTRY_DESCRIPTION = 0x10000002;
+  private static final int RECORDING_ENTRY_OBJECTIVE = 0x10000004;
+
+  private static final int TRACK_ENTRY_TIME_BETWEEN_STACKS = 0x4000000b;
+
+  private static final int LASER_ENTRY_NAME = 0x50000001;
+
+  private static final int CHANNEL_ENTRY_DETECTOR_GAIN = 0x70000003;
+  private static final int CHANNEL_ENTRY_PINHOLE_DIAMETER = 0x70000009;
+  private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_START = 0x70000022;
+  private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_END = 0x70000023;
+  private static final int DATA_CHANNEL_NAME = 0xd0000001;
+
+  // -- Static fields --
+
+  private static Hashtable metadataKeys = createKeys();
+
   // -- Fields --
 
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
+  private boolean thumbnailsRemoved = false;
+  private byte[] lut = null;
+  private Vector timestamps;
+  private int validChannels;
 
   // -- Constructor --
 
@@ -88,31 +143,24 @@ public class ZeissLSMReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    int[] lut = (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
-    if (lut == null || (core.pixelType[0] != FormatTools.UINT8 &&
-      core.pixelType[0] != FormatTools.INT8))
-    {
-      return null;
+    if (lut == null || core.pixelType[0] != FormatTools.UINT8) return null;
+    byte[][] b = new byte[3][256];
+    for (int i=core.sizeC[0]-1; i>=core.sizeC[0]-validChannels; i--) {
+      for (int j=0; j<256; j++) {
+        b[i][j] = (byte) j;
+      }
     }
-    byte[][] bLut = new byte[3][256];
-    for (int i=0; i<bLut[0].length; i++) {
-      bLut[0][i] = (byte) ((lut[i] & 0xff0000) >> 16);
-      bLut[1][i] = (byte) ((lut[i] & 0xff00) >> 8);
-      bLut[2][i] = (byte) (lut[i] & 0xff);
-    }
-    return bLut;
+    return b;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    int[] lut = (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
-    if (lut == null) return null;
+    if (lut == null || core.pixelType[0] != FormatTools.UINT16) return null;
     short[][] s = new short[3][65536];
-    if (lut.length < s.length * s[0].length) return null;
-    for (int i=0; i<s.length; i++) {
+    for (int i=core.sizeC[0]-1; i>=core.sizeC[0]-validChannels; i--) {
       for (int j=0; j<s[i].length; j++) {
-        s[i][j] = (short) (lut[i*s[i].length + j]);
+        s[i][j] = (short) j;
       }
     }
     return s;
@@ -126,7 +174,13 @@ public class ZeissLSMReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length);
 
-    TiffTools.getSamples(ifds[2*no], in, buf);
+    if (core.sizeY[0] > 1) TiffTools.getSamples(ifds[2*no], in, buf);
+    else {
+      int n = (int) TiffTools.getImageLength(ifds[0]);
+      byte[] b = new byte[buf.length * n];
+      TiffTools.getSamples(ifds[0], in, b);
+      System.arraycopy(b, no * (b.length / n), buf, 0, b.length / n);
+    }
     return swapIfRequired(buf);
   }
 
@@ -145,13 +199,13 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   /* @see BaseTiffReader#initMetadata() */
   protected void initMetadata() {
+    if (!thumbnailsRemoved) return;
     Hashtable ifd = ifds[0];
 
-    try {
-      boolean little = TiffTools.isLittleEndian(ifd);
-      in.order(little);
+    MetadataStore store = getMetadataStore();
 
-      super.initMetadata();
+    try {
+      super.initStandardMetadata();
 
       // get TIF_CZ_LSMINFO structure
       short[] s = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
@@ -162,7 +216,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       RandomAccessStream ras = new RandomAccessStream(cz);
-      ras.order(little);
+      ras.order(core.littleEndian[0]);
 
       put("MagicNumber", ras.readInt());
       put("StructureSize", ras.readInt());
@@ -170,35 +224,11 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DimensionY", ras.readInt());
 
       core.sizeZ[0] = ras.readInt();
-      int c = ras.readInt();
+      ras.skipBytes(4);
       core.sizeT[0] = ras.readInt();
-
-      if (isIndexed()) core.sizeC[0] = 3;
-      if (c > core.sizeC[0] || c != 1) core.sizeC[0] = c;
-      if (core.sizeC[0] == 0) core.sizeC[0]++;
-
-      while (core.imageCount[0] > core.sizeZ[0] * core.sizeC[0] * core.sizeT[0])
-      {
-        if (core.sizeZ[0] > core.sizeT[0]) core.sizeZ[0]++;
-        else core.sizeT[0]++;
-      }
-
-      while (core.imageCount[0] > core.sizeZ[0] * core.sizeT[0] *
-        getEffectiveSizeC())
-      {
-        core.imageCount[0]--;
-      }
-
-      put("DimensionZ", core.sizeZ[0]);
-      put("DimensionChannels", core.sizeC[0]);
-      put("DimensionTime", core.sizeT[0]);
 
       int dataType = ras.readInt();
       switch (dataType) {
-        case 1:
-          put("DataType", "8 bit unsigned integer");
-          core.pixelType[0] = FormatTools.UINT8;
-          break;
         case 2:
           put("DataType", "12 bit unsigned integer");
           core.pixelType[0] = FormatTools.UINT16;
@@ -297,24 +327,12 @@ public class ZeissLSMReader extends BaseTiffReader {
           core.currentOrder[0] = "XYZCT";
       }
 
-      MetadataStore store = getMetadataStore();
       store.setImageName("", 0);
       store.setImageCreationDate(
         DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
-      MetadataTools.populatePixels(store, this);
-      // CTR CHECK
-//      for (int i=0; i<core.sizeC[0]; i++) {
-//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null);
-//      }
-
       int spectralScan = ras.readShort();
       switch (spectralScan) {
-        case 0:
-          put("SpectralScan", "no spectral scan");
-          break;
         case 1:
           put("SpectralScan", "acquired with spectral scan");
           break;
@@ -324,9 +342,6 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       long type = ras.readInt();
       switch ((int) type) {
-        case 0:
-          put("DataType2", "original scan data");
-          break;
         case 1:
           put("DataType2", "calculated data");
           break;
@@ -344,7 +359,9 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       put("TimeInterval", ras.readDouble());
 
-      ras.skipBytes(12);
+      ras.skipBytes(4);
+      long scanInformationOffset = ras.readInt();
+      ras.skipBytes(4);
       long timeStampOffset = ras.readInt();
       long eventListOffset = ras.readInt();
       long roiOffset = ras.readInt();
@@ -367,16 +384,23 @@ public class ZeissLSMReader extends BaseTiffReader {
       // read referenced structures
 
       if (overlayOffset != 0) {
-        parseOverlays(overlayOffset, "OffsetVectorOverlay", little);
+        parseOverlays(overlayOffset, "OffsetVectorOverlay");
       }
 
       if (inputLUTOffset != 0) {
-        parseSubBlocks(inputLUTOffset, "OffsetInputLut", little);
+        parseSubBlocks(inputLUTOffset, "OffsetInputLut");
       }
 
       if (outputLUTOffset != 0) {
-        parseSubBlocks(outputLUTOffset, "OffsetOutputLut", little);
+        parseSubBlocks(outputLUTOffset, "OffsetOutputLut");
       }
+
+      core.indexed[0] = lut != null && getSizeC() == 1;
+      if (core.indexed[0]) core.sizeC[0] = 3;
+      if (core.sizeC[0] == 0) core.sizeC[0] = 1;
+
+      put("DimensionZ", core.sizeZ[0]);
+      put("DimensionChannels", core.sizeC[0]);
 
       if (channelColorsOffset != 0) {
         in.seek(channelColorsOffset + 4);
@@ -385,8 +409,8 @@ public class ZeissLSMReader extends BaseTiffReader {
 
         if (numColors > core.sizeC[0]) {
           in.seek(channelColorsOffset - 2);
-          in.order(!little);
-          in.readInt();
+          in.order(!core.littleEndian[0]);
+          in.skipBytes(4);
           numColors = in.readInt();
           numNames = in.readInt();
         }
@@ -412,7 +436,6 @@ public class ZeissLSMReader extends BaseTiffReader {
             current = (char) in.read();
           }
           if (sb.length() <= 128) put("ChannelName" + i, sb.toString());
-          else put("ChannelName" + i, "");
         }
       }
 
@@ -420,49 +443,222 @@ public class ZeissLSMReader extends BaseTiffReader {
         in.seek(timeStampOffset + 4);
         int numberOfStamps = in.readInt();
         for (int i=0; i<numberOfStamps; i++) {
-          put("TimeStamp" + i, in.readDouble());
+          double stamp = in.readDouble();
+          put("TimeStamp" + i, stamp);
+          timestamps.add(new Double(stamp));
         }
       }
 
       if (eventListOffset != 0) {
-        in.seek(eventListOffset);
-        in.skipBytes(4); // skipping the block size
+        in.seek(eventListOffset + 4);
         int numEvents = in.readInt();
         for (int i=0; i<numEvents; i++) {
           int size = in.readInt();
           double eventTime = in.readDouble();
           int eventType = in.readInt();
-          byte[] b = new byte[size - 16];
-          in.read(b);
           put("Event" + i + " Time", eventTime);
           put("Event" + i + " Type", eventType);
-          put("Event" + i + " Description", new String(b));
+          put("Event" + i + " Description", in.readString(size - 16));
         }
       }
 
-      if (roiOffset != 0) parseOverlays(roiOffset, "ROIOffset", little);
+      if (roiOffset != 0) parseOverlays(roiOffset, "ROIOffset");
 
       if (bleachRoiOffset != 0) {
-        parseOverlays(bleachRoiOffset, "BleachROIOffset", little);
+        parseOverlays(bleachRoiOffset, "BleachROIOffset");
       }
 
       if (meanOfRoisOverlayOffset != 0) {
-        parseOverlays(meanOfRoisOverlayOffset,
-          "OffsetMeanOfRoisOverlay", little);
+        parseOverlays(meanOfRoisOverlayOffset, "OffsetMeanOfRoisOverlay");
       }
 
       if (topoIsolineOverlayOffset != 0) {
-        parseOverlays(topoIsolineOverlayOffset,
-          "OffsetTopoIsolineOverlay", little);
+        parseOverlays(topoIsolineOverlayOffset, "OffsetTopoIsolineOverlay");
       }
 
       if (topoProfileOverlayOffset != 0) {
-        parseOverlays(topoProfileOverlayOffset,
-          "OffsetTopoProfileOverlay", little);
+        parseOverlays(topoProfileOverlayOffset, "OffsetTopoProfileOverlay");
       }
 
       if (linescanOverlayOffset != 0) {
-        parseOverlays(linescanOverlayOffset, "OffsetLinescanOverlay", little);
+        parseOverlays(linescanOverlayOffset, "OffsetLinescanOverlay");
+      }
+
+      if (scanInformationOffset != 0) {
+        in.seek(scanInformationOffset);
+
+        Stack prefix = new Stack();
+        int count = 1;
+
+        Object value = null;
+
+        boolean done = false;
+        int nextLaserMedium = 0, nextLaserType = 0, nextGain = 0,
+          nextPinhole = 0, nextEmWave = 0, nextExWave = 0, nextChannelName = 0;
+        while (!done) {
+          int entry = in.readInt();
+          int blockType = in.readInt();
+          int dataSize = in.readInt();
+
+          switch (blockType) {
+            case TYPE_SUBBLOCK:
+              switch (entry) {
+                case SUBBLOCK_RECORDING:
+                  prefix.push("Recording");
+                  break;
+                case SUBBLOCK_LASERS:
+                  prefix.push("Lasers");
+                  break;
+                case SUBBLOCK_LASER:
+                  prefix.push("Laser " + count);
+                  count++;
+                  break;
+                case SUBBLOCK_TRACKS:
+                  prefix.push("Tracks");
+                  break;
+                case SUBBLOCK_TRACK:
+                  prefix.push("Track " + count);
+                  count++;
+                  break;
+                case SUBBLOCK_DETECTION_CHANNELS:
+                  prefix.push("Detection Channels");
+                  break;
+                case SUBBLOCK_DETECTION_CHANNEL:
+                  prefix.push("Detection Channel " + count);
+                  count++;
+                  validChannels = count;
+                  break;
+                case SUBBLOCK_ILLUMINATION_CHANNELS:
+                  prefix.push("Illumination Channels");
+                  break;
+                case SUBBLOCK_ILLUMINATION_CHANNEL:
+                  prefix.push("Illumination Channel " + count);
+                  count++;
+                  break;
+                case SUBBLOCK_BEAM_SPLITTERS:
+                  prefix.push("Beam Splitters");
+                  break;
+                case SUBBLOCK_BEAM_SPLITTER:
+                  prefix.push("Beam Splitter " + count);
+                  count++;
+                  break;
+                case SUBBLOCK_DATA_CHANNELS:
+                  prefix.push("Data Channels");
+                  break;
+                case SUBBLOCK_DATA_CHANNEL:
+                  prefix.push("Data Channel " + count);
+                  count++;
+                  break;
+                case SUBBLOCK_TIMERS:
+                  prefix.push("Timers");
+                  break;
+                case SUBBLOCK_TIMER:
+                  prefix.push("Timer " + count);
+                  count++;
+                  break;
+                case SUBBLOCK_MARKERS:
+                  prefix.push("Markers");
+                  break;
+                case SUBBLOCK_MARKER:
+                  prefix.push("Marker " + count);
+                  count++;
+                  break;
+                case SUBBLOCK_END:
+                  count = 1;
+                  prefix.pop();
+                  if (prefix.size() == 0) done = true;
+                  break;
+              }
+              break;
+            case TYPE_LONG:
+              value = new Long(in.readInt());
+              break;
+            case TYPE_RATIONAL:
+              value = new Double(in.readDouble());
+              break;
+            case TYPE_ASCII:
+              value = in.readString(dataSize);
+              break;
+          }
+          String key = getKey(prefix, entry);
+          if (key != null) addMeta(key, value);
+
+          switch (entry) {
+            case RECORDING_ENTRY_DESCRIPTION:
+              store.setImageDescription(value.toString(), 0);
+              break;
+            case RECORDING_ENTRY_OBJECTIVE:
+              store.setObjectiveModel(value.toString(), 0, 0);
+              break;
+            case TRACK_ENTRY_TIME_BETWEEN_STACKS:
+              store.setDimensionsTimeIncrement(
+                new Float(value.toString()), 0, 0);
+              break;
+            case LASER_ENTRY_NAME:
+              String medium = value.toString();
+              String laserType = null;
+
+              if (medium.startsWith("HeNe")) {
+                medium = "HeNe";
+                laserType = "Gas";
+              }
+              else if (medium.startsWith("Argon")) {
+                medium = "Ar";
+                laserType = "Gas";
+              }
+              else if (medium.equals("Titanium:Sapphire") ||
+                medium.equals("Mai Tai"))
+              {
+                medium = "TiSapphire";
+                laserType = "SolidState";
+              }
+              else if (medium.equals("YAG")) {
+                medium = null;
+                laserType = "SolidState";
+              }
+              else if (medium.equals("Ar/Kr")) {
+                medium = null;
+                laserType = "Gas";
+              }
+              else if (medium.equals("Enterprise")) medium = null;
+
+              if (medium != null && laserType != null) {
+                store.setLaserLaserMedium(medium, 0, nextLaserMedium++);
+                store.setLaserType(laserType, 0, nextLaserType++);
+              }
+
+              break;
+          //case LASER_POWER:
+          //  TODO: this is a setting, not a fixed value
+          //  store.setLaserPower(new Float(value.toString()), 0, count - 1);
+          //  break;
+            case CHANNEL_ENTRY_DETECTOR_GAIN:
+              store.setDetectorSettingsGain(
+                new Float(value.toString()), 0, nextGain++);
+              break;
+            case CHANNEL_ENTRY_PINHOLE_DIAMETER:
+              int n = (int) Float.parseFloat(value.toString());
+              if (n > 0) {
+                store.setLogicalChannelPinholeSize(new Integer(n), 0,
+                  nextPinhole++);
+              }
+              break;
+            case CHANNEL_ENTRY_SPI_WAVELENGTH_START:
+              n = (int) Float.parseFloat(value.toString());
+              store.setLogicalChannelEmWave(new Integer(n), 0, nextEmWave++);
+              break;
+            case CHANNEL_ENTRY_SPI_WAVELENGTH_END:
+              n = (int) Float.parseFloat(value.toString());
+              store.setLogicalChannelExWave(new Integer(n), 0, nextExWave++);
+              break;
+            case DATA_CHANNEL_NAME:
+              store.setLogicalChannelName(value.toString(),
+                0, nextChannelName++);
+              break;
+          }
+
+          if (!done) done = in.getFilePointer() >= in.length() - 12;
+        }
       }
     }
     catch (FormatException exc) {
@@ -472,14 +668,38 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (debug) trace(exc);
     }
 
+    if (core.indexed[0]) core.rgb[0] = true;
+    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
+      ((core.rgb[0] || core.indexed[0]) ? 1 : core.sizeC[0]);
+
+    MetadataTools.populatePixels(store, this);
+
     Float pixX = new Float((float) pixelSizeX);
     Float pixY = new Float((float) pixelSizeY);
     Float pixZ = new Float((float) pixelSizeZ);
 
-    MetadataStore store = getMetadataStore();
     store.setDimensionsPhysicalSizeX(pixX, 0, 0);
     store.setDimensionsPhysicalSizeY(pixY, 0, 0);
     store.setDimensionsPhysicalSizeZ(pixZ, 0, 0);
+
+    for (int i=0; i<core.imageCount[0]; i++) {
+      int[] zct = FormatTools.getZCTCoords(this, i);
+      store.setPlaneTheZ(new Integer(zct[0]), 0, 0, i);
+      store.setPlaneTheC(new Integer(zct[1]), 0, 0, i);
+      store.setPlaneTheT(new Integer(zct[2]), 0, 0, i);
+
+      if (zct[2] < timestamps.size()) {
+        float thisStamp = ((Double) timestamps.get(zct[2])).floatValue();
+        store.setPlaneTimingDeltaT(new Float(thisStamp), 0, 0, i);
+        float nextStamp = i < core.sizeT[0] - 1 ?
+          ((Double) timestamps.get(zct[2] + 1)).floatValue() : thisStamp;
+        if (i == core.sizeT[0] - 1 && zct[2] > 0) {
+          thisStamp = ((Double) timestamps.get(zct[2] - 1)).floatValue();
+        }
+        store.setPlaneTimingExposureTime(new Float(nextStamp - thisStamp),
+          0, 0, i);
+      }
+    }
 
     // see if we have an associated MDB file
 
@@ -492,7 +712,7 @@ public class ZeissLSMReader extends BaseTiffReader {
           MDBParser.parseDatabase((new Location(dir.getPath(),
             dirList[i])).getAbsolutePath(), metadata);
         }
-        catch (FormatException exc) {
+        catch (Exception exc) {
           if (debug) trace(exc);
         }
         i = dirList.length;
@@ -505,7 +725,10 @@ public class ZeissLSMReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissLSMReader.initFile(" + id + ")");
+    thumbnailsRemoved = false;
     super.initFile(id);
+
+    timestamps = new Vector();
 
     // go through the IFD hashtable array and
     // remove anything with NEW_SUBFILE_TYPE = 1
@@ -514,66 +737,18 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     status("Removing thumbnails");
 
-    int numThumbs = 0;
-    long prevOffset = 0;
-    byte[] b = new byte[48];
-    byte[] c = new byte[48];
+    Vector newIFDs = new Vector();
     for (int i=0; i<ifds.length; i++) {
       long subFileType = TiffTools.getIFDLongValue(ifds[i],
         TiffTools.NEW_SUBFILE_TYPE, true, 0);
-      long[] offsets = TiffTools.getStripOffsets(ifds[i]);
 
-      if (subFileType == 1) {
-        ifds[i] = null;
-        numThumbs++;
-      }
-      else if (i > 0) {
-        // make sure that we don't grab the thumbnail by accident
-        // there's probably a better way to do this
-
-        in.seek(prevOffset);
-        in.read(b);
-        in.seek(offsets[0]);
-        in.read(c);
-
-        boolean equal = true;
-        for (int j=0; j<48; j++) {
-          if (b[j] != c[j]) {
-            equal = false;
-            j = 48;
-          }
-        }
-
-        if (equal) {
-          offsets[0] += (offsets[0] - prevOffset);
-          TiffTools.putIFDValue(ifds[i], TiffTools.STRIP_OFFSETS, offsets);
-        }
-      }
-      prevOffset = offsets[0];
-    }
-
-    // now copy ifds to a temp array so that we can get rid of
-    // any null entries
-
-    int ifdPointer = 0;
-    Hashtable[] tempIFDs = new Hashtable[ifds.length - numThumbs];
-    for (int i=0; i<tempIFDs.length; i++) {
-      if (ifds[ifdPointer] != null) {
-        tempIFDs[i] = ifds[ifdPointer];
-        ifdPointer++;
-      }
-      else {
-        while ((ifds[ifdPointer] == null) && ifdPointer < ifds.length) {
-          ifdPointer++;
-        }
-        tempIFDs[i] = ifds[ifdPointer];
-        ifdPointer++;
-      }
+      if (subFileType == 0) newIFDs.add(ifds[i]);
     }
 
     // reset numImages and ifds
-    core.imageCount[0] = tempIFDs.length;
-    ifds = tempIFDs;
+    ifds = (Hashtable[]) newIFDs.toArray(new Hashtable[0]);
+    thumbnailsRemoved = true;
+
     initMetadata();
     ifds = TiffTools.getIFDs(in);
 
@@ -583,14 +758,16 @@ public class ZeissLSMReader extends BaseTiffReader {
       core.thumbSizeY[0] = TiffTools.getIFDIntValue(ifds[1],
         TiffTools.IMAGE_LENGTH, false, 1);
     }
+
+    if (ifds.length == 2 && core.imageCount[0] > ifds.length / 2) {
+      core.sizeY[0] = 1;
+    }
   }
 
   // -- Helper methods --
 
   /** Parses overlay-related fields. */
-  protected void parseOverlays(long data, String suffix, boolean little)
-    throws IOException
-  {
+  protected void parseOverlays(long data, String suffix) throws IOException {
     if (data == 0) return;
 
     in.seek(data);
@@ -626,9 +803,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     put("FontClipPrecision-" + suffix, in.readInt());
     put("FontQuality-" + suffix, in.readInt());
     put("FontPitchAndFamily-" + suffix, in.readInt());
-    byte[] temp = new byte[64];
-    in.read(temp);
-    put("FontFaceName-" + suffix, new String(temp));
+    put("FontFaceName-" + suffix, in.readString(64));
 
     // some flags for measuring values of different drawing element types
     put("ClosedPolyline-" + suffix, in.read());
@@ -644,9 +819,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     try {
       int drawingEl = (size - 194) / nde;
       for (int i=0; i<nde; i++) {
-        byte[] draw = new byte[drawingEl];
-        in.read(draw);
-        put("DrawingElement" + i + "-" + suffix, new String(draw));
+        put("DrawingElement" + i + "-" + suffix, in.readString(drawingEl));
       }
     }
     catch (ArithmeticException exc) {
@@ -655,64 +828,55 @@ public class ZeissLSMReader extends BaseTiffReader {
   }
 
   /** Parses subblock-related fields. */
-  protected void parseSubBlocks(long data, String suffix, boolean little)
+  protected void parseSubBlocks(long data, String suffix)
     throws IOException, FormatException
   {
     if (data == 0) return;
 
-    in.seek((int) data);
+    in.seek(data);
 
-    in.order(little);
+    in.order(core.littleEndian[0]);
 
-    long size = in.readInt();
-    if (size < 0) size += 4294967296L;
-    long numSubBlocks = in.readInt();
-    if (numSubBlocks < 0) numSubBlocks += 4294967296L;
+    long size = in.readInt() & 0xffffffff;
+    long numSubBlocks = in.readInt() & 0xffffffff;
     put("NumSubBlocks-" + suffix, numSubBlocks);
-    long numChannels = in.readInt();
-    if (numChannels < 0) numChannels += 4294967296L;
+    long numChannels = in.readInt() & 0xffffffff;
     put("NumChannels-" + suffix, numChannels);
-    data = in.readInt();
-    if (data < 0) data += 4294967296L;
+    data = in.readInt() & 0xffffffff;
     put("LutType-" + suffix, data);
-    data = in.readInt();
-    if (data < 0) data += 4294967296L;
+    data = in.readInt() & 0xffffffff;
     put("Advanced-" + suffix, data);
-    data = in.readInt();
-    if (data < 0) data += 4294967296L;
+    data = in.readInt() & 0xffffffff;
     put("CurrentChannel-" + suffix, data);
     in.skipBytes(36);
 
     if (numSubBlocks > 100) numSubBlocks = 20;
 
     for (int i=0; i<numSubBlocks; i++) {
-      data = in.readInt();
-      if (data < 0) data += 4294967296L;
+      data = in.readInt() & 0xffffffff;
       put("Type" + i + "-" + suffix, data);
       int v = in.readInt();
       put("Size" + i + "-" + suffix, v);
 
       switch ((int) data) {
-        case 1:
+        case SUBBLOCK_GAMMA:
           for (int j=0; j<numChannels; j++) {
             put("GammaChannel" + j + "-" + i + "-" + suffix, in.readDouble());
           }
           break;
-        case 2:
+        case SUBBLOCK_BRIGHTNESS:
           for (int j=0; j<numChannels; j++) {
             put("BrightnessChannel" + j + "-" + i + "-" + suffix,
               in.readDouble());
           }
           break;
-
-        case 3:
+        case SUBBLOCK_CONTRAST:
           for (int j=0; j<numChannels; j++) {
             put("ContrastChannel" + j + "-" + i + "-" + suffix,
               in.readDouble());
           }
           break;
-
-        case 4:
+        case SUBBLOCK_RAMP:
           for (int j=0; j<numChannels; j++) {
             put("RampStartXChannel" + j + "-" + i + "-" + suffix,
               in.readDouble());
@@ -725,19 +889,207 @@ public class ZeissLSMReader extends BaseTiffReader {
             j += 4;
           }
           break;
-
-        case 5:
-          // the specs are unclear as to how
-          // this subblock should be read, so I'm
-          // skipping it for the present
+        case SUBBLOCK_KNOTS:
+          for (int j=0; j<numChannels; j++) {
+            double knotX = -1, knotY = -1;
+            int n = 0;
+            while (knotX < 255) {
+              knotX = in.readDouble();
+              knotY = in.readDouble();
+              addMeta("Channel " + j + " Knot " + n + " X", new Double(knotX));
+              addMeta("Channel " + j + " Knot " + n + " Y", new Double(knotY));
+              n++;
+            }
+          }
           break;
-
-        case 6:
-          // also skipping this block for
-          // the moment
+        case SUBBLOCK_PALETTE:
+          if (lut == null) {
+            lut = new byte[(int) (8192 * numChannels)];
+            in.read(lut);
+          }
+          else in.skipBytes((int) (8192 * numChannels));
           break;
       }
     }
+  }
+
+  /** Construct a metadata key from the given stack. */
+  private String getKey(Stack stack, int entry) {
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<stack.size(); i++) {
+      sb.append((String) stack.get(i));
+      sb.append("/");
+    }
+    sb.append(" - ");
+
+    sb.append(metadataKeys.get(new Integer(entry)));
+    return sb.toString();
+  }
+
+  private static Hashtable createKeys() {
+    Hashtable h = new Hashtable();
+    h.put(new Integer(0x10000001), "Name");
+    h.put(new Integer(0x4000000c), "Name");
+    h.put(new Integer(0x50000001), "Name");
+    h.put(new Integer(0x90000001), "Name");
+    h.put(new Integer(0x90000005), "Name");
+    h.put(new Integer(0xb0000003), "Name");
+    h.put(new Integer(0xd0000001), "Name");
+    h.put(new Integer(0x12000001), "Name");
+    h.put(new Integer(0x14000001), "Name");
+    h.put(new Integer(0x10000002), "Description");
+    h.put(new Integer(0x14000002), "Description");
+    h.put(new Integer(0x10000003), "Notes");
+    h.put(new Integer(0x10000004), "Objective");
+    h.put(new Integer(0x10000005), "Processing Summary");
+    h.put(new Integer(0x10000006), "Special Scan Mode");
+    h.put(new Integer(0x10000007), "Scan Type");
+    h.put(new Integer(0x10000008), "Scan Mode");
+    h.put(new Integer(0x10000009), "Number of Stacks");
+    h.put(new Integer(0x1000000a), "Lines Per Plane");
+    h.put(new Integer(0x1000000b), "Samples Per Line");
+    h.put(new Integer(0x1000000c), "Planes Per Volume");
+    h.put(new Integer(0x1000000d), "Images Width");
+    h.put(new Integer(0x1000000e), "Images Height");
+    h.put(new Integer(0x1000000f), "Number of Planes");
+    h.put(new Integer(0x10000010), "Number of Stacks");
+    h.put(new Integer(0x10000011), "Number of Channels");
+    h.put(new Integer(0x10000012), "Linescan XY Size");
+    h.put(new Integer(0x10000013), "Scan Direction");
+    h.put(new Integer(0x10000014), "Time Series");
+    h.put(new Integer(0x10000015), "Original Scan Data");
+    h.put(new Integer(0x10000016), "Zoom X");
+    h.put(new Integer(0x10000017), "Zoom Y");
+    h.put(new Integer(0x10000018), "Zoom Z");
+    h.put(new Integer(0x10000019), "Sample 0X");
+    h.put(new Integer(0x1000001a), "Sample 0Y");
+    h.put(new Integer(0x1000001b), "Sample 0Z");
+    h.put(new Integer(0x1000001c), "Sample Spacing");
+    h.put(new Integer(0x1000001d), "Line Spacing");
+    h.put(new Integer(0x1000001e), "Plane Spacing");
+    h.put(new Integer(0x1000001f), "Plane Width");
+    h.put(new Integer(0x10000020), "Plane Height");
+    h.put(new Integer(0x10000021), "Volume Depth");
+    h.put(new Integer(0x10000034), "Rotation");
+    h.put(new Integer(0x10000035), "Precession");
+    h.put(new Integer(0x10000036), "Sample 0Time");
+    h.put(new Integer(0x10000037), "Start Scan Trigger In");
+    h.put(new Integer(0x10000038), "Start Scan Trigger Out");
+    h.put(new Integer(0x10000039), "Start Scan Event");
+    h.put(new Integer(0x10000040), "Start Scan Time");
+    h.put(new Integer(0x10000041), "Stop Scan Trigger In");
+    h.put(new Integer(0x10000042), "Stop Scan Trigger Out");
+    h.put(new Integer(0x10000043), "Stop Scan Event");
+    h.put(new Integer(0x10000044), "Stop Scan Time");
+    h.put(new Integer(0x10000045), "Use ROIs");
+    h.put(new Integer(0x10000046), "Use Reduced Memory ROIs");
+    h.put(new Integer(0x10000047), "User");
+    h.put(new Integer(0x10000048), "Use B/C Correction");
+    h.put(new Integer(0x10000049), "Position B/C Contrast 1");
+    h.put(new Integer(0x10000050), "Position B/C Contrast 2");
+    h.put(new Integer(0x10000051), "Interpolation Y");
+    h.put(new Integer(0x10000052), "Camera Binning");
+    h.put(new Integer(0x10000053), "Camera Supersampling");
+    h.put(new Integer(0x10000054), "Camera Frame Width");
+    h.put(new Integer(0x10000055), "Camera Frame Height");
+    h.put(new Integer(0x10000056), "Camera Offset X");
+    h.put(new Integer(0x10000057), "Camera Offset Y");
+    h.put(new Integer(0x40000001), "Multiplex Type");
+    h.put(new Integer(0x40000002), "Multiplex Order");
+    h.put(new Integer(0x40000003), "Sampling Mode");
+    h.put(new Integer(0x40000004), "Sampling Method");
+    h.put(new Integer(0x40000005), "Sampling Number");
+    h.put(new Integer(0x40000006), "Acquire");
+    h.put(new Integer(0x50000002), "Acquire");
+    h.put(new Integer(0x7000000b), "Acquire");
+    h.put(new Integer(0x90000004), "Acquire");
+    h.put(new Integer(0xd0000017), "Acquire");
+    h.put(new Integer(0x40000007), "Sample Observation Time");
+    h.put(new Integer(0x40000008), "Time Between Stacks");
+    h.put(new Integer(0x4000000d), "Collimator 1 Name");
+    h.put(new Integer(0x4000000e), "Collimator 1 Position");
+    h.put(new Integer(0x4000000f), "Collimator 2 Name");
+    h.put(new Integer(0x40000010), "Collimator 2 Position");
+    h.put(new Integer(0x40000011), "Is Bleach Track");
+    h.put(new Integer(0x40000012), "Bleach After Scan Number");
+    h.put(new Integer(0x40000013), "Bleach Scan Number");
+    h.put(new Integer(0x40000014), "Trigger In");
+    h.put(new Integer(0x12000004), "Trigger In");
+    h.put(new Integer(0x14000003), "Trigger In");
+    h.put(new Integer(0x40000015), "Trigger Out");
+    h.put(new Integer(0x12000005), "Trigger Out");
+    h.put(new Integer(0x14000004), "Trigger Out");
+    h.put(new Integer(0x40000016), "Is Ratio Track");
+    h.put(new Integer(0x40000017), "Bleach Count");
+    h.put(new Integer(0x40000018), "SPI Center Wavelength");
+    h.put(new Integer(0x40000019), "Pixel Time");
+    h.put(new Integer(0x40000020), "ID Condensor Frontlens");
+    h.put(new Integer(0x40000021), "Condensor Frontlens");
+    h.put(new Integer(0x40000022), "ID Field Stop");
+    h.put(new Integer(0x40000023), "Field Stop Value");
+    h.put(new Integer(0x40000024), "ID Condensor Aperture");
+    h.put(new Integer(0x40000025), "Condensor Aperture");
+    h.put(new Integer(0x40000026), "ID Condensor Revolver");
+    h.put(new Integer(0x40000027), "Condensor Revolver");
+    h.put(new Integer(0x40000028), "ID Transmission Filter 1");
+    h.put(new Integer(0x40000029), "ID Transmission 1");
+    h.put(new Integer(0x40000030), "ID Transmission Filter 2");
+    h.put(new Integer(0x40000031), "ID Transmission 2");
+    h.put(new Integer(0x40000032), "Repeat Bleach");
+    h.put(new Integer(0x40000033), "Enable Spot Bleach Pos");
+    h.put(new Integer(0x40000034), "Spot Bleach Position X");
+    h.put(new Integer(0x40000035), "Spot Bleach Position Y");
+    h.put(new Integer(0x40000036), "Bleach Position Z");
+    h.put(new Integer(0x50000003), "Power");
+    h.put(new Integer(0x90000002), "Power");
+    h.put(new Integer(0x70000003), "Detector Gain");
+    h.put(new Integer(0x70000005), "Amplifier Gain");
+    h.put(new Integer(0x70000007), "Amplifier Offset");
+    h.put(new Integer(0x70000009), "Pinhole Diameter");
+    h.put(new Integer(0x7000000c), "Detector Name");
+    h.put(new Integer(0x7000000d), "Amplifier Name");
+    h.put(new Integer(0x7000000e), "Pinhole Name");
+    h.put(new Integer(0x7000000f), "Filter Set Name");
+    h.put(new Integer(0x70000010), "Filter Name");
+    h.put(new Integer(0x70000013), "Integrator Name");
+    h.put(new Integer(0x70000014), "Detection Channel Name");
+    h.put(new Integer(0x70000015), "Detector Gain B/C 1");
+    h.put(new Integer(0x70000016), "Detector Gain B/C 2");
+    h.put(new Integer(0x70000017), "Amplifier Gain B/C 1");
+    h.put(new Integer(0x70000018), "Amplifier Gain B/C 2");
+    h.put(new Integer(0x70000019), "Amplifier Offset B/C 1");
+    h.put(new Integer(0x70000020), "Amplifier Offset B/C 2");
+    h.put(new Integer(0x70000021), "Spectral Scan Channels");
+    h.put(new Integer(0x70000022), "SPI Wavelength Start");
+    h.put(new Integer(0x70000023), "SPI Wavelength End");
+    h.put(new Integer(0x70000026), "Dye Name");
+    h.put(new Integer(0xd0000014), "Dye Name");
+    h.put(new Integer(0x70000027), "Dye Folder");
+    h.put(new Integer(0xd0000015), "Dye Folder");
+    h.put(new Integer(0x90000003), "Wavelength");
+    h.put(new Integer(0x90000006), "Power B/C 1");
+    h.put(new Integer(0x90000007), "Power B/C 2");
+    h.put(new Integer(0xb0000001), "Filter Set");
+    h.put(new Integer(0xb0000002), "Filter");
+    h.put(new Integer(0xd0000004), "Color");
+    h.put(new Integer(0xd0000005), "Sample Type");
+    h.put(new Integer(0xd0000006), "Bits Per Sample");
+    h.put(new Integer(0xd0000007), "Ratio Type");
+    h.put(new Integer(0xd0000008), "Ratio Track 1");
+    h.put(new Integer(0xd0000009), "Ratio Track 2");
+    h.put(new Integer(0xd000000a), "Ratio Channel 1");
+    h.put(new Integer(0xd000000b), "Ratio Channel 2");
+    h.put(new Integer(0xd000000c), "Ratio Const. 1");
+    h.put(new Integer(0xd000000d), "Ratio Const. 2");
+    h.put(new Integer(0xd000000e), "Ratio Const. 3");
+    h.put(new Integer(0xd000000f), "Ratio Const. 4");
+    h.put(new Integer(0xd0000010), "Ratio Const. 5");
+    h.put(new Integer(0xd0000011), "Ratio Const. 6");
+    h.put(new Integer(0xd0000012), "Ratio First Images 1");
+    h.put(new Integer(0xd0000013), "Ratio First Images 2");
+    h.put(new Integer(0xd0000016), "Spectrum");
+    h.put(new Integer(0x12000003), "Interval");
+    return h;
   }
 
 }
