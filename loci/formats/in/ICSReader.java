@@ -440,7 +440,9 @@ public class ICSReader extends FormatReader {
         else if (axis.equals("y")) pixY = new Float(size);
         else if (axis.equals("z")) pixZ = new Float(size);
         else if (axis.equals("t")) pixT = new Float(size);
-        else if (axis.equals("ch")) pixC = new Integer(size);
+        else if (axis.equals("ch")) {
+          pixC = new Integer(new Float(size).intValue());
+        }
       }
       store.setDimensionsPhysicalSizeX(pixX, 0, 0);
       store.setDimensionsPhysicalSizeY(pixY, 0, 0);
