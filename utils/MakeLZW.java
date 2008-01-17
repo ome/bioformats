@@ -21,7 +21,7 @@ public class MakeLZW {
       String f = args[i];
       String nf = "lzw-" + f;
       System.out.print("Converting " + f + " to " + nf);
-      reader.setId(f); 
+      reader.setId(f);
       writer.setId(nf);
       int blocks = reader.getImageCount();
       // CTR: FIXME: update this to be version-agnostic

@@ -20,7 +20,7 @@ public class EditImageName {
     reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
     String id = args[0];
     System.out.print("Reading metadata ");
-    reader.setId(id); 
+    reader.setId(id);
     MetadataStore omexmlMeta = reader.getMetadataStore();
     System.out.println(" [done]");
 

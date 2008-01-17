@@ -35,7 +35,7 @@ public class MakeTestOmeTiff {
     Random r = new Random();
     int n = array.length;
     while (--n > 0) {
-      int k = r.nextInt(n + 1);  // 0 <= k <= n (!)
+      int k = r.nextInt(n + 1); // 0 <= k <= n (!)
       int temp = array[n];
       array[n] = array[k];
       array[k] = temp;
@@ -93,7 +93,7 @@ public class MakeTestOmeTiff {
 
   public static void main(String[] args) throws FormatException, IOException {
     boolean usage = false;
-    
+
     // parse command line arguments
     String name = null;
     String dist = null;

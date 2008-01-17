@@ -28,7 +28,7 @@ public class ConvertToOmeTiff {
       // record metadata to OME-XML format
       MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
       reader.setMetadataStore(omexmlMeta);
-      reader.setId(id); 
+      reader.setId(id);
 
       // configure OME-TIFF writer
       writer.setMetadataRetrieve((MetadataRetrieve) omexmlMeta);

@@ -40,7 +40,7 @@ public class SewTiffs {
     out.setId(outId);
     System.out.print("   ");
     boolean comment = false;
-    
+
     for (int t=0; t<num; t++) {
       String inId = base + "_C" + c + "_TP" + (t + 1) + ".tiff";
       in.setId(inId);
