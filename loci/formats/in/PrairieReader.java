@@ -149,10 +149,11 @@ public class PrairieReader extends FormatReader {
     if (!isGroupFiles()) return false;
 
     // check if there is an XML file in the same directory
-    Location  f = new Location(name);
+    Location f = new Location(name);
     f = f.getAbsoluteFile();
     Location parent = f.getParentFile();
     String[] listing = parent.list();
+    if (listing == null) return false; // file doesn't exist, or other problem
     int xmlCount = 0;
     for (int i=0; i<listing.length; i++) {
       if (listing[i].toLowerCase().endsWith(".xml")) {
