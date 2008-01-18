@@ -236,7 +236,7 @@ public class MetamorphReader extends BaseTiffReader {
           hasZ.add(new Boolean(value.toLowerCase()));
         }
         else if (key.startsWith("WaveName")) {
-          waveNames.add(value); 
+          waveNames.add(value);
         }
 
         line = ndStream.readLine().trim();

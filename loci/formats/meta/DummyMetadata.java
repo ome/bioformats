@@ -496,7 +496,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setRoot(Object root) {
   }
 
-
   // - Image property storage -
 
   /* @see MetadataStore#setImage(String, String, String, int) */

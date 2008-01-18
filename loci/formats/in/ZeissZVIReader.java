@@ -546,7 +546,6 @@ public class ZeissZVIReader extends FormatReader {
 
     // TODO : Objective Working Distance
 
-
     // CTR CHECK - use Objective, combined w/ ObjectiveSettings once it exists?
 //    String objectiveName = (String) getMeta("Objective Name 0");
 //

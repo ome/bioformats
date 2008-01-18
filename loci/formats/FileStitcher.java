@@ -686,7 +686,7 @@ public class FileStitcher implements IFormatReader {
             catch (IOException exc) {
               LogTools.trace(exc);
              return null;
-            } 
+            }
             used[i][j] = readers[i][j].getUsedFiles();
             total += used[i][j].length;
           }

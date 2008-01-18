@@ -400,7 +400,7 @@ public final class TiffTools {
   /**
    * Gets offset to the first IFD, or -1 if stream is not TIFF.
    * Assumes the stream is positioned properly (checkHeader just called).
-   * 
+   *
    * @param bigTiff true if this is a BigTIFF file (8 byte pointers).
    */
   public static long getFirstOffset(RandomAccessStream in, boolean bigTiff)
@@ -860,7 +860,6 @@ public final class TiffTools {
     }
     return results;
   }
-
 
   /** Convenience method for obtaining the ImageDescription from an IFD. */
   public static String getComment(Hashtable ifd) {

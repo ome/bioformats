@@ -132,6 +132,4 @@ public interface Codec {
   byte[] decompress(RandomAccessStream in, Object options)
     throws FormatException;
 
-
-
 }

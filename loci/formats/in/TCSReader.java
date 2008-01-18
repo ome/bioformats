@@ -308,7 +308,7 @@ public class TCSReader extends FormatReader {
         // CTR CHECK
 //        for (int cc=0; cc<core.sizeC[i]; cc++) {
 //          store.setLogicalChannel(cc, null, null, null, null, null, null, null,
-//            null, null, null, null, null, null, null, null, 
+//            null, null, null, null, null, null, null, null,
 //            null, null, null, null, null, null, null, null, new Integer(i));
 //        }
         store.setDimensionsPhysicalSizeX((Float) xcal.get(i), i, 0);

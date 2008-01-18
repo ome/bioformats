@@ -750,7 +750,7 @@ public class OMEUtils {
     return rtn;
   }
 
-  // -- Helper class -- 
+  // -- Helper class --
 
   class OMEROLoader implements Runnable {
     private long[] ids;
