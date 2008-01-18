@@ -50,9 +50,8 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     String in = null, out = null;
-    boolean stitch = false, separate = false, merge = false, fill = false, 
-    	series=false;
-    int seriesNum=0;
+    boolean stitch = false, separate = false, merge = false, fill = false;
+    int series = 0;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
@@ -61,13 +60,11 @@ public final class ImageConverter {
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-fill")) fill = true;
-               	
-          else if (args[i].equals("-series")) {	
-            series=true;
+          else if (args[i].equals("-series")) {
             try {
-              seriesNum = Integer.parseInt(args[++i]);
+              series = Integer.parseInt(args[++i]);
             }
-        	catch (NumberFormatException exc) { }
+            catch (NumberFormatException exc) { }
           }
           else LogTools.println("Ignoring unknown command flag: " + args[i]);
         }
@@ -96,9 +93,6 @@ public final class ImageConverter {
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
-   
-    
-    
 
     reader.setOriginalMetadataPopulated(true);
     MetadataStore store = MetadataTools.createOMEXMLMetadata();
@@ -106,20 +100,14 @@ public final class ImageConverter {
     else reader.setMetadataStore(store);
 
     reader.setId(in);
-    
-    //allison's code
-    if (series) reader.setSeries(seriesNum);
-    
-    
+    reader.setSeries(series);
+
     LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
 
     store = reader.getMetadataStore();
     if (store instanceof MetadataRetrieve) {
       writer.setMetadataRetrieve((MetadataRetrieve) store);
     }
-    
-    
-
 
     writer.setId(out);
     LogTools.print("[" + writer.getFormat() + "] ");
