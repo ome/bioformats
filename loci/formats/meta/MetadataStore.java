@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Dec 26, 2007 2:30:06 PM CST
+ * Created by curtis via MetadataAutogen on Jan 22, 2008 4:26:50 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -77,159 +77,6 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    */
   void setImageDescription(String description, int imageIndex);
-
-  // - Experimenter property storage -
-
-  /**
-   * Sets the FirstName property for an experimenter in the metadata store with a particular index.
-   * @param firstName the first name of the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterFirstName(String firstName, int experimenterIndex);
-
-  /**
-   * Sets the LastName property for an experimenter in the metadata store with a particular index.
-   * @param lastName the last name of the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterLastName(String lastName, int experimenterIndex);
-
-  /**
-   * Sets the Email property for an experimenter in the metadata store with a particular index.
-   * @param email the e-mail address of the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterEmail(String email, int experimenterIndex);
-
-  /**
-   * Sets the Institution property for an experimenter in the metadata store with a particular index.
-   * @param institution the institution to which the experimenter belongs
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterInstitution(String institution, int experimenterIndex);
-
-  /**
-   * Sets the DataDirectory property for an experimenter in the metadata store with a particular index.
-   * @param dataDirectory the fully qualified path to the experimenter's data
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterDataDirectory(String dataDirectory, int experimenterIndex);
-
-  // - Dimensions property storage -
-
-  /**
-   * Sets the PhysicalSizeX property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
-   * @param physicalSizeX size of an individual pixel's X axis in microns
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex);
-
-  /**
-   * Sets the PhysicalSizeY property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
-   * @param physicalSizeY size of an individual pixel's Y axis in microns
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex);
-
-  /**
-   * Sets the PhysicalSizeZ property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
-   * @param physicalSizeZ size of an individual pixel's Z axis in microns
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex);
-
-  /**
-   * Sets the TimeIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
-   * @param timeIncrement distance between adjacent time points in seconds
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex);
-
-  /**
-   * Sets the WaveStart property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
-   * @param waveStart starting wavelength in nanometers
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex);
-
-  /**
-   * Sets the WaveIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
-   * @param waveIncrement distance between adjacent wavelengths in nanometers
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex);
-
-  // - DisplayROI property storage -
-
-  /**
-   * Sets the X0 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param x0 the starting X coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIX0(Integer x0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Y0 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param y0 the starting Y coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIY0(Integer y0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Z0 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param z0 the starting Z coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIZ0(Integer z0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the T0 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param t0 the starting timepoint
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIT0(Integer t0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the X1 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param x1 the ending X coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIX1(Integer x1, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Y1 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param y1 the ending Y coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIY1(Integer y1, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Z1 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param z1 the ending Z coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIZ1(Integer z1, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the T1 property for a 5D bounding box region of interest and a set of display options in the metadata store with a particular index.
-   * @param t1 the ending timepoint
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setDisplayROIT1(Integer t1, int imageIndex, int roiIndex);
 
   // - Pixels property storage -
 
@@ -297,35 +144,163 @@ public interface MetadataStore {
    */
   void setPixelsDimensionOrder(String dimensionOrder, int imageIndex, int pixelsIndex);
 
-  // - StageLabel property storage -
+  // - Dimensions property storage -
 
   /**
-   * Sets the Name property for a stage label in the metadata store with a particular index.
-   * @param name a name for the stage label
+   * Sets the PhysicalSizeX property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * @param physicalSizeX size of an individual pixel's X axis in microns
    * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
    */
-  void setStageLabelName(String name, int imageIndex);
+  void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the X property for a stage label in the metadata store with a particular index.
-   * @param x x coordinate of the stage
+   * Sets the PhysicalSizeY property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * @param physicalSizeY size of an individual pixel's Y axis in microns
    * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
    */
-  void setStageLabelX(Float x, int imageIndex);
+  void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the Y property for a stage label in the metadata store with a particular index.
-   * @param y y coordinate of the stage
+   * Sets the PhysicalSizeZ property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * @param physicalSizeZ size of an individual pixel's Z axis in microns
    * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
    */
-  void setStageLabelY(Float y, int imageIndex);
+  void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the Z property for a stage label in the metadata store with a particular index.
-   * @param z z coordinate of the stage
+   * Sets the TimeIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * @param timeIncrement distance between adjacent time points in seconds
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex);
+
+  /**
+   * Sets the WaveStart property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * @param waveStart starting wavelength in nanometers
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex);
+
+  /**
+   * Sets the WaveIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * @param waveIncrement distance between adjacent wavelengths in nanometers
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex);
+
+  // - ImagingEnvironment property storage -
+
+  /**
+   * Sets the Temperature property for the imaging environment for a particular image.
+   * @param temperature CTR TODO
    * @param imageIndex index of the Image
    */
-  void setStageLabelZ(Float z, int imageIndex);
+  void setImagingEnvironmentTemperature(Float temperature, int imageIndex);
+
+  /**
+   * Sets the AirPressure property for the imaging environment for a particular image.
+   * @param airPressure CTR TODO
+   * @param imageIndex index of the Image
+   */
+  void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex);
+
+  /**
+   * Sets the Humidity property for the imaging environment for a particular image.
+   * @param humidity CTR TODO
+   * @param imageIndex index of the Image
+   */
+  void setImagingEnvironmentHumidity(Float humidity, int imageIndex);
+
+  /**
+   * Sets the CO2Percent property for the imaging environment for a particular image.
+   * @param cO2Percent CTR TODO
+   * @param imageIndex index of the Image
+   */
+  void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex);
+
+  // - Plane property storage -
+
+  /**
+   * Sets the TheZ property for the plane information for a specific X-Y plane (section) within a particular pixels set.
+   * @param theZ the optical section index
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * Sets the TheC property for the plane information for a specific X-Y plane (section) within a particular pixels set.
+   * @param theC the channel index
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * Sets the TheT property for the plane information for a specific X-Y plane (section) within a particular pixels set.
+   * @param theT the timepoint
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex);
+
+  // - PlaneTiming property storage -
+
+  /**
+   * Sets the DeltaT property for the timing information for a specific X-Y plane (section) within a particular pixels set.
+   * @param deltaT the time in seconds since the beginning of the experiment
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * Sets the ExposureTime property for the timing information for a specific X-Y plane (section) within a particular pixels set.
+   * @param exposureTime the exposure time in seconds
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
+
+  // - StagePosition property storage -
+
+  /**
+   * Sets the PositionX property for the stage position for a specific X-Y plane (section) within a particular pixels set.
+   * @param positionX the X coordinate of the stage position
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * Sets the PositionY property for the stage position for a specific X-Y plane (section) within a particular pixels set.
+   * @param positionY the Y coordinate of the stage position
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex);
+
+  /**
+   * Sets the PositionZ property for the stage position for a specific X-Y plane (section) within a particular pixels set.
+   * @param positionZ the Z coordinate of the stage position
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   * @param planeIndex index of the Plane
+   */
+  void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
 
   // - LogicalChannel property storage -
 
@@ -425,24 +400,6 @@ public interface MetadataStore {
    */
   void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex);
 
-  // - LightSourceSettings property storage -
-
-  /**
-   * Sets the Attenuation property for the light source associated with a particular logical channel.
-   * @param attenuation the primary light source attenuation
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Sets the Wavelength property for the light source associated with a particular logical channel.
-   * @param wavelength the primary light source wavelength
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex);
-
   // - DetectorSettings property storage -
 
   /**
@@ -461,113 +418,119 @@ public interface MetadataStore {
    */
   void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex);
 
-  // - Plane property storage -
+  // - LightSourceSettings property storage -
 
   /**
-   * Sets the TheZ property for the plane information for a specific X-Y plane (section) within a particular pixels set.
-   * @param theZ the optical section index
+   * Sets the Attenuation property for the light source associated with a particular logical channel.
+   * @param attenuation the primary light source attenuation
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex);
+  void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex);
 
   /**
-   * Sets the TheC property for the plane information for a specific X-Y plane (section) within a particular pixels set.
-   * @param theC the channel index
+   * Sets the Wavelength property for the light source associated with a particular logical channel.
+   * @param wavelength the primary light source wavelength
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex);
+  void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex);
+
+  // - DisplayROI property storage -
 
   /**
-   * Sets the TheT property for the plane information for a specific X-Y plane (section) within a particular pixels set.
-   * @param theT the timepoint
+   * Sets the X0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param x0 the starting X coordinate
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param roiIndex index of the ROI
    */
-  void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - PlaneTiming property storage -
+  void setDisplayROIX0(Integer x0, int imageIndex, int roiIndex);
 
   /**
-   * Sets the DeltaT property for the timing information for a specific X-Y plane (section) within a particular pixels set.
-   * @param deltaT the time in seconds since the beginning of the experiment
+   * Sets the Y0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param y0 the starting Y coordinate
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param roiIndex index of the ROI
    */
-  void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
+  void setDisplayROIY0(Integer y0, int imageIndex, int roiIndex);
 
   /**
-   * Sets the ExposureTime property for the timing information for a specific X-Y plane (section) within a particular pixels set.
-   * @param exposureTime the exposure time in seconds
+   * Sets the Z0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param z0 the starting Z coordinate
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param roiIndex index of the ROI
    */
-  void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - StagePosition property storage -
+  void setDisplayROIZ0(Integer z0, int imageIndex, int roiIndex);
 
   /**
-   * Sets the PositionX property for the stage position for a specific X-Y plane (section) within a particular pixels set.
-   * @param positionX the X coordinate of the stage position
+   * Sets the T0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param t0 the starting timepoint
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param roiIndex index of the ROI
    */
-  void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex);
+  void setDisplayROIT0(Integer t0, int imageIndex, int roiIndex);
 
   /**
-   * Sets the PositionY property for the stage position for a specific X-Y plane (section) within a particular pixels set.
-   * @param positionY the Y coordinate of the stage position
+   * Sets the X1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param x1 the ending X coordinate
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param roiIndex index of the ROI
    */
-  void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex);
+  void setDisplayROIX1(Integer x1, int imageIndex, int roiIndex);
 
   /**
-   * Sets the PositionZ property for the stage position for a specific X-Y plane (section) within a particular pixels set.
-   * @param positionZ the Z coordinate of the stage position
+   * Sets the Y1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param y1 the ending Y coordinate
    * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
+   * @param roiIndex index of the ROI
    */
-  void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - ImagingEnvironment property storage -
+  void setDisplayROIY1(Integer y1, int imageIndex, int roiIndex);
 
   /**
-   * Sets the Temperature property for the imaging environment for a particular image.
-   * @param temperature CTR TODO
+   * Sets the Z1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param z1 the ending Z coordinate
    * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
    */
-  void setImagingEnvironmentTemperature(Float temperature, int imageIndex);
+  void setDisplayROIZ1(Integer z1, int imageIndex, int roiIndex);
 
   /**
-   * Sets the AirPressure property for the imaging environment for a particular image.
-   * @param airPressure CTR TODO
+   * Sets the T1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param t1 the ending timepoint
    * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
    */
-  void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex);
+  void setDisplayROIT1(Integer t1, int imageIndex, int roiIndex);
+
+  // - StageLabel property storage -
 
   /**
-   * Sets the Humidity property for the imaging environment for a particular image.
-   * @param humidity CTR TODO
+   * Sets the Name property for a stage label in the metadata store with a particular index.
+   * @param name a name for the stage label
    * @param imageIndex index of the Image
    */
-  void setImagingEnvironmentHumidity(Float humidity, int imageIndex);
+  void setStageLabelName(String name, int imageIndex);
 
   /**
-   * Sets the CO2Percent property for the imaging environment for a particular image.
-   * @param cO2Percent CTR TODO
+   * Sets the X property for a stage label in the metadata store with a particular index.
+   * @param x x coordinate of the stage
    * @param imageIndex index of the Image
    */
-  void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex);
+  void setStageLabelX(Float x, int imageIndex);
+
+  /**
+   * Sets the Y property for a stage label in the metadata store with a particular index.
+   * @param y y coordinate of the stage
+   * @param imageIndex index of the Image
+   */
+  void setStageLabelY(Float y, int imageIndex);
+
+  /**
+   * Sets the Z property for a stage label in the metadata store with a particular index.
+   * @param z z coordinate of the stage
+   * @param imageIndex index of the Image
+   */
+  void setStageLabelZ(Float z, int imageIndex);
 
   // - LightSource property storage -
 
@@ -838,5 +801,42 @@ public interface MetadataStore {
    * @param otfIndex index of the OTF
    */
   void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex);
+
+  // - Experimenter property storage -
+
+  /**
+   * Sets the FirstName property for an experimenter in the metadata store with a particular index.
+   * @param firstName the first name of the experimenter
+   * @param experimenterIndex index of the Experimenter
+   */
+  void setExperimenterFirstName(String firstName, int experimenterIndex);
+
+  /**
+   * Sets the LastName property for an experimenter in the metadata store with a particular index.
+   * @param lastName the last name of the experimenter
+   * @param experimenterIndex index of the Experimenter
+   */
+  void setExperimenterLastName(String lastName, int experimenterIndex);
+
+  /**
+   * Sets the Email property for an experimenter in the metadata store with a particular index.
+   * @param email the e-mail address of the experimenter
+   * @param experimenterIndex index of the Experimenter
+   */
+  void setExperimenterEmail(String email, int experimenterIndex);
+
+  /**
+   * Sets the Institution property for an experimenter in the metadata store with a particular index.
+   * @param institution the institution to which the experimenter belongs
+   * @param experimenterIndex index of the Experimenter
+   */
+  void setExperimenterInstitution(String institution, int experimenterIndex);
+
+  /**
+   * Sets the DataDirectory property for an experimenter in the metadata store with a particular index.
+   * @param dataDirectory the fully qualified path to the experimenter's data
+   * @param experimenterIndex index of the Experimenter
+   */
+  void setExperimenterDataDirectory(String dataDirectory, int experimenterIndex);
 
 }

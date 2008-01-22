@@ -43,6 +43,15 @@ package loci.formats.meta;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface MetadataRetrieve {
+
+  // - Entity retrieval -
+#foreach ($entity in $entities)
+
+  /**
+   * Gets an object representing a particular $entity.name(), for use with certain methods of {@link MetadataStore}.
+   */
+  Object get$entity.name()($entity.indicesList(true, true));
+#end##foreach $entity
 #foreach ($entity in $entities)
 
   // - $entity.name() property retrieval -

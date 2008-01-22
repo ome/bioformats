@@ -84,16 +84,7 @@ public class MetadataAutogen {
     Vector entities = parseEntities();
     context.put("entities", entities);
 
-    // process templates
-    processTemplate(ve, context,
-      "MetadataStore.vm", "meta/MetadataStore.java");
-    processTemplate(ve, context,
-      "MetadataRetrieve.vm", "meta/MetadataRetrieve.java");
-    processTemplate(ve, context,
-      "DummyMetadata.vm", "meta/DummyMetadata.java");
-    processTemplate(ve, context,
-      "AggregateMetadata.vm", "meta/AggregateMetadata.java");
-
+    // generate version-specific OME-XML metadata implementations
     Enumeration versionKeys = versions.keys();
     while (versionKeys.hasMoreElements()) {
       String versionKey = (String) versionKeys.nextElement();
@@ -122,6 +113,16 @@ public class MetadataAutogen {
       processTemplate(ve, context,
         "OMEXMLMetadata.vm", "ome/OMEXML" + versionKey + "Metadata.java");
     }
+
+    // generate base metadata classes
+    processTemplate(ve, context,
+      "MetadataStore.vm", "meta/MetadataStore.java");
+    processTemplate(ve, context,
+      "MetadataRetrieve.vm", "meta/MetadataRetrieve.java");
+    processTemplate(ve, context,
+      "DummyMetadata.vm", "meta/DummyMetadata.java");
+    processTemplate(ve, context,
+      "AggregateMetadata.vm", "meta/AggregateMetadata.java");
   }
 
   // -- Helper methods --

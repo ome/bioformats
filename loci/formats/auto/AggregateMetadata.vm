@@ -92,8 +92,25 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // -- MetadataRetrieve API methods --
 
+  // - Entity retrieval -
 #foreach ($entity in $entities)
-  // -- $entity.name() property retrieval --
+
+  /* @see MetadataRetrieve#get$entity.name()($entity.indicesList(true, false)) */
+  public Object get$entity.name()($entity.indicesList(true, true)) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.get$entity.name()($entity.indicesList(false, true));
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+#end##foreach $entity
+#foreach ($entity in $entities)
+
+  // - $entity.name() property retrieval -
 
 #foreach ($prop in $entity.props())
   /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
@@ -108,9 +125,9 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
     return null;
   }
+#end##foreach $prop
+#end##foreach $entity
 
-#end
-#end
   // -- MetadataStore API methods --
 
   /* @see MetadataStore#createRoot() */

@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Dec 26, 2007 2:30:06 PM CST
+ * Created by curtis via MetadataAutogen on Jan 22, 2008 4:26:50 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,108 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // -- MetadataRetrieve API methods --
 
+  // - Entity retrieval -
+
+  /* @see MetadataRetrieve#getImage(int) */
+  public Object getImage(int imageIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPixels(int, int) */
+  public Object getPixels(int imageIndex, int pixelsIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDimensions(int, int) */
+  public Object getDimensions(int imageIndex, int pixelsIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getImagingEnvironment(int) */
+  public Object getImagingEnvironment(int imageIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlane(int, int, int) */
+  public Object getPlane(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getPlaneTiming(int, int, int) */
+  public Object getPlaneTiming(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getStagePosition(int, int, int) */
+  public Object getStagePosition(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getLogicalChannel(int, int) */
+  public Object getLogicalChannel(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDetectorSettings(int, int) */
+  public Object getDetectorSettings(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getLightSourceSettings(int, int) */
+  public Object getLightSourceSettings(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDisplayROI(int, int) */
+  public Object getDisplayROI(int imageIndex, int roiIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getStageLabel(int) */
+  public Object getStageLabel(int imageIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getLightSource(int, int) */
+  public Object getLightSource(int instrumentIndex, int lightSourceIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getLaser(int, int) */
+  public Object getLaser(int instrumentIndex, int lightSourceIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getFilament(int, int) */
+  public Object getFilament(int instrumentIndex, int lightSourceIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getArc(int, int) */
+  public Object getArc(int instrumentIndex, int lightSourceIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDetector(int, int) */
+  public Object getDetector(int instrumentIndex, int detectorIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getObjective(int, int) */
+  public Object getObjective(int instrumentIndex, int objectiveIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getOTF(int, int) */
+  public Object getOTF(int instrumentIndex, int otfIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getExperimenter(int) */
+  public Object getExperimenter(int experimenterIndex) {
+    return null;
+  }
+
   // - Image property retrieval -
 
   /* @see MetadataRetrieve#getImageName(int) */
@@ -60,91 +162,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   }
   /* @see MetadataRetrieve#getImageDescription(int) */
   public String getImageDescription(int imageIndex) {
-    return null;
-  }
-
-  // - Experimenter property retrieval -
-
-  /* @see MetadataRetrieve#getExperimenterFirstName(int) */
-  public String getExperimenterFirstName(int experimenterIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getExperimenterLastName(int) */
-  public String getExperimenterLastName(int experimenterIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getExperimenterEmail(int) */
-  public String getExperimenterEmail(int experimenterIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getExperimenterInstitution(int) */
-  public String getExperimenterInstitution(int experimenterIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getExperimenterDataDirectory(int) */
-  public String getExperimenterDataDirectory(int experimenterIndex) {
-    return null;
-  }
-
-  // - Dimensions property retrieval -
-
-  /* @see MetadataRetrieve#getDimensionsPhysicalSizeX(int, int) */
-  public Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDimensionsPhysicalSizeY(int, int) */
-  public Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDimensionsPhysicalSizeZ(int, int) */
-  public Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDimensionsTimeIncrement(int, int) */
-  public Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDimensionsWaveStart(int, int) */
-  public Integer getDimensionsWaveStart(int imageIndex, int pixelsIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDimensionsWaveIncrement(int, int) */
-  public Integer getDimensionsWaveIncrement(int imageIndex, int pixelsIndex) {
-    return null;
-  }
-
-  // - DisplayROI property retrieval -
-
-  /* @see MetadataRetrieve#getDisplayROIX0(int, int) */
-  public Integer getDisplayROIX0(int imageIndex, int roiIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayROIY0(int, int) */
-  public Integer getDisplayROIY0(int imageIndex, int roiIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayROIZ0(int, int) */
-  public Integer getDisplayROIZ0(int imageIndex, int roiIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayROIT0(int, int) */
-  public Integer getDisplayROIT0(int imageIndex, int roiIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayROIX1(int, int) */
-  public Integer getDisplayROIX1(int imageIndex, int roiIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayROIY1(int, int) */
-  public Integer getDisplayROIY1(int imageIndex, int roiIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayROIZ1(int, int) */
-  public Integer getDisplayROIZ1(int imageIndex, int roiIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayROIT1(int, int) */
-  public Integer getDisplayROIT1(int imageIndex, int roiIndex) {
     return null;
   }
 
@@ -183,22 +200,90 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
-  // - StageLabel property retrieval -
+  // - Dimensions property retrieval -
 
-  /* @see MetadataRetrieve#getStageLabelName(int) */
-  public String getStageLabelName(int imageIndex) {
+  /* @see MetadataRetrieve#getDimensionsPhysicalSizeX(int, int) */
+  public Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getStageLabelX(int) */
-  public Float getStageLabelX(int imageIndex) {
+  /* @see MetadataRetrieve#getDimensionsPhysicalSizeY(int, int) */
+  public Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getStageLabelY(int) */
-  public Float getStageLabelY(int imageIndex) {
+  /* @see MetadataRetrieve#getDimensionsPhysicalSizeZ(int, int) */
+  public Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getStageLabelZ(int) */
-  public Float getStageLabelZ(int imageIndex) {
+  /* @see MetadataRetrieve#getDimensionsTimeIncrement(int, int) */
+  public Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDimensionsWaveStart(int, int) */
+  public Integer getDimensionsWaveStart(int imageIndex, int pixelsIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDimensionsWaveIncrement(int, int) */
+  public Integer getDimensionsWaveIncrement(int imageIndex, int pixelsIndex) {
+    return null;
+  }
+
+  // - ImagingEnvironment property retrieval -
+
+  /* @see MetadataRetrieve#getImagingEnvironmentTemperature(int) */
+  public Float getImagingEnvironmentTemperature(int imageIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getImagingEnvironmentAirPressure(int) */
+  public Float getImagingEnvironmentAirPressure(int imageIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getImagingEnvironmentHumidity(int) */
+  public Float getImagingEnvironmentHumidity(int imageIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getImagingEnvironmentCO2Percent(int) */
+  public Float getImagingEnvironmentCO2Percent(int imageIndex) {
+    return null;
+  }
+
+  // - Plane property retrieval -
+
+  /* @see MetadataRetrieve#getPlaneTheZ(int, int, int) */
+  public Integer getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlaneTheC(int, int, int) */
+  public Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlaneTheT(int, int, int) */
+  public Integer getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+
+  // - PlaneTiming property retrieval -
+
+  /* @see MetadataRetrieve#getPlaneTimingDeltaT(int, int, int) */
+  public Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getPlaneTimingExposureTime(int, int, int) */
+  public Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+
+  // - StagePosition property retrieval -
+
+  /* @see MetadataRetrieve#getStagePositionPositionX(int, int, int) */
+  public Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getStagePositionPositionY(int, int, int) */
+  public Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getStagePositionPositionZ(int, int, int) */
+  public Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex) {
     return null;
   }
 
@@ -253,17 +338,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
-  // - LightSourceSettings property retrieval -
-
-  /* @see MetadataRetrieve#getLightSourceSettingsAttenuation(int, int) */
-  public Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getLightSourceSettingsWavelength(int, int) */
-  public Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex) {
-    return null;
-  }
-
   // - DetectorSettings property retrieval -
 
   /* @see MetadataRetrieve#getDetectorSettingsOffset(int, int) */
@@ -275,63 +349,68 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
-  // - Plane property retrieval -
+  // - LightSourceSettings property retrieval -
 
-  /* @see MetadataRetrieve#getPlaneTheZ(int, int, int) */
-  public Integer getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataRetrieve#getLightSourceSettingsAttenuation(int, int) */
+  public Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPlaneTheC(int, int, int) */
-  public Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getPlaneTheT(int, int, int) */
-  public Integer getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataRetrieve#getLightSourceSettingsWavelength(int, int) */
+  public Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex) {
     return null;
   }
 
-  // - PlaneTiming property retrieval -
+  // - DisplayROI property retrieval -
 
-  /* @see MetadataRetrieve#getPlaneTimingDeltaT(int, int, int) */
-  public Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataRetrieve#getDisplayROIX0(int, int) */
+  public Integer getDisplayROIX0(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getPlaneTimingExposureTime(int, int, int) */
-  public Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataRetrieve#getDisplayROIY0(int, int) */
+  public Integer getDisplayROIY0(int imageIndex, int roiIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDisplayROIZ0(int, int) */
+  public Integer getDisplayROIZ0(int imageIndex, int roiIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDisplayROIT0(int, int) */
+  public Integer getDisplayROIT0(int imageIndex, int roiIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDisplayROIX1(int, int) */
+  public Integer getDisplayROIX1(int imageIndex, int roiIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDisplayROIY1(int, int) */
+  public Integer getDisplayROIY1(int imageIndex, int roiIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDisplayROIZ1(int, int) */
+  public Integer getDisplayROIZ1(int imageIndex, int roiIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getDisplayROIT1(int, int) */
+  public Integer getDisplayROIT1(int imageIndex, int roiIndex) {
     return null;
   }
 
-  // - StagePosition property retrieval -
+  // - StageLabel property retrieval -
 
-  /* @see MetadataRetrieve#getStagePositionPositionX(int, int, int) */
-  public Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataRetrieve#getStageLabelName(int) */
+  public String getStageLabelName(int imageIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getStagePositionPositionY(int, int, int) */
-  public Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataRetrieve#getStageLabelX(int) */
+  public Float getStageLabelX(int imageIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getStagePositionPositionZ(int, int, int) */
-  public Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataRetrieve#getStageLabelY(int) */
+  public Float getStageLabelY(int imageIndex) {
     return null;
   }
-
-  // - ImagingEnvironment property retrieval -
-
-  /* @see MetadataRetrieve#getImagingEnvironmentTemperature(int) */
-  public Float getImagingEnvironmentTemperature(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getImagingEnvironmentAirPressure(int) */
-  public Float getImagingEnvironmentAirPressure(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getImagingEnvironmentHumidity(int) */
-  public Float getImagingEnvironmentHumidity(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getImagingEnvironmentCO2Percent(int) */
-  public Float getImagingEnvironmentCO2Percent(int imageIndex) {
+  /* @see MetadataRetrieve#getStageLabelZ(int) */
+  public Float getStageLabelZ(int imageIndex) {
     return null;
   }
 
@@ -484,6 +563,29 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - Experimenter property retrieval -
+
+  /* @see MetadataRetrieve#getExperimenterFirstName(int) */
+  public String getExperimenterFirstName(int experimenterIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getExperimenterLastName(int) */
+  public String getExperimenterLastName(int experimenterIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getExperimenterEmail(int) */
+  public String getExperimenterEmail(int experimenterIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getExperimenterInstitution(int) */
+  public String getExperimenterInstitution(int experimenterIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getExperimenterDataDirectory(int) */
+  public String getExperimenterDataDirectory(int experimenterIndex) {
+    return null;
+  }
+
   // -- MetadataStore API methods --
 
   public void createRoot() {
@@ -495,6 +597,7 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   public void setRoot(Object root) {
   }
+
 
   // - Image property storage -
 
@@ -508,88 +611,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setImage(String, String, String, int) */
   public void setImageDescription(String description, int imageIndex) {
-  }
-
-  // - Experimenter property storage -
-
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
-  public void setExperimenterFirstName(String firstName, int experimenterIndex) {
-  }
-
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
-  public void setExperimenterLastName(String lastName, int experimenterIndex) {
-  }
-
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
-  public void setExperimenterEmail(String email, int experimenterIndex) {
-  }
-
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
-  public void setExperimenterInstitution(String institution, int experimenterIndex) {
-  }
-
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
-  public void setExperimenterDataDirectory(String dataDirectory, int experimenterIndex) {
-  }
-
-  // - Dimensions property storage -
-
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
-  public void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex) {
-  }
-
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
-  public void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex) {
-  }
-
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
-  public void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex) {
-  }
-
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
-  public void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex) {
-  }
-
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
-  public void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex) {
-  }
-
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
-  public void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex) {
-  }
-
-  // - DisplayROI property storage -
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIX0(Integer x0, int imageIndex, int roiIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIY0(Integer y0, int imageIndex, int roiIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIZ0(Integer z0, int imageIndex, int roiIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIT0(Integer t0, int imageIndex, int roiIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIX1(Integer x1, int imageIndex, int roiIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIY1(Integer y1, int imageIndex, int roiIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIZ1(Integer z1, int imageIndex, int roiIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIT1(Integer t1, int imageIndex, int roiIndex) {
   }
 
   // - Pixels property storage -
@@ -626,22 +647,86 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setPixelsDimensionOrder(String dimensionOrder, int imageIndex, int pixelsIndex) {
   }
 
-  // - StageLabel property storage -
+  // - Dimensions property storage -
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
-  public void setStageLabelName(String name, int imageIndex) {
+  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  public void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
-  public void setStageLabelX(Float x, int imageIndex) {
+  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  public void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
-  public void setStageLabelY(Float y, int imageIndex) {
+  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  public void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
-  public void setStageLabelZ(Float z, int imageIndex) {
+  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  public void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex) {
+  }
+
+  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  public void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex) {
+  }
+
+  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  public void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex) {
+  }
+
+  // - ImagingEnvironment property storage -
+
+  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  public void setImagingEnvironmentTemperature(Float temperature, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  public void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  public void setImagingEnvironmentHumidity(Float humidity, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  public void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex) {
+  }
+
+  // - Plane property storage -
+
+  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
+  public void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
+  public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
+  public void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  // - PlaneTiming property storage -
+
+  /* @see MetadataStore#setPlaneTiming(Float, Float, int, int, int) */
+  public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  /* @see MetadataStore#setPlaneTiming(Float, Float, int, int, int) */
+  public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  // - StagePosition property storage -
+
+  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
+  public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
+  public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex) {
+  }
+
+  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
+  public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
   // - LogicalChannel property storage -
@@ -694,16 +779,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex) {
   }
 
-  // - LightSourceSettings property storage -
-
-  /* @see MetadataStore#setLightSourceSettings(Float, Integer, int, int) */
-  public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex) {
-  }
-
-  /* @see MetadataStore#setLightSourceSettings(Float, Integer, int, int) */
-  public void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex) {
-  }
-
   // - DetectorSettings property storage -
 
   /* @see MetadataStore#setDetectorSettings(Float, Float, int, int) */
@@ -714,60 +789,66 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex) {
   }
 
-  // - Plane property storage -
+  // - LightSourceSettings property storage -
 
-  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
-  public void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setLightSourceSettings(Float, Integer, int, int) */
+  public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
-  public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setLightSourceSettings(Float, Integer, int, int) */
+  public void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
-  public void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex) {
+  // - DisplayROI property storage -
+
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIX0(Integer x0, int imageIndex, int roiIndex) {
   }
 
-  // - PlaneTiming property storage -
-
-  /* @see MetadataStore#setPlaneTiming(Float, Float, int, int, int) */
-  public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIY0(Integer y0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setPlaneTiming(Float, Float, int, int, int) */
-  public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIZ0(Integer z0, int imageIndex, int roiIndex) {
   }
 
-  // - StagePosition property storage -
-
-  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
-  public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIT0(Integer t0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
-  public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIX1(Integer x1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
-  public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIY1(Integer y1, int imageIndex, int roiIndex) {
   }
 
-  // - ImagingEnvironment property storage -
-
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
-  public void setImagingEnvironmentTemperature(Float temperature, int imageIndex) {
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIZ1(Integer z1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
-  public void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex) {
+  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setDisplayROIT1(Integer t1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
-  public void setImagingEnvironmentHumidity(Float humidity, int imageIndex) {
+  // - StageLabel property storage -
+
+  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  public void setStageLabelName(String name, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
-  public void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex) {
+  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  public void setStageLabelX(Float x, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  public void setStageLabelY(Float y, int imageIndex) {
+  }
+
+  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  public void setStageLabelZ(Float z, int imageIndex) {
   }
 
   // - LightSource property storage -
@@ -910,6 +991,28 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataStore#setOTF(Integer, Integer, String, String, Boolean, int, int) */
   public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex) {
+  }
+
+  // - Experimenter property storage -
+
+  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  public void setExperimenterFirstName(String firstName, int experimenterIndex) {
+  }
+
+  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  public void setExperimenterLastName(String lastName, int experimenterIndex) {
+  }
+
+  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  public void setExperimenterEmail(String email, int experimenterIndex) {
+  }
+
+  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  public void setExperimenterInstitution(String institution, int experimenterIndex) {
+  }
+
+  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  public void setExperimenterDataDirectory(String dataDirectory, int experimenterIndex) {
   }
 
 }

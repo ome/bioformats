@@ -53,13 +53,144 @@ import loci.formats.LogTools;
  */
 public class $class extends OMEXMLMetadata {
 
-  // -- $class API methods --
-#foreach ($entity in $unique)
+  // -- OMEXMLMetadata API methods --
+
+  /* @see OMEXMLMetadata#dumpXML() */
+  public String dumpXML() {
+    if (root == null) return null;
+#if ($legacy == "true")
+    try { return ((OMENode) root).writeOME(false); }
+    catch (javax.xml.transform.TransformerException exc) {
+      LogTools.trace(exc);
+    }
+    catch (java.io.IOException exc) { LogTools.trace(exc); }
+    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      LogTools.trace(exc);
+    }
+    return null;
+#else
+    try {
+      java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+      ome.xml.DOMUtil.writeXML(os, root.getDOMElement().getOwnerDocument());
+      return os.toString();
+    }
+    catch (javax.xml.transform.TransformerException exc) {
+      LogTools.trace(exc);
+    }
+    return null;
+#end##if $legacy
+  }
+
+  // -- MetadataRetrieve API methods --
+
+  // - Entity retrieval -
+#foreach ($entity in $entities)
+#set ($last = $entity.last($versionKey))
+
+  public Object get$entity.name()($entity.indicesList(true, true)) {
+#if ($last == "-")
+    // NB: $entity.name() unsupported for schema version $version
+    return null;
+#else
+    return get${last}Node($entity.indicesList(false, true), false);
+#end##if "-"
+  }
+#end##foreach $entity
+#foreach ($entity in $entities)
 #set ($last = $entity.last($versionKey))
 #set ($lastVar = $entity.lastVar($versionKey))
 
+  // - $entity.name() property retrieval -
+#foreach ($prop in $entity.props())
+#set ($mappedName = $prop.mappedName($versionKey))
+#set ($convert = $mappedName.endsWith("%"))
+#set ($mappedName = $mappedName.replaceAll("%", ""))
+#set ($mappedPrefix = $prop.mappedPrefix($versionKey))
+
+  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+#if ($last == "-" || $mappedName == "-")
+    // NB: $prop.name() unsupported for schema version $version
+    return null;
+#else
+    ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), false);
+#if ($convert)
+    return $lastVar == null ? null : $lastVar${mappedName}To$prop.type()(${lastVar}.$mappedPrefix$mappedName());
+#else
+    return $lastVar == null ? null : ${lastVar}.$mappedPrefix$mappedName();
+#end##if $convert
+#end##if "-"
+  }
+#end##foreach $prop
+#end##foreach $entity
+
+  // -- MetadataStore API methods --
+
+  /* @see loci.formats.MetadataStore#setRoot(Object) */
+  public void createRoot() {
+#if ($legacy == "true")
+    try {
+      root = new OMENode();
+    }
+    catch (javax.xml.transform.TransformerException exc) {
+      LogTools.trace(exc);
+    }
+#else
+    try {
+      root = ome.xml.OMEXMLFactory.newOMENode("$version");
+    }
+#end##if $legacy
+    catch (java.io.IOException exc) { LogTools.trace(exc); }
+    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      LogTools.trace(exc);
+    }
+  }
+
+  /* @see loci.formats.MetadataStore#setRoot(Object) */
+  public void setRoot(Object root) {
+    if (!(root instanceof OMENode)) {
+      throw new IllegalArgumentException(
+        "This metadata store accepts root objects of type " +
+        OMENode.class.getName());
+    }
+    this.root = (OMENode) root;
+  }
+
+#foreach ($entity in $entities)
+#set ($last = $entity.last($versionKey))
+#set ($lastVar = $entity.lastVar($versionKey))
+
+  // - $entity.name() property storage -
+#foreach ($prop in $entity.props())
+#set ($varName = $prop.varName())
+#set ($mappedName = $prop.mappedName($versionKey))
+#set ($convert = $mappedName.endsWith("%"))
+#set ($mappedName = $mappedName.replaceAll("%", ""))
+#set ($mappedVarName = $prop.mappedVarName($versionKey))
+
+  public void set$entity.name()$prop.name()($prop.type() $varName, $entity.indicesList(true, true)) {
+#if ($last == "-" || $mappedName == "-")
+    // NB: $prop.name() unsupported for schema version $version
+#else
+    if ($varName == null) return;
+    ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), true);
+#if ($convert)
+    ${lastVar}.set$mappedName($lastVar${mappedName}From$prop.type()($varName));
+#else
+    ${lastVar}.set$mappedName($varName);
+#end##if $convert
+#end##if "-"
+  }
+#end##foreach $prop
+#end##foreach $entity
+
+  // -- Helper methods --
+#foreach ($entity in $unique)
+#set ($last = $entity.last($versionKey))
+
   // $entity.path($versionKey)
-  public ${last}Node get$last($entity.indicesList(true, true), boolean create) {
+  private ${last}Node get${last}Node($entity.indicesList(true, true), boolean create) {
     int ndx, count;
     List list;
     // get OME node
@@ -141,124 +272,6 @@ public class $class extends OMEXMLMetadata {
 #end##foreach $node
     return $var;
   }
-#end##foreach $entity
-
-  // -- OMEXMLMetadata API methods --
-
-  /* @see OMEXMLMetadata#dumpXML() */
-  public String dumpXML() {
-    if (root == null) return null;
-#if ($legacy == "true")
-    try { return ((OMENode) root).writeOME(false); }
-    catch (javax.xml.transform.TransformerException exc) {
-      LogTools.trace(exc);
-    }
-    catch (java.io.IOException exc) { LogTools.trace(exc); }
-    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
-    catch (javax.xml.parsers.ParserConfigurationException exc) {
-      LogTools.trace(exc);
-    }
-    return null;
-#else
-    try {
-      java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-      ome.xml.DOMUtil.writeXML(os, root.getDOMElement().getOwnerDocument());
-      return os.toString();
-    }
-    catch (javax.xml.transform.TransformerException exc) {
-      LogTools.trace(exc);
-    }
-    return null;
-#end##if $legacy
-  }
-
-  // -- MetadataRetrieve API methods --
-#foreach ($entity in $entities)
-#set ($last = $entity.last($versionKey))
-#set ($lastVar = $entity.lastVar($versionKey))
-
-  // - $entity.name() property retrieval -
-#foreach ($prop in $entity.props())
-#set ($mappedName = $prop.mappedName($versionKey))
-#set ($convert = $mappedName.endsWith("%"))
-#set ($mappedName = $mappedName.replaceAll("%", ""))
-#set ($mappedPrefix = $prop.mappedPrefix($versionKey))
-
-  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
-#if ($last == "-" || $mappedName == "-")
-    // NB: $prop.name() unsupported for schema version $version
-    return null;
-#else
-    ${last}Node $lastVar = get$last($entity.indicesList(false, true), false);
-#if ($convert)
-    return $lastVar == null ? null : $lastVar${mappedName}To$prop.type()(${lastVar}.$mappedPrefix$mappedName());
-#else
-    return $lastVar == null ? null : ${lastVar}.$mappedPrefix$mappedName();
-#end##if $convert
-#end##if "-"
-  }
-#end##foreach $prop
-#end##foreach $entity
-
-  // -- MetadataStore API methods --
-
-  /* @see loci.formats.MetadataStore#setRoot(Object) */
-  public void createRoot() {
-#if ($legacy == "true")
-    try {
-      root = new OMENode();
-    }
-    catch (javax.xml.transform.TransformerException exc) {
-      LogTools.trace(exc);
-    }
-#else
-    try {
-      root = ome.xml.OMEXMLFactory.newOMENode("$version");
-    }
-#end##if $legacy
-    catch (java.io.IOException exc) { LogTools.trace(exc); }
-    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
-    catch (javax.xml.parsers.ParserConfigurationException exc) {
-      LogTools.trace(exc);
-    }
-  }
-
-  /* @see loci.formats.MetadataStore#setRoot(Object) */
-  public void setRoot(Object root) {
-    if (!(root instanceof OMENode)) {
-      throw new IllegalArgumentException(
-        "This metadata store accepts root objects of type " +
-        OMENode.class.getName());
-    }
-    this.root = (OMENode) root;
-  }
-
-#foreach ($entity in $entities)
-#set ($last = $entity.last($versionKey))
-#set ($lastVar = $entity.lastVar($versionKey))
-
-  // - $entity.name() property storage -
-#foreach ($prop in $entity.props())
-#set ($varName = $prop.varName())
-#set ($mappedName = $prop.mappedName($versionKey))
-#set ($convert = $mappedName.endsWith("%"))
-#set ($mappedName = $mappedName.replaceAll("%", ""))
-#set ($mappedVarName = $prop.mappedVarName($versionKey))
-
-  public void set$entity.name()$prop.name()($prop.type() $varName, $entity.indicesList(true, true)) {
-#if ($last == "-" || $mappedName == "-")
-    // NB: $prop.name() unsupported for schema version $version
-#else
-    if ($varName == null) return;
-    ${last}Node $lastVar = get$last($entity.indicesList(false, true), true);
-#if ($convert)
-    ${lastVar}.set$mappedName($lastVar${mappedName}From$prop.type()($varName));
-#else
-    ${lastVar}.set$mappedName($varName);
-#end##if $convert
-#end##if "-"
-  }
-#end##foreach $prop
 #end##foreach $entity
 
 }
