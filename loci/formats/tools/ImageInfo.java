@@ -603,7 +603,14 @@ public final class ImageInfo {
         MetadataTools.validateOMEXML(xml);
       }
       else {
-        LogTools.println("OME-Java library not found; no OME-XML available");
+        LogTools.println("The metadata could not be converted to OME-XML.");
+        if (omexmlVersion == null) {
+          LogTools.println("The OME-Java library is probably not available.");
+        }
+        else {
+          LogTools.println(omexmlVersion +
+            " is probably not a legal schema version.");
+        }
       }
     }
 
