@@ -117,6 +117,7 @@ public abstract class FormatReader extends FormatHandler
     Arrays.fill(core.orderCertain, true);
 
     // reinitialize the MetadataStore
+    // NB: critical for metadata conversion to work properly!
     getMetadataStore().createRoot();
   }
 
@@ -613,7 +614,8 @@ public abstract class FormatReader extends FormatHandler
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(currentId, false, 1);
     if (store == null) {
-      throw new IllegalArgumentException("Metadata object is null");
+      throw new IllegalArgumentException("Metadata object cannot be null; " +
+        "use loci.formats.meta.DummyMetadata instead");
     }
     metadataStore = store;
   }

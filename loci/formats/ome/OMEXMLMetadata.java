@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
- * It is the superclass for for all versions of OME-XML. It requires the
+ * It is the superclass for all versions of OME-XML. It requires the
  * ome.xml package to compile (part of ome-java.jar).
  *
  * <dl><dt><b>Source code:</b></dt>

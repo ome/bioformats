@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 22, 2008 4:26:50 PM CST
+ * Created by curtis via MetadataAutogen on Jan 23, 2008 3:27:29 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -39,7 +39,7 @@ import loci.formats.LogTools;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs for the
- * 2003 (FC) version of OME-XML. It requires the
+ * 2003-FC version of OME-XML. It requires the
  * org.openmicroscopy.xml package to compile (part of ome-java.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -89,17 +89,17 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   public Object getPlane(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: Plane unsupported for schema version 2003 (FC)
+    // NB: Plane unsupported for schema version 2003-FC
     return null;
   }
 
   public Object getPlaneTiming(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PlaneTiming unsupported for schema version 2003 (FC)
+    // NB: PlaneTiming unsupported for schema version 2003-FC
     return null;
   }
 
   public Object getStagePosition(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: StagePosition unsupported for schema version 2003 (FC)
+    // NB: StagePosition unsupported for schema version 2003-FC
     return null;
   }
 
@@ -237,7 +237,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   public Integer getDimensionsWaveStart(int imageIndex, int pixelsIndex) {
-    // NB: WaveStart unsupported for schema version 2003 (FC)
+    // NB: WaveStart unsupported for schema version 2003-FC
     return null;
   }
 
@@ -271,46 +271,46 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   // - Plane property retrieval -
 
   public Integer getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheZ unsupported for schema version 2003 (FC)
+    // NB: TheZ unsupported for schema version 2003-FC
     return null;
   }
 
   public Integer getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheC unsupported for schema version 2003 (FC)
+    // NB: TheC unsupported for schema version 2003-FC
     return null;
   }
 
   public Integer getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheT unsupported for schema version 2003 (FC)
+    // NB: TheT unsupported for schema version 2003-FC
     return null;
   }
 
   // - PlaneTiming property retrieval -
 
   public Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: DeltaT unsupported for schema version 2003 (FC)
+    // NB: DeltaT unsupported for schema version 2003-FC
     return null;
   }
 
   public Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: ExposureTime unsupported for schema version 2003 (FC)
+    // NB: ExposureTime unsupported for schema version 2003-FC
     return null;
   }
 
   // - StagePosition property retrieval -
 
   public Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionX unsupported for schema version 2003 (FC)
+    // NB: PositionX unsupported for schema version 2003-FC
     return null;
   }
 
   public Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionY unsupported for schema version 2003 (FC)
+    // NB: PositionY unsupported for schema version 2003-FC
     return null;
   }
 
   public Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionZ unsupported for schema version 2003 (FC)
+    // NB: PositionZ unsupported for schema version 2003-FC
     return null;
   }
 
@@ -372,7 +372,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   public Integer getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex) {
-    // NB: PockelCellSetting unsupported for schema version 2003 (FC)
+    // NB: PockelCellSetting unsupported for schema version 2003-FC
     return null;
   }
 
@@ -602,7 +602,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   public Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex) {
-    // NB: NominalMagnification unsupported for schema version 2003 (FC)
+    // NB: NominalMagnification unsupported for schema version 2003-FC
     return null;
   }
 
@@ -686,12 +686,12 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public void setRoot(Object root) {
     if (!(root instanceof OMENode)) {
       throw new IllegalArgumentException(
+        "Invalid root type: " + root.getClass().getName() + ". " +
         "This metadata store accepts root objects of type " +
         OMENode.class.getName());
     }
     this.root = (OMENode) root;
   }
-
 
   // - Image property storage -
 
@@ -790,7 +790,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   public void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex) {
-    // NB: WaveStart unsupported for schema version 2003 (FC)
+    // NB: WaveStart unsupported for schema version 2003-FC
   }
 
   public void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex) {
@@ -828,39 +828,39 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   // - Plane property storage -
 
   public void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheZ unsupported for schema version 2003 (FC)
+    // NB: TheZ unsupported for schema version 2003-FC
   }
 
   public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheC unsupported for schema version 2003 (FC)
+    // NB: TheC unsupported for schema version 2003-FC
   }
 
   public void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: TheT unsupported for schema version 2003 (FC)
+    // NB: TheT unsupported for schema version 2003-FC
   }
 
   // - PlaneTiming property storage -
 
   public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: DeltaT unsupported for schema version 2003 (FC)
+    // NB: DeltaT unsupported for schema version 2003-FC
   }
 
   public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: ExposureTime unsupported for schema version 2003 (FC)
+    // NB: ExposureTime unsupported for schema version 2003-FC
   }
 
   // - StagePosition property storage -
 
   public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionX unsupported for schema version 2003 (FC)
+    // NB: PositionX unsupported for schema version 2003-FC
   }
 
   public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionY unsupported for schema version 2003 (FC)
+    // NB: PositionY unsupported for schema version 2003-FC
   }
 
   public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
-    // NB: PositionZ unsupported for schema version 2003 (FC)
+    // NB: PositionZ unsupported for schema version 2003-FC
   }
 
   // - LogicalChannel property storage -
@@ -932,7 +932,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   public void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex) {
-    // NB: PockelCellSetting unsupported for schema version 2003 (FC)
+    // NB: PockelCellSetting unsupported for schema version 2003-FC
   }
 
   // - DetectorSettings property storage -
@@ -1202,7 +1202,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   }
 
   public void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex) {
-    // NB: NominalMagnification unsupported for schema version 2003 (FC)
+    // NB: NominalMagnification unsupported for schema version 2003-FC
   }
 
   public void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex) {

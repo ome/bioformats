@@ -72,29 +72,64 @@ public final class MetadataTools {
    * direct dependencies on the optional {@link loci.formats.ome} package,
    * wrapping a DOM representation of the given OME-XML string.
    *
-   * @param version The OME-XML version to use (e.g., "2003FC" or "200706").
-   *   If null, the latest version is used.
+   * @param xml The OME-XML string to use for initial population of the
+   *   metadata object.
+   * @param version The OME-XML version to use (e.g., "2003-FC" or "2007-06").
+   *   If the xml and version parameters are both null, the newest version is
+   *   used.
    * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
    *   or null if the class is not available.
    */
   public static MetadataStore createOMEXMLMetadata(String xml, String version) {
-    if (xml != null) throw new RuntimeException("CTR FIXME"); // TEMP
+    Object ome = null;
     MetadataStore store = null;
     ReflectedUniverse r = new ReflectedUniverse();
     try {
-      r.exec("import ome.xml.OMEXMLFactory");
+      ome = createOMEXMLRoot(xml);
       if (version == null) {
-        version = (String) r.exec("OMEXMLFactory.LATEST_VERSION");
+        if (ome == null) {
+          // default to newest schema version
+          r.exec("import ome.xml.OMEXMLFactory");
+          version = (String) r.exec("OMEXMLFactory.LATEST_VERSION");
+        }
+        else {
+          // extract schema version from OME root node
+          r.setVar("ome", ome);
+          version = getOMEXMLVersion(ome);
+        }
       }
+
+      // create metadata object of the appropriate schema version
       String metaClass = "OMEXML" +
         version.replaceAll("[^\\w]", "") + "Metadata";
       r.exec("import loci.formats.ome." + metaClass);
-      r.setVar("xml", xml);
-      // CTR FIXME need to pass XML as an argument here... eventually
       store = (MetadataStore) r.exec("new " + metaClass + "()");
+
+      // attach OME root node to metadata object
+      if (ome != null) store.setRoot(ome);
     }
-    catch (ReflectException exc) { exc.printStackTrace(); }
+    catch (ReflectException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
+    }
     return store;
+  }
+
+  /**
+   * Constructs an OME root node (ome.xml.OMEXMLNode subclass)
+   * of the appropriate schema version from the given XML string.
+   */
+  public static Object createOMEXMLRoot(String xml) {
+    if (xml == null) return null;
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import ome.xml.OMEXMLFactory");
+      r.setVar("xml", xml);
+      return r.exec("OMEXMLFactory.newOMENodeFromSource(xml)");
+    }
+    catch (ReflectException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
+    }
+    return null;
   }
 
   /**
@@ -103,29 +138,81 @@ public final class MetadataTools {
    *   {@link loci.formats.ome.OMEXMLMetadata}.
    */
   public static boolean isOMEXMLMetadata(Object o) {
+    return isInstance(o, "loci.formats.ome", "OMEXMLMetadata");
+  }
+
+  /**
+   * Checks whether the given object is an OME-XML root object.
+   * @return True iff the object is an instance of ome.xml.OMEXMLNode.
+   */
+  public static boolean isOMEXMLRoot(Object o) {
+    return isInstance(o, "ome.xml", "OMEXMLNode");
+  }
+
+  /**
+   * Gets the schema version for the given OME-XML metadata or root object.
+   * @return OME-XML schema version, or null if the object is not an instance
+   *   of {@link loci.formats.ome.OMEXMLMetadata} or ome.xml.OMEXMLNode.
+   */
+  public static String getOMEXMLVersion(Object o) {
+    String name = o.getClass().getName();
+    if (isOMEXMLMetadata(o)) {
+      final String prefix = "loci.formats.ome.OMEXML";
+      final String suffix = "Metadata";
+      if (name.startsWith(prefix) && name.endsWith(suffix)) {
+        String numbers =
+          name.substring(prefix.length(), name.length() - suffix.length());
+        if (numbers.length() == 6) {
+          return numbers.substring(0, 4) + "-" + numbers.substring(4, 6);
+        }
+      }
+    }
+    else if (isOMEXMLRoot(o)) {
+      ReflectedUniverse r = new ReflectedUniverse();
+      r.setVar("ome", o);
+      try {
+        return (String) r.exec("ome.getVersion()");
+      }
+      catch (ReflectException exc) {
+        if (FormatHandler.debug) LogTools.trace(exc);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Extracts an OME-XML metadata string from the given metadata object,
+   * by converting to an OME-XML metadata object if necessary.
+   */
+  public static String getOMEXML(MetadataRetrieve src) {
+    MetadataStore omexmlMeta;
+    if (isOMEXMLMetadata(src)) {
+      // the metadata is already an OME-XML metadata object
+      omexmlMeta = (MetadataStore) src;
+    }
+    else {
+      // populate a new OME-XML metadata object with metadata
+      // converted from the non-OME-XML metadata object
+      omexmlMeta = createOMEXMLMetadata();
+      MetadataTools.convertMetadata(src, omexmlMeta);
+    }
     ReflectedUniverse r = new ReflectedUniverse();
+    r.setVar("omexmlMeta", omexmlMeta);
     try {
-      r.exec("import loci.formats.ome.OMEXMLMetadata");
-      Class c = (Class) r.getVar("OMEXMLMetadata");
-      return c.isInstance(o);
+      return (String) r.exec("omexmlMeta.dumpXML()");
     }
     catch (ReflectException exc) {
       if (FormatHandler.debug) LogTools.trace(exc);
     }
-    return false;
+    return null;
   }
 
   /**
-   * Gets the schema version for the given OME-XML metadata object.
-   * @return OME-XML schema version, or null if the object is not
-   *   an instance of {@link loci.formats.ome.OMEXMLMetadata}.
+   * Attempts to validate the given OME-XML string using
+   * Java's XML validation facility. Requires Java 1.5+.
    */
-  public static String getOMEXMLVersion(Object o) {
-    String name = o.getClass().getName();
-    final String prefix = "loci.formats.ome.OMEXML";
-    final String suffix = "Metadata";
-    if (!name.startsWith(prefix) || !name.endsWith(suffix)) return null;
-    return name.substring(prefix.length(), name.length() - suffix.length());
+  public static void validateOMEXML(String xml) {
+    XMLTools.validateXML(xml, "OME-XML");
   }
 
   /**
@@ -173,41 +260,6 @@ public final class MetadataTools {
     }
   }
 
-  /**
-   * Extracts an OME-XML metadata string from the given metadata object,
-   * by converting to an OME-XML metadata object if necessary.
-   */
-  public static String getOMEXML(MetadataRetrieve src) {
-    MetadataStore omexmlMeta;
-    if (isOMEXMLMetadata(src)) {
-      // the metadata is already an OME-XML metadata object
-      omexmlMeta = (MetadataStore) src;
-    }
-    else {
-      // populate a new OME-XML metadata object with metadata
-      // converted from the non-OME-XML metadata object
-      omexmlMeta = createOMEXMLMetadata();
-      MetadataTools.convertMetadata(src, omexmlMeta);
-    }
-    ReflectedUniverse r = new ReflectedUniverse();
-    r.setVar("omexmlMeta", omexmlMeta);
-    try {
-      return (String) r.exec("omexmlMeta.dumpXML()");
-    }
-    catch (ReflectException exc) {
-      if (FormatHandler.debug) LogTools.trace(exc);
-    }
-    return null;
-  }
-
-  /**
-   * Attempts to validate the given OME-XML string using
-   * Java's XML validation facility. Requires Java 1.5+.
-   */
-  public static void validateOMEXML(String xml) {
-    XMLTools.validateXML(xml, "OME-XML");
-  }
-
   // -- Utility methods -- metadata conversion --
 
   /**
@@ -215,9 +267,12 @@ public final class MetadataTools {
    * into a metadata store (destination).
    */
   public static void convertMetadata(String xml, MetadataStore dest) {
-    if (isOMEXMLMetadata(dest)) {
-      // metadata store is already an OME-XML metadata object;
-      // populate OME-XML string directly
+    Object ome = createOMEXMLRoot(xml);
+    String rootVersion = getOMEXMLVersion(ome);
+    String storeVersion = getOMEXMLVersion(dest);
+    if (rootVersion.equals(storeVersion)) {
+      // metadata store is already an OME-XML metadata object of the
+      // correct schema version; populate OME-XML string directly
       ReflectedUniverse r = new ReflectedUniverse();
       try {
         r.setVar("xml", xml);
@@ -229,7 +284,7 @@ public final class MetadataTools {
       }
     }
     else {
-      // metadata store is foreign; create an OME-XML
+      // metadata store is incompatible; create an OME-XML
       // metadata object and copy it into the destination
       MetadataRetrieve src = (MetadataRetrieve) createOMEXMLMetadata(xml);
       convertMetadata(src, dest);
@@ -379,6 +434,28 @@ public final class MetadataTools {
       src.getOTFPixelType(ii), src.getOTFPath(ii),
       src.getOTFOpticalAxisAverage(ii), ii, ii, ii, ii);
     */
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Checks whether the given object is an instance of the specified class.
+   * @return True iff the object is an instance of the given class
+   *   from the specified package.
+   */
+  private static boolean isInstance(Object o,
+    String packageName, String className)
+  {
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import " + packageName + "." + className);
+      Class c = (Class) r.getVar(className);
+      return c.isInstance(o);
+    }
+    catch (ReflectException exc) {
+      if (FormatHandler.debug) LogTools.trace(exc);
+    }
+    return false;
   }
 
 }

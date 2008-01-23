@@ -151,12 +151,12 @@ public class $class extends OMEXMLMetadata {
   public void setRoot(Object root) {
     if (!(root instanceof OMENode)) {
       throw new IllegalArgumentException(
+        "Invalid root type: " + root.getClass().getName() + ". " +
         "This metadata store accepts root objects of type " +
         OMENode.class.getName());
     }
     this.root = (OMENode) root;
   }
-
 #foreach ($entity in $entities)
 #set ($last = $entity.last($versionKey))
 #set ($lastVar = $entity.lastVar($versionKey))

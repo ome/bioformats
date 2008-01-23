@@ -35,7 +35,7 @@ class = OMEXML2003FCMetadata
 id = OMEXML2003FCMetadata.java
 basePackage = org.openmicroscopy.xml
 subPackage = st
-version = 2003 (FC)
+version = 2003-FC
 legacy = true
 
 [-]
