@@ -11,9 +11,12 @@ function [result] = bfopen(id)
 %
 % Thanks to Ville Rantanen for his performance improvements and ideas.
 % Thanks to Brett Shoelson of The MathWorks for his excellent suggestions.
-
+%
+% To install, download loci_tools.jar from:
+%   http://www.loci.wisc.edu/ome/formats.html
 % Internet Explorer sometimes erroneously renames the Bio-Formats library
 % to loci_tools.zip. If this happens, rename it back to loci_tools.jar.
+% Place loci_tools.jar and this script (bfopen.m) in your MATLAB work folder.
 
 % load Bio-Formats library into MATLAB environment
 javaaddpath('loci_tools.jar');
