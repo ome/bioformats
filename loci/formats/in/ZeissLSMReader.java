@@ -166,19 +166,29 @@ public class ZeissLSMReader extends BaseTiffReader {
     return s;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    if (core.sizeY[0] > 1) TiffTools.getSamples(ifds[2*no], in, buf);
+    // check that predictor is set to 1 if anything other
+    // than LZW compression is used
+    if (TiffTools.getCompression(ifds[2*no]) != TiffTools.LZW) {
+      ifds[2*no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
+    }
+
+    if (core.sizeY[0] > 1) {
+      TiffTools.getSamples(ifds[2*no], in, buf, x, y, w, h);
+    }
     else {
       int n = (int) TiffTools.getImageLength(ifds[0]);
       byte[] b = new byte[buf.length * n];
-      TiffTools.getSamples(ifds[0], in, b);
+      TiffTools.getSamples(ifds[0], in, b, x, y, w, h);
       System.arraycopy(b, no * (b.length / n), buf, 0, b.length / n);
     }
     return swapIfRequired(buf);
@@ -407,35 +417,23 @@ public class ZeissLSMReader extends BaseTiffReader {
         int numColors = in.readInt();
         int numNames = in.readInt();
 
-        if (numColors > core.sizeC[0]) {
-          in.seek(channelColorsOffset - 2);
-          in.order(!core.littleEndian[0]);
-          in.skipBytes(4);
-          numColors = in.readInt();
-          numNames = in.readInt();
-        }
-
-        long namesOffset = in.readInt() + channelColorsOffset;
-        in.skipBytes(4);
+        long namesOffset = in.readInt();
 
         // read in the intensity value for each color
 
-        if (namesOffset >= 0) {
-          in.seek(namesOffset);
-          for (int i=0; i<numColors; i++) put("Intensity" + i, in.readInt());
-        }
+        if (namesOffset > 0) {
+          in.seek(namesOffset + channelColorsOffset);
 
-        // read in the channel names
-
-        for (int i=0; i<numNames; i++) {
-          // we want to read until we find a null char
-          StringBuffer sb = new StringBuffer();
-          char current = (char) in.read();
-          while (current != 0) {
-            if (current < 128) sb.append(current);
-            current = (char) in.read();
+          for (int i=0; i<numNames; i++) {
+            // we want to read until we find a null char
+            StringBuffer sb = new StringBuffer();
+            char current = (char) in.read();
+            while (current != 0) {
+              if (current < 128) sb.append(current);
+              current = (char) in.read();
+            }
+            if (sb.length() <= 128) put("ChannelName" + i, sb.toString());
           }
-          if (sb.length() <= 128) put("ChannelName" + i, sb.toString());
         }
       }
 

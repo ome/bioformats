@@ -88,14 +88,16 @@ public class PCIReader extends FormatReader {
       block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     if (noPOI) throw new FormatException(NO_POI_MSG);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     Integer ii = new Integer(no);
     Object directory = imageDirectories.get(ii);
@@ -108,7 +110,35 @@ public class PCIReader extends FormatReader {
       r.exec("dis = new DocumentInputStream(document, fis)");
       r.exec("numBytes = dis.available()");
       r.setVar("data", buf);
-      r.exec("dis.read(data)");
+
+      int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
+
+      int rowLen = w * bpp;
+      r.setVar("rowLen", rowLen);
+
+      long skip = y * core.sizeX[series] * bpp;
+
+      long beginSkip = bpp * x;
+      long endSkip = bpp * (core.sizeX[0] - w - x);
+
+      r.setVar("skip", skip);
+      r.setVar("beginSkip", beginSkip);
+      r.setVar("endSkip", endSkip);
+
+      for (int c=0; c<core.sizeC[series]; c++) {
+        if (skip > 0) r.exec("dis.skip(skip)");
+        for (int row=0; row<h; row++) {
+          if (beginSkip > 0) r.exec("dis.skip(beginSkip)");
+          r.setVar("offset", c * h * rowLen + row * rowLen);
+          r.exec("dis.read(data, offset, rowLen)");
+          if (endSkip > 0) r.exec("dis.skip(endSkip)");
+        }
+        if (h + y < core.sizeY[series]) {
+          r.setVar("s",
+            (long) (core.sizeY[series] - h - y) * core.sizeX[series] * bpp);
+          r.exec("dis.skip(s)");
+        }
+      }
     }
     catch (ReflectException e) {
       throw new FormatException(NO_POI_MSG, e);
@@ -233,25 +263,29 @@ public class PCIReader extends FormatReader {
         r.exec("dis = new DocumentInputStream(entry, fis)");
         r.exec("numBytes = dis.available()");
         int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-        byte[] data = new byte[numBytes];
-        r.setVar("data", data);
-        r.exec("dis.read(data)");
 
         String entryName = (String) r.getVar("entryName");
         String dirName = (String) r.getVar("dirName");
-        RandomAccessStream s = new RandomAccessStream(data);
-        s.order(true);
 
         if (entryName.equals("Field Count")) {
-          core.imageCount[0] = s.readInt();
+          byte[] b = new byte[4];
+          r.setVar("data", b);
+          r.exec("dis.read(data)");
+          core.imageCount[0] = DataTools.bytesToInt(b, 0, true);
         }
         else if (entryName.equals("File Has Image")) {
-          if (s.readShort() == 0) {
+          byte[] b = new byte[2];
+          r.setVar("data", b);
+          r.exec("dis.read(data)");
+          if (DataTools.bytesToInt(b, 0, 2, true) == 0) {
             throw new FormatException("This file does not contain image data.");
           }
         }
         else if (entryName.equals("Comments")) {
-          String comments = new String(data).trim();
+          byte[] b = new byte[numBytes];
+          r.setVar("data", b);
+          r.exec("dis.read(data)");
+          String comments = new String(b).trim();
           StringTokenizer st = new StringTokenizer(comments, "\n");
           while (st.hasMoreTokens()) {
             String token = st.nextToken().trim();
@@ -271,13 +305,16 @@ public class PCIReader extends FormatReader {
           imageFiles.put(ii, entryName);
 
           if (core.sizeX[0] != 0 && core.sizeY[0] != 0) {
-            core.sizeC[0] = data.length / (core.sizeX[0] * core.sizeY[0] *
+            core.sizeC[0] = numBytes / (core.sizeX[0] * core.sizeY[0] *
               FormatTools.getBytesPerPixel(core.pixelType[0]));
           }
         }
         else if (entryName.indexOf("Image_Depth") != -1) {
-          s.order(false);
-          int bits = (int) (s.readLong() & 0x1f00) >> 8;
+          byte[] b = new byte[8];
+          r.setVar("data", b);
+          r.exec("dis.read(data)");
+          int bits =
+            (int) (DataTools.bytesToLong(b, 0, 8, false) & 0x1f00) >> 8;
           while (bits % 8 != 0) bits++;
           switch (bits) {
             case 8:
@@ -292,17 +329,20 @@ public class PCIReader extends FormatReader {
             default:
               throw new FormatException("Unsupported bits per pixel : " + bits);
           }
-          s.order(true);
         }
         else if (entryName.indexOf("Image_Height") != -1) {
-          s.order(false);
-          core.sizeY[0] = (int) ((s.readLong() & 0x1f00) >> 8) * 64;
-          s.order(true);
+          byte[] b = new byte[8];
+          r.setVar("data", b);
+          r.exec("dis.read(data)");
+          core.sizeY[0] = (int)
+            ((DataTools.bytesToLong(b, 0, 8, false) & 0x1f00) >> 8) * 64;
         }
         else if (entryName.indexOf("Image_Width") != -1) {
-          s.order(false);
-          core.sizeX[0] = (int) ((s.readLong() & 0x1f00) >> 8) * 64;
-          s.order(true);
+          byte[] b = new byte[8];
+          r.setVar("data", b);
+          r.exec("dis.read(data)");
+          core.sizeX[0] = (int)
+            ((DataTools.bytesToLong(b, 0, 8, false) & 0x1f00) >> 8) * 64;
         }
         else if (entryName.indexOf("Time_From_Start") != -1) {
         }
@@ -316,8 +356,6 @@ public class PCIReader extends FormatReader {
 
         }
 
-        s.close();
-        data = null;
         r.exec("dis.close()");
       }
     }

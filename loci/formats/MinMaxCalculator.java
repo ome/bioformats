@@ -188,28 +188,22 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    BufferedImage b = super.openImage(no);
-    updateMinMax(b, no);
-    return b;
-  }
-
-  /* @see IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    byte[] b = super.openBytes(no);
-    updateMinMax(b, no);
-    return b;
-  }
-
-  /* @see IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    super.openBytes(no, buf);
+    BufferedImage b = super.openImage(no, x, y, w, h);
+    updateMinMax(b, no);
+    return b;
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    super.openBytes(no, buf, x, y, w, h);
     updateMinMax(buf, no);
     return buf;
   }

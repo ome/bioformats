@@ -57,21 +57,26 @@ public class AliconaReader extends FormatReader {
     return (new String(block)).indexOf("Alicona") != -1;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int pad = (8 - (core.sizeX[0] % 8)) % 8;
 
+    int planeSize = (core.sizeX[0] + pad) * core.sizeY[0];
+
     for (int i=0; i<numBytes; i++) {
-      in.seek(textureOffset + (no * (core.sizeX[0] + pad)*core.sizeY[0]*(i+1)));
-      for (int j=0; j<core.sizeX[0] * core.sizeY[0]; j++) {
-        buf[j*numBytes + i] = in.readByte();
-        if (j % core.sizeX[0] == core.sizeX[0] - 1) in.skipBytes(pad);
+      in.seek(textureOffset + (no * planeSize * (i + 1)));
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x);
+        in.read(buf, i * w * h + row * w, w);
+        in.skipBytes(core.sizeX[0] + pad - x - w);
       }
     }
 

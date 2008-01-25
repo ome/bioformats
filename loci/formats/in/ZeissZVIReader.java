@@ -134,14 +134,16 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     if (noPOI || needLegacy) return legacy.openBytes(no, buf);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     try {
       int tiles = tileRows * tileColumns;
@@ -195,15 +197,23 @@ public class ZeissZVIReader extends FormatReader {
 
         int xf = ((i - start) % tileColumns) * ex * bytes;
         int yf = ((i - start) / tileRows) * ey;
-        int offset = yf*core.sizeX[0]*bytes + xf;
-        for (int y=0; y<ey; y++) {
+        int offset = 0;
+
+        r.setVar("skip", (long) y * core.sizeX[0] * bytes);
+        r.exec("dis.skip(skip)");
+
+        for (int yy=0; yy<h; yy++) {
+          r.setVar("skip", (long) x * bytes);
+          r.exec("dis.skip(skip)");
           r.setVar("offset", offset);
-          r.setVar("len", row);
+          r.setVar("len", w * bytes);
           try {
             r.exec("dis.read(data, offset, len)");
           }
           catch (ReflectException e) { }
-          offset += core.sizeX[0]*bytes;
+          offset += w*bytes;
+          r.setVar("skip", (long) bytes * (core.sizeX[0] - w - x));
+          r.exec("dis.skip(skip)");
         }
 
         if (isJPEG) {

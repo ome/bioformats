@@ -53,16 +53,23 @@ public class LIMReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(0x94b);
-    in.read(buf);
+    in.seek(0x94b + y * core.sizeX[0] * core.sizeC[0]);
+
+    for (int row=0; row<h; row++) {
+      in.skipBytes(x * core.sizeC[0]);
+      in.read(buf, row * w * core.sizeC[0], w * core.sizeC[0]);
+      in.skipBytes(core.sizeC[0] * (core.sizeX[0] - w - x));
+    }
 
     // swap red and blue channels
     if (core.rgb[0]) {

@@ -255,19 +255,21 @@ public class OMETiffReader extends BaseTiffReader {
     return usedFiles;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int ifd = ifdMap[series][no];
     int fileIndex = fileMap[series][no];
 
     in = new RandomAccessStream(usedFiles[fileIndex]);
-    TiffTools.getSamples(usedIFDs[fileIndex][ifd], in, buf);
+    TiffTools.getSamples(usedIFDs[fileIndex][ifd], in, buf, x, y, w, h);
     in.close();
     return swapIfRequired(buf);
   }

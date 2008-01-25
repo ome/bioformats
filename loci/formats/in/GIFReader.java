@@ -122,25 +122,31 @@ public class GIFReader extends FormatReader {
     return table;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     act = (int[]) colorTables.get(no);
 
-    buf = (byte[]) images.get(no);
+    byte[] b = (byte[]) images.get(no);
     if (no > 0) {
       byte[] prev = (byte[]) images.get(no - 1);
-      for (int i=0; i<buf.length; i++) {
-        if ((act[buf[i] & 0xff] & 0xffffff) == 0) {
-          buf[i] = prev[i];
+      for (int i=0; i<b.length; i++) {
+        if ((act[b[i] & 0xff] & 0xffffff) == 0) {
+          b[i] = prev[i];
         }
       }
-      images.setElementAt(buf, no);
+      images.setElementAt(b, no);
+    }
+
+    for (int row=0; row<h; row++) {
+      System.arraycopy(b, (row + y) * core.sizeX[0] + x, buf, row*w, w);
     }
 
     return buf;

@@ -81,18 +81,30 @@ public class LIFReader extends FormatReader {
     return block[0] == 0x70;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     long offset = ((Long) offsets.get(series)).longValue();
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[series]);
     in.seek(offset + core.sizeX[series] * core.sizeY[series] * (long) no *
-      FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount());
-    in.read(buf);
+      bytes * getRGBChannelCount());
+
+    in.skipBytes(y * core.sizeX[series] * bytes * getRGBChannelCount());
+
+    int line = w * bytes * getRGBChannelCount();
+    for (int row=0; row<h; row++) {
+      in.skipBytes(x * bytes * getRGBChannelCount());
+      in.read(buf, row * line, line);
+      in.skipBytes(bytes * getRGBChannelCount() * (core.sizeX[series] - w - x));
+    }
+
     return buf;
   }
 

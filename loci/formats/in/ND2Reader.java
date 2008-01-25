@@ -165,23 +165,27 @@ public class ND2Reader extends FormatReader {
       block[7] == 0x20;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(offsets[series][no]);
 
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    int pixel = bpp * getRGBChannelCount();
+
     if (isJPEG) {
-      BufferedImage b = openImage(no);
+      BufferedImage b = openImage(no, x, y, w, h);
       byte[][] pixels = ImageTools.getPixelBytes(b, false);
       if (pixels.length == 1 && core.sizeC[series] > 1) {
         pixels = ImageTools.splitChannels(pixels[series], core.sizeC[series],
-          FormatTools.getBytesPerPixel(core.pixelType[series]), false,
-          !core.interleaved[series]);
+          bpp, false, !core.interleaved[series]);
       }
       for (int i=0; i<core.sizeC[series]; i++) {
         System.arraycopy(pixels[i], 0, buf, i*pixels[i].length,
@@ -190,43 +194,47 @@ public class ND2Reader extends FormatReader {
       pixels = null;
     }
     else if (isLossless) {
-      byte[] b = new byte[buf.length];
+      int plane = core.sizeX[series] * core.sizeY[series] * pixel;
+      byte[] b = new byte[plane];
       in.read(b);
 
+      byte[] t = null;
       if ((core.sizeX[series] % 2) != 0) {
-        buf = new byte[(core.sizeX[series] + 1) * core.sizeY[series] *
-          getRGBChannelCount() *
-          FormatTools.getBytesPerPixel(core.pixelType[series])];
+        t = new byte[(core.sizeX[series] + 1) * core.sizeY[series] * pixel];
       }
+      else t = new byte[plane];
 
       Inflater decompresser = new Inflater();
       decompresser.setInput(b);
-      try { decompresser.inflate(buf); }
+      try { decompresser.inflate(t); }
       catch (DataFormatException e) { throw new FormatException(e); }
       decompresser.end();
 
-      if ((core.sizeX[series] % 2) != 0) {
-        byte[] tmp = buf;
-        buf = new byte[core.sizeX[series] * core.sizeY[series] *
-          getRGBChannelCount() *
-          FormatTools.getBytesPerPixel(core.pixelType[series])];
-        int row = core.sizeX[series] * getRGBChannelCount() *
-          FormatTools.getBytesPerPixel(core.pixelType[series]);
-        int padRow = (core.sizeX[series] + 1) * getRGBChannelCount() *
-          FormatTools.getBytesPerPixel(core.pixelType[series]);
-        for (int i=0; i<core.sizeY[series]; i++) {
-          System.arraycopy(tmp, padRow * i, buf, row * i, row);
-        }
+      int width = core.sizeX[series];
+      if ((width % 2) != 0) width++;
+
+      for (int row=0; row<h; row++) {
+        System.arraycopy(t, (row + y) * width * pixel + x * pixel,
+          buf, row * w * pixel, w * pixel);
       }
     }
-    else in.readFully(buf);
+    else {
+      in.skipBytes(y * core.sizeX[series] * pixel);
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * pixel);
+        in.read(buf, row * w * pixel, w * pixel);
+        in.skipBytes(pixel * (core.sizeX[series] - w - x));
+      }
+    }
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     if (!isJPEG) {
-      return ImageTools.makeImage(openBytes(no), core.sizeX[series],
+      return ImageTools.makeImage(openBytes(no, x, y, w, h), core.sizeX[series],
         core.sizeY[series], core.sizeC[series], core.interleaved[series],
         FormatTools.getBytesPerPixel(core.pixelType[series]),
         core.littleEndian[series]);
@@ -263,7 +271,7 @@ public class ND2Reader extends FormatReader {
     mciis.close();
     b = null;
 
-    return img;
+    return img.getSubimage(x, y, w, h);
   }
 
   // -- IFormatHandler API methods --
@@ -563,7 +571,7 @@ public class ND2Reader extends FormatReader {
 
     status("Parsing XML");
 
-    if (off > 0 && off < in.length() - 5) {
+    if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
       in.seek(off + 5);
       byte[] b = new byte[(int) (in.length() - off - 5)];
       in.readFully(b);
@@ -749,7 +757,35 @@ public class ND2Reader extends FormatReader {
     if (offsets[0].length > 1 && vs.size() > 1) {
       offsets[0][1] = ((Long) vs.get(1)).longValue();
     }
-    BufferedImage img = openImage(0);
+
+    in.seek(offsets[0][0]);
+
+    long len = 0 < core.imageCount[0] - 1 ? offsets[0][1] -
+      offsets[0][0] : in.length() - offsets[0][0];
+
+    byte[] b = new byte[(int) len];
+    in.readFully(b);
+
+    ByteArrayInputStream bis = new ByteArrayInputStream(b);
+    // NB: Even after registering J2KImageReader with
+    // IIORegistry manually, the following still does not work:
+    //BufferedImage img = ImageIO.read(bis);
+    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
+    BufferedImage img = null;
+    try {
+      r.setVar("mciis", mciis);
+      r.exec("j2kReader.setInput(mciis)");
+      r.setVar("zero", 0);
+      r.setVar("param", null);
+      img = (BufferedImage) r.exec("j2kReader.read(zero, param)");
+    }
+    catch (ReflectException exc) {
+      throw new FormatException(exc);
+    }
+    bis.close();
+    mciis.close();
+    b = null;
+
     Arrays.fill(core.sizeX, img.getWidth());
     Arrays.fill(core.sizeY, img.getHeight());
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;

@@ -84,47 +84,16 @@ public class ChannelMerger extends ReaderWrapper {
     return canMerge() || reader.isRGB();
   }
 
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    if (!canMerge()) return super.openImage(no);
-    int sizeC = getSizeC();
-    int[] nos = getZCTCoords(no);
-
-    int z = nos[0], t = nos[2];
-    String order = reader.getDimensionOrder();
-    int ic = order.indexOf("C") - 2;
-    if (ic < 0 || ic > 2) {
-      throw new FormatException("Invalid dimension order: " + order);
-    }
-    BufferedImage[] img = new BufferedImage[sizeC];
-    for (int c=0; c<sizeC; c++) {
-      img[c] = reader.openImage(reader.getIndex(z, c, t));
-    }
-    return ImageTools.mergeChannels(img);
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
-  /**
-   * Obtains the specified image from the given file as a byte array.
-   * For convenience, the channels are sequential, i.e. "RRR...GGG...BBB".
-   */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    if (!canMerge()) return super.openBytes(no);
-    int sizeC = getSizeC();
-    int[] nos = getZCTCoords(no);
-    int z = nos[0], t = nos[2];
-    byte[] bytes = null;
-    for (int c=0; c<sizeC; c++) {
-      byte[] b = reader.openBytes(reader.getIndex(z, c, t));
-
-      if (c == 0) {
-        // assume array lengths for each channel are equal
-        bytes = new byte[sizeC * b.length];
-      }
-      System.arraycopy(b, 0, bytes, c * b.length, b.length);
-    }
-    return bytes;
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return openBytes(no , buf, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
@@ -141,21 +110,28 @@ public class ChannelMerger extends ReaderWrapper {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] bytes = openBytes(no);
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int ch = getRGBChannelCount();
-    if (buf.length < w * h * bpp * ch) {
-      throw new FormatException("Buffer too small.");
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    if (!canMerge()) return super.openBytes(no, buf, x, y, w, h);
+    int sizeC = getSizeC();
+    int[] nos = getZCTCoords(no);
+    int z = nos[0], t = nos[2];
+    for (int c=0; c<sizeC; c++) {
+      byte[] b = reader.openBytes(reader.getIndex(z, c, t), x, y, w, h);
+      System.arraycopy(b, 0, buf, c * b.length, b.length);
     }
-    return ImageTools.getSubimage(bytes, buf, getSizeX(), getSizeY(), x, y,
-      w, h, bpp, ch, isInterleaved());
+    return buf;
+  }
+
+  /* @see IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return openImage(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openImage(int, int, int, int, int) */
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return openImage(no).getSubimage(x, y, w, h);
+    return ImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
   }
 
   /* @see IFormatReader#openThumbImage(int) */

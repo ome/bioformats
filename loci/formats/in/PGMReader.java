@@ -59,19 +59,30 @@ public class PGMReader extends FormatReader {
     return block[0] == 'P';
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(offset);
-    if (rawBits) in.read(buf);
+    if (rawBits) {
+      int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+      in.skipBytes(bpp * core.sizeX[0] * core.sizeC[0] * y);
+
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bpp * core.sizeC[0]);
+        in.read(buf, row * w * bpp * core.sizeC[0], w * bpp * core.sizeC[0]);
+        in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+      }
+    }
     else {
       int pt = 0;
-      while (pt < buf.length) {
+      while (true) {
         String line = in.readLine().trim();
         line = line.replaceAll("[^0-9]", " ");
         StringTokenizer t = new StringTokenizer(line, " ");

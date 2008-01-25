@@ -59,12 +59,14 @@ public abstract class ImageIOReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    buf = ImageTools.getBytes(openImage(no), false, no);
-    int bytesPerChannel = core.sizeX[0] * core.sizeY[0];
+    buf = ImageTools.getBytes(openImage(no, x, y, w, h), false, no);
+    int bytesPerChannel = w * h;
     if (buf.length > bytesPerChannel) {
       byte[] tmp = buf;
       buf = new byte[bytesPerChannel * 3];
@@ -76,8 +78,10 @@ public abstract class ImageIOReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
@@ -87,7 +91,7 @@ public abstract class ImageIOReader extends FormatReader {
     BufferedImage b = ImageIO.read(dis);
     ras.close();
     dis.close();
-    return b;
+    return b.getSubimage(x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -102,7 +106,8 @@ public abstract class ImageIOReader extends FormatReader {
 
     status("Populating metadata");
     core.imageCount[0] = 1;
-    BufferedImage img = openImage(0);
+    BufferedImage img =
+      ImageIO.read(new DataInputStream(new RandomAccessStream(currentId)));
 
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();

@@ -117,8 +117,10 @@ public class FV1000Reader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
@@ -127,7 +129,7 @@ public class FV1000Reader extends FormatReader {
     String file = (String) (series == 0 ? tiffs.get(no) : previewNames.get(no));
     RandomAccessStream plane = getFile(file);
     Hashtable[] ifds = TiffTools.getIFDs(plane);
-    buf = TiffTools.getSamples(ifds[0], plane, buf);
+    buf = TiffTools.getSamples(ifds[0], plane, buf, x, y, w, h);
     plane.close();
     ifds = null;
     plane = null;

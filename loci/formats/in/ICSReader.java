@@ -117,26 +117,40 @@ public class ICSReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int bpp = bitsPerPixel / 8;
 
     int len = core.sizeX[0] * core.sizeY[0] * bpp * getRGBChannelCount();
     int offset = len * no;
     if (!core.rgb[0] && core.sizeC[0] > 4) {
-      int pt = 0;
-      for (int i=no*bpp; i<data.length; i+=core.sizeC[0]*bpp) {
-        System.arraycopy(data, i, buf, pt, bpp);
-        pt += bpp;
+      for (int row=0; row<h; row++) {
+        for (int col=0; col<w; col++) {
+          for (int b=0; b<bpp; b++) {
+            buf[row * w * bpp + col * bpp + b] =
+              data[(row + y) * core.sizeX[0] * bpp * core.sizeC[0] +
+              (col + x) * bpp * core.sizeC[0] + no * bpp + b];
+          }
+        }
       }
     }
-    else System.arraycopy(data, offset, buf, 0, len);
+    else {
+      int pixel = bpp * getRGBChannelCount();
+      int rowLen = w * pixel;
+      for (int row=0; row<h; row++) {
+        System.arraycopy(data,
+          offset + (row + y) * core.sizeX[0] * pixel + x * pixel, buf,
+          row * rowLen, rowLen);
+      }
+    }
 
     return buf;
   }

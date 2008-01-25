@@ -64,16 +64,20 @@ public class MNGReader extends FormatReader {
       block[6] == 0x1a && block[7] == 0x0a;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    buf = ImageTools.getBytes(openImage(no), true, core.sizeC[0]);
+    buf = ImageTools.getBytes(openImage(no, x, y, w, h), true, core.sizeC[0]);
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
@@ -91,7 +95,7 @@ public class MNGReader extends FormatReader {
     b[6] = 0x1a;
     b[7] = 0x0a;
 
-    return ImageIO.read(new ByteArrayInputStream(b));
+    return ImageIO.read(new ByteArrayInputStream(b)).getSubimage(x, y, w, h);
   }
 
   // -- IFormatHandler API methods --
@@ -116,12 +120,9 @@ public class MNGReader extends FormatReader {
     offsets = new Vector();
     lengths = new Vector();
 
-    in.skipBytes(8);
+    in.skipBytes(12);
 
-    in.skipBytes(4);
-    byte[] b = new byte[4];
-    in.read(b);
-    if (!"MHDR".equals(new String(b))) {
+    if (!"MHDR".equals(in.readString(4))) {
       throw new FormatException("Invalid MNG file.");
     }
 
@@ -139,8 +140,7 @@ public class MNGReader extends FormatReader {
 
     while (in.getFilePointer() < in.length()) {
       int len = in.readInt();
-      in.read(b);
-      String code = new String(b);
+      String code = in.readString(4);
 
       long fp = in.getFilePointer();
 
@@ -175,7 +175,24 @@ public class MNGReader extends FormatReader {
     status("Populating metadata");
 
     core.sizeZ[0] = 1;
-    core.sizeC[0] = openImage(0).getRaster().getNumBands();
+
+    long offset = ((Long) offsets.get(0)).longValue();
+    in.seek(offset);
+    long end = ((Long) lengths.get(0)).longValue();
+    byte[] b = new byte[(int) (end - offset + 8)];
+    in.read(b, 8, b.length - 8);
+    b[0] = (byte) 0x89;
+    b[1] = 0x50;
+    b[2] = 0x4e;
+    b[3] = 0x47;
+    b[4] = 0x0d;
+    b[5] = 0x0a;
+    b[6] = 0x1a;
+    b[7] = 0x0a;
+
+    core.sizeC[0] =
+      ImageIO.read(new ByteArrayInputStream(b)).getRaster().getNumBands();
+
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCZT";
     core.pixelType[0] = FormatTools.UINT8;

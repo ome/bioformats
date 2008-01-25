@@ -274,24 +274,29 @@ public class PictReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkBufferSize(this, buf.length);
-    byte[][] b = ImageTools.getPixelBytes(openImage(no), core.littleEndian[0]);
+    byte[][] b = ImageTools.getPixelBytes(openImage(no, x, y, w, h),
+      core.littleEndian[0]);
     for (int i=0; i<b.length; i++) {
       System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
     }
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
-    return open(bytes);
+    return open(bytes).getSubimage(x, y, w, h);
   }
 
   // -- Internal FormatReader API methods --

@@ -106,42 +106,24 @@ public class FluoviewReader extends BaseTiffReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
-      return super.openBytes(no);
-    }
-    return openBytes(no, new byte[core.sizeX[0] *
-      FormatTools.getBytesPerPixel(core.pixelType[0])]);
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
-      return super.openBytes(no, buf);
+      return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    byte[] b = new byte[core.sizeX[0] *
-      (int) TiffTools.getImageLength(ifds[0]) *
+    byte[] b = new byte[w * h *
       getRGBChannelCount() * FormatTools.getBytesPerPixel(core.pixelType[0])];
-    super.openBytes(0, b);
+    super.openBytes(0, b, x, y, w, h);
     System.arraycopy(b, 0, buf, 0, buf.length);
     return buf;
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (core.sizeY[0] == TiffTools.getImageLength(ifds[0])) {
-      return super.openImage(no);
-    }
-
-    if (zeroImage == null) zeroImage = super.openImage(0);
-    return zeroImage.getSubimage(0, no, core.sizeX[0], 1);
   }
 
   // -- IFormatHandler API methods --

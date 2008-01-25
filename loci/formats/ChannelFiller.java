@@ -76,14 +76,14 @@ public class ChannelFiller extends ReaderWrapper {
     return null;
   }
 
-  /* @see IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     if (reader.isIndexed() && !reader.isFalseColor()) {
       if (getPixelType() == FormatTools.UINT8) {
         byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(),
-          reader.openBytes(no));
+          reader.openBytes(no, x, y, w, h));
         if (isInterleaved()) {
           int pt = 0;
           for (int i=0; i<b[0].length; i++) {
@@ -101,7 +101,7 @@ public class ChannelFiller extends ReaderWrapper {
       }
       else {
         short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
-          reader.openBytes(no), isLittleEndian());
+          reader.openBytes(no, x, y, w, h), isLittleEndian());
 
         if (isInterleaved()) {
           int pt = 0;
@@ -128,22 +128,16 @@ public class ChannelFiller extends ReaderWrapper {
         return buf;
       }
     }
-    return reader.openBytes(no, buf);
+    return reader.openBytes(no, buf, x, y, w, h);
   }
 
-  /* @see IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[getSizeX() * getSizeY() * getRGBChannelCount() *
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] buf = new byte[w * h * getRGBChannelCount() *
       FormatTools.getBytesPerPixel(getPixelType())];
-    return openBytes(no, buf);
-  }
-
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    if (reader.isIndexed() && !reader.isFalseColor()) {
-      return ImageTools.indexedToRGB(reader.openImage(no), isLittleEndian());
-    }
-    return reader.openImage(no);
+    return openBytes(no, buf, x, y, w, h);
   }
 
 }

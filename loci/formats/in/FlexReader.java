@@ -70,14 +70,16 @@ public class FlexReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.FormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
 
     // expand pixel values with multiplication by factor[no]
-    byte[] bytes = super.openBytes(no, buf);
+    byte[] bytes = super.openBytes(no, buf, x, y, w, h);
     if (core.pixelType[0] == FormatTools.UINT8) {
       int num = bytes.length;
       for (int i=num-1; i>=0; i--) {

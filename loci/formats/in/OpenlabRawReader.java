@@ -64,16 +64,27 @@ public class OpenlabRawReader extends FormatReader {
       (block[3] == 'W');
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     in.seek(offsets[no / core.sizeC[0]] + 288);
-    in.read(buf);
+
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    in.skipBytes(y * core.sizeX[0] * bpp * core.sizeC[0]);
+
+    int rowLen = w * bpp * core.sizeC[0];
+    for (int row=0; row<h; row++) {
+      in.skipBytes(x * bpp * core.sizeC[0]);
+      in.read(buf, row * rowLen, rowLen);
+      in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+    }
 
     if (bytesPerPixel == 1) {
       // need to invert the pixels
@@ -105,10 +116,7 @@ public class OpenlabRawReader extends FormatReader {
 
     status("Verifying Openlab RAW format");
 
-    byte[] header = new byte[4];
-    in.read(header);
-    String check = new String(header);
-    if (!check.equals("OLRW")) {
+    if (!in.readString(4).equals("OLRW")) {
       throw new FormatException("Openlab RAW magic string not found.");
     }
 
@@ -121,13 +129,13 @@ public class OpenlabRawReader extends FormatReader {
     offsets = new int[core.imageCount[0]];
     offsets[0] = 12;
 
-    in.readLong();
+    in.skipBytes(8);
     core.sizeX[0] = in.readInt();
     core.sizeY[0] = in.readInt();
-    in.read();
+    in.skipBytes(1);
     core.sizeC[0] = in.read();
     bytesPerPixel = in.read();
-    in.read();
+    in.skipBytes(1);
 
     long stamp = in.readLong();
     Date timestamp = null;
@@ -141,10 +149,8 @@ public class OpenlabRawReader extends FormatReader {
       addMeta("Timestamp", sdf.format(timestamp));
     }
     in.skipBytes(4);
-    byte[] s = new byte[256];
-    in.read(s);
-    int len = s[0] > 0 ? s[0] : (s[0] + 256);
-    addMeta("Image name", new String(s, 1, len).trim());
+    int len = in.read() & 0xff;
+    addMeta("Image name", in.readString(len - 1).trim());
 
     if (core.sizeC[0] <= 1) core.sizeC[0] = 1;
     else core.sizeC[0] = 3;

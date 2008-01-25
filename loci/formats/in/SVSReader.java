@@ -38,6 +38,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class SVSReader extends BaseTiffReader {
 
+  // -- Fields --
+
+  private float[] pixelSize;
+
   // -- Constructor --
 
   /** Constructs a new SVS reader. */
@@ -48,17 +52,21 @@ public class SVSReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (getSeriesCount() == 1) return super.openBytes(no, buf);
+    if (getSeriesCount() == 1) {
+      return super.openBytes(no, buf, x, y, w, h);
+    }
 
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    TiffTools.getSamples(ifds[series], in, buf);
+    TiffTools.getSamples(ifds[series], in, buf, x, y, w, h);
     return swapIfRequired(buf);
   }
 
@@ -68,33 +76,30 @@ public class SVSReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    String comment = TiffTools.getComment(ifds[0]);
-    // one line per series
-    StringTokenizer st = new StringTokenizer(comment, "\n");
-    int seriesNumber = 0;
-    while (st.hasMoreTokens()) {
-      StringTokenizer tokens = new StringTokenizer(st.nextToken(), "|");
-      while (tokens.hasMoreTokens()) {
-        String t = tokens.nextToken();
-        if (t.indexOf("=") == -1) {
-          addMeta("Comment", t);
-        }
-        else {
-          String key = t.substring(0, t.indexOf("=")).trim();
-          String value = t.substring(t.indexOf("=") + 1).trim();
-          addMeta("Series " + seriesNumber + " " + key, value);
+    pixelSize = new float[ifds.length];
+    for (int i=0; i<ifds.length; i++) {
+      String comment = TiffTools.getComment(ifds[i]);
+      StringTokenizer st = new StringTokenizer(comment, "\n");
+      while (st.hasMoreTokens()) {
+        StringTokenizer tokens = new StringTokenizer(st.nextToken(), "|");
+        while (tokens.hasMoreTokens()) {
+          String t = tokens.nextToken();
+          if (t.indexOf("=") == -1) addMeta("Comment", t);
+          else {
+            String key = t.substring(0, t.indexOf("=")).trim();
+            String value = t.substring(t.indexOf("=") + 1).trim();
+            addMeta("Series " + i + " " + key, value);
+            if (key.equals("MPP")) pixelSize[i] = Float.parseFloat(value);
+          }
         }
       }
-      seriesNumber++;
     }
-
-    seriesNumber = ifds.length;
 
     // repopulate core
 
-    core = new CoreMetadata(seriesNumber);
+    core = new CoreMetadata(ifds.length);
 
-    for (int s=0; s<seriesNumber; s++) {
+    for (int s=0; s<ifds.length; s++) {
       int p =
         TiffTools.getIFDIntValue(ifds[s], TiffTools.PHOTOMETRIC_INTERPRETATION);
       int samples =

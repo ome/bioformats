@@ -70,13 +70,15 @@ public class EPSReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     if (isTiff) {
       long[] offsets = TiffTools.getStripOffsets(ifds[0]);
@@ -84,19 +86,28 @@ public class EPSReader extends FormatReader {
 
       int[] map = TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
       if (map == null) {
-        in.read(buf);
+        int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+        in.skipBytes(y * core.sizeX[0] * bpp * core.sizeC[0]);
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bpp * core.sizeC[0]);
+          in.read(buf, row * w * bpp * core.sizeC[0], w * bpp * core.sizeC[0]);
+          in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+        }
         return buf;
       }
 
-      byte[] b = new byte[core.sizeX[0] * core.sizeY[0]];
-      for (int i=0; i<b.length; i++) {
-        b[i] = (byte) in.read();
-        in.read();
+      byte[] b = new byte[w * h];
+      in.skipBytes(2 * y * core.sizeX[0]);
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * 2);
+        for (int col=0; col<w; col++) {
+          b[row * w + col] = (byte) (in.readShort() & 0xff);
+        }
+        in.skipBytes(2 * (core.sizeX[0] - w - x));
       }
 
       for (int i=0; i<b.length; i++) {
-        int ndx = b[i];
-        if (ndx < 0) ndx += 256;
+        int ndx = b[i] & 0xff;
         for (int j=0; j<core.sizeC[0]; j++) {
           buf[i*core.sizeC[0] + j] = (byte) map[ndx + j*256];
         }
@@ -106,29 +117,35 @@ public class EPSReader extends FormatReader {
     }
 
     RandomAccessStream ras = new RandomAccessStream(currentId);
-    int line = 0;
-
-    while (line <= start) {
+    for (int line=0; line<=start; line++) {
       ras.readLine();
-      line++;
     }
 
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
     if (binary) {
-      ras.read(buf, 0, buf.length);
+      ras.skipBytes(y * core.sizeX[0] * bytes * core.sizeC[0]);
+      for (int row=0; row<h; row++) {
+        ras.skipBytes(x * bytes * core.sizeC[0]);
+        ras.read(buf, row*w*bytes*core.sizeC[0], w * bytes * core.sizeC[0]);
+        ras.skipBytes(bytes * core.sizeC[0] * (core.sizeX[0] - w - h));
+      }
     }
     else {
-      long pos = ras.getFilePointer();
-      ras.seek(pos);
+      String pix = ras.readString((int) (ras.length() - ras.getFilePointer()));
+      pix = pix.replaceAll("\n", "");
+      pix = pix.replaceAll("\r", "");
 
-      char[] chars = new char[2];
+      int ndx = core.sizeC[0] * y * bytes * core.sizeX[0];
+      int destNdx = 0;
 
-      for (int i=0; i<buf.length; i++) {
-        chars[0] = ras.readChar();
-        while (chars[0] == '\n') chars[0] = ras.readChar();
-        chars[1] = ras.readChar();
-        while (chars[1] == '\n') chars[1] = ras.readChar();
-        String s = new String(chars);
-        buf[i] = (byte) Integer.parseInt(s, 16);
+      for (int row=0; row<h; row++) {
+        ndx += x * core.sizeC[0] * bytes;
+        for (int col=0; col<w*core.sizeC[0]*bytes; col++) {
+          buf[destNdx++] =
+            (byte) Integer.parseInt(pix.substring(2*ndx, 2*(ndx+1)), 16);
+          ndx++;
+        }
+        ndx += core.sizeC[0] * bytes * (core.sizeX[0] - w - x);
       }
     }
     ras.close();
@@ -200,13 +217,6 @@ public class EPSReader extends FormatReader {
       store.setImageCreationDate(
         DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
       MetadataTools.populatePixels(store, this);
-      // CTR CHECK
-//      for (int i=0; i<core.sizeC[0]; i++) {
-//        store.setLogicalChannel(i, null, null, null, null, null, null, null,
-//         null, null, null, null, null, null, null, null, null, null, null,
-//         null, null, null, null, null, null);
-//      }
-
       return;
     }
 
@@ -304,12 +314,6 @@ public class EPSReader extends FormatReader {
     store.setImageName("", 0);
 
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//       null, null, null, null, null, null, null, null, null, null, null, null,
-//       null, null, null, null);
-//    }
   }
 
 }

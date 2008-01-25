@@ -85,19 +85,27 @@ public class DeltavisionReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     // read the image plane's pixel data
     long offset = HEADER_LENGTH + extSize;
     long bytes = core.sizeX[0] * core.sizeY[0] * bytesPerPixel;
-    in.seek(offset + bytes*no);
-    in.read(buf);
+    in.seek(offset + bytes*no + y * core.sizeX[0] * bytesPerPixel);
+
+    for (int row=0; row<h; row++) {
+      in.skipBytes(x * bytesPerPixel);
+      in.read(buf, w * bytesPerPixel * row, w * bytesPerPixel);
+      in.skipBytes(bytesPerPixel * (core.sizeX[0] - w - x));
+    }
+
     return buf;
   }
 

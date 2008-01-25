@@ -82,30 +82,38 @@ public class BMPReader extends FormatReader {
     return palette;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     if (compression != 0) {
       throw new FormatException("Compression type " + compression +
         " not supported");
     }
 
-    in.seek(global);
+    int rowsToSkip = core.sizeY[0] - (h + y);
+    int rowLength = core.sizeX[0] * (isIndexed() ? 1 : core.sizeC[0]);
+    in.seek(global + rowsToSkip * rowLength);
 
     if ((palette != null && palette[0].length > 0) || core.sizeC[0] == 1) {
-      for (int y=core.sizeY[0]-1; y>=0; y--) {
-        in.read(buf, y*core.sizeX[0], core.sizeX[0]);
+      for (int row=h-1; row>=0; row--) {
+        in.skipBytes(x);
+        in.read(buf, row*w, w);
+        in.skipBytes(core.sizeX[0] - w - x);
       }
     }
     else {
-      int row = core.sizeX[0] * core.sizeC[0];
-      for (int y=core.sizeY[0]-1; y>=0; y--) {
-        in.read(buf, y*row, row);
+      int len = core.sizeX[0] * core.sizeC[0];
+      for (int row=h-1; row>=y; row--) {
+        in.skipBytes(x * core.sizeC[0]);
+        in.read(buf, row*w*core.sizeC[0], w*core.sizeC[0]);
+        in.skipBytes(core.sizeC[0] * (core.sizeX[0] - w - x));
       }
       for (int i=0; i<buf.length/core.sizeC[0]; i++) {
         byte tmp = buf[i*core.sizeC[0] + 2];

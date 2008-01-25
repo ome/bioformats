@@ -77,23 +77,33 @@ public class PerkinElmerReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     if (isTiff) {
       tiff[no / core.sizeC[0]].setId(files[no / core.sizeC[0]]);
-      return tiff[no / core.sizeC[0]].openBytes(0, buf);
+      return tiff[no / core.sizeC[0]].openBytes(0, buf, x, y, w, h);
     }
 
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     String file = files[no];
     RandomAccessStream ras = new RandomAccessStream(file);
-    ras.skipBytes(6);
-    ras.read(buf);
+
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    ras.skipBytes(6 + y * core.sizeX[0] * bytes);
+
+    for (int row=0; row<h; row++) {
+      ras.skipBytes(x * bytes);
+      ras.read(buf, row * w * bytes, w * bytes);
+      ras.skipBytes(bytes * (core.sizeX[0] - w - x));
+    }
+
     ras.close();
     return buf;
   }

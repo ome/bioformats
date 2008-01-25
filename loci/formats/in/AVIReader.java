@@ -84,13 +84,15 @@ public class AVIReader extends FormatReader {
     return new String(block).startsWith("RIFF");
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
     double p = ((double) bmpScanLineSize) / bmpBitsPerPixel;
@@ -102,7 +104,15 @@ public class AVIReader extends FormatReader {
     long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek(fileOff);
 
-    if (bmpCompression != 0) return uncompress(no, buf);
+    if (bmpCompression != 0) {
+      byte[] b = uncompress(no, buf);
+      int rowLen = w * bytes * core.sizeC[0];
+      for (int row=0; row<h; row++) {
+        System.arraycopy(b, (row + y) * core.sizeX[0] * bytes * core.sizeC[0],
+          buf, row * rowLen, rowLen);
+      }
+      return buf;
+    }
 
     if (bmpBitsPerPixel < 8) {
       int rawSize = bytes * core.sizeY[0] * effectiveWidth * core.sizeC[0];
@@ -111,8 +121,8 @@ public class AVIReader extends FormatReader {
       byte[] b = new byte[rawSize];
 
       int len = rawSize / core.sizeY[0];
-      for (int y=0; y<core.sizeY[0]; y++) {
-        in.read(b, (core.sizeY[0] - y - 1) * len, len);
+      for (int row=0; row<core.sizeY[0]; row++) {
+        in.read(b, (core.sizeY[0] - row - 1) * len, len);
       }
 
       BitBuffer bb = new BitBuffer(b);
@@ -125,18 +135,22 @@ public class AVIReader extends FormatReader {
     }
 
     int pad = bmpScanLineSize - core.sizeX[0]*(bmpBitsPerPixel / 8);
-    int scanline = core.sizeX[0] * (bmpBitsPerPixel / 8);
+    int scanline = w * (bmpBitsPerPixel / 8);
 
     for (int i=core.sizeY[0] - 1; i>=0; i--) {
-      in.read(buf, i*scanline, scanline);
-      if (bmpBitsPerPixel == 24) {
-        for (int j=0; j<core.sizeX[0]; j++) {
-          byte r = buf[i*scanline + j*3 + 2];
-          buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
-          buf[i*scanline + j*3] = r;
+      in.skipBytes(x * (bmpBitsPerPixel / 8));
+      if (i >= (h + y)|| i < y) in.skipBytes(scanline);
+      else {
+        in.read(buf, (i - y)*scanline, scanline);
+        if (bmpBitsPerPixel == 24) {
+          for (int j=0; j<core.sizeX[0]; j++) {
+            byte r = buf[i*scanline + j*3 + 2];
+            buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
+            buf[i*scanline + j*3] = r;
+          }
         }
       }
-      in.skipBytes(pad * (bmpBitsPerPixel / 8));
+      in.skipBytes((bmpBitsPerPixel / 8) * (core.sizeX[0] - w - x + pad));
     }
 
     if (bmpBitsPerPixel == 16) {

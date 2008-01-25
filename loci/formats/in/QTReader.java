@@ -134,13 +134,15 @@ public class QTReader extends FormatReader {
     if (useLegacy) legacy.setMetadataStore(store);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     String code = codec;
     if (no >= getImageCount() - altPlanes) code = altCodec;
@@ -157,7 +159,7 @@ public class QTReader extends FormatReader {
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
       legacy.setId(currentId);
-      return legacy.openBytes(no);
+      return legacy.openBytes(no, buf, x, y, w, h);
     }
 
     int offset = ((Integer) offsets.get(no)).intValue();
@@ -185,23 +187,23 @@ public class QTReader extends FormatReader {
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1) &&
       !code.equals(altCodec);
 
-    buf = uncompress(pixs, code);
+    byte[] t = uncompress(pixs, code);
     if (code.equals("rpza")) {
-      for (int i=0; i<buf.length; i++) {
-        buf[i] = (byte) (255 - buf[i]);
+      for (int i=0; i<t.length; i++) {
+        t[i] = (byte) (255 - t[i]);
       }
       prevPlane = no;
       return buf;
     }
 
     // on rare occassions, we need to trim the data
-    if (canUsePrevious && (prevPixels.length < buf.length)) {
-      byte[] temp = buf;
-      buf = new byte[prevPixels.length];
-      System.arraycopy(temp, 0, buf, 0, buf.length);
+    if (canUsePrevious && (prevPixels.length < t.length)) {
+      byte[] temp = t;
+      t = new byte[prevPixels.length];
+      System.arraycopy(temp, 0, t, 0, t.length);
     }
 
-    prevPixels = buf;
+    prevPixels = t;
     prevPlane = no;
 
     // determine whether we need to strip out any padding bytes
@@ -214,11 +216,21 @@ public class QTReader extends FormatReader {
     if (size * (bitsPerPixel / 8) == prevPixels.length) pad = 0;
 
     if (pad > 0) {
-      buf = new byte[prevPixels.length - core.sizeY[0]*pad];
+      t = new byte[prevPixels.length - core.sizeY[0]*pad];
 
       for (int row=0; row<core.sizeY[0]; row++) {
-        System.arraycopy(prevPixels, row*(core.sizeX[0]+pad), buf,
+        System.arraycopy(prevPixels, row*(core.sizeX[0]+pad), t,
           row*core.sizeX[0], core.sizeX[0]);
+      }
+    }
+
+    int bpp = bitsPerPixel / 8;
+    if (bpp > 4) bpp -= 4;
+
+    for (int cc=0; cc<bpp; cc++) {
+      for (int row=0; row<h; row++) {
+        System.arraycopy(t, cc * core.sizeX[0] * core.sizeY[0] +
+          (row + y) * core.sizeX[0] + x, buf, cc * h * w + row * w, w);
       }
     }
 
@@ -247,8 +259,10 @@ public class QTReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
@@ -267,13 +281,13 @@ public class QTReader extends FormatReader {
     if (doLegacy) {
       if (legacy == null) legacy = createLegacyReader();
       legacy.setId(currentId);
-      return legacy.openImage(no);
+      return legacy.openImage(no, x, y, w, h);
     }
 
     int bpp = bitsPerPixel / 8;
     if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
-    return ImageTools.makeImage(openBytes(no), core.sizeX[0],
-      core.sizeY[0], core.sizeC[0], false, bpp, core.littleEndian[0]);
+    return ImageTools.makeImage(openBytes(no, x, y, w, h), w,
+      h, core.sizeC[0], false, bpp, core.littleEndian[0]);
   }
 
   // -- IFormatHandler API methods --

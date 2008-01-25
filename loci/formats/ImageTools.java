@@ -28,6 +28,7 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
+import java.io.IOException;
 
 /**
  * A utility class with convenience methods for manipulating images.
@@ -465,6 +466,76 @@ public final class ImageTools {
 
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
+  }
+
+  /**
+   * Creates an image from the given byte array, using the given
+   * IFormatReader to retrieve additional information.
+   */
+  public static BufferedImage openImage(byte[] buf, IFormatReader r,
+    int w, int h) throws FormatException, IOException
+  {
+    int pixelType = r.getPixelType();
+    if (pixelType == FormatTools.FLOAT) {
+      float[] f =
+        (float[]) DataTools.makeDataArray(buf, 4, true, r.isLittleEndian());
+      if (r.isNormalized()) f = DataTools.normalizeFloats(f);
+      return makeImage(f, w, h, r.getRGBChannelCount(), true); 
+    }
+
+    boolean signed = pixelType == FormatTools.INT8 ||
+      pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
+
+    if (signed) {
+      if (pixelType == FormatTools.INT8) buf = DataTools.makeSigned(buf);
+      else if (pixelType == FormatTools.INT16) {
+        short[] s =
+          (short[]) DataTools.makeDataArray(buf, 2, false, r.isLittleEndian());
+        s = DataTools.makeSigned(s);
+        for (int i=0; i<s.length; i++) {
+          byte high = (byte) (s[i] >> 8);
+          byte low = (byte) s[i];
+          buf[i * 2] = r.isLittleEndian() ? low : high;
+          buf[i * 2 + 1] = r.isLittleEndian() ? high : low;
+        }
+      }
+      else if (pixelType == FormatTools.INT32) {
+        int[] ii =
+          (int[]) DataTools.makeDataArray(buf, 4, false, r.isLittleEndian());
+        ii = DataTools.makeSigned(ii);
+        for (int i=0; i<ii.length; i++) {
+          buf[i*4] = (byte) (r.isLittleEndian() ? ii[i] : ii[i] >> 24);
+          buf[i*4 + 1] = (byte) (r.isLittleEndian() ? ii[i] >> 8 : ii[i] >> 16);
+          buf[i*4 + 2] = (byte) (r.isLittleEndian() ? ii[i] >> 16 : ii[i] >> 8);
+          buf[i*4 + 3] = (byte) (r.isLittleEndian() ? ii[i] >> 24 : ii[i]);
+        }
+      }
+    }
+
+    BufferedImage b = ImageTools.makeImage(buf, w, h,
+      r.isIndexed() ? 1 : r.getRGBChannelCount(), r.isInterleaved(),
+      FormatTools.getBytesPerPixel(r.getPixelType()), r.isLittleEndian());
+
+    if (r.isIndexed()) {
+      IndexedColorModel model = null;
+      if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
+        byte[][] table = r.get8BitLookupTable();
+        model = new IndexedColorModel(8, table[0].length, table);
+      }
+      else if (pixelType == FormatTools.UINT16 ||
+        pixelType == FormatTools.INT16)
+      {
+        short[][] table = r.get16BitLookupTable();
+        model = new IndexedColorModel(16, table[0].length, table);
+      }
+      if (model != null) {
+        WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
+          b.getData().getDataBuffer(), null);
+        b = new BufferedImage(model, raster, false, null);
+      }
+    }
+
+    return b;
   }
 
   // -- Data extraction --

@@ -91,26 +91,43 @@ public class BioRadReader extends FormatReader {
     return (String[]) used.toArray(new String[0]);
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
+
+    int bytes = byteFormat ? 1 : 2;
 
     if (picFiles != null) {
       int file = no % picFiles.length;
       RandomAccessStream ras = new RandomAccessStream(picFiles[file]);
       long offset = (no / picFiles.length) *
-        core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2);
+        core.sizeX[0] * core.sizeY[0] * bytes;
       ras.seek(offset + 76);
-      ras.read(buf);
+
+      ras.skipBytes(y * core.sizeX[0] * bytes);
+      for (int row=0; row<h; row++) {
+        ras.skipBytes(x * bytes);
+        ras.read(buf, row * w * bytes, w * bytes);
+        ras.skipBytes(bytes * (core.sizeX[0] - w - x));
+      }
+
       ras.close();
     }
     else {
-      in.seek(no * core.sizeX[0] * core.sizeY[0] * (byteFormat ? 1 : 2) + 76);
-      in.read(buf);
+      in.seek(no * core.sizeX[0] * core.sizeY[0] * bytes + 76);
+
+      in.skipBytes(y * core.sizeX[0] * bytes);
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bytes);
+        in.read(buf, row * w * bytes, w * bytes);
+        in.skipBytes(bytes * (core.sizeX[0] - w - x));
+      }
     }
     return buf;
   }

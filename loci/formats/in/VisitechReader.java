@@ -56,16 +56,18 @@ public class VisitechReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int plane = core.sizeX[series] * core.sizeY[series] *
-      FormatTools.getBytesPerPixel(core.pixelType[series]);
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    int plane = core.sizeX[series] * core.sizeY[series] * bpp;
 
     int div = core.sizeZ[series] * core.sizeT[series];
     int fileIndex = (series * core.sizeC[series]) + no / div;
@@ -81,7 +83,14 @@ public class VisitechReader extends FormatReader {
       if (planeIndex == 0) s.seek(s.getFilePointer() - 4);
       else s.skipBytes((plane + 164) * planeIndex - 4);
     }
-    s.read(buf);
+
+    s.skipBytes(y * core.sizeX[series] * bpp);
+    for (int row=0; row<h; row++) {
+      s.skipBytes(x * bpp);
+      s.read(buf, row * w * bpp, w * bpp);
+      s.skipBytes(bpp * (core.sizeX[series] - w - x));
+    }
+
     s.close();
     return buf;
   }

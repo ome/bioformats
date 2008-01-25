@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataStore;
 
@@ -40,6 +40,24 @@ import loci.formats.meta.MetadataStore;
  */
 public class GatanReader extends FormatReader {
 
+  // -- Constants --
+
+  /** Tag types. */
+  private static final int GROUP = 20;
+  private static final int VALUE = 21;
+
+  /** Data types. */
+  private static final int ARRAY = 15;
+  private static final int SHORT = 2;
+  private static final int USHORT = 4;
+  private static final int INT = 3;
+  private static final int UINT = 5;
+  private static final int FLOAT = 6;
+  private static final int DOUBLE = 7;
+  private static final int BYTE = 8;
+  private static final int UBYTE = 9;
+  private static final int CHAR = 10;
+
   // -- Fields --
 
   /** Offset to pixel data. */
@@ -51,9 +69,12 @@ public class GatanReader extends FormatReader {
   private int bytesPerPixel;
 
   private int pixelDataNum = 0;
-  private int datatype;
+  private int numPixelBytes;
 
-  private String gamma, mag;
+  private boolean signed;
+  private long timestamp;
+  private float gamma, mag, voltage;
+  private String info;
 
   // -- Constructor --
 
@@ -68,16 +89,25 @@ public class GatanReader extends FormatReader {
     return DataTools.bytesToInt(block, false) == 3;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(pixelOffset);
-    in.read(buf);
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    in.seek(pixelOffset + y * core.sizeX[0] * bpp);
+
+    for (int row=0; row<h; row++) {
+      in.skipBytes(x * bpp);
+      in.read(buf, row * w * bpp, w * bpp);
+      in.skipBytes(bpp * (core.sizeX[0] - w - x));
+    }
+
     return buf;
   }
 
@@ -87,7 +117,7 @@ public class GatanReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     pixelOffset = 0;
-    bytesPerPixel = pixelDataNum = datatype = 0;
+    bytesPerPixel = pixelDataNum = numPixelBytes = 0;
     pixelSizes = null;
   }
 
@@ -116,35 +146,31 @@ public class GatanReader extends FormatReader {
 
     in.skipBytes(4);
     core.littleEndian[0] = in.readInt() == 1;
+    in.order(!core.littleEndian[0]);
 
     // TagGroup instance
 
     in.skipBytes(2);
-    in.order(!core.littleEndian[0]);
     parseTags(in.readInt(), "initFile");
 
     status("Populating metadata");
 
-    switch (datatype) {
+    core.littleEndian[0] = true;
+
+    int bytes = numPixelBytes / (core.sizeX[0] * core.sizeY[0]);
+
+    switch (bytes) {
       case 1:
-      case 10:
-        core.pixelType[0] = FormatTools.UINT16;
+        core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
         break;
       case 2:
-      case 3:
-      case 5:
-      case 12:
-      case 13:
-        core.pixelType[0] = FormatTools.FLOAT;
+        core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
         break;
-      case 7:
-      case 8:
-      case 11:
-      case 23:
-        core.pixelType[0] = FormatTools.UINT32;
+      case 4:
+        core.pixelType[0] = signed ? FormatTools.INT32 : FormatTools.UINT32;
         break;
       default:
-        core.pixelType[0] = FormatTools.UINT8;
+        throw new FormatException("Unsupported pixel type");
     }
 
     core.sizeZ[0] = 1;
@@ -187,19 +213,30 @@ public class GatanReader extends FormatReader {
 
     for (int i=0; i<core.sizeC[0]; i++) {
       // CTR CHECK
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-
-      // CTR CHECK
 //      store.setDisplayChannel(new Integer(i), null, null,
-//        gamma == null ? null : new Float(gamma), null);
+//        new Float(gamma), null);
     }
 
     // CTR CHECK
-    //if (mag != null) {
-    //  store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
-    //}
+    //store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+    //store.setDetectorVoltage(new Float(voltage), 0, 0);
+
+    StringTokenizer scopeInfo = new StringTokenizer(info, "(");
+    while (scopeInfo.hasMoreTokens()) {
+      String token = scopeInfo.nextToken().trim();
+      if (token.startsWith("Microscope")) {
+        //token = token.substring(0, token.indexOf(" ")).trim();
+        //store.setMicroscopeManufacturer(
+        //  token.substring(token.indexOf(" ")).trim(), 0, 0);
+        //store.setMicroscopeModel(token, 0, 0);
+      }
+      else if (token.startsWith("Mode")) {
+        token = token.substring(token.indexOf(" ")).trim();
+        String mode = token.substring(0, token.indexOf(" ")).trim();
+        if (mode.equals("TEM")) mode = "Other";
+        store.setLogicalChannelMode(mode, 0, 0);
+      }
+    }
   }
 
   // -- Helper methods --
@@ -220,182 +257,179 @@ public class GatanReader extends FormatReader {
       // image dimensions are in type 20 tag with 2 type 15 tags
       // bytes per pixel is in type 21 tag with label 'PixelDepth'
 
-      if (type == 21) {
+      String value = null;
+
+      if (type == VALUE) {
         in.skipBytes(4);  // equal to '%%%%'
         int n = in.readInt();
         int dataType = 0;
         if (n == 1) {
           dataType = in.readInt();
-          String data;
-          in.order(core.littleEndian[0]);
-          switch (dataType) {
-            case 2:
-            case 4:
-              data = "" + in.readShort();
-              break;
-            case 3:
-            case 5:
-              data = "" + in.readInt();
-              break;
-            case 6:
-              data = "" + in.readFloat();
-              break;
-            case 7:
-              data = "" + in.readFloat();
-              in.skipBytes(4);
-              break;
-            case 8:
-            case 9:
-            case 10:
-              data = "" + in.read();
-              break;
-            default:
-              data = "0";
+          if (parent.equals("Dimensions") && labelString.length() == 0) {
+            in.order(!in.isLittleEndian());
+            if (i == 0) core.sizeX[0] = in.readInt();
+            else if (i == 1) core.sizeY[0] = in.readInt();
+            in.order(!in.isLittleEndian());
           }
-          if (parent.equals("Dimensions")) {
-            if (i == 0) core.sizeX[0] = Integer.parseInt(data);
-            else if (i == 1) core.sizeY[0] = Integer.parseInt(data);
-          }
-          if (labelString.equals("PixelDepth")) {
-            bytesPerPixel = Integer.parseInt(data);
-          }
-          else if (labelString.equals("Scale") && !data.equals("1.0") &&
-            !data.equals("0.0"))
-          {
-            pixelSizes.add(data);
-          }
-          addMeta(labelString, data);
-          if (labelString.equals("DataType")) datatype = Integer.parseInt(data);
-          else if (labelString.equals("Gamma")) gamma = data;
-          else if (labelString.equals("Indicated Magnification")) mag = data;
-          in.order(!core.littleEndian[0]);
+          else value = String.valueOf(readValue(dataType));
         }
         else if (n == 2) {
-          in.order(core.littleEndian[0]);
           dataType = in.readInt();
           if (dataType == 18) { // this should always be true
             length = in.readInt();
           }
-          String data = in.readString(length);
-          addMeta(labelString, data);
-          if (labelString.equals("Gamma")) gamma = data;
-          else if (labelString.equals("Indicated Magnification")) mag = data;
-          in.order(!core.littleEndian[0]);
+          value = in.readString(length);
         }
-        else if (n == 3) {
+        else if (n == 3 && !labelString.equals("Data")) {
           dataType = in.readInt();
-          if (dataType == 20) { // this should always be true
+          if (dataType == GROUP) { // this should always be true
             dataType = in.readInt();
             length = in.readInt();
-
-            if ("Data".equals(labelString)) pixelDataNum++;
-
-            if ("Data".equals(labelString) /*&& pixelDataNum == 2*/) {
-              // we're given the number of pixels, but the tag containing
-              // bytes per pixel doesn't occur until after the image data
-              //
-              // this is a messy way to read pixel data, which uses the fact
-              // that the first byte after the pixel data is either 20 or 21
-
-              byte check = 0;
-              double bpp = 0.5;
-              long pos = in.getFilePointer();
-              while (check != 20 && check != 21) {
-                bpp *= 2;
-                in.seek(pos);
-                pixelOffset = pos;
-                in.skipBytes((int) (bpp * length));
-                check = in.readByte();
-              }
-              in.seek((long) (pos + bpp * length));
+            if (dataType == 10) {
+              in.skipBytes(length);
             }
             else {
-              int[] data = new int[length];
-              for (int j=0; j<length; j++) {
-                if (dataType == 2 || dataType == 4) {
-                  data[j] = in.readShort();
-                }
-                else if (dataType == 7) in.skipBytes(8);
-                else if (dataType == 8 || dataType == 9) in.skipBytes(1);
-                else {
-                  data[j] = in.readInt();
-                }
-              }
+              value = DataTools.stripString(in.readString(length * 2));
             }
+          }
+        }
+        else if (n == 3 && labelString.equals("Data")) {
+          dataType = in.readInt();
+          if (dataType == GROUP) {  // this should always be true
+            dataType = in.readInt();
+            length = in.readInt();
+            pixelOffset = in.getFilePointer();
+            in.skipBytes(getNumBytes(dataType) * length);
+            numPixelBytes = (int) (in.getFilePointer() - pixelOffset);
           }
         }
         else {
           dataType = in.readInt();
           // this is a normal struct of simple types
-          if (dataType == 15) {
-            int skip = in.readInt();
+          if (dataType == ARRAY) {
+            in.skipBytes(4);
             int numFields = in.readInt();
+            StringBuffer s = new StringBuffer();
+            in.skipBytes(4);
             for (int j=0; j<numFields; j++) {
-              skip += in.readInt();
               dataType = in.readInt();
-
-              switch (dataType) {
-                case 2:
-                case 4:
-                  skip += 2;
-                  break;
-                case 3:
-                case 5:
-                case 6:
-                  skip += 4;
-                  break;
-                case 7:
-                  skip += 8;
-                  break;
-                case 8:
-                case 9:
-                  skip += 1;
-                  break;
-              }
+              s.append(readValue(dataType));
+              if (j < numFields - 1) s.append(", ");
             }
-            in.skipBytes(skip);
+            value = s.toString();
+            byte b = in.readByte();
+            while (b != GROUP && b != VALUE &&
+              in.getFilePointer() < in.length() - 1)
+            {
+              b = in.readByte();
+            }
+            in.seek(in.getFilePointer() - 1);
           }
-          else if (dataType == 20) {
+          else if (dataType == GROUP) {
             // this is an array of structs
-            int skip = 0;
             dataType = in.readInt();
-            if (dataType == 15) { // should always be true
-              skip += in.readInt();
+            if (dataType == ARRAY) { // should always be true
+              in.skipBytes(4);
               int numFields = in.readInt();
+              int[] datatypes = new int[numFields];
               for (int j=0; j<numFields; j++) {
-                skip += in.readInt();
-                dataType = in.readInt();
+                in.skipBytes(4);
+                datatypes[j] = in.readInt();
+              }
+              int len = in.readInt();
 
-                switch (dataType) {
-                  case 2:
-                  case 4:
-                    skip += 2;
-                    break;
-                  case 3:
-                  case 5:
-                  case 6:
-                    skip += 4;
-                    break;
-                  case 7:
-                    skip += 8;
-                    break;
-                  case 8:
-                  case 9:
-                    skip += 1;
-                    break;
+              double[][] values = new double[numFields][len];
+
+              for (int k=0; k<len; k++) {
+                for (int q=0; q<numFields; q++) {
+                  values[q][k] = readValue(datatypes[q]);
                 }
               }
             }
-            skip *= in.readInt();
-            in.skipBytes(skip);
           }
         }
       }
-      else if (type == 20) {
+      else if (type == GROUP) {
         in.skipBytes(2);
         parseTags(in.readInt(), labelString);
       }
+
+      if (value != null) {
+        addMeta(labelString, value);
+
+        if (labelString.equals("Scale")) {
+          if (value.indexOf(",") == -1) pixelSizes.add(value);
+          else {
+            float start =
+              Float.parseFloat(value.substring(0, value.indexOf(",")));
+            float end =
+              Float.parseFloat(value.substring(value.indexOf(",") + 2));
+            pixelSizes.add(String.valueOf(end - start));
+          }
+        }
+        else if (labelString.equals("LowLimit")) {
+          signed = Float.parseFloat(value) < 0;
+        }
+        else if (labelString.equals("Acquisition Start Time (epoch)")) {
+          timestamp = (long) Double.parseDouble(value);
+        }
+        else if (labelString.equals("Voltage")) {
+          voltage = Float.parseFloat(value);
+        }
+        else if (labelString.equals("Microscope Info")) info = value;
+        else if (labelString.equals("Indicated Magnification")) {
+          mag = Float.parseFloat(value);
+        }
+        else if (labelString.equals("Gamma")) gamma = Float.parseFloat(value);
+
+        value = null;
+      }
     }
+  }
+
+  private double readValue(int type) throws IOException {
+    switch (type) {
+      case SHORT:
+      case USHORT:
+        return in.readShort();
+      case INT:
+      case UINT:
+        return in.readInt();
+      case FLOAT:
+        in.order(!in.isLittleEndian());
+        float f = in.readFloat();
+        in.order(!in.isLittleEndian());
+        return f;
+      case DOUBLE:
+        in.order(!in.isLittleEndian());
+        double dbl = in.readDouble();
+        in.order(!in.isLittleEndian());
+        return dbl;
+      case BYTE:
+      case UBYTE:
+      case CHAR:
+        return in.readByte();
+    }
+    return 0;
+  }
+
+  private int getNumBytes(int type) {
+    switch (type) {
+      case SHORT:
+      case USHORT:
+        return 2;
+      case INT:
+      case UINT:
+      case FLOAT:
+        return 4;
+      case DOUBLE:
+        return 8;
+      case BYTE:
+      case UBYTE:
+      case CHAR:
+        return 1;
+    }
+    return 0;
   }
 
 }

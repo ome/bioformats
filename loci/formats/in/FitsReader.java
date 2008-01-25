@@ -57,18 +57,24 @@ public class FitsReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(2880 + 2880 * (((count * 80) - 1) / 2880));
-    int line = core.sizeX[0] * FormatTools.getBytesPerPixel(core.pixelType[0]);
-    for (int y=core.sizeY[0]-1; y>=0; y--) {
-      in.read(buf, y*line, line);
+    in.seek(2880 * ((((count * 80) - 1) / 2880) + 1));
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int line = core.sizeX[0] * bytes;
+    in.skipBytes(line * y);
+    for (int row=h-1; row>=0; row--) {
+      in.skipBytes(x * bytes);
+      in.read(buf, row*w*bytes, w*bytes);
+      in.skipBytes(bytes * (core.sizeX[0] - w - x));
     }
     return buf;
   }
@@ -94,6 +100,7 @@ public class FitsReader extends FormatReader {
       throw new FormatException("Unsupported FITS file.");
     }
 
+    String key = "", value = "";
     while (true) {
       count++;
       line = in.readString(80);
@@ -102,8 +109,6 @@ public class FitsReader extends FormatReader {
       int ndx = line.indexOf("=");
       int comment = line.indexOf("/", ndx);
       if (comment < 0) comment = line.length();
-
-      String key = "", value = "";
 
       if (ndx >= 0) {
         key = line.substring(0, ndx).trim();
@@ -147,11 +152,6 @@ public class FitsReader extends FormatReader {
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
     MetadataTools.populatePixels(store, this);
-
-    // CTR CHECK
-//    store.setLogicalChannel(0, null, null, null, null, null, null, null, null,
-//      null, null, null, null, null, null, null, null, null, null, null,
-//      null, null, null, null, null);
   }
 
 }

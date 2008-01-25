@@ -81,30 +81,43 @@ public class LegacyND2Reader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    if (goodReader != null) return goodReader.openBytes(no, buf);
+    if (goodReader != null) return goodReader.openBytes(no, buf, x, y, w, h);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
-    getImage(buf, getSeries(), zct[0], zct[1], zct[2]);
+    int bpc = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    byte[] b = new byte[core.sizeX[series] * core.sizeY[series] * bpc *
+      getRGBChannelCount()];
+
+    getImage(b, getSeries(), zct[0], zct[1], zct[2]);
+
+    int pixel = bpc * getRGBChannelCount();
+    int rowLen = w * pixel;
+    for (int row=0; row<h; row++) {
+      System.arraycopy(b, (row + y) * core.sizeX[series] * pixel + x * pixel,
+        buf, row * rowLen, rowLen);
+    }
 
     if (core.rgb[series]) {
-      int bpc = FormatTools.getBytesPerPixel(core.pixelType[series]);
       int bpp = core.sizeC[series] * bpc;
-      int line = core.sizeX[series] * bpp;
-      for (int y=0; y<core.sizeY[series]; y++) {
-        for (int x=0; x<core.sizeX[series]; x++) {
-          for (int b=0; b<bpc; b++) {
-            byte blue = buf[y*line + x*bpp + bpc*(core.sizeC[series] - 1) + b];
-            buf[y*line + x*bpp + bpc*(core.sizeC[series] - 1) + b] =
-              buf[y*line + x*bpp + b];
-            buf[y*line + x*bpp + b] = blue;
+      int line = w * bpp;
+      for (int row=0; row<h; row++) {
+        for (int col=0; col<w; col++) {
+          for (int bb=0; bb<bpc; bb++) {
+            byte blue =
+              buf[y*line + col*bpp + bpc*(core.sizeC[series] - 1) + bb];
+            buf[row*line + col*bpp + bpc*(core.sizeC[series] - 1) + bb] =
+              buf[row*line + col*bpp + bb];
+            buf[row*line + col*bpp + bb] = blue;
           }
         }
       }

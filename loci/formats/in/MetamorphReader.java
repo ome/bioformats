@@ -138,13 +138,15 @@ public class MetamorphReader extends BaseTiffReader {
     return stks == null ? super.getUsedFiles() : stks[series];
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     if (stks == null || stks[series].length == 1) {
-      return super.openBytes(no, buf);
+      return super.openBytes(no, buf, x, y, w, h);
     }
 
     int[] coords = FormatTools.getZCTCoords(this, no % core.sizeZ[series]);
@@ -153,7 +155,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     if (r == null) r = new MetamorphReader();
     r.setId(file);
-    return r.openBytes(coords[0], buf);
+    return r.openBytes(coords[0], buf, x, y, w, h);
   }
 
   // -- IFormatHandler API methods --
@@ -546,23 +548,6 @@ public class MetamorphReader extends BaseTiffReader {
     catch (FormatException exc) {
       if (debug) trace(exc);
     }
-  }
-
-  /* @see BaseTiffReader#getImageName() */
-  protected String getImageName() {
-    if (imageName == null) return super.getImageName();
-    return imageName;
-  }
-
-  /* @see BaseTiffReader#getImageCreationDate() */
-  protected String getImageCreationDate() {
-    if (imageCreationDate == null) return super.getImageCreationDate();
-    return imageCreationDate;
-  }
-
-  Integer getEmWave(int i) {
-    if (emWavelength == null || emWavelength[i] == 0)  return null;
-    return new Integer((int) emWavelength[i]);
   }
 
   // -- Helper methods --

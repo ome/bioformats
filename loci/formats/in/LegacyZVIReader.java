@@ -98,27 +98,19 @@ public class LegacyZVIReader extends FormatReader {
     return true;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
-    zviBlock.readBytes(in, buf);
+    zviBlock.readBytes(in, buf, x, y, w, h);
     return buf;
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-
-    if (debug) debug("Reading image #" + no + "...");
-    ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
-    return zviBlock.readImage(in);
   }
 
   // -- IFormatHandler API methods --
@@ -529,8 +521,8 @@ public class LegacyZVIReader extends FormatReader {
     }
 
     /** Reads in this block's image bytes from the given file. */
-    public byte[] readBytes(RandomAccessStream raf, byte[] buf)
-      throws IOException, FormatException
+    public byte[] readBytes(RandomAccessStream raf, byte[] buf, int x, int y,
+      int w, int h) throws IOException, FormatException
     {
       long fileSize = raf.length();
       if (imagePos + imageSize > fileSize) {
@@ -542,36 +534,14 @@ public class LegacyZVIReader extends FormatReader {
       if (buf.length < imageSize) throw new FormatException("Buffer too small");
 
       // read image
-      raf.seek(imagePos);
-      raf.readFully(buf);
+      raf.seek(imagePos + y * width * bytesPerPixel * numChannels);
+      int rowLen = w * bytesPerPixel * numChannels;
+      for (int row=0; row<h; row++) {
+        raf.skipBytes(x * bytesPerPixel * numChannels);
+        raf.read(buf, row * rowLen, rowLen);
+        raf.skipBytes(bytesPerPixel * numChannels * (core.sizeX[0] - w - x));
+      }
       return buf;
-    }
-
-    /** Reads in this block's image data from the given file. */
-    public BufferedImage readImage(RandomAccessStream raf)
-      throws IOException, FormatException
-    {
-      byte[] imageBytes = readBytes(raf, new byte[imageSize]);
-
-      // convert image bytes into BufferedImage
-      if (bytesPerPixel > 4) {
-        numChannels = bytesPerPixel / 2;
-        bytesPerPixel /= numChannels;
-        bytesPerChannel = bytesPerPixel;
-      }
-      int index = 0;
-      short[][] samples = new short[numChannels][numPixels * bytesPerPixel];
-      for (int i=0; i<numPixels; i++) {
-        for (int c=numChannels-1; c>=0; c--) {
-          byte[] b = new byte[bytesPerChannel];
-          System.arraycopy(imageBytes, index, b, 0, bytesPerChannel);
-          index += bytesPerChannel;
-          // our zvi images are 16 bit per pixel (BitsPerPixel) but
-          // with an Acquisition Bit Depth of 12
-          samples[c][i] = (short) (DataTools.bytesToShort(b, true) * 8);
-        }
-      }
-      return ImageTools.makeImage(samples, width, height);
     }
 
     public String toString() {

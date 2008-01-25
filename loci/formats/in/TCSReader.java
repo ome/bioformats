@@ -92,13 +92,15 @@ public class TCSReader extends FormatReader {
     return tiffReaders[0].get16BitLookupTable();
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int n = 0;
     for (int i=0; i<series; i++) {
@@ -106,8 +108,10 @@ public class TCSReader extends FormatReader {
     }
     n += no;
 
-    if (tiffReaders.length == 1) return tiffReaders[0].openBytes(n, buf);
-    return tiffReaders[n].openBytes(0, buf);
+    if (tiffReaders.length == 1) {
+      return tiffReaders[0].openBytes(n, buf, x, y, w, h);
+    }
+    return tiffReaders[n].openBytes(0, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */

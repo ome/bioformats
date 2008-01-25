@@ -106,30 +106,28 @@ public class ChannelSeparator extends ReaderWrapper {
     return isIndexed() && !isFalseColor();
   }
 
-  /* @see IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    FormatTools.checkPlaneNumber(this, no);
-
-    if (isIndexed()) return reader.openImage(no);
-
-    int bytes = FormatTools.getBytesPerPixel(getPixelType());
-
-    byte[] b = openBytes(no);
-
-    if (getPixelType() == FormatTools.FLOAT) {
-      float[] f =
-        (float[]) DataTools.makeDataArray(b, 4, true, isLittleEndian());
-      if (isNormalized()) f = DataTools.normalizeFloats(f);
-      return ImageTools.makeImage(f, getSizeX(), getSizeY());
-    }
-
-    return ImageTools.makeImage(b, getSizeX(), getSizeY(), 1, false,
-      bytes, isLittleEndian());
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
   public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] buf = new byte[w * h * FormatTools.getBytesPerPixel(getPixelType())];
+    return openBytes(no, buf, x, y, w, h);
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -142,58 +140,29 @@ public class ChannelSeparator extends ReaderWrapper {
       int series = getSeries();
 
       if (source != lastImageIndex || series != lastImageSeries) {
-        lastImage = reader.openBytes(source);
+        lastImage = reader.openBytes(source, x, y, w, h);
         lastImageIndex = source;
         lastImageSeries = series;
       }
 
-      byte[] t = ImageTools.splitChannels(lastImage, c,
+      buf = ImageTools.splitChannels(lastImage, c,
         FormatTools.getBytesPerPixel(getPixelType()),
         false, !isInterleaved())[channel];
-      System.arraycopy(t, 0, buf, 0, t.length);
       return buf;
     }
-    else return reader.openBytes(no, buf);
+    else return reader.openBytes(no, buf, x, y, w, h);
   }
 
-  /* @see IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    FormatTools.checkPlaneNumber(this, no);
-    byte[] buf = new byte[getSizeX() * getSizeY() * getRGBChannelCount() *
-      FormatTools.getBytesPerPixel(getPixelType())];
-    return openBytes(no, buf);
-  }
-
-  /* @see IFormatReader#openBytes(int, int, int, int, int) */
-  public byte[] openBytes(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int ch = getRGBChannelCount();
-    byte[] newBuffer = new byte[w * h * ch * bpp];
-    return openBytes(no, newBuffer, x, y, w, h);
-  }
-
-  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    byte[] bytes = openBytes(no);
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int ch = getRGBChannelCount();
-    if (buf.length < w * h * bpp * ch) {
-      throw new FormatException("Buffer too small.");
-    }
-    return ImageTools.getSubimage(bytes, buf, getSizeX(), getSizeY(), x, y,
-      w, h, bpp, ch, isInterleaved());
+  /* @see IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return openImage(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openImage(int, int, int, int, int) */
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return openImage(no).getSubimage(x, y, w, h);
+    return ImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
   }
 
   /* @see IFormatReader#openThumbImage(int) */

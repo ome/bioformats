@@ -92,13 +92,15 @@ public class ImarisHDFReader extends FormatReader {
     return new String(block).indexOf("HDF") != -1;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
     if (previousImageNumber > getImageCount()) previousImageNumber = -1;
@@ -127,35 +129,37 @@ public class ImarisHDFReader extends FormatReader {
     }
     previousImageNumber = no;
 
-    for (int y=0; y<core.sizeY[series]; y++) {
+    for (int row=0; row<h; row++) {
       if (previousImage instanceof byte[][][]) {
-        System.arraycopy(((byte[][][]) previousImage)[zct[0]][y], 0, buf,
-          y*core.sizeX[series], core.sizeX[series]);
+        System.arraycopy(((byte[][][]) previousImage)[zct[0]][row + y], x, buf,
+          row*w, w);
       }
       else if (previousImage instanceof short[][][]) {
-        short[] s = ((short[][][]) previousImage)[zct[0]][y];
-        for (int i=0; i<core.sizeX[series]; i++) {
-          buf[y*core.sizeX[series]*2 + i*2] = (byte) ((s[i] >> 8) & 0xff);
-          buf[y*core.sizeX[series]*2 + i*2 + 1] = (byte) (s[i] & 0xff);
+        short[] s = ((short[][][]) previousImage)[zct[0]][row + y];
+        for (int i=0; i<w; i++) {
+          buf[row*w*2 + i*2] = (byte) ((s[x + i] >> 8) & 0xff);
+          buf[row*w*2 + i*2 + 1] = (byte) (s[x + i] & 0xff);
         }
       }
       else if (previousImage instanceof int[][][]) {
-        int[] s = ((int[][][]) previousImage)[zct[0]][y];
-        for (int i=0; i<core.sizeX[series]; i++) {
-          buf[y*core.sizeX[series]*4 + i*4] = (byte) ((s[i] >> 24) & 0xff);
-          buf[y*core.sizeX[series]*4 + i*4 + 1] = (byte) ((s[i] >> 16) & 0xff);
-          buf[y*core.sizeX[series]*4 + i*4 + 2] = (byte) ((s[i] >> 8) & 0xff);
-          buf[y*core.sizeX[series]*4 + i*4 + 3] = (byte) (s[i] & 0xff);
+        int[] s = ((int[][][]) previousImage)[zct[0]][row + y];
+        int base = row * w * 4;
+        for (int i=0; i<w; i++) {
+          buf[base + i*4] = (byte) ((s[x + i] >> 24) & 0xff);
+          buf[base + i*4 + 1] = (byte) ((s[x + i] >> 16) & 0xff);
+          buf[base + i*4 + 2] = (byte) ((s[x + i] >> 8) & 0xff);
+          buf[base + i*4 + 3] = (byte) (s[x + i] & 0xff);
         }
       }
       else if (previousImage instanceof float[][][]) {
-        float[] s = ((float[][][]) previousImage)[zct[0]][y];
-        for (int i=0; i<core.sizeX[series]; i++) {
-          int v = Float.floatToIntBits(s[i]);
-          buf[y*core.sizeX[series]*4 + i*4] = (byte) ((v >> 24) & 0xff);
-          buf[y*core.sizeX[series]*4 + i*4 + 1] = (byte) ((v >> 16) & 0xff);
-          buf[y*core.sizeX[series]*4 + i*4 + 2] = (byte) ((v >> 8) & 0xff);
-          buf[y*core.sizeX[series]*4 + i*4 + 3] = (byte) (v & 0xff);
+        float[] s = ((float[][][]) previousImage)[zct[0]][row + y];
+        int base = row * w * 4;
+        for (int i=0; i<w; i++) {
+          int v = Float.floatToIntBits(s[x + i]);
+          buf[base + i*4] = (byte) ((v >> 24) & 0xff);
+          buf[base + i*4 + 1] = (byte) ((v >> 16) & 0xff);
+          buf[base + i*4 + 2] = (byte) ((v >> 8) & 0xff);
+          buf[base + i*4 + 3] = (byte) (v & 0xff);
         }
       }
     }

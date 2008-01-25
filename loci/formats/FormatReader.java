@@ -343,82 +343,26 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
-    byte[] buf = new byte[getSizeX() * getSizeY() *
-      (isIndexed() ? 1 : getRGBChannelCount()) *
-      FormatTools.getBytesPerPixel(getPixelType())];
-    return openBytes(no, buf);
+    return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
-    byte[] buf = openBytes(no);
+    return openImage(no, 0, 0, getSizeX(), getSizeY());
+  }
 
-    int pixelType = getPixelType();
-    if (pixelType == FormatTools.FLOAT) {
-      float[] f =
-        (float[]) DataTools.makeDataArray(buf, 4, true, isLittleEndian());
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return ImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
+  }
 
-      if (normalizeData) f = DataTools.normalizeFloats(f);
-      return ImageTools.makeImage(f, core.sizeX[series], core.sizeY[series],
-        getRGBChannelCount(), true);
-    }
-
-    boolean signed = pixelType == FormatTools.INT8 ||
-      pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
-
-    if (signed) {
-      if (pixelType == FormatTools.INT8) {
-        buf = DataTools.makeSigned(buf);
-      }
-      else if (pixelType == FormatTools.INT16) {
-        short[] s =
-          (short[]) DataTools.makeDataArray(buf, 2, false, isLittleEndian());
-        s = DataTools.makeSigned(s);
-        for (int i=0; i<s.length; i++) {
-          byte high = (byte) (s[i] >> 8);
-          byte low = (byte) s[i];
-          buf[i*2] = isLittleEndian() ? low : high;
-          buf[i*2 + 1] = isLittleEndian() ? high : low;
-        }
-      }
-      else if (pixelType == FormatTools.INT32) {
-        int[] ii =
-          (int[]) DataTools.makeDataArray(buf, 4, false, isLittleEndian());
-        ii = DataTools.makeSigned(ii);
-        for (int i=0; i<ii.length; i++) {
-          buf[i*4] = (byte) (isLittleEndian() ? ii[i] : ii[i] >> 24);
-          buf[i*4 + 1] = (byte) (isLittleEndian() ? ii[i] >> 8 : ii[i] >> 16);
-          buf[i*4 + 2] = (byte) (isLittleEndian() ? ii[i] >> 16 : ii[i] >> 8);
-          buf[i*4 + 3] = (byte) (isLittleEndian() ? ii[i] >> 24 : ii[i]);
-        }
-      }
-    }
-
-    BufferedImage b = ImageTools.makeImage(buf, core.sizeX[series],
-      core.sizeY[series], isIndexed() ? 1 : getRGBChannelCount(),
-      core.interleaved[0], FormatTools.getBytesPerPixel(core.pixelType[series]),
-      core.littleEndian[series]);
-    if (isIndexed()) {
-      IndexedColorModel model = null;
-      if (core.pixelType[series] == FormatTools.UINT8 ||
-        core.pixelType[series] == FormatTools.INT8)
-      {
-        byte[][] table = get8BitLookupTable();
-        model = new IndexedColorModel(8, table[0].length, table);
-      }
-      else if (core.pixelType[series] == FormatTools.UINT16 ||
-        core.pixelType[series] == FormatTools.INT16)
-      {
-        short[][] table = get16BitLookupTable();
-        model = new IndexedColorModel(16, table[0].length, table);
-      }
-      if (model != null) {
-        WritableRaster raster = Raster.createWritableRaster(b.getSampleModel(),
-          b.getData().getDataBuffer(), null);
-        b = new BufferedImage(model, raster, false, null);
-      }
-    }
-    return b;
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
@@ -432,25 +376,8 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    byte[] bytes = openBytes(no);
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int ch = getRGBChannelCount();
-    if (buf.length < w * h * bpp * ch) {
-      throw new FormatException("Buffer too small.");
-    }
-    return ImageTools.getSubimage(bytes, buf, getSizeX(), getSizeY(), x, y,
-      w, h, bpp, ch, isInterleaved());
-  }
-
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return openImage(no).getSubimage(x, y, w, h);
-  }
+  public abstract byte[] openBytes(int no, byte[] buf, int x, int y,
+    int w, int h) throws FormatException, IOException;
 
   /* @see IFormatReader#openThumbImage(int) */
   public BufferedImage openThumbImage(int no)

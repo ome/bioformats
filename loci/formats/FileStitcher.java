@@ -372,13 +372,20 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#openImage(int) */
   public BufferedImage openImage(int no) throws FormatException, IOException {
+    return openImage(no, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 2);
     int[] q = computeIndices(no);
     int sno = seriesInFile ? 0 : getSeries();
     int fno = q[0], ino = q[1];
     if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openImage(ino);
+      return readers[sno][fno].openImage(ino, x, y, w, h);
     }
 
     sno = getSeries();
@@ -386,29 +393,35 @@ public class FileStitcher implements IFormatReader {
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     if (blankImage[sno] == null) {
-      blankImage[sno] = ImageTools.blankImage(core.sizeX[sno], core.sizeY[sno],
-        sizeC[sno], getPixelType());
+      blankImage[sno] = ImageTools.blankImage(w, h, sizeC[sno], getPixelType());
     }
 
     return blankImage[sno];
   }
 
-  /* @see IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return openImage(no).getSubimage(x, y, w, h);
-  }
-
   /* @see IFormatReader#openBytes(int) */
   public byte[] openBytes(int no) throws FormatException, IOException {
+    return openBytes(no, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 2);
     int[] q = computeIndices(no);
     int sno = seriesInFile ? 0 : getSeries();
     int fno = q[0], ino = q[1];
     if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openBytes(ino);
+      return readers[sno][fno].openBytes(ino, x, y, w, h);
     }
 
     sno = getSeries();
@@ -417,23 +430,13 @@ public class FileStitcher implements IFormatReader {
     // this file does not contain enough image planes
     if (blankBytes[sno] == null) {
       int bytes = FormatTools.getBytesPerPixel(getPixelType());
-      blankBytes[sno] = new byte[core.sizeX[sno] * core.sizeY[sno] *
-        bytes * getRGBChannelCount()];
+      blankBytes[sno] = new byte[w * h * bytes * getRGBChannelCount()];
     }
     return blankBytes[sno];
   }
 
-  /* @see IFormatReader#openBytes(int, int, int, int, int) */
-  public byte[] openBytes(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    byte[] buffer = new byte[w * h *
-      FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount()];
-    return openBytes(no, buffer, x, y, w, h);
-  }
-
-  /* @see IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
@@ -442,42 +445,12 @@ public class FileStitcher implements IFormatReader {
     int fno = q[0], ino = q[1];
     if (seriesInFile) readers[sno][fno].setSeries(getSeries());
     if (ino < readers[sno][fno].getImageCount()) {
-      return readers[sno][fno].openBytes(ino, buf);
+      return readers[sno][fno].openBytes(ino, buf, x, y, w, h);
     }
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
     Arrays.fill(buf, (byte) 0);
-    return buf;
-  }
-
-  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    byte[] bytes = openBytes(no);
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int ch = getRGBChannelCount();
-    if (buf.length < w * h * bpp * ch) {
-      throw new FormatException("Buffer too small.");
-    }
-
-    for (int yy=y; yy<y + h; yy++) {
-      for (int xx=x; xx<x + w; xx++) {
-        for (int cc=0; cc<ch; cc++) {
-          int oldNdx = -1, newNdx = -1;
-          if (isInterleaved()) {
-            oldNdx = yy*getSizeX()*bpp*ch + xx*bpp*ch + cc*bpp;
-            newNdx = (yy - y)*w*bpp*ch + (xx - x)*bpp*ch + cc*bpp;
-          }
-          else {
-            oldNdx = cc*getSizeX()*getSizeY()*bpp + yy*getSizeX()*bpp + xx*bpp;
-            newNdx = cc*w*h*bpp + (yy - y)*w*bpp + (xx - x)*bpp;
-          }
-          System.arraycopy(bytes, oldNdx, buf, newNdx, bpp);
-        }
-      }
-    }
     return buf;
   }
 

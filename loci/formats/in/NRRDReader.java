@@ -71,24 +71,34 @@ public class NRRDReader extends FormatReader {
     return new String[] {currentId, dataFile};
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     // TODO : add support for additional encoding types
     if (dataFile == null) {
       if (encoding.equals("raw")) {
-        in.seek(offset + no * buf.length);
-        in.read(buf);
+        int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+        int rowLen = core.sizeX[0] * bpp * core.sizeC[0];
+        in.seek(offset + no * core.sizeY[0] * rowLen + y * rowLen);
+
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bpp * core.sizeC[0]);
+          in.read(buf, row * w * bpp * core.sizeC[0], w * bpp * core.sizeC[0]);
+          in.skipBytes(bpp * core.sizeC[0] * (core.sizeX[0] - w - x));
+        }
+
         return buf;
       }
       else throw new FormatException("Unsupported encoding: " + encoding);
     }
-    return helper.openBytes(no, buf);
+    return helper.openBytes(no, buf, x, y, w, h);
   }
 
   // -- IFormatHandler API methods --

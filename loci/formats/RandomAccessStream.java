@@ -575,16 +575,31 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
 
     if (dis != null) {
-      while (fp > (length() - dis.available())) {
-        while (fp - length() + dis.available() > Integer.MAX_VALUE) {
-          dis.skipBytes(Integer.MAX_VALUE);
+      if (fp < length()) {
+        while (fp > (length() - dis.available())) {
+          while (fp - length() + dis.available() > Integer.MAX_VALUE) {
+            dis.skipBytes(Integer.MAX_VALUE);
+          }
+          dis.skipBytes((int) (fp - (length() - dis.available())));
         }
-        dis.skipBytes((int) (fp - (length() - dis.available())));
+      }
+      else {
+        fp = afp;
+        BufferedInputStream bis = new BufferedInputStream(
+          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+        dis = new DataInputStream(bis);
+        while (fp > (length() - dis.available())) {
+          while (fp - length() + dis.available() > Integer.MAX_VALUE) {
+            dis.skipBytes(Integer.MAX_VALUE);
+          }
+          dis.skipBytes((int) (fp - length() + dis.available()));
+        }
       }
     }
 
     if (dis != null && raf != null &&
-      afp + toRead < MAX_OVERHEAD && afp + toRead < raf.length())
+      afp + toRead < MAX_OVERHEAD && afp + toRead < raf.length() &&
+      afp + toRead < buf.length)
     {
       // this is a really special case that allows us to read directly from
       // an array when working with the first MAX_OVERHEAD bytes of the file

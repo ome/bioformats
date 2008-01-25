@@ -133,13 +133,15 @@ public class SDTReader extends FormatReader {
     return !intensity && subC == 0;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     if (intensity) {
       in.seek(off + 2 * core.sizeX[series] * core.sizeY[series] *
@@ -147,9 +149,10 @@ public class SDTReader extends FormatReader {
       byte[] b =
         new byte[timeBins * 2 * core.sizeX[series] * core.sizeY[series]];
       in.read(b);
-      int offset = 0;
-      for (int y=0; y<core.sizeY[series]; y++) {
-        for (int x=0; x<core.sizeX[series]; x++) {
+      int offset = y * core.sizeX[series] * timeBins * 2;
+      for (int row=0; row<h; row++) {
+        offset += x * timeBins * 2;
+        for (int col=0; col<w; col++) {
           // read all lifetime bins at this pixel for this channel
 
           // combine lifetime bins into intensity value
@@ -158,21 +161,25 @@ public class SDTReader extends FormatReader {
             sum += DataTools.bytesToShort(b, offset, true);
             offset += 2;
           }
-          int ndx = 2 * (core.sizeX[0] * y + x);
+          int ndx = 2 * (w * row + col);
           buf[ndx] = (byte) (sum & 0xff);
           buf[ndx + 1] = (byte) ((sum >> 8) & 0xff);
         }
+        offset += timeBins * 2 * (core.sizeX[series] - w - x);
       }
     }
     else {
       in.seek(off + 2 * core.sizeX[series]*core.sizeY[series] * timeBins * no);
-      for (int y=0; y<core.sizeY[series]; y++) {
-        for (int x=0; x<core.sizeX[series]; x++) {
+      in.skipBytes(y * core.sizeX[series] * timeBins * 2);
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * timeBins * 2);
+        for (int col=0; col<w; col++) {
           for (int t=0; t<timeBins; t++) {
-            int ndx = 2 * (timeBins * core.sizeX[0] * y + timeBins * x + t);
+            int ndx = 2 * (timeBins * w * row + timeBins * col + t);
             in.readFully(buf, ndx, 2);
           }
         }
+        in.skipBytes(timeBins * 2 * (core.sizeX[series] - w - x));
       }
     }
     return buf;

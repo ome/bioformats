@@ -56,16 +56,20 @@ public class LegacyPictReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    buf = ImageTools.getBytes(openImage(no), false, 3);
+    buf = ImageTools.getBytes(openImage(no, x, y, w, h), false, 3);
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int) */
-  public BufferedImage openImage(int no) throws FormatException, IOException {
+  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
@@ -82,7 +86,8 @@ public class LegacyPictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-    return ImageTools.makeBuffered(qtTools.pictToImage(bytes));
+    return ImageTools.makeBuffered(
+      qtTools.pictToImage(bytes)).getSubimage(x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

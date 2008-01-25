@@ -45,6 +45,52 @@ import loci.formats.meta.MetadataStore;
  */
 public abstract class BaseTiffReader extends FormatReader {
 
+  // -- Constants --
+
+  /** EXIF tags. */
+  private static final int EXIF_VERSION = 36864;
+  private static final int FLASH_PIX_VERSION = 40960;
+  private static final int COLOR_SPACE = 40961;
+  private static final int COMPONENTS_CONFIGURATION = 37121;
+  private static final int COMPRESSED_BITS_PER_PIXEL = 37122;
+  private static final int PIXEL_X_DIMENSION = 40962;
+  private static final int PIXEL_Y_DIMENSION = 40963;
+  private static final int MAKER_NOTE = 37500;
+  private static final int USER_COMMENT = 37510;
+  private static final int RELATED_SOUND_FILE = 40964;
+  private static final int DATE_TIME_ORIGINAL = 36867;
+  private static final int DATE_TIME_DIGITIZED = 36868;
+  private static final int SUB_SEC_TIME = 37520;
+  private static final int SUB_SEC_TIME_ORIGINAL = 37521;
+  private static final int SUB_SEC_TIME_DIGITIZED = 37522;
+  private static final int EXPOSURE_TIME = 33434;
+  private static final int F_NUMBER = 33437;
+  private static final int EXPOSURE_PROGRAM = 34850;
+  private static final int SPECTRAL_SENSITIVITY = 34852;
+  private static final int ISO_SPEED_RATINGS = 34855;
+  private static final int OECF = 34856;
+  private static final int SHUTTER_SPEED_VALUE = 37377;
+  private static final int APERTURE_VALUE = 37378;
+  private static final int BRIGHTNESS_VALUE = 37379;
+  private static final int EXPOSURE_BIAS_VALUE = 37380;
+  private static final int MAX_APERTURE_VALUE = 37381;
+  private static final int SUBJECT_DISTANCE = 37382;
+  private static final int METERING_MODE = 37383;
+  private static final int LIGHT_SOURCE = 37384;
+  private static final int FLASH = 37385;
+  private static final int FOCAL_LENGTH = 37386;
+  private static final int FLASH_ENERGY = 41483;
+  private static final int SPATIAL_FREQUENCY_RESPONSE = 41484;
+  private static final int FOCAL_PLANE_X_RESOLUTION = 41486;
+  private static final int FOCAL_PLANE_Y_RESOLUTION = 41487;
+  private static final int FOCAL_PLANE_RESOLUTION_UNIT = 41488;
+  private static final int SUBJECT_LOCATION = 41492;
+  private static final int EXPOSURE_INDEX = 41493;
+  private static final int SENSING_METHOD = 41495;
+  private static final int FILE_SOURCE = 41728;
+  private static final int SCENE_TYPE = 41729;
+  private static final int CFA_PATTERN = 41730;
+
   // -- Fields --
 
   /** List of IFDs for the current TIFF. */
@@ -134,15 +180,17 @@ public abstract class BaseTiffReader extends FormatReader {
     return getMeta(field);
   }
 
-  /* @see loci.formats.FormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
-    throws FormatException, IOException
+  /**
+   * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int width,
+    int height) throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, width, height);
 
-    TiffTools.getSamples(ifds[no], in, buf);
+    TiffTools.getSamples(ifds[no], in, buf, x, y, width, height);
     return swapIfRequired(buf);
   }
 
@@ -174,6 +222,19 @@ public abstract class BaseTiffReader extends FormatReader {
     put("ImageWidth", ifd, TiffTools.IMAGE_WIDTH);
     put("ImageLength", ifd, TiffTools.IMAGE_LENGTH);
     put("BitsPerSample", ifd, TiffTools.BITS_PER_SAMPLE);
+
+    // retrieve EXIF values, if available
+
+    long exifOffset = TiffTools.getIFDLongValue(ifd, TiffTools.EXIF, false, 0);
+    if (exifOffset != 0) {
+      Hashtable exif = TiffTools.getIFD(in, 1, exifOffset);
+
+      Enumeration keys = exif.keys();
+      while (keys.hasMoreElements()) {
+        int key = ((Integer) keys.nextElement()).intValue();
+        addMeta(getExifTagName(key), exif.get(new Integer(key)));
+      }
+    }
 
     int comp = TiffTools.getIFDIntValue(ifd, TiffTools.COMPRESSION);
     String compression = null;
@@ -636,7 +697,7 @@ public abstract class BaseTiffReader extends FormatReader {
       // populate Image
 
       store.setImageCreationDate(creationDate, 0);
-      store.setImageDescription(getImageDescription(), 0);
+      store.setImageDescription(TiffTools.getComment(ifds[0]), 0);
 
       // CHECK
       // populate LogicalChannel
@@ -713,12 +774,6 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /**
-   * Retrieves the image name from the TIFF.
-   * @return the image name.
-   */
-  protected String getImageName() { return currentId; }
-
-  /**
    * Retrieves the image creation date.
    * @return the image creation date.
    */
@@ -727,14 +782,6 @@ public abstract class BaseTiffReader extends FormatReader {
     if (o instanceof String) return (String) o;
     if (o instanceof String[]) return ((String[]) o)[0];
     return null;
-  }
-
-  /**
-   * Retrieves the image description.
-   * @return the image description.
-   */
-  protected String getImageDescription() {
-    return TiffTools.getComment(ifds[0]);
   }
 
   /**
@@ -823,37 +870,94 @@ public abstract class BaseTiffReader extends FormatReader {
 
   // -- Helper methods --
 
-  /**
-   * Sets the logical channel in the metadata store.
-   * @param i the logical channel number.
-   * @throws FormatException if there is an error parsing metadata.
-   * @throws IOException if there is an error reading the file.
-   */
-  private void setLogicalChannel(int i) throws FormatException, IOException {
-    MetadataStore store = getMetadataStore();
-    store.setLogicalChannelName(getChannelName(i), 0, i);
-    store.setLogicalChannelPhotometricInterpretation(
-      getPhotometricInterpretation(i), 0, i);
-    store.setLogicalChannelMode(getMode(i), 0, i);
-    store.setLogicalChannelEmWave(getEmWave(i), 0, i);
-    store.setLogicalChannelExWave(getExWave(i), 0, i);
-    store.setLogicalChannelNdFilter(getNdFilter(i), 0, i);
+  private static String getExifTagName(int tag) {
+    switch (tag) {
+      case EXIF_VERSION:
+        return "EXIF Version";
+      case FLASH_PIX_VERSION:
+        return "FlashPix Version";
+      case COLOR_SPACE:
+        return "Color Space";
+      case COMPONENTS_CONFIGURATION:
+        return "Components Configuration";
+      case COMPRESSED_BITS_PER_PIXEL:
+        return "Compressed Bits Per Pixel";
+      case PIXEL_X_DIMENSION:
+        return "Image width";
+      case PIXEL_Y_DIMENSION:
+        return "Image height";
+      case MAKER_NOTE:
+        return "Maker Note";
+      case USER_COMMENT:
+        return "User comment";
+      case RELATED_SOUND_FILE:
+        return "Related sound file";
+      case DATE_TIME_ORIGINAL:
+        return "Original date/time";
+      case DATE_TIME_DIGITIZED:
+        return "Date/time digitized";
+      case SUB_SEC_TIME:
+        return "Date/time subseconds";
+      case SUB_SEC_TIME_ORIGINAL:
+        return "Original date/time subseconds";
+      case SUB_SEC_TIME_DIGITIZED:
+        return "Digitized date/time subseconds";
+      case EXPOSURE_TIME:
+        return "Exposure time";
+      case F_NUMBER:
+        return "F Number";
+      case EXPOSURE_PROGRAM:
+        return "Exposure program";
+      case SPECTRAL_SENSITIVITY:
+        return "Spectral sensitivity";
+      case ISO_SPEED_RATINGS:
+        return "ISO speed ratings";
+      case OECF:
+        return "Optoelectric conversion factor";
+      case SHUTTER_SPEED_VALUE:
+        return "Shutter speed";
+      case APERTURE_VALUE:
+        return "Aperture value";
+      case BRIGHTNESS_VALUE:
+        return "Brightness value";
+      case EXPOSURE_BIAS_VALUE:
+        return "Exposure Bias value";
+      case MAX_APERTURE_VALUE:
+        return "Max aperture value";
+      case SUBJECT_DISTANCE:
+        return "Subject distance";
+      case METERING_MODE:
+        return "Metering mode";
+      case LIGHT_SOURCE:
+        return "Light source";
+      case FLASH:
+        return "Flash";
+      case FOCAL_LENGTH:
+        return "Focal length";
+      case FLASH_ENERGY:
+        return "Flash energy";
+      case SPATIAL_FREQUENCY_RESPONSE:
+        return "Spatial frequency response";
+      case FOCAL_PLANE_X_RESOLUTION:
+        return "Focal plane X resolution";
+      case FOCAL_PLANE_Y_RESOLUTION:
+        return "Focal plane Y resolution";
+      case FOCAL_PLANE_RESOLUTION_UNIT:
+        return "Focal plane resolution unit";
+      case SUBJECT_LOCATION:
+        return "Subject location";
+      case EXPOSURE_INDEX:
+        return "Exposure index";
+      case SENSING_METHOD:
+        return "Sensing method";
+      case FILE_SOURCE:
+        return "File source";
+      case SCENE_TYPE:
+        return "Scene type";
+      case CFA_PATTERN:
+        return "CFA Pattern";
+    }
+    return null;
   }
-
-  private String getChannelName(int i) { return null; }
-
-  private Float getNdFilter(int i) { return null; }
-
-  private Integer getEmWave(int i) { return null; }
-
-  private Integer getExWave(int i) { return null; }
-
-  private String getPhotometricInterpretation(int i)
-    throws FormatException, IOException
-  {
-    return (String) getMetadataValue("metaDataPhotometricInterpretation");
-  }
-
-  private String getMode(int i) { return null; }
 
 }

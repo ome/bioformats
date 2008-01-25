@@ -438,8 +438,13 @@ public final class FormatTools {
   public static void checkBufferSize(IFormatReader r, int len)
     throws FormatException
   {
-    int size = r.getSizeX() * r.getSizeY() *
-      (r.isIndexed() ? 1 : r.getRGBChannelCount()) *
+    checkBufferSize(r, len, r.getSizeX(), r.getSizeY());
+  }
+
+  public static void checkBufferSize(IFormatReader r, int len, int w, int h)
+    throws FormatException
+  {
+    int size = w * h * (r.isIndexed() ? 1 : r.getRGBChannelCount()) *
       getBytesPerPixel(r.getPixelType());
     if (size > len) {
       throw new FormatException("Buffer too small (got " + len +

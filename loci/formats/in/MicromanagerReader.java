@@ -74,14 +74,16 @@ public class MicromanagerReader extends FormatReader {
     return s;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     tiffReader.setId((String) tiffs.get(no));
-    return tiffReader.openBytes(0, buf);
+    return tiffReader.openBytes(0, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

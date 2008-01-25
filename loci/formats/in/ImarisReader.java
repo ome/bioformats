@@ -66,19 +66,22 @@ public class ImarisReader extends FormatReader {
     return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(offsets[no]);
-    int row = core.sizeY[0] - 1;
-    for (int i=0; i<core.sizeY[0]; i++) {
-      in.read(buf, row*core.sizeX[0], core.sizeX[0]);
-      row--;
+    in.seek(offsets[no] + core.sizeX[0] * (core.sizeY[0] - y - h));
+
+    for (int row=h-1; row>=0; row--) {
+      in.skipBytes(x);
+      in.read(buf, row*w, w);
+      in.skipBytes(core.sizeX[0] - w - x);
     }
     return buf;
   }

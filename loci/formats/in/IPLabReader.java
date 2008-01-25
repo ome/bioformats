@@ -68,17 +68,30 @@ public class IPLabReader extends FormatReader {
     return version >= 0x100e;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int numPixels = core.sizeX[0] * core.sizeY[0] * core.sizeC[0] * bps;
     in.seek(numPixels * (no / core.sizeC[0]) + 44);
-    in.read(buf);
+
+    for (int c=0; c<core.sizeC[0]; c++) {
+      in.skipBytes(y * core.sizeX[0] * bps);
+
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * bps);
+        in.read(buf, c * h * w * bps + row * w * bps, w * bps);
+        in.skipBytes(bps * (core.sizeX[0] - w - x));
+      }
+      in.skipBytes((core.sizeY[0] - h - y) * core.sizeX[0] * bps);
+    }
+
     return buf;
   }
 
@@ -190,13 +203,6 @@ public class IPLabReader extends FormatReader {
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
     MetadataTools.populatePixels(store, this);
 
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-//    }
-
     status("Reading tags");
 
     String tag = in.readString(4);
@@ -294,6 +300,7 @@ public class IPLabReader extends FormatReader {
         Integer x1 = new Integer(roiRight);
         Integer y0 = new Integer(roiBottom);
         Integer y1 = new Integer(roiTop);
+        // TODO
         //store.setDisplayROIX0(x0, 0, 0);
         //store.setDisplayROIY0(y0, 0, 0);
         //store.setDisplayROIX1(x1, 0, 0);
@@ -311,14 +318,32 @@ public class IPLabReader extends FormatReader {
 
         for (int i=0; i<4; i++) {
           int xResStyle = in.readInt();
-          int unitsPerPixel = in.readInt();
+          float unitsPerPixel = in.readFloat();
           int xUnitName = in.readInt();
 
           addMeta("ResolutionStyle" + i, new Long(xResStyle));
-          addMeta("UnitsPerPixel" + i, new Long(unitsPerPixel));
+          addMeta("UnitsPerPixel" + i, new Float(unitsPerPixel));
+
+          switch (xUnitName) {
+            case 2: // mm
+              unitsPerPixel *= 1000;
+              break;
+            case 3: // cm
+              unitsPerPixel *= 10000;
+              break;
+            case 4: // m
+              unitsPerPixel *= 1000000;
+              break;
+            case 5: // inch
+              unitsPerPixel *= 3937;
+              break;
+            case 6: //ft
+              unitsPerPixel *= 47244;
+              break;
+          }
 
           if (i == 0) {
-            Float pixelSize = new Float(1 / (float) unitsPerPixel);
+            Float pixelSize = new Float(unitsPerPixel);
             store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
             store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
           }
@@ -343,7 +368,6 @@ public class IPLabReader extends FormatReader {
         addMeta("Descriptor", descriptor);
         addMeta("Notes", notes);
 
-        store.setImageName(currentId, 0);
         store.setImageDescription(notes, 0);
       }
 

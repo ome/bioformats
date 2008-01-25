@@ -55,13 +55,15 @@ public class PSDReader extends FormatReader {
     return lut;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     if (in.getFilePointer() % 2 == 1) in.skipBytes(1);
     in.skipBytes(4);
@@ -82,27 +84,39 @@ public class PSDReader extends FormatReader {
     int[][] lens = new int[core.sizeC[0]][core.sizeY[0]];
     boolean compressed = in.readShort() == 1;
 
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+
     if (compressed) {
-      int pt = 0;
       PackbitsCodec codec = new PackbitsCodec();
       for (int c=0; c<core.sizeC[0]; c++) {
-        for (int y=0; y<core.sizeY[0]; y++) {
-          lens[c][y] = in.readShort();
+        for (int row=0; row<core.sizeY[0]; row++) {
+          lens[c][row] = in.readShort();
         }
       }
 
       for (int c=0; c<core.sizeC[0]; c++) {
-        for (int y=0; y<core.sizeY[0]; y++) {
-          byte[] b = new byte[lens[c][y]];
-          in.read(b);
-          b = codec.decompress(b, new Integer(core.sizeX[0] *
-            FormatTools.getBytesPerPixel(core.pixelType[0])));
-          System.arraycopy(b, 0, buf, pt, b.length);
-          pt += b.length;
+        for (int row=0; row<core.sizeY[0]; row++) {
+          if (row < y || row >= (y + h)) in.skipBytes(lens[c][row]);
+          else {
+            byte[] b = new byte[lens[c][row]];
+            in.read(b);
+            b = codec.decompress(b, new Integer(core.sizeX[0] * bpp));
+            System.arraycopy(b, x * bpp, buf,
+              c * h * bpp * w + (row - y) * bpp * w, w * bpp);
+          }
         }
       }
     }
-    else in.read(buf);
+    else {
+      for (int c=0; c<core.sizeC[0]; c++) {
+        in.skipBytes(y * bpp * core.sizeX[0]);
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bpp);
+          in.read(buf, row * w * bpp, w * bpp);
+          in.skipBytes(bpp * (core.sizeX[0] - w - x));
+        }
+      }
+    }
     return buf;
   }
 
