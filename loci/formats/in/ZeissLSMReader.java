@@ -176,20 +176,21 @@ public class ZeissLSMReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    // check that predictor is set to 1 if anything other
-    // than LZW compression is used
-    if (TiffTools.getCompression(ifds[2*no]) != TiffTools.LZW) {
-      ifds[2*no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
-    }
-
     if (core.sizeY[0] > 1) {
+      // check that predictor is set to 1 if anything other
+      // than LZW compression is used
+      if (TiffTools.getCompression(ifds[2*no]) != TiffTools.LZW) {
+        ifds[2*no].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
+      }
+
       TiffTools.getSamples(ifds[2*no], in, buf, x, y, w, h);
     }
     else {
-      int n = (int) TiffTools.getImageLength(ifds[0]);
-      byte[] b = new byte[buf.length * n];
-      TiffTools.getSamples(ifds[0], in, b, x, y, w, h);
-      System.arraycopy(b, no * (b.length / n), buf, 0, b.length / n);
+      if (TiffTools.getCompression(ifds[0]) != TiffTools.LZW) {
+        ifds[0].put(new Integer(TiffTools.PREDICTOR), new Integer(1));
+      }
+
+      TiffTools.getSamples(ifds[0], in, buf, x, no, w, 1);
     }
     return swapIfRequired(buf);
   }
@@ -578,7 +579,8 @@ public class ZeissLSMReader extends BaseTiffReader {
               value = in.readString(dataSize);
               break;
           }
-          String key = getKey(prefix, entry);
+          String key = getKey(prefix, entry).trim();
+          if (value instanceof String) value = ((String) value).trim();
           if (key != null) addMeta(key, value);
 
           switch (entry) {
