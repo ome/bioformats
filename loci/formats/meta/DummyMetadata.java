@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 23, 2008 3:27:29 PM CST
+ * Created by curtis via MetadataAutogen on Jan 29, 2008 2:12:52 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -47,6 +47,58 @@ package loci.formats.meta;
 public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // -- MetadataRetrieve API methods --
+
+  // - Entity counting -
+
+  /* @see MetadataRetrieve#getImageCount() */
+  public int getImageCount() {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getPixelsCount(int) */
+  public int getPixelsCount(int imageIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getPlaneCount(int, int) */
+  public int getPlaneCount(int imageIndex, int pixelsIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getLogicalChannelCount(int) */
+  public int getLogicalChannelCount(int imageIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getROICount(int) */
+  public int getROICount(int imageIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getLightSourceCount(int) */
+  public int getLightSourceCount(int instrumentIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getDetectorCount(int) */
+  public int getDetectorCount(int instrumentIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getObjectiveCount(int) */
+  public int getObjectiveCount(int instrumentIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getOTFCount(int) */
+  public int getOTFCount(int instrumentIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getExperimenterCount() */
+  public int getExperimenterCount() {
+    return -1;
+  }
 
   // - Entity retrieval -
 
@@ -100,8 +152,8 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
-  /* @see MetadataRetrieve#getDisplayROI(int, int) */
-  public Object getDisplayROI(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROI(int, int) */
+  public Object getROI(int imageIndex, int roiIndex) {
     return null;
   }
 
@@ -360,38 +412,38 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
-  // - DisplayROI property retrieval -
+  // - ROI property retrieval -
 
-  /* @see MetadataRetrieve#getDisplayROIX0(int, int) */
-  public Integer getDisplayROIX0(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIX0(int, int) */
+  public Integer getROIX0(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getDisplayROIY0(int, int) */
-  public Integer getDisplayROIY0(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIY0(int, int) */
+  public Integer getROIY0(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getDisplayROIZ0(int, int) */
-  public Integer getDisplayROIZ0(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIZ0(int, int) */
+  public Integer getROIZ0(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getDisplayROIT0(int, int) */
-  public Integer getDisplayROIT0(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIT0(int, int) */
+  public Integer getROIT0(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getDisplayROIX1(int, int) */
-  public Integer getDisplayROIX1(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIX1(int, int) */
+  public Integer getROIX1(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getDisplayROIY1(int, int) */
-  public Integer getDisplayROIY1(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIY1(int, int) */
+  public Integer getROIY1(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getDisplayROIZ1(int, int) */
-  public Integer getDisplayROIZ1(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIZ1(int, int) */
+  public Integer getROIZ1(int imageIndex, int roiIndex) {
     return null;
   }
-  /* @see MetadataRetrieve#getDisplayROIT1(int, int) */
-  public Integer getDisplayROIT1(int imageIndex, int roiIndex) {
+  /* @see MetadataRetrieve#getROIT1(int, int) */
+  public Integer getROIT1(int imageIndex, int roiIndex) {
     return null;
   }
 
@@ -527,6 +579,14 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex) {
     return null;
   }
+  /* @see MetadataRetrieve#getObjectiveCorrection(int, int) */
+  public String getObjectiveCorrection(int instrumentIndex, int objectiveIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getObjectiveImmersion(int, int) */
+  public String getObjectiveImmersion(int instrumentIndex, int objectiveIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getObjectiveLensNA(int, int) */
   public Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex) {
     return null;
@@ -537,6 +597,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   }
   /* @see MetadataRetrieve#getObjectiveCalibratedMagnification(int, int) */
   public Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex) {
+    return null;
+  }
+  /* @see MetadataRetrieve#getObjectiveWorkingDistance(int, int) */
+  public Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex) {
     return null;
   }
 
@@ -799,38 +863,38 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex) {
   }
 
-  // - DisplayROI property storage -
+  // - ROI property storage -
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIX0(Integer x0, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIX0(Integer x0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIY0(Integer y0, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIY0(Integer y0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIZ0(Integer z0, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIZ0(Integer z0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIT0(Integer t0, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIT0(Integer t0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIX1(Integer x1, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIX1(Integer x1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIY1(Integer y1, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIY1(Integer y1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIZ1(Integer z1, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setDisplayROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
-  public void setDisplayROIT1(Integer t1, int imageIndex, int roiIndex) {
+  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  public void setROIT1(Integer t1, int imageIndex, int roiIndex) {
   }
 
   // - StageLabel property storage -
@@ -947,28 +1011,40 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Objective property storage -
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Integer, Float, int, int) */
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
   public void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Integer, Float, int, int) */
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
   public void setObjectiveModel(String model, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Integer, Float, int, int) */
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
   public void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Integer, Float, int, int) */
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  public void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex) {
+  }
+
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  public void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex) {
+  }
+
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
   public void setObjectiveLensNA(Float lensNA, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Integer, Float, int, int) */
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
   public void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, Float, Integer, Float, int, int) */
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
   public void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex) {
+  }
+
+  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex) {
   }
 
   // - OTF property storage -

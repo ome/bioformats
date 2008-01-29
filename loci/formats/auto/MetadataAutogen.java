@@ -70,7 +70,6 @@ public class MetadataAutogen {
 
     // populate Velocity context
     VelocityContext context = new VelocityContext();
-    context.put("name", "World");
     context.put("user", System.getProperty("user.name"));
     DateFormat dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM);
     DateFormat timeFmt = DateFormat.getTimeInstance(DateFormat.LONG);
@@ -199,7 +198,7 @@ public class MetadataAutogen {
         String desc = in.readLine();
         String extra = in.readLine();
         entity = new Entity(name, desc, extra);
-        System.out.println("\t" + name);
+        System.out.println("\t" + entity.name());
         continue;
       }
 

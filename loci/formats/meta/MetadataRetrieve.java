@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 23, 2008 3:27:29 PM CST
+ * Created by curtis via MetadataAutogen on Jan 29, 2008 2:12:52 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -43,6 +43,28 @@ package loci.formats.meta;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface MetadataRetrieve {
+
+  // - Entity counting -
+
+  int getImageCount();
+
+  int getPixelsCount(int imageIndex);
+
+  int getPlaneCount(int imageIndex, int pixelsIndex);
+
+  int getLogicalChannelCount(int imageIndex);
+
+  int getROICount(int imageIndex);
+
+  int getLightSourceCount(int instrumentIndex);
+
+  int getDetectorCount(int instrumentIndex);
+
+  int getObjectiveCount(int instrumentIndex);
+
+  int getOTFCount(int instrumentIndex);
+
+  int getExperimenterCount();
 
   // - Entity retrieval -
 
@@ -97,9 +119,9 @@ public interface MetadataRetrieve {
   Object getLightSourceSettings(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets an object representing a particular DisplayROI, for use with certain methods of {@link MetadataStore}.
+   * Gets an object representing a particular ROI, for use with certain methods of {@link MetadataStore}.
    */
-  Object getDisplayROI(int imageIndex, int roiIndex);
+  Object getROI(int imageIndex, int roiIndex);
 
   /**
    * Gets an object representing a particular StageLabel, for use with certain methods of {@link MetadataStore}.
@@ -482,63 +504,63 @@ public interface MetadataRetrieve {
    */
   Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex);
 
-  // - DisplayROI property retrieval -
+  // - ROI property retrieval -
 
   /**
-   * Gets the starting X coordinate for a particular DisplayROI object.
+   * Gets the starting X coordinate for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIX0(int imageIndex, int roiIndex);
+  Integer getROIX0(int imageIndex, int roiIndex);
 
   /**
-   * Gets the starting Y coordinate for a particular DisplayROI object.
+   * Gets the starting Y coordinate for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIY0(int imageIndex, int roiIndex);
+  Integer getROIY0(int imageIndex, int roiIndex);
 
   /**
-   * Gets the starting Z coordinate for a particular DisplayROI object.
+   * Gets the starting Z coordinate for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIZ0(int imageIndex, int roiIndex);
+  Integer getROIZ0(int imageIndex, int roiIndex);
 
   /**
-   * Gets the starting timepoint for a particular DisplayROI object.
+   * Gets the starting timepoint for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIT0(int imageIndex, int roiIndex);
+  Integer getROIT0(int imageIndex, int roiIndex);
 
   /**
-   * Gets the ending X coordinate for a particular DisplayROI object.
+   * Gets the ending X coordinate for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIX1(int imageIndex, int roiIndex);
+  Integer getROIX1(int imageIndex, int roiIndex);
 
   /**
-   * Gets the ending Y coordinate for a particular DisplayROI object.
+   * Gets the ending Y coordinate for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIY1(int imageIndex, int roiIndex);
+  Integer getROIY1(int imageIndex, int roiIndex);
 
   /**
-   * Gets the ending Z coordinate for a particular DisplayROI object.
+   * Gets the ending Z coordinate for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIZ1(int imageIndex, int roiIndex);
+  Integer getROIZ1(int imageIndex, int roiIndex);
 
   /**
-   * Gets the ending timepoint for a particular DisplayROI object.
+   * Gets the ending timepoint for a particular ROI object.
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  Integer getDisplayROIT1(int imageIndex, int roiIndex);
+  Integer getROIT1(int imageIndex, int roiIndex);
 
   // - StageLabel property retrieval -
 
@@ -751,6 +773,20 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
+  String getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * Gets CTR TODO for a particular Objective object.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  String getObjectiveImmersion(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * Gets CTR TODO for a particular Objective object.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
   Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
 
   /**
@@ -766,6 +802,13 @@ public interface MetadataRetrieve {
    * @param objectiveIndex index of the Objective
    */
   Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * Gets CTR TODO for a particular Objective object.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
 
   // - OTF property retrieval -
 

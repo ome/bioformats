@@ -48,6 +48,17 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // -- MetadataRetrieve API methods --
 
+  // - Entity counting -
+#foreach ($entity in $entities)
+#if ($entity.countable())
+
+  /* @see MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
+  public int get$entity.name()Count($entity.indicesList(true, true, false)) {
+    return -1;
+  }
+#end##if countable
+#end##foreach $entity
+
   // - Entity retrieval -
 #foreach ($entity in $entities)
 

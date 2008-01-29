@@ -178,9 +178,10 @@ public class AliconaReader extends FormatReader {
       store.setObjectiveCalibratedMagnification(
         new Float(magnification), 0, 0);
     }
-    */
 
-    // TODO : workingDistance stores the working distance of the Objective
+    store.setObjectiveWorkingDistance(
+      new Float(workingDistance), 0, 0);
+    */
 
     if (pntX != null && pntY != null) {
       float pixelSizeX = Float.parseFloat(pntX) / 1000000;

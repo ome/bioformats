@@ -44,6 +44,14 @@ package loci.formats.meta;
  */
 public interface MetadataRetrieve {
 
+  // - Entity counting -
+#foreach ($entity in $entities)
+#if ($entity.countable())
+
+  int get$entity.name()Count($entity.indicesList(true, true, false));
+#end###if countable
+#end##foreach $entity
+
   // - Entity retrieval -
 #foreach ($entity in $entities)
 

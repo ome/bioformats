@@ -39,6 +39,9 @@ public class Entity {
 
   // -- Fields --
 
+  /** Whether a count method should be created for the entity. */
+  private boolean countable;
+
   /** Name of the entity. */
   private String name;
 
@@ -63,12 +66,16 @@ public class Entity {
   // -- Constructor --
 
   public Entity(String name, String desc, String extra) {
+    countable = name.endsWith("+");
+    if (countable) name = name.substring(0, name.length() - 1);
     this.name = name;
     this.desc = desc;
     this.extra = extra;
   }
 
   // -- Entity API methods --
+
+  public boolean countable() { return countable; }
 
   public String name() { return name; }
 
@@ -127,8 +134,14 @@ public class Entity {
   }
 
   public String indicesList(boolean doTypes, boolean doVars) {
+    return indicesList(doTypes, doVars, true);
+  }
+
+  public String indicesList(boolean doTypes, boolean doVars, boolean doLast) {
     StringBuffer sb = new StringBuffer();
-    for (int i=0; i<indices.size(); i++) {
+    int size = indices.size();
+    if (!doLast) size--;
+    for (int i=0; i<size; i++) {
       Property p = (Property) indices.get(i);
       if (i > 0) sb.append(", ");
       if (doTypes) sb.append(p.type());

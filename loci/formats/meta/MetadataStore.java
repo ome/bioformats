@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 23, 2008 3:27:29 PM CST
+ * Created by curtis via MetadataAutogen on Jan 29, 2008 2:12:52 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -436,7 +436,7 @@ public interface MetadataStore {
    */
   void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex);
 
-  // - DisplayROI property storage -
+  // - ROI property storage -
 
   /**
    * Sets the X0 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -444,7 +444,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIX0(Integer x0, int imageIndex, int roiIndex);
+  void setROIX0(Integer x0, int imageIndex, int roiIndex);
 
   /**
    * Sets the Y0 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -452,7 +452,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIY0(Integer y0, int imageIndex, int roiIndex);
+  void setROIY0(Integer y0, int imageIndex, int roiIndex);
 
   /**
    * Sets the Z0 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -460,7 +460,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIZ0(Integer z0, int imageIndex, int roiIndex);
+  void setROIZ0(Integer z0, int imageIndex, int roiIndex);
 
   /**
    * Sets the T0 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -468,7 +468,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIT0(Integer t0, int imageIndex, int roiIndex);
+  void setROIT0(Integer t0, int imageIndex, int roiIndex);
 
   /**
    * Sets the X1 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -476,7 +476,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIX1(Integer x1, int imageIndex, int roiIndex);
+  void setROIX1(Integer x1, int imageIndex, int roiIndex);
 
   /**
    * Sets the Y1 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -484,7 +484,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIY1(Integer y1, int imageIndex, int roiIndex);
+  void setROIY1(Integer y1, int imageIndex, int roiIndex);
 
   /**
    * Sets the Z1 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -492,7 +492,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIZ1(Integer z1, int imageIndex, int roiIndex);
+  void setROIZ1(Integer z1, int imageIndex, int roiIndex);
 
   /**
    * Sets the T1 property for a 5D bounding box region of interest in the metadata store with a particular index.
@@ -500,7 +500,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param roiIndex index of the ROI
    */
-  void setDisplayROIT1(Integer t1, int imageIndex, int roiIndex);
+  void setROIT1(Integer t1, int imageIndex, int roiIndex);
 
   // - StageLabel property storage -
 
@@ -737,6 +737,22 @@ public interface MetadataStore {
   void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex);
 
   /**
+   * Sets the Correction property for an objective for a particular instrument.
+   * @param correction CTR TODO
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex);
+
+  /**
+   * Sets the Immersion property for an objective for a particular instrument.
+   * @param immersion CTR TODO
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex);
+
+  /**
    * Sets the LensNA property for an objective for a particular instrument.
    * @param lensNA CTR TODO
    * @param instrumentIndex index of the Instrument
@@ -759,6 +775,14 @@ public interface MetadataStore {
    * @param objectiveIndex index of the Objective
    */
   void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex);
+
+  /**
+   * Sets the WorkingDistance property for an objective for a particular instrument.
+   * @param workingDistance CTR TODO
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex);
 
   // - OTF property storage -
 
