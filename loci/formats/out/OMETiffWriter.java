@@ -56,9 +56,16 @@ public class OMETiffWriter extends TiffWriter {
 
       // insert TiffData element
       int pix = xml.indexOf("<Pixels ");
-      int end = xml.indexOf("/>", pix);
-      xml = xml.substring(0, end) + "><TiffData/></Pixels>" +
-        xml.substring(end + 2);
+      int end = xml.indexOf("</Pixels>", pix);
+      if (end != -1) {
+        xml = xml.substring(0, end) + "<TiffData/></Pixels>" +
+          xml.substring(end + 9);
+      }
+      else {
+        end = xml.indexOf("/>", pix);
+        xml = xml.substring(0, end) + "><TiffData/></Pixels>" +
+          xml.substring(end + 2);
+      }
 
       // write OME-XML to the first IFD's comment
       try {
