@@ -27,7 +27,6 @@ package loci.formats.codec;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
-import javax.imageio.ImageIO;
 import javax.imageio.spi.*;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import loci.formats.*;
