@@ -151,10 +151,10 @@ public abstract class FormatReader extends FormatHandler
   /** Adds an entry to the metadata table. */
   protected void addMeta(String key, Object value) {
     if (key == null || value == null || !collectMetadata) return;
+    String val = value.toString();
     if (filterMetadata) {
       // verify key & value are not empty
       if (key.length() == 0) return;
-      String val = value.toString();
       if (val.length() == 0) return;
 
       // verify key & value are reasonable length
@@ -162,9 +162,24 @@ public abstract class FormatReader extends FormatHandler
       if (key.length() > maxLen) return;
       if (val.length() > maxLen) return;
 
-      // verify key & value start with printable characters
-      if (key.charAt(0) < 32) return;
-      if (val.charAt(0) < 32) return;
+      // remove all non-printable characters
+      StringBuffer keyBuffer = new StringBuffer(key);
+      StringBuffer valBuffer = new StringBuffer(val);
+
+      for (int i=0; i<keyBuffer.length(); i++) {
+        if (keyBuffer.charAt(i) < 32 && keyBuffer.charAt(i) != 10) {
+          keyBuffer = keyBuffer.deleteCharAt(i);
+        }
+      }
+
+      for (int i=0; i<valBuffer.length(); i++) {
+        if (valBuffer.charAt(i) < 32 && valBuffer.charAt(i) != 10) {
+          valBuffer = valBuffer.deleteCharAt(i);
+        }
+      }
+
+      key = keyBuffer.toString();
+      val = valBuffer.toString();
 
       // verify key contains at least one alphabetic character
       if (!key.matches(".*[a-zA-Z].*")) return;
@@ -173,11 +188,11 @@ public abstract class FormatReader extends FormatHandler
     if (saveOriginalMetadata) {
       MetadataStore store = getMetadataStore();
       if (MetadataTools.isOMEXMLMetadata(store)) {
-        MetadataTools.populateOriginalMetadata(store, key, value.toString());
+        MetadataTools.populateOriginalMetadata(store, key, val);
       }
     }
 
-    metadata.put(key, value);
+    metadata.put(key, val);
   }
 
   /** Gets a value from the metadata table. */
