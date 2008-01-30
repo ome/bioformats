@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 29, 2008 2:12:52 PM CST
+ * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,8 +40,8 @@ import java.util.List;
  * metadata stores.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/AggregateMetadata.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/AggregateMetadata.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/AggregateMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/AggregateMetadata.java">SVN</a></dd></dl>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -153,6 +153,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getROICount(imageIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getInstrumentCount() */
+  public int getInstrumentCount() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getInstrumentCount();
         if (result >= 0) return result;
       }
     }
@@ -376,6 +389,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Object result = retrieve.getStageLabel(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getInstrument(int) */
+  public Object getInstrument(int instrumentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getInstrument(instrumentIndex);
         if (result != null) return result;
       }
     }
@@ -1250,6 +1276,8 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
     return null;
   }
+
+  // - Instrument property retrieval -
 
   // - LightSource property retrieval -
 
@@ -2467,6 +2495,8 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       }
     }
   }
+
+  // - Instrument property storage -
 
   // - LightSource property storage -
 

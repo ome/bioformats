@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 29, 2008 2:12:52 PM CST
+ * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -36,8 +36,8 @@ package loci.formats.meta;
  * TODO - MetadataRetrieve javadoc.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataRetrieve.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataRetrieve.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/MetadataRetrieve.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/MetadataRetrieve.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -55,6 +55,8 @@ public interface MetadataRetrieve {
   int getLogicalChannelCount(int imageIndex);
 
   int getROICount(int imageIndex);
+
+  int getInstrumentCount();
 
   int getLightSourceCount(int instrumentIndex);
 
@@ -127,6 +129,11 @@ public interface MetadataRetrieve {
    * Gets an object representing a particular StageLabel, for use with certain methods of {@link MetadataStore}.
    */
   Object getStageLabel(int imageIndex);
+
+  /**
+   * Gets an object representing a particular Instrument, for use with certain methods of {@link MetadataStore}.
+   */
+  Object getInstrument(int instrumentIndex);
 
   /**
    * Gets an object representing a particular LightSource, for use with certain methods of {@link MetadataStore}.
@@ -587,6 +594,8 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    */
   Float getStageLabelZ(int imageIndex);
+
+  // - Instrument property retrieval -
 
   // - LightSource property retrieval -
 

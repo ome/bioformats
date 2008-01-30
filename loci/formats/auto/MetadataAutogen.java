@@ -92,6 +92,9 @@ public class MetadataAutogen {
       "DummyMetadata.vm", "meta/DummyMetadata.java");
     processTemplate(ve, context,
       "AggregateMetadata.vm", "meta/AggregateMetadata.java");
+    context.put("convertMetadataBody", generateConvertMetadata(entities));
+    processTemplate(ve, context,
+      "MetadataConverter.vm", "meta/MetadataConverter.java");
 
     // generate version-specific OME-XML metadata implementations
     Enumeration versionKeys = versions.keys();
@@ -245,6 +248,76 @@ public class MetadataAutogen {
     }
     in.close();
     return entities;
+  }
+
+  private static String generateConvertMetadata(Vector entities) {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    PrintWriter out = new PrintWriter(new OutputStreamWriter(baos));
+    final int indent = 2;
+
+    Collections.sort(entities);
+
+    StringBuffer spaces = new StringBuffer();
+    Vector lastIndices = new Vector();
+
+    for (int i=0; i<entities.size(); i++) {
+      Entity e = (Entity) entities.get(i);
+      Vector indices = e.indices();
+
+      // find deepest common element
+      int depth = 0;
+      for (int j=0; j<indices.size(); j++) {
+        if (j >= lastIndices.size()) break;
+        Property lastP = (Property) lastIndices.get(j);
+        Property thisP = (Property) indices.get(j);
+        if (!lastP.name().equals(thisP.name())) break;
+        depth++;
+      }
+
+      // end old for loops
+      int lastDepth = lastIndices.size();
+      for (int j=lastDepth; j>depth; j--) {
+        spaces.setLength(0);
+        for (int k=1; k<j+indent; k++) spaces.append("  ");
+        out.println(spaces + "}");
+      }
+
+      // start new for loops
+      for (int j=depth; j<indices.size(); j++) {
+        Property prop = (Property) indices.get(j);
+        spaces.setLength(0);
+        for (int k=0; k<j+indent; k++) spaces.append("  ");
+        String iVar = prop.varName();
+        String countVar = prop.varName().replaceFirst("Index$", "Count");
+        out.println(spaces + "int " + countVar + " = " + "src.get" +
+          prop.name().replaceFirst("Index$", "Count") + "(" +
+          e.indicesList(false, true, false) + ");");
+        out.println(spaces + "for (int " + iVar + "=0; " +
+          iVar + "<" + countVar + "; " + iVar + "++) {");
+      }
+      lastIndices = indices;
+
+      // set properties
+      Vector props = e.props();
+      for (int j=0; j<props.size(); j++) {
+        Property prop = (Property) props.get(j);
+        String methodName = e.name() + prop.name();
+        String iList = e.indicesList(false, true);
+        out.println(spaces + "  dest.set" + methodName +
+          "(src.get" + methodName + "(" + iList + "), " + iList + ");");
+      }
+    }
+
+    // end remaining for loops
+    int lastDepth = lastIndices.size();
+    for (int j=lastDepth; j>0; j--) {
+      spaces.setLength(0);
+      for (int k=1; k<j+indent; k++) spaces.append("  ");
+      out.println(spaces + "}");
+    }
+
+    out.close();
+    return baos.toString();
   }
 
 }

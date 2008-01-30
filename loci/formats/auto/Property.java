@@ -116,6 +116,10 @@ public class Property {
     nameMap.put(version, name);
   }
 
+  // -- Object API methods --
+
+  public String toString() { return name; }
+
   // -- Helper methods --
 
   protected int getPrefixIndex(String s) {

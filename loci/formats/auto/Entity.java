@@ -35,7 +35,7 @@ import java.util.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class Entity {
+public class Entity implements Comparable {
 
   // -- Fields --
 
@@ -190,6 +190,25 @@ public class Entity {
   /** Adds a property associated with this entity. */
   protected void addProperty(Property prop) {
     props.add(prop);
+  }
+
+  // -- Comparable API methods --
+
+  /** Enables sorting by indices. */
+  public int compareTo(Object o) {
+    Entity e = (Entity) o;
+    int isize = indices.size();
+    int jsize = e.indices.size();
+    int minSize = isize < jsize ? isize : jsize;
+    for (int i=0; i<minSize; i++) {
+      Property pi = (Property) indices.get(i);
+      Property pj = (Property) e.indices.get(i);
+      int rval = pi.name().compareTo(pj.name());
+      if (rval != 0) return rval;
+    }
+    if (isize < jsize) return -1;
+    if (jsize < isize) return 1;
+    return 0;
   }
 
 }

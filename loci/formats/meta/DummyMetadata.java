@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 29, 2008 2:12:52 PM CST
+ * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -38,8 +38,8 @@ package loci.formats.meta;
  * metadata implementations are available.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DummyMetadata.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/DummyMetadata.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/DummyMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/DummyMetadata.java">SVN</a></dd></dl>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -72,6 +72,11 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataRetrieve#getROICount(int) */
   public int getROICount(int imageIndex) {
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getInstrumentCount() */
+  public int getInstrumentCount() {
     return -1;
   }
 
@@ -159,6 +164,11 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   /* @see MetadataRetrieve#getStageLabel(int) */
   public Object getStageLabel(int imageIndex) {
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getInstrument(int) */
+  public Object getInstrument(int instrumentIndex) {
     return null;
   }
 
@@ -465,6 +475,9 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   public Float getStageLabelZ(int imageIndex) {
     return null;
   }
+
+  // - Instrument property retrieval -
+
 
   // - LightSource property retrieval -
 
@@ -914,6 +927,8 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
   public void setStageLabelZ(Float z, int imageIndex) {
   }
+
+  // - Instrument property storage -
 
   // - LightSource property storage -
 

@@ -229,17 +229,11 @@ Float Z      z coordinate of the stage
 
 ### Entities for Instrument hardware -- these DO NOT vary by Image ###
 
-#CTR TODO - Instrument shouldn't have any attributes directly... right?
-#           so why are they in the 2003 FC CA schema...?
-#[Instrument]
-#an instrument in the metadata store with a particular index
-#-
-#Default: Instrument+
-#2003FC: CA/Instrument+
-#String Manufacturer  the name of the manufacturer
-#String Model         the model number of the instrument
-#String SerialNumber  the serial number of the instrument
-#String Type          the type of the instrument
+[Instrument+]
+an instrument in the metadata store with a particular index
+-
+Default: Instrument+
+2003FC: CA/Instrument+
 
 [LightSource+]
 a light source for a particular instrument

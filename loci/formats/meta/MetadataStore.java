@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 29, 2008 2:12:52 PM CST
+ * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,8 @@ package loci.formats.meta;
  * expected to store into its backing data model.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/MetadataStore.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/MetadataStore.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/MetadataStore.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/MetadataStore.java">SVN</a></dd></dl>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -531,6 +531,8 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    */
   void setStageLabelZ(Float z, int imageIndex);
+
+  // - Instrument property storage -
 
   // - LightSource property storage -
 

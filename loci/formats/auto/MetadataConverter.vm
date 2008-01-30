@@ -1,5 +1,5 @@
 //
-// MetadataRetrieve.java
+// MetadataConverter.java
 //
 
 /*
@@ -33,46 +33,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.meta;
 
 /**
- * TODO - MetadataRetrieve javadoc.
+ * A utility class containing a method for piping a source
+ * {@link MetadataRetrieve} object into a destination {@link MetadataStore}.
+ * This technique allows non-OME-XML-based metadata stores (such as OMERO's
+ * metadata store implementation) to be easily converted to another
+ * implementation, particularly {@link loci.formats.ome.OMEXMLMetadataStore},
+ * which allows generation of OME-XML from OMERO metadata.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/MetadataRetrieve.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/MetadataRetrieve.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/MetadataConverter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/MetadataConverter.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface MetadataRetrieve {
+public final class MetadataConverter {
 
-  // - Entity counting -
-#foreach ($entity in $entities)
-#if ($entity.countable())
+  // -- Constructor --
 
-  int get$entity.name()Count($entity.indicesList(true, true, false));
-#end###if countable
-#end##foreach $entity
+  private MetadataConverter() { }
 
-  // - Entity retrieval -
-#foreach ($entity in $entities)
-
+  // -- MetadataConverter API methods --
+ 
   /**
-   * Gets an object representing a particular $entity.name(), for use with certain methods of {@link MetadataStore}.
+   * Copies information from a metadata retrieval object
+   * (source) into a metadata store (destination).
    */
-  Object get$entity.name()($entity.indicesList(true, true));
-#end##foreach $entity
-#foreach ($entity in $entities)
-
-  // - $entity.name() property retrieval -
-#foreach ($prop in $entity.props())
-
-  /**
-   * Gets $prop.desc() for a particular $entity.name() object.
-#foreach ($prop in $entity.indices())
-   * @param $prop.varName() $prop.desc()
-#end
-   */
-  $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true));
-#end
-#end
+  public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
+$convertMetadataBody  }
 
 }

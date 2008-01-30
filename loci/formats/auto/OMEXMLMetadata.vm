@@ -40,8 +40,8 @@ import java.util.List;
 import loci.formats.LogTools;
 
 /**
- * A utility class for constructing and manipulating OME-XML DOMs for the
- * $version version of OME-XML. It requires the
+ * A metadata store implementation for constructing and manipulating OME-XML
+ * DOMs for the $version version of OME-XML. It requires the
  * $basePackage package to compile (part of ome-java.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
