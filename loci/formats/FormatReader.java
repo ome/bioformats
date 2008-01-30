@@ -165,19 +165,18 @@ public abstract class FormatReader extends FormatHandler
       // remove all non-printable characters
       StringBuffer keyBuffer = new StringBuffer(key);
       StringBuffer valBuffer = new StringBuffer(val);
-
       for (int i=0; i<keyBuffer.length(); i++) {
-        if (keyBuffer.charAt(i) < 32 && keyBuffer.charAt(i) != 10) {
-          keyBuffer = keyBuffer.deleteCharAt(i);
+        char c = keyBuffer.charAt(i);
+        if (c != '\t' && c != '\n' && c < ' ') {
+          keyBuffer = keyBuffer.deleteCharAt(i--); // recheck this index
         }
       }
-
       for (int i=0; i<valBuffer.length(); i++) {
-        if (valBuffer.charAt(i) < 32 && valBuffer.charAt(i) != 10) {
-          valBuffer = valBuffer.deleteCharAt(i);
+        char c = valBuffer.charAt(i);
+        if (c != '\t' && c != '\n' && c < ' ') {
+          valBuffer = valBuffer.deleteCharAt(i--); // recheck this index
         }
       }
-
       key = keyBuffer.toString();
       val = valBuffer.toString();
 

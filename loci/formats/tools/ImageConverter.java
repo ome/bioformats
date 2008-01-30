@@ -94,6 +94,7 @@ public final class ImageConverter {
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
 
+    reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
     MetadataStore store = MetadataTools.createOMEXMLMetadata();
     if (store == null) LogTools.println("OME-Java library not found.");
