@@ -97,20 +97,17 @@ public class OMEXMLReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    in.seek(((Integer) offsets[series].get(no)).intValue());
+    in.seek(((Long) offsets[series].get(no)).longValue());
 
-    byte[] b;
+    int len = 0;
     if (no < getImageCount() - 1) {
-      b = new byte[((Integer) offsets[series].get(no + 1)).intValue() -
-        ((Integer) offsets[series].get(no)).intValue()];
+      len = (int) (((Long) offsets[series].get(no + 1)).longValue() -
+        ((Long) offsets[series].get(no)).longValue());
     }
     else {
-      b = new byte[(int) (in.length() -
-        ((Integer) offsets[series].get(no)).intValue())];
+      len = (int) (in.length() - ((Long) offsets[series].get(no)).longValue());
     }
-    in.read(b);
-    String data = new String(b);
-    b = null;
+    String data = in.readString(len);
 
     // retrieve the compressed pixel data
 
@@ -153,7 +150,13 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Error uncompressing zlib data.");
       }
     }
-    buf = pixels;
+
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    for (int row=0; row<h; row++) {
+      System.arraycopy(pixels, (row + y) * core.sizeX[series] * bpp + x * bpp,
+        buf, row * w * bpp, w * bpp);
+    }
+
     return buf;
   }
 
@@ -185,14 +188,17 @@ public class OMEXMLReader extends FormatReader {
     }
 
     try {
-      byte[] b = new byte[(int) in.length()];
-      long oldFp = in.getFilePointer();
       in.seek(0);
-      in.read(b);
-      in.seek(oldFp);
-      r.setVar("s", new String(b));
-      r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata(s)");
-      b = null;
+      r.setVar("s", in.readString((int) in.length()));
+      in.seek(0);
+      //r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata(s)");
+      r.setVar("version", "2003FC");
+      r.setVar("nullString", "");
+      r.exec("omexmlMeta = " +
+        "MetadataTools.createOMEXMLMetadata(nullString, version)");
+      r.exec("import org.openmicroscopy.xml.OMENode");
+      r.exec("root = new OMENode(s)");
+      r.exec("omexmlMeta.setRoot(root)");
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);
@@ -252,25 +258,24 @@ public class OMEXMLReader extends FormatReader {
 
       while (!found) {
         if (in.getFilePointer() < in.length()) {
-          int numRead = in.read(buf, 14, 8192-14);
+          int numRead = in.read(buf, 14, 8178);
 
           String test = new String(buf);
 
           int ndx = test.indexOf("<Bin");
           if (ndx == -1) {
             byte[] b = buf;
-            System.arraycopy(b, 8192 - 15, buf, 0, 14);
+            System.arraycopy(b, 8177, buf, 0, 14);
           }
           else {
             while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")) &&
               (ndx != test.indexOf("<Bin:BinaryFile"))))
             {
-              ndx = test.indexOf("<Bin", ndx+1);
+              ndx = test.indexOf("<Bin", ndx + 1);
             }
             found = true;
             numRead += 14;
-            offsets[i].add(new Integer(
-              (int) in.getFilePointer() - (numRead - ndx)));
+            offsets[i].add(new Long(in.getFilePointer() - (numRead - ndx)));
           }
           test = null;
         }
@@ -284,7 +289,7 @@ public class OMEXMLReader extends FormatReader {
 
     for (int i=0; i<numDatasets; i++) {
       if (i == 0) {
-        buf = new byte[((Integer) offsets[i].get(0)).intValue()];
+        buf = new byte[((Long) offsets[i].get(0)).intValue()];
       }
       else {
         // look for the next Image element
@@ -294,19 +299,19 @@ public class OMEXMLReader extends FormatReader {
         in.read(buf, 0, 14);
         while (!found) {
           if (in.getFilePointer() < in.length()) {
-            in.read(buf, 14, 8192-14);
+            in.read(buf, 14, 8178);
 
             String test = new String(buf);
 
             int ndx = test.indexOf("<Image ");
             if (ndx == -1) {
               byte[] b = buf;
-              System.arraycopy(b, 8192 - 15, buf, 0, 14);
+              System.arraycopy(b, 8177, buf, 0, 14);
               b = null;
             }
             else {
               found = true;
-              in.seek(in.getFilePointer() - (8192 - ndx));
+              in.seek(in.getFilePointer() - 8192 + ndx);
             }
             test = null;
           }
@@ -387,10 +392,8 @@ public class OMEXMLReader extends FormatReader {
       int expected = core.sizeX[i] * core.sizeY[i] * bpp[i];
 
       // find the compression type and adjust 'expected' accordingly
-      in.seek(((Integer) offsets[i].get(0)).intValue());
-      buf = new byte[256];
-      in.read(buf);
-      String data = new String(buf);
+      in.seek(((Long) offsets[i].get(0)).longValue());
+      String data = in.readString(256);
 
       int compressionStart = data.indexOf("Compression") + 13;
       int compressionEnd = data.indexOf("\"", compressionStart);
@@ -401,7 +404,7 @@ public class OMEXMLReader extends FormatReader {
 
       expected /= 2;
 
-      in.seek(((Integer) offsets[i].get(0)).intValue());
+      in.seek(((Long) offsets[i].get(0)).longValue());
 
       int planes = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
 
@@ -409,7 +412,7 @@ public class OMEXMLReader extends FormatReader {
       core.imageCount[i] = offsets[i].size();
       if (core.imageCount[i] < planes) {
         // hope this doesn't happen too often
-        in.seek(((Integer) offsets[i].get(0)).intValue());
+        in.seek(((Long) offsets[i].get(0)).longValue());
         searchForData(0, planes);
         core.imageCount[i] = offsets[i].size();
       }
@@ -466,8 +469,7 @@ public class OMEXMLReader extends FormatReader {
           while (ndx != -1) {
             found = true;
             if (numRead == buf.length - 20) numRead = buf.length;
-            offsets[series].add(new Integer(
-              (int) in.getFilePointer() - (numRead - ndx)));
+            offsets[series].add(new Long(in.getFilePointer() - numRead + ndx));
             ndx = test.indexOf("<Bin", ndx+1);
           }
           test = null;

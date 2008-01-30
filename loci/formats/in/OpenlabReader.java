@@ -49,10 +49,27 @@ public class OpenlabReader extends FormatReader {
 
   /** Image types. */
   private static final int MAC_1_BIT = 1;
+  private static final int MAC_4_GREYS = 2;
+  private static final int MAC_16_GREYS = 3;
+  private static final int MAC_16_COLORS = 4;
   private static final int MAC_256_GREYS = 5;
   private static final int MAC_256_COLORS = 6;
-  private static final int MAC_24_BIT = 8;
-  private static final int GREY_16_BIT = 16;
+  private static final int MAC_16_BIT_COLOR = 7;
+  private static final int MAC_24_BIT_COLOR = 8;
+  private static final int DEEP_GREY_9 = 9;
+  private static final int DEEP_GREY_10 = 10;
+  private static final int DEEP_GREY_11 = 11;
+  private static final int DEEP_GREY_12 = 12;
+  private static final int DEEP_GREY_13 = 13;
+  private static final int DEEP_GREY_14 = 14;
+  private static final int DEEP_GREY_15 = 15;
+  private static final int DEEP_GREY_16 = 16;
+
+  /** Tag types. */
+  private static final int IMAGE_TYPE_1 = 67;
+  private static final int IMAGE_TYPE_2 = 68;
+  private static final int CALIBRATION = 69;
+  private static final int USER = 72;
 
   // -- Static fields --
 
@@ -67,12 +84,13 @@ public class OpenlabReader extends FormatReader {
   /** Number of series. */
   private int numSeries;
 
-  private Vector[] layerInfoList;
-  private float xCal, yCal, zCal;
-  private int bytesPerPixel;
+  private PlaneInfo[] planes;
+  private float xcal, ycal;
 
+  private long nextTag = 0;
   private int tag = 0, subTag = 0;
   private String fmt = "";
+  private int[][] planeOffsets;
 
   // -- Constructor --
 
@@ -88,225 +106,116 @@ public class OpenlabReader extends FormatReader {
       block[5] == 109 && block[6] == 112 && block[7] == 114;
   }
 
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return openBytes(no);
-  }
-
-  /**
-   * @see loci.formats.IFormatReader#openBytes(int)
-   */
-  public byte[] openBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
-    LayerInfo info = (LayerInfo) layerInfoList[series].get(no);
-    in.seek(info.layerStart);
+    in.seek(planes[planeOffsets[series][no]].planeOffset);
+    long first = planes[planeOffsets[series][no]].planeOffset;
+    long last = no == core.imageCount[series] - 1 ? in.length() :
+      planes[planeOffsets[series][no + 1]].planeOffset;
+    byte[] b = new byte[(int) (last - first)];
 
-    readTagHeader();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
-    if ((tag != 67 && tag != 68) ||
-      (!fmt.equals("PICT") && !fmt.equals("RAWi")))
-    {
-      throw new FormatException("Corrupt LIFF file.");
-    }
-
-    in.skipBytes(24);
-    int volumeType = in.readShort();
-    in.skipBytes(272);
-
-    if (version == 2) {
-      in.skipBytes(2);
-      int top = in.readShort();
-      int left = in.readShort();
-      int bottom = in.readShort();
-      int right = in.readShort();
-
-      if (core.sizeX[series] == 0) core.sizeX[series] = right - left;
-      if (core.sizeY[series] == 0) core.sizeY[series] = bottom - top;
-    }
-    else {
-      core.sizeX[series] = in.readInt();
-      core.sizeY[series] = in.readInt();
-    }
-
-    in.seek(info.layerStart);
-
-    byte[] b = new byte[0];
-
-    if (version == 2) {
-      long nextTag = readTagHeader();
-
-      if ((tag != 67 && tag != 68) || !fmt.equals("PICT")) {
-        throw new FormatException("Corrupt LIFF file.");
+    if (!planes[planeOffsets[series][no]].pict) {
+      if (version == 2) {
+        in.skipBytes(y * getSizeX() * bpp * getRGBChannelCount());
+        int rowLen = w * bpp * getRGBChannelCount();
+        for (int row=0; row<h; row++) {
+          in.skipBytes(x * bpp * getRGBChannelCount());
+          in.read(buf, row * rowLen, rowLen);
+          in.skipBytes(bpp * getRGBChannelCount() * (getSizeX() - w - x));
+        }
       }
-      in.skipBytes(298);
-
-      // open image using pict reader
-      Exception exception = null;
-      try {
-        b = new byte[(int) (nextTag - in.getFilePointer())];
+      else {
+        in.skipBytes(16);
         in.read(b);
-        BufferedImage img = pict.open(b);
-        byte[][] tmp = ImageTools.getBytes(img);
-        b = new byte[tmp.length * tmp[0].length];
-        int pt = 0;
-        for (int i=0; i<tmp[0].length; i++) {
-          for (int j=0; j<tmp.length; j++) {
-            b[pt++] = tmp[j][i];
+        b = new LZOCodec().decompress(b);
+
+        if (core.sizeX[series] * core.sizeY[series] * 4 <= b.length) {
+          for (int yy=y; yy<h + y; yy++) {
+            for (int xx=x; xx<w + x; xx++) {
+              System.arraycopy(b, (yy*(core.sizeX[series]+4) + xx)*4 + 1, buf,
+                ((yy - y)*w + xx - x)*3, 3);
+            }
+          }
+        }
+        else {
+          int srcLen = b.length / core.sizeY[series];
+          int destLen = core.sizeX[series] * bpp * getRGBChannelCount();
+          if (srcLen - destLen != 16) srcLen = destLen;
+          destLen = w * bpp * getRGBChannelCount();
+          for (int row=0; row<h; row++) {
+            System.arraycopy(b, (row + y)*srcLen + x*bpp*getRGBChannelCount(),
+              buf, row*destLen, destLen);
           }
         }
       }
-      catch (FormatException exc) { exception = exc; }
-      catch (IOException exc) { exception = exc; }
-      if (exception != null) {
-        if (debug) trace(exception);
+    }
+    else {
+      in.read(b);
+      Exception exc = null;
+      try {
+        BufferedImage img = pict.open(b).getSubimage(x, y, w, h);
+        byte[][] pix = ImageTools.getPixelBytes(img, core.littleEndian[series]);
+        for (int i=0; i<pix.length; i++) {
+          System.arraycopy(pix[i], 0, buf, i*pix[i].length, pix[i].length);
+        }
+      }
+      catch (FormatException e) { exc = e; }
+      catch (IOException e) { exc = e; }
 
-        b = null;
-        in.seek(info.layerStart + 12);
-        int blockSize = in.readInt();
-        byte toRead = in.readByte();
+      if (exc != null) {
+        in.seek(planes[planeOffsets[series][no]].planeOffset - 298);
 
-        // right now I'm gonna skip all the header info
-        // check to see whether or not this is v2 data
-        if (toRead == 1) in.skipBytes(128);
+        if (in.readByte() == 1) in.skipBytes(128);
         in.skipBytes(169);
-        // read in the block of data
-        byte[] q = new byte[blockSize];
-        in.read(q);
-        byte[] pixelData = new byte[blockSize];
-        int pixPos = 0;
 
-        int length = q.length;
-        int num, size;
-        int totalBlocks = -1; // set to allow loop to start.
-        int expectedBlock = 0;
-        int pos = 0;
+        int size = 0, expectedBlock = 0, totalBlocks = -1, pixPos = 0;
+
+        byte[] plane =
+          new byte[getSizeX() * getSizeY() * bpp * getRGBChannelCount()];
 
         while (expectedBlock != totalBlocks) {
-
-          while (pos + 7 < length &&
-            (q[pos] != 73 || q[pos + 1] != 86 || q[pos + 2] != 69 ||
-            q[pos + 3] != 65 || q[pos + 4] != 100 || q[pos + 5] != 98 ||
-            q[pos + 6] != 112 || q[pos + 7] != 113))
-          {
-            pos++;
+          while (in.readLong() != 0x4956454164627071L) {
+            in.seek(in.getFilePointer() - 7);
           }
 
-          pos += 8; // skip the block type we just found
-
-          // Read info from the iPic comment. This serves as a
-          // starting point to read the rest.
-          num = DataTools.bytesToInt(q, pos, 4, false);
+          int num = in.readInt();
           if (num != expectedBlock) {
             throw new FormatException("Expected iPic block not found");
           }
+
           expectedBlock++;
-          if (totalBlocks == -1) {
-            totalBlocks = DataTools.bytesToInt(q, pos + 4, 4, false);
-          }
-          else {
-            if (DataTools.bytesToInt(q, pos + 4, 4, false) != totalBlocks) {
-              throw new FormatException("Unexpected totalBlocks numbein.read");
-            }
-          }
+          if (totalBlocks == -1) totalBlocks = in.readInt();
+          else in.skipBytes(4);
 
-          // skip to size
-          pos += 16;
+          in.skipBytes(8);
+          size = in.readInt();
+          in.skipBytes(4);
 
-          size = DataTools.bytesToInt(q, pos, 4, false);
-          pos += 8;
+          if (size + pixPos > plane.length) size = plane.length - pixPos;
 
-          // copy into our data array.
-          System.arraycopy(q, pos, pixelData, pixPos, size);
+          in.read(plane, pixPos, size);
           pixPos += size;
         }
-        b = new byte[pixPos];
-        System.arraycopy(pixelData, 0, b, 0, b.length);
-      }
-    }
-    else {
-      readTagHeader();
 
-      if (tag != 68 || !fmt.equals("RAWi")) {
-        throw new FormatException("Corrupt LIFF file.");
-      }
-
-      if (subTag != 0) {
-        throw new FormatException("Wrong compression type.");
-      }
-
-      in.skipBytes(24);
-      volumeType = in.readShort();
-
-      in.skipBytes(280);
-      int size = in.readInt();
-      int compressedSize = in.readInt();
-      b = new byte[size];
-      byte[] c = new byte[compressedSize];
-      in.read(c);
-
-      LZOCodec lzoc = new LZOCodec();
-      b = lzoc.decompress(c);
-      if (b.length != size) {
-        LogTools.println("LZOCodec failed to predict image size");
-        LogTools.println(size + " expected, got " + b.length +
-          ". The image displayed may not be correct.");
-      }
-
-      if (volumeType == MAC_24_BIT) {
-        bytesPerPixel =
-          b.length >= core.sizeX[series] * core.sizeY[series] * 4 ? 4 : 3;
-
-        int destRowBytes = core.sizeX[series] * bytesPerPixel;
-        int srcRowBytes = b.length / core.sizeY[series];
-
-        byte[] tmp = new byte[destRowBytes * core.sizeY[series]];
-        int src = 0;
-        int dest = 0;
-        for (int row=0; row<core.sizeY[series]; row++) {
-          System.arraycopy(b, src, tmp, dest, destRowBytes);
-          src += srcRowBytes;
-          dest += destRowBytes;
+        int srcRow = getSizeX() * bpp * getRGBChannelCount();
+        int rowLen = w * bpp * getRGBChannelCount();
+        for (int row=0; row<h; row++) {
+          System.arraycopy(plane, (row + y) * srcRow +
+            x * bpp * getRGBChannelCount(), buf, row*rowLen, rowLen);
         }
-
-        // strip out alpha channel and force channel separation
-        /*
-        if (bytesPerPixel == 4) {
-          b = new byte[(3 * tmp.length) / 4];
-          dest = 0;
-          for (int i=0; i<tmp.length; i+=4) {
-            b[dest] = tmp[i + 1];
-            b[dest + (b.length / 3)] = tmp[i + 2];
-            b[dest + ((2 * b.length) / 3)] = tmp[i + 3];
-            dest++;
-          }
-          bytesPerPixel = 3;
-        }
-        */
-      }
-      else if (volumeType == MAC_256_GREYS) {
-        byte[] tmp = b;
-        b = new byte[core.sizeX[series] * core.sizeY[series]];
-        for (int row=0; row<core.sizeY[series]; row++) {
-          System.arraycopy(tmp, row*(core.sizeX[series] + 16), b,
-            row*core.sizeX[series], core.sizeX[series]);
-        }
-      }
-      else if (volumeType < MAC_24_BIT) {
-        throw new FormatException("Unsupported image type : " + volumeType);
       }
     }
 
-    int bpp = b.length / (core.sizeX[series] * core.sizeY[series]);
-    int expected = core.sizeX[series] * core.sizeY[series] * bpp;
-    if (b.length > expected) {
-      byte[] tmp = b;
-      b = new byte[expected];
-      System.arraycopy(tmp, 0, b, 0, b.length);
-    }
-    return b;
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -345,7 +254,7 @@ public class OpenlabReader extends FormatReader {
   public void close() throws IOException {
     super.close();
     if (pict != null) pict.close();
-    layerInfoList = null;
+    planes = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -370,8 +279,13 @@ public class OpenlabReader extends FormatReader {
       throw new FormatException("Invalid version : " + version);
     }
 
-    // skip the layer count and ID seed
-    in.skipBytes(4);
+    // total number of planes in the file
+    int planeCount = in.readShort();
+
+    planes = new PlaneInfo[planeCount];
+
+    // skip the ID seed
+    in.skipBytes(2);
 
     // read offset to first plane
     int offset = in.readInt();
@@ -379,346 +293,230 @@ public class OpenlabReader extends FormatReader {
 
     status("Finding image offsets");
 
-    layerInfoList = new Vector[2];
-    for (int i=0; i<layerInfoList.length; i++) layerInfoList[i] = new Vector();
-    xCal = yCal = zCal = (float) 0.0;
+    xcal = ycal = 0.0f;
 
     // scan through the file, and read image information
 
-    long nextTag, startPos;
+    int imagesFound = 0;
+
+    Vector firstSeriesOffsets = new Vector();
+    Vector secondSeriesOffsets = new Vector();
+
     while (in.getFilePointer() < in.length()) {
+      readTagHeader();
 
-      subTag = tag = 0;
-      try {
-        startPos = in.getFilePointer();
-        nextTag = readTagHeader();
-      }
-      catch (IOException exc) {
-        if (debug) trace(exc);
+      if (tag == IMAGE_TYPE_1 || tag == IMAGE_TYPE_2) {
+        // found an image
 
-        if (in.getFilePointer() >= in.length()) break;
-        else throw new FormatException(exc.getMessage());
-      }
+        planes[imagesFound] = new PlaneInfo();
 
-      try {
-        if (tag == 67 || tag == 68 || fmt.equals("PICT") || fmt.equals("RAWi"))
-        {
-          LayerInfo info = new LayerInfo();
-          info.layerStart = (int) startPos;
-          info.zPosition = -1;
-          info.wavelength = -1;
+        planes[imagesFound].pict = fmt.toLowerCase().equals("pict");
+        planes[imagesFound].compressed = subTag == 0;
 
-          in.skipBytes(24);
-          int volumeType = in.readShort();
+        in.skipBytes(24);
+        planes[imagesFound].volumeType = in.readShort();
+        in.skipBytes(16);
+        planes[imagesFound].planeName = in.readString(128).trim();
+        in.skipBytes(128);
 
-          if (volumeType == MAC_1_BIT || volumeType == MAC_256_GREYS ||
-            volumeType == MAC_256_COLORS ||
-            (volumeType >= MAC_24_BIT && volumeType <= GREY_16_BIT))
-          {
-            in.skipBytes(16);
-            info.layerName = in.readString(128);
+        planes[imagesFound].planeOffset = in.getFilePointer();
 
-            if (!info.layerName.trim().equals("Original Image")) {
-              info.timestamp = in.readLong();
-              layerInfoList[0].add(info);
-            }
-          }
-
-        }
-        else if (tag == 69) {
-          in.skipBytes(18);
-
-          xCal = in.readFloat();
-          yCal = in.readFloat();
-        }
-        else if (tag == 72 || fmt.equals("USER")) {
-          char aChar = in.readChar();
-          StringBuffer sb = new StringBuffer();
-          while (aChar != 0) {
-            sb = sb.append(aChar);
-            aChar = in.readChar();
-          }
-
-          String className = sb.toString();
-
-          if (className.equals("CVariableList")) {
-            aChar = in.readChar();
-
-            if (aChar == 1) {
-              int numVars = in.readShort();
-              while (numVars > 0) {
-                aChar = in.readChar();
-                sb = new StringBuffer();
-                while (aChar != 0) {
-                  sb = sb.append(aChar);
-                  aChar = in.readChar();
-                }
-
-                String varName = "";
-                String varStringValue = "";
-                double varNumValue = 0.0;
-
-                className = sb.toString();
-
-                int derivedClassVersion = in.read();
-                if (derivedClassVersion != 1) {
-                  throw new FormatException("Invalid revision.");
-                }
-
-                if (className.equals("CStringVariable")) {
-                  int strSize = in.readInt();
-                  varStringValue = in.readString(strSize);
-                  varNumValue = Float.parseFloat(varStringValue);
-
-                  in.skipBytes(1);
-                }
-                else if (className.equals("CFloatVariable")) {
-                  varNumValue = in.readDouble();
-                  varStringValue = "" + varNumValue;
-                }
-
-                int baseClassVersion = in.read();
-                if (baseClassVersion == 1 || baseClassVersion == 2) {
-                  int strSize = in.readInt();
-                  varName = in.readString(strSize);
-                  in.skipBytes(baseClassVersion == 1 ? 3 : 2);
-                }
-                else {
-                  throw new FormatException("Invalid revision.");
-                }
-
-                addMeta(varName, varStringValue);
-                numVars--;
-              }
-            }
-          }
-        }
-
-        in.seek(nextTag);
-      }
-      catch (Exception exc) {
-        // CTR TODO - eliminate catch-all exception handling
-        if (debug) trace(exc);
-        in.seek(nextTag);
-      }
-    }
-
-    Vector tmp = new Vector();
-    for (int i=0; i<layerInfoList[0].size(); i++) {
-      tmp.add(layerInfoList[0].get(i));
-    }
-
-    core = new CoreMetadata(2);
-
-    core.imageCount[0] = tmp.size();
-
-    // determine if we have a multi-series file
-
-    status("Determining series count");
-
-    int oldChannels = openBytes(0).length / (core.sizeX[0] * core.sizeY[0] * 3);
-    int oldWidth = core.sizeX[0];
-
-    for (int i=0; i<tmp.size(); i++) {
-      LayerInfo layer = (LayerInfo) tmp.get(i);
-      in.seek(layer.layerStart);
-
-      int top, left, bottom, right;
-      nextTag = readTagHeader();
-      if (fmt.equals("PICT")) {
-        in.skipBytes(298);
-
+        // read the image dimensions
         if (version == 2) {
           in.skipBytes(2);
-          top = in.readShort();
-          left = in.readShort();
-          bottom = in.readShort();
-          right = in.readShort();
+          int top = in.readShort();
+          int left = in.readShort();
+          int bottom = in.readShort();
+          int right = in.readShort();
 
-          if (core.sizeX[series] == 0) core.sizeX[series] = right - left;
-          if (core.sizeY[series] == 0) core.sizeY[series] = bottom - top;
+          planes[imagesFound].width = right - left;
+          planes[imagesFound].height = bottom - top;
         }
         else {
-          core.sizeX[series] = in.readInt();
-          core.sizeY[series] = in.readInt();
+          planes[imagesFound].width = in.readInt();
+          planes[imagesFound].height = in.readInt();
         }
 
-        in.seek(layer.layerStart);
-
-        if (version == 2) {
-          nextTag = readTagHeader();
-
-          if ((tag != 67 && tag != 68) || !fmt.equals("PICT")) {
-            throw new FormatException("Corrupt LIFF file.");
+        // check if this image belongs to a new series
+        if (!planes[imagesFound].planeName.equals("Original Image")) {
+          if (planes[imagesFound].width == planes[0].width &&
+            planes[imagesFound].height == planes[0].height &&
+            planes[imagesFound].volumeType == planes[0].volumeType)
+          {
+            firstSeriesOffsets.add(new Integer(imagesFound));
           }
-          in.skipBytes(298);
+          else secondSeriesOffsets.add(new Integer(imagesFound));
+          imagesFound++;
+        }
+      }
+      else if (tag == CALIBRATION) {
+        in.skipBytes(4);
+        short units = in.readShort();
+        in.skipBytes(12);
 
-          // open image using pict reader
-          try {
-            byte[] b = new byte[(int) (nextTag - in.getFilePointer())];
-            in.read(b);
-            BufferedImage img = pict.open(b);
-            if (img.getRaster().getNumBands() != oldChannels ||
-              img.getWidth() != oldWidth)
-            {
-              layerInfoList[1].add(tmp.get(i));
-              layerInfoList[0].remove(tmp.get(i));
+        xcal = in.readFloat();
+        ycal = in.readFloat();
+
+        float scaling = units == 3 ? 0.001f : 1.0f;
+
+        xcal *= scaling;
+        ycal *= scaling;
+      }
+      else if (tag == USER) {
+        String className = in.readCString();
+
+        if (className.equals("CVariableList")) {
+          char achar = in.readChar();
+
+          if (achar == 1) {
+            int numVars = in.readShort();
+            while (numVars > 0) {
+              className = in.readCString();
+
+              String varName = "", varStringValue = "";
+
+              int derivedClassVersion = in.read();
+              if (derivedClassVersion != 1) {
+                throw new FormatException("Invalid revision");
+              }
+
+              if (className.equals("CStringVariable")) {
+                int strSize = in.readInt();
+                varStringValue = in.readString(strSize);
+                in.skipBytes(1);
+              }
+              else if (className.equals("CFloatVariable")) {
+                varStringValue = String.valueOf(in.readDouble());
+              }
+
+              int baseClassVersion = in.read();
+              if (baseClassVersion == 1 || baseClassVersion == 2) {
+                int strSize = in.readInt();
+                varName = in.readString(strSize);
+                in.skipBytes(baseClassVersion * 2 + 1);
+              }
+              else {
+                throw new FormatException("Invalid revision: " + baseClassVersion);
+              }
+
+              addMeta(varName, varStringValue);
+              numVars--;
             }
           }
-          catch (FormatException e) {
-          }
+        }
+      }
+
+      in.seek(nextTag);
+    }
+
+    int nSeries = secondSeriesOffsets.size() > 0 ? 2 : 1;
+    planeOffsets = new int[nSeries][];
+    for (int i=0; i<nSeries; i++) {
+      if (i == 0) {
+        planeOffsets[i] = new int[firstSeriesOffsets.size()];
+        for (int n=0; n<planeOffsets[i].length; n++) {
+          planeOffsets[i][n] = ((Integer) firstSeriesOffsets.get(n)).intValue();
         }
       }
       else {
-        in.skipBytes(24);
-        int type = in.readShort();
-        if (type == MAC_24_BIT) {
-          layerInfoList[1].add(tmp.get(i));
-          layerInfoList[0].remove(tmp.get(i));
+        planeOffsets[i] = new int[secondSeriesOffsets.size()];
+        for (int n=0; n<planeOffsets[i].length; n++) {
+          planeOffsets[i][n] =
+            ((Integer) secondSeriesOffsets.get(n)).intValue();
         }
       }
     }
 
-    if (layerInfoList[1].size() == 0 || layerInfoList[0].size() == 0) {
-      core.sizeC = new int[1];
-      core.sizeC[0] = layerInfoList[1].size() == 0 ? 1 : 3;
-      if (core.sizeC[0] == 1 && oldChannels == 1) core.sizeC[0] = 3;
+    // populate core metadata
 
-      int oldImages = core.imageCount[0];
-      core.imageCount = new int[1];
-      core.imageCount[0] = oldImages;
-      if (layerInfoList[0].size() == 0) layerInfoList[0] = layerInfoList[1];
+    core = new CoreMetadata(nSeries);
 
-      int x = core.sizeX[0];
-      core.sizeX = new int[1];
-      core.sizeX[0] = x;
+    for (int i=0; i<nSeries; i++) {
+      core.sizeX[i] = planes[planeOffsets[i][0]].width;
+      core.sizeY[i] = planes[planeOffsets[i][0]].height;
+      core.imageCount[i] = planeOffsets[i].length;
+
+      switch (planes[planeOffsets[i][0]].volumeType) {
+        case MAC_1_BIT:
+        case MAC_4_GREYS:
+        case MAC_256_GREYS:
+          core.pixelType[i] = FormatTools.UINT8;
+          core.rgb[i] = false;
+          core.sizeC[i] = 1;
+          core.interleaved[i] = false;
+          break;
+        case MAC_16_COLORS:
+        case MAC_256_COLORS:
+        case MAC_16_BIT_COLOR:
+        case MAC_24_BIT_COLOR:
+          core.pixelType[i] = FormatTools.UINT8;
+          core.rgb[i] = true;
+          core.sizeC[i] = 3;
+          core.interleaved[i] = version == 5;
+          break;
+        case MAC_16_GREYS:
+        case DEEP_GREY_9:
+        case DEEP_GREY_10:
+        case DEEP_GREY_11:
+        case DEEP_GREY_12:
+        case DEEP_GREY_13:
+        case DEEP_GREY_14:
+        case DEEP_GREY_15:
+        case DEEP_GREY_16:
+          core.pixelType[i] = FormatTools.UINT16;
+          core.rgb[i] = false;
+          core.sizeC[i] = 1;
+          core.interleaved[i] = false;
+          break;
+        default:
+          throw new FormatException("Unsupported plane type: " +
+            planes[planeOffsets[i][0]].volumeType);
+      }
+
+      core.sizeT[i] = 1;
+      core.sizeZ[i] = core.imageCount[i];
     }
-    else {
-      core.imageCount[0] = layerInfoList[0].size();
-      core.imageCount[1] = layerInfoList[1].size();
-      core.sizeC[0] = 1;
-      core.sizeC[1] = 3;
-      int oldW = core.sizeX[0];
-      int oldH = core.sizeY[0];
-      core.sizeX = new int[2];
-      core.sizeY = new int[2];
-      core.sizeX[0] = oldW;
-      core.sizeX[1] = oldW;
-      core.sizeY[0] = oldH;
-      core.sizeY[1] = oldH;
-    }
-
+    Arrays.fill(core.currentOrder, "XYCZT");
+    Arrays.fill(core.littleEndian, false);
+    Arrays.fill(core.indexed, false);
+    Arrays.fill(core.falseColor, false);
     Arrays.fill(core.metadataComplete, true);
-
-    status("Populating metadata");
-
-    numSeries = core.imageCount.length;
-
-    int[] bpp = new int[numSeries];
-
-    Arrays.fill(core.orderCertain, true);
-
-    int oldSeries = getSeries();
-    for (int i=0; i<bpp.length; i++) {
-      setSeries(i);
-      if (core.sizeC[i] == 0) core.sizeC[i] = 1;
-      bpp[i] = openBytes(0).length / (core.sizeX[i] * core.sizeY[i]);
-    }
-    setSeries(oldSeries);
-
-    if (bytesPerPixel == 3) bytesPerPixel = 1;
-    if (bytesPerPixel == 0) bytesPerPixel++;
-
-    // finish populating metadata hashtable
-    addMeta("Version", new Integer(version));
-    addMeta("Number of Series", new Integer(numSeries));
-    for (int i=0; i<numSeries; i++) {
-      addMeta("Width (Series " + i + ")", new Integer(core.sizeX[i]));
-      addMeta("Height (Series " + i + ")", new Integer(core.sizeY[i]));
-      addMeta("Bit depth (Series " + i + ")",
-        new Integer(bpp[i] * 8));
-      addMeta("Number of channels (Series " + i + ")",
-        new Integer(core.sizeC[i]));
-      addMeta("Number of images (Series " + i + ")",
-        new Integer(core.imageCount[i]));
-    }
 
     // populate MetadataStore
 
     MetadataStore store = getMetadataStore();
-
-    for (int i=0; i<numSeries; i++) {
-      core.sizeT[i] += 1;
-      core.sizeZ[i] = core.imageCount[i] / core.sizeT[i];
-      core.currentOrder[i] = isRGB() ? "XYCZT" : "XYZCT";
-      core.rgb[i] = core.sizeC[i] > 1;
-      core.interleaved[i] = numSeries == 1 || version == 2;
-      core.littleEndian[i] = false;
-
-      try {
-        if (i != 0) {
-          if (bpp[i] == bpp[0]) bpp[i] = bpp[i + 1];
-        }
-      }
-      catch (ArrayIndexOutOfBoundsException a) { }
-
-      switch (bpp[i]) {
-        case 1:
-        case 3:
-          core.pixelType[i] = FormatTools.UINT8;
-          break;
-        case 2:
-        case 6:
-          core.pixelType[i] = FormatTools.UINT16;
-          break;
-        case 4:
-          core.pixelType[i] = FormatTools.UINT32;
-          break;
-      }
-
-      store.setImageName("Series " + i, i);
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
-      store.setDimensionsPhysicalSizeX(new Float(xCal), i, 0);
-      store.setDimensionsPhysicalSizeY(new Float(yCal), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Float(zCal), i, 0);
-    }
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<numSeries; i++) {
-//      for (int j=0; j<core.sizeC[i]; j++) {
-//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, new Integer(i));
-//      }
-//    }
+    store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
   }
 
   // -- Helper methods --
 
   /** Read the next tag. */
-  private long readTagHeader()
-    throws IOException
-  {
+  private void readTagHeader() throws IOException {
     tag = in.readShort();
     subTag = in.readShort();
 
-    long nextTag = (version == 2 ? in.readInt() : in.readLong());
+    nextTag = (version == 2 ? in.readInt() : in.readLong());
 
     fmt = in.readString(4);
     in.skipBytes(version == 2 ? 4 : 8);
-    return nextTag;
   }
 
   // -- Helper classes --
 
-  /** Helper class for storing layer info. */
-  protected class LayerInfo {
-    protected int layerStart;
+  /** Helper class for storing plane info. */
+  protected class PlaneInfo {
+    protected long planeOffset;
     protected int zPosition;
     protected int wavelength;
-    protected String layerName;
+    protected String planeName;
     protected long timestamp;
+    protected boolean pict;
+    protected boolean compressed;
+    protected int volumeType;
+    protected int width;
+    protected int height;
   }
 
 }

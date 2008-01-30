@@ -332,6 +332,17 @@ public class RandomAccessStream extends InputStream implements DataInput {
     return sb.toString();
   }
 
+  /** Read a string of arbitrary length, terminated by a null char. */
+  public String readCString() throws IOException {
+    StringBuffer sb = new StringBuffer();
+    char achar = readChar();
+    while (achar != 0) {
+      sb = sb.append(achar);
+      achar = readChar();
+    }
+    return sb.toString();
+  }
+
   /** Read a string of length n. */
   public String readString(int n) throws IOException {
     byte[] b = new byte[n];
