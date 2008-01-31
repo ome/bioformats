@@ -457,6 +457,7 @@ public final class Util {
     ImagePlus p = new ImagePlus(imp.getTitle(), newStack);
     p.setDimensions(c, z, t);
     p.setCalibration(imp.getCalibration());
+    p.setFileInfo(imp.getOriginalFileInfo());
     return p;
   }
 

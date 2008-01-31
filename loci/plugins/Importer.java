@@ -365,6 +365,14 @@ public class Importer {
           FileInfo fi = new FileInfo();
           fi.description = MetadataTools.getOMEXML(retrieve);
 
+          // populate other common FileInfo fields
+          String idDir = idLoc.getParent();
+          if (idDir != null && !idDir.endsWith(File.separator)) {
+            idDir += File.separator;
+          }
+          fi.fileName = idName;
+          fi.directory = idDir;
+
           // place metadata key/value pairs in ImageJ's info field
           StringBuffer metadata = getMetadataString(r.getMetadata(), " = ");
 
@@ -639,7 +647,7 @@ public class Importer {
         ru.setVar("sizeT", r.getSizeT());
         ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
         ru.setVar("cal", imp.getCalibration());
-        ru.setVar("fi", imp.getFileInfo());
+        ru.setVar("fi", imp.getOriginalFileInfo());
         ru.exec("i5d.setCalibration(cal)");
         ru.exec("i5d.setFileInfo(fi)");
         //ru.exec("i5d.setDimensions(sizeC, sizeZ, sizeT)");

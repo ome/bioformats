@@ -156,6 +156,7 @@ public class Slicer implements PlugInFilter {
       p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
         sliceT ? 1 : sizeT);
       p.setCalibration(calibration);
+      p.setFileInfo(imp.getOriginalFileInfo());
       if (IJ.getVersion().compareTo("1.39l") >= 0 &&
         !(p instanceof CompositeImage))
       {
