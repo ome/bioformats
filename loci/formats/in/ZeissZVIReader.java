@@ -937,14 +937,65 @@ public class ZeissZVIReader extends FormatReader {
         firstImageTile = value;
       }
       else if (key.equals("ImageTile Index 1")) secondImageTile = value;
-      else if (key.equals("Scale Factor for X")) {
-        if (pixelSizeX == 0f) pixelSizeX = Float.parseFloat(value);
+      else if (key.startsWith("Scale Factor for X")) {
+        pixelSizeX = Float.parseFloat(value);
       }
-      else if (key.equals("Scale Factor for Y")) {
-        if (pixelSizeY == 0f) pixelSizeY = Float.parseFloat(value);
+      else if (key.startsWith("Scale Factor for Y")) {
+        pixelSizeY = Float.parseFloat(value);
       }
-      else if (key.equals("Scale Factor for Z")) {
-        if (pixelSizeZ == 0f) pixelSizeZ = Float.parseFloat(value);
+      else if (key.startsWith("Scale Factor for Z")) {
+        pixelSizeZ = Float.parseFloat(value);
+      }
+      else if (key.startsWith("Scale Unit for X")) {
+        int v = Integer.parseInt(value);
+        switch (v) {
+          case 72:
+            // meters
+            pixelSizeX *= 1000000;
+            break;
+          case 77:
+            // nanometers
+            pixelSizeX /= 1000;
+            break;
+          case 81:
+            // inches
+            pixelSizeX *= 25400;
+            break;
+        }
+      }
+      else if (key.startsWith("Scale Unit for Y")) {
+        int v = Integer.parseInt(value);
+        switch (v) {
+          case 72:
+            // meters
+            pixelSizeY *= 1000000;
+            break;
+          case 77:
+            // nanometers
+            pixelSizeY /= 1000;
+            break;
+          case 81:
+            // inches
+            pixelSizeY *= 25400;
+            break;
+        }
+      }
+      else if (key.startsWith("Scale Unit for Z")) {
+        int v = Integer.parseInt(value);
+        switch (v) {
+          case 72:
+            // meters
+            pixelSizeZ *= 1000000;
+            break;
+          case 77:
+            // nanometers
+            pixelSizeZ /= 1000;
+            break;
+          case 81:
+            // inches
+            pixelSizeZ *= 25400;
+            break;
+        }
       }
       else if (key.equals("Microscope Name") || key.equals("Microscope Name 0"))
       {
