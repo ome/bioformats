@@ -58,10 +58,10 @@ public class QTReader extends FormatReader {
   // -- Fields --
 
   /** Offset to start of pixel data. */
-  private int pixelOffset;
+  private long pixelOffset;
 
   /** Total number of bytes of pixel data. */
-  private int pixelBytes;
+  private long pixelBytes;
 
   /** Pixel depth. */
   private int bitsPerPixel;
@@ -163,7 +163,7 @@ public class QTReader extends FormatReader {
     }
 
     int offset = ((Integer) offsets.get(no)).intValue();
-    int nextOffset = pixelBytes;
+    int nextOffset = (int) pixelBytes;
 
     scale = ((Integer) offsets.get(0)).intValue();
     offset -= scale;
@@ -208,8 +208,7 @@ public class QTReader extends FormatReader {
 
     // determine whether we need to strip out any padding bytes
 
-    int pad = core.sizeX[0] % 4;
-    pad = (4 - pad) % 4;
+    int pad = (4 - (core.sizeX[0] % 4)) % 4;
     if (codec.equals("mjpb")) pad = 0;
 
     int size = core.sizeX[0] * core.sizeY[0];
@@ -224,13 +223,19 @@ public class QTReader extends FormatReader {
       }
     }
 
-    int bpp = bitsPerPixel / 8;
-    if (bpp > 4) bpp -= 4;
-
-    for (int cc=0; cc<bpp; cc++) {
-      for (int row=0; row<h; row++) {
-        System.arraycopy(t, cc * core.sizeX[0] * core.sizeY[0] +
-          (row + y) * core.sizeX[0] + x, buf, cc * h * w + row * w, w);
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
+    int srcRowLen = core.sizeX[0] * bpp * core.sizeC[0];
+    int destRowLen = w * bpp * core.sizeC[0];
+    for (int row=0; row<h; row++) {
+      if (bitsPerPixel == 32) {
+        for (int col=0; col<w; col++) {
+          System.arraycopy(t, row*core.sizeX[0]*bpp*4 + (x + col)*bpp*4 + 1,
+            buf, row*destRowLen + col*bpp*3, 3);
+        }
+      }
+      else {
+        System.arraycopy(t, row*srcRowLen + x*bpp*core.sizeC[0], buf,
+          row*destRowLen, destRowLen);
       }
     }
 
@@ -239,55 +244,8 @@ public class QTReader extends FormatReader {
       for (int i=0; i<buf.length; i++) {
         buf[i] = (byte) (255 - buf[i]);
       }
-      return buf;
-    }
-    else if (bitsPerPixel == 32) {
-      // strip out alpha channel
-      byte[][] data = new byte[3][buf.length / 4];
-      for (int i=0; i<data[0].length; i++) {
-        data[0][i] = buf[4*i + 1];
-        data[1][i] = buf[4*i + 2];
-        data[2][i] = buf[4*i + 3];
-      }
-
-      byte[] rtn = new byte[data.length * data[0].length];
-      for (int i=0; i<data.length; i++) {
-        System.arraycopy(data[i], 0, rtn, i * data[0].length, data[i].length);
-      }
-      return rtn;
     }
     return buf;
-  }
-
-  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-
-    String code = codec;
-    if (no >= getImageCount() - altPlanes) code = altCodec;
-
-    boolean doLegacy = useLegacy;
-    if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
-      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
-    {
-      if (debug) {
-        debug("Unsupported codec (" + code + "); using QTJava reader");
-      }
-      doLegacy = true;
-    }
-    if (doLegacy) {
-      if (legacy == null) legacy = createLegacyReader();
-      legacy.setId(currentId);
-      return legacy.openImage(no, x, y, w, h);
-    }
-
-    int bpp = bitsPerPixel / 8;
-    if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
-    return ImageTools.makeImage(openBytes(no, x, y, w, h), w,
-      h, core.sizeC[0], false, bpp, core.littleEndian[0]);
   }
 
   // -- IFormatHandler API methods --
@@ -340,19 +298,9 @@ public class QTReader extends FormatReader {
 
     status("Populating metadata");
 
-    int bytesPerPixel = bitsPerPixel / 8;
-    bytesPerPixel %= 4;
-
-    switch (bytesPerPixel) {
-      case 0:
-      case 1:
-      case 3:
-        core.pixelType[0] = FormatTools.UINT8;
-        break;
-      case 2:
-        core.pixelType[0] = FormatTools.UINT16;
-        break;
-    }
+    int bytesPerPixel = (bitsPerPixel / 8) % 4;
+    core.pixelType[0] =
+      bytesPerPixel == 2 ?  FormatTools.UINT16 : FormatTools.UINT8;
 
     core.rgb[0] = bitsPerPixel < 40;
     core.sizeZ[0] = 1;
@@ -427,49 +375,6 @@ public class QTReader extends FormatReader {
       throw new FormatException("QuickTime resource fork not found. " +
         " To avoid this issue, please flatten your QuickTime movies " +
         "before importing with Bio-Formats.");
-
-      /* TODO
-      // If we didn't find the resource fork, we can check to see if the file
-      // uses a JPEG-compatible codec.  In this case, we can do some guesswork
-      // to read the file; otherwise we will fail gracefully.
-
-      if (debug) {
-        debug("Failed to find the QuickTime resource fork. " +
-          "Attempting to proceed using only the data fork.");
-      }
-
-      // read through the file looking for occurences of the codec string
-      core.imageCount[0] = 0;
-      String codecString = new String(pixels, 4, 4);
-      if (codecString.equals("mjpg")) codec = "mjpb";
-      else codec = codecString;
-
-      if (codec.equals("mjpb") || codec.equals("jpeg")) {
-        // grab the width, height, and bits per pixel from the first plane
-
-      }
-      else {
-        throw new FormatException("Sorry, this QuickTime movie does not " +
-          "contain a Resource Fork.  Support for this case will be improved " +
-          "as time permits.  To avoid this issue, please flatten your " +
-          "QuickTime movies before importing with Bio-Formats.");
-      }
-
-      boolean canAdd = true;
-      for (int i=0; i<pixels.length-5; i++) {
-        if (codecString.equals(new String(pixels, i, 4))) {
-          if (canAdd) {
-            offsets.add(new Integer(i - 4));
-            core.imageCount[0]++;
-            canAdd = false;
-          }
-          else {
-            canAdd = true;
-          }
-          i += 1000;
-        }
-      }
-      */
     }
   }
 
@@ -483,8 +388,7 @@ public class QTReader extends FormatReader {
       in.seek(offset);
 
       // first 4 bytes are the atom size
-      long atomSize = in.readInt();
-      if (atomSize < 0) atomSize += 4294967296L;
+      long atomSize = in.readInt() & 0xffffffff;
 
       // read the atom type
       String atomType = in.readString(4);
@@ -503,23 +407,21 @@ public class QTReader extends FormatReader {
           "; atomType=" + atomType + "; atomSize=" + atomSize);
       }
 
-      byte[] data = new byte[0];
-
       // if this is a container atom, parse the children
       if (isContainer(atomType)) {
         parse(depth++, in.getFilePointer(), offset + atomSize);
       }
       else {
         if (atomSize == 0) atomSize = in.length();
-        int oldpos = (int) in.getFilePointer();
+        long oldpos = in.getFilePointer();
 
         if (atomType.equals("mdat")) {
           // we've found the pixel data
-          pixelOffset = (int) in.getFilePointer();
-          pixelBytes = (int) atomSize;
+          pixelOffset = in.getFilePointer();
+          pixelBytes = atomSize;
 
           if (pixelBytes > (in.length() - pixelOffset)) {
-            pixelBytes = (int) (in.length() - pixelOffset);
+            pixelBytes = in.length() - pixelOffset;
           }
         }
         else if (atomType.equals("tkhd")) {
@@ -547,14 +449,12 @@ public class QTReader extends FormatReader {
         }
         else if (atomType.equals("cmov")) {
           in.skipBytes(8);
-          byte[] b = new byte[4];
-          in.read(b);
-          if ("zlib".equals(new String(b))) {
+          if ("zlib".equals(in.readString(4))) {
             atomSize = in.readInt();
             in.skipBytes(4);
             int uncompressedSize = in.readInt();
 
-            b = new byte[(int) (atomSize - 12)];
+            byte[] b = new byte[(int) (atomSize - 12)];
             in.read(b);
 
             Inflater inf = new Inflater();
@@ -582,7 +482,7 @@ public class QTReader extends FormatReader {
 
           if (offsets.size() > 0) break;
           spork = false;
-          in.readInt();
+          in.skipBytes(4);
           int numPlanes = in.readInt();
           if (numPlanes != core.imageCount[0]) {
             in.seek(in.getFilePointer() - 4);
@@ -606,9 +506,9 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stsd")) {
           // found video codec and pixel depth information
 
-          in.readInt();
+          in.skipBytes(4);
           int numEntries = in.readInt();
-          in.readInt();
+          in.skipBytes(4);
 
           for (int i=0; i<numEntries; i++) {
             if (i == 0) {
@@ -627,14 +527,11 @@ public class QTReader extends FormatReader {
 
                 bitsPerPixel = in.readShort();
                 if (codec.equals("rpza")) bitsPerPixel = 8;
-                in.readShort();
-                in.readDouble();
-                int fieldsPerPlane = in.read();
-                interlaced = fieldsPerPlane == 2;
+                in.skipBytes(10);
+                interlaced = in.read() == 2;
                 addMeta("Codec", codec);
                 addMeta("Bits per pixel", new Integer(bitsPerPixel));
-                in.readDouble();
-                in.read();
+                in.skipBytes(9);
               }
             }
             else {
@@ -645,7 +542,7 @@ public class QTReader extends FormatReader {
         }
         else if (atomType.equals("stsz")) {
           // found the number of planes
-          in.readInt();
+          in.skipBytes(4);
           rawSize = in.readInt();
           core.imageCount[0] = in.readInt();
 
@@ -657,7 +554,7 @@ public class QTReader extends FormatReader {
           }
         }
         else if (atomType.equals("stsc")) {
-          in.readInt();
+          in.skipBytes(4);
 
           int numChunks = in.readInt();
 
@@ -675,8 +572,7 @@ public class QTReader extends FormatReader {
           }
         }
         else if (atomType.equals("stts")) {
-          in.readDouble();
-          in.readInt();
+          in.skipBytes(10);
           int fps = in.readInt();
           addMeta("Frames per second", new Integer(fps));
         }
@@ -691,7 +587,7 @@ public class QTReader extends FormatReader {
 
       // if a 'udta' atom, skip ahead 4 bytes
       if (atomType.equals("udta")) offset += 4;
-      if (debug) print(depth, atomSize, atomType, data);
+      if (debug) print(depth, atomSize, atomType);
     }
   }
 
@@ -704,7 +600,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Debugging method; prints information on an atom. */
-  private void print(int depth, long size, String type, byte[] data) {
+  private void print(int depth, long size, String type) {
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<depth; i++) sb.append(" ");
     sb.append(type + " : [" + size + "]");

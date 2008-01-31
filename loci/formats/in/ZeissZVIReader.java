@@ -113,6 +113,9 @@ public class ZeissZVIReader extends FormatReader {
   private Vector whiteValue, blackValue, gammaValue, exposureTime;
   private String userName, userCompany, mag, na;
 
+  private int tileWidth, tileHeight;
+  private int realWidth, realHeight;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -141,48 +144,15 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (noPOI || needLegacy) return legacy.openBytes(no, buf);
+    if (noPOI || needLegacy) return legacy.openBytes(no, buf, x, y, w, h);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
+
     try {
-      int tiles = tileRows * tileColumns;
-      if (tiles == 0) {
-        tiles = 1;
-        tileRows = 1;
-        tileColumns = 1;
-      }
-      int start = no * tiles;
-
-      int bytes =
-        FormatTools.getBytesPerPixel(core.pixelType[0]) * getRGBChannelCount();
-      int ex = core.sizeX[0] / tileColumns;
-      int ey = core.sizeY[0] / tileRows;
-      int row = ex * bytes;
-
-      int[] tileOrder = new int[tiles];
-      if (tiles == 1) tileOrder[0] = no;
-      else {
-        int p = 0;
-        for (int r=0; r<tileRows; r++) {
-          for (int c=0; c<tileColumns; c++) {
-            int n = (no % core.sizeC[0]) +
-              (tiles * core.sizeC[0] * (no / core.sizeC[0]));
-            if (r % 2 == 0) {
-              tileOrder[p] = p*core.sizeC[0] + n;
-            }
-            else {
-              tileOrder[p] = (tileColumns - c)*core.sizeC[0];
-              if (p > 0 && c == 0) tileOrder[p] += tileOrder[p - 1];
-              else if (c > 0) tileOrder[p] = tileOrder[p - 1] - core.sizeC[0];
-            }
-            p++;
-          }
-        }
-      }
-
-      for (int i=start; i<start+tiles; i++) {
-        Integer ii = new Integer(tileOrder[i - start]);
+      if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
+        Integer ii = new Integer(no);
         Object directory = pixels.get(ii);
         String name = (String) names.get(ii);
 
@@ -195,30 +165,97 @@ public class ZeissZVIReader extends FormatReader {
         r.exec("blah = dis.skip(skipBytes)");
         r.setVar("data", buf);
 
-        int xf = ((i - start) % tileColumns) * ex * bytes;
-        int yf = ((i - start) / tileRows) * ey;
         int offset = 0;
 
-        r.setVar("skip", (long) y * core.sizeX[0] * bytes);
+        r.setVar("skip", (long) y * core.sizeX[0] * bytes * core.sizeC[0]);
         r.exec("dis.skip(skip)");
 
         for (int yy=0; yy<h; yy++) {
-          r.setVar("skip", (long) x * bytes);
+          r.setVar("skip", (long) x * bytes * core.sizeC[0]);
           r.exec("dis.skip(skip)");
           r.setVar("offset", offset);
-          r.setVar("len", w * bytes);
+          r.setVar("len", w * bytes * core.sizeC[0]);
           try {
             r.exec("dis.read(data, offset, len)");
           }
           catch (ReflectException e) { }
-          offset += w*bytes;
-          r.setVar("skip", (long) bytes * (core.sizeX[0] - w - x));
+          offset += w * bytes * core.sizeC[0];
+          r.setVar("skip",
+            (long) bytes * (core.sizeX[0] - w - x) * core.sizeC[0]);
           r.exec("dis.skip(skip)");
         }
 
         if (isJPEG) {
           JPEGCodec codec = new JPEGCodec();
           buf = codec.decompress(buf, new Boolean(core.littleEndian[0]));
+        }
+      }
+      else {
+        // determine which tiles to read
+
+        int firstTile = no * tileRows * tileColumns;
+
+        int rowOffset = 0;
+        int colOffset = 0;
+
+        byte[] tile = new byte[tileWidth * tileHeight * bytes];
+
+        tileRows = (core.sizeY[0] / tileHeight) + 1;
+        tileColumns = (core.sizeX[0] / tileWidth) + 1;
+
+        for (int row=0; row<tileRows; row++) {
+          for (int col=0; col<tileColumns; col++) {
+            int rowIndex = row * tileHeight;
+            int colIndex = col * tileWidth;
+
+            if ((rowIndex <= y && rowIndex + tileHeight >= y) ||
+              (rowIndex > y && rowIndex <= y + h))
+            {
+              if ((colIndex <= x && colIndex + tileWidth >= x) ||
+                (colIndex > x && colIndex <= x + w))
+              {
+                // read this tile
+                int tileX = colIndex < x ? x - colIndex : 0;
+                int tileY = rowIndex < y ? y - rowIndex : 0;
+                int tileW = colIndex + tileWidth <= x + w ?
+                  tileWidth - tileX : x + w - colIndex -  tileX;
+                int tileH = rowIndex + tileHeight <= y + h ?
+                  tileHeight - tileY : y + h - rowIndex - tileY;
+
+                Integer ii = new Integer(row*tileColumns*core.sizeC[0] +
+                  col*core.sizeC[0] + (no % core.sizeC[0]));
+                if ((row % 2) == 1) {
+                  ii = new Integer(core.sizeC[0]*(row*tileColumns +
+                    tileColumns - col - 1) + (no % core.sizeC[0]));
+                }
+
+                Object directory = pixels.get(ii);
+                String name = (String) names.get(ii);
+
+                r.setVar("dir", directory);
+                r.setVar("entryName", name);
+                r.exec("document = dir.getEntry(entryName)");
+                r.exec("dis = new DocumentInputStream(document, fis)");
+                r.exec("numBytes = dis.available()");
+                r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
+                r.exec("blah = dis.skip(skipBytes)");
+                r.setVar("data", tile);
+                r.exec("dis.read(data)");
+
+                for (int r=tileY; r<tileY + tileH; r++) {
+                  System.arraycopy(tile, r*tileWidth*bytes + bytes*tileX, buf,
+                    w*bytes*(rowOffset + r - tileY) + bytes*colOffset,
+                    tileW * bytes);
+                }
+
+                colOffset += tileW;
+                if (colOffset >= w) {
+                  colOffset = 0;
+                  rowOffset += tileH;
+                }
+              }
+            }
+          }
         }
       }
 
@@ -237,7 +274,7 @@ public class ZeissZVIReader extends FormatReader {
     }
     catch (ReflectException e) {
       needLegacy = true;
-      return openBytes(no, buf);
+      return openBytes(no, buf, x, y, w, h);
     }
   }
 
@@ -362,8 +399,6 @@ public class ZeissZVIReader extends FormatReader {
           tileRows = (lowerLeft / tileColumns) + 1;
           if (tileColumns < 0) tileColumns = 1;
           if (tileRows < 0) tileRows = 1;
-          core.sizeX[0] *= tileColumns;
-          core.sizeY[0] *= tileRows;
           if (tileColumns == 1 && tileRows == 1) isTiled = false;
         }
       }
@@ -418,6 +453,13 @@ public class ZeissZVIReader extends FormatReader {
         core.sizeZ[0] = core.sizeT[0];
         core.sizeT[0] = tmp;
       }
+    }
+
+    if (isTiled) {
+      tileWidth = core.sizeX[0];
+      tileHeight = core.sizeY[0];
+      core.sizeX[0] = realWidth;
+      core.sizeY[0] = realHeight;
     }
 
     try {
@@ -870,13 +912,19 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (key.equals("ImageWidth")) {
         try {
-          if (core.sizeX[0] == 0) core.sizeX[0] = Integer.parseInt(value);
+          if (core.sizeX[0] == 0) Integer.parseInt(value);
+          if (realWidth == 0 && Integer.parseInt(value) > realWidth) {
+            realWidth = Integer.parseInt(value);
+          }
         }
         catch (NumberFormatException f) { }
       }
       else if (key.equals("ImageHeight")) {
         try {
           if (core.sizeY[0] == 0) core.sizeY[0] = Integer.parseInt(value);
+          if (realHeight == 0 || Integer.parseInt(value) > realHeight) {
+            realHeight = Integer.parseInt(value);
+          }
         }
         catch (NumberFormatException f) { }
       }
@@ -890,13 +938,13 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (key.equals("ImageTile Index 1")) secondImageTile = value;
       else if (key.equals("Scale Factor for X")) {
-        pixelSizeX = Float.parseFloat(value);
+        if (pixelSizeX == 0f) pixelSizeX = Float.parseFloat(value);
       }
       else if (key.equals("Scale Factor for Y")) {
-        pixelSizeY = Float.parseFloat(value);
+        if (pixelSizeY == 0f) pixelSizeY = Float.parseFloat(value);
       }
       else if (key.equals("Scale Factor for Z")) {
-        pixelSizeZ = Float.parseFloat(value);
+        if (pixelSizeZ == 0f) pixelSizeZ = Float.parseFloat(value);
       }
       else if (key.equals("Microscope Name") || key.equals("Microscope Name 0"))
       {

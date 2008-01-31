@@ -77,14 +77,14 @@ public class MJPBCodec extends BaseCodec implements Codec {
 
         if (quantOffset != 0) {
           ras.seek(quantOffset);
-          ras.skipBytes(1);
+          ras.skipBytes(3);
           quant = new byte[64];
           ras.read(quant);
         }
 
         if (huffmanOffset != 0) {
           ras.seek(huffmanOffset);
-          ras.skipBytes(1);
+          ras.skipBytes(3);
           lumDcBits = new byte[16];
           ras.read(lumDcBits);
           lumDc = new byte[12];
