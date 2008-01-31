@@ -65,7 +65,7 @@ public final class MetadataTools {
    *   or null if the class is not available.
    */
   public static MetadataStore createOMEXMLMetadata(String xml) {
-    return createOMEXMLMetadata(xml, null);
+    return createOMEXMLMetadata(xml, "2003FC");
   }
 
   /**
