@@ -414,12 +414,12 @@ public class FluoviewReader extends BaseTiffReader {
       if (lensNA[i] != null) {
         store.setObjectiveLensNA(new Float(lensNA[i]), 0, i);
       }
-      if (gains[i] != null) {
-        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
-      }
-      if (offsets[i] != null) {
-        store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
-      }
+      //if (gains[i] != null) {
+      //  store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+      //}
+      //if (offsets[i] != null) {
+      //  store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
+      //}
     }
 
     /*

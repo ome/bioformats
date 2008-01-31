@@ -633,8 +633,8 @@ public class ZeissLSMReader extends BaseTiffReader {
           //  store.setLaserPower(new Float(value.toString()), 0, count - 1);
           //  break;
             case CHANNEL_ENTRY_DETECTOR_GAIN:
-              store.setDetectorSettingsGain(
-                new Float(value.toString()), 0, nextGain++);
+              //store.setDetectorSettingsGain(
+              //  new Float(value.toString()), 0, nextGain++);
               break;
             case CHANNEL_ENTRY_PINHOLE_DIAMETER:
               int n = (int) Float.parseFloat(value.toString());

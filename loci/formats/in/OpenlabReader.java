@@ -302,6 +302,8 @@ public class OpenlabReader extends FormatReader {
     Vector firstSeriesOffsets = new Vector();
     Vector secondSeriesOffsets = new Vector();
 
+    MetadataStore store = getMetadataStore();
+
     while (in.getFilePointer() < in.length()) {
       readTagHeader();
 
@@ -370,10 +372,10 @@ public class OpenlabReader extends FormatReader {
 
           if (achar == 1) {
             int numVars = in.readShort();
-            while (numVars > 0) {
+            for (int i=0; i<numVars; i++) {
               className = in.readCString();
 
-              String varName = "", varStringValue = "";
+              String name = "", value = "";
 
               int derivedClassVersion = in.read();
               if (derivedClassVersion != 1) {
@@ -382,25 +384,41 @@ public class OpenlabReader extends FormatReader {
 
               if (className.equals("CStringVariable")) {
                 int strSize = in.readInt();
-                varStringValue = in.readString(strSize);
+                value = in.readString(strSize);
                 in.skipBytes(1);
               }
               else if (className.equals("CFloatVariable")) {
-                varStringValue = String.valueOf(in.readDouble());
+                value = String.valueOf(in.readDouble());
               }
 
               int baseClassVersion = in.read();
               if (baseClassVersion == 1 || baseClassVersion == 2) {
                 int strSize = in.readInt();
-                varName = in.readString(strSize);
+                name = in.readString(strSize);
                 in.skipBytes(baseClassVersion * 2 + 1);
               }
               else {
-                throw new FormatException("Invalid revision: " + baseClassVersion);
+                throw new FormatException("Invalid revision: " +
+                  baseClassVersion);
               }
 
-              addMeta(varName, varStringValue);
-              numVars--;
+              addMeta(name, value);
+
+              if (name.equals("Gain")) {
+                //store.setDetectorSettingsGain(new Float(value), 0, 0);
+              }
+              else if (name.equals("Offset")) {
+                //store.setDetectorSettingsOffset(new Float(value), 0, 0);
+              }
+              else if (name.equals("X-Y Stage: X Position")) {
+                store.setStagePositionPositionX(new Float(value), 0, 0, 0);
+              }
+              else if (name.equals("X-Y Stage: Y Position")) {
+                store.setStagePositionPositionY(new Float(value), 0, 0, 0);
+              }
+              else if (name.equals("ZPosition")) {
+                store.setStagePositionPositionZ(new Float(value), 0, 0, 0);
+              }
             }
           }
         }
@@ -484,7 +502,7 @@ public class OpenlabReader extends FormatReader {
 
     // populate MetadataStore
 
-    MetadataStore store = getMetadataStore();
+    store.setImageName("", 0);
     MetadataTools.populatePixels(store, this);
     store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);

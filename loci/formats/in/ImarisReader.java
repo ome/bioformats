@@ -200,10 +200,10 @@ public class ImarisReader extends FormatReader {
         store.setLogicalChannelPinholeSize(new Integer((int) pinholes[i]),
           0, i);
       }
-      if (gains[i] > 0) {
-        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
-      }
-      store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
+      //if (gains[i] > 0) {
+      //  store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+      //}
+      //store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
     }
 
     // CTR CHECK
