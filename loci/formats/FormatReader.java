@@ -167,13 +167,13 @@ public abstract class FormatReader extends FormatHandler
       StringBuffer valBuffer = new StringBuffer(val);
       for (int i=0; i<keyBuffer.length(); i++) {
         char c = keyBuffer.charAt(i);
-        if (c != '\t' && c != '\n' && c < ' ') {
+        if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
           keyBuffer = keyBuffer.deleteCharAt(i--); // recheck this index
         }
       }
       for (int i=0; i<valBuffer.length(); i++) {
         char c = valBuffer.charAt(i);
-        if (c != '\t' && c != '\n' && c < ' ') {
+        if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
           valBuffer = valBuffer.deleteCharAt(i--); // recheck this index
         }
       }
