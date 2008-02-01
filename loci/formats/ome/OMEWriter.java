@@ -191,6 +191,7 @@ public class OMEWriter extends FormatWriter {
     String pixelTypeString = metadata.getPixelsPixelType(0, 0);
     int pixelType = FormatTools.pixelTypeFromString(pixelTypeString);
     int bpp = FormatTools.getBytesPerPixel(pixelType);
+    boolean bigEndian = metadata.getPixelsBigEndian(0, 0).booleanValue();
 
     try {
       r.exec("sessionKey = rc.getSessionKey()");
@@ -202,7 +203,7 @@ public class OMEWriter extends FormatWriter {
         r.setVar("c", c);
         r.setVar("t", t);
         r.setVar("bpp", bpp);
-        r.setVar("bigEndian", false);
+        r.setVar("bigEndian", bigEndian);
         r.setVar("float", pixelTypeString.equals("float"));
         r.setVar("pixelType", pixelTypeString);
         r.exec("pixelsId = is.newPixels(x, y, z, c, t, bpp, bigEndian, float)");
@@ -226,7 +227,7 @@ public class OMEWriter extends FormatWriter {
         r.setVar("cndx", coords[1]);
         r.setVar("tndx", coords[2]);
         r.setVar("bytes", b[ch]);
-        r.setVar("bigEndian", metadata.getPixelsBigEndian(0, 0).booleanValue());
+        r.setVar("bigEndian", bigEndian);
 
         r.setVar("pixelsId", credentials.imageID);
         r.exec("is.setPlane(pixelsId, zndx, cndx, tndx, bytes, bigEndian)");
