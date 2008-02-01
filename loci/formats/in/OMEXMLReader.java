@@ -192,10 +192,7 @@ public class OMEXMLReader extends FormatReader {
       r.setVar("s", in.readString((int) in.length()));
       in.seek(0);
       //r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata(s)");
-      r.setVar("version", "2003FC");
-      r.setVar("nullString", "");
-      r.exec("omexmlMeta = " +
-        "MetadataTools.createOMEXMLMetadata(nullString, version)");
+      r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata()");
       r.exec("import org.openmicroscopy.xml.OMENode");
       r.exec("root = new OMENode(s)");
       r.exec("omexmlMeta.setRoot(root)");
