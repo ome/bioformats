@@ -1,0 +1,197 @@
+//
+// AggregateMetadata.java
+//
+
+/*
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+Eric Kjellman and Brian Loranger.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by $user via MetadataAutogen on $timestamp
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package loci.formats.meta;
+
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * A metadata store which delegates the actual storage to one or more <i>sub</i>
+ * metadata stores.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/meta/AggregateMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/meta/AggregateMetadata.java">SVN</a></dd></dl>
+ *
+ * @author Chris Allan callan at blackcat.ca
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
+
+  // -- Fields --
+
+  /** The active metadata store delegates. */
+  private List delegates;
+
+  // -- Constructor --
+
+  /**
+   * Creates a new instance.
+   * @param delegates of type {@link MetadataRetrieve}
+   *   and/or {@link MetadataStore}.
+   */
+  public AggregateMetadata(List delegates) {
+    this.delegates = delegates;
+  }
+
+  // -- AggregateMetadata API methods --
+
+  /**
+   * Adds a delegate to the metadata store.
+   * @param delegate a <code>MetadataStore</code>
+   */
+  public void addDelegate(MetadataStore delegate) {
+    delegates.add(delegate);
+  }
+
+  /**
+   * Removes a delegate from the metadata store.
+   * @param delegate a <code>MetadataStore</code>
+   */
+  public void removeDelegate(MetadataStore delegate) {
+    delegates.remove(delegate);
+  }
+
+  /**
+   * Retrieves the current list of metadata store delegates.
+   * @return list of {@link MetadataStore} delegates.
+   */
+  public List getDelegates() {
+    return delegates;
+  }
+
+  // -- MetadataRetrieve API methods --
+
+  // - Entity counting -
+#foreach ($entity in $entities)
+#if ($entity.countable())
+
+  /* @see MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
+  public int get$entity.name()Count($entity.indicesList(true, true, false)) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.get$entity.name()Count($entity.indicesList(false, true, false));
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+#end##if countable
+#end##foreach $entity
+
+  // - Entity retrieval -
+#foreach ($entity in $entities)
+
+  /* @see MetadataRetrieve#get$entity.name()($entity.indicesList(true, false)) */
+  public Object get$entity.name()($entity.indicesList(true, true)) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.get$entity.name()($entity.indicesList(false, true));
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+#end##foreach $entity
+#foreach ($entity in $entities)
+
+  // - $entity.name() property retrieval -
+#foreach ($prop in $entity.props())
+
+  /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
+  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        $prop.type() result = retrieve.get$entity.name()$prop.name()($entity.indicesList(false, true));
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+#end##foreach $prop
+#end##foreach $entity
+
+  // -- MetadataStore API methods --
+
+  /* @see MetadataStore#createRoot() */
+  public void createRoot() {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        ((MetadataStore) o).createRoot();
+      }
+    }
+  }
+
+  /**
+   * Unsupported with an AggregateMetadata.
+   * @throws RuntimeException Always.
+   */
+  public Object getRoot() {
+    throw new RuntimeException("Unsupported with AggregateMetadata. " +
+      "Use getDelegates() and getRoot().");
+  }
+
+  /**
+   * Unsupported with an AggregateMetadata.
+   * @throws RuntimeException Always.
+   */
+  public void setRoot(Object root) {
+    throw new RuntimeException("Unsupported with AggregateMetadata. " +
+      "Use getDelegates() and setRoot().");
+  }
+#foreach ($entity in $entities)
+
+  // - $entity.name() property storage -
+#foreach ($prop in $entity.props())
+
+  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(), $entity.indicesList(true, false)) */
+  public void set$entity.name()$prop.name()($prop.type() $prop.varName(), $entity.indicesList(true, true)) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.set$entity.name()$prop.name()($prop.varName(), $entity.indicesList(false, true));
+      }
+    }
+  }
+#end##foreach $prop
+#end##foreach $entity
+
+}
