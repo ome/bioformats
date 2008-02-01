@@ -1,3 +1,17 @@
+2007 Feb 01:
+
+* Fixed bugs in Zeiss LSM, Metamorph STK, FV1000 OIB/OIF, Leica LEI, TIFF,
+  Zeiss ZVI, ICS, Prairie, Openlab LIFF, Gatan, DICOM, QuickTime
+* Fixed bug in OME-TIFF writer
+* Major changes to MetadataStore API
+* Added support for JPEG-compressed TIFF files
+* Added basic support for Aperio SVS files - note that JPEG2000 compression is still not supported
+* Improved "crop on import" functionality
+* Improvements to bfconvert and bfview
+* Improved OME-XML population for several formats
+* Added support for JPEG2000-compressed DICOM files
+* EXIF data is now parsed from TIFF files
+
 2007 Dec 28:
 * Fixed bugs in Leica LEI, Leica TCS, SDT, Leica LIF, Visitech, DICOM, Imaris 5.5 (HDF), and Slidebook readers
 * Better parsing of comments in TIFF files exported from ImageJ
