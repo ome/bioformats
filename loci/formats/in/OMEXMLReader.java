@@ -151,10 +151,10 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
-    int bpp = FormatTools.getBytesPerPixel(core.pixelType[series]);
+    int depth = FormatTools.getBytesPerPixel(core.pixelType[series]);
     for (int row=0; row<h; row++) {
-      System.arraycopy(pixels, (row + y) * core.sizeX[series] * bpp + x * bpp,
-        buf, row * w * bpp, w * bpp);
+      int offset = (row + y) * core.sizeX[series] * depth + x * depth;
+      System.arraycopy(pixels, offset, buf, row * w * depth, w * depth);
     }
 
     return buf;
