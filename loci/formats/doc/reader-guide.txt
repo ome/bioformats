@@ -23,18 +23,20 @@ String[] getUsedFiles() throws FormatException, IOException :
   "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
   is non-null.
 
-byte[] openBytes(int) throws FormatException, IOException :
-  Returns a byte array containing the pixel data for the specified image from
-  the given file.  Should throw a FormatException if the image number is invalid
-  (less than 0 or >= the number of images).  The ordering of the array
-  returned by openBytes should correspond to the values returned by
+byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOException :
+  Returns a byte array containing the pixel data for a subimage specified
+  image from the given file.  The dimensions of the subimage (upper left X
+  coordinate, upper left Y coordinate, width, and height) are specified in the
+  final four int parameters.  This should throw a FormatException if the image
+  number is invalid (less than 0 or >= the number of images).  The ordering of
+  the array returned by openBytes should correspond to the values returned by
   isLittleEndian() and isInterleaved().  Also, the length of the
   byte array should be [image width * image height * bytes per pixel].  Extra
-  bytes will generally be truncated. It is recommended that the first line of 
-  this method be "FormatTools.asserId(currentId, true, 1)" - this ensures that 
+  bytes will generally be truncated. It is recommended that the first line of
+  this method be "FormatTools.assertId(currentId, true, 1)" - this ensures that
   the file name is non-null.
 
-BufferedImage openImage(int) throws FormatException, IOException :
+BufferedImage openImage(int, int, int, int, int) throws FormatException, IOException :
   Basically the same as openBytes, but returns a java.awt.image.BufferedImage
   instead of a byte array.  In general, the easiest way to implement this is
   by getting the corresponding byte array from openBytes, then returning
@@ -115,21 +117,16 @@ and Location.getMappedId(String).
   see loci.formats.in.ZeissZVIReader.
 
 - Several common image compression types are supported through subclasses of
-  loci.formats.BaseCompressor.  These include LZW, LZO, Base64, ZIP and
+  loci.formats.BaseCompressor.  These include JPEG, LZW, LZO, Base64, ZIP and
   RLE (PackBits).
 
 - Debugging statements can be added using FormatHandler.debug(String).
 
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
-  loci.formats.ome.OMEXMLMetadataStore provides methods for creating OME-XML
-  from metadata values.  Note that OMEXMLMetadataStore is a subclass of
-  loci.formats.MetadataStore (every subclass of FormatReader keeps an instance
-  of MetadataStore by default); so to add OME-XML support is as simple as
-  calling getMetadataStore() on a format reader instance, and then
-  calling the appropriate "set" methods as documented in OMEXMLMetadataStore.
+  please see metadata-guide.txt further information.
 
 - Utility methods for reading and writing individual bits from a byte array
-  can be found in loci.formats.BitBuffer and loci.formats.BitWriter
+  can be found in loci.formats.codec.BitBuffer and loci.formats.codec.BitWriter
 
 - Once you have written your file format reader, add a line to the readers.txt
   file with the fully qualified name of the reader, followed by a '#' and the
@@ -139,7 +136,7 @@ and Location.getMappedId(String).
   in an appropriate position within the list.
 
 - The easiest way to test your new reader is by calling "java
-  loci.formats.ImageReader <file name>".  If all goes well, you should see
+  loci.formats.tools.ImageInfo <file name>".  If all goes well, you should see
   all of the metadata and dimension information, along with a window showing
   the images in the file.  ImageReader can take additional parameters; a
   brief listing is provided for reference, but it is recommended that you
@@ -162,8 +159,8 @@ and Location.getMappedId(String).
     -series             Set the series number (for container file formats).
     -map                Specify file on disk to which name should be mapped.
 
-- If you wish to test using TestNG, loci.formats.test.ReaderTest provides 15 
-  basic tests that work with all Bio-Formats readers.  See the
+- If you wish to test using TestNG, loci.formats.test.ReaderTest provides
+  several basic tests that work with all Bio-Formats readers.  See the
   ReaderTest source code for additional information.
 
 - For more details, please look at the source code and javadocs.  Studying

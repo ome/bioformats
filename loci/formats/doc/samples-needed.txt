@@ -3,12 +3,15 @@ Alicona AL3D:
   - T series
   - 16 bit data
 
+Aperio SVS:
+  - any
+
 AVI:
   - files compressed with a common, unsupported codec
   - 2+ GB files
 
 BioRad:
-  - 16 bit data 
+  - 16 bit data
   - 2+ GB files
 
 Deltavision:
@@ -43,9 +46,8 @@ MicroManager:
 
 ND2:
   - any files acquired with most recent NIS Elements
-  - multi-Z, multi-T
 
-Olympus CellR:
+Olympus CellR (APL):
   - any
 
 Openlab LIFF:
@@ -61,6 +63,7 @@ TIFF:
   - anything weird - preferably rare/unsupported compression or photometric
     interpretation type
   - BigTIFF files
+  - anything compressed with Group 3 fax, Group 4 fax, or JPEG2000
 
 Visitech XYS:
   - multi-Z, multi-T series
@@ -74,9 +77,6 @@ Volocity ACFF:
 Volocity MVD2:
   - anything - please specify dimensions and which version of Volocity was
     used
-
-Zeiss LSM:
-  - anything compressed with an algorithm other than LZW
 
 Zeiss ZVI:
   - JPEG compressed
