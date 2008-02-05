@@ -66,7 +66,7 @@ public interface MetadataStore {
    * @param $indexProp.varName() $indexProp.desc()
 #end##foreach $indexProp
    */
-  void set$entity.name()$prop.name()($prop.type() $prop.varName(), $entity.indicesList(true, true));
+  void set$entity.name()$prop.name()($prop.type(true) $prop.varName(), $entity.indicesList(true, true));
 #end##foreach $prop
 #end##foreach $entity
 

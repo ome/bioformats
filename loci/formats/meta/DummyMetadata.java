@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
+ * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -402,6 +402,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - DetectorSettings property retrieval -
 
+  /* @see MetadataRetrieve#getDetectorSettingsDetector(int, int) */
+  public Object getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getDetectorSettingsOffset(int, int) */
   public Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex) {
     return null;
@@ -413,6 +417,10 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - LightSourceSettings property retrieval -
 
+  /* @see MetadataRetrieve#getLightSourceSettingsLightSource(int, int) */
+  public Object getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex) {
+    return null;
+  }
   /* @see MetadataRetrieve#getLightSourceSettingsAttenuation(int, int) */
   public Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex) {
     return null;
@@ -678,253 +686,261 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Image property storage -
 
-  /* @see MetadataStore#setImage(String, String, String, int) */
+  /* @see MetadataStore#setImageName(String, int) */
   public void setImageName(String name, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImage(String, String, String, int) */
+  /* @see MetadataStore#setImageCreationDate(String, int) */
   public void setImageCreationDate(String creationDate, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImage(String, String, String, int) */
+  /* @see MetadataStore#setImageDescription(String, int) */
   public void setImageDescription(String description, int imageIndex) {
   }
 
   // - Pixels property storage -
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsSizeX(Integer, int, int) */
   public void setPixelsSizeX(Integer sizeX, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsSizeY(Integer, int, int) */
   public void setPixelsSizeY(Integer sizeY, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsSizeZ(Integer, int, int) */
   public void setPixelsSizeZ(Integer sizeZ, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsSizeC(Integer, int, int) */
   public void setPixelsSizeC(Integer sizeC, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsSizeT(Integer, int, int) */
   public void setPixelsSizeT(Integer sizeT, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsPixelType(String, int, int) */
   public void setPixelsPixelType(String pixelType, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsBigEndian(Boolean, int, int) */
   public void setPixelsBigEndian(Boolean bigEndian, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setPixels(Integer, Integer, Integer, Integer, Integer, String, Boolean, String, int, int) */
+  /* @see MetadataStore#setPixelsDimensionOrder(String, int, int) */
   public void setPixelsDimensionOrder(String dimensionOrder, int imageIndex, int pixelsIndex) {
   }
 
   // - Dimensions property storage -
 
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  /* @see MetadataStore#setDimensionsPhysicalSizeX(Float, int, int) */
   public void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  /* @see MetadataStore#setDimensionsPhysicalSizeY(Float, int, int) */
   public void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  /* @see MetadataStore#setDimensionsPhysicalSizeZ(Float, int, int) */
   public void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  /* @see MetadataStore#setDimensionsTimeIncrement(Float, int, int) */
   public void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  /* @see MetadataStore#setDimensionsWaveStart(Integer, int, int) */
   public void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensions(Float, Float, Float, Float, Integer, Integer, int, int) */
+  /* @see MetadataStore#setDimensionsWaveIncrement(Integer, int, int) */
   public void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex) {
   }
 
   // - ImagingEnvironment property storage -
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  /* @see MetadataStore#setImagingEnvironmentTemperature(Float, int) */
   public void setImagingEnvironmentTemperature(Float temperature, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  /* @see MetadataStore#setImagingEnvironmentAirPressure(Float, int) */
   public void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  /* @see MetadataStore#setImagingEnvironmentHumidity(Float, int) */
   public void setImagingEnvironmentHumidity(Float humidity, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironment(Float, Float, Float, Float, int) */
+  /* @see MetadataStore#setImagingEnvironmentCO2Percent(Float, int) */
   public void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex) {
   }
 
   // - Plane property storage -
 
-  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
+  /* @see MetadataStore#setPlaneTheZ(Integer, int, int, int) */
   public void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
+  /* @see MetadataStore#setPlaneTheC(Integer, int, int, int) */
   public void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setPlane(Integer, Integer, Integer, int, int, int) */
+  /* @see MetadataStore#setPlaneTheT(Integer, int, int, int) */
   public void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
   // - PlaneTiming property storage -
 
-  /* @see MetadataStore#setPlaneTiming(Float, Float, int, int, int) */
+  /* @see MetadataStore#setPlaneTimingDeltaT(Float, int, int, int) */
   public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setPlaneTiming(Float, Float, int, int, int) */
+  /* @see MetadataStore#setPlaneTimingExposureTime(Float, int, int, int) */
   public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
   // - StagePosition property storage -
 
-  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
+  /* @see MetadataStore#setStagePositionPositionX(Float, int, int, int) */
   public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
+  /* @see MetadataStore#setStagePositionPositionY(Float, int, int, int) */
   public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setStagePosition(Float, Float, Float, int, int, int) */
+  /* @see MetadataStore#setStagePositionPositionZ(Float, int, int, int) */
   public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
   // - LogicalChannel property storage -
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelName(String, int, int) */
   public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelSamplesPerPixel(Integer, int, int) */
   public void setLogicalChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelIlluminationType(String, int, int) */
   public void setLogicalChannelIlluminationType(String illuminationType, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelPinholeSize(Integer, int, int) */
   public void setLogicalChannelPinholeSize(Integer pinholeSize, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelPhotometricInterpretation(String, int, int) */
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelMode(String, int, int) */
   public void setLogicalChannelMode(String mode, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelContrastMethod(String, int, int) */
   public void setLogicalChannelContrastMethod(String contrastMethod, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelExWave(Integer, int, int) */
   public void setLogicalChannelExWave(Integer exWave, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelEmWave(Integer, int, int) */
   public void setLogicalChannelEmWave(Integer emWave, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelFluor(String, int, int) */
   public void setLogicalChannelFluor(String fluor, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelNdFilter(Float, int, int) */
   public void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannel(String, Integer, String, Integer, String, String, String, Integer, Integer, String, Float, Integer, int, int) */
+  /* @see MetadataStore#setLogicalChannelPockelCellSetting(Integer, int, int) */
   public void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex) {
   }
 
   // - DetectorSettings property storage -
 
-  /* @see MetadataStore#setDetectorSettings(Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorSettingsDetector(Object, int, int) */
+  public void setDetectorSettingsDetector(Object detector, int imageIndex, int logicalChannelIndex) {
+  }
+
+  /* @see MetadataStore#setDetectorSettingsOffset(Float, int, int) */
   public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setDetectorSettings(Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorSettingsGain(Float, int, int) */
   public void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex) {
   }
 
   // - LightSourceSettings property storage -
 
-  /* @see MetadataStore#setLightSourceSettings(Float, Integer, int, int) */
+  /* @see MetadataStore#setLightSourceSettingsLightSource(Object, int, int) */
+  public void setLightSourceSettingsLightSource(Object lightSource, int imageIndex, int logicalChannelIndex) {
+  }
+
+  /* @see MetadataStore#setLightSourceSettingsAttenuation(Float, int, int) */
   public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLightSourceSettings(Float, Integer, int, int) */
+  /* @see MetadataStore#setLightSourceSettingsWavelength(Integer, int, int) */
   public void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex) {
   }
 
   // - ROI property storage -
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIX0(Integer, int, int) */
   public void setROIX0(Integer x0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIY0(Integer, int, int) */
   public void setROIY0(Integer y0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIZ0(Integer, int, int) */
   public void setROIZ0(Integer z0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIT0(Integer, int, int) */
   public void setROIT0(Integer t0, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIX1(Integer, int, int) */
   public void setROIX1(Integer x1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIY1(Integer, int, int) */
   public void setROIY1(Integer y1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIZ1(Integer, int, int) */
   public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
   }
 
-  /* @see MetadataStore#setROI(Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, int, int) */
+  /* @see MetadataStore#setROIT1(Integer, int, int) */
   public void setROIT1(Integer t1, int imageIndex, int roiIndex) {
   }
 
   // - StageLabel property storage -
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  /* @see MetadataStore#setStageLabelName(String, int) */
   public void setStageLabelName(String name, int imageIndex) {
   }
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  /* @see MetadataStore#setStageLabelX(Float, int) */
   public void setStageLabelX(Float x, int imageIndex) {
   }
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  /* @see MetadataStore#setStageLabelY(Float, int) */
   public void setStageLabelY(Float y, int imageIndex) {
   }
 
-  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, int) */
+  /* @see MetadataStore#setStageLabelZ(Float, int) */
   public void setStageLabelZ(Float z, int imageIndex) {
   }
 
@@ -932,177 +948,177 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - LightSource property storage -
 
-  /* @see MetadataStore#setLightSource(String, String, String, int, int) */
+  /* @see MetadataStore#setLightSourceManufacturer(String, int, int) */
   public void setLightSourceManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLightSource(String, String, String, int, int) */
+  /* @see MetadataStore#setLightSourceModel(String, int, int) */
   public void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLightSource(String, String, String, int, int) */
+  /* @see MetadataStore#setLightSourceSerialNumber(String, int, int) */
   public void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex) {
   }
 
   // - Laser property storage -
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Integer, Boolean, String, Float, int, int) */
+  /* @see MetadataStore#setLaserType(String, int, int) */
   public void setLaserType(String type, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Integer, Boolean, String, Float, int, int) */
+  /* @see MetadataStore#setLaserLaserMedium(String, int, int) */
   public void setLaserLaserMedium(String laserMedium, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Integer, Boolean, String, Float, int, int) */
+  /* @see MetadataStore#setLaserWavelength(Integer, int, int) */
   public void setLaserWavelength(Integer wavelength, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Integer, Boolean, String, Float, int, int) */
+  /* @see MetadataStore#setLaserFrequencyMultiplication(Integer, int, int) */
   public void setLaserFrequencyMultiplication(Integer frequencyMultiplication, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Integer, Boolean, String, Float, int, int) */
+  /* @see MetadataStore#setLaserTuneable(Boolean, int, int) */
   public void setLaserTuneable(Boolean tuneable, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Integer, Boolean, String, Float, int, int) */
+  /* @see MetadataStore#setLaserPulse(String, int, int) */
   public void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLaser(String, String, Integer, Integer, Boolean, String, Float, int, int) */
+  /* @see MetadataStore#setLaserPower(Float, int, int) */
   public void setLaserPower(Float power, int instrumentIndex, int lightSourceIndex) {
   }
 
   // - Filament property storage -
 
-  /* @see MetadataStore#setFilament(String, Float, int, int) */
+  /* @see MetadataStore#setFilamentType(String, int, int) */
   public void setFilamentType(String type, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setFilament(String, Float, int, int) */
+  /* @see MetadataStore#setFilamentPower(Float, int, int) */
   public void setFilamentPower(Float power, int instrumentIndex, int lightSourceIndex) {
   }
 
   // - Arc property storage -
 
-  /* @see MetadataStore#setArc(String, Float, int, int) */
+  /* @see MetadataStore#setArcType(String, int, int) */
   public void setArcType(String type, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setArc(String, Float, int, int) */
+  /* @see MetadataStore#setArcPower(Float, int, int) */
   public void setArcPower(Float power, int instrumentIndex, int lightSourceIndex) {
   }
 
   // - Detector property storage -
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float, Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorManufacturer(String, int, int) */
   public void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float, Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorModel(String, int, int) */
   public void setDetectorModel(String model, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float, Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorSerialNumber(String, int, int) */
   public void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float, Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorType(String, int, int) */
   public void setDetectorType(String type, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float, Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorGain(Float, int, int) */
   public void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float, Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorVoltage(Float, int, int) */
   public void setDetectorVoltage(Float voltage, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetector(String, String, String, String, Float, Float, Float, int, int) */
+  /* @see MetadataStore#setDetectorOffset(Float, int, int) */
   public void setDetectorOffset(Float offset, int instrumentIndex, int detectorIndex) {
   }
 
   // - Objective property storage -
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveManufacturer(String, int, int) */
   public void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveModel(String, int, int) */
   public void setObjectiveModel(String model, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveSerialNumber(String, int, int) */
   public void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveCorrection(String, int, int) */
   public void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveImmersion(String, int, int) */
   public void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveLensNA(Float, int, int) */
   public void setObjectiveLensNA(Float lensNA, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveNominalMagnification(Integer, int, int) */
   public void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveCalibratedMagnification(Float, int, int) */
   public void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjective(String, String, String, String, String, Float, Integer, Float, Float, int, int) */
+  /* @see MetadataStore#setObjectiveWorkingDistance(Float, int, int) */
   public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex) {
   }
 
   // - OTF property storage -
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String, Boolean, int, int) */
+  /* @see MetadataStore#setOTFSizeX(Integer, int, int) */
   public void setOTFSizeX(Integer sizeX, int instrumentIndex, int otfIndex) {
   }
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String, Boolean, int, int) */
+  /* @see MetadataStore#setOTFSizeY(Integer, int, int) */
   public void setOTFSizeY(Integer sizeY, int instrumentIndex, int otfIndex) {
   }
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String, Boolean, int, int) */
+  /* @see MetadataStore#setOTFPixelType(String, int, int) */
   public void setOTFPixelType(String pixelType, int instrumentIndex, int otfIndex) {
   }
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String, Boolean, int, int) */
+  /* @see MetadataStore#setOTFPath(String, int, int) */
   public void setOTFPath(String path, int instrumentIndex, int otfIndex) {
   }
 
-  /* @see MetadataStore#setOTF(Integer, Integer, String, String, Boolean, int, int) */
+  /* @see MetadataStore#setOTFOpticalAxisAveraged(Boolean, int, int) */
   public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex) {
   }
 
   // - Experimenter property storage -
 
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  /* @see MetadataStore#setExperimenterFirstName(String, int) */
   public void setExperimenterFirstName(String firstName, int experimenterIndex) {
   }
 
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  /* @see MetadataStore#setExperimenterLastName(String, int) */
   public void setExperimenterLastName(String lastName, int experimenterIndex) {
   }
 
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  /* @see MetadataStore#setExperimenterEmail(String, int) */
   public void setExperimenterEmail(String email, int experimenterIndex) {
   }
 
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  /* @see MetadataStore#setExperimenterInstitution(String, int) */
   public void setExperimenterInstitution(String institution, int experimenterIndex) {
   }
 
-  /* @see MetadataStore#setExperimenter(String, String, String, String, String, int) */
+  /* @see MetadataStore#setExperimenterDataDirectory(String, int) */
   public void setExperimenterDataDirectory(String dataDirectory, int experimenterIndex) {
   }
 

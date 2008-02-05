@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
+ * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -403,6 +403,14 @@ public interface MetadataStore {
   // - DetectorSettings property storage -
 
   /**
+   * Sets the Detector property for the detector associated with a particular logical channel.
+   * @param detector the detector associated with this channel
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setDetectorSettingsDetector(Object detector, int imageIndex, int logicalChannelIndex);
+
+  /**
    * Sets the Offset property for the detector associated with a particular logical channel.
    * @param offset the detector offset
    * @param imageIndex index of the Image
@@ -419,6 +427,14 @@ public interface MetadataStore {
   void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex);
 
   // - LightSourceSettings property storage -
+
+  /**
+   * Sets the LightSource property for the light source associated with a particular logical channel.
+   * @param lightSource the primary light source
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLightSourceSettingsLightSource(Object lightSource, int imageIndex, int logicalChannelIndex);
 
   /**
    * Sets the Attenuation property for the light source associated with a particular logical channel.

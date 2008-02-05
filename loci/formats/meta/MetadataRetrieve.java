@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
+ * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -482,6 +482,13 @@ public interface MetadataRetrieve {
   // - DetectorSettings property retrieval -
 
   /**
+   * Gets the detector associated with this channel for a particular DetectorSettings object.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  Object getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex);
+
+  /**
    * Gets the detector offset for a particular DetectorSettings object.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
@@ -496,6 +503,13 @@ public interface MetadataRetrieve {
   Float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
 
   // - LightSourceSettings property retrieval -
+
+  /**
+   * Gets the primary light source for a particular LightSourceSettings object.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  Object getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex);
 
   /**
    * Gets the primary light source attenuation for a particular LightSourceSettings object.

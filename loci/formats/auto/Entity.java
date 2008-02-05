@@ -116,23 +116,6 @@ public class Entity implements Comparable {
 
   public Vector indices() { return indices; }
 
-  public String argsList(boolean doTypes, boolean doVars) {
-    StringBuffer sb = new StringBuffer();
-    int psize = props.size();
-    int isize = indices.size();
-    int total = psize + isize;
-    for (int i=0; i<total; i++) {
-      Property p;
-      if (i < psize) p = (Property) props.get(i);
-      else p = (Property) indices.get(i - psize);
-      if (i > 0) sb.append(", ");
-      if (doTypes) sb.append(p.type());
-      if (doTypes && doVars) sb.append(" ");
-      if (doVars) sb.append(p.varName());
-    }
-    return sb.toString();
-  }
-
   public String indicesList(boolean doTypes, boolean doVars) {
     return indicesList(doTypes, doVars, true);
   }
@@ -144,7 +127,7 @@ public class Entity implements Comparable {
     for (int i=0; i<size; i++) {
       Property p = (Property) indices.get(i);
       if (i > 0) sb.append(", ");
-      if (doTypes) sb.append(p.type());
+      if (doTypes) sb.append(p.type(true));
       if (doTypes && doVars) sb.append(" ");
       if (doVars) sb.append(p.varName());
     }

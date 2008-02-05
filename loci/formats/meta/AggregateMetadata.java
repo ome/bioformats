@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
+ * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -1063,6 +1063,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - DetectorSettings property retrieval -
 
+  /* @see MetadataRetrieve#getDetectorSettingsDetector(int, int) */
+  public Object getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getDetectorSettingsDetector(imageIndex, logicalChannelIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getDetectorSettingsOffset(int, int) */
   public Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1090,6 +1103,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - LightSourceSettings property retrieval -
+
+  /* @see MetadataRetrieve#getLightSourceSettingsLightSource(int, int) */
+  public Object getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   /* @see MetadataRetrieve#getLightSourceSettingsAttenuation(int, int) */
   public Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex) {
@@ -2314,6 +2340,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - DetectorSettings property storage -
 
+  /* @see MetadataStore#setDetectorSettingsDetector(Object, int, int) */
+  public void setDetectorSettingsDetector(Object detector, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDetectorSettingsDetector(detector, imageIndex, logicalChannelIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setDetectorSettingsOffset(Float, int, int) */
   public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -2337,6 +2374,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - LightSourceSettings property storage -
+
+  /* @see MetadataStore#setLightSourceSettingsLightSource(Object, int, int) */
+  public void setLightSourceSettingsLightSource(Object lightSource, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setLightSourceSettingsLightSource(lightSource, imageIndex, logicalChannelIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setLightSourceSettingsAttenuation(Float, int, int) */
   public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex) {

@@ -73,7 +73,7 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
 #foreach ($prop in $entity.props())
   /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
-  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+  public $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true)) {
     return null;
   }
 #end##foreach $prop
@@ -96,8 +96,8 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
   // - $entity.name() property storage -
 #foreach ($prop in $entity.props())
 
-  /* @see MetadataStore#set$entity.name()($entity.argsList(true, false)) */
-  public void set$entity.name()$prop.name()($prop.type() $prop.varName(), $entity.indicesList(true, true)) {
+  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
+  public void set$entity.name()$prop.name()($prop.type(true) $prop.varName(), $entity.indicesList(true, true)) {
   }
 #end##foreach $prop
 #end##foreach $entity

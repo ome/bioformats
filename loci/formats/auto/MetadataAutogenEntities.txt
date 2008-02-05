@@ -149,8 +149,7 @@ the detector associated with a particular logical channel
 -
 Default: Image+/LogicalChannel+/DetectorRef
 2003FC: Image+/CA/LogicalChannel+
-#CTR TODO - complexify
-#DetectorIndex Detector  the index of the detector associated with this channel
+DetectorNode Detector   the detector associated with this channel
 Float Offset            the detector offset
 *2003FC: DetectorOffset
 Float Gain              the detector gain
@@ -161,12 +160,10 @@ the light source associated with a particular logical channel
 -
 Default: Image+/LogicalChannel+/LightSourceRef
 2003FC: Image+/CA/LogicalChannel+
-#CTR TODO - complexify
-#LightSourceIndex ID  the index of the primary light source
-#*2003FC: LightSource
-Float Attenuation    the primary light source attenuation
+LightSourceNode LightSource  the primary light source
+Float Attenuation            the primary light source attenuation
 *2003FC: LightAttenuation
-Integer Wavelength   the primary light source wavelength
+Integer Wavelength           the primary light source wavelength
 *2003FC: LightWavelength
 
 ### CTR TODO Unclassified Entities ###

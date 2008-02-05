@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
+ * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -445,6 +445,12 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
 
   // - DetectorSettings property retrieval -
 
+  /* @see loci.formats.meta.MetadataRetrieve#getDetectorSettingsDetector(int, int) */
+  public Object getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex) {
+    DetectorRefNode detectorRef = getDetectorRefNode(imageIndex, logicalChannelIndex, false);
+    return detectorRef == null ? null : detectorRef.getDetector();
+  }
+
   /* @see loci.formats.meta.MetadataRetrieve#getDetectorSettingsOffset(int, int) */
   public Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex) {
     DetectorRefNode detectorRef = getDetectorRefNode(imageIndex, logicalChannelIndex, false);
@@ -458,6 +464,12 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   }
 
   // - LightSourceSettings property retrieval -
+
+  /* @see loci.formats.meta.MetadataRetrieve#getLightSourceSettingsLightSource(int, int) */
+  public Object getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex) {
+    LightSourceRefNode lightSourceRef = getLightSourceRefNode(imageIndex, logicalChannelIndex, false);
+    return lightSourceRef == null ? null : lightSourceRef.getLightSource();
+  }
 
   /* @see loci.formats.meta.MetadataRetrieve#getLightSourceSettingsAttenuation(int, int) */
   public Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex) {
@@ -1120,6 +1132,13 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
 
   // - DetectorSettings property storage -
 
+  /* @see loci.formats.meta.MetadataStore#setDetectorSettingsDetector(Object, int, int) */
+  public void setDetectorSettingsDetector(Object detector, int imageIndex, int logicalChannelIndex) {
+    if (detector == null) return;
+    DetectorRefNode detectorRef = getDetectorRefNode(imageIndex, logicalChannelIndex, true);
+    detectorRef.setDetector((DetectorNode) detector);
+  }
+
   /* @see loci.formats.meta.MetadataStore#setDetectorSettingsOffset(Float, int, int) */
   public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex) {
     if (offset == null) return;
@@ -1135,6 +1154,13 @@ public class OMEXML200706Metadata extends OMEXMLMetadata {
   }
 
   // - LightSourceSettings property storage -
+
+  /* @see loci.formats.meta.MetadataStore#setLightSourceSettingsLightSource(Object, int, int) */
+  public void setLightSourceSettingsLightSource(Object lightSource, int imageIndex, int logicalChannelIndex) {
+    if (lightSource == null) return;
+    LightSourceRefNode lightSourceRef = getLightSourceRefNode(imageIndex, logicalChannelIndex, true);
+    lightSourceRef.setLightSource((LightSourceNode) lightSource);
+  }
 
   /* @see loci.formats.meta.MetadataStore#setLightSourceSettingsAttenuation(Float, int, int) */
   public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex) {

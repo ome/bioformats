@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Jan 30, 2008 1:38:52 PM CST
+ * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
  *
  *-----------------------------------------------------------------------------
  */
@@ -94,8 +94,10 @@ public final class MetadataConverter {
         dest.setLogicalChannelFluor(src.getLogicalChannelFluor(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLogicalChannelNdFilter(src.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLogicalChannelPockelCellSetting(src.getLogicalChannelPockelCellSetting(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
+        dest.setDetectorSettingsDetector(src.getDetectorSettingsDetector(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setDetectorSettingsOffset(src.getDetectorSettingsOffset(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setDetectorSettingsGain(src.getDetectorSettingsGain(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
+        dest.setLightSourceSettingsLightSource(src.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLightSourceSettingsAttenuation(src.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLightSourceSettingsWavelength(src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
       }

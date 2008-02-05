@@ -130,7 +130,7 @@ public class $class extends OMEXMLMetadata {
 #set ($mappedPrefix = $prop.mappedPrefix($versionKey))
 
   /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
-  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+  public $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true)) {
 #if ($last == "-" || $mappedName == "-")
     // NB: $prop.name() unsupported for schema version $version
     return null;
@@ -186,22 +186,22 @@ public class $class extends OMEXMLMetadata {
   // - $entity.name() property storage -
 #foreach ($prop in $entity.props())
 #set ($varName = $prop.varName())
+#set ($varNameSafe = $prop.varName(true))
 #set ($mappedName = $prop.mappedName($versionKey))
 #set ($convert = $mappedName.endsWith("%"))
 #set ($mappedName = $mappedName.replaceAll("%", ""))
-#set ($mappedVarName = $prop.mappedVarName($versionKey))
 
-  /* @see loci.formats.meta.MetadataStore#set$entity.name()$prop.name()($prop.type(), $entity.indicesList(true, false)) */
-  public void set$entity.name()$prop.name()($prop.type() $varName, $entity.indicesList(true, true)) {
+  /* @see loci.formats.meta.MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
+  public void set$entity.name()$prop.name()($prop.type(true) $varName, $entity.indicesList(true, true)) {
 #if ($last == "-" || $mappedName == "-")
     // NB: $prop.name() unsupported for schema version $version
 #else
     if ($varName == null) return;
     ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), true);
 #if ($convert)
-    ${lastVar}.set$mappedName($lastVar${mappedName}From$prop.type()($varName));
+    ${lastVar}.set$mappedName($lastVar${mappedName}From$prop.type()($varNameSafe));
 #else
-    ${lastVar}.set$mappedName($varName);
+    ${lastVar}.set$mappedName($varNameSafe);
 #end##if $convert
 #end##if "-"
   }

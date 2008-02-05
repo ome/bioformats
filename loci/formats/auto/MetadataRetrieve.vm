@@ -71,7 +71,7 @@ public interface MetadataRetrieve {
    * @param $prop.varName() $prop.desc()
 #end
    */
-  $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true));
+  $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true));
 #end
 #end
 

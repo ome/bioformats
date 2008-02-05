@@ -133,12 +133,12 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 #foreach ($prop in $entity.props())
 
   /* @see MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
-  public $prop.type() get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+  public $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true)) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        $prop.type() result = retrieve.get$entity.name()$prop.name()($entity.indicesList(false, true));
+        $prop.type(true) result = retrieve.get$entity.name()$prop.name()($entity.indicesList(false, true));
         if (result != null) return result;
       }
     }
@@ -181,8 +181,8 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   // - $entity.name() property storage -
 #foreach ($prop in $entity.props())
 
-  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(), $entity.indicesList(true, false)) */
-  public void set$entity.name()$prop.name()($prop.type() $prop.varName(), $entity.indicesList(true, true)) {
+  /* @see MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
+  public void set$entity.name()$prop.name()($prop.type(true) $prop.varName(), $entity.indicesList(true, true)) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {
