@@ -207,6 +207,8 @@ public class FV1000Reader extends FormatReader {
 
     String line = null, key = null, value = null;
 
+    String oifName = null;
+
     if (isOIB) {
       in.order(true);
       in.seek(30);
@@ -260,7 +262,7 @@ public class FV1000Reader extends FormatReader {
               String last = value.substring(value.lastIndexOf("=") + 1);
               value = first + last;
             }
-            if (value.toLowerCase().endsWith(".oif")) currentId = value;
+            if (value.toLowerCase().endsWith(".oif")) oifName = value;
             oibMapping.put(value, key);
           }
           else if (key.startsWith("Storage")) {
@@ -305,10 +307,11 @@ public class FV1000Reader extends FormatReader {
         else currentId = oifFile;
         super.initFile(currentId);
         in = new RandomAccessStream(currentId);
+        oifName = currentId;
       }
     }
 
-    String path = new Location(currentId).getAbsoluteFile().getAbsolutePath();
+    String path = new Location(oifName).getAbsoluteFile().getAbsolutePath();
     String filename =
       isOIB ? path.substring(path.lastIndexOf(File.separator) + 1) : path;
     path = isOIB ? "" : path.substring(0, path.lastIndexOf(File.separator) + 1);
