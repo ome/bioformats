@@ -62,7 +62,7 @@
 		<complexType>
 			<sequence>
 				<element ref = "AML:Entry" maxOccurs = "unbounded"/>
-				<element ref = "AML:Description" minOccurs = "0"/>
+				<element ref = "OME:Description" minOccurs = "0"/>
 			</sequence>
 			<attribute name = "Name" use = "required">
 				<annotation>
@@ -84,7 +84,7 @@
 		<complexType>
 			<sequence>
 				<element ref = "AML:LookupTable" minOccurs = "0"/>
-				<element ref = "AML:Description" minOccurs = "0"/>
+				<element ref = "OME:Description" minOccurs = "0"/>
 			</sequence>
 			<attribute name = "UserDefined" default = "false" type = "boolean">
 				<annotation>
@@ -130,7 +130,7 @@ Tied to DB. Table FORMAL_INPUTS Column USER_DEFINED
 		</annotation>
 		<complexType>
 			<sequence>
-				<element ref = "AML:Description" minOccurs = "0"/>
+				<element ref = "OME:Description" minOccurs = "0"/>
 			</sequence>
 			<attribute name = "IBelongTo">
 				<annotation>
@@ -199,7 +199,7 @@ These are given by &lt;RawImageFilePath>, &lt;sizeX>, &lt;sizeY>, &lt;sizeZ>, &l
 		</annotation>
 		<complexType>
 			<sequence>
-				<element ref = "AML:Description" minOccurs = "0"/>
+				<element ref = "OME:Description" minOccurs = "0"/>
 				<element ref = "AML:Declaration"/>
 				<choice minOccurs = "0">
 					<element ref = "CLI:ExecutionInstructions"/>
@@ -418,18 +418,10 @@ A temporary hack to be sure, but that's the way it works for now.
 			<pattern value = "(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</restriction>
 	</simpleType>
-	<element name = "Description" type = "string">
-		<annotation>
-			<documentation>
-				Just some free-form text to describe Images, Screens and Projects.
-				The content model is ANY, which means that en entire XML sub-document can be placed here.
-			</documentation>
-		</annotation>
-	</element>
 	<element name = "Category">
 		<complexType>
 			<sequence>
-				<element ref = "AML:Description"/>
+				<element ref = "OME:Description"/>
 			</sequence>
 			<attribute name = "Path" use = "required">
 				<annotation>

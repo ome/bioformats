@@ -6,7 +6,7 @@
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
-	#       University of Wisconsin at Madison
+	#       University of Wisconsin at Madison"
 	#
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
@@ -23,6 +23,7 @@
 	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" 
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2007-06" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="2" 
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
@@ -30,6 +31,7 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06/BinaryFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2007-06/CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2007-06/SPW.xsd"/>
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
@@ -231,6 +233,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:element name="TiffData">
 		<xsd:annotation>
 			<xsd:documentation>
+				THis described the location of the pixel data in a tiff file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -272,6 +275,18 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
 						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
 						file, unless an IFD is specified, in which case the default is 1.	
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FilePath" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						This is used when the IFDs are located in another file.
+						The / (forward slash) is used as the path separator.
+						A relative path is recommended. However an absolute path can be specified.
+						Default is to use the file the ome-xml data has been pulled from.
+						Note: It is permissible for this to be self referential. The file image1.tiff
+						may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -992,15 +1007,25 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Description">
+	<xsd:element name = "Description">
 		<xsd:annotation>
 			<xsd:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
-				The content model is currently ANY, but this is going to change to String in 
-				the near future. This is no longer the correct place for an XML sub-document
-				- use CustomAttributes instead.
+				The content model is now String.
+				This is no longer the correct place for an XML sub-document
+				Either 
+				- use CustomAttributes instead
+				Or
+				- define your own xml tree outside the OME node and link to the OME objects using references to the IDs
 			</xsd:documentation>
 		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base = "xsd:string">
+					<xsd:attribute ref = "xml:lang" default = "en"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Microscope">
 		<xsd:annotation>
@@ -1599,7 +1624,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>
 				Laser types are specified using two attributes - the Type and the lasing medium (Medium).  Type is a string which may be set to:
 				'Excimer','Gas','Metal Vapor','Solid State','Dye','Semiconductor', or 'Free Electron'.  The Medium attribute specifies the actual lasing medium
-				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), whether or not the laser is FrequencyDoubled or Tuneable may be specified.
+				for a given laser type (for example, 'Nd-YAG').  Additionally, the Wavelength (in nm), whether or not the laser is Tuneable, and any FrequencyMultiplication that may be specified.
 				The Pulse attribute can be set to 'CW' (Continuous Wave),','Single','Q-Switched','Repetitive','Mode-Locked'.
 				The Power attribute specifies the nominal laser power in watts.
 				The Laser element may contain a Pump sub-element which refers to a LightSource used as a laser pump.
@@ -1654,7 +1679,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The Arc element is used to describe various kinds of Arc lamps - Hg, Xe, HgXe.
-				The Power attribute is the lamp's nominal power in watts.
+				The Power of the Arc is now stored in the LightSource.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1667,14 +1692,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Power" type="xsd:float"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Filament">
 		<xsd:annotation>
 			<xsd:documentation>
 				The Filament element is used to describe various kinds of filament bulbs such as Incadescent or Halogen.
-				The Power attribute is the bulb's nominal power in watts.
+				The Power of the Filament is now stored in the LightSource.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1686,7 +1710,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Power" type="xsd:float"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="LightSourceRef">
