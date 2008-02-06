@@ -67,7 +67,7 @@ String DimensionOrder  the dimension order of the pixels set
 
 [Dimensions]
 a set of pixel dimensions in the metadata store with a particular index
-Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+Unless both values are non-null, the MetadataStore should assume physicalSizeX equals physicalSizeY (i.e., should populate the null field with the other field's value). # TODO Does Bio-Formats still rely on this requirement?
 Default: Image+/Pixels+
 2003FC: Image+/CA/Dimensions
 Float PhysicalSizeX    size of an individual pixel's X axis in microns
@@ -88,10 +88,10 @@ the imaging environment for a particular image
 -
 Default: Image+/ImagingEnvironment
 2003FC: Image+/CA/ImagingEnvironment
-Float Temperature  CTR TODO
-Float AirPressure  CTR TODO
-Float Humidity     CTR TODO
-Float CO2Percent   CTR TODO
+Float Temperature  TODO
+Float AirPressure  TODO
+Float Humidity     TODO
+Float CO2Percent   TODO
 
 [Plane+]
 the plane information for a specific X-Y plane (section) within a particular pixels set
@@ -120,7 +120,7 @@ Float PositionY  the Y coordinate of the stage position
 Float PositionZ  the Z coordinate of the stage position
 
 
-### Entities for Instrument settings for a particular Image ###
+### Entities for channel information for a particular Image ###
 
 [LogicalChannel+]
 a logical channel and physical channel in the metadata store for a particular pixels
@@ -128,7 +128,7 @@ a logical channel and physical channel in the metadata store for a particular pi
 Default: Image+/LogicalChannel+
 2003FC: Image+/CA/LogicalChannel+
 String Name                            the logical channel's name
-Integer SamplesPerPixel                CTR TODO
+Integer SamplesPerPixel                TODO
 String IlluminationType                the illumination type
 Integer PinholeSize                    the size of the pinhole
 String PhotometricInterpretation       the photometric interpretation type
@@ -141,8 +141,148 @@ Integer EmWave                         the emission wavelength
 String Fluor                           the fluorescence type
 Float NdFilter                         the neutral-density filter value
 *2003FC: NDFilter
-Integer PockelCellSetting              CTR TODO
+Integer PockelCellSetting              TODO
 *2003FC: -
+
+[ChannelComponent+]
+a channel component describes how each channel in the pixel array relates to the logical channels
+-
+Default: Image+/LogicalChannel+/ChannelComponent+
+2003FC: Image+/CA/LogicalChannel+/@PixelChannelComponent+
+Integer Index       the index into the channel dimension of the 5-D pixel array
+String ColorDomain  which color channel this ChannelComponent belongs to (for example, 'R' for an 'RGB' PhotometricInterpretation)
+# FIXME xsd-fu needs to include get/setPixels methods in ChannelComponentNode
+#PixelsNode Pixels   the pixels to which this channel component corresponds
+
+[DisplayOptions]
+various display options for a particular pixels set
+-
+Default: Image+/DisplayOptions
+2003FC: Image+/CA/DisplayOptions
+# FIXME xsd-fu needs to include get/setPixels methods in DisplayOptionsNode
+#PixelsNode Pixels  the pixels to which these display options correspond
+Float Zoom         zoom factor for use in the display (NOT THE LENS ZOOM)
+
+# FIXME xsd-fu needs to include RedChannelNode (extension of ChannelSpecNode)
+#[RedChannel]
+#information about the red channel for a particular image
+#-
+#Default: Image+/DisplayOptions/RedChannel
+## FIXME the 2003FC path below will cause compilation errors because RedChannel is not of type RedChannelNode, but DisplayChannelNode; need a notation to specify the distinction between node type and method getter name
+#2003FC: Image+/CA/DisplayOptions/RedChannel
+#Integer ChannelNumber  TODO
+#Float WhiteLevel       TODO
+#Float BlackLevel       TODO
+#Float Gamma            TODO
+
+# FIXME xsd-fu needs to include RedChannelNode (extension of ChannelSpecNode)
+#[RedChannelToggle]
+#visibility toggle for a particular image's red channel
+#-
+#Default: Image+/DisplayOptions/RedChannel
+#2003FC: Image+/CA/DisplayOptions
+## FIXME this attribute really is called "isOn"; needs to be addressed somehow
+#Boolean isOn  indicator for whether red channel is active in the display
+#*2003FC: isRedChannelOn
+
+# FIXME xsd-fu needs to include GreenChannelNode (extension of ChannelSpecNode)
+#[GreenChannel]
+#information about the green channel for a particular image
+#-
+#Default: Image+/DisplayOptions/GreenChannel
+## FIXME the 2003FC path below will cause compilation errors because GreenChannel is not of type GreenChannelNode, but DisplayChannelNode; need a notation to specify the distinction between node type and method getter name
+#2003FC: Image+/CA/DisplayOptions/GreenChannel
+#Integer ChannelNumber  TODO
+#Float WhiteLevel       TODO
+#Float BlackLevel       TODO
+#Float Gamma            TODO
+
+# FIXME xsd-fu needs to include GreenChannelNode (extension of ChannelSpecNode)
+#[GreenChannelToggle]
+#visibility toggle for a particular image's green channel
+#-
+#Default: Image+/DisplayOptions/GreenChannel
+#2003FC: Image+/CA/DisplayOptions
+## FIXME this attribute really is called "isOn"; needs to be addressed somehow
+#Boolean isOn  indicator for whether green channel is active in the display
+#*2003FC: isGreenChannelOn
+
+# FIXME xsd-fu needs to include BlueChannelNode (extension of ChannelSpecNode)
+#[BlueChannel]
+#information about the blue channel for a particular image
+#-
+#Default: Image+/DisplayOptions/BlueChannel
+## FIXME the 2003FC path below will cause compilation errors because BlueChannel is not of type BlueChannelNode, but DisplayChannelNode; need a notation to specify the distinction between node type and method getter name
+#2003FC: Image+/CA/DisplayOptions/BlueChannel
+#Integer ChannelNumber  TODO
+#Float WhiteLevel       TODO
+#Float BlackLevel       TODO
+#Float Gamma            TODO
+
+# FIXME xsd-fu needs to include BlueChannelNode (extension of ChannelSpecNode)
+#[BlueChannelToggle]
+#visibility toggle for a particular image's blue channel
+#-
+#Default: Image+/DisplayOptions/BlueChannel
+#2003FC: Image+/CA/DisplayOptions
+## FIXME this attribute really is called "isOn"; needs to be addressed somehow
+#Boolean isOn  indicator for whether blue channel is active in the display
+#*2003FC: isBlueChannelOn
+
+# FIXME xsd-fu needs to include GreyChannelNode
+#[GreyChannel]
+#information about the grey channel for a particular image
+#-
+#Default: Image+/DisplayOptions/GreyChannel
+## FIXME the 2003FC path below will cause compilation errors because GreyChannel is not of type GreyChannelNode, but DisplayChannelNode; need a notation to specify the distinction between node type and method getter name
+#2003FC: Image+/CA/DisplayOptions/GreyChannel
+#Integer ChannelNumber  TODO
+#Float WhiteLevel       TODO
+#Float BlackLevel       TODO
+#Float Gamma            TODO
+
+# FIXME xsd-fu needs to include GreyChannelNode
+#[GreyChannelMap]
+#color map setting for a particular image's grey channel
+#-
+#Default: Image+/DisplayOptions/GreyChannel
+#2003FC: Image+/CA/DisplayOptions
+#String ColorMap     TODO
+## FIXME need to implement this conversion method in OMEXMLNode
+#*2003FC: isDisplayRGB%
+
+[DisplayOptionsProjection]
+maximum intensity projection-related display options for a particular pixels set
+-
+Default: Image+/DisplayOptions/Projection
+2003FC: Image+/CA/DisplayOptions
+Integer ZStart  the first focal plane to include in the maximum intensity projection
+Integer ZStop   the last focal plane to include in the maximum intensity projection
+
+[DisplayOptionsTime]
+time range-related display options for a particular pixels set
+-
+Default: Image+/DisplayOptions/Time
+2003FC: Image+/CA/DisplayOptions
+Integer TStart  the first time point to include in the animation
+Integer TStop   the last time point to include in the animation
+
+[ROI+]
+a 5D bounding box region of interest in the metadata store with a particular index
+-
+Default: Image+/DisplayOptions/ROI+
+2003FC: Image+/CA/DisplayOptions/@DisplayROI+
+Integer X0  the starting X coordinate
+Integer Y0  the starting Y coordinate
+Integer X1  the ending X coordinate
+Integer Y1  the ending Y coordinate
+Integer Z0  the starting Z coordinate
+Integer Z1  the ending Z coordinate
+Integer T0  the starting timepoint
+Integer T1  the ending timepoint
+
+
+### Entities for Instrument settings for a particular Image ###
 
 [DetectorSettings]
 the detector associated with a particular logical channel
@@ -166,52 +306,8 @@ Float Attenuation            the primary light source attenuation
 Integer Wavelength           the primary light source wavelength
 *2003FC: LightWavelength
 
-### CTR TODO Unclassified Entities ###
 
-# CTR TODO - finish/add this - LogicalChannel/FilterSetRef
-#[ChannelFilterSet]
-
-#TODO figure out how to solve problem with multiple subtypes of ChannelSpecType 
-#[DisplayChannel]
-#information about the specified channel for a particular image
-#-
-#Default: ChannelSpecType
-#2003FC: Image+/CA/DisplayChannel+
-#Integer ChannelNumber  CTR TODO
-#Double BlackLevel      CTR TODO
-#Double WhiteLevel      CTR TODO
-#Float Gamma            CTR TODO
-
-#[DisplayOptions]
-#various display options for a particular pixels set
-#-
-#Default: Image+/DisplayOptions
-#2003FC: Image+/CA/DisplayOptions
-#Float Zoom                CTR TODO
-#TODO need to split this into separate blocks for each of R, G, B & maybe gray
-#Boolean isRedChannelOn    CTR TODO
-#Boolean isGreenChannelOn  CTR TODO
-#Boolean isBlueChannelOn   CTR TODO
-#Boolean isDisplayRGB      CTR TODO
-#String ColorMap           CTR TODO
-#Integer ZStart            CTR TODO
-#Integer ZStop             CTR TODO
-#Integer TStart            CTR TODO
-#Integer TStop             CTR TODO
-
-[ROI+]
-a 5D bounding box region of interest in the metadata store with a particular index
--
-Default: Image+/DisplayOptions/ROI+
-2003FC: Image+/CA/DisplayROI+
-Integer X0                          the starting X coordinate
-Integer Y0                          the starting Y coordinate
-Integer Z0                          the starting Z coordinate
-Integer T0                          the starting timepoint
-Integer X1                          the ending X coordinate
-Integer Y1                          the ending Y coordinate
-Integer Z1                          the ending Z coordinate
-Integer T1                          the ending timepoint
+### Entities for other Image-specific information ###
 
 [StageLabel]
 a stage label in the metadata store with a particular index
@@ -237,25 +333,25 @@ a light source for a particular instrument
 -
 Default: Instrument+/LightSource+
 2003FC: CA/Instrument+/@LightSource+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String SerialNumber  CTR TODO
+String Manufacturer  TODO
+String Model         TODO
+String SerialNumber  TODO
 
 [Laser]
 a laser for a particular instrument
 -
 Default: Instrument+/LightSource+/Laser
 2003FC: CA/Instrument+/@LightSource+/@!Laser
-String Type                      CTR TODO
-String LaserMedium               CTR TODO
+String Type                      TODO
+String LaserMedium               TODO
 *2003FC: Medium
-Integer Wavelength               CTR TODO
-Integer FrequencyMultiplication  CTR TODO
+Integer Wavelength               TODO
+Integer FrequencyMultiplication  TODO
 *2003FC: isFrequencyDoubled%
-Boolean Tuneable                 CTR TODO
+Boolean Tuneable                 TODO
 *2003FC: isTunable
-String Pulse                     CTR TODO
-Float Power                      CTR TODO
+String Pulse                     TODO
+Float Power                      TODO
 *200706: -
 
 [Filament]
@@ -263,100 +359,107 @@ a filament for a particular instrument
 -
 Default: Instrument+/LightSource+/Filament
 2003FC: CA/Instrument+/@LightSource+/@Filament
-String Type  CTR TODO
-Float Power  CTR TODO
+String Type  TODO
+Float Power  TODO
 
 [Arc]
 an arc for a particular instrument
 -
 Default: Instrument+/LightSource+/Arc
 2003FC: CA/Instrument+/@LightSource+/@Arc
-String Type  CTR TODO
-Float Power  CTR TODO
+String Type  TODO
+Float Power  TODO
 
 [Detector+]
 a detector for a particular instrument
 -
 Default: Instrument+/Detector+
 2003FC: CA/Instrument+/@Detector+
-String Manufacturer  CTR TODO
-String Model         CTR TODO
-String SerialNumber  CTR TODO
-String Type          CTR TODO
-Float Gain           CTR TODO
-Float Voltage        CTR TODO
-Float Offset         CTR TODO
+String Manufacturer  TODO
+String Model         TODO
+String SerialNumber  TODO
+String Type          TODO
+Float Gain           TODO
+Float Voltage        TODO
+Float Offset         TODO
 
 [Objective+]
 an objective for a particular instrument
 -
 Default: Instrument+/Objective+
 2003FC: CA/Instrument+/@Objective+
-String Manufacturer            CTR TODO
-String Model                   CTR TODO
-String SerialNumber            CTR TODO
-String Correction              CTR TODO
+String Manufacturer            TODO
+String Model                   TODO
+String SerialNumber            TODO
+String Correction              TODO
 *2003FC: -
-String Immersion               CTR TODO
+String Immersion               TODO
 *2003FC: -
-Float LensNA                   CTR TODO
-Integer NominalMagnification   CTR TODO
+Float LensNA                   TODO
+Integer NominalMagnification   TODO
 *2003FC: -
-Float CalibratedMagnification  CTR TODO
+Float CalibratedMagnification  TODO
 *2003FC: Magnification
-Float WorkingDistance          CTR TODO
+Float WorkingDistance          TODO
 *2003FC: -
 
 #TODO figure out how to reconcile the two filter models
+
+#http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd
+#http://ome-xml.org/wiki/FilterAndFilterSet
+
+#http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd
+#http://openmicroscopy.org/api/xml/OME/ome-instrument.html
+
 #[ExcitationFilter]
 #an excitation filter for a particular instrument
 #-
 #Default: ?
 #2003FC: CA/ExcitationFilter+
-#String Manufacturer  CTR TODO
-#String Model         CTR TODO
-#String LotNumber     CTR TODO
-#String Type          CTR TODO
+#String Manufacturer  TODO
+#String Model         TODO
+#String LotNumber     TODO
+#String Type          TODO
 
 #[Dichroic]
 #a dichroic for a particular instrument
 #-
 #Default: ?
 #2003FC: CA/Dichroic+
-#String Manufacturer  CTR TODO
-#String Model         CTR TODO
-#String LotNumber     CTR TODO
-#
+#String Manufacturer  TODO
+#String Model         TODO
+#String LotNumber     TODO
+
 #[EmissionFilter]
 #an emission filter for a particular instrument
 #-
 #Default: ?
 #2003FC: CA/EmissionFilter+
-#String Manufacturer  CTR TODO
-#String Model         CTR TODO
-#String LotNumber     CTR TODO
-#String Type          CTR TODO
-#
+#String Manufacturer  TODO
+#String Model         TODO
+#String LotNumber     TODO
+#String Type          TODO
+
 #[FilterSet]
 #a filter set for a particular instrument
 #-
 #Default: ?
 #2003FC: CA/FilterSet+
-#String Manufacturer  CTR TODO
-#String Model         CTR TODO
-#String LotNumber     CTR TODO
+#String Manufacturer  TODO
+#String Model         TODO
+#String LotNumber     TODO
 
 [OTF+]
 an optical transfer function for a particular instrument
 -
 Default: Instrument+/OTF+
 2003FC: CA/Instrument+/@OTF+
-Integer SizeX                CTR TODO
-Integer SizeY                CTR TODO
-String PixelType             CTR TODO
-String Path                  CTR TODO
+Integer SizeX                TODO
+Integer SizeY                TODO
+String PixelType             TODO
+String Path                  TODO
 *200706: -
-Boolean OpticalAxisAveraged  CTR TODO
+Boolean OpticalAxisAveraged  TODO
 *2003FC: isOpticalAxisAverage
 
 
