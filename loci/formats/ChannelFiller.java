@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
@@ -73,6 +74,27 @@ public class ChannelFiller extends ReaderWrapper {
     catch (FormatException e) { }
     catch (IOException e) { }
     return null;
+  }
+
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return openBytes(no, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] buf = new byte[w * h * getRGBChannelCount() *
+      FormatTools.getBytesPerPixel(getPixelType())];
+    return openBytes(no, buf, x, y, w, h);
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
@@ -130,13 +152,18 @@ public class ChannelFiller extends ReaderWrapper {
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
-  /* @see IFormatReader#openBytes(int, int, int, int, int) */
-  public byte[] openBytes(int no, int x, int y, int w, int h)
+  /* @see IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return openImage(no, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openImage(int, int, int, int, int) */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] buf = new byte[w * h * getRGBChannelCount() *
-      FormatTools.getBytesPerPixel(getPixelType())];
-    return openBytes(no, buf, x, y, w, h);
+    return ImageTools.makeImage(openBytes(no, x, y, w, h), w, h,
+      getRGBChannelCount(), isInterleaved(),
+      FormatTools.getBytesPerPixel(getPixelType()), isLittleEndian());
   }
 
 }

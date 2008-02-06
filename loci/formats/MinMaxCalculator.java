@@ -188,6 +188,11 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#openImage(int) */
+  public BufferedImage openImage(int no) throws FormatException, IOException {
+    return openImage(no, 0, 0, getSizeX(), getSizeY());
+  }
+
   /* @see IFormatReader#openImage(int, int, int, int, int) */
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
@@ -196,6 +201,27 @@ public class MinMaxCalculator extends ReaderWrapper {
     BufferedImage b = super.openImage(no, x, y, w, h);
     updateMinMax(b, no);
     return b;
+  }
+
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return openBytes(no, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
+  }
+
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    byte[] buf = new byte[w * h * getRGBChannelCount() *
+      FormatTools.getBytesPerPixel(getPixelType())];
+    return openBytes(no, buf, x, y, w, h);
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
