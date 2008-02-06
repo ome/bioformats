@@ -89,13 +89,16 @@ public class Slicer implements PlugInFilter {
       stackOrder = gd.getNextChoice();
     }
     else {
-      sliceZ = Boolean.parseBoolean(Macro.getValue(arg, "slice_z", "false"));
-      sliceC = Boolean.parseBoolean(Macro.getValue(arg, "slice_c", "false"));
-      sliceT = Boolean.parseBoolean(Macro.getValue(arg, "slice_t", "false"));
-      keepOriginal = Boolean.parseBoolean(Macro.getValue(arg,
-        "keep_original", "false"));
-      hyperstack =
-        Boolean.parseBoolean(Macro.getValue(arg, "hyper_stack", "false"));
+      sliceZ =
+        Boolean.valueOf(Macro.getValue(arg, "slice_z", "false")).booleanValue();
+      sliceC =
+        Boolean.valueOf(Macro.getValue(arg, "slice_c", "false")).booleanValue();
+      sliceT =
+        Boolean.valueOf(Macro.getValue(arg, "slice_t", "false")).booleanValue();
+      keepOriginal = Boolean.valueOf(Macro.getValue(arg,
+        "keep_original", "false")).booleanValue();
+      hyperstack = Boolean.valueOf(
+        Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
     }
 

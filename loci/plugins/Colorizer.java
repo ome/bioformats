@@ -110,12 +110,14 @@ public class Colorizer implements PlugInFilter {
     }
     else {
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
-      merge = Boolean.parseBoolean(Macro.getValue(arg, "merge", "true"));
-      color = Boolean.parseBoolean(Macro.getValue(arg, "colorize", "false"));
+      merge =
+        Boolean.valueOf(Macro.getValue(arg, "merge", "true")).booleanValue();
+      color = Boolean.valueOf(
+        Macro.getValue(arg, "colorize", "false")).booleanValue();
       colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "0"));
       mergeOption = Macro.getValue(arg, "merge_option", null);
-      hyperstack =
-        Boolean.parseBoolean(Macro.getValue(arg, "hyper_stack", "false"));
+      hyperstack = Boolean.valueOf(
+        Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
     }
 
     ImageStack stack = imp.getImageStack();
