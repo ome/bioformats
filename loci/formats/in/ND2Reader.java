@@ -450,9 +450,9 @@ public class ND2Reader extends FormatReader {
 
       Arrays.fill(core.sizeX, core.sizeX[0]);
       Arrays.fill(core.sizeY, core.sizeY[0]);
-      Arrays.fill(core.sizeC, core.sizeC[0]);
-      Arrays.fill(core.sizeZ, core.sizeZ[0]);
-      Arrays.fill(core.sizeT, core.sizeT[0]);
+      Arrays.fill(core.sizeC, core.sizeC[0] == 0 ? 1 : core.sizeC[0]);
+      Arrays.fill(core.sizeZ, core.sizeZ[0] == 0 ? 1 : core.sizeZ[0]);
+      Arrays.fill(core.sizeT, core.sizeT[0] == 0 ? 1 : core.sizeT[0]);
       Arrays.fill(core.imageCount, core.imageCount[0]);
       Arrays.fill(core.pixelType, core.pixelType[0]);
 
@@ -474,7 +474,8 @@ public class ND2Reader extends FormatReader {
         core.imageCount[0] > core.sizeT[0] * core.sizeZ[0])
       {
         if (adjustImageCount) {
-          Arrays.fill(core.sizeT, numValidPlanes / core.sizeT.length);
+          int n = numValidPlanes / core.sizeT.length;
+          Arrays.fill(core.sizeT, n == 0 ? 1 : n);
         }
         Arrays.fill(core.imageCount, core.sizeT[0] * core.sizeZ[0]);
       }
@@ -723,6 +724,7 @@ public class ND2Reader extends FormatReader {
 
     status("Populating metadata");
     if (core.imageCount[0] == 0) {
+      /* debug */ System.out.println("*** image count was 0");
       core.sizeZ[0] = zs.size() == 0 ? 1 : zs.size();
       core.sizeT[0] = ts.size() == 0 ? 1 : ts.size();
       core.sizeC[0] = (vs.size() + 1) / (core.sizeT[0] * core.sizeZ[0]);
