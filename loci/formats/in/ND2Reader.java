@@ -324,7 +324,6 @@ public class ND2Reader extends FormatReader {
             debug("Reading chunk of size " + len +
               " at position " + in.getFilePointer());
           }
-          //in.readFully(b, 0, len);
           int n = in.read(b, 0, len);
           if (n < len) break;
 
@@ -620,96 +619,79 @@ public class ND2Reader extends FormatReader {
                     prefix = "";
                   }
                   String effectiveKey = prefix + " " + pre + " " + key;
-                  if (!metadata.containsKey(effectiveKey)) {
-                    if (effectiveKey.endsWith("dTimeMSec value")) {
-                      long v = (long) Double.parseDouble(value);
-                      if (!ts.contains(new Long(v))) {
-                        ts.add(new Long(v));
-                      }
+                  if (effectiveKey.endsWith("dTimeMSec value")) {
+                    long v = (long) Double.parseDouble(value);
+                    if (!ts.contains(new Long(v))) {
+                      ts.add(new Long(v));
                     }
-                    else if (effectiveKey.endsWith("dZPos value")) {
-                      long v = (long) Double.parseDouble(value);
-                      if (!zs.contains(new Long(v))) {
-                        zs.add(new Long(v));
-                      }
+                  }
+                  else if (effectiveKey.endsWith("dZPos value")) {
+                    long v = (long) Double.parseDouble(value);
+                    if (!zs.contains(new Long(v))) {
+                      zs.add(new Long(v));
                     }
-                    else if (effectiveKey.endsWith("uiComp value")) {
-                      if (core.sizeC[0] == 0) {
-                        core.sizeC[0] = Integer.parseInt(value);
-                      }
+                  }
+                  else if (effectiveKey.endsWith("uiComp value")) {
+                    if (core.sizeC[0] == 0) {
+                      core.sizeC[0] = Integer.parseInt(value);
                     }
-                    else if (effectiveKey.endsWith("uiCount value")) {
-                      if (core.sizeT[0] == 0) {
-                        core.sizeT[0] = Integer.parseInt(value);
-                      }
+                  }
+                  else if (effectiveKey.endsWith("uiCount value")) {
+                    if (core.sizeT[0] == 0) {
+                      core.sizeT[0] = Integer.parseInt(value);
                     }
-                    else if (effectiveKey.endsWith("TextInfoItem Text")) {
-                      value = value.replaceAll("&#x000d;&#x000a;", "\n");
-                      StringTokenizer tokens = new StringTokenizer(value, "\n");
-                      while (tokens.hasMoreTokens()) {
-                        String t = tokens.nextToken().trim();
-                        if (t.startsWith("Dimensions:")) {
-                          t = t.substring(11);
-                          StringTokenizer dims = new StringTokenizer(t, " x ");
-                          while (dims.hasMoreTokens()) {
-                            String dim = dims.nextToken().trim();
-                            int idx = dim.indexOf("(");
-                            int v = Integer.parseInt(dim.substring(idx + 1,
-                              dim.indexOf(")", idx)));
-                            if (dim.startsWith("XY")) {
-                              numSeries = v;
-                              if (numSeries > 1) {
-                                int x = core.sizeX[0];
-                                int y = core.sizeY[0];
-                                int z = core.sizeZ[0];
-                                int tSize = core.sizeT[0];
-                                int c = core.sizeC[0];
-                                core = new CoreMetadata(numSeries);
-                                Arrays.fill(core.sizeX, x);
-                                Arrays.fill(core.sizeY, y);
-                                Arrays.fill(core.sizeZ, z);
-                                Arrays.fill(core.sizeC, c);
-                                Arrays.fill(core.sizeT, tSize);
-                              }
-                            }
-                            else if (dim.startsWith("T")) {
-                              Arrays.fill(core.sizeT, v);
-                            }
-                            else if (dim.startsWith("Z")) {
-                              Arrays.fill(core.sizeZ, v);
-                            }
-                            else {
-                              Arrays.fill(core.sizeC, v);
+                  }
+                  else if (effectiveKey.endsWith("TextInfoItem Text")) {
+                    value = value.replaceAll("&#x000d;&#x000a;", "\n");
+                    StringTokenizer tokens = new StringTokenizer(value, "\n");
+                    while (tokens.hasMoreTokens()) {
+                      String t = tokens.nextToken().trim();
+                      if (t.startsWith("Dimensions:")) {
+                        t = t.substring(11);
+                        StringTokenizer dims = new StringTokenizer(t, " x ");
+                        while (dims.hasMoreTokens()) {
+                          String dim = dims.nextToken().trim();
+                          int idx = dim.indexOf("(");
+                          int v = Integer.parseInt(dim.substring(idx + 1,
+                            dim.indexOf(")", idx)));
+                          if (dim.startsWith("XY")) {
+                            numSeries = v;
+                            if (numSeries > 1) {
+                              int x = core.sizeX[0];
+                              int y = core.sizeY[0];
+                              int z = core.sizeZ[0];
+                              int tSize = core.sizeT[0];
+                              int c = core.sizeC[0];
+                              core = new CoreMetadata(numSeries);
+                              Arrays.fill(core.sizeX, x);
+                              Arrays.fill(core.sizeY, y);
+                              Arrays.fill(core.sizeZ, z);
+                              Arrays.fill(core.sizeC, c);
+                              Arrays.fill(core.sizeT, tSize);
                             }
                           }
-
-                          if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
-                          if (core.sizeC[0] == 0) Arrays.fill(core.sizeC, 1);
-                          if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
-
-                          int count =
-                            core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-                          Arrays.fill(core.imageCount, count);
+                          else if (dim.startsWith("T")) {
+                            Arrays.fill(core.sizeT, v);
+                          }
+                          else if (dim.startsWith("Z")) {
+                            Arrays.fill(core.sizeZ, v);
+                          }
+                          else {
+                            Arrays.fill(core.sizeC, v);
+                          }
                         }
+
+                        if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
+                        if (core.sizeC[0] == 0) Arrays.fill(core.sizeC, 1);
+                        if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
+
+                        int count =
+                          core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+                        Arrays.fill(core.imageCount, count);
                       }
                     }
-                    parseKeyAndValue(effectiveKey, value);
                   }
-                  else {
-                    String v = (String) getMeta(effectiveKey);
-                    boolean parse = v != null;
-                    if (parse) {
-                      for (int i=0; i<v.length(); i++) {
-                        if (Character.isLetter(v.charAt(i)) ||
-                          Character.isWhitespace(v.charAt(i)))
-                        {
-                          parse = false;
-                          break;
-                        }
-                      }
-                    }
-                    if (parse) parseKeyAndValue(effectiveKey, value);
-                  }
+                  parseKeyAndValue(effectiveKey, value);
                 }
                 s = s.substring(s.indexOf("\"", eq + 2) + 1);
               }
@@ -724,7 +706,6 @@ public class ND2Reader extends FormatReader {
 
     status("Populating metadata");
     if (core.imageCount[0] == 0) {
-      /* debug */ System.out.println("*** image count was 0");
       core.sizeZ[0] = zs.size() == 0 ? 1 : zs.size();
       core.sizeT[0] = ts.size() == 0 ? 1 : ts.size();
       core.sizeC[0] = (vs.size() + 1) / (core.sizeT[0] * core.sizeZ[0]);
