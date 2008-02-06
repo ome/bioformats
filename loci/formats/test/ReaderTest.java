@@ -31,7 +31,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
 
 /**
  * TestNG tester for Bio-Formats file format readers.
