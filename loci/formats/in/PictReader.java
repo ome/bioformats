@@ -323,7 +323,6 @@ public class PictReader extends FormatReader {
     Dimension d = getDimensions(b);
 
     core.sizeX[0] = d.width;
-    while (core.sizeX[0] % 8 != 0) core.sizeX[0]++;
     core.sizeY[0] = d.height;
     core.sizeZ[0] = 1;
     core.sizeC[0] = 3;
