@@ -164,7 +164,7 @@ public class OpenlabReader extends FormatReader {
       try {
         BufferedImage img = pict.open(b).getSubimage(x, y, w, h);
         byte[][] pix = ImageTools.getPixelBytes(img, core.littleEndian[series]);
-        for (int i=0; i<pix.length; i++) {
+        for (int i=0; i<core.sizeC[series]; i++) {
           System.arraycopy(pix[i], 0, buf, i*pix[i].length, pix[i].length);
         }
       }
@@ -459,6 +459,12 @@ public class OpenlabReader extends FormatReader {
         case MAC_4_GREYS:
         case MAC_256_GREYS:
           core.pixelType[i] = FormatTools.UINT8;
+          if (core.imageCount[i] > 1 && (core.sizeX[i] * core.sizeY[i] <
+            (planes[planeOffsets[i][1]].planeOffset -
+            planes[planeOffsets[i][0]].planeOffset)))
+          {
+            core.pixelType[i] = FormatTools.UINT16;
+          }
           core.rgb[i] = false;
           core.sizeC[i] = 1;
           core.interleaved[i] = false;
