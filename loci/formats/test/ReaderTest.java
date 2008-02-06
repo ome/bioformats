@@ -56,7 +56,7 @@ public class ReaderTest {
   private boolean isFirstTime = true;
 
   /** List of files to test. */
-  private String[][] toTest;
+  private Object[][] toTest;
 
   /** List of configuration files. */
   private static Vector configFiles = new Vector();
@@ -79,9 +79,20 @@ public class ReaderTest {
       v = removeDuplicates(v);
       isFirstTime = false;
       String[] o = (String[]) v.toArray(new String[0]);
-      toTest = new String[o.length][1];
+      toTest = new Object[o.length][2];
       for (int i=0; i<o.length; i++) {
         toTest[i][0] = o[i];
+        FileStitcher f = new FileStitcher();
+        f.setNormalized(true);
+        f.setOriginalMetadataPopulated(true);
+        f.setMetadataFiltered(true);
+        f.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+        try {
+          f.setId(o[i]);
+        }
+        catch (FormatException e) { }
+        catch (IOException e) { }
+        toTest[i][1] = f;
       }
     }
     return toTest;
@@ -93,12 +104,10 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testBufferedImageDimensions(String file) {
+  public void testBufferedImageDimensions(String file, FileStitcher reader) {
     try {
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
-
       boolean success = true;
+      BufferedImage b = null;
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
 
@@ -108,7 +117,7 @@ public class ReaderTest {
         int type = reader.getPixelType();
 
         for (int j=0; j<reader.getImageCount(); j++) {
-          BufferedImage b = reader.openImage(j);
+          b = reader.openImage(j);
           boolean failX = b.getWidth() != x;
           boolean failY = b.getHeight() != y;
           boolean failC = b.getRaster().getNumBands() <= c;
@@ -139,11 +148,10 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testByteArrayDimensions(String file) {
+  public void testByteArrayDimensions(String file, FileStitcher reader) {
     try {
       boolean success = true;
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
+      byte[] b = null;
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
         int x = reader.getSizeX();
@@ -154,7 +162,7 @@ public class ReaderTest {
         int expected = x * y * c * bytes;
 
         for (int j=0; j<reader.getImageCount(); j++) {
-          byte[] b = reader.openBytes(j);
+          b = reader.openBytes(j);
           if (b.length < expected) {
             success = false;
             break;
@@ -180,13 +188,10 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testThumbnailImageDimensions(String file) {
+  public void testThumbnailImageDimensions(String file, FileStitcher reader) {
     try {
-      FileStitcher reader = new FileStitcher();
-      reader.setNormalized(true);
-      reader.setId(file);
-
       boolean success = true;
+      BufferedImage b = null;
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
 
@@ -196,7 +201,7 @@ public class ReaderTest {
         int type = reader.getPixelType();
 
         for (int j=0; j<reader.getImageCount(); j++) {
-          BufferedImage b = reader.openThumbImage(j);
+          b = reader.openThumbImage(j);
           boolean failX = b.getWidth() != x;
           boolean failY = b.getHeight() != y;
           boolean failC = b.getRaster().getNumBands() <= c;
@@ -227,12 +232,11 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testThumbnailByteArrayDimensions(String file) {
+  public void testThumbnailByteArrayDimensions(String file, FileStitcher reader)
+  {
     try {
       boolean success = true;
-      FileStitcher reader = new FileStitcher();
-      reader.setNormalized(true);
-      reader.setId(file);
+      byte[] b = null;
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
         int x = reader.getThumbSizeX();
@@ -243,7 +247,7 @@ public class ReaderTest {
         int expected = x * y * c * bytes;
 
         for (int j=0; j<reader.getImageCount(); j++) {
-          byte[] b = reader.openThumbBytes(j);
+          b = reader.openThumbBytes(j);
           if (b.length < expected) {
             success = false;
             break;
@@ -269,166 +273,121 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all fast"
    */
-  public void testImageCount(String file) {
-    try {
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
-      boolean success = true;
-      for (int i=0; i<reader.getSeriesCount(); i++) {
-        reader.setSeries(i);
-        int imageCount = reader.getImageCount();
-        int z = reader.getSizeZ();
-        int c = reader.getEffectiveSizeC();
-        int t = reader.getSizeT();
-        if (imageCount != z * c * t) {
-          success = false;
-          break;
-        }
+  public void testImageCount(String file, FileStitcher reader) {
+    boolean success = true;
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      int imageCount = reader.getImageCount();
+      int z = reader.getSizeZ();
+      int c = reader.getEffectiveSizeC();
+      int t = reader.getSizeT();
+      if (imageCount != z * c * t) {
+        success = false;
+        break;
       }
-      reader.close();
-      if (!success) writeLog(file + " failed image count test");
-      assert success;
     }
-    catch (FormatException exc) {
-      writeLog(file + " failed image count test");
-      writeLog(exc);
-      assert false;
-    }
-    catch (IOException exc) {
-      writeLog(file + " failed image count test");
-      writeLog(exc);
-      assert false;
-    }
+    if (!success) writeLog(file + " failed image count test");
+    assert success;
   }
 
   /**
    * @testng.test dataProvider = "provider"
    *              groups = "all xml fast"
    */
-  public void testOMEXML(String file) {
-    try {
-      MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
-      FileStitcher reader = new FileStitcher();
-      reader.setMetadataStore(omexmlMeta);
-      reader.setId(file);
+  public void testOMEXML(String file, FileStitcher reader) {
+    MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
 
-      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
+    boolean success = true;
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
 
-      boolean success = true;
-      for (int i=0; i<reader.getSeriesCount(); i++) {
-        reader.setSeries(i);
+      String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
-        String type = FormatTools.getPixelTypeString(reader.getPixelType());
+      boolean failX = reader.getSizeX() !=
+        retrieve.getPixelsSizeX(i, 0).intValue();
+      boolean failY = reader.getSizeY() !=
+        retrieve.getPixelsSizeY(i, 0).intValue();
+      boolean failZ = reader.getSizeZ() !=
+        retrieve.getPixelsSizeZ(i, 0).intValue();
+      boolean failC = reader.getSizeC() !=
+        retrieve.getPixelsSizeC(i, 0).intValue();
+      boolean failT = reader.getSizeT() !=
+        retrieve.getPixelsSizeT(i, 0).intValue();
+      boolean failBE = reader.isLittleEndian() ==
+        retrieve.getPixelsBigEndian(i, 0).booleanValue();
+      boolean failDE = !reader.getDimensionOrder().equals(
+        retrieve.getPixelsDimensionOrder(i, 0));
+      boolean failType = !type.equalsIgnoreCase(
+        retrieve.getPixelsPixelType(i, 0));
 
-        boolean failX = reader.getSizeX() !=
-          retrieve.getPixelsSizeX(i, 0).intValue();
-        boolean failY = reader.getSizeY() !=
-          retrieve.getPixelsSizeY(i, 0).intValue();
-        boolean failZ = reader.getSizeZ() !=
-          retrieve.getPixelsSizeZ(i, 0).intValue();
-        boolean failC = reader.getSizeC() !=
-          retrieve.getPixelsSizeC(i, 0).intValue();
-        boolean failT = reader.getSizeT() !=
-          retrieve.getPixelsSizeT(i, 0).intValue();
-        boolean failBE = reader.isLittleEndian() ==
-          retrieve.getPixelsBigEndian(i, 0).booleanValue();
-        boolean failDE = !reader.getDimensionOrder().equals(
-          retrieve.getPixelsDimensionOrder(i, 0));
-        boolean failType = !type.equalsIgnoreCase(
-          retrieve.getPixelsPixelType(i, 0));
-
-        if (success) {
-          success = !(failX || failY || failZ || failC || failT || failBE ||
-            failDE || failType);
-        }
-        if (!success) break;
+      if (success) {
+        success = !(failX || failY || failZ || failC || failT || failBE ||
+          failDE || failType);
       }
-      if (!success) writeLog(file + " failed OME-XML sanity test");
-      assert success;
+      if (!success) break;
     }
-    catch (FormatException exc) {
-      writeLog(file + " failed OME-XML sanity test");
-      writeLog(exc);
-      assert false;
-    }
-    catch (IOException exc) {
-      writeLog(file + " failed OME-XML sanity test");
-      writeLog(exc);
-      assert false;
-    }
+    if (!success) writeLog(file + " failed OME-XML sanity test");
+    assert success;
   }
 
   /**
    * @testng.test dataProvider = "provider"
    *              groups = "all fast"
    */
-  public void testConsistent(String file) {
-    try {
-      FileStitcher r = new FileStitcher();
-      r.setId(file);
+  public void testConsistent(String file, FileStitcher reader) {
+    boolean success = true;
+    boolean failSeries = reader.getSeriesCount() != config.getNumSeries(file);
 
-      boolean success = true;
-      boolean failSeries = r.getSeriesCount() != config.getNumSeries(file);
+    if (failSeries) {
+      writeLog(file + " failed consistent metadata (wrong series count)");
+      assert false;
+      return;
+    }
 
-      if (failSeries) {
-        writeLog(file + " failed consistent metadata (wrong series count)");
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(file, i);
+
+      boolean failX = config.getWidth(file) != reader.getSizeX();
+      boolean failY = config.getHeight(file) != reader.getSizeY();
+      boolean failZ = config.getZ(file) != reader.getSizeZ();
+      boolean failC = config.getC(file) != reader.getSizeC();
+      boolean failT = config.getT(file) != reader.getSizeT();
+      boolean failDim =
+        !config.getDimOrder(file).equals(reader.getDimensionOrder());
+      boolean failInt = config.isInterleaved(file) != reader.isInterleaved();
+      boolean failRGB = config.isRGB(file) != reader.isRGB();
+      boolean failTX = config.getThumbX(file) != reader.getThumbSizeX();
+      boolean failTY = config.getThumbY(file) != reader.getThumbSizeY();
+      boolean failType = config.getPixelType(file) != reader.getPixelType();
+      boolean failEndian =
+        config.isLittleEndian(file) != reader.isLittleEndian();
+      //boolean failIndexed = config.isIndexed(file) != reader.isIndexed();
+      //boolean failFalseColor =
+      //  config.isFalseColor(file) != reader.isFalseColor();
+
+      success = !(failX || failY || failZ || failC || failT || failDim ||
+        failInt || failRGB || failTX || failTY || failType || failEndian);
+
+      if (!success) {
+        writeLog(file + " failed consistent metadata test");
         assert false;
         return;
       }
-
-      for (int i=0; i<r.getSeriesCount(); i++) {
-        r.setSeries(i);
-        config.setSeries(file, i);
-
-        boolean failX = config.getWidth(file) != r.getSizeX();
-        boolean failY = config.getHeight(file) != r.getSizeY();
-        boolean failZ = config.getZ(file) != r.getSizeZ();
-        boolean failC = config.getC(file) != r.getSizeC();
-        boolean failT = config.getT(file) != r.getSizeT();
-        boolean failDim =
-          !config.getDimOrder(file).equals(r.getDimensionOrder());
-        boolean failInt = config.isInterleaved(file) != r.isInterleaved();
-        boolean failRGB = config.isRGB(file) != r.isRGB();
-        boolean failTX = config.getThumbX(file) != r.getThumbSizeX();
-        boolean failTY = config.getThumbY(file) != r.getThumbSizeY();
-        boolean failType = config.getPixelType(file) != r.getPixelType();
-        boolean failEndian = config.isLittleEndian(file) != r.isLittleEndian();
-
-        success = !(failX || failY || failZ || failC || failT || failDim ||
-          failInt || failRGB || failTX || failTY || failType || failEndian);
-
-        if (!success) {
-          writeLog(file + " failed consistent metadata test");
-          assert false;
-          return;
-        }
-      }
-      assert true;
     }
-    catch (FormatException exc) {
-      writeLog(file + " failed consistent metadata test");
-      writeLog(exc);
-      assert false;
-    }
-    catch (IOException exc) {
-      writeLog(file + " failed consistent metadata test");
-      writeLog(exc);
-      assert false;
-    }
+    assert true;
   }
 
   /**
    * @testng.test dataProvider = "provider"
    *              groups = "all"
    */
-  public void testMemoryUsage(String file) {
+  public void testMemoryUsage(String file, FileStitcher reader) {
     try {
       Runtime r = Runtime.getRuntime();
       int maxMemory = (int) ((r.totalMemory() - r.freeMemory()) >> 20);
       int initialMemory = maxMemory;
 
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
       int mem = (int) ((r.totalMemory() - r.freeMemory()) >> 20);
       if (mem > maxMemory) maxMemory = mem;
 
@@ -473,13 +432,10 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all"
    */
-  public void testAccessTime(String file) {
+  public void testAccessTime(String file, FileStitcher reader) {
     try {
       float timeMultiplier =
         Float.parseFloat(System.getProperty("testng.multiplier"));
-
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
 
       long l1 = System.currentTimeMillis();
       for (int i=0; i<reader.getImageCount(); i++) {
@@ -513,12 +469,10 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all"
    */
-  public void testSaneUsedFiles(String file) {
+  public void testSaneUsedFiles(String file, FileStitcher reader) {
     try {
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
-
       String[] base = reader.getUsedFiles();
+      if (base.length == 1) assert true;
       Arrays.sort(base);
 
       for (int i=0; i<base.length; i++) {
@@ -533,7 +487,6 @@ public class ReaderTest {
           }
         }
       }
-      reader.close();
       assert true;
     }
     catch (FormatException e) {
@@ -552,44 +505,22 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all xml fast"
    */
-  public void testValidXML(String file) {
-    try {
-      MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
-      FileStitcher reader = new FileStitcher();
-      reader.setMetadataStore(omexmlMeta);
-      reader.setId(file);
+  public void testValidXML(String file, FileStitcher reader) {
+    MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
 
-      MetadataRetrieve retrieve =
-        (MetadataRetrieve) reader.getMetadataStore();
-
-      String xml = MetadataTools.getOMEXML(retrieve);
-      if (xml == null) writeLog(file + " failed OME-XML validation");
-      reader.close();
-      assert xml != null;
-    }
-    catch (FormatException e) {
-      writeLog(file + " failed OME-XML validation");
-      writeLog(e);
-      assert false;
-    }
-    catch (IOException e) {
-      writeLog(file + " failed OME-XML validation");
-      writeLog(e);
-      assert false;
-    }
+    String xml = MetadataTools.getOMEXML(retrieve);
+    if (xml == null) writeLog(file + " failed OME-XML validation");
+    assert xml != null;
   }
 
   /**
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testPixelsHashes(String file) {
+  public void testPixelsHashes(String file, FileStitcher reader) {
     boolean success = true;
     try {
       // check the MD5 of the first plane in each series
-
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
 
       for (int i=0; i<reader.getSeriesCount(); i++) {
         reader.setSeries(i);
@@ -620,12 +551,9 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "config"
    */
-  public void writeConfigFiles(String file) {
+  public void writeConfigFiles(String file, FileStitcher reader) {
     Exception exc = null;
     try {
-      FileStitcher reader = new FileStitcher();
-      reader.setId(file);
-
       StringBuffer line = new StringBuffer();
       line.append("\"");
       line.append(new Location(file).getName());
@@ -650,6 +578,8 @@ public class ReaderTest {
         line.append(" type=" +
           FormatTools.getPixelTypeString(reader.getPixelType()));
         line.append(" little=" + reader.isLittleEndian());
+        line.append(" indexed=" + reader.isIndexed());
+        line.append(" falseColor=" + reader.isFalseColor());
         line.append(" md5=" + md5(reader.openBytes(0)));
         line.append("]");
 
