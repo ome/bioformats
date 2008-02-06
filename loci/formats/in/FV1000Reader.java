@@ -490,7 +490,6 @@ public class FV1000Reader extends FormatReader {
       file = sanitizeFile(file, isOIB ? "" : path);
 
       tiffPath = file.substring(0, file.lastIndexOf(File.separator));
-
       RandomAccessStream ptyReader = getFile(file);
       s = ptyReader.readString((int) ptyReader.length());
       ptyReader.close();
@@ -668,6 +667,7 @@ public class FV1000Reader extends FormatReader {
       if (name.startsWith("/") || name.startsWith("\\")) {
         name = name.substring(1);
       }
+      name = name.replace('\\', '/');
       String file = (String) oibMapping.get(name);
 
       try {
