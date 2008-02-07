@@ -103,7 +103,7 @@ public class DeltavisionReader extends FormatReader {
 
     for (int row=0; row<h; row++) {
       in.skipBytes(x * bytesPerPixel);
-      in.read(buf, w * bytesPerPixel * row, w * bytesPerPixel);
+      in.read(buf, w * bytesPerPixel * (h - row - 1), w * bytesPerPixel);
       in.skipBytes(bytesPerPixel * (core.sizeX[0] - w - x));
     }
 
