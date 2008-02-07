@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -188,6 +189,10 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     // likely an INI-style comment, although we can't be sure
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    int[] channelIndexes = new int[3];
+
     if (comment != null && comment.startsWith("[")) {
       // parse key/value pairs
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -195,14 +200,32 @@ public class ImarisTiffReader extends BaseTiffReader {
         String line = st.nextToken();
         int equals = line.indexOf("=");
         if (equals < 0) continue;
-        String key = line.substring(0, equals);
-        String value = line.substring(equals + 1);
-        addMeta(key.trim(), value.trim());
+        String key = line.substring(0, equals).trim();
+        String value = line.substring(equals + 1).trim();
+        addMeta(key, value);
+
+        if (key.equals("Description")) {
+          store.setImageDescription(value, 0);
+        }
+        else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
+          store.setLogicalChannelEmWave(new Integer(value), 0,
+            channelIndexes[1]++);
+        }
+        else if (key.equals("LSMExcitationWavelength") && !value.equals("0")) {
+          store.setLogicalChannelExWave(new Integer(value), 0,
+            channelIndexes[2]++);
+        }
+        else if (key.equals("Name") && !currentId.endsWith(value)) {
+          store.setLogicalChannelName(value, 0, channelIndexes[0]++);
+        }
+        else if (key.equals("RecordingDate")) {
+          value = value.replaceAll(" ", "T");
+          store.setImageCreationDate(value.substring(0, value.indexOf(".")), 0);
+        }
       }
       metadata.remove("Comment");
     }
 
-    MetadataStore store = getMetadataStore();
     store.setImageName("", 0);
     MetadataTools.populatePixels(store, this);
   }

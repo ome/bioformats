@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -323,7 +324,8 @@ public class DeltavisionReader extends FormatReader {
     addMeta("Z origin (in um)", new Float(in.readFloat()));
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

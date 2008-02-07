@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -341,7 +342,8 @@ public class GIFReader extends FormatReader {
 
     // populate metadata store
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

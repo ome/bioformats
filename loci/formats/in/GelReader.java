@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -102,7 +103,8 @@ public class GelReader extends BaseTiffReader {
 
     core.sizeT[series] = core.imageCount[series];
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

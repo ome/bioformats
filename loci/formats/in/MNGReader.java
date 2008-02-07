@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -203,7 +204,8 @@ public class MNGReader extends FormatReader {
     core.indexed[0] = false;
     core.falseColor[0] = false;
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

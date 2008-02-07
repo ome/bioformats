@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -610,7 +611,8 @@ public class FV1000Reader extends FormatReader {
 
     // populate MetadataStore
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName("Series " + i, i);
       store.setImageCreationDate(

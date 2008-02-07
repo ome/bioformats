@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -208,7 +209,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
     super.initMetadataStore();
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
 
     MetadataTools.populatePixels(store, this);

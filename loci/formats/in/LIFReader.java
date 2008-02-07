@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -428,7 +429,8 @@ public class LIFReader extends FormatReader {
     status("Populating metadata");
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     core = new CoreMetadata(numDatasets);
     Arrays.fill(core.orderCertain, true);

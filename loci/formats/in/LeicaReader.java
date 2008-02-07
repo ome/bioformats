@@ -28,6 +28,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -961,7 +962,8 @@ public class LeicaReader extends FormatReader {
     }
 
     // the metadata store we're working with
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     byte[] f = new byte[4];
     for (int i=0; i<numSeries; i++) {

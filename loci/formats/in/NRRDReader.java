@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.StringTokenizer;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -132,6 +133,9 @@ public class NRRDReader extends FormatReader {
     core.sizeT[0] = 1;
     core.currentOrder[0] = "XYCZT";
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     while (!finished) {
       line = in.readLine().trim();
       if (!line.startsWith("#") && line.length() > 0 &&
@@ -193,6 +197,16 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("endian")) {
           core.littleEndian[0] = v.equals("little");
         }
+        else if (key.equals("spacings")) {
+          StringTokenizer tokens = new StringTokenizer(v, " ");
+          int count = tokens.countTokens();
+          for (int i=0; i<count; i++) {
+            Float f = new Float(tokens.nextToken().trim());
+            if (i == 0) store.setDimensionsPhysicalSizeX(f, 0, 0);
+            else if (i == 1) store.setDimensionsPhysicalSizeY(f, 0, 0);
+            else if (i == 2) store.setDimensionsPhysicalSizeZ(f, 0, 0);
+          }
+        }
       }
 
       if ((line.length() == 0 && dataFile == null) || line == null) {
@@ -220,7 +234,6 @@ public class NRRDReader extends FormatReader {
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
 
-    MetadataStore store = getMetadataStore();
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

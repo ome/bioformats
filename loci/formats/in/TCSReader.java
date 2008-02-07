@@ -30,6 +30,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.in.TiffReader;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -298,7 +299,8 @@ public class TCSReader extends FormatReader {
       Arrays.fill(core.indexed, tiffReaders[0].isIndexed());
       Arrays.fill(core.falseColor, true);
 
-      MetadataStore store = getMetadataStore();
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
       for (int i=0; i<x.size(); i++) {
         store.setImageName((String) seriesNames.get(i), i);

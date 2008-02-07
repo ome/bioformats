@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -197,7 +198,8 @@ public class IPLabReader extends FormatReader {
     core.metadataComplete[0] = true;
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
@@ -264,7 +266,7 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationBlack" + i, new Double(black));
           addMeta("NormalizationWhite" + i, new Double(white));
 
-          store = getMetadataStore();
+          store = new FilterMetadata(getMetadataStore(), isMetadataFiltered());
           // CTR CHECK
 //          store.setChannelGlobalMinMax(i, new Double(min),
 //            new Double(max), null);

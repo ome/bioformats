@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -266,7 +267,8 @@ public class SlidebookReader extends FormatReader {
       core.metadataComplete[i] = true;
     }
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeX.length; i++) {

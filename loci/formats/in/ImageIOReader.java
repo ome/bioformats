@@ -30,6 +30,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -126,7 +127,8 @@ public abstract class ImageIOReader extends FormatReader {
     core.falseColor[0] = false;
 
     // populate the metadata store
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -392,7 +393,8 @@ public class FluoviewReader extends BaseTiffReader {
   /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() {
     super.initMetadataStore();
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageDescription(comment, 0);
     store.setImageCreationDate(

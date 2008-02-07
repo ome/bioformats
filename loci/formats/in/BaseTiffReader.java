@@ -30,6 +30,7 @@ import java.nio.ShortBuffer;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -648,7 +649,8 @@ public abstract class BaseTiffReader extends FormatReader {
     Hashtable ifd = ifds[0];
     try {
       // the metadata store we're working with
-      MetadataStore store = getMetadataStore();
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
       store.setImageName("", 0);
 
       // set the pixel values in the metadata store

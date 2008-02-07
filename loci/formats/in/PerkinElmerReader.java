@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -704,7 +705,8 @@ public class PerkinElmerReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
 
     // populate Dimensions element

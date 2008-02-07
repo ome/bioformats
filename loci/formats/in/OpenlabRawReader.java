@@ -28,6 +28,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -137,17 +138,23 @@ public class OpenlabRawReader extends FormatReader {
     bytesPerPixel = in.read();
     in.skipBytes(1);
 
-    long stamp = in.readLong();
+    long stampMs = in.readLong();
     Date timestamp = null;
+    String stamp = null;
     SimpleDateFormat sdf = null;
-    if (stamp > 0) {
-      stamp /= 1000000;
-      stamp -= (67 * 365.25 * 24 * 60 * 60);
+    if (stampMs > 0) {
+      stampMs /= 1000000;
+      stampMs -= (67 * 365.25 * 24 * 60 * 60);
 
-      timestamp = new Date(stamp);
+      timestamp = new Date(stampMs);
       sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      addMeta("Timestamp", sdf.format(timestamp));
+      stamp = sdf.format(timestamp);
+      addMeta("Timestamp", stamp);
     }
+    if (stamp == null) {
+      stamp = DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
+    }
+
     in.skipBytes(4);
     int len = in.read() & 0xff;
     addMeta("Image name", in.readString(len - 1).trim());
@@ -174,7 +181,8 @@ public class OpenlabRawReader extends FormatReader {
     core.falseColor[0] = false;
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
 
     switch (bytesPerPixel) {
@@ -189,20 +197,8 @@ public class OpenlabRawReader extends FormatReader {
         core.pixelType[0] = FormatTools.FLOAT;
     }
 
-    if (timestamp != null) {
-      store.setImageCreationDate(sdf.format(timestamp), 0);
-    }
-    else {
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
-    }
+    store.setImageCreationDate(stamp, 0);
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null);
-//    }
   }
 
 }

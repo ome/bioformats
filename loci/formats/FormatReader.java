@@ -163,22 +163,8 @@ public abstract class FormatReader extends FormatHandler
       if (val.length() > maxLen) return;
 
       // remove all non-printable characters
-      StringBuffer keyBuffer = new StringBuffer(key);
-      StringBuffer valBuffer = new StringBuffer(val);
-      for (int i=0; i<keyBuffer.length(); i++) {
-        char c = keyBuffer.charAt(i);
-        if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
-          keyBuffer = keyBuffer.deleteCharAt(i--); // recheck this index
-        }
-      }
-      for (int i=0; i<valBuffer.length(); i++) {
-        char c = valBuffer.charAt(i);
-        if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
-          valBuffer = valBuffer.deleteCharAt(i--); // recheck this index
-        }
-      }
-      key = keyBuffer.toString();
-      val = valBuffer.toString();
+      key = DataTools.sanitize(key);
+      val = DataTools.sanitize(val);
 
       // verify key contains at least one alphabetic character
       if (!key.matches(".*[a-zA-Z].*")) return;

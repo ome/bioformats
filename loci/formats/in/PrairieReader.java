@@ -28,6 +28,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -353,7 +354,8 @@ public class PrairieReader extends FormatReader {
         core.indexed[0] = tiff.isIndexed();
         core.falseColor[0] = false;
 
-        MetadataStore store = getMetadataStore();
+        MetadataStore store =
+          new FilterMetadata(getMetadataStore(), isMetadataFiltered());
         store.setImageName("", 0);
 
         MetadataTools.populatePixels(store, this);

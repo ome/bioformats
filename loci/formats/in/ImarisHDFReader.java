@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -199,7 +200,8 @@ public class ImarisHDFReader extends FormatReader {
     seriesCount = 0;
 
     previousImageNumber = -1;
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     try {
       r.setVar("currentId", id);

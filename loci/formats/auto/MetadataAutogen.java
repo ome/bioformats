@@ -91,6 +91,8 @@ public class MetadataAutogen {
     processTemplate(ve, context,
       "DummyMetadata.vm", "meta/DummyMetadata.java");
     processTemplate(ve, context,
+      "FilterMetadata.vm", "meta/FilterMetadata.java");
+    processTemplate(ve, context,
       "AggregateMetadata.vm", "meta/AggregateMetadata.java");
     context.put("convertMetadataBody", generateConvertMetadata(entities));
     processTemplate(ve, context,

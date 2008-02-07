@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import java.util.zip.*;
 import loci.formats.*;
 import loci.formats.codec.ByteVector;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -388,7 +389,8 @@ public class ICSReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

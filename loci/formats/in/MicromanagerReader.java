@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -165,7 +166,11 @@ public class MicromanagerReader extends FormatReader {
       s = s.substring(s.indexOf("\n", start), end).trim();
     }
 
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
     StringTokenizer st = new StringTokenizer(s, "\n");
+    int[] slice = new int[3];
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
       boolean open = token.indexOf("[") != -1;
@@ -201,6 +206,41 @@ public class MicromanagerReader extends FormatReader {
           if (key.equals("Channels")) core.sizeC[0] = Integer.parseInt(value);
         }
       }
+
+      if (token.trim().startsWith("\"FrameKey")) {
+        int dash = token.indexOf("-") + 1;
+        slice[2] = Integer.parseInt(token.substring(dash,
+          token.indexOf("-", dash)));
+        dash = token.indexOf("-", dash);
+        slice[1] = Integer.parseInt(token.substring(dash,
+          token.indexOf("-", dash)));
+        dash = token.indexOf("-", dash);
+        slice[0] = Integer.parseInt(token.substring(dash,
+          token.indexOf("\"", dash)));
+
+        token = st.nextToken().trim();
+        String key = "", value = "";
+        while (!token.startsWith("}")) {
+          key = token.substring(1, token.indexOf(":")).trim();
+          value =
+            token.substring(token.indexOf(":") + 1, token.length() - 1).trim();
+
+          addMeta(key, value);
+
+          if (key.equals("Exposure-ms")) {
+
+          }
+          else if (key.equals("ElapsedTime-ms")) {
+
+          }
+          else if (key.equals("Z-um")) {
+
+          }
+
+          token = st.nextToken().trim();
+        }
+      }
+
     }
     tiffReader.setId((String) tiffs.get(0));
 
@@ -228,7 +268,6 @@ public class MicromanagerReader extends FormatReader {
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
 
-    MetadataStore store = getMetadataStore();
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

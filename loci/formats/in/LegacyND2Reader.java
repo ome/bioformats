@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.Arrays;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -185,7 +186,8 @@ public class LegacyND2Reader extends FormatReader {
       metadata = goodReader.getMetadata();
     }
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName("Series " + i, i);
       store.setImageCreationDate(

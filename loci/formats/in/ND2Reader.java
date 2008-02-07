@@ -33,6 +33,7 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -494,7 +495,8 @@ public class ND2Reader extends FormatReader {
         }
       }
 
-      MetadataStore store = getMetadataStore();
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
       MetadataTools.populatePixels(store, this);
       for (int i=0; i<core.sizeC.length; i++) {
         store.setImageName("Series " + i, i);
@@ -804,7 +806,8 @@ public class ND2Reader extends FormatReader {
     Arrays.fill(core.littleEndian, false);
     Arrays.fill(core.metadataComplete, true);
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<numSeries; i++) {
       store.setImageName(currentId, i);

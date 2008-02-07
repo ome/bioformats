@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -253,7 +254,8 @@ public class VisitechReader extends FormatReader {
     }
     files.add(currentId);
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     for (int i=0; i<numSeries; i++) {
       store.setImageName("Position " + i, i);
       store.setImageCreationDate(

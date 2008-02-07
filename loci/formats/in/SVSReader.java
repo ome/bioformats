@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -165,7 +166,8 @@ public class SVSReader extends BaseTiffReader {
   protected void initMetadataStore() {
     super.initMetadataStore();
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     for (int i=0; i<core.sizeX.length; i++) {
       store.setImageName("Series " + i, i);

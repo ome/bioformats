@@ -29,6 +29,7 @@ import java.text.*;
 import java.util.*;
 import loci.formats.*;
 import loci.formats.codec.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -426,7 +427,8 @@ public class DicomReader extends FormatReader {
     if (isJPEG || isRLE) core.interleaved[0] = false;
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
 
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;

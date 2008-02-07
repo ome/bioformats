@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -213,7 +214,8 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (!thumbnailsRemoved) return;
     Hashtable ifd = ifds[0];
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     try {
       super.initStandardMetadata();

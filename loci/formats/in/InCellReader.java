@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -157,7 +158,8 @@ public class InCellReader extends FormatReader {
     core.pixelType[0] = tiffReaders[0].getPixelType();
     core.littleEndian[0] = tiffReaders[0].isLittleEndian();
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);

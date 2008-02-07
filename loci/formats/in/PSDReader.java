@@ -27,15 +27,27 @@ package loci.formats.in;
 import java.io.IOException;
 import loci.formats.*;
 import loci.formats.codec.PackbitsCodec;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
-/** PSDReader is the file format reader for Photoshop PSD files. */
+/**
+ * PSDReader is the file format reader for Photoshop PSD files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/PSDReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/PSDReader.java">SVN</a></dd></dl>
+ *
+ * @author Melissa Linkert linkert at wisc.edu
+ */
 public class PSDReader extends FormatReader {
 
   // -- Fields --
 
   /** Lookup table. */
   private byte[][] lut;
+
+  /** Offset to pixel data. */
+  private long offset;
 
   // -- Constructor --
 
@@ -65,19 +77,7 @@ public class PSDReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    if (in.getFilePointer() % 2 == 1) in.skipBytes(1);
-    in.skipBytes(4);
-    while (in.read() != '8');
-    in.skipBytes(7);
-    int len = in.readInt();
-    in.skipBytes(len);
-
-    while (in.readString(4).equals("8BIM")) {
-      in.skipBytes(4);
-      len = in.readInt();
-      in.skipBytes(len);
-    }
-    in.seek(in.getFilePointer() - 4);
+    in.seek(offset);
 
     int plane = core.sizeX[0] * core.sizeY[0] *
       FormatTools.getBytesPerPixel(core.pixelType[0]);
@@ -217,8 +217,7 @@ public class PSDReader extends FormatReader {
 
       int size = in.readInt();
       if (size % 2 == 1) size++;
-      byte[] data = new byte[size];
-      in.read(data);
+      in.skipBytes(size);
     }
     in.seek(in.getFilePointer() - 4);
 
@@ -236,8 +235,7 @@ public class PSDReader extends FormatReader {
       w[i] = right - left;
       h[i] = bottom - top;
       c[i] = in.readShort();
-      in.skipBytes(c[i] * 6);
-      in.skipBytes(4 + 4 + 4);
+      in.skipBytes(c[i] * 6 + 12);
       int len = in.readInt();
       if (len % 2 == 1) len++;
       in.skipBytes(len);
@@ -260,6 +258,20 @@ public class PSDReader extends FormatReader {
       }
     }
 
+    in.skipBytes((int) (in.getFilePointer() % 2) + 4);
+    while (in.read() != '8');
+    in.skipBytes(7);
+    int len = in.readInt();
+    in.skipBytes(len);
+
+    while (in.readString(4).equals("8BIM")) {
+      in.skipBytes(4);
+      len = in.readInt();
+      in.skipBytes(len);
+    }
+
+    offset = in.getFilePointer() - 4;
+
     core.sizeZ[0] = 1;
     core.sizeT[0] = 1;
     core.rgb[0] = modeString.equals("RGB");
@@ -271,17 +283,12 @@ public class PSDReader extends FormatReader {
     core.littleEndian[0] = true;
     core.metadataComplete[0] = true;
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-//    }
   }
 
 }

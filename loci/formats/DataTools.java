@@ -571,4 +571,16 @@ public final class DataTools {
     return sb.toString();
   }
 
+  /** Remove unprintable characters from the given string. */
+  public static String sanitize(String s) {
+    StringBuffer buf = new StringBuffer(s);
+    for (int i=0; i<buf.length(); i++) {
+      char c = buf.charAt(i);
+      if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
+        buf = buf.deleteCharAt(i--);
+      }
+    }
+    return buf.toString();
+  }
+
 }

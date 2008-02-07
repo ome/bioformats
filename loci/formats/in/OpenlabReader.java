@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.codec.LZOCodec;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -302,7 +303,8 @@ public class OpenlabReader extends FormatReader {
     Vector firstSeriesOffsets = new Vector();
     Vector secondSeriesOffsets = new Vector();
 
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     while (in.getFilePointer() < in.length()) {
       readTagHeader();

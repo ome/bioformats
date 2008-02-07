@@ -25,8 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -126,7 +128,6 @@ public class IPWReader extends BaseTiffReader {
 
     RandomAccessStream stream = getStream(no);
     ifds = TiffTools.getIFDs(stream);
-    core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
     TiffTools.getSamples(ifds[0], stream, buf, x, y, w, h);
     stream.close();
 
@@ -219,7 +220,7 @@ public class IPWReader extends BaseTiffReader {
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
     // parse the image description
-    String description = new String(tags, 22, tags.length-22);
+    String description = new String(tags).trim();
     addMeta("Image Description", description);
 
     // default values
@@ -231,6 +232,8 @@ public class IPWReader extends BaseTiffReader {
     addMeta("channels", "1");
     addMeta("frames", new Integer(getImageCount()));
 
+    String timestamp = null;
+
     // parse the description to get channels/slices/times where applicable
     // basically the same as in SEQReader
     if (description != null) {
@@ -240,8 +243,8 @@ public class IPWReader extends BaseTiffReader {
         String label = "Timestamp";
         String data;
         if (token.indexOf("=") != -1) {
-          label = token.substring(0, token.indexOf("="));
-          data = token.substring(token.indexOf("=")+1);
+          label = token.substring(0, token.indexOf("=")).trim();
+          data = token.substring(token.indexOf("=") + 1).trim();
         }
         else {
           data = token.trim();
@@ -252,6 +255,7 @@ public class IPWReader extends BaseTiffReader {
         else if (label.equals("channels")) {
           core.sizeC[0] = Integer.parseInt(data);
         }
+        else if (label.equals("Timestamp")) timestamp = label;
       }
     }
 
@@ -261,38 +265,13 @@ public class IPWReader extends BaseTiffReader {
     Hashtable h = ifds[0];
     core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
     core.sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-    core.currentOrder[0] = "XY";
+    core.currentOrder[0] = core.rgb[0] ? "XYCTZ" : "XYTCZ";
 
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
     if (core.rgb[0]) core.sizeC[0] *= 3;
-
-    int maxNdx = 0, max = 0;
-    int[] dims = {core.sizeZ[0], core.sizeC[0], core.sizeT[0]};
-    String[] axes = {"Z", "C", "T"};
-
-    for (int i=0; i<dims.length; i++) {
-      if (dims[i] > max) {
-        max = dims[i];
-        maxNdx = i;
-      }
-    }
-
-    core.currentOrder[0] += axes[maxNdx];
-
-    if (maxNdx != 1) {
-      if (core.sizeC[0] > 1) {
-        core.currentOrder[0] += "C";
-        core.currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]);
-      }
-      else core.currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
-    }
-    else {
-      if (core.sizeZ[0] > core.sizeT[0]) core.currentOrder[0] += "ZT";
-      else core.currentOrder[0] += "TZ";
-    }
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);
@@ -332,20 +311,23 @@ public class IPWReader extends BaseTiffReader {
     }
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+
+    if (timestamp != null) {
+      SimpleDateFormat fmt = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS aa");
+      Date d = fmt.parse(timestamp, new ParsePosition(0));
+      fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      store.setImageCreationDate(fmt.format(d), 0);
+    }
+    else {
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    }
 
     MetadataTools.populatePixels(store, this);
-    store.setImageDescription(version, 0);
-
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-//    }
+    store.setImageDescription(description, 0);
   }
 
   // -- Internal FormatReader API methods --
@@ -386,7 +368,6 @@ public class IPWReader extends BaseTiffReader {
       noPOI = true;
       if (debug) trace(t);
     }
-
   }
 
   // -- Helper methods --
@@ -408,21 +389,13 @@ public class IPWReader extends BaseTiffReader {
       r.setVar("dir", dir);
       r.exec("dirName = dir.getName()");
       if (isInstance)  {
-        status("Parsing embedded folder (" + (depth + 1) + ")");
         parseDir(depth + 1, r.getVar("entry"));
       }
       else if (isDocument) {
-        status("Parsing embedded file (" + depth + ")");
         r.exec("entryName = entry.getName()");
         r.exec("dis = new DocumentInputStream(entry, fis)");
         r.exec("numBytes = dis.available()");
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-        byte[] data = new byte[numbytes + 4]; // append 0 for final offset
-        r.setVar("data", data);
-        r.exec("dis.read(data)");
-
-        RandomAccessStream ds = new RandomAccessStream(data);
-        ds.order(true);
 
         String entryName = (String) r.getVar("entryName");
         String dirName = (String) r.getVar("dirName");
@@ -431,44 +404,48 @@ public class IPWReader extends BaseTiffReader {
 
         if (isContents) {
           // software version
-          header = data;
+          header = new byte[numbytes];
+          r.setVar("data", header);
+          r.exec("dis.read(data)");
         }
         else if (entryName.equals("FrameRate")) {
           // should always be exactly 4 bytes
           // only exists if the file has more than one image
-          addMeta("Frame Rate", new Long(ds.readInt()));
+          byte[] b = new byte[4];
+          r.setVar("data", b);
+          r.exec("dis.read(data)");
+          addMeta("Frame Rate", new Integer(DataTools.bytesToInt(b, true)));
         }
         else if (entryName.equals("FrameInfo")) {
-          // should always be 16 bytes (if present)
-          for(int i=0; i<data.length/2; i++) {
-            addMeta("FrameInfo "+i, new Short(ds.readShort()));
+          byte[] b = new byte[2];
+          r.setVar("data", b);
+          for (int i=0; i<numbytes/2; i++) {
+            r.exec("dis.read(data)");
+            addMeta("FrameInfo " + i,
+              new Short(DataTools.bytesToShort(b, true)));
           }
         }
         else if (entryName.equals("ImageInfo")) {
           // acquisition data
-          tags = data;
-        }
-        else if (entryName.equals("ImageResponse")) {
-          // skip this entry
+          tags = new byte[numbytes];
+          r.setVar("data", tags);
+          r.exec("dis.read(data)");
         }
         else if (entryName.equals("ImageTIFF")) {
           // pixel data
-          String name;
+          String name = "0";
           if (!dirName.equals("Root Entry")) {
             name = dirName.substring(11, dirName.length());
           }
-          else name = "0";
 
           Integer imageNum = Integer.valueOf(name);
           pixels.put(imageNum, dirName);
           names.put(imageNum, entryName);
           core.imageCount[0]++;
         }
-        ds.close();
+
         r.exec("dis.close()");
-        if (debug) {
-          print(depth + 1, data.length + " bytes read.");
-        }
+        if (debug) print(depth + 1, numbytes + " bytes read.");
       }
     }
   }
@@ -495,7 +472,7 @@ public class IPWReader extends BaseTiffReader {
       r.exec("dis = new DocumentInputStream(document, fis)");
       r.exec("numBytes = dis.available()");
       int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes + 4];
+      byte[] b = new byte[numBytes];
       r.setVar("data", b);
       r.exec("dis.read(data)");
 
