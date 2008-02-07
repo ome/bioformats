@@ -573,6 +573,7 @@ public final class DataTools {
 
   /** Remove unprintable characters from the given string. */
   public static String sanitize(String s) {
+    if (s == null) return null;
     StringBuffer buf = new StringBuffer(s);
     for (int i=0; i<buf.length(); i++) {
       char c = buf.charAt(i);
