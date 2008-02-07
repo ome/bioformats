@@ -100,11 +100,17 @@ public class Exporter {
       if (store == null) IJ.error("OME-Java library not found.");
       else if (store instanceof MetadataRetrieve) {
         if (xml == null) {
+          store.createRoot();
+
           int ptype = 0;
+          int channels = 1;
           switch (imp.getType()) {
             case ImagePlus.GRAY8:
             case ImagePlus.COLOR_256:
+              ptype = FormatTools.UINT8;
+              break;
             case ImagePlus.COLOR_RGB:
+              channels = 3;
               ptype = FormatTools.UINT8;
               break;
             case ImagePlus.GRAY16:
@@ -118,7 +124,7 @@ public class Exporter {
           store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
           store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
           store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
-          store.setPixelsSizeC(new Integer(imp.getNChannels()), 0, 0);
+          store.setPixelsSizeC(new Integer(channels*imp.getNChannels()), 0, 0);
           store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
           store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
           store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
