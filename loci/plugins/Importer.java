@@ -614,7 +614,9 @@ public class Importer {
     int nChannels = imp.getNChannels();
     int nSlices = imp.getNSlices();
     int nFrames = imp.getNFrames();
-    if (options.isAutoscale()) Util.adjustColorRange(imp);
+    if (options.isAutoscale() && !options.isVirtual()) {
+      Util.adjustColorRange(imp);
+    }
 
     boolean splitC = options.isSplitChannels();
     boolean splitZ = options.isSplitFocalPlanes();

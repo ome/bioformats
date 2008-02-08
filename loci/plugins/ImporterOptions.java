@@ -958,6 +958,12 @@ public class ImporterOptions implements ItemListener {
         }
       }
     }
+    else if (src == autoscaleBox) {
+      if (autoscaleBox.getState()) virtualBox.setState(false);
+    }
+    else if (src == virtualBox) {
+      if (virtualBox.getState()) autoscaleBox.setState(false);
+    }
   }
 
   // -- Helper methods --
