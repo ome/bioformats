@@ -198,8 +198,8 @@ public class BMPReader extends FormatReader {
     addMeta("Compression type", comp);
 
     in.skipBytes(4);
-    float pixelSizeX = in.readFloat();
-    float pixelSizeY = in.readFloat();
+    float pixelSizeX = (float) in.readInt();
+    float pixelSizeY = (float) in.readInt();
     addMeta("X resolution", "" + pixelSizeX);
     addMeta("Y resolution", "" + pixelSizeY);
     int nColors = in.readInt();
