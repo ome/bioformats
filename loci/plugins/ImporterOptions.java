@@ -93,7 +93,6 @@ public class ImporterOptions implements ItemListener {
   };
 
   // keys for use in IJ_Prefs.txt
-  public static final String PREF_FIRST = "bioformats.firstTime";
   public static final String PREF_STACK = "bioformats.stackFormat";
   public static final String PREF_ORDER = "bioformats.stackOrder";
   public static final String PREF_MERGE = "bioformats.mergeChannels";
@@ -101,18 +100,21 @@ public class ImporterOptions implements ItemListener {
   public static final String PREF_C = "bioformats.splitWindows";
   public static final String PREF_Z = "bioformats.splitFocalPlanes";
   public static final String PREF_T = "bioformats.splitTimepoints";
+  public static final String PREF_CROP = "bioformats.crop";
   public static final String PREF_METADATA = "bioformats.showMetadata";
   public static final String PREF_GROUP = "bioformats.groupFiles";
   public static final String PREF_CONCATENATE = "bioformats.concatenate";
   public static final String PREF_RANGE = "bioformats.specifyRanges";
   public static final String PREF_AUTOSCALE = "bioformats.autoscale";
-  public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
-  public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
-  public static final String PREF_SERIES = "bioformats.series";
-  public static final String PREF_WINDOWLESS = "bioformats.windowless";
   public static final String PREF_VIRTUAL = "bioformats.virtual";
   public static final String PREF_ALL_SERIES = "bioformats.openAllSeries";
-  public static final String PREF_CROP = "bioformats.crop";
+
+  public static final String PREF_MERGE_OPTION = "bioformats.mergeOption";
+  public static final String PREF_WINDOWLESS = "bioformats.windowless";
+  public static final String PREF_SERIES = "bioformats.series";
+
+  public static final String PREF_FIRST = "bioformats.firstTime";
+  public static final String PREF_THUMBNAIL = "bioformats.forceThumbnails";
 
   // labels for user dialog; when trimmed these double as argument & macro keys
   public static final String LABEL_STACK = "View stack with: ";
@@ -123,6 +125,7 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_Z =
     "Split_focal planes into separate windows";
   public static final String LABEL_T = "Split_timepoints into separate windows";
+  public static final String LABEL_CROP = "Crop on import";
   public static final String LABEL_METADATA =
     "Display_metadata in results window";
   public static final String LABEL_GROUP = "Group_files with similar names";
@@ -130,15 +133,15 @@ public class ImporterOptions implements ItemListener {
     "Concatenate_series when compatible";
   public static final String LABEL_RANGE = "Specify_range for each series";
   public static final String LABEL_AUTOSCALE = "Autoscale images";
+  public static final String LABEL_VIRTUAL = "Use_virtual_stack";
+  public static final String LABEL_ALL_SERIES = "Open_all_series";
 
-  public static final String LABEL_LOCATION = "Location: ";
-  public static final String LABEL_ID = "Open";
   public static final String LABEL_MERGE_OPTION = "Merging Options";
   public static final String LABEL_WINDOWLESS = "windowless";
   public static final String LABEL_SERIES = "series";
-  public static final String LABEL_VIRTUAL = "Use_virtual_stack";
-  public static final String LABEL_ALL_SERIES = "Open_all_series";
-  public static final String LABEL_CROP = "Crop on import";
+
+  public static final String LABEL_LOCATION = "Location: ";
+  public static final String LABEL_ID = "Open";
 
   // -- Fields - GUI components --
 
@@ -169,18 +172,20 @@ public class ImporterOptions implements ItemListener {
   private boolean splitChannels;
   private boolean splitFocalPlanes;
   private boolean splitTimepoints;
+  private boolean crop;
   private boolean showMetadata;
   private boolean groupFiles;
   private boolean concatenate;
   private boolean specifyRanges;
   private boolean autoscale;
-  private boolean forceThumbnails;
-  private boolean windowless;
-  private String mergeOption;
-  private String seriesString;
   private boolean virtual;
   private boolean openAllSeries;
-  private boolean crop;
+
+  private String mergeOption;
+  private boolean windowless;
+  private String seriesString;
+
+  private boolean forceThumbnails;
 
   private String location;
   private String id;
@@ -256,7 +261,6 @@ public class ImporterOptions implements ItemListener {
 
   /** Loads default option values from IJ_Prefs.txt. */
   public void loadPreferences() {
-    firstTime = Prefs.get(PREF_FIRST, true);
     stackFormat = Prefs.get(PREF_STACK, VIEW_STANDARD);
     stackOrder = Prefs.get(PREF_ORDER, ORDER_DEFAULT);
     mergeChannels = Prefs.get(PREF_MERGE, false);
@@ -264,18 +268,21 @@ public class ImporterOptions implements ItemListener {
     splitChannels = Prefs.get(PREF_C, true);
     splitFocalPlanes = Prefs.get(PREF_Z, false);
     splitTimepoints = Prefs.get(PREF_T, false);
+    crop = Prefs.get(PREF_CROP, false);
     showMetadata = Prefs.get(PREF_METADATA, false);
     groupFiles = Prefs.get(PREF_GROUP, false);
     concatenate = Prefs.get(PREF_CONCATENATE, false);
     specifyRanges = Prefs.get(PREF_RANGE, false);
-    forceThumbnails = Prefs.get(PREF_THUMBNAIL, false);
     autoscale = Prefs.get(PREF_AUTOSCALE, true);
-    mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
-    seriesString = Prefs.get(PREF_SERIES, "0");
-    windowless = Prefs.get(PREF_WINDOWLESS, false);
     virtual = Prefs.get(PREF_VIRTUAL, false);
     openAllSeries = Prefs.get(PREF_ALL_SERIES, false);
-    crop = Prefs.get(PREF_CROP, false);
+
+    mergeOption = Prefs.get(PREF_MERGE_OPTION, MERGE_DEFAULT);
+    windowless = Prefs.get(PREF_WINDOWLESS, false);
+    seriesString = Prefs.get(PREF_SERIES, "0");
+
+    firstTime = Prefs.get(PREF_FIRST, true);
+    forceThumbnails = Prefs.get(PREF_THUMBNAIL, false);
 
     // set SDT intensity property, if available
     String sdtIntensity = Prefs.get(SDTReader.INTENSITY_PROPERTY, null);
@@ -286,7 +293,6 @@ public class ImporterOptions implements ItemListener {
 
   /** Saves option values to IJ_Prefs.txt as the new defaults. */
   public void savePreferences() {
-    Prefs.set(PREF_FIRST, false);
     Prefs.set(PREF_STACK, stackFormat);
     Prefs.set(PREF_ORDER, stackOrder);
     Prefs.set(PREF_MERGE, mergeChannels);
@@ -294,17 +300,21 @@ public class ImporterOptions implements ItemListener {
     Prefs.set(PREF_C, splitChannels);
     Prefs.set(PREF_Z, splitFocalPlanes);
     Prefs.set(PREF_T, splitTimepoints);
+    Prefs.set(PREF_CROP, crop);
     Prefs.set(PREF_METADATA, showMetadata);
     Prefs.set(PREF_GROUP, groupFiles);
     Prefs.set(PREF_CONCATENATE, concatenate);
     Prefs.set(PREF_RANGE, specifyRanges);
-    Prefs.set(PREF_MERGE_OPTION, mergeOption);
     Prefs.set(PREF_AUTOSCALE, autoscale);
-    Prefs.set(PREF_SERIES, seriesString);
-    Prefs.set(PREF_WINDOWLESS, windowless);
     Prefs.set(PREF_VIRTUAL, virtual);
     Prefs.set(PREF_ALL_SERIES, openAllSeries);
-    Prefs.set(PREF_CROP, crop);
+
+    Prefs.set(PREF_MERGE_OPTION, mergeOption);
+    Prefs.set(PREF_WINDOWLESS, windowless);
+    Prefs.set(PREF_SERIES, seriesString);
+
+    Prefs.set(PREF_FIRST, false);
+    //Prefs.set(PREF_THUMBNAIL, forceThumbnails);
   }
 
   /** Parses the plugin argument for parameter values. */
@@ -332,23 +342,25 @@ public class ImporterOptions implements ItemListener {
       // NB: This functionality enables multiple plugin entries to achieve
       // distinct behavior by calling the LociImporter plugin differently.
 
+      stackFormat = Macro.getValue(arg, LABEL_STACK, stackFormat);
+      stackOrder = Macro.getValue(arg, LABEL_ORDER, stackOrder);
       mergeChannels = getMacroValue(arg, LABEL_MERGE, mergeChannels);
       colorize = getMacroValue(arg, LABEL_COLORIZE, colorize);
       splitChannels = getMacroValue(arg, LABEL_C, splitChannels);
       splitFocalPlanes = getMacroValue(arg, LABEL_Z, splitFocalPlanes);
       splitTimepoints = getMacroValue(arg, LABEL_T, splitTimepoints);
+      crop = getMacroValue(arg, LABEL_CROP, crop);
       showMetadata = getMacroValue(arg, LABEL_METADATA, showMetadata);
       groupFiles = getMacroValue(arg, LABEL_GROUP, groupFiles);
       concatenate = getMacroValue(arg, LABEL_CONCATENATE, concatenate);
       specifyRanges = getMacroValue(arg, LABEL_RANGE, specifyRanges);
-      stackFormat = Macro.getValue(arg, LABEL_STACK, stackFormat);
-      mergeOption = Macro.getValue(arg, LABEL_MERGE_OPTION, mergeOption);
       autoscale = getMacroValue(arg, LABEL_AUTOSCALE, autoscale);
-      windowless = getMacroValue(arg, LABEL_WINDOWLESS, windowless);
-      seriesString = Macro.getValue(arg, LABEL_SERIES, "0");
       virtual = getMacroValue(arg, LABEL_VIRTUAL, virtual);
       openAllSeries = getMacroValue(arg, LABEL_ALL_SERIES, openAllSeries);
-      crop = getMacroValue(arg, LABEL_CROP, crop);
+
+      mergeOption = Macro.getValue(arg, LABEL_MERGE_OPTION, mergeOption);
+      windowless = getMacroValue(arg, LABEL_WINDOWLESS, windowless);
+      seriesString = Macro.getValue(arg, LABEL_SERIES, "0");
 
       location = Macro.getValue(arg, LABEL_LOCATION, location);
       id = Macro.getValue(arg, LABEL_ID, id);
