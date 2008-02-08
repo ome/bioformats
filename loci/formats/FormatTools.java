@@ -124,6 +124,16 @@ public final class FormatTools {
   /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
+   *
+   * @param order Dimension order.
+   * @param zSize Total number of focal planes.
+   * @param cSize Total number of channels.
+   * @param tSize Total number of time points.
+   * @param num Total number of image planes (zSize * cSize * tSize),
+   *   specified as a consistency check.
+   * @param z Z coordinate of ZCT coordinate triple to convert to 1D index.
+   * @param c C coordinate of ZCT coordinate triple to convert to 1D index.
+   * @param t T coordinate of ZCT coordinate triple to convert to 1D index.
    */
   public static int getIndex(String order, int zSize, int cSize, int tSize,
     int num, int z, int c, int t)
@@ -205,6 +215,14 @@ public final class FormatTools {
   /**
    * Gets the Z, C and T coordinates corresponding to the given rasterized
    * index value.
+   *
+   * @param order Dimension order.
+   * @param zSize Total number of focal planes.
+   * @param cSize Total number of channels.
+   * @param tSize Total number of time points.
+   * @param num Total number of image planes (zSize * cSize * tSize),
+   *   specified as a consistency check.
+   * @param index 1D (rasterized) index to convert to ZCT coordinate triple.
    */
   public static int[] getZCTCoords(String order,
     int zSize, int cSize, int tSize, int num, int index)
@@ -269,14 +287,40 @@ public final class FormatTools {
     return new int[] {z, c, t};
   }
 
-  /** Converts indices from the given dimension order to the native one. */
-  public static int getReorderedIndex(IFormatReader r, String order, int no)
-    throws FormatException
+  /**
+   * Converts index from the given dimension order to the reader's native one.
+   */
+  public static int getReorderedIndex(IFormatReader reader,
+    String origOrder, int newIndex) throws FormatException
   {
-    int[] zct = getZCTCoords(order, r.getSizeZ(), r.getEffectiveSizeC(),
-      r.getSizeT(), r.getImageCount(), no);
-    return getIndex(r.getDimensionOrder(), r.getSizeZ(), r.getEffectiveSizeC(),
-      r.getSizeT(), r.getImageCount(), zct[0], zct[1], zct[2]);
+    String newOrder = reader.getDimensionOrder();
+    int zSize = reader.getSizeZ();
+    int cSize = reader.getEffectiveSizeC();
+    int tSize = reader.getSizeT();
+    int num = reader.getImageCount();
+    return getReorderedIndex(origOrder, newOrder,
+      zSize, cSize, tSize, num, newIndex);
+  }
+
+  /**
+   * Converts index from one dimension order to another.
+   *
+   * @param origOrder Original dimension order.
+   * @param newOrder New dimension order.
+   * @param zSize Total number of focal planes.
+   * @param cSize Total number of channels.
+   * @param tSize Total number of time points.
+   * @param num Total number of image planes (zSize * cSize * tSize),
+   *   specified as a consistency check.
+   * @param newIndex 1D (rasterized) index according to new dimension order.
+   * @return rasterized index according to original dimension order.
+   */
+  public static int getReorderedIndex(String origOrder, String newOrder,
+    int zSize, int cSize, int tSize, int num, int newIndex)
+  {
+    int[] zct = getZCTCoords(newOrder, zSize, cSize, tSize, num, newIndex);
+    return getIndex(origOrder,
+      zSize, cSize, tSize, num, zct[0], zct[1], zct[2]);
   }
 
   /**

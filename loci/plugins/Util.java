@@ -436,8 +436,8 @@ public final class Util {
     return true;
   }
 
-  /** Reorder the given ImagePlus' stack. */
-  public static ImagePlus reorder(ImagePlus imp, String oldOrder,
+  /** Reorder the given ImagePlus's stack. */
+  public static ImagePlus reorder(ImagePlus imp, String origOrder,
     String newOrder)
   {
     ImageStack s = imp.getStack();
@@ -447,11 +447,16 @@ public final class Util {
     int c = imp.getNChannels();
     int t = imp.getNFrames();
 
-    for (int i=0; i<s.getSize(); i++) {
+    int stackSize = s.getSize();
+    for (int i=0; i<stackSize; i++) {
+      /*
       int[] target =
-        FormatTools.getZCTCoords(newOrder, z, c, t, s.getSize(), i);
-      int ndx = FormatTools.getIndex(oldOrder, z, c, t, s.getSize(),
+        FormatTools.getZCTCoords(newOrder, z, c, t, stackSize, i);
+      int ndx = FormatTools.getIndex(origOrder, z, c, t, stackSize,
         target[0], target[1], target[2]);
+      */
+      int ndx = FormatTools.getReorderedIndex(
+        origOrder, newOrder, z, c, t, stackSize, i);
       newStack.addSlice(s.getSliceLabel(ndx + 1), s.getProcessor(ndx + 1));
     }
     ImagePlus p = new ImagePlus(imp.getTitle(), newStack);
