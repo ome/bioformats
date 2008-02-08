@@ -1,0 +1,300 @@
+//
+// $id
+//
+
+/*
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+Eric Kjellman and Brian Loranger.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by $user via MetadataAutogen on $timestamp
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package loci.formats.ome;
+
+#if ($legacy == "true")
+import $basePackage.*;
+#end##$legacy
+import $basePackage.$subPackage.*;
+import java.util.List;
+import loci.formats.LogTools;
+
+/**
+ * A metadata store implementation for constructing and manipulating OME-XML
+ * DOMs for the $version version of OME-XML. It requires the
+ * $basePackage package to compile (part of ome-java.jar).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/$id">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/$id">SVN</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
+ */
+public class $class extends OMEXMLMetadata {
+
+  // -- OMEXMLMetadata API methods --
+
+  /* @see OMEXMLMetadata#dumpXML() */
+  public String dumpXML() {
+    if (root == null) return null;
+#if ($legacy == "true")
+    try { return ((OMENode) root).writeOME(false); }
+    catch (javax.xml.transform.TransformerException exc) {
+      LogTools.trace(exc);
+    }
+    catch (java.io.IOException exc) { LogTools.trace(exc); }
+    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      LogTools.trace(exc);
+    }
+    return null;
+#else
+    try {
+      java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+      ome.xml.DOMUtil.writeXML(os, root.getDOMElement().getOwnerDocument());
+      return os.toString();
+    }
+    catch (javax.xml.transform.TransformerException exc) {
+      LogTools.trace(exc);
+    }
+    return null;
+#end##if $legacy
+  }
+
+  // -- MetadataRetrieve API methods --
+
+  // - Entity counting -
+#foreach ($entity in $entities)
+#if ($entity.countable())
+#set ($last = $entity.last($versionKey))
+
+  /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()Count($entity.indicesList(true, false, false)) */
+  public int get$entity.name()Count($entity.indicesList(true, true, false)) {
+#if ($last == "-")
+    // NB: $entity.name() unsupported for schema version $version
+    return -1;
+#else
+    for (int i=0; i<Integer.MAX_VALUE; i++) {
+      if (get$entity.name()($entity.indicesList(false, true).replaceFirst("[a-zA-Z_0-9]+$", "i")) == null) return i;
+    }
+    return -1;
+#end##if "-"
+  }
+#end##if countable
+#end##foreach $entity
+
+  // - Entity retrieval -
+#foreach ($entity in $entities)
+#set ($last = $entity.last($versionKey))
+
+  /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()($entity.indicesList(true, false)) */
+  public Object get$entity.name()($entity.indicesList(true, true)) {
+#if ($last == "-")
+    // NB: $entity.name() unsupported for schema version $version
+    return null;
+#else
+    return get${last}Node($entity.indicesList(false, true), false);
+#end##if "-"
+  }
+#end##foreach $entity
+#foreach ($entity in $entities)
+#set ($last = $entity.last($versionKey))
+#set ($lastVar = $entity.lastVar($versionKey))
+
+  // - $entity.name() property retrieval -
+#foreach ($prop in $entity.props())
+#set ($mappedName = $prop.mappedName($versionKey))
+#set ($convert = $mappedName.endsWith("%"))
+#set ($mappedName = $mappedName.replaceAll("%", ""))
+#set ($mappedPrefix = $prop.mappedPrefix($versionKey))
+
+  /* @see loci.formats.meta.MetadataRetrieve#get$entity.name()$prop.name()($entity.indicesList(true, false)) */
+  public $prop.type(true) get$entity.name()$prop.name()($entity.indicesList(true, true)) {
+#if ($last == "-" || $mappedName == "-")
+    // NB: $prop.name() unsupported for schema version $version
+    return null;
+#else
+    ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), false);
+#if ($convert)
+    return $lastVar == null ? null : $lastVar${mappedName}To$prop.type()(${lastVar}.$mappedPrefix$mappedName());
+#else
+    return $lastVar == null ? null : ${lastVar}.$mappedPrefix$mappedName();
+#end##if $convert
+#end##if "-"
+  }
+#end##foreach $prop
+#end##foreach $entity
+
+  // -- MetadataStore API methods --
+
+  /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
+  public void createRoot() {
+#if ($legacy == "true")
+    try {
+      root = new OMENode();
+    }
+    catch (javax.xml.transform.TransformerException exc) {
+      LogTools.trace(exc);
+    }
+#else
+    try {
+      root = ome.xml.OMEXMLFactory.newOMENode("$version");
+    }
+#end##if $legacy
+    catch (java.io.IOException exc) { LogTools.trace(exc); }
+    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      LogTools.trace(exc);
+    }
+  }
+
+  /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
+  public void setRoot(Object root) {
+    if (!(root instanceof OMENode)) {
+      throw new IllegalArgumentException(
+        "Invalid root type: " + root.getClass().getName() + ". " +
+        "This metadata store accepts root objects of type " +
+        OMENode.class.getName());
+    }
+    this.root = (OMENode) root;
+  }
+#foreach ($entity in $entities)
+#set ($last = $entity.last($versionKey))
+#set ($lastVar = $entity.lastVar($versionKey))
+
+  // - $entity.name() property storage -
+#foreach ($prop in $entity.props())
+#set ($varName = $prop.varName())
+#set ($varNameSafe = $prop.varName(true))
+#set ($mappedName = $prop.mappedName($versionKey))
+#set ($convert = $mappedName.endsWith("%"))
+#set ($mappedName = $mappedName.replaceAll("%", ""))
+
+  /* @see loci.formats.meta.MetadataStore#set$entity.name()$prop.name()($prop.type(true), $entity.indicesList(true, false)) */
+  public void set$entity.name()$prop.name()($prop.type(true) $varName, $entity.indicesList(true, true)) {
+#if ($last == "-" || $mappedName == "-")
+    // NB: $prop.name() unsupported for schema version $version
+#else
+    if ($varName == null) return;
+    ${last}Node $lastVar = get${last}Node($entity.indicesList(false, true), true);
+#if ($convert)
+    ${lastVar}.set$mappedName($lastVar${mappedName}From$prop.type()($varNameSafe));
+#else
+    ${lastVar}.set$mappedName($varNameSafe);
+#end##if $convert
+#end##if "-"
+  }
+#end##foreach $prop
+#end##foreach $entity
+
+  // -- Helper methods --
+#foreach ($entity in $unique)
+#set ($last = $entity.last($versionKey))
+
+  // $entity.path($versionKey)
+  private ${last}Node get${last}Node($entity.indicesList(true, true), boolean create) {
+    int ndx, count;
+    List list;
+    // get OME node
+    OMENode ome = (OMENode) root;
+#set ($var = "ome")
+#set ($pVar = "ome")
+#set ($pNode = "OME")
+#set ($multiCount = 0)
+#foreach ($node in $entity.pathNodes($versionKey))
+#set ($multi = $node.endsWith("+"))
+#set ($ref = $node.startsWith("@"))
+#set ($bang = $node.startsWith("@!"))
+#set ($node = $node.replaceAll("[@!+]", ""))
+#set ($ca = $pVar.equals("ca"))
+#set ($var = $entity.toVarName($node))
+    // get $node node
+#if ($node.equals("CA"))
+#set ($node = "CustomAttributes")
+#end##if
+#if ($multi)
+#set ($prop = $entity.indices().get($multiCount))
+#set ($multiCount = $multiCount + 1)
+    ndx = $prop.varName();
+#if ($ca)
+    count = ${pVar}.countCAList("$node");
+#elseif ($legacy == "true")
+    count = ${pVar}.count${node}List();
+#else
+    count = ${pVar}.get${node}Count();
+#end##if $ca, $legacy
+    if (!create && ndx >= count) return null;
+#if ($ref)
+    for (int i=count; i<=ndx; i++) {
+      new ${node}Node(ca).set$pNode($pVar);
+    }
+#else
+    for (int i=count; i<=ndx; i++) new ${node}Node($pVar);
+#end##if $ref
+#if ($ca)
+    list = ${pVar}.getCAList("$node");
+#else
+    list = ${pVar}.get${node}List();
+#end##if $ca
+    ${node}Node $var = (${node}Node) list.get(ndx);
+#else
+#if ($ca || $ref)
+#if ($bang)
+#set ($extra = "By$pNode")
+#else
+#set ($extra = "")
+#end##if $bang
+    ${node}Node $var = null;
+#if ($ca)
+    count = ca.countCAList("$node");
+    if (count >= 1) {
+      $var = (${node}Node) ca.getCAList("$node").get(0);
+    }
+#else
+    count = ${pVar}.count${node}List$extra();
+    if (count >= 1) {
+      $var = (${node}Node) ${pVar}.get${node}List$extra().get(0);
+    }
+#end##if $ca
+#else
+    ${node}Node $var = ${pVar}.get$node();
+#end##if $ca || $ref
+    if ($var == null) {
+      if (!create) return null;
+#if ($ref)
+      $var = new ${node}Node(ca);
+      ${var}.set$pNode($pVar);
+#else
+      $var = new ${node}Node($pVar);
+#end##if $ref
+    }
+#end##if $multi
+#set ($pNode = $node)
+#set ($pVar = $var)
+#end##foreach $node
+    return $var;
+  }
+#end##foreach $entity
+
+}

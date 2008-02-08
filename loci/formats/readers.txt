@@ -1,0 +1,97 @@
+#
+# readers.txt
+#
+
+# LOCI Bio-Formats package for reading and converting biological file formats.
+# Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+# Eric Kjellman and Brian Loranger.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# This document is a configuration file identifying all file format readers
+# available to Bio-Formats, and the order in which they should be used.
+# Please do not edit unless you know what you are doing (see reader-guide.txt).
+
+# javax.imageio readers
+loci.formats.in.PNGReader          # png [javax.imageio]
+loci.formats.in.JPEGReader         # jpg, jpeg [javax.imageio]
+
+# standalone readers with unique file extensions
+loci.formats.in.PGMReader          # pgm
+loci.formats.in.FitsReader         # fits
+loci.formats.in.GIFReader          # gif
+loci.formats.in.BMPReader          # bmp
+loci.formats.in.DicomReader        # dcm, dicom
+loci.formats.in.BioRadReader       # pic
+loci.formats.in.IPLabReader        # ipl
+loci.formats.in.DeltavisionReader  # dv, r3d
+loci.formats.in.MRCReader          # mrc
+loci.formats.in.GatanReader        # dm3
+loci.formats.in.ImarisReader       # ims
+loci.formats.in.OpenlabRawReader   # raw
+loci.formats.in.OMEXMLReader       # ome
+loci.formats.in.LIFReader          # lif
+loci.formats.in.AVIReader          # avi
+loci.formats.in.QTReader           # mov
+loci.formats.in.PictReader         # pict, pct
+loci.formats.in.SDTReader          # sdt
+loci.formats.in.EPSReader          # eps, epsi
+loci.formats.in.SlidebookReader    # sld
+loci.formats.in.AliconaReader      # al3d
+loci.formats.in.MNGReader          # mng
+loci.formats.in.NRRDReader         # nrrd, nhdr
+loci.formats.in.KhorosReader       # xv
+loci.formats.in.VisitechReader     # html, xys
+loci.formats.in.LIMReader          # lim
+loci.formats.in.PSDReader          # psd
+loci.formats.in.InCellReader       # xdce
+
+# multi-extension messes
+loci.formats.in.ICSReader          # ics, ids
+loci.formats.in.PerkinElmerReader  # rec, ano, csv, htm, tim, zpo, 2, 3, 4, ...
+loci.formats.in.TCSReader # xml, tif
+
+# readers requiring third-party libraries
+loci.formats.in.FV1000Reader    # oib, oif, various
+loci.formats.in.ZeissZVIReader     # zvi [POIFS]
+loci.formats.in.IPWReader          # ipw [POIFS]
+loci.formats.in.LegacyND2Reader    # nd2, jp2 [Nikon SDK - Windows only]
+loci.formats.in.ND2Reader          # nd2, jp2 [JAI-ImageIO]
+loci.formats.in.PCIReader          # cxd [POIFS]
+loci.formats.in.ImarisHDFReader    # ims
+
+# TIFF-based readers with unique file extensions
+loci.formats.in.MetamorphReader    # stk
+loci.formats.in.ZeissLSMReader     # lsm
+loci.formats.in.SEQReader          # seq
+loci.formats.in.GelReader          # gel
+loci.formats.in.ImarisTiffReader   # ims
+loci.formats.in.FlexReader         # flex
+loci.formats.in.SVSReader          # svs
+
+# TIFF-based readers with slow isThisType
+loci.formats.in.LeicaReader        # lei, tif
+loci.formats.in.NikonReader        # nef, tif
+loci.formats.in.FluoviewReader     # tif
+loci.formats.in.PrairieReader      # xml, cfg, tif
+loci.formats.in.MicromanagerReader # txt, tif
+loci.formats.in.ImprovisionTiffReader # tif
+loci.formats.in.OMETiffReader # tif
+
+# standard TIFF reader must go last (it accepts any TIFF)
+loci.formats.in.TiffReader         # tif, tiff
+
+# non-TIFF readers with slow isThisType
+loci.formats.in.OpenlabReader      # liff
