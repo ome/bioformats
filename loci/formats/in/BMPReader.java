@@ -198,8 +198,8 @@ public class BMPReader extends FormatReader {
     addMeta("Compression type", comp);
 
     in.skipBytes(4);
-    int pixelSizeX = in.readInt();
-    int pixelSizeY = in.readInt();
+    float pixelSizeX = in.readFloat();
+    float pixelSizeY = in.readFloat();
     addMeta("X resolution", "" + pixelSizeX);
     addMeta("Y resolution", "" + pixelSizeY);
     int nColors = in.readInt();
@@ -275,8 +275,8 @@ public class BMPReader extends FormatReader {
     // resolution is stored as pixels per meter; we want to convert to
     // microns per pixel
 
-    float correctedX = (1 / (float) pixelSizeX) * 1000000;
-    float correctedY = (1 / (float) pixelSizeY) * 1000000;
+    float correctedX = pixelSizeX == 0f ? 0f : 1000000 / pixelSizeX;
+    float correctedY = pixelSizeY == 0f ? 0f : 1000000 / pixelSizeY;
 
     store.setDimensionsPhysicalSizeX(new Float(correctedX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Float(correctedY), 0, 0);
