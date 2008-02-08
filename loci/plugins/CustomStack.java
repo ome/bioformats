@@ -46,16 +46,18 @@ public class CustomStack extends VirtualStack {
 
   private IFormatReader reader;
   private String file;
+  private String stackOrder;
   private int merge;
 
   // -- Constructor --
 
   public CustomStack(int w, int h, ColorModel cm, String path, IFormatReader r,
-    int merge)
+    String stackOrder, int merge)
   {
     super(w, h, cm, path);
     reader = r;
     file = path;
+    this.stackOrder = stackOrder;
     this.merge = merge;
     try {
       reader.setId(path);
@@ -72,10 +74,11 @@ public class CustomStack extends VirtualStack {
 
   public ImageProcessor getProcessor(int n) {
     try {
-      if (merge <= 1) return Util.openProcessor(reader, n - 1);
+      int index = FormatTools.getReorderedIndex(reader, stackOrder, n - 1);
+      if (merge <= 1) return Util.openProcessor(reader, index);
       else {
         ImageProcessor[] p = new ImageProcessor[merge];
-        int[] zct = FormatTools.getZCTCoords(reader, (n - 1) * merge);
+        int[] zct = FormatTools.getZCTCoords(reader, index * merge);
         for (int q=0; q<merge; q++) {
           p[q] = Util.openProcessor(reader, FormatTools.getIndex(reader,
             zct[0], zct[1] + q, zct[2]));

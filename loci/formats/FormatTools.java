@@ -293,9 +293,9 @@ public final class FormatTools {
    * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
    */
   public static int getReorderedIndex(IFormatReader reader,
-    String origOrder, int newIndex) throws FormatException
+    String newOrder, int newIndex) throws FormatException
   {
-    String newOrder = reader.getDimensionOrder();
+    String origOrder = reader.getDimensionOrder();
     int zSize = reader.getSizeZ();
     int cSize = reader.getEffectiveSizeC();
     int tSize = reader.getSizeT();

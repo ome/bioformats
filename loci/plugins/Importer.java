@@ -401,11 +401,13 @@ public class Importer {
           }
 
           if (options.isVirtual()) {
-            boolean needComposite = options.isMergeChannels() &&
-              (r.getSizeC() > 3 || (r.getPixelType() != FormatTools.UINT8 &&
-              r.getPixelType() != FormatTools.INT8));
-            stackB = new CustomStack(w, h, null, id, r, (needComposite ||
-              !options.isMergeChannels()) ? 1 : r.getSizeC());
+            int cSize = r.getSizeC();
+            int pt = r.getPixelType();
+            boolean doMerge = options.isMergeChannels();
+            boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
+            boolean needComposite = doMerge && (cSize > 3 || eight);
+            int merge = (needComposite || !doMerge) ? 1 : cSize;
+            stackB = new CustomStack(w, h, null, id, r, stackOrder, merge);
             for (int j=0; j<num[i]; j++) {
               ((CustomStack) stackB).addSlice(constructSliceLabel(j, r,
               retrieve, i, new int[][] {zCount, cCount, tCount}));
