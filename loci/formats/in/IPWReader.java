@@ -216,6 +216,10 @@ public class IPWReader extends BaseTiffReader {
         TiffTools.PHOTOMETRIC_INTERPRETATION, false, 1) ==
         TiffTools.RGB_PALETTE;
     }
+    if (core.indexed[0]) {
+      core.sizeC[0] = 1;
+      core.rgb[0] = false;
+    }
 
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 

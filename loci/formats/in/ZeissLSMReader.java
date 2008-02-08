@@ -159,7 +159,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || core.pixelType[0] != FormatTools.UINT16) return null;
     short[][] s = new short[3][65536];
-    for (int i=core.sizeC[0]-1; i>=core.sizeC[0]-validChannels; i--) {
+    for (int i=2; i>=3-validChannels; i--) {
       for (int j=0; j<s[i].length; j++) {
         s[i][j] = (short) j;
       }
@@ -409,7 +409,10 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       core.indexed[0] = lut != null && getSizeC() == 1;
-      if (core.indexed[0]) core.sizeC[0] = 3;
+      if (core.indexed[0]) {
+        core.sizeC[0] = 1;
+        core.rgb[0] = false;
+      }
       if (core.sizeC[0] == 0) core.sizeC[0] = 1;
 
       put("DimensionZ", core.sizeZ[0]);
@@ -670,7 +673,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (debug) trace(exc);
     }
 
-    if (core.indexed[0]) core.rgb[0] = true;
+    if (core.indexed[0]) core.rgb[0] = false;
     core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
       ((core.rgb[0] || core.indexed[0]) ? 1 : core.sizeC[0]);
 

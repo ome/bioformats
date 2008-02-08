@@ -256,6 +256,10 @@ public class BMPReader extends FormatReader {
     core.currentOrder[0] = "XYCTZ";
     core.metadataComplete[0] = true;
     core.indexed[0] = palette != null;
+    if (core.indexed[0]) {
+      core.sizeC[0] = 1;
+      core.rgb[0] = false;
+    }
     core.falseColor[0] = false;
 
     // Populate metadata store.

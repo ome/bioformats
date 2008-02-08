@@ -330,10 +330,10 @@ public class GIFReader extends FormatReader {
     status("Populating metadata");
 
     core.sizeZ[0] = 1;
-    core.sizeC[0] = 3;
+    core.sizeC[0] = 1;
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCTZ";
-    core.rgb[0] = true;
+    core.rgb[0] = false;
     core.littleEndian[0] = true;
     core.interleaved[0] = true;
     core.metadataComplete[0] = true;

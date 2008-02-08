@@ -187,6 +187,11 @@ public class KhorosReader extends FormatReader {
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;
 
+    if (core.indexed[0]) {
+      core.sizeC[0] = 1;
+      core.rgb[0] = false;
+    }
+
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     store.setImageName("", 0);

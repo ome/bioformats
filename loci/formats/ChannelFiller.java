@@ -56,6 +56,21 @@ public class ChannelFiller extends ReaderWrapper {
     return false;
   }
 
+  /* @see IFormatReader#getSizeC() */
+  public int getSizeC() {
+    return reader.getSizeC() * (reader.isIndexed() ? 3 : 1);
+  }
+
+  /* @see IFormatReader#getRGBChannelCount() */
+  public int getRGBChannelCount() {
+    return reader.isIndexed() ? 3 : 1;
+  }
+
+  /* @see IFormatReader#isRGB() */
+  public boolean isRGB() {
+    return reader.isIndexed() || reader.isRGB();
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     try {
@@ -140,9 +155,9 @@ public class ChannelFiller extends ReaderWrapper {
           for (int i=0; i<s.length; i++) {
             for (int j=0; j<s[i].length; j++) {
               buf[pt++] = (byte) (isLittleEndian() ?
-                (s[j][i] & 0xff) : (s[j][i] >> 8));
+                (s[i][j] & 0xff) : (s[i][j] >> 8));
               buf[pt++] = (byte) (isLittleEndian() ?
-                (s[j][i] >> 8) : (s[j][i] & 0xff));
+                (s[i][j] >> 8) : (s[i][j] & 0xff));
             }
           }
         }

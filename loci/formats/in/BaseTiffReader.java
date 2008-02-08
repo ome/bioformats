@@ -595,6 +595,10 @@ public abstract class BaseTiffReader extends FormatReader {
     core.metadataComplete[0] = true;
     core.indexed[0] = p == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
+    if (core.indexed[0]) {
+      core.sizeC[0] = 1;
+      core.rgb[0] = false;
+    }
     if (core.sizeC[0] == 1 && !core.indexed[0]) core.rgb[0] = false;
     core.falseColor[0] = false;
 

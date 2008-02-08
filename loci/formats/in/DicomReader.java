@@ -90,12 +90,15 @@ public class DicomReader extends FormatReader {
   private boolean inSequence;
   private boolean bigEndianTransferSyntax;
   private byte[][] lut;
+  private short[][] shortLut;
   private long[] offsets;
   private int scale;
+  private int maxPixelValue;
 
   private boolean isJP2K = false;
   private boolean isJPEG = false;
   private boolean isRLE = false;
+  private boolean inverted;
 
   private String date, time, imageType;
 
@@ -112,14 +115,19 @@ public class DicomReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    if (block.length < 132) return false;
-    return new String(block).indexOf("DICM") != -1;
+    return block.length >= 132;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return shortLut;
   }
 
   /**
@@ -187,6 +195,28 @@ public class DicomReader extends FormatReader {
       }
     }
 
+    if (inverted) {
+      if (bpp == 1) {
+        for (int i=0; i<buf.length; i++) {
+          buf[i] = (byte) (255 - buf[i]);
+        }
+      }
+      else if (bpp == 2) {
+        for (int i=0; i<buf.length; i+=2) {
+          short s = DataTools.bytesToShort(buf, i, 2, core.littleEndian[0]);
+          s = (short) (maxPixelValue - s);
+          if (core.littleEndian[0]) {
+            buf[i + 1] = (byte) (s >> 8);
+            buf[i] = (byte) (s & 0xff);
+          }
+          else {
+            buf[i] = (byte) (s >> 8);
+            buf[i + 1] = (byte) (s & 0xff);
+          }
+        }
+      }
+    }
+
     return buf;
   }
 
@@ -200,6 +230,7 @@ public class DicomReader extends FormatReader {
     isJPEG = isRLE = false;
     lut = null;
     offsets = null;
+    shortLut = null;
   }
 
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
@@ -214,7 +245,7 @@ public class DicomReader extends FormatReader {
       }
       catch (IOException e) { }
     }
-    return false;
+    return super.isThisType(name, open);
   }
 
   // -- Internal FormatReader API methods --
@@ -239,6 +270,7 @@ public class DicomReader extends FormatReader {
     lut = null;
     offsets = null;
     scale = 0;
+    inverted = false;
 
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
@@ -341,8 +373,12 @@ public class DicomReader extends FormatReader {
           addInfo(tag, intercept);
           break;
         case 537262910:
-        case WINDOW_CENTER:
         case WINDOW_WIDTH:
+          String t = in.readString(elementLength);
+          maxPixelValue = new Double(t.trim()).intValue();
+          addInfo(tag, t);
+          break;
+        case WINDOW_CENTER:
         case RESCALE_SLOPE:
           addInfo(tag, in.readString(elementLength));
           break;
@@ -497,16 +533,19 @@ public class DicomReader extends FormatReader {
       else if (key.equals("Photometric Interpretation")) {
         if (info.trim().equals("PALETTE COLOR")) {
           core.indexed[0] = true;
-          core.sizeC[0] = 3;
-          core.rgb[0] = true;
+          core.sizeC[0] = 1;
+          core.rgb[0] = false;
           lut = new byte[3][];
+        }
+        else if (info.trim().startsWith("MONOCHROME")) {
+          inverted = info.trim().endsWith("1");
         }
       }
       else if (key.indexOf("Palette Color LUT Data") != -1) {
         String color = key.substring(0, key.indexOf(" ")).trim();
         int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
         long fp = in.getFilePointer();
-        in.seek(oldFp + 1);
+        in.seek(in.getFilePointer() - elementLength);
         lut[ndx] = new byte[elementLength / 2];
         for (int i=0; i<lut[ndx].length; i++) {
           lut[ndx][i] = (byte) (in.read() & 0xff);
