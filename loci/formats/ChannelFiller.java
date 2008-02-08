@@ -63,7 +63,7 @@ public class ChannelFiller extends ReaderWrapper {
 
   /* @see IFormatReader#getRGBChannelCount() */
   public int getRGBChannelCount() {
-    return reader.isIndexed() ? 3 : 1;
+    return reader.isIndexed() ? 3 : reader.getRGBChannelCount();
   }
 
   /* @see IFormatReader#isRGB() */
