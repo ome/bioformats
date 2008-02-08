@@ -27,7 +27,9 @@ package loci.formats;
 import loci.formats.meta.MetadataStore;
 
 /**
- * Handles swapping the dimension order of a file.
+ * Handles swapping the dimension order of a file. This class is useful for
+ * reassigning ZCT sizes (rather than shuffling the planar order around as
+ * {@link FormatTools#getReorderedIndex(IFormatReader, String, int)} does).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/DimensionSwapper.java">Trac</a>,

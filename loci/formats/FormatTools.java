@@ -289,6 +289,8 @@ public final class FormatTools {
 
   /**
    * Converts index from the given dimension order to the reader's native one.
+   * This method is useful for shuffling the planar order around
+   * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
    */
   public static int getReorderedIndex(IFormatReader reader,
     String origOrder, int newIndex) throws FormatException
@@ -304,6 +306,8 @@ public final class FormatTools {
 
   /**
    * Converts index from one dimension order to another.
+   * This method is useful for shuffling the planar order around
+   * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
    *
    * @param origOrder Original dimension order.
    * @param newOrder New dimension order.
