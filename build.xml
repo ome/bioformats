@@ -64,7 +64,6 @@ VisBio
 LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
     Folders:       loci/plugins
-                   loci/plugins/browser
                    loci/ome/upload
                    loci/ome/util
     Main class:    loci.plugins.About

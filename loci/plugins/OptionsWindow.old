@@ -444,7 +444,6 @@ public class OptionsWindow extends JFrame implements
       updatePriorities();
       updateRanges();
       updateOrder();
-      updateCacheIndicators();
     }
     else if (source == stratBox) {
       // change order in which axes are cached
@@ -595,7 +594,6 @@ public class OptionsWindow extends JFrame implements
       if (tChar == cChar) tChar = oldChar;
       updateGroups(zChar, tChar, cChar);
     }
-    updateCacheIndicators();
   }
 
   public void itemStateChanged(ItemEvent e) {
@@ -608,7 +606,6 @@ public class OptionsWindow extends JFrame implements
     else if (source == mergeCheck) {
       cw.db.toggleMerge();
     }
-    updateCacheIndicators();
   }
 
   // -- ChangeListener API methods --
@@ -616,7 +613,6 @@ public class OptionsWindow extends JFrame implements
   public void stateChanged(ChangeEvent e) {
     if (!update) return;
     updateRanges();
-    updateCacheIndicators();
   }
 
   // -- Helper methods --
@@ -677,15 +673,6 @@ public class OptionsWindow extends JFrame implements
     update = true;
     cw.db.setDimensions();
     cw.updateControls();
-  }
-
-  private void updateCacheIndicators() {
-    if (cw.zIndicator != null) {
-      cw.zIndicator.setIndicator(cw.db.cache, sizeZ, order.indexOf("Z"));
-    }
-    if (cw.tIndicator != null) {
-      cw.tIndicator.setIndicator(cw.db.cache, sizeT, order.indexOf("T"));
-    }
   }
 
 }

@@ -34,6 +34,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import loci.formats.*;
 
+/**
+ * A plugin for splitting an image stack into separate channels, focal planes
+ * and/or time points.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/Slicer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/Slicer.java">SVN</a></dd></dl>
+ *
+ * @author Melissa Linkert linkert at wisc.edu
+ */
 public class Slicer implements PlugInFilter {
 
   // -- Fields --

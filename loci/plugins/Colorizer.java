@@ -36,6 +36,15 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import loci.formats.*;
 
+/**
+ * A plugin for merging, colorizing and reordering image stacks.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/Colorizer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/Colorizer.java">SVN</a></dd></dl>
+ *
+ * @author Melissa Linkert linkert at wisc.edu
+ */
 public class Colorizer implements PlugInFilter {
 
   // -- Static fields --

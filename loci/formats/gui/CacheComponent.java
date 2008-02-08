@@ -50,8 +50,7 @@ public class CacheComponent extends JPanel
     {"Byte arrays", "BufferedImages", "ImageProcessors"};
   protected static final Class[] SOURCE_VALUES = {
     ByteArraySource.class,
-    BufferedImageSource.class,
-    ImageProcessorSource.class
+    BufferedImageSource.class
   };
   protected static final Class[] SOURCE_PARAMS = {String.class};
   protected static final String[] STRATEGIES = {"Crosshair", "Rectangle"};

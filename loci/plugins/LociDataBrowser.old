@@ -37,7 +37,7 @@ import loci.formats.cache.*;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
- * image data (stacks of image planes over time) with two-channel support.
+ * image data (stacks of image planes over time) with multiple channels.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/LociDataBrowser.java">Trac</a>,
@@ -140,6 +140,7 @@ public class LociDataBrowser {
       return;
     }
     if (cw != null) {
+//      cache.removeCacheListener(cw);
       cw.ow.dispose();
       cw.ow = null;
       cw.dispose();
@@ -263,8 +264,7 @@ public class LociDataBrowser {
             cache.setCurrentPos(new int[] {0, 0, 0});
           }
           if (cacheThread != null) cacheThread.quit();
-          cacheThread = new CacheUpdater(cache,
-            new CacheIndicator[0], new int[0], new int[0]);
+          cacheThread = new CacheUpdater(cache);
           cacheThread.start();
 
           try {

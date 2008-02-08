@@ -3,9 +3,9 @@
 //
 
 /*
-LOCI 4D Data Browser plugin for quick browsing of 4D datasets in ImageJ.
-Copyright (C) 2005-@year@ Christopher Peterson, Francis Wong, Curtis Rueden
-and Melissa Linkert.
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+Eric Kjellman and Brian Loranger.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -22,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.browser;
+package loci.formats.gui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,10 +33,10 @@ import loci.formats.cache.*;
  * for a given dimensional axis at a particular dimensional position.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/browser/CacheIndicator.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/CacheIndicator.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/gui/CacheIndicator.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/gui/CacheIndicator.java">SVN</a></dd></dl>
  */
-public class CacheIndicator extends JComponent {
+public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- Constants --
 
@@ -44,45 +44,34 @@ public class CacheIndicator extends JComponent {
 
   // -- Fields --
 
-  private Cache cache;
-  private int cacheLength, axis, numAxes;
   private JScrollBar scroll;
-  private boolean doUpdate;
+  private int axis;
+  private Cache cache;
 
   // -- Constructor --
 
   public CacheIndicator(JScrollBar scroll) {
-    doUpdate = true;
     this.scroll = scroll;
-    setBackground(Color.WHITE);
-    cache = null;
-    cacheLength = 0;
     axis = -1;
+    setBackground(Color.WHITE);
   }
 
   // -- CacheIndicator API methods --
 
-  public void setIndicator(Cache cache, int length, int axis) {
-    doUpdate = false;
-    this.cache = cache;
-    cacheLength = length;
+  public void setAxis(int axis) {
     this.axis = axis;
-
-    // NB: think more on whether this should be synchronized (cache)
-    numAxes = cache.getCurrentPos().length;
-
-    doUpdate = true;
     repaint();
   }
 
   // -- JComponent API methods --
 
   public void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    if (!doUpdate) return;
-
+//    super.paintComponent(g);
     g.setColor(Color.BLACK);
     g.drawRect(0, 0, getWidth() - 1, COMPONENT_HEIGHT - 1);
+
+    int[] lengths = cache.getStrategy().getLengths();
+    int cacheLength = axis >= 0 && axis < lengths.length ? lengths[axis] : 0;
 
     if (cacheLength == 0) return;
 
@@ -93,7 +82,6 @@ public class CacheIndicator extends JComponent {
       int[] currentPos = null;
       int[][] loadList = null;
 
-      // NB: think more on whether this should be synchronized (cache)
       currentPos = cache.getCurrentPos();
       loadList = cache.getStrategy().getLoadList(currentPos);
 
@@ -121,7 +109,6 @@ public class CacheIndicator extends JComponent {
 
         boolean inCache = false;
 
-        // NB: think more on whether this should be synchronized (cache)
         inCache = cache.isInCache(pos);
 
         if (inCache) g.setColor(Color.BLUE);
@@ -133,7 +120,7 @@ public class CacheIndicator extends JComponent {
         start += len;
       }
     }
-    catch (CacheException e) { }
+    catch (CacheException e) { e.printStackTrace(); }
   }
 
   // -- Component API methods --
@@ -148,6 +135,27 @@ public class CacheIndicator extends JComponent {
 
   public Dimension getMaximumSize() {
     return new Dimension(scroll.getMaximumSize().width, COMPONENT_HEIGHT);
+  }
+
+  // -- CacheListener API methods --
+
+  public void cacheUpdated(CacheEvent e) {
+    System.out.println("cacheUpdated: " + e);//TEMP
+    this.cache = (Cache) e.getSource();
+    int type = e.getType();
+    if (type == CacheEvent.OBJECT_LOADED || type == CacheEvent.OBJECT_DROPPED) {
+      // cache has changed; update GUI
+      final Object temp = this;
+      try {
+      SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          System.out.println("REPAINTING " + temp);//TEMP
+          repaint();
+        }
+      });
+      }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
   }
 
 }

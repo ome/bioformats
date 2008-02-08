@@ -47,7 +47,7 @@ import org.openmicroscopy.xml.OMENode;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/browser/CustomWindow.java">SVN</a></dd></dl>
  */
 public class CustomWindow extends ImageWindow implements ActionListener,
-  AdjustmentListener, CacheListener, ChangeListener, ItemListener, KeyListener
+  AdjustmentListener, ChangeListener, ItemListener, KeyListener
 {
 
   // -- Constants --
@@ -219,8 +219,18 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     tPanel.add(tSliceSel, BorderLayout.CENTER);
 
     if (db.virtual) {
+      if (db.cache != null) {
+        if (zIndicator != null) db.cache.removeCacheListener(zIndicator);
+        if (zIndicator != null) db.cache.removeCacheListener(tIndicator);
+      }
       zIndicator = new CacheIndicator(zSliceSel);
       tIndicator = new CacheIndicator(tSliceSel);
+      zIndicator.setAxis(db.zIndex);
+      tIndicator.setAxis(db.tIndex);
+      if (db.cache != null) {
+        db.cache.addCacheListener(zIndicator);
+        db.cache.addCacheListener(tIndicator);
+      }
       zPanel.add(zIndicator, BorderLayout.SOUTH);
       tPanel.add(tIndicator, BorderLayout.SOUTH);
     }
@@ -318,7 +328,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   /** Selects and shows slice defined by z, t and c. */
-  public synchronized void showSlice(int zVal, int tVal, int cVal,
+  public void showSlice(int zVal, int tVal, int cVal,
     boolean temp)
   {
     int index = db.getIndex(zVal - 1, tVal - 1, cVal - 1);
@@ -361,21 +371,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         }
 
         try {
-          synchronized (db.cache) {
-            db.cache.setCurrentPos(newZCT);
-          }
+          db.cache.setCurrentPos(newZCT);
           if (db.cacheThread != null) db.cacheThread.quit();
-          db.cacheThread = new CacheUpdater(db.cache,
-            new CacheIndicator[] {zIndicator, tIndicator},
-            new int[] {db.reader.getSizeZ(), db.reader.getSizeT()},
-            new int[] {zIndex, tIndex});
+          db.cacheThread = new CacheUpdater(db.cache);
           db.cacheThread.start();
 
-          while (processors[i] == null) {
-            synchronized (db.cache) {
-              processors[i] = (ImageProcessor) db.cache.getObject(newZCT);
-            }
-          }
+          processors[i] = (ImageProcessor) db.cache.getObject(newZCT);
+
           if (!temp) {
             double bits = 255;
             if (processors[i] instanceof ShortProcessor) bits = 65535;
@@ -385,14 +387,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
           }
           if (i == numPlanes - 1) {
             newZCT[cIndex] -= (numPlanes - 1);
-            synchronized (db.cache) {
-              db.cache.setCurrentPos(newZCT);
-            }
+            db.cache.setCurrentPos(newZCT);
             if (db.cacheThread != null) db.cacheThread.quit();
-            db.cacheThread = new CacheUpdater(db.cache,
-              new CacheIndicator[] {zIndicator, tIndicator},
-              new int[] {db.reader.getSizeZ(), db.reader.getSizeT()},
-              new int[] {zIndex, tIndex});
+            db.cacheThread = new CacheUpdater(db.cache);
             db.cacheThread.start();
           }
         }
@@ -442,12 +439,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     int nSlices = db.numZ * db.numT * db.numC;
     int current = imp.getCurrentSlice();
     if (db.cache != null) {
-      synchronized (db.cache) {
-        int[] zct = db.cache.getCurrentPos();
-        current = FormatTools.positionToRaster(
-          db.cache.getStrategy().getLengths(), zct);
-        current++;
-      }
+      int[] zct = db.cache.getCurrentPos();
+      current = FormatTools.positionToRaster(
+        db.cache.getStrategy().getLengths(), zct);
+      current++;
     }
     if (db.merged) {
       current--;
@@ -508,10 +503,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     int stackSize = imp.getStackSize();
     if (db.cache != null) {
       try {
-        synchronized (db.cache) {
-          stackSize = db.cache.getStrategy().getLoadList(
-            db.cache.getCurrentPos()).length;
-        }
+        stackSize = db.cache.getStrategy().getLoadList(
+          db.cache.getCurrentPos()).length;
       }
       catch (CacheException exc) {
         LociDataBrowser.dumpException(exc);
@@ -557,7 +550,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- ActionListener methods --
 
-  public synchronized void actionPerformed(ActionEvent e) {
+  public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     String cmd = e.getActionCommand();
     if ("xml".equals(cmd)) {
@@ -610,12 +603,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     showSlice(z, t, c, src.getValueIsAdjusting() || db.cache != null);
   }
 
-  // -- CacheListener API methods --
-
-  public void cacheUpdated(CacheEvent e) {
-    //System.out.println("cacheUpdated: " + e);
-  }
-
   // -- ChangeListener methods --
 
   public void stateChanged(ChangeEvent e) {
@@ -634,7 +621,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- ItemListener methods --
 
-  public synchronized void itemStateChanged(ItemEvent e) {
+  public void itemStateChanged(ItemEvent e) {
     if (!update) return;
     JCheckBox channels = (JCheckBox) e.getSource();
 

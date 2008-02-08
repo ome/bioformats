@@ -31,12 +31,16 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-/*
-* A class to handle the appearance of "Goto" buttons
-* that are within a cell of a given ClickableTable.
-*
-* @author Christopher Peterson crpeterson2 at wisc.edu
-*/
+/**
+ * A class to handle the appearance of "Goto" buttons
+ * that are within a cell of a given ClickableTable.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/GotoRenderer.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/GotoRenderer.java">SVN</a></dd></dl>
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class GotoRenderer extends JButton implements TableCellRenderer {
 
   /**Construct a GotoRenderer.*/

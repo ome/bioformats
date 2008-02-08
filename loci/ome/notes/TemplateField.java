@@ -3,8 +3,8 @@
 //
 
 /*
-OME Metadata Notes application for exploration and editing of OME-XML and
-OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
+OME Notes library for flexible organization and presentation of OME-XML
+metadata. Copyright (C) 2006-@year@ Melissa Linkert and Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by

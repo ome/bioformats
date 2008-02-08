@@ -32,7 +32,15 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import java.util.Vector;
 
+/**
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/Merger.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/Merger.java">SVN</a></dd></dl>
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class Merger {
+
   // --Constants--
 
   /** Factory for generating document builders. */

@@ -36,7 +36,6 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEReader;
 import loci.formats.ome.OMEROReader;
-import loci.plugins.browser.LociDataBrowser;
 
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
@@ -566,7 +565,8 @@ public class Importer {
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           IFormatReader reader = first ? r : null;
-          new LociDataBrowser(reader, id, i, mergeChannels, colorize).run();
+          //FIXME:
+          //new LociDataBrowser(reader, id, i, mergeChannels, colorize).run();
           first = false;
         }
       }

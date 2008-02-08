@@ -33,13 +33,17 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.*;
 
-/*
-* A class to handle the behavior of the Goto buttons
-* that are within a cell of a given ClickableTable.
-* These buttons should go to the referenced TabPanel.
-*
-* @author Christopher Peterson crpeterson2 at wisc.edu
-*/
+/**
+ * A class to handle the behavior of the Goto buttons
+ * that are within a cell of a given ClickableTable.
+ * These buttons should go to the referenced TabPanel.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/editor/GotoEditor.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/editor/GotoEditor.java">SVN</a></dd></dl>
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class GotoEditor extends AbstractCellEditor
   implements TableCellEditor, ActionListener
 {

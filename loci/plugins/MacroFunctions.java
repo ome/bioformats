@@ -35,6 +35,17 @@ import java.lang.reflect.Method;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+/**
+ * Convenience class that simplifies implemention of ImageJ macro extensions.
+ * It uses reflection to create an extension method for each public method in
+ * the implementing subclass. See {@link LociFunctions} for an example.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/MacroFunctions.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/MacroFunctions.java">SVN</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
 public class MacroFunctions implements PlugIn, MacroExtension {
 
   // -- Fields --

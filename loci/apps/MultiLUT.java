@@ -2,6 +2,11 @@
 // MultiLUT.java
 //
 
+/*
+Coded in 2001-2002 by the SSEC Visualization Project.
+Permission is granted to use this code for anything.
+*/
+
 package loci.apps;
 
 import visad.*;

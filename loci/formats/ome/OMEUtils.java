@@ -3,6 +3,10 @@
 //
 
 /*
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
+Eric Kjellman and Brian Loranger.
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -39,8 +43,8 @@ import loci.plugins.Util;
  * Utility methods for retrieving data from an OME database.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/util/OMEUtils.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/util/OMEUtils.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/ome/OMEUtils.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/ome/OMEUtils.java">SVN</a></dd></dl>
  */
 public class OMEUtils {
 

@@ -3,8 +3,8 @@
 //
 
 /*
-OME Metadata Notes application for exploration and editing of OME-XML and
-OME-TIFF metadata. Copyright (C) 2006-@year@ Christopher Peterson.
+OME Notes library for flexible organization and presentation of OME-XML
+metadata. Copyright (C) 2006-@year@ Melissa Linkert and Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -28,6 +28,11 @@ import java.util.*;
 import javax.swing.*;
 import loci.formats.meta.AggregateMetadata;
 
+/**
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/ome/notes/TemplateTools.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/ome/notes/TemplateTools.java">SVN</a></dd></dl>
+ */
 public class TemplateTools {
 
   /** Get the value corresponding to the given map. */

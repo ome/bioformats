@@ -31,11 +31,17 @@ import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
-  * This class provides macro extensions for ImageJ for Bio-Formats and other
-  * LOCI tools. Currently, it is a fairly tight mirror to the
-  * {@link loci.formats.IFormatReader} interface, with some additional
-  * functions to control the type of format reader used.
-  */
+ * This class provides macro extensions for ImageJ for Bio-Formats and other
+ * LOCI tools. Currently, it is a fairly tight mirror to the
+ * {@link loci.formats.IFormatReader} interface, with some additional
+ * functions to control the type of format reader used.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/LociFunctions.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/LociFunctions.java">SVN</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
 public class LociFunctions extends MacroFunctions {
 
   // -- Fields --
