@@ -5,7 +5,7 @@
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
 4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
-Copyright (C) 2006-@year@ Melissa Linkert, Christopher Peterson,
+Copyright (C) 2005-@year@ Melissa Linkert, Christopher Peterson,
 Curtis Rueden, Philip Huettl and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
@@ -84,8 +84,8 @@ public final class Util {
     Rectangle crop) throws FormatException, IOException
   {
     // read byte array
-    boolean first = true;
     byte[] b = null;
+    boolean first = true;
     boolean doCrop = crop != null;
     while (true) {
       // read LuraWave license code, if available
@@ -125,8 +125,8 @@ public final class Util {
     int type = r.getPixelType();
     int bpp = FormatTools.getBytesPerPixel(type);
 
-    boolean signed = type == FormatTools.INT8 || type == FormatTools.INT16 ||
-      type == FormatTools.INT32;
+    boolean isSigned = type == FormatTools.INT8 ||
+      type == FormatTools.INT16 || type == FormatTools.INT32;
 
     if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
       // HACK - byte array dimensions are incorrect - image is probably
@@ -140,9 +140,9 @@ public final class Util {
     }
 
     // convert byte array to appropriate primitive array type
-    Object pixels = DataTools.makeDataArray(b, bpp,
-      type == FormatTools.FLOAT || type == FormatTools.DOUBLE,
-      r.isLittleEndian());
+    boolean isFloat = type == FormatTools.FLOAT || type == FormatTools.DOUBLE;
+    boolean isLittle = r.isLittleEndian();
+    Object pixels = DataTools.makeDataArray(b, bpp, isFloat, isLittle);
 
     IndexColorModel cm = null;
     IndexedColorModel model = null;
@@ -168,7 +168,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
 
-      if (signed) q = DataTools.makeSigned(q);
+      if (isSigned) q = DataTools.makeSigned(q);
 
       ip = new ByteProcessor(w, h, q, null);
       if (cm != null) ip.setColorModel(cm);
@@ -181,7 +181,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
 
-      if (signed) q = DataTools.makeSigned(q);
+      if (isSigned) q = DataTools.makeSigned(q);
 
       ip = new ShortProcessor(w, h, q, model);
     }
@@ -193,7 +193,7 @@ public final class Util {
         System.arraycopy(tmp, 0, q, 0, q.length);
       }
 
-      if (signed) q = DataTools.makeSigned(q);
+      if (isSigned) q = DataTools.makeSigned(q);
 
       ip = new FloatProcessor(w, h, q);
     }
