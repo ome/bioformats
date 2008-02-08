@@ -41,6 +41,9 @@ Leica TCS TIFF:
   - T series
   - multi-channel
 
+Metamorph 7.5 TIFF:
+  - any
+
 MicroManager:
   - any
 

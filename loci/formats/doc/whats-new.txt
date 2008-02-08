@@ -1,3 +1,6 @@
+2007 Feb 08:
+* Fixed bugs in everything
+
 2007 Feb 01:
 
 * Fixed bugs in Zeiss LSM, Metamorph STK, FV1000 OIB/OIF, Leica LEI, TIFF,
