@@ -308,7 +308,7 @@ public class QTReader extends FormatReader {
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCZT";
     core.littleEndian[0] = false;
-    core.interleaved[0] = false;
+    core.interleaved[0] = bitsPerPixel == 32;
     core.metadataComplete[0] = true;
     core.indexed[0] = false;
     core.falseColor[0] = false;

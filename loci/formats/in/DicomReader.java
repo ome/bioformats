@@ -115,7 +115,7 @@ public class DicomReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return block.length >= 132;
+    return block.length >= 132 && !new String(block).startsWith("OLRW");
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -150,6 +150,20 @@ public class DicomReader extends FormatReader {
       in.read(b);
       PackbitsCodec codec = new PackbitsCodec();
       byte[] t = codec.decompress(b, new Integer(bytes));
+
+      if (bpp > 1) {
+        int plane = bytes / bpp;
+        byte[][] tmp = new byte[bpp][plane];
+        for (int i=0; i<bpp; i++) {
+          System.arraycopy(t, i*plane, tmp[i], 0, plane);
+        }
+        for (int i=0; i<plane; i++) {
+          for (int j=0; j<bpp; j++) {
+            t[i*bpp + j] =
+              core.littleEndian[0] ? tmp[bpp - j - 1][i] : tmp[j][i];
+          }
+        }
+      }
 
       int rowLen = w * bpp;
       int srcRowLen = core.sizeX[0] * bpp;
@@ -688,7 +702,9 @@ public class DicomReader extends FormatReader {
       case UT:
       case QQ:
         // Explicit VR with 16-bit length
-        return DataTools.bytesToShort(b, 2, 2, core.littleEndian[0]);
+        int n1 = DataTools.bytesToShort(b, 2, 2, core.littleEndian[0]);
+        int n2 = DataTools.bytesToShort(b, 2, 2, !core.littleEndian[0]);
+        return (int) Math.min(n1, n2);
       default:
         vr = IMPLICIT_VR;
         return DataTools.bytesToInt(b, core.littleEndian[0]);

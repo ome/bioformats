@@ -310,6 +310,7 @@ public class FV1000Reader extends FormatReader {
         in = new RandomAccessStream(currentId);
         oifName = currentId;
       }
+      else oifName = currentId;
     }
 
     String path = new Location(oifName).getAbsoluteFile().getAbsolutePath();
