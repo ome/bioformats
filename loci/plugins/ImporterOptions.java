@@ -877,28 +877,38 @@ public class ImporterOptions implements ItemListener {
   /** Handles toggling of mutually exclusive options. */
   public void itemStateChanged(ItemEvent e) {
     Object src = e.getSource();
+    Vector changed = new Vector();
     if (src == stackChoice) {
       String s = stackChoice.getSelectedItem();
       if (s.equals(VIEW_NONE)) {
         metadataBox.setState(true);
+        changed.add(metadataBox);
         rangeBox.setState(false);
+        changed.add(rangeBox);
       }
       if (s.equals(VIEW_STANDARD)) {
       }
       else if (s.equals(VIEW_BROWSER)) {
         splitCBox.setState(false);
+        changed.add(splitCBox);
         splitZBox.setState(false);
+        changed.add(splitZBox);
         splitTBox.setState(false);
+        changed.add(splitTBox);
         rangeBox.setState(false);
+        changed.add(rangeBox);
         concatenateBox.setState(false); // TEMPORARY
+        changed.add(concatenateBox); // TEMPORARY
       }
       else if (s.equals(VIEW_IMAGE_5D)) {
         mergeBox.setState(false);
+        changed.add(mergeBox);
       }
       else if (s.equals(VIEW_VIEW_5D)) {
       }
       else if (s.equals(VIEW_HYPERSTACK)) {
         orderChoice.select(ORDER_XYCZT);
+        changed.add(orderChoice);
       }
     }
     else if (src == orderChoice) {
@@ -907,33 +917,48 @@ public class ImporterOptions implements ItemListener {
         stackChoice.getSelectedItem().equals(VIEW_HYPERSTACK))
       {
         stackChoice.select(VIEW_STANDARD);
+        changed.add(stackChoice);
       }
     }
     else if (src == mergeBox) {
       if (mergeBox.getState()) {
         colorizeBox.setState(false);
+        changed.add(colorizeBox);
         splitCBox.setState(false);
+        changed.add(splitCBox);
         String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_IMAGE_5D)) stackChoice.select(VIEW_STANDARD);
+        if (s.equals(VIEW_IMAGE_5D)) {
+          stackChoice.select(VIEW_STANDARD);
+          changed.add(stackChoice);
+        }
       }
     }
     else if (src == colorizeBox) {
       if (colorizeBox.getState()) {
         mergeBox.setState(false);
+        changed.add(mergeBox);
         splitCBox.setState(!stackChoice.getSelectedItem().equals(VIEW_BROWSER));
+        changed.add(mergeBox);
       }
     }
     else if (src == splitCBox) {
       if (splitCBox.getState()) {
         mergeBox.setState(false);
+        changed.add(mergeBox);
         String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+        if (s.equals(VIEW_BROWSER)) {
+          stackChoice.select(VIEW_STANDARD);
+          changed.add(stackChoice);
+        }
       }
     }
     else if (src == metadataBox) {
       if (!metadataBox.getState()) {
         String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_NONE)) stackChoice.select(VIEW_STANDARD);
+        if (s.equals(VIEW_NONE)) {
+          stackChoice.select(VIEW_STANDARD);
+          changed.add(stackChoice);
+        }
       }
     }
     else if (src == groupBox) {
@@ -941,13 +966,17 @@ public class ImporterOptions implements ItemListener {
         getLocation().equals(LOCATION_OMERO)))
       {
         groupBox.setState(false);
+        changed.add(groupBox);
       }
     }
     else if (src == concatenateBox) {
       if (concatenateBox.getState()) {
         // TEMPORARY
         String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+        if (s.equals(VIEW_BROWSER)) {
+          stackChoice.select(VIEW_STANDARD);
+          changed.add(stackChoice);
+        }
       }
     }
     else if (src == rangeBox) {
@@ -955,24 +984,54 @@ public class ImporterOptions implements ItemListener {
         String s = stackChoice.getSelectedItem();
         if (s.equals(VIEW_NONE) || s.equals(VIEW_BROWSER)) {
           stackChoice.select(VIEW_STANDARD);
+          changed.add(stackChoice);
         }
       }
     }
     else if (src == autoscaleBox) {
-      if (autoscaleBox.getState()) virtualBox.setState(false);
+      if (autoscaleBox.getState()) {
+        virtualBox.setState(false);
+        changed.add(virtualBox);
+      }
     }
     else if (src == virtualBox) {
-      if (virtualBox.getState()) autoscaleBox.setState(false);
+      if (virtualBox.getState()) {
+        autoscaleBox.setState(false);
+        changed.add(autoscaleBox);
+      }
     }
+    if (changed.size() > 0) flash(changed);
   }
 
   // -- Helper methods --
 
-  private boolean getMacroValue(String options,
+  private static boolean getMacroValue(String options,
     String key, boolean defaultValue)
   {
     String s = Macro.getValue(options, key, null);
     return s == null ? defaultValue : s.equalsIgnoreCase("true");
+  }
+
+  /**
+   * Besides flashing the components's background red for a split second,
+   * this method also acts as a workaround for a Mac OS X bug that causes
+   * components not to be redrawn after programmatic state changes.
+   */
+  private static void flash(Vector v) {
+    Color[] bg = new Color[v.size()];
+    for (int i=0; i<bg.length; i++) {
+      Component c = (Component) v.get(i);
+      bg[i] = c.isBackgroundSet() ? c.getBackground() : null;
+      c.setBackground(Color.red);
+    }
+    try {
+      Thread.sleep(100);
+    }
+    catch (InterruptedException exc) { }
+    for (int i=0; i<bg.length; i++) {
+      Component c = (Component) v.get(i);
+      c.setBackground(bg[i]);
+    }
   }
 
 }
