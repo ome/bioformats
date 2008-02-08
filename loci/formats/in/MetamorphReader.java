@@ -195,11 +195,14 @@ public class MetamorphReader extends BaseTiffReader {
 
       // find an associated STK file
       String stkFile = id.substring(0, id.lastIndexOf("."));
+      if (stkFile.indexOf(File.separator) != -1) {
+        stkFile = stkFile.substring(stkFile.lastIndexOf(File.separator) + 1);
+      }
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       String[] dirList = parent.list();
       for (int i=0; i<dirList.length; i++) {
         String s = dirList[i].toLowerCase();
-        if (dirList[i].startsWith(stkFile) && s.endsWith(".stk")) {
+        if (dirList[i].indexOf(stkFile) != -1 && s.endsWith(".stk")) {
           stkFile =
             new Location(parent.getPath(), dirList[i]).getAbsolutePath();
           break;
