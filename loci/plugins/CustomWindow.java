@@ -27,9 +27,10 @@ package loci.plugins;
 
 import com.jgoodies.forms.layout.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
@@ -43,11 +44,15 @@ import ij.gui.StackWindow;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/CustomWindow.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/CustomWindow.java">SVN</a></dd></dl>
  */
-public class CustomWindow extends StackWindow implements ActionListener {
+public class CustomWindow extends StackWindow
+  implements ActionListener, ChangeListener, ItemListener
+{
 
   // -- Fields --
 
   protected JSpinner fpsSpin;
+  protected Checkbox cBox;
+  protected JSpinner cSpin;
   protected Button animate, options, metadata;
   protected boolean anim = false, die = false;
   protected boolean allowShow = false;
@@ -84,8 +89,11 @@ public class CustomWindow extends StackWindow implements ActionListener {
     controls.setBackground(Color.white);
 
     Label zLabel = new Label("z-depth");
+    if (sliceSelector == null) zLabel.setEnabled(false);
     Label tLabel = new Label("time");
+    if (frameSelector == null) tLabel.setEnabled(false);
     Label cLabel = new Label("channel");
+    if (channelSelector == null) cLabel.setEnabled(false);
 
     Scrollbar zSlider = sliceSelector == null ?
       makeDummySlider() : sliceSelector;
@@ -110,20 +118,23 @@ public class CustomWindow extends StackWindow implements ActionListener {
 
     animate = new Button("Animate");
     animate.addActionListener(this);
-    if (frameSelector == null) animate.setEnabled(false);
+    if (frameSelector == null) {
+      fpsSpin.setEnabled(false);
+      fpsLabel.setEnabled(false);
+      animate.setEnabled(false);
+    }
 
     int sizeC = channelSelector == null ? 1 : channelSelector.getMaximum() - 1;
     Component cComp;
     if (sizeC < 3) {
-      Checkbox cBox = new Checkbox("Transmitted");
-      if (sizeC != 2) {
-        cLabel.setEnabled(false);
-        cBox.setEnabled(false);
-      }
+      cBox = new Checkbox("Transmitted", sizeC == 2);
+      cBox.addItemListener(this);
+      if (sizeC != 2) cBox.setEnabled(false);
       cComp = cBox;
     }
     else {
-      JSpinner cSpin = new JSpinner(new SpinnerNumberModel(1, 1, sizeC, 1));
+      cSpin = new JSpinner(new SpinnerNumberModel(1, 1, sizeC, 1));
+      cSpin.addChangeListener(this);
       cComp = makeHeavyPanel(cSpin);
     }
 
@@ -212,7 +223,32 @@ public class CustomWindow extends StackWindow implements ActionListener {
     }
     else if (src == metadata) {
     }
-    else super.actionPerformed(e); // NB: do not eat superclass events :-)
+    // NB: Do not eat superclass events. Om nom nom nom. :-)
+    else super.actionPerformed(e);
+  }
+
+  // -- ChangeListener API methods --
+
+  public void stateChanged(ChangeEvent e) {
+    Object src = e.getSource();
+    if (src == cSpin) {
+      int c = ((Number) cSpin.getValue()).intValue();
+      int z = getHSSlice();
+      int t = getHSFrame();
+      setPosition(c, z, t);
+    }
+  }
+
+  // -- ItemListener API methods --
+
+  public void itemStateChanged(ItemEvent e) {
+    Object src = e.getSource();
+    if (src == cBox) {
+      int c = cBox.getState() ? 1 : 2;
+      int z = getHSSlice();
+      int t = getHSFrame();
+      setPosition(c, z, t);
+    }
   }
 
   // -- Helper methods --
