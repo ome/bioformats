@@ -4,9 +4,9 @@
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
-Copyright (C) 2005-@year@ Melissa Linkert, Christopher Peterson,
-Curtis Rueden, Philip Huettl and Francis Wong.
+Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
+Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
+Curtis Rueden, Christopher Peterson, Philip Huettl and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -61,10 +61,10 @@ public class ImporterOptions implements ItemListener {
   // enumeration for stackFormat
   public static final String VIEW_NONE = "Metadata only";
   public static final String VIEW_STANDARD = "Standard ImageJ";
-  public static final String VIEW_BROWSER = "4D Data Browser";
+  public static final String VIEW_HYPERSTACK = "Hyperstack";
+  public static final String VIEW_BROWSER = "Data Browser";
   public static final String VIEW_IMAGE_5D = "Image5D";
   public static final String VIEW_VIEW_5D = "View5D";
-  public static final String VIEW_HYPERSTACK = "Hyperstack";
 
   // enumeration for stackOrder
   public static final String ORDER_DEFAULT = "Default";
@@ -80,8 +80,6 @@ public class ImporterOptions implements ItemListener {
   public static final String MERGE_PROJECTION = "Spectral projection";
 
   // class to check for each viewing option
-  private static final String CLASS_BROWSER =
-    "loci.plugins.browser.LociDataBrowser";
   private static final String CLASS_IMAGE_5D = "i5d.Image5D";
   private static final String CLASS_VIEW_5D = "View5D_";
 
@@ -508,12 +506,12 @@ public class ImporterOptions implements ItemListener {
     Vector stackTypes = new Vector();
     stackTypes.add(VIEW_NONE);
     stackTypes.add(VIEW_STANDARD);
-    if (Checker.checkClass(CLASS_BROWSER)) stackTypes.add(VIEW_BROWSER);
-    if (Checker.checkClass(CLASS_IMAGE_5D)) stackTypes.add(VIEW_IMAGE_5D);
-    if (Checker.checkClass(CLASS_VIEW_5D)) stackTypes.add(VIEW_VIEW_5D);
     if (IJ.getVersion().compareTo("1.39l") >= 0) {
       stackTypes.add(VIEW_HYPERSTACK);
+      stackTypes.add(VIEW_BROWSER);
     }
+    if (Checker.checkClass(CLASS_IMAGE_5D)) stackTypes.add(VIEW_IMAGE_5D);
+    if (Checker.checkClass(CLASS_VIEW_5D)) stackTypes.add(VIEW_VIEW_5D);
     final String[] stackFormats = new String[stackTypes.size()];
     stackTypes.copyInto(stackFormats);
 
@@ -889,16 +887,8 @@ public class ImporterOptions implements ItemListener {
       if (s.equals(VIEW_STANDARD)) {
       }
       else if (s.equals(VIEW_BROWSER)) {
-        splitCBox.setState(false);
-        changed.add(splitCBox);
-        splitZBox.setState(false);
-        changed.add(splitZBox);
-        splitTBox.setState(false);
-        changed.add(splitTBox);
-        rangeBox.setState(false);
-        changed.add(rangeBox);
-        concatenateBox.setState(false); // TEMPORARY
-        changed.add(concatenateBox); // TEMPORARY
+        orderChoice.select(ORDER_XYCZT);
+        changed.add(orderChoice);
       }
       else if (s.equals(VIEW_IMAGE_5D)) {
         mergeBox.setState(false);
@@ -913,8 +903,9 @@ public class ImporterOptions implements ItemListener {
     }
     else if (src == orderChoice) {
       String s = orderChoice.getSelectedItem();
+      String item = stackChoice.getSelectedItem();
       if (!s.equals(ORDER_XYCZT) &&
-        stackChoice.getSelectedItem().equals(VIEW_HYPERSTACK))
+        (item.equals(VIEW_HYPERSTACK) || item.equals(VIEW_BROWSER)))
       {
         stackChoice.select(VIEW_STANDARD);
         changed.add(stackChoice);
@@ -937,19 +928,12 @@ public class ImporterOptions implements ItemListener {
       if (colorizeBox.getState()) {
         mergeBox.setState(false);
         changed.add(mergeBox);
-        splitCBox.setState(!stackChoice.getSelectedItem().equals(VIEW_BROWSER));
-        changed.add(mergeBox);
       }
     }
     else if (src == splitCBox) {
       if (splitCBox.getState()) {
         mergeBox.setState(false);
         changed.add(mergeBox);
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) {
-          stackChoice.select(VIEW_STANDARD);
-          changed.add(stackChoice);
-        }
       }
     }
     else if (src == metadataBox) {
@@ -969,20 +953,10 @@ public class ImporterOptions implements ItemListener {
         changed.add(groupBox);
       }
     }
-    else if (src == concatenateBox) {
-      if (concatenateBox.getState()) {
-        // TEMPORARY
-        String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) {
-          stackChoice.select(VIEW_STANDARD);
-          changed.add(stackChoice);
-        }
-      }
-    }
     else if (src == rangeBox) {
       if (rangeBox.getState()) {
         String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_NONE) || s.equals(VIEW_BROWSER)) {
+        if (s.equals(VIEW_NONE)) {
           stackChoice.select(VIEW_STANDARD);
           changed.add(stackChoice);
         }

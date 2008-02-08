@@ -4,9 +4,9 @@
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
-Copyright (C) 2005-@year@ Melissa Linkert, Christopher Peterson,
-Curtis Rueden, Philip Huettl and Francis Wong.
+Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
+Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
+Curtis Rueden, Christopher Peterson, Philip Huettl and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by

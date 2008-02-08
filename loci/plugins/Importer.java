@@ -4,9 +4,9 @@
 
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-4D Data Browser, Bio-Formats Importer, Bio-Formats Exporter and OME plugins.
-Copyright (C) 2005-@year@ Melissa Linkert, Christopher Peterson,
-Curtis Rueden, Philip Huettl and Francis Wong.
+Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
+Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
+Curtis Rueden, Christopher Peterson, Philip Huettl and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -130,14 +130,7 @@ public class Importer {
     boolean groupFiles = options.isGroupFiles();
     boolean concatenate = options.isConcatenate();
     boolean specifyRanges = options.isSpecifyRanges();
-    boolean autoscale = options.isAutoscale();
     boolean cropOnImport = options.doCrop();
-
-    boolean viewNone = options.isViewNone();
-    boolean viewStandard = options.isViewStandard();
-    boolean viewImage5D = options.isViewImage5D();
-    boolean viewBrowser = options.isViewBrowser();
-    boolean viewView5D = options.isViewView5D();
 
     // -- Step 4: analyze and read from data source --
 
@@ -338,166 +331,165 @@ public class Importer {
 
       // -- Step 4e: read pixel data --
 
-      // only read data explicitly if not using 4D Data Browser
-      if (!viewBrowser) {
-        IJ.showStatus("Reading " + currentFile);
+      IJ.showStatus("Reading " + currentFile);
 
-        for (int i=0; i<seriesCount; i++) {
-          if (!series[i]) continue;
-          r.setSeries(i);
+      for (int i=0; i<seriesCount; i++) {
+        if (!series[i]) continue;
+        r.setSeries(i);
 
-          boolean[] load = new boolean[num[i]];
-          if (!viewNone) {
-            for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
-              for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
-                for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
-                  int index = r.getIndex(z, c, t);
-                  load[index] = true;
-                }
+        boolean[] load = new boolean[num[i]];
+        if (!options.isViewNone()) {
+          for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
+            for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
+              for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
+                int index = r.getIndex(z, c, t);
+                load[index] = true;
               }
             }
           }
-          int total = 0;
-          for (int j=0; j<num[i]; j++) if (load[j]) total++;
+        }
+        int total = 0;
+        for (int j=0; j<num[i]; j++) if (load[j]) total++;
 
-          // dump OME-XML to ImageJ's description field, if available
-          FileInfo fi = new FileInfo();
-          fi.description = MetadataTools.getOMEXML(retrieve);
+        // dump OME-XML to ImageJ's description field, if available
+        FileInfo fi = new FileInfo();
+        fi.description = MetadataTools.getOMEXML(retrieve);
 
-          // populate other common FileInfo fields
-          String idDir = idLoc.getParent();
-          if (idDir != null && !idDir.endsWith(File.separator)) {
-            idDir += File.separator;
+        // populate other common FileInfo fields
+        String idDir = idLoc.getParent();
+        if (idDir != null && !idDir.endsWith(File.separator)) {
+          idDir += File.separator;
+        }
+        fi.fileName = idName;
+        fi.directory = idDir;
+
+        // place metadata key/value pairs in ImageJ's info field
+        String metadata = getMetadataString(r.getMetadata(), " = ");
+
+        long startTime = System.currentTimeMillis();
+        long time = startTime;
+
+        ImageStack stackB = null; // for byte images (8-bit)
+        ImageStack stackS = null; // for short images (16-bit)
+        ImageStack stackF = null; // for floating point images (32-bit)
+        ImageStack stackO = null; // for all other images (24-bit RGB)
+
+        int w = cropOnImport ? cropOptions[i].width : r.getSizeX();
+        int h = cropOnImport ? cropOptions[i].height : r.getSizeY();
+        int c = r.getRGBChannelCount();
+        int type = r.getPixelType();
+
+        int q = 0;
+        stackOrder = options.getStackOrder();
+        if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
+          stackOrder = r.getDimensionOrder();
+        }
+        if (options.isViewView5D()) {
+          stackOrder = ImporterOptions.ORDER_XYZCT;
+        }
+        if (options.isViewImage5D() ||
+          options.isViewHyperstack() || options.isViewBrowser())
+        {
+          stackOrder = ImporterOptions.ORDER_XYCZT;
+        }
+
+        if (options.isVirtual()) {
+          int cSize = r.getSizeC();
+          int pt = r.getPixelType();
+          boolean doMerge = options.isMergeChannels();
+          boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
+          boolean needComposite = doMerge && (cSize > 3 || eight);
+          int merge = (needComposite || !doMerge) ? 1 : cSize;
+          stackB = new CustomStack(w, h, null, id, r, stackOrder, merge);
+          for (int j=0; j<num[i]; j++) {
+            ((CustomStack) stackB).addSlice(constructSliceLabel(j, r,
+            retrieve, i, new int[][] {zCount, cCount, tCount}));
           }
-          fi.fileName = idName;
-          fi.directory = idDir;
+        }
+        else {
+          for (int j=0; j<num[i]; j++) {
+            if (!load[j]) continue;
 
-          // place metadata key/value pairs in ImageJ's info field
-          String metadata = getMetadataString(r.getMetadata(), " = ");
-
-          long startTime = System.currentTimeMillis();
-          long time = startTime;
-
-          ImageStack stackB = null; // for byte images (8-bit)
-          ImageStack stackS = null; // for short images (16-bit)
-          ImageStack stackF = null; // for floating point images (32-bit)
-          ImageStack stackO = null; // for all other images (24-bit RGB)
-
-          int w = cropOnImport ? cropOptions[i].width : r.getSizeX();
-          int h = cropOnImport ? cropOptions[i].height : r.getSizeY();
-          int c = r.getRGBChannelCount();
-          int type = r.getPixelType();
-
-          int q = 0;
-          stackOrder = options.getStackOrder();
-          if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
-            stackOrder = r.getDimensionOrder();
-          }
-          if (options.isViewView5D()) {
-            stackOrder = ImporterOptions.ORDER_XYZCT;
-          }
-          if (options.isViewImage5D() || options.isViewHyperstack()) {
-            stackOrder = ImporterOptions.ORDER_XYCZT;
-          }
-
-          if (options.isVirtual()) {
-            int cSize = r.getSizeC();
-            int pt = r.getPixelType();
-            boolean doMerge = options.isMergeChannels();
-            boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
-            boolean needComposite = doMerge && (cSize > 3 || eight);
-            int merge = (needComposite || !doMerge) ? 1 : cSize;
-            stackB = new CustomStack(w, h, null, id, r, stackOrder, merge);
-            for (int j=0; j<num[i]; j++) {
-              ((CustomStack) stackB).addSlice(constructSliceLabel(j, r,
-              retrieve, i, new int[][] {zCount, cCount, tCount}));
+            // limit message update rate
+            long clock = System.currentTimeMillis();
+            if (clock - time >= 100) {
+              IJ.showStatus("Reading " +
+                (seriesCount > 1 ? ("series " + (i + 1) + ", ") : "") +
+                "plane " + (j + 1) + "/" + num[i]);
+              time = clock;
             }
-          }
-          else {
-            for (int j=0; j<num[i]; j++) {
-              if (!load[j]) continue;
+            IJ.showProgress((double) q++ / total);
 
-              // limit message update rate
-              long clock = System.currentTimeMillis();
-              if (clock - time >= 100) {
-                IJ.showStatus("Reading " +
-                  (seriesCount > 1 ? ("series " + (i + 1) + ", ") : "") +
-                  "plane " + (j + 1) + "/" + num[i]);
-                time = clock;
-              }
-              IJ.showProgress((double) q++ / total);
+            int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
 
-              int ndx = FormatTools.getReorderedIndex(r, stackOrder, j);
+            String label = constructSliceLabel(ndx, r, retrieve, i,
+              new int[][] {zCount, cCount, tCount});
 
-              String label = constructSliceLabel(ndx, r, retrieve, i,
-                new int[][] {zCount, cCount, tCount});
+            // get image processor for jth plane
+            ImageProcessor ip = Util.openProcessor(r, ndx, cropOptions[i]);
+            if (ip == null) {
+              plugin.canceled = true;
+              return;
+            }
 
-              // get image processor for jth plane
-              ImageProcessor ip = Util.openProcessor(r, ndx, cropOptions[i]);
-              if (ip == null) {
-                plugin.canceled = true;
-                return;
-              }
-
-              // add plane to image stack
-              if (ip instanceof ByteProcessor) {
-                if (stackB == null) stackB = new ImageStack(w, h);
+            // add plane to image stack
+            if (ip instanceof ByteProcessor) {
+              if (stackB == null) stackB = new ImageStack(w, h);
+              stackB.addSlice(label, ip);
+            }
+            else if (ip instanceof ShortProcessor) {
+              if (stackS == null) stackS = new ImageStack(w, h);
+              stackS.addSlice(label, ip);
+            }
+            else if (ip instanceof FloatProcessor) {
+              // merge image plane into existing stack if possible
+              if (stackB != null) {
+                ip = ip.convertToByte(true);
                 stackB.addSlice(label, ip);
               }
-              else if (ip instanceof ShortProcessor) {
-                if (stackS == null) stackS = new ImageStack(w, h);
+              else if (stackS != null) {
+                ip = ip.convertToShort(true);
                 stackS.addSlice(label, ip);
               }
-              else if (ip instanceof FloatProcessor) {
-                // merge image plane into existing stack if possible
-                if (stackB != null) {
-                  ip = ip.convertToByte(true);
-                  stackB.addSlice(label, ip);
-                }
-                else if (stackS != null) {
-                  ip = ip.convertToShort(true);
-                  stackS.addSlice(label, ip);
-                }
-                else {
-                  if (stackF == null) stackF = new ImageStack(w, h);
-                  stackF.addSlice(label, ip);
-                }
-              }
-              else if (ip instanceof ColorProcessor) {
-                if (stackO == null) stackO = new ImageStack(w, h);
-                stackO.addSlice(label, ip);
+              else {
+                if (stackF == null) stackF = new ImageStack(w, h);
+                stackF.addSlice(label, ip);
               }
             }
+            else if (ip instanceof ColorProcessor) {
+              if (stackO == null) stackO = new ImageStack(w, h);
+              stackO.addSlice(label, ip);
+            }
           }
+        }
 
-          IJ.showStatus("Creating image");
-          IJ.showProgress(1);
+        IJ.showStatus("Creating image");
+        IJ.showProgress(1);
 
-          String seriesName = retrieve.getImageName(i);
+        String seriesName = retrieve.getImageName(i);
 
-          showStack(stackB, currentFile, seriesName, retrieve,
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options, metadata);
-          showStack(stackS, currentFile, seriesName, retrieve,
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options, metadata);
-          showStack(stackF, currentFile, seriesName, retrieve,
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options, metadata);
-          showStack(stackO, currentFile, seriesName, retrieve,
-            cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
-            fi, r, options, metadata);
+        showStack(stackB, currentFile, seriesName, retrieve,
+          cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
+          fi, r, options, metadata);
+        showStack(stackS, currentFile, seriesName, retrieve,
+          cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
+          fi, r, options, metadata);
+        showStack(stackF, currentFile, seriesName, retrieve,
+          cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
+          fi, r, options, metadata);
+        showStack(stackO, currentFile, seriesName, retrieve,
+          cCount[i], zCount[i], tCount[i], sizeZ[i], sizeC[i], sizeT[i],
+          fi, r, options, metadata);
 
-          long endTime = System.currentTimeMillis();
-          double elapsed = (endTime - startTime) / 1000.0;
-          if (num[i] == 1) {
-            IJ.showStatus("Bio-Formats: " + elapsed + " seconds");
-          }
-          else {
-            long average = (endTime - startTime) / num[i];
-            IJ.showStatus("Bio-Formats: " + elapsed + " seconds (" +
-              average + " ms per plane)");
-          }
+        long endTime = System.currentTimeMillis();
+        double elapsed = (endTime - startTime) / 1000.0;
+        if (num[i] == 1) {
+          IJ.showStatus("Bio-Formats: " + elapsed + " seconds");
+        }
+        else {
+          long average = (endTime - startTime) / num[i];
+          IJ.showStatus("Bio-Formats: " + elapsed + " seconds (" +
+            average + " ms per plane)");
         }
 
         if (concatenate) {
@@ -506,35 +498,35 @@ public class Importer {
           Vector types = new Vector();
           Vector newImps = new Vector();
 
-          for (int i=0; i<imps.size(); i++) {
-            ImagePlus imp = (ImagePlus) imps.get(i);
-            int w = imp.getWidth();
-            int h = imp.getHeight();
-            int type = imp.getBitDepth();
+          for (int j=0; j<imps.size(); j++) {
+            ImagePlus imp = (ImagePlus) imps.get(j);
+            int wj = imp.getWidth();
+            int hj = imp.getHeight();
+            int tj = imp.getBitDepth();
             boolean append = false;
-            for (int j=0; j<widths.size(); j++) {
-              int width = ((Integer) widths.get(j)).intValue();
-              int height = ((Integer) heights.get(j)).intValue();
-              int t = ((Integer) types.get(j)).intValue();
+            for (int k=0; k<widths.size(); k++) {
+              int wk = ((Integer) widths.get(k)).intValue();
+              int hk = ((Integer) heights.get(k)).intValue();
+              int tk = ((Integer) types.get(k)).intValue();
 
-              if (width == w && height == h && type == t) {
-                ImagePlus oldImp = (ImagePlus) newImps.get(j);
+              if (wj == wk && hj == hk && tj == tk) {
+                ImagePlus oldImp = (ImagePlus) newImps.get(k);
                 ImageStack is = oldImp.getStack();
                 ImageStack newStack = imp.getStack();
-                for (int k=0; k<newStack.getSize(); k++) {
-                  is.addSlice(newStack.getSliceLabel(k+1),
-                    newStack.getProcessor(k+1));
+                for (int s=0; s<newStack.getSize(); s++) {
+                  is.addSlice(newStack.getSliceLabel(s + 1),
+                    newStack.getProcessor(s + 1));
                 }
                 oldImp.setStack(oldImp.getTitle(), is);
-                newImps.setElementAt(oldImp, j);
+                newImps.setElementAt(oldImp, k);
                 append = true;
-                j = widths.size();
+                k = widths.size();
               }
             }
             if (!append) {
-              widths.add(new Integer(w));
-              heights.add(new Integer(h));
-              types.add(new Integer(type));
+              widths.add(new Integer(wj));
+              heights.add(new Integer(hj));
+              types.add(new Integer(tj));
               newImps.add(imp);
             }
           }
@@ -543,8 +535,8 @@ public class Importer {
           boolean splitZ = options.isSplitFocalPlanes();
           boolean splitT = options.isSplitTimepoints();
 
-          for (int i=0; i<newImps.size(); i++) {
-            ImagePlus imp = (ImagePlus) newImps.get(i);
+          for (int j=0; j<newImps.size(); j++) {
+            ImagePlus imp = (ImagePlus) newImps.get(j);
             imp.show();
             if (splitC || splitZ || splitT) {
               IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
@@ -559,19 +551,7 @@ public class Importer {
       // -- Step 5: finish up --
 
       plugin.success = true;
-
       options.savePreferences();
-
-      if (viewBrowser) {
-        boolean first = true;
-        for (int i=0; i<seriesCount; i++) {
-          if (!series[i]) continue;
-          IFormatReader reader = first ? r : null;
-          //FIXME:
-          //new LociDataBrowser(reader, id, i, mergeChannels, colorize).run();
-          first = false;
-        }
-      }
     }
     catch (FormatException exc) {
       reportException(exc, quiet,
@@ -639,8 +619,7 @@ public class Importer {
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
       nSlices, nFrames);
 
-    if (options.isViewBrowser()) { }
-    else if (options.isViewImage5D()) {
+    if (options.isViewImage5D()) {
       ReflectedUniverse ru = new ReflectedUniverse();
       try {
         ru.exec("import i5d.Image5D");
@@ -669,11 +648,13 @@ public class Importer {
     }
     else if (!options.isViewNone()) {
       if (IJ.getVersion().compareTo("1.39l") >= 0) {
-        imp.setOpenAsHyperStack(options.isViewHyperstack());
+        boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
+        imp.setOpenAsHyperStack(hyper);
       }
 
       if (!concatenate) {
-        imp.show();
+        if (options.isViewBrowser()) new CustomWindow(imp);
+        else imp.show();
         if (splitC || splitZ || splitT) {
           IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
             " slice_c=" + splitC + " slice_t=" + splitT +
