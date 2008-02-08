@@ -27,11 +27,13 @@ package loci.plugins;
 
 import com.jgoodies.forms.layout.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
-import loci.formats.gui.CacheIndicator;
+//import loci.formats.gui.CacheIndicator;
 
 /**
  * Extension of StackWindow with additional UI trimmings for animation,
@@ -41,10 +43,13 @@ import loci.formats.gui.CacheIndicator;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/CustomWindow.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/plugins/CustomWindow.java">SVN</a></dd></dl>
  */
-public class CustomWindow extends StackWindow {
+public class CustomWindow extends StackWindow implements ActionListener {
 
   // -- Fields --
 
+  protected JSpinner fpsSpin;
+  protected Button animate, options, metadata;
+  protected boolean anim = false, die = false;
   protected boolean allowShow = false;
 
   // -- Constructors --
@@ -60,12 +65,21 @@ public class CustomWindow extends StackWindow {
     while (getComponentCount() > 1) remove(1);
     Panel controls = new Panel() {
       public Dimension getPreferredSize() {
-        Dimension prefSize = super.getPreferredSize();
-        return new Dimension(imp.getCanvas().getWidth(), prefSize.height);
+        int minWidth = 200;
+        int w = imp.getCanvas().getWidth();
+        if (w < minWidth) w = minWidth;
+        int h = super.getPreferredSize().height;
+        return new Dimension(w, h);
       }
     };
-    String cols = "5dlu, right:pref, 3dlu, pref:grow, pref, 5dlu, pref, 5dlu";
-    String rows = "5dlu, pref, 5dlu, pref, 5dlu, pref, 8dlu";
+
+    String cols =
+      "5dlu, right:pref, 3dlu, pref, pref:grow, pref, 5dlu, pref, 5dlu";
+    //       <-labels->        <------sliders------>       <misc>
+
+    String rows = "4dlu, pref, 3dlu, pref, 3dlu, pref, 6dlu";
+    //                   <Z->        <T->        <C->
+
     controls.setLayout(new FormLayout(cols, rows));
     controls.setBackground(Color.white);
 
@@ -78,16 +92,15 @@ public class CustomWindow extends StackWindow {
     Scrollbar tSlider = frameSelector == null ?
       makeDummySlider() : frameSelector;
 
-
-    CacheIndicator zCache = new CacheIndicator(zSlider);
+    //CacheIndicator zCache = new CacheIndicator(zSlider);
     Panel zPanel = makeHeavyPanel(zSlider);
-    zPanel.add(zCache, BorderLayout.SOUTH);
+    //zPanel.add(zCache, BorderLayout.SOUTH);
 
-    CacheIndicator tCache = new CacheIndicator(tSlider);
+    //CacheIndicator tCache = new CacheIndicator(tSlider);
     Panel tPanel = makeHeavyPanel(tSlider);
-    tPanel.add(tCache, BorderLayout.SOUTH);
+    //tPanel.add(tCache, BorderLayout.SOUTH);
 
-    JSpinner fpsSpin = new JSpinner(new SpinnerNumberModel(10, 1, 99, 1));
+    fpsSpin = new JSpinner(new SpinnerNumberModel(10, 1, 99, 1));
     fpsSpin.setToolTipText("Animation rate in frames per second");
     Label fpsLabel = new Label(" FPS");
     Panel fpsPanel = new Panel();
@@ -95,13 +108,18 @@ public class CustomWindow extends StackWindow {
     fpsPanel.add(fpsSpin, BorderLayout.CENTER);
     fpsPanel.add(fpsLabel, BorderLayout.EAST);
 
-    Button animate = new Button("Animate");
+    animate = new Button("Animate");
+    animate.addActionListener(this);
+    if (frameSelector == null) animate.setEnabled(false);
 
     int sizeC = channelSelector == null ? 1 : channelSelector.getMaximum() - 1;
     Component cComp;
     if (sizeC < 3) {
       Checkbox cBox = new Checkbox("Transmitted");
-      if (sizeC != 2) cBox.setEnabled(false);
+      if (sizeC != 2) {
+        cLabel.setEnabled(false);
+        cBox.setEnabled(false);
+      }
       cComp = cBox;
     }
     else {
@@ -109,27 +127,54 @@ public class CustomWindow extends StackWindow {
       cComp = makeHeavyPanel(cSpin);
     }
 
-    Button options = new Button("Options");
+    options = new Button("Options");
+    options.addActionListener(this);
     options.setEnabled(false);
-    Button metadata = new Button("Metadata");
+    metadata = new Button("Metadata");
+    metadata.addActionListener(this);
     metadata.setEnabled(false);
 
     CellConstraints cc = new CellConstraints();
 
     controls.add(zLabel, cc.xy(2, 2));
-    controls.add(zPanel, cc.xyw(4, 2, 2));
-    controls.add(fpsPanel, cc.xy(7, 2));
+    controls.add(zPanel, cc.xyw(4, 2, 3));
+    controls.add(fpsPanel, cc.xy(8, 2));
 
     controls.add(tLabel, cc.xy(2, 4));
-    controls.add(tPanel, cc.xyw(4, 4, 2));
-    controls.add(animate, cc.xy(7, 4));
+    controls.add(tPanel, cc.xyw(4, 4, 3));
+    controls.add(animate, cc.xy(8, 4));
 
     controls.add(cLabel, cc.xy(2, 6));
     controls.add(cComp, cc.xy(4, 6));
-    controls.add(options, cc.xy(5, 6));
-    controls.add(metadata, cc.xy(7, 6));
+    controls.add(options, cc.xy(6, 6));
+    controls.add(metadata, cc.xy(8, 6));
 
     add(controls, BorderLayout.SOUTH);
+
+    // start up animation thread
+    if (frameSelector != null) {
+      new Thread() {
+        public void run() {
+          while (!die) {
+            int ms = 200;
+            if (anim) {
+              int c = getHSChannel();
+              int z = getHSSlice();
+              int t = getHSFrame() + 1;
+              int sizeT = frameSelector.getMaximum() - 1;
+              if (t > sizeT) t = 1;
+              setPosition(c, z, t);
+              int fps = ((Number) fpsSpin.getValue()).intValue();
+              ms = 1000 / fps;
+            }
+            try {
+              Thread.sleep(ms);
+            }
+            catch (InterruptedException exc) { }
+          }
+        }
+      }.start();
+    }
 
     allowShow = true;
     pack();
@@ -137,6 +182,11 @@ public class CustomWindow extends StackWindow {
   }
 
   // -- Window API methods --
+
+  public void dispose() {
+    die = true; // terminate animation thread
+    super.dispose();
+  }
 
   /** Overridden pack method to allow us to delay initial window sizing. */
   public void pack() {
@@ -148,6 +198,21 @@ public class CustomWindow extends StackWindow {
   /** Overridden show method to allow us to delay initial window display. */
   public void setVisible(boolean b) {
     if (allowShow) super.setVisible(b);
+  }
+
+  // -- ActionListener API methods --
+
+  public void actionPerformed(ActionEvent e) {
+    Object src = e.getSource();
+    if (src == animate) {
+      animate.setLabel(anim ? "Animate" : "Stop");
+      anim = !anim;
+    }
+    else if (src == options) {
+    }
+    else if (src == metadata) {
+    }
+    else super.actionPerformed(e); // NB: do not eat superclass events :-)
   }
 
   // -- Helper methods --
