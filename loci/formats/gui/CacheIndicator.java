@@ -44,14 +44,19 @@ public class CacheIndicator extends JComponent implements CacheListener {
 
   // -- Fields --
 
-  private JScrollBar scroll;
+  private Component comp;
   private int axis;
   private Cache cache;
 
   // -- Constructor --
 
-  public CacheIndicator(JScrollBar scroll) {
-    this.scroll = scroll;
+  /**
+   * Creates a new cache indicator. The component was designed to sit directly
+   * below an AWT Scrollbar or Swing JScrollBar, but any component can be
+   * given, and the indicator will mimic its width (minus padding).
+   */
+  public CacheIndicator(Component c) {
+    comp = c;
     axis = -1;
     setBackground(Color.WHITE);
   }
@@ -126,35 +131,30 @@ public class CacheIndicator extends JComponent implements CacheListener {
   // -- Component API methods --
 
   public Dimension getPreferredSize() {
-    return new Dimension(scroll.getPreferredSize().width, COMPONENT_HEIGHT);
+    return new Dimension(comp.getPreferredSize().width, COMPONENT_HEIGHT);
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(scroll.getMinimumSize().width, COMPONENT_HEIGHT);
+    return new Dimension(comp.getMinimumSize().width, COMPONENT_HEIGHT);
   }
 
   public Dimension getMaximumSize() {
-    return new Dimension(scroll.getMaximumSize().width, COMPONENT_HEIGHT);
+    return new Dimension(comp.getMaximumSize().width, COMPONENT_HEIGHT);
   }
 
   // -- CacheListener API methods --
 
   public void cacheUpdated(CacheEvent e) {
-    System.out.println("cacheUpdated: " + e);//TEMP
     this.cache = (Cache) e.getSource();
     int type = e.getType();
     if (type == CacheEvent.OBJECT_LOADED || type == CacheEvent.OBJECT_DROPPED) {
       // cache has changed; update GUI
       final Object temp = this;
-      try {
-      SwingUtilities.invokeAndWait(new Runnable() {
+      SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          System.out.println("REPAINTING " + temp);//TEMP
           repaint();
         }
       });
-      }
-      catch (Exception exc) { exc.printStackTrace(); }
     }
   }
 
