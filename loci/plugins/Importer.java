@@ -329,10 +329,10 @@ public class Importer {
         }
 
         // sort metadata keys
-        StringBuffer sb = getMetadataString(meta, "\t");
+        String metaString = getMetadataString(meta, "\t");
 
         SearchableWindow w = new SearchableWindow("Metadata - " + id,
-          "Key\tValue", sb.toString(), 400, 400);
+          "Key\tValue", metaString, 400, 400);
         w.setVisible(true);
       }
 
@@ -373,7 +373,7 @@ public class Importer {
           fi.directory = idDir;
 
           // place metadata key/value pairs in ImageJ's info field
-          StringBuffer metadata = getMetadataString(r.getMetadata(), " = ");
+          String metadata = getMetadataString(r.getMetadata(), " = ");
 
           long startTime = System.currentTimeMillis();
           long time = startTime;
@@ -590,12 +590,12 @@ public class Importer {
   private void showStack(ImageStack stack, String file, String series,
     MetadataRetrieve retrieve, int cCount, int zCount, int tCount,
     int sizeZ, int sizeC, int sizeT, FileInfo fi, IFormatReader r,
-    ImporterOptions options, StringBuffer metadata)
+    ImporterOptions options, String metadata)
     throws FormatException, IOException
   {
     if (stack == null) return;
     ImagePlus imp = new ImagePlus(getTitle(r, file, series), stack);
-    imp.setProperty("Info", metadata.toString());
+    imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
     Util.applyCalibration(retrieve, imp, r.getSeries());
@@ -738,7 +738,7 @@ public class Importer {
     return title;
   }
 
-  /** Construct slice label. */
+  /** Constructs slice label. */
   private String constructSliceLabel(int ndx, IFormatReader r,
     MetadataRetrieve retrieve, int series, int[][] counts)
   {
@@ -814,8 +814,8 @@ public class Importer {
     }
   }
 
-  /** Return a StringBuffer with each key/value pair on its own line. */
-  private StringBuffer getMetadataString(Hashtable meta, String separator) {
+  /** Returns a string with each key/value pair on its own line. */
+  private String getMetadataString(Hashtable meta, String separator) {
     Enumeration e = meta.keys();
     Vector v = new Vector();
     while (e.hasMoreElements()) v.add(e.nextElement());
@@ -830,7 +830,7 @@ public class Importer {
       sb.append(meta.get(keys[i]));
       sb.append("\n");
     }
-    return sb;
+    return sb.toString();
   }
 
   // -- Main method --
