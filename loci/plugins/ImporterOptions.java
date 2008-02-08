@@ -136,8 +136,8 @@ public class ImporterOptions implements ItemListener {
   public static final String LABEL_MERGE_OPTION = "Merging Options";
   public static final String LABEL_WINDOWLESS = "windowless";
   public static final String LABEL_SERIES = "series";
-  public static final String LABEL_VIRTUAL = "Use virtual stack";
-  public static final String LABEL_ALL_SERIES = "Open all series";
+  public static final String LABEL_VIRTUAL = "Use_virtual stack";
+  public static final String LABEL_ALL_SERIES = "Open_all series";
   public static final String LABEL_CROP = "Crop on import";
 
   // -- Fields - GUI components --
