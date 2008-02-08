@@ -1,14 +1,16 @@
-2007 Feb 08:
-* Fixed bugs in everything
+2007 Feb 8:
+* Many critical bugfixes in format readers and ImageJ plugins
+* Newly reborn Data Browser for 5D image visualization
+    + some combinations of import options do not work yet
 
-2007 Feb 01:
-
+2007 Feb 1:
 * Fixed bugs in Zeiss LSM, Metamorph STK, FV1000 OIB/OIF, Leica LEI, TIFF,
   Zeiss ZVI, ICS, Prairie, Openlab LIFF, Gatan, DICOM, QuickTime
 * Fixed bug in OME-TIFF writer
 * Major changes to MetadataStore API
 * Added support for JPEG-compressed TIFF files
-* Added basic support for Aperio SVS files - note that JPEG2000 compression is still not supported
+* Added basic support for Aperio SVS files
+    + JPEG2000 compression is still not supported
 * Improved "crop on import" functionality
 * Improvements to bfconvert and bfview
 * Improved OME-XML population for several formats
@@ -16,7 +18,8 @@
 * EXIF data is now parsed from TIFF files
 
 2007 Dec 28:
-* Fixed bugs in Leica LEI, Leica TCS, SDT, Leica LIF, Visitech, DICOM, Imaris 5.5 (HDF), and Slidebook readers
+* Fixed bugs in Leica LEI, Leica TCS, SDT, Leica LIF,
+  Visitech, DICOM, Imaris 5.5 (HDF), and Slidebook readers
 * Better parsing of comments in TIFF files exported from ImageJ
 * Fixed problem with exporting 48-bit RGB data
 * Added logic to read multi-series datasets spread across multiple files
@@ -44,11 +47,11 @@
 * Fixed bugs in ND2, Leica LIF, DICOM, Zeiss ZVI, Zeiss LSM, FV1000 OIB,
   FV1000 OIF, BMP, Evotec Flex, BioRad PIC, Slidebook, TIFF
 * Added new ImageJ plugins to slice stacks and do "smart" RGB merging
-* Added "windowless" importer plugin - collects all import parameters from
-  IJ_Prefs.txt, without prompting the user
+* Added "windowless" importer plugin
+    + uses import parameters from IJ_Prefs.txt, without prompting the user
 * Improved stack slicing and colorizing logic in importer plugin
 * Added support for DICOM files compressed with lossless JPEG
-    - requires native libraries
+    + requires native libraries
 * Fixed bugs with signed pixel data
 * Added support for Imaris 5.5 (HDF) files
 * Added 4 channel merging to importer plugin
@@ -67,8 +70,8 @@
 * Added support for compressed DICOM images
 * Added support for uncompressed LIM files
 * Added support for Adobe Photoshop PSD files
-* Fixed bugs in DICOM, OME-TIFF, Leica LIF, Zeiss ZVI, Visitech, PerkinElmer
-  and Metamorph
+* Fixed bugs in DICOM, OME-TIFF, Leica LIF, Zeiss ZVI,
+  Visitech, PerkinElmer and Metamorph
 * Improved indexed color support
 * Addressed several efficiency issues
 * Fixed how multiple series are handled in 4D data browser
@@ -77,7 +80,7 @@
 * Additional metadata convenience methods
 
 2007 Sept 11:
-* Major improvements to ND2 support - lossless compression now supported
+* Major improvements to ND2 support; lossless compression now supported
 * Support for indexed color images
 * Added support for Simple-PCI .cxd files
 * Command-line OME-XML validation
@@ -136,7 +139,7 @@
 * Fixed QuickTime Motion JPEG-B support
 * Fixed some memory issues (repeated small array allocations)
 * Fixed issues reading large (> 2 GB) files
-* Removed "ignore color table" logic - replaced with Leica-specific solution
+* Removed "ignore color table" logic, and replaced with Leica-specific solution
 * Added status event reporting to readers
 * Added API to toggle metadata collection
 * Support for multiple dimensions rasterized into channels
