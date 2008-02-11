@@ -216,6 +216,7 @@ public class DicomReader extends FormatReader {
         }
       }
       else if (bpp == 2) {
+        if (maxPixelValue == -1) maxPixelValue = 65535;
         for (int i=0; i<buf.length; i+=2) {
           short s = DataTools.bytesToShort(buf, i, 2, core.littleEndian[0]);
           s = (short) (maxPixelValue - s);
@@ -310,6 +311,9 @@ public class DicomReader extends FormatReader {
     core.interleaved[0] = true;
 
     while (decodingTags) {
+      if (in.getFilePointer() + 2 >= in.length()) {
+        break;
+      }
       int tag = getNextTag();
 
       if (elementLength == 0) continue;
@@ -389,7 +393,15 @@ public class DicomReader extends FormatReader {
         case 537262910:
         case WINDOW_WIDTH:
           String t = in.readString(elementLength);
-          maxPixelValue = new Double(t.trim()).intValue();
+          if (t.trim().length() == 0) maxPixelValue = -1;
+          else {
+            try {
+              maxPixelValue = new Double(t.trim()).intValue();
+            }
+            catch (NumberFormatException e) {
+              maxPixelValue = -1;
+            }
+          }
           addInfo(tag, t);
           break;
         case WINDOW_CENTER:
