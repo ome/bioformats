@@ -68,21 +68,18 @@ public class MJPBCodec extends BaseCodec implements Codec {
     try {
       RandomAccessStream ras = new RandomAccessStream(data);
       ras.order(false);
-      ras.skipBytes(20);
+      ras.seek(4);
 
       byte[] lumDcBits = null, lumAcBits = null, lumDc = null, lumAc = null;
       byte[] quant = null;
 
-      byte[] a = new byte[4];
-      ras.read(a);
-      String s1 = new String(a);
-      ras.seek(ras.getFilePointer() - 20);
-      ras.read(a);
-      String s2 = new String(a);
+      String s1 = ras.readString(4);
       ras.skipBytes(12);
+      String s2 = ras.readString(4);
+      ras.seek(ras.getFilePointer() - 4);
       if (s1.equals("mjpg") || s2.equals("mjpg")) {
         int extra = 16;
-        if (s2.startsWith("m")) {
+        if (s1.startsWith("m")) {
           extra = 0;
           ras.seek(4);
         }
@@ -100,6 +97,14 @@ public class MJPBCodec extends BaseCodec implements Codec {
           ras.skipBytes(3);
           quant = new byte[64];
           ras.read(quant);
+        }
+        else {
+          quant = new byte[] {
+            7, 5, 5, 6, 5, 5, 7, 6, 6, 6, 8, 7, 7, 8, 10, 17, 11, 10, 9, 9, 10,
+            20, 15, 15, 12, 17, 24, 21, 25, 25, 23, 21, 23, 23, 26, 29, 37, 32,
+            26, 28, 35, 28, 23, 23, 33, 44, 33, 35, 39, 40, 42, 42, 42, 25, 31,
+            46, 49, 45, 41, 49, 37, 41, 42, 40
+          };
         }
 
         if (huffmanOffset != 0) {

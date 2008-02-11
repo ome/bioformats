@@ -302,30 +302,12 @@ public class QTReader extends FormatReader {
     core.pixelType[0] =
       bytesPerPixel == 2 ?  FormatTools.UINT16 : FormatTools.UINT8;
 
-    core.rgb[0] = bitsPerPixel < 40;
     core.sizeZ[0] = 1;
-    core.sizeC[0] = core.rgb[0] ? 3 : 1;
-    core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCZT";
     core.littleEndian[0] = false;
-    core.interleaved[0] = bitsPerPixel == 32;
     core.metadataComplete[0] = true;
     core.indexed[0] = false;
     core.falseColor[0] = false;
-
-    // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
-    MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null);
-//    }
 
     // this handles the case where the data and resource forks have been
     // separated
@@ -350,7 +332,6 @@ public class QTReader extends FormatReader {
         stripHeader();
         parse(0, 0, in.length());
         core.imageCount[0] = offsets.size();
-        return;
       }
       else {
         if (debug) debug("\tAbsent: " + f);
@@ -361,9 +342,8 @@ public class QTReader extends FormatReader {
           if (debug) debug("\t Found: " + f);
           in = new RandomAccessStream(f.getAbsolutePath());
           stripHeader();
-          parse(0, 0, in.length());
+          parse(0, in.getFilePointer(), in.length());
           core.imageCount[0] = offsets.size();
-          return;
         }
         else {
           if (debug) debug("\tAbsent: " + f);
@@ -374,16 +354,31 @@ public class QTReader extends FormatReader {
             stripHeader();
             parse(0, 0, in.length());
             core.imageCount[0] = offsets.size();
-            return;
           }
-          else if (debug) debug("\tAbsent: " + f);
+          else {
+            if (debug) debug("\tAbsent: " + f);
+            throw new FormatException("QuickTime resource fork not found. " +
+              " To avoid this issue, please flatten your QuickTime movies " +
+              "before importing with Bio-Formats.");
+          }
         }
       }
-
-      throw new FormatException("QuickTime resource fork not found. " +
-        " To avoid this issue, please flatten your QuickTime movies " +
-        "before importing with Bio-Formats.");
     }
+
+    in = new RandomAccessStream(currentId);
+
+    core.rgb[0] = bitsPerPixel < 40;
+    core.sizeC[0] = core.rgb[0] ? 3 : 1;
+    core.interleaved[0] = bitsPerPixel == 32;
+    core.sizeT[0] = core.imageCount[0];
+
+    // The metadata store we're working with.
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --
