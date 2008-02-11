@@ -342,7 +342,9 @@ public class QTReader extends FormatReader {
       else base = id;
 
       Location f = new Location(base + ".qtr");
+      if (debug) debug("Searching for research fork:");
       if (f.exists()) {
+        if (debug) debug("\t Found: " + f);
         in = new RandomAccessStream(f.getAbsolutePath());
 
         stripHeader();
@@ -351,10 +353,12 @@ public class QTReader extends FormatReader {
         return;
       }
       else {
-        f = new Location(base.substring(0,
-          base.lastIndexOf(File.separator) + 1) + "._" +
-          base.substring(base.lastIndexOf(File.separator) + 1));
+        if (debug) debug("\tAbsent: " + f);
+        f = new Location(id.substring(0,
+          id.lastIndexOf(File.separator) + 1) + "._" +
+          id.substring(base.lastIndexOf(File.separator) + 1));
         if (f.exists()) {
+          if (debug) debug("\t Found: " + f);
           in = new RandomAccessStream(f.getAbsolutePath());
           stripHeader();
           parse(0, 0, in.length());
@@ -362,14 +366,17 @@ public class QTReader extends FormatReader {
           return;
         }
         else {
-          f = new Location(base + "/rsrc");
+          if (debug) debug("\tAbsent: " + f);
+          f = new Location(id + "/..namedfork/rsrc");
           if (f.exists()) {
+            if (debug) debug("\t Found: " + f);
             in = new RandomAccessStream(f.getAbsolutePath());
             stripHeader();
             parse(0, 0, in.length());
             core.imageCount[0] = offsets.size();
             return;
           }
+          else if (debug) debug("\tAbsent: " + f);
         }
       }
 
