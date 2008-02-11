@@ -11,7 +11,7 @@ This build file handles the following projects:
 Bio-Formats
     JAR file:      bio-formats.jar
     Folders:       loci/formats
-                   loci/formats/* (except auto and test)
+                   loci/formats/* (except auto)
     Main class:    loci.formats.ImageViewer
     Dependencies:  bufr-1.1.00.jar (reflected)
                    clibwrapper_jiio.jar (reflected)
@@ -915,7 +915,7 @@ Apache XML-RPC
     </exec>
   </target>
 
-  <!-- Automated testing -->
+  <!-- Automated tests -->
 
   <target name="style-tests" depends="copy-source, jar-checks"
     description="check source code style for testing framework">
