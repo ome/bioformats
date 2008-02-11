@@ -40,18 +40,29 @@ public class Log {
 
   public static final String NL = System.getProperty("line.separator");
 
+  // -- Fields --
+
+  /** Output stream to which information should be logged. */
+  protected PrintStream out = System.out;
+
   // -- Log API methods --
+
+  /** Overrides the stream to which logging occurs (default is System.out). */
+  public void setStream(PrintStream out) { this.out = out; }
+
+  /** Gets the stream to which logging currenly occurs. */
+  public PrintStream getStream() { return out; }
 
   /** Main output method. Override to control how logging occurs. */
   public void print(String x) {
-    // default implementation writes to the console
-    System.out.print(x);
+    // default implementation writes to the associated print stream
+    out.print(x);
   }
 
   /** Flushes buffer to the log. Override to control how logging occurs. */
   public void flush() {
-    // default implementation flushes the console
-    System.out.flush();
+    // default implementation flushes the associated print stream
+    out.flush();
   }
 
   public void print(boolean x) { print("" + x); }
@@ -73,9 +84,9 @@ public class Log {
 
   public void trace(String s) { trace(new Exception(s)); }
   public void trace(Throwable t) {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    t.printStackTrace(new PrintStream(out));
-    println(out);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    t.printStackTrace(new PrintStream(baos));
+    println(baos);
   }
 
 }

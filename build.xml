@@ -289,7 +289,7 @@ Skin Look and Feel
 TestNG
     JAR file:  testng-5.6-jdk14.jar
     URL:       http://testng.org/
-    Notes:     testing framework used for Bio-Formats test suite
+    Notes:     testing framework used for LOCI software automated test suite
     License:   Apache
 
 VisAD
@@ -317,6 +317,14 @@ Apache XML-RPC
   <condition property="isUnix"><os family="unix"/></condition>
 
   <!-- Non-core ant tasks -->
+
+  <path id="cp-testng">
+    <pathelement location="jar/testng-5.6-jdk14.jar"/>
+    <pathelement location="${classes.dir}"/>
+  </path>
+
+  <taskdef name="testng" classpathref="cp-testng"
+    classname="org.testng.TestNGAntTask"/>
 
   <!-- NB - We do not reference build/jar/loci-checks.jar directly, as doing so
     causes loci-checks.jar to be locked by some file systems (Windows in
@@ -354,8 +362,8 @@ Apache XML-RPC
   </target>
 -->
   <target name="compile"
-    depends="compile-formats, compile-visbio, compile-plugins,
-      compile-notes, compile-editor, compile-slim"
+    depends="compile-formats, compile-visbio, compile-plugins, compile-notes,
+      compile-editor, compile-slim, compile-tests, compile-checks"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
@@ -409,24 +417,24 @@ Apache XML-RPC
   </target>
 
   <target name="clean-classes" description="remove classes from build folder">
-    <delete dir="${build.dir}/classes"/>
+    <delete dir="${classes.dir}"/>
   </target>
 
   <target name="clean-dist"
     description="remove distribution bundles from build folder">
-    <delete dir="${build.dir}/dist"/>
+    <delete dir="${dist.dir}"/>
   </target>
 
   <target name="clean-docs" description="remove javadocs from build folder">
-    <delete dir="${build.dir}/docs"/>
+    <delete dir="${docs.dir}"/>
   </target>
 
   <target name="clean-jars" description="remove JAR files from build folder">
-    <delete dir="${build.dir}/jar"/>
+    <delete dir="${jar.dir}"/>
   </target>
 
   <target name="clean-src" description="remove source files from build folder">
-    <delete dir="${build.dir}/src"/>
+    <delete dir="${dest.dir}"/>
   </target>
 
   <target name="dev-compile" description="compile classes in-place (no copy)">
@@ -440,6 +448,66 @@ Apache XML-RPC
     <delete>
       <fileset dir="." includes="loci/**/*.class"/>
     </delete>
+  </target>
+
+  <target name="test-all" depends="copy-source, compile-tests"
+    description="run all automated tests">
+    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
+      annotations="Javadoc" groups="all" testname="All tests"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-config" depends="copy-source, compile-tests"
+    description="generate config files for automated test suite">
+    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
+      annotations="Javadoc" groups="config" testname="Config generation"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-fast" depends="copy-source, compile-tests"
+    description="run automated tests in group 'fast'">
+    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
+      annotations="Javadoc" groups="fast" testname="Fast tests"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <jvmarg value="-Xmx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-pixels" depends="copy-source, compile-tests"
+    description="run automated tests in group 'pixels'">
+    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
+      annotations="Javadoc" groups="pixels" testname="Pixels tests"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <jvmarg value="-Xmx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-xml" depends="copy-source, compile-tests"
+    description="run automated tests in group 'xml'">
+    <testng classpathref="cp-testng" sourceDir="${dest.dir}"
+      annotations="Javadoc" groups="xml" testname="XML tests"
+      suitename="LOCI software test suite">
+      <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <jvmarg value="-Xmx${testng.memory}"/>
+    </testng>
   </target>
 
   <!-- Internal build targets -->
@@ -845,6 +913,23 @@ Apache XML-RPC
       <arg value="../slim.zip"/>
       <arg value="SlimPlotter"/>
     </exec>
+  </target>
+
+  <!-- Automated testing -->
+
+  <target name="style-tests" depends="copy-source, jar-checks"
+    description="check source code style for testing framework">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${tests.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-tests" depends="copy-source"
+    description="compile classes for testing framework">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${tests.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <!-- LOCI Checkstyle checks -->

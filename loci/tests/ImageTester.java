@@ -22,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.test;
+package loci.tests;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -33,7 +33,7 @@ import loci.formats.ImageTools;
 import loci.formats.LogTools;
 
 /**
- * A class for testing the ImageTools.makeImage methods.
+ * A class for testing the {@link loci.formats.ImageTools#makeImage} methods.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/test/ImageTester.java">Trac</a>,
