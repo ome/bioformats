@@ -201,9 +201,6 @@ public class ZeissZVIReader extends FormatReader {
 
         byte[] tile = new byte[tileWidth * tileHeight * bytes];
 
-        tileRows = (core.sizeY[0] / tileHeight) + 1;
-        tileColumns = (core.sizeX[0] / tileWidth) + 1;
-
         for (int row=0; row<tileRows; row++) {
           for (int col=0; col<tileColumns; col++) {
             int rowIndex = row * tileHeight;
@@ -223,11 +220,12 @@ public class ZeissZVIReader extends FormatReader {
                 int tileH = rowIndex + tileHeight <= y + h ?
                   tileHeight - tileY : y + h - rowIndex - tileY;
 
-                Integer ii = new Integer(row*tileColumns*core.sizeC[0] +
-                  col*core.sizeC[0] + (no % core.sizeC[0]));
+                int count = core.sizeZ[0] * core.sizeT[0];
+                count *= core.sizeC[0];
+                Integer ii = new Integer(no + (row*tileColumns + col)*count);
                 if ((row % 2) == 1) {
-                  ii = new Integer(core.sizeC[0]*(row*tileColumns +
-                    tileColumns - col - 1) + (no % core.sizeC[0]));
+                  ii = new Integer(no +
+                    (row*tileColumns + (tileColumns - col - 1))*count);
                 }
 
                 Object directory = pixels.get(ii);
@@ -244,9 +242,10 @@ public class ZeissZVIReader extends FormatReader {
                 r.exec("dis.read(data)");
 
                 for (int r=tileY; r<tileY + tileH; r++) {
-                  System.arraycopy(tile, r*tileWidth*bytes + bytes*tileX, buf,
-                    w*bytes*(rowOffset + r - tileY) + bytes*colOffset,
-                    tileW * bytes);
+                  int src = bytes * (r * tileWidth + tileX);
+                  int dest = bytes * (w * (rowOffset + r - tileY) + colOffset);
+                  int len = tileW * bytes;
+                  System.arraycopy(tile, src, buf, dest, len);
                 }
 
                 colOffset += tileW;
@@ -383,24 +382,21 @@ public class ZeissZVIReader extends FormatReader {
         (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
 
       if (isTiled) {
-        if (firstImageTile == null || firstImageTile.equals("")) {
-          firstImageTile = null;
-        }
-        if (secondImageTile == null || secondImageTile.equals("")) {
-          secondImageTile = null;
-        }
-        if (firstImageTile == null || secondImageTile == null) {
-          isTiled = false;
-        }
-        else {
-          int lowerLeft = Integer.parseInt(firstImageTile);
-          int middle = Integer.parseInt(secondImageTile);
+        int totalTiles =
+          offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
 
-          tileColumns = lowerLeft - middle - 1;
-          tileRows = (lowerLeft / tileColumns) + 1;
-          if (tileColumns < 0) tileColumns = 1;
-          if (tileRows < 0) tileRows = 1;
-          if (tileColumns == 1 && tileRows == 1) isTiled = false;
+        tileRows = (realHeight / core.sizeY[0]) + 1;
+        tileColumns = (realWidth / core.sizeX[0]) + 1;
+
+        if (tileRows == 0) tileRows = 1;
+        if (tileColumns == 0) tileColumns = 1;
+
+        if (tileColumns == 1 && tileRows == 1) isTiled = false;
+        else {
+          tileWidth = core.sizeX[0];
+          tileHeight = core.sizeY[0];
+          core.sizeX[0] = tileWidth * tileColumns;
+          core.sizeY[0] = tileHeight * tileRows;
         }
       }
 
@@ -454,13 +450,6 @@ public class ZeissZVIReader extends FormatReader {
         core.sizeZ[0] = core.sizeT[0];
         core.sizeT[0] = tmp;
       }
-    }
-
-    if (isTiled) {
-      tileWidth = core.sizeX[0];
-      tileHeight = core.sizeY[0];
-      core.sizeX[0] = realWidth;
-      core.sizeY[0] = realHeight;
     }
 
     try {
