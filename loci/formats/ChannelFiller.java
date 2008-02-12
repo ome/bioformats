@@ -26,8 +26,9 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import loci.formats.meta.*;
 
-/**
+/*
  * Expands indexed color images to RGB.
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -179,6 +180,13 @@ public class ChannelFiller extends ReaderWrapper {
     return ImageTools.makeImage(openBytes(no, x, y, w, h), w, h,
       getRGBChannelCount(), isInterleaved(),
       FormatTools.getBytesPerPixel(getPixelType()), isLittleEndian());
+  }
+
+  /* @see IFormatReader#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+    MetadataStore store = getMetadataStore();
+    MetadataTools.populatePixels(store, this);
   }
 
 }

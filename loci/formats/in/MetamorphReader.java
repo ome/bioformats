@@ -65,7 +65,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   private int mmPlanes; //number of metamorph planes
 
-  private MetamorphReader r;
+  private MetamorphReader stkReader;
 
   /** List of STK files in the dataset. */
   private String[][] stks;
@@ -153,9 +153,11 @@ public class MetamorphReader extends BaseTiffReader {
     int ndx = no / core.sizeZ[series];
     String file = stks[series][ndx];
 
-    if (r == null) r = new MetamorphReader();
-    r.setId(file);
-    return r.openBytes(coords[0], buf, x, y, w, h);
+    // the original file is a .nd file, so we need to construct a new reader
+    // for the constituent STK files
+    if (stkReader == null) stkReader = new MetamorphReader();
+    stkReader.setId(file);
+    return stkReader.openBytes(coords[0], buf, x, y, w, h);
   }
 
   // -- IFormatHandler API methods --
@@ -163,8 +165,8 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
     super.close();
-    if (r != null) r.close();
-    r = null;
+    if (stkReader != null) stkReader.close();
+    stkReader = null;
     imageName = imageCreationDate = null;
     emWavelength = null;
     stks = null;
