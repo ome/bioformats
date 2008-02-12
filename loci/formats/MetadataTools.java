@@ -228,12 +228,7 @@ public final class MetadataTools {
       store.setPixelsSizeX(new Integer(r.getSizeX()), i, 0);
       store.setPixelsSizeY(new Integer(r.getSizeY()), i, 0);
       store.setPixelsSizeZ(new Integer(r.getSizeZ()), i, 0);
-      if (r.isIndexedAsRGB()) {
-        int c = r.getSizeC();
-        if (r.isIndexed()) c *= 3;
-        store.setPixelsSizeC(new Integer(c), i, 0);
-      }
-      else store.setPixelsSizeC(new Integer(r.getSizeC()), i, 0);
+      store.setPixelsSizeC(new Integer(r.getSizeC()), i, 0);
       store.setPixelsSizeT(new Integer(r.getSizeT()), i, 0);
       store.setPixelsPixelType(
         FormatTools.getPixelTypeString(r.getPixelType()), i, 0);

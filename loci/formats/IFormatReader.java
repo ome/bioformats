@@ -277,19 +277,6 @@ public interface IFormatReader extends IFormatHandler {
    */
   boolean isOriginalMetadataPopulated();
 
-  /**
-   * If the flag is set, MetadataStore sets number of channels to three
-   * for indexed color images.  Otherwise, the number of channels is set
-   * to one for indexed color images.
-   */
-  void setIndexedAsRGB(boolean rgb);
-
-  /**
-   * Returns true if MetadataStore sets the number of channels to
-   * three for indexed color images.
-   */
-  boolean isIndexedAsRGB();
-
   /** Specifies whether or not to force grouping in multi-file formats. */
   void setGroupFiles(boolean group);
 

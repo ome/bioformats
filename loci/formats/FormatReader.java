@@ -486,17 +486,6 @@ public abstract class FormatReader extends FormatHandler
     return saveOriginalMetadata;
   }
 
-  /* @see IFormatReader#setIndexedAsRGB(boolean) */
-  public void setIndexedAsRGB(boolean rgb) {
-    FormatTools.assertId(currentId, false, 1);
-    indexedAsRGB = rgb;
-  }
-
-  /* @see IFormatReader#isIndexedAsRGB() */
-  public boolean isIndexedAsRGB() {
-    return indexedAsRGB;
-  }
-
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);

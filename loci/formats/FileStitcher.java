@@ -631,24 +631,6 @@ public class FileStitcher implements IFormatReader {
     return reader.isOriginalMetadataPopulated();
   }
 
-  /* @see IFormatReader#setIndexedAsRGB(boolean) */
-  public void setIndexedAsRGB(boolean rgb) {
-    FormatTools.assertId(currentId, false, 1);
-    if (readers == null) reader.setIndexedAsRGB(rgb);
-    else {
-      for (int i=0; i<readers.length; i++) {
-        for (int j=0; j<readers[i].length; j++) {
-          readers[i][j].setIndexedAsRGB(rgb);
-        }
-      }
-    }
-  }
-
-  /* @see IFormatReader#isIndexedAsRGB() */
-  public boolean isIndexedAsRGB() {
-    return reader.isIndexedAsRGB();
-  }
-
   /* @see IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 2);

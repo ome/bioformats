@@ -484,19 +484,6 @@ public class ImageReader implements IFormatReader {
     return readers[0].isOriginalMetadataPopulated();
   }
 
-  /* @see IFormatReader#setIndexedAsRGB(boolean) */
-  public void setIndexedAsRGB(boolean rgb) {
-    FormatTools.assertId(currentId, false, 1);
-    for (int i=0; i<readers.length; i++) {
-      readers[i].setIndexedAsRGB(rgb);
-    }
-  }
-
-  /* @see IFormatReader#isIndexedAsRGB() */
-  public boolean isIndexedAsRGB() {
-    return readers[0].isIndexedAsRGB();
-  }
-
   /* @see IFormatReader#getCurrentFile() */
   public String getCurrentFile() {
     return getReader().getCurrentFile();
