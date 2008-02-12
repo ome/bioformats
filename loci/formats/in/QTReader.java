@@ -382,7 +382,7 @@ public class QTReader extends FormatReader {
             if (debug) debug("\t Found: " + f);
             in = new RandomAccessStream(f.getAbsolutePath());
             stripHeader();
-            parse(0, 0, in.length());
+            parse(0, in.getFilePointer(), in.length());
             core.imageCount[0] = offsets.size();
           }
           else {
