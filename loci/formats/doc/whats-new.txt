@@ -1,3 +1,7 @@
+2007 Feb 12:
+* Fixed bugs in QuickTime, SimplePCI and DICOM
+* Fixed a bug in channel splitting logic
+
 2007 Feb 8:
 * Many critical bugfixes in format readers and ImageJ plugins
 * Newly reborn Data Browser for 5D image visualization
