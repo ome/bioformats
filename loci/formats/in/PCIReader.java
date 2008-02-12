@@ -315,8 +315,7 @@ public class PCIReader extends FormatReader {
           byte[] b = new byte[8];
           r.setVar("data", b);
           r.exec("dis.read(data)");
-          int bits =
-            (int) (DataTools.bytesToLong(b, 0, 8, false) & 0x1f00) >> 8;
+          int bits = (int) (DataTools.bytesToLong(b, 0, 8, false) & 0xff) >> 2;
           while (bits % 8 != 0) bits++;
           switch (bits) {
             case 8:
