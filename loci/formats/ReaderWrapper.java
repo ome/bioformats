@@ -268,6 +268,14 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isOriginalMetadataPopulated();
   }
 
+  public void setIndexedAsRGB(boolean rgb) {
+    reader.setIndexedAsRGB(rgb);
+  }
+
+  public boolean isIndexedAsRGB() {
+    return reader.isIndexedAsRGB();
+  }
+
   public String[] getUsedFiles() {
     return reader.getUsedFiles();
   }

@@ -72,6 +72,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to save proprietary metadata in the MetadataStore. */
   protected boolean saveOriginalMetadata = false;
 
+  /** Whether or not MetadataStore sets C = 3 for indexed color images. */
+  protected boolean indexedAsRGB = false;
+
   /** Whether or not to group multi-file formats. */
   protected boolean group = true;
 
@@ -481,6 +484,17 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isOriginalMetadataPopulated() */
   public boolean isOriginalMetadataPopulated() {
     return saveOriginalMetadata;
+  }
+
+  /* @see IFormatReader#setIndexedAsRGB(boolean) */
+  public void setIndexedAsRGB(boolean rgb) {
+    FormatTools.assertId(currentId, false, 1);
+    indexedAsRGB = rgb;
+  }
+
+  /* @see IFormatReader#isIndexedAsRGB() */
+  public boolean isIndexedAsRGB() {
+    return indexedAsRGB;
   }
 
   /* @see IFormatReader#getUsedFiles() */
