@@ -8,7 +8,8 @@
     xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
     xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06 ome.xsd">
+ xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06 ome.xsd"
+    HashMethod="SHA1">
     <ome:Project Name="Name0" ID="Project:a">
         <ome:Description>
         </ome:Description>
@@ -358,7 +359,7 @@
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
-            <ome:Plane TheZ="0" TheT="0" TheC="0">
+            <ome:Plane TheZ="0" TheT="0" TheC="0" Hash="1234567890ABCDEF1234567890ABCDEF12345678">
                 <ome:PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
                 <ome:StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
             </ome:Plane>

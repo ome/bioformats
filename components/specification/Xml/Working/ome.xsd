@@ -6,7 +6,7 @@
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
-	#       University of Wisconsin at Madison"
+	#       University of Wisconsin at Madison
 	#
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
@@ -15,22 +15,22 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2007-06" 
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2007-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" 
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-02" 
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="2" 
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2007-06/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2007-06/CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2007-06/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>
@@ -64,6 +64,8 @@
 				<xsd:element ref="AML:AnalysisModuleLibrary" minOccurs="0"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xsd:sequence>
+				<xsd:attribute name="ID" type="FileID"/>
+				<xsd:attribute name="HashMethod" type="HashMethodType" default="SHA1"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Image">
@@ -156,19 +158,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="PixelType" use="required">
-				<xsd:simpleType>
-					<xsd:restriction base="PixelTypes">
-						<xsd:enumeration value = "int8"/>
-						<xsd:enumeration value = "int16"/>
-						<xsd:enumeration value = "int32"/>
-						<xsd:enumeration value = "uint8"/>
-						<xsd:enumeration value = "uint16"/>
-						<xsd:enumeration value = "uint32"/>
-						<xsd:enumeration value = "float"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
+			<xsd:attribute name="PixelType" use="required" type="PixelTypes"/>
 			<xsd:attribute name="BigEndian" use="required" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>This is true if the pixel data was written in BigEndian order. This is dependent on the system architecture of the machine that wrote the pixels. True for essentially all modern CPUs other than Intel and Alpha. All pixel data must be written in the same endian order.</xsd:documentation>
@@ -233,7 +223,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	<xsd:element name="TiffData">
 		<xsd:annotation>
 			<xsd:documentation>
-				THis described the location of the pixel data in a tiff file.
+				This described the location of the pixel data in a tiff file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -306,6 +296,15 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="TheZ" use="required" type="xsd:integer"/>
 			<xsd:attribute name="TheT" use="required" type="xsd:integer"/>
 			<xsd:attribute name="TheC" use="required" type="xsd:integer"/>
+			<xsd:attribute name="Hash" type="HashValue">
+				<xsd:annotation>
+					<xsd:documentation>
+						This optional value is a hash of the plane's image data. 
+						It is calculated using the method set in the HashMethod of the OME element.
+						Currently the only method supported is SHA1.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -1096,6 +1095,14 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:length value="20"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="HashValue">
+		<xsd:union memberTypes="Hex40"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="HashMethodType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SHA1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="MetalVaporLaserMedia">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Cu"/>
@@ -1175,6 +1182,22 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:\S+:\S+)|(\S+:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FileID">
+		<xsd:annotation>
+			<xsd:documentation>
+				Note: This does not conform to the ID pattern used in the rest of the file.
+				The rest of the IDs are either an full LSID or an internal ID which is a string that is simply unique in this file.
+				As the FileID is used from outside this file to identify it having the same ID in another file could cause problems.
+				To resolve this a FileID can either be an LSID or a UUID.
+				A UUID is 32 hexadecimal digits, in 5 groups, 8-4-4-4-12, separated by hyphens
+				e.g. 3e450fae-b8f2-4d35-aa54-702168b2487f
+				There are methods to generate these in most modern languages.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:File:\S+)|(File:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProjectID">
@@ -1284,18 +1307,26 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 	</xsd:simpleType>
 	<xsd:simpleType name="PixelTypes">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="bit"/>
-			<xsd:enumeration value="int8"/>
-			<xsd:enumeration value="int16"/>
-			<xsd:enumeration value="int32"/>
-			<xsd:enumeration value="uint8"/>
-			<xsd:enumeration value="uint16"/>
-			<xsd:enumeration value="uint32"/>
-			<xsd:enumeration value ="float"/>
-			<xsd:enumeration value ="double"/>
-			<xsd:enumeration value ="complex"/>
-			<xsd:enumeration value ="double-complex"/>
+				<xsd:enumeration value = "int8"/>
+				<xsd:enumeration value = "int16"/>
+				<xsd:enumeration value = "int32"/>
+				<xsd:enumeration value = "uint8"/>
+				<xsd:enumeration value = "uint16"/>
+				<xsd:enumeration value = "uint32"/>
+				<xsd:enumeration value = "float"/>
 		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ExtendedPixelTypes">
+		<xsd:union memberTypes="PixelTypes">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="bit"/>
+					<xsd:enumeration value ="double"/>
+					<xsd:enumeration value ="complex"/>
+					<xsd:enumeration value ="double-complex"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
 	</xsd:simpleType>
 	<xsd:simpleType name="ModuleID">
 		<xsd:restriction base="LSID">
@@ -1513,7 +1544,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				<xsd:element ref="Bin:BinaryFile"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="OTFID"/>
-			<xsd:attribute name="PixelType" use="required" type="PixelTypes"/>
+			<xsd:attribute name="PixelType" use="required" type="ExtendedPixelTypes"/>
 			<xsd:attribute name="OpticalAxisAveraged" use="required" type="xsd:boolean"/>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger"/>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger"/>

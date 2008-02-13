@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ome:OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2007-06"
-    xmlns:std="http://www.openmicroscopy.org/Schemas/STD/2007-06"
- xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
- xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2007-06"
- xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2007-06"
- xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2007-06"
- xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
- xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
+<ome:OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2008-02"
+    xmlns:std="http://www.openmicroscopy.org/Schemas/STD/2008-02"
+ xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02"
+ xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-02"
+ xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2008-02"
+ xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2008-02"
+ xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
+ xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06 http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd">
+ xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd">
     <ome:Project Name="Name0" ID="Project:a">
         <ome:Description>
         </ome:Description>

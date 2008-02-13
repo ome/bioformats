@@ -16,8 +16,8 @@
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <schema xmlns = "http://www.w3.org/2001/XMLSchema"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/STD/2007-06"
-	xmlns:STD = "http://www.openmicroscopy.org/Schemas/STD/2007-06"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/STD/2008-02"
+	xmlns:STD = "http://www.openmicroscopy.org/Schemas/STD/2008-02"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	 version = "2"
 	 elementFormDefault = "qualified">
