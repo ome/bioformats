@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.gui;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -45,7 +46,7 @@ import loci.formats.*;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/gui/PreviewPane.java">SVN</a></dd></dl>
  */
 public class PreviewPane extends JPanel
-  implements PropertyChangeListener, Runnable
+  implements PropertyChangeListener, Runnable, StatusListener
 {
 
   // -- Fields --
@@ -53,8 +54,11 @@ public class PreviewPane extends JPanel
   /** Reader for use when loading thumbnails. */
   protected IFormatReader reader;
 
-  /** Labels containing thumbnail and dimensional information. */
-  protected JLabel iconLabel, resLabel, zctLabel, typeLabel;
+  /** Current ID to load. */
+  protected String loadId;
+
+  /** Last ID loaded. */
+  protected String lastId;
 
   /** Thumbnail loading thread. */
   protected Thread loader;
@@ -62,41 +66,84 @@ public class PreviewPane extends JPanel
   /** Flag indicating whether loader thread should keep running. */
   protected boolean loaderAlive;
 
-  /** Current ID to load. */
-  protected String loadId;
+  /** Method for syncing the view to the model. */
+  protected Runnable refresher;
 
-  /** Last ID loaded. */
-  protected String lastId;
+  // -- Fields - view --
 
-  // -- Constructors --
+  /** Labels containing thumbnail and dimensional information. */
+  protected JLabel iconLabel, formatLabel, resLabel, zctLabel, typeLabel;
+
+  // -- Fields - model --
+
+  protected ImageIcon icon;
+  protected String iconText, formatText, resText, zctText, typeText;
+  protected String iconTip, formatTip, resTip, zctTip, typeTip;
+
+  // -- Constructor --
 
   /** Constructs a preview pane for the given file chooser. */
   public PreviewPane(JFileChooser jc) {
     super();
-    setBorder(new EmptyBorder(0, 10, 0, 0));
 
     reader = new ImageReader();
     reader.setNormalized(true);
+    reader.addStatusListener(this);
 
+    // create view
+    setBorder(new EmptyBorder(0, 10, 0, 10));
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     iconLabel = new JLabel();
     iconLabel.setMinimumSize(new java.awt.Dimension(128, -1));
     iconLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     add(iconLabel);
     add(Box.createVerticalStrut(7));
-    resLabel = new JLabel("");
+    formatLabel = new JLabel();
+    formatLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+    add(formatLabel);
+    add(Box.createVerticalStrut(5));
+    resLabel = new JLabel();
     resLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     add(resLabel);
-    zctLabel = new JLabel("");
+    zctLabel = new JLabel();
     zctLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     add(zctLabel);
-    typeLabel = new JLabel("");
+    typeLabel = new JLabel();
     typeLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     add(typeLabel);
+
+    // smaller font for most labels
+    Font font = formatLabel.getFont();
+    font = font.deriveFont(font.getSize2D() - 3);
+    formatLabel.setFont(font);
+    resLabel.setFont(font);
+    zctLabel.setFont(font);
+    typeLabel.setFont(font);
+
+    // populate model
+    icon = null;
+    iconText = formatText = resText = zctText = typeText = "";
+    iconTip = formatTip = resTip = zctTip = typeTip = null;
 
     if (jc != null) {
       jc.setAccessory(this);
       jc.addPropertyChangeListener(this);
+
+      refresher = new Runnable() {
+        public void run() {
+          iconLabel.setIcon(icon);
+          iconLabel.setText(iconText);
+          iconLabel.setToolTipText(iconTip);
+          formatLabel.setText(formatText);
+          formatLabel.setToolTipText(formatTip);
+          resLabel.setText(resText);
+          resLabel.setToolTipText(resTip);
+          zctLabel.setText(zctText);
+          zctLabel.setToolTipText(zctTip);
+          typeLabel.setText(typeText);
+          typeLabel.setToolTipText(typeTip);
+        }
+      };
 
       // start separate loader thread
       loaderAlive = true;
@@ -107,10 +154,10 @@ public class PreviewPane extends JPanel
 
   // -- Component API methods --
 
-  /* @see java.awt.Component.getPreferredSize() */
+  /* @see java.awt.Component#getPreferredSize() */
   public Dimension getPreferredSize() {
     Dimension prefSize = super.getPreferredSize();
-    return new Dimension(128, prefSize.height);
+    return new Dimension(148, prefSize.height);
   }
 
   // -- PropertyChangeListener API methods --
@@ -128,10 +175,10 @@ public class PreviewPane extends JPanel
 
     if (!prop.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) return;
 
-    File selection = (File) e.getNewValue();
-    if (selection == null) return;
+    File f = (File) e.getNewValue();
+    if (f != null && (f.isDirectory() || !f.exists())) f = null;
 
-    loadId = selection.getAbsolutePath();
+    loadId = f == null ? null : f.getAbsolutePath();
   }
 
   // -- Runnable API methods --
@@ -142,7 +189,7 @@ public class PreviewPane extends JPanel
       try { Thread.sleep(100); }
       catch (InterruptedException exc) { LogTools.trace(exc); }
 
-      String id = loadId;
+      final String id = loadId;
       if (id == lastId) continue;
       if (id != null && lastId != null) {
         String[] files = reader.getUsedFiles();
@@ -150,6 +197,7 @@ public class PreviewPane extends JPanel
         for (int i=0; i<files.length; i++) {
           if (id.equals(files[i])) {
             found = true;
+            lastId = id;
             break;
           }
         }
@@ -157,36 +205,48 @@ public class PreviewPane extends JPanel
       }
       lastId = id;
 
-      iconLabel.setIcon(null);
-      resLabel.setText(id == null ? "" : "Reading...");
-      zctLabel.setText("");
-      typeLabel.setText("");
+      icon = null;
+      iconText = id == null ? "" : "Reading...";
+      formatText = resText = zctText = typeText = "";
+      iconTip = id;
+      formatTip = resTip = zctTip = typeTip = "";
 
-      if (id == null) continue;
+      if (id == null) {
+        SwingUtilities.invokeLater(refresher);
+        continue;
+      }
 
       try { reader.setId(id); }
       catch (FormatException exc) {
-        LogTools.trace(exc);
-        resLabel.setText("Unsupported");
+        if (FormatReader.debug) LogTools.trace(exc);
         boolean badFormat = exc.getMessage().startsWith("Unknown file format");
-        zctLabel.setText(badFormat ? "format" : "file");
+        iconText = "Unsupported " + (badFormat ? "format" : "file");
+        SwingUtilities.invokeLater(refresher);
+        lastId = null;
         continue;
       }
       catch (IOException exc) {
-        LogTools.trace(exc);
-        resLabel.setText("Unsupported");
-        zctLabel.setText("file");
+        if (FormatReader.debug) LogTools.trace(exc);
+        iconText = "Unsupported file";
+        SwingUtilities.invokeLater(refresher);
+        lastId = null;
         continue;
       }
-      if (id != loadId) continue;
+      if (id != loadId) {
+        SwingUtilities.invokeLater(refresher);
+        continue;
+      }
 
-      iconLabel.setIcon(id == null ? null :
-        new ImageIcon(makeImage("Loading...")));
-      resLabel.setText(reader.getSizeX() + " x " + reader.getSizeY());
-      zctLabel.setText(reader.getSizeZ() + "Z x " +
-        reader.getSizeT() + "T x " + reader.getSizeC() + "C");
-      typeLabel.setText(reader.getRGBChannelCount() + " x " +
-        FormatTools.getPixelTypeString(reader.getPixelType()));
+      icon = id == null ? null : new ImageIcon(makeImage("Loading..."));
+      iconText = "";
+      String format = reader.getFormat();
+      formatText = format;
+      formatTip = format;
+      resText = reader.getSizeX() + " x " + reader.getSizeY();
+      zctText = reader.getSizeZ() + "Z x " +
+        reader.getSizeT() + "T x " + reader.getSizeC() + "C";
+      typeText = reader.getRGBChannelCount() + " x " +
+        FormatTools.getPixelTypeString(reader.getPixelType());
 
       // open middle image thumbnail
       int z = reader.getSizeZ() / 2;
@@ -194,12 +254,32 @@ public class PreviewPane extends JPanel
       int ndx = reader.getIndex(z, 0, t);
       BufferedImage thumb = null;
       try { thumb = reader.openThumbImage(ndx); }
-      catch (FormatException exc) { LogTools.trace(exc); }
-      catch (IOException exc) { LogTools.trace(exc); }
-      iconLabel.setIcon(new ImageIcon(thumb == null ?
-        makeImage("Failed") : thumb));
-      repaint();
+      catch (FormatException exc) {
+        if (FormatReader.debug) LogTools.trace(exc);
+      }
+      catch (IOException exc) {
+        if (FormatReader.debug) LogTools.trace(exc);
+      }
+      icon = new ImageIcon(thumb == null ? makeImage("Failed") : thumb);
+      iconText = "";
+
+      SwingUtilities.invokeLater(refresher);
     }
+  }
+
+  // -- StatusListener API methods --
+
+  /** Updates label messages with loading progress information. */
+  public void statusUpdated(StatusEvent e) {
+    String msg = e.getStatusMessage();
+    if (msg == null) msg = "";
+    formatText = msg;
+    int val = e.getProgressValue();
+    int max = e.getProgressMaximum();
+    int percent = val < 0 || max <= 0 ? -1 : 100 * val / max;
+    String progress = percent < 0 ? "" : percent + "%";
+    resText = progress;
+    SwingUtilities.invokeLater(refresher);
   }
 
   // -- Helper methods --
