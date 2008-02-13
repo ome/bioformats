@@ -13,11 +13,11 @@ JVMLinkClient::JVMLinkClient(void)
 }
 
 
-void JVMLinkClient::startJava(int arg_port, CString cpath) { //make second argument optional
+void JVMLinkClient::startJava(int arg_port, CString serverPath, CString classpath) { //make second argument optional
 	if (arg_port != NULL) port = arg_port;
 	else port = DEFAULT_PORT;
 	CString command;
-	command.Format("-cp %s;C:\\Workplace\\eclipse_workspace\\Test\\bin Server %d", cpath, port);
+	command.Format("-cp %s;%s Server %d", serverPath, classpath, port);
 	std::cout << command << std::endl;
 	//ShellExecute(NULL, "open", "java.exe" , command, "", SW_SHOW);
 }

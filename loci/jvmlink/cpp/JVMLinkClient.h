@@ -8,7 +8,7 @@ private:
 	SOCKET conn;
 public:
 	JVMLinkClient(void);
-	void startJava(int, CString);
+	void startJava(int, CString, CString);
 	void shutJava();
 	int establishConnection();
 	int closeConnection();
