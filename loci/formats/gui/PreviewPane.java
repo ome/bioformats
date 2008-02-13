@@ -221,6 +221,7 @@ public class PreviewPane extends JPanel
         if (FormatReader.debug) LogTools.trace(exc);
         boolean badFormat = exc.getMessage().startsWith("Unknown file format");
         iconText = "Unsupported " + (badFormat ? "format" : "file");
+        formatText = resText = "";
         SwingUtilities.invokeLater(refresher);
         lastId = null;
         continue;
@@ -228,6 +229,7 @@ public class PreviewPane extends JPanel
       catch (IOException exc) {
         if (FormatReader.debug) LogTools.trace(exc);
         iconText = "Unsupported file";
+        formatText = resText = "";
         SwingUtilities.invokeLater(refresher);
         lastId = null;
         continue;
@@ -247,6 +249,7 @@ public class PreviewPane extends JPanel
         reader.getSizeT() + "T x " + reader.getSizeC() + "C";
       typeText = reader.getRGBChannelCount() + " x " +
         FormatTools.getPixelTypeString(reader.getPixelType());
+      SwingUtilities.invokeLater(refresher);
 
       // open middle image thumbnail
       int z = reader.getSizeZ() / 2;
