@@ -109,20 +109,4 @@ public interface IFormatWriter extends IFormatHandler {
   /** Sets the current compression type. */
   void setCompression(String compress) throws FormatException;
 
-  // -- Deprecated API methods --
-
-  /** @deprecated Replaced by {@link #canDoStacks()} */
-  boolean canDoStacks(String id) throws FormatException;
-
-  /** @deprecated Replaced by {@link #getPixelTypes()} */
-  int[] getPixelTypes(String id) throws FormatException, IOException;
-
-  /** @deprecated Replaced by {@link #isSupportedType(int type)} */
-  boolean isSupportedType(String id, int type)
-    throws FormatException, IOException;
-
-  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
-  void save(String id, Image image, boolean last)
-    throws FormatException, IOException;
-
 }

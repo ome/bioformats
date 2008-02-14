@@ -181,40 +181,4 @@ public abstract class FormatWriter extends FormatHandler
     initialized = false;
   }
 
-  // -- Deprecated IFormatWriter API methods --
-
-  /** @deprecated Replaced by {@link #canDoStacks()} */
-  public boolean canDoStacks(String id) throws FormatException {
-    try {
-      setId(id);
-    }
-    catch (IOException exc) {
-      // NB: should never happen
-      throw new FormatException(exc);
-    }
-    return canDoStacks(id);
-  }
-
-  /** @deprecated Replaced by {@link #getPixelTypes()} */
-  public int[] getPixelTypes(String id) throws FormatException, IOException {
-    setId(id);
-    return getPixelTypes(id);
-  }
-
-  /** @deprecated Replaced by {@link #isSupportedType(int type)} */
-  public boolean isSupportedType(String id, int type)
-    throws FormatException, IOException
-  {
-    setId(id);
-    return isSupportedType(type);
-  }
-
-  /** @deprecated Replaced by {@link #saveImage(Image, boolean)} */
-  public void save(String id, Image image, boolean last)
-    throws FormatException, IOException
-  {
-    setId(id);
-    saveImage(image, last);
-  }
-
 }

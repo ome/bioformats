@@ -158,14 +158,4 @@ public class TiffWriter extends FormatWriter {
     lastOffset = 0;
   }
 
-  // -- Deprecated API methods --
-
-  /** @deprecated Replaced by {@link #saveImage(Image, Hashtable, boolean)} */
-  public void saveImage(String id, Image image, Hashtable ifd, boolean last)
-    throws IOException, FormatException
-  {
-    setId(id);
-    saveImage(image, ifd, last);
-  }
-
 }

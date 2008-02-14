@@ -434,35 +434,4 @@ public class MinMaxCalculator extends ReaderWrapper {
     if (minMaxDone == null) minMaxDone = new int[seriesCount];
   }
 
-  // -- Deprecated IFormatReader API methods --
-
-  /** @deprecated Replaced by {@link #openImage(int)} */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    setId(id);
-    BufferedImage b = super.openImage(no);
-    updateMinMax(b, no);
-    return b;
-  }
-
-  /** @deprecated Replaced by {@link #openBytes(int)} */
-  public byte[] openBytes(String id, int no) throws FormatException, IOException
-  {
-    setId(id);
-    byte[] b = super.openBytes(no);
-    updateMinMax(b, no);
-    return b;
-  }
-
-  /** @deprecated Replaced by {@link #openBytes(int, byte[])} */
-  public byte[] openBytes(String id, int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    setId(id);
-    super.openBytes(no, buf);
-    updateMinMax(buf, no);
-    return buf;
-  }
-
 }

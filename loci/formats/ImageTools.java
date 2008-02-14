@@ -549,7 +549,9 @@ public final class ImageTools {
     WritableRaster raster = image.getRaster();
     int tt = raster.getTransferType();
     if (tt == DataBuffer.TYPE_BYTE) return getBytes(image);
-    else if (tt == DataBuffer.TYPE_USHORT) return getShorts(image);
+    else if (tt == DataBuffer.TYPE_USHORT || tt == DataBuffer.TYPE_SHORT) {
+      return getShorts(image);
+    }
     else if (tt == DataBuffer.TYPE_INT) return getInts(image);
     else if (tt == DataBuffer.TYPE_FLOAT) return getFloats(image);
     else if (tt == DataBuffer.TYPE_DOUBLE) return getDoubles(image);
