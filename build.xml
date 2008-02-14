@@ -118,6 +118,16 @@ OME Notes
                    jar-notes
     License:       LGPL
 
+JVMLink
+    JAR file:      jvmlink.jar
+    Folder:        loci/jvmlink
+    Main class:    loci.jvmlink.JVMLinkServer
+    Dependencies:  bio-formats.jar
+    Targets:       style-jvmlink
+                   compile-jvmlink
+                   jar-jvmlink
+    License:       BSD
+
 Slim Plotter
     JAR file:      SlimPlotter.jar
     Folders:       loci/apps/slim
@@ -363,12 +373,13 @@ Apache XML-RPC
 -->
   <target name="compile"
     depends="compile-formats, compile-visbio, compile-plugins, compile-notes,
-      compile-editor, compile-slim, compile-tests, compile-checks"
+      compile-jvmlink, compile-slim, compile-editor, compile-tests,
+      compile-checks"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
     depends="jar-formats, jar-visbio, jar-plugins, jar-notes,
-      jar-editor, jar-slim, jar-checks"
+      jar-jvmlink, jar-slim, jar-editor, jar-checks"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="tools" depends="jars"
@@ -833,34 +844,31 @@ Apache XML-RPC
     </jar>
   </target>
 
-  <!-- OME Metadata Editor -->
+  <!-- JVMLink -->
 
-  <target name="style-editor" depends="copy-source, jar-checks"
-    description="check source code style for OME Metadata Editor">
+  <target name="style-jvmlink" depends="copy-source, jar-checks"
+    description="check source code style for JVMLink">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
-      <fileset dir="${dest.dir}" includes="${editor.source}"/>
+      <fileset dir="${dest.dir}" includes="${jvmlink.source}"/>
     </checkstyle>
   </target>
 
-  <target name="compile-editor" depends="copy-source"
-    description="compile classes for OME Metadata Editor">
+  <target name="compile-jvmlink" depends="copy-source"
+    description="compile classes for JVMLink">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${editor.source}" classpath="${ext.jars}"
+      includes="${jvmlink.source}" classpath="${ext.jars}"
       debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
-  <target name="jar-editor"
-    depends="compile-editor, copy-jars, jar-formats"
-    description="generate JAR file for OME Metadata Editor">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${editor.resources}"/>
-    </copy>
-    <jar jarfile="${jar.dir}/${editor.jar}" basedir="${classes.dir}"
-      includes="${editor.files}">
+  <target name="jar-jvmlink"
+    depends="compile-jvmlink, copy-jars, jar-formats"
+    description="generate JAR file for JVMLink">
+    <jar jarfile="${jar.dir}/${jvmlink.jar}" basedir="${classes.dir}"
+      includes="${jvmlink.files}">
       <manifest>
-        <attribute name="Main-Class" value="${editor.main}"/>
-        <attribute name="Class-Path" value="${editor.classpath}"/>
+        <attribute name="Main-Class" value="${jvmlink.main}"/>
+        <attribute name="Class-Path" value="${jvmlink.classpath}"/>
       </manifest>
     </jar>
   </target>
@@ -913,6 +921,38 @@ Apache XML-RPC
       <arg value="../slim.zip"/>
       <arg value="SlimPlotter"/>
     </exec>
+  </target>
+
+  <!-- OME Metadata Editor -->
+
+  <target name="style-editor" depends="copy-source, jar-checks"
+    description="check source code style for OME Metadata Editor">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${editor.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-editor" depends="copy-source"
+    description="compile classes for OME Metadata Editor">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${editor.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-editor"
+    depends="compile-editor, copy-jars, jar-formats"
+    description="generate JAR file for OME Metadata Editor">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${editor.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/${editor.jar}" basedir="${classes.dir}"
+      includes="${editor.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${editor.main}"/>
+        <attribute name="Class-Path" value="${editor.classpath}"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- Automated tests -->
