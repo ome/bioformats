@@ -49,7 +49,7 @@ import org.w3c.dom.Element;
 public class ${klass.name}Node extends ${klass.javaBase}
 {
 	// -- Constructors --
-	
+
 	/** Constructs a ${klass.name} node with an associated DOM element. */
 	public ${klass.name}Node(Element element)
 	{
@@ -80,14 +80,14 @@ public class ${klass.name}Node extends ${klass.javaBase}
   {% choose %}\
     {% when prop.isReference %}
 	// Virtual, inferred back reference ${prop.name}
+	public int get${prop.javaType}Count()
+	{
+		return getReferringCount("${prop.javaType}");
+	}
+
 	public List get${prop.javaType}List()
 	{
 		return getReferringNodes("${prop.javaType}");
-	}
-	
-	public int count${prop.javaType}List()
-	{
-		return getReferringCount("${prop.javaType}");
 	}
     {% end %}\
     {% when prop.isAttribute and prop.type[-2:] == "ID" and \
@@ -95,7 +95,7 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	// Attribute which is an OME XML "ID"
 	public ${prop.javaType} get${prop.name}()
 	{
-		return (${prop.javaType}) 
+		return (${prop.javaType})
 			getAttrReferencedNode("${prop.type[:-2]}", "${prop.name}");
 	}
     {% end %}\
@@ -122,6 +122,11 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	{
 		return getReferencedNodes("${prop.name[:-3]}", "${prop.name}");
 	}
+
+	public Vector get${prop.name}List()
+	{
+		return getChildNodes("${prop.name}");
+	}
     {% end %}\
     {% when not prop.isAttribute and prop.maxOccurs > 1 %}
 	// Element which occurs more than once
@@ -141,20 +146,31 @@ public class ${klass.name}Node extends ${klass.javaBase}
 	{
 		return get${prop.javaType}CData("${prop.name}");
 	}
+
+	public void set${prop.name}(${prop.javaType} ${prop.javaArgumentName})
+	{
+		setCData("${prop.name}", ${prop.javaArgumentName});
+	}
     {% end %}\
     {% when not prop.isAttribute and prop.isComplex() and prop.name[-3:] == "Ref" %}
 	// Element which is complex and is an OME XML "Ref"
 	public ${prop.javaType.replace("Ref", "")} get${prop.name[:-3]}()
 	{
-		return (${prop.javaType.replace("Ref", "")}) 
+		return (${prop.javaType.replace("Ref", "")})
 			getReferencedNode("${prop.name[:-3]}", "${prop.name}");
+	}
+
+	public ${prop.javaType} get${prop.name}()
+	{
+		return (${prop.javaType})
+			getChildNode("${prop.javaType[:-4]}", "${prop.name}");
 	}
     {% end %}\
     {% when not prop.isAttribute and prop.isComplex() %}
 	// Element which is complex (has sub-elements)
 	public ${prop.javaType} get${prop.name}()
 	{
-		return (${prop.javaType}) 
+		return (${prop.javaType})
 			getChildNode("${prop.javaType[:-4]}", "${prop.name}");
 	}
     {% end %}\
@@ -165,7 +181,7 @@ public class ${klass.name}Node extends ${klass.javaBase}
 {% end %}\
 
 	// -- OMEXMLNode API methods --
-	
+
 	public boolean hasID()
 	{
 {% choose %}\
