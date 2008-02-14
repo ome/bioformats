@@ -47,6 +47,8 @@ public class ImarisTiffReader extends BaseTiffReader {
   /** Constructs a new Imaris TIFF reader. */
   public ImarisTiffReader() {
     super("Imaris 5 (TIFF)", "ims");
+    blockCheckLen = 1024;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -54,10 +56,7 @@ public class ImarisTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
-    if (block.length < 3) return false;
-    if (block.length < 8) {
-      return true; // we have no way of verifying further
-    }
+    if (block.length < 8) return false;
 
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
     boolean big = (block[0] == 0x4d && block[1] == 0x4d);
@@ -65,34 +64,19 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
     if (ifdlocation < 0) return false;
-    else if (ifdlocation + 1 > block.length) return true;
+    else if (ifdlocation + 1 > block.length) return false;
     else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
       for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) {
-          return false;
-        }
+        if (ifdlocation + 3 + (i*12) > block.length) return false;
         else {
           int ifdtag = DataTools.bytesToInt(block,
             ifdlocation + 2 + (i*12), 2, little);
-          if (ifdtag == TiffTools.TILE_WIDTH) {
-            return true;
-          }
+          if (ifdtag == TiffTools.TILE_WIDTH) return true;
         }
       }
       return false;
     }
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-
-    // just checking the filename isn't enough to differentiate between
-    // Andor and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, 1024) : true;
   }
 
   // -- Internal FormatReader API methods --

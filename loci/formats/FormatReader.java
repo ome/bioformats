@@ -60,6 +60,24 @@ public abstract class FormatReader extends FormatHandler
   /** Core metadata values. */
   protected CoreMetadata core;
 
+  /**
+   * Maximum number of bytes to check for header information.
+   * If blockCheckLen is zero, the file is never opened for file type analysis.
+   */
+  protected int blockCheckLen = 0;
+
+  /**
+   * Whether the file extension matching one of the reader's suffixes
+   * is necessary to identify the file as an instance of this format.
+   */
+  protected boolean suffixNecessary = true;
+
+  /**
+   * Whether the file extension matching one of the reader's suffixes
+   * is sufficient to identify the file as an instance of this format.
+   */
+  protected boolean suffixSufficient = true;
+
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
 
@@ -79,7 +97,7 @@ public abstract class FormatReader extends FormatHandler
   protected boolean group = true;
 
   /**
-   * Current metadata store. Should <b>never</b> be accessed directly as the
+   * Current metadata store. Should never be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
    */
   protected MetadataStore metadataStore = new DummyMetadata();
@@ -130,12 +148,16 @@ public abstract class FormatReader extends FormatHandler
     try {
       RandomAccessStream ras = new RandomAccessStream(name);
       long len = ras.length();
-      byte[] buf = new byte[len < maxLen ? (int) len : maxLen];
+      if (len > maxLen) len = maxLen;
+      byte[] buf = new byte[(int) len];
       ras.readFully(buf);
       ras.close();
       return isThisType(buf);
     }
-    catch (IOException exc) { return false; }
+    catch (IOException exc) {
+      if (debug) trace(exc);
+      return false;
+    }
   }
 
   /** Returns true if the given file name is in the used files list. */
@@ -189,6 +211,36 @@ public abstract class FormatReader extends FormatHandler
   }
 
   // -- IFormatReader API methods --
+
+  /**
+   * Checks if a file matches the type of this format reader.
+   * Checks filename suffixes against those known for this format.
+   * If the suffix check is inconclusive, the open parameter is true, and the
+   * blockCheckLen variable is set to a value greater than zero, the first
+   * blockCheckLen bytes of the file are read and tested with
+   * {@link #isThisType(byte[])}.
+   * @param open If true, and the file extension is insufficient to determine
+   *   the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
+    // if file extension ID is insufficient and we can't open the file, give up
+    if (!suffixSufficient && !open) return false;
+
+    if (suffixNecessary || suffixSufficient) {
+      // it's worth checking the file extension
+      boolean suffixMatch = super.isThisType(name);
+
+      // if suffix match is required but it doesn't match, failure
+      if (suffixNecessary && !suffixMatch) return false;
+
+      // if suffix matches and that's all we need, green light it
+      if (suffixSufficient && suffixMatch) return true;
+    }
+
+    // suffix matching was inconclusive; we need to analyze the file contents
+    if (!open || blockCheckLen == 0) return false;
+    return checkBytes(name, blockCheckLen);
+  }
 
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
@@ -565,6 +617,12 @@ public abstract class FormatReader extends FormatHandler
   }
 
   // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#isThisType(String) */
+  public boolean isThisType(String name) {
+    // if necessary, open the file for further analysis
+    return isThisType(name, true);
+  }
 
   /* @see IFormatHandler#setId(String, boolean) */
   public void setId(String id, boolean force)

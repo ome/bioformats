@@ -279,16 +279,8 @@ public class ImageWriter implements IFormatWriter {
 
   /* @see IFormatHandler#isThisType(String) */
   public boolean isThisType(String name) {
-    // NB: Unlike individual format writers, ImageWriter defaults to *not*
-    // allowing files to be opened to analyze type, because doing so is
-    // quite slow with the large number of supported formats.
-    return isThisType(name, false);
-  }
-
-  /* @see IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
     for (int i=0; i<writers.length; i++) {
-      if (writers[i].isThisType(name, open)) return true;
+      if (writers[i].isThisType(name)) return true;
     }
     return false;
   }

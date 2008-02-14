@@ -162,6 +162,14 @@ public class ImageReader implements IFormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    for (int i=0; i<readers.length; i++) {
+      if (readers[i].isThisType(name, open)) return true;
+    }
+    return false;
+  }
+
   /* @see IFormatReader.isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     for (int i=0; i<readers.length; i++) {
@@ -532,14 +540,6 @@ public class ImageReader implements IFormatReader {
     // allowing files to be opened to analyze type, because doing so is
     // quite slow with the large number of supported formats.
     return isThisType(name, false);
-  }
-
-  /* @see IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(name, open)) return true;
-    }
-    return false;
   }
 
   /* @see IFormatHandler#getFormat() */

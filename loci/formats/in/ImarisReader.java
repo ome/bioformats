@@ -58,12 +58,17 @@ public class ImarisReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Imaris reader. */
-  public ImarisReader() { super("Bitplane Imaris", "ims"); }
+  public ImarisReader() {
+    super("Bitplane Imaris", "ims");
+    blockCheckLen = 4;
+    suffixSufficient = false;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
+    if (block.length < blockCheckLen) return false;
     return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
   }
 
@@ -88,13 +93,6 @@ public class ImarisReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!open) return true; // not allowed to check the file contents
-    return checkBytes(name, 8);
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

@@ -84,13 +84,18 @@ public class ImarisHDFReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Imaris HDF reader. */
-  public ImarisHDFReader() { super("Imaris 5.5 (HDF)", "ims"); }
+  public ImarisHDFReader() {
+    super("Imaris 5.5 (HDF)", "ims");
+    blockCheckLen = 8;
+    suffixSufficient = false;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return new String(block).indexOf("HDF") != -1;
+    if (block.length < blockCheckLen) return false;
+    return new String(block, 0, 8).indexOf("HDF") >= 0;
   }
 
   /**
@@ -170,13 +175,6 @@ public class ImarisHDFReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false;
-    if (!open) return true;
-    return checkBytes(name, 8);
-  }
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {

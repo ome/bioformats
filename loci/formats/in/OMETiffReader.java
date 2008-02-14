@@ -249,6 +249,27 @@ public class OMETiffReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open)) return false; // check extension
+    if (!open) return true; // not allowed to check the file contents
+
+    // just checking the filename isn't enough to differentiate between
+    // OME-TIFF and regular TIFF; open the file and check more thoroughly
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
+      if (ifd == null) return false;
+
+      String comment = (String)
+        ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      if (comment == null) return false;
+      return comment.indexOf("ome.xsd") >= 0;
+    }
+    catch (IOException e) { return false; }
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
@@ -275,27 +296,6 @@ public class OMETiffReader extends BaseTiffReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!open) return true; // not allowed to check the file contents
-
-    // just checking the filename isn't enough to differentiate between
-    // OME-TIFF and regular TIFF; open the file and check more thoroughly
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
-
-      String comment = (String)
-        ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      if (comment == null) return false;
-      return comment.indexOf("ome.xsd") >= 0;
-    }
-    catch (IOException e) { return false; }
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

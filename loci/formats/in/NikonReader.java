@@ -42,9 +42,6 @@ public class NikonReader extends BaseTiffReader {
 
   // -- Constants --
 
-  /** Maximum number of bytes to check for Nikon header information. */
-  private static final int BLOCK_CHECK_LEN = 16384;
-
   // Tags that give a good indication of whether this is an NEF file.
   private static final int EXIF_IFD_POINTER = 34665;
   private static final int TIFF_EPS_STANDARD = 37398;
@@ -121,35 +118,37 @@ public class NikonReader extends BaseTiffReader {
   /** Constructs a new Nikon reader. */
   public NikonReader() {
     super("Nikon NEF (TIFF)", new String[] {"nef", "tif", "tiff"});
+    blockCheckLen = 16384;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    // extension is sufficient as long as it is NEF
+    if (lname.endsWith(".nef")) return true;
+    return super.isThisType(name, open);
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
-
-    if (block.length < 3) return false;
-    if (block.length < 8) return true; // we have no way of verifying further
+    if (block.length < 8) return false;
 
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
 
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
-    if (ifdlocation < 0 || ifdlocation + 1 > block.length) {
-      return false;
-    }
+    if (ifdlocation < 0 || ifdlocation + 1 > block.length) return false;
     else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
       for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) {
-          return false;
-        }
+        if (ifdlocation + 3 + (i*12) > block.length) return false;
         else {
           int ifdtag = DataTools.bytesToInt(block,
             ifdlocation + 2 + (i*12), 2, little);
-          if (ifdtag == TIFF_EPS_STANDARD) {
-            return true;
-          }
+          if (ifdtag == TIFF_EPS_STANDARD) return true;
         }
       }
       return false;
@@ -157,17 +156,6 @@ public class NikonReader extends BaseTiffReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".nef")) return true;
-    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-
-    // just checking the filename isn't enough to differentiate between
-    // Nikon and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

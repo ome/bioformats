@@ -52,9 +52,9 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     super("Improvision TIFF", new String[] {"tif", "tiff"});
   }
 
-  // -- IFormatHandler API methods --
+  // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
     if (!open) return true; // not allowed to check the file contents
@@ -77,6 +77,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       return false;
     }
   }
+
+  // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

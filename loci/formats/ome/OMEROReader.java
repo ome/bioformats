@@ -84,6 +84,12 @@ public class OMEROReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    StringTokenizer st = new StringTokenizer(name, "\n");
+    return st.countTokens() == 5;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
@@ -120,12 +126,6 @@ public class OMEROReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-  }
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    StringTokenizer st = new StringTokenizer(name, "\n");
-    return st.countTokens() == 5;
   }
 
   // -- Internal FormatReader API methods --

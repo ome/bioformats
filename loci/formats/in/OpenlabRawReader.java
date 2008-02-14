@@ -55,14 +55,19 @@ public class OpenlabRawReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new RAW reader. */
-  public OpenlabRawReader() { super("Openlab RAW", "raw"); }
+  public OpenlabRawReader() {
+    super("Openlab RAW", "raw");
+    blockCheckLen = 4;
+    suffixSufficient = false;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return (block[0] == 'O') && (block[1] == 'L') && (block[2] == 'R') &&
-      (block[3] == 'W');
+    if (block.length < blockCheckLen) return false;
+    return block[0] == 'O' && block[1] == 'L' &&
+      block[2] == 'R' && block[3] == 'W';
   }
 
   /**

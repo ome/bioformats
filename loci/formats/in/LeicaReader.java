@@ -78,6 +78,54 @@ public class LeicaReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".lei")) return true;
+    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+    if (!open) return true; // not allowed to check the file contents
+    if (!isGroupFiles()) return false;
+
+    // just checking the filename isn't enough to differentiate between
+    // Leica and regular TIFF; open the file and check more thoroughly
+    Location file = new Location(name);
+    if (!file.exists()) return false;
+    long len = file.length();
+    if (len < 4) return false;
+
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
+      if (ifd == null) return false;
+
+      String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      int ndx = descr == null ? -1 : descr.indexOf("Series Name");
+
+      if (ndx == -1) return false;
+
+      File f = new File(name).getAbsoluteFile();
+      String[] listing = null;
+      if (f.exists()) listing = f.getParentFile().list();
+      else {
+        listing =
+          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+      }
+
+      for (int i=0; i<listing.length; i++) {
+        if (listing[i].toLowerCase().endsWith(".lei")) return true;
+      }
+      return false;
+    }
+    catch (IOException exc) {
+      if (debug) trace(exc);
+    }
+    catch (ClassCastException exc) {
+      if (debug) trace(exc);
+    }
+    return false;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < 4) return false;
@@ -170,54 +218,6 @@ public class LeicaReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".lei")) return true;
-    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-    if (!open) return true; // not allowed to check the file contents
-    if (!isGroupFiles()) return false;
-
-    // just checking the filename isn't enough to differentiate between
-    // Leica and regular TIFF; open the file and check more thoroughly
-    Location file = new Location(name);
-    if (!file.exists()) return false;
-    long len = file.length();
-    if (len < 4) return false;
-
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
-
-      String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      int ndx = descr == null ? -1 : descr.indexOf("Series Name");
-
-      if (ndx == -1) return false;
-
-      File f = new File(name).getAbsoluteFile();
-      String[] listing = null;
-      if (f.exists()) listing = f.getParentFile().list();
-      else {
-        listing =
-          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-      }
-
-      for (int i=0; i<listing.length; i++) {
-        if (listing[i].toLowerCase().endsWith(".lei")) return true;
-      }
-      return false;
-    }
-    catch (IOException exc) {
-      if (debug) trace(exc);
-    }
-    catch (ClassCastException exc) {
-      if (debug) trace(exc);
-    }
-    return false;
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

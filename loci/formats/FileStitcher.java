@@ -215,6 +215,11 @@ public class FileStitcher implements IFormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    return reader.isThisType(name, open);
+  }
+
   /* @see IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return reader.isThisType(block);
@@ -763,11 +768,6 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatHandler#isThisType(String) */
   public boolean isThisType(String name) {
     return reader.isThisType(name);
-  }
-
-  /* @see IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    return reader.isThisType(name, open);
   }
 
   /* @see IFormatHandler#getFormat() */

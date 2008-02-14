@@ -61,6 +61,20 @@ public class MicromanagerReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    File f = new File(name).getAbsoluteFile();
+    String[] list = null;
+    if (f.exists()) list = f.getParentFile().list();
+    else list = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+
+    if (list == null) return false;
+    for (int i=0; i<list.length; i++) {
+      if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
+    }
+    return false;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] b) {
     return tiffReader.isThisType(b);
@@ -96,20 +110,6 @@ public class MicromanagerReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    File f = new File(name).getAbsoluteFile();
-    String[] list = null;
-    if (f.exists()) list = f.getParentFile().list();
-    else list = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-
-    if (list == null) return false;
-    for (int i=0; i<list.length; i++) {
-      if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
-    }
-    return false;
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

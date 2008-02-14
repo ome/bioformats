@@ -52,13 +52,17 @@ public class IPLabReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new IPLab reader. */
-  public IPLabReader() { super("IPLab", "ipl"); }
+  public IPLabReader() {
+    super("IPLab", "ipl");
+    blockCheckLen = 12;
+    suffixNecessary = false; // allow extensionless IPLab files
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    if (block.length < 12) return false; // block length too short
+    if (block.length < blockCheckLen) return false; // block length too short
     String s = new String(block, 0, 4);
     boolean big = s.equals("iiii");
     boolean little = s.equals("mmmm");

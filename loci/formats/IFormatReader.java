@@ -47,6 +47,13 @@ public interface IFormatReader extends IFormatHandler {
 
   // -- IFormatReader API methods --
 
+  /**
+   * Checks if the given file is a valid instance of this file format.
+   * @param open If true, and the file extension is insufficient to determine
+   *   the file type, the file is opened for further analysis.
+   */
+  boolean isThisType(String name, boolean open);
+
   /** Checks if the given block is a valid header for this file format. */
   boolean isThisType(byte[] block);
 

@@ -96,13 +96,18 @@ public class OpenlabReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new OpenlabReader. */
-  public OpenlabReader() { super("Openlab LIFF", "liff"); }
+  public OpenlabReader() {
+    super("Openlab LIFF", "liff");
+    blockCheckLen = 8;
+    suffixNecessary = false;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
+    if (block.length < blockCheckLen) return false;
+    return block[0] == 0 && block[1] == 0 &&
       block[2] == -1 && block[3] == -1 && block[4] == 105 &&
       block[5] == 109 && block[6] == 112 && block[7] == 114;
   }
@@ -229,27 +234,6 @@ public class OpenlabReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true; // check extension
-
-    if (open) {
-      byte[] b = new byte[8];
-      try {
-        in = new RandomAccessStream(name);
-        in.read(b);
-      }
-      catch (IOException exc) {
-        if (debug) trace(exc);
-        return false;
-      }
-      return isThisType(b);
-    }
-    else { // not allowed to check the file contents
-      return name.indexOf(".") < 0; // file appears to have no extension
-    }
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

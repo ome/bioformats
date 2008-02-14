@@ -108,14 +108,34 @@ public class DicomReader extends FormatReader {
   public DicomReader() {
     super("Digital Img. & Comm. in Med.",
       new String[] {"dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw"});
+    blockCheckLen = 132;
+    // FIXME: Would like to enable extensionless DICOM support with
+    // suffixNecessary = false here, but in order to do that, the
+    // isThisType(byte[]) method must robustly identify DICOM files
+    // from their headers.
+    //suffixNecessary = false;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    // extension is sufficient as long as it is DIC, DCM, DICOM, J2KI, or J2KR
+    if (lname.endsWith(".dic") || lname.endsWith(".dcm") ||
+      lname.endsWith(".dicom") || lname.endsWith(".j2ki") ||
+      lname.endsWith(".j2kr"))
+    {
+      return true;
+    }
+    return super.isThisType(name, open);
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return new String(block).indexOf("DICM") != -1 ||
-      (block[0] == 8 && block[0] == 0);
+    if (block.length < blockCheckLen) return false;
+    return new String(block, 0, blockCheckLen).indexOf("DICM") >= 0;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -268,21 +288,6 @@ public class DicomReader extends FormatReader {
     lut = null;
     offsets = null;
     shortLut = null;
-  }
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (open) {
-      try {
-        RandomAccessStream s = new RandomAccessStream(name);
-        byte[] b = new byte[132];
-        s.read(b);
-        s.close();
-        return isThisType(b);
-      }
-      catch (IOException e) { }
-    }
-    return super.isThisType(name, open);
   }
 
   // -- Internal FormatReader API methods --

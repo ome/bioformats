@@ -77,6 +77,11 @@ public class LegacyND2Reader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String file, boolean open) {
+    return libraryFound && super.isThisType(file, open);
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
@@ -125,14 +130,6 @@ public class LegacyND2Reader extends FormatReader {
     }
 
     return buf;
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String file, boolean open) {
-    if (!super.isThisType(file, open)) return false;
-    return libraryFound;
   }
 
   // -- Internal FormatReader API methods --

@@ -72,6 +72,48 @@ public class PrairieReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open)) return false; // check extension
+    if (!isGroupFiles()) return false;
+
+    // check if there is an XML file in the same directory
+    Location f = new Location(name);
+    f = f.getAbsoluteFile();
+    Location parent = f.getParentFile();
+    String[] listing = parent.list();
+    if (listing == null) return false; // file doesn't exist, or other problem
+    int xmlCount = 0;
+    for (int i=0; i<listing.length; i++) {
+      if (listing[i].toLowerCase().endsWith(".xml")) {
+        try {
+          RandomAccessStream s = new RandomAccessStream(
+            parent.getAbsolutePath() + File.separator + listing[i]);
+          if (s.readString(512).indexOf("PV") != -1) xmlCount++;
+        }
+        catch (IOException e) { }
+      }
+    }
+    if (xmlCount == 0) {
+      listing = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+      for (int i=0; i<listing.length; i++) {
+        if (listing[i].toLowerCase().endsWith(".xml")) {
+          try {
+            RandomAccessStream s = new RandomAccessStream(listing[i]);
+            if (s.readString(512).indexOf("PV") != -1) xmlCount++;
+          }
+          catch (IOException e) { }
+        }
+      }
+    }
+
+    boolean xml = xmlCount > 0;
+
+    // just checking the filename isn't enough to differentiate between
+    // Prairie and regular TIFF; open the file and check more thoroughly
+    return open ? checkBytes(name, 524304) && xml : xml;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
@@ -145,48 +187,6 @@ public class PrairieReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!isGroupFiles()) return false;
-
-    // check if there is an XML file in the same directory
-    Location f = new Location(name);
-    f = f.getAbsoluteFile();
-    Location parent = f.getParentFile();
-    String[] listing = parent.list();
-    if (listing == null) return false; // file doesn't exist, or other problem
-    int xmlCount = 0;
-    for (int i=0; i<listing.length; i++) {
-      if (listing[i].toLowerCase().endsWith(".xml")) {
-        try {
-          RandomAccessStream s = new RandomAccessStream(
-            parent.getAbsolutePath() + File.separator + listing[i]);
-          if (s.readString(512).indexOf("PV") != -1) xmlCount++;
-        }
-        catch (IOException e) { }
-      }
-    }
-    if (xmlCount == 0) {
-      listing = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-      for (int i=0; i<listing.length; i++) {
-        if (listing[i].toLowerCase().endsWith(".xml")) {
-          try {
-            RandomAccessStream s = new RandomAccessStream(listing[i]);
-            if (s.readString(512).indexOf("PV") != -1) xmlCount++;
-          }
-          catch (IOException e) { }
-        }
-      }
-    }
-
-    boolean xml = xmlCount > 0;
-
-    // just checking the filename isn't enough to differentiate between
-    // Prairie and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, 524304) && xml : xml;
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

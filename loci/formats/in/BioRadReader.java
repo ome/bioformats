@@ -76,13 +76,23 @@ public class BioRadReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
-  public BioRadReader() { super("Bio-Rad PIC", new String[] {"pic", "xml"}); }
+  public BioRadReader() {
+    super("Bio-Rad PIC", new String[] {"pic", "xml"});
+    blockCheckLen = 56;
+  }
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    boolean success = super.isThisType(name, open);
+    String lname = name.toLowerCase();
+    return (success && !lname.endsWith(".xml")) || lname.endsWith("lse.xml");
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    if (block.length < 56) return false;
+    if (block.length < blockCheckLen) return false;
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
   }
 
@@ -134,13 +144,6 @@ public class BioRadReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".pic") || lname.endsWith("lse.xml")) return true;
-    return false;
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

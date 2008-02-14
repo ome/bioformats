@@ -76,6 +76,43 @@ public class TCSReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open) && !name.toLowerCase().endsWith("xml")) {
+      return false; // check extension
+    }
+    if (!open) return true; // not allowed to check the file contents
+
+    if (name.toLowerCase().endsWith("xml")) {
+      try {
+        RandomAccessStream ras = new RandomAccessStream(name);
+        String s = ras.readString(20);
+        return s.indexOf("Data") != -1;
+      }
+      catch (IOException exc) {
+        return false;
+      }
+    }
+
+    // just checking the filename isn't enough to differentiate between
+    // Leica TCS and regular TIFF; open the file and check more thoroughly
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
+      if (ifd == null) return false;
+
+      String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
+      if (document == null) document = "";
+      Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
+      String software = s instanceof String ? (String) s :
+        s instanceof String[] ? ((String[]) s)[0] : null;
+      if (software == null) software = "";
+      return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
+    }
+    catch (IOException e) { return false; }
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     return false;
@@ -126,43 +163,6 @@ public class TCSReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open) && !name.toLowerCase().endsWith("xml")) {
-      return false; // check extension
-    }
-    if (!open) return true; // not allowed to check the file contents
-
-    if (name.toLowerCase().endsWith("xml")) {
-      try {
-        RandomAccessStream ras = new RandomAccessStream(name);
-        String s = ras.readString(20);
-        return s.indexOf("Data") != -1;
-      }
-      catch (IOException exc) {
-        return false;
-      }
-    }
-
-    // just checking the filename isn't enough to differentiate between
-    // Leica TCS and regular TIFF; open the file and check more thoroughly
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
-
-      String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
-      if (document == null) document = "";
-      Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
-      String software = s instanceof String ? (String) s :
-        s instanceof String[] ? ((String[]) s)[0] : null;
-      if (software == null) software = "";
-      return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
-    }
-    catch (IOException e) { return false; }
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

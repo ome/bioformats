@@ -76,13 +76,19 @@ public class AVIReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new AVI reader. */
-  public AVIReader() { super("Audio Video Interleave", "avi"); }
+  public AVIReader() {
+    super("Audio Video Interleave", "avi");
+    blockCheckLen = 4;
+    suffixNecessary = false;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return new String(block).startsWith("RIFF");
+    if (block.length < blockCheckLen) return false;
+    return block[0] == 'R' && block[1] == 'I' &&
+      block[2] == 'F' && block[3] == 'F';
   }
 
   /**

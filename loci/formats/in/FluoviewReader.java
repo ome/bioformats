@@ -75,26 +75,24 @@ public class FluoviewReader extends BaseTiffReader {
   /** Constructs a new Fluoview TIFF reader. */
   public FluoviewReader() {
     super("Olympus Fluoview/ABD TIFF", new String[] {"tif", "tiff"});
+    blockCheckLen = 16384;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    if (!TiffTools.isValidHeader(block)) return false;
+    Boolean endianness = TiffTools.checkHeader(block);
+    if (endianness == null) return false;
+    boolean little = endianness.booleanValue();
 
-    if (block.length < 3) return false;
-    if (block.length < 8) return true;
+    if (new String(block).indexOf(FLUOVIEW_MAGIC_STRING) >= 0) return true;
 
-    String test = new String(block);
-    if (test.indexOf(FLUOVIEW_MAGIC_STRING) != -1) {
-      return true;
-    }
-
-    int ifdlocation = DataTools.bytesToInt(block, 4, true);
+    int ifdlocation = DataTools.bytesToInt(block, 4, little);
     if (ifdlocation < 0 || ifdlocation + 1 > block.length) return false;
     else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
+      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
       for (int i=0; i<ifdnumber; i++) {
         if (ifdlocation + 3 + (i*12) > block.length) return false;
         else {
@@ -128,15 +126,6 @@ public class FluoviewReader extends BaseTiffReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-
-    // just checking the filename isn't enough to differentiate between
-    // Fluoview and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
-  }
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {

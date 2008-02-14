@@ -70,6 +70,22 @@ public class PerkinElmerReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (name.toLowerCase().endsWith(".cfg")) {
+      try {
+        RandomAccessStream s = new RandomAccessStream(name);
+        String ss = s.readString(512);
+        return ss.indexOf("Series") != -1;
+      }
+      catch (IOException e) {
+        if (debug) trace(e);
+        return false;
+      }
+    }
+    return super.isThisType(name, open);
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) { return false; }
 
@@ -142,22 +158,6 @@ public class PerkinElmerReader extends FormatReader {
     files = null;
     details = sliceSpace = null;
     isTiff = true;
-  }
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (name.toLowerCase().endsWith(".cfg")) {
-      try {
-        RandomAccessStream s = new RandomAccessStream(name);
-        String ss = s.readString(512);
-        return ss.indexOf("Series") != -1;
-      }
-      catch (IOException e) {
-        if (debug) trace(e);
-        return false;
-      }
-    }
-    return super.isThisType(name, open);
   }
 
   // -- Internal FormatReader API methods --

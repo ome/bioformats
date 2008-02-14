@@ -122,6 +122,30 @@ public class QTReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (super.isThisType(name, open)) return true; // check extension
+
+    if (open) {
+      byte[] b;
+      try {
+        in = new RandomAccessStream(name);
+        long len = in.length();
+        if (len > 20) len = 20;
+        b = new byte[(int) len];
+        in.readFully(b);
+      }
+      catch (IOException exc) {
+        if (debug) trace(exc);
+        return false;
+      }
+      return isThisType(b);
+    }
+    else { // not allowed to check the file contents
+      return name.indexOf(".") < 0; // file appears to have no extension
+    }
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // use a crappy hack for now
@@ -255,30 +279,6 @@ public class QTReader extends FormatReader {
   }
 
   // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true; // check extension
-
-    if (open) {
-      byte[] b;
-      try {
-        in = new RandomAccessStream(name);
-        long len = in.length();
-        if (len > 20) len = 20;
-        b = new byte[(int) len];
-        in.readFully(b);
-      }
-      catch (IOException exc) {
-        if (debug) trace(exc);
-        return false;
-      }
-      return isThisType(b);
-    }
-    else { // not allowed to check the file contents
-      return name.indexOf(".") < 0; // file appears to have no extension
-    }
-  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
