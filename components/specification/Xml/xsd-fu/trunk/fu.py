@@ -276,6 +276,14 @@ class OMEModelObject(object):
 
 	javaBase = property(_get_javaBase, 
 		doc="""The model object's Java base class.""")
+		
+	def _get_refNodeName(self):
+		if self.base == "Reference":
+			return self.properties["ID"].javaType
+		return None
+		
+	refNodeName = property(_get_refNodeName,
+		doc="""The name of this node's reference node; None otherwise.""")
 	
 	def __str__(self):
 		return self.__repr__(self)

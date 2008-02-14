@@ -65,7 +65,7 @@ def main():
 		usage(msg)
 
 	if len(args) != 1:
-	    usage("Expecting single ome.xsd file path!")
+		usage("Expecting single ome.xsd file path!")
 
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
@@ -77,8 +77,8 @@ def main():
 	if outputDirectory is None:
 		usage("Output directory must be specified!")
 	if not os.path.exists(outputDirectory):
-	    print "Output directory '%s' does not exist!" % outputDirectory
-	    sys.exit(1)
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
 
 	model = parseXmlSchema(args[0])
 	fu = TemplateInfo(outputDirectory, package)
@@ -102,7 +102,7 @@ def debugMain():
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
 		if obj.name == "Laser":
-			print " +--", obj.name
+			print " +-- %s(%s)" % (obj.name, obj.base)
 			for prop in obj.properties.values():
 				print " +---- %s(%s) [%d:%d]" % \
 				    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs)

@@ -74,6 +74,27 @@ public class ${klass.name}Node extends ${klass.javaBase}
 		super(DOMUtil.createChild(parent.getDOMElement(),
 		                          "${klass.name}", attach));
 	}
+{% if klass.base == "Reference" %}
+	/** 
+	 * Returns the <code>${klass.refNodeName}</code> which this reference
+	 * links to.
+	 */
+	public ${klass.refNodeName} get${klass.refNodeName[:-4]}()
+	{
+		return (${klass.refNodeName})
+			getAttrReferencedNode("${klass.refNodeName[:-4]}", "ID");
+	}
+
+	/**
+	 * Sets the active reference node on this node.
+	 * @param node The <code>${klass.refNodeName}</code> to set as a
+	 * reference.
+	 */
+	public void set${klass.refNodeName}(${klass.refNodeName} node)
+	{
+		setNodeID(node.getNodeID());
+	}
+{% end %}\
 
 	// -- ${klass.name} API methods --
 {% for prop in klass.properties.values() %}\
