@@ -42,6 +42,11 @@ import loci.formats.*;
  */
 public final class GUITools {
 
+  // -- Fields --
+
+  /** String to use for "all types" combination filter. */
+  private static final String ALL_TYPES = "All supported file types";
+
   // -- Constructor --
 
   private GUITools() { }
@@ -50,7 +55,7 @@ public final class GUITools {
 
   /** Constructs a list of file filters for the given file format handler. */
   public static FileFilter[] buildFileFilters(IFormatHandler handler) {
-    FileFilter[] ff = null;
+    FileFilter[] filters = null;
 
     // unwrap reader
     while (true) {
@@ -65,45 +70,51 @@ public final class GUITools {
 
     // handle special cases of ImageReader and ImageWriter
     if (handler instanceof ImageReader) {
-      IFormatReader[] readers = ((ImageReader) handler).getReaders();
-      Vector v = new Vector();
+      ImageReader imageReader = (ImageReader) handler;
+      IFormatReader[] readers = imageReader.getReaders();
+      Vector filterList = new Vector();
+      Vector comboList = new Vector();
       for (int i=0; i<readers.length; i++) {
-        // NB: By default, some readers might need to open a file to
-        // determine if it is the proper type, when the extension alone
-        // isn't enough to distinguish.
-        //
-        // We want to disable that behavior for ImageReader,
-        // because otherwise the combination filter is too slow.
-        //
-        // Also, most of the formats that do this are TIFF-based, and the
-        // TIFF reader will already green-light anything with .tif
-        // extension, making more thorough checks redundant.
-        v.add(new FormatFileFilter(readers[i], false));
+        filterList.add(new FormatFileFilter(readers[i]));
+        // NB: Some readers need to open a file to determine if it is the
+        // proper type, when the extension alone is insufficient to
+        // distinguish. This behavior is fine for individual filters, but not
+        // for ImageReader's combination filter, because it makes the combo
+        // filter too slow. So rather than composing the combo filter from
+        // FormatFileFilters, we use faster but less accurate
+        // ExtensionFileFilters instead.
+        String[] suffixes = readers[i].getSuffixes();
+        String format = readers[i].getFormat();
+        comboList.add(new ExtensionFileFilter(suffixes, format));
       }
-      ff = ComboFileFilter.sortFilters(v);
+      comboList.add(new NoExtensionFileFilter());
+      FileFilter combo = makeComboFilter(sortFilters(comboList));
+      if (combo != null) filterList.add(combo);
+
+      filters = sortFilters(filterList);
     }
     else if (handler instanceof ImageWriter) {
       IFormatWriter[] writers = ((ImageWriter) handler).getWriters();
-      Vector v = new Vector();
+      Vector filterList = new Vector();
       for (int i=0; i<writers.length; i++) {
         String[] suffixes = writers[i].getSuffixes();
         String format = writers[i].getFormat();
-        v.add(new ExtensionFileFilter(suffixes, format));
+        filterList.add(new ExtensionFileFilter(suffixes, format));
       }
-      ff = ComboFileFilter.sortFilters(v);
+      filters = sortFilters(filterList);
     }
 
     // handle default reader and writer cases
     else if (handler instanceof IFormatReader) {
       IFormatReader reader = (IFormatReader) handler;
-      ff = new FileFilter[] {new FormatFileFilter(reader)};
+      filters = new FileFilter[] {new FormatFileFilter(reader)};
     }
     else {
       String[] suffixes = handler.getSuffixes();
       String format = handler.getFormat();
-      ff = new FileFilter[] {new ExtensionFileFilter(suffixes, format)};
+      filters = new FileFilter[] {new ExtensionFileFilter(suffixes, format)};
     }
-    return ff;
+    return filters;
   }
 
   /** Constructs a file chooser for the given file format handler. */
@@ -131,25 +142,31 @@ public final class GUITools {
   }
 
   /**
-   * Builds a file chooser with the given file filters,
-   * as well as an "All supported file types" combo filter.
-   * If preview flag is set, chooser has an preview pane showing
-   * a thumbnail and other information for the selected file.
+   * Builds a file chooser with the given file filters, as well as an "All
+   * supported file types" combo filter, if one is not already specified.
+   * @param preview If set, chooser has a preview pane showing a
+   *   thumbnail and other information for the selected file.
    */
   public static JFileChooser buildFileChooser(final FileFilter[] filters,
     final boolean preview)
   {
-    // NB: must construct JFileChooser in the
-    // AWT worker thread, to avoid deadlocks
+    // NB: construct JFileChooser in the AWT worker thread, to avoid deadlocks
     final JFileChooser[] jfc = new JFileChooser[1];
     Runnable r = new Runnable() {
       public void run() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-        FileFilter[] ff = ComboFileFilter.sortFilters(filters);
+        FileFilter[] ff = sortFilters(filters);
+
         FileFilter combo = null;
-        if (ff.length > 1) {
-          combo = new ComboFileFilter(ff, "All supported file types");
-          fc.addChoosableFileFilter(combo);
+        if (ff.length > 0 && ff[0] instanceof ComboFileFilter) {
+          // check for existing "All supported file types" filter
+          ComboFileFilter cff = (ComboFileFilter) ff[0];
+          if (ALL_TYPES.equals(cff.getDescription())) combo = cff;
+        }
+        // make an "All supported file types" filter if we don't have one yet
+        if (combo == null) {
+          combo = makeComboFilter(ff);
+          if (combo != null) fc.addChoosableFileFilter(combo);
         }
         for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
         if (combo != null) fc.setFileFilter(combo);
@@ -170,6 +187,53 @@ public final class GUITools {
       catch (InvocationTargetException exc) { return null; }
     }
     return jfc[0];
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Creates an "All supported file types" combo filter
+   * encompassing all of the given filters.
+   */
+  private static FileFilter makeComboFilter(FileFilter[] filters) {
+    return filters.length > 1 ? new ComboFileFilter(filters, ALL_TYPES) : null;
+  }
+
+  /**
+   * Sorts the given list of file filters, keeping the "All supported
+   * file types" combo filter (if any) at the front of the list.
+   */
+  private static FileFilter[] sortFilters(FileFilter[] filters) {
+    filters = ComboFileFilter.sortFilters(filters);
+    shuffleAllTypesToFront(filters);
+    return filters;
+  }
+
+  /**
+   * Sorts the given list of file filters, keeping the "All supported
+   * file types" combo filter (if any) at the front of the list.
+   */
+  private static FileFilter[] sortFilters(Vector filterList) {
+    FileFilter[] filters = ComboFileFilter.sortFilters(filterList);
+    shuffleAllTypesToFront(filters);
+    return filters;
+  }
+
+  /**
+   * Looks for an "All supported file types" combo filter
+   * and shuffles it to the front of the list.
+   */
+  private static void shuffleAllTypesToFront(FileFilter[] filters) {
+    for (int i=0; i<filters.length; i++) {
+      if (filters[i] instanceof ComboFileFilter) {
+        ComboFileFilter combo = (ComboFileFilter) filters[i];
+        if (ALL_TYPES.equals(combo.getDescription())) {
+          for (int j=i; j>=0; j--) filters[i] = filters[i - 1];
+          filters[0] = combo;
+          break;
+        }
+      }
+    }
   }
 
 }
