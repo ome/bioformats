@@ -64,8 +64,9 @@ public class OMETiffReader extends BaseTiffReader {
   private int currentFile, currentSeries, seriesCount;
   private int[] numIFDs;
   private int[][] ifdMap, fileMap;
-  private boolean lsids, isWiscScan;
+  private boolean lsids, fileIDs, isWiscScan;
   private Hashtable[][] usedIFDs;
+  private Hashtable keyMetadata, temporaryKeyMetadata;
 
   // -- Constructor --
 
@@ -79,7 +80,10 @@ public class OMETiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    OMETiffHandler handler = new OMETiffHandler();
+    keyMetadata = new Hashtable();
+    temporaryKeyMetadata = new Hashtable();
+
+    OMETiffHandler handler = new OMETiffHandler(false);
     String comment = TiffTools.getComment(ifds[0]);
 
     currentSeries = -1;
@@ -119,11 +123,15 @@ public class OMETiffReader extends BaseTiffReader {
     l = l.getAbsoluteFile().getParentFile();
     String[] fileList = l.list();
 
+    /*
     if (!lsids) {
       fileList = new String[] {currentId};
       LogTools.println("Not searching for other files - " +
         "Image LSID not present");
     }
+    */
+
+    int oldSeriesCount = seriesCount;
 
     for (int i=0; i<fileList.length; i++) {
       String check = fileList[i].toLowerCase();
@@ -134,7 +142,7 @@ public class OMETiffReader extends BaseTiffReader {
         String iid = file.getAbsolutePath();
         String icomment = TiffTools.getComment(iid);
         boolean addToList = true;
-        if (imageIDs != null) {
+        if (lsids && imageIDs != null) {
           for (int k=0; k<imageIDs.size(); k++) {
             if (icomment.indexOf((String) imageIDs.get(k)) == -1) {
               addToList = false;
@@ -150,11 +158,46 @@ public class OMETiffReader extends BaseTiffReader {
             }
           }
         }
-        if (addToList) files.add(iid);
+        else if (fileIDs) {
+          // TODO : FilePath/FileID checking
+        }
+        else {
+          // check key pieces of metadata for consistency
+          currentSeries = -1;
+          seriesCount = 0;
+          handler = new OMETiffHandler(true);
+          try {
+            SAXParser parser = SAX_FACTORY.newSAXParser();
+            parser.parse(
+              new ByteArrayInputStream(icomment.getBytes()), handler);
+          }
+          catch (ParserConfigurationException exc) {
+            throw new FormatException(exc);
+          }
+          catch (SAXException exc) {
+            throw new FormatException(exc);
+          }
+
+          Enumeration keys = keyMetadata.keys();
+          while (keys.hasMoreElements()) {
+            String key = keys.nextElement().toString();
+            if (!keyMetadata.get(key).equals(temporaryKeyMetadata.get(key))) {
+              addToList = false;
+              break;
+            }
+          }
+          temporaryKeyMetadata.clear();
+        }
+
+        if (addToList || iid.endsWith(File.separator + currentId)) {
+          files.add(iid);
+        }
       }
     }
 
     // parse grouped files
+
+    seriesCount = oldSeriesCount;
 
     ifdMap = new int[seriesCount][];
     fileMap = new int[seriesCount][];
@@ -200,6 +243,7 @@ public class OMETiffReader extends BaseTiffReader {
 
       usedIFDs[i] = TiffTools.getIFDs(new RandomAccessStream(usedFiles[i]));
       String c = TiffTools.getComment(usedIFDs[i][0]);
+      handler = new OMETiffHandler(false);
       try {
         SAXParser parser = SAX_FACTORY.newSAXParser();
         parser.parse(new ByteArrayInputStream(c.getBytes()), handler);
@@ -223,7 +267,7 @@ public class OMETiffReader extends BaseTiffReader {
             ", expected " + core.imageCount[i]);
         }
       }
-      else if (core.imageCount[i] > ifds.length) {
+      else if (core.imageCount[i] > ifdMap[i].length) {
         core.imageCount[i] = ifds.length;
         if (core.sizeZ[i] > ifds.length) {
           core.sizeZ[i] = ifds.length / (core.rgb[i] ? core.sizeC[i] : 1);
@@ -235,6 +279,14 @@ public class OMETiffReader extends BaseTiffReader {
           core.sizeZ[i] = 1;
           if (!core.rgb[i]) core.sizeC[i] = 1;
         }
+      }
+      else if (core.imageCount[i] !=
+        core.sizeZ[i] * core.sizeC[i] * core.sizeT[i])
+      {
+        if (!core.rgb[i]) {
+          core.imageCount[i] = core.sizeZ[i] * core.sizeC[i] * core.sizeT[i];
+        }
+        else core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
       }
     }
   }
@@ -315,19 +367,57 @@ public class OMETiffReader extends BaseTiffReader {
   private class OMETiffHandler extends DefaultHandler {
     private String order;
     private int sizeZ, sizeC, sizeT;
+    private int imageCount = 0;
+    private boolean foundDescription = false, foundDate = false;
+    private boolean minimal;
+
+    public OMETiffHandler(boolean minimal) {
+      // flag is true if we just want to scan for metadata, without populating
+      // anything
+      this.minimal = minimal;
+    }
+
+    public void characters(char[] ch, int start, int length) {
+      String key = null;
+      if (foundDescription) {
+        key = "Description " + (imageCount - 1);
+        foundDescription = false;
+      }
+      if (foundDate) {
+        key = "CreationDate " + (imageCount - 1);
+        foundDate = false;
+      }
+      if (key != null) {
+        if (!keyMetadata.containsKey(key)) {
+          keyMetadata.put(key, new String(ch, start, length));
+        }
+        else temporaryKeyMetadata.put(key, new String(ch, start, length));
+      }
+    }
 
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
       if (qName.equals("Image")) {
         String id = attributes.getValue("ID");
-        if (id.startsWith("urn:lsid:")) {
-          if (imageIDs == null) imageIDs = new Vector();
-          imageIDs.add(id);
+        if (!minimal) {
+          if (id.startsWith("urn:lsid:")) {
+            if (imageIDs == null) imageIDs = new Vector();
+            imageIDs.add(id);
+          }
+          else lsids = false;
         }
-        else lsids = false;
+
+        imageCount++;
+      }
+      else if (qName.equals("CreationDate")) {
+        foundDate = true;
+      }
+      else if (qName.equals("Description")) {
+        foundDescription = true;
       }
       else if (qName.equals("Pixels")) {
+        if (minimal) return;
         currentSeries++;
         String id = attributes.getValue("ID");
         if (id.startsWith("urn:lsid:")) {
@@ -386,7 +476,6 @@ public class OMETiffReader extends BaseTiffReader {
 
         int sc = core.sizeC[currentSeries];
         if (core.rgb[currentSeries] && !core.indexed[currentSeries]) sc /= 3;
-        if (core.indexed[currentSeries]) core.sizeC[currentSeries] *= 3;
         core.imageCount[currentSeries] =
           core.sizeZ[currentSeries] * sc * core.sizeT[currentSeries];
         core.pixelType[currentSeries] =
@@ -405,6 +494,7 @@ public class OMETiffReader extends BaseTiffReader {
         seriesCount++;
       }
       else if (qName.equals("TiffData")) {
+        if (minimal) return;
         String ifd = attributes.getValue("IFD");
         String numPlanes = attributes.getValue("NumPlanes");
         String z = attributes.getValue("FirstZ");
