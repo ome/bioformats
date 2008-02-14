@@ -3,7 +3,6 @@ package loci.jvmlink;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.*;
-import java.nio.charset.Charset;
 
 import loci.formats.ReflectException;
 import loci.formats.ReflectedUniverse;
@@ -186,7 +185,7 @@ public class ConnThread extends Thread implements Runnable
         		    	byte[] b = new byte[packetSize];
     		    		inStream.readFully(b, 0, packetSize);
     		    		for (int i=0; i<packetSize; i++) {
-        					boolArray[i + readBytes] = (b[i] == 0) ? Boolean.FALSE : Boolean.TRUE;
+        					boolArray[i + readBytes] = b[i] != 0;
         				}
     		    		readBytes += packetSize;
     		    	}
@@ -323,7 +322,7 @@ public class ConnThread extends Thread implements Runnable
     				//untested. probably quite messed up.
     				out.writeInt(DataTools.swap(4)); out.flush();
     				String[] sArray = (String[]) theArray;
-    				for (int i=0; i<arrayLen; i++) out.write(sArray[i].getBytes(Charset.forName("UTF-16")));
+    				for (int i=0; i<arrayLen; i++) out.write(sArray[i].getBytes());
     			}
     			else if (insideType == BYTE_TYPE) {
     				out.writeInt(DataTools.swap(1)); out.flush();
