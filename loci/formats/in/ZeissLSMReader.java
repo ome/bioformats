@@ -146,7 +146,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || core.pixelType[0] != FormatTools.UINT8) return null;
     byte[][] b = new byte[3][256];
-    for (int i=core.sizeC[0]-1; i>=core.sizeC[0]-validChannels; i--) {
+    for (int i=2; i>=3-validChannels; i--) {
       for (int j=0; j<256; j++) {
         b[i][j] = (byte) j;
       }
