@@ -31,7 +31,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
- * Reader for Imaris 5.5 (HDF) files.
+ * Reader for Bitplane Imaris 5.5 (HDF) files.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ImarisHDFReader.java">Trac</a>,
@@ -85,7 +85,7 @@ public class ImarisHDFReader extends FormatReader {
 
   /** Constructs a new Imaris HDF reader. */
   public ImarisHDFReader() {
-    super("Imaris 5.5 (HDF)", "ims");
+    super("Bitplane Imaris 5.5 (HDF)", "ims");
     blockCheckLen = 8;
     suffixSufficient = false;
   }

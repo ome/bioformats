@@ -32,7 +32,7 @@ import loci.formats.meta.MetadataStore;
 
 /**
  * ImarisTiffReader is the file format reader for
- * Imaris 5 files (TIFF variant).
+ * Bitplane Imaris 5 files (TIFF variant).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ImarisTiffReader.java">Trac</a>,
@@ -46,7 +46,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   /** Constructs a new Imaris TIFF reader. */
   public ImarisTiffReader() {
-    super("Imaris 5 (TIFF)", "ims");
+    super("Bitplane Imaris 5 (TIFF)", "ims");
     blockCheckLen = 1024;
     suffixSufficient = false;
   }
