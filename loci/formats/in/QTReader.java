@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Vector;
 import java.util.zip.*;
@@ -162,6 +163,35 @@ public class QTReader extends FormatReader {
     FormatTools.assertId(currentId, false, 1);
     super.setMetadataStore(store);
     if (useLegacy) legacy.setMetadataStore(store);
+  }
+
+  /**
+   * @see loci.formats.IFormatReader#openImage(int, int, int, int, int)
+   */
+  public BufferedImage openImage(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+    FormatTools.checkPlaneNumber(this, no);
+
+    String code = codec;
+    if (no >= getImageCount() - altPlanes) code = altCodec;
+
+    boolean doLegacy = useLegacy;
+    if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
+      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
+    {
+      if (debug) {
+        debug("Unsupported codec (" + code + "); using QTJava reader");
+      }
+      doLegacy = true;
+    }
+    if (doLegacy) {
+      if (legacy == null) legacy = createLegacyReader();
+      legacy.setId(currentId);
+      return legacy.openImage(no, x, y, w, h);
+    }
+    return super.openImage(no, x, y, w, h);
   }
 
   /**
