@@ -738,10 +738,10 @@ public class ImporterOptions implements ItemListener {
     for (int i=0; i<series.length; i++) {
       if (!series[i]) continue;
       gd.addMessage(labels[i].replaceAll("_", " "));
-      gd.addNumericField("X_Coordinate", 0, 0);
-      gd.addNumericField("Y_Coordinate", 0, 0);
-      gd.addNumericField("Width", 0, 0);
-      gd.addNumericField("Height", 0, 0);
+      gd.addNumericField("X_Coordinate_" + i, 0, 0);
+      gd.addNumericField("Y_Coordinate_" + i, 0, 0);
+      gd.addNumericField("Width_" + i, 0, 0);
+      gd.addNumericField("Height_" + i, 0, 0);
     }
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
