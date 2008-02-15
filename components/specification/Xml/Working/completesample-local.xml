@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ome:OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2007-06"
-    xmlns:std="http://www.openmicroscopy.org/Schemas/STD/2007-06"
-    xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
-    xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2007-06"
-    xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2007-06"
-    xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2007-06"
-    xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
-    xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
+<ome:OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2008-02"
+    xmlns:std="http://www.openmicroscopy.org/Schemas/STD/2008-02"
+    xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02"
+    xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2008-02"
+    xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2008-02"
+    xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2008-02"
+    xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
+    xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06 ome.xsd"
-    HashMethod="SHA1">
+ xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome.xsd"
+    UUID="urn:uuid:b9a95980-dbd6-11dc-95ff-0800200c9a66">
     <ome:Project Name="Name0" ID="Project:a">
         <ome:Description>
         </ome:Description>
@@ -294,7 +294,7 @@
             </bf:BinaryFile>
         </ome:OTF>
     </ome:Instrument>
-    <ome:Image ID="Image:a" Name="Name92" DefaultPixels="Pixels:a">
+    <ome:Image ID="Image:a" Name="Name92" DefaultPixels="Pixels:a" AcquiredPixels="Pixels:a">
         <ome:CreationDate>2006-05-04T18:13:51.0Z</ome:CreationDate>
         <ome:ExperimenterRef ID="Experimenter:a"/>
         <ome:Description>
@@ -337,9 +337,13 @@
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
+            <ome:TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
+                <ome:UUID FileName="thisfile.ome.tiff">urn:uuid:b9a95980-dbd6-11dc-95ff-0800200c9a66</ome:UUID>
+            </ome:TiffData>
             <ome:Plane TheZ="0" TheT="0" TheC="0">
                 <ome:PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
                 <ome:StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
+                <ome:HashSHA1>1234567890ABCDEF1234567890ABCDEF12345678</ome:HashSHA1>
             </ome:Plane>
         </ome:Pixels>
         <ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2" SizeZ="2"
@@ -359,12 +363,12 @@
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
             <bf:BinData Compression="none" Length="1">ZGVmYXVsdA==</bf:BinData>
-            <ome:Plane TheZ="0" TheT="0" TheC="0" Hash="1234567890ABCDEF1234567890ABCDEF12345678">
+            <ome:Plane TheZ="0" TheT="0" TheC="0">
                 <ome:PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
                 <ome:StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
+                <ome:HashSHA1>1234567890ABCDEF1234567890ABCDEF12345678</ome:HashSHA1>
             </ome:Plane>
         </ome:Pixels>
-        <ome:AcquiredPixelsRef ID="Pixels:a"/>
         <ome:Region Tag="Tag22" Name="Name95" ID="Region:a">
             <ome:Region Tag="Tag23" Name="Name96" ID="Region:a"/>
             <ca:CustomAttributes>
@@ -434,19 +438,19 @@
     <am:AnalysisModuleLibrary>
         <am:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator0" NewRegionName="NewRegionName0"
              Category="Category0" ProgramID="ProgramID0" ModuleName="ModuleName0" ID="Module:a">
-            <am:Description>Description3</am:Description>
+            <ome:Description>Description3</ome:Description>
             <am:Declaration>
                 <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName0">
                     <am:LookupTable Name="Name109">
                         <am:Entry Value="Value9" Label="Label9"/>
                         <am:Entry Value="Value10" Label="Label10"/>
                         <am:Entry Value="Value11" Label="Label11"/>
-                        <am:Description>Description4</am:Description>
+                        <ome:Description>Description4</ome:Description>
                     </am:LookupTable>
-                    <am:Description>Description5</am:Description>
+                    <ome:Description>Description5</ome:Description>
                 </am:FormalInput>
                 <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName1">
-                    <am:Description>Description6</am:Description>
+                    <ome:Description>Description6</ome:Description>
                 </am:FormalOutput>
             </am:Declaration>
                 <cli:ExecutionInstructions ExecutionPoint="executeGlobal" MakesNewRegion="false">
@@ -540,19 +544,19 @@
         </am:AnalysisModule>
         <am:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator1" NewRegionName="NewRegionName1"
              Category="Category1" ProgramID="ProgramID1" ModuleName="ModuleName1" ID="Module:a">
-            <am:Description>Description7</am:Description>
+            <ome:Description>Description7</ome:Description>
             <am:Declaration>
                 <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName2">
                     <am:LookupTable Name="Name110">
                         <am:Entry Value="Value12" Label="Label12"/>
                         <am:Entry Value="Value13" Label="Label13"/>
                         <am:Entry Value="Value14" Label="Label14"/>
-                        <am:Description>Description8</am:Description>
+                        <ome:Description>Description8</ome:Description>
                     </am:LookupTable>
-                    <am:Description>Description9</am:Description>
+                    <ome:Description>Description9</ome:Description>
                 </am:FormalInput>
                 <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName3">
-                    <am:Description>Description10</am:Description>
+                    <ome:Description>Description10</ome:Description>
                 </am:FormalOutput>
             </am:Declaration>
                 <cli:ExecutionInstructions ExecutionPoint="executeGlobal" MakesNewRegion="false">
@@ -646,19 +650,19 @@
         </am:AnalysisModule>
         <am:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator2" NewRegionName="NewRegionName2"
              Category="Category2" ProgramID="ProgramID2" ModuleName="ModuleName2" ID="Module:a">
-            <am:Description>Description11</am:Description>
+            <ome:Description>Description11</ome:Description>
             <am:Declaration>
                 <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName4">
                     <am:LookupTable Name="Name111">
                         <am:Entry Value="Value15" Label="Label15"/>
                         <am:Entry Value="Value16" Label="Label16"/>
                         <am:Entry Value="Value17" Label="Label17"/>
-                        <am:Description>Description12</am:Description>
+                        <ome:Description>Description12</ome:Description>
                     </am:LookupTable>
-                    <am:Description>Description13</am:Description>
+                    <ome:Description>Description13</ome:Description>
                 </am:FormalInput>
                 <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName5">
-                    <am:Description>Description14</am:Description>
+                    <ome:Description>Description14</ome:Description>
                 </am:FormalOutput>
             </am:Declaration>
                 <cli:ExecutionInstructions ExecutionPoint="executeGlobal" MakesNewRegion="false">
@@ -751,7 +755,7 @@
                 </cli:ExecutionInstructions>
         </am:AnalysisModule>
         <am:Category Path="^ $">
-            <am:Description>Description15</am:Description>
+            <ome:Description>Description15</ome:Description>
         </am:Category>
         <am:Program Name="Name112" Version="Version0" ProgramID="ProgramID3">
                 <am:InstallationScript>

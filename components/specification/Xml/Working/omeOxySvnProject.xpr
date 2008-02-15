@@ -17,11 +17,8 @@
         <file name="DataHistory.xsd"/>
         <file name="min-sample.xml"/>
         <file name="MLI.xsd"/>
-        <file name="newInstMk40.ome.xml"/>
         <file name="ome.xsd"/>
         <file name="sample-updated.ome.xml"/>
-        <file name="scratch.xml"/>
-        <file name="scratch2.xml"/>
         <file name="SPW.xsd"/>
         <file name="STD.xsd"/>
     </projectTree>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2007-06"
-    xmlns:std="http://www.openmicroscopy.org/Schemas/STD/2007-06"
- xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
- xmlns="http://www.openmicroscopy.org/Schemas/OME/2007-06"
- xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2007-06"
- xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2007-06"
- xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
- xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
+<OME xmlns:ca="http://www.openmicroscopy.org/Schemas/CA/2008-02"
+    xmlns:std="http://www.openmicroscopy.org/Schemas/STD/2008-02"
+ xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02"
+ xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-02"
+ xmlns:cli="http://www.openmicroscopy.org/Schemas/CLI/2008-02"
+ xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2008-02"
+ xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
+ xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06 http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd">
+ xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd">
     <Project Name="Name0" ID="Project:a">
         <Description>
         </Description>
@@ -122,24 +122,24 @@
                  PockelCell="false" RepetitionRate="false">
                 <Pump ID="LightSource:a"/>
             </Laser>
-<!--        <Filament Type="Incandescent" Power="3.14159E0"/>-->
-<!--        <Arc Type="Hg" Power="3.14159E0"/>-->
+<!--        <Filament Type="Incandescent"/>-->
+<!--        <Arc Type="Hg"/>-->
         </LightSource>
         <LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer2" Model="Model2" SerialNumber="SerialNumber2">
 <!--        <Laser Type="Excimer" LaserMedium="CO2" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
                  PockelCell="false" RepetitionRate="false">
                 <Pump ID="LightSource:a"/>
             </Laser>-->
-            <Filament Type="Incandescent" Power="3.14159E0"/>
-<!--        <Arc Type="Hg" Power="3.14159E0"/>-->
+            <Filament Type="Incandescent"/>
+<!--        <Arc Type="Hg"/>-->
         </LightSource>
         <LightSource ID="LightSource:a" Power="3.14159E0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3">
 <!--        <Laser Type="Excimer" LaserMedium="HeNe" Wavelength="2" FrequencyMultiplication="2" Tuneable="false" Pulse="CW"
                  PockelCell="false" RepetitionRate="false">
                 <Pump ID="LightSource:a"/>
             </Laser>-->
-<!--        <Filament Type="Incandescent" Power="3.14159E0"/>-->
-            <Arc Type="Hg" Power="3.14159E0"/>
+<!--        <Filament Type="Incandescent"/>-->
+            <Arc Type="Hg"/>
         </LightSource>
         <Detector Gain="3.14159E0" Voltage="3.14159E0" Offset="3.14159E0" Zoom="3.14159E0" AmplificationGain="3.14159E0"
              ID="Detector:a" Type="CCD" Manufacturer="Manufacturer4" Model="Model4" SerialNumber="SerialNumber4"/>
@@ -353,19 +353,19 @@
     <am:AnalysisModuleLibrary>
         <am:AnalysisModule isStreamAlgorithm="false"  ModuleType= "OME::Analysis::a" RegionIterator="RegionIterator0" NewRegionName="NewRegionName0"
              Category="Category0" ProgramID="ProgramID0" ModuleName="ModuleName0" ID="Module:a">
-            <am:Description>Description3</am:Description>
+            <Description>Description3</Description>
             <am:Declaration>
                 <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName0">
                     <am:LookupTable Name="Name109">
                         <am:Entry Value="Value9" Label="Label9"/>
                         <am:Entry Value="Value10" Label="Label10"/>
                         <am:Entry Value="Value11" Label="Label11"/>
-                        <am:Description>Description4</am:Description>
+                        <Description>Description4</Description>
                     </am:LookupTable>
-                    <am:Description>Description5</am:Description>
+                    <Description>Description5</Description>
                 </am:FormalInput>
                 <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName1">
-                    <am:Description>Description6</am:Description>
+                    <Description>Description6</Description>
                 </am:FormalOutput>
             </am:Declaration>
                 <cli:ExecutionInstructions ExecutionPoint="executeGlobal" MakesNewRegion="false">
@@ -459,19 +459,19 @@
         </am:AnalysisModule>
         <am:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator1" NewRegionName="NewRegionName1"
              Category="Category1" ProgramID="ProgramID1" ModuleName="ModuleName1" ID="Module:a">
-            <am:Description>Description7</am:Description>
+            <Description>Description7</Description>
             <am:Declaration>
                 <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName2">
                     <am:LookupTable Name="Name110">
                         <am:Entry Value="Value12" Label="Label12"/>
                         <am:Entry Value="Value13" Label="Label13"/>
                         <am:Entry Value="Value14" Label="Label14"/>
-                        <am:Description>Description8</am:Description>
+                        <Description>Description8</Description>
                     </am:LookupTable>
-                    <am:Description>Description9</am:Description>
+                    <Description>Description9</Description>
                 </am:FormalInput>
                 <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName3">
-                    <am:Description>Description10</am:Description>
+                    <Description>Description10</Description>
                 </am:FormalOutput>
             </am:Declaration>
                 <cli:ExecutionInstructions ExecutionPoint="executeGlobal" MakesNewRegion="false">
@@ -565,19 +565,19 @@
         </am:AnalysisModule>
         <am:AnalysisModule isStreamAlgorithm="false" ModuleType="OME::Analysis::a" RegionIterator="RegionIterator2" NewRegionName="NewRegionName2"
              Category="Category2" ProgramID="ProgramID2" ModuleName="ModuleName2" ID="Module:a">
-            <am:Description>Description11</am:Description>
+            <Description>Description11</Description>
             <am:Declaration>
                 <am:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName4">
                     <am:LookupTable Name="Name111">
                         <am:Entry Value="Value15" Label="Label15"/>
                         <am:Entry Value="Value16" Label="Label16"/>
                         <am:Entry Value="Value17" Label="Label17"/>
-                        <am:Description>Description12</am:Description>
+                        <Description>Description12</Description>
                     </am:LookupTable>
-                    <am:Description>Description13</am:Description>
+                    <Description>Description13</Description>
                 </am:FormalInput>
                 <am:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName5">
-                    <am:Description>Description14</am:Description>
+                    <Description>Description14</Description>
                 </am:FormalOutput>
             </am:Declaration>
                 <cli:ExecutionInstructions ExecutionPoint="executeGlobal" MakesNewRegion="false">
@@ -670,7 +670,7 @@
                 </cli:ExecutionInstructions>
         </am:AnalysisModule>
         <am:Category Path="^ $">
-            <am:Description>Description15</am:Description>
+            <Description>Description15</Description>
         </am:Category>
         <am:Program Name="Name112" Version="Version0" ProgramID="ProgramID3">
                 <am:InstallationScript>
