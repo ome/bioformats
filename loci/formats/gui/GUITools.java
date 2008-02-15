@@ -227,8 +227,9 @@ public final class GUITools {
     for (int i=0; i<filters.length; i++) {
       if (filters[i] instanceof ComboFileFilter) {
         if (ALL_TYPES.equals(filters[i].getDescription())) {
+          FileFilter f = filters[i];
           for (int j=i; j>=1; j--) filters[j] = filters[j - 1];
-          filters[0] = filters[i];
+          filters[0] = f;
           break;
         }
       }
