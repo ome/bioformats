@@ -379,7 +379,10 @@ public class FV1000Reader extends FormatReader {
             String last = value.substring(value.lastIndexOf("=", ndx) + 1);
             value = first + last;
           }
-          previewNames.add(value.trim());
+          if (value.startsWith("\"")) {
+            value = value.substring(1, value.length() - 1);
+          }
+          previewNames.add(path + value.trim());
         }
         addMeta(prefix + key, value);
 
@@ -442,13 +445,12 @@ public class FV1000Reader extends FormatReader {
       for (int i=0; i<previewNames.size(); i++) {
         String ss = (String) previewNames.get(i);
         ss = ss.replaceAll("pty", "tif");
-        ss = ss.substring(1, ss.length() - 1);
         if (ss.endsWith(".tif")) v.add(ss);
       }
       previewNames = v;
       String previewName = (String) previewNames.get(0);
       core = new CoreMetadata(2);
-      Hashtable[] ifds = TiffTools.getIFDs(getFile(path + previewName));
+      Hashtable[] ifds = TiffTools.getIFDs(getFile(previewName));
       core.imageCount[1] = ifds.length * previewNames.size();
       core.sizeX[1] = (int) TiffTools.getImageWidth(ifds[0]);
       core.sizeY[1] = (int) TiffTools.getImageLength(ifds[0]);
