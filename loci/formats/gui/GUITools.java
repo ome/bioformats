@@ -224,18 +224,11 @@ public final class GUITools {
    * and shuffles it to the front of the list.
    */
   private static void shuffleAllTypesToFront(FileFilter[] filters) {
-    if (filters[0] instanceof ComboFileFilter &&
-      ALL_TYPES.equals(filters[0].getDescription()))
-    {
-      return;
-    }
-
     for (int i=0; i<filters.length; i++) {
       if (filters[i] instanceof ComboFileFilter) {
-        ComboFileFilter combo = (ComboFileFilter) filters[i];
-        if (ALL_TYPES.equals(combo.getDescription())) {
-          for (int j=i; j>=0; j--) filters[i] = filters[i - 1];
-          filters[0] = combo;
+        if (ALL_TYPES.equals(filters[i].getDescription())) {
+          for (int j=i; j>=0; j--) filters[j] = filters[j - 1];
+          filters[0] = filters[i];
           break;
         }
       }
