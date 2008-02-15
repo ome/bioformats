@@ -157,7 +157,7 @@ public interface IFormatReader extends IFormatHandler {
    * </ul>
    * In cases where the channels are interleaved (e.g., CXYTZ), C will be
    * the first dimension after X and Y (e.g., XYCTZ) and the
-   * {@link #isInterleaved(String)} method will return true.
+   * {@link #isInterleaved()} method will return true.
    */
   String getDimensionOrder();
 

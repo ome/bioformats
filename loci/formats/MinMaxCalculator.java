@@ -130,10 +130,10 @@ public class MinMaxCalculator extends ReaderWrapper {
   }
 
   /**
-   * Retrieves the minimum pixel value for the specified plane.  If each
-   * image plane contains more than one channel (i.e.,
-   * {@link #getRGBChannelCount(String)}), returns the maximum value for each
-   * embedded channel.  Returns null if the plane has not already been read.
+   * Retrieves the minimum pixel value for the specified plane.
+   * If each image plane contains more than one channel (i.e.,
+   * {@link #getRGBChannelCount()} &gt; 1), returns the maximum value for each
+   * embedded channel. Returns null if the plane has not already been read.
    */
   public Double[] getPlaneMinimum(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -154,10 +154,10 @@ public class MinMaxCalculator extends ReaderWrapper {
   }
 
   /**
-   * Retrieves the maximum pixel value for the specified plane.  If each
-   * image plane contains more than one channel (i.e.,
-   * {@link #getRGBChannelCount(String)}), returns the maximum value for each
-   * embedded channel.  Returns null if the plane has not already been read.
+   * Retrieves the maximum pixel value for the specified plane.
+   * If each image plane contains more than one channel (i.e.,
+   * {@link #getRGBChannelCount()} &gt; 1), returns the maximum value for each
+   * embedded channel. Returns null if the plane has not already been read.
    */
   public Double[] getPlaneMaximum(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);

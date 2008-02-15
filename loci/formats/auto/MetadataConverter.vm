@@ -37,7 +37,7 @@ package loci.formats.meta;
  * {@link MetadataRetrieve} object into a destination {@link MetadataStore}.
  * This technique allows non-OME-XML-based metadata stores (such as OMERO's
  * metadata store implementation) to be easily converted to another
- * implementation, particularly {@link loci.formats.ome.OMEXMLMetadataStore},
+ * implementation, particularly {@link loci.formats.ome.OMEXMLMetadata},
  * which allows generation of OME-XML from OMERO metadata.
  *
  * <dl><dt><b>Source code:</b></dt>

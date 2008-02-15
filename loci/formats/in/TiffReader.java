@@ -54,8 +54,7 @@ public class TiffReader extends BaseTiffReader {
    * <code>TiffReader</code> the ability to affect the <code>sizeZ</code> value
    * that is inserted into the metadata store.
    * @param zSize the number of optical sections to use when making a call to
-   * {@link loci.formats.MetadataStore#setPixels(Integer, Integer, Integer,
-   *   Integer, Integer, Integer, Boolean, String, Integer, Integer)}.
+   * {@link loci.formats.meta.MetadataStore#setPixelsSizeZ(Integer, int, int)}.
    */
   protected void setSizeZ(int zSize) {
     if (core.sizeZ == null) core.sizeZ = new int[1];

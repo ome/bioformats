@@ -417,7 +417,7 @@ public final class FormatTools {
    * @param pixelType the pixel type as retrieved from
    *   {@link IFormatReader#getPixelType()}.
    * @return the number of bytes per pixel.
-   * @see IFormatReader#getPixelType(String)
+   * @see IFormatReader#getPixelType()
    */
   public static int getBytesPerPixel(int pixelType) {
     switch (pixelType) {
