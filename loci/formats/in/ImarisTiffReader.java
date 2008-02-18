@@ -55,28 +55,8 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    // adapted from MetamorphReader.isThisType(byte[])
-    if (block.length < 8) return false;
-
-    boolean little = (block[0] == 0x49 && block[1] == 0x49);
-    boolean big = (block[0] == 0x4d && block[1] == 0x4d);
-    if (!little && !big) return false;
-
-    int ifdlocation = DataTools.bytesToInt(block, 4, little);
-    if (ifdlocation < 0) return false;
-    else if (ifdlocation + 1 > block.length) return false;
-    else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
-      for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) return false;
-        else {
-          int ifdtag = DataTools.bytesToInt(block,
-            ifdlocation + 2 + (i*12), 2, little);
-          if (ifdtag == TiffTools.TILE_WIDTH) return true;
-        }
-      }
-      return false;
-    }
+    if (block.length < blockCheckLen) return false;
+    return TiffTools.isValidHeader(block);
   }
 
   // -- Internal FormatReader API methods --
