@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.GraphicsConfiguration;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -437,8 +438,8 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    return ImageTools.scale(openImage(no), getThumbSizeX(),
-      getThumbSizeY(), false);
+    return ImageTools.scale2D(openImage(no), getThumbSizeX(),
+      getThumbSizeY(), null, (GraphicsConfiguration) null);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */
