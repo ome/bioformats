@@ -39,21 +39,27 @@ public final class About {
   private About() { }
 
   public static void about() {
+    String msg = "<html>" +
+      "LOCI Plugins for ImageJ, built @date@" +
+      "<br>Copyright 2005-@year@ UW-Madison LOCI" +
+      "<br>http://www.loci.wisc.edu/software" +
+      "<br>" +
+      "<br><b>Bio-Formats Importer</b> and <b>Bio-Formats Exporter</b>" +
+      "<br>Authors: Melissa Linkert, Curtis Rueden" +
+      "<br>Web site: http://www.loci.wisc.edu/ome/formats.html" +
+      "<br>" +
+      "<br><b>Data Browser</b>" +
+      "<br>Authors: Curtis Rueden, Melissa Linkert, Chris Peterson" +
+      "<br>Web site: http://www.loci.wisc.edu/ome/browser.html" +
+      "<br>" +
+      "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
+      "<br>Authors: Melissa Linkert, Philip Huettl" +
+      "<br>Web site: http://www.loci.wisc.edu/ome/imagej.html" +
+      "<br>" +
+      "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
+      "<br>Author: Melissa Linkert";
     JOptionPane.showMessageDialog(null,
-      "LOCI Plugins for ImageJ\n" +
-      "Built @date@\n\n" +
-      "Copyright 2005-@year@ Laboratory for Optical and Computational\n" +
-      "Instrumentation; http://www.loci.wisc.edu/software\n\n" +
-      "The 4D Data Browser is written by Melissa Linkert,\n" +
-      "Christopher Peterson, Francis Wong and Curtis Rueden.\n" +
-      "http://www.loci.wisc.edu/ome/browser.html\n\n" +
-      "The Bio-Formats Importer and Exporter are written by\n" +
-      "Melissa Linkert and Curtis Rueden.\n" +
-      "http://www.loci.wisc.edu/ome/formats.html\n\n" +
-      "The OME plugins for ImageJ are written by Melissa Linkert\n" +
-      "and Philip Huettl.\n" +
-      "http://www.loci.wisc.edu/ome/imagej.html",
-      "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
+      msg, "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public static void main(String[] args) {
