@@ -184,11 +184,11 @@ public class ND2Reader extends FormatReader {
     if (isJPEG) {
       BufferedImage b = openImage(no, x, y, w, h);
       byte[][] pixels = ImageTools.getPixelBytes(b, false);
-      if (pixels.length == 1 && core.sizeC[series] > 1) {
-        pixels = ImageTools.splitChannels(pixels[series], core.sizeC[series],
+      if (pixels.length == 1 && getRGBChannelCount() > 1) {
+        pixels = ImageTools.splitChannels(pixels[series], getRGBChannelCount(),
           bpp, false, !core.interleaved[series]);
       }
-      for (int i=0; i<core.sizeC[series]; i++) {
+      for (int i=0; i<getRGBChannelCount(); i++) {
         System.arraycopy(pixels[i], 0, buf, i*pixels[i].length,
           pixels[i].length);
       }
@@ -236,7 +236,7 @@ public class ND2Reader extends FormatReader {
   {
     if (!isJPEG) {
       return ImageTools.makeImage(openBytes(no, x, y, w, h), core.sizeX[series],
-        core.sizeY[series], core.sizeC[series], core.interleaved[series],
+        core.sizeY[series], getRGBChannelCount(), core.interleaved[series],
         FormatTools.getBytesPerPixel(core.pixelType[series]),
         core.littleEndian[series]);
     }
