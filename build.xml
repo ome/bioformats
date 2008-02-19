@@ -329,7 +329,9 @@ Apache XML-RPC
   <!-- Non-core ant tasks -->
 
   <path id="cp-testng">
-    <pathelement location="jar/testng-5.6-jdk14.jar"/>
+    <fileset dir="jar">
+      <include name="*.jar"/>
+    </fileset>
     <pathelement location="${classes.dir}"/>
   </path>
 

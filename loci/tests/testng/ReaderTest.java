@@ -82,6 +82,7 @@ public class ReaderTest {
   public Object[][] createData() {
     if (isFirstTime) {
       isFirstTime = false;
+
       // parse base directory
       final String baseDirProp = "testng.directory";
       String baseDir = System.getProperty(baseDirProp);
@@ -94,9 +95,11 @@ public class ReaderTest {
         writeLog("   ant -D" + baseDirProp + "=\"/path/to/data\" test-all");
         return null;
       }
+
       // create log file
       createLogFile();
       writeLog("testng.directory = " + baseDir);
+
       // parse multiplier
       final String multProp = "testng.multiplier";
       String mult = System.getProperty(multProp);
@@ -109,29 +112,63 @@ public class ReaderTest {
         }
       }
       writeLog("testng.multiplier = " + timeMultiplier);
+
       // detect maximum heap size
       long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
       writeLog("Maximum heap size = " + maxMemory + " MB");
+
       // scan for files
-      Vector v = new Vector();
-      getFiles(baseDir, v);
-      writeLog("Removing duplicates");
-      v = removeDuplicates(v);
-      // build test data
-      data = new Object[v.size()][2];
-      writeLog("Testing " + data.length + " files");
-      for (int i=0; i<data.length; i++) {
-        String id = (String) v.get(i);
-        writeLog("Initializing: " + id);
-        IFormatReader r = makeReader();
+      Vector files = new Vector();
+      getFiles(baseDir, files);
+      writeLog("Total files: " + files.size());
+
+      // initialize one reader per dataset
+      List readers = new LinkedList(); // more efficient than Vector here
+      Vector errors = new Vector();
+      while (files.size() > 0) {
+        String id = (String) files.get(0);
+        LogTools.print("Initializing " + id + ": ");
+        IFormatReader r = makeReader(true);
+        boolean removed = false;
         try {
           r.setId(id);
+          // remove used files
+          String[] used = r.getUsedFiles();
+          for (int i=0; i<used.length; i++) {
+            int ndx = files.indexOf(used[i]);
+            if (ndx < 0) {
+              errors.add("Error: invalid used file #" + i + ": " + used[i]);
+            }
+            else {
+              if (ndx == 0) removed = true;
+              files.removeElementAt(ndx);
+            }
+          }
+          if (!removed) {
+            errors.add("Error: used files list does not include base file");
+          }
+          if (used.length == 1 && errors.isEmpty()) LogTools.println("OK");
+          else {
+            LogTools.println(used.length +
+              (used.length == 1 ? " file" : " files"));
+          }
+          for (int i=0; i<errors.size(); i++) writeLog((String) errors.get(i));
+          errors.removeAllElements();
+          readers.add(r);
         }
-        catch (FormatException exc) { writeLog(exc); }
-        catch (IOException exc) { writeLog(exc); }
-        data[i][0] = id;
-        data[i][1] = r;
+        catch (Throwable t) {
+          LogTools.println("error");
+          writeLog(t);
+        }
+
+        // remove base file, if for some reason it wasn't already
+        if (!removed) files.removeElementAt(0);
       }
+      writeLog("Total datasets: " + readers.size());
+
+      // package into TestNG array format
+      data = new Object[readers.size()][1];
+      for (int i=0; i<readers.size(); i++) data[i][0] = readers.get(i);
     }
     return data;
   }
@@ -142,7 +179,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testBufferedImageDimensions(String file, IFormatReader reader) {
+  public void testBufferedImageDimensions(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testBufferedImageDimensions: " + file;
     boolean success = true;
     try {
@@ -176,7 +214,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testByteArrayDimensions(String file, IFormatReader reader) {
+  public void testByteArrayDimensions(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testByteArrayDimensions: " + file;
     boolean success = true;
     try {
@@ -207,7 +246,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testThumbnailImageDimensions(String file, IFormatReader reader) {
+  public void testThumbnailImageDimensions(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testThumbnailImageDimensions: " + file;
     boolean success = true;
     try {
@@ -242,9 +282,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testThumbnailByteArrayDimensions(String file,
-    IFormatReader reader)
-  {
+  public void testThumbnailByteArrayDimensions(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testThumbnailByteArrayDimensions: " + file;
     boolean success = true;
     try {
@@ -275,7 +314,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all fast"
    */
-  public void testImageCount(String file, IFormatReader reader) {
+  public void testImageCount(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testImageCount: " + file;
     boolean success = true;
     try {
@@ -299,12 +339,15 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all xml fast"
    */
-  public void testOMEXML(String file, IFormatReader reader) {
+  public void testOMEXML(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testOMEXML: " + file;
     boolean success = true;
+    String msg = null;
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
       success = MetadataTools.isOMEXMLMetadata(retrieve);
+      if (!success) msg = retrieve.getClass().getName();
 
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
@@ -313,20 +356,28 @@ public class ReaderTest {
 
         boolean passX = reader.getSizeX() ==
           retrieve.getPixelsSizeX(i, 0).intValue();
+        if (!passX) msg = "SizeX";
         boolean passY = reader.getSizeY() ==
           retrieve.getPixelsSizeY(i, 0).intValue();
+        if (!passY) msg = "SizeY";
         boolean passZ = reader.getSizeZ() ==
           retrieve.getPixelsSizeZ(i, 0).intValue();
+        if (!passZ) msg = "SizeZ";
         boolean passC = reader.getSizeC() ==
           retrieve.getPixelsSizeC(i, 0).intValue();
+        if (!passC) msg = "SizeC";
         boolean passT = reader.getSizeT() ==
           retrieve.getPixelsSizeT(i, 0).intValue();
+        if (!passT) msg = "SizeT";
         boolean passBE = reader.isLittleEndian() !=
           retrieve.getPixelsBigEndian(i, 0).booleanValue();
+        if (!passBE) msg = "BigEndian";
         boolean passDE = reader.getDimensionOrder().equals(
           retrieve.getPixelsDimensionOrder(i, 0));
+        if (!passDE) msg = "DimensionOrder";
         boolean passType = type.equalsIgnoreCase(
           retrieve.getPixelsPixelType(i, 0));
+        if (!passType) msg = "PixelType";
 
         success = passX && passY && passZ &&
           passC && passT && passBE && passDE && passType;
@@ -336,14 +387,15 @@ public class ReaderTest {
       writeLog(t);
       success = false;
     }
-    result(testName, success);
+    result(testName, success, msg);
   }
 
   /**
    * @testng.test dataProvider = "provider"
    *              groups = "all fast"
    */
-  public void testConsistent(String file, IFormatReader reader) {
+  public void testConsistent(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testConsistent: " + file;
     boolean success = true;
     String msg = null;
@@ -390,7 +442,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all"
    */
-  public void testMemoryUsage(String file, IFormatReader reader) {
+  public void testMemoryUsage(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testMemoryUsage: " + file;
     boolean success = true;
     String msg = null;
@@ -434,7 +487,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all"
    */
-  public void testAccessTime(String file, IFormatReader reader) {
+  public void testAccessTime(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testAccessTime: " + file;
     boolean success = true;
     String msg = null;
@@ -460,7 +514,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all"
    */
-  public void testSaneUsedFiles(String file, IFormatReader reader) {
+  public void testSaneUsedFiles(IFormatReader reader) {
+    String file = reader.getCurrentFile();
     String testName = "testSaneUsedFiles: " + file;
     boolean success = true;
     String msg = null;
@@ -471,7 +526,7 @@ public class ReaderTest {
       }
       else {
         Arrays.sort(base);
-        IFormatReader r = makeReader();
+        IFormatReader r = makeReader(false);
         for (int i=0; i<base.length && success; i++) {
           r.setId(base[i]);
           String[] comp = r.getUsedFiles();
@@ -496,7 +551,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all xml fast"
    */
-  public void testValidXML(String file, FileStitcher reader) {
+  public void testValidXML(FileStitcher reader) {
+    String file = reader.getCurrentFile();
     String testName = "testValidXML: " + file;
     boolean success = true;
     try {
@@ -517,7 +573,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "all pixels"
    */
-  public void testPixelsHashes(String file, FileStitcher reader) {
+  public void testPixelsHashes(FileStitcher reader) {
+    String file = reader.getCurrentFile();
     String testName = "testPixelsHashes: " + file;
     boolean success = true;
     String msg = null;
@@ -544,7 +601,8 @@ public class ReaderTest {
    * @testng.test dataProvider = "provider"
    *              groups = "config"
    */
-  public void writeConfigFiles(String file, FileStitcher reader) {
+  public void writeConfigFile(FileStitcher reader) {
+    String file = reader.getCurrentFile();
     writeLog("Generating configuration: " + file);
     Exception exc = null;
     try {
@@ -655,13 +713,15 @@ public class ReaderTest {
     assert success;
   }
 
-  private static IFormatReader makeReader() {
+  private static IFormatReader makeReader(boolean metadata) {
     FileStitcher fs = new FileStitcher();
     fs.setNormalized(true);
-    fs.setOriginalMetadataPopulated(true);
-    fs.setMetadataFiltered(true);
-    MetadataStore store = MetadataTools.createOMEXMLMetadata();
-    if (store != null) fs.setMetadataStore(store);
+    if (metadata) {
+      fs.setOriginalMetadataPopulated(true);
+      fs.setMetadataFiltered(true);
+      MetadataStore store = MetadataTools.createOMEXMLMetadata();
+      fs.setMetadataStore(store);
+    }
     return fs;
   }
 
@@ -680,7 +740,7 @@ public class ReaderTest {
   }
 
   /** Recursively generate a list of files to test. */
-  private static void getFiles(String root, Vector files) {
+  private static void getFiles(String root, List files) {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
@@ -688,7 +748,7 @@ public class ReaderTest {
 
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
-      if (subs[i].endsWith(".bioformats") && i != 0) {
+      if (subs[i].endsWith(".bioformats")) {
         String tmp = subs[0];
         subs[0] = subs[i];
         subs[i] = tmp;
@@ -696,18 +756,13 @@ public class ReaderTest {
       }
     }
 
-    ImageReader ir = new ImageReader();
-    Vector similarFiles = new Vector();
+    ImageReader typeTester = new ImageReader();
 
     for (int i=0; i<subs.length; i++) {
       subs[i] = new Location(root, subs[i]).getAbsolutePath();
       LogTools.print("Checking " + subs[i] + ": ");
-      if (isBadFile(subs[i]) || similarFiles.contains(subs[i])) {
+      if (isIgnoredFile(subs[i])) {
         LogTools.println("ignored");
-        String[] matching = new FilePattern(subs[i]).getFiles();
-        for (int j=0; j<matching.length; j++) {
-          similarFiles.add(new Location(root, matching[j]).getAbsolutePath());
-        }
         continue;
       }
       Location file = new Location(subs[i]);
@@ -722,7 +777,7 @@ public class ReaderTest {
         configFiles.add(file.getAbsolutePath());
       }
       else {
-        if (ir.isThisType(subs[i])) {
+        if (typeTester.isThisType(subs[i])) {
           LogTools.println("OK");
           files.add(file.getAbsolutePath());
         }
@@ -732,47 +787,18 @@ public class ReaderTest {
     }
   }
 
-  /** Determines if the given file is "bad" (bad files are not tested). */
-  private static boolean isBadFile(String file) {
+  /** Determines if the given file should be ignored by the test suite. */
+  private static boolean isIgnoredFile(String file) {
     for (int i=0; i<configFiles.size(); i++) {
       try {
         String s = (String) configFiles.get(i);
-        if (!config.isParsed(s)) {
-          config.addFile(s);
-        }
+        if (!config.isParsed(s)) config.addFile(s);
       }
       catch (IOException exc) {
         LogTools.trace(exc);
       }
     }
     return !config.testFile(file) && !file.endsWith(".bioformats");
-  }
-
-  /** Remove duplicates from a file list. */
-  private static Vector removeDuplicates(Vector files) {
-    Vector v = new Vector();
-    try {
-      for (int i=0; i<files.size(); i++) {
-        if (files.get(i) == null) continue;
-        FileStitcher f = new FileStitcher();
-        f.setId((String) files.get(i));
-        String[] used = f.getUsedFiles();
-        v.add(used[0]);
-        for (int q=1; q<used.length; q++) {
-          int ndx = files.indexOf(used[q]);
-          if (ndx > -1) files.setElementAt(null, ndx);
-          if (used[q].indexOf(File.separator) != -1) {
-            String s =
-              used[q].substring(used[q].lastIndexOf(File.separator) + 1);
-            ndx = files.indexOf(s);
-            if (ndx > -1) files.setElementAt(null, ndx);
-          }
-        }
-        f.close();
-      }
-    }
-    catch (Throwable t) { writeLog(t); }
-    return v;
   }
 
 }
