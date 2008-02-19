@@ -68,6 +68,7 @@ public class PrairieReader extends FormatReader {
   /** Constructs a new Prairie TIFF reader. */
   public PrairieReader() {
     super("Prairie (TIFF)", new String[] {"tif", "tiff", "cfg", "xml"});
+    blockCheckLen = 1048608;
   }
 
   // -- IFormatReader API methods --
@@ -111,44 +112,29 @@ public class PrairieReader extends FormatReader {
 
     // just checking the filename isn't enough to differentiate between
     // Prairie and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, 524304) && xml : xml;
+    return open ? checkBytes(name, blockCheckLen) && xml : xml;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    // adapted from MetamorphReader.isThisType(byte[])
-    if (block.length < 3) return false;
-    if (block.length < 8) {
-      return true; // we have no way of verifying further
-    }
+    if (block.length < blockCheckLen) return false;
 
     String s = new String(block);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
 
-    boolean little = (block[0] == 0x49 && block[1] == 0x49);
-
-    int ifdlocation = DataTools.bytesToInt(block, 4, little);
-
-    if (ifdlocation < 0) return false;
-    else if (ifdlocation + 1 > block.length) return true;
-    else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
-      for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) {
-          return false;
-        }
-        else {
-          int ifdtag = DataTools.bytesToInt(block,
-            ifdlocation + 2 + (i*12), 2, little);
-          if (ifdtag == PRAIRIE_TAG_1 || ifdtag == PRAIRIE_TAG_2 ||
-            ifdtag == PRAIRIE_TAG_3)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
+    try {
+      RandomAccessStream stream = new RandomAccessStream(block);
+      Hashtable ifd = TiffTools.getFirstIFD(stream);
+      String software = (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
+      return software.indexOf("Prairie") != -1 &&
+        ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
+        ifd.containsKey(new Integer(PRAIRIE_TAG_2)) &&
+        ifd.containsKey(new Integer(PRAIRIE_TAG_3));
     }
+    catch (Exception e) {
+      if (debug) LogTools.trace(e);
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -433,7 +419,7 @@ public class PrairieReader extends FormatReader {
       for (int i=0; i<listing.length; i++) {
         String path = listing[i].toLowerCase();
         if (path.endsWith(".xml") || path.endsWith(".cfg")) {
-          initFile(new Location(path).getAbsolutePath());
+          initFile(new Location(parent, listing[i]).getAbsolutePath());
         }
       }
     }
