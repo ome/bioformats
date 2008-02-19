@@ -42,41 +42,13 @@ import loci.formats.meta.MetadataStore;
  */
 public class IPWReader extends BaseTiffReader {
 
-  // -- Constants --
-
-  private static final String NO_POI_MSG =
-    "Jakarta POI is required to read IPW files. Please " +
-    "obtain poi-loci.jar from http://loci.wisc.edu/ome/formats.html";
-
-  // -- Static fields --
-
-  private static boolean noPOI = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
-
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
-      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import org.apache.poi.util.RandomAccessStream");
-      r.exec("import java.util.Iterator");
-    }
-    catch (Throwable t) {
-      noPOI = true;
-      if (debug) LogTools.trace(t);
-    }
-    return r;
-  }
-
   // -- Fields --
 
-  private Hashtable pixels;
-  private Hashtable names;
+  private Vector imageFiles;
   private byte[] header;  // general image header data
   private byte[] tags; // tags data
+
+  private POITools poi;
 
   // -- Constructor --
 
@@ -95,7 +67,8 @@ public class IPWReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    RandomAccessStream stream = getStream(0);
+    RandomAccessStream stream =
+      poi.getDocumentStream((String) imageFiles.get(0));
     ifds = TiffTools.getIFDs(stream);
     int[] bits = TiffTools.getBitsPerSample(ifds[0]);
     if (bits[0] <= 8) {
@@ -126,7 +99,8 @@ public class IPWReader extends BaseTiffReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    RandomAccessStream stream = getStream(no);
+    RandomAccessStream stream =
+      poi.getDocumentStream((String) imageFiles.get(no));
     ifds = TiffTools.getIFDs(stream);
     TiffTools.getSamples(ifds[0], stream, buf, x, y, w, h);
     stream.close();
@@ -162,51 +136,21 @@ public class IPWReader extends BaseTiffReader {
   public void close() throws IOException {
     super.close();
 
-    pixels = null;
-    names = null;
     header = null;
     tags = null;
 
-    try { r.exec("fis.close()"); }
-    catch (ReflectException e) { }
-    String[] vars = {"dirName", "root", "dir", "document", "dis",
-      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
-      "entry", "documentName", "entryName"};
-    for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
+    if (poi != null) poi.close();
+    poi = null;
   }
 
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initMetadata() */
   public void initMetadata() throws FormatException, IOException {
-    String directory = (String) pixels.get(new Integer(0));
-    String name = (String) names.get(new Integer(0));
-
-    try {
-      r.setVar("dirName", directory);
-      r.exec("root = fs.getRoot()");
-      if (!directory.equals("Root Entry")) {
-        r.exec("dir = root.getEntry(dirName)");
-        r.setVar("entryName", name);
-        r.exec("document = dir.getEntry(entryName)");
-      }
-      else {
-        r.setVar("entryName", name);
-        r.exec("document = root.getEntry(entryName)");
-      }
-
-      r.exec("dis = new DocumentInputStream(document, fis)");
-      r.exec("numBytes = dis.available()");
-      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes];
-      r.setVar("data", b);
-      r.exec("dis.read(data)");
-
-      RandomAccessStream stream = new RandomAccessStream(b);
-      ifds = TiffTools.getIFDs(stream);
-      stream.close();
-    }
-    catch (ReflectException e) { }
+    RandomAccessStream stream =
+      poi.getDocumentStream((String) imageFiles.get(0));
+    ifds = TiffTools.getIFDs(stream);
+    stream.close();
 
     core.rgb[0] = (TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
@@ -259,7 +203,7 @@ public class IPWReader extends BaseTiffReader {
         else if (label.equals("channels")) {
           core.sizeC[0] = Integer.parseInt(data);
         }
-        else if (label.equals("Timestamp")) timestamp = label;
+        else if (label.equals("Timestamp")) timestamp = data;
       }
     }
 
@@ -320,6 +264,9 @@ public class IPWReader extends BaseTiffReader {
     store.setImageName("", 0);
 
     if (timestamp != null) {
+      if (timestamp.length() > 26) {
+        timestamp = timestamp.substring(timestamp.length() - 26);
+      }
       SimpleDateFormat fmt = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS aa");
       Date d = fmt.parse(timestamp, new ParsePosition(0));
       fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -339,7 +286,6 @@ public class IPWReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("IPWReader.initFile(" + id + ")");
-    if (noPOI) throw new FormatException(NO_POI_MSG);
 
     currentId = id;
     metadata = new Hashtable();
@@ -348,152 +294,58 @@ public class IPWReader extends BaseTiffReader {
     getMetadataStore().createRoot();
 
     in = new RandomAccessStream(id);
+    poi = new POITools(currentId);
 
-    pixels = new Hashtable();
-    names = new Hashtable();
+    imageFiles = new Vector();
 
-    try {
-      in.order(true);
-      in.seek(30);
-      int size = (int) Math.pow(2, in.readShort());
-      in.close();
-      r.setVar("file", currentId);
-      r.exec("fis = new RandomAccessStream(file)");
-      r.setVar("size", size);
-      r.setVar("littleEndian", true);
-      r.exec("fis.order(littleEndian)");
-      r.exec("fs = new POIFSFileSystem(fis, size)");
-      r.exec("dir = fs.getRoot()");
-      parseDir(0, r.getVar("dir"));
-      status("Populating metadata");
-      initMetadata();
-    }
-    catch (Throwable t) {
-      noPOI = true;
-      if (debug) trace(t);
-    }
-  }
+    Vector fileList = poi.getDocumentList();
 
-  // -- Helper methods --
+    for (int i=0; i<fileList.size(); i++) {
+      String name = (String) fileList.get(i);
+      String relativePath =
+        name.substring(name.lastIndexOf(File.separator) + 1);
 
-  protected void parseDir(int depth, Object dir)
-    throws IOException, FormatException, ReflectException
-  {
-    r.setVar("dir", dir);
-    r.exec("dirName = dir.getName()");
-    r.setVar("depth", depth);
-    r.exec("iter = dir.getEntries()");
-    Iterator iter = (Iterator) r.getVar("iter");
-    while (iter.hasNext()) {
-      r.setVar("entry", iter.next());
-      r.exec("isInstance = entry.isDirectoryEntry()");
-      r.exec("isDocument = entry.isDocumentEntry()");
-      boolean isInstance = ((Boolean) r.getVar("isInstance")).booleanValue();
-      boolean isDocument = ((Boolean) r.getVar("isDocument")).booleanValue();
-      r.setVar("dir", dir);
-      r.exec("dirName = dir.getName()");
-      if (isInstance)  {
-        parseDir(depth + 1, r.getVar("entry"));
+      if (relativePath.equals("CONTENTS")) {
+        header = poi.getDocumentBytes(name);
       }
-      else if (isDocument) {
-        r.exec("entryName = entry.getName()");
-        r.exec("dis = new DocumentInputStream(entry, fis)");
-        r.exec("numBytes = dis.available()");
-        int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-
-        String entryName = (String) r.getVar("entryName");
-        String dirName = (String) r.getVar("dirName");
-
-        boolean isContents = entryName.equals("CONTENTS");
-
-        if (isContents) {
-          // software version
-          header = new byte[numbytes];
-          r.setVar("data", header);
-          r.exec("dis.read(data)");
+      else if (relativePath.equals("FrameRate")) {
+        byte[] b = poi.getDocumentBytes(name, 4);
+        addMeta("Frame Rate", new Integer(DataTools.bytesToInt(b, true)));
+      }
+      else if (relativePath.equals("FrameInfo")) {
+        byte[] b = poi.getDocumentBytes(name);
+        for (int q=0; q<b.length/2; q++) {
+          addMeta("FrameInfo " + q,
+            new Short(DataTools.bytesToShort(b, q*2, 2, true)));
         }
-        else if (entryName.equals("FrameRate")) {
-          // should always be exactly 4 bytes
-          // only exists if the file has more than one image
-          byte[] b = new byte[4];
-          r.setVar("data", b);
-          r.exec("dis.read(data)");
-          addMeta("Frame Rate", new Integer(DataTools.bytesToInt(b, true)));
+      }
+      else if (relativePath.equals("ImageInfo")) {
+        tags = poi.getDocumentBytes(name);
+      }
+      else if (relativePath.equals("ImageTIFF")) {
+        // pixel data
+        String idx = "0";
+        if (!name.substring(0,
+          name.lastIndexOf(File.separator)).equals("Root Entry"))
+        {
+          idx = name.substring(21, name.indexOf(File.separator, 22));
         }
-        else if (entryName.equals("FrameInfo")) {
-          byte[] b = new byte[2];
-          r.setVar("data", b);
-          for (int i=0; i<numbytes/2; i++) {
-            r.exec("dis.read(data)");
-            addMeta("FrameInfo " + i,
-              new Short(DataTools.bytesToShort(b, true)));
+
+        int n = Integer.parseInt(idx);
+        if (n < imageFiles.size()) imageFiles.setElementAt(name, n);
+        else {
+          int diff = n - imageFiles.size();
+          for (int q=0; q<diff; q++) {
+            imageFiles.add("");
           }
+          imageFiles.add(name);
         }
-        else if (entryName.equals("ImageInfo")) {
-          // acquisition data
-          tags = new byte[numbytes];
-          r.setVar("data", tags);
-          r.exec("dis.read(data)");
-        }
-        else if (entryName.equals("ImageTIFF")) {
-          // pixel data
-          String name = "0";
-          if (!dirName.equals("Root Entry")) {
-            name = dirName.substring(11, dirName.length());
-          }
-
-          Integer imageNum = Integer.valueOf(name);
-          pixels.put(imageNum, dirName);
-          names.put(imageNum, entryName);
-          core.imageCount[0]++;
-        }
-
-        r.exec("dis.close()");
-        if (debug) print(depth + 1, numbytes + " bytes read.");
+        core.imageCount[0]++;
       }
     }
-  }
 
-  /** Retrieve the file corresponding to the given image number. */
-  private RandomAccessStream getStream(int no) throws IOException {
-    try {
-      String directory = (String) pixels.get(new Integer(no));
-      String name = (String) names.get(new Integer(no));
-
-      r.setVar("dirName", directory);
-      r.exec("root = fs.getRoot()");
-
-      if (!directory.equals("Root Entry")) {
-        r.exec("dir = root.getEntry(dirName)");
-        r.setVar("entryName", name);
-        r.exec("document = dir.getEntry(entryName)");
-      }
-      else {
-        r.setVar("entryName", name);
-        r.exec("document = root.getEntry(entryName)");
-      }
-
-      r.exec("dis = new DocumentInputStream(document, fis)");
-      r.exec("numBytes = dis.available()");
-      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-      byte[] b = new byte[numBytes];
-      r.setVar("data", b);
-      r.exec("dis.read(data)");
-
-      return new RandomAccessStream(b);
-    }
-    catch (ReflectException e) {
-      noPOI = true;
-      return null;
-    }
-  }
-
-  /** Debugging helper method. */
-  protected void print(int depth, String s) {
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<depth; i++) sb.append("  ");
-    sb.append(s);
-    debug(sb.toString());
+    status("Populating metadata");
+    initMetadata();
   }
 
 }

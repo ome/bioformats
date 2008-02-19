@@ -43,34 +43,6 @@ import loci.formats.meta.MetadataStore;
  */
 public class FV1000Reader extends FormatReader {
 
-  // -- Constants --
-
-  private static final String NO_POI_MSG =
-    "Jakarta POI is required to read OIB files.  Please " +
-    "obtain poi-loci.jar from http://loci.wisc.edu/ome/formats.html";
-
-  // -- Static fields --
-
-  private static boolean noPOI = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
-
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import java.util.Iterator");
-      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
-      r.exec("import org.apache.poi.util.RandomAccessStream");
-    }
-    catch (ReflectException exc) {
-      noPOI = true;
-    }
-    return r;
-  }
-
   // -- Fields --
 
   /** Names of every TIFF file to open. */
@@ -97,6 +69,8 @@ public class FV1000Reader extends FormatReader {
 
   private String pixelSizeX, pixelSizeY;
   private Vector channelNames, emWaves, exWaves, gains, voltages, offsets;
+
+  private POITools poi;
 
   // -- Constructor --
 
@@ -162,9 +136,6 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    try { r.exec("fis.close()"); }
-    catch (ReflectException e) { }
-
     if (in != null) in.close();
     if (thumbReader != null) thumbReader.close(fileOnly);
 
@@ -174,6 +145,8 @@ public class FV1000Reader extends FormatReader {
       thumbReader = null;
       thumbId = null;
       previewNames = null;
+      if (poi != null) poi.close();
+      poi = null;
     }
   }
 
@@ -189,15 +162,13 @@ public class FV1000Reader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("FV1000Reader.initFile(" + id + ")");
-    if (noPOI && id.toLowerCase().endsWith(".oib")) {
-      throw new FormatException(NO_POI_MSG);
-    }
 
     super.initFile(id);
 
     isOIB = id.toLowerCase().endsWith(".oib");
 
     in = new RandomAccessStream(id);
+    if (isOIB) poi = new POITools(id);
 
     channelNames = new Vector();
     emWaves = new Vector();
@@ -206,46 +177,15 @@ public class FV1000Reader extends FormatReader {
     offsets = new Vector();
     voltages = new Vector();
 
-    String line = null, key = null, value = null;
-
-    String oifName = null;
+    String line = null, key = null, value = null, oifName = null;
 
     if (isOIB) {
-      in.order(true);
-      in.seek(30);
-      int blockSize = (int) Math.pow(2, in.readShort());
-      int extend = blockSize - (int) (in.length() % blockSize);
-      if (extend == blockSize) extend = 0;
-      in.close();
-
-      byte[] b = null;
-      try {
-        r.setVar("file", currentId);
-        r.setVar("extend", extend);
-        r.exec("fis = new RandomAccessStream(file)");
-        r.setVar("littleEndian", true);
-        r.exec("fis.order(littleEndian)");
-        r.exec("fis.setExtend(extend)");
-        r.setVar("size", blockSize);
-        r.exec("fs = new POIFSFileSystem(fis, size)");
-        r.exec("root = fs.getRoot()");
-        r.setVar("infoFile", "OibInfo.txt");
-        r.exec("document = root.getEntry(infoFile)");
-        r.exec("dis = new DocumentInputStream(document, fis)");
-        r.exec("numBytes = dis.available()");
-        int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-        b = new byte[numBytes];
-        r.setVar("data", b);
-        r.exec("dis.read(data)");
-      }
-      catch (ReflectException e) {
-        throw new FormatException(e);
-      }
+      RandomAccessStream ras = poi.getDocumentStream("Root/OibInfo.txt");
 
       oibMapping = new Hashtable();
 
-      String s = DataTools.stripString(new String(b));
-      b = null;
+      String s = DataTools.stripString(ras.readString((int) ras.length()));
+      ras.close();
       StringTokenizer lines = new StringTokenizer(s, "\n");
       String directoryKey = null, directoryValue = null;
       while (lines.hasMoreTokens()) {
@@ -264,7 +204,10 @@ public class FV1000Reader extends FormatReader {
               value = first + last;
             }
             if (value.toLowerCase().endsWith(".oif")) oifName = value;
-            oibMapping.put(value, key);
+            if (directoryKey != null) {
+              oibMapping.put(value, "Root/" + directoryKey + "/" + key);
+            }
+            else oibMapping.put(value, "Root/" + key);
           }
           else if (key.startsWith("Storage")) {
             if (value.indexOf("GST") != -1) {
@@ -274,13 +217,6 @@ public class FV1000Reader extends FormatReader {
             }
             directoryKey = key;
             directoryValue = value;
-            try {
-              r.setVar("dirName", directoryKey);
-              r.exec("dir = root.getEntry(dirName)");
-            }
-            catch (ReflectException e) {
-              throw new FormatException(e);
-            }
           }
         }
       }
@@ -632,13 +568,13 @@ public class FV1000Reader extends FormatReader {
     }
 
     for (int i=0; i<core.sizeC[0]; i++) {
-      String name = (String) channelNames.get(i);
-      String emWave = (String) emWaves.get(i);
-      String exWave = (String) exWaves.get(i);
+      String name = i < channelNames.size() ? (String) channelNames.get(i) : "";
+      String emWave = i < emWaves.size() ? (String) emWaves.get(i) : "";
+      String exWave = i < exWaves.size() ? (String) exWaves.get(i) : "";
 
-      String gain = (String) gains.get(i);
-      String voltage = (String) voltages.get(i);
-      String offset = (String) offsets.get(i);
+      String gain = i < gains.size() ? (String) gains.get(i) : "";
+      String voltage = i < voltages.size() ? (String) voltages.get(i) : "";
+      String offset = i < offsets.size() ? (String) offsets.get(i) : "";
 
       // CTR CHECK
       /*
@@ -667,35 +603,15 @@ public class FV1000Reader extends FormatReader {
     return path + File.separator + f;
   }
 
-  private RandomAccessStream getFile(String name) throws IOException {
+  private RandomAccessStream getFile(String name)
+    throws FormatException, IOException
+  {
     if (isOIB) {
       if (name.startsWith("/") || name.startsWith("\\")) {
         name = name.substring(1);
       }
       name = name.replace('\\', '/');
-      String file = (String) oibMapping.get(name);
-
-      try {
-        r.setVar("entryName", file);
-        if (name.indexOf("/") != -1) {
-          r.exec("document = dir.getEntry(entryName)");
-        }
-        else r.exec("document = root.getEntry(entryName)");
-        r.exec("dis = new DocumentInputStream(document, fis)");
-        r.exec("numBytes = dis.available()");
-        int numBytes = ((Integer) r.getVar("numBytes")).intValue();
-        byte[] b = new byte[numBytes];
-        r.setVar("data", b);
-        r.exec("dis.read(data)");
-        RandomAccessStream s = new RandomAccessStream(b);
-        b = null;
-        r.setVar("data", null);
-        return s;
-      }
-      catch (ReflectException e) {
-        if (debug) LogTools.trace(e);
-      }
-      return null;
+      return poi.getDocumentStream((String) oibMapping.get(name));
     }
     else return new RandomAccessStream(name);
   }

@@ -42,35 +42,9 @@ import loci.formats.meta.MetadataStore;
  */
 public class ZeissZVIReader extends FormatReader {
 
-  // -- Constants --
-
-  private static final String NO_POI_MSG =
-    "Jakarta POI is required to read ZVI files. Please " +
-    "obtain poi-loci.jar from http://loci.wisc.edu/ome/formats.html";
-
   // -- Static fields --
 
   private LegacyZVIReader legacy = new LegacyZVIReader();
-  private static boolean noPOI = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
-
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
-      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import org.apache.poi.util.RandomAccessStream");
-      r.exec("import java.util.Iterator");
-    }
-    catch (ReflectException exc) {
-      noPOI = true;
-      if (debug) LogTools.trace(exc);
-    }
-    return r;
-  }
 
   // -- Fields --
 
@@ -80,14 +54,7 @@ public class ZeissZVIReader extends FormatReader {
   /** Number of bytes per pixel. */
   private int bpp;
 
-  /** Hashtable containing the directory entry for each plane. */
-  private Hashtable pixels;
-
-  /**
-   * Hashtable containing the document name for each plane,
-   * indexed by the plane number.
-   */
-  private Hashtable names;
+  private Vector imageFiles;
 
   /** Vector containing Z indices. */
   private Vector zIndices;
@@ -117,6 +84,8 @@ public class ZeissZVIReader extends FormatReader {
   private int tileWidth, tileHeight;
   private int realWidth, realHeight;
 
+  private POITools poi;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -135,7 +104,7 @@ public class ZeissZVIReader extends FormatReader {
   public void setMetadataStore(MetadataStore store) {
     FormatTools.assertId(currentId, false, 1);
     super.setMetadataStore(store);
-    if (noPOI || needLegacy) legacy.setMetadataStore(store);
+    if (needLegacy) legacy.setMetadataStore(store);
   }
 
   /**
@@ -145,137 +114,121 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (noPOI || needLegacy) return legacy.openBytes(no, buf, x, y, w, h);
+    if (needLegacy) return legacy.openBytes(no, buf, x, y, w, h);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
 
-    try {
-      if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
-        Integer ii = new Integer(no);
-        Object directory = pixels.get(ii);
-        String name = (String) names.get(ii);
+    if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
+      RandomAccessStream s =
+        poi.getDocumentStream((String) imageFiles.get(no));
+      s.seek(((Integer) offsets.get(new Integer(no))).intValue());
 
-        r.setVar("dir", directory);
-        r.setVar("entryName", name);
-        r.exec("document = dir.getEntry(entryName)");
-        r.exec("dis = new DocumentInputStream(document, fis)");
-        r.exec("numBytes = dis.available()");
-        r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
-        r.exec("blah = dis.skip(skipBytes)");
-        r.setVar("data", buf);
+      int len = w * bytes * getRGBChannelCount();
 
-        int offset = 0;
+      if (isJPEG) {
+        byte[] t = new byte[(int) (s.length() - s.getFilePointer())];
+        s.read(t);
+        t = new JPEGCodec().decompress(t, new Object[] {
+          new Boolean(core.littleEndian[0]), new Boolean(core.interleaved[0])});
 
-        r.setVar("skip", (long) y * core.sizeX[0] * bytes * core.sizeC[0]);
-        r.exec("dis.skip(skip)");
+        int row = core.sizeX[0] * bytes * getRGBChannelCount();
 
         for (int yy=0; yy<h; yy++) {
-          r.setVar("skip", (long) x * bytes * core.sizeC[0]);
-          r.exec("dis.skip(skip)");
-          r.setVar("offset", offset);
-          r.setVar("len", w * bytes * core.sizeC[0]);
-          try {
-            r.exec("dis.read(data, offset, len)");
-          }
-          catch (ReflectException e) { }
-          offset += w * bytes * core.sizeC[0];
-          r.setVar("skip",
-            (long) bytes * (core.sizeX[0] - w - x) * core.sizeC[0]);
-          r.exec("dis.skip(skip)");
-        }
-
-        if (isJPEG) {
-          JPEGCodec codec = new JPEGCodec();
-          buf = codec.decompress(buf, new Boolean(core.littleEndian[0]));
+          System.arraycopy(t, (yy + y) * row + x * bytes * getRGBChannelCount(),
+            buf, yy*len, len);
         }
       }
       else {
-        // determine which tiles to read
+        s.skipBytes(y * core.sizeX[0] * bytes * getRGBChannelCount());
 
-        int firstTile = no * tileRows * tileColumns;
+        for (int yy=0; yy<h; yy++) {
+          s.skipBytes(x * bytes * getRGBChannelCount());
+          s.read(buf, yy * len, len);
+          s.skipBytes(bytes * getRGBChannelCount() * (core.sizeX[0] - w - x));
+        }
+      }
+      s.close();
+    }
+    else {
+      // determine which tiles to read
 
-        int rowOffset = 0;
-        int colOffset = 0;
+      int firstTile = no * tileRows * tileColumns;
 
-        byte[] tile = new byte[tileWidth * tileHeight * bytes];
+      int rowOffset = 0;
+      int colOffset = 0;
 
-        for (int row=0; row<tileRows; row++) {
-          for (int col=0; col<tileColumns; col++) {
-            int rowIndex = row * tileHeight;
-            int colIndex = col * tileWidth;
+      byte[] tile = new byte[tileWidth * tileHeight * bytes];
 
-            if ((rowIndex <= y && rowIndex + tileHeight >= y) ||
-              (rowIndex > y && rowIndex <= y + h))
+      for (int row=0; row<tileRows; row++) {
+        for (int col=0; col<tileColumns; col++) {
+          int rowIndex = row * tileHeight;
+          int colIndex = col * tileWidth;
+
+          if ((rowIndex <= y && rowIndex + tileHeight >= y) ||
+            (rowIndex > y && rowIndex <= y + h))
+          {
+            if ((colIndex <= x && colIndex + tileWidth >= x) ||
+              (colIndex > x && colIndex <= x + w))
             {
-              if ((colIndex <= x && colIndex + tileWidth >= x) ||
-                (colIndex > x && colIndex <= x + w))
-              {
-                // read this tile
-                int tileX = colIndex < x ? x - colIndex : 0;
-                int tileY = rowIndex < y ? y - rowIndex : 0;
-                int tileW = colIndex + tileWidth <= x + w ?
-                  tileWidth - tileX : x + w - colIndex -  tileX;
-                int tileH = rowIndex + tileHeight <= y + h ?
-                  tileHeight - tileY : y + h - rowIndex - tileY;
+              // read this tile
+              int tileX = colIndex < x ? x - colIndex : 0;
+              int tileY = rowIndex < y ? y - rowIndex : 0;
+              int tileW = colIndex + tileWidth <= x + w ?
+                tileWidth - tileX : x + w - colIndex -  tileX;
+              int tileH = rowIndex + tileHeight <= y + h ?
+                tileHeight - tileY : y + h - rowIndex - tileY;
 
-                int count = core.sizeZ[0] * core.sizeT[0];
-                count *= core.sizeC[0];
-                Integer ii = new Integer(no + (row*tileColumns + col)*count);
-                if ((row % 2) == 1) {
-                  ii = new Integer(no +
-                    (row*tileColumns + (tileColumns - col - 1))*count);
-                }
+              int count = core.sizeZ[0] * core.sizeT[0];
+              count *= core.sizeC[0];
+              int ii = no + (row*tileColumns + col)*count;
+              if ((row % 2) == 1) {
+                ii = no + (row*tileColumns + (tileColumns - col - 1))*count;
+              }
 
-                Object directory = pixels.get(ii);
-                String name = (String) names.get(ii);
+              RandomAccessStream s =
+                poi.getDocumentStream((String) imageFiles.get(ii));
+              s.skipBytes(
+                ((Integer) offsets.get(new Integer(ii))).intValue());
+              s.read(tile);
+              if (isJPEG) {
+                tile = new JPEGCodec().decompress(tile,
+                  new Object[] {new Boolean(core.littleEndian[0]),
+                  new Boolean(core.interleaved[0])});
+              }
+              s.close();
 
-                r.setVar("dir", directory);
-                r.setVar("entryName", name);
-                r.exec("document = dir.getEntry(entryName)");
-                r.exec("dis = new DocumentInputStream(document, fis)");
-                r.exec("numBytes = dis.available()");
-                r.setVar("skipBytes", ((Integer) offsets.get(ii)).longValue());
-                r.exec("blah = dis.skip(skipBytes)");
-                r.setVar("data", tile);
-                r.exec("dis.read(data)");
+              for (int r=tileY; r<tileY + tileH; r++) {
+                int src = bytes * (r * tileWidth + tileX);
+                int dest = bytes * (w * (rowOffset + r - tileY) + colOffset);
+                int len = tileW * bytes;
+                System.arraycopy(tile, src, buf, dest, len);
+              }
 
-                for (int r=tileY; r<tileY + tileH; r++) {
-                  int src = bytes * (r * tileWidth + tileX);
-                  int dest = bytes * (w * (rowOffset + r - tileY) + colOffset);
-                  int len = tileW * bytes;
-                  System.arraycopy(tile, src, buf, dest, len);
-                }
-
-                colOffset += tileW;
-                if (colOffset >= w) {
-                  colOffset = 0;
-                  rowOffset += tileH;
-                }
+              colOffset += tileW;
+              if (colOffset >= w) {
+                colOffset = 0;
+                rowOffset += tileH;
               }
             }
           }
         }
       }
+    }
 
-      if (bpp > 6) bpp = 1;
-      if (bpp == 3 || bpp == 6) {
-        // reverse bytes in groups of 3 to account for BGR storage
-        byte[] bb = new byte[bpp / 3];
-        int bp = bpp / 3;
-        for (int i=0; i<buf.length; i+=bpp) {
-          System.arraycopy(buf, i + 2*bp, bb, 0, bp);
-          System.arraycopy(buf, i, buf, i + 2*bp, bp);
-          System.arraycopy(bb, 0, buf, i, bp);
-        }
+    if (bpp > 6) bpp = 1;
+    if (bpp == 3 || bpp == 6) {
+      // reverse bytes in groups of 3 to account for BGR storage
+      byte[] bb = new byte[bpp / 3];
+      int bp = bpp / 3;
+      for (int i=0; i<buf.length; i+=bpp) {
+        System.arraycopy(buf, i + 2*bp, bb, 0, bp);
+        System.arraycopy(buf, i, buf, i + 2*bp, bp);
+        System.arraycopy(bb, 0, buf, i, bp);
       }
-      return buf;
     }
-    catch (ReflectException e) {
-      needLegacy = true;
-      return openBytes(no, buf, x, y, w, h);
-    }
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -295,19 +248,13 @@ public class ZeissZVIReader extends FormatReader {
     needLegacy = false;
 
     if (legacy != null) legacy.close();
-    pixels = names = offsets = coordinates = null;
-    zIndices = cIndices = tIndices = null;
+    offsets = coordinates = null;
+    imageFiles = zIndices = cIndices = tIndices = null;
     bpp = tileRows = tileColumns = 0;
     zIndex = cIndex = tIndex = -1;
     needLegacy = isTiled = isJPEG = false;
-
-    try { r.exec("fis.close()"); }
-    catch (ReflectException e) { }
-
-    String[] vars = {"dirName", "root", "dir", "document", "dis",
-      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
-      "entry", "documentName", "entryName"};
-    for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
+    if (poi != null) poi.close();
+    poi = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -315,15 +262,14 @@ public class ZeissZVIReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
-    if (noPOI || needLegacy) {
+    if (needLegacy) {
       legacy.setId(id);
       core = legacy.getCoreMetadata();
       return;
     }
     super.initFile(id);
 
-    pixels = new Hashtable();
-    names = new Hashtable();
+    imageFiles = new Vector();
     offsets = new Hashtable();
     coordinates = new Hashtable();
     zIndices = new Vector();
@@ -338,99 +284,224 @@ public class ZeissZVIReader extends FormatReader {
     gammaValue = new Vector();
     exposureTime = new Vector();
 
-    try {
-      in = new RandomAccessStream(id);
+    poi = new POITools(id);
+    if (poi == null) {
+      needLegacy = true;
+      initFile(id);
+    }
 
-      // Don't uncomment this block.  Even though OIBReader has something
-      // like this, it's really a bad idea here.  Every ZVI file we have *will*
-      // break if you uncomment it.
-      //
-      //if (in.length() % 4096 != 0) {
-      //  in.setExtend((4096 - (int) (in.length() % 4096)));
-      //}
+    Vector files = poi.getDocumentList();
 
-      in.order(true);
-      in.seek(30);
-      int size = (int) Math.pow(2, in.readShort());
-      in.close();
+    for (int i=0; i<files.size(); i++) {
+      String name = (String) files.get(i);
+      String relPath = name.substring(name.lastIndexOf(File.separator) + 1);
+      String dirName = name.substring(0, name.lastIndexOf(File.separator));
+      if (dirName.indexOf(File.separator) != -1) {
+        dirName = dirName.substring(dirName.lastIndexOf(File.separator) + 1);
+      }
 
-      r.setVar("file", currentId);
-      r.exec("fis = new RandomAccessStream(file)");
-      r.setVar("littleEndian", true);
-      r.exec("fis.order(littleEndian)");
-      r.setVar("size", size);
-      r.exec("fs = new POIFSFileSystem(fis, size)");
-      r.exec("dir = fs.getRoot()");
-      parseDir(0, r.getVar("dir"));
+      boolean isContents = relPath.toUpperCase().equals("CONTENTS");
 
-      status("Populating metadata");
+      RandomAccessStream s = poi.getDocumentStream(name);
+      s.order(true);
 
-      core.rgb[0] = core.sizeC[0] > 1 &&
-        (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] != core.imageCount[0]);
-      core.littleEndian[0] = true;
-      core.interleaved[0] = !isJPEG;
-      core.indexed[0] = false;
-      core.falseColor[0] = false;
-      core.metadataComplete[0] = true;
+      if (dirName.equals("Tags") && isContents) {
+        try { parseTags(s); }
+        catch (EOFException e) { }
+      }
+      else if (isContents && (dirName.equals("Image") ||
+        dirName.toUpperCase().indexOf("ITEM") != -1) &&
+        (s.length() > 1024))
+      {
+        try {
+          s.seek(6);
 
-      core.sizeZ[0] = zIndices.size();
-      core.sizeT[0] = tIndices.size();
+          int vt = s.readShort();
+          if (vt == 3) {
+            s.skipBytes(6);
+          }
+          else if (vt == 8) {
+            int l = s.readShort();
+            s.skipBytes(l + 2);
+          }
+          int len = s.readShort();
+          if (s.readShort() != 0) s.seek(s.getFilePointer() - 2);
 
-      core.sizeC[0] *= cIndices.size();
+          if (s.getFilePointer() + len <= s.length()) {
+            s.skipBytes(len);
+          }
+          else break;
 
-      core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
-        (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
+          vt = s.readShort();
+          if (vt == 8) {
+            len = s.readInt();
+            s.skipBytes(len + 2);
+          }
 
-      if (isTiled) {
-        int totalTiles =
+          int tw = s.readInt();
+          if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
+            core.sizeX[0] = tw;
+          }
+          s.skipBytes(2);
+          int th = s.readInt();
+          if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
+            core.sizeY[0] = th;
+          }
+
+          s.skipBytes(14);
+
+          int numImageContainers = s.readInt();
+          s.skipBytes(6);
+
+          // VT_CLSID - PluginCLSID
+          while (s.readShort() != 65);
+
+          // VT_BLOB - Others
+          len = s.readInt();
+          s.skipBytes(len);
+
+          // VT_STORED_OBJECT - Layers
+          s.skipBytes(2);
+          long old = s.getFilePointer();
+          len = s.readInt();
+
+          s.skipBytes(8);
+
+          int zidx = s.readInt();
+          int cidx = s.readInt();
+          int tidx = s.readInt();
+
+          Integer zndx = new Integer(zidx);
+          Integer cndx = new Integer(cidx);
+          Integer tndx = new Integer(tidx);
+
+          if (!zIndices.contains(zndx)) zIndices.add(zndx);
+          if (!cIndices.contains(cndx)) cIndices.add(cndx);
+          if (!tIndices.contains(tndx)) tIndices.add(tndx);
+
+          s.seek(old + len + 4);
+
+          boolean foundWidth = s.readInt() == core.sizeX[0];
+          boolean foundHeight = s.readInt() == core.sizeY[0];
+          boolean findFailed = false;
+          while ((!foundWidth || !foundHeight) &&
+            s.getFilePointer() + 1 < s.length())
+          {
+            s.seek(s.getFilePointer() - 7);
+            foundWidth = s.readInt() == core.sizeX[0];
+            foundHeight = s.readInt() == core.sizeY[0];
+          }
+          s.seek(s.getFilePointer() - 16);
+          findFailed = !foundWidth && !foundHeight;
+
+          // image header and data
+
+          if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
+            (dirName.equals("Image") && numImageContainers == 0))
+          {
+            if (findFailed) s.seek(old + len + 92);
+            long fp = s.getFilePointer();
+            byte[] o = new byte[(int) (s.length() - fp)];
+            s.read(o);
+
+            int imageNum = 0;
+            if (dirName.toUpperCase().indexOf("ITEM") != -1) {
+              String num = dirName.substring(dirName.indexOf("(") + 1);
+              num = num.substring(0, num.length() - 1);
+              imageNum = Integer.parseInt(num);
+            }
+
+            coordinates.put(new Integer(imageNum),
+              new int[] {zidx, cidx, tidx});
+
+            offsets.put(new Integer(imageNum), new Integer((int) fp + 32));
+            parsePlane(o, imageNum, name);
+          }
+        }
+        catch (EOFException exc) { }
+      }
+      else {
+        try { parseTags(s); }
+        catch (IOException e) { }
+      }
+    }
+
+    status("Populating metadata");
+
+    core.rgb[0] = core.sizeC[0] > 1 &&
+      (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] != core.imageCount[0]);
+    core.littleEndian[0] = true;
+    core.interleaved[0] = !isJPEG;
+    core.indexed[0] = false;
+    core.falseColor[0] = false;
+    core.metadataComplete[0] = true;
+
+    core.sizeZ[0] = zIndices.size();
+    core.sizeT[0] = tIndices.size();
+
+    core.sizeC[0] *= cIndices.size();
+
+    core.imageCount[0] = core.sizeZ[0] * core.sizeT[0] *
+      (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
+
+    if (isTiled) {
+      int totalTiles =
+        offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
+
+      tileRows = (realHeight / core.sizeY[0]) + 1;
+      tileColumns = (realWidth / core.sizeX[0]) + 1;
+
+      if (totalTiles <= 1) {
+        tileRows = 1;
+        tileColumns = 1;
+        totalTiles = 1;
+        isTiled = false;
+      }
+
+      while (tileRows * tileColumns > totalTiles) {
+        core.sizeC[0]--;
+        totalTiles =
           offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
-
-        tileRows = (realHeight / core.sizeY[0]) + 1;
-        tileColumns = (realWidth / core.sizeX[0]) + 1;
-
-        if (tileRows == 0) tileRows = 1;
-        if (tileColumns == 0) tileColumns = 1;
-
-        if (tileColumns == 1 && tileRows == 1) isTiled = false;
-        else {
-          tileWidth = core.sizeX[0];
-          tileHeight = core.sizeY[0];
-          core.sizeX[0] = tileWidth * tileColumns;
-          core.sizeY[0] = tileHeight * tileRows;
-        }
+        core.imageCount[0] -= core.sizeZ[0] * core.sizeT[0];
       }
 
-      core.currentOrder[0] = "XY";
-      for (int i=0; i<coordinates.size()-1; i++) {
-        int[] zct1 = (int[]) coordinates.get(new Integer(i));
-        int[] zct2 = (int[]) coordinates.get(new Integer(i + 1));
-        int deltaZ = zct2[0] - zct1[0];
-        int deltaC = zct2[1] - zct1[1];
-        int deltaT = zct2[2] - zct1[2];
-        if (deltaZ > 0 && core.currentOrder[0].indexOf("Z") == -1) {
-          core.currentOrder[0] += "Z";
-        }
-        if (deltaC > 0 && core.currentOrder[0].indexOf("C") == -1) {
-          core.currentOrder[0] += "C";
-        }
-        if (deltaT > 0 && core.currentOrder[0].indexOf("T") == -1) {
-          core.currentOrder[0] += "T";
-        }
+      if (tileRows == 0) tileRows = 1;
+      if (tileColumns == 0) tileColumns = 1;
+
+      if (tileColumns == 1 && tileRows == 1) isTiled = false;
+      else {
+        tileWidth = core.sizeX[0];
+        tileHeight = core.sizeY[0];
+        core.sizeX[0] = tileWidth * tileColumns;
+        core.sizeY[0] = tileHeight * tileRows;
       }
-      if (core.currentOrder[0].indexOf("C") == -1) {
-        core.currentOrder[0] += "C";
-      }
-      if (core.currentOrder[0].indexOf("Z") == -1) {
+    }
+
+    core.currentOrder[0] = "XY";
+    for (int i=0; i<coordinates.size()-1; i++) {
+      int[] zct1 = (int[]) coordinates.get(new Integer(i));
+      int[] zct2 = (int[]) coordinates.get(new Integer(i + 1));
+      int deltaZ = zct2[0] - zct1[0];
+      int deltaC = zct2[1] - zct1[1];
+      int deltaT = zct2[2] - zct1[2];
+      if (deltaZ > 0 && core.currentOrder[0].indexOf("Z") == -1) {
         core.currentOrder[0] += "Z";
       }
-      if (core.currentOrder[0].indexOf("T") == -1) {
+      if (deltaC > 0 && core.currentOrder[0].indexOf("C") == -1) {
+        core.currentOrder[0] += "C";
+      }
+      if (deltaT > 0 && core.currentOrder[0].indexOf("T") == -1) {
         core.currentOrder[0] += "T";
       }
     }
-    catch (ReflectException exc) {
-      needLegacy = true;
-      if (debug) trace(exc);
-      initFile(id);
+    if (core.currentOrder[0].indexOf("C") == -1) {
+      core.currentOrder[0] += "C";
+    }
+    if (core.currentOrder[0].indexOf("Z") == -1) {
+      core.currentOrder[0] += "Z";
+    }
+    if (core.currentOrder[0].indexOf("T") == -1) {
+      core.currentOrder[0] += "T";
     }
 
     // rearrange axis sizes, if necessary
@@ -599,199 +670,8 @@ public class ZeissZVIReader extends FormatReader {
 //      new Float(mag), null, null);
   }
 
-  protected void parseDir(int depth, Object dir)
-    throws IOException, FormatException, ReflectException
-  {
-    r.setVar("dir", dir);
-    r.exec("dirName = dir.getName()");
-    r.setVar("depth", depth);
-    r.exec("iter = dir.getEntries()");
-    Iterator iter = (Iterator) r.getVar("iter");
-    String dirName = (String) r.getVar("dirName");
-    while (iter.hasNext()) {
-      r.setVar("entry", iter.next());
-      r.exec("isInstance = entry.isDirectoryEntry()");
-      r.exec("isDocument = entry.isDocumentEntry()");
-      boolean isInstance = ((Boolean) r.getVar("isInstance")).booleanValue();
-      boolean isDocument = ((Boolean) r.getVar("isDocument")).booleanValue();
-      r.setVar("dir", dir);
-      r.exec("dirName = dir.getName()");
-
-      if (isInstance)  {
-        parseDir(depth + 1, r.getVar("entry"));
-      }
-      else if (isDocument) {
-        r.exec("entryName = entry.getName()");
-        if (debug) {
-          print(depth + 1, "Found document: " + r.getVar("entryName"));
-        }
-        r.exec("dis = new DocumentInputStream(entry, fis)");
-        r.exec("numBytes = dis.available()");
-        int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-        byte[] data = new byte[numbytes];
-        r.setVar("data", data);
-
-        try {
-          r.exec("dis.read(data)");
-        }
-        catch (ReflectException exc) {
-          if (debug) trace(exc);
-        }
-
-        String entryName = (String) r.getVar("entryName");
-
-        boolean isContents = entryName.toUpperCase().equals("CONTENTS");
-        Object directory = r.getVar("dir");
-
-        RandomAccessStream s = new RandomAccessStream(data);
-        s.order(true);
-
-        if (dirName.toUpperCase().equals("ROOT ENTRY") ||
-          dirName.toUpperCase().equals("ROOTENTRY"))
-        {
-          if (entryName.equals("Tags")) {
-            try { parseTags(s); }
-            catch (EOFException e) { }
-          }
-        }
-        else if (dirName.equals("Tags") && isContents) {
-          try { parseTags(s); }
-          catch (EOFException e) { }
-        }
-        else if (isContents && (dirName.equals("Image") ||
-          dirName.toUpperCase().indexOf("ITEM") != -1) &&
-          (data.length > core.sizeX[0]*core.sizeY[0]))
-        {
-          try {
-            s.skipBytes(6);
-
-            int vt = s.readShort();
-            if (vt == 3) {
-              s.skipBytes(6);
-            }
-            else if (vt == 8) {
-              int l = s.readShort();
-              s.skipBytes(l + 2);
-            }
-            int len = s.readShort();
-            if (s.readShort() != 0) s.seek(s.getFilePointer() - 2);
-
-            if (s.getFilePointer() + len <= s.length()) {
-              s.skipBytes(len);
-            }
-            else break;
-
-            vt = s.readShort();
-            if (vt == 8) {
-              len = s.readInt();
-              s.skipBytes(len + 2);
-            }
-
-            int tw = s.readInt();
-            if (core.sizeX[0] == 0 || (tw < core.sizeX[0] && tw > 0)) {
-              core.sizeX[0] = tw;
-            }
-            s.skipBytes(2);
-            int th = s.readInt();
-            if (core.sizeY[0] == 0 || (th < core.sizeY[0] && th > 0)) {
-              core.sizeY[0] = th;
-            }
-
-            s.skipBytes(14);
-
-            int numImageContainers = s.readInt();
-            s.skipBytes(6);
-
-            // VT_CLSID - PluginCLSID
-            while (s.readShort() != 65);
-
-            // VT_BLOB - Others
-            len = s.readInt();
-            s.skipBytes(len);
-
-            // VT_STORED_OBJECT - Layers
-            s.skipBytes(2);
-            long old = s.getFilePointer();
-            len = s.readInt();
-
-            s.skipBytes(8);
-
-            int zidx = s.readInt();
-            int cidx = s.readInt();
-            int tidx = s.readInt();
-
-            Integer zndx = new Integer(zidx);
-            Integer cndx = new Integer(cidx);
-            Integer tndx = new Integer(tidx);
-
-            if (!zIndices.contains(zndx)) zIndices.add(zndx);
-            if (!cIndices.contains(cndx)) cIndices.add(cndx);
-            if (!tIndices.contains(tndx)) tIndices.add(tndx);
-
-            s.seek(old + len + 4);
-
-            boolean foundWidth = s.readInt() == core.sizeX[0];
-            boolean foundHeight = s.readInt() == core.sizeY[0];
-            boolean findFailed = false;
-            while ((!foundWidth || !foundHeight) &&
-              s.getFilePointer() + 1 < s.length())
-            {
-              s.seek(s.getFilePointer() - 7);
-              foundWidth = s.readInt() == core.sizeX[0];
-              foundHeight = s.readInt() == core.sizeY[0];
-            }
-            s.seek(s.getFilePointer() - 16);
-            findFailed = !foundWidth && !foundHeight;
-
-            // image header and data
-
-            if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
-              (dirName.equals("Image") && numImageContainers == 0))
-            {
-              if (findFailed) s.seek(old + len + 92);
-              long fp = s.getFilePointer();
-              byte[] o = new byte[(int) (s.length() - fp)];
-              s.read(o);
-
-              int imageNum = 0;
-              if (dirName.toUpperCase().indexOf("ITEM") != -1) {
-                String num = dirName.substring(5);
-                num = num.substring(0, num.length() - 1);
-                imageNum = Integer.parseInt(num);
-              }
-
-              coordinates.put(new Integer(imageNum),
-                new int[] {zidx, cidx, tidx});
-
-              offsets.put(new Integer(imageNum), new Integer((int) fp + 32));
-              parsePlane(o, imageNum, directory, entryName);
-            }
-          }
-          catch (EOFException exc) { }
-        }
-        else {
-          try { parseTags(s); }
-          catch (IOException e) { }
-        }
-
-        s.close();
-        data = null;
-        r.exec("dis.close()");
-      }
-    }
-  }
-
-  /** Debugging helper method. */
-  protected void print(int depth, String s) {
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<depth; i++) sb.append("  ");
-    sb.append(s);
-    debug(sb.toString());
-  }
-
   /** Parse a plane of data. */
-  private void parsePlane(byte[] data, int num, Object directory, String entry)
-    throws IOException
+  private void parsePlane(byte[] data, int num, String name) throws IOException
   {
     RandomAccessStream s = new RandomAccessStream(data);
     s.order(true);
@@ -806,8 +686,14 @@ public class ZeissZVIReader extends FormatReader {
     int valid = s.readInt();
     isJPEG = valid == 0 || valid == 1;
 
-    pixels.put(new Integer(num), directory);
-    names.put(new Integer(num), entry);
+    if (num < imageFiles.size()) imageFiles.setElementAt(name, num);
+    else {
+      int diff = num - imageFiles.size();
+      for (int i=0; i<diff; i++) {
+        imageFiles.add("");
+      }
+      imageFiles.add(name);
+    }
     core.imageCount[0]++;
     if (bpp % 3 == 0) core.sizeC[0] = 3;
     else core.sizeC[0] = 1;
