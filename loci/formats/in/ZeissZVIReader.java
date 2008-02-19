@@ -42,14 +42,7 @@ import loci.formats.meta.MetadataStore;
  */
 public class ZeissZVIReader extends FormatReader {
 
-  // -- Static fields --
-
-  private LegacyZVIReader legacy = new LegacyZVIReader();
-
   // -- Fields --
-
-  /** Flag set to true if we need to use the legacy reader. */
-  private boolean needLegacy = false;
 
   /** Number of bytes per pixel. */
   private int bpp;
@@ -100,13 +93,6 @@ public class ZeissZVIReader extends FormatReader {
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
-  /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
-  public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 1);
-    super.setMetadataStore(store);
-    if (needLegacy) legacy.setMetadataStore(store);
-  }
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -114,7 +100,6 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    if (needLegacy) return legacy.openBytes(no, buf, x, y, w, h);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
@@ -235,7 +220,6 @@ public class ZeissZVIReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     if (fileOnly) {
       if (in != null) in.close();
-      if (legacy != null) legacy.close(fileOnly);
     }
     else close();
   }
@@ -245,14 +229,12 @@ public class ZeissZVIReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    needLegacy = false;
 
-    if (legacy != null) legacy.close();
     offsets = coordinates = null;
     imageFiles = zIndices = cIndices = tIndices = null;
     bpp = tileRows = tileColumns = 0;
     zIndex = cIndex = tIndex = -1;
-    needLegacy = isTiled = isJPEG = false;
+    isTiled = isJPEG = false;
     if (poi != null) poi.close();
     poi = null;
   }
@@ -262,11 +244,6 @@ public class ZeissZVIReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
-    if (needLegacy) {
-      legacy.setId(id);
-      core = legacy.getCoreMetadata();
-      return;
-    }
     super.initFile(id);
 
     imageFiles = new Vector();
@@ -285,10 +262,6 @@ public class ZeissZVIReader extends FormatReader {
     exposureTime = new Vector();
 
     poi = new POITools(id);
-    if (poi == null) {
-      needLegacy = true;
-      initFile(id);
-    }
 
     Vector files = poi.getDocumentList();
 
