@@ -94,6 +94,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   private static final int CHANNEL_ENTRY_PINHOLE_DIAMETER = 0x70000009;
   private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_START = 0x70000022;
   private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_END = 0x70000023;
+  private static final int ILLUM_CHANNEL_WAVELENGTH = 0x90000003;
   private static final int DATA_CHANNEL_NAME = 0xd0000001;
 
   // -- Static fields --
@@ -643,18 +644,31 @@ public class ZeissLSMReader extends BaseTiffReader {
               break;
             case CHANNEL_ENTRY_PINHOLE_DIAMETER:
               int n = (int) Float.parseFloat(value.toString());
-              if (n > 0) {
+              if (n > 0 && nextPinhole < core.sizeC[0]) {
                 store.setLogicalChannelPinholeSize(new Integer(n), 0,
                   nextPinhole++);
               }
               break;
             case CHANNEL_ENTRY_SPI_WAVELENGTH_START:
               n = (int) Float.parseFloat(value.toString());
-              store.setLogicalChannelEmWave(new Integer(n), 0, nextEmWave++);
+              store.setLogicalChannelEmWave(new Integer(n), 0,
+                (nextEmWave % core.sizeC[0]));
+              nextEmWave++;
               break;
             case CHANNEL_ENTRY_SPI_WAVELENGTH_END:
               n = (int) Float.parseFloat(value.toString());
-              store.setLogicalChannelExWave(new Integer(n), 0, nextExWave++);
+              store.setLogicalChannelExWave(new Integer(n), 0,
+                (nextExWave % core.sizeC[0]));
+              nextExWave++;
+              break;
+            case ILLUM_CHANNEL_WAVELENGTH:
+              n = (int) Float.parseFloat(value.toString());
+              store.setLogicalChannelEmWave(new Integer(n), 0,
+                (nextEmWave % core.sizeC[0]));
+              store.setLogicalChannelExWave(new Integer(n), 0,
+                (nextExWave % core.sizeC[0]));
+              nextEmWave++;
+              nextExWave++;
               break;
             case DATA_CHANNEL_NAME:
               store.setLogicalChannelName(value.toString(),
