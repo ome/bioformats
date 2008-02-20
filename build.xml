@@ -467,6 +467,7 @@ Apache XML-RPC
     description="run all automated tests">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="all" testname="All tests"
+      listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -479,6 +480,7 @@ Apache XML-RPC
     description="generate config files for automated test suite">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="config" testname="Config generation"
+      listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -504,6 +506,7 @@ Apache XML-RPC
     description="run automated tests in group 'pixels'">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="pixels" testname="Pixels tests"
+      listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -516,6 +519,7 @@ Apache XML-RPC
     description="run automated tests in group 'xml'">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="xml" testname="XML tests"
+      listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
