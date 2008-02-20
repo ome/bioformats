@@ -77,8 +77,9 @@ public class BioRadReader extends FormatReader {
 
   /** Constructs a new BioRadReader. */
   public BioRadReader() {
-    super("Bio-Rad PIC", new String[] {"pic", "xml"});
+    super("Bio-Rad PIC", new String[] {"pic", "xml", "raw"});
     blockCheckLen = 56;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -93,7 +94,8 @@ public class BioRadReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < blockCheckLen) return false;
-    return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
+    return DataTools.bytesToShort(block, 54, LITTLE_ENDIAN) == PIC_FILE_ID ||
+      new String(block).startsWith("[Input Sources]");
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */
@@ -159,16 +161,57 @@ public class BioRadReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
 
-    if (id.toLowerCase().endsWith(".xml")) {
-      Location l = new Location(id).getAbsoluteFile().getParentFile();
-      String[] list = l.list();
-      for (int i=0; i<list.length; i++) {
-        if (list[i].toLowerCase().endsWith(".pic")) {
-          id = new Location(l.getAbsolutePath(), list[i]).getAbsolutePath();
+    if (!id.toLowerCase().endsWith(".pic")) {
+      // find the data.raw file
+      Location dir = new Location(id).getAbsoluteFile().getParentFile();
+      Location raw = new Location(dir, "data.raw");
+
+      if (raw.exists()) {
+        // use data.raw to find the appropriate .pic file(s)
+        RandomAccessStream s = new RandomAccessStream(raw.getAbsolutePath());
+        String data = s.readString((int) s.length());
+        StringTokenizer lines = new StringTokenizer(data, "\n");
+
+        String prefix = null;
+        int nFiles = 0;
+
+        while (lines.hasMoreTokens()) {
+          String line = lines.nextToken().trim();
+          if (line.startsWith("Data file path")) {
+            prefix = line.substring(line.indexOf("=") + 1);
+            if (prefix.endsWith(".pic")) {
+              prefix = prefix.substring(0, prefix.length() - 4);
+            }
+          }
+          else if (line.startsWith("Number of Panes")) {
+            nFiles = Integer.parseInt(line.substring(line.indexOf("=") + 1));
+          }
+        }
+
+        if (prefix != null && nFiles > 0) {
+          String file = nFiles == 1 ? prefix + ".pic" : prefix + "01.pic";
+          Location l = new Location(dir, file);
+          if (!l.exists()) {
+            file = file.replaceAll("pic", "PIC");
+            l = new Location(dir, file);
+          }
+          initFile(l.getAbsolutePath());
+          return;
+        }
+        else {
+          throw new FormatException("No .pic files found - invalid dataset.");
         }
       }
-      if (id.toLowerCase().endsWith(".xml")) {
-        throw new FormatException("No .pic files found - invalid dataset.");
+      else {
+        String[] list = dir.list();
+        for (int i=0; i<list.length; i++) {
+          if (list[i].toLowerCase().endsWith(".pic")) {
+            id = new Location(dir.getAbsolutePath(), list[i]).getAbsolutePath();
+          }
+        }
+        if (!id.toLowerCase().endsWith(".pic")) {
+          throw new FormatException("No .pic files found - invalid dataset.");
+        }
       }
     }
 
@@ -662,18 +705,20 @@ public class BioRadReader extends FormatReader {
       }
     }
 
-    String colorString = "";
+    StringBuffer colorString = new StringBuffer();
     for (int i=0; i<numLuts; i++) {
       for (int j=0; j<256; j++) {
         for (int k=0; k<3; k++) {
-          colorString += (colors[i][k][j]);
-          if (!(j == 255 && k == 2)) colorString += ",";
+          colorString = colorString.append(colors[i][k][j]);
+          if (!(j == 255 && k == 2)) {
+            colorString = colorString.append(",");
+          }
         }
       }
-      colorString += "\n\n";
+      colorString = colorString.append("\n\n");
     }
 
-    addMeta("luts", colorString);
+    addMeta("luts", colorString.toString());
 
     status("Populating metadata");
 
@@ -681,6 +726,10 @@ public class BioRadReader extends FormatReader {
 
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
     String[] list = parent.list();
+    Arrays.sort(list);
+
+    String prefix = null;
+    int numFiles = 0;
 
     for (int i=0; i<list.length; i++) {
       if (list[i].endsWith("data.raw")) {
@@ -688,12 +737,28 @@ public class BioRadReader extends FormatReader {
           new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
         used.add(new Location(
           parent.getAbsolutePath(), list[i]).getAbsolutePath());
-        String line = raw.readLine();
+        String line = raw.readLine().trim();
         while (line != null && line.length() > 0) {
           if (line.charAt(0) != '[') {
             String key = line.substring(0, line.indexOf("="));
             String value = line.substring(line.indexOf("=") + 1);
             addMeta(key.trim(), value.trim());
+          }
+          if (line.startsWith("Data file path")) {
+            prefix = line.substring(line.indexOf("=") + 1).trim();
+            if (prefix.endsWith(".pic")) {
+              prefix = prefix.substring(0, prefix.length() - 4).trim();
+            }
+            if (currentId.indexOf(prefix) == -1) {
+              prefix = null;
+              numFiles = 0;
+              i = list.length;
+              break;
+            }
+          }
+          else if (line.startsWith("Number of Panes")) {
+            numFiles =
+              Integer.parseInt(line.substring(line.indexOf("=") + 1).trim());
           }
           line = raw.readLine();
         }
@@ -704,9 +769,8 @@ public class BioRadReader extends FormatReader {
           new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
         used.add(new Location(
           parent.getAbsolutePath(), list[i]).getAbsolutePath());
-        byte[] b = new byte[(int) raw.length()];
-        raw.read(b);
-        String xml = new String(b);
+        String xml = raw.readString((int) raw.length());
+        raw.close();
 
         // parse dataset dimensions
         if (xml.indexOf("<Pixels ") != -1) {
@@ -715,36 +779,51 @@ public class BioRadReader extends FormatReader {
           String s = xml.substring(start, end);
 
           int zs = s.indexOf("SizeZ=") + 7;
-          int z =
-            zs == 6 ? 1 : Integer.parseInt(s.substring(zs, s.indexOf("\"", zs)));
+          int z = zs == 6 ? 1 :
+            Integer.parseInt(s.substring(zs, s.indexOf("\"", zs)));
           int cs = s.indexOf("SizeC=") + 7;
-          int c =
-            cs == 6 ? 1 : Integer.parseInt(s.substring(cs, s.indexOf("\"", cs)));
+          int c = cs == 6 ? 1 :
+            Integer.parseInt(s.substring(cs, s.indexOf("\"", cs)));
           int ts = s.indexOf("SizeT=") + 7;
-          int t =
-            ts == 6 ? 1 : Integer.parseInt(s.substring(ts, s.indexOf("\"", ts)));
+          int t = ts == 6 ? 1 :
+            Integer.parseInt(s.substring(ts, s.indexOf("\"", ts)));
 
           core.sizeZ[0] = z;
           core.sizeC[0] = c;
           core.sizeT[0] = t;
 
-          int numFiles = (z * c * t) / core.imageCount[0];
-
+          if (numFiles == 0) numFiles = (z * c * t) / core.imageCount[0];
           picFiles = new String[numFiles];
           int ndx = 0;
           used.remove(currentId);
-          for (int j=0; j<list.length; j++) {
-            if (list[j].toLowerCase().endsWith(".pic")) {
-              if (ndx == picFiles.length) {
-                core.sizeC[0]++;
-                c++;
-                String[] tmp = picFiles;
-                picFiles = new String[ndx * core.sizeC[0]];
-                System.arraycopy(tmp, 0, picFiles, 0, tmp.length);
+          if (prefix != null) {
+            core.sizeC[0] = numFiles;
+            c = numFiles;
+            for (int j=0; j<numFiles; j++) {
+              String num = String.valueOf(j + 1);
+              if (num.length() == 1) num = "0" + num;
+              if (numFiles == 1) num = "";
+              picFiles[j] = prefix + num + ".pic";
+              if (!new Location(picFiles[j]).exists()) {
+                picFiles[j] = picFiles[j].replaceAll("pic", "PIC");
               }
-              picFiles[ndx] =
-                new Location(parent.getAbsolutePath(), list[j]).getAbsolutePath();
-              used.add(picFiles[ndx++]);
+              used.add(picFiles[j]);
+            }
+          }
+          else {
+            for (int j=0; j<list.length; j++) {
+              if (list[j].toLowerCase().endsWith(".pic")) {
+                if (ndx == picFiles.length) {
+                  core.sizeC[0]++;
+                  c++;
+                  String[] tmp = picFiles;
+                  picFiles = new String[ndx * core.sizeC[0]];
+                  System.arraycopy(tmp, 0, picFiles, 0, tmp.length);
+                }
+                picFiles[ndx] = new Location(parent.getAbsolutePath(),
+                  list[j]).getAbsolutePath();
+                used.add(picFiles[ndx++]);
+              }
             }
           }
           Arrays.sort(picFiles);
@@ -776,7 +855,6 @@ public class BioRadReader extends FormatReader {
           }
         }
         raw.close();
-        b = null;
       }
     }
 
