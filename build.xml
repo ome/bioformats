@@ -297,7 +297,7 @@ Skin Look and Feel
     License:   Custom (BSD-like)
 
 TestNG
-    JAR file:  testng-5.6-jdk14.jar
+    JAR file:  testng-5.7-jdk14.jar
     URL:       http://testng.org/
     Notes:     testing framework used for LOCI software automated test suite
     License:   Apache
@@ -491,6 +491,7 @@ Apache XML-RPC
     description="run automated tests in group 'fast'">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="fast" testname="Fast tests"
+      listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
