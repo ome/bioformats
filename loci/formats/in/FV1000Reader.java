@@ -76,15 +76,19 @@ public class FV1000Reader extends FormatReader {
 
   /** Constructs a new FV1000 reader. */
   public FV1000Reader() {
-    super("Fluoview FV1000",
-      new String[] {"oib", "oif", "roi", "pty", "lut", "bmp"});
+    super("Fluoview FV1000", new String[] {"oib", "oif", "pty", "lut"});
+    blockCheckLen = 1024;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return false;
+    if (block.length < blockCheckLen) return false;
+    String s = DataTools.stripString(new String(block));
+    return s.indexOf("FileInformation") != -1 ||
+      s.indexOf("Acquisition Parameters") != -1;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -131,6 +135,7 @@ public class FV1000Reader extends FormatReader {
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
+    if (usedFiles == null) return new String[] {currentId};
     return (String[]) usedFiles.toArray(new String[0]);
   }
 
@@ -232,7 +237,8 @@ public class FV1000Reader extends FormatReader {
 
         id = current.getPath();
         String oifFile = id.substring(id.lastIndexOf(File.separator));
-        oifFile = parent + oifFile.substring(0, oifFile.indexOf("_")) + ".oif";
+        oifFile =
+          parent + oifFile.substring(0, oifFile.lastIndexOf("_")) + ".oif";
 
         tmp = new Location(oifFile);
         if (!tmp.exists()) {
