@@ -1827,8 +1827,26 @@ public final class ImageTools {
     }
 
     BufferedImage result = null;
-    Image scaled = scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
-    result = makeBuffered(scaled, source.getColorModel());
+    if (source.getColorModel() instanceof IndexedColorModel) {
+      ColorModel model = source.getColorModel();
+      WritableRaster raster = Raster.createWritableRaster(
+        source.getSampleModel(), source.getData().getDataBuffer(), null);
+      source = new BufferedImage(makeColorModel(1,
+        source.getData().getDataBuffer().getDataType()), raster, false, null);
+
+      Image scaled =
+        scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
+      result = makeBuffered(scaled, source.getColorModel());
+
+      raster = Raster.createWritableRaster(result.getSampleModel(),
+        result.getData().getDataBuffer(), null);
+      result = new BufferedImage(model, raster, false, null);
+    }
+    else {
+      Image scaled =
+        scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
+      result = makeBuffered(scaled, source.getColorModel());
+    }
     return padImage(result, finalWidth, finalHeight);
   }
 

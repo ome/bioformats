@@ -438,8 +438,8 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
-    return ImageTools.scale2D(openImage(no), getThumbSizeX(),
-      getThumbSizeY(), null, (GraphicsConfiguration) null);
+    return ImageTools.scale(openImage(no), getThumbSizeX(),
+      getThumbSizeY(), false);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */
