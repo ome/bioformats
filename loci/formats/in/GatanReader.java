@@ -223,6 +223,7 @@ public class GatanReader extends FormatReader {
     //store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
     //store.setDetectorVoltage(new Float(voltage), 0, 0);
 
+    if (info == null) info = "";
     StringTokenizer scopeInfo = new StringTokenizer(info, "(");
     while (scopeInfo.hasMoreTokens()) {
       String token = scopeInfo.nextToken().trim();
