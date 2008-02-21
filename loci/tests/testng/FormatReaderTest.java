@@ -147,6 +147,7 @@ public class FormatReaderTest {
     String file = reader.getCurrentFile();
     String testName = "\ttestByteArrayDimensions";
     boolean success = true;
+    String msg = null;
     try {
       byte[] b = null;
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
@@ -161,6 +162,10 @@ public class FormatReaderTest {
         for (int j=0; j<reader.getImageCount() && success; j++) {
           b = reader.openBytes(j);
           success = b.length == expected;
+          if (!success) {
+            msg = "series #" + i + ", image #" + j +
+              ": was " + b.length + ", expected " + expected;
+          }
         }
       }
     }
@@ -168,7 +173,7 @@ public class FormatReaderTest {
       LogTools.trace(t);
       success = false;
     }
-    result(testName, success);
+    result(testName, success, msg);
   }
 
   /**
