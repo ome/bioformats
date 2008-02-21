@@ -32,6 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdafx.h"
 #include "JVMLinkClient.h"
+#include <ctime> // for time()
+#include <cstdlib> // for srand() and rand()
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -57,19 +59,113 @@ int _tmain(int argc, _TCHAR* argv[])
 	b->data = a;
 */
 
-	int testValue = 47;
-	p->setVar("myInt", testValue);
-	std::cout << "TestC2: setVar: myInt = " << testValue << std::endl;
-	JVMLinkObject* myInt = p->getVar("myInt");
-	std::cout << "TestC2: getVar: myInt = " << myInt->getDataAsInt() << std::endl;
+	// test the API
+
+	srand(time(0));
+
+	// bool variables
+	bool myBool = (bool) rand();
+	p->setVar("myBool", myBool);
+	std::cout << "TestC2: setVar: myBool = " << myBool << std::endl;
+	JVMLinkObject* jvmBool = p->getVar("myBool");
+	std::cout << "TestC2: getVar: myBool = " << jvmBool->getDataAsBool() << std::endl;
+
+	// Byte variables
+	Byte myByte;
+	myByte.data = (int) (rand() % 128);
+	p->setVar("myByte", myByte);
+	std::cout << "TestC2: setVar: myByte = " << myByte.data << std::endl;
+	JVMLinkObject* jvmByte = p->getVar("myByte");
+	std::cout << "TestC2: getVar: myByte = " << jvmByte->getDataAsByte().data << std::endl;
+
+	// char variables
+	char myChar = (char) (rand() % (127 - 33 + 1)) + 33;
+	p->setVar("myChar", myChar);
+	std::cout << "TestC2: setVar: myChar = " << myChar << std::endl;
+	JVMLinkObject* jvmChar = p->getVar("myChar");
+	std::cout << "TestC2: getVar: myChar = " << jvmChar->getDataAsChar() << std::endl;
+
+	// double variables
+	// TODO - investigate why doubles are transferred incorrectly
+	double myDouble = (double) rand();
+	p->setVar("myDouble", myDouble);
+	std::cout << "TestC2: setVar: myDouble = " << myDouble << std::endl;
+	JVMLinkObject* jvmDouble = p->getVar("myDouble");
+	std::cout << "TestC2: getVar: myDouble = " << jvmDouble->getDataAsDouble() << std::endl;
+
+	// float variables
+	// TODO - investigate why floats are transferred incorrectly
+	float myFloat = (float) rand();
+	p->setVar("myFloat", myFloat);
+	std::cout << "TestC2: setVar: myFloat = " << myFloat << std::endl;
+	JVMLinkObject* jvmFloat = p->getVar("myFloat");
+	std::cout << "TestC2: getVar: myFloat = " << jvmFloat->getDataAsFloat() << std::endl;
+
+	// int variables
+	int myInt = rand();
+	p->setVar("myInt", myInt);
+	std::cout << "TestC2: setVar: myInt = " << myInt << std::endl;
+	JVMLinkObject* jvmInt = p->getVar("myInt");
+	std::cout << "TestC2: getVar: myInt = " << jvmInt->getDataAsInt() << std::endl;
 	//for (int i=0; i<first->length; i++) std::cout << a[i] << ", ";
 	//std::cout << "Last two elements are " << data[first->length - 2] << " and " << data[first->length - 1] << std::endl;
 
-	fprintf( stdout, "\n\nPress enter to exit...\n");
+	// long variables
+	// TODO - investigate why longs are broken
+/*
+	long myLong = (long) rand();
+	p->setVar("myLong", myLong);
+	std::cout << "TestC2: setVar: myLong = " << myLong << std::endl;
+	JVMLinkObject* jvmLong = p->getVar("myLong");
+	std::cout << "TestC2: getVar: myLong = " << jvmLong->getDataAsLong() << std::endl;
+*/
+
+	// short variables
+	// TODO - investigate why shorts are transferred incorrectly
+	short myShort = (short) rand();
+	p->setVar("myShort", myShort);
+	std::cout << "TestC2: setVar: myShort = " << myShort << std::endl;
+	JVMLinkObject* jvmShort = p->getVar("myShort");
+	std::cout << "TestC2: getVar: myShort = " << jvmShort->getDataAsShort() << std::endl;
+
+	// CString variables
+	CString myString = "<< The quick brown fox jumps over the lazy dog. >>";
+	p->setVar("myString", myString);
+	std::cout << "TestC2: setVar: myString = " << myString << std::endl;
+	JVMLinkObject* jvmString = p->getVar("myString");
+	std::cout << "TestC2: getVar: myString = " << jvmString->getDataAsString() << std::endl;
+
+	// TODO - test arrays
+
+	// exec commands
+	std::cout << "TestC2: trying some exec calls" << std::endl;
+	p->exec("import java.awt.BorderLayout");
+	p->exec("import javax.swing.JButton");
+	p->exec("import javax.swing.JFrame");
+	p->exec("import javax.swing.JPanel");
+	p->exec("frame = new JFrame(\"My Java Frame\")");
+	p->exec("pane = new JPanel()");
+	p->exec("frame.setContentPane(pane)");
+	p->exec("layout = new BorderLayout()");
+	p->exec("pane.setLayout(layout)");
+	p->exec("button = new JButton(\"Hello world!\")");
+	p->exec("pane.add(button, BorderLayout.CENTER)");
+	p->exec("frame.setBounds(100, 100, 500, 400)");
+	p->exec("frame.setVisible(true)");
+
+	fprintf( stdout, "\n\nPress enter to shut down the server and exit...\n");
 	_fgetchar();
 
+	// free Java resources
+	p->exec("frame.dispose()");
+
+	// order the server to shut down
 	p->shutJava();
+
+	// close our connection to the server
 	p->closeConnection();
+
+	// free local resources
 	delete(p);
 
 	return 0;

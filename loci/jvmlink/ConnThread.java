@@ -155,6 +155,12 @@ public class ConnThread extends Thread {
       }
       catch (EOFException exc) {
         // client disconnected
+        debug("EOF reached; client probably disconnected");
+        break;
+      }
+      catch (SocketException exc) {
+        // connection error
+        debug("Socket error; connection lost");
         break;
       }
       catch (IOException exc) {
@@ -366,10 +372,8 @@ public class ConnThread extends Thread {
       value = new Byte(readByte);
     }
     else if (type == CHAR_TYPE) {
-      byte readByte = in.readByte();
-      char readChar = (char) ((0x00 << 8) | (readByte & 0xff));
+      char readChar = in.readChar();
       value = new Character(readChar);
-      r.setVar(name, readChar);
     }
     else if (type == FLOAT_TYPE) {
       float readFloat = in.readFloat();
@@ -459,18 +463,14 @@ public class ConnThread extends Thread {
     }
 
     out.writeInt(DataTools.swap(type));
-    //out.flush();
     //TODO: still need to swap most of what is sent.
     if (type == ARRAY_TYPE) {
       Object theArray = value;
       out.writeInt(DataTools.swap(insideType));
-      //out.flush();
       int arrayLen = Array.getLength(theArray);
       out.writeInt(DataTools.swap(arrayLen));
-      //out.flush();
       if (insideType == INT_TYPE) {
         out.writeInt(DataTools.swap(4));
-        //out.flush();
         int[] intArray = (int[]) theArray;
         for (int i=0; i<arrayLen; i++) {
           out.writeInt(DataTools.swap(intArray[i]));
@@ -483,20 +483,17 @@ public class ConnThread extends Thread {
       else if (insideType == STRING_TYPE) {
         //untested. probably quite messed up.
         out.writeInt(DataTools.swap(4));
-        //out.flush();
         String[] sArray = (String[]) theArray;
         for (int i=0; i<arrayLen; i++) out.write(sArray[i].getBytes());
       }
       else if (insideType == BYTE_TYPE) {
         out.writeInt(DataTools.swap(1));
-        //out.flush();
         byte[] bArray = (byte[]) theArray;
         for (int i=0; i<arrayLen; i++) out.writeByte(bArray[i]);
       }
       else if (insideType == CHAR_TYPE) {
         //need to fix this to send only one byte.
         out.writeInt(DataTools.swap(1));
-        //out.flush();
         char[] cArray = (char[]) theArray;
         for (int i=0; i<arrayLen; i++) out.writeByte((byte) cArray[i]);
         //for (int i=0; i<arrayLen; i++) {
@@ -505,7 +502,6 @@ public class ConnThread extends Thread {
       }
       else if (insideType == FLOAT_TYPE) {
         out.writeInt(DataTools.swap(4));
-        out.flush();
         float[] fArray = (float[]) theArray;
         for (int i=0; i<arrayLen; i++) {
           out.writeInt(DataTools.swap(Float.floatToIntBits(fArray[i])));
@@ -513,13 +509,11 @@ public class ConnThread extends Thread {
       }
       else if (insideType == BOOLEAN_TYPE) {
         out.writeInt(DataTools.swap(1));
-        out.flush();
         boolean[] bArray = (boolean[]) theArray;
         for (int i=0; i<arrayLen; i++) out.writeBoolean(bArray[i]);
       }
       else if (insideType == DOUBLE_TYPE) {
         out.writeInt(DataTools.swap(8));
-        //out.flush();
         double[] dArray = (double[]) theArray;
         for (int i=0; i<arrayLen; i++) {
           out.writeLong(DataTools.swap(Double.doubleToLongBits(dArray[i])));
@@ -527,7 +521,6 @@ public class ConnThread extends Thread {
       }
       else if (insideType == LONG_TYPE) {
         out.writeInt(DataTools.swap(8));
-        //out.flush();
         long[] lArray = (long[]) theArray;
         for (int i=0; i<arrayLen; i++) {
           out.writeLong(DataTools.swap(lArray[i]));
@@ -535,13 +528,11 @@ public class ConnThread extends Thread {
       }
       else if (insideType == SHORT_TYPE) {
         out.writeInt(DataTools.swap(2));
-        //out.flush();
         short[] sArray = (short[]) theArray;
         for (int i=0; i<arrayLen; i++) {
           out.writeShort(DataTools.swap(sArray[i]));
         }
       }
-      //out.flush();
     }
     else if (type == INT_TYPE) {
       int val = ((Integer) value).intValue();
@@ -561,44 +552,39 @@ public class ConnThread extends Thread {
     else if (type == BYTE_TYPE) {
       byte val = ((Byte) value).byteValue();
       out.writeInt(DataTools.swap(1));
-      //out.flush();
       out.writeByte(val);
     }
     else if (type == CHAR_TYPE) {
       char val = ((Character) value).charValue();
+      //out.writeInt(DataTools.swap(1));
+      //out.writeByte((byte) val);
       //fix this to write one byte only
       out.writeInt(DataTools.swap(2));
-      //out.flush();
       out.writeChar(DataTools.swap(val));
     }
     else if (type == FLOAT_TYPE) {
       float val = ((Float) value).floatValue();
       out.writeInt(DataTools.swap(4));
-      //out.flush();
       out.writeInt(DataTools.swap(Float.floatToIntBits(val)));
     }
     else if (type == BOOLEAN_TYPE) {
       boolean val = ((Boolean) value).booleanValue();
       out.writeInt(DataTools.swap(1));
-      //out.flush();
       out.writeBoolean(val);
     }
     else if (type == DOUBLE_TYPE) {
       double val = ((Double) value).doubleValue();
       out.writeInt(DataTools.swap(8));
-      //out.flush();
       out.writeLong(DataTools.swap(Double.doubleToLongBits(val)));
     }
     else if (type == LONG_TYPE) {
       long val = ((Long) value).longValue();
       out.writeInt(DataTools.swap(8));
-      //out.flush();
       out.writeLong(DataTools.swap(val));
     }
     else if (type == SHORT_TYPE) {
       short val = ((Short) value).shortValue();
       out.writeInt(DataTools.swap(2));
-      //out.flush();
       out.writeShort(DataTools.swap(val));
     }
     out.flush();

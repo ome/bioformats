@@ -111,3 +111,23 @@ double* JVMLinkObject::getDataAsDoubleArray() {
 	double* retval = (double*) data;
 	return retval;
 }
+
+long JVMLinkObject::getDataAsLong() {
+	long retval = (long) *(void**) data;
+	return retval;
+}
+
+long* JVMLinkObject::getDataAsLongArray() {
+	long* retval = (long*) data;
+	return retval;
+}
+
+short JVMLinkObject::getDataAsShort() {
+	short retval = (short) *(void**) data;
+	return retval;
+}
+
+short* JVMLinkObject::getDataAsShortArray() {
+	short* retval = (short*) data;
+	return retval;
+}

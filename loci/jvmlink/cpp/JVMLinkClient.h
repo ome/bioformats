@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include "JVMLinkObject.h"
 
+// NB: Toggle comments to control debugging output for the client.
 //#define debug(msg) ((void)0)
 #define debug(msg) std::cout << "JVMLinkClient: " << msg << std::endl
 
@@ -76,4 +77,3 @@ public:
 
 	~JVMLinkClient(void);
 };
-

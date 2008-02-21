@@ -52,10 +52,11 @@ JVMLinkClient::~JVMLinkClient(void)
 void JVMLinkClient::startJava(int arg_port, CString classpath) {
 	port = arg_port == NULL ? DEFAULT_PORT : arg_port;
 	CString command;
-//	command.Format("-cp %s loci.jvmlink.JVMLinkServer %d", classpath, port);
+	// NB: Toggle comments to control debugging output for the server.
+	//command.Format("-cp %s loci.jvmlink.JVMLinkServer %d", classpath, port);
 	command.Format("-cp %s loci.jvmlink.JVMLinkServer -debug %d", classpath, port);
 	debug("java " << command);
-//	ShellExecute(NULL, "open", "javaw.exe" , command, "", SW_SHOW);
+	//ShellExecute(NULL, "open", "javaw.exe" , command, "", SW_SHOW);
 	ShellExecute(NULL, "open", "java.exe" , command, "", SW_SHOW);
 }
 
@@ -203,10 +204,9 @@ void JVMLinkClient::setVar(CString argname, char obj) {
 	sendMessage(argname);
 	sendMessage(CHAR_TYPE);
 
-	char buff[3];
+	char buff[2];
 	buff[0] = 0;
 	buff[1] = obj;
-	buff[2] = '\0';
 	send(conn,buff,2,0);
 }
 
