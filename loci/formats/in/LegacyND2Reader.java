@@ -120,7 +120,7 @@ public class LegacyND2Reader extends FormatReader {
         for (int col=0; col<w; col++) {
           for (int bb=0; bb<bpc; bb++) {
             byte blue =
-              buf[y*line + col*bpp + bpc*(core.sizeC[series] - 1) + bb];
+              buf[row*line + col*bpp + bpc*(core.sizeC[series] - 1) + bb];
             buf[row*line + col*bpp + bpc*(core.sizeC[series] - 1) + bb] =
               buf[row*line + col*bpp + bb];
             buf[row*line + col*bpp + bb] = blue;
@@ -128,7 +128,6 @@ public class LegacyND2Reader extends FormatReader {
         }
       }
     }
-
     return buf;
   }
 
@@ -155,7 +154,10 @@ public class LegacyND2Reader extends FormatReader {
         if (bytes % 3 == 0) {
           core.sizeC[i] *= 3;
           bytes /= 3;
+          core.rgb[i] = true;
         }
+        else core.rgb[i] = false;
+
         switch (bytes) {
           case 1:
             core.pixelType[i] = FormatTools.UINT8;
@@ -167,8 +169,8 @@ public class LegacyND2Reader extends FormatReader {
             core.pixelType[i] = FormatTools.FLOAT;
             break;
         }
-        core.rgb[i] = core.sizeC[i] > 1;
         core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
+        if (!core.rgb[i]) core.imageCount[i] *= core.sizeC[i];
       }
       Arrays.fill(core.interleaved, true);
       Arrays.fill(core.littleEndian, true);
