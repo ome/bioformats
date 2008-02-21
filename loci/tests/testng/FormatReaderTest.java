@@ -207,7 +207,7 @@ public class FormatReaderTest {
           if (!passY) msg = "Y: was " + actualY + ", expected " + y;
 
           int actualC = b.getRaster().getNumBands();
-          boolean passC = c < actualC;
+          boolean passC = c == actualC;
           if (!passC) msg = "C: was " + actualC + ", expected < " + c;
 
           int actualType = ImageTools.getPixelType(b);
