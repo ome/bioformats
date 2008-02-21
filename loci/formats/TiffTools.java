@@ -1392,6 +1392,7 @@ public final class TiffTools {
           size *= rowsPerStrip;
 
           if (DEBUG) debug("reading image strip #" + strip);
+          stripOffsets[strip] = (long) (stripOffsets[strip] & 0xffffffffL);
           in.seek(stripOffsets[strip]);
 
           if (stripByteCounts[strip] > Integer.MAX_VALUE) {
