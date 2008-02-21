@@ -538,6 +538,21 @@ public class FileStitcher implements IFormatReader {
     blankImage = null;
     blankBytes = null;
     currentId = null;
+    patternIds = false;
+    fp = null;
+    ag = null;
+    files = null;
+    usedFiles = null;
+    blankThumb = null;
+    blankThumbBytes = null;
+    imagesPerFile = null;
+    sizeZ = sizeC = sizeT = null;
+    lenZ = lenC = lenT = null;
+    core = null;
+    series = 0;
+    seriesBlocks = null;
+    fileVector = seriesNames = null;
+    seriesInFile = false;
   }
 
   /* @see IFormatReader#getSeriesCount() */
@@ -820,6 +835,7 @@ public class FileStitcher implements IFormatReader {
       LogTools.println("calling FileStitcher.initFile(" + id + ")");
     }
 
+    close();
     currentId = id;
 
     fp = findPattern(currentId);
