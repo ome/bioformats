@@ -95,6 +95,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_START = 0x70000022;
   private static final int CHANNEL_ENTRY_SPI_WAVELENGTH_END = 0x70000023;
   private static final int ILLUM_CHANNEL_WAVELENGTH = 0x90000003;
+  private static final int START_TIME = 0x10000036;
   private static final int DATA_CHANNEL_NAME = 0xd0000001;
 
   // -- Static fields --
@@ -669,6 +670,14 @@ public class ZeissLSMReader extends BaseTiffReader {
                 (nextExWave % core.sizeC[0]));
               nextEmWave++;
               nextExWave++;
+              break;
+            case START_TIME:
+              // date/time on which the first pixel was acquired, in days
+              // since 30 December 1899
+              double time = Double.parseDouble(value.toString());
+              store.setImageCreationDate(DataTools.convertDate(
+                (long) (time * 86400000), DataTools.MICROSOFT), 0);
+
               break;
             case DATA_CHANNEL_NAME:
               store.setLogicalChannelName(value.toString(),
