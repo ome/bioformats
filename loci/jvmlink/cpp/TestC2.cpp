@@ -3,7 +3,8 @@
 //
 
 /*
-JVMLink package for communicating between Java and non-Java programs via IP.
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,19 +30,17 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// TestC2.cpp : Defines the entry point for the console application.
-
 #include "stdafx.h"
 #include "JVMLinkClient.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	JVMLinkClient *p = new JVMLinkClient();
-	p->startJava(20345, "jar\\ij.jar;jar\\loci_tools.jar");
-	while (p->establishConnection() != 0) Sleep(250);
+	p->startJava(20345, "jvmlink.jar");
+	while (p->establishConnection() != JVMLinkClient::CONNECTION_SUCCESS) Sleep(250);
 
-	JVMLinkObject* b = new JVMLinkObject("first");
 /*
+	JVMLinkObject* b = new JVMLinkObject("first");
 
 	int arrayLen = 100000;
 	b->size = sizeof(double);
@@ -58,22 +57,20 @@ int _tmain(int argc, _TCHAR* argv[])
 	b->data = a;
 */
 
-	int testValue= 47;
-	p->setVar("first", testValue);
-	JVMLinkObject* first = p->getVar("first");
-	std::cout << first->name << ": type is " << first->type << ", insideType is " << first->insideType << ", length is " <<
-		first->length << ", size is " << first->size << std::endl;
-	int data = first->getDataAsInt();
-	std::cout << "Returned value is " << data << std::endl;
+	int testValue = 47;
+	p->setVar("myInt", testValue);
+	std::cout << "TestC2: setVar: myInt = " << testValue << std::endl;
+	JVMLinkObject* myInt = p->getVar("myInt");
+	std::cout << "TestC2: getVar: myInt = " << myInt->getDataAsInt() << std::endl;
 	//for (int i=0; i<first->length; i++) std::cout << a[i] << ", ";
 	//std::cout << "Last two elements are " << data[first->length - 2] << " and " << data[first->length - 1] << std::endl;
 
-	//p->shutJava();
+	fprintf( stdout, "\n\nPress enter to exit...\n");
+	_fgetchar();
+
+	p->shutJava();
 	p->closeConnection();
 	delete(p);
 
-	fprintf( stdout, "\n\nHit any key to exit...\n");
-	_fgetchar();
 	return 0;
 }
-

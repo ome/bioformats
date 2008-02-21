@@ -3,7 +3,8 @@
 //
 
 /*
-JVMLink package for communicating between Java and non-Java programs via IP.
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,7 +34,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class JVMLinkClient;
 
-enum Type :int {ARRAY_TYPE, INT_TYPE, STRING_TYPE, BYTE_TYPE, CHAR_TYPE, FLOAT_TYPE, BOOL_TYPE, DOUBLE_TYPE, LONG_TYPE, SHORT_TYPE};
+enum Command {
+	SETVAR_CMD = 0,
+	GETVAR_CMD = 1,
+	EXEC_CMD = 2,
+	EXIT_CMD = 255
+};
+
+enum Type {
+	ARRAY_TYPE = 0,
+	INT_TYPE,
+	STRING_TYPE,
+	BYTE_TYPE,
+	CHAR_TYPE,
+	FLOAT_TYPE,
+	BOOL_TYPE,
+	DOUBLE_TYPE,
+	LONG_TYPE,
+	SHORT_TYPE,
+	NULL_TYPE = -1
+};
 
 struct Byte {
 	char data;

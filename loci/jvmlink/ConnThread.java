@@ -3,7 +3,8 @@
 //
 
 /*
-JVMLink package for communicating between Java and non-Java programs via IP.
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,7 +41,17 @@ import loci.formats.ReflectedUniverse;
 
 //TODO: Communicating exceptions ..
 
-public class ConnThread extends Thread implements Runnable {
+/**
+ * Thread for managing a client/server socket connection.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/jvmlink/ConnThread.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/jvmlink/ConnThread.java">SVN</a></dd></dl>
+ */
+public class ConnThread extends Thread {
+
+  // -- Constants --
+
   public static final int MAX_PACKET_SIZE = 65536;
 
   public static final int ARRAY_TYPE = 0;
@@ -59,52 +70,34 @@ public class ConnThread extends Thread implements Runnable {
   public static final int EXEC = 2;
   public static final int EXIT = 255;
 
-  Socket server;
-  int number;
+  // -- Static fields --
+
+  private static int threadNumber = 0;
+
+  // -- Fields --
+
+  private Socket socket;
+  private JVMLinkServer server;
   private ReflectedUniverse r;
-  JVMLinkServer listener;
+  private DataInputStream in;
+  private DataOutputStream out;
 
-  ConnThread(Socket server, int threadNumber, JVMLinkServer listener)
-    throws Exception
-  {
-    number = threadNumber;
+  // -- Constructor --
+
+  public ConnThread(Socket socket, JVMLinkServer server) throws IOException {
+    super("JVMLink-Client-" + (++threadNumber));
+    this.socket = socket;
     this.server = server;
-    this.listener = listener;
     r = new ReflectedUniverse();
-    this.start();
+    in = new DataInputStream(
+      new BufferedInputStream(socket.getInputStream()));
+    out = new DataOutputStream(
+      new BufferedOutputStream(socket.getOutputStream()));
+    start();
   }
 
-  public void run() {
-    try {
-      handleConnection(server);
-    }
-    catch (Exception e) {
-      System.out.println("Exception: Error handling the connection");
-      System.out.println(e.getMessage());
-    }
-  }
-
-  public void handleConnection(Socket server)
-    throws IOException, ReflectException
-  {
-    DataInputStream inStream = new DataInputStream(
-      new BufferedInputStream(server.getInputStream()));
-    DataOutputStream outStream = new DataOutputStream(
-      new BufferedOutputStream(server.getOutputStream()));
-
-    while (true) {
-      int command = DataTools.read4SignedBytes(inStream, true);
-      System.out.println("received command "+command);
-      if (command == EXIT) break;
-      processCommand(command, inStream, outStream);
-    }
-
-    System.out.println("Thread no."+number+" exiting..");
-    listener.shutServer();
-    server.close();
-  }
-
-  /* New syntax
+  /*
+   * Protocol syntax:
    *
    * First thing on the stream is an integer:
    *  255 - exit Server
@@ -115,360 +108,586 @@ public class ConnThread extends Thread implements Runnable {
    * Then, a newline-delimited string, specifying:
    *   setVar, getVar : identifier in question
    *   exec : command to be executed
- *
+   *
    * Then, according to which branch:
    *  setVar:
-   *   0 - array (followed by another integer specifying one of the following types,
-   *    then an integer specifying length of array
-   *   1-9 - int, string, byte, char, float, bool, double, long, short (in order)
+   *   0 - array (followed by another integer specifying one of the following
+   *     types, then an integer specifying length of array)
+   *   1-9 - int, string, byte, char, float, bool, double, long, short
+   *     (in order)
    *
    *  getVar (sends):
-   *   0 - array (followed by another integer specifying one of the following types, then length
-   *   1-9 - int, string, byte, char, float, bool, double, long, short (in order)
+   *   0 - array (followed by another integer specifying one of the following
+   *     types, then length)
+   *   1-9 - int, string, byte, char, float, bool, double, long, short
+   *     (in order)
    *
-   *   Then
-   *    size - number of bytes (per item).
-   *     In case of strings (not strings in arrays though) length of string.
+   * Then:
+   *  size - number of bytes (per item)
+   *   In case of strings (not strings in arrays though) length of string
    *
-   *  Then, for setVar, the data.
-   *
+   * Then, for setVar, the data
    */
 
-  private void processCommand(int command, DataInputStream inStream,
-    DataOutputStream out) throws IOException
-  {
-    String name = inStream.readLine();
-    int type;
-    switch (command) {
-      case SETVAR:
-        type = DataTools.read4SignedBytes(inStream, true);
-        if (type == ARRAY_TYPE) {
-          int insideType = DataTools.read4SignedBytes(inStream, true);
-          int arrayLength = DataTools.read4SignedBytes(inStream, true);
-          int size = DataTools.read4SignedBytes(inStream, true);
-          System.out.println("in array type for variable "+name+" insidetype, length, size:"+insideType +","+arrayLength+","+size);
-          Object theArray = null;
-          if (insideType == INT_TYPE) {
-            int[] intArray = new int[arrayLength];
-              int readBytes = 0, totalBytes = size*arrayLength;
-              while (readBytes < totalBytes) {
-                int packetSize = MAX_PACKET_SIZE;
-                if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                  byte[] b = new byte[packetSize];
-                inStream.readFully(b, 0, packetSize);
-                for (int i=0; i<packetSize/4; i++) {
-                  intArray[i + (readBytes/4)] = DataTools.bytesToInt(b, 4*i, true);
-                }
-                readBytes += packetSize;
-              }
-              theArray = intArray;
-            }
-          else if (insideType == STRING_TYPE) {
-            String[] stringArray = new String[arrayLength];
-              for (int i=0; i<arrayLength; i++) {
-                stringArray[i] = inStream.readLine();
-              }
-              theArray = stringArray;
-            }
-          else if (insideType == BYTE_TYPE) {
-            byte[] byteArray = new byte[arrayLength];
-              int readBytes = 0, totalBytes = size*arrayLength;
-              while (readBytes < totalBytes) {
-                int packetSize = MAX_PACKET_SIZE;
-                if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                inStream.readFully(byteArray, readBytes, packetSize);
-                readBytes += packetSize;
-              }
-              theArray = byteArray;
-            }
-          else if (insideType == CHAR_TYPE) {
-            char[] charArray = new char[arrayLength];
-              int readBytes = 0, totalBytes = size*arrayLength;
-              while (readBytes < totalBytes) {
-                int packetSize = MAX_PACKET_SIZE;
-                if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                  byte[] b = new byte[packetSize];
-                inStream.readFully(b, 0, packetSize);
-                for (int i=0; i<packetSize; i++) {
-                  charArray[i + readBytes] = (char) ((0x00 << 8) | (b[i] & 0xff));
-                }
-                readBytes += packetSize;
-              }
-              theArray = charArray;
-              //System.out.println("recvd char array is "+  new String(charArray));
-            }
-          else if (insideType == FLOAT_TYPE) {
-            float[] floatArray = new float[arrayLength];
-              int readBytes = 0, totalBytes = size*arrayLength;
-              while (readBytes < totalBytes) {
-                int packetSize = MAX_PACKET_SIZE;
-                if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                  byte[] b = new byte[packetSize];
-                inStream.readFully(b, 0, packetSize);
-                for (int i=0; i<packetSize/4; i++) {
-                  floatArray[i + (readBytes/4)] = Float.intBitsToFloat(DataTools.bytesToInt(b, 4*i, true));
-                }
-                readBytes += packetSize;
-              }
-              theArray = floatArray;
-            }
-          else if (insideType == BOOLEAN_TYPE) {
-            boolean[] boolArray = new boolean[arrayLength];
-              int readBytes = 0, totalBytes = size*arrayLength;
-              while (readBytes < totalBytes) {
-                int packetSize = MAX_PACKET_SIZE;
-                if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                  byte[] b = new byte[packetSize];
-                inStream.readFully(b, 0, packetSize);
-                for (int i=0; i<packetSize; i++) {
-                  boolArray[i + readBytes] = b[i] != 0;
-                }
-                readBytes += packetSize;
-              }
-              theArray = boolArray;
-          }
-          else if (insideType == DOUBLE_TYPE) {
-            double[] doubleArray = new double[arrayLength];
-            int readBytes = 0, totalBytes = size*arrayLength;
-            while (readBytes < totalBytes) {
-              int packetSize = MAX_PACKET_SIZE;
-              if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                byte[] b = new byte[packetSize];
-              inStream.readFully(b, 0, packetSize);
-              for (int i=0; i<packetSize/8; i++) {
-                doubleArray[i + (readBytes/8)] = Double.longBitsToDouble(DataTools.bytesToLong(b, 8*i, true));
-              }
-              readBytes += packetSize;
-            }
-            theArray = doubleArray;
-          }
-          else if (insideType == LONG_TYPE) {
-            long[] longArray = new long[arrayLength];
-            int readBytes = 0, totalBytes = size*arrayLength;
-            while (readBytes < totalBytes) {
-              int packetSize = MAX_PACKET_SIZE;
-              if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                byte[] b = new byte[packetSize];
-              inStream.readFully(b, 0, packetSize);
-              for (int i=0; i<packetSize/8; i++) {
-                longArray[i + (readBytes/8)] = DataTools.bytesToLong(b, 8*i, true);
-              }
-              readBytes += packetSize;
-            }
-            theArray = longArray;
-          }
-          else if (insideType == SHORT_TYPE) {
-            short[] shortArray = new short[arrayLength];
-            int readBytes = 0, totalBytes = size*arrayLength;
-            while (readBytes < totalBytes) {
-              int packetSize = MAX_PACKET_SIZE;
-              if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-                byte[] b = new byte[packetSize];
-              inStream.readFully(b, 0, packetSize);
-              for (int i=0; i<packetSize/4; i++) {
-                shortArray[i + (readBytes/4)] = DataTools.bytesToShort(b, 4*i, true);
-              }
-              readBytes += packetSize;
-            }
-            theArray = shortArray;
-          }
-          r.setVar(name, theArray);
-        }
-        else if (type == INT_TYPE) {
-          int value = DataTools.read4SignedBytes(inStream, true);
-          System.out.println("just setvarred "+name+" as "+value);
-          r.setVar(name, value);
-        }
-        else if (type == STRING_TYPE) {
-          r.setVar(name, inStream.readLine());
-        }
-        else if (type == BYTE_TYPE) {
-          r.setVar(name, inStream.readByte());
-        }
-        else if (type == CHAR_TYPE) {
-          System.out.println("In char type ..");
-          byte readByte = inStream.readByte();
-          char readChar = (char) ((0x00 << 8) | (readByte & 0xff));
-          System.out.println("Read "+readChar);
-          r.setVar(name, readChar);
-        }
-        else if (type == FLOAT_TYPE) {
-          r.setVar(name, inStream.readFloat());
-        }
-        else if (type == BOOLEAN_TYPE) {
-          r.setVar(name, inStream.readBoolean());
-        }
-        else if (type == DOUBLE_TYPE) {
-          r.setVar(name, inStream.readDouble());
-        }
-        else if (type == LONG_TYPE) {
-          r.setVar(name, inStream.readLong());
-        }
-        else if (type == SHORT_TYPE) {
-          r.setVar(name, inStream.readShort());
-        }
-        break;
-      case GETVAR:
-        int insideType = 0;
-        type=0;
-        Object var = null;
-        try {
-          var = r.getVar(name);
-          if (var instanceof int[]) {type = ARRAY_TYPE; insideType = INT_TYPE;}
-          else if (var instanceof String[]) {type = ARRAY_TYPE; insideType = STRING_TYPE;}
-          else if (var instanceof byte[]) {type = ARRAY_TYPE; insideType = BYTE_TYPE;}
-          else if (var instanceof char[]) {type = ARRAY_TYPE; insideType = CHAR_TYPE;}
-          else if (var instanceof float[]) {type = ARRAY_TYPE; insideType = FLOAT_TYPE;}
-          else if (var instanceof boolean[]) {type = ARRAY_TYPE; insideType = BOOLEAN_TYPE;}
-          else if (var instanceof double[]) {type = ARRAY_TYPE; insideType = DOUBLE_TYPE;}
-          else if (var instanceof long[]) {type = ARRAY_TYPE; insideType = LONG_TYPE;}
-          else if (var instanceof short[]) {type = ARRAY_TYPE; insideType = SHORT_TYPE;}
+  // -- Thread API methods --
 
-          else if (var instanceof Integer) type = INT_TYPE;
-          else if (var instanceof String) type = STRING_TYPE;
-          else if (var instanceof Byte) type = BYTE_TYPE;
-          else if (var instanceof Character) type = CHAR_TYPE;
-          else if (var instanceof Float) type = FLOAT_TYPE;
-          else if (var instanceof Boolean) type = BOOLEAN_TYPE;
-          else if (var instanceof Double) type = DOUBLE_TYPE;
-          else if (var instanceof Long) type = LONG_TYPE;
-          else if (var instanceof Short) type = SHORT_TYPE;
-          else type = INT_TYPE; //default
+  public void run() {
+    boolean killServer = false;
+    while (true) {
+      try {
+        int command = DataTools.read4SignedBytes(in, true);
+        debug("Received command: " + getCommand(command));
+        if (command == EXIT) {
+          killServer = true;
+          break;
         }
-        catch (ReflectException e) {
-          System.out.println("Exception thrown while retrieving variable: "+e.getMessage());
-          e.printStackTrace();
+        switch (command) {
+          case SETVAR:
+            setVar();
+            break;
+          case GETVAR:
+            getVar();
+            break;
+          case EXEC:
+            exec();
+            break;
         }
-
-        out.writeInt(DataTools.swap(type)); out.flush();
-        //TODO: still need to swap most of what is sent.
-        if (type == ARRAY_TYPE) {
-          Object theArray = var;
-          out.writeInt(DataTools.swap(insideType)); out.flush();
-          int arrayLen = Array.getLength(theArray);
-          out.writeInt(DataTools.swap(arrayLen)); out.flush();
-          if (insideType == INT_TYPE) {
-            out.writeInt(DataTools.swap(4)); out.flush();
-            int[] intArray = (int[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeInt(DataTools.swap(intArray[i]));
-            if (arrayLen > 10000) {
-              System.out.println("Last two elements are "+intArray[arrayLen-1]+" and "+intArray[arrayLen-2]);
-            }
-          }
-          else if (insideType == STRING_TYPE) {
-            //untested. probably quite messed up.
-            out.writeInt(DataTools.swap(4)); out.flush();
-            String[] sArray = (String[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.write(sArray[i].getBytes());
-          }
-          else if (insideType == BYTE_TYPE) {
-            out.writeInt(DataTools.swap(1)); out.flush();
-            byte[] bArray = (byte[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeByte(bArray[i]);
-          }
-          else if (insideType == CHAR_TYPE) {
-            //need to fix this to send only one byte.
-            out.writeInt(DataTools.swap(1)); out.flush();
-            char[] cArray = (char[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeByte((byte)cArray[i]);
-            //for (int i=0; i<arrayLen; i++) out.writeChar(DataTools.swap(cArray[i]));
-          }
-          else if (insideType == FLOAT_TYPE) {
-            out.writeInt(DataTools.swap(4)); out.flush();
-            float[] fArray = (float[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeInt(DataTools.swap(Float.floatToIntBits(fArray[i])));
-          }
-          else if (insideType == BOOLEAN_TYPE) {
-            out.writeInt(DataTools.swap(1)); out.flush();
-            boolean[] bArray = (boolean[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeBoolean(bArray[i]);
-          }
-          else if (insideType == DOUBLE_TYPE) {
-            out.writeInt(DataTools.swap(8)); out.flush();
-            double[] dArray = (double[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeLong(DataTools.swap(Double.doubleToLongBits(dArray[i])));
-          }
-          else if (insideType == LONG_TYPE) {
-            out.writeInt(DataTools.swap(8)); out.flush();
-            long[] lArray = (long[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeLong(DataTools.swap(lArray[i]));
-          }
-          else if (insideType == SHORT_TYPE) {
-            out.writeInt(DataTools.swap(2)); out.flush();
-            short[] sArray = (short[]) theArray;
-            for (int i=0; i<arrayLen; i++) out.writeShort(DataTools.swap(sArray[i]));
-          }
-          out.flush();
-        }
-        else if (type == INT_TYPE) {
-          out.writeInt(DataTools.swap(4));
-          out.writeInt(DataTools.swap(((Integer)var).intValue()));
-        }
-        else if (type == STRING_TYPE) {
-          out.writeInt(DataTools.swap(((String)var).length()));
-          System.out.println("Number of bytes="+((String)var).length());
-          out.writeBytes((String)var);
-          //out.write(((String)r.getVar(name)).getBytes(Charset.forName("UTF-16")));
-          //System.out.println("Returning string: "+((String)r.getVar(name)).getBytes(Charset.forName("UTF-16")));
-        }
-        else if (type == BYTE_TYPE) {
-          out.writeInt(DataTools.swap(1)); out.flush();
-          out.writeByte(((Byte)var).byteValue());
-        }
-        else if (type == CHAR_TYPE) {
-          //fix this to write one byte only
-          out.writeInt(DataTools.swap(2)); out.flush();
-          out.writeChar(DataTools.swap(((Character)var).charValue()));
-        }
-        else if (type == FLOAT_TYPE) {
-          out.writeInt(DataTools.swap(4)); out.flush();
-          float floatVal = ((Float)var).floatValue();
-          out.writeInt(DataTools.swap(Float.floatToIntBits(floatVal)));
-        }
-        else if (type == BOOLEAN_TYPE) {
-          out.writeInt(DataTools.swap(1)); out.flush();
-          out.writeBoolean(((Boolean)var).booleanValue());}
-        else if (type == DOUBLE_TYPE) {
-          out.writeInt(DataTools.swap(8)); out.flush();
-          double doubleVal = ((Double)var).doubleValue();
-          out.writeLong(DataTools.swap(Double.doubleToLongBits(doubleVal)));
-        }
-        else if (type == LONG_TYPE) {
-          out.writeInt(DataTools.swap(8)); out.flush();
-          out.writeLong(DataTools.swap(((Long)var).longValue()));
-        }
-        else if (type == SHORT_TYPE) {
-          out.writeInt(DataTools.swap(2)); out.flush();
-          out.writeShort(DataTools.swap(((Short)var).shortValue()));
-        }
-        out.flush();
+      }
+      catch (EOFException exc) {
+        // client disconnected
         break;
-      case EXEC:
-        System.out.println("exec command received: "+name);
+      }
+      catch (IOException exc) {
+        if (JVMLinkServer.debug) exc.printStackTrace();
         try {
-          r.exec(name);
+          Thread.sleep(100);
         }
-        catch (ReflectException re) {
-          System.out.println("Exec Exception: "+re.getMessage());
-          re.printStackTrace();
+        catch (InterruptedException exc2) {
+          if (JVMLinkServer.debug) exc2.printStackTrace();
         }
-        break;
+      }
+      catch (ReflectException exc) {
+        if (JVMLinkServer.debug) exc.printStackTrace();
+      }
+    }
+
+    debug("Exiting");
+    try {
+      socket.close();
+    }
+    catch (IOException exc) {
+      if (JVMLinkServer.debug) exc.printStackTrace();
+    }
+    if (killServer) {
+      try {
+        server.shutServer();
+      }
+      catch (IOException exc) {
+        if (JVMLinkServer.debug) exc.printStackTrace();
+      }
     }
   }
 
+  // -- Helper methods --
+
+  /**
+   * Performs a SETVAR command, including reading arguments
+   * from the input stream.
+   */
+  private void setVar() throws IOException {
+    String name = in.readLine();
+    int type = DataTools.read4SignedBytes(in, true);
+    Object value = null;
+    if (type == ARRAY_TYPE) {
+      int insideType = DataTools.read4SignedBytes(in, true);
+      int arrayLength = DataTools.read4SignedBytes(in, true);
+      int size = DataTools.read4SignedBytes(in, true);
+      debug("in array type for variable " + name +
+        " insidetype, length, size: " + insideType + ", " + arrayLength +
+        ", " + size);
+      Object theArray = null;
+      if (insideType == INT_TYPE) {
+        int[] intArray = new int[arrayLength];
+          int readBytes = 0, totalBytes = size*arrayLength;
+          while (readBytes < totalBytes) {
+            int packetSize = MAX_PACKET_SIZE;
+            if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+              packetSize = totalBytes - readBytes;
+            }
+            byte[] b = new byte[packetSize];
+            in.readFully(b, 0, packetSize);
+            for (int i=0; i<packetSize/4; i++) {
+              intArray[i + (readBytes/4)] =
+                DataTools.bytesToInt(b, 4*i, true);
+            }
+            readBytes += packetSize;
+          }
+          theArray = intArray;
+        }
+      else if (insideType == STRING_TYPE) {
+        String[] stringArray = new String[arrayLength];
+          for (int i=0; i<arrayLength; i++) {
+            stringArray[i] = in.readLine();
+          }
+          theArray = stringArray;
+        }
+      else if (insideType == BYTE_TYPE) {
+        byte[] byteArray = new byte[arrayLength];
+          int readBytes = 0, totalBytes = size*arrayLength;
+          while (readBytes < totalBytes) {
+            int packetSize = MAX_PACKET_SIZE;
+            if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+              packetSize = totalBytes - readBytes;
+            }
+            in.readFully(byteArray, readBytes, packetSize);
+            readBytes += packetSize;
+          }
+          theArray = byteArray;
+        }
+      else if (insideType == CHAR_TYPE) {
+        char[] charArray = new char[arrayLength];
+          int readBytes = 0, totalBytes = size*arrayLength;
+          while (readBytes < totalBytes) {
+            int packetSize = MAX_PACKET_SIZE;
+            if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+              packetSize = totalBytes - readBytes;
+            }
+            byte[] b = new byte[packetSize];
+            in.readFully(b, 0, packetSize);
+            for (int i=0; i<packetSize; i++) {
+              charArray[i + readBytes] = (char)
+                ((0x00 << 8) | (b[i] & 0xff));
+            }
+            readBytes += packetSize;
+          }
+          theArray = charArray;
+          //debug("recvd char array is " + new String(charArray));
+        }
+      else if (insideType == FLOAT_TYPE) {
+        float[] floatArray = new float[arrayLength];
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
+          }
+          byte[] b = new byte[packetSize];
+          in.readFully(b, 0, packetSize);
+          for (int i=0; i<packetSize/4; i++) {
+            floatArray[i + readBytes/4] =
+              Float.intBitsToFloat(DataTools.bytesToInt(b, 4*i, true));
+          }
+          readBytes += packetSize;
+        }
+        theArray = floatArray;
+      }
+      else if (insideType == BOOLEAN_TYPE) {
+        boolean[] boolArray = new boolean[arrayLength];
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
+          }
+          byte[] b = new byte[packetSize];
+          in.readFully(b, 0, packetSize);
+          for (int i=0; i<packetSize; i++) {
+            boolArray[i + readBytes] = b[i] != 0;
+          }
+          readBytes += packetSize;
+        }
+        theArray = boolArray;
+      }
+      else if (insideType == DOUBLE_TYPE) {
+        double[] doubleArray = new double[arrayLength];
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
+          }
+          byte[] b = new byte[packetSize];
+          in.readFully(b, 0, packetSize);
+          for (int i=0; i<packetSize/8; i++) {
+            doubleArray[i + readBytes/8] =
+              Double.longBitsToDouble(DataTools.bytesToLong(b, 8*i, true));
+          }
+          readBytes += packetSize;
+        }
+        theArray = doubleArray;
+      }
+      else if (insideType == LONG_TYPE) {
+        long[] longArray = new long[arrayLength];
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
+          }
+            byte[] b = new byte[packetSize];
+          in.readFully(b, 0, packetSize);
+          for (int i=0; i<packetSize/8; i++) {
+            longArray[i + readBytes/8] =
+              DataTools.bytesToLong(b, 8*i, true);
+          }
+          readBytes += packetSize;
+        }
+        theArray = longArray;
+      }
+      else if (insideType == SHORT_TYPE) {
+        short[] shortArray = new short[arrayLength];
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
+          }
+          byte[] b = new byte[packetSize];
+          in.readFully(b, 0, packetSize);
+          for (int i=0; i<packetSize/4; i++) {
+            shortArray[i + readBytes/4] =
+              DataTools.bytesToShort(b, 4*i, true);
+          }
+          readBytes += packetSize;
+        }
+        theArray = shortArray;
+      }
+      value = theArray;
+    }
+    else if (type == INT_TYPE) {
+      int readInt = DataTools.read4SignedBytes(in, true);
+      value = new Integer(readInt);
+    }
+    else if (type == STRING_TYPE) {
+      value = in.readLine();
+    }
+    else if (type == BYTE_TYPE) {
+      byte readByte = in.readByte();
+      value = new Byte(readByte);
+    }
+    else if (type == CHAR_TYPE) {
+      byte readByte = in.readByte();
+      char readChar = (char) ((0x00 << 8) | (readByte & 0xff));
+      value = new Character(readChar);
+      r.setVar(name, readChar);
+    }
+    else if (type == FLOAT_TYPE) {
+      float readFloat = in.readFloat();
+      value = new Float(readFloat);
+    }
+    else if (type == BOOLEAN_TYPE) {
+      boolean readBoolean = in.readBoolean();
+      value = new Boolean(readBoolean);
+    }
+    else if (type == DOUBLE_TYPE) {
+      double readDouble = in.readDouble();
+      value = new Double(readDouble);
+    }
+    else if (type == LONG_TYPE) {
+      long readLong = in.readLong();
+      value = new Long(readLong);
+    }
+    else if (type == SHORT_TYPE) {
+      short readShort = in.readShort();
+      value = new Short(readShort);
+    }
+    debug("setVar: " + name + " = " + getValue(value));
+    if (value != null) r.setVar(name, value);
+  }
+
+  /**
+   * Performs a GETVAR command, including reading arguments
+   * from the input stream and sending results to the output stream.
+   */
+  private void getVar() throws IOException {
+    String name = in.readLine();
+    int insideType = 0;
+    int type = 0;
+    Object value = null;
+    try {
+      value = r.getVar(name);
+      debug("getVar: " + name + " = " + getValue(value));
+      if (value instanceof int[]) {
+        type = ARRAY_TYPE;
+        insideType = INT_TYPE;
+      }
+      else if (value instanceof String[]) {
+        type = ARRAY_TYPE;
+        insideType = STRING_TYPE;
+      }
+      else if (value instanceof byte[]) {
+        type = ARRAY_TYPE;
+        insideType = BYTE_TYPE;
+      }
+      else if (value instanceof char[]) {
+        type = ARRAY_TYPE;
+        insideType = CHAR_TYPE;
+      }
+      else if (value instanceof float[]) {
+        type = ARRAY_TYPE;
+        insideType = FLOAT_TYPE;
+      }
+      else if (value instanceof boolean[]) {
+        type = ARRAY_TYPE;
+        insideType = BOOLEAN_TYPE;
+      }
+      else if (value instanceof double[]) {
+        type = ARRAY_TYPE;
+        insideType = DOUBLE_TYPE;
+      }
+      else if (value instanceof long[]) {
+        type = ARRAY_TYPE;
+        insideType = LONG_TYPE;
+      }
+      else if (value instanceof short[]) {
+        type = ARRAY_TYPE;
+        insideType = SHORT_TYPE;
+      }
+      else if (value instanceof Integer) type = INT_TYPE;
+      else if (value instanceof String) type = STRING_TYPE;
+      else if (value instanceof Byte) type = BYTE_TYPE;
+      else if (value instanceof Character) type = CHAR_TYPE;
+      else if (value instanceof Float) type = FLOAT_TYPE;
+      else if (value instanceof Boolean) type = BOOLEAN_TYPE;
+      else if (value instanceof Double) type = DOUBLE_TYPE;
+      else if (value instanceof Long) type = LONG_TYPE;
+      else if (value instanceof Short) type = SHORT_TYPE;
+      else type = INT_TYPE; //default
+    }
+    catch (ReflectException e) {
+      if (JVMLinkServer.debug) e.printStackTrace();
+    }
+
+    out.writeInt(DataTools.swap(type));
+    //out.flush();
+    //TODO: still need to swap most of what is sent.
+    if (type == ARRAY_TYPE) {
+      Object theArray = value;
+      out.writeInt(DataTools.swap(insideType));
+      //out.flush();
+      int arrayLen = Array.getLength(theArray);
+      out.writeInt(DataTools.swap(arrayLen));
+      //out.flush();
+      if (insideType == INT_TYPE) {
+        out.writeInt(DataTools.swap(4));
+        //out.flush();
+        int[] intArray = (int[]) theArray;
+        for (int i=0; i<arrayLen; i++) {
+          out.writeInt(DataTools.swap(intArray[i]));
+        }
+        if (arrayLen > 10000) {
+          debug("Last two elements are " +
+            intArray[arrayLen-1] + " and " + intArray[arrayLen-2]);
+        }
+      }
+      else if (insideType == STRING_TYPE) {
+        //untested. probably quite messed up.
+        out.writeInt(DataTools.swap(4));
+        //out.flush();
+        String[] sArray = (String[]) theArray;
+        for (int i=0; i<arrayLen; i++) out.write(sArray[i].getBytes());
+      }
+      else if (insideType == BYTE_TYPE) {
+        out.writeInt(DataTools.swap(1));
+        //out.flush();
+        byte[] bArray = (byte[]) theArray;
+        for (int i=0; i<arrayLen; i++) out.writeByte(bArray[i]);
+      }
+      else if (insideType == CHAR_TYPE) {
+        //need to fix this to send only one byte.
+        out.writeInt(DataTools.swap(1));
+        //out.flush();
+        char[] cArray = (char[]) theArray;
+        for (int i=0; i<arrayLen; i++) out.writeByte((byte) cArray[i]);
+        //for (int i=0; i<arrayLen; i++) {
+        //  out.writeChar(DataTools.swap(cArray[i]));
+        //}
+      }
+      else if (insideType == FLOAT_TYPE) {
+        out.writeInt(DataTools.swap(4));
+        out.flush();
+        float[] fArray = (float[]) theArray;
+        for (int i=0; i<arrayLen; i++) {
+          out.writeInt(DataTools.swap(Float.floatToIntBits(fArray[i])));
+        }
+      }
+      else if (insideType == BOOLEAN_TYPE) {
+        out.writeInt(DataTools.swap(1));
+        out.flush();
+        boolean[] bArray = (boolean[]) theArray;
+        for (int i=0; i<arrayLen; i++) out.writeBoolean(bArray[i]);
+      }
+      else if (insideType == DOUBLE_TYPE) {
+        out.writeInt(DataTools.swap(8));
+        //out.flush();
+        double[] dArray = (double[]) theArray;
+        for (int i=0; i<arrayLen; i++) {
+          out.writeLong(DataTools.swap(Double.doubleToLongBits(dArray[i])));
+        }
+      }
+      else if (insideType == LONG_TYPE) {
+        out.writeInt(DataTools.swap(8));
+        //out.flush();
+        long[] lArray = (long[]) theArray;
+        for (int i=0; i<arrayLen; i++) {
+          out.writeLong(DataTools.swap(lArray[i]));
+        }
+      }
+      else if (insideType == SHORT_TYPE) {
+        out.writeInt(DataTools.swap(2));
+        //out.flush();
+        short[] sArray = (short[]) theArray;
+        for (int i=0; i<arrayLen; i++) {
+          out.writeShort(DataTools.swap(sArray[i]));
+        }
+      }
+      //out.flush();
+    }
+    else if (type == INT_TYPE) {
+      int val = ((Integer) value).intValue();
+      out.writeInt(DataTools.swap(4));
+      out.writeInt(DataTools.swap(val));
+    }
+    else if (type == STRING_TYPE) {
+      String val = (String) value;
+      out.writeInt(DataTools.swap(val.length()));
+      debug("Number of bytes=" + val.length());
+      out.writeBytes(val);
+      //String name = (String) r.getVar(name);
+      //out.write(name.getBytes(Charset.forName("UTF-16")));
+      //debug("Returning string: " +
+      //  name.getBytes(Charset.forName("UTF-16")));
+    }
+    else if (type == BYTE_TYPE) {
+      byte val = ((Byte) value).byteValue();
+      out.writeInt(DataTools.swap(1));
+      //out.flush();
+      out.writeByte(val);
+    }
+    else if (type == CHAR_TYPE) {
+      char val = ((Character) value).charValue();
+      //fix this to write one byte only
+      out.writeInt(DataTools.swap(2));
+      //out.flush();
+      out.writeChar(DataTools.swap(val));
+    }
+    else if (type == FLOAT_TYPE) {
+      float val = ((Float) value).floatValue();
+      out.writeInt(DataTools.swap(4));
+      //out.flush();
+      out.writeInt(DataTools.swap(Float.floatToIntBits(val)));
+    }
+    else if (type == BOOLEAN_TYPE) {
+      boolean val = ((Boolean) value).booleanValue();
+      out.writeInt(DataTools.swap(1));
+      //out.flush();
+      out.writeBoolean(val);
+    }
+    else if (type == DOUBLE_TYPE) {
+      double val = ((Double) value).doubleValue();
+      out.writeInt(DataTools.swap(8));
+      //out.flush();
+      out.writeLong(DataTools.swap(Double.doubleToLongBits(val)));
+    }
+    else if (type == LONG_TYPE) {
+      long val = ((Long) value).longValue();
+      out.writeInt(DataTools.swap(8));
+      //out.flush();
+      out.writeLong(DataTools.swap(val));
+    }
+    else if (type == SHORT_TYPE) {
+      short val = ((Short) value).shortValue();
+      out.writeInt(DataTools.swap(2));
+      //out.flush();
+      out.writeShort(DataTools.swap(val));
+    }
+    out.flush();
+  }
+
+  /**
+   * Performs an EXEC command, including reading arguments
+   * from the input stream.
+   */
+  private void exec() throws IOException, ReflectException {
+    String cmd = in.readLine();
+    debug("exec: " + cmd);
+    r.exec(cmd);
+  }
+
+  /** Prints a debugging message if debug mode is enabled. */
+  private void debug(String msg) {
+    if (JVMLinkServer.debug) System.out.println(getName() + ": " + msg);
+  }
+
+  // -- Static utility methods --
+
+  public static String getType(int type) {
+    switch (type) {
+      case ARRAY_TYPE:
+        return "ARRAY";
+      case INT_TYPE:
+        return "INT";
+      case STRING_TYPE:
+        return "STRING";
+      case BYTE_TYPE:
+        return "BYTE";
+      case CHAR_TYPE:
+        return "CHAR";
+      case FLOAT_TYPE:
+        return "FLOAT";
+      case BOOLEAN_TYPE:
+        return "BOOLEAN";
+      case DOUBLE_TYPE:
+        return "DOUBLE";
+      case LONG_TYPE:
+        return "LONG";
+      case SHORT_TYPE:
+        return "SHORT";
+      default:
+        return "UNKNOWN [" + type + "]";
+    }
+  }
+
+  public static String getCommand(int cmd) {
+    switch (cmd) {
+      case SETVAR:
+        return "SETVAR";
+      case GETVAR:
+        return "GETVAR";
+      case EXEC:
+        return "EXEC";
+      case EXIT:
+        return "EXIT";
+      default:
+        return "UNKNOWN [" + cmd + "]";
+    }
+  }
+
+  public static String getValue(Object value) {
+    String val = value.toString();
+    try {
+      val += " (length " + Array.getLength(value) + ")";
+    }
+    catch (IllegalArgumentException exc) { }
+    return val;
+  }
+
 /*
-  private byte[] readArray(DataInputStream inStream, int size, int arrayLength)
+  private byte[] readArray(DataInputStream in, int size, int arrayLength)
     throws IOException
   {
     int readBytes = 0, totalBytes = size*arrayLength;
     byte[] b = new byte[totalBytes];
     while (readBytes < totalBytes) {
       int packetSize = MAX_PACKET_SIZE;
-      if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
-      int readThisTime = inStream.read(b, readBytes, packetSize);
+      if (readBytes+MAX_PACKET_SIZE > totalBytes) {
+        packetSize = totalBytes - readBytes;
+      }
+      int readThisTime = in.read(b, readBytes, packetSize);
       while (readThisTime < packetSize) {
         System.out.println("in loop: didn't read fully");
-        int additional = inStream.read(b, readBytes+readThisTime, packetSize-readThisTime);
+        int additional = in.read(b, readBytes+readThisTime,
+          packetSize-readThisTime);
         readThisTime += additional;
       }
       readBytes += packetSize;
@@ -484,12 +703,14 @@ int[] intArray = new int[arrayLength];
 int readBytes = 0, totalBytes = size*arrayLength;
 while (readBytes < totalBytes) {
   int packetSize = MAX_PACKET_SIZE;
-  if (readBytes+MAX_PACKET_SIZE > totalBytes) packetSize = totalBytes - readBytes;
+  if (readBytes+MAX_PACKET_SIZE > totalBytes) {
+    packetSize = totalBytes - readBytes;
+  }
   byte[] b = new byte[packetSize];
-  int readThisTime = inStream.read(b, 0, packetSize);
+  int readThisTime = in.read(b, 0, packetSize);
   while (readThisTime < packetSize) {
     System.out.println("in loop: didn't read fully");
-    int additional = inStream.read(b, readThisTime, packetSize-readThisTime);
+    int additional = in.read(b, readThisTime, packetSize-readThisTime);
     readThisTime += additional;
   }
   for (int i=0; i<packetSize/4; i++) {

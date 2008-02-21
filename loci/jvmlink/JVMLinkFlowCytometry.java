@@ -3,7 +3,8 @@
 //
 
 /*
-JVMLink package for communicating between Java and non-Java programs via IP.
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

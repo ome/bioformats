@@ -869,13 +869,13 @@ Apache XML-RPC
   </target>
 
   <target name="jar-jvmlink"
-    depends="compile-jvmlink, copy-jars, jar-formats"
+    depends="compile-formats, compile-jvmlink, copy-jars"
     description="generate JAR file for JVMLink">
     <jar jarfile="${jar.dir}/${jvmlink.jar}" basedir="${classes.dir}"
       includes="${jvmlink.files}">
       <manifest>
         <attribute name="Main-Class" value="${jvmlink.main}"/>
-        <attribute name="Class-Path" value="${jvmlink.classpath}"/>
+        <!--<attribute name="Class-Path" value="${jvmlink.classpath}"/>-->
       </manifest>
     </jar>
   </target>

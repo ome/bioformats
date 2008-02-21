@@ -3,7 +3,8 @@
 //
 
 /*
-JVMLink package for communicating between Java and non-Java programs via IP.
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +30,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "JVMLinkObject.h"
 
 JVMLinkObject::JVMLinkObject(void)

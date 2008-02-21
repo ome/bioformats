@@ -3,7 +3,8 @@
 //
 
 /*
-JVMLink package for communicating between Java and non-Java programs via IP.
+JVMLink client/server architecture for communicating between Java and
+non-Java programs using sockets.
 Copyright (c) 2008 Hidayath Ansari and Curtis Rueden. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,21 +33,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include "JVMLinkObject.h"
 
+//#define debug(msg) ((void)0)
+#define debug(msg) std::cout << "JVMLinkClient: " << msg << std::endl
+
 class JVMLinkClient
 {
 private:
 	int port;
 	SOCKET conn;
-public:
-	JVMLinkClient(void);
-	void startJava(int, CString, CString);
-	void shutJava();
-	int establishConnection();
-	int closeConnection();
+
 	int sendMessage(CString);
 	int sendMessage(int);
 	CString readMessage();
 	void* readMessage(int);
+
+public:
+	enum ConnectionCode {
+		CONNECTION_SUCCESS = 0,
+		WINSOCK_ERR,
+		SOCKET_ERR,
+		RESOLVE_ERR,
+		RESPONSE_ERR
+	};
+
+	JVMLinkClient(void);
+	void startJava(int, CString);
+	void shutJava();
+	ConnectionCode establishConnection();
+	int closeConnection();
 	JVMLinkObject* getVar(CString);
 	void setVar(JVMLinkObject*);
 	void setVar(CString, int);
