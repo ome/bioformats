@@ -351,9 +351,7 @@ public class Importer {
         int total = 0;
         for (int j=0; j<num[i]; j++) if (load[j]) total++;
 
-        // dump OME-XML to ImageJ's description field, if available
         FileInfo fi = new FileInfo();
-        fi.description = MetadataTools.getOMEXML(retrieve);
 
         // populate other common FileInfo fields
         String idDir = idLoc.getParent();
@@ -392,6 +390,11 @@ public class Importer {
         {
           stackOrder = ImporterOptions.ORDER_XYCZT;
         }
+
+        store.setPixelsDimensionOrder(stackOrder, i, 0);
+
+        // dump OME-XML to ImageJ's description field, if available
+        fi.description = MetadataTools.getOMEXML(retrieve);
 
         if (options.isVirtual()) {
           int cSize = r.getSizeC();
