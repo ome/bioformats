@@ -27,6 +27,7 @@ package loci.formats;
 import java.io.*;
 import java.text.*;
 import java.util.Date;
+import java.util.Hashtable;
 
 /**
  * A utility class with convenience methods for
@@ -521,6 +522,53 @@ public final class DataTools {
     return sub1.equals(sub2) || sub1.startsWith(sub2) || sub2.startsWith(sub1);
   }
 
+  /** Remove unprintable characters from the given string. */
+  public static String sanitize(String s) {
+    if (s == null) return null;
+    StringBuffer buf = new StringBuffer(s);
+    for (int i=0; i<buf.length(); i++) {
+      char c = buf.charAt(i);
+      if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
+        buf = buf.deleteCharAt(i--);
+      }
+    }
+    return buf.toString();
+  }
+
+  /**
+   * Load a list of metadata tags and their corresponding descriptions.
+   */
+  public static Hashtable getMetadataTags(String baseClass, String file) {
+    try {
+      return getMetadataTags(Class.forName(baseClass), file);
+    }
+    catch (ClassNotFoundException e) { }
+    return null;
+  }
+
+  /**
+   * Load a list of metadata tags and their corresponding descriptions.
+   */
+  public static Hashtable getMetadataTags(Class c, String file) {
+    Hashtable h = new Hashtable();
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+      c.getResourceAsStream(file)));
+    String line = null, key = null, value = null;
+    while (true) {
+      try {
+        line = in.readLine();
+      }
+      catch (IOException e) {
+        line = null;
+      }
+      if (line == null) break;
+      key = line.substring(0, line.indexOf("=>")).trim();
+      value = line.substring(line.indexOf("=>") + 2).trim();
+      h.put(key, value);
+    }
+    return h;
+  }
+
   /**
    * Normalize the given float array so that the minimum value maps to 0.0
    * and the maximum value maps to 1.0.
@@ -574,19 +622,6 @@ public final class DataTools {
 
     fmt.format(d, sb, new FieldPosition(0));
     return sb.toString();
-  }
-
-  /** Remove unprintable characters from the given string. */
-  public static String sanitize(String s) {
-    if (s == null) return null;
-    StringBuffer buf = new StringBuffer(s);
-    for (int i=0; i<buf.length(); i++) {
-      char c = buf.charAt(i);
-      if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
-        buf = buf.deleteCharAt(i--);
-      }
-    }
-    return buf.toString();
   }
 
 }

@@ -79,7 +79,6 @@ public class BioRadReader extends FormatReader {
   public BioRadReader() {
     super("Bio-Rad PIC", new String[] {"pic", "xml", "raw"});
     blockCheckLen = 56;
-    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --

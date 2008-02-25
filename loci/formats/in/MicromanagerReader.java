@@ -252,7 +252,7 @@ public class MicromanagerReader extends FormatReader {
 
     String t = (String) metadata.get("Frames");
     if (t != null) {
-      core.sizeT[0 ] = Integer.parseInt(t);
+      core.sizeT[0] = Integer.parseInt(t);
     }
     else core.sizeT[0] = tiffs.size() / core.sizeC[0];
 

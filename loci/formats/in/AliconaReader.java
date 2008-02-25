@@ -49,12 +49,16 @@ public class AliconaReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Alicona reader. */
-  public AliconaReader() { super("Alicona AL3D", "al3d"); }
+  public AliconaReader() {
+    super("Alicona AL3D", "al3d");
+    blockCheckLen = 16;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
+    if (block.length < blockCheckLen) return false;
     return (new String(block)).indexOf("Alicona") != -1;
   }
 

@@ -118,6 +118,7 @@ public class AVIReader extends FormatReader {
         System.arraycopy(b, (row + y) * core.sizeX[0] * bytes * core.sizeC[0],
           buf, row * rowLen, rowLen);
       }
+      b = null;
       return buf;
     }
 

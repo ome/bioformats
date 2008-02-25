@@ -68,12 +68,16 @@ public class BMPReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new BMP reader. */
-  public BMPReader() { super("Windows Bitmap", "bmp"); }
+  public BMPReader() {
+    super("Windows Bitmap", "bmp");
+    blockCheckLen = 2;
+  }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
+    if (block.length < blockCheckLen) return false;
     return new String(block).startsWith("BM");
   }
 

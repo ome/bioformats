@@ -31,6 +31,7 @@ loci.formats.in.JPEGReader         # jpg, jpeg [javax.imageio]
 # standalone readers with unique file extensions
 loci.formats.in.PGMReader          # pgm
 loci.formats.in.FitsReader         # fits
+loci.formats.in.PCXReader          # pcx
 loci.formats.in.GIFReader          # gif
 loci.formats.in.BMPReader          # bmp
 loci.formats.in.DicomReader        # dcm, dicom
