@@ -39,6 +39,7 @@ import java.util.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import org.testng.SkipException;
 
 /**
  * TestNG tester for Bio-Formats file format readers.
@@ -55,6 +56,11 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/tests/testng/FormatReaderTest.java">SVN</a></dd></dl>
  */
 public class FormatReaderTest {
+
+  // -- Constants --
+
+  /** Message to give for why a test was skipped. */
+  private static final String SKIP_MESSAGE = "Dataset already tested.";
 
   // -- Static fields --
 
@@ -697,7 +703,7 @@ public class FormatReaderTest {
 
   /** Initializes the reader. */
   private boolean initReader() {
-    if (skip) return false; // skip this file
+    if (skip) throw new SkipException(SKIP_MESSAGE);
     if (reader == null) {
       reader = new FileStitcher();
       reader.setNormalized(true);
@@ -714,7 +720,7 @@ public class FormatReaderTest {
       LogTools.println("Skipping " + id);
       skipFiles.remove(ndx);
       skip = true;
-      return false; // skip
+      throw new SkipException(SKIP_MESSAGE);
     }
 
     LogTools.print("Initializing " + id + ": ");
