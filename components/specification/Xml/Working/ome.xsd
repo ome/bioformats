@@ -24,7 +24,7 @@
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	version="2" 
+	version="1" 
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>

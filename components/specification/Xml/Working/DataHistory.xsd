@@ -20,6 +20,7 @@
 	 xmlns:DH = "http://openmicroscopy.com/Schemas/DataHistory/2008-02"
 	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	 xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-02"
+	 version="1"
 	 elementFormDefault = "qualified">
 	<import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation = "http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd"/>
 	<element name = "Input">

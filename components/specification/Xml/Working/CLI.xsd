@@ -19,8 +19,8 @@
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/CLI/2008-02"
 	xmlns:CLI = "http://www.openmicroscopy.org/Schemas/CLI/2008-02"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	version = "2"
-	 elementFormDefault = "qualified">
+	version = "1"
+	elementFormDefault = "qualified">
 	<import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<annotation>
 		<documentation>

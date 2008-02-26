@@ -7,8 +7,8 @@
     xmlns:mli="http://www.openmicroscopy.org/Schemas/MLI/2008-02"
     xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
     xmlns:am="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome.xsd"
     UUID="urn:uuid:b9a95980-dbd6-11dc-95ff-0800200c9a66">
     <ome:Project Name="Name0" ID="Project:a">
         <ome:Description>

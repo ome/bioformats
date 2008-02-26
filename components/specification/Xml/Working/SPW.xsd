@@ -19,7 +19,7 @@
     targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-    version="2" 
+    version="1" 
     elementFormDefault="qualified">
     <xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd"/>
 
