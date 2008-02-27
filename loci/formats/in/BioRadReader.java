@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import loci.formats.*;
@@ -87,7 +88,7 @@ public class BioRadReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
     if (lname.endsWith(".pic")) return true;
-    String fname = new java.io.File(lname).getName();
+    String fname = new File(lname).getName();
     if (fname.equals("lse.xml") || fname.equals("data.raw")) return true;
     return false;
   }
