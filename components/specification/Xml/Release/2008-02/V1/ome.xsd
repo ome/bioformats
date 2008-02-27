@@ -2,7 +2,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2002-2007 Open Microscopy Environment
+	# Copyright (C) 2002-2008 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -24,20 +24,20 @@
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	version="2" 
+	version="1" 
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-02/V1/AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-02/V1/STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-02/V1/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-02/V1/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2008-02/V1/SPW.xsd"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema June 2007 - Update Version 2 September 2007
+			OME XML Schema February 2008 - Version 1
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright 2002 - 2007 OME. All rights reserved.
+			Copyright 2002 - 2008 OME. All rights reserved.
 		</xsd:documentation>
 	</xsd:annotation>
 	<xsd:element name="OME">
@@ -64,8 +64,7 @@
 				<xsd:element ref="AML:AnalysisModuleLibrary" minOccurs="0"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
 			</xsd:sequence>
-				<xsd:attribute name="ID" type="FileID"/>
-				<xsd:attribute name="HashMethod" type="HashMethodType" default="SHA1"/>
+				<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Image">
@@ -102,7 +101,6 @@
 				<xsd:element ref="DisplayOptions" minOccurs="0"/>
 				<xsd:element ref="StageLabel" minOccurs="0"/>
 				<xsd:element ref="Pixels" maxOccurs="unbounded"/>
-				<xsd:element ref="AcquiredPixelsRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Region" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="CA:CustomAttributes" minOccurs="0"/>
 				<xsd:element ref="ROI" minOccurs="0" maxOccurs="unbounded"/>
@@ -112,8 +110,18 @@
 			<xsd:attribute name="Name" use="required" type="xsd:string"/>
 			<xsd:attribute name="DefaultPixels" use="required" type="PixelsID">
 				<xsd:annotation>
-					<xsd:documentation>More than one Pixels attribute may be associated with an Image. An Image will however have one "primary" set of Pixels. If a PixelsID is specified with this attribute, then that will be the "primary" pixels for this image. If this attribute
-is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be assumed to be the "primary" set.
+					<xsd:documentation>
+						More than one Pixels element may be associated with an Image. 
+						An Image will however have one "primary" set of Pixels specified with this attribute.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="AcquiredPixels" type="PixelsID">
+				<xsd:annotation>
+					<xsd:documentation>
+						Optional. 
+						More than one Pixels element may be associated with an Image. 
+						This attribute indicates the original acquired pixels.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -209,17 +217,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="WaveIncrement" type="xsd:positiveInteger"/>
 		</xsd:complexType>
 	</xsd:element>
-	
-	<xsd:element name="AcquiredPixelsRef">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="PixelsID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-				
 	<xsd:element name="TiffData">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -227,6 +224,34 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UUID" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+							This must be used when the IFDs are located in another file.
+							Note: It is permissible for this to be self referential.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base = "UniversallyUniqueIdentifier">
+								<xsd:attribute name="FileName" type="xsd:string">
+									<xsd:annotation>
+										<xsd:documentation>
+											This can be used when the IFDs are located in another file.
+											The / (forward slash) is used as the path separator.
+											A relative path is recommended. However an absolute path can be specified.
+											Default is to use the file the ome-xml data has been pulled from.
+											Note: It is permissible for this to be self referential. The file image1.tiff
+											may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:extension>
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
 			<xsd:attribute name="IFD" type="xsd:integer" default="0">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -268,18 +293,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FilePath" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						This is used when the IFDs are located in another file.
-						The / (forward slash) is used as the path separator.
-						A relative path is recommended. However an absolute path can be specified.
-						Default is to use the file the ome-xml data has been pulled from.
-						Note: It is permissible for this to be self referential. The file image1.tiff
-						may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -292,19 +305,20 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:sequence>
 				<xsd:element name="PlaneTiming" type="PlaneTiming" minOccurs="0" maxOccurs="1"/>
 				<xsd:element name="StagePosition" type="StagePosition" minOccurs="0" maxOccurs="1"/>
+				<xsd:choice minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							This optional element is a hash of the plane's image data. 
+							It is a choice between all the support hash types.
+							Currently the only method supported is SHA1.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:element name="HashSHA1" type="Hex40"/>
+				</xsd:choice>
 			</xsd:sequence>
 			<xsd:attribute name="TheZ" use="required" type="xsd:integer"/>
 			<xsd:attribute name="TheT" use="required" type="xsd:integer"/>
 			<xsd:attribute name="TheC" use="required" type="xsd:integer"/>
-			<xsd:attribute name="Hash" type="HashValue">
-				<xsd:annotation>
-					<xsd:documentation>
-						This optional value is a hash of the plane's image data. 
-						It is calculated using the method set in the HashMethod of the OME element.
-						Currently the only method supported is SHA1.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -910,36 +924,36 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="Correction" type="Correction">
+	<xsd:element name="Correction">
 		<xsd:annotation>
 			<xsd:documentation>The coating applied to the lens</xsd:documentation>
 		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="UV"/>
+				<xsd:enumeration value="PlanApo"/>
+				<xsd:enumeration value="PlanFluor"/>
+				<xsd:enumeration value="SuperFluor"/>
+				<xsd:enumeration value="VioletCorrected"/>
+			</xsd:restriction>
+		</xsd:simpleType>
 	</xsd:element>
-	<xsd:simpleType name="Correction">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="UV"/>
-			<xsd:enumeration value="PlanApo"/>
-			<xsd:enumeration value="PlanFluor"/>
-			<xsd:enumeration value="SuperFluor"/>
-			<xsd:enumeration value="VioletCorrected"/>
-		</xsd:restriction>
-	</xsd:simpleType>	
-	<xsd:element name="Immersion" type="Immersion">
+	<xsd:element name="Immersion">
 		<xsd:annotation>
 			<xsd:documentation>The immersion medium the lens is designed for</xsd:documentation>
 		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="Oil"/>
+				<xsd:enumeration value="Water"/>
+				<xsd:enumeration value="WaterDipping"/>
+				<xsd:enumeration value="Air"/>
+				<xsd:enumeration value="Multi"/>
+				<xsd:enumeration value="Glycerol"/>
+				<xsd:enumeration value="Other"/>
+			</xsd:restriction>
+		</xsd:simpleType>	
 	</xsd:element>
-	<xsd:simpleType name="Immersion">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="Oil"/>
-			<xsd:enumeration value="Water"/>
-			<xsd:enumeration value="WaterDipping"/>
-			<xsd:enumeration value="Air"/>
-			<xsd:enumeration value="Multi"/>
-			<xsd:enumeration value="Glycerol"/>
-			<xsd:enumeration value="Other"/>
-		</xsd:restriction>
-	</xsd:simpleType>	
 	<xsd:element name="WorkingDistance" type="xsd:float">
 		<xsd:annotation>
 			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number. Units are um.</xsd:documentation>
@@ -1095,14 +1109,6 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:length value="20"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="HashValue">
-		<xsd:union memberTypes="Hex40"/>
-	</xsd:simpleType>
-	<xsd:simpleType name="HashMethodType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="SHA1"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="MetalVaporLaserMedia">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Cu"/>
@@ -1184,20 +1190,20 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:\S+:\S+)|(\S+:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="FileID">
+	<xsd:simpleType name="UniversallyUniqueIdentifier">
 		<xsd:annotation>
 			<xsd:documentation>
-				Note: This does not conform to the ID pattern used in the rest of the file.
+				This is a unique ID for the file but does not conform to the ID pattern used in the rest of the file.
 				The rest of the IDs are either an full LSID or an internal ID which is a string that is simply unique in this file.
-				As the FileID is used from outside this file to identify it having the same ID in another file could cause problems.
-				To resolve this a FileID can either be an LSID or a UUID.
+				As the UniversallyUniqueIdentifier is used from outside this file to identify it having the same ID in another file could cause problems.
 				A UUID is 32 hexadecimal digits, in 5 groups, 8-4-4-4-12, separated by hyphens
-				e.g. 3e450fae-b8f2-4d35-aa54-702168b2487f
+				e.g. urn:uuid:3e450fae-b8f2-4d35-aa54-702168b2487f
 				There are methods to generate these in most modern languages.
+				http://www.ietf.org/rfc/rfc4122.txt
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:File:\S+)|(File:\S+)"/>
+		<xsd:restriction base="xsd:anyURI">
+			<xsd:pattern value="(urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProjectID">
@@ -1320,10 +1326,10 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:union memberTypes="PixelTypes">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="bit"/>
-					<xsd:enumeration value ="double"/>
-					<xsd:enumeration value ="complex"/>
-					<xsd:enumeration value ="double-complex"/>
+					<xsd:enumeration value = "bit"/>
+					<xsd:enumeration value = "double"/>
+					<xsd:enumeration value = "complex"/>
+					<xsd:enumeration value = "double-complex"/>
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:union>
