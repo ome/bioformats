@@ -1279,7 +1279,6 @@ public final class TiffTools {
       numStrips--;
     }
 
-
     short[][] samples = new short[samplesPerPixel][numSamples];
     byte[] altBytes = new byte[0];
 

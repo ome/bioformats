@@ -140,9 +140,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     SimpleDateFormat parse = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SS");
     Date d = parse.parse(date, new ParsePosition(0));
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    store.setImageCreationDate(format.format(d), 0);
+    store.setImageCreationDate(fmt.format(d), 0);
     MetadataTools.populatePixels(store, this);
 
     store.setImagingEnvironmentTemperature(new Float(temperature), 0);

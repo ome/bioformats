@@ -109,7 +109,6 @@ public class Property {
 
   public boolean isNode() { return type.endsWith("Node"); }
 
-
   public void addMappedName(String version, String name) {
     nameMap.put(version, name);
   }

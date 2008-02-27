@@ -486,7 +486,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Instrument property retrieval -
 
-
   // - LightSource property retrieval -
 
   /* @see MetadataRetrieve#getLightSourceManufacturer(int, int) */
@@ -682,7 +681,6 @@ public class DummyMetadata implements MetadataRetrieve, MetadataStore {
 
   public void setRoot(Object root) {
   }
-
 
   // - Image property storage -
 

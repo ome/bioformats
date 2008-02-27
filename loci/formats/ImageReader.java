@@ -536,10 +536,8 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatHandler#isThisType(String) */
   public boolean isThisType(String name) {
-    // NB: Unlike individual format readers, ImageReader defaults to *not*
-    // allowing files to be opened to analyze type, because doing so is
-    // quite slow with the large number of supported formats.
-    return isThisType(name, false);
+    // if necessary, open the file for further analysis
+    return isThisType(name, true);
   }
 
   /* @see IFormatHandler#getFormat() */

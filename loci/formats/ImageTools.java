@@ -480,7 +480,7 @@ public final class ImageTools {
       float[] f =
         (float[]) DataTools.makeDataArray(buf, 4, true, r.isLittleEndian());
       if (r.isNormalized()) f = DataTools.normalizeFloats(f);
-      return makeImage(f, w, h, r.getRGBChannelCount(), true); 
+      return makeImage(f, w, h, r.getRGBChannelCount(), true);
     }
 
     boolean signed = pixelType == FormatTools.INT8 ||

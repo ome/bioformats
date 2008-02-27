@@ -53,7 +53,7 @@ public final class MetadataConverter {
   private MetadataConverter() { }
 
   // -- MetadataConverter API methods --
- 
+
   /**
    * Copies information from a metadata retrieval object
    * (source) into a metadata store (destination).

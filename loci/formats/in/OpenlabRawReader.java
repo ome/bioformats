@@ -58,6 +58,7 @@ public class OpenlabRawReader extends FormatReader {
   public OpenlabRawReader() {
     super("Openlab RAW", "raw");
     blockCheckLen = 4;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -65,6 +66,7 @@ public class OpenlabRawReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     if (block.length < blockCheckLen) return false;
+    new Exception("OpenlabRawReader.isThisType").printStackTrace();//TEMP
     return block[0] == 'O' && block[1] == 'L' &&
       block[2] == 'R' && block[3] == 'W';
   }

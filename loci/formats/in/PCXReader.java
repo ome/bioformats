@@ -24,15 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
+import java.io.IOException;
 import loci.formats.*;
-import loci.formats.meta.FilterMetadata;
-import loci.formats.meta.MetadataStore;
 
 /**
  * PCXReader is the file format reader for PCX files (originally used by
  * PC Paintbrush; now used in Zeiss' LSM Image Browser).
- * See http://www.qzx.com/pc-gpe/pcx.txt 
+ * See http://www.qzx.com/pc-gpe/pcx.txt
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/PCXReader.java">Trac</a>,

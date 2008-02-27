@@ -874,18 +874,18 @@ public class ND2Reader extends FormatReader {
       }
       else if (qName.equals("uiBpcInMemory")) {
         if (attributes.getValue("value") == null) return;
-    	  int bits = Integer.parseInt(attributes.getValue("value"));
+        int bits = Integer.parseInt(attributes.getValue("value"));
         int bytes = bits / 8;
         switch (bytes) {
           case 1:
             core.pixelType[0] = FormatTools.UINT8;
             break;
           case 2:
-          	core.pixelType[0] = FormatTools.UINT16;
-          	break;
+            core.pixelType[0] = FormatTools.UINT16;
+            break;
           case 4:
-          	core.pixelType[0] = FormatTools.UINT32;
-          	break;
+            core.pixelType[0] = FormatTools.UINT32;
+            break;
           default: core.pixelType[0] = FormatTools.UINT8;
         }
         parseKeyAndValue(qName, attributes.getValue("value"));

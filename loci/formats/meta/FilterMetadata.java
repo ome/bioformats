@@ -72,7 +72,6 @@ public class FilterMetadata implements MetadataStore {
     delegate.setRoot(root);
   }
 
-
   // -- Image property storage -
 
   /* @see MetadataStore#setImageName(String, int) */

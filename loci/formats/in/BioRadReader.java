@@ -79,7 +79,6 @@ public class BioRadReader extends FormatReader {
   public BioRadReader() {
     super("Bio-Rad PIC", new String[] {"pic", "xml", "raw"});
     blockCheckLen = 56;
-    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -87,8 +86,10 @@ public class BioRadReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
-    if (lname.endsWith(".pic") || lname.endsWith("lse.xml")) return true;
-    return !lname.endsWith(".xml") && super.isThisType(name, open);
+    if (lname.endsWith(".pic")) return true;
+    String fname = new java.io.File(lname).getName();
+    if (fname.equals("lse.xml") || fname.equals("data.raw")) return true;
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
