@@ -86,10 +86,9 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    boolean success = super.isThisType(name, open);
     String lname = name.toLowerCase();
-    return (success && !lname.endsWith(".xml")) || lname.endsWith("lse.xml") ||
-      lname.endsWith(".pic");
+    if (lname.endsWith(".pic") || lname.endsWith("lse.xml")) return true;
+    return super.isThisType(name, open) && !lname.endsWith(".xml");
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
