@@ -112,7 +112,7 @@ public class PSDReader extends FormatReader {
         in.skipBytes(y * bpp * core.sizeX[0]);
         for (int row=0; row<h; row++) {
           in.skipBytes(x * bpp);
-          in.read(buf, row * w * bpp, w * bpp);
+          in.read(buf, c * h * w * bpp + row * w * bpp, w * bpp);
           in.skipBytes(bpp * (core.sizeX[0] - w - x));
         }
       }
@@ -132,7 +132,7 @@ public class PSDReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug ("PSDReader.initFile(" + id + ")");
+    if (debug) debug("PSDReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
     core.littleEndian[0] = false;
@@ -262,12 +262,16 @@ public class PSDReader extends FormatReader {
     while (in.read() != '8');
     in.skipBytes(7);
     int len = in.readInt();
+    if ((len % 4) != 0) len += 4 - (len % 4);
     in.skipBytes(len);
 
-    while (in.readString(4).equals("8BIM")) {
+    String s = in.readString(4);
+    while (s.equals("8BIM")) {
       in.skipBytes(4);
       len = in.readInt();
+      if ((len % 4) != 0) len += 4 - (len % 4);
       in.skipBytes(len);
+      s = in.readString(4);
     }
 
     offset = in.getFilePointer() - 4;
@@ -280,7 +284,6 @@ public class PSDReader extends FormatReader {
     core.falseColor[0] = false;
     core.currentOrder[0] = "XYCZT";
     core.interleaved[0] = false;
-    core.littleEndian[0] = true;
     core.metadataComplete[0] = true;
 
     MetadataStore store =

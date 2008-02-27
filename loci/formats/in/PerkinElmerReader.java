@@ -83,7 +83,28 @@ public class PerkinElmerReader extends FormatReader {
         return false;
       }
     }
-    return super.isThisType(name, open);
+    String ext = name;
+    if (ext.indexOf(".") != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
+    boolean binFile = true;
+    try {
+      Integer.parseInt(ext, 16);
+    }
+    catch (NumberFormatException e) {
+      binFile = false;
+    }
+
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    String[] list = parent.list();
+    boolean html = false;
+    for (int i=0; i<list.length; i++) {
+      if (list[i].toLowerCase().endsWith(".htm")) {
+        html = true;
+        break;
+      }
+    }
+
+    return super.isThisType(name, open) || binFile ||
+      (ext.equals("tif") && html);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */

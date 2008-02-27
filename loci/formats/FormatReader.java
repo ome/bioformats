@@ -350,6 +350,7 @@ public abstract class FormatReader extends FormatHandler
       int sy = getSizeY();
       core.thumbSizeX[series] =
         sx > sy ? THUMBNAIL_DIMENSION : sx * THUMBNAIL_DIMENSION / sy;
+      if (core.thumbSizeX[series] == 0) core.thumbSizeX[series] = 1;
     }
     return core.thumbSizeX[series];
   }
@@ -362,6 +363,7 @@ public abstract class FormatReader extends FormatHandler
       int sy = getSizeY();
       core.thumbSizeY[series] =
         sy > sx ? THUMBNAIL_DIMENSION : sy * THUMBNAIL_DIMENSION / sx;
+      if (core.thumbSizeY[series] == 0) core.thumbSizeY[series] = 1;
     }
     return core.thumbSizeY[series];
   }

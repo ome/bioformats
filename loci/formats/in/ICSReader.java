@@ -99,6 +99,9 @@ public class ICSReader extends FormatReader {
   /** Emission and excitation wavelength. */
   private String em, ex;
 
+  private long offset;
+  private boolean gzip;
+
   // -- Constructor --
 
   /** Constructs a new ICSReader. */
@@ -129,16 +132,22 @@ public class ICSReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     int bpp = bitsPerPixel / 8;
-
     int len = core.sizeX[0] * core.sizeY[0] * bpp * getRGBChannelCount();
-    int offset = len * no;
+
+    in.seek(offset + no * len);
+
     if (!core.rgb[0] && core.sizeC[0] > 4) {
       for (int row=0; row<h; row++) {
         for (int col=0; col<w; col++) {
-          for (int b=0; b<bpp; b++) {
-            buf[row * w * bpp + col * bpp + b] =
-              data[(row + y) * core.sizeX[0] * bpp * core.sizeC[0] +
-              (col + x) * bpp * core.sizeC[0] + no * bpp + b];
+          if (gzip) {
+            System.arraycopy(data,
+              bpp * (no + core.sizeC[0]*((row + y) * core.sizeX[0] + col + x)),
+              buf, bpp * (row * w + col), bpp);
+          }
+          else {
+            in.seek(offset + (row + y) * core.sizeX[0] * bpp * core.sizeC[0] +
+              (col + x) * bpp * core.sizeC[0] + no * bpp);
+            in.read(buf, row * w * bpp + col * bpp, bpp);
           }
         }
       }
@@ -147,9 +156,16 @@ public class ICSReader extends FormatReader {
       int pixel = bpp * getRGBChannelCount();
       int rowLen = w * pixel;
       for (int row=0; row<h; row++) {
-        System.arraycopy(data,
-          offset + (row + y) * core.sizeX[0] * pixel + x * pixel, buf,
-          row * rowLen, rowLen);
+        if (gzip) {
+          System.arraycopy(data,
+            len*no + (row + y) * core.sizeX[0] * pixel + x * pixel, buf,
+            row * rowLen, rowLen);
+        }
+        else {
+          in.skipBytes(x * pixel);
+          in.read(buf, row * rowLen, rowLen);
+          in.skipBytes(pixel * (core.sizeX[0] - w - x));
+        }
       }
     }
 
@@ -176,6 +192,7 @@ public class ICSReader extends FormatReader {
     data = null;
     bitsPerPixel = 0;
     versionTwo = false;
+    gzip = false;
   }
 
   // -- Internal FormatReader API methods --
@@ -212,12 +229,11 @@ public class ICSReader extends FormatReader {
 
     // check if we have a v2 ICS file
     RandomAccessStream f = new RandomAccessStream(icsId);
-    byte[] b = new byte[17];
-    f.read(b);
-    f.close();
-    if (new String(b).trim().equals("ics_version\t2.0")) {
+    if (f.readString(17).trim().equals("ics_version\t2.0")) {
       in = new RandomAccessStream(icsId);
       versionTwo = true;
+      f.close();
+      f = null;
     }
     else {
       if (idsId == null) throw new FormatException("No IDS file found.");
@@ -351,19 +367,21 @@ public class ICSReader extends FormatReader {
     }
 
     String test = compression;
-    boolean gzip = (test == null) ? false : test.equals("gzip");
+    gzip = (test == null) ? false : test.equals("gzip");
 
     if (versionTwo) {
       s = in.readLine();
       while(!s.trim().equals("end")) s = in.readLine();
     }
-    data = new byte[(int) (in.length() - in.getFilePointer())];
+
+    offset = in.getFilePointer();
 
     // extra check is because some of our datasets are labeled as 'gzip', and
     // have a valid GZIP header, but are actually uncompressed
-    if (gzip && ((data.length / (core.imageCount[0]) <
+    if (gzip && (((in.length() - in.getFilePointer()) / (core.imageCount[0]) <
       (core.sizeX[0] * core.sizeY[0] * bitsPerPixel / 8))))
     {
+      data = new byte[(int) (in.length() - in.getFilePointer())];
       status("Decompressing pixel data");
       in.read(data);
       byte[] buf = new byte[8192];
@@ -382,7 +400,7 @@ public class ICSReader extends FormatReader {
         throw new FormatException("Error uncompressing gzip'ed data", dfe);
       }
     }
-    else in.readFully(data);
+    else gzip = false;
 
     status("Populating metadata");
 

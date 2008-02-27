@@ -58,7 +58,6 @@ public class OpenlabRawReader extends FormatReader {
   public OpenlabRawReader() {
     super("Openlab RAW", "raw");
     blockCheckLen = 4;
-    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --

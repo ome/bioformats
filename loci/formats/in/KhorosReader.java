@@ -140,7 +140,7 @@ public class KhorosReader extends FormatReader {
         core.pixelType[0] = FormatTools.UINT16;
         break;
       case 4:
-        core.pixelType[0] = FormatTools.UINT32;
+        core.pixelType[0] = FormatTools.INT32;
         break;
       case 5:
         core.pixelType[0] = FormatTools.FLOAT;

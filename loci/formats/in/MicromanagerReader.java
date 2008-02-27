@@ -52,6 +52,8 @@ public class MicromanagerReader extends FormatReader {
   /** List of TIFF files to open. */
   private Vector tiffs;
 
+  private String metadataFile;
+
   // -- Constructor --
 
   /** Constructs a new Micromanager reader. */
@@ -85,7 +87,7 @@ public class MicromanagerReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     String[] s = new String[tiffs.size() + 1];
     tiffs.copyInto(s);
-    s[tiffs.size()] = currentId;
+    s[tiffs.size()] = metadataFile;
     return s;
   }
 
@@ -131,8 +133,9 @@ public class MicromanagerReader extends FormatReader {
     // find metadata.txt
 
     File file = new File(currentId).getAbsoluteFile();
-    in = new RandomAccessStream(file.exists() ? new File(file.getParentFile(),
-      METADATA).getAbsolutePath() : METADATA);
+    metadataFile =  file.exists() ? new File(file.getParentFile(),
+      METADATA).getAbsolutePath() : METADATA;
+    in = new RandomAccessStream(metadataFile);
     String parent = file.exists() ? file.getParentFile().getAbsolutePath() : "";
 
     // usually a small file, so we can afford to read it into memory

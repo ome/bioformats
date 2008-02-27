@@ -132,7 +132,7 @@ public class QTReader extends FormatReader {
       try {
         in = new RandomAccessStream(name);
         long len = in.length();
-        if (len > 20) len = 20;
+        if (len > 16) len = 16;
         b = new byte[(int) len];
         in.readFully(b);
       }

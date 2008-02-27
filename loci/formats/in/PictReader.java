@@ -144,6 +144,9 @@ public class PictReader extends FormatReader {
     bytes = pix;
     ras = new RandomAccessStream(bytes);
     ras.order(false);
+    rowBytes = 0;
+    versionOne = false;
+    lookup = null;
 
     try {
       while (driveDecoder()) { }

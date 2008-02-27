@@ -1213,6 +1213,9 @@ public class FileStitcher implements IFormatReader {
       posC[0] < readers[sno][fno].getSizeC() &&
       posT[0] < readers[sno][fno].getSizeT())
     {
+      if (readers[sno][fno].isRGB()) {
+        posC[0] /= lenC[sno][0];
+      }
       ino = FormatTools.getIndex(readers[sno][fno], posZ[0], posC[0], posT[0]);
     }
     else ino = Integer.MAX_VALUE; // coordinates out of range

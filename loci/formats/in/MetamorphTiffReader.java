@@ -81,6 +81,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
     catch (IOException e) {
       if (debug) LogTools.trace(e);
     }
+    catch (ArrayIndexOutOfBoundsException e) {
+      if (debug) LogTools.trace(e);
+    }
     return false;
   }
 

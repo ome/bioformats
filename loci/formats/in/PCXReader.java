@@ -32,8 +32,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * PCXReader is the file format reader for PCX files (originally used by
  * PC Paintbrush; now used in Zeiss' LSM Image Browser).
- * See http://courses.ece.uiuc.edu/ece390/books/labmanual/graphics-pcx.html
- * for an outline of the format.
+ * See http://www.qzx.com/pc-gpe/pcx.txt 
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/PCXReader.java">Trac</a>,
