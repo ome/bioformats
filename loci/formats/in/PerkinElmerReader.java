@@ -215,8 +215,6 @@ public class PerkinElmerReader extends FormatReader {
     String workingDirPath = workingDir.getPath() + File.separator;
     String[] ls = workingDir.list();
 
-    allFiles.add(id);
-
     float pixelSizeX = 1f, pixelSizeY = 1f;
     String finishTime = null, startTime = null;
     float originX = 0f, originY = 0f, originZ = 0f;
@@ -381,6 +379,19 @@ public class PerkinElmerReader extends FormatReader {
 
     status("Parsing metadata values");
 
+    if (cfgPos != -1) {
+      tempFile = new Location(workingDir, ls[cfgPos]);
+      allFiles.add(tempFile.getAbsolutePath());
+    }
+    if (anoPos != -1) {
+      tempFile = new Location(workingDir, ls[anoPos]);
+      allFiles.add(tempFile.getAbsolutePath());
+    }
+    if (recPos != -1) {
+      tempFile = new Location(workingDir, ls[recPos]);
+      allFiles.add(tempFile.getAbsolutePath());
+    }
+
     if (timPos != -1) {
       tempFile = new Location(workingDir, ls[timPos]);
       allFiles.add(tempFile.getAbsolutePath());
@@ -534,19 +545,22 @@ public class PerkinElmerReader extends FormatReader {
       }
       read.close();
     }
-    else if (zpoPos != -1) {
+    if (zpoPos != -1) {
       tempFile = new Location(workingDir, ls[zpoPos]);
       allFiles.add(tempFile.getAbsolutePath());
-      read = new RandomAccessStream(tempFile.getAbsolutePath());
-      data = new byte[(int) tempFile.length()];
-      read.read(data);
-      t = new StringTokenizer(new String(data));
-      int tNum = 0;
-      while (t.hasMoreTokens()) {
-        addMeta("Z slice #" + tNum + " position", t.nextToken());
-        tNum++;
+      if (csvPos < 0) {
+        // parse .zpo only if no .csv is available
+        read = new RandomAccessStream(tempFile.getAbsolutePath());
+        data = new byte[(int) tempFile.length()];
+        read.read(data);
+        t = new StringTokenizer(new String(data));
+        int tNum = 0;
+        while (t.hasMoreTokens()) {
+          addMeta("Z slice #" + tNum + " position", t.nextToken());
+          tNum++;
+        }
+        read.close();
       }
-      read.close();
     }
 
     // be aggressive about parsing the HTML file, since it's the only one that
