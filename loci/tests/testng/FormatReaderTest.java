@@ -37,6 +37,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import loci.formats.*;
+import loci.formats.in.TiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import org.testng.SkipException;
@@ -665,6 +666,10 @@ public class FormatReaderTest {
           // and only one reader, identifies the dataset as its own
           for (int j=0; j<readers.length; j++) {
             boolean result = readers[j].isThisType(used[i]);
+
+            // TIFF reader is allowed to redundantly green-light files
+            if (result && readers[j] instanceof TiffReader) continue;
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;

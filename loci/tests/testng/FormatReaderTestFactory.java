@@ -97,13 +97,13 @@ public class FormatReaderTestFactory {
     ImageReader typeTester = new ImageReader();
 
     for (int i=0; i<subs.length; i++) {
-      subs[i] = new Location(root, subs[i]).getAbsolutePath();
+      Location file = new Location(root, subs[i]);
+      subs[i] = file.getAbsolutePath();
       LogTools.print("Checking " + subs[i] + ": ");
       if (isIgnoredFile(subs[i])) {
         LogTools.println("ignored");
         continue;
       }
-      Location file = new Location(subs[i]);
 
       if (file.isDirectory()) {
         LogTools.println("directory");
