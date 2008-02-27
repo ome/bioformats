@@ -80,6 +80,7 @@ public class ConnThread extends Thread {
   private JVMLinkServer server;
   private ReflectedUniverse r;
   private DataInputStream in;
+  private BufferedReader inReader;
   private DataOutputStream out;
 
   // -- Constructor --
@@ -91,6 +92,7 @@ public class ConnThread extends Thread {
     r = new ReflectedUniverse();
     in = new DataInputStream(
       new BufferedInputStream(socket.getInputStream()));
+    inReader = new BufferedReader(new InputStreamReader(in));
     out = new DataOutputStream(
       new BufferedOutputStream(socket.getOutputStream()));
     start();
@@ -201,7 +203,7 @@ public class ConnThread extends Thread {
    * from the input stream.
    */
   private void setVar() throws IOException {
-    String name = in.readLine();
+    String name = inReader.readLine();
     int type = DataTools.read4SignedBytes(in, true);
     Object value = null;
     if (type == ARRAY_TYPE) {
@@ -233,7 +235,7 @@ public class ConnThread extends Thread {
       else if (insideType == STRING_TYPE) {
         String[] stringArray = new String[arrayLength];
           for (int i=0; i<arrayLength; i++) {
-            stringArray[i] = in.readLine();
+            stringArray[i] = inReader.readLine();
           }
           theArray = stringArray;
         }
@@ -365,7 +367,7 @@ public class ConnThread extends Thread {
       value = new Integer(readInt);
     }
     else if (type == STRING_TYPE) {
-      value = in.readLine();
+      value = inReader.readLine();
     }
     else if (type == BYTE_TYPE) {
       byte readByte = in.readByte();
@@ -404,7 +406,7 @@ public class ConnThread extends Thread {
    * from the input stream and sending results to the output stream.
    */
   private void getVar() throws IOException {
-    String name = in.readLine();
+    String name = inReader.readLine();
     int insideType = 0;
     int type = 0;
     Object value = null;
@@ -595,7 +597,7 @@ public class ConnThread extends Thread {
    * from the input stream.
    */
   private void exec() throws IOException, ReflectException {
-    String cmd = in.readLine();
+    String cmd = inReader.readLine();
     debug("exec: " + cmd);
     r.exec(cmd);
   }
