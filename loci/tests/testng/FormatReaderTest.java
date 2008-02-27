@@ -276,6 +276,7 @@ public class FormatReaderTest {
     String file = reader.getCurrentFile();
     String testName = "\ttestImageCount";
     boolean success = true;
+    String msg = null;
     try {
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
@@ -284,6 +285,8 @@ public class FormatReaderTest {
         int c = reader.getEffectiveSizeC();
         int t = reader.getSizeT();
         success = imageCount == z * c * t;
+        msg = "series #" + i + ": imageCount=" + imageCount +
+          ", z=" + z + ", c=" + c + ", t=" + t;
       }
     }
     catch (Throwable t) {
@@ -622,6 +625,59 @@ public class FormatReaderTest {
           success = false;
           msg = expected == null ? "no configuration" : "series " + i;
         }
+      }
+    }
+    catch (Throwable t) {
+      LogTools.trace(t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testIsThisType() {
+    if (!initReader()) return;
+    String file = reader.getCurrentFile();
+    String testName = "\ttestIsThisType";
+    boolean success = true;
+    String msg = null;
+    try {
+      IFormatReader r = reader;
+      // unwrap reader
+      while (true) {
+        if (r instanceof ReaderWrapper) {
+          r = ((ImageReader) r).getReader();
+        }
+        else if (r instanceof FileStitcher) {
+          r = ((FileStitcher) r).getReader();
+        }
+        else break;
+      }
+      if (r instanceof ImageReader) {
+        ImageReader ir = (ImageReader) r;
+        r = ir.getReader();
+        IFormatReader[] readers = ir.getReaders();
+        String[] used = reader.getUsedFiles();
+        for (int i=0; i<used.length && success; i++) {
+          // for each used file, make sure that one reader,
+          // and only one reader, identifies the dataset as its own
+          for (int j=0; j<readers.length; j++) {
+            boolean result = readers[j].isThisType(used[i]);
+            boolean expected = r == readers[j];
+            if (result != expected) {
+              success = false;
+              msg = readers[j].getClass().getName() +
+                ".isThisType(\"" + used[i] + "\") = " + result;
+              break;
+            }
+          }
+        }
+      }
+      else {
+        success = false;
+        msg = "Reader " + r.getClass().getName() + " is not an ImageReader";
       }
     }
     catch (Throwable t) {
