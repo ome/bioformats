@@ -329,10 +329,10 @@ Apache XML-RPC
   <!-- Non-core ant tasks -->
 
   <path id="cp-testng">
+    <pathelement location="${classes.dir}"/>
     <fileset dir="jar">
       <include name="*.jar"/>
     </fileset>
-    <pathelement location="${classes.dir}"/>
   </path>
 
   <taskdef name="testng" classpathref="cp-testng"
@@ -463,7 +463,7 @@ Apache XML-RPC
     </delete>
   </target>
 
-  <target name="test-all" depends="copy-source, compile-tests"
+  <target name="test-all" depends="compile"
     description="run all automated tests">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="all" testname="All tests"
@@ -476,7 +476,7 @@ Apache XML-RPC
     </testng>
   </target>
 
-  <target name="test-config" depends="copy-source, compile-tests"
+  <target name="test-config" depends="compile"
     description="generate config files for automated test suite">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="config" testname="Config generation"
@@ -489,7 +489,7 @@ Apache XML-RPC
     </testng>
   </target>
 
-  <target name="test-fast" depends="copy-source, compile-tests"
+  <target name="test-fast" depends="compile"
     description="run automated tests in group 'fast'">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="fast" testname="Fast tests"
@@ -502,7 +502,7 @@ Apache XML-RPC
     </testng>
   </target>
 
-  <target name="test-pixels" depends="copy-source, compile-tests"
+  <target name="test-pixels" depends="compile"
     description="run automated tests in group 'pixels'">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="pixels" testname="Pixels tests"
@@ -515,7 +515,7 @@ Apache XML-RPC
     </testng>
   </target>
 
-  <target name="test-xml" depends="copy-source, compile-tests"
+  <target name="test-xml" depends="compile"
     description="run automated tests in group 'xml'">
     <testng classpathref="cp-testng" sourceDir="${dest.dir}"
       annotations="Javadoc" groups="xml" testname="XML tests"
@@ -530,7 +530,39 @@ Apache XML-RPC
 
   <!-- Internal build targets -->
 
-  <target name="copy-source" depends="init">
+  <target name="copy-resources-formats">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${formats.resources}"/>
+    </copy>
+  </target>
+
+  <target name="copy-resources-visbio">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${visbio.resources}"/>
+    </copy>
+  </target>
+
+  <target name="copy-resources-notes">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${notes.resources}"/>
+    </copy>
+  </target>
+
+  <target name="copy-resources-editor">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${editor.resources}"/>
+    </copy>
+  </target>
+
+  <target name="copy-resources-checks">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${checks.resources}"/>
+    </copy>
+  </target>
+
+  <target name="copy-source" depends="init, copy-resources-formats,
+    copy-resources-visbio, copy-resources-notes, copy-resources-editor,
+    copy-resources-checks">
     <!-- copy binary files without filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="loci/**"
@@ -573,9 +605,6 @@ Apache XML-RPC
 
   <target name="jar-formats" depends="compile-formats, copy-jars"
     description="generate JAR file for Bio-Formats">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${formats.resources}"/>
-    </copy>
     <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/${formats.jar}" basedir="${classes.dir}"
       includes="${formats.files}">
@@ -605,9 +634,6 @@ Apache XML-RPC
 
   <target name="jar-visbio" depends="compile-visbio, copy-jars, jar-formats"
     description="generate JAR file for VisBio">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${visbio.resources}"/>
-    </copy>
     <jar jarfile="${jar.dir}/${visbio.jar}" basedir="${classes.dir}"
       includes="${visbio.files}">
       <manifest>
@@ -839,9 +865,6 @@ Apache XML-RPC
   <target name="jar-notes"
     depends="compile-notes, copy-jars, jar-formats"
     description="generate JAR file for OME Notes">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${notes.resources}"/>
-    </copy>
     <jar jarfile="${jar.dir}/${notes.jar}" basedir="${classes.dir}"
       includes="${notes.files}">
       <manifest>
@@ -950,9 +973,6 @@ Apache XML-RPC
   <target name="jar-editor"
     depends="compile-editor, copy-jars, jar-formats"
     description="generate JAR file for OME Metadata Editor">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${editor.resources}"/>
-    </copy>
     <jar jarfile="${jar.dir}/${editor.jar}" basedir="${classes.dir}"
       includes="${editor.files}">
       <manifest>
@@ -998,9 +1018,6 @@ Apache XML-RPC
 
   <target name="jar-checks" depends="compile-checks, copy-jars"
     description="generate JAR file for LOCI Checkstyle checks">
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}" includes="${checks.resources}"/>
-    </copy>
     <jar jarfile="${jar.dir}/${checks.jar}" basedir="${classes.dir}"
       includes="${checks.files}">
       <manifest>
