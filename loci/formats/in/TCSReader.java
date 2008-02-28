@@ -81,7 +81,7 @@ public class TCSReader extends FormatReader {
     if (!super.isThisType(name, open) && !name.toLowerCase().endsWith("xml")) {
       return false; // check extension
     }
-    if (!open) return true; // not allowed to check the file contents
+    if (!open) return false; // not allowed to check the file contents
 
     if (name.toLowerCase().endsWith("xml")) {
       try {
