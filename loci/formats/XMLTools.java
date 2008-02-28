@@ -248,4 +248,3 @@ public final class XMLTools {
   }
 
 }
-

@@ -397,7 +397,8 @@ public final class FormatTools {
     for (int i = 0; i < pixelTypes.length; i++) {
       if (pixelTypes[i].equals(lowercaseTypeAsString)) return i;
     }
-    throw new RuntimeException("Unknown type: '" + pixelTypeAsString + "'");
+    throw new IllegalArgumentException("Unknown type: '" +
+      pixelTypeAsString + "'");
   }
 
   /**
