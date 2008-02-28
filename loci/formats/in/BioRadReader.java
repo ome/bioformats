@@ -24,12 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.text.*;
 import java.util.*;
+import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
@@ -45,6 +49,10 @@ import loci.formats.meta.MetadataStore;
 public class BioRadReader extends FormatReader {
 
   // -- Constants --
+
+  /** Factory for generating SAX parsers. */
+  public static final SAXParserFactory SAX_FACTORY =
+    SAXParserFactory.newInstance();
 
   /** Numerical ID of a valid Bio-Rad PIC file. */
   private static final int PIC_FILE_ID = 12345;
@@ -64,6 +72,100 @@ public class BioRadReader extends FormatReader {
     "SCALEBAR", "MERGE", "THRUVIEW", "ARROW", "12", "13", "14", "15",
     "16", "17", "18", "19", "VARIABLE", "STRUCTURE", "4D SERIES"
   };
+
+  /** List of metadata keys. */
+  public static final String[][] METADATA_KEYS = {
+    {},
+    {"Scan Channel", "Both Mode", "Speed", "Filter", "Factor",
+      "Number of scans", "Photon counting mode (channel 1)",
+      "Photon counting detector (channel 1)",
+      "Photon counting mode (channel 2)",
+      "Photon counting detector (channel 2)", "Photon mode",
+      "Objective lens magnification", "Zoom factor (user selected)",
+      "Motor on", "Z step size"},
+    {"Z start", "Z stop", "Scan area - cx", "Scan area - cy",
+      "Scan area - lx", "Scan area - ly"},
+    {"PMT 1 Iris", "PMT 1 Gain", "PMT 1 Black level", "PMT 1 Emission filter",
+      "PMT 2 Iris", "PMT 2 Gain", "PMT 2 Black level", "PMT 2 Emission filter",
+      "PMT 3 Iris", "PMT 3 Gain", "PMT 3 Black level", "PMT 3 Emission filter",
+      "Multiplier of channel 1", "Multiplier of channel 2",
+      "Multiplier of channel 3"},
+    {"Number of lasers", "Number of transmission detectors", "Number of PMTs",
+      "Shutter present for laser 1", "Shutter present for laser 2",
+      "Shutter present for laser 3", "Neutral density filter for laser 1",
+      "Excitation filter for laser 1", "Use laser 1",
+      "Neutral density filter for laser 2", "Excitation filter for laser 2",
+      "Use laser 2", "Neutral density filter for laser 3",
+      "Excitation filter for laser 3", "Use laser 3",
+      "Neutral density filter name - laser 1",
+      "Neutral density filter name - laser 2",
+      "Neutral density filter name - laser 3"},
+    {"Excitation filter name - laser 1", "Excitation filter name - laser 2",
+      "Excitation filter name - laser 3"},
+    {"Emission filter name - laser 1", "Emission filter name - laser 2",
+      "Emission filter name - laser 3"},
+    {"Mixer 0 - enhanced", "Mixer 0 - PMT 1 percentage",
+      "Mixer 0 - PMT 2 percentage", "Mixer 0 - PMT 3 percentage",
+      "Mixer 0 - Transmission 1 percentage",
+      "Mixer 0 - Transmission 2 percentage",
+      "Mixer 0 - Transmission 3 percentage", "Mixer 1 - enhanced",
+      "Mixer 1 - PMT 1 percentage", "Mixer 1 - PMT 2 percentage",
+      "Mixer 1 - PMT 3 percentage", "Mixer 1 - Transmission 1 percentage",
+      "Mixer 1 - Transmission 2 percentage",
+      "Mixer 1 - Transmission 3 percentage", "Mixer 0 - low signal on",
+      "Mixer 1 - low signal on"},
+    {"Laser 1 name"},
+    {"Laser 2 name"},
+    {"Laser 3 name"},
+    {"Transmission detector 1 - offset", "Transmission detector 1 - gain",
+      "Transmission detector 1 - black level",
+      "Transmission detector 2 - offset", "Transmission detector 2 - gain",
+      "Transmission detector 2 - black level",
+      "Transmission detector 3 - offset", "Transmission detector 3 - gain",
+      "Transmission detector 3 - black level"},
+    {"Part number of laser 1", "Part number of excitation filter for laser 1",
+      "Part number of ND filter for laser 1",
+      "Part number of emission filter for laser 1", "Part number of laser 2",
+      "Part number of excitation filter for laser 2",
+      "Part number of ND filter for laser 2",
+      "Part number of emission filter for laser 2"},
+    {"Part number of laser 3", "Part number of excitation filter for laser 3",
+      "Part number of ND filter for laser 3",
+      "Part number of emission filter for laser 3",
+      "Part number of filter block 1", "Part number of filter block 2",
+      "Filter block 1", "Filter block 2"},
+    {"Filter block 1 name", "Filter block 2 name"},
+    {"Image band 1 status", "Image band 1 min", "Image band 1 max",
+      "Image band 2 status", "Image band 2 min", "Image band 2 max",
+      "Image band 3 status", "Image band 3 min", "Image band 3 max",
+      "Image band 4 status", "Image band 4 min", "Image band 4 max",
+      "Image band 5 status", "Image band 5 min", "Image band 5 max"},
+    {"Image band 5 status", "Image band 5 min", "Image band 5 max"},
+    {"Date stamp (seconds)", "Date stamp (minutes)", "Date stamp (hours)",
+      "Date stamp (day of month)", "Date stamp (month)",
+      "Date stamp (year: actual year - 1900)", "Date stamp (day of week)",
+      "Date stamp (day of year)", "Daylight savings?"},
+    {"Mixer 3 - enhanced", "Mixer 3 - PMT 1 percentage",
+      "Mixer 3 - PMT 2 percentage", "Mixer 3 - PMT 3 percentage",
+      "Mixer 3 - Transmission 1 percentage",
+      "Mixer 3 - Transmission 2 percentage",
+      "Mixer 3 - Transmission 3 percentage", "Mixer 3 - low signal on",
+      "Mixer 3 - photon counting 1", "Mixer 3 - photon counting 2",
+      "Mixer 3 - photon counting 3", "Mixer 3 - mode"},
+    {"Mixer 1 - photon counting 1", "Mixer 1 - photon counting 2",
+      "Mixer 1 - photon counting 3", "Mixer 1 - mode",
+      "Mixer2 - photon counting 1", "Mixer 2 - photon counting 2",
+      "Mixer 2 - photon counting 3", "Mixer 2 - mode"},
+    {"Display mode", "Course", "Time Course - experiment type",
+      "Time Course - kd factor"},
+    {"Time Course - ion name"},
+    {"PIC file generated on Isoscan (lite)", "Photon counting used (PMT 1)",
+      "Photon counting used (PMT 2)", "Photon counting used (PMT 3)",
+      "Hot spot filter used (PMT 1)", "Hot spot filter used (PMT 2)",
+      "Hot spot filter used (PMT 3)", "Tx selector used (TX 1)",
+      "Tx selected used (TX 2)", "Tx selector used (TX 3)"}
+  };
+
 
   // -- Fields --
 
@@ -164,56 +266,16 @@ public class BioRadReader extends FormatReader {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
 
     if (!id.toLowerCase().endsWith(".pic")) {
-      // find the data.raw file
       Location dir = new Location(id).getAbsoluteFile().getParentFile();
-      Location raw = new Location(dir, "data.raw");
 
-      if (raw.exists()) {
-        // use data.raw to find the appropriate .pic file(s)
-        RandomAccessStream s = new RandomAccessStream(raw.getAbsolutePath());
-        String data = s.readString((int) s.length());
-        StringTokenizer lines = new StringTokenizer(data, "\n");
-
-        String prefix = null;
-        int nFiles = 0;
-
-        while (lines.hasMoreTokens()) {
-          String line = lines.nextToken().trim();
-          if (line.startsWith("Data file path")) {
-            prefix = line.substring(line.indexOf("=") + 1);
-            if (prefix.endsWith(".pic")) {
-              prefix = prefix.substring(0, prefix.length() - 4);
-            }
-          }
-          else if (line.startsWith("Number of Panes")) {
-            nFiles = Integer.parseInt(line.substring(line.indexOf("=") + 1));
-          }
-        }
-
-        if (prefix != null && nFiles > 0) {
-          String file = nFiles == 1 ? prefix + ".pic" : prefix + "01.pic";
-          Location l = new Location(dir, file);
-          if (!l.exists()) {
-            file = file.replaceAll("pic", "PIC");
-            l = new Location(dir, file);
-          }
-          initFile(l.getAbsolutePath());
-          return;
-        }
-        else {
-          throw new FormatException("No .pic files found - invalid dataset.");
+      String[] list = dir.list();
+      for (int i=0; i<list.length; i++) {
+        if (list[i].toLowerCase().endsWith(".pic")) {
+          id = new Location(dir.getAbsolutePath(), list[i]).getAbsolutePath();
         }
       }
-      else {
-        String[] list = dir.list();
-        for (int i=0; i<list.length; i++) {
-          if (list[i].toLowerCase().endsWith(".pic")) {
-            id = new Location(dir.getAbsolutePath(), list[i]).getAbsolutePath();
-          }
-        }
-        if (!id.toLowerCase().endsWith(".pic")) {
-          throw new FormatException("No .pic files found - invalid dataset.");
-        }
+      if (!id.toLowerCase().endsWith(".pic")) {
+        throw new FormatException("No .pic files found - invalid dataset.");
       }
     }
 
@@ -230,7 +292,8 @@ public class BioRadReader extends FormatReader {
 
     core.sizeX[0] = in.readShort();
     core.sizeY[0] = in.readShort();
-    core.imageCount[0] = in.readShort();
+    int npic = in.readShort();
+    core.imageCount[0] = npic;
 
     int ramp1min = in.readShort();
     int ramp1max = in.readShort();
@@ -317,7 +380,7 @@ public class BioRadReader extends FormatReader {
       for (int i=0; i<text.length(); i++) {
         if (text.charAt(i) == 0) {
           ndx = i;
-          i = text.length();
+          break;
         }
       }
 
@@ -359,169 +422,9 @@ public class BioRadReader extends FormatReader {
         case 21: // NOTE_TYPE_STRUCTURE
           StringTokenizer st = new StringTokenizer(text, " ");
 
-          String[] keys = new String[0];
+          String[] keys =
+            y < METADATA_KEYS.length ? METADATA_KEYS[y] : new String[0];
           int idx = 0;
-
-          switch (y) {
-            case 1:
-              keys = new String[] {"Scan Channel", "Both Mode", "Speed",
-                "Filter", "Factor", "Number of scans",
-                "Photon counting mode (channel 1)",
-                "Photon counting detector (channel 1)",
-                "Photon counting mode (channel 2)",
-                "Photon counting detector (channel 2)", "Photon mode",
-                "Objective lens magnification", "Zoom factor (user selected)",
-                "Motor on", "Z step size"};
-              break;
-            case 2:
-              keys = new String[] {"Z start", "Z stop", "Scan area - cx",
-                "Scan area - cy", "Scan area - lx", "Scan area - ly"};
-              break;
-            case 3:
-              keys = new String[] {"PMT 1 Iris", "PMT 1 Gain",
-                "PMT 1 Black level", "PMT 1 Emission filter", "PMT 2 Iris",
-                "PMT 2 Gain", "PMT 2 Black level", "PMT 2 Emission filter",
-                "PMT 3 Iris", "PMT 3 Gain", "PMT 3 Black level",
-                "PMT 3 Emission filter", "Multiplier of channel 1",
-                "Multiplier of channel 2", "Multiplier of channel 3"};
-              break;
-            case 4:
-              keys = new String[] {"Number of lasers",
-                "Number of transmission detectors", "Number of PMTs",
-                "Shutter present for laser 1",
-                "Shutter present for laser 2", "Shutter present for laser 3",
-                "Neutral density filter for laser 1",
-                "Excitation filter for laser 1", "Use laser 1",
-                "Neutral density filter for laser 2",
-                "Excitation filter for laser 2", "Use laser 2",
-                "Neutral density filter for laser 3",
-                "Excitation filter for laser 3", "Use laser 3",
-                "Neutral density filter name - laser 1",
-                "Neutral density filter name - laser 2",
-                "Neutral density filter name - laser 3"};
-              break;
-            case 5:
-              keys = new String[] {"Excitation filter name - laser 1",
-                "Excitation filter name - laser 2",
-                "Excitation filter name - laser 3"};
-              break;
-            case 6:
-              keys = new String[] {"Emission filter name - laser 1",
-                "Emission filter name - laser 2",
-                "Emission filter name - laser 3"};
-              break;
-            case 7:
-              keys = new String[] {"Mixer 0 - enhanced",
-                "Mixer 0 - PMT 1 percentage",
-                "Mixer 0 - PMT 2 percentage", "Mixer 0 - PMT 3 percentage",
-                "Mixer 0 - Transmission 1 percentage",
-                "Mixer 0 - Transmission 2 percentage",
-                "Mixer 0 - Transmission 3 percentage", "Mixer 1 - enhanced",
-                "Mixer 1 - PMT 1 percentage", "Mixer 1 - PMT 2 percentage",
-                "Mixer 1 - PMT 3 percentage",
-                "Mixer 1 - Transmission 1 percentage",
-                "Mixer 1 - Transmission 2 percentage",
-                "Mixer 1 - Transmission 3 percentage",
-                "Mixer 0 - low signal on", "Mixer 1 - low signal on"};
-              break;
-            case 8:
-              keys = new String[] {"Laser 1 name"};
-              break;
-            case 9:
-              keys = new String[] {"Laser 2 name"};
-              break;
-            case 10:
-              keys = new String[] {"Laser 3 name"};
-              break;
-            case 11:
-              keys = new String[] {"Transmission detector 1 - offset",
-                "Transmission detector 1 - gain",
-                "Transmission detector 1 - black level",
-                "Transmission detector 2 - offset",
-                "Transmission detector 2 - gain",
-                "Transmission detector 2 - black level",
-                "Transmission detector 3 - offset",
-                "Transmission detector 3 - gain",
-                "Transmission detector 3 - black level"};
-              break;
-            case 12:
-              keys = new String[] {"Part number of laser 1",
-                "Part number of excitation filter for laser 1",
-                "Part number of ND filter for laser 1",
-                "Part number of emission filter for laser 1",
-                "Part number of laser 2",
-                "Part number of excitation filter for laser 2",
-                "Part number of ND filter for laser 2",
-                "Part number of emission filter for laser 2"};
-              break;
-            case 13:
-              keys = new String[] {"Part number of laser 3",
-                "Part number of excitation filter for laser 3",
-                "Part number of ND filter for laser 3",
-                "Part number of emission filter for laser 3",
-                "Part number of filter block 1",
-                "Part number of filter block 2",
-                "Filter block 1", "Filter block 2"};
-              break;
-            case 14:
-              keys = new String[] {"Filter block 1 name",
-                "Filter block 2 name"};
-              break;
-            case 15:
-              keys = new String[] {"Image band 1 status", "Image band 1 min",
-                "Image band 1 max", "Image band 2 status", "Image band 2 min",
-                "Image band 2 max", "Image band 3 status", "Image band 3 min",
-                "Image band 3 max", "Image band 4 status", "Image band 4 min",
-                "Image band 4 max", "Image band 5 status", "Image band 5 min",
-                "Image band 5 max"};
-              break;
-            case 16:
-              keys = new String[] {"Image band 5 status", "Image band 5 min",
-                "Image band 5 max"};
-              break;
-            case 17:
-              keys = new String[] {"Date stamp (seconds)",
-                "Date stamp (minutes)",
-                "Date stamp (hours)", "Date stamp (day of month)",
-                "Date stamp (month)", "Date stamp (year: actual year - 1900)",
-                "Date stamp (day of week)", "Date stamp (day of year)",
-                "Daylight savings?"};
-              break;
-            case 18:
-              keys = new String[] {"Mixer 3 - enhanced",
-                "Mixer 3 - PMT 1 percentage",
-                "Mixer 3 - PMT 2 percentage", "Mixer 3 - PMT 3 percentage",
-                "Mixer 3 - Transmission 1 percentage",
-                "Mixer 3 - Transmission 2 percentage",
-                "Mixer 3 - Transmission 3 percentage",
-                "Mixer 3 - low signal on",
-                "Mixer 3 - photon counting 1", "Mixer 3 - photon counting 2",
-                "Mixer 3 - photon counting 3", "Mixer 3 - mode"};
-              break;
-            case 19:
-              keys = new String[] {"Mixer 1 - photon counting 1",
-                "Mixer 1 - photon counting 2", "Mixer 1 - photon counting 3",
-                "Mixer 1 - mode", "Mixer2 - photon counting 1",
-                "Mixer 2 - photon counting 2", "Mixer 2 - photon counting 3",
-                "Mixer 2 - mode"};
-              break;
-            case 20:
-              keys = new String[] {"Display mode", "Course",
-                "Time Course - experiment type",
-                "Time Course - kd factor"};
-              break;
-            case 21:
-              keys = new String[] {"Time Course - ion name"};
-              break;
-            case 22:
-              keys = new String[] {"PIC file generated on Isoscan (lite)",
-                "Photon counting used (PMT 1)", "Photon counting used (PMT 2)",
-                "Photon counting used (PMT 3)", "Hot spot filter used (PMT 1)",
-                "Hot spot filter used (PMT 2)", "Hot spot filter used (PMT 3)",
-                "Tx selector used (TX 1)", "Tx selected used (TX 2)",
-                "Tx selector used (TX 3)"};
-              break;
-          }
 
           String value;
           while (st.hasMoreTokens() && idx < keys.length) {
@@ -730,135 +633,42 @@ public class BioRadReader extends FormatReader {
     String[] list = parent.list();
     Arrays.sort(list);
 
-    String prefix = null;
-    int numFiles = 0;
+    Vector pics = new Vector();
 
     for (int i=0; i<list.length; i++) {
-      if (list[i].endsWith("data.raw")) {
-        RandomAccessStream raw = new RandomAccessStream(
-          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
-        used.add(new Location(
-          parent.getAbsolutePath(), list[i]).getAbsolutePath());
-        String line = raw.readLine().trim();
-        while (line != null && line.length() > 0) {
-          if (line.charAt(0) != '[') {
-            String key = line.substring(0, line.indexOf("="));
-            String value = line.substring(line.indexOf("=") + 1);
-            addMeta(key.trim(), value.trim());
-          }
-          if (line.startsWith("Data file path")) {
-            prefix = line.substring(line.indexOf("=") + 1).trim();
-            if (prefix.endsWith(".pic")) {
-              prefix = prefix.substring(0, prefix.length() - 4).trim();
-            }
-            if (currentId.indexOf(prefix) == -1) {
-              prefix = null;
-              numFiles = 0;
-              i = list.length;
-              break;
-            }
-          }
-          else if (line.startsWith("Number of Panes")) {
-            numFiles =
-              Integer.parseInt(line.substring(line.indexOf("=") + 1).trim());
-          }
-          line = raw.readLine();
-        }
-        raw.close();
-      }
-      else if (list[i].endsWith("lse.xml")) {
-        RandomAccessStream raw = new RandomAccessStream(
-          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
-        used.add(new Location(
-          parent.getAbsolutePath(), list[i]).getAbsolutePath());
-        String xml = raw.readString((int) raw.length());
+      if (list[i].endsWith("lse.xml")) {
+        String path =
+          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath();
+        RandomAccessStream raw = new RandomAccessStream(path);
+        used.add(path);
+        byte[] xml = new byte[(int) raw.length()];
+        raw.read(xml);
         raw.close();
 
-        // parse dataset dimensions
-        if (xml.indexOf("<Pixels ") != -1) {
-          int start = xml.indexOf("<Pixels");
-          int end = xml.indexOf("/>", start);
-          String s = xml.substring(start, end);
-
-          int zs = s.indexOf("SizeZ=") + 7;
-          int z = zs == 6 ? 1 :
-            Integer.parseInt(s.substring(zs, s.indexOf("\"", zs)));
-          int cs = s.indexOf("SizeC=") + 7;
-          int c = cs == 6 ? 1 :
-            Integer.parseInt(s.substring(cs, s.indexOf("\"", cs)));
-          int ts = s.indexOf("SizeT=") + 7;
-          int t = ts == 6 ? 1 :
-            Integer.parseInt(s.substring(ts, s.indexOf("\"", ts)));
-
-          core.sizeZ[0] = z;
-          core.sizeC[0] = c;
-          core.sizeT[0] = t;
-
-          if (numFiles == 0) numFiles = (z * c * t) / core.imageCount[0];
-          picFiles = new String[numFiles];
-          int ndx = 0;
-          used.remove(currentId);
-          if (prefix != null) {
-            core.sizeC[0] = numFiles;
-            c = numFiles;
-            for (int j=0; j<numFiles; j++) {
-              String num = String.valueOf(j + 1);
-              if (num.length() == 1) num = "0" + num;
-              if (numFiles == 1) num = "";
-              picFiles[j] = prefix + num + ".pic";
-              if (!new Location(picFiles[j]).exists()) {
-                picFiles[j] = picFiles[j].replaceAll("pic", "PIC");
-              }
-              used.add(picFiles[j]);
-            }
-          }
-          else {
-            for (int j=0; j<list.length; j++) {
-              if (list[j].toLowerCase().endsWith(".pic")) {
-                if (ndx == picFiles.length) {
-                  core.sizeC[0]++;
-                  c++;
-                  String[] tmp = picFiles;
-                  picFiles = new String[ndx * core.sizeC[0]];
-                  System.arraycopy(tmp, 0, picFiles, 0, tmp.length);
-                }
-                picFiles[ndx] = new Location(parent.getAbsolutePath(),
-                  list[j]).getAbsolutePath();
-                used.add(picFiles[ndx++]);
-              }
-            }
-          }
-          Arrays.sort(picFiles);
-
-          core.imageCount[0] = z * c * t;
+        BioRadHandler handler = new BioRadHandler();
+        try {
+          SAXParser parser = SAX_FACTORY.newSAXParser();
+          parser.parse(new ByteArrayInputStream(xml), handler);
+        }
+        catch (SAXException e) {
+          if (debug) LogTools.trace(e);
+        }
+        catch (ParserConfigurationException e) {
+          if (debug) LogTools.trace(e);
         }
 
-        if (xml.indexOf("SectionInfo") != -1) {
-          int start = xml.indexOf("<SectionInfo>") + 13;
-          int end = xml.indexOf("</SectionInfo>");
-          xml = xml.substring(start, end);
-
-          // parse the timestamps
-          while (xml.length() > 0) {
-            String element = xml.substring(0, xml.indexOf(">") + 1);
-            xml = xml.substring(xml.indexOf(">") + 1);
-
-            int ndx = element.indexOf("TimeCompleted") + 15;
-            if (ndx > 14) {
-              String stamp = element.substring(ndx, element.indexOf("\"", ndx));
-
-              String key = element.substring(1, element.indexOf("\"",
-                element.indexOf("\"") + 1));
-              key = key.replace('\"', '\0');
-              key = key.replace('=', ' ');
-
-              addMeta(key + " Timestamp", stamp);
-            }
+        for (int q=0; q<list.length; q++) {
+          if (list[q].toLowerCase().endsWith(".pic")) {
+            path =
+              new Location(parent.getAbsolutePath(), list[q]).getAbsolutePath();
+            pics.add(path);
+            if (!used.contains(path)) used.add(path);
           }
         }
-        raw.close();
       }
     }
+
+    picFiles = (String[]) pics.toArray(new String[0]);
 
     core.indexed[0] = false;
     core.falseColor[0] = false;
@@ -878,6 +688,12 @@ public class BioRadReader extends FormatReader {
       FormatTools.UINT16;
 
     core.currentOrder[0] = "XYCTZ";
+
+    if (picFiles.length > 0) {
+      core.imageCount[0] = npic * picFiles.length;
+      core.sizeC[0] = core.imageCount[0] / (core.sizeZ[0] * core.sizeT[0]);
+    }
+    else picFiles = null;
 
     MetadataTools.populatePixels(store, this);
 
@@ -955,6 +771,39 @@ public class BioRadReader extends FormatReader {
     sb.append("; text=");
     sb.append(p == null ? "null" : p.trim());
     return sb.toString();
+  }
+
+  // -- Helper class --
+
+  /** SAX handler for parsing XML. */
+  class BioRadHandler extends DefaultHandler {
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (qName.equals("Pixels")) {
+        String sizeZ = attributes.getValue("SizeZ");
+        String sizeC = attributes.getValue("SizeC");
+        String sizeT = attributes.getValue("SizeT");
+        int z = sizeZ == null ? 1 : Integer.parseInt(sizeZ);
+        int c = sizeC == null ? 1 : Integer.parseInt(sizeC);
+        int t = sizeT == null ? 1 : Integer.parseInt(sizeT);
+        int count = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+        if (z >= core.sizeZ[0] && c >= core.sizeC[0] && t >= core.sizeT[0] &&
+          count >= core.imageCount[0])
+        {
+          core.sizeZ[0] = z;
+          core.sizeC[0] = c;
+          core.sizeT[0] = t;
+          core.imageCount[0] = count;
+        }
+      }
+      else if (qName.equals("Z") || qName.equals("C") || qName.equals("T")) {
+        String stamp = attributes.getValue("TimeCompleted");
+        int count = 0;
+        while (metadata.containsKey("Timestamp " + count)) count++;
+        addMeta("Timestamp " + count, stamp);
+      }
+    }
   }
 
 }
