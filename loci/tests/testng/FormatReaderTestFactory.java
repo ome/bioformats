@@ -8,11 +8,6 @@ import loci.formats.*;
 
 public class FormatReaderTestFactory {
 
-  // -- Static fields --
-
-  /** List of configuration files. */
-  private static Vector configFiles = new Vector();
-
   // -- TestNG factory methods --
 
   /**
@@ -32,6 +27,7 @@ public class FormatReaderTestFactory {
         "=\"/path/to/data\" test-all");
       return new Object[0];
     }
+    FormatReaderTest.config = new ConfigurationTree(baseDir);
 
     // create log file
     createLogFile();
@@ -100,19 +96,24 @@ public class FormatReaderTestFactory {
       Location file = new Location(root, subs[i]);
       subs[i] = file.getAbsolutePath();
       LogTools.print("Checking " + subs[i] + ": ");
-      if (isIgnoredFile(subs[i])) {
+
+      if (file.getName().equals(".bioformats")) {
+        // special config file for the test suite
+        LogTools.println("config file");
+        try {
+          FormatReaderTest.config.parseConfigFile(subs[i]);
+        }
+        catch (IOException exc) {
+          LogTools.trace(exc);
+        }
+      }
+      else if (isIgnoredFile(subs[i])) {
         LogTools.println("ignored");
         continue;
       }
-
-      if (file.isDirectory()) {
+      else if (file.isDirectory()) {
         LogTools.println("directory");
         getFiles(subs[i], files);
-      }
-      else if (file.getName().equals(".bioformats")) {
-        // special config file for the test suite
-        LogTools.println("config file");
-        configFiles.add(file.getAbsolutePath());
       }
       else {
         if (typeTester.isThisType(subs[i])) {
@@ -127,19 +128,15 @@ public class FormatReaderTestFactory {
 
   /** Determines if the given file should be ignored by the test suite. */
   private static boolean isIgnoredFile(String file) {
-    for (int i=0; i<configFiles.size(); i++) {
-      try {
-        String s = (String) configFiles.get(i);
-        if (!FormatReaderTest.config.isParsed(s)) {
-          FormatReaderTest.config.addFile(s);
-        }
-      }
-      catch (IOException exc) {
-        LogTools.trace(exc);
-      }
-    }
-    return !FormatReaderTest.config.testFile(file) &&
-      !file.endsWith(".bioformats");
+    if (file.indexOf(File.separator + ".") >= 0) return true; // hidden file
+
+    FormatReaderTest.config.setId(file);
+    if (!FormatReaderTest.config.isTestable()) return true;
+
+    // HACK - heuristics to speed things up
+    if (file.endsWith(".oif.files")) return true; // ignore .oif folders
+
+    return false;
   }
 
   /** Creates a new log file. */

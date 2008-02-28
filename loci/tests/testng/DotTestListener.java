@@ -48,7 +48,7 @@ public class DotTestListener implements ITestListener {
   private int count = 0;
 
   public void onTestFailure(ITestResult tr) { log("F"); }
-  public void onTestSkipped(ITestResult tr) { log("S"); }
+  public void onTestSkipped(ITestResult tr) { log("-"); }
   public void onTestSuccess(ITestResult tr) { log("."); }
 
   public void onFinish(ITestContext tc) { }

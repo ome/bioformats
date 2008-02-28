@@ -65,8 +65,8 @@ public class FormatReaderTest {
 
   // -- Static fields --
 
-  /** Configuration file reader. */
-  public static ConfigurationFiles config = ConfigurationFiles.newInstance();
+  /** Configuration tree structure containing dataset metadata. */
+  public static ConfigurationTree config;
 
   /** List of files to skip. */
   public static List skipFiles = new LinkedList();
@@ -101,7 +101,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testBufferedImageDimensions() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestBufferedImageDimensions";
     boolean success = true;
@@ -150,7 +150,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testByteArrayDimensions() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestByteArrayDimensions";
     boolean success = true;
@@ -187,7 +187,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testThumbnailImageDimensions() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestThumbnailImageDimensions";
     boolean success = true;
@@ -236,7 +236,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testThumbnailByteArrayDimensions() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestThumbnailByteArrayDimensions";
     boolean success = true;
@@ -273,7 +273,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all fast"
    */
   public void testImageCount() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestImageCount";
     boolean success = true;
@@ -301,7 +301,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all xml fast"
    */
   public void testOMEXML() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestOMEXML";
     boolean success = true;
@@ -309,7 +309,7 @@ public class FormatReaderTest {
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
       success = MetadataTools.isOMEXMLMetadata(retrieve);
-      if (!success) msg = retrieve.getClass().getName();
+      if (!success) msg = shortClassName(retrieve);
 
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
@@ -356,13 +356,13 @@ public class FormatReaderTest {
    * @testng.test groups = "all fast"
    */
   public void testConsistent() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestConsistent";
     boolean success = true;
     String msg = null;
     try {
-      int numSeries = config.getNumSeries(file);
+      int numSeries = config.getNumSeries();
       if (numSeries == 0) {
         success = false;
         msg = "no configuration";
@@ -375,35 +375,35 @@ public class FormatReaderTest {
 
       for (int i=0; i<numSeries && success; i++) {
         reader.setSeries(i);
-        config.setSeries(file, i);
+        config.setSeries(i);
 
         int actualX = reader.getSizeX();
-        int expectedX = config.getWidth(file);
+        int expectedX = config.getX();
         boolean passX = actualX == expectedX;
         if (!passX) msg = "SizeX: was " + actualX + ", expected " + expectedX;
 
         int actualY = reader.getSizeY();
-        int expectedY = config.getHeight(file);
+        int expectedY = config.getY();
         boolean passY = actualY == expectedY;
         if (!passY) msg = "SizeY: was " + actualY + ", expected " + expectedY;
 
         int actualZ = reader.getSizeZ();
-        int expectedZ = config.getZ(file);
+        int expectedZ = config.getZ();
         boolean passZ = actualZ == expectedZ;
         if (!passZ) msg = "SizeZ: was " + actualZ + ", expected " + expectedZ;
 
         int actualC = reader.getSizeC();
-        int expectedC = config.getC(file);
+        int expectedC = config.getC();
         boolean passC = actualC == expectedC;
         if (!passC) msg = "SizeC: was " + actualC + ", expected " + expectedC;
 
         int actualT = reader.getSizeT();
-        int expectedT = config.getT(file);
+        int expectedT = config.getT();
         boolean passT = actualT == expectedT;
         if (!passT) msg = "SizeT: was " + actualT + ", expected " + expectedT;
 
         String actualDim = reader.getDimensionOrder();
-        String expectedDim = config.getDimOrder(file);
+        String expectedDim = config.getOrder();
         boolean passDim = expectedDim.equals(actualDim);
         if (!passDim) {
           msg = "DimensionOrder: was " + actualDim +
@@ -411,50 +411,50 @@ public class FormatReaderTest {
         }
 
         boolean actualInt = reader.isInterleaved();
-        boolean expectedInt = config.isInterleaved(file);
+        boolean expectedInt = config.isInterleaved();
         boolean passInt = actualInt == expectedInt;
         if (!passInt) {
           msg = "interleaved: was " + actualInt + ", expected " + expectedInt;
         }
 
         boolean actualRGB = reader.isRGB();
-        boolean expectedRGB = config.isRGB(file);
+        boolean expectedRGB = config.isRGB();
         boolean passRGB = actualRGB == expectedRGB;
         if (!passRGB) {
           msg = "RGB: was " + actualRGB + ", expected " + expectedRGB;
         }
 
         int actualTX = reader.getThumbSizeX();
-        int expectedTX = config.getThumbX(file);
+        int expectedTX = config.getThumbX();
         boolean passTX = actualTX == expectedTX;
         if (!passTX) {
           msg = "ThumbSizeX: was " + actualTX + ", expected " + expectedTX;
         }
 
         int actualTY = reader.getThumbSizeY();
-        int expectedTY = config.getThumbY(file);
+        int expectedTY = config.getThumbY();
         boolean passTY = actualTY == expectedTY;
         if (!passTY) {
           msg = "ThumbSizeY: was " + actualTY + ", expected " + expectedTY;
         }
 
         int actualType = reader.getPixelType();
-        int expectedType = config.getPixelType(file);
+        int expectedType = config.getPixelType();
         boolean passType = actualType == expectedType;
         if (!passType) {
           msg = "PixelType: was " + actualType + ", expected " + expectedType;
         }
 
         boolean actualLE = reader.isLittleEndian();
-        boolean expectedLE = config.isLittleEndian(file);
+        boolean expectedLE = config.isLittleEndian();
         boolean passLE = actualLE == expectedLE;
         if (!passLE) {
           msg = "little-endian: was " + actualLE + ", expected " + expectedLE;
         }
 
-        //boolean passIndexed = config.isIndexed(file) == reader.isIndexed();
+        //boolean passIndexed = config.isIndexed() == reader.isIndexed();
         //boolean passFalseColor =
-        //  config.isFalseColor(file) == reader.isFalseColor();
+        //  config.isFalseColor() == reader.isFalseColor();
 
         success = passX && passY && passZ && passC && passT && passDim &&
           passInt && passRGB && passTX && passTY && passType && passLE;
@@ -471,7 +471,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all"
    */
   public void testMemoryUsage() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestMemoryUsage";
     boolean success = true;
@@ -491,11 +491,12 @@ public class FormatReaderTest {
       }
       int finalMemory = (int) ((r.totalMemory() - r.freeMemory()) >> 20);
 
-      // max memory usage should be no more than twice the file size
-      if (maxMemory - initialMemory > 2*(config.getFileSize(file) + 1)) {
+      // max memory usage should be no more than twice the expected value
+      int memUse = config.getMemoryUse();
+      if (maxMemory - initialMemory > 2 * (memUse + 1)) {
         success = false;
         msg =  "used " + (maxMemory - initialMemory) + "MB; expected <= " +
-          (2*config.getFileSize(file) + 1) + "MB";
+          (2 * memUse + 1) + "MB";
       }
 
       // check that the reader doesn't have any significant memory leaks
@@ -516,13 +517,13 @@ public class FormatReaderTest {
    * @testng.test groups = "all"
    */
   public void testAccessTime() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestAccessTime";
     boolean success = true;
     String msg = null;
     try {
-      double proper = config.getTimePerPlane(file);
+      double proper = config.getTimePerPlane();
       if (proper == 0) {
         success = false;
         msg = "no configuration";
@@ -549,7 +550,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all"
    */
   public void testSaneUsedFiles() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestSaneUsedFiles";
     boolean success = true;
@@ -586,7 +587,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all xml fast"
    */
   public void testValidXML() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestValidXML";
     boolean success = true;
@@ -608,7 +609,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testPixelsHashes() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestPixelsHashes";
     boolean success = true;
@@ -617,12 +618,12 @@ public class FormatReaderTest {
       // check the MD5 of the first plane in each series
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
-        config.setSeries(file, i);
+        config.setSeries(i);
 
         String md5 = md5(reader.openBytes(0));
-        String expected = config.getMD5(file);
+        String expected = config.getMD5();
 
-        if (!md5.equals(config.getMD5(file))) {
+        if (!md5.equals(expected)) {
           success = false;
           msg = expected == null ? "no configuration" : "series " + i;
         }
@@ -639,7 +640,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all fast"
    */
   public void testIsThisType() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     String testName = "\ttestIsThisType";
     boolean success = true;
@@ -673,8 +674,14 @@ public class FormatReaderTest {
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
-              msg = readers[j].getClass().getName() +
-                ".isThisType(\"" + used[i] + "\") = " + result;
+              if (result) {
+                msg = shortClassName(readers[j]) + " flagged \"" +
+                  used[i] + "\" but so did " + shortClassName(r);
+              }
+              else {
+                msg = shortClassName(readers[j]) +
+                  " skipped \"" + used[i] + "\"";
+              }
               break;
             }
           }
@@ -696,7 +703,7 @@ public class FormatReaderTest {
    * @testng.test groups = "config"
    */
   public void writeConfigFile() {
-    if (!initReader()) return;
+    if (!initFile()) return;
     String file = reader.getCurrentFile();
     LogTools.println("Generating configuration: " + file);
     Exception exc = null;
@@ -762,8 +769,8 @@ public class FormatReaderTest {
 
   // -- Helper methods --
 
-  /** Initializes the reader. */
-  private boolean initReader() {
+  /** Initializes the reader and configuration tree. */
+  private boolean initFile() {
     if (skip) throw new SkipException(SKIP_MESSAGE);
     if (reader == null) {
       reader = new FileStitcher();
@@ -803,6 +810,9 @@ public class FormatReaderTest {
       if (!base) {
         LogTools.println("Error: used files list does not include base file");
       }
+
+      // initialize configuration tree
+      config.setId(id);
     }
     catch (Throwable t) {
       LogTools.println("error");
@@ -845,6 +855,13 @@ public class FormatReaderTest {
       (msg == null ? "" : " (" + msg + ")"));
     if (msg == null) assert success;
     else assert success : msg;
+  }
+
+  /** Gets the class name sans package for the given object. */
+  private static String shortClassName(Object o) {
+    String name = o.getClass().getName();
+    int dot = name.lastIndexOf(".");
+    return dot < 0 ? name : name.substring(dot + 1);
   }
 
 }
