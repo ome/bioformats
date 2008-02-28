@@ -83,7 +83,7 @@ public class LeicaReader extends FormatReader {
     String lname = name.toLowerCase();
     if (lname.endsWith(".lei")) return true;
     else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-    if (!open) return true; // not allowed to check the file contents
+    if (!open) return false; // not allowed to check the file contents
     if (!isGroupFiles()) return false;
 
     // just checking the filename isn't enough to differentiate between
