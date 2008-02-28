@@ -250,7 +250,7 @@ void JVMLinkClient::setVar(CString argname, double obj) {
 	send(conn,buff,sizeof(obj),0);
 }
 
-void JVMLinkClient::setVar(CString argname, long obj) {
+void JVMLinkClient::setVar(CString argname, long long obj) {
 	debug("setVar: " << argname << " = " << obj << " (long)");
 	sendMessage(SETVAR_CMD);
 	sendMessage(argname);

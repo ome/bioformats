@@ -41,8 +41,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	p->startJava(20345, "jvmlink.jar");
 	while (p->establishConnection() != JVMLinkClient::CONNECTION_SUCCESS) Sleep(250);
 
-/*
-	JVMLinkObject* b = new JVMLinkObject("first");
+
+/*	JVMLinkObject* b = new JVMLinkObject("first");
 
 	int arrayLen = 100000;
 	b->size = sizeof(double);
@@ -57,9 +57,16 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	a[arrayLen-1] = 3.78765;
 	b->data = a;
+
+	long long d = 324565;
+	p->setVar("first", d);
+	JVMLinkObject* first = p->getVar("first");
+	std::cout << "Received variable " << first->getDataAsLong() << std::endl;
 */
 
 	// test the API
+
+	std::cout << "size of float is " << sizeof(float) << std::endl;
 
 	srand(time(0));
 
@@ -86,7 +93,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << "TestC2: getVar: myChar = " << jvmChar->getDataAsChar() << std::endl;
 
 	// double variables
-	// TODO - investigate why doubles are transferred incorrectly
 	double myDouble = (double) rand();
 	p->setVar("myDouble", myDouble);
 	std::cout << "TestC2: setVar: myDouble = " << myDouble << std::endl;
@@ -94,7 +100,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << "TestC2: getVar: myDouble = " << jvmDouble->getDataAsDouble() << std::endl;
 
 	// float variables
-	// TODO - investigate why floats are transferred incorrectly
 	float myFloat = (float) rand();
 	p->setVar("myFloat", myFloat);
 	std::cout << "TestC2: setVar: myFloat = " << myFloat << std::endl;
@@ -111,17 +116,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::cout << "Last two elements are " << data[first->length - 2] << " and " << data[first->length - 1] << std::endl;
 
 	// long variables
-	// TODO - investigate why longs are broken
-/*
 	long myLong = (long) rand();
 	p->setVar("myLong", myLong);
 	std::cout << "TestC2: setVar: myLong = " << myLong << std::endl;
 	JVMLinkObject* jvmLong = p->getVar("myLong");
 	std::cout << "TestC2: getVar: myLong = " << jvmLong->getDataAsLong() << std::endl;
-*/
 
 	// short variables
-	// TODO - investigate why shorts are transferred incorrectly
 	short myShort = (short) rand();
 	p->setVar("myShort", myShort);
 	std::cout << "TestC2: setVar: myShort = " << myShort << std::endl;

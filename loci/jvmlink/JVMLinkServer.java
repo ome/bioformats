@@ -106,7 +106,7 @@ public class JVMLinkServer implements Runnable {
         break;
       }
       catch (SocketTimeoutException exc) {
-        if (debug) System.out.print(".");
+        //if (debug) System.out.print(".");
       }
       catch (IOException exc) {
         if (debug) exc.printStackTrace();

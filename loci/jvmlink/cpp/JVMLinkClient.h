@@ -71,7 +71,7 @@ public:
 	void setVar(CString, float);
 	void setVar(CString, bool);
 	void setVar(CString, double);
-	void setVar(CString, long);
+	void setVar(CString, long long);
 	void setVar(CString, short);
 	void exec(CString);
 

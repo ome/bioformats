@@ -84,8 +84,8 @@ public:
 	bool* getDataAsBoolArray();
 	double getDataAsDouble();
 	double* getDataAsDoubleArray();
-	long getDataAsLong();
-	long* getDataAsLongArray();
+	long long getDataAsLong();
+	long long* getDataAsLongArray();
 	short getDataAsShort();
 	short* getDataAsShortArray();
 };

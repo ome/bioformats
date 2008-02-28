@@ -377,7 +377,8 @@ public class ConnThread extends Thread {
     }
     else if (type == FLOAT_TYPE) {
       float readFloat = in.readFloat();
-      value = new Float(readFloat);
+      int intRep = Float.floatToIntBits(readFloat);
+      value = new Float(Float.intBitsToFloat(DataTools.swap(intRep)));
     }
     else if (type == BOOLEAN_TYPE) {
       boolean readBoolean = in.readBoolean();
@@ -385,17 +386,19 @@ public class ConnThread extends Thread {
     }
     else if (type == DOUBLE_TYPE) {
       double readDouble = in.readDouble();
-      value = new Double(readDouble);
+      long longRep = Double.doubleToLongBits(readDouble);
+      value = new Double(Double.longBitsToDouble(DataTools.swap(longRep)));
+      //value = new Double(readDouble);
     }
     else if (type == LONG_TYPE) {
       long readLong = in.readLong();
-      value = new Long(readLong);
+      value = new Long(DataTools.swap(readLong));
     }
     else if (type == SHORT_TYPE) {
       short readShort = in.readShort();
-      value = new Short(readShort);
+      value = new Short(DataTools.swap(readShort));
     }
-    debug("setVar: " + name + " = " + getValue(value));
+    debug("setVar ("+type+"): " + name + " = " + getValue(value));
     if (value != null) r.setVar(name, value);
   }
 
