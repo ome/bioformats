@@ -537,7 +537,8 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#isThisType(String) */
   public boolean isThisType(String name) {
     // if necessary, open the file for further analysis
-    return isThisType(name, true);
+    // but check isThisType(name, false) first, for efficiency
+    return isThisType(name, false) || isThisType(name, true);
   }
 
   /* @see IFormatHandler#getFormat() */
