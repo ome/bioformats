@@ -180,92 +180,73 @@ void JVMLinkClient::setVar(JVMLinkObject* obj) {
 			sentBytes += packetSize;
 		}
 	}
+	else {
+		if (obj->type == STRING_TYPE) sendMessage(*(CString*) obj->data);
+		else send(conn, (char*) obj->data, obj->size,0);
+	}
 }
 
 void JVMLinkClient::setVar(CString argname, int obj) {
 	debug("setVar: " << argname << " = " << obj << " (int)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(INT_TYPE);
-	sendInt(obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, INT_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, CString obj) {
 	debug("setVar: " << argname << " = " << obj << " (string)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(STRING_TYPE);
-	sendMessage(obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, STRING_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, char obj) {
 	debug("setVar: " << argname << " = " << obj << " (char)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(CHAR_TYPE);
-
-	char* buff = (char*) (&obj);
-	send(conn,buff,1,0);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, CHAR_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, Byte obj) {
 	debug("setVar: " << argname << " = " << obj.data << " (byte)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(BYTE_TYPE);
-
-	char* buff = (char*) (&obj);
-	send(conn,buff,1,0);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, BYTE_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, float obj) {
 	debug("setVar: " << argname << " = " << obj << " (float)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(FLOAT_TYPE);
-
-	char* buff = (char*) (&obj);
-	send(conn,buff,sizeof(obj),0);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, FLOAT_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, bool obj) {
 	debug("setVar: " << argname << " = " << obj << " (bool)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(BOOL_TYPE);
-
-	char* buff = (char*) (&obj);
-	send(conn,buff,sizeof(obj),0);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, BOOL_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, double obj) {
 	debug("setVar: " << argname << " = " << obj << " (double)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(DOUBLE_TYPE);
-
-	char* buff = (char*) (&obj);
-	send(conn,buff,sizeof(obj),0);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, DOUBLE_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, long long obj) {
 	debug("setVar: " << argname << " = " << obj << " (long)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(LONG_TYPE);
-
-	char* buff = (char*) (&obj);
-	send(conn,buff,sizeof(obj),0);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, LONG_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 void JVMLinkClient::setVar(CString argname, short obj) {
 	debug("setVar: " << argname << " = " << obj << " (short)");
-	sendInt(SETVAR_CMD);
-	sendMessage(argname);
-	sendInt(SHORT_TYPE);
-
-	char* buff = (char*) (&obj);
-	send(conn,buff,sizeof(obj),0);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, SHORT_TYPE, &obj);
+	setVar(jvmObj);
+	delete jvmObj;
 }
 
 // -- Private methods --
@@ -276,8 +257,8 @@ int JVMLinkClient::sendMessage(CString message) {
 	return 0;
 }
 
-int JVMLinkClient::sendInt(int message) {
-	char* buff = (char*) (&message);
+int JVMLinkClient::sendInt(int value) {
+	char* buff = (char*) (&value);
 	send(conn,buff,4,0);
 	return 0;
 }

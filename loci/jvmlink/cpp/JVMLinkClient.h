@@ -57,7 +57,7 @@ public:
 		RESPONSE_ERR
 	};
 
-	JVMLinkClient(void);
+	JVMLinkClient();
 	void startJava(int, CString);
 	void shutJava();
 	ConnectionCode establishConnection();

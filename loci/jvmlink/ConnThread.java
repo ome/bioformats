@@ -392,7 +392,7 @@ public class ConnThread extends Thread {
     else if (type == LONG_TYPE) value = new Long(readLong());
     else if (type == SHORT_TYPE) value = new Short(readShort());
 
-    debug("setVar ("+type+"): " + name + " = " + getValue(value));
+    debug("setVar (" + type + "): " + name + " = " + getValue(value));
     if (value != null) r.setVar(name, value);
   }
 
@@ -704,6 +704,7 @@ public class ConnThread extends Thread {
   }
 
   public static String getValue(Object value) {
+    if (value == null) return null;
     String val = value.toString();
     try {
       val += " (length " + Array.getLength(value) + ")";

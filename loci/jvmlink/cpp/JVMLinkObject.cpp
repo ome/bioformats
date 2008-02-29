@@ -33,17 +33,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #include "JVMLinkObject.h"
 
-JVMLinkObject::JVMLinkObject(void)
-{
+JVMLinkObject::JVMLinkObject(CString name) {
+	this->name = name;
 }
 
+// Constructor for single primitives
+JVMLinkObject::JVMLinkObject(CString name, Type type, void* data) {
+	this->name = name;
+	this->size = getSize(type, data);
+	this->length = 1;
+	this->type = type;
+	this->data = data;
+}
+
+// Constructor for arrays
+JVMLinkObject::JVMLinkObject(CString name, Type type, int length, void* data) {
+	this->name = name;
+	this->size = getSize(type, data);
+	this->length = length;
+	this->type = ARRAY_TYPE;
+	this->insideType = type;
+	this->data = data;
+}
+
+// Destructor
 JVMLinkObject::~JVMLinkObject(void)
 {
-}
-
-JVMLinkObject::JVMLinkObject(CString argname) {
-	length = 0;
-	name = argname;
 }
 
 int JVMLinkObject::getDataAsInt() {
@@ -59,6 +74,11 @@ int* JVMLinkObject::getDataAsIntArray() {
 CString JVMLinkObject::getDataAsString() {
 	CString* retval = new CString((char*) data);
 	return *retval;
+}
+
+CString* JVMLinkObject::getDataAsStringArray() {
+	// TODO
+	return 0;
 }
 
 Byte JVMLinkObject::getDataAsByte() {
@@ -130,4 +150,26 @@ short JVMLinkObject::getDataAsShort() {
 short* JVMLinkObject::getDataAsShortArray() {
 	short* retval = (short*) data;
 	return retval;
+}
+
+int JVMLinkObject::getSize(Type type, void* data) {
+	switch (type) {
+		case BYTE_TYPE:
+		case CHAR_TYPE:
+		case BOOL_TYPE:
+		case NULL_TYPE:
+			return 1;
+		case SHORT_TYPE:
+			return 2;
+		case INT_TYPE:
+		case FLOAT_TYPE:
+			return 4;
+		case DOUBLE_TYPE:
+		case LONG_TYPE:
+			return 8;
+		case STRING_TYPE:
+			return ((CString*) data)->GetLength();
+		default:
+			return 0;
+	}
 }

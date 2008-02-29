@@ -61,15 +61,20 @@ struct Byte {
 };
 
 class JVMLinkObject {
+private:
+	int getSize(Type, void*);
+
 public:
-	JVMLinkObject(void);
+	JVMLinkObject(CString);
+	JVMLinkObject(CString, Type, void*);
+	JVMLinkObject(CString, Type, int, void*);
+
 	~JVMLinkObject(void);
 
-	JVMLinkObject(CString);
-	void* data;
 	CString name;
 	int size, length;
 	Type type, insideType;
+	void* data;
 
 	int getDataAsInt();
 	int* getDataAsIntArray();
