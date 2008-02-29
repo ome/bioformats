@@ -154,7 +154,7 @@ public class FlexReader extends BaseTiffReader {
     // SAX parser fails due to improperly handled mu (181) characters.
     char[] c = xml.toCharArray();
     for (int i=0; i<c.length; i++) {
-      if (c[i] < ' ' || c[i] > '~') c[i] = '?';
+      if (c[i] > '~' || (c[i] != '\t' && c[i] < ' ')) c[i] = ' ';
     }
     xml = new String(c);
 
