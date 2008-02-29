@@ -95,6 +95,7 @@ public class ConfigurationTree {
       if (line == null) break;
       line = line.trim();
       count++;
+      if (line.startsWith("#")) continue; // ignore comments
 
       // parse filename
       int start = 0;
