@@ -161,6 +161,7 @@ public class SlidebookReader extends FormatReader {
           while (in.read() != ']');
         }
         else {
+          if ((fp % 2) == 1) fp -= 2;
           in.seek(fp);
           pixelOffsets.add(new Long(fp));
           try {
@@ -226,6 +227,10 @@ public class SlidebookReader extends FormatReader {
             (j == pixelOffsets.size() - 1))
           {
             core.sizeY[j - 1] = in.readShort();
+            int div = (int) Math.pow(2, in.readShort() & 1);
+            if (div < core.sizeY[j - 1]) {
+              core.sizeY[j - 1] /= div;
+            }
             if (prevSeries != j - 1) {
               iCount = 1;
             }
