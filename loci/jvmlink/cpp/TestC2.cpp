@@ -35,43 +35,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctime> // for time()
 #include <cstdlib> // for srand() and rand()
 
+// Tests the JVMLink API.
 int _tmain(int argc, _TCHAR* argv[])
 {
 	JVMLinkClient *p = new JVMLinkClient();
 	p->startJava(20345, "jvmlink.jar");
 	while (p->establishConnection() != JVMLinkClient::CONNECTION_SUCCESS) Sleep(250);
 
-
-/*	JVMLinkObject* b = new JVMLinkObject("first");
-
-	int arrayLen = 100000;
-	b->size = sizeof(double);
-	b->length = arrayLen;
-	b->insideType = DOUBLE_TYPE;
-	b->type = ARRAY_TYPE;
-
-	double* a = new double[arrayLen];
-	for (int i=0; i<arrayLen; i++) {
-		a[i] = i/100.0 + 0.005;
-	}
-
-	a[arrayLen-1] = 3.78765;
-	b->data = a;
-
-	long long d = 324565;
-	p->setVar("first", d);
-	JVMLinkObject* first = p->getVar("first");
-	std::cout << "Received variable " << first->getDataAsLong() << std::endl;
-*/
-
-	// test the API
-
-	std::cout << "size of float is " << sizeof(float) << std::endl;
-
-	srand(time(0));
+	srand((int) time(0));
 
 	// bool variables
-	bool myBool = (bool) rand();
+	bool myBool = rand() == 0;
 	p->setVar("myBool", myBool);
 	std::cout << "TestC2: setVar: myBool = " << myBool << std::endl;
 	JVMLinkObject* jvmBool = p->getVar("myBool");
@@ -116,7 +90,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::cout << "Last two elements are " << data[first->length - 2] << " and " << data[first->length - 1] << std::endl;
 
 	// long variables
-	long myLong = (long) rand();
+	long long myLong = (long long) rand() + 0xffffffffL;
 	p->setVar("myLong", myLong);
 	std::cout << "TestC2: setVar: myLong = " << myLong << std::endl;
 	JVMLinkObject* jvmLong = p->getVar("myLong");

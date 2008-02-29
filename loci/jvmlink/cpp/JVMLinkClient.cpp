@@ -124,16 +124,16 @@ JVMLinkObject* JVMLinkClient::getVar(CString name) {
 	JVMLinkObject* obj = new JVMLinkObject(name);
 	sendMessage(GETVAR_CMD);
 	sendMessage(name);
-	obj->type = (Type) (int) *((void**) readMessage(4));
+	obj->type = (Type) readInt();
 	if (obj->type == ARRAY_TYPE) {
-		obj->insideType = (Type) (int) *((void**) readMessage(4));
-		obj->length = (Type) (int) *((void**) readMessage(4));
-		obj->size = (int) *((void**) readMessage(4));
+		obj->insideType = (Type) readInt();
+		obj->length = (Type) readInt();
+		obj->size = readInt();
 		obj->data = readMessage(obj->size * obj->length);
 		debug("getVar: got array: length=" << obj->length << ", type=" << obj->insideType);
 	}
 	else if (obj->type == STRING_TYPE) {	
-		int len = (int) *((void**) readMessage(4));
+		int len = readInt();
 		char* buff = new char[len+1];
 		int size = recv(conn,buff,len,0);
 		buff[len] = '\0';
@@ -142,7 +142,7 @@ JVMLinkObject* JVMLinkClient::getVar(CString name) {
 		debug("getVar: got string: length=" << len << ", value=" << buff);
 	}
 	else {
-		int size = (int) *((void**) readMessage(4));
+		int size = readInt();
 		obj->data = readMessage(size);
 		obj->size = size;
 		obj->insideType = NULL_TYPE;
@@ -273,7 +273,7 @@ void JVMLinkClient::setVar(CString argname, short obj) {
 int JVMLinkClient::sendMessage(CString message) {
 	char* buff = new char[message.GetLength()];
 	sprintf_s(buff,message.GetLength()+2,message+"\n");
-	send(conn,buff,strlen(buff),0);
+	send(conn,buff,(int) strlen(buff),0);
 	//delete[](buff);
 	return 0;
 }
@@ -305,6 +305,10 @@ CString JVMLinkClient::readMessage() {
 
 void* JVMLinkClient::readMessage(int size) {
 	char* buff = (char*) malloc(size);
-	recv(conn,buff,size,0); //todo: check if everything is received.
-	return ((void*) buff);
+	recv(conn,buff,size,0); //TODO: check if everything is received.
+	return (void*) buff;
+}
+
+int JVMLinkClient::readInt() {
+	return *(int*) readMessage(4);
 }

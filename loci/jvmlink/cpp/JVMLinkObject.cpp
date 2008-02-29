@@ -47,7 +47,7 @@ JVMLinkObject::JVMLinkObject(CString argname) {
 }
 
 int JVMLinkObject::getDataAsInt() {
-	int retval = (int) *(void**) data;
+	int retval = *(int*) data;
 	return retval;
 }
 
@@ -57,13 +57,13 @@ int* JVMLinkObject::getDataAsIntArray() {
 }
 
 CString JVMLinkObject::getDataAsString() {
-	CString* retval = new CString((char*)data);
+	CString* retval = new CString((char*) data);
 	return *retval;
 }
 
 Byte JVMLinkObject::getDataAsByte() {
 	Byte retval;
-	retval.data = (char) *(void**) data;
+	retval.data = *(char*) data;
 	return retval;
 }
 
@@ -73,7 +73,7 @@ Byte* JVMLinkObject::getDataAsByteArray() {
 }
 
 char JVMLinkObject::getDataAsChar() {
-	char retval = (char) *(void**) data;
+	char retval = *(char*) data;
 	return retval;
 }
 
@@ -83,7 +83,7 @@ char* JVMLinkObject::getDataAsCharArray() {
 }
 
 float JVMLinkObject::getDataAsFloat() {
-	float retval = *(float*) (int*) data;
+	float retval = *(float*) data;
 	return retval;
 }
 
@@ -93,7 +93,7 @@ float* JVMLinkObject::getDataAsFloatArray() {
 }
 
 bool JVMLinkObject::getDataAsBool() {
-	bool retval = (bool) *(void**) data;
+	bool retval = (*(int*) data) != 0;
 	return retval;
 }
 
@@ -103,7 +103,7 @@ bool* JVMLinkObject::getDataAsBoolArray() {
 }
 
 double JVMLinkObject::getDataAsDouble() {
-	double retval = *(double*) (long long*) data;
+	double retval = *(double*) data;
 	return retval;
 }
 
@@ -113,7 +113,7 @@ double* JVMLinkObject::getDataAsDoubleArray() {
 }
 
 long long JVMLinkObject::getDataAsLong() {
-	long retval = (long) *(void**) data;
+	long long retval = *(long long*) data;
 	return retval;
 }
 
@@ -123,7 +123,7 @@ long long* JVMLinkObject::getDataAsLongArray() {
 }
 
 short JVMLinkObject::getDataAsShort() {
-	short retval = (short) *(void**) data;
+	short retval = *(short*) data;
 	return retval;
 }
 

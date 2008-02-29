@@ -47,6 +47,7 @@ private:
 	int sendMessage(int);
 	CString readMessage();
 	void* readMessage(int);
+	int readInt();
 
 public:
 	enum ConnectionCode {
