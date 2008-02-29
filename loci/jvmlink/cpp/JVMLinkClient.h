@@ -44,9 +44,8 @@ private:
 	SOCKET conn;
 
 	int sendMessage(CString);
-	int sendMessage(int);
-	CString readMessage();
 	void* readMessage(int);
+	int sendInt(int);
 	int readInt();
 
 public:

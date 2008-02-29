@@ -117,7 +117,7 @@ public class ConnThread extends Thread {
    *
    * For byte order, the integer 1 in the desired byte order
    *
-   * For the other commands, a newline-delimited string, specifying:
+   * For the other commands, a string (prefixed by its length), specifying:
    *   setVar, getVar : identifier in question
    *   exec : command to be executed
    *
@@ -136,7 +136,7 @@ public class ConnThread extends Thread {
    *
    * Then:
    *  size - number of bytes (per item)
-   *   In case of strings (not strings in arrays though) length of string
+   *   In case of strings, length of string
    */
 
   // -- Thread API methods --
@@ -223,7 +223,7 @@ public class ConnThread extends Thread {
    * from the input stream.
    */
   private void setVar() throws IOException {
-    String name = in.readLine();
+    String name = readString();
     int type = readInt();
     Object value = null;
     if (type == ARRAY_TYPE) {
@@ -255,7 +255,7 @@ public class ConnThread extends Thread {
       else if (insideType == STRING_TYPE) {
         String[] stringArray = new String[arrayLength];
           for (int i=0; i<arrayLength; i++) {
-            stringArray[i] = in.readLine();
+            stringArray[i] = readString();
           }
           theArray = stringArray;
         }
@@ -383,9 +383,7 @@ public class ConnThread extends Thread {
       value = theArray;
     }
     else if (type == INT_TYPE) value = new Integer(readInt());
-    else if (type == STRING_TYPE) {
-      value = in.readLine();
-    }
+    else if (type == STRING_TYPE) value = readString();
     else if (type == BYTE_TYPE) value = new Byte(in.readByte());
     else if (type == CHAR_TYPE) value = new Character((char) in.readByte());
     else if (type == FLOAT_TYPE) value = new Float(readFloat());
@@ -403,7 +401,7 @@ public class ConnThread extends Thread {
    * from the input stream and sending results to the output stream.
    */
   private void getVar() throws IOException {
-    String name = in.readLine();
+    String name = readString();
     int insideType = 0;
     int type = 0;
     Object value = null;
@@ -532,13 +530,7 @@ public class ConnThread extends Thread {
     }
     else if (type == STRING_TYPE) {
       String val = (String) value;
-      writeInt(val.length());
-      debug("Number of bytes=" + val.length());
-      out.writeBytes(val);
-      //String name = (String) r.getVar(name);
-      //out.write(name.getBytes(Charset.forName("UTF-16")));
-      //debug("Returning string: " +
-      //  name.getBytes(Charset.forName("UTF-16")));
+      writeString(val);
     }
     else if (type == BYTE_TYPE) {
       byte val = ((Byte) value).byteValue();
@@ -583,7 +575,7 @@ public class ConnThread extends Thread {
    * from the input stream.
    */
   private void exec() throws IOException, ReflectException {
-    String cmd = in.readLine();
+    String cmd = readString();
     debug("exec: " + cmd);
     r.exec(cmd);
   }
@@ -629,6 +621,14 @@ public class ConnThread extends Thread {
     return value;
   }
 
+  /** Reads a string from the socket. */
+  private String readString() throws IOException {
+    int len = readInt();
+    byte[] bytes = new byte[len];
+    in.readFully(bytes, 0, len);
+    return new String(bytes);
+  }
+
   /** Writes the given short to the socket with the correct endianness. */
   private void writeShort(short value) throws IOException {
     out.writeShort(little ? DataTools.swap(value) : value);
@@ -642,6 +642,12 @@ public class ConnThread extends Thread {
   /** Writes the given long to the socket with the correct endianness. */
   private void writeLong(long value) throws IOException {
     out.writeLong(little ? DataTools.swap(value) : value);
+  }
+
+  /** Writes the given string to the socket. */
+  private void writeString(String value) throws IOException {
+    writeInt(value.length());
+    out.write(value.getBytes());
   }
 
   // - Debugging helper methods -
