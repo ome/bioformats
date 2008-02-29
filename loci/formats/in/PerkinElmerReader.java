@@ -72,17 +72,6 @@ public class PerkinElmerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (name.toLowerCase().endsWith(".cfg")) {
-      try {
-        RandomAccessStream s = new RandomAccessStream(name);
-        String ss = s.readString(512);
-        return ss.indexOf("Series") != -1;
-      }
-      catch (IOException e) {
-        if (debug) trace(e);
-        return false;
-      }
-    }
     String ext = name;
     if (ext.indexOf(".") != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
     boolean binFile = true;
@@ -90,21 +79,30 @@ public class PerkinElmerReader extends FormatReader {
       Integer.parseInt(ext, 16);
     }
     catch (NumberFormatException e) {
-      binFile = false;
+      ext = ext.toLowerCase();
+      if (!ext.equals("tif") && !ext.equals("tiff")) binFile = false;
     }
 
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    String[] list = parent.list();
-    boolean html = false;
-    for (int i=0; i<list.length; i++) {
-      if (list[i].toLowerCase().endsWith(".htm")) {
-        html = true;
-        break;
+    String prefix = name;
+    if (prefix.indexOf(".") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("."));
+    }
+    if (prefix.indexOf("_") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+    }
+
+    Location htmlFile = new Location(prefix + ".htm");
+    if (!htmlFile.exists()) {
+      htmlFile = new Location(prefix + ".HTM");
+      while (!htmlFile.exists() && prefix.indexOf("_") != -1) {
+        prefix = prefix.substring(0, prefix.indexOf("_"));
+        htmlFile = new Location(prefix + ".htm");
+        if (!htmlFile.exists()) htmlFile = new Location(prefix + ".HTM");
       }
     }
 
-    return super.isThisType(name, open) || binFile ||
-      (ext.equals("tif") && html);
+    return (htmlFile.exists() && (binFile || super.isThisType(name, false))) ||
+      super.isThisType(name, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */

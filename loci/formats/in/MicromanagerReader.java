@@ -65,16 +65,8 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    File f = new File(name).getAbsoluteFile();
-    String[] list = null;
-    if (f.exists()) list = f.getParentFile().list();
-    else list = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-
-    if (list == null) return false;
-    for (int i=0; i<list.length; i++) {
-      if (list[i].endsWith("metadata.txt")) return super.isThisType(name, open);
-    }
-    return false;
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    return new Location(parent, METADATA).exists();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */

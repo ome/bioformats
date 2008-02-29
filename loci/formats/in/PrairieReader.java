@@ -75,44 +75,26 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!isGroupFiles()) return false;
-
-    // check if there is an XML file in the same directory
-    Location f = new Location(name);
-    f = f.getAbsoluteFile();
-    Location parent = f.getParentFile();
-    String[] listing = parent.list();
-    if (listing == null) return false; // file doesn't exist, or other problem
-    int xmlCount = 0;
-    for (int i=0; i<listing.length; i++) {
-      if (listing[i].toLowerCase().endsWith(".xml")) {
-        try {
-          RandomAccessStream s = new RandomAccessStream(
-            parent.getAbsolutePath() + File.separator + listing[i]);
-          if (s.readString(512).indexOf("PV") != -1) xmlCount++;
-        }
-        catch (IOException e) { }
-      }
-    }
-    if (xmlCount == 0) {
-      listing = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-      for (int i=0; i<listing.length; i++) {
-        if (listing[i].toLowerCase().endsWith(".xml")) {
-          try {
-            RandomAccessStream s = new RandomAccessStream(listing[i]);
-            if (s.readString(512).indexOf("PV") != -1) xmlCount++;
-          }
-          catch (IOException e) { }
-        }
-      }
+    String prefix = name;
+    if (prefix.indexOf(".") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
 
-    boolean xml = xmlCount > 0;
+    if (name.endsWith(".cfg")) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("Config"));
+    }
+    if (prefix.indexOf("_") != -1) {
+      prefix = prefix.substring(0, prefix.indexOf("_"));
+    }
 
-    // just checking the filename isn't enough to differentiate between
-    // Prairie and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, blockCheckLen) && xml : xml;
+    // check for appropriately named XML and CFG files
+
+    Location xml = new Location(prefix + ".xml");
+    Location cfg = new Location(prefix + "Config.cfg");
+
+    boolean hasMetadataFiles = xml.exists() && cfg.exists();
+
+    return hasMetadataFiles && super.isThisType(name, false);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
@@ -126,6 +108,7 @@ public class PrairieReader extends FormatReader {
       RandomAccessStream stream = new RandomAccessStream(block);
       Hashtable ifd = TiffTools.getFirstIFD(stream);
       String software = (String) TiffTools.getIFDValue(ifd, TiffTools.SOFTWARE);
+      stream.close();
       return software.indexOf("Prairie") != -1 &&
         ifd.containsKey(new Integer(PRAIRIE_TAG_1)) &&
         ifd.containsKey(new Integer(PRAIRIE_TAG_2)) &&

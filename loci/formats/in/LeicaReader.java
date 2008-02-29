@@ -80,79 +80,42 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".lei")) return true;
-    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-    if (!open) return false; // not allowed to check the file contents
-    if (!isGroupFiles()) return false;
+    String ext = name;
+    if (ext.indexOf(".") != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
+    ext = ext.toLowerCase();
 
-    // just checking the filename isn't enough to differentiate between
-    // Leica and regular TIFF; open the file and check more thoroughly
-    Location file = new Location(name);
-    if (!file.exists()) return false;
-    long len = file.length();
-    if (len < 4) return false;
+    if (ext.equals("lei")) return true;
+    if (!ext.equals("tif") && !ext.equals("tiff")) return false;
 
-    try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
-
-      String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      int ndx = descr == null ? -1 : descr.indexOf("Series Name");
-
-      if (ndx == -1) return false;
-
-      File f = new File(name).getAbsoluteFile();
-      String[] listing = null;
-      if (f.exists()) listing = f.getParentFile().list();
-      else {
-        listing =
-          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+    String prefix = name;
+    if (prefix.indexOf(".") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("."));
+    }
+    Location lei = new Location(prefix + ".lei");
+    if (!lei.exists()) {
+      lei = new Location(prefix + ".LEI");
+      while (!lei.exists() && prefix.indexOf("_") != -1) {
+        prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+        lei = new Location(prefix + ".lei");
+        if (!lei.exists()) lei = new Location(prefix + ".LEI");
       }
-
-      for (int i=0; i<listing.length; i++) {
-        if (listing[i].toLowerCase().endsWith(".lei")) return true;
-      }
-      return false;
     }
-    catch (IOException exc) {
-      if (debug) trace(exc);
-    }
-    catch (ClassCastException exc) {
-      if (debug) trace(exc);
-    }
-    return false;
+    return lei.exists();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    if (block.length < 4) return false;
-
-    if (block.length < 8) {
-      // we can only check whether it is a TIFF
-      return (block[0] == 0x49 && block[1] == 0x49 && block[2] == 0x49 &&
-        block[3] == 0x49) || (block[0] == 0x4d && block[1] == 0x4d &&
-        block[2] == 0x4d && block[3] == 0x4d);
+    if (block.length < blockCheckLen) return false;
+    try {
+      RandomAccessStream stream = new RandomAccessStream(block);
+      Hashtable ifd = TiffTools.getFirstIFD(stream);
+      stream.close();
+      return ifd.containsKey(new Integer(LEICA_MAGIC_TAG));
     }
-
-    int ifdlocation = DataTools.bytesToInt(block, 4, true);
-    if (ifdlocation < 0 || ifdlocation + 1 > block.length) {
-      return false;
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
     }
-    else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
-      for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) return false;
-        else {
-          int ifdtag = DataTools.bytesToInt(block,
-            ifdlocation + 2 + (i*12), 2, true);
-          if (ifdtag == LEICA_MAGIC_TAG) return true;
-        }
-      }
-      return false;
-    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

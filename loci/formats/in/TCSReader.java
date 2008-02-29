@@ -72,36 +72,42 @@ public class TCSReader extends FormatReader {
 
   public TCSReader() {
     super("Leica TCS TIFF", new String[] {"tif", "tiff", "xml"});
+    blockCheckLen = 524288;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open) && !name.toLowerCase().endsWith("xml")) {
-      return false; // check extension
-    }
-    if (!open) return false; // not allowed to check the file contents
+    // check that there is no LEI file
 
-    if (name.toLowerCase().endsWith("xml")) {
-      try {
-        RandomAccessStream ras = new RandomAccessStream(name);
-        String s = ras.readString(20);
-        return s.indexOf("Data") != -1;
-      }
-      catch (IOException exc) {
-        return false;
+    String prefix = name;
+    if (prefix.indexOf(".") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("."));
+    }
+    Location lei = new Location(prefix + ".lei");
+    if (!lei.exists()) {
+      lei = new Location(prefix + ".LEI");
+      while (!lei.exists() && prefix.indexOf("_") != -1) {
+        prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+        lei = new Location(prefix + ".lei");
+        if (!lei.exists()) lei = new Location(prefix + ".LEI");
       }
     }
 
-    // just checking the filename isn't enough to differentiate between
-    // Leica TCS and regular TIFF; open the file and check more thoroughly
+    return !lei.exists() && super.isThisType(name, open);
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
     try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
+      if (block.length < blockCheckLen) return false;
+      RandomAccessStream stream = new RandomAccessStream(block);
+      Hashtable ifd = TiffTools.getFirstIFD(stream);
+      stream.close();
 
+      if (ifd == null) return false;
       String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
       if (document == null) document = "";
       Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
@@ -110,12 +116,10 @@ public class TCSReader extends FormatReader {
       if (software == null) software = "";
       return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
     }
-    catch (IOException e) { return false; }
-  }
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    return false;
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+      return false;
+    }
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

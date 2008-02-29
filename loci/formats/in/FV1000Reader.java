@@ -78,15 +78,12 @@ public class FV1000Reader extends FormatReader {
   public FV1000Reader() {
     super("Fluoview FV1000", new String[] {"oib", "oif", "pty", "lut"});
     blockCheckLen = 1024;
-    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true;
-
     String extension = name;
     if (extension.indexOf(".") != -1) {
       extension = extension.substring(extension.lastIndexOf(".") + 1);
@@ -94,13 +91,15 @@ public class FV1000Reader extends FormatReader {
     extension = extension.toLowerCase();
     if (extension.equals("oib") || extension.equals("oif")) return true;
 
-    Location path = new Location(name).getAbsoluteFile();
-    Location parent = path.getParentFile().getParentFile();
-    String[] list = parent.list();
-    for (int i=0; i<list.length; i++) {
-      if (list[i].toLowerCase().endsWith(".oif")) return true;
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    String path = parent.getPath();
+    path = path.substring(path.lastIndexOf(File.separator) + 1);
+    if (path.indexOf(".") != -1) {
+      path = path.substring(0, path.lastIndexOf("."));
     }
-    return false;
+
+    Location oif = new Location(parent.getParentFile(), path);
+    return oif.exists() && !oif.isDirectory();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
