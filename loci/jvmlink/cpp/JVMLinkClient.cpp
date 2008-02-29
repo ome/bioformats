@@ -204,10 +204,8 @@ void JVMLinkClient::setVar(CString argname, char obj) {
 	sendMessage(argname);
 	sendMessage(CHAR_TYPE);
 
-	char buff[2];
-	buff[0] = 0;
-	buff[1] = obj;
-	send(conn,buff,2,0);
+	char* buff = (char*) (&obj);
+	send(conn,buff,1,0);
 }
 
 void JVMLinkClient::setVar(CString argname, Byte obj) {

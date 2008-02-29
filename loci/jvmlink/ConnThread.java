@@ -53,6 +53,7 @@ public class ConnThread extends Thread {
   // -- Constants --
 
   public static final int MAX_PACKET_SIZE = 65536;
+  public static final int ORDER_VALUE = 1;
 
   public static final int ARRAY_TYPE = 0;
   public static final int INT_TYPE = 1;
@@ -65,9 +66,10 @@ public class ConnThread extends Thread {
   public static final int LONG_TYPE = 8;
   public static final int SHORT_TYPE = 9;
 
-  public static final int SETVAR = 0;
-  public static final int GETVAR = 1;
-  public static final int EXEC = 2;
+  public static final int BYTE_ORDER = 0;
+  public static final int SETVAR = 1;
+  public static final int GETVAR = 2;
+  public static final int EXEC = 3;
   public static final int EXIT = 255;
 
   // -- Static fields --
@@ -82,6 +84,12 @@ public class ConnThread extends Thread {
   private DataInputStream in;
   private DataOutputStream out;
 
+  /**
+   * True for little endian (intel) byte order,
+   * false for big endian (motorola) order.
+   */
+  private boolean little;
+
   // -- Constructor --
 
   public ConnThread(Socket socket, JVMLinkServer server) throws IOException {
@@ -93,6 +101,7 @@ public class ConnThread extends Thread {
       new BufferedInputStream(socket.getInputStream()));
     out = new DataOutputStream(
       new BufferedOutputStream(socket.getOutputStream()));
+    little = true;
     start();
   }
 
@@ -100,12 +109,15 @@ public class ConnThread extends Thread {
    * Protocol syntax:
    *
    * First thing on the stream is an integer:
-   *  255 - exit Server
-   *  0   - setVar
-   *  1   - getVar
-   *  2   - exec
+   *  0   - byte order
+   *  1   - setVar
+   *  2   - getVar
+   *  3   - exec
+   *  255 - terminate server
    *
-   * Then, a newline-delimited string, specifying:
+   * For byte order, the integer 1 in the desired byte order
+   *
+   * For the other commands, a newline-delimited string, specifying:
    *   setVar, getVar : identifier in question
    *   exec : command to be executed
    *
@@ -125,8 +137,6 @@ public class ConnThread extends Thread {
    * Then:
    *  size - number of bytes (per item)
    *   In case of strings (not strings in arrays though) length of string
-   *
-   * Then, for setVar, the data
    */
 
   // -- Thread API methods --
@@ -135,13 +145,16 @@ public class ConnThread extends Thread {
     boolean killServer = false;
     while (true) {
       try {
-        int command = DataTools.read4SignedBytes(in, true);
+        int command = readInt();
         debug("Received command: " + getCommand(command));
         if (command == EXIT) {
           killServer = true;
           break;
         }
         switch (command) {
+          case BYTE_ORDER:
+            byteOrder();
+            break;
           case SETVAR:
             setVar();
             break;
@@ -196,18 +209,27 @@ public class ConnThread extends Thread {
 
   // -- Helper methods --
 
+  /** Changes the byte order between big and little endian. */
+  private void byteOrder() throws IOException {
+    int bigType = in.readInt();
+    int littleType = DataTools.swap(bigType);
+    if (bigType == ORDER_VALUE) little = false; // big endian
+    else if (littleType == ORDER_VALUE) little = true; // little endian
+    else debug("Invalid byte order value: 0x" + Integer.toString(bigType, 16));
+  }
+
   /**
    * Performs a SETVAR command, including reading arguments
    * from the input stream.
    */
   private void setVar() throws IOException {
     String name = in.readLine();
-    int type = DataTools.read4SignedBytes(in, true);
+    int type = readInt();
     Object value = null;
     if (type == ARRAY_TYPE) {
-      int insideType = DataTools.read4SignedBytes(in, true);
-      int arrayLength = DataTools.read4SignedBytes(in, true);
-      int size = DataTools.read4SignedBytes(in, true);
+      int insideType = readInt();
+      int arrayLength = readInt();
+      int size = readInt();
       debug("in array type for variable " + name +
         " insidetype, length, size: " + insideType + ", " + arrayLength +
         ", " + size);
@@ -224,7 +246,7 @@ public class ConnThread extends Thread {
             in.readFully(b, 0, packetSize);
             for (int i=0; i<packetSize/4; i++) {
               intArray[i + (readBytes/4)] =
-                DataTools.bytesToInt(b, 4*i, true);
+                DataTools.bytesToInt(b, 4*i, little);
             }
             readBytes += packetSize;
           }
@@ -281,7 +303,7 @@ public class ConnThread extends Thread {
           in.readFully(b, 0, packetSize);
           for (int i=0; i<packetSize/4; i++) {
             floatArray[i + readBytes/4] =
-              Float.intBitsToFloat(DataTools.bytesToInt(b, 4*i, true));
+              Float.intBitsToFloat(DataTools.bytesToInt(b, 4*i, little));
           }
           readBytes += packetSize;
         }
@@ -316,7 +338,7 @@ public class ConnThread extends Thread {
           in.readFully(b, 0, packetSize);
           for (int i=0; i<packetSize/8; i++) {
             doubleArray[i + readBytes/8] =
-              Double.longBitsToDouble(DataTools.bytesToLong(b, 8*i, true));
+              Double.longBitsToDouble(DataTools.bytesToLong(b, 8*i, little));
           }
           readBytes += packetSize;
         }
@@ -334,7 +356,7 @@ public class ConnThread extends Thread {
           in.readFully(b, 0, packetSize);
           for (int i=0; i<packetSize/8; i++) {
             longArray[i + readBytes/8] =
-              DataTools.bytesToLong(b, 8*i, true);
+              DataTools.bytesToLong(b, 8*i, little);
           }
           readBytes += packetSize;
         }
@@ -352,7 +374,7 @@ public class ConnThread extends Thread {
           in.readFully(b, 0, packetSize);
           for (int i=0; i<packetSize/4; i++) {
             shortArray[i + readBytes/4] =
-              DataTools.bytesToShort(b, 4*i, true);
+              DataTools.bytesToShort(b, 4*i, little);
           }
           readBytes += packetSize;
         }
@@ -360,44 +382,18 @@ public class ConnThread extends Thread {
       }
       value = theArray;
     }
-    else if (type == INT_TYPE) {
-      int readInt = DataTools.read4SignedBytes(in, true);
-      value = new Integer(readInt);
-    }
+    else if (type == INT_TYPE) value = new Integer(readInt());
     else if (type == STRING_TYPE) {
       value = in.readLine();
     }
-    else if (type == BYTE_TYPE) {
-      byte readByte = in.readByte();
-      value = new Byte(readByte);
-    }
-    else if (type == CHAR_TYPE) {
-      char readChar = in.readChar();
-      value = new Character(readChar);
-    }
-    else if (type == FLOAT_TYPE) {
-      float readFloat = in.readFloat();
-      int intRep = Float.floatToIntBits(readFloat);
-      value = new Float(Float.intBitsToFloat(DataTools.swap(intRep)));
-    }
-    else if (type == BOOLEAN_TYPE) {
-      boolean readBoolean = in.readBoolean();
-      value = new Boolean(readBoolean);
-    }
-    else if (type == DOUBLE_TYPE) {
-      double readDouble = in.readDouble();
-      long longRep = Double.doubleToLongBits(readDouble);
-      value = new Double(Double.longBitsToDouble(DataTools.swap(longRep)));
-      //value = new Double(readDouble);
-    }
-    else if (type == LONG_TYPE) {
-      long readLong = in.readLong();
-      value = new Long(DataTools.swap(readLong));
-    }
-    else if (type == SHORT_TYPE) {
-      short readShort = in.readShort();
-      value = new Short(DataTools.swap(readShort));
-    }
+    else if (type == BYTE_TYPE) value = new Byte(in.readByte());
+    else if (type == CHAR_TYPE) value = new Character((char) in.readByte());
+    else if (type == FLOAT_TYPE) value = new Float(readFloat());
+    else if (type == BOOLEAN_TYPE) value = new Boolean(in.readBoolean());
+    else if (type == DOUBLE_TYPE) value = new Double(readDouble());
+    else if (type == LONG_TYPE) value = new Long(readLong());
+    else if (type == SHORT_TYPE) value = new Short(readShort());
+
     debug("setVar ("+type+"): " + name + " = " + getValue(value));
     if (value != null) r.setVar(name, value);
   }
@@ -465,18 +461,17 @@ public class ConnThread extends Thread {
       if (JVMLinkServer.debug) e.printStackTrace();
     }
 
-    out.writeInt(DataTools.swap(type));
-    //TODO: still need to swap most of what is sent.
+    writeInt(type);
     if (type == ARRAY_TYPE) {
       Object theArray = value;
-      out.writeInt(DataTools.swap(insideType));
+      writeInt(insideType);
       int arrayLen = Array.getLength(theArray);
-      out.writeInt(DataTools.swap(arrayLen));
+      writeInt(arrayLen);
       if (insideType == INT_TYPE) {
-        out.writeInt(DataTools.swap(4));
+        writeInt(4);
         int[] intArray = (int[]) theArray;
         for (int i=0; i<arrayLen; i++) {
-          out.writeInt(DataTools.swap(intArray[i]));
+          writeInt(intArray[i]);
         }
         if (arrayLen > 10000) {
           debug("Last two elements are " +
@@ -485,66 +480,59 @@ public class ConnThread extends Thread {
       }
       else if (insideType == STRING_TYPE) {
         //untested. probably quite messed up.
-        out.writeInt(DataTools.swap(4));
+        writeInt(4);
         String[] sArray = (String[]) theArray;
         for (int i=0; i<arrayLen; i++) out.write(sArray[i].getBytes());
       }
       else if (insideType == BYTE_TYPE) {
-        out.writeInt(DataTools.swap(1));
+        writeInt(1);
         byte[] bArray = (byte[]) theArray;
         for (int i=0; i<arrayLen; i++) out.writeByte(bArray[i]);
       }
       else if (insideType == CHAR_TYPE) {
-        //need to fix this to send only one byte.
-        out.writeInt(DataTools.swap(1));
+        writeInt(1);
         char[] cArray = (char[]) theArray;
         for (int i=0; i<arrayLen; i++) out.writeByte((byte) cArray[i]);
-        //for (int i=0; i<arrayLen; i++) {
-        //  out.writeChar(DataTools.swap(cArray[i]));
-        //}
       }
       else if (insideType == FLOAT_TYPE) {
-        out.writeInt(DataTools.swap(4));
+        writeInt(4);
         float[] fArray = (float[]) theArray;
         for (int i=0; i<arrayLen; i++) {
-          out.writeInt(DataTools.swap(Float.floatToIntBits(fArray[i])));
+          int intBits = Float.floatToIntBits(fArray[i]);
+          writeInt(intBits);
         }
       }
       else if (insideType == BOOLEAN_TYPE) {
-        out.writeInt(DataTools.swap(1));
+        writeInt(1);
         boolean[] bArray = (boolean[]) theArray;
         for (int i=0; i<arrayLen; i++) out.writeBoolean(bArray[i]);
       }
       else if (insideType == DOUBLE_TYPE) {
-        out.writeInt(DataTools.swap(8));
+        writeInt(8);
         double[] dArray = (double[]) theArray;
         for (int i=0; i<arrayLen; i++) {
-          out.writeLong(DataTools.swap(Double.doubleToLongBits(dArray[i])));
+          writeLong(Double.doubleToLongBits(dArray[i]));
         }
       }
       else if (insideType == LONG_TYPE) {
-        out.writeInt(DataTools.swap(8));
+        writeInt(8);
         long[] lArray = (long[]) theArray;
-        for (int i=0; i<arrayLen; i++) {
-          out.writeLong(DataTools.swap(lArray[i]));
-        }
+        for (int i=0; i<arrayLen; i++) writeLong(lArray[i]);
       }
       else if (insideType == SHORT_TYPE) {
-        out.writeInt(DataTools.swap(2));
+        writeInt(2);
         short[] sArray = (short[]) theArray;
-        for (int i=0; i<arrayLen; i++) {
-          out.writeShort(DataTools.swap(sArray[i]));
-        }
+        for (int i=0; i<arrayLen; i++) writeShort(sArray[i]);
       }
     }
     else if (type == INT_TYPE) {
       int val = ((Integer) value).intValue();
-      out.writeInt(DataTools.swap(4));
-      out.writeInt(DataTools.swap(val));
+      writeInt(4);
+      writeInt(val);
     }
     else if (type == STRING_TYPE) {
       String val = (String) value;
-      out.writeInt(DataTools.swap(val.length()));
+      writeInt(val.length());
       debug("Number of bytes=" + val.length());
       out.writeBytes(val);
       //String name = (String) r.getVar(name);
@@ -554,41 +542,38 @@ public class ConnThread extends Thread {
     }
     else if (type == BYTE_TYPE) {
       byte val = ((Byte) value).byteValue();
-      out.writeInt(DataTools.swap(1));
+      writeInt(1);
       out.writeByte(val);
     }
     else if (type == CHAR_TYPE) {
       char val = ((Character) value).charValue();
-      //out.writeInt(DataTools.swap(1));
-      //out.writeByte((byte) val);
-      //fix this to write one byte only
-      out.writeInt(DataTools.swap(2));
-      out.writeChar(DataTools.swap(val));
+      writeInt(1);
+      out.writeByte((byte) val);
     }
     else if (type == FLOAT_TYPE) {
       float val = ((Float) value).floatValue();
-      out.writeInt(DataTools.swap(4));
-      out.writeInt(DataTools.swap(Float.floatToIntBits(val)));
+      writeInt(4);
+      writeInt(Float.floatToIntBits(val));
     }
     else if (type == BOOLEAN_TYPE) {
       boolean val = ((Boolean) value).booleanValue();
-      out.writeInt(DataTools.swap(1));
+      writeInt(1);
       out.writeBoolean(val);
     }
     else if (type == DOUBLE_TYPE) {
       double val = ((Double) value).doubleValue();
-      out.writeInt(DataTools.swap(8));
-      out.writeLong(DataTools.swap(Double.doubleToLongBits(val)));
+      writeInt(8);
+      writeLong(Double.doubleToLongBits(val));
     }
     else if (type == LONG_TYPE) {
       long val = ((Long) value).longValue();
-      out.writeInt(DataTools.swap(8));
-      out.writeLong(DataTools.swap(val));
+      writeInt(8);
+      writeLong(val);
     }
     else if (type == SHORT_TYPE) {
       short val = ((Short) value).shortValue();
-      out.writeInt(DataTools.swap(2));
-      out.writeShort(DataTools.swap(val));
+      writeInt(2);
+      writeShort(val);
     }
     out.flush();
   }
@@ -602,6 +587,64 @@ public class ConnThread extends Thread {
     debug("exec: " + cmd);
     r.exec(cmd);
   }
+
+  // - I/O helper methods -
+
+  /** Reads a short from the socket with the correct endianness. */
+  private short readShort() throws IOException {
+    short value = in.readShort();
+    if (little) value = DataTools.swap(value);
+    return value;
+  }
+
+  /** Reads an int from the socket with the correct endianness. */
+  private int readInt() throws IOException {
+    int value = in.readInt();
+    if (little) value = DataTools.swap(value);
+    return value;
+  }
+
+  /** Reads a long from the socket with the correct endianness. */
+  private long readLong() throws IOException {
+    long value = in.readLong();
+    if (little) value = DataTools.swap(value);
+    return value;
+  }
+
+  /** Reads a float from the socket with the correct endianness. */
+  private float readFloat() throws IOException {
+    float readFloat = in.readFloat();
+    int intRep = Float.floatToIntBits(readFloat);
+    if (little) intRep = DataTools.swap(intRep);
+    float value = Float.intBitsToFloat(intRep);
+    return value;
+  }
+
+  /** Reads a double from the socket with the correct endianness. */
+  private double readDouble() throws IOException {
+    double readDouble = in.readDouble();
+    long longRep = Double.doubleToLongBits(readDouble);
+    if (little) longRep = DataTools.swap(longRep);
+    double value = Double.longBitsToDouble(longRep);
+    return value;
+  }
+
+  /** Writes the given short to the socket with the correct endianness. */
+  private void writeShort(short value) throws IOException {
+    out.writeShort(little ? DataTools.swap(value) : value);
+  }
+
+  /** Writes the given int to the socket with the correct endianness. */
+  private void writeInt(int value) throws IOException {
+    out.writeInt(little ? DataTools.swap(value) : value);
+  }
+
+  /** Writes the given long to the socket with the correct endianness. */
+  private void writeLong(long value) throws IOException {
+    out.writeLong(little ? DataTools.swap(value) : value);
+  }
+
+  // - Debugging helper methods -
 
   /** Prints a debugging message if debug mode is enabled. */
   private void debug(String msg) {
@@ -639,6 +682,8 @@ public class ConnThread extends Thread {
 
   public static String getCommand(int cmd) {
     switch (cmd) {
+      case BYTE_ORDER:
+        return "BYTE_ORDER";
       case SETVAR:
         return "SETVAR";
       case GETVAR:
@@ -661,51 +706,4 @@ public class ConnThread extends Thread {
     return val;
   }
 
-/*
-  private byte[] readArray(DataInputStream in, int size, int arrayLength)
-    throws IOException
-  {
-    int readBytes = 0, totalBytes = size*arrayLength;
-    byte[] b = new byte[totalBytes];
-    while (readBytes < totalBytes) {
-      int packetSize = MAX_PACKET_SIZE;
-      if (readBytes+MAX_PACKET_SIZE > totalBytes) {
-        packetSize = totalBytes - readBytes;
-      }
-      int readThisTime = in.read(b, readBytes, packetSize);
-      while (readThisTime < packetSize) {
-        System.out.println("in loop: didn't read fully");
-        int additional = in.read(b, readBytes+readThisTime,
-          packetSize-readThisTime);
-        readThisTime += additional;
-      }
-      readBytes += packetSize;
-    }
-    return b;
-  }
-*/
-
 }
-
-/* Old code:
-int[] intArray = new int[arrayLength];
-int readBytes = 0, totalBytes = size*arrayLength;
-while (readBytes < totalBytes) {
-  int packetSize = MAX_PACKET_SIZE;
-  if (readBytes+MAX_PACKET_SIZE > totalBytes) {
-    packetSize = totalBytes - readBytes;
-  }
-  byte[] b = new byte[packetSize];
-  int readThisTime = in.read(b, 0, packetSize);
-  while (readThisTime < packetSize) {
-    System.out.println("in loop: didn't read fully");
-    int additional = in.read(b, readThisTime, packetSize-readThisTime);
-    readThisTime += additional;
-  }
-  for (int i=0; i<packetSize/4; i++) {
-    intArray[i + (readBytes/4)] = DataTools.bytesToInt(b, 4*i, true);
-  }
-  readBytes += packetSize;
-}
-theArray = intArray;
-*/
