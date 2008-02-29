@@ -666,6 +666,10 @@ public class BioRadReader extends FormatReader {
           }
         }
       }
+      else if (list[i].endsWith("data.raw")) {
+        used.add(
+          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
+      }
     }
 
     picFiles = (String[]) pics.toArray(new String[0]);
