@@ -176,6 +176,9 @@ public class BioRadReader extends FormatReader {
 
   private String[] picFiles;
 
+  private byte[][][] lut;
+  private int lastChannel;
+
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
@@ -202,6 +205,12 @@ public class BioRadReader extends FormatReader {
       new String(block).startsWith("[Input Sources]");
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return lut == null ? null : lut[lastChannel];
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
@@ -217,6 +226,8 @@ public class BioRadReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
+
+    lastChannel = getZCTCoords(no)[1];
 
     int bytes = byteFormat ? 1 : 2;
 
@@ -257,6 +268,7 @@ public class BioRadReader extends FormatReader {
     byteFormat = false;
     used = null;
     picFiles = null;
+    lut = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -586,44 +598,24 @@ public class BioRadReader extends FormatReader {
 
     // read color tables
     int numLuts = 0;
-    byte[][] lut = new byte[3][768];
+    lut = new byte[3][3][256];
     boolean eof = false;
+    int next = 0;
     while (!eof && numLuts < 3) {
-      if (in.getFilePointer() + lut[numLuts].length <= in.length()) {
-        in.read(lut[numLuts]);
-        numLuts++;
+      if (in.getFilePointer() + lut[numLuts][next].length <= in.length()) {
+        in.read(lut[numLuts][next++]);
+        if (next == 3) {
+          next = 0;
+          numLuts++;
+        }
       }
       else eof = true;
+      if (eof && numLuts == 0) lut = null;
     }
 
     if (debug && debugLevel >= 2) {
       debug(numLuts + " color table" + (numLuts == 1 ? "" : "s") + " present.");
     }
-
-    // convert color table bytes to floats
-    float[][][] colors = new float[numLuts][3][256];
-    for (int i=0; i<numLuts; i++) {
-      for (int l=0; l<256; l++) {
-        colors[i][0][l] = (float) (lut[i][l] & 0xff);
-        colors[i][1][l] = (float) (lut[i][l + 256] & 0xff);
-        colors[i][2][l] = (float) (lut[i][l + 512] & 0xff);
-      }
-    }
-
-    StringBuffer colorString = new StringBuffer();
-    for (int i=0; i<numLuts; i++) {
-      for (int j=0; j<256; j++) {
-        for (int k=0; k<3; k++) {
-          colorString = colorString.append(colors[i][k][j]);
-          if (!(j == 255 && k == 2)) {
-            colorString = colorString.append(",");
-          }
-        }
-      }
-      colorString = colorString.append("\n\n");
-    }
-
-    addMeta("luts", colorString.toString());
 
     status("Populating metadata");
 
@@ -674,8 +666,8 @@ public class BioRadReader extends FormatReader {
 
     picFiles = (String[]) pics.toArray(new String[0]);
 
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+    core.indexed[0] = lut != null;
+    core.falseColor[0] = true;
 
     // Populate the metadata store
 
@@ -792,14 +784,11 @@ public class BioRadReader extends FormatReader {
         int c = sizeC == null ? 1 : Integer.parseInt(sizeC);
         int t = sizeT == null ? 1 : Integer.parseInt(sizeT);
         int count = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-        if (z >= core.sizeZ[0] && c >= core.sizeC[0] && t >= core.sizeT[0] &&
-          count >= core.imageCount[0])
-        {
-          core.sizeZ[0] = z;
-          core.sizeC[0] = c;
-          core.sizeT[0] = t;
-          core.imageCount[0] = count;
-        }
+        core.sizeZ[0] = z;
+        core.sizeC[0] = c;
+        core.sizeT[0] = t;
+        if (count >= core.imageCount[0]) core.imageCount[0] = count;
+        else core.sizeC[0] = core.imageCount[0] / count;
       }
       else if (qName.equals("Z") || qName.equals("C") || qName.equals("T")) {
         String stamp = attributes.getValue("TimeCompleted");
