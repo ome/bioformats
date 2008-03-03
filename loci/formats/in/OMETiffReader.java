@@ -213,15 +213,17 @@ public class OMETiffReader extends BaseTiffReader {
 
     for (int i=0; i<tempIfdMap.size(); i++) {
       Vector v = (Vector) tempIfdMap.get(i);
-      for (int j=0; j<v.size(); j++) {
+      int ifdCount = ((Integer) tempIfdCount.get(i)).intValue();
+      for (int j=0; j<ifdCount; j++) {
         ifdMap[i][j] = ((Integer) v.get(j)).intValue();
       }
-      numIFDs[i] = v.size();
+      numIFDs[i] = ifdCount;
     }
 
     for (int i=0; i<tempFileMap.size(); i++) {
       Vector v = (Vector) tempFileMap.get(i);
-      for (int j=0; j<v.size(); j++) {
+      int ifdCount = ((Integer) tempIfdCount.get(i)).intValue();
+      for (int j=0; j<ifdCount; j++) {
         fileMap[i][j] = ((Integer) v.get(j)).intValue();
       }
     }
@@ -550,8 +552,19 @@ public class OMETiffReader extends BaseTiffReader {
           y.setElementAt(new Integer(0), idx);
 
           for (int i=1; i<Integer.parseInt(numPlanes); i++) {
-            v.setElementAt(new Integer(Integer.parseInt(ifd) + i), idx + i);
-            y.setElementAt(new Integer(0), idx + i);
+            if (idx + i < v.size()) {
+              v.setElementAt(new Integer(Integer.parseInt(ifd) + i), idx + i);
+              y.setElementAt(new Integer(0), idx + i);
+            }
+            else {
+              int diff = idx + i - v.size();
+              for (int q=0; q<diff; q++) {
+                v.add(new Integer(-1));
+                y.add(new Integer(-1));
+              }
+              v.add(new Integer(Integer.parseInt(ifd) + i));
+              y.add(new Integer(0));
+            }
           }
 
           if (tempIfdMap.size() >= seriesCount) {

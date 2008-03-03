@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
+import java.awt.Image;
 import java.io.IOException;
+import java.util.Vector;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -36,6 +38,10 @@ import loci.formats.meta.MetadataRetrieve;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/out/OMETiffWriter.java">SVN</a></dd></dl>
  */
 public class OMETiffWriter extends TiffWriter {
+
+  // -- Fields --
+
+  private Vector seriesMap;
 
   // -- Constructor --
 
@@ -54,17 +60,54 @@ public class OMETiffWriter extends TiffWriter {
       MetadataRetrieve retrieve = getMetadataRetrieve();
       String xml = MetadataTools.getOMEXML(retrieve);
 
-      // insert TiffData element
-      int pix = xml.indexOf("<Pixels ");
-      int end = xml.indexOf("</Pixels>", pix);
-      if (end != -1) {
-        xml = xml.substring(0, end) + "<TiffData/></Pixels>" +
-          xml.substring(end + 9);
-      }
-      else {
-        end = xml.indexOf("/>", pix);
-        xml = xml.substring(0, end) + "><TiffData/></Pixels>" +
-          xml.substring(end + 2);
+      int previousPixelsIndex = 0;
+
+      for (int series=0; series<retrieve.getImageCount(); series++) {
+        String dimensionOrder = retrieve.getPixelsDimensionOrder(series, 0);
+        int sizeZ = retrieve.getPixelsSizeZ(series, 0).intValue();
+        int sizeC = retrieve.getPixelsSizeC(series, 0).intValue();
+        int sizeT = retrieve.getPixelsSizeT(series, 0).intValue();
+
+        int imageCount = 0;
+        for (int q=0; q<seriesMap.size(); q++) {
+          if ((((Integer) seriesMap.get(q))).intValue() == series) imageCount++;
+        }
+
+        StringBuffer tiffData = new StringBuffer();
+        tiffData.append(">");
+        int num = 0;
+        for (int q=0; q<imageCount; q++) {
+          while (((Integer) seriesMap.get(num)).intValue() != series) {
+            num++;
+          }
+          int[] coordinates = FormatTools.getZCTCoords(dimensionOrder,
+            sizeZ, sizeC, sizeT, imageCount, q);
+          tiffData.append("<TiffData IFD=\"");
+          tiffData.append(num);
+          tiffData.append("\" FirstZ=\"");
+          tiffData.append(coordinates[0]);
+          tiffData.append("\" FirstC=\"");
+          tiffData.append(coordinates[1]);
+          tiffData.append("\" FirstT=\"");
+          tiffData.append(coordinates[2]);
+          tiffData.append("\" />");
+          num++;
+        }
+        tiffData.append("</Pixels>");
+
+        // insert TiffData element
+        int pix = xml.indexOf("<Pixels ", previousPixelsIndex);
+        int end = xml.indexOf("</Pixels", pix);
+        int len = 9;
+        if (end == -1) {
+          end = xml.indexOf("/>", pix);
+          len = 2;
+        }
+
+        String prefix = xml.substring(0, end);
+        String suffix = xml.substring(end + len);
+        xml = prefix + tiffData.toString() + suffix;
+        previousPixelsIndex = pix + 8;
       }
 
       // write OME-XML to the first IFD's comment
@@ -79,6 +122,17 @@ public class OMETiffWriter extends TiffWriter {
       }
     }
     super.close();
+    seriesMap = null;
+  }
+
+  // -- IFormatWriter API methods --
+
+  public void saveImage(Image image, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    if (seriesMap == null) seriesMap = new Vector();
+    seriesMap.add(new Integer(series));
+    super.saveImage(image, series, lastInSeries, last);
   }
 
 }

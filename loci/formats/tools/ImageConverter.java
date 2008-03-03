@@ -51,7 +51,7 @@ public final class ImageConverter {
   {
     String in = null, out = null;
     boolean stitch = false, separate = false, merge = false, fill = false;
-    int series = 0;
+    int series = -1;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
@@ -101,7 +101,6 @@ public final class ImageConverter {
     else reader.setMetadataStore(store);
 
     reader.setId(in);
-    reader.setSeries(series);
 
     LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
 
@@ -114,17 +113,24 @@ public final class ImageConverter {
     LogTools.print("[" + writer.getFormat() + "] ");
     long mid = System.currentTimeMillis();
 
-    int num = writer.canDoStacks() ? reader.getImageCount() : 1;
+    int num = writer.canDoStacks() ? reader.getSeriesCount() : 1;
     long read = 0, write = 0;
-    for (int i=0; i<num; i++) {
-      long s = System.currentTimeMillis();
-      Image image = reader.openImage(i);
-      long m = System.currentTimeMillis();
-      writer.saveImage(image, i == num - 1);
-      long e = System.currentTimeMillis();
-      LogTools.print(".");
-      read += m - s;
-      write += e - m;
+    int first = series == -1 ? 0 : series;
+    int last = series == -1 ? num : series + 1;
+    for (int q=first; q<last; q++) {
+      reader.setSeries(q);
+      int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
+      for (int i=0; i<numImages; i++) {
+        long s = System.currentTimeMillis();
+        Image image = reader.openImage(i);
+        long m = System.currentTimeMillis();
+        writer.saveImage(image, q, i == numImages - 1,
+          q == num - 1 && i == numImages - 1);
+        long e = System.currentTimeMillis();
+        LogTools.print(".");
+        read += m - s;
+        write += e - m;
+      }
     }
     long end = System.currentTimeMillis();
     LogTools.println(" [done]");

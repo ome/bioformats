@@ -120,6 +120,10 @@ public class TCSReader extends FormatReader {
       if (debug) LogTools.trace(e);
       return false;
     }
+    catch (ArrayIndexOutOfBoundsException e) {
+      if (debug) LogTools.trace(e);
+      return false;
+    }
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
