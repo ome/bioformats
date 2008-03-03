@@ -72,6 +72,9 @@ public class FV1000Reader extends FormatReader {
 
   private POITools poi;
 
+  private short[][][] lut;
+  private int lastChannel;
+
   // -- Constructor --
 
   /** Constructs a new FV1000 reader. */
@@ -115,6 +118,12 @@ public class FV1000Reader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return lut[lastChannel];
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -123,6 +132,8 @@ public class FV1000Reader extends FormatReader {
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
+
+    lastChannel = getZCTCoords(no)[1];
 
     String file = (String) (series == 0 ? tiffs.get(no) : previewNames.get(no));
     RandomAccessStream plane = getFile(file);
@@ -171,6 +182,7 @@ public class FV1000Reader extends FormatReader {
       previewNames = null;
       if (poi != null) poi.close();
       poi = null;
+      lastChannel = 0;
     }
   }
 
@@ -297,6 +309,7 @@ public class FV1000Reader extends FormatReader {
 
     previewNames = new Vector();
 
+    Vector lutNames = new Vector();
     Hashtable filenames = new Hashtable();
     String prefix = "";
     while (st.hasMoreTokens()) {
@@ -329,6 +342,21 @@ public class FV1000Reader extends FormatReader {
             value = first + last;
           }
           if (thumbId == null) thumbId = value.trim();
+        }
+        else if (key.startsWith("LutFileName")) {
+          value = value.substring(1, value.length() - 1);
+          if (value.indexOf("-R") == -1) {
+            value = value.replaceAll("/", File.separator);
+            value = value.replace('\\', File.separatorChar);
+            while (value.indexOf("GST") != -1) {
+              String first = value.substring(0, value.indexOf("GST"));
+              int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
+                value.length() : value.indexOf(File.separator);
+              String last = value.substring(value.lastIndexOf("=", ndx) + 1);
+              value = first + last;
+            }
+          }
+          lutNames.add(path + value);
         }
         else if (value.indexOf("-R") != -1) {
           value = value.replaceAll("/", File.separator);
@@ -566,11 +594,24 @@ public class FV1000Reader extends FormatReader {
       Arrays.fill(core.thumbSizeY, thumbReader.getSizeY());
     }
 
+    lut = new short[core.sizeC[0]][3][65536];
+    byte[] buffer = new byte[65536 * 4];
+    for (int c=0; c<core.sizeC[0]; c++) {
+      RandomAccessStream stream = getFile((String) lutNames.get(c));
+      stream.seek(stream.length() - 65536 * 4);
+      stream.read(buffer);
+      for (int q=0; q<buffer.length; q+=4) {
+        lut[c][0][q / 4] = buffer[q + 1];
+        lut[c][1][q / 4] = buffer[q + 2];
+        lut[c][2][q / 4] = buffer[q + 3];
+      }
+    }
+
     core.rgb[0] = false;
     core.littleEndian[0] = false;
     core.interleaved[0] = false;
     core.metadataComplete[0] = true;
-    core.indexed[0] = false;
+    core.indexed[0] = lut != null;
     core.falseColor[0] = false;
 
     // populate MetadataStore
