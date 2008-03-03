@@ -66,7 +66,7 @@ public class LociImporter implements PlugIn {
     success = false;
     if ("about".equals(arg)) About.about();
     else {
-      if (!Checker.checkVersion()) return;
+      if (!Checker.checkJava() || !Checker.checkImageJ()) return;
       HashSet missing = new HashSet();
       Checker.checkLibrary(Checker.BIO_FORMATS, missing);
       Checker.checkLibrary(Checker.OME_JAVA_XML, missing);

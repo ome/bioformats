@@ -403,10 +403,31 @@ public class Importer {
           boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
           boolean needComposite = doMerge && (cSize > 3 || eight);
           int merge = (needComposite || !doMerge) ? 1 : cSize;
-          stackB = new CustomStack(w, h, null, id, r, stackOrder, merge);
-          for (int j=0; j<num[i]; j++) {
-            ((CustomStack) stackB).addSlice(constructSliceLabel(j, r,
-            retrieve, i, new int[][] {zCount, cCount, tCount}));
+          // NB: CustomStack extends VirtualStack, which only exists in
+          // ImageJ v1.39+. We avoid referencing it directly to keep the
+          // class loader happy for earlier versions of ImageJ.
+          try {
+            ReflectedUniverse ru = new ReflectedUniverse();
+            ru.exec("import loci.plugins.CustomStack");
+            ru.setVar("w", w);
+            ru.setVar("h", h);
+            ru.setVar("id", id);
+            ru.setVar("r", r);
+            ru.setVar("stackOrder", stackOrder);
+            ru.setVar("merge", merge);
+            stackB = (ImageStack) ru.exec("stackB = " +
+              "new CustomStack(w, h, null, id, r, stackOrder, merge)");
+            for (int j=0; j<num[i]; j++) {
+              String label = constructSliceLabel(j, r,
+                retrieve, i, new int[][] {zCount, cCount, tCount});
+              ru.setVar("label", label);
+              ru.exec("stackB.addSlice(label)");
+            }
+          }
+          catch (ReflectException exc) {
+            reportException(exc, options.isQuiet(),
+              "Sorry, there was a problem constructing the virtual stack");
+            return;
           }
         }
         else {

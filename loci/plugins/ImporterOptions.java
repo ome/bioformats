@@ -414,15 +414,22 @@ public class ImporterOptions implements ItemListener {
    */
   public int promptIdLocal() {
     if (firstTime && IJ.isMacOSX()) {
-      // present user with one-time dialog box
-      IJ.showMessage("Bio-Formats",
-        "Please note: There is a bug in Java on Mac OS X with the\n" +
-        "native file chooser that crashes ImageJ if you click on a file\n" +
-        "in cxd, ipw, oib or zvi format while in column view mode.\n" +
-        "You can work around the problem by switching to list view\n" +
-        "(press Command+2) or by checking the \"Use JFileChooser\n" +
-        "to Open/Save\" option in the Edit>Options>Input/Output...\n" +
-        "dialog. This message will not appear again.");
+      String osVersion = System.getProperty("os.version");
+      if (osVersion == null ||
+        osVersion.startsWith("10.4.") ||
+        osVersion.startsWith("10.3.") ||
+        osVersion.startsWith("10.2."))
+      {
+        // present user with one-time dialog box
+        IJ.showMessage("Bio-Formats",
+          "Please note: There is a bug in Java on Mac OS X with the\n" +
+          "native file chooser that crashes ImageJ if you click on a file\n" +
+          "in cxd, ipw, oib or zvi format while in column view mode.\n" +
+          "You can work around the problem by switching to list view\n" +
+          "(press Command+2) or by checking the \"Use JFileChooser\n" +
+          "to Open/Save\" option in the Edit>Options>Input/Output...\n" +
+          "dialog. This message will not appear again.");
+      }
     }
     if (id == null) {
       // prompt user for the filename (or grab from macro options)

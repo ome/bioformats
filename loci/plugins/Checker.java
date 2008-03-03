@@ -114,16 +114,33 @@ public final class Checker {
   }
 
   /** Checks for a new enough version of the Java Runtime Environment. */
-  public static boolean checkVersion() {
+  public static boolean checkJava() {
     String version = System.getProperty("java.version");
     double ver = Double.parseDouble(version.substring(0, 3));
     if (ver < 1.4) {
       IJ.error("LOCI Plugins",
-        "Sorry, the LOCI Plugins require Java 1.4 or later." +
+        "Sorry, the LOCI plugins require Java 1.4 or later." +
         "\nYou can download ImageJ with JRE 5.0 from the ImageJ web site.");
       return false;
     }
     return true;
+  }
+
+  /** Checks whether the version of ImageJ is new enough. */
+  public static boolean checkImageJ() {
+    boolean success;
+    try {
+      String version = IJ.getVersion();
+      success = version != null && version.compareTo("1.34") >= 0;
+    }
+    catch (NoSuchMethodError err) {
+      success = false;
+    }
+    if (!success) {
+      IJ.error("LOCI Plugins",
+        "Sorry, the LOCI plugins require ImageJ v1.34 or later.");
+    }
+    return success;
   }
 
   /**

@@ -57,7 +57,7 @@ public class OMEPlugin implements PlugIn {
 
   /** Executes the plugin. */
   public void run(String arg) {
-    if (!Checker.checkVersion()) return;
+    if (!Checker.checkJava() || !Checker.checkImageJ()) return;
     HashSet missing = new HashSet();
     Checker.checkLibrary(Checker.BIO_FORMATS, missing);
     Checker.checkLibrary(Checker.OME_JAVA_XML, missing);

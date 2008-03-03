@@ -60,7 +60,7 @@ public class LociUploader implements PlugIn {
 
   public void run(String arg) {
     // check that we can safely execute the plugin
-    if (!Checker.checkVersion()) return;
+    if (!Checker.checkJava() || !Checker.checkImageJ()) return;
     HashSet missing = new HashSet();
     Checker.checkLibrary(Checker.BIO_FORMATS, missing);
     Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
