@@ -29,7 +29,8 @@ import java.util.*;
 import loci.formats.*;
 
 /**
- * TiffReader is the file format reader for TIFF files, including OME-TIFF.
+ * TiffReader is the file format reader for regular TIFF files,
+ * not of any specific TIFF variant.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/TiffReader.java">Trac</a>,
