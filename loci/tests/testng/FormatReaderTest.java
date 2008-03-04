@@ -470,72 +470,47 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all"
    */
-  public void testMemoryUsage() {
+  public void testPerformance() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestMemoryUsage";
+    String testName = "\ttestPerformance";
     boolean success = true;
     String msg = null;
     try {
-      Runtime r = Runtime.getRuntime();
-      int maxMemory = (int) ((r.totalMemory() - r.freeMemory()) >> 20);
-      int initialMemory = maxMemory;
-
-      int mem = (int) ((r.totalMemory() - r.freeMemory()) >> 20);
-      if (mem > maxMemory) maxMemory = mem;
-
-      for (int i=0; i<reader.getImageCount(); i++) {
-        BufferedImage b = reader.openImage(i);
-        mem = (int) ((r.totalMemory() - r.freeMemory()) >> 20);
-        if (mem > maxMemory) maxMemory = mem;
-      }
-      int finalMemory = (int) ((r.totalMemory() - r.freeMemory()) >> 20);
-
-      // max memory usage should be no more than twice the expected value
-      int memUse = config.getMemoryUse();
-      if (maxMemory - initialMemory > 2 * (memUse + 1)) {
-        success = false;
-        msg =  "used " + (maxMemory - initialMemory) + "MB; expected <= " +
-          (2 * memUse + 1) + "MB";
-      }
-
-      // check that the reader doesn't have any significant memory leaks
-      if (finalMemory - initialMemory > 10) {
-        success = false;
-        String leakMsg = (finalMemory - initialMemory) + "MB leaked";
-        msg = msg == null ? leakMsg : msg + "; " + leakMsg;
-      }
-    }
-    catch (Throwable t) {
-      LogTools.trace(t);
-      success = false;
-    }
-    result(testName, success, msg);
-  }
-
-  /**
-   * @testng.test groups = "all"
-   */
-  public void testAccessTime() {
-    if (!initFile()) return;
-    String file = reader.getCurrentFile();
-    String testName = "\ttestAccessTime";
-    boolean success = true;
-    String msg = null;
-    try {
-      double proper = config.getTimePerPlane();
-      if (proper == 0) {
+      int properMem = config.getMemoryUse();
+      double properTime = config.getTimePerPlane();
+      if (properMem == 0 || properTime == 0) {
         success = false;
         msg = "no configuration";
       }
       else {
-        long l1 = System.currentTimeMillis();
-        for (int i=0; i<reader.getImageCount(); i++) reader.openImage(i);
-        long l2 = System.currentTimeMillis();
-        double actual = (double) (l2 - l1) / reader.getImageCount();
-        if (actual - timeMultiplier * proper > 20.0) {
+        Runtime r = Runtime.getRuntime();
+        System.gc(); // clean memory before we start
+        long m1 = r.totalMemory() - r.freeMemory();
+        long t1 = System.currentTimeMillis();
+        int totalPlanes = 0;
+        int seriesCount = reader.getSeriesCount();
+        for (int i=0; i<seriesCount; i++) {
+          reader.setSeries(i);
+          int imageCount = reader.getImageCount();
+          totalPlanes += imageCount;
+          for (int j=0; j<imageCount; j++) reader.openImage(j);
+        }
+        long t2 = System.currentTimeMillis();
+        long m2 = r.totalMemory() - r.freeMemory();
+        double actualTime = (double) (t2 - t1) / totalPlanes;
+        int actualMem = (int) ((m2 - m1) >> 20);
+
+        // check time elapsed 
+        if (actualTime - timeMultiplier * properTime > 20.0) {
           success = false;
-          msg = "got " + actual + " ms, expected " + proper + " ms";
+          msg = "got " + actualTime + " ms, expected " + properTime + " ms";
+        }
+
+        // check memory used
+        else if (actualMem > properMem) {
+          success = false;
+          msg =  "used " + actualMem + " MB; expected <= " + properMem + " MB";
         }
       }
     }
@@ -713,9 +688,8 @@ public class FormatReaderTest {
       line.append(new Location(file).getName());
       line.append("\" total_series=");
       line.append(reader.getSeriesCount());
-      long start = System.currentTimeMillis();
-      int total = 0;
-      for (int i=0; i<reader.getSeriesCount(); i++) {
+      int seriesCount = reader.getSeriesCount();
+      for (int i=0; i<seriesCount; i++) {
         reader.setSeries(i);
         line.append(" [series=");
         line.append(i);
@@ -736,16 +710,29 @@ public class FormatReaderTest {
         line.append(" falseColor=" + reader.isFalseColor());
         line.append(" md5=" + md5(reader.openBytes(0)));
         line.append("]");
-
-        total += reader.getImageCount();
-        for (int j=1; j<reader.getImageCount(); j++) reader.openImage(j);
       }
-      long end = System.currentTimeMillis();
+
+      // evaluate performance
+      Runtime r = Runtime.getRuntime();
+      System.gc(); // clean memory before we start
+      long m1 = r.totalMemory() - r.freeMemory();
+      long t1 = System.currentTimeMillis();
+      int totalPlanes = 0;
+      for (int i=0; i<seriesCount; i++) {
+        reader.setSeries(i);
+        int imageCount = reader.getImageCount();
+        totalPlanes += imageCount;
+        for (int j=0; j<imageCount; j++) reader.openImage(j);
+      }
+      long t2 = System.currentTimeMillis();
+      long m2 = r.totalMemory() - r.freeMemory();
+      double actualTime = (double) (t2 - t1) / totalPlanes;
+      int actualMem = (int) ((m2 - m1) >> 20);
 
       line.append(" access=");
-      line.append((end - start) / total);
+      line.append(actualTime);
       line.append(" mem=");
-      line.append(new RandomAccessStream(file).length());
+      line.append(actualMem);
       line.append(" test=true\n");
 
       File f = new File(new Location(file).getParent(), ".bioformats");
