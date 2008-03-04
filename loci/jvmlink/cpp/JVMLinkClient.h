@@ -65,14 +65,23 @@ public:
 	JVMLinkObject* getVar(CString);
 	void setVar(JVMLinkObject*);
 	void setVar(CString, int);
+	void setVar(CString, int*, int);
 	void setVar(CString, CString);
+	void setVar(CString, CString*, int);
 	void setVar(CString, char);
+	void setVar(CString, char*, int);
 	void setVar(CString, Byte);
+	void setVar(CString, Byte*, int);
 	void setVar(CString, float);
+	void setVar(CString, float*, int);
 	void setVar(CString, bool);
+	void setVar(CString, bool*, int);
 	void setVar(CString, double);
+	void setVar(CString, double*, int);
 	void setVar(CString, long long);
+	void setVar(CString, long long*, int);
 	void setVar(CString, short);
+	void setVar(CString, short*, int);
 	void exec(CString);
 
 	~JVMLinkClient(void);
