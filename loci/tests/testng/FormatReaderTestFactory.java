@@ -54,10 +54,15 @@ public class FormatReaderTestFactory {
     // scan for files
     Vector files = new Vector();
     System.out.println("Scanning for files...");
+    long start = System.currentTimeMillis();
     getFiles(baseDir, files);
-    LogTools.println("--------------------");
+    long end = System.currentTimeMillis();
+    long avg = (end - start) / files.size();
+    double time = (end - start) / 1000.0;
+    LogTools.println("----------------------------------------");
     LogTools.println("Total files: " + files.size());
-    LogTools.println("--------------------");
+    LogTools.println("Scan time: " + time + " s (" + avg + " ms/file)");
+    LogTools.println("----------------------------------------");
 
     // create test class instances
     System.out.println("Building list of tests...");
