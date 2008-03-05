@@ -40,13 +40,11 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class IPWReader extends BaseTiffReader {
+public class IPWReader extends FormatReader {
 
   // -- Fields --
 
   private Vector imageFiles;
-  private byte[] header;  // general image header data
-  private byte[] tags; // tags data
 
   private POITools poi;
 
@@ -69,7 +67,7 @@ public class IPWReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessStream stream =
       poi.getDocumentStream((String) imageFiles.get(0));
-    ifds = TiffTools.getIFDs(stream);
+    Hashtable[] ifds = TiffTools.getIFDs(stream);
     int[] bits = TiffTools.getBitsPerSample(ifds[0]);
     if (bits[0] <= 8) {
       int[] colorMap =
@@ -101,7 +99,7 @@ public class IPWReader extends BaseTiffReader {
 
     RandomAccessStream stream =
       poi.getDocumentStream((String) imageFiles.get(no));
-    ifds = TiffTools.getIFDs(stream);
+    Hashtable[] ifds = TiffTools.getIFDs(stream);
     TiffTools.getSamples(ifds[0], stream, buf, x, y, w, h);
     stream.close();
 
@@ -136,20 +134,126 @@ public class IPWReader extends BaseTiffReader {
   public void close() throws IOException {
     super.close();
 
-    header = null;
-    tags = null;
-
     if (poi != null) poi.close();
     poi = null;
   }
 
-  // -- Internal BaseTiffReader API methods --
+  // -- Internal FormatReader API methods --
 
-  /* @see BaseTiffReader#initMetadata() */
-  public void initMetadata() throws FormatException, IOException {
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (debug) debug("IPWReader.initFile(" + id + ")");
+
+    currentId = id;
+    metadata = new Hashtable();
+    core = new CoreMetadata(1);
+    Arrays.fill(core.orderCertain, true);
+    getMetadataStore().createRoot();
+
+    in = new RandomAccessStream(id);
+    poi = new POITools(currentId);
+
+    imageFiles = new Vector();
+
+    Vector fileList = poi.getDocumentList();
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    store.setImageName("", 0);
+
+    for (int i=0; i<fileList.size(); i++) {
+      String name = (String) fileList.get(i);
+      String relativePath =
+        name.substring(name.lastIndexOf(File.separator) + 1);
+
+      if (relativePath.equals("CONTENTS")) {
+        addMeta("Version", new String(poi.getDocumentBytes(name)).trim());
+      }
+      else if (relativePath.equals("FrameRate")) {
+        byte[] b = poi.getDocumentBytes(name, 4);
+        addMeta("Frame Rate", new Integer(DataTools.bytesToInt(b, true)));
+      }
+      else if (relativePath.equals("FrameInfo")) {
+        byte[] b = poi.getDocumentBytes(name);
+        for (int q=0; q<b.length/2; q++) {
+          addMeta("FrameInfo " + q,
+            new Short(DataTools.bytesToShort(b, q*2, 2, true)));
+        }
+      }
+      else if (relativePath.equals("ImageInfo")) {
+        String description = new String(poi.getDocumentBytes(name)).trim();
+        addMeta("Image Description", description);
+
+        String timestamp = null;
+
+        // parse the description to get channels/slices/times where applicable
+        // basically the same as in SEQReader
+        if (description != null) {
+          StringTokenizer tokenizer = new StringTokenizer(description, "\n");
+          while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken();
+            String label = "Timestamp";
+            String data;
+            if (token.indexOf("=") != -1) {
+              label = token.substring(0, token.indexOf("=")).trim();
+              data = token.substring(token.indexOf("=") + 1).trim();
+            }
+            else data = token.trim();
+            addMeta(label, data);
+            if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data);
+            else if (label.equals("slices")) {
+              core.sizeT[0] = Integer.parseInt(data);
+            }
+            else if (label.equals("channels")) {
+              core.sizeC[0] = Integer.parseInt(data);
+            }
+            else if (label.equals("Timestamp")) timestamp = data;
+          }
+        }
+        store.setImageDescription(description, 0);
+
+        if (timestamp != null) {
+          if (timestamp.length() > 26) {
+            timestamp = timestamp.substring(timestamp.length() - 26);
+          }
+          SimpleDateFormat fmt =
+            new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS aa");
+          Date d = fmt.parse(timestamp, new ParsePosition(0));
+          fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+          store.setImageCreationDate(fmt.format(d), 0);
+        }
+        else {
+          store.setImageCreationDate(DataTools.convertDate(
+            System.currentTimeMillis(), DataTools.UNIX), 0);
+        }
+      }
+      else if (relativePath.equals("ImageTIFF")) {
+        // pixel data
+        String idx = "0";
+        if (!name.substring(0,
+          name.lastIndexOf(File.separator)).equals("Root Entry"))
+        {
+          idx = name.substring(21, name.indexOf(File.separator, 22));
+        }
+
+        int n = Integer.parseInt(idx);
+        if (n < imageFiles.size()) imageFiles.setElementAt(name, n);
+        else {
+          int diff = n - imageFiles.size();
+          for (int q=0; q<diff; q++) {
+            imageFiles.add("");
+          }
+          imageFiles.add(name);
+        }
+        core.imageCount[0]++;
+      }
+    }
+
+    status("Populating metadata");
+
     RandomAccessStream stream =
       poi.getDocumentStream((String) imageFiles.get(0));
-    ifds = TiffTools.getIFDs(stream);
+    Hashtable[] ifds = TiffTools.getIFDs(stream);
     stream.close();
 
     core.rgb[0] = (TiffTools.getIFDIntValue(ifds[0],
@@ -167,48 +271,11 @@ public class IPWReader extends BaseTiffReader {
 
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
-    // parse the image description
-    String description = new String(tags).trim();
-    addMeta("Image Description", description);
-
     // default values
 
-    core.sizeZ[0] = 1;
-    core.sizeC[0] = 1;
-    core.sizeT[0] = getImageCount();
     addMeta("slices", "1");
     addMeta("channels", "1");
     addMeta("frames", new Integer(getImageCount()));
-
-    String timestamp = null;
-
-    // parse the description to get channels/slices/times where applicable
-    // basically the same as in SEQReader
-    if (description != null) {
-      StringTokenizer tokenizer = new StringTokenizer(description, "\n");
-      while (tokenizer.hasMoreTokens()) {
-        String token = tokenizer.nextToken();
-        String label = "Timestamp";
-        String data;
-        if (token.indexOf("=") != -1) {
-          label = token.substring(0, token.indexOf("=")).trim();
-          data = token.substring(token.indexOf("=") + 1).trim();
-        }
-        else {
-          data = token.trim();
-        }
-        addMeta(label, data);
-        if (label.equals("frames")) core.sizeZ[0] = Integer.parseInt(data);
-        else if (label.equals("slices")) core.sizeT[0] = Integer.parseInt(data);
-        else if (label.equals("channels")) {
-          core.sizeC[0] = Integer.parseInt(data);
-        }
-        else if (label.equals("Timestamp")) timestamp = data;
-      }
-    }
-
-    String version = new String(header).trim();
-    addMeta("Version", version);
 
     Hashtable h = ifds[0];
     core.sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
@@ -218,6 +285,12 @@ public class IPWReader extends BaseTiffReader {
     if (core.sizeZ[0] == 0) core.sizeZ[0] = 1;
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
+
+    if (core.sizeZ[0] * getRGBChannelCount() * core.sizeT[0] <
+      core.imageCount[0])
+    {
+      core.sizeZ[0] = core.imageCount[0];
+    }
 
     if (core.rgb[0]) core.sizeC[0] *= 3;
 
@@ -258,94 +331,7 @@ public class IPWReader extends BaseTiffReader {
       }
     }
 
-    // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-
-    if (timestamp != null) {
-      if (timestamp.length() > 26) {
-        timestamp = timestamp.substring(timestamp.length() - 26);
-      }
-      SimpleDateFormat fmt = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS aa");
-      Date d = fmt.parse(timestamp, new ParsePosition(0));
-      fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      store.setImageCreationDate(fmt.format(d), 0);
-    }
-    else {
-      store.setImageCreationDate(
-        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
-    }
-
     MetadataTools.populatePixels(store, this);
-    store.setImageDescription(description, 0);
-  }
-
-  // -- Internal FormatReader API methods --
-
-  /* @see loci.formats.FormatReader#initFile(String) */
-  protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("IPWReader.initFile(" + id + ")");
-
-    currentId = id;
-    metadata = new Hashtable();
-    core = new CoreMetadata(1);
-    Arrays.fill(core.orderCertain, true);
-    getMetadataStore().createRoot();
-
-    in = new RandomAccessStream(id);
-    poi = new POITools(currentId);
-
-    imageFiles = new Vector();
-
-    Vector fileList = poi.getDocumentList();
-
-    for (int i=0; i<fileList.size(); i++) {
-      String name = (String) fileList.get(i);
-      String relativePath =
-        name.substring(name.lastIndexOf(File.separator) + 1);
-
-      if (relativePath.equals("CONTENTS")) {
-        header = poi.getDocumentBytes(name);
-      }
-      else if (relativePath.equals("FrameRate")) {
-        byte[] b = poi.getDocumentBytes(name, 4);
-        addMeta("Frame Rate", new Integer(DataTools.bytesToInt(b, true)));
-      }
-      else if (relativePath.equals("FrameInfo")) {
-        byte[] b = poi.getDocumentBytes(name);
-        for (int q=0; q<b.length/2; q++) {
-          addMeta("FrameInfo " + q,
-            new Short(DataTools.bytesToShort(b, q*2, 2, true)));
-        }
-      }
-      else if (relativePath.equals("ImageInfo")) {
-        tags = poi.getDocumentBytes(name);
-      }
-      else if (relativePath.equals("ImageTIFF")) {
-        // pixel data
-        String idx = "0";
-        if (!name.substring(0,
-          name.lastIndexOf(File.separator)).equals("Root Entry"))
-        {
-          idx = name.substring(21, name.indexOf(File.separator, 22));
-        }
-
-        int n = Integer.parseInt(idx);
-        if (n < imageFiles.size()) imageFiles.setElementAt(name, n);
-        else {
-          int diff = n - imageFiles.size();
-          for (int q=0; q<diff; q++) {
-            imageFiles.add("");
-          }
-          imageFiles.add(name);
-        }
-        core.imageCount[0]++;
-      }
-    }
-
-    status("Populating metadata");
-    initMetadata();
   }
 
 }
