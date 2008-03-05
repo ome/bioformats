@@ -72,8 +72,6 @@ public class TCSReader extends FormatReader {
 
   public TCSReader() {
     super("Leica TCS TIFF", new String[] {"tif", "tiff", "xml"});
-    blockCheckLen = 524288;
-    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -96,31 +94,22 @@ public class TCSReader extends FormatReader {
         if (!lei.exists()) lei = new Location(prefix + ".LEI");
       }
     }
-    return !lei.exists() && super.isThisType(name, open);
-  }
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
+    if (lei.exists()) return false;
     try {
-      if (block.length < blockCheckLen) return false;
-      RandomAccessStream stream = new RandomAccessStream(block);
-      Hashtable ifd = TiffTools.getFirstIFD(stream);
-      stream.close();
-
-      if (ifd == null) return false;
-      String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
-      if (document == null) document = "";
-      Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
-      String software = s instanceof String ? (String) s :
-        s instanceof String[] ? ((String[]) s)[0] : null;
-      if (software == null) software = "";
-      return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
+      return isThisType(new RandomAccessStream(name));
     }
     catch (IOException e) {
       if (debug) LogTools.trace(e);
       return false;
     }
-    catch (ArrayIndexOutOfBoundsException e) {
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    try {
+      return isThisType(new RandomAccessStream(block));
+    }
+    catch (IOException e) {
       if (debug) LogTools.trace(e);
       return false;
     }
@@ -426,7 +415,28 @@ public class TCSReader extends FormatReader {
     }
   }
 
-  // -- Helper class --
+  // -- Helper methods --
+
+  private boolean isThisType(RandomAccessStream stream) throws IOException {
+    // check for Leica TCS IFD directory entries
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    stream.close();
+
+    if (ifd == null) return false;
+    String document = (String) ifd.get(new Integer(TiffTools.DOCUMENT_NAME));
+    if (document == null) document = "";
+    Object s = ifd.get(new Integer(TiffTools.SOFTWARE));
+    String software = null;
+    if (s instanceof String) software = (String) s;
+    else if (s instanceof String[]) {
+      String[] ss = (String[]) s;
+      if (ss.length > 0) software = ss[0];
+    }
+    if (software == null) software = "";
+    return document.startsWith("CHANNEL") || software.trim().equals("TCSNTV");
+  }
+
+  // -- Helper classes --
 
   /** SAX handler for parsing XML. */
   class TCSHandler extends DefaultHandler {
