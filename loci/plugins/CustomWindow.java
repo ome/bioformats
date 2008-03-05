@@ -169,9 +169,9 @@ public class CustomWindow extends StackWindow
           while (!die) {
             int ms = 200;
             if (anim) {
-              int c = getHSChannel();
-              int z = getHSSlice();
-              int t = getHSFrame() + 1;
+              int c = imp.getChannel();
+              int z = imp.getSlice();
+              int t = imp.getFrame() + 1;
               int sizeT = frameSelector.getMaximum() - 1;
               if (t > sizeT) t = 1;
               setPosition(c, z, t);
@@ -233,8 +233,8 @@ public class CustomWindow extends StackWindow
     Object src = e.getSource();
     if (src == cSpin) {
       int c = ((Number) cSpin.getValue()).intValue();
-      int z = getHSSlice();
-      int t = getHSFrame();
+      int z = imp.getSlice();
+      int t = imp.getFrame();
       setPosition(c, z, t);
     }
   }
@@ -245,8 +245,8 @@ public class CustomWindow extends StackWindow
     Object src = e.getSource();
     if (src == cBox) {
       int c = cBox.getState() ? 1 : 2;
-      int z = getHSSlice();
-      int t = getHSFrame();
+      int z = imp.getSlice();
+      int t = imp.getFrame();
       setPosition(c, z, t);
     }
   }
