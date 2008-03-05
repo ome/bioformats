@@ -470,7 +470,7 @@
 				The optional PinholeAize attribute allows specifying adjustable pin hole diameters for confocal microscopes.
 				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
 				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
-				The Model attribute describes the type of microscopy performed for each channel.  This may be set to:
+				The Mode attribute describes the type of microscopy performed for each channel.  This may be set to:
 				'Wide-field','Wide-field','Laser Scanning Microscopy','Laser Scanning Confocal','Spinning Disk Confocal','Slit Scan Confocal','Multi-Photon Microscopy',
 				'Structured Illumination','Single Molecule Imaging','Total Internal Reflection','Fluorescence-Lifetime','Spectral Imaging',
 				'Fluorescence Correlation Spectroscopy','Near Field Scanning Optical Microscopy','Second Harmonic Generation Imaging'.
