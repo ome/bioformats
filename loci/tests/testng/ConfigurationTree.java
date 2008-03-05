@@ -122,7 +122,6 @@ public class ConfigurationTree {
 
       Hashtable local = null;
 
-      System.out.println("line=" + line + ", end=" + end);//TEMP
       StringTokenizer st = new StringTokenizer(line.substring(end));
       while (st.hasMoreTokens()) {
         String token = st.nextToken();
