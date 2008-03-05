@@ -124,8 +124,8 @@ public abstract class FormatHandler implements IFormatHandler {
     for (int i=0; i<suffixes.length; i++) {
       String s = "." + suffixes[i];
       if (lname.endsWith(s)) return true;
-      for (int i=0; i<COMPRESSION_SUFFIXES.length; i++) {
-        if (lname.endsWith(s + "." + COMPRESSION_SUFFIXES[i])) return true;
+      for (int j=0; j<COMPRESSION_SUFFIXES.length; j++) {
+        if (lname.endsWith(s + "." + COMPRESSION_SUFFIXES[j])) return true;
       }
     }
     return false;
