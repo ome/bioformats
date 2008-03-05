@@ -68,7 +68,7 @@ public class FormatReaderTestFactory {
     LogTools.print("Scan time: " + time + " s");
     if (files.size() > 0) {
       long avg = (end - start) / files.size();
-      LogTools.println(" " + avg + " ms/file)");
+      LogTools.println(" (" + avg + " ms/file)");
     }
     else LogTools.println();
     LogTools.println(DIVIDER);
