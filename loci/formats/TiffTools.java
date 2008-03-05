@@ -465,12 +465,12 @@ public final class TiffTools {
         }
         if (count == 1) value = new Short(in.readByte());
         else {
-          short[] bytes = new short[count];
-          for (int j=0; j<count; j++) {
-            bytes[j] = in.readByte();
-            if (bytes[j] < 0) bytes[j] += 255;
-          }
-          value = bytes;
+          byte[] bytes = new byte[count];
+          in.readFully(bytes);
+          // bytes are unsigned, so use shorts
+          short[] shorts = new short[count];
+          for (int j=0; j<count; j++) shorts[j] = (short) (bytes[j] & 0xff);
+          value = shorts;
         }
       }
       else if (type == ASCII) {
