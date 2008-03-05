@@ -35,3 +35,43 @@ public class FileOpsTest {
       " ms (" + ((t2 - t1) / list.length) + "/file)");
   }
 }
+
+/*
+Some results on a MacPro 2 x 2.66 GHz Dual-Core Intel Xeon
+Networked file system over SMB on local network (gigabit?)
+Windows and Linux results via Parallels v2
+
+LINUX - NETWORK
+File.exists() for existing = 16 ms
+File.exists() for non-exist = 12 ms
+File.listFiles() = 1755 ms (2/file)
+
+MAC OS X - NETWORK
+curtis@monk:~/data/perkinelmer/koen/20061107165034$ java FileOpsTest
+File.exists() for existing = 58 ms
+File.exists() for non-exist = 602 ms
+File.listFiles() = 4519 ms (6/file)
+
+WIN XP - NETWORK
+Z:\perkinelmer\koen\20061107165034>java -cp C:\svn\java\utils FileOpsTest
+File.exists() for existing = 2043 ms
+File.exists() for non-exist = 1763 ms
+File.listFiles() = 40882 ms (60/file)
+
+LINUX - LOCAL
+File.exists() for existing = 10 ms
+File.exists() for non-exist = 17 ms
+File.listFiles() = 71 ms (2/file)
+
+MAC OS X - LOCAL
+curtis@monk:~/svn/java/jar$ java FileOpsTest
+File.exists() for existing = 7 ms
+File.exists() for non-exist = 12 ms
+File.listFiles() = 149 ms (5/file)
+
+WIN XP - LOCAL
+C:\svn\java\jar>java -cp ..\utils FileOpsTest
+File.exists() for existing = 0 ms
+File.exists() for non-exist = 0 ms
+File.listFiles() = 91 ms (3/file)
+*/
