@@ -8,6 +8,11 @@ import loci.formats.*;
 
 public class FormatReaderTestFactory {
 
+  // -- Constants --
+
+  private static final String DIVIDER =
+    "----------------------------------------";
+
   // -- TestNG factory methods --
 
   /**
@@ -57,12 +62,16 @@ public class FormatReaderTestFactory {
     long start = System.currentTimeMillis();
     getFiles(baseDir, files);
     long end = System.currentTimeMillis();
-    long avg = (end - start) / files.size();
     double time = (end - start) / 1000.0;
-    LogTools.println("----------------------------------------");
+    LogTools.println(DIVIDER);
     LogTools.println("Total files: " + files.size());
-    LogTools.println("Scan time: " + time + " s (" + avg + " ms/file)");
-    LogTools.println("----------------------------------------");
+    LogTools.print("Scan time: " + time + " s");
+    if (files.size() > 0) {
+      long avg = (end - start) / files.size();
+      LogTools.println(" " + avg + " ms/file)");
+    }
+    else LogTools.println();
+    LogTools.println(DIVIDER);
 
     // create test class instances
     System.out.println("Building list of tests...");
@@ -160,7 +169,7 @@ public class FormatReaderTestFactory {
     // close log file on exit
     Runtime.getRuntime().addShutdownHook(new Thread() {
       public void run() {
-        LogTools.println("--------------------");
+        LogTools.println(DIVIDER);
         LogTools.println("Test suite complete.");
         LogTools.getLog().getStream().close();
       }

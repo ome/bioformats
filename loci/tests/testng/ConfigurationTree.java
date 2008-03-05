@@ -98,15 +98,18 @@ public class ConfigurationTree {
       if (line.startsWith("#")) continue; // ignore comments
 
       // parse filename
-      int start = 0;
-      int end = -1;
+      int start = 0, mid = -1, end = -1;
       if (line.startsWith("\"")) {
         start = 1;
-        end = line.indexOf("\"", 1);
+        mid = line.indexOf("\"", 1);
+        end = mid + 1;
       }
-      if (end < 0) end = line.indexOf(" ");
-      if (end < 0) end = line.length();
-      String id = line.substring(start, end);
+      if (mid < 0) {
+        mid = line.indexOf(" ");
+        end = mid + 1;
+      }
+      if (mid < 0) mid = end = line.length();
+      String id = line.substring(start, mid);
       id = new File(dir, id).getAbsolutePath();
 
       DefaultMutableTreeNode node = findNode(id, true);
@@ -119,7 +122,8 @@ public class ConfigurationTree {
 
       Hashtable local = null;
 
-      StringTokenizer st = new StringTokenizer(line.substring(end + 1));
+      System.out.println("line=" + line + ", end=" + end);//TEMP
+      StringTokenizer st = new StringTokenizer(line.substring(end));
       while (st.hasMoreTokens()) {
         String token = st.nextToken();
 
