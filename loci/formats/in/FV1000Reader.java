@@ -87,12 +87,8 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String extension = name;
-    if (extension.indexOf(".") != -1) {
-      extension = extension.substring(extension.lastIndexOf(".") + 1);
-    }
-    extension = extension.toLowerCase();
-    if (extension.equals("oib") || extension.equals("oif")) return true;
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".oib") || lname.endsWith(".oif")) return true;
 
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     String path = parent.getPath();

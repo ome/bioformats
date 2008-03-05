@@ -59,11 +59,6 @@ public class GelReader extends BaseTiffReader {
     super("Molecular Dynamics GEL TIFF", new String[] {"gel"});
   }
 
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) { return false; }
-
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */

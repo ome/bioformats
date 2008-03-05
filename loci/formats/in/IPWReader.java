@@ -60,8 +60,8 @@ public class IPWReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     // all of our samples begin with 0xd0cf11e0
-    return (block[0] == 0xd0 && block[1] == 0xcf &&
-      block[2] == 0x11 && block[3] == 0xe0);
+    return block[0] == 0xd0 && block[1] == 0xcf &&
+      block[2] == 0x11 && block[3] == 0xe0;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

@@ -83,6 +83,7 @@ public class FluoviewReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
+    // TODO - update this out-of-date logic (see MetamorphTiffReader)
     Boolean endianness = TiffTools.checkHeader(block);
     if (endianness == null) return false;
     boolean little = endianness.booleanValue();

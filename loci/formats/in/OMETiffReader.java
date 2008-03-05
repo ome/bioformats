@@ -324,6 +324,12 @@ public class OMETiffReader extends BaseTiffReader {
     catch (IOException e) { return false; }
   }
 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    // TODO - implement this (see MetamorphTiffReader)
+    return false;
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);

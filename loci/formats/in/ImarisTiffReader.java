@@ -51,14 +51,6 @@ public class ImarisTiffReader extends BaseTiffReader {
     suffixSufficient = false;
   }
 
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < blockCheckLen) return false;
-    return TiffTools.isValidHeader(block);
-  }
-
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

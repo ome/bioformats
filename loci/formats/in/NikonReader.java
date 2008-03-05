@@ -134,6 +134,8 @@ public class NikonReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
+    // TODO - update this out-of-date logic (see MetamorphTiffReader)
+
     // adapted from MetamorphReader.isThisType(byte[])
     if (block.length < 8) return false;
 

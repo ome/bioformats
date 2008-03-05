@@ -79,41 +79,6 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    // If the file is a Metamorph STK file, it should have a specific IFD tag.
-    // Most Metamorph files seem to have the IFD information at the end, so it
-    // is difficult to determine whether or not the block is a Metamorph block
-    // without being passed the entire file.  Therefore, we will check the only
-    // things we can reasonably check at the beginning of the file, and if we
-    // happen to be passed the entire file, well, great, we'll check that too.
-
-    // Must be little-endian TIFF
-    if (block.length < 3) return false;
-    if (block[0] != TiffTools.LITTLE) return false; // denotes little-endian
-    if (block[1] != TiffTools.LITTLE) return false;
-    if (block[2] != TiffTools.MAGIC_NUMBER) return false; // denotes TIFF
-    if (block.length < 8) return true; // we have no way of verifying further
-    int ifdlocation = DataTools.bytesToInt(block, 4, true);
-    if (ifdlocation + 1 > block.length) {
-      // we have no way of verifying this is a Metamorph file.
-      // It is at least a TIFF.
-      return true;
-    }
-    else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
-      for (int i = 0; i < ifdnumber; i++) {
-        if (ifdlocation + 3 + (i * 12) > block.length) return true;
-        else {
-          int ifdtag = DataTools.bytesToInt(block,
-            ifdlocation + 2 + (i * 12), 2, true);
-          if (ifdtag == METAMORPH_ID) return true; // absolutely a valid file
-        }
-      }
-      return false; // we went through the IFD; the ID wasn't found.
-    }
-  }
-
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     if (id.toLowerCase().endsWith(".nd")) return FormatTools.MUST_GROUP;

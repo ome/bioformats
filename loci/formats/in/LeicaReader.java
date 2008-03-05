@@ -80,12 +80,9 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String ext = name;
-    if (ext.indexOf(".") != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
-    ext = ext.toLowerCase();
-
-    if (ext.equals("lei")) return true;
-    if (!ext.equals("tif") && !ext.equals("tiff")) return false;
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".lei")) return true;
+    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
 
     String prefix = name;
     if (prefix.indexOf(".") != -1) {

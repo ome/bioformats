@@ -78,6 +78,12 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    // TODO - implement this (see MetamorphTiffReader)
+    return false;
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */

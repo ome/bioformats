@@ -50,7 +50,7 @@ public interface IFormatReader extends IFormatHandler {
   /**
    * Checks if the given file is a valid instance of this file format.
    * @param open If true, and the file extension is insufficient to determine
-   *   the file type, the file is opened for further analysis.
+   *   the file type, the file may be opened for further analysis.
    */
   boolean isThisType(String name, boolean open);
 

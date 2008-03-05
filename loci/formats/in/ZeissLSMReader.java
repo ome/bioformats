@@ -117,32 +117,6 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    if (block.length < 3) return false;
-    if (block[0] != TiffTools.LITTLE) return false; // denotes little-endian
-    if (block[1] != TiffTools.LITTLE) return false;
-    if (block[2] != TiffTools.MAGIC_NUMBER) return false; // denotes TIFF
-    if (block.length < 8) return true; // we have no way of verifying
-    int ifdlocation = DataTools.bytesToInt(block, 4, true);
-    if (ifdlocation + 1 > block.length) {
-      // no way of verifying this is a Zeiss file; it is at least a TIFF
-      return true;
-    }
-    else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
-      for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i * 12) > block.length) return true;
-        else {
-          int ifdtag = DataTools.bytesToInt(block,
-            ifdlocation + 2 + (i * 12), 2, true);
-          if (ifdtag == ZEISS_ID) return true; // absolutely a valid file
-        }
-      }
-      return false; // we went through the IFD; the ID wasn't found.
-    }
-  }
-
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
