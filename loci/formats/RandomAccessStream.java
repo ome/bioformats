@@ -134,9 +134,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
         compressed = true;
 
         length = 0;
-
-        while (dis.available() != 0) {
-          length += dis.skipBytes(1024);
+        while (true) {
+          int skip = dis.skipBytes(1024);
+          if (skip <= 0) break;
+          length += skip;
         }
 
         bis = new BufferedInputStream(
@@ -145,22 +146,35 @@ public class RandomAccessStream extends InputStream implements DataInput {
       }
       else if (path.endsWith(".zip")) {
         ZipFile zf = new ZipFile(Location.getMappedId(file));
-        InputStream zip =
-          zf.getInputStream((ZipEntry) zf.entries().nextElement());
+
+        // strip off .zip extension and directory prefix
+        String innerId = path.substring(0, path.length() - 4);
+        int slash = innerId.lastIndexOf(File.separator);
+        if (slash < 0) slash = innerId.lastIndexOf("/");
+        if (slash >= 0) innerId = innerId.substring(slash + 1);
+
+        // look for zip entry with same prefix as the ZIP file
+        ZipEntry entry = null;
+        Enumeration en = zf.entries();
+        while (en.hasMoreElements()) {
+          ZipEntry ze = (ZipEntry) en.nextElement();
+          if (ze.getName().startsWith(innerId)) {
+            // found entry with matching name
+            entry = ze;
+            break;
+          }
+          else if (entry == null) entry = ze; // default to first entry
+        }
+        if (entry == null) {
+          throw new IOException("Zip file '" + file + "' has no entries");
+        }
 
         compressed = true;
 
-        length = 0;
+        length = entry.getSize();
 
-        while (zip.available() != 0) {
-          zip.read();
-          length++;
-        }
-
-        zf = new ZipFile(Location.getMappedId(file));
-        zip = new BufferedInputStream(zf.getInputStream(
-          (ZipEntry) zf.entries().nextElement()), MAX_OVERHEAD);
-        dis = new DataInputStream(zip);
+        dis = new DataInputStream(new BufferedInputStream(
+          zf.getInputStream(entry), MAX_OVERHEAD));
       }
       else if (path.endsWith(".bz2")) {
         bis.skip(2);
@@ -168,12 +182,10 @@ public class RandomAccessStream extends InputStream implements DataInput {
         compressed = true;
 
         length = 0;
-
-        int s = 0;
-
-        while (s != -1) {
-          s = dis.read();
-          length++;
+        while (true) {
+          int skip = dis.skipBytes(1024);
+          if (skip <= 0) break;
+          length += skip;
         }
 
         bis = new BufferedInputStream(
