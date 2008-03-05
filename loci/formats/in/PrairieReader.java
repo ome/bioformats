@@ -75,6 +75,8 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
+    if (!open) return false; // not allowed to touch the file system
+
     String prefix = name;
     if (prefix.indexOf(".") != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));

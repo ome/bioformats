@@ -65,6 +65,7 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
+    if (!open) return false; // not allowed to touch the file system
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     return new Location(parent, METADATA).exists();
   }

@@ -80,8 +80,9 @@ public class TCSReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    // check that there is no LEI file
+    if (!open) return false; // not allowed to touch the file system
 
+    // check that there is no LEI file
     String prefix = name;
     if (prefix.indexOf(".") != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
@@ -95,7 +96,6 @@ public class TCSReader extends FormatReader {
         if (!lei.exists()) lei = new Location(prefix + ".LEI");
       }
     }
-
     return !lei.exists() && super.isThisType(name, open);
   }
 

@@ -90,6 +90,8 @@ public class FV1000Reader extends FormatReader {
     String lname = name.toLowerCase();
     if (lname.endsWith(".oib") || lname.endsWith(".oif")) return true;
 
+    if (!open) return false; // not allowed to touch the file system
+
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     String path = parent.getPath();
     path = path.substring(path.lastIndexOf(File.separator) + 1);

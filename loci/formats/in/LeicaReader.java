@@ -84,6 +84,8 @@ public class LeicaReader extends FormatReader {
     if (lname.endsWith(".lei")) return true;
     if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
 
+    if (!open) return false; // not allowed to touch the file system
+
     String prefix = name;
     if (prefix.indexOf(".") != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
