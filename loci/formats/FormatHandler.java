@@ -36,6 +36,11 @@ import java.util.Vector;
  */
 public abstract class FormatHandler implements IFormatHandler {
 
+  // -- Constants --
+
+  /** Suffixes for supported compression types. */
+  public static final String[] COMPRESSION_SUFFIXES = {"bz2", "gz", "zip"};
+
   // -- Static fields --
 
   /** Debugging flag. */
@@ -117,10 +122,11 @@ public abstract class FormatHandler implements IFormatHandler {
   public boolean isThisType(String name) {
     String lname = name.toLowerCase();
     for (int i=0; i<suffixes.length; i++) {
-      if (lname.endsWith("." + suffixes[i])) return true;
-      if (lname.endsWith("." + suffixes[i] + ".gz")) return true;
-      if (lname.endsWith("." + suffixes[i] + ".bz2")) return true;
-      if (lname.endsWith("." + suffixes[i] + ".zip")) return true;
+      String s = "." + suffixes[i];
+      if (lname.endsWith(s)) return true;
+      for (int i=0; i<COMPRESSION_SUFFIXES.length; i++) {
+        if (lname.endsWith(s + "." + COMPRESSION_SUFFIXES[i])) return true;
+      }
     }
     return false;
   }
