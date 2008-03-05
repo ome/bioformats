@@ -92,7 +92,7 @@ public class JVMLinkServer implements Runnable {
 
   /** Continually listens for incoming client connections. */
   public void run() {
-    debug("Listening on port " + port);
+    System.out.println("JVMLink server started on port " + port);
     while (alive) {
       try {
         Socket socket = listener.accept();
