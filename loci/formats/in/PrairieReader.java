@@ -43,6 +43,10 @@ public class PrairieReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String[] CFG_SUFFIX = {"cfg"};
+  public static final String[] XML_SUFFIX = {"xml"};
+  public static final String[] PRAIRIE_SUFFIXES = {"cfg", "xml"};
+
   // Private tags present in Prairie TIFF files
   // IMPORTANT NOTE: these are the same as Metamorph's private tags - therefore,
   //                 it is likely that Prairie TIFF files will be incorrectly
@@ -82,7 +86,7 @@ public class PrairieReader extends FormatReader {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
 
-    if (name.endsWith(".cfg")) {
+    if (checkSuffix(name, CFG_SUFFIX)) {
       prefix = prefix.substring(0, prefix.lastIndexOf("Config"));
     }
     if (prefix.indexOf("_") != -1) {
@@ -125,7 +129,7 @@ public class PrairieReader extends FormatReader {
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     id = id.toLowerCase();
-    return (id.endsWith(".cfg") || id.endsWith(".xml")) ?
+    return (checkSuffix(id, PRAIRIE_SUFFIXES)) ?
       FormatTools.MUST_GROUP : FormatTools.CAN_GROUP;
   }
 
@@ -178,18 +182,18 @@ public class PrairieReader extends FormatReader {
     if (metadata == null) metadata = new Hashtable();
     if (core == null) core = new CoreMetadata(1);
 
-    if (id.endsWith("xml") || id.endsWith("cfg")) {
+    if (checkSuffix(id, PRAIRIE_SUFFIXES)) {
       // we have been given the XML file that lists TIFF files (best case)
 
       status("Parsing XML");
 
-      if (id.endsWith("xml")) {
+      if (checkSuffix(id, XML_SUFFIX)) {
         super.initFile(id);
         tiff = new TiffReader();
         xmlFile = id;
         readXML = true;
       }
-      else if (id.endsWith("cfg")) {
+      else if (checkSuffix(id, CFG_SUFFIX)) {
         cfgFile = id;
         readCFG = true;
       }
@@ -216,7 +220,7 @@ public class PrairieReader extends FormatReader {
       boolean isZ = false;
       Vector f = new Vector();
       int fileIndex = 1;
-      if (id.endsWith(".xml")) core.imageCount[0] = 0;
+      if (checkSuffix(id, XML_SUFFIX)) core.imageCount[0] = 0;
 
       float pixelSizeX = 1f, pixelSizeY = 1f;
       String date = null, laserPower = null;
@@ -305,7 +309,7 @@ public class PrairieReader extends FormatReader {
         }
       }
 
-      if (id.endsWith("xml")) {
+      if (checkSuffix(id, XML_SUFFIX)) {
         files = new String[f.size()];
         f.copyInto(files);
         tiff.setId(files[0]);
@@ -378,9 +382,8 @@ public class PrairieReader extends FormatReader {
         String[] listing = file.exists() ? parent.list() :
           (String[]) Location.getIdMap().keySet().toArray(new String[0]);
         for (int i=0; i<listing.length; i++) {
-          String path = listing[i].toLowerCase();
-          if ((!readXML && path.endsWith(".xml")) ||
-            (readXML && path.endsWith(".cfg")))
+          if ((!readXML && checkSuffix(listing[i], XML_SUFFIX)) ||
+            (readXML && checkSuffix(listing[i], CFG_SUFFIX)))
           {
             String dir = "";
             if (file.exists()) {
@@ -402,8 +405,7 @@ public class PrairieReader extends FormatReader {
       Location parent = f.getParentFile();
       String[] listing = parent.list();
       for (int i=0; i<listing.length; i++) {
-        String path = listing[i].toLowerCase();
-        if (path.endsWith(".xml") || path.endsWith(".cfg")) {
+        if (checkSuffix(listing[i], PRAIRIE_SUFFIXES)) {
           initFile(new Location(parent, listing[i]).getAbsolutePath());
         }
       }

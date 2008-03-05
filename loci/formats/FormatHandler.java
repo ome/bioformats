@@ -120,15 +120,7 @@ public abstract class FormatHandler implements IFormatHandler {
    * those known for this format.
    */
   public boolean isThisType(String name) {
-    String lname = name.toLowerCase();
-    for (int i=0; i<suffixes.length; i++) {
-      String s = "." + suffixes[i];
-      if (lname.endsWith(s)) return true;
-      for (int j=0; j<COMPRESSION_SUFFIXES.length; j++) {
-        if (lname.endsWith(s + "." + COMPRESSION_SUFFIXES[j])) return true;
-      }
-    }
-    return false;
+    return checkSuffix(name, suffixes);
   }
 
   /* @see IFormatHandler#getFormat() */
@@ -168,6 +160,19 @@ public abstract class FormatHandler implements IFormatHandler {
   }
 
   // -- Utility methods --
+
+  /** Performs suffix matching for the given filename. */
+  public static boolean checkSuffix(String name, String[] suffixList) {
+    String lname = name.toLowerCase();
+    for (int i=0; i<suffixList.length; i++) {
+      String s = "." + suffixList[i];
+      if (lname.endsWith(s)) return true;
+      for (int j=0; j<COMPRESSION_SUFFIXES.length; j++) {
+        if (lname.endsWith(s + "." + COMPRESSION_SUFFIXES[j])) return true;
+      }
+    }
+    return false;
+  }
 
   /** Toggles debug mode (more verbose output and error messages). */
   public static void setDebug(boolean debug) {

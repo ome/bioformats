@@ -42,6 +42,8 @@ public class NikonReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String[] NEF_SUFFIX = {"nef"};
+
   // Tags that give a good indication of whether this is an NEF file.
   private static final int EXIF_IFD_POINTER = 34665;
   private static final int TIFF_EPS_STANDARD = 37398;
@@ -126,9 +128,8 @@ public class NikonReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
     // extension is sufficient as long as it is NEF
-    if (lname.endsWith(".nef")) return true;
+    if (checkSuffix(name, NEF_SUFFIX)) return true;
     return super.isThisType(name, open);
   }
 

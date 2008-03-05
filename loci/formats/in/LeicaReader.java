@@ -44,6 +44,8 @@ public class LeicaReader extends FormatReader {
 
   // -- Constants -
 
+  public static final String[] LEI_SUFFIX = {"lei"};
+
   /** All Leica TIFFs have this tag. */
   private static final int LEICA_MAGIC_TAG = 33923;
 
@@ -80,9 +82,8 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".lei")) return true;
-    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+    if (checkSuffix(name, LEI_SUFFIX)) return true;
+    if (!checkSuffix(name, TiffReader.TIFF_SUFFIXES)) return false;
 
     if (!open) return false; // not allowed to touch the file system
 
@@ -133,8 +134,8 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return id.toLowerCase().endsWith(".lei") ? FormatTools.MUST_GROUP :
-      FormatTools.CAN_GROUP;
+    return checkSuffix(id, LEI_SUFFIX) ?
+      FormatTools.MUST_GROUP : FormatTools.CAN_GROUP;
   }
 
   /**
@@ -207,10 +208,9 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("LeicaReader.initFile(" + id + ")");
-    String idLow = id.toLowerCase();
     close();
 
-    if (idLow.endsWith("tif") || idLow.endsWith("tiff")) {
+    if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
       if (ifds == null) super.initFile(id);
 
       in = new RandomAccessStream(id);
@@ -282,7 +282,7 @@ public class LeicaReader extends FormatReader {
         l = l.getAbsoluteFile().getParentFile();
         String[] list = l.list();
         for (int i=0; i<list.length; i++) {
-          if (list[i].toLowerCase().endsWith("lei")) {
+          if (checkSuffix(list[i], LEI_SUFFIX)) {
             initFile(list[i]);
             return;
           }
@@ -384,9 +384,7 @@ public class LeicaReader extends FormatReader {
         Vector list = new Vector();
 
         for (int k=0; k<listing.length; k++) {
-          if (listing[k].toLowerCase().endsWith(".tif") ||
-            listing[k].toLowerCase().endsWith(".tiff"))
-          {
+          if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
             list.add(listing[k]);
           }
         }
@@ -612,7 +610,7 @@ public class LeicaReader extends FormatReader {
         while (st.hasMoreTokens()) {
           String token = st.nextToken();
           String lcase = token.toLowerCase();
-          if (!lcase.endsWith(".tif") && !lcase.endsWith(".tiff") &&
+          if (!checkSuffix(lcase, TiffReader.TIFF_SUFFIXES) &&
             !lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
             !lcase.startsWith("z0"))
           {

@@ -46,6 +46,8 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String[] MDB_SUFFIX = {"mdb"};
+
   /** Tag identifying a Zeiss LSM file. */
   private static final int ZEISS_ID = 34412;
 
@@ -709,7 +711,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     String[] dirList = dir.list();
 
     for (int i=0; i<dirList.length; i++) {
-      if (dirList[i].toLowerCase().endsWith(".mdb")) {
+      if (checkSuffix(dirList[i], MDB_SUFFIX)) {
         try {
           MDBParser.parseDatabase((new Location(dir.getPath(),
             dirList[i])).getAbsolutePath(), metadata);

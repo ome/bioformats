@@ -44,6 +44,16 @@ import loci.formats.meta.MetadataStore;
  */
 public class PerkinElmerReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String[] CFG_SUFFIX = {"cfg"};
+  public static final String[] ANO_SUFFIX = {"ano"};
+  public static final String[] REC_SUFFIX = {"rec"};
+  public static final String[] TIM_SUFFIX = {"tim"};
+  public static final String[] CSV_SUFFIX = {"csv"};
+  public static final String[] ZPO_SUFFIX = {"zpo"};
+  public static final String[] HTM_SUFFIX = {"htm"};
+
   // -- Fields --
 
   /** Helper reader. */
@@ -194,11 +204,11 @@ public class PerkinElmerReader extends FormatReader {
     // always init on the HTML file - this prevents complications with
     // initializing the image files
 
-    if (!id.toLowerCase().endsWith(".htm")) {
+    if (!checkSuffix(id, HTM_SUFFIX)) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       String[] ls = parent.list();
       for (int i=0; i<ls.length; i++) {
-        if (ls[i].toLowerCase().endsWith(".htm")) {
+        if (checkSuffix(ls[i], HTM_SUFFIX)) {
           id = new Location(parent.getAbsolutePath(), ls[i]).getAbsolutePath();
           break;
         }
@@ -253,63 +263,52 @@ public class PerkinElmerReader extends FormatReader {
       }
       String s = dot < 0 ? ls[i] : ls[i].substring(0, d);
 
-      String filename = ls[i].toLowerCase();
-
       if (s.startsWith(check) || check.startsWith(s) ||
         ((prefix != null) && (s.startsWith(prefix))))
       {
-        if (cfgPos == -1 && filename.endsWith(".cfg")) {
+        if (cfgPos == -1 && checkSuffix(ls[i], CFG_SUFFIX)) {
           cfgPos = i;
           prefix = ls[i].substring(0, d);
         }
-        if (anoPos == -1 && filename.endsWith(".ano")) {
+        if (anoPos == -1 && checkSuffix(ls[i], ANO_SUFFIX)) {
           anoPos = i;
           prefix = ls[i].substring(0, d);
         }
-        if (recPos == -1 && filename.endsWith(".rec")) {
+        if (recPos == -1 && checkSuffix(ls[i], REC_SUFFIX)) {
           recPos = i;
           prefix = ls[i].substring(0, d);
         }
-        if (timPos == -1 && filename.endsWith(".tim")) {
+        if (timPos == -1 && checkSuffix(ls[i], TIM_SUFFIX)) {
           timPos = i;
           prefix = ls[i].substring(0, d);
         }
-        if (csvPos == -1 && filename.endsWith(".csv")) {
+        if (csvPos == -1 && checkSuffix(ls[i], CSV_SUFFIX)) {
           csvPos = i;
           prefix = ls[i].substring(0, d);
         }
-        if (zpoPos == -1 && filename.endsWith(".zpo")) {
+        if (zpoPos == -1 && checkSuffix(ls[i], ZPO_SUFFIX)) {
           zpoPos = i;
           prefix = ls[i].substring(0, d);
         }
-        if (htmPos == -1 && filename.endsWith(".htm")) {
+        if (htmPos == -1 && checkSuffix(ls[i], HTM_SUFFIX)) {
           htmPos = i;
           prefix = ls[i].substring(0, d);
         }
 
-        if (filename.endsWith(".tif") || filename.endsWith(".tiff")) {
+        if (checkSuffix(ls[i], TiffReader.TIFF_SUFFIXES)) {
           files[filesPt] = workingDirPath + ls[i];
           filesPt++;
         }
 
         try {
-          String ext = filename.substring(filename.lastIndexOf(".") + 1);
-          Integer.parseInt(ext);
+          String ext = ls[i].substring(ls[i].lastIndexOf(".") + 1);
+          Integer.parseInt(ext, 16);
           isTiff = false;
           files[filesPt] = workingDirPath + ls[i];
           filesPt++;
         }
-        catch (NumberFormatException e) {
-          try {
-            String ext = filename.substring(filename.lastIndexOf(".") + 1);
-            Integer.parseInt(ext, 16);
-            isTiff = false;
-            files[filesPt] = workingDirPath + ls[i];
-            filesPt++;
-          }
-          catch (NumberFormatException exc) {
-            if (debug) trace(exc);
-          }
+        catch (NumberFormatException exc) {
+          if (debug) trace(exc);
         }
       }
     }

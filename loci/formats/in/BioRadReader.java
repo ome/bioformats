@@ -165,6 +165,7 @@ public class BioRadReader extends FormatReader {
       "Tx selected used (TX 2)", "Tx selector used (TX 3)"}
   };
 
+  public static final String[] PIC_SUFFIX = {"pic"};
 
   // -- Fields --
 
@@ -190,9 +191,8 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".pic")) return true;
-    String fname = new File(lname).getName();
+    if (checkSuffix(name, PIC_SUFFIX)) return true;
+    String fname = new File(name.toLowerCase()).getName();
     if (fname.equals("lse.xml") || fname.equals("data.raw")) return true;
     return false;
   }
@@ -276,16 +276,16 @@ public class BioRadReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
 
-    if (!id.toLowerCase().endsWith(".pic")) {
+    if (!checkSuffix(id, PIC_SUFFIX)) {
       Location dir = new Location(id).getAbsoluteFile().getParentFile();
 
       String[] list = dir.list();
       for (int i=0; i<list.length; i++) {
-        if (list[i].toLowerCase().endsWith(".pic")) {
+        if (checkSuffix(list[i], PIC_SUFFIX)) {
           id = new Location(dir.getAbsolutePath(), list[i]).getAbsolutePath();
         }
       }
-      if (!id.toLowerCase().endsWith(".pic")) {
+      if (!checkSuffix(id, PIC_SUFFIX)) {
         throw new FormatException("No .pic files found - invalid dataset.");
       }
     }
@@ -649,7 +649,7 @@ public class BioRadReader extends FormatReader {
         }
 
         for (int q=0; q<list.length; q++) {
-          if (list[q].toLowerCase().endsWith(".pic")) {
+          if (checkSuffix(list[q], PIC_SUFFIX)) {
             path =
               new Location(parent.getAbsolutePath(), list[q]).getAbsolutePath();
             pics.add(path);

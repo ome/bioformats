@@ -135,7 +135,7 @@ public class OMETiffReader extends BaseTiffReader {
 
     for (int i=0; i<fileList.length; i++) {
       String check = fileList[i].toLowerCase();
-      if (check.endsWith(".tif") || check.endsWith(".tiff")) {
+      if (checkSuffix(fileList[i], TiffReader.TIFF_SUFFIXES)) {
         status("Checking " + fileList[i]);
         Location file = new Location(fileList[i]);
         if (!file.exists()) file = new Location(l, fileList[i]);

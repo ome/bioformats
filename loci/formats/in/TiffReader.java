@@ -41,6 +41,10 @@ import loci.formats.*;
  */
 public class TiffReader extends BaseTiffReader {
 
+  // -- Constants --
+
+  public static final String[] TIFF_SUFFIXES = {"tif", "tiff"};
+
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */

@@ -45,6 +45,10 @@ public class DicomReader extends FormatReader {
 
   // -- Constants --
 
+  private static final String[] DICOM_SUFFIXES = {
+    "dic", "dcm", "dicom", "j2ki", "j2kr"
+  };
+
   private static final Hashtable TYPES = buildTypes();
 
   private static final int PIXEL_REPRESENTATION = 0x00280103;
@@ -121,14 +125,8 @@ public class DicomReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
     // extension is sufficient as long as it is DIC, DCM, DICOM, J2KI, or J2KR
-    if (lname.endsWith(".dic") || lname.endsWith(".dcm") ||
-      lname.endsWith(".dicom") || lname.endsWith(".j2ki") ||
-      lname.endsWith(".j2kr"))
-    {
-      return true;
-    }
+    if (checkSuffix(name, DICOM_SUFFIXES)) return true;
     return super.isThisType(name, open);
   }
 

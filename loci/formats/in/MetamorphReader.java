@@ -45,6 +45,9 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- Constants --
 
+  public static final String[] ND_SUFFIX = {"nd"};
+  public static final String[] STK_SUFFIX = {"stk"};
+
   // IFD tag numbers of important fields
   private static final int METAMORPH_ID = 33628;
   private static final int UIC1TAG = METAMORPH_ID;
@@ -81,15 +84,14 @@ public class MetamorphReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    if (id.toLowerCase().endsWith(".nd")) return FormatTools.MUST_GROUP;
+    if (checkSuffix(id, ND_SUFFIX)) return FormatTools.MUST_GROUP;
 
     Location l = new Location(id).getAbsoluteFile();
     String[] files = l.getParentFile().list();
 
     for (int i=0; i<files.length; i++) {
-      String s = files[i].toLowerCase();
-      if (s.endsWith(".nd") && id.startsWith(files[i].substring(0,
-        s.lastIndexOf("."))))
+      if (checkSuffix(files[i], ND_SUFFIX) &&
+       id.startsWith(files[i].substring(0, files[i].lastIndexOf("."))))
       {
         return FormatTools.CAN_GROUP;
       }
@@ -142,7 +144,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (id.toLowerCase().endsWith(".nd")) {
+    if (checkSuffix(id, ND_SUFFIX)) {
       if (currentId != null) {
         String[] s = getUsedFiles();
         for (int i=0; i<s.length; i++) {
@@ -168,8 +170,9 @@ public class MetamorphReader extends BaseTiffReader {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       String[] dirList = parent.list();
       for (int i=0; i<dirList.length; i++) {
-        String s = dirList[i].toLowerCase();
-        if (dirList[i].indexOf(stkFile) != -1 && s.endsWith(".stk")) {
+        if (dirList[i].indexOf(stkFile) != -1 &&
+          checkSuffix(dirList[i], STK_SUFFIX))
+        {
           stkFile =
             new Location(parent.getPath(), dirList[i]).getAbsolutePath();
           break;
@@ -182,7 +185,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     Location ndfile = null;
 
-    if (id.toLowerCase().endsWith(".nd")) ndfile = new Location(id);
+    if (checkSuffix(id, ND_SUFFIX)) ndfile = new Location(id);
 
     if (ndfile != null && ndfile.exists() &&
       (fileGroupOption(id) == FormatTools.MUST_GROUP || isGroupFiles()))

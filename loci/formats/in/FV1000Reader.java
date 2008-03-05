@@ -43,6 +43,12 @@ import loci.formats.meta.MetadataStore;
  */
 public class FV1000Reader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String[] OIB_SUFFIX = {"oib"};
+  public static final String[] OIF_SUFFIX = {"oif"};
+  public static final String[] FV1000_SUFFIXES = {"oib", "oif"};
+
   // -- Fields --
 
   /** Names of every TIFF file to open. */
@@ -87,8 +93,7 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".oib") || lname.endsWith(".oif")) return true;
+    if (checkSuffix(name, FV1000_SUFFIXES)) return true;
 
     if (!open) return false; // not allowed to touch the file system
 
@@ -199,7 +204,7 @@ public class FV1000Reader extends FormatReader {
 
     super.initFile(id);
 
-    isOIB = id.toLowerCase().endsWith(".oib");
+    isOIB = checkSuffix(id, OIB_SUFFIX);
 
     in = new RandomAccessStream(id);
     if (isOIB) poi = new POITools(id);
@@ -237,7 +242,7 @@ public class FV1000Reader extends FormatReader {
               String last = value.substring(value.lastIndexOf("=") + 1);
               value = first + last;
             }
-            if (value.toLowerCase().endsWith(".oif")) oifName = value;
+            if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
             if (directoryKey != null) {
               oibMapping.put(value, "Root/" + directoryKey + "/" + key);
             }
@@ -258,7 +263,7 @@ public class FV1000Reader extends FormatReader {
     }
     else {
       // make sure we have the OIF file, not a TIFF
-      if (!id.toLowerCase().endsWith(".oif")) {
+      if (!checkSuffix(id, OIF_SUFFIX)) {
         Location current = new Location(id).getAbsoluteFile();
         String parent = current.getParent();
         Location tmp = new Location(parent);

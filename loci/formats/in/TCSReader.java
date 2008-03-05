@@ -54,6 +54,8 @@ public class TCSReader extends FormatReader {
   public static final SAXParserFactory SAX_FACTORY =
     SAXParserFactory.newInstance();
 
+  public static final String[] XML_SUFFIX = {"xml"};
+
   // -- Fields --
 
   /** List of TIFF files. */
@@ -174,14 +176,13 @@ public class TCSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("TCSReader.initFile(" + id + ")");
 
-    String lname = id.toLowerCase();
-    if (lname.endsWith("tiff") || lname.endsWith("tif")) {
+    if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
       // find the associated XML file, if it exists
       Location l = new Location(id).getAbsoluteFile();
       Location parent = l.getParentFile();
       String[] list = parent.list();
       for (int i=0; i<list.length; i++) {
-        if (list[i].toLowerCase().endsWith("xml")) {
+        if (checkSuffix(list[i], XML_SUFFIX)) {
           initFile(new Location(parent, list[i]).getAbsolutePath());
           return;
         }
@@ -190,7 +191,7 @@ public class TCSReader extends FormatReader {
 
     super.initFile(id);
 
-    if (lname.endsWith("xml")) {
+    if (checkSuffix(id, XML_SUFFIX)) {
       in = new RandomAccessStream(id);
       xcal = new Vector();
       ycal = new Vector();
@@ -238,8 +239,7 @@ public class TCSReader extends FormatReader {
       String[] list = parent.list();
       Arrays.sort(list);
       for (int i=0; i<list.length; i++) {
-        String lcase = list[i].toLowerCase();
-        if (lcase.endsWith("tif") || lcase.endsWith("tiff")) {
+        if (checkSuffix(list[i], TiffReader.TIFF_SUFFIXES)) {
           String file = new Location(parent, list[i]).getAbsolutePath();
           Hashtable ifd = TiffTools.getIFDs(new RandomAccessStream(file))[0];
           String software =

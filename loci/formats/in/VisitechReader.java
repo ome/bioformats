@@ -39,6 +39,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class VisitechReader extends FormatReader {
 
+  // -- Constants --
+
+  public static final String[] HTML_SUFFIX = {"html"};
+
   // -- Fields --
 
   /** Files in this dataset. */
@@ -118,7 +122,7 @@ public class VisitechReader extends FormatReader {
 
     // first, make sure we have the HTML file
 
-    if (!id.toLowerCase().endsWith("html")) {
+    if (checkSuffix(id, HTML_SUFFIX)) {
       Location file = new Location(id).getAbsoluteFile();
       String path = file.exists() ? file.getPath() : id;
       int ndx = path.lastIndexOf(File.separator);
