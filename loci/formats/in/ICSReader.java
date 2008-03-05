@@ -137,34 +137,44 @@ public class ICSReader extends FormatReader {
     in.seek(offset + no * len);
 
     if (!core.rgb[0] && core.sizeC[0] > 4) {
-      for (int row=0; row<h; row++) {
-        for (int col=0; col<w; col++) {
-          if (gzip) {
-            System.arraycopy(data,
-              bpp * (no + core.sizeC[0]*((row + y) * core.sizeX[0] + col + x)),
-              buf, bpp * (row * w + col), bpp);
-          }
-          else {
-            in.seek(offset + (row + y) * core.sizeX[0] * bpp * core.sizeC[0] +
-              (col + x) * bpp * core.sizeC[0] + no * bpp);
-            in.read(buf, row * w * bpp + col * bpp, bpp);
-          }
+      if (!gzip && data == null) {
+        data = new byte[len * core.sizeC[0]];
+        in.read(data);
+      }
+
+      for (int row=y; row<h + y; row++) {
+        for (int col=x; col<w + x; col++) {
+          System.arraycopy(data, bpp * (no + core.sizeC[0]*
+            (row * core.sizeX[0] + col)), buf, bpp * (row * w + col), bpp);
         }
       }
     }
     else {
       int pixel = bpp * getRGBChannelCount();
       int rowLen = w * pixel;
-      for (int row=0; row<h; row++) {
+
+      if (!gzip) in.skipBytes(y * rowLen);
+
+      if (x == 0 && core.sizeX[0] == w) {
         if (gzip) {
-          System.arraycopy(data,
-            len*no + (row + y) * core.sizeX[0] * pixel + x * pixel, buf,
-            row * rowLen, rowLen);
+          System.arraycopy(data, len * no + y * rowLen, buf, 0, h * rowLen);
         }
         else {
-          in.skipBytes(x * pixel);
-          in.read(buf, row * rowLen, rowLen);
-          in.skipBytes(pixel * (core.sizeX[0] - w - x));
+          in.read(buf, 0, h * rowLen);
+        }
+      }
+      else {
+        for (int row=y; row<h + y; row++) {
+          if (gzip) {
+            System.arraycopy(data,
+              len*no + row * core.sizeX[0] * pixel + x * pixel, buf,
+              row * rowLen, rowLen);
+          }
+          else {
+            in.skipBytes(x * pixel);
+            in.read(buf, row * rowLen, rowLen);
+            in.skipBytes(pixel * (core.sizeX[0] - w - x));
+          }
         }
       }
     }
