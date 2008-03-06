@@ -10,7 +10,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 ome.xsd"
     UUID="urn:uuid:b9a95980-dbd6-11dc-95ff-0800200c9a66">
-    <ome:Project Name="Name0" ID="Project:a">
+    <ome:Project Name="Name00" ID="Project:a">
         <ome:Description>
         </ome:Description>
         <ome:ExperimenterRef ID="Experimenter:a"/>
