@@ -83,25 +83,21 @@ public class FluoviewReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    // TODO - update this out-of-date logic (see MetamorphTiffReader)
-    Boolean endianness = TiffTools.checkHeader(block);
-    if (endianness == null) return false;
-    boolean little = endianness.booleanValue();
-
-    if (new String(block).indexOf(FLUOVIEW_MAGIC_STRING) >= 0) return true;
-
-    int ifdlocation = DataTools.bytesToInt(block, 4, little);
-    if (ifdlocation < 0 || ifdlocation + 1 > block.length) return false;
-    else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
-      for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) return false;
-        else {
-          int ifdtag = DataTools.bytesToInt(block, ifdlocation + 2 + (i*12),
-            2, true);
-          if (ifdtag == MMHEADER || ifdtag == MMSTAMP) return true;
-        }
-      }
+    try {
+      RandomAccessStream stream = new RandomAccessStream(block);
+      Hashtable ifd = TiffTools.getFirstIFD(stream);
+      stream.close();
+      String comment = TiffTools.getComment(ifd);
+      if (comment == null) comment = "";
+      return comment.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
+        ifd.containsKey(new Integer(MMHEADER)) ||
+        ifd.containsKey(new Integer(MMSTAMP));
+    }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
+    catch (ArrayIndexOutOfBoundsException e) {
+      if (debug) LogTools.trace(e);
     }
     return false;
   }

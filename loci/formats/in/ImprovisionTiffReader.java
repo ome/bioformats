@@ -50,37 +50,29 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   public ImprovisionTiffReader() {
     super("Improvision TIFF", new String[] {"tif", "tiff"});
+    blockCheckLen = 524288;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!open) return false; // not allowed to check the file contents
-
-    // just checking the filename isn't enough to differentiate between
-    // Improvision and regular TIFF; open the file and check more thoroughly
+  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
     try {
-      RandomAccessStream ras = new RandomAccessStream(name);
+      RandomAccessStream ras = new RandomAccessStream(block);
       Hashtable ifd = TiffTools.getFirstIFD(ras);
       ras.close();
       if (ifd == null) return false;
 
-      Object c = ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      String comment = c instanceof String ? (String) c :
-        c instanceof String[] ? ((String[]) c)[0] : null;
-      return comment == null ? false : comment.indexOf("Improvision") != -1;
+      String comment = TiffTools.getComment(ifd);
+      return comment != null && comment.indexOf("Improvision") != -1;
     }
     catch (IOException exc) {
-      if (debug) trace(exc);
-      return false;
+      if (debug) LogTools.trace(exc);
     }
-  }
-
-  /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) {
-    // TODO - implement this (see MetamorphTiffReader)
+    catch (ArrayIndexOutOfBoundsException exc) {
+      if (debug) LogTools.trace(exc);
+    }
     return false;
   }
 

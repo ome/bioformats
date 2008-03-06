@@ -72,6 +72,8 @@ public class OMETiffReader extends BaseTiffReader {
 
   public OMETiffReader() {
     super("OME-TIFF", new String[] {"tif", "tiff"});
+    blockCheckLen = 1048576;
+    suffixSufficient = false;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -305,29 +307,42 @@ public class OMETiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false; // check extension
-    if (!open) return false; // not allowed to check the file contents
-
-    // just checking the filename isn't enough to differentiate between
-    // OME-TIFF and regular TIFF; open the file and check more thoroughly
+    if (!open) return false;
     try {
-      RandomAccessStream ras = new RandomAccessStream(name);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
-
-      String comment = (String)
-        ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
-      if (comment == null) return false;
-      return comment.indexOf("ome.xsd") >= 0;
+      RandomAccessStream s = new RandomAccessStream(name);
+      byte[] buf = new byte[blockCheckLen];
+      s.seek(0);
+      s.read(buf);
+      boolean passFirst = isThisType(buf);
+      s.seek(s.length() - blockCheckLen);
+      s.read(buf);
+      boolean passSecond = isThisType(buf);
+      return passFirst || passSecond;
     }
-    catch (IOException e) { return false; }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    // TODO - implement this (see MetamorphTiffReader)
-    return false;
+    try {
+      RandomAccessStream ras = new RandomAccessStream(block);
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      ras.close();
+      if (ifd == null) throw new IOException();
+
+      String comment = TiffTools.getComment(ifd);
+      return comment != null && comment.indexOf("ome.xsd") >= 0;
+    }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
+    catch (ArrayIndexOutOfBoundsException e) {
+      if (debug) LogTools.trace(e);
+    }
+    return new String(block).indexOf("ome.xsd") != -1;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */

@@ -135,27 +135,18 @@ public class NikonReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    // TODO - update this out-of-date logic (see MetamorphTiffReader)
-
-    // adapted from MetamorphReader.isThisType(byte[])
-    if (block.length < 8) return false;
-
-    boolean little = (block[0] == 0x49 && block[1] == 0x49);
-
-    int ifdlocation = DataTools.bytesToInt(block, 4, little);
-    if (ifdlocation < 0 || ifdlocation + 1 > block.length) return false;
-    else {
-      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
-      for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) return false;
-        else {
-          int ifdtag = DataTools.bytesToInt(block,
-            ifdlocation + 2 + (i*12), 2, little);
-          if (ifdtag == TIFF_EPS_STANDARD) return true;
-        }
-      }
-      return false;
+    try {
+      RandomAccessStream stream = new RandomAccessStream(block);
+      Hashtable ifd = TiffTools.getFirstIFD(stream);
+      return ifd != null && ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
     }
+    catch (IOException e) {
+      if (debug) LogTools.trace(e);
+    }
+    catch (ArrayIndexOutOfBoundsException e) {
+      if (debug) LogTools.trace(e);
+    }
+    return false;
   }
 
   // -- IFormatHandler API methods --

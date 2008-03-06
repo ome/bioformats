@@ -76,6 +76,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     try {
       RandomAccessStream stream = new RandomAccessStream(block);
       String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
+      stream.close(); 
       return comment != null && comment.trim().startsWith("<MetaData>");
     }
     catch (IOException e) {
