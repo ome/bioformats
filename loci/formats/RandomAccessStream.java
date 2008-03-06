@@ -621,7 +621,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     }
 
     if (dis != null && raf != null &&
-      afp + toRead < MAX_OVERHEAD && afp + toRead < raf.length() &&
+      afp + toRead < MAX_OVERHEAD && afp + toRead < length() &&
       afp + toRead < buf.length)
     {
       // this is a really special case that allows us to read directly from
