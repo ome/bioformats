@@ -286,8 +286,8 @@ public class IPWReader extends FormatReader {
     if (core.sizeC[0] == 0) core.sizeC[0] = 1;
     if (core.sizeT[0] == 0) core.sizeT[0] = 1;
 
-    if (core.sizeZ[0] * getRGBChannelCount() * core.sizeT[0] <
-      core.imageCount[0])
+    if (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0] == 1 &&
+      core.imageCount[0] != 1)
     {
       core.sizeZ[0] = core.imageCount[0];
     }
