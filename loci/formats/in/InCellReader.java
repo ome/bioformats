@@ -68,6 +68,11 @@ public class InCellReader extends FormatReader {
     return false;
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);

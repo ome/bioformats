@@ -66,6 +66,11 @@ public class NRRDReader extends FormatReader {
     return new String(block).startsWith("NRRD");
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     if (dataFile == null) return new String[] {currentId};

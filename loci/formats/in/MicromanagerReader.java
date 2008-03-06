@@ -70,6 +70,11 @@ public class MicromanagerReader extends FormatReader {
     return new Location(parent, METADATA).exists();
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] b) {
     return tiffReader.isThisType(b);

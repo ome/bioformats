@@ -204,6 +204,12 @@ public class BioRadReader extends FormatReader {
       new String(block).startsWith("[Input Sources]");
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return id.toLowerCase().endsWith(".pic") ? FormatTools.CAN_GROUP :
+      FormatTools.MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
