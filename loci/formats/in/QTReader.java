@@ -707,16 +707,31 @@ public class QTReader extends FormatReader {
   private void stripHeader() throws IOException {
     // seek to 4 bytes before first occurence of 'moov'
 
-    String test = null;
-    boolean found = false;
-    while (!found && in.getFilePointer() < (in.length() - 4)) {
-      test = in.readString(4);
-      if (test.equals("moov")) {
-        found = true;
-        in.seek(in.getFilePointer() - 8);
+    // read 8K at a time, for efficiency
+    long fp = in.getFilePointer();
+    byte[] buf = new byte[8192];
+    int index = -1;
+    while (true) {
+      int r = in.read(buf, 3, buf.length - 3);
+      if (r <= 0) break;
+      // search buffer for "moov"
+      for (int i=0; i<buf.length-3; i++) {
+        if (buf[i] == 'm' && buf[i+1] == 'o' &&
+          buf[i+2] == 'o' && buf[i+3] == 'v')
+        {
+          index = i - 3; // first three characters are zeroes or leftovers
+          break;
+        }
       }
-      else in.seek(in.getFilePointer() - 3);
+      if (index >= 0) break;
+
+      // save last three bytes of buffer
+      fp += r;
+      buf[0] = buf[buf.length - 3];
+      buf[1] = buf[buf.length - 2];
+      buf[2] = buf[buf.length - 1];
     }
+    if (index >= 0) in.seek(fp + index - 4);
   }
 
   /** Creates a legacy QT reader. */
