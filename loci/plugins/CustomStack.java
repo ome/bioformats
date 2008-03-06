@@ -72,7 +72,7 @@ public class CustomStack extends VirtualStack {
 
   // -- VirtualStack API methods --
 
-  public ImageProcessor getProcessor(int n) {
+  public synchronized ImageProcessor getProcessor(int n) {
     try {
       int index = FormatTools.getReorderedIndex(reader, stackOrder, n - 1);
       if (merge <= 1) return Util.openProcessor(reader, index);
