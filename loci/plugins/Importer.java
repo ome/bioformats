@@ -354,7 +354,7 @@ public class Importer {
         FileInfo fi = new FileInfo();
 
         // populate other common FileInfo fields
-        String idDir = idLoc.getParent();
+        String idDir = idLoc == null ? null : idLoc.getParent();
         if (idDir != null && !idDir.endsWith(File.separator)) {
           idDir += File.separator;
         }
