@@ -22,6 +22,7 @@ Bio-Formats
                    ome-java.jar (reflected, except in loci/formats/ome)
                    omero-client.jar (reflected)
                    omero-common.jar (reflected)
+                   spring.jar (reflected)
                    poi-loci.jar (reflected)
                    slf4j-jdk14.jar (reflected)
     Targets:       style-formats
@@ -49,6 +50,7 @@ VisBio
                    ome-java.jar
                    omero-client.jar (bio-formats.jar)
                    omero-common.jar (bio-formats.jar)
+                   spring.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    visad-lite.jar
@@ -85,6 +87,7 @@ LOCI Plugins for ImageJ
                    ome-java.jar (bio-formats.jar)
                    omero-client.jar (bio-formats.jar)
                    omero-common.jar (bio-formats.jar)
+                   spring.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -110,6 +113,7 @@ OME Notes
                    ome-java.jar
                    omero-client.jar (bio-formats.jar)
                    omero-common.jar (bio-formats.jar)
+                   spring.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -272,13 +276,19 @@ OMERO Common
     JAR file:  omero-common.jar
     URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
     Notes:     used by VisBio and Bio-Formats to connect to OMERO
-    Licence:   LGPL
+    License:   LGPL
 
 OMERO Client
     JAR file:  omero-client.jar
     URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
     Notes:     used by VisBio and Bio-Formats to connect to OMERO
-    Licence:   LGPL
+    License:   LGPL
+
+Spring
+    JAR file:  spring.jar
+    URL:       http://springframework.org
+    Notes:     used by VisBio and Bio-Formats to connect to OMERO
+    License:   Apache
 
 Apache Jakarta POI
     JAR file:  poi-loci.jar
