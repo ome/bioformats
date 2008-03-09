@@ -57,13 +57,17 @@ public class OMEPlugin implements PlugIn {
 
   /** Executes the plugin. */
   public void run(String arg) {
+    if (IJ.debugMode) IJ.log("Downloading from OME or OMERO server");
     if (!Checker.checkJava() || !Checker.checkImageJ()) return;
     HashSet missing = new HashSet();
     Checker.checkLibrary(Checker.BIO_FORMATS, missing);
     Checker.checkLibrary(Checker.OME_JAVA_XML, missing);
     Checker.checkLibrary(Checker.OME_JAVA_DS, missing);
     Checker.checkLibrary(Checker.FORMS, missing);
-    if (!Checker.checkMissing(missing)) return;
+    if (!Checker.checkMissing(missing)) {
+      if (IJ.debugMode) IJ.log("Required libraries are missing, exiting.");
+      return;
+    }
     this.arg = arg;
     runPlugin();
   }
@@ -127,10 +131,16 @@ public class OMEPlugin implements PlugIn {
     cred.username = user;
     cred.password = pass;
     cred.isOMERO = type.equals("OMERO");
+    if (IJ.debugMode) IJ.log("Attempting to log in to " + server + ":" + port);
     try {
       OMEUtils.login(cred);
     }
     catch (ReflectException e) {
+      IJ.error("Login failed");
+      e.printStackTrace();
+      getInput();
+    }
+    catch (ClassNotFoundException e) {
       IJ.error("Login failed");
       e.printStackTrace();
       getInput();
@@ -140,6 +150,7 @@ public class OMEPlugin implements PlugIn {
     Prefs.set("downloader.user", user);
     Prefs.set("downloader.port", port);
     Prefs.set("downloader.type", type);
+    if (IJ.debugMode) IJ.log("Login successful!");
   }
 
   public static void setPlugin(boolean isCancelled) {
@@ -152,6 +163,7 @@ public class OMEPlugin implements PlugIn {
     IJ.showProgress(.99);
     OMEUtils.logout(cred.isOMERO);
     IJ.showStatus("OME: Completed");
+    if (IJ.debugMode) IJ.log("Logged out.");
   }
 
   // -- Download methods --
@@ -166,6 +178,8 @@ public class OMEPlugin implements PlugIn {
       }
 
       // prompt for search criteria
+
+      if (IJ.debugMode) IJ.log("Prompting for search criteria...");
 
       String name = null, firstName = null, lastName = null, iname = null,
         created = null, id = null;
@@ -185,6 +199,7 @@ public class OMEPlugin implements PlugIn {
         searchBox.showDialog();
 
         if (searchBox.wasCanceled()) {
+          if (IJ.debugMode) IJ.log("Search cancelled, returning.");
           cancelPlugin = true;
           return;
         }
@@ -211,6 +226,8 @@ public class OMEPlugin implements PlugIn {
       if (created != null && created.trim().equals("")) created = null;
       if (id != null && id.trim().equals("")) id = null;
 
+      if (IJ.debugMode) IJ.log("Search for matching images...");
+
       // filter images based on search terms
       OMEUtils.filterPixels(firstName, lastName, iname, created, id,
         cred.isOMERO);
@@ -219,16 +236,19 @@ public class OMEPlugin implements PlugIn {
 
       long[] images = null;
       if (arg == null || arg.trim().equals("")) {
+        if (IJ.debugMode) IJ.log("Found images...");
         images = new OMEUtils().showTable(cred);
       }
 
       if (images == null || images.length == 0) {
+        if (IJ.debugMode) IJ.log("No images found!");
         logout();
         return;
       }
 
       // download into ImageJ
       for (int i=0; i<images.length; i++) {
+        if (IJ.debugMode("Downloading image ID " + images[i]);
         String type = cred.isOMERO ? "OMERO server" : "OME server";
         String file = "location=[" + type + "] open=[" + cred.server +
           (cred.isOMERO ? ":" + cred.port : "") + "?user=" + cred.username +
