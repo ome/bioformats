@@ -29,6 +29,7 @@ import java.io.IOException;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.out.TiffWriter;
 
 /**
  * ImageConverter is a utility class for converting a file between formats.
@@ -51,6 +52,7 @@ public final class ImageConverter {
   {
     String in = null, out = null;
     boolean stitch = false, separate = false, merge = false, fill = false;
+    boolean bigtiff = false;
     int series = -1;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
@@ -60,6 +62,7 @@ public final class ImageConverter {
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-fill")) fill = true;
+          else if (args[i].equals("-bigtiff")) bigtiff = true;
           else if (args[i].equals("-series")) {
             try {
               series = Integer.parseInt(args[++i]);
@@ -109,7 +112,17 @@ public final class ImageConverter {
       writer.setMetadataRetrieve((MetadataRetrieve) store);
     }
 
+    if (writer instanceof TiffWriter) {
+      ((TiffWriter) writer).setBigTiff(bigtiff);
+    }
+    else if (writer instanceof ImageWriter) {
+      IFormatWriter w = ((ImageWriter) writer).getWriter(out);
+      if (w instanceof TiffWriter) {
+        ((TiffWriter) w).setBigTiff(bigtiff);
+      }
+    }
     writer.setId(out);
+
     LogTools.print("[" + writer.getFormat() + "] ");
     long mid = System.currentTimeMillis();
 

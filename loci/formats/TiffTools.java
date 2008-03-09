@@ -289,7 +289,7 @@ public final class TiffTools {
       Hashtable ifd = getIFD(in, ifdNum, offset, bigTiff);
       if (ifd == null || ifd.size() <= 1) break;
       v.add(ifd);
-      offset = bigTiff ? in.readLong() : in.readInt();
+      offset = bigTiff ? in.readLong() : (long) (in.readInt() & 0xffffffffL);
       if (offset <= 0 || offset >= in.length()) break;
     }
 
@@ -460,7 +460,8 @@ public final class TiffTools {
       if (type == BYTE) {
         // 8-bit unsigned integer
         if (count > threshhold) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Short(in.readByte());
@@ -478,7 +479,8 @@ public final class TiffTools {
         // the last byte must be NUL (binary zero)
         byte[] ascii = new byte[count];
         if (count > threshhold) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         in.read(ascii);
@@ -510,7 +512,8 @@ public final class TiffTools {
       else if (type == SHORT) {
         // 16-bit (2-byte) unsigned integer
         if (count > threshhold / 2) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Integer(in.readShort() & 0xffff);
@@ -525,7 +528,8 @@ public final class TiffTools {
       else if (type == LONG) {
         // 32-bit (4-byte) unsigned integer
         if (count > threshhold / 4) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Long(in.readInt());
@@ -537,7 +541,8 @@ public final class TiffTools {
       }
       else if (type == LONG8 || type == SLONG8 || type == IFD8) {
         if (count > threshhold / 8) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Long(in.readLong());
@@ -552,7 +557,8 @@ public final class TiffTools {
         // the second, the denominator
         // Two SLONG's: the first represents the numerator of a fraction,
         // the second the denominator
-        long pointer = bigTiff ? in.readLong() : in.readInt();
+        long pointer = bigTiff ? in.readLong() :
+          (long) (in.readInt() & 0xffffffffL);
         if (count > threshhold / 8) in.seek(pointer);
         if (count == 1) value = new TiffRational(in.readInt(), in.readInt());
         else {
@@ -568,7 +574,8 @@ public final class TiffTools {
         // UNDEFINED: An 8-bit byte that may contain anything,
         // depending on the definition of the field
         if (count > threshhold) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Byte(in.readByte());
@@ -581,7 +588,8 @@ public final class TiffTools {
       else if (type == SSHORT) {
         // A 16-bit (2-byte) signed (twos-complement) integer
         if (count > threshhold / 2) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Short(in.readShort());
@@ -594,7 +602,8 @@ public final class TiffTools {
       else if (type == SLONG) {
         // A 32-bit (4-byte) signed (twos-complement) integer
         if (count > threshhold / 4) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Integer(in.readInt());
@@ -607,7 +616,8 @@ public final class TiffTools {
       else if (type == FLOAT) {
         // Single precision (4-byte) IEEE format
         if (count > threshhold / 4) {
-          long pointer = bigTiff ? in.readLong() : in.readInt();
+          long pointer = bigTiff ? in.readLong() :
+            (long) (in.readInt() & 0xffffffffL);
           in.seek(pointer);
         }
         if (count == 1) value = new Float(in.readFloat());
@@ -619,7 +629,8 @@ public final class TiffTools {
       }
       else if (type == DOUBLE) {
         // Double precision (8-byte) IEEE format
-        long pointer = bigTiff ? in.readLong() : in.readInt();
+        long pointer = bigTiff ? in.readLong() :
+          (long) (in.readInt() & 0xffffffffL);
         in.seek(pointer);
         if (count == 1) value = new Double(in.readDouble());
         else {
@@ -1391,7 +1402,9 @@ public final class TiffTools {
           size *= rowsPerStrip;
 
           if (DEBUG) debug("reading image strip #" + strip);
-          stripOffsets[strip] = (long) (stripOffsets[strip] & 0xffffffffL);
+          if (stripOffsets[strip] < 0) {
+            stripOffsets[strip] = (long) (stripOffsets[strip] & 0xffffffffL);
+          }
           in.seek(stripOffsets[strip]);
 
           if (stripByteCounts[strip] > Integer.MAX_VALUE) {
@@ -2064,8 +2077,8 @@ public final class TiffTools {
    * @param value IFD value to write
    */
   public static void writeIFDValue(DataOutput ifdOut,
-    ByteArrayOutputStream extraBuf, DataOutputStream extraOut, int offset,
-    int tag, Object value) throws FormatException, IOException
+    ByteArrayOutputStream extraBuf, DataOutputStream extraOut, long offset,
+    int tag, Object value, boolean bigTiff) throws FormatException, IOException
   {
     // convert singleton objects into arrays, for simplicity
     if (value instanceof Short) {
@@ -2087,31 +2100,37 @@ public final class TiffTools {
       value = new double[] {((Double) value).doubleValue()};
     }
 
+    int dataLength = bigTiff ? 8 : 4;
+
     // write directory entry to output buffers
     ifdOut.writeShort(tag); // tag
     if (value instanceof short[]) { // BYTE
       short[] q = (short[]) value;
       ifdOut.writeShort(BYTE); // type
-      ifdOut.writeInt(q.length); // count
-      if (q.length <= 4) {
+      if (bigTiff) ifdOut.writeLong(q.length);
+      else ifdOut.writeInt(q.length);
+      if (q.length <= dataLength) {
         for (int i=0; i<q.length; i++) ifdOut.writeByte(q[i]); // value(s)
-        for (int i=q.length; i<4; i++) ifdOut.writeByte(0); // padding
+        for (int i=q.length; i<dataLength; i++) ifdOut.writeByte(0); // padding
       }
       else {
-        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        if (bigTiff) ifdOut.writeLong(offset + extraBuf.size());
+        else ifdOut.writeInt((int) (offset + extraBuf.size())); // offset
         for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]); // values
       }
     }
     else if (value instanceof String) { // ASCII
       char[] q = ((String) value).toCharArray();
       ifdOut.writeShort(ASCII); // type
-      ifdOut.writeInt(q.length + 1); // count
-      if (q.length < 4) {
+      if (bigTiff) ifdOut.writeLong(q.length + 1);
+      else ifdOut.writeInt(q.length + 1);
+      if (q.length < dataLength) {
         for (int i=0; i<q.length; i++) ifdOut.writeByte(q[i]); // value(s)
-        for (int i=q.length; i<4; i++) ifdOut.writeByte(0); // padding
+        for (int i=q.length; i<dataLength; i++) ifdOut.writeByte(0); // padding
       }
       else {
-        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        if (bigTiff) ifdOut.writeLong(offset + extraBuf.size());
+        else ifdOut.writeInt((int) (offset + extraBuf.size())); // offset
         for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]); // values
         extraOut.writeByte(0); // concluding NULL byte
       }
@@ -2119,59 +2138,99 @@ public final class TiffTools {
     else if (value instanceof int[]) { // SHORT
       int[] q = (int[]) value;
       ifdOut.writeShort(SHORT); // type
-      ifdOut.writeInt(q.length); // count
-      if (q.length <= 2) {
+      if (bigTiff) ifdOut.writeLong(q.length);
+      else ifdOut.writeInt(q.length);
+      if (q.length <= dataLength / 2) {
         for (int i=0; i<q.length; i++) ifdOut.writeShort(q[i]); // value(s)
-        for (int i=q.length; i<2; i++) ifdOut.writeShort(0); // padding
+        for (int i=q.length; i<dataLength / 2; i++) {
+          ifdOut.writeShort(0); // padding
+        }
       }
       else {
-        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        if (bigTiff) ifdOut.writeLong(offset + extraBuf.size());
+        else ifdOut.writeInt((int) (offset + extraBuf.size())); // offset
         for (int i=0; i<q.length; i++) extraOut.writeShort(q[i]); // values
       }
     }
     else if (value instanceof long[]) { // LONG
       long[] q = (long[]) value;
-      ifdOut.writeShort(LONG); // type
-      ifdOut.writeInt(q.length); // count
-      if (q.length <= 1) {
-        if (q.length == 1) ifdOut.writeInt((int) q[0]); // value
-        else ifdOut.writeInt(0); // padding
+
+      if (bigTiff) {
+        ifdOut.writeShort(LONG8);
+        ifdOut.writeLong(q.length);
+
+        if (q.length <= dataLength / 4) {
+          for (int i=0; i<q.length; i++) ifdOut.writeLong(q[0]);
+          for (int i=q.length; i<dataLength / 4; i++) {
+            ifdOut.writeLong(0);
+          }
+        }
+        else {
+          ifdOut.writeLong(offset + extraBuf.size());
+          for (int i=0; i<q.length; i++) {
+            extraOut.writeLong(q[i]);
+          }
+        }
       }
       else {
-        ifdOut.writeInt(offset + extraBuf.size()); // offset
-        for (int i=0; i<q.length; i++) {
-          extraOut.writeInt((int) q[i]); // values
+        ifdOut.writeShort(LONG);
+        ifdOut.writeInt(q.length);
+        if (q.length <= dataLength / 4) {
+          for (int i=0; i<q.length; i++) ifdOut.writeInt((int) q[0]);
+          for (int i=q.length; i<dataLength / 4; i++) {
+            ifdOut.writeInt(0); // padding
+          }
+        }
+        else {
+          ifdOut.writeInt((int) (offset + extraBuf.size()));
+          for (int i=0; i<q.length; i++) {
+            extraOut.writeInt((int) q[i]);
+          }
         }
       }
     }
     else if (value instanceof TiffRational[]) { // RATIONAL
       TiffRational[] q = (TiffRational[]) value;
       ifdOut.writeShort(RATIONAL); // type
-      ifdOut.writeInt(q.length); // count
-      ifdOut.writeInt(offset + extraBuf.size()); // offset
-      for (int i=0; i<q.length; i++) {
-        extraOut.writeInt((int) q[i].getNumerator()); // values
-        extraOut.writeInt((int) q[i].getDenominator()); // values
+      if (bigTiff) ifdOut.writeLong(q.length);
+      else ifdOut.writeInt(q.length);
+      if (bigTiff && q.length == 1) {
+        ifdOut.writeInt((int) q[0].getNumerator());
+        ifdOut.writeInt((int) q[0].getDenominator());
+      }
+      else {
+        if (bigTiff) ifdOut.writeLong(offset + extraBuf.size());
+        else ifdOut.writeInt((int) (offset + extraBuf.size())); // offset
+        for (int i=0; i<q.length; i++) {
+          extraOut.writeInt((int) q[i].getNumerator()); // values
+          extraOut.writeInt((int) q[i].getDenominator()); // values
+        }
       }
     }
     else if (value instanceof float[]) { // FLOAT
       float[] q = (float[]) value;
       ifdOut.writeShort(FLOAT); // type
-      ifdOut.writeInt(q.length); // count
-      if (q.length <= 1) {
-        if (q.length == 1) ifdOut.writeFloat(q[0]); // value
-        else ifdOut.writeInt(0); // padding
+      if (bigTiff) ifdOut.writeLong(q.length);
+      else ifdOut.writeInt(q.length);
+      if (q.length <= dataLength / 4) {
+        for (int i=0; i<q.length; i++) ifdOut.writeFloat(q[0]); // value
+        for (int i=q.length; i<dataLength / 4; i++) {
+          ifdOut.writeInt(0); // padding
+        }
       }
       else {
-        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        if (bigTiff) ifdOut.writeLong(offset + extraBuf.size());
+        else ifdOut.writeInt((int) (offset + extraBuf.size())); // offset
         for (int i=0; i<q.length; i++) extraOut.writeFloat(q[i]); // values
       }
     }
     else if (value instanceof double[]) { // DOUBLE
       double[] q = (double[]) value;
       ifdOut.writeShort(DOUBLE); // type
-      ifdOut.writeInt(q.length); // count
-      ifdOut.writeInt(offset + extraBuf.size()); // offset
+      if (bigTiff) ifdOut.writeLong(q.length);
+      else ifdOut.writeInt(q.length);
+      if (bigTiff) ifdOut.writeLong(offset + extraBuf.size());
+      else ifdOut.writeInt((int) (offset + extraBuf.size())); // offset
       for (int i=0; i<q.length; i++) extraOut.writeDouble(q[i]); // values
     }
     else {
@@ -2229,7 +2288,8 @@ public final class TiffTools {
         DataOutputStream ifdOut = new DataOutputStream(ifdBuf);
         ByteArrayOutputStream extraBuf = new ByteArrayOutputStream();
         DataOutputStream extraOut = new DataOutputStream(extraBuf);
-        writeIFDValue(ifdOut, extraBuf, extraOut, oldOffset, tag, value);
+        writeIFDValue(ifdOut, extraBuf, extraOut, oldOffset, tag, value,
+          header[2] == 0x2b);
         byte[] bytes = ifdBuf.toByteArray();
         byte[] extra = extraBuf.toByteArray();
 
@@ -2308,10 +2368,11 @@ public final class TiffTools {
    * @param out The output stream to which the TIFF data should be written
    * @param offset The value to use for specifying byte offsets
    * @param last Whether this image is the final IFD entry of the TIFF data
+   * @param bigTiff Whether this image should be written as BigTIFF
    * @return total number of bytes written
    */
   public static long writeImage(BufferedImage img, Hashtable ifd,
-    OutputStream out, int offset, boolean last)
+    OutputStream out, long offset, boolean last, boolean bigTiff)
     throws FormatException, IOException
   {
     if (img == null) throw new FormatException("Image is null");
@@ -2431,7 +2492,12 @@ public final class TiffTools {
 
     Object[] keys = ifd.keySet().toArray();
     Arrays.sort(keys); // sort IFD tags in ascending order
-    int ifdBytes = 2 + BYTES_PER_ENTRY * keys.length + 4;
+
+    int keyCount = keys.length;
+    if (ifd.containsKey(new Integer(LITTLE_ENDIAN))) keyCount--;
+    if (ifd.containsKey(new Integer(BIG_TIFF))) keyCount--;
+
+    int ifdBytes = (bigTiff ? 16 : 6) + (bigTiff ? 20 : 12) * keyCount;
     long pixelBytes = 0;
     for (int i=0; i<stripsPerImage; i++) {
       stripByteCounts[i] = strips[i].length;
@@ -2448,13 +2514,17 @@ public final class TiffTools {
     offset += ifdBytes + pixelBytes;
 
     // write IFD to output buffers
-    ifdOut.writeShort(keys.length); // number of directory entries
+
+    // number of directory entries
+    if (bigTiff) ifdOut.writeLong(keyCount);
+    else ifdOut.writeShort(keyCount);
     for (int k=0; k<keys.length; k++) {
       Object key = keys[k];
       if (!(key instanceof Integer)) {
         throw new FormatException("Malformed IFD tag (" + key + ")");
       }
       if (((Integer) key).intValue() == LITTLE_ENDIAN) continue;
+      if (((Integer) key).intValue() == BIG_TIFF) continue;
       Object value = ifd.get(key);
       if (DEBUG) {
         String sk = getIFDTagName(((Integer) key).intValue());
@@ -2463,9 +2533,11 @@ public final class TiffTools {
         debug("writeImage: writing " + sk + " (value=" + sv + ")");
       }
       writeIFDValue(ifdOut, extraBuf, extraOut, offset,
-        ((Integer) key).intValue(), value);
+        ((Integer) key).intValue(), value, bigTiff);
     }
-    ifdOut.writeInt(last ? 0 : offset + extraBuf.size()); // offset to next IFD
+    // offset to next IFD
+    if (bigTiff) ifdOut.writeLong(last ? 0 : offset + extraBuf.size());
+    else ifdOut.writeInt(last ? 0 : (int) (offset + extraBuf.size()));
 
     // flush buffers to output stream
     byte[] ifdArray = ifdBuf.toByteArray();

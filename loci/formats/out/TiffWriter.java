@@ -42,13 +42,16 @@ public class TiffWriter extends FormatWriter {
   // -- Fields --
 
   /** The last offset written to. */
-  protected int lastOffset;
+  protected long lastOffset;
 
   /** Current output stream. */
   protected BufferedOutputStream out;
 
   /** Image counts for each open series. */
   protected Vector imageCounts;
+
+  /** Whether or not the output file is a BigTIFF file. */
+  protected boolean isBigTiff;
 
   // -- Constructors --
 
@@ -60,6 +63,7 @@ public class TiffWriter extends FormatWriter {
     super(format, exts);
     lastOffset = 0;
     compressionTypes = new String[] {"Uncompressed", "LZW"};
+    isBigTiff = false;
   }
 
   // -- TiffWriter API methods --
@@ -97,9 +101,14 @@ public class TiffWriter extends FormatWriter {
         DataOutputStream dataOut = new DataOutputStream(out);
         dataOut.writeByte(TiffTools.BIG);
         dataOut.writeByte(TiffTools.BIG);
-        dataOut.writeShort(TiffTools.MAGIC_NUMBER);
+        if (isBigTiff) dataOut.writeShort(TiffTools.BIG_TIFF_MAGIC_NUMBER);
+        else dataOut.writeShort(TiffTools.MAGIC_NUMBER);
         dataOut.writeInt(8); // offset to first IFD
         lastOffset = 8;
+        if (isBigTiff) {
+          dataOut.writeLong(16);
+          lastOffset = 16;
+        }
       }
       else {
         // compute the offset to the last IFD
@@ -112,7 +121,7 @@ public class TiffWriter extends FormatWriter {
           offset = tmp.readInt();
           if (offset <= 0 || offset >= tmp.length()) break;
         }
-        lastOffset = (int) offset;
+        lastOffset = offset;
       }
       tmp.close();
     }
@@ -120,7 +129,23 @@ public class TiffWriter extends FormatWriter {
     BufferedImage img = (cm == null) ?
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
 
-    lastOffset += TiffTools.writeImage(img, ifd, out, lastOffset, last);
+    int plane = img.getWidth() * img.getHeight() *
+      img.getRaster().getNumBands() *
+      FormatTools.getBytesPerPixel(ImageTools.getPixelType(img));
+
+    if (!isBigTiff) {
+      RandomAccessStream tmp = new RandomAccessStream(currentId);
+      isBigTiff = (tmp.length() + 2 * plane) >= 4294967296L;
+      if (isBigTiff) {
+        throw new FormatException("File is to large.  Call setBigTiff(true)");
+      }
+      tmp.close();
+    }
+
+    // write the image
+
+    lastOffset +=
+      TiffTools.writeImage(img, ifd, out, lastOffset, last, isBigTiff);
     if (last) close();
   }
 
@@ -156,6 +181,13 @@ public class TiffWriter extends FormatWriter {
     currentId = null;
     initialized = false;
     lastOffset = 0;
+  }
+
+  // -- TiffWriter API methods --
+
+  public void setBigTiff(boolean bigTiff) {
+    FormatTools.assertId(currentId, false, 1);
+    isBigTiff = bigTiff;
   }
 
 }
