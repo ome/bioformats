@@ -140,11 +140,6 @@ public class OMEPlugin implements PlugIn {
       e.printStackTrace();
       getInput();
     }
-    catch (ClassNotFoundException e) {
-      IJ.error("Login failed");
-      e.printStackTrace();
-      getInput();
-    }
 
     Prefs.set("downloader.server", server);
     Prefs.set("downloader.user", user);
@@ -248,7 +243,7 @@ public class OMEPlugin implements PlugIn {
 
       // download into ImageJ
       for (int i=0; i<images.length; i++) {
-        if (IJ.debugMode("Downloading image ID " + images[i]);
+        if (IJ.debugMode) IJ.log("Downloading image ID " + images[i]);
         String type = cred.isOMERO ? "OMERO server" : "OME server";
         String file = "location=[" + type + "] open=[" + cred.server +
           (cred.isOMERO ? ":" + cred.port : "") + "?user=" + cred.username +
