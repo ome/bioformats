@@ -23,6 +23,7 @@ Bio-Formats
                    omero-client.jar (reflected)
                    omero-common.jar (reflected)
                    spring.jar (reflected)
+                   jbossall-client.jar (reflected)
                    poi-loci.jar (reflected)
                    slf4j-jdk14.jar (reflected)
     Targets:       style-formats
@@ -51,6 +52,7 @@ VisBio
                    omero-client.jar (bio-formats.jar)
                    omero-common.jar (bio-formats.jar)
                    spring.jar (bio-formats.jar)
+                   jbossall-client.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    visad-lite.jar
@@ -88,6 +90,7 @@ LOCI Plugins for ImageJ
                    omero-client.jar (bio-formats.jar)
                    omero-common.jar (bio-formats.jar)
                    spring.jar (bio-formats.jar)
+                   jbossall-client.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -114,6 +117,7 @@ OME Notes
                    omero-client.jar (bio-formats.jar)
                    omero-common.jar (bio-formats.jar)
                    spring.jar (bio-formats.jar)
+                   jbossall-client.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    slf4j-jdk14.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -289,6 +293,12 @@ Spring
     URL:       http://springframework.org
     Notes:     used by VisBio and Bio-Formats to connect to OMERO
     License:   Apache
+
+JBoss
+    JAR file:  jbossall-client.jar
+    URL:       http://jboss.org
+    Notes:     used by VisBio and Bio-Formats to connect to OMERO
+    License:   LGPL
 
 Apache Jakarta POI
     JAR file:  poi-loci.jar
