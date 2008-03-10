@@ -75,7 +75,7 @@ public class FluoviewReader extends BaseTiffReader {
   /** Constructs a new Fluoview TIFF reader. */
   public FluoviewReader() {
     super("Olympus Fluoview/ABD TIFF", new String[] {"tif", "tiff"});
-    blockCheckLen = 16384;
+    blockCheckLen = 524288;
     suffixSufficient = false;
   }
 
@@ -141,10 +141,6 @@ public class FluoviewReader extends BaseTiffReader {
     // Originally, Andor TIFF had its own reader; however, the two formats are
     // very similar, so it made more sense to merge the two formats into one
     // reader.
-
-    byte[] buf = new byte[BLOCK_CHECK_LEN];
-    in.seek(0);
-    in.read(buf);
 
     short[] s = TiffTools.getIFDShortArray(ifds[0], MMHEADER, true);
     byte[] mmheader = new byte[s.length];
@@ -249,7 +245,7 @@ public class FluoviewReader extends BaseTiffReader {
         voxelX = voxel;
       }
       else if (name.equals("y")) {
-        core.sizeY[0] = size;
+        if (core.sizeY[0] == 0) core.sizeY[0] = size;
         voxelY = voxel;
       }
       else if (name.equals("z") || name.equals("event")) {
@@ -280,6 +276,8 @@ public class FluoviewReader extends BaseTiffReader {
     if (core.currentOrder[0].indexOf("C") == -1) core.currentOrder[0] += "C";
 
     core.imageCount[0] = ifds.length;
+    if (core.sizeZ[0] > ifds.length) core.sizeZ[0] = ifds.length;
+    if (core.sizeT[0] > ifds.length) core.sizeT[0] = ifds.length;
 
     if (core.imageCount[0] == 1 && (core.sizeT[0] == core.sizeY[0] ||
       core.sizeZ[0] == core.sizeY[0]) && (core.sizeT[0] > core.imageCount[0] ||

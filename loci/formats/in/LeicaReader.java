@@ -134,8 +134,7 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return checkSuffix(id, LEI_SUFFIX) ?
-      FormatTools.MUST_GROUP : FormatTools.CAN_GROUP;
+    return FormatTools.MUST_GROUP;
   }
 
   /**

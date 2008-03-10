@@ -26,6 +26,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 import loci.formats.*;
+import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.MetadataStore;
 
 /**
  * PCXReader is the file format reader for PCX files (originally used by
@@ -154,6 +156,13 @@ public class PCXReader extends FormatReader {
     core.imageCount[0] = 1;
     core.pixelType[0] = FormatTools.UINT8;
     core.currentOrder[0] = "XYCZT";
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    MetadataTools.populatePixels(store, this);
   }
 
 }

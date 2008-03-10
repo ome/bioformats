@@ -521,8 +521,8 @@ public class FV1000Reader extends FormatReader {
     usedFiles = new Vector();
 
     if (tiffPath != null) {
-      if (isOIB) usedFiles.add(id);
-      else {
+      usedFiles.add(id);
+      if (!isOIB) {
         Location dir = new Location(tiffPath);
         String[] list = dir.list();
         for (int i=0; i<list.length; i++) {

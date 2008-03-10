@@ -101,6 +101,7 @@ public class LegacyPictReader extends FormatReader {
     if (debug) debug("LegacyPictReader.initFile(" + id + ")");
     super.initFile(id);
     status("Populating metadata");
+    core.imageCount[0] = 1;
     BufferedImage img = openImage(0);
     core.sizeX[0] = img.getWidth();
     core.sizeY[0] = img.getHeight();
@@ -111,7 +112,6 @@ public class LegacyPictReader extends FormatReader {
     core.currentOrder[0] = "XYCZT";
     core.rgb[0] = core.sizeC[0] > 1;
     core.interleaved[0] = false;
-    core.imageCount[0] = 1;
     core.littleEndian[0] = false;
     core.indexed[0] = false;
     core.falseColor[0] = false;

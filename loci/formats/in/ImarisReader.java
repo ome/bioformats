@@ -121,7 +121,7 @@ public class ImarisReader extends FormatReader {
 
     int version = in.readInt();
     addMeta("Version", new Integer(version));
-    in.readInt();
+    in.skipBytes(4);
 
     addMeta("Image name", in.readString(128));
 
@@ -143,7 +143,7 @@ public class ImarisReader extends FormatReader {
 
     addMeta("Image comment", in.readString(128));
     int isSurvey = in.readInt();
-    addMeta("Survey performed", isSurvey == 0 ? "true" : "false");
+    addMeta("Survey performed", String.valueOf(isSurvey == 0));
 
     status("Calculating image offsets");
 
@@ -160,7 +160,7 @@ public class ImarisReader extends FormatReader {
       detectorOffsets[i] = in.readFloat();
       pinholes[i] = in.readFloat();
       in.skipBytes(24);
-      int offset = 332 + (164 * core.sizeC[0]) +
+      int offset = 336 + (164 * core.sizeC[0]) +
         (i * core.sizeX[0] * core.sizeY[0] * core.sizeZ[0]);
       for (int j=0; j<core.sizeZ[0]; j++) {
         offsets[i*core.sizeZ[0] + j] =
