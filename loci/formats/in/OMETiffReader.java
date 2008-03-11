@@ -143,6 +143,7 @@ public class OMETiffReader extends BaseTiffReader {
         if (!file.exists()) file = new Location(l, fileList[i]);
         String iid = file.getAbsolutePath();
         String icomment = TiffTools.getComment(iid);
+        if (icomment == null || icomment.trim().length() == 0) continue;
         boolean addToList = true;
         if (lsids && imageIDs != null) {
           for (int k=0; k<imageIDs.size(); k++) {

@@ -943,7 +943,7 @@ public class LeicaReader extends FormatReader {
       tiff[i][0].setId((String) files[i].get(0));
       core.indexed[i] = tiff[i][0].isIndexed();
       core.rgb[i] = tiff[i][0].isRGB();
-      if (core.rgb[i] && core.sizeC[i] == 1) core.sizeC[i] = 3;
+      if (core.rgb[i]) core.sizeC[i] *= 3;
       core.interleaved[i] = tiff[i][0].isInterleaved();
       core.pixelType[i] = tiff[i][0].getPixelType();
       core.falseColor[i] = true;
