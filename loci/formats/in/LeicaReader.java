@@ -282,7 +282,8 @@ public class LeicaReader extends FormatReader {
         String[] list = l.list();
         for (int i=0; i<list.length; i++) {
           if (checkSuffix(list[i], LEI_SUFFIX)) {
-            initFile(list[i]);
+            initFile(
+              new Location(l.getAbsolutePath(), list[i]).getAbsolutePath());
             return;
           }
         }
