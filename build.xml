@@ -492,6 +492,7 @@ Apache XML-RPC
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
   </target>
@@ -505,6 +506,7 @@ Apache XML-RPC
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
   </target>
@@ -518,6 +520,7 @@ Apache XML-RPC
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-Xmx${testng.memory}"/>
     </testng>
   </target>
@@ -531,6 +534,7 @@ Apache XML-RPC
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-Xmx${testng.memory}"/>
     </testng>
   </target>
@@ -544,6 +548,7 @@ Apache XML-RPC
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-Xmx${testng.memory}"/>
     </testng>
   </target>
