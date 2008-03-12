@@ -164,42 +164,25 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (fileOnly) {
-      if (in != null) in.close();
-      if (tiff != null) {
-        for (int i=0; i<tiff.length; i++) {
-          if (tiff[i] != null) {
-            for (int j=0; j<tiff[i].length; j++) {
-              if (tiff[i][j] != null) tiff[i][j].close(fileOnly);
-            }
-          }
-        }
-      }
-    }
-    else close();
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    leiFilename = null;
-    files = null;
+    if (in != null) in.close();
     if (tiff != null) {
       for (int i=0; i<tiff.length; i++) {
         if (tiff[i] != null) {
           for (int j=0; j<tiff[i].length; j++) {
-            if (tiff[i][j] != null) tiff[i][j].close();
+            if (tiff[i][j] != null) tiff[i][j].close(fileOnly);
           }
         }
       }
     }
-    ifds = headerIFDs = null;
-    tiff = null;
-    files = null;
-    seriesNames = null;
-    numSeries = bpp = 0;
+    if (!fileOnly) {
+      super.close();
+      leiFilename = null;
+      files = null;
+      ifds = headerIFDs = null;
+      tiff = null;
+      seriesNames = null;
+      numSeries = bpp = 0;
+    }
   }
 
   // -- Internal FormatReader API methods --
@@ -294,7 +277,7 @@ public class LeicaReader extends FormatReader {
 
       super.initFile(id);
 
-      leiFilename = id;
+      leiFilename = new Location(id).getAbsolutePath();
       in = new RandomAccessStream(id);
 
       seriesNames = new Vector();
@@ -638,9 +621,11 @@ public class LeicaReader extends FormatReader {
             break;
           case 10:
             type = "gray normal";
+            core.rgb[i] = false;
             break;
           case 20:
             type = "RGB";
+            core.rgb[i] = true;
             break;
         }
 
@@ -648,6 +633,28 @@ public class LeicaReader extends FormatReader {
 
         bpp = stream.readInt();
         addMeta("Bytes per pixel", new Integer(bpp));
+
+        switch (bpp) {
+          case 1:
+            core.pixelType[i] = FormatTools.UINT8;
+            break;
+          case 2:
+            core.pixelType[i] = FormatTools.UINT16;
+            break;
+          case 3:
+            core.pixelType[i] = FormatTools.UINT8;
+            break;
+          case 4:
+            core.pixelType[i] = FormatTools.UINT32;
+            break;
+          case 6:
+            core.pixelType[i] = FormatTools.UINT16;
+            break;
+          default:
+            throw new FormatException("Unsupported bytes per pixel (" +
+              bpp + ")");
+        }
+
         resolution = stream.readInt();
         addMeta("Real world resolution", new Integer(resolution));
         int length = stream.readInt();
@@ -873,6 +880,7 @@ public class LeicaReader extends FormatReader {
         stream.order(core.littleEndian[0]);
 
         int nChannels = stream.readInt();
+        if (nChannels > 0) core.indexed[i] = true;
         addMeta("Number of LUT channels", new Integer(nChannels));
         addMeta("ID of colored dimension", new Integer(stream.readInt()));
 
@@ -906,8 +914,11 @@ public class LeicaReader extends FormatReader {
       }
     }
 
-    //core = new CoreMetadata(numSeries);
     Arrays.fill(core.orderCertain, true);
+    Arrays.fill(core.littleEndian, core.littleEndian[0]);
+    Arrays.fill(core.falseColor, true);
+    Arrays.fill(core.metadataComplete, true);
+    Arrays.fill(core.interleaved, false);
 
     // sizeC is null here if the file we opened was a TIFF.
     // However, the sizeC field will be adjusted anyway by
@@ -927,27 +938,11 @@ public class LeicaReader extends FormatReader {
 
     byte[] f = new byte[4];
     for (int i=0; i<numSeries; i++) {
-      core.orderCertain[i] = true;
-
-      in.seek(0);
-      in.read(f);
-      core.littleEndian[i] = (f[0] == TiffTools.LITTLE &&
-        f[1] == TiffTools.LITTLE && f[2] == TiffTools.LITTLE &&
-        f[3] == TiffTools.LITTLE);
-
       if (core.sizeC[i] == 0) core.sizeC[i] = 1;
+      if (core.rgb[i]) core.sizeC[i] *= 3;
       core.sizeT[i] += 1;
       core.currentOrder[i] = core.sizeC[i] == 1 ? "XYZTC" : "XYCZT";
       if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
-
-      tiff[i][0].setId((String) files[i].get(0));
-      core.indexed[i] = tiff[i][0].isIndexed();
-      core.rgb[i] = tiff[i][0].isRGB();
-      if (core.rgb[i]) core.sizeC[i] *= 3;
-      core.interleaved[i] = tiff[i][0].isInterleaved();
-      core.pixelType[i] = tiff[i][0].getPixelType();
-      core.falseColor[i] = true;
-      core.metadataComplete[i] = true;
 
       if (i < timestamps.length && timestamps[i] != null) {
         SimpleDateFormat parse =
