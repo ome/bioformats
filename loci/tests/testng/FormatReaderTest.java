@@ -778,7 +778,7 @@ public class FormatReaderTest {
       throw new SkipException(SKIP_MESSAGE);
     }
 
-    LogTools.print("Initializing " + id + ": ");
+    LogTools.print(timestamp() + "Initializing " + id + ": ");
     try {
       reader.setId(id);
       // remove used files
@@ -838,8 +838,8 @@ public class FormatReaderTest {
    * and generates appropriate assertion.
    */
   private static void result(String testName, boolean success, String msg) {
-    LogTools.println(testName + ": " + (success ? "PASSED" : "FAILED") +
-      (msg == null ? "" : " (" + msg + ")"));
+    LogTools.println(timestamp() + ": " + testName + ": " +
+      (success ? "PASSED" : "FAILED") + (msg == null ? "" : " (" + msg + ")"));
     if (msg == null) assert success;
     else assert success : msg;
   }
@@ -849,6 +849,11 @@ public class FormatReaderTest {
     String name = o.getClass().getName();
     int dot = name.lastIndexOf(".");
     return dot < 0 ? name : name.substring(dot + 1);
+  }
+
+  /** Gets a timestamp for the current moment. */
+  private static String timestamp() {
+    return DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
   }
 
 }
