@@ -607,6 +607,9 @@ public final class DataTools {
     long ms = stamp;
 
     switch (format) {
+      case UNIX:
+        ms -= UNIX_EPOCH;
+        break;
       case COBOL:
         ms -= COBOL_EPOCH;
         break;
