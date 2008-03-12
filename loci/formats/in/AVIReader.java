@@ -418,13 +418,23 @@ public class AVIReader extends FormatReader {
               type = in.readString(4);
               size = in.readInt();
               fcc = in.readString(4);
-              if (!(type.equals("LIST") && fcc.equals("rec "))) {
+              if (!(type.equals("LIST") && (fcc.equals("rec ") ||
+                fcc.equals("movi"))))
+              {
                 in.seek(spos);
               }
 
               spos = in.getFilePointer();
               type = in.readString(4);
-              size = in.readInt();
+              if (type.startsWith("ix")) {
+                size = in.readInt();
+                in.skipBytes(size);
+                type = in.readString(4);
+                size = in.readInt();
+              }
+              else {
+                size = in.readInt();
+              }
 
               while (type.substring(2).equals("db") ||
                 type.substring(2).equals("dc") ||
@@ -556,12 +566,14 @@ public class AVIReader extends FormatReader {
     else {
       throw new FormatException("Unsupported compression : " + bmpCompression);
     }
-    b = buf;
-    buf = new byte[b.length * core.sizeC[0]];
-    for (int i=0; i<b.length; i++) {
-      buf[i*core.sizeC[0]] = lut[0][b[i] & 0xff];
-      buf[i*core.sizeC[0] + 1] = lut[1][b[i] & 0xff];
-      buf[i*core.sizeC[0] + 2] = lut[2][b[i] & 0xff];
+    if (lut != null) {
+      b = buf;
+      buf = new byte[b.length * core.sizeC[0]];
+      for (int i=0; i<b.length; i++) {
+        buf[i*core.sizeC[0]] = lut[0][b[i] & 0xff];
+        buf[i*core.sizeC[0] + 1] = lut[1][b[i] & 0xff];
+        buf[i*core.sizeC[0] + 2] = lut[2][b[i] & 0xff];
+      }
     }
     return buf;
   }
