@@ -87,9 +87,9 @@ public class FluoviewReader extends BaseTiffReader {
       RandomAccessStream stream = new RandomAccessStream(block);
       Hashtable ifd = TiffTools.getFirstIFD(stream);
       stream.close();
-      String comment = TiffTools.getComment(ifd);
-      if (comment == null) comment = "";
-      return comment.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
+      String com = TiffTools.getComment(ifd);
+      if (com == null) com = "";
+      return com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
         ifd.containsKey(new Integer(MMHEADER)) ||
         ifd.containsKey(new Integer(MMSTAMP));
     }
