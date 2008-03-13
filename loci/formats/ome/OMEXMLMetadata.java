@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
@@ -53,12 +52,6 @@ public abstract class OMEXMLMetadata
 
   /** The root element of OME-XML. */
   protected OMEXMLNode root;
-
-  /** Each channel's global minimum. */
-  protected double[] channelMinimum;
-
-  /** Each channel's global maximum. */
-  protected double[] channelMaximum;
 
   /** DOM element that backs the first Image's CustomAttributes node. */
   private Element imageCA;
@@ -118,66 +111,11 @@ public abstract class OMEXMLMetadata
     DOMUtil.setAttribute("Value", value, om);
   }
 
-  // -- MetadataRetrieve API methods --
-
-  /* @see loci.formats.MetadataRetrieve#getGlobalMin(Integer, Integer) */
-  public Double getGlobalMin(Integer pixels, Integer channel) {
-    // TODO FIX -- why no usage of pixels?
-    int ndx = i2i(channel);
-    if (channelMinimum == null || ndx >= channelMinimum.length) return null;
-    return new Double(channelMinimum[ndx]);
-  }
-
-  /* @see loci.formats.MetadataRetrieve#getGlobalMax(Integer, Integer) */
-  public Double getGlobalMax(Integer pixels, Integer channel) {
-    // TODO FIX -- why no usage of pixels?
-    int ndx = i2i(channel);
-    if (channelMaximum == null || ndx >= channelMaximum.length) return null;
-    return new Double(channelMaximum[ndx]);
-  }
-
   // -- MetadataStore API methods --
 
   /* @see loci.formats.MetadataStore#getRoot() */
   public Object getRoot() {
     return root;
-  }
-
-  /*
-   * @see loci.formats.MetadataStore#setChannelGlobalMinMax(int,
-   *   Double, Double, Integer)
-   */
-  public void setChannelGlobalMinMax(int channel,
-    Double globalMin, Double globalMax, Integer i)
-  {
-    int ndx = i == null ? 0 : i.intValue();
-    // Since we will need this information for default display options creation
-    // but don't have a place really to store this in OME-XML we're just going
-    // to store it in instance variables.
-    if (channelMinimum == null || channelMinimum.length <= channel) {
-      // expand channel minimum list
-      double[] min = new double[channel + 1];
-      Arrays.fill(min, Double.NaN);
-      if (channelMinimum != null) {
-        System.arraycopy(channelMinimum, 0, min, 0, channelMinimum.length);
-      }
-      channelMinimum = min;
-    }
-
-    if (channelMaximum == null || channelMaximum.length <= channel) {
-      // expand channel maximum list
-      double[] max = new double[channel + 1];
-      Arrays.fill(max, Double.NaN);
-      if (channelMaximum != null) {
-        System.arraycopy(channelMaximum, 0, max, 0, channelMaximum.length);
-      }
-      channelMaximum = max;
-    }
-
-    // Now that the array initialization hocus-pocus has been completed
-    // let's do the work.
-    channelMinimum[channel] = globalMin.doubleValue();
-    channelMaximum[channel] = globalMax.doubleValue();
   }
 
   // -- Helper methods --
@@ -194,22 +132,23 @@ public abstract class OMEXMLMetadata
 
   /** Converts Dimensions.PixelSizeC Float value to Integer. */
   protected Integer dimensionsPixelSizeCToInteger(Float value) {
-    return new Integer(value.intValue());
+    return value == null ? null : new Integer(value.intValue());
   }
 
   /** Converts Integer value to Dimensions.PixelSizeC Float. */
   protected Float dimensionsPixelSizeCFromInteger(Integer value) {
-    return new Float(value.floatValue());
+    return value == null ? null : new Float(value.floatValue());
   }
 
   /** Converts Laser.FrequencyDoubled Boolean value to Integer. */
   protected Integer laserFrequencyDoubledToInteger(Boolean value) {
-    return new Integer(value.booleanValue() ? 2 : 1);
+    return value == null ? null : new Integer(value.booleanValue() ? 2 : 1);
   }
 
   /** Converts Integer value to Laser.FrequencyDoubled Boolean. */
   protected Boolean laserFrequencyDoubledFromInteger(Integer value) {
-    return value.intValue() == 2 ? Boolean.TRUE : Boolean.FALSE;
+    return value == null ? null : value.intValue() == 2 ?
+      Boolean.TRUE : Boolean.FALSE;
   }
 
 }
