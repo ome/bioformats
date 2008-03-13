@@ -6,7 +6,7 @@
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
 Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
 Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden, Christopher Peterson, Philip Huettl and Francis Wong.
+Curtis Rueden, Christopher Peterson and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -42,19 +42,19 @@ public final class About {
     String msg = "<html>" +
       "LOCI Plugins for ImageJ, built @date@" +
       "<br>Copyright 2005-@year@ UW-Madison LOCI" +
-      "<br>http://www.loci.wisc.edu/software" +
+      "<br><i>http://www.loci.wisc.edu/software</i>" +
       "<br>" +
       "<br><b>Bio-Formats Importer</b> and <b>Bio-Formats Exporter</b>" +
       "<br>Authors: Melissa Linkert, Curtis Rueden" +
-      "<br>Web site: http://www.loci.wisc.edu/ome/formats.html" +
+      "<br>Web site: <i>http://www.loci.wisc.edu/ome/formats.html</i>" +
       "<br>" +
       "<br><b>Data Browser</b>" +
       "<br>Authors: Curtis Rueden, Melissa Linkert, Chris Peterson" +
-      "<br>Web site: http://www.loci.wisc.edu/ome/browser.html" +
+      "<br>Web site: <i>http://www.loci.wisc.edu/ome/browser.html</i>" +
       "<br>" +
       "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
       "<br>Authors: Melissa Linkert, Philip Huettl" +
-      "<br>Web site: http://www.loci.wisc.edu/ome/imagej.html" +
+      "<br>Web site: <i>http://www.loci.wisc.edu/ome/imagej.html</i>" +
       "<br>" +
       "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
       "<br>Author: Melissa Linkert";
