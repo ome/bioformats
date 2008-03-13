@@ -79,7 +79,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int series = getSeries();
 
-    // check that all planes have been reade
+    // check that all planes have been read
     if (minMaxDone == null || minMaxDone[series] < getImageCount()) {
       return null;
     }
