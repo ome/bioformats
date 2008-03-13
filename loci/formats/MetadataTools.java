@@ -91,8 +91,7 @@ public final class MetadataTools {
         if (ome == null) {
           // default to newest schema version
           r.exec("import ome.xml.OMEXMLFactory");
-          //version = (String) r.exec("OMEXMLFactory.LATEST_VERSION");
-          version = "2003-FC";
+          version = (String) r.exec("OMEXMLFactory.LATEST_VERSION");
         }
         else {
           // extract schema version from OME root node

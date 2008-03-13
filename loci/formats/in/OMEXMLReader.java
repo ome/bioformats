@@ -84,7 +84,8 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    return new String(block, 0, 5).equals("<?xml");
+    String xml = new String(block);
+    return xml.startsWith("<?xml") && xml.indexOf("<OME") >= 0;
   }
 
   /**
@@ -191,11 +192,7 @@ public class OMEXMLReader extends FormatReader {
       in.seek(0);
       r.setVar("s", in.readString((int) in.length()));
       in.seek(0);
-      //r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata(s)");
-      r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata()");
-      r.exec("import org.openmicroscopy.xml.OMENode");
-      r.exec("root = new OMENode(s)");
-      r.exec("omexmlMeta.setRoot(root)");
+      r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata(s)");
     }
     catch (ReflectException exc) {
       throw new FormatException(exc);

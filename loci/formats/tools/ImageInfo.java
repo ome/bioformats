@@ -184,7 +184,6 @@ public final class ImageInfo {
     }
 
     if (omexml) {
-      if (omexmlVersion == null) omexmlVersion = "2003-FC";
       reader.setOriginalMetadataPopulated(true);
       MetadataStore store =
         MetadataTools.createOMEXMLMetadata(null, omexmlVersion);
