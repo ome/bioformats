@@ -244,7 +244,15 @@ public class OMEWriter extends FormatWriter {
         credentials.imageID = ((Long) r.getVar("pixelsId")).longValue();
 
         r.setVar("NOW", "now");
-        r.setVar("creationDate", metadata.getImageCreationDate(0));
+
+        String creationDate = metadata.getImageCreationDate(0);
+        if (creationDate == null) {
+          creationDate =
+            DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
+        }
+
+        r.setVar("creationDate", creationDate);
+
         if (metadata.getImageName(0) != null) {
           r.setVar("imageName", metadata.getImageName(0));
         }
