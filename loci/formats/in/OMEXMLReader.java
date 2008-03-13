@@ -430,8 +430,7 @@ public class OMEXMLReader extends FormatReader {
       if (debug) LogTools.trace(e);
     }
 
-    String xml = MetadataTools.getOMEXML(omexmlMeta);
-    MetadataTools.convertMetadata(xml, store);
+    MetadataTools.convertMetadata(omexmlMeta, store);
   }
 
   // -- Helper methods --
