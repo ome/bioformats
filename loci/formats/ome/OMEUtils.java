@@ -520,6 +520,8 @@ public class OMEUtils {
     Panel[] p = new Panel[ids.length];
     String[] tips = new String[ids.length];
     for (int i=0; i<ids.length; i++) {
+      if (names[i] == null) names[i] = "";
+
       StringBuffer tip = new StringBuffer();
       tip.append("<HTML>Name: ");
       tip.append(names[i]);

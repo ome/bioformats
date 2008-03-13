@@ -149,11 +149,6 @@ public class LociUploader implements PlugIn {
         String name = fi == null ? imp.getTitle() : fi.fileName;
         store.setImageName(name, 0);
         if (fi != null) store.setImageDescription(fi.info, 0);
-
-      }
-      if (is.getProcessor(1) instanceof ColorProcessor) {
-        store.setPixelsPixelType(
-          FormatTools.getPixelTypeString(FormatTools.UINT8), 0, 0);
       }
       MetadataRetrieve retrieve = (MetadataRetrieve) store;
       ul.setMetadata(retrieve);
