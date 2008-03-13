@@ -188,10 +188,11 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException(exc);
     }
 
+    in.seek(0);
+    String s = in.readString((int) in.length());
+    in.seek(0);
     try {
-      in.seek(0);
-      r.setVar("s", in.readString((int) in.length()));
-      in.seek(0);
+      r.setVar("s", s);
       r.exec("omexmlMeta = MetadataTools.createOMEXMLMetadata(s)");
     }
     catch (ReflectException exc) {
@@ -422,12 +423,11 @@ public class OMEXMLReader extends FormatReader {
     MetadataRetrieve omexmlMeta = null;
     try {
       omexmlMeta = (MetadataRetrieve) r.getVar("omexmlMeta");
+      MetadataTools.convertMetadata(omexmlMeta, store);
     }
     catch (ReflectException e) {
       if (debug) LogTools.trace(e);
     }
-
-    MetadataTools.convertMetadata(omexmlMeta, store);
   }
 
   // -- Helper methods --
