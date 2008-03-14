@@ -59,7 +59,7 @@ public class Template {
 
   /** Default background color (white). */
   private static final int[] DEFAULT_BACKGROUND_COLOR = new int[] {
-    80, 80, 80};
+    255, 255, 255};
 
   // -- Fields --
 

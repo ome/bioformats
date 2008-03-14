@@ -64,6 +64,9 @@ public class Notes extends JFrame implements ActionListener {
   /** Menu bar. */
   private JMenuBar menubar;
 
+  /** Menu item for saving data. */
+  private JMenuItem saveFile;
+
   /** Main viewing area. */
   private JTabbedPane tabPane;
 
@@ -185,9 +188,7 @@ public class Notes extends JFrame implements ActionListener {
   public void loadTemplate(Template t) {
     currentTemplate = t;
 
-    if (tabPane != null) getContentPane().remove(tabPane);
-    tabPane = new JTabbedPane();
-    getContentPane().add(tabPane);
+    tabPane.removeAll();
 
     // retrieve defined GUI parameters
     setPreferredSize(new Dimension(currentTemplate.getDefaultWidth(),
@@ -323,6 +324,7 @@ public class Notes extends JFrame implements ActionListener {
         changeEditable(enable, (Container) c[i]);
       }
     }
+    saveFile.setEnabled(enable);
   }
 
   // -- ActionListener API methods --
@@ -507,6 +509,8 @@ public class Notes extends JFrame implements ActionListener {
     // set up the main panel
 
     JPanel contentPane = new JPanel();
+    contentPane.setLayout(new BorderLayout());
+    setContentPane(contentPane);
 
     // set up the menu bar
 
@@ -524,7 +528,7 @@ public class Notes extends JFrame implements ActionListener {
     openFile.addActionListener(this);
     file.add(openFile);
 
-    JMenuItem saveFile = new JMenuItem("Save");
+    saveFile = new JMenuItem("Save");
     saveFile.setActionCommand("save");
     saveFile.addActionListener(this);
     file.add(saveFile);
@@ -545,17 +549,16 @@ public class Notes extends JFrame implements ActionListener {
     menubar.add(file);
     menubar.add(view);
 
+    setJMenuBar(menubar);
+
     // add the status bar
     progress = new JProgressBar(0, 1);
     progress.setStringPainted(true);
-    menubar.add(progress);
-
-    setJMenuBar(menubar);
+    contentPane.add(progress, BorderLayout.SOUTH);
 
     // provide a place to show metadata
-
     tabPane = new JTabbedPane();
-    contentPane.add(tabPane);
+    contentPane.add(tabPane, BorderLayout.CENTER);
   }
 
   private void openFile(String file) throws Exception {
