@@ -1827,7 +1827,9 @@ public final class ImageTools {
     }
 
     BufferedImage result = null;
-    if (source.getColorModel() instanceof IndexedColorModel) {
+    if ((source.getColorModel() instanceof IndexedColorModel) ||
+      (source.getColorModel() instanceof IndexColorModel))
+    {
       ColorModel model = source.getColorModel();
       WritableRaster raster = Raster.createWritableRaster(
         source.getSampleModel(), source.getData().getDataBuffer(), null);
