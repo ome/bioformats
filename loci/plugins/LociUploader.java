@@ -107,7 +107,6 @@ public class LociUploader implements PlugIn {
       IJ.showStatus("Starting upload...");
       OMEWriter ul = new OMEWriter();
       String id = server + "?user=" + user + "&password=" + pass;
-      ul.setId(id);
 
       ImagePlus imp = WindowManager.getCurrentImage();
       if (imp == null) {
@@ -151,7 +150,8 @@ public class LociUploader implements PlugIn {
         if (fi != null) store.setImageDescription(fi.info, 0);
       }
       MetadataRetrieve retrieve = (MetadataRetrieve) store;
-      ul.setMetadata(retrieve);
+      ul.setMetadataRetrieve(retrieve);
+      ul.setId(id);
 
       boolean little = !retrieve.getPixelsBigEndian(0, 0).booleanValue();
 

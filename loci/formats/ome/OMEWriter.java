@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
+import java.awt.Image;
 import java.io.*;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
@@ -87,8 +88,6 @@ public class OMEWriter extends FormatWriter {
   /** Number of planes written. */
   private int planesWritten = 0;
 
-  private MetadataRetrieve metadata;
-
   // -- Constructor --
 
   public OMEWriter() {
@@ -115,24 +114,29 @@ public class OMEWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#setMetadata(MetadataRetrieve) */
-  public void setMetadata(MetadataRetrieve meta) {
-    metadata = meta;
+  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
+  public void saveImage(Image image, boolean last)
+    throws FormatException, IOException
+  {
+    saveImage(image, 0, last, last);
   }
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, boolean) */
-  public void saveImage(java.awt.Image image, boolean last)
+  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
+  public void saveImage(Image image, int series, boolean lastInSeries,
+    boolean last)
     throws FormatException, IOException
   {
     byte[][] b = ImageTools.getPixelBytes(ImageTools.makeBuffered(image),
-      !metadata.getPixelsBigEndian(0, 0).booleanValue());
+      !metadataRetrieve.getPixelsBigEndian(series, 0).booleanValue());
     for (int i=0; i<b.length; i++) {
-      saveBytes(b[i], last && (i == b.length - 1));
+      saveBytes(b[i], series, lastInSeries && (i == b.length - 1),
+        last && (i == b.length - 1));
     }
   }
 
-  /* @see loci.formats.IFormatWriter#saveBytes(String, byte[], boolean) */
-  public void saveBytes(byte[] bytes, boolean last)
+  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
+    boolean last)
     throws FormatException, IOException
   {
     if (!hasOMEJava) throw new FormatException(NO_OME_JAVA);
@@ -170,28 +174,34 @@ public class OMEWriter extends FormatWriter {
         r.setVar("omeis", omeis);
         r.exec("repository = pf.findRepository(zero)");
         r.exec("repository.setImageServerURL(omeis)");
-
-        r.exec("im.startImport(exp)");
       }
       catch (ReflectException e) {
         throw new FormatException(e);
       }
 
-      if (metadata == null) {
+      if (metadataRetrieve == null) {
         throw new FormatException("Metadata store not specified.");
       }
     }
 
-    int x = metadata.getPixelsSizeX(0, 0).intValue();
-    int y = metadata.getPixelsSizeY(0, 0).intValue();
-    int z = metadata.getPixelsSizeZ(0, 0).intValue();
-    int c = metadata.getPixelsSizeC(0, 0).intValue();
-    int t = metadata.getPixelsSizeT(0, 0).intValue();
-    String order = metadata.getPixelsDimensionOrder(0, 0);
-    String pixelTypeString = metadata.getPixelsPixelType(0, 0);
+    try {
+      r.exec("im.startImport(exp)");
+    }
+    catch (ReflectException e) {
+      if (debug) LogTools.trace(e);
+    }
+
+    int x = metadataRetrieve.getPixelsSizeX(series, 0).intValue();
+    int y = metadataRetrieve.getPixelsSizeY(series, 0).intValue();
+    int z = metadataRetrieve.getPixelsSizeZ(series, 0).intValue();
+    int c = metadataRetrieve.getPixelsSizeC(series, 0).intValue();
+    int t = metadataRetrieve.getPixelsSizeT(series, 0).intValue();
+    String order = metadataRetrieve.getPixelsDimensionOrder(series, 0);
+    String pixelTypeString = metadataRetrieve.getPixelsPixelType(series, 0);
     int pixelType = FormatTools.pixelTypeFromString(pixelTypeString);
     int bpp = FormatTools.getBytesPerPixel(pixelType);
-    boolean bigEndian = metadata.getPixelsBigEndian(0, 0).booleanValue();
+    boolean bigEndian =
+      metadataRetrieve.getPixelsBigEndian(series, 0).booleanValue();
 
     try {
       r.exec("sessionKey = rc.getSessionKey()");
@@ -238,14 +248,14 @@ public class OMEWriter extends FormatWriter {
       throw new FormatException("Failed to upload plane.", e);
     }
 
-    if (last) {
+    if (lastInSeries) {
       try {
         r.exec("pixelsId = is.finishPixels(pixelsId)");
         credentials.imageID = ((Long) r.getVar("pixelsId")).longValue();
 
         r.setVar("NOW", "now");
 
-        String creationDate = metadata.getImageCreationDate(0);
+        String creationDate = metadataRetrieve.getImageCreationDate(series);
         if (creationDate == null) {
           creationDate =
             DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX);
@@ -253,11 +263,12 @@ public class OMEWriter extends FormatWriter {
 
         r.setVar("creationDate", creationDate);
 
-        if (metadata.getImageName(0) != null) {
-          r.setVar("imageName", metadata.getImageName(0));
+        if (metadataRetrieve.getImageName(series) != null) {
+          r.setVar("imageName", metadataRetrieve.getImageName(series));
         }
         else r.setVar("imageName", "new image " + credentials.imageID);
-        r.setVar("imageDescription", metadata.getImageDescription(0));
+        r.setVar("imageDescription",
+          metadataRetrieve.getImageDescription(series));
 
         r.setVar("IMAGE_CLASS", "org.openmicroscopy.ds.dto.Image");
         r.exec("IMAGE_CLASS = Class.forName(IMAGE_CLASS)");
@@ -319,13 +330,16 @@ public class OMEWriter extends FormatWriter {
 
         r.exec("img.setDefaultPixels(pixels)");
         r.exec("df.update(img)");
-
-        close();
       }
       catch (ReflectException e) {
         throw new FormatException(e);
       }
+
+      planesWritten = 0;
+      credentials.imageID = -1;
     }
+
+    if (last) close();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
@@ -341,7 +355,8 @@ public class OMEWriter extends FormatWriter {
     catch (ReflectException e) { }
     credentials = null;
     planesWritten = 0;
-    metadata = null;
+    if (currentId != null) metadataRetrieve = null;
+    currentId = null;
   }
 
   // -- StatusReporter API methods --
@@ -403,6 +418,7 @@ public class OMEWriter extends FormatWriter {
   public static void main(String[] args) throws Exception {
     String server = null, user = null, pass = null;
     String id = null;
+    int series = -1;
 
     // parse command-line arguments
     boolean doUsage = false;
@@ -415,6 +431,9 @@ public class OMEWriter extends FormatWriter {
           if (param.equalsIgnoreCase("-s")) server = args[++i];
           else if (param.equalsIgnoreCase("-u")) user = args[++i];
           else if (param.equalsIgnoreCase("-p")) pass = args[++i];
+          else if (param.equalsIgnoreCase("-series")) {
+            series = Integer.parseInt(args[++i]);
+          }
           else if (param.equalsIgnoreCase("-h") || param.equalsIgnoreCase("-?"))
           {
             doUsage = true;
@@ -449,7 +468,7 @@ public class OMEWriter extends FormatWriter {
     if (id == null) doUsage = true;
     if (doUsage) {
       LogTools.println("Usage: omeul [-s server.address] " +
-        "[-u username] [-p password] filename");
+        "[-u username] [-p password] [-series series.number] filename");
       LogTools.println();
       System.exit(1);
     }
@@ -486,14 +505,23 @@ public class OMEWriter extends FormatWriter {
       }
     });
 
-    uploader.setId(server + "?user=" + user + "&password=" + pass);
-
     FileStitcher reader = new FileStitcher();
     reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
     reader.setId(id);
-    uploader.setMetadata((MetadataRetrieve) reader.getMetadataStore());
-    for (int i=0; i<reader.getImageCount(); i++) {
-      uploader.saveImage(reader.openImage(i), i == reader.getImageCount() - 1);
+
+    uploader.setMetadataRetrieve((MetadataRetrieve) reader.getMetadataStore());
+    uploader.setId(server + "?user=" + user + "&password=" + pass);
+
+    int start = series == -1 ? 0 : series;
+    int end = series == -1 ? reader.getSeriesCount() : series + 1;
+
+    for (int s=start; s<end; s++) {
+      reader.setSeries(s);
+      for (int i=0; i<reader.getImageCount(); i++) {
+        boolean last = i == reader.getImageCount() - 1;
+        uploader.saveImage(reader.openImage(i), s, last,
+          last && s == end - 1);
+      }
     }
     reader.close();
     uploader.close();

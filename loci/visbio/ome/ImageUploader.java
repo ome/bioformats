@@ -66,7 +66,7 @@ public class ImageUploader {
       MetadataStore store = MetadataTools.createOMEXMLMetadata();
       store.setRoot(data.getOMENode());
       MetadataRetrieve retrieve = (MetadataRetrieve) store;
-      writer.setMetadata(retrieve);
+      writer.setMetadataRetrieve(retrieve);
 
       String id = server + "?user=" + username + "&password=" + password;
       writer.setId(id);
