@@ -34,7 +34,14 @@ import javax.swing.event.ChangeListener;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
+import ij.io.FileInfo;
 //import loci.formats.gui.CacheIndicator;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import javax.xml.parsers.*;
+import loci.formats.gui.XMLCellRenderer;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Extension of StackWindow with additional UI trimmings for animation,
@@ -57,6 +64,9 @@ public class CustomWindow extends StackWindow
   protected boolean anim = false, die = false;
   protected boolean allowShow = false;
 
+  protected JFrame metaWindow;
+  protected String xml;
+
   // -- Constructors --
 
   public CustomWindow(ImagePlus imp) {
@@ -65,6 +75,9 @@ public class CustomWindow extends StackWindow
 
   public CustomWindow(final ImagePlus imp, ImageCanvas ic) {
     super(imp, ic);
+
+    // build metadata window
+    metaWindow = new JFrame("Metadata - " + getTitle());
 
     // build fancy UI widgets
     while (getComponentCount() > 1) remove(1);
@@ -187,9 +200,68 @@ public class CustomWindow extends StackWindow
       }.start();
     }
 
+    FileInfo fi = imp.getOriginalFileInfo();
+    if (fi.description != null && fi.description.startsWith("<?xml")) {
+      setXML(fi.description);
+    }
+
     allowShow = true;
     pack();
     setVisible(true);
+  }
+
+  // -- CustomWindow API methods --
+
+  /**
+   * Sets XML block associated with this window. This information will be
+   * displayed in a tree structure when the Metadata button is clicked.
+   */
+  public void setXML(String xml) {
+    this.xml = xml;
+    metaWindow.getContentPane().removeAll();
+    boolean success = false;
+    if (xml == null) {
+      metaWindow.setVisible(false);
+      success = true;
+    }
+    else {
+      try {
+        // parse XML into DOM structure
+        DocumentBuilderFactory docFact = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = docFact.newDocumentBuilder();
+        ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes());
+        Document doc = db.parse(is);
+        is.close();
+
+        // construct metadata window and size intelligently
+        JTree tree = XMLCellRenderer.makeJTree(doc);
+        for (int i=0; i<tree.getRowCount(); i++) tree.expandRow(i);
+        metaWindow.getContentPane().add(new JScrollPane(tree));
+        metaWindow.pack();
+        Dimension dim = metaWindow.getSize();
+        int pad = 20;
+        dim.width += pad;
+        dim.height += pad;
+        Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = 3 * ss.width / 4;
+        int maxHeight = 3 * ss.height / 4;
+        if (dim.width > maxWidth) dim.width = maxWidth;
+        if (dim.height > maxHeight) dim.height = maxHeight;
+        metaWindow.setSize(dim);
+
+        success = true;
+      }
+      catch (ParserConfigurationException exc) {
+        exc.printStackTrace();
+      }
+      catch (SAXException exc) {
+        exc.printStackTrace();
+      }
+      catch (IOException exc) {
+        exc.printStackTrace();
+      }
+    }
+    metadata.setEnabled(success);
   }
 
   // -- Window API methods --
@@ -222,6 +294,15 @@ public class CustomWindow extends StackWindow
     else if (src == options) {
     }
     else if (src == metadata) {
+      // center window and show
+      Rectangle r = getBounds();
+      Dimension w = metaWindow.getSize();
+      int x = r.x + (r.width - w.width) / 2;
+      int y = r.y + (r.height - w.height) / 2;
+      if (x < 5) x = 5;
+      if (y < 5) y = 5;
+      metaWindow.setLocation(x, y);
+      metaWindow.setVisible(true);
     }
     // NB: Do not eat superclass events. Om nom nom nom. :-)
     else super.actionPerformed(e);
