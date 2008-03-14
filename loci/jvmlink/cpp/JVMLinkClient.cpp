@@ -158,31 +158,34 @@ void JVMLinkClient::exec(CString command) {
 }
 
 void JVMLinkClient::setVar(JVMLinkObject* obj) {
-	debug("setVar: " << obj->name << " = " << obj);
 	sendInt(SETVAR_CMD);
 	sendMessage(obj->name);
 	sendInt((int) obj->type);
 	if (obj->type == ARRAY_TYPE) {
 		sendInt((int) obj->insideType);
 		sendInt(obj->length);
-		sendInt(obj->size);
-
-		int sentBytes = 0;
-		int totalBytes = (obj->size)*(obj->length);
-		char* dataPointer = (char*) obj->data;
-		while (sentBytes < totalBytes) {
-			char* buff = (char*) (dataPointer + sentBytes);
-			int packetSize = MAX_PACKET_SIZE;
-			if (sentBytes + MAX_PACKET_SIZE > totalBytes) {
-				packetSize = totalBytes - sentBytes;
+		if (obj->insideType == STRING_TYPE) {
+			CString* s = (CString*) obj->data;
+			for (int i=0; i<obj->length; i++) sendMessage(s[i]);
+		}
+		else {
+			int sentBytes = 0;
+			int totalBytes = obj->size * obj->length;
+			char* dataPointer = (char*) obj->data;
+			while (sentBytes < totalBytes) {
+				char* buff = (char*) (dataPointer + sentBytes);
+				int packetSize = MAX_PACKET_SIZE;
+				if (sentBytes + MAX_PACKET_SIZE > totalBytes) {
+					packetSize = totalBytes - sentBytes;
+				}
+				send(conn, dataPointer, packetSize, 0);
+				sentBytes += packetSize;
 			}
-			send(conn,buff,packetSize,0);
-			sentBytes += packetSize;
 		}
 	}
 	else {
 		if (obj->type == STRING_TYPE) sendMessage(*(CString*) obj->data);
-		else send(conn, (char*) obj->data, obj->size,0);
+		else send(conn, (char*) obj->data, obj->size, 0);
 	}
 }
 
@@ -195,7 +198,7 @@ void JVMLinkClient::setVar(CString argname, int obj) {
 
 void JVMLinkClient::setVar(CString argname, int* obj, int length) {
 	debug("setVar: " << argname << " (int array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, INT_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, INT_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -209,7 +212,7 @@ void JVMLinkClient::setVar(CString argname, CString obj) {
 
 void JVMLinkClient::setVar(CString argname, CString* obj, int length) {
 	debug("setVar: " << argname << " (string array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, STRING_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, STRING_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -223,7 +226,7 @@ void JVMLinkClient::setVar(CString argname, char obj) {
 
 void JVMLinkClient::setVar(CString argname, char* obj, int length) {
 	debug("setVar: " << argname << " (char array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, CHAR_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, CHAR_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -237,7 +240,7 @@ void JVMLinkClient::setVar(CString argname, Byte obj) {
 
 void JVMLinkClient::setVar(CString argname, Byte* obj, int length) {
 	debug("setVar: " << argname << " (byte array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, BYTE_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, BYTE_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -251,7 +254,7 @@ void JVMLinkClient::setVar(CString argname, float obj) {
 
 void JVMLinkClient::setVar(CString argname, float* obj, int length) {
 	debug("setVar: " << argname << " (float array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, FLOAT_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, FLOAT_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -265,7 +268,7 @@ void JVMLinkClient::setVar(CString argname, bool obj) {
 
 void JVMLinkClient::setVar(CString argname, bool* obj, int length) {
 	debug("setVar: " << argname << " (bool array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, BOOL_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, BOOL_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -279,7 +282,7 @@ void JVMLinkClient::setVar(CString argname, double obj) {
 
 void JVMLinkClient::setVar(CString argname, double* obj, int length) {
 	debug("setVar: " << argname << " (double array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, DOUBLE_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, DOUBLE_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -293,7 +296,7 @@ void JVMLinkClient::setVar(CString argname, long long obj) {
 
 void JVMLinkClient::setVar(CString argname, long long* obj, int length) {
 	debug("setVar: " << argname << " (long array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, LONG_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, LONG_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -307,7 +310,7 @@ void JVMLinkClient::setVar(CString argname, short obj) {
 
 void JVMLinkClient::setVar(CString argname, short* obj, int length) {
 	debug("setVar: " << argname << " (short array)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, SHORT_TYPE, length, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, SHORT_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -316,19 +319,17 @@ void JVMLinkClient::setVar(CString argname, short* obj, int length) {
 
 int JVMLinkClient::sendMessage(CString message) {
     sendInt(message.GetLength());
-	send(conn,(LPCTSTR)message,message.GetLength(),0);
-	return 0;
+	return send(conn,(LPCTSTR)message,message.GetLength(),0);
 }
 
 int JVMLinkClient::sendInt(int value) {
 	char* buff = (char*) (&value);
-	send(conn,buff,4,0);
-	return 0;
+	return send(conn,buff,4,0);
 }
 
 void* JVMLinkClient::readMessage(int size) {
 	char* buff = (char*) malloc(size);
-	recv(conn,buff,size,0); //TODO: check if everything is received.
+	recv(conn, buff, size, 0); //TODO: check if everything is received.
 	return (void*) buff;
 }
 

@@ -62,7 +62,7 @@ struct Byte {
 
 class JVMLinkObject {
 private:
-	int getSize(Type, void*);
+	int getSize(Type);
 
 public:
 	JVMLinkObject(CString);

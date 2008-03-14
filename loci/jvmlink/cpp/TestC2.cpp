@@ -144,8 +144,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << "TestC2: setVar: myInt = " << myInt << std::endl;
 	JVMLinkObject* jvmInt = p->getVar("myInt");
 	std::cout << "TestC2: getVar: myInt = " << jvmInt->getDataAsInt() << std::endl;
-	//for (int i=0; i<first->length; i++) std::cout << a[i] << ", ";
-	//std::cout << "Last two elements are " << data[first->length - 2] << " and " << data[first->length - 1] << std::endl;
 
 	// long variables
 	long long myLong = randomLong();
@@ -279,18 +277,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << " ]" << std::endl;
 
 	// CString arrays
-//	p->setVar("myStrings", myStrings, num);
-//	std::cout << "TestC2: setVar: myStrings = [" << std::endl;
-//	for (i=0; i<num; i++) {
-//		std::cout << "\t" << myStrings[i] << std::endl;
-//	}
-//	std::cout << "]" << std::endl;
-//	JVMLinkObject* jvmStrings = p->getVar("myStrings");
-//	std::cout << "TestC2: getVar: myStrings = [" << std::endl;
-//	for (i=0; i<num; i++) {
-//		std::cout << "\t" << myStrings[i] << std::endl;
-//	}
-//	std::cout << "]" << std::endl;
+	p->setVar("myStrings", myStrings, num);
+	std::cout << "TestC2: setVar: myStrings = [" << std::endl;
+	for (int i=0; i<num; i++) {
+		std::cout << "\t" << myStrings[i] << std::endl;
+	}
+	std::cout << "]" << std::endl;
+	JVMLinkObject* jvmStrings = p->getVar("myStrings");
+	std::cout << "TestC2: getVar: myStrings = [" << std::endl;
+	for (int i=0; i<num; i++) {
+		std::cout << "\t" << myStrings[i] << std::endl;
+	}
+	std::cout << "]" << std::endl;
 
 	delete myBools;
 	delete myBytes;

@@ -65,6 +65,7 @@ public class ConnThread extends Thread {
   public static final int DOUBLE_TYPE = 7;
   public static final int LONG_TYPE = 8;
   public static final int SHORT_TYPE = 9;
+  public static final int NULL_TYPE = -1;
 
   public static final int BYTE_ORDER = 0;
   public static final int SETVAR = 1;
@@ -137,6 +138,7 @@ public class ConnThread extends Thread {
    * Then:
    *  size - number of bytes (per item)
    *   In case of strings, length of string
+   *   For array of strings, 0
    */
 
   // -- Thread API methods --
@@ -229,68 +231,64 @@ public class ConnThread extends Thread {
     if (type == ARRAY_TYPE) {
       int insideType = readInt();
       int arrayLength = readInt();
-      int size = readInt();
-      debug("in array type for variable " + name +
-        " insidetype, length, size: " + insideType + ", " + arrayLength +
-        ", " + size);
+      int size = getSize(insideType);
       Object theArray = null;
       if (insideType == INT_TYPE) {
         int[] intArray = new int[arrayLength];
-          int readBytes = 0, totalBytes = size*arrayLength;
-          while (readBytes < totalBytes) {
-            int packetSize = MAX_PACKET_SIZE;
-            if (readBytes + MAX_PACKET_SIZE > totalBytes) {
-              packetSize = totalBytes - readBytes;
-            }
-            byte[] b = new byte[packetSize];
-            in.readFully(b, 0, packetSize);
-            for (int i=0; i<packetSize/4; i++) {
-              intArray[i + (readBytes/4)] =
-                DataTools.bytesToInt(b, 4*i, little);
-            }
-            readBytes += packetSize;
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
           }
-          theArray = intArray;
+          byte[] b = new byte[packetSize];
+          in.readFully(b, 0, packetSize);
+          for (int i=0; i<packetSize/4; i++) {
+            intArray[i + (readBytes/4)] =
+              DataTools.bytesToInt(b, 4*i, little);
+          }
+          readBytes += packetSize;
         }
+        theArray = intArray;
+      }
       else if (insideType == STRING_TYPE) {
         String[] stringArray = new String[arrayLength];
-          for (int i=0; i<arrayLength; i++) {
-            stringArray[i] = readString();
-          }
-          theArray = stringArray;
+        for (int i=0; i<arrayLength; i++) {
+          stringArray[i] = readString();
         }
+        theArray = stringArray;
+      }
       else if (insideType == BYTE_TYPE) {
         byte[] byteArray = new byte[arrayLength];
-          int readBytes = 0, totalBytes = size*arrayLength;
-          while (readBytes < totalBytes) {
-            int packetSize = MAX_PACKET_SIZE;
-            if (readBytes + MAX_PACKET_SIZE > totalBytes) {
-              packetSize = totalBytes - readBytes;
-            }
-            in.readFully(byteArray, readBytes, packetSize);
-            readBytes += packetSize;
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
           }
-          theArray = byteArray;
+          in.readFully(byteArray, readBytes, packetSize);
+          readBytes += packetSize;
         }
+        theArray = byteArray;
+      }
       else if (insideType == CHAR_TYPE) {
         char[] charArray = new char[arrayLength];
-          int readBytes = 0, totalBytes = size*arrayLength;
-          while (readBytes < totalBytes) {
-            int packetSize = MAX_PACKET_SIZE;
-            if (readBytes + MAX_PACKET_SIZE > totalBytes) {
-              packetSize = totalBytes - readBytes;
-            }
-            byte[] b = new byte[packetSize];
-            in.readFully(b, 0, packetSize);
-            for (int i=0; i<packetSize; i++) {
-              charArray[i + readBytes] = (char)
-                ((0x00 << 8) | (b[i] & 0xff));
-            }
-            readBytes += packetSize;
+        int readBytes = 0, totalBytes = size*arrayLength;
+        while (readBytes < totalBytes) {
+          int packetSize = MAX_PACKET_SIZE;
+          if (readBytes + MAX_PACKET_SIZE > totalBytes) {
+            packetSize = totalBytes - readBytes;
           }
-          theArray = charArray;
-          //debug("recvd char array is " + new String(charArray));
+          byte[] b = new byte[packetSize];
+          in.readFully(b, 0, packetSize);
+          for (int i=0; i<packetSize; i++) {
+            charArray[i + readBytes] = (char)
+              ((0x00 << 8) | (b[i] & 0xff));
+          }
+          readBytes += packetSize;
         }
+        theArray = charArray;
+      }
       else if (insideType == FLOAT_TYPE) {
         float[] floatArray = new float[arrayLength];
         int readBytes = 0, totalBytes = size*arrayLength;
@@ -703,13 +701,48 @@ public class ConnThread extends Thread {
     }
   }
 
+  public static int getSize(int type) {
+    switch (type) {
+      case BYTE_TYPE:
+      case CHAR_TYPE:
+      case BOOLEAN_TYPE:
+      case NULL_TYPE:
+        return 1;
+      case SHORT_TYPE:
+        return 2;
+      case INT_TYPE:
+      case FLOAT_TYPE:
+        return 4;
+      case DOUBLE_TYPE:
+      case LONG_TYPE:
+        return 8;
+      case STRING_TYPE: // string size is variable
+      default:
+        return 0;
+    }
+  }
+
   public static String getValue(Object value) {
     if (value == null) return null;
-    String val = value.toString();
+    String val;
     try {
-      val += " (length " + Array.getLength(value) + ")";
+      int len = Array.getLength(value);
+      StringBuffer sb = new StringBuffer();
+      sb.append("[");
+      boolean str = false;
+      for (int i=0; i<len; i++) {
+        Object o = Array.get(value, i);
+        str = o instanceof String;
+        sb.append(str ? "\n\t" : " ");
+        sb.append(o);
+      }
+      sb.append(str ? "\n" : " ");
+      sb.append("]");
+      val = sb.toString();
     }
-    catch (IllegalArgumentException exc) { }
+    catch (IllegalArgumentException exc) {
+      val = value.toString();
+    }
     return val;
   }
 

@@ -40,7 +40,7 @@ JVMLinkObject::JVMLinkObject(CString name) {
 // Constructor for single primitives
 JVMLinkObject::JVMLinkObject(CString name, Type type, void* data) {
 	this->name = name;
-	this->size = getSize(type, data);
+	this->size = getSize(type);
 	this->length = 1;
 	this->type = type;
 	this->data = data;
@@ -49,7 +49,7 @@ JVMLinkObject::JVMLinkObject(CString name, Type type, void* data) {
 // Constructor for arrays
 JVMLinkObject::JVMLinkObject(CString name, Type type, int length, void* data) {
 	this->name = name;
-	this->size = getSize(type, data);
+	this->size = getSize(type);
 	this->length = length;
 	this->type = ARRAY_TYPE;
 	this->insideType = type;
@@ -152,7 +152,7 @@ short* JVMLinkObject::getDataAsShortArray() {
 	return retval;
 }
 
-int JVMLinkObject::getSize(Type type, void* data) {
+int JVMLinkObject::getSize(Type type) {
 	switch (type) {
 		case BYTE_TYPE:
 		case CHAR_TYPE:
@@ -167,8 +167,7 @@ int JVMLinkObject::getSize(Type type, void* data) {
 		case DOUBLE_TYPE:
 		case LONG_TYPE:
 			return 8;
-		case STRING_TYPE:
-			return ((CString*) data)->GetLength();
+		case STRING_TYPE: // string size is variable
 		default:
 			return 0;
 	}
