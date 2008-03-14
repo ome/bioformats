@@ -345,7 +345,7 @@ public class ConnThread extends Thread {
           if (readBytes + MAX_PACKET_SIZE > totalBytes) {
             packetSize = totalBytes - readBytes;
           }
-            byte[] b = new byte[packetSize];
+          byte[] b = new byte[packetSize];
           in.readFully(b, 0, packetSize);
           for (int i=0; i<packetSize/8; i++) {
             longArray[i + readBytes/8] =
@@ -365,9 +365,9 @@ public class ConnThread extends Thread {
           }
           byte[] b = new byte[packetSize];
           in.readFully(b, 0, packetSize);
-          for (int i=0; i<packetSize/4; i++) {
-            shortArray[i + readBytes/4] =
-              DataTools.bytesToShort(b, 4*i, little);
+          for (int i=0; i<packetSize/2; i++) {
+            shortArray[i + readBytes/2] =
+              DataTools.bytesToShort(b, 2*i, little);
           }
           readBytes += packetSize;
         }
