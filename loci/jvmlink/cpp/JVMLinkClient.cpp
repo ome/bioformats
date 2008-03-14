@@ -80,17 +80,14 @@ JVMLinkClient::ConnectionCode JVMLinkClient::establishConnection() {
 	if (conn==INVALID_SOCKET) return SOCKET_ERR;
 	debug("Socket created");
 
-	if (inet_addr(servername)==INADDR_NONE)
-	{
+	if (inet_addr(servername)==INADDR_NONE) {
 		hp=gethostbyname(servername);
 	}
-	else
-	{
+	else {
 		addr=inet_addr(servername);
 		hp=gethostbyaddr((char*)&addr,sizeof(addr),AF_INET);
 	}
-	if (hp == NULL)
-	{
+	if (hp == NULL) {
 		closesocket(conn);
 		debug("Could not resolve network address: " << servername);
 		return RESOLVE_ERR;
@@ -100,8 +97,7 @@ JVMLinkClient::ConnectionCode JVMLinkClient::establishConnection() {
 	server.sin_addr.s_addr=*((unsigned long*)hp->h_addr);
 	server.sin_family=AF_INET;
 	server.sin_port=htons(port);
-	if (connect(conn,(struct sockaddr*)&server,sizeof(server)))
-	{
+	if (connect(conn,(struct sockaddr*)&server,sizeof(server))) {
 		closesocket(conn);
 		debug("No server response on port " << port);
 		return RESPONSE_ERR;	
@@ -112,11 +108,12 @@ JVMLinkClient::ConnectionCode JVMLinkClient::establishConnection() {
 
 int JVMLinkClient::closeConnection() {
 	debug("Closing connection");
+	shutdown(conn, SD_SEND);
 	closesocket(conn);
 	debug("Socket closed");
 	WSACleanup();
 	debug("De-initialized WinSock");
-	return 0;
+	return CONNECTION_SUCCESS;
 }
 
 JVMLinkObject* JVMLinkClient::getVar(CString name) {

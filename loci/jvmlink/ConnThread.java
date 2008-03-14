@@ -134,11 +134,6 @@ public class ConnThread extends Thread {
    *     types, then length)
    *   1-9 - int, string, byte, char, float, bool, double, long, short
    *     (in order)
-   *
-   * Then:
-   *  size - number of bytes (per item)
-   *   In case of strings, length of string
-   *   For array of strings, 0
    */
 
   // -- Thread API methods --

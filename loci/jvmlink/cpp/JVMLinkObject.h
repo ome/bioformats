@@ -32,8 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-class JVMLinkClient;
-
 enum Command {
 	BYTE_ORDER_CMD = 0,
 	SETVAR_CMD = 1,
