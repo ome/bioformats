@@ -103,7 +103,7 @@ public class FormatReaderTest {
   public void testBufferedImageDimensions() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestBufferedImageDimensions";
+    String testName = "testBufferedImageDimensions";
     boolean success = true;
     String msg = null;
     try {
@@ -116,7 +116,9 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
 
-        for (int j=0; j<reader.getImageCount() && success; j++) {
+        int num = reader.getImageCount();
+        if (num > 3) num = 3; // test first three image planes only, for speed
+        for (int j=0; j<num && success; j++) {
           b = reader.openImage(j);
 
           int actualX = b.getWidth();
@@ -152,7 +154,7 @@ public class FormatReaderTest {
   public void testByteArrayDimensions() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestByteArrayDimensions";
+    String testName = "testByteArrayDimensions";
     boolean success = true;
     String msg = null;
     try {
@@ -166,7 +168,9 @@ public class FormatReaderTest {
 
         int expected = x * y * c * bytes;
 
-        for (int j=0; j<reader.getImageCount() && success; j++) {
+        int num = reader.getImageCount();
+        if (num > 3) num = 3; // test first three planes only, for speed
+        for (int j=0; j<num && success; j++) {
           b = reader.openBytes(j);
           success = b.length == expected;
           if (!success) {
@@ -189,11 +193,10 @@ public class FormatReaderTest {
   public void testThumbnailImageDimensions() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestThumbnailImageDimensions";
+    String testName = "testThumbnailImageDimensions";
     boolean success = true;
     String msg = null;
     try {
-      BufferedImage b = null;
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
 
@@ -202,27 +205,34 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
 
-        for (int j=0; j<reader.getImageCount() && success; j++) {
-          b = reader.openThumbImage(j);
+        BufferedImage b = reader.openThumbImage(0);
 
-          int actualX = b.getWidth();
-          boolean passX = x == actualX;
-          if (!passX) msg = "X: was " + actualX + ", expected " + x;
-
-          int actualY = b.getHeight();
-          boolean passY = y == actualY;
-          if (!passY) msg = "Y: was " + actualY + ", expected " + y;
-
-          int actualC = b.getRaster().getNumBands();
-          boolean passC = c == actualC;
-          if (!passC) msg = "C: was " + actualC + ", expected < " + c;
-
-          int actualType = ImageTools.getPixelType(b);
-          boolean passType = type == actualType;
-          if (!passType) msg = "type: was " + actualType + ", expected " + type;
-
-          success = passX && passY && passC && passType;
+        int actualX = b.getWidth();
+        boolean passX = x == actualX;
+        if (!passX) {
+          msg = "series #" + i + ": X: was " + actualX + ", expected " + x;
         }
+
+        int actualY = b.getHeight();
+        boolean passY = y == actualY;
+        if (!passY) {
+          msg = "series #" + i + ": Y: was " + actualY + ", expected " + y;
+        }
+
+        int actualC = b.getRaster().getNumBands();
+        boolean passC = c == actualC;
+        if (!passC) {
+          msg = "series #" + i + ": C: was " + actualC + ", expected < " + c;
+        }
+
+        int actualType = ImageTools.getPixelType(b);
+        boolean passType = type == actualType;
+        if (!passType) {
+          msg = "series #" + i + ": type: was " +
+            actualType + ", expected " + type;
+        }
+
+        success = passX && passY && passC && passType;
       }
     }
     catch (Throwable t) {
@@ -238,11 +248,10 @@ public class FormatReaderTest {
   public void testThumbnailByteArrayDimensions() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestThumbnailByteArrayDimensions";
+    String testName = "testThumbnailByteArrayDimensions";
     boolean success = true;
     String msg = null;
     try {
-      byte[] b = null;
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
         int x = reader.getThumbSizeX();
@@ -252,13 +261,10 @@ public class FormatReaderTest {
 
         int expected = x * y * c * bytes;
 
-        for (int j=0; j<reader.getImageCount() && success; j++) {
-          b = reader.openThumbBytes(j);
-          success = b.length == expected;
-          if (!success) {
-            msg = "series #" + i + ", image #" + j +
-              ": was " + b.length + ", expected " + expected;
-          }
+        byte[] b = reader.openThumbBytes(0);
+        success = b.length == expected;
+        if (!success) {
+          msg = "series #" + i + ": was " + b.length + ", expected " + expected;
         }
       }
     }
@@ -275,7 +281,7 @@ public class FormatReaderTest {
   public void testImageCount() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestImageCount";
+    String testName = "testImageCount";
     boolean success = true;
     String msg = null;
     try {
@@ -303,7 +309,7 @@ public class FormatReaderTest {
   public void testOMEXML() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestOMEXML";
+    String testName = "testOMEXML";
     boolean success = true;
     String msg = null;
     try {
@@ -358,7 +364,7 @@ public class FormatReaderTest {
   public void testConsistent() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestConsistent";
+    String testName = "testConsistent";
     boolean success = true;
     String msg = null;
     try {
@@ -473,7 +479,7 @@ public class FormatReaderTest {
   public void testPerformance() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestPerformance";
+    String testName = "testPerformance";
     boolean success = true;
     String msg = null;
     try {
@@ -501,7 +507,7 @@ public class FormatReaderTest {
         double actualTime = (double) (t2 - t1) / totalPlanes;
         int actualMem = (int) ((m2 - m1) >> 20);
 
-        // check time elapsed 
+        // check time elapsed
         if (actualTime - timeMultiplier * properTime > 20.0) {
           success = false;
           msg = "got " + actualTime + " ms, expected " + properTime + " ms";
@@ -527,7 +533,7 @@ public class FormatReaderTest {
   public void testSaneUsedFiles() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestSaneUsedFiles";
+    String testName = "testSaneUsedFiles";
     boolean success = true;
     String msg = null;
     try {
@@ -564,7 +570,7 @@ public class FormatReaderTest {
   public void testValidXML() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestValidXML";
+    String testName = "testValidXML";
     boolean success = true;
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
@@ -586,7 +592,7 @@ public class FormatReaderTest {
   public void testPixelsHashes() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestPixelsHashes";
+    String testName = "testPixelsHashes";
     boolean success = true;
     String msg = null;
     try {
@@ -617,7 +623,7 @@ public class FormatReaderTest {
   public void testIsThisType() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    String testName = "\ttestIsThisType";
+    String testName = "testIsThisType";
     boolean success = true;
     String msg = null;
     try {
@@ -838,7 +844,7 @@ public class FormatReaderTest {
    * and generates appropriate assertion.
    */
   private static void result(String testName, boolean success, String msg) {
-    LogTools.println(timestamp() + ": " + testName + ": " +
+    LogTools.println("\t" + timestamp() + ": " + testName + ": " +
       (success ? "PASSED" : "FAILED") + (msg == null ? "" : " (" + msg + ")"));
     if (msg == null) assert success;
     else assert success : msg;
