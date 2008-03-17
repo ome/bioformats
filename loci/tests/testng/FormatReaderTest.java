@@ -135,6 +135,12 @@ public class FormatReaderTest {
 
           int actualType = ImageTools.getPixelType(b);
           boolean passType = type == actualType;
+          if (!passType && actualType == FormatTools.UINT16 &&
+            type == FormatTools.INT16)
+          {
+            passType = true;
+          }
+
           if (!passType) msg = "type: was " + actualType + ", expected " + type;
 
           success = passX && passY && passC && passType;
@@ -227,6 +233,12 @@ public class FormatReaderTest {
 
         int actualType = ImageTools.getPixelType(b);
         boolean passType = type == actualType;
+        if (!passType && actualType == FormatTools.UINT16 &&
+          type == FormatTools.INT16)
+        {
+          passType = true;
+        }
+
         if (!passType) {
           msg = "series #" + i + ": type: was " +
             actualType + ", expected " + type;
