@@ -47,6 +47,7 @@ private:
 	void* readMessage(int);
 	int sendInt(int);
 	int readInt();
+	CString* readString();
 
 public:
 	enum ConnectionCode {
@@ -66,7 +67,7 @@ public:
 	void setVar(JVMLinkObject*);
 	void setVar(CString, int);
 	void setVar(CString, int*, int);
-	void setVar(CString, CString);
+	void setVar(CString, CString*);
 	void setVar(CString, CString*, int);
 	void setVar(CString, char);
 	void setVar(CString, char*, int);

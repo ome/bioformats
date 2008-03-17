@@ -53,11 +53,11 @@ void JVMLinkClient::startJava(int arg_port, CString classpath) {
 	port = arg_port == NULL ? DEFAULT_PORT : arg_port;
 	CString command;
 	// NB: Toggle comments to control debugging output for the server.
-	//command.Format("-cp %s loci.jvmlink.JVMLinkServer %d", classpath, port);
-	command.Format("-cp %s loci.jvmlink.JVMLinkServer -debug %d", classpath, port);
+	command.Format("-cp %s loci.jvmlink.JVMLinkServer %d", classpath, port);
+	//command.Format("-cp %s loci.jvmlink.JVMLinkServer -debug %d", classpath, port);
 	debug("java " << command);
-	//ShellExecute(NULL, "open", "javaw.exe" , command, "", SW_SHOW);
-	ShellExecute(NULL, "open", "java.exe" , command, "", SW_SHOW);
+	ShellExecute(NULL, "open", "javaw.exe" , command, "", SW_SHOW);
+	//ShellExecute(NULL, "open", "java.exe" , command, "", SW_SHOW);
 }
 
 void JVMLinkClient::shutJava() {
@@ -124,18 +124,21 @@ JVMLinkObject* JVMLinkClient::getVar(CString name) {
 	obj->type = (Type) readInt();
 	if (obj->type == ARRAY_TYPE) {
 		obj->insideType = (Type) readInt();
-		obj->length = (Type) readInt();
-		obj->size = readInt();
-		obj->data = readMessage(obj->size * obj->length);
+		obj->length = readInt();
+		if (obj->insideType == STRING_TYPE) {
+			CString* s = new CString[obj->length];
+			for (int i=0; i<obj->length; i++) s[i] = *readString();
+			obj->data = s;
+		}
+		else {
+			obj->size = readInt();
+			obj->data = readMessage(obj->size * obj->length);
+		}
 		debug("getVar: got array: length=" << obj->length << ", type=" << obj->insideType);
 	}
 	else if (obj->type == STRING_TYPE) {	
-		int len = readInt();
-		char* buff = new char[len+1];
-		int size = recv(conn,buff,len,0);
-		buff[len] = '\0';
-		obj->data = buff;
-		obj->size = len;
+		obj->data = readString();
+		obj->size = 0;
 		debug("getVar: got string: length=" << len << ", value=" << buff);
 	}
 	else {
@@ -163,7 +166,9 @@ void JVMLinkClient::setVar(JVMLinkObject* obj) {
 		sendInt(obj->length);
 		if (obj->insideType == STRING_TYPE) {
 			CString* s = (CString*) obj->data;
-			for (int i=0; i<obj->length; i++) sendMessage(s[i]);
+			for (int i=0; i<obj->length; i++) {
+				sendMessage(s[i]);
+			}
 		}
 		else {
 			int sentBytes = 0;
@@ -200,9 +205,9 @@ void JVMLinkClient::setVar(CString argname, int* obj, int length) {
 	delete jvmObj;
 }
 
-void JVMLinkClient::setVar(CString argname, CString obj) {
+void JVMLinkClient::setVar(CString argname, CString* obj) {
 	debug("setVar: " << argname << " = " << obj << " (string)");
-	JVMLinkObject* jvmObj = new JVMLinkObject(argname, STRING_TYPE, &obj);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, STRING_TYPE, obj);
 	setVar(jvmObj);
 	delete jvmObj;
 }
@@ -316,12 +321,12 @@ void JVMLinkClient::setVar(CString argname, short* obj, int length) {
 
 int JVMLinkClient::sendMessage(CString message) {
     sendInt(message.GetLength());
-	return send(conn,(LPCTSTR)message,message.GetLength(),0);
+	return send(conn, (LPCTSTR)message, message.GetLength(), 0);
 }
 
 int JVMLinkClient::sendInt(int value) {
 	char* buff = (char*) (&value);
-	return send(conn,buff,4,0);
+	return send(conn, buff, 4, 0);
 }
 
 void* JVMLinkClient::readMessage(int size) {
@@ -332,4 +337,12 @@ void* JVMLinkClient::readMessage(int size) {
 
 int JVMLinkClient::readInt() {
 	return *(int*) readMessage(4);
+}
+
+CString* JVMLinkClient::readString() {
+	int len = readInt();
+	char* buff = new char[len + 1];
+	int size = recv(conn, buff, len, 0);
+	buff[len] = '\0';
+	return new CString(buff);
 }

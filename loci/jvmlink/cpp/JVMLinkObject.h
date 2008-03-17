@@ -76,7 +76,7 @@ public:
 
 	int getDataAsInt();
 	int* getDataAsIntArray();
-	CString getDataAsString();
+	CString* getDataAsString();
 	CString* getDataAsStringArray();
 	char getDataAsChar();
 	char* getDataAsCharArray();

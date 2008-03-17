@@ -94,6 +94,12 @@ void printShorts(short* values, int len) {
 	for (int i=0; i<len; i++) std::cout << " " << values[i];
 }
 
+void printStrings(CString* values, int len) {
+	for (int i=0; i<len; i++) {
+		std::cout << "\t" << values[i] << std::endl;
+	}
+}
+
 // Tests the JVMLink API.
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -161,13 +167,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// CString variables
 	CString myString = "<<The quick brown fox jumps over the lazy dog.>>";
-	p->setVar("myString", myString);
+	p->setVar("myString", &myString);
 	std::cout << "TestC2: setVar: myString = " << myString << std::endl;
 	JVMLinkObject* jvmString = p->getVar("myString");
-	std::cout << "TestC2: getVar: myString = " << jvmString->getDataAsString() << std::endl;
+	std::cout << "TestC2: getVar: myString = " << *jvmString->getDataAsString() << std::endl;
 
 	// arrays
-	const int num = 5;
+	const int num = 15;
 	bool* myBools = new bool[num];
 	Byte* myBytes = new Byte[num];
 	char* myChars = new char[num];
@@ -188,7 +194,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		myShorts[i] = randomShort();
 	}
 
-	CString myStrings[6];
+	CString* myStrings = new CString[6];
 	myStrings[0] = "\"There was an Old Man with a beard,";
 	myStrings[1] = "Who said, 'It is just as I feared!";
 	myStrings[2] = "Two Owls and a Hen,";
@@ -277,17 +283,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << " ]" << std::endl;
 
 	// CString arrays
-	p->setVar("myStrings", myStrings, num);
+	p->setVar("myStrings", myStrings, 6);
 	std::cout << "TestC2: setVar: myStrings = [" << std::endl;
-	for (int i=0; i<num; i++) {
+	for (int i=0; i<6; i++) {
 		std::cout << "\t" << myStrings[i] << std::endl;
 	}
 	std::cout << "]" << std::endl;
 	JVMLinkObject* jvmStrings = p->getVar("myStrings");
 	std::cout << "TestC2: getVar: myStrings = [" << std::endl;
-	for (int i=0; i<num; i++) {
-		std::cout << "\t" << myStrings[i] << std::endl;
-	}
+	printStrings(jvmStrings->getDataAsStringArray(), 6);
 	std::cout << "]" << std::endl;
 
 	delete myBools;

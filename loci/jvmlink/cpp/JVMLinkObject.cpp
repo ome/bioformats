@@ -71,14 +71,14 @@ int* JVMLinkObject::getDataAsIntArray() {
 	return retval;
 }
 
-CString JVMLinkObject::getDataAsString() {
-	CString* retval = new CString((char*) data);
-	return *retval;
+CString* JVMLinkObject::getDataAsString() {
+	CString* retval = (CString*) data;
+	return retval;
 }
 
 CString* JVMLinkObject::getDataAsStringArray() {
-	// TODO
-	return 0;
+	CString* retval = (CString*) data;
+	return retval;
 }
 
 Byte JVMLinkObject::getDataAsByte() {
@@ -113,7 +113,7 @@ float* JVMLinkObject::getDataAsFloatArray() {
 }
 
 bool JVMLinkObject::getDataAsBool() {
-	bool retval = (*(int*) data) != 0;
+	bool retval = *(bool*) data;
 	return retval;
 }
 

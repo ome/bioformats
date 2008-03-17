@@ -222,9 +222,10 @@ public class ConnThread extends Thread {
   private void setVar() throws IOException {
     String name = readString();
     int type = readInt();
+    int insideType = -1;
     Object value = null;
     if (type == ARRAY_TYPE) {
-      int insideType = readInt();
+      insideType = readInt();
       int arrayLength = readInt();
       int size = getSize(insideType);
       Object theArray = null;
@@ -385,7 +386,8 @@ public class ConnThread extends Thread {
     else if (type == LONG_TYPE) value = new Long(readLong());
     else if (type == SHORT_TYPE) value = new Short(readShort());
 
-    debug("setVar (" + type + "): " + name + " = " + getValue(value));
+    String sType = type == 0 ? type + "/" + insideType : "" + type;
+    debug("setVar (" + sType + "): " + name + " = " + getValue(value));
     if (value != null) r.setVar(name, value);
   }
 
@@ -446,7 +448,7 @@ public class ConnThread extends Thread {
       else if (value instanceof Double) type = DOUBLE_TYPE;
       else if (value instanceof Long) type = LONG_TYPE;
       else if (value instanceof Short) type = SHORT_TYPE;
-      else type = INT_TYPE; //default
+      else debug("Unknown type for value: " + value.getClass().getName());
     }
     catch (ReflectException e) {
       if (JVMLinkServer.debug) e.printStackTrace();
@@ -470,10 +472,9 @@ public class ConnThread extends Thread {
         }
       }
       else if (insideType == STRING_TYPE) {
-        //untested. probably quite messed up.
-        writeInt(4);
+        // NB: string size is variable
         String[] sArray = (String[]) theArray;
-        for (int i=0; i<arrayLen; i++) out.write(sArray[i].getBytes());
+        for (int i=0; i<arrayLen; i++) writeString(sArray[i]);
       }
       else if (insideType == BYTE_TYPE) {
         writeInt(1);
