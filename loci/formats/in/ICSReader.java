@@ -186,7 +186,7 @@ public class ICSReader extends FormatReader {
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
     if (versionTwo) {
-      return new String[] {currentIdsId == null ? "" : currentIdsId};
+      return new String[] {currentId};
     }
     return new String[] {currentIdsId, currentIcsId};
   }

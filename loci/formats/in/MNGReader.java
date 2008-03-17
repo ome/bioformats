@@ -129,9 +129,7 @@ public class MNGReader extends FormatReader {
 
     status("Reading dimensions");
 
-    core.sizeX[0] = in.readInt();
-    core.sizeY[0] = in.readInt();
-    in.skipBytes(24);
+    in.skipBytes(32);
 
     Vector stack = new Vector();
     int maxIterations = 0;
@@ -158,7 +156,7 @@ public class MNGReader extends FormatReader {
         maxIterations = in.readInt();
       }
       else if (code.equals("ENDL")) {
-        int seek = ((Integer) stack.get(stack.size() - 1)).intValue();
+        long seek = ((Long) stack.get(stack.size() - 1)).longValue();
         if (currentIteration < maxIterations) {
           in.seek(seek);
           currentIteration++;
@@ -191,8 +189,11 @@ public class MNGReader extends FormatReader {
     b[6] = 0x1a;
     b[7] = 0x0a;
 
-    core.sizeC[0] =
-      ImageIO.read(new ByteArrayInputStream(b)).getRaster().getNumBands();
+    BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+
+    core.sizeX[0] = img.getWidth();
+    core.sizeY[0] = img.getHeight();
+    core.sizeC[0] = img.getRaster().getNumBands();
 
     core.sizeT[0] = core.imageCount[0];
     core.currentOrder[0] = "XYCZT";

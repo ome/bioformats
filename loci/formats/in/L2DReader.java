@@ -53,7 +53,7 @@ public class L2DReader extends FormatReader {
 
   /** Construct a new L2D reader. */
   public L2DReader() {
-    super("Li-Cor L2D", "l2d");
+    super("Li-Cor L2D", new String[] {"l2d", "scn"});
   }
 
   // -- IFormatReader API methods --
@@ -95,6 +95,21 @@ public class L2DReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("L2DReader.initFile(" + id + ")");
+
+    if (id.toLowerCase().endsWith(".scn")) {
+      // find the corresponding .l2d file
+      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      String[] list = parent.list();
+      for (int i=0; i<list.length; i++) {
+        if (list[i].toLowerCase().endsWith(".l2d")) {
+          initFile(new Location(parent.getAbsolutePath(),
+            list[i]).getAbsolutePath());
+          break;
+        }
+      }
+      return;
+    }
+
     super.initFile(id);
     in = new RandomAccessStream(id);
 

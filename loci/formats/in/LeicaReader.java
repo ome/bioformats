@@ -49,6 +49,16 @@ public class LeicaReader extends FormatReader {
   /** All Leica TIFFs have this tag. */
   private static final int LEICA_MAGIC_TAG = 33923;
 
+  /** IFD tags. */
+  private static final int SERIES = 10;
+  private static final int IMAGES = 15;
+  private static final int DIMDESCR = 20;
+  private static final int FILTERSET = 30;
+  private static final int TIMEINFO = 40;
+  private static final int SCANNERSET = 50;
+  private static final int EXPERIMENT = 60;
+  private static final int LUTDESC = 70;
+
   // -- Fields --
 
   protected Hashtable[] ifds;
@@ -68,7 +78,6 @@ public class LeicaReader extends FormatReader {
   /** Name of current LEI file */
   private String leiFilename;
 
-  private int bpp;
   private Vector seriesNames;
 
   // -- Constructor --
@@ -181,7 +190,7 @@ public class LeicaReader extends FormatReader {
       ifds = headerIFDs = null;
       tiff = null;
       seriesNames = null;
-      numSeries = bpp = 0;
+      numSeries = 0;
     }
   }
 
@@ -196,10 +205,7 @@ public class LeicaReader extends FormatReader {
       if (ifds == null) super.initFile(id);
 
       in = new RandomAccessStream(id);
-
-      if (in.readShort() == 0x4949) {
-        in.order(true);
-      }
+      in.order(TiffTools.checkHeader(in).booleanValue());
 
       in.seek(0);
 
@@ -211,57 +217,36 @@ public class LeicaReader extends FormatReader {
       if (ifds == null) throw new FormatException("No IFDs found");
       String descr = TiffTools.getComment(ifds[0]);
 
-      int ndx = descr.indexOf("Series Name");
+      // remove anything of the form "[blah]"
 
-      // should be more graceful about this
-      if (ndx == -1) throw new FormatException("LEI file not found");
-
-      String lei = descr.substring(descr.indexOf("=", ndx) + 1);
-      int newLineNdx = lei.indexOf("\n");
-      lei = lei.substring(0, newLineNdx == -1 ? lei.length() : newLineNdx);
-      lei = lei.trim();
-
-      String dir = id.substring(0, id.lastIndexOf("/") + 1);
-      lei = dir + lei;
-
-      // parse key/value pairs in ImageDescription
-
-      // first thing is to remove anything of the form "[blah]"
-
-      String first;
-      String last;
-
-      while (descr.indexOf("[") != -1) {
-        first = descr.substring(0, descr.indexOf("["));
-        last = descr.substring(descr.indexOf("\n", descr.indexOf("[")));
-        descr = first + last;
-      }
+      descr = descr.replaceAll("\\[.*.\\]\n", "");
 
       // each remaining line in descr is a (key, value) pair,
       // where '=' separates the key from the value
 
-      String key;
-      String value;
-      int eqIndex = descr.indexOf("=");
+      String lei = id.substring(0, id.lastIndexOf(File.separator) + 1);
 
-      while (eqIndex != -1) {
-        key = descr.substring(0, eqIndex);
-        newLineNdx = descr.indexOf("\n", eqIndex);
-        if (newLineNdx == -1) newLineNdx = descr.length();
-        value = descr.substring(eqIndex+1, newLineNdx);
-        addMeta(key.trim(), value.trim());
-        newLineNdx = descr.indexOf("\n", eqIndex);
-        if (newLineNdx == -1) newLineNdx = descr.length();
-        descr = descr.substring(newLineNdx);
-        eqIndex = descr.indexOf("=");
+      StringTokenizer lines = new StringTokenizer(descr, "\n");
+      String line = null, key = null, value = null;
+      while (lines.hasMoreTokens()) {
+        line = lines.nextToken();
+        if (line.indexOf("=") == -1) continue;
+        key = line.substring(0, line.indexOf("=")).trim();
+        value = line.substring(line.indexOf("=") + 1).trim();
+        addMeta(key, value);
+
+        if (key.startsWith("Series Name")) lei += value;
       }
 
       // now open the LEI file
 
-      Location l = new Location(lei);
-      if (l.getAbsoluteFile().exists()) initFile(lei);
+      Location l = new Location(lei).getAbsoluteFile();
+      if (l.exists()) {
+        initFile(lei);
+        return;
+      }
       else {
-        l = l.getAbsoluteFile().getParentFile();
+        l = l.getParentFile();
         String[] list = l.list();
         for (int i=0; i<list.length; i++) {
           if (checkSuffix(list[i], LEI_SUFFIX)) {
@@ -271,6 +256,7 @@ public class LeicaReader extends FormatReader {
           }
         }
       }
+      throw new FormatException("LEI file not found.");
     }
     else {
       // parse the LEI file
@@ -296,9 +282,9 @@ public class LeicaReader extends FormatReader {
       in.skipBytes(8);
       int addr = in.readInt();
       Vector v = new Vector();
+      Hashtable ifd;
       while (addr != 0) {
-        numSeries++;
-        Hashtable ifd = new Hashtable();
+        ifd = new Hashtable();
         v.add(ifd);
         in.seek(addr + 4);
 
@@ -322,19 +308,16 @@ public class LeicaReader extends FormatReader {
         addr = in.readInt();
       }
 
-      if (v.size() < numSeries) numSeries = v.size();
+      numSeries = v.size();
 
       core = new CoreMetadata(numSeries);
-
-      headerIFDs = new Hashtable[numSeries];
       files = new Vector[numSeries];
 
-      v.copyInto(headerIFDs);
+      headerIFDs = (Hashtable[]) v.toArray(new Hashtable[0]);
 
       // determine the length of a filename
 
       int nameLength = 0;
-
       int maxPlanes = 0;
 
       status("Parsing metadata blocks");
@@ -342,14 +325,14 @@ public class LeicaReader extends FormatReader {
       core.littleEndian[0] = !core.littleEndian[0];
 
       for (int i=0; i<headerIFDs.length; i++) {
-        if (headerIFDs[i].get(new Integer(10)) != null) {
-          byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
-          nameLength = DataTools.bytesToInt(temp, 8, 4, core.littleEndian[0]);
+        if (headerIFDs[i].get(new Integer(SERIES)) != null) {
+          byte[] temp = (byte[]) headerIFDs[i].get(new Integer(SERIES));
+          nameLength = DataTools.bytesToInt(temp, 8, core.littleEndian[0]) * 2;
         }
 
         Vector f = new Vector();
-        byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
-        int tempImages = DataTools.bytesToInt(tempData, 0, 4,
+        byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(IMAGES));
+        int tempImages = DataTools.bytesToInt(tempData, 0,
           core.littleEndian[0]);
 
         File dirFile = new File(id).getAbsoluteFile();
@@ -380,7 +363,7 @@ public class LeicaReader extends FormatReader {
         for (int j=0; j<tempImages; j++) {
           // read in each filename
           prefix = DataTools.stripString(new String(tempData,
-            20 + 2*(j*nameLength), 2*nameLength));
+            20 + j*nameLength, nameLength));
           f.add(dirPrefix + File.separator + prefix);
           // test to make sure the path is valid
           Location test = new Location((String) f.get(f.size() - 1));
@@ -392,17 +375,16 @@ public class LeicaReader extends FormatReader {
         if (!tiffsExist) {
           status("Handling renamed TIFF files");
 
-          // first thing is to get original LEI name associate with each TIFF
+          // get original LEI name associate with each TIFF
           // this lets us figure out which TIFFs we need for this dataset
           Hashtable leiMapping = new Hashtable();
           int numLeis = 0;
           for (int j=0; j<listing.length; j++) {
             RandomAccessStream ras = new RandomAccessStream(
               new Location(dirPrefix, listing[j]).getAbsolutePath());
-            Hashtable ifd = TiffTools.getFirstIFD(ras);
+            ifd = TiffTools.getFirstIFD(ras);
             ras.close();
-            String descr =
-              (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+            String descr = TiffTools.getComment(ifd);
             int ndx = descr.indexOf("=", descr.indexOf("Series Name"));
             String leiFile = descr.substring(ndx + 1, descr.indexOf("\n", ndx));
             leiFile = leiFile.trim();
@@ -550,7 +532,7 @@ public class LeicaReader extends FormatReader {
     String[] timestamps = null;
 
     for (int i=0; i<headerIFDs.length; i++) {
-      byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
+      byte[] temp = (byte[]) headerIFDs[i].get(new Integer(SERIES));
       if (temp != null) {
         // the series data
         // ID_SERIES
@@ -567,7 +549,7 @@ public class LeicaReader extends FormatReader {
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(15));
+      temp = (byte[]) headerIFDs[i].get(new Integer(IMAGES));
       if (temp != null) {
         // the image data
         // ID_IMAGES
@@ -604,7 +586,7 @@ public class LeicaReader extends FormatReader {
         seriesNames.add(buf.toString());
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(20));
+      temp = (byte[]) headerIFDs[i].get(new Integer(DIMDESCR));
       if (temp != null) {
         // dimension description
         // ID_DIMDESCR
@@ -614,41 +596,24 @@ public class LeicaReader extends FormatReader {
 
         addMeta("Voxel Version", new Integer(stream.readInt()));
         int voxelType = stream.readInt();
-        String type = "";
-        switch (voxelType) {
-          case 0:
-            type = "undefined";
-            break;
-          case 10:
-            type = "gray normal";
-            core.rgb[i] = false;
-            break;
-          case 20:
-            type = "RGB";
-            core.rgb[i] = true;
-            break;
-        }
+        core.rgb[i] = voxelType == 20;
 
-        addMeta("VoxelType", type);
+        addMeta("VoxelType", voxelType == 20 ? "RGB" : "gray");
 
-        bpp = stream.readInt();
+        int bpp = stream.readInt();
         addMeta("Bytes per pixel", new Integer(bpp));
 
         switch (bpp) {
           case 1:
-            core.pixelType[i] = FormatTools.UINT8;
-            break;
-          case 2:
-            core.pixelType[i] = FormatTools.UINT16;
-            break;
           case 3:
             core.pixelType[i] = FormatTools.UINT8;
             break;
-          case 4:
-            core.pixelType[i] = FormatTools.UINT32;
-            break;
+          case 2:
           case 6:
             core.pixelType[i] = FormatTools.UINT16;
+            break;
+          case 4:
+            core.pixelType[i] = FormatTools.UINT32;
             break;
           default:
             throw new FormatException("Unsupported bytes per pixel (" +
@@ -754,12 +719,10 @@ public class LeicaReader extends FormatReader {
               break;
           }
 
-          //if (dimType.equals("channel")) numChannels++;
           addMeta("Dim" + j + " type", dimType);
           addMeta("Dim" + j + " size", new Integer(stream.readInt()));
-          int dist = stream.readInt();
           addMeta("Dim" + j + " distance between sub-dimensions",
-            new Integer(dist));
+            new Integer(stream.readInt()));
 
           int len = stream.readInt();
           addMeta("Dim" + j + " physical length",
@@ -778,7 +741,7 @@ public class LeicaReader extends FormatReader {
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(30));
+      temp = (byte[]) headerIFDs[i].get(new Integer(FILTERSET));
       if (temp != null) {
         // filter data
         // ID_FILTERSET
@@ -786,7 +749,7 @@ public class LeicaReader extends FormatReader {
         // not currently used
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(40));
+      temp = (byte[]) headerIFDs[i].get(new Integer(TIMEINFO));
 
       if (temp != null) {
         // time data
@@ -801,13 +764,10 @@ public class LeicaReader extends FormatReader {
         addMeta("Time-stamped dimension", new Integer(stream.readInt()));
 
         for (int j=0; j < nDims; j++) {
-          int v = stream.readInt();
-          addMeta("Dimension " + j + " ID", new Integer(v));
-          v = stream.readInt();
-          addMeta("Dimension " + j + " size", new Integer(v));
-          v = stream.readInt();
+          addMeta("Dimension " + j + " ID", new Integer(stream.readInt()));
+          addMeta("Dimension " + j + " size", new Integer(stream.readInt()));
           addMeta("Dimension " + j + " distance between dimensions",
-            new Integer(v));
+            new Integer(stream.readInt()));
         }
 
         int numStamps = stream.readInt();
@@ -836,7 +796,7 @@ public class LeicaReader extends FormatReader {
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(50));
+      temp = (byte[]) headerIFDs[i].get(new Integer(SCANNERSET));
       if (temp != null) {
         // scanner data
         // ID_SCANNERSET
@@ -844,7 +804,7 @@ public class LeicaReader extends FormatReader {
         // not currently used
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(60));
+      temp = (byte[]) headerIFDs[i].get(new Integer(EXPERIMENT));
       if (temp != null) {
         // experiment data
         // ID_EXPERIMENT
@@ -871,7 +831,7 @@ public class LeicaReader extends FormatReader {
         stream.close();
       }
 
-      temp = (byte[]) headerIFDs[i].get(new Integer(70));
+      temp = (byte[]) headerIFDs[i].get(new Integer(LUTDESC));
       if (temp != null) {
         // LUT data
         // ID_LUTDESC
@@ -893,8 +853,7 @@ public class LeicaReader extends FormatReader {
 
           int invert = stream.read();
           boolean inverted = invert == 1;
-          addMeta("LUT Channel " + j + " inverted?",
-            new Boolean(inverted).toString());
+          addMeta("LUT Channel " + j + " inverted?", new Boolean(inverted));
 
           int length = stream.readInt();
           addMeta("LUT Channel " + j + " description",
@@ -936,7 +895,6 @@ public class LeicaReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    byte[] f = new byte[4];
     for (int i=0; i<numSeries; i++) {
       if (core.sizeC[i] == 0) core.sizeC[i] = 1;
       if (core.rgb[i]) core.sizeC[i] *= 3;
