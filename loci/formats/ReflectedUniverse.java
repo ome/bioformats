@@ -95,27 +95,33 @@ public class ReflectedUniverse {
 
   /**
    * Executes a command in the universe. The following syntaxes are valid:
-   * <li>import fully.qualified.package.ClassName
-   * <li>var = new ClassName(param1, ..., paramN)
-   * <li>var.method(param1, ..., paramN)
-   * <li>var2 = var.method(param1, ..., paramN)
-   * <li>ClassName.method(param1, ..., paramN)
-   * <li>var2 = ClassName.method(param1, ..., paramN)
-   * <li>var2 = var
-   * <p>
+   * <ul>
+   *   <li>import fully.qualified.package.ClassName</li>
+   *   <li>var = new ClassName(param1, ..., paramN)</li>
+   *   <li>var.method(param1, ..., paramN)</li>
+   *   <li>var2 = var.method(param1, ..., paramN)</li>
+   *   <li>ClassName.method(param1, ..., paramN)</li>
+   *   <li>var2 = ClassName.method(param1, ..., paramN)</li>
+   *   <li>var2 = var</li>
+   * </ul>
    * Important guidelines:
-   * <li>Any referenced class must be imported first using "import".
-   * <li>Variables can be exported from the universe with getVar().
-   * <li>Variables can be imported to the universe with setVar().
-   * <li>Each parameter must be either:
-   *     1) a variable in the universe;
-   *     2) a static or instance field (i.e., no nested methods);
-   *     3) a string literal (remember to escape the double quotes);
-   *     4) an integer literal;
-   *     6) a long literal (ending in L);
-   *     7) a double literal (containing a decimal point);
-   *     8) a boolean literal (true or false);
-   *     or 9) the null keyword.
+   * <ul>
+   *   <li>Any referenced class must be imported first using "import".</li>
+   *   <li>Variables can be exported from the universe with getVar().</li>
+   *   <li>Variables can be imported to the universe with setVar().</li>
+   *   <li>Each parameter must be either:
+   *     <ol>
+   *       <li>a variable in the universe</li>
+   *       <li>a static or instance field (i.e., no nested methods)</li>
+   *       <li>a string literal (remember to escape the double quotes)</li>
+   *       <li>an integer literal</li>
+   *       <li>a long literal (ending in L)</li>
+   *       <li>a double literal (containing a decimal point)</li>
+   *       <li>a boolean literal (true or false)</li>
+   *       <li>the null keyword</li>
+   *     </ol>
+   *   </li>
+   * </ul>
    */
   public Object exec(String command) throws ReflectException {
     command = command.trim();
