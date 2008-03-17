@@ -92,4 +92,5 @@ public:
 	long long* getDataAsLongArray();
 	short getDataAsShort();
 	short* getDataAsShortArray();
+	bool isDataNull();
 };

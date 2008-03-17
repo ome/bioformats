@@ -112,65 +112,78 @@ int _tmain(int argc, _TCHAR* argv[])
 	// bool variables
 	bool myBool = randomBool();
 	p->setVar("myBool", myBool);
-	std::cout << "TestC2: setVar: myBool = " << myBool << std::endl;
+	std::cout << "TestC2: setVar: myBool -> " << myBool << std::endl;
 	JVMLinkObject* jvmBool = p->getVar("myBool");
-	std::cout << "TestC2: getVar: myBool = " << jvmBool->getDataAsBool() << std::endl;
+	std::cout << "TestC2: getVar: myBool == " << jvmBool->getDataAsBool() << std::endl;
 
 	// Byte variables
 	Byte myByte = randomByte();
 	p->setVar("myByte", myByte);
-	std::cout << "TestC2: setVar: myByte = " << myByte.data << std::endl;
+	std::cout << "TestC2: setVar: myByte -> " << myByte.data << std::endl;
 	JVMLinkObject* jvmByte = p->getVar("myByte");
-	std::cout << "TestC2: getVar: myByte = " << jvmByte->getDataAsByte().data << std::endl;
+	std::cout << "TestC2: getVar: myByte == " << jvmByte->getDataAsByte().data << std::endl;
 
 	// char variables
 	char myChar = randomChar();
 	p->setVar("myChar", myChar);
-	std::cout << "TestC2: setVar: myChar = " << myChar << std::endl;
+	std::cout << "TestC2: setVar: myChar -> " << myChar << std::endl;
 	JVMLinkObject* jvmChar = p->getVar("myChar");
-	std::cout << "TestC2: getVar: myChar = " << jvmChar->getDataAsChar() << std::endl;
+	std::cout << "TestC2: getVar: myChar == " << jvmChar->getDataAsChar() << std::endl;
 
 	// double variables
 	double myDouble = randomDouble();
 	p->setVar("myDouble", myDouble);
-	std::cout << "TestC2: setVar: myDouble = " << myDouble << std::endl;
+	std::cout << "TestC2: setVar: myDouble -> " << myDouble << std::endl;
 	JVMLinkObject* jvmDouble = p->getVar("myDouble");
-	std::cout << "TestC2: getVar: myDouble = " << jvmDouble->getDataAsDouble() << std::endl;
+	std::cout << "TestC2: getVar: myDouble == " << jvmDouble->getDataAsDouble() << std::endl;
 
 	// float variables
 	float myFloat = randomFloat();
 	p->setVar("myFloat", myFloat);
-	std::cout << "TestC2: setVar: myFloat = " << myFloat << std::endl;
+	std::cout << "TestC2: setVar: myFloat -> " << myFloat << std::endl;
 	JVMLinkObject* jvmFloat = p->getVar("myFloat");
-	std::cout << "TestC2: getVar: myFloat = " << jvmFloat->getDataAsFloat() << std::endl;
+	std::cout << "TestC2: getVar: myFloat == " << jvmFloat->getDataAsFloat() << std::endl;
 
 	// int variables
 	int myInt = randomInt();
 	p->setVar("myInt", myInt);
-	std::cout << "TestC2: setVar: myInt = " << myInt << std::endl;
+	std::cout << "TestC2: setVar: myInt -> " << myInt << std::endl;
 	JVMLinkObject* jvmInt = p->getVar("myInt");
-	std::cout << "TestC2: getVar: myInt = " << jvmInt->getDataAsInt() << std::endl;
+	std::cout << "TestC2: getVar: myInt == " << jvmInt->getDataAsInt() <<
+		(jvmInt->isDataNull() ? " (NULL)" : " (not NULL)") << std::endl;
 
 	// long variables
 	long long myLong = randomLong();
 	p->setVar("myLong", myLong);
-	std::cout << "TestC2: setVar: myLong = " << myLong << std::endl;
+	std::cout << "TestC2: setVar: myLong -> " << myLong << std::endl;
 	JVMLinkObject* jvmLong = p->getVar("myLong");
-	std::cout << "TestC2: getVar: myLong = " << jvmLong->getDataAsLong() << std::endl;
+	std::cout << "TestC2: getVar: myLong == " << jvmLong->getDataAsLong() << std::endl;
 
 	// short variables
 	short myShort = randomShort();
 	p->setVar("myShort", myShort);
-	std::cout << "TestC2: setVar: myShort = " << myShort << std::endl;
+	std::cout << "TestC2: setVar: myShort -> " << myShort << std::endl;
 	JVMLinkObject* jvmShort = p->getVar("myShort");
-	std::cout << "TestC2: getVar: myShort = " << jvmShort->getDataAsShort() << std::endl;
+	std::cout << "TestC2: getVar: myShort == " << jvmShort->getDataAsShort() << std::endl;
 
 	// CString variables
 	CString myString = "<<The quick brown fox jumps over the lazy dog.>>";
 	p->setVar("myString", &myString);
-	std::cout << "TestC2: setVar: myString = " << myString << std::endl;
+	std::cout << "TestC2: setVar: myString -> " << myString << std::endl;
 	JVMLinkObject* jvmString = p->getVar("myString");
-	std::cout << "TestC2: getVar: myString = " << *jvmString->getDataAsString() << std::endl;
+	std::cout << "TestC2: getVar: myString == " << *jvmString->getDataAsString() << std::endl;
+
+	// null variable
+	p->setVarNull("myInt");
+	std::cout << "TestC2: setVar: myInt -> NULL" << std::endl;
+	JVMLinkObject* jvmNull = p->getVar("myInt");
+	std::cout << "TestC2: getVar: myInt == " <<
+		(jvmNull->isDataNull() ? "NULL" : "not NULL") << std::endl;
+
+	// non-existent variable
+	JVMLinkObject* jvmNonExist = p->getVar("myNonExist");
+	std::cout << "TestC2: getVar: myNonExist == " <<
+		(jvmNonExist->isDataNull() ? "NULL" : "not NULL") << std::endl;
 
 	// arrays
 	const int num = 15;
@@ -204,93 +217,93 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// bool arrays
 	p->setVar("myBools", myBools, num);
-	std::cout << "TestC2: setVar: myBools = [";
+	std::cout << "TestC2: setVar: myBools -> [";
 	printBools(myBools, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmBools = p->getVar("myBools");
-	std::cout << "TestC2: getVar: myBools = [";
+	std::cout << "TestC2: getVar: myBools == [";
 	printBools(jvmBools->getDataAsBoolArray(), num);
 	std::cout << " ]" << std::endl;
 
 	// Byte arrays
 	p->setVar("myBytes", myBytes, num);
-	std::cout << "TestC2: setVar: myBytes = [";
+	std::cout << "TestC2: setVar: myBytes -> [";
 	printBytes(myBytes, 0, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmBytes = p->getVar("myBytes");
-	std::cout << "TestC2: getVar: myBytes = [";
+	std::cout << "TestC2: getVar: myBytes == [";
 	printBytes(jvmBytes->getDataAsByteArray(), 0, num);
 	std::cout << " ]" << std::endl;
 
 	// char arrays
 	p->setVar("myChars", myChars, num);
-	std::cout << "TestC2: setVar: myChars = [";
+	std::cout << "TestC2: setVar: myChars -> [";
 	printChars(myChars, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmChars = p->getVar("myChars");
-	std::cout << "TestC2: getVar: myChars = [";
+	std::cout << "TestC2: getVar: myChars == [";
 	printChars(jvmChars->getDataAsCharArray(), num);
 	std::cout << " ]" << std::endl;
 
 	// double arrays
 	p->setVar("myDoubles", myDoubles, num);
-	std::cout << "TestC2: setVar: myDoubles = [";
+	std::cout << "TestC2: setVar: myDoubles -> [";
 	printDoubles(myDoubles, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmDoubles = p->getVar("myDoubles");
-	std::cout << "TestC2: getVar: myDoubles = [";
+	std::cout << "TestC2: getVar: myDoubles == [";
 	printDoubles(jvmDoubles->getDataAsDoubleArray(), num);
 	std::cout << " ]" << std::endl;
 
 	// float arrays
 	p->setVar("myFloats", myFloats, num);
-	std::cout << "TestC2: setVar: myFloats = [";
+	std::cout << "TestC2: setVar: myFloats -> [";
 	printFloats(myFloats, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmFloats = p->getVar("myFloats");
-	std::cout << "TestC2: getVar: myFloats = [";
+	std::cout << "TestC2: getVar: myFloats == [";
 	printFloats(jvmFloats->getDataAsFloatArray(), num);
 	std::cout << " ]" << std::endl;
 
 	// int arrays
 	p->setVar("myInts", myInts, num);
-	std::cout << "TestC2: setVar: myInts = [";
+	std::cout << "TestC2: setVar: myInts -> [";
 	printInts(myInts, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmInts = p->getVar("myInts");
-	std::cout << "TestC2: getVar: myInts = [";
+	std::cout << "TestC2: getVar: myInts == [";
 	printInts(jvmInts->getDataAsIntArray(), num);
 	std::cout << " ]" << std::endl;
 
 	// long arrays
 	p->setVar("myLongs", myLongs, num);
-	std::cout << "TestC2: setVar: myLongs = [";
+	std::cout << "TestC2: setVar: myLongs -> [";
 	printLongs(myLongs, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmLongs = p->getVar("myLongs");
-	std::cout << "TestC2: getVar: myLongs = [";
+	std::cout << "TestC2: getVar: myLongs == [";
 	printLongs(jvmLongs->getDataAsLongArray(), num);
 	std::cout << " ]" << std::endl;
 
 	// short arrays
 	p->setVar("myShorts", myShorts, num);
-	std::cout << "TestC2: setVar: myShorts = [";
+	std::cout << "TestC2: setVar: myShorts -> [";
 	printShorts(myShorts, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmShorts = p->getVar("myShorts");
-	std::cout << "TestC2: getVar: myShorts = [";
+	std::cout << "TestC2: getVar: myShorts == [";
 	printShorts(jvmShorts->getDataAsShortArray(), num);
 	std::cout << " ]" << std::endl;
 
 	// CString arrays
 	p->setVar("myStrings", myStrings, 6);
-	std::cout << "TestC2: setVar: myStrings = [" << std::endl;
+	std::cout << "TestC2: setVar: myStrings -> [" << std::endl;
 	for (int i=0; i<6; i++) {
 		std::cout << "\t" << myStrings[i] << std::endl;
 	}
 	std::cout << "]" << std::endl;
 	JVMLinkObject* jvmStrings = p->getVar("myStrings");
-	std::cout << "TestC2: getVar: myStrings = [" << std::endl;
+	std::cout << "TestC2: getVar: myStrings == [" << std::endl;
 	printStrings(jvmStrings->getDataAsStringArray(), 6);
 	std::cout << "]" << std::endl;
 
@@ -325,7 +338,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	for (int i=0; i<big; i++) largeBytes[i] = randomByte();
 
 	p->setVar("largeBytes", largeBytes, big);
-	std::cout << "TestC2: setVar: largeBytes = [";
+	std::cout << "TestC2: setVar: largeBytes -> [";
 	printBytes(largeBytes, 0, 3);
 	std::cout << " ...";
 	printBytes(largeBytes, big / 2 - 1, 3);
@@ -333,7 +346,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	printBytes(largeBytes, big - 3, 3);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmLargeBytes = p->getVar("largeBytes");
-	std::cout << "TestC2: getVar: largeBytes = [";
+	std::cout << "TestC2: getVar: largeBytes == [";
 	Byte* largeBytes2 = jvmLargeBytes->getDataAsByteArray();
 	printBytes(largeBytes2, 0, 3);
 	std::cout << " ...";

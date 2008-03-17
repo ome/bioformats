@@ -140,6 +140,11 @@ JVMLinkObject* JVMLinkClient::getVar(CString name) {
 		obj->size = 0;
 		debug("getVar: got string: length=" << len << ", value=" << buf);
 	}
+	else if (obj->type == NULL_TYPE) {
+		obj->data = NULL;
+		obj->size = 0;
+		debug("getVar: got NULL value");
+	}
 	else {
 		int size = readInt();
 		obj->data = readMessage(size);
@@ -308,6 +313,13 @@ void JVMLinkClient::setVar(CString argname, short* obj, int length) {
 	JVMLinkObject* jvmObj = new JVMLinkObject(argname, SHORT_TYPE, length, obj);
 	setVar(jvmObj);
 	delete jvmObj;
+}
+
+void JVMLinkClient::setVarNull(CString argname) {
+	debug("setVarNull: " << argname);
+	JVMLinkObject* jvmObj = new JVMLinkObject(argname, NULL_TYPE, NULL);
+	setVar(jvmObj);
+	delete jvmObj;	
 }
 
 // -- Private methods --

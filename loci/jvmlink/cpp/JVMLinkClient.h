@@ -83,6 +83,7 @@ public:
 	void setVar(CString, long long*, int);
 	void setVar(CString, short);
 	void setVar(CString, short*, int);
+	void setVarNull(CString);
 	void exec(CString);
 
 	~JVMLinkClient(void);

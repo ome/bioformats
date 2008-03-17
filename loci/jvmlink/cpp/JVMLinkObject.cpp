@@ -152,12 +152,15 @@ short* JVMLinkObject::getDataAsShortArray() {
 	return retval;
 }
 
+bool JVMLinkObject::isDataNull() {
+	return type == NULL_TYPE;
+}
+
 int JVMLinkObject::getSize(Type type) {
 	switch (type) {
 		case BYTE_TYPE:
 		case CHAR_TYPE:
 		case BOOL_TYPE:
-		case NULL_TYPE:
 			return 1;
 		case SHORT_TYPE:
 			return 2;
@@ -167,6 +170,7 @@ int JVMLinkObject::getSize(Type type) {
 		case DOUBLE_TYPE:
 		case LONG_TYPE:
 			return 8;
+		case NULL_TYPE:
 		case STRING_TYPE: // string size is variable
 		default:
 			return 0;

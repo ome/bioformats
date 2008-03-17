@@ -388,7 +388,7 @@ public class ConnThread extends Thread {
 
     String sType = type == 0 ? type + "/" + insideType : "" + type;
     debug("setVar (" + sType + "): " + name + " = " + getValue(value));
-    if (value != null) r.setVar(name, value);
+    r.setVar(name, value);
   }
 
   /**
@@ -448,6 +448,7 @@ public class ConnThread extends Thread {
       else if (value instanceof Double) type = DOUBLE_TYPE;
       else if (value instanceof Long) type = LONG_TYPE;
       else if (value instanceof Short) type = SHORT_TYPE;
+      else if (value == null) type = NULL_TYPE;
       else debug("Unknown type for value: " + value.getClass().getName());
     }
     catch (ReflectException e) {
@@ -702,7 +703,6 @@ public class ConnThread extends Thread {
       case BYTE_TYPE:
       case CHAR_TYPE:
       case BOOLEAN_TYPE:
-      case NULL_TYPE:
         return 1;
       case SHORT_TYPE:
         return 2;
@@ -712,6 +712,7 @@ public class ConnThread extends Thread {
       case DOUBLE_TYPE:
       case LONG_TYPE:
         return 8;
+      case NULL_TYPE:
       case STRING_TYPE: // string size is variable
       default:
         return 0;
