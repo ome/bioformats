@@ -66,8 +66,8 @@ void printBools(bool* values, int len) {
 	for (int i=0; i<len; i++) std::cout << " " << values[i];
 }
 
-void printBytes(Byte* values, int len) {
-	for (int i=0; i<len; i++) std::cout << " " << values[i].data;
+void printBytes(Byte* values, int off, int len) {
+	for (int i=off; i<off+len; i++) std::cout << " " << values[i].data;
 }
 
 void printChars(char* values, int len) {
@@ -215,11 +215,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Byte arrays
 	p->setVar("myBytes", myBytes, num);
 	std::cout << "TestC2: setVar: myBytes = [";
-	printBytes(myBytes, num);
+	printBytes(myBytes, 0, num);
 	std::cout << " ]" << std::endl;
 	JVMLinkObject* jvmBytes = p->getVar("myBytes");
 	std::cout << "TestC2: getVar: myBytes = [";
-	printBytes(jvmBytes->getDataAsByteArray(), num);
+	printBytes(jvmBytes->getDataAsByteArray(), 0, num);
 	std::cout << " ]" << std::endl;
 
 	// char arrays
@@ -318,6 +318,31 @@ int _tmain(int argc, _TCHAR* argv[])
 	p->exec("pane.add(button, BorderLayout.CENTER)");
 	p->exec("frame.setBounds(100, 100, 500, 400)");
 	p->exec("frame.setVisible(true)");
+
+	// large Byte array
+	const int big = 10000000;
+	Byte* largeBytes = new Byte[big];
+	for (int i=0; i<big; i++) largeBytes[i] = randomByte();
+
+	p->setVar("largeBytes", largeBytes, big);
+	std::cout << "TestC2: setVar: largeBytes = [";
+	printBytes(largeBytes, 0, 3);
+	std::cout << " ...";
+	printBytes(largeBytes, big / 2 - 1, 3);
+	std::cout << " ...";
+	printBytes(largeBytes, big - 3, 3);
+	std::cout << " ]" << std::endl;
+	JVMLinkObject* jvmLargeBytes = p->getVar("largeBytes");
+	std::cout << "TestC2: getVar: largeBytes = [";
+	Byte* largeBytes2 = jvmLargeBytes->getDataAsByteArray();
+	printBytes(largeBytes2, 0, 3);
+	std::cout << " ...";
+	printBytes(largeBytes2, big / 2 - 1, 3);
+	std::cout << " ...";
+	printBytes(largeBytes2, big - 3, 3);
+	std::cout << " ]" << std::endl;
+
+	delete largeBytes;
 
 	fprintf(stdout, "\n\nPress enter to shut down the server and exit...\n");
 	_fgetchar();

@@ -35,7 +35,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <Windows.h>
 
 #define DEFAULT_PORT 20345
-#define MAX_PACKET_SIZE 65536
 
 //TODO: clear memory at appropriate points.
 
@@ -139,7 +138,7 @@ JVMLinkObject* JVMLinkClient::getVar(CString name) {
 	else if (obj->type == STRING_TYPE) {	
 		obj->data = readString();
 		obj->size = 0;
-		debug("getVar: got string: length=" << len << ", value=" << buff);
+		debug("getVar: got string: length=" << len << ", value=" << buf);
 	}
 	else {
 		int size = readInt();
@@ -171,17 +170,11 @@ void JVMLinkClient::setVar(JVMLinkObject* obj) {
 			}
 		}
 		else {
-			int sentBytes = 0;
-			int totalBytes = obj->size * obj->length;
-			char* dataPointer = (char*) obj->data;
-			while (sentBytes < totalBytes) {
-				char* buff = (char*) (dataPointer + sentBytes);
-				int packetSize = MAX_PACKET_SIZE;
-				if (sentBytes + MAX_PACKET_SIZE > totalBytes) {
-					packetSize = totalBytes - sentBytes;
-				}
-				send(conn, dataPointer, packetSize, 0);
-				sentBytes += packetSize;
+			int sent = 0;
+			int total = obj->size * obj->length;
+			char* buf = (char*) obj->data;
+			while (sent < total) {
+				sent += send(conn, buf + sent, total - sent, 0);
 			}
 		}
 	}
@@ -319,20 +312,24 @@ void JVMLinkClient::setVar(CString argname, short* obj, int length) {
 
 // -- Private methods --
 
-int JVMLinkClient::sendMessage(CString message) {
-    sendInt(message.GetLength());
-	return send(conn, (LPCTSTR)message, message.GetLength(), 0);
+void JVMLinkClient::sendMessage(CString message) {
+	int sent = 0;
+	char* buf = (char*) (LPCTSTR) message;
+	int total = message.GetLength();
+	sendInt(total);
+	while (sent < total) sent += send(conn, buf + sent, total - sent, 0);
 }
 
-int JVMLinkClient::sendInt(int value) {
-	char* buff = (char*) (&value);
-	return send(conn, buff, 4, 0);
+void JVMLinkClient::sendInt(int value) {
+	char* buf = (char*) (&value);
+	send(conn, buf, 4, 0);
 }
 
 void* JVMLinkClient::readMessage(int size) {
-	char* buff = (char*) malloc(size);
-	recv(conn, buff, size, 0); //TODO: check if everything is received.
-	return (void*) buff;
+	int read = 0;
+	char* buf = (char*) malloc(size);
+	while (read < size) read += recv(conn, buf + read, size - read, 0);
+	return (void*) buf;
 }
 
 int JVMLinkClient::readInt() {
@@ -340,9 +337,10 @@ int JVMLinkClient::readInt() {
 }
 
 CString* JVMLinkClient::readString() {
-	int len = readInt();
-	char* buff = new char[len + 1];
-	int size = recv(conn, buff, len, 0);
-	buff[len] = '\0';
-	return new CString(buff);
+	int read = 0;
+	int total = readInt();
+	char* buf = new char[total + 1];
+	while (read < total) read += recv(conn, buf + read, total - read, 0);
+	buf[total] = '\0';
+	return new CString(buf);
 }

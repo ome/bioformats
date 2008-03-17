@@ -727,6 +727,17 @@ public class ConnThread extends Thread {
       sb.append("[");
       boolean str = false;
       for (int i=0; i<len; i++) {
+        if (len > 20) {
+          // skip some values for large arrays
+          boolean changed = true;
+          if (i == 3) i = len / 2 - 1;
+          else if (i == len / 2 + 2) i = len - 3;
+          else changed = false;
+          if (changed) {
+            sb.append(str ? "\n\t" : " ");
+            sb.append("...");
+          }
+        }
         Object o = Array.get(value, i);
         str = o instanceof String;
         sb.append(str ? "\n\t" : " ");

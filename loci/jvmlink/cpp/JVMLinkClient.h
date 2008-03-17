@@ -43,9 +43,9 @@ private:
 	int port;
 	SOCKET conn;
 
-	int sendMessage(CString);
+	void sendMessage(CString);
 	void* readMessage(int);
-	int sendInt(int);
+	void sendInt(int);
 	int readInt();
 	CString* readString();
 
