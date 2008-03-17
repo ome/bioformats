@@ -88,6 +88,8 @@ public class OMEWriter extends FormatWriter {
   /** Number of planes written. */
   private int planesWritten = 0;
 
+  private String[] originalFiles;
+
   // -- Constructor --
 
   public OMEWriter() {
@@ -186,6 +188,22 @@ public class OMEWriter extends FormatWriter {
 
     try {
       r.exec("im.startImport(exp)");
+
+      r.setVar("IMAGE_CLASS", "org.openmicroscopy.ds.dto.Image");
+      r.exec("IMAGE_CLASS = Class.forName(IMAGE_CLASS)");
+      r.exec("img = df.createNew(IMAGE_CLASS)");
+
+      // upload original files
+
+      if (originalFiles != null) {
+        r.exec("of = im.getOriginalFilesMEX()");
+        for (int i=0; i<originalFiles.length; i++) {
+          r.setVar("file", new File(originalFiles[i]));
+          r.exec("ofile = pf.uploadFile(repository, of, file)");
+        }
+        r.exec("df.updateMarked()");
+        r.exec("of.setImage(img)");
+      }
     }
     catch (ReflectException e) {
       if (debug) LogTools.trace(e);
@@ -270,9 +288,6 @@ public class OMEWriter extends FormatWriter {
         r.setVar("imageDescription",
           metadataRetrieve.getImageDescription(series));
 
-        r.setVar("IMAGE_CLASS", "org.openmicroscopy.ds.dto.Image");
-        r.exec("IMAGE_CLASS = Class.forName(IMAGE_CLASS)");
-        r.exec("img = df.createNew(IMAGE_CLASS)");
         r.exec("img.setOwner(exp)");
         r.exec("img.setInserted(NOW)");
         r.exec("img.setCreated(creationDate)");
@@ -282,6 +297,7 @@ public class OMEWriter extends FormatWriter {
 
         r.exec("ii = im.getImageImportMEX(img)");
         r.exec("ii.setExperimenter(exp)");
+        r.exec("df.updateMarked()");
         r.exec("df.update(ii)");
 
         r.setVar("PIXELS", "Pixels");
@@ -325,11 +341,19 @@ public class OMEWriter extends FormatWriter {
         r.exec("df.update(physical)");
 
         r.setVar("FINISHED", "FINISHED");
+
+        if (originalFiles != null) {
+          r.exec("of.setStatus(FINISHED)");
+          r.exec("df.update(of)");
+        }
+
         r.exec("ii.setStatus(FINISHED)");
         r.exec("df.update(ii)");
 
         r.exec("img.setDefaultPixels(pixels)");
         r.exec("df.update(img)");
+
+        r.exec("im.finishImport()");
       }
       catch (ReflectException e) {
         throw new FormatException(e);
@@ -411,6 +435,12 @@ public class OMEWriter extends FormatWriter {
     catch (ReflectException e) {
       throw new FormatException("Login failed", e);
     }
+  }
+
+  // -- OMEWriter API methods --
+
+  public void setOriginalFiles(String[] filenames) {
+    originalFiles = filenames;
   }
 
   // -- Main method --
@@ -510,6 +540,7 @@ public class OMEWriter extends FormatWriter {
     reader.setId(id);
 
     uploader.setMetadataRetrieve((MetadataRetrieve) reader.getMetadataStore());
+    uploader.setOriginalFiles(reader.getUsedFiles());
     uploader.setId(server + "?user=" + user + "&password=" + pass);
 
     int start = series == -1 ? 0 : series;
