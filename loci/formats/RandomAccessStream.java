@@ -226,6 +226,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
     fp = 0;
     afp = 0;
     length = raf.length();
+    fileCache.put(this, Boolean.TRUE);
+    openFiles++;
+    if (openFiles > MAX_FILES) cleanCache();
   }
 
   // -- RandomAccessStream API methods --
@@ -233,7 +236,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   /** Returns the underlying InputStream. */
   public DataInputStream getInputStream() {
     try {
-      if (fileCache.get(this) == Boolean.FALSE) reopen();
+      if (!((Boolean) fileCache.get(this)).booleanValue()) reopen();
     }
     catch (IOException e) {
       return null;
@@ -259,7 +262,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   /** Gets the number of bytes in the file. */
   public long length() throws IOException {
-    if (fileCache.get(this) == Boolean.FALSE) reopen();
+    if (!((Boolean) fileCache.get(this)).booleanValue()) reopen();
     return length;
   }
 
@@ -273,7 +276,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
     if (dis != null) dis.close();
     dis = null;
     buf = null;
-    if (fileCache.get(this) != Boolean.FALSE) {
+    if (((Boolean) fileCache.get(this)).booleanValue()) {
       fileCache.put(this, Boolean.FALSE);
       openFiles--;
     }
@@ -500,7 +503,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- InputStream API methods --
 
   public int available() throws IOException {
-    if (fileCache.get(this) == Boolean.FALSE) reopen();
+    if (!((Boolean) fileCache.get(this)).booleanValue()) reopen();
     int available = dis != null ? dis.available() + ext :
       (int) (length() - getFilePointer());
     if (available < 0) available = Integer.MAX_VALUE;
@@ -509,7 +512,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   public void mark(int readLimit) {
     try {
-      if (fileCache.get(this) == Boolean.FALSE) reopen();
+      if (!((Boolean) fileCache.get(this)).booleanValue()) reopen();
     }
     catch (IOException e) { }
     if (!compressed) dis.mark(readLimit);
@@ -518,7 +521,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   public boolean markSupported() { return !compressed; }
 
   public void reset() throws IOException {
-    if (fileCache.get(this) == Boolean.FALSE) reopen();
+    if (!((Boolean) fileCache.get(this)).booleanValue()) reopen();
     dis.reset();
     fp = length() - dis.available();
   }
@@ -560,7 +563,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * RandomAccessFile, and 2 for a direct array access.
    */
   protected int checkEfficiency(int toRead) throws IOException {
-    if (fileCache.get(this) == Boolean.FALSE) reopen();
+    if (!((Boolean) fileCache.get(this)).booleanValue()) reopen();
     int oldBufferSize = bufferSizes[bufferSizes.length - 1];
 
     if (compressed) {
