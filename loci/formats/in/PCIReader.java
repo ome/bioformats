@@ -88,6 +88,8 @@ public class PCIReader extends FormatReader {
       s.skipBytes((core.sizeY[series] - h - y) * core.sizeX[series] * bpp);
     }
 
+    s.close();
+
     if (core.pixelType[0] == FormatTools.UINT16) {
       for (int i=0; i<buf.length; i+=2) {
         byte b = buf[i];
@@ -129,7 +131,7 @@ public class PCIReader extends FormatReader {
 
     imageFiles = new Vector();
 
-    poi = new POITools(currentId);
+    poi = new POITools(Location.getMappedId(currentId));
 
     Vector allFiles = poi.getDocumentList();
 

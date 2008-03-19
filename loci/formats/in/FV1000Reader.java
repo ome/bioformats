@@ -207,7 +207,7 @@ public class FV1000Reader extends FormatReader {
     isOIB = checkSuffix(id, OIB_SUFFIX);
 
     in = new RandomAccessStream(id);
-    if (isOIB) poi = new POITools(id);
+    if (isOIB) poi = new POITools(Location.getMappedId(id));
 
     channelNames = new Vector();
     emWaves = new Vector();
@@ -289,17 +289,16 @@ public class FV1000Reader extends FormatReader {
       else oifName = currentId;
     }
 
-    String path = new Location(oifName).getAbsoluteFile().getAbsolutePath();
-    String filename =
-      isOIB ? path.substring(path.lastIndexOf(File.separator) + 1) : path;
-    path = isOIB ? "" : path.substring(0, path.lastIndexOf(File.separator) + 1);
+    String f = new Location(oifName).getAbsoluteFile().getAbsolutePath();
+    String path = isOIB || !f.endsWith(oifName) ? "" :
+      f.substring(0, f.lastIndexOf(File.separator) + 1);
 
     RandomAccessStream oif = null;
     try {
-      oif = getFile(filename.substring(0, filename.lastIndexOf(".")) + ".oif");
+      oif = getFile(oifName);
     }
     catch (IOException e) {
-      oif = getFile(filename.substring(0, filename.lastIndexOf(".")) + ".OIF");
+      oif = getFile(oifName.replaceAll(".oif", ".OIF"));
     }
 
     String s = oif.readString((int) oif.length());
@@ -669,6 +668,7 @@ public class FV1000Reader extends FormatReader {
     String f = file.substring(1, file.length() - 1);
     f = f.replace('\\', File.separatorChar);
     f = f.replace('/', File.separatorChar);
+    if (!isOIB && path.equals("")) return f;
     return path + File.separator + f;
   }
 

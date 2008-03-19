@@ -151,7 +151,7 @@ public class IPWReader extends FormatReader {
     getMetadataStore().createRoot();
 
     in = new RandomAccessStream(id);
-    poi = new POITools(currentId);
+    poi = new POITools(Location.getMappedId(currentId));
 
     imageFiles = new Vector();
 

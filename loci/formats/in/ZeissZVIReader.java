@@ -261,7 +261,7 @@ public class ZeissZVIReader extends FormatReader {
     gammaValue = new Vector();
     exposureTime = new Vector();
 
-    poi = new POITools(id);
+    poi = new POITools(Location.getMappedId(id));
 
     Vector files = poi.getDocumentList();
 
