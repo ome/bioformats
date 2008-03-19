@@ -446,7 +446,21 @@ public class FilePattern {
       }
     }
     sb.append(q > 0 ? name.substring(endList[q - 1]) : name);
-    return sb.toString();
+    String pat = sb.toString();
+
+    // NB: Due to variations in axis length, the file pattern detected can
+    // depend on the file name given as the basis of detection.
+    //
+    // To work around this problem, we redetect the pattern using the first
+    // file in the pattern if it differs from the current base file name.
+    //
+    // For details, see Trac ticket #19:
+    // https://skyking.microscopy.wisc.edu/trac/java/ticket/19
+    String first = pat.substring(dir.length());
+    first = first.replaceAll("<([0-9]+)-[0-9]+(:[0-9]+)?>", "$1");
+    if (!name.equals(first)) return findPattern(first, dir, nameList);
+
+    return pat;
   }
 
   // -- Utility helper methods --
