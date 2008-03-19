@@ -96,6 +96,8 @@ public class OmeisImporter {
   public void testIds(int[] fileIds)
     throws OmeisException, FormatException, IOException
   {
+    Arrays.sort(fileIds);
+
     // set up file path mappings
     String[] ids = new String[fileIds.length];
     for (int i=0; i<fileIds.length; i++) {
@@ -151,6 +153,8 @@ public class OmeisImporter {
     throws OmeisException, FormatException, IOException
   {
     boolean doLittle = isLittleEndian();
+
+    Arrays.sort(fileIds);
 
     // set up file path mappings
     String[] ids = new String[fileIds.length];
