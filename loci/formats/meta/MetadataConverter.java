@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
+ * Created by curtis via MetadataAutogen on Mar 20, 2008 12:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -53,7 +53,7 @@ public final class MetadataConverter {
   private MetadataConverter() { }
 
   // -- MetadataConverter API methods --
-
+ 
   /**
    * Copies information from a metadata retrieval object
    * (source) into a metadata store (destination).
@@ -61,6 +61,7 @@ public final class MetadataConverter {
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
     int experimenterCount = src.getExperimenterCount();
     for (int experimenterIndex=0; experimenterIndex<experimenterCount; experimenterIndex++) {
+      dest.setExperimenterNodeID(src.getExperimenterNodeID(experimenterIndex), experimenterIndex);
       dest.setExperimenterFirstName(src.getExperimenterFirstName(experimenterIndex), experimenterIndex);
       dest.setExperimenterLastName(src.getExperimenterLastName(experimenterIndex), experimenterIndex);
       dest.setExperimenterEmail(src.getExperimenterEmail(experimenterIndex), experimenterIndex);
@@ -69,6 +70,7 @@ public final class MetadataConverter {
     }
     int imageCount = src.getImageCount();
     for (int imageIndex=0; imageIndex<imageCount; imageIndex++) {
+      dest.setImageNodeID(src.getImageNodeID(imageIndex), imageIndex);
       dest.setImageName(src.getImageName(imageIndex), imageIndex);
       dest.setImageCreationDate(src.getImageCreationDate(imageIndex), imageIndex);
       dest.setImageDescription(src.getImageDescription(imageIndex), imageIndex);
@@ -76,12 +78,19 @@ public final class MetadataConverter {
       dest.setImagingEnvironmentAirPressure(src.getImagingEnvironmentAirPressure(imageIndex), imageIndex);
       dest.setImagingEnvironmentHumidity(src.getImagingEnvironmentHumidity(imageIndex), imageIndex);
       dest.setImagingEnvironmentCO2Percent(src.getImagingEnvironmentCO2Percent(imageIndex), imageIndex);
+      dest.setDisplayOptionsNodeID(src.getDisplayOptionsNodeID(imageIndex), imageIndex);
+      dest.setDisplayOptionsZoom(src.getDisplayOptionsZoom(imageIndex), imageIndex);
+      dest.setDisplayOptionsProjectionZStart(src.getDisplayOptionsProjectionZStart(imageIndex), imageIndex);
+      dest.setDisplayOptionsProjectionZStop(src.getDisplayOptionsProjectionZStop(imageIndex), imageIndex);
+      dest.setDisplayOptionsTimeTStart(src.getDisplayOptionsTimeTStart(imageIndex), imageIndex);
+      dest.setDisplayOptionsTimeTStop(src.getDisplayOptionsTimeTStop(imageIndex), imageIndex);
       dest.setStageLabelName(src.getStageLabelName(imageIndex), imageIndex);
       dest.setStageLabelX(src.getStageLabelX(imageIndex), imageIndex);
       dest.setStageLabelY(src.getStageLabelY(imageIndex), imageIndex);
       dest.setStageLabelZ(src.getStageLabelZ(imageIndex), imageIndex);
       int logicalChannelCount = src.getLogicalChannelCount(imageIndex);
       for (int logicalChannelIndex=0; logicalChannelIndex<logicalChannelCount; logicalChannelIndex++) {
+        dest.setLogicalChannelNodeID(src.getLogicalChannelNodeID(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLogicalChannelName(src.getLogicalChannelName(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLogicalChannelSamplesPerPixel(src.getLogicalChannelSamplesPerPixel(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLogicalChannelIlluminationType(src.getLogicalChannelIlluminationType(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
@@ -100,9 +109,15 @@ public final class MetadataConverter {
         dest.setLightSourceSettingsLightSource(src.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLightSourceSettingsAttenuation(src.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
         dest.setLightSourceSettingsWavelength(src.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex), imageIndex, logicalChannelIndex);
+        int channelComponentCount = src.getChannelComponentCount(imageIndex, logicalChannelIndex);
+        for (int channelComponentIndex=0; channelComponentIndex<channelComponentCount; channelComponentIndex++) {
+          dest.setChannelComponentIndex(src.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex), imageIndex, logicalChannelIndex, channelComponentIndex);
+          dest.setChannelComponentColorDomain(src.getChannelComponentColorDomain(imageIndex, logicalChannelIndex, channelComponentIndex), imageIndex, logicalChannelIndex, channelComponentIndex);
+        }
       }
       int pixelsCount = src.getPixelsCount(imageIndex);
       for (int pixelsIndex=0; pixelsIndex<pixelsCount; pixelsIndex++) {
+        dest.setPixelsNodeID(src.getPixelsNodeID(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
         dest.setPixelsSizeX(src.getPixelsSizeX(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
         dest.setPixelsSizeY(src.getPixelsSizeY(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
         dest.setPixelsSizeZ(src.getPixelsSizeZ(imageIndex, pixelsIndex), imageIndex, pixelsIndex);
@@ -131,20 +146,23 @@ public final class MetadataConverter {
       }
       int roiCount = src.getROICount(imageIndex);
       for (int roiIndex=0; roiIndex<roiCount; roiIndex++) {
+        dest.setROINodeID(src.getROINodeID(imageIndex, roiIndex), imageIndex, roiIndex);
         dest.setROIX0(src.getROIX0(imageIndex, roiIndex), imageIndex, roiIndex);
         dest.setROIY0(src.getROIY0(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIZ0(src.getROIZ0(imageIndex, roiIndex), imageIndex, roiIndex);
-        dest.setROIT0(src.getROIT0(imageIndex, roiIndex), imageIndex, roiIndex);
         dest.setROIX1(src.getROIX1(imageIndex, roiIndex), imageIndex, roiIndex);
         dest.setROIY1(src.getROIY1(imageIndex, roiIndex), imageIndex, roiIndex);
+        dest.setROIZ0(src.getROIZ0(imageIndex, roiIndex), imageIndex, roiIndex);
         dest.setROIZ1(src.getROIZ1(imageIndex, roiIndex), imageIndex, roiIndex);
+        dest.setROIT0(src.getROIT0(imageIndex, roiIndex), imageIndex, roiIndex);
         dest.setROIT1(src.getROIT1(imageIndex, roiIndex), imageIndex, roiIndex);
       }
     }
     int instrumentCount = src.getInstrumentCount();
     for (int instrumentIndex=0; instrumentIndex<instrumentCount; instrumentIndex++) {
+      dest.setInstrumentNodeID(src.getInstrumentNodeID(instrumentIndex), instrumentIndex);
       int detectorCount = src.getDetectorCount(instrumentIndex);
       for (int detectorIndex=0; detectorIndex<detectorCount; detectorIndex++) {
+        dest.setDetectorNodeID(src.getDetectorNodeID(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
         dest.setDetectorManufacturer(src.getDetectorManufacturer(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
         dest.setDetectorModel(src.getDetectorModel(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
         dest.setDetectorSerialNumber(src.getDetectorSerialNumber(instrumentIndex, detectorIndex), instrumentIndex, detectorIndex);
@@ -155,6 +173,7 @@ public final class MetadataConverter {
       }
       int lightSourceCount = src.getLightSourceCount(instrumentIndex);
       for (int lightSourceIndex=0; lightSourceIndex<lightSourceCount; lightSourceIndex++) {
+        dest.setLightSourceNodeID(src.getLightSourceNodeID(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
         dest.setLightSourceManufacturer(src.getLightSourceManufacturer(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
         dest.setLightSourceModel(src.getLightSourceModel(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
         dest.setLightSourceSerialNumber(src.getLightSourceSerialNumber(instrumentIndex, lightSourceIndex), instrumentIndex, lightSourceIndex);
@@ -172,6 +191,7 @@ public final class MetadataConverter {
       }
       int otfCount = src.getOTFCount(instrumentIndex);
       for (int otfIndex=0; otfIndex<otfCount; otfIndex++) {
+        dest.setOTFNodeID(src.getOTFNodeID(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
         dest.setOTFSizeX(src.getOTFSizeX(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
         dest.setOTFSizeY(src.getOTFSizeY(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
         dest.setOTFPixelType(src.getOTFPixelType(instrumentIndex, otfIndex), instrumentIndex, otfIndex);
@@ -180,6 +200,7 @@ public final class MetadataConverter {
       }
       int objectiveCount = src.getObjectiveCount(instrumentIndex);
       for (int objectiveIndex=0; objectiveIndex<objectiveCount; objectiveIndex++) {
+        dest.setObjectiveNodeID(src.getObjectiveNodeID(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
         dest.setObjectiveManufacturer(src.getObjectiveManufacturer(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
         dest.setObjectiveModel(src.getObjectiveModel(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);
         dest.setObjectiveSerialNumber(src.getObjectiveSerialNumber(instrumentIndex, objectiveIndex), instrumentIndex, objectiveIndex);

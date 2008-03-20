@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
+ * Created by curtis via MetadataAutogen on Mar 20, 2008 12:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,6 +58,13 @@ public interface MetadataStore {
   // - Image property storage -
 
   /**
+   * Sets the NodeID property for an image in the metadata store with a particular index.
+   * @param nodeID TODO
+   * @param imageIndex index of the Image
+   */
+  void setImageNodeID(String nodeID, int imageIndex);
+
+  /**
    * Sets the Name property for an image in the metadata store with a particular index.
    * @param name the full name of the image
    * @param imageIndex index of the Image
@@ -79,6 +86,14 @@ public interface MetadataStore {
   void setImageDescription(String description, int imageIndex);
 
   // - Pixels property storage -
+
+  /**
+   * Sets the NodeID property for a pixels set in the metadata store with a particular image and pixels index.
+   * @param nodeID TODO
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  void setPixelsNodeID(String nodeID, int imageIndex, int pixelsIndex);
 
   /**
    * Sets the SizeX property for a pixels set in the metadata store with a particular image and pixels index.
@@ -147,7 +162,7 @@ public interface MetadataStore {
   // - Dimensions property storage -
 
   /**
-   * Sets the PhysicalSizeX property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * Sets the PhysicalSizeX property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume physicalSizeX equals physicalSizeY (i.e., should populate the null field with the other field's value). # TODO Does Bio-Formats still rely on this requirement?
    * @param physicalSizeX size of an individual pixel's X axis in microns
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
@@ -155,7 +170,7 @@ public interface MetadataStore {
   void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the PhysicalSizeY property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * Sets the PhysicalSizeY property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume physicalSizeX equals physicalSizeY (i.e., should populate the null field with the other field's value). # TODO Does Bio-Formats still rely on this requirement?
    * @param physicalSizeY size of an individual pixel's Y axis in microns
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
@@ -163,7 +178,7 @@ public interface MetadataStore {
   void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the PhysicalSizeZ property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * Sets the PhysicalSizeZ property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume physicalSizeX equals physicalSizeY (i.e., should populate the null field with the other field's value). # TODO Does Bio-Formats still rely on this requirement?
    * @param physicalSizeZ size of an individual pixel's Z axis in microns
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
@@ -171,7 +186,7 @@ public interface MetadataStore {
   void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the TimeIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * Sets the TimeIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume physicalSizeX equals physicalSizeY (i.e., should populate the null field with the other field's value). # TODO Does Bio-Formats still rely on this requirement?
    * @param timeIncrement distance between adjacent time points in seconds
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
@@ -179,7 +194,7 @@ public interface MetadataStore {
   void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the WaveStart property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * Sets the WaveStart property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume physicalSizeX equals physicalSizeY (i.e., should populate the null field with the other field's value). # TODO Does Bio-Formats still rely on this requirement?
    * @param waveStart starting wavelength in nanometers
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
@@ -187,7 +202,7 @@ public interface MetadataStore {
   void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex);
 
   /**
-   * Sets the WaveIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume pixelSizeX equals pixelSizeY (i.e., should populate the null field with the other field's value).
+   * Sets the WaveIncrement property for a set of pixel dimensions in the metadata store with a particular index. Unless both values are non-null, the MetadataStore should assume physicalSizeX equals physicalSizeY (i.e., should populate the null field with the other field's value). # TODO Does Bio-Formats still rely on this requirement?
    * @param waveIncrement distance between adjacent wavelengths in nanometers
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
@@ -198,28 +213,28 @@ public interface MetadataStore {
 
   /**
    * Sets the Temperature property for the imaging environment for a particular image.
-   * @param temperature CTR TODO
+   * @param temperature TODO
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentTemperature(Float temperature, int imageIndex);
 
   /**
    * Sets the AirPressure property for the imaging environment for a particular image.
-   * @param airPressure CTR TODO
+   * @param airPressure TODO
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex);
 
   /**
    * Sets the Humidity property for the imaging environment for a particular image.
-   * @param humidity CTR TODO
+   * @param humidity TODO
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentHumidity(Float humidity, int imageIndex);
 
   /**
    * Sets the CO2Percent property for the imaging environment for a particular image.
-   * @param cO2Percent CTR TODO
+   * @param cO2Percent TODO
    * @param imageIndex index of the Image
    */
   void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex);
@@ -305,6 +320,14 @@ public interface MetadataStore {
   // - LogicalChannel property storage -
 
   /**
+   * Sets the NodeID property for a logical channel and physical channel in the metadata store for a particular pixels.
+   * @param nodeID TODO
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  void setLogicalChannelNodeID(String nodeID, int imageIndex, int logicalChannelIndex);
+
+  /**
    * Sets the Name property for a logical channel and physical channel in the metadata store for a particular pixels.
    * @param name the logical channel's name
    * @param imageIndex index of the Image
@@ -314,7 +337,7 @@ public interface MetadataStore {
 
   /**
    * Sets the SamplesPerPixel property for a logical channel and physical channel in the metadata store for a particular pixels.
-   * @param samplesPerPixel CTR TODO
+   * @param samplesPerPixel TODO
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
@@ -394,11 +417,153 @@ public interface MetadataStore {
 
   /**
    * Sets the PockelCellSetting property for a logical channel and physical channel in the metadata store for a particular pixels.
-   * @param pockelCellSetting CTR TODO
+   * @param pockelCellSetting TODO
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex);
+
+  // - ChannelComponent property storage -
+
+  /**
+   * Sets the Index property for a channel component describes how each channel in the pixel array relates to the logical channels.
+   * @param index the index into the channel dimension of the 5-D pixel array
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   * @param channelComponentIndex index of the ChannelComponent
+   */
+  void setChannelComponentIndex(Integer index, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  /**
+   * Sets the ColorDomain property for a channel component describes how each channel in the pixel array relates to the logical channels.
+   * @param colorDomain which color channel this ChannelComponent belongs to (for example, 'R' for an 'RGB' PhotometricInterpretation)
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   * @param channelComponentIndex index of the ChannelComponent
+   */
+  void setChannelComponentColorDomain(String colorDomain, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  // - DisplayOptions property storage -
+
+  /**
+   * Sets the NodeID property for various display options for a particular pixels set.
+   * @param nodeID TODO
+   * @param imageIndex index of the Image
+   */
+  void setDisplayOptionsNodeID(String nodeID, int imageIndex);
+
+  /**
+   * Sets the Zoom property for various display options for a particular pixels set.
+   * @param zoom zoom factor for use in the display (NOT THE LENS ZOOM)
+   * @param imageIndex index of the Image
+   */
+  void setDisplayOptionsZoom(Float zoom, int imageIndex);
+
+  // - DisplayOptionsProjection property storage -
+
+  /**
+   * Sets the ZStart property for maximum intensity projection-related display options for a particular pixels set.
+   * @param zStart the first focal plane to include in the maximum intensity projection
+   * @param imageIndex index of the Image
+   */
+  void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex);
+
+  /**
+   * Sets the ZStop property for maximum intensity projection-related display options for a particular pixels set.
+   * @param zStop the last focal plane to include in the maximum intensity projection
+   * @param imageIndex index of the Image
+   */
+  void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex);
+
+  // - DisplayOptionsTime property storage -
+
+  /**
+   * Sets the TStart property for time range-related display options for a particular pixels set.
+   * @param tStart the first time point to include in the animation
+   * @param imageIndex index of the Image
+   */
+  void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex);
+
+  /**
+   * Sets the TStop property for time range-related display options for a particular pixels set.
+   * @param tStop the last time point to include in the animation
+   * @param imageIndex index of the Image
+   */
+  void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex);
+
+  // - ROI property storage -
+
+  /**
+   * Sets the NodeID property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param nodeID TODO
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROINodeID(String nodeID, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the X0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param x0 the starting X coordinate
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIX0(Integer x0, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the Y0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param y0 the starting Y coordinate
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIY0(Integer y0, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the X1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param x1 the ending X coordinate
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIX1(Integer x1, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the Y1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param y1 the ending Y coordinate
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIY1(Integer y1, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the Z0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param z0 the starting Z coordinate
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIZ0(Integer z0, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the Z1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param z1 the ending Z coordinate
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIZ1(Integer z1, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the T0 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param t0 the starting timepoint
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIT0(Integer t0, int imageIndex, int roiIndex);
+
+  /**
+   * Sets the T1 property for a 5D bounding box region of interest in the metadata store with a particular index.
+   * @param t1 the ending timepoint
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  void setROIT1(Integer t1, int imageIndex, int roiIndex);
 
   // - DetectorSettings property storage -
 
@@ -452,72 +617,6 @@ public interface MetadataStore {
    */
   void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex);
 
-  // - ROI property storage -
-
-  /**
-   * Sets the X0 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param x0 the starting X coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIX0(Integer x0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Y0 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param y0 the starting Y coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIY0(Integer y0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Z0 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param z0 the starting Z coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIZ0(Integer z0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the T0 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param t0 the starting timepoint
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIT0(Integer t0, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the X1 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param x1 the ending X coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIX1(Integer x1, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Y1 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param y1 the ending Y coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIY1(Integer y1, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the Z1 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param z1 the ending Z coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIZ1(Integer z1, int imageIndex, int roiIndex);
-
-  /**
-   * Sets the T1 property for a 5D bounding box region of interest in the metadata store with a particular index.
-   * @param t1 the ending timepoint
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIT1(Integer t1, int imageIndex, int roiIndex);
-
   // - StageLabel property storage -
 
   /**
@@ -550,11 +649,26 @@ public interface MetadataStore {
 
   // - Instrument property storage -
 
+  /**
+   * Sets the NodeID property for an instrument in the metadata store with a particular index.
+   * @param nodeID TODO
+   * @param instrumentIndex index of the Instrument
+   */
+  void setInstrumentNodeID(String nodeID, int instrumentIndex);
+
   // - LightSource property storage -
 
   /**
+   * Sets the NodeID property for a light source for a particular instrument.
+   * @param nodeID TODO
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  void setLightSourceNodeID(String nodeID, int instrumentIndex, int lightSourceIndex);
+
+  /**
    * Sets the Manufacturer property for a light source for a particular instrument.
-   * @param manufacturer CTR TODO
+   * @param manufacturer TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -562,7 +676,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Model property for a light source for a particular instrument.
-   * @param model CTR TODO
+   * @param model TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -570,7 +684,7 @@ public interface MetadataStore {
 
   /**
    * Sets the SerialNumber property for a light source for a particular instrument.
-   * @param serialNumber CTR TODO
+   * @param serialNumber TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -580,7 +694,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Type property for a laser for a particular instrument.
-   * @param type CTR TODO
+   * @param type TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -588,7 +702,7 @@ public interface MetadataStore {
 
   /**
    * Sets the LaserMedium property for a laser for a particular instrument.
-   * @param laserMedium CTR TODO
+   * @param laserMedium TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -596,7 +710,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Wavelength property for a laser for a particular instrument.
-   * @param wavelength CTR TODO
+   * @param wavelength TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -604,7 +718,7 @@ public interface MetadataStore {
 
   /**
    * Sets the FrequencyMultiplication property for a laser for a particular instrument.
-   * @param frequencyMultiplication CTR TODO
+   * @param frequencyMultiplication TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -612,7 +726,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Tuneable property for a laser for a particular instrument.
-   * @param tuneable CTR TODO
+   * @param tuneable TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -620,7 +734,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Pulse property for a laser for a particular instrument.
-   * @param pulse CTR TODO
+   * @param pulse TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -628,7 +742,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Power property for a laser for a particular instrument.
-   * @param power CTR TODO
+   * @param power TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -638,7 +752,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Type property for a filament for a particular instrument.
-   * @param type CTR TODO
+   * @param type TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -646,7 +760,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Power property for a filament for a particular instrument.
-   * @param power CTR TODO
+   * @param power TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -656,7 +770,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Type property for an arc for a particular instrument.
-   * @param type CTR TODO
+   * @param type TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -664,7 +778,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Power property for an arc for a particular instrument.
-   * @param power CTR TODO
+   * @param power TODO
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -673,8 +787,16 @@ public interface MetadataStore {
   // - Detector property storage -
 
   /**
+   * Sets the NodeID property for a detector for a particular instrument.
+   * @param nodeID TODO
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  void setDetectorNodeID(String nodeID, int instrumentIndex, int detectorIndex);
+
+  /**
    * Sets the Manufacturer property for a detector for a particular instrument.
-   * @param manufacturer CTR TODO
+   * @param manufacturer TODO
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -682,7 +804,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Model property for a detector for a particular instrument.
-   * @param model CTR TODO
+   * @param model TODO
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -690,7 +812,7 @@ public interface MetadataStore {
 
   /**
    * Sets the SerialNumber property for a detector for a particular instrument.
-   * @param serialNumber CTR TODO
+   * @param serialNumber TODO
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -698,7 +820,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Type property for a detector for a particular instrument.
-   * @param type CTR TODO
+   * @param type TODO
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -706,7 +828,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Gain property for a detector for a particular instrument.
-   * @param gain CTR TODO
+   * @param gain TODO
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -714,7 +836,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Voltage property for a detector for a particular instrument.
-   * @param voltage CTR TODO
+   * @param voltage TODO
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -722,7 +844,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Offset property for a detector for a particular instrument.
-   * @param offset CTR TODO
+   * @param offset TODO
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -731,8 +853,16 @@ public interface MetadataStore {
   // - Objective property storage -
 
   /**
+   * Sets the NodeID property for an objective for a particular instrument.
+   * @param nodeID TODO
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  void setObjectiveNodeID(String nodeID, int instrumentIndex, int objectiveIndex);
+
+  /**
    * Sets the Manufacturer property for an objective for a particular instrument.
-   * @param manufacturer CTR TODO
+   * @param manufacturer TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -740,7 +870,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Model property for an objective for a particular instrument.
-   * @param model CTR TODO
+   * @param model TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -748,7 +878,7 @@ public interface MetadataStore {
 
   /**
    * Sets the SerialNumber property for an objective for a particular instrument.
-   * @param serialNumber CTR TODO
+   * @param serialNumber TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -756,7 +886,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Correction property for an objective for a particular instrument.
-   * @param correction CTR TODO
+   * @param correction TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -764,7 +894,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Immersion property for an objective for a particular instrument.
-   * @param immersion CTR TODO
+   * @param immersion TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -772,7 +902,7 @@ public interface MetadataStore {
 
   /**
    * Sets the LensNA property for an objective for a particular instrument.
-   * @param lensNA CTR TODO
+   * @param lensNA TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -780,7 +910,7 @@ public interface MetadataStore {
 
   /**
    * Sets the NominalMagnification property for an objective for a particular instrument.
-   * @param nominalMagnification CTR TODO
+   * @param nominalMagnification TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -788,7 +918,7 @@ public interface MetadataStore {
 
   /**
    * Sets the CalibratedMagnification property for an objective for a particular instrument.
-   * @param calibratedMagnification CTR TODO
+   * @param calibratedMagnification TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -796,7 +926,7 @@ public interface MetadataStore {
 
   /**
    * Sets the WorkingDistance property for an objective for a particular instrument.
-   * @param workingDistance CTR TODO
+   * @param workingDistance TODO
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -805,8 +935,16 @@ public interface MetadataStore {
   // - OTF property storage -
 
   /**
+   * Sets the NodeID property for an optical transfer function for a particular instrument.
+   * @param nodeID TODO
+   * @param instrumentIndex index of the Instrument
+   * @param otfIndex index of the OTF
+   */
+  void setOTFNodeID(String nodeID, int instrumentIndex, int otfIndex);
+
+  /**
    * Sets the SizeX property for an optical transfer function for a particular instrument.
-   * @param sizeX CTR TODO
+   * @param sizeX TODO
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -814,7 +952,7 @@ public interface MetadataStore {
 
   /**
    * Sets the SizeY property for an optical transfer function for a particular instrument.
-   * @param sizeY CTR TODO
+   * @param sizeY TODO
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -822,7 +960,7 @@ public interface MetadataStore {
 
   /**
    * Sets the PixelType property for an optical transfer function for a particular instrument.
-   * @param pixelType CTR TODO
+   * @param pixelType TODO
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -830,7 +968,7 @@ public interface MetadataStore {
 
   /**
    * Sets the Path property for an optical transfer function for a particular instrument.
-   * @param path CTR TODO
+   * @param path TODO
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
@@ -838,13 +976,20 @@ public interface MetadataStore {
 
   /**
    * Sets the OpticalAxisAveraged property for an optical transfer function for a particular instrument.
-   * @param opticalAxisAveraged CTR TODO
+   * @param opticalAxisAveraged TODO
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex);
 
   // - Experimenter property storage -
+
+  /**
+   * Sets the NodeID property for an experimenter in the metadata store with a particular index.
+   * @param nodeID TODO
+   * @param experimenterIndex index of the Experimenter
+   */
+  void setExperimenterNodeID(String nodeID, int experimenterIndex);
 
   /**
    * Sets the FirstName property for an experimenter in the metadata store with a particular index.

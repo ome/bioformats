@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
+ * Created by curtis via MetadataAutogen on Mar 20, 2008 12:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -53,6 +53,8 @@ public interface MetadataRetrieve {
   int getPlaneCount(int imageIndex, int pixelsIndex);
 
   int getLogicalChannelCount(int imageIndex);
+
+  int getChannelComponentCount(int imageIndex, int logicalChannelIndex);
 
   int getROICount(int imageIndex);
 
@@ -111,6 +113,31 @@ public interface MetadataRetrieve {
   Object getLogicalChannel(int imageIndex, int logicalChannelIndex);
 
   /**
+   * Gets an object representing a particular ChannelComponent, for use with certain methods of {@link MetadataStore}.
+   */
+  Object getChannelComponent(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  /**
+   * Gets an object representing a particular DisplayOptions, for use with certain methods of {@link MetadataStore}.
+   */
+  Object getDisplayOptions(int imageIndex);
+
+  /**
+   * Gets an object representing a particular DisplayOptionsProjection, for use with certain methods of {@link MetadataStore}.
+   */
+  Object getDisplayOptionsProjection(int imageIndex);
+
+  /**
+   * Gets an object representing a particular DisplayOptionsTime, for use with certain methods of {@link MetadataStore}.
+   */
+  Object getDisplayOptionsTime(int imageIndex);
+
+  /**
+   * Gets an object representing a particular ROI, for use with certain methods of {@link MetadataStore}.
+   */
+  Object getROI(int imageIndex, int roiIndex);
+
+  /**
    * Gets an object representing a particular DetectorSettings, for use with certain methods of {@link MetadataStore}.
    */
   Object getDetectorSettings(int imageIndex, int logicalChannelIndex);
@@ -119,11 +146,6 @@ public interface MetadataRetrieve {
    * Gets an object representing a particular LightSourceSettings, for use with certain methods of {@link MetadataStore}.
    */
   Object getLightSourceSettings(int imageIndex, int logicalChannelIndex);
-
-  /**
-   * Gets an object representing a particular ROI, for use with certain methods of {@link MetadataStore}.
-   */
-  Object getROI(int imageIndex, int roiIndex);
 
   /**
    * Gets an object representing a particular StageLabel, for use with certain methods of {@link MetadataStore}.
@@ -178,6 +200,12 @@ public interface MetadataRetrieve {
   // - Image property retrieval -
 
   /**
+   * Gets TODO for a particular Image object.
+   * @param imageIndex index of the Image
+   */
+  String getImageNodeID(int imageIndex);
+
+  /**
    * Gets the full name of the image for a particular Image object.
    * @param imageIndex index of the Image
    */
@@ -196,6 +224,13 @@ public interface MetadataRetrieve {
   String getImageDescription(int imageIndex);
 
   // - Pixels property retrieval -
+
+  /**
+   * Gets TODO for a particular Pixels object.
+   * @param imageIndex index of the Image
+   * @param pixelsIndex index of the Pixels
+   */
+  String getPixelsNodeID(int imageIndex, int pixelsIndex);
 
   /**
    * Gets size of an individual plane or section's X axis (width) for a particular Pixels object.
@@ -300,25 +335,25 @@ public interface MetadataRetrieve {
   // - ImagingEnvironment property retrieval -
 
   /**
-   * Gets CTR TODO for a particular ImagingEnvironment object.
+   * Gets TODO for a particular ImagingEnvironment object.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentTemperature(int imageIndex);
 
   /**
-   * Gets CTR TODO for a particular ImagingEnvironment object.
+   * Gets TODO for a particular ImagingEnvironment object.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentAirPressure(int imageIndex);
 
   /**
-   * Gets CTR TODO for a particular ImagingEnvironment object.
+   * Gets TODO for a particular ImagingEnvironment object.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentHumidity(int imageIndex);
 
   /**
-   * Gets CTR TODO for a particular ImagingEnvironment object.
+   * Gets TODO for a particular ImagingEnvironment object.
    * @param imageIndex index of the Image
    */
   Float getImagingEnvironmentCO2Percent(int imageIndex);
@@ -396,6 +431,13 @@ public interface MetadataRetrieve {
   // - LogicalChannel property retrieval -
 
   /**
+   * Gets TODO for a particular LogicalChannel object.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   */
+  String getLogicalChannelNodeID(int imageIndex, int logicalChannelIndex);
+
+  /**
    * Gets the logical channel's name for a particular LogicalChannel object.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
@@ -403,7 +445,7 @@ public interface MetadataRetrieve {
   String getLogicalChannelName(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets CTR TODO for a particular LogicalChannel object.
+   * Gets TODO for a particular LogicalChannel object.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
@@ -473,11 +515,136 @@ public interface MetadataRetrieve {
   Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
 
   /**
-   * Gets CTR TODO for a particular LogicalChannel object.
+   * Gets TODO for a particular LogicalChannel object.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
   Integer getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex);
+
+  // - ChannelComponent property retrieval -
+
+  /**
+   * Gets the index into the channel dimension of the 5-D pixel array for a particular ChannelComponent object.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   * @param channelComponentIndex index of the ChannelComponent
+   */
+  Integer getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  /**
+   * Gets which color channel this ChannelComponent belongs to (for example, 'R' for an 'RGB' PhotometricInterpretation) for a particular ChannelComponent object.
+   * @param imageIndex index of the Image
+   * @param logicalChannelIndex index of the LogicalChannel
+   * @param channelComponentIndex index of the ChannelComponent
+   */
+  String getChannelComponentColorDomain(int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+  // - DisplayOptions property retrieval -
+
+  /**
+   * Gets TODO for a particular DisplayOptions object.
+   * @param imageIndex index of the Image
+   */
+  String getDisplayOptionsNodeID(int imageIndex);
+
+  /**
+   * Gets zoom factor for use in the display (NOT THE LENS ZOOM) for a particular DisplayOptions object.
+   * @param imageIndex index of the Image
+   */
+  Float getDisplayOptionsZoom(int imageIndex);
+
+  // - DisplayOptionsProjection property retrieval -
+
+  /**
+   * Gets the first focal plane to include in the maximum intensity projection for a particular DisplayOptionsProjection object.
+   * @param imageIndex index of the Image
+   */
+  Integer getDisplayOptionsProjectionZStart(int imageIndex);
+
+  /**
+   * Gets the last focal plane to include in the maximum intensity projection for a particular DisplayOptionsProjection object.
+   * @param imageIndex index of the Image
+   */
+  Integer getDisplayOptionsProjectionZStop(int imageIndex);
+
+  // - DisplayOptionsTime property retrieval -
+
+  /**
+   * Gets the first time point to include in the animation for a particular DisplayOptionsTime object.
+   * @param imageIndex index of the Image
+   */
+  Integer getDisplayOptionsTimeTStart(int imageIndex);
+
+  /**
+   * Gets the last time point to include in the animation for a particular DisplayOptionsTime object.
+   * @param imageIndex index of the Image
+   */
+  Integer getDisplayOptionsTimeTStop(int imageIndex);
+
+  // - ROI property retrieval -
+
+  /**
+   * Gets TODO for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  String getROINodeID(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the starting X coordinate for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIX0(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the starting Y coordinate for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIY0(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the ending X coordinate for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIX1(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the ending Y coordinate for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIY1(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the starting Z coordinate for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIZ0(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the ending Z coordinate for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIZ1(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the starting timepoint for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIT0(int imageIndex, int roiIndex);
+
+  /**
+   * Gets the ending timepoint for a particular ROI object.
+   * @param imageIndex index of the Image
+   * @param roiIndex index of the ROI
+   */
+  Integer getROIT1(int imageIndex, int roiIndex);
 
   // - DetectorSettings property retrieval -
 
@@ -525,64 +692,6 @@ public interface MetadataRetrieve {
    */
   Integer getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex);
 
-  // - ROI property retrieval -
-
-  /**
-   * Gets the starting X coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIX0(int imageIndex, int roiIndex);
-
-  /**
-   * Gets the starting Y coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIY0(int imageIndex, int roiIndex);
-
-  /**
-   * Gets the starting Z coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIZ0(int imageIndex, int roiIndex);
-
-  /**
-   * Gets the starting timepoint for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIT0(int imageIndex, int roiIndex);
-
-  /**
-   * Gets the ending X coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIX1(int imageIndex, int roiIndex);
-
-  /**
-   * Gets the ending Y coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIY1(int imageIndex, int roiIndex);
-
-  /**
-   * Gets the ending Z coordinate for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIZ1(int imageIndex, int roiIndex);
-
-  /**
-   * Gets the ending timepoint for a particular ROI object.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  Integer getROIT1(int imageIndex, int roiIndex);
-
   // - StageLabel property retrieval -
 
   /**
@@ -611,24 +720,37 @@ public interface MetadataRetrieve {
 
   // - Instrument property retrieval -
 
+  /**
+   * Gets TODO for a particular Instrument object.
+   * @param instrumentIndex index of the Instrument
+   */
+  String getInstrumentNodeID(int instrumentIndex);
+
   // - LightSource property retrieval -
 
   /**
-   * Gets CTR TODO for a particular LightSource object.
+   * Gets TODO for a particular LightSource object.
+   * @param instrumentIndex index of the Instrument
+   * @param lightSourceIndex index of the LightSource
+   */
+  String getLightSourceNodeID(int instrumentIndex, int lightSourceIndex);
+
+  /**
+   * Gets TODO for a particular LightSource object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLightSourceManufacturer(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular LightSource object.
+   * Gets TODO for a particular LightSource object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLightSourceModel(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular LightSource object.
+   * Gets TODO for a particular LightSource object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -637,49 +759,49 @@ public interface MetadataRetrieve {
   // - Laser property retrieval -
 
   /**
-   * Gets CTR TODO for a particular Laser object.
+   * Gets TODO for a particular Laser object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLaserType(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Laser object.
+   * Gets TODO for a particular Laser object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLaserLaserMedium(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Laser object.
+   * Gets TODO for a particular Laser object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   Integer getLaserWavelength(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Laser object.
+   * Gets TODO for a particular Laser object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   Integer getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Laser object.
+   * Gets TODO for a particular Laser object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   Boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Laser object.
+   * Gets TODO for a particular Laser object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getLaserPulse(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Laser object.
+   * Gets TODO for a particular Laser object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -688,14 +810,14 @@ public interface MetadataRetrieve {
   // - Filament property retrieval -
 
   /**
-   * Gets CTR TODO for a particular Filament object.
+   * Gets TODO for a particular Filament object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getFilamentType(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Filament object.
+   * Gets TODO for a particular Filament object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -704,14 +826,14 @@ public interface MetadataRetrieve {
   // - Arc property retrieval -
 
   /**
-   * Gets CTR TODO for a particular Arc object.
+   * Gets TODO for a particular Arc object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
   String getArcType(int instrumentIndex, int lightSourceIndex);
 
   /**
-   * Gets CTR TODO for a particular Arc object.
+   * Gets TODO for a particular Arc object.
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
@@ -720,49 +842,56 @@ public interface MetadataRetrieve {
   // - Detector property retrieval -
 
   /**
-   * Gets CTR TODO for a particular Detector object.
+   * Gets TODO for a particular Detector object.
+   * @param instrumentIndex index of the Instrument
+   * @param detectorIndex index of the Detector
+   */
+  String getDetectorNodeID(int instrumentIndex, int detectorIndex);
+
+  /**
+   * Gets TODO for a particular Detector object.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorManufacturer(int instrumentIndex, int detectorIndex);
 
   /**
-   * Gets CTR TODO for a particular Detector object.
+   * Gets TODO for a particular Detector object.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorModel(int instrumentIndex, int detectorIndex);
 
   /**
-   * Gets CTR TODO for a particular Detector object.
+   * Gets TODO for a particular Detector object.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorSerialNumber(int instrumentIndex, int detectorIndex);
 
   /**
-   * Gets CTR TODO for a particular Detector object.
+   * Gets TODO for a particular Detector object.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   String getDetectorType(int instrumentIndex, int detectorIndex);
 
   /**
-   * Gets CTR TODO for a particular Detector object.
+   * Gets TODO for a particular Detector object.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   Float getDetectorGain(int instrumentIndex, int detectorIndex);
 
   /**
-   * Gets CTR TODO for a particular Detector object.
+   * Gets TODO for a particular Detector object.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
   Float getDetectorVoltage(int instrumentIndex, int detectorIndex);
 
   /**
-   * Gets CTR TODO for a particular Detector object.
+   * Gets TODO for a particular Detector object.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
@@ -771,63 +900,70 @@ public interface MetadataRetrieve {
   // - Objective property retrieval -
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
+   * @param instrumentIndex index of the Instrument
+   * @param objectiveIndex index of the Objective
+   */
+  String getObjectiveNodeID(int instrumentIndex, int objectiveIndex);
+
+  /**
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveModel(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   String getObjectiveImmersion(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
   Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
 
   /**
-   * Gets CTR TODO for a particular Objective object.
+   * Gets TODO for a particular Objective object.
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
@@ -836,41 +972,54 @@ public interface MetadataRetrieve {
   // - OTF property retrieval -
 
   /**
-   * Gets CTR TODO for a particular OTF object.
+   * Gets TODO for a particular OTF object.
+   * @param instrumentIndex index of the Instrument
+   * @param otfIndex index of the OTF
+   */
+  String getOTFNodeID(int instrumentIndex, int otfIndex);
+
+  /**
+   * Gets TODO for a particular OTF object.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   Integer getOTFSizeX(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets CTR TODO for a particular OTF object.
+   * Gets TODO for a particular OTF object.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   Integer getOTFSizeY(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets CTR TODO for a particular OTF object.
+   * Gets TODO for a particular OTF object.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   String getOTFPixelType(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets CTR TODO for a particular OTF object.
+   * Gets TODO for a particular OTF object.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   String getOTFPath(int instrumentIndex, int otfIndex);
 
   /**
-   * Gets CTR TODO for a particular OTF object.
+   * Gets TODO for a particular OTF object.
    * @param instrumentIndex index of the Instrument
    * @param otfIndex index of the OTF
    */
   Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex);
 
   // - Experimenter property retrieval -
+
+  /**
+   * Gets TODO for a particular Experimenter object.
+   * @param experimenterIndex index of the Experimenter
+   */
+  String getExperimenterNodeID(int experimenterIndex);
 
   /**
    * Gets the first name of the experimenter for a particular Experimenter object.

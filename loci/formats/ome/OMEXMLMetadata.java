@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.ome;
 
-import java.util.Vector;
 import loci.formats.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -56,6 +55,9 @@ public abstract class OMEXMLMetadata
   /** DOM element that backs the first Image's CustomAttributes node. */
   private Element imageCA;
 
+  /** Whether OriginalMetadata semantic type definition has been created. */
+  private boolean omCreated;
+
   // -- Constructors --
 
   /** Creates a new OME-XML metadata object. */
@@ -84,8 +86,7 @@ public abstract class OMEXMLMetadata
       }
     }
     final String originalMetadata = "OriginalMetadata";
-    Vector omList = DOMUtil.getChildElements(originalMetadata, imageCA);
-    if (omList.size() == 0) {
+    if (!omCreated) {
       Element std = DOMUtil.createChild(root.getDOMElement(),
         "SemanticTypeDefinitions");
       DOMUtil.setAttribute("xmlns",
@@ -104,6 +105,7 @@ public abstract class OMEXMLMetadata
       DOMUtil.setAttribute("DBLocation",
         "ORIGINAL_METADATA.VALUE", valueElement);
       DOMUtil.setAttribute("DataType", "string", valueElement);
+      omCreated = true;
     }
     Element om = DOMUtil.createChild(imageCA, originalMetadata);
     DOMUtil.setAttribute("ID", root.makeID(originalMetadata), om);

@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Feb 4, 2008 10:43:20 AM CST
+ * Created by curtis via MetadataAutogen on Mar 20, 2008 12:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -140,6 +140,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getLogicalChannelCount(imageIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getChannelComponentCount(int, int) */
+  public int getChannelComponentCount(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getChannelComponentCount(imageIndex, logicalChannelIndex);
         if (result >= 0) return result;
       }
     }
@@ -343,6 +356,71 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  /* @see MetadataRetrieve#getChannelComponent(int, int, int) */
+  public Object getChannelComponent(int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getChannelComponent(imageIndex, logicalChannelIndex, channelComponentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDisplayOptions(int) */
+  public Object getDisplayOptions(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getDisplayOptions(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDisplayOptionsProjection(int) */
+  public Object getDisplayOptionsProjection(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getDisplayOptionsProjection(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDisplayOptionsTime(int) */
+  public Object getDisplayOptionsTime(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getDisplayOptionsTime(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROI(int, int) */
+  public Object getROI(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Object result = retrieve.getROI(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getDetectorSettings(int, int) */
   public Object getDetectorSettings(int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -363,19 +441,6 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         Object result = retrieve.getLightSourceSettings(imageIndex, logicalChannelIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROI(int, int) */
-  public Object getROI(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Object result = retrieve.getROI(imageIndex, roiIndex);
         if (result != null) return result;
       }
     }
@@ -514,6 +579,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Image property retrieval -
 
+  /* @see MetadataRetrieve#getImageNodeID(int) */
+  public String getImageNodeID(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getImageNodeID(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getImageName(int) */
   public String getImageName(int imageIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -554,6 +632,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Pixels property retrieval -
+
+  /* @see MetadataRetrieve#getPixelsNodeID(int, int) */
+  public String getPixelsNodeID(int imageIndex, int pixelsIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getPixelsNodeID(imageIndex, pixelsIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   /* @see MetadataRetrieve#getPixelsSizeX(int, int) */
   public Integer getPixelsSizeX(int imageIndex, int pixelsIndex) {
@@ -905,6 +996,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - LogicalChannel property retrieval -
 
+  /* @see MetadataRetrieve#getLogicalChannelNodeID(int, int) */
+  public String getLogicalChannelNodeID(int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getLogicalChannelNodeID(imageIndex, logicalChannelIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getLogicalChannelName(int, int) */
   public String getLogicalChannelName(int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1061,6 +1165,237 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
+  // - ChannelComponent property retrieval -
+
+  /* @see MetadataRetrieve#getChannelComponentIndex(int, int, int) */
+  public Integer getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getChannelComponentColorDomain(int, int, int) */
+  public String getChannelComponentColorDomain(int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getChannelComponentColorDomain(imageIndex, logicalChannelIndex, channelComponentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - DisplayOptions property retrieval -
+
+  /* @see MetadataRetrieve#getDisplayOptionsNodeID(int) */
+  public String getDisplayOptionsNodeID(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getDisplayOptionsNodeID(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDisplayOptionsZoom(int) */
+  public Float getDisplayOptionsZoom(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Float result = retrieve.getDisplayOptionsZoom(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - DisplayOptionsProjection property retrieval -
+
+  /* @see MetadataRetrieve#getDisplayOptionsProjectionZStart(int) */
+  public Integer getDisplayOptionsProjectionZStart(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getDisplayOptionsProjectionZStart(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDisplayOptionsProjectionZStop(int) */
+  public Integer getDisplayOptionsProjectionZStop(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getDisplayOptionsProjectionZStop(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - DisplayOptionsTime property retrieval -
+
+  /* @see MetadataRetrieve#getDisplayOptionsTimeTStart(int) */
+  public Integer getDisplayOptionsTimeTStart(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getDisplayOptionsTimeTStart(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getDisplayOptionsTimeTStop(int) */
+  public Integer getDisplayOptionsTimeTStop(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getDisplayOptionsTimeTStop(imageIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  // - ROI property retrieval -
+
+  /* @see MetadataRetrieve#getROINodeID(int, int) */
+  public String getROINodeID(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getROINodeID(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIX0(int, int) */
+  public Integer getROIX0(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIX0(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIY0(int, int) */
+  public Integer getROIY0(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIY0(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIX1(int, int) */
+  public Integer getROIX1(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIX1(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIY1(int, int) */
+  public Integer getROIY1(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIY1(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIZ0(int, int) */
+  public Integer getROIZ0(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIZ0(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIZ1(int, int) */
+  public Integer getROIZ1(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIZ1(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIT0(int, int) */
+  public Integer getROIT0(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIT0(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getROIT1(int, int) */
+  public Integer getROIT1(int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Integer result = retrieve.getROIT1(imageIndex, roiIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   // - DetectorSettings property retrieval -
 
   /* @see MetadataRetrieve#getDetectorSettingsDetector(int, int) */
@@ -1143,112 +1478,6 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     return null;
   }
 
-  // - ROI property retrieval -
-
-  /* @see MetadataRetrieve#getROIX0(int, int) */
-  public Integer getROIX0(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIX0(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROIY0(int, int) */
-  public Integer getROIY0(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIY0(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROIZ0(int, int) */
-  public Integer getROIZ0(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIZ0(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROIT0(int, int) */
-  public Integer getROIT0(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIT0(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROIX1(int, int) */
-  public Integer getROIX1(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIX1(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROIY1(int, int) */
-  public Integer getROIY1(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIY1(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROIZ1(int, int) */
-  public Integer getROIZ1(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIZ1(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getROIT1(int, int) */
-  public Integer getROIT1(int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getROIT1(imageIndex, roiIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
   // - StageLabel property retrieval -
 
   /* @see MetadataRetrieve#getStageLabelName(int) */
@@ -1305,7 +1534,33 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Instrument property retrieval -
 
+  /* @see MetadataRetrieve#getInstrumentNodeID(int) */
+  public String getInstrumentNodeID(int instrumentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getInstrumentNodeID(instrumentIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   // - LightSource property retrieval -
+
+  /* @see MetadataRetrieve#getLightSourceNodeID(int, int) */
+  public String getLightSourceNodeID(int instrumentIndex, int lightSourceIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getLightSourceNodeID(instrumentIndex, lightSourceIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   /* @see MetadataRetrieve#getLightSourceManufacturer(int, int) */
   public String getLightSourceManufacturer(int instrumentIndex, int lightSourceIndex) {
@@ -1497,6 +1752,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Detector property retrieval -
 
+  /* @see MetadataRetrieve#getDetectorNodeID(int, int) */
+  public String getDetectorNodeID(int instrumentIndex, int detectorIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getDetectorNodeID(instrumentIndex, detectorIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getDetectorManufacturer(int, int) */
   public String getDetectorManufacturer(int instrumentIndex, int detectorIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1589,6 +1857,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Objective property retrieval -
+
+  /* @see MetadataRetrieve#getObjectiveNodeID(int, int) */
+  public String getObjectiveNodeID(int instrumentIndex, int objectiveIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getObjectiveNodeID(instrumentIndex, objectiveIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   /* @see MetadataRetrieve#getObjectiveManufacturer(int, int) */
   public String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex) {
@@ -1709,6 +1990,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - OTF property retrieval -
 
+  /* @see MetadataRetrieve#getOTFNodeID(int, int) */
+  public String getOTFNodeID(int instrumentIndex, int otfIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getOTFNodeID(instrumentIndex, otfIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getOTFSizeX(int, int) */
   public Integer getOTFSizeX(int instrumentIndex, int otfIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1775,6 +2069,19 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Experimenter property retrieval -
+
+  /* @see MetadataRetrieve#getExperimenterNodeID(int) */
+  public String getExperimenterNodeID(int experimenterIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getExperimenterNodeID(experimenterIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
 
   /* @see MetadataRetrieve#getExperimenterFirstName(int) */
   public String getExperimenterFirstName(int experimenterIndex) {
@@ -1873,6 +2180,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Image property storage -
 
+  /* @see MetadataStore#setImageNodeID(String, int) */
+  public void setImageNodeID(String nodeID, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setImageNodeID(nodeID, imageIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setImageName(String, int) */
   public void setImageName(String name, int imageIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -1907,6 +2225,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Pixels property storage -
+
+  /* @see MetadataStore#setPixelsNodeID(String, int, int) */
+  public void setPixelsNodeID(String nodeID, int imageIndex, int pixelsIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setPixelsNodeID(nodeID, imageIndex, pixelsIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setPixelsSizeX(Integer, int, int) */
   public void setPixelsSizeX(Integer sizeX, int imageIndex, int pixelsIndex) {
@@ -2206,6 +2535,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - LogicalChannel property storage -
 
+  /* @see MetadataStore#setLogicalChannelNodeID(String, int, int) */
+  public void setLogicalChannelNodeID(String nodeID, int imageIndex, int logicalChannelIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setLogicalChannelNodeID(nodeID, imageIndex, logicalChannelIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setLogicalChannelName(String, int, int) */
   public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -2338,6 +2678,203 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
   }
 
+  // - ChannelComponent property storage -
+
+  /* @see MetadataStore#setChannelComponentIndex(Integer, int, int, int) */
+  public void setChannelComponentIndex(Integer index, int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setChannelComponentIndex(index, imageIndex, logicalChannelIndex, channelComponentIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setChannelComponentColorDomain(String, int, int, int) */
+  public void setChannelComponentColorDomain(String colorDomain, int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setChannelComponentColorDomain(colorDomain, imageIndex, logicalChannelIndex, channelComponentIndex);
+      }
+    }
+  }
+
+  // - DisplayOptions property storage -
+
+  /* @see MetadataStore#setDisplayOptionsNodeID(String, int) */
+  public void setDisplayOptionsNodeID(String nodeID, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDisplayOptionsNodeID(nodeID, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setDisplayOptionsZoom(Float, int) */
+  public void setDisplayOptionsZoom(Float zoom, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDisplayOptionsZoom(zoom, imageIndex);
+      }
+    }
+  }
+
+  // - DisplayOptionsProjection property storage -
+
+  /* @see MetadataStore#setDisplayOptionsProjectionZStart(Integer, int) */
+  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDisplayOptionsProjectionZStart(zStart, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
+  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDisplayOptionsProjectionZStop(zStop, imageIndex);
+      }
+    }
+  }
+
+  // - DisplayOptionsTime property storage -
+
+  /* @see MetadataStore#setDisplayOptionsTimeTStart(Integer, int) */
+  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDisplayOptionsTimeTStart(tStart, imageIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
+  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDisplayOptionsTimeTStop(tStop, imageIndex);
+      }
+    }
+  }
+
+  // - ROI property storage -
+
+  /* @see MetadataStore#setROINodeID(String, int, int) */
+  public void setROINodeID(String nodeID, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROINodeID(nodeID, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIX0(Integer, int, int) */
+  public void setROIX0(Integer x0, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIX0(x0, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIY0(Integer, int, int) */
+  public void setROIY0(Integer y0, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIY0(y0, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIX1(Integer, int, int) */
+  public void setROIX1(Integer x1, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIX1(x1, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIY1(Integer, int, int) */
+  public void setROIY1(Integer y1, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIY1(y1, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIZ0(Integer, int, int) */
+  public void setROIZ0(Integer z0, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIZ0(z0, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIZ1(Integer, int, int) */
+  public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIZ1(z1, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIT0(Integer, int, int) */
+  public void setROIT0(Integer t0, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIT0(t0, imageIndex, roiIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setROIT1(Integer, int, int) */
+  public void setROIT1(Integer t1, int imageIndex, int roiIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setROIT1(t1, imageIndex, roiIndex);
+      }
+    }
+  }
+
   // - DetectorSettings property storage -
 
   /* @see MetadataStore#setDetectorSettingsDetector(Object, int, int) */
@@ -2408,96 +2945,6 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
     }
   }
 
-  // - ROI property storage -
-
-  /* @see MetadataStore#setROIX0(Integer, int, int) */
-  public void setROIX0(Integer x0, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIX0(x0, imageIndex, roiIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setROIY0(Integer, int, int) */
-  public void setROIY0(Integer y0, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIY0(y0, imageIndex, roiIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setROIZ0(Integer, int, int) */
-  public void setROIZ0(Integer z0, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIZ0(z0, imageIndex, roiIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setROIT0(Integer, int, int) */
-  public void setROIT0(Integer t0, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIT0(t0, imageIndex, roiIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setROIX1(Integer, int, int) */
-  public void setROIX1(Integer x1, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIX1(x1, imageIndex, roiIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setROIY1(Integer, int, int) */
-  public void setROIY1(Integer y1, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIY1(y1, imageIndex, roiIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setROIZ1(Integer, int, int) */
-  public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIZ1(z1, imageIndex, roiIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setROIT1(Integer, int, int) */
-  public void setROIT1(Integer t1, int imageIndex, int roiIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setROIT1(t1, imageIndex, roiIndex);
-      }
-    }
-  }
-
   // - StageLabel property storage -
 
   /* @see MetadataStore#setStageLabelName(String, int) */
@@ -2546,7 +2993,29 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Instrument property storage -
 
+  /* @see MetadataStore#setInstrumentNodeID(String, int) */
+  public void setInstrumentNodeID(String nodeID, int instrumentIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setInstrumentNodeID(nodeID, instrumentIndex);
+      }
+    }
+  }
+
   // - LightSource property storage -
+
+  /* @see MetadataStore#setLightSourceNodeID(String, int, int) */
+  public void setLightSourceNodeID(String nodeID, int instrumentIndex, int lightSourceIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setLightSourceNodeID(nodeID, instrumentIndex, lightSourceIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setLightSourceManufacturer(String, int, int) */
   public void setLightSourceManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex) {
@@ -2710,6 +3179,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - Detector property storage -
 
+  /* @see MetadataStore#setDetectorNodeID(String, int, int) */
+  public void setDetectorNodeID(String nodeID, int instrumentIndex, int detectorIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setDetectorNodeID(nodeID, instrumentIndex, detectorIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setDetectorManufacturer(String, int, int) */
   public void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -2788,6 +3268,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Objective property storage -
+
+  /* @see MetadataStore#setObjectiveNodeID(String, int, int) */
+  public void setObjectiveNodeID(String nodeID, int instrumentIndex, int objectiveIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setObjectiveNodeID(nodeID, instrumentIndex, objectiveIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setObjectiveManufacturer(String, int, int) */
   public void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex) {
@@ -2890,6 +3381,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
 
   // - OTF property storage -
 
+  /* @see MetadataStore#setOTFNodeID(String, int, int) */
+  public void setOTFNodeID(String nodeID, int instrumentIndex, int otfIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setOTFNodeID(nodeID, instrumentIndex, otfIndex);
+      }
+    }
+  }
+
   /* @see MetadataStore#setOTFSizeX(Integer, int, int) */
   public void setOTFSizeX(Integer sizeX, int instrumentIndex, int otfIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -2946,6 +3448,17 @@ public class AggregateMetadata implements MetadataRetrieve, MetadataStore {
   }
 
   // - Experimenter property storage -
+
+  /* @see MetadataStore#setExperimenterNodeID(String, int) */
+  public void setExperimenterNodeID(String nodeID, int experimenterIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setExperimenterNodeID(nodeID, experimenterIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setExperimenterFirstName(String, int) */
   public void setExperimenterFirstName(String firstName, int experimenterIndex) {

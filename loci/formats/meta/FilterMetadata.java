@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Feb 7, 2008 9:37:02 AM CST
+ * Created by curtis via MetadataAutogen on Mar 20, 2008 12:34:36 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -72,7 +72,14 @@ public class FilterMetadata implements MetadataStore {
     delegate.setRoot(root);
   }
 
+
   // -- Image property storage -
+
+  /* @see MetadataStore#setImageNodeID(String, int) */
+  public void setImageNodeID(String nodeID, int imageIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setImageNodeID(temp, imageIndex);
+  }
 
   /* @see MetadataStore#setImageName(String, int) */
   public void setImageName(String name, int imageIndex) {
@@ -93,6 +100,12 @@ public class FilterMetadata implements MetadataStore {
   }
 
   // -- Pixels property storage -
+
+  /* @see MetadataStore#setPixelsNodeID(String, int, int) */
+  public void setPixelsNodeID(String nodeID, int imageIndex, int pixelsIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setPixelsNodeID(temp, imageIndex, pixelsIndex);
+  }
 
   /* @see MetadataStore#setPixelsSizeX(Integer, int, int) */
   public void setPixelsSizeX(Integer sizeX, int imageIndex, int pixelsIndex) {
@@ -238,6 +251,12 @@ public class FilterMetadata implements MetadataStore {
 
   // -- LogicalChannel property storage -
 
+  /* @see MetadataStore#setLogicalChannelNodeID(String, int, int) */
+  public void setLogicalChannelNodeID(String nodeID, int imageIndex, int logicalChannelIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setLogicalChannelNodeID(temp, imageIndex, logicalChannelIndex);
+  }
+
   /* @see MetadataStore#setLogicalChannelName(String, int, int) */
   public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex) {
     String temp = filter ? DataTools.sanitize(name) : name;
@@ -304,6 +323,104 @@ public class FilterMetadata implements MetadataStore {
     delegate.setLogicalChannelPockelCellSetting(pockelCellSetting, imageIndex, logicalChannelIndex);
   }
 
+  // -- ChannelComponent property storage -
+
+  /* @see MetadataStore#setChannelComponentIndex(Integer, int, int, int) */
+  public void setChannelComponentIndex(Integer index, int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    delegate.setChannelComponentIndex(index, imageIndex, logicalChannelIndex, channelComponentIndex);
+  }
+
+  /* @see MetadataStore#setChannelComponentColorDomain(String, int, int, int) */
+  public void setChannelComponentColorDomain(String colorDomain, int imageIndex, int logicalChannelIndex, int channelComponentIndex) {
+    String temp = filter ? DataTools.sanitize(colorDomain) : colorDomain;
+    delegate.setChannelComponentColorDomain(temp, imageIndex, logicalChannelIndex, channelComponentIndex);
+  }
+
+  // -- DisplayOptions property storage -
+
+  /* @see MetadataStore#setDisplayOptionsNodeID(String, int) */
+  public void setDisplayOptionsNodeID(String nodeID, int imageIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setDisplayOptionsNodeID(temp, imageIndex);
+  }
+
+  /* @see MetadataStore#setDisplayOptionsZoom(Float, int) */
+  public void setDisplayOptionsZoom(Float zoom, int imageIndex) {
+    delegate.setDisplayOptionsZoom(zoom, imageIndex);
+  }
+
+  // -- DisplayOptionsProjection property storage -
+
+  /* @see MetadataStore#setDisplayOptionsProjectionZStart(Integer, int) */
+  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
+    delegate.setDisplayOptionsProjectionZStart(zStart, imageIndex);
+  }
+
+  /* @see MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
+  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
+    delegate.setDisplayOptionsProjectionZStop(zStop, imageIndex);
+  }
+
+  // -- DisplayOptionsTime property storage -
+
+  /* @see MetadataStore#setDisplayOptionsTimeTStart(Integer, int) */
+  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
+    delegate.setDisplayOptionsTimeTStart(tStart, imageIndex);
+  }
+
+  /* @see MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
+  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
+    delegate.setDisplayOptionsTimeTStop(tStop, imageIndex);
+  }
+
+  // -- ROI property storage -
+
+  /* @see MetadataStore#setROINodeID(String, int, int) */
+  public void setROINodeID(String nodeID, int imageIndex, int roiIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setROINodeID(temp, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIX0(Integer, int, int) */
+  public void setROIX0(Integer x0, int imageIndex, int roiIndex) {
+    delegate.setROIX0(x0, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIY0(Integer, int, int) */
+  public void setROIY0(Integer y0, int imageIndex, int roiIndex) {
+    delegate.setROIY0(y0, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIX1(Integer, int, int) */
+  public void setROIX1(Integer x1, int imageIndex, int roiIndex) {
+    delegate.setROIX1(x1, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIY1(Integer, int, int) */
+  public void setROIY1(Integer y1, int imageIndex, int roiIndex) {
+    delegate.setROIY1(y1, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIZ0(Integer, int, int) */
+  public void setROIZ0(Integer z0, int imageIndex, int roiIndex) {
+    delegate.setROIZ0(z0, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIZ1(Integer, int, int) */
+  public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
+    delegate.setROIZ1(z1, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIT0(Integer, int, int) */
+  public void setROIT0(Integer t0, int imageIndex, int roiIndex) {
+    delegate.setROIT0(t0, imageIndex, roiIndex);
+  }
+
+  /* @see MetadataStore#setROIT1(Integer, int, int) */
+  public void setROIT1(Integer t1, int imageIndex, int roiIndex) {
+    delegate.setROIT1(t1, imageIndex, roiIndex);
+  }
+
   // -- DetectorSettings property storage -
 
   /* @see MetadataStore#setDetectorSettingsDetector(Object, int, int) */
@@ -338,48 +455,6 @@ public class FilterMetadata implements MetadataStore {
     delegate.setLightSourceSettingsWavelength(wavelength, imageIndex, logicalChannelIndex);
   }
 
-  // -- ROI property storage -
-
-  /* @see MetadataStore#setROIX0(Integer, int, int) */
-  public void setROIX0(Integer x0, int imageIndex, int roiIndex) {
-    delegate.setROIX0(x0, imageIndex, roiIndex);
-  }
-
-  /* @see MetadataStore#setROIY0(Integer, int, int) */
-  public void setROIY0(Integer y0, int imageIndex, int roiIndex) {
-    delegate.setROIY0(y0, imageIndex, roiIndex);
-  }
-
-  /* @see MetadataStore#setROIZ0(Integer, int, int) */
-  public void setROIZ0(Integer z0, int imageIndex, int roiIndex) {
-    delegate.setROIZ0(z0, imageIndex, roiIndex);
-  }
-
-  /* @see MetadataStore#setROIT0(Integer, int, int) */
-  public void setROIT0(Integer t0, int imageIndex, int roiIndex) {
-    delegate.setROIT0(t0, imageIndex, roiIndex);
-  }
-
-  /* @see MetadataStore#setROIX1(Integer, int, int) */
-  public void setROIX1(Integer x1, int imageIndex, int roiIndex) {
-    delegate.setROIX1(x1, imageIndex, roiIndex);
-  }
-
-  /* @see MetadataStore#setROIY1(Integer, int, int) */
-  public void setROIY1(Integer y1, int imageIndex, int roiIndex) {
-    delegate.setROIY1(y1, imageIndex, roiIndex);
-  }
-
-  /* @see MetadataStore#setROIZ1(Integer, int, int) */
-  public void setROIZ1(Integer z1, int imageIndex, int roiIndex) {
-    delegate.setROIZ1(z1, imageIndex, roiIndex);
-  }
-
-  /* @see MetadataStore#setROIT1(Integer, int, int) */
-  public void setROIT1(Integer t1, int imageIndex, int roiIndex) {
-    delegate.setROIT1(t1, imageIndex, roiIndex);
-  }
-
   // -- StageLabel property storage -
 
   /* @see MetadataStore#setStageLabelName(String, int) */
@@ -405,7 +480,19 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Instrument property storage -
 
+  /* @see MetadataStore#setInstrumentNodeID(String, int) */
+  public void setInstrumentNodeID(String nodeID, int instrumentIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setInstrumentNodeID(temp, instrumentIndex);
+  }
+
   // -- LightSource property storage -
+
+  /* @see MetadataStore#setLightSourceNodeID(String, int, int) */
+  public void setLightSourceNodeID(String nodeID, int instrumentIndex, int lightSourceIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setLightSourceNodeID(temp, instrumentIndex, lightSourceIndex);
+  }
 
   /* @see MetadataStore#setLightSourceManufacturer(String, int, int) */
   public void setLightSourceManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex) {
@@ -493,6 +580,12 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Detector property storage -
 
+  /* @see MetadataStore#setDetectorNodeID(String, int, int) */
+  public void setDetectorNodeID(String nodeID, int instrumentIndex, int detectorIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setDetectorNodeID(temp, instrumentIndex, detectorIndex);
+  }
+
   /* @see MetadataStore#setDetectorManufacturer(String, int, int) */
   public void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex) {
     String temp = filter ? DataTools.sanitize(manufacturer) : manufacturer;
@@ -533,6 +626,12 @@ public class FilterMetadata implements MetadataStore {
   }
 
   // -- Objective property storage -
+
+  /* @see MetadataStore#setObjectiveNodeID(String, int, int) */
+  public void setObjectiveNodeID(String nodeID, int instrumentIndex, int objectiveIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setObjectiveNodeID(temp, instrumentIndex, objectiveIndex);
+  }
 
   /* @see MetadataStore#setObjectiveManufacturer(String, int, int) */
   public void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex) {
@@ -586,6 +685,12 @@ public class FilterMetadata implements MetadataStore {
 
   // -- OTF property storage -
 
+  /* @see MetadataStore#setOTFNodeID(String, int, int) */
+  public void setOTFNodeID(String nodeID, int instrumentIndex, int otfIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setOTFNodeID(temp, instrumentIndex, otfIndex);
+  }
+
   /* @see MetadataStore#setOTFSizeX(Integer, int, int) */
   public void setOTFSizeX(Integer sizeX, int instrumentIndex, int otfIndex) {
     delegate.setOTFSizeX(sizeX, instrumentIndex, otfIndex);
@@ -614,6 +719,12 @@ public class FilterMetadata implements MetadataStore {
   }
 
   // -- Experimenter property storage -
+
+  /* @see MetadataStore#setExperimenterNodeID(String, int) */
+  public void setExperimenterNodeID(String nodeID, int experimenterIndex) {
+    String temp = filter ? DataTools.sanitize(nodeID) : nodeID;
+    delegate.setExperimenterNodeID(temp, experimenterIndex);
+  }
 
   /* @see MetadataStore#setExperimenterFirstName(String, int) */
   public void setExperimenterFirstName(String firstName, int experimenterIndex) {
