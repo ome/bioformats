@@ -190,9 +190,12 @@ public class InCellReader extends FormatReader {
 
       if (qName.equals("Image")) {
         String file = attributes.getValue("filename");
-        Location parent =
-          new Location(currentId).getAbsoluteFile().getParentFile();
-        tiffs.add(new Location(parent, file).getAbsolutePath());
+        Location current = new Location(currentId).getAbsoluteFile();
+        if (new Location(current.getParentFile(), file).exists()) {
+          tiffs.add(
+            new Location(current.getParentFile(), file).getAbsolutePath());
+        }
+        else tiffs.add(file);
       }
       else if (qName.equals("Identifier")) {
         core.sizeZ[0] = Integer.parseInt(attributes.getValue("z_index")) + 1;

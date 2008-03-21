@@ -220,11 +220,16 @@ public class PerkinElmerReader extends FormatReader {
     allFiles = new Vector();
 
     // get the working directory
-    Location tempFile = new Location(id).getAbsoluteFile();
-    Location workingDir = tempFile.getParentFile();
-    if (workingDir == null) workingDir = new Location(".");
-    String workingDirPath = workingDir.getPath() + File.separator;
+    File tmpFile = new File(id).getAbsoluteFile();
+    File workingDir = tmpFile.getParentFile();
+    if (workingDir == null) workingDir = new File(".");
+    String workingDirPath = workingDir.getPath();
+    if (!workingDirPath.equals("")) workingDirPath += File.separator;
     String[] ls = workingDir.list();
+    if (!new File(id).exists()) {
+      ls = (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+      workingDirPath = "";
+    }
 
     float pixelSizeX = 1f, pixelSizeY = 1f;
     String finishTime = null, startTime = null;
@@ -244,13 +249,15 @@ public class PerkinElmerReader extends FormatReader {
     int filesPt = 0;
     files = new String[ls.length];
 
-    String tempFileName = tempFile.getName();
-    int dot = tempFileName.lastIndexOf(".");
-    String check = dot < 0 ? tempFileName : tempFileName.substring(0, dot);
+    int dot = id.lastIndexOf(".");
+    String check = dot < 0 ? id : id.substring(0, dot);
+    check = check.substring(check.lastIndexOf(File.separator) + 1);
 
     // locate appropriate .tim, .csv, .zpo, .htm and .tif files
 
     String prefix = null;
+
+    Location tempFile = null;
 
     for (int i=0; i<ls.length; i++) {
       // make sure that the file has a name similar to the name of the
@@ -261,7 +268,7 @@ public class PerkinElmerReader extends FormatReader {
         i++;
         d = ls[i].lastIndexOf(".");
       }
-      String s = dot < 0 ? ls[i] : ls[i].substring(0, d);
+      String s = d < 0 ? ls[i] : ls[i].substring(0, d);
 
       if (s.startsWith(check) || check.startsWith(s) ||
         ((prefix != null) && (s.startsWith(prefix))))
@@ -380,25 +387,27 @@ public class PerkinElmerReader extends FormatReader {
     status("Parsing metadata values");
 
     if (cfgPos != -1) {
-      tempFile = new Location(workingDir, ls[cfgPos]);
-      allFiles.add(tempFile.getAbsolutePath());
+      tempFile = new Location(workingDirPath, ls[cfgPos]);
+      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
+      else allFiles.add(ls[cfgPos]);
     }
     if (anoPos != -1) {
-      tempFile = new Location(workingDir, ls[anoPos]);
-      allFiles.add(tempFile.getAbsolutePath());
+      tempFile = new Location(workingDirPath, ls[anoPos]);
+      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
+      else allFiles.add(ls[anoPos]);
     }
     if (recPos != -1) {
-      tempFile = new Location(workingDir, ls[recPos]);
-      allFiles.add(tempFile.getAbsolutePath());
+      tempFile = new Location(workingDirPath, ls[recPos]);
+      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
+      else allFiles.add(ls[recPos]);
     }
 
     if (timPos != -1) {
-      tempFile = new Location(workingDir, ls[timPos]);
-      allFiles.add(tempFile.getAbsolutePath());
-      read = new RandomAccessStream(tempFile.getAbsolutePath());
-      data = new byte[(int) tempFile.length()];
-      read.read(data);
-      t = new StringTokenizer(new String(data));
+      tempFile = new Location(workingDirPath, ls[timPos]);
+      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
+      else allFiles.add(ls[timPos]);
+      read = new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+      t = new StringTokenizer(read.readString((int) read.length()));
       int tNum = 0;
       // can ignore "Zero x" and "Extra int"
       String[] hashKeys = {"Number of Wavelengths/Timepoints", "Zero 1",
@@ -464,12 +473,11 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     if (csvPos != -1) {
-      tempFile = new Location(workingDir, ls[csvPos]);
-      allFiles.add(tempFile.getAbsolutePath());
-      read = new RandomAccessStream(tempFile.getAbsolutePath());
-      data = new byte[(int) tempFile.length()];
-      read.read(data);
-      t = new StringTokenizer(new String(data));
+      tempFile = new Location(workingDirPath, ls[csvPos]);
+      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
+      else allFiles.add(ls[csvPos]);
+      read = new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+      t = new StringTokenizer(read.readString((int) read.length()));
       int tNum = 0;
       String[] hashKeys = {"Calibration Unit", "Pixel Size X", "Pixel Size Y",
         "Z slice space"};
@@ -546,14 +554,14 @@ public class PerkinElmerReader extends FormatReader {
       read.close();
     }
     if (zpoPos != -1) {
-      tempFile = new Location(workingDir, ls[zpoPos]);
-      allFiles.add(tempFile.getAbsolutePath());
+      tempFile = new Location(workingDirPath, ls[zpoPos]);
+      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
+      else allFiles.add(ls[zpoPos]);
       if (csvPos < 0) {
         // parse .zpo only if no .csv is available
-        read = new RandomAccessStream(tempFile.getAbsolutePath());
-        data = new byte[(int) tempFile.length()];
-        read.read(data);
-        t = new StringTokenizer(new String(data));
+        read =
+          new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+        t = new StringTokenizer(read.readString((int) read.length()));
         int tNum = 0;
         while (t.hasMoreTokens()) {
           addMeta("Z slice #" + tNum + " position", t.nextToken());
@@ -572,10 +580,11 @@ public class PerkinElmerReader extends FormatReader {
     Vector exWaves = new Vector();
 
     if (htmPos != -1) {
-      tempFile = new Location(workingDir, ls[htmPos]);
-      allFiles.add(tempFile.getAbsolutePath());
-      read = new RandomAccessStream(tempFile.getAbsolutePath());
-      data = new byte[(int) tempFile.length()];
+      tempFile = new Location(workingDirPath, ls[htmPos]);
+      if (!workingDirPath.equals("")) allFiles.add(tempFile.getAbsolutePath());
+      else allFiles.add(ls[htmPos]);
+      read = new RandomAccessStream((String) allFiles.get(allFiles.size() - 1));
+      data = new byte[(int) read.length()];
       read.read(data);
 
       String regex = "<p>|</p>|<br>|<hr>|<b>|</b>|<HTML>|<HEAD>|</HTML>|" +

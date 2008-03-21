@@ -121,9 +121,9 @@ public class OMETiffReader extends BaseTiffReader {
 
     // look for additional files in the dataset
     Vector files = new Vector();
-    Location l = new Location(currentId);
-    l = l.getAbsoluteFile().getParentFile();
-    String[] fileList = l.list();
+    Location l = new Location(currentId).getAbsoluteFile().getParentFile();
+    String[] fileList = new File(currentId).exists() ? l.list() :
+      (String[]) Location.getIdMap().keySet().toArray(new String[0]);
 
     /*
     if (!lsids) {

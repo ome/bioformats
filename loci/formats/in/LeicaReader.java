@@ -263,7 +263,8 @@ public class LeicaReader extends FormatReader {
 
       super.initFile(id);
 
-      leiFilename = new Location(id).getAbsolutePath();
+      leiFilename = new File(id).exists() ?
+        new Location(id).getAbsolutePath() : id;
       in = new RandomAccessStream(id);
 
       seriesNames = new Vector();
@@ -341,6 +342,7 @@ public class LeicaReader extends FormatReader {
         if (dirFile.exists()) {
           listing = dirFile.getParentFile().list();
           dirPrefix = dirFile.getParent();
+          if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
         }
         else {
           listing =
@@ -364,7 +366,7 @@ public class LeicaReader extends FormatReader {
           // read in each filename
           prefix = DataTools.stripString(new String(tempData,
             20 + j*nameLength, nameLength));
-          f.add(dirPrefix + File.separator + prefix);
+          f.add(dirPrefix + prefix);
           // test to make sure the path is valid
           Location test = new Location((String) f.get(f.size() - 1));
           if (tiffsExist) tiffsExist = test.exists();

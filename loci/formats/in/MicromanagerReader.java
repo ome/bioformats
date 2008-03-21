@@ -65,6 +65,7 @@ public class MicromanagerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
+    if (name.endsWith(METADATA)) return true;
     if (!open) return false; // not allowed to touch the file system
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     return new Location(parent, METADATA).exists();
@@ -134,7 +135,8 @@ public class MicromanagerReader extends FormatReader {
     metadataFile =  file.exists() ? new File(file.getParentFile(),
       METADATA).getAbsolutePath() : METADATA;
     in = new RandomAccessStream(metadataFile);
-    String parent = file.exists() ? file.getParentFile().getAbsolutePath() : "";
+    String parent = file.exists() ?
+      file.getParentFile().getAbsolutePath() + File.separator : "";
 
     // usually a small file, so we can afford to read it into memory
 
@@ -152,8 +154,7 @@ public class MicromanagerReader extends FormatReader {
       pos = s.indexOf("FileName", pos);
       if (pos == -1 || pos >= in.length()) break;
       String name = s.substring(s.indexOf(":", pos), s.indexOf(",", pos));
-      tiffs.add(0,
-        parent + File.separator + name.substring(3, name.length() - 1));
+      tiffs.add(0, parent + name.substring(3, name.length() - 1));
       pos++;
     }
 

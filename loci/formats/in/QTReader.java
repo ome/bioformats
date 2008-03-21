@@ -135,6 +135,7 @@ public class QTReader extends FormatReader {
         if (len > 16) len = 16;
         b = new byte[(int) len];
         in.readFully(b);
+        in.close();
       }
       catch (IOException exc) {
         if (debug) trace(exc);
@@ -387,6 +388,7 @@ public class QTReader extends FormatReader {
       if (debug) debug("Searching for research fork:");
       if (f.exists()) {
         if (debug) debug("\t Found: " + f);
+        if (in != null) in.close();
         in = new RandomAccessStream(f.getAbsolutePath());
 
         stripHeader();
@@ -400,6 +402,7 @@ public class QTReader extends FormatReader {
           id.substring(base.lastIndexOf(File.separator) + 1));
         if (f.exists()) {
           if (debug) debug("\t Found: " + f);
+          if (in != null) in.close();
           in = new RandomAccessStream(f.getAbsolutePath());
           stripHeader();
           parse(0, in.getFilePointer(), in.length());
@@ -410,6 +413,7 @@ public class QTReader extends FormatReader {
           f = new Location(id + "/..namedfork/rsrc");
           if (f.exists()) {
             if (debug) debug("\t Found: " + f);
+            if (in != null) in.close();
             in = new RandomAccessStream(f.getAbsolutePath());
             stripHeader();
             parse(0, in.getFilePointer(), in.length());
@@ -424,8 +428,6 @@ public class QTReader extends FormatReader {
         }
       }
     }
-
-    in = new RandomAccessStream(currentId);
 
     core.rgb[0] = bitsPerPixel < 40;
     core.sizeC[0] = core.rgb[0] ? 3 : 1;

@@ -87,6 +87,7 @@ public class PrairieReader extends FormatReader {
     }
 
     if (checkSuffix(name, CFG_SUFFIX)) {
+      if (prefix.lastIndexOf("Config") == -1) return false;
       prefix = prefix.substring(0, prefix.lastIndexOf("Config"));
     }
     if (prefix.indexOf("_") != -1) {

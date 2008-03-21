@@ -127,16 +127,12 @@ public class VisitechReader extends FormatReader {
 
     // first, make sure we have the HTML file
 
-    if (checkSuffix(id, HTML_SUFFIX)) {
-      Location file = new Location(id).getAbsoluteFile();
-      String path = file.exists() ? file.getPath() : id;
-      int ndx = path.lastIndexOf(File.separator);
-      String base = path.substring(ndx + 1, path.lastIndexOf(" "));
+    if (!checkSuffix(id, HTML_SUFFIX)) {
+      String base = id.substring(0, id.lastIndexOf(" "));
 
       String suffix = " Report.html";
       currentId = null;
-      initFile(file.exists() ? new Location(file.getParent(),
-        base + suffix).getAbsolutePath() : base + suffix);
+      initFile(base + suffix);
       return;
     }
 
