@@ -88,6 +88,8 @@ public class ImarisHDFReader extends FormatReader {
     super("Bitplane Imaris 5.5 (HDF)", "ims");
     blockCheckLen = 8;
     suffixSufficient = false;
+    OutputFilter out = new OutputFilter(System.out);
+    System.setOut(out);
   }
 
   // -- IFormatReader API methods --
@@ -202,7 +204,7 @@ public class ImarisHDFReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     try {
-      r.setVar("currentId", id);
+      r.setVar("currentId", Location.getMappedId(id));
       r.exec("ncfile = NetcdfFile.open(currentId)");
       r.exec("root = ncfile.getRootGroup()");
     }
