@@ -209,6 +209,8 @@ public class FV1000Reader extends FormatReader {
     in = new RandomAccessStream(id);
     if (isOIB) poi = new POITools(Location.getMappedId(id));
 
+    boolean mappedOIF = !isOIB && !new File(id).getAbsoluteFile().exists();
+
     channelNames = new Vector();
     emWaves = new Vector();
     exWaves = new Vector();
@@ -290,7 +292,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     String f = new Location(oifName).getAbsoluteFile().getAbsolutePath();
-    String path = isOIB || !f.endsWith(oifName) ? "" :
+    String path = (isOIB || !f.endsWith(oifName) || mappedOIF) ? "" :
       f.substring(0, f.lastIndexOf(File.separator) + 1);
 
     RandomAccessStream oif = null;
@@ -331,6 +333,9 @@ public class FV1000Reader extends FormatReader {
             String last = value.substring(value.lastIndexOf("=", ndx) + 1);
             value = first + last;
           }
+          if (mappedOIF) {
+            value = value.substring(value.lastIndexOf(File.separator) + 1);
+          }
           filenames.put(new Integer(key.substring(11)), value.trim());
         }
         else if (key.indexOf("Thumb") != -1) {
@@ -342,6 +347,9 @@ public class FV1000Reader extends FormatReader {
               value.length() : value.indexOf(File.separator);
             String last = value.substring(value.lastIndexOf("=", ndx) + 1);
             value = first + last;
+          }
+          if (mappedOIF) {
+            value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
           if (thumbId == null) thumbId = value.trim();
         }
@@ -358,6 +366,9 @@ public class FV1000Reader extends FormatReader {
               value = first + last;
             }
           }
+          if (mappedOIF) {
+            value = value.substring(value.lastIndexOf(File.separator) + 1);
+          }
           lutNames.add(path + value);
         }
         else if (value.indexOf("-R") != -1) {
@@ -372,6 +383,9 @@ public class FV1000Reader extends FormatReader {
           }
           if (value.startsWith("\"")) {
             value = value.substring(1, value.length() - 1);
+          }
+          if (mappedOIF) {
+            value = value.substring(value.lastIndexOf(File.separator) + 1);
           }
           previewNames.add(path + value.trim());
         }
@@ -470,7 +484,7 @@ public class FV1000Reader extends FormatReader {
     tiffs = new Vector(core.imageCount[0]);
 
     thumbId = thumbId.replaceAll("pty", "bmp");
-    thumbId = sanitizeFile(thumbId, isOIB ? "" : path);
+    thumbId = sanitizeFile(thumbId, (isOIB || mappedOIF) ? "" : path);
     if (isOIB) thumbId = thumbId.substring(1);
 
     status("Reading additional metadata");
@@ -482,9 +496,12 @@ public class FV1000Reader extends FormatReader {
     for (int i=0, ii=0; ii<core.imageCount[0]; i++, ii++) {
       String file = (String) filenames.get(new Integer(i));
       while (file == null) file = (String) filenames.get(new Integer(++i));
-      file = sanitizeFile(file, isOIB ? "" : path);
+      file = sanitizeFile(file, (isOIB || mappedOIF) ? "" : path);
 
-      tiffPath = file.substring(0, file.lastIndexOf(File.separator));
+      if (file.indexOf(File.separator) != -1) {
+        tiffPath = file.substring(0, file.lastIndexOf(File.separator));
+      }
+      else tiffPath = file;
       RandomAccessStream ptyReader = getFile(file);
       s = ptyReader.readString((int) ptyReader.length());
       ptyReader.close();
@@ -509,7 +526,8 @@ public class FV1000Reader extends FormatReader {
                 String last = value.substring(value.lastIndexOf("=", ndx) + 1);
                 value = first + last;
               }
-              tiffs.add(ii, tiffPath + File.separator + value);
+              if (mappedOIF) tiffs.add(ii, value);
+              else tiffs.add(ii, tiffPath + File.separator + value);
             }
           }
           addMeta("Image " + ii + " : " + key, value);
@@ -523,9 +541,12 @@ public class FV1000Reader extends FormatReader {
       usedFiles.add(id);
       if (!isOIB) {
         Location dir = new Location(tiffPath);
-        String[] list = dir.list();
+        String[] list = mappedOIF ?
+          (String[]) Location.getIdMap().keySet().toArray(new String[0]) :
+          dir.list();
         for (int i=0; i<list.length; i++) {
-          usedFiles.add(new Location(tiffPath, list[i]).getAbsolutePath());
+          if (mappedOIF) usedFiles.add(list[i]);
+          else usedFiles.add(new Location(tiffPath, list[i]).getAbsolutePath());
         }
       }
     }
@@ -665,7 +686,8 @@ public class FV1000Reader extends FormatReader {
   // -- Helper methods --
 
   private String sanitizeFile(String file, String path) {
-    String f = file.substring(1, file.length() - 1);
+    String f = file;
+    f = f.replaceAll("\"", "");
     f = f.replace('\\', File.separatorChar);
     f = f.replace('/', File.separatorChar);
     if (!isOIB && path.equals("")) return f;
