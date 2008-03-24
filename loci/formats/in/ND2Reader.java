@@ -485,16 +485,6 @@ public class ND2Reader extends FormatReader {
       Arrays.fill(core.falseColor, false);
       Arrays.fill(core.metadataComplete, true);
 
-      for (int i=0; i<offsets.length; i++) {
-        for (int j=0; j<offsets[i].length; j++) {
-          if (offsets[i][j] == 0 && core.sizeT[i] > j) {
-            core.sizeT[i] = j;
-            core.imageCount[i] = core.sizeZ[i] * core.sizeT[i];
-            break;
-          }
-        }
-      }
-
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());
       MetadataTools.populatePixels(store, this);
