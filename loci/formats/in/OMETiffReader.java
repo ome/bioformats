@@ -60,11 +60,17 @@ public class OMETiffReader extends BaseTiffReader {
   /** List of Pixels IDs. */
   private Vector pixelsIDs;
 
+  /** List of TiffData UUIDs. */
+  private Vector planeUUIDs;
+
+  /** List of file UUIDs. */
+  private Vector fileUUIDs;
+
   private Vector tempIfdMap, tempFileMap, tempIfdCount;
   private int currentFile, currentSeries, seriesCount;
   private int[] numIFDs;
   private int[][] ifdMap, fileMap;
-  private boolean lsids, fileIDs, isWiscScan;
+  private boolean uuids, lsids, isWiscScan;
   private Hashtable[][] usedIFDs;
   private Hashtable keyMetadata, temporaryKeyMetadata;
 
@@ -92,6 +98,8 @@ public class OMETiffReader extends BaseTiffReader {
     seriesCount = 0;
     imageIDs = null;
     pixelsIDs = null;
+    planeUUIDs = null;
+    fileUUIDs = null;
     lsids = true;
 
     tempIfdMap = new Vector();
@@ -125,14 +133,6 @@ public class OMETiffReader extends BaseTiffReader {
     String[] fileList = new File(currentId).exists() ? l.list() :
       (String[]) Location.getIdMap().keySet().toArray(new String[0]);
 
-    /*
-    if (!lsids) {
-      fileList = new String[] {currentId};
-      LogTools.println("Not searching for other files - " +
-        "Image LSID not present");
-    }
-    */
-
     int oldSeriesCount = seriesCount;
 
     for (int i=0; i<fileList.length; i++) {
@@ -145,7 +145,25 @@ public class OMETiffReader extends BaseTiffReader {
         String icomment = TiffTools.getComment(iid);
         if (icomment == null || icomment.trim().length() == 0) continue;
         boolean addToList = true;
-        if (lsids && imageIDs != null) {
+        if (uuids) {
+          currentSeries = -1;
+          seriesCount = 0;
+          handler = new OMETiffHandler(true);
+          try {
+            SAXParser parser = SAX_FACTORY.newSAXParser();
+            parser.parse(
+              new ByteArrayInputStream(icomment.getBytes()), handler);
+          }
+          catch (ParserConfigurationException exc) {
+            throw new FormatException(exc);
+          }
+          catch (SAXException exc) {
+            throw new FormatException(exc);
+          }
+          addToList = planeUUIDs.contains(fileUUIDs.get(fileUUIDs.size() - 1));
+        }
+        // the rest of this logic is a hack for obsolete OME-TIFF files
+        else if (lsids && imageIDs != null) {
           for (int k=0; k<imageIDs.size(); k++) {
             if (icomment.indexOf((String) imageIDs.get(k)) == -1) {
               addToList = false;
@@ -160,9 +178,6 @@ public class OMETiffReader extends BaseTiffReader {
               }
             }
           }
-        }
-        else if (fileIDs) {
-          // TODO : FilePath/FileID checking
         }
         else {
           // check key pieces of metadata for consistency
@@ -197,6 +212,8 @@ public class OMETiffReader extends BaseTiffReader {
         }
       }
     }
+
+    if (!files.contains(currentId)) files.add(currentId);
 
     // parse grouped files
 
@@ -246,7 +263,9 @@ public class OMETiffReader extends BaseTiffReader {
       tempIfdCount = null;
       currentFile = i;
 
-      usedIFDs[i] = TiffTools.getIFDs(new RandomAccessStream(usedFiles[i]));
+      RandomAccessStream ras = new RandomAccessStream(usedFiles[i]);
+      usedIFDs[i] = TiffTools.getIFDs(ras);
+      ras.close();
       String c = TiffTools.getComment(usedIFDs[i][0]);
       handler = new OMETiffHandler(false);
       try {
@@ -308,7 +327,7 @@ public class OMETiffReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (!open) return false;
+    if (!open && !checkSuffix(name, suffixes)) return false;
     try {
       RandomAccessStream s = new RandomAccessStream(name);
       byte[] buf = new byte[blockCheckLen];
@@ -318,6 +337,7 @@ public class OMETiffReader extends BaseTiffReader {
       s.seek(s.length() - blockCheckLen);
       s.read(buf);
       boolean passSecond = isThisType(buf);
+      s.close();
       return passFirst || passSecond;
     }
     catch (IOException e) {
@@ -378,7 +398,7 @@ public class OMETiffReader extends BaseTiffReader {
     super.close();
     usedFiles = null;
     usedIFDs = null;
-    imageIDs = pixelsIDs = null;
+    imageIDs = pixelsIDs = planeUUIDs = fileUUIDs = null;
     tempIfdMap = tempFileMap = tempIfdCount = null;
     numIFDs = null;
     ifdMap = fileMap = null;
@@ -422,7 +442,12 @@ public class OMETiffReader extends BaseTiffReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      if (qName.equals("Image")) {
+      if (qName.equals("OME")) {
+        String uuid = attributes.getValue("UUID");
+        if (fileUUIDs == null) fileUUIDs = new Vector();
+        fileUUIDs.add(uuid);
+      }
+      else if (qName.equals("Image")) {
         String id = attributes.getValue("ID");
         if (!minimal) {
           if (id.startsWith("urn:lsid:")) {
@@ -519,7 +544,19 @@ public class OMETiffReader extends BaseTiffReader {
       }
       else if (qName.equals("TiffData")) {
         if (minimal) return;
+        String uuid = attributes.getValue("UUID");
         String ifd = attributes.getValue("IFD");
+        if (uuid != null) {
+          uuids = true;
+          if (planeUUIDs == null) planeUUIDs = new Vector();
+          int ndx = Integer.parseInt(ifd);
+          if (ndx < planeUUIDs.size()) planeUUIDs.setElementAt(uuid, ndx);
+          else {
+            int diff = ndx - planeUUIDs.size();
+            for (int i=0; i<diff; i++) planeUUIDs.add("");
+            planeUUIDs.add(uuid);
+          }
+        }
         String numPlanes = attributes.getValue("NumPlanes");
         String z = attributes.getValue("FirstZ");
         String c = attributes.getValue("FirstC");
