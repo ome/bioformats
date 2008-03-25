@@ -39,6 +39,15 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class OMETiffWriter extends TiffWriter {
 
+  // -- Constants --
+
+  private static final String WARNING_COMMENT =
+    "<!-- Warning: this comment is an OME-XML metadata block, which " +
+    "contains crucial dimensional parameters and other important metadata. " +
+    "Please edit cautiously (if at all), and back up the original data " +
+    "before doing so.  For more information, see the OME-TIFF web site: " +
+    "http://loci.wisc.edu/ome/ome-tiff.html. -->";
+
   // -- Fields --
 
   private Vector seriesMap;
@@ -59,6 +68,12 @@ public class OMETiffWriter extends TiffWriter {
       // extract OME-XML string from metadata object
       MetadataRetrieve retrieve = getMetadataRetrieve();
       String xml = MetadataTools.getOMEXML(retrieve);
+
+      // insert warning comment
+
+      String prefix = xml.substring(0, xml.indexOf(">") + 1);
+      String suffix = xml.substring(xml.indexOf(">") + 1);
+      xml = prefix + WARNING_COMMENT + suffix;
 
       int previousPixelsIndex = 0;
 
@@ -104,8 +119,8 @@ public class OMETiffWriter extends TiffWriter {
           len = 2;
         }
 
-        String prefix = xml.substring(0, end);
-        String suffix = xml.substring(end + len);
+        prefix = xml.substring(0, end);
+        suffix = xml.substring(end + len);
         xml = prefix + tiffData.toString() + suffix;
         previousPixelsIndex = pix + 8;
       }
