@@ -102,12 +102,12 @@ public class SlidebookReader extends FormatReader {
     if (debug) debug("SlidebookReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
-    in.order(true);
 
     status("Finding offsets to pixel data");
 
     in.skipBytes(4);
     core.littleEndian[0] = in.read() == 0x49;
+    in.order(core.littleEndian[0]);
 
     metadataOffsets = new Vector();
     pixelOffsets = new Vector();
@@ -119,10 +119,11 @@ public class SlidebookReader extends FormatReader {
       in.skipBytes(4);
       int checkOne = in.read();
       int checkTwo = in.read();
-      if (checkOne == 'I' && checkTwo == 'I') {
+      if ((checkOne == 'I' && checkTwo == 'I') ||
+        (checkOne == 'M' && checkTwo == 'M'))
+      {
         metadataOffsets.add(new Long(in.getFilePointer() - 6));
-        if (in.read() == 0) in.skipBytes(249);
-        else in.skipBytes(121);
+        in.skipBytes(in.readShort() - 8);
       }
       else {
         String s = null;
@@ -171,7 +172,9 @@ public class SlidebookReader extends FormatReader {
 
             while (!found && in.getFilePointer() < in.length()) {
               for (int i=0; i<buf.length-6; i++) {
-                if (buf[i] == 'h' && buf[i+4] == 'I' && buf[i+5] == 'I') {
+                if ((buf[i] == 'h' && buf[i+4] == 'I' && buf[i+5] == 'I') ||
+                  (buf[i+1] == 'h' && buf[i+4] == 'M' && buf[i+5] == 'M'))
+                {
                   found = true;
                   in.seek(in.getFilePointer() - n + i - 20);
                   break;
@@ -197,7 +200,41 @@ public class SlidebookReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata(pixelOffsets.size() - 1);
+    for (int i=0; i<pixelOffsets.size(); i++) {
+      long length = ((Long) pixelLengths.get(i)).longValue();
+      long offset = ((Long) pixelOffsets.get(i)).longValue();
+      in.seek(offset);
+      byte checkByte = in.readByte();
+      if (length + offset >= in.length()) {
+        pixelOffsets.remove(i);
+        pixelLengths.remove(i);
+        i--;
+      }
+      else if (checkByte == 'l') {
+        long lengthSum = ((Long) pixelLengths.get(0)).longValue();
+        while (pixelLengths.size() > 1) {
+          int size = pixelLengths.size() - 1;
+          lengthSum += ((Long) pixelLengths.get(size)).longValue();
+          pixelLengths.remove(size);
+          pixelOffsets.remove(size);
+        }
+
+        for (int q=0; q<metadataOffsets.size(); q++) {
+          long mOffset = ((Long) metadataOffsets.get(q)).longValue();
+          if (mOffset > lengthSum) {
+            lengthSum = mOffset - offset;
+            break;
+          }
+        }
+
+        pixelLengths.setElementAt(new Long(lengthSum), 0);
+        break;
+      }
+    }
+
+    if (pixelOffsets.size() > 1) {
+      core = new CoreMetadata(pixelOffsets.size());
+    }
 
     status("Determining dimensions");
 
@@ -217,41 +254,62 @@ public class SlidebookReader extends FormatReader {
     for (int i=0; i<metadataOffsets.size(); i++) {
       long off = ((Long) metadataOffsets.get(i)).longValue();
       in.seek(off);
-      int n = in.read();
+      char n = (char) in.readShort();
       if (n == 'i') {
         iCount++;
         in.skipBytes(81);
-        for (int j=1; j<pixelOffsets.size(); j++) {
-          if ((in.getFilePointer() <
-            ((Long) pixelOffsets.get(j)).longValue()) ||
-            (j == pixelOffsets.size() - 1))
+        int start = 0;
+        for (int j=start; j<pixelOffsets.size(); j++) {
+          long length = ((Long) pixelLengths.get(j)).longValue();
+          long offset = ((Long) pixelOffsets.get(j)).longValue();
+          long end = j == pixelOffsets.size() - 1 ? in.length() :
+            ((Long) pixelOffsets.get(j + 1)).longValue();
+          if (in.getFilePointer() >= (length + offset) &&
+            in.getFilePointer() < end)
           {
-            core.sizeY[j - 1] = in.readShort();
-            int div = (int) Math.pow(2, in.readShort() & 1);
-            if (div < core.sizeY[j - 1]) {
-              core.sizeY[j - 1] /= div;
+            if ((in.getFilePointer() % 2) == 1) {
+              in.seek(in.getFilePointer() - 1);
             }
-            if (prevSeries != j - 1) {
+            if (core.sizeY[j - start] == 0) {
+              core.sizeY[j - start] = in.readShort();
+              if (core.sizeY[j - start] < 256 && core.sizeY[j - start] != 128) {
+                in.seek(in.getFilePointer() - 3);
+                core.sizeY[j - start] = in.readShort();
+              }
+              else if ((core.sizeY[j - start] % 8) != 0) {
+                in.skipBytes(2);
+                core.sizeY[j - start] = in.readShort();
+              }
+              int div = (int) Math.pow(2, in.readShort() & 1);
+              if (div < core.sizeY[j - start]) {
+                core.sizeY[j - start] /= div;
+              }
+            }
+            if (prevSeries != j - start) {
               iCount = 1;
             }
-            prevSeries = j - 1;
-            core.sizeC[j - 1] = iCount;
+            prevSeries = j - start;
+            core.sizeC[j - start] = iCount;
             break;
           }
         }
       }
       else if (n == 'u') {
         uCount++;
-        for (int j=1; j<pixelOffsets.size(); j++) {
-          if ((in.getFilePointer() <
-            ((Long) pixelOffsets.get(j)).longValue()) ||
-            (j == pixelOffsets.size() - 1))
+        int start = 0;
+        for (int j=start; j<pixelOffsets.size(); j++) {
+          long length = ((Long) pixelLengths.get(j)).longValue();
+          long offset = ((Long) pixelOffsets.get(j)).longValue();
+          long end = j == pixelOffsets.size() - 1 ? in.length() :
+            ((Long) pixelOffsets.get(j + 1)).longValue();
+          if (in.getFilePointer() >= (length + offset) &&
+            in.getFilePointer() < end)
           {
-            if (prevSeriesU != j - 1) {
+            if (prevSeriesU != j - start) {
               uCount = 1;
             }
-            prevSeriesU = j - 1;
-            core.sizeT[j - 1] = uCount;
+            prevSeriesU = j - start;
+            core.sizeT[j - start] = uCount;
             break;
           }
         }
@@ -262,6 +320,7 @@ public class SlidebookReader extends FormatReader {
     for (int i=0; i<core.sizeX.length; i++) {
       long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
       core.sizeZ[i] = 1;
+      if (core.sizeT[i] == 0) core.sizeT[i] = 1;
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i] * core.sizeC[i];
       core.sizeX[i] = (int) (pixels / (core.imageCount[i] * core.sizeY[i]));
       core.pixelType[i] = FormatTools.UINT16;
@@ -280,12 +339,6 @@ public class SlidebookReader extends FormatReader {
       store.setImageName("Series " + i, i);
       store.setImageCreationDate(
         DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
-      // CTR CHECK
-//      for (int j=0; j<core.sizeC[i]; j++) {
-//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, ii);
-//      }
     }
   }
 
