@@ -69,6 +69,15 @@ public class LIFReader extends FormatReader {
   private Vector seriesNames;
   private Vector containerNames;
   private Vector containerCounts;
+  private Vector widths;
+  private Vector heights;
+  private Vector zs;
+  private Vector ts;
+  private Vector channels;
+  private Vector bps;
+  private Vector extraDims;
+
+  private int numDatasets;
 
   // -- Constructor --
 
@@ -210,6 +219,15 @@ public class LIFReader extends FormatReader {
     containerCounts = new Vector();
     seriesNames = new Vector();
 
+    numDatasets = 0;
+    widths = new Vector();
+    heights = new Vector();
+    zs = new Vector();
+    ts = new Vector();
+    channels = new Vector();
+    bps = new Vector();
+    extraDims = new Vector();
+
     LIFHandler handler = new LIFHandler();
 
     xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml +
@@ -232,191 +250,6 @@ public class LIFReader extends FormatReader {
     }
     catch (SAXException exc) {
       throw new FormatException(exc);
-    }
-
-    Vector elements = new Vector();
-
-    status("Populating native metadata");
-
-    // first parse each element in the XML string
-
-    StringTokenizer st = new StringTokenizer(xml, ">");
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken();
-      elements.add(token.substring(1));
-    }
-
-    // the first element contains version information
-
-    String token = (String) elements.get(0);
-    String key = token.substring(0, token.indexOf("\""));
-    String value = token.substring(token.indexOf("\"") + 1, token.length()-1);
-    addMeta(key, value);
-
-    // what we have right now is a vector of XML elements, which need to
-    // be parsed into the appropriate image dimensions
-
-    int ndx = 1;
-
-    // the image data we need starts with the token "ElementName='blah'" and
-    // ends with the token "/ImageDescription"
-
-    int numDatasets = 0;
-    Vector widths = new Vector();
-    Vector heights = new Vector();
-    Vector zs = new Vector();
-    Vector ts = new Vector();
-    Vector channels = new Vector();
-    Vector bps = new Vector();
-    Vector extraDims = new Vector();
-
-    while (ndx < elements.size()) {
-      token = (String) elements.get(ndx);
-
-      // if the element contains a key/value pair, parse it and put it in
-      // the metadata hashtable
-
-      if (token.startsWith("ScannerSettingRecord")) {
-        if (token.indexOf("csScanMode") != -1) {
-          int index = token.indexOf("Variant") + 7;
-          String ordering = token.substring(index + 2,
-            token.indexOf("\"", index + 3));
-          ordering = ordering.toLowerCase();
-
-          if (ordering.indexOf("x") == -1 || ordering.indexOf("y") == -1 ||
-            ordering.indexOf("xy") == -1)
-          {
-            int xPos = ordering.indexOf("x");
-            int yPos = ordering.indexOf("y");
-            int zPos = ordering.indexOf("z");
-            int tPos = ordering.indexOf("t");
-
-            if (xPos < 0) xPos = 0;
-            if (yPos < 0) yPos = 1;
-            if (zPos < 0) zPos = 2;
-            if (tPos < 0) tPos = 3;
-
-            int x = ((Integer) widths.get(widths.size() - 1)).intValue();
-            int y = ((Integer) heights.get(widths.size() - 1)).intValue();
-            int z = ((Integer) zs.get(widths.size() - 1)).intValue();
-            int t = ((Integer) ts.get(widths.size() - 1)).intValue();
-
-            int[] dimensions = {x, y, z, t};
-
-            x = dimensions[xPos];
-            y = dimensions[yPos];
-            z = dimensions[zPos];
-            t = dimensions[tPos];
-
-            widths.setElementAt(new Integer(x), widths.size() - 1);
-            heights.setElementAt(new Integer(y), heights.size() - 1);
-            zs.setElementAt(new Integer(z), zs.size() - 1);
-            ts.setElementAt(new Integer(t), ts.size() - 1);
-          }
-        }
-        else if (token.indexOf("dblVoxel") != -1) {
-          int index = token.indexOf("Variant") + 7;
-          String size = token.substring(index + 2,
-            token.indexOf("\"", index + 3));
-          float cal = Float.parseFloat(size) * 1000000;
-          if (token.indexOf("Z") != -1 && xcal.size() > zcal.size()) {
-            zcal.add(new Float(cal));
-          }
-        }
-      }
-      else if (token.startsWith("Element Name")) {
-        // loop until we find "/ImageDescription"
-
-        numDatasets++;
-        int numChannels = 0;
-        int extras = 1;
-
-        while (token.indexOf("/ImageDescription") == -1) {
-          if (token.indexOf("=") != -1) {
-            // create a small hashtable to store just this element's data
-
-            if (token.startsWith("Element Name")) {
-              // hack to override first series name
-              int idx = numDatasets - 1;
-              if (idx >= seriesNames.size()) {
-                numDatasets = seriesNames.size();
-                idx = numDatasets - 1;
-              }
-            }
-
-            Hashtable tmp = new Hashtable();
-            while (token.length() > 2) {
-              key = token.substring(0, token.indexOf("\"") - 1);
-              value = token.substring(token.indexOf("\"") + 1,
-                token.indexOf("\"", token.indexOf("\"") + 1));
-
-              token = token.substring(key.length() + value.length() + 3);
-
-              key = key.trim();
-              value = value.trim();
-              tmp.put(key, value);
-            }
-
-            if (tmp.get("ChannelDescription DataType") != null) {
-              // found channel description block
-              numChannels++;
-              if (numChannels == 1) {
-                bps.add(new Integer((String) tmp.get("Resolution")));
-              }
-            }
-            else if (tmp.get("DimensionDescription DimID") != null) {
-              // found dimension description block
-
-              int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
-              int id = Integer.parseInt((String)
-                tmp.get("DimensionDescription DimID"));
-              float size = Float.parseFloat((String) tmp.get("Length"));
-              if (size < 0) size *= -1;
-
-              switch (id) {
-                case 1:
-                  widths.add(new Integer(w));
-                  xcal.add(new Float((size * 1000000) / w));
-                  break;
-                case 2:
-                  heights.add(new Integer(w));
-                  ycal.add(new Float((size * 1000000) / w));
-                  break;
-                case 3:
-                  zs.add(new Integer(w));
-                  zcal.add(new Float((size * 1000000) / w));
-                  break;
-                case 4:
-                  ts.add(new Integer(w));
-                  break;
-                default:
-                  extras *= w;
-              }
-            }
-          }
-
-          ndx++;
-          if (elements != null && ndx < elements.size()) {
-            token = (String) elements.get(ndx);
-          }
-          else break;
-        }
-        extraDims.add(new Integer(extras));
-        if (numChannels == 0) numChannels++;
-        channels.add(new Integer(numChannels));
-
-        if (widths.size() < numDatasets && heights.size() < numDatasets) {
-          numDatasets--;
-        }
-        else {
-          if (widths.size() < numDatasets) widths.add(new Integer(1));
-          if (heights.size() < numDatasets) heights.add(new Integer(1));
-          if (zs.size() < numDatasets) zs.add(new Integer(1));
-          if (ts.size() < numDatasets) ts.add(new Integer(1));
-          if (bps.size() < numDatasets) bps.add(new Integer(8));
-        }
-      }
-      ndx++;
     }
 
     numDatasets = widths.size();
@@ -493,13 +326,6 @@ public class LIFReader extends FormatReader {
       store.setDimensionsPhysicalSizeZ(zf, i, 0);
 
       // CTR CHECK
-//      for (int j=0; j<core.sizeC[i]; j++) {
-//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, ii);
-//      }
-
-      // CTR CHECK
 //      String zoom = (String) getMeta(seriesName + " - dblZoom");
 //      store.setDisplayOptions(zoom == null ? null : new Float(zoom),
 //        new Boolean(core.sizeC[i] > 1), new Boolean(core.sizeC[i] > 1),
@@ -525,6 +351,7 @@ public class LIFReader extends FormatReader {
     private int count = 0;
     private boolean firstElement = true;
     private boolean dcroiOpen = false;
+    private int numChannels, extras;
 
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("Element")) {
@@ -536,6 +363,23 @@ public class LIFReader extends FormatReader {
           fullSeries = fullSeries.substring(0, fullSeries.lastIndexOf("/"));
         }
         else fullSeries = "";
+
+        extraDims.add(new Integer(extras));
+        if (numChannels == 0) numChannels++;
+        channels.add(new Integer(numChannels));
+
+        if (widths.size() < numDatasets && heights.size() < numDatasets) {
+          numDatasets--;
+        }
+        else if (widths.size() > numDatasets && heights.size() > numDatasets) {
+          numDatasets = widths.size();
+        }
+        if (widths.size() < numDatasets) widths.add(new Integer(1));
+        if (heights.size() < numDatasets) heights.add(new Integer(1));
+        if (zs.size() < numDatasets) zs.add(new Integer(1));
+        if (ts.size() < numDatasets) ts.add(new Integer(1));
+        if (bps.size() < numDatasets) bps.add(new Integer(8));
+        numChannels = 0;
       }
     }
 
@@ -553,6 +397,17 @@ public class LIFReader extends FormatReader {
 
         if (attributes.getValue("Name").equals("DCROISet")) {
           dcroiOpen = true;
+        }
+
+        numDatasets++;
+        int idx = numDatasets - 1;
+        if (idx >= seriesNames.size()) {
+          numDatasets = seriesNames.size();
+        }
+
+        if (!dcroiOpen) {
+          numChannels = 0;
+          extras = 1;
         }
       }
       else if (qName.equals("Experiment")) {
@@ -575,25 +430,109 @@ public class LIFReader extends FormatReader {
       }
       else if (qName.equals("ChannelDescription")) {
         String prefix = fullSeries + " - Channel " + count + " - ";
-        addMeta(prefix + "Min", attributes.getValue("Min"));
-        addMeta(prefix + "Max", attributes.getValue("Max"));
-        addMeta(prefix + "Resolution", attributes.getValue("Resolution"));
-        addMeta(prefix + "LUTName", attributes.getValue("LUTName"));
-        addMeta(prefix + "IsLUTInverted", attributes.getValue("IsLUTInverted"));
+        for (int i=0; i<attributes.getLength(); i++) {
+          String name = attributes.getQName(i);
+          addMeta(prefix + name, attributes.getValue(name));
+        }
         count++;
+        numChannels++;
+        if (numChannels == 1) {
+          bps.add(new Integer(attributes.getValue("Resolution")));
+        }
       }
       else if (qName.equals("DimensionDescription")) {
         String prefix = fullSeries + " - Dimension " + count + " - ";
-        addMeta(prefix + "NumberOfElements",
-          attributes.getValue("NumberOfElements"));
-        addMeta(prefix + "Length", attributes.getValue("Length"));
-        addMeta(prefix + "Origin", attributes.getValue("Origin"));
-        addMeta(prefix + "DimID", attributes.getValue("DimID"));
+        for (int i=0; i<attributes.getLength(); i++) {
+          String name = attributes.getQName(i);
+          addMeta(prefix + name, attributes.getValue(name));
+        }
+        Integer w = new Integer(attributes.getValue("NumberOfElements"));
+        int id = Integer.parseInt(attributes.getValue("DimID"));
+        float size = Float.parseFloat(attributes.getValue("Length"));
+        if (size < 0) size *= -1;
+        size *= 1000000;
+        Float pixelSize = new Float(size / w.intValue());
+
+        switch (id) {
+          case 1:
+            widths.add(w);
+            xcal.add(pixelSize);
+            break;
+          case 2:
+            heights.add(w);
+            ycal.add(pixelSize);
+            break;
+          case 3:
+            zs.add(w);
+            zcal.add(pixelSize);
+            break;
+          case 4:
+            ts.add(w);
+            break;
+          default:
+            extras *= w.intValue();
+        }
       }
       else if (qName.equals("ScannerSettingRecord")) {
         String key = attributes.getValue("Identifier") + " - " +
           attributes.getValue("Description");
         addMeta(fullSeries + " - " + key, attributes.getValue("Variant"));
+        String identifier = attributes.getValue("Identifier");
+        if ("csScanMode".equals(identifier)) {
+          String ordering = attributes.getValue("Variant").toLowerCase();
+
+          if (ordering.indexOf("x") == -1 || ordering.indexOf("y") == -1 ||
+            ordering.indexOf("xy") == -1)
+          {
+            int xPos = ordering.indexOf("x");
+            int yPos = ordering.indexOf("y");
+            int zPos = ordering.indexOf("z");
+            int tPos = ordering.indexOf("t");
+
+            if (xPos < 0) xPos = 0;
+            if (yPos < 0) yPos = 1;
+            if (zPos < 0) zPos = 2;
+            if (tPos < 0) tPos = 3;
+
+            int index = widths.size() - 1;
+
+            int x = ((Integer) widths.get(index)).intValue();
+            int y = index < heights.size() ?
+              ((Integer) heights.get(index)).intValue() : 1;
+            int z =
+              index < zs.size() ? ((Integer) zs.get(index)).intValue() : 1;
+            int t =
+              index < ts.size() ? ((Integer) ts.get(index)).intValue() : 1;
+
+            int[] dimensions = {x, y, z, t};
+
+            x = dimensions[xPos];
+            y = dimensions[yPos];
+            z = dimensions[zPos];
+            t = dimensions[tPos];
+
+            widths.setElementAt(new Integer(x), widths.size() - 1);
+            if (index < heights.size()) {
+              heights.setElementAt(new Integer(y), heights.size() - 1);
+            }
+            else heights.add(new Integer(y));
+            if (index < zs.size()) {
+              zs.setElementAt(new Integer(z), zs.size() - 1);
+            }
+            else zs.add(new Integer(z));
+            if (index < ts.size()) {
+              ts.setElementAt(new Integer(t), ts.size() - 1);
+            }
+            else ts.add(new Integer(t));
+          }
+        }
+        else if (identifier.startsWith("dblVoxel")) {
+          if (identifier.endsWith("Z") && xcal.size() > zcal.size()) {
+            String size = attributes.getValue("Variant");
+            float cal = Float.parseFloat(size) * 1000000;
+            zcal.add(new Float(cal));
+          }
+        }
       }
       else if (qName.equals("FilterSettingRecord")) {
         String key = attributes.getValue("ObjectName") + " - " +
@@ -612,8 +551,7 @@ public class LIFReader extends FormatReader {
         }
         else {
           int ndx = fullSeries.indexOf(" - Sequential Setting ") + 22;
-          int n = Integer.parseInt(fullSeries.substring(ndx));
-          n++;
+          int n = Integer.parseInt(fullSeries.substring(ndx)) + 1;
           fullSeries = fullSeries.substring(0, ndx) + String.valueOf(n);
         }
 
@@ -624,19 +562,15 @@ public class LIFReader extends FormatReader {
       }
       else if (qName.equals("Wheel")) {
         String prefix = fullSeries + " - Wheel " + count + " - ";
-        addMeta(prefix + "Qualifier", attributes.getValue("Qualifier"));
-        addMeta(prefix + "FilterIndex", attributes.getValue("FilterIndex"));
-        addMeta(prefix + "FilterSpectrumPos",
-          attributes.getValue("FilterSpectrumPos"));
-        addMeta(prefix + "IsSpectrumTurnMode",
-          attributes.getValue("IsSpectrumTurnMode"));
-        addMeta(prefix + "IndexChanged", attributes.getValue("IndexChanged"));
-        addMeta(prefix + "SpectrumChanged",
-          attributes.getValue("SpectrumChanged"));
+        for (int i=0; i<attributes.getLength(); i++) {
+          String name = attributes.getQName(i);
+          addMeta(prefix + name, attributes.getValue(name));
+        }
         count++;
       }
       else if (qName.equals("WheelName")) {
-        String prefix = fullSeries + " - Wheel " + (count - 1) + " - WheelName ";
+        String prefix =
+          fullSeries + " - Wheel " + (count - 1) + " - WheelName ";
         int ndx = 0;
         while (getMeta(prefix + ndx) != null) ndx++;
 
@@ -652,39 +586,34 @@ public class LIFReader extends FormatReader {
       else if (qName.equals("LaserLineSetting")) {
         String prefix = fullSeries + " - LaserLine " +
           attributes.getValue("LaserLine") + " - ";
-        addMeta(prefix + "IntensityDev", attributes.getValue("IntensityDev"));
-        addMeta(prefix + "IntensityLowDev",
-          attributes.getValue("IntensityLowDev"));
-        addMeta(prefix + "AOBSIntensityDev",
-          attributes.getValue("AOBSIntensityDev"));
-        addMeta(prefix + "AOBSIntensityLowDev",
-          attributes.getValue("AOBSIntensityLowDev"));
-        addMeta(prefix + "EnableDoubleMode",
-          attributes.getValue("EnableDoubleMode"));
-        addMeta(prefix + "LineIndex", attributes.getValue("LineIndex"));
-        addMeta(prefix + "Qualifier", attributes.getValue("Qualifier"));
-        addMeta(prefix + "SequenceIndex",
-          attributes.getValue("SequenceIndex"));
+        for (int i=0; i<attributes.getLength(); i++) {
+          String name = attributes.getQName(i);
+          if (!name.equals("LaserLine")) {
+            addMeta(prefix + name, attributes.getValue(name));
+          }
+        }
       }
       else if (qName.equals("Detector")) {
         String prefix = fullSeries + " - Detector Channel " +
           attributes.getValue("Channel") + " - ";
-        addMeta(prefix + "IsActive", attributes.getValue("IsActive"));
-        addMeta(prefix + "IsReferenceUnitActivatedForCorrection",
-          attributes.getValue("IsReferenceUnitActivatedForCorrection"));
-        addMeta(prefix + "Gain", attributes.getValue("Gain"));
-        addMeta(prefix + "Offset", attributes.getValue("Offset"));
+        for (int i=0; i<attributes.getLength(); i++) {
+          String name = attributes.getQName(i);
+          if (!name.equals("Channel")) {
+            addMeta(prefix + name, attributes.getValue(name));
+          }
+        }
       }
       else if (qName.equals("Laser")) {
         String prefix = fullSeries + " Laser " +
           attributes.getValue("LaserName") + " - ";
-        addMeta(prefix + "CanDoLinearOutputPower",
-          attributes.getValue("CanDoLinearOutputPower"));
-        addMeta(prefix + "OutputPower", attributes.getValue("OutputPower"));
-        addMeta(prefix + "Wavelength", attributes.getValue("Wavelength"));
+        for (int i=0; i<attributes.getLength(); i++) {
+          String name = attributes.getQName(i);
+          if (!name.equals("LaserName")) {
+            addMeta(prefix + name, attributes.getValue(name));
+          }
+        }
       }
       else if (qName.equals("TimeStamp")) {
-
         long high = Long.parseLong(attributes.getValue("HighInteger"));
         long low = Long.parseLong(attributes.getValue("LowInteger"));
 
@@ -705,10 +634,10 @@ public class LIFReader extends FormatReader {
       }
       else if (qName.equals("ChannelScalingInfo")) {
         String prefix = fullSeries + " - ChannelScalingInfo " + count + " - ";
-        addMeta(prefix + "WhiteValue", attributes.getValue("WhiteValue"));
-        addMeta(prefix + "BlackValue", attributes.getValue("BlackValue"));
-        addMeta(prefix + "GammaValue", attributes.getValue("GammaValue"));
-        addMeta(prefix + "Automatic", attributes.getValue("Automatic"));
+        for (int i=0; i<attributes.getLength(); i++) {
+          String name = attributes.getQName(i);
+          addMeta(prefix + name, attributes.getValue(name));
+        }
       }
       else if (qName.equals("RelTimeStamp")) {
         addMeta(fullSeries + " RelTimeStamp " + attributes.getValue("Frame"),
