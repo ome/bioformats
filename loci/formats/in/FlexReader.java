@@ -88,40 +88,14 @@ public class FlexReader extends BaseTiffReader {
       int num = bytes.length / 2;
       for (int i=num-1; i>=0; i--) {
         int q = (int) ((bytes[i] & 0xff) * factors[no]);
-        byte b0 = (byte) (q & 0xff);
-        byte b1 = (byte) ((q >> 8) & 0xff);
-        int ndx = 2 * i;
-        if (core.littleEndian[0]) {
-          bytes[ndx] = b0;
-          bytes[ndx + 1] = b1;
-        }
-        else {
-          bytes[ndx] = b1;
-          bytes[ndx + 1] = b0;
-        }
+        DataTools.unpackBytes(q, bytes, i * 2, 2, core.littleEndian[0]);
       }
     }
     else if (core.pixelType[0] == FormatTools.UINT32) {
       int num = bytes.length / 4;
       for (int i=num-1; i>=0; i--) {
         int q = (int) ((bytes[i] & 0xff) * factors[no]);
-        byte b0 = (byte) (q & 0xff);
-        byte b1 = (byte) ((q >> 8) & 0xff);
-        byte b2 = (byte) ((q >> 16) & 0xff);
-        byte b3 = (byte) ((q >> 24) & 0xff);
-        int ndx = 4 * i;
-        if (core.littleEndian[0]) {
-          bytes[ndx] = b0;
-          bytes[ndx + 1] = b1;
-          bytes[ndx + 2] = b2;
-          bytes[ndx + 3] = b3;
-        }
-        else {
-          bytes[ndx] = b3;
-          bytes[ndx + 1] = b2;
-          bytes[ndx + 2] = b1;
-          bytes[ndx + 3] = b0;
-        }
+        DataTools.unpackBytes(q, bytes, i * 4, 4, core.littleEndian[0]);
       }
     }
     return bytes;

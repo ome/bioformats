@@ -151,6 +151,8 @@ public class KhorosReader extends FormatReader {
       default: throw new FormatException("Unsupported pixel type : " + type);
     }
 
+    // read lookup table
+
     in.skipBytes(12);
     int c = in.readInt();
     if (c > 1) {

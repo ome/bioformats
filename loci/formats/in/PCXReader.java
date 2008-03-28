@@ -139,9 +139,7 @@ public class PCXReader extends FormatReader {
     int vertDPI = in.readShort();
     int horizDPI = version == 5 ? in.readShort() : 1;
 
-    in.skipBytes(48);
-
-    in.skipBytes(1);
+    in.skipBytes(49);
 
     nColorPlanes = in.read();
     bytesPerLine = in.readShort();

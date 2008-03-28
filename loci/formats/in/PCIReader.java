@@ -90,24 +90,6 @@ public class PCIReader extends FormatReader {
 
     s.close();
 
-    if (core.pixelType[0] == FormatTools.UINT16) {
-      for (int i=0; i<buf.length; i+=2) {
-        byte b = buf[i];
-        buf[i] = buf[i + 1];
-        buf[i + 1] = b;
-      }
-    }
-    else if (core.pixelType[0] == FormatTools.UINT32) {
-      for (int i=0; i<buf.length; i+=4) {
-        byte b = buf[i];
-        buf[i] = buf[i + 3];
-        buf[i + 3] = b;
-        b = buf[i + 1];
-        buf[i + 1] = buf[i + 2];
-        buf[i + 2] = b;
-      }
-    }
-
     return buf;
   }
 
@@ -218,7 +200,7 @@ public class PCIReader extends FormatReader {
     core.rgb[0] = core.sizeC[0] > 1;
     core.interleaved[0] = false;
     core.currentOrder[0] = "XYCZT";
-    core.littleEndian[0] = false;
+    core.littleEndian[0] = true;
     core.indexed[0] = false;
     core.falseColor[0] = false;
     core.metadataComplete[0] = true;

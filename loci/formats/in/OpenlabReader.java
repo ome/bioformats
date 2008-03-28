@@ -165,6 +165,7 @@ public class OpenlabReader extends FormatReader {
       }
     }
     else {
+      // PICT plane
       in.read(b);
       Exception exc = null;
       try {

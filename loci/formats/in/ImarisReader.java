@@ -119,8 +119,7 @@ public class ImarisReader extends FormatReader {
 
     status("Reading header");
 
-    int version = in.readInt();
-    addMeta("Version", new Integer(version));
+    addMeta("Version", new Integer(in.readInt()));
     in.skipBytes(4);
 
     addMeta("Image name", in.readString(128));

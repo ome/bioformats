@@ -110,7 +110,7 @@ public class MRCReader extends FormatReader {
     in.seek(213);
     core.littleEndian[0] = in.read() == 68;
 
-    // read 1024 byte header
+    // read dimension information from 1024 byte header
 
     in.seek(0);
     in.order(core.littleEndian[0]);
@@ -124,37 +124,32 @@ public class MRCReader extends FormatReader {
     int mode = in.readInt();
     switch (mode) {
       case 0:
-        bpp = 1;
         core.pixelType[0] = FormatTools.UINT8;
         break;
       case 1:
-        bpp = 2;
         core.pixelType[0] = FormatTools.INT16;
         break;
       case 6:
-        bpp = 2;
         core.pixelType[0] = FormatTools.UINT16;
         break;
       case 2:
-        bpp = 4;
         isFloat = true;
         core.pixelType[0] = FormatTools.FLOAT;
         break;
       case 3:
-        bpp = 4;
         core.pixelType[0] = FormatTools.UINT32;
         break;
       case 4:
-        bpp = 8;
         isFloat = true;
         core.pixelType[0] = FormatTools.DOUBLE;
         break;
       case 16:
-        bpp = 2;
         core.sizeC[0] = 3;
         core.pixelType[0] = FormatTools.UINT16;
         break;
     }
+
+    bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
 
     // pixel size = xlen / mx
 
@@ -166,21 +161,21 @@ public class MRCReader extends FormatReader {
     float ylen = in.readFloat();
     float zlen = in.readFloat();
 
-    addMeta("Pixel size (X)", "" + (xlen / mx));
-    addMeta("Pixel size (Y)", "" + (ylen / my));
-    addMeta("Pixel size (Z)", "" + (zlen / mz));
+    addMeta("Pixel size (X)", String.valueOf(xlen / mx));
+    addMeta("Pixel size (Y)", String.valueOf(ylen / my));
+    addMeta("Pixel size (Z)", String.valueOf(zlen / mz));
 
-    addMeta("Alpha angle", "" + in.readFloat());
-    addMeta("Beta angle", "" + in.readFloat());
-    addMeta("Gamma angle", "" + in.readFloat());
+    addMeta("Alpha angle", String.valueOf(in.readFloat()));
+    addMeta("Beta angle", String.valueOf(in.readFloat()));
+    addMeta("Gamma angle", String.valueOf(in.readFloat()));
 
     in.skipBytes(12);
 
     // min, max and mean pixel values
 
-    addMeta("Minimum pixel value", "" + in.readFloat());
-    addMeta("Maximum pixel value", "" + in.readFloat());
-    addMeta("Mean pixel value", "" + in.readFloat());
+    addMeta("Minimum pixel value", String.valueOf(in.readFloat()));
+    addMeta("Maximum pixel value", String.valueOf(in.readFloat()));
+    addMeta("Mean pixel value", String.valueOf(in.readFloat()));
 
     in.skipBytes(4);
     extHeaderSize = in.readInt();
@@ -194,11 +189,11 @@ public class MRCReader extends FormatReader {
       "unknown";
 
     addMeta("Series type", type);
-    addMeta("Lens", "" + in.readShort());
-    addMeta("ND1", "" + in.readShort());
-    addMeta("ND2", "" + in.readShort());
-    addMeta("VD1", "" + in.readShort());
-    addMeta("VD2", "" + in.readShort());
+    addMeta("Lens", String.valueOf(in.readShort()));
+    addMeta("ND1", String.valueOf(in.readShort()));
+    addMeta("ND2", String.valueOf(in.readShort()));
+    addMeta("VD1", String.valueOf(in.readShort()));
+    addMeta("VD2", String.valueOf(in.readShort()));
 
     float[] angles = new float[6];
     for (int i=0; i<angles.length; i++) {

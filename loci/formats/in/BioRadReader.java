@@ -169,9 +169,6 @@ public class BioRadReader extends FormatReader {
 
   // -- Fields --
 
-  /** Flag indicating current Bio-Rad PIC is packed with bytes. */
-  private boolean byteFormat;
-
   private Vector used;
 
   private String[] picFiles;
@@ -234,7 +231,7 @@ public class BioRadReader extends FormatReader {
 
     lastChannel = getZCTCoords(no)[1];
 
-    int bytes = byteFormat ? 1 : 2;
+    int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
 
     if (picFiles != null) {
       int file = no % picFiles.length;
@@ -270,7 +267,6 @@ public class BioRadReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    byteFormat = false;
     used = null;
     picFiles = null;
     lut = null;
@@ -282,6 +278,7 @@ public class BioRadReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("BioRadReader.initFile(" + id + ")");
 
+    // always initialize a PIC file, even if we were given something else
     if (!checkSuffix(id, PIC_SUFFIX)) {
       Location dir = new Location(id).getAbsoluteFile().getParentFile();
 
@@ -315,7 +312,8 @@ public class BioRadReader extends FormatReader {
     int ramp1min = in.readShort();
     int ramp1max = in.readShort();
     boolean notes = in.readInt() != 0;
-    byteFormat = in.readShort() != 0;
+    core.pixelType[0] =
+      in.readShort() == 0 ? FormatTools.UINT16 : FormatTools.UINT8;
     int imageNumber = in.readShort();
     String name = in.readString(32);
     int merged = in.readShort();
@@ -340,7 +338,6 @@ public class BioRadReader extends FormatReader {
     addMeta("ramp1_min", new Integer(ramp1min));
     addMeta("ramp1_max", new Integer(ramp1max));
     addMeta("notes", new Boolean(notes));
-    addMeta("byte_format", new Boolean(byteFormat));
     addMeta("image_number", new Integer(imageNumber));
     addMeta("name", name);
     addMeta("merged", MERGE_NAMES[merged]);
@@ -355,7 +352,7 @@ public class BioRadReader extends FormatReader {
 
     // skip image data
     int imageLen = core.sizeX[0] * core.sizeY[0];
-    int bpp = byteFormat ? 1 : 2;
+    int bpp = FormatTools.getBytesPerPixel(core.pixelType[0]);
     in.skipBytes(bpp * core.imageCount[0] * imageLen + 6);
 
     Vector pixelSize = new Vector();

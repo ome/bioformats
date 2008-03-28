@@ -88,6 +88,8 @@ public class ImarisHDFReader extends FormatReader {
     super("Bitplane Imaris 5.5 (HDF)", "ims");
     blockCheckLen = 8;
     suffixSufficient = false;
+    // NetCDF prints a fair number of warning messages to stdout - we need to
+    // filter these out so that they don't interfere with omebf.
     OutputFilter out = new OutputFilter(System.out);
     System.setOut(out);
   }
@@ -114,6 +116,8 @@ public class ImarisHDFReader extends FormatReader {
     if (previousImageNumber > getImageCount()) previousImageNumber = -1;
     int[] oldZCT = previousImageNumber == -1 ? new int[] {-1, -1, -1} :
       FormatTools.getZCTCoords(this, previousImageNumber);
+
+    // pixel data is stored in XYZ blocks
 
     if (zct[1] != oldZCT[1] || zct[2] != oldZCT[2] || series != previousSeries)
     {
@@ -143,20 +147,17 @@ public class ImarisHDFReader extends FormatReader {
           row*w, w);
       }
       else if (previousImage instanceof short[][][]) {
-        short[] s = ((short[][][]) previousImage)[zct[0]][row + y];
         for (int i=0; i<w; i++) {
-          buf[row*w*2 + i*2] = (byte) ((s[x + i] >> 8) & 0xff);
-          buf[row*w*2 + i*2 + 1] = (byte) (s[x + i] & 0xff);
+          DataTools.unpackShort(
+            ((short[][][]) previousImage)[zct[0]][row + y][x + i], buf,
+            2 * (row * w + i), core.littleEndian[0]);
         }
       }
       else if (previousImage instanceof int[][][]) {
-        int[] s = ((int[][][]) previousImage)[zct[0]][row + y];
-        int base = row * w * 4;
         for (int i=0; i<w; i++) {
-          buf[base + i*4] = (byte) ((s[x + i] >> 24) & 0xff);
-          buf[base + i*4 + 1] = (byte) ((s[x + i] >> 16) & 0xff);
-          buf[base + i*4 + 2] = (byte) ((s[x + i] >> 8) & 0xff);
-          buf[base + i*4 + 3] = (byte) (s[x + i] & 0xff);
+          DataTools.unpackBytes(
+            ((int[][][]) previousImage)[zct[0]][row + y][x + i], buf,
+            4 * (row * w + i), 4, core.littleEndian[0]);
         }
       }
       else if (previousImage instanceof float[][][]) {
@@ -164,10 +165,7 @@ public class ImarisHDFReader extends FormatReader {
         int base = row * w * 4;
         for (int i=0; i<w; i++) {
           int v = Float.floatToIntBits(s[x + i]);
-          buf[base + i*4] = (byte) ((v >> 24) & 0xff);
-          buf[base + i*4 + 1] = (byte) ((v >> 16) & 0xff);
-          buf[base + i*4 + 2] = (byte) ((v >> 8) & 0xff);
-          buf[base + i*4 + 3] = (byte) (v & 0xff);
+          DataTools.unpackBytes(v, buf, base + i*4, 4, core.littleEndian[0]);
         }
       }
     }
@@ -203,6 +201,8 @@ public class ImarisHDFReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    // initialize the file
+
     try {
       r.setVar("currentId", Location.getMappedId(id));
       r.exec("ncfile = NetcdfFile.open(currentId)");
@@ -214,6 +214,8 @@ public class ImarisHDFReader extends FormatReader {
 
     getValue("root", "ImarisDataSet");
     getValue("root", "ImarisVersion");
+
+    // read all of the metadata key/value pairs
 
     findGroup("DataSetInfo", "root", "dataSetInfo");
     findGroup("DataSet", "root", "dataSet");
@@ -256,6 +258,9 @@ public class ImarisHDFReader extends FormatReader {
       }
     }
     core.imageCount[0] = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+
+    // determine pixel type - this isn't stored in the metadata, so we need
+    // to check the pixels themselves
 
     try {
       findGroup("ResolutionLevel_0", "dataSet", "g");
@@ -417,6 +422,11 @@ public class ImarisHDFReader extends FormatReader {
     return null;
   }
 
+  /**
+   * Look for a group of the given name within the given parent group.
+   * Stores the resulting group object in a variable whose name is the
+   * value of 'store'.
+   */
   private Object findGroup(String name, String parent, String store) {
     try {
       r.setVar("name", name);

@@ -57,7 +57,6 @@ public class IPWReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    // all of our samples begin with 0xd0cf11e0
     return block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0;
   }
@@ -102,29 +101,6 @@ public class IPWReader extends FormatReader {
     Hashtable[] ifds = TiffTools.getIFDs(stream);
     TiffTools.getSamples(ifds[0], stream, buf, x, y, w, h);
     stream.close();
-
-    if (core.pixelType[0] == FormatTools.UINT16 ||
-      core.pixelType[0] == FormatTools.INT16)
-    {
-      for (int i=0; i<buf.length; i+=2) {
-        byte b = buf[i];
-        buf[i] = buf[i + 1];
-        buf[i + 1] = b;
-      }
-    }
-    else if (core.pixelType[0] == FormatTools.UINT32 ||
-      core.pixelType[0] == FormatTools.INT32)
-    {
-      for (int i=0; i<buf.length; i+=4) {
-        byte b = buf[i];
-        buf[i] = buf[i + 3];
-        buf[i + 3] = b;
-        b = buf[i + 1];
-        buf[i + 1] = buf[i + 2];
-        buf[i + 2] = b;
-      }
-    }
-
     return buf;
   }
 
@@ -271,7 +247,7 @@ public class IPWReader extends FormatReader {
 
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
-    // default values
+    // retrieve axis sizes
 
     addMeta("slices", "1");
     addMeta("channels", "1");

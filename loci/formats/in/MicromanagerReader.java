@@ -160,6 +160,18 @@ public class MicromanagerReader extends FormatReader {
 
     // now parse the rest of the metadata
 
+    // metadata.txt looks something like this:
+    //
+    // {
+    //   "Section Name": {
+    //      "Key": "Value",
+    //      "Array key": [
+    //        first array value, second array value
+    //      ]
+    //   }
+    //
+    // }
+
     status("Populating metadata");
 
     int start = s.indexOf("Summary");
@@ -228,16 +240,6 @@ public class MicromanagerReader extends FormatReader {
             token.substring(token.indexOf(":") + 1, token.length() - 1).trim();
 
           addMeta(key, value);
-
-          if (key.equals("Exposure-ms")) {
-
-          }
-          else if (key.equals("ElapsedTime-ms")) {
-
-          }
-          else if (key.equals("Z-um")) {
-
-          }
 
           token = st.nextToken().trim();
         }

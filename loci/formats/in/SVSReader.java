@@ -93,7 +93,7 @@ public class SVSReader extends BaseTiffReader {
       }
     }
 
-    // repopulate core
+    // repopulate core metadata
 
     core = new CoreMetadata(ifds.length);
 

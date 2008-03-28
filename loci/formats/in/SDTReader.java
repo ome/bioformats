@@ -163,8 +163,7 @@ public class SDTReader extends FormatReader {
             offset += 2;
           }
           int ndx = 2 * (w * row + col);
-          buf[ndx] = (byte) (sum & 0xff);
-          buf[ndx + 1] = (byte) ((sum >> 8) & 0xff);
+          DataTools.unpackShort(sum, buf, ndx, core.littleEndian[0]);
         }
         offset += timeBins * 2 * (core.sizeX[series] - w - x);
       }
@@ -242,26 +241,6 @@ public class SDTReader extends FormatReader {
 //        null, null, null, null, null, null, null, null, null, null, null, null,
 //        null, null, null, null, null);
 //    }
-  }
-
-  // -- Deprecated API methods --
-
-  /** @deprecated Replaced by {@link #getTimeBinCount()} */
-  public int getTimeBinCount(String id) throws FormatException, IOException {
-    setId(id);
-    return getTimeBinCount();
-  }
-
-  /** @deprecated Replaced by {@link #getChannelCount()} */
-  public int getChannelCount(String id) throws FormatException, IOException {
-    setId(id);
-    return getChannelCount();
-  }
-
-  /** @deprecated Replaced by {@link #getInfo()} */
-  public SDTInfo getInfo(String id) throws FormatException, IOException {
-    setId(id);
-    return getInfo();
   }
 
 }

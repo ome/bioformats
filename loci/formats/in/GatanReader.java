@@ -249,6 +249,12 @@ public class GatanReader extends FormatReader {
    * Information on the DM3 structure found at:
    * http://rsb.info.nih.gov/ij/plugins/DM3Format.gj.html and
    * http://www-hrem.msm.cam.ac.uk/~cbb/info/dmformat/
+   *
+   * The basic structure is this: the file is comprised of a list of tags.
+   * Each tag is either a data tag or a group tag.  Group tags are simply
+   * containers for more group and data tags, where data tags contain actual
+   * metadata.  Each data tag is comprised of a type (byte, short, etc.),
+   * a label, and a value.
    */
   private void parseTags(int numTags, String parent) throws IOException {
     for (int i=0; i<numTags; i++) {
@@ -265,9 +271,8 @@ public class GatanReader extends FormatReader {
       if (type == VALUE) {
         in.skipBytes(4);  // equal to '%%%%'
         int n = in.readInt();
-        int dataType = 0;
+        int dataType = in.readInt();
         if (n == 1) {
-          dataType = in.readInt();
           if (parent.equals("Dimensions") && labelString.length() == 0) {
             in.order(!in.isLittleEndian());
             if (i == 0) core.sizeX[0] = in.readInt();
@@ -277,14 +282,12 @@ public class GatanReader extends FormatReader {
           else value = String.valueOf(readValue(dataType));
         }
         else if (n == 2) {
-          dataType = in.readInt();
           if (dataType == 18) { // this should always be true
             length = in.readInt();
           }
           value = in.readString(length);
         }
         else if (n == 3 && !labelString.equals("Data")) {
-          dataType = in.readInt();
           if (dataType == GROUP) { // this should always be true
             dataType = in.readInt();
             length = in.readInt();
@@ -297,7 +300,6 @@ public class GatanReader extends FormatReader {
           }
         }
         else if (n == 3 && labelString.equals("Data")) {
-          dataType = in.readInt();
           if (dataType == GROUP) {  // this should always be true
             dataType = in.readInt();
             length = in.readInt();
@@ -307,7 +309,6 @@ public class GatanReader extends FormatReader {
           }
         }
         else {
-          dataType = in.readInt();
           // this is a normal struct of simple types
           if (dataType == ARRAY) {
             in.skipBytes(4);

@@ -42,6 +42,14 @@ import loci.formats.meta.MetadataStore;
  */
 public class BMPReader extends FormatReader {
 
+  // -- Constants --
+
+  /** Compression types. */
+  private static final int RAW = 0;
+  private static final int RLE_8 = 1;
+  private static final int RLE_4 = 2;
+  private static final int RGB_MASK = 3;
+
   // -- Fields --
 
   /** Offset to the image data. */
@@ -53,13 +61,7 @@ public class BMPReader extends FormatReader {
   /** The palette for indexed color images. */
   private byte[][] palette;
 
-  /**
-   * Compression type:
-   * 0 = no compression,
-   * 1 = 8 bit run length encoding,
-   * 2 = 4 bit run length encoding,
-   * 3 = RGB bitmap with mask.
-   */
+  /** Compression type */
   private int compression;
 
   /** Offset to image data. */
@@ -97,7 +99,7 @@ public class BMPReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    if (compression != 0) {
+    if (compression != RAW) {
       throw new FormatException("Compression type " + compression +
         " not supported");
     }
@@ -185,16 +187,16 @@ public class BMPReader extends FormatReader {
     String comp = "invalid";
 
     switch (compression) {
-      case 0:
+      case RAW:
         comp = "None";
         break;
-      case 1:
+      case RLE_8:
         comp = "8 bit run length encoding";
         break;
-      case 2:
+      case RLE_4:
         comp = "4 bit run length encoding";
         break;
-      case 3:
+      case RGB_MASK:
         comp = "RGB bitmap with mask";
         break;
     }
@@ -227,7 +229,7 @@ public class BMPReader extends FormatReader {
 
     global = in.getFilePointer();
 
-    addMeta("Indexed color", palette == null ? "false" : "true");
+    addMeta("Indexed color", String.valueOf(palette != null));
 
     status("Populating metadata");
 

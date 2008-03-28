@@ -105,6 +105,24 @@ public class SlidebookReader extends FormatReader {
 
     status("Finding offsets to pixel data");
 
+    // Slidebook files appear to be comprised of three types of blocks:
+    // variable length pixel data blocks, 512 byte metadata blocks and
+    // 128 byte metadata blocks.
+    //
+    // Metadata blocks begin with a 2 byte identifier, e.g. 'i' or 'h'.
+    // Following this are two unknown bytes (usually 256), then a 2 byte
+    // endianness identifier - II or MM, for little or big endian, respectively.
+    // Presumably these blocks contain useful information, but for the most
+    // part we aren't sure what it is or how to extract it.
+    //
+    // Each pixel data block corresponds to one series.
+    // The first 'i' metadata block after each pixel data block contains
+    // the width and height of the planes in that block - this can (and does)
+    // vary between blocks.
+    //
+    // Z, C, and T sizes are computed heuristically based on the number of
+    // metadata blocks of a specific type.
+
     in.skipBytes(4);
     core.littleEndian[0] = in.read() == 0x49;
     in.order(core.littleEndian[0]);
@@ -114,6 +132,8 @@ public class SlidebookReader extends FormatReader {
     pixelLengths = new Vector();
 
     in.seek(0);
+
+    // gather offsets to metadata and pixel data blocks
 
     while (in.getFilePointer() < in.length() - 8) {
       in.skipBytes(4);
@@ -131,9 +151,7 @@ public class SlidebookReader extends FormatReader {
         in.seek(fp);
         int len = in.read();
         if (len > 0 && len <= 32) {
-          byte[] b = new byte[len];
-          in.read(b);
-          s = new String(b);
+          s = in.readString(len);
         }
 
         if (s != null && s.indexOf("Annotation") != -1) {

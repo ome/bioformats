@@ -31,7 +31,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
- * File format reader for NRRD files;  see http://teem.sourceforge.net/nrrd.
+ * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/NRRDReader.java">Trac</a>,
@@ -221,6 +221,10 @@ public class NRRDReader extends FormatReader {
         finished = true;
       }
     }
+
+    // nrrd files store pixel data in addition to metadata
+    // nhdr files don't store pixel data, but instead provide a path to the
+    //   pixels file (this can be any format)
 
     if (dataFile == null) offset = in.getFilePointer();
     else {

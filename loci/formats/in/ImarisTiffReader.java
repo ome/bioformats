@@ -94,10 +94,8 @@ public class ImarisTiffReader extends BaseTiffReader {
     core.sizeC[0] = ifds.length - 1;
     core.sizeZ[0] = tmp.size() / core.sizeC[0];
     core.sizeT[0] = 1;
-    core.sizeX[0] =
-      TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 0);
-    core.sizeY[0] =
-      TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 0);
+    core.sizeX[0] = (int) TiffTools.getImageWidth(ifds[1]);
+    core.sizeY[0] = (int) TiffTools.getImageLength(ifds[1]);
 
     ifds = (Hashtable[]) tmp.toArray(new Hashtable[0]);
     core.imageCount[0] = core.sizeC[0] * core.sizeZ[0];
@@ -113,30 +111,19 @@ public class ImarisTiffReader extends BaseTiffReader {
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
+    boolean signed = bitFormat == 2;
+
     if (bitFormat == 3) core.pixelType[0] = FormatTools.FLOAT;
-    else if (bitFormat == 2) {
-      switch (bitsPerSample) {
-        case 8:
-          core.pixelType[0] = FormatTools.INT8;
-          break;
-        case 16:
-          core.pixelType[0] = FormatTools.INT16;
-          break;
-        case 32:
-          core.pixelType[0] = FormatTools.INT32;
-          break;
-      }
-    }
     else {
       switch (bitsPerSample) {
         case 8:
-          core.pixelType[0] = FormatTools.UINT8;
+          core.pixelType[0] = signed ? FormatTools.INT8 : FormatTools.UINT8;
           break;
         case 16:
-          core.pixelType[0] = FormatTools.UINT16;
+          core.pixelType[0] = signed ? FormatTools.INT16 : FormatTools.UINT16;
           break;
         case 32:
-          core.pixelType[0] = FormatTools.UINT32;
+          core.pixelType[0] = signed ? FormatTools.INT32: FormatTools.UINT32;
           break;
       }
     }

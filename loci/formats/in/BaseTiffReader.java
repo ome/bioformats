@@ -107,18 +107,6 @@ public abstract class BaseTiffReader extends FormatReader {
     super(name, suffixes);
   }
 
-  // -- BaseTiffReader API methods --
-
-  /** Gets the dimensions of the given (possibly multi-page) TIFF file. */
-  public int[] getTiffDimensions() throws FormatException, IOException {
-    if (ifds == null || ifds.length == 0) return null;
-    return new int[] {
-      TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, -1),
-      TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, -1),
-      core.imageCount[0]
-    };
-  }
-
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
@@ -132,7 +120,7 @@ public abstract class BaseTiffReader extends FormatReader {
     int[] bits = TiffTools.getBitsPerSample(ifds[0]);
     if (bits[0] <= 8) {
       int[] colorMap =
-        (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+        TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
       if (colorMap == null) return null;
 
       byte[][] table = new byte[3][colorMap.length / 3];
@@ -154,7 +142,7 @@ public abstract class BaseTiffReader extends FormatReader {
     int[] bits = TiffTools.getBitsPerSample(ifds[0]);
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap =
-        (int[]) TiffTools.getIFDValue(ifds[0], TiffTools.COLOR_MAP);
+        TiffTools.getIFDIntArray(ifds[0], TiffTools.COLOR_MAP, false);
       if (colorMap == null || colorMap.length < 65536 * 3) return null;
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;
@@ -175,12 +163,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return null;
   }
 
-  /* @see loci.formats.IFormatReader#getMetadataValue(String) */
-  public Object getMetadataValue(String field) {
-    FormatTools.assertId(currentId, true, 1);
-    return getMeta(field);
-  }
-
   /**
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -192,7 +174,7 @@ public abstract class BaseTiffReader extends FormatReader {
     FormatTools.checkBufferSize(this, buf.length, width, height);
 
     TiffTools.getSamples(ifds[no], in, buf, x, y, width, height);
-    return swapIfRequired(buf);
+    return buf;
   }
 
   // -- IFormatHandler API methods --
@@ -237,7 +219,7 @@ public abstract class BaseTiffReader extends FormatReader {
       }
     }
 
-    int comp = TiffTools.getIFDIntValue(ifd, TiffTools.COMPRESSION);
+    int comp = TiffTools.getCompression(ifd);
     String compression = null;
     switch (comp) {
       case TiffTools.UNCOMPRESSED:
@@ -264,8 +246,7 @@ public abstract class BaseTiffReader extends FormatReader {
     }
     put("Compression", compression);
 
-    int photo = TiffTools.getIFDIntValue(ifd,
-      TiffTools.PHOTOMETRIC_INTERPRETATION);
+    int photo = TiffTools.getPhotometricInterpretation(ifd);
     String photoInterp = null;
     String metaDataPhotoInterp = null;
 
@@ -546,23 +527,14 @@ public abstract class BaseTiffReader extends FormatReader {
     putInt("ReferenceBlackWhite", ifd, TiffTools.REFERENCE_BLACK_WHITE);
 
     // bits per sample and number of channels
-    Object bpsObj = TiffTools.getIFDValue(ifd, TiffTools.BITS_PER_SAMPLE);
-    int bps = -1, numC = 3;
-    if (bpsObj instanceof int[]) {
-      int[] q = (int[]) bpsObj;
-      bps = q[0];
-      numC = q.length;
-    }
-    else if (bpsObj instanceof Number) {
-      bps = ((Number) bpsObj).intValue();
-      numC = 1;
-    }
+    int[] q = TiffTools.getBitsPerSample(ifd);
+    int bps = q[0];
+    int numC = q.length;
 
     // numC isn't set properly if we have an indexed color image, so we need
     // to reset it here
 
-    int p = TiffTools.getIFDIntValue(ifd, TiffTools.PHOTOMETRIC_INTERPRETATION);
-    if (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY) {
+    if (photo == TiffTools.RGB_PALETTE || photo == TiffTools.CFA_ARRAY) {
       numC = 3;
       bps *= 3;
     }
@@ -579,21 +551,18 @@ public abstract class BaseTiffReader extends FormatReader {
       put("Comment", comment);
     }
 
-    int samples = TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.SAMPLES_PER_PIXEL, false, 1);
-    core.rgb[0] = samples > 1 || p == TiffTools.RGB;
+    int samples = TiffTools.getSamplesPerPixel(ifd);
+    core.rgb[0] = samples > 1 || photo == TiffTools.RGB;
     core.interleaved[0] = false;
     core.littleEndian[0] = TiffTools.isLittleEndian(ifds[0]);
 
-    core.sizeX[0] =
-      TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
-    core.sizeY[0] =
-      TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
+    core.sizeX[0] = (int) TiffTools.getImageWidth(ifds[0]);
+    core.sizeY[0] = (int) TiffTools.getImageLength(ifds[0]);
     core.sizeZ[0] = 1;
     core.sizeC[0] = core.rgb[0] ? samples : 1;
     core.sizeT[0] = ifds.length;
     core.metadataComplete[0] = true;
-    core.indexed[0] = p == TiffTools.RGB_PALETTE &&
+    core.indexed[0] = photo == TiffTools.RGB_PALETTE &&
       (get8BitLookupTable() != null || get16BitLookupTable() != null);
     if (core.indexed[0]) {
       core.sizeC[0] = 1;
@@ -602,8 +571,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (core.sizeC[0] == 1 && !core.indexed[0]) core.rgb[0] = false;
     core.falseColor[0] = false;
 
-    int bitFormat = TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.SAMPLE_FORMAT);
+    int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
 
     while (bps % 8 != 0) bps++;
     if (bps == 24 || bps == 48) bps /= 3;
@@ -650,7 +618,6 @@ public abstract class BaseTiffReader extends FormatReader {
    * sub-classes that override the getters for pixel set array size, etc.
    */
   protected void initMetadataStore() {
-    Hashtable ifd = ifds[0];
     try {
       // the metadata store we're working with
       MetadataStore store =
@@ -661,7 +628,7 @@ public abstract class BaseTiffReader extends FormatReader {
       MetadataTools.populatePixels(store, this);
 
       // populate Experimenter
-      String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
+      String artist = (String) TiffTools.getIFDValue(ifds[0], TiffTools.ARTIST);
       if (artist != null) {
         String firstName = null, lastName = null;
         int ndx = artist.indexOf(" ");
@@ -671,7 +638,7 @@ public abstract class BaseTiffReader extends FormatReader {
           lastName = artist.substring(ndx + 1);
         }
         String email = (String)
-          TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
+          TiffTools.getIFDValue(ifds[0], TiffTools.HOST_COMPUTER);
         store.setExperimenterFirstName(firstName, 0);
         store.setExperimenterLastName(lastName, 0);
         store.setExperimenterEmail(email, 0);
@@ -723,11 +690,11 @@ public abstract class BaseTiffReader extends FormatReader {
 
       // set the X and Y pixel dimensions
 
-      int resolutionUnit = TiffTools.getIFDIntValue(ifd,
+      int resolutionUnit = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.RESOLUTION_UNIT);
-      TiffRational xResolution = TiffTools.getIFDRationalValue(ifd,
+      TiffRational xResolution = TiffTools.getIFDRationalValue(ifds[0],
         TiffTools.X_RESOLUTION, false);
-      TiffRational yResolution = TiffTools.getIFDRationalValue(ifd,
+      TiffRational yResolution = TiffTools.getIFDRationalValue(ifds[0],
         TiffTools.Y_RESOLUTION, false);
       float pixX = xResolution == null ? 0f : xResolution.floatValue();
       float pixY = yResolution == null ? 0f : yResolution.floatValue();
@@ -749,8 +716,8 @@ public abstract class BaseTiffReader extends FormatReader {
       store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
 
       // populate StageLabel
-      Object x = TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
-      Object y = TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
+      Object x = TiffTools.getIFDValue(ifds[0], TiffTools.X_POSITION);
+      Object y = TiffTools.getIFDValue(ifds[0], TiffTools.Y_POSITION);
       Float stageX;
       Float stageY;
       if (x instanceof TiffRational) {
@@ -761,14 +728,6 @@ public abstract class BaseTiffReader extends FormatReader {
         stageX = x == null ? null : new Float((String) x);
         stageY = y == null ? null : new Float((String) y);
       }
-      // CHECK
-      /*
-      if (stageX != null || stageY != null) {
-        store.setStageLabelX(stageX, 0);
-        store.setStageLabelY(stageY, 0);
-      }
-      */
-
       // populate Instrument
       // CTR CHECK
 //      String make = (String) TiffTools.getIFDValue(ifd, TiffTools.MAKE);

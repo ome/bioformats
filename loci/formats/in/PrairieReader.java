@@ -27,9 +27,13 @@ package loci.formats.in;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import javax.xml.parsers.*;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * PrairieReader is the file format reader for
@@ -55,6 +59,10 @@ public class PrairieReader extends FormatReader {
   private static final int PRAIRIE_TAG_2 = 33629;
   private static final int PRAIRIE_TAG_3 = 33630;
 
+  /** Factory for generating SAX parsers. */
+  public static final SAXParserFactory SAX_FACTORY =
+    SAXParserFactory.newInstance();
+
   // -- Fields --
 
   /** List of files in the current dataset */
@@ -66,6 +74,12 @@ public class PrairieReader extends FormatReader {
   /** Names of the associated XML files */
   private String xmlFile, cfgFile;
   private boolean readXML = false, readCFG = false;
+
+  private int zt;
+  private Vector f, gains, offsets;
+  private boolean isZ;
+  private float pixelSizeX, pixelSizeY;
+  private String date, laserPower;
 
   // -- Constructor --
 
@@ -172,6 +186,9 @@ public class PrairieReader extends FormatReader {
     files = null;
     readXML = false;
     readCFG = false;
+    isZ = false;
+    zt = 0;
+    f = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -199,115 +216,26 @@ public class PrairieReader extends FormatReader {
         readCFG = true;
       }
 
+      f = new Vector();
+      gains = new Vector();
+      offsets = new Vector();
+      zt = 0;
+
       RandomAccessStream is = new RandomAccessStream(id);
       byte[] b = new byte[(int) is.length()];
       is.read(b);
       is.close();
-      String s = new String(b);
 
-      Vector elements = new Vector();
-
-      while (s.length() > 0) {
-        int ndx = s.indexOf("<");
-        int val1 = s.indexOf(">", ndx);
-        if (val1 != -1 && val1 > ndx) {
-          String sub = s.substring(ndx + 1, val1);
-          s = s.substring(val1 + 1);
-          elements.add(sub);
-        }
+      PrairieHandler handler = new PrairieHandler();
+      try {
+        SAXParser parser = SAX_FACTORY.newSAXParser();
+        parser.parse(new ByteArrayInputStream(b), handler);
       }
-
-      int zt = 0;
-      boolean isZ = false;
-      Vector f = new Vector();
-      int fileIndex = 1;
-      if (checkSuffix(id, XML_SUFFIX)) core.imageCount[0] = 0;
-
-      float pixelSizeX = 1f, pixelSizeY = 1f;
-      String date = null, laserPower = null;
-      Vector gains = new Vector(), offsets = new Vector();
-
-      String pastPrefix = "";
-      for (int i=1; i<elements.size(); i++) {
-        String el = (String) elements.get(i);
-        if (el.indexOf(" ") != -1) {
-          boolean closed = el.endsWith("/");
-
-          String prefix = el.substring(0, el.indexOf(" "));
-          if (prefix.equals("File")) core.imageCount[0]++;
-          if (prefix.equals("Frame")) {
-            zt++;
-            fileIndex = 1;
-          }
-
-          if (!prefix.equals("Key") && !prefix.equals("Frame")) {
-            el = el.substring(el.indexOf(" ") + 1);
-            while (el.indexOf("=") != -1) {
-              int eq = el.indexOf("=");
-              String key = el.substring(0, eq);
-              String value = el.substring(eq + 2, el.indexOf("\"", eq + 2));
-              if (prefix.equals("File")) {
-                addMeta(pastPrefix + " " + prefix + " " + fileIndex +
-                  " " + key, value);
-                if (key.equals("filename")) fileIndex++;
-              }
-              else {
-                addMeta(pastPrefix + " " + prefix + " " + key, value);
-                if (pastPrefix.equals("PVScan") &&
-                  prefix.equals("Sequence") && key.equals("type"))
-                {
-                  isZ = value.equals("ZSeries");
-                }
-                if (prefix.equals("PVScan") && key.equals("date")) {
-                  date = value;
-                }
-              }
-              el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
-              if (prefix.equals("File") && key.equals("filename")) {
-                File current = new File(id).getAbsoluteFile();
-                String dir = "";
-                if (current.exists()) {
-                  dir = current.getPath();
-                  dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
-                }
-                f.add(dir + value);
-              }
-            }
-          }
-          else if (prefix.equals("Key")) {
-            int keyIndex = el.indexOf("key") + 5;
-            int valueIndex = el.indexOf("value") + 7;
-            String key = el.substring(keyIndex, el.indexOf("\"", keyIndex));
-            String value =
-              el.substring(valueIndex, el.indexOf("\"", valueIndex));
-            addMeta(key, value);
-
-            if (key.equals("pixelsPerLine")) {
-              core.sizeX[0] = Integer.parseInt(value);
-            }
-            else if (key.equals("linesPerFrame")) {
-              core.sizeY[0] = Integer.parseInt(value);
-            }
-            else if (key.equals("micronsPerPixel_XAxis")) {
-              pixelSizeX = Float.parseFloat(value);
-            }
-            else if (key.equals("micronsPerPixel_YAxis")) {
-              pixelSizeY = Float.parseFloat(value);
-            }
-            else if (key.startsWith("pmtGain_")) gains.add(value);
-            else if (key.startsWith("pmtOffset_")) offsets.add(value);
-            else if (key.equals(" PVScan date")) date = value;
-            else if (key.equals("laserPower_0")) laserPower = value;
-          }
-          if (!closed) {
-            pastPrefix = prefix;
-            if (prefix.equals("Frame")) {
-              int index = el.indexOf("index") + 7;
-              String idx = el.substring(index, el.indexOf("\"", index));
-              pastPrefix += " " + idx;
-            }
-          }
-        }
+      catch (ParserConfigurationException exc) {
+        throw new FormatException(exc);
+      }
+      catch (SAXException exc) {
+        throw new FormatException(exc);
       }
 
       if (checkSuffix(id, XML_SUFFIX)) {
@@ -412,6 +340,54 @@ public class PrairieReader extends FormatReader {
       }
     }
     if (currentId == null) currentId = id;
+  }
+
+  // -- Helper classes --
+
+  /** SAX handler for parsing XML. */
+  public class PrairieHandler extends DefaultHandler {
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (qName.equals("PVScan")) {
+        date = attributes.getValue("date");
+      }
+      else if (qName.equals("Frame")) zt++;
+      else if (qName.equals("Sequence")) {
+        isZ = attributes.getValue("type").equals("ZSeries");
+      }
+      else if (qName.equals("File")) {
+        core.imageCount[0]++;
+        File current = new File(currentId).getAbsoluteFile();
+        String dir = "";
+        if (current.exists()) {
+          dir = current.getPath();
+          dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
+        }
+        f.add(dir + attributes.getValue("filename"));
+      }
+      else if (qName.equals("Key")) {
+        String key = attributes.getValue("key");
+        String value = attributes.getValue("value");
+        addMeta(key, value);
+
+        if (key.equals("pixelsPerLine")) {
+          core.sizeX[0] = Integer.parseInt(value);
+        }
+        else if (key.equals("linesPerFrame")) {
+          core.sizeY[0] = Integer.parseInt(value);
+        }
+        else if (key.equals("micronsPerPixel_XAxis")) {
+          pixelSizeX = Float.parseFloat(value);
+        }
+        else if (key.equals("micronsPerPixel_YAxis")) {
+          pixelSizeY = Float.parseFloat(value);
+        }
+        else if (key.startsWith("pmtGain_")) gains.add(value);
+        else if (key.startsWith("pmtOffset_")) offsets.add(value);
+        else if (key.equals("laserPower_0")) laserPower = value;
+      }
+    }
   }
 
 }

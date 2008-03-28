@@ -122,8 +122,9 @@ public class IPLabReader extends FormatReader {
 
     in.order(core.littleEndian[0]);
 
-    // populate standard metadata hashtable and OME root node
     in.skipBytes(12);
+
+    // read axis sizes from header
 
     dataSize = in.readInt() - 28;
     core.sizeX[0] = in.readInt();
@@ -142,51 +143,44 @@ public class IPLabReader extends FormatReader {
     addMeta("TDepth", new Long(core.sizeT[0]));
 
     String ptype;
-    bps = 1;
     switch (filePixelType) {
       case 0:
         ptype = "8 bit unsigned";
         core.pixelType[0] = FormatTools.UINT8;
-        bps = 1;
         break;
       case 1:
         ptype = "16 bit signed short";
         core.pixelType[0] = FormatTools.INT16;
-        bps = 2;
         break;
       case 2:
         ptype = "16 bit unsigned short";
         core.pixelType[0] = FormatTools.UINT16;
-        bps = 2;
         break;
       case 3:
         ptype = "32 bit signed long";
         core.pixelType[0] = FormatTools.INT32;
-        bps = 4;
         break;
       case 4:
         ptype = "32 bit single-precision float";
         core.pixelType[0] = FormatTools.FLOAT;
-        bps = 4;
         break;
       case 5:
         ptype = "Color24";
         core.pixelType[0] = FormatTools.UINT32;
-        bps = 1;
         break;
       case 6:
         ptype = "Color48";
         core.pixelType[0] = FormatTools.UINT16;
-        bps = 2;
         break;
       case 10:
         ptype = "64 bit double-precision float";
         core.pixelType[0] = FormatTools.DOUBLE;
-        bps = 8;
         break;
       default:
         ptype = "reserved"; // for values 7-9
     }
+
+    bps = FormatTools.getBytesPerPixel(core.pixelType[0]);
 
     addMeta("PixelType", ptype);
     in.skipBytes(dataSize);
@@ -270,7 +264,6 @@ public class IPLabReader extends FormatReader {
           addMeta("NormalizationBlack" + i, new Double(black));
           addMeta("NormalizationWhite" + i, new Double(white));
 
-          store = new FilterMetadata(getMetadataStore(), isMetadataFiltered());
           // CTR CHECK
 //          store.setChannelGlobalMinMax(i, new Double(min),
 //            new Double(max), null);

@@ -33,6 +33,8 @@ import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
+// TODO : lots of duplicate code can be removed from this reader
+
 /**
  * PictReader is the file format reader for Apple PICT files.
  * Most of this code was adapted from the PICT readers in JIMI

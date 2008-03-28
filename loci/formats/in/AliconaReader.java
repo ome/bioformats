@@ -76,6 +76,9 @@ public class AliconaReader extends FormatReader {
 
     int planeSize = (core.sizeX[0] + pad) * core.sizeY[0];
 
+    // 16-bit images are stored in a non-standard format:
+    // all of the LSBs are stored together, followed by all of the MSBs
+    // so instead of LMLMLM... storage, we have LLLLL...MMMMM...
     for (int i=0; i<numBytes; i++) {
       in.seek(textureOffset + (no * planeSize * (i + 1)));
       for (int row=0; row<h; row++) {
@@ -83,6 +86,17 @@ public class AliconaReader extends FormatReader {
         in.read(buf, i * w * h + row * w, w);
         in.skipBytes(core.sizeX[0] + pad - x - w);
       }
+    }
+
+    if (numBytes > 1) {
+      byte[] tmp = new byte[buf.length];
+      for (int i=0; i<planeSize; i++) {
+        for (int j=0; j<numBytes; j++) {
+          tmp[i*numBytes + j] = buf[planeSize*j + i];
+        }
+      }
+      System.arraycopy(tmp, 0, buf, 0, tmp.length);
+      tmp = null;
     }
 
     return buf;

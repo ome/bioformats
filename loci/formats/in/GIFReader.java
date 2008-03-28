@@ -104,12 +104,16 @@ public class GIFReader extends FormatReader {
   /** Constructs a new GIF reader. */
   public GIFReader() {
     super("Graphics Interchange Format", "gif");
+    blockCheckLen = 6;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
-  public boolean isThisType(byte[] block) { return false; }
+  public boolean isThisType(byte[] block) {
+    if (block.length < blockCheckLen) return false;
+    return new String(block).startsWith("GIF");
+  }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
@@ -349,12 +353,6 @@ public class GIFReader extends FormatReader {
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
     core.pixelType[0] = FormatTools.UINT8;
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-//    }
   }
 
   // -- Helper methods --

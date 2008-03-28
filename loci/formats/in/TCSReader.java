@@ -139,11 +139,10 @@ public class TCSReader extends FormatReader {
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
-    int n = 0;
+    int n = no;
     for (int i=0; i<series; i++) {
       n += core.imageCount[i];
     }
-    n += no;
 
     if (tiffReaders.length == 1) {
       return tiffReaders[0].openBytes(n, buf, x, y, w, h);

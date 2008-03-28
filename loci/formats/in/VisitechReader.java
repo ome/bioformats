@@ -130,9 +130,8 @@ public class VisitechReader extends FormatReader {
     if (!checkSuffix(id, HTML_SUFFIX)) {
       String base = id.substring(0, id.lastIndexOf(" "));
 
-      String suffix = " Report.html";
       currentId = null;
-      initFile(base + suffix);
+      initFile(base + " Report.html");
       return;
     }
 
@@ -267,15 +266,6 @@ public class VisitechReader extends FormatReader {
         DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
     }
     MetadataTools.populatePixels(store, this);
-
-    // CTR CHECK
-//    for (int i=0; i<numSeries; i++) {
-//      for (int j=0; j<core.sizeC[i]; j++) {
-//        store.setLogicalChannel(j, null, null, null, null, null, null, null,
-//          null, null, null, null, null, null, null, null, null, null, null,
-//          null, null, null, null, null, new Integer(i));
-//      }
-//    }
   }
 
 }

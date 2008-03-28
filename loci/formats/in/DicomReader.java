@@ -164,6 +164,7 @@ public class DicomReader extends FormatReader {
     in.seek(offsets[no]);
 
     if (isRLE) {
+      // plane is compressed using run-length encoding
       byte[] b = new byte[bytes];
       in.read(b);
       PackbitsCodec codec = new PackbitsCodec();
@@ -197,6 +198,7 @@ public class DicomReader extends FormatReader {
       }
     }
     else if (isJPEG || isJP2K) {
+      // plane is compressed using JPEG or JPEG-2000
       byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
       in.read(b);
       if (b[2] != (byte) 0xff) {
@@ -227,6 +229,7 @@ public class DicomReader extends FormatReader {
       }
     }
     else {
+      // plane is not compressed
       in.skipBytes(4);
       byte b1 = in.readByte();
       byte b2 = in.readByte();
@@ -250,6 +253,8 @@ public class DicomReader extends FormatReader {
     }
 
     if (inverted) {
+      // pixels are stored such that white -> 0; invert the values so that
+      // white -> 255 (or 65535)
       if (bpp == 1) {
         for (int i=0; i<buf.length; i++) {
           buf[i] = (byte) (255 - buf[i]);
@@ -340,11 +345,12 @@ public class DicomReader extends FormatReader {
 
       if (elementLength == 0) continue;
 
-      if ((location & 1) != 0) oddLocations = true;
+      oddLocations = (location & 1) != 0;
 
       String s;
       switch (tag) {
         case TRANSFER_SYNTAX_UID:
+          // this tag can indicate which compression scheme is used
           s = in.readString(elementLength);
           addInfo(tag, s);
           if (s.startsWith("1.2.840.10008.1.2.4.9")) isJP2K = true;
@@ -365,8 +371,7 @@ public class DicomReader extends FormatReader {
           if (frames > 1.0) core.imageCount[0] = (int) frames;
           break;
         case SAMPLES_PER_PIXEL:
-          int samplesPerPixel = in.readShort();
-          addInfo(tag, samplesPerPixel);
+          addInfo(tag, in.readShort());
           break;
         case PHOTOMETRIC_INTERPRETATION:
           addInfo(tag, in.readString(elementLength));
@@ -455,6 +460,8 @@ public class DicomReader extends FormatReader {
 
     status("Calculating image offsets");
 
+    // calculate the offset to each plane
+
     offsets = new long[core.imageCount[0]];
     for (int i=0; i<core.imageCount[0]; i++) {
       if (isRLE) {
@@ -468,12 +475,15 @@ public class DicomReader extends FormatReader {
         offsets[i] = in.getFilePointer() - 1;
       }
       else if (isJPEG || isJP2K) {
+        // scan for next JPEG magic byte sequence
         if (i == 0) offsets[i] = baseOffset;
         else offsets[i] = offsets[i - 1] + 3;
 
         byte secondCheck = isJPEG ? (byte) 0xd8 : (byte) 0x4f;
 
+        in.seek(offsets[i]);
         byte[] buf = new byte[8192];
+        in.read(buf);
         boolean found = false;
         while (!found) {
           for (int q=0; q<buf.length-3; q++) {
@@ -482,7 +492,7 @@ public class DicomReader extends FormatReader {
                 (isJP2K && buf[q + 2] == (byte) 0xff && buf[q + 3] == 0x51))
               {
                 found = true;
-                offsets[i] = in.getFilePointer() + q - 8192;
+                offsets[i] = in.getFilePointer() + q - buf.length;
                 break;
               }
             }

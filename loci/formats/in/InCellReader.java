@@ -169,12 +169,6 @@ public class InCellReader extends FormatReader {
     store.setImageCreationDate(
       DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int c=0; c<core.sizeC[0]; c++) {
-//      store.setLogicalChannel(c, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-//    }
   }
 
   // -- Helper class --

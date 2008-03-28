@@ -63,7 +63,7 @@ public class MetamorphReader extends BaseTiffReader {
   /** The TIFF's creation date */
   private String imageCreationDate;
 
-  //** The TIFF's emWavelength */
+  /** The TIFF's emWavelength */
   private long[] emWavelength;
 
   private int mmPlanes; //number of metamorph planes
@@ -93,7 +93,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (checkSuffix(files[i], ND_SUFFIX) &&
        id.startsWith(files[i].substring(0, files[i].lastIndexOf("."))))
       {
-        return FormatTools.CAN_GROUP;
+        return FormatTools.MUST_GROUP;
       }
     }
 
@@ -190,6 +190,8 @@ public class MetamorphReader extends BaseTiffReader {
     if (ndfile != null && ndfile.exists() &&
       (fileGroupOption(id) == FormatTools.MUST_GROUP || isGroupFiles()))
     {
+      // parse key/value pairs from .nd file
+
       RandomAccessStream ndStream =
         new RandomAccessStream(ndfile.getAbsolutePath());
       String line = ndStream.readLine().trim();
@@ -261,6 +263,8 @@ public class MetamorphReader extends BaseTiffReader {
         }
       }
 
+      // build list of STK files
+
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
         for (int j=0; j<cc; j++) {
@@ -276,6 +280,8 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       ndfile = ndfile.getAbsoluteFile();
+
+      // check that each STK file exists
 
       for (int s=0; s<stks.length; s++) {
         for (int f=0; f<stks[s].length; f++) {
@@ -402,35 +408,10 @@ public class MetamorphReader extends BaseTiffReader {
 
       Hashtable temp;
       for(int i=0; i<core.imageCount[0]; i++) {
-        temp = new Hashtable();
+        // copy data from the first IFD
+        temp = new Hashtable(ifds[0]);
 
-        // copy most of the data from 1st IFD
-        temp.put(new Integer(TiffTools.LITTLE_ENDIAN), ifds[0].get(
-            new Integer(TiffTools.LITTLE_ENDIAN)));
-        temp.put(new Integer(TiffTools.IMAGE_WIDTH), ifds[0].get(
-            new Integer(TiffTools.IMAGE_WIDTH)));
-        temp.put(new Integer(TiffTools.IMAGE_LENGTH),
-            ifds[0].get(new Integer(TiffTools.IMAGE_LENGTH)));
-        temp.put(new Integer(TiffTools.BITS_PER_SAMPLE), ifds[0].get(
-            new Integer(TiffTools.BITS_PER_SAMPLE)));
-        temp.put(new Integer(TiffTools.COMPRESSION), ifds[0].get(
-            new Integer(TiffTools.COMPRESSION)));
-        temp.put(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION),
-            ifds[0].get(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION)));
-        temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), ifds[0].get(
-            new Integer(TiffTools.STRIP_BYTE_COUNTS)));
-        temp.put(new Integer(TiffTools.ROWS_PER_STRIP), ifds[0].get(
-            new Integer(TiffTools.ROWS_PER_STRIP)));
-        temp.put(new Integer(TiffTools.X_RESOLUTION), ifds[0].get(
-            new Integer(TiffTools.X_RESOLUTION)));
-        temp.put(new Integer(TiffTools.Y_RESOLUTION), ifds[0].get(
-            new Integer(TiffTools.Y_RESOLUTION)));
-        temp.put(new Integer(TiffTools.RESOLUTION_UNIT), ifds[0].get(
-            new Integer(TiffTools.RESOLUTION_UNIT)));
-        temp.put(new Integer(TiffTools.PREDICTOR), ifds[0].get(
-            new Integer(TiffTools.PREDICTOR)));
-
-        // now we need a StripOffsets entry
+        // now we need a StripOffsets entry - the original IFD doesn't have this
 
         long planeOffset = i*(oldOffsets[stripsPerImage - 1] +
             stripByteCounts[stripsPerImage - 1] - oldOffsets[0]);
@@ -783,7 +764,6 @@ public class MetamorphReader extends BaseTiffReader {
         case 15:
           int zoom = valOrOffset;
           put("Zoom", zoom);
-          //OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + zoom);
           break;
         case 16: // oh how we hate you Julian format...
           lastOffset = in.getFilePointer();

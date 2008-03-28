@@ -42,7 +42,6 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-
 public class ICSReader extends FormatReader {
 
   // -- Constants --
@@ -137,6 +136,8 @@ public class ICSReader extends FormatReader {
     in.seek(offset + no * len);
 
     if (!core.rgb[0] && core.sizeC[0] > 4) {
+      // channels are stored interleaved, but because there are more than we
+      // can display as RGB, we need to separate them
       if (!gzip && data == null) {
         data = new byte[len * core.sizeC[0]];
         in.read(data);
@@ -214,7 +215,6 @@ public class ICSReader extends FormatReader {
 
     status("Finding companion file");
 
-    //String icsId = l.getPath(), idsId = l.getPath();
     String icsId = id, idsId = id;
     int dot = id.lastIndexOf(".");
     String ext = dot < 0 ? "" : id.substring(dot + 1).toLowerCase();
@@ -237,7 +237,7 @@ public class ICSReader extends FormatReader {
 
     status("Checking file version");
 
-    // check if we have a v2 ICS file
+    // check if we have a v2 ICS file - means there is no companion IDS file
     RandomAccessStream f = new RandomAccessStream(icsId);
     if (f.readString(17).trim().equals("ics_version\t2.0")) {
       in = new RandomAccessStream(icsId);
@@ -261,6 +261,8 @@ public class ICSReader extends FormatReader {
 
     String layoutSizes = null, layoutOrder = null, byteOrder = null;
     String rFormat = null, compression = null, scale = null;
+
+    // parse key/value pairs from beginning of ICS file
 
     RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
     StringTokenizer t;
@@ -320,12 +322,13 @@ public class ICSReader extends FormatReader {
     status("Populating metadata");
 
     layoutOrder = layoutOrder.trim();
-    // bpp, width, height, z, channels
     StringTokenizer t1 = new StringTokenizer(layoutSizes);
     StringTokenizer t2 = new StringTokenizer(layoutOrder);
 
     core.rgb[0] = layoutOrder.indexOf("ch") >= 0 &&
       layoutOrder.indexOf("ch") < layoutOrder.indexOf("x");
+
+    // find axis sizes
 
     String imageToken;
     String orderToken;
@@ -509,17 +512,6 @@ public class ICSReader extends FormatReader {
         exWave[i] = (int) Float.parseFloat(exTokens.nextToken().trim());
       }
     }
-
-    /*
-    for (int i=0; i<core.sizeC[0]; i++) {
-      // CTR CHECK
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//       null, null, null, null, null, null, null, null, null, null, null,
-//       new Integer(emWave[i]), new Integer(exWave[i]), null, null, null);
-      store.setLogicalChannelEmWave(new Integer(emWave[i]), 0, i);
-      store.setLogicalChannelExWave(new Integer(exWave[i]), 0, i);
-    }
-    */
   }
 
 }

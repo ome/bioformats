@@ -47,6 +47,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * (1) the JJ2000 jar file is *not* in the classpath; or
  * (2) the JAI jar file precedes JJ2000 in the classpath.
  *
+ * Also note that there is alternate ND2 reader for Windows
+ * (see LegacyND2Reader.java) that requires a native library.  If that native
+ * library is installed, then ND2Reader's logic will be bypassed.
+ *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/formats/in/ND2Reader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/loci/formats/in/ND2Reader.java">SVN</a></dd></dl>
@@ -182,6 +186,7 @@ public class ND2Reader extends FormatReader {
     int pixel = bpp * getRGBChannelCount();
 
     if (isJPEG) {
+      // plane is compressed using JPEG 2000
       BufferedImage b = openImage(no, x, y, w, h);
       byte[][] pixels = ImageTools.getPixelBytes(b, false);
       if (pixels.length == 1 && getRGBChannelCount() > 1) {
@@ -195,6 +200,7 @@ public class ND2Reader extends FormatReader {
       pixels = null;
     }
     else if (isLossless) {
+      // plane is compressed using ZLIB
       int plane = core.sizeX[series] * core.sizeY[series] * pixel;
       byte[] b = new byte[plane];
       in.read(b);
@@ -220,6 +226,7 @@ public class ND2Reader extends FormatReader {
       }
     }
     else {
+      // plane is not compressed
       in.skipBytes(y * core.sizeX[series] * pixel);
       for (int row=0; row<h; row++) {
         in.skipBytes(x * pixel);
@@ -504,6 +511,8 @@ public class ND2Reader extends FormatReader {
     }
     else in.seek(0);
 
+    // older version of ND2 - uses JPEG 2000 compression
+
     isJPEG = true;
 
     status("Calculating image offsets");
@@ -514,6 +523,8 @@ public class ND2Reader extends FormatReader {
     boolean lastBoxFound = false;
     int length = 0;
     int box = 0;
+
+    // assemble offsets to each plane
 
     while (!lastBoxFound) {
       pos = in.getFilePointer();
@@ -565,135 +576,52 @@ public class ND2Reader extends FormatReader {
 
     if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
       in.seek(off + 5);
-      byte[] b = new byte[(int) (in.length() - off - 5)];
-      in.readFully(b);
-      String xml = new String(b);
-
-      // assume that this XML string will be malformed, since that's how both
-      // sample files are; this means we need to manually parse it :-(
+      String xml = in.readString((int) (in.length() - in.getFilePointer()));
 
       // strip out binary data at the end - this is irrelevant for our purposes
-      xml = xml.substring(0, xml.lastIndexOf("</MetadataSeq>") + 14);
+      xml = "\n" + xml.substring(0, xml.lastIndexOf("</MetadataSeq>") + 14);
 
       // strip out all comments
-      xml = xml.replaceAll("<!--*-->", "");
+      xml = xml.replaceAll("<!--.*-->", "");
+      xml = xml.replaceAll("\n.*xml", "");
 
-      // each chunk appears on a separate line, so split up the chunks
+      // stored XML doesn't have a root node - add one, so that we can parse
+      // using SAX
 
-      StringTokenizer st = new StringTokenizer(xml, "\r\n");
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken().trim();
-        if (token.indexOf("<") != -1) {
-          String prefix = token.substring(1, token.indexOf(">")).trim();
-          token = token.substring(token.indexOf(">") + 1);
+      xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><NIKON>" + xml +
+        "</NIKON>";
 
-          while (token.indexOf("<") != -1) {
-            int start = token.indexOf("<");
-            String s = token.substring(start + 1, token.indexOf(">", start));
-            token = token.substring(token.indexOf(">", start));
+      ND2Handler handler = new ND2Handler();
 
-            // get the prefix for this tag
-            if (s.indexOf(" ") != -1) {
-              String pre = s.substring(0, s.indexOf(" ")).trim();
-              s = s.substring(s.indexOf(" ") + 1);
+      // strip out invalid characters
+      int offset = 0;
+      byte[] b = xml.getBytes();
+      int len = b.length;
+      for (int i=0; i<len; i++) {
+        char c = (char) b[i];
+        if (offset == 0 && c == '!') offset = i + 1;
 
-              // get key/value pairs
-              while (s.indexOf("=") != -1) {
-                int eq = s.indexOf("=");
-                int end = s.indexOf("\"", eq + 2);
-                if (eq < 0 || end < 0) break;
-                String key = s.substring(0, eq).trim();
-                String value = s.substring(eq + 2, end).trim();
-
-                // strip out the data types
-                if (key.indexOf("runtype") == -1) {
-                  if (prefix.startsWith("Metadata_V1.2")) {
-                    prefix = "";
-                  }
-                  String effectiveKey = prefix + " " + pre + " " + key;
-                  if (effectiveKey.endsWith("dTimeMSec value")) {
-                    long v = (long) Double.parseDouble(value);
-                    if (!ts.contains(new Long(v))) {
-                      ts.add(new Long(v));
-                    }
-                  }
-                  else if (effectiveKey.endsWith("dZPos value")) {
-                    long v = (long) Double.parseDouble(value);
-                    if (!zs.contains(new Long(v))) {
-                      zs.add(new Long(v));
-                    }
-                  }
-                  else if (effectiveKey.endsWith("uiComp value")) {
-                    if (core.sizeC[0] == 0) {
-                      core.sizeC[0] = Integer.parseInt(value);
-                    }
-                  }
-                  else if (effectiveKey.endsWith("uiCount value")) {
-                    if (core.sizeT[0] == 0) {
-                      core.sizeT[0] = Integer.parseInt(value);
-                    }
-                  }
-                  else if (effectiveKey.endsWith("TextInfoItem Text")) {
-                    value = value.replaceAll("&#x000d;&#x000a;", "\n");
-                    StringTokenizer tokens = new StringTokenizer(value, "\n");
-                    while (tokens.hasMoreTokens()) {
-                      String t = tokens.nextToken().trim();
-                      if (t.startsWith("Dimensions:")) {
-                        t = t.substring(11);
-                        StringTokenizer dims = new StringTokenizer(t, " x ");
-                        while (dims.hasMoreTokens()) {
-                          String dim = dims.nextToken().trim();
-                          int idx = dim.indexOf("(");
-                          int v = Integer.parseInt(dim.substring(idx + 1,
-                            dim.indexOf(")", idx)));
-                          if (dim.startsWith("XY")) {
-                            numSeries = v;
-                            if (numSeries > 1) {
-                              int x = core.sizeX[0];
-                              int y = core.sizeY[0];
-                              int z = core.sizeZ[0];
-                              int tSize = core.sizeT[0];
-                              int c = core.sizeC[0];
-                              core = new CoreMetadata(numSeries);
-                              Arrays.fill(core.sizeX, x);
-                              Arrays.fill(core.sizeY, y);
-                              Arrays.fill(core.sizeZ, z);
-                              Arrays.fill(core.sizeC, c);
-                              Arrays.fill(core.sizeT, tSize);
-                            }
-                          }
-                          else if (dim.startsWith("T")) {
-                            Arrays.fill(core.sizeT, v);
-                          }
-                          else if (dim.startsWith("Z")) {
-                            Arrays.fill(core.sizeZ, v);
-                          }
-                          else {
-                            Arrays.fill(core.sizeC, v);
-                          }
-                        }
-
-                        if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
-                        if (core.sizeC[0] == 0) Arrays.fill(core.sizeC, 1);
-                        if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
-
-                        int count =
-                          core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
-                        Arrays.fill(core.imageCount, count);
-                      }
-                    }
-                  }
-                  parseKeyAndValue(effectiveKey, value);
-                }
-                s = s.substring(s.indexOf("\"", eq + 2) + 1);
-              }
-            }
-          }
+        if (Character.isISOControl(c) || !Character.isDefined(c)) {
+          b[i] = (byte) ' ';
         }
       }
-      b = null;
+
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(b, offset, len - offset);
+
+      try {
+        SAXParser parser = SAX_FACTORY.newSAXParser();
+        parser.parse(s, handler);
+      }
+      catch (ParserConfigurationException exc) {
+        throw new FormatException(exc);
+      }
+      catch (SAXException exc) {
+        throw new FormatException(exc);
+      }
+
+      s.close();
       xml = null;
-      st = null;
     }
 
     status("Populating metadata");
@@ -836,6 +764,16 @@ public class ND2Reader extends FormatReader {
 
   /** SAX handler for parsing XML. */
   class ND2Handler extends DefaultHandler {
+    private String prefix = null;
+
+    public void endElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
+        prefix = null;
+      }
+    }
+
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -860,16 +798,15 @@ public class ND2Reader extends FormatReader {
         if (v == numSeries) numSeries++;
       }
       else if (qName.equals("uiComp")) {
-        core.sizeC[0] = Integer.parseInt(attributes.getValue("value"));
+        if (core.sizeC[0] == 0) {
+          core.sizeC[0] = Integer.parseInt(attributes.getValue("value"));
+        }
       }
       else if (qName.equals("uiBpcInMemory")) {
         if (attributes.getValue("value") == null) return;
         int bits = Integer.parseInt(attributes.getValue("value"));
         int bytes = bits / 8;
         switch (bytes) {
-          case 1:
-            core.pixelType[0] = FormatTools.UINT8;
-            break;
           case 2:
             core.pixelType[0] = FormatTools.UINT16;
             break;
@@ -931,8 +868,18 @@ public class ND2Reader extends FormatReader {
         isLossless = v > 0;
         parseKeyAndValue(qName, attributes.getValue("value"));
       }
+      else if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
+        prefix = qName + " " + attributes.getValue("_SEQUENCE_INDEX");
+      }
       else {
-        parseKeyAndValue(qName, attributes.getValue("value"));
+        StringBuffer sb = new StringBuffer();
+        if (prefix != null) {
+          sb.append(prefix);
+          sb.append(" ");
+        }
+        sb.append(qName);
+        if (prefix != null) sb.append(" value");
+        parseKeyAndValue(sb.toString(), attributes.getValue("value"));
       }
     }
   }
@@ -941,28 +888,93 @@ public class ND2Reader extends FormatReader {
 
   private void parseKeyAndValue(String key, String value) {
     addMeta(key, value);
-    if (key.equals("CalibrationSeq _SEQUENCE_INDEX=\"0\" dCalibration value")) {
+    if (key.endsWith("dCalibration value")) {
       pixelSizeX = Float.parseFloat(value);
       pixelSizeY = pixelSizeX;
     }
-    else if (key.equals("CalibrationSeq _SEQUENCE_INDEX=\"0\" dAspect value")) {
+    else if (key.endsWith("dAspect value")) {
       pixelSizeZ = Float.parseFloat(value);
     }
-    else if (key.equals("MetadataSeq _SEQUENCE_INDEX=\"0\" dGain value")) {
+    else if (key.endsWith("dGain value")) {
       gain = value;
     }
-    else if (key.equals("MetadataSeq _SEQUENCE_INDEX=\"0\" dLampVoltage value"))
+    else if (key.endsWith("dLampVoltage value"))
     {
       voltage = value;
     }
-    else if (key.equals("MetadataSeq " +
-      "_SEQUENCE_INDEX=\"0\" dObjectiveMag value"))
+    else if (key.endsWith("dObjectiveMag value"))
     {
       mag = value;
     }
-    else if (key.equals("MetadataSeq _SEQUENCE_INDEX=\"0\" dObjectiveNA value"))
+    else if (key.endsWith("dObjectiveNA value"))
     {
       na = value;
+    }
+    else if (key.endsWith("dTimeMSec value")) {
+      long v = (long) Double.parseDouble(value);
+      if (!ts.contains(new Long(v))) {
+        ts.add(new Long(v));
+      }
+    }
+    else if (key.endsWith("dZPos value")) {
+      long v = (long) Double.parseDouble(value);
+      if (!zs.contains(new Long(v))) {
+        zs.add(new Long(v));
+      }
+    }
+    else if (key.endsWith("uiCount value")) {
+      if (core.sizeT[0] == 0) {
+        core.sizeT[0] = Integer.parseInt(value);
+      }
+    }
+    else if (key.endsWith("TextInfoItem Text")) {
+      value = value.replaceAll("&#x000d;&#x000a;", "\n");
+      StringTokenizer tokens = new StringTokenizer(value, "\n");
+      while (tokens.hasMoreTokens()) {
+        String t = tokens.nextToken().trim();
+        if (t.startsWith("Dimensions:")) {
+          t = t.substring(11);
+          StringTokenizer dims = new StringTokenizer(t, " x ");
+          while (dims.hasMoreTokens()) {
+            String dim = dims.nextToken().trim();
+            int idx = dim.indexOf("(");
+            int v = Integer.parseInt(dim.substring(idx + 1,
+              dim.indexOf(")", idx)));
+            if (dim.startsWith("XY")) {
+              numSeries = v;
+              if (numSeries > 1) {
+                int x = core.sizeX[0];
+                int y = core.sizeY[0];
+                int z = core.sizeZ[0];
+                int tSize = core.sizeT[0];
+                int c = core.sizeC[0];
+                core = new CoreMetadata(numSeries);
+                Arrays.fill(core.sizeX, x);
+                Arrays.fill(core.sizeY, y);
+                Arrays.fill(core.sizeZ, z);
+                Arrays.fill(core.sizeC, c);
+                Arrays.fill(core.sizeT, tSize);
+              }
+            }
+            else if (dim.startsWith("T")) {
+              Arrays.fill(core.sizeT, v);
+            }
+            else if (dim.startsWith("Z")) {
+              Arrays.fill(core.sizeZ, v);
+            }
+            else {
+              Arrays.fill(core.sizeC, v);
+            }
+          }
+
+          if (core.sizeZ[0] == 0) Arrays.fill(core.sizeZ, 1);
+          if (core.sizeC[0] == 0) Arrays.fill(core.sizeC, 1);
+          if (core.sizeT[0] == 0) Arrays.fill(core.sizeT, 1);
+
+          int count = core.sizeZ[0] * core.sizeC[0] * core.sizeT[0];
+          Arrays.fill(core.imageCount, count);
+        }
+      }
     }
   }
 

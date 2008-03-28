@@ -76,7 +76,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     try {
       RandomAccessStream stream = new RandomAccessStream(block);
       String comment = TiffTools.getComment(TiffTools.getFirstIFD(stream));
-      stream.close(); 
+      stream.close();
       return comment != null && comment.trim().startsWith("<MetaData>");
     }
     catch (IOException e) {
@@ -100,6 +100,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
     wavelengths = new int[ifds.length];
     zpPointer = 0;
     wavePointer = 0;
+
+    // parse XML comment
+
     MetamorphHandler handler = new MetamorphHandler();
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();
@@ -116,6 +119,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     core.sizeC[0] = core.sizeZ[0] = 0;
+
+    // calculate axis sizes
 
     Vector uniqueZ = new Vector();
     Vector uniqueC = new Vector();

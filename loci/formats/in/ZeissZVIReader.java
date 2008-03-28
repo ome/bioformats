@@ -88,7 +88,6 @@ public class ZeissZVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
-    // all of our samples begin with 0xd0cf11e0
     return (block[0] == 0xd0 && block[1] == 0xcf &&
       block[2] == 0x11 && block[3] == 0xe0);
   }
@@ -263,6 +262,8 @@ public class ZeissZVIReader extends FormatReader {
 
     poi = new POITools(Location.getMappedId(id));
 
+    // parse each embedded file
+
     Vector files = poi.getDocumentList();
 
     for (int i=0; i<files.size(); i++) {
@@ -286,6 +287,7 @@ public class ZeissZVIReader extends FormatReader {
         dirName.toUpperCase().indexOf("ITEM") != -1) &&
         (s.length() > 1024))
       {
+        // found a valid image stream
         try {
           s.seek(6);
 
@@ -418,6 +420,7 @@ public class ZeissZVIReader extends FormatReader {
       (core.rgb[0] ? core.sizeC[0] / 3 : core.sizeC[0]);
 
     if (isTiled) {
+      // calculate tile dimensions and number of tiles
       int totalTiles =
         offsets.size() / (core.sizeZ[0] * core.sizeC[0] * core.sizeT[0]);
 

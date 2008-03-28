@@ -165,7 +165,6 @@ public class LIFReader extends FormatReader {
     }
 
     // number of Unicode characters in the XML block
-
     int nc = in.readInt();
     String xml = DataTools.stripString(in.readString(nc * 2));
 
@@ -213,8 +212,6 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
-    // parse raw key/value pairs - adapted from FlexReader
-
     containerNames = new Vector();
     containerCounts = new Vector();
     seriesNames = new Vector();
@@ -229,6 +226,9 @@ public class LIFReader extends FormatReader {
     extraDims = new Vector();
 
     LIFHandler handler = new LIFHandler();
+
+    // the XML blocks stored in a LIF file are invalid,
+    // because they don't have a root node
 
     xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml +
       "</LEICA>";
@@ -484,6 +484,9 @@ public class LIFReader extends FormatReader {
           if (ordering.indexOf("x") == -1 || ordering.indexOf("y") == -1 ||
             ordering.indexOf("xy") == -1)
           {
+            // switch the axis sizes around, depending on the
+            // stored dimension order
+
             int xPos = ordering.indexOf("x");
             int yPos = ordering.indexOf("y");
             int zPos = ordering.indexOf("z");
@@ -614,6 +617,9 @@ public class LIFReader extends FormatReader {
         }
       }
       else if (qName.equals("TimeStamp")) {
+        // parse the time stamp
+        // we're not 100% sure of how time stamps should be stored, but this
+        // seems to work
         long high = Long.parseLong(attributes.getValue("HighInteger"));
         long low = Long.parseLong(attributes.getValue("LowInteger"));
 

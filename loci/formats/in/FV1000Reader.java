@@ -209,6 +209,12 @@ public class FV1000Reader extends FormatReader {
     in = new RandomAccessStream(id);
     if (isOIB) poi = new POITools(Location.getMappedId(id));
 
+    // mappedOIF is used to distinguish between datasets that are being read
+    // directly (e.g. using ImageJ or showinf), and datasets that are being
+    // imported through omebf. In the latter case, the necessary directory
+    // structure is not preserved (only relative file names are stored in
+    // OMEIS), so we will need to use slightly different logic to build the
+    // list of associated files.
     boolean mappedOIF = !isOIB && !new File(id).getAbsoluteFile().exists();
 
     channelNames = new Vector();
@@ -224,6 +230,8 @@ public class FV1000Reader extends FormatReader {
       RandomAccessStream ras = poi.getDocumentStream("Root/OibInfo.txt");
 
       oibMapping = new Hashtable();
+
+      // set up file name mappings
 
       String s = DataTools.stripString(ras.readString((int) ras.length()));
       ras.close();
@@ -303,6 +311,8 @@ public class FV1000Reader extends FormatReader {
       oif = getFile(oifName.replaceAll(".oif", ".OIF"));
     }
 
+    // parse key/value pairs from the OIF file
+
     String s = oif.readString((int) oif.length());
     oif.close();
 
@@ -372,6 +382,7 @@ public class FV1000Reader extends FormatReader {
           lutNames.add(path + value);
         }
         else if (value.indexOf("-R") != -1) {
+          // "-R" in the file name indicates that this is a preview image
           value = value.replaceAll("/", File.separator);
           value = value.replace('\\', File.separatorChar);
           while (value.indexOf("GST") != -1) {
@@ -445,6 +456,8 @@ public class FV1000Reader extends FormatReader {
 
     status("Initializing helper readers");
 
+    // populate core metadata for preview series
+
     if (previewNames.size() > 0) {
       Vector v = new Vector();
       for (int i=0; i<previewNames.size(); i++) {
@@ -479,17 +492,17 @@ public class FV1000Reader extends FormatReader {
       core.indexed[1] = false;
     }
 
-    thumbReader = new BMPReader();
     core.imageCount[0] = filenames.size();
     tiffs = new Vector(core.imageCount[0]);
 
+    thumbReader = new BMPReader();
     thumbId = thumbId.replaceAll("pty", "bmp");
     thumbId = sanitizeFile(thumbId, (isOIB || mappedOIF) ? "" : path);
     if (isOIB) thumbId = thumbId.substring(1);
 
     status("Reading additional metadata");
 
-    // open each INI file (.pty extension)
+    // open each INI file (.pty extension) and build list of TIFF files
 
     String tiffPath = null;
 
@@ -553,6 +566,8 @@ public class FV1000Reader extends FormatReader {
 
     status("Populating metadata");
 
+    // calculate axis sizes
+
     int realChannels = 0;
     for (int i=0; i<9; i++) {
       int ss = Integer.parseInt(size[i]);
@@ -606,6 +621,8 @@ public class FV1000Reader extends FormatReader {
     in.close();
     in = null;
 
+    // set up thumbnail file mapping
+
     RandomAccessStream thumb = getFile(thumbId);
     if (thumb != null) {
       byte[] b = new byte[(int) thumb.length()];
@@ -616,6 +633,8 @@ public class FV1000Reader extends FormatReader {
       Arrays.fill(core.thumbSizeX, thumbReader.getSizeX());
       Arrays.fill(core.thumbSizeY, thumbReader.getSizeY());
     }
+
+    // initialize lookup table
 
     lut = new short[core.sizeC[0]][3][65536];
     byte[] buffer = new byte[65536 * 4];

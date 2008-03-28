@@ -124,6 +124,7 @@ public class EPSReader extends FormatReader {
 
     int bytes = FormatTools.getBytesPerPixel(core.pixelType[0]);
     if (binary) {
+      // pixels are stored as raw bytes
       ras.skipBytes(y * core.sizeX[0] * bytes * core.sizeC[0]);
       for (int row=0; row<h; row++) {
         ras.skipBytes(x * bytes * core.sizeC[0]);
@@ -132,6 +133,7 @@ public class EPSReader extends FormatReader {
       }
     }
     else {
+      // pixels are stored as a 2 character hexadecimal value
       String pix = ras.readString((int) (ras.length() - ras.getFilePointer()));
       pix = pix.replaceAll("\n", "");
       pix = pix.replaceAll("\r", "");
@@ -229,11 +231,11 @@ public class EPSReader extends FormatReader {
     String image = "image";
     int lineNum = 1;
 
-    line = in.readLine();
+    line = in.readLine().trim();
 
     while (line != null) {
-      if (line.trim().equals(image) || line.trim().endsWith(image)) {
-        if (line.trim().endsWith(image) && !line.trim().startsWith(image)) {
+      if (line.endsWith(image)) {
+        if (!line.startsWith(image)) {
           if (line.indexOf("colorimage") != -1) core.sizeC[0] = 3;
           StringTokenizer t = new StringTokenizer(line, " ");
           try {
@@ -314,6 +316,8 @@ public class EPSReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
     store.setImageName("", 0);
+    store.setImageCreationDate(
+      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
 
     MetadataTools.populatePixels(store, this);
   }

@@ -96,6 +96,7 @@ public class LeicaReader extends FormatReader {
 
     if (!open) return false; // not allowed to touch the file system
 
+    // check for that there is an .lei file in the same directory
     String prefix = name;
     if (prefix.indexOf(".") != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
@@ -202,6 +203,7 @@ public class LeicaReader extends FormatReader {
     close();
 
     if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
+      // need to find the associated .lei file
       if (ifds == null) super.initFile(id);
 
       in = new RandomAccessStream(id);
@@ -258,213 +260,194 @@ public class LeicaReader extends FormatReader {
       }
       throw new FormatException("LEI file not found.");
     }
-    else {
-      // parse the LEI file
 
-      super.initFile(id);
+    // parse the LEI file
 
-      leiFilename = new File(id).exists() ?
-        new Location(id).getAbsolutePath() : id;
-      in = new RandomAccessStream(id);
+    super.initFile(id);
 
-      seriesNames = new Vector();
+    leiFilename = new File(id).exists() ?
+      new Location(id).getAbsolutePath() : id;
+    in = new RandomAccessStream(id);
 
-      byte[] fourBytes = new byte[4];
-      in.read(fourBytes);
-      core.littleEndian[0] = (fourBytes[0] == TiffTools.LITTLE &&
-        fourBytes[1] == TiffTools.LITTLE &&
-        fourBytes[2] == TiffTools.LITTLE &&
-        fourBytes[3] == TiffTools.LITTLE);
+    seriesNames = new Vector();
 
-      in.order(core.littleEndian[0]);
+    byte[] fourBytes = new byte[4];
+    in.read(fourBytes);
+    core.littleEndian[0] = (fourBytes[0] == TiffTools.LITTLE &&
+      fourBytes[1] == TiffTools.LITTLE &&
+      fourBytes[2] == TiffTools.LITTLE &&
+      fourBytes[3] == TiffTools.LITTLE);
 
-      status("Reading metadata blocks");
+    in.order(core.littleEndian[0]);
 
-      in.skipBytes(8);
-      int addr = in.readInt();
-      Vector v = new Vector();
-      Hashtable ifd;
-      while (addr != 0) {
-        ifd = new Hashtable();
-        v.add(ifd);
-        in.seek(addr + 4);
+    status("Reading metadata blocks");
 
-        int tag = in.readInt();
+    in.skipBytes(8);
+    int addr = in.readInt();
+    Vector v = new Vector();
+    Hashtable ifd;
+    while (addr != 0) {
+      ifd = new Hashtable();
+      v.add(ifd);
+      in.seek(addr + 4);
 
-        while (tag != 0) {
-          // create the IFD structure
-          int offset = in.readInt();
+      int tag = in.readInt();
 
-          long pos = in.getFilePointer();
-          in.seek(offset + 12);
+      while (tag != 0) {
+        // create the IFD structure
+        int offset = in.readInt();
 
-          int size = in.readInt();
-          byte[] data = new byte[size];
-          in.read(data);
-          ifd.put(new Integer(tag), (Object) data);
-          in.seek(pos);
-          tag = in.readInt();
-        }
+        long pos = in.getFilePointer();
+        in.seek(offset + 12);
 
-        addr = in.readInt();
+        int size = in.readInt();
+        byte[] data = new byte[size];
+        in.read(data);
+        ifd.put(new Integer(tag), (Object) data);
+        in.seek(pos);
+        tag = in.readInt();
       }
 
-      numSeries = v.size();
+      addr = in.readInt();
+    }
 
-      core = new CoreMetadata(numSeries);
-      files = new Vector[numSeries];
+    numSeries = v.size();
 
-      headerIFDs = (Hashtable[]) v.toArray(new Hashtable[0]);
+    core = new CoreMetadata(numSeries);
+    files = new Vector[numSeries];
 
-      // determine the length of a filename
+    headerIFDs = (Hashtable[]) v.toArray(new Hashtable[0]);
 
-      int nameLength = 0;
-      int maxPlanes = 0;
+    // determine the length of a filename
 
-      status("Parsing metadata blocks");
+    int nameLength = 0;
+    int maxPlanes = 0;
 
-      core.littleEndian[0] = !core.littleEndian[0];
+    status("Parsing metadata blocks");
 
-      for (int i=0; i<headerIFDs.length; i++) {
-        if (headerIFDs[i].get(new Integer(SERIES)) != null) {
-          byte[] temp = (byte[]) headerIFDs[i].get(new Integer(SERIES));
-          nameLength = DataTools.bytesToInt(temp, 8, core.littleEndian[0]) * 2;
+    core.littleEndian[0] = !core.littleEndian[0];
+
+    for (int i=0; i<headerIFDs.length; i++) {
+      if (headerIFDs[i].get(new Integer(SERIES)) != null) {
+        byte[] temp = (byte[]) headerIFDs[i].get(new Integer(SERIES));
+        nameLength = DataTools.bytesToInt(temp, 8, core.littleEndian[0]) * 2;
+      }
+
+      Vector f = new Vector();
+      byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(IMAGES));
+      int tempImages = DataTools.bytesToInt(tempData, 0,
+        core.littleEndian[0]);
+
+      File dirFile = new File(id).getAbsoluteFile();
+      String[] listing = null;
+      String dirPrefix = "";
+      if (dirFile.exists()) {
+        listing = dirFile.getParentFile().list();
+        dirPrefix = dirFile.getParent();
+        if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
+      }
+      else {
+        listing =
+          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+      }
+
+      Vector list = new Vector();
+
+      for (int k=0; k<listing.length; k++) {
+        if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
+          list.add(listing[k]);
+        }
+      }
+
+      listing = (String[]) list.toArray(new String[0]);
+
+      boolean tiffsExist = true;
+
+      String prefix = "";
+      for (int j=0; j<tempImages; j++) {
+        // read in each filename
+        prefix = DataTools.stripString(new String(tempData,
+          20 + j*nameLength, nameLength));
+        f.add(dirPrefix + prefix);
+        // test to make sure the path is valid
+        Location test = new Location((String) f.get(f.size() - 1));
+        if (tiffsExist) tiffsExist = test.exists();
+      }
+
+      // at least one of the TIFF files was renamed
+
+      if (!tiffsExist) {
+        status("Handling renamed TIFF files");
+
+        // get original LEI name associate with each TIFF
+        // this lets us figure out which TIFFs we need for this dataset
+        Hashtable leiMapping = new Hashtable();
+        int numLeis = 0;
+        for (int j=0; j<listing.length; j++) {
+          RandomAccessStream ras = new RandomAccessStream(
+            new Location(dirPrefix, listing[j]).getAbsolutePath());
+          ifd = TiffTools.getFirstIFD(ras);
+          ras.close();
+          String descr = TiffTools.getComment(ifd);
+          int ndx = descr.indexOf("=", descr.indexOf("Series Name"));
+          String leiFile = descr.substring(ndx + 1, descr.indexOf("\n", ndx));
+          leiFile = leiFile.trim();
+          if (!leiMapping.contains(leiFile)) numLeis++;
+          leiMapping.put(listing[j], leiFile);
         }
 
-        Vector f = new Vector();
-        byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(IMAGES));
-        int tempImages = DataTools.bytesToInt(tempData, 0,
-          core.littleEndian[0]);
+        // compare original TIFF prefix with original LEI prefix
 
-        File dirFile = new File(id).getAbsoluteFile();
-        String[] listing = null;
-        String dirPrefix = "";
-        if (dirFile.exists()) {
-          listing = dirFile.getParentFile().list();
-          dirPrefix = dirFile.getParent();
-          if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
-        }
-        else {
-          listing =
-            (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-        }
-
-        Vector list = new Vector();
-
-        for (int k=0; k<listing.length; k++) {
-          if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
-            list.add(listing[k]);
+        f.clear();
+        String[] keys = (String[]) leiMapping.keySet().toArray(new String[0]);
+        for (int j=0; j<keys.length; j++) {
+          String lei = (String) leiMapping.get(keys[j]);
+          if (DataTools.samePrefix(lei, prefix)) {
+            f.add(keys[j]);
           }
         }
 
-        listing = (String[]) list.toArray(new String[0]);
+        // now that we have our list of files, all that remains is to figure
+        // out how they should be ordered
 
-        boolean tiffsExist = true;
+        // we'll try looking for a naming convention, using FilePattern
+        String[] usedFiles = null;
+        for (int j=0; j<f.size(); j++) {
+          if (usedFiles != null) {
+            for (int k=0; k<usedFiles.length; k++) {
+              if (usedFiles[k].equals((String) f.get(j)) ||
+                usedFile((String) f.get(j)))
+              {
+                k = 0;
+                j++;
+              }
+            }
+          }
+          if (j >= f.size()) break;
 
-        String prefix = "";
-        for (int j=0; j<tempImages; j++) {
-          // read in each filename
-          prefix = DataTools.stripString(new String(tempData,
-            20 + j*nameLength, nameLength));
-          f.add(dirPrefix + prefix);
-          // test to make sure the path is valid
-          Location test = new Location((String) f.get(f.size() - 1));
-          if (tiffsExist) tiffsExist = test.exists();
+          FilePattern fp = new FilePattern(new Location((String) f.get(j)));
+          if (fp != null) usedFiles = fp.getFiles();
+          if (usedFiles != null && usedFiles.length == tempImages) {
+            files[i] = new Vector();
+            for (int k=0; k<usedFiles.length; k++) {
+              files[i].add(new Location(usedFiles[k]).getAbsolutePath());
+            }
+            break;
+          }
         }
 
-        // at least one of the TIFF files was renamed
-
-        if (!tiffsExist) {
-          status("Handling renamed TIFF files");
-
-          // get original LEI name associate with each TIFF
-          // this lets us figure out which TIFFs we need for this dataset
-          Hashtable leiMapping = new Hashtable();
-          int numLeis = 0;
+        // failing that, we can check the datestamp in each TIFF file
+        // note that this is not guaranteed to work - some versions of
+        // the Leica software will write a blank datestamp
+        if (files[i] == null || files[i].size() == 0) {
+          files[i] = new Vector();
+          Hashtable h = new Hashtable();
           for (int j=0; j<listing.length; j++) {
             RandomAccessStream ras = new RandomAccessStream(
               new Location(dirPrefix, listing[j]).getAbsolutePath());
-            ifd = TiffTools.getFirstIFD(ras);
-            ras.close();
-            String descr = TiffTools.getComment(ifd);
-            int ndx = descr.indexOf("=", descr.indexOf("Series Name"));
-            String leiFile = descr.substring(ndx + 1, descr.indexOf("\n", ndx));
-            leiFile = leiFile.trim();
-            if (!leiMapping.contains(leiFile)) numLeis++;
-            leiMapping.put(listing[j], leiFile);
-          }
-
-          // compare original TIFF prefix with original LEI prefix
-
-          f.clear();
-          String[] keys = (String[]) leiMapping.keySet().toArray(new String[0]);
-          for (int j=0; j<keys.length; j++) {
-            String lei = (String) leiMapping.get(keys[j]);
-            if (DataTools.samePrefix(lei, prefix)) {
-              f.add(keys[j]);
-            }
-          }
-
-          // now that we have our list of files, all that remains is to figure
-          // out how they should be ordered
-
-          // we'll try looking for a naming convention, using FilePattern
-          String[] usedFiles = null;
-          for (int j=0; j<f.size(); j++) {
-            if (usedFiles != null) {
-              for (int k=0; k<usedFiles.length; k++) {
-                if (usedFiles[k].equals((String) f.get(j)) ||
-                  usedFile((String) f.get(j)))
-                {
-                  k = 0;
-                  j++;
-                }
-              }
-            }
-            if (j >= f.size()) break;
-
-            FilePattern fp = new FilePattern(new Location((String) f.get(j)));
-            if (fp != null) usedFiles = fp.getFiles();
-            if (usedFiles != null && usedFiles.length == tempImages) {
-              files[i] = new Vector();
-              for (int k=0; k<usedFiles.length; k++) {
-                files[i].add(new Location(usedFiles[k]).getAbsolutePath());
-              }
-              break;
-            }
-          }
-
-          // failing that, we can check the datestamp in each TIFF file
-          // note that this is not guaranteed to work - some versions of
-          // the Leica software will write a blank datestamp
-          if (files[i] == null || files[i].size() == 0) {
-            files[i] = new Vector();
-            Hashtable h = new Hashtable();
-            for (int j=0; j<listing.length; j++) {
-              RandomAccessStream ras = new RandomAccessStream(
-                new Location(dirPrefix, listing[j]).getAbsolutePath());
-              Hashtable fd = TiffTools.getFirstIFD(ras);
-              String stamp =
-                (String) TiffTools.getIFDValue(fd, TiffTools.DATE_TIME);
-              if (h.size() == tempImages) {
-                String[] ks = (String[]) h.keySet().toArray(new String[0]);
-                Arrays.sort(ks);
-                for (int k=0; k<ks.length; k++) {
-                  files[i].add(new Location(dirPrefix,
-                    (String) h.get(ks[k])).getAbsolutePath());
-                }
-                h.clear();
-                break;
-              }
-              else {
-                if (!h.contains(stamp)) h.put(stamp, listing[j]);
-                else {
-                  h.clear();
-                  h.put(stamp, listing[j]);
-                }
-              }
-              ras.close();
-            }
+            Hashtable fd = TiffTools.getFirstIFD(ras);
+            String stamp =
+              (String) TiffTools.getIFDValue(fd, TiffTools.DATE_TIME);
             if (h.size() == tempImages) {
               String[] ks = (String[]) h.keySet().toArray(new String[0]);
               Arrays.sort(ks);
@@ -472,59 +455,72 @@ public class LeicaReader extends FormatReader {
                 files[i].add(new Location(dirPrefix,
                   (String) h.get(ks[k])).getAbsolutePath());
               }
+              h.clear();
+              break;
             }
+            else {
+              if (!h.contains(stamp)) h.put(stamp, listing[j]);
+              else {
+                h.clear();
+                h.put(stamp, listing[j]);
+              }
+            }
+            ras.close();
           }
-
-          // Our final effort is to just sort the filenames lexicographically.
-          // This gives us a pretty good chance of getting the order right,
-          // but it's not perfect.  Basically covers the (hopefully) unlikely
-          // case where filenames are nonsensical, and datestamps are invalid.
-          if (files[i] == null || files[i].size() == 0) {
-            if (debug) debug("File ordering is not obvious.");
-            files[i] = new Vector();
-            Arrays.sort(listing);
-            int ndx = 0;
-            for (int j=0; j<i; j++) ndx += files[j].size();
-            for (int j=ndx; j<ndx+tempImages; j++) {
+          if (h.size() == tempImages) {
+            String[] ks = (String[]) h.keySet().toArray(new String[0]);
+            Arrays.sort(ks);
+            for (int k=0; k<ks.length; k++) {
               files[i].add(new Location(dirPrefix,
-                listing[j]).getAbsolutePath());
+                (String) h.get(ks[k])).getAbsolutePath());
             }
           }
-
-          // Ways to break the renaming heuristics:
-          //
-          // 1) Don't use a detectable naming convention, and remove datestamps
-          //    from TIFF files.
-          // 2) Use a naming convention such as plane 0 -> "5.tif",
-          //    plane 1 -> "4.tif", plane 2 -> "3.tif", etc.
-          // 3) Place two datasets in the same folder:
-          //      a) swap the two LEI file names
-          //      b) use the same naming convention for both sets of TIFF files
-          //      c) use the same naming convention AND make sure the datestamps
-          //         are the same between TIFF files
         }
-        else files[i] = f;
-        core.imageCount[i] = files[i].size();
-        if (core.imageCount[i] > maxPlanes) maxPlanes = core.imageCount[i];
-      }
 
-      tiff = new TiffReader[numSeries][maxPlanes];
-
-      for (int i=0; i<tiff.length; i++) {
-        for (int j=0; j<tiff[i].length; j++) {
-          tiff[i][j] = new TiffReader();
-          if (j > 0) tiff[i][j].setMetadataCollected(false);
+        // Our final effort is to just sort the filenames lexicographically.
+        // This gives us a pretty good chance of getting the order right,
+        // but it's not perfect.  Basically covers the (hopefully) unlikely
+        // case where filenames are nonsensical, and datestamps are invalid.
+        if (files[i] == null || files[i].size() == 0) {
+          if (debug) debug("File ordering is not obvious.");
+          files[i] = new Vector();
+          Arrays.sort(listing);
+          int ndx = 0;
+          for (int j=0; j<i; j++) ndx += files[j].size();
+          for (int j=ndx; j<ndx+tempImages; j++) {
+            files[i].add(new Location(dirPrefix,
+              listing[j]).getAbsolutePath());
+          }
         }
-      }
 
-      status("Populating metadata");
-      initMetadata();
+        // Ways to break the renaming heuristics:
+        //
+        // 1) Don't use a detectable naming convention, and remove datestamps
+        //    from TIFF files.
+        // 2) Use a naming convention such as plane 0 -> "5.tif",
+        //    plane 1 -> "4.tif", plane 2 -> "3.tif", etc.
+        // 3) Place two datasets in the same folder:
+        //      a) swap the two LEI file names
+        //      b) use the same naming convention for both sets of TIFF files
+        //      c) use the same naming convention AND make sure the datestamps
+        //         are the same between TIFF files
+      }
+      else files[i] = f;
+      core.imageCount[i] = files[i].size();
+      if (core.imageCount[i] > maxPlanes) maxPlanes = core.imageCount[i];
     }
-  }
 
-  // -- Helper methods --
+    tiff = new TiffReader[numSeries][maxPlanes];
 
-  protected void initMetadata() throws FormatException, IOException {
+    for (int i=0; i<tiff.length; i++) {
+      for (int j=0; j<tiff[i].length; j++) {
+        tiff[i][j] = new TiffReader();
+        if (j > 0) tiff[i][j].setMetadataCollected(false);
+      }
+    }
+
+    status("Populating metadata");
+
     if (headerIFDs == null) headerIFDs = ifds;
 
     int fileLength = 0;
@@ -787,9 +783,9 @@ public class LeicaReader extends FormatReader {
             int numDims = stream.readInt();
 
             for (int k=0; k<numDims; k++) {
-              int v = stream.readInt();
+              int value = stream.readInt();
               addMeta("Time-marker " + j +
-                " Dimension " + k + " coordinate", new Integer(v));
+                " Dimension " + k + " coordinate", new Integer(value));
             }
             addMeta("Time-marker " + j,
               DataTools.stripString(stream.readString(64)));
@@ -850,8 +846,8 @@ public class LeicaReader extends FormatReader {
         core.sizeC[i] = nChannels;
 
         for (int j=0; j<nChannels; j++) {
-          int v = stream.readInt();
-          addMeta("LUT Channel " + j + " version", new Integer(v));
+          int value = stream.readInt();
+          addMeta("LUT Channel " + j + " version", new Integer(value));
 
           int invert = stream.read();
           boolean inverted = invert == 1;
@@ -934,6 +930,8 @@ public class LeicaReader extends FormatReader {
       }
     }
   }
+
+  // -- Helper methods --
 
   private boolean usedFile(String s) {
     if (files == null) return false;

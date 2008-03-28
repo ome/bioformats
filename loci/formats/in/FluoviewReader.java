@@ -117,8 +117,8 @@ public class FluoviewReader extends BaseTiffReader {
 
     byte[] b = new byte[w * h *
       getRGBChannelCount() * FormatTools.getBytesPerPixel(core.pixelType[0])];
-    super.openBytes(0, b, x, y, w, h);
-    System.arraycopy(b, 0, buf, 0, buf.length);
+    super.openBytes(0, buf, x, y, w, h);
+    System.arraycopy(b, no*b.length, buf, 0, b.length);
     return buf;
   }
 

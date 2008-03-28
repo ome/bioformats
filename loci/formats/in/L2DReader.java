@@ -96,6 +96,9 @@ public class L2DReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("L2DReader.initFile(" + id + ")");
 
+    // NB: This format cannot be imported using omebf.
+    // See Trac ticket #266 for details.
+
     if (id.toLowerCase().endsWith(".scn")) {
       // find the corresponding .l2d file
       Location parent = new Location(id).getAbsoluteFile().getParentFile();

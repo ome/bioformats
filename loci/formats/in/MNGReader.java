@@ -137,6 +137,8 @@ public class MNGReader extends FormatReader {
 
     status("Finding image offsets");
 
+    // read sequence of [len, code, value] tags
+
     while (in.getFilePointer() < in.length()) {
       int len = in.readInt();
       String code = in.readString(4);
@@ -144,14 +146,14 @@ public class MNGReader extends FormatReader {
       long fp = in.getFilePointer();
 
       if (code.equals("IHDR")) {
-        offsets.add(new Long(in.getFilePointer() - 8));
+        offsets.add(new Long(fp - 8));
         core.imageCount[0]++;
       }
       else if (code.equals("IEND")) {
         lengths.add(new Long(fp + len + 4));
       }
       else if (code.equals("LOOP")) {
-        stack.add(new Long(in.getFilePointer() + len + 4));
+        stack.add(new Long(fp + len + 4));
         in.skipBytes(1);
         maxIterations = in.readInt();
       }
@@ -174,6 +176,8 @@ public class MNGReader extends FormatReader {
     status("Populating metadata");
 
     core.sizeZ[0] = 1;
+
+    // easiest way to get image dimensions is by opening the first plane
 
     long offset = ((Long) offsets.get(0)).longValue();
     in.seek(offset);
