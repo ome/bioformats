@@ -25,10 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import ij.Prefs;
 import java.awt.Component;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import loci.formats.codec.LuraWaveCodec;
 
 /**
  * Custom widgets for configuring Bio-Formats Flex support.
@@ -46,12 +48,22 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
   private String[] labels;
   private Component[] widgets;
 
+  private JTextField licenseBox;
+
   // -- Constructor --
 
   public FlexWidgets() {
+    // get license code from ImageJ preferences
+    String prefCode = Prefs.get(LuraWaveCodec.LICENSE_PROPERTY, null);
+    String propCode = System.getProperty(LuraWaveCodec.LICENSE_PROPERTY);
+    String code = "";
+    if (prefCode != null) code = prefCode;
+    else if (propCode != null) code = null; // hidden code
+
     String licenseLabel = "LuraWave license code";
-    JTextField licenseBox = ConfigWindow.makeTextField();
-    licenseBox.setEditable(true);
+    licenseBox = ConfigWindow.makeTextField();
+    licenseBox.setText(code == null ? "(Licensed)" : code);
+    licenseBox.setEditable(code != null);
     licenseBox.getDocument().addDocumentListener(this);
 
     labels = new String[] {licenseLabel};
@@ -83,7 +95,8 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
   // -- Helper methods --
 
   private void documentUpdate(DocumentEvent e) {
-    // TOOD - respond to document update
+    String code = licenseBox.getText();
+    Prefs.set(LuraWaveCodec.LICENSE_PROPERTY, code);
   }
 
 }

@@ -59,6 +59,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
   public ConfigWindow() {
     setTitle("LOCI Plugins Configuration");
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     // generate list of formats
     FormatEntry[] formats = null;
@@ -221,9 +222,9 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
       new LibraryEntry("Apache Jakarta POI (LOCI version)", libJava,
         "org.apache.poi.poifs.filesystem.POIFSDocument", null, // poi-loci.jar
         "http://jakarta.apache.org/poi/", "Apache",
-        "Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2 " +
-        "and memory efficiency improvements. Used by Bio-Formats for OLE " +
-        "support in CXD, IPW, OIB and ZVI formats."),
+        "Used by Bio-Formats for OLE support in CXD, IPW, OIB and ZVI " +
+        "formats. Based on poi-2.5.1-final-20040804.jar, with bugfixes for " +
+        "OLE v2 and memory efficiency improvements."),
       new LibraryEntry("Simple Logging Facade for Java", libJava,
         "org.slf4j.Logger", null, // slf4j-jdk14.jar
         "http://www.slf4j.org/", "MIT",
@@ -354,6 +355,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
     SpringUtilities.makeCompactGrid(libInfo, 7, 2, 3, 3, 3, 3);
 
+    tabs.setSelectedIndex(1);
     pack();
   }
 
