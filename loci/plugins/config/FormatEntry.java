@@ -42,7 +42,8 @@ public class FormatEntry implements Comparable {
   // -- Fields --
 
   private Object reader;
-  private String name;
+  private String formatName;
+  protected String readerName;
   protected String[] suffixes;
   protected String[] labels;
   protected Component[] widgets;
@@ -54,8 +55,10 @@ public class FormatEntry implements Comparable {
     Class readerClass = null;
     try {
       readerClass = reader.getClass();
+      String n = readerClass.getName();
+      readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
       Method getFormat = readerClass.getMethod("getFormat", null);
-      name = (String) getFormat.invoke(reader, null);
+      formatName = (String) getFormat.invoke(reader, null);
       Method getSuffixes = readerClass.getMethod("getSuffixes", null);
       suffixes = (String[]) getSuffixes.invoke(reader, null);
     }
@@ -66,10 +69,7 @@ public class FormatEntry implements Comparable {
     // create any extra widgets for this format, if any
     IFormatWidgets fw = null;
     try {
-      String readerClassName = readerClass.getName();
-      String fwClassName = "loci.plugins.config." +
-        readerClassName.substring(readerClassName.lastIndexOf(".") + 1,
-        readerClassName.length() - 6) + "Widgets";
+      String fwClassName = "loci.plugins.config." + readerName + "Widgets";
       Class fwClass = Class.forName(fwClassName);
       fw = (IFormatWidgets) fwClass.newInstance();
     }
@@ -87,7 +87,7 @@ public class FormatEntry implements Comparable {
   // -- Object API methods --
 
   public String toString() {
-    return "<html>" + name;
+    return "<html>" + formatName;
   }
 
 }

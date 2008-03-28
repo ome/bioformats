@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.config;
 
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import javax.swing.*;
@@ -42,7 +44,13 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class ConfigWindow extends JFrame implements ListSelectionListener {
+public class ConfigWindow extends JFrame
+  implements ItemListener, ListSelectionListener
+{
+
+  // -- Constants --
+
+  private static final String READER_ENABLED_PROPERTY = "bioformats.enabled";
 
   // -- Fields --
 
@@ -296,6 +304,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
     extensions = makeTextField();
     enabled = new JCheckBox("", false);
+    enabled.addItemListener(this);
 
     doFormatLayout(null);
 
@@ -357,6 +366,13 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
     tabs.setSelectedIndex(1);
     pack();
+  }
+
+  // -- ItemListener API methods --
+
+  public void itemStateChanged(ItemEvent e) {
+    FormatEntry entry = (FormatEntry) formatsList.getSelectedValue();
+    setReaderEnabled(entry, enabled.isSelected());
   }
 
   // -- ListSelectionListener API methods --
@@ -422,9 +438,9 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
         sb.append(entry.suffixes[i]);
       }
       extensions.setText(sb.toString());
-
-      enabled.setSelected(true);
     }
+
+    enabled.setSelected(isReaderEnabled(entry));
 
     formatInfo.removeAll();
     formatInfo.setLayout(new SpringLayout());
@@ -446,6 +462,37 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
     formatInfo.validate();
     formatInfo.repaint();
+  }
+
+  private boolean isReaderEnabled(FormatEntry entry) {
+    if (entry == null) return false;
+    String key = READER_ENABLED_PROPERTY + "." + entry.readerName;
+    try {
+      Class prefsClass = Class.forName("ij.Prefs");
+      Method get = prefsClass.getMethod("get",
+        new Class[] {String.class, boolean.class});
+      Boolean on = (Boolean) get.invoke(null,
+        new Object[] {key, Boolean.TRUE});
+      return on.booleanValue();
+    }
+    catch (Throwable t) {
+      t.printStackTrace();
+      return false;
+    }
+  }
+
+  private void setReaderEnabled(FormatEntry entry, boolean on) {
+    if (entry == null) return;
+    String key = READER_ENABLED_PROPERTY + "." + entry.readerName;
+    try {
+      Class prefsClass = Class.forName("ij.Prefs");
+      Method set = prefsClass.getMethod("set",
+        new Class[] {String.class, boolean.class});
+      set.invoke(null, new Object[] {key, new Boolean(on)});
+    }
+    catch (Throwable t) {
+      t.printStackTrace();
+    }
   }
 
 }
