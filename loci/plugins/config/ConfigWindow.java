@@ -47,6 +47,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
   // -- Fields --
 
   private JList formatsList;
+  private JPanel formatInfo;
   private JTextField extensions;
   private JCheckBox enabled;
 
@@ -85,6 +86,10 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
     String javaVersion = System.getProperty("java.version") +
       " (" + System.getProperty("java.vendor") + ")";
+
+    String bfVersion = "@date@";
+    // Ant replaces date token with datestamp of the build
+    if (bfVersion.equals("@" + "date" + "@")) bfVersion = "Internal build";
 
     String qtVersion = null;
     try {
@@ -153,7 +158,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
         "\n" +
         "You can toggle which mode is used " +
         "in the Formats tab's \"QuickTime\" entry."),
-      new LibraryEntry("JAI Image I/O Tools (native)", libNative,
+      new LibraryEntry("JAI Image I/O Tools - native codecs", libNative,
         "TODO", null,
         "https://jai-imageio.dev.java.net/", "BSD",
         "Used by Bio-Formats for lossless JPEG support in DICOM."),
@@ -166,7 +171,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
       // ImageJ plugins
       new LibraryEntry("LOCI plugins", libPlugin,
-        "loci.plugins.About", "@date@", // loci_plugins.jar
+        "loci.plugins.About", bfVersion, // loci_plugins.jar
         "http://www.loci.wisc.edu/ome/formats.html", "LGPL",
         "LOCI Plugins for ImageJ: a collection of ImageJ plugins including " +
         "the Bio-Formats Importer, Bio-Formats Exporter, Data Browser, " +
@@ -184,7 +189,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
       // Java libraries
       new LibraryEntry("Bio-Formats", libJava,
-        "loci.formats.IFormatReader", "@date@", // bio-formats.jar
+        "loci.formats.IFormatReader", bfVersion, // bio-formats.jar
         "http://www.loci.wisc.edu/ome/formats.html", "LGPL",
         "LOCI Bio-Formats package for reading and converting " +
         "biological file formats."),
@@ -192,15 +197,15 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
         "ucar.bufr.BufrDump", null, // bufr-1.1.00.jar
         "http://www.unidata.ucar.edu/software/decoders/", "LGPL",
         "Used by the NetCDF Java library."),
-      new LibraryEntry("TODO clib", libJava,
+      new LibraryEntry("JAI Image I/O Tools - Java wrapper", libJava,
         "com.sun.medialib.codec.jiio.Constants", null, // clibwrapper_jiio.jar
         "https://jai-imageio.dev.java.net/", "BSD",
-        "Java wrapper for JAI Image I/O Tools native library."),
+        "Java wrapper for JAI Image I/O Tools native codecs."),
       new LibraryEntry("GRIB Java Decoder", libJava,
         "ucar.grib.GribChecker", null, // grib-5.1.03.jar
         "http://www.unidata.ucar.edu/software/decoders/", "LGPL",
         "Used by the NetCDF Java library."),
-      new LibraryEntry("JAI Image I/O Tools (Java)", libJava,
+      new LibraryEntry("JAI Image I/O Tools - Java codecs", libJava,
         "com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam",
         null, // jai_imageio.jar
         "https://jai-imageio.dev.java.net/", "BSD",
@@ -210,7 +215,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
         "http://sourceforge.net/forum/message.php?msg_id=2550619", "LGPL",
         "Used by Bio-Formats for Zeiss LSM metadata in MDB database files."),
       new LibraryEntry("NetCDF Java", libJava,
-        "TODO", null, // netcdf-4.0.jar
+        "ucar.nc2.NetcdfFile", null, // netcdf-4.0.jar
         "http://www.unidata.ucar.edu/software/netcdf-java/", "LGPL",
         "Used by Bio-Formats for HDF support (Imaris 5.5)."),
       new LibraryEntry("Apache Jakarta POI (LOCI version)", libJava,
@@ -263,7 +268,9 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
         "Used for layout by the Data Browser plugin."),
       new LibraryEntry("OME Notes", libJava,
         "loci.ome.notes.Notes", null, // ome-notes.jar
-        "http://www.loci.wisc.edu/ome/notes.html", "LGPL", "TODO"),
+        "http://www.loci.wisc.edu/ome/notes.html", "LGPL",
+        "OME Notes library for flexible organization and presentation " +
+        "of OME-XML metadata."),
       new LibraryEntry("LuraWave decoder SDK", libJava,
         "com.luratech.lwf.lwfDecoder", null, // lwf_jsdk2.6.jar
         "http://www.luratech.com/", "Commercial",
@@ -282,21 +289,14 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
     tabs.addTab("Options", optionsPanel);
 
     formatsList = makeList(formats);
-    JPanel formatInfo = new JPanel();
-    tabs.addTab("Formats", new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-      new JScrollPane(formatsList), formatInfo));
 
-    formatInfo.setLayout(new SpringLayout());
+    formatInfo = new JPanel();
+    tabs.addTab("Formats", makeSplitPane(formatsList, formatInfo));
 
-    formatInfo.add(makeLabel("Extensions", false));
     extensions = makeTextField();
-    formatInfo.add(extensions);
-
-    formatInfo.add(makeLabel("Enabled", false));
     enabled = new JCheckBox("", false);
-    formatInfo.add(enabled);
 
-    SpringUtilities.makeCompactGrid(formatInfo, 2, 2, 3, 3, 3, 3);
+    doFormatLayout(null);
 
     // TODO - reader-specific options
     // - QT: "Use QuickTime for Java" checkbox (default off)
@@ -307,9 +307,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
 
     libsList = makeList(libraries);
     JPanel libInfo = new JPanel();
-    JPanel libsPanel = new JPanel();
-    tabs.addTab("Libraries", new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-      new JScrollPane(libsList), libInfo));
+    tabs.addTab("Libraries", makeSplitPane(libsList, libInfo));
 
     libInfo.setLayout(new SpringLayout());
 
@@ -350,8 +348,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
     notes.setEditable(false);
     notes.setWrapStyleWord(true);
     notes.setLineWrap(true);
-    notes.setBorder(license.getBorder()); // match text field border style
-    libInfo.add(notes);
+    libInfo.add(new JScrollPane(notes));
 
     // TODO - "How to install" for each library?
 
@@ -366,13 +363,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
     Object src = e.getSource();
     if (src == formatsList) {
       FormatEntry entry = (FormatEntry) formatsList.getSelectedValue();
-      StringBuffer sb = new StringBuffer();
-      for (int i=0; i<entry.suffixes.length; i++) {
-        if (i > 0) sb.append(", ");
-        sb.append(entry.suffixes[i]);
-      }
-      extensions.setText(sb.toString());
-      enabled.setSelected(true);
+      doFormatLayout(entry);
     }
     else if (src == libsList) {
       LibraryEntry entry = (LibraryEntry) libsList.getSelectedValue();
@@ -384,6 +375,16 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
       license.setText(entry.license);
       notes.setText(entry.notes);
     }
+  }
+
+  // -- Utility methods --
+
+  public static JTextField makeTextField() {
+    JTextField textField = new JTextField(38);
+    int prefHeight = textField.getPreferredSize().height;
+    textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
+    textField.setEditable(false);
+    return textField;
   }
 
   // -- Helper methods --
@@ -399,17 +400,50 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
     JList list = new JList(data);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     list.setVisibleRowCount(25);
-    list.setPrototypeCellValue("abcdefghijklmnopqrstuvwxyz12345678");
     list.addListSelectionListener(this);
     return list;
   }
 
-  private JTextField makeTextField() {
-    JTextField textField = new JTextField(38);
-    int prefHeight = textField.getPreferredSize().height;
-    textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
-    textField.setEditable(false);
-    return textField;
+  private JSplitPane makeSplitPane(JList list, JPanel info) {
+    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+      new JScrollPane(list), info);
+    splitPane.setDividerLocation(260);
+    return splitPane;
+  }
+
+  private void doFormatLayout(FormatEntry entry) {
+    if (entry != null) {
+      // build list of extensions
+      StringBuffer sb = new StringBuffer();
+      for (int i=0; i<entry.suffixes.length; i++) {
+        if (i > 0) sb.append(", ");
+        sb.append(entry.suffixes[i]);
+      }
+      extensions.setText(sb.toString());
+
+      enabled.setSelected(true);
+    }
+
+    formatInfo.removeAll();
+    formatInfo.setLayout(new SpringLayout());
+
+    formatInfo.add(makeLabel("Extensions", false));
+    formatInfo.add(extensions);
+
+    formatInfo.add(makeLabel("Enabled", false));
+    formatInfo.add(enabled);
+
+    // format-specific widgets
+    int rows = entry == null ? 0 : entry.widgets.length;
+    for (int i=0; i<rows; i++) {
+      formatInfo.add(makeLabel(entry.labels[i], false));
+      formatInfo.add(entry.widgets[i]);
+    }
+
+    SpringUtilities.makeCompactGrid(formatInfo, 2 + rows, 2, 3, 3, 3, 3);
+
+    formatInfo.validate();
+    formatInfo.repaint();
   }
 
 }

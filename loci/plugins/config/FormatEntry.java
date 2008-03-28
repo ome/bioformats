@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import java.awt.Component;
 import java.lang.reflect.Method;
 
 /**
@@ -43,21 +44,38 @@ public class FormatEntry implements Comparable {
   private Object reader;
   private String name;
   protected String[] suffixes;
+  protected String[] labels;
+  protected Component[] widgets;
 
   // -- Constructor --
 
   public FormatEntry(Object reader) {
     this.reader = reader;
+    Class readerClass = null;
     try {
-      Method getFormat = reader.getClass().getMethod("getFormat", null);
+      readerClass = reader.getClass();
+      Method getFormat = readerClass.getMethod("getFormat", null);
       name = (String) getFormat.invoke(reader, null);
-      Method getSuffixes = reader.getClass().getMethod("getSuffixes", null);
+      Method getSuffixes = readerClass.getMethod("getSuffixes", null);
       suffixes = (String[]) getSuffixes.invoke(reader, null);
     }
     catch (Throwable t) {
       t.printStackTrace();
       suffixes = new String[0];
     }
+    // create any extra widgets for this format, if any
+    IFormatWidgets fw = null;
+    try {
+      String readerClassName = readerClass.getName();
+      String fwClassName = "loci.plugins.config." +
+        readerClassName.substring(readerClassName.lastIndexOf(".") + 1,
+        readerClassName.length() - 6) + "Widgets";
+      Class fwClass = Class.forName(fwClassName);
+      fw = (IFormatWidgets) fwClass.newInstance();
+    }
+    catch (Throwable t) { }
+    labels = fw == null ? new String[0] : fw.getLabels();
+    widgets = fw == null ? new Component[0] : fw.getWidgets();
   }
 
   // -- Comparable API methods --

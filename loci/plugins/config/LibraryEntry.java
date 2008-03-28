@@ -38,9 +38,11 @@ public class LibraryEntry implements Comparable {
 
   // -- Constants --
 
-  private static final String RED = "7f0000";
-  private static final String ORANGE = "7f3f00";
-  private static final String BLACK = "000000";
+  /** HTML markup for installed library. */
+  private static final String PRESENT = "";
+
+  /** HTML markup for missing library. */
+  private static final String MISSING = "<font color=\"7f7f7f\"><i>";
 
   // -- Fields --
 
@@ -53,7 +55,6 @@ public class LibraryEntry implements Comparable {
 
   protected String status;
   protected String version;
-  protected String latest;
 
   protected String path;
 
@@ -89,7 +90,6 @@ public class LibraryEntry implements Comparable {
         }
       }
       this.version = version;
-      latest = version; // TEMP
 
       // get resource containing the class
       String className = libClass.substring(libClass.lastIndexOf(".") + 1);
@@ -113,10 +113,8 @@ public class LibraryEntry implements Comparable {
   // -- Object API methods --
 
   public String toString() {
-    String color = BLACK;
-    if (version == null) color = RED;
-    else if (!version.equals(latest)) color = ORANGE;
-    return "<html><font color=\"" + color + "\">" + name;
+    String markup = version == null ? MISSING : PRESENT;
+    return "<html>" + markup + name;
   }
 
 }
