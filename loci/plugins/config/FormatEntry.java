@@ -28,7 +28,7 @@ package loci.plugins.config;
 import java.lang.reflect.Method;
 
 /**
- * TODO
+ * A list entry for the configuration window's Formats tab.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/config/FormatEntry.java">Trac</a>,

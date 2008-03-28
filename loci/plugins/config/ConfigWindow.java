@@ -34,7 +34,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * TODO
+ * A window for managing configuration of the LOCI plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/loci/plugins/config/ConfigWindow.java">Trac</a>,
@@ -64,7 +64,7 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
     try {
       Class irClass = Class.forName("loci.formats.ImageReader");
       Object ir = irClass.newInstance();
-      Method getClasses = ir.getClass().getMethod("getReaders", null);
+      Method getClasses = irClass.getMethod("getReaders", null);
       Object[] readers = (Object[]) getClasses.invoke(ir, null);
       formats = new FormatEntry[readers.length];
       for (int i=0; i<readers.length; i++) {
@@ -86,60 +86,120 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
     String javaVersion = System.getProperty("java.version") +
       " (" + System.getProperty("java.vendor") + ")";
 
+    String qtVersion = null;
+    try {
+      Class qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
+      Object qtTools = qtToolsClass.newInstance();
+      Method getQTVersion = qtToolsClass.getMethod("getQTVersion", null);
+      qtVersion = (String) getQTVersion.invoke(qtTools, null);
+    }
+    catch (Throwable t) { }
+
+    String matlabVersion = null;
+    try {
+      Class matlabClass = Class.forName("com.mathworks.jmi.Matlab");
+      Object matlab = matlabClass.newInstance();
+      Method eval = matlabClass.getMethod("eval", new Class[] {String.class});
+      String ans = (String) eval.invoke(matlab, new Object[] {"version"});
+      if (ans.startsWith("ans =")) ans = ans.substring(5);
+      matlabVersion = ans.trim();
+    }
+    catch (Throwable t) { }
+
     LibraryEntry[] libraries = {
       // core libraries
-      new LibraryEntry("Java", libCore,
-        "TODO", javaVersion,
-        "TODO", "TODO", "TODO"),
+      new LibraryEntry("Java", libCore, // classes.jar, rt.jar
+        "java.lang.System", javaVersion,
+        "http://java.sun.com/", "Varies", "Core Java library"),
       new LibraryEntry("ImageJ", libCore, // ij.jar
         "ij.ImageJ", null,
         "http://rsb.info.nih.gov/ij/", "Public domain",
         "Core ImageJ library"),
-      //new LibraryEntry("Java3D", libCore,
-      //  "javax.vecmath.Point3d", null,
-      //  "TODO", "TODO", "TODO"),
-      //new LibraryEntry("Jython", libCore,
-      //  "TODO", null,
-      //  "TODO", "TODO", "TODO"),
-      //new LibraryEntry("MATLAB", libCore,
-      //  "TODO", null,
-      //  "TODO", "TODO", "TODO"),
+      new LibraryEntry("Java3D", libCore,
+        "javax.vecmath.Point3d", null,
+        "https://java3d.dev.java.net/", "GPL",
+        "Not used; listed for informational purposes only."),
+      new LibraryEntry("Jython", libCore,
+        "org.python.util.PythonInterpreter", null,
+        "http://www.jython.org/", "BSD",
+        "Not used; listed for informational purposes only."),
+      new LibraryEntry("MATLAB", libCore,
+        "com.mathworks.jmi.Matlab", matlabVersion,
+        "http://www.mathworks.com/products/matlab/", "Commercial",
+        "Not used; listed for informational purposes only. " +
+        "Note that for MATLAB to be successfully detected here, " +
+        "ImageJ must be launched from within the MATLAB environment."),
 
       // native libraries
-      new LibraryEntry("QuickTime for Java (native)", libNative,
-        "TODO", null,
-        "TODO", "TODO", "TODO"),
+      new LibraryEntry("QuickTime for Java", libNative,
+        "quicktime.QTSession", qtVersion, // QTJava.zip
+        "http://www.apple.com/quicktime/", "Commercial",
+        "Bio-Formats has two modes of operation for QuickTime movies:\n" +
+        "1) QTJava mode requires the QuickTime for Java library to be " +
+        "installed.\n" +
+        "2) Native mode works on systems with no QuickTime (e.g., Linux).\n" +
+        "\n" +
+        "Using QTJava mode adds or improves support for the following " +
+        "codecs:\n" +
+        "1) [iraw] Intel YUV Uncompressed: enables write\n" +
+        "2) [rle] Animation (run length encoded RGB): " +
+        "improves read, enables write\n" +
+        "3) [rpza] Apple Video 16 bit \"road pizza\": improves read\n" +
+        "4) [cvid] Cinepak: enables read and write\n" +
+        "5) [svq1] Sorenson Video: enables read and write\n" +
+        "6) [svq3] Sorenson Video 3: enables read and write\n" +
+        "7) [mp4v] MPEG-4: enables read and write\n" +
+        "8) [h263] H.263: enables read and write\n" +
+        "\n" +
+        "You can toggle which mode is used " +
+        "in the Formats tab's \"QuickTime\" entry."),
       new LibraryEntry("JAI Image I/O Tools (native)", libNative,
         "TODO", null,
-        "TODO", "TODO", "TODO"),
+        "https://jai-imageio.dev.java.net/", "BSD",
+        "Used by Bio-Formats for lossless JPEG support in DICOM."),
       new LibraryEntry("Nikon ND2 plugin", libNative,
         "TODO", null,
-        "TODO", "TODO", "TODO"),
+        "http://rsb.info.nih.gov/ij/plugins/nd2-reader.html", "Commercial",
+        "Optional plugin. If you have Nikon's ND2 plugin installed, you can " +
+        "configure Bio-Formats to use it instead of its native ND2 support " +
+        "in the Formats tab's \"Nikon ND2\" entry."),
 
       // ImageJ plugins
       new LibraryEntry("LOCI plugins", libPlugin,
         "loci.plugins.About", "@date@", // loci_plugins.jar
-        "TODO", "TODO", "TODO"),
+        "http://www.loci.wisc.edu/ome/formats.html", "LGPL",
+        "LOCI Plugins for ImageJ: a collection of ImageJ plugins including " +
+        "the Bio-Formats Importer, Bio-Formats Exporter, Data Browser, " +
+        "Stack Colorizer, Stack Slicer, and OME plugins."),
       new LibraryEntry("Image5D", libPlugin,
         "i5d.Image5D", null, // Image_5D.jar
-        "http://www.nanoimaging.de/View5D/", "TODO", "TODO"),
+        "http://rsb.info.nih.gov/ij/plugins/image5d.html", "Public domain",
+        "Optional plugin. If you have Image5D installed, the Bio-Formats " +
+        "Importer plugin can use Image5D to display your image stacks."),
       new LibraryEntry("View5D", libPlugin,
         "View5D_", null, // View5D_.jar
-        "TODO", "TODO", "TODO"),
+        "http://www.nanoimaging.de/View5D/", "GPL",
+        "Optional plugin. If you have View5D installed, the Bio-Formats " +
+        "Importer plugin can use View5D to display your image stacks."),
 
       // Java libraries
       new LibraryEntry("Bio-Formats", libJava,
         "loci.formats.IFormatReader", "@date@", // bio-formats.jar
-        "http://www.loci.wisc.edu/ome/formats.html", "LGPL", "TODO"),
-      new LibraryEntry("TODO bufr", libJava,
-        "TODO", null, // bufr-1.1.00.jar
-        "TODO", "TODO", "TODO"),
+        "http://www.loci.wisc.edu/ome/formats.html", "LGPL",
+        "LOCI Bio-Formats package for reading and converting " +
+        "biological file formats."),
+      new LibraryEntry("BUFR Java Decoder", libJava,
+        "ucar.bufr.BufrDump", null, // bufr-1.1.00.jar
+        "http://www.unidata.ucar.edu/software/decoders/", "LGPL",
+        "Used by the NetCDF Java library."),
       new LibraryEntry("TODO clib", libJava,
         "com.sun.medialib.codec.jiio.Constants", null, // clibwrapper_jiio.jar
-        "TODO", "TODO", "TODO"),
-      new LibraryEntry("TODO grib", libJava,
-        "TODO", null, // grib-5.1.03.jar
-        "TODO", "TODO", "TODO"),
+        "https://jai-imageio.dev.java.net/", "BSD",
+        "Java wrapper for JAI Image I/O Tools native library."),
+      new LibraryEntry("GRIB Java Decoder", libJava,
+        "ucar.grib.GribChecker", null, // grib-5.1.03.jar
+        "http://www.unidata.ucar.edu/software/decoders/", "LGPL",
+        "Used by the NetCDF Java library."),
       new LibraryEntry("JAI Image I/O Tools (Java)", libJava,
         "com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam",
         null, // jai_imageio.jar
@@ -149,21 +209,20 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
         "mdbtools.libmdb.MdbFile", null, // mdbtools-java.jar
         "http://sourceforge.net/forum/message.php?msg_id=2550619", "LGPL",
         "Used by Bio-Formats for Zeiss LSM metadata in MDB database files."),
-      new LibraryEntry("TODO netcdf", libJava,
+      new LibraryEntry("NetCDF Java", libJava,
         "TODO", null, // netcdf-4.0.jar
-        "TODO", "TODO", "TODO"),
+        "http://www.unidata.ucar.edu/software/netcdf-java/", "LGPL",
+        "Used by Bio-Formats for HDF support (Imaris 5.5)."),
       new LibraryEntry("Apache Jakarta POI (LOCI version)", libJava,
         "org.apache.poi.poifs.filesystem.POIFSDocument", null, // poi-loci.jar
         "http://jakarta.apache.org/poi/", "Apache",
         "Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2 " +
         "and memory efficiency improvements. Used by Bio-Formats for OLE " +
         "support in CXD, IPW, OIB and ZVI formats."),
-      new LibraryEntry("QuickTime for Java (Java)", libJava,
-        "quicktime.QTSession", null, // QTJava.zip
-        "TODO", "TODO", "TODO"),
-      new LibraryEntry("TODO slf4j", libJava,
-        "TODO", null, // slf4j-jdk14.jar
-        "TODO", "TODO", "TODO"),
+      new LibraryEntry("Simple Logging Facade for Java", libJava,
+        "org.slf4j.Logger", null, // slf4j-jdk14.jar
+        "http://www.slf4j.org/", "MIT",
+        "Used by the NetCDF Java library."),
       new LibraryEntry("OME Java", libJava,
         "ome.xml.OMEXMLNode", null, // ome-java.jar
         "http://openmicroscopy.org/api/java/", "LGPL",
@@ -339,14 +398,14 @@ public class ConfigWindow extends JFrame implements ListSelectionListener {
   private JList makeList(Object[] data) {
     JList list = new JList(data);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.setVisibleRowCount(20);
+    list.setVisibleRowCount(25);
     list.setPrototypeCellValue("abcdefghijklmnopqrstuvwxyz12345678");
     list.addListSelectionListener(this);
     return list;
   }
 
   private JTextField makeTextField() {
-    JTextField textField = new JTextField(40);
+    JTextField textField = new JTextField(38);
     int prefHeight = textField.getPreferredSize().height;
     textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
     textField.setEditable(false);
