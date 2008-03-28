@@ -397,6 +397,42 @@ public final class DataTools {
     return bytesToLong(bytes, 0, 8, little);
   }
 
+  /**
+   * Translates the short value into two bytes, and places them in a byte
+   * array at the given index.
+   */
+  public static void unpackShort(short value, byte[] buf, int ndx,
+    boolean little)
+  {
+    if (little) {
+      buf[ndx] = (byte) (value & 0xff);
+      buf[ndx + 1] = (byte) ((value >> 8) & 0xff);
+    }
+    else {
+      buf[ndx + 1] = (byte) (value & 0xff);
+      buf[ndx] = (byte) ((value >> 8) & 0xff);
+    }
+  }
+
+  /**
+   * Translates nBytes of the given long and places the result in the
+   * given byte array.
+   */
+  public static void unpackBytes(long value, byte[] buf, int ndx,
+    int nBytes, boolean little)
+  {
+    if (little) {
+      for (int i=0; i<nBytes; i++) {
+        buf[ndx + i] = (byte) ((value >> (8*i)) & 0xff);
+      }
+    }
+    else {
+      for (int i=0; i<nBytes; i++) {
+        buf[ndx + i] = (byte) ((value >> (8*(nBytes - i - 1))) & 0xff);
+      }
+    }
+  }
+
   /** Convert a byte array to a signed byte array. */
   public static byte[] makeSigned(byte[] b) {
     for (int i=0; i<b.length; i++) {
