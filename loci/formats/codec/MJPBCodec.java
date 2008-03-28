@@ -194,6 +194,8 @@ public class MJPBCodec extends BaseCodec implements Codec {
         }
       }
 
+      ras.close();
+
       if (raw == null) raw = data;
 
       // insert zero after each byte equal to 0xff

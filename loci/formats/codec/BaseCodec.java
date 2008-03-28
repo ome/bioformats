@@ -163,7 +163,10 @@ public abstract class BaseCodec implements Codec {
   public byte[] decompress(byte[] data, Object options) throws FormatException
   {
     try {
-      return decompress(new RandomAccessStream(data), options);
+      RandomAccessStream s = new RandomAccessStream(data);
+      byte[] b = decompress(s, options);
+      s.close();
+      return b;
     }
     catch (IOException exc) {
       throw new FormatException(exc);

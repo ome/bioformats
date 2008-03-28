@@ -89,8 +89,12 @@ public class JPEGCodec extends BaseCodec implements Codec {
 
       if (r == null) throw new IOException("");
 
-      r.setInput(ImageIO.createImageInputStream(new BufferedInputStream(in)));
+      ImageInputStream ii =
+        ImageIO.createImageInputStream(new BufferedInputStream(in));
+      r.setInput(ii);
       b = r.read(0);
+      ii.close();
+      r.dispose();
     }
     catch (IOException exc) {
       try {
@@ -113,6 +117,8 @@ public class JPEGCodec extends BaseCodec implements Codec {
           ImageIO.createImageInputStream(new BufferedInputStream(in));
         r.setInput(ii);
         b = r.read(0);
+        ii.close();
+        r.dispose();
       }
       catch (IOException e) {
         throw new FormatException(
