@@ -117,18 +117,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     java3dField.setEditable(false);
 
     // QuickTime library text field
-    String qtVersion = null;
-    try {
-      LegacyQTTools qtTools = new LegacyQTTools();
-      if (qtTools.isQTExpired()) qtVersion = "Expired";
-      else {
-        ReflectedUniverse r = qtTools.getUniverse();
-        String qtMajor = r.exec("QTSession.getMajorVersion()").toString();
-        String qtMinor = r.exec("QTSession.getMinorVersion()").toString();
-        qtVersion = qtMajor + "." + qtMinor;
-      }
-    }
-    catch (ReflectException exc) { qtVersion = "Missing"; }
+    String qtVersion = new LegacyQTTools().getQTVersion();
     JTextField qtField = new JTextField(qtVersion);
     qtField.setEditable(false);
 

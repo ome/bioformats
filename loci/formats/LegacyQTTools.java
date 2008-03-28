@@ -182,6 +182,23 @@ public class LegacyQTTools {
     return expiredQT;
   }
 
+  /** Gets the QuickTime for Java version number. */
+  public String getQTVersion() {
+    if (isQTExpired()) return "Expired";
+    else if (!canDoQT()) return "Missing";
+    else {
+      try {
+        String qtMajor = r.exec("QTSession.getMajorVersion()").toString();
+        String qtMinor = r.exec("QTSession.getMinorVersion()").toString();
+        return qtMajor + "." + qtMinor;
+      }
+      catch (Throwable t) {
+        if (FormatHandler.debug) LogTools.trace(t);
+        return "Error";
+      }
+    }
+  }
+
   /** Gets QuickTime for Java reflected universe. */
   public ReflectedUniverse getUniverse() {
     if (!initialized) initClass();
