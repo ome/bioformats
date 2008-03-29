@@ -49,6 +49,10 @@ import loci.formats.ome.OMEROReader;
  */
 public class Importer {
 
+  // -- Constants --
+
+  public static final String READER_ENABLED_PROPERTY = "bioformats.enabled";
+
   // -- Fields --
 
   /**
@@ -95,7 +99,7 @@ public class Importer {
     IFormatReader r = null;
     if (options.isLocal() || options.isHTTP()) {
       IJ.showStatus("Identifying " + idName);
-      ImageReader reader = new ImageReader();
+      ImageReader reader = makeImageReader();
       try { r = reader.getReader(id); }
       catch (FormatException exc) {
         reportException(exc, quiet,
@@ -588,6 +592,35 @@ public class Importer {
   }
 
   // -- Helper methods --
+
+  /** Creates an image reader from only the enabled reader types. */
+  private ImageReader makeImageReader() {
+    Class[] c = null;
+    try {
+      ClassList defaultClasses =
+        new ClassList("readers.txt", IFormatReader.class);
+      c = defaultClasses.getClasses();
+    }
+    catch (IOException exc) {
+      return new ImageReader();
+    }
+    ClassList enabledClasses = new ClassList(IFormatReader.class);
+    for (int i=0; i<c.length; i++) {
+      String n = c[i].getName();
+      String readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
+      String key = READER_ENABLED_PROPERTY + "." + readerName;
+      boolean on = Prefs.get(key, true);
+      if (on) {
+        try {
+          enabledClasses.addClass(c[i]);
+        }
+        catch (FormatException exc) {
+          exc.printStackTrace();
+        }
+      }
+    }
+    return new ImageReader(enabledClasses);
+  }
 
   /**
    * Displays the given image stack according to

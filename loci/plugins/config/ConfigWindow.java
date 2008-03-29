@@ -28,6 +28,7 @@ package loci.plugins.config;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import javax.swing.*;
@@ -47,10 +48,6 @@ import javax.swing.event.ListSelectionListener;
 public class ConfigWindow extends JFrame
   implements ItemListener, ListSelectionListener
 {
-
-  // -- Constants --
-
-  private static final String READER_ENABLED_PROPERTY = "bioformats.enabled";
 
   // -- Fields --
 
@@ -466,8 +463,10 @@ public class ConfigWindow extends JFrame
 
   private boolean isReaderEnabled(FormatEntry entry) {
     if (entry == null) return false;
-    String key = READER_ENABLED_PROPERTY + "." + entry.readerName;
     try {
+      Class importerClass = Class.forName("loci.plugins.Importer");
+      Field field = importerClass.getField("READER_ENABLED_PROPERTY");
+      String key = field.get(null) + "." + entry.readerName;
       Class prefsClass = Class.forName("ij.Prefs");
       Method get = prefsClass.getMethod("get",
         new Class[] {String.class, boolean.class});
@@ -483,8 +482,10 @@ public class ConfigWindow extends JFrame
 
   private void setReaderEnabled(FormatEntry entry, boolean on) {
     if (entry == null) return;
-    String key = READER_ENABLED_PROPERTY + "." + entry.readerName;
     try {
+      Class importerClass = Class.forName("loci.plugins.Importer");
+      Field field = importerClass.getField("READER_ENABLED_PROPERTY");
+      String key = field.get(null) + "." + entry.readerName;
       Class prefsClass = Class.forName("ij.Prefs");
       Method set = prefsClass.getMethod("set",
         new Class[] {String.class, boolean.class});
