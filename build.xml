@@ -567,6 +567,12 @@ Apache XML-RPC
     </copy>
   </target>
 
+  <target name="copy-resources-plugins">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${plugins.resources}"/>
+    </copy>
+  </target>
+
   <target name="copy-resources-notes">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${notes.resources}"/>
@@ -586,8 +592,8 @@ Apache XML-RPC
   </target>
 
   <target name="copy-source" depends="init, copy-resources-formats,
-    copy-resources-visbio, copy-resources-notes, copy-resources-editor,
-    copy-resources-checks">
+    copy-resources-visbio, copy-resources-plugins, copy-resources-notes,
+		copy-resources-editor, copy-resources-checks">
     <!-- copy binary files without filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="loci/**"

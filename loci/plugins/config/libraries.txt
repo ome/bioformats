@@ -1,0 +1,287 @@
+#
+# libraries.txt
+#
+
+# LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+# Bio-Formats Importer, Bio-Formats Exporter, Data Browser, Stack Colorizer,
+# Stack Slicer, and OME plugins. Copyright (C) 2005-@year@ Melissa Linkert,
+# Curtis Rueden, Christopher Peterson and Philip Huettl.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# This document is a configuration file identifying binary libraries to list
+# in the LOCI plugins configuration dialog's Libraries tab. Edit with caution.
+
+# core libraries
+
+[Java]
+type = Core library
+class = java.lang.System
+version = javaVersion
+url = http://java.sun.com/
+license = Varies
+notes = Core Java library
+
+[ImageJ]
+type = Core library
+class = ij.ImageJ
+url = http://rsb.info.nih.gov/ij/
+license = Public domain
+notes = Core ImageJ library
+
+[Java3D]
+type = Core library
+class = javax.vecmath.Point3d
+url = https://java3d.dev.java.net/
+license = GPL
+notes = Not used; listed for informational purposes only.
+
+[Jython]
+type = Core library
+class = org.python.util.PythonInterpreter
+url = http://www.jython.org/
+license = BSD
+notes = Not used; listed for informational purposes only.
+
+[MATLAB]
+type = Core library
+class = com.mathworks.jmi.Matlab
+version = matlabVersion
+url = http://www.mathworks.com/products/matlab/
+license = Commercial
+notes = Not used; listed for informational purposes only.
+        Note that for MATLAB to be successfully detected here,
+        ImageJ must be launched from within the MATLAB environment.
+
+# native libraries
+
+[QuickTime for Java]
+type = Native library
+class = quicktime.QTSession
+version = qtVersion
+url = http://www.apple.com/quicktime/
+license = Commercial
+notes = Bio-Formats has two modes of operation for QuickTime movies:\n
+        1) QTJava mode requires the QuickTime for Java library to be
+        installed.\n
+        2) Native mode works on systems with no QuickTime (e.g., Linux).\n
+        \n
+        Using QTJava mode adds or improves support for the following
+        codecs:\n
+        1) [iraw] Intel YUV Uncompressed: enables write\n
+        2) [rle] Animation (run length encoded RGB):
+        improves read, enables write\n
+        3) [rpza] Apple Video 16 bit "road pizza": improves read\n
+        4) [cvid] Cinepak: enables read and write\n
+        5) [svq1] Sorenson Video: enables read and write\n
+        6) [svq3] Sorenson Video 3: enables read and write\n
+        7) [mp4v] MPEG-4: enables read and write\n
+        8) [h263] H.263: enables read and write\n
+        \n
+        You can toggle which mode is used
+        in the Formats tab's "QuickTime" entry.
+
+[JAI Image I/O Tools - native codecs]
+type = Native library
+class = TODO
+url = https://jai-imageio.dev.java.net/
+license = BSD
+notes = Used by Bio-Formats for lossless JPEG support in DICOM.
+
+[Nikon ND2 plugin]
+type = Native library
+class = ND_to_Image6D
+url = http://rsb.info.nih.gov/ij/plugins/nd2-reader.html
+license = Commercial
+notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
+        configure Bio-Formats to use it instead of its native ND2 support
+        in the Formats tab's "Nikon ND2" entry.
+
+# ImageJ plugins
+
+[LOCI plugins]
+type = ImageJ plugin
+class = loci.plugins.About
+version = bfVersion
+url = http://www.loci.wisc.edu/ome/formats.html
+license = LGPL
+notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
+        the Bio-Formats Importer, Bio-Formats Exporter, Data Browser,
+        Stack Colorizer, Stack Slicer, and OME plugins.
+
+[Image5D]
+type = ImageJ plugin
+class = i5d.Image5D
+url = http://rsb.info.nih.gov/ij/plugins/image5d.html
+license = Public domain
+notes = Optional plugin. If you have Image5D installed, the Bio-Formats
+        Importer plugin can use Image5D to display your image stacks.
+
+[View5D]
+type = ImageJ plugin
+class = View5D_
+url = http://www.nanoimaging.de/View5D/
+license = GPL
+notes = Optional plugin. If you have View5D installed, the Bio-Formats
+        Importer plugin can use View5D to display your image stacks.
+
+# Java libraries
+
+[Bio-Formats]
+type = Java library
+class = loci.formats.IFormatReader
+version = bfVersion
+url = http://www.loci.wisc.edu/ome/formats.html
+license = LGPL
+notes = LOCI Bio-Formats package for reading and converting
+        biological file formats.
+
+[BUFR Java Decoder]
+type = Java library
+class = ucar.bufr.BufrDump
+url = http://www.unidata.ucar.edu/software/decoders/
+license = LGPL
+notes = Used by the NetCDF Java library.
+
+[JAI Image I/O Tools - Java wrapper]
+type = Java library
+class = com.sun.medialib.codec.jiio.Constants
+url = https://jai-imageio.dev.java.net/
+license = BSD
+notes = Java wrapper for JAI Image I/O Tools native codecs.
+
+[GRIB Java Decoder]
+type = Java library
+class = ucar.grib.GribChecker
+url = http://www.unidata.ucar.edu/software/decoders/
+license = LGPL
+notes = Used by the NetCDF Java library.
+
+[JAI Image I/O Tools - Java codecs]
+type = Java library
+class = com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam
+url = https://jai-imageio.dev.java.net/
+license = BSD
+notes = Used by Bio-Formats for JPEG2000 support (ND2, JP2).
+
+[MDB Tools (Java port)]
+type = Java library
+class = mdbtools.libmdb.MdbFile
+url = http://sourceforge.net/forum/message.php?msg_id=2550619
+license = LGPL
+notes = Used by Bio-Formats for Zeiss LSM metadata in MDB database files.
+
+[NetCDF Java]
+type = Java library
+class = ucar.nc2.NetcdfFile
+url = http://www.unidata.ucar.edu/software/netcdf-java/
+license = LGPL
+notes = Used by Bio-Formats for HDF support (Imaris 5.5).
+
+[Apache Jakarta POI (LOCI version)]
+type = Java library
+class = org.apache.poi.poifs.filesystem.POIFSDocument
+url = http://jakarta.apache.org/poi/
+license = Apache
+notes = Used by Bio-Formats for OLE support in CXD, IPW, OIB and ZVI
+        formats. Based on poi-2.5.1-final-20040804.jar, with bugfixes for
+        OLE v2 and memory efficiency improvements.
+
+[Simple Logging Facade for Java]
+type = Java library
+class = org.slf4j.Logger
+url = http://www.slf4j.org/
+license = MIT
+notes = Used by the NetCDF Java library.
+
+[OME Java]
+type = Java library
+class = ome.xml.OMEXMLNode
+url = http://openmicroscopy.org/api/java/
+license = LGPL
+notes = Used by the "Download from OME" and "Upload to OME" plugins
+        to connect to OME. Used by Bio-Formats to work with OME-XML.
+
+[Apache Jakarta Commons HttpClient]
+type = Java library
+class = org.apache.commons.httpclient.HttpConnection
+url = http://jakarta.apache.org/commons/httpclient/
+license = Apache
+notes = Required for OME Java to communicate with OME servers.
+
+[Apache Jakarta Commons Logging]
+type = Java library
+class = org.apache.commons.logging.Log
+url = http://jakarta.apache.org/commons/logging/
+license = Apache
+notes = Used by OME Java.
+
+[Apache XML-RPC]
+type = Java library
+class = org.apache.xmlrpc.XmlRpc
+url = http://ws.apache.org/xmlrpc/
+license = Apache
+notes = Required for OME Java to communicate with OME servers
+
+[OMERO Common]
+type = Java library
+class = ome.model.core.Image
+url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+license = LGPL
+notes = Used by Bio-Formats to connect to OMERO.
+
+[OMERO Client]
+type = Java library
+class = ome.client.Session
+url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+license = LGPL
+notes = Used by Bio-Formats to connect to OMERO.
+
+[Spring]
+type = Java library
+class = org.springframework.core.SpringVersion
+url = http://springframework.org/
+license = Apache
+notes = Used by Bio-Formats to connect to OMERO.
+
+[JBoss Client]
+type = Java library
+class = org.jboss.system.Service
+url = http://jboss.org/
+license = LGPL
+notes = Used by Bio-Formats to connect to OMERO.
+
+[JGoodies Forms]
+type = Java library
+class = com.jgoodies.forms.layout.FormLayout
+url = http://www.jgoodies.com/freeware/forms/index.html
+license = BSD
+notes = Used for layout by the Data Browser plugin.
+
+[OME Notes]
+type = Java library
+class = loci.ome.notes.Notes
+url = http://www.loci.wisc.edu/ome/notes.html
+license = LGPL
+notes = OME Notes library for flexible organization and presentation
+        of OME-XML metadata.
+
+[LuraWave decoder SDK]
+type = Java library
+class = com.luratech.lwf.lwfDecoder
+url = http://www.luratech.com/
+license = Commercial
+notes = Used by Bio-Formats to decode Flex files
+        compressed with the LuraWave JPEG2000 codec.

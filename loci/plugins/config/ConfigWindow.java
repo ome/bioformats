@@ -30,7 +30,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.io.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -117,172 +118,13 @@ public class ConfigWindow extends JFrame
     }
     catch (Throwable t) { }
 
-    LibraryEntry[] libraries = {
-      // core libraries
-      new LibraryEntry("Java", libCore, // classes.jar, rt.jar
-        "java.lang.System", javaVersion,
-        "http://java.sun.com/", "Varies", "Core Java library"),
-      new LibraryEntry("ImageJ", libCore, // ij.jar
-        "ij.ImageJ", null,
-        "http://rsb.info.nih.gov/ij/", "Public domain",
-        "Core ImageJ library"),
-      new LibraryEntry("Java3D", libCore,
-        "javax.vecmath.Point3d", null,
-        "https://java3d.dev.java.net/", "GPL",
-        "Not used; listed for informational purposes only."),
-      new LibraryEntry("Jython", libCore,
-        "org.python.util.PythonInterpreter", null,
-        "http://www.jython.org/", "BSD",
-        "Not used; listed for informational purposes only."),
-      new LibraryEntry("MATLAB", libCore,
-        "com.mathworks.jmi.Matlab", matlabVersion,
-        "http://www.mathworks.com/products/matlab/", "Commercial",
-        "Not used; listed for informational purposes only. " +
-        "Note that for MATLAB to be successfully detected here, " +
-        "ImageJ must be launched from within the MATLAB environment."),
+    Hashtable versions = new Hashtable();
+    if (javaVersion != null) versions.put("javaVersion", javaVersion);
+    if (bfVersion != null) versions.put("bfVersion", bfVersion);
+    if (qtVersion != null) versions.put("qtVersion", qtVersion);
+    if (matlabVersion != null) versions.put("matlabVersion", matlabVersion);
 
-      // native libraries
-      new LibraryEntry("QuickTime for Java", libNative,
-        "quicktime.QTSession", qtVersion, // QTJava.zip
-        "http://www.apple.com/quicktime/", "Commercial",
-        "Bio-Formats has two modes of operation for QuickTime movies:\n" +
-        "1) QTJava mode requires the QuickTime for Java library to be " +
-        "installed.\n" +
-        "2) Native mode works on systems with no QuickTime (e.g., Linux).\n" +
-        "\n" +
-        "Using QTJava mode adds or improves support for the following " +
-        "codecs:\n" +
-        "1) [iraw] Intel YUV Uncompressed: enables write\n" +
-        "2) [rle] Animation (run length encoded RGB): " +
-        "improves read, enables write\n" +
-        "3) [rpza] Apple Video 16 bit \"road pizza\": improves read\n" +
-        "4) [cvid] Cinepak: enables read and write\n" +
-        "5) [svq1] Sorenson Video: enables read and write\n" +
-        "6) [svq3] Sorenson Video 3: enables read and write\n" +
-        "7) [mp4v] MPEG-4: enables read and write\n" +
-        "8) [h263] H.263: enables read and write\n" +
-        "\n" +
-        "You can toggle which mode is used " +
-        "in the Formats tab's \"QuickTime\" entry."),
-      new LibraryEntry("JAI Image I/O Tools - native codecs", libNative,
-        "TODO", null,
-        "https://jai-imageio.dev.java.net/", "BSD",
-        "Used by Bio-Formats for lossless JPEG support in DICOM."),
-      new LibraryEntry("Nikon ND2 plugin", libNative,
-        "TODO", null,
-        "http://rsb.info.nih.gov/ij/plugins/nd2-reader.html", "Commercial",
-        "Optional plugin. If you have Nikon's ND2 plugin installed, you can " +
-        "configure Bio-Formats to use it instead of its native ND2 support " +
-        "in the Formats tab's \"Nikon ND2\" entry."),
-
-      // ImageJ plugins
-      new LibraryEntry("LOCI plugins", libPlugin,
-        "loci.plugins.About", bfVersion, // loci_plugins.jar
-        "http://www.loci.wisc.edu/ome/formats.html", "LGPL",
-        "LOCI Plugins for ImageJ: a collection of ImageJ plugins including " +
-        "the Bio-Formats Importer, Bio-Formats Exporter, Data Browser, " +
-        "Stack Colorizer, Stack Slicer, and OME plugins."),
-      new LibraryEntry("Image5D", libPlugin,
-        "i5d.Image5D", null, // Image_5D.jar
-        "http://rsb.info.nih.gov/ij/plugins/image5d.html", "Public domain",
-        "Optional plugin. If you have Image5D installed, the Bio-Formats " +
-        "Importer plugin can use Image5D to display your image stacks."),
-      new LibraryEntry("View5D", libPlugin,
-        "View5D_", null, // View5D_.jar
-        "http://www.nanoimaging.de/View5D/", "GPL",
-        "Optional plugin. If you have View5D installed, the Bio-Formats " +
-        "Importer plugin can use View5D to display your image stacks."),
-
-      // Java libraries
-      new LibraryEntry("Bio-Formats", libJava,
-        "loci.formats.IFormatReader", bfVersion, // bio-formats.jar
-        "http://www.loci.wisc.edu/ome/formats.html", "LGPL",
-        "LOCI Bio-Formats package for reading and converting " +
-        "biological file formats."),
-      new LibraryEntry("BUFR Java Decoder", libJava,
-        "ucar.bufr.BufrDump", null, // bufr-1.1.00.jar
-        "http://www.unidata.ucar.edu/software/decoders/", "LGPL",
-        "Used by the NetCDF Java library."),
-      new LibraryEntry("JAI Image I/O Tools - Java wrapper", libJava,
-        "com.sun.medialib.codec.jiio.Constants", null, // clibwrapper_jiio.jar
-        "https://jai-imageio.dev.java.net/", "BSD",
-        "Java wrapper for JAI Image I/O Tools native codecs."),
-      new LibraryEntry("GRIB Java Decoder", libJava,
-        "ucar.grib.GribChecker", null, // grib-5.1.03.jar
-        "http://www.unidata.ucar.edu/software/decoders/", "LGPL",
-        "Used by the NetCDF Java library."),
-      new LibraryEntry("JAI Image I/O Tools - Java codecs", libJava,
-        "com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam",
-        null, // jai_imageio.jar
-        "https://jai-imageio.dev.java.net/", "BSD",
-        "Used by Bio-Formats for JPEG2000 support (ND2, JP2)."),
-      new LibraryEntry("MDB Tools (Java port)", libJava,
-        "mdbtools.libmdb.MdbFile", null, // mdbtools-java.jar
-        "http://sourceforge.net/forum/message.php?msg_id=2550619", "LGPL",
-        "Used by Bio-Formats for Zeiss LSM metadata in MDB database files."),
-      new LibraryEntry("NetCDF Java", libJava,
-        "ucar.nc2.NetcdfFile", null, // netcdf-4.0.jar
-        "http://www.unidata.ucar.edu/software/netcdf-java/", "LGPL",
-        "Used by Bio-Formats for HDF support (Imaris 5.5)."),
-      new LibraryEntry("Apache Jakarta POI (LOCI version)", libJava,
-        "org.apache.poi.poifs.filesystem.POIFSDocument", null, // poi-loci.jar
-        "http://jakarta.apache.org/poi/", "Apache",
-        "Used by Bio-Formats for OLE support in CXD, IPW, OIB and ZVI " +
-        "formats. Based on poi-2.5.1-final-20040804.jar, with bugfixes for " +
-        "OLE v2 and memory efficiency improvements."),
-      new LibraryEntry("Simple Logging Facade for Java", libJava,
-        "org.slf4j.Logger", null, // slf4j-jdk14.jar
-        "http://www.slf4j.org/", "MIT",
-        "Used by the NetCDF Java library."),
-      new LibraryEntry("OME Java", libJava,
-        "ome.xml.OMEXMLNode", null, // ome-java.jar
-        "http://openmicroscopy.org/api/java/", "LGPL",
-        "Used by the \"Download from OME\" and \"Upload to OME\" plugins " +
-        "to connect to OME. Used by Bio-Formats to work with OME-XML."),
-      new LibraryEntry("Apache Jakarta Commons HttpClient", libJava,
-        "org.apache.commons.httpclient.HttpConnection",
-        null, // commons-httpclient-2.0-rc2.jar
-        "http://jakarta.apache.org/commons/httpclient/", "Apache",
-        "Required for OME Java to communicate with OME servers."),
-      new LibraryEntry("Apache Jakarta Commons Logging", libJava,
-        "org.apache.commons.logging.Log", null, // commons-logging.jar
-        "http://jakarta.apache.org/commons/logging/", "Apache",
-        "Used by OME Java."),
-      new LibraryEntry("Apache XML-RPC", libJava,
-        "org.apache.xmlrpc.XmlRpc", null, // xmlrpc-1.2-b1.jar
-        "http://ws.apache.org/xmlrpc/", "Apache",
-        "Required for OME Java to communicate with OME servers"),
-      new LibraryEntry("OMERO Common", libJava,
-        "ome.model.core.Image", null, // omero-common.jar
-        "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
-        "LGPL", "Used by Bio-Formats to connect to OMERO."),
-      new LibraryEntry("OMERO Client", libJava,
-        "ome.client.Session", null, // omero-client.jar
-        "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
-        "LGPL", "Used by Bio-Formats to connect to OMERO."),
-      new LibraryEntry("Spring", libJava,
-        "org.springframework.core.SpringVersion", null, // spring.jar
-        "http://springframework.org/", "Apache",
-        "Used by Bio-Formats to connect to OMERO."),
-      new LibraryEntry("JBoss Client", libJava,
-        "org.jboss.system.Service", null, // jbossall-client.jar
-        "http://jboss.org/", "LGPL",
-        "Used by Bio-Formats to connect to OMERO."),
-      new LibraryEntry("JGoodies Forms", libJava,
-        "com.jgoodies.forms.layout.FormLayout", null, // forms-1.0.4.jar
-        "http://www.jgoodies.com/freeware/forms/index.html", "BSD",
-        "Used for layout by the Data Browser plugin."),
-      new LibraryEntry("OME Notes", libJava,
-        "loci.ome.notes.Notes", null, // ome-notes.jar
-        "http://www.loci.wisc.edu/ome/notes.html", "LGPL",
-        "OME Notes library for flexible organization and presentation " +
-        "of OME-XML metadata."),
-      new LibraryEntry("LuraWave decoder SDK", libJava,
-        "com.luratech.lwf.lwfDecoder", null, // lwf_jsdk2.6.jar
-        "http://www.luratech.com/", "Commercial",
-        "Used by Bio-Formats to decode Flex files " +
-        "compressed with the LuraWave JPEG2000 codec.")
-    };
+    LibraryEntry[] libraries = parseLibraries("libraries.txt", versions);
     Arrays.sort(libraries);
 
     // build UI
@@ -403,6 +245,81 @@ public class ConfigWindow extends JFrame
   }
 
   // -- Helper methods --
+
+  private static LibraryEntry[] parseLibraries(String resource,
+    Hashtable versions)
+  {
+    Vector list = new Vector();
+    Hashtable props = null;
+    String propKey = null;
+    StringBuffer propValue = new StringBuffer();
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+      ConfigWindow.class.getResourceAsStream(resource)));
+    while (true) {
+      String line = null;
+      try {
+        line = in.readLine();
+      }
+      catch (IOException exc) {
+        break;
+      }
+      if (line == null) break;
+
+      // ignore characters following # sign (comments)
+      int ndx = line.indexOf("#");
+      if (ndx >= 0) line = line.substring(0, ndx);
+      boolean space = line.startsWith(" ");
+      line = line.trim();
+      if (line.equals("")) continue;
+
+      // parse key/value pairs
+      int equals = line.indexOf("=");
+      if (line.startsWith("[")) {
+        // new entry
+        if (props == null) props = new Hashtable();
+        else {
+          addProp(props, propKey, propValue.toString(), versions);
+          list.add(new LibraryEntry(props));
+        }
+        props.clear();
+        props.put("name", line.substring(1, line.length() - 1));
+        propKey = null;
+      }
+      else if (space) {
+        // append to previous property value
+        propValue.append(" ");
+        propValue.append(line);
+      }
+      else if (equals >= 0) {
+        addProp(props, propKey, propValue.toString(), versions);
+        propKey = line.substring(0, equals - 1).trim();
+        propValue.setLength(0);
+        propValue.append(line.substring(equals + 1).trim());
+      }
+    }
+    try {
+      in.close();
+    }
+    catch (IOException exc) { }
+    LibraryEntry[] entries = new LibraryEntry[list.size()];
+    list.copyInto(entries);
+    return entries;
+  }
+
+  private static void addProp(Hashtable props,
+    String key, String value, Hashtable versions)
+  {
+    if (key == null) return;
+
+    // replace \n sequence with newlines
+    value = value.replaceAll("\\\\n *", "\n");
+
+    if (key.equals("version")) {
+      // get actual value from versions hashtable
+      value = (String) versions.get(value);
+    }
+    if (value != null) props.put(key, value);
+  }
 
   private JLabel makeLabel(String text, boolean top) {
     JLabel label = new JLabel(text);

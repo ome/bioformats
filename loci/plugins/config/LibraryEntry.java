@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import java.io.File;
+import java.net.URLDecoder;
+import java.util.Hashtable;
+
 /**
  * A list entry for the configuration window's Libraries tab.
  *
@@ -59,6 +63,16 @@ public class LibraryEntry implements Comparable {
   protected String path;
 
   // -- Constructor --
+
+  public LibraryEntry(Hashtable props) {
+    this((String) props.get("name"),
+      (String) props.get("type"),
+      (String) props.get("class"),
+      (String) props.get("version"),
+      (String) props.get("url"),
+      (String) props.get("license"),
+      (String) props.get("notes"));
+  }
 
   public LibraryEntry(String name, String type, String libClass,
     String version, String url, String license, String notes)
@@ -97,7 +111,12 @@ public class LibraryEntry implements Comparable {
       path = path.replaceAll("^jar:", "");
       path = path.replaceAll("^file:", "");
       path = path.replaceAll("^/*/", "/");
+      path = path.replaceAll("^/([A-Z]:)", "$1");
       path = path.replaceAll("!.*", "");
+      path = URLDecoder.decode(path, "UTF-8");
+			String slash = File.separator;
+			if (slash.equals("\\")) slash = "\\\\";
+      path = path.replaceAll("/", slash);
     }
     catch (Throwable t) { }
     status = version == null ? "Missing" : "Installed";
