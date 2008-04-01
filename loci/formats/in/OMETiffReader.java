@@ -639,8 +639,10 @@ public class OMETiffReader extends BaseTiffReader {
           ifdMap[currentSeries][idx] = Integer.parseInt(ifd);
           fileMap[currentSeries][idx] = currentFile;
           for (int i=1; i<Integer.parseInt(numPlanes); i++) {
-            ifdMap[currentSeries][idx + i] = ifdMap[currentSeries][idx] + i;
-            fileMap[currentSeries][idx + i] = currentFile;
+            if (idx + i < ifdMap[currentSeries].length) {
+              ifdMap[currentSeries][idx + i] = ifdMap[currentSeries][idx] + i;
+              fileMap[currentSeries][idx + i] = currentFile;
+            }
           }
         }
       }
