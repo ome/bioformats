@@ -291,7 +291,7 @@ public class GatanReader extends FormatReader {
           if (skip != 623191333) debug("Warning: skip mismatch: " + skip);
         }
         if (n == 1) {
-          if ("Dimensions".equals(parent)&& labelString.length() == 0) {
+          if ("Dimensions".equals(parent) && labelString.length() == 0) {
             in.order(!in.isLittleEndian());
             if (i == 0) core.sizeX[0] = in.readInt();
             else if (i == 1) core.sizeY[0] = in.readInt();
@@ -348,7 +348,7 @@ public class GatanReader extends FormatReader {
               }
               if (b != GROUP && b != VALUE) {
                 throw new FormatException("Cannot find next tag (pos=" +
-                  in.getFilePointer() + ", label=" + labelString);
+                  in.getFilePointer() + ", label=" + labelString + ")");
               }
               in.seek(in.getFilePointer() - 1); // reread tag type code
             }
