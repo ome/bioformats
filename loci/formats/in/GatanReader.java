@@ -152,12 +152,18 @@ public class GatanReader extends FormatReader {
     // TagGroup instance
 
     in.skipBytes(2);
-    parseTags(in.readInt(), "initFile");
+    int numTags = in.readInt();
+    if (debug) debug("tags (" + numTags + ") {");
+    parseTags(numTags, null, "  ");
+    if (debug) debug("}");
 
     status("Populating metadata");
 
     core.littleEndian[0] = true;
 
+    if (core.sizeX[0] == 0 || core.sizeY[0] == 0) {
+      throw new FormatException("Dimensions information not found");
+    }
     int bytes = numPixelBytes / (core.sizeX[0] * core.sizeY[0]);
 
     switch (bytes) {
@@ -256,24 +262,36 @@ public class GatanReader extends FormatReader {
    * metadata.  Each data tag is comprised of a type (byte, short, etc.),
    * a label, and a value.
    */
-  private void parseTags(int numTags, String parent) throws IOException {
+  private void parseTags(int numTags, String parent, String indent)
+    throws FormatException, IOException
+  {
     for (int i=0; i<numTags; i++) {
       byte type = in.readByte();  // can be 21 (data) or 20 (tag group)
       int length = in.readShort();
-      String labelString = in.readString(length);
 
       // image data is in tag with type 21 and label 'Data'
       // image dimensions are in type 20 tag with 2 type 15 tags
       // bytes per pixel is in type 21 tag with label 'PixelDepth'
 
+      String labelString = null;
       String value = null;
 
       if (type == VALUE) {
-        in.skipBytes(4);  // equal to '%%%%'
+        labelString = in.readString(length);
+        int skip = in.readInt(); // equal to '%%%%' / 623191333
         int n = in.readInt();
         int dataType = in.readInt();
+        if (debug) {
+          String s = labelString;
+          if (s.length() > 32) {
+            s = s.substring(0, 20) + "... (" + s.length() + ")";
+          }
+          debug(indent + i + ": n=" + n +
+            ", dataType=" + dataType + ", label=" + s);
+          if (skip != 623191333) debug("Warning: skip mismatch: " + skip);
+        }
         if (n == 1) {
-          if (parent.equals("Dimensions") && labelString.length() == 0) {
+          if ("Dimensions".equals(parent)&& labelString.length() == 0) {
             in.order(!in.isLittleEndian());
             if (i == 0) core.sizeX[0] = in.readInt();
             else if (i == 1) core.sizeY[0] = in.readInt();
@@ -285,28 +303,24 @@ public class GatanReader extends FormatReader {
           if (dataType == 18) { // this should always be true
             length = in.readInt();
           }
+          else if (debug) debug("Warning: dataType mismatch: " + dataType);
           value = in.readString(length);
         }
-        else if (n == 3 && !labelString.equals("Data")) {
-          if (dataType == GROUP) { // this should always be true
-            dataType = in.readInt();
-            length = in.readInt();
-            if (dataType == 10) {
-              in.skipBytes(length);
-            }
-            else {
-              value = DataTools.stripString(in.readString(length * 2));
-            }
-          }
-        }
-        else if (n == 3 && labelString.equals("Data")) {
+        else if (n == 3) {
           if (dataType == GROUP) {  // this should always be true
             dataType = in.readInt();
             length = in.readInt();
-            pixelOffset = in.getFilePointer();
-            in.skipBytes(getNumBytes(dataType) * length);
-            numPixelBytes = (int) (in.getFilePointer() - pixelOffset);
+            if (labelString.equals("Data")) {
+              pixelOffset = in.getFilePointer();
+              in.skipBytes(getNumBytes(dataType) * length);
+              numPixelBytes = (int) (in.getFilePointer() - pixelOffset);
+            }
+            else {
+              if (dataType == 10) in.skipBytes(length);
+              else value = DataTools.stripString(in.readString(length * 2));
+            }
           }
+          else if (debug) debug("Warning: dataType mismatch: " + dataType);
         }
         else {
           // this is a normal struct of simple types
@@ -321,13 +335,23 @@ public class GatanReader extends FormatReader {
               if (j < numFields - 1) s.append(", ");
             }
             value = s.toString();
-            byte b = in.readByte();
-            while (b != GROUP && b != VALUE &&
-              in.getFilePointer() < in.length() - 1)
-            {
-              b = in.readByte();
+            boolean lastTag = parent == null && i == numTags - 1;
+            if (!lastTag) {
+              // search for next tag
+              // empirically, we need to skip 4, 12, 18 or 28 total bytes
+              byte b = 0;
+              final int[] jumps = {4, 7, 5, 9};
+              for (int j=0; j<jumps.length; j++) {
+                in.skipBytes(jumps[j]);
+                b = in.readByte();
+                if (b == GROUP || b == VALUE) break;
+              }
+              if (b != GROUP && b != VALUE) {
+                throw new FormatException("Cannot find next tag (pos=" +
+                  in.getFilePointer() + ", label=" + labelString);
+              }
+              in.seek(in.getFilePointer() - 1); // reread tag type code
             }
-            in.seek(in.getFilePointer() - 1);
           }
           else if (dataType == GROUP) {
             // this is an array of structs
@@ -335,10 +359,10 @@ public class GatanReader extends FormatReader {
             if (dataType == ARRAY) { // should always be true
               in.skipBytes(4);
               int numFields = in.readInt();
-              int[] datatypes = new int[numFields];
+              int[] dataTypes = new int[numFields];
               for (int j=0; j<numFields; j++) {
                 in.skipBytes(4);
-                datatypes[j] = in.readInt();
+                dataTypes[j] = in.readInt();
               }
               int len = in.readInt();
 
@@ -346,17 +370,23 @@ public class GatanReader extends FormatReader {
 
               for (int k=0; k<len; k++) {
                 for (int q=0; q<numFields; q++) {
-                  values[q][k] = readValue(datatypes[q]);
+                  values[q][k] = readValue(dataTypes[q]);
                 }
               }
             }
+            else if (debug) debug("Warning: dataType mismatch: " + dataType);
           }
         }
       }
       else if (type == GROUP) {
+        labelString = in.readString(length);
         in.skipBytes(2);
-        parseTags(in.readInt(), labelString);
+        int num = in.readInt();
+        if (debug) debug(indent + i + ": group (" + num + ") {");
+        parseTags(num, labelString, indent + "  ");
+        if (debug) debug(indent + "}");
       }
+      else if (debug) debug(indent + i + ": unknown type: " + type);
 
       if (value != null) {
         addMeta(labelString, value);
