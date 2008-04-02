@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.config;
 
 import java.awt.Component;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 /**
@@ -50,30 +51,42 @@ public class FormatEntry implements Comparable {
 
   // -- Constructor --
 
-  public FormatEntry(Object reader) {
+  public FormatEntry(PrintWriter log, Object reader) {
     this.reader = reader;
-    Class readerClass = null;
+    Class readerClass = reader.getClass();
+    String n = readerClass.getName();
+    readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
     try {
-      readerClass = reader.getClass();
-      String n = readerClass.getName();
-      readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
       Method getFormat = readerClass.getMethod("getFormat", null);
       formatName = (String) getFormat.invoke(reader, null);
       Method getSuffixes = readerClass.getMethod("getSuffixes", null);
       suffixes = (String[]) getSuffixes.invoke(reader, null);
+      log.println("Successfully queried " + readerName + " reader.");
     }
     catch (Throwable t) {
-      t.printStackTrace();
+      log.println("Error querying " + readerName + " reader:");
+      t.printStackTrace(log);
+      log.println();
       suffixes = new String[0];
     }
     // create any extra widgets for this format, if any
     IFormatWidgets fw = null;
+    String fwClassName = "loci.plugins.config." + readerName + "Widgets";
     try {
-      String fwClassName = "loci.plugins.config." + readerName + "Widgets";
       Class fwClass = Class.forName(fwClassName);
       fw = (IFormatWidgets) fwClass.newInstance();
+      log.println("Initialized extra widgets for " + readerName + " reader.");
     }
-    catch (Throwable t) { }
+    catch (Throwable t) {
+      if (t instanceof ClassNotFoundException) {
+        // no extra widgets for this reader
+      }
+      else {
+        log.println("Error constructing widgets for " +
+          readerName + " reader:");
+        t.printStackTrace(log);
+      }
+    }
     labels = fw == null ? new String[0] : fw.getLabels();
     widgets = fw == null ? new Component[0] : fw.getWidgets();
   }

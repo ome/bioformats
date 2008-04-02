@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.config;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.util.Hashtable;
 
@@ -64,8 +65,9 @@ public class LibraryEntry implements Comparable {
 
   // -- Constructor --
 
-  public LibraryEntry(Hashtable props) {
-    this((String) props.get("name"),
+  public LibraryEntry(PrintWriter log, Hashtable props) {
+    this(log,
+      (String) props.get("name"),
       (String) props.get("type"),
       (String) props.get("class"),
       (String) props.get("version"),
@@ -74,8 +76,8 @@ public class LibraryEntry implements Comparable {
       (String) props.get("notes"));
   }
 
-  public LibraryEntry(String name, String type, String libClass,
-    String version, String url, String license, String notes)
+  public LibraryEntry(PrintWriter log, String name, String type,
+    String libClass, String version, String url, String license, String notes)
   {
     this.name = name;
     this.type = type;
@@ -117,8 +119,20 @@ public class LibraryEntry implements Comparable {
 			String slash = File.separator;
 			if (slash.equals("\\")) slash = "\\\\";
       path = path.replaceAll("/", slash);
+
+      log.println("Found library " + name + ":");
+      if (!"".equals(version)) log.println("    Version = " + version);
+      log.println("    Path = " + path);
     }
-    catch (Throwable t) { }
+    catch (Throwable t) {
+      if (t instanceof ClassNotFoundException) {
+        log.println("No library " + name + ".");
+      }
+      else {
+        log.println("Error communicating with library " + name + ":");
+        t.printStackTrace(log);
+      }
+    }
     status = version == null ? "Missing" : "Installed";
   }
 

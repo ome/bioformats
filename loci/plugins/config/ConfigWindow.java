@@ -47,85 +47,29 @@ import javax.swing.event.ListSelectionListener;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ConfigWindow extends JFrame
-  implements ItemListener, ListSelectionListener
+  implements ItemListener, ListSelectionListener, Runnable
 {
 
   // -- Fields --
 
+  private DefaultListModel formatsListModel;
   private JList formatsList;
   private JPanel formatInfo;
   private JTextField extensions;
   private JCheckBox enabled;
 
+  private DefaultListModel libsListModel;
   private JList libsList;
   private JTextField type, status, version, path, url, license;
   private JTextArea notes;
+
+  private PrintWriter log;
 
   // -- Constructor --
 
   public ConfigWindow() {
     setTitle("LOCI Plugins Configuration");
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-    // generate list of formats
-    FormatEntry[] formats = null;
-    try {
-      Class irClass = Class.forName("loci.formats.ImageReader");
-      Object ir = irClass.newInstance();
-      Method getClasses = irClass.getMethod("getReaders", null);
-      Object[] readers = (Object[]) getClasses.invoke(ir, null);
-      formats = new FormatEntry[readers.length];
-      for (int i=0; i<readers.length; i++) {
-        formats[i] = new FormatEntry(readers[i]);
-      }
-      Arrays.sort(formats);
-    }
-    catch (Throwable t) {
-      t.printStackTrace();
-      formats = new FormatEntry[0];
-    }
-
-    // enumerate list of libraries
-    final String libCore = "Core library";
-    final String libNative = "Native library";
-    final String libPlugin = "ImageJ plugin";
-    final String libJava = "Java library";
-
-    String javaVersion = System.getProperty("java.version") +
-      " (" + System.getProperty("java.vendor") + ")";
-
-    String bfVersion = "@date@";
-    // Ant replaces date token with datestamp of the build
-    if (bfVersion.equals("@" + "date" + "@")) bfVersion = "Internal build";
-
-    String qtVersion = null;
-    try {
-      Class qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
-      Object qtTools = qtToolsClass.newInstance();
-      Method getQTVersion = qtToolsClass.getMethod("getQTVersion", null);
-      qtVersion = (String) getQTVersion.invoke(qtTools, null);
-    }
-    catch (Throwable t) { }
-
-    String matlabVersion = null;
-    try {
-      Class matlabClass = Class.forName("com.mathworks.jmi.Matlab");
-      Object matlab = matlabClass.newInstance();
-      Method eval = matlabClass.getMethod("eval", new Class[] {String.class});
-      String ans = (String) eval.invoke(matlab, new Object[] {"version"});
-      if (ans.startsWith("ans =")) ans = ans.substring(5);
-      matlabVersion = ans.trim();
-    }
-    catch (Throwable t) { }
-
-    Hashtable versions = new Hashtable();
-    if (javaVersion != null) versions.put("javaVersion", javaVersion);
-    if (bfVersion != null) versions.put("bfVersion", bfVersion);
-    if (qtVersion != null) versions.put("qtVersion", qtVersion);
-    if (matlabVersion != null) versions.put("matlabVersion", matlabVersion);
-
-    LibraryEntry[] libraries = parseLibraries("libraries.txt", versions);
-    Arrays.sort(libraries);
 
     // build UI
 
@@ -136,7 +80,8 @@ public class ConfigWindow extends JFrame
     JPanel optionsPanel = new JPanel();
     tabs.addTab("Options", optionsPanel);
 
-    formatsList = makeList(formats);
+    formatsListModel = new DefaultListModel();
+    formatsList = makeList(formatsListModel);
 
     formatInfo = new JPanel();
     tabs.addTab("Formats", makeSplitPane(formatsList, formatInfo));
@@ -147,14 +92,8 @@ public class ConfigWindow extends JFrame
 
     doFormatLayout(null);
 
-    // TODO - reader-specific options
-    // - QT: "Use QuickTime for Java" checkbox (default off)
-    // - ND2: "Use Nikon's ND2 plugin" checkbox (default off)
-    // - Flex: "LuraWave license code" label and text field (default nothing)
-    //   + if sys prop set, but ij prop not set, GRAY OUT AND DO NOT SHOW
-    // - SDT: "Merge lifetime bins to intensity" checkbox
-
-    libsList = makeList(libraries);
+    libsListModel = new DefaultListModel();
+    libsList = makeList(libsListModel);
     JPanel libInfo = new JPanel();
     tabs.addTab("Libraries", makeSplitPane(libsList, libInfo));
 
@@ -201,10 +140,25 @@ public class ConfigWindow extends JFrame
 
     // TODO - "How to install" for each library?
 
+    JPanel logPanel = new JPanel();
+    tabs.addTab("Log", logPanel);
+
+    logPanel.setLayout(new java.awt.BorderLayout());
+
+    JTextArea logArea = new JTextArea();
+    logArea.setEditable(false);
+    logArea.setRows(10);
+    logPanel.add(new JScrollPane(logArea));
+
     SpringUtilities.makeCompactGrid(libInfo, 7, 2, 3, 3, 3, 3);
 
-    tabs.setSelectedIndex(1);
+    tabs.setSelectedIndex(1); // Formats tab
     pack();
+
+    TextAreaWriter taw = new TextAreaWriter(logArea);
+    log = new PrintWriter(taw);
+
+    new Thread(this, "ConfigWindow-Loader").start();
   }
 
   // -- ItemListener API methods --
@@ -234,25 +188,90 @@ public class ConfigWindow extends JFrame
     }
   }
 
-  // -- Utility methods --
+  // -- Runnable API methods --
 
-  public static JTextField makeTextField() {
-    JTextField textField = new JTextField(38);
-    int prefHeight = textField.getPreferredSize().height;
-    textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
-    textField.setEditable(false);
-    return textField;
-  }
+  /** Populate configuration information in a separate thread. */
+  public void run() {
+    log.println("LOCI Plugins configuration - " + new Date());
 
-  // -- Helper methods --
+    // generate list of formats
+    log.println();
+    log.println("-- Formats --");
+    FormatEntry[] formats = null;
+    try {
+      Class irClass = Class.forName("loci.formats.ImageReader");
+      Object ir = irClass.newInstance();
+      Method getClasses = irClass.getMethod("getReaders", null);
+      Object[] readers = (Object[]) getClasses.invoke(ir, null);
+      for (int i=0; i<readers.length; i++) {
+        FormatEntry entry = new FormatEntry(log, readers[i]);
+        addEntry(entry, formatsListModel);
+      }
+    }
+    catch (Throwable t) {
+      log.println("Could not generate list of supported formats:");
+      t.printStackTrace(log);
+    }
 
-  private static LibraryEntry[] parseLibraries(String resource,
-    Hashtable versions)
-  {
-    Vector list = new Vector();
+    log.println();
+    log.println("-- Libraries --");
+
+    // enumerate list of libraries
+    final String libCore = "Core library";
+    final String libNative = "Native library";
+    final String libPlugin = "ImageJ plugin";
+    final String libJava = "Java library";
+
+    String javaVersion = System.getProperty("java.version") +
+      " (" + System.getProperty("java.vendor") + ")";
+
+    String bfVersion = "@date@";
+    // Ant replaces date token with datestamp of the build
+    if (bfVersion.equals("@" + "date" + "@")) bfVersion = "Internal build";
+
+    String qtVersion = null;
+    try {
+      Class qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
+      Object qtTools = qtToolsClass.newInstance();
+      Method getQTVersion = qtToolsClass.getMethod("getQTVersion", null);
+      qtVersion = (String) getQTVersion.invoke(qtTools, null);
+    }
+    catch (Throwable t) {
+      log.println("Could not determine QuickTime version:");
+      t.printStackTrace(log);
+    }
+
+    String matlabVersion = null;
+    try {
+      Class matlabClass = Class.forName("com.mathworks.jmi.Matlab");
+      Object matlab = matlabClass.newInstance();
+      Method eval = matlabClass.getMethod("eval", new Class[] {String.class});
+
+      String ans = (String) eval.invoke(matlab, new Object[] {"version"});
+      if (ans.startsWith("ans =")) ans = ans.substring(5);
+      matlabVersion = ans.trim();
+    }
+    catch (Throwable t) {
+      if (t instanceof ClassNotFoundException) {
+        // MATLAB library not available
+      }
+      else {
+        log.println("Error determining MATLAB version:");
+        t.printStackTrace(log);
+      }
+    }
+
+    Hashtable versions = new Hashtable();
+    if (javaVersion != null) versions.put("javaVersion", javaVersion);
+    if (bfVersion != null) versions.put("bfVersion", bfVersion);
+    if (qtVersion != null) versions.put("qtVersion", qtVersion);
+    if (matlabVersion != null) versions.put("matlabVersion", matlabVersion);
+
+    // parse libraries
     Hashtable props = null;
     String propKey = null;
     StringBuffer propValue = new StringBuffer();
+    String resource = "libraries.txt";
     BufferedReader in = new BufferedReader(new InputStreamReader(
       ConfigWindow.class.getResourceAsStream(resource)));
     while (true) {
@@ -261,6 +280,8 @@ public class ConfigWindow extends JFrame
         line = in.readLine();
       }
       catch (IOException exc) {
+        log.println("Error parsing " + resource + ":");
+        exc.printStackTrace(log);
         break;
       }
       if (line == null) break;
@@ -279,7 +300,8 @@ public class ConfigWindow extends JFrame
         if (props == null) props = new Hashtable();
         else {
           addProp(props, propKey, propValue.toString(), versions);
-          list.add(new LibraryEntry(props));
+          LibraryEntry entry = new LibraryEntry(log, props);
+          addEntry(entry, libsListModel);
         }
         props.clear();
         props.put("name", line.substring(1, line.length() - 1));
@@ -300,13 +322,44 @@ public class ConfigWindow extends JFrame
     try {
       in.close();
     }
-    catch (IOException exc) { }
-    LibraryEntry[] entries = new LibraryEntry[list.size()];
-    list.copyInto(entries);
-    return entries;
+    catch (IOException exc) {
+      log.println("Error closing " + resource + ":");
+      exc.printStackTrace(log);
+    }
   }
 
-  private static void addProp(Hashtable props,
+  // -- Utility methods --
+
+  public static JTextField makeTextField() {
+    JTextField textField = new JTextField(38);
+    int prefHeight = textField.getPreferredSize().height;
+    textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
+    textField.setEditable(false);
+    return textField;
+  }
+
+  public static void addEntry(final Comparable c,
+    final DefaultListModel listModel)
+  {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        // binary search for proper location
+        int min = 0, max = listModel.size();
+        while (min < max) {
+          int mid = (min + max) / 2;
+          Object o = listModel.get(mid);
+          int result = c.compareTo(o);
+          if (result > 0) min = mid + 1;
+          else max = mid;
+        }
+        listModel.add(max, c);
+      }
+    });
+  }
+
+  // -- Helper methods --
+
+  private void addProp(Hashtable props,
     String key, String value, Hashtable versions)
   {
     if (key == null) return;
@@ -328,8 +381,8 @@ public class ConfigWindow extends JFrame
     return label;
   }
 
-  private JList makeList(Object[] data) {
-    JList list = new JList(data);
+  private JList makeList(DefaultListModel listModel) {
+    JList list = new JList(listModel);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     list.setVisibleRowCount(25);
     list.addListSelectionListener(this);
@@ -392,7 +445,9 @@ public class ConfigWindow extends JFrame
       return on.booleanValue();
     }
     catch (Throwable t) {
-      t.printStackTrace();
+      log.println("Error determining status for " +
+        entry.readerName + " reader:");
+      t.printStackTrace(log);
       return false;
     }
   }
@@ -410,6 +465,9 @@ public class ConfigWindow extends JFrame
     }
     catch (Throwable t) {
       t.printStackTrace();
+      log.println("Error " + (on ? "enabling" : "disabling") +
+        " " + entry.readerName + " reader:");
+      t.printStackTrace(log);
     }
   }
 
