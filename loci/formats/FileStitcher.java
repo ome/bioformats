@@ -666,15 +666,16 @@ public class FileStitcher implements IFormatReader {
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 2);
 
+    if (noStitch) return reader.getUsedFiles();
+
     // returning the files list directly here is fast, since we do not
     // have to call initFile on each constituent file; but we can only do so
     // when each constituent file does not itself have multiple used files
 
-    if (reader.getUsedFiles().length > 1 || noStitch) {
+    if (reader.getUsedFiles().length > 1) {
       // each constituent file has multiple used files; we must build the list
       // this could happen with, e.g., a stitched collection of ICS/IDS pairs
       // we have no datasets structured this way, so this logic is untested
-      /*
       if (usedFiles == null) {
         String[][][] used = new String[files.length][][];
         int total = 0;
@@ -703,8 +704,7 @@ public class FileStitcher implements IFormatReader {
           }
         }
       }
-      */
-      return reader.getUsedFiles();
+      return usedFiles;
     }
     // assume every constituent file has no other used files
     // this logic could fail if the first constituent has no extra used files,
