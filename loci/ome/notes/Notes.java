@@ -191,7 +191,7 @@ public class Notes extends JFrame implements ActionListener {
     tabPane.removeAll();
 
     // retrieve defined GUI parameters
-    setPreferredSize(new Dimension(currentTemplate.getDefaultWidth(),
+    setSize(new Dimension(currentTemplate.getDefaultWidth(),
       currentTemplate.getDefaultHeight()));
 
     font = new Font(currentTemplate.getFontStyle(), Font.PLAIN,

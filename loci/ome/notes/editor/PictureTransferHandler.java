@@ -51,8 +51,8 @@ public class PictureTransferHandler extends TransferHandler {
         Component[] cs = p.getComponents();
         for (int i=0; i<cs.length; i++) {
           Component cc = (Component) cs[i].getClass().newInstance();
-          if (!(cc instanceof JLabel)) {
-            cc.setPreferredSize(new Dimension(64, 25));
+          if (cc instanceof JComponent && !(cc instanceof JLabel)) {
+            ((JComponent) cc).setPreferredSize(new Dimension(64, 25));
           }
           newPanel.add(cc);
         }

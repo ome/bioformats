@@ -197,8 +197,7 @@ public class TemplateEditor extends JFrame implements ActionListener {
     contentPane.add(componentPane, cc.xywh(1, 2, 1, 4));
 
     setContentPane(contentPane);
-    setPreferredSize(new Dimension(768, 768));
-    pack();
+    setSize(new Dimension(768, 768));
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
   }
