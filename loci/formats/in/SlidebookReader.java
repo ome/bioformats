@@ -296,6 +296,9 @@ public class SlidebookReader extends FormatReader {
       pixelBytes += ((Long) pixelLengths.get(i)).longValue();
     }
 
+    String[] imageNames = new String[core.sizeX.length];
+    int nextName = 0;
+
     // try to find the width and height
     int iCount = 0;
     int hCount = 0;
@@ -366,6 +369,18 @@ public class SlidebookReader extends FormatReader {
         }
       }
       else if (n == 'h') hCount++;
+      else if (n == 'j') {
+        // this block should contain an image name
+        in.skipBytes(4);
+        in.order(!core.littleEndian[0]);
+        int length = in.readShort();
+        in.order(core.littleEndian[0]);
+        in.skipBytes(3);
+        // read image name, removing all non-whitespace and
+        // non-alphanumeric characters
+        imageNames[nextName++] =
+          in.readString(length).replaceAll("[\\W&&[\\S]]", "");
+      }
     }
 
     for (int i=0; i<core.sizeX.length; i++) {
@@ -387,7 +402,7 @@ public class SlidebookReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<core.sizeX.length; i++) {
-      store.setImageName("Series " + i, i);
+      store.setImageName(imageNames[i], i);
       store.setImageCreationDate(
         DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
     }
