@@ -25,10 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import ij.Prefs;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
+import loci.plugins.Util;
 
 /**
  * Custom widgets for configuring Bio-Formats QuickTime support.
@@ -49,9 +51,11 @@ public class QTWidgets implements IFormatWidgets, ItemListener {
   // -- Constructor --
 
   public QTWidgets() {
+    boolean qtJava = Prefs.get(Util.PREF_QT_QTJAVA, false);
+
     String legacyLabel = "Legacy";
     JCheckBox legacyBox = new JCheckBox(
-      "Use QTJava instead of native QT support");
+      "Use QTJava instead of native QT support", qtJava);
     legacyBox.addItemListener(this);
 
     labels = new String[] {legacyLabel};
@@ -71,7 +75,8 @@ public class QTWidgets implements IFormatWidgets, ItemListener {
   // -- ItemListener API methods --
 
   public void itemStateChanged(ItemEvent e) {
-    // TOOD - respond to checkbox toggle
+    JCheckBox box = (JCheckBox) e.getSource();
+    Prefs.set(Util.PREF_QT_QTJAVA, box.isSelected());
   }
 
 }

@@ -25,10 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import ij.Prefs;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
+import loci.plugins.Util;
 
 /**
  * Custom widgets for configuring Bio-Formats SDT support.
@@ -49,8 +51,11 @@ public class SDTWidgets implements IFormatWidgets, ItemListener {
   // -- Constructor --
 
   public SDTWidgets() {
+    boolean intensity = Prefs.get(Util.PREF_SDT_INTENSITY, false);
+
     String mergeLabel = "Merge";
-    JCheckBox mergeBox = new JCheckBox("Merge lifetime bins to intensity");
+    JCheckBox mergeBox = new JCheckBox(
+      "Combine lifetime bins to intensity", intensity);
     mergeBox.addItemListener(this);
 
     labels = new String[] {mergeLabel};
@@ -70,7 +75,8 @@ public class SDTWidgets implements IFormatWidgets, ItemListener {
   // -- ItemListener API methods --
 
   public void itemStateChanged(ItemEvent e) {
-    // TOOD - respond to checkbox toggle
+    JCheckBox box = (JCheckBox) e.getSource();
+    Prefs.set(Util.PREF_SDT_INTENSITY, box.isSelected());
   }
 
 }

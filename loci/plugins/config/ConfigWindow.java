@@ -73,6 +73,8 @@ public class ConfigWindow extends JFrame
 
     // build UI
 
+    final String loading = "Loading...";
+
     JTabbedPane tabs = new JTabbedPane();
     tabs.setBorder(new EmptyBorder(3, 3, 3, 3));
     setContentPane(tabs);
@@ -81,6 +83,7 @@ public class ConfigWindow extends JFrame
     tabs.addTab("Options", optionsPanel);
 
     formatsListModel = new DefaultListModel();
+    formatsListModel.addElement(loading);
     formatsList = makeList(formatsListModel);
 
     formatInfo = new JPanel();
@@ -93,6 +96,7 @@ public class ConfigWindow extends JFrame
     doFormatLayout(null);
 
     libsListModel = new DefaultListModel();
+    libsListModel.addElement(loading);
     libsList = makeList(libsListModel);
     JPanel libInfo = new JPanel();
     tabs.addTab("Libraries", makeSplitPane(libsList, libInfo));
@@ -164,7 +168,9 @@ public class ConfigWindow extends JFrame
   // -- ItemListener API methods --
 
   public void itemStateChanged(ItemEvent e) {
-    FormatEntry entry = (FormatEntry) formatsList.getSelectedValue();
+    Object value = formatsList.getSelectedValue();
+    if (!(value instanceof FormatEntry)) return;
+    FormatEntry entry = (FormatEntry) value;
     setReaderEnabled(entry, enabled.isSelected());
   }
 
@@ -173,10 +179,14 @@ public class ConfigWindow extends JFrame
   public void valueChanged(ListSelectionEvent e) {
     Object src = e.getSource();
     if (src == formatsList) {
+      Object value = formatsList.getSelectedValue();
+      if (!(value instanceof FormatEntry)) return;
       FormatEntry entry = (FormatEntry) formatsList.getSelectedValue();
       doFormatLayout(entry);
     }
     else if (src == libsList) {
+      Object value = libsList.getSelectedValue();
+      if (!(value instanceof LibraryEntry)) return;
       LibraryEntry entry = (LibraryEntry) libsList.getSelectedValue();
       type.setText(entry.type);
       status.setText(entry.status);
@@ -343,6 +353,10 @@ public class ConfigWindow extends JFrame
   {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
+        // remove "Loading..." message
+        if (listModel.size() == 1 && listModel.get(0) instanceof String) {
+          listModel.remove(0);
+        }
         // binary search for proper location
         int min = 0, max = listModel.size();
         while (min < max) {
@@ -434,8 +448,8 @@ public class ConfigWindow extends JFrame
   private boolean isReaderEnabled(FormatEntry entry) {
     if (entry == null) return false;
     try {
-      Class importerClass = Class.forName("loci.plugins.Importer");
-      Field field = importerClass.getField("READER_ENABLED_PROPERTY");
+      Class importerClass = Class.forName("loci.plugins.Util");
+      Field field = importerClass.getField("PREF_READER_ENABLED");
       String key = field.get(null) + "." + entry.readerName;
       Class prefsClass = Class.forName("ij.Prefs");
       Method get = prefsClass.getMethod("get",
@@ -455,8 +469,8 @@ public class ConfigWindow extends JFrame
   private void setReaderEnabled(FormatEntry entry, boolean on) {
     if (entry == null) return;
     try {
-      Class importerClass = Class.forName("loci.plugins.Importer");
-      Field field = importerClass.getField("READER_ENABLED_PROPERTY");
+      Class importerClass = Class.forName("loci.plugins.Util");
+      Field field = importerClass.getField("PREF_READER_ENABLED");
       String key = field.get(null) + "." + entry.readerName;
       Class prefsClass = Class.forName("ij.Prefs");
       Method set = prefsClass.getMethod("set",

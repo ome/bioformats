@@ -25,10 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import ij.Prefs;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
+import loci.plugins.Util;
 
 /**
  * Custom widgets for configuring Bio-Formats ND2 support.
@@ -49,10 +51,13 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
   // -- Constructor --
 
   public ND2Widgets() {
-    String legacyLabel = "Legacy";
+    boolean nikon = Prefs.get(Util.PREF_ND2_NIKON, false);
+
+    String legacyLabel = "Nikon";
     JCheckBox legacyBox = new JCheckBox(
       "Use Nikon's ND2 library instead of native ND2 support");
     legacyBox.addItemListener(this);
+    legacyBox.setEnabled(false);//TEMP
 
     labels = new String[] {legacyLabel};
     widgets = new Component[] {legacyBox};
@@ -71,7 +76,8 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
   // -- ItemListener API methods --
 
   public void itemStateChanged(ItemEvent e) {
-    // TOOD - respond to checkbox toggle
+    JCheckBox box = (JCheckBox) e.getSource();
+    Prefs.set(Util.PREF_ND2_NIKON, box.isSelected());
   }
 
 }

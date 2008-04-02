@@ -34,6 +34,7 @@ import java.awt.image.*;
 import java.io.*;
 import loci.formats.*;
 import loci.formats.codec.LuraWaveCodec;
+import loci.formats.in.*;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -51,6 +52,11 @@ public final class Util {
   public static final String COMPOSITE_MSG =
     "ImageJ 1.39l or later is required to merge >8 bit or >3 channel data";
 
+  public static final String PREF_READER_ENABLED = "bioformats.enabled";
+  public static final String PREF_ND2_NIKON = "bioformats.nd2.nikon";
+  public static final String PREF_PICT_QTJAVA = "bioformats.pict.qtjava";
+  public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
+  public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
 
   // -- Constructor --
 
@@ -464,6 +470,67 @@ public final class Util {
     p.setCalibration(imp.getCalibration());
     p.setFileInfo(imp.getOriginalFileInfo());
     return p;
+  }
+
+  /**
+   * Creates an image reader according to the current configuration settings,
+   * including which format readers are currently enabled, as well as
+   * format-specific configuration settings.
+   */
+  public static ImageReader makeImageReader() {
+    // include only enabled classes
+    Class[] c = null;
+    try {
+      ClassList defaultClasses =
+        new ClassList("readers.txt", IFormatReader.class);
+      c = defaultClasses.getClasses();
+    }
+    catch (IOException exc) {
+      return new ImageReader();
+    }
+    ClassList enabledClasses = new ClassList(IFormatReader.class);
+    for (int i=0; i<c.length; i++) {
+      String n = c[i].getName();
+      String readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
+      String key = PREF_READER_ENABLED + "." + readerName;
+      boolean on = Prefs.get(key, true);
+      if (on) {
+        try {
+          enabledClasses.addClass(c[i]);
+        }
+        catch (FormatException exc) {
+          exc.printStackTrace();
+        }
+      }
+    }
+    ImageReader reader = new ImageReader(enabledClasses);
+
+    // toggle reader-specific options
+    boolean nd2Nikon = Prefs.get(PREF_ND2_NIKON, false);
+    boolean pictQTJava = Prefs.get(PREF_PICT_QTJAVA, false);
+    boolean qtQTJava = Prefs.get(PREF_QT_QTJAVA, false);
+    boolean sdtIntensity = Prefs.get(PREF_SDT_INTENSITY, false);
+    IFormatReader[] r = reader.getReaders();
+    for (int i=0; i<r.length; i++) {
+      if (r[i] instanceof ND2Reader) {
+        ND2Reader nd2 = (ND2Reader) r[i];
+        //nd2.setLegacy(nd2);
+      }
+      else if (r[i] instanceof PictReader) {
+        PictReader pict = (PictReader) r[i];
+        //pict.setLegacy(pictQTJava);
+      }
+      else if (r[i] instanceof QTReader) {
+        QTReader qt = (QTReader) r[i];
+        qt.setLegacy(qtQTJava);
+      }
+      else if (r[i] instanceof SDTReader) {
+        SDTReader sdt = (SDTReader) r[i];
+        sdt.setIntensity(sdtIntensity);
+      }
+    }
+
+    return reader;
   }
 
 }
