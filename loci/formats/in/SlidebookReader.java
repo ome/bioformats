@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
@@ -105,15 +106,21 @@ public class SlidebookReader extends FormatReader {
 
     status("Finding offsets to pixel data");
 
-    // Slidebook files appear to be comprised of three types of blocks:
-    // variable length pixel data blocks, 512 byte metadata blocks and
-    // 128 byte metadata blocks.
+    // Slidebook files appear to be comprised of four types of blocks:
+    // variable length pixel data blocks, 512 byte metadata blocks,
+    // 128 byte metadata blocks, and variable length metadata blocks.
     //
-    // Metadata blocks begin with a 2 byte identifier, e.g. 'i' or 'h'.
+    // Fixed-length metadata blocks begin with a 2 byte identifier,
+    // e.g. 'i' or 'h'.
     // Following this are two unknown bytes (usually 256), then a 2 byte
     // endianness identifier - II or MM, for little or big endian, respectively.
     // Presumably these blocks contain useful information, but for the most
     // part we aren't sure what it is or how to extract it.
+    //
+    // Variable length metadata blocks begin with 0xffff and are
+    // (as far as I know) always between two fixed-length metadata blocks.
+    // These appear to be a relatively new addition to the format - they are
+    // only present in files received on/after March 30, 2008.
     //
     // Each pixel data block corresponds to one series.
     // The first 'i' metadata block after each pixel data block contains
@@ -144,6 +151,30 @@ public class SlidebookReader extends FormatReader {
       {
         metadataOffsets.add(new Long(in.getFilePointer() - 6));
         in.skipBytes(in.readShort() - 8);
+      }
+      else if (checkOne == -1 && checkTwo == -1) {
+        boolean foundBlock = false;
+        byte[] block = new byte[8192];
+        in.read(block);
+        while (!foundBlock) {
+          for (int i=0; i<block.length-2; i++) {
+            if ((block[i] == 'M' && block[i + 1] == 'M') ||
+              (block[i] == 'I' && block[i + 1] == 'I'))
+            {
+              foundBlock = true;
+              in.seek(in.getFilePointer() - block.length + i - 2);
+              metadataOffsets.add(new Long(in.getFilePointer() - 2));
+              in.skipBytes(in.readShort() - 5);
+              break;
+            }
+          }
+          if (!foundBlock) {
+            block[0] = block[block.length - 2];
+            block[1] = block[block.length - 1];
+            in.read(block, 2, block.length - 2);
+          }
+        }
+
       }
       else {
         String s = null;
@@ -251,7 +282,9 @@ public class SlidebookReader extends FormatReader {
     }
 
     if (pixelOffsets.size() > 1) {
+      boolean little = core.littleEndian[0];
       core = new CoreMetadata(pixelOffsets.size());
+      Arrays.fill(core.littleEndian, little);
     }
 
     status("Determining dimensions");
@@ -341,9 +374,9 @@ public class SlidebookReader extends FormatReader {
       if (core.sizeT[i] == 0) core.sizeT[i] = 1;
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i] * core.sizeC[i];
       core.sizeX[i] = (int) (pixels / (core.imageCount[i] * core.sizeY[i]));
+      if ((core.sizeX[i] % 2) == 1) core.sizeX[i]--;
       core.pixelType[i] = FormatTools.UINT16;
       core.currentOrder[i] = "XYZTC";
-      core.littleEndian[i] = true;
       core.indexed[i] = false;
       core.falseColor[i] = false;
       core.metadataComplete[i] = true;
