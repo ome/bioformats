@@ -415,7 +415,6 @@ public class CapturePanel extends JPanel implements ActionListener,
     DisplayPosition pos = (DisplayPosition) posListModel.getElementAt(ndx);
     double[] matrix = pos.getMatrix();
     DisplayWindow display = handler.getWindow();
-    VisBioFrame bio = display.getVisBio();
     DisplayImpl d = display.getDisplay();
     if (d == null) return;
     ProjectionControl pc = d.getProjectionControl();

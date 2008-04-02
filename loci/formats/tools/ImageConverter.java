@@ -81,7 +81,6 @@ public final class ImageConverter {
     if (FormatHandler.debug) {
       LogTools.println("Debugging at level " + FormatHandler.debugLevel);
     }
-    String className = writer.getClass().getName();
     if (in == null || out == null) {
       LogTools.println("To convert a file to " + writer.getFormat() +
         " format, run:");

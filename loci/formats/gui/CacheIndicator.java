@@ -149,7 +149,6 @@ public class CacheIndicator extends JComponent implements CacheListener {
     int type = e.getType();
     if (type == CacheEvent.OBJECT_LOADED || type == CacheEvent.OBJECT_DROPPED) {
       // cache has changed; update GUI
-      final Object temp = this;
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           repaint();

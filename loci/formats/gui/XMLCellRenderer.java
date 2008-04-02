@@ -83,7 +83,6 @@ public class XMLCellRenderer extends DefaultTreeCellRenderer {
     // generate syntax highlighted text, modeled after Mozilla Firefox
     DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
     XMLItem item = (XMLItem) treeNode.getUserObject();
-    Node node = item.node;
     JLabel l = (JLabel) c;
     l.setText(item.toString(true));
     return c;
