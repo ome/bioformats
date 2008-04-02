@@ -41,14 +41,6 @@ import loci.formats.meta.MetadataStore;
  */
 public class SDTReader extends FormatReader {
 
-  // -- Constants --
-
-  /**
-   * System property to check for whether to merge
-   * SDT lifetime bins into single intensity image planes.
-   */
-  public static final String INTENSITY_PROPERTY = "bioformats.sdt.intensity";
-
   // -- Fields --
 
   /** Object containing SDT header information. */
@@ -64,18 +56,13 @@ public class SDTReader extends FormatReader {
   protected int channels;
 
   /** Whether to combine lifetime bins into single intensity image planes. */
-  protected boolean intensity = true;
+  protected boolean intensity = false;
 
   // -- Constructor --
 
   /** Constructs a new SDT reader. */
   public SDTReader() {
     super("SPCImage Data", "sdt");
-    try {
-      intensity = !"false".equalsIgnoreCase(
-        System.getProperty(INTENSITY_PROPERTY));
-    }
-    catch (SecurityException exc) { }
   }
 
   // -- SDTReader API methods --
