@@ -363,7 +363,7 @@ public class SlidebookReader extends FormatReader {
               uCount = 1;
             }
             prevSeriesU = j - start;
-            core.sizeT[j - start] = uCount;
+            core.sizeZ[j - start] = uCount;
             break;
           }
         }
@@ -385,8 +385,8 @@ public class SlidebookReader extends FormatReader {
 
     for (int i=0; i<core.sizeX.length; i++) {
       long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
-      core.sizeZ[i] = 1;
-      if (core.sizeT[i] == 0) core.sizeT[i] = 1;
+      core.sizeT[i] = 1;
+      if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i] * core.sizeC[i];
       core.sizeX[i] = (int) (pixels / (core.imageCount[i] * core.sizeY[i]));
       if ((core.sizeX[i] % 2) == 1) core.sizeX[i]--;
