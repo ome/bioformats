@@ -341,7 +341,7 @@ public class ConfigWindow extends JFrame
   // -- Utility methods --
 
   public static JTextField makeTextField() {
-    JTextField textField = new JTextField(38);
+    JTextField textField = new JTextField(48);
     int prefHeight = textField.getPreferredSize().height;
     textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
     textField.setEditable(false);
