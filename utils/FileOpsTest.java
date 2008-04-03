@@ -53,7 +53,7 @@ File.exists() for non-exist = 602 ms
 File.listFiles() = 4519 ms (6/file)
 
 WIN XP - NETWORK
-Z:\perkinelmer\koen\20061107165034>java -cp C:\svn\java\utils FileOpsTest
+Z:/perkinelmer/koen/20061107165034>java -cp C:/svn/java/utils FileOpsTest
 File.exists() for existing = 2043 ms
 File.exists() for non-exist = 1763 ms
 File.listFiles() = 40882 ms (60/file)
@@ -70,7 +70,7 @@ File.exists() for non-exist = 12 ms
 File.listFiles() = 149 ms (5/file)
 
 WIN XP - LOCAL
-C:\svn\java\jar>java -cp ..\utils FileOpsTest
+C:/svn/java/jar>java -cp ../utils FileOpsTest
 File.exists() for existing = 0 ms
 File.exists() for non-exist = 0 ms
 File.listFiles() = 91 ms (3/file)
