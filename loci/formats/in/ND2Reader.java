@@ -633,19 +633,23 @@ public class ND2Reader extends FormatReader {
     if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
       in.seek(off + 5);
       String xml = in.readString((int) (in.length() - in.getFilePointer()));
-
-      // strip out binary data at the end - this is irrelevant for our purposes
-      xml = "\n" + xml.substring(0, xml.lastIndexOf("</MetadataSeq>") + 14);
-
-      // strip out all comments
-      xml = xml.replaceAll("<!--.*-->", "");
-      xml = xml.replaceAll("\n.*xml", "");
+      StringTokenizer st = new StringTokenizer(xml, "\n");
+      StringBuffer sb = new StringBuffer();
 
       // stored XML doesn't have a root node - add one, so that we can parse
       // using SAX
 
-      xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><NIKON>" + xml +
-        "</NIKON>";
+      sb.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><NIKON>");
+
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken();
+        token = token.replaceAll("<!--.*-->", "");
+        token = token.replaceAll(".*xml", "").trim();
+        token = token.substring(0, token.lastIndexOf(">") + 1);
+        if (token.startsWith("<")) sb.append(token);
+      }
+      sb.append("</NIKON>");
+      xml = sb.toString();
 
       ND2Handler handler = new ND2Handler();
 
@@ -682,7 +686,7 @@ public class ND2Reader extends FormatReader {
 
     status("Populating metadata");
     if (core.imageCount[0] == 0) {
-      core.sizeZ[0] = zs.size() == 0 ? 1 : zs.size();
+      core.sizeZ[0] = zs.size() == 0 ? vs.size() : zs.size();
       core.sizeT[0] = ts.size() == 0 ? 1 : ts.size();
       core.sizeC[0] = (vs.size() + 1) / (core.sizeT[0] * core.sizeZ[0]);
       core.imageCount[0] = vs.size();
@@ -896,7 +900,7 @@ public class ND2Reader extends FormatReader {
       }
       else if (qName.startsWith("TextInfoItem")) {
         String value = attributes.getValue("value");
-        if (value.indexOf("Dimensions") != -1) {
+        if (value != null && value.indexOf("Dimensions") != -1) {
           int ndx = value.indexOf("Dimensions");
           value = value.substring(ndx + 11, value.indexOf("\n", ndx)).trim();
           StringTokenizer st = new StringTokenizer(value, " x ");
@@ -954,16 +958,13 @@ public class ND2Reader extends FormatReader {
     else if (key.endsWith("dGain value")) {
       gain = value;
     }
-    else if (key.endsWith("dLampVoltage value"))
-    {
+    else if (key.endsWith("dLampVoltage value")) {
       voltage = value;
     }
-    else if (key.endsWith("dObjectiveMag value"))
-    {
+    else if (key.endsWith("dObjectiveMag value")) {
       mag = value;
     }
-    else if (key.endsWith("dObjectiveNA value"))
-    {
+    else if (key.endsWith("dObjectiveNA value")) {
       na = value;
     }
     else if (key.endsWith("dTimeMSec value")) {
