@@ -69,7 +69,6 @@ loci.formats.in.TCSReader             # xml, tif
 loci.formats.in.FV1000Reader          # oib, oif, various
 loci.formats.in.ZeissZVIReader        # zvi [POIFS]
 loci.formats.in.IPWReader             # ipw [POIFS]
-loci.formats.in.LegacyND2Reader       # nd2, jp2 [Nikon SDK - Windows only]
 loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
 loci.formats.in.PCIReader             # cxd [POIFS]
 loci.formats.in.ImarisHDFReader       # ims

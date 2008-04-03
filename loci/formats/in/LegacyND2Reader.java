@@ -50,6 +50,10 @@ public class LegacyND2Reader extends FormatReader {
   private static final int SWEPT_FIELD_CONFOCAL = 4;
   private static final int MULTI_PHOTON = 5;
 
+  private static final String NO_NIKON_MSG =
+    "Nikon ND2 library not found.  Please see " +
+    "http://loci.wisc.edu/ome/formats.html for details.";
+
   // -- Static initializers --
 
   private static boolean libraryFound = true;
@@ -63,11 +67,6 @@ public class LegacyND2Reader extends FormatReader {
       libraryFound = false;
     }
   }
-
-  // -- Fields --
-
-  /** Reader to delegate to if this one fails. */
-  private ND2Reader goodReader;
 
   // -- Constructor --
 
@@ -96,8 +95,6 @@ public class LegacyND2Reader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
-
-    if (goodReader != null) return goodReader.openBytes(no, buf, x, y, w, h);
 
     int[] zct = FormatTools.getZCTCoords(this, no);
     int bpc = FormatTools.getBytesPerPixel(core.pixelType[series]);
@@ -179,10 +176,7 @@ public class LegacyND2Reader extends FormatReader {
       Arrays.fill(core.falseColor, false);
     }
     catch (Exception e) {
-      goodReader = new ND2Reader();
-      goodReader.setId(currentId);
-      core = goodReader.getCoreMetadata();
-      metadata = goodReader.getMetadata();
+      throw new FormatException(NO_NIKON_MSG);
     }
 
     MetadataStore store =

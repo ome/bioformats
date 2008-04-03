@@ -113,12 +113,19 @@ public class PictReader extends FormatReader {
   /** Helper reader in case this one fails. */
   protected LegacyQTTools qtTools = new LegacyQTTools();
 
+  private boolean legacy = false;
+
   // -- Constructor --
 
   /** Constructs a new PICT reader. */
   public PictReader() { super("PICT", new String[] {"pict", "pct"}); }
 
   // -- PictReader API methods --
+
+  /** Control whether or not legacy reader (QT Java) is used. */
+  public void setLegacy(boolean legacy) {
+    this.legacy = legacy;
+  }
 
   /** Get the dimensions of a PICT file from the first 4 bytes after header. */
   public Dimension getDimensions(byte[] stuff) throws FormatException {
@@ -133,6 +140,8 @@ public class PictReader extends FormatReader {
 
   /** Open a PICT image from an array of bytes (used by OpenlabReader). */
   public BufferedImage open(byte[] pix) throws FormatException, IOException {
+    if (legacy) return ImageTools.makeBuffered(qtTools.pictToImage(pix));
+
     // handles case when we call this method directly, instead of
     // through initFile(String)
     if (debug) debug("open");

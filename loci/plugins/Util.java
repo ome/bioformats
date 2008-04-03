@@ -514,11 +514,11 @@ public final class Util {
     for (int i=0; i<r.length; i++) {
       if (r[i] instanceof ND2Reader) {
         ND2Reader nd2 = (ND2Reader) r[i];
-        //nd2.setLegacy(nd2);
+        nd2.setLegacy(nd2Nikon);
       }
       else if (r[i] instanceof PictReader) {
         PictReader pict = (PictReader) r[i];
-        //pict.setLegacy(pictQTJava);
+        pict.setLegacy(pictQTJava);
       }
       else if (r[i] instanceof QTReader) {
         QTReader qt = (QTReader) r[i];

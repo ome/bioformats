@@ -57,7 +57,7 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
     JCheckBox legacyBox = new JCheckBox(
       "Use Nikon's ND2 library instead of native ND2 support");
     legacyBox.addItemListener(this);
-    legacyBox.setEnabled(false);//TEMP
+    legacyBox.setEnabled(true);
 
     labels = new String[] {legacyLabel};
     widgets = new Component[] {legacyBox};

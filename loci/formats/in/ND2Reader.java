@@ -156,10 +156,23 @@ public class ND2Reader extends FormatReader {
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
   private String gain, voltage, mag, na;
 
+  private LegacyND2Reader legacyReader;
+  private boolean legacy = false;
+
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
   public ND2Reader() { super("Nikon ND2", new String[] {"nd2", "jp2"}); }
+
+  // -- ND2Reader API methods --
+
+  public void setLegacy(boolean legacy) {
+    this.legacy = legacy;
+    if (this.legacy) {
+      if (legacyReader == null) legacyReader = new LegacyND2Reader();
+    }
+    else legacyReader = null;
+  }
 
   // -- IFormatReader API methods --
 
@@ -176,6 +189,7 @@ public class ND2Reader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (legacy) return legacyReader.openBytes(no, buf, x, y, w, h);
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
     FormatTools.checkBufferSize(this, buf.length, w, h);
@@ -241,6 +255,7 @@ public class ND2Reader extends FormatReader {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (legacy) return openImage(no, x, y, w, h);
     if (!isJPEG) {
       return ImageTools.makeImage(openBytes(no, x, y, w, h), core.sizeX[series],
         core.sizeY[series], getRGBChannelCount(), core.interleaved[series],
@@ -282,11 +297,45 @@ public class ND2Reader extends FormatReader {
     return img.getSubimage(x, y, w, h);
   }
 
+  /* @see loci.formats.IFormatReader#setNormalized(boolean) */
+  public void setNormalized(boolean normalize) {
+    super.setNormalized(normalize);
+    if (legacy) legacyReader.setNormalized(normalize);
+  }
+
+  /* @see loci.formats.IFormatReader#setMetadataCollected(boolean) */
+  public void setMetadataCollected(boolean collect) {
+    super.setMetadataCollected(collect);
+    if (legacy) legacyReader.setMetadataCollected(collect);
+  }
+
+  /* @see loci.formats.IFormatReader#setOriginalMetadataPopulated(boolean) */
+  public void setOriginalMetadataPopulated(boolean populate) {
+    super.setOriginalMetadataPopulated(populate);
+    if (legacy) legacyReader.setOriginalMetadataPopulated(populate);
+  }
+
+  /* @see loci.formats.IFormatReader#setMetadataFiltered(boolean) */
+  public void setMetadataFiltered(boolean filter) {
+    super.setMetadataFiltered(filter);
+    if (legacy) legacyReader.setMetadataFiltered(filter);
+  }
+
+  /* @see loci.formats.IFormatReader#setMetadataStore(MetadataStore) */
+  public void setMetadataStore(MetadataStore store) {
+    super.setMetadataStore(store);
+    if (legacy) legacyReader.setMetadataStore(store);
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatReader#close() */
   public void close() throws IOException {
     super.close();
+
+    if (legacyReader != null) legacyReader.close();
+    legacyReader = null;
+    legacy = false;
 
     offsets = null;
     zs.clear();
@@ -302,6 +351,13 @@ public class ND2Reader extends FormatReader {
     if (debug) debug("ND2Reader.initFile(" + id + ")");
     if (noJ2k) throw new FormatException(NO_J2K_MSG);
     super.initFile(id);
+
+    if (legacy) {
+      legacyReader.setId(id, true);
+      core = legacyReader.getCoreMetadata();
+      metadataStore = legacyReader.getMetadataStore();
+      return;
+    }
 
     in = new RandomAccessStream(id);
 

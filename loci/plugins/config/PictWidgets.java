@@ -57,7 +57,7 @@ public class PictWidgets implements IFormatWidgets, ItemListener {
     JCheckBox legacyBox = new JCheckBox(
       "Use QTJava instead of native PICT support", qtJava);
     legacyBox.addItemListener(this);
-    legacyBox.setEnabled(false);//TEMP
+    legacyBox.setEnabled(true);
 
     labels = new String[] {legacyLabel};
     widgets = new Component[] {legacyBox};
