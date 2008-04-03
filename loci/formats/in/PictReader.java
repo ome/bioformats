@@ -160,7 +160,7 @@ public class PictReader extends FormatReader {
     lookup = null;
 
     try {
-      while (driveDecoder()) { }
+      while (driveDecoder());
     }
     catch (FormatException exc) {
       trace(exc);

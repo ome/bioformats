@@ -176,7 +176,7 @@ public class LegacyND2Reader extends FormatReader {
       Arrays.fill(core.falseColor, false);
     }
     catch (Exception e) {
-      throw new FormatException(NO_NIKON_MSG);
+      throw new FormatException(NO_NIKON_MSG, e);
     }
 
     MetadataStore store =
