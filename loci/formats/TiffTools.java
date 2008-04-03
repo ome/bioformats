@@ -1471,7 +1471,6 @@ public final class TiffTools {
         }
         catch (Exception e) {
           // CTR TODO - eliminate catch-all exception handling
-          /* debug */ e.printStackTrace();
           if (strip == 0) {
             if (e instanceof FormatException) throw (FormatException) e;
             else throw new FormatException(e);

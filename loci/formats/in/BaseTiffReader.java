@@ -578,7 +578,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
     if (bitFormat == 3) {
       core.pixelType[0] = FormatTools.FLOAT;
-      core.littleEndian[0] = true;
+      //core.littleEndian[0] = true;
     }
     else if (bitFormat == 2) {
       switch (bps) {
