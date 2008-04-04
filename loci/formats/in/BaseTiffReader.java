@@ -696,24 +696,25 @@ public abstract class BaseTiffReader extends FormatReader {
         TiffTools.X_RESOLUTION, false);
       TiffRational yResolution = TiffTools.getIFDRationalValue(ifds[0],
         TiffTools.Y_RESOLUTION, false);
-      float pixX = xResolution == null ? 0f : xResolution.floatValue();
-      float pixY = yResolution == null ? 0f : yResolution.floatValue();
+      float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
+      float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
 
       switch (resolutionUnit) {
         case 2:
           // resolution is expressed in pixels per inch
-          pixX *= 0.0254;
-          pixY *= 0.0254;
+          pixX /= 0.0254;
+          pixY /= 0.0254;
           break;
         case 3:
           // resolution is expressed in pixels per centimeter
-          pixX /= 100;
-          pixY /= 100;
+          pixX *= 100;
+          pixY *= 100;
           break;
       }
 
       store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Float(0), 0, 0);
 
       // populate StageLabel
       Object x = TiffTools.getIFDValue(ifds[0], TiffTools.X_POSITION);
