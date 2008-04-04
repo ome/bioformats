@@ -375,7 +375,9 @@ public class ND2Reader extends FormatReader {
           in.read() == 10)
         {
           // found a data chunk
-          int len = in.readInt() + in.readInt();
+          int lenOne = in.readInt();
+          int lenTwo = in.readInt();
+          int len = lenOne + lenTwo;
           if (len > b.length) {
             // make sure size at least doubles, for efficiency
             int size = b.length + b.length;
@@ -420,13 +422,7 @@ public class ND2Reader extends FormatReader {
                   offsets[i].length);
               }
             }
-            offsets[seriesNdx][plane] =
-              in.getFilePointer() - len + sb.length() + 21;
-            while (offsets[seriesNdx][plane] - in.getFilePointer() +
-              len - sb.length() < 22)
-            {
-              offsets[seriesNdx][plane]++;
-            }
+            offsets[seriesNdx][plane] = in.getFilePointer() - lenTwo + 8;
             numValidPlanes++;
           }
           else if (len >= 5 && b[0] == 'I' && b[1] == 'm' && b[2] == 'a' &&
@@ -440,7 +436,7 @@ public class ND2Reader extends FormatReader {
             int off = 0;
             for (int i=0; i<len; i++) {
               char c = (char) b[i];
-              if (off == 0 && c == '!') off = i + 1;
+              if ((off == 0 && c == '!') || c == 0) off = i + 1;
 
               if (Character.isISOControl(c) || !Character.isDefined(c)) {
                 b[i] = (byte) ' ';
