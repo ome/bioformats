@@ -43,6 +43,9 @@ public class LibraryEntry implements Comparable {
 
   // -- Constants --
 
+  /** Version code to indicate a missing library. */
+  public static final String MISSING_VERSION_CODE = "!";
+
   /** HTML markup for installed library. */
   private static final String PRESENT = "";
 
@@ -104,6 +107,11 @@ public class LibraryEntry implements Comparable {
             else if (pVendor != null) version = pVendor;
           }
         }
+      }
+      else if (version.equals(MISSING_VERSION_CODE)) {
+        // we know a priori that this library is not properly installed
+        version = null;
+        throw new ClassNotFoundException();
       }
       this.version = version;
 

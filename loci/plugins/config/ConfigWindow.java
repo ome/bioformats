@@ -26,12 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.config;
 
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.io.*;
 import java.util.*;
+import javax.imageio.spi.IIORegistry;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -47,8 +47,12 @@ import javax.swing.event.ListSelectionListener;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ConfigWindow extends JFrame
-  implements ItemListener, ListSelectionListener, Runnable
+  implements ActionListener, ItemListener, ListSelectionListener, Runnable
 {
+
+  // -- Constants --
+
+  private static final int PAD = 5;
 
   // -- Fields --
 
@@ -76,11 +80,21 @@ public class ConfigWindow extends JFrame
     final String loading = "Loading...";
 
     JTabbedPane tabs = new JTabbedPane();
-    tabs.setBorder(new EmptyBorder(3, 3, 3, 3));
+    tabs.setBorder(new EmptyBorder(PAD, PAD, PAD, PAD));
     setContentPane(tabs);
 
-    JPanel optionsPanel = new JPanel();
-    tabs.addTab("Options", optionsPanel);
+    JPanel installPanel = new JPanel();
+    tabs.addTab("Install", installPanel);
+
+    JButton installButton = new JButton(
+      "<html><center><br><font size=\"+1\">Check my system,<br>" +
+      "install missing libraries,<br>" +
+      "and upgrade old files</font><br>" +
+      "<font size=\"-1\">&nbsp;<br>" +
+      "(We'll ask before we install or upgrade anything.)" +
+      "</font><br>&nbsp;");
+    installButton.addActionListener(this);
+    installPanel.add(installButton);
 
     formatsListModel = new DefaultListModel();
     formatsListModel.addElement(loading);
@@ -154,15 +168,21 @@ public class ConfigWindow extends JFrame
     logArea.setRows(10);
     logPanel.add(new JScrollPane(logArea));
 
-    SpringUtilities.makeCompactGrid(libInfo, 7, 2, 3, 3, 3, 3);
+    SpringUtilities.makeCompactGrid(libInfo, 7, 2, PAD, PAD, PAD, PAD);
 
-    tabs.setSelectedIndex(1); // Formats tab
     pack();
 
     TextAreaWriter taw = new TextAreaWriter(logArea);
     log = new PrintWriter(taw);
 
     new Thread(this, "ConfigWindow-Loader").start();
+  }
+
+  // -- ActionListener API methods --
+
+  public void actionPerformed(ActionEvent e) {
+    new LociInstaller().run(null);
+    dispose();
   }
 
   // -- ItemListener API methods --
@@ -251,6 +271,24 @@ public class ConfigWindow extends JFrame
       t.printStackTrace(log);
     }
 
+    String clibIIOVersion = null;
+    try {
+      Class jpegSpi = Class.forName(
+        "com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi");
+      IIORegistry registry = IIORegistry.getDefaultInstance();
+      Object jpeg = registry.getServiceProviderByClass(jpegSpi);
+      if (jpeg == null) clibIIOVersion = LibraryEntry.MISSING_VERSION_CODE;
+    }
+    catch (Throwable t) {
+      if (t instanceof ClassNotFoundException) {
+        // JAI Image I/O Tools library not available
+      }
+      else {
+        log.println("Error determining native Image I/O Tools version:");
+        t.printStackTrace(log);
+      }
+    }
+
     String matlabVersion = null;
     try {
       Class matlabClass = Class.forName("com.mathworks.jmi.Matlab");
@@ -275,6 +313,7 @@ public class ConfigWindow extends JFrame
     if (javaVersion != null) versions.put("javaVersion", javaVersion);
     if (bfVersion != null) versions.put("bfVersion", bfVersion);
     if (qtVersion != null) versions.put("qtVersion", qtVersion);
+    if (clibIIOVersion != null) versions.put("clibIIOVersion", clibIIOVersion);
     if (matlabVersion != null) versions.put("matlabVersion", matlabVersion);
 
     // parse libraries
@@ -439,7 +478,8 @@ public class ConfigWindow extends JFrame
       formatInfo.add(entry.widgets[i]);
     }
 
-    SpringUtilities.makeCompactGrid(formatInfo, 2 + rows, 2, 3, 3, 3, 3);
+    SpringUtilities.makeCompactGrid(formatInfo,
+      2 + rows, 2, PAD, PAD, PAD, PAD);
 
     formatInfo.validate();
     formatInfo.repaint();

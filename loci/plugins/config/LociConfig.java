@@ -46,7 +46,18 @@ public class LociConfig implements PlugIn {
   /** Executes the plugin. */
   public void run(String arg) {
     ConfigWindow cw = new ConfigWindow();
-    Dimension size = cw.getSize();
+    placeWindow(cw);
+    cw.setVisible(true);
+  }
+
+  // -- Utility methods --
+
+  /**
+   * Places the given window at a nice location on screen, either centered
+   * below the ImageJ window if there is one, or else centered on screen.
+   */
+  public static void placeWindow(Window w) {
+    Dimension size = w.getSize();
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -77,8 +88,7 @@ public class LociConfig implements PlugIn {
       p.y = screen.height - size.height - pad;
     }
 
-    cw.setLocation(p);
-    cw.setVisible(true);
+    w.setLocation(p);
   }
 
   // -- Main method --

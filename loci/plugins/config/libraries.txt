@@ -95,7 +95,8 @@ notes = Bio-Formats has two modes of operation for QuickTime movies:\n
 
 [JAI Image I/O Tools - native codecs]
 type = Native library
-class = TODO
+class = com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi
+version = clibIIOVersion
 url = https://jai-imageio.dev.java.net/
 license = BSD
 notes = Used by Bio-Formats for lossless JPEG support in DICOM.
