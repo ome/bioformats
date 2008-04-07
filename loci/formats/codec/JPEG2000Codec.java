@@ -108,6 +108,8 @@ public class JPEG2000Codec extends BaseCodec implements Codec {
     return ru;
   }
 
+  // -- Codec API methods --
+
   /**
    * Compresses a block of JPEG 2000 data.  Currently not supported.
    *
