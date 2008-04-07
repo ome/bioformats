@@ -680,6 +680,7 @@ public class FileStitcher implements IFormatReader {
         String[][][] used = new String[files.length][][];
         int total = 0;
         for (int i=0; i<files.length; i++) {
+          used[i] = new String[files[i].length][];
           for (int j=0; j<files[i].length; j++) {
             try {
               readers[i][j].setId(files[i][j]);
