@@ -104,7 +104,9 @@ public class PCXReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     offset = 0;

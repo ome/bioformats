@@ -76,13 +76,20 @@ public class L2DReader extends FormatReader {
     return readers[series][no].openBytes(0, buf, x, y, w, h);
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#getUsedFiles() */
   public String[] getUsedFiles() {
     FormatTools.assertId(currentId, true, 1);
     return (String[]) used.toArray(new String[0]);
   }
 
-  /* @see loci.formats.IFormatReader#close() */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     tiffs = null;

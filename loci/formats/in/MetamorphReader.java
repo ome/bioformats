@@ -129,7 +129,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatReader#close() */
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     if (stkReader != null) stkReader.close();

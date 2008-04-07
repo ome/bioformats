@@ -124,7 +124,7 @@ public class FluoviewReader extends BaseTiffReader {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatReader#close() */
+  /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
     voxelX = voxelY = voxelZ = voxelC = voxelT = 1f;
