@@ -1624,8 +1624,8 @@ public final class TiffTools {
 
     int index = 0;
     int counter = 0;
+    int numBytes = bitsPerSample[0] / 8;
     for (int j=0; j<bytes.length; j++) {
-      int numBytes = bitsPerSample[0] / 8;
 
       if (bitsPerSample[0] % 8 != 0) {
         // bits per sample is not a multiple of 8
@@ -1689,20 +1689,18 @@ public final class TiffTools {
           System.arraycopy(bytes, bytes.length - numBytes, b, 0, numBytes);
         }
         index += numBytes;
-        int ndx = startIndex + j;
-        if (ndx >= numSamples) ndx = numSamples - 1;
-        short v = (short) DataTools.bytesToLong(b, !littleEndian);
+        long v = DataTools.bytesToLong(b, littleEndian);
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
           long max = 1;
           for (int q=0; q<numBytes; q++) max *= 8;
-          v = (short) (max - v);
+          v = max - v;
         }
         else if (photoInterp == CMYK) {
-          v = (short) (Integer.MAX_VALUE - v);
+          v = Integer.MAX_VALUE - v;
         }
-        DataTools.unpackShort(v, samples,
-          channelNum*numSamples + ndx*numBytes, littleEndian);
+        DataTools.unpackBytes(v, samples,
+          channelNum*numSamples + j*numBytes, numBytes, littleEndian);
       }
     }
   }
@@ -1741,12 +1739,6 @@ public final class TiffTools {
       if (DEBUG) debug("WARNING: truncated " + trunc + " extra samples");
       sampleCount -= trunc;
     }
-
-    // rules on incrementing the index:
-    // 1) if the planar configuration is set to 1 (interleaved), then add one
-    //    to the index
-    // 2) if the planar configuration is set to 2 (separated), then go to
-    //    j + (i*(bytes.length / sampleCount))
 
     int bps0 = bitsPerSample[0];
     int numBytes = bps0 / 8;
@@ -1835,18 +1827,15 @@ public final class TiffTools {
         }
         else if (bps8) {
           // special case handles 8-bit data more quickly
-          //if (planar == 2) { index = j+(i*(bytes.length / samples.length)); }
 
           int ndx = startIndex + j;
           if (photoInterp != Y_CB_CR) {
-            short b = (short) (bytes[index++] & 0xff);
-            samples[i*nSamples + ndx] =
-              (byte) (b < 0 ? Integer.MAX_VALUE + b : b);
+            samples[i*nSamples + ndx] = (byte) (bytes[index++] & 0xff);
           }
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             samples[i*nSamples + ndx] =
-              (byte) ((65535 - samples[i*nSamples + ndx]) & 0xffff);
+              (byte) (255 - samples[i*nSamples + ndx]);
           }
           else if (photoInterp == CMYK) {
             samples[i*nSamples + ndx] =
@@ -1902,15 +1891,10 @@ public final class TiffTools {
           index += numBytes;
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            long max = 1;
-            for (int q=0; q<numBytes; q++) max *= 8;
-            v = DataTools.bytesToShort(samples, i*nSamples + ndx*2, 2,
-              littleEndian);
+            long max = (long) Math.pow(2, numBytes * 8) - 1;
             v = (short) (max - v);
           }
           else if (photoInterp == CMYK) {
-            v = DataTools.bytesToShort(samples, i*nSamples + ndx*2, 2,
-              littleEndian);
             v = (short) (Integer.MAX_VALUE - v);
           }
           if (ndx*2 >= nSamples) break;
