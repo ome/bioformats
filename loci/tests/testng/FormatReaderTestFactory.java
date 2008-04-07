@@ -63,6 +63,9 @@ public class FormatReaderTestFactory {
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
     String filename = System.getProperty(nameProp);
+    if (filename != null && filename.equals("${" + nameProp + "}")) {
+      filename = null;
+    }
     if (filename != null && !new File(filename).exists()) {
       LogTools.println("Error: invalid filename: " + filename);
       return new Object[0];
