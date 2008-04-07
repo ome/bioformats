@@ -375,6 +375,7 @@ public class FormatReaderTest {
    */
   public void testConsistent() {
     if (!initFile()) return;
+    if (config == null) throw new SkipException("No config tree");
     String file = reader.getCurrentFile();
     String testName = "testConsistent";
     boolean success = true;
@@ -490,6 +491,7 @@ public class FormatReaderTest {
    */
   public void testPerformance() {
     if (!initFile()) return;
+    if (config == null) throw new SkipException("No config tree");
     String file = reader.getCurrentFile();
     String testName = "testPerformance";
     boolean success = true;
@@ -603,6 +605,7 @@ public class FormatReaderTest {
    */
   public void testPixelsHashes() {
     if (!initFile()) return;
+    if (config == null) throw new SkipException("No config tree");
     String file = reader.getCurrentFile();
     String testName = "testPixelsHashes";
     boolean success = true;
@@ -817,7 +820,7 @@ public class FormatReaderTest {
       }
 
       // initialize configuration tree
-      config.setId(id);
+      if (config != null) config.setId(id);
     }
     catch (Throwable t) {
       LogTools.println("error");

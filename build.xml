@@ -371,6 +371,11 @@ Apache XML-RPC
   <taskdef resource="net/sf/antcontrib/antlib.xml"
     classpath="jar/ant-contrib-1.0b1.jar"/>
 
+  <!--
+  <taskdef resource="proguard/ant/task.properties"
+    classpath="jar/proguard.jar"/>
+  -->
+
   <!-- Global build targets -->
 
   <target name="init">
@@ -490,6 +495,7 @@ Apache XML-RPC
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
       <classfileset dir="${classes.dir}" includes="${testng.classes}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
