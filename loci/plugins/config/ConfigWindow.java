@@ -84,7 +84,7 @@ public class ConfigWindow extends JFrame
     setContentPane(tabs);
 
     JPanel installPanel = new JPanel();
-    tabs.addTab("Install", installPanel);
+    //tabs.addTab("Install", installPanel);
 
     JButton installButton = new JButton(
       "<html><center><br><font size=\"+1\">Check my system,<br>" +
