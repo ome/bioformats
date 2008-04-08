@@ -536,7 +536,6 @@ public abstract class BaseTiffReader extends FormatReader {
 
     if (photo == TiffTools.RGB_PALETTE || photo == TiffTools.CFA_ARRAY) {
       numC = 3;
-      bps *= 3;
     }
 
     put("BitsPerSample", bps);
@@ -574,11 +573,10 @@ public abstract class BaseTiffReader extends FormatReader {
     int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
 
     while (bps % 8 != 0) bps++;
-    if (bps == 24 || bps == 48) bps /= 3;
+    if (bps == 24) bps = 32;
 
     if (bitFormat == 3) {
       core.pixelType[0] = FormatTools.FLOAT;
-      //core.littleEndian[0] = true;
     }
     else if (bitFormat == 2) {
       switch (bps) {

@@ -77,9 +77,10 @@ public class PackbitsCodec extends BaseCodec implements Codec {
       while (output.size() < expected) {
         byte n = in.readByte();
         if (n >= 0) { // 0 <= n <= 127
-          for (int i=0; i<n + 1; i++) {
-            output.add(in.readByte());
-          }
+          byte[] b = new byte[n + 1];
+          in.read(b);
+          output.add(b);
+          b = null;
         }
         else if (n != -128) { // -127 <= n <= -1
           int len = -n + 1;

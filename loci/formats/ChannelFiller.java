@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import loci.formats.meta.*;
 
-/*
+/**
  * Expands indexed color images to RGB.
  *
  * <dl><dt><b>Source code:</b></dt>

@@ -325,6 +325,11 @@ public class OMETiffReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!open && !checkSuffix(name, suffixes)) return false;
@@ -524,7 +529,10 @@ public class OMETiffReader extends BaseTiffReader {
         core.falseColor[currentSeries] = isFalseColor();
 
         int sc = core.sizeC[currentSeries];
-        if (core.rgb[currentSeries] && !core.indexed[currentSeries]) sc /= 3;
+        if (core.rgb[currentSeries] && !core.indexed[currentSeries]) {
+          if (sc <= 3) sc = 1;
+          else sc /= 3;
+        }
         core.imageCount[currentSeries] =
           core.sizeZ[currentSeries] * sc * core.sizeT[currentSeries];
         core.pixelType[currentSeries] =

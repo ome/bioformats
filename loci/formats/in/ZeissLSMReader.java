@@ -174,17 +174,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     return swapIfRequired(buf);
   }
 
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */
-  public BufferedImage openThumbImage(int no)
-    throws FormatException, IOException
-  {
-    FormatTools.assertId(currentId, true, 1);
-    FormatTools.checkPlaneNumber(this, no);
-
-    if (2*no + 1 < ifds.length) return TiffTools.getImage(ifds[2*no + 1], in);
-    return super.openThumbImage(no);
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initMetadata() */
