@@ -26,7 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Vector;
+import java.util.*;
 import javax.imageio.ImageIO;
 import loci.formats.*;
 import loci.formats.meta.FilterMetadata;
@@ -45,10 +45,10 @@ public class MNGReader extends FormatReader {
   // -- Fields --
 
   /** Offsets to each plane. */
-  private Vector offsets;
+  private Vector[] offsets;
 
   /** Length (in bytes) of each plane. */
-  private Vector lengths;
+  private Vector[] lengths;
 
   // -- Constructor --
 
@@ -71,7 +71,8 @@ public class MNGReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    buf = ImageTools.getBytes(openImage(no, x, y, w, h), true, core.sizeC[0]);
+    buf = ImageTools.getBytes(openImage(no, x, y, w, h), true,
+      core.sizeC[series]);
     return buf;
   }
 
@@ -82,9 +83,9 @@ public class MNGReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
 
-    long offset = ((Long) offsets.get(no)).longValue();
+    long offset = ((Long) offsets[series].get(no)).longValue();
     in.seek(offset);
-    long end = ((Long) lengths.get(no)).longValue();
+    long end = ((Long) lengths[series].get(no)).longValue();
     byte[] b = new byte[(int) (end - offset + 8)];
     in.read(b, 8, b.length - 8);
     b[0] = (byte) 0x89;
@@ -118,8 +119,11 @@ public class MNGReader extends FormatReader {
 
     status("Verifying MNG format");
 
-    offsets = new Vector();
-    lengths = new Vector();
+    offsets = new Vector[1];
+    lengths = new Vector[1];
+
+    offsets[0] = new Vector();
+    lengths[0] = new Vector();
 
     in.skipBytes(12);
 
@@ -146,11 +150,10 @@ public class MNGReader extends FormatReader {
       long fp = in.getFilePointer();
 
       if (code.equals("IHDR")) {
-        offsets.add(new Long(fp - 8));
-        core.imageCount[0]++;
+        offsets[0].add(new Long(fp - 8));
       }
       else if (code.equals("IEND")) {
-        lengths.add(new Long(fp + len + 4));
+        lengths[0].add(new Long(fp + len + 4));
       }
       else if (code.equals("LOOP")) {
         stack.add(new Long(fp + len + 4));
@@ -175,52 +178,77 @@ public class MNGReader extends FormatReader {
 
     status("Populating metadata");
 
-    core.sizeZ[0] = 1;
-
     // easiest way to get image dimensions is by opening the first plane
 
-    long offset = ((Long) offsets.get(0)).longValue();
-    in.seek(offset);
-    long end = ((Long) lengths.get(0)).longValue();
-    byte[] b = new byte[(int) (end - offset + 8)];
-    in.read(b, 8, b.length - 8);
-    b[0] = (byte) 0x89;
-    b[1] = 0x50;
-    b[2] = 0x4e;
-    b[3] = 0x47;
-    b[4] = 0x0d;
-    b[5] = 0x0a;
-    b[6] = 0x1a;
-    b[7] = 0x0a;
+    Hashtable seriesOffsets = new Hashtable();
+    Hashtable seriesLengths = new Hashtable();
 
-    BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+    for (int i=0; i<offsets[0].size(); i++) {
+      long offset = ((Long) offsets[0].get(i)).longValue();
+      in.seek(offset);
+      long end = ((Long) lengths[0].get(i)).longValue();
+      byte[] b = new byte[(int) (end - offset + 8)];
+      in.read(b, 8, b.length - 8);
+      b[0] = (byte) 0x89;
+      b[1] = 0x50;
+      b[2] = 0x4e;
+      b[3] = 0x47;
+      b[4] = 0x0d;
+      b[5] = 0x0a;
+      b[6] = 0x1a;
+      b[7] = 0x0a;
 
-    core.sizeX[0] = img.getWidth();
-    core.sizeY[0] = img.getHeight();
-    core.sizeC[0] = img.getRaster().getNumBands();
+      BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+      String data = img.getWidth() + "-" + img.getHeight() + "-" +
+        img.getRaster().getNumBands() + "-" + ImageTools.getPixelType(img);
+      Vector v = new Vector();
+      if (seriesOffsets.containsKey(data)) {
+        v = (Vector) seriesOffsets.get(data);
+      }
+      v.add(new Long(offset));
+      seriesOffsets.put(data, v);
 
-    core.sizeT[0] = core.imageCount[0];
-    core.currentOrder[0] = "XYCZT";
-    core.pixelType[0] = FormatTools.UINT8;
-    core.rgb[0] = core.sizeC[0] > 1;
-    core.interleaved[0] = false;
-    core.littleEndian[0] = false;
-    core.metadataComplete[0] = true;
-    core.indexed[0] = false;
-    core.falseColor[0] = false;
+      v = new Vector();
+      if (seriesLengths.containsKey(data)) {
+        v = (Vector) seriesLengths.get(data);
+      }
+      v.add(new Long(end));
+      seriesLengths.put(data, v);
+    }
+
+    String[] keys = (String[]) seriesOffsets.keySet().toArray(new String[0]);
+    core = new CoreMetadata(keys.length);
+    offsets = new Vector[keys.length];
+    lengths = new Vector[keys.length];
+    for (int i=0; i<keys.length; i++) {
+      StringTokenizer st = new StringTokenizer(keys[i], "-");
+      core.sizeX[i] = Integer.parseInt(st.nextToken());
+      core.sizeY[i] = Integer.parseInt(st.nextToken());
+      core.sizeC[i] = Integer.parseInt(st.nextToken());
+      core.pixelType[i] = Integer.parseInt(st.nextToken());
+      core.rgb[i] = core.sizeC[i] > 1;
+      offsets[i] = (Vector) seriesOffsets.get(keys[i]);
+      core.imageCount[i] = offsets[i].size();
+      core.sizeT[i] = core.imageCount[i];
+      lengths[i] = (Vector) seriesLengths.get(keys[i]);
+    }
+
+    Arrays.fill(core.sizeZ, 1);
+    Arrays.fill(core.currentOrder, "XYCZT");
+    Arrays.fill(core.interleaved, false);
+    Arrays.fill(core.metadataComplete, true);
+    Arrays.fill(core.indexed, false);
+    Arrays.fill(core.littleEndian, false);
+    Arrays.fill(core.falseColor, false);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    store.setImageName("", 0);
-    store.setImageCreationDate(
-      DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), 0);
+    for (int i=0; i<core.sizeX.length; i++) {
+      store.setImageName("Series " + i, i);
+      store.setImageCreationDate(
+        DataTools.convertDate(System.currentTimeMillis(), DataTools.UNIX), i);
+    }
     MetadataTools.populatePixels(store, this);
-    // CTR CHECK
-//    for (int i=0; i<core.sizeC[0]; i++) {
-//      store.setLogicalChannel(i, null, null, null, null, null, null, null, null,
-//        null, null, null, null, null, null, null, null, null, null, null, null,
-//        null, null, null, null);
-//    }
   }
 
 }
