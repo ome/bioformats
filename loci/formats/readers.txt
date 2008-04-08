@@ -35,6 +35,7 @@ loci.formats.in.PCXReader             # pcx
 loci.formats.in.GIFReader             # gif
 loci.formats.in.BMPReader             # bmp
 loci.formats.in.DicomReader           # dcm, dicom
+loci.formats.in.NRRDReader            # nrrd, nhdr
 loci.formats.in.BioRadReader          # pic
 loci.formats.in.IPLabReader           # ipl
 loci.formats.in.DeltavisionReader     # dv, r3d
@@ -52,7 +53,6 @@ loci.formats.in.EPSReader             # eps, epsi
 loci.formats.in.SlidebookReader       # sld
 loci.formats.in.AliconaReader         # al3d
 loci.formats.in.MNGReader             # mng
-loci.formats.in.NRRDReader            # nrrd, nhdr
 loci.formats.in.KhorosReader          # xv
 loci.formats.in.VisitechReader        # html, xys
 loci.formats.in.LIMReader             # lim
