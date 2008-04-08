@@ -330,7 +330,9 @@ public class OpenlabReader extends FormatReader {
         if (!planes[imagesFound].planeName.equals("Original Image")) {
           if (planes[imagesFound].width == planes[0].width &&
             planes[imagesFound].height == planes[0].height &&
-            planes[imagesFound].volumeType == planes[0].volumeType)
+            (planes[imagesFound].volumeType == planes[0].volumeType ||
+            (planes[imagesFound].volumeType >= DEEP_GREY_9 &&
+            planes[0].volumeType >= DEEP_GREY_9)))
           {
             firstSeriesOffsets.add(new Integer(imagesFound));
           }
