@@ -50,7 +50,6 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   public ImprovisionTiffReader() {
     super("Improvision TIFF", new String[] {"tif", "tiff"});
-    blockCheckLen = 524288;
     suffixSufficient = false;
   }
 
@@ -59,19 +58,29 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     try {
-      RandomAccessStream ras = new RandomAccessStream(block);
-      Hashtable ifd = TiffTools.getFirstIFD(ras);
-      ras.close();
-      if (ifd == null) return false;
+      RandomAccessStream stream = new RandomAccessStream(block);
+      boolean isThisType = isThisType(stream);
+      stream.close();
+      return isThisType;
+    }
+    catch (IOException e) {
+      if (debug) trace(e);
+    }
+    return false;
+  }
 
-      String comment = TiffTools.getComment(ifd);
-      return comment != null && comment.indexOf("Improvision") != -1;
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!open) return false;
+
+    try {
+      RandomAccessStream stream = new RandomAccessStream(name);
+      boolean isThisType = isThisType(stream);
+      stream.close();
+      return isThisType;
     }
-    catch (IOException exc) {
-      if (debug) LogTools.trace(exc);
-    }
-    catch (ArrayIndexOutOfBoundsException exc) {
-      if (debug) LogTools.trace(exc);
+    catch (IOException e) {
+      if (debug) trace(e);
     }
     return false;
   }
@@ -221,6 +230,15 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
     store.setDimensionsTimeIncrement(new Float(pixelSizeT / 1000000.0), 0, 0);
+  }
+
+  // -- Helper methods --
+
+  private boolean isThisType(RandomAccessStream stream) throws IOException {
+    Hashtable ifd = TiffTools.getFirstIFD(stream);
+    String comment = TiffTools.getComment(ifd);
+    if (comment == null) return false;
+    return comment.indexOf("Improvision") != -1;
   }
 
 }
