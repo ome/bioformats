@@ -37,7 +37,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import loci.formats.*;
-import loci.formats.in.TiffReader;
+import loci.formats.in.*;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import org.testng.SkipException;
@@ -561,7 +561,11 @@ public class FormatReaderTest {
         for (int i=0; i<base.length && success; i++) {
           r.setId(base[i]);
           String[] comp = r.getUsedFiles();
-          Arrays.sort(comp);
+          if (comp.length != base.length) {
+            success = false;
+            msg = base[i];
+          }
+          if (success) Arrays.sort(comp);
           for (int j=0; j<comp.length && success; j++) {
             if (!comp[j].equals(base[j])) {
               success = false;
@@ -666,6 +670,16 @@ public class FormatReaderTest {
 
             // TIFF reader is allowed to redundantly green-light files
             if (result && readers[j] instanceof TiffReader) continue;
+
+            // Bio-Rad reader is allowed to redundantly
+            // green-light PIC files from NRRD datasets
+            if (result && r instanceof NRRDReader &&
+              readers[j] instanceof BioRadReader)
+            {
+              String low = used[i].toLowerCase();
+              boolean isPic = low.endsWith(".pic") || low.endsWith(".pic.gz");
+              if (isPic) continue;
+            }
 
             boolean expected = r == readers[j];
             if (result != expected) {
