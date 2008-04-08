@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# bftest: a script for running the LOCI Tools automated test suite
+
+if test -z "$1"
+then
+  echo "Please specify test base directory on the command line."
+  exit 1
+else
+  DIR=$1
+fi
+echo --------=========== Sorting directories ===========--------
+DIRS=`du -s $DIR/* | sort -n | sed -e 's/^[0-9]*\s*//g'`
+cd ~/svn/java
+for f in $DIRS
+do
+  if [ -d $f ] &&
+    [ "${f:(-10)}" != "lost+found" ] &&
+    [ "${f:(-11)}" != "screencasts" ] &&
+    [ "${f:(-8)}" != "software" ] &&
+    [ "${f:(-5)}" != "specs" ] &&
+    [ "${f:(-4)}" != "test" ];
+  then
+    echo --------=========== Testing $f ===========--------
+    svn up
+    ant -Dtestng.directory="$f" test-all
+  fi
+done
