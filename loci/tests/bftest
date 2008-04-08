@@ -2,7 +2,7 @@
 
 # bftest: a script for running the LOCI Tools automated test suite
 
-if test -z "$1"
+if [ -z "$1" ]
 then
   echo "Please specify test base directory on the command line."
   exit 1
