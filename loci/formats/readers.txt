@@ -35,8 +35,6 @@ loci.formats.in.PCXReader             # pcx
 loci.formats.in.GIFReader             # gif
 loci.formats.in.BMPReader             # bmp
 loci.formats.in.DicomReader           # dcm, dicom
-loci.formats.in.NRRDReader            # nrrd, nhdr
-loci.formats.in.BioRadReader          # pic
 loci.formats.in.IPLabReader           # ipl
 loci.formats.in.DeltavisionReader     # dv, r3d
 loci.formats.in.MRCReader             # mrc
@@ -61,9 +59,13 @@ loci.formats.in.InCellReader          # xdce
 loci.formats.in.L2DReader             # l2d
 
 # multi-extension messes
+loci.formats.in.NRRDReader            # nrrd, nhdr, pic
 loci.formats.in.ICSReader             # ics, ids
 loci.formats.in.PerkinElmerReader     # rec, ano, csv, htm, tim, zpo, 2, 3, ...
 loci.formats.in.TCSReader             # xml, tif
+
+# standard PIC reader must go last (it accepts any PIC)
+loci.formats.in.BioRadReader          # pic
 
 # readers requiring third-party libraries
 loci.formats.in.FV1000Reader          # oib, oif, various
