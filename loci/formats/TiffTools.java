@@ -29,7 +29,6 @@ import java.awt.image.DataBuffer;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.nio.*;
 import java.util.*;
 import loci.formats.codec.*;
 
