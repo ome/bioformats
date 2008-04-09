@@ -150,14 +150,14 @@ public class ImarisHDFReader extends FormatReader {
         for (int i=0; i<w; i++) {
           DataTools.unpackShort(
             ((short[][][]) previousImage)[zct[0]][row + y][x + i], buf,
-            2 * (row * w + i), core.littleEndian[0]);
+            2 * (row * w + i), !core.littleEndian[0]);
         }
       }
       else if (previousImage instanceof int[][][]) {
         for (int i=0; i<w; i++) {
           DataTools.unpackBytes(
             ((int[][][]) previousImage)[zct[0]][row + y][x + i], buf,
-            4 * (row * w + i), 4, core.littleEndian[0]);
+            4 * (row * w + i), 4, !core.littleEndian[0]);
         }
       }
       else if (previousImage instanceof float[][][]) {
@@ -165,7 +165,7 @@ public class ImarisHDFReader extends FormatReader {
         int base = row * w * 4;
         for (int i=0; i<w; i++) {
           int v = Float.floatToIntBits(s[x + i]);
-          DataTools.unpackBytes(v, buf, base + i*4, 4, core.littleEndian[0]);
+          DataTools.unpackBytes(v, buf, base + i*4, 4, !core.littleEndian[0]);
         }
       }
     }
