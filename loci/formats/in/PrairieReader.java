@@ -329,9 +329,9 @@ public class PrairieReader extends FormatReader {
 
       status("Finding XML file");
 
-      Location f = new Location(id);
-      f = f.getAbsoluteFile();
-      Location parent = f.getParentFile();
+      Location file = new Location(id);
+      file = file.getAbsoluteFile();
+      Location parent = file.getParentFile();
       String[] listing = parent.list();
       for (int i=0; i<listing.length; i++) {
         if (checkSuffix(listing[i], PRAIRIE_SUFFIXES)) {

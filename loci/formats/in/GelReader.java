@@ -117,9 +117,9 @@ public class GelReader extends BaseTiffReader {
 
     super.initMetadata();
 
-    long format = TiffTools.getIFDLongValue(ifds[0], MD_FILETAG, true, LINEAR);
-    if (format == SQUARE_ROOT) core.pixelType[0] = FormatTools.FLOAT;
-    addMeta("Data format", format == SQUARE_ROOT ? "square root" : "linear");
+    long fmt = TiffTools.getIFDLongValue(ifds[0], MD_FILETAG, true, LINEAR);
+    if (fmt == SQUARE_ROOT) core.pixelType[0] = FormatTools.FLOAT;
+    addMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
 
     TiffRational scale =
       (TiffRational) TiffTools.getIFDValue(ifds[0], MD_SCALE_PIXEL);
@@ -153,8 +153,8 @@ public class GelReader extends BaseTiffReader {
     if (prepTime != null) {
       SimpleDateFormat parse = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
       Date date = parse.parse(prepTime, new ParsePosition(0));
-      SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      store.setImageCreationDate(fmt.format(date), 0);
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      store.setImageCreationDate(sdf.format(date), 0);
     }
     else {
       store.setImageCreationDate(
