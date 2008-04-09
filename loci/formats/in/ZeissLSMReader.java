@@ -171,7 +171,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       TiffTools.getSamples(ifds[0], in, buf, x, no, w, 1);
     }
-    return swapIfRequired(buf);
+    return buf;
   }
 
   // -- Internal BaseTiffReader API methods --

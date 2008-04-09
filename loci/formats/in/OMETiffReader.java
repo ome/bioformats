@@ -393,7 +393,7 @@ public class OMETiffReader extends BaseTiffReader {
     in = new RandomAccessStream(usedFiles[fileIndex]);
     TiffTools.getSamples(usedIFDs[fileIndex][ifd], in, buf, x, y, w, h);
     in.close();
-    return swapIfRequired(buf);
+    return buf;
   }
 
   // -- IFormatHandler API methods --

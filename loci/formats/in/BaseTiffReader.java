@@ -748,39 +748,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return null;
   }
 
-  /**
-   * Examines a byte array to see if it needs to be byte swapped and modifies
-   * the byte array directly.
-   * @param byteArray The byte array to check and modify if required.
-   * @return the <i>byteArray</i> either swapped or not for convenience.
-   * @throws IOException if there is an error read from the file.
-   * @throws FormatException if there is an error during metadata parsing.
-   */
-  protected byte[] swapIfRequired(byte[] byteArray)
-    throws FormatException, IOException
-  {
-    int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
-
-    // We've got nothing to do if the samples are only 8-bits wide or if they
-    // are floating point.
-    if (bitsPerSample == 8 || bitsPerSample == 32) return byteArray;
-
-    if (isLittleEndian()) {
-      if (bitsPerSample == 16) { // short
-        ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
-        for (int i = 0; i < (byteArray.length / 2); i++) {
-          buf.put(i, DataTools.swap(buf.get(i)));
-        }
-      }
-      else {
-        throw new FormatException(
-          "Unsupported sample bit width: '" + bitsPerSample + "'");
-      }
-    }
-    // We've got a big-endian file with a big-endian byte array.
-    return byteArray;
-  }
-
   // -- Internal FormatReader API methods - metadata convenience --
 
   protected void put(String key, Object value) {

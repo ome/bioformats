@@ -65,7 +65,7 @@ public class SVSReader extends BaseTiffReader {
     FormatTools.checkBufferSize(this, buf.length, w, h);
 
     TiffTools.getSamples(ifds[series], in, buf, x, y, w, h);
-    return swapIfRequired(buf);
+    return buf;
   }
 
   // -- Internal BaseTiffReader API methods --
