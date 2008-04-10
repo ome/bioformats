@@ -1562,8 +1562,10 @@ public final class TiffTools {
         value = Integer.MAX_VALUE - value;
       }
 
-      DataTools.unpackBytes(value, samples, numBytes*(startIndex + j),
-        numBytes, littleEndian);
+      if (numBytes*(startIndex + j) < samples.length) {
+        DataTools.unpackBytes(value, samples, numBytes*(startIndex + j),
+          numBytes, littleEndian);
+      }
     }
   }
 
