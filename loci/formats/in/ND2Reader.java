@@ -507,6 +507,34 @@ public class ND2Reader extends FormatReader {
         }
       }
 
+      if (offsets[0].length != core.imageCount[0]) {
+        long[][] tmpOffsets = offsets;
+        offsets = new long[1][core.imageCount[0]];
+        int next = 0;
+        for (int i=0; i<tmpOffsets.length; i++) {
+          for (int j=0; j<tmpOffsets[i].length; j++) {
+            if (next < offsets[0].length) {
+              offsets[0][next++] = tmpOffsets[i][j];
+            }
+          }
+        }
+        int x = core.sizeX[0];
+        int y = core.sizeY[0];
+        int z = core.sizeZ[0];
+        int c = core.sizeC[0];
+        int t = core.sizeT[0];
+        int count = core.imageCount[0];
+        int type = core.pixelType[0];
+        core = new CoreMetadata(1);
+        core.sizeX[0] = x;
+        core.sizeY[0] = y;
+        core.sizeZ[0] = z;
+        core.sizeC[0] = c;
+        core.sizeT[0] = t;
+        core.imageCount[0] = count;
+        core.pixelType[0] = type;
+      }
+
       Arrays.fill(core.sizeX, core.sizeX[0]);
       Arrays.fill(core.sizeY, core.sizeY[0]);
       Arrays.fill(core.sizeC, core.sizeC[0] == 0 ? 1 : core.sizeC[0]);
@@ -520,6 +548,7 @@ public class ND2Reader extends FormatReader {
       Arrays.fill(core.rgb, core.sizeC[0] > 1);
 
       adjustImageCount = false;
+
       for (int i=0; i<offsets.length; i++) {
         for (int j=1; j<core.imageCount[i]; j++) {
           if (offsets[i][j] < offsets[i][j - 1]) {
