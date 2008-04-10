@@ -74,7 +74,7 @@ public class PackbitsCodec extends BaseCodec implements Codec {
     int expected = ((Integer) options).intValue();
     ByteVector output = new ByteVector(1024);
     try {
-      while (output.size() < expected) {
+      while (output.size() < expected && in.getFilePointer() < in.length()) {
         byte n = in.readByte();
         if (n >= 0) { // 0 <= n <= 127
           byte[] b = new byte[n + 1];
