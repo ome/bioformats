@@ -311,7 +311,7 @@ public class SlidebookReader extends FormatReader {
       char n = (char) in.readShort();
       if (n == 'i') {
         iCount++;
-        in.skipBytes(81);
+        in.skipBytes(78);
         int start = 0;
         for (int j=start; j<pixelOffsets.size(); j++) {
           long length = ((Long) pixelLengths.get(j)).longValue();
@@ -321,23 +321,17 @@ public class SlidebookReader extends FormatReader {
           if (in.getFilePointer() >= (length + offset) &&
             in.getFilePointer() < end)
           {
-            if ((in.getFilePointer() % 2) == 1) {
-              in.seek(in.getFilePointer() - 1);
-            }
-            if (core.sizeY[j - start] == 0) {
+            if (core.sizeX[j - start] == 0) {
+              core.sizeX[j - start] = in.readShort();
               core.sizeY[j - start] = in.readShort();
-              if (core.sizeY[j - start] < 256 && core.sizeY[j - start] != 128) {
-                in.seek(in.getFilePointer() - 3);
-                core.sizeY[j - start] = in.readShort();
-              }
-              else if ((core.sizeY[j - start] % 8) != 0) {
-                in.skipBytes(2);
-                core.sizeY[j - start] = in.readShort();
-              }
-              int div = (int) Math.pow(2, in.readShort() & 1);
-              if (div < core.sizeY[j - start]) {
-                core.sizeY[j - start] /= div;
-              }
+              int checkX = in.readShort();
+              int checkY = in.readShort();
+              int div = in.readShort();
+              //if (checkX >= 128 && div == 1) div = 2;
+              core.sizeX[j - start] /= div;
+              div = in.readShort();
+              //if (checkY>= 128 && div == 1) div = 2;
+              core.sizeY[j - start] /= div;
             }
             if (prevSeries != j - start) {
               iCount = 1;
@@ -385,11 +379,19 @@ public class SlidebookReader extends FormatReader {
 
     for (int i=0; i<core.sizeX.length; i++) {
       long pixels = ((Long) pixelLengths.get(i)).longValue() / 2;
-      core.sizeT[i] = 1;
+      boolean x = true;
+      while (core.sizeX[i] * core.sizeY[i] * core.sizeC[i] * core.sizeZ[i] >
+        pixels)
+      {
+        if (x) core.sizeX[i] /= 2;
+        else core.sizeY[i] /= 2;
+        x = !x;
+      }
       if (core.sizeZ[i] == 0) core.sizeZ[i] = 1;
+      core.sizeT[i] = (int) (pixels /
+        (core.sizeX[i] * core.sizeY[i] * core.sizeZ[i] * core.sizeC[i]));
+      if (core.sizeT[i] == 0) core.sizeT[i] = 1;
       core.imageCount[i] = core.sizeZ[i] * core.sizeT[i] * core.sizeC[i];
-      core.sizeX[i] = (int) (pixels / (core.imageCount[i] * core.sizeY[i]));
-      if ((core.sizeX[i] % 2) == 1) core.sizeX[i]--;
       core.pixelType[i] = FormatTools.UINT16;
       core.currentOrder[i] = "XYZTC";
       core.indexed[i] = false;
