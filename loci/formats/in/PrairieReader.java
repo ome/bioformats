@@ -143,9 +143,7 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    id = id.toLowerCase();
-    return (checkSuffix(id, PRAIRIE_SUFFIXES)) ?
-      FormatTools.MUST_GROUP : FormatTools.CAN_GROUP;
+    return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles() */

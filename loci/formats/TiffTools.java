@@ -1009,11 +1009,11 @@ public final class TiffTools {
 
       long temp = stripByteCounts[0];
       stripByteCounts = new long[bitsPerSample.length];
-      for (int i=0; i<stripByteCounts.length; i++) stripByteCounts[i] = temp;
+      Arrays.fill(stripByteCounts, temp);
       temp = bitsPerSample[0];
       if (temp == 0) temp = 8;
       bitsPerSample = new int[bitsPerSample.length];
-      for (int i=0; i<bitsPerSample.length; i++) bitsPerSample[i] = (int) temp;
+      Arrays.fill(bitsPerSample, (int) temp);
       temp = stripOffsets[0];
 
       // we have two files that reverse the endianness for BitsPerSample,
@@ -1091,9 +1091,9 @@ public final class TiffTools {
         }
       }
 
-      for (int i=0; i<stripByteCounts.length; i++) {
-        stripByteCounts[i] *= 2;
-      }
+      //for (int i=0; i<stripByteCounts.length; i++) {
+      //  stripByteCounts[i] *= 2;
+      //}
     }
 
     if (lastBitsZero) {
@@ -1645,6 +1645,8 @@ public final class TiffTools {
           // special case handles 8-bit data more quickly
 
           int ndx = startIndex + j;
+          if (i*nSamples + ndx >= samples.length) break;
+
           if (photoInterp != Y_CB_CR) {
             samples[i*nSamples + ndx] = (byte) (bytes[index++] & 0xff);
           }
@@ -1827,8 +1829,7 @@ public final class TiffTools {
           s[b] += s[b - len];
         }
         for (int i=0; i<s.length; i++) {
-          input[little ? i*2 + 1: i*2] = (byte) (s[i] & 0xff);
-          input[little ? i*2 : i*2 + 1] = (byte) ((s[i] >> 8) & 0xff);
+          DataTools.unpackShort(s[i], input, i*2, little);
         }
       }
     }
