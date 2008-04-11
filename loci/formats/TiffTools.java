@@ -1297,8 +1297,6 @@ public final class TiffTools {
       numStrips--;
     }
 
-    byte[] altBytes = new byte[0];
-
     byte[] jpegTable = null;
     if (compression == JPEG) {
       jpegTable = (byte[]) TiffTools.getIFDValue(ifd, JPEG_TABLES);
@@ -1418,59 +1416,48 @@ public final class TiffTools {
           }
           byte[] bytes = new byte[(int) stripByteCounts[strip]];
           in.read(bytes);
-          if (compression != PACK_BITS) {
-            if (jpegTable != null) {
-              byte[] q = new byte[jpegTable.length + bytes.length - 4];
-              System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
-              System.arraycopy(bytes, 2, q, jpegTable.length - 2,
-                bytes.length - 2);
-              bytes = uncompress(q, compression, size);
-            }
-            else bytes = uncompress(bytes, compression, size);
-
-            undifference(bytes, bitsPerSample,
-              imageWidth, planarConfig, predictor, littleEndian);
-
-            if (x != 0 || width != imageWidth || y != 0 ||
-              height != imageLength)
-            {
-              byte[] tmp = bytes;
-              int extra = (int) bitsPerSample[0] / 8;
-              if (planarConfig != 2) extra *= samplesPerPixel;
-              int rowLen = (int) width * extra;
-              int srcRowLen = (int) imageWidth * extra;
-              bytes = new byte[(int) (nRows * extra * width)];
-
-              int startRow = (row % imageLength) < y ?
-                (int) (y - (row % imageLength)) : 0;
-              int endRow = (int) ((row % imageLength) + rowsPerStrip >
-                y + height ?  y + height - (row % imageLength) : rowsPerStrip);
-              for (int n=startRow; n<endRow; n++) {
-                int srcOffset = n * srcRowLen + x * extra;
-                System.arraycopy(tmp, srcOffset, bytes,
-                  (n - startRow) * rowLen, rowLen);
-              }
-              nRows = endRow - startRow;
-            }
-
-            unpackBytes(buf, offset, bytes, bitsPerSample,
-              photoInterp, colorMap, littleEndian, maxValue, planarConfig,
-              strip, (int) numStrips, width);
-            int div = bitsPerSample[0] / 8;
-            if (div == 0) div = 1;
-            if (bitsPerSample[0] % 8 != 0) div++;
-            if (planarConfig != 2) div *= samplesPerPixel;
-            offset += bytes.length / div;
+          if (jpegTable != null) {
+            byte[] q = new byte[jpegTable.length + bytes.length - 4];
+            System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
+            System.arraycopy(bytes, 2, q, jpegTable.length - 2,
+              bytes.length - 2);
+            bytes = uncompress(q, compression, size);
           }
-          else {
-            // concatenate contents of bytes to altBytes
-            byte[] tempPackBits = new byte[altBytes.length];
-            System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
-            altBytes = new byte[altBytes.length + bytes.length];
-            System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
-            System.arraycopy(bytes, 0, altBytes,
-              tempPackBits.length, bytes.length);
+          else bytes = uncompress(bytes, compression, size);
+
+          undifference(bytes, bitsPerSample,
+            imageWidth, planarConfig, predictor, littleEndian);
+
+          if (x != 0 || width != imageWidth || y != 0 ||
+            height != imageLength)
+          {
+            byte[] tmp = bytes;
+            int extra = (int) bitsPerSample[0] / 8;
+            if (planarConfig != 2) extra *= samplesPerPixel;
+            int rowLen = (int) width * extra;
+            int srcRowLen = (int) imageWidth * extra;
+            bytes = new byte[(int) (nRows * extra * width)];
+
+            int startRow = (row % imageLength) < y ?
+              (int) (y - (row % imageLength)) : 0;
+            int endRow = (int) ((row % imageLength) + rowsPerStrip >
+              y + height ?  y + height - (row % imageLength) : rowsPerStrip);
+            for (int n=startRow; n<endRow; n++) {
+              int srcOffset = n * srcRowLen + x * extra;
+              System.arraycopy(tmp, srcOffset, bytes,
+                (n - startRow) * rowLen, rowLen);
+            }
+            nRows = endRow - startRow;
           }
+
+          unpackBytes(buf, offset, bytes, bitsPerSample,
+            photoInterp, colorMap, littleEndian, maxValue, planarConfig,
+            strip, (int) numStrips, width);
+          int div = bitsPerSample[0] / 8;
+          if (div == 0) div = 1;
+          if (bitsPerSample[0] % 8 != 0) div++;
+          if (planarConfig != 2) div *= samplesPerPixel;
+          offset += bytes.length / div;
         }
         catch (Exception e) {
           // CTR TODO - eliminate catch-all exception handling
@@ -1486,38 +1473,6 @@ public final class TiffTools {
             colorMap, littleEndian, maxValue, planarConfig,
             strip, (int) numStrips, imageWidth);
         }
-      }
-    }
-
-    // only do this if the image uses PackBits compression
-    if (altBytes.length != 0) {
-      int bpp = bitsPerSample[0];
-      while ((bpp % 8) != 0) bpp++;
-      bpp /= 8;
-
-      altBytes = uncompress(altBytes, compression,
-        (int) (imageWidth * imageLength * samplesPerPixel));
-      undifference(altBytes, bitsPerSample,
-        imageWidth, planarConfig, predictor, littleEndian);
-      if (width < imageWidth || height < imageLength) {
-        byte[] tmp = new byte[(int)
-          (imageWidth * imageLength * bitsPerSample.length * bpp)];
-        unpackBytes(tmp, 0, altBytes, bitsPerSample,
-          photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 1,
-          imageWidth);
-
-        for (int c=0; c<bitsPerSample.length; c++) {
-          for (int row=y; row<y+height; row++) {
-            System.arraycopy(tmp, (int) (c*imageWidth*imageLength*bpp +
-              row*imageWidth*bpp) + x*bpp, buf, (int) (c*width*height*bpp +
-              (row - y)*width*bpp), (int) (bpp*width));
-          }
-        }
-      }
-      else {
-        unpackBytes(buf, 0, altBytes, bitsPerSample,
-          photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 1,
-          imageWidth);
       }
     }
 
