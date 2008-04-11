@@ -203,7 +203,7 @@ def showLevel(outfile, level):
         outfile.write('    ')
 
 
-class XschemaElementBase:
+class XschemaElementBase(object):
     def __init__(self):
         pass
 
@@ -666,7 +666,7 @@ class XschemaElement(XschemaElementBase):
 # end class XschemaElement
 
 
-class XschemaAttributeGroup:
+class XschemaAttributeGroup(object):
     def __init__(self, name='', group=None):
         self.name = name
         if group:
@@ -694,7 +694,7 @@ class XschemaAttributeGroup:
             return 0
 # end class XschemaAttributeGroup
 
-class XschemaAttribute:
+class XschemaAttribute(object):
     def __init__(self, name, data_type='xs:string', use='optional'):
         self.name = name
         self.data_type = data_type
@@ -870,11 +870,11 @@ class XschemaHandler(handler.ContentHandler):
             element = SimpleTypeElement(stName)
             SimpleTypeDict[stName] = element
             self.stack.append(element)
-            self.inSimpleType = 1
+            self.inSimpleType += 1
         elif name == RestrictionType:
             # If we are in a simpleType, capture the name of
             #   the restriction base.
-            if self.inSimpleType and 'base' in attrs.keys():
+            if self.inSimpleType > 0 and 'base' in attrs.keys():
                 self.stack[-1].setBase(attrs['base'])
             self.inRestrictionType = 1
         elif name == EnumerationType:
@@ -889,16 +889,19 @@ class XschemaHandler(handler.ContentHandler):
                 # in the stack. We search backwards through the stack to
                 # find the last element.
                 element = None
-                for entry in list(stack).reverse():
+                reverse = list(self.stack)
+                reverse.reverse()
+                logging.debug("Found enum, reverse stack: %s" % reverse)
+                for entry in reverse:
                     if type(entry) == XschemaElement:
                         element = entry
                 if element is None:
                     sys.stderr.write(
-                        'Cannot find element to attach enumeration: %s' % \
-                            value)
+                        'Cannot find element to attach enumeration: %s\n' % \
+                            attrs['value'])
                     sys.exit(-1)
                 element.values.append(attrs['value'])
-            elif self.inSimpleType and attrs.has_key('value'):
+            elif self.inSimpleType > 0 and attrs.has_key('value'):
                 # We've been defined as a simpleType on our own.
                 self.stack[-1].values.append(attrs['value'])
         elif name == UnionType:
@@ -919,9 +922,9 @@ class XschemaHandler(handler.ContentHandler):
 
     def endElement(self, name):
         logging.debug("End element: %s" % (name))
-        logging.debug("End element stack: %d" % (len(self.stack)))
-        if name == SimpleTypeType and self.inSimpleType:
-            self.inSimpleType = 0
+        logging.debug("End element stack length: %d" % (len(self.stack)))
+        if name == SimpleTypeType and self.inSimpleType > 0:
+            self.inSimpleType -= 1
             # If the simpleType is directly off the root, it may be used to 
             # qualify the type of many elements and/or attributes so we 
             # don't want to loose it entirely.
@@ -934,6 +937,7 @@ class XschemaHandler(handler.ContentHandler):
             self.inElement = 0
             self.inNonanonymousComplexType = 0
             element = self.stack.pop()
+            logging.debug("Adding %s as child of %s" % (element, self.stack[-1]))
             self.stack[-1].addChild(element)
         elif name == ComplexTypeType:
             self.inComplexType = 0
@@ -974,11 +978,6 @@ class XschemaHandler(handler.ContentHandler):
         elif name == ExtensionType:
             pass
         elif name == ListType:
-            # List types are only used with a parent simpleType and can have a
-            # simpleType child. So, if we're in a list type we have to be
-            # careful to reset the inSimpleType flag otherwise the handler's
-            # internal stack will not be unrolled correctly.
-            self.inSimpleType = 1
             self.inListType = 0
 
     def characters(self, chrs):

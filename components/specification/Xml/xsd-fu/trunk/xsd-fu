@@ -45,13 +45,17 @@ def usage(error):
 	"""
 	cmd = sys.argv[0]
 	print """%s
-Usage: %s [-p package] -o <output_dir> <path/to/ome.xsd>
+Usage: %s [-n xsd_namespace] [-p package] -o <output_dir> <path/to/ome.xsd>
 Generates Java classes from an OME XML Schema definition.
 
-Examples:
-  %s -p ome.xml -o ome/xml schemas/ome.xsd
+Default package: "%s"
+Default namespace: "%s"
 
-Report bugs to Chris Allan <callan@blackcat.ca>""" % (error, cmd, cmd)
+Examples:
+  %s -n 'xs:' -p ome.xml -o ome/xml schemas/ome.xsd
+
+Report bugs to Chris Allan <callan@blackcat.ca>""" % \
+	(error, cmd, DEFAULT_PACKAGE, NAMESPACE, cmd)
 	sys.exit(2)
 
 def main():
@@ -60,7 +64,7 @@ def main():
 	classes in the output directory.
 	"""
 	try:
-		options, args = getopt(sys.argv[1:], "o:p:")
+		options, args = getopt(sys.argv[1:], "o:p:n:")
 	except GetoptError, (msg, opt):
 		usage(msg)
 
@@ -69,18 +73,21 @@ def main():
 
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
+	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
 			outputDirectory = argument
 		if option == "-p":
 			package = argument
+		if option == "-n":
+			namespace = argument
 	if outputDirectory is None:
 		usage("Output directory must be specified!")
 	if not os.path.exists(outputDirectory):
 		print "Output directory '%s' does not exist!" % outputDirectory
 		sys.exit(1)
 
-	model = parseXmlSchema(args[0])
+	model = parseXmlSchema(args[0], namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
@@ -96,12 +103,13 @@ def debugMain():
 	"""
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
+	namespace = "xs:"
 
-	model = parseXmlSchema("tmp/ome.xsd")
+	model = parseXmlSchema("tmp/schemas/2003/ome.xsd", namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
-		if obj.name == "Laser":
+		if obj.name == "Image":
 			print " +-- %s(%s)" % (obj.name, obj.base)
 			for prop in obj.properties.values():
 				print " +---- %s(%s) [%d:%d]" % \

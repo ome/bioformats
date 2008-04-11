@@ -1,6 +1,6 @@
 """
 Object model and helper classes used in the generation of Java classes from
-an OME XML (http://www.ome.xml.org) XSD document.
+an OME XML (http://www.ome-xml.org) XSD document.
 """
 
 #  
@@ -50,34 +50,66 @@ except ImportError:
 #logging.basicConfig(level=logging.DEBUG,
 #                    format='%(asctime)s %(levelname)s %(message)s')
 
-# A global mapping from XSD Schema types and Java types
-JAVA_TYPE_MAP = {
-	# Base types
-	'xsd:boolean': 'Boolean',
-	'xsd:dateTime': 'String',
-	'xsd:string': 'String',
-	'xsd:integer': 'Integer',
-	'xsd:positiveInteger': 'Integer',
-	'xsd:nonNegativeInteger': 'Integer',
-	'xsd:float': 'Float',
-	'xsd:anyURI': 'String',
-	# Hacks
-	'MIMEtype': 'String',
-	'RedChannel': 'ChannelSpecTypeNode',
-	'GreenChannel': 'ChannelSpecTypeNode',
-	'BlueChannel': 'ChannelSpecTypeNode',
-	'AcquiredPixelsRef': 'PixelsNode',
-	'Description': 'String',
-}
+# A global mapping from XSD Schema types and Java types that is used to
+# inform and override type mappings for OME Model properties which are
+# comprised of XML Schema attributes, elements and OME XML reference virtual
+# types.
+JAVA_TYPE_MAP = None
+
+# A global type mapping from XSD Schema types to Java base classes that is
+# used to override places in the model where we do not wish subclassing to
+# take place.
+JAVA_BASE_TYPE_MAP = None
+
+# Types which have not been recognized as explicit defines (XML Schema
+# definitions that warrant a the creation of a first class model object) that
+# we wish to be treated otherwise. As part of the code generation process they 
+# will also be confirmed to be top-level types.
+EXPLICIT_DEFINE_OVERRIDE = ('Dichroic', 'Experimenter', 'FilterSet')
+
+def updateTypeMaps(namespace):
+	"""
+	Updates the type maps with a new namespace. **Must** be executed at least 
+	once, **before** node class file generation.
+	"""
+	global JAVA_TYPE_MAP
+	JAVA_TYPE_MAP = {
+		# Base types
+		namespace + 'boolean': 'Boolean',
+		namespace + 'dateTime': 'String',
+		namespace + 'string': 'String',
+		namespace + 'integer': 'Integer',
+		namespace + 'positiveInteger': 'Integer',
+		namespace + 'nonNegativeInteger': 'Integer',
+		namespace + 'float': 'Float',
+		namespace + 'anyURI': 'String',
+		# Hacks
+		'PercentFraction': 'Float',
+		'MIMEtype': 'String',
+		'RedChannel': 'ChannelSpecTypeNode',
+		'GreenChannel': 'ChannelSpecTypeNode',
+		'BlueChannel': 'ChannelSpecTypeNode',
+		'AcquiredPixelsRef': 'PixelsNode',
+		'Description': 'String',
+		'Leader': 'ExperimenterRefNode',
+	}
+	
+	global JAVA_BASE_TYPE_MAP
+	JAVA_BASE_TYPE_MAP = {
+		'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
+	}
 
 # The list of properties not to process.
 DO_NOT_PROCESS = ["ID"]
+
+# Default root XML Schema namespace
+DEFAULT_NAMESPACE = "xsd:"
 
 # The default Java base class for OME XML model objects.
 DEFAULT_BASE_CLASS = "OMEXMLNode"
 
 # The default Java package for OME XML model objects.
-DEFAULT_PACKAGE = "org.openmicroscopy.xml2007"
+DEFAULT_PACKAGE = "ome.xml.r2008"
 
 # The default template for class processing.
 CLASS_TEMPLATE = "templates/Class.template"
@@ -92,13 +124,14 @@ class ReferenceDelegate(object):
 	"""
 	A "virtual" property delegate to be used with "reference" 
 	OMEModelProperty instances. This delegate conforms loosely to the same
-	interface as a delegate coming from generateDS.
+	interface as a delegate coming from generateDS (ie. an "attribute" or
+	an "element").
 	"""
 	def __init__(self, dataType):
 		self.name = dataType + "_BackReference"
 		self.dataType = dataType
 		# Ensures property code which is looking for elements or attributes
-		# which conform to an enumeration can function.
+		# which conform to an enumeration can still function.
 		self.values = None
 	
 	def getMaxOccurs(self):
@@ -115,9 +148,11 @@ class ReferenceDelegate(object):
 	
 class OMEModelProperty(object):
 	"""
-	An aggregate type representing either an OME XML Schema element or 
-	attribute. This class equates conceptually to an instance variable which
-	may be of a singular type or a collection.
+	An aggregate type representing either an OME XML Schema element, 
+	attribute or our OME XML Schema "Reference" meta element (handled by the
+	ReferenceDelegate class). This class equates conceptually to an object
+	oriented language instance variable which may be of a singular type or a 
+	collection.
 	"""
 	
 	def __init__(self, delegate, model):
@@ -130,14 +165,12 @@ class OMEModelProperty(object):
 		if self.isAttribute:
 			return self.delegate.getData_type()
 		return self.delegate.getType()
-		
 	type = property(_get_type, doc="""The property's XML Schema data type.""")
 			
 	def _get_maxOccurs(self):
 		if self.isAttribute:
 			return 1
 		return self.delegate.getMaxOccurs()
-		
 	maxOccurs = property(_get_maxOccurs,
 		doc="""The maximum number of occurances for this property.""")
 		
@@ -147,13 +180,11 @@ class OMEModelProperty(object):
 				return 0
 			return 1
 		return self.delegate.getMinOccurs()
-		
 	minOccurs = property(_get_minOccurs,
 		doc="""The minimum number of occurances for this property.""")
 
 	def _get_name(self):
 		return self.delegate.getName()
-		
 	name = property(_get_name, doc="""The property's name.""")
 	
 	def _get_javaType(self):
@@ -189,7 +220,6 @@ class OMEModelProperty(object):
 						pass
 			raise ModelProcessingError, \
 				"Unable to find Java type for %s" % self.type
-		
 	javaType = property(_get_javaType, doc="""The property's Java type.""")
 	
 	def _get_javaArgumentName(self):
@@ -197,7 +227,6 @@ class OMEModelProperty(object):
 		if not m: return self.name.lower()
 		i = m.start()
 		return self.name[:i].lower() + self.name[i:]
-	
 	javaArgumentName = property(_get_javaArgumentName,
 		doc="""The property's Java argument name (camelCase).""")
 	
@@ -270,10 +299,13 @@ class OMEModelObject(object):
 
 	def _get_javaBase(self):
 		base = self.element.getBase()
+		if base in JAVA_BASE_TYPE_MAP:
+			return JAVA_BASE_TYPE_MAP[base]
+		if base is None and self.element.attrs['type'] != self.name:
+			base = self.element.attrs['type']
 		if base is None:
 			return DEFAULT_BASE_CLASS
 		return base + "Node"
-
 	javaBase = property(_get_javaBase, 
 		doc="""The model object's Java base class.""")
 		
@@ -281,7 +313,6 @@ class OMEModelObject(object):
 		if self.base == "Reference":
 			return self.properties["ID"].javaType
 		return None
-		
 	refNodeName = property(_get_refNodeName,
 		doc="""The name of this node's reference node; None otherwise.""")
 	
@@ -345,15 +376,17 @@ class OMEModel(object):
 		"""
 		Process an element (a leaf).
 		"""
-		if not element.isExplicitDefine():
-			logging.info("Element %s.%s not an explicit define, skipping." % (parent, element))
+		e = element
+		if not e.isExplicitDefine() \
+		   and (e.name not in EXPLICIT_DEFINE_OVERRIDE or not e.topLevel):
+			logging.info("Element %s.%s not an explicit define, skipping." % (parent, e))
 			return
-		if element.getMixedExtensionError():
-			logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, element))
+		if e.getMixedExtensionError():
+			logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, e))
 			return
-		obj = OMEModelObject(element, self)
-		self.addObject(element, obj)
-		self.processAttributes(element)
+		obj = OMEModelObject(e, self)
+		self.addObject(e, obj)
+		self.processAttributes(e)
 
 	def processTree(self, elements, parent=None):
 		"""
@@ -426,19 +459,25 @@ class TemplateInfo(object):
 		self.user = getpwuid(getuid())[0]
 		self.DO_NOT_PROCESS = DO_NOT_PROCESS
 
-def parseXmlSchema(filename):
+def parseXmlSchema(filename, namespace=DEFAULT_NAMESPACE):
 	"""
 	Entry point for XML Schema parsing into an OME Model.
 	"""
 	# The following two statements are required to "prime" the generateDS
-	# code.
-	namespace = 'xsd:'
+	# code and ensure we have reasonable namespace support.
+	logging.debug("Namespace: %s" % namespace)
 	set_type_constants(namespace)
+	updateTypeMaps(namespace)
+	logging.debug("Java type map: %s" % JAVA_TYPE_MAP)
 
 	parser = sax.make_parser()
 	ch = XschemaHandler()
 	parser.setContentHandler(ch)
 	parser.parse(filename)
 
-	ch.getRoot().annotate()
+	root = ch.getRoot()
+	if root is None:
+		raise ModelProcessingError(
+			"No model objects found, have you set the correct namespace?")
+	root.annotate()
 	return OMEModel.process(ch)
